@@ -27,13 +27,13 @@ foreach i (${argv[2-]})
   endif
   set newfl=$fl:r"_v4.proj"
 
-  sed -e "s/_MGroup/_Group/g" \
+  sed -E -e "s/_MGroup/_Group/g" \
     -e "s/Project/$projnm/g" -e "s/$projgp/Project_Group/g" -e "s/$projection/Projection/g" \
     -e "s/Network/$netnm/g" -e "s/$netgp/Network_Group/g" \
     -e "s/LeabraWiz/Wizard/g" -e "s/Wizard/$wiznm/g" -e "s/$wizgp/Wizard_Group/g" \
     -e "s/WinView_Group/taBase_Group/g" -e "s/ProjViewState_List/taBase_List/g" \
     -e "s/NetView/taNBase/g" -e "s/DataTable/taNBase/g" -e "s/EnviroView/taNBase/g" \
-    -e "s/Xform/taBase/g" \
+    -e "s/Xform/taBase/g" -e 's/unique[ 	]*=/unique/g' \
     $fl >$cvttmp
   mv -f $cvttmp $newfl
   if($ext == "gz") then

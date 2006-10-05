@@ -1,10 +1,9 @@
 leabra todo list:
 
-* projection from* not being set
-* operator= for SmartRef: should set ptr
-* test string assgn in taptr
-* test FILE string_stream.css
+* still some weirdness where some unique flags are being lost in conversion, but 
+  others are not.. it happens after conversion during save or something.  maybe during run?
 
+* test FILE string_stream.css: ptr = 0?
 
 * need GUI_READ_ONLY vs READ_ONLY -- interface vs. css -- some stuff should
   really be read only in css like owner..
@@ -20,10 +19,6 @@ leabra todo list:
 
 * something funky about converted networks.. save & rebuild works but initial one does not..
   * still true!
-
-* why are cvt error msgs still happening!?
-
-* implement css watchpoint to trap bug??
 
 ---
 

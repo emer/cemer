@@ -2197,7 +2197,7 @@ static void Install_Types() {
   cssTA_Base_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_taBase, "taBase");
   cssMisc::TypesSpace.Push(new cssFStream("fstream"));
   cssMisc::TypesSpace.Push(new cssSStream("sstream"));
-  cssTA_inst_nm (cssMisc::TypesSpace, NULL, 2, &TA_fstream, "FILE");
+  cssMisc::TypesSpace.Push(new cssIOS(NULL, 2, &TA_fstream, "FILE"));
   cssMisc::TypesSpace.Push(new cssLeafItr("taLeafItr"));
 
   cssMisc::TypesSpace.Push(new cssTypeDef(NULL, 1, &TA_TypeDef, "TypeDef"));

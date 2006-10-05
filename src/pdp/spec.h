@@ -23,21 +23,13 @@
 #include "pdpbase.h"
 #include "pdp_TA_type.h" // for templates
 
-#define MAX_SPEC_LONGS	(int)((256 / (sizeof(long) * 8)) + 1)
-
-#ifdef TA_GUI
-class taiAction; //
-#endif
-
 // forwards this file
 
 class BaseSpec;
 
 class PDP_API BaseSpec_Group: public taBase_Group {
-#ifndef __MAKETA__
-  typedef taBase_Group inherited;
-#endif
   // group of specs
+INHERITED(taBase_Group)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
@@ -69,21 +61,15 @@ public:
   void	Initialize();
   void 	Destroy()		{ }
   TA_BASEFUNS(BaseSpec_Group);
-
-#ifdef TA_GUI
-public:
-  virtual void		NewChildSpec_mc(taiAction* sel); // callback for new child spec
-#endif
 };
-
-
 
 class PDP_API BaseSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network base specification class
+INHERITED(taNBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
-  unsigned long unique[MAX_SPEC_LONGS]; // #HIDDEN bits representing members unique
+  String_Array unique; // #HIDDEN string list of unique members
   TypeDef*		min_obj_type;
   // #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
   BaseSpec_Group 	children;
@@ -92,10 +78,10 @@ public:
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
 
-  virtual void	SetUnique(int memb_no, bool onoff); // set inherit bit
-  virtual void	SetUnique(char* memb_nm, bool onoff); // set inherit bit
+  virtual void	SetUnique(int memb_no, bool on); // set inherit bit
+  virtual void	SetUnique(const char* memb_nm, bool on); // set inherit bit
   virtual bool	GetUnique(int memb_no);	     	// check inherit bit
-  virtual bool	GetUnique(char* memb_nm);	// check inherit bit
+  virtual bool	GetUnique(const char* memb_nm);	// check inherit bit
 
   virtual void	UpdateMember(BaseSpec* from, int memb_no);
   // copy member from given parent
@@ -120,11 +106,6 @@ public:
   virtual bool 	    RemoveChild(const char* nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
-  // save the unique members
-  int 		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
-  int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
-
-
   void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy();
@@ -137,27 +118,23 @@ public:
 
 class PDP_API BaseSubSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU specification class for sub-objects of specs
+INHERITED(taNBase)
 public:
-  unsigned long unique[MAX_SPEC_LONGS]; // #HIDDEN bits representing members unique
-
+  String_Array unique; // #HIDDEN string list of unique members
   virtual BaseSubSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the corresponding parent subspec of this one
   virtual BaseSpec*	FindParentBaseSpec();
   // #MENU #USE_RVAL Find the parent spec of this one
 
-  virtual void	SetUnique(int memb_no, bool onoff); // set inherit bit
-  virtual void	SetUnique(char* memb_nm, bool onoff); // set inherit bit
+  virtual void	SetUnique(int memb_no, bool on); // set inherit bit
+  virtual void	SetUnique(const char* memb_nm, bool on); // set inherit bit
   virtual bool	GetUnique(int memb_no);	     	// check inherit bit
-  virtual bool	GetUnique(char* memb_nm);	// check inherit bit
+  virtual bool	GetUnique(const char* memb_nm);	// check inherit bit
 
   virtual void	UpdateMember(BaseSubSpec* from, int memb_no);
   // copy member from given sub spec if not unique
   virtual void	UpdateSpec();
   // update from parent sub spec, if one exists
-
-  // save the unique members
-  int 		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
-  int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -170,6 +147,7 @@ public:
 
 class PDP_API SpecPtr_impl : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER magic pointer to a spec
+INHERITED(taBase)
 public:
   TAPtr		owner;		// #NO_SAVE #READ_ONLY to get to proj..
   TypeDef*	base_type;	// #TYPE_BaseSpec #HIDDEN #NO_SAVE base type for type field
@@ -255,7 +233,6 @@ public:
   TA_TMPLT_BASEFUNS(SpecPtr, T);
 };
 
-
 #define SpecPtr_of(T)							      \
 class PDP_API T ## _SPtr : public SpecPtr<T> {					      \
 public:									      \
@@ -263,8 +240,6 @@ public:									      \
   void	Destroy()		{ };					      \
   TA_BASEFUNS(T ## _SPtr);						      \
 }
-
-
 
 #endif // spec_h
 

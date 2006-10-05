@@ -76,6 +76,7 @@ String cssTA::PrintFStr() const {
 }
 
 void cssTA::TypeInfo(ostream& fh) const {
+  for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
   type_def->OutputType(fh);
 }
 
@@ -288,6 +289,7 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
 }
 
 void cssTA::operator=(const String& s) {
+  if(!ROCheck()) return;
   if(ptr_cnt == 0) {
     if(type_def->HasOption("INLINE") || type_def->InheritsFrom(TA_taList_impl)
        || type_def->InheritsFrom(TA_taArray_base)
@@ -326,14 +328,14 @@ void cssTA::operator=(const String& s) {
 }
 
 void cssTA::operator=(const cssEl& s) {
-  if(!ROCheck()) return;
-  if(ptr_cnt > 0) {
-    PtrAssignPtr(s);
-    return;
-  }
   if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
     *this = s.GetStr();	// use string converter
     if(class_parent)	class_parent->UpdateAfterEdit();
+    return;
+  }
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(s);
     return;
   }
 
@@ -426,6 +428,7 @@ cssTA_Base::~cssTA_Base() {
 }
 
 void cssTA_Base::TypeInfo(ostream& fh) const {
+  for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
   taBase* ths = GetTAPtr();
   if(ths)
     ths->OutputType(fh);
@@ -491,17 +494,17 @@ void cssTA_Base::operator=(const String& s) {
 }
 
 void cssTA_Base::operator=(const cssEl& s) {
+  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
+    *this = s.GetStr();	// use string converter
+    if(class_parent)	class_parent->UpdateAfterEdit();
+    return;
+  }
   if(!ROCheck()) return;
   if(ptr_cnt > 0) {
     PtrAssignPtr(s);
     taBase* ths = GetTAPtr();
     if(ths)
       type_def = ths->GetTypeDef();	// just to be sure
-    return;
-  }
-  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
-    *this = s.GetStr();	// use string converter
-    if(class_parent)	class_parent->UpdateAfterEdit();
     return;
   }
   // basic ptr_cnt == 0 copy:
@@ -584,7 +587,8 @@ void cssTA_Base::InstallThis(cssProgSpace* ps) {
 ////////////////////////////////////////////////////////////////////////
 
 const char* cssSmartRef::GetTypeName() const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return "taSmartRef";
   if(sr->ptr()) {
     return sr->ptr()->GetTypeDef()->name;
   }
@@ -596,7 +600,8 @@ void cssSmartRef::Print(ostream& fh) const {
 }
 
 void cssSmartRef::PrintR(ostream& fh) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) { fh << "NULL cssSmartRef"; return; }
   if(sr->ptr()) {
     sr->ptr()->GetTypeDef()->OutputR(fh, sr->ptr());
   }
@@ -606,7 +611,9 @@ void cssSmartRef::PrintR(ostream& fh) const {
 }
 
 void cssSmartRef::TypeInfo(ostream& fh) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) { fh << "NULL cssSmartRef"; return; }
   if(sr->ptr()) {
     sr->ptr()->GetTypeDef()->OutputType(fh);
     return;
@@ -615,7 +622,8 @@ void cssSmartRef::TypeInfo(ostream& fh) const {
 }
 
 void cssSmartRef::InheritInfo(ostream& fh) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) { fh << "NULL cssSmartRef"; return; }
   if(sr->ptr()) {
     sr->ptr()->GetTypeDef()->OutputInherit(fh);
     return;
@@ -624,7 +632,8 @@ void cssSmartRef::InheritInfo(ostream& fh) const {
 }
 
 cssEl* cssSmartRef::GetToken(int idx) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return &cssMisc::Void;
   if(sr->ptr()) {
     void* rval = sr->ptr()->GetTypeDef()->tokens[idx];
     return new cssTA(rval, 1, sr->ptr()->GetTypeDef());
@@ -633,7 +642,8 @@ cssEl* cssSmartRef::GetToken(int idx) const {
 }
 
 void cssSmartRef::TokenInfo(ostream& fh) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return;
   if(sr->ptr()) {
     sr->ptr()->GetTypeDef()->tokens.List(fh);
   }
@@ -641,12 +651,14 @@ void cssSmartRef::TokenInfo(ostream& fh) const {
 }
 
 cssSmartRef::operator void*() const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return NULL;
   return sr->ptr();
 }
 
 void* cssSmartRef::GetVoidPtrOfType(TypeDef* td) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return NULL;
   if(sr->ptr()) {
     return sr->ptr()->GetTypeDef()->GetParAddr(td, sr->ptr());
   }
@@ -654,7 +666,8 @@ void* cssSmartRef::GetVoidPtrOfType(TypeDef* td) const {
 }
 
 void* cssSmartRef::GetVoidPtrOfType(const char* td) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return NULL;
   if(sr->ptr()) {
     return sr->ptr()->GetTypeDef()->GetParAddr(td, sr->ptr());
   }
@@ -662,7 +675,8 @@ void* cssSmartRef::GetVoidPtrOfType(const char* td) const {
 }  
 
 String cssSmartRef::GetStr() const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return "NULL";
   if(sr->ptr()) {
     return sr->ptr()->GetTypeDef()->GetValStr(sr->ptr());
   }
@@ -670,20 +684,21 @@ String cssSmartRef::GetStr() const {
 }
 
 void cssSmartRef::operator=(const String& s) {
-  type_def->SetValStr(s, ptr);	// treats string as a path to object..
+  type_def->SetValStr(s, GetVoidPtr());	// treats string as a path to object..
 }
 
 void cssSmartRef::operator=(const cssEl& s) {
-  
+  PtrAssignPtr(s);		// this is the only copy op supported..
 }
 
 void cssSmartRef::PtrAssignPtr(const cssEl& s) {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return;
   sr->set((taBase*)s);	// set as a taptr
 }
 
 void cssSmartRef::UpdateAfterEdit() {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr()) {
     sr->ptr()->UpdateAfterEdit();
     return;
@@ -692,42 +707,42 @@ void cssSmartRef::UpdateAfterEdit() {
 }
 
 cssEl* cssSmartRef::operator[](int i) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetElement_impl(sr->ptr(), i);
   return cssTA::operator[](i);
 }
 
 cssEl* cssSmartRef::GetMemberFmName(const char* memb) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetMemberFmName_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
   return cssTA::GetMemberFmName(memb);
 }
 
 cssEl* cssSmartRef::GetMemberFmNo(int memb) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetMemberFmNo_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
   return cssTA::GetMemberFmNo(memb);
 }
 
 cssEl* cssSmartRef::GetMethodFmName(const char* memb) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetMethodFmName_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
   return cssTA::GetMethodFmName(memb);
 }
 
 cssEl* cssSmartRef::GetMethodFmNo(int memb) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetMethodFmNo_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
   return cssTA::GetMethodFmNo(memb);
 }
 
 cssEl* cssSmartRef::GetScoped(const char* memb) const {
-  taSmartRef* sr = (taSmartRef*)ptr;
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetScoped_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
   return cssTA::GetScoped(memb);
@@ -1075,6 +1090,7 @@ void cssTypeDef::PrintR(ostream& fh) const {
 }
 
 void cssTypeDef::TypeInfo(ostream& fh) const {
+  for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
   void* pt = GetVoidPtr();
   if(pt)
     ((TypeDef*)pt)->OutputType(fh);

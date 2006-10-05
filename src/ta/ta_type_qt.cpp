@@ -50,7 +50,8 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   cerr << a << " " << b << " " << c << " " << d << " " << e << " " << f << 
     " " << g << " " << h << " " << i << "\n";
   FlushConsole();
-  cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+  if(cssMisc::cur_top)
+    cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
     String errmsg = String(a) + " "  + b + " " + c + " " + d + " " + e + " " + f

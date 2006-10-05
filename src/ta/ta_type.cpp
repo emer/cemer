@@ -345,7 +345,8 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
     " " << g << " " << h << " " << i  << "\n";
   FlushConsole();
 #if !defined(NO_TA_BASE) 
-  cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+  if(cssMisc::cur_top)
+    cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
 #endif
 }
 

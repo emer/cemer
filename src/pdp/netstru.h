@@ -406,9 +406,7 @@ public:
 };
 
 class PDP_API UnitSpec: public BaseSpec { // Generic Unit Specification
-#ifndef __MAKETA__
-typedef BaseSpec inherited;
-#endif
+INHERITED(BaseSpec)
   static Con_Group*	rcg_rval; // return value for connecting
   static Con_Group*	scg_rval; // return value for connecting
 public:
@@ -462,9 +460,7 @@ SpecPtr_of(UnitSpec);
 
 class PDP_API Unit: public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 Generic unit
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+INHERITED(taNBase)
 protected:
   static Con_Group*	rcg_rval; // return value for connecting
   static Con_Group*	scg_rval; // return value for connecting
@@ -655,9 +651,7 @@ SpecPtr_of(ProjectionSpec);
 
 class PDP_API Projection: public taNBase {
   // Projection describes connectivity between layers (from receivers perspective)
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+INHERITED(taNBase)
 public:
   enum PrjnSource {
     NEXT,		// Recv from the next layer in network
@@ -943,9 +937,7 @@ public:
 
 class PDP_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS layer containing units
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+INHERITED(taNBase)
 public:
   enum DMemDist {
     DMEM_DIST_DEFAULT,		// distribute units to different processors for distributed memory processing according to the default sequential scheme

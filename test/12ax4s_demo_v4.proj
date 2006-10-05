@@ -4376,7 +4376,7 @@ el_typ=LeabraUnitSpec;
 el_def=0;
 name="";
 DaModUnitSpec @[0] {
-   unique 	    = {opt_thresh; };
+   unique {opt_thresh; };
 name="DaModUnitSpec_0";
 not_used_ok=false;
 children {
@@ -4415,7 +4415,7 @@ cur_val=0;
 da_mod {on=false: mod=PLUS_CONT: gain=1: neg_rec=0.2: p_dwt=false: };
 };
 LeabraLayerSpec @[1] {
-   unique 	    = {};
+   unique {};
 name="Hidden";
 not_used_ok=false;
 children {
@@ -4423,7 +4423,7 @@ el_typ=LeabraLayerSpec;
 el_def=0;
 name="";
 LeabraLayerSpec @[0] {
-     unique 	      = {kwta; inhib_group; compute_i; i_kwta_pt; };
+     unique {kwta; inhib_group; compute_i; i_kwta_pt; };
 name="Input";
 not_used_ok=true;
 children {
@@ -4442,7 +4442,7 @@ clamp {hard=true: gain=0.5: d_gain=0: };
 decay {event=1: phase=1: phase2=0: clamp_phase2=true: };
 };
 LeabraLayerSpec @[1] {
-     unique 	      = {kwta; inhib_group; compute_i; i_kwta_pt; };
+     unique {kwta; inhib_group; compute_i; i_kwta_pt; };
 name="Output";
 not_used_ok=true;
 children {
@@ -4472,7 +4472,7 @@ clamp {hard=true: gain=0.5: d_gain=0: };
 decay {event=1: phase=1: phase2=0: clamp_phase2=true: };
 };
 FullPrjnSpec @[2] {
-   unique 	    = {};
+   unique {};
 name="FullPrjnSpec_0";
 not_used_ok=false;
 children {
@@ -4484,7 +4484,7 @@ self_con=false;
 init_wts=false;
 };
 LeabraConSpec @[3] {
-   unique 	    = {};
+   unique {};
 name="LeabraConSpec_0";
 not_used_ok=false;
 children {
@@ -4492,7 +4492,7 @@ el_typ=LeabraConSpec;
 el_def=0;
 name="";
 LeabraBiasSpec @[0] {
-     unique 	      = {rnd; wt_limits; wt_scale; dwt_thresh; };
+     unique {rnd; wt_limits; wt_scale; dwt_thresh; };
 name="LeabraBiasSpec_0";
 not_used_ok=false;
 children {
@@ -4571,7 +4571,7 @@ el_typ=DaModUnitSpec;
 el_def=0;
 name="PFC_BG_Units";
 DaModUnitSpec @[0] {
-    unique 	     = {act_fun; act; opt_thresh; dt; g_bar; };
+    unique {act_fun; act; opt_thresh; dt; g_bar; };
 name="PVUnits";
 not_used_ok=false;
 children {
@@ -4579,7 +4579,7 @@ el_typ=DaModUnitSpec;
 el_def=0;
 name="";
 DaModUnitSpec @[0] {
-      unique 	       = {};
+      unique {};
 name="LVUnits";
 not_used_ok=false;
 children {
@@ -4649,7 +4649,7 @@ cur_val=0;
 da_mod {on=false: mod=PLUS_CONT: gain=1: neg_rec=0.2: p_dwt=false: };
 };
 DaModUnitSpec @[1] {
-    unique 	     = {act_range; act; clamp_range; };
+    unique {act_range; act; clamp_range; };
 name="DaUnits";
 not_used_ok=false;
 children {
@@ -4688,7 +4688,7 @@ cur_val=0;
 da_mod {on=false: mod=PLUS_CONT: gain=1: neg_rec=0.2: p_dwt=false: };
 };
 DaModUnitSpec @[2] {
-    unique 	     = {g_bar; act_reg; };
+    unique {g_bar; act_reg; };
 name="PFCUnits";
 not_used_ok=false;
 children {
@@ -4727,7 +4727,7 @@ cur_val=0;
 da_mod {on=false: mod=PLUS_CONT: gain=1: neg_rec=0.2: p_dwt=false: };
 };
 MatrixUnitSpec @[3] {
-    unique 	     = {bias_spec; opt_thresh; g_bar; };
+    unique {bias_spec; opt_thresh; g_bar; };
 name="MatrixUnits";
 not_used_ok=false;
 children {
@@ -4767,7 +4767,7 @@ da_mod {on=false: mod=PLUS_CONT: gain=1: neg_rec=0.2: p_dwt=false: };
 freeze_net=true;
 };
 DaModUnitSpec @[4] {
-    unique 	     = {};
+    unique {};
 name="SNrThalUnits";
 not_used_ok=false;
 children {
@@ -4811,7 +4811,7 @@ el_typ=LeabraConSpec;
 el_def=0;
 name="PFC_BG_Cons";
 LeabraConSpec @[0] {
-    unique 	     = {};
+    unique {};
 name="LearnCons";
 not_used_ok=true;
 children {
@@ -4819,7 +4819,7 @@ el_typ=PVConSpec;
 el_def=0;
 name="";
 PVConSpec @[0] {
-      unique 	       = {rnd; wt_limits; wt_sig; lrate; lrs_value; lrate_sched; 
+      unique {rnd; wt_limits; wt_sig; lrate; lrs_value; lrate_sched; 
 lmix; };
 name="PVi";
 not_used_ok=false;
@@ -4828,7 +4828,7 @@ el_typ=PVConSpec;
 el_def=0;
 name="";
 LVConSpec @[0] {
-	unique 		 = {lrate; };
+	unique {lrate; };
 name="LVe";
 not_used_ok=false;
 children {
@@ -4836,7 +4836,7 @@ el_typ=LVConSpec;
 el_def=0;
 name="";
 LVConSpec @[0] {
-	  unique 	   = {lrate; };
+	  unique {lrate; };
 name="LVi";
 not_used_ok=false;
 children {
@@ -4909,7 +4909,7 @@ lmix {hebb=0: err=1: err_sb=false: };
 savg_cor {cor=0.4: thresh=0.001: norm_con_n=false: };
 };
 LeabraBiasSpec @[1] {
-      unique 	       = {rnd; wt_limits; wt_scale; lrate; };
+      unique {rnd; wt_limits; wt_scale; lrate; };
 name="BgBias";
 not_used_ok=false;
 children {
@@ -4917,7 +4917,7 @@ el_typ=LeabraBiasSpec;
 el_def=0;
 name="";
 LeabraBiasSpec @[0] {
-	unique 		 = {rnd; wt_limits; wt_scale; lrate; };
+	unique {rnd; wt_limits; wt_scale; lrate; };
 name="FixedBias";
 not_used_ok=false;
 children {
@@ -4959,7 +4959,7 @@ savg_cor {cor=0.4: thresh=0.001: norm_con_n=false: };
 dwt_thresh=0.1;
 };
 MatrixBiasSpec @[1] {
-	unique 		 = {rnd; wt_limits; wt_scale; };
+	unique {rnd; wt_limits; wt_scale; };
 name="MatrixBias";
 not_used_ok=false;
 children {
@@ -5036,7 +5036,7 @@ savg_cor {cor=0.4: thresh=0.001: norm_con_n=false: };
 dwt_thresh=0.1;
 };
 LeabraConSpec @[2] {
-      unique 	       = {rnd; lrate; lmix; };
+      unique {rnd; lrate; lmix; };
 name="ToPFC";
 not_used_ok=false;
 children {
@@ -5044,7 +5044,7 @@ el_typ=LeabraConSpec;
 el_def=0;
 name="";
 LeabraConSpec @[0] {
-	unique 		 = {wt_scale; };
+	unique {wt_scale; };
 name="IntraPFC";
 not_used_ok=false;
 children {
@@ -5085,7 +5085,7 @@ lmix {hebb=0.001: err=0.999: err_sb=true: };
 savg_cor {cor=0.4: thresh=0.001: norm_con_n=false: };
 };
 LeabraBiasSpec @[1] {
-	unique 		 = {rnd; wt_limits; wt_scale; };
+	unique {rnd; wt_limits; wt_scale; };
 name="PFCBias";
 not_used_ok=false;
 children {
@@ -5160,7 +5160,7 @@ lmix {hebb=0.001: err=0.999: err_sb=true: };
 savg_cor {cor=0.4: thresh=0.001: norm_con_n=false: };
 };
 MatrixConSpec @[3] {
-      unique 	       = {wt_limits; lrate; lmix; };
+      unique {wt_limits; lrate; lmix; };
 name="MatrixCons";
 not_used_ok=false;
 children {
@@ -5168,7 +5168,7 @@ el_typ=MatrixConSpec;
 el_def=0;
 name="";
 MatrixConSpec @[0] {
-	unique 		 = {wt_limits; wt_scale; };
+	unique {wt_limits; wt_scale; };
 name="MatrixFmPFC";
 not_used_ok=false;
 children {
@@ -5277,7 +5277,7 @@ lmix {hebb=0.001: err=0.999: err_sb=true: };
 savg_cor {cor=0.4: thresh=0.001: norm_con_n=false: };
 };
 MarkerConSpec @[1] {
-    unique 	     = {rnd; wt_limits; wt_scale; lrate; };
+    unique {rnd; wt_limits; wt_scale; lrate; };
 name="MarkerCons";
 not_used_ok=false;
 children {
@@ -5306,7 +5306,7 @@ lmix {hebb=0.001: err=0.999: err_sb=true: };
 savg_cor {cor=0.4: thresh=0.001: norm_con_n=false: };
 };
 LeabraConSpec @[2] {
-    unique 	     = {rnd; wt_scale; lrate; };
+    unique {rnd; wt_scale; lrate; };
 name="PFCSelfCon";
 not_used_ok=false;
 children {
@@ -5340,7 +5340,7 @@ el_typ=ExtRewLayerSpec;
 el_def=0;
 name="PFC_BG_Layers";
 ExtRewLayerSpec @[0] {
-    unique 	     = {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
+    unique {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
 name="PVeLayer";
 not_used_ok=false;
 children {
@@ -5367,7 +5367,7 @@ out_err {graded=false: no_off_err=false: seq_all_cor=false: };
 rew {err_val=0: norew_val=0.5: rew_val=1: };
 };
 PViLayerSpec @[1] {
-    unique 	     = {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
+    unique {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
 name="PViLayer";
 not_used_ok=false;
 children {
@@ -5391,7 +5391,7 @@ val_range {min=0: max=1: range=1: scale=1: };
 pv_detect {thr_min=0.2: thr_max=0.8: };
 };
 LVeLayerSpec @[2] {
-    unique 	     = {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
+    unique {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
 name="LVeLayer";
 not_used_ok=false;
 children {
@@ -5399,7 +5399,7 @@ el_typ=LViLayerSpec;
 el_def=0;
 name="";
 LViLayerSpec @[0] {
-      unique 	       = {};
+      unique {};
 name="LViLayer";
 not_used_ok=false;
 children {
@@ -5423,7 +5423,7 @@ val_range {min=0: max=1: range=1: scale=1: };
 lv {discount=0: use_actual_er=false: };
 };
 PatchLayerSpec @[1] {
-      unique 	       = {kwta; gp_kwta; inhib_group; compute_i; i_kwta_pt; decay; 
+      unique {kwta; gp_kwta; inhib_group; compute_i; i_kwta_pt; decay; 
 };
 name="PatchLayer";
 not_used_ok=false;
@@ -5464,7 +5464,7 @@ val_range {min=0: max=1: range=1: scale=1: };
 lv {discount=0: use_actual_er=false: };
 };
 PVLVDaLayerSpec @[3] {
-    unique 	     = {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
+    unique {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
 name="DALayer";
 not_used_ok=false;
 children {
@@ -5472,7 +5472,7 @@ el_typ=SNcLayerSpec;
 el_def=0;
 name="";
 SNcLayerSpec @[0] {
-      unique 	       = {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
+      unique {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
 name="SNcLayer";
 not_used_ok=false;
 children {
@@ -5505,7 +5505,7 @@ decay {event=1: phase=1: phase2=0: clamp_phase2=false: };
 da {mode=LV_PLUS_IF_PV: tonic_da=0: min_lvi=0.1: use_actual_er=false: };
 };
 PFCLayerSpec @[4] {
-    unique 	     = {gp_kwta; inhib_group; compute_i; i_kwta_pt; decay; };
+    unique {gp_kwta; inhib_group; compute_i; i_kwta_pt; decay; };
 name="PFCLayer";
 not_used_ok=false;
 children {
@@ -5525,7 +5525,7 @@ decay {event=0: phase=0: phase2=0.1: clamp_phase2=false: };
 gate {off_accom=0: updt_reset_sd=true: allow_clamp=false: };
 };
 MatrixLayerSpec @[5] {
-    unique 	     = {decay; };
+    unique {decay; };
 name="MatrixLayer";
 not_used_ok=false;
 children {
@@ -5549,7 +5549,7 @@ rnd_go {on=true: go_p=0.1: rgo_da=20: prf_go_p=1e-04: prf_rgo_da=1: };
 rnd_go_thr {abs_thr=0: abs_max=0.1: rel=0.05: mnt=10: avgrew=0.9: avg_go_dt=0.005: };
 };
 SNrThalLayerSpec @[6] {
-    unique 	     = {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
+    unique {kwta; inhib_group; compute_i; i_kwta_pt; decay; };
 name="SNrThalLayer";
 not_used_ok=false;
 children {
@@ -5574,7 +5574,7 @@ el_typ=FullPrjnSpec;
 el_def=0;
 name="PFC_BG_Prjns";
 FullPrjnSpec @[0] {
-    unique 	     = {};
+    unique {};
 name="FullPrjn";
 not_used_ok=false;
 children {
@@ -5586,7 +5586,7 @@ self_con=false;
 init_wts=false;
 };
 OneToOnePrjnSpec @[1] {
-    unique 	     = {self_con; };
+    unique {self_con; };
 name="OneToOne";
 not_used_ok=false;
 children {
@@ -5601,7 +5601,7 @@ recv_start=0;
 send_start=0;
 };
 GpOneToOnePrjnSpec @[2] {
-    unique 	     = {self_con; };
+    unique {self_con; };
 name="GpOneToOne";
 not_used_ok=false;
 children {
@@ -5616,7 +5616,7 @@ recv_start=0;
 send_start=0;
 };
 UniformRndPrjnSpec @[3] {
-    unique 	     = {};
+    unique {};
 name="ToPFC";
 not_used_ok=true;
 children {
@@ -5636,7 +5636,7 @@ mti=186;
 };
 };
 OneToOnePrjnSpec @[4] {
-    unique 	     = {self_con; };
+    unique {self_con; };
 name="PFCSelf";
 not_used_ok=false;
 children {
@@ -5651,7 +5651,7 @@ recv_start=0;
 send_start=0;
 };
 GpRndTesselPrjnSpec @[5] {
-    unique 	     = {};
+    unique {};
 name="IntraPFC";
 not_used_ok=true;
 children {
@@ -5691,7 +5691,7 @@ mti=186;
 };
 };
 TesselPrjnSpec @[6] {
-    unique 	     = {};
+    unique {};
 name="Input_PFC";
 not_used_ok=false;
 children {
@@ -33224,7 +33224,7 @@ el_typ=EventSpec;
 el_def=0;
 name="";
 EventSpec @[0] {
-     unique 	      = {};
+     unique {};
 name="StdSpec";
 not_used_ok=false;
 children {
@@ -33238,7 +33238,7 @@ el_def=0;
 name="";
 pat_gp_type=Pattern_Group;
 PatternSpec @[0] {
-       unique 	        = {};
+       unique {};
 name="Input";
 type=INPUT;
 to_layer=LAY_NAME;
@@ -33256,7 +33256,7 @@ value_names{ 1;2;3;A;B;C;X;Y;Z;};
 global_flags{ 0;0;0;0;0;0;0;0;0;};
 };
 PatternSpec @[1] {
-       unique 	        = {};
+       unique {};
 name="Output";
 type=TARGET;
 to_layer=LAY_NAME;
@@ -33274,7 +33274,7 @@ value_names{ L;R;};
 global_flags{ 0;0;};
 };
 PatternSpec @[2] {
-       unique 	        = {};
+       unique {};
 name="RewTarg";
 type=INPUT;
 to_layer=LAY_NAME;
@@ -36475,7 +36475,7 @@ el_typ=EventSpec;
 el_def=0;
 name="";
 EventSpec @[0] {
-     unique 	      = {};
+     unique {};
 name="EventSpec_1";
 not_used_ok=false;
 children {
@@ -36489,7 +36489,7 @@ el_def=0;
 name="";
 pat_gp_type=Pattern_Group;
 PatternSpec @[0] {
-       unique 	        = {};
+       unique {};
 name="Input";
 type=INPUT;
 to_layer=LAY_NAME;

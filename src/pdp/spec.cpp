@@ -56,7 +56,7 @@ BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {
     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef())))
       continue;			// no hope..
     BaseSpec* rval = bs->children.FindSpecType(td);
-    if(rval != NULL)
+    if(rval)
       return rval;
   }
   return NULL;
@@ -77,7 +77,7 @@ BaseSpec* BaseSpec_Group::FindSpecInherits(TypeDef* td, TAPtr for_obj) {
     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef())))
       continue;			// no hope..
     BaseSpec* rval = bs->children.FindSpecInherits(td, for_obj);
-    if(rval != NULL)
+    if(rval)
       return rval;
   }
   return NULL;
@@ -96,7 +96,7 @@ BaseSpec* BaseSpec_Group::FindSpecTypeNotMe(TypeDef* td, BaseSpec* not_me) {
     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef()) || (bs != not_me)))
       continue;			// no hope..
     BaseSpec* rval = bs->children.FindSpecTypeNotMe(td, not_me);
-    if(rval != NULL)
+    if(rval)
       return rval;
   }
   return NULL;
@@ -117,7 +117,7 @@ BaseSpec* BaseSpec_Group::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, T
     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef()) || (bs != not_me)))
       continue;			// no hope..
     BaseSpec* rval = bs->children.FindSpecInheritsNotMe(td, not_me, for_obj);
-    if(rval != NULL)
+    if(rval)
       return rval;
   }
   return NULL;
@@ -127,13 +127,13 @@ BaseSpec* BaseSpec_Group::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, T
 BaseSpec* BaseSpec_Group::FindSpecName(const char* nm) {
   int idx;
   BaseSpec* rval = (BaseSpec*)FindLeafName((char*)nm, idx);
-  if(rval != NULL)
+  if(rval)
     return rval;
   BaseSpec* bs;
   taLeafItr i;
   FOR_ITR_EL(BaseSpec, bs, this->, i) {
     rval = bs->children.FindSpecName(nm);
-    if(rval != NULL)
+    if(rval)
       return rval;
   }
   return NULL;
@@ -143,39 +143,14 @@ BaseSpec* BaseSpec_Group::FindParent() {
   return GET_MY_OWNER(BaseSpec);
 }
 
-/*obs void BaseSpec_Group::GenMenu_impl(taiMenu* menu) {
-  PDPMGroup::GenMenu_impl(menu);
-
-  menu->AddSep();
-  mc.member = SLOT(NewChildSpec_mc(taiMenuEl*));
-
-  taiMenu* sub = menu->AddSubMenu("New Child");
-  itm_list->GetMenu(sub, &mc);
-} */
-#ifdef TA_GUI
-void BaseSpec_Group::NewChildSpec_mc(taiAction* sel) {
-/*TODO  if(win_owner == NULL) return;
-  if((sel != NULL) && (sel->usr_data != NULL)) {
-    TAPtr itm = (TAPtr)sel->usr_data;
-    if(itm->InheritsFrom(TA_BaseSpec)) {
-      // call with 0 causes menu to come up..
-      TAPtr rval = ((BaseSpec*)itm)->children.New(0);
-      if(rval != NULL) {
-//	taMisc::DelayedMenuUpdate(this);
-	itm->UpdateAfterEdit();
-      }
-    }
-  } */
-}
-#endif
 BaseSpec* BaseSpec_Group::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_itm, const char* alt_nm) {
   nw_itm = false;
   BaseSpec* sp = NULL;
-  if(nm != NULL) {
+  if(nm) {
     sp = (BaseSpec*)FindName(nm);
-    if((sp == NULL) && (alt_nm != NULL)) {
+    if((sp == NULL) && (alt_nm)) {
       sp = (BaseSpec*)FindName(alt_nm);
-      if(sp != NULL) sp->name = nm;
+      if(sp) sp->name = nm;
     }
   }
   else {
@@ -183,14 +158,14 @@ BaseSpec* BaseSpec_Group::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_itm
   }
   if(sp == NULL) {
     sp = (BaseSpec*)NewEl(1, tp);
-    if(nm != NULL)
+    if(nm)
       sp->name = nm;
     nw_itm = true;
   }
   else if(!sp->InheritsFrom(tp)) {
     Remove(sp);
     sp = (BaseSpec*)NewEl(1, tp);
-    if(nm != NULL)
+    if(nm)
       sp->name = nm;
     nw_itm = true;
   }
@@ -198,7 +173,7 @@ BaseSpec* BaseSpec_Group::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_itm
 }
 
 bool BaseSpec_Group::RemoveSpec(const char* nm, TypeDef* tp) {
-  if(nm != NULL)
+  if(nm)
     return RemoveName(nm);
 
   int idx = Find(tp);
@@ -215,16 +190,11 @@ bool BaseSpec::nw_itm_def_arg = false;
 
 void BaseSpec::Initialize() {
   min_obj_type = &TA_taBase;
-  int i;
-  for(i=0; i< MAX_SPEC_LONGS; i++)
-    unique[i] = 0;
 }
 
 void BaseSpec::Copy_(const BaseSpec& cp) {
   //  min_obj_type = cp.min_obj_type;  // don't do this -- could be going between types
-  int i;
-  for(i=0; i< MAX_SPEC_LONGS; i++)
-    unique[i] = cp.unique[i];
+  unique = cp.unique;
   children = cp.children;
 }
 
@@ -234,6 +204,7 @@ void BaseSpec::Destroy() {
 
 void BaseSpec::InitLinks() {
   taNBase::InitLinks();
+  taBase::Own(unique, this);
   taBase::Own(children, this);
   children.SetBaseType(GetTypeDef());
   if(!taMisc::is_loading)
@@ -265,58 +236,62 @@ BaseSpec* BaseSpec::FindParent() {
   return GET_MY_OWNER(BaseSpec);
 }
 
-bool BaseSpec::GetUnique(char* memb_nm) {
-  MemberDef* md = FindMember(memb_nm);
-  if(md != NULL)
-    return GetUnique(md->idx);
-  return false;
-}
-
 bool BaseSpec::RemoveChild(const char* nm, TypeDef* td) {
   if(td == NULL) td = children.el_typ;
   return children.RemoveSpec(nm, td);
 }
 
-void BaseSpec::SetUnique(char* memb_nm, bool onoff) {
+void BaseSpec::SetUnique(const char* memb_nm, bool on) {
   MemberDef* md = FindMember(memb_nm);
-  if(md != NULL)
-    SetUnique(md->idx, onoff);
+  if(md)
+    SetUnique(md->idx, on);
+  else {
+    if(GetTypeDef()->members.size > 0)
+      taMisc::Error("SetUnique: Member named:", memb_nm, "not found in Spec type:",
+		    GetTypeDef()->name);
+  }
 }
 
-void BaseSpec::SetUnique(int memb_no, bool onoff) {
+void BaseSpec::SetUnique(int memb_no, bool on) {
   if(memb_no < TA_BaseSpec.members.size)
     return;
-  memb_no -= TA_BaseSpec.members.size; // always relative to the evespec..
-  int lng_no = memb_no / (sizeof(long) * 8);
-  int bit_no = memb_no % (sizeof(long) * 8);
-  if(lng_no >= MAX_SPEC_LONGS) {
-    taMisc::Error("Number of members", String(memb_no), "exceeds spec limit in",
-	     GetTypeDef()->name, "of", String(256));
+  MemberDef* md = GetTypeDef()->members[memb_no];
+  if(!md) {
+    taMisc::Error("SetUnique: Member number:", String(memb_no), "not found in Spec type:",
+		  GetTypeDef()->name);
     return;
   }
-  if(onoff)
-    unique[lng_no] |= 1 << bit_no;
+  if(on)
+    unique.AddUnique(md->name);
   else
-    unique[lng_no] &= ~(1 << bit_no);
+    unique.RemoveEl(md->name);
+}
+
+bool BaseSpec::GetUnique(const char* memb_nm) {
+  MemberDef* md = FindMember(memb_nm);
+  if(md)
+    return GetUnique(md->idx);
+  taMisc::Error("GetUnique: Member named:", memb_nm, "not found in Spec type:",
+		GetTypeDef()->name);
+  return false;
 }
 
 bool BaseSpec::GetUnique(int memb_no) {
   if(memb_no < TA_BaseSpec.members.size)
     return false;
-  memb_no -= TA_BaseSpec.members.size; // always relative to the evespec..
-  int lng_no = memb_no / (sizeof(long) * 8);
-  int bit_no = memb_no % (sizeof(long) * 8);
-  if(lng_no >= MAX_SPEC_LONGS) {
-    taMisc::Error("Number of members", String(memb_no), "exceeds spec limit in",
-	     GetTypeDef()->name, "of", String(256));
+  MemberDef* md = GetTypeDef()->members[memb_no];
+  if(!md) {
+    taMisc::Error("GetUnique: Member number:", String(memb_no), "not found in Spec type:",
+		  GetTypeDef()->name);
     return false;
   }
-  return unique[lng_no] & (1 << bit_no) ? 1 : 0;
+  if(unique.Find(md->name) >= 0) return true;
+  return false;
 }
 
 void BaseSpec::UpdateSpec() {
   BaseSpec* parent = FindParent();
-  if(parent != NULL) {
+  if(parent) {
     TypeDef* td = GetTypeDef();
     int i;
     for(i=TA_BaseSpec.members.size; i< td->members.size; i++)
@@ -421,105 +396,15 @@ bool BaseSpec::CheckObjectType_impl(TAPtr obj) {
   return true;
 }
 
-int BaseSpec::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
-  strm << " {\n";
-  String tmpstr = "unique";
-  taMisc::fmt_sep(strm, tmpstr, 0, indent+1, 1);
-  strm << " = {";
-
-  TypeDef* td = GetTypeDef();
-  int i;
-  int cnt=0;
-  for(i=TA_BaseSpec.members.size; i< td->members.size; i++) {
-    if(GetUnique(i)) {
-      strm << td->members[i]->name << "; ";
-      cnt++;
-      if((cnt % 6) == 0) {
-	strm << "\n";
-	taMisc::indent(strm, indent+2, 1);
-      }
-    }
-  }
-  strm << "};\n";
-
-  GetTypeDef()->members.Dump_Save(strm, (void*)this, (void*)par, indent+1);
-
-  return true;
-}
-
-
-int BaseSpec::Dump_Load_Value(istream& strm, TAPtr par) {
-  int c = taMisc::skip_white(strm);
-  if(c == EOF)    return EOF;
-  if(c == ';')    return 2;  // signal that just a path was loaded..
-  if(c == '}') {
-    if(strm.peek() == ';') strm.get();
-    return 2;
-  }
-
-  if(c != '{') {
-    taMisc::Error("*** Missing '{' in dump file for spec object:",name);
-    return false;
-  }
-
-  // this is now like MemberSpace::Dump_Load
-  c = taMisc::read_word(strm, true);
-  if(c == EOF) return EOF;
-  if(c == '}') {
-    strm.get();			// get the bracket (above was peek)
-    if(strm.peek() == ';') strm.get(); // skip past ending semi
-    return 2;
-  }
-
-  String mb_name = taMisc::LexBuf;
-  if(mb_name == "unique") {
-    // first turn all others off, since default is off
-    int i;
-    for(i=TA_BaseSpec.members.size; i<GetTypeDef()->members.size; i++)
-      SetUnique(i, false);
-    while(true) {
-      c = taMisc::skip_white(strm);
-      if(c == '=') {
-	c = taMisc::read_till_lb_or_semi(strm);
-	if(c == '{') {
-	  while(true) {
-	    c = taMisc::read_till_rb_or_semi(strm);
-	    if(c == EOF)  return EOF;
-	    if(c == '}')	break;
-	    if(c == ';')
-	      SetUnique((char*)taMisc::LexBuf, true);
-	  }
-	  if(c == EOF)	return EOF;
-	  break;		// successful
-	}
-      }
-      taMisc::Error("*** Bad 'unique' Formatting in dump file for type:",
-		      GetTypeDef()->name);
-      taMisc::skip_past_err(strm);
-      break;
-    }
-  }
-  else {			// not 'unique' so pass it to std function
-    return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par,
-					   (const char*)mb_name, c);
-  }
-  return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
-}
-
 //////////////////////////////////
 //	BaseSubSpec		//
 //////////////////////////////////
 
 void BaseSubSpec::Initialize() {
-  int i;
-  for(i=0; i< MAX_SPEC_LONGS; i++)
-    unique[i] = 0;
 }
 
 void BaseSubSpec::Copy_(const BaseSubSpec& cp) {
-  int i;
-  for(i=0; i< MAX_SPEC_LONGS; i++)
-    unique[i] = cp.unique[i];
+  unique = cp.unique;
 }
 
 void BaseSubSpec::Destroy() {
@@ -527,6 +412,7 @@ void BaseSubSpec::Destroy() {
 
 void BaseSubSpec::InitLinks() {
   taNBase::InitLinks();
+  taBase::Own(unique, this);
   if(!taMisc::is_loading)
     UpdateSpec();
 }
@@ -554,53 +440,57 @@ BaseSubSpec* BaseSubSpec::FindParent() {
   return from;
 }
 
-void BaseSubSpec::SetUnique(char* memb_nm, bool onoff) {
+void BaseSubSpec::SetUnique(const char* memb_nm, bool on) {
   MemberDef* md = FindMember(memb_nm);
-  if(md != NULL)
-    SetUnique(md->idx, onoff);
+  if(md)
+    SetUnique(md->idx, on);
+  else {
+    if(GetTypeDef()->members.size > 0)
+      taMisc::Error("SetUnique: Member named:", memb_nm, "not found in Spec type:",
+		    GetTypeDef()->name);
+  }
 }
 
-bool BaseSubSpec::GetUnique(char* memb_nm) {
-  MemberDef* md = FindMember(memb_nm);
-  if(md != NULL)
-    return GetUnique(md->idx);
-  return false;
-}
-
-void BaseSubSpec::SetUnique(int memb_no, bool onoff) {
+void BaseSubSpec::SetUnique(int memb_no, bool on) {
   if(memb_no < TA_BaseSubSpec.members.size)
     return;
-  memb_no -= TA_BaseSubSpec.members.size; // always relative to the evespec..
-  int lng_no = memb_no / (sizeof(long) * 8);
-  int bit_no = memb_no % (sizeof(long) * 8);
-  if(lng_no >= MAX_SPEC_LONGS) {
-    taMisc::Error("Number of members", String(memb_no), "exceeds spec limit in",
-	     GetTypeDef()->name, "of", String(256));
+  MemberDef* md = GetTypeDef()->members[memb_no];
+  if(!md) {
+    taMisc::Error("SetUnique: Member number:", String(memb_no), "not found in Spec type:",
+		  GetTypeDef()->name);
     return;
   }
-  if(onoff)
-    unique[lng_no] |= 1 << bit_no;
+  if(on)
+    unique.AddUnique(md->name);
   else
-    unique[lng_no] &= ~(1 << bit_no);
+    unique.RemoveEl(md->name);
+}
+
+bool BaseSubSpec::GetUnique(const char* memb_nm) {
+  MemberDef* md = FindMember(memb_nm);
+  if(md)
+    return GetUnique(md->idx);
+  taMisc::Error("GetUnique: Member named:", memb_nm, "not found in Spec type:",
+		GetTypeDef()->name);
+  return false;
 }
 
 bool BaseSubSpec::GetUnique(int memb_no) {
   if(memb_no < TA_BaseSubSpec.members.size)
     return false;
-  memb_no -= TA_BaseSubSpec.members.size; // always relative to the evespec..
-  int lng_no = memb_no / (sizeof(long) * 8);
-  int bit_no = memb_no % (sizeof(long) * 8);
-  if(lng_no >= MAX_SPEC_LONGS) {
-    taMisc::Error("Number of members", String(memb_no), "exceeds spec limit in",
-	     GetTypeDef()->name, "of", String(256));
+  MemberDef* md = GetTypeDef()->members[memb_no];
+  if(!md) {
+    taMisc::Error("SetUnique: Member number:", String(memb_no), "not found in Spec type:",
+		  GetTypeDef()->name);
     return false;
   }
-  return unique[lng_no] & (1 << bit_no) ? 1 : 0;
+  if(unique.Find(md->name) >= 0) return true;
+  return false;
 }
 
 void BaseSubSpec::UpdateSpec() {
   BaseSubSpec* parent = FindParent();
-  if(parent != NULL) {
+  if(parent) {
     TypeDef* td = GetTypeDef();
     int i;
     for(i=TA_BaseSubSpec.members.size; i< td->members.size; i++)
@@ -628,92 +518,6 @@ void BaseSubSpec::UpdateMember(BaseSubSpec* from, int memb_no) {
     }
   }
 }
-
-int BaseSubSpec::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
-  strm << " {\n";
-  String tmpstr = "unique";
-  taMisc::fmt_sep(strm, tmpstr, 0, indent+1, 1);
-  strm << " = {";
-
-  TypeDef* td = GetTypeDef();
-  int i;
-  int cnt=0;
-  for(i=TA_BaseSubSpec.members.size; i< td->members.size; i++) {
-    if(GetUnique(i)) {
-      strm << td->members[i]->name << "; ";
-      cnt++;
-      if((cnt % 6) == 0) {
-	strm << "\n";
-	taMisc::indent(strm, indent+2, 1);
-      }
-    }
-  }
-  strm << "};\n";
-
-  GetTypeDef()->members.Dump_Save(strm, (void*)this, (void*)par, indent+1);
-
-  return true;
-}
-
-
-int BaseSubSpec::Dump_Load_Value(istream& strm, TAPtr par) {
-  int c = taMisc::skip_white(strm);
-  if(c == EOF)    return EOF;
-  if(c == ';')    return 2;  // signal that just a path was loaded..
-  if(c == '}') {
-    if(strm.peek() == ';') strm.get();
-    return 2;
-  }
-
-  if(c != '{') {
-    taMisc::Error("*** Missing '{' in dump file for spec object:",name);
-    return false;
-  }
-
-  // this is now like MemberSpace::Dump_Load
-  c = taMisc::read_word(strm, true);
-  if(c == EOF) return EOF;
-  if(c == '}') {
-    strm.get();			// get the bracket (above was peek)
-    if(strm.peek() == ';') strm.get(); // skip past ending semi
-    return 2;
-  }
-
-  String mb_name = taMisc::LexBuf;
-  if(mb_name == "unique") {
-    // first turn all others off, since default is off
-    int i;
-    for(i=TA_BaseSubSpec.members.size; i<GetTypeDef()->members.size; i++)
-      SetUnique(i, false);
-    while(true) {
-      c = taMisc::skip_white(strm);
-      if(c == '=') {
-	c = taMisc::read_till_lb_or_semi(strm);
-	if(c == '{') {
-	  while(true) {
-	    c = taMisc::read_till_rb_or_semi(strm);
-	    if(c == EOF)  return EOF;
-	    if(c == '}')	break;
-	    if(c == ';')
-	      SetUnique((char*)taMisc::LexBuf, true);
-	  }
-	  if(c == EOF)	return EOF;
-	  break;		// successful
-	}
-      }
-      taMisc::Error("*** Bad 'unique' Formatting in dump file for type:",
-		      GetTypeDef()->name);
-      taMisc::skip_past_err(strm);
-      break;
-    }
-  }
-  else {			// not 'unique' so pass it to std function
-    return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par,
-					   (const char*)mb_name, c);
-  }
-  return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
-}
-
 
 //////////////////////////////////
 //	SpecPtr_impl		//
@@ -774,7 +578,7 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
   }
 
   BaseSpec* sp = GetSpec();
-  if((sp != NULL) && (sp->GetTypeDef() == type))
+  if((sp) && (sp->GetTypeDef() == type))
     return;
 
   // this is just like GetSpecOfType(), except it uses inherits!
@@ -784,7 +588,7 @@ void SpecPtr_impl::SetDefaultSpec(TAPtr ownr, TypeDef* td) {
     return;
   // pass the ownr to this, so that min_obj_type can be checked
   sp = spgp->FindSpecInherits(type, owner);
-  if((sp != NULL) && sp->InheritsFrom(type)) {
+  if((sp) && sp->InheritsFrom(type)) {
     SetSpec(sp);
     return;
   }
@@ -813,7 +617,7 @@ void SpecPtr_impl::GetSpecOfType() {
   if(spgp == NULL)
     return;
   BaseSpec* sp = spgp->FindSpecType(type);
-  if((sp != NULL) && (sp->GetTypeDef() == type)) {
+  if((sp) && (sp->GetTypeDef() == type)) {
     SetSpec(sp);
     return;
   }
