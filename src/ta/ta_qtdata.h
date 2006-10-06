@@ -1040,6 +1040,8 @@ protected:
   const String		labelNameNonNull() const;
 
   TypeCat		AddType_Class(TypeDef* typ); // true if should be shown to user
+  override void 	BuildCategories_impl();
+  void 			BuildCategoriesR_impl(TypeDef* top_typ);
   int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
     QTreeWidgetItem* top_item); // we use this recursively
   int 			CountChildren(TypeDef* td);

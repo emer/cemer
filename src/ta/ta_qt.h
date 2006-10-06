@@ -231,9 +231,12 @@ public:
   int		label_height(int sizeSpec); // for QLabel, QCheckBox, QRadioButton
   int		text_height(int sizeSpec); // can pass any XxxSpec that uses size -- for: QLineEdit, QSpinBox,
   int		max_control_height(int sizeSpec); // maximum height needed
+  int		maxButtonWidth(int sizeSpec = 0) const; // maximum width allowed
 
   QLabel*	NewLabel(int fontSpec, const String& text, QWidget* parent);
     // convenience, for making a label with indicated fontspec
+  void		FormatButton(QAbstractButton* but, const String& text,
+    int font_spec = 0); // sets max width, text, and adds a tooltip
     
 static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrightness); // applies a legacy IV brightness factor to a Qt Color
   String 	color_to_string(const iColor& color); // returns a string value (appropriate for setting in a style) for the color
@@ -261,6 +264,7 @@ protected:
   signed char	mbutton_ht[3]; // for s/m/b
   signed char	mlabel_ht[3];  // for s/m/b
   signed char	mtext_ht[3];  // for s/m/b
+  short int	max_button_width;
 
   override void		Init(bool gui); // NOTE: called from static New
   override void 	OnQuitting_impl(CancelOp& cancel_op); // pre-quit resolves changes

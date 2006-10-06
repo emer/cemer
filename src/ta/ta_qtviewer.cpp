@@ -3118,7 +3118,7 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   if (!data.isNull() && data.isValid())
     m_panel = (iDataPanel*)data.value<intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
   
-  if ((m_panel == value) && !force) return;
+  if ((m_panel == value) && !force) goto set_cur;
   m_panel = value;
   if (m_panel) {
     setTabText(idx, m_panel->TabText());
@@ -3130,6 +3130,10 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   }
   data = (ta_intptr_t)m_panel;
   setTabData(idx, data);
+  
+set_cur:
+  if (currentIndex() != idx)
+    setCurrentIndex(idx);
 }
 
 

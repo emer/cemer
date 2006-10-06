@@ -1952,7 +1952,7 @@ void taiButtonMenu::init()
   if (!HasFlag(flgEditOnly)) {
     button->setMenu(menu());
   }
-  button->setFont(taiM->menuFont(font_spec)); //note: we use menu font -- TODO: might need to use a button font
+  taiM->FormatButton(button, _nilString, font_spec);
   button->setFixedHeight(taiM->button_height(defSize()));
   SetRep(button);
 }
@@ -2652,19 +2652,6 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   layOuter->setSpacing(taiM->vspc_c); 
   QHBoxLayout* layFilter = NULL; // only if needed
   QLabel* lbl = NULL;
-  // we only put up a view selector if more than 1 view supported
-  if (client_->viewCount() > 1) {
-    layFilter = new QHBoxLayout(); layFilter->setMargin(0); // sp ok
-    lbl = new QLabel("view", this);
-    layFilter->addWidget(lbl);
-    cmbView = new QComboBox(this);
-    for (int i = 0; i < client_->viewCount(); ++i) {
-      cmbView->addItem(client_->viewText(i));
-    }
-    layFilter->addWidget(cmbView, 1);
-    connect(cmbView, SIGNAL(currentIndexChanged(int)),
-      this, SLOT(cmbView_currentIndexChanged(int)) );
-  } else cmbView = NULL;
   
   // we only put a cats selector if there are cats
   if (client_->catCount() > 0) {
@@ -2685,6 +2672,22 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
     connect(cmbCat, SIGNAL(currentIndexChanged(int)),
       this, SLOT(cmbCat_currentIndexChanged(int)) );
   } else cmbCat = NULL;
+  
+  // we only put up a view selector if more than 1 view supported
+  if (client_->viewCount() > 1) {
+    if (!layFilter) {
+      layFilter = new QHBoxLayout(); layFilter->setMargin(0); // sp ok
+    }
+    lbl = new QLabel("view", this);
+    layFilter->addWidget(lbl);
+    cmbView = new QComboBox(this);
+    for (int i = 0; i < client_->viewCount(); ++i) {
+      cmbView->addItem(client_->viewText(i));
+    }
+    layFilter->addWidget(cmbView, 1);
+    connect(cmbView, SIGNAL(currentIndexChanged(int)),
+      this, SLOT(cmbView_currentIndexChanged(int)) );
+  } else cmbView = NULL;
   if (layFilter) layOuter->addLayout(layFilter);
   
   items = new QTreeWidget(this);
@@ -2877,8 +2880,8 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   m_sel = NULL;
   cats = NULL;
   QPushButton* rep_ = new QPushButton(gui_parent_);
+  taiM->FormatButton(rep_, _nilString, defSize());
   rep_->setFixedHeight(taiM->button_height(defSize()));
-  rep_->setFont(taiM->menuFont(defSize())); //note: we use menu font -- TODO: might need to use a button font
   SetRep(rep_);
   connect(rep_, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
 }
@@ -2914,9 +2917,10 @@ void taiItemPtrBase::GetImage(void* cur_sel, TypeDef* targ_typ_) {
 
 const String taiItemPtrBase::labelText() {
   String nm;
+//note: don't include itemTag with name -- label is usually descriptive
   if (m_sel) nm = labelNameNonNull();
-  else       nm = String::con_NULL;
-  return itemTag() + nm + "...";
+  else       nm = itemTag() + String::con_NULL;
+  return nm ;
 }
 
 void taiItemPtrBase::OpenChooser() {
@@ -3190,6 +3194,29 @@ taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
   return TC_Add;
 }
 
+void taiTypeDefButton::BuildCategories_impl() {
+  if (cats) cats->Reset();
+  else cats = new String_Array;
+  BuildCategoriesR_impl(targ_typ);
+  cats->Sort(); // empty, if any, should sort to top
+}
+
+void taiTypeDefButton::BuildCategoriesR_impl(TypeDef* top_typ) {
+  TypeCat tc = AddType_Class(top_typ);
+  switch (tc) {
+  case TC_NoAdd : return;
+  case TC_NoAddCheckChildren: break;
+  case TC_Add: {
+    String cat = top_typ->OptionAfter("CAT_"); // note: could be empty for no category
+    cats->AddUnique(cat);
+    } break;
+  }
+  for (int i = 0; i < top_typ->children.size; ++i) {
+    TypeDef* chld = top_typ->children.FastEl(i);
+    BuildCategoriesR_impl(chld);
+  }
+}
+
 void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
   //assume only called if needed
   
@@ -3225,7 +3252,8 @@ int taiTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
     TypeDef* par = top_typ->parents.SafeEl(0); // NULL for root types, ex. taBase
     String par_name;
     if (par) par_name = par->name;
-    item = ic->AddItem(top_typ->name, top_item, (void*)top_typ);
+    String cat = top_typ->OptionAfter("CAT_"); // note: could be empty for no category
+    item = ic->AddItem(cat, top_typ->name, top_item, (void*)top_typ);
     item->setData(1, Qt::DisplayRole, par_name);
     item->setData(2, Qt::DisplayRole, top_typ->desc);
     ++rval;

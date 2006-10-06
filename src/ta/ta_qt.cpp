@@ -36,6 +36,7 @@
 #include <qcursor.h>
 #include <qdesktopwidget.h>
 #include <qfont.h>
+#include <QFontMetrics>
 #include <qrect.h>
 
 #include <qlabel.h>// metrics
@@ -194,22 +195,6 @@ void taiMisc::InitMetrics() {
   else
     base_height = 29;
     
-  // fonts -- note, no way to get Qt's metrics without instances!
-  QWidget* w = NULL;
-  w = new QPushButton("the rain in spain", (QWidget*)NULL);
-    mbig_button_font = QApplication::font(w);
-  delete w;
-
-  mbig_dialog_font = QApplication::font(NULL); // use the default font
-
-  w = new QMenuBar();
-    mbig_menu_font = QApplication::font(w);
-  delete w;
-
-  w = new QLabel("the rain in spain", (QWidget*)NULL);
-    mbig_name_font = QApplication::font(w);
-  delete w;
-  
   // control sizes -- depend on size of default font
   if (taMisc::font_size <= 10) {
     // Small
@@ -229,6 +214,25 @@ void taiMisc::InitMetrics() {
     mlabel_ht[0] = 20;  mlabel_ht[1] = 21;  mlabel_ht[2] = 24;
     mtext_ht[0] = 22;  mtext_ht[1] = 23;  mtext_ht[2] = 26;
   } 
+  
+  // fonts -- note, no way to get Qt's metrics without instances!
+  QWidget* w = NULL;
+  w = new QPushButton("the rain in spain", (QWidget*)NULL);
+  mbig_button_font = QApplication::font(w);
+  QFontMetrics fm(mbig_button_font);
+  max_button_width = fm.size(Qt::TextSingleLine,"12345678901234567890").width();
+  delete w;
+
+  mbig_dialog_font = QApplication::font(NULL); // use the default font
+
+  w = new QMenuBar();
+    mbig_menu_font = QApplication::font(w);
+  delete w;
+
+  w = new QLabel("the rain in spain", (QWidget*)NULL);
+    mbig_name_font = QApplication::font(w);
+  delete w;
+  
 }
 
 /* Qt Metrics note
@@ -358,8 +362,23 @@ iFont taiMisc::nameFont(int fontSpec) {
   return rval;
 }
 
+void taiMisc::FormatButton(QAbstractButton* but, const String& text,
+  int fontSpec) 
+{
+  but->setFont(taiM->menuFont(fontSpec)); //note: we use menu font -- TODO: might need to use a button font
+  but->setMaximumWidth(maxButtonWidth(fontSpec));
+  but->setText(text);
+//TODO: may conflict w/ desc text
+//  but->setToolTip(text);
+}
+
 void taiMisc::LoadDialogDestroyed() {
   load_dlg = NULL;
+}
+
+int taiMisc::maxButtonWidth(int sizeSpec) const {
+//TODO: should probably parameterize
+  return max_button_width;
 }
 
 QLabel* taiMisc::NewLabel(int fontSpec, const String& text, QWidget* parent) {

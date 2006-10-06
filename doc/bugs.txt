@@ -7,11 +7,8 @@ Alpha:
 Brad:
 
 misc ui improvements:
-* remove extra scrollbar on console & disown from root or remove as dock and just make a fun
-  to move it to bottom of project window
 * highlight progeditor lines w/red for ProgEl->CheckConfig == false #70
 * read-only, condedit off guys in edits are just labels, not controls
-* yellow surround for non-default values
 * add ... to edit a token pointer (replaces #93)
 * text controls have minimum width
 * minimal netview cleanup: transparent layer etc
@@ -27,18 +24,22 @@ misc ui improvements:
   * support for matrices
 
 * ChangeType/UpdatePointers etc. gui patches
-* virtual console dock window
+* virtual console dock window, ex. be able to dock to bottom of any project window
 
 * startup pathing cleanup + platform params: redo pdproot/main code + randy
 
 Brad done:
 * dnd icon bar for: progedit
 * shutdown cleanup + add window menu
+* remove extra scrollbar on console 
 * move edit dialog menus & buttons outside of the different panel sets in an edit
 * #CAT_ support for method, member choosers: simple is just column (1st col). bonus is menu..
+* fixed tab activating bugs
+* #CAT_ support for types
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)
+* yellow surround for non-default values (NOTE: non-defaults already use BOLD captions)
 
 Randy:
 
