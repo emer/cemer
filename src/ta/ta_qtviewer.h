@@ -955,7 +955,7 @@ public:
     iTabBar*		tbPanels; //note: we always maintain at least one tab
     Q3WidgetStack*	wsPanels; //
 
-  iDataPanel*		cur_panel(); // currently active panel
+  iDataPanel*		curPanel() const; // currently active panel
   iDataPanel*		panel(int idx = 0); // implementation-independent way to access panels
   int			panel_count();
   taiDataLink*		par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
@@ -974,6 +974,7 @@ public:
   void 			RemoveDataPanel(iDataPanel* panel);
   void			ResolveChanges(CancelOp& cancel_op);
   void			OnWindowBind(iTabViewer* itv); // called at constr_post time
+  void			ShowPanel(iDataPanel* panel); // top level guy, checks if exists, adds or sets current
   void 			SetPanel(iDataPanel* panel);
 
   iTabView(QWidget* parent = NULL);
@@ -1156,7 +1157,7 @@ public:
   override MemberDef*	par_md() const {return (m_tabView) ? m_tabView->par_md() : NULL;}
   override iTabViewer* tabViewerWin() const {return (m_tabView) ? m_tabView->tabViewerWin() : NULL;}
 
-  iDataPanel*		cur_panel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
+  iDataPanel*		curPanel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
   void			set_cur_panel_id(int cpi);
 
   void			SetMenu(QWidget* menu); // sets the menu (s/b a menubar; or toolbar on mac)

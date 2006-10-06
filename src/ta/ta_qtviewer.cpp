@@ -1937,32 +1937,12 @@ void iTabViewer::ResolveChanges_impl(CancelOp& cancel_op) {
 void iTabViewer::SelectionChanged_impl(ISelectableHost* src_host) {
   //TODO: should actually check if old panel=new panel, since theoretically, two different
   // gui items can have the same datalink (i.e., underlying data)
-  iDataPanel* pn = NULL;
   iDataPanel* new_pn = NULL;
   cur_item = src_host->curItem(); // note: could be NULL
-  bool done;
+  if (!cur_item) goto end; // no selected item, so no change
   if (m_curTabView) {
-    pn = m_curTabView->cur_panel();
-    // first, check for the trivial cases (esp. when multi-selections are made), no change
-    if (!cur_item) goto end; // no selected item, so no change
-    if (!pn) {
-      new_pn = m_curTabView->GetDataPanel(cur_item->link());
-    } else {
-      if (pn->lockInPlace()) goto end; // locked, user must create one and change
-      if (pn->link() == cur_item->link()) goto end; //this is panel for item,
-
-
-      new_pn = m_curTabView->GetDataPanel(cur_item->link());
-      //if not exists, or is dirty, make a new one, else just switch
-      if (!pn || pn->dirty()) {
-        // first try activating an existing panel -- don't keep creating new ones
-        done = m_curTabView->ActivatePanel(cur_item->link());
-        if (done) goto end;
-        // ok, no panel for that link, so need to create a new one
-        m_curTabView->AddPanelNewTab(new_pn);
-      }
-    }
-    m_curTabView->SetPanel(new_pn);
+    new_pn = m_curTabView->GetDataPanel(cur_item->link());
+    m_curTabView->ShowPanel(new_pn);
   }
 end:
   inherited::SelectionChanged_impl(src_host); // prob does nothing
@@ -3282,8 +3262,8 @@ void iTabView::Closing(CancelOp& cancel_op) {
   }
 }
 
-iDataPanel* iTabView::cur_panel() {
-  iDataPanel* rval  = tbPanels->panel(tbPanels->currentIndex());
+iDataPanel* iTabView::curPanel() const {
+  iDataPanel* rval = tbPanels->panel(tbPanels->currentIndex());
   return rval; // could be NULL if empty
 }
 
@@ -3373,6 +3353,42 @@ void iTabView::ResolveChanges(CancelOp& cancel_op) {
 void iTabView::SetPanel(iDataPanel* panel) {
   wsPanels->raiseWidget(panel);
   tbPanels->SetPanel(tbPanels->currentIndex(), panel);
+}
+
+void iTabView::ShowPanel(iDataPanel* panel) {
+  if (!panel) return;
+  // first, see if we have a tab already -- don't create more than 1 per guy
+  if (ActivatePanel(panel->link())) return;
+  
+  // always create a new tab for lockinplace guys
+  if (panel->lockInPlace()) {
+    AddPanelNewTab(panel);
+    return;
+  }
+  
+  // ok, so we'll either replace cur panel, swap one out, or make a new
+  iDataPanel* cur_pn = curPanel(); //note: can be null
+  
+  // replace curr if it is not locked and not dirty
+  if (cur_pn && (!cur_pn->lockInPlace() && !cur_pn->dirty())) {
+    SetPanel(panel);
+  }
+  
+  // try switching to another eligible panel
+  for (int i = 0; i < tbPanels->count(); ++i) {
+    iDataPanel* pn = tbPanels->panel(i);
+    if (pn) {
+      if (pn == cur_pn) continue;
+      if (pn->lockInPlace() || pn->dirty()) continue;
+    }
+    // ok, make that the guy!
+    wsPanels->raiseWidget(panel);
+    tbPanels->SetPanel(i, panel);
+    return;
+  }
+  
+  // no eligible one, so make new
+  AddPanelNewTab(panel);
 }
 
 void iTabView::UpdateTabNames() { // called by a datalink when a tab name might have changed
@@ -3655,7 +3671,7 @@ void iDataPanelSet::GetImage() {
 }
 
 const iColor* iDataPanelSet::GetTabColor(bool selected) const {
-  iDataPanel* pn = cur_panel();
+  iDataPanel* pn = curPanel();
   if (pn) return pn->GetTabColor(selected);
   else    return inherited::GetTabColor(selected);
 }
