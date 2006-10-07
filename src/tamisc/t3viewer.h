@@ -521,7 +521,7 @@ public:
 
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
-  virtual T3DataViewFrame* NewT3DataViewFrame(); // create and map a new frame
+  virtual T3DataViewFrame* NewT3DataViewFrame(); // #MENU #MENU_ON_Object #MENU_CONTEXT create and map a new frame
   
   void	InitLinks();
   void	CutLinks();
