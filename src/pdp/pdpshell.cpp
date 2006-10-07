@@ -485,7 +485,6 @@ void ProjectBase::Initialize() {
 void ProjectBase::InitLinks_impl() {
   inherited::InitLinks_impl();
   taBase::Own(networks, this);
-  taBase::Own(data, this);
   taBase::Own(the_colors, this);
   taBase::Own(view_colors, this);
 
@@ -500,16 +499,11 @@ void ProjectBase::CutLinks_impl() {
   inherited::CutLinks_impl();
   view_colors.CutLinks();
   the_colors.CutLinks();
-  data.CutLinks();
   networks.CutLinks();
 }
 
 void ProjectBase::Copy_(const ProjectBase& cp) {
-  // delete first, to avoid ref issues
-  data.Reset();
-  
   networks = cp.networks;
-  data = cp.data;
 
   view_colors = cp.view_colors;
   the_colors = cp.the_colors;
@@ -520,6 +514,15 @@ void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 
   UpdateColors();
+}
+
+DataTable_Group* ProjectBase::analysisDataGroup() {
+  DataTable_Group* rval = (DataTable_Group*)data.gp.FindName("AnalysisData");
+  if (!rval) {
+    rval = (DataTable_Group*)data.NewGp(1);
+    rval->SetName("AnalysisData");
+  }
+  return rval;
 }
 
 void ProjectBase::GetDefaultColors() {

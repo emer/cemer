@@ -21,6 +21,7 @@
 #include "ta_group.h"
 #include "ta_defaults.h"
 #include "ta_viewer.h"
+#include "ta_datatable.h"
 #include "program.h"
 
 #ifdef TA_GUI
@@ -78,6 +79,7 @@ public:
   taBase_Group		templates; // templates for new objects -- copy new objects from here
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
+  DataTable_Group	data;	// data, such as patterns for network input
   Program_Group		programs; // Gui-based programs to run simulations and other processing
   DataViewer_List	viewers; // any top-level viewers that have been saved
 

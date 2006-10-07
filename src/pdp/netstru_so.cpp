@@ -536,20 +536,20 @@ void T3NetNode::setDefaultCaptionTransform() {
 
 
 //////////////////////////
-//   T3LogViewNode	//
+//   T3TableViewNode	//
 //////////////////////////
 
-SO_NODE_SOURCE(T3LogViewNode);
+SO_NODE_SOURCE(T3TableViewNode);
 
-void T3LogViewNode::initClass()
+void T3TableViewNode::initClass()
 {
-  SO_NODE_INIT_CLASS(T3LogViewNode, T3NodeParent, "T3NodeParent");
+  SO_NODE_INIT_CLASS(T3TableViewNode, T3NodeParent, "T3NodeParent");
 }
 
-T3LogViewNode::T3LogViewNode(void* dataView_)
+T3TableViewNode::T3TableViewNode(void* dataView_)
 :inherited(dataView_)
 {
-  SO_NODE_CONSTRUCTOR(T3LogViewNode);
+  SO_NODE_CONSTRUCTOR(T3TableViewNode);
 
   frame_ = NULL;
   canvasSeparator_ = new SoSeparator();
@@ -561,7 +561,7 @@ T3LogViewNode::T3LogViewNode(void* dataView_)
   geom_.setValue(1, 1, 1); // puts in valid state
 }
 
-T3LogViewNode::~T3LogViewNode()
+T3TableViewNode::~T3TableViewNode()
 {
   canvas_ = NULL;
   txfm_canvas_ = NULL;
@@ -569,7 +569,7 @@ T3LogViewNode::~T3LogViewNode()
   frame_ = NULL;
 }
 
-void T3LogViewNode::render() {
+void T3TableViewNode::render() {
   float inset = (frame_) ? frame_->inset : 0.0f;
   if (frame_) {
     frame_->setDimensions(geom_.x, geom_.z, 0.1f, 0.05f);
@@ -585,14 +585,14 @@ void T3LogViewNode::render() {
   txfm_canvas_->translation.setValue(inset, inset, 0.0f);
 }
 
-void T3LogViewNode::setGeom(int px, int py, int pz) {
+void T3TableViewNode::setGeom(int px, int py, int pz) {
   if (px < 1) px = 1;  if (pz < 1) py = 1;  if (pz < 1) pz = 1;
   if (geom_.isEqual(px, py, pz)) return;
   geom_.setValue(px, py, pz);
   render();
 }
 
-void T3LogViewNode::setShowFrame(bool value) {
+void T3TableViewNode::setShowFrame(bool value) {
   if (showFrame() == value) return;
   SoSeparator* ss = shapeSeparator(); // cache
   if (value) {
@@ -606,33 +606,33 @@ void T3LogViewNode::setShowFrame(bool value) {
   render();
 }
 
-bool T3LogViewNode::showFrame() {
+bool T3TableViewNode::showFrame() {
   return frame_;
 }
 
 
 //////////////////////////
-//   T3GridLogViewBaseNode	//
+//   T3GridTableViewBaseNode	//
 //////////////////////////
 
-SO_NODE_SOURCE(T3GridLogViewBaseNode);
+SO_NODE_SOURCE(T3GridTableViewBaseNode);
 
-void T3GridLogViewBaseNode::initClass()
+void T3GridTableViewBaseNode::initClass()
 {
-  SO_NODE_INIT_CLASS(T3GridLogViewBaseNode, T3LogViewNode, "T3LogViewNode");
+  SO_NODE_INIT_CLASS(T3GridTableViewBaseNode, T3TableViewNode, "T3TableViewNode");
 }
 
-T3GridLogViewBaseNode::T3GridLogViewBaseNode(void* dataView_)
+T3GridTableViewBaseNode::T3GridTableViewBaseNode(void* dataView_)
 :inherited(dataView_)
 {
-  SO_NODE_CONSTRUCTOR(T3GridLogViewBaseNode);
+  SO_NODE_CONSTRUCTOR(T3GridTableViewBaseNode);
   header_ = new SoGroup();
   canvas_->addChild(header_);
   body_ = new SoGroup();
   canvas_->addChild(body_);
 }
 
-T3GridLogViewBaseNode::~T3GridLogViewBaseNode()
+T3GridTableViewBaseNode::~T3GridTableViewBaseNode()
 {
   header_ = NULL;
   body_ = NULL;
@@ -640,27 +640,27 @@ T3GridLogViewBaseNode::~T3GridLogViewBaseNode()
 
 
 //////////////////////////
-//   T3GraphLogViewNode	//
+//   T3GraphTableViewNode	//
 //////////////////////////
 
-SO_NODE_SOURCE(T3GraphLogViewNode);
+SO_NODE_SOURCE(T3GraphTableViewNode);
 
-void T3GraphLogViewNode::initClass()
+void T3GraphTableViewNode::initClass()
 {
-  SO_NODE_INIT_CLASS(T3GraphLogViewNode, T3LogViewNode, "T3LogViewNode");
+  SO_NODE_INIT_CLASS(T3GraphTableViewNode, T3TableViewNode, "T3TableViewNode");
 }
 
-T3GraphLogViewNode::T3GraphLogViewNode(void* dataView_)
+T3GraphTableViewNode::T3GraphTableViewNode(void* dataView_)
 :inherited(dataView_)
 {
-  SO_NODE_CONSTRUCTOR(T3GraphLogViewNode);
+  SO_NODE_CONSTRUCTOR(T3GraphTableViewNode);
 /*  header_ = new SoGroup();
   canvas_->addChild(header_);
   body_ = new SoGroup();
   canvas_->addChild(body_); */
 }
 
-T3GraphLogViewNode::~T3GraphLogViewNode()
+T3GraphTableViewNode::~T3GraphTableViewNode()
 {
 /*  header_ = NULL;
   body_ = NULL; */

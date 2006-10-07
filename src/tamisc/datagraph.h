@@ -83,9 +83,7 @@ class GraphSpec;
 
 class TAMISC_API GraphColSpec: public DA_ViewSpec {
   // #BUTROWS_1 data-array view spec for graph-based display
-#ifndef __MAKETA__
-typedef DA_ViewSpec inherited;
-#endif
+INHERITED(DA_ViewSpec)
 public:
   enum ColumnType { // column type hints for graphing
     AUTO,			// value on initialization, typically becomes y data
@@ -184,9 +182,7 @@ public:
 
 
 class TAMISC_API AxisSpec: public taNBase { // #VIRT_BASE #NO_INSTANCE specs of the axis on a graph, name is cloned from primary col
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+INHERITED(taNBase)
 public:
   enum Axis {X, Y, Z}; // invariant, used internally
 
@@ -235,9 +231,7 @@ private:
 };
 
 class TAMISC_API XAxisSpec: public AxisSpec { // specs of the X axis on a graph, name is cloned from primary col
-#ifndef __MAKETA__
-typedef AxisSpec inherited;
-#endif
+INHERITED(AxisSpec)
 public:
   enum XAxisType { // source of data for the X axis; determines ranges, etc.
     COL_VALUE,	// the content of the col in the data table (legacy mode)
@@ -258,9 +252,7 @@ private:
 };
 
 class TAMISC_API YAxisSpec: public AxisSpec { // specs of the Y axis on a graph, name is cloned from primary col
-#ifndef __MAKETA__
-typedef AxisSpec inherited;
-#endif
+INHERITED(AxisSpec)
 friend class YAxisSpec_List;
 public:
   bool			no_vertical;  // don't draw any vertical dimension at all (for VALUE_COLORS or THRESH_POINTS line_type
@@ -279,9 +271,7 @@ private:
 };
 
 class TAMISC_API ZAxisSpec: public AxisSpec { // specs of the Z axis on a graph, name is cloned from primary col
-#ifndef __MAKETA__
-typedef AxisSpec inherited;
-#endif
+INHERITED(AxisSpec)
 public:
   int			n_traces;	// #READ_ONLY for STACK_TRACES and STACK_LINES, # of traces
 
@@ -300,9 +290,7 @@ private:
 
 
 class TAMISC_API YAxisSpec_List: public taList<YAxisSpec> {
-#ifndef __MAKETA__
-typedef taList<AxisSpec> inherited;
-#endif
+INHERITED(taList<AxisSpec>)
 public:
   YAxisSpec*		FindBySpec(const GraphColSpec* spec, int* idx = NULL);
     // find an axis with given spec, optionally returning its index as well (NULL/-1 if not found)
@@ -316,9 +304,7 @@ private:
 
 class TAMISC_API GraphletSpec: public YAxisSpec_List {
   // link list of axes, plus additional per-graphlet info
-#ifndef __MAKETA__
-typedef YAxisSpec_List inherited;
-#endif
+INHERITED(YAxisSpec_List)
 public:
 
   TA_BASEFUNS(GraphletSpec)
@@ -329,9 +315,7 @@ private:
 };
 
 class TAMISC_API GraphletSpec_List: public taList<GraphletSpec> {
-#ifndef __MAKETA__
-typedef taList<GraphletSpec> inherited;
-#endif
+INHERITED(taList<GraphletSpec>)
 public:
   TA_BASEFUNS(GraphletSpec_List)
 
@@ -343,9 +327,7 @@ private:
 
 class TAMISC_API GraphSpec : public DT_ViewSpec {
   // controls display of datatable in a graph format
-#ifndef __MAKETA__
-typedef DT_ViewSpec inherited;
-#endif
+INHERITED(DT_ViewSpec)
 public:
   enum GraphType { // overall type of the graph
     TWOD,		// #LABEL_2D standard 2d graph

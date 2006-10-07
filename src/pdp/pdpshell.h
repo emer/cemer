@@ -30,7 +30,6 @@
 
 #include "netstru.h"
 #include "netdata.h"
-#include "pdplog.h"
 #include "program.h"
 
 //////////////////////////////////////////////////
@@ -177,11 +176,12 @@ public:
   };
 
   Network_Group		networks;	// Networks of interconnected units
-  DataTable_Group	data;		// Misc data, such as patterns for network input
 
   bool			save_rmv_units; // #DEF_true don't include units in network when saving (makes project file much smaller!)
   TAColor_List		the_colors; 	// #IGNORE actual colors
   RGBA_List		view_colors; 	// colors to use in the project view
+  
+  DataTable_Group*	analysisDataGroup(); // returns default group used for auto-created analysis data
   
   virtual void	UpdateColors();	// #BUTTON update the actual colors based on settings (
   virtual void	GetDefaultColors(); // #BUTTON get default colors for various project objects (in view and edit dialogs)

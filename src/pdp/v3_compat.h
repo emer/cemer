@@ -80,7 +80,14 @@ class Environment; //
 //TODO class TimeEnvironment;
 
 // from pdpshell.h
-class V3ProjectBase;
+class V3ProjectBase; //
+
+// from pdplog.h
+class PDPLog;
+typedef PDPLog TextLog;
+typedef TextLog GridLog;
+typedef TextLog NetLog;
+typedef PDPLog GraphLog;
 
 #ifdef TA_GUI
 class PDP_API CtrlPanelData : public taOBase {
@@ -358,7 +365,7 @@ class PDP_API Counter : public taBase {
 INHERITED(taBase)
 public:
   String	name;			// #HIDDEN not an taNBase to hide name
-  int 		val;			// #IV_READ_ONLY #SHOW value of the counter
+  int 		val;			// #GUI_READ_ONLY #SHOW value of the counter
   int 		max;			// maximum value of the counter
 
   virtual void 	SetMax(int i)	  	{ max = i; }
@@ -1288,7 +1295,7 @@ INHERITED(BatchProcess)
 public:
   float		start_val;	// #CONTROL_PANEL start value of parameter being searched
   float		inc_val;	// #CONTROL_PANEL increment of parameter being searched
-  float		cur_val;	// #CONTROL_PANEL #IV_READ_ONLY current value of parameter based on batch value
+  float		cur_val;	// #CONTROL_PANEL #GUI_READ_ONLY current value of parameter based on batch value
   String	param_path;	// path to the parameter (starting at the project)
   
   void	Initialize();
@@ -1705,9 +1712,6 @@ public:
 
 /// end: procs_extra.h
 
-////////////////////////////////////////////////////////////////////////////////
-// V3ProjectBase -- base class for loading and converting
-
 class TA_API TypeDefault_Group : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults group of type default objects
 INHERITED(taGroup<TypeDefault>)
@@ -1720,6 +1724,39 @@ public:
   TA_BASEFUNS(TypeDefault_Group);
 };
 
+
+////////////////////////////////////////////////////////////////////////////////
+// PDPLog -- legacy logs
+
+class PDP_API PDPLog : public taNBase {
+INHERITED(taNBase)
+public:
+  taFiler*	log_file;	// optional file for saving
+  DataTable	data;		// data for the log
+  int		data_bufsz;	// #DETAIL how big a data buffer size to keep
+  float		data_shift;	// #DETAIL percentage to shift buffer upon overflow
+  bool		record_proc_name; // whether to record process name in log file or not
+  String_Array	display_labels;	// ordered list of labels to use for views and log files
+  TDCoord	pos;  // position of view
+  TDCoord	geom;  // size of view
+  
+  void	Initialize();
+  void 	Destroy();
+  void	InitLinks();
+  void	CutLinks();
+  TA_BASEFUNS(PDPLog);
+};
+
+class PDP_API PDPLog_Group : public taGroup<PDPLog> {
+public:
+  void	Initialize() 		{SetBaseType(&TA_PDPLog);}
+  void 	Destroy()		{ }
+  TA_BASEFUNS(PDPLog_Group);
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// V3ProjectBase -- base class for loading and converting
 
 class PDP_API V3ProjectBase : public ProjectBase {
   // #HIDDEN for loading legacy (v3.x) projects only

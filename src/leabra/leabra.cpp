@@ -17,7 +17,7 @@
 
 #include "leabra.h"
 
-#include "pdplog.h"
+//#include "pdplog_qtso.h"
 #include "netstru_extra.h"
 
 #include <math.h>
@@ -190,7 +190,7 @@ void LeabraConSpec::CreateWtSigFun() {
   wt_sig_fun_res = wt_sig_fun.res;
 }
 
-void LeabraConSpec::GraphWtSigFun(GraphLog* graph_log) {
+/*TEMP void LeabraConSpec::GraphWtSigFun(GraphLog* graph_log) {
   // todo:
   taMisc::Error("Graphing not yet supported");
   return;
@@ -215,7 +215,7 @@ void LeabraConSpec::GraphWtSigFun(GraphLog* graph_log) {
 //   }
 //   dt->UpdateAllRanges();
 //   graph_log->ViewAllData();
-}
+}*/
 
 void LeabraCon_Group::Initialize() {
   spec.SetBaseType(&TA_LeabraConSpec);
@@ -1185,7 +1185,7 @@ float LeabraUnitSpec::Compute_SSE(Unit* u) {
 //	 Misc Functions 		//
 //////////////////////////////////////////
 
-void LeabraUnitSpec::GraphVmFun(GraphLog* graph_log, float g_i, float min, float max, float incr) {
+/*TEMP void LeabraUnitSpec::GraphVmFun(GraphLog* graph_log, float g_i, float min, float max, float incr) {
   // todo:
   taMisc::Error("Graphing not yet supported");
   return;
@@ -1268,7 +1268,7 @@ void LeabraUnitSpec::GraphActFmNetFun(GraphLog* graph_log, float g_i, float min,
 //   }
 //   dt->UpdateAllRanges();
 //   graph_log->ViewAllData();
-}
+}*/
 
 //////////////////////////
 //  	Unit 		//

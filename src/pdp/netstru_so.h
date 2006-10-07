@@ -41,8 +41,8 @@ class T3LayerNode;
 class T3PrjnNode;
 class T3NetNode;
 
-class T3LogViewNode;
-class T3GridLogViewBaseNode;
+class T3TableViewNode;
+class T3GridTableViewBaseNode;
 
 
 //////////////////////////
@@ -326,7 +326,7 @@ private:
 
 
 //////////////////////////
-//   T3LogViewNode	//
+//   T3TableViewNode	//
 //////////////////////////
 
 /* Base class for 3d log views
@@ -340,11 +340,11 @@ private:
         canvas: SoSeparator
 */
 
-class PDP_API T3LogViewNode: public T3NodeParent {
+class PDP_API T3TableViewNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
-  SO_NODE_HEADER(T3LogViewNode);
+  SO_NODE_HEADER(T3TableViewNode);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -354,7 +354,7 @@ public:
   bool			showFrame();
   virtual void		setShowFrame(bool value);
   void 			setGeom(int px, int py, int pz); // sets (actual) geom of log
-  T3LogViewNode(void* dataView_ = NULL); // dataview is a LogView object
+  T3TableViewNode(void* dataView_ = NULL); // dataview is a TableView object
 
 protected:
   iVec3i		geom_; //note, not a field
@@ -362,7 +362,7 @@ protected:
 #ifndef __MAKETA__
 #endif
   virtual void		render(); // called after geom and other changes
-  ~T3LogViewNode();
+  ~T3TableViewNode();
 
 private:
   SoFrame*		frame_; // NULL if not shown
@@ -371,7 +371,7 @@ private:
 };
 
 //////////////////////////
-//   T3GridLogViewBaseNode	//
+//   T3GridTableViewBaseNode	//
 //////////////////////////
 
 /* 3d grid and text log views
@@ -383,11 +383,11 @@ private:
           body: SoGroup
 */
 
-class PDP_API T3GridLogViewBaseNode: public T3LogViewNode {
+class PDP_API T3GridTableViewBaseNode: public T3TableViewNode {
 #ifndef __MAKETA__
-typedef T3LogViewNode inherited;
+typedef T3TableViewNode inherited;
 
-  SO_NODE_HEADER(T3GridLogViewBaseNode);
+  SO_NODE_HEADER(T3GridTableViewBaseNode);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -395,17 +395,17 @@ public:
   SoGroup*		header() {return header_;}
   SoGroup*		body() {return body_;}
 
-  T3GridLogViewBaseNode(void* dataView_ = NULL); // dataview is a TextLogView object
+  T3GridTableViewBaseNode(void* dataView_ = NULL); // dataview is a TextTableView object
 
 protected:
-  ~T3GridLogViewBaseNode();
+  ~T3GridTableViewBaseNode();
   SoGroup*		header_;
   SoGroup*		body_;
 };
 
 
 //////////////////////////
-//   T3GraphLogViewNode	//
+//   T3GraphTableViewNode	//
 //////////////////////////
 
 /* 3d grid and text log views
@@ -417,11 +417,11 @@ protected:
           body: SoGroup
 */
 
-class PDP_API T3GraphLogViewNode: public T3LogViewNode {
+class PDP_API T3GraphTableViewNode: public T3TableViewNode {
 #ifndef __MAKETA__
-typedef T3LogViewNode inherited;
+typedef T3TableViewNode inherited;
 
-  SO_NODE_HEADER(T3GraphLogViewNode);
+  SO_NODE_HEADER(T3GraphTableViewNode);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -429,10 +429,10 @@ public:
 /*TODO: graphs, axes, body, etc.  SoGroup*		header() {return header_;}
   SoGroup*		body() {return body_;} */
 
-  T3GraphLogViewNode(void* dataView_ = NULL); // dataview is a TextLogView object
+  T3GraphTableViewNode(void* dataView_ = NULL); // dataview is a TextTableView object
 
 protected:
-  ~T3GraphLogViewNode();
+  ~T3GraphTableViewNode();
 //  SoGroup*		header_;
 //  SoGroup*		body_;
 };

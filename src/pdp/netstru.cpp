@@ -2393,18 +2393,18 @@ void Projection::UpdateAfterEdit() {
   }*/
 }
 
-void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int un_y, int wt_x, int wt_y) {
+/*obs void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int un_y, int wt_x, int wt_y) {
   if(disp_log == NULL) {
     disp_log = (GridLog*) pdpMisc::GetNewLog(GET_MY_OWNER(ProjectBase), &TA_GridLog);
     if(disp_log == NULL) return;
   }
   else {
     disp_log->Clear();
-/*TODO    LogView* lv = (LogView*)disp_log->views()->SafeEl(0);
+/ *TODO    LogView* lv = (LogView*)disp_log->views()->SafeEl(0);
     if((lv == NULL) || !lv->display_toggle || !lv->IsMapped())
-      return; */
+      return; * /
   }
-/*TODO: replace subgroup usage with a Matrix-type col instead
+/ *TODO: replace subgroup usage with a Matrix-type col instead
   disp_log->SetName((String)"GridViewWeights: " + layer->GetName() + ", " + GetName());
 
   DataTable* md = &(disp_log->data);
@@ -2471,8 +2471,8 @@ void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int 
   }
 
   disp_log->ViewAllData();
-*/
-}
+* /
+}*/
 
 void Projection::WeightsToTable(DataTable* dt) {
   if(from == NULL) return;
@@ -4040,7 +4040,7 @@ int Layer::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
   return 1;
 }
 
-void Layer::GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt, int un_x, int un_y, int wt_x, int wt_y) {
+/*obs void Layer::GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt, int un_x, int un_y, int wt_x, int wt_y) {
   if(send_lay == NULL) return;
   bool gotone = false;
   Projection* p;
@@ -4053,7 +4053,7 @@ void Layer::GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt, in
   if(!gotone) {
     taMisc::Error("GridViewWeights: No sending projection from: ", send_lay->name);
   }
-}
+}*/
 
 void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   if(send_lay == NULL) return;
@@ -5470,12 +5470,12 @@ int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
   return nchg;
 }
 
-void Network::GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_lay,
+/*obs void Network::GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_lay,
 			      bool use_swt, int un_x, int un_y, int wt_x, int wt_y)
 {
   if(recv_lay == NULL) return;
   recv_lay->GridViewWeights(grid_log, send_lay, use_swt, un_x, un_y, wt_x, wt_y);
-}
+}*/
 
 void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 {

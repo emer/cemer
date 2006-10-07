@@ -657,6 +657,58 @@ int TypeDefault_Group::Dump_Load_Value(istream& strm, TAPtr par) {
   return inherited::Dump_Load_Value(strm, par);
 }
 
+//////////////////////////
+// 	PDPLog		//
+//////////////////////////
+
+void PDPLog::Initialize() {
+  log_file = NULL; // maybe this var is not needed for streaming???
+
+  data.name = "data"; // override the default one
+  data_bufsz = 10000;
+  data_shift = .20f;
+  record_proc_name = false;
+  geom.SetXYZ(4, 1, 3);
+  pos.SetXYZ(0, 0, 0);
+}
+
+void PDPLog::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(data, this);
+  taBase::Own(display_labels, this);
+  taBase::Own(pos, this);
+  taBase::Own(geom, this);
+}
+
+void PDPLog::Destroy() {
+  CutLinks();
+  if (log_file) {
+    taRefN::unRefDone(log_file);
+    log_file = NULL;
+  }
+}
+
+void PDPLog::CutLinks() {
+  geom.CutLinks();
+  pos.CutLinks();
+  display_labels.CutLinks();
+  data.CutLinks();
+  inherited::CutLinks();
+}
+
+/*nn void PDPLog::Copy_(const PDPLog& cp) {
+  if (log_file) *log_file = *(cp.log_file);
+  data = cp.data;
+  data_bufsz = cp.data_bufsz;
+  data_shift = cp.data_shift;
+  record_proc_name = cp.record_proc_name;
+
+  display_labels = cp.display_labels;
+  pos = cp.pos;
+  geom = cp.geom;
+} */
+
+
 
 //////////////////////////////////
 // 	 V3ProjectBase		//
@@ -666,7 +718,6 @@ void V3ProjectBase::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   environments.SetBaseType(&TA_Environment);
   processes.SetBaseType(&TA_SchedProcess);
-  //nn logs.SetBaseType(&TA_TextLog);
   scripts.SetBaseType(&TA_Script);
 }
 

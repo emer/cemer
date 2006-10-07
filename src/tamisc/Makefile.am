@@ -55,7 +55,6 @@ TAHEADS =\
 	@abs_srcdir@/aggregate.h \
 	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/colorscale.h \
-	@abs_srcdir@/ta_data.h \
 	@abs_srcdir@/datatable.h \
 	@abs_srcdir@/datagraph.h \
 	@abs_srcdir@/fun_lookup.h \
@@ -72,7 +71,6 @@ HEADS =\
 	aggregate.h \
 	minmax.h \
 	colorscale.h \
-	ta_data.h \
 	datatable.h \
 	datagraph.h \
 	fun_lookup.h \
@@ -86,7 +84,6 @@ SRCS =\
 	aggregate.cpp \
 	minmax.cpp \
 	colorscale.cpp \
-	ta_data.cpp \
 	datatable.cpp \
 	datagraph.cpp \
 	fun_lookup.cpp \

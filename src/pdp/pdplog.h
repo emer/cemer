@@ -41,9 +41,7 @@ class T3DataViewer; //
 #ifdef TA_GUI
 
 class PDP_API LogView_PtrList : public taPtrList<LogView> { // link list of associated logviews
-#ifndef __MAKETA__
-typedef taPtrList<LogView> inherited;
-#endif
+INHERITED(taPtrList<LogView>)
 public:
   TypeDef*	el_typ; // actual type set by subclass of owner
   LogView_PtrList() {el_typ = &TA_LogView;} //
@@ -71,9 +69,7 @@ public:
 
 class PDP_API PDPLog : public taNBase {
   // ##EXT_log Records data from processes, displaying and saving it
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+INHERITED(taNBase)
 public:
   taFiler*	log_file;	// optional file for saving
   int		log_lines;	// #READ_ONLY #NO_SAVE number of lines in the log
@@ -199,6 +195,7 @@ public:
 
 class PDP_API TextLog : public PDPLog {
   // log with textview as a default display
+INHERITED(PDPLog)
 public:
 #ifdef TA_GUI
   void	Initialize() 		{views.el_typ = &TA_TextLogView; };
@@ -211,6 +208,7 @@ public:
 
 class PDP_API GridLog : public TextLog {
   // log with grid as a default display
+INHERITED(TextLog)
 public:
 #ifdef TA_GUI
   void	Initialize() 		{views.el_typ = &TA_GridLogView;};
@@ -223,6 +221,7 @@ public:
 
 class PDP_API NetLog: public TextLog {
   // log with netlog as a default display
+INHERITED(TextLog)
 public:
   virtual void	SetNetwork(Network* net);
   // #MENU #MENU_ON_Object select given network as the one to update views on
@@ -238,6 +237,7 @@ public:
 
 class PDP_API GraphLog : public PDPLog {
   // log with graph as a default display
+INHERITED(PDPLog)
 public:
 #ifdef TA_GUI
   void	Initialize() 		{views.el_typ = &TA_GraphLogView;};
@@ -248,7 +248,7 @@ public:
   TA_BASEFUNS(GraphLog);
 };
 
-typedef GraphLog* GraphLog_ptr;	/* needed to prevent conflicts in TA_GraphLog_ptr in algos */
+typedef GraphLog* GraphLog_ptr;	// prevents conflicts in TA_GraphLog_ptr in algos
 
 
 #endif // pdplog.h

@@ -7,6 +7,8 @@ Alpha:
 Brad:
 
 misc ui improvements:
+* graph log (get working again)  
+  * support for matrices
 * highlight progeditor lines w/red for ProgEl->CheckConfig == false #70
 * read-only, condedit off guys in edits are just labels, not controls
 * add ... to edit a token pointer (replaces #93)
@@ -20,8 +22,6 @@ misc ui improvements:
 * Program ControlPanel: extend list view for programs + their vars/args + add buttons for selected guy + step_prog + global_vars
 * tabs for 3d views - required for these next guys (simple version):
 * matrix view of datatable (in 3d/inventor)
-* graph log (get working again)  
-  * support for matrices
 
 * ChangeType/UpdatePointers etc. gui patches
 * virtual console dock window, ex. be able to dock to bottom of any project window
@@ -36,6 +36,7 @@ Brad done:
 * #CAT_ support for method, member choosers: simple is just column (1st col). bonus is menu..
 * fixed tab activating bugs
 * #CAT_ support for types
+* buttons have maximum width (20 chars, established in taiMisc::InitMetrics)
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)

@@ -196,7 +196,7 @@ inline bool operator ==(const MatrixGeom& a, const MatrixGeom& b)
 inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
   {return !a.Equal(b);}
 
-class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS ref counted multi-dimensional data array
+class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
 INHERITED(taOBase)
 friend class MatrixTableModel;
 
@@ -460,7 +460,7 @@ private:
 
 
 template<class T> 
-class taMatrixT : public taMatrix { // #VIRT_BASE #NO_INSTANCE 
+class taMatrixT : public taMatrix { // #VIRT_BASE #NO_INSTANCE #CAT_Data 
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
@@ -634,7 +634,7 @@ public:
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
-class TA_API String_Matrix: public taMatrixT<String> { // #INSTANCE
+class TA_API String_Matrix: public taMatrixT<String> { // #INSTANCE #CAT_Data
 public:
   override int		defAlignment() const; // default Qt alignment, left for text, right for nums	
   override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
@@ -664,7 +664,7 @@ private:
 //nn?? SmartPtr_Of(String_Matrix); // String_MatrixPtr
 
 
-class TA_API float_Matrix: public taMatrixT<float> { // #INSTANCE
+class TA_API float_Matrix: public taMatrixT<float> { // #INSTANCE #CAT_Data
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_float;} 
   
@@ -692,7 +692,7 @@ private:
 //nn?? SmartPtr_Of(float_Matrix)
 
 
-class TA_API int_Matrix: public taMatrixT<int> { // #INSTANCE
+class TA_API int_Matrix: public taMatrixT<int> { // #INSTANCE #CAT_Data
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_int;} 
   
@@ -719,7 +719,7 @@ private:
 //nn? SmartPtr_Of(int_Matrix)
 
 
-class TA_API byte_Matrix: public taMatrixT<byte> { // #INSTANCE
+class TA_API byte_Matrix: public taMatrixT<byte> { // #INSTANCE #CAT_Data
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_unsigned_char;} 
   
@@ -746,7 +746,7 @@ private:
 //nn? SmartPtr_Of(byte_Matrix)
 
 
-class TA_API Variant_Matrix: public taMatrixT<Variant> { // #INSTANCE
+class TA_API Variant_Matrix: public taMatrixT<Variant> { // #INSTANCE #CAT_Data
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_Variant;} 
   
@@ -775,7 +775,7 @@ private:
 
 //nn? SmartPtr_Of(Variant_Matrix) //
 
-class TA_API rgb_Matrix: public taMatrixT<rgb_t> { // #INSTANCE
+class TA_API rgb_Matrix: public taMatrixT<rgb_t> { // #INSTANCE #CAT_Data
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_rgb_t;} 
   

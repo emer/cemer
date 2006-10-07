@@ -101,19 +101,10 @@ public:
   // get default object color (for edit dialogs and project view)
 
 
-  static PDPLog* GetNewLog(ProjectBase* prj, TypeDef* typ);
-  // get a temporary log of given type in given project (e.g., for pulling up a graph, etc)
   static Network* GetNewNetwork(ProjectBase* prj, TypeDef* typ = NULL);
   // get a new network object
   static Network* GetDefNetwork(ProjectBase* prj);
   // get default network from project
-
-  static PDPLog* FindMakeLog(ProjectBase* prj, const char* nm, TypeDef* td, bool& nw_itm = nw_itm_def_arg);
-  // find a given log and if not found, make it
-  static PDPLog*  FindLogName(ProjectBase* prj, const char* nm);
-  // find a log of given name
-  static PDPLog*  FindLogType(ProjectBase* prj, TypeDef* td);
-  // find a log of given type
 
 #ifdef TA_GUI
   static SelectEdit* FindSelectEdit(ProjectBase* prj);

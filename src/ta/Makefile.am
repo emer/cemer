@@ -96,6 +96,8 @@ TAHEADS =\
 	@abs_srcdir@/ta_dmem.h \
 	@abs_srcdir@/ta_viewer.h \
 	@abs_srcdir@/ta_matrix.h \
+	@abs_srcdir@/ta_data.h \
+	@abs_srcdir@/ta_datatable.h \
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
 	@abs_srcdir@/ta_script.h \
@@ -122,6 +124,8 @@ HEADS =\
 	ta_dmem.h \
 	ta_viewer.h \
 	ta_matrix.h \
+	ta_data.h \
+	ta_datatable.h \
 	ta_dump.h \
 	ta_defaults.h \
 	ta_script.h \
@@ -148,6 +152,8 @@ SRCS =\
 	ta_dmem.cpp \
 	ta_viewer.cpp \
 	ta_matrix.cpp \
+	ta_data.cpp \
+	ta_datatable.cpp \
 	ta_dump.cpp \
 	ta_defaults.cpp \
 	ta_script.cpp \

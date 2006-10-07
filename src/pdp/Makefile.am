@@ -51,7 +51,6 @@ TAHEADS =\
 	@abs_srcdir@/netstru_extra.h \
 	@abs_srcdir@/netdata.h \
 	@abs_srcdir@/pdp_program.h \
-	@abs_srcdir@/pdplog.h \
 	@abs_srcdir@/pdpshell.h \
 	@abs_srcdir@/pdpserver.h \
 	$(TAHEADS_GUI) \
@@ -65,7 +64,6 @@ HEADS =\
 	netstru_extra.h \
 	netdata.h \
 	pdp_program.h \
-	pdplog.h \
 	pdpshell.h \
 	pdpserver.h \
 	v3_compat.h \
@@ -79,7 +77,6 @@ SRCS =\
 	netstru_extra.cpp \
 	netdata.cpp \
 	pdp_program.cpp \
-	pdplog.cpp \
 	pdpshell.cpp \
 	pdpserver.cpp \
 	pdpserver.moc.cpp \

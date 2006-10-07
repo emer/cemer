@@ -19,8 +19,6 @@
 
 #include "bp.h"
 
-#include "pdplog.h"
-
 #include <math.h>
 #include <limits.h>
 #include <float.h>
@@ -159,7 +157,7 @@ void BpUnitSpec::UpdateWeights(Unit* u) {
   ((BpConSpec*)bias_spec.spec)->B_UpdateWeights((BpCon*)u->bias, (BpUnit*)u);
 }
 
-void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
+/*TODO void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
   if(graph_log == NULL) {
     graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(BpProject), &TA_GraphLog);
     if(graph_log == NULL) return;
@@ -182,7 +180,7 @@ void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
   }
   dt->UpdateAllRanges();
   graph_log->ViewAllData();
-}
+}*/
 
 void BpUnit::Initialize() {
   spec.SetBaseType(&TA_BpUnitSpec);

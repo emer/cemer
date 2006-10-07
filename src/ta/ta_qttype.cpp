@@ -832,7 +832,8 @@ void taiMember::EndScript(const void* base) {
 bool taiMember::isReadOnly(taiData* dat, IDataHost* host_) {
   // ReadOnly if parent type is RO, or par is RO, OR directives state RO
   bool rval = taiType::isReadOnly(dat, host_);
-  rval = rval || mbr->HasOption("READ_ONLY") || mbr->HasOption("IV_READ_ONLY");
+  rval = rval || mbr->HasOption("READ_ONLY") || //note: 'IV' only for legacy support
+    mbr->HasOption("IV_READ_ONLY") || mbr->HasOption("GUI_READ_ONLY");
   return rval;
 }
 

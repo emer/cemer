@@ -544,7 +544,7 @@ public:
   ProgEl_List		init_code; // the prog els for initialization (done once); use a "return" if an error occurs 
   ProgEl_List		prog_code; // the prog els for the main program
   
-  int			ret_val; // #HIDDEN #IV_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
+  int			ret_val; // #HIDDEN #GUI_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
   ProgEl_List		sub_progs; // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCall's, not the actual Program's)
   bool		    	m_dirty; // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   

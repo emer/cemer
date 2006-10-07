@@ -23,8 +23,6 @@
 #include "ta_qttype.h"
 #include "t3viewer.h"
 
-#include "pdplog.h"
-#include "pdp_qtso.h"
 #include "datagraph.h"
 #include "netstru_so.h"
 #include "netstru.h"
@@ -35,45 +33,49 @@ class GraphViews;
 class iGraphButtons; // #IGNORE
 
 // forwards
-class LogView;
-class LogViewAdapter; // #IGNORE
+class TableView;
+class TableViewAdapter; // #IGNORE
 
-class iLogView_Panel;
-class iGridLogViewBase_Panel;
-class iTextLogView_Panel;
-class iNetLogView_Panel;
-class iGridLogView_Panel;
-class iGraphLogView_Panel;
+class iTableView_Panel;
+class iGridTableViewBase_Panel;
+class iTextTableView_Panel;
+class iNetTableView_Panel;
+class iGridTableView_Panel;
+class iGraphTableView_Panel;
 
 
 //////////////////////////
-//   LogView		//
+//   TableView		//
 //////////////////////////
 
-class PDP_API LogView : public T3DataViewPar {
-  // #VIRT_BASE #NO_TOKENS parent class of all log views (Par is only for GraphLogView)
-#ifndef __MAKETA__
-typedef T3DataViewPar inherited;
-#endif
-friend class LogViewAdapter;
-public:
+class PDP_API TableView : public T3DataViewPar {
+  // #VIRT_BASE #NO_TOKENS parent class of all log views (Par is only for GraphTableView)
+INHERITED(T3DataViewPar)
+friend class TableViewAdapter;
+public: //
+//TEMP: conversion properties
+  int		virt_lines_() const; // #IGNORE prev: log()->virt_lines TEMP conversion property
+  int		data_range_min_() const; // #IGNORE prev: log()data_range.min
+  int		data_range_max_() const; // #IGNORE prev: log()data_range.max
+  
+  
+  static void	InitNew(TableView* lv, DataTable* dt, T3DataViewer* vw);
+    // common code for creating a new one -- creates new data and/or vw if necessary
+    
   int		view_bufsz;	// Maximum number of lines in visible buffer
-//obs  float		view_shift;	// precentage of buffer to shift
   MinMaxInt	view_range;	// #NO_SAVE range of visible lines (in log lines)
   DT_ViewSpec*	viewspec;	// #BROWSE #READ_ONLY #NO_SAVE global view spec for all data
 
   taBase_List 	viewspecs;	// #NO_SHOW dummy group list to hold the single viewspec
   bool		display_toggle;  // #DEF_true 'true' if display should be updated
-//nn  TDCoord	pos;		// origin of the log in 3d space (not used for panel view)
-//nn  TDCoord	geom;		// space taken
+  TDCoord	pos;		// origin of the log in 3d space (not used for panel view)
+  TDCoord	geom;		// space taken
   float		frame_inset;	// #DEF_0.05 inset of frame (used to calc actual inner space avail)
-//obs  PDPLog* 	log_mgr;	// #READ_ONLY #SAVE Parent Log -- must be set before InitLinks
+  bool		own_data; // true if we "own" the DataTable, ex. deletes it if we are deleted
 
-  PDPLog*		log() const {return (PDPLog*)m_data;}
-  T3LogViewNode*	node_so() const {return (T3LogViewNode*)m_node_so.ptr();}
-
-  virtual bool	IsMapped(); // return true if any panels/T3 views are mapped
-
+  inline DataTable*	data() const {return (DataTable*)m_data;}
+  T3TableViewNode*	node_so() const {return (T3TableViewNode*)m_node_so.ptr();}
+  
   // log interface
   virtual void  NewHead(); // new header information is in log data
   virtual void  NewData() {} // new data information is in log's datatable
@@ -98,13 +100,10 @@ public:
   // #MENU #FROM_GROUP_viewspec set whether this column of data is displayed in the log display
   void		SetLogging(taBase* column, bool log_data, bool also_chg_vis = true);
   // #MENU #FROM_GROUP_viewspec set whether this column of data is logged to a file (if also_chg_vis, then visibility in view is changed to match logging)
-  void		UpdateDispLabels();
-  // #MENU #CONFIRM update the display labels in the view using the display_labels stored in the log object
 
   // following are analysis routines that copy log data to a temporary environment
   // and then run the associated function on that environment
 
-  virtual void 	CopyToTable(taBase* data, taBase* labels, DataTable* dt);
   // TODO:OBS #MENU #MENU_ON_Analyze #FROM_GROUP_1_viewspec #NULL_OK output data (must be group) with labels to datatable dt (NULL = new table). WARNING: reformats table to fit data!)
 /*obs
   virtual void	DistMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log, float_RArray::DistMetric metric=float_RArray::HAMMING,
@@ -127,11 +126,6 @@ public:
   virtual TypeDef*	DT_ViewSpecType(); // #IGNORE get type of DataTable for this log
   virtual TypeDef*	DA_ViewSpecType(); // #IGNORE get type of DataArray for this log
 
-  // winview stuff
-  void			AddNotify(TAPtr ud); // #IGNORE
-  void	 		RemoveNotify(TAPtr ud);	// #IGNORE
-  void  		SetWinName();
-//  override void		CloseWindow();
   QWidget*		GetPrintData();	// #IGNORE
 
   virtual void 		LogUpdateAfterEdit(); // called by log in its uae
@@ -144,9 +138,9 @@ public:
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
-  void	Copy_(const LogView& cp);
-  COPY_FUNS(LogView, T3DataViewPar);
-  T3_DATAVIEWFUNS(LogView, T3DataViewPar) //
+  void	Copy_(const TableView& cp);
+  COPY_FUNS(TableView, T3DataViewPar);
+  T3_DATAVIEWFUNS(TableView, T3DataViewPar) //
 
 public:
   // view control -- row
@@ -162,39 +156,38 @@ public:
   virtual void 	ViewC_At(int start) {}	// start viewing at indicated column value
 
 protected:
-  iLogView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
+  iTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
   virtual void		InitDisplayParams() {} // called in _pre
   override void		OnWindowBind_impl(iT3DataViewer* vw);
   override void		Render_pre(); // #IGNORE -- we only set color of frame
   override void		Render_impl(); // #IGNORE
   override void 	Render_post();
   override void		Reset_impl();
+  virtual void		UpdateOwnedData(); // called in UAE to sync data params
   virtual void		UpdateFromBuffer_impl(); // update view from buffer
   virtual void		viewWin_selectionChanged(ISelectable_PtrList& sels) {} // TODO
 
 };
 
-class PDP_API LogViewAdapter: public taBaseAdapter { // ##IGNORE
+class PDP_API TableViewAdapter: public taBaseAdapter { // ##IGNORE
   Q_OBJECT
 public:
-  LogViewAdapter(LogView* owner_): taBaseAdapter(owner_) {}
+  TableViewAdapter(TableView* owner_): taBaseAdapter(owner_) {}
 public slots:
   // view control -- rows
-/*obs  void 	View_F() {if(owner) ((LogView*)owner)->View_F();}
-  void 	View_R() {if(owner) ((LogView*)owner)->View_R();}
-  void 	View_FSF() {if(owner) ((LogView*)owner)->View_FSF();}
-  void 	View_FSR() {if(owner) ((LogView*)owner)->View_FSR();}
-  void 	View_FF() {if(owner) ((LogView*)owner)->View_FF();}
-  void 	View_FR() {if(owner) ((LogView*)owner)->View_FR();} */
+/*obs  void 	View_F() {if(owner) ((TableView*)owner)->View_F();}
+  void 	View_R() {if(owner) ((TableView*)owner)->View_R();}
+  void 	View_FSF() {if(owner) ((TableView*)owner)->View_FSF();}
+  void 	View_FSR() {if(owner) ((TableView*)owner)->View_FSR();}
+  void 	View_FF() {if(owner) ((TableView*)owner)->View_FF();}
+  void 	View_FR() {if(owner) ((TableView*)owner)->View_FR();} */
   void	viewWin_selectionChanged(ISelectable_PtrList& sels)
-    {if(owner) ((LogView*)owner)->viewWin_selectionChanged(sels);}
+    {if(owner) ((TableView*)owner)->viewWin_selectionChanged(sels);}
 };
 
-class PDP_API GridLogViewBase : public LogView {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS common subclass of TextLogView and GridLogView
-#ifndef __MAKETA__
-typedef LogView inherited;
-#endif
+class PDP_API GridTableViewBase : public TableView {
+  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS common subclass of TextTableView and GridTableView
+INHERITED(TableView)
 public:
   int			cols; // #IGNORE visible columns
   MinMaxInt		col_range;	// column range that is visible
@@ -202,7 +195,7 @@ public:
   float			tot_col_widths; // total of all col widths
   float			row_height; // #IGNORE determined from font size, =xx% of font height
 
-  T3GridLogViewBaseNode* node_so() const {return (T3GridLogViewBaseNode*)m_node_so.ptr();}
+  T3GridTableViewBaseNode* node_so() const {return (T3GridTableViewBaseNode*)m_node_so.ptr();}
 
   override void  	NewHead(); // new header information is in log data
   override void  	NewData(); // new data information is in log's datatable
@@ -218,9 +211,9 @@ public:
   void 	UpdateAfterEdit();
   void	Initialize();
   void	Destroy() {CutLinks();}
-  void	Copy_(const GridLogViewBase& cp);
-  COPY_FUNS(GridLogViewBase, LogView);
-  T3_DATAVIEWFUNS(GridLogViewBase, LogView)
+  void	Copy_(const GridTableViewBase& cp);
+  COPY_FUNS(GridTableViewBase, TableView);
+  T3_DATAVIEWFUNS(GridTableViewBase, TableView)
 
 protected:
   virtual void		AdjustColView() {} // sets visible last column, and colsizes, based on .min, and geom
@@ -232,16 +225,14 @@ protected:
   override void		Reset_impl();
 };
 
-class PDP_API TextLogView : public GridLogViewBase {
+class PDP_API TextTableView : public GridTableViewBase {
   // #INSTANCE a textual view of the log data
-#ifndef __MAKETA__
-typedef GridLogViewBase inherited;
-#endif
+INHERITED(GridTableViewBase)
 public:
   float		font_width;	// #IGNORE width of font spacing
 
   DT_ViewSpec*  viewSpec() {return (DT_ViewSpec*)viewspec;}
-  iTextLogView_Panel*	lvp(){return (iTextLogView_Panel*)m_lvp;}
+  iTextTableView_Panel*	lvp(){return (iTextTableView_Panel*)m_lvp;}
 
 //obs  int		ShowMore(int newsize); // #IGNORE
 //obs  int		ShowLess(int newsize); // #IGNORE
@@ -263,7 +254,7 @@ public:
   void 	CutLinks();
   void	Initialize();
   void	Destroy() {CutLinks();}
-  T3_DATAVIEWFUNS(TextLogView, GridLogViewBase)
+  T3_DATAVIEWFUNS(TextTableView, GridTableViewBase)
 
 protected:
   override void		OnWindowBind_impl(iT3DataViewer* vw);
@@ -275,13 +266,13 @@ protected:
   void			UpdateFromBuffer_AddLine(int row, int buff_idx); // creates a data line
 };
 
-class PDP_API NetLogView : public LogView {
+class PDP_API NetTableView : public TableView {
   // #INSTANCE displays log information in the network view window
-INHERITED(LogView)
+INHERITED(TableView)
 public:
   NetworkRef      network;		// Network to whose views  data is logged
 
-  iNetLogView_Panel*	lvp(){return (iNetLogView_Panel*)m_lvp;}
+  iNetTableView_Panel*	lvp(){return (iNetTableView_Panel*)m_lvp;}
 
   virtual void	SetNetwork(Network* net);
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE select given network as the one to update views on
@@ -300,18 +291,16 @@ public:
   void	Destroy()	{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
-  T3_DATAVIEWFUNS(NetLogView, LogView)
+  T3_DATAVIEWFUNS(NetTableView, TableView)
 
 protected:
   override void		OnWindowBind_impl(iT3DataViewer* vw);
   void		UpdateFromBuffer_impl();
 };
 
-class PDP_API GridLogView : public LogView {
+class PDP_API GridTableView : public TableView {
   // #INSTANCE displays log information as colored grids
-#ifndef __MAKETA__
-typedef LogView inherited;
-#endif
+INHERITED(TableView)
 public:
   DT_GridViewSpec::BlockFill	fill_type;
   // how the grid blocks are filled in to display their value
@@ -329,7 +318,7 @@ public:
   QPushButton*	auto_sc_but;	// #IGNORE toggle auto-scale button
   QPushButton*	head_tog_but;	// #IGNORE header toggle button
 
-  iGridLogView_Panel*	lvp(){return (iGridLogView_Panel*)m_lvp;}
+  iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
 
   void  	NewHead();
   void  	NewData();
@@ -369,9 +358,9 @@ public:
   void  CutLinks();
   void	Initialize();
   void 	Destroy();
-  void	Copy_(const GridLogView& cp);
-  COPY_FUNS(GridLogView, LogView);
-  T3_DATAVIEWFUNS(GridLogView, LogView)
+  void	Copy_(const GridTableView& cp);
+  COPY_FUNS(GridTableView, TableView);
+  T3_DATAVIEWFUNS(GridTableView, TableView)
 
 public:
   void ColorBar_execute();
@@ -381,30 +370,28 @@ protected:
   override void		UpdateFromBuffer_impl();
 };
 
-class PDP_API GridLogViewAdapter: public LogViewAdapter {
+class PDP_API GridTableViewAdapter: public TableViewAdapter {
   Q_OBJECT
 public:
-  GridLogViewAdapter(GridLogView* owner_): LogViewAdapter(owner_) {}
+  GridTableViewAdapter(GridTableView* owner_): TableViewAdapter(owner_) {}
 public slots:
-  void 	ColorBar_execute() {if(owner) ((GridLogView*)owner)->ColorBar_execute();}
+  void 	ColorBar_execute() {if(owner) ((GridTableView*)owner)->ColorBar_execute();}
 };
 
 
-/*nnclass GraphLogViewLabel : public ViewLabel {
+/*nnclass GraphTableViewLabel : public ViewLabel {
   // view labels for graph logs
 public:
   void		GetMasterViewer();
 
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS(GraphLogViewLabel);
+  TA_BASEFUNS(GraphTableViewLabel);
 };*/
 
-class PDP_API GraphLogView : public LogView {
+class PDP_API GraphTableView : public TableView {
   // #INSTANCE View log data as a graph of lines
-#ifndef __MAKETA__
-typedef LogView inherited;
-#endif
+INHERITED(TableView)
 public:
   int			x_axis_index;	// index of index in array
 //  Graph*		graph;		// data/configuration portion of graph
@@ -415,8 +402,8 @@ public:
   PosTwoDCoord		graph_layout; 	// arrangement of graphs for separate graphs
   bool			anim_stop; 	// #IGNORE
   GraphViews*		graphs; // #READ_ONLY #NO_SAVE
-  iGraphLogView_Panel*	lvp(){return (iGraphLogView_Panel*)m_lvp;}
-  T3GraphLogViewNode* 	node_so() const {return (T3GraphLogViewNode*)m_node_so.ptr();}
+  iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)m_lvp;}
+  T3GraphTableViewNode* 	node_so() const {return (T3GraphTableViewNode*)m_node_so.ptr();}
   GraphSpec*  	viewSpec() {return (GraphSpec*)viewspec;}
 
   virtual void	Animate(int msec_per_point = 500);
@@ -474,7 +461,7 @@ public:
 
   void  	NewHead();
   void  	NewData();
-  virtual int	SetXAxis(char* nm); // set the x axis to be this field
+  virtual int	SetXAxis(const String& nm); // set the x axis to be this field
   virtual void	UpdateViewRange();  // update view range info from log
 
   TypeDef*	DT_ViewSpecType(); // #IGNORE get type of DataTable for this log
@@ -495,9 +482,9 @@ public:
   void  Destroy();
   void	CutLinks();
   void 	InitLinks();
-  void	Copy_(const GraphLogView& cp);
-  COPY_FUNS(GraphLogView, LogView);
-  T3_DATAVIEWFUNS(GraphLogView, LogtView)
+  void	Copy_(const GraphTableView& cp);
+  COPY_FUNS(GraphTableView, TableView);
+  T3_DATAVIEWFUNS(GraphTableView, LogtView)
 
 protected:
   override void 	ChildAdding(T3DataView* child);
@@ -512,14 +499,12 @@ protected:
 
 
 //////////////////////////
-//   iLogView_DataPanel //
+//   iTableView_DataPanel //
 //////////////////////////
 
-class PDP_API iLogView_Panel: public iViewPanelFrame {
+class PDP_API iTableView_Panel: public iViewPanelFrame {
   // abstract base for logview panels
-#ifndef __MAKETA__
-typedef iViewPanelFrame inherited;
-#endif
+INHERITED(iViewPanelFrame)
   Q_OBJECT
 public:
   enum ButtonIds {
@@ -538,8 +523,8 @@ public:
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
-  QCheckBox*		    chkAuto; // NOTE: only created in GridLogView
-  QCheckBox*		    chkHeaders; // NOTE: only created in GridLogView
+  QCheckBox*		    chkAuto; // NOTE: only created in GridTableView
+  QCheckBox*		    chkHeaders; // NOTE: only created in GridTableView
   QButtonGroup*		    bgpTopButtons; // NOTE: not a widget
   QHBoxLayout*		    layVcrButtons;
   QHBoxLayout*		    layInitButtons;
@@ -562,7 +547,7 @@ public:
 */
 //  override String	panel_type() const; // this string is on the subpanel button for this panel
 
-  LogView*		lv() {return (LogView*)m_dv;}
+  TableView*		lv() {return (TableView*)m_dv;}
   SoQtRenderArea* 	ra() {return m_ra;}
 //  override int 		EditAction(int ea);
 //  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
@@ -571,19 +556,19 @@ public:
 
   virtual void 		BufferUpdated() {} //called when data added/removed, or view is scrolled
 
-  iLogView_Panel(LogView* lv);
-  ~iLogView_Panel();
+  iTableView_Panel(TableView* lv);
+  ~iTableView_Panel();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iLogView_Panel;}
+  override TypeDef*	GetTypeDef() const {return &TA_iTableView_Panel;}
 
 protected:
   SoQtRenderArea* 	m_ra;
   SoPerspectiveCamera*	m_camera;
   SoLightModel*		m_lm;
 
-  iLogView_Panel(bool is_grid_log, LogView* lv); // only used by GridLogView
+  iTableView_Panel(bool is_grid_log, TableView* lv); // only used by GridTableView
   void 			Constr_T3ViewspaceWidget();
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
@@ -600,22 +585,20 @@ private:
 
 
 //////////////////////////
-// iGridLogViewBase_Panel//
+// iGridTableViewBase_Panel//
 //////////////////////////
 
-class PDP_API iGridLogViewBase_Panel: public iLogView_Panel {
+class PDP_API iGridTableViewBase_Panel: public iTableView_Panel {
   Q_OBJECT
-#ifndef __MAKETA__
-typedef iLogView_Panel inherited;
-#endif
+INHERITED(iTableView_Panel)
 public:
-  GridLogViewBase*	lv() {return (GridLogViewBase*)m_dv;}
+  GridTableViewBase*	lv() {return (GridTableViewBase*)m_dv;}
 
 
   override void 	BufferUpdated();
 
-  iGridLogViewBase_Panel(GridLogViewBase* tlv);
-  ~iGridLogViewBase_Panel();
+  iGridTableViewBase_Panel(GridTableViewBase* tlv);
+  ~iGridTableViewBase_Panel();
 
 public slots:
   void 			horScrBar_valueChanged(int value);
@@ -623,34 +606,32 @@ public slots:
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iGridLogViewBase_Panel;}
+  override TypeDef*	GetTypeDef() const {return &TA_iGridTableViewBase_Panel;}
 
 protected:
   override void		InitPanel_impl(); // called on structural changes
 };
 
 //////////////////////////
-// iTextLogView_Panel//
+// iTextTableView_Panel//
 //////////////////////////
 
-class PDP_API iTextLogView_Panel: public iGridLogViewBase_Panel {
+class PDP_API iTextTableView_Panel: public iGridTableViewBase_Panel {
   Q_OBJECT
-#ifndef __MAKETA__
-typedef iGridLogViewBase_Panel inherited;
-#endif
+INHERITED(iGridTableViewBase_Panel)
 public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  TextLogView*		lv() {return (TextLogView*)m_dv;}
+  TextTableView*		lv() {return (TextTableView*)m_dv;}
 
 //  override int 		EditAction(int ea);
 //  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
 
-  iTextLogView_Panel(TextLogView* tlv);
-  ~iTextLogView_Panel();
+  iTextTableView_Panel(TextTableView* tlv);
+  ~iTextTableView_Panel();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iTextLogView_Panel;}
+  override TypeDef*	GetTypeDef() const {return &TA_iTextTableView_Panel;}
 
 protected:
   override void		InitPanel_impl(); // called on structural changes
@@ -664,27 +645,25 @@ protected:
 
 
 //////////////////////////
-// iNetLogView_Panel//
+// iNetTableView_Panel//
 //////////////////////////
 
-class PDP_API iNetLogView_Panel: public iLogView_Panel {
+class PDP_API iNetTableView_Panel: public iTableView_Panel {
   Q_OBJECT
-#ifndef __MAKETA__
-typedef iLogView_Panel inherited;
-#endif
+INHERITED(iTableView_Panel)
 public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  NetLogView*		nlv() {return (NetLogView*)m_dv;}
+  NetTableView*		nlv() {return (NetTableView*)m_dv;}
 
 //  override int 		EditAction(int ea);
 //  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
 
-  iNetLogView_Panel(NetLogView* nlv);
-  ~iNetLogView_Panel();
+  iNetTableView_Panel(NetTableView* nlv);
+  ~iNetTableView_Panel();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iNetLogView_Panel;}
+  override TypeDef*	GetTypeDef() const {return &TA_iNetTableView_Panel;}
 protected:
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
@@ -693,27 +672,25 @@ protected:
 
 
 //////////////////////////
-// iGridLogView_Panel//
+// iGridTableView_Panel//
 //////////////////////////
 
-class PDP_API iGridLogView_Panel: public iLogView_Panel {
+class PDP_API iGridTableView_Panel: public iTableView_Panel {
   Q_OBJECT
-#ifndef __MAKETA__
-typedef iLogView_Panel inherited;
-#endif
+INHERITED(iTableView_Panel)
 public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  GridLogView*		glv() {return (GridLogView*)m_dv;}
+  GridTableView*		glv() {return (GridTableView*)m_dv;}
 
 //  override int 		EditAction(int ea);
 //  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
 
-  iGridLogView_Panel(GridLogView* glv);
-  ~iGridLogView_Panel();
+  iGridTableView_Panel(GridTableView* glv);
+  ~iGridTableView_Panel();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iGridLogView_Panel;}
+  override TypeDef*	GetTypeDef() const {return &TA_iGridTableView_Panel;}
 protected:
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
@@ -728,14 +705,12 @@ protected slots:
 
 
 //////////////////////////
-// iGraphLogView_Panel//
+// iGraphTableView_Panel//
 //////////////////////////
 
-class PDP_API iGraphLogView_Panel: public iLogView_Panel {
+class PDP_API iGraphTableView_Panel: public iTableView_Panel {
   Q_OBJECT
-#ifndef __MAKETA__
-typedef iLogView_Panel inherited;
-#endif
+INHERITED(iTableView_Panel)
 public:
   QVBoxLayout*		layToolGraphButtons;// layout on left of graph
 //  QLayout*		  layToolButtons;// layout containing tool buttons
@@ -744,17 +719,17 @@ public:
   iGraphButtons*	    gbs;//  graph buttons
 
   override String	panel_type() const; // this string is on the subpanel button for this panel
-  GraphLogView*		glv() {return (GraphLogView*)m_dv;}
+  GraphTableView*		glv() {return (GraphTableView*)m_dv;}
 
 //  override int 		EditAction(int ea);
 //  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
 
-  iGraphLogView_Panel(GraphLogView* glv);
-  ~iGraphLogView_Panel();
+  iGraphTableView_Panel(GraphTableView* glv);
+  ~iGraphTableView_Panel();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iGraphLogView_Panel;}
+  override TypeDef*	GetTypeDef() const {return &TA_iGraphTableView_Panel;}
 protected:
   override void 	GetImage_impl();
   override void		InitPanel_impl(); // called on structural changes
@@ -767,7 +742,7 @@ protected:
 };
 
 /* nn
-class LogView_ViewType: public tabOViewType { // we group all together, and dynamically decide at runtime
+class TableView_ViewType: public tabOViewType { // we group all together, and dynamically decide at runtime
 #ifndef __MAKETA__
 typedef tabOViewType inherited;
 #endif
@@ -775,7 +750,7 @@ public:
   override int		BidForView(TypeDef*);
   void			Initialize() {}
   void			Destroy() {}
-  TA_VIEW_TYPE_FUNS(LogView_ViewType, tabOViewType)
+  TA_VIEW_TYPE_FUNS(TableView_ViewType, tabOViewType)
 protected:
 //  override taiDataLink*	CreateDataLink_impl(taBase* data_);
   override void		CreateDataPanel_impl(taiDataLink* dl_);

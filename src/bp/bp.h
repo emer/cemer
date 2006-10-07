@@ -160,7 +160,7 @@ public:
   virtual void	SetCurLrate(BpUnit* u, int epoch);
   // set current learning rate based on epoch
 
-  virtual void	GraphActFun(GraphLog* graph_log, float min = -5.0, float max = 5.0);
+//TODO  virtual void	GraphActFun(GraphLog* graph_log, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph log)
 
   void 	Initialize();

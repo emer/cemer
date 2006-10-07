@@ -55,13 +55,7 @@ class Layer;
 class Network;
 
 class ProjectBase;
-class PDPRoot;
-
-
-class PDPLog;
-class TextLog;
-class GraphLog;
-class GridLog; //
+class PDPRoot; //
 
 #ifdef TA_GUI
 
@@ -72,11 +66,11 @@ class Xform; // #IGNORE
 class Xform_List; // #IGNORE
 
 class PDPView;
-class LogView; //
-class TextLogView; //
-class GridLogView; //
-class NetLogView; //
-class GraphLogView; //
+class TableView; //
+class TextTableView; //
+class GridTableView; //
+class NetTableView; //
+class GraphTableView; //
 
 
 // net_qt.h and netstru_so.h

@@ -21,17 +21,16 @@
 #define TA_DATA_H
 
 
-#include "ta_matrix.h"
 #include "ta_base.h"
 #include "ta_group.h"
+#include "ta_matrix.h"
 
-#include "tamisc_def.h"
-#include "tamisc_TA_type.h"
+#include "ta_TA_type.h"
 
 // forwards
 class DataBlock;
 
-class TAMISC_API ChannelSpec: public taNBase { // describes a channel of data in a DataBlock
+class TA_API ChannelSpec: public taNBase { // describes a channel of data in a DataBlock
 INHERITED(taNBase)
 public: 
   String		new_group_name; // if set, creates a new channel group (where supported)
@@ -53,7 +52,7 @@ private:
   void		Destroy() {}
 };
 
-class TAMISC_API MatrixChannelSpec: public ChannelSpec { 
+class TA_API MatrixChannelSpec: public ChannelSpec { 
 // describes a matrix channel of data in a DataBlock
 INHERITED(ChannelSpec) 
 public:
@@ -84,7 +83,7 @@ private:
 };
 
 
-class TAMISC_API ChannelSpec_List: public taList<ChannelSpec> { // 
+class TA_API ChannelSpec_List: public taList<ChannelSpec> { // 
 INHERITED(taList<ChannelSpec>)
 public:
   void		UpdateDataBlockSchema(DataBlock* db);
@@ -98,7 +97,7 @@ private:
 };
 
 
-class TAMISC_API DataBlock: public taNBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS base class for objects that provide and/or accept data
+class TA_API DataBlock: public taNBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS base class for objects that provide and/or accept data
 INHERITED(taNBase)
 public:
   enum DBOptions { // #BITS datablock options -- they also have individual convenience accessors
@@ -284,7 +283,7 @@ private:
 SmartRef_Of(DataBlock); // DataBlockRef
 
 
-class TAMISC_API DataBlock_Idx: public DataBlock { 
+class TA_API DataBlock_Idx: public DataBlock { 
  // #VIRT_BASE #NO_INSTANCE partial implementation for an indexable data block
 public: 
   override bool		sourceItemAvailable() const
@@ -338,7 +337,7 @@ private:
 
 
 /*nn??
-class TAMISC_API ChannelSpec_List: public taList<ChannelSpec> {
+class TA_API ChannelSpec_List: public taList<ChannelSpec> {
 INHERITED(taList<ChannelSpec>)
 public:
   
@@ -357,7 +356,7 @@ private:
 
 
 /* prob NN
-class TAMISC_API SequenceMaster { // #NO_INSTANCE singleton class
+class TA_API SequenceMaster { // #NO_INSTANCE singleton class
 public:
   static SequenceMaster& instance();
   
@@ -392,7 +391,7 @@ private:
 
 */
 /*
-class TAMISC_API DataCatalog: public taNBase { // #VIRT_BASE #NO_INSTANCE a Catalog provides a collection of data items
+class TA_API DataCatalog: public taNBase { // #VIRT_BASE #NO_INSTANCE a Catalog provides a collection of data items
 INHERITED(taNBase)
 public:
 

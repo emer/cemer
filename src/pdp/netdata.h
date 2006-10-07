@@ -26,22 +26,6 @@
 
 #include "pdp_TA_type.h"
 
-// forwards this file
-class DataTable_Group;
-
-class PDP_API DataTable_Group : public taGroup<DataTable> {
-  // group of data objects
-INHERITED(taGroup<DataTable>)
-public:
-//  virtual void	AutoEdit();
-
-  TA_BASEFUNS(DataTable_Group);
-  
-private:
-  void	Initialize() 		{ SetBaseType(&TA_DataTable); }
-  void 	Destroy()		{ };
-};
-
 //////////////////////////////////////////
 //	Layer Reader / Writer		//
 //////////////////////////////////////////

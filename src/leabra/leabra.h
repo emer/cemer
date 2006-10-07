@@ -293,7 +293,7 @@ public:
 
   virtual void	Defaults();	// #BUTTON #CONFIRM restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
-  virtual void	GraphWtSigFun(GraphLog* graph_log);
+//TEMP  virtual void	GraphWtSigFun(GraphLog* graph_log);
   // #BUTTON #NULL_OK graph the sigmoidal weight contrast enhancement function (NULL = new graph log)
 
   void	UpdateAfterEdit();
@@ -691,11 +691,11 @@ public:
 
   virtual void	Defaults();	// #BUTTON #CONFIRM restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
-  virtual void	GraphVmFun(GraphLog* graph_log, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .01);
+//TEMP  virtual void	GraphVmFun(GraphLog* graph_log, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .01);
   // #BUTTON #NULL_OK graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph log)
-  virtual void	GraphActFmVmFun(GraphLog* graph_log, float min = .15, float max = .50, float incr = .001);
+//TEMP  virtual void	GraphActFmVmFun(GraphLog* graph_log, float min = .15, float max = .50, float incr = .001);
   // #BUTTON #NULL_OK graph the activation function as a function of membrane potential (v_m) (NULL = new graph log)
-  virtual void	GraphActFmNetFun(GraphLog* graph_log, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
+//TEMP  virtual void	GraphActFmNetFun(GraphLog* graph_log, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
   // #BUTTON #NULL_OK graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph log)
 
   bool  CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet=false);

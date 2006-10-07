@@ -743,7 +743,7 @@ public:
   virtual bool 	SetConGpType(TypeDef* td);
   // set the connection group type for all connections in this prjn
 
-  virtual void	GridViewWeights(GridLog* grid_log, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
+//obs  virtual void	GridViewWeights(GridLog* grid_log, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
   /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of projection weights (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
      (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
   virtual void	WeightsToTable(DataTable* dt);
@@ -1086,7 +1086,7 @@ public:
   virtual int	ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp);
   // switch any layers using old_sp to using new_sp
 
-  virtual void	GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
+//obs  virtual void	GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
   /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of weights from sending layer (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
      (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
   virtual void	WeightsToTable(DataTable* dt, Layer* send_lay);
@@ -1365,7 +1365,7 @@ public:
   virtual void	TwoD_Or_ThreeD(LayerLayout layout_type);
   // #MENU #MENU_SEP_BEFORE Set 2d or 3d and reposition and redraw layers
 
-  virtual void	GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_lay, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
+//obs  virtual void	GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_lay, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
   /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of weights from sending layer to recv_lay (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
      (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
   virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);

@@ -17,15 +17,13 @@
 
 // stuff to implement pdplog_view graphics
 
+#include "ta_qt.h"
+
+#include "datagraph_qtso.h"
+
 #include "pdp_qtso.h"
 #include "pdplog_qtso.h"
-//obs#include "sched_proc.h"
 #include "pdpshell.h"
-#include "datagraph_qtso.h"
-//#include "datagraph.h"
-//#include <iv_misc/vcrbitmaps.h>
-//#include <iv_misc/dastepper.h>
-#include "ta_qt.h"
 
 #include "icolor.h"
 
@@ -61,12 +59,32 @@
 
 #include <time.h>		// for animate
 
-//////////////////////////////////
-//	LogView IV Stuff	//
-//////////////////////////////////
+//////////////////////////
+//  TableView		//
+//////////////////////////
 
-void LogView::Initialize() {
-  data_base = &TA_PDPLog;
+// TEMP: conversion properties
+int TableView::virt_lines_() const {
+  DataTable* dt = data();
+  if (dt) return dt->rows;
+  else return 0;
+}
+int TableView::data_range_min_() const {
+  return 0;
+}
+int TableView::data_range_max_() const {
+  DataTable* dt = data();
+  if (dt) return dt->rows - 1;
+  else return 0;
+}
+// END conversion properties
+
+void TableView::InitNew(TableView* lv, DataTable* dt, T3DataViewer* vw) {
+//TODO
+}
+
+void TableView::Initialize() {
+  data_base = &TA_DataTable;
 //obs  view_bufsz = 100;
   view_bufsz = 0; //note: set by actual class based on screen
 //obs  view_shift = .2f;
@@ -75,75 +93,94 @@ void LogView::Initialize() {
   viewspec = NULL;
   display_toggle = true;
   m_lvp = NULL;
+  geom.SetXYZ(4, 1, 3);
+  //TODO: new ones should offset pos in viewers so they don't overlap
+  pos.SetXYZ(0-geom.x, 0, 0);
   frame_inset = 0.05f;
+  own_data = false;
 
-  SetAdapter(new LogViewAdapter(this));
+  SetAdapter(new TableViewAdapter(this));
 }
 
-void LogView::InitLinks() {
+void TableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(view_range, this);
   taBase::Own(viewspecs,this);
+  taBase::Own(pos,this);
+  taBase::Own(geom,this);
 
-  log()->SyncLogViewUpdaters(); // make sure we're all together here..
-  CreateViewSpec();
-  viewspec->BuildFromDataTable(&(log()->data));
+  if (!taMisc::is_loading) {
+    CreateViewSpec();
+    viewspec->BuildFromDataTable(data());
+  }
 }
 
-void LogView::CutLinks() {
+void TableView::CutLinks() {
   taBase::DelPointer((TAPtr*)&viewspec);
+  geom.CutLinks();
+  pos.CutLinks();
   viewspecs.CutLinks();
   view_range.CutLinks();
   if (m_lvp) {
     m_lvp = NULL;
   }
+  // if we own the data, have to delete it now because inherited will disconnect us
+  if (own_data && data()) {
+    delete data(); // will null our pointer
+  }
   inherited::CutLinks();
 }
 
-void LogView::Copy_(const LogView& cp) {
+void TableView::Copy_(const TableView& cp) {
   view_bufsz = cp.view_bufsz;
 //obs  view_shift = cp.view_shift;
   view_range = cp.view_range;
   viewspecs = cp.viewspecs;
+  pos = cp.pos;
+  pos.x++; pos.y--; pos.z++; // outset it from last one
+  geom = cp.geom;
   frame_inset = cp.frame_inset;
+  //TODO: we will need to fixup the ref to the data
+  own_data = cp.own_data;
 }
 
-void LogView::UpdateAfterEdit() {
+void TableView::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  if (own_data && data()) UpdateOwnedData();
   if(!taMisc::gui_active) return;
   SetToggle(display_toggle);
   InitDisplay();
 }
 
-void LogView::AddNotify(TAPtr ud) {
-/*obs  if(ud->InheritsFrom(TA_SchedProcess) && (log() != NULL)) {
-    log()->AddUpdater((SchedProcess*)ud);
-  } */
+void TableView::UpdateOwnedData() {
+  DataTable* dt = data();
+  if (!dt) return;
+  dt->SetName(GetName()); // mirror our name
 }
 
-void LogView::ClearData() {
-  if (log()) {
-    log()->Clear();
+void TableView::ClearData() {
+  if (data()) {
+    data()->ResetData();
   }
   view_range.min = 0;
   view_range.max = -1;
   InitDisplay();
 }
 
-TypeDef* LogView::DT_ViewSpecType() {
+TypeDef* TableView::DT_ViewSpecType() {
   return &TA_DT_ViewSpec;
 }
 
-TypeDef* LogView::DA_ViewSpecType() {
+TypeDef* TableView::DA_ViewSpecType() {
   return &TA_DA_ViewSpec;
 }
 
-/*void LogView::CloseWindow() {
-  if (!IsMapped()) return;
+/*void TableView::CloseWindow() {
+  if (!isMapped()) return;
   inherited::CloseWindow();
 } */
 
-void LogView::CreateViewSpec() {
+void TableView::CreateViewSpec() {
   if (viewspecs.size == 0) {
     viewspecs.New(1, DT_ViewSpecType());
     taBase::DelPointer((TAPtr*)&viewspec); // this must be old if it exists
@@ -154,18 +191,18 @@ void LogView::CreateViewSpec() {
   }
 }
 
-void LogView::EditViewSpec(taBase* spec){
+void TableView::EditViewSpec(taBase* spec){
   if(spec==NULL) return;
   spec->Edit();
 }
 
-QWidget* LogView::GetPrintData() {
+QWidget* TableView::GetPrintData() {
 return NULL; //temp //TODO  return win_box;
 }
 
-void LogView::InitDisplay(){
+void TableView::InitDisplay(){
   // save the display names
-  int mxsz = MIN(viewspec->leaves, log()->display_labels.size);
+/*obs  int mxsz = MIN(viewspec->leaves, log()->display_labels.size);
   int i;
   for(i=0;i<mxsz;i++) {
     DA_ViewSpec* dvs = (DA_ViewSpec*)viewspec->Leaf(i);
@@ -175,21 +212,17 @@ void LogView::InitDisplay(){
     else {
       log()->display_labels[i] = "";
     }
-  }
+  } */
   InitDisplayParams();
 }
 
-void LogView::InitPanel() {
+void TableView::InitPanel() {
   if (m_lvp)
     m_lvp->InitPanel();
 }
 
-bool LogView::IsMapped() {
-  return m_node_so.ptr();
-}
-
-void LogView::NewHead() {
-  if(log() && (viewspec != NULL)) {
+void TableView::NewHead() {
+  if(data() && (viewspec != NULL)) {
     if (!viewspec->BuildFromDataTable()) {
       viewspec->ReBuildFromDataTable();	// make sure it rebuilds for sure!!
     }
@@ -197,19 +230,13 @@ void LogView::NewHead() {
   //  UpdateDispLabels();
 }
 
-void LogView::OnWindowBind_impl(iT3DataViewer* vw) {
+void TableView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   QObject::connect(vw, SIGNAL(selectionChanged(ISelectable_PtrList&)),
     adapter, SLOT(viewWin_selectionChanged(ISelectable_PtrList&)) );
 }
 
-void LogView::RemoveNotify(TAPtr ud) {
-/*obs  if(ud->InheritsFrom(TA_SchedProcess) && (log() != NULL)) {
-    log()->RemoveUpdater((SchedProcess*)ud);
-  } */
-}
-
-void LogView::Render_pre() {
+void TableView::Render_pre() {
   if (!m_node_so.ptr()) return; // shouldn't happen
 
   // release any previous incarnation of graph in panel
@@ -217,7 +244,7 @@ void LogView::Render_pre() {
     m_lvp->t3vs->setSceneGraph(NULL);
   }
 
-  T3LogViewNode* node_so = this->node_so(); //cache
+  T3TableViewNode* node_so = this->node_so(); //cache
   node_so->setShowFrame(true);
   node_so->frame()->inset = frame_inset;
   const iColor* col = GetEditColorInherit();
@@ -229,14 +256,13 @@ void LogView::Render_pre() {
   InitDisplayParams();
 }
 
-void LogView::Render_impl() {
-  PDPLog* log = this->log(); // cache
+void TableView::Render_impl() {
   // set origin: in allocated area
   FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ(log->pos.x, (log->pos.z + 0.5f), -log->pos.y);
+  ft->translate.SetXYZ(pos.x, (pos.z + 0.5f), -pos.y);
 
-  T3LogViewNode* node_so = this->node_so(); // cache
-  node_so->setGeom(log->geom.x, log->geom.y, log->geom.z);
+  T3TableViewNode* node_so = this->node_so(); // cache
+  node_so->setGeom(geom.x, geom.y, geom.z);
   SoFont* font = node_so->captionFont(true);
   float font_size = 0.4f;
   font->size.setValue(font_size); // is in same units as geometry units of network
@@ -246,7 +272,7 @@ void LogView::Render_impl() {
   inherited::Render_impl();
 }
 
-void LogView::Render_post() {
+void TableView::Render_post() {
   inherited::Render_post();
   if (m_lvp && m_lvp->t3vs) {
     m_lvp->t3vs->setSceneGraph(node_so()); //TODO: change to node_so()->canvas()
@@ -254,13 +280,13 @@ void LogView::Render_post() {
   }
 }
 
-void LogView::Reset_impl() {
+void TableView::Reset_impl() {
   view_range.max = -1;
   view_range.min = 0;
   inherited::Reset_impl();
 }
 
-void LogView::SetVisibility(taBase* spec, bool vis) {
+void TableView::SetVisibility(taBase* spec, bool vis) {
   if(spec==NULL) return;
   if(spec->InheritsFrom(&TA_DA_ViewSpec)) {
     DA_ViewSpec* davs = (DA_ViewSpec*)spec;
@@ -274,7 +300,7 @@ void LogView::SetVisibility(taBase* spec, bool vis) {
   }
 }
 
-void LogView::SetLogging(taBase* spec, bool log_data, bool also_chg_vis) {
+void TableView::SetLogging(taBase* spec, bool log_data, bool also_chg_vis) {
   if(spec==NULL) return;
   if(spec->InheritsFrom(&TA_DA_ViewSpec)) {
     DA_ViewSpec* davs = (DA_ViewSpec*)spec;
@@ -295,43 +321,21 @@ void LogView::SetLogging(taBase* spec, bool log_data, bool also_chg_vis) {
   }
 }
 
-void LogView::SetToggle(bool value){
+void TableView::SetToggle(bool value){
   display_toggle = value;
 //TODO: update display  if(disp_tog_but) {
 //    disp_tog_but->setDown(value);
 //  }
 }
 
-void LogView::SetWinName() {
-  if(log() == NULL)    return;
-  if(!taMisc::gui_active) return;
-//  if (m_window == NULL)    return;
-/*TODO  if(GetName().contains(GetTypeDef()->name) || GetName().contains(mgr->GetName())) {
-    int idx = mgr->views.FindLeaf(this);
-    SetName(mgr->GetName() + "_" + String(idx));
-  }
-  String t1 = GetName();
-  String nw_name = String(taiM->classname()) + ": " + mgr->GetPath() +
-    "(" + mgr->GetName() + ")" + " Vw: " + t1.after("_");
-  if(log()->log_file->IsOpen() && !log()->log_file->fname.empty()) {
-    nw_name += String(" Fn:") + log()->log_file->fname;
-    file_name = log()->log_file->fname;
-    mgr->file_name = file_name;
-  }
-  if(nw_name == win_name) return; // no need to set, same name!
-  win_name = nw_name;
-  mgr->win_name = nw_name;
-  window->setCaption(nw_name); */
-}
-
-void LogView::ToggleDisplay() {
+void TableView::ToggleDisplay() {
   display_toggle = !display_toggle;
 //TODO:  if(disp_tog_but != NULL) {
 //    disp_tog_but->setDown(display_toggle);
 //  }
 }
 
-void LogView::UpdateDispLabels() {
+/*nn void TableView::UpdateDispLabels() {
   if((log() == NULL) || (viewspec == NULL)) return;
   // restore the display names
   int mxsz = MIN(viewspec->leaves, log()->display_labels.size);
@@ -342,9 +346,9 @@ void LogView::UpdateDispLabels() {
     if(!dnm.empty())
       dvs->display_name = dnm;
   }
-}
+}*/
 
-void LogView::UpdateFromBuffer() {
+void TableView::UpdateFromBuffer() {
   if (!display_toggle)
     return;
   UpdateFromBuffer_impl();
@@ -352,16 +356,16 @@ void LogView::UpdateFromBuffer() {
     m_lvp->BufferUpdated();
 }
 
-void LogView::UpdateFromBuffer_impl() {
+void TableView::UpdateFromBuffer_impl() {
 }
 
-void LogView::UpdateDisplay(TAPtr){
+void TableView::UpdateDisplay(TAPtr){
 //TODO:fixup  inherited::UpdateDisplay();
 }
 
-void LogView::View_At(int start) {
+void TableView::View_At(int start) {
   if(!taMisc::gui_active) return;
-  int virt_lines = log()->virt_lines();
+  int virt_lines = virt_lines_();
   if (start >= virt_lines)
     start = virt_lines - 1;
   if (start < 0)
@@ -369,23 +373,23 @@ void LogView::View_At(int start) {
 
   view_range.min = start;
   view_range.max = view_range.min + view_bufsz -1; // always keep min and max valid
-  int log_max = MAX(virt_lines - 1, log()->data_range.max);
+  int log_max = MAX(virt_lines - 1, data_range_max_());
   view_range.MaxLT(log_max); // keep it less than max
-  log()->Buffer_SeekForView(view_range);
-  view_range.MinGT(log()->data_range.min); // redo now that data_range.min is final
+//obs  log()->Buffer_SeekForView(view_range);
+  view_range.MinGT(data_range_min_()); // redo now that data_range.min is final
   view_range.max = view_range.min + view_bufsz -1;
-  view_range.MaxLT(log()->data_range.max);
+  view_range.MaxLT(data_range_max_());
   UpdateFromBuffer();
 }
 
-void LogView::View_FF() {
+void TableView::View_FF() {
   if(!taMisc::gui_active) return;
-  int virt_lines = log()->virt_lines();
+  int virt_lines = virt_lines_();
   View_At(virt_lines - view_bufsz);
 }
 
 /*obs
-void LogView::View_F() {
+void TableView::View_F() {
   if(!taMisc::gui_active) return;
   int shft = (int)((float)view_bufsz * view_shift);
   if(shft < 1) shft = 1;
@@ -403,7 +407,7 @@ void LogView::View_F() {
   UpdateFromBuffer();
 }
 
-void LogView::View_FSF() {
+void TableView::View_FSF() {
   if(!taMisc::gui_active) return;
   view_range.max += view_bufsz;
   int log_max = MAX(log()->log_lines-1, log()->data_range.max);
@@ -419,7 +423,7 @@ void LogView::View_FSF() {
   UpdateFromBuffer();
 }
 
-void LogView::View_FF() {
+void TableView::View_FF() {
   if(!taMisc::gui_active) return;
   view_range.max = MAX(log()->log_lines-1, log()->data_range.max);
   view_range.min = view_range.max - view_bufsz +1; // always keep min and max valid
@@ -433,7 +437,7 @@ void LogView::View_FF() {
   UpdateFromBuffer();
 }
 
-void LogView::View_R() {
+void TableView::View_R() {
   if(!taMisc::gui_active) return;
   int shft = (int)((float)view_bufsz * view_shift);
   if(shft < 1) shft = 1;
@@ -451,7 +455,7 @@ void LogView::View_R() {
   UpdateFromBuffer();
 }
 
-void LogView::View_FSR() {
+void TableView::View_FSR() {
   if(!taMisc::gui_active) return;
   view_range.min -= view_bufsz;
   view_range.MinGT(0);
@@ -467,7 +471,7 @@ void LogView::View_FSR() {
   UpdateFromBuffer();
 }
 
-void LogView::View_FR() {
+void TableView::View_FR() {
   if(!taMisc::gui_active) return;
   view_range.min = 0;
   view_range.max = view_range.min + view_bufsz -1; // always keep min and max valid
@@ -487,68 +491,14 @@ void LogView::View_FR() {
 // 	Analysis Routines 	//
 //////////////////////////////////
 
-void LogView::CopyToTable(taBase* data, taBase* labels, DataTable* dt) { /* TODO OBS
-  if((data == NULL) || (labels == NULL)) return;
-  if(!data->InheritsFrom(&TA_DT_ViewSpec)){
-    taMisc::Error("CopyToEnv: copying of single column of data not supported -- please select a group of data");
-    return;
-  }
-  if(!labels->InheritsFrom(&TA_DA_ViewSpec)){
-    taMisc::Error("CopyToEnv: labels must be a single column in the log, not a group");
-    return;
-  }
-  if(env == NULL) {
-    env = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase), &TA_Environment);
-    if(env == NULL) return;
-  }
-  env->events.Reset();
-  DT_ViewSpec* dtvs = (DT_ViewSpec*)data;
-  DataTable* tabl = dtvs->data_table;
-
-  DA_ViewSpec* davs = (DA_ViewSpec*)labels;
-  taArray_base* labsbs = davs->data_array->AR();
-  float_RArray* rlabs = NULL;
-  String_Array* slabs = NULL;
-  if(labsbs->InheritsFrom(TA_float_RArray))
-    rlabs = (float_RArray*)labsbs;
-  else if(labsbs->InheritsFrom(TA_String_Array))
-    slabs = (String_Array*)labsbs;
-
-  EventSpec* es = env->GetAnEventSpec();
-  es->UpdateAfterEdit();	// make sure its all done with internals..
-  es->patterns.EnforceSize(1);
-
-  PatternSpec* ps = (PatternSpec*)es->patterns[0];
-  ps->n_vals = tabl->leaves;
-  if(dtvs->InheritsFrom(TA_DT_GridViewSpec))
-    ps->geom = ((DT_GridViewSpec*)dtvs)->geom;
-  ps->UpdateAfterEdit();	// this will sort out cases where nvals > geom
-  es->UpdateAllEvents();	// get them all straightened out
-
-  int len = tabl->MinLength();
-  int i;
-  for (i=0;i<len;i++) {
-    Event* ev = (Event*)env->events.NewEl(1);
-    if(rlabs != NULL)
-      ev->name = (String)rlabs->SafeEl(i);
-    else if(slabs != NULL)
-      ev->name = (String)slabs->SafeEl(i);
-    else
-      ev->name = "Row_" + String(i);
-    Pattern* pat = (Pattern*)ev->patterns.FastEl(0);
-    pat->value.Reset();
-    tabl->AddRowToArray(pat->value, i);
-  }*/
-} 
-
-void LogView::LogUpdateAfterEdit() {
-  if (viewspec && (viewspec->leaves != log()->data.cols()))
+void TableView::LogUpdateAfterEdit() {
+  if (data() && viewspec && (viewspec->leaves != data()->cols()))
     NewHead();
   //TODO: following is legacy, and may be obsolete
 //      NotifyAllUpdaters();	// make sure logs are getting it from  us..
 }
 /*TODO 
-void LogView::DistMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log,
+void TableView::DistMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log,
 			     float_RArray::DistMetric metric, bool norm, float tol) {
   if(!data->InheritsFrom(&TA_DT_ViewSpec)){
     taMisc::Error("DistMatrixGrid: use of single data of data not supported -- please select a vector (group) of data");
@@ -565,7 +515,7 @@ void LogView::DistMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log,
   tabMisc::Close_Obj(env);
 }
 
-void LogView::ClusterPlot(taBase* data, taBase* labels, GraphLog* disp_log,
+void TableView::ClusterPlot(taBase* data, taBase* labels, GraphLog* disp_log,
 			  float_RArray::DistMetric metric, bool norm, float tol) {
   if(!data->InheritsFrom(&TA_DT_ViewSpec)) {
     taMisc::Error("ClusterPlot: use of single data of data not supported -- please select a vector (group) of data");
@@ -582,7 +532,7 @@ void LogView::ClusterPlot(taBase* data, taBase* labels, GraphLog* disp_log,
   tabMisc::Close_Obj(env);
 }
 
-void LogView::CorrelMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log) {
+void TableView::CorrelMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log) {
   if(!data->InheritsFrom(&TA_DT_ViewSpec)) {
     taMisc::Error("CorrelMatrixGrid: use of single data of data not supported -- please select a vector (group) of data");
     return;
@@ -598,7 +548,7 @@ void LogView::CorrelMatrixGrid(taBase* data, taBase* labels, GridLog* disp_log) 
   tabMisc::Close_Obj(env);
 }
 
-void LogView::PCAEigenGrid(taBase* data, taBase* labels, GridLog* disp_log) {
+void TableView::PCAEigenGrid(taBase* data, taBase* labels, GridLog* disp_log) {
   if(!data->InheritsFrom(&TA_DT_ViewSpec)){
     taMisc::Error("PCAEigenGrid: use of single data of data not supported -- please select a vector (group) of data");
     return;
@@ -614,7 +564,7 @@ void LogView::PCAEigenGrid(taBase* data, taBase* labels, GridLog* disp_log) {
   tabMisc::Close_Obj(env);
 }
 
-void LogView::PCAPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int x_axis_component, int y_axis_component) {
+void TableView::PCAPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int x_axis_component, int y_axis_component) {
   if(!data->InheritsFrom(&TA_DT_ViewSpec)){
     taMisc::Error("PCAPrjnPlot: use of single data of data not supported -- please select a vector (group) of data");
     return;
@@ -630,7 +580,7 @@ void LogView::PCAPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int 
   tabMisc::Close_Obj(env);
 }
 
-void LogView::MDSPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int x_axis_component, int y_axis_component) {
+void TableView::MDSPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int x_axis_component, int y_axis_component) {
   if(!data->InheritsFrom(&TA_DT_ViewSpec)){
     taMisc::Error("MDSPrjnPlot: use of single data of data not supported -- please select a vector (group) of data");
     return;
@@ -647,41 +597,41 @@ void LogView::MDSPrjnPlot(taBase* data, taBase* labels, GraphLog* disp_log, int 
 }
 */
 //////////////////////////
-// 	GridLogViewBase	//
+// 	GridTableViewBase	//
 //////////////////////////
 
-void GridLogViewBase::Initialize() {
+void GridTableViewBase::Initialize() {
   cols = 0;
   row_height = 0.1f; // non-zero dummy value
   tot_col_widths = 0.00001f; //avoid /0
 }
 
-void GridLogViewBase::InitLinks() {
+void GridTableViewBase::InitLinks() {
   inherited::InitLinks();
   taBase::Own(col_range, this);
 }
 
-void GridLogViewBase::CutLinks() {
+void GridTableViewBase::CutLinks() {
   col_range.CutLinks();
   inherited::CutLinks();
 }
 
-void GridLogViewBase::Copy_(const GridLogViewBase& cp) {
+void GridTableViewBase::Copy_(const GridTableViewBase& cp) {
   cols = cp.cols;
   col_range = cp.col_range;
   col_widths = cp.col_widths;
 }
 
-void GridLogViewBase::UpdateAfterEdit() {
+void GridTableViewBase::UpdateAfterEdit() {
   AdjustColView();
   inherited::UpdateAfterEdit();
 }
 
-void GridLogViewBase::Clear_impl() {
+void GridTableViewBase::Clear_impl() {
 //  if (!taMisc::gui_active ) return;
   view_range.max = -1;
   view_range.min = 0;
-  T3GridLogViewBaseNode* node_so = this->node_so();
+  T3GridTableViewBaseNode* node_so = this->node_so();
   if (node_so) {
     node_so->header()->removeAllChildren();
     node_so->body()->removeAllChildren();
@@ -689,11 +639,11 @@ void GridLogViewBase::Clear_impl() {
   inherited::Clear_impl();
 }
 
-void GridLogViewBase::NewData() {
-  if(!IsMapped() || !display_toggle) return;
+void GridTableViewBase::NewData() {
+  if (!isMapped() || !display_toggle) return;
 
   // if we are not at the very end, then don't scroll, but do update the panel
-  if ((view_range.max < log()->data_range.max-1) && (view_range.max > 0)) {
+  if ((view_range.max < data_range_max_()-1) && (view_range.max > 0)) {
     if (m_lvp)
       m_lvp->BufferUpdated();
     return;
@@ -706,10 +656,10 @@ void GridLogViewBase::NewData() {
   UpdateFromBuffer();
 }
 
-void GridLogViewBase::NewHead() {
-  if(!IsMapped() || !display_toggle) return;
+void GridTableViewBase::NewHead() {
+  if(!isMapped() || !display_toggle) return;
   inherited::NewHead();
-  T3GridLogViewBaseNode* node_so = this->node_so();
+  T3GridTableViewBaseNode* node_so = this->node_so();
   if (node_so) {
     node_so->header()->removeAllChildren();
   }
@@ -717,24 +667,24 @@ void GridLogViewBase::NewHead() {
   RenderHead();
 }
 
-void GridLogViewBase::Render_pre() {
-  m_node_so = new T3GridLogViewBaseNode(this);
+void GridTableViewBase::Render_pre() {
+  m_node_so = new T3GridTableViewBaseNode(this);
 
   inherited::Render_pre();
 }
 
-void GridLogViewBase::Render_post() {
+void GridTableViewBase::Render_post() {
   RenderHead();
   UpdateFromBuffer();
   inherited::Render_post();
 }
 
-void GridLogViewBase::Reset_impl() {
+void GridTableViewBase::Reset_impl() {
   col_range.min = 0;
   inherited::Reset_impl();
 }
 
-void GridLogViewBase::VScroll(bool left) {
+void GridTableViewBase::VScroll(bool left) {
   if (left) {
     ViewC_At(col_range.min - 1);
   } else {
@@ -742,7 +692,7 @@ void GridLogViewBase::VScroll(bool left) {
   }
 }
 
-void GridLogViewBase::ViewC_At(int start) {
+void GridTableViewBase::ViewC_At(int start) {
   if (start < 0) start = 0;
   if (start >= cols) start = cols - 1;
   if (col_range.min == start) return;
@@ -754,50 +704,50 @@ void GridLogViewBase::ViewC_At(int start) {
 
 
 //////////////////////////
-// 	TextLogView	//
+// 	TextTableView	//
 //////////////////////////
 
-void TextLogView::Initialize() {
+void TextTableView::Initialize() {
 }
 
-void TextLogView::InitLinks() {
+void TextTableView::InitLinks() {
   inherited::InitLinks();
 }
 
-void TextLogView::CutLinks() {
+void TextTableView::CutLinks() {
   inherited::CutLinks();
 }
 
-void TextLogView::UpdateAfterEdit() {
-  LogView::UpdateAfterEdit();
+void TextTableView::UpdateAfterEdit() {
+  TableView::UpdateAfterEdit();
   InitDisplay();
 }
 
-void TextLogView::AdjustColView() {
+void TextTableView::AdjustColView() {
   col_range.max = col_range.min - 1;
   if (cols == 0) return;
   float wd_tot = 0.0f;
-  while ((col_range.max < (cols - 1)) && ((wd_tot += col_widths[col_range.max + 1]) <= (float)log()->geom.x))
+  while ((col_range.max < (cols - 1)) && ((wd_tot += col_widths[col_range.max + 1]) <= (float)geom.x))
     col_range.max++;
 }
 
-TypeDef* TextLogView::DT_ViewSpecType() {
+TypeDef* TextTableView::DT_ViewSpecType() {
   return &TA_DT_ViewSpec;
 }
 
-TypeDef* TextLogView::DA_ViewSpecType() {
+TypeDef* TextTableView::DA_ViewSpecType() {
   return &TA_DA_TextViewSpec;
 }
 
-QWidget* TextLogView::GetPrintData(){
-return NULL; /*TODO  if(vbox == NULL) return LogView::GetPrintData();
+QWidget* TextTableView::GetPrintData(){
+return NULL; /*TODO  if(vbox == NULL) return TableView::GetPrintData();
   return patch; */
 }
 
-void TextLogView::InitDisplay() {
-  if (!(IsMapped() && taMisc::gui_active)) return;
-  LogView::InitDisplay(); //clears
-/*nn  T3GridLogViewBaseNode* node_so = this->node_so();
+void TextTableView::InitDisplay() {
+  if (!(isMapped() && taMisc::gui_active)) return;
+  TableView::InitDisplay(); //clears
+/*nn  T3GridTableViewBaseNode* node_so = this->node_so();
   node_so->body()->removeAllChildren();
 
   NewHead();
@@ -805,17 +755,17 @@ void TextLogView::InitDisplay() {
   UpdateDisplay(); */
 }
 
-void TextLogView::InitDisplayParams() {
+void TextTableView::InitDisplayParams() {
   DT_ViewSpec* tvs = viewSpec();
   // row height, and number of rows
   row_height = tvs->def_font.pointSize / pdpMisc::pts_per_so_unit;
-  view_bufsz = (int)(log()->geom.z / row_height) - 1; // 1 for header
+  view_bufsz = (int)(geom.z / row_height) - 1; // 1 for header
 
   InitHead();
   InitPanel();
 }
 
-void TextLogView::InitHead() {
+void TextTableView::InitHead() {
   DT_ViewSpec* tvs = viewSpec();
   // col widths, and number of cols
   cols = 0;
@@ -829,7 +779,7 @@ void TextLogView::InitHead() {
     // col width will depend on font size, and number of tabs in col (8 chars / tab)
     float col_wd = MIN(
       (tvs->def_font.pointSize * vs->width * 8)  / pdpMisc::char_pts_per_so_unit,
-      (float)log()->geom.x
+      (float)geom.x
     );
     tot_col_widths += col_wd;
     col_widths.Add(col_wd);
@@ -837,8 +787,8 @@ void TextLogView::InitHead() {
   AdjustColView();
 }
 
-/*void TextLogView::NewData() {
-  if(!IsMapped() || !display_toggle) return;
+/*void TextTableView::NewData() {
+  if(!isMapped() || !display_toggle) return;
 
   if((view_range.max < log()->data_range.max-1) && (view_range.max > 0))
     return;			// i'm not viewing the full file here..
@@ -852,19 +802,18 @@ void TextLogView::InitHead() {
   UpdateDisplay();
 } */
 
-void TextLogView::OnWindowBind_impl(iT3DataViewer* vw) {
+void TextTableView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
-    m_lvp = new iTextLogView_Panel(this);
+    m_lvp = new iTextTableView_Panel(this);
     vw->window()->AddPanelNewTab(m_lvp);
   }
 }
 
-void TextLogView::RenderHead() {
+void TextTableView::RenderHead() {
   //note: only called when node exists
-  T3GridLogViewBaseNode* node_so = this->node_so();
+  T3GridTableViewBaseNode* node_so = this->node_so();
   DT_ViewSpec* tvs = viewSpec();
-  PDPLog* log = this->log(); //cache
   // make header
   SoSeparator* hdr = new SoSeparator();
   SoFont* fnt = new SoFont();
@@ -883,7 +832,7 @@ void TextLogView::RenderHead() {
     SoTranslation* tr = new SoTranslation();
     hdr->addChild(tr);
     if (col == col_range.min) { // first trnsl positions row
-      tr->translation.setValue(0.0f, log->geom.z - row_height, 0.0f);
+      tr->translation.setValue(0.0f, geom.z - row_height, 0.0f);
     } else {
       tr->translation.setValue(col_widths[col - 1], 0.0f, 0.0f);
     }
@@ -897,7 +846,7 @@ void TextLogView::RenderHead() {
 }
 
 /*obs
-int TextLogView::ShowLess(int newsize) {
+int TextTableView::ShowLess(int newsize) {
   if((newsize <= 0) || (newsize == view_bufsz)) return 1;
   view_bufsz = MAX(newsize, 1);	// never show zero!
   view_range.max = view_range.min + view_bufsz -1;
@@ -909,7 +858,7 @@ int TextLogView::ShowLess(int newsize) {
   return 0;
 }
 
-int TextLogView::ShowMore(int newsize) {
+int TextTableView::ShowMore(int newsize) {
   if((newsize <= 0) || (newsize == view_bufsz)) return 1;
   int oldsize = (view_range.max - view_range.min +1);
   view_bufsz = MAX(newsize, 1);
@@ -928,8 +877,8 @@ int TextLogView::ShowMore(int newsize) {
   }
 } */
 
-void TextLogView::RemoveLine(int index){
-  T3GridLogViewBaseNode* node_so = this->node_so();
+void TextTableView::RemoveLine(int index){
+  T3GridTableViewBaseNode* node_so = this->node_so();
   if (!node_so) return;
   if (index == -1) {
     node_so->body()->removeAllChildren();
@@ -939,7 +888,7 @@ void TextLogView::RemoveLine(int index){
   }
 }
 
-void TextLogView::UpdateDisplay(TAPtr) {
+void TextTableView::UpdateDisplay(TAPtr) {
 /*TODO   if(!taMisc::gui_active) return;
   if(patch == NULL) return;
   patch->reallocate();
@@ -947,10 +896,10 @@ void TextLogView::UpdateDisplay(TAPtr) {
   if(anim.capture) CaptureAnimImg(); */
 }
 
-void TextLogView::UpdateFromBuffer_impl(){
+void TextTableView::UpdateFromBuffer_impl(){
   // this updates the data area
   if(!taMisc::gui_active || !display_toggle) return;
-  T3GridLogViewBaseNode* node_so = this->node_so();
+  T3GridTableViewBaseNode* node_so = this->node_so();
   if (!node_so) return;
   node_so->body()->removeAllChildren();
 
@@ -962,17 +911,16 @@ void TextLogView::UpdateFromBuffer_impl(){
 
   // this is the index (in view_range units) of the first view line of data in the buffer
   int row = 0;
-  int buff_offset = log()->data_range.min;
+  int buff_offset = data_range_min_();
   for (int ln = view_range.min; ln <= view_range.max; ln++) {
     UpdateFromBuffer_AddLine(row, ln - buff_offset);
     ++row;
   }
 }
 
-void TextLogView::UpdateFromBuffer_AddLine(int row, int buff_idx){
-  T3GridLogViewBaseNode* node_so = this->node_so();
+void TextTableView::UpdateFromBuffer_AddLine(int row, int buff_idx){
+  T3GridTableViewBaseNode* node_so = this->node_so();
   if (!node_so) return;
-  PDPLog* log = this->log(); //cache
 
   // make line container
   SoSeparator* ln = new SoSeparator();
@@ -980,24 +928,24 @@ void TextLogView::UpdateFromBuffer_AddLine(int row, int buff_idx){
   taLeafItr i;
   int col = 0;
   DA_TextViewSpec* vs;
-  DataTable& dt = log->data;
+  DataTable* dt = data(); //cache
   String el;
   FOR_ITR_EL(DA_TextViewSpec, vs, viewspec->, i) {
-    if((vs->visible == false) || (vs->data_array == NULL)) continue;
+    if((vs->visible == false) || (!vs->data_array)) continue;
     if (col < col_range.min) {++col; continue;}
     if (col > col_range.max) break;
     SoTranslation* tr = new SoTranslation();
     ln->addChild(tr);
     if (col == col_range.min) { // translation is relative to 0,0
-      tr->translation.setValue(0.0f, log->geom.z - (row_height * (row + 2)), 0.0f);
+      tr->translation.setValue(0.0f, geom.z - (row_height * (row + 2)), 0.0f);
     } else {
       tr->translation.setValue(col_widths[col - 1], 0.0f, 0.0f);
     }
-
+//TODO: we really shouldn't be doing this low level stuff ourself...
     taMatrix* mat = vs->data_array->AR();
     int act_idx;
     //calculate the actual row index, for the case of a jagged data tables
-    if ((mat != NULL) && dt.idx(buff_idx, mat->frames(), act_idx)) {
+    if ((mat != NULL) && dt->idx(buff_idx, mat->frames(), act_idx)) {
       el = vs->ValAsString(act_idx);
     } else {
       el = "n/a";
@@ -1012,15 +960,15 @@ void TextLogView::UpdateFromBuffer_AddLine(int row, int buff_idx){
 
 
 //////////////////////////
-//  NetLogView 		//
+//  NetTableView 		//
 //////////////////////////
 
-void NetLogView::Initialize(){
+void NetTableView::Initialize(){
   view_bufsz = 1;
 //obs  view_shift = 1;
 }
 
-void NetLogView::InitLinks() {
+void NetTableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(network, this); // smartptr ref
 /*TODO:fixup  if(updaters.size == 0) return;
@@ -1029,40 +977,40 @@ void NetLogView::InitLinks() {
     SetNetwork(proc->network);	// use process network by default */
 }
 
-void NetLogView::CutLinks() {
+void NetTableView::CutLinks() {
   RemoveLabels();
   network = NULL;
   inherited::CutLinks();
 }
 
 
-TypeDef* NetLogView::DA_ViewSpecType() {
+TypeDef* NetTableView::DA_ViewSpecType() {
   return &TA_DA_NetViewSpec;
 }
 
-void NetLogView::UpdateAfterEdit(){
-  LogView::UpdateAfterEdit();
+void NetTableView::UpdateAfterEdit(){
+  TableView::UpdateAfterEdit();
   UpdateDisplay();
 }
 
-void NetLogView::SetNetwork(Network* net) {
+void NetTableView::SetNetwork(Network* net) {
   network = net;
   ArrangeLabels();
 }
 
-void NetLogView::NewHead(){
-  LogView::NewHead();
+void NetTableView::NewHead(){
+  TableView::NewHead();
   if(!display_toggle) return;
   InitDisplay();
 }
 
-void NetLogView::NewData(){
+void NetTableView::NewData(){
   if(!taMisc::gui_active || !display_toggle) return;
   UpdateDisplay();
 }
 
-void NetLogView::InitDisplay() {
-  LogView::InitDisplay();
+void NetTableView::InitDisplay() {
+  TableView::InitDisplay();
 /*TODO: fixup  if (network == NULL) {
     if(updaters.size == 0) return;
     SchedProcess* proc = (SchedProcess*)updaters.FastEl(0);
@@ -1073,7 +1021,7 @@ void NetLogView::InitDisplay() {
     UpdateDisplay(); */
 }
 
-void NetLogView::ArrangeLabels(int cols, int rows, int width, float left, float top) {
+void NetTableView::ArrangeLabels(int cols, int rows, int width, float left, float top) {
 /*  if(!taMisc::gui_active || (network == NULL)) return;
   UpdateDisplay();
 
@@ -1134,7 +1082,7 @@ void NetLogView::ArrangeLabels(int cols, int rows, int width, float left, float 
   }*/
 }
 
-void NetLogView::UpdateDisplay(TAPtr) {
+void NetTableView::UpdateDisplay(TAPtr) {
   if(!taMisc::gui_active || (!network)) return;
 /*TODO  NetView* netview;
   taLeafItr j;
@@ -1205,15 +1153,15 @@ void NetLogView::UpdateDisplay(TAPtr) {
   }*/
 }
 
-void NetLogView::OnWindowBind_impl(iT3DataViewer* vw) {
+void NetTableView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
-    m_lvp = new iNetLogView_Panel(this);
+    m_lvp = new iNetTableView_Panel(this);
     vw->window()->AddPanelNewTab(m_lvp);
   }
 }
 
-void NetLogView::RemoveLabels() {
+void NetTableView::RemoveLabels() {
   if(!taMisc::gui_active || (!network)) return;
 /*TODO  NetView* netview;
   taLeafItr j;
@@ -1228,17 +1176,17 @@ void NetLogView::RemoveLabels() {
   } */
 }
 
-void NetLogView::UpdateFromBuffer_impl() {
+void NetTableView::UpdateFromBuffer_impl() {
   inherited::UpdateFromBuffer_impl();
   UpdateAfterEdit();
 }
 
 
 //////////////////////////
-//    GridLogView	//
+//    GridTableView	//
 //////////////////////////
 
-void GridLogView::Initialize() {
+void GridTableView::Initialize() {
   fill_type = DT_GridViewSpec::COLOR;
   block_size = 8;
   block_border_size = 1;
@@ -1253,10 +1201,10 @@ void GridLogView::Initialize() {
 //TODO  editor = NULL;
   head_tog_but = NULL;
   auto_sc_but = NULL;
-  SetAdapter(new GridLogViewAdapter(this));
+  SetAdapter(new GridTableViewAdapter(this));
 }
 
-void GridLogView::InitLinks(){
+void GridTableView::InitLinks(){
   inherited::InitLinks();
 
 //done  CreateViewSpec();
@@ -1268,18 +1216,18 @@ void GridLogView::InitLinks(){
   taBase::Own(actual_range,this);
 }
 
-void GridLogView::CutLinks() {
+void GridTableView::CutLinks() {
   view_font.CutLinks();
   taBase::DelPointer((TAPtr*)&colorspec);
   inherited::CutLinks();
 //TODO  if(editor != NULL) { delete editor; editor = NULL; }
 }
 
-void GridLogView::Destroy() {
+void GridTableView::Destroy() {
   CutLinks();
 }
 
-void GridLogView::Copy_(const GridLogView& cp) {
+void GridTableView::Copy_(const GridTableView& cp) {
   fill_type = cp.fill_type;
   block_size = cp.block_size;
   block_border_size = cp.block_border_size;
@@ -1291,8 +1239,8 @@ void GridLogView::Copy_(const GridLogView& cp) {
   actual_range = cp.actual_range;
 }
 
-void GridLogView::UpdateAfterEdit(){
-  LogView::UpdateAfterEdit();
+void GridTableView::UpdateAfterEdit(){
+  TableView::UpdateAfterEdit();
   if (!taMisc::gui_active) return;
   if (taMisc::is_loading) return;
 
@@ -1330,7 +1278,7 @@ void GridLogView::UpdateAfterEdit(){
 }
 
 
-void GridLogView::ColorBar_execute() {
+void GridTableView::ColorBar_execute() {
   auto_scale = false;
 /*TODO  scale_range.min = editor->cbar->min;
   scale_range.max = editor->cbar->max;
@@ -1343,33 +1291,33 @@ void GridLogView::ColorBar_execute() {
 }
 
 
-TypeDef* GridLogView::DT_ViewSpecType() {
+TypeDef* GridTableView::DT_ViewSpecType() {
   return &TA_DT_GridViewSpec;
 }
 
-TypeDef* GridLogView::DA_ViewSpecType() {
+TypeDef* GridTableView::DA_ViewSpecType() {
   return &TA_DA_GridViewSpec;
 }
 
-void GridLogView::NewHead() {
-  LogView::NewHead();
-  if(!IsMapped() || !display_toggle) return;
+void GridTableView::NewHead() {
+  TableView::NewHead();
+  if(!isMapped() || !display_toggle) return;
 //    if((editor != NULL) && (editor->dtvsp != NULL))
 //      editor->dtvsp->UpdateLayout();
   InitDisplay();
 }
 
-void GridLogView::NewData() {
-  if(!IsMapped() || !display_toggle ) return;
-  if((view_range.max < log()->data_range.max-1) && (view_range.max > 0))
+void GridTableView::NewData() {
+  if(!isMapped() || !display_toggle ) return;
+  if((view_range.max < data_range_max_()-1) && (view_range.max > 0))
     return;			// not viewing the whole range, don't update
   view_range.max++;
-  view_range.MaxLT(log()->data_range.max); // double check
+  view_range.MaxLT(data_range_max_()); // double check
   view_range.MinGT(view_range.max - view_bufsz + 1);
-  view_range.WithinRange(log()->data_range); // triple check
+  view_range.WithinRange(data_range_min_(), data_range_max_()); // triple check
 
-  actual_range.min = view_range.min - log()->data_range.min;
-  actual_range.max = view_range.max - log()->data_range.min;
+  actual_range.min = view_range.min - data_range_min_();
+  actual_range.max = view_range.max - data_range_min_();
 /*TODO  editor->view_range = actual_range;
   editor->AddOneLine();
   view_bufsz = editor->disp_lines;
@@ -1378,12 +1326,12 @@ void GridLogView::NewData() {
   view_range.max = actual_range.max + log()->data_range.min; */
 }
 
-void GridLogView::InitDisplay(){
+void GridTableView::InitDisplay(){
   if(!taMisc::gui_active) return;
   if (taMisc::is_loading) return;
-  LogView::InitDisplay();
-  actual_range.min = view_range.min - log()->data_range.min;
-  actual_range.max = view_range.max - log()->data_range.min;
+  TableView::InitDisplay();
+  actual_range.min = view_range.min - data_range_min_();
+  actual_range.max = view_range.max - data_range_min_();
 /*TODO  editor->view_range = actual_range;
   editor->InitDisplay();
   view_bufsz = editor->disp_lines;
@@ -1397,7 +1345,7 @@ void GridLogView::InitDisplay(){
   } */
 }
 
-void GridLogView::UpdateDisplay(TAPtr){
+void GridTableView::UpdateDisplay(TAPtr){
   if(!taMisc::gui_active) return;
 /*TODO  editor->UpdateDisplay();
   auto_scale = editor->auto_scale;
@@ -1408,18 +1356,18 @@ void GridLogView::UpdateDisplay(TAPtr){
   if(anim.capture) CaptureAnimImg(); */
 }
 
-void GridLogView::UpdateFromBuffer_impl() {
+void GridTableView::UpdateFromBuffer_impl() {
   inherited::UpdateFromBuffer_impl();
   InitDisplay();
 }
 
-void GridLogView::Clear_impl(){
+void GridTableView::Clear_impl(){
   view_range.max = -1;
   view_range.min = 0;
   InitDisplay();
 }
 
-void GridLogView::GetBodyRep(){
+void GridTableView::GetBodyRep(){
 /*  if(!taMisc::gui_active) return;
   if(body != NULL) return;
 
@@ -1455,15 +1403,15 @@ void GridLogView::GetBodyRep(){
   } */
 }
 
-void GridLogView::OnWindowBind_impl(iT3DataViewer* vw) {
+void GridTableView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
-    m_lvp = new iGridLogView_Panel(this);
+    m_lvp = new iGridTableView_Panel(this);
     vw->window()->AddPanelNewTab(lvp());
   }
 }
 
-void GridLogView::ToggleHeader() {
+void GridTableView::ToggleHeader() {
   header_on = !header_on;
 //TODO  if(editor != NULL) editor->header_on = header_on;
   if(head_tog_but != NULL) {
@@ -1472,7 +1420,7 @@ void GridLogView::ToggleHeader() {
   }
 }
 
-void GridLogView::ToggleAutoScale() {
+void GridTableView::ToggleAutoScale() {
   auto_scale = !auto_scale;
 //TODO  if(editor != NULL) editor->auto_scale = auto_scale;
   if(auto_sc_but != NULL) {
@@ -1481,40 +1429,40 @@ void GridLogView::ToggleAutoScale() {
   }
 }
 
-QWidget* GridLogView::GetPrintData() {
+QWidget* GridTableView::GetPrintData() {
 /*TODO  if((editor != NULL) && (editor->print_patch != NULL))
     return editor->print_patch; */
-  return LogView::GetPrintData();
+  return TableView::GetPrintData();
 }
 
-void GridLogView::SetColorSpec(ColorScaleSpec* colors) {
+void GridTableView::SetColorSpec(ColorScaleSpec* colors) {
   taBase::SetPointer((TAPtr*)&colorspec, colors);
   UpdateAfterEdit();
 }
 
-void GridLogView::SetBlockFill(DT_GridViewSpec::BlockFill b){
+void GridTableView::SetBlockFill(DT_GridViewSpec::BlockFill b){
   fill_type = b;
 //TODO  editor->fill_type = b;
   InitDisplay();
 }
 
-void GridLogView::SetBlockSizes(int block_sz, int border_sz) {
+void GridTableView::SetBlockSizes(int block_sz, int border_sz) {
   block_size = block_sz;
   block_border_size = border_sz;
   UpdateAfterEdit();
 }
 
-void GridLogView::UpdateGridLayout(DT_GridViewSpec::MatrixLayout ml){
+void GridTableView::UpdateGridLayout(DT_GridViewSpec::MatrixLayout ml){
 //TODO   editor->dtvsp->UpdateLayout(ml);
    InitDisplay(); // gets new headerbox and grids
 }
 
-void GridLogView::SetViewFontSize(int point_size) {
+void GridTableView::SetViewFontSize(int point_size) {
   view_font.SetFontSize(point_size);
   UpdateAfterEdit();
 }
 
-void GridLogView::AllBlockTextOn() {
+void GridTableView::AllBlockTextOn() {
   DT_GridViewSpec* vs = (DT_GridViewSpec*)viewspec;
   int i;
   for(i=0;i<vs->size;i++) {
@@ -1539,7 +1487,7 @@ void GridLogView::AllBlockTextOn() {
   InitDisplay();
 }
 
-void GridLogView::AllBlockTextOff() {
+void GridTableView::AllBlockTextOff() {
   DT_GridViewSpec* vs = (DT_GridViewSpec*)viewspec;
   int i;
   for(i=0;i<vs->size;i++) {
@@ -1565,11 +1513,11 @@ void GridLogView::AllBlockTextOff() {
 }
 /*TODO nn??
 //////////////////////////
-//    GraphLogView	//
+//    GraphTableView	//
 //////////////////////////
 
-void GraphLogViewLabel::GetMasterViewer() {
-  GraphLogView* glv = GET_MY_OWNER(GraphLogView);
+void GraphTableViewLabel::GetMasterViewer() {
+  GraphTableView* glv = GET_MY_OWNER(GraphTableView);
   if((glv != NULL) && (glv->editor != NULL)) {
     GraphEditor* ge = glv->editor;
     if(ge->first_graph != NULL) {
@@ -1579,10 +1527,10 @@ void GraphLogViewLabel::GetMasterViewer() {
   } 
 }*/
 
-void GraphLogView::Initialize() {
+void GraphTableView::Initialize() {
   x_axis_index = 0;
 //  graph = new Graph();
-//  labels.SetBaseType(&TA_GraphLogViewLabel); // make sure to use this type..
+//  labels.SetBaseType(&TA_GraphTableViewLabel); // make sure to use this type..
   view_range.max = 10000;
   view_bufsz = 10000;
   colorspec = NULL;
@@ -1592,15 +1540,15 @@ void GraphLogView::Initialize() {
   graphs = NULL;
 }
 
-TypeDef* GraphLogView::DT_ViewSpecType() {
+TypeDef* GraphTableView::DT_ViewSpecType() {
   return &TA_GraphSpec;
 }
 
-TypeDef* GraphLogView::DA_ViewSpecType() {
+TypeDef* GraphTableView::DA_ViewSpecType() {
   return &TA_GraphColSpec;
 }
 
-void GraphLogView::InitLinks() {
+void GraphTableView::InitLinks() {
 //  taBase::Own(graph, this);
 //  taBase::Own(labels,this);
   taBase::Own(actual_range,this);
@@ -1608,14 +1556,14 @@ void GraphLogView::InitLinks() {
   UpdateViewRange();
 }
 
-void GraphLogView::CutLinks() {
+void GraphTableView::CutLinks() {
 //  labels.CutLinks();
   taBase::DelPointer((TAPtr*)&colorspec);
 //  if (graph) graph.CutLinks();
   inherited::CutLinks();
 }
 
-void GraphLogView::Destroy() {
+void GraphTableView::Destroy() {
   CutLinks();
 /*  if (graph) {
     delete graph;
@@ -1623,7 +1571,7 @@ void GraphLogView::Destroy() {
   } */
 }
 
-void GraphLogView::Copy_(const GraphLogView& cp) {
+void GraphTableView::Copy_(const GraphTableView& cp) {
   x_axis_index = cp.x_axis_index;
 //  labels = cp.labels;
   actual_range = cp.actual_range;
@@ -1632,9 +1580,9 @@ void GraphLogView::Copy_(const GraphLogView& cp) {
   graph_layout = cp.graph_layout;
 }
 
-void GraphLogView::UpdateAfterEdit() {
-  LogView::UpdateAfterEdit();
-//  labels.SetBaseType(&TA_GraphLogViewLabel); // make sure to use this type..
+void GraphTableView::UpdateAfterEdit() {
+  TableView::UpdateAfterEdit();
+//  labels.SetBaseType(&TA_GraphTableViewLabel); // make sure to use this type..
 /*TODO  if((editor == NULL) || (log() == NULL)) return;
   bool init = false;
   if((colorspec != NULL) && (editor->scale->spec != colorspec)) {
@@ -1661,7 +1609,7 @@ void GraphLogView::UpdateAfterEdit() {
     UpdateDisplay(); */
 }
 
-void GraphLogView::BuildAll() {
+void GraphTableView::BuildAll() {
   Reset();
   if (!graphs) {
     graphs = GraphViews::New(viewSpec());
@@ -1670,7 +1618,7 @@ void GraphLogView::BuildAll() {
   }
 }
 
-void GraphLogView::ChildAdding(T3DataView* child) {
+void GraphTableView::ChildAdding(T3DataView* child) {
   inherited::ChildAdding(child);
   TypeDef* typ = child->GetTypeDef();
   if (typ->InheritsFrom(&TA_GraphViews)) {
@@ -1678,32 +1626,32 @@ void GraphLogView::ChildAdding(T3DataView* child) {
   }
 }
 
-void GraphLogView::ChildRemoving(T3DataView* child) {
+void GraphTableView::ChildRemoving(T3DataView* child) {
   if (child == graphs) {graphs = NULL; goto done;}
 done:
   inherited::ChildRemoving(child);
 }
 
-void GraphLogView::Clear_impl() {
+void GraphTableView::Clear_impl() {
   inherited::Clear_impl();
 /*obs  view_range.max = -1;
   view_range.min = 0; // collapse the view range..
   InitDisplay(); */
 }
 
-void GraphLogView::InitColors(){
+void GraphTableView::InitColors(){
 //TODO  if(editor!=NULL) editor->InitColors();
 }
 
 void GLVSetXAxis(TAPtr tap, int idx){
-  GraphLogView* glv = (GraphLogView *) tap;
+  GraphTableView* glv = (GraphTableView *) tap;
   if(glv->x_axis_index != idx){
     glv->x_axis_index = idx;
     glv->DataChanged(DCR_ITEM_UPDATED); //obs tabMisc::NotifyEdits(glv);
   }
 }
 
-void GraphLogView::GetBodyRep() {
+void GraphTableView::GetBodyRep() {
   if(!taMisc::gui_active) return;
 
 /*TODO  editor = new GraphEditor((TAPtr) this, &(log()->data),
@@ -1720,8 +1668,8 @@ void GraphLogView::GetBodyRep() {
   ivResource::ref(body); */
 }
 
-QWidget* GraphLogView::GetPrintData(){
-return NULL; /*TODO  if(editor == NULL) return LogView::GetPrintData();
+QWidget* GraphTableView::GetPrintData(){
+return NULL; /*TODO  if(editor == NULL) return TableView::GetPrintData();
   for(int i=0;i<editor->graphs.size;i++) {
     GraphGraph* gg = (GraphGraph*)editor->graphs[i];
     gg->viewer->ClearCachedAllocation(); // recompute size for printing
@@ -1729,8 +1677,8 @@ return NULL; /*TODO  if(editor == NULL) return LogView::GetPrintData();
   return editor->boxpatch; */
 }
 
-void GraphLogView::InitDisplay() {
-  LogView::InitDisplay();
+void GraphTableView::InitDisplay() {
+  TableView::InitDisplay();
   if (graphs) {
     graphs->ReInit(); // clears out lines and axes
   }
@@ -1740,25 +1688,25 @@ void GraphLogView::InitDisplay() {
   editor->InitDisplay(); */
 }
 
-void GraphLogView::Log_Clear() {
-  if(!IsMapped() || !display_toggle || (graphs == NULL)) return;
+void GraphTableView::Log_Clear() {
+  if(!isMapped() || !display_toggle || (graphs == NULL)) return;
   view_range = 0;
   UpdateDisplay();
 }
 
-void GraphLogView::NewData() {
-  if(!IsMapped() || !display_toggle || (graphs == NULL)) return;
+void GraphTableView::NewData() {
+  if(!isMapped() || !display_toggle || (graphs == NULL)) return;
   bool not_at_last = false;
-  if ((view_range.max < log()->data_range.max-1) && (view_range.max > 0)) {
+  if ((view_range.max < data_range_max_()-1) && (view_range.max > 0)) {
     // not viewing most recent data point..
     not_at_last = true;
-    if((log()->data_range.max - view_range.min) > view_bufsz) // beyond current display -- don't view
+    if((data_range_max_() - view_range.min) > view_bufsz) // beyond current display -- don't view
       return;
   }
   view_range.max++;
-  view_range.MaxLT(log()->data_range.max); // double check
+  view_range.MaxLT(data_range_max_()); // double check
   view_range.MinGT(view_range.max - view_bufsz + 1);
-  view_range.WithinRange(log()->data_range); // triple check
+  view_range.WithinRange(data_range_min_(), data_range_max_()); // triple check
 
 //TODO: fix this nonsense!!!!!!!!!!!!!!!!!!!!!!!!!!!! UVR sets actual_range!!! don't change it again!!!
   UpdateViewRange();
@@ -1780,27 +1728,26 @@ void GraphLogView::NewData() {
   }
 }
 
-void GraphLogView::NewHead() {
-  LogView::NewHead();
-  if(!IsMapped() || !display_toggle) return;
+void GraphTableView::NewHead() {
+  TableView::NewHead();
+  if(!isMapped() || !display_toggle) return;
   // for new header (or data reset) just rebuild all graphs
   if (graphs) {
     graphs->BuildAll();
   }
 }
 
-void GraphLogView::OnWindowBind_impl(iT3DataViewer* vw) {
+void GraphTableView::OnWindowBind_impl(iT3DataViewer* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
-    m_lvp = new iGraphLogView_Panel(this);
+    m_lvp = new iGraphTableView_Panel(this);
     vw->window()->AddPanelNewTab(m_lvp);
   }
 }
 
-void GraphLogView::Render_impl() {
+void GraphTableView::Render_impl() {
 //nn  GraphSpec* gvs = viewSpec(); // cache
   // set origin: in allocated area
-  TDCoord& geom = log()->geom;
   if (graphs) {
     graphs->geom.x = geom.x - (2 * frame_inset); //note: PDP coords
     graphs->geom.y = geom.y;
@@ -1812,27 +1759,27 @@ void GraphLogView::Render_impl() {
   inherited::Render_impl();
 }
 
-void GraphLogView::Render_pre() {
-  m_node_so = new T3GraphLogViewNode(this);
+void GraphTableView::Render_pre() {
+  m_node_so = new T3GraphTableViewNode(this);
 
   inherited::Render_pre();
 }
 
-int GraphLogView::SetXAxis(char* nm) {
-  int dx = log()->data.data.FindLeaf(nm); //TODO: replace with the portable DataTable i/f
-  if(dx >= 0) {
+int GraphTableView::SetXAxis(const String& nm) {
+  int dx = data()->data.FindLeaf(nm); //TODO: replace with the portable DataTable i/f
+  if (dx >= 0) {
     x_axis_index = dx;
     UpdateAfterEdit();
   }
   return x_axis_index;
 }
 
-void GraphLogView::UpdateFromBuffer_impl() {
+void GraphTableView::UpdateFromBuffer_impl() {
   inherited::UpdateFromBuffer_impl();
   UpdateDisplay();
 }
 
-void GraphLogView::UpdateDisplay(TAPtr) {
+void GraphTableView::UpdateDisplay(TAPtr) {
   UpdateViewRange();
   if (graphs) {
     //TODO: maybe don't need to always do complete redraw???
@@ -1842,22 +1789,22 @@ void GraphLogView::UpdateDisplay(TAPtr) {
   if(anim.capture) CaptureAnimImg(); */
 }
 
-void GraphLogView::UpdateViewRange() {
-  actual_range.min = view_range.min - log()->data_range.min;
-  actual_range.max = view_range.max - log()->data_range.min;
+void GraphTableView::UpdateViewRange() {
+  actual_range.min = view_range.min - data_range_min_();
+  actual_range.max = view_range.max - data_range_min_();
   if (viewSpec()) {
     viewSpec()->view_range = actual_range;
 //TODO: fix up this whacky nonsense!!!!!!
 //TEMP
 viewSpec()->view_range.min = 0;
-viewSpec()->view_range.max = -1 + log()->data.rows;
+viewSpec()->view_range.max = -1 + data()->rows;
 
 
     viewSpec()->view_bufsz = view_bufsz;
   }
 }
 
-void GraphLogView::Animate(int msec_per_point) {
+void GraphTableView::Animate(int msec_per_point) {
 /*TODO  if(editor == NULL) return;
   anim_stop = false;
   int old_bufsz = editor->view_bufsz;
@@ -1885,28 +1832,28 @@ void GraphLogView::Animate(int msec_per_point) {
   editor->last_pt_offset = 0;	// just make sure */
 }
 
-void GraphLogView::StopAnimate() {
+void GraphTableView::StopAnimate() {
   anim_stop = true;
 }
 
-void GraphLogView::SetColorSpec(ColorScaleSpec* colors) {
+void GraphTableView::SetColorSpec(ColorScaleSpec* colors) {
   taBase::SetPointer((TAPtr*)&colorspec, colors);
   UpdateAfterEdit();
 }
 
-void GraphLogView::SetBackground(RGBA background){
+void GraphTableView::SetBackground(RGBA background){
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->background = background;
   dtvsp->UpdateAfterEdit();
 }
 
-void GraphLogView::UpdateLineFeatures() {
+void GraphTableView::UpdateLineFeatures() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->UpdateLineFeatures();
   InitDisplay();
 }
 
-void GraphLogView::SetLineFeatures(GraphSpec::ColorType	color_type,
+void GraphTableView::SetLineFeatures(GraphSpec::ColorType	color_type,
 				   GraphSpec::SequenceType sequence1,
 				   GraphSpec::SequenceType sequence2,
 				   GraphSpec::SequenceType sequence3,
@@ -1925,17 +1872,17 @@ void GraphLogView::SetLineFeatures(GraphSpec::ColorType	color_type,
   InitDisplay();
 }
 
-void GraphLogView::SetLineWidths(float line_width) {
+void GraphTableView::SetLineWidths(float line_width) {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->SetLineWidths(line_width);
 }
 
-void GraphLogView::SetLineType(GraphColSpec::LineType line_type) {
+void GraphTableView::SetLineType(GraphColSpec::LineType line_type) {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->SetLineType(line_type);
 }
 
-void GraphLogView::ShareAxisAfter(taBase* spec) {
+void GraphTableView::ShareAxisAfter(taBase* spec) {
   if(spec==NULL) return;
   if(!spec->InheritsFrom(&TA_GraphColSpec)) {
     taMisc::Error("Must specify a valid GraphViewSpec variable as the axis variable");
@@ -1957,49 +1904,49 @@ void GraphLogView::ShareAxisAfter(taBase* spec) {
   InitDisplay();
 }
 
-void GraphLogView::ShareAxes() {
+void GraphTableView::ShareAxes() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->ShareAxes();
 }
 
-void GraphLogView::SeparateAxes() {
+void GraphTableView::SeparateAxes() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->SeparateAxes();
 }
 
-void GraphLogView::SeparateGraphs(int x_layout, int y_layout) {
+void GraphTableView::SeparateGraphs(int x_layout, int y_layout) {
   separate_graphs = true;
   graph_layout.x = x_layout;
   graph_layout.y = y_layout;
   UpdateAfterEdit();
 }
 
-void GraphLogView::OneGraph() {
+void GraphTableView::OneGraph() {
   separate_graphs = false;
   UpdateAfterEdit();
 }
 
-void GraphLogView::StackTraces() {
+void GraphTableView::StackTraces() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->StackTraces();
 }
 
-void GraphLogView::UnStackTraces() {
+void GraphTableView::UnStackTraces() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->UnStackTraces();
 }
 
-void GraphLogView::StackSharedAxes() {
+void GraphTableView::StackSharedAxes() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->StackSharedAxes();
 }
 
-void GraphLogView::UnStackSharedAxes() {
+void GraphTableView::UnStackSharedAxes() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->UnStackSharedAxes();
 }
 
-void GraphLogView::SpikeRaster(float thresh) {
+void GraphTableView::SpikeRaster(float thresh) {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->graph_type = GraphSpec::STACK_LINES;
   taLeafItr i;
@@ -2020,7 +1967,7 @@ void GraphLogView::SpikeRaster(float thresh) {
   InitDisplay();
 }
 
-void GraphLogView::ColorRaster() {
+void GraphTableView::ColorRaster() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   dtvsp->graph_type = GraphSpec::STACK_LINES;
   taLeafItr i;
@@ -2040,7 +1987,7 @@ void GraphLogView::ColorRaster() {
   InitDisplay();
 }
 
-void GraphLogView::StandardLines() {
+void GraphTableView::StandardLines() {
   GraphSpec* dtvsp = (GraphSpec*)viewspec;
   YAxisSpec* daxs;
   for (int j = 0; j < dtvsp->y_axes.size; ++j) {
@@ -2053,32 +2000,32 @@ void GraphLogView::StandardLines() {
 
 
 //////////////////////////
-//   LogView_ViewType 	//
+//   TableView_ViewType 	//
 //////////////////////////
 
-/*int LogView_ViewType::BidForView(TypeDef* td) {
-  if (td->InheritsFrom(&TA_LogView))
+/*int TableView_ViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_TableView))
     return (inherited::BidForView(td) +1);
   return 0;
 } */
 
-/*taiDataLink* LogViewType::CreateDataLink_impl(taBase* data_) {
+/*taiDataLink* TableViewType::CreateDataLink_impl(taBase* data_) {
   return new tabListDataLink((taList_impl*)data_);
 } */
 
 
 
 //////////////////////////
-//    iLogView_Panel //
+//    iTableView_Panel //
 //////////////////////////
 
-iLogView_Panel::iLogView_Panel(LogView* lv)
+iTableView_Panel::iTableView_Panel(TableView* lv)
 :inherited(lv)
 {
   init(false);
 }
 
-iLogView_Panel::iLogView_Panel(bool is_grid_log, LogView* lv)
+iTableView_Panel::iTableView_Panel(bool is_grid_log, TableView* lv)
 :inherited(lv)
 {
   init(is_grid_log);
@@ -2087,7 +2034,7 @@ iLogView_Panel::iLogView_Panel(bool is_grid_log, LogView* lv)
 //TEMP -- will be pixmaps
 const char* but_strs[] = {"|<","<<","<",">",">>",">|","Update","Init","Clear"};
 
-void iLogView_Panel::init(bool is_grid_log)
+void iTableView_Panel::init(bool is_grid_log)
 {
   QWidget* widg = new QWidget();
   layOuter = new QVBoxLayout(widg);
@@ -2154,14 +2101,14 @@ void iLogView_Panel::init(bool is_grid_log)
   FillList(); */
 }
 
-iLogView_Panel::~iLogView_Panel() {
+iTableView_Panel::~iTableView_Panel() {
   delete bgpTopButtons; bgpTopButtons = NULL;
 
 }
 
-void iLogView_Panel::buttonClicked(int id) {
+void iTableView_Panel::buttonClicked(int id) {
   if (updating) return;
-  LogView* lv;
+  TableView* lv;
   if (!(lv = this->lv())) return;
 
   switch (id) {
@@ -2188,15 +2135,15 @@ void iLogView_Panel::buttonClicked(int id) {
   }
 }
 
-void iLogView_Panel::chkDisplay_toggled(bool on) {
+void iTableView_Panel::chkDisplay_toggled(bool on) {
   if (updating) return;
-  LogView* lv;
+  TableView* lv;
   if (!(lv = this->lv())) return;
 
   lv->display_toggle = on;
 }
 
-void iLogView_Panel::Constr_T3ViewspaceWidget() {
+void iTableView_Panel::Constr_T3ViewspaceWidget() {
   t3vs = new iT3ViewspaceWidget(this);
   t3vs->setSelMode(iT3ViewspaceWidget::SM_MULTI); // default
 
@@ -2219,7 +2166,7 @@ void iLogView_Panel::Constr_T3ViewspaceWidget() {
 }
 
 
-void iLogView_Panel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+void iTableView_Panel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
 }
 /*TODO
@@ -2251,8 +2198,8 @@ int iLogDataPanel::GetEditActions() {
   return rval;
 } */
 
-void iLogView_Panel::GetImage_impl() {
-  LogView* lv = this->lv(); // cache
+void iTableView_Panel::GetImage_impl() {
+  TableView* lv = this->lv(); // cache
   chkDisplay->setChecked(lv->display_toggle);
 }
 
@@ -2287,30 +2234,29 @@ void iLogDataPanel::list_selectionChanged() {
   viewer_win()->UpdateUi();
 } */
 
-void iLogView_Panel::viewAll() {
+void iTableView_Panel::viewAll() {
   m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion());
 }
 
 
 //////////////////////////
-// iGridLogViewBase_Panel //
+// iGridTableViewBase_Panel //
 //////////////////////////
 
-iGridLogViewBase_Panel::iGridLogViewBase_Panel(GridLogViewBase* tlv)
+iGridTableViewBase_Panel::iGridTableViewBase_Panel(GridTableViewBase* tlv)
 :inherited(tlv)
 {
 }
 
-iGridLogViewBase_Panel::~iGridLogViewBase_Panel() {
+iGridTableViewBase_Panel::~iGridTableViewBase_Panel() {
 }
 
-void iGridLogViewBase_Panel::InitPanel_impl() {
+void iGridTableViewBase_Panel::InitPanel_impl() {
   inherited::InitPanel_impl();
-  GridLogViewBase* lv = this->lv(); //cache
-  PDPLog* log = lv->log(); // cache
+  GridTableViewBase* lv = this->lv(); //cache
   ++updating;
   // only show col slider if necessary
-  if (lv->tot_col_widths < (float)log->geom.x) {
+  if (lv->tot_col_widths < (float)lv->geom.x) {
     t3vs->setHasHorScrollBar(false);
   } else {
     QScrollBar* sb = t3vs->horScrollBar(); // no autocreate
@@ -2322,7 +2268,7 @@ void iGridLogViewBase_Panel::InitPanel_impl() {
     sb->setMinValue(0);
     sb->setMaxValue(lv->cols - 1);
     //we make a crude estimate of page step based on ratio of act width to tot width
-    int pg_step = (int)(((log->geom.x / lv->tot_col_widths) * lv->cols) + 0.5f);
+    int pg_step = (int)(((lv->geom.x / lv->tot_col_widths) * lv->cols) + 0.5f);
     if (pg_step == 0) pg_step = 1;
     sb->setSteps(1, pg_step);
   }
@@ -2330,13 +2276,12 @@ void iGridLogViewBase_Panel::InitPanel_impl() {
   --updating;
 }
 
-void iGridLogViewBase_Panel::BufferUpdated() {
+void iGridTableViewBase_Panel::BufferUpdated() {
   ++updating;
   inherited::BufferUpdated();
-  GridLogViewBase* lv = this->lv(); //cache
-  PDPLog* log = lv->log(); // cache
+  GridTableViewBase* lv = this->lv(); //cache
   // only show row slider if necessary
-  if (lv->view_bufsz >= log->virt_lines()) {
+  if (lv->view_bufsz >= lv->virt_lines_()) {
     t3vs->setHasVerScrollBar(false);
   } else {
     QScrollBar* sb = t3vs->verScrollBar(); // no autocreate
@@ -2347,7 +2292,7 @@ void iGridLogViewBase_Panel::BufferUpdated() {
     }
     sb->setMinValue(0);
     //note: the max val is set so that the last page is a full page (i.e., can't scroll past end)
-    int mx = MAX((log->virt_lines() - lv->view_bufsz), 0);
+    int mx = MAX((lv->virt_lines_() - lv->view_bufsz), 0);
     sb->setMaxValue(mx);
     //page step size based on viewable to total lines
     int pg_step = MAX(lv->view_bufsz, 1);
@@ -2357,23 +2302,23 @@ void iGridLogViewBase_Panel::BufferUpdated() {
   --updating;
 }
 
-void iGridLogViewBase_Panel::horScrBar_valueChanged(int value) {
-  GridLogViewBase* lv = this->lv(); //cache
+void iGridTableViewBase_Panel::horScrBar_valueChanged(int value) {
+  GridTableViewBase* lv = this->lv(); //cache
   if (updating || !lv) return;
   lv->ViewC_At(value);
 }
 
-void iGridLogViewBase_Panel::verScrBar_valueChanged(int value) {
-  GridLogViewBase* lv = this->lv(); //cache
+void iGridTableViewBase_Panel::verScrBar_valueChanged(int value) {
+  GridTableViewBase* lv = this->lv(); //cache
   if (updating || !lv) return;
   lv->View_At(value);
 }
 
 //////////////////////////
-// iTextLogView_Panel //
+// iTextTableView_Panel //
 //////////////////////////
 
-iTextLogView_Panel::iTextLogView_Panel(TextLogView* tlv)
+iTextTableView_Panel::iTextTableView_Panel(TextTableView* tlv)
 :inherited(tlv)
 {
   Constr_T3ViewspaceWidget();
@@ -2393,26 +2338,26 @@ iTextLogView_Panel::iTextLogView_Panel(TextLogView* tlv)
   FillList(); */
 }
 
-iTextLogView_Panel::~iTextLogView_Panel() {
+iTextTableView_Panel::~iTextTableView_Panel() {
 }
 
-void iTextLogView_Panel::InitPanel_impl() {
+void iTextTableView_Panel::InitPanel_impl() {
   inherited::InitPanel_impl();
-//  TextLogView* lv = this->lv(); //cache
+//  TextTableView* lv = this->lv(); //cache
   // only show col slider if necessary
 }
 
-String iTextLogView_Panel::panel_type() const {
+String iTextTableView_Panel::panel_type() const {
   static String str("Text Log");
   return str;
 }
 
 
 //////////////////////////
-// iGridLogView_Panel //
+// iGridTableView_Panel //
 //////////////////////////
 
-iGridLogView_Panel::iGridLogView_Panel(GridLogView* glv)
+iGridTableView_Panel::iGridTableView_Panel(GridTableView* glv)
 :inherited(true, glv)
 {
 
@@ -2435,27 +2380,27 @@ iGridLogView_Panel::iGridLogView_Panel(GridLogView* glv)
   FillList(); */
 }
 
-iGridLogView_Panel::~iGridLogView_Panel() {
+iGridTableView_Panel::~iGridTableView_Panel() {
 }
 
-void iGridLogView_Panel::chkAuto_toggled(bool on) {
+void iGridTableView_Panel::chkAuto_toggled(bool on) {
 }
-void iGridLogView_Panel::chkHeaders_toggled(bool on) {
+void iGridTableView_Panel::chkHeaders_toggled(bool on) {
 }
 
 
 
-String iGridLogView_Panel::panel_type() const {
+String iGridTableView_Panel::panel_type() const {
   static String str("Grid Log");
   return str;
 }
 
 
 //////////////////////////
-// iNetLogView_Panel //
+// iNetTableView_Panel //
 //////////////////////////
 
-iNetLogView_Panel::iNetLogView_Panel(NetLogView* nlv)
+iNetTableView_Panel::iNetTableView_Panel(NetTableView* nlv)
 :inherited(nlv)
 {
 
@@ -2475,20 +2420,20 @@ iNetLogView_Panel::iNetLogView_Panel(NetLogView* nlv)
   FillList(); */
 }
 
-iNetLogView_Panel::~iNetLogView_Panel() {
+iNetTableView_Panel::~iNetTableView_Panel() {
 }
 
-String iNetLogView_Panel::panel_type() const {
+String iNetTableView_Panel::panel_type() const {
   static String str("Net Log");
   return str;
 }
 
 
 //////////////////////////
-// iGraphLogView_Panel //
+// iGraphTableView_Panel //
 //////////////////////////
 
-iGraphLogView_Panel::iGraphLogView_Panel(GraphLogView* glv)
+iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* glv)
 :inherited(glv)
 {
   //TODO: add in below when there is anything else other than graphbutts
@@ -2521,21 +2466,21 @@ iGraphLogView_Panel::iGraphLogView_Panel(GraphLogView* glv)
   FillList(); */
 }
 
-iGraphLogView_Panel::~iGraphLogView_Panel() {
+iGraphTableView_Panel::~iGraphTableView_Panel() {
 }
 
 
-void iGraphLogView_Panel::GetImage_impl() {
+void iGraphTableView_Panel::GetImage_impl() {
   inherited::GetImage_impl();
   gbs->setGraph(glv()->viewSpec(), true);
 }
 
-void iGraphLogView_Panel::InitPanel_impl() {
+void iGraphTableView_Panel::InitPanel_impl() {
   inherited::InitPanel_impl();
   gbs->setGraph(glv()->viewSpec(), true);
 }
 
-String iGraphLogView_Panel::panel_type() const {
+String iGraphTableView_Panel::panel_type() const {
   static String str("Graph Log");
   return str;
 }

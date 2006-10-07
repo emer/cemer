@@ -80,6 +80,8 @@ public:
 
   void  WithinRange(MinMax& it)		// put my range within given one
   { min = MAX(it.min, min); max = MIN(it.max, max); }
+  void  WithinRange(float min_, float max_) // #IGNORE put my range within given one
+  { min = MAX(min_, min); max = MIN(max_, max); }
 
   float	Normalize(float val) const	{ return (val - min) * Scale(); }
   // normalize given value to 0-1 range given current in max
@@ -209,6 +211,8 @@ public:
 
   void  WithinRange(MinMaxInt& it)		// put my range within given one
   { min = MAX(it.min, min); max = MIN(it.max, max); }
+  void  WithinRange(int min_, int max_) // #IGNORE put my range within given one
+  { min = MAX(min_, min); max = MIN(max_, max); }
 
   float	Normalize(int val) const	{ return (val - min) * Scale(); }
   // normalize given value to 0-1 range given current in max
