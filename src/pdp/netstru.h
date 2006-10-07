@@ -1267,8 +1267,8 @@ public:
   virtual int	GetDefaultY();
   virtual int	GetDefaultZ();
 #ifdef TA_GUI
-  virtual void	ShowInViewer(T3DataViewer* dv = NULL);
-  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT open a viewer on this network (NULL=default viewer)
+  virtual void	ShowInViewer(T3DataViewFrame* dv = NULL);
+  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT open a viewer on this network (NULL=make new frame)
 #endif
   virtual void	Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other network (incl wts assoc with unit bias member)

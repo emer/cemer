@@ -244,6 +244,7 @@ public:
   virtual bool		isDirty() const {return false;}
   virtual QWidget*	widget() = 0; // return the widget
   DataViewer*		viewer() {return m_viewer;} // often lexically overridden to strongly type
+  virtual iMainWindowViewer* viewerWindow() const; // the main window in which this widget lives
   
   void			Constr() {Constr_impl();} // called virtually, after new, override impl
   void			Close(); // deletes us, and disconects us from viewer -- YOU MUST NOT MAKE ANY CALLS TO OBJ AFTER THIS
@@ -258,6 +259,7 @@ public:
   
 protected:
   DataViewer*		m_viewer; // our mummy
+  mutable iMainWindowViewer* m_window; // can be set by creator, or dyn looked up/cached
   virtual void		closeEvent_Handler(QCloseEvent* e,
     CancelOp def_cancel_op = CO_PROCEED);
     // default says "proceed", delegates decision to viewer; call with CO_NOT_CANCELLABLE for unconditional
@@ -506,7 +508,6 @@ public:
   
   virtual int		stretchFactor() const {return 2;} // helps set sensible alloc of space in split
   inline FrameViewer*	viewer() {return (FrameViewer*)m_viewer;} // usually lex overridden in subclass
-  inline iMainWindowViewer* window() {return m_window;} // main window in which we are being shown
   
 //nn??  virtual void		UpdateTabNames(); // called by a datalink when a tab name might have changed
   iFrameViewer(FrameViewer* viewer_, QWidget* parent = NULL);
@@ -530,7 +531,6 @@ protected:
 //  override void		Constr_impl(); // called virtually, after new
 
 protected:
-  iMainWindowViewer*    m_window;
   short int		shn_changing; // for marking forwarding, so we don't reflect back
 
   virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
@@ -591,6 +591,7 @@ protected:
 private:
   void			Init();
 };
+
 
 class TA_API iDockViewer: public QDockWidget, public IDataViewWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DockViewer
@@ -655,7 +656,6 @@ friend class iMainWindowViewer;
   Q_OBJECT
 public:
   ToolBar*		viewer() {return (ToolBar*)m_viewer;}
-  iMainWindowViewer*	window() {return m_window;}
   
   iToolBar(ToolBar* viewer, QWidget* parent = NULL);
   ~iToolBar();
@@ -663,7 +663,6 @@ public:
 public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
 protected:
-  iMainWindowViewer*    m_window; // set when added
 //  override void		Constr_impl();
 
 protected:
@@ -961,7 +960,7 @@ public:
   taiDataLink*		par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
   MemberDef*		par_md() const {return (m_viewer_win) ? m_viewer_win->sel_md() : NULL;}
   iTabViewer* 		tabViewerWin() {return m_viewer_win;}
-  iMainWindowViewer* 	window() {return (m_viewer_win) ? m_viewer_win->window() : NULL;}
+  iMainWindowViewer* 	viewerWindow() {return (m_viewer_win) ? m_viewer_win->viewerWindow() : NULL;}
 
   void			Activated(bool val); // called by parent to indicate if we are active tabview or not
   bool 			ActivatePanel(taiDataLink* dl); // if a panel exists for the link, make it active and return true
@@ -1034,7 +1033,7 @@ public:
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabView*		tabView() {return m_tabView;} // tab view in which we are shown
   virtual iTabViewer* 	tabViewerWin() const = 0;
-  iMainWindowViewer* 	window() {return (m_tabView) ? m_tabView->window() : NULL;}
+  iMainWindowViewer* 	viewerWindow() {return (m_tabView) ? m_tabView->viewerWindow() : NULL;}
 
 
   virtual void		Closing(CancelOp& cancel_op) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent

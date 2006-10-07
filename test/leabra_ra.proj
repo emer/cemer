@@ -21,6 +21,8 @@ LeabraProject .projects[1] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
+T3DataViewFrame_List @.frames = [1] {
+  T3DataViewFrame @[0] { 
 	  T3DataView_List @.children = [1] {
 	    NetView @[0] { 
 	      T3DataView_List @.children = [102] {
@@ -133,6 +135,7 @@ LeabraProject .projects[1] {
 	      };
 	    };
 	  };
+}; };
 	};
       };
 
@@ -2152,6 +2155,9 @@ else min_cycles = network->min_cycles_phase2;
      name="DefaultT3DataViewer";
      display_toggle=1;
      visible=1;
+frames  {
+  T3DataViewFrame @[0] { 
+     name="DefaultT3DataViewFrame";
      root_view {
       m_data=NULL;
       m_transform=NULL;
@@ -2859,7 +2865,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       };
       host=ISelectableHost_ptr;
      };
-    };
+    }; }; };
    };
    docks {
     name=;

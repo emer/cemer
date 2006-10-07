@@ -206,6 +206,12 @@ bool DataViewer::isMapped() const {
   }
 } */
 
+iMainWindowViewer* DataViewer::viewerWindow() const {
+  if (m_dvwidget) return m_dvwidget->viewerWindow(); 
+  else return NULL;
+}
+
+
 void DataViewer::WidgetDeleting() {
   WidgetDeleting_impl();
   if (deleteOnWinClose()) {
@@ -235,12 +241,6 @@ QWidget* DataViewer::widget() {
 //////////////////////////////////
 
 void FrameViewer::Initialize() {
-}
-
-iMainWindowViewer* FrameViewer::window() {
-  MainWindowViewer* mwv;
-  if ((mwv = mainWindowViewer())) return mwv->window(); 
-  else return NULL;
 }
 
 //////////////////////////////////
@@ -725,11 +725,6 @@ void ToolBar::WidgetDeleting_impl() {
   visible = false;
 }
 
-iMainWindowViewer* ToolBar::window() {
-  MainWindowViewer* mwv;
-  if ((mwv = parent())) return mwv->window(); 
-  else return NULL;
-}
 
 //////////////////////////
 //   MainWindowViewer	//
@@ -916,7 +911,7 @@ void MainWindowViewer::Constr_impl(QWidget* gui_parent) {
 }
 
 void MainWindowViewer::ConstrDocks_impl() {
-  iMainWindowViewer* win = window(); //cache
+  iMainWindowViewer* win = viewerWindow(); //cache
   for (int i = 0; i < docks.size; ++i) {
     DockViewer* dv = docks.FastEl(i);
     if (!dv) continue; // shouldn't happen
@@ -927,7 +922,7 @@ void MainWindowViewer::ConstrDocks_impl() {
 }
 
 void MainWindowViewer::ConstrFrames_impl() {
-  iMainWindowViewer* win = window(); //cache
+  iMainWindowViewer* win = viewerWindow(); //cache
   for (int i = 0; i < frames.size; ++i) {
     FrameViewer* fv = frames.FastEl(i);
     if (!fv) continue; // shouldn't happen
@@ -1045,7 +1040,7 @@ void MainWindowViewer::MakeWinName_impl() {
 
 void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
 //TODO: just nuke the post_constr variable -- 
-  iMainWindowViewer* win = window(); //cache
+  iMainWindowViewer* win = viewerWindow(); //cache
   //note: always costructed, even if not visible
   ((DataViewer*)tb)->Constr_impl(NULL);
   

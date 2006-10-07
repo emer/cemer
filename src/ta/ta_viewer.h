@@ -118,7 +118,7 @@ public:
   MainWindowViewer*	parent() const {return (MainWindowViewer*)m_parent;} 
   override TypeDef*	parentType() const {return &TA_MainWindowViewer;} 
   QWidget*		widget();
-  virtual iMainWindowViewer* window() {return NULL;}
+  virtual iMainWindowViewer* viewerWindow() const;
     // #IGNORE valid if is, or is within, a main window
   
   // view state properties (don't require to be mapped)
@@ -126,6 +126,7 @@ public:
   virtual void		setVisible(bool value, bool update_view = true); // whether we are supposed to be showing or not (view state)
 
   virtual void 		Constr(QWidget* gui_parent = NULL); // #IGNORE constrs the gui this class NOTE: only called directly for gui tops or for items added after mapping; all others recursively call _impl, then _post
+  virtual void		Constr_impl(QWidget* gui_parent); //#IGNORE NOTE: do not call directly, only called inside us or from within Constr routines of derived classes
   void 			CloseWindow() {DoActions(CLOSE_WIN_IMPL);}	
    // #IGNORE closes the window or panel, removing our reference
  
@@ -154,7 +155,6 @@ protected:
   // from taDataView
   override void		CloseWindow_impl(); // closes the widget, only called if mapped, default calls the Close on the IDVW
   
-  virtual void		Constr_impl(QWidget* gui_parent);
   virtual IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;} 
     // implement this to create and set the m_widget instance -- only called if !m_widget
   override void		Constr_post();
@@ -193,7 +193,6 @@ public:
   inline iFrameViewer* widget() {return (iFrameViewer*)inherited::widget();} // lex override
   
   inline MainWindowViewer* mainWindowViewer() {return parent();}
-  override iMainWindowViewer* window();
   
 //  void	InitLinks();
 //  void	CutLinks(); //
@@ -482,7 +481,6 @@ public:
   Orientation		o; // whether hor or vert
 
   inline iToolBar*	widget() {return (iToolBar*)inherited::widget();} // #IGNORE lex override
-  override iMainWindowViewer*	window();
 
   void	Copy_(const ToolBar& cp);
   COPY_FUNS(ToolBar, DataViewer)
@@ -547,7 +545,6 @@ public:
   inline bool		isProjViewer() const {return m_is_proj_viewer;}
 //parent note: we inherit MainWindowViewer type, but actually never have a taDataView parent
   inline iMainWindowViewer* widget() {return (iMainWindowViewer*)inherited::widget();} 
-  override iMainWindowViewer* window() {return (iMainWindowViewer*)inherited::widget();} 
 
 
   void 			AddDock(DockViewer* dv);

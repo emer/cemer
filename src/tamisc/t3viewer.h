@@ -55,7 +55,9 @@ class T3DataViewRoot;
 class T3DataView_List;
 class iT3ViewspaceWidget;
 class iSoSelectionEvent; // #IGNORE
+class iT3DataViewFrame; // #IGNORE
 class iT3DataViewer; // #IGNORE
+class T3DataViewFrame;
 class T3DataViewer;
 
 SoPtr_Of(T3Node);
@@ -136,7 +138,7 @@ public:
 //  void			SetPos(const TDCoord& pos); // sets origin, also doing ta->so coordinate flip
 //  virtual void		SetPos(int x, int y, int z); // sets origin, also doing ta->so coordinate flip
 
-  virtual void		OnWindowBind(iT3DataViewer* vw); // called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
+  virtual void		OnWindowBind(iT3DataViewFrame* vw); // called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
 //TODO  virtual BrDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
 //  override bool		HasChildItems() {return false;} // used when node first created, to control whether we put a + expansion on it or not
 //obs  virtual String 	GetName() const = 0; // base name of item (could be blank)
@@ -182,7 +184,7 @@ protected:
   virtual void		Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
 //nn  virtual void		DestroyPanels();
 
-  virtual void		OnWindowBind_impl(iT3DataViewer* vw) {} // override for something this class
+  virtual void		OnWindowBind_impl(iT3DataViewFrame* vw) {} // override for something this class
   override void		Clear_impl();
   virtual void		ReInit_impl(); // default just calls clear() on the so, if it exists
   override void		Render_pre(); //
@@ -245,7 +247,7 @@ public:
   T3DataView_List	children; // #SHOW #READ_ONLY #BROWSE
   override bool		hasChildren() const {return (children.size > 0);}
 
-  override void		OnWindowBind(iT3DataViewer* vw);
+  override void		OnWindowBind(iT3DataViewFrame* vw);
   override void 	CloseChild(taDataView* child);
   override void		ReInit(); //note: does a depth-first calls to children, before self
 
@@ -275,8 +277,8 @@ class TAMISC_API T3DataViewRoot: public T3DataViewPar { // Root item for a vieww
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
 #endif
-friend class iT3DataViewer;
-friend class T3DataViewer;
+friend class iT3DataViewFrame;
+friend class T3DataViewFrame;
 public:
   ISelectableHost*	host; // ss/b set by owner
 
@@ -292,27 +294,6 @@ private:
   void			Initialize() {host = NULL;}
   void			Destroy() {}
 };
-
-/*obs
-class T3DataView_List: public taList<T3DataView> { // list to own T3DataView objects
-public:
-  virtual void		Render(SoGroup* par_so); // renders all the items
-  virtual void		Clear(); // clears all the items (not: *not* the same as deleting them -- they stay)
-
-  // pseudo-taDataView methods/events -- managed by dvf
-  void 			SetData(TAPtr ta); // set the data to which this points -- must be subclass of data_base
-  virtual void		DataDestroying(){} // notify a T3DataView parent
-  virtual void		DataDataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // notify a T3DataView parent
-
-  void			InitLinks();
-  void			CutLinks();
-  TA_BASEFUNS(T3DataView_List)
-protected:
-  T3DataViewForwarder*	dvf; // #IGNORE actual view client -- we forward its events to our like-named methods
-private:
-  void			Initialize();
-  void			Destroy();
-}; */
 
 
 //////////////////////////
@@ -406,14 +387,14 @@ private:
 
 
 //////////////////////////
-//   iT3DataViewer	//
+//   iT3DataViewFrame	//
 //////////////////////////
 
-class TAMISC_API iT3DataViewer : public iFrameViewer {
+class TAMISC_API iT3DataViewFrame : public QWidget, public IDataViewWidget {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS panel widget that contains 3D data views
   Q_OBJECT
-INHERITED(iFrameViewer)
-friend class T3DataViewer;
+INHERITED(QWidget)
+friend class T3DataViewFrame;
 public:
 //  taiMenu* 		fileExportInventorMenu;
 
@@ -423,12 +404,13 @@ public:
   T3DataViewRoot*	root();
   virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_pre
   override int		stretchFactor() const {return 4;} // 4/2 default
-  inline T3DataViewer*	viewer() {return (T3DataViewer*)m_viewer;}
+  inline T3DataViewFrame* viewer() {return (T3DataViewFrame*)m_viewer;}
+  iT3DataViewer* 	viewerWidget() const;
 
   virtual void		T3DataViewClosing(T3DataView* node); // used mostly to remove from selection list
 
-  iT3DataViewer(T3DataViewer* viewer_, QWidget* parent = NULL); 
-  ~iT3DataViewer(); //
+  iT3DataViewFrame(T3DataViewFrame* viewer_, QWidget* parent = NULL); 
+  ~iT3DataViewFrame(); //
 
 public: // menu and menu overrides
   void			viewRefresh(); // rebuild/refresh the current view
@@ -436,7 +418,9 @@ public: // menu and menu overrides
 public slots:
   virtual void 		fileExportInventor();
 
-protected: // IViewerWidget i/f
+public: // IDataViewWidget i/f
+  override QWidget*	widget() {return this;}
+protected:
   override void		Constr_impl();
   
 protected:
@@ -451,29 +435,24 @@ private:
 };
 
 
-//////////////////////////
-//   T3DataViewer	//
-//////////////////////////
-
-class TAMISC_API T3DataViewer : public FrameViewer {
+class TAMISC_API T3DataViewFrame : public DataViewer {
   // top-level taDataViewer object that contains one 3D data view of multiple objects
-INHERITED(FrameViewer)
+INHERITED(DataViewer)
 friend class T3DataView;
+friend class T3DataViewer;
 public:
   T3DataViewRoot	root_view; // #BROWSE placeholder item -- contains the actual root(s) DataView items as children
 
-  inline iT3DataViewer*	widget() {return (iT3DataViewer*)inherited::widget();} // lex override
-//  iT3DataViewer*	viewer_win() {return (iT3DataViewer*)m_widget;}
+  inline iT3DataViewFrame* widget() {return (iT3DataViewFrame*)inherited::widget();} // lex override
 
   virtual void		AddView(T3DataView* view); // add a view
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const T3DataViewer& cp);
-  COPY_FUNS(T3DataViewer, FrameViewer)
-  TA_DATAVIEWFUNS(T3DataViewer, FrameViewer)
-  
+  void	Copy_(const T3DataViewFrame& cp);
+  COPY_FUNS(T3DataViewFrame, DataViewer)
+  TA_DATAVIEWFUNS(T3DataViewFrame, DataViewer)
 
 protected:
   static void		SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
@@ -489,7 +468,80 @@ protected:
   override void		Render_impl();  // #IGNORE
   override void		Render_post(); // #IGNORE
   override void		Reset_impl(); //  #IGNORE
-//  taDataView_List	link_views; // linked views
+private:
+  void			Initialize();
+  void			Destroy();
+};
+
+class TAMISC_API T3DataViewFrame_List: public DataViewer_List { // #NO_TOKENS
+INHERITED(DataViewer_List)
+public:
+  TA_DATAVIEWLISTFUNS(T3DataViewFrame_List, DataViewer_List, T3DataViewFrame)
+private:
+  void 	Initialize() { SetBaseType(&TA_T3DataViewFrame);}
+  void	Destroy() {}
+};
+
+
+//////////////////////////
+//   iT3DataViewer	//
+//////////////////////////
+
+class TAMISC_API iT3DataViewer : public iFrameViewer {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS panel widget that contains 3D data views
+  Q_OBJECT
+INHERITED(iFrameViewer)
+friend class T3DataViewer;
+public:
+  QTabWidget*		tw;
+
+  inline T3DataViewer*	viewer() {return (T3DataViewer*)m_viewer;}
+
+  void			AddT3DataViewFrame(iT3DataViewFrame* dvf, int idx = -1);
+  
+  iT3DataViewer(T3DataViewer* viewer_, QWidget* parent = NULL); 
+  ~iT3DataViewer(); //
+
+protected: // IViewerWidget i/f
+//nn  override void		Constr_impl();
+  
+private:
+  void			Init();
+};
+
+
+class TAMISC_API T3DataViewer : public FrameViewer {
+  // top-level taDataViewer object that contains one 3D data view of multiple objects
+INHERITED(FrameViewer)
+friend class T3DataView;
+public:
+  T3DataViewFrame_List	frames; // 
+
+  inline iT3DataViewer*	widget() {return (iT3DataViewer*)inherited::widget();} // lex override
+
+  virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
+
+  virtual T3DataViewFrame* NewT3DataViewFrame(); // create and map a new frame
+  
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const T3DataViewer& cp);
+  COPY_FUNS(T3DataViewer, FrameViewer)
+  TA_DATAVIEWFUNS(T3DataViewer, FrameViewer)
+
+protected:
+  // from taDataView
+  override void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2);
+  override void		DoActionChildren_impl(DataViewAction act); // just one act
+
+  // DataViewer
+  override void 	Constr_impl(QWidget* gui_parent);
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+//override void 	ResolveChanges(CancelOp& cancel_op); // nn: no "dirty" for T3
+  override void		Reset_impl(); //  #IGNORE
+  
+  virtual void 		ConstrFrames_impl();
+
 private:
   void			Initialize();
   void			Destroy();

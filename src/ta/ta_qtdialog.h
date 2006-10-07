@@ -333,7 +333,7 @@ public: // IDataHost i/f
     return ((s > EXISTS) && (s < ZOMBIE));}
   bool		isModal() {return modal;}
   bool		isReadOnly() {return read_only;} //
-// iMainWindowViewer* window() const; n/a here -- defined in taiEDH
+// iMainWindowViewer* viewerWindow() const; n/a here -- defined in taiEDH
   void*		Base() {return cur_base;} // base of the object
   TypeDef*	GetBaseTypeDef() {return typ;} // TypeDef on the base, for casting
 //  void		GetImage()	{ }
@@ -457,7 +457,7 @@ public slots:
   void Cancel(); // override
 
 // IDataHost i/f
-  override iMainWindowViewer* window() const;
+  override iMainWindowViewer* viewerWindow() const;
 
 protected:
   EditDataPanel* panel; //NOTE: not used when invoked by Edit()

@@ -776,9 +776,9 @@ void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
   // connect the tree up to the panel
   pe->items->Connect_SelectableHostNotifySignal(itv,
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
-  pe->m_window = itv->window();
+  pe->m_window = itv->viewerWindow();
   // make sure the Program toolbar is created
-  MainWindowViewer* mvw = itv->window()->viewer();
+  MainWindowViewer* mvw = itv->viewerWindow()->viewer();
   ProgramToolBar* ptb = (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
     "Program");
 /*TODO: re-enable once the program toolbar is defined
@@ -856,7 +856,7 @@ IDataViewWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
 
 
 void iProgramToolBar::Constr_post() {
-  iMainWindowViewer* win = window(); //cache
+  iMainWindowViewer* win = viewerWindow(); //cache
 
 //TODO: add the appropriate global actions
 }

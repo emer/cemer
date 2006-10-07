@@ -69,7 +69,7 @@ public:
   virtual bool		isConstructed() = 0;
   virtual bool		isModal() = 0;
   virtual bool		isReadOnly() = 0;
-  virtual iMainWindowViewer* window() const {return NULL;} // used to set cliphandler
+  virtual iMainWindowViewer* viewerWindow() const {return NULL;} // used to set cliphandler
   virtual bool		HasChanged() = 0; // 'true' if has changed
   virtual void*		Base() = 0; // base of the object
   virtual TypeDef*	GetBaseTypeDef() = 0; // TypeDef on the base, for casting

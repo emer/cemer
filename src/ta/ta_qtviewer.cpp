@@ -607,7 +607,7 @@ TODO:
 
 //from ta_qtdata_def.h -- dependencies are here, so makes sense to impl here
 void IDataHost::SetItemAsHandler(taiData* item, bool set_it) {
-  iMainWindowViewer* dv = window();
+  iMainWindowViewer* dv = viewerWindow();
   if (!dv) return;
   //TODO: we really should check to make sure our class expresses these,
   // and not include the last two if not expressed
@@ -1143,6 +1143,7 @@ String tabListItemsDataLink::GetText(DataLinkText dlt) const {
 IDataViewWidget::IDataViewWidget(DataViewer* viewer_)
 {
   m_viewer = viewer_;
+  m_window = NULL;
   // note: caller will still do a virtual Constr() on us after new
 }
 
@@ -1183,6 +1184,18 @@ void IDataViewWidget::OnClosing_impl(CancelOp& cancel_op) {
   }
 }
 
+iMainWindowViewer* IDataViewWidget::viewerWindow() const {
+  //note: an owner might have simply set this on creation
+  if (!m_window) {
+    //note: ok to cast away constness
+    QWidget* par = const_cast<IDataViewWidget*>(this)->widget(); // we start here, so MainViewer itself returns itself
+    do {
+      m_window = qobject_cast<iMainWindowViewer*>(par);
+      if (m_window) break;
+    } while ((par = par->parentWidget()));
+  }
+  return m_window; // could still be null if not found
+}
 
 //////////////////////////
 //   ISelectable	//
@@ -1797,7 +1810,6 @@ iFrameViewer::~iFrameViewer() {
 }
 
 void iFrameViewer::Init() {
-  m_window = NULL; // set by main win when it adds us
   shn_changing = 0;
 }
 
@@ -1812,7 +1824,7 @@ void iFrameViewer::showEvent(QShowEvent* e) {
 }
 
 void iFrameViewer::Showing(bool showing) {
-  iMainWindowViewer* dv = window();
+  iMainWindowViewer* dv = viewerWindow();
   if (!dv) return;
   taiAction* me = dv->frameMenu->FindActionByData((void*)this);
   if (!me) return;
@@ -2172,7 +2184,7 @@ void iDockViewer::Showing(bool showing) {
   if (!vw) return; // shouldn't happen
   MainWindowViewer* wvw = (MainWindowViewer*)vw->GetOwner(&TA_MainWindowViewer);
   if (!wvw) return; // normally shouldn't happen for owned docks
-  iMainWindowViewer* dv = wvw->window();
+  iMainWindowViewer* dv = wvw->viewerWindow();
   if (!dv) return;
   taiAction* me = dv->dockMenu->FindActionByData((void*)this);
   if (!me) return;
@@ -2268,7 +2280,6 @@ iToolBar::~iToolBar() {
 }
 
 void iToolBar::Init() {
-  m_window = NULL; //set when added
   setLabel(viewer()->GetName());
 }
 
@@ -2283,7 +2294,7 @@ void iToolBar::showEvent(QShowEvent* e) {
 }
 
 void iToolBar::Showing(bool showing) {
-  iMainWindowViewer* dv = window();
+  iMainWindowViewer* dv = viewerWindow();
   if (!dv) return;
   taiAction* me = dv->toolBarMenu->FindActionByData((void*)this);
   if (!me) return;
@@ -2306,7 +2317,7 @@ String iToolBar_List::El_GetName_(void* it) const {
 //////////////////////////
 
 void iApplicationToolBar::Constr_post() {
-  iMainWindowViewer* win = window(); //cache
+  iMainWindowViewer* win = viewerWindow(); //cache
   iToolBar* tb = this;
   win->fileNewAction->addTo(tb);
   win->fileOpenAction->addTo(tb);
@@ -4507,7 +4518,7 @@ void iTextDataPanel::setText(const String& value) {
 
   
 void iTextDataPanel::textText_copyAvailable (bool) {
-  window()->UpdateUi();
+  viewerWindow()->UpdateUi();
 }
 
 String iTextDataPanel::panel_type() const {

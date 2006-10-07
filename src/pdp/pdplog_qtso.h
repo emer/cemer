@@ -158,14 +158,12 @@ public:
 protected:
   iTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
   virtual void		InitDisplayParams() {} // called in _pre
-  override void		OnWindowBind_impl(iT3DataViewer* vw);
   override void		Render_pre(); // #IGNORE -- we only set color of frame
   override void		Render_impl(); // #IGNORE
   override void 	Render_post();
   override void		Reset_impl();
   virtual void		UpdateOwnedData(); // called in UAE to sync data params
   virtual void		UpdateFromBuffer_impl(); // update view from buffer
-  virtual void		viewWin_selectionChanged(ISelectable_PtrList& sels) {} // TODO
 
 };
 
@@ -181,8 +179,6 @@ public slots:
   void 	View_FSR() {if(owner) ((TableView*)owner)->View_FSR();}
   void 	View_FF() {if(owner) ((TableView*)owner)->View_FF();}
   void 	View_FR() {if(owner) ((TableView*)owner)->View_FR();} */
-  void	viewWin_selectionChanged(ISelectable_PtrList& sels)
-    {if(owner) ((TableView*)owner)->viewWin_selectionChanged(sels);}
 };
 
 class PDP_API GridTableViewBase : public TableView {
@@ -257,7 +253,7 @@ public:
   T3_DATAVIEWFUNS(TextTableView, GridTableViewBase)
 
 protected:
-  override void		OnWindowBind_impl(iT3DataViewer* vw);
+  override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void 	InitDisplayParams();
   override void		InitHead();
   override void		RenderHead();
@@ -294,7 +290,7 @@ public:
   T3_DATAVIEWFUNS(NetTableView, TableView)
 
 protected:
-  override void		OnWindowBind_impl(iT3DataViewer* vw);
+  override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   void		UpdateFromBuffer_impl();
 };
 
@@ -366,7 +362,7 @@ public:
   void ColorBar_execute();
 
 protected:
-  override void		OnWindowBind_impl(iT3DataViewer* vw);
+  override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		UpdateFromBuffer_impl();
 };
 
@@ -490,7 +486,7 @@ protected:
   override void 	ChildAdding(T3DataView* child);
   override void 	ChildRemoving(T3DataView* child);
   override void		Clear_impl();
-  override void		OnWindowBind_impl(iT3DataViewer* vw);
+  override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		Render_impl(); // #IGNORE
   override void		Render_pre(); // #IGNORE
   override void		UpdateFromBuffer_impl();

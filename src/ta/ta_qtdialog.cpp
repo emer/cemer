@@ -1890,9 +1890,9 @@ void taiEditDataHost::SetCurMenuButton(MethodDef* md) {
   ta_menu_buttons.Add(cur_menu_but);
 }
 
-iMainWindowViewer* taiEditDataHost::window() const {
+iMainWindowViewer* taiEditDataHost::viewerWindow() const {
   iMainWindowViewer* dv = NULL; 
-  if (panel) dv = panel->window();
+  if (panel) dv = panel->viewerWindow();
   return dv;
 }
 

@@ -798,7 +798,7 @@ void NetViewAdapter::viewWin_NotifySignal(ISelectableHost* src, int op) {
   nv()->viewWin_NotifySignal(src, op);
 }
 
-NetView* NetView::New(T3DataViewer* viewer, Network* net) {
+NetView* NetView::New(T3DataViewFrame* viewer, Network* net) {
   // create NetView
   NetView* nv = new NetView();
   net->AddDataView(nv);
@@ -1151,11 +1151,11 @@ void NetView::NewLayer(int x, int y) {
   //TODO:
 }
 
-void NetView::OnWindowBind_impl(iT3DataViewer* vw) {
+void NetView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!nvp) {
     nvp = new NetViewPanel(this);
-    vw->window()->AddPanelNewTab(nvp);
+    vw->viewerWindow()->AddPanelNewTab(nvp);
   }
   vw->t3vs->Connect_SelectableHostNotifySignal(adapter,
     SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );

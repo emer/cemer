@@ -317,7 +317,7 @@ public:
     UDM_CYLINDER	// #LABEL_3d_Cylinder
   };
 
-  static NetView*	New(T3DataViewer* viewer, Network* net); // create a new instance and add to viewer
+  static NetView*	New(T3DataViewFrame* viewer, Network* net); // create a new instance and add to viewer
 
 
   T3DataView_PtrList	layers; // #NO_SAVE
@@ -376,7 +376,7 @@ protected:
   override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DataUpdateAfterEdit_impl(); //
-  override void		OnWindowBind_impl(iT3DataViewer* vw);
+  override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE

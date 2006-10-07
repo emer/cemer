@@ -230,12 +230,6 @@ void TableView::NewHead() {
   //  UpdateDispLabels();
 }
 
-void TableView::OnWindowBind_impl(iT3DataViewer* vw) {
-  inherited::OnWindowBind_impl(vw);
-  QObject::connect(vw, SIGNAL(selectionChanged(ISelectable_PtrList&)),
-    adapter, SLOT(viewWin_selectionChanged(ISelectable_PtrList&)) );
-}
-
 void TableView::Render_pre() {
   if (!m_node_so.ptr()) return; // shouldn't happen
 
@@ -802,11 +796,11 @@ void TextTableView::InitHead() {
   UpdateDisplay();
 } */
 
-void TextTableView::OnWindowBind_impl(iT3DataViewer* vw) {
+void TextTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iTextTableView_Panel(this);
-    vw->window()->AddPanelNewTab(m_lvp);
+    vw->viewerWindow()->AddPanelNewTab(m_lvp);
   }
 }
 
@@ -1153,11 +1147,11 @@ void NetTableView::UpdateDisplay(TAPtr) {
   }*/
 }
 
-void NetTableView::OnWindowBind_impl(iT3DataViewer* vw) {
+void NetTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iNetTableView_Panel(this);
-    vw->window()->AddPanelNewTab(m_lvp);
+    vw->viewerWindow()->AddPanelNewTab(m_lvp);
   }
 }
 
@@ -1403,11 +1397,11 @@ void GridTableView::GetBodyRep(){
   } */
 }
 
-void GridTableView::OnWindowBind_impl(iT3DataViewer* vw) {
+void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGridTableView_Panel(this);
-    vw->window()->AddPanelNewTab(lvp());
+    vw->viewerWindow()->AddPanelNewTab(lvp());
   }
 }
 
@@ -1737,11 +1731,11 @@ void GraphTableView::NewHead() {
   }
 }
 
-void GraphTableView::OnWindowBind_impl(iT3DataViewer* vw) {
+void GraphTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGraphTableView_Panel(this);
-    vw->window()->AddPanelNewTab(m_lvp);
+    vw->viewerWindow()->AddPanelNewTab(m_lvp);
   }
 }
 
