@@ -24,13 +24,15 @@
 #include "t3viewer.h"
 
 #include "datagraph.h"
-#include "netstru_so.h"
-#include "netstru.h"
+#include "pdp_def.h"
 #include "pdp_TA_type.h"
 
 // externals
 class GraphViews;
 class iGraphButtons; // #IGNORE
+class T3TableViewNode;
+class T3GridTableViewBaseNode;
+class T3GraphTableViewNode;
 
 // forwards
 class TableView;
@@ -39,7 +41,6 @@ class TableViewAdapter; // #IGNORE
 class iTableView_Panel;
 class iGridTableViewBase_Panel;
 class iTextTableView_Panel;
-class iNetTableView_Panel;
 class iGridTableView_Panel;
 class iGraphTableView_Panel;
 
@@ -59,8 +60,7 @@ public: //
   int		data_range_max_() const; // #IGNORE prev: log()data_range.max
   
   
-  static void	InitNew(TableView* lv, DataTable* dt, T3DataViewer* vw);
-    // common code for creating a new one -- creates new data and/or vw if necessary
+  virtual void	InitNew(DataTable* dt, T3DataViewFrame* fr); // #IGNORE common code for creating a new one -- creates new fr if necessary -- called virtually after construction
     
   int		view_bufsz;	// Maximum number of lines in visible buffer
   MinMaxInt	view_range;	// #NO_SAVE range of visible lines (in log lines)
@@ -130,8 +130,6 @@ public: //
 
   virtual void 		LogUpdateAfterEdit(); // called by log in its uae
   virtual void		Log_Clear() {} // called by log in its Clear()
-
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_PDPLog); }
 
   void 	UpdateAfterEdit();
   void 	Initialize();
@@ -262,37 +260,6 @@ protected:
   void			UpdateFromBuffer_AddLine(int row, int buff_idx); // creates a data line
 };
 
-class PDP_API NetTableView : public TableView {
-  // #INSTANCE displays log information in the network view window
-INHERITED(TableView)
-public:
-  NetworkRef      network;		// Network to whose views  data is logged
-
-  iNetTableView_Panel*	lvp(){return (iNetTableView_Panel*)m_lvp;}
-
-  virtual void	SetNetwork(Network* net);
-  // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE select given network as the one to update views on
-  virtual void  ArrangeLabels(int cols = -1, int rows = -1, int width = 12, float left = 0.0, float top = .9);
-  // #MENU arrange the display labels in the netview in a grid of rows and cols starting at given top-left position (as fraction of display size) -1 = auto-compute based on size
-  virtual void	RemoveLabels();	// remove all my labels from the netview
-
-  void 		NewHead();
-  void 		NewData();
-  void		UpdateDisplay(TAPtr updtr=NULL);
-  void 		InitDisplay();
-  void 		UpdateAfterEdit();
-  TypeDef*	DA_ViewSpecType(); // #IGNORE get type of DataArray for this log
-
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  T3_DATAVIEWFUNS(NetTableView, TableView)
-
-protected:
-  override void		OnWindowBind_impl(iT3DataViewFrame* vw);
-  void		UpdateFromBuffer_impl();
-};
 
 class PDP_API GridTableView : public TableView {
   // #INSTANCE displays log information as colored grids
@@ -375,23 +342,13 @@ public slots:
 };
 
 
-/*nnclass GraphTableViewLabel : public ViewLabel {
-  // view labels for graph logs
-public:
-  void		GetMasterViewer();
-
-  void	Initialize()	{ };
-  void	Destroy()	{ };
-  TA_BASEFUNS(GraphTableViewLabel);
-};*/
-
 class PDP_API GraphTableView : public TableView {
   // #INSTANCE View log data as a graph of lines
 INHERITED(TableView)
 public:
+  static GraphTableView* NewGraphTableView(DataTable* dt, T3DataViewFrame* fr); // creates graph
+  
   int			x_axis_index;	// index of index in array
-//  Graph*		graph;		// data/configuration portion of graph
-//  ViewLabel_List	labels;		// misc labels in the graph view
   MinMaxInt		actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
   ColorScaleSpec* 	colorspec; 	// The color spectrum for this display (for TRACE_COLOR or VALUE_COLOR line displays)
   bool			separate_graphs; // draw each group of lines sharing a Y axis using separate graphs
@@ -399,7 +356,7 @@ public:
   bool			anim_stop; 	// #IGNORE
   GraphViews*		graphs; // #READ_ONLY #NO_SAVE
   iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)m_lvp;}
-  T3GraphTableViewNode* 	node_so() const {return (T3GraphTableViewNode*)m_node_so.ptr();}
+  T3GraphTableViewNode* 	node_so() const;
   GraphSpec*  	viewSpec() {return (GraphSpec*)viewspec;}
 
   virtual void	Animate(int msec_per_point = 500);
@@ -527,20 +484,6 @@ public:
   QHBoxLayout*		  layContents; // subclasses put their actual content here
   iT3ViewspaceWidget*	    t3vs; //note: created with call to Constr_T3Viewspace
 
-
-
-/* obs graphical implementation stuff
-  iButton*	disp_tog_but;	// #IGNORE display toggle button
-  iButton*	frev_but;	// #IGNORE full rev
-  iButton*	fsrev_but;	// #IGNORE fast rev
-  iButton*	rev_but;	// #IGNORE rev
-  iButton*	fwd_but;	// #IGNORE fwd
-  iButton*	fsfwd_but;	// #IGNORE fast fwd
-  iButton*	ffwd_but;	// #IGNORE full fwd
-  iButton*	clear_but;	// #IGNORE
-  iButton*	init_but;	// #IGNORE
-  iButton*	update_but;	// #IGNORE
-*/
 //  override String	panel_type() const; // this string is on the subpanel button for this panel
 
   TableView*		lv() {return (TableView*)m_dv;}
@@ -580,10 +523,6 @@ private:
 };
 
 
-//////////////////////////
-// iGridTableViewBase_Panel//
-//////////////////////////
-
 class PDP_API iGridTableViewBase_Panel: public iTableView_Panel {
   Q_OBJECT
 INHERITED(iTableView_Panel)
@@ -608,9 +547,6 @@ protected:
   override void		InitPanel_impl(); // called on structural changes
 };
 
-//////////////////////////
-// iTextTableView_Panel//
-//////////////////////////
 
 class PDP_API iTextTableView_Panel: public iGridTableViewBase_Panel {
   Q_OBJECT
@@ -640,37 +576,6 @@ protected:
 };
 
 
-//////////////////////////
-// iNetTableView_Panel//
-//////////////////////////
-
-class PDP_API iNetTableView_Panel: public iTableView_Panel {
-  Q_OBJECT
-INHERITED(iTableView_Panel)
-public:
-  override String	panel_type() const; // this string is on the subpanel button for this panel
-  NetTableView*		nlv() {return (NetTableView*)m_dv;}
-
-//  override int 		EditAction(int ea);
-//  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-
-  iNetTableView_Panel(NetTableView* nlv);
-  ~iNetTableView_Panel();
-
-public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iNetTableView_Panel;}
-protected:
-//  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
-
-};
-
-
-//////////////////////////
-// iGridTableView_Panel//
-//////////////////////////
-
 class PDP_API iGridTableView_Panel: public iTableView_Panel {
   Q_OBJECT
 INHERITED(iTableView_Panel)
@@ -699,10 +604,6 @@ protected slots:
 //  void			list_selectionChanged(); //note: must use this parameterless version in Multi mode
 };
 
-
-//////////////////////////
-// iGraphTableView_Panel//
-//////////////////////////
 
 class PDP_API iGraphTableView_Panel: public iTableView_Panel {
   Q_OBJECT
@@ -736,22 +637,6 @@ protected:
 //  void			list_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col);
 //  void			list_selectionChanged(); //note: must use this parameterless version in Multi mode
 };
-
-/* nn
-class TableView_ViewType: public tabOViewType { // we group all together, and dynamically decide at runtime
-#ifndef __MAKETA__
-typedef tabOViewType inherited;
-#endif
-public:
-  override int		BidForView(TypeDef*);
-  void			Initialize() {}
-  void			Destroy() {}
-  TA_VIEW_TYPE_FUNS(TableView_ViewType, tabOViewType)
-protected:
-//  override taiDataLink*	CreateDataLink_impl(taBase* data_);
-  override void		CreateDataPanel_impl(taiDataLink* dl_);
-}; */
-
 
 
 #endif

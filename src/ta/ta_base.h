@@ -565,7 +565,7 @@ public:
   // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT Edit this object using the gui
 //obs  virtual bool		CloseEdit();	// close any open edit dialogs for this object
   virtual bool		ReShowEdit(bool force = false);	// reshows any open edit dialogs for this object
-  virtual const iColor* GetEditColor()  { return NULL; } // #IGNORE background color for edit dialog
+  virtual const iColor* GetEditColor(); // #IGNORE background color for edit dialog
   virtual const iColor* GetEditColorInherit(); // #IGNORE background color for edit dialog, include inherited colors from parents
 #ifdef TA_GUI
   virtual const QPixmap* GetDataNodeBitmap(int, int& flags_supported) const

@@ -29,6 +29,7 @@
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 # include "netstru_qtso.h"
+# include "pdplog_qtso.h" // TEMP, until moved
 
 # include <qapplication.h>
 # include <QWidgetList>
@@ -615,11 +616,18 @@ const iColor* ProjectBase::GetObjColor(TypeDef* td) {
     return the_colors.FastEl(ProjectBase::PRJN_SPEC)->color();
   else if(td->InheritsFrom(TA_LayerSpec))
     return the_colors.FastEl(ProjectBase::LAYER_SPEC)->color();
-  else if(td->InheritsFrom(TA_Network))
-    return the_colors.FastEl(ProjectBase::NETWORK)->color();
+  else if (td->InheritsFrom(TA_Network) ||
+    td->InheritsFrom(TA_Layer) ||
+    td->InheritsFrom(TA_Unit_Group) ||
+    td->InheritsFrom(TA_Projection) ||
+    td->InheritsFrom(TA_Connection) ||
+    td->InheritsFrom(TA_Con_Group) ||
+    td->InheritsFrom(TA_Unit) ||
+    td->InheritsFrom(TA_Network_Group)
+    ) return the_colors.FastEl(ProjectBase::NETWORK)->color();
   else if(td->InheritsFrom(TA_Environment))
     return the_colors.FastEl(ProjectBase::ENVIRONMENT)->color();
-  else if(td->InheritsFrom(TA_PDPLog))
+  else if (td->InheritsFrom(TA_TableView)) //note: formerly logs
     return the_colors.FastEl(ProjectBase::PDPLOG)->color();
   else if(td->InheritsFrom(TA_SchedProcess))
     return the_colors.FastEl(ProjectBase::SCHED_PROC)->color();
@@ -629,7 +637,7 @@ const iColor* ProjectBase::GetObjColor(TypeDef* td) {
     return the_colors.FastEl(ProjectBase::OTHER_PROC)->color();
   else if(td->InheritsFrom(TA_taGroup_impl))
     return the_colors.FastEl(ProjectBase::GEN_GROUP)->color();
-  else if(td->InheritsFrom(TA_Wizard))
+  else if(td->InheritsFrom(TA_taWizard)) //note: all Wizards, even ta ones
     return the_colors.FastEl(ProjectBase::WIZARD)->color();
 #endif
   return NULL;
@@ -661,6 +669,30 @@ void ProjectBase::AssertDefaultWiz(bool auto_opn) {
     ((Wizard*)wiz)->ThreeLayerNet();
     wiz->Edit();
   }
+}
+
+void ProjectBase::NewGraphView(DataTable* dt, T3DataViewFrame* fr)
+{
+  if (!dt) {
+    taMisc::Error("You must specify a DataTable");
+    return;
+  }
+  //note: even if fr specified, need to insure it is right proj for table
+  ProjectBase* proj = (ProjectBase*)dt->GetOwner(&TA_ProjectBase);
+  
+  if (fr) {
+    if (proj != fr->GetOwner(&TA_ProjectBase)) {
+      taMisc::Error("The viewer you specified is not in the same Project as the table.");
+      return;
+    }
+  } else {
+    MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
+    if (!vw) return; // shouldn't happen
+    T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
+    if (!t3vw) return; // shouldn't happen
+    fr = t3vw->NewT3DataViewFrame();
+  }
+  GraphTableView::NewGraphTableView(dt, fr); // discard result
 }
 
 void ProjectBase::UpdateColors() {
@@ -719,6 +751,14 @@ TAPtr PDPRoot::Browse(const char* init_path) {
   return retv;
 }
 #endif
+
+const iColor* PDPRoot::GetObjColor(taBase* inst) {
+  if (!inst) return NULL;
+  ProjectBase* proj = (ProjectBase*)inst->GetOwner(&TA_ProjectBase);
+  if (proj) return proj->GetObjColor(inst->GetTypeDef());
+  else return NULL;
+} 
+
 void PDPRoot::Info() {
   STRING_BUF(info, 2048);
   info += "PDP Info\n";

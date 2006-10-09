@@ -2137,7 +2137,7 @@ else min_cycles = network->min_cycles_phase2;
     el_def=0;
     tabBrowseViewer @[0] {
      m_data=NULL;
-     name="DefaultBrowseViewer";
+     name="Tree";
      display_toggle=1;
      visible=1;
      root_typ=LeabraProject;
@@ -2146,18 +2146,18 @@ else min_cycles = network->min_cycles_phase2;
     };
     PanelViewer @[1] {
      m_data=NULL;
-     name="DefaultPanelViewer";
+     name="Panels";
      display_toggle=1;
      visible=1;
     };
     T3DataViewer @[2] {
      m_data=NULL;
-     name="DefaultT3DataViewer";
+     name="Viewer";
      display_toggle=1;
      visible=1;
 frames  {
   T3DataViewFrame @[0] { 
-     name="DefaultT3DataViewFrame";
+     name="DefaultFrame";
      root_view {
       m_data=NULL;
       m_transform=NULL;

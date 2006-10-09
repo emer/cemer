@@ -49,40 +49,12 @@ class PDP_API pdpMisc {
   // #NO_TOKENS miscellaneous things for pdp, extension of basic tabMisc app stuff
 friend class InitProcRegistrar;
 public:
-  //note: this enum must be duplicated in ProjectBase
-  enum ViewColors {		// indicies for view_colors
-    TEXT,
-    BACKGROUND,
-    NETWORK,
-    ENVIRONMENT, //note: also used for Events
-    SCHED_PROC,
-    STAT_GROUP,
-    SUBPROC_GROUP,
-    STAT_PROC,
-    OTHER_PROC,
-    PDPLOG,
-    STAT_AGG,
-    GEN_GROUP,
-    INACTIVE,
-    STOP_CRIT,
-    AGG_STAT,
-    CON_SPEC,
-    UNIT_SPEC,
-    PRJN_SPEC,
-    LAYER_SPEC,
-    WIZARD,
-    COLOR_COUNT
-  };
-
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
   static PDPRoot*	root;		// root of pdp class hierarchy
   static String_Array	proj_to_load;	// list of projects to load
   static String		user_spec_def;	// provided by user using -d option
   static float		pdpZScale; // amount by which to scale y dimension (inventor z) def is 4.0
-  static float		pts_per_so_unit; // #DEF_36 equivalent font points per so unit
-  static float		char_pts_per_so_unit; // #DEF_72 chars*pt size / so unit
-
   static taPtrList_impl* initHookList(); // need to use accessor to resolve module initialization ambiguity
   
   static int	Main(int argc, char* argv[]);
@@ -94,12 +66,6 @@ public:
   static void 	SaveRecoverFile(int err = 1);
   // error handling function that saves a recover file when system crashes
   static ColorScaleSpec* GetDefaultColor();  // gets the default color scale
-
-  static const iColor* GetObjColor(ProjectBase* prj, ViewColors vc);
-  // #IGNORE get default object color (for edit dialogs and project view)
-  static const iColor* GetObjColor(ProjectBase* prj, TypeDef* typ);
-  // get default object color (for edit dialogs and project view)
-
 
   static Network* GetNewNetwork(ProjectBase* prj, TypeDef* typ = NULL);
   // get a new network object

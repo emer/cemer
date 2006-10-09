@@ -40,7 +40,10 @@ void BaseSpec_Group::Initialize() {
 }
 
 const iColor* BaseSpec_Group::GetEditColor() {
-  return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase), el_base);
+  // we use color of type of the specs, not our own type
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  if (proj) return proj->GetObjColor(el_base);
+  else return inherited::GetEditColor();
 }
 
 BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {

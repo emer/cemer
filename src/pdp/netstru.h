@@ -131,9 +131,6 @@ public:
   float 	wt;		// weight of connection
 
   bool		ChangeMyType(TypeDef* new_type);
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
-#endif
   void 	SetTypeDefaults()	{ }; // overload this to do nothing (faster)
   void	UpdateAfterEdit();	     // might want to override any default updates..
   void 	Initialize() 		{ wt = 0.0f; }
@@ -246,9 +243,6 @@ public:
   // overload this function to prevent this projection from being pruned for non-local units under dmem processing (for "special" connection types)
   virtual MemberDef* DMem_EpochShareDwtVar() { return min_con_type->members.FindName("dwt"); }
   // name of weight-change variable to share across dmem processors in BATCH mode learning
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_ConSpec); }
-#endif
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
@@ -392,9 +386,7 @@ public:
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   bool	ChangeMyType(TypeDef* new_type);
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
-#endif
+  
   void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -440,11 +432,6 @@ public:
   // check for for misc configuration settings required by different algorithms
 
   virtual int	UseCount(); // return number of times this spec is used
-
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_UnitSpec); }
-//  virtual Unit_So*	MakeSo(Unit* unit, Layer_So* par);
-#endif
 
   void  UpdateAfterEdit();
   void 	Initialize();
@@ -590,9 +577,7 @@ public: //
 
   virtual void	CopyNetwork(Network* anet, Network* cn, Unit* cp); // #IGNORE copy network
   virtual void	CopyPtrs(Unit* cp); // #IGNORE copy the pointers directly
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
-#endif
+  
   void  UpdateAfterEdit();
   void	Initialize();
   void 	Destroy();
@@ -635,9 +620,7 @@ public:
 
   virtual void 	CopyNetwork(Network* net, Network* cn, Projection* prjn, Projection* cp);
   virtual int	UseCount(); // return number of times this spec is used
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_ProjectionSpec); }
-#endif
+  
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void 	InitLinks();
@@ -750,9 +733,7 @@ public:
   // #MENU #NULL_OK TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
   void 	CopyPtrs(Projection* cp); // #IGNORE copy the pointers
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
-#endif
+  
   void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy();
@@ -901,9 +882,7 @@ public:
   override bool	Dump_QuerySaveChildren();
 
   void		RemoveAll();
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
-#endif
+  
   void	UpdateAfterEdit();
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }
@@ -922,11 +901,6 @@ class PDP_API LayerSpec : public BaseSpec {
   // generic layer specification
 public:
   virtual int	UseCount(); // return number of times this spec is used
-
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_LayerSpec); }
-//  virtual Layer_So*	MakeSo(Layer* layer, Network_So* par);
-#endif
 
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
@@ -1116,9 +1090,7 @@ public:
 
   virtual void	CopyNetwork(Network* net, Network* cn, Layer* cp); // #IGNORE copy entire network
   virtual void	CopyPtrs(Layer* cp); // #IGNORE the pointers
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
-#endif
+  
   void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -1421,9 +1393,6 @@ public:
 //TODO???  TypeDef*	GetDefaultView() { return &TA_NetView; } // #IGNORE default view
   int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
-#endif
   void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -1443,9 +1412,7 @@ SmartRef_Of(Network)
 class PDP_API Network_Group : public taGroup<Network> {
 INHERITED(taGroup<Network>)
 public:
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Network); }
-#endif
+  
   void	Initialize() 		{SetBaseType(&TA_Network);}
   void 	Destroy()		{ };
   TA_BASEFUNS(Network_Group); //

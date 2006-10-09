@@ -69,7 +69,6 @@ class PDPView;
 class TableView; //
 class TextTableView; //
 class GridTableView; //
-class NetTableView; //
 class GraphTableView; //
 
 

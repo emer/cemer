@@ -124,8 +124,6 @@ PDPRoot* 	pdpMisc::root = NULL;
 String_Array	pdpMisc::proj_to_load;
 String		pdpMisc::user_spec_def;
 float		pdpMisc::pdpZScale = 4.0f;
-float		pdpMisc::pts_per_so_unit = 36.0f;
-float		pdpMisc::char_pts_per_so_unit = 72.0f;
 
 
 taPtrList_impl* pdpMisc::initHookList() {
@@ -396,16 +394,6 @@ SelectEdit* pdpMisc::FindMakeSelectEdit(ProjectBase* prj) {
   return rval;
 }
 #endif
-
-const iColor* pdpMisc::GetObjColor(ProjectBase* proj, ViewColors vc) {
-  if (proj == NULL) return NULL;
-  return proj->GetObjColor((ProjectBase::ViewColors)vc);
-}
-
-const iColor* pdpMisc::GetObjColor(ProjectBase* proj, TypeDef* td) {
-  if((proj == NULL) || (td == NULL)) return NULL;
-  return proj->GetObjColor(td);
-}
 
 ColorScaleSpec* pdpMisc::GetDefaultColor() {
   if((root == NULL) || !taMisc::gui_active)	return NULL;

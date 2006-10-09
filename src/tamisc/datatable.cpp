@@ -1692,19 +1692,6 @@ bool DA_TextViewSpec::BuildFromDataArray(DataArray_impl* tda) {
   return result;
 }
 
-//////////////////////////////////
-// 	DA Net View Specs	//
-//////////////////////////////////
-
-void DA_NetViewSpec::Initialize() {
-  label_index = -1;
-}
-
-void DA_NetViewSpec::Destroy() {
-}
-
-
-
 
 //////////////////////////////////
 // 	DA Grid View Specs	//

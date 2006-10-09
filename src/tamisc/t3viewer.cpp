@@ -60,6 +60,9 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 
+float t3Misc::pts_per_so_unit = 36.0f;
+float t3Misc::char_pts_per_so_unit = 72.0f;
+
 //////////////////////////
 //	T3DataView	//
 //////////////////////////
@@ -994,7 +997,7 @@ void T3DataViewer::InitLinks() {
   // add a default frame, if none yet
   if (frames.size == 0) {
     T3DataViewFrame* fv = (T3DataViewFrame*)frames.New(1);
-    fv->SetName("DefaultT3DataViewFrame");
+    fv->SetName("DefaultFrame");
   }
 }
 

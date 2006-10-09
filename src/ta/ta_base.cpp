@@ -717,11 +717,16 @@ taDataLink* taBase::GetDataLink() {
   return data_link();
 }
 
+const iColor* taBase::GetEditColor() {
+  if (tabMisc::root) return tabMisc::root->GetObjColor(this);
+  else return NULL;
+}
+
 const iColor* taBase::GetEditColorInherit() {
   const iColor* bgclr = GetEditColor();
-  if(bgclr == NULL) {
+  if (!bgclr) {
     TAPtr ownr = GetOwner();
-    while((ownr != NULL) && (bgclr == NULL)) {
+    while ((ownr != NULL) && (bgclr == NULL)) {
       bgclr = ownr->GetEditColor();
       ownr = ownr->GetOwner();
     }

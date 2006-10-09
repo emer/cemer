@@ -62,6 +62,14 @@ class T3DataViewer;
 
 SoPtr_Of(T3Node);
 
+class TAMISC_API t3Misc {
+// global params and funcs for T3 viewing system
+public:
+  static float		pts_per_so_unit; // #DEF_36 equivalent font points per so unit
+  static float		char_pts_per_so_unit; // #DEF_72 chars*pt size / so unit
+
+};
+
 //////////////////////////
 //   T3DataView_List	//
 //////////////////////////

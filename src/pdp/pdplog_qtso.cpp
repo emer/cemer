@@ -21,9 +21,10 @@
 
 #include "datagraph_qtso.h"
 
-#include "pdp_qtso.h"
+//#include "pdp_qtso.h"
 #include "pdplog_qtso.h"
-#include "pdpshell.h"
+#include "netstru_so.h" // TEMP
+//#include "pdpshell.h"
 
 #include "icolor.h"
 
@@ -79,10 +80,6 @@ int TableView::data_range_max_() const {
 }
 // END conversion properties
 
-void TableView::InitNew(TableView* lv, DataTable* dt, T3DataViewer* vw) {
-//TODO
-}
-
 void TableView::Initialize() {
   data_base = &TA_DataTable;
 //obs  view_bufsz = 100;
@@ -101,6 +98,16 @@ void TableView::Initialize() {
 
   SetAdapter(new TableViewAdapter(this));
 }
+
+// called virtually, after construct
+void TableView::InitNew(DataTable* dt, T3DataViewFrame* fr) {
+  SetData(dt);
+  fr->AddView(this);
+  //??
+  if (fr->isMapped())
+    fr->Render();
+}
+
 
 void TableView::InitLinks() {
   inherited::InitLinks();
@@ -752,7 +759,7 @@ void TextTableView::InitDisplay() {
 void TextTableView::InitDisplayParams() {
   DT_ViewSpec* tvs = viewSpec();
   // row height, and number of rows
-  row_height = tvs->def_font.pointSize / pdpMisc::pts_per_so_unit;
+  row_height = tvs->def_font.pointSize / t3Misc::pts_per_so_unit;
   view_bufsz = (int)(geom.z / row_height) - 1; // 1 for header
 
   InitHead();
@@ -772,7 +779,7 @@ void TextTableView::InitHead() {
     ++cols;
     // col width will depend on font size, and number of tabs in col (8 chars / tab)
     float col_wd = MIN(
-      (tvs->def_font.pointSize * vs->width * 8)  / pdpMisc::char_pts_per_so_unit,
+      (tvs->def_font.pointSize * vs->width * 8)  / t3Misc::char_pts_per_so_unit,
       (float)geom.x
     );
     tot_col_widths += col_wd;
@@ -950,229 +957,6 @@ void TextTableView::UpdateFromBuffer_AddLine(int row, int buff_idx){
     ++col;
   }
   node_so->body()->addChild(ln);
-}
-
-
-//////////////////////////
-//  NetTableView 		//
-//////////////////////////
-
-void NetTableView::Initialize(){
-  view_bufsz = 1;
-//obs  view_shift = 1;
-}
-
-void NetTableView::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(network, this); // smartptr ref
-/*TODO:fixup  if(updaters.size == 0) return;
-  SchedProcess* proc = (SchedProcess*)updaters.FastEl(0);
-  if(proc->network != NULL)
-    SetNetwork(proc->network);	// use process network by default */
-}
-
-void NetTableView::CutLinks() {
-  RemoveLabels();
-  network = NULL;
-  inherited::CutLinks();
-}
-
-
-TypeDef* NetTableView::DA_ViewSpecType() {
-  return &TA_DA_NetViewSpec;
-}
-
-void NetTableView::UpdateAfterEdit(){
-  TableView::UpdateAfterEdit();
-  UpdateDisplay();
-}
-
-void NetTableView::SetNetwork(Network* net) {
-  network = net;
-  ArrangeLabels();
-}
-
-void NetTableView::NewHead(){
-  TableView::NewHead();
-  if(!display_toggle) return;
-  InitDisplay();
-}
-
-void NetTableView::NewData(){
-  if(!taMisc::gui_active || !display_toggle) return;
-  UpdateDisplay();
-}
-
-void NetTableView::InitDisplay() {
-  TableView::InitDisplay();
-/*TODO: fixup  if (network == NULL) {
-    if(updaters.size == 0) return;
-    SchedProcess* proc = (SchedProcess*)updaters.FastEl(0);
-    if(proc->network != NULL)
-      SetNetwork(proc->network);	// use process network by default
-  }
-  else
-    UpdateDisplay(); */
-}
-
-void NetTableView::ArrangeLabels(int cols, int rows, int width, float left, float top) {
-/*  if(!taMisc::gui_active || (network == NULL)) return;
-  UpdateDisplay();
-
-  top -= .07f;			// mystery offset...
-
-  int sz = viewspec->leaves;
-  if(cols < 0 && rows > 0) {
-    cols = sz / rows;
-    while((cols * rows) < sz) cols++;
-  }
-  else if(cols > 0 && rows < 0) {
-    rows = sz / cols;
-    while((cols * rows) < sz) rows++;
-  }
-  else if(cols < 0 && rows < 0) {
-    cols = (int)sqrtf((float)sz);
-    rows = sz / cols;
-    while((cols * rows) < sz) cols++;
-  }
-
-  NetView* netview;
-  taLeafItr j;
-  FOR_ITR_EL(NetView, netview, network->views., j) {
-    if(netview->display_toggle == false) continue;
-    if(netview->labels.size < 1) continue;
-
-    NetViewLabel* vl = (NetViewLabel*) netview->labels.FastEl(0); // take first one as representative
-    ivFontBoundingBox bbox;
-    vl->spec.fnt->font_bbox(bbox);
-    float fy = bbox.ascent() + bbox.descent();
-    float fx = vl->spec.fnt->width('m');
-
-    float xscale = (float)width * fx;
-    float yscale = 1.25f * fy;
-    float xoff = left * vl->viewer->viewallocation().x_allotment().span();
-    float yoff = top * vl->viewer->viewallocation().y_allotment().span();
-
-    int curx = 0;
-    int cury = 0;
-
-    taLeafItr i;
-    DA_NetViewSpec* vs;
-    FOR_ITR_EL(DA_NetViewSpec, vs, viewspec->, i) {
-      if((vs->visible == false) || (vs->data_array == NULL)) continue;
-      NetViewLabel* vl = (NetViewLabel*) netview->labels.FastEl(vs->label_index);
-      Xform* xf = new Xform;
-      float xc = xoff + ((float)curx * xscale);
-      float yc = yoff - ((float)cury * yscale);
-      xf->Set(1.0f, 0.0f, 0.0f, 1.0f, xc, yc);
-      vl->SetLabelXform(xf);
-      curx++;
-      if(curx >= cols) {
-	curx = 0;
-	cury++;
-      }
-    }
-    netview->InitDisplay();
-  }*/
-}
-
-void NetTableView::UpdateDisplay(TAPtr) {
-  if(!taMisc::gui_active || (!network)) return;
-/*TODO  NetView* netview;
-  taLeafItr j;
-  FOR_ITR_EL(NetView, netview, network->views., j) {
-    if(netview->display_toggle == false) continue;
-    bool newlabel = false;
-    taLeafItr i;
-    DA_NetViewSpec* vs;
-    FOR_ITR_EL(DA_NetViewSpec, vs, viewspec->, i) {
-      if((vs->visible == false) || (vs->data_array == NULL)) continue;
-      DataArray_impl* da = vs->data_array;
-      NetViewLabel* vl = NULL;
-      if(vs->label_index < 0) {	// not there, try to find existing first..
-	String srch = vs->display_name + ":";
-	int k;
-	for(k=0;k<netview->labels.size;k++) {
-	  NetViewLabel* tvl = (NetViewLabel*)netview->labels.FastEl(k);
-	  if(tvl->name.contains(srch)) {
-	    // now need to make sure its unique..
-	    bool unique = true;
-	    DA_NetViewSpec* tvs;
-	    taLeafItr ti;
-	    FOR_ITR_EL(DA_NetViewSpec, tvs, viewspec->, ti) {
-	      if(tvs->label_index == k) {
-		unique = false;
-		break;
-	      }
-	    }
-	    if(unique) {
-	      vl = tvl;
-	      vs->label_index = k;
-	      break;
-	    }
-	  }
-	}
-	if(vl == NULL) { // didn't find it
-	  vl = (NetViewLabel*)netview->labels.New(1,&TA_NetViewLabel);
-	  vs->label_index = netview->labels.size -1;
-	  newlabel = true;
-	}
-      }
-      else if(vs->label_index >= netview->labels.size) {
-	vl = (NetViewLabel*)netview->labels.New(1,&TA_NetViewLabel);
-	vs->label_index = netview->labels.size -1;
-	newlabel = true;
-      }
-      else {
-	vl = (NetViewLabel*) netview->labels.FastEl(vs->label_index);
-      }
-
-      vl->name = vs->display_name + ":";
-      taArray_base* ar = da->AR();
-      String el;
-      if((ar != NULL) && (ar->size > 0)){
-	el = ar->El_GetStr_(ar->FastEl_(ar->size-1));
-      }
-      else {
-	el = "n/a";
-      }
-      vl->name += el;
-      vl->label_gp = 1;
-      vl->UpdateAfterEdit(); //    vl->MakeText();
-    }
-    if(newlabel)
-      netview->InitDisplay();
-    else
-      netview->UpdateDisplay();
-  }*/
-}
-
-void NetTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
-  inherited::OnWindowBind_impl(vw);
-  if (!m_lvp) {
-    m_lvp = new iNetTableView_Panel(this);
-    vw->viewerWindow()->AddPanelNewTab(m_lvp);
-  }
-}
-
-void NetTableView::RemoveLabels() {
-  if(!taMisc::gui_active || (!network)) return;
-/*TODO  NetView* netview;
-  taLeafItr j;
-  FOR_ITR_EL(NetView, netview, network->views., j) {
-    if(netview->labels.size < 1) continue;
-    int i;
-    for(i=viewspec->leaves-1;i>=0;i--) {
-      DA_NetViewSpec* vs = (DA_NetViewSpec*)viewspec->Leaf(i);
-      netview->labels.Remove(vs->label_index);
-    }
-    netview->InitDisplay();
-  } */
-}
-
-void NetTableView::UpdateFromBuffer_impl() {
-  inherited::UpdateFromBuffer_impl();
-  UpdateAfterEdit();
 }
 
 
@@ -1505,11 +1289,20 @@ void GridTableView::AllBlockTextOff() {
   }
   InitDisplay();
 }
-/*TODO nn??
 //////////////////////////
 //    GraphTableView	//
 //////////////////////////
 
+GraphTableView* GraphTableView::NewGraphTableView(DataTable* dt,
+    T3DataViewFrame* fr)
+{
+  if (!dt) return NULL;
+  GraphTableView* rval = new GraphTableView;
+  rval->InitNew(dt, fr);
+  return rval;
+}
+
+/*TODO nn??
 void GraphTableViewLabel::GetMasterViewer() {
   GraphTableView* glv = GET_MY_OWNER(GraphTableView);
   if((glv != NULL) && (glv->editor != NULL)) {
@@ -1731,6 +1524,11 @@ void GraphTableView::NewHead() {
   }
 }
 
+T3GraphTableViewNode* GraphTableView::node_so() const {
+  return (T3GraphTableViewNode*)m_node_so.ptr();
+}
+
+
 void GraphTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
@@ -1791,7 +1589,7 @@ void GraphTableView::UpdateViewRange() {
 //TODO: fix up this whacky nonsense!!!!!!
 //TEMP
 viewSpec()->view_range.min = 0;
-viewSpec()->view_range.max = -1 + data()->rows;
+viewSpec()->view_range.max = (data()) ? -1 + data()->rows : 0;
 
 
     viewSpec()->view_bufsz = view_bufsz;
@@ -2386,39 +2184,6 @@ void iGridTableView_Panel::chkHeaders_toggled(bool on) {
 
 String iGridTableView_Panel::panel_type() const {
   static String str("Grid Log");
-  return str;
-}
-
-
-//////////////////////////
-// iNetTableView_Panel //
-//////////////////////////
-
-iNetTableView_Panel::iNetTableView_Panel(NetTableView* nlv)
-:inherited(nlv)
-{
-
-/*TODO  list = new iLDPListView(this, "list");
-  layOuter->addWidget(list);
-  list->setSelectionMode(QListView::Extended);
-  list->setShowSortIndicator(true);
-  // set up number of cols, based on link
-  list->addColumn("#");
-  for (int i = 0; i < link()->NumListCols(); ++i) {
-    list->addColumn(link()->GetColHeading(i));
-  }
-  connect(list, SIGNAL(contextMenuRequested(QListViewItem*, const QPoint &, int)),
-      this, SLOT(list_contextMenuRequested(QListViewItem*, const QPoint &, int)) );
-  connect(list, SIGNAL(selectionChanged()),
-      this, SLOT(list_selectionChanged()) );
-  FillList(); */
-}
-
-iNetTableView_Panel::~iNetTableView_Panel() {
-}
-
-String iNetTableView_Panel::panel_type() const {
-  static String str("Net Log");
   return str;
 }
 

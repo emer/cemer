@@ -9,6 +9,7 @@ Brad:
 misc ui improvements:
 * graph log (get working again)  
   * support for matrices
+* T3 tabs should update if name changes
 * highlight progeditor lines w/red for ProgEl->CheckConfig == false #70
 * read-only, condedit off guys in edits are just labels, not controls
 * add ... to edit a token pointer (replaces #93)

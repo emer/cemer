@@ -748,6 +748,19 @@ void MainWindowViewer::	HelpContentsAction(){} // #ACT
 TypeDef* MainWindowViewer::def_browser_type = &TA_MainWindowViewer; 
 TypeDef* MainWindowViewer::def_viewer_type = &TA_MainWindowViewer; 
 
+MainWindowViewer* MainWindowViewer::GetDefaultProjectBrowser(taProject* proj) {
+// look in list of viewer wins for most current
+  for (int i = taiMisc::active_wins. size - 1; i >= 0; --i) {
+    iMainWindowViewer* ivw = taiMisc::active_wins.FastElAsMainWindow(i); 
+    // check if it is a proj viewer
+    if (!ivw || !ivw->isProjViewer()) continue;
+    // if proj specified, check if same
+    if (proj && (ivw->curProject() != proj)) continue;
+    return ivw->viewer();
+  } 
+  return NULL;
+}
+
 MainWindowViewer* MainWindowViewer::NewBrowser(TAPtr root,
   MemberDef* root_md, bool is_root)
 {
@@ -771,10 +784,10 @@ MainWindowViewer* MainWindowViewer::NewClassBrowser(void* root, TypeDef* root_ty
 {
   MainWindowViewer* rval = new MainWindowViewer;
   ClassBrowseViewer* cb = ClassBrowseViewer::New(root, root_typ, root_md);
-  cb->SetName("DefaultBrowseViewer");
+  cb->SetName("Tree");
   rval->frames.Add(cb);
   PanelViewer* pv = new PanelViewer;
-  pv->SetName("DefaultPanelViewer");
+  pv->SetName("Panels");
   rval->frames.Add(pv);
   // browsers are added to the global viewers, and not persistent
   if (tabMisc::root)
@@ -790,13 +803,13 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   rval->m_is_proj_viewer = true;
   tabBrowseViewer* cb = tabBrowseViewer::New(proj);
-  cb->SetName("DefaultBrowseViewer");
+  cb->SetName("Tree"); // generally only one (open BrowseFromHere for more wins)
   rval->frames.Add(cb);
   FrameViewer* fv = rval->AddFrameByType(&TA_PanelViewer);
-  fv->SetName("DefaultPanelViewer");
+  fv->SetName("Panels"); // generally only one (can be split for mult-panels)
   fv = rval->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
   // always added to the viewer collection
-  fv->SetName("DefaultT3DataViewer");
+  fv->SetName("DefaultViewer");
   proj->viewers.Add(rval);
   // global toolbar
   ToolBoxDockViewer* tb = ToolBoxDockViewer::New(); // initializes

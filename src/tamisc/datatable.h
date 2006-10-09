@@ -393,17 +393,6 @@ public:
   TA_BASEFUNS(DA_TextViewSpec);
 };
 
-class TAMISC_API DA_NetViewSpec: public DA_ViewSpec {
-  // data-array view spec for netview based display
-public:
-  int	label_index;	// index into the netview's label list
-  void  Initialize();
-  void  Destroy();
-  void Copy_(const DA_NetViewSpec& cp) { label_index = cp.label_index;}
-  COPY_FUNS(DA_NetViewSpec,DA_ViewSpec);
-  TA_BASEFUNS(DA_NetViewSpec);
-};
-
 class TAMISC_API DA_GridViewSpec : public DA_ViewSpec {
   // information for display of a data array in a grid display
 public:

@@ -133,9 +133,7 @@ public:
   // todo: various ways of configuring specific types of logs?? should probably be on logs themselves
   // what about making everything black & white vs. color?
 */
-#ifdef TA_GUI
-  const iColor* GetEditColor() { return pdpMisc::GetObjColor(GET_MY_OWNER(ProjectBase),&TA_Wizard); }
-#endif
+  
   void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -150,7 +148,6 @@ class PDP_API ProjectBase : public taProject {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN A ProjectBase has everything
 INHERITED(taProject)
 public:
-  //note: this enum must be duplicated in pdpMisc
   enum ViewColors {		// indicies for view_colors
     TEXT,
     BACKGROUND,
@@ -161,7 +158,7 @@ public:
     SUBPROC_GROUP,
     STAT_PROC,
     OTHER_PROC,
-    PDPLOG,
+    PDPLOG, //note: now for TableView
     STAT_AGG,
     GEN_GROUP,
     INACTIVE,
@@ -175,6 +172,8 @@ public:
     COLOR_COUNT
   };
 
+  static void 		NewGraphView(DataTable* dt, T3DataViewFrame* fr = NULL); // #DYN_P1 #MENU #MENU_CONTEXT #NULL_OK create a new graph view of the specified table in current project browser; NULL creates new frame
+  
   Network_Group		networks;	// Networks of interconnected units
 
   bool			save_rmv_units; // #DEF_true don't include units in network when saving (makes project file much smaller!)
@@ -189,6 +188,8 @@ public:
   override const iColor* GetObjColor(TypeDef* td); // #IGNORE get default color for object (for edit, project view)
   override const iColor* GetObjColor(int vc); // #IGNORE get default color for object (for edit, project view)
   override void 	AssertDefaultWiz(bool auto_opn); // make the default wizard(s)
+
+//TEMP methods until we add dynamic methods for DataTable
 
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only
@@ -217,6 +218,8 @@ public:
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
 #endif
   override void	SaveAll(); // saves all the projects
+
+  override const iColor* GetObjColor(taBase* inst);
 
   void	InitLinks();
   void	CutLinks();

@@ -158,6 +158,8 @@ public:
   
   taBase*		GetTemplateInstance(TypeDef* typ); // get an instance of the indicated tab type, or NULL if not found
   
+  virtual const iColor*	GetObjColor(taBase* inst) {return NULL;}  //#IGNORE
+  	
   void	InitLinks();
   void	CutLinks();
   TA_ABSTRACT_BASEFUNS(taRootBase)

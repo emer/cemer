@@ -529,6 +529,9 @@ public:
   static MainWindowViewer* NewProjectBrowser(taProject* proj); 
     // makes a standard 3-pane project viewer
 
+  static MainWindowViewer* GetDefaultProjectBrowser(taProject* proj = NULL);
+    // get the default pb for given project, or whatever one is current if NULL
+  
   bool			m_is_root; // #READ_ONLY #SAVE #NO_SHOW
   bool			m_is_proj_viewer; // #READ_ONLY #SAVE #NO_SHOW
   
