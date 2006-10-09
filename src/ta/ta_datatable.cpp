@@ -126,6 +126,12 @@ DataTable* DataArray_impl::dataTable() {
   return rval;
 }
 
+void DataArray_impl::EnforceRows(int rws) {
+  taMatrix* mat = AR();
+  if (!mat) return;
+  mat->EnforceFrames(rws);
+}
+
 int DataArray_impl::displayWidth() const {// low level display width, in tabs (8 chars/tab), taken from spec
   int rval = 2; // default
   // explicit width has highest priority
@@ -307,9 +313,7 @@ bool DataTable::AddRow(int n) {
   taLeafItr i;
   DataArray_impl* ar;
   FOR_ITR_EL(DataArray_impl, ar, data., i) {
-    taMatrix* mat = ar->AR();
-    if (!mat) continue;
-    mat->EnforceFrames(mat->frames() + n);
+    ar->EnforceRows(ar->rows() + n);
   }
   RowsAdding(n, false);
   return true;
@@ -510,6 +514,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
   default: return NULL; // compiler food
   }
   DataArray_impl* rval = (DataArray_impl*) col_gp->NewEl(1, td);
+  rval->EnforceRows(rows);	// new guys always get same # of rows as current table
   rval->name = col_nm;
   // additional specialized initialization
   switch (val_type) {
@@ -574,6 +579,38 @@ DataArray_impl* DataTable::NewColMatrixN(DataArray_impl::ValType val_type,
 
 String_Data* DataTable::NewColString(const String& col_nm) {
   return (String_Data*)NewCol(VT_STRING, col_nm);
+}
+
+DataArray_impl* DataTable::FindColName(const String& col_nm, int& col_idx, int val_type, 
+				       int dims, int d0, int d1, int d2, int d3, int d4) {
+  if(val_type < 0 && dims < 0) {
+    DataArray_impl* rval = data.FindLeafName(col_nm, col_idx);
+    return rval;
+  }
+  int lfi = 0;
+  taLeafItr i;
+  DataArray_impl* ar;
+  for(ar = (DataArray_impl*)data.FirstEl(i); ar; ar = (DataArray_impl*)data.NextEl(i), lfi++) {
+    if(ar->name != col_nm) continue;
+    if((val_type >= 0) && (ar->valType() != (ValType)val_type)) continue;
+    if((dims > 0 ) && (ar->cell_dims() != dims)) continue;
+    // todo: set geom
+    col_idx = lfi;
+    return ar;			// found it!
+  }
+  col_idx = -1;
+  return NULL;
+}
+
+DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
+					   DataArray_impl::ValType val_type, 
+					   int dims, int d0, int d1, int d2, int d3, int d4) {
+  DataArray_impl* da = FindColName(col_nm, col_idx, val_type, dims, d0, d1, d2, d3, d4);
+  if(da) return da;
+  if(dims > 1)
+    return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
+  else
+    return NewCol(val_type, col_nm);
 }
 
 DataTableCols* DataTable::NewGroupFloat(const String& col_nm, int n) {

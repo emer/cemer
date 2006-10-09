@@ -77,9 +77,9 @@ public:
   virtual void	StdNetwork(Network* net=NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)
 
-//   virtual void	StdInputData(DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
-//   // #MENU_BUTTON #MENU_ON_InputData #NULL_OK make a standard data table of input patterns according to the current settings (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences 
-//   virtual void	UpdateDataTableFmNet(DataTable* data_table, Network* net);
+  virtual void	StdInputData(DataTable* data_table, Network* net, int n_patterns = 0, bool group=false);
+  // #MENU_BUTTON #MENU_ON_InputData #NULL_OK make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences 
+  virtual void	UpdateInputDataFmNet(DataTable* data_table, Network* net);
   // #MENU_BUTTON #MENU_SEP_BEFORE update data table columns based on configuration of the network 
 //   virtual void	TimeSeqEvents(TimeEnvironment* env, int n_seqs = 10, int events_per_seq = 4, float start_time = 0.0, float time_inc = 1.0);
 //   // #MENU_BUTTON make sequences (groups) of TimeEvents, with each sequence having the same sequence of times (start + inc for each addnl event)

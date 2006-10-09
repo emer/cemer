@@ -195,27 +195,52 @@ void Wizard::StdNetwork(Network* net) {
   }
   net->Build();
   net->Connect();
+  net->ShowInViewer();
 //obs  taMisc::DelayedMenuUpdate(net);
 }
 
-/* TEMP
+
 //////////////////////////////////
 // 	Enviro Wizard		//
 //////////////////////////////////
 
-void Wizard::StdConduit(NetConduit* cond, Network* net) {
+void Wizard::StdInputData(DataTable* data_table, Network* net, int n_patterns, bool group) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if (cond == NULL) {
-    cond = pdpMisc::GetNewConduit(proj);
+  if(!data_table) {
+    data_table = proj->data.NewEl(1, &TA_DataTable); // todo: should be in InputData
+    data_table->name = "StdInputData";
   }
-  if (cond == NULL) return;
-  if (net == NULL) {
+  if(!net) {
     net = pdpMisc::GetDefNetwork(GET_MY_OWNER(ProjectBase));
   }
-  if (net == NULL) return; // TODO, maybe create net
-  cond->InitFromNetwork(net);
+  if(!net) return;
+  if(group) {
+    int gp_idx = 0;
+    data_table->FindMakeColName("Group", gp_idx, DataTable::VT_STRING, 1, 1);
+  }
+  int nm_idx = 0;
+  data_table->FindMakeColName("Name", nm_idx, DataTable::VT_STRING, 1, 1);
+
+  UpdateInputDataFmNet(data_table, net);
+
+  data_table->AddRow(n_patterns);
 }
 
+void Wizard::UpdateInputDataFmNet(DataTable* data_table, Network* net) {
+  if(!data_table || !net) return;
+  taLeafItr li;
+  Layer* lay;
+  FOR_ITR_EL(Layer, lay, net->layers., li) {
+    if(lay->layer_type == Layer::HIDDEN) continue;
+    int lay_idx = 0;
+    DataArray_impl* ld = data_table->FindMakeColName
+      (lay->name, lay_idx, DataTable::VT_FLOAT, 2,
+       MAX(lay->geom.x,1), MAX(lay->geom.y,1));
+  }
+}
+
+
+/* TEMP
 
 //////////////////////////////////
 // 	Proc Wizard		//

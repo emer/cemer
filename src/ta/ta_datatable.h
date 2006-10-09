@@ -143,6 +143,9 @@ public:
     // valid if type is numeric, -ve row is from end (-1=last)
     {return SetValAsByte_impl(val, row, cell);} 
 
+  void		EnforceRows(int rows);
+  // force data to have this many rows
+
   // Matrix ops
   taMatrix*	GetValAsMatrix(int row);
     // gets the cell as a slice of the entire column (note: not const -- you can write it)
@@ -269,20 +272,19 @@ public:
     const String& col_nm,  const MatrixGeom& cell_geom);
    // create new matrix column of data of specified type, with specified cell geom
   
-  DataArray_impl*	NewColFromChannelSpec(ChannelSpec* cs)
-   // #MENU_1N create new matrix column of data based on name/type in the data item (default is Variant)
-    {if (cs) return NewColFromChannelSpec_impl(cs); else return NULL;}
-    
-  DataArray_impl*	GetColForChannelSpec(ChannelSpec* cs)
-   // #MENU_1N find existing or create new matrix column of data based on name/type in the data item
-    {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
-    
   float_Data*		NewColFloat(const String& col_nm); 
     // create new column of floating point data
   int_Data*		NewColInt(const String& col_nm); 	 
     // create new column of integer-level data (= narrow display, actually stored as float)
   String_Data*		NewColString(const String& col_nm); 
     // create new column of string data
+
+  DataArray_impl*	FindColName(const String& col_nm, int& col_idx, int val_type = -1,  
+    int dims = -1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
+  // find a column of the given name.  if further parameters are specified (val_type of type taBase::ValType, number of dimensions, etc) they are also matching criteria
+
+  DataArray_impl*	FindMakeColName(const String& col_nm, int& col_idx, DataArray_impl::ValType val_type,  int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
+  // find a column of the given name, val type, and dimension. if one does not exist, then create it
     
   DataTableCols*	NewGroupFloat(const String& base_nm, int n); 
     // OBS create new sub-group of floats of size n, named as base_nm_index
@@ -291,6 +293,14 @@ public:
   DataTableCols*	NewGroupString(const String& base_nm, int n); 
     // OBS create new sub-group of strings of size n, named as base_nm_index
 
+  DataArray_impl*	NewColFromChannelSpec(ChannelSpec* cs)
+   // #MENU_1N create new matrix column of data based on name/type in the data item (default is Variant)
+    {if (cs) return NewColFromChannelSpec_impl(cs); else return NULL;}
+    
+  DataArray_impl*	GetColForChannelSpec(ChannelSpec* cs)
+   // #MENU_1N find existing or create new matrix column of data based on name/type in the data item
+    {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
+    
   DataArray_impl* 	GetColData(int col) const;
     // get col data for given leaf column 
   taMatrix*		GetColMatrix(int col) const;
