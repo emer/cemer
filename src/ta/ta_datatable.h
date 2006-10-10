@@ -284,7 +284,7 @@ public:
   // find a column of the given name.  if further parameters are specified (val_type of type taBase::ValType, number of dimensions, etc) they are also matching criteria
 
   DataArray_impl*	FindMakeColName(const String& col_nm, int& col_idx, DataArray_impl::ValType val_type,  int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
-  // find a column of the given name, val type, and dimension. if one does not exist, then create it
+  // find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
   DataTableCols*	NewGroupFloat(const String& base_nm, int n); 
     // OBS create new sub-group of floats of size n, named as base_nm_index

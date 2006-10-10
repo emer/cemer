@@ -78,16 +78,21 @@ public:
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)
 
   virtual void	StdInputData(DataTable* data_table, Network* net, int n_patterns = 0, bool group=false);
-  // #MENU_BUTTON #MENU_ON_InputData #NULL_OK make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences 
+  // #MENU_BUTTON #MENU_ON_Data #NULL_OK make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences 
   virtual void	UpdateInputDataFmNet(DataTable* data_table, Network* net);
   // #MENU_BUTTON #MENU_SEP_BEFORE update data table columns based on configuration of the network 
+  virtual void	StdOutputData();
+  // #MENU_BUTTON #MENU_SEP_BEFORE make standard set of output data (monitoring network performance) -- this just creates empty datatables in OutputData subgroup with names that standard programs look for
+
 //   virtual void	TimeSeqEvents(TimeEnvironment* env, int n_seqs = 10, int events_per_seq = 4, float start_time = 0.0, float time_inc = 1.0);
 //   // #MENU_BUTTON make sequences (groups) of TimeEvents, with each sequence having the same sequence of times (start + inc for each addnl event)
 
-/*
-  virtual void	StdProcs();
-  // #MENU_BUTTON #MENU_ON_Processes #CONFIRM create a standard set of processes, starting with a batch process
-  virtual void	NetAutoSave(SchedProcess* process_level_to_save_at, bool just_weights = false);
+  virtual void	StdProgs();
+  // #MENU_BUTTON #MENU_ON_Programs #CONFIRM create a standard set of programs for running the algorithm specified by this project
+
+  virtual Program_Group* StdProgs_impl(const String& prog_nm); // #IGNORE impl that actually loads progs from proglib with given name; returns new program group or NULL if not found
+
+  /*  virtual void	NetAutoSave(SchedProcess* process_level_to_save_at, bool just_weights = false);
   // #MENU_BUTTON #MENU_SEP_BEFORE make the given process save a network when it is complted (just_weights = just save the weights)
   virtual EpochProcess*	AutoTestProc(SchedProcess* training_process, Environment* test_env);
   // #MENU_BUTTON create an automatic testing epoch process that runs on the test environment, and is called automatically from the training process

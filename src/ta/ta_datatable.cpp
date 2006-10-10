@@ -496,6 +496,7 @@ DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type,
   StructUpdate(true);
   DataArray_impl* rval = NewCol_impl(val_type, col_nm);
   rval->Init(); // asserts geom
+  rval->EnforceRows(rows);	// new guys always get same # of rows as current table
   StructUpdate(false);
   return rval;
 }
@@ -514,7 +515,6 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
   default: return NULL; // compiler food
   }
   DataArray_impl* rval = (DataArray_impl*) col_gp->NewEl(1, td);
-  rval->EnforceRows(rows);	// new guys always get same # of rows as current table
   rval->name = col_nm;
   // additional specialized initialization
   switch (val_type) {
@@ -554,6 +554,9 @@ int_Data* DataTable::NewColInt(const String& col_nm) {
 DataArray_impl* DataTable::NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
     int dims, int d0, int d1, int d2, int d3, int d4)
 {
+  if(dims < 1) {		// < 1 is shortcut for not actually a matrix!
+    return NewCol(val_type, col_nm);
+  }
   MatrixGeom geom(dims, d0, d1, d2, d3, d4);
   String err_msg;
   if (!taMatrix::GeomIsValid(geom, &err_msg)) {
@@ -573,6 +576,7 @@ DataArray_impl* DataTable::NewColMatrixN(DataArray_impl::ValType val_type,
   rval->is_matrix = true;
   rval->cell_geom = cell_geom;
   rval->Init(); // asserts geom
+  rval->EnforceRows(rows);	// new guys always get same # of rows as current table
   StructUpdate(false);
   return rval;
 }
@@ -607,7 +611,7 @@ DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
 					   int dims, int d0, int d1, int d2, int d3, int d4) {
   DataArray_impl* da = FindColName(col_nm, col_idx, val_type, dims, d0, d1, d2, d3, d4);
   if(da) return da;
-  if(dims > 1)
+  if(dims >= 1)
     return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
   else
     return NewCol(val_type, col_nm);

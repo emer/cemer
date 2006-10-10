@@ -9938,3 +9938,8 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 }
 
 
+void LeabraWizard::StdProgs() {
+  // todo: could check for subgroups and do LeabraAll_GpData instead
+  Program_Group* pg = StdProgs_impl("LeabraAll_Std");
+  // todo: could do something more here..
+}

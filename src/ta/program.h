@@ -675,9 +675,9 @@ public:
 
   void	FindPrograms();		// search paths to find all available programs
   taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT create a new program in new_owner of given type (return value could be a Program or a Program_Group)
+  // #MENU #MENU_ON_Object #MENU_CONTEXT create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
   taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
-  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found)
+  // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
   
   TA_SIMPLE_BASEFUNS(ProgLib);
 protected:
@@ -701,6 +701,8 @@ public:
 
   taBase* NewFromLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib create a new program from a library of existing program types
+  taBase* NewFromLibByName(const String& prog_nm);
+  // create a new program from a library of existing program types, looking up by name (NULL if name not found)
 
   void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
   

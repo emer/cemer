@@ -322,6 +322,14 @@ TAPtr taGroup_impl::FindLeafType_(TypeDef* it, int& idx) const {
   return NULL;
 }
 
+TAGPtr taGroup_impl::FindMakeGpName(const String& nm, TypeDef* typ) {
+  TAGPtr rval = gp.FindName(nm);
+  if(rval) return rval;
+  rval = NewGp_(1, typ);
+  rval->SetName(nm);
+  return rval;
+}
+
 MemberDef* taGroup_impl::FindMembeR(const String& nm, void*& ptr) const {
   String idx_str = nm;
   idx_str = idx_str.before(']');

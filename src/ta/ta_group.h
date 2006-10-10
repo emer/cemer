@@ -156,6 +156,8 @@ public:
   virtual TAPtr FindLeafName_(const char* it, int& idx=Idx) const; 	// #IGNORE
   virtual TAPtr	FindLeafType_(TypeDef* it, int& idx=Idx) const;	// #IGNORE
 
+  virtual TAGPtr FindMakeGpName(const String& gp_nm, TypeDef* typ=NULL);
+  // #IGNORE find subgroup of given name; if it doesn't exist, then make it (using type if specified, else default type for subgroup)
 
   ////////////////////////////////////////////////
   // functions that don't depend on the type	//

@@ -45,7 +45,7 @@
 //////////////////////////
 
 void LayerWizEl::Initialize() {
-  n_units = 10;
+  n_units = 25;
 }
 
 
@@ -208,7 +208,8 @@ void Wizard::StdNetwork(Network* net) {
 void Wizard::StdInputData(DataTable* data_table, Network* net, int n_patterns, bool group) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!data_table) {
-    data_table = proj->data.NewEl(1, &TA_DataTable); // todo: should be in InputData
+    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
+    data_table = dgp->NewEl(1, &TA_DataTable); // todo: should be in InputData
     data_table->name = "StdInputData";
   }
   if(!net) {
@@ -217,10 +218,10 @@ void Wizard::StdInputData(DataTable* data_table, Network* net, int n_patterns, b
   if(!net) return;
   if(group) {
     int gp_idx = 0;
-    data_table->FindMakeColName("Group", gp_idx, DataTable::VT_STRING, 1, 1);
+    data_table->FindMakeColName("Group", gp_idx, DataTable::VT_STRING, 0);
   }
   int nm_idx = 0;
-  data_table->FindMakeColName("Name", nm_idx, DataTable::VT_STRING, 1, 1);
+  data_table->FindMakeColName("Name", nm_idx, DataTable::VT_STRING, 0);
 
   UpdateInputDataFmNet(data_table, net);
 
@@ -240,21 +241,37 @@ void Wizard::UpdateInputDataFmNet(DataTable* data_table, Network* net) {
   }
 }
 
+void Wizard::StdOutputData() {
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("OutputData");
+  DataTable* trl_data = dgp->NewEl(1, &TA_DataTable);
+  DataTable* epc_data = dgp->NewEl(1, &TA_DataTable);
+  trl_data->SetName("TrialOutputData");
+  epc_data->SetName("EpochOutputData");
+}
+
+//////////////////////////////////
+// 	Progs Wizard		//
+//////////////////////////////////
+
+void Wizard::StdProgs() {
+  taMisc::Error("This must be redefined in algorithm-specific project!",
+		"Just call StdProgs_impl with name of std program from proglib");
+}
+
+Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  taBase* rval = proj->programs.NewFromLibByName(prog_nm);
+  if(!rval) return NULL;
+  if(!rval->InheritsFrom(&TA_Program_Group)) {
+    taMisc::Error("Wizard::StdProgs_impl program named:", prog_nm,
+		  "is not a group of programs -- invalid for this function");
+    return NULL;
+  }
+  return (Program_Group*)rval;
+}
 
 /* TEMP
-
-//////////////////////////////////
-// 	Proc Wizard		//
-//////////////////////////////////
-
-void Wizard::StdProcs() {
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  BatchProcess* batch = (BatchProcess*)pdpMisc::FindMakeProc(proj, "Batch_0", &TA_BatchProcess);
-  batch->CreateSubProcs();
-#ifdef TA_GUI
-  batch->ControlPanel();
-#endif
-}
 
 void Wizard::NetAutoSave(SchedProcess* proc, bool just_weights) {
   if(proc == NULL) return;
@@ -518,6 +535,11 @@ void ProjectBase::InitLinks_impl() {
     view_colors.Reset();		// kill existing colors
   else
     GetDefaultColors();
+
+  // make default groups for different types of data
+  data.FindMakeGpName("InputData");
+  data.FindMakeGpName("OutputData");
+  data.FindMakeGpName("AnalysisData");
 }
 
 void ProjectBase::CutLinks_impl() {
@@ -543,11 +565,7 @@ void ProjectBase::UpdateAfterEdit() {
 }
 
 DataTable_Group* ProjectBase::analysisDataGroup() {
-  DataTable_Group* rval = (DataTable_Group*)data.gp.FindName("AnalysisData");
-  if (!rval) {
-    rval = (DataTable_Group*)data.NewGp(1);
-    rval->SetName("AnalysisData");
-  }
+  DataTable_Group* rval = (DataTable_Group*)data.FindMakeGpName("AnalysisData");
   return rval;
 }
 

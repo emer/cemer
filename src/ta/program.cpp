@@ -1728,6 +1728,10 @@ taBase* Program_Group::NewFromLib(ProgLibEl* prog_type) {
   return prog_lib.NewProgram(prog_type, this);
 }
 
+taBase* Program_Group::NewFromLibByName(const String& prog_nm) {
+  return prog_lib.NewProgramFmName(prog_nm, this);
+}
+
 //////////////////////////
 //  Program_List	//
 //////////////////////////
