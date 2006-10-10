@@ -381,7 +381,8 @@ int taiMisc::maxButtonWidth(int sizeSpec) const {
   return max_button_width;
 }
 
-QLabel* taiMisc::NewLabel(int fontSpec, const String& text, QWidget* parent) {
+QLabel* taiMisc::NewLabel(const String& text, QWidget* parent, int fontSpec) {
+  if (fontSpec == 0) fontSpec = ctrl_size;
   QLabel* rval = new QLabel(text, parent);
   rval->setFixedHeight(label_height(fontSpec));
   rval->setFont(nameFont(fontSpec));

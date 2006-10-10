@@ -802,7 +802,7 @@ void taiDataHost::Constr_Prompt() {
   if (prompt != NULL) return; // already constructed
   // convert to html-ish format, for display
   QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
-  prompt = taiM->NewLabel(ctrl_size, s, widget());
+  prompt = taiM->NewLabel(s, widget(), ctrl_size);
   prompt->setTextFormat(Qt::RichText);
   prompt->setWordWrap(true); // so it doesn't dominate hor sizing
   QFont f = prompt->font(); f.setBold(true); prompt->setFont(f);

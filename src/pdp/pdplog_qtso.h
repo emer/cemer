@@ -64,7 +64,7 @@ public: //
     
   int		view_bufsz;	// Maximum number of lines in visible buffer
   MinMaxInt	view_range;	// #NO_SAVE range of visible lines (in log lines)
-  DT_ViewSpec*	viewspec;	// #BROWSE #READ_ONLY #NO_SAVE global view spec for all data
+  DT_ViewSpec*	viewspec;	// #SHOW_TREE #READ_ONLY #NO_SAVE global view spec for all data
 
   taBase_List 	viewspecs;	// #NO_SHOW dummy group list to hold the single viewspec
   bool		display_toggle;  // #DEF_true 'true' if display should be updated

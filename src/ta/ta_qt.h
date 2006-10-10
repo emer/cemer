@@ -233,7 +233,7 @@ public:
   int		max_control_height(int sizeSpec); // maximum height needed
   int		maxButtonWidth(int sizeSpec = 0) const; // maximum width allowed
 
-  QLabel*	NewLabel(int fontSpec, const String& text, QWidget* parent);
+  QLabel*	NewLabel(const String& text, QWidget* parent = NULL, int fontSpec = 0);
     // convenience, for making a label with indicated fontspec
   void		FormatButton(QAbstractButton* but, const String& text,
     int font_spec = 0); // sets max width, text, and adds a tooltip

@@ -1386,7 +1386,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   connect(butNewLayer, SIGNAL(pressed()), this, SLOT(butNewLayer_pressed()) );
 
   layCtrls->addSpacing(5);
-  lblDisplayValues = taiM->NewLabel(font_spec, "Display Values", widg);
+  lblDisplayValues = taiM->NewLabel("Display Values", widg, font_spec);
   layCtrls->addWidget(lblDisplayValues);
   lvDisplayValues = new Q3ListView(widg);
   lvDisplayValues->addColumn("Value", 80);
@@ -1400,13 +1400,13 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layOuter->addSpacing(5);
   layColorScale = new QVBoxLayout(layOuter);
 
-  lblUnitText = taiM->NewLabel(font_spec, "Unit Text", widg);
+  lblUnitText = taiM->NewLabel("Unit Text", widg, font_spec);
   layColorScale->addWidget(lblUnitText);
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
     NULL, NULL, widg);
   layColorScale->addWidget(cmbUnitText->GetRep());
 
-  lblDispMode = taiM->NewLabel(font_spec, "Disp Mode", widg);
+  lblDispMode = taiM->NewLabel("Disp Mode", widg, font_spec);
   layColorScale->addWidget(lblDispMode);
   cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
     NULL, NULL, widg);

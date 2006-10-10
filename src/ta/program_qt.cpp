@@ -85,13 +85,13 @@ void taiProgVar::Constr(QWidget* gui_parent_) {
 
 void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
   QWidget* rep_ = GetRep();
-  QLabel* lbl = new QLabel("name", rep_);
+  QLabel* lbl = MakeLabel("name", rep_);
   AddChildWidget(lbl, taiM->hsep_c);
 
   fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
   AddChildWidget(fldName->GetRep(), taiM->hsep_c);
   
-  lbl = new QLabel("var type",rep_);
+  lbl = MakeLabel("var type",rep_);
   AddChildWidget(lbl, taiM->hsep_c);
   
   TypeDef* typ_var_enum = TA_ProgVar.sub_types.FindName("VarType");
@@ -171,11 +171,11 @@ void taiProgVar::AssertControls(int value) {
     stack = new QWidget();
     hl = new QHBoxLayout(stack);
     hl->setMargin(0);
-    lbl = new QLabel("min type", stack);
+    lbl = MakeLabel("min type", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
     thValType = new taiTypeDefButton(&TA_taBase, host, this, stack, (mflags & flgReadOnly));
     hl->addWidget(thValType->GetRep());  hl->addSpacing(taiM->hsep_c);
-    lbl = new QLabel("value", stack);
+    lbl = MakeLabel("value", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
     tkObjectValue = new taiTokenPtrButton(thValType->typ, host, this, stack, 
       ((mflags & flgReadOnly) | flgNullOk));
@@ -188,12 +188,12 @@ void taiProgVar::AssertControls(int value) {
     hl = new QHBoxLayout(stack);
     hl->setMargin(0);
     
-    lbl = new QLabel("enum type", stack);
+    lbl = MakeLabel("enum type", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
     thEnumType = new taiEnumTypeDefButton(&TA_taBase, host, this, stack, (mflags & flgReadOnly));
     hl->addWidget(thEnumType->GetRep()); hl->addSpacing(taiM->hsep_c);
     
-    lbl = new QLabel("enum value", stack);
+    lbl = MakeLabel("enum value", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
     
     cboEnumValue = new taiComboBox(true, NULL, host, this, stack, (mflags & flgReadOnly));
@@ -210,7 +210,7 @@ void taiProgVar::AssertControls(int value) {
         stack, ((mflags & flgReadOnly) | flgEditOnly));
     hl->addWidget(edDynEnum->GetRep()); hl->addSpacing(taiM->hsep_c);
     
-    lbl = new QLabel("enum value", stack);
+    lbl = MakeLabel("enum value", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
     
     cboDynEnumValue = new taiComboBox(true, NULL, host, this, stack, (mflags & flgReadOnly));
@@ -528,25 +528,12 @@ void iProgramEditor::Base_Add() {
   // add desc control in line 1 for ProgEls (and any other type with a "desc" member
   md_desc = typ->members.FindName("desc");
   if (md_desc) {
-/*    // in order to get the 'desc' label, we need to indirect, and get a poly guy
-    //note: the "type" is that of the member's parent, not the member itself
-    taiPolyData* pd = taiPolyData::New (false, typ, this, NULL, body->dataGridWidget(), flags);
-    // now, add the member to the poly guy -- this will also render the label
-    pd->InitLayout();
-    pd->AddChildMember(md_desc);
-    //pd->EndLayout();
-    
-    data_el.Add(pd);
-    rep = pd->GetRep();
-*/
-//    AddData(1, rep/*, pd->GetLayout()*/);
-    
-    //ok, we don't make a poly guy because it seemed impossible to get field to stretch,
+    //NOTE: we don't make a poly guy because it seemed impossible to get field to stretch,
     // so we just get the field dude manually, and pack up in our own layout
     QHBoxLayout* hbl = new QHBoxLayout();
     hbl->setMargin(0);
     hbl->setSpacing(taiM->hsep_c);
-    QLabel* lbl = new QLabel("desc", body->dataGridWidget());
+    QLabel* lbl = taiM->NewLabel("desc", body->dataGridWidget());
     hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
     lbl->show();
     if (!read_only)
