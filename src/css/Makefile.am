@@ -35,7 +35,6 @@ SRCS =\
 	css_lex.cpp \
 	ta_css.cpp \
 	xmemory.cpp \
-	css_special_math.cpp \
 	css_misc_funs.cpp \
 	$(SRCS_GUI) \
 	css_ti.cpp
@@ -49,7 +48,6 @@ HEADS =\
 	css_extern_support.h \
 	ta_css.h \
 	css_parse.h \
-	css_special_math.h \
 	hard_of_css.h \
 	css_misc_funs.h \
 	$(HEADS_GUI)

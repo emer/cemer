@@ -24,6 +24,7 @@
 #include "ta_css.h"
 #include "ta_base.h"
 #include "ta_group.h"
+#include "ta_math.h"
 
 #ifdef TA_GUI
 #include "css_qt.h"
@@ -48,13 +49,7 @@
 #if (defined(TA_OS_WIN))
 #include <complex>
 #endif
-// when using the .c version
-// extern "C" {
-// #include <special_math.h>
-// }
 
-// using the .cc version
-#include <css_special_math.h>
 #include <css_misc_funs.h>
 
 #ifndef CSS_NUMBER
@@ -1234,77 +1229,10 @@ static cssRealFun_stub1(asinh);
 static cssRealFun_stub1(atanh);
 #endif
 
-// stuff from special math:
-
-//static cssRealFun_stub1(fact_ln);
-static cssEl* cssRealFun_fact_ln_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)fact_ln((int)*(arg[1])));
-}
-//static cssRealFun_stub2(bico_ln);
-static cssEl* cssRealFun_bico_ln_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)bico_ln((int)*(arg[1]), (int)*(arg[2])));
-}
-
-//static cssRealFun_stub4(hyperg);
-static cssEl* cssRealFun_hyperg_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)hyperg((int)*(arg[1]), (int)*(arg[2]), (int)*(arg[3]), (int)*(arg[4])));
-}
-
-static cssRealFun_stub1(gamma_ln);
-static cssRealFun_stub2(gamma_p);
-static cssRealFun_stub2(gamma_q);
-static cssRealFun_stub2(beta);
-static cssRealFun_stub3(beta_i);
-
-//static cssRealFun_stub3(binom_den);
-static cssEl* cssRealFun_binom_den_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)binom_den((int)*(arg[1]), (int)*(arg[2]), (double)*(arg[3])));
-}
-//static cssRealFun_stub3(binom_cum);
-static cssEl* cssRealFun_binom_cum_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)binom_cum((int)*(arg[1]), (int)*(arg[2]), (double)*(arg[3])));
-}
-//static cssRealFun_stub2(binom_dev);
-static cssEl* cssRealFun_binom_dev_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)binom_dev((int)*(arg[1]), (double)*(arg[2])));
-}
-
-//static cssRealFun_stub2(poisson_den);
-static cssEl* cssRealFun_poisson_den_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)poisson_den((int)*(arg[1]), (double)*(arg[2])));
-}
-//static cssRealFun_stub2(poisson_cum);
-static cssEl* cssRealFun_poisson_cum_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)poisson_cum((int)*(arg[1]), (double)*(arg[2])));
-}
-static cssRealFun_stub1(poisson_dev);
-
-//static cssRealFun_stub3(gamma_den);
-static cssEl* cssRealFun_gamma_den_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)gamma_den((int)*(arg[1]), (double)*(arg[2]), (double)*(arg[3])));
-}
-//static cssRealFun_stub3(gamma_cum);
-static cssEl* cssRealFun_gamma_cum_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)gamma_cum((int)*(arg[1]), (double)*(arg[2]), (double)*(arg[3])));
-}
-//static cssRealFun_stub1(gamma_dev);
-static cssEl* cssRealFun_gamma_dev_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)gamma_dev((int)*(arg[1])));
-}
-
-static cssRealFun_stub1(gauss_den);
-static cssRealFun_stub1(gauss_cum);
-static cssRealFun_stub0(gauss_dev);
-static cssRealFun_stub1(gauss_inv);
 #if (!defined(TA_OS_WIN))
 static cssRealFun_stub1(erf);
-static cssRealFun_stub1(erf_c);
+static cssRealFun_stub1(erfc);
 #endif
-static cssRealFun_stub2(chisq_p);
-static cssRealFun_stub2(chisq_q);
-static cssRealFun_stub2(students_cum);
-static cssRealFun_stub2(students_den);
-static cssRealFun_stub3(Ftest_q);
 
 
 //////////////////////////////////
@@ -1381,93 +1309,6 @@ static void Install_Math() {
 "(Real x) The tangent of angle x (given in radians).  Use tan(x / DEG) if x is in degrees.");
   cssRealFun_inst(cssMisc::Functions, tanh, 1,
 "(Real x) The hyperbolic tangent of x.");
-
-  cssRealFun_inst(cssMisc::Functions, fact_ln   , 1,
-"(Real x) The natural logarithm of the factorial of x (x!).");
-  cssRealFun_inst(cssMisc::Functions, bico_ln   , 2,
-"(Int n, Int j) The natural logarithm of the binomial coefficient \"n choose j\".  The\
- number of ways of choosing j items out of a set containing n\
- elements: (n j) =  n! / (k! (n-k)!)");
-  cssRealFun_inst(cssMisc::Functions, hyperg    , 4,
-"(Int j, Int s, Int t, Int n) The hypergeometric probability function for getting j number of the\
- target items in an environment of size n, where there are t\
- targets and a sample (without replacement) of this environment of size\
- s is taken.");
-
-  cssRealFun_inst(cssMisc::Functions, gamma_ln  , 1,
-"(Real z) The natural logarithm of the gamma function, which is a generalization\
- of (n-1)! to real-valued arguments. Note that this is not the\
- gamma probability distribution. Gamma(z) = integral_0^x t^(z-1) e^(-t) dt");
-  cssRealFun_inst(cssMisc::Functions, gamma_p   , 2,
-"(Real a, Real x) The incomplete gamma function: P(a,x) = 1/Gamma(a) \
- integral_0^x t^(a-1) e^(-t) dt (a > 0)");
-  cssRealFun_inst(cssMisc::Functions, gamma_q   , 2,
-"(Real a, Real x) The incomplete gamma function as the complement of gamma_p:\
- P(a,x) = 1/Gamma(a) integral_x^inf t^(a-1) e^(-t) dt (a > 0)");
-  cssRealFun_inst(cssMisc::Functions, beta      , 2,
-"(Real z, Real w) The Beta function.");
-  cssRealFun_inst(cssMisc::Functions, beta_i    , 3,
-"(Real a, Real b, Real x) The incomplete Beta function.");
-
-  cssRealFun_inst(cssMisc::Functions, binom_den , 3,
-"(Int n, Int j, Real p)  The binomial probability density function for j successes in n trials,\
- each with probability p of success.  P(n,j,p) = (n j) p^j (1-p)^(n-j)");
-  cssRealFun_inst(cssMisc::Functions, binom_cum , 3,
-"(Int n, Int j, Int p)  The cumulative binomial probability of getting j or more in n\
- trials of probability p.");
-  cssRealFun_inst(cssMisc::Functions, binom_dev , 2,
-"(Int n, Real p) The binomial random deviate: produces an integer number of successes for\
- a binomial distribution with p probability over n trials.");
-
-  cssRealFun_inst(cssMisc::Functions, poisson_den, 2,
-"(Int j, Real l) The Poisson probability density function for j events given an expected\
- number of events of l (lambda). P(j,l) = (l^j/j!) e^-l");
-  cssRealFun_inst(cssMisc::Functions, poisson_cum,2,
-"(Int j, Real l) The cumulative Poisson distribution for getting 0 to j-1 events with an\
- exected number of events of l (lambda).");
-  cssRealFun_inst(cssMisc::Functions, poisson_dev,1,
-"(Real l) A random Poisson deviate with a mean of l (lambda).");
-
-  cssRealFun_inst(cssMisc::Functions, gamma_den , 3,
-"(Int j, Real l, Real t) The gamma probability density function for j events, l=lambda, and\
- t=time.  P(j,l,t) = (l^j t^(j-1) / j!) e^-lt (t > 0)");
-  cssRealFun_inst(cssMisc::Functions, gamma_cum , 3,
-"(Int i, Real l, Real t) The cumulative gamma distribution for event i with parameters l=lambda\
- and t=time, which is the same as gamma_p(j, l * t).");
-  cssRealFun_inst(cssMisc::Functions, gamma_dev , 1,
-"(Int j) A random gamma deviate: how long it takes to wait until j events occur\
- with a unit lambda (l=1).");
-
-  cssRealFun_inst(cssMisc::Functions, gauss_den , 1,
-"(Real x) The Gaussian or normal probability density function at x with sigma = 1\
- and mean = 0.");
-  cssRealFun_inst(cssMisc::Functions, gauss_cum , 1,
-"(Real x) The cumulative of the Gaussian or normal distribution up to given x\
- (sigma = 1, mean = 0).");
-  cssRealFun_inst(cssMisc::Functions, gauss_inv , 1,
-"(Real p) Inverse of the cumulative for p: returns z value for given p");
-  cssRealFun_inst(cssMisc::Functions, gauss_dev , 0,
-"The Gaussian or normal probability density function at x with sigma = 1\
- and mean = 0.");
-#if (!defined(TA_OS_WIN))
-  cssRealFun_inst(cssMisc::Functions, erf       , 1,
-"(Real x) The error function, which provides an approximation to the integral of\
- the normal distribution.");
-  cssRealFun_inst(cssMisc::Functions, erf_c     , 1,
-"(Real x) The complement of the error function erf.");
-#endif
-  cssRealFun_inst(cssMisc::Functions, chisq_p   , 2,
-"(Real X, v) Gives the chi-squared statistic P(X^2 | v).");
-  cssRealFun_inst(cssMisc::Functions, chisq_q   , 2,
-"(Real X, v) Gives the complement of the chi-squared statistic Q(X^2 | v).");
-  cssRealFun_inst(cssMisc::Functions, students_cum, 2,
-"(Real t, v) Gives the cumulative Student's distribution for v degrees of freedom t test.");
-  cssRealFun_inst(cssMisc::Functions, students_den, 2,
-"(Real t, v) Gives the Student's distribution density function for v degrees of freedom t test.");
-  cssRealFun_inst(cssMisc::Functions, Ftest_q   , 3,
-"(Real F, Real v1, Real v2) Gives the F probability distribution for P(F | (v1 < v2)).  Useful for\
- performing statistical significance tests.  The _q suffix means that\
- this is the complement distribution.");
 
 // MSVC does not include these
 // hp does not include these unless you have _INCLUDE_HPUX_SOURCE...
