@@ -7,7 +7,6 @@ Alpha:
 Brad:
 
 misc ui improvements:
-* read-only, condedit off guys in edits are just labels, not controls
 * add ... to edit a token pointer (replaces #93)
 * text controls have minimum width
 * minimal netview cleanup: transparent layer etc
@@ -47,6 +46,8 @@ Brad done:
 * buttons have maximum width (20 chars, established in taiMisc::InitMetrics)
 * T3 tabs should update if name changes
 * highlight progeditor lines w/red for ProgEl->CheckConfig == false #70
+* read-only, condedit off guys are now indicated by grey
+* highlighting working (label goes bold to indicate non-default value)
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)
