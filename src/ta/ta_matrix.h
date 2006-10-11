@@ -297,6 +297,22 @@ public:
   float			SafeElAsFloat_Flat(int idx) const	
     { if (InRange_Flat(idx)) return El_GetFloat_(FastEl_Flat_(idx)); else return 0.0f; } 
     
+  double			FastElAsDouble(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+    const {return El_GetDouble_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4))); }
+  double			FastElAsDoubleN(const MatrixGeom& indices) const	
+    {return El_GetDouble_(FastEl_Flat_(FastElIndexN(indices))); }   
+  double			FastElAsDouble_Flat(int idx) const 
+    {return El_GetDouble_(FastEl_Flat_(idx)); } 
+  double			SafeElAsDouble(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+    const {return SafeElAsDouble_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
+    // (safely) returns the element as a variant
+  double			SafeElAsDoubleN(const MatrixGeom& indices) const	
+    {return SafeElAsDouble_Flat(SafeElIndexN(indices)); }   
+    // (safely) returns the element as a variant
+  double			SafeElAsDouble_Flat(int idx) const	
+    { if (InRange_Flat(idx)) return El_GetDouble_(FastEl_Flat_(idx)); else return 0.0f; } 
+    
+  
   virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
     {return true;}
     // validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
@@ -366,6 +382,8 @@ public: // low-level, try not to use these, internal use only
     {if ((i > 0) && (i < size)) return FastEl_Flat_(i); else return El_GetBlank_();}   // #IGNORE raw element in flat space, else NULL
   // every subclass should implement these:
   virtual float		El_GetFloat_(const void*) const	{ return 0.0f; } // #IGNORE
+  virtual double	El_GetDouble_(const void* it) const 
+   { return El_GetFloat_(it); } // #IGNORE
   virtual const String	El_GetStr_(const void*) const	{ return _nilString; } // #IGNORE
   virtual void		El_SetFmStr_(void*, const String&) { }; // #IGNORE
   virtual const Variant	El_GetVar_(const void*) const	{ return _nilVariant; } // #IGNORE
@@ -690,6 +708,42 @@ private:
 };
 
 //nn?? SmartPtr_Of(float_Matrix)
+
+
+class TA_API double_Matrix: public taMatrixT<double> { // #INSTANCE #CAT_Data
+public:
+  override TypeDef*	GetDataTypeDef() const {return &TA_double;} 
+  
+  override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
+    // accepts valid format for double
+    
+  void			Copy_(const double_Matrix& cp) {}
+  COPY_FUNS(double_Matrix, taMatrixT<double>)
+  TA_MATRIX_FUNS(double_Matrix, double)
+  
+public:
+  override float	El_GetFloat_(const void* it) const 
+    { return (float)*((double*)it); } 
+    // #IGNORE warning: loss of precision and/or under/overflow possible
+  override double	El_GetDouble_(const void* it) const 
+    { return *((double*)it); } // #IGNORE
+  override const String	El_GetStr_(const void* it) const 
+    { return (String)*((double*)it); } // #IGNORE
+  override void		El_SetFmStr_(void* it, const String& str) 
+    {*((double*)it) = (double)str;}  // #IGNORE
+  override const Variant El_GetVar_(const void* it) const 
+    {return Variant(*((double*)it));} // #IGNORE
+  override void		El_SetFmVar_(void* it, const Variant& var) 
+    {*((double*)it) = var.toDouble(); };  // #IGNORE
+protected:
+  STATIC_CONST double	blank; // #IGNORE
+  override void		Dump_Save_Item(ostream& strm, int idx); // stream in full precision
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
+
+//nn?? SmartPtr_Of(double_Matrix)
 
 
 class TA_API int_Matrix: public taMatrixT<int> { // #INSTANCE #CAT_Data

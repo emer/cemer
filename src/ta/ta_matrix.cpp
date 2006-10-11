@@ -977,6 +977,25 @@ bool float_Matrix::StrValIsValid(const String& str, String* err_msg) const {
 
 
 //////////////////////////
+//   double_Matrix	//
+//////////////////////////
+
+void double_Matrix::Dump_Save_Item(ostream& strm, int idx) {
+  strm << String(FastEl_Flat(idx), "%.16g");
+}
+
+bool double_Matrix::StrValIsValid(const String& str, String* err_msg) const {
+  bool rval = true;
+#ifdef TA_USE_QT
+  str.toDouble(&rval); //discard result
+#endif
+  if (!rval && (err_msg != NULL))
+    *err_msg = "not a valid floating point number";
+  return rval;
+}
+
+
+//////////////////////////
 //   int_Matrix	//
 //////////////////////////
 

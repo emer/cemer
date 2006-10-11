@@ -73,6 +73,8 @@ template class TA_API taMatrixT<Variant>;
   const Variant Variant_Matrix::blank;
 template class TA_API taMatrixT<String>;
   const String String_Matrix::blank;
+template class TA_API taMatrixT<double>;
+  const double double_Matrix::blank = 0.0;
 template class TA_API taMatrixT<float>;
   const float float_Matrix::blank = 0.0f;
 template class TA_API taMatrixT<int>;

@@ -29,11 +29,6 @@ INHERITED(QSpinBox)
 public:
   iSpinBox(QWidget* parent = 0);
 
-  void		setPaletteBackgroundColor3(const QColor &); // override, pushes through to lineEdit
-//  void		stepUp(); // override
-//  void		stepDown(); // override
-//  void		updateDisplay(); // override -- hack to disable up/down
-
   // from hidden lineedit
   bool		hasSelectedText();
   void		cut();

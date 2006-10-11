@@ -414,9 +414,11 @@ taBase::ValType taBase::ValTypeForType(TypeDef* td) {
     {
       return VT_INT; 
     }
-    else if(td->DerivesFrom(TA_float)
-      || td->DerivesFrom(TA_double)  //TODO: maybe we should use Variant???  
-      ) 
+    else if (td->DerivesFrom(TA_double)) 
+    {
+      return VT_DOUBLE; 
+    }
+    else if (td->DerivesFrom(TA_float)) 
     {
       return VT_FLOAT; 
     }
@@ -434,12 +436,14 @@ taBase::ValType taBase::ValTypeForType(TypeDef* td) {
 
 const String taBase::ValTypeToStr(ValType vt) {
   static String str_String("String");
+  static String str_double("double");
   static String str_float("float");
   static String str_int("int");
   static String str_byte("byte");
   static String str_Variant("Variant");
   switch (vt) {
   case VT_STRING: return str_String;
+  case VT_DOUBLE: return str_double;
   case VT_FLOAT: return str_float;
   case VT_INT: return str_int;
   case VT_BYTE: return str_byte;

@@ -418,6 +418,14 @@ taMatrix* DataTable::GetMatrixData_impl(int chan) {
   return da->AR()->GetFrameSlice_(i);
 }
 
+double DataTable::GetValAsDouble(int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  int i;
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsDouble(i);
+  else return 0.0f;
+}
+
 float DataTable::GetValAsFloat(int col, int row) {
   DataArray_impl* da = GetColData(col);
   int i;
@@ -509,6 +517,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
   switch (val_type) {
   case VT_STRING: td = &TA_String_Data; break;
   case VT_FLOAT:  td = &TA_float_Data; break;
+  case VT_DOUBLE:  td = &TA_double_Data; break;
   case VT_INT:  td = &TA_int_Data; break;
   case VT_BYTE:  td = &TA_byte_Data; break;
   case VT_VARIANT:  td = &TA_Variant_Data; break;
@@ -521,6 +530,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
   case VT_STRING: 
     break;
   case VT_FLOAT: 
+  case VT_DOUBLE:
     break;
   case VT_INT: 
     rval->AddDispOption("NARROW");
@@ -534,6 +544,10 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
 
 float_Data* DataTable::NewColFloat(const String& col_nm) {
   return (float_Data*)NewCol(VT_FLOAT, col_nm);
+}
+
+double_Data* DataTable::NewColDouble(const String& col_nm) {
+  return (double_Data*)NewCol(VT_DOUBLE, col_nm);
 }
 
 DataArray_impl* DataTable::NewColFromChannelSpec_impl(ChannelSpec* cs) {
@@ -618,7 +632,6 @@ DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
 }
 
 DataTableCols* DataTable::NewGroupFloat(const String& col_nm, int n) {
-//TODO: obs
   StructUpdate(true);
   DataTableCols* rval = (DataTableCols*)data.NewGp(1);
   rval->el_typ = &TA_float_Data;
@@ -637,8 +650,26 @@ DataTableCols* DataTable::NewGroupFloat(const String& col_nm, int n) {
   return rval;
 }
 
+DataTableCols* DataTable::NewGroupDouble(const String& col_nm, int n) {
+  StructUpdate(true);
+  DataTableCols* rval = (DataTableCols*)data.NewGp(1);
+  rval->el_typ = &TA_double_Data;
+  rval->EnforceSize(n);
+  rval->name = col_nm;
+  if(n > 0) {
+    double_Data* da = (double_Data*)NewCol(VT_DOUBLE, col_nm, rval);
+    da->name = String("<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
+  }
+  int i;
+  for(i=1;i<n;i++) {
+    double_Data* da = (double_Data*)NewCol(VT_DOUBLE, col_nm, rval);
+    da->name = String(col_nm) + "_" + String(i);
+  }
+  StructUpdate(false);
+  return rval;
+}
+
 DataTableCols* DataTable::NewGroupInt(const String& col_nm, int n) {
-//TODO: obs
   StructUpdate(true);
   DataTableCols* rval = (DataTableCols*)data.NewGp(1);
   rval->el_typ = &TA_int_Data;
@@ -932,6 +963,17 @@ void DataTable::SetSaveToFile(bool save_to_file) {
   FOR_ITR_EL(DataArray_impl, ar, data., i) {
     ar->save_to_file = save_to_file;
   }
+}
+
+bool DataTable::SetValAsDouble(double val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsDouble(val, i);
+    return true;
+  } else return false;
 }
 
 bool DataTable::SetValAsFloat(float val, int col, int row) {

@@ -183,16 +183,16 @@ bool taiData::isConstructed() {
   else return true;
 }
 
-QLabel* taiData::MakeLabel(const String& text, QWidget* gui_parent, int font_spec) const {
-  QLabel* rval = MakeLabel(gui_parent, font_spec);
+iLabel* taiData::MakeLabel(const String& text, QWidget* gui_parent, int font_spec) const {
+  iLabel* rval = MakeLabel(gui_parent, font_spec);
   rval->setText(text);
   return rval;
 }
 
-QLabel* taiData::MakeLabel(QWidget* gui_parent, int font_spec) const {
+iLabel* taiData::MakeLabel(QWidget* gui_parent, int font_spec) const {
   // fs may have size+attribs, but normal case is just def attribs+ defsize
   if (font_spec == 0) font_spec = defSize();
-  QLabel* rval = new QLabel(gui_parent);
+  iLabel* rval = new iLabel(gui_parent);
   rval->setMaximumHeight(taiM->max_control_height(defSize()));
   rval->setFont(taiM->nameFont(font_spec));
   return rval;
@@ -289,7 +289,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
 
   // add caption
   String nm = md->GetLabel();
-  QLabel* lbl = MakeLabel(nm, GetRep());
+QLabel* lbl = taiM->NewLabel(nm, GetRep());//  iLabel* lbl = MakeLabel(nm, GetRep());
 
   AddChildWidget(lbl, taiM->hsep_c);
 
@@ -297,6 +297,8 @@ void taiCompData::AddChildMember(MemberDef* md) {
   taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
+//  connect(mb_dat, SIGNAL(settingHighlight(bool)),
+//    lbl, SLOT(setHighlight(bool)) );
   AddChildWidget(ctrl, taiM->hspc_c);
 
   // add description text tooltips
@@ -401,7 +403,7 @@ void ScrollFieldEditor::keystroke(const ivEvent& e) {
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
-  if (flags_ && flgEditDialog) {
+  if (flags_ & flgEditDialog) {
     QWidget* act_par = new QWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
     lay->setMargin(0);
@@ -1037,11 +1039,11 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   stack->addWidget(lbl);
   togVal = new taiToggle(typ, host, this, NULL);
   stack->addWidget(togVal->rep());
-  incVal = new taiIncrField(typ, host, this, NULL, mflags & flgEditDialog);
+  incVal = new taiIncrField(typ, host, this, NULL, mflags);
   incVal->setMinimum(INT_MIN); //note: must be int
   incVal->setMaximum(INT_MAX); //note: must be int
   stack->addWidget(incVal->rep());
-  fldVal = new taiField(typ, host, this, NULL, mflags & flgEditDialog);
+  fldVal = new taiField(typ, host, this, NULL, mflags & ~flgEditDialog);
   stack->addWidget(fldVal->rep());
   lbl = MakeLabel("(Ptr cannot be set)");
   stack->addWidget(lbl);

@@ -16,7 +16,7 @@
 
 #include "ispinbox.h"
 
-#include "qlineedit.h"
+#include "ilineedit.h"
 
 #include <qapplication.h>
 #include <qevent.h>
@@ -44,6 +44,7 @@ void iSpinBox::focusOutEvent(QFocusEvent* ev) {
 
 void iSpinBox::init() {
   updating = 0;
+  setLineEdit(new iLineEdit); // takes ownership
   connect(lineEdit(), SIGNAL(selectionChanged()), this, SIGNAL(selectionChanged()) );
 }
 
@@ -68,58 +69,12 @@ void iSpinBox::del() {
 }
 
 void iSpinBox::setReadOnly(bool value) {
+  if (isReadOnly() == value) return;
+  
+  // we need to set ro first, so our strongly typed guy sees it
+  iLineEdit* le = qobject_cast<iLineEdit*>(lineEdit()); // should succeed
+  if (le) {
+    le->setReadOnly(value);
+  }
   inherited::setReadOnly(value);
-
-/*Qt3  if (mreadOnly == value) return;
-  lineEdit()->setReadOnly(value);
-  if (value) {
-    mhilight = false;
-    setFocusPolicy(ClickFocus);
-    setPaletteBackgroundColor3(QApplication::palette().color(QPalette::Button));
-  } else {
-    setFocusPolicy(StrongFocus);
-    setPaletteBackgroundColor3( QApplication::palette().color(QPalette::Base));
-  }
-  // note: we have to dynamically disable the up/down controls in the paint event, because of how qspinbox is implemented
-  mreadOnly = value; */
 }
-
-void iSpinBox::setPaletteBackgroundColor3(const QColor& color) {
-   // pushes through to lineEdit
-//  QSpinBox::setPaletteBackgroundColor(color);
-  SET_PALETTE_BACKGROUND_COLOR(this, color);
-  SET_PALETTE_BACKGROUND_COLOR(lineEdit(), color);
-}
-
-/*void iSpinBox::stepUp() {
-   if (mreadOnly) return;
-   QSpinBox::stepUp();
-}
-
-void iSpinBox::stepDown(){
-   if (mreadOnly) return;
-   QSpinBox::stepDown();
-}
-
-void iSpinBox::updateDisplay() {
-  // this is a huge implementation-dependent hack to disable the up/down for readOnly
-  // if this stops working, it is not critical (controls will be enabled, but won't do anything)
-  if (mreadOnly) {
-    if (updating > 0) return; // needed because our actions cause reentrance
-    ++updating;
-    // following tricks updateDisplay() into disabling both up/down levers
-    int old_max = maximum();
-    int old_min = minimum();
-    bool old_wrap = wrapping();
-    setMaximum(value());
-    setMinimum(value());
-    setWrapping(false);
-//    QSpinBox::updateDisplay();
-    // restore saved values
-    setRange(old_min, old_max);
-    setWrapping(old_wrap);
-    --updating;
-  } else {
-//    QSpinBox::updateDisplay();
-  }
-} */

@@ -33,6 +33,7 @@ class DataTable_Group;
 class String_Data; 
 class Variant_Data; 
 class float_Data;
+class double_Data;
 class int_Data;
 class byte_Data;
 class DataTableModel;
@@ -93,6 +94,8 @@ public:
     // valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloat(int row) const {return GetValAsFloat_impl(row, 0);} 
     // valid if type is numeric, -ve row is from end (-1=last)
+  double 	GetValAsDouble(int row) const {return GetValAsDouble_impl(row, 0);} 
+    // valid if type is numeric, -ve row is from end (-1=last)
   int	 	GetValAsInt(int row) const {return GetValAsInt_impl(row, 0);} 
     // valid if type is int or byte, -ve row is from end (-1=last)
   byte	 	GetValAsByte(int row) const {return GetValAsByte_impl(row, 0);} 
@@ -104,6 +107,8 @@ public:
   const String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
     // valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloatM(int row, int cell) const {return GetValAsFloat_impl(row, cell);} 
+    // valid if type is numeric, -ve row is from end (-1=last)
+  double 	GetValAsDoubleM(int row, int cell) const {return GetValAsDouble_impl(row, cell);} 
     // valid if type is numeric, -ve row is from end (-1=last)
   int	 	GetValAsIntM(int row, int cell) const {return GetValAsInt_impl(row, cell);} 
     // valid if type is int or byte, -ve row is from end (-1=last)
@@ -119,6 +124,9 @@ public:
   bool	 	SetValAsFloat(float val, int row) 
     // valid only if type is float, -ve row is from end (-1=last)
     {return SetValAsFloat_impl(val, row, 0);} 
+  bool	 	SetValAsDouble(double val, int row) 
+    // valid only if type is double, -ve row is from end (-1=last)
+    {return SetValAsDouble_impl(val, row, 0);} 
   bool	 	SetValAsInt(int val, int row) 
     // valid if type is int or float, -ve row is from end (-1=last)
     {return SetValAsInt_impl(val, row, 0);} 
@@ -136,6 +144,9 @@ public:
   bool	 	SetValAsFloatM(float val, int row, int cell) 
     // valid only if type is float, -ve row is from end (-1=last)
     {return SetValAsFloat_impl(val, row, cell);} 
+  bool	 	SetValAsDoubleM(double val, int row, int cell) 
+    // valid only if type is float, -ve row is from end (-1=last)
+    {return SetValAsDouble_impl(val, row, cell);} 
   bool	 	SetValAsIntM(int val, int row, int cell) 
     // valid if type is int or float, -ve row is from end (-1=last)
     {return SetValAsInt_impl(val, row, cell);} 
@@ -173,6 +184,8 @@ protected:
     // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
   virtual const Variant GetValAsVar_impl(int row, int cell) const; 
   virtual const String 	GetValAsString_impl(int row, int cell) const; 
+  virtual double 	GetValAsDouble_impl(int row, int cell) const 
+    {return GetValAsFloat_impl(row, cell);}
   virtual float 	GetValAsFloat_impl(int row, int cell) const 
     {return (float)GetValAsInt_impl(row, cell);}
   virtual int	 	GetValAsInt_impl(int row, int cell) const 
@@ -181,7 +194,9 @@ protected:
   
   virtual bool	 	SetValAsVar_impl(const Variant& val, int row, int cell); // true if set 
   virtual bool	 	SetValAsString_impl(const String& val, int row, int cell);  // true if set 
-  virtual bool	 	SetValAsFloat_impl(float val, int row, int cell) {return false;}  // true if set 
+  virtual bool	 	SetValAsDouble_impl(double val, int row, int cell) {return false;}  // true if set 
+  virtual bool	 	SetValAsFloat_impl(float val, int row, int cell) 
+    {return SetValAsDouble_impl(val, row, cell);}  // true if set 
   virtual bool	 	SetValAsInt_impl(int val, int row, int cell)  // true if set 
     {return SetValAsFloat_impl((float)val, row, cell);} 
   virtual bool	 	SetValAsByte_impl(byte val, int row, int cell)  // true if set 
@@ -272,6 +287,8 @@ public:
     const String& col_nm,  const MatrixGeom& cell_geom);
    // create new matrix column of data of specified type, with specified cell geom
   
+  double_Data*		NewColDouble(const String& col_nm); 
+    // create new column of double data
   float_Data*		NewColFloat(const String& col_nm); 
     // create new column of floating point data
   int_Data*		NewColInt(const String& col_nm); 	 
@@ -286,12 +303,14 @@ public:
   DataArray_impl*	FindMakeColName(const String& col_nm, int& col_idx, DataArray_impl::ValType val_type,  int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
   // find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
+  DataTableCols*	NewGroupDouble(const String& base_nm, int n); 
+    // create new sub-group of doubles of size n, named as base_nm_index
   DataTableCols*	NewGroupFloat(const String& base_nm, int n); 
-    // OBS create new sub-group of floats of size n, named as base_nm_index
+    // create new sub-group of floats of size n, named as base_nm_index
   DataTableCols*	NewGroupInt(const String& base_nm, int n); 
-    // OBS create new sub-group of ints of size n, named as base_nm_index
+    // create new sub-group of ints of size n, named as base_nm_index
   DataTableCols*	NewGroupString(const String& base_nm, int n); 
-    // OBS create new sub-group of strings of size n, named as base_nm_index
+    // create new sub-group of strings of size n, named as base_nm_index
 
   DataArray_impl*	NewColFromChannelSpec(ChannelSpec* cs)
    // #MENU_1N create new matrix column of data based on name/type in the data item (default is Variant)
@@ -311,6 +330,10 @@ public:
   void			AddColDispOpt(const String& dsp_opt, int col);
   // add display option for given leaf column
   
+  double 		GetValAsDouble(int col, int row);
+  // get data of scalar type, in double form, for given leaf col, row; if data is NULL, then 0 is returned
+  bool 			SetValAsDouble(double val, int col, int row);
+  // set data of scalar type, in String form, for given leaf column, row; does nothing if no cell' 'true' if set
   float 		GetValAsFloat(int col, int row);
   // get data of scalar type, in float form, for given leaf col, row; if data is NULL, then 0 is returned
   bool 			SetValAsFloat(float val, int col, int row);
@@ -474,6 +497,28 @@ private:
 };
 
 
+class TA_API double_Data : public DataArray<double_Matrix> {
+  // doubleing point data
+INHERITED(DataArray<double_Matrix>)
+friend class DataTable;
+public:
+  override bool		is_numeric() const {return true;} 
+  override int		maxColWidth() const {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
+  override ValType 	valType() const {return VT_DOUBLE;}
+
+  TA_BASEFUNS(double_Data);
+  
+protected:
+  override double 	GetValAsDouble_impl(int row, int cell) const
+    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
+  override bool	 	SetValAsDouble_impl(double val, int row, int cell)
+    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
 class TA_API float_Data : public DataArray<float_Matrix> {
   // floating point data
 INHERITED(DataArray<float_Matrix>)
@@ -490,6 +535,9 @@ protected:
     {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
   override bool	 	SetValAsFloat_impl(float val, int row, int cell)
     {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+  override bool	 	SetValAsDouble_impl(double val, int row, int cell)
+    {ar.Set_Flat((float)val, IndexOfEl_Flat(row, cell)); return true;}
+    //NOTE: can result in loss of precision and/or underflow/overflow
 
 private:
   void	Initialize() {}

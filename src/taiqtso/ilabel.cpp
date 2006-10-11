@@ -15,6 +15,7 @@
 
 #include "ilabel.h"
 
+#include <QApplication>
 #include <qpalette.h>
 #include <qbrush.h>
 #include <qpainter.h>
@@ -48,11 +49,12 @@ void iLabel::setHighlight(bool value){
   QFont fnt(font());
   if (value) {
     fnt.setBold(true);
-    setForegroundRole(QPalette::Text);
-  
+    SET_PALETTE_COLOR(this, QPalette::Text, 
+      QApplication::palette().color(QPalette::Highlight)); // typically darkBlue
   } else {
     fnt.setBold(false);
-    setForegroundRole(QPalette::Highlight); //s/b dark blue
+    SET_PALETTE_COLOR(this, QPalette::Text, 
+      QApplication::palette().color(QPalette::Text));
   }
   setFont(fnt);
   update();

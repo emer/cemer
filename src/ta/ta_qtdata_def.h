@@ -160,8 +160,8 @@ public:
   void			GetImageVar_(const Variant& val) {GetImageVar_impl(val);} // get as Var, mostly used by css
   void			GetValueVar_(Variant& val) const {GetValueVar_impl(val);} // set as Var, mostly used by css
   
-  QLabel*		MakeLabel(QWidget* gui_parent = NULL, int font_spec = 0) const; // convenience func, sets fonts etc.
-  QLabel*		MakeLabel(const String& text, QWidget* gui_parent = NULL,
+  iLabel*		MakeLabel(QWidget* gui_parent = NULL, int font_spec = 0) const; // convenience func, sets fonts etc.
+  iLabel*		MakeLabel(const String& text, QWidget* gui_parent = NULL,
     int font_spec = 0) const; // convenience func, sets fonts etc.
   
 #ifndef __MAKETA__
