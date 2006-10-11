@@ -84,6 +84,11 @@ if test x"$debug" = x"false"; then
   PDP_PROG_PDP
 fi
 
+#Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
+AC_CHECK_LIB(m,main,[LIBS="$LIBS -lm"])
+AC_CHECK_LIB(gslcblas,main,[LIBS="$LIBS -lgslcblas"])
+AC_CHECK_LIB(gsl,main,[LIBS="$LIBS -lgsl"])
+
 # Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
