@@ -33,15 +33,27 @@ iLabel::iLabel(QWidget* parent)
   init();
 }
 
-iLabel::iLabel(const char* text, QWidget* parent)
-: QLabel(QString(text), parent)
+iLabel::iLabel(const QString& text, QWidget* parent)
+:inherited(text, parent)
 {
   init();
 }
 
+iLabel::iLabel(int index_, const QString& text, QWidget* parent)
+:inherited(text, parent)
+{
+  init();
+  mindex = index_;
+}
+
 void iLabel::init() {
   mhighlight = false;
+  mindex = -1;
 }
+
+void iLabel::contextMenuEvent(QContextMenuEvent* e) {
+  emit contextMenuInvoked(this, e);
+};
 
 void iLabel::setHighlight(bool value){
   if (mhighlight == value) return;

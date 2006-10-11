@@ -1922,7 +1922,7 @@ void gpiSelectEditDataHost::DoRemoveSelEdit() {
   sele->RemoveField(sel_item_index - base_items);
 }
 
-void gpiSelectEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id) {
+void gpiSelectEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id) {
   if (sender->index() < base_items) return; // only add for user-added items
   menu->insertItem("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()), 0, ++last_id);
 }

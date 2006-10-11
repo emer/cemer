@@ -207,7 +207,7 @@ bool taiData::readOnly() {
 
 void taiData::setHighlight(bool value) {
   if (mhighlight == value) return;
-  mhighlight == value;
+  mhighlight = value;
   emit settingHighlight(value);
 }
 void taiData::setParent(taiData* value) {
@@ -289,7 +289,8 @@ void taiCompData::AddChildMember(MemberDef* md) {
 
   // add caption
   String nm = md->GetLabel();
-QLabel* lbl = taiM->NewLabel(nm, GetRep());//  iLabel* lbl = MakeLabel(nm, GetRep());
+//QLabel* lbl = taiM->NewLabel(nm, GetRep());
+  iLabel* lbl = MakeLabel(nm, GetRep());
 
   AddChildWidget(lbl, taiM->hsep_c);
 
@@ -297,8 +298,8 @@ QLabel* lbl = taiM->NewLabel(nm, GetRep());//  iLabel* lbl = MakeLabel(nm, GetRe
   taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
-//  connect(mb_dat, SIGNAL(settingHighlight(bool)),
-//    lbl, SLOT(setHighlight(bool)) );
+  connect(mb_dat, SIGNAL(settingHighlight(bool)),
+    lbl, SLOT(setHighlight(bool)) );
   AddChildWidget(ctrl, taiM->hspc_c);
 
   // add description text tooltips

@@ -532,7 +532,7 @@ protected:
   override void		Constr_Body();
   void 			Constr_Methods();
 
-  override void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id);
+  override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
   void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
   QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
 

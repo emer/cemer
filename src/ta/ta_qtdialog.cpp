@@ -160,27 +160,6 @@ void HiLightButton::mouseMoveEvent(QMouseEvent*  mev) {
 } */
 
 
-//////////////////////////////////
-// 	iContextLabel		//
-//////////////////////////////////
-
-iContextLabel::iContextLabel(QWidget* parent)
-:inherited(parent)
-{
-  mindex = -1;
-}
-
-iContextLabel::iContextLabel(int index_, const String& text, QWidget* parent)
-:inherited(text.chars(), parent)
-{
-  mindex = index_;
-}
-
-void iContextLabel::contextMenuEvent (QContextMenuEvent* e) {
-  emit contextMenuInvoked(this, e);
-};
-
-
 //////////////////////////////////////////////////////////
 // 		taiChoiceDialog				//
 //////////////////////////////////////////////////////////
@@ -598,12 +577,12 @@ const iColor* taiDataHost::colorOfRow(int row) const {
 }
 
 int taiDataHost::AddName(int row, const String& name, const String& desc, taiData* buddy) {
-  iContextLabel* label = new iContextLabel(row, name, body);
+  iLabel* label = new iLabel(row, name, body);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
   label->setPaletteBackgroundColor(*colorOfRow(row));
-  connect(label, SIGNAL(contextMenuInvoked(iContextLabel*, QContextMenuEvent*)),
-      this, SLOT(label_contextMenuInvoked(iContextLabel*, QContextMenuEvent*)) );
+  connect(label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
+      this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)) );
 // if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
   QWidget* buddy_widg = NULL;
   if (buddy) {
@@ -943,7 +922,7 @@ void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2)
   
 }
 
-void taiDataHost::label_contextMenuInvoked(iContextLabel* sender, QContextMenuEvent* e) {
+void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
   QMenu* menu = new QMenu(widget());
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
   Q_CHECK_PTR(menu);
@@ -994,7 +973,7 @@ int taiDataHost::Edit(bool modal_) { // only called if isDialog() true
   return dialog->post(modal);
 }
 
-void taiDataHost::FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id) {
+void taiDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
   sel_item_index = sender->index();
 }
 
@@ -1511,12 +1490,12 @@ void taiEditDataHost::ConstrEditControl(QWidget* gui_parent, const iColor* bgcol
   state = ACTIVE;
 }
 
-void taiEditDataHost::FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id) {
+void taiEditDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
   inherited::FillLabelContextMenu(sender, menu, last_id);
   FillLabelContextMenu_SelEdit(sender, menu, last_id);
 }
 
-void taiEditDataHost::FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id) {
+void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id) {
   if ((cur_base == NULL) || (typ == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; // have to be a taBase to use SelEdit
   MemberDef* md = memb_el.SafeEl(sel_item_index);
   if (md == NULL) return;

@@ -28,17 +28,28 @@ class TAIQTSO_API iLabel: public QLabel {
   Q_OBJECT
 INHERITED(QLabel)
 public:
-  iLabel(QWidget* parent = 0);
-  iLabel(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
+  bool			highlight() {return mhighlight;}
+  int			index() {return mindex;}
 
-  bool		highlight() {return mhighlight;}
+  iLabel(QWidget* parent = 0);
+  iLabel(const QString& text, QWidget* parent); 
+  iLabel(int index_, const QString& text, QWidget* parent); 
 
 public slots:
-  virtual void	setHighlight(bool value); // 
+  void			setHighlight(bool value);
+  
+#ifndef __MAKETA__
+signals:
+  void			contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
+#endif
+
 protected:
-  bool mhighlight;
+  bool 			mhighlight;
+  int			mindex;
+
+  override void 	contextMenuEvent (QContextMenuEvent* e); 
+private:
   void		init();
-//  void    	paintEvent(QPaintEvent* pe); // override
 };
 
-#endif // ISPINBOX_H
+#endif

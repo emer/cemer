@@ -69,30 +69,6 @@ protected:
 };
 
 
-//////////////////////////////////
-// 	iContextLabel		//
-//////////////////////////////////
-
-class TA_API iContextLabel: public iLabel {
-  Q_OBJECT
-INHERITED(iLabel)
-public:
-  int			index() {return mindex;}
-
-  iContextLabel(QWidget* parent = NULL);
-  iContextLabel(int index_, const String& text, QWidget* parent = NULL);
-  ~iContextLabel()	{};
-
-#ifndef __MAKETA__
-signals:
-  void			contextMenuInvoked(iContextLabel* sender, QContextMenuEvent* e);
-#endif
-
-protected:
-  int			mindex;
-  void 			contextMenuEvent (QContextMenuEvent* e); // override
-};
-
 //////////////////////////
 // 	Script Button 	//
 //////////////////////////
@@ -378,7 +354,7 @@ protected:
   virtual void  Constr_Methods(); // creates the box for buttons
   virtual void	Constr_Buttons(); // note: Constr_impl creates the box/layout for the buttons
   virtual void	Constr_Final();
-  virtual void	FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id); // last_id enables access menu items
+  virtual void	FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id); // last_id enables access menu items
 
 public slots:
   virtual void 	Ok(); // for dialogs
@@ -392,7 +368,7 @@ protected:
   
   virtual void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
 protected slots:
-  virtual void	label_contextMenuInvoked(iContextLabel* sender, QContextMenuEvent* e);
+  virtual void	label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
 };
 
 
@@ -477,8 +453,8 @@ protected:
   void			Constr_MethButtons();
   virtual void		Constr_ShowMenu(); // make the show/hide menu
   override void		Constr_Final();
-  override void		FillLabelContextMenu(iContextLabel* sender, QMenu* menu, int& last_id);
-  virtual void		FillLabelContextMenu_SelEdit(iContextLabel* sender, QMenu* menu, int& last_id);
+  override void		FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id);
+  virtual void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
   virtual void		GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
   virtual void		GetImageInline_impl(const void* base);
   virtual void		GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const;
