@@ -456,6 +456,7 @@ public:
   virtual void		AddView(T3DataView* view); // add a view
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
+  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const T3DataViewFrame& cp);
@@ -506,6 +507,7 @@ public:
   inline T3DataViewer*	viewer() {return (T3DataViewer*)m_viewer;}
 
   void			AddT3DataViewFrame(iT3DataViewFrame* dvf, int idx = -1);
+  void			UpdateTabNames();
   
   iT3DataViewer(T3DataViewer* viewer_, QWidget* parent = NULL); 
   ~iT3DataViewer(); //
@@ -530,7 +532,8 @@ public:
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
   virtual T3DataViewFrame* NewT3DataViewFrame(); // #MENU #MENU_ON_Object #MENU_CONTEXT create and map a new frame
-  
+  void			FrameChanged(T3DataViewFrame* frame); 
+    // called by frame if changes, we update names
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const T3DataViewer& cp);

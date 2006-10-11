@@ -899,6 +899,14 @@ IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
   return new iT3DataViewFrame(this, gui_parent);
 }
 
+void T3DataViewFrame::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if (dcr == DCR_ITEM_UPDATED) {
+    T3DataViewer* par = GET_MY_OWNER(T3DataViewer);
+    if (par) par->FrameChanged(this);
+  }
+}
+
 T3DataView* T3DataViewFrame::FindRootViewOfData(TAPtr data) {
   if (!data) return NULL;
   for (int i = 0; i < root_view.children.size; ++i) {
@@ -977,6 +985,16 @@ void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
 
+void iT3DataViewer::UpdateTabNames() {
+  for (int i = 0; i < viewer()->frames.size; ++i) {
+    T3DataViewFrame* dvf = viewer()->frames.FastEl(i);
+    iT3DataViewFrame* idvf = dvf->widget();
+    if (!idvf) continue;
+    int idx = tw->indexOf(idvf);
+    if (idx >= 0)
+      tw->setTabText(idx, dvf->GetName());
+  }
+}
 
 //////////////////////////
 //	T3DataViewer	//
@@ -1060,6 +1078,13 @@ T3DataView* T3DataViewer::FindRootViewOfData(TAPtr data) {
     if (dv) return dv;
   }
   return NULL;
+}
+
+void T3DataViewer::FrameChanged(T3DataViewFrame* frame) {
+  // just update all the tab names, in case that is what changed
+  if (isMapped()) {
+    widget()->UpdateTabNames();
+  }
 }
 
 T3DataViewFrame* T3DataViewer::NewT3DataViewFrame() {

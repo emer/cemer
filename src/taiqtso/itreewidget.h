@@ -30,22 +30,35 @@ class TAIQTSO_API iTreeWidget: public QTreeWidget {
 INHERITED(QTreeWidget)
   Q_OBJECT
 public:
-/*  enum CustomEventType {
-    TWDrop		= QEvent::User + 1
-  };*/
-  
   bool			allColumnsShowFocus() const; // qt3 compat
+  
+  bool			hasHighlightColor(int idx) const;
+  void			setHighlightColor(int idx, const QColor& base);
+    // synthesizes the darker highlight color
+  void			setHighlightColor(int idx, const QColor& base,
+    const QColor& hilight);
+    // sets the color for idx >= 1 (0 undefined); base should be fairly light, hilight darker, if NULL, then it is computed
+    
+  bool			highlightRows() const {return m_highlightRows;}
+    // whether we use the highlight information from items
+  void			setHighlightRows(bool value);
   
   void 			resizeColumnsToContents(); // convenience: resizes all but last col
   
   iTreeWidget(QWidget* parent = 0);
+  ~iTreeWidget();
   
 signals:
   void 			contextMenuRequested(QTreeWidgetItem* item, const QPoint& pos, int col);
   
 protected:
   QPoint		drop_pos; // we capture this from the drop event
+  bool			m_highlightRows;
+  mutable void*		m_highlightColors; // a QMap
   
+  void*			highlightColors() const; // insures map exists
+  void 			drawRow(QPainter* painter,
+    const QStyleOptionViewItem& option, const QModelIndex& index) const; //override
   void			dropEvent(QDropEvent* e); // override
   bool 			dropMimeData(QTreeWidgetItem* parent, int index, 
     const QMimeData* data, Qt::DropAction action); // override -- we always delegate to the item, and always return false (we handle item manipulation manually)
@@ -55,6 +68,8 @@ protected:
 protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);
   void			this_itemCollapsed(QTreeWidgetItem* item);
+private:
+  void			init();
 };
 
 
@@ -67,6 +82,8 @@ public:
   inline bool		lazyChildren() const {return lazy_children;}
     // true while lc enabled, but not yet expanded
   void			enableLazyChildren(); // call on create or anytime when empty
+  virtual int		highlightIndex() const {return 0;}
+    // subclass must override to return >0 for highlighting
   
   virtual bool		acceptDrop(const QMimeData* mime) const {return false;}
     // returns whether we can accept the given data in a drop upon us

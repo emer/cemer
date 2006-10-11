@@ -677,6 +677,8 @@ friend class taDataLinkItr;
 public:
   void*			data() const {return m_data;} // subclasses usually replace with strongly typed version
   virtual bool		isBase() const {return false;} // true if data is of type taBase (note: could still be null)
+  virtual bool		isValid() const {return true;} // used to highlight invalid items in gui
+  
   void			AddDataClient(IDataLinkClient* dlc);
   bool			RemoveDataClient(IDataLinkClient* dlc); // WARNING: link is undefined after this call; CAUSES US TO DESTROY IF CLIENTS=0
 

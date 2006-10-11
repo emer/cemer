@@ -472,6 +472,7 @@ void iProgramEditor::Init() {
   items->setDragEnabled(true);
   items->setAcceptDrops(true);
   items->setDropIndicatorShown(true);
+  items->setHighlightRows(true);
   
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
   connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );

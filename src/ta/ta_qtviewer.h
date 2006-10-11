@@ -140,6 +140,7 @@ public:
   taBase*		data() {return (taBase*)m_data;}
   taBase*		data() const {return (taBase*)m_data;}
   override bool		isBase() const {return true;} 
+  override bool		isValid() const; // we call CheckConfig
   
   override bool		GetIcon(int bmf, int& flags_supported, QIcon& ic);
     // delegates to taBase::GetDataNodeBitmap
@@ -1198,6 +1199,7 @@ public:
   enum Roles { // extra roles, for additional data, etc.
     ObjDataRole = Qt::UserRole + 1, // for additional data
     ColKeyRole,	// store a string in header to indicate the col key to use for data
+    HighlightIndexRole	// store an int >0 in item0 to highlight row with this color
   };
 #endif
   enum TreeViewFlags { // #BITS
@@ -1298,10 +1300,12 @@ public:
 
   int			dn_flags; // any of DataNodeFlags
 
-  void* 		data() {return m_link->data();} //
+  override bool 	acceptDrop(const QMimeData* mime) const;
+  override int		highlightIndex() const; // highlight color to use, 0=none
+  void*			linkData() const;
+  void			setHighlightIndex(int value); // highlight color to use, 0=none
   iTreeView*		treeView() const;
 
-  override bool 	acceptDrop(const QMimeData* mime) const;
   override void 	CreateChildren(); 
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
 

@@ -1016,6 +1016,10 @@ bool tabDataLink::HasChildItems() {
   return false;
 }
 
+bool tabDataLink::isValid() const {
+  return data()->CheckConfig();
+}
+
 bool tabDataLink::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const {
   TypeDef* td = md->type;
   if (td == NULL) return false; // shouldn't happen...
@@ -3759,11 +3763,19 @@ void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
   }
 }
 
-
+/*  TEMP: good colors for red highlighting of errors
+  QColor h_base(0xFF, 0x99, 0x99); // pale dull red
+  QColor h_rev(0x99, 0x33, 0x33); // dark dull red
+*/
 iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 :inherited(parent)
 {
   tv_flags = tv_flags_;
+  // set default 'invalid' highlight colors, but don't enable highlighting by default
+  setHighlightColor(1, 
+    QColor(0xFF, 0x99, 0x99),  // pale dull red
+    QColor(0x99, 0x33, 0x33) // dark dull red
+  );
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
   connect(this, SIGNAL(itemSelectionChanged()),
@@ -4124,6 +4136,13 @@ void iTreeViewItem::DecorateDataNode() {
       setText(i, link()->GetColText(key));
     }
   }
+  // if tree is using highlighting, then highlight if invalid
+  if (tv->highlightRows()) {
+    if (link()->isValid())
+      setHighlightIndex(0);
+    else
+      setHighlightIndex(1);
+  }
 }
 
 /*void iTreeViewItem::dragEntered() {
@@ -4225,6 +4244,11 @@ void iTreeViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
   ISelectable::GetEditActionsS_impl_(allowed, forbidden);
 }
 
+int iTreeViewItem::highlightIndex() const {
+  //note: if none has been set, then the NULL variant will return 0, ie none
+  return data(0, iTreeView::HighlightIndexRole).toInt();
+}
+
 ISelectableHost* iTreeViewItem::host() const {
   iTreeView* tv = treeView();
   return (tv) ? (ISelectableHost*)tv : NULL;
@@ -4235,12 +4259,25 @@ void iTreeViewItem::itemExpanded(bool value) {
   DecorateDataNode();
 }
 
+void* iTreeViewItem::linkData() const {
+  return (m_link) ? m_link->data() : NULL;
+}
+
 void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   if (fm_idx == to_idx) return; // DOH!
   // if the fm is prior to to, we need to adjust index (for removal)
   if (fm_idx < to_idx) --to_idx;
   QTreeWidgetItem* tak = takeChild(fm_idx);
   insertChild(to_idx, tak); 
+}
+
+void iTreeViewItem::setHighlightIndex(int value) {
+  // 0 is slightly special case, because we don't want to unnecessarily create
+  // a data item, so we just bail if there is no data already (which returns 0)
+  if (value == 0) {
+    if (!data(0, iTreeView::HighlightIndexRole).isValid()) return;
+  }
+  setData(0, iTreeView::HighlightIndexRole, value);
 }
 
 void iTreeViewItem::swapChildren(int n1_idx, int n2_idx) {
@@ -4295,7 +4332,7 @@ void taiTreeDataNode::CreateChildren_impl() {
     MemberDef* md = ms->FastEl(i);
     if (!link()->ShowMember(md, TypeItem::SC_TREE)) continue;
     TypeDef* typ = md->type;
-    void* el = md->GetOff(data()); //note: GetDataLink automatically derefs typ and el if pointers
+    void* el = md->GetOff(linkData()); //note: GetDataLink automatically derefs typ and el if pointers
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     //note: we still can't get links for some types, ex. ptrs to NULL
     if (dl) {
