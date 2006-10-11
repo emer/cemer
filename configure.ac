@@ -88,7 +88,7 @@ fi
 AC_CHECK_LIB(m,main,[LIBS="$LIBS -lm"])
 AC_CHECK_LIB(gslcblas,main,[LIBS="$LIBS -lgslcblas"])
 AC_CHECK_LIB(gsl,main,[LIBS="$LIBS -lgsl"]
-                      [AC_DEFINE([HAVE_LIBGSL],[For the gnu scientific library])
+                      [AC_DEFINE([HAVE_LIBGSL],[],[For the gnu scientific library])])
 
 # Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
