@@ -77,9 +77,9 @@ public:
   virtual void	StdNetwork(Network* net=NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)
 
-  virtual void	StdInputData(DataTable* data_table, Network* net, int n_patterns = 0, bool group=false);
+  virtual void	StdInputData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
   // #MENU_BUTTON #MENU_ON_Data #NULL_OK make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences 
-  virtual void	UpdateInputDataFmNet(DataTable* data_table, Network* net);
+  virtual void	UpdateInputDataFmNet(Network* net, DataTable* data_table);
   // #MENU_BUTTON #MENU_SEP_BEFORE update data table columns based on configuration of the network 
   virtual void	StdOutputData();
   // #MENU_BUTTON #MENU_SEP_BEFORE make standard set of output data (monitoring network performance) -- this just creates empty datatables in OutputData subgroup with names that standard programs look for

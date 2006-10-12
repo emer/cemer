@@ -4209,9 +4209,9 @@ void Network::Initialize() {
 
   n_units = 0;
   n_cons = 0;
-  max_size.x = GetDefaultX();
-  max_size.y = GetDefaultY();
-  max_size.z = GetDefaultZ();
+  max_size.x = 1;
+  max_size.y = 1;
+  max_size.z = 1;
 
   deleting = false;
   copying = false;
@@ -5273,12 +5273,34 @@ void Network::ReadWeights(istream& strm) {
   taMisc::DoneBusy();
 }
 
-void Network::StretchLayerPos(int add_to_z) {
+void Network::LayerZPos_Add(int add_to_z) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     l->pos.z += l->pos.z * add_to_z;
   }
+  UpdateMax();
+}
+
+void Network::LayerZPos_Unitize() {
+  int_Array zvals;
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    zvals.AddUnique(l->pos.z);
+  }
+  zvals.Sort();
+  FOR_ITR_EL(Layer, l, layers., i) {
+    l->pos.z = zvals.Find(l->pos.z); // replace with its index on sorted list..
+  }
+  UpdateMax();
+}
+
+void Network::LayerZPos_Auto(float y_mult_factor) {
+  LayerZPos_Unitize();
+  int add_to_z = (int)((float)y_mult_factor * max_size.y);
+  if(add_to_z <= 0) add_to_z = 1;
+  LayerZPos_Add(add_to_z);
 }
 
 void Network::TransformWeights(const SimpleMathSpec& trans) {
@@ -5368,7 +5390,7 @@ int Network::LesionUnits(float p_lesion, bool permute) {
 }
 
 void Network::UpdateMax() {
-  max_size.x = 1;  max_size.y = 1;  max_size.z = 0;
+  max_size.x = 1;  max_size.y = 1;  max_size.z = 1;
 
   Layer* l;
   taLeafItr i;
@@ -5377,10 +5399,6 @@ void Network::UpdateMax() {
     max_size.y = MAX(max_size.y, l->act_geom.y + l->pos.y);
     max_size.z = MAX(max_size.z, 1 + l->pos.z);
   }
-  max_size.y += 1;		// increment max y by one (for extra spacing)
-  if(max_size.x == 1) max_size.x = GetDefaultX();
-  if(max_size.y == 2) max_size.y = GetDefaultY();
-  if(max_size.z == 0) max_size.z = GetDefaultZ();
 }
 
 void Network::FixLayerViews(Layer* lay){

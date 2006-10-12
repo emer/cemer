@@ -852,6 +852,7 @@ bool V3ProjectBase::ConvertToV4_Nets(ProjectBase* nwproj) {
   nwproj->networks = networks;	// this should the do spec updating automatically!
 
   FOR_ITR_EL(Network, net, nwproj->networks., ni) {
+    net->LayerZPos_Auto();
     net->ShowInViewer();
     net->Build();
     net->Connect();

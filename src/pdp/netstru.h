@@ -1318,8 +1318,12 @@ public:
   virtual void	Compute_SSE(); // #CAT_Statistic compute sum squared error over the entire network
   virtual void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics
 
-  virtual void	StretchLayerPos(int add_to_z = 1);
+  virtual void	LayerZPos_Add(int add_to_z = 1);
   // #MENU #MENU_SEP_BEFORE Add add_to_z to layer vertical positions in proportion to current positions:\n new layer.pos.z += layer.pos.z * add_to_z -- makes display look better \n -- negative values will subtract or compact the layers
+  virtual void	LayerZPos_Unitize();
+  // set layer z axis positions to unitary increments (0, 1, 2.. etc)
+  virtual void	LayerZPos_Auto(float y_mult_factor = .5f);
+  // #MENU auto stretch out z positions in proportion to the maximum y axis size of the network
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE apply given transformation to weights

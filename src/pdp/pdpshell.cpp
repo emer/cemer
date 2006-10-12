@@ -194,9 +194,10 @@ void Wizard::StdNetwork(Network* net) {
       }
     }
   }
+  net->LayerZPos_Auto();
+  net->ShowInViewer();
   net->Build();
   net->Connect();
-  net->ShowInViewer();
 //obs  taMisc::DelayedMenuUpdate(net);
 }
 
@@ -205,7 +206,7 @@ void Wizard::StdNetwork(Network* net) {
 // 	Enviro Wizard		//
 //////////////////////////////////
 
-void Wizard::StdInputData(DataTable* data_table, Network* net, int n_patterns, bool group) {
+void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, bool group) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!data_table) {
     DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
@@ -223,12 +224,12 @@ void Wizard::StdInputData(DataTable* data_table, Network* net, int n_patterns, b
   int nm_idx = 0;
   data_table->FindMakeColName("Name", nm_idx, DataTable::VT_STRING, 0);
 
-  UpdateInputDataFmNet(data_table, net);
+  UpdateInputDataFmNet(net, data_table);
 
   data_table->AddRow(n_patterns);
 }
 
-void Wizard::UpdateInputDataFmNet(DataTable* data_table, Network* net) {
+void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
   if(!data_table || !net) return;
   taLeafItr li;
   Layer* lay;
