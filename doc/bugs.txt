@@ -7,7 +7,6 @@ Alpha:
 Brad:
 
 misc ui improvements:
-* add ... to edit a token pointer (replaces #93)
 * dnd extended to applying things: drag a layerspec and drop it on a layer
   and this sets the layerspec.  need to just parse member funs that take
   layerspec args + comment dir to disambiguate (or just pop up menu).
@@ -50,6 +49,7 @@ Brad done:
 * read-only, condedit off guys are now indicated by grey
 * highlighting working (label goes bold to indicate non-default value)
 * text controls have minimum width
+* add ... to edit a token pointer (replaces #93)
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)
