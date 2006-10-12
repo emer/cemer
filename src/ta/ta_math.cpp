@@ -505,20 +505,19 @@ double taMath::Ftest_q(double F, double v1, double v2) {
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix operations (note: only float, not double, is supported
 
-// todo: definitely need to support double_Matrix: eigen funs and various other gsl
-// code only supports double type..
+#ifdef HAVE_GSL
 
-// bool taMath::get_gsl_matrix_fm_ta(const double_Matrix* ta_mat, gsl_matrix* gsl_mat)
-// {
-//   if(ta_mat->dims() != 2) return false;
-//   gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
-//   gsl_mat->size2 = ta_mat->dim(1); // "columns"
-//   gsl_mat->tda = ta_mat->dim(0); // actual size of row in memory
-//   gsl_mat->data = (double*)ta_mat->data();
-//   gsl_mat->block = NULL;
-//   gsl_mat->owner = false;
-//   return true;
-// }
+bool taMath::get_gsl_matrix_fm_ta(const double_Matrix* ta_mat, gsl_matrix* gsl_mat)
+{
+  if(ta_mat->dims() != 2) return false;
+  gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
+  gsl_mat->size2 = ta_mat->dim(1); // "columns"
+  gsl_mat->tda = ta_mat->dim(0); // actual size of row in memory
+  gsl_mat->data = (double*)ta_mat->data();
+  gsl_mat->block = NULL;
+  gsl_mat->owner = false;
+  return true;
+}
 
 bool taMath::get_gsl_matrix_fm_ta_f(float_Matrix* ta_mat, gsl_matrix_float* gsl_mat) 
 {
@@ -532,28 +531,54 @@ bool taMath::get_gsl_matrix_fm_ta_f(float_Matrix* ta_mat, gsl_matrix_float* gsl_
   return true;
 }
 
-// todo: need to -l the library first!
-bool taMath::matrix_add(float_Matrix* a, float_Matrix* b) {
-  gsl_matrix_float g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
-  gsl_matrix_float g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
-  //  return gsl_matrix_float_add(&g_a, &g_b);
+bool taMath::matrix_add(double_Matrix* a, double_Matrix* b) {
+  gsl_matrix g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
+  gsl_matrix g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
+  return gsl_matrix_add(&g_a, &g_b);
 }
 
-bool taMath::matrix_sub(float_Matrix* a, float_Matrix* b) {
-  gsl_matrix_float g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
-  gsl_matrix_float g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
-  //  return gsl_matrix_float_sub(&g_a, &g_b);
+bool taMath::matrix_sub(double_Matrix* a, double_Matrix* b) {
+  gsl_matrix g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
+  gsl_matrix g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
+  return gsl_matrix_sub(&g_a, &g_b);
 }
 
-bool taMath::matrix_mult_els(float_Matrix* a, float_Matrix* b) {
-  gsl_matrix_float g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
-  gsl_matrix_float g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
-  //  return gsl_matrix_float_mul_elements(&g_a, &g_b);
+bool taMath::matrix_mult_els(double_Matrix* a, double_Matrix* b) {
+  gsl_matrix g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
+  gsl_matrix g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
+  return gsl_matrix_mul_elements(&g_a, &g_b);
 }
 
-bool taMath::matrix_div_els(float_Matrix* a, float_Matrix* b) {
-  gsl_matrix_float g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
-  gsl_matrix_float g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
-  //  return gsl_matrix_float_div_elements(&g_a, &g_b);
+bool taMath::matrix_div_els(double_Matrix* a, double_Matrix* b) {
+  gsl_matrix g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
+  gsl_matrix g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
+  return gsl_matrix_div_elements(&g_a, &g_b);
 }
 
+//
+
+bool taMath::matrix_add_f(float_Matrix* a, float_Matrix* b) {
+  gsl_matrix_float g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
+  gsl_matrix_float g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
+  return gsl_matrix_float_add(&g_a, &g_b);
+}
+
+bool taMath::matrix_sub_f(float_Matrix* a, float_Matrix* b) {
+  gsl_matrix_float g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
+  gsl_matrix_float g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
+  return gsl_matrix_float_sub(&g_a, &g_b);
+}
+
+bool taMath::matrix_mult_els_f(float_Matrix* a, float_Matrix* b) {
+  gsl_matrix_float g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
+  gsl_matrix_float g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
+  return gsl_matrix_float_mul_elements(&g_a, &g_b);
+}
+
+bool taMath::matrix_div_els_f(float_Matrix* a, float_Matrix* b) {
+  gsl_matrix_float g_a;  get_gsl_matrix_fm_ta_f(a, &g_a);
+  gsl_matrix_float g_b;  get_gsl_matrix_fm_ta_f(b, &g_b);
+  return gsl_matrix_float_div_elements(&g_a, &g_b);
+}
+
+#endif

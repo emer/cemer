@@ -1520,6 +1520,11 @@ void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
 }
 
+bool taList_impl::CheckConfig(bool quiet) {
+  return inherited_taBase::CheckConfig(quiet);
+}
+
+
 void taList_impl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   // check for embedded member
   inherited_taBase::ChildUpdateAfterEdit(child, handled);

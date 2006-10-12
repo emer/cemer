@@ -1,0 +1,44 @@
+// ta_Dump File v2.0
+DataTable .projects[0].data[0] { 
+  DataTableCols @.data = [3] {
+    String_Data @[0] { };
+    float_Data @[1] { };
+    float_Data @[2] { };
+  };
+};
+DataTable .projects[0].data[0] {
+ name="SimpleLines5x5";
+ save_data=1;
+ data {
+  name=;
+  el_typ=String_Data;
+  el_def=0;
+  String_Data @[0] {
+   name="Name";
+   disp_opts=;
+   pin=0;
+   save_to_file=1;
+   is_matrix=0;
+   cell_geom{ 1;   };
+   ar{ [5] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";   };
+  };
+  float_Data @[1] {
+   name="Input";
+   disp_opts=;
+   pin=0;
+   save_to_file=1;
+   is_matrix=1;
+   cell_geom{ 5;5;   };
+   ar{ [5 5 5] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;   };
+  };
+  float_Data @[2] {
+   name="Output";
+   disp_opts=;
+   pin=0;
+   save_to_file=1;
+   is_matrix=1;
+   cell_geom{ 5;5;   };
+   ar{ [5 5 5] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;   };
+  };
+ };
+};

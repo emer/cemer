@@ -53,7 +53,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[0] {
    name="phase_no";
    var_type=T_Int;
-   int_val=0;
+   int_val=2;
    objs_ptr=0;
    desc=;
   };
@@ -85,10 +85,8 @@ Program .projects[0].programs.gp[0][2] {
    desc="prevent automatic updating of network displays during processing";
    off=1;
    result_var=;
-   method_spec {
-    script_obj=$0$;
-    method=taBase::DataUpdate;
-   };
+   script_obj=$0$;
+   method=taBase::DataUpdate;
    args{ true;};
 { bool begin;   };
   };
@@ -108,10 +106,8 @@ Program .projects[0].programs.gp[0][2] {
    desc=;
    off=0;
    result_var=;
-   method_spec {
-    script_obj=$0$;
-    method=LeabraNetwork::Trial_Init;
-   };
+   script_obj=$0$;
+   method=LeabraNetwork::Trial_Init;
    args{ };
 {    };
   };
@@ -143,10 +139,8 @@ Program .projects[0].programs.gp[0][2] {
      desc=;
      off=0;
      result_var=;
-     method_spec {
-      script_obj=$0$;
-      method=LeabraNetwork::Trial_UpdatePhase;
-     };
+     script_obj=$0$;
+     method=LeabraNetwork::Trial_UpdatePhase;
      args{ };
 {      };
     };
@@ -157,10 +151,8 @@ Program .projects[0].programs.gp[0][2] {
    desc=;
    off=0;
    result_var=;
-   method_spec {
-    script_obj=$0$;
-    method=LeabraNetwork::Trial_Final;
-   };
+   script_obj=$0$;
+   method=LeabraNetwork::Trial_Final;
    args{ };
 {    };
   };
@@ -176,10 +168,8 @@ Program .projects[0].programs.gp[0][2] {
      desc=;
      off=0;
      result_var=;
-     method_spec {
-      script_obj=$0$;
-      method=Network::UpdateWeights;
-     };
+     script_obj=$0$;
+     method=Network::UpdateWeights;
      args{ };
 {      };
     };
@@ -210,10 +200,8 @@ Program .projects[0].programs.gp[0][2] {
    desc="allow automatic updating";
    off=1;
    result_var=;
-   method_spec {
-    script_obj=$0$;
-    method=taBase::DataUpdate;
-   };
+   script_obj=$0$;
+   method=taBase::DataUpdate;
    args{ false;};
 { bool begin;   };
   };

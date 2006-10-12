@@ -176,7 +176,7 @@ int		cssMisc::init_debug = -1;
 int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
 int		cssMisc::refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
-bool		cssMisc::obey_read_only = false;
+bool		cssMisc::obey_read_only = true;
 
 cssEl 		cssMisc::Void("Void"); 	
 cssElPtr	cssMisc::VoidElPtr;		// in theory, points to voidptr

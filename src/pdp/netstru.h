@@ -62,7 +62,7 @@ const float SIGMOID_MIN_VAL = 0.000001f; // min eval value
 const float SIGMOID_MAX_NET = 13.81551f;	// maximium net input value
 
 class PDP_API SigmoidSpec : public taBase {
-// ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
+// ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 public:
   float		off;		// offset for .5 point
   float		gain;		// gain
@@ -85,7 +85,7 @@ public:
 
 
 class PDP_API SchedItem : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER one element of a schedule
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Network one element of a schedule
 public:
   int		start_ctr;	// ctr number to start at for this item
   float		start_val;	// starting value for item
@@ -103,7 +103,7 @@ public:
 };
 
 class PDP_API Schedule : public taList<SchedItem> {
-  // A schedule for parameters that vary over time
+  // ##CAT_Network A schedule for parameters that vary over time
 public:
   int 		last_ctr;	// the last counter index called
   float		default_val;	// the default if group is empty
@@ -126,7 +126,7 @@ public:
 // don't put any functions on the connection itself
 
 class PDP_API Connection : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER Generic Connections
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network Generic Connections
 public:
   float 	wt;		// weight of connection
 
@@ -158,7 +158,7 @@ SmartRef_Of(Connection); // ConnectionSRef
     expr
 
 class PDP_API WeightLimits : public taBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER specifies weight limits for connections
+  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Network specifies weight limits for connections
 public:
   enum LimitType {
     NONE,			// no weight limitations
@@ -187,7 +187,7 @@ public:
 };
 
 class PDP_API ConSpec: public BaseSpec {
-  // Connection Group Specs: for processing over connections
+  // ##CAT_Spec Connection Group Specs: for processing over connections
 public:
   TypeDef*	min_con_type;
   // #HIDDEN #NO_SAVE #TYPE_Connection mimimal con type required for spec (obj is con group)
@@ -197,37 +197,37 @@ public:
   inline void		C_ApplyLimits(Connection* cn, Unit*, Unit*)
   { wt_limits.ApplyLimits(cn->wt); }
   inline virtual void	ApplyLimits(Con_Group* cg, Unit* ru);
-  // apply weight limits (sign, magnitude)
+  // #CAT_Learning apply weight limits (sign, magnitude)
 
   virtual void		ApplySymmetry(Con_Group* cg, Unit* ru);
-  // apply weight symmetrizing between reciprocal units
+  // #CAT_Learning apply weight symmetrizing between reciprocal units
 
   inline virtual void	C_InitWtState(Con_Group* cg, Connection* cn, Unit* ru, Unit* su);
   inline virtual void 	InitWtState(Con_Group* cg, Unit* ru);
-  // initialize state variables (ie. at beginning of training)
+  // #CAT_Learning initialize state variables (ie. at beginning of training)
   inline virtual void	C_InitWtState_post(Con_Group*, Connection*, Unit*, Unit*) { };
   // #IGNORE
   inline virtual void 	InitWtState_post(Con_Group* cg, Unit* ru);
   // #IGNORE post-initialize state variables (ie. for scaling symmetrical weights, etc)
   inline virtual void 	C_InitWtDelta(Con_Group*, Connection*, Unit*, Unit*)	{ };
   inline virtual void 	InitWtDelta(Con_Group* cg, Unit* ru);
-  // initialize variables that change every delta-weight computation
+  // #CAT_Learning initialize variables that change every delta-weight computation
 
   inline float 		C_Compute_Net(Connection* cn, Unit* ru, Unit* su);
   inline virtual float 	Compute_Net(Con_Group* cg, Unit* ru);
-  // compute net input for weights in this con group
+  // #CAT_Activation compute net input for weights in this con group
   inline void 		C_Send_Net(Connection* cn, Unit* ru, Unit* su);
   inline virtual void 	Send_Net(Con_Group* cg, Unit* su);
-  // sender-based net input for con group (send net input to receivers)
+  // #CAT_Activation sender-based net input for con group (send net input to receivers)
   inline float 		C_Compute_Dist(Connection* cn, Unit* ru, Unit* su);
   inline virtual float 	Compute_Dist(Con_Group* cg, Unit* ru);
-  // compute net distance for con group (ie. euclidean distance)
+  // #CAT_Activation compute net distance for con group (ie. euclidean distance)
   inline void		C_Compute_dWt(Connection*, Unit*, Unit*)	{ };
   inline virtual void	Compute_dWt(Con_Group* cg, Unit* ru);
-  // compute the delta-weight change
+  // #CAT_Learning compute the delta-weight change
   inline void 		C_UpdateWeights(Connection*, Unit*, Unit*)	{ };
   inline virtual void 	UpdateWeights(Con_Group* cg, Unit* ru);
-  // update weights (ie. add delta-wt to wt, zero delta-wt)
+  // #CAT_Learning update weights (ie. add delta-wt to wt, zero delta-wt)
 
   bool	CheckObjectType_impl(TAPtr obj); // don't do checking on 1st con group in units
 
@@ -237,12 +237,13 @@ public:
   virtual int		UseCount(); // return number of times this spec is used
 
   virtual  void  InitWeights();
-  // #BUTTON initializes weights for all projections with this conspec
+  // #BUTTON #CAT_Learning initializes weights for all projections with this conspec
 
   virtual bool	 DMem_AlwaysLocal() { return false; }
-  // overload this function to prevent this projection from being pruned for non-local units under dmem processing (for "special" connection types)
+  // #CAT_DMem overload this function to prevent this projection from being pruned for non-local units under dmem processing (for "special" connection types)
   virtual MemberDef* DMem_EpochShareDwtVar() { return min_con_type->members.FindName("dwt"); }
-  // name of weight-change variable to share across dmem processors in BATCH mode learning
+  // #CAT_DMem name of weight-change variable to share across dmem processors in BATCH mode learning
+
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
@@ -257,7 +258,7 @@ SpecPtr_of(ConSpec);
 // assumes no USE_TEMPLATE_GROUPS
 
 class PDP_API Unit_List: public taList<Unit> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network 
 public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
@@ -265,8 +266,7 @@ public:
 };
 
 class PDP_API Con_Group: public taBase_Group {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER Group of connections, controlls processing over them
-  // entire group must have same connection object type
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network Group of connections, controlls processing over them -- entire group must have same connection object type
 public:
   // note: follwing must be coordinated with the Network enum
   enum WtSaveFormat {
@@ -397,7 +397,8 @@ public:
   TA_BASEFUNS(Con_Group);
 };
 
-class PDP_API UnitSpec: public BaseSpec { // Generic Unit Specification
+class PDP_API UnitSpec: public BaseSpec {
+  // ##CAT_Spec Generic Unit Specification
 INHERITED(BaseSpec)
   static Con_Group*	rcg_rval; // return value for connecting
   static Con_Group*	scg_rval; // return value for connecting
@@ -446,7 +447,7 @@ public:
 SpecPtr_of(UnitSpec);
 
 class PDP_API Unit: public taNBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 Generic unit
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit
 INHERITED(taNBase)
 protected:
   static Con_Group*	rcg_rval; // return value for connecting
@@ -464,7 +465,7 @@ public: //
   };
 
   UnitSpec_SPtr spec;		// unit specification
-  ExtType	ext_flag;	// #READ_ONLY #SHOW tells what kind of external input unit received
+  ExtType	ext_flag;	// #GUI_READ_ONLY #SHOW tells what kind of external input unit received
   float 	targ;		// target pattern
   float 	ext;		// external input
   float 	act;		// #DMEM_SHARE_SET_2 activation
@@ -592,7 +593,7 @@ public: //
 // ProjectionSpec does the connectivity, and optionally the weight init
 
 class PDP_API ProjectionSpec : public BaseSpec {
-  // #VIRT_BASE Specifies the connectivity between layers (ie. full vs. partial)
+  // #VIRT_BASE ##CAT_Spec Specifies the connectivity between layers (ie. full vs. partial)
 public:
   bool		self_con;	// whether to create self-connections or not (if applicable)
   bool		init_wts;	// whether this projection spec does weight init (else conspec)
@@ -633,7 +634,7 @@ public:
 SpecPtr_of(ProjectionSpec);
 
 class PDP_API Projection: public taNBase {
-  // Projection describes connectivity between layers (from receivers perspective)
+  // ##CAT_Network Projection describes connectivity between layers (from receivers perspective)
 INHERITED(taNBase)
 public:
   enum PrjnSource {
@@ -827,14 +828,14 @@ inline void ConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
 
 
 class PDP_API Unit_Group: public taGroup<Unit> {
-  // #NO_UPDATE_AFTER a group of units
+  // #NO_UPDATE_AFTER ##CAT_Network a group of units
 INHERITED(taGroup<Unit>)
 public:
   Layer*	own_lay;	// #READ_ONLY #NO_SAVE layer owner
   int		n_units;	// number of units to create in the group (0 = use layer n_units)
   PosTDCoord	pos;		// position of group relative to the layer
   PosTDCoord	geom;		// geometry of the group
-  bool		units_lesioned;	// #READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
+  bool		units_lesioned;	// #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
 
   virtual void	Copy_Weights(const Unit_Group* src);
   // #MENU #MENU_ON_Object copies weights from other unit group (incl wts assoc with unit bias member)
@@ -910,7 +911,7 @@ public:
 };
 
 class PDP_API Layer : public taNBase {
-  // ##EXT_lay ##COMPRESS layer containing units
+  // ##EXT_lay ##COMPRESS ##CAT_Network layer containing units
 INHERITED(taNBase)
 public:
   enum DMemDist {
@@ -945,7 +946,7 @@ public:
   Unit_Group		units;		// units or groups of units
   UnitSpec_SPtr 	unit_spec;	// default unit specification for units in this layer
   bool			lesion;		// #DEF_false inactivate this layer from processing (reversable)
-  Unit::ExtType		ext_flag;	// #READ_ONLY #SHOW indicates which kind of external input layer received
+  Unit::ExtType		ext_flag;	// #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
   int_Array		sent_already; 	// #READ_ONLY #NO_SAVE array of layer addresses for coordinating sending of net input to this layer
   DMemDist		dmem_dist; 	// how to distribute units across multiple distributed memory processors
 
@@ -1141,7 +1142,7 @@ PosGroup_of(Layer);
 SmartRef_Of(Layer); // LayerRef
 
 class PDP_API Network : public taNBase {
-  // ##FILETYPE_Network ##EXT_net ##COMPRESS A network, containing layers, units, etc..
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network A network, containing layers, units, etc..
 INHERITED(taNBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
@@ -1181,24 +1182,24 @@ public:
  
   BaseSpec_Group specs;		// Specifications for network parameters
   Layer_Group	layers;		// Layers or Groups of Layers
-  int		context;	// #READ_ONLY #SHOW #CAT_Learning used by programs to provide context modality to algorithms
-  WtUpdate	wt_update;	// #READ_ONLY #SHOW #CAT_Learning determines weight update mode
+  int		context;	// #GUI_READ_ONLY #SHOW #CAT_Learning used by programs to provide context modality to algorithms
+  WtUpdate	wt_update;	// #GUI_READ_ONLY #SHOW #CAT_Learning determines weight update mode
   int		batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
-  int		batch_n_eff;	// #READ_ONLY #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
+  int		batch_n_eff;	// #GUI_READ_ONLY #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 
-  int		batch;		// #READ_ONLY #SHOW #CAT_Counter batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
-  int		epoch;		// #READ_ONLY #SHOW #CAT_Counter epoch counter: number of times a complete set of training patterns has been presented (updated by program)
-  int		trial;		// #READ_ONLY #SHOW #CAT_Counter trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
-  int		cycle;		// #READ_ONLY #SHOW #CAT_Counter cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)	
-  float		time;		// #READ_ONLY #SHOW #CAT_Counter the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
-  String	group_name;	// #READ_ONLY #SHOW #CAT_Counter name associated with the current group of trials, if such a grouping is applicable
-  String	trial_name;	// #READ_ONLY #SHOW #CAT_Counter name associated with the current trial (e.g., name of input pattern)
+  int		batch;		// #GUI_READ_ONLY #SHOW #CAT_Counter batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
+  int		epoch;		// #GUI_READ_ONLY #SHOW #CAT_Counter epoch counter: number of times a complete set of training patterns has been presented (updated by program)
+  int		trial;		// #GUI_READ_ONLY #SHOW #CAT_Counter trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
+  int		cycle;		// #GUI_READ_ONLY #SHOW #CAT_Counter cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)	
+  float		time;		// #GUI_READ_ONLY #SHOW #CAT_Counter the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
+  String	group_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter name associated with the current group of trials, if such a grouping is applicable
+  String	trial_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter name associated with the current trial (e.g., name of input pattern)
 
-  float		sse;		// #READ_ONLY #SHOW #CAT_Statistic sum squared error over the network, for the current external input pattern
-  float		sum_sse;	// #READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
-  float		avg_sse;	// #READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
+  float		sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic sum squared error over the network, for the current external input pattern
+  float		sum_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
+  float		avg_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
   float		cnt_err_tol;	// #CAT_Statistic tolerance for computing the count of number of errors over current epoch
-  float		cnt_err;	// #READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
+  float		cnt_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
 
   float	       	cur_sum_sse;	// #READ_ONLY current sum_sse -- used during computation of sum_sse
   int	       	avg_sse_n;	// #READ_ONLY number of times cur_sum_sse updated: for computing avg_sse
@@ -1410,6 +1411,7 @@ protected:
 SmartRef_Of(Network)
 
 class PDP_API Network_Group : public taGroup<Network> {
+  // ##CAT_Network a group of networks
 INHERITED(taGroup<Network>)
 public:
   

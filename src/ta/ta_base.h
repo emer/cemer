@@ -349,8 +349,8 @@ protected:
 public:
   virtual taDataLink* 	data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
   
-  virtual bool		isDirty() const {return false;} // implemented by very few, esp. Project
-  virtual void 		setDirty(bool value); // 'true' gets forwarded up; 'false' does nothing
+  virtual bool		isDirty() const {return false;} // #IGNORE implemented by very few, esp. Project
+  virtual void 		setDirty(bool value); // #CAT_ObjectMgmt 'true' gets forwarded up; 'false' does nothing
   
   virtual taDataLink* 	GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
   void			AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
@@ -390,15 +390,15 @@ public:
   void 			operator=(const taBase& cp)	{ Copy(cp); }
   virtual TypeDef*	GetTypeDef() const;	// #IGNORE
 
-  virtual int		GetIndex() const {return -1;} // typically its index in an own List
+  virtual int		GetIndex() const {return -1;} // #CAT_ObjectMgmt typically its index in an own List
   virtual void		SetIndex(int value) {} // #IGNORE note: typically don't do a notify, because list itself will take care of notifying gui clients
   
-  virtual bool		SetName(const String& nm) {return false;}
+  virtual bool		SetName(const String& nm) {return false;} // #IGNORE 
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const; // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names) -- will/must never be empty
-  virtual String	GetDesc() const {return _nilString;} // a type-specific "description" of the instance
-  virtual bool		SetFileName(const String& val)  {return false;} // set file name for object
-  virtual String	GetFileName() const 	{ return _nilString; } // get file name object was last saved with
+  virtual String	GetDesc() const {return _nilString;} // #IGNORE a type-specific "description" of the instance
+  virtual bool		SetFileName(const String& val)  {return false;} // #CAT_File set file name for object
+  virtual String	GetFileName() const 	{ return _nilString; } // #CAT_File get file name object was last saved with
   taFiler*		GetFiler(TypeItem* td = NULL);
   // #IGNORE gets filer for the TypeItem if specified, or this object-- clients must ref/unrefdone
   virtual void 		SetDefaultName();			    // #IGNORE
@@ -409,14 +409,14 @@ public:
   virtual void* 	GetTA_Element(int, TypeDef*& eltd) 
     { eltd = NULL; return NULL; } // #IGNORE a bracket opr
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
-  virtual TAPtr 	GetOwner() const	{ return(NULL); }
-  virtual TAPtr		GetOwner(TypeDef* td) const;
+  virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
+  virtual TAPtr		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
   virtual String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop=NULL) const;
   // #IGNORE get path from root (default), but stop at par_stop if non-null
   virtual String	GetPath(TAPtr ta=NULL, TAPtr par_stop=NULL) const;
-  // get path without name informtation, stop at par_stop if non-null
+  // #CAT_ObjectMgmt get path without name informtation, stop at par_stop if non-null
   virtual TAPtr		FindFromPath(const String& path, MemberDef*& ret_md=no_mdef, int start=0) const;
-  // find object from path (starting from this, and position start of the path)
+  // #CAT_ObjectMgmt find object from path (starting from this, and position start of the path)
 
   // functions for managing structural scoping
   virtual TypeDef*	GetScopeType();
@@ -426,32 +426,32 @@ public:
   virtual bool		SameScope(TAPtr ref_obj, TypeDef* scp_tp=NULL);
   // #IGNORE determine if this is in the same scope as given ref_obj (uses my scope type)
   virtual TAPtr		New(int n_objs=0, TypeDef* type=NULL);
-  // Create n_objs objects of given type (type is optional)
+  // #CAT_ObjectMgmt Create n_objs objects of given type (type is optional)
   virtual uint		GetSize() const		{ return GetTypeDef()->size; }  // #IGNORE
 
   virtual void		UpdateAfterEdit();
-  // called after editing, or any user change to members (eg. in the interface, script)
+  // #CAT_ObjectMgmt called after editing, or any user change to members (eg. in the interface, script)
   virtual void		ChildUpdateAfterEdit(TAPtr child, bool& handled);
    // #IGNORE called by a child in its UAE routine; provides child notifications\nNOTE: only member objects are detected; subclasses that want to notify on owned TAPtr members must override and check for those instances manually
   virtual void		UpdateAllViews();
-  // called after data changes, to update views
+  // #CAT_Display called after data changes, to update views
   virtual void 		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   // #IGNORE sends the indicated notification to all datalink clients, if any;\nvirtual so we can override to trap/monitor
   void			StructUpdate(bool begin) {BatchUpdate(begin, true);}
-  // bracket structural changes with (nestable) true/false calls;
+  // #CAT_ObjectMgmt bracket structural changes with (nestable) true/false calls;
   void			DataUpdate(bool begin) {BatchUpdate(begin, false);}
-  // bracket data value changes with (nestable) true/false calls;
+  // #CAT_ObjectMgmt bracket data value changes with (nestable) true/false calls;
   virtual bool		CheckConfig(bool quiet = false);
-  // check the configuration of this object (false if not configed properly).  typically called before running any major processing, enabling processing to assume things are configured correctly.  quiet flag suppresses error messages
+  // #CAT_ObjectMgmt check the configuration of this object (false if not configed properly).  typically called before running any major processing, enabling processing to assume things are configured correctly.  quiet flag suppresses error messages
 
   // viewing-related functions -- usually not overridden base
-  virtual void		AddDataView(taDataView* dv); // add a dataview (not usually overridden)
-  virtual bool		RemoveDataView(taDataView* dv); // removes a dataview (not usually overridden)
+  virtual void		AddDataView(taDataView* dv); // #CAT_Display add a dataview 
+  virtual bool		RemoveDataView(taDataView* dv); // #CAT_Display removes a dataview (not usually overridden)
 protected:
-  virtual void		DataViewAdding(taDataView* dv); // adds a dataview that has been validated
-  virtual void		DataViewRemoving(taDataView* dv) {} // signals removal of dataview
+  virtual void		DataViewAdding(taDataView* dv); // #IGNORE adds a dataview that has been validated
+  virtual void		DataViewRemoving(taDataView* dv) {} // #IGNORE signals removal of dataview
   virtual void		BatchUpdate(bool begin, bool struc);
-  // bracket changes with (nestable) true/false calls; data clients can use it to supress change updates
+  // #IGNORE bracket changes with (nestable) true/false calls; data clients can use it to supress change updates
   virtual void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {}
   // #IGNORE the obj (to which we have a ref) is about to destroy (the ref will null its ptr on return)
   virtual void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
@@ -467,7 +467,7 @@ public:
 
   bool 		InheritsFrom(TypeDef* it) const		{ return GetTypeDef()->InheritsFrom(it); }
   bool		InheritsFrom(const TypeDef& it) const	{ return GetTypeDef()->InheritsFrom(it); }
-  bool 		InheritsFrom(const char* nm) const	// does this inherit from given type?
+  bool 		InheritsFrom(const char* nm) const	// #CAT_ObjectMgmt does this inherit from given type?
   { return GetTypeDef()->InheritsFrom(nm); }
 
   bool		InheritsFormal(TypeDef* it) const	// #IGNORE
@@ -495,10 +495,10 @@ public:
 
   virtual String	GetEnumString(const String& enum_tp_nm, int enum_val) const
     { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
-  // get the name corresponding to given enum value in enum type enum_tp_nm
+  // #CAT_ObjectMgmt get the name corresponding to given enum value in enum type enum_tp_nm
   virtual int		GetEnumVal(const String& enum_nm, String& enum_tp_nm = no_name) const
     { return GetTypeDef()->GetEnumVal(enum_nm, enum_tp_nm); }
-  // get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)
+  // #CAT_ObjectMgmt get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)
 
   virtual void		CopyFromSameType(void* src_base) 	// #IGNORE
     { GetTypeDef()->CopyFromSameType((void*)this, src_base); }
@@ -521,21 +521,21 @@ public:
     { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
 
   virtual int	 	Load(istream& strm, TAPtr par=NULL, void** el = NULL);
-  // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #MENU_CONTEXT Load object data from a file
+  // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #MENU_CONTEXT #CAT_File Load object data from a file
   virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
 
   virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0);
-  // Save object data to a file
+  // #CAT_File Save object data to a file
   virtual int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0)
-  // #ARGC_1 Save object data to a new file
+  // #ARGC_1 #CAT_File Save object data to a new file
     { return Save(strm,par,indent); }
   virtual int		Save_File(); 
-    // #MENU #MENU_ON_Object #LABEL_Save saves the object to a file
+  // #MENU #MENU_ON_Object #LABEL_Save #CAT_File saves the object to a file
   virtual int		SaveAs_File(const String& fname = ""); 
-    // #MENU #ARGC_0 #LABEL_Save_As Saves object data to a new file
+  // #MENU #ARGC_0 #LABEL_Save_As #CAT_File Saves object data to a new file
   virtual int	 	Load_File(TypeDef* td = NULL, void** el = NULL);
   // #IGNORE load object data from a file -- gets the filename
   virtual int	 	LoadAs_File(const String& fname, TypeDef* td = NULL
@@ -563,9 +563,9 @@ public:
     {return true;} // #IGNORE override to make save decision at runtime
 
   virtual int		Edit();
-  // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT Edit this object using the gui
+  // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object using the gui
 //obs  virtual bool		CloseEdit();	// close any open edit dialogs for this object
-  virtual bool		ReShowEdit(bool force = false);	// reshows any open edit dialogs for this object
+  virtual bool		ReShowEdit(bool force = false);	// #CAT_Display reshows any open edit dialogs for this object
   virtual const iColor* GetEditColor(); // #IGNORE background color for edit dialog
   virtual const iColor* GetEditColorInherit(); // #IGNORE background color for edit dialog, include inherited colors from parents
 #ifdef TA_GUI
@@ -573,30 +573,30 @@ public:
     {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h
 #endif
   virtual void		CloseLater();
-  // #MENU #CONFIRM #NO_REVERT_AFTER #LABEL_Close_(Destroy) #NO_MENU_CONTEXT PERMANENTLY Destroy this object!  This is not Iconify.
-  virtual void		Close(); // an immediate version of Close for use in code (no waitproc delay)
+  // #MENU #CONFIRM #NO_REVERT_AFTER #LABEL_Close_(Destroy) #NO_MENU_CONTEXT #CAT_ObjectMgmt PERMANENTLY Destroy this object!  This is not Iconify.
+  virtual void		Close(); // #IGNORE an immediate version of Close for use in code (no waitproc delay)
   virtual bool		Close_Child(TAPtr obj);
   // #IGNORE actually closes a child object (should be immediate child)
   virtual bool		CopyFrom(TAPtr cpy_from);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_ON_this #NO_SCOPE #UPDATE_MENUS Copy from given object into this object
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_ON_this #NO_SCOPE #UPDATE_MENUS #CAT_ObjectMgmt Copy from given object into this object
   // this is a safe interface to UnSafeCopy
   virtual bool		CopyTo(TAPtr cpy_to);
-  // #MENU #TYPE_ON_this #NO_SCOPE #UPDATE_MENUS Copy to given object from this object
+  // #MENU #TYPE_ON_this #NO_SCOPE #UPDATE_MENUS #CAT_ObjectMgmt Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
   virtual bool		DuplicateMe();
-  // #MENU #CONFIRM #UPDATE_MENUS Make another copy of myself (done through owner)
+  // #MENU #CONFIRM #UPDATE_MENUS #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
-  // #MENU #TYPE_this #UPDATE_MENUS Change me into a different type of object, copying current info (done through owner)
+  // #MENU #TYPE_this #UPDATE_MENUS #CAT_ObjectMgmt Change me into a different type of object, copying current info (done through owner)
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
-  // #MENU select a given member for editing --\n if already on dialog, removes it & returns false (else true)
+  // #MENU #CAT_Display select a given member for editing --\n if already on dialog, removes it & returns false (else true)
   virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor, const String& extra_label);
   // #IGNORE hard code interface for updating editors
   virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label);
-  // #MENU select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)
+  // #MENU #CAT_Display select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)
   virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor, const String& extra_label);
   // #IGNORE hard code interface for updating editors
   virtual void		Help();
-  // #MENU get help on using this object
+  // #MENU #CAT_Display get help on using this object
 
   static bool	UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* new_par,
 					  bool null_not_found = true);
@@ -632,7 +632,7 @@ public:
   // #IGNORE replace all pointers to old_ptr with new_ptr: walks the entire structure (members, lists, etc) and iteratively calls; returns number changed
 
   virtual void	CallFun(const String& fun_name);
-  // call function of given name on this object, prompting for args using gui interface
+  // #CAT_ObjectMgmt call function of given name on this object, prompting for args using gui interface
 
 #ifdef DMEM_COMPILE
   virtual bool DMem_IsLocal()      // #IGNORE check if local given stored "this process" number
@@ -937,7 +937,7 @@ public:
     {return taPtrList_ta_base::GetTA_Element_(i, eltd); } // #IGNORE a bracket opr
 
   TAPtr		New(int n_objs=0, TypeDef* typ=NULL);
-  // #MENU #MENU_ON_Object #ARGC_0 #UPDATE_MENUS #NO_SCRIPT #MENU_CONTEXT create n_objs new objects of given type
+  // #MENU #MENU_ON_Object #ARGC_0 #UPDATE_MENUS #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
 
   String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
   String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
@@ -945,16 +945,16 @@ public:
   bool 		FindCheck(const String& nm) const // also check for el_typ
   { return ((name == nm) || InheritsFrom(nm) || el_typ->InheritsFrom(nm)); }
 
-  MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;    // extended to search in the list
-  MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const; // extended to search in the list
+  MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;
+  // #CAT_Access extended to search in the list
+  MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const;
+  // #CAT_Access extended to search in the list
 
   override void	Close();
   override bool	Close_Child(TAPtr obj);
   override void	ChildUpdateAfterEdit(TAPtr child, bool& handled); 
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); 
-    // called when list has changed 
 
-  // IO
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
   override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
@@ -978,7 +978,6 @@ public:
   // set the default element to be item with given type
 
   virtual int	Find(const taBase* item) const		{ return taPtrList_ta_base::Find(item); }
-//  virtual int	Find(const TAPtr item) const		{ return taPtrList_ta_base::Find(item); }
   virtual int	Find(TypeDef* item) const;
   // find element of given type
   virtual int	Find(const String& item_nm) const	{ return taPtrList_ta_base::Find(item_nm); }
@@ -1017,6 +1016,8 @@ public:
   override String	GetColHeading(const KeyString& key) const; // #IGNORE header text for the indicated column
   override String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
     int itm_idx = -1) const;	// #IGNORE
+
+  override bool CheckConfig(bool quiet = false);
 
   void 	Initialize();
   void	Destroy();
@@ -1068,38 +1069,38 @@ template<class T>
 class taList: public taList_impl { // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
 public:
   T*		SafeEl(int idx) const		{ return (T*)SafeEl_(idx); }
-  // get element at index
+  // #CAT_Access get element at index
   T*		FastEl(int i) const		{ return (T*)el[i]; }
-  // fast element (no range checking)
+  // #CAT_Access fast element (no range checking)
   T* 		operator[](int i) const	{ return (T*)el[i]; }
 
   T*		DefaultEl() const		{ return (T*)DefaultEl_(); }
-  // returns the element specified as the default for this list
+  // #CAT_Access returns the element specified as the default for this list
 
   T*		Edit_El(T* item) const		{ return SafeEl(Find((TAPtr)item)); }
-  // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
+  // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
 
   virtual T*	FindName(const String& item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
-  // #MENU #USE_RVAL #ARGC_1 #LABEL_Find Find element with given name (item_nm)
+  // #MENU #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find element with given name (item_nm)
   virtual T* 	FindType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindType_(item_tp, idx); }
-  // find given type element (NULL = not here), sets idx
+  // #CAT_Access find given type element (NULL = not here), sets idx
 
   T*		First() const			{ return (T*)First_(); }
-  // look at the first element; NULL if none
+  // #CAT_Access look at the first element; NULL if none
   virtual T*	Pop()				{ return (T*)Pop_(); }
-  // pop the last element off the stack
+  // #CAT_Modify pop the last element off the stack
   virtual T*	Peek() const			{ return (T*)Peek_(); }
-  // peek at the last element on the stack, if any
+  // #CAT_Access peek at the last element on the stack, if any
 
   virtual T*	AddUniqNameOld(T* item)		{ return (T*)AddUniqNameOld_((void*)item); }
-  // add so that name is unique, old used if dupl, returns one used
+  // #CAT_Modify add so that name is unique, old used if dupl, returns one used
   virtual T*	LinkUniqNameOld(T* item)	{ return (T*)LinkUniqNameOld_((void*)item); }
-  // link so that name is unique, old used if dupl, returns one used
+  // #CAT_Modify link so that name is unique, old used if dupl, returns one used
 
   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
-  // move item so that it appears just before the target item trg in the list
+  // #CAT_Modify move item so that it appears just before the target item trg in the list
   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
-  // move item so that it appears just after the target item trg in the list
+  // #CAT_Modify move item so that it appears just after the target item trg in the list
 
 // when a taList is declared in advance of defining the type within it, this breaks
 //  void 	Initialize() 			{ SetBaseType(T::StatTypeDef(1)); }

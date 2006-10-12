@@ -20,13 +20,13 @@
 #include <math.h>
 #include "ta_matrix.h"
 
-//#ifdef TA_GSL
+#ifdef HAVE_GSL
 #include <gsl/gsl_matrix_double.h>
 #include <gsl/gsl_matrix_float.h>
-//#endif
+#endif
 
 class TA_API taMath : public taBase {
-  // collection of commonly-used math functions
+  // ##CAT_Math collection of commonly-used math functions
 public:
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -367,20 +367,29 @@ public:
   // Matrix operations
 
   // todo: support this?
-//   static bool get_gsl_matrix_fm_ta(double_Matrix* ta_mat, gsl_matrix* gsl_mat);
-//   // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
+#ifdef HAVE_GSL
+  static bool get_gsl_matrix_fm_ta(double_Matrix* ta_mat, gsl_matrix* gsl_mat);
+  // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
   static bool get_gsl_matrix_fm_ta_f(float_Matrix* ta_mat, gsl_matrix_float* gsl_mat);
   // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
 
-  static bool matrix_add(float_Matrix* a, float_Matrix* b);
+  static bool matrix_add(double_Matrix* a, double_Matrix* b);
   // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions
-  static bool matrix_sub(float_Matrix* a, float_Matrix* b);
+  static bool matrix_add_f(float_Matrix* a, float_Matrix* b);
+  // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions
+  static bool matrix_sub(double_Matrix* a, double_Matrix* b);
   // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions
-  static bool matrix_mult_els(float_Matrix* a, float_Matrix* b);
+  static bool matrix_sub_f(float_Matrix* a, float_Matrix* b);
+  // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions
+  static bool matrix_mult_els(double_Matrix* a, double_Matrix* b);
   // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions
-  static bool matrix_div_els(float_Matrix* a, float_Matrix* b);
+  static bool matrix_mult_els_f(float_Matrix* a, float_Matrix* b);
+  // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions
+  static bool matrix_div_els(double_Matrix* a, double_Matrix* b);
   // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
-
+  static bool matrix_div_els_f(float_Matrix* a, float_Matrix* b);
+  // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
+#endif
   
 };
 

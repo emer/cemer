@@ -79,7 +79,7 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   data=.projects[0].data[2]$1$;
+   data=.projects[0].data.gp[1][1]$1$;
    rmv_orphan_cols=1;
   };
  };
@@ -117,10 +117,8 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    off=0;
    result_var=;
-   method_spec {
-    script_obj=.projects[0].programs.gp[0][7].vars[1]$3$;
-    method=NetMonitor::CheckConfig;
-   };
+   script_obj=.projects[0].programs.gp[0][7].vars[1]$3$;
+   method=NetMonitor::CheckConfig;
    args{ false;};
 { bool quiet;   };
   };
@@ -128,10 +126,8 @@ Program .projects[0].programs.gp[0][7] {
    desc="Initialize monitoring data (get rid of any existing)";
    off=0;
    result_var=;
-   method_spec {
-    script_obj=.projects[0].programs.gp[0][7].vars[0]$4$;
-    method=DataTable::ResetData;
-   };
+   script_obj=.projects[0].programs.gp[0][7].vars[0]$4$;
+   method=DataTable::ResetData;
    args{ };
 {    };
   };
@@ -139,10 +135,8 @@ Program .projects[0].programs.gp[0][7] {
    desc="update the monitor items and data schema";
    off=0;
    result_var=;
-   method_spec {
-    script_obj=$3$;
-    method=NetMonitor::UpdateMonitors;
-   };
+   script_obj=$3$;
+   method=NetMonitor::UpdateMonitors;
    args{ true;};
 { bool reset_first;   };
   };
@@ -155,10 +149,8 @@ Program .projects[0].programs.gp[0][7] {
    desc="add a new blank row to the data";
    off=0;
    result_var=;
-   method_spec {
-    script_obj=$4$;
-    method=DataTable::AddBlankRow;
-   };
+   script_obj=$4$;
+   method=DataTable::AddBlankRow;
    args{ };
 {    };
   };
@@ -166,10 +158,8 @@ Program .projects[0].programs.gp[0][7] {
    desc="get the new monitor data.  Note this is inactive until MethodCall can work on objs";
    off=0;
    result_var=;
-   method_spec {
-    script_obj=$3$;
-    method=NetMonitor::GetMonVals;
-   };
+   script_obj=$3$;
+   method=NetMonitor::GetMonVals;
    args{ };
 {    };
   };
@@ -177,10 +167,8 @@ Program .projects[0].programs.gp[0][7] {
    desc="update after writing new data to monitor data table";
    off=1;
    result_var=;
-   method_spec {
-    script_obj=$4$;
-    method=DataBlock::WriteDone;
-   };
+   script_obj=$4$;
+   method=DataBlock::WriteDone;
    args{ };
 {    };
   };

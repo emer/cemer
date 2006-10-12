@@ -118,17 +118,20 @@ bool V3LeabraProject::ConvertToV4_impl() {
   PDPRoot* root = (PDPRoot*)tabMisc::root;
   LeabraProject* nwproj = (LeabraProject*)root->projects.NewEl(1, &TA_LeabraProject);
 
+  LeabraWizard* lwiz = (LeabraWizard*)nwproj->wizards[0];
+
+  lwiz->StdOutputData();	// need this for std procs
+
   ConvertToV4_Nets(nwproj);
   ConvertToV4_Enviros(nwproj);
   ConvertToV4_ProcScripts(nwproj);
   ConvertToV4_Scripts(nwproj);
 
-  DataTable* mon_data = (DataTable*)nwproj->data.NewEl(1,&TA_DataTable);
-  mon_data->name = "mon_data";
+  DataTable_Group* dgp = (DataTable_Group*)nwproj->data.FindMakeGpName("InputData");
 
   bool grouped_data = false;
-  if(nwproj->data.size > 1) {
-    DataTable* first_env = (DataTable*)nwproj->data[0];
+  if(dgp->size > 1) {
+    DataTable* first_env = (DataTable*)dgp->FastEl(0);
     if(first_env->data.FindName("Group"))
       grouped_data = true;
   }

@@ -2,27 +2,22 @@ leabra todo list:
 
 * test FILE string_stream.css: ptr = 0?
 
-* need GUI_READ_ONLY vs READ_ONLY -- interface vs. css -- some stuff should
-  really be read only in css like owner..
+* create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
+docs..: add all float_RArray funs, for matricies.
+
+* extrew in trial monitor seems not to be working: 12ax demo
 
 -------
 
+* profile: slow!!! -- probably all the uae's triggering cascade of datachanged stuff..
+  (faster now!)
 
-* LayerSpec CheckConfig needs to test for existence of units before doing Leaf();
-
-* need state flag for changing type: don't try to replace spec pointers on cutlinks.
-
-* wizards: reactivate env making stuff -- makes life easier -- and simple procs??
-
-* something funky about converted networks.. save & rebuild works but initial one does not..
-  * still true!
+* datachanged for obj -> update corresp var; datachanged goes to obj_list --
+  need hook in there, but it is a generic list..
 
 ---
 
 * datatable aggregation
-
-* create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
-docs..
 
 * deal with small-batch weight updates
 * deal with dmem: network counters aggregate across epoch.. rndseed aggregate, etc
@@ -31,9 +26,15 @@ docs..
 
 * bugs: network display updates at start of trial with weird state info, despite wrap
   by DataUpdate guys, etc
-* profile: slow!!!
 
 * change scope to #PROGRAM for vars in callmethod -- needs a special override to locate
 the global_vars..
+
+
+----------
+Not sure if still an issue:
+
+* LayerSpec CheckConfig needs to test for existence of units before doing Leaf();?
+* need state flag for changing type: don't try to replace spec pointers on cutlinks.
 
 

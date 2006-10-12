@@ -246,7 +246,7 @@ public:
   ////////////////////////////////////////////////
 
   void*   	GetTA_Element_(int i, TypeDef*& eltd) const
-  { eltd = GetElType(); return (void*)SafeEl_(i); }
+  { eltd = GetElType(); return (void*)SafeEl_(i); } // #IGNORE 
   void*		SafeEl_(int i) const
   { void* rval=NULL; if((i >= 0) && (i < size)) rval = el[i]; return rval; } 	// #IGNORE
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
@@ -301,82 +301,87 @@ public:
   ////////////////////////////////////////////////
 
   virtual TypeDef* 	GetElType() const {return NULL;}		// #IGNORE Default type for objects in group
-  virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {} // called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
+  virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
+  // #IGNORE called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
   virtual void	Alloc(int sz);
-  // allocate a list big enough for given number of elements (or current size)
+  // #CAT_Modify allocate a list big enough for given number of elements (or current size)
   virtual void 	Reset()			{ RemoveAll(); }
-  // reset the list (remove all elements)
+  // #CAT_Modify reset the list (remove all elements)
   virtual bool	IsEmpty()	{ return (size == 0) ? true : false; }
+  // #CAT_Access is the list empty of elements (i.e., size == 0)
 
   virtual void	BuildHashTable(int n_buckets);
-  // build a hash table with given number of buckets (not dynamic, so make it big)
+  // #CAT_Modify build a hash table with given number of buckets (not dynamic, so make it big)
 
   virtual int	Find(const String& nm) const;
-  // find named element in list
+  // #CAT_Access find named element in list
 
   virtual bool	Remove(const String& item_nm);
   virtual bool	Remove(int idx);
-  // remove (and delete) element from list at index
+  // #CAT_Modify remove (and delete) element from list at index
   virtual bool	RemoveName(const String& item_nm)		{ return Remove(item_nm); }
-  // remove given named element from list (if on list)
+  // #CAT_Modify remove given named element from list (if on list)
   virtual bool	RemoveLast();
-  // remove the last element on the list
+  // #CAT_Modify remove the last element on the list
   virtual void	RemoveAll();
-  // #MENU #MENU_ON_Edit #CONFIRM #UPDATE_MENUS Remove all elements on the list
+  // #MENU #MENU_ON_Edit #CONFIRM #UPDATE_MENUS #CAT_Modify Remove all elements on the list
 
   virtual bool	Move(int from, int to);
-  // Move element from (from) to position (to) in list
+  // #CAT_Modify Move element from (from) to position (to) in list
   virtual bool	Swap(int pos1, int pos2);
-  // Swap the elements in the two given positions on the list
+  // #CAT_Modify Swap the elements in the two given positions on the list
 
   virtual void	PopAll();
-  // pop all elements off the stack
+  // #CAT_Modify pop all elements off the stack
 
   virtual void	Permute();
-  // #MENU #CONFIRM #UPDATE_MENUS permute the items in the list into a random order
+  // #MENU #CONFIRM #UPDATE_MENUS #CAT_Order permute the items in the list into a random order
   virtual void	Sort(bool descending=false);
-  // #MENU #CONFIRM #UPDATE_MENUS sort the items in the list in alpha order according to name (or El_Compare_)
+  // #MENU #CONFIRM #UPDATE_MENUS #CAT_Order sort the items in the list in alpha order according to name (or El_Compare_)
   virtual void	Sort_(bool descending=false);	// implementation of sorting function
-  virtual void 	UpdateAllIndicies();	// update all indices of elements in list
+  virtual void 	UpdateAllIndicies();	// #IGNORE update all indices of elements in list
 
+  void*		FirstEl(taListItr& itr) {itr = 0; return SafeEl_(0);}
+  // #CAT_Access get the first item on the list, initialize iterator
+  void*		NextEl(taListItr& itr) {return (++itr < size) ? FastEl_(itr) : NULL;}
+  // #CAT_Access get the next item on the list according to iterator
 
-  void*		FirstEl(taListItr& itr) {itr = 0; return SafeEl_(0);} // for ta_group::FOR_ITR_EL macro
-  void*		NextEl(taListItr& itr) {return (++itr < size) ? FastEl_(itr) : NULL;} // for ta_group::FOR_ITR_EL macro
   /////////////////////////////////////////////////////////////////////////
   // replicating items: either by clone/add (duplicate) or link (borrow) //
   /////////////////////////////////////////////////////////////////////////
 
   void	Duplicate(const taPtrList_impl& cp);
-  // duplicate (clone & add) elements of given list into this one
+  // #CAT_Copy duplicate (clone & add) elements of given list into this one
   void	DupeUniqNameNew(const taPtrList_impl& cp);
-  // duplicate so result is unique names, replacing with new ones where dupl
+  // #CAT_Copy duplicate so result is unique names, replacing with new ones where dupl
   void	DupeUniqNameOld(const taPtrList_impl& cp);
-  // duplicate so result is unique names, using old ones where dupl
+  // #CAT_Copy duplicate so result is unique names, using old ones where dupl
 
   void	Stealth_Borrow(const taPtrList_impl& cp);
-  // borrow without referencing the borrowed elements (i.e. use AddEl_())
+  // #CAT_Copy borrow without referencing the borrowed elements (i.e. use AddEl_())
   void	Borrow(const taPtrList_impl& cp);
-  // borrow (link) elements of given list into this one
+  // #CAT_Copy borrow (link) elements of given list into this one
   void	BorrowUnique(const taPtrList_impl& cp);
-  // borrow so result is unique list
+  // #CAT_Copy borrow so result is unique list
   void	BorrowUniqNameNew(const taPtrList_impl& cp);
-  // borrow so result is unique names, replacing with new ones where dupl
+  // #CAT_Copy borrow so result is unique names, replacing with new ones where dupl
   void	BorrowUniqNameOld(const taPtrList_impl& cp);
-  // borrow so result is unique names, using old ones where dupl
+  // #CAT_Copy borrow so result is unique names, using old ones where dupl
 
   /////////////////////////////////
   // copying items between lists //
   /////////////////////////////////
 
   void	Copy_Common(const taPtrList_impl& cp);
-  // apply copy operator to only those items in common between the two lists
+  // #CAT_Copy apply copy operator to only those items in common between the two lists
   void	Copy_Duplicate(const taPtrList_impl& cp);
-  // apply copy operator to items, use duplicate to add new ones from cp (if necc)
+  // #CAT_Copy apply copy operator to items, use duplicate to add new ones from cp (if necc)
   void	Copy_Borrow(const taPtrList_impl& cp);
-  // apply copy operator to items, use borrow to add new ones from cp (if necc)
+  // #CAT_Copy apply copy operator to items, use borrow to add new ones from cp (if necc)
 
   // browsing -- browse client lists must override
-  virtual int		NumListCols() const {return 0;} // number of columns in a list view for this item type
+  virtual int		NumListCols() const {return 0;}
+  // #IGNORE number of columns in a list view for this item type
   virtual const KeyString GetListColKey(int col) const {return _nilKeyString;}
     // #IGNORE col key for the default list column
   virtual String	GetColHeading(const KeyString& key) const {return _nilKeyString;} 
@@ -386,7 +391,8 @@ public:
     // #IGNORE itm_idx is a hint from source, -1 means not specified or ignore
 
   // output
-  virtual void 	List(ostream& strm=cout) const; 	// List the group items
+  virtual void 	List(ostream& strm=cout) const;
+  // #CAT_Display List the group items
 protected:
   virtual void		ItemRemoved_() {} // we overload this in groups to update the leaf counts
 };

@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[1].programs.gp[0][1] { 
+Program .projects[0].programs.gp[0][1] { 
   ProgVar_List @.vars = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -9,7 +9,7 @@ Program .projects[1].programs.gp[0][1] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [3] {
+  ProgEl_List @.prog_code = [4] {
     NetCounterInit @[0] { };
     GroupedDataLoop @[1] { 
       ProgEl_List @.loop_code = [2] {
@@ -18,9 +18,10 @@ Program .projects[1].programs.gp[0][1] {
       };
     };
     MethodCall @[2] { };
+    ProgramCall @[3] { };
   };
 };
-Program .projects[1].programs.gp[0][1] {
+Program .projects[0].programs.gp[0][1] {
  name="LeabraEpoch_GpData";
  desc="iterates over all of the items in a data table and calls LeabraTrial process on them; this version uses GroupDataLoop to iterate over data table first by groups and then by items within a group";
  flags=PF_NONE;
@@ -41,7 +42,7 @@ Program .projects[1].programs.gp[0][1] {
   ProgVar @[0] {
    name="trial";
    var_type=T_Int;
-   int_val=4;
+   int_val=10;
    objs_ptr=0;
    desc=;
   };
@@ -49,7 +50,7 @@ Program .projects[1].programs.gp[0][1] {
    name="train_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[1].data[0]$0$;
+   object_val=.projects[0].data.gp[0][0]$0$;
    objs_ptr=0;
    desc=;
   };
@@ -61,8 +62,8 @@ Program .projects[1].programs.gp[0][1] {
   NetCounterInit @[0] {
    desc="initialize trial counter: note also needs to do this in regular running program";
    off=0;
-   network_var=.projects[1].programs.gp[0].global_vars[0]$1$;
-   local_ctr_var=.projects[1].programs.gp[0][1].vars[0]$2$;
+   network_var=.projects[0].programs.gp[0].global_vars[0]$1$;
+   local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$2$;
    counter=Network::trial;
   };
  };
@@ -87,7 +88,7 @@ Program .projects[1].programs.gp[0][1] {
     ProgramCall @[0] {
      desc=;
      off=0;
-     target=.projects[1].programs.gp[0][2]$3$;
+     target=.projects[0].programs.gp[0][2]$3$;
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -103,23 +104,31 @@ Program .projects[1].programs.gp[0][1] {
     };
    };
    loop_test="This is not used here!";
-   data_var=.projects[1].programs.gp[0][1].vars[1]$4$;
+   data_var=.projects[0].programs.gp[0][1].vars[1]$4$;
    group_order=PERMUTED;
    item_order=SEQUENTIAL;
    group_col=0;
-   group_idx_list{ 0;123;79;11;128;63;51;72;42;98;105;   };
-   item_idx_list{ 0;1;2;3;4;5;6;7;8;9;10;   };
+   group_idx_list{ 79;11;105;51;98;123;128;72;0;63;42;   };
+   item_idx_list{ 79;80;81;82;83;84;85;86;87;88;89;90;91;92;93;94;95;96;97;   };
   };
   MethodCall @[2] {
    desc=;
    off=0;
    result_var=;
-   method_spec {
-    script_obj=$1$;
-    method=LeabraNetwork::Compute_EpochSSE;
-   };
+   script_obj=$1$;
+   method=LeabraNetwork::Compute_EpochSSE;
    args{ };
 {    };
+  };
+  ProgramCall @[3] {
+   desc=;
+   off=0;
+   target=.projects[0].programs.gp[0][7]$5$;
+   prog_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
  };
 };

@@ -134,7 +134,7 @@ private:
 SmartRef_Of(ProgVar); // ProgVarRef
 
 class TA_API ProgArg: public taOBase {
-  // ##NO_TOKENS ##INSTANCE a program or method argument
+  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE a program or method argument
 INHERITED(taOBase)
 public:
   String		name; // #SHOW #READ_ONLY the name of the argument (always same as the target)
@@ -171,7 +171,7 @@ private:
 
 
 class TA_API ProgEl: public taOBase {
-  // #NO_INSTANCE #VIRT_BASE definition of a program element
+  // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE definition of a program element
 INHERITED(taOBase)
 public:
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
@@ -183,7 +183,7 @@ public:
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
-  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
+  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
 
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
@@ -296,7 +296,7 @@ private:
 };
 
 class TA_API Loop: public ProgEl { 
-  // #VIRT_BASE ##EDIT_INLINE base class for loops
+  // #VIRT_BASE base class for loops
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
@@ -435,35 +435,14 @@ private:
   void	Destroy()	{CutLinks();} //
 };
 
-
-class TA_API MethodSpec: public taOBase { 
-  // #EDIT_INLINE #HIDDEN #NO_TOKENS helper obj for MethodCall; has custom taiData
-INHERITED(taOBase)
-public:
-  ProgVarRef		script_obj; // #SCOPE_Program_Group the previously defined script object that has the method
-  TypeDef*		object_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.object_type
-  MethodDef*		method; //  #TYPE_ON_object_type the method to call
-  
-  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
-
-  void	UpdateAfterEdit();
-  void	CutLinks();
-  void	Copy_(const MethodSpec& cp);
-  COPY_FUNS(MethodSpec, inherited);
-  TA_BASEFUNS(MethodSpec);
-  
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-}; 
-
 class TA_API MethodCall: public ProgEl { 
   // call a method (member function) on an object
 INHERITED(ProgEl)
-friend class MethodSpec;
 public:
   String		result_var; // result variable (optional)
-  MethodSpec		method_spec; //  the method to call
+  ProgVarRef		script_obj; // #SCOPE_Program_Group the previously defined script object that has the method
+  TypeDef*		object_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.object_type
+  MethodDef*		method; //  #TYPE_ON_object_type the method to call
   SArg_Array		args; // arguments to the method
   
   override bool		CheckConfig(bool quiet=false);
@@ -485,6 +464,46 @@ protected:
 private:
   void	Initialize();
   void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API StaticMethodCall: public ProgEl { 
+  // call a static method (member function) on a type 
+INHERITED(ProgEl)
+public:
+  String		result_var; // result variable (optional)
+  TypeDef*		min_type; // #NO_SHOW #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
+  TypeDef*		object_type; // #TYPE_ON_min_type The object type to look for methods on
+  MethodDef*		method; //  #TYPE_ON_object_type the method to call
+  SArg_Array		args; // arguments to the method
+  
+  override bool		CheckConfig(bool quiet=false);
+  override String	GetDisplayName() const;
+  void	UpdateAfterEdit();
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const StaticMethodCall& cp);
+  COPY_FUNS(StaticMethodCall, inherited);
+  TA_BASEFUNS(StaticMethodCall);
+
+protected:
+  MethodDef*		lst_method; 
+  
+  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  virtual void		CheckUpdateArgs(bool force = false); // called when method changes
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API MathCall : public StaticMethodCall { 
+  // call a taMath function
+INHERITED(StaticMethodCall)
+public:
+  TA_BASEFUNS(MathCall);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 }; 
 
 class TA_API Program_List : public taList<Program> {
@@ -536,7 +555,7 @@ public:
   
   Program_Group*	prog_gp;   // #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
   
-  String		desc; // #EDIT_DIALOG description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
+  String		desc; // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgFlags		flags;  // control flags, for display and execution control
   taBase_List		objs; // sundry objects that are used in this program
   ProgVar_List		args; // global variables that are parameters (arguments) for callers

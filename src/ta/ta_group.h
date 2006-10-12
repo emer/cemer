@@ -97,8 +97,8 @@ public:
 
   TAPtr 	New(int no=0, TypeDef* typ = NULL);
 
-  MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;    // extended to search in the group
-  MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const; // extended to search in the group
+  MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;
+  MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const;
 
   // IO routines
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
@@ -163,42 +163,45 @@ public:
   // functions that don't depend on the type	//
   ////////////////////////////////////////////////
 
-  virtual void	InitLeafGp() const;		// Initialize the leaf group iter list, always ok to call
+  virtual void	InitLeafGp() const;
+  // #CAT_Access Initialize the leaf group iter list, always ok to call
   virtual void	InitLeafGp_impl(TALOG* lg) const; // #IGNORE impl of init leaf gp
   virtual void	AddEl_(void* it); 		// #IGNORE update leaf count
 //  virtual bool	Remove(const char* item_nm)	{ return taList_impl::Remove(item_nm); }
 //  virtual bool	Remove(TAPtr item)		{ return taList_impl::Remove(item); }
 
-  virtual bool 	RemoveLeaf(TAPtr item); 	// remove given leaf element
+  virtual bool 	RemoveLeaf(TAPtr item);
+  // #CAT_Modify remove given leaf element
   virtual bool	RemoveLeaf(const char* item_nm);
   virtual bool  RemoveLeaf(int idx);
-  // Remove leaf element at leaf index
+  // #CAT_Modify Remove leaf element at leaf index
   virtual bool	RemoveLeafName(const char* item_nm)	{ return RemoveLeaf(item_nm); }
-  // remove given named leaf element
+  // #CAT_Modify remove given named leaf element
   virtual bool	RemoveLeafEl(TAPtr item)		{ return RemoveLeaf(item); }
-  // Remove given leaf element
+  // #CAT_Modify Remove given leaf element
   virtual void 	RemoveAll();
-  // Remove all elements of the group
+  // #CAT_Modify Remove all elements of the group
 
   virtual bool	RemoveGp(int idx) 			{ return gp.Remove(idx); }
-  // remove group at given index
+  // #CAT_Modify remove group at given index
   virtual bool	RemoveGp(TAGPtr group)			{ return gp.Remove(group); }
-  // #MENU #FROM_GROUP_gp #MENU_ON_Edit #UPDATE_MENUS remove given group
+  // #MENU #FROM_GROUP_gp #MENU_ON_Edit #UPDATE_MENUS #CAT_Modify remove given group
   virtual TALOG* EditSubGps() 				{ return &gp; }
-  // #MENU #USE_RVAL edit the list of sub-groups (e.g., so you can move around subgroups)
+  // #MENU #USE_RVAL #CAT_Access edit the list of sub-groups (e.g., so you can move around subgroups)
 
   virtual void	EnforceLeaves(int sz);
-  // ensure that sz leaves exits by adding new ones to top group and removing old ones from end
+  // #CAT_Modify ensure that sz leaves exits by adding new ones to top group and removing old ones from end
   void	EnforceSameStru(const taGroup_impl& cp);
+  // #CAT_Modify enforce this group to have same structure as cp
 
   int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
 
   virtual int	FindLeaf(TAPtr item) const;  // find given leaf element (-1 = not here)
   virtual int	FindLeaf(TypeDef* item) const;
   virtual int	FindLeaf(const char* item_nm) const;
-  // find named leaf element
+  // #CAT_Access find named leaf element
   virtual int	FindLeafEl(TAPtr item) const	{ return FindLeaf(item); }
-  // find given leaf element -1 = not here.
+  // #CAT_Access find given leaf element -1 = not here.
 
   void	Duplicate(const taGroup_impl& cp);
   void	DupeUniqNameOld(const taGroup_impl& cp);
@@ -235,77 +238,77 @@ public:
 
   // operators
   T*		SafeEl(int idx) const		{ return (T*)SafeEl_(idx); }
-  // get element at index
+  // #CAT_Access get element at index
   T*		FastEl(int i) const		{ return (T*)el[i]; }
-  // fast element (no checking)
+  // #CAT_Access fast element (no checking)
   T* 		operator[](int i) const		{ return (T*)el[i]; }
 
   T*		DefaultEl() const		{ return (T*)DefaultEl_(); }
-  // returns the element specified as the default for this group
+  // #CAT_Access returns the element specified as the default for this group
 
   // note that the following is just to get this on the menu (it doesn't actually edit)
   T*		Edit_El(T* item) const		{ return SafeEl(Find((TAPtr)item)); }
-  // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given group item
+  // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given group item
 
   taGroup<T>*	SafeGp(int idx) const		{ return (taGroup<T>*)gp.SafeEl(idx); }
-  // get group at index
+  // #CAT_Access get group at index
   taGroup<T>*	FastGp(int i) const		{ return (taGroup<T>*)gp.FastEl(i); }
-  // the sub group at index
+  // #CAT_Access the sub group at index
   taGroup<T>* 	FastLeafGp(int gp_idx) const	{ return (taGroup<T>*)FastLeafGp_(gp_idx); } 
-  // the leaf sub group at index, note: 0 is always "this"
+  // #CAT_Access the leaf sub group at index, note: 0 is always "this"
   taGroup<T>* 	SafeLeafGp(int gp_idx) const	{ return (taGroup<T>*)SafeLeafGp_(gp_idx); } 
-  // the leaf sub group at index, note: 0 is always "this"
+  // #CAT_Access the leaf sub group at index, note: 0 is always "this"
 
   T*		Leaf(int idx) const		{ return (T*)Leaf_(idx); }
-  // get leaf element at index
+  // #CAT_Access get leaf element at index
   taGroup<T>* 	RootGp() const 			{ return (taGroup<T>*)root_gp;  }
-    // the root group ('this' for the root group)
+  // #CAT_Access the root group ('this' for the root group)
 
   // iterator-like functions
   inline T*	FirstEl(taLeafItr& lf) const	{ return (T*)FirstEl_(lf); }
-  // returns first leaf element and inits indexes
+  // #CAT_Access returns first leaf element and inits indexes
   inline T*	NextEl(taLeafItr& lf) const 	{ return (T*)NextEl_(lf); }
-  // returns next leaf element and incs indexes
+  // #CAT_Access returns next leaf element and incs indexes
   inline T*	LastEl(taLeafItr& lf) const	{ return (T*)LastEl_(lf); }
-  // returns first leaf element and inits indexes
+  // #CAT_Access returns first leaf element and inits indexes
   inline T*	PrevEl(taLeafItr& lf) const 	{ return (T*)PrevEl_(lf); }
-  // returns next leaf element and incs indexes
+  // #CAT_Access returns next leaf element and incs indexes
 
 
   taGroup<T>*	FirstGp(int& g)	const		{ return (taGroup<T>*)FirstGp_(g); }
-  // returns first leaf group and inits index
+  // #CAT_Access returns first leaf group and inits index
   taGroup<T>*	NextGp(int& g) const		{ return (taGroup<T>*)NextGp_(g); }
-  // returns next leaf group and incs index
+  // #CAT_Access returns next leaf group and incs index
 
   virtual T* 	NewEl(int n_els=0, TypeDef* typ=NULL) { return (T*)NewEl_(n_els, typ);}
-  // Create and add (n_els) new element(s) of given type
+  // #CAT_Modify Create and add (n_els) new element(s) of given type
   virtual taGroup<T>* NewGp(int n_gps=0, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
-  // Create and add (n_gps) new group(s) of given type
+  // #CAT_Modify Create and add (n_gps) new group(s) of given type
 
   virtual T*	FindName(const char* item_nm, int& idx=Idx)  const { return (T*)FindName_(item_nm, idx); }
-  // Find element with given name (nm) (NULL = not here), sets idx
+  // #CAT_Access Find element with given name (nm) (NULL = not here), sets idx
   virtual T* 	FindType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindType_(item_tp, idx); }
-  // find given type element (NULL = not here), sets idx
+  // #CAT_Access find given type element (NULL = not here), sets idx
 
   virtual T*	Pop()				{ return (T*)Pop_(); }
-  // pop the last element off the stack
+  // #CAT_Modify pop the last element off the stack
   virtual T*	Peek()				{ return (T*)Peek_(); }
-  // peek at the last element on the stack
+  // #CAT_Access peek at the last element on the stack
 
   virtual T*	AddUniqNameOld(T* item)		{ return (T*)AddUniqNameOld_((void*)item); }
-  // add so that name is unique, old used if dupl, returns one used
+  // #CAT_Modify add so that name is unique, old used if dupl, returns one used
   virtual T*	LinkUniqNameOld(T* item)	{ return (T*)LinkUniqNameOld_((void*)item); }
-  // link so that name is unique, old used if dupl, returns one used
+  // #CAT_Modify link so that name is unique, old used if dupl, returns one used
 
   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
-  // move item so that it appears just before the target item trg in the list
+  // #CAT_Modify move item so that it appears just before the target item trg in the list
   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
-  // move item so that it appears just after the target item trg in the list
+  // #CAT_Modify move item so that it appears just after the target item trg in the list
 
   virtual T* 	FindLeafName(const char* item_nm, int& idx=Idx) const { return (T*)FindLeafName_(item_nm, idx); }
-  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find Find element with given name (el_nm)
+  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find element with given name (el_nm)
   virtual T* 	FindLeafType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindLeafType_(item_tp, idx);}
-  // find given type leaf element (NULL = not here), sets idx
+  // #CAT_Access find given type leaf element (NULL = not here), sets idx
 
   void Initialize() 			{ SetBaseType(T::StatTypeDef(1));}
 

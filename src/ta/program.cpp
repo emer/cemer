@@ -513,7 +513,8 @@ void ProgEl_List::Destroy() {
 bool ProgEl_List::CheckConfig(bool quiet) {
   for(int i=0; i < size; ++i) {
     ProgEl* pe = FastEl(i);
-    if(!pe->CheckConfig(quiet)) return false;
+    if(!pe->CheckConfig(quiet))
+      return false;
   }
   return true;
 }
@@ -917,36 +918,55 @@ void IfElse::PreGenChildren_impl(int& item_id) {
 }
 
 //////////////////////////
-//    MethodSpec	//
+//    MethodCall	//
 //////////////////////////
 
-void MethodSpec::Initialize() {
+void MethodCall::Initialize() {
   method = NULL;
   object_type = &TA_taBase; // placeholder
+  lst_script_obj = NULL;
+  lst_method = NULL;
 }
 
-void MethodSpec::CutLinks() {
+void MethodCall::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(script_obj, this);
+  taBase::Own(args, this);
+}
+
+void MethodCall::CutLinks() {
+  args.CutLinks();
   script_obj.CutLinks();
   method = NULL;
+  lst_script_obj = NULL;
+  lst_method = NULL;
   inherited::CutLinks();
 }
 
-void MethodSpec::Copy_(const MethodSpec& cp) {
+void MethodCall::Copy_(const MethodCall& cp) {
   script_obj = cp.script_obj;
   method = cp.method;
+  args = cp.args;
+  lst_script_obj = cp.lst_script_obj;
+  lst_method = cp.lst_method;
 }
 
-void MethodSpec::UpdateAfterEdit() {
+void MethodCall::UpdateAfterEdit() {
   if(script_obj)
     object_type = script_obj->act_object_type();
   else object_type = &TA_taBase; // placeholder
+
+  if(!taMisc::is_loading)
+    CheckUpdateArgs();
+
+  lst_script_obj = script_obj; //note: don't ref
+  lst_method = method;
   inherited::UpdateAfterEdit();
-  if (taMisc::is_loading) return;
-  MethodCall* own = GET_MY_OWNER(MethodCall);
-  if (own) own->UpdateAfterEdit();
 }
 
-bool MethodSpec::CheckConfig(bool quiet) {
+bool MethodCall::CheckConfig(bool quiet) {
+  if(off) return true;
+  if(!inherited::CheckConfig(quiet)) return false;
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;
@@ -961,66 +981,19 @@ bool MethodSpec::CheckConfig(bool quiet) {
   return true;
 }
 
-
-//////////////////////////
-//    MethodCall	//
-//////////////////////////
-
-void MethodCall::Initialize() {
-  lst_script_obj = NULL;
-  lst_method = NULL;
-}
-
-void MethodCall::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(method_spec, this);
-  taBase::Own(args, this);
-}
-
-void MethodCall::CutLinks() {
-  args.CutLinks();
-  method_spec.CutLinks();
-  lst_script_obj = NULL;
-  lst_method = NULL;
-  inherited::CutLinks();
-}
-
-void MethodCall::Copy_(const MethodCall& cp) {
-  args = cp.args;
-  method_spec = cp.method_spec;
-  lst_script_obj = cp.lst_script_obj;
-  lst_method = cp.lst_method;
-}
-
-void MethodCall::UpdateAfterEdit() {
-  if (taMisc::is_loading) goto inh;
-  CheckUpdateArgs();
-  
-inh:
-  lst_script_obj = method_spec.script_obj; //note: don't ref
-  lst_method = method_spec.method;
-  inherited::UpdateAfterEdit();
-}
-
-bool MethodCall::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
-  return method_spec.CheckConfig(quiet);
-}
-
 const String MethodCall::GenCssBody_impl(int indent_level) {
   STRING_BUF(rval, 80); // more allocated if needed
   rval += cssMisc::Indent(indent_level);
-  if (!(method_spec.script_obj && method_spec.method)) {
+  if (!(script_obj && method)) {
     rval += "//WARNING: MethodCall not generated here -- obj or method not specified\n";
    return rval;
   }
   
   if (!result_var.empty())
     rval += result_var + " = ";
-  rval += method_spec.script_obj->name;
+  rval += script_obj->name;
   rval += "->";
-  rval += method_spec.method->name;
+  rval += method->name;
   rval += "(";
     for (int i = 0; i < args.size; ++ i) {
       if (i > 0) rval += ", ";
@@ -1032,13 +1005,13 @@ const String MethodCall::GenCssBody_impl(int indent_level) {
 }
 
 String MethodCall::GetDisplayName() const {
-  if (!(method_spec.script_obj && method_spec.method))
+  if (!script_obj || !method)
     return "(object or method not selected)";
   
   STRING_BUF(rval, 40); // more allocated if needed
-  rval += method_spec.script_obj->name;
+  rval += script_obj->name;
   rval += "->";
-  rval += method_spec.method->name;
+  rval += method->name;
   rval += "(";
   for(int i=0;i<args.size;i++) {
     rval += args.labels[i] + "=" + args[i];
@@ -1050,10 +1023,10 @@ String MethodCall::GetDisplayName() const {
 }
 
 void MethodCall::CheckUpdateArgs(bool force) {
-  if ((method_spec.method == lst_method) && (!force)) return;
+  if ((method == lst_method) && (!force)) return;
   args.Reset(); args.labels.Reset();
-  if (!method_spec.method) return;
-  MethodDef* md = method_spec.method; //cache
+  if (!method) return;
+  MethodDef* md = method; //cache
   String arg_nm;
   for (int i = 0; i < md->arg_types.size; ++i) {
     TypeDef* arg_typ = md->arg_types.FastEl(i);
@@ -1063,9 +1036,123 @@ void MethodCall::CheckUpdateArgs(bool force) {
     args.Add(md->arg_defs.SafeEl(i)); 
   }
   args.UpdateAfterEdit(); // note: arrays don't have very good data notify
-  lst_method = method_spec.method;
+  lst_method = method;
 }
 
+//////////////////////////
+//    StaticMethodCall	//
+//////////////////////////
+
+void StaticMethodCall::Initialize() {
+  method = NULL;
+  min_type = &TA_taBase;
+  object_type = &TA_taBase;
+  lst_method = NULL;
+}
+
+void StaticMethodCall::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(args, this);
+}
+
+void StaticMethodCall::CutLinks() {
+  args.CutLinks();
+  method = NULL;
+  lst_method = NULL;
+  inherited::CutLinks();
+}
+
+void StaticMethodCall::Copy_(const StaticMethodCall& cp) {
+  min_type = cp.min_type;
+  object_type = cp.object_type;
+  method = cp.method;
+  args = cp.args;
+  lst_method = cp.lst_method;
+}
+
+void StaticMethodCall::UpdateAfterEdit() {
+  if(!taMisc::is_loading)
+    CheckUpdateArgs();
+
+  lst_method = method;
+  inherited::UpdateAfterEdit();
+}
+
+bool StaticMethodCall::CheckConfig(bool quiet) {
+  if(off) return true;
+  if(!inherited::CheckConfig(quiet)) return false;
+  String prognm;
+  Program* prg = GET_MY_OWNER(Program);
+  if(prg) prognm = prg->name;
+  if(!method) {
+    if(!quiet) taMisc::Error("Error in StaticMethodCall in program:", prognm, "method is NULL");
+    return false;
+  }
+  return true;
+}
+
+const String StaticMethodCall::GenCssBody_impl(int indent_level) {
+  STRING_BUF(rval, 80); // more allocated if needed
+  rval += cssMisc::Indent(indent_level);
+  if (!method) {
+    rval += "//WARNING: StaticMethodCall not generated here -- obj or method not specified\n";
+    return rval;
+  }
+  
+  if (!result_var.empty())
+    rval += result_var + " = ";
+  rval += object_type->name;
+  rval += "::";
+  rval += method->name;
+  rval += "(";
+    for (int i = 0; i < args.size; ++ i) {
+      if (i > 0) rval += ", ";
+      rval += args[i];
+    }
+  rval += ");\n";
+  
+  return rval;
+}
+
+String StaticMethodCall::GetDisplayName() const {
+  if (!method)
+    return "(method not selected)";
+  
+  STRING_BUF(rval, 40); // more allocated if needed
+  rval += object_type->name;
+  rval += "::";
+  rval += method->name;
+  rval += "(";
+  for(int i=0;i<args.size;i++) {
+    rval += args.labels[i] + "=" + args[i];
+    if(i < args.size-1)
+      rval += ", ";
+  }
+  rval += ")";
+  return rval;
+}
+
+void StaticMethodCall::CheckUpdateArgs(bool force) {
+  if ((method == lst_method) && (!force)) return;
+  args.Reset(); args.labels.Reset();
+  if (!method) return;
+  MethodDef* md = method; //cache
+  String arg_nm;
+  for (int i = 0; i < md->arg_types.size; ++i) {
+    TypeDef* arg_typ = md->arg_types.FastEl(i);
+    arg_nm = arg_typ->Get_C_Name() + " " + md->arg_names[i] ;
+    args.labels.Add(arg_nm);
+    // preseed the arg value with the default
+    args.Add(md->arg_defs.SafeEl(i)); 
+  }
+  args.UpdateAfterEdit(); // note: arrays don't have very good data notify
+  lst_method = method;
+}
+
+void MathCall::Initialize() {
+  min_type = &TA_taMath;
+  object_type = &TA_taMath;
+}
 
 //////////////////////////
 //   ProgramCall	//
@@ -1219,6 +1306,7 @@ Program* Program::MakeTemplate() {
   {IfContinue* o = new IfContinue; o->SetName("NewIfContinue"); prog->init_code.Add(o);}
   {IfBreak* o = new IfBreak; o->SetName("NewIfBreak"); prog->init_code.Add(o);}
   {MethodCall* o = new MethodCall; o->SetName("NewMethodCall"); prog->init_code.Add(o);}
+  {MathCall* o = new MathCall; o->SetName("NewMathCall"); prog->init_code.Add(o);}
   {ProgramCall* o = new ProgramCall; o->SetName("NewProgramCall"); prog->init_code.Add(o);}
   return prog;
 }

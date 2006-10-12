@@ -239,7 +239,7 @@ private:
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TA_API DataTable : public DataBlock_Idx {
-  // #NO_UPDATE_AFTER ##TOKENS ##CAT_Data table of data
+  // #NO_UPDATE_AFTER ##TOKENS ##CAT_Data #EXT_dat table of data
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;

@@ -48,10 +48,8 @@ Program .projects[0].programs.gp[0][4] {
    desc=;
    off=0;
    result_var=;
-   method_spec {
-    script_obj=.projects[0].programs.gp[0].global_vars[0]$0$;
-    method=LeabraNetwork::Cycle_Run;
-   };
+   script_obj=.projects[0].programs.gp[0].global_vars[0]$0$;
+   method=LeabraNetwork::Cycle_Run;
    args{ };
 {    };
   };

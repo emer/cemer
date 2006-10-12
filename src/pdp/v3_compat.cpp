@@ -780,9 +780,10 @@ bool V3ProjectBase::ConvertToV4_Script_impl(Program_Group* pg, const String& obj
 }
 
 bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
+  DataTable_Group* dgp = (DataTable_Group*)nwproj->data.FindMakeGpName("InputData");
   for(int ei=0; ei < environments.size; ei++) {
     Environment* env = environments[ei];
-    DataTable* dt = nwproj->data.NewEl(1,&TA_DataTable);
+    DataTable* dt = dgp->NewEl(1,&TA_DataTable);
     dt->name = env->name;
     String_Data* gpcol = NULL;
     int st_col = 0;		// starting column for standard fields
@@ -936,7 +937,8 @@ bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
   if(env->event_specs.size <= 0) return false;
   EventSpec* es = (EventSpec*)env->event_specs[0];
 
-  DataTable* dt = (DataTable*)nwproj->data.FindName(env->name);
+  DataTable_Group* dgp = (DataTable_Group*)nwproj->data.FindMakeGpName("InputData");
+  DataTable* dt = (DataTable*)dgp->FindName(env->name);
   if(!dt) return false;
   
   if(networks.leaves <= 0) return false;
@@ -964,6 +966,7 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec
       else if(ps->type == PatternSpec::TARGET) lay->layer_type = Layer::TARGET;
       else if(ps->type == PatternSpec::COMPARE) lay->layer_type = Layer::OUTPUT;
     }
+    lw->UpdateAfterEdit();
   }
   { // trial_name
     LayerWriter* lw = (LayerWriter*)lw_list->New(1, &TA_LayerWriter);
@@ -971,6 +974,7 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec
     lw->data = dt;
     lw->network = net;
     lw->chan_name = "Name";
+    lw->UpdateAfterEdit();
   }
   if(dt->data.FindName("Group"))
   { // groupl_name
@@ -979,6 +983,7 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec
     lw->data = dt;
     lw->network = net;
     lw->chan_name = "Group";
+    lw->UpdateAfterEdit();
   }
   return true;
 }

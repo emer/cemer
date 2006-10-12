@@ -1017,7 +1017,7 @@ bool tabDataLink::HasChildItems() {
 }
 
 bool tabDataLink::isValid() const {
-  return data()->CheckConfig(true);
+  return data()->CheckConfig(true); // true = quiet
 }
 
 bool tabDataLink::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const {
