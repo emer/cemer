@@ -781,10 +781,12 @@ void taiDataHost::Constr_Prompt() {
   if (prompt != NULL) return; // already constructed
   // convert to html-ish format, for display
   QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
-  prompt = taiM->NewLabel(s, widget(), ctrl_size);
+  prompt = new QLabel(s, widget()); // note, don't use creation func because needs to expand
   prompt->setTextFormat(Qt::RichText);
   prompt->setWordWrap(true); // so it doesn't dominate hor sizing
-  QFont f = prompt->font(); f.setBold(true); prompt->setFont(f);
+  QFont f = taiM->nameFont(ctrl_size);
+  f.setBold(true); 
+  prompt->setFont(f);
   prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
   vblDialog->addWidget(prompt);
   // add a separator line

@@ -33,6 +33,9 @@ public:
   iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
 
   bool		hilight() {return mhilight;}
+  
+  short		minCharWidth() {return mmin_char_width;} 
+  void		setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
 
 #ifndef __MAKETA__
 signals:
@@ -45,6 +48,8 @@ public slots:
 
 protected:
   bool mhilight;
+  short		mmin_char_width; // note: we limit to 128
+  
   void 		focusInEvent(QFocusEvent* ev); // override
   void 		focusOutEvent(QFocusEvent* ev); // override
   void		init();

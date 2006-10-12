@@ -42,6 +42,7 @@ void iLineEdit::focusOutEvent(QFocusEvent* ev) {
 
 void iLineEdit::init() {
   mhilight = false;
+  mmin_char_width = 0;
 }
 
 void iLineEdit::setHilight(bool value){
@@ -57,6 +58,24 @@ void iLineEdit::setHilight(bool value){
   }
   SET_PALETTE_COLOR(this, QPalette::Base, bg);
   update();
+}
+
+void iLineEdit::setMinCharWidth(int num) {
+  if (num > 128) num = 128;
+  else if (num < 0) num = 0;
+  if (mmin_char_width == num) return;
+  mmin_char_width = num;
+  if (mmin_char_width == 0) {
+    setMinimumWidth(0);
+  } else {
+    QFontMetrics fm(font());
+    QString s; s.reserve(num);
+    // just use numbers, which are probably of about average width
+    for (int i = 0; i < num; ++i) {
+      s.append(QChar('0' + (i % 10)));
+    }
+    setMinimumWidth(fm.size(Qt::TextSingleLine, s).width());
+  }
 }
 
 void iLineEdit::setReadOnly(bool value) {

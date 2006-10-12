@@ -634,7 +634,7 @@ taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidge
     return ebrval;
   }
   else {
-    flags_ |= (taiData::flgNullOk | taiData::flgEditOk);
+    flags_ |= (taiData::flgNullOk | taiData::flgEditOk | taiData::flgEditDialog);
     taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, flags_);
 //nn here, do in getimage    rval->GetMenu();
     return rval;
@@ -1008,7 +1008,7 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   }
   if (!mbr->HasOption("NO_NULL"))
     token_flags |= taiData::flgNullOk;
-
+  token_flags |= taiData::flgEditDialog;
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_,
 	token_flags);
   return rval;

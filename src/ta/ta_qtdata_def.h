@@ -123,7 +123,7 @@ public:
     flgNoInGroup	= 0x020,  // used by gpiGroupEls
     flgEditOnly		= 0x040,  // used by EditButton
     flgInline		= 0x080,   // used by types and members that support INLINE directive, esp. Array
-    flgEditDialog	= 0x100,   // for taiField, enables dialog for EDIT_DIALOG directive
+    flgEditDialog	= 0x100,   // for taiField, enables dialog for EDIT_DIALOG directive; for token menu, adds ... edit
     flgNoUAE		= 0x200  // for things like polydata, don't issue an UpdateAfterEdit
   };
 

@@ -178,7 +178,7 @@ void taiProgVar::AssertControls(int value) {
     lbl = MakeLabel("value", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
     tkObjectValue = new taiTokenPtrButton(thValType->typ, host, this, stack, 
-      ((mflags & flgReadOnly) | flgNullOk));
+      ((mflags & flgReadOnly) | flgNullOk | flgEditDialog));
     hl->addWidget(tkObjectValue->GetRep());  hl->addSpacing(taiM->hsep_c);
     
     AddChildWidget(stack);

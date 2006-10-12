@@ -8,17 +8,13 @@ Brad:
 
 misc ui improvements:
 * add ... to edit a token pointer (replaces #93)
-* text controls have minimum width
-* minimal netview cleanup: transparent layer etc
-* bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys (esp New dialog!).
 * dnd extended to applying things: drag a layerspec and drop it on a layer
   and this sets the layerspec.  need to just parse member funs that take
   layerspec args + comment dir to disambiguate (or just pop up menu).
 
 * Program ControlPanel: extend list view for programs + their vars/args + add buttons for selected guy + step_prog + global_vars
-* tabs for 3d views - required for these next guys (simple version):
-* matrix view of datatable (in 3d/inventor)
 
+* save/restore state of viewers
 * ChangeType/UpdatePointers etc. gui patches
 * virtual console dock window, ex. be able to dock to bottom of any project window
 
@@ -30,6 +26,10 @@ Graphing/Viewing:
   * T3 graphs  
   * T3 table views
   * T3 grid views
+* matrix view of datatable (in 3d/inventor)
+
+* bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys (esp New dialog!).
+* minimal netview cleanup: transparent layer etc
 
 Others to Prioritize:
 
@@ -44,13 +44,17 @@ Brad done:
 * fixed tab activating bugs
 * #CAT_ support for types
 * buttons have maximum width (20 chars, established in taiMisc::InitMetrics)
+* tabs for 3d views - required for these next guys (simple version):
 * T3 tabs should update if name changes
 * highlight progeditor lines w/red for ProgEl->CheckConfig == false #70
 * read-only, condedit off guys are now indicated by grey
 * highlighting working (label goes bold to indicate non-default value)
+* text controls have minimum width
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)
+
+Brad cancelled:
 * yellow surround for non-default values (NOTE: non-defaults already use BOLD captions)
 
 Randy:

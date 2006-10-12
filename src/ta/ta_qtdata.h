@@ -87,6 +87,8 @@ class TA_API taiField : public taiData {
 public:
   iLineEdit*		rep() const { return leText; }
   bool			fillHor() {return true;} // override 
+  void 			setMinCharWidth(int num); // hint for min chars, 0=no min
+  
   taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 
   void 	GetImage(const String& val);
@@ -914,7 +916,7 @@ public:
   virtual int		columnCount(int view) const = 0; 
     // number of header columns in the view
   virtual const String	headerText(int index, int view) const = 0;
-  inline QPushButton*	rep() {return (QPushButton*)m_rep;}
+  inline QPushButton*	rep() {return m_but;}
   inline void*		sel() const {return m_sel;}
   virtual bool		isValid() const {return (targ_typ);} // if all required params have been set
   virtual int		catCount() const; 
@@ -936,9 +938,12 @@ public:
   
 public slots:
   void			OpenChooser(); // make and then open chooser dialog
+  virtual void		btnEdit_clicked() {} // used by tokens to edit
 
 protected:
   void*			m_sel; // current value
+  QPushButton*		m_but;
+  QToolButton*		btnEdit; // only for tokens
   TypeDef*		targ_typ; 
   String_Array*		cats; // categories -- only created if needed
   
@@ -1080,10 +1085,12 @@ public:
 
   virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL);
     // get image, using the new type and scope supplied
-  virtual TAPtr		GetValue() {return token();}
+  virtual taBase*	GetValue() {return token();}
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
+  override void		btnEdit_clicked(); // used by tokens to edit
+  
   taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
 protected:

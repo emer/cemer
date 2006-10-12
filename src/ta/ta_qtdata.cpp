@@ -432,6 +432,16 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
   // cliphandling connections
   QObject::connect(rep(), SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
+    
+  // min width for some popular types
+  if (typ) {
+    if (typ->DerivesFrom(TA_float))
+      setMinCharWidth(8);
+    else if (typ->DerivesFrom(TA_double))
+      setMinCharWidth(16);
+    else // just put a lower pixel bound on size, since charwidth is exp to compute
+      rep()->setMinimumWidth(100);
+  }
 }
 
 void taiField::btnEdit_clicked(bool) {
@@ -455,6 +465,10 @@ String taiField::GetValue() const {
 
 void taiField::selectionChanged() {
   emit_UpdateUi();
+}
+
+void taiField::setMinCharWidth(int num) {
+  rep()->setMinCharWidth(num);
 }
 
 void taiField::this_GetEditActionsEnabled(int& ea) {
@@ -1049,7 +1063,7 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   lbl = MakeLabel("(Ptr cannot be set)");
   stack->addWidget(lbl);
   
-  tabVal = new taiTokenPtrButton(&TA_taBase, host, this, NULL);
+  tabVal = new taiTokenPtrButton(&TA_taBase, host, this, NULL, flgEditDialog);
   stack->addWidget(tabVal->GetRep());
 }
     
@@ -2882,11 +2896,29 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   targ_typ = NULL; // gets set later
   m_sel = NULL;
   cats = NULL;
-  QPushButton* rep_ = new QPushButton(gui_parent_);
-  taiM->FormatButton(rep_, _nilString, defSize());
-  rep_->setFixedHeight(taiM->button_height(defSize()));
-  SetRep(rep_);
-  connect(rep_, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
+  if (flags_ & flgEditDialog) {
+    // put the stuff in the gui
+    QWidget* act_par = new QWidget(gui_parent_);
+    QHBoxLayout* lay = new QHBoxLayout(act_par);
+    lay->setMargin(0);
+    lay->setSpacing(1);
+    m_but = new QPushButton(act_par);
+    lay->addWidget(m_but, 1);
+    btnEdit = new QToolButton(act_par);
+    btnEdit->setText("...");
+    btnEdit->setFixedHeight(taiM->text_height(defSize()));
+    lay->addWidget(btnEdit);
+    SetRep(act_par);
+    connect(btnEdit, SIGNAL(clicked()),
+      this, SLOT(btnEdit_clicked()) );
+  } else {
+    btnEdit = NULL; // not used
+    m_but = new QPushButton(gui_parent_);
+    SetRep(m_but);
+  }
+  taiM->FormatButton(m_but, _nilString, defSize());
+  m_but->setFixedHeight(taiM->button_height(defSize()));
+  connect(m_but, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
 }
 
 taiItemPtrBase::~taiItemPtrBase() {
@@ -3463,6 +3495,17 @@ taiTokenPtrButton::taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_)
 :inherited(typ_, host, par, gui_parent_, flags_)
 {
+}
+
+void taiTokenPtrButton::btnEdit_clicked() {
+  taBase* cur_base = GetValue();
+  if (!cur_base) return;
+
+  const iColor* bgclr = cur_base->GetEditColorInherit();
+  taiEdit* gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
+  if (!gc) return; // shouldn't happen
+
+  gc->Edit(cur_base, false, bgclr);
 }
 
 void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {
