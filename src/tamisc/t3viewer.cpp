@@ -968,9 +968,7 @@ iT3DataViewer::~iT3DataViewer() {
 void iT3DataViewer::Init() {
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setSpacing(0);  lay->setMargin(0);
-  tw = new QTabWidget(this);
-  tw->setTabPosition(QTabWidget::South);
-  tw->setTabShape(QTabWidget::Triangular);
+  tw = new QTabWidget(this); //top, standard tabs
   lay->addWidget(tw);
 }
 

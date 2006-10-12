@@ -33,6 +33,8 @@ Graphing/Viewing:
 Others to Prioritize:
 
 * #99 (improper Mac prompt on Quit)
+* #101 list API changes
+* #104 CheckConfig rework
 
 Brad done:
 * dnd icon bar for: progedit

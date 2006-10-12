@@ -814,7 +814,7 @@ void NetView::Initialize() {
   unit_md_flags = MD_UNKNOWN;
   nvp = NULL;
   display = true;
-  unit_disp_mode = UDM_CYLINDER;
+  unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
   unit_src = NULL;
   SetAdapter(new NetViewAdapter(this));
