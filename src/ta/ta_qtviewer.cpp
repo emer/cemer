@@ -2478,6 +2478,8 @@ void iMainWindowViewer::Init() {
   fileSaveAsAction = NULL;
   fileSaveAllAction = NULL;
   fileCloseAction = NULL;
+  fileCloseWindowAction = NULL;
+  fileQuitAction = NULL;
 }
 
 taiAction* iMainWindowViewer::AddAction(taiAction* act) {
@@ -2562,9 +2564,20 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
 void iMainWindowViewer::Constr_impl() {
   Constr_MainMenu_impl();
   Constr_Menu_impl();
-  // we always put the fileclose action at bottom of menu
+  // we always put the fileclose or quit action at bottom of menu
   fileMenu->insertSeparator();
-  fileCloseWindowAction->AddTo(fileMenu);
+  
+  if (!isRoot()) {
+    fileCloseWindowAction->AddTo(fileMenu);
+  }
+  
+  //note: on Mac, this Quit will get moved to app menu (needed on all toplevel wins)
+#ifndef TA_OS_MAC
+  if (isRoot())
+#endif
+  {
+    fileQuitAction->AddTo(fileMenu);
+  }
 
   body = new QSplitter(); // def is hor
   setCentralWidget(body);
@@ -2647,10 +2660,19 @@ void iMainWindowViewer::Constr_Menu_impl() {
   
   filePrintAction = AddAction(new taiAction("&Print...", QKeySequence("Ctrl+P"), _filePrintAction ));
   filePrintAction->setIconSet( QIconSet( image3 ) );
-  if (isRoot())
-    fileCloseWindowAction = AddAction(new taiAction("&Quit", QKeySequence("Ctrl+Q"), _fileCloseWindowAction ));
-  else
+  if (!isRoot()) {
     fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence("Ctrl+W"), _fileCloseWindowAction ));
+    connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()) );
+  }
+#ifndef TA_OS_MAC
+  if (isRoot())
+#endif
+  {
+    fileQuitAction = AddAction(new taiAction("&Quit", QKeySequence("Ctrl+Q"),
+      _fileQuitAction ));
+    connect(fileQuitAction, SIGNAL(Action()), this, SLOT(fileQuit()) );
+  }
+  
   editUndoAction = AddAction(new taiAction("&Undo", QKeySequence("Ctrl+Z"), _editUndoAction ));
   editUndoAction->setEnabled( FALSE );
   editUndoAction->setIconSet( QIconSet( image4 ) );
@@ -2700,7 +2722,6 @@ void iMainWindowViewer::Constr_Menu_impl() {
     // signals and slots connections
   connect( fileOptionsAction, SIGNAL( Action() ), this, SLOT( fileOptions() ) );
 //   connect( filePrintAction, SIGNAL( activated() ), this, SLOT( filePrint() ) ); */
-  connect( fileCloseWindowAction, SIGNAL( Action() ), this, SLOT( fileCloseWindow() ) );
 //    connect( editUndoAction, SIGNAL( activated() ), this, SLOT( editUndo() ) );
 //   connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
   connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
@@ -2761,9 +2782,7 @@ void iMainWindowViewer::emit_EditAction(int param) {
 } */
 
 void iMainWindowViewer::fileCloseWindow() {
-  if (isRoot()) {
-    taiMiscCore::Quit(CO_PROCEED); // not forced, until main closes
-  } else close();
+  close();
 }
 
 // note: all the fileXxx for projects are safe -- they don't get enabled
@@ -2814,6 +2833,10 @@ void iMainWindowViewer::fileOpen() {
   // this will automatically view it if already open
   if (proj) // this is the easiest way...
     proj->AssertDefaultProjectBrowser(true);
+}
+
+void iMainWindowViewer::fileQuit() {
+  taiMiscCore::Quit(CO_PROCEED); // not forced, until main closes
 }
 
 void iMainWindowViewer::fileSave() {

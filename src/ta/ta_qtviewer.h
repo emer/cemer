@@ -757,7 +757,8 @@ public: //
   taiAction* 		fileCloseAction;
   taiAction* 		fileOptionsAction;
   taiAction* 		filePrintAction;
-  taiAction* 		fileCloseWindowAction; //note: special, because it is always at bottom of File menu; root=Quit
+  taiAction* 		fileCloseWindowAction; //note: special, because it is always at bottom of File menu for non-root
+  taiAction* 		fileQuitAction; //note: only on app window, except on all in Mac
   taiAction* 		editUndoAction;
   taiAction* 		editRedoAction;
   taiAction* 		editCutAction;
@@ -811,7 +812,8 @@ public slots:
   virtual void 	fileClose(); // Close Project (only enabled if viewer)
   virtual void 	fileOptions(); // edits taMisc
   virtual void 	filePrint(){}
-  virtual void 	fileCloseWindow(); // Quit (root) or Close Window (non-root)
+  virtual void 	fileCloseWindow();// (non-root only)
+  virtual void 	fileQuit(); // (root) or all on Mac (needed for App menu)
 /*  virtual void editUndo();
   virtual void editRedo();
   virtual void editCut();

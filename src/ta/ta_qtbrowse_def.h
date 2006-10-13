@@ -44,6 +44,7 @@ enum NodeBitmapFlags {
 #define _fileSaveAsAction 	"fileSaveAsAction"
 #define _filePrintAction 	"filePrintAction"
 #define _fileCloseWindowAction 	"fileCloseWindowAction"
+#define _fileQuitAction 	"fileQuitAction"
 #define _editUndoAction 	"editUndoAction"
 #define _editRedoAction 	"editRedoAction"
 #define _editCutAction 		"editCutAction"
