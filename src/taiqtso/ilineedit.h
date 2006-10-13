@@ -32,8 +32,6 @@ public:
   iLineEdit(QWidget* parent = 0);
   iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
 
-  bool		hilight() {return mhilight;}
-  
   short		minCharWidth() {return mmin_char_width;} 
   void		setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
 
@@ -43,11 +41,9 @@ signals:
 #endif
 
 public slots:
-  virtual void	setHilight(bool value); //note: won't accept set(true) if readonly
   void		setReadOnly(bool value);
 
 protected:
-  bool mhilight;
   short		mmin_char_width; // note: we limit to 128
   
   void 		focusInEvent(QFocusEvent* ev); // override

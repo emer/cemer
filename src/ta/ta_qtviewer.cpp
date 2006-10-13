@@ -1984,8 +1984,8 @@ void iTabViewer::TabView_Selected(iTabView* tv) {
   }
 }
 
-void iTabViewer::SetPanel(iDataPanel* panel) {
-  tabView()->SetPanel(panel);
+void iTabViewer::ShowPanel(iDataPanel* panel) {
+  tabView()->ShowPanel(panel);
 }
 
 void iTabViewer::UpdateTabNames() { // called by a datalink when a tab name might have changed
@@ -3153,8 +3153,8 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   setTabData(idx, data);
   
 set_cur:
-  if (currentIndex() != idx)
-    setCurrentIndex(idx);
+;/*don't autoset  if (currentIndex() != idx)
+    setCurrentIndex(idx); */
 }
 
 
@@ -3211,12 +3211,7 @@ void iTabView::Init() {
   layDetail->addWidget(tbPanels);
   wsPanels = new Q3WidgetStack(this);
   layDetail->addWidget(wsPanels);
-//obs add a dummy data panel with id=0 to show blank
-//obs  wsPanels->addWidget(new iDataPanel(NULL), 0);
-  // add the default tab
-/*Qt3  iPanelTab* pt  = new iPanelTab();
-  tbPanels->addTab(pt); */
-  
+  //add a dummy data panel with id=0 to show blank
   tbPanels->addTab("");
   connect(tbPanels, SIGNAL(currentChanged(int)),
       this, SLOT(panelSelected(int)) );
@@ -3245,6 +3240,7 @@ bool iTabView::ActivatePanel(taiDataLink* dl) {
 void iTabView::AddPanel(iDataPanel* panel) {
   wsPanels->addWidget(panel);
   panels.Add(panel); // refs us
+  if (panels.size == 1) wsPanels->raiseWidget(panel); // always show first
   iTabViewer* itv = tabViewerWin();
   if (itv) panel->OnWindowBind(itv);
 }
@@ -3314,9 +3310,9 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   if (!dp || dp->lockInPlace()) return;
   contextMenu->addSeparator();
   if (dp->pinned()) {
-    act = new taiAction("&Unpin",  this, SLOT(Unpin()), CTRL+ALT+Key_U );
+    act = new taiAction("&Unpin",  dp, SLOT(Unpin()), CTRL+ALT+Key_U );
   } else {
-    act = new taiAction("&Pin in place",  this, SLOT(Pin()), CTRL+ALT+Key_P );
+    act = new taiAction("&Pin in place",  dp, SLOT(Pin()), CTRL+ALT+Key_P );
   }
   act->setParent(contextMenu);
   contextMenu->addAction(act);
@@ -3340,7 +3336,8 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   rval = tabViewerWin()->MakeNewDataPanel_(link);
   if (rval != NULL) {
     AddPanel(rval);
-    rval->show(); // may be required in some contexts
+    //note: we don't do a show() here because it automatically raises the panel
+//    rval->show(); //needed!
   }
   return rval;
 }
@@ -3348,8 +3345,11 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
 void iTabView::panelSelected(int idx) {
   iDataPanel* panel = NULL;
   if (idx >= 0) panel = tbPanels->panel(idx); 
-  if (panel == NULL) wsPanels->raiseWidget((int)0);
-  else            wsPanels->raiseWidget(panel);
+  if (panel) {
+    wsPanels->raiseWidget(panel);
+  } else {
+    wsPanels->raiseWidget((int)0);
+  }
   if (m_viewer_win)
     m_viewer_win->TabView_Selected(this);
 }
@@ -3395,12 +3395,9 @@ void iTabView::SetCurrentTab(int idx, bool except_if_locked) {
     iDataPanel* pan = curPanel();
     if (pan && pan->lockInPlace()) return;
   }
-  tbPanels->setCurrentTab(idx);
-}
-
-void iTabView::SetPanel(iDataPanel* panel) {
-  wsPanels->raiseWidget(panel);
-  tbPanels->SetPanel(tbPanels->currentIndex(), panel);
+  iDataPanel* pan = panel(idx);
+  tbPanels->setCurrentIndex(idx);
+  wsPanels->raiseWidget(pan);
 }
 
 void iTabView::ShowPanel(iDataPanel* panel) {
@@ -3411,10 +3408,11 @@ void iTabView::ShowPanel(iDataPanel* panel) {
   bool cur_lock = (cur_pn && (cur_pn->lockInPlace()));
   
   // first, see if we have a tab for guy already -- don't create more than 1 per guy
-  if (cur_lock)
+  if (cur_lock) {
     if (TabIndexOfPanel(panel) >= 0) return; // visible, but don't switch
-  else
+  } else {
     if (ActivatePanel(panel->link())) return;
+  }
   
   // ok, not visible...
   
@@ -3428,7 +3426,8 @@ void iTabView::ShowPanel(iDataPanel* panel) {
   
   // replace curr if it is not locked, dirty, or pinned
   if (cur_pn && (!cur_pn->lockInPlace() && !cur_pn->dirty() && !cur_pn->pinned())) {
-    SetPanel(panel);
+    tbPanels->SetPanel(tbPanels->currentIndex(), panel);
+    wsPanels->raiseWidget(panel);
     return;
   }
   
@@ -3440,7 +3439,7 @@ void iTabView::ShowPanel(iDataPanel* panel) {
       if (pn->lockInPlace() || pn->dirty() || pn->pinned()) continue;
     }
     // ok, make that the guy!
-    wsPanels->raiseWidget(panel);
+//nn    wsPanels->raiseWidget(panel);
     tbPanels->SetPanel(i, panel);
     SetCurrentTab(i);
     return;

@@ -41,23 +41,7 @@ void iLineEdit::focusOutEvent(QFocusEvent* ev) {
 }
 
 void iLineEdit::init() {
-  mhilight = false;
   mmin_char_width = 0;
-}
-
-void iLineEdit::setHilight(bool value){
-  if (mhilight == value) return;
-  if (isReadOnly() && value) return; // can't set hilight when ro
-  mhilight = value;
-  //NOTE: following doesn't really work, and is just temporary until a proper solution is found
-  QColor bg;
-  if (value) {
-    bg = COLOR_HILIGHT;
-  } else {
-    bg = QApplication::palette().color(QPalette::Base); // current text widget background
-  }
-  SET_PALETTE_COLOR(this, QPalette::Base, bg);
-  update();
 }
 
 void iLineEdit::setMinCharWidth(int num) {
@@ -80,17 +64,17 @@ void iLineEdit::setMinCharWidth(int num) {
 
 void iLineEdit::setReadOnly(bool value) {
   if (isReadOnly() == value) return;
-  QLineEdit::setReadOnly(value);
+  inherited::setReadOnly(value);
+  QPalette pal(palette());
   if (value) {
-    mhilight = false;
 //    setFocusPolicy(ClickFocus);
-    SET_PALETTE_COLOR(this, QPalette::Base,
-      QApplication::palette().color(QPalette::Button));
+    pal.setColor(backgroundRole(), COLOR_RO_BACKGROUND);
   } else {
 //    setFocusPolicy(StrongFocus);
-    SET_PALETTE_COLOR(this, QPalette::Base,
-      QApplication::palette().color(QPalette::Base));
+    pal.setColor(backgroundRole(), 
+      QApplication::palette(this).color(QPalette::Base));
   }
+  setPalette(pal);
   update();
 }
 

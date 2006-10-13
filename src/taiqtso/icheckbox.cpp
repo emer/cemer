@@ -41,55 +41,24 @@ iCheckBox::iCheckBox(const char* text, QWidget* parent)
 }
 
 void iCheckBox::init() {
-  mhilight = false;
-  mreadOnly = false;
-}
-
-bool iCheckBox::isReadOnly() {
-  return mreadOnly;
-}
-
-void iCheckBox::setHilight(bool value){
-  if (mhilight == value) return;
-  if (isReadOnly() && value) return; // can't set hilight when ro
-  mhilight = value;
-  update();
+  mread_only = false;
 }
 
 void iCheckBox::setReadOnly(bool value) {
-  if (mreadOnly == value) return;
-  mreadOnly = value;
+  if (mread_only == value) return;
+  mread_only = value;
+  QPalette pal(palette());
   if (value) {
-    mhilight = false;
+//    setFocusPolicy(ClickFocus);
+    pal.setColor(backgroundRole(), COLOR_RO_BACKGROUND);
   } else {
-    //nothing
+//    setFocusPolicy(StrongFocus);
+    pal.setColor(backgroundRole(), 
+      QApplication::palette(this).color(QPalette::Base));
   }
+  setPalette(pal);
   setEnabled(!value); // temp
 }
 
-// NOTE: this is the Trolltech routine from QCheckbox, with the Hilight color setting added in the middle
-
-void iCheckBox::paintEvent(QPaintEvent* pe)
-{
-  QCheckBox::paintEvent(pe);
-  if (mhilight) {
-/*TODO    QPainter p;
-    QRect irect = style()->subElementRect(QStyle::SE_CheckBoxContents, QStyleOptionButton, this);
-    p.setBrush(COLOR_BRIGHT_HILIGHT);
-    p.setPen(COLOR_BRIGHT_HILIGHT);
-//TODO: Qt4     p->setRasterOp(Qt::CopyROP);
-    QRect r;
-    r.setRect(irect.x(), irect.y() - 2, irect.width() + 2, 2);
-    p.drawRect(r);
-    r.setRect(irect.x() + irect.width() + 1, irect.y(), 2, irect.height() + 2);
-    p.drawRect(r);
-    r.setRect(irect.x() - 2, irect.y() + irect.height(), irect.width() + 2, 2);
-    p.drawRect(r);
-    r.setRect(irect.x() - 2, irect.y() - 2, 2, irect.height() + 2);
-    p.drawRect(r); */
-  } else {
-    //nothing
-  }
-}
 
 #endif

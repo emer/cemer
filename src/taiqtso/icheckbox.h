@@ -30,17 +30,14 @@ public:
   iCheckBox(QWidget* parent = 0);
   iCheckBox(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
 
-  bool		hilight() {return mhilight;}
-  bool 		isReadOnly();
+  bool 		isReadOnly() const {return mread_only;}
 
 public slots:
-  virtual void	setHilight(bool value); // set(true) ignored if ro
   virtual void	setReadOnly(bool value);
+  
 protected:
-  bool mhilight;
-  bool mreadOnly;
+  bool 		mread_only;
   void		init();
-  void    	paintEvent(QPaintEvent* pe); // override
 };
 
 #endif // ISPINBOX_H

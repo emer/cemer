@@ -59,16 +59,25 @@ void iLabel::setHighlight(bool value){
   if (mhighlight == value) return;
   mhighlight = value;
   QFont fnt(font());
+  QPalette pal(palette());
+//NOTES:
+// foregroundRole() is role used to render text
   if (value) {
     fnt.setBold(true);
-    SET_PALETTE_COLOR(this, QPalette::Text, 
-      QApplication::palette().color(QPalette::Highlight)); // typically darkBlue
+    pal.setColor(backgroundRole(), Qt::yellow);
+    setAutoFillBackground(true);
+    pal.setColor(foregroundRole(), Qt::darkBlue); 
+      //QApplication::palette().color(QPalette::Highlight)); // typically darkBlue
   } else {
     fnt.setBold(false);
-    SET_PALETTE_COLOR(this, QPalette::Text, 
-      QApplication::palette().color(QPalette::Text));
+    pal.setColor(backgroundRole(),  
+      QApplication::palette(this).color(backgroundRole()));
+    setAutoFillBackground(false);
+    pal.setColor(foregroundRole(),  
+      QApplication::palette(this).color(foregroundRole()));
   }
   setFont(fnt);
+  setPalette(pal);
   update();
 }
 

@@ -46,6 +46,8 @@
   pal.setColor(r,c); \
   w->setPalette(pal);} 
 
+#define COLOR_RO_BACKGROUND Qt::lightGray
+
 // NOTE: these are instantiated in tai_qtso_ti.cc (for want of a better place)
 // COLOR_BRIGHT_HILIGHT is for checkboxes, for better contrast
 //#define COLOR_BRIGHT_HILIGHT qtsoMisc::color_bright_hilight

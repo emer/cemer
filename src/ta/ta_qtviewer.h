@@ -562,7 +562,7 @@ public:
   virtual void		AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
   void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
   virtual iTabView*	AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL); // adds a new tab view, optionally as a split
-  void			SetPanel(iDataPanel* panel); // sets the panel active in current tab
+  void			ShowPanel(iDataPanel* panel); // shows the panel, according to showing rules
   
   virtual void		TabView_Destroying(iTabView* tv); // called when a tabview deletes
   virtual void		TabView_Selected(iTabView* tv); // called when a tabview gets focus
@@ -965,8 +965,8 @@ public:
 
   void			Activated(bool val); // called by parent to indicate if we are active tabview or not
   bool 			ActivatePanel(taiDataLink* dl); // if a panel exists for the link, make it active and return true
-  void			AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
-  void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
+  void			AddPanel(iDataPanel* panel); // adds a panel
+  void			AddPanelNewTab(iDataPanel* panel); // adds a panel in a new tab
   void 			Closing(CancelOp& cancel_op);
   void 			DataPanelDestroying(iDataPanel* panel);
   void			FillTabBarContextMenu(QMenu* contextMenu, int tab_idx = -1); 
@@ -975,7 +975,6 @@ public:
   void			ResolveChanges(CancelOp& cancel_op);
   void			OnWindowBind(iTabViewer* itv); // called at constr_post time
   void			ShowPanel(iDataPanel* panel); // top level guy, checks if exists, adds or sets current
-  void 			SetPanel(iDataPanel* panel);
   void			SetCurrentTab(int idx, bool except_if_locked = true); 
     // focus indicated tab, but usually not if current is lockInPlace 
   int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
