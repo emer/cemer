@@ -589,7 +589,7 @@ bool taiMisc::ReShowEdits(void* obj, TypeDef*, bool force) {
   return got_one;
 }
 
-taiEditDataHost* taiMisc::FindEdit(void* obj, TypeDef*, iMainWindowViewer* not_in_win) {
+taiEditDataHost* taiMisc::FindEdit(void* obj, iMainWindowViewer* not_in_win) {
   //NOTE: not_in_win works as follows:
   // NULL: ok to return any edit (typically used to get show value)
   // !NULL: must get other win that not; used to raise that edit panel to top, so
@@ -607,6 +607,38 @@ taiEditDataHost* taiMisc::FindEdit(void* obj, TypeDef*, iMainWindowViewer* not_i
   }
   return NULL;
 }
+
+taiEditDataHost* taiMisc::FindEditDialog(void* obj, bool read_only_state) {
+  if (!taMisc::gui_active) return NULL;
+  for (int i = active_edits.size - 1; i >= 0; --i) {
+    taiEditDataHost* host = active_edits.FastEl(i);
+    if ((host->cur_base != obj) || (host->state != taiDataHost::ACTIVE))
+      continue;
+    if (host->isDialog() && !host->modal && (host->read_only == read_only_state))
+      return host;
+  }
+  return NULL;
+}
+
+taiEditDataHost* taiMisc::FindEditPanel(void* obj, bool read_only,
+  iMainWindowViewer* not_in_win) 
+{
+  //NOTE: not_in_win works as follows:
+  // NULL: ok to return any edit (typically used to get show value)
+  // !NULL: must get other win that not; used to raise that edit panel to top, so
+  //  shouldn't hide the edit panel that invoked the operation
+  if (!taMisc::gui_active) return NULL;
+  for (int i = active_edits.size - 1; i >= 0; --i) {
+    taiEditDataHost* host = active_edits.FastEl(i);
+    if ((host->cur_base != obj) || (host->state != taiDataHost::ACTIVE))
+      continue;
+    if (host->isPanel() && (host->read_only == read_only) &&
+      (host->dataPanel()->window() != not_in_win)) // if niw NULL, then will always be true
+      return host;
+  }
+  return NULL;
+}
+
 
 // old winb funcs
 

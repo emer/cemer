@@ -969,21 +969,24 @@ public:
   void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
   void 			Closing(CancelOp& cancel_op);
   void 			DataPanelDestroying(iDataPanel* panel);
-  virtual void		FillTabBarContextMenu(QMenu* contextMenu);
-  virtual iDataPanel*	GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
+  void			FillTabBarContextMenu(QMenu* contextMenu, int tab_idx = -1); 
+  iDataPanel*		GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
   void 			RemoveDataPanel(iDataPanel* panel);
   void			ResolveChanges(CancelOp& cancel_op);
   void			OnWindowBind(iTabViewer* itv); // called at constr_post time
   void			ShowPanel(iDataPanel* panel); // top level guy, checks if exists, adds or sets current
   void 			SetPanel(iDataPanel* panel);
+  void			SetCurrentTab(int idx, bool except_if_locked = true); 
+    // focus indicated tab, but usually not if current is lockInPlace 
+  int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
 
   iTabView(QWidget* parent = NULL);
   iTabView(iTabViewer* data_viewer_, QWidget* parent = NULL);
   ~iTabView();
 
 public slots:
-  void 			AddTab();
-  void 			CloseTab();
+  void 			AddTab(int tab = -1);
+  void 			CloseTab(int tab = -1);
   virtual void		panelSelected(int idx);
   void 			UpdateTabNames(); // called by a datalink when a tab name might have changed; panels also hook to this
 
@@ -1026,11 +1029,13 @@ public:
   taiDataLink*		link() {return (taiDataLink*)m_link;}
   const taiDataLink*	link() const {return (taiDataLink*)m_link;}
   virtual bool		lockInPlace() {return false;}
-    // true if panel should not be replaced when a user clicks around
+    // true if panel should not be replaced or (except by user) unfocused
   virtual String	panel_type() const {return _nilString;}
    //  this string is on the subpanel button for a panel (n/a to panelsets)
   virtual taiDataLink*	par_link() const = 0; // *current* visual parent link of this data panel; this could change dynamically, if a datapanel is shared across all referring instances, ex. link lists, references, etc. -- return NULL if unknown, not set, or not applicable -- controls things like clip enabling etc.
   virtual MemberDef*	par_md() const = 0; // as for par_link
+  bool			pinned() const {return m_pinned;}
+  void			setPinned(bool value);
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabView*		tabView() {return m_tabView;} // tab view in which we are shown
   virtual iTabViewer* 	tabViewerWin() const = 0;
@@ -1050,6 +1055,10 @@ public:
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
   ~iDataPanel();
 
+public slots:
+    void		Pin() {setPinned(true);}
+    void		Unpin() {setPinned(false);}
+
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2)
@@ -1059,6 +1068,7 @@ public: // IDataLinkClient interface
 
 protected:
   iTabView*		m_tabView; // tab view in which we are shown
+  bool			m_pinned;
   QScrollArea*		scr; // central scrollview
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
   virtual void		OnWindowBind_impl(iTabViewer* itv) {}

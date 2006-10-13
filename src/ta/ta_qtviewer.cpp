@@ -3079,9 +3079,15 @@ iTabBar::~iTabBar() {
 }
 
 void iTabBar::contextMenuEvent(QContextMenuEvent * e) {
+  // find the tab being clicked, or -1 if none
+  int idx = count() - 1;
+  while (idx >= 0) {
+    if (tabRect(idx).contains(e->pos())) break;
+    --idx;
+  }
+  // put up the context menu
   QMenu* menu = new QMenu(this);
-  Q_CHECK_PTR(menu);
-  tabView()->FillTabBarContextMenu(menu);
+  tabView()->FillTabBarContextMenu(menu, idx);
   menu->exec(QCursor::pos());
   delete menu;
 }
@@ -3245,25 +3251,26 @@ void iTabView::AddPanel(iDataPanel* panel) {
 
 void iTabView::AddPanelNewTab(iDataPanel* panel) {
   AddPanel(panel);
-/*Qt3  iPanelTab* pt = new iPanelTab(panel);
-  int id = tbPanels->addTab(pt); */
   int id = tbPanels->addTab(panel);
-  tbPanels->setCurrentTab(id);
+  SetCurrentTab(id);
 }
 
-void iTabView::AddTab() {
-/*Qt3  iPanelTab* pt  = (iPanelTab*)tbPanels->tab(tbPanels->currentTab());
-  pt = new iPanelTab(pt->panel());
-  int id = tbPanels->addTab(pt); */
-  iDataPanel* pan  = tbPanels->panel(tbPanels->currentIndex());
+void iTabView::AddTab(int tab) {
+  iDataPanel* pan = NULL;
+  if (tab < 0) tab = tbPanels->currentIndex();
+  if (tab >= 0)
+    pan = tbPanels->panel(tab);
+  if (pan && pan->lockInPlace())
+    pan = NULL;
   int id = tbPanels->addTab(pan);
-  tbPanels->setCurrentTab(id);
+  SetCurrentTab(id);
 }
 
-void iTabView::CloseTab() {
+void iTabView::CloseTab(int tab) {
+  if (tab < 0) return; // huh?
   // don't allow closing last tab for a modified panel
   if (tbPanels->count() > 1) {
-    tbPanels->removeTab(tbPanels->currentIndex());
+    tbPanels->removeTab(tab);
     panelSelected(tbPanels->currentIndex()); // needed to resync proper panel with tab
   } else { // last tab
     panelSelected(-1);
@@ -3290,15 +3297,29 @@ void iTabView::DataPanelDestroying(iDataPanel* panel) {
   RemoveDataPanel(panel);
 }
 
-void iTabView::FillTabBarContextMenu(QMenu* contextMenu) {
-  taiAction* act = new taiAction("&Add Tab",  this, SLOT(AddTab()), CTRL+ALT+Key_N );
-  // note: need to parent
+void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
+  // note: need to (re)parent the actions; not parented by adding to menu
+  taiAction* act = new taiAction(tab_idx, "&Add Tab",  CTRL+ALT+Key_N );
+  act->connect(taiAction::int_act, this,  SLOT(AddTab(int))); 
   act->setParent(contextMenu);
   contextMenu->addAction(act);
-  act = new taiAction("&Close Tab", this, SLOT(CloseTab()), CTRL+ALT+Key_Q );
+  act = new taiAction(tab_idx, "&Close Tab", CTRL+ALT+Key_Q );
+  act->connect(taiAction::int_act, this,  SLOT(CloseTab(int))); 
   act->setParent(contextMenu);
   contextMenu->addAction(act);
-  act->setEnabled((tbPanels->count() > 1));
+  act->setEnabled(tab_idx >= 0);
+  // pinning/unpinning only if not lockInPlace guy
+  if (tab_idx < 0) return;
+  iDataPanel* dp = panel(tab_idx);
+  if (!dp || dp->lockInPlace()) return;
+  contextMenu->addSeparator();
+  if (dp->pinned()) {
+    act = new taiAction("&Unpin",  this, SLOT(Unpin()), CTRL+ALT+Key_U );
+  } else {
+    act = new taiAction("&Pin in place",  this, SLOT(Pin()), CTRL+ALT+Key_P );
+  }
+  act->setParent(contextMenu);
+  contextMenu->addAction(act);
 }
 
 iDataPanel* iTabView::panel(int idx) {
@@ -3369,6 +3390,14 @@ void iTabView::ResolveChanges(CancelOp& cancel_op) {
   }
 }
 
+void iTabView::SetCurrentTab(int idx, bool except_if_locked) {
+  if (except_if_locked) {
+    iDataPanel* pan = curPanel();
+    if (pan && pan->lockInPlace()) return;
+  }
+  tbPanels->setCurrentTab(idx);
+}
+
 void iTabView::SetPanel(iDataPanel* panel) {
   wsPanels->raiseWidget(panel);
   tbPanels->SetPanel(tbPanels->currentIndex(), panel);
@@ -3376,21 +3405,31 @@ void iTabView::SetPanel(iDataPanel* panel) {
 
 void iTabView::ShowPanel(iDataPanel* panel) {
   if (!panel) return;
-  // first, see if we have a tab already -- don't create more than 1 per guy
-  if (ActivatePanel(panel->link())) return;
+  iDataPanel* cur_pn = curPanel(); //note: can be null
   
-  // always create a new tab for lockinplace guys
+  // if cur guy is a lockinplace, make sure we don't change focus
+  bool cur_lock = (cur_pn && (cur_pn->lockInPlace()));
+  
+  // first, see if we have a tab for guy already -- don't create more than 1 per guy
+  if (cur_lock)
+    if (TabIndexOfPanel(panel) >= 0) return; // visible, but don't switch
+  else
+    if (ActivatePanel(panel->link())) return;
+  
+  // ok, not visible...
+  
+  // always create a new tab for lockinplace guys (and of course can never go invisible...)
   if (panel->lockInPlace()) {
     AddPanelNewTab(panel);
     return;
   }
   
   // ok, so we'll either replace cur panel, swap one out, or make a new
-  iDataPanel* cur_pn = curPanel(); //note: can be null
   
-  // replace curr if it is not locked and not dirty
-  if (cur_pn && (!cur_pn->lockInPlace() && !cur_pn->dirty())) {
+  // replace curr if it is not locked, dirty, or pinned
+  if (cur_pn && (!cur_pn->lockInPlace() && !cur_pn->dirty() && !cur_pn->pinned())) {
     SetPanel(panel);
+    return;
   }
   
   // try switching to another eligible panel
@@ -3398,16 +3437,24 @@ void iTabView::ShowPanel(iDataPanel* panel) {
     iDataPanel* pn = tbPanels->panel(i);
     if (pn) {
       if (pn == cur_pn) continue;
-      if (pn->lockInPlace() || pn->dirty()) continue;
+      if (pn->lockInPlace() || pn->dirty() || pn->pinned()) continue;
     }
     // ok, make that the guy!
     wsPanels->raiseWidget(panel);
     tbPanels->SetPanel(i, panel);
+    SetCurrentTab(i);
     return;
   }
   
   // no eligible one, so make new
   AddPanelNewTab(panel);
+}
+
+int iTabView::TabIndexOfPanel(iDataPanel* panel) const {
+  for (int i = 0; i < tbPanels->count(); ++i) {
+    if (tbPanels->panel(i) == panel) return i;
+  }
+  return -1;
 }
 
 void iTabView::UpdateTabNames() { // called by a datalink when a tab name might have changed
@@ -3446,6 +3493,7 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
 :QFrame(NULL)
 {
   m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
+  m_pinned = false;
   setFrameStyle(NoFrame | Plain);
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);
@@ -3481,6 +3529,11 @@ void iDataPanel::ResolveChanges(CancelOp& cancel_op) {
 void iDataPanel::setCentralWidget(QWidget* widg) {
   scr->setWidget(widg);
   widg->show(); 
+}
+
+void iDataPanel::setPinned(bool value) {
+  if (m_pinned == value) return;
+  m_pinned = value; // no action needed... "pinned is just a state of mind"
 }
 
 String iDataPanel::TabText() const {

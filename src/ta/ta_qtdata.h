@@ -452,7 +452,7 @@ public:
   taiAction(const QString& label_, const QKeySequence& accel, const char* name); // used by viewer/browser
   taiAction(const QString& label_, QObject* receiver, const char* member, const QKeySequence& accel); 
     // used by viewer/browser
-  taiAction(const Variant& usr_data_, const QString& label_, const QKeySequence& accel, const char* name); // used by viewer/browser
+  taiAction(const Variant& usr_data_, const QString& label_, const QKeySequence& accel, const char* name = NULL); // used by viewer/browser
   virtual ~taiAction();
 
   void connect(CallbackType ct_, const QObject *receiver, const char* member); // connect callback to given
@@ -938,7 +938,8 @@ public:
   
 public slots:
   void			OpenChooser(); // make and then open chooser dialog
-  virtual void		btnEdit_clicked() {} // used by tokens to edit
+  virtual void		EditPanel() {} // used by tokens to edit -- opens panel on guy (in new tab)
+  virtual void		EditDialog() {} // used by tokens to edit -- opens edit dialog
 
 protected:
   void*			m_sel; // current value
@@ -1089,7 +1090,8 @@ public:
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
-  override void		btnEdit_clicked(); // used by tokens to edit
+  override void		EditPanel();
+  override void		EditDialog();
   
   taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_ = 0);

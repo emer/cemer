@@ -772,11 +772,15 @@ void taiEdit::AddEdit(TypeDef* td) {
   *ptr_to_ie = this;
 }
 
-int taiEdit::Edit(void* base, bool readonly, const iColor* bgclr) {
+taiEditDataHost* taiEdit::CreateDataHost(void* base, bool read_only) {
+  return new taiEditDataHost(base, typ, read_only);
+}
+
+int taiEdit::Edit(void* base, bool readonly, const iColor* bgcol) {
   taiEditDataHost* host_ = NULL;
   // get currently active win -- we will only look in any other window
   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
-  host_ = taiMisc::FindEdit(base, typ, cur_win);
+  host_ = taiMisc::FindEdit(base, cur_win);
   if (host_ == NULL) {
     host_ = CreateDataHost(base, readonly);
 
@@ -784,7 +788,7 @@ int taiEdit::Edit(void* base, bool readonly, const iColor* bgclr) {
       host_->no_ok_but = true;
     if (typ->HasOption("NO_CANCEL"))
       host_->read_only = true;
-    host_->Constr("", "", bgclr);
+    host_->Constr("", "", bgcol);
 //TODO: no longer supported:    host_->cancel_only = readonly;
     return host_->Edit(false);
   } else if (!host_->modal) {
@@ -793,21 +797,39 @@ int taiEdit::Edit(void* base, bool readonly, const iColor* bgclr) {
   return 2;
 }
 
-EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base, bool readonly, const iColor* bgclr) {
-  taiEditDataHost* host_ = NULL;
-//TODO: should we try to find????  host_ = taiMisc::FindEdit(base, typ);
-  if (host_ == NULL) {
-    host_ = CreateDataHost(base, readonly);
-    host_->Constr("", "", bgclr, taiDataHost::HT_PANEL);
-    return host_->EditPanel(link); //TODO: verify this conversion is always valid!!!
-  } else { //TODO: this logic needs to be verified and probably revised
-    host_->Raise();
-    return host_->dataPanel(); // TODO: verify conversion is always valid!!!
+int taiEdit::EditDialog(void* base, bool read_only, const iColor* bgcol) {
+  taiEditDataHost* host = taiMisc::FindEditDialog(base, read_only);
+  if (host) {
+    host->Raise();
+    return 2;
+  } else {
+    host = CreateDataHost(base, read_only);
+    if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+    host->Constr("", "", bgcol, taiDataHost::HT_DIALOG);
+    return host->Edit(); // non-modal
   }
 }
 
-taiEditDataHost* taiEdit::CreateDataHost(void* base, bool readonly) {
-  return new taiEditDataHost(base, typ, readonly);
+EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
+   bool read_only, const iColor* bgcol, iMainWindowViewer* not_in_win) 
+{
+  taiEditDataHost* host = NULL;
+  host = taiMisc::FindEditPanel(base, read_only, not_in_win);
+  if (host) {
+    host->Raise();
+    return host->dataPanel();
+  } else { 
+    host = CreateDataHost(base, read_only);
+    if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+    host->Constr("", "", bgcol, taiDataHost::HT_PANEL);
+    return host->EditPanel(link); 
+  }
+}
+
+const iColor* taiEdit::GetBackgroundColor(void* base) {
+  if (typ->InheritsFrom(&TA_taBase) && base) {
+    return ((taBase*)base)->GetEditColorInherit();
+  } else return NULL;
 }
 
 

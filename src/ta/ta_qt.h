@@ -169,8 +169,12 @@ public:
   // revert any open edit dialogs for given object
   static bool	ReShowEdits(void* obj, TypeDef* td, bool force = true);
   // rebuilds any open edit dialogs for object; if force=true, doesn't prompt user if changes, just does it
-  static taiEditDataHost* FindEdit(void* obj, TypeDef* td, iMainWindowViewer* not_in_win = NULL);
+  static taiEditDataHost* FindEdit(void* base, iMainWindowViewer* not_in_win = NULL);
   // find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified
+  static taiEditDataHost* FindEditDialog(void* base, bool read_only);
+  // find an active (non-modal) edit dialog with same read_only state for the object
+  static taiEditDataHost* FindEditPanel(void* base, bool read_only,
+    iMainWindowViewer* not_in_win = NULL);
 
   static void	Cleanup(int err); // #IGNORE function to be called upon exit to clean stuff up
   

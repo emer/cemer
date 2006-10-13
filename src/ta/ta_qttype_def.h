@@ -34,7 +34,7 @@ class iDataPanelSet;
 class EditDataPanel;
 class iDataViewer;
 class taiDataLink;
-
+class iMainWindowViewer;
 class taiDataList;
 
 class taiToken;
@@ -181,8 +181,14 @@ public:
   taiEdit* 		sub_types() {return (taiEdit*)m_sub_types;}
   taiEdit** 		addr_sub_types() {return (taiEdit**)&m_sub_types;}
 
-  virtual int 		Edit(void* base=NULL, bool readonly=false, const iColor* bgcol = NULL); //note: rarely overridden
-  virtual EditDataPanel* EditPanel(taiDataLink* link, void* base=NULL, bool readonly=false, const iColor* bgcol = NULL); //note: rarely overridden
+  virtual const iColor* GetBackgroundColor(void* base); // gets for taBase
+  virtual int 		Edit(void* base=NULL, bool read_only=false, const iColor* bgcol = NULL); //edit wherever found (note: rarely overridden)
+  virtual int 		EditDialog(void* base, bool read_only = false,
+    const iColor* bgcol = NULL); //edit in a Dialog (note: rarely overridden)
+  virtual EditDataPanel* EditPanel(taiDataLink* link, void* base=NULL,
+    bool read_only = false, const iColor* bgcol = NULL,
+    iMainWindowViewer* not_in_win = NULL); 
+    //edit in a panel (note: rarely overridden)
   virtual int 		BidForType(TypeDef*) { return 0;}
   virtual int 		BidForEdit(TypeDef*) { return 1;}
 //

@@ -413,6 +413,7 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
     lay->addWidget(leText, 1);
     btnEdit = new QToolButton(act_par);
     btnEdit->setText("...");
+    btnEdit->setToolTip("edit this field in an editor dialog");
     btnEdit->setFixedHeight(taiM->text_height(defSize()));
     lay->addWidget(btnEdit);
     SetRep(act_par);
@@ -2906,11 +2907,17 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
     lay->addWidget(m_but, 1);
     btnEdit = new QToolButton(act_par);
     btnEdit->setText("...");
+    btnEdit->setToolTip("edit this token");
+    QMenu* mnuEdit = new QMenu(act_par); // note: ownership not transferred when set
+    btnEdit->setPopupMode(QToolButton::MenuButtonPopup);
+    mnuEdit->addAction("Edit in another panel", this, SLOT(EditPanel()) );
+    mnuEdit->addAction("Edit in a dialog", this, SLOT(EditDialog()) );
+    btnEdit->setMenu(mnuEdit);
     btnEdit->setFixedHeight(taiM->text_height(defSize()));
     lay->addWidget(btnEdit);
     SetRep(act_par);
     connect(btnEdit, SIGNAL(clicked()),
-      this, SLOT(btnEdit_clicked()) );
+      this, SLOT(EditPanel()) );
   } else {
     btnEdit = NULL; // not used
     m_but = new QPushButton(gui_parent_);
@@ -3497,15 +3504,25 @@ taiTokenPtrButton::taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
 {
 }
 
-void taiTokenPtrButton::btnEdit_clicked() {
+void taiTokenPtrButton::EditDialog() {
   taBase* cur_base = GetValue();
   if (!cur_base) return;
 
-  const iColor* bgclr = cur_base->GetEditColorInherit();
   taiEdit* gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
   if (!gc) return; // shouldn't happen
 
-  gc->Edit(cur_base, false, bgclr);
+  gc->EditDialog(cur_base, false); //TODO: ever read_only???
+}
+
+void taiTokenPtrButton::EditPanel() {
+  taBase* cur_base = GetValue();
+  if (!cur_base) return;
+
+  taiEdit* gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
+  if (!gc) return; // shouldn't happen
+
+//  taiEditDataHost* edh = 
+  gc->EditPanel((taiDataLink*)cur_base->GetDataLink(), cur_base, false); //TODO: ever read_only???
 }
 
 void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {

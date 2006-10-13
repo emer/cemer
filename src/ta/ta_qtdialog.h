@@ -136,7 +136,7 @@ class TA_API iDialog : public QDialog { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 friend class taiDataHost;
 public:
-  iDialog(taiDataHost* owner_, QWidget* parent = 0);
+  iDialog(taiDataHost* owner_, QWidget* parent = 0, int wflags = 0);
   ~iDialog();
 
   bool		post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
@@ -410,7 +410,8 @@ public:
   ~taiEditDataHost();
 
 
-  override int 		Edit(bool modal_); // for dialogs -- add to list of active_edit dialogs too
+  override int 		Edit(bool modal_ = false); 
+    // for dialogs -- add to list of active_edit dialogs too
   EditDataPanel* 	EditPanel(taiDataLink* link); // for panels
   void		 	ConstrEditControl(QWidget* gui_parent, const iColor* bgcol = NULL); 
     // for controls -- construct then edit 

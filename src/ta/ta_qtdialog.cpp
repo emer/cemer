@@ -337,8 +337,8 @@ void iTextEditDialog::setText(const String& value) {
 //   iDialog		//
 //////////////////////////
 
-iDialog::iDialog(taiDataHost* owner_, QWidget* parent)
-:QDialog(parent) 
+iDialog::iDialog(taiDataHost* owner_, QWidget* parent, int wflags)
+:QDialog(parent, (Qt::WFlags)wflags) 
 {
   owner = owner_;
   mcentralWidget = NULL;
@@ -773,8 +773,7 @@ void taiDataHost::Constr_Widget() {
 }
 
 void taiDataHost::Constr_WinName() {
-  if (win_str.length() > 50)
-      win_str = win_str.from((int)(win_str.length() - 50));
+//nothing
 }
 
 void taiDataHost::Constr_Prompt() {
@@ -937,11 +936,14 @@ void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e)
 
 void taiDataHost::DoConstr_Dialog(iDialog*& dlg) {
   // common subcode for creating a dialog -- used by the taiDialog and taiEditDialog cousin classes
-  if (dlg != NULL) return; // already constructed
-  dlg = new iDialog(this, QApplication::activeWindow());
-  // another top-level window, otherwise X can't seem to handle more than 12-14 windows
+  if (dlg) return; // already constructed
+  if (modal) // s/b parented to current win
+    dlg = new iDialog(this, QApplication::activeWindow());
+  else 
+    dlg = new iDialog(this, NULL, Qt::WindowMinimizeButtonHint);
+  // note: X can't seem to handle more than 12-14 windows, so making these top-level is an issue
+  // BUT it is also highly unusable to make them owned, since then they obscure parent window
   dlg->setCaption(win_str);
-  //TODO: max_w seems to span both monitors of a dual head system!!!
   dlg->setMinimumWidth(400); //TODO: maybe parameterize; note: would need to set layout FreeResize as well
 }
 
