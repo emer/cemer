@@ -943,17 +943,18 @@ int taBase::GetLastPathDelimPos(const String& path) {
 }
 
 TypeDef* taBase::GetScopeType() {
-  TypeDef* scp_tp = taMisc::default_scope;
+  TypeDef* scp_tp = NULL;
   String scp_nm  = GetTypeDef()->OptionAfter("SCOPE_");
-  if(scp_nm != "")
+  if (scp_nm.nonempty())
     scp_tp = taMisc::types.FindName(scp_nm);
-  return scp_tp;
+  if (scp_tp) return scp_tp;
+  else return taMisc::default_scope;
 }
 
 TAPtr taBase::GetScopeObj(TypeDef* scp_tp) {
-  if(scp_tp == NULL)
+  if (!scp_tp)
     scp_tp = GetScopeType();
-  if(scp_tp == NULL)
+  if (!scp_tp)
     return tabMisc::root;
   return GetOwner(scp_tp);
 }
@@ -1043,13 +1044,15 @@ bool taBase::ReShowEdit(bool force) {
 }
 
 bool taBase::SameScope(TAPtr ref_obj, TypeDef* scp_tp) {
-  if(scp_tp == NULL)
+  if (!ref_obj)
+    return true;
+  if (!scp_tp)
     scp_tp = GetScopeType();
-  if((scp_tp == NULL) || (ref_obj == NULL))
+  if (!scp_tp)
     return true;
 
   TAPtr my_scp = GetOwner(scp_tp);
-  if((my_scp == NULL) || (my_scp == ref_obj) || (my_scp == ref_obj->GetOwner(scp_tp)))
+  if ((!my_scp) || (my_scp == ref_obj) || (my_scp == ref_obj->GetOwner(scp_tp)))
     return true;
   return false;
 }
@@ -1367,6 +1370,25 @@ bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor, cons
 #endif
 }
 
+
+//////////////////////////
+//  taSmartPtr		//
+//////////////////////////
+
+TypeDef* taSmartPtr::GetBaseType(TypeDef* this_typ) {
+  TypeDef* targ = this_typ;
+  String act_name;
+  while (targ) {
+    act_name = targ->name.after("taSmartPtrT_");
+    if (act_name.nonempty()) {
+      TypeDef* rval = taMisc::types.FindName(act_name); 
+      if (rval && rval->InheritsFrom(&TA_taBase))
+        return rval;
+    }
+    targ = targ->GetParent();
+  }
+  return &TA_taBase; // default
+}
 
 //////////////////////////
 //  taSmartRef		//

@@ -998,117 +998,133 @@ TypeDef* taiMember::GetTargetType(const void* base) {
 //////////////////////////////////
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if (td->InheritsFrom(TA_taBase) && (
-     ((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase))
-     || ((md->type->ptr == 0) && md->type->DerivesFrom(TA_taSmartRef)))
-  )
-    return taiMember::BidForMember(md,td)+1;
+  if (td->InheritsFrom(&TA_taBase) &&
+     ((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) ||
+     ((md->type->ptr == 0) && md->type->DerivesFrom(TA_taSmartPtr)) || 
+     ((md->type->ptr == 0) && md->type->DerivesFrom(TA_taSmartRef)) )
+     return inherited::BidForMember(md,td) + 1;
   return 0;
 }
 
 taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
   int flags_) 
 {
-  TypeDef* npt = NULL;
+  // setting mode now is good for rest of life
+  if (mbr->type->DerivesFrom(TA_taBase))
+    mode = MD_BASE;
+  else if (mbr->type->DerivesFrom(TA_taSmartPtr)) 
+    mode = MD_SMART_PTR;
+  else if (mbr->type->DerivesFrom(TA_taSmartRef))
+    mode = MD_SMART_REF;
+  TypeDef* npt = GetMinType(NULL); // note: this will only be a min type
   int token_flags = 0;
-  Mode mode = mbr->type->DerivesFrom(TA_taBase) ? MD_BASE : MD_SMART_REF;
-  switch (mode) {
-  case MD_BASE: {
-    npt = mbr->type->GetNonPtrType();
-    if (!npt->tokens.keep) {
-      taiEditButton* ebrval = taiEditButton::New(NULL, NULL, npt, host_, par, gui_parent_, flags_);
-      return ebrval;
-    } 
-    if (!mbr->HasOption("NO_EDIT"))
-      token_flags |= taiData::flgEditOk;
-  } break;
-  case MD_SMART_REF: {
-    npt = &TA_taOBase; // typically no tokenptrs for < taOBase
-    if (mbr->HasOption("EDIT"))
-      token_flags |= taiData::flgEditOk;
-  } break;
-  }
   if (!mbr->HasOption("NO_NULL"))
     token_flags |= taiData::flgNullOk;
-  token_flags |= taiData::flgEditDialog;
+  if (!mbr->HasOption("NO_EDIT")) //note: #EDIT is the default
+    token_flags |= taiData::flgEditOk;
+    
+  if (token_flags & taiData::flgEditOk)
+    token_flags |= taiData::flgEditDialog;
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_,
 	token_flags);
   return rval;
 }
 
-void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
-  TypeDef* npt = NULL; //always set
-  Mode mode = mbr->type->DerivesFrom(TA_taBase) ? MD_BASE : MD_SMART_REF;
+TypeDef* taiTokenPtrMember::GetMinType(const void* base) {
+  // the min type is at least the type of the member, but can be more derived
+  TypeDef* rval = NULL;
+  // first, we'll try to get a bare minimum type, from the member type itself
   switch (mode) {
   case MD_BASE: {
-    npt = mbr->type->GetNonPtrType();
-    if (!npt->tokens.keep) {
-      taiEditButton *ebrval = (taiEditButton*) dat;
-      ebrval->GetImage_(*((void**) mbr->GetOff(base)));
-      return;
-    } 
+    rval = mbr->type->GetNonPtrType();
+  } break;
+  case MD_SMART_PTR: {
+    rval = taSmartPtr::GetBaseType(mbr->type);
   } break;
   case MD_SMART_REF: {
-    taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
-    npt = ref.GetDataTypeDef(); // either base type of smartref if null, or act type of data if not
+    //note: don't know anything about the type w/o an instance
+    if (base) {
+      taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
+      rval = ref.GetBaseType();
+    } else {
+      rval = &TA_taBase; 
+    }
   } break;
   }
+  
+  // now, further restrict according to type directives
+  TypeDef* dir_type = NULL;
   // dynamic (member-based) type scoping
   String tmp = mbr->OptionAfter("TYPE_ON_");
-  if (!tmp.empty()) {
-    MemberDef* md = typ->members.FindName(tmp);
-    if (md)
-      npt = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+  if (tmp.nonempty()) {
+    if (base) {
+      MemberDef* md = typ->members.FindName(tmp);
+      if (md && (md->type->ptr == 1) && md->type->InheritsFrom(&TA_TypeDef))
+        dir_type = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+    }
   } else {
     // static type scoping
     tmp = mbr->OptionAfter("TYPE_");
-    if(!tmp.empty()) {
-      npt = taMisc::types.FindName(tmp);
+    if (tmp.nonempty()) {
+      dir_type = taMisc::types.FindName(tmp);
     }
   }
+  if (dir_type && dir_type->InheritsFrom(rval))
+    rval = dir_type;
+  
+  return rval;
+}
 
-  taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
-  TAPtr scope = NULL;
-  if (!mbr->HasOption("NO_SCOPE")) {
-    if((rval->host != NULL) && (rval->host)->GetBaseTypeDef()->InheritsFrom(TA_taBase))
-      scope = (TAPtr)(rval->host)->Base();
-    else
-      scope = (TAPtr)base;
-  }
-    
+taBase* taiTokenPtrMember::GetTokenPtr(const void* base) const {
+  taBase* tok_ptr = NULL; // this is the addr of the token, in the member
   switch (mode) {
-  case MD_BASE:
-    rval->GetImage(*((TAPtr*)mbr->GetOff(base)), npt, scope);
-    break;
+  case MD_BASE: 
+  case MD_SMART_PTR:  // is binary compatible
+  {
+    tok_ptr = *((taBase**)mbr->GetOff(base));
+  } break;
   case MD_SMART_REF: {
     taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
-    rval->GetImage(ref, npt, scope);
+    tok_ptr = ref.ptr();
   } break;
   }
+  return tok_ptr;
+}
+
+void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
+  TypeDef* min_type = NULL; // absolute min type -- act must inherit from this
+  TypeDef* targ_type = NULL; //always set
+  taBase* tok_ptr = GetTokenPtr(base); // this is the addr of the token, in the member
+  TypeDef* targ_typ = GetMinType(base);
+  
+  taBase* obj = (taBase*)base;
+  
+  TAPtr scope = NULL;
+  if (!mbr->HasOption("NO_SCOPE")) {
+    scope = (TAPtr)base;
+/*nn    if((rval->host != NULL) && (rval->host)->GetBaseTypeDef()->InheritsFrom(TA_taBase))
+      scope = (TAPtr)(rval->host)->Base(); */
+  }
+    
+  taiTokenPtrButton* tpb = (taiTokenPtrButton*)dat;
+  tpb->GetImage(tok_ptr, targ_typ, scope);
   GetOrigVal(dat, base);
 }
 
 void taiTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-  Mode mode = mbr->type->DerivesFrom(TA_taBase) ? MD_BASE : MD_SMART_REF;
-  switch (mode) {
-  case MD_BASE: {
-    TypeDef* npt = NULL; //always set
-    npt = mbr->type->GetNonPtrType();
-    if (!npt->tokens.keep) {
-      // do nothing
-      return;
-    }
-  } break;
-  default: break;
-  }
+//note: in 3.2 we bailed if not keeping tokens, but that is complicated to test
+// and could modally depend on dynamic type directives, so we just always set
     
   taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
   switch (mode) {
   case MD_BASE:
-    if (!no_setpointer)
-      taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
-    else
+    if (no_setpointer)
       *((void**)mbr->GetOff(base)) = rval->GetValue();
+    else
+      taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
+    break;
+  case MD_SMART_PTR: //WARNING: use of no_setpointer on smartptrs is not defined!
+    taBase::SetPointer((TAPtr*)mbr->GetOff(base), (TAPtr)rval->GetValue());
     break;
   case MD_SMART_REF: {
     taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
@@ -1139,14 +1155,12 @@ taiData* taiDefaultToken::GetDataRep_impl(IDataHost* host_, taiData* par, QWidge
 }
 
 void taiDefaultToken::GetImage_impl(taiData* dat, const void* base) {
-  void* new_base = mbr->GetOff(base);
 
   taiEditButton* rval = (taiEditButton*)dat;
-  rval->GetImage_(*((void**)new_base));
-
-  taBase* new_token = *((taBase**)new_base);
-  if (new_token != NULL) {
-    rval->typ = new_token->GetTypeDef();
+  taBase* token_ptr = GetTokenPtr(base);
+  rval->GetImage_(token_ptr);
+  if (token_ptr) {
+    rval->typ = token_ptr->GetTypeDef();
   }
 }
 

@@ -663,6 +663,9 @@ inline ostream& operator<<(ostream &strm, taBase &obj)
 
 class TA_API taSmartPtr { // ##NO_INSTANCE ##NO_TOKENS "safe" ptr for taBase objects -- automatically does ref counts; designed to be binary compatible with taBase*
 public:
+  static TypeDef*	GetBaseType(TypeDef* this_typ);
+    // returns a best-guess min type -- hacks by looking at the name
+    
   inline taBase*	ptr() const {return m_ptr;}
   inline void		set(taBase* src) {taBase::SetPointer(&m_ptr, src);}
   
@@ -728,6 +731,8 @@ public:
     if (m_ptr) {m_ptr->RemoveDataClient(this);}
     if (src) {src->AddDataClient(this);}  m_ptr = src;}
   
+  virtual TypeDef*	GetBaseType() const {return &TA_taBase;}
+  
   inline		operator bool() const {return (m_ptr);}
     // needed to avoid ambiguities when we have derived T* operators
   inline 		operator taBase*() const {return m_ptr;}
@@ -766,6 +771,8 @@ class taSmartRefT: public taSmartRef {
 public:
   inline T*	ptr() const {return (T*)m_ptr;} // typed alias for the base version
 
+  override TypeDef*	GetBaseType() const {return T::StatTypeDef(0);}
+  
   inline 	operator T*() const {return (T*)m_ptr;} //
   inline T* 	operator->() const {return (T*)m_ptr;} //
   

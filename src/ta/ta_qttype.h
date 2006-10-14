@@ -312,8 +312,13 @@ INHERITED(taiMember)
 public:
   enum Mode {
     MD_BASE,		// taBase pointer
+    MD_SMART_PTR,	// taSmartPtr -- acts almost identical to taBase*
     MD_SMART_REF	// taSmartRef
   };
+  
+  TypeDef*	GetMinType(const void* base);
+  
+  taBase*	GetTokenPtr(const void* base) const; // depends on mode
   
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
@@ -321,6 +326,8 @@ public:
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiTokenPtrMember, taiMember);
+protected:
+  Mode 		mode; // set during bidding 
 };
 
 class TA_API taiDefaultToken : public taiTokenPtrMember {
@@ -355,12 +362,12 @@ class TA_API taiTypePtrMember : public taiMember {
 INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiTypePtrMember, taiMember);
 protected:
-   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-   void		GetImage_impl(taiData* dat, const void* base);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  void		GetImage_impl(taiData* dat, const void* base);
 };
 
 class TA_API taiEnumTypePtrMember : public taiTypePtrMember {
