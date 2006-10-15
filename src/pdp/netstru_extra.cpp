@@ -2347,3 +2347,87 @@ int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init
   return rval;
 }
 
+///////////////////////////////////////////////////////
+//		TiledNovlpPrjnSpec
+///////////////////////////////////////////////////////
+
+void TiledNovlpPrjnSpec::Initialize() {
+  reciprocal = false;
+}
+
+void TiledNovlpPrjnSpec::InitLinks() {
+  ProjectionSpec::InitLinks();
+
+  taBase::Own(ru_geo, this);
+  taBase::Own(su_act_geom, this);
+  taBase::Own(rf_width, this);
+}
+
+bool TiledNovlpPrjnSpec::InitRFSizes(Projection* prjn) {
+  if(prjn->from == NULL)	return false;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return false;
+
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  if(reciprocal) {
+    recv_lay = prjn->from;
+    send_lay = prjn->layer;
+  }
+
+  if(recv_lay->units.gp.size == 0) {
+    taMisc::Error("*** Warning: TiledNovlpPrjnSpec requires recv layer to have unit groups!:",name);
+    return false;
+  }
+
+  ru_geo = recv_lay->gp_geom;
+
+  send_lay->GetActGeomNoSpc(su_act_geom);
+
+  rf_width.x = (float)su_act_geom.x / (float)ru_geo.x;
+  rf_width.y = (float)su_act_geom.y / (float)ru_geo.y;
+
+  return true;
+}
+
+void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!InitRFSizes(prjn)) return;
+
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  if(reciprocal) {
+    recv_lay = prjn->from;
+    send_lay = prjn->layer;
+  }
+
+  TwoDCoord ruc;
+  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+      if(ru_gp == NULL) continue;
+
+      TwoDCoord su_st;
+      su_st.x = (int)((float)ruc.x * rf_width.x);
+      su_st.y = (int)((float)ruc.y * rf_width.y);
+
+      TwoDCoord suc;
+      for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
+	for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
+	  Unit* su_u = send_lay->FindUnitFmCoord(suc);
+	  if(su_u == NULL) continue;
+
+	  for(int rui=0;rui<ru_gp->size;rui++) {
+	    Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	    if(!self_con && (su_u == ru_u)) continue;
+
+	    if(!reciprocal)
+	      ru_u->ConnectFrom(su_u, prjn);
+	    else
+	      su_u->ConnectFrom(ru_u, prjn);
+	  }
+	}
+      }
+    }
+  }
+}
+

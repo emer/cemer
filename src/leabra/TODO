@@ -7,11 +7,9 @@ docs..: add all float_RArray funs, for matricies.
 
 * extrew in trial monitor seems not to be working: 12ax demo
 
-* add highvis projections to leabra
-
-* convert Highvis env -> ScriptEnv
-
 * add "print" Progel
+
+* encase programs in struct update brackets to prevent updating
 
 -------
 

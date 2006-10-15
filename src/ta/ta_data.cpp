@@ -49,7 +49,7 @@ String ChannelSpec::GetColText(int col, int) {
   case 1: return name;
   case 2: return ValTypeToStr(val_type);
   case 3: return isMatrix();
-  case 4: return isMatrix() ? taMatrix::GeomToString(cellGeom()) : _nilString;
+  case 4: return isMatrix() ? cellGeom().GeomToString() : _nilString;
   case 5: return isMatrix() ? String(usesCellNames()) : _nilString;
   case 6: return new_group_name;
   default: return _nilString; // compiler food

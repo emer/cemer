@@ -363,14 +363,17 @@ void float_RArray::AggToArray(const float_RArray& oth, Aggregate& agg,
   if(end == -1)	end = size;  else end = MIN(size, end);
   end = MIN(end, oth.size);
   int i;
-  for(i=start;i<end;i++)
-    agg.ComputeAggNoUpdt(FastEl(i), oth.FastEl(i));
+  for(i=start;i<end;i++) {
+    double tmp_me = FastEl(i);
+    agg.ComputeAggNoUpdt(tmp_me, oth.FastEl(i));
+    FastEl(i) = tmp_me;
+  }
   ItemsChanged_();
 }
 
 float float_RArray::AggToVal(Aggregate& agg, int start, int end) const {
   if(end == -1)	end = size;  else end = MIN(size, end);
-  float rval = agg.InitAggVal();
+  double rval = agg.InitAggVal();
   agg.Init();
   int i;
   for(i=start;i<end;i++)

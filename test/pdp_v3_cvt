@@ -34,6 +34,7 @@ foreach i (${argv[2-]})
     -e "s/WinView_Group/taBase_Group/g" -e "s/ProjViewState_List/taBase_List/g" \
     -e "s/NetView/taNBase/g" -e "s/DataTable/taNBase/g" -e "s/EnviroView/taNBase/g" \
     -e "s/Xform/taBase/g" -e 's/unique[ 	]*=/unique/g' \
+    -e "s/ImageEnv/ScriptEnv/g" \
     $fl >$cvttmp
   mv -f $cvttmp $newfl
   if($ext == "gz") then

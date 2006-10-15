@@ -10,14 +10,26 @@ TAHEADS =\
 	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
 	@abs_srcdir@/../pdp/pdp_TA_type.h \
 	@abs_srcdir@/../leabra/leabra.h \
+	@abs_srcdir@/../leabra/leabra_extra.h \
+	@abs_srcdir@/../leabra/leabra_td.h \
+	@abs_srcdir@/../leabra/leabra_pvlv.h \
+	@abs_srcdir@/../leabra/leabra_pbwm.h \
 	@abs_srcdir@/../leabra/leabra_v3_compat.h
 
 HEADS=\
 	leabra.h \
+	leabra_extra.h \
+	leabra_td.h \
+	leabra_pvlv.h \
+	leabra_pbwm.h \
 	leabra_v3_compat.h
 
 SRCS=\
 	leabra.cpp \
+	leabra_extra.cpp \
+	leabra_td.cpp \
+	leabra_pvlv.cpp \
+	leabra_pbwm.cpp \
 	leabra_v3_compat.cpp
 
 include $(top_srcdir)/Maketa.am

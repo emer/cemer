@@ -142,6 +142,10 @@ class MatrixTableModel;
 #define TA_MATRIX_DIMS_MAX 5
 #define IMatrix taMatrix
 
+///////////////////////////////////
+// 	Matrix Geometry
+///////////////////////////////////
+
 class TA_API MatrixGeom: public taBase  { 
   // matrix geometry, similar to an array of int
 INHERITED(taBase)
@@ -166,6 +170,9 @@ public:
     
   inline void		Reset() {EnforceSize(0);} // set size to 0, and clear all dims
   
+  String		GeomToString() const;
+  // returns human-friendly text in form: "[{dim}{,dim}]"
+
   override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const MatrixGeom& cp);
@@ -196,148 +203,205 @@ inline bool operator ==(const MatrixGeom& a, const MatrixGeom& b)
 inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
   {return !a.Equal(b);}
 
+
+///////////////////////////////////
+// 	Base taMatrix
+///////////////////////////////////
+
 class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
 INHERITED(taOBase)
 friend class MatrixTableModel;
 
-public: // ITypedObject i/f
+public:
+  ///////////////////////////////////////////////////////////////////
+  // ITypedObject i/f
 // TypeDef*		GetTypeDef() const; // in taBase
   void*			This() {return (void*)this;}
+
+public: 
+  ///////////////////////////////////////////////////////////////////
+  // IMatrix i/f  
+
+  //////////////////////////////////////////////////////////////////
+  // Access functions
   
-public: // IMatrix i/f
-  inline int		count() const {return size;} // the number of items
-  inline int		dims() const {return geom.size;} // the number of dimensions
-  inline int		dim(int d) const {return geom.el[d];} // the value of dimenion d -- MUST BE IN_RANGE
-  int 			frames() const;	// number of frames currently in use (value of highest dimension) 
-  int 			frameSize() const;	// number of elements in each frame (product of inner dimensions) 
-  int			rowCount(); // flat row count, for 2-d grid operations, only 0 if empty
-   	
-  int			FrameToRow(int f) const; // convert frame number to row number
+  inline int		count() const {return size;}
+  // #CAT_Access the number of items
+  inline int		dims() const {return geom.size;}
+  // #CAT_Access the number of dimensions
+  inline int		dim(int d) const {return geom.el[d];}
+  // #CAT_Access the value of dimenion d -- MUST BE IN_RANGE
+  int 			frames() const;
+  // #CAT_Access number of frames currently in use (value of highest dimension) 
+  int 			frameSize() const;
+  // #CAT_Access number of elements in each frame (product of inner dimensions) 
+  int			rowCount();
+  // #CAT_Access flat row count, for 2-d grid operations, only 0 if empty
+  int			FrameToRow(int f) const;
+  // #CAT_Access convert frame number to row number
   
-  virtual TypeDef*	GetDataTypeDef() const = 0; // type of data, ex TA_int, TA_float, etc.
-   	
-  const String		SafeElAsStr(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const	
-    {return SafeElAsStr_Flat(SafeElIndex(d0, d1, d2, d3, d4)); }
-    // (safely) returns the element as a string
-  const String		SafeElAsStrN(const MatrixGeom& indices) const	
-    {return SafeElAsStr_Flat(SafeElIndexN(indices)); }  
-    // (safely) returns the element as a string
+  virtual TypeDef*	GetDataTypeDef() const = 0;
+  // #CAT_Access type of data, ex TA_int, TA_float, etc.
+
+  ///////////////////////////////////////
+  // String
+
+  const String		SafeElAsStr(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return SafeElAsStr_Flat(SafeElIndex(d0, d1, d2, d3, d4)); }
+  // #CAT_Access (safely) returns the element as a string
+  const String		SafeElAsStrN(const MatrixGeom& indices) const
+  { return SafeElAsStr_Flat(SafeElIndexN(indices)); }  
+  // #CAT_Access (safely) returns the element as a string
   const String		SafeElAsStr_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetStr_(FastEl_Flat_(idx)); else return _nilString; } 
-    // treats the matrix like a flat array, returns the element as a string
-  
-  void			SetFmStr_Flat(const String& str, int idx) 	
-    {if (InRange_Flat(idx))  El_SetFmStr_(FastEl_Flat_(idx), str); } 
-    // treats the matrix like a flat array, sets the element as a string
-  
-  const Variant		SafeElAsVar(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const	
-    {return SafeElAsVar_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
-    // (safely) returns the element as a variant
-  const Variant		SafeElAsVarN(const MatrixGeom& indices) const	
-    {return SafeElAsVar_Flat(SafeElIndexN(indices)); }   
-    // (safely) returns the element as a variant
-  const Variant		SafeElAsVar_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetVar_(FastEl_Flat_(idx)); else return _nilVariant; } 
-    // treats the matrix like a flat array, returns the element as a variant
-    
-  void			SetFmVar(const Variant& var, int d0, int d1=0, int d2=0, int d3=0, int d4=0) 	
-    {int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4)) >= 0)
-       El_SetFmVar_(FastEl_Flat_(idx), var); } 
-    // (safely) sets the element as a variant
-  void			SetFmVarN(const Variant& var, const MatrixGeom& indices) 	
-    {int idx; if ((idx = SafeElIndexN(indices)) >= 0)
-       El_SetFmVar_(FastEl_Flat_(idx), var); } 
-    // (safely) sets the element as a variant
-  void			SetFmVar_Flat(const Variant& var, int idx) 	
-    {if (InRange_Flat(idx))  El_SetFmVar_(FastEl_Flat_(idx), var); } 
-    // treats the matrix like a flat array, (safely) sets the element as a variant
-   	
-public:
-  static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
-    // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
-  static bool		GeomIsValid(const MatrixGeom& geom_, String* err_msg = NULL)
-    {return GeomIsValid(geom_.size, geom_.el, err_msg);}
-    // validates proposed geom, ex. dims >=1, and valid values for supplied geoms
-  static String		GeomToString(const MatrixGeom& geom); // returns human-friendly text in form: "[{dim}{,dim}]"
-  
-  int 			size;	// #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
-  MatrixGeom		geom; // #SHOW #READ_ONLY dimensions array -- you cannot change this directly, you have to use API functions to change size
-  
-  bool			canResize() const; 
-    // true only if not fixed NOTE: may also include additional constraints, tbd
-  virtual int		defAlignment() const; // default Qt alignment, left for text, right for nums
-  bool			isFixedData() const {return alloc_size < 0;} 
-    // true if using fixed (externally managed) data storage
-  int			sliceCount() const; // number of extant slices
-  	
-  int			BaseIndexOfFrame(int fm) {return fm * frameSize();}
-    // returns the flat base index of the specified frame
+  { if (InRange_Flat(idx)) return El_GetStr_(FastEl_Flat_(idx)); else return _nilString; } 
+  // #CAT_Access treats the matrix like a flat array, returns the element as a string
   
   // universal string access/set, for flat array
-  const String		FastElAsStr_Flat(int idx) const	{ return El_GetStr_(FastEl_Flat_(idx)); } 
-    // treats the matrix like a flat array, returns the element as a string
-    
-  // universal Variant access/set, for flat array
-  const Variant		FastElAsVar_Flat(int idx) const	{ return El_GetVar_(FastEl_Flat_(idx)); } 
-    // treats the matrix like a flat array, returns the element as a variant
-    
-  // universal numeric access -- primarily to make numeric ops efficient
-  float			FastElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-    const {return El_GetFloat_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4))); }
-  float			FastElAsFloatN(const MatrixGeom& indices) const	
-    {return El_GetFloat_(FastEl_Flat_(FastElIndexN(indices))); }   
-  float			FastElAsFloat_Flat(int idx) const 
-    {return El_GetFloat_(FastEl_Flat_(idx)); } 
-  float			SafeElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-    const {return SafeElAsFloat_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
-    // (safely) returns the element as a variant
-  float			SafeElAsFloatN(const MatrixGeom& indices) const	
-    {return SafeElAsFloat_Flat(SafeElIndexN(indices)); }   
-    // (safely) returns the element as a variant
-  float			SafeElAsFloat_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetFloat_(FastEl_Flat_(idx)); else return 0.0f; } 
-    
-  double			FastElAsDouble(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-    const {return El_GetDouble_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4))); }
-  double			FastElAsDoubleN(const MatrixGeom& indices) const	
-    {return El_GetDouble_(FastEl_Flat_(FastElIndexN(indices))); }   
-  double			FastElAsDouble_Flat(int idx) const 
-    {return El_GetDouble_(FastEl_Flat_(idx)); } 
-  double			SafeElAsDouble(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-    const {return SafeElAsDouble_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
-    // (safely) returns the element as a variant
-  double			SafeElAsDoubleN(const MatrixGeom& indices) const	
-    {return SafeElAsDouble_Flat(SafeElIndexN(indices)); }   
-    // (safely) returns the element as a variant
-  double			SafeElAsDouble_Flat(int idx) const	
-    { if (InRange_Flat(idx)) return El_GetDouble_(FastEl_Flat_(idx)); else return 0.0f; } 
-    
-  
-  virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
-    {return true;}
-    // validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
-     
+  const String		FastElAsStr_Flat(int idx) const	
+  { return El_GetStr_(FastEl_Flat_(idx)); } 
+  // #CAT_Access  treats the matrix like a flat array, returns the element as a string
 
-  void			AddFrame() {AddFrames(1);} // #MENU #MENU_ON_Matrix #MENU_CONTEXT  add 1 new blank frame
-  virtual void		AddFrames(int n); // #MENU #MENU_ON_Matrix #MENU_CONTEXT add n new blank frames
-  virtual void		AllocFrames(int n); // make sure space exists for n frames
-  virtual void		EnforceFrames(int n, bool notify = true); 
-    // #MENU #MENU_ON_Object #ARGC_1 set size to n frames, blanking new elements if added
-  virtual void		RemoveFrame(int n); // #MENU #MENU_ON_Matrix remove the given frame, copying data backwards if needed
-  virtual bool		CopyFrame(const taMatrix& src, int frame); // copy the source matrix to the indicated frame; src geom must be our frame geom; optimized for like-type mats
+  void		SetFmStr_Flat(const String& str, int idx) 	
+  { if (InRange_Flat(idx))  El_SetFmStr_(FastEl_Flat_(idx), str); } 
+  // #CAT_Access treats the matrix like a flat array, sets the element as a string
   
-  virtual void		Reset();
+  ///////////////////////////////////////
+  // Variant
+
+  const Variant		SafeElAsVar(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return SafeElAsVar_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
+  // #CAT_Access (safely) returns the element as a variant
+  const Variant		SafeElAsVarN(const MatrixGeom& indices) const	
+  { return SafeElAsVar_Flat(SafeElIndexN(indices)); }   
+  // #CAT_Access (safely) returns the element as a variant
+  const Variant		SafeElAsVar_Flat(int idx) const	
+  { if (InRange_Flat(idx)) return El_GetVar_(FastEl_Flat_(idx)); else return _nilVariant; } 
+  // #CAT_Access treats the matrix like a flat array, returns the element as a variant
+
+  const Variant		FastElAsVar_Flat(int idx) const
+  { return El_GetVar_(FastEl_Flat_(idx)); } 
+  // #CAT_Access treats the matrix like a flat array, returns the element as a variant
+    
+  void		SetFmVar(const Variant& var, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  { int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4)) >= 0)
+	       El_SetFmVar_(FastEl_Flat_(idx), var); } 
+  // #CAT_Access (safely) sets the element as a variant
+  void		SetFmVarN(const Variant& var, const MatrixGeom& indices) 	
+  { int idx; if ((idx = SafeElIndexN(indices)) >= 0)
+	       El_SetFmVar_(FastEl_Flat_(idx), var); } 
+  // #CAT_Access (safely) sets the element as a variant
+  void		SetFmVar_Flat(const Variant& var, int idx) 	
+  { if (InRange_Flat(idx))  El_SetFmVar_(FastEl_Flat_(idx), var); } 
+  // #CAT_Access treats the matrix like a flat array, (safely) sets the element as a variant
+   	
+public:
+  ///////////////////////////////////////////////////////////////////
+  // main matrix interface
+
+  int 			size;
+  // #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
+  MatrixGeom		geom;
+  // #SHOW #READ_ONLY dimensions array -- you cannot change this directly, you have to use API functions to change size
   
+  static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
+  // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
+  static bool		GeomIsValid(const MatrixGeom& geom_, String* err_msg = NULL)
+  { return GeomIsValid(geom_.size, geom_.el, err_msg); }
+  // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
+  
+  bool			canResize() const; 
+  // #CAT_Modify true only if not fixed NOTE: may also include additional constraints, tbd
+  bool			isFixedData() const { return alloc_size < 0; } 
+  // #CAT_Modify true if using fixed (externally managed) data storage
+  int			sliceCount() const;
+  // #IGNORE number of extant slices
+
+  int			BaseIndexOfFrame(int fm) {return fm * frameSize();}
+  // #CAT_Access returns the flat base index of the specified frame
+  // todo: can we rename this: FrameStartIdx and shouldn't it be above?
+
+  virtual int		defAlignment() const;
+  // #CAT_Display default Qt alignment, left for text, right for nums
+    
   bool			InRange(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
-    // 'true' if indices in range; ignores irrelevant dims
+  // #CAT_Access true if indices in range; ignores irrelevant dims
   bool			InRangeN(const MatrixGeom& indices) const;  
-    // 'true' if indices in range; MAY ignore under-supplied dims
+  // #CAT_Access true if indices in range; MAY ignore under-supplied dims
+  inline bool		InRange_Flat(int idx) const {return ((idx >= 0) && (idx < size));}
+  // #CAT_Access checks if in actual range
+  
+  
+  ///////////////////////////////////////
+  // Float access
+
+  float		SafeElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return SafeElAsFloat_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
+  // #CAT_Access (safely) returns the element as a float
+  float		SafeElAsFloatN(const MatrixGeom& indices) const	
+  { return SafeElAsFloat_Flat(SafeElIndexN(indices)); }   
+  // #CAT_Access (safely) returns the element as a float
+  float		SafeElAsFloat_Flat(int idx) const	
+  { if (InRange_Flat(idx)) return El_GetFloat_(FastEl_Flat_(idx)); else return 0.0f; } 
+  // #CAT_Access (safely) returns the element as a float, flat array model
+
+  float		FastElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return El_GetFloat_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4))); }
+  // #CAT_Access get element as float without range checking 
+  float		FastElAsFloatN(const MatrixGeom& indices) const	
+  { return El_GetFloat_(FastEl_Flat_(FastElIndexN(indices))); }   
+  // #CAT_Access get element as float without range checking 
+  float		FastElAsFloat_Flat(int idx) const 
+  { return El_GetFloat_(FastEl_Flat_(idx)); } 
+  // #CAT_Access get element as float without range checking, flat array model
+
+  ///////////////////////////////////////
+  // Double access
+
+  double	SafeElAsDouble(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return SafeElAsDouble_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
+  // #CAT_Access (safely) returns the element as a double
+  double	SafeElAsDoubleN(const MatrixGeom& indices) const	
+  { return SafeElAsDouble_Flat(SafeElIndexN(indices)); }   
+  // #CAT_Access (safely) returns the element as a double
+  double	SafeElAsDouble_Flat(int idx) const	
+  { if (InRange_Flat(idx)) return El_GetDouble_(FastEl_Flat_(idx)); else return 0.0f; } 
+  // #CAT_Access (safely) returns the element as a double, float array model
+
+  double	FastElAsDouble(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return El_GetDouble_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4))); }
+  // #CAT_Access get element as double without range checking 
+  double	FastElAsDoubleN(const MatrixGeom& indices) const	
+  { return El_GetDouble_(FastEl_Flat_(FastElIndexN(indices))); }   
+  // #CAT_Access get element as double without range checking 
+  double	FastElAsDouble_Flat(int idx) const 
+  { return El_GetDouble_(FastEl_Flat_(idx)); } 
+  // #CAT_Access get element as double without range checking, flat array model
+
+  ///////////////////////////////////////
+  // alloc management
+
+  void			AddFrame() {AddFrames(1);}
+  // #MENU #MENU_ON_Matrix #MENU_CONTEXT #CAT_Modify add 1 new blank frame
+  virtual void		AddFrames(int n);
+  // #MENU #MENU_ON_Matrix #MENU_CONTEXT #CAT_Modify add n new blank frames
+  virtual void		AllocFrames(int n);
+  // #CAT_Modify make sure space exists for n frames
+  virtual void		EnforceFrames(int n, bool notify = true); 
+  // #MENU #MENU_ON_Object #ARGC_1 #CAT_Modify set size to n frames, blanking new elements if added
+  virtual void		RemoveFrame(int n);
+  // #MENU #MENU_ON_Matrix #CAT_Modify remove the given frame, copying data backwards if needed
+  virtual bool		CopyFrame(const taMatrix& src, int frame);
+  // #CAT_Copy copy the source matrix to the indicated frame; src geom must be our frame geom; optimized for like-type mats
+
+  virtual void		Reset();
+  // #CAT_Modify remove all items
   
   void			SetGeom(int size, int d0, int d1=0, int d2=0, int d3=0, int d4=0)  
-    {int d[5]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; d[4]=d4; SetGeom_(size, d);} 
-    // set geom for matrix
+  { int d[5]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; d[4]=d4; SetGeom_(size, d);} 
+  // #CAT_Modify set geom for matrix
   void			SetGeomN(const MatrixGeom& geom_) 
-    {SetGeom_(geom_.size, geom_.el);} // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE set geom for any sized array
+  { SetGeom_(geom_.size, geom_.el);}
+  // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify set geom for any sized matrix
   
   // Slicing -- NOTES: 
   // 1. slices are updated if parent allocation changes -- this could collapse slice to [0]
@@ -349,9 +413,9 @@ public:
   
   virtual taMatrix*	GetSlice_(const MatrixGeom& base, 
     int slice_frame_dims = -1, int num_slice_frames = 1);
-    // return a slice, sfd=-1 indicates a frame size slice; base should be a subframe boundary
+  // #CAT_Access return a slice, sfd=-1 indicates a frame size slice; base should be a subframe boundary
   virtual taMatrix*	GetFrameSlice_(int frame);
-    // return a slice, of exactly one frame; will have dim-1 of us
+  // #CAT_Access return a slice, of exactly one frame; will have dim-1 of us
   
 #ifdef TA_GUI
   MatrixTableModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
@@ -359,6 +423,10 @@ public:
   
   virtual void 		List(ostream& strm=cout) const; 	// List the items
   
+  virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
+  { return true; }
+  // #IGNORE validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
+     
   ostream& 		Output(ostream& strm, int indent = 0) const;
   ostream& 		OutputR(ostream& strm, int indent = 0) const
     { return Output(strm, indent); }
@@ -368,26 +436,41 @@ public:
   void			Copy_(const taMatrix& cp);
   COPY_FUNS(taMatrix, taOBase);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
-public: // low-level, try not to use these, internal use only
-  virtual void*		data() const = 0;  // #IGNORE
-  virtual void*		FastEl_Flat_(int i) = 0;   // #IGNORE the raw element in the flat space _
-  virtual const void*	FastEl_Flat_(int i) const = 0;   // #IGNORE
+
+public:
+  ///////////////////////////////////////////////////////////////////
+  // low-level interface, try not to use these, internal use only
+
+  virtual void*		data() const = 0;
+  // #IGNORE pointer to the start of the raw data
+  virtual void*		FastEl_Flat_(int i) = 0;
+  // #IGNORE the raw element in the flat space _
+  virtual const void*	FastEl_Flat_(int i) const = 0;
+  // #IGNORE const version
   const void*		FastEl_(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const 
-    {return FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4));} 
-    // the raw element in index space -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  { return FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4)); } 
+  // #IGNORE the raw element in index space -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   const void*		FastElN_(const MatrixGeom& indices) const 
-    {return FastEl_Flat_(FastElIndexN(indices));} 
+  { return FastEl_Flat_(FastElIndexN(indices));} 
+  // #IGNORE 
   
   virtual const void*	SafeEl_(int i) const 
-    {if ((i > 0) && (i < size)) return FastEl_Flat_(i); else return El_GetBlank_();}   // #IGNORE raw element in flat space, else NULL
+  {if ((i > 0) && (i < size)) return FastEl_Flat_(i); else return El_GetBlank_(); }
+  // #IGNORE raw element in flat space, else NULL
+
   // every subclass should implement these:
-  virtual float		El_GetFloat_(const void*) const	{ return 0.0f; } // #IGNORE
-  virtual double	El_GetDouble_(const void* it) const 
-   { return El_GetFloat_(it); } // #IGNORE
-  virtual const String	El_GetStr_(const void*) const	{ return _nilString; } // #IGNORE
-  virtual void		El_SetFmStr_(void*, const String&) { }; // #IGNORE
-  virtual const Variant	El_GetVar_(const void*) const	{ return _nilVariant; } // #IGNORE
-  virtual void		El_SetFmVar_(void*, const Variant&) { };  // #IGNORE
+  virtual float		El_GetFloat_(const void*) const	{ return 0.0f; }
+  // #IGNORE
+  virtual double	El_GetDouble_(const void* it) const  { return El_GetFloat_(it); }
+  // #IGNORE
+  virtual const String	El_GetStr_(const void*) const	{ return _nilString; }
+  // #IGNORE
+  virtual void		El_SetFmStr_(void*, const String&) { };
+  // #IGNORE
+  virtual const Variant	El_GetVar_(const void*) const	{ return _nilVariant; }
+  // #IGNORE
+  virtual void		El_SetFmVar_(void*, const Variant&) { };
+  // #IGNORE
  
 protected:
   static void		SliceInitialize(taMatrix* par_slice, taMatrix* child_slice); 
@@ -400,25 +483,28 @@ protected:
   taMatrix*		slice_par; // slice parent -- we ref/unref it
   MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
   
-  
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
   int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
-    // NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  // NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   int			FastElIndexN(const MatrixGeom& indices) const; //
-    // NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  // NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   
   int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
-    // check bounds and return flat index, -1 if any dim out of bounds
+  // check bounds and return flat index, -1 if any dim out of bounds
   int			SafeElIndexN(const MatrixGeom& indices) const; 
-    // check bounds and return flat index, -1 if any dim out of bounds
+  // check bounds and return flat index, -1 if any dim out of bounds
   
-  virtual void		Alloc_(int new_alloc); // set capacity to n -- should always be in multiples of frames 
-  virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type; raise exception on failure
+  virtual void		Alloc_(int new_alloc);
+  // set capacity to n -- should always be in multiples of frames 
+  virtual void*		MakeArray_(int i) const = 0;
+  // #IGNORE make a new array of item type; raise exception on failure
   virtual void		SetArray_(void* nw) = 0;
-  virtual void		ReclaimOrphans_(int from, int to) {} // called when elements can be reclaimed, ex. for strings
+  virtual void		ReclaimOrphans_(int from, int to) {}
+  // called when elements can be reclaimed, ex. for strings
   
-  virtual void		Add_(const void* it); // compatibility function -- only valid if dims=1
+  virtual void		Add_(const void* it);
+  // compatibility function -- only valid if dims=1
   virtual bool		El_Equal_(const void*, const void*) const = 0;
   // #IGNORE for finding
   virtual const void*	El_GetBlank_() const = 0;
@@ -430,25 +516,28 @@ protected:
   virtual uint		El_SizeOf_() const = 0;
   // #IGNORE size of element
   
-  inline bool		InRange_Flat(int idx) const {return ((idx >= 0) && (idx < size));}
-    // checks if in actual range
-  
-  virtual void		SetFixedData_(void* el_, const MatrixGeom& geom_); // initialize fixed data
+  virtual void		SetFixedData_(void* el_, const MatrixGeom& geom_);
+  // initialize fixed data
 //  virtual bool		Equal_(const taMatrix& src) const; 
     // 'true' if same size and els
     
   void 			Slice_Collapse();
   void			Slice_Realloc(ta_intptr_t base_delta);
   
-  virtual void		UpdateGeom(); // called to potentially update the allocation based on new geom info -- will fix if in error
-  void			UpdateSlices_Collapse(); // collapses all the slices to []
-  void			UpdateSlices_FramesDeleted(void* deletion_base, int num); // called when deleting a frame -- for each slice: update base addr if after delete base, or collapse if doesn't exist any more
-  void			UpdateSlices_Realloc(ta_intptr_t base_delta); // called when allocing new mem (more or less) -- for each slice: update base addr; note: not for use if size has changed (FramesDeleted would be called)
+  virtual void		UpdateGeom();
+  // called to potentially update the allocation based on new geom info -- will fix if in error
+  void			UpdateSlices_Collapse();
+  // collapses all the slices to []
+  void			UpdateSlices_FramesDeleted(void* deletion_base, int num);
+  // called when deleting a frame -- for each slice: update base addr if after delete base, or collapse if doesn't exist any more
+  void			UpdateSlices_Realloc(ta_intptr_t base_delta);
+  // called when allocing new mem (more or less) -- for each slice: update base addr; note: not for use if size has changed (FramesDeleted would be called)
     
   virtual void		Dump_Save_Item(ostream& strm, int idx); 
-    // dump the value, term with ; generic is fine for numbers, override for strings, variants, etc.
+  // dump the value, term with ; generic is fine for numbers, override for strings, variants, etc.
   virtual int		Dump_Load_Item(istream& strm, int idx); 
-    // load the ;-term'ed value ; generic is fine for numbers, override for strings, variants, etc.; ret is last char read, usually ;
+  // load the ;-term'ed value ; generic is fine for numbers, override for strings, variants, etc.; ret is last char read, usually ;
+
 private:
   void 			Initialize();
   void			Destroy();
@@ -458,7 +547,8 @@ typedef taMatrix* ptaMatrix_impl;
 SmartPtr_Of(taMatrix); // taMatrixPtr
 
 
-class TA_API taMatrix_PList: public taPtrList<taMatrix> { // simple list for keeping track of slices
+class TA_API taMatrix_PList: public taPtrList<taMatrix> {
+  // simple list for keeping track of slices
 INHERITED(taPtrList<taMatrix>)
 public:
 
@@ -466,7 +556,8 @@ public:
 };
 
 
-class TA_API taMatrix_Group: public taGroup<taMatrix> { // group that can hold matrix items -- typically used for dataset elements
+class TA_API taMatrix_Group: public taGroup<taMatrix> {
+  // group that can hold matrix items -- typically used for dataset elements
 INHERITED(taGroup<taMatrix>)
 public:
 
@@ -476,56 +567,64 @@ private:
   void		Destroy() {}
 };
 
+///////////////////////////////////
+// 	Matrix Template
+///////////////////////////////////
 
 template<class T> 
-class taMatrixT : public taMatrix { // #VIRT_BASE #NO_INSTANCE #CAT_Data 
+class taMatrixT : public taMatrix {
+  // #VIRT_BASE #NO_INSTANCE ##CAT_Data 
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
-  override void*	data() const {return el;}
+  override void*	data() const {return el;} // #IGNORE
   
-  void			SetFixedData(T* data_, const MatrixGeom& geom_) {SetFixedData_(data_, geom_);} 
-  // sets external (fixed) data, setting the geom/size
+  void			SetFixedData(T* data_, const MatrixGeom& geom_)
+  { SetFixedData_(data_, geom_); } 
+  // #IGNORE sets external (fixed) data, setting the geom/size
   
   ////////////////////////////////////////////////
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  T&			FastEl_Flat(int idx) // #IGNORE	treats matrix like a flat array
-    { return el[idx]; }
-  T&			FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) // #IGNORE 	
-    { return el[FastElIndex(d0)]; }
-  T&			FastElN(const MatrixGeom& indices) // #IGNORE 
-    {return el[FastElIndexN(indices)]; }
+  const T&		FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return el[FastElIndex(d0,d1,d2,d3,d4)]; }
+  const T&		FastElN(const MatrixGeom& indices) const
+  { return el[FastElIndexN(indices)]; } 
+  const T&		FastEl_Flat(int idx) const { return el[idx]; }
   
-  const T&		FastEl_Flat(int idx) const // #IGNORE	treats matrix like a flat array
-    { return el[idx]; }
-  const T&		FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const // 	
-    { return el[FastElIndex(d0,d1,d2,d3,d4)]; }
-  const T&		FastElN(const MatrixGeom& indices) const //  
-    { return el[FastElIndexN(indices)]; } 
+  T&			FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  { return el[FastElIndex(d0)]; }
+  // #CAT_Access get element without range checking
+  T&			FastElN(const MatrixGeom& indices)
+  { return el[FastElIndexN(indices)]; }
+  // #CAT_Access get element without range checking
+  T&			FastEl_Flat(int idx) { return el[idx]; }
+  // #CAT_Access get element without range checking -- treats matrix like a flat array
   
-  const T&		SafeEl_Flat(int idx) const 	
-    { return *((T*)(SafeEl_(idx))); } // access the matrix as if it were a flat vector, for reading
   const T&		SafeEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const 	
-    { return *((T*)(SafeEl_(SafeElIndex(d0,d1,d2,d3,d4)))); } 
-     // access the element for reading
+  { return *((T*)(SafeEl_(SafeElIndex(d0,d1,d2,d3,d4)))); } 
+  // #CAT_Access (safely) access the element for reading
   const T&		SafeElN(const MatrixGeom& indices) const  
-    { return *((T*)(SafeElIndexN(indices))); }  
-    // access the element for reading
+  { return *((T*)(SafeElIndexN(indices))); }  
+  // #CAT_Access (safely) access the element for reading
+  const T&		SafeEl_Flat(int idx) const
+  { return *((T*)(SafeEl_(idx))); }
+  // #CAT_Access (safely) access the matrix as if it were a flat vector, for reading
   
-  void			Set_Flat(const T& item, int idx) 	
-    { if (InRange_Flat(idx)) el[idx] = item; }
-  // use this for safely assigning values to items in the matrix, treated as a flat vector
-  void			Set(const T& item, int d0) 	
-    { el[SafeElIndex(d0)] = item; }
-  // (TODO: add remaining d's) use this for safely assigning values to items in the matrix, esp. from script code
+  void			Set(const T& item, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  { el[SafeElIndex(d0,d1,d2,d3,d4)] = item; }
+  // #CAT_Access safely assign values to items in the matrix
   void			SetN(const T& item, const MatrixGeom& indices) 	
-    {  el[SafeElIndexN(indices)] = item; }
-  // use this for safely assigning values to items in the matrix, esp. from script code
+  {  el[SafeElIndexN(indices)] = item; }
+  // #CAT_Access safely assign values to items in the matrix
+  void			Set_Flat(const T& item, int idx) 	
+  { if (InRange_Flat(idx)) el[idx] = item; }
+  // #CAT_Access safely assign values to items in the matrix, treated as a flat vector
   
   // compatibility functions, for when dims=1
-  void			Add(const T& item) {Add_(&item);}  // only valid when dims=1
+  void			Add(const T& item) {Add_(&item);}
+  // #CAT_Modify only valid when dims=1
 
   void	CutLinks() 	{SetArray_(NULL); taMatrix::CutLinks();}
   TA_ABSTRACT_TMPLT_BASEFUNS(taMatrixT, T)
@@ -652,9 +751,15 @@ public:
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
-class TA_API String_Matrix: public taMatrixT<String> { // #INSTANCE #CAT_Data
+
+///////////////////////////////////
+// 	String_Matrix
+///////////////////////////////////
+
+class TA_API String_Matrix: public taMatrixT<String> {
+  // #INSTANCE a matrix of strings
 public:
-  override int		defAlignment() const; // default Qt alignment, left for text, right for nums	
+  override int		defAlignment() const;
   override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
   
   void			Copy_(const String_Matrix& cp) {}
@@ -682,7 +787,12 @@ private:
 //nn?? SmartPtr_Of(String_Matrix); // String_MatrixPtr
 
 
-class TA_API float_Matrix: public taMatrixT<float> { // #INSTANCE #CAT_Data
+///////////////////////////////////
+// 	float_Matrix
+///////////////////////////////////
+
+class TA_API float_Matrix: public taMatrixT<float> {
+  // #INSTANCE a matrix of floats
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_float;} 
   
@@ -709,8 +819,12 @@ private:
 
 //nn?? SmartPtr_Of(float_Matrix)
 
+///////////////////////////////////
+// 	double_Matrix
+///////////////////////////////////
 
-class TA_API double_Matrix: public taMatrixT<double> { // #INSTANCE #CAT_Data
+class TA_API double_Matrix: public taMatrixT<double> {
+  // #INSTANCE a matrix of doubles
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_double;} 
   
@@ -745,8 +859,12 @@ private:
 
 //nn?? SmartPtr_Of(double_Matrix)
 
+///////////////////////////////////
+// 	int_Matrix
+///////////////////////////////////
 
-class TA_API int_Matrix: public taMatrixT<int> { // #INSTANCE #CAT_Data
+class TA_API int_Matrix: public taMatrixT<int> {
+  // #INSTANCE a matrix of ints
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_int;} 
   
@@ -772,8 +890,12 @@ private:
 
 //nn? SmartPtr_Of(int_Matrix)
 
+///////////////////////////////////
+// 	byte_Matrix
+///////////////////////////////////
 
-class TA_API byte_Matrix: public taMatrixT<byte> { // #INSTANCE #CAT_Data
+class TA_API byte_Matrix: public taMatrixT<byte> {
+  // #INSTANCE a matrix of bytes
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_unsigned_char;} 
   
@@ -799,8 +921,12 @@ private:
 
 //nn? SmartPtr_Of(byte_Matrix)
 
+///////////////////////////////////
+// 	Variant_Matrix
+///////////////////////////////////
 
-class TA_API Variant_Matrix: public taMatrixT<Variant> { // #INSTANCE #CAT_Data
+class TA_API Variant_Matrix: public taMatrixT<Variant> {
+  // #INSTANCE a matrix of variants
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_Variant;} 
   
@@ -829,7 +955,12 @@ private:
 
 //nn? SmartPtr_Of(Variant_Matrix) //
 
-class TA_API rgb_Matrix: public taMatrixT<rgb_t> { // #INSTANCE #CAT_Data
+///////////////////////////////////
+// 	rgb_Matrix
+///////////////////////////////////
+
+class TA_API rgb_Matrix: public taMatrixT<rgb_t> {
+  // #INSTANCE a matrix of rgb values
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_rgb_t;} 
   
@@ -855,7 +986,8 @@ private:
 
 //nn? SmartPtr_Of(byte_Matrix)
 
-class TA_API MatrixTableModel: public QAbstractTableModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display
+class TA_API MatrixTableModel: public QAbstractTableModel {
+  // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display
 friend class taMatrix;
 INHERITED(QAbstractTableModel)
 public:

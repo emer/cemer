@@ -104,6 +104,15 @@ int MatrixGeom::Dump_Load_Value(istream& strm, TAPtr) {
   return true;
 }
 
+String MatrixGeom::GeomToString() const {
+  String rval("[");
+  for (int i = 0; i < size; ++i) {
+    if (i > 0) rval += ',';
+    rval += String(el[i]);
+  }
+  rval += "]";
+  return rval;
+}
 
 void MatrixGeom::EnforceSize(int new_sz) {
   if ((new_sz < 0) || (new_sz >= TA_MATRIX_DIMS_MAX)) return;
@@ -182,16 +191,6 @@ bool taMatrix::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
   }
   
   return true;
-}
-
-String taMatrix::GeomToString(const MatrixGeom& geom) {
-  String rval("[");
-  for (int i = 0; i < geom.size; ++i) {
-    if (i > 0) rval += ',';
-    rval += String(geom.el[i]);
-  }
-  rval += "]";
-  return rval;
 }
 
 void taMatrix::SliceDestroying(taMatrix* par_slice, taMatrix* child_slice) {

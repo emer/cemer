@@ -72,25 +72,25 @@ public:
   // uniform random number with given range centered at 0
   static float 	Uniform(float half_rng)	{ return half_rng * 2.0f * (ZeroOne() - 0.5f); }
   // uniform random number with given half_range (var) centered at 0
-  static float 	Binom(int n, float p) 	{ return taMath::binom_dev(n,p); }
+  static float 	Binom(int n, float p) 	{ return taMath_double::binom_dev(n,p); }
   // binomial with n trials (par) each of probability p (var)
-  static float 	Poisson(float l)   	{ return taMath::poisson_dev(l); }
+  static float 	Poisson(float l)   	{ return taMath_double::poisson_dev(l); }
   // poisson with parameter l (var)
-  static float 	Gamma(float var, int j)  { return var * taMath::gamma_dev(j); }
+  static float 	Gamma(float var, int j)  { return var * taMath_double::gamma_dev(j); }
   // gamma with given variance, number of exponential stages (par)
-  static float 	Gauss(float var)  	{ return var * taMath::gauss_dev(); }
+  static float 	Gauss(float var)  	{ return var * taMath_double::gauss_dev(); }
   // gaussian (normal) random number with given variance
 
   static float 	UniformDen(float x, float half_rng)
   { float rval = 0.0f; if(fabsf(x) <= half_rng) rval = 1.0f / (2.0f * half_rng); return rval; }
   // uniform density at x with given half_range (var) centered at 0 (subtr mean)
-  static float 	BinomDen(int n, int j, float p) { return taMath::binom_den(n,j,p); }
+  static float 	BinomDen(int n, int j, float p) { return taMath_double::binom_den(n,j,p); }
   // binomial density at j with n trials (par) each of probability p (var)
-  static float 	PoissonDen(int j, float l) { return taMath::poisson_den(j,l); }
+  static float 	PoissonDen(int j, float l) { return taMath_double::poisson_den(j,l); }
   // poisson density with parameter l (var)
-  static float 	GammaDen(int j, float l, float t)  { return taMath::gamma_den(j,l,t); }
+  static float 	GammaDen(int j, float l, float t)  { return taMath_double::gamma_den(j,l,t); }
   // gamma density at time t with given number of stages (par), lambda (var)
-  static float 	GaussDen(float x, float var)  	{ return taMath::gauss_den(x / var); }
+  static float 	GaussDen(float x, float var)  	{ return taMath_double::gauss_den(x / var); }
   // gaussian (normal) density for given variance (0 mean)
 
   float 	Gen() const;

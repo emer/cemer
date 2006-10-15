@@ -472,4 +472,29 @@ public:
   TA_BASEFUNS(TiledGpRFPrjnSpec);
 };
 
+class PDP_API TiledNovlpPrjnSpec : public ProjectionSpec {
+  // Tiled non-overlapping projection spec: connects entire receiving layer unit groups with non-overlapping tiled regions of sending units
+public:
+  bool		reciprocal;	// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
+
+  TwoDCoord ru_geo;		// #READ_ONLY receiving unit geometry
+  PosTDCoord su_act_geom;	// #READ_ONLY sending actual geometry
+  FloatTwoDCoord rf_width;	// #READ_ONLY how much to move sending rf per recv group
+
+  virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
+
+  void 	Connect_impl(Projection* prjn);
+//   int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
+
+//   virtual void	SelectRF(Projection* prjn);
+  // #BUTTON select all sending and receiving units in the receptive field of this projection
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  void	InitLinks();
+  SIMPLE_COPY(TiledNovlpPrjnSpec);
+  COPY_FUNS(TiledNovlpPrjnSpec, ProjectionSpec);
+  TA_BASEFUNS(TiledNovlpPrjnSpec);
+};
+
 #endif /* netstru_extra_h */
