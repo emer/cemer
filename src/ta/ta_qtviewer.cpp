@@ -3144,7 +3144,7 @@ TODO: hangs in here  iDataPanel* panel = ((iPanelTab*)t)->panel();
 iDataPanel* iTabBar::panel(int idx) {
   QVariant data(tabData(idx)); // returns NULL variant if out of range
   if (data.isNull() || !data.isValid()) return NULL;
-  intptr_t rval = data.value<intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
+  ta_intptr_t rval = data.value<ta_intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
   return (iDataPanel*)rval;
   
 }
@@ -3160,7 +3160,7 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   QVariant data(tabData(idx)); // returns NULL variant if out of range
   iDataPanel* m_panel = NULL;
   if (!data.isNull() && data.isValid())
-    m_panel = (iDataPanel*)data.value<intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
+    m_panel = (iDataPanel*)data.value<ta_intptr_t>(); //NOTE: if probs in msvc, use the qvariant_cast thingy
   
   if ((m_panel == value) && !force) goto set_cur;
   m_panel = value;
