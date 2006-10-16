@@ -266,10 +266,15 @@ void taiProgVar::GetImage(const ProgVar* var) {
   case ProgVar::T_String:
     fldVal->GetImage(var->string_val); 
     break;
-  case ProgVar::T_Object:
+  case ProgVar::T_Object: {
     thValType->GetImage(var->object_type, &TA_taBase);
-    tkObjectValue->GetImage(var->object_val.ptr(), var->object_type, NULL);// no scope
-    break;
+    // get the host obj (usually Program) as scope obj
+    taBase* host_obj = NULL;
+    if (host && host->GetBaseTypeDef()->InheritsFrom(&TA_taBase)) {
+      host_obj = (taBase*)host->Base();
+    }
+    tkObjectValue->GetImage(var->object_val.ptr(), var->object_type, host_obj);
+    } break;
   case ProgVar::T_HardEnum:
     thEnumType->GetImage(var->hard_enum_type, &TA_taBase);
     cboEnumValue->SetEnumType(var->hard_enum_type);
