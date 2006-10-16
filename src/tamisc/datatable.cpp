@@ -1151,7 +1151,6 @@ void ClustNode::GraphData(DataTable* dt) {
   dt->AddColDispOpt("AXIS=1", 2); // labels use same axis as y values
   dt->AddColDispOpt("STRING_COORDS=1", 2); // use y values
   GraphData_impl(dt);
-  dt->UpdateAllRanges();
 /*TODO: ranges
   float_Matrix* xar = dt->GetColFloatArray(0);
   dt->AddColDispOpt(String("MAX=") + String(xar->range.max * 1.15f), 0); // adds extra room for labels
