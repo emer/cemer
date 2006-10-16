@@ -879,26 +879,26 @@ double taMath_double::vec_ss_len(const double_Matrix* vec) {
 
 void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, double bin_size) {
   // todo: rewrite
-//   vec->Reset();
-//   if(oth->size == 0) return;
-//   double_Matrix tmp = *oth;	// need to sort it!
-//   // todo: no sort function!!
-//   //  tmp.Sort();
-//   double min_v = tmp.FastEl(0);
-//   // todo: no peek either
-//   //  double max = tmp.Peek();
-//   double max_v = 0.0;
-//   int src_idx = 0;
-//   int trg_idx = 0;
-//   for(double cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
-//     double cur_max = cur_val + bin_size;
-//     vec->Add(0);
-//     double& cur_hist = vec->FastEl_Flat(trg_idx);
-//     while((src_idx < tmp.size) && (tmp.FastEl_Flat(src_idx) < cur_max)) {
-//       cur_hist += 1.0;
-//       src_idx++;
-//     }
-//   }
+  vec->Reset();
+  if(oth->size == 0) return;
+  double_Array tmp;
+  for(int i=0;i<oth->size;i++)
+    tmp.Add(oth->FastEl_Flat(i));
+  tmp.Sort();
+  double min_v = tmp.FastEl(0);
+  double max = tmp.Peek();
+  double max_v = 0.0;
+  int src_idx = 0;
+  int trg_idx = 0;
+  for(double cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
+    double cur_max = cur_val + bin_size;
+    vec->Add(0);
+    double& cur_hist = vec->FastEl_Flat(trg_idx);
+    while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < cur_max)) {
+      cur_hist += 1.0;
+      src_idx++;
+    }
+  }
 }
 
 ///////////////////////////////////////

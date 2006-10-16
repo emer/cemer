@@ -32,7 +32,15 @@
 
 class ClustNode; //
 
-
+// todo: move float_RArray to v3compat
+// remaining dependencies:
+// src/pdp/netstru.h:  virtual void        ConValuesToArray(float_RArray& ary, const char* variable);
+// src/pdp/netstru.h:  virtual void        ConValuesFromArray(float_RArray& ary, const char* variable);
+// src/pdp/netstru.h:  virtual void        UnitValuesToArray(float_RArray& ary, const char* variable);
+// src/pdp/netstru.h:  virtual void        UnitValuesFromArray(float_RArray& ary, const char* variable);
+// src/tamisc/datagraph.h:  float_RArray           rows_x_axis;    // x axis values for plot rows mode
+// src/tamisc/fun_lookup.h:class TAMISC_API FunLookup : public float_RArray {
+// src/tamisc/fun_lookup.h:  COPY_FUNS(FunLookup, float_RArray);
 
 class TAMISC_API float_RArray : public float_Array {
   // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
@@ -126,6 +134,9 @@ public:
   // apply simple math operators to values, other array provides 'arg' value for math_spec
   virtual int	Threshold(float thresh=.5f, float low=0.0f, float high=1.0f, int start=0, int end = -1);
   // #MENU threshold values in the array, low vals go to low, etc.
+
+  ////////////////////////////////////
+  // todo: above are all in taMath, below go in image processing..
 
   virtual void 	WritePoint(const TwoDCoord& geom, int x, int y, float color=1.0, bool wrap=true);
   // write a single point, assuming geometry geom
@@ -229,6 +240,8 @@ protected:
 */
 
 
+// todo: move this to taMath::Cluster routine!
+
 class TAMISC_API ClustLink : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER a link in the cluster tree with distance
 public:
@@ -314,6 +327,8 @@ public:
   COPY_FUNS(ClustNode, taNBase);
   TA_BASEFUNS(ClustNode);
 };
+
+// todo: these would seem to be completely removable now!?
 
 class TAMISC_API DA_ViewSpec : public taNBase {
   // ##SCOPE_DT_ViewSpec base specification for the display of log data_array (DA)

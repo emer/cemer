@@ -1020,18 +1020,6 @@ bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
 }
 
 
-void DataTable::UpdateAllRanges() {
-/*TODO
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
-    if(ar->InheritsFrom(TA_float_Data)) {
-      ((float_Matrix*)ar->AR())->UpdateAllRange();
-    }
-  } */
-}
-
-
 //////////////////////////////////
 //   DataTableModel		//
 //////////////////////////////////

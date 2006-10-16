@@ -49,36 +49,53 @@ class DataTableModel;
 
 */
 
+/////////////////////////////////////////////////////////
+//   DataArray_impl -- One colum of a datatable
+/////////////////////////////////////////////////////////
+
 class TA_API DataArray_impl : public taNBase {
-  // #VIRT_BASE ##NO_TOKENS #NO_INSTANCE holds a column of data;\n (a scalar cell can generally be treated as a degenerate matrix cell of dim[1])
+  // #VIRT_BASE ##NO_TOKENS #NO_INSTANCE ##CAT_Data holds a column of data;\n (a scalar cell can generally be treated as a degenerate matrix cell of dim[1])
 INHERITED(taNBase)
 friend class DataTable;
 public:
   static void 		DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt);
     // note: vt is -1 if unknown
 
-  String		disp_opts;	// viewer default display options
-  bool			mark; // #NO_SHOW #NO_SAVE clear on new and when col confirmed, used to delete orphans
-  bool			pin; // set true to prevent this column from being deleted on orphan deleting
-  bool			save_to_file;	// save this data to a file (e.g., to a log file in PDP++)?
-  bool			is_matrix; // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
-  MatrixGeom		cell_geom; //  #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
+  String		disp_opts;
+  // viewer default display options
+  bool			mark;
+  // #NO_SHOW #NO_SAVE clear on new and when col confirmed, used to delete orphans
+  bool			pin;
+  // set true to prevent this column from being deleted on orphan deleting
+  bool			save_to_file;
+  // save this data to a file (e.g., to a log file in PDP++)?
+  bool			is_matrix;
+  // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
+  MatrixGeom		cell_geom;
+  // #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
   
-  virtual taMatrix* 	AR() = 0; // the matrix pointer -- NOTE: actual member should be called 'ar'
-  virtual const taMatrix* 	AR() const = 0; // const version of the matrix pointer
-  virtual bool		is_numeric() const {return false;} // true if data is float, int, or byte
-  virtual bool		is_string() const {return false;}// true if data is string
-  virtual int		cell_size() const // for matrix type, number of elements in each cell
-     {return (is_matrix) ? cell_geom.Product() : 1;}
-  virtual int		cell_dims() const // for matrix type, number of dimensions in each cell
-     {return cell_geom.size;}
-  virtual int		GetCellGeom(int dim) const  // for matrix type, size of given dim
-    {return cell_geom.SafeEl(dim);}
-  int			rows() const {return AR()->frames();}
+  virtual taMatrix* 	AR() = 0;
+  // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
+  virtual const taMatrix* 	AR() const = 0;
+  // #CAT_Access const version of the matrix pointer
+  virtual bool		is_numeric() const {return false;}
+  // #CAT_Access true if data is float, int, or byte
+  virtual bool		is_string() const {return false;}
+  // #CAT_Access true if data is string
+  virtual int		cell_size() const
+  { return (is_matrix) ? cell_geom.Product() : 1; }
+  // #CAT_Access for matrix type, number of elements in each cell
+  virtual int		cell_dims() const { return cell_geom.size; }
+  // #CAT_Access for matrix type, number of dimensions in each cell
+  virtual int		GetCellGeom(int dim) const { return cell_geom.SafeEl(dim); }
+  // #CAT_Access for matrix type, size of given dim
+  int			rows() const { return AR()->frames(); }
+  // #CAT_Access total number of rows of data within this column
 
-  int			displayWidth() const; // low level display width, in tabs (8 chars/tab), taken from spec
-  DataTable*		dataTable(); // root data table this col belongs to
-  virtual int		maxColWidth() const {return -1;} // aprox max number of columns, in characters, -1 if variable or unknown
+  int			displayWidth() const;
+  // #CAT_Display low level display width, in tabs (8 chars/tab), taken from spec
+  virtual int		maxColWidth() const {return -1;}
+  // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
   virtual ValType 	valType() const = 0; // the type of data in each element
 
   static const KeyString key_val_type; // "val_type"
@@ -89,84 +106,84 @@ public:
   // for accessor routines, row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
   // -ve values are from end, and are valid for both low-level col access, and DataTable access
   const Variant GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
-    // valid for all types, -ve row is from end (-1=last)
+  // #CAT_Access valid for all types, -ve row is from end (-1=last)
+  bool	 	SetValAsVar(const Variant& val, int row) 
+  { return SetValAsVar_impl(val, row, 0);} 
+  // #CAT_Modify valid for all types, -ve row is from end (-1=last)
   const String 	GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
-    // valid for all types, -ve row is from end (-1=last)
+  // #CAT_Access valid for all types, -ve row is from end (-1=last)
+  bool	 	SetValAsString(const String& val, int row) 
+  {return SetValAsString_impl(val, row, 0);} 
+  // #CAT_Modify valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloat(int row) const {return GetValAsFloat_impl(row, 0);} 
-    // valid if type is numeric, -ve row is from end (-1=last)
+  // #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
+  bool	 	SetValAsFloat(float val, int row) 
+  // #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
+  {return SetValAsFloat_impl(val, row, 0);} 
   double 	GetValAsDouble(int row) const {return GetValAsDouble_impl(row, 0);} 
-    // valid if type is numeric, -ve row is from end (-1=last)
+  // #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
+  bool	 	SetValAsDouble(double val, int row) 
+  // #CAT_Modify valid only if type is double, -ve row is from end (-1=last)
+  {return SetValAsDouble_impl(val, row, 0);} 
   int	 	GetValAsInt(int row) const {return GetValAsInt_impl(row, 0);} 
-    // valid if type is int or byte, -ve row is from end (-1=last)
+  // #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
+  bool	 	SetValAsInt(int val, int row) 
+  // #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
+  {return SetValAsInt_impl(val, row, 0);} 
   byte	 	GetValAsByte(int row) const {return GetValAsByte_impl(row, 0);} 
-    // valid only if type is byte, -ve row is from end (-1=last)
+  // #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
+  bool	 	SetValAsByte(byte val, int row) 
+  // #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
+  {return SetValAsByte_impl(val, row, 0);} 
     
   // Matrix versions
   const Variant GetValAsVarM(int row, int cell) const {return GetValAsVar_impl(row, cell);} 
-    // valid for all types, -ve row is from end (-1=last)
-  const String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
-    // valid for all types, -ve row is from end (-1=last)
-  float 	GetValAsFloatM(int row, int cell) const {return GetValAsFloat_impl(row, cell);} 
-    // valid if type is numeric, -ve row is from end (-1=last)
-  double 	GetValAsDoubleM(int row, int cell) const {return GetValAsDouble_impl(row, cell);} 
-    // valid if type is numeric, -ve row is from end (-1=last)
-  int	 	GetValAsIntM(int row, int cell) const {return GetValAsInt_impl(row, cell);} 
-    // valid if type is int or byte, -ve row is from end (-1=last)
-  byte	 	GetValAsByteM(int row, int cell) const {return GetValAsByte_impl(row, cell);} 
-    // valid only if type is byte, -ve row is from end (-1=last)
-
-  bool	 	SetValAsVar(const Variant& val, int row) 
-    {return SetValAsVar_impl(val, row, 0);} 
-    // valid for all types, -ve row is from end (-1=last)
-  bool	 	SetValAsString(const String& val, int row) 
-    {return SetValAsString_impl(val, row, 0);} 
-    // valid for all types, -ve row is from end (-1=last)
-  bool	 	SetValAsFloat(float val, int row) 
-    // valid only if type is float, -ve row is from end (-1=last)
-    {return SetValAsFloat_impl(val, row, 0);} 
-  bool	 	SetValAsDouble(double val, int row) 
-    // valid only if type is double, -ve row is from end (-1=last)
-    {return SetValAsDouble_impl(val, row, 0);} 
-  bool	 	SetValAsInt(int val, int row) 
-    // valid if type is int or float, -ve row is from end (-1=last)
-    {return SetValAsInt_impl(val, row, 0);} 
-  bool	 	SetValAsByte(byte val, int row) 
-    // valid if type is numeric, -ve row is from end (-1=last)
-    {return SetValAsByte_impl(val, row, 0);} 
-    
-  // Matrix versions of scalar data 
+  // #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVarM(const Variant& val, int row, int cell) 
-    {return SetValAsVar_impl(val, row, cell);} 
-    // valid for all types, -ve row is from end (-1=last)
+  { return SetValAsVar_impl(val, row, cell);} 
+  // #CAT_Modify valid for all types, -ve row is from end (-1=last)
+  const String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
+  // #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsStringM(const String& val, int row, int cell) 
-    {return SetValAsString_impl(val, row, cell);} 
-    // valid for all types, -ve row is from end (-1=last)
+  {return SetValAsString_impl(val, row, cell);} 
+  // #CAT_Modify valid for all types, -ve row is from end (-1=last)
+  float 	GetValAsFloatM(int row, int cell) const {return GetValAsFloat_impl(row, cell);} 
+  // #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsFloatM(float val, int row, int cell) 
-    // valid only if type is float, -ve row is from end (-1=last)
-    {return SetValAsFloat_impl(val, row, cell);} 
+  // #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
+  {return SetValAsFloat_impl(val, row, cell);} 
+  double 	GetValAsDoubleM(int row, int cell) const {return GetValAsDouble_impl(row, cell);} 
+  // #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsDoubleM(double val, int row, int cell) 
-    // valid only if type is float, -ve row is from end (-1=last)
-    {return SetValAsDouble_impl(val, row, cell);} 
+  // #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
+  {return SetValAsDouble_impl(val, row, cell);} 
+  int	 	GetValAsIntM(int row, int cell) const {return GetValAsInt_impl(row, cell);} 
+  // #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
   bool	 	SetValAsIntM(int val, int row, int cell) 
-    // valid if type is int or float, -ve row is from end (-1=last)
-    {return SetValAsInt_impl(val, row, cell);} 
+  // #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
+  {return SetValAsInt_impl(val, row, cell);} 
+  byte	 	GetValAsByteM(int row, int cell) const {return GetValAsByte_impl(row, cell);} 
+  // #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
   bool	 	SetValAsByteM(byte val, int row, int cell) 
-    // valid if type is numeric, -ve row is from end (-1=last)
-    {return SetValAsByte_impl(val, row, cell);} 
-
-  void		EnforceRows(int rows);
-  // force data to have this many rows
+  // #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
+  {return SetValAsByte_impl(val, row, cell);} 
 
   // Matrix ops
   taMatrix*	GetValAsMatrix(int row);
-    // gets the cell as a slice of the entire column (note: not const -- you can write it)
+  // #CAT_Access gets the cell as a slice of the entire column (note: not const -- you can write it)
   bool	 	SetValAsMatrix(const taMatrix* val, int row);
-    // set the matrix cell from a same-sized matrix 
+  // #CAT_Modify set the matrix cell from a same-sized matrix 
   
+  void		EnforceRows(int rows);
+  // force data to have this many rows
+
   bool		HasDispOption(const String& opt) const
   { return disp_opts.contains(opt); } // check if a given display option is set
   const String 	DispOptionAfter(const String& opt) const;
   void		AddDispOption(const String& opt);
+
+  DataTable*		dataTable();
+  // root data table this col belongs to
 
   override bool		Dump_QuerySaveMember(MemberDef* md); // dynamically check for saving data 
   
@@ -207,21 +224,32 @@ private:
   void	Destroy()	{CutLinks(); }; //
 };
 
+/////////////////////////////////////////////////////////
+//   DataTableCols -- group of DataArray
+/////////////////////////////////////////////////////////
 
 class TA_API DataTableCols: public taGroup<DataArray_impl> {
+  // ##CAT_Data columns of a datatable 
 INHERITED(taGroup<DataArray_impl>)
 public:
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   
-  override int		NumListCols() const {return 3;} // name, val_type (float, etc.), disp_opts
-  override String	GetColHeading(const KeyString& key) const; // header text for the indicated column
+  override int		NumListCols() const {return 3;}
+  // name, val_type (float, etc.), disp_opts
+  override String	GetColHeading(const KeyString& key) const;
+  // header text for the indicated column
   override const KeyString GetListColKey(int col) const;
   
-  TA_BASEFUNS(DataTableCols); //
+  TA_BASEFUNS(DataTableCols);
 private:
   void	Initialize();
   void	Destroy()		{}
 };
+
+
+/////////////////////////////////////////////////////////
+//   DataTable
+/////////////////////////////////////////////////////////
 
 /*
   DataTable Notifications
@@ -244,125 +272,158 @@ INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
 public:
-  int 			rows; // #READ_ONLY #NO_SAVE #SHOW the number of rows
-  bool			save_data; // 'true' if data should be saved in project; typically false for logs, true for data patterns
-  DataTableCols	data; // all the columns and actual data
+  /////////////////////////////////////////////////////////
+  // 	Main datatable interface:
+
+  int 			rows;
+  // #READ_ONLY #NO_SAVE #SHOW the number of rows
+  bool			save_data;
+  // 'true' if data should be saved in project; typically false for logs, true for data patterns
+  DataTableCols		data;
+  // all the columns and actual data
   
-  int			cols() const {return data.leaves;}
-  bool			hasData(int col, int row); // true if data at that cell
-  bool			idx(int row_num, int col_size, int& act_idx) const
-    {if (row_num < 0) row_num = rows + row_num;
-    act_idx = col_size - (rows - row_num); return act_idx >= 0;} 
-    // calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
-  bool			RowInRangeNormalize(int& row); // normalizes row (if -ve) and tests result in range 
-  virtual void		Reset();
-  void			RemoveRow(int row_num);
-    // #MENU Remove an entire row of data
-//TODO if needed:  virtual void	ShiftUp(int num_rows);
-  // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
-  void			AddBlankRow() {if (AddRow(1)) wr_itr = rows - 1;}
-  // #MENU add a new row to the data table
-  bool			AddRow(int n); // add n rows, 'true' if added
-  void			AllocRows(int n); // allocate space for at least n rows
 
-  void			SetSaveToFile(bool save_to_file);
-  // #MENU set the save_to_file flag for entire group of data elements
+  /////////////////////////////////////////////////////////
+  // columns
 
-  void			UpdateAllRanges();
-  // update all min-max range data for all float_Data elements in log
+  int			cols() const { return data.leaves; }
+  // #CAT_Columns number of columns
 
-  void			RemoveCol(int col); // removes indicated column; 'true' if removed
-  void			MarkCols(); // mark all cols before updating, for orphan deleting
-  void			RemoveOrphanCols(); // removes all non-pinned marked cols
-  
-  bool 			ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
-    // returns 'true' if the col has the same name and a compatible data type
   DataArray_impl*	NewCol(DataArray_impl::ValType val_type, 
-    const String& col_nm, DataTableCols* col_gp = NULL);
-   // #MENU #MENU_ON_Table #ARG_C_2 create new scalar column of data of specified type
+			       const String& col_nm, DataTableCols* col_gp = NULL);
+  // #MENU #MENU_ON_Table #ARG_C_2 #CAT_Columns create new scalar column of data of specified type
   DataArray_impl*	NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
-   // #MENU #MENU_ON_Table create new matrix column of data of specified type, with specified cell geom
+  // #MENU #MENU_ON_Table #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   DataArray_impl*	NewColMatrixN(DataArray_impl::ValType val_type, 
     const String& col_nm,  const MatrixGeom& cell_geom);
-   // create new matrix column of data of specified type, with specified cell geom
+  // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   
   double_Data*		NewColDouble(const String& col_nm); 
-    // create new column of double data
+  // #CAT_Columns create new column of double data
   float_Data*		NewColFloat(const String& col_nm); 
-    // create new column of floating point data
+  // #CAT_Columns create new column of floating point data
   int_Data*		NewColInt(const String& col_nm); 	 
-    // create new column of integer-level data (= narrow display, actually stored as float)
+  // #CAT_Columns create new column of integer-level data (= narrow display, actually stored as float)
   String_Data*		NewColString(const String& col_nm); 
-    // create new column of string data
+  // #CAT_Columns create new column of string data
 
   DataArray_impl*	FindColName(const String& col_nm, int& col_idx, int val_type = -1,  
     int dims = -1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
-  // find a column of the given name.  if further parameters are specified (val_type of type taBase::ValType, number of dimensions, etc) they are also matching criteria
+  // #CAT_Columns find a column of the given name.  if further parameters are specified (val_type of type taBase::ValType, number of dimensions, etc) they are also matching criteria
 
   DataArray_impl*	FindMakeColName(const String& col_nm, int& col_idx, DataArray_impl::ValType val_type,  int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
-  // find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
+  // #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
   DataTableCols*	NewGroupDouble(const String& base_nm, int n); 
-    // create new sub-group of doubles of size n, named as base_nm_index
+  // #CAT_Columns create new sub-group of doubles of size n, named as base_nm_index
   DataTableCols*	NewGroupFloat(const String& base_nm, int n); 
-    // create new sub-group of floats of size n, named as base_nm_index
+  // #CAT_Columns create new sub-group of floats of size n, named as base_nm_index
   DataTableCols*	NewGroupInt(const String& base_nm, int n); 
-    // create new sub-group of ints of size n, named as base_nm_index
+  // #CAT_Columns create new sub-group of ints of size n, named as base_nm_index
   DataTableCols*	NewGroupString(const String& base_nm, int n); 
-    // create new sub-group of strings of size n, named as base_nm_index
+  // #CAT_Columns create new sub-group of strings of size n, named as base_nm_index
 
-  DataArray_impl*	NewColFromChannelSpec(ChannelSpec* cs)
-   // #MENU_1N create new matrix column of data based on name/type in the data item (default is Variant)
-    {if (cs) return NewColFromChannelSpec_impl(cs); else return NULL;}
-    
-  DataArray_impl*	GetColForChannelSpec(ChannelSpec* cs)
-   // #MENU_1N find existing or create new matrix column of data based on name/type in the data item
-    {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
-    
   DataArray_impl* 	GetColData(int col) const;
-    // get col data for given leaf column 
+  // #CAT_Columns get col data for given leaf column 
   taMatrix*		GetColMatrix(int col) const;
-    // get matrix for given leaf column -- WARNING: this is NOT row-number safe 
+  // #CAT_Columns get matrix for given leaf column -- WARNING: this is NOT row-number safe 
 
   void			SetColName(const String& col_nm, int col);
-  // set column name for given column
+  // #CAT_Columns set column name for given column
   void			AddColDispOpt(const String& dsp_opt, int col);
-  // add display option for given leaf column
+  // #CAT_Columns add display option for given leaf column
+
+  bool 			ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
+  // #CAT_Columns returns 'true' if the col has the same name and a compatible data type
+  DataArray_impl*	NewColFromChannelSpec(ChannelSpec* cs)
+  // #MENU_1N #CAT_Columns create new matrix column of data based on name/type in the data item (default is Variant)
+  { if (cs) return NewColFromChannelSpec_impl(cs); else return NULL; }
+    
+  DataArray_impl*	GetColForChannelSpec(ChannelSpec* cs)
+  // #MENU_1N #CAT_Columns find existing or create new matrix column of data based on name/type in the data item
+    {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
+    
+  void			RemoveCol(int col);
+  // #CAT_Columns removes indicated column; 'true' if removed
+  virtual void		Reset();
+  // #CAT_Modify remove all columns and data
+
+  void			MarkCols();
+  // #CAT_Columns mark all cols before updating, for orphan deleting
+  void			RemoveOrphanCols();
+  // #CAT_Columns removes all non-pinned marked cols
   
+
+  /////////////////////////////////////////////////////////
+  // rows (access)
+
+  bool			hasData(int col, int row);
+  // #CAT_Rows true if data at that cell
+  bool			idx(int row_num, int col_size, int& act_idx) const
+  { if (row_num < 0) row_num = rows + row_num;
+    act_idx = col_size - (rows - row_num); return act_idx >= 0;} 
+  // #CAT_Rows calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
+  bool			RowInRangeNormalize(int& row);
+  // #CAT_Rows normalizes row (if -ve) and tests result in range 
+  void			AllocRows(int n);
+  // #CAT_Rows allocate space for at least n rows
+  void			AddBlankRow() {if (AddRow(1)) wr_itr = rows - 1;}
+  // #MENU #CAT_Rows add a new row to the data table
+  bool			AddRow(int n);
+  // #CAT_Rows add n rows, 'true' if added
+  void			RemoveRow(int row_num);
+  // #MENU #CAT_Rows Remove an entire row of data
+//TODO if needed:  virtual void	ShiftUp(int num_rows);
+  // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
+  void			RemoveAllRows() { ResetData(); }
+  // #CAT_Rows remove all of the rows, but keep the column structure
+
   double 		GetValAsDouble(int col, int row);
-  // get data of scalar type, in double form, for given leaf col, row; if data is NULL, then 0 is returned
+  // #CAT_Rows get data of scalar type, in double form, for given leaf col, row; if data is NULL, then 0 is returned
   bool 			SetValAsDouble(double val, int col, int row);
-  // set data of scalar type, in String form, for given leaf column, row; does nothing if no cell' 'true' if set
+  // #CAT_Rows set data of scalar type, in String form, for given leaf column, row; does nothing if no cell' 'true' if set
   float 		GetValAsFloat(int col, int row);
-  // get data of scalar type, in float form, for given leaf col, row; if data is NULL, then 0 is returned
+  // #CAT_Rows get data of scalar type, in float form, for given leaf col, row; if data is NULL, then 0 is returned
   bool 			SetValAsFloat(float val, int col, int row);
-  // set data of scalar type, in String form, for given leaf column, row; does nothing if no cell' 'true' if set
+  // #CAT_Rows set data of scalar type, in String form, for given leaf column, row; does nothing if no cell' 'true' if set
   const String 		GetValAsString(int col, int row) const;
-  // get data of scalar type, in String form, for given leaf column, row; if data is NULL, then "n/a" is returned
+  // #CAT_Rows get data of scalar type, in String form, for given leaf column, row; if data is NULL, then "n/a" is returned
   bool 			SetValAsString(const String& val, int col, int row);
-  // set data of scalar type, in String form, for given leaf column, row; does nothing if no cell; 'true if set
+  // #CAT_Rows set data of scalar type, in String form, for given leaf column, row; does nothing if no cell; 'true if set
 
   const Variant 	GetValAsVar(int col, int row) const;
-  // get data of scalar type, in Variant form, for given column, row; Invalid/NULL if no cell
+  // #CAT_Rows get data of scalar type, in Variant form, for given column, row; Invalid/NULL if no cell
   bool 			SetValAsVar(const Variant& val, int col, int row);
-  // set data of scalar type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
+  // #CAT_Rows set data of scalar type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
 
   taMatrix*	 	GetValAsMatrix(int col, int row);
-  // get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+  // #CAT_Rows get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
-  // set data of any type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
+  //#CAT_Rows  set data of any type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
 
+  /////////////////////////////////////////////////////////
+  // saving/loading (file)
+
+  // todo: is this needed?  do we really want separate control per column?
+  void			SetSaveToFile(bool save_to_file);
+  // #MENU #CAT_File set the save_to_file flag for entire group of data elements
+  
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  void 			SaveHeader(ostream& strm); // saves header information, tab-separated, 
-  void 			SaveData(ostream& strm); // saves data, one line per rec, tab-separated
-  void 			LoadHeader(istream& strm); // loads header information -- preserves current headers if possible
-  void 			LoadData(istream& strm, int max_recs = -1); // loads data, up to max num of recs (-1 for all)
+  void 			SaveHeader(ostream& strm);
+  // #CAT_File saves header information, tab-separated, 
+  void 			SaveData(ostream& strm);
+  // #CAT_File saves data, one line per rec, tab-separated
+  void 			LoadHeader(istream& strm);
+  // #CAT_File loads header information -- preserves current headers if possible
+  void 			LoadData(istream& strm, int max_recs = -1);
+  // #CAT_File loads data, up to max num of recs (-1 for all)
   
   int  			MinLength();		// #IGNORE
   int  			MaxLength();		// #IGNORE
 
-  DataTableModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
+  DataTableModel*	GetDataModel();
+  // #IGNORE returns new if none exists, or existing -- enables views to be shared
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
@@ -373,52 +434,71 @@ public:
   TA_BASEFUNS(DataTable); //
 
 protected: 
-  void			RowsAdding(int n, bool begin); // indicate beginning and end of row adding -- you have to pass the same n each time; NOT nestable
+  /////////////////////////////////////////////////////////
+  // IMPL
 
-public: // DataBlock i/f and common routines
-  override DBOptions	dbOptions() const // options the instance type support
-    {return (DBOptions)(DB_IND_SEQ_SRC_SNK | DB_SINK_DYNAMIC);} 
-  override int		ItemCount() const {return rows;} 
-protected: // DataBlock i/f and common routines
-  inline int		channelCount() const {return data.leaves;} // #IGNORE
-  inline const String	channelName(int chan) const  // #IGNORE
-    {DataArray_impl* da = data.Leaf(chan);
-     if (da) return da->name; else return _nilString;}
+  void			RowsAdding(int n, bool begin);
+  // indicate beginning and end of row adding -- you have to pass the same n each time; NOT nestable
 
-public: // DataSource i/f
-  override int		sourceChannelCount() const {return channelCount();}
-    // for combo src/sinks where channels are all the same
-  override const String	sourceChannelName(int chan) const 
-    {return channelName(chan);}
+public:
+  /////////////////////////////////////////////////////////
+  // DataBlock i/f and common routines: see ta_data.h for details
+
+  override DBOptions	dbOptions() const
+  { return (DBOptions)(DB_IND_SEQ_SRC_SNK | DB_SINK_DYNAMIC); } 
+  override int		ItemCount() const { return rows; } 
+
+protected:
+  /////////////////////////////////////////////////////////
+  // DataBlock i/f IMPL
+  inline int		channelCount() const {return data.leaves;}
+  inline const String	channelName(int chan) const
+  { DataArray_impl* da = data.Leaf(chan);
+    if (da) return da->name; else return _nilString; }
+
+public:
+  /////////////////////////////////////////////////////////
+  // DataSource i/f
+
+  override int		sourceChannelCount() const { return channelCount(); }
+  override const String	sourceChannelName(int chan) const { return channelName(chan); }
   override void		ResetData();
-    // #MENU #MENU_ON_Actions deletes all the data, but keeps the column structure
-protected: // DataSource i/f
-  override const Variant GetData_impl(int chan)
-  {return GetValAsVar(chan, rd_itr);}
-  override taMatrix*	GetMatrixData_impl(int chan);//
-//  virtual bool		ReadItem_impl() {return true;} 
+  // #MENU #MENU_ON_Actions #CAT_Rows deletes all the data (rows), but keeps the column structure
 
-public: // DataSink i/f
+protected:
+  /////////////////////////////////////////////////////////
+  // DataSource i/f IMPL
+  override const Variant GetData_impl(int chan)
+  { return GetValAsVar(chan, rd_itr);}
+  override taMatrix*	GetMatrixData_impl(int chan);
+  //  virtual bool		ReadItem_impl() {return true;} 
+
+public:
+  /////////////////////////////////////////////////////////
+  // DataSink i/f
   override int		sinkChannelCount() const {return channelCount();}
-  override const String	sinkChannelName(int chan) const {return channelName(chan);}//
+  override const String	sinkChannelName(int chan) const {return channelName(chan);}
   override bool		AddSinkChannel(ChannelSpec* cs); 
-  override bool		AssertSinkChannel(ChannelSpec* cs); //
-protected: // DataSink i/f
-  override bool		AddItem_impl(int n) {return AddRow(n);} // adds n items
+  override bool		AssertSinkChannel(ChannelSpec* cs);
+
+protected:
+  /////////////////////////////////////////////////////////
+  // DataSink i/f IMPL
+  override bool		AddItem_impl(int n) {return AddRow(n);}
   override void		DeleteSinkChannel_impl(int chan) {RemoveCol(chan);}
   override taMatrix*	GetSinkMatrix_impl(int chan) 
-    {return GetValAsMatrix(chan, wr_itr);} //note: DS refs it
+  { return GetValAsMatrix(chan, wr_itr);} //note: DS refs it
   override bool		SetData_impl(const Variant& data, int chan) 
-    {return SetValAsVar(data, chan, wr_itr);}
+  { return SetValAsVar(data, chan, wr_itr);}
   override bool		SetMatrixData_impl(const taMatrix* data, int chan) 
-    {return SetValAsMatrix(data, chan, wr_itr);}
+  { return SetValAsMatrix(data, chan, wr_itr);}
 
 protected:
   DataTableModel*	m_dm; // #IGNORE note: once we create, always exists
   
   DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, 
-    const String& col_nm, DataTableCols* col_gp = NULL);
-   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate, col_gp=NULL means data
+				    const String& col_nm, DataTableCols* col_gp = NULL);
+  // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate, col_gp=NULL means data
   DataArray_impl*	GetColForChannelSpec_impl(ChannelSpec* cs);
   DataArray_impl*	NewColFromChannelSpec_impl(ChannelSpec* cs);
   
@@ -429,6 +509,10 @@ private:
 
 SmartRef_Of(DataTable) // DataTableRef
 
+
+/////////////////////////////////////////////////////////
+//   DataTable Group
+/////////////////////////////////////////////////////////
 
 class TA_API DataTable_Group : public taGroup<DataTable> {
   // group of data objects
@@ -442,8 +526,13 @@ private:
 };
 
 
+/////////////////////////////////////////////////////////
+//   DataArray templates
+/////////////////////////////////////////////////////////
+
 template<class T> 
-class DataArray : public DataArray_impl { // #VIRT_BASE #NO_INSTANCE template for common elements
+class DataArray : public DataArray_impl {
+  // #VIRT_BASE #NO_INSTANCE template for common elements
 public:
   override taMatrix* 	AR()	{ return &ar; } // the array pointer
   override const taMatrix* AR() const { return &ar; } // the array pointer
@@ -589,7 +678,8 @@ private:
 };
 
 
-class TA_API DataTableModel: public QAbstractTableModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
+class TA_API DataTableModel: public QAbstractTableModel {
+  // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
 friend class DataTableCols;
 friend class DataTable;
