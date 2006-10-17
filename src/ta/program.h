@@ -538,22 +538,19 @@ public:
     RV_NO_PROGRAM // no program was available to run
   };
    
-  // TODO: need to clarify difference between current state and requested state, ex RUN but user wants to STOP, while running, still not stopped -- may need a separate var for requests to stop -- but if split between two vars, makes gui state control a lot more complicated (custom code vs. baked in gui enabling)
-  enum RunState { // current run state, is global to all active programs
+  enum RunState { // current run state for this program
     DONE = 0, 	// there is no program running or stopped; any previous run completed
-    INIT,	// tells the prog to reset its state to the beginning; this is a "running" state
+    INIT,	// program is running its init_code
+    RUN,	// program is running its prog_code
     STOP,	// the program is stopped (note: NOT the same as "DONE")
-    RUN,	// normal running state; this is a "running" state
-    STEP,	// state when we are executing a Step; this is a "running" state
-    STOP_REQ,	// a stopping request has been issued -- next StopCheck should find and stop!
-    NOT_INIT	// init has not yet been run
+    NOT_INIT,	// init has not yet been run
   };
-  
-  static RunState	run_state; // #READ_ONLY the one and only global run mode for current running prog
-  
-  static Program*	MakeTemplate(); // make a template instance (with children) suitable for root.templates
-  
+
   Program_Group*	prog_gp;   // #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
+
+  RunState		run_state; // #READ_ONLY #NO_SAVE this program's run state
+  static bool		stop_req;  // #READ_ONLY a stop was requested by someone -- stop at next chance
+  static bool		step_mode; // #READ_ONLY the program was run in step mode -- check for stepping
   
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgFlags		flags;  // control flags, for display and execution control
@@ -580,7 +577,7 @@ public:
   virtual void	Step();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP step the program, at the selected step level
   virtual void	Stop();
-  // #BUTTON #GHOST_OFF_run_state:RUN,STEP stop the running programs
+  // #BUTTON #GHOST_OFF_run_state:RUN stop the running programs
   
   virtual void  Compile();
   // #BUTTON #GHOST_OFF_m_dirty:true generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
@@ -610,6 +607,8 @@ public: // XxxGui versions provide feedback to the usbool no_gui = falseer
     // #MENU #MENU_ON_Actions #MENU_CONTEXT #BUTTON open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
 #endif
 
+  static Program*	MakeTemplate(); // make a template instance (with children) suitable for root.templates
+  
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
@@ -741,6 +740,7 @@ class TA_API ProgramCall: public ProgEl {
   INHERITED(ProgEl)
 public:
   ProgramRef		target; // the program to be called
+  bool			call_init; // if true, run the init_code on that program, not prog_code
   ProgArg_List		prog_args; // arguments to the program--copied to prog before call
 
   virtual void		UpdateGlobalArgs(); 

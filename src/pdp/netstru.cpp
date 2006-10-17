@@ -233,6 +233,10 @@ void ConSpec::Copy_(const ConSpec& cp) {
   wt_limits = cp.wt_limits;
 }
 
+bool ConSpec::CheckConfig(Con_Group* cg, bool quiet) {
+  return true;
+}
+
 int ConSpec::UseCount() {
   Network* net = (Network *) GET_MY_OWNER(Network);
   if(!net) return -1;
@@ -1205,11 +1209,11 @@ void UnitSpec::Copy_(const UnitSpec& cp) {
   sse_tol = cp.sse_tol;
 }
 
-bool UnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet) {
+bool UnitSpec::CheckConfig(Unit* un, bool quiet) {
   Con_Group* recv_gp;
   int g;
   FOR_ITR_GP(Con_Group, recv_gp, un->recv., g) {
-    if(!recv_gp->CheckConfig(lay, un, net, quiet)) return false;
+    if(!recv_gp->CheckConfig(quiet)) return false;
   }
   return true;
 }
@@ -3678,13 +3682,12 @@ bool Layer::CheckTypes(bool quiet) {
   return true;
 }
 
-bool Layer::CheckConfig(Network* net, bool quiet) {
+bool Layer::CheckConfig(bool quiet) {
   // layerspec should take over this function in layers that have them!
   Unit* u;
   taLeafItr ui;
   FOR_ITR_EL(Unit, u, units., ui) {
-    if(!u->CheckConfig(this, net, quiet))
-      return false;
+    if(!u->CheckConfig(quiet)) return false;
   }
   return true;
 }
@@ -4536,7 +4539,7 @@ bool Network::CheckConfig(bool quiet) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->CheckConfig(this, quiet))
+    if(!l->CheckConfig(quiet))
       return false;
   }
   return true;

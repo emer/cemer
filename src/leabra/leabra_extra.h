@@ -71,7 +71,7 @@ public:
   virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
   // get context source value for given context unit
 
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
 
   void	Defaults();
 
@@ -631,7 +631,7 @@ public:
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -783,7 +783,7 @@ public:
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
 
   void	UpdateAfterEdit();
   void 	Initialize();

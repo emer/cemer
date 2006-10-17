@@ -457,15 +457,14 @@ void LeabraUnitSpec::UpdateAfterEdit() {
     act_range.max = depress.max_amp;
 }
 
-bool LeabraUnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet) {
+bool LeabraUnitSpec::CheckConfig(Unit* un, bool quiet) {
+  if(!UnitSpec::CheckConfig(un, quiet)) return false;
+
+  Network* net = GET_MY_OWNER(Network);
+
   act.send_delta = ((LeabraNetwork*)net)->send_delta; // always copy from network, so it is global..
 
-  Con_Group* recv_gp;
   int g;
-  FOR_ITR_GP(Con_Group, recv_gp, un->recv., g) {
-    if(!recv_gp->CheckConfig(lay, un, net, quiet)) return false;
-  }
-
   Con_Group* send_gp;
   FOR_ITR_GP(Con_Group, send_gp, un->send., g) {
     if(send_gp->size < 2) continue;
@@ -476,7 +475,7 @@ bool LeabraUnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet)
       if(sc != first_sc) {
 	if(!quiet) taMisc::Error("Leabra CheckConfig Error: the effective weight scales for\
  different sending connections within a group are not all the same!  Sending Layer:",
-				 lay->name, ", Rev Layer:", send_gp->prjn->layer->name,
+				 send_gp->prjn->from->name, ", Rev Layer:", send_gp->prjn->layer->name,
 				 ", first_sc: ", (const char*)String(first_sc), ", sc: ",
 				 (const char*)String(sc));
 				 //				 ", con:", String(j));
@@ -1413,12 +1412,8 @@ void LeabraLayerSpec::CutLinks() {
   LayerSpec::CutLinks();
 }
 
-bool LeabraLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  LeabraUnit* u;
-  taLeafItr ui;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., ui) {
-    if(!u->CheckConfig(lay, net, quiet)) return false;
-  }
+bool LeabraLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  // basic guy doesn't check anything yet..
   return true;
 }
 
@@ -2629,6 +2624,11 @@ void LeabraLayerSpec::Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayer::UpdateWeights() {
   Layer::UpdateWeights();
+}
+
+bool LeabraLayer::CheckConfig(bool quiet) {
+  if(!Layer::CheckConfig(quiet)) return false; // checks units
+  return spec->CheckConfig(this, quiet); // use layerspec's version for everything else
 }
 
 //////////////////////////

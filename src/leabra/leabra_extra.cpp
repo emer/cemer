@@ -66,8 +66,11 @@ void LeabraContextLayerSpec::InitLinks() {
 //   hysteresis_c = 1.0f - hysteresis;
 // }
 
-bool LeabraContextLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool LeabraContextLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("LeabraContextLayerSpec requires trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
@@ -396,8 +399,8 @@ void ScalarValLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool ScalarValLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool ScalarValLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
 
   if(lay->n_units < 3) {
     if(!quiet) taMisc::Error("ScalarValLayerSpec: coarse-coded scalar representation requires at least 3 units, I just set n_units");
@@ -1114,8 +1117,8 @@ void TwoDValLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool TwoDValLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool TwoDValLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
 
   if(lay->n_units < 3) {
     if(!quiet) taMisc::Error("TwoDValLayerSpec: coarse-coded twod representation requires at least 3 units, I just set n_units");

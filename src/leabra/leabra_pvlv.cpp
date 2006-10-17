@@ -104,9 +104,11 @@ void PViLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool PViLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, net, quiet))
+bool PViLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
     return false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("PViLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
@@ -329,9 +331,11 @@ void LVeLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool LVeLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, net, quiet))
+bool LVeLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
     return false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("LVeLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
@@ -510,11 +514,13 @@ void PVLVDaLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("PVLVDaLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
@@ -1129,9 +1135,9 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
   net->Build();
   net->Connect();
 
-  bool ok = pvisp->CheckConfig(pvi, net, true) && lvesp->CheckConfig(lve, net, true)
-    && lvisp->CheckConfig(lve, net, true)
-    && dasp->CheckConfig(vta, net, true) && pvesp->CheckConfig(pve, net, true);
+  bool ok = pvisp->CheckConfig(pvi, true) && lvesp->CheckConfig(lve, true)
+    && lvisp->CheckConfig(lve, true)
+    && dasp->CheckConfig(vta, true) && pvesp->CheckConfig(pve, true);
 
   if(!ok) {
     msg =

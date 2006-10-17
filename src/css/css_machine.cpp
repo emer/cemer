@@ -3272,7 +3272,7 @@ cssEl* cssProg::Cont() {
 	top->last_bp_prog = this;
 	top->last_bp_pc = PC();
 	top->run_stat = cssEl::BreakPoint;
-	Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	Program::stop_req = true; // stop programs when this guy was stopped
       }
       else if(top->external_stop && !(state & State_NoBreak)) {
 	top->run_stat = cssEl::BreakPoint;
@@ -3283,10 +3283,10 @@ cssEl* cssProg::Cont() {
 	cssEl::RunStat rval = nxt->Do();
 	if((top->watchpoints.size > 0) && CheckWatch()) {
 	  top->run_stat = cssEl::BreakPoint;
-	  Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	  Program::stop_req = true; // stop programs when this guy was stopped
 	}
 	else if(top->run_stat == cssEl::ExecError) // do could have triggered an exec error
-	  Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	  Program::stop_req = true; // stop programs when this guy was stopped
 	else
 	  top->run_stat = rval;
       }
@@ -3312,7 +3312,7 @@ cssEl* cssProg::Cont() {
 	top->last_bp_prog = this;
 	top->last_bp_pc = PC();
 	top->run_stat = cssEl::BreakPoint;
-	Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	Program::stop_req = true; // stop programs when this guy was stopped
       }
       else if(top->external_stop && !(state & State_NoBreak)) {
 	top->run_stat = cssEl::BreakPoint;
@@ -3323,10 +3323,10 @@ cssEl* cssProg::Cont() {
 	cssEl::RunStat rval = nxt->Do();
 	if((top->watchpoints.size > 0) && CheckWatch()) {
 	  top->run_stat = cssEl::BreakPoint;
-	  Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	  Program::stop_req = true; // stop programs when this guy was stopped
 	}
 	else if(top->run_stat == cssEl::ExecError) 
-	  Program::run_state = Program::STOP; // stop programs when this guy was stopped
+	  Program::stop_req = true; // stop programs when this guy was stopped
 	else
 	  top->run_stat = rval;
 	if(top->debug < 2)

@@ -63,11 +63,6 @@ void DaModUnitSpec::Defaults() {
   Initialize();
 }
 
-bool DaModUnitSpec::CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet) {
-  LeabraUnitSpec::CheckConfig(un, lay, net, quiet);
-  return true;
-}
-
 void DaModUnitSpec::InitState(LeabraUnit* u, LeabraLayer* lay) {
   LeabraUnitSpec::InitState(u, lay);
   DaModUnit* lu = (DaModUnit*)u;
@@ -280,9 +275,11 @@ void ExtRewLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool ExtRewLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, net, quiet))
+bool ExtRewLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
     return false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("ExtRewLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
@@ -652,9 +649,11 @@ void TDRewPredLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool TDRewPredLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, net, quiet))
+bool TDRewPredLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
     return false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("TDRewPredLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
@@ -844,9 +843,11 @@ void TDRewIntegLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool TDRewIntegLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, net, quiet))
+bool TDRewIntegLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
     return false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("TDRewIntegLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
@@ -1004,11 +1005,13 @@ void TdLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool TdLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool TdLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("TdLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
@@ -1378,8 +1381,8 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   net->Build();
   net->Connect();
 
-  bool ok = tdrpsp->CheckConfig(tdrp, net, true) && tdintsp->CheckConfig(tdint, net, true)
-    && tdsp->CheckConfig(tdda, net, true) && ersp->CheckConfig(extrew, net, true);
+  bool ok = tdrpsp->CheckConfig(tdrp, true) && tdintsp->CheckConfig(tdint, true)
+    && tdsp->CheckConfig(tdda, true) && ersp->CheckConfig(extrew, true);
 
   if(!ok) {
     msg =

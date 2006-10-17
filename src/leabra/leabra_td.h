@@ -77,8 +77,6 @@ public:
   void		PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
 			   LeabraNetwork* net, bool set_both=false);
 
-  bool  CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet=false);
-
   void	Defaults();
   void	Initialize();
   void	Destroy()		{ };
@@ -169,7 +167,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -247,7 +245,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -284,7 +282,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -316,7 +314,7 @@ public:
   void	Compute_dWt(LeabraLayer*, LeabraNetwork*) { }; // nop
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void 	Initialize();

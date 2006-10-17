@@ -66,7 +66,7 @@ public:
   void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void 	Initialize();
@@ -334,7 +334,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -376,7 +376,7 @@ public:
   void	Compute_dWt(LeabraLayer*, LeabraNetwork*);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void 	Initialize();
@@ -453,7 +453,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }
@@ -492,7 +492,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet=false);
+  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }

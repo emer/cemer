@@ -230,7 +230,7 @@ public:
 
   bool	CheckObjectType_impl(TAPtr obj); // don't do checking on 1st con group in units
 
-  virtual bool  	CheckConfig(Con_Group*, Layer*, Unit*, Network*, bool =false) { return true; }
+  virtual bool  	CheckConfig(Con_Group* cg, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
   virtual int		UseCount(); // return number of times this spec is used
@@ -376,8 +376,7 @@ public:
   void 	UpdateWeights(Unit* ru)	 	{ spec->UpdateWeights(this,ru); }
   void  Compute_dWt(Unit* ru)	 	{ spec->Compute_dWt(this,ru); }
 
-  bool  CheckConfig(Layer* lay, Unit* ru, Network* net, bool quiet=false)
-  { return spec->CheckConfig(this, lay, ru, net, quiet); }
+  override bool  CheckConfig(bool quiet=false) 	{ return spec->CheckConfig(this, quiet); }
 
   int 	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent = 0);
@@ -428,7 +427,7 @@ public:
   virtual void	BuildBiasCons();
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE build the bias connections according to specified type
 
-  virtual bool  CheckConfig(Unit* un, Layer* lay, Network* net, bool quiet=false);
+  virtual bool  CheckConfig(Unit* un, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
   virtual int	UseCount(); // return number of times this spec is used
@@ -518,8 +517,8 @@ public: //
 
   float	Compute_SSE()		{ return spec->Compute_SSE(this); }
 
-  bool  CheckConfig(Layer* lay, Network* net, bool quiet=false)
-  { return spec->CheckConfig(this, lay, net, quiet); }
+  override bool  CheckConfig(bool quiet=false)
+  { return spec->CheckConfig(this, quiet); }
 
   virtual void 	ApplyExternal(float val, ExtType act_ext_flags, Random* ran = NULL);
   // apply external input or target value to unit
@@ -1046,7 +1045,7 @@ public:
   // #MENU set for all unit's connections in layer
   virtual bool	CheckTypes(bool quiet=false);
   // #MENU #USE_RVAL check that the object and spec types are all ok
-  virtual bool 	CheckConfig(Network* net, bool quiet=false);
+  override bool	CheckConfig(bool quiet=false);
   // check for for misc configuration settings required by different algorithms
   virtual void	FixPrjnIndexes();
   // #MENU fix the projection indicies of the connection groups (other_idx)
@@ -1259,7 +1258,7 @@ public:
   // check if network is connected
   virtual bool	CheckTypes(bool quiet=false);
   // #MENU #MENU_ON_Actions #USE_RVAL #MENU_SEP_BEFORE check that the object and spec types are all ok
-  virtual bool	CheckConfig(bool quiet=false);
+  override bool	CheckConfig(bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
   virtual void	UpdtAfterNetMod();

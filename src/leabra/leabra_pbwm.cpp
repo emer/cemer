@@ -67,8 +67,8 @@ void SNcLayerSpec::HelpConfig() {
   PVLVDaLayerSpec::HelpConfig();
 }
 
-bool SNcLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!PVLVDaLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool SNcLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!PVLVDaLayerSpec::CheckConfig(lay, quiet)) return false;
 
   int myidx = lay->own_net->layers.FindLeaf(lay);
 
@@ -291,9 +291,11 @@ void MatrixLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool MatrixLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet))
+bool MatrixLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet))
     return false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -898,11 +900,13 @@ void SNrThalLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool SNrThalLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool SNrThalLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
     if(!quiet) taMisc::Error("SNrThalLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
@@ -1054,8 +1058,8 @@ void PFCLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool PFCLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool PFCLayerSpec::CheckConfig(LeabraLayer* lay,  bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
 
   if(decay.clamp_phase2) {
     SetUnique("decay", true);
@@ -1064,6 +1068,8 @@ bool PFCLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet)
     decay.phase2 = 0.1f;
     decay.clamp_phase2 = false;
   }
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(lay->units.gp.size == 1) {
     taMisc::Error("PFCLayerSpec: layer must contain multiple unit groups (= stripes) for indepent searching of gating space!");
@@ -1380,8 +1386,8 @@ void PFCOutLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool PFCOutLayerSpec::CheckConfig(LeabraLayer* lay, LeabraNetwork* net, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, net, quiet)) return false;
+bool PFCOutLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
 
   if(decay.clamp_phase2) {
     SetUnique("decay", true);
@@ -2167,15 +2173,15 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   SetPFCStripes(net, n_stripes);
 
-  bool ok = pfcmsp->CheckConfig(pfc_m, net, true) && matrixsp->CheckConfig(matrix_m, net, true)
-    && snrthalsp->CheckConfig(snrthal_m, net, true) && sncsp->CheckConfig(snc, net, true);
+  bool ok = pfcmsp->CheckConfig(pfc_m, true) && matrixsp->CheckConfig(matrix_m, true)
+    && snrthalsp->CheckConfig(snrthal_m, true) && sncsp->CheckConfig(snc, true);
 
   if(ok && out_gate) {
-    ok = pfcosp->CheckConfig(pfc_o, net, true) && matrixosp->CheckConfig(matrix_o, net, true)
-      && snrthalosp->CheckConfig(snrthal_o, net, true);
+    ok = pfcosp->CheckConfig(pfc_o, true) && matrixosp->CheckConfig(matrix_o, true)
+      && snrthalosp->CheckConfig(snrthal_o, true);
   }
 
-//   if(ok && make_patch) ok = patchsp->CheckConfig(patch, net, true);
+//   if(ok && make_patch) ok = patchsp->CheckConfig(patch, true);
 
   if(!ok) {
     msg =

@@ -1161,6 +1161,7 @@ void MathCall::Initialize() {
 
 void ProgramCall::Initialize() {
   old_target = NULL;
+  call_init = false;
 }
 
 void ProgramCall::InitLinks() {
@@ -1178,6 +1179,7 @@ void ProgramCall::CutLinks() {
 
 void ProgramCall::Copy_(const ProgramCall& cp) {
   target = cp.target;
+  call_init = cp.call_init;
   prog_args = cp.prog_args;
 }
 
@@ -1250,7 +1252,10 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
     rval += "target->DataChanged(DCR_ITEM_UPDATED);\n";
   }
   rval += cssMisc::Indent(indent_level+1);
-  rval += "{ target->Call(this); }\n";
+  if(call_init)
+    rval += "{ target->CallInit(this); }\n";
+  else
+    rval += "{ target->Call(this); }\n";
   rval += cssMisc::Indent(indent_level);
   rval += "}\n";
   
@@ -1287,8 +1292,6 @@ void ProgramCall::UpdateGlobalArgs() {
 //  Program		//
 //////////////////////////
 
-Program::RunState 	Program::run_state = Program::NOT_INIT; 
-
 Program* Program::MakeTemplate() {
 //TODO: this will probably get nuked and replaced with a generic maker on .root
   Program* prog = new Program;
@@ -1311,7 +1314,11 @@ Program* Program::MakeTemplate() {
   return prog;
 }
   
+bool Program::stop_req = false;
+bool Program::step_mode = false;
+
 void Program::Initialize() {
+  run_state = NOT_INIT;
   flags = PF_NONE;
   objs.SetBaseType(&TA_taOBase);
   ret_val = 0;
@@ -1383,16 +1390,19 @@ bool Program::CheckConfig(bool quiet) {
 }
 
 int Program::Call(Program* caller) {
+  setRunState(RUN);
   int rval = Cont_impl();
-  if(run_state == STOP) {
+  if(stop_req) {
     script->Stop();		// stop us
     caller->script->Stop();	// stop caller!
     caller->script->Prog()->Frame()->pc = 0;
+    setRunState(STOP);		// we are done
     // NOTE: this backs up to restart the entire call to fun -- THIS DEPENDS ON THE CODE
     // that generates the call!!!!!  ALWAYS MUST BE IN A SUB-BLOCK of code..
   }
   else {
     script->Restart();		// restart script at beginning if run again	
+    setRunState(DONE);		// we are done
   }
   return rval;
 } 
@@ -1400,7 +1410,8 @@ int Program::Call(Program* caller) {
 int Program::CallInit(Program* caller) {
   setRunState(INIT); // this is redundant if called from an existing INIT but otherwise needed
   int rval = Run_impl();
-  script->Restart();		// for init, always restart script at beginning if run again	
+  script->Restart(); // for init, always restart script at beginning if run again	
+  setRunState(DONE);		// always done..
   return rval;
 } 
 
@@ -1416,8 +1427,8 @@ void Program::Init() {
     }
     taMisc::Error("Error: The Program did not run -- ret_val=", err_str);
   }
-  setRunState(DONE);
   script->Restart();		// restart script at beginning if run again
+  setRunState(DONE);
 } 
 
 bool Program::PreCompileScript_impl() {
@@ -1434,9 +1445,9 @@ bool Program::PreCompileScript_impl() {
 }
 
 void Program::setRunState(RunState value) {
-  //note: run_state is static/global, but its gui effects are instance
   if (run_state == value) return;
   run_state = value;
+  // todo: this might be adding unnec overhead:?
   DataChanged(DCR_ITEM_UPDATED);
 }
 
@@ -1458,12 +1469,14 @@ int Program::Cont_impl() {
   else
     script->Cont();
   //note: shared var state likely changed, so update gui
-  DataChanged(DCR_ITEM_UPDATED);
+  // DataChanged(DCR_ITEM_UPDATED);
   script_compiled = true; // override any run-generated changes!!
   return ret_val;
 }
 
 void Program::Run() {
+  stop_req = false;
+  step_mode = false;
   taMisc::Busy();
   setRunState(RUN);
   Cont_impl();
@@ -1474,10 +1487,14 @@ void Program::Run() {
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
   // unless we were stopped, we are done
-  if (run_state != STOP) {
+  if(stop_req) {
+    setRunState(STOP);
+  }
+  else {
     script->Restart();
     setRunState(DONE);
   }
+  stop_req = false;
 } 
 
 void Program::Step() {
@@ -1485,8 +1502,10 @@ void Program::Step() {
   if(!prog_gp->step_prog) {
     prog_gp->step_prog = prog_gp->Peek();
   }
+  stop_req = false;
+  step_mode = true;
   taMisc::Busy();
-  setRunState(STEP);
+  setRunState(RUN);
   Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != 0) {//TODO: use enums and sensible output string
@@ -1495,14 +1514,19 @@ void Program::Step() {
       "The Program did not run -- ret_val=").cat(String(ret_val)), 
       QMessageBox::Ok, QMessageBox::NoButton);
   }
-  if (run_state != STOP) {	// if not stopped (stepping causes a stop)
+  step_mode = false;
+  if(stop_req) {
+    setRunState(STOP);
+  }
+  else {
     script->Restart();
     setRunState(DONE);
   }
+  stop_req = false;
 }
 
 void Program::Stop() {
-  run_state = STOP_REQ;
+  stop_req = true;
 }
 
 void Program::Stop_impl() {
@@ -1518,11 +1542,12 @@ bool Program::StopCheck() {
   // the above processEvents will process any Stop events and this will directly cause
   // css to stop in its tracks.
   if(run_state == STOP) return true;
-  if(run_state == STOP_REQ) {
+  if(stop_req) {
     Stop_impl();
     return true;
   }
-  if((run_state == STEP) && prog_gp && (prog_gp->step_prog.ptr() == this)) {
+  if((step_mode) && prog_gp && (prog_gp->step_prog.ptr() == this)) {
+    stop_req = true;			// stop everyone else
     Stop_impl();			// time for us to stop
     return true;
   }
@@ -1584,7 +1609,7 @@ const String Program::scriptString() {
     m_scriptCache = "// ";
     m_scriptCache += GetName();
     m_scriptCache += "\n\n/* globals added to hardvars:\n";
-    m_scriptCache += "Program::RunState run_state; //note: global static\n";
+    m_scriptCache += "Program::RunState run_state; // our program's run state\n";
     m_scriptCache += "int ret_val;\n";
     if (args.size > 0) {
       m_scriptCache += "// global script parameters\n";
