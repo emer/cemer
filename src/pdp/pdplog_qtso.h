@@ -36,7 +36,6 @@ class T3GraphTableViewNode;
 
 // forwards
 class TableView;
-class TableViewAdapter; // #IGNORE
 
 class iTableView_Panel;
 class iGridTableViewBase_Panel;
@@ -52,7 +51,6 @@ class iGraphTableView_Panel;
 class PDP_API TableView : public T3DataViewPar {
   // #VIRT_BASE #NO_TOKENS parent class of all log views (Par is only for GraphTableView)
 INHERITED(T3DataViewPar)
-friend class TableViewAdapter;
 public: //
 //TEMP: conversion properties
   int		virt_lines_() const; // #IGNORE prev: log()->virt_lines TEMP conversion property
@@ -163,20 +161,6 @@ protected:
   virtual void		UpdateOwnedData(); // called in UAE to sync data params
   virtual void		UpdateFromBuffer_impl(); // update view from buffer
 
-};
-
-class PDP_API TableViewAdapter: public taBaseAdapter { // ##IGNORE
-  Q_OBJECT
-public:
-  TableViewAdapter(TableView* owner_): taBaseAdapter(owner_) {}
-public slots:
-  // view control -- rows
-/*obs  void 	View_F() {if(owner) ((TableView*)owner)->View_F();}
-  void 	View_R() {if(owner) ((TableView*)owner)->View_R();}
-  void 	View_FSF() {if(owner) ((TableView*)owner)->View_FSF();}
-  void 	View_FSR() {if(owner) ((TableView*)owner)->View_FSR();}
-  void 	View_FF() {if(owner) ((TableView*)owner)->View_FF();}
-  void 	View_FR() {if(owner) ((TableView*)owner)->View_FR();} */
 };
 
 class PDP_API GridTableViewBase : public TableView {
@@ -333,13 +317,14 @@ protected:
   override void		UpdateFromBuffer_impl();
 };
 
+/*TODO: rework so doesn't need an adapter
 class PDP_API GridTableViewAdapter: public TableViewAdapter {
   Q_OBJECT
 public:
   GridTableViewAdapter(GridTableView* owner_): TableViewAdapter(owner_) {}
 public slots:
   void 	ColorBar_execute() {if(owner) ((GridTableView*)owner)->ColorBar_execute();}
-};
+};*/
 
 
 class PDP_API GraphTableView : public TableView {

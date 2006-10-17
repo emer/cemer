@@ -102,12 +102,13 @@ void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
 	md->arg_vals.Add(fa->def); // initial val is default
 	fa++;
       }
-      // use a very simple adduniqnamenew here: all the hard work is already done
+      tp.methods.AddUniqNameNew(md);
+/*nuke      // use a very simple adduniqnamenew here: all the hard work is already done
       int idx;
       if(tp.methods.FindName(md->name, idx) != NULL)
 	tp.methods.Replace(idx, md);
       else
-	tp.methods.Add(md);
+	tp.methods.Add(md);*/
     }
     dt++;
   }

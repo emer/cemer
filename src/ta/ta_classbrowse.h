@@ -89,6 +89,7 @@ public:
   DL_FUNS(taTypeInfoDataLink); //
 
 protected:
+  override iDataPanel* 	CreateDataPanel_impl(); 
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
     iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
 /*  override void		QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden);
@@ -271,7 +272,6 @@ public:
 
 public slots:
   virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiNode*
-  override iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); 
 };
 
 

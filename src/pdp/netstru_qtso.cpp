@@ -794,10 +794,6 @@ void PrjnView::Reset_impl() {
   (ex. "act", "r.wt", etc.), the scale system is keyed to this value.
 
 */
-void NetViewAdapter::viewWin_NotifySignal(ISelectableHost* src, int op) {
-  nv()->viewWin_NotifySignal(src, op);
-}
-
 NetView* NetView::New(T3DataViewFrame* viewer, Network* net) {
   // create NetView
   NetView* nv = new NetView();
@@ -817,7 +813,6 @@ void NetView::Initialize() {
   unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
   unit_src = NULL;
-  SetAdapter(new NetViewAdapter(this));
 }
 
 void NetView::Destroy() {
@@ -1156,9 +1151,9 @@ void NetView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   if (!nvp) {
     nvp = new NetViewPanel(this);
     vw->viewerWindow()->AddPanelNewTab(nvp);
+    vw->t3vs->Connect_SelectableHostNotifySignal(nvp,
+      SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );
   }
-  vw->t3vs->Connect_SelectableHostNotifySignal(adapter,
-    SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );
 }
 
 void NetView::Render_pre() {
@@ -1609,6 +1604,12 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   ColorScaleFromData();
   nv_->InitDisplay(false);
   nv_->UpdateDisplay(false);
+}
+
+void NetViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) {
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  nv_->viewWin_NotifySignal(src, op);
 }
 
 

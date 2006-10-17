@@ -134,12 +134,6 @@ void T3DataView::AddRemoveChildNode_impl(SoNode* node, bool adding) {
   node_so()->addRemoveChildNode(node, adding);
 }
 
-void T3DataView::Assert_Adapter() {
-  if (!adapter) {
-    SetAdapter(new taBaseAdapter(this));
-  }
-}
-
 void T3DataView::ChildClearing(taDataView* child_) { // child is always a T3DataView
   T3DataView* child = (T3DataView*)child_;
   // remove the visual rendering of child, if any

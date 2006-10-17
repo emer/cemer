@@ -67,12 +67,12 @@ public:
   // #NO_SHOW #NO_SAVE clear on new and when col confirmed, used to delete orphans
   bool			pin;
   // set true to prevent this column from being deleted on orphan deleting
-  bool			save_to_file;
-  // save this data to a file (e.g., to a log file in PDP++)?
   bool			is_matrix;
   // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   MatrixGeom		cell_geom;
   // #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
+  
+  bool			save_to_file; //#NO_SHOW #NO_SAVE OBSOLETE -- just included for loading projs until we resave them
   
   virtual taMatrix* 	AR() = 0;
   // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
@@ -96,6 +96,7 @@ public:
   // #CAT_Display low level display width, in tabs (8 chars/tab), taken from spec
   virtual int		maxColWidth() const {return -1;}
   // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
+  virtual bool		saveToFile() const {return true;} //whether to save col -- currently always true
   virtual ValType 	valType() const = 0; // the type of data in each element
 
   static const KeyString key_val_type; // "val_type"
@@ -281,7 +282,6 @@ public:
   // 'true' if data should be saved in project; typically false for logs, true for data patterns
   DataTableCols		data;
   // all the columns and actual data
-  
 
   /////////////////////////////////////////////////////////
   // columns
@@ -405,10 +405,6 @@ public:
   /////////////////////////////////////////////////////////
   // saving/loading (file)
 
-  // todo: is this needed?  do we really want separate control per column?
-  void			SetSaveToFile(bool save_to_file);
-  // #MENU #CAT_File set the save_to_file flag for entire group of data elements
-  
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
   void 			SaveHeader(ostream& strm);
   // #CAT_File saves header information, tab-separated, 

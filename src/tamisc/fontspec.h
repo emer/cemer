@@ -39,10 +39,12 @@ public:
   void	UpdateAfterEdit();
   void	CutLinks();
   void	InitLinks();
-  void	Initialize();
   void	Copy_(const FontSpec& cp);
   COPY_FUNS(FontSpec,taOBase);
   TA_BASEFUNS(FontSpec);
+private:
+  void	Initialize();
+  void	Destroy() {CutLinks();}
 };
 
 

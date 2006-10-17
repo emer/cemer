@@ -184,8 +184,6 @@ protected:
   MemberDef*		m_md; // memberdef of this item in its parent
   T3NodePtr		m_node_so; // Inventor node
 
-  virtual void		Assert_Adapter(); // makes sure the QObject adapter is created
-
   virtual void		AddRemoveChildNode_impl(SoNode* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
 //override void 	ChildAdding(taDataView* child) {} // #IGNORE called from list;
   override void		ChildRemoving(taDataView* child); // #IGNORE called from list; we also forward to DataViewer; we also remove visually

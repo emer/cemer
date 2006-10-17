@@ -26,9 +26,11 @@
 class TAIQTSO_API iCheckBox: public QCheckBox {
 //class __declspec(dllexport) iCheckBox: public QCheckBox {
   Q_OBJECT
+INHERITED(QCheckBox)
 public:
   iCheckBox(QWidget* parent = 0);
   iCheckBox(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
+  iCheckBox(bool value, QWidget* parent); //note: can't have defaults, ambiguity
 
   bool 		isReadOnly() const {return mread_only;}
 

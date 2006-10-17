@@ -39,7 +39,7 @@ friend class PdpServer;
   Q_OBJECT
 public:
   inline PdpServer*	owner() {return (PdpServer*)taBaseAdapter::owner;}
-  PdpServerAdapter(PdpServer* owner_): taBaseAdapter((taOBase*)owner_) {}
+  PdpServerAdapter(PdpServer* owner_): taBaseAdapter((taOABase*)owner_) {}
   
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public slots:
@@ -53,15 +53,15 @@ public slots:
 #endif
 };
 
-class PDP_API PdpServer: public taOBase { 
+class PDP_API PdpServer: public taOABase { 
   // #INSTANCE #TOKENS Pdp Server, for tcp-based remote services 
-INHERITED(taOBase)
+INHERITED(taOABase)
 public:
   unsigned short	port; // #DEF_5360 port number to use -- each instance must have unique port
   bool			open; // #NO_SAVE #SHOW #READ_ONLY set when server is open and accepting connections
   int			clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
   
-  inline PdpServerAdapter* adapter() {return (PdpServerAdapter*)taOBase::adapter;} // #IGNORE
+  inline PdpServerAdapter* adapter() {return (PdpServerAdapter*)taOABase::adapter;} // #IGNORE
 
   bool			OpenServer(); // #BUTTON #GHOST_ON_open open the server and accept connections
   void			CloseServer(bool notify = true); // #BUTTON #GHOST_OFF_open #ARGC_0 stop the server and close open connections

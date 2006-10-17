@@ -88,6 +88,7 @@ public:
   virtual bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const
     {return false;} // asks this type if we should show the md member
 
+  iDataPanel* 		CreateDataPanel(); 
   taiTreeDataNode* 	CreateTreeDataNode(MemberDef* md, taiTreeDataNode* parent,
     taiTreeDataNode* after, const String& node_name, int dn_flags = 0);
     // create the proper tree node, with a tree node as a parent
@@ -110,6 +111,7 @@ protected:
 
   virtual void		Assert_QObj(); // makes sure the qobj is created
   virtual void		FillContextMenu_impl(taiActions* menu) {} // this is usually the one to override
+  virtual iDataPanel* 	CreateDataPanel_impl(); // default uses taiView
   taiTreeDataNode* 	CreateTreeDataNode(MemberDef* md,
     taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
     const String& node_name, int dn_flags); // combined version, only 1 xxPar is set
@@ -291,6 +293,8 @@ protected:
 */
 
 class TA_API ISelectable: public virtual IDataLinkClient { //
+INHERITED(IDataLinkClient)
+friend class ISelectableHost;
 public: // Interface Properties and Methods
   virtual MemberDef*	md() const = 0; // memberdef in parent, if any, of the selected item
   virtual taiDataLink*	par_link() const = 0; // parent item's (if any) link
@@ -316,6 +320,8 @@ public: // Interface Properties and Methods
 
 
 protected:
+  void 			DropHandler(const QMimeData* mime, const QPoint& pos);
+    //  handles all aspects of a drag drop operation
   virtual int		EditActionD_impl_(taiMimeSource* ms, int ea);
     // do Dst op for single selected item; generally doesn't need extending
   virtual int		EditActionS_impl_(int ea);
@@ -378,11 +384,14 @@ public:
   enum DMDType {
     Type_1N,	// <methname>() method; applied to all selected object
     Type_1_2N,	// <methname>(Type2N* param) method; called on object 1 for objects 2:N
-    Type_2N_1	// <methname>(Type1* param) method; called on objects 2:N for object 1
+    Type_2N_1,	// <methname>(Type1* param) method; called on objects 2:N for object 1
+    Type_MimeN_N // <methname>(Type1* param) method; called on objects 1:N for mime source object(s) of common subtype Type1
   };
 
   DynMethodDesc*	AddNew(int dmd_type, MethodDef* md); // creates new DMD and adds, returning ref
   void			Fill(ISelectable_PtrList& sel_items); // clear, then fill based on sel_items
+  void			FillForDrop(const taiMimeSource& ms, 
+    ISelectable_PtrList& sel_items); // clear, then fill based on ms and sel_items (used for Drop operations)
   ~DynMethod_PtrList();
 protected:
   override void 	El_Done_(void* it) {delete (DynMethodDesc*)it;}
@@ -394,6 +403,7 @@ class SelectableHostHelper;
 
 class TA_API ISelectableHost { // interface on the controlling widget hosting ISelectable items
 friend class SelectableHostHelper;
+friend class ISelectable;
 public:
   enum NotifyOp { // notify ops for the NotifySignal -- note, passed as int in the sig/slot
     OP_GOT_FOCUS,
@@ -415,6 +425,7 @@ public:
   QObject*		clipHandlerObj() const; 
     // provided so client can connect to us as a ClipHandler (EditEnabled, EditAction only)
   virtual bool 		hasMultiSelect() const = 0; // true if supports multi select
+  SelectableHostHelper* helperObj() const {return helper;} // for attaching slots
   virtual bool		selectionChanging() {return (m_sel_chg_cnt != 0);}
     // you can use this to escape from sundry gui notifies to yourself (to avoid recursion)
   virtual ISelectable_PtrList&	selItems() {return sel_items;} // currently selected items
@@ -433,6 +444,7 @@ public:
 
   virtual void 		EditActionsEnabled(int&); // return enabled flags
   virtual void 		EditAction(int); // perform the action
+  virtual void 		DropEditAction(int ea); // perform the action (from drop handler)
   
   void			Emit_GotFocusSignal() {Emit_NotifySignal(OP_GOT_FOCUS);} 
     // only signal external guys should call (when we or a parent get focus)
@@ -441,6 +453,8 @@ public:
     const char* sink_slot, bool discnct = false);  // connects (or disconnects) a sink (ex iFrame) to the notify signal raised when sel changes (or gets focus, etc.)
   void 			Connect_SelectableHostItemRemovingSlot(QObject* src_obj, 
     const char* src_signal, bool discnct = false); // connects (or disconnects) an optional ItemRemoving notification
+  void 			UpdateMethodsActionsForDrop();
+    // uses drop_ms and drop_item
 
   ISelectableHost();
   virtual ~ISelectableHost();
@@ -451,6 +465,8 @@ protected:
   ISelectable_PtrList	sel_items;
   DynMethod_PtrList	dyn_methods; // available dynamic methods
   taiAction_List	dyn_actions; // actions corresponding to methods (always 1:1)
+  taiMimeSource*	drop_ms; // during a drop, holds the ms used for dyn and edit actions
+  ISelectable*		drop_item; // during drop, holds the items dropped on
   
   virtual void		UpdateSelectedItems_impl() = 0; 
     // called when force=true for changes, force gui to be selItems
@@ -470,6 +486,7 @@ class TA_API SelectableHostHelper: public QObject {
   Q_OBJECT
 INHERITED(QObject)
 friend class ISelectableHost;
+friend class ISelectable;
 public:
 
 public slots:
@@ -492,6 +509,7 @@ protected:
 
 protected slots:
   void		DynAction(int i) {host->DoDynAction(i);}
+  void		DropEditAction(int ea) {host->DropEditAction(ea);}  // for drops
   void		ItemRemoving(ISelectable* item) {host->RemoveSelectedItem(item, false);}
 private:
   SelectableHostHelper& operator=(const SelectableHostHelper&); // not allowed
@@ -534,7 +552,6 @@ protected:
 protected:
   short int		shn_changing; // for marking forwarding, so we don't reflect back
 
-  virtual iDataPanel* 	MakeNewDataPanel_(taiDataLink* link); // can be overridden, esp for Class browser and other non-tabase
   void 			hideEvent(QHideEvent* e); // override
   void 			showEvent(QShowEvent* e); // override
   virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers

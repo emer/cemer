@@ -64,6 +64,7 @@ class taBase;
 class taSmartRef;
 class taSmartPtr;
 class taOBase;
+class taOABase;
 class taDataView;
 class taNBase;
 class taBase_List;
@@ -797,10 +798,33 @@ private:\
   T ## Ref(const T ## Ref& src); \
 };
 
-#ifdef TA_USE_QT
-
 SmartRef_Of(taBase);		// basic ref if you don't know the type
 
+class TA_API taOBase : public taBase {
+  // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
+INHERITED(taBase)
+public:
+  TAPtr			owner;	// #READ_ONLY #NO_SAVE pointer to owner
+
+  taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
+  override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
+//  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
+
+  TAPtr 	GetOwner() const	{ return owner; }
+  TAPtr		GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
+  TAPtr 	SetOwner(TAPtr ta)	{ owner = ta; return ta; }
+
+  void	CutLinks();
+  TA_BASEFUNS(taOBase); //
+protected:
+  taDataLink*		m_data_link; //
+private:
+  void 	Initialize()	{ owner = NULL; m_data_link = NULL;}
+  void	Destroy();
+}; //
+
+
+#ifdef TA_USE_QT
 /*
  * taBaseAdapter enables a taOBase object to handle Qt events, via a
  * proxy(taBaseAdapter)/stub(taBase) approach. Note that dual-parenting a taBase object
@@ -820,45 +844,33 @@ SmartRef_Of(taBase);		// basic ref if you don't know the type
 
 class TA_API taBaseAdapter: public QObject {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
-friend class taOBase;
+friend class taOABase;
 public:
-  taBaseAdapter(taOBase* owner_): QObject(NULL) {owner = owner_;}
+  taBaseAdapter(taOABase* owner_): QObject(NULL) {owner = owner_;}
   ~taBaseAdapter();
 protected:
-  taOBase* owner; // #IGNORE
+  taOABase* owner; // #IGNORE
 };
 #endif // TA_USE_QT
 
 
-class TA_API taOBase : public taBase {
-  // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
-INHERITED(taBase)
+//NOTE: the taOABase object is not used very much...
+class TA_API taOABase : public taOBase {
+  // #NO_TOKENS #NO_UPDATE_AFTER owned base class with QObject adapter for signals/slots
+INHERITED(taOBase)
 friend class taBaseAdapter;
 public:
-  TAPtr		owner;		// #READ_ONLY #NO_SAVE pointer to owner
 #ifdef TA_USE_QT
   taBaseAdapter* 	adapter; // #IGNORE
   void			SetAdapter(taBaseAdapter* adapter_);
-#endif
-
-  taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
-  override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
-//  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
-
-  TAPtr 	GetOwner() const	{ return owner; }
-  TAPtr		GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
-  TAPtr 	SetOwner(TAPtr ta)	{ owner = ta; return ta; }
-
-#ifdef TA_USE_QT
-  void 	Initialize()			{ owner = NULL; adapter = NULL; m_data_link = NULL;}
+  void 	Initialize()	{adapter = NULL;}
 #else
-  void 	Initialize()			{ owner = NULL; m_data_link = NULL;}
+  void 	Initialize()	{}
 #endif
-  void	Destroy();
   void	CutLinks();
-  TA_BASEFUNS(taOBase); //
-protected:
-  taDataLink*		m_data_link; //
+  TA_BASEFUNS(taOABase); //
+private:
+  void	Destroy() {CutLinks();}
 };
 
 

@@ -379,6 +379,16 @@ taiMimeSource::~taiMimeSource() {
   //nothing
 }
 
+TypeDef* taiMimeSource::CommonSubtype() const {
+  int size = count();
+  if (size == 0) return NULL;
+  TypeDef* rval = item(0)->td();
+  for (int i = 1; (rval && (i < size)); ++i) {
+    rval = TypeDef::GetCommonSubtype(rval, item(i)->td());
+  }
+  return rval;
+}
+
 int taiMimeSource::data(const QString& mimeType, taString& result) const {
   QByteArray ba = data(mimeType);
   result.set(ba.data(), ba.size());

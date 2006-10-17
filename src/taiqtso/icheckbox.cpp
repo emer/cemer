@@ -29,15 +29,22 @@
 #include <QStyleOptionButton>
 
 iCheckBox::iCheckBox(QWidget* parent)
-: QCheckBox(parent)
+: inherited(parent)
 {
   init();
 }
 
 iCheckBox::iCheckBox(const char* text, QWidget* parent)
-: QCheckBox(QString(text), parent)
+: inherited(QString(text), parent)
 {
   init();
+}
+
+iCheckBox::iCheckBox(bool value, QWidget* parent)
+: inherited(parent)
+{
+  init();
+  if (value) setChecked(value); // off is the default
 }
 
 void iCheckBox::init() {

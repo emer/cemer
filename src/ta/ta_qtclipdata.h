@@ -417,13 +417,15 @@ public:
 #endif
 
   virtual bool		IsThisProcess() const = 0; // true if object originates in this process (ie, we can do low-level object-based ops)
+  virtual TypeDef*	CommonSubtype() const; // type of item (if 1) or common subtype if multiple
 
   ~taiMimeSource();
 protected:
   const QMimeData* 	ms;
   int			iter_idx; // iteration index: =-1, not started yet; >=0 < items.size, in range; =size, past end
   bool			in_range() const {return ((iter_idx >= 0) && (iter_idx < count()));}// true if index in range
-  virtual taiMimeItem*	item() const = 0; // current item -- must always be checked with in_range before access
+  taiMimeItem*		item() const {return item(iter_idx);} // current item -- must always be checked with in_range before access
+  virtual taiMimeItem*	item(int idx) const = 0; // item by index
 
   void			AssertList(); // makes sure list is constructed
 #ifndef __MAKETA__
@@ -447,7 +449,7 @@ public:
   ~taiIntMimeSource();
 protected:
   taiClipData*		cd; // must be set -- is also set as ms
-  taiMimeItem*		item() const {return cd->items(iter_idx);} // override
+  taiMimeItem*		item(int idx) const {return cd->items(idx);} // override
 
   taiIntMimeSource(taiClipData* cd); // creates an instance from a cd
 };
@@ -469,7 +471,7 @@ protected:
   taiMimeItem_List	list;
   int			msrc_action;
   int			process_id;
-  taiMimeItem*		item() const {return list.SafeEl(iter_idx);} // override
+  taiMimeItem*		item(int idx) const {return list.SafeEl(idx);} // override
   bool			DecodeDesc(String arg); // decode the full description, return 'true' if valid, build list from desc
 
   taiExtMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded

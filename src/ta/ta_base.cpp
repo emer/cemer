@@ -1412,14 +1412,56 @@ void taSmartRef::DataLinkDestroying(taDataLink* dl) {
 //	taOBase		//
 //////////////////////////
 
-#ifdef TA_USE_QT
+void taOBase::Destroy() {
+  CutLinks();
+}
 
+void taOBase::CutLinks() {
+  if (m_data_link) {
+    m_data_link->DataDestroying(); // link NULLs our pointer
+  }
+  owner = NULL;
+// maybe don't do this for only obases, just for nbases..
+// #ifdef TA_GUI
+//   if(taMisc::gui_active)
+//     taiMisc::CloseEdits((void*)this, GetTypeDef());
+// #endif
+  inherited::CutLinks();
+}
+
+/* all in taBase void taOBase::UpdateAfterEdit(){
+  inherited::UpdateAfterEdit();
+  tabMisc::NotifyEdits(this);
+  if (owner && GetTypeDef()->HasOption("UAE_OWNER")) {
+    bool handled = false;
+    owner->ChildUpdateAfterEdit(this, handled);
+  }
+}
+
+void taOBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+  if (!handled && owner)
+    owner->ChildUpdateAfterEdit(child, handled);
+} */
+
+//////////////////////////
+//  taOABase		//
+//////////////////////////
+
+void taOABase::CutLinks() {
+#ifdef TA_GUI
+  SetAdapter(NULL);
+#endif
+  inherited::CutLinks();
+}
+
+
+#ifdef TA_USE_QT
 taBaseAdapter::~taBaseAdapter() {
   if (owner && (owner->adapter == this)) owner->adapter = NULL;
   owner = NULL;
 }
 
-void taOBase::SetAdapter(taBaseAdapter* adapter_) {
+void taOABase::SetAdapter(taBaseAdapter* adapter_) {
   if (adapter == adapter_) return;
   if (adapter_) { // setting adapter
     if (adapter) { // chaining
@@ -1437,39 +1479,6 @@ void taOBase::SetAdapter(taBaseAdapter* adapter_) {
 #endif
 
 
-void taOBase::Destroy() {
-  CutLinks();
-}
-
-void taOBase::CutLinks() {
-  if (m_data_link) {
-    m_data_link->DataDestroying(); // link NULLs our pointer
-  }
-  owner = NULL;
-// maybe don't do this for only obases, just for nbases..
-// #ifdef TA_GUI
-//   if(taMisc::gui_active)
-//     taiMisc::CloseEdits((void*)this, GetTypeDef());
-// #endif
-#ifdef TA_GUI
-  SetAdapter(NULL);
-#endif
-  inherited::CutLinks();
-}
-
-/* all in taBase void taOBase::UpdateAfterEdit(){
-  inherited::UpdateAfterEdit();
-  tabMisc::NotifyEdits(this);
-  if (owner && GetTypeDef()->HasOption("UAE_OWNER")) {
-    bool handled = false;
-    owner->ChildUpdateAfterEdit(this, handled);
-  }
-}
-
-void taOBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  if (!handled && owner)
-    owner->ChildUpdateAfterEdit(child, handled);
-} */
 
 
 //////////////////////////

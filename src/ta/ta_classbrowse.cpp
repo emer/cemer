@@ -143,6 +143,15 @@ String taTypeInfoDataLink::GetDisplayName() const {
   return data()->name;
 }
 
+iDataPanel* taTypeInfoDataLink::CreateDataPanel_impl() {
+  taiTypeItemDataHost* tidh = 
+    new taiTypeItemDataHost(data(), tik, true, false);
+  tidh->Constr("", "", NULL, taiDataHost::HT_PANEL);
+  EditDataPanel* dp = tidh->EditPanel(this);
+  return dp;
+} 
+
+
 bool taTypeInfoDataLink::ShowMember(MemberDef* md) {
   return false; // na
 }
@@ -634,19 +643,6 @@ iClassBrowseViewer::~iClassBrowseViewer()
 {
 }
 
-iDataPanel* iClassBrowseViewer::MakeNewDataPanel_(taiDataLink* link) {
-  TypeDef* typ = link->GetTypeDef();
-  if (!typ->InheritsFrom(&TA_taTypeInfoDataLink)) {
-    return inherited::MakeNewDataPanel_(link);
-  }
-  taTypeInfoDataLink* dl = static_cast<taTypeInfoDataLink*>(link);
-  taiTypeItemDataHost* tidh = 
-    new taiTypeItemDataHost(dl->data(), dl->tik, true, false);
-  tidh->Constr("", "", NULL, taiDataHost::HT_PANEL);
-  EditDataPanel* dp = tidh->EditPanel(link);
-  return dp;
-} 
-
 void iClassBrowseViewer::mnuNewBrowser(taiAction* mel) {
   taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
   taClassDataLink* dl = static_cast<taClassDataLink*>(node->link());
@@ -681,6 +677,7 @@ void taiTypeItemDataHost::Constr_Labels() {
 //  mb_dat = md->im->GetDataRep(this, NULL, body);
 //  data_el->Add(mb_dat);
 //    rep = mb_dat->GetRep();
+  iCheckBox* chk = NULL;
   iLineEdit* rep = new iLineEdit(ti->name, body);
   rep->setReadOnly(true);
 //  AddName(row, "name", "name of the type item", rep);
@@ -720,6 +717,12 @@ void taiTypeItemDataHost::Constr_Labels() {
     rep->setReadOnly(true);
     AddName(row, "type", "type of the member", NULL);
     AddData(row++, rep, true);
+    
+    chk = new iCheckBox(md->is_static, body);
+    chk->setReadOnly(true);
+    AddName(row, "is_static", "static (non-instance) member", NULL);
+    AddData(row++, chk, true);
+    
     break;
     }
 
@@ -736,6 +739,21 @@ void taiTypeItemDataHost::Constr_Labels() {
     rep->setReadOnly(true);
     AddName(row, "params", "params of the method", NULL);
     AddData(row++, rep, true);
+    
+    chk = new iCheckBox(md->is_static, body);
+    chk->setReadOnly(true);
+    AddName(row, "is_static", "static (non-instance) method", NULL);
+    AddData(row++, chk, true);
+    
+    chk = new iCheckBox(md->is_virtual, body);
+    chk->setReadOnly(true);
+    AddName(row, "is_virtual", "virtual (overridable) method", NULL);
+    AddData(row++, chk, true);
+    
+    chk = new iCheckBox(md->is_override, body);
+    chk->setReadOnly(true);
+    AddName(row, "is_override", "virtual override of a base method", NULL);
+    AddData(row++, chk, true);
     break;
     }
 
@@ -748,6 +766,18 @@ void taiTypeItemDataHost::Constr_Labels() {
 //    AddName(row, "size", "size, in bytes, of the type", repi);
     AddName(row, "size", "size, in bytes, of the type", NULL);
     AddData(row++, repi);
+    
+    // parents
+    String pars;
+    for (int i = 0; i < td->parents.size; ++i) {
+      if (i > 0) pars.cat(", ");
+      pars.cat(td->parents.FastEl(i)->name);
+    }
+    rep = new iLineEdit(pars, body);
+    rep->setReadOnly(true);
+    AddName(row, "parents", "parent type(s)", NULL);
+    AddData(row++, rep, true);
+    
     break;
     }
   default: break; // compiler food

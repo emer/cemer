@@ -657,6 +657,21 @@ void taiDataLink::Assert_QObj() {
   }
 }
 
+iDataPanel* taiDataLink::CreateDataPanel() {
+  return CreateDataPanel_impl();
+}
+
+iDataPanel* taiDataLink::CreateDataPanel_impl() {
+  iDataPanel* rval = NULL;
+  TypeDef* typ = GetDataTypeDef();
+  //typ can be null for non-taBase classes
+  if ((typ == NULL) || (typ->iv == NULL)) return NULL;
+  taiViewType* tiv = typ->iv;
+  rval = tiv->CreateDataPanel(this);
+  return rval;
+}
+
+
 taiTreeDataNode* taiDataLink::CreateTreeDataNode(MemberDef* md, taiTreeDataNode* parent,
   taiTreeDataNode* after, const String& node_name, int dn_flags)
 {
@@ -1210,6 +1225,58 @@ QObject* ISelectable::clipHandlerObj() const {
   return (host_) ? host_->clipHandlerObj() : NULL;
 }
 
+// called from ui to handle drops
+void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos) {
+  taiMimeSource* ms = taiMimeSource::New(mime);
+  ISelectableHost* host_ = host(); //cache
+  
+  // set for the menu callbacks
+  host_->drop_ms = ms;
+  host_->drop_item = this;
+  
+  int ea = GetEditActions_(ms);
+  // always show menu, for consistency
+  
+  taiMenu* menu = new taiMenu(widget(), taiMenu::normal, 0);
+  QAction* act;
+
+  act = menu->AddItem("&Move Here", taiAction::int_act,
+    host_->helperObj(),  SLOT(DropEditAction(int)), 
+    taiClipData::EA_DROP_MOVE, QKeySequence("Shift"));
+  act->setEnabled(ea & taiClipData::EA_DROP_MOVE);
+  
+  act = menu->AddItem("&Copy Here", taiAction::int_act,
+    host_->helperObj(),  SLOT(DropEditAction(int)),
+    taiClipData::EA_DROP_COPY, QKeySequence("Ctrl"));
+  act->setEnabled(ea & taiClipData::EA_DROP_COPY);
+  
+  act = menu->AddItem("&Link Here", taiAction::int_act,
+    host_->helperObj(),  SLOT(DropEditAction(int)),
+    taiClipData::EA_DROP_LINK, QKeySequence("Ctrl+Shift"));
+  act->setEnabled(ea & taiClipData::EA_DROP_LINK);
+
+  // if any appropriate drop actions, then add them!
+  host_->UpdateMethodsActionsForDrop();
+  host_->AddDynActions(menu);
+  
+  menu->AddSep();
+  act = menu->AddItem("C&ancel", -1);
+  act->setShortcut(QKeySequence("Esc"));
+
+  // 
+  //TODO: any for us last (ex. delete)
+  // get current mouse position
+  QPoint men_pos = widget()->mapToGlobal(pos);
+  
+  act = menu->menu()->exec(men_pos);
+  //menu->deleteLater();
+  delete menu;
+  delete ms;
+  host_->drop_ms = NULL;
+  host_->drop_item = NULL;
+}
+
+
 // called from Ui for cut/paste etc. -- not called for drag/drop ops
 int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   taiMimeSource* ms = NULL;
@@ -1506,6 +1573,33 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
 
 }
 
+void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms, 
+    ISelectable_PtrList& sel_items)
+{
+  Reset();
+  if ((ms.count() == 0) || (sel_items.size == 0)) return;
+
+  TypeDef* tms = ms.CommonSubtype(); // greatest common subtype of source object(s)
+  TypeDef* t1n = sel_items.CommonSubtype1N(); // greatest common subtype of items 1-N
+  if (!tms || !t1n) return; // typically for non-taBase types, ex Class browsing
+  
+  for (int i = 0; i < t1n->methods.size; ++i) {
+    MethodDef* md = t1n->methods.FastEl(i);
+    //look for all MENU methods with compatible arg0 type
+    if ((md->arg_types.size == 0) || !md->HasOption("MENU")) continue;
+    
+    TypeDef* arg0_typ = md->arg_types.FastEl(0);
+    // must be a pointer to a class type
+    if (arg0_typ->ptr != 1) {
+      continue;
+    }
+    // now get the non-pointer type
+    arg0_typ = arg0_typ->GetNonPtrType();
+    if (!tms->InheritsFrom(arg0_typ)) continue;
+    AddNew(Type_MimeN_N, md);
+  }
+
+}
 
 //////////////////////////////////
 //   ISelectableHost		//
@@ -1519,6 +1613,7 @@ const char* ISelectableHost::update_ui_signal; // currently NULL
 ISelectableHost::ISelectableHost() {
   m_sel_chg_cnt = 0;
   helper = new SelectableHostHelper(this);
+  drop_ms = NULL;
 }
 
 ISelectableHost::~ISelectableHost() {
@@ -1542,6 +1637,9 @@ void ISelectableHost::AddDynActions(taiActions* menu) {
     act->AddTo(menu);
   }
 }
+
+void		AddDynActionsForDrop(taiMimeSource* ms, taiActions* menu);
+   // add the drop dynamic guys to the given menu
 
 void ISelectableHost::ClearSelectedItems(bool forced) {
   SelectionChanging(true, forced);
@@ -1571,6 +1669,12 @@ void ISelectableHost::Connect_SelectableHostItemRemovingSlot(QObject* src_obj,
     QObject::disconnect(src_obj, src_signal, helper, slot_nm);
   else
     QObject::connect(src_obj, src_signal, helper, slot_nm);
+}
+
+void ISelectableHost::DropEditAction(int ea) {
+  ISelectable* ci = curItem();
+  if (!ci) return;
+  ci->EditActionD_impl_(drop_ms, ea);
 }
 
 void ISelectableHost::EditAction(int ea) {
@@ -1626,7 +1730,14 @@ void ISelectableHost::DoDynAction(int idx) {
   use_argc = MIN(use_argc, meth->arg_names.size);
 
   // use a copy of selected items list, to avoid issues if items change during these operations
-  ISelectable_PtrList sel_items_cp(sel_items);
+  //NOTE: a bit hacky since adding dynamic drop actions...
+  ISelectable_PtrList sel_items_cp;
+  if (dmd->dmd_type == DynMethod_PtrList::Type_MimeN_N) {
+    if (!drop_ms || !drop_item) return; // not supposed to happen
+    sel_items_cp.Add(drop_item);
+  } else {
+    sel_items_cp = sel_items;
+  }
 
   // if no params to prompt for, and no confirmation required, just do it
   if (((use_argc - hide_args) == 0) && !meth->HasOption("CONFIRM")) {
@@ -1663,6 +1774,39 @@ void ISelectableHost::DoDynAction(int idx) {
         delete param[1];
       }
       case DynMethod_PtrList::Type_2N_1: { // call 2:N with 1 as param
+        cssEl* param[2];
+        param[0] = &cssMisc::Void;
+        param[1] = new cssCPtr();
+        ISelectable* it1 = sel_items_cp.FastEl(0);
+        typ = it1->GetDataTypeDef();
+        *param[1] = (void*)it1->link()->data();
+        for (i = 1; i < sel_items_cp.size; ++i) {
+          itN = sel_items_cp.FastEl(i);
+          base = itN->link()->data();
+          rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
+        }
+        delete param[1];
+      }
+      case DynMethod_PtrList::Type_MimeN_N: { // call 1:N with ms_objs[1..N] as params
+        //NOTE: sel_items actually contains the drop target item
+        if (!drop_ms || !drop_item) break; // not supposed to happen
+        cssEl* param[2];
+        param[0] = &cssMisc::Void;
+        param[1] = new cssCPtr();
+        ISelectable* it1 = sel_items_cp.FastEl(0);
+        typ = it1->GetDataTypeDef();
+        for (int j = 0; j < drop_ms->count(); ++j) {
+          drop_ms->setIndex(j);
+          taBase* obj = drop_ms->tab_object();
+          if (!obj) continue;
+          *param[1] = (void*)obj;
+          for (i = 0; i < sel_items_cp.size; ++i) {
+            itN = sel_items_cp.FastEl(i);
+            base = itN->link()->data();
+            rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
+          }
+        }
+        delete param[1];
       }
       }
 //TODO:      UpdateAfter();
@@ -1728,29 +1872,30 @@ void ISelectableHost::SelectionChanging(bool begin, bool forced) {
 }
 
 void ISelectableHost::UpdateMethodsActions() {
-/*  cerr << m_sel_items.size << " items selected.\n";
-  if (m_sel_items.size > 0) {
-    TypeDef* typ = m_sel_items.CommonSubtype1N();
-    String name;
-    if (typ) name = typ->name;
-    else     name = "(none)";
-    cerr << "  CommonSubtype1N: " << name << "\n";
-    if (m_sel_items.size > 1) {
-      typ = m_sel_items.CommonSubtype2N();
-      if (typ) name = typ->name;
-      else     name = "(none)";
-      cerr << "  CommonSubtype2N: " << name << "\n";
-    }
-  }
-*/ // end TEMP
-
   // enumerate dynamic methods
   dyn_methods.Reset();
   dyn_methods.Fill(selItems());
 
-
   // dynamically create actions
   dyn_actions.Reset(); // note: items ref deleted if needed
+  for (int i = 0; i < dyn_methods.size; ++i) {
+    DynMethodDesc* dmd = dyn_methods.FastEl(i);
+    taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
+    QObject::connect(act, SIGNAL(IntParamAction(int)), helper, SLOT(DynAction(int)));
+    dyn_actions.Add(act);
+  }
+}
+
+void ISelectableHost::UpdateMethodsActionsForDrop() {
+  // enumerate dynamic methods
+  dyn_methods.Reset();
+  dyn_actions.Reset(); // note: items ref deleted if needed
+  if (!drop_ms || !drop_item) return;
+  ISelectable_PtrList drop_targets; 
+  drop_targets.Add(drop_item);
+  dyn_methods.FillForDrop(*drop_ms, drop_targets);
+
+  // dynamically create actions
   for (int i = 0; i < dyn_methods.size; ++i) {
     DynMethodDesc* dmd = dyn_methods.FastEl(i);
     taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
@@ -1834,18 +1979,6 @@ void iFrameViewer::Showing(bool showing) {
   if (!me) return;
   if (showing == me->isChecked()) return;
   me->setChecked(showing); //note: triggers event
-}
-
-
-
-iDataPanel* iFrameViewer::MakeNewDataPanel_(taiDataLink* link) {
-  iDataPanel* rval = NULL;
-  TypeDef* typ = link->GetDataTypeDef();
-  //typ can be null for non-taBase classes
-  if ((typ == NULL) || (typ->iv == NULL)) return NULL;
-  taiViewType* tiv = typ->iv;
-  rval = tiv->CreateDataPanel(link);
-  return rval;
 }
 
 void iFrameViewer::SelectableHostNotifySlot_Internal(ISelectableHost* src, int op) {
@@ -3356,7 +3489,7 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
     if (rval->link() == link) return rval;
   }
 
-  rval = tabViewerWin()->MakeNewDataPanel_(link);
+  rval = link->CreateDataPanel();
   if (rval != NULL) {
     AddPanel(rval);
     //note: we don't do a show() here because it automatically raises the panel
@@ -4245,71 +4378,57 @@ void iTreeViewItem::dragLeft() {
 
 
 void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos) {
+  DropHandler(mime, pos);
+/*
   taiMimeSource* ms = taiMimeSource::New(mime);
-/*Qt3  int ea = 0;
-  //NOTE: ev->action() was always observed to be Copy, whether the + was shown or not in the UI
-  // NOTE: we always force clip ops to be MOVE in this version of the app
-  ea |= taiClipData::EA_DROP_MOVE;
-//TODO: always seems to be Copy even if + is not shown in Ui
-// not working:  switch (ev->action()) {
-//  case QDropEvent::Copy: ea |= taiClipData::EA_DROP_COPY; break;
-//  case QDropEvent::Link: ea |= taiClipData::EA_DROP_LINK; break;
-//  case QDropEvent::Move: ea |= taiClipData::EA_DROP_MOVE; break;
-//  default: break;
-//  } 
-  EditActionD_impl_(ms, ea);
-  */
 
   int ea = GetEditActions_(ms);
-  // only show a menu if any actions possible (note: shouldn't have dropped otherwise!)
-  if (ea != 0) {
-    // create an aux object to handle the signal (because we are not a QObject)
-    QMenu* menu = new QMenu(treeWidget());
-    QAction* act;
+  // always show menu, for consistency
   
-    act = menu->addAction("&Move Here");
-    act->setShortcut(QKeySequence("Shift"));
-    act->setData(taiClipData::EA_DROP_MOVE);
-    act->setEnabled(ea & taiClipData::EA_DROP_MOVE);
-    
-    act = menu->addAction("&Copy Here");
-    act->setShortcut(QKeySequence("Ctrl"));
-    act->setData(taiClipData::EA_DROP_COPY);
-    act->setEnabled(ea & taiClipData::EA_DROP_COPY);
-    
-    act = menu->addAction("&Link Here");
-    act->setShortcut(QKeySequence("Ctrl+Shift"));
-    act->setData(taiClipData::EA_DROP_LINK);
-    act->setEnabled(ea & taiClipData::EA_DROP_LINK);
+  QMenu* menu = new QMenu(treeWidget());
+  taiMenu* imenu = new taiMenu(treeWidget(), taiMenu::normal, 0, menu);
+  QAction* act;
 
-/*TODO    act = menu->addAction("Move as &Subgroup of This Item", dh, SLOT(mnuBrowseNodeDrop(taiAction*)), QKeySequence());
-    act->setData( BDA_MOVE_AS_SUBGROUP );
-    act->setEnabled(ea & taiClipData::EA_DROP_MOVE)
-    
-    act = menu->addAction("Move as &Subitem of This Item", dh, SLOT(mnuBrowseNodeDrop(taiAction*)), QKeySequence());
-    act->setData( BDA_MOVE_AS_SUBITEM ); 
-    act->setEnabled(ea & taiClipData::EA_DROP_MOVE)
-    */
-    menu->addSeparator();
-    act = menu->addAction("C&ancel");
-    act->setData(-1);
-    act->setShortcut(QKeySequence("Esc"));
+  act = menu->addAction("&Move Here");
+  act->setShortcut(QKeySequence("Shift"));
+  act->setData(taiClipData::EA_DROP_MOVE);
+  act->setEnabled(ea & taiClipData::EA_DROP_MOVE);
   
-    //TODO: any for us last (ex. delete)
-    // get current mouse position
-//obs    QPoint pos = treeWidget()->mapToGlobal(ev->pos() );
-    QPoint men_pos = treeWidget()->mapToGlobal(pos);
-    
-    act = menu->exec(men_pos);
-    int ea = -1;
-    if (act)
-      ea = act->data().toInt();
-    menu->deleteLater();
-    if (ea != -1) {
-      EditActionD_impl_(ms, ea);
-    }
+  act = menu->addAction("&Copy Here");
+  act->setShortcut(QKeySequence("Ctrl"));
+  act->setData(taiClipData::EA_DROP_COPY);
+  act->setEnabled(ea & taiClipData::EA_DROP_COPY);
+  
+  act = menu->addAction("&Link Here");
+  act->setShortcut(QKeySequence("Ctrl+Shift"));
+  act->setData(taiClipData::EA_DROP_LINK);
+  act->setEnabled(ea & taiClipData::EA_DROP_LINK);
+
+  // if any appropriate drop actions, then add them!
+  host()->UpdateMethodsActionsForDrop(ms);
+  host()->AddDynActions(imenu);
+  
+  menu->addSeparator();
+  act = menu->addAction("C&ancel");
+  act->setData(-1);
+  act->setShortcut(QKeySequence("Esc"));
+
+  // 
+  //TODO: any for us last (ex. delete)
+  // get current mouse position
+  QPoint men_pos = treeWidget()->mapToGlobal(pos);
+  
+  act = menu->exec(men_pos);
+  int ea = -1;
+  if (act)
+    ea = act->data().toInt();
+  menu->deleteLater();
+  if (ea != -1) {
+    EditActionD_impl_(ms, ea);
   }
-  delete ms;
+  delete imenu;
+
+  delete ms;*/
 }
 
 void iTreeViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {

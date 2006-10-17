@@ -1899,6 +1899,11 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   It is HIGHLY recommended to write source with unique names, and use
   variants on names or default parameters to achieve overloading.
 */
+//TEMP
+if (it->name == "SetLayerSpec") {
+  int i = 0;
+  ++i;
+}
   MethodDef* rval = NULL;
   bool replace = false; // we set true if we should replace the one we find 
   int idx;

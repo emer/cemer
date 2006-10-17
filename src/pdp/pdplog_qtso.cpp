@@ -95,8 +95,6 @@ void TableView::Initialize() {
   pos.SetXYZ(0-geom.x, 0, 0);
   frame_inset = 0.05f;
   own_data = false;
-
-  SetAdapter(new TableViewAdapter(this));
 }
 
 // called virtually, after construct
@@ -306,7 +304,7 @@ void TableView::SetLogging(taBase* spec, bool log_data, bool also_chg_vis) {
   if(spec->InheritsFrom(&TA_DA_ViewSpec)) {
     DA_ViewSpec* davs = (DA_ViewSpec*)spec;
     if(davs->data_array == NULL) return;
-    davs->data_array->save_to_file = log_data;
+//obs    davs->data_array->save_to_file = log_data;
     if(also_chg_vis) {
       davs->visible = log_data;
       davs->UpdateAfterEdit();
@@ -316,9 +314,10 @@ void TableView::SetLogging(taBase* spec, bool log_data, bool also_chg_vis) {
   else if(spec->InheritsFrom(&TA_DT_ViewSpec)) {
     DT_ViewSpec* dtvs = (DT_ViewSpec*)spec;
     if(dtvs->data_table == NULL) return;
-    dtvs->data_table->SetSaveToFile(log_data);
-    if(also_chg_vis)
+    dtvs->data_table->save_data = log_data; // should already be set?
+    if (also_chg_vis)
       dtvs->SetVisibility(log_data);
+    dtvs->DataChanged(DCR_ITEM_UPDATED);
   }
 }
 
@@ -979,7 +978,7 @@ void GridTableView::Initialize() {
 //TODO  editor = NULL;
   head_tog_but = NULL;
   auto_sc_but = NULL;
-  SetAdapter(new GridTableViewAdapter(this));
+//REDO  SetAdapter(new GridTableViewAdapter(this));
 }
 
 void GridTableView::InitLinks(){

@@ -36,7 +36,6 @@ bool BaseSpec_Group::nw_itm_def_arg = false;
 
 void BaseSpec_Group::Initialize() {
   SetBaseType(&TA_BaseSpec);
-//  SetAdapter(new BaseSpec_GroupAdapter(this));
 }
 
 const iColor* BaseSpec_Group::GetEditColor() {

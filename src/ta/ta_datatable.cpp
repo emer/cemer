@@ -63,7 +63,6 @@ void DataArray_impl::DecodeName(String nm, String& base_nm, int& vt, int& vec_co
 }
 
 void DataArray_impl::Initialize() {
-  save_to_file = true;
   mark = false;
   pin = false;
   is_matrix = false;
@@ -88,7 +87,6 @@ void DataArray_impl::CutLinks() {
 void DataArray_impl::Copy_(const DataArray_impl& cp) {
   mark = cp.mark;
   pin = cp.pin;
-  save_to_file = cp.save_to_file;
   disp_opts = cp.disp_opts;
   is_matrix = cp.is_matrix;
   cell_geom = cp.cell_geom;
@@ -153,7 +151,7 @@ const String DataArray_impl::DispOptionAfter(const String& opt) const {
 bool DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
   if (md->name == "ar") {
     // if no save, don't need to check DataTable global
-    if (!save_to_file) return false;
+    if (!saveToFile()) return false;
     DataTable* dt = dataTable();
     if (dt)
       return dt->save_data;
@@ -363,7 +361,7 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
     DataArray_impl* col;
     for (i = 0; i < cols(); ++i) {
       col = GetColData(i);
-      if (!col->save_to_file) continue;
+      if (!col->saveToFile()) continue;
       int frms = col->AR()->frames();
       // number of rows is going to be = biggest number in individual cols
       rows = max(rows, frms);
@@ -956,14 +954,6 @@ void DataTable::SetColName(const String& col_nm, int col) {
     gp.EnforceSize(subgp_gpi);
   StructUpdate(false);
 } */
-
-void DataTable::SetSaveToFile(bool save_to_file) {
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
-    ar->save_to_file = save_to_file;
-  }
-}
 
 bool DataTable::SetValAsDouble(double val, int col, int row) {
   DataArray_impl* da = GetColData(col);

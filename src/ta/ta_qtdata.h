@@ -567,6 +567,9 @@ public:
   taiAction* 		AddItem(const String& val, SelType st = use_default, 
     taiAction::CallbackType ct = taiAction::none, const QObject *receiver = NULL, const char* member = NULL,
     const Variant& usr = _nilVariant);
+  taiAction* 		AddItem(const String& val, taiAction::CallbackType ct, 
+    const QObject *receiver, const char* member,
+    const Variant& usr = _nilVariant, const QKeySequence& shortcut = 0);
   taiAction* 		AddItem(const String& val, SelType st, const taiMenuAction* men_act, 
     const Variant& usr = _nilVariant);
   taiAction* 		AddItem(const String& val, const Variant& usr);

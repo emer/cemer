@@ -580,8 +580,6 @@ taiToggle::taiToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui
        taiData(typ_, host_, par, gui_parent_, flags_)
 {
   SetRep( new iCheckBox(gui_parent_) );
-  // prevent from expanding horizontally -- may want to permit this if using the built in label
-  rep()->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed)); //def is Minimum,Preferred
   rep()->setFixedHeight(taiM->label_height(defSize()));
 
   //connect changed signal to our slot
@@ -1579,8 +1577,17 @@ taiAction* taiActions::AddItem(const String& val, SelType st, const taiMenuActio
     return AddItem(val, st, taiAction::none, NULL, NULL, usr);
 }
 
+taiAction* taiActions::AddItem(const String& val, taiAction::CallbackType ct, 
+    const QObject *receiver, const char* member,
+    const Variant& usr, const QKeySequence& shortcut)
+{
+  taiAction* rval = AddItem(val, use_default, ct, receiver, member, usr);
+  if (shortcut) rval->setShortcut(shortcut);
+  return rval;
+}
+
 taiAction* taiActions::AddItem(const String& val, const Variant& usr) {
-    return AddItem(val, sel_type, taiAction::none, NULL, NULL, usr);
+  return AddItem(val, sel_type, taiAction::none, NULL, NULL, usr);
 }
 
 void taiActions::AddSep(bool new_radio_grp) {

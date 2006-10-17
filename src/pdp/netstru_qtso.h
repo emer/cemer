@@ -272,17 +272,6 @@ private:
 //   NetView		//
 //////////////////////////
 
-class PDP_API NetViewAdapter: public taBaseAdapter {
-  // ##IGNORE QObject for attaching events/signals for its taBase owner
-  Q_OBJECT
-friend class NetView;
-public:
-  NetView*		nv() {return (NetView*)owner;}
-  NetViewAdapter(NetView* owner_): taBaseAdapter((taOBase*)owner_) {}
-public slots:
-  void			viewWin_NotifySignal(ISelectableHost* src, int op);
-};
-
 /*
  * Note that we keep simple ptr lists separately of the Layers, Prjns, etc., for ease
  * of iteration
@@ -440,6 +429,9 @@ protected:
   int			cmd_x; // current coords of where to place next button/ctrl
   int			cmd_y;
   override void		GetImage_impl();
+
+public slots:
+  void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
 
 protected slots:
   void			butBuildAll_pressed();
