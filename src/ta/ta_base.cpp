@@ -140,11 +140,11 @@ bool tabMisc::CheckConfig(taBase* obj, bool quiet, bool gui, bool success_dialog
   if (!quiet) {
 #ifdef TA_GUI
     if (gui) {
-      if (rval)
+      if (rval) {
         if (success_dialog)
           QMessageBox::information(NULL, "Check Succeeded", 
             "No configuration errors were found.");
-      else {
+      } else {
         iTextEditDialog* td = new iTextEditDialog(true);
         td->setWindowTitle("Check Failed");
         td->setText(taMisc::last_check_msg);
