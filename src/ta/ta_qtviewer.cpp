@@ -1672,7 +1672,7 @@ void ISelectableHost::Connect_SelectableHostItemRemovingSlot(QObject* src_obj,
 }
 
 void ISelectableHost::DropEditAction(int ea) {
-  ISelectable* ci = curItem();
+  ISelectable* ci = drop_item; 
   if (!ci) return;
   ci->EditActionD_impl_(drop_ms, ea);
 }
