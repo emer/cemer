@@ -230,7 +230,7 @@ public:
 
   bool	CheckObjectType_impl(TAPtr obj); // don't do checking on 1st con group in units
 
-  virtual bool  	CheckConfig(Con_Group* cg, bool quiet=false);
+  virtual bool  	CheckConfig_ConGroup(Con_Group* cg, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
   virtual int		UseCount(); // return number of times this spec is used
@@ -266,6 +266,7 @@ public:
 
 class PDP_API Con_Group: public taBase_Group {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network Group of connections, controlls processing over them -- entire group must have same connection object type
+INHERITED(taBase_Group)
 public:
   // note: follwing must be coordinated with the Network enum
   enum WtSaveFormat {
@@ -376,8 +377,10 @@ public:
   void 	UpdateWeights(Unit* ru)	 	{ spec->UpdateWeights(this,ru); }
   void  Compute_dWt(Unit* ru)	 	{ spec->Compute_dWt(this,ru); }
 
-  override bool  CheckConfig(bool quiet=false) 	{ return spec->CheckConfig(this, quiet); }
-
+  override bool  CheckConfig(bool quiet=false) 	
+    { return spec->CheckConfig_ConGroup(this, quiet); }
+  USING(inherited::CheckConfig)
+  
   int 	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent = 0);
   int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent = 0);
@@ -427,7 +430,7 @@ public:
   virtual void	BuildBiasCons();
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE build the bias connections according to specified type
 
-  virtual bool  CheckConfig(Unit* un, bool quiet=false);
+  virtual bool  CheckConfig_Unit(Unit* un, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
   virtual int	UseCount(); // return number of times this spec is used
@@ -518,8 +521,9 @@ public: //
   float	Compute_SSE()		{ return spec->Compute_SSE(this); }
 
   override bool  CheckConfig(bool quiet=false)
-  { return spec->CheckConfig(this, quiet); }
-
+  { return spec->CheckConfig_Unit(this, quiet); }
+  USING(inherited::CheckConfig)
+  
   virtual void 	ApplyExternal(float val, ExtType act_ext_flags, Random* ran = NULL);
   // apply external input or target value to unit
   virtual bool	Build();
@@ -901,6 +905,8 @@ class PDP_API LayerSpec : public BaseSpec {
 public:
   virtual int	UseCount(); // return number of times this spec is used
 
+  virtual bool		CheckConfig_Layer(Layer* lay, bool quiet = false)
+    {return true;}
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -1045,8 +1051,6 @@ public:
   // #MENU set for all unit's connections in layer
   virtual bool	CheckTypes(bool quiet=false);
   // #MENU #USE_RVAL check that the object and spec types are all ok
-  override bool	CheckConfig(bool quiet=false);
-  // check for for misc configuration settings required by different algorithms
   virtual void	FixPrjnIndexes();
   // #MENU fix the projection indicies of the connection groups (other_idx)
 
@@ -1134,6 +1138,7 @@ protected:
   // #IGNORE grouped layer, 2d data
   virtual void		ApplyExternal_Gp4d(const TxferDataStruct& ads);
   // #IGNORE grouped layer, 4d data
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);// #IGNORE 
 };
 
 PosGroup_of(Layer);
@@ -1258,8 +1263,6 @@ public:
   // check if network is connected
   virtual bool	CheckTypes(bool quiet=false);
   // #MENU #MENU_ON_Actions #USE_RVAL #MENU_SEP_BEFORE check that the object and spec types are all ok
-  override bool	CheckConfig(bool quiet=false);
-  // check for for misc configuration settings required by different algorithms
 
   virtual void	UpdtAfterNetMod();
   // update network after any network modification (calls appropriate functions)
@@ -1404,6 +1407,10 @@ public:
   void 	Copy_(const Network& cp);
   COPY_FUNS(Network, taNBase);
   TA_BASEFUNS(Network);
+  
+protected:
+  override void	CheckConfig_impl(bool quiet, bool& rval);
+  override void	CheckChildConfig_impl(bool quiet, bool& rval);
 #ifdef TA_GUI
 protected:
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);

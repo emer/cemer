@@ -698,7 +698,7 @@ public:
 //TEMP  virtual void	GraphActFmNetFun(GraphLog* graph_log, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
   // #BUTTON #NULL_OK graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph log)
 
-  bool  CheckConfig(Unit* un, bool quiet=false);
+  override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
 
   void	UpdateAfterEdit();	// to set _impl sig
   void 	Initialize();
@@ -1142,7 +1142,7 @@ public:
   // find a layer in network based on the type of layer spec
 
   virtual void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  override bool CheckConfig(LeabraLayer* lay, bool quiet=false);
+  override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   // check for for misc configuration settings required by different algorithms, including settings on the processes
 
   virtual void	Defaults();	// #BUTTON #CONFIRM restores default parameter settings: warning -- you will lose any unique parameters you might have set!
@@ -1253,6 +1253,7 @@ public:
 
 class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
   // Leabra Layer: implicit inhibition for soft kWTA behavior
+INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// the spec for this layer: controls all functions of layer
   float		stm_gain;	// actual stim gain for soft clamping, can be incremented to ensure clamped units active
@@ -1313,6 +1314,7 @@ public:
   bool		CheckTypes();
 
   override bool  CheckConfig(bool quiet=false);
+  USING(inherited::CheckConfig)
 
   void	UpdateAfterEdit();	// reset sort_buf after any edits..
 

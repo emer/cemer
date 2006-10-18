@@ -80,16 +80,15 @@ void ProgVar::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-bool ProgVar::CheckConfig(bool quiet) {
+void ProgVar::CheckConfig_impl(bool quiet, bool& rval) {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
-  if(prg != NULL) prognm = prg->name;
+  if (prg) prognm = prg->name;
   if((var_type == T_Object) && (!object_val)) {
-    if(!quiet) taMisc::Error("Error in ProgVar in program:", prognm, "var name:",name,
+    if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
 			     "object pointer is NULL");
-    return false;
+    rval = false;
   }
-  return true;
 }
 
 TypeDef* ProgVar::act_object_type() const {
@@ -328,14 +327,6 @@ void ProgVar_List::Copy_(const ProgVar_List& cp) {
   var_context = cp.var_context;
 }
 
-bool ProgVar_List::CheckConfig(bool quiet) {
-  for(int i = 0; i < size; ++i) {
-    ProgVar* pv = FastEl(i);
-    if(!pv->CheckConfig(quiet)) return false;
-  }
-  return true;
-}
-
 void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   // if we are in a prog, dirty prog
@@ -457,8 +448,9 @@ void ProgEl::Copy_(const ProgEl& cp) {
   off = cp.off;
 }
 
-bool ProgEl::CheckConfig(bool) {
-  return true;
+bool ProgEl::CheckConfig(bool quiet) {
+  if (off) return true;
+  return inherited::CheckConfig(quiet);
 }
 
 void ProgEl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
@@ -508,15 +500,6 @@ void ProgEl_List::Initialize() {
 
 void ProgEl_List::Destroy() {
   Reset();
-}
-
-bool ProgEl_List::CheckConfig(bool quiet) {
-  for(int i=0; i < size; ++i) {
-    ProgEl* pe = FastEl(i);
-    if(!pe->CheckConfig(quiet))
-      return false;
-  }
-  return true;
 }
 
 void ProgEl_List::DataChanged(int dcr, void* op1, void* op2) {
@@ -583,9 +566,9 @@ void ProgList::Copy_(const ProgList& cp) {
   prog_code = cp.prog_code; //TODO: need to make sure this is a value copy
 }
 
-bool ProgList::CheckConfig(bool quiet) {
-  if(!inherited::CheckConfig(quiet)) return false;
-  return prog_code.CheckConfig(quiet);
+void ProgList::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  prog_code.CheckConfig(quiet, rval);
 }
 
 const String ProgList::GenCssBody_impl(int indent_level) {
@@ -621,9 +604,9 @@ void ProgVars::CutLinks() {
   inherited::CutLinks();
 }
 
-bool ProgVars::CheckConfig(bool quiet) {
-  if(!inherited::CheckConfig(quiet)) return false;
-  return script_vars.CheckConfig(quiet);
+void ProgVars::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  script_vars.CheckConfig(quiet, rval);
 }
 
 const String ProgVars::GenCssBody_impl(int indent_level) {
@@ -705,13 +688,17 @@ void UserScript::ExportToFileName(const String& fnm) {
 //  Loop		//
 //////////////////////////
 
-bool Loop::CheckConfig(bool quiet) {
-  if(off) return true;
+void Loop::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
   if(loop_test.empty()) {
-    if(!quiet) taMisc::Error("Error in Loop in program:", program()->name, "loop_test expression is empty");
-    return false;
+    if(!quiet) taMisc::CheckError("Error in Loop in program:", program()->name, "loop_test expression is empty");
+    rval = false;
   }
-  return loop_code.CheckConfig(quiet);
+}
+
+void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  loop_code.CheckConfig(quiet, rval);
 }
 
 const String Loop::GenCssBody_impl(int indent_level) {
@@ -768,14 +755,12 @@ void ForLoop::Initialize() {
   loop_iter = "i++";
 }
 
-bool ForLoop::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
+void ForLoop::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
   if(loop_iter.empty()) {
-    if(!quiet) taMisc::Error("Error in ForLoop in program:", program()->name, "loop_iter expression is empty");
-    return false;
+    if(!quiet) taMisc::CheckError("Error in ForLoop in program:", program()->name, "loop_iter expression is empty");
+    rval = false;
   }
-  return true;
 }
 
 const String ForLoop::GenCssPre_impl(int indent_level) {
@@ -802,14 +787,12 @@ String ForLoop::GetDisplayName() const {
 void IfContinue::Initialize() {
 }
 
-bool IfContinue::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
-  if(condition.empty()) {
-    if(!quiet) taMisc::Error("Error in IfContinue in program:", program()->name, "condition expression is empty");
-    return false;
+void IfContinue::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
+  if (condition.empty()) {
+    if(!quiet) taMisc::CheckError("Error in IfContinue in program:", program()->name, "condition expression is empty");
+    rval = false;
   }
-  return true;
 }
 
 const String IfContinue::GenCssBody_impl(int indent_level) {
@@ -831,14 +814,12 @@ String IfContinue::GetDisplayName() const {
 void IfBreak::Initialize() {
 }
 
-bool IfBreak::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
-  if(condition.empty()) {
-    if(!quiet) taMisc::Error("Error in IfBreak in program:", program()->name, "condition expression is empty");
-    return false;
+void IfBreak::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
+  if (condition.empty()) {
+    if(!quiet) taMisc::CheckError("Error in IfBreak in program:", program()->name, "condition expression is empty");
+    rval = false;
   }
-  return true;
 }
 
 const String IfBreak::GenCssBody_impl(int indent_level) {
@@ -878,14 +859,18 @@ void IfElse::Copy_(const IfElse& cp) {
   false_code = cp.false_code;
 }
 
-bool IfElse::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
-  if(condition.empty()) {
-    if(!quiet) taMisc::Error("Error in IfElse in program:", program()->name, "condition expression is empty");
-    return false;
+void IfElse::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
+  if (condition.empty()) {
+    if(!quiet) taMisc::CheckError("Error in IfElse in program:", program()->name, "condition expression is empty");
+    rval = false;
   }
-  return true;
+}
+
+void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  true_code.CheckConfig(quiet, rval);
+  false_code.CheckConfig(quiet, rval);
 }
 
 const String IfElse::GenCssPre_impl(int indent_level) {
@@ -964,21 +949,19 @@ void MethodCall::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-bool MethodCall::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
+void MethodCall::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;
   if(!script_obj) {
-    if(!quiet) taMisc::Error("Error in MethodCall in program:", prognm, "script_obj is NULL");
-    return false;
+    if(!quiet) taMisc::CheckError("Error in MethodCall in program:", prognm, "script_obj is NULL");
+    rval = false;
   }
   if(!method) {
-    if(!quiet) taMisc::Error("Error in MethodCall in program:", prognm, "method is NULL");
-    return false;
+    if(!quiet) taMisc::CheckError("Error in MethodCall in program:", prognm, "method is NULL");
+    rval = false;
   }
-  return true;
 }
 
 const String MethodCall::GenCssBody_impl(int indent_level) {
@@ -1078,17 +1061,15 @@ void StaticMethodCall::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-bool StaticMethodCall::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
+void StaticMethodCall::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;
   if(!method) {
-    if(!quiet) taMisc::Error("Error in StaticMethodCall in program:", prognm, "method is NULL");
-    return false;
+    if(!quiet) taMisc::CheckError("Error in StaticMethodCall in program:", prognm, "method is NULL");
+    rval = false;
   }
-  return true;
 }
 
 const String StaticMethodCall::GenCssBody_impl(int indent_level) {
@@ -1191,14 +1172,12 @@ void ProgramCall::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-bool ProgramCall::CheckConfig(bool quiet) {
-  if(off) return true;
-  if(!inherited::CheckConfig(quiet)) return false;
+void ProgramCall::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
   if(!target) {
-    if(!quiet) taMisc::Error("Error in ProgramCall in program:", program()->name, "target is NULL");
-    return false;
+    if(!quiet) taMisc::CheckError("Error in ProgramCall in program:", program()->name, "target is NULL");
+    rval = false;
   }
-  return true;
 }
 
 Program* ProgramCall::GetTarget() {
@@ -1383,10 +1362,12 @@ void Program::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-bool Program::CheckConfig(bool quiet) {
-  bool rval = args.CheckConfig(quiet) && vars.CheckConfig(quiet)
-    && init_code.CheckConfig(quiet) && prog_code.CheckConfig(quiet);
-  return rval;
+void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  args.CheckConfig(quiet, rval);
+  vars.CheckConfig(quiet, rval);
+  init_code.CheckConfig(quiet, rval);
+  prog_code.CheckConfig(quiet, rval);
 }
 
 int Program::Call(Program* caller) {
@@ -1826,15 +1807,6 @@ void Program_Group::SetProgsDirty() {
   }
 }
 
-bool Program_Group::CheckConfig(bool quiet) {
-  taLeafItr itr;
-  Program* prog;
-  FOR_ITR_EL(Program, prog, this->, itr) {
-    if(!prog->CheckConfig(quiet)) return false;
-  }
-  return true;
-}
-
 ProgLib Program_Group::prog_lib;
 
 taBase* Program_Group::NewFromLib(ProgLibEl* prog_type) {
@@ -1851,14 +1823,6 @@ taBase* Program_Group::NewFromLibByName(const String& prog_nm) {
 
 void Program_List::Initialize() {
   SetBaseType(&TA_Program);
-}
-
-bool Program_List::CheckConfig(bool quiet) {
-  for(int i = 0; i < size; ++i) {
-    Program* pv = FastEl(i);
-    if(!pv->CheckConfig(quiet)) return false;
-  }
-  return true;
 }
 
 

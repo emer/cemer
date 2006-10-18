@@ -67,8 +67,8 @@ void SNcLayerSpec::HelpConfig() {
   PVLVDaLayerSpec::HelpConfig();
 }
 
-bool SNcLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!PVLVDaLayerSpec::CheckConfig(lay, quiet)) return false;
+bool SNcLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!PVLVDaLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
 
   int myidx = lay->own_net->layers.FindLeaf(lay);
 
@@ -77,7 +77,7 @@ bool SNcLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   if(pclay != NULL) {
     int patchidx = lay->own_net->layers.FindLeaf(pclay);
     if(patchidx > myidx) {
-      taMisc::Error("SNcLayerSpec: Patch layer must be *before* this layer in list of layers -- it is now after, won't work");
+      if (!quiet) taMisc::CheckError("SNcLayerSpec: Patch layer must be *before* this layer in list of layers -- it is now after, won't work");
       return false;
     }
   }
@@ -291,8 +291,8 @@ void MatrixLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool MatrixLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, quiet))
+bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
@@ -303,27 +303,27 @@ bool MatrixLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   decay.clamp_phase2 = false;
 
   if(lay->units.gp.size == 1) {
-    taMisc::Error("MatrixLayerSpec: layer must contain multiple unit groups (= stripes) for indepent searching of gating space!");
+    if (!quiet) taMisc::CheckError("MatrixLayerSpec: layer must contain multiple unit groups (= stripes) for indepent searching of gating space!");
     return false;
   }
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("MatrixLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("MatrixLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::Error("MatrixLayerSpec: must have DaModUnits!");
+    if (!quiet) taMisc::CheckError("MatrixLayerSpec: must have DaModUnits!");
     return false;
   }
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
   if(!us->InheritsFrom(TA_MatrixUnitSpec)) {
-    taMisc::Error("MatrixLayerSpec: UnitSpec must be MatrixUnitSpec!");
+    if (!quiet) taMisc::CheckError("MatrixLayerSpec: UnitSpec must be MatrixUnitSpec!");
     return false;
   }
   ((DaModUnitSpec*)us)->da_mod.p_dwt = false; // don't need prior state dwt
   if((us->opt_thresh.learn >= 0.0f) || us->opt_thresh.updt_wts) {
-    if(!quiet) taMisc::Error("MatrixLayerSpec: UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
+    if(!quiet) taMisc::CheckError("MatrixLayerSpec: UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
 			     "I just set it for you in spec:", us->name,
 			     "(make sure this is appropriate for all layers that use this spec!)");
     us->SetUnique("opt_thresh", true);
@@ -333,7 +333,7 @@ bool MatrixLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   if(us->act.avg_dt <= 0.0f) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.005f;
-    if(!quiet) taMisc::Error("MatrixLayerSpec: requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
+    if(!quiet) taMisc::CheckError("MatrixLayerSpec: requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   us->SetUnique("g_bar", true);
@@ -341,20 +341,20 @@ bool MatrixLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   if(us->hyst.init) {
     us->SetUnique("hyst", true);
     us->hyst.init = false;
-    if(!quiet) taMisc::Error("MatrixLayerSpec: requires UnitSpec hyst.init = false, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("MatrixLayerSpec: requires UnitSpec hyst.init = false, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   if(us->acc.init) {
     us->SetUnique("acc", true);
     us->acc.init = false;
-    if(!quiet) taMisc::Error("MatrixLayerSpec: requires UnitSpec acc.init = false, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("MatrixLayerSpec: requires UnitSpec acc.init = false, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   us->UpdateAfterEdit();
 
   LeabraBiasSpec* bs = (LeabraBiasSpec*)us->bias_spec.spec;
   if(bs == NULL) {
-    taMisc::Error("MatrixLayerSpec: Error: null bias spec in unit spec", us->name);
+    if (!quiet) taMisc::CheckError("MatrixLayerSpec: Error: null bias spec in unit spec", us->name);
     return false;
   }
 
@@ -374,20 +374,20 @@ bool MatrixLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     }
     MatrixConSpec* cs = (MatrixConSpec*)recv_gp->spec.spec;
     if(!cs->InheritsFrom(TA_MatrixConSpec)) {
-      taMisc::Error("MatrixLayerSpec:  Receiving connections must be of type MatrixConSpec!");
+      if (!quiet) taMisc::CheckError("MatrixLayerSpec:  Receiving connections must be of type MatrixConSpec!");
       return false;
     }
     if(cs->wt_limits.sym != false) {
       cs->SetUnique("wt_limits", true);
       cs->wt_limits.sym = false;
-      if(!quiet) taMisc::Error("MatrixLayerSpec: requires recv connections to have wt_limits.sym=false, I just set it for you in spec:",
+      if(!quiet) taMisc::CheckError("MatrixLayerSpec: requires recv connections to have wt_limits.sym=false, I just set it for you in spec:",
 			       cs->name,"(make sure this is appropriate for all layers that use this spec!)");
     }
     if(bg_type == MatrixLayerSpec::OUTPUT) {
       if((cs->learn_rule != MatrixConSpec::OUTPUT_DELTA) && (cs->learn_rule != MatrixConSpec::OUTPUT_CHL)) {
 	cs->SetUnique("learn_rule", true);
 	cs->learn_rule = MatrixConSpec::OUTPUT_DELTA;
-	if(!quiet) taMisc::Error("MatrixLayerSpec: OUTPUT BG requires MatrixConSpec learn_rule of OUTPUT type, I just set it for you in spec:",
+	if(!quiet) taMisc::CheckError("MatrixLayerSpec: OUTPUT BG requires MatrixConSpec learn_rule of OUTPUT type, I just set it for you in spec:",
 				 cs->name,"(make sure this is appropriate for all layers that use this spec!)");
       }
     }
@@ -395,24 +395,24 @@ bool MatrixLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
       if((cs->learn_rule == MatrixConSpec::OUTPUT_DELTA) || (cs->learn_rule == MatrixConSpec::OUTPUT_CHL)) {
 	cs->SetUnique("learn_rule", true);
 	cs->learn_rule = MatrixConSpec::MAINT;
-	if(!quiet) taMisc::Error("MatrixLayerSpec: BG_pfc requires MatrixConSpec learn_rule of MAINT type, I just set it for you in spec:",
+	if(!quiet) taMisc::CheckError("MatrixLayerSpec: BG_pfc requires MatrixConSpec learn_rule of MAINT type, I just set it for you in spec:",
 				 cs->name,"(make sure this is appropriate for all layers that use this spec!)");
       }
     }
   }
   if(da_lay == NULL) {
-    taMisc::Error("MatrixLayerSpec: Could not find DA layer (PVLVDaLayerSpec, VTA or SNc) -- must receive MarkerConSpec projection from one!");
+    if (!quiet) taMisc::CheckError("MatrixLayerSpec: Could not find DA layer (PVLVDaLayerSpec, VTA or SNc) -- must receive MarkerConSpec projection from one!");
     return false;
   }
   if(snr_lay == NULL) {
-    taMisc::Error("MatrixLayerSpec: Could not find SNrThal layer -- must receive MarkerConSpec projection from one!");
+    if (!quiet) taMisc::CheckError("MatrixLayerSpec: Could not find SNrThal layer -- must receive MarkerConSpec projection from one!");
     return false;
   }
   // vta/snc must be before matrix!  good.
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int daidx = lay->own_net->layers.FindLeaf(da_lay);
   if(daidx > myidx) {
-    taMisc::Error("MatrixLayerSpec: DA layer (PVLVDaLayerSpec, VTA or SNc) must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("MatrixLayerSpec: DA layer (PVLVDaLayerSpec, VTA or SNc) must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
   return true;
@@ -900,8 +900,8 @@ void SNrThalLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool SNrThalLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
+bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
@@ -909,7 +909,7 @@ bool SNrThalLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("SNrThalLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("SNrThalLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
 
@@ -921,12 +921,12 @@ bool SNrThalLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   LeabraLayer* matrix_lay = FindLayerFmSpec(lay, mtx_prjn_idx, &TA_MatrixLayerSpec);
 
   if(matrix_lay == NULL) {
-    taMisc::Error("SNrThalLayerSpec: did not find Matrix layer to recv from!");
+    if (!quiet) taMisc::CheckError("SNrThalLayerSpec: did not find Matrix layer to recv from!");
     return false;
   }
 
   if(matrix_lay->units.gp.size != lay->units.gp.size) {
-    taMisc::Error("SNrThalLayerSpec: MatrixLayer unit groups must = SNrThalLayer unit groups!");
+    if (!quiet) taMisc::CheckError("SNrThalLayerSpec: MatrixLayer unit groups must = SNrThalLayer unit groups!");
     lay->geom.z = matrix_lay->units.gp.size;
     return false;
   }
@@ -934,7 +934,7 @@ bool SNrThalLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int matidx = lay->own_net->layers.FindLeaf(matrix_lay);
   if(matidx > myidx) {
-    taMisc::Error("SNrThalLayerSpec: Matrix layer must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("SNrThalLayerSpec: Matrix layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
   return true;
@@ -1058,8 +1058,8 @@ void PFCLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool PFCLayerSpec::CheckConfig(LeabraLayer* lay,  bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
+bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
 
   if(decay.clamp_phase2) {
     SetUnique("decay", true);
@@ -1072,66 +1072,66 @@ bool PFCLayerSpec::CheckConfig(LeabraLayer* lay,  bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(lay->units.gp.size == 1) {
-    taMisc::Error("PFCLayerSpec: layer must contain multiple unit groups (= stripes) for indepent searching of gating space!");
+    if (!quiet) taMisc::CheckError("PFCLayerSpec: layer must contain multiple unit groups (= stripes) for indepent searching of gating space!");
     return false;
   }
 
   if(net->phase_order != LeabraNetwork::MINUS_PLUS_PLUS) {
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires LeabraNetwork phase_oder = MINUS_PLUS_PLUS, I just set it for you");
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires LeabraNetwork phase_oder = MINUS_PLUS_PLUS, I just set it for you");
     net->phase_order = LeabraNetwork::MINUS_PLUS_PLUS;
   }
   if(net->first_plus_dwt != LeabraNetwork::ONLY_FIRST_DWT) {
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires LeabraNetwork first_plus_dwt = ONLY_FIRST_DWT, I just set it for you");
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires LeabraNetwork first_plus_dwt = ONLY_FIRST_DWT, I just set it for you");
     net->first_plus_dwt = LeabraNetwork::ONLY_FIRST_DWT;
   }
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
   if(net->no_plus_test) {
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires LeabraNetwork no_plus_test = false, I just set it for you");
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires LeabraNetwork no_plus_test = false, I just set it for you");
     net->no_plus_test = false;
   }
 
   if(net->min_cycles_phase2 < 35) {
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires LeabraNetwork min_cycles_phase2 >= 35, I just set it for you");
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires LeabraNetwork min_cycles_phase2 >= 35, I just set it for you");
     net->min_cycles_phase2 = 35;
   }
 
   if(net->sequence_init != LeabraNetwork::DO_NOTHING) {
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires network sequence_init = DO_NOTHING, I just set it for you");
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires network sequence_init = DO_NOTHING, I just set it for you");
     net->sequence_init = LeabraNetwork::DO_NOTHING;
   }
 
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::Error("PFCLayerSpec: must have DaModUnits!");
+    if (!quiet) taMisc::CheckError("PFCLayerSpec: must have DaModUnits!");
     return false;
   }
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
-    taMisc::Error("PFCLayerSpec: UnitSpec must be DaModUnitSpec!");
+    if (!quiet) taMisc::CheckError("PFCLayerSpec: UnitSpec must be DaModUnitSpec!");
     return false;
   }
 
   if(us->act.avg_dt <= 0.0f) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.005f;
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires UnitSpec act.avg_dt > 0, I just set it to .005 for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   us->SetUnique("g_bar", true);
   if(us->hyst.init) {
     us->SetUnique("hyst", true);
     us->hyst.init = false;
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires UnitSpec hyst.init = false, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires UnitSpec hyst.init = false, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   if(us->acc.init) {
     us->SetUnique("acc", true);
     us->acc.init = false;
-    if(!quiet) taMisc::Error("PFCLayerSpec: requires UnitSpec acc.init = false, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("PFCLayerSpec: requires UnitSpec acc.init = false, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
 
@@ -1142,7 +1142,7 @@ bool PFCLayerSpec::CheckConfig(LeabraLayer* lay,  bool quiet) {
     recv_gp = (LeabraCon_Group*)u->recv.gp[g];
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
     if(fmlay == NULL) {
-      taMisc::Error("*** PFCLayerSpec: null from layer in recv projection:", (String)g);
+      if (!quiet) taMisc::CheckError("*** PFCLayerSpec: null from layer in recv projection:", (String)g);
       return false;
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
@@ -1153,11 +1153,11 @@ bool PFCLayerSpec::CheckConfig(LeabraLayer* lay,  bool quiet) {
   int snrthal_prjn_idx;
   LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
   if(snrthal_lay == NULL) {
-    taMisc::Error("*** PFCLayerSpec: Warning: no projection from SNrThal Layer found: must have MarkerConSpec!");
+    if (!quiet) taMisc::CheckError("*** PFCLayerSpec: Warning: no projection from SNrThal Layer found: must have MarkerConSpec!");
     return false;
   }
   if(snrthal_lay->units.gp.size != lay->units.gp.size) {
-    taMisc::Error("PFCLayerSpec: Gating Layer unit groups must = PFCLayer unit groups!");
+    if (!quiet) taMisc::CheckError("PFCLayerSpec: Gating Layer unit groups must = PFCLayer unit groups!");
     snrthal_lay->geom.z = lay->units.gp.size;
     return false;
   }
@@ -1166,7 +1166,7 @@ bool PFCLayerSpec::CheckConfig(LeabraLayer* lay,  bool quiet) {
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int gateidx = lay->own_net->layers.FindLeaf(snrthal_lay);
   if(gateidx > myidx) {
-    taMisc::Error("PFCLayerSpec: SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("PFCLayerSpec: SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
 
@@ -1386,8 +1386,8 @@ void PFCOutLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool PFCOutLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
+bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
 
   if(decay.clamp_phase2) {
     SetUnique("decay", true);
@@ -1398,29 +1398,29 @@ bool PFCOutLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   }
 
   if(lay->units.gp.size == 1) {
-    taMisc::Error("PFCOutLayerSpec: layer must contain multiple unit groups (= stripes) for indepent searching of gating space!");
+    if (!quiet) taMisc::CheckError("PFCOutLayerSpec: layer must contain multiple unit groups (= stripes) for indepent searching of gating space!");
     return false;
   }
 
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::Error("PFCOutLayerSpec: must have DaModUnits!");
+    if (!quiet) taMisc::CheckError("PFCOutLayerSpec: must have DaModUnits!");
     return false;
   }
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
-    taMisc::Error("PFCOutLayerSpec: UnitSpec must be DaModUnitSpec!");
+    if (!quiet) taMisc::CheckError("PFCOutLayerSpec: UnitSpec must be DaModUnitSpec!");
     return false;
   }
 
   int snrthal_prjn_idx;
   LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
   if(snrthal_lay == NULL) {
-    taMisc::Error("*** PFCOutLayerSpec: Warning: no projection from SNrThal Layer found: must have MarkerConSpec!");
+    if (!quiet) taMisc::CheckError("*** PFCOutLayerSpec: Warning: no projection from SNrThal Layer found: must have MarkerConSpec!");
     return false;
   }
   if(snrthal_lay->units.gp.size != lay->units.gp.size) {
-    taMisc::Error("PFCOutLayerSpec: Gating Layer unit groups must = PFCOutLayer unit groups!");
+    if (!quiet) taMisc::CheckError("PFCOutLayerSpec: Gating Layer unit groups must = PFCOutLayer unit groups!");
     snrthal_lay->geom.z = lay->units.gp.size;
     return false;
   }
@@ -1428,17 +1428,17 @@ bool PFCOutLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   int pfc_prjn_idx;
   LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
   if(pfc_lay == NULL) {
-    taMisc::Error("*** PFCOutLayerSpec: Warning: no projection from PFC Layer found: must have MarkerConSpec!");
+    if (!quiet) taMisc::CheckError("*** PFCOutLayerSpec: Warning: no projection from PFC Layer found: must have MarkerConSpec!");
     return false;
   }
   if(pfc_lay->units.gp.size != lay->units.gp.size) {
     if(!quiet)
-      taMisc::Error("PFCOutLayerSpec: PFC Layer unit groups must = PFCOutLayer unit groups, copiped from PFC Layer; Please do a Build of network");
+      taMisc::CheckError("PFCOutLayerSpec: PFC Layer unit groups must = PFCOutLayer unit groups, copiped from PFC Layer; Please do a Build of network");
     lay->geom.z = pfc_lay->units.gp.size;
   }
   if(pfc_lay->units.leaves != lay->units.leaves) {
     if(!quiet)
-      taMisc::Error("PFCOutLayerSpec: PFC Layer units must = PFCOutLayer units, copied from PFC Layer; Please do a Build of network");
+      taMisc::CheckError("PFCOutLayerSpec: PFC Layer units must = PFCOutLayer units, copied from PFC Layer; Please do a Build of network");
     lay->geom = pfc_lay->geom;
   }
 
@@ -1453,14 +1453,14 @@ bool PFCOutLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int gateidx = lay->own_net->layers.FindLeaf(snrthal_lay);
   if(gateidx > myidx) {
-    taMisc::Error("PFCOutLayerSpec: SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("PFCOutLayerSpec: SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
 
   // check for ordering of layers!
   int pfcidx = lay->own_net->layers.FindLeaf(pfc_lay);
   if(pfcidx > myidx) {
-    taMisc::Error("PFCOutLayerSpec: PFC Layer must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("PFCOutLayerSpec: PFC Layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
 
@@ -2173,15 +2173,15 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   SetPFCStripes(net, n_stripes);
 
-  bool ok = pfcmsp->CheckConfig(pfc_m, true) && matrixsp->CheckConfig(matrix_m, true)
-    && snrthalsp->CheckConfig(snrthal_m, true) && sncsp->CheckConfig(snc, true);
+  bool ok = pfcmsp->CheckConfig_Layer(pfc_m, true) && matrixsp->CheckConfig_Layer(matrix_m, true)
+    && snrthalsp->CheckConfig_Layer(snrthal_m, true) && sncsp->CheckConfig_Layer(snc, true);
 
   if(ok && out_gate) {
-    ok = pfcosp->CheckConfig(pfc_o, true) && matrixosp->CheckConfig(matrix_o, true)
-      && snrthalosp->CheckConfig(snrthal_o, true);
+    ok = pfcosp->CheckConfig_Layer(pfc_o, true) && matrixosp->CheckConfig_Layer(matrix_o, true)
+      && snrthalosp->CheckConfig_Layer(snrthal_o, true);
   }
 
-//   if(ok && make_patch) ok = patchsp->CheckConfig(patch, true);
+//   if(ok && make_patch) ok = patchsp->CheckConfig_Layer(patch, true);
 
   if(!ok) {
     msg =

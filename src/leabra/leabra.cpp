@@ -457,8 +457,8 @@ void LeabraUnitSpec::UpdateAfterEdit() {
     act_range.max = depress.max_amp;
 }
 
-bool LeabraUnitSpec::CheckConfig(Unit* un, bool quiet) {
-  if(!UnitSpec::CheckConfig(un, quiet)) return false;
+bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
+  if(!UnitSpec::CheckConfig_Unit(un, quiet)) return false;
 
   Network* net = GET_MY_OWNER(Network);
 
@@ -473,7 +473,7 @@ bool LeabraUnitSpec::CheckConfig(Unit* un, bool quiet) {
     for(int j=1; j<send_gp->size; j++) {
       float sc = ((LeabraCon_Group*)ru->recv.FastGp(send_gp->other_idx))->scale_eff;
       if(sc != first_sc) {
-	if(!quiet) taMisc::Error("Leabra CheckConfig Error: the effective weight scales for\
+	if(!quiet) taMisc::CheckError("Leabra CheckConfig Error: the effective weight scales for\
  different sending connections within a group are not all the same!  Sending Layer:",
 				 send_gp->prjn->from->name, ", Rev Layer:", send_gp->prjn->layer->name,
 				 ", first_sc: ", (const char*)String(first_sc), ", sc: ",
@@ -487,14 +487,14 @@ bool LeabraUnitSpec::CheckConfig(Unit* un, bool quiet) {
   if(opt_thresh.updt_wts &&
       (net->wt_update != Network::ON_LINE) &&
       (net->context != Network::TEST)) {
-    if(!quiet) taMisc::Error("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when wt_update is not ON_LINE",
+    if(!quiet) taMisc::CheckError("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when wt_update is not ON_LINE",
 			     "I turned this flag off for you in LeabraUnitSpec:", name);
     SetUnique("opt_thresh", true);
     opt_thresh.updt_wts = false;
   }
 
   if(opt_thresh.updt_wts && act_reg.on && (act_reg.min > 0.0f)) {
-    if(!quiet) taMisc::Error("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when act_reg is on and min > 0",
+    if(!quiet) taMisc::CheckError("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when act_reg is on and min > 0",
 			     "I turned this flag off for you in LeabraUnitSpec:", name);
     SetUnique("opt_thresh", true);
     opt_thresh.updt_wts = false;
@@ -1412,7 +1412,7 @@ void LeabraLayerSpec::CutLinks() {
   LayerSpec::CutLinks();
 }
 
-bool LeabraLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
+bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   // basic guy doesn't check anything yet..
   return true;
 }
@@ -2627,8 +2627,8 @@ void LeabraLayer::UpdateWeights() {
 }
 
 bool LeabraLayer::CheckConfig(bool quiet) {
-  if(!Layer::CheckConfig(quiet)) return false; // checks units
-  return spec->CheckConfig(this, quiet); // use layerspec's version for everything else
+//obs  if(!Layer::CheckConfig(quiet)) return false; // checks units
+  return spec->CheckConfig_Layer(this, quiet); // use layerspec's version for everything else
 }
 
 //////////////////////////

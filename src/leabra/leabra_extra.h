@@ -62,6 +62,7 @@ public:
 
 class LEABRA_API LeabraContextLayerSpec : public LeabraLayerSpec {
   // context layer that copies from its recv projection (like an input layer)
+INHERITED(LeabraLayerSpec)
 public:
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
 
@@ -71,7 +72,7 @@ public:
   virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
   // get context source value for given context unit
 
-  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
+  override bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
   void	Defaults();
 
@@ -581,6 +582,7 @@ public:
 
 class LEABRA_API ScalarValLayerSpec : public LeabraLayerSpec {
   // represents a scalar value using a coarse-coded distributed code over units.  first unit represents scalar value.
+INHERITED(LeabraLayerSpec)
 public:
   ScalarValSpec	 scalar;	// specifies how values are represented in terms of distributed patterns of activation across the layer
   MinMaxRange	 unit_range;	// range of values represented across the units; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
@@ -631,7 +633,7 @@ public:
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -736,6 +738,7 @@ public:
 
 class LEABRA_API TwoDValLayerSpec : public LeabraLayerSpec {
   // represents one or more two-d value(s) using a coarse-coded distributed code over units.  first row represents scalar value(s).  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid
+INHERITED(LeabraLayerSpec)
 public:
   TwoDValSpec	 twod;		// specifies how values are represented in terms of distributed patterns of activation across the layer
   MinMaxRange	 x_range;	// range of values represented across the X (horizontal) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
@@ -783,7 +786,7 @@ public:
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
   void	UpdateAfterEdit();
   void 	Initialize();

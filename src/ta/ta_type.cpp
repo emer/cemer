@@ -201,6 +201,8 @@ bool 	taMisc::gui_active = false;
 ContextFlag	taMisc::is_loading;
 ContextFlag	taMisc::is_saving;
 ContextFlag	taMisc::is_duplicating;
+ContextFlag	taMisc::is_checking;
+String	taMisc::last_check_msg;
 int	taMisc::strm_ver = 2;
 
 int	taMisc::dmem_proc = 0;
@@ -323,9 +325,33 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 //TODO: should provide a way to log these somehow
   if(taMisc::dmem_proc > 0) return;
 #endif
-  cerr << "***WARNING: " << a << " " << b << " " << c << " " << d << " " << e << " " << f << 
-    " " << g << " " << h << " " << i  << "\n";
+  cerr << "***WARNING: " << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
   FlushConsole();
+}
+
+String taMisc::SuperCat(const char* a, const char* b, const char* c,
+		      const char* d, const char* e, const char* f,
+		      const char* g, const char* h, const char* i)
+{
+  STRING_BUF(s, 250);
+  s.cat(a); if(b) s.cat(" ").cat(b);  if(c) s.cat(" ").cat(c); 
+  if(d) s.cat(" ").cat(d); if(e) s.cat(" ").cat(e); if(f) s.cat(" ").cat(f); 
+  if(g) s.cat(" ").cat(g); if(h) s.cat(" ").cat(h); if(i) s.cat(" ").cat(i); 
+  return s;
+}
+
+void taMisc::CheckError(const char* a, const char* b, const char* c, const char* d,
+  const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  if(taMisc::dmem_proc > 0) return;
+#endif
+  if (is_checking) {
+    last_check_msg.cat(SuperCat(a, b, c, d, e, f, g, h, i)).cat("\n");
+  } else {
+    last_check_msg = SuperCat(a, b, c, d, e, f, g, h, i).cat("\n");
+    Warning(a, b, c, d, e, f, g, h, i);
+  }
 }
 
 #ifdef TA_NO_GUI
@@ -341,8 +367,7 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   if(taMisc::dmem_proc > 0) return;
 #endif
   if (beep_on_error) cerr << '\a'; // BEL character
-  cerr << a << " " << b << " " << c << " " << d << " " << e << " " << f  << 
-    " " << g << " " << h << " " << i  << "\n";
+  cerr << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
   FlushConsole();
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top)
@@ -361,12 +386,15 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
     int   chn = 0;
     String chstr = text;
     chstr += "\n";
-    if(strlen(a)>0) { chstr += String("0: ") + a + "\n"; chn++; }
-    if(strlen(b)>0) { chstr += String("1: ") + b + "\n"; chn++; }
-    if(strlen(c)>0) { chstr += String("2: ") + c + "\n"; chn++; }
-    if(strlen(d)>0) { chstr += String("3: ") + d + "\n"; chn++; }
-    if(strlen(e)>0) { chstr += String("4: ") + e + "\n"; chn++; }
-    if(strlen(f)>0) { chstr += String("5: ") + f + "\n"; chn++; }
+    if (a) { chstr += String("0: ") + a + "\n"; chn++; }
+    if (b) { chstr += String("1: ") + b + "\n"; chn++; }
+    if (c) { chstr += String("2: ") + c + "\n"; chn++; }
+    if (d) { chstr += String("3: ") + d + "\n"; chn++; }
+    if (e) { chstr += String("4: ") + e + "\n"; chn++; }
+    if (f) { chstr += String("5: ") + f + "\n"; chn++; }
+    if (g) { chstr += String("6: ") + g + "\n"; chn++; }
+    if (h) { chstr += String("7: ") + h + "\n"; chn++; }
+    if (i) { chstr += String("8: ") + i + "\n"; chn++; }
 
     int   choiceval = -1;
     while((choiceval < 0) ||  (choiceval > chn) ) {

@@ -50,7 +50,6 @@ public:
   PosTwoDCoord		offset;	// #EXPERT offset in layer or unit group at which to start reading/writing
   
   override String	GetDisplayName() const;
-  override bool 	CheckConfig(bool quiet = false);
 
   void  UpdateAfterEdit();
   void  InitLinks();
@@ -62,6 +61,7 @@ public:
 protected:
   int			chan_idx; // cached col, -1 = not looked up, or invalid
   
+  override void 	CheckConfig_impl(bool quiet, bool& rval);
   int			GetChanIdx(bool force_lookup = false); // recalcs if needed
 private:
   void	Initialize();
@@ -88,8 +88,6 @@ public:
   virtual void	SetAllDataNetwork(DataBlock* db, Network* net);
   // set all the data and network pointers for list elements
 
-  virtual bool CheckConfig(bool quiet = false);
-    
   TA_ABSTRACT_BASEFUNS(LayerRWBase_List);
 protected:
   virtual void		FillFromDataBlock_impl(DataBlock* db, Network* net,
@@ -213,7 +211,6 @@ public:
   // get the monitor data and stick it in the current row of the datablock/datatable
   void		ResetMonVals(); // deletes the cached vars
 
-  override bool	CheckConfig(bool quiet = false);
   
   static const KeyString key_obj_name;
   static const KeyString key_obj_type;
@@ -228,6 +225,7 @@ public:
   
 protected:
   int			cell_num; // current cell number, when adding mon vals
+  override void		CheckConfig_impl(bool quiet, bool& rval);
   override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
   override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_);
@@ -277,8 +275,6 @@ public:
   String GetColHeading(const KeyString&) const; // header text for the indicated column
   TA_BASEFUNS(NetMonItem_List);
   
-  override bool	CheckConfig(bool quiet = false);
-
 private:
   void		Initialize() {SetBaseType(&TA_NetMonItem);}
   void		Destroy() {}
@@ -318,7 +314,6 @@ public:
   void		RemoveMonitors();
   // #IGNORE called by the network to remove the objs from lists
 
-  override bool	CheckConfig(bool quiet = false);
   
   void	InitLinks();
   void	CutLinks();
@@ -327,6 +322,9 @@ public:
   COPY_FUNS(NetMonitor, taNBase);
   TA_BASEFUNS(NetMonitor);
   
+protected:
+  override void	CheckConfig_impl(bool quiet, bool& rval);
+  override void	CheckChildConfig_impl(bool quiet, bool& rval);
 private:
   void		Initialize();
   void		Destroy() {CutLinks();}

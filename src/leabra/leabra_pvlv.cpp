@@ -104,22 +104,22 @@ void PViLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool PViLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
+bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("PViLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("PViLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
   if(net->no_plus_test) {
-    if(!quiet) taMisc::Error("PViLayerSpec: requires LeabraNetwork no_plus_test = false, I just set it for you");
+    if(!quiet) taMisc::CheckError("PViLayerSpec: requires LeabraNetwork no_plus_test = false, I just set it for you");
     net->no_plus_test = false;
   }
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::Error("PViLayerSpec: must have DaModUnits!");
+    taMisc::CheckError("PViLayerSpec: must have DaModUnits!");
     return false;
   }
 
@@ -130,11 +130,11 @@ bool PViLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
-    taMisc::Error("PViLayerSpec: UnitSpec must be DaModUnitSpec!");
+    taMisc::CheckError("PViLayerSpec: UnitSpec must be DaModUnitSpec!");
     return false;
   }
   if((us->opt_thresh.learn >= 0.0f) || us->opt_thresh.updt_wts) {
-    if(!quiet) taMisc::Error("PViLayerSpec: UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
+    if(!quiet) taMisc::CheckError("PViLayerSpec: UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
 			     "I just set it for you in spec:", us->name,
 			     "(make sure this is appropriate for all layers that use this spec!)");
     us->SetUnique("opt_thresh", true);
@@ -145,7 +145,7 @@ bool PViLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   if(us->act.avg_dt != 0.0f) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.0f;
-    if(!quiet) taMisc::Error("PViLayerSpec: requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("PViLayerSpec: requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   us->UpdateAfterEdit();
@@ -167,19 +167,19 @@ bool PViLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
     if(!cs->InheritsFrom(TA_PVConSpec)) {
-      taMisc::Error("PViLayerSpec: requires recv connections to be of type PVConSpec");
+      if (!quiet) taMisc::CheckError("PViLayerSpec: requires recv connections to be of type PVConSpec");
       return false;
     }
   }
   
   if(ext_rew_lay == NULL) {
-    taMisc::Error("PViLayerSpec: requires MarkerConSpec connection from PVe/ExtRewLayerSpec layer to get external rewards!");
+    if (!quiet) taMisc::CheckError("PViLayerSpec: requires MarkerConSpec connection from PVe/ExtRewLayerSpec layer to get external rewards!");
     return false;
   }
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int eridx = lay->own_net->layers.FindLeaf(ext_rew_lay);
   if(eridx > myidx) {
-    taMisc::Error("PViLayerSpec: PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("PViLayerSpec: PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
 
@@ -331,22 +331,22 @@ void LVeLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool LVeLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
+bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("LVeLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("LVeLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
   if(net->no_plus_test) {
-    if(!quiet) taMisc::Error("LVeLayerSpec: requires LeabraNetwork no_plus_test = false, I just set it for you");
+    if(!quiet) taMisc::CheckError("LVeLayerSpec: requires LeabraNetwork no_plus_test = false, I just set it for you");
     net->no_plus_test = false;
   }
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::Error("LVeLayerSpec: must have DaModUnits!");
+    if (!quiet) taMisc::CheckError("LVeLayerSpec: must have DaModUnits!");
     return false;
   }
 
@@ -356,11 +356,11 @@ bool LVeLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
-    taMisc::Error("LVeLayerSpec: UnitSpec must be DaModUnitSpec!");
+    if (!quiet) taMisc::CheckError("LVeLayerSpec: UnitSpec must be DaModUnitSpec!");
     return false;
   }
   if((us->opt_thresh.learn >= 0.0f) || us->opt_thresh.updt_wts) {
-    if(!quiet) taMisc::Error("LVeLayerSpec: UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
+    if(!quiet) taMisc::CheckError("LVeLayerSpec: UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
 			     "I just set it for you in spec:", us->name,
 			     "(make sure this is appropriate for all layers that use this spec!)");
     us->SetUnique("opt_thresh", true);
@@ -387,13 +387,13 @@ bool LVeLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
     if(!cs->InheritsFrom(TA_LVConSpec)) {
-      taMisc::Error("LVeLayerSpec: requires recv connections to be of type LVConSpec");
+      if (!quiet) taMisc::CheckError("LVeLayerSpec: requires recv connections to be of type LVConSpec");
       return false;
     }
   }
   
   if(pvi_lay == NULL) {
-    taMisc::Error("LVeLayerSpec: requires MarkerConSpec connection from PViLayerSpec layer to get DA values!");
+    if (!quiet) taMisc::CheckError("LVeLayerSpec: requires MarkerConSpec connection from PViLayerSpec layer to get DA values!");
     return false;
   }
 
@@ -514,8 +514,8 @@ void PVLVDaLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
+bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
@@ -523,7 +523,7 @@ bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("PVLVDaLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("PVLVDaLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
 
@@ -534,7 +534,7 @@ bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     us->act_range.max = 2.0f;
     us->act_range.min = -2.0f;
     us->act_range.UpdateAfterEdit();
-    if(!quiet) taMisc::Error("PVLVDaLayerSpec: requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("PVLVDaLayerSpec: requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   if((us->clamp_range.max != 2.0f) || (us->clamp_range.min != -2.0f)) {
@@ -542,13 +542,13 @@ bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     us->clamp_range.max = 2.0f;
     us->clamp_range.min = -2.0f;
     us->clamp_range.UpdateAfterEdit();
-    if(!quiet) taMisc::Error("PVLVDaLayerSpec: requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("PVLVDaLayerSpec: requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   if(us->act.avg_dt != 0.0f) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.0f;
-    if(!quiet) taMisc::Error("PVLVDaLayerSpec: requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("PVLVDaLayerSpec: requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
 
@@ -565,11 +565,11 @@ bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.spec;
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
       if(recv_gp->size <= 0) {
-	taMisc::Error("PVLVDaLayerSpec: requires one recv projection with at least one unit!");
+	if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: requires one recv projection with at least one unit!");
 	return false;
       }
       if(!recv_gp->Un(0)->InheritsFrom(TA_DaModUnit)) {
-	taMisc::Error("PVLVDaLayerSpec: I need to receive from a DaModUnit!");
+	if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: I need to receive from a DaModUnit!");
 	return false;
       }
       if(fls->InheritsFrom(TA_LVeLayerSpec)) lve_lay = fmlay;
@@ -579,32 +579,32 @@ bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   }
 
   if(lve_lay == NULL) {
-    taMisc::Error("PVLVDaLayerSpec: did not find LVe layer to get Da from!");
+    if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: did not find LVe layer to get Da from!");
     return false;
   }
   if(lvi_lay == NULL) {
-    taMisc::Error("PVLVDaLayerSpec: did not find LVi layer to get Da from!");
+    if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: did not find LVi layer to get Da from!");
     return false;
   }
   if(pvi_lay == NULL) {
-    taMisc::Error("PVLVDaLayerSpec: did not find PVi layer to get Da from!");
+    if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: did not find PVi layer to get Da from!");
     return false;
   }
 
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int lvidx = lay->own_net->layers.FindLeaf(lve_lay);
   if(lvidx > myidx) {
-    taMisc::Error("PVLVDaLayerSpec: LVe layer must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: LVe layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
   lvidx = lay->own_net->layers.FindLeaf(lvi_lay);
   if(lvidx > myidx) {
-    taMisc::Error("PVLVDaLayerSpec: LVi layer must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: LVi layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
   lvidx = lay->own_net->layers.FindLeaf(pvi_lay);
   if(lvidx > myidx) {
-    taMisc::Error("PVLVDaLayerSpec: PVi layer must be *before* this layer in list of layers -- it is now after, won't work");
+    if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: PVi layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
 
@@ -613,7 +613,7 @@ bool PVLVDaLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   for(si=0;si<lay->send_prjns.size;si++) {
     Projection* prjn = (Projection*)lay->send_prjns[si];
     if(!prjn->from->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-      taMisc::Error("PVLVDaLayerSpec: all layers I send to must have DaModUnits!, layer:",
+      if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: all layers I send to must have DaModUnits!, layer:",
 		    prjn->from->GetPath(),"doesn't");
       return false;
     }
@@ -1135,9 +1135,9 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
   net->Build();
   net->Connect();
 
-  bool ok = pvisp->CheckConfig(pvi, true) && lvesp->CheckConfig(lve, true)
-    && lvisp->CheckConfig(lve, true)
-    && dasp->CheckConfig(vta, true) && pvesp->CheckConfig(pve, true);
+  bool ok = pvisp->CheckConfig_Layer(pvi, true) && lvesp->CheckConfig_Layer(lve, true)
+    && lvisp->CheckConfig_Layer(lve, true)
+    && dasp->CheckConfig_Layer(vta, true) && pvesp->CheckConfig_Layer(pve, true);
 
   if(!ok) {
     msg =

@@ -25,16 +25,18 @@
 #include "ta_TA_type.h"
 
 #ifdef TA_GUI
-  #include "ta_seledit.h"
-  #include "ta_qt.h"
-  #include "ta_qtdata.h"
-  #include "ta_qttype_def.h"
-  #include "ta_qtgroup.h"
-  #include "ta_qtbrowse.h"
-  #include "ta_qtclipdata.h"
+# include "ta_seledit.h"
+# include "ta_qt.h"
+# include "ta_qtdata.h"
+# include "ta_qtdialog.h"
+# include "ta_qttype_def.h"
+# include "ta_qtgroup.h"
+# include "ta_qtbrowse.h"
+# include "ta_qtclipdata.h"
 
-  #include <qcolor.h>
-  #include <qpixmap.h>
+# include  <qcolor.h>
+# include <QMessageBox>
+# include  <qpixmap.h>
 #endif
 
 #include <QFileInfo>
@@ -124,6 +126,41 @@ taRootBase* tabMisc::root = NULL;
 taBase_PtrList 	tabMisc::delayed_remove;
 taBase_PtrList 	tabMisc::delayed_updateafteredit;
 taBase_PtrList	tabMisc::post_load_opr;
+
+bool tabMisc::CheckConfig(taBase* obj, bool quiet, bool gui) {
+  if (!obj) return false; // not supposed to happen
+  if (!taMisc::gui_active) gui = false;
+  // always clear last msg, so there is no confusion after running Check
+  taMisc::last_check_msg = _nilString;
+  ++taMisc::is_checking;
+  taMisc::Busy();
+  bool rval = obj->CheckConfig(quiet);
+  taMisc::DoneBusy();
+  --taMisc::is_checking;
+  if (!quiet) {
+#ifdef TA_GUI
+    if (gui) {
+      if (rval)
+        QMessageBox::information(NULL, "Check Succeeded", "No configuration errors were found.");
+      else {
+        iTextEditDialog* td = new iTextEditDialog(true);
+        td->setWindowTitle("Check Failed");
+        td->setText(taMisc::last_check_msg);
+        td->exec();
+        td->deleteLater();
+      }
+    } else 
+#endif // TA_GUI
+    {
+      if (rval)
+        taMisc::Warning("No configuration errors were found.");
+      else {
+        taMisc::Warning("** Configuration errors were found:\n");
+        cerr << taMisc::last_check_msg;
+      }
+    }
+  }
+}
 
 void tabMisc::Close_Obj(TAPtr obj) {
   delayed_remove.Link(obj);
@@ -452,13 +489,17 @@ const String taBase::ValTypeToStr(ValType vt) {
   }
 }
 
-
 void taBase::Destroy() {
+#ifdef DEBUG
+  SetFlag(DESTROYED);
+#endif
 }
 
-TypeDef* taBase::GetTypeDef() const {
-  return &TA_taBase;
+#ifdef DEBUG
+void taBase::CheckDestroyed() {
+//  assert(!HasFlag(DESTROYED) && "taBase object being multiply destroyed"); 
 }
+#endif
 
 void taBase::UpdateAfterEdit() {
 //obs  tabMisc::NotifyEdits(this);
@@ -480,13 +521,8 @@ void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   }
 }
 
-bool taBase::CheckConfig(bool quiet) {
-  return true;
-}
-
 void taBase::CutLinks() {
 }
-
 
 void taBase::InitLinks_taAuto(TypeDef* td) {
   for(int i=0; i<td->members.size; i++) {
@@ -550,6 +586,31 @@ void taBase::CallFun(const String& fun_name) {
     md->CallFun((void*)this);
   else
     taMisc::Error("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
+}
+
+bool taBase::CheckConfig(bool quiet) {
+  int cp_flags = m_flags; 
+  bool this_rval = true;
+  CheckConfig_impl(quiet, this_rval);
+  if (this_rval) {
+    ClearFlag(THIS_INVALID);
+  } else {
+    SetFlag(THIS_INVALID);
+  }
+  bool child_rval = true;
+  CheckChildConfig_impl(quiet, child_rval);
+  if (child_rval) {
+    ClearFlag(CHILD_INVALID);
+  } else {
+    SetFlag(CHILD_INVALID);
+  }
+  if (cp_flags != m_flags)
+    DataChanged(DCR_ITEM_UPDATED);
+  return (this_rval && child_rval);
+}
+
+void taBase::ClearFlag(int flag) {
+  m_flags &= ~flag;
 }
 
 void taBase::Close() {
@@ -758,6 +819,14 @@ String taBase::GetDisplayName() const {
   return rval;
 }
 
+TypeDef* taBase::GetTypeDef() const {
+  return &TA_taBase;
+}
+
+bool taBase::HasFlag(int flag) const {
+  return (m_flags & flag);
+}
+
 int taBase::Load(istream& strm, TAPtr par, void** el_) { 
   int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, el_); 
   if (el_) {
@@ -847,6 +916,10 @@ int taBase::SaveAs_File(const String& fname) {
   
   taRefN::unRefDone(flr);
   return rval;
+}
+
+void taBase::SetFlag(int flag) {
+  m_flags |= flag;
 }
 
 TAPtr taBase::GetOwner(TypeDef* td) const {
@@ -1551,8 +1624,17 @@ void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
 }
 
-bool taList_impl::CheckConfig(bool quiet) {
-  return inherited_taBase::CheckConfig(quiet);
+void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
+  //note: we have to process everyone, because this is the routine
+  // that asserts or clears the state, even if an invalid found early
+  for (int i = 0; i < size; ++i) {
+    taBase* child = (taBase*)FastEl_(i);
+//TODO: is a linked test necessary?? would it not be ok???
+    // we only include owned items, not linked
+    if (!child || (child->GetOwner() != this)) 
+      continue;
+    child->CheckConfig(quiet, rval);
+  }
 }
 
 

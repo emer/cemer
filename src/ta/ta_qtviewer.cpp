@@ -1031,8 +1031,8 @@ bool tabDataLink::HasChildItems() {
   return false;
 }
 
-bool tabDataLink::isValid() const {
-  return data()->CheckConfig(true); // true = quiet
+int tabDataLink::checkConfigFlags() const {
+  return (data()->baseFlags() & taBase::INVALID_MASK);
 }
 
 bool tabDataLink::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const {
@@ -3984,6 +3984,10 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
     QColor(0xFF, 0x99, 0x99),  // pale dull red
     QColor(0x99, 0x33, 0x33) // dark dull red
   );
+  setHighlightColor(2, 
+    QColor(0xFF, 0xFF, 0x99),  // pale dull yellow
+    QColor(0x99, 0x99, 0x33) // dark dull yellow
+  );
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
   connect(this, SIGNAL(itemSelectionChanged()),
@@ -4346,10 +4350,13 @@ void iTreeViewItem::DecorateDataNode() {
   }
   // if tree is using highlighting, then highlight if invalid
   if (tv->highlightRows()) {
-    if (link()->isValid())
-      setHighlightIndex(0);
+    int cfc = link()->checkConfigFlags();
+    if (cfc & taBase::THIS_INVALID)
+      setHighlightIndex(1); //red
+    else if (cfc & taBase::CHILD_INVALID)
+      setHighlightIndex(2); //yellow
     else
-      setHighlightIndex(1);
+      setHighlightIndex(0);
   }
 }
 

@@ -103,6 +103,15 @@ void taGroup_impl::CutLinks() {
   inherited::CutLinks();
 }
 
+void taGroup_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  //note: we have to process everyone, because this is the routine
+  // that asserts or clears the state, even if an invalid found early
+  for (int i = 0; i < gp.size; ++i) {
+    taGroup_impl* child_gp = gp.FastEl(i);
+    child_gp->CheckConfig(quiet, rval);
+  }
+}
 
 void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
   taList_impl::DataChanged(dcr, op1, op2); // normal processing

@@ -134,6 +134,7 @@ public:
 
 class LEABRA_API ExtRewLayerSpec : public ScalarValLayerSpec {
   // computes external reward feedback: minus phase is zero, plus phase is reward value derived from network performance or other inputs (computed at start of 1+)
+INHERITED(ScalarValLayerSpec)
 public:
   enum RewardType {		// how do we get the reward values?
     OUT_ERR_REW,		// get rewards as a function of errors on the output layer ONLY WHEN RewTarg layer act > .5 -- get from markerconspec from output layer(s)
@@ -167,7 +168,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -228,6 +229,7 @@ public:
 
 class LEABRA_API TDRewPredLayerSpec : public ScalarValLayerSpec {
   // predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1)
+INHERITED(ScalarValLayerSpec)
 public:
   virtual void 	Compute_SavePred(Unit_Group* ugp, LeabraNetwork* net); // save current prediction to misc_1 for later clamping
   virtual void 	Compute_ClampPred(Unit_Group* ugp, LeabraNetwork* net); // clamp misc_1 to ext 
@@ -245,7 +247,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -275,6 +277,7 @@ public:
 
 class LEABRA_API TDRewIntegLayerSpec : public ScalarValLayerSpec {
   // integrates perceived and external rewards: delta over phases = DA td-like signal. minus phase = prev exp rew V^(t), plus phase = extrew (r) + tdrewpred computing V(t+1)
+INHERITED(ScalarValLayerSpec)
 public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
 
@@ -282,7 +285,7 @@ public:
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void	UpdateAfterEdit();
@@ -300,6 +303,7 @@ public:
 
 class LEABRA_API TdLayerSpec : public LeabraLayerSpec {
   // computes activation = temporal derivative (act_eq - act_m) of sending units in plus phases: note, act will go negative!
+INHERITED(LeabraLayerSpec)
 public:
   virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net);
   // compute a zero td value: in minus phase
@@ -314,7 +318,7 @@ public:
   void	Compute_dWt(LeabraLayer*, LeabraNetwork*) { }; // nop
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig(LeabraLayer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
   void 	Initialize();

@@ -78,9 +78,7 @@ public:
   virtual void	SetHardEnum(TypeDef* enum_type, int val);
   virtual void	SetDynEnum(int val);
   virtual void	SetDynEnumName(const String& val);
-
-  override bool		CheckConfig(bool quiet=false);
-  
+ 
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
 
@@ -96,6 +94,7 @@ public:
   COPY_FUNS(ProgVar, inherited);
   TA_BASEFUNS(ProgVar);
 protected:
+  override void		CheckConfig_impl(bool quiet, bool& rval);
   virtual const String	GenCssArg_impl();
   virtual const String	GenCssVar_impl();
 private:
@@ -116,8 +115,6 @@ public:
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
 
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
-  
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	Copy_(const ProgVar_List& cp);
   COPY_FUNS(ProgVar_List, inherited);
@@ -183,11 +180,12 @@ public:
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
-  override bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
-
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
 
+  override bool CheckConfig(bool quiet = false);
+  USING(taOBase::CheckConfig)
+  
   override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, inherited);
@@ -212,8 +210,6 @@ public:
   virtual void		PreGen(int& item_id); // iterates over all items
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object
   
-  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
-
   override int		NumListCols() const {return 2;} 
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
@@ -232,8 +228,6 @@ INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of ProgEl's
   
-  override bool		CheckConfig(bool quiet=false);
-
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
@@ -242,6 +236,7 @@ public:
   TA_BASEFUNS(ProgList);
 
 protected:
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
 
@@ -256,13 +251,13 @@ INHERITED(ProgEl)
 public:
   ProgVar_List	script_vars;
   
-  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(ProgVars);
 
 protected:
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
 
 private:
@@ -302,13 +297,14 @@ public:
   ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
   String	    	loop_test; // #EDIT_DIALOG a test expression for whether to continue looping (e.g., 'i < max')
   
-  override bool		CheckConfig(bool quiet=false);
   SIMPLE_LINKS(Loop);
   SIMPLE_COPY(Loop);
   COPY_FUNS(Loop, inherited);
   TA_ABSTRACT_BASEFUNS(Loop);
 
 protected:
+  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -360,10 +356,10 @@ public:
   String	    	loop_iter; // #EDIT_DIALOG the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
   
   override String	GetDisplayName() const;
-  override bool		CheckConfig(bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(ForLoop);
 protected:
+  override void		CheckConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
@@ -379,10 +375,10 @@ public:
   String	    	condition; // #EDIT_DIALOG #AKA_cond_expr conditionalizing expression for continuing loop
   
   override String	GetDisplayName() const;
-  override bool		CheckConfig(bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(IfContinue);
 protected:
+  override void		CheckConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -397,10 +393,10 @@ public:
   String	    	condition; // #EDIT_DIALOG #AKA_cond_expr conditionalizing expression for breaking out of loop
   
   override String	GetDisplayName() const;
-  override bool		CheckConfig(bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(IfBreak);
 protected:
+  override void		CheckConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -416,7 +412,6 @@ public:
   ProgEl_List	    true_code; // #BROWSE items to execute if condition true
   ProgEl_List	    false_code; // #BROWSE items to execute if condition false
   
-  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
   void	InitLinks();
   void	CutLinks();
@@ -425,6 +420,8 @@ public:
   TA_BASEFUNS(IfElse);
 
 protected:
+  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
@@ -445,7 +442,6 @@ public:
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
   SArg_Array		args; // arguments to the method
   
-  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
   void	UpdateAfterEdit();
   void	InitLinks();
@@ -458,6 +454,7 @@ protected:
   ProgVar*		lst_script_obj; 
   MethodDef*		lst_method; 
   
+  override void 	CheckConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
   virtual void		CheckUpdateArgs(bool force = false); // called when method changes
 
@@ -476,7 +473,6 @@ public:
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
   SArg_Array		args; // arguments to the method
   
-  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
   void	UpdateAfterEdit();
   void	InitLinks();
@@ -488,6 +484,7 @@ public:
 protected:
   MethodDef*		lst_method; 
   
+  override void 	CheckConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
   virtual void		CheckUpdateArgs(bool force = false); // called when method changes
 
@@ -510,7 +507,6 @@ class TA_API Program_List : public taList<Program> {
 INHERITED(taList<Program>)
 public:
   
-  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
   TA_BASEFUNS(Program_List);
 
 private:
@@ -594,8 +590,6 @@ public:
   // set the value of a global variable (in the cssProgSpace) prior to calling Run
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
-  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
-
   virtual void		SaveScript(ostream& strm);
   // #MENU #MENU_ON_Actions #MENU_CONTEXT #BUTTON save the css script generated by the program to a file
 
@@ -624,6 +618,7 @@ public: // ScriptBase i/f
 
 protected:
   String		m_scriptCache; // cache of script, managed by implementation
+  override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override bool		PreCompileScript_impl(); // CheckConfig & add/update the global vars
   virtual void		Stop_impl(); 
@@ -715,8 +710,6 @@ public:
 
   static ProgLib	prog_lib; // #HIDDEN_TREE library of available programs
 
-  virtual bool		CheckConfig(bool quiet=false);	// return false if not properly configured for generating a program
-
   taBase* NewFromLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib create a new program from a library of existing program types
   taBase* NewFromLibByName(const String& prog_nm);
@@ -748,7 +741,6 @@ public:
 
   virtual Program*	GetTarget(); // safe call to get target: emits error if target is null
 
-  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
@@ -761,6 +753,7 @@ public:
 protected:
   Program*		old_target; // the last target, used to detect changes
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
+  override void 	CheckConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 

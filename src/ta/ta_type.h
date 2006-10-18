@@ -395,6 +395,8 @@ public:
   static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
   static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object
   static ContextFlag	is_duplicating;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently duplicating an object
+  static ContextFlag	is_checking;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently doing batch CheckConfig on objects
+  static String		last_check_msg; // #READ_ONLY #NO_SAVE #SHOW #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
   static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
 
   static int		dmem_proc; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory process number (rank in MPI, always 0 for no dmem)
@@ -453,20 +455,30 @@ public:
   static void	FlushConsole();
   // flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
 
-  static void 	Error(const char* a, const char* b="", const char* c="",
-		      const char* d="", const char* e="", const char* f="",
-		      const char* g="", const char* h="", const char* i="");
+
+  static String	SuperCat(const char* a, const char* b, const char* c,
+		      const char* d, const char* e, const char* f,
+		      const char* g, const char* h, const char* i);
+  
+  static void 	Error(const char* a, const char* b=0, const char* c=0,
+		      const char* d=0, const char* e=0, const char* f=0,
+		      const char* g=0, const char* h=0, const char* i=0);
   // displays error either in a window+stderr if gui_active or to stderr only
 
-  static void 	Warning(const char* a, const char* b="", const char* c="",
-		      const char* d="", const char* e="", const char* f="",
-		      const char* g="", const char* h="", const char* i="");
+  static void 	CheckError(const char* a, const char* b=0, const char* c=0,
+		      const char* d=0, const char* e=0, const char* f=0,
+		      const char* g=0, const char* h=0, const char* i=0);
+  // called by CheckConfig routines; enables batching up of errors for display
+  
+  static void 	Warning(const char* a, const char* b=0, const char* c=0,
+		      const char* d=0, const char* e=0, const char* f=0,
+		      const char* g=0, const char* h=0, const char* i=0);
   // displays warning to stderr and/or other logging mechanism
 
-  static int 	Choice(const char* text="Choice", const char* a="Ok", const char* b="",
-		       const char* c="", const char* d="", const char* e="",
-		       const char* f="", const char* g="", const char* h="",
-		       const char* i="");
+  static int 	Choice(const char* text="Choice", const char* a="Ok", const char* b=0,
+		       const char* c=0, const char* d=0, const char* e=0,
+		       const char* f=0, const char* g=0, const char* h=0,
+		       const char* i=0);
   // allows user to choose among different options in window if iv_active or stdin/out
 
   static void 	Busy();		// puts system in a 'busy' state
@@ -677,7 +689,6 @@ friend class taDataLinkItr;
 public:
   void*			data() const {return m_data;} // subclasses usually replace with strongly typed version
   virtual bool		isBase() const {return false;} // true if data is of type taBase (note: could still be null)
-  virtual bool		isValid() const {return true;} // used to highlight invalid items in gui
   
   void			AddDataClient(IDataLinkClient* dlc);
   bool			RemoveDataClient(IDataLinkClient* dlc); // WARNING: link is undefined after this call; CAUSES US TO DESTROY IF CLIENTS=0

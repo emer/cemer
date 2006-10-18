@@ -226,6 +226,7 @@ public:
   TA_BASEFUNS(taGroup_impl);
 
 protected:
+  override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   override void		ItemRemoved_(); // update the leaf counts (supercursively)
 };
 

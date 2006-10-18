@@ -584,11 +584,13 @@ String& String::cat(const String& y) {
 }
 
 String& String::cat(const char* y) {
-  uint slen = (y) ? (uint)strlen(y) : 0;
-  if (mrep->canCat(slen))
-    mrep->cat(y, slen);
-  else
-    ::cat(*this, y, slen, *this);
+  uint slen;
+  if (y && (slen = (uint)strlen(y)) ) {
+    if (mrep->canCat(slen))
+      mrep->cat(y, slen);
+    else
+      ::cat(*this, y, slen, *this);
+  }
   return *this;
 }
 

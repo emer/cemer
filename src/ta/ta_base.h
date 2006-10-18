@@ -91,6 +91,8 @@ public:
   // notify any edit dialogs of a taptr object that object has changed
   static void		DelayedUpdateAfterEdit(TAPtr obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
+  static bool		CheckConfig(taBase* obj, bool quiet = false, bool gui = true);
+    // do a batch check of the obj, if !quiet: gui: display, else console; true if ok
 };
 
 #define TA_BASEFUNS(y) 	y () { Register(); Initialize(); SetDefaultName(); } \
@@ -108,7 +110,7 @@ public:
 
 #define TA_BASEFUNS_LITE(y) y () {Initialize();} \
 			y (const y& cp) {Initialize(); Copy(cp); } \
-			~y () {Destroy();} \
+			~y () {CheckDestroyed(); Destroy();} \
 			TAPtr Clone() { return new y(*this); }  \
 			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
 						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
@@ -159,7 +161,7 @@ public:
 //for abstract templates
 #define TA_ABSTRACT_TMPLT_BASEFUNS(y,T) y () { Initialize(); } \
 			y (const y<T>& cp) { Initialize(); Copy(cp); } \
-			~y () {Destroy(); } \
+			~y () {CheckDestroyed(); Destroy(); } \
 			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y<T>*)cp)); \
 						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
 			void  CastCopyTo(TAPtr cp) { y<T>& rf = *((y<T>*)cp); rf.Copy(*this); } \
@@ -254,6 +256,15 @@ public:
     VT_INT,		// a 32-bit signed integer
     VT_BYTE,		// an unsigned 8-bit integer; used mostly for image components (rgb)
     VT_VARIANT		// a Variant, which can hold scalars, matrices, and objects
+  };
+  
+  enum Flags { // #BITS control flags 
+    THIS_INVALID	= 0x01, // #BIT CheckConfig_impl has detected a problem
+    CHILD_INVALID	= 0x02, // #BIT CheckChildConfig_impl returns issue with a child
+    DESTROYED		= 0x80 // #BIT set in base destroy (DEBUG only); lets us detect multi destroys
+#ifndef __MAKETA__
+    ,INVALID_MASK	= THIS_INVALID | CHILD_INVALID
+#endif
   };
   
   static const String 	ValTypeToStr(ValType vt);    // #IGNORE
@@ -353,6 +364,8 @@ public:
   virtual bool		isDirty() const {return false;} // #IGNORE implemented by very few, esp. Project
   virtual void 		setDirty(bool value); // #CAT_ObjectMgmt 'true' gets forwarded up; 'false' does nothing
   
+  int			baseFlags() const {return m_flags;} // flag values; see also HasFlag
+  
   virtual taDataLink* 	GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
   void			AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
   bool			RemoveDataClient(IDataLinkClient* dlc); // #IGNORE WARNING: link is undefined after this 
@@ -372,17 +385,21 @@ public:
   void 			Register()			// #IGNORE non-virtual, called in constructors
   { if(!taMisc::not_constr) GetTypeDef()->Register((void*)this); }
   void 			unRegister()			// #IGNORE non-virtual, called in destructors
-  { if(!taMisc::not_constr) GetTypeDef()->unRegister((void*)this); }
+  { CheckDestroyed(); if(!taMisc::not_constr) GetTypeDef()->unRegister((void*)this); }
 
   // these are all "free" with the TA_BASEFUNS
-  void			Initialize()		{ refn = 0; }
+  void			Initialize()		{ refn_flags = 0; }
   // #IGNORE initializer; same considerations as Destroy
   void			Destroy(); // #IGNORE destroy for classes that don't need their own -- MIGHT BE CALLED MULTIPLE TIMES
   taBase()					{ Register(); Initialize(); }
   taBase(taBase& cp)				{ Register(); Initialize(); Copy(cp); }
   taBase(int)					{ Initialize(); } // don't register...
-  virtual ~taBase() 				{ Destroy(); }
+  virtual ~taBase() 				{ Destroy(); } //
 
+  bool			HasFlag(int flag) const; // true if flag set, or if multiple, any set
+  void			SetFlag(int flag); // sets the flag(s)
+  void			ClearFlag(int flag); // clears the flag(s)
+  
   virtual TAPtr		Clone()			{ return new taBase(*this); } // #IGNORE
   virtual void		UnSafeCopy(TAPtr)	{ }; // #IGNORE assumes source is same type
   virtual void		CastCopyTo(TAPtr)	{ }; // #IGNORE ??
@@ -442,8 +459,12 @@ public:
   // #CAT_ObjectMgmt bracket structural changes with (nestable) true/false calls;
   void			DataUpdate(bool begin) {BatchUpdate(begin, false);}
   // #CAT_ObjectMgmt bracket data value changes with (nestable) true/false calls;
-  virtual bool		CheckConfig(bool quiet = false);
-  // #CAT_ObjectMgmt check the configuration of this object (false if not configed properly).  typically called before running any major processing, enabling processing to assume things are configured correctly.  quiet flag suppresses error messages
+  void			CheckConfig(bool quiet, bool& rval)
+    {if (!CheckConfig(quiet)) rval = false;} // #IGNORE convenience
+  virtual bool		CheckConfig(bool quiet = false); // for code
+  void			DoCheckConfig()
+   {tabMisc::CheckConfig(this, false, true);}
+  // #MENU #CAT_ObjectMgmt #LABEL_CheckConfig check the configuration of this object and all its children;  typically called before running any major processing, enabling processing to assume things are configured correctly
 
   // viewing-related functions -- usually not overridden base
   virtual void		AddDataView(taDataView* dv); // #CAT_Display add a dataview 
@@ -648,13 +669,32 @@ public:
   { }
 #endif
 protected:
-  virtual void 		Dump_Save_pre() {} // called before _impl, enables jit updating before save
-  virtual String	GetStringRep_impl() const; // string representation, ex. for variants; default is typename:fullpath
-
-  int			refn;		// number of references to this object; note: MAXINT is the max allowed value
   static String		no_name; 	// return this for no names
   static int		no_idx;		// return this for no index
   static MemberDef*	no_mdef;	// return this for no memberdef ptr
+  
+#ifndef __MAKETA__
+  union {
+  int			refn_flags; // for efficient initialization
+  struct {
+  int			refn: 24;	// number of references to this object
+  mutable int		m_flags: 8;
+  };
+  };
+#endif
+  
+#ifdef DEBUG
+  void			CheckDestroyed();// issues assertion if destroyed
+#else
+  inline void		CheckDestroyed() {} // should get optimized out
+#endif
+
+  virtual void		CheckConfig_impl(bool quiet, bool& rval) {}
+    // impl for us; can include embedded objects (but don't incl them in Child check); only clear rval (if invalid), don't set
+  virtual void		CheckChildConfig_impl(bool quiet, bool& rval) {}
+   // impl for checking children; only clear rval (if invalid), don't set
+  virtual void 		Dump_Save_pre() {} // called before _impl, enables jit updating before save
+  virtual String	GetStringRep_impl() const; // string representation, ex. for variants; default is typename:fullpath
 };
 
 inline istream& operator>>(istream &strm, taBase &obj)
@@ -1036,8 +1076,6 @@ public:
   override String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
     int itm_idx = -1) const;	// #IGNORE
 
-  override bool CheckConfig(bool quiet = false);
-
   void 	Initialize();
   void	Destroy();
   void 	CutLinks();
@@ -1081,6 +1119,7 @@ protected:
   virtual int	ChildEditActionLD_impl_ext(const MemberDef* md, int item_idx, taBase* lst_itm, taiMimeSource* ms, int ea);
 #endif
 protected:
+  override void	CheckChildConfig_impl(bool quiet, bool& rval);
   override String ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const;
 };
 

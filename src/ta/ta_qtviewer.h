@@ -80,6 +80,9 @@ INHERITED(taDataLink)
 public:
   static String		AnonymousItemName(const String& type_name, int index); // [index]:Typename
 
+  virtual int		checkConfigFlags() const { return 0;}
+    // taBase::THIS_INVALID|CHILD_INVALID
+
   virtual void		FillContextMenu(taiActions* menu); // only override to prepend to menu
   virtual void		FillContextMenu_EditItems(taiActions* menu, int allowed) {}
   virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
@@ -142,7 +145,7 @@ public:
   taBase*		data() {return (taBase*)m_data;}
   taBase*		data() const {return (taBase*)m_data;}
   override bool		isBase() const {return true;} 
-  override bool		isValid() const; // we call CheckConfig
+  override int		checkConfigFlags() const; // we call CheckConfig
   
   override bool		GetIcon(int bmf, int& flags_supported, QIcon& ic);
     // delegates to taBase::GetDataNodeBitmap

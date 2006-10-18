@@ -275,19 +275,19 @@ void ExtRewLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool ExtRewLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
-    return false;
+bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  bool rval = ScalarValLayerSpec::CheckConfig_Layer(lay, quiet);
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("ExtRewLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    rval = false;
+    if(!quiet) taMisc::CheckError("ExtRewLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::Error("ExtRewLayerSpec: must have DaModUnits!");
-    return false;
+    taMisc::CheckError("ExtRewLayerSpec: must have DaModUnits!");
+    rval = false;
   }
 
   SetUnique("decay", true);
@@ -297,13 +297,14 @@ bool ExtRewLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
-    taMisc::Error("ExtRewLayerSpec: UnitSpec must be DaModUnitSpec!");
-    return false;
+    taMisc::CheckError("ExtRewLayerSpec: UnitSpec must be DaModUnitSpec!");
+    rval = false;
   }
   if(us->act.avg_dt != 0.0f) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.0f;
-    if(!quiet) taMisc::Error("ExtRewLayerSpec: requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
+    rval = false;
+    if(!quiet) taMisc::CheckError("ExtRewLayerSpec: requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   us->UpdateAfterEdit();
@@ -325,34 +326,34 @@ bool ExtRewLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   }
   if(!got_marker) {
     if(rew_type == DA_REW) {
-      taMisc::Error("ExtRewLayerSpec: requires at least one recv MarkerConSpec connection from DA layer",
+      taMisc::CheckError("ExtRewLayerSpec: requires at least one recv MarkerConSpec connection from DA layer",
 		    "to get reward based on performance.  This was not found -- please fix!");
-      return false;
+      rval = false;
     }
     else if(rew_type == OUT_ERR_REW) {
-      taMisc::Error("ExtRewLayerSpec: requires at least one recv MarkerConSpec connection from output/response layer(s) to compute",
+      taMisc::CheckError("ExtRewLayerSpec: requires at least one recv MarkerConSpec connection from output/response layer(s) to compute",
 		    "reward based on performance.  This was not found -- please fix!");
-      return false;
+      rval = false;
     }
   }
   if(rew_type == OUT_ERR_REW) {
     if(rew_targ_lay == NULL) {
-      taMisc::Error("ExtRewLayerSpec: requires a recv MarkerConSpec connection from layer called RewTarg",
+      taMisc::CheckError("ExtRewLayerSpec: requires a recv MarkerConSpec connection from layer called RewTarg",
 		    "that signals (act > .5) when output error should be used for computing rewards.  This was not found -- please fix!");
-      return false;
+      rval = false;
     }
     if(rew_targ_lay->units.size == 0) {
-      taMisc::Error("ExtRewLayerSpec: RewTarg layer must have one unit (has zero) -- please fix!");
-      return false;
+      taMisc::CheckError("ExtRewLayerSpec: RewTarg layer must have one unit (has zero) -- please fix!");
+      rval = false;
     }
     int myidx = lay->own_net->layers.FindLeaf(lay);
     int rtidx = lay->own_net->layers.FindLeaf(rew_targ_lay);
     if(rtidx > myidx) {
-      taMisc::Error("ExtRewLayerSpec: reward target (RewTarg) layer must be *before* this layer in list of layers -- it is now after, won't work");
-      return false;
+      taMisc::CheckError("ExtRewLayerSpec: reward target (RewTarg) layer must be *before* this layer in list of layers -- it is now after, won't work");
+      rval = false;
     }
   }
-  return true;
+  return rval;
 }
 
 void ExtRewLayerSpec::Compute_UnitDa(float er, DaModUnit* u, Unit_Group* ugp, LeabraLayer*, LeabraNetwork* net) {
@@ -649,22 +650,22 @@ void TDRewPredLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool TDRewPredLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
+bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("TDRewPredLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("TDRewPredLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
   if(net->no_plus_test) {
-    if(!quiet) taMisc::Error("TDRewPredLayerSpec: requires LeabraNetwork no_plus_test = false, I just set it for you");
+    if(!quiet) taMisc::CheckError("TDRewPredLayerSpec: requires LeabraNetwork no_plus_test = false, I just set it for you");
     net->no_plus_test = false;
   }
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::Error("TDRewPredLayerSpec: must have DaModUnits!");
+    taMisc::CheckError("TDRewPredLayerSpec: must have DaModUnits!");
     return false;
   }
 
@@ -674,7 +675,7 @@ bool TDRewPredLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
-    taMisc::Error("TDRewPredLayerSpec: UnitSpec must be DaModUnitSpec!");
+    taMisc::CheckError("TDRewPredLayerSpec: UnitSpec must be DaModUnitSpec!");
     return false;
   }
   ((DaModUnitSpec*)us)->da_mod.p_dwt = true; // do need prior state dwt
@@ -693,13 +694,13 @@ bool TDRewPredLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
     if(!cs->InheritsFrom(TA_TDRewPredConSpec)) {
-      taMisc::Error("TDRewPredLayerSpec: requires recv connections to be of type TDRewPredConSpec");
+      taMisc::CheckError("TDRewPredLayerSpec: requires recv connections to be of type TDRewPredConSpec");
       return false;
     }
     if(cs->wt_limits.sym != false) {
       cs->SetUnique("wt_limits", true);
       cs->wt_limits.sym = false;
-      if(!quiet) taMisc::Error("TDRewPredLayerSpec: requires recv connections to have wt_limits.sym=false, I just set it for you in spec:",
+      if(!quiet) taMisc::CheckError("TDRewPredLayerSpec: requires recv connections to have wt_limits.sym=false, I just set it for you in spec:",
 		    cs->name,"(make sure this is appropriate for all layers that use this spec!)");
     }
   }
@@ -843,18 +844,18 @@ void TDRewIntegLayerSpec::HelpConfig() {
   ScalarValLayerSpec::HelpConfig();
 }
 
-bool TDRewIntegLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig(lay, quiet))
+bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!ScalarValLayerSpec::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("TDRewIntegLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("TDRewIntegLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::Error("TDRewIntegLayerSpec: must have DaModUnits!");
+    taMisc::CheckError("TDRewIntegLayerSpec: must have DaModUnits!");
     return false;
   }
 
@@ -864,7 +865,7 @@ bool TDRewIntegLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
-    taMisc::Error("TDRewIntegLayerSpec: UnitSpec must be DaModUnitSpec!");
+    taMisc::CheckError("TDRewIntegLayerSpec: UnitSpec must be DaModUnitSpec!");
     return false;
   }
   us->UpdateAfterEdit();
@@ -891,23 +892,23 @@ bool TDRewIntegLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   }
 
   if(rew_pred_lay == NULL) {
-    taMisc::Error("TDRewIntegLayerSpec: requires recv projection from TDRewPredLayerSpec!");
+    taMisc::CheckError("TDRewIntegLayerSpec: requires recv projection from TDRewPredLayerSpec!");
     return false;
   }
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int rpidx = lay->own_net->layers.FindLeaf(rew_pred_lay);
   if(rpidx > myidx) {
-    taMisc::Error("TDRewIntegLayerSpec: reward prediction layer must be *before* this layer in list of layers -- it is now after, won't work");
+    taMisc::CheckError("TDRewIntegLayerSpec: reward prediction layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
 
   if(ext_rew_lay == NULL) {
-    taMisc::Error("TDRewIntegLayerSpec: TD requires recv projection from ExtRewLayerSpec!");
+    taMisc::CheckError("TDRewIntegLayerSpec: TD requires recv projection from ExtRewLayerSpec!");
     return false;
   }
   int eridx = lay->own_net->layers.FindLeaf(ext_rew_lay);
   if(eridx > myidx) {
-    taMisc::Error("TDRewIntegLayerSpec: external reward layer must be *before* this layer in list of layers -- it is now after, won't work");
+    taMisc::CheckError("TDRewIntegLayerSpec: external reward layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
   return true;
@@ -1005,8 +1006,8 @@ void TdLayerSpec::HelpConfig() {
   taMisc::Choice(help, "Ok");
 }
 
-bool TdLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig(lay, quiet)) return false;
+bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
@@ -1014,7 +1015,7 @@ bool TdLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
   if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::Error("TdLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
+    if(!quiet) taMisc::CheckError("TdLayerSpec: requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you");
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
 
@@ -1025,7 +1026,7 @@ bool TdLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     us->act_range.max = 2.0f;
     us->act_range.min = -2.0f;
     us->act_range.UpdateAfterEdit();
-    if(!quiet) taMisc::Error("TdLayerSpec: requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("TdLayerSpec: requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
   if((us->clamp_range.max != 2.0f) || (us->clamp_range.min != -2.0f)) {
@@ -1033,7 +1034,7 @@ bool TdLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
     us->clamp_range.max = 2.0f;
     us->clamp_range.min = -2.0f;
     us->clamp_range.UpdateAfterEdit();
-    if(!quiet) taMisc::Error("TdLayerSpec: requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:",
+    if(!quiet) taMisc::CheckError("TdLayerSpec: requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:",
 		  us->name,"(make sure this is appropriate for all layers that use this spec!)");
   }
 
@@ -1045,32 +1046,32 @@ bool TdLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
     if(fmlay == NULL) {
-      taMisc::Error("TdLayerSpec: null from layer in recv projection:", (String)g);
+      taMisc::CheckError("TdLayerSpec: null from layer in recv projection:", (String)g);
       return false;
     }
     if(recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec)
 	&& fmlay->spec.spec->InheritsFrom(TA_TDRewIntegLayerSpec)) {
       rewinteg_lay = fmlay;
       if(recv_gp->size <= 0) {
-	taMisc::Error("TdLayerSpec: requires one recv projection with at least one unit!");
+	taMisc::CheckError("TdLayerSpec: requires one recv projection with at least one unit!");
 	return false;
       }
       if(!recv_gp->Un(0)->InheritsFrom(TA_DaModUnit)) {
-	taMisc::Error("TdLayerSpec: I need to receive from a DaModUnit!");
+	taMisc::CheckError("TdLayerSpec: I need to receive from a DaModUnit!");
 	return false;
       }
     }
   }
 
   if(rewinteg_lay == NULL) {
-    taMisc::Error("TdLayerSpec: did not find TDRewInteg layer to get Td from!");
+    taMisc::CheckError("TdLayerSpec: did not find TDRewInteg layer to get Td from!");
     return false;
   }
 
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int rpidx = lay->own_net->layers.FindLeaf(rewinteg_lay);
   if(rpidx > myidx) {
-    taMisc::Error("TdLayerSpec: reward integration layer must be *before* this layer in list of layers -- it is now after, won't work");
+    taMisc::CheckError("TdLayerSpec: reward integration layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
 
@@ -1079,7 +1080,7 @@ bool TdLayerSpec::CheckConfig(LeabraLayer* lay, bool quiet) {
   for(si=0;si<lay->send_prjns.size;si++) {
     Projection* prjn = (Projection*)lay->send_prjns[si];
     if(!prjn->from->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-      taMisc::Error("TdLayerSpec: all layers I send to must have DaModUnits!, layer:",
+      taMisc::CheckError("TdLayerSpec: all layers I send to must have DaModUnits!, layer:",
 		    prjn->from->GetPath(),"doesn't");
       return false;
     }
@@ -1381,8 +1382,8 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   net->Build();
   net->Connect();
 
-  bool ok = tdrpsp->CheckConfig(tdrp, true) && tdintsp->CheckConfig(tdint, true)
-    && tdsp->CheckConfig(tdda, true) && ersp->CheckConfig(extrew, true);
+  bool ok = tdrpsp->CheckConfig_Layer(tdrp, true) && tdintsp->CheckConfig_Layer(tdint, true)
+    && tdsp->CheckConfig_Layer(tdda, true) && ersp->CheckConfig_Layer(extrew, true);
 
   if(!ok) {
     msg =

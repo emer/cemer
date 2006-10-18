@@ -75,39 +75,39 @@ String LayerRWBase::GetDisplayName() const {
   return rval;
 }
 
-bool LayerRWBase::CheckConfig(bool quiet) {
+void LayerRWBase::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
   if(!data) {
     if(!quiet) taMisc::Error("LayerRWBase Error: data is NULL");
-    return false;
+    rval =  false;
   }
   if(chan_name.empty()) {
     if(!quiet) taMisc::Error("LayerRWBase Error: chan_name is empty");
-    return false;
+    rval =  false;
   }
   if(GetChanIdx(true) < 0) {
     if(!quiet) taMisc::Error("LayerRWBase Error: channel/column named",
 			     chan_name, "not found in data:", data->name);
-    return false;
+    rval =  false;
   }
   if(!network) {
     if(!quiet) taMisc::Error("LayerRWBase Error: network is NULL for channel named:",
 			     chan_name, "for data:", data->name);
-    return false;
+    rval =  false;
   }
   if(net_target == LAYER) {
     if(!layer) {
       if(!quiet) taMisc::Error("LayerRWBase Error: layer is NULL for channel named:",
 			       chan_name, "for data:", data->name);
-      return false;
+      rval =  false;
     }
     if(layer->own_net != network) {
       if(!quiet) taMisc::Error("LayerRWBase Error: layer named:",layer->name,
 			       "is not on network:", network->name, "for channel named:",
 			       chan_name, "for data:", data->name);
-      return false;
+      rval = false;
     }
   }    
-  return true;
 }
 
 int LayerRWBase::GetChanIdx(bool force_lookup) {
@@ -122,14 +122,6 @@ int LayerRWBase::GetChanIdx(bool force_lookup) {
 //////////////////////////
 //  LayerRWBase_List	//
 //////////////////////////
-
-bool LayerRWBase_List::CheckConfig(bool quiet) {
-  for(int i = 0; i < size; ++i) {
-    LayerRWBase* it = FastEl(i);
-    if(!it->CheckConfig(quiet)) return false;
-  }
-  return true;
-}
 
 void LayerRWBase_List::FillFromDataBlock(DataBlock* db, Network* net, 
   bool freshen_only) 
@@ -677,22 +669,22 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   pre_proc_3 = cp.pre_proc_3;
 }
 
-bool NetMonItem::CheckConfig(bool quiet) {
+void NetMonItem::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
   if(!owner) {
     if(!quiet) taMisc::Error("NetMonItem named:", name, "has no owner");
-    return false;
+    rval =  false;
   }
   if(!object) {
     if(!quiet) taMisc::Error("NetMonItem named:", name, "path:", GetPath(),
 			     "object is NULL");
-    return false;
+    rval =  false;
   }
   if(variable.empty()) {
     if(!quiet) taMisc::Error("NetMonItem named:", name, "path:", GetPath(),
 			     "variable is empty");
-    return false;
+    rval =  false;
   }
-  return true;
 }
 
 void NetMonItem::UpdateAfterEdit() {
@@ -1218,14 +1210,6 @@ const KeyString NetMonItem_List::GetListColKey(int col) const {
   }
 }
 
-bool NetMonItem_List::CheckConfig(bool quiet) {
-  for(int i=0;i<size;i++) {
-    NetMonItem* it = FastEl(i);
-    if(!it->CheckConfig(quiet)) return false;
-  }
-  return true;
-}
-
 //////////////////////////
 //  NetMonitor		//
 //////////////////////////
@@ -1252,14 +1236,18 @@ void NetMonitor::Copy_(const NetMonitor& cp) {
   data = cp.data; //warning: generates a UAE, but we ignore it
 }
 
-bool NetMonitor::CheckConfig(bool quiet) {
+void NetMonitor::CheckConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckConfig_impl(quiet, rval);
   if(!data) {
     if(!quiet) taMisc::Error("NetMonitor named:", name, "path:", GetPath(),
 			     "data is NULL");
-    return false;
+    rval = false;
   }
-  if(!items.CheckConfig(quiet)) return false;
-  return true;
+}
+
+void NetMonitor::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  items.CheckConfig(quiet, rval);
 }
 
 void NetMonitor::UpdateAfterEdit() {
