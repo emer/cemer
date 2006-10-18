@@ -147,14 +147,25 @@ taiMiscCore::~taiMiscCore() {
     taiMC_ = NULL;
 }
   
-const String taiMiscCore::classname() {
-  return String(QCoreApplication::instance()->applicationName());
-}
-
 void taiMiscCore::app_aboutToQuit() {
 //NOTE: Qt will not process any more events at this point!
   if (timer)
     timer->stop();
+}
+
+void taiMiscCore::CheckConfigResult_(bool ok) {
+//note: only called if !quiet, and if !ok only if confirm_success
+  if (ok) {
+    taMisc::Warning("No configuration errors were found.");
+  } else {
+    cerr << "/n" << "/n"; // helps group this block together
+    taMisc::Warning("Configuration errors were found:\n");
+    cerr << taMisc::last_check_msg;
+  }
+}
+
+const String taiMiscCore::classname() {
+  return String(QCoreApplication::instance()->applicationName());
 }
 
 void taiMiscCore::Init(bool gui) {
@@ -259,8 +270,10 @@ String	taMisc::help_file_tmplt = "manual/html/Help_%t.html";
 //String	taMisc::help_cmd = "netscape -remote openURL\\(file:%s\\)";
 ostream*	taMisc::record_script = NULL;
 bool taMisc::beep_on_error = false;
+bool taMisc::check_quiet;
+bool taMisc::check_confirm_success;
+bool taMisc::check_ok;
 void (*taMisc::WaitProc)() = NULL;
-void (*taMisc::Busy_Hook)(bool) = NULL; // gui callback when prog goes busy/unbusy; var is 'busy'
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 
 // NOTE: we quote all filenames in case they have spaces
@@ -281,11 +294,15 @@ String	taMisc::edit_cmd = "emacs \"%s\" &";
 
 
 void taMisc::Busy() {
-  if (Busy_Hook) Busy_Hook(true);
+#ifndef NO_TA_BASE
+  if (taiMC_) taiMC_->Busy_(true);
+#endif
 }
 
 void taMisc::DoneBusy() {
-  if (Busy_Hook) Busy_Hook(false);
+#ifndef NO_TA_BASE
+  if (taiMC_) taiMC_->Busy_(false);
+#endif
 }
 
 void taMisc::SaveConfig() {
@@ -349,8 +366,9 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
   if (is_checking) {
     last_check_msg.cat(SuperCat(a, b, c, d, e, f, g, h, i)).cat("\n");
   } else {
-    last_check_msg = SuperCat(a, b, c, d, e, f, g, h, i).cat("\n");
-    Warning(a, b, c, d, e, f, g, h, i);
+    last_check_msg = SuperCat(a, b, c, d, e, f, g, h, i);
+    cerr << last_check_msg << "\n";
+    FlushConsole();
   }
 }
 
@@ -430,6 +448,33 @@ strncpy(typ_name, typ->name.chars(), 63);
     // call the init function
     md->addr();
   }
+}
+
+void taMisc::CheckConfigStart(bool confirm_success, bool quiet) {
+  // if first entry, do init stuff
+  if (!taMisc::is_checking) {
+    // always clear last msg, so there is no confusion after running Check
+    taMisc::last_check_msg = _nilString;
+    check_ok = true;
+    check_quiet = quiet;
+    check_confirm_success = confirm_success;
+    taMisc::Busy();
+  };
+  ++taMisc::is_checking;
+}
+
+void taMisc::CheckConfigEnd(bool ok) {
+#ifndef NO_TA_BASE
+  // failure always cumulative for all nestings 
+  if (!ok) check_ok = false;
+  // if last exit, do notify stuff
+  if (--taMisc::is_checking) return; // still checking
+  
+  taMisc::DoneBusy();
+  if (!check_quiet && (!check_ok || check_confirm_success)) {
+    taiMC_->CheckConfigResult_(check_ok);
+  }
+#endif
 }
 
 void taMisc::DMem_Initialize() {

@@ -160,8 +160,6 @@ public:
 
   static void	Update(TAPtr obj); // #IGNORE update stuff after modification (uses hook fun)
 
-  static void	DoneBusy_impl();// #IGNORE implements the done busy function
-
   static void	PurgeDialogs();
   // remove any 'NoBlock' dialogs from active list (& delete them)
 
@@ -182,12 +180,14 @@ public:
   void 		AdjustFont(int fontSpec, iFont& font); // sets the font according to the spec parameter
   void		ResolveEditChanges(CancelOp& cancel_op); // resolve all changes on ALL edits panels and dialogs
   void		ResolveViewerChanges(CancelOp& cancel_op); // resolve all changes on ALL top level viewers
+  override void Busy_(bool busy);// impl for taMisc, puts system in a 'busy' state (pointer, no input)
+  override void CheckConfigResult_(bool ok);
+
 protected:
   static void	SetWinCursors();
   // #IGNORE sets cursors for all active windows based on busy and record status
   static void	RestoreWinCursors();
   // #IGNORE restores cursors to previous state -- Set/Restore always called in pairs
-  static void 	Busy_(bool busy);		// callback from taMisc, puts system in a 'busy' state (pointer, no input)
   static void	ScriptRecordingGui_(bool start); // callback from taMisc
   
 public:

@@ -459,6 +459,7 @@ void iBrowseViewer::Init() {
   lvwDataTree->setDragEnabled(true);
   lvwDataTree->setAcceptDrops(true);
   lvwDataTree->setDropIndicatorShown(true);
+  lvwDataTree->setHighlightRows(true); // show error objects
 /*no! prevents from collapsing in splitters  int mw = (taiM->scrn_s.width() * 3) / 20; // 15% min for tree
   lvwDataTree->resize(mw, lvwDataTree->height()); // 15% min for tree
   lvwDataTree->setMinimumWidth(mw); // 15% min for tree

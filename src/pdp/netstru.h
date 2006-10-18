@@ -376,10 +376,6 @@ public:
   float Compute_Dist(Unit* ru)	 	{ return spec->Compute_Dist(this,ru); }
   void 	UpdateWeights(Unit* ru)	 	{ spec->UpdateWeights(this,ru); }
   void  Compute_dWt(Unit* ru)	 	{ spec->Compute_dWt(this,ru); }
-
-  override bool  CheckConfig(bool quiet=false) 	
-    { return spec->CheckConfig_ConGroup(this, quiet); }
-  USING(inherited::CheckConfig)
   
   int 	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent = 0);
@@ -396,6 +392,8 @@ public:
   void	Copy_(const Con_Group& cp);
   void	Copy(const Con_Group& cp);
   TA_BASEFUNS(Con_Group);
+protected:
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
 class PDP_API UnitSpec: public BaseSpec {
@@ -519,10 +517,6 @@ public: //
   void 	Compute_dWt()		{ spec->Compute_dWt(this); }
 
   float	Compute_SSE()		{ return spec->Compute_SSE(this); }
-
-  override bool  CheckConfig(bool quiet=false)
-  { return spec->CheckConfig_Unit(this, quiet); }
-  USING(inherited::CheckConfig)
   
   virtual void 	ApplyExternal(float val, ExtType act_ext_flags, Random* ran = NULL);
   // apply external input or target value to unit
@@ -589,6 +583,10 @@ public: //
   void	Copy_(const Unit& cp);
   COPY_FUNS(Unit, taNBase);
   TA_BASEFUNS(Unit);
+protected:
+
+  override bool  CheckConfig_impl(bool quiet)
+  { return spec->CheckConfig_Unit(this, quiet); }
 };
 
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)
@@ -906,7 +904,7 @@ public:
   virtual int	UseCount(); // return number of times this spec is used
 
   virtual bool		CheckConfig_Layer(Layer* lay, bool quiet = false)
-    {return true;}
+    {return true;} // This is ONLY for spec-specific stuff; the layer still does all its default checking (incl child checking)
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -1138,6 +1136,8 @@ protected:
   // #IGNORE grouped layer, 2d data
   virtual void		ApplyExternal_Gp4d(const TxferDataStruct& ads);
   // #IGNORE grouped layer, 4d data
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+    // #IGNORE this is the guy that *additionally* delegates to the Spec
   override void		CheckChildConfig_impl(bool quiet, bool& rval);// #IGNORE 
 };
 

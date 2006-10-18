@@ -95,6 +95,7 @@ public:
   TA_BASEFUNS(ProgVar);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  override void 	CheckChildConfig_impl(bool quiet, bool& rval); //object, if any
   virtual const String	GenCssArg_impl();
   virtual const String	GenCssVar_impl();
 private:
@@ -183,13 +184,13 @@ public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
 
-  override bool CheckConfig_impl(bool quiet = false);
   override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, inherited);
   TA_BASEFUNS(ProgEl);
 
 protected:
+  override bool 	CheckConfig_impl(bool quiet);
   virtual void		PreGenMe_impl(int item_id) {}
   virtual void		PreGenChildren_impl(int& item_id) {}
   virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
@@ -525,6 +526,7 @@ public:
   enum ReturnVal { // system defined return values (<0 are for user defined)
     RV_OK	= 0, 	// program finished successfully
     RV_COMPILE_ERR, 	// script couldn't be compiled
+    RV_CHECK_ERR,	// program or its dependencies failed CheckConfig
     RV_INIT_ERR, 	// initialization failed (note: user prog may use its own value)
     RV_RUNTIME_ERR,	// misc runtime error (ex, null pointer ref, etc.)
     RV_PROG_CALL_FAILED, // a program call failed (probably an error in that program)
@@ -616,6 +618,8 @@ public: // ScriptBase i/f
 
 protected:
   String		m_scriptCache; // cache of script, managed by implementation
+  bool			m_checked; // flag to help us avoid doing CheckConfig twice
+  override bool 	CheckConfig_impl(bool quiet);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override bool		PreCompileScript_impl(); // CheckConfig & add/update the global vars
@@ -625,6 +629,7 @@ protected:
   override void 	ScriptCompiled(); // #IGNORE
   virtual void		UpdateProgVars(); // put global vars in script, set values
   virtual void	       	GetVarsForObjs(); // automatically create variables for objects in objs
+  void 			ShowRunError(); // factored error msg code
 #ifdef TA_GUI
   virtual void		ViewScript_impl();
 #endif

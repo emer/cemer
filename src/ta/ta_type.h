@@ -263,6 +263,10 @@ public:
   
   const String		classname(); // 3.x compatability, basically the app name
   
+  virtual void		Busy_(bool busy) {} // impl for gui in taiMisc
+  virtual void		CheckConfigResult_(bool ok);
+    // this is the nogui version; taiMisc does the gui version
+    
   taiMiscCore(QObject* parent = NULL);
   ~taiMiscCore();
 protected slots:
@@ -444,9 +448,12 @@ public:
   static String		edit_cmd;	// #SAVE how to run editor
   static ostream*	record_script;// #IGNORE // stream to use for recording a script of interface activity (NULL if no record)
   static bool		beep_on_error; // #SAVE #DEF_false beep when an error message is printed on the console
+  static bool		check_quiet; // #IGNORE mode we are in; set by CheckConfigStart
+  static bool		check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart
+  static bool		check_ok; // #IGNORE cumulative AND of all nested oks
+  
   static void	(*WaitProc)();
   // #IGNORE set this to a work process for idle time processing
-  static void (*Busy_Hook)(bool); // #IGNORE gui callback when prog goes busy/unbusy; var is 'busy'
   static void (*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
 
   void	SaveConfig();		// #BUTTON #CONFIRM save configuration defaults to ~/.taconfig file that is loaded automatically at startup
@@ -483,6 +490,10 @@ public:
 
   static void 	Busy();		// puts system in a 'busy' state
   static void	DoneBusy();	// when no longer busy, call this function
+
+  static void 	CheckConfigStart(bool confirm_success = true, bool quiet = false); 
+   // we are starting checkconfig, nestable, 1st guy controls params
+  static void	CheckConfigEnd(bool ok = true); // ending checkconfig, last exit handles display etc.
 
   static void	Initialize();	// initialize type system, called in ta_TA.cc
   static void	InitializeTypes();// called after all type info has been loaded into types

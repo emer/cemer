@@ -41,6 +41,7 @@
 
 #include <qlabel.h>// metrics
 #include <qmenubar.h>// metrics
+#include <QMessageBox>
 #include <qprogressdialog.h>
 #include <qpushbutton.h> // metrics
 #include <QSessionManager>
@@ -133,7 +134,6 @@ void taiMisc::Init(bool gui) {
 
   taMisc::WaitProc = &WaitProc; // typically gets replaced in pdpbase.cpp
 
-  taMisc::Busy_Hook = &Busy_;
   taMisc::ScriptRecordingGui_Hook = &ScriptRecordingGui_; // note: ok to do more than once
   load_dlg = NULL;
   InitMetrics();
@@ -165,6 +165,47 @@ taiMisc::~taiMisc() {
   if (taiM_ == this)
     taiM_ = NULL;
 }
+
+void taiMisc::Busy_(bool busy) {
+  if (!taMisc::gui_active)    return;
+  if (busy) {
+    ++busy_count;	// keep track of number of times called
+  //  if (cssiSession::block_in_event == true) // already busy
+  //    return;
+  //  cssiSession::block_in_event = true;
+    if (busy_count == 1) SetWinCursors();
+  } else {
+    if(--busy_count == 0) {
+      RestoreWinCursors(); //added 4.0
+    }
+    if (busy_count < 0) {
+      cerr << "Warning: taiMisc::DoneBusy() called more times than Busy()\n";
+      busy_count = 0;
+    }
+  }
+}
+
+void taiMisc::CheckConfigResult_(bool ok) {
+//note: only called if !quiet, and if !ok only if confirm_success
+  if (!taMisc::gui_active) {
+    inherited::CheckConfigResult_(ok);
+    return;
+  }
+  
+  if (ok) {
+    QMessageBox::information(QApplication::activeWindow(),
+      "Check Succeeded", 
+      "No configuration errors were found.");
+  } else {
+    iTextEditDialog* td = new iTextEditDialog(true);
+    td->setWindowTitle("Check Failed");
+    td->setText(taMisc::last_check_msg);
+    td->exec();
+    td->deleteLater();
+  }
+}
+
+
 
 void taiMisc::InitMetrics() {
   // everything that requires Qt to be initialized and could depend on Settings being loaded
@@ -420,31 +461,6 @@ void taiMisc::ResolveViewerChanges(CancelOp& cancel_op) {
 void taiMisc::Update(TAPtr obj) {
   if (Update_Hook != NULL)
     (*Update_Hook)(obj);
-}
-
-void taiMisc::Busy_(bool busy) {
-  if (!taMisc::gui_active)    return;
-  if (busy) {
-    ++busy_count;	// keep track of number of times called
-  //  if (cssiSession::block_in_event == true) // already busy
-  //    return;
-  //  cssiSession::block_in_event = true;
-    if (busy_count == 1) SetWinCursors();
-  } else {
-    if(--busy_count == 0) {
-      RestoreWinCursors(); //added 4.0
-    }
-    if (busy_count < 0) {
-      cerr << "Warning: taiMisc::DoneBusy() called more times than Busy()\n";
-      busy_count = 0;
-    }
-  }
-}
-
-void taiMisc::DoneBusy_impl() {
-  if (!taMisc::gui_active)    return;
-//  cssiSession::block_in_event = false;
-//3.2a  RestoreWinCursors();
 }
 
 void taiMisc::PurgeDialogs() {

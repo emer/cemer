@@ -127,43 +127,6 @@ taBase_PtrList 	tabMisc::delayed_remove;
 taBase_PtrList 	tabMisc::delayed_updateafteredit;
 taBase_PtrList	tabMisc::post_load_opr;
 
-bool tabMisc::CheckConfig(taBase* obj, bool quiet, bool gui, bool success_dialog) {
-  if (!obj) return false; // not supposed to happen
-  if (!taMisc::gui_active) gui = false;
-  // always clear last msg, so there is no confusion after running Check
-  taMisc::last_check_msg = _nilString;
-  ++taMisc::is_checking;
-  taMisc::Busy();
-  bool rval = obj->CheckConfig_impl(quiet);
-  taMisc::DoneBusy();
-  --taMisc::is_checking;
-  if (!quiet) {
-#ifdef TA_GUI
-    if (gui) {
-      if (rval) {
-        if (success_dialog)
-          QMessageBox::information(NULL, "Check Succeeded", 
-            "No configuration errors were found.");
-      } else {
-        iTextEditDialog* td = new iTextEditDialog(true);
-        td->setWindowTitle("Check Failed");
-        td->setText(taMisc::last_check_msg);
-        td->exec();
-        td->deleteLater();
-      }
-    } else 
-#endif // TA_GUI
-    {
-      if (rval)
-        taMisc::Warning("No configuration errors were found.");
-      else {
-        taMisc::Warning("** Configuration errors were found:\n");
-        cerr << taMisc::last_check_msg;
-      }
-    }
-  }
-}
-
 void tabMisc::Close_Obj(TAPtr obj) {
   delayed_remove.Link(obj);
 /*obs -- the obj will send a delete notify
@@ -499,7 +462,7 @@ void taBase::Destroy() {
 
 #ifdef DEBUG
 void taBase::CheckDestroyed() {
-//  assert(!HasFlag(DESTROYED) && "taBase object being multiply destroyed"); 
+  assert(!HasFlag(DESTROYED) && "taBase object being multiply destroyed"); 
 }
 #endif
 
@@ -588,6 +551,13 @@ void taBase::CallFun(const String& fun_name) {
     md->CallFun((void*)this);
   else
     taMisc::Error("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
+}
+
+bool taBase::CheckConfig_Gui(bool confirm_success, bool quiet) {
+  taMisc::CheckConfigStart(confirm_success, quiet);
+  bool ok = CheckConfig_impl(quiet);
+  taMisc::CheckConfigEnd(ok);
+  return ok;
 }
 
 bool taBase::CheckConfig_impl(bool quiet) {

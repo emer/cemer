@@ -91,6 +91,13 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
+void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  if((var_type == T_Object) && (object_val)) {
+    object_val->CheckConfig(quiet, rval);
+  }
+}
+
 TypeDef* ProgVar::act_object_type() const {
   TypeDef* rval = &TA_taBase; // the min return value
   if (object_type)
@@ -1303,6 +1310,7 @@ void Program::Initialize() {
   ret_val = 0;
   m_dirty = true; 
   prog_gp = NULL;
+  m_checked = false;
 }
 
 void Program::Destroy()	{ 
@@ -1345,6 +1353,7 @@ void Program::Copy_(const Program& cp) {
   ret_val = 0; // redo
   m_dirty = true; // require rebuild/refetch
   m_scriptCache = "";
+  m_checked = false; // redo
   sub_progs.RemoveAll();
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
 }
@@ -1361,6 +1370,15 @@ void Program::UpdateAfterEdit() {
   GetVarsForObjs();
   inherited::UpdateAfterEdit();
 }
+
+bool Program::CheckConfig_impl(bool quiet) {
+  //TODO: global program dependencies and other objects -- check them all here
+  bool rval = inherited::CheckConfig_impl(quiet);
+  m_checked = true;
+  if (!rval) ret_val = RV_CHECK_ERR;
+  return rval;
+}
+
 
 void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
@@ -1401,13 +1419,7 @@ void Program::Init() {
   setRunState(INIT);
   Run_impl();
   taMisc::DoneBusy();
-  if(ret_val != RV_OK) {
-    String err_str = GetTypeDef()->GetEnumString("ReturnVal", ret_val);
-    if(ret_val == RV_COMPILE_ERR) {
-      err_str += " a program did not compile correctly: check the console for error messages";
-    }
-    taMisc::Error("Error: The Program did not run -- ret_val=", err_str);
-  }
+  if (ret_val != RV_OK) ShowRunError();
   script->Restart();		// restart script at beginning if run again
   setRunState(DONE);
 } 
@@ -1421,10 +1433,8 @@ bool Program::PreCompileScript_impl() {
   if(!AbstractScriptBase::PreCompileScript_impl()) return false;
   GetVarsForObjs();
   UpdateProgVars();
-// BA 10/18/06 -- should not have CheckConfig w/gui buried deep inside worker-bee
-// routines like this!!! Also, this may not even be necessary at all
-// since we should now be doing CheckConfig before running...
-//  if(!CheckConfig(false)) return false; // not quiet
+  //Note: following may be a nested invocation
+  if (!CheckConfig(false)) return false; 
   return true;
 }
 
@@ -1437,24 +1447,42 @@ void Program::setRunState(RunState value) {
 
 int Program::Run_impl() {
   ret_val = RV_OK;
-  if(!CompileScript())
-    ret_val = RV_COMPILE_ERR;
-  else
+  m_checked = false; //don't do twice if we do in compile
+  // we explicitly wrap with config start/end so runtime config error report too
+  taMisc::CheckConfigStart(false);
+  if (!CompileScript()) {
+    if (ret_val != RV_CHECK_ERR)
+      ret_val = RV_COMPILE_ERR;
+  }
+  if (!m_checked)
+    CheckConfig(false); //sets ret_val on fail
+  if (ret_val == RV_OK) {
     script->Run();
-  //note: shared var state likely changed, so update gui
-  DataChanged(DCR_ITEM_UPDATED);
+    //note: shared var state likely changed, so update gui
+    DataChanged(DCR_ITEM_UPDATED);
+  }
+  taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   return ret_val;
 }
 
 int Program::Cont_impl() {
   ret_val = RV_OK;
-  if(!CompileScript())
-    ret_val = RV_COMPILE_ERR;
-  else
+  m_checked = false; //don't do twice if we do in compile
+  // we explicitly wrap with config start/end so runtime config error report too
+  taMisc::CheckConfigStart(false);
+  if (!CompileScript()) {
+    if (ret_val != RV_CHECK_ERR)
+      ret_val = RV_COMPILE_ERR;
+  }
+  if (!m_checked)
+    CheckConfig(false); //sets ret_val on fail
+  if (ret_val == RV_OK) {
     script->Cont();
-  //note: shared var state likely changed, so update gui
-  // DataChanged(DCR_ITEM_UPDATED);
-  script_compiled = true; // override any run-generated changes!!
+    //note: shared var state likely changed, so update gui
+    script_compiled = true; // override any run-generated changes!!
+    DataChanged(DCR_ITEM_UPDATED);
+  }
+  taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   return ret_val;
 }
 
@@ -1465,11 +1493,7 @@ void Program::Run() {
   setRunState(RUN);
   Cont_impl();
   taMisc::DoneBusy();
-  if (ret_val != 0) //TODO: use enums and sensible output string
-    QMessageBox::warning(NULL, QString("Operation Failed"),
-      String(
-      "The Program did not run -- ret_val=").cat(String(ret_val)), 
-      QMessageBox::Ok, QMessageBox::NoButton);
+  if (ret_val != RV_OK) ShowRunError();
   // unless we were stopped, we are done
   if(stop_req) {
     setRunState(STOP);
@@ -1480,6 +1504,17 @@ void Program::Run() {
   }
   stop_req = false;
 } 
+
+void Program::ShowRunError() {
+  //note: if there was a ConfigCheck error, the user already got a dialog
+  if (ret_val == RV_CHECK_ERR) return;
+  String err_str = "Error: The Program did not run -- ret_val=";
+  err_str.cat( GetTypeDef()->GetEnumString("ReturnVal", ret_val));
+  if (ret_val == RV_COMPILE_ERR) {
+    err_str += " (a program did not compile correctly: check the console for error messages)";
+  }
+  taMisc::Error(err_str);
+}
 
 void Program::Step() {
   if(!prog_gp) return;

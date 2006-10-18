@@ -2626,9 +2626,11 @@ void LeabraLayer::UpdateWeights() {
   Layer::UpdateWeights();
 }
 
-bool LeabraLayer::CheckConfig(bool quiet) {
-//obs  if(!Layer::CheckConfig(quiet)) return false; // checks units
-  return spec->CheckConfig_Layer(this, quiet); // use layerspec's version for everything else
+bool LeabraLayer::CheckConfig_impl(bool quiet) {
+  //note: inherited does so much, we only augment with spec
+  bool rval = inherited::CheckConfig_impl(quiet);
+  rval = rval && spec->CheckConfig_Layer(this, quiet); 
+  return rval;
 }
 
 //////////////////////////

@@ -336,6 +336,12 @@ void Con_Group::Copy_(const Con_Group& cp) {
 
 //static TimeUsed debug_time;
 
+void Con_Group::CheckThisConfig_impl(bool quiet, bool& rval) { 
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if (!spec->CheckConfig_ConGroup(this, quiet)) 
+    rval = false; 
+}
+
 void Con_Group::CopyNetwork(Network* net, Network* cn, Con_Group* cp) {
   MemberDef* md;
   String path;
@@ -1212,10 +1218,11 @@ void UnitSpec::Copy_(const UnitSpec& cp) {
 bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   Con_Group* recv_gp;
   int g;
+  bool rval = true;
   FOR_ITR_GP(Con_Group, recv_gp, un->recv., g) {
-    if(!recv_gp->CheckConfig(quiet)) return false;
+    recv_gp->CheckConfig(quiet, rval);
   }
-  return true;
+  return rval;
 }
 
 void UnitSpec::UpdateAfterEdit() {
@@ -3683,6 +3690,15 @@ bool Layer::CheckTypes(bool quiet) {
   return true;
 }
 
+void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
+  //note: network also called our checks
+  // slightly non-standard, since we bail on first error
+  if (!CheckBuild(quiet)) {rval = false; return;}
+  if (!CheckConnect(quiet)) {rval = false; return;}
+  if (!CheckTypes(quiet)) {rval = false; return;}
+  inherited::CheckThisConfig_impl(quiet, rval);
+}
+
 void Layer::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   // layerspec should take over this function in layers that have them!
@@ -5072,9 +5088,8 @@ void Network::InitWtDelta(){
 
 void Network::InitWtState() {
   // do lots of checking here to make sure, cuz often 1st thing that happens
-// BA 10/18/06 -- is this still necessary at all
-// since we should now be doing CheckConfig before running...
-//  if (!CheckConfig(true)) return;
+  //NOTE: this will typically be nested inside a gui check
+  if (!CheckConfig(true)) return;
 
   taMisc::Busy();
   Layer* l;

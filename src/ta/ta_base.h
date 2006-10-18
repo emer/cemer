@@ -91,9 +91,6 @@ public:
   // notify any edit dialogs of a taptr object that object has changed
   static void		DelayedUpdateAfterEdit(TAPtr obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
-  static bool		CheckConfig(taBase* obj, bool quiet = false,
-    bool gui = true, bool success_dialog = false);
-    // do a batch check of the obj, if !quiet: gui: display, else console; true if ok
 };
 
 #define TA_BASEFUNS(y) 	y () { Register(); Initialize(); SetDefaultName(); } \
@@ -466,13 +463,14 @@ public:
 #ifndef __MAKETA__
   void			CheckConfig(bool quiet, bool& rval)
     {if (!CheckConfig_impl(quiet)) rval = false;}
-    // this one is typically used in CheckXxx_impl routines
+    // this one is typically used in CheckXxx_impl routines; we don't do gui wrap stuff
 #endif
-  void			CheckConfig_Menu()
-   {tabMisc::CheckConfig(this, false, true, true);}
-  // #MENU #CAT_ObjectMgmt #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
-  virtual bool		CheckConfig_impl(bool quiet);
-  // #IGNORE usually not overridden, see Check[This/Child]_impl
+  bool			CheckConfig(bool quiet = false)
+    {CheckConfig_Gui(false, quiet);}
+  // #CAT_ObjectMgmt check the configuration of this object and all its children (defaults to no confirm of success)
+  bool			CheckConfig_Gui(bool confirm_success = true,
+    bool quiet = false);
+  // #MENU #CAT_ObjectMgmt #ARGC_0 #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
 
   // viewing-related functions -- usually not overridden base
   virtual void		AddDataView(taDataView* dv); // #CAT_Display add a dataview 
@@ -697,10 +695,12 @@ protected:
   inline void		CheckDestroyed() {} // should get optimized out
 #endif
 
-  virtual void		CheckThisConfig_impl(bool quiet, bool& rval) {}
-    // impl for us; can include embedded objects (but don't incl them in Child check); only clear rval (if invalid), don't set
-  virtual void		CheckChildConfig_impl(bool quiet, bool& rval) {}
-   // impl for checking children; only clear rval (if invalid), don't set
+  virtual bool		CheckConfig_impl(bool quiet);
+  // #IGNORE usually not overridden, see Check[This/Child]_impl
+  virtual void		CheckThisConfig_impl(bool quiet, bool& ok) {}
+    // impl for us; can include embedded objects (but don't incl them in Child check); only clear ok (if invalid), don't set
+  virtual void		CheckChildConfig_impl(bool quiet, bool& ok) {}
+   // impl for checking children; only clear ok (if invalid), don't set
   virtual void 		Dump_Save_pre() {} // called before _impl, enables jit updating before save
   virtual String	GetStringRep_impl() const; // string representation, ex. for variants; default is typename:fullpath
 };

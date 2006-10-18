@@ -1143,7 +1143,7 @@ public:
 
   virtual void	HelpConfig();	// #BUTTON get help message for configuring this spec
   override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
-  // check for for misc configuration settings required by different algorithms, including settings on the processes
+  // check for for misc configuration settings required by different algorithms, including settings on the processes NOTE: this routine augments the default layer checks, it doesn't replace them
 
   virtual void	Defaults();	// #BUTTON #CONFIRM restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
@@ -1313,9 +1313,6 @@ public:
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
   bool		CheckTypes();
 
-  override bool  CheckConfig(bool quiet=false);
-  USING(inherited::CheckConfig)
-
   void	UpdateAfterEdit();	// reset sort_buf after any edits..
 
   void	Initialize();
@@ -1325,6 +1322,8 @@ public:
   void	Copy_(const LeabraLayer& cp);
   COPY_FUNS(LeabraLayer, Layer);
   TA_BASEFUNS(LeabraLayer);
+protected:
+  override bool  CheckConfig_impl(bool quiet);
 };
 
 class LEABRA_API LeabraUnit_Group : public Unit_Group, public LeabraInhib {
