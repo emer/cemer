@@ -3445,8 +3445,9 @@ void Layer::SyncSendPrjns() {
 
 void Layer::RecomputeGeometry() {
   geom.y = MAX(1,geom.y);  geom.z = MAX(1,geom.z);
-  if((n_units == 0) && (units.size > 0))
-    n_units = units.size;
+//BA 10/18/06 NO! if user resets n_units, that should force rebuild
+/*  if((n_units == 0) && (units.size > 0))
+    n_units = units.size; */
   geom.FitNinXY(n_units);
   if(n_units == 0)
     n_units = geom.x * geom.y;
@@ -4528,12 +4529,12 @@ bool Network::CheckTypes(bool quiet) {
   return true;
 }
 
-void Network::CheckConfig_impl(bool quiet, bool& rval) {
+void Network::CheckThisConfig_impl(bool quiet, bool& rval) {
   //NOTE: slightly non-standard, because we bail on first detected issue
-  if (!CheckTypes(quiet)) {rval = false; return;}
   if (!CheckBuild(quiet)) {rval = false; return;}
   if (!CheckConnect(quiet)) {rval = false; return;}
-  inherited::CheckConfig_impl(quiet, rval);
+  if (!CheckTypes(quiet)) {rval = false; return;}
+  inherited::CheckThisConfig_impl(quiet, rval);
 }
 
 void Network::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -5071,7 +5072,9 @@ void Network::InitWtDelta(){
 
 void Network::InitWtState() {
   // do lots of checking here to make sure, cuz often 1st thing that happens
-  if (!CheckConfig(true)) return;
+// BA 10/18/06 -- is this still necessary at all
+// since we should now be doing CheckConfig before running...
+//  if (!CheckConfig(true)) return;
 
   taMisc::Busy();
   Layer* l;

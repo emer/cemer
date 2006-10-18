@@ -38,10 +38,10 @@ public:
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies 
 
   override String	GetDisplayName() const;
-  override bool		CheckConfig(bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(BasicDataLoop);
 protected:
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -69,7 +69,6 @@ public:
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies within group
 
   override String	GetDisplayName() const;
-  override bool		CheckConfig(bool quiet=false);
 
   virtual void	GetGroupList();
   // initialize the group_idx_list from the data: idx's are where group name changes
@@ -77,6 +76,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(GroupedDataLoop);
 protected:
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -95,13 +95,13 @@ public:
   ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
   MemberDef*	counter;	// #TYPE_ON_network_type #DEF_CAT_Counter counter variable on network to operate on
   
-  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(NetCounterInit);
 
 protected:
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
@@ -120,13 +120,13 @@ public:
   ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
   MemberDef*	counter;	// #TYPE_ON_network_type  #DEF_CAT_Counter counter variable on network to operate on
   
-  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(NetCounterIncr);
 
 protected:
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
@@ -143,13 +143,13 @@ public:
   ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
   ProgVarRef	update_var;	// #SCOPE_Program_Group variable that controls whether we update the display or not
   
-  override bool		CheckConfig(bool quiet=false);
   override String	GetDisplayName() const;
 
   void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(NetUpdateView);
 
 protected:
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetUpdateVar(); // get the update_var variable
 
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object

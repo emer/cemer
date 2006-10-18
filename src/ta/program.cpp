@@ -80,7 +80,7 @@ void ProgVar::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void ProgVar::CheckConfig_impl(bool quiet, bool& rval) {
+void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
@@ -448,9 +448,9 @@ void ProgEl::Copy_(const ProgEl& cp) {
   off = cp.off;
 }
 
-bool ProgEl::CheckConfig(bool quiet) {
+bool ProgEl::CheckConfig_impl(bool quiet) {
   if (off) return true;
-  return inherited::CheckConfig(quiet);
+  return inherited::CheckConfig_impl(quiet);
 }
 
 void ProgEl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
@@ -688,8 +688,8 @@ void UserScript::ExportToFileName(const String& fnm) {
 //  Loop		//
 //////////////////////////
 
-void Loop::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void Loop::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if(loop_test.empty()) {
     if(!quiet) taMisc::CheckError("Error in Loop in program:", program()->name, "loop_test expression is empty");
     rval = false;
@@ -755,8 +755,8 @@ void ForLoop::Initialize() {
   loop_iter = "i++";
 }
 
-void ForLoop::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if(loop_iter.empty()) {
     if(!quiet) taMisc::CheckError("Error in ForLoop in program:", program()->name, "loop_iter expression is empty");
     rval = false;
@@ -787,8 +787,8 @@ String ForLoop::GetDisplayName() const {
 void IfContinue::Initialize() {
 }
 
-void IfContinue::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if (condition.empty()) {
     if(!quiet) taMisc::CheckError("Error in IfContinue in program:", program()->name, "condition expression is empty");
     rval = false;
@@ -814,8 +814,8 @@ String IfContinue::GetDisplayName() const {
 void IfBreak::Initialize() {
 }
 
-void IfBreak::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if (condition.empty()) {
     if(!quiet) taMisc::CheckError("Error in IfBreak in program:", program()->name, "condition expression is empty");
     rval = false;
@@ -859,8 +859,8 @@ void IfElse::Copy_(const IfElse& cp) {
   false_code = cp.false_code;
 }
 
-void IfElse::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if (condition.empty()) {
     if(!quiet) taMisc::CheckError("Error in IfElse in program:", program()->name, "condition expression is empty");
     rval = false;
@@ -949,8 +949,8 @@ void MethodCall::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void MethodCall::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;
@@ -1061,8 +1061,8 @@ void StaticMethodCall::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void StaticMethodCall::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;
@@ -1172,8 +1172,8 @@ void ProgramCall::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void ProgramCall::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if(!target) {
     if(!quiet) taMisc::CheckError("Error in ProgramCall in program:", program()->name, "target is NULL");
     rval = false;
@@ -1421,7 +1421,10 @@ bool Program::PreCompileScript_impl() {
   if(!AbstractScriptBase::PreCompileScript_impl()) return false;
   GetVarsForObjs();
   UpdateProgVars();
-  if(!CheckConfig(false)) return false; // not quiet
+// BA 10/18/06 -- should not have CheckConfig w/gui buried deep inside worker-bee
+// routines like this!!! Also, this may not even be necessary at all
+// since we should now be doing CheckConfig before running...
+//  if(!CheckConfig(false)) return false; // not quiet
   return true;
 }
 

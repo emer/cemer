@@ -94,7 +94,7 @@ public:
   COPY_FUNS(ProgVar, inherited);
   TA_BASEFUNS(ProgVar);
 protected:
-  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   virtual const String	GenCssArg_impl();
   virtual const String	GenCssVar_impl();
 private:
@@ -183,9 +183,7 @@ public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
 
-  override bool CheckConfig(bool quiet = false);
-  USING(taOBase::CheckConfig)
-  
+  override bool CheckConfig_impl(bool quiet = false);
   override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, inherited);
@@ -303,7 +301,7 @@ public:
   TA_ABSTRACT_BASEFUNS(Loop);
 
 protected:
-  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level); 
@@ -359,7 +357,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(ForLoop);
 protected:
-  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
@@ -378,7 +376,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(IfContinue);
 protected:
-  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -396,7 +394,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(IfBreak);
 protected:
-  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -420,7 +418,7 @@ public:
   TA_BASEFUNS(IfElse);
 
 protected:
-  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssPre_impl(int indent_level); 
@@ -454,7 +452,7 @@ protected:
   ProgVar*		lst_script_obj; 
   MethodDef*		lst_method; 
   
-  override void 	CheckConfig_impl(bool quiet, bool& rval);
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
   virtual void		CheckUpdateArgs(bool force = false); // called when method changes
 
@@ -484,7 +482,7 @@ public:
 protected:
   MethodDef*		lst_method; 
   
-  override void 	CheckConfig_impl(bool quiet, bool& rval);
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
   virtual void		CheckUpdateArgs(bool force = false); // called when method changes
 
@@ -753,7 +751,7 @@ public:
 protected:
   Program*		old_target; // the last target, used to detect changes
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
-  override void 	CheckConfig_impl(bool quiet, bool& rval);
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 

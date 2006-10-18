@@ -61,7 +61,7 @@ public:
 protected:
   int			chan_idx; // cached col, -1 = not looked up, or invalid
   
-  override void 	CheckConfig_impl(bool quiet, bool& rval);
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   int			GetChanIdx(bool force_lookup = false); // recalcs if needed
 private:
   void	Initialize();
@@ -225,7 +225,7 @@ public:
   
 protected:
   int			cell_num; // current cell number, when adding mon vals
-  override void		CheckConfig_impl(bool quiet, bool& rval);
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
   override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_);
@@ -323,7 +323,7 @@ public:
   TA_BASEFUNS(NetMonitor);
   
 protected:
-  override void	CheckConfig_impl(bool quiet, bool& rval);
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
 private:
   void		Initialize();

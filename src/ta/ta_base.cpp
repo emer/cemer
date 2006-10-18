@@ -127,21 +127,23 @@ taBase_PtrList 	tabMisc::delayed_remove;
 taBase_PtrList 	tabMisc::delayed_updateafteredit;
 taBase_PtrList	tabMisc::post_load_opr;
 
-bool tabMisc::CheckConfig(taBase* obj, bool quiet, bool gui) {
+bool tabMisc::CheckConfig(taBase* obj, bool quiet, bool gui, bool success_dialog) {
   if (!obj) return false; // not supposed to happen
   if (!taMisc::gui_active) gui = false;
   // always clear last msg, so there is no confusion after running Check
   taMisc::last_check_msg = _nilString;
   ++taMisc::is_checking;
   taMisc::Busy();
-  bool rval = obj->CheckConfig(quiet);
+  bool rval = obj->CheckConfig_impl(quiet);
   taMisc::DoneBusy();
   --taMisc::is_checking;
   if (!quiet) {
 #ifdef TA_GUI
     if (gui) {
       if (rval)
-        QMessageBox::information(NULL, "Check Succeeded", "No configuration errors were found.");
+        if (success_dialog)
+          QMessageBox::information(NULL, "Check Succeeded", 
+            "No configuration errors were found.");
       else {
         iTextEditDialog* td = new iTextEditDialog(true);
         td->setWindowTitle("Check Failed");
@@ -588,10 +590,10 @@ void taBase::CallFun(const String& fun_name) {
     taMisc::Error("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
 }
 
-bool taBase::CheckConfig(bool quiet) {
+bool taBase::CheckConfig_impl(bool quiet) {
   int cp_flags = m_flags; 
   bool this_rval = true;
-  CheckConfig_impl(quiet, this_rval);
+  CheckThisConfig_impl(quiet, this_rval);
   if (this_rval) {
     ClearFlag(THIS_INVALID);
   } else {

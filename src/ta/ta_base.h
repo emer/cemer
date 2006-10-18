@@ -91,7 +91,8 @@ public:
   // notify any edit dialogs of a taptr object that object has changed
   static void		DelayedUpdateAfterEdit(TAPtr obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
-  static bool		CheckConfig(taBase* obj, bool quiet = false, bool gui = true);
+  static bool		CheckConfig(taBase* obj, bool quiet = false,
+    bool gui = true, bool success_dialog = false);
     // do a batch check of the obj, if !quiet: gui: display, else console; true if ok
 };
 
@@ -259,7 +260,7 @@ public:
   };
   
   enum Flags { // #BITS control flags 
-    THIS_INVALID	= 0x01, // #BIT CheckConfig_impl has detected a problem
+    THIS_INVALID	= 0x01, // #BIT CheckThisConfig_impl has detected a problem
     CHILD_INVALID	= 0x02, // #BIT CheckChildConfig_impl returns issue with a child
     DESTROYED		= 0x80 // #BIT set in base destroy (DEBUG only); lets us detect multi destroys
 #ifndef __MAKETA__
@@ -459,12 +460,19 @@ public:
   // #CAT_ObjectMgmt bracket structural changes with (nestable) true/false calls;
   void			DataUpdate(bool begin) {BatchUpdate(begin, false);}
   // #CAT_ObjectMgmt bracket data value changes with (nestable) true/false calls;
+//  bool			CheckConfig(bool quiet = false)
+//    {return CheckConfig_impl(quiet);} // 
+  // #CAT_ObjectMgmt check the configuration of this object and all its children;  typically called before running any major processing, enabling processing to assume things are configured correctly
+#ifndef __MAKETA__
   void			CheckConfig(bool quiet, bool& rval)
-    {if (!CheckConfig(quiet)) rval = false;} // #IGNORE convenience
-  virtual bool		CheckConfig(bool quiet = false); // for code
-  void			DoCheckConfig()
-   {tabMisc::CheckConfig(this, false, true);}
-  // #MENU #CAT_ObjectMgmt #LABEL_CheckConfig check the configuration of this object and all its children;  typically called before running any major processing, enabling processing to assume things are configured correctly
+    {if (!CheckConfig_impl(quiet)) rval = false;}
+    // this one is typically used in CheckXxx_impl routines
+#endif
+  void			CheckConfig_Menu()
+   {tabMisc::CheckConfig(this, false, true, true);}
+  // #MENU #CAT_ObjectMgmt #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
+  virtual bool		CheckConfig_impl(bool quiet);
+  // #IGNORE usually not overridden, see Check[This/Child]_impl
 
   // viewing-related functions -- usually not overridden base
   virtual void		AddDataView(taDataView* dv); // #CAT_Display add a dataview 
@@ -689,7 +697,7 @@ protected:
   inline void		CheckDestroyed() {} // should get optimized out
 #endif
 
-  virtual void		CheckConfig_impl(bool quiet, bool& rval) {}
+  virtual void		CheckThisConfig_impl(bool quiet, bool& rval) {}
     // impl for us; can include embedded objects (but don't incl them in Child check); only clear rval (if invalid), don't set
   virtual void		CheckChildConfig_impl(bool quiet, bool& rval) {}
    // impl for checking children; only clear rval (if invalid), don't set

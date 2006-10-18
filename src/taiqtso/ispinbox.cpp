@@ -18,11 +18,9 @@
 
 #include "ilineedit.h"
 
-#include <qapplication.h>
 #include <qevent.h>
-//#include <qrangecontrol.h>
 
-//Qt4 TODO: the updateDisplay() no longer exists, so the hack we coded won't take effect
+#include <limits.h>
 
 using namespace Qt;
 
@@ -44,6 +42,7 @@ void iSpinBox::focusOutEvent(QFocusEvent* ev) {
 
 void iSpinBox::init() {
   updating = 0;
+  setMaximum(INT_MAX); // 99 is a whacked-out maximum
   setLineEdit(new iLineEdit); // takes ownership
   connect(lineEdit(), SIGNAL(selectionChanged()), this, SIGNAL(selectionChanged()) );
 }

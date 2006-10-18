@@ -1409,7 +1409,7 @@ public:
   TA_BASEFUNS(Network);
   
 protected:
-  override void	CheckConfig_impl(bool quiet, bool& rval);
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
 #ifdef TA_GUI
 protected:

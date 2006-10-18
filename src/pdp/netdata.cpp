@@ -75,8 +75,8 @@ String LayerRWBase::GetDisplayName() const {
   return rval;
 }
 
-void LayerRWBase::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void LayerRWBase::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if(!data) {
     if(!quiet) taMisc::Error("LayerRWBase Error: data is NULL");
     rval =  false;
@@ -669,8 +669,8 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   pre_proc_3 = cp.pre_proc_3;
 }
 
-void NetMonItem::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if(!owner) {
     if(!quiet) taMisc::Error("NetMonItem named:", name, "has no owner");
     rval =  false;
@@ -1236,8 +1236,8 @@ void NetMonitor::Copy_(const NetMonitor& cp) {
   data = cp.data; //warning: generates a UAE, but we ignore it
 }
 
-void NetMonitor::CheckConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckConfig_impl(quiet, rval);
+void NetMonitor::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   if(!data) {
     if(!quiet) taMisc::Error("NetMonitor named:", name, "path:", GetPath(),
 			     "data is NULL");
