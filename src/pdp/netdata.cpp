@@ -78,31 +78,33 @@ String LayerRWBase::GetDisplayName() const {
 void LayerRWBase::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!data) {
-    if(!quiet) taMisc::Error("LayerRWBase Error: data is NULL");
+    if(!quiet) taMisc::CheckError("LayerRWBase Error: data is NULL");
     rval =  false;
+    return;			// this is fatal
   }
   if(chan_name.empty()) {
-    if(!quiet) taMisc::Error("LayerRWBase Error: chan_name is empty");
+    if(!quiet) taMisc::CheckError("LayerRWBase Error: chan_name is empty");
     rval =  false;
   }
   if(GetChanIdx(true) < 0) {
-    if(!quiet) taMisc::Error("LayerRWBase Error: channel/column named",
+    if(!quiet) taMisc::CheckError("LayerRWBase Error: channel/column named",
 			     chan_name, "not found in data:", data->name);
     rval =  false;
   }
   if(!network) {
-    if(!quiet) taMisc::Error("LayerRWBase Error: network is NULL for channel named:",
+    if(!quiet) taMisc::CheckError("LayerRWBase Error: network is NULL for channel named:",
 			     chan_name, "for data:", data->name);
     rval =  false;
+    return;			// this is fatal
   }
   if(net_target == LAYER) {
     if(!layer) {
-      if(!quiet) taMisc::Error("LayerRWBase Error: layer is NULL for channel named:",
+      if(!quiet) taMisc::CheckError("LayerRWBase Error: layer is NULL for channel named:",
 			       chan_name, "for data:", data->name);
       rval =  false;
     }
-    if(layer->own_net != network) {
-      if(!quiet) taMisc::Error("LayerRWBase Error: layer named:",layer->name,
+    if(layer && layer->own_net != network) {
+      if(!quiet) taMisc::CheckError("LayerRWBase Error: layer named:",layer->name,
 			       "is not on network:", network->name, "for channel named:",
 			       chan_name, "for data:", data->name);
       rval = false;
@@ -672,16 +674,16 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
 void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!owner) {
-    if(!quiet) taMisc::Error("NetMonItem named:", name, "has no owner");
+    if(!quiet) taMisc::CheckError("NetMonItem named:", name, "has no owner");
     rval =  false;
   }
   if(!object) {
-    if(!quiet) taMisc::Error("NetMonItem named:", name, "path:", GetPath(),
+    if(!quiet) taMisc::CheckError("NetMonItem named:", name, "path:", GetPath(),
 			     "object is NULL");
     rval =  false;
   }
   if(variable.empty()) {
-    if(!quiet) taMisc::Error("NetMonItem named:", name, "path:", GetPath(),
+    if(!quiet) taMisc::CheckError("NetMonItem named:", name, "path:", GetPath(),
 			     "variable is empty");
     rval =  false;
   }
@@ -1239,7 +1241,7 @@ void NetMonitor::Copy_(const NetMonitor& cp) {
 void NetMonitor::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!data) {
-    if(!quiet) taMisc::Error("NetMonitor named:", name, "path:", GetPath(),
+    if(!quiet) taMisc::CheckError("NetMonitor named:", name, "path:", GetPath(),
 			     "data is NULL");
     rval = false;
   }

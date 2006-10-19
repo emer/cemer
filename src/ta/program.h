@@ -34,7 +34,7 @@ class Program_Group;
 class Program_List;
 
 class TA_API ProgVar: public taNBase {
-  // ##INSTANCE #INLINE a program variable, accessible from the outer system, and inside the script in .vars and args
+  // ##INSTANCE #INLINE #SCOPE_Program a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)
 public:
   enum VarType {
@@ -435,7 +435,7 @@ class TA_API MethodCall: public ProgEl {
 INHERITED(ProgEl)
 public:
   String		result_var; // result variable (optional)
-  ProgVarRef		script_obj; // #SCOPE_Program_Group the previously defined script object that has the method
+  ProgVarRef		script_obj; // the previously defined script object that has the method
   TypeDef*		object_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.object_type
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
   SArg_Array		args; // arguments to the method
@@ -585,8 +585,8 @@ public:
   // runs the program as a subprogram called from another running program, 0=success
   int			CallInit(Program* caller); 
   // runs the program's Init from a superProg Init, 0=success
-  virtual bool		SetGlobalVar(const String& nm, const Variant& value);
-  // set the value of a global variable (in the cssProgSpace) prior to calling Run
+  virtual bool		SetVar(const String& var_nm, const Variant& value);
+  // set the value of a program variable (in the cssProgSpace) prior to calling Run
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
   virtual void		SaveScript(ostream& strm);
@@ -708,7 +708,6 @@ INHERITED(taGroup<Program>)
 public:
   ProgramRef		step_prog; // the program that will be stepped when the Step button is pressed
   String		desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
-  ProgVar_List		global_vars; // global vars in all progs in this group and subgroups
 
   static ProgLib	prog_lib; // #HIDDEN_TREE library of available programs
 

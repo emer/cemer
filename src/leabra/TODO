@@ -1,7 +1,5 @@
 leabra todo list:
 
-* test FILE string_stream.css: ptr = 0?
-
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
@@ -11,6 +9,28 @@ docs..: add all float_RArray funs, for matricies.
 
 * encase programs in struct update brackets to prevent updating
 
+---------
+
+current bugs:
+
+* need to be able to update args without changing program call target: check for
+  mismatch in arg count!
+
+* Netmon should have a network variable that contextualizes everything for given network
+-- otherwize you need to set each one individually -- painful.
+
+* checkconfig -- crashes from check all vs. first fail: safety violation
+
+* applyexternal should just use current network context setting, instead of arg.
+
+* change applyexternal -> applyinputdata?
+
+* display arg value in program call
+
+* actions menu comes before object in program, other places?
+
+* need special menu action to save in prog_lib
+
 -------
 
 * profile: slow!!! -- probably all the uae's triggering cascade of datachanged stuff..
@@ -19,9 +39,49 @@ docs..: add all float_RArray funs, for matricies.
 * datachanged for obj -> update corresp var; datachanged goes to obj_list --
   need hook in there, but it is a generic list..
 
+* test FILE string_stream.css: ptr = 0?
+
 ---
 
-* datatable aggregation
+* datatable aggregation:
+
+  -------
+  taDataOps static class:
+
+  helper classes
+
+  * DataSortEls = column ref/name, op; DataSortSpec object = list
+  * DataSelectEls = column ref/name, expr; DataSortSpec object = list
+
+  void Select(DataTable* dest, DataTable* src, 
+  void Sort(DataTable* dest, DataTable* src, DataSortSpec& sort_spec);
+
+
+
+  -------
+  ProgEl's:
+
+  DataProg -- just has DataTableRef, and some common convenience funs..
+
+  need to be able to choose columns from datatable from menu (dt->data els)
+
+  DataFilter: (select)
+    implied loop over all rows of data table
+    for each: local vars created with names = colum names (UAE in dt needs to 
+      enforce good css-names)
+    filter expr string: e.g., Name == "horiz" && sse > .5
+
+  DataSort:
+    * column, op list of sort fields (alpha, etc), in order: a DataSortSpec object -- list
+      of DataSortEls; need database
+
+   
+    
+  
+   
+
+
+
 
 * deal with small-batch weight updates
 * deal with dmem: network counters aggregate across epoch.. rndseed aggregate, etc
@@ -31,9 +91,8 @@ docs..: add all float_RArray funs, for matricies.
 * bugs: network display updates at start of trial with weird state info, despite wrap
   by DataUpdate guys, etc
 
-* change scope to #PROGRAM for vars in callmethod -- needs a special override to locate
-the global_vars..
-
+----------
+arg directives
 
 ----------
 Not sure if still an issue:

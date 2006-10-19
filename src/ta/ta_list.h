@@ -307,7 +307,7 @@ public:
   // #CAT_Modify allocate a list big enough for given number of elements (or current size)
   virtual void 	Reset()			{ RemoveAll(); }
   // #CAT_Modify reset the list (remove all elements)
-  virtual bool	IsEmpty()	{ return (size == 0) ? true : false; }
+  virtual bool	IsEmpty() const	{ return (size == 0) ? true : false; }
   // #CAT_Access is the list empty of elements (i.e., size == 0)
 
   virtual void	BuildHashTable(int n_buckets);

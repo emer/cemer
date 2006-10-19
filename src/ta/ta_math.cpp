@@ -847,6 +847,14 @@ double taMath_double::vec_sum(const double_Matrix* vec) {
   return rval;
 }
 
+double taMath_double::vec_prod(const double_Matrix* vec) {
+  if(vec->size == 0) return 0.0;
+  double rval = vec->FastEl_Flat(0);
+  for(int i=1;i<vec->size;i++)
+    rval *= vec->FastEl_Flat(i);
+  return rval;
+}
+
 double taMath_double::vec_mean(const double_Matrix* vec) {
   if(vec->size == 0)	return 0.0;
   return vec_sum(vec) / (double)vec->size;

@@ -99,6 +99,7 @@ TAHEADS =\
 	@abs_srcdir@/ta_math.h \
 	@abs_srcdir@/ta_data.h \
 	@abs_srcdir@/ta_datatable.h \
+	@abs_srcdir@/ta_dataops.h \
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
 	@abs_srcdir@/ta_script.h \
@@ -128,6 +129,7 @@ HEADS =\
 	ta_data.h \
 	ta_math.h \
 	ta_datatable.h \
+	ta_dataops.h \
 	ta_dump.h \
 	ta_defaults.h \
 	ta_script.h \
@@ -137,6 +139,7 @@ HEADS =\
 	$(HEADS_GUI)
 
 SRCS =\
+	ta_dataops.cpp \
 	ta_platform.cpp \
 	ta_platform_unix.cpp \
 	ta_thread.cpp \

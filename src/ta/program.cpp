@@ -1191,12 +1191,12 @@ void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 Program* ProgramCall::GetTarget() {
   if(!target) {
-    taMisc::Error("Program target is NULL in ProgramCall:",
-		  desc, "in program:", program()->name);
+    taMisc::CheckError("Program target is NULL in ProgramCall:",
+		       desc, "in program:", program()->name);
   }
   if(!target->CompileScript()) {
-    taMisc::Error("Program target script did not compile correctly in ProgramCall:",
-		  desc, "in program:", program()->name);
+    taMisc::CheckError("Program target script did not compile correctly in ProgramCall:",
+		       desc, "in program:", program()->name);
   }
   return target.ptr();
 }
@@ -1232,13 +1232,13 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
     if (!prg_var || ths_arg->value.empty()) continue;
     set_one = true;
     rval += cssMisc::Indent(indent_level+1);
-    rval += "target->SetGlobalVar(\"" + prg_var->name + "\", "
+    rval += "target->SetVar(\"" + prg_var->name + "\", "
       + ths_arg->value + ");\n";
   }
-  if (set_one) {
-    rval += cssMisc::Indent(indent_level+1);
-    rval += "target->DataChanged(DCR_ITEM_UPDATED);\n";
-  }
+//   if (set_one) {
+//     rval += cssMisc::Indent(indent_level+1);
+//     rval += "target->DataChanged(DCR_ITEM_UPDATED);\n";
+//   }
   rval += cssMisc::Indent(indent_level+1);
   if(call_init)
     rval += "{ target->CallInit(this); }\n";
@@ -1419,10 +1419,13 @@ int Program::CallInit(Program* caller) {
 void Program::Init() {
   taMisc::Busy();
   setRunState(INIT);
+  taMisc::CheckConfigStart(false);
+  CheckConfig(false); //sets ret_val on fail
   Run_impl();
   taMisc::DoneBusy();
   if (ret_val != RV_OK) ShowRunError();
   script->Restart();		// restart script at beginning if run again
+  taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   setRunState(DONE);
 } 
 
@@ -1449,42 +1452,28 @@ void Program::setRunState(RunState value) {
 
 int Program::Run_impl() {
   ret_val = RV_OK;
-  m_checked = false; //don't do twice if we do in compile
-  // we explicitly wrap with config start/end so runtime config error report too
-  taMisc::CheckConfigStart(false);
   if (!CompileScript()) {
     if (ret_val != RV_CHECK_ERR)
       ret_val = RV_COMPILE_ERR;
   }
-  if (!m_checked)
-    CheckConfig(false); //sets ret_val on fail
   if (ret_val == RV_OK) {
     script->Run();
     //note: shared var state likely changed, so update gui
     DataChanged(DCR_ITEM_UPDATED);
   }
-  taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   return ret_val;
 }
 
 int Program::Cont_impl() {
-  ret_val = RV_OK;
-  m_checked = false; //don't do twice if we do in compile
-  // we explicitly wrap with config start/end so runtime config error report too
-  taMisc::CheckConfigStart(false);
-  if (!CompileScript()) {
-    if (ret_val != RV_CHECK_ERR)
-      ret_val = RV_COMPILE_ERR;
-  }
-  if (!m_checked)
-    CheckConfig(false); //sets ret_val on fail
-  if (ret_val == RV_OK) {
-    script->Cont();
-    //note: shared var state likely changed, so update gui
-    script_compiled = true; // override any run-generated changes!!
-    DataChanged(DCR_ITEM_UPDATED);
-  }
-  taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
+  // note: cont is fast and does not do any compile or run checks.
+  // the user cannot access this without having pressed Init first, and that
+  // does all the checks.  this is the standard paradigm for such things --
+  // init does checks. run assumes things are ok & thus can be fast.
+  script->Cont();
+  // note: shared var state likely changed, so update gui
+  script_compiled = true; // override any run-generated changes!!
+  // do not update this -- too tight
+  // DataChanged(DCR_ITEM_UPDATED);
   return ret_val;
 }
 
@@ -1576,7 +1565,7 @@ bool Program::StopCheck() {
 }
 
 void Program::Compile() {
-  CompileScript();
+  CompileScript(true);		// always force if command entered
 }
 
 void Program::CmdShell() {
@@ -1596,6 +1585,7 @@ void Program::ScriptCompiled() {
 }
 
 void Program::setDirty(bool value) {
+  if(value) script_compiled = false; // make sure this always reflects dirty status -- is used as check for compiling..
   if (m_dirty == value) return;
   m_dirty = value;
   script_compiled = false; // have to assume user changed something
@@ -1604,19 +1594,11 @@ void Program::setDirty(bool value) {
   DataChanged(DCR_ITEM_UPDATED);
 }
 
-bool Program::SetGlobalVar(const String& nm, const Variant& value) {
+bool Program::SetVar(const String& nm, const Variant& value) {
   cssElPtr& el_ptr = script->prog_vars.FindName(nm);
   if (el_ptr == cssMisc::VoidElPtr) return false;
   cssEl* el = el_ptr.El();
-//   if(el->GetType() == cssEl::T_Variant) {
-//     ((cssVariant*)el)->val.setVariantData(value); // only copy data, preserve type!
-//   }
-  if((el->GetType() == cssEl::T_C_Ptr) && (el->GetPtrType() == cssEl::T_Variant)) {
-    ((Variant*)((cssCPtr_Variant*)el)->GetNonNullVoidPtr())->setVariantData(value);
-  }
-  else {
-    *el = value;
-  }
+  *el = value;
   return true;
 }
 
@@ -1667,7 +1649,6 @@ const String Program::scriptString() {
     }
     m_scriptCache += "}\n\n";
     m_scriptCache += "\n";
-    m_dirty = false;
     
     m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
     m_scriptCache += "if (run_state == Program::INIT) {\n";
@@ -1675,6 +1656,8 @@ const String Program::scriptString() {
     m_scriptCache += "} else {\n";
     m_scriptCache += "  __Prog();\n";
     m_scriptCache += "}\n";
+
+    m_dirty = false;
   }
   return m_scriptCache;
 }
@@ -1711,22 +1694,6 @@ void  Program::UpdateProgVars() {
     if(el != NULL)
       script->prog_types.Push(el);
   } 
-  
-  // add new (with unique names) from our groups, starting at most inner
-  Program_Group* grp = prog_gp;
-  while (grp) {
-    for (int i = 0; i < grp->global_vars.size; ++i) {
-      ProgVar* sv = grp->global_vars.FastEl(i);
-      // for group vars, we only add with unique names 
-      if (script->prog_vars.IndexOfName(sv->GetName()) >= 0) continue;
-      el = sv->NewCssEl();
-      script->prog_vars.Push(el); //refs
-      el = sv->NewCssType();	// for dynenums
-      if(el != NULL)
-	script->prog_types.Push(el);
-    } 
-    grp = (Program_Group*)grp->GetOwner(&TA_Program_Group);
-  }
 }
 
 void Program::GetVarsForObjs() {
@@ -1818,7 +1785,6 @@ void Program_Group::Initialize() {
 void Program_Group::InitLinks() {
   inherited::InitLinks();
   taBase::Own(step_prog, this);
-  taBase::Own(global_vars, this);
   if(prog_lib.not_init) {
     taBase::Ref(prog_lib);
     prog_lib.paths.Add("../../prog_lib"); // todo: hack for testing from pdp_lib location!
@@ -1828,13 +1794,11 @@ void Program_Group::InitLinks() {
 
 void Program_Group::CutLinks() {
   step_prog.CutLinks();
-  global_vars.CutLinks();
   inherited::CutLinks();
 }
 
 void Program_Group::Copy_(const Program_Group& cp) {
   desc = cp.desc;
-  global_vars = cp.global_vars;
   if(cp.step_prog)
     step_prog = FindName(cp.step_prog->name);
 }

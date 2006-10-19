@@ -198,6 +198,10 @@ public:
 
   static bool	dist_larger_further(DistMetric metric);
   // returns true if a larger value of given distance metric means further apart
+
+  void Initialize() { };
+  void Destroy() { };
+  TA_BASEFUNS(taMath);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -432,6 +436,8 @@ public:
 
   static double	vec_sum(const double_Matrix* vec);
   // #CAT_Statistics compute the sum of the values in the vector
+  static double	vec_prod(const double_Matrix* vec);
+  // #CAT_Statistics compute the product of the values in the vector
   static double	vec_mean(const double_Matrix* vec);
   // #CAT_Statistics compute the mean of the values in the vector
   static double	vec_var(const double_Matrix* vec, double mean=0, bool use_mean=false);
@@ -509,6 +515,9 @@ public:
   // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
 #endif
   
+  void Initialize() { };
+  void Destroy() { };
+  TA_BASEFUNS(taMath_double);
 };
 
 
@@ -638,6 +647,9 @@ public:
 
   // todo: copy over from double and replace all w/ float when double is all good..
 
+  void Initialize() { };
+  void Destroy() { };
+  TA_BASEFUNS(taMath_float);
 };
 
 #endif // TA_MATH_H

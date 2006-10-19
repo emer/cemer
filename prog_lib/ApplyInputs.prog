@@ -8,6 +8,10 @@ Program .projects[0].programs.gp[0][5] {
     };
   };
 
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
   ProgVar_List @.vars = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -76,6 +80,14 @@ Program .projects[0].programs.gp[0][5] {
   name=;
   el_typ=ProgVar;
   el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=$1$;
+   objs_ptr=0;
+   desc=;
+  };
  };
  vars {
   name=;
@@ -116,7 +128,7 @@ Program .projects[0].programs.gp[0][5] {
    off=0;
    result_var=;
    script_obj=$5$;
-   method=LayerRWBase_List::CheckConfig;
+   method=taList_impl::CheckConfig;
    args{ false;};
 { bool quiet;   };
   };
@@ -131,7 +143,7 @@ Program .projects[0].programs.gp[0][5] {
    result_var=;
    script_obj=$5$;
    method=LayerWriter_List::ApplyExternal;
-   args{ context;};
+   args{ network->context;};
 { int context;   };
   };
  };

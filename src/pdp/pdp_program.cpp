@@ -34,11 +34,11 @@ void BasicDataLoop::Initialize() {
 void BasicDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if (!data_var) {
-    if(!quiet) taMisc::Error("Error in BasicDataLoop in program:", program()->name, "data_var = NULL");
+    if(!quiet) taMisc::CheckError("Error in BasicDataLoop in program:", program()->name, "data_var = NULL");
     rval = false;
   }
   if(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable)) {
-    if(!quiet) taMisc::Error("Error in BasicDataLoop in program:", program()->name, "data_var does not point to a data table");
+    if(!quiet) taMisc::CheckError("Error in BasicDataLoop in program:", program()->name, "data_var does not point to a data table");
     rval = false;
   }
 }
@@ -94,11 +94,11 @@ void GroupedDataLoop::Initialize() {
 void GroupedDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!data_var) {
-    if(!quiet) taMisc::Error("Error in GroupedDataLoop in program:", program()->name, "data_var = NULL");
+    if(!quiet) taMisc::CheckError("Error in GroupedDataLoop in program:", program()->name, "data_var = NULL");
     rval = false;
   }
   if(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable)) {
-    if(!quiet) taMisc::Error("Error in GroupedDataLoop in program:", program()->name, "data_var does not point to a data table");
+    if(!quiet) taMisc::CheckError("Error in GroupedDataLoop in program:", program()->name, "data_var does not point to a data table");
     rval = false;
   }
 }
@@ -201,19 +201,19 @@ void NetCounterInit::UpdateAfterEdit() {
 void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!counter) {
-    if(!quiet) taMisc::Error("Error in NetCounterInit in program:", program()->name, "counter is NULL");
+    if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "counter is NULL");
     rval = false;
   }
   if(!network_var) {
-    if(!quiet) taMisc::Error("Error in NetCounterInit in program:", program()->name, "network_var = NULL");
+    if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "network_var = NULL");
     rval = false;
   }
-  if(!network_var->object_val) {
-    if(!quiet) taMisc::Error("Error in NetCounterInit in program:", program()->name, "network_var object = NULL");
+  if(network_var && !network_var->object_val) {
+    if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "network_var object = NULL");
     rval = false;
   }
   if(!local_ctr_var) {
-    if(!quiet) taMisc::Error("Error in NetCounterInit in program:", program()->name, "local_ctr_var = NULL");
+    if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "local_ctr_var = NULL");
     rval = false;
   }
 }
@@ -267,19 +267,19 @@ void NetCounterIncr::UpdateAfterEdit() {
 void NetCounterIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!counter) {
-    if(!quiet) taMisc::Error("Error in NetCounterIncr in program:", program()->name, "counter is NULL");
+    if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "counter is NULL");
     rval = false;
   }
   if(!network_var) {
-    if(!quiet) taMisc::Error("Error in NetCounterIncr in program:", program()->name, "network_var = NULL");
+    if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "network_var = NULL");
     rval = false;
   }
-  if(!network_var->object_val) {
-    if(!quiet) taMisc::Error("Error in NetCounterIncr in program:", program()->name, "network_var object = NULL");
+  if(network_var && !network_var->object_val) {
+    if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "network_var object = NULL");
     rval = false;
   }
   if(!local_ctr_var) {
-    if(!quiet) taMisc::Error("Error in NetCounterIncr in program:", program()->name, "local_ctr_var = NULL");
+    if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "local_ctr_var = NULL");
     rval = false;
   }
 }
@@ -329,11 +329,11 @@ void NetUpdateView::UpdateAfterEdit() {
 void NetUpdateView::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!network_var) {
-    if(!quiet) taMisc::Error("Error in NetUpdateView in program:", program()->name, "network_var = NULL");
+    if(!quiet) taMisc::CheckError("Error in NetUpdateView in program:", program()->name, "network_var = NULL");
     rval = false;
   }
   if(!update_var) {
-    if(!quiet) taMisc::Error("Error in NetUpdateView in program:", program()->name, "update_var = NULL");
+    if(!quiet) taMisc::CheckError("Error in NetUpdateView in program:", program()->name, "update_var = NULL");
     rval = false;
   }
 }
