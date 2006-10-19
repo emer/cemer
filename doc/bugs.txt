@@ -41,7 +41,21 @@ Others to Prioritize:
 * get ClassBrowser panels working again
 * Spec Editor (similar to prog editor -- shows children)
 * dnd for T3
+* spec gui enhancements:
+  * make a link and tree node for making subspecs be direct children
+  * enhance BaseSpec edit/drop to accept compatible subspec objects
 
+* Show changes:
+Ps force expert idea is good & should just be the default: if there is a 
+def ant it is not set to that, then show.
+Also, just to be clear, ro should be rmv from show menu.
+* upgrade and test plugin system:
+  * tags in type info to check dependencies
+  * prefix or similar in proj files to indicate required plugins
+  * naming/registry spec for class and plugin naming
+  * separate enumeration from loading
+  * startup enumeration of plugins;
+  * dynamic (user controlled) loading of plugins
 
 Brad done:
 * dnd icon bar for: progedit
@@ -65,6 +79,8 @@ Brad done:
 * dnd extended to applying things: drag a layerspec and drop it on a layer
   and this sets the layerspec.  need to just parse member funs that take
   layerspec args + comment dir to disambiguate (or just pop up menu).
+* substantial changes to CheckConfig, to support UI highlighting, state
+  in the object, and a factored api for doing This and Child objects
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)

@@ -29,7 +29,7 @@
 #include "pdpbase.h"
 
 #ifdef TA_GUI
-#include "ta_qtbrowse_def.h"
+//#include "ta_qtbrowse_def.h"
 #include "t3viewer.h"
 //#include "fontspec.h"
 #endif

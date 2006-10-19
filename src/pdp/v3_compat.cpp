@@ -23,7 +23,6 @@
 
 #ifdef TA_GUI
 #include "ta_qtviewer.h"
-#include "ta_qtbrowse.h"
 
 
 //////////////////////////

@@ -33,7 +33,6 @@
 # include "css_qt.h"
 # include "ta_qtdata.h" // for taiObjChooser
 # include "ta_qtviewer.h"
-# include "ta_qtbrowse.h"
 # include "pdp_qtso.h"
 # include <qbitmap.h>
 # include <QApplication>

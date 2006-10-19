@@ -25,8 +25,7 @@
 #include "ta_qttype.h"
 #include "ta_qtdata.h"
 #include "ta_qtdialog.h"
-#include "ta_qtbrowse.h"
-//#include "array_qt.h"
+#include "ta_qtviewer.h"
 #include "t3viewer.h"
 #include "pdp_TA_type.h"
 
