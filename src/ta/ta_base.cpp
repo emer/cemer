@@ -581,6 +581,13 @@ bool taBase::CheckConfig_impl(bool quiet) {
   return (this_rval && child_rval);
 }
 
+void taBase::ClearCheckConfig() {
+  if (m_flags & INVALID_MASK) {
+    ClearFlag(INVALID_MASK);
+    DataChanged(DCR_ITEM_UPDATED);
+  }
+}
+
 void taBase::ClearFlag(int flag) {
   m_flags &= ~flag;
 }

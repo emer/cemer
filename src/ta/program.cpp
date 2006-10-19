@@ -456,21 +456,23 @@ void ProgEl::Copy_(const ProgEl& cp) {
 }
 
 bool ProgEl::CheckConfig_impl(bool quiet) {
-  if (off) return true;
+  if (off) {
+    ClearCheckConfig();
+    return true;
+  }
   return inherited::CheckConfig_impl(quiet);
 }
 
-void ProgEl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  inherited::ChildUpdateAfterEdit(child, handled);
+void ProgEl::UpdateAfterEdit() {
   Program* prog = GET_MY_OWNER(Program);
   if (prog) {
     prog->setDirty(true);
   }
+  inherited::UpdateAfterEdit();
 }
 
-void ProgEl::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  if (!(dcr == DCR_ITEM_UPDATED)) return;
+void ProgEl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+  inherited::ChildUpdateAfterEdit(child, handled);
   Program* prog = GET_MY_OWNER(Program);
   if (prog) {
     prog->setDirty(true);

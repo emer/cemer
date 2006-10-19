@@ -471,6 +471,7 @@ public:
   bool			CheckConfig_Gui(bool confirm_success = true,
     bool quiet = false);
   // #MENU #CAT_ObjectMgmt #ARGC_0 #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
+  void			ClearCheckConfig(); // this can be called when a CheckConfig_impl routine blindly assert ok, ex. for an object that has an "off" or "disable" state; this routine updates the gui if the state has now changed
 
   // viewing-related functions -- usually not overridden base
   virtual void		AddDataView(taDataView* dv); // #CAT_Display add a dataview 

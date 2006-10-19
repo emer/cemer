@@ -181,9 +181,8 @@ public:
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
-  override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
-
+  void	UpdateAfterEdit();
   override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, inherited);
