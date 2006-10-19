@@ -1212,11 +1212,6 @@ void gpiListDataHost::Constr_Strings(const char*, const char* win_title) {
      + " " + cur_lst->GetPath();
 }
 
-// don't check for null im ptr here
-bool gpiListDataHost::ShowMember(MemberDef* md) {
-  return md->ShowMember(show);
-}
-
 void gpiListDataHost::Constr_Final() {
   gpiMultiEditDataHost::Constr_Final();
   multi_body->resizeNames(); //temp: idatatable should do this automatically
@@ -1260,6 +1255,7 @@ void gpiListDataHost::Constr_ListData() {
       taiData* mb_dat = md->im->GetDataRep(this, NULL, multi_body->dataGridWidget());
       lf_el->memb_el.Add(md);
       lf_el->data_el.Add(mb_dat);
+      //TODO: should get desc for this member, to add to tooltip for rep
       AddMultiData(cur_row, lf, mb_dat->GetRep());
     }
   }
@@ -1506,125 +1502,6 @@ int gpiCompactListDataHost::Edit() {
 } */
 
 
-
-//////////////////////////////////
-// 	taiGroupDataHost		//
-//////////////////////////////////
-
-gpiGroupDataHost::gpiGroupDataHost(void* base, TypeDef* typ_, bool read_only_,
-  	bool modal_, QObject* parent)
-: gpiListDataHost(base, typ_, read_only_, modal_, parent)
-{
-  subData = NULL;
-  scrSubData = NULL;
-}
-
-gpiGroupDataHost::~gpiGroupDataHost() {
-  sub_data_el.Reset();
-}
-
-void gpiGroupDataHost::ClearBody_impl() {
-  sub_data_el.Reset();
-  DeleteChildrenLater(subData);
-  gpiListDataHost::ClearBody_impl();
-}
-
-void gpiGroupDataHost::Constr_Strings(const char*, const char* win_title) {
-  prompt_str = cur_lst->GetTypeDef()->name + ": ";
-  if(cur_lst->GetTypeDef()->desc == TA_taBase_Group.desc) {
-    prompt_str += cur_lst->el_typ->name + "s: " + cur_lst->el_typ->desc;
-  }
-  else {
-    prompt_str += cur_lst->GetTypeDef()->desc;
-  }
-  win_str = String(win_title) + " " + cur_lst->GetPath();
-}
-
-
-void gpiGroupDataHost::Constr_Box() {
-  gpiListDataHost::Constr_Box();
-  TAGPtr cur_gp = (TAGPtr)cur_lst;
-  //TODO: maybe should always create -- may not even show if empty
-  if (cur_gp->gp.size > 0) {
-    scrSubData = new QScrollArea(multi);
-    scrSubData->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // no h scrolling
-    subData = new QWidget();
-    subData->setPaletteBackgroundColor(*bg_color_dark);
-    scrSubData->viewport()->setPaletteBackgroundColor(*bg_color_dark);
-    scrSubData->setWidget(subData);
-    scrSubData->viewport()->setPaletteBackgroundColor(*bg_color_dark);
-    lay_multi->addWidget(scrSubData);
-
-  }
-}
-
-void gpiGroupDataHost::Constr_Body() {
-  gpiListDataHost::Constr_Body();
-  laySubData = new QVBoxLayout(subData);
-  //TODO:if there are subgroups, only show 2 of maingroup
-  Constr_SubGpData();
-}
-
-void gpiGroupDataHost::GetImage() {
-  inherited::GetImage();
-  TAGPtr cur_gp = (TAGPtr)cur_lst;
-  if (sub_data_el.size != cur_gp->gp.size) {
-return;
-/*TODO    if (subData == NULL)
-      return;
-    sub_data_el.Reset();
-    for (int i = sub_data_g->count() - 1; i >= 0; --i)
-      sub_data_g->remove(i);
-    Constr_SubGpData(); */
-  }
-
-  // and the sub-Lists
-  for (int lf = 0; lf < cur_gp->gp.size; lf++) {
-    TAGPtr sub = cur_gp->gp.FastEl(lf);
-    gpiSubEditButton* sub_dat = (gpiSubEditButton*)sub_data_el.FastEl(lf);
-    String nm = sub->name;
-    if(nm == "")
-      nm = String("[") + String(lf) + "]";
-    sub_dat->label = nm;
-    sub_dat->GetImage_((void*)sub);
-  }
-}
-
-void gpiGroupDataHost::Constr_SubGpData() {
-  if(subData == NULL)
-    return;
-  TAGPtr cur_gp = (TAGPtr)cur_lst;
-  bool widgetAdded = false;
-  for (int lf = 0; lf < cur_gp->gp.size; ++lf) {
-    TAGPtr sub = cur_gp->gp.FastEl(lf);
-    String nm = sub->name;
-    if (nm == "")
-      nm = String("[") + String(lf) + "]";
-    taiData* mb_dat =
-      new gpiSubEditButton((void*)sub, nm, sub->GetTypeDef(), this, NULL, subData);
-    QWidget* rep = mb_dat->GetRep();
-    if (rep != NULL) {
-      laySubData->addWidget(rep);
-      widgetAdded = true;
-    }
-    rep->show(); // needed when rebuilding
-    sub_data_el.Add(mb_dat);
-  }
-  if (widgetAdded)
-    laySubData->addStretch();
-}
-/*TODO
-int gpiGroupDataHost::Edit() {
-  TAGPtr cur_gp = (TAGPtr)cur_lst;
-  if((cur_gp != NULL) && ((cur_gp->size > 100) || (cur_gp->gp.size > 100))) {
-    int rval = taMisc::Choice("Group or sub-groups contain more than 100 items (size = " +
-			      String(cur_gp->size) + ", gp.size = "
-			      + String(cur_gp->gp.size) + "), continue with Edit?",
-			      "Ok", "Cancel");
-    if(rval == 1) return 0;
-  }
-  return taiEditDataHost::Edit();
-} */
 
 //////////////////////////////////
 //	gpiArrayEditDataHost	//

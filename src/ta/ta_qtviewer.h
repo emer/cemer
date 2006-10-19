@@ -54,11 +54,15 @@ class ISelectable;
 class ISelectable_PtrList;
 class ISelectableHost; //
 
+class iBrowseViewer;
 
 class iTreeView;
 class iTreeViewItem;
-class taiTreeDataNode;
 class taiListDataNode;
+class taiTreeDataNode;
+class tabTreeDataNode;
+class tabListTreeDataNode;
+class tabGroupTreeDataNode;
 class iListDataPanel; //
 
 
@@ -561,6 +565,41 @@ protected:
   virtual void		SelectionChanged_impl(ISelectableHost* src_host) {}
     // we call this when we receive a valid incoming change, or maybe new focus
   
+private:
+  void			Init();
+};
+
+
+class TA_API iBrowseViewer : public iFrameViewer { // base of viewer window used for object and class browsing
+Q_OBJECT
+INHERITED(iFrameViewer)
+public:
+
+  iTreeView*		lvwDataTree; 
+
+  inline BrowseViewer*	browser() {return (BrowseViewer*)m_viewer;}
+  void*			root() {return (browser()) ? browser()->root() : NULL;}
+  TypeDef*		root_typ() {return (browser()) ? browser()->root_typ : &TA_void;}
+  MemberDef*		root_md() {return (browser()) ? browser()->root_md : NULL;} //
+  override int		stretchFactor() const {return 1;} //  1/2 default
+
+  void			Reset();
+  virtual void 		ApplyRoot(); // #IGNORE actually applies the new root value
+  
+  iBrowseViewer(BrowseViewer* browser_, QWidget* parent = 0);
+  ~iBrowseViewer();
+
+public slots:
+  virtual void		mnuBrowseNodeDrop(int param) {mnuBrowseNodeDrop_param = param;} 
+    // called from within the node->dropped event
+
+protected slots:
+  virtual void		lvwDataTree_FillContextMenuHookPost(
+    ISelectable_PtrList& sel_items, taiMenu* menu);
+
+protected:
+  int			mnuBrowseNodeDrop_param;
+    // param from the mnuBrowseDrop slot -- called by a node, only valid for its call
 private:
   void			Init();
 };
@@ -1220,6 +1259,68 @@ protected:
   override void		OnWindowBind_impl(iTabViewer* itv);
 };
 
+//////////////////////////
+//   iListDataPanel 	//
+//////////////////////////
+
+class TA_API iListDataPanel: public iDataPanelFrame {
+  Q_OBJECT
+#ifndef __MAKETA__
+typedef iDataPanelFrame inherited;
+#endif
+public:
+  iTreeView*		list; //actually an iLDPListView
+
+  override String	panel_type() const; // this string is on the subpanel button for this panel
+
+  void			ClearList(); // for when data changes -- we just rebuild the list
+  void			FillList();
+  
+  iListDataPanel(taiDataLink* dl_);
+  ~iListDataPanel();
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iListDataPanel;}
+protected:
+  iTreeViewItem* 	mparentItem;
+  void 			ConfigHeader();
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void		OnWindowBind_impl(iTabViewer* itv);
+};
+
+class TA_API iTextDataPanel: public iDataPanelFrame {
+  // a panel frame for displaying text; used, ex. by Scripts and Programs
+  Q_OBJECT
+INHERITED(iDataPanelFrame)
+public:
+  QTextEdit*		txtText; // the text of the script
+  
+  virtual bool		readOnly();
+  virtual void		setReadOnly(bool value);
+  virtual void		setText(const String& value);
+  
+
+  override String	panel_type() const;
+
+  override int 		EditAction(int ea);
+  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
+
+  iTextDataPanel(taiDataLink* dl_);
+  ~iTextDataPanel();
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iTextDataPanel;}
+protected:
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
+
+protected slots:
+  void 			textText_copyAvailable (bool yes);
+
+};
+
 class TA_API iTreeView: public iTreeWidget, public ISelectableHost {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for all views of iTreeViewItems
 INHERITED(iTreeWidget)
@@ -1391,6 +1492,31 @@ private:
 };
 
 
+class TA_API taiListDataNode: public iTreeViewItem {
+INHERITED(iTreeViewItem)
+public:
+  int			num; // item number, starting from 1
+  iListDataPanel*	panel; // logical parent node of the list items
+
+  QString		text(int col) const; // override
+
+  bool 			operator<(const QTreeWidgetItem& item) const; // override
+
+  taiListDataNode(int num_, iListDataPanel* panel_, taiDataLink* link_,
+    iTreeView* parent_, taiListDataNode* after, int dn_flags_ = 0);
+    //note: list flag automatically or'ed in
+  ~taiListDataNode(); //
+  
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_taiListDataNode;}
+
+public: // ISelectable interface
+  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
+  override MemberDef* 	par_md() const; // as for par_link
+};
+
+
 class TA_API taiTreeDataNode: public iTreeViewItem {
 INHERITED(iTreeViewItem)
 public:
@@ -1422,91 +1548,78 @@ private:
 };
 
 
-class TA_API taiListDataNode: public iTreeViewItem {
-INHERITED(iTreeViewItem)
+class TA_API tabTreeDataNode: public taiTreeDataNode {
+INHERITED(taiTreeDataNode)
 public:
-  int			num; // item number, starting from 1
-  iListDataPanel*	panel; // logical parent node of the list items
+  taBase* 		data() {return ((tabDataLink*)m_link)->data();}
+  tabDataLink* 		link() const {return (tabDataLink*)m_link;}
 
-  QString		text(int col) const; // override
 
-  bool 			operator<(const QTreeWidgetItem& item) const; // override
-
-  taiListDataNode(int num_, iListDataPanel* panel_, taiDataLink* link_,
-    iTreeView* parent_, taiListDataNode* after, int dn_flags_ = 0);
-    //note: list flag automatically or'ed in
-  ~taiListDataNode(); //
-  
+  tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeView* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  ~tabTreeDataNode();
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_taiListDataNode;}
-
-public: // ISelectable interface
-  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
-  override MemberDef* 	par_md() const; // as for par_link
+  override TypeDef*	GetTypeDef() const {return &TA_tabTreeDataNode;}
+private:
+  void			init(tabDataLink* link_, int dn_flags_); // #IGNORE
 };
 
 
-//////////////////////////
-//   iListDataPanel 	//
-//////////////////////////
-
-class TA_API iListDataPanel: public iDataPanelFrame {
-  Q_OBJECT
-#ifndef __MAKETA__
-typedef iDataPanelFrame inherited;
-#endif
+class TA_API tabListTreeDataNode: public tabTreeDataNode {
+INHERITED(tabTreeDataNode)
 public:
-  iTreeView*		list; //actually an iLDPListView
+  taList_impl* 		data() {return ((tabListDataLink*)m_link)->data();}
+  tabListDataLink* 	link() const {return (tabListDataLink*)m_link;}
 
-  override String	panel_type() const; // this string is on the subpanel button for this panel
+  void			AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
+  override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
 
-  void			ClearList(); // for when data changes -- we just rebuild the list
-  void			FillList();
-  
-  iListDataPanel(taiDataLink* dl_);
-  ~iListDataPanel();
-
+  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeView* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  ~tabListTreeDataNode();
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iListDataPanel;}
+  override TypeDef*	GetTypeDef() const {return &TA_tabListTreeDataNode;}
 protected:
-  iTreeViewItem* 	mparentItem;
-  void 			ConfigHeader();
-  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-  override void		OnWindowBind_impl(iTabViewer* itv);
+  taiTreeDataNode*	last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
+  override void		DataChanged_impl(int dcr, void* op1, void* op2);
+  override void 	CreateChildren_impl(); 
+  void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after, void* el);
+  void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
+private:
+  void			init(tabListDataLink* link_, int dn_flags_); // #IGNORE
 };
 
-class TA_API iTextDataPanel: public iDataPanelFrame {
-  // a panel frame for displaying text; used, ex. by Scripts and Programs
-  Q_OBJECT
-INHERITED(iDataPanelFrame)
+
+class TA_API tabGroupTreeDataNode: public tabListTreeDataNode {
+INHERITED(tabListTreeDataNode)
 public:
-  QTextEdit*		txtText; // the text of the script
-  
-  virtual bool		readOnly();
-  virtual void		setReadOnly(bool value);
-  virtual void		setText(const String& value);
-  
+  taGroup_impl* 	data() {return ((tabGroupDataLink*)m_link)->data();}
+  tabGroupDataLink* 	link() const {return (tabGroupDataLink*)m_link;}
 
-  override String	panel_type() const;
+  void 			CreateSubGroup(taiTreeDataNode* after, void* el); 
+    // for dynamic changes to tree
+  override void		UpdateChildNames(); // #IGNORE
 
-  override int 		EditAction(int ea);
-  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-
-  iTextDataPanel(taiDataLink* dl_);
-  ~iTextDataPanel();
-
+  tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, iTreeView* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  ~tabGroupTreeDataNode();
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iTextDataPanel;}
+  override TypeDef*	GetTypeDef() const {return &TA_tabGroupTreeDataNode;}
 protected:
-  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
-
-protected slots:
-  void 			textText_copyAvailable (bool yes);
-
+  override void 	CreateChildren_impl(); 
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); // handle DCR_GROUP_xxx ops
+  void			UpdateGroupNames(); // #IGNORE updates names after inserts/deletes etc.
+private:
+  void			init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
 };
 
 

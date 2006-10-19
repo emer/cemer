@@ -365,8 +365,6 @@ public:
   int			num_lst_fields; // number of editble list memberdefs with fields
 
 //TODO  int		Edit();
-
-  bool			ShowMember(MemberDef* md);
   
   gpiListDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0); //(TypeDef* tp, void* base);
@@ -440,34 +438,6 @@ protected:
   override void 	Constr_Final(); //TEMP
 };
 
-
-
-class TA_API gpiGroupDataHost : public gpiListDataHost {
-INHERITED(gpiListDataHost)
-public:
-  taiDataList	sub_data_el;	// list of data elements for sub groups
-  QWidget*	subData;
-  QScrollArea*	scrSubData;
-  QVBoxLayout*	laySubData;  // layout for the sub buttons
-
-  gpiGroupDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
-  	bool modal_ = false, QObject* parent = 0);
-  gpiGroupDataHost() 				{ };
-  ~gpiGroupDataHost();
-
-  override void	ClearBody_impl();	// clear body data for reshowing
-  
-public: // IDataHost i/f
-  override void		GetImage();
-
-//TODO  int		Edit();
-
-protected:
-  void		Constr_Strings(const char* prompt="", const char* win_title="");
-  void		Constr_Box();
-  override void	Constr_Body();
-  virtual void	Constr_SubGpData(); // construct data for subgroups
-};
 
 
 //////////////////////////////////

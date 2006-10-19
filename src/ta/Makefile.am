@@ -16,10 +16,8 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qttype_def.h \
 	@abs_srcdir@/ta_qttype.h \
 	@abs_srcdir@/ta_qtclipdata.h \
-	@abs_srcdir@/ta_qtbrowse_def.h \
 	@abs_srcdir@/ta_qtviewer.h \
 	@abs_srcdir@/ta_matrix_qt.h \
-	@abs_srcdir@/ta_qtbrowse.h \
 	@abs_srcdir@/ta_classbrowse.h \
 	@abs_srcdir@/ta_qtgroup.h \
 	@abs_srcdir@/ta_seledit.h \
@@ -34,11 +32,9 @@ HEADS_GUI =\
 	ta_qtdialog.h \
 	ta_qttype_def.h \
 	ta_qttype.h \
-	ta_qtbrowse_def.h \
 	ta_qtgroup.h \
 	ta_qtviewer.h \
 	ta_matrix_qt.h \
-	ta_qtbrowse.h \
 	ta_classbrowse.h \
 	ta_qtcursors.h \
 	ta_qtclipdata.h \
@@ -62,8 +58,6 @@ SRCS_GUI =\
 	ta_qtviewer.moc.cpp \
 	ta_matrix_qt.cpp \
 	ta_matrix_qt.moc.cpp \
-	ta_qtbrowse.cpp \
-	ta_qtbrowse.moc.cpp \
 	ta_classbrowse.cpp \
 	ta_classbrowse.moc.cpp \
 	ta_qttype.cpp \

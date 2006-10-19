@@ -40,8 +40,8 @@
 #ifndef TA_CLASSBROWSE_H
 #define TA_CLASSBROWSE_H
 
-#include "ta_qtbrowse.h"
 #include "ta_qtdialog.h"
+#include "ta_qtviewer.h"
 
 // forwards
 

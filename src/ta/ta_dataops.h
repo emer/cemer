@@ -21,7 +21,7 @@
 
 class TA_API DataOpEl : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
-  INHERITED(taBase);
+  INHERITED(taBase)
 public:
   DataTableCols*	cols;	// #READ_ONLY #NO_SAVE data table columns -- gets set dynamically
   DataArray_impl*	column;	// #NO_SAVE #FROM_GROUP_cols column in data table to sort on -- just to lookup the name, which is what is actually used

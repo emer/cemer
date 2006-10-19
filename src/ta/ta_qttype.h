@@ -761,13 +761,6 @@ protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
-class TA_API gpiGroupEdit : public gpiListEdit {
-public:
-  int		BidForEdit(TypeDef* td);
-  TAQT_EDIT_INSTANCE(gpiGroupEdit, gpiListEdit);
-protected:
-  override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
-};
 
 class TA_API gpiArrayEdit : public taiEdit {
 public:

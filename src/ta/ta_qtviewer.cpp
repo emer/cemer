@@ -2003,6 +2003,100 @@ void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int o
 
 
 //////////////////////////
+//   iBrowseViewer 	//
+//////////////////////////
+
+iBrowseViewer::iBrowseViewer(BrowseViewer* browser_, QWidget* parent)
+:inherited(browser_, parent)
+{
+  Init();
+}
+
+iBrowseViewer::~iBrowseViewer()
+{
+}
+
+void iBrowseViewer::Init() {
+  mnuBrowseNodeDrop_param = -1;
+  QVBoxLayout* lay = new QVBoxLayout(this);
+  lay->setMargin(0);  lay->setSpacing(0);
+  lvwDataTree = new iTreeView(this);
+  lay->addWidget(lvwDataTree);
+  lvwDataTree->setName("lvwDataTree");
+  lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
+  lvwDataTree->setColumnCount(1);
+  lvwDataTree->header()->hide();
+  //enable dnd support
+  lvwDataTree->setDragEnabled(true);
+  lvwDataTree->setAcceptDrops(true);
+  lvwDataTree->setDropIndicatorShown(true);
+  lvwDataTree->setHighlightRows(true); // show error objects
+/*no! prevents from collapsing in splitters  int mw = (taiM->scrn_s.width() * 3) / 20; // 15% min for tree
+  lvwDataTree->resize(mw, lvwDataTree->height()); // 15% min for tree
+  lvwDataTree->setMinimumWidth(mw); // 15% min for tree
+*/
+  connect(lvwDataTree, SIGNAL(FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)),
+      this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)) );
+  lvwDataTree->Connect_SelectableHostNotifySignal(this, 
+    SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+}
+
+/*TODO: sort this out iTabView* iBrowseViewer::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
+  iTabView* rval = inherited::AddTabView(parCtrl, splitBuddy);
+  // create a tab in the new tabview, based on cur item
+  iDataPanel* pn;
+  ISelectable* ci = curItem();
+  if (!ci) goto exit;
+  pn = NULL;
+  pn = rval->GetDataPanel(ci->link());
+  rval->SetPanel(pn);
+
+exit:
+  return rval;
+} */
+
+void iBrowseViewer::ApplyRoot() {
+  void* m_root = root(); //cache
+  if (!m_root) return;
+  taiDataLink* dl = taiViewType::StatGetDataLink(m_root, root_typ());
+  if (!dl) return; // shouldn't happen...
+
+  // by definition, we should always be able to create a new browser on root of a browser
+  int dn_flags_ = iTreeViewItem::DNF_CAN_BROWSE;
+  
+  // we treat root slightly different if it is true root, or is just a subsidiary named item
+  taiTreeDataNode* node;
+  //TODO: should add memberdef to constructor
+  if (m_root == tabMisc::root)
+    node = dl->CreateTreeDataNode(root_md(), lvwDataTree, NULL, "root",
+      dn_flags_ | iTreeViewItem::DNF_IS_MEMBER);
+  else //TODO: should really have a better scheme for root name -- what if it is unnamed???
+    node = dl->CreateTreeDataNode(root_md(), lvwDataTree, NULL, dl->GetName(), 
+      dn_flags_ | iTreeViewItem::DNF_UPDATE_NAME);
+  // always show the first items under the root
+  node->CreateChildren();
+  lvwDataTree->setCurItem(node);
+  lvwDataTree->setItemExpanded(node, true); // always open root node
+}
+
+/*was not an override! void iBrowseViewer::DataPanelDestroying(iDataPanel* panel) {
+  // remove from tabs, deleting tabs (except always leave at least one tab, except when we are destroying)
+  //note: not called by the blank panel, since it has no link
+  tabView()->DataPanelDestroying(panel);
+} */
+
+void iBrowseViewer::lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& /*sel_items*/,
+   taiMenu* menu) 
+{
+//TODO:  FillContextMenu(menu);
+}
+
+void iBrowseViewer::Reset() {
+  lvwDataTree->clear();
+}
+
+
+//////////////////////////
 //   iTabViewer 	//
 //////////////////////////
 
@@ -3956,6 +4050,145 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
   //TODO: maybe something to change tab color
 }
 
+//////////////////////////
+//    iListDataPanel 	//
+//////////////////////////
+
+iListDataPanel::iListDataPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  list = new iTreeView(this);
+  list->setName("list"); // nn???
+  setCentralWidget(list);
+  list->setSelectionMode(QTreeWidget::ExtendedSelection);
+  list->setSortingEnabled(true);
+  //enable dnd support, at least as source
+  list->setDragEnabled(true);
+//  list->setAcceptDrops(true);
+//  list->setDropIndicatorShown(true);
+  
+  ConfigHeader();
+  FillList();
+}
+
+iListDataPanel::~iListDataPanel() {
+}
+
+void iListDataPanel::ClearList() {
+  list->clear();
+}
+
+void iListDataPanel::ConfigHeader() {
+  // set up number of cols, based on link, ok to repeat this
+  list->setColumnCount(link()->NumListCols() + 1);
+  QTreeWidgetItem* hdr = list->headerItem();
+  hdr->setText(0, "#"); //note: we don't need a key, because we manage the text ourself
+  for (int i = 0; i < link()->NumListCols(); ++i) {
+    int hdr_idx = i + 1;
+    KeyString key = link()->GetListColKey(i);
+    hdr->setText(hdr_idx, link()->GetColHeading(key));
+    hdr->setData(hdr_idx, iTreeView::ColKeyRole, key);
+  }
+}
+
+void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  if (!( ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_MAX))
+    || (dcr == DCR_DATA_UPDATE_END) || (dcr == DCR_STRUCT_UPDATE_END))
+  ) return;
+
+  ClearList();
+  if (dcr == DCR_STRUCT_UPDATE_END)
+    ConfigHeader();
+  FillList();
+}
+
+void iListDataPanel::FillList() {
+  taiListDataNode* last_child = NULL;
+  int i = 0;
+  for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
+    if (!child) continue;
+    taiListDataNode* dn = new taiListDataNode(i + 1, this, child, list, last_child, (iTreeViewItem::DNF_CAN_DRAG));
+    dn->DecorateDataNode(); // fills in remaining columns
+    last_child = dn;
+  }
+}
+
+void iListDataPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  // connect the list up to the panel
+  list->Connect_SelectableHostNotifySignal(itv,
+    SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+}
+
+String iListDataPanel::panel_type() const {
+  static String str("List View");
+  return str;
+}
+
+
+//////////////////////////
+//    iTextDataPanel 	//
+//////////////////////////
+
+iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  txtText = new QTextEdit(this);
+  setCentralWidget(txtText);
+  // default is ro
+  setReadOnly(true);
+  connect(txtText, SIGNAL(copyAvailable(bool)),
+      this, SLOT(textText_copyAvailable(bool)) );
+}
+
+iTextDataPanel::~iTextDataPanel() {
+}
+
+void iTextDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  if (dcr == DCR_ITEM_UPDATED) ;
+  //get updated text
+}
+
+int iTextDataPanel::EditAction(int ea) {
+  int rval = 0;
+//todo
+  return rval;
+}
+
+
+int iTextDataPanel::GetEditActions() {
+  int rval = 0;
+  QTextCursor tc(txtText->textCursor());
+  if (tc.hasSelection())
+    rval |= taiClipData::EA_COPY;
+//TODO: more, if not readonly
+  return rval;
+}
+
+bool iTextDataPanel::readOnly() {
+  return txtText->isReadOnly();
+}
+
+void iTextDataPanel::setReadOnly(bool value) {
+  txtText->setReadOnly(value);
+}
+
+void iTextDataPanel::setText(const String& value) {
+  txtText->setPlainText(value);
+}
+
+  
+void iTextDataPanel::textText_copyAvailable (bool) {
+  viewerWindow()->UpdateUi();
+}
+
+String iTextDataPanel::panel_type() const {
+  static String str("Text View");
+  return str;
+}
+
 
 //////////////////////////
 //    iTreeView 	//
@@ -4499,6 +4732,53 @@ String iTreeViewItem::view_name() const {
 
 
 //////////////////////////////////
+// 	taiListDataNode 	//
+//////////////////////////////////
+
+taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
+   taiDataLink* link_, iTreeView* parent_, taiListDataNode* after, int dn_flags_)
+:inherited(link_, NULL, parent_, after, String(num_), (dn_flags_ | DNF_IS_LIST_NODE))
+{
+  num = num_;
+  panel = panel_;
+  setData(0, Qt::TextAlignmentRole, Qt::AlignRight);
+}
+
+taiListDataNode::~taiListDataNode() {
+}
+
+
+bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
+{ //NOTE: it was tried to set display data as an int QVariant, but sorting was still lexographic
+  QTreeWidget* tw = treeWidget();
+  if (!tw) return false; // shouldn't happen
+  int col = tw->sortColumn();
+  if (col > 0)
+    return inherited::operator<(item);
+  else {
+    taiListDataNode* ldn = (taiListDataNode*)&item;
+    return (num < ldn->num);
+  } 
+}
+
+
+taiDataLink* taiListDataNode::par_link() const {
+  return (panel) ? panel->par_link() : NULL;
+}
+
+MemberDef* taiListDataNode::par_md() const {
+  return (panel) ? panel->par_md() : NULL;
+}
+
+QString taiListDataNode::text(int col) const {
+  if (col > 0)
+    return inherited::text(col);
+  else
+    return QString::number(num);
+}
+
+
+//////////////////////////////////
 // 	taiTreeDataNode 	//
 //////////////////////////////////
 
@@ -4577,190 +4857,344 @@ MemberDef* taiTreeDataNode::par_md() const {
 }
 
 
+//////////////////////////////////
+//   tabTreeDataNode 		//
+//////////////////////////////////
+
+tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+tabTreeDataNode::tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((taiDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+void tabTreeDataNode::init(tabDataLink* link_, int dn_flags_) {
+}
+
+tabTreeDataNode::~tabTreeDataNode()
+{
+}
+
+
 
 //////////////////////////////////
-// 	taiListDataNode 	//
+//   taiListTreeDataNode 	//
 //////////////////////////////////
 
-taiListDataNode::taiListDataNode(int num_, iListDataPanel* panel_,
-   taiDataLink* link_, iTreeView* parent_, taiListDataNode* after, int dn_flags_)
-:inherited(link_, NULL, parent_, after, String(num_), (dn_flags_ | DNF_IS_LIST_NODE))
+tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, 
+  dn_flags_ | DNF_LAZY_CHILDREN)
 {
-  num = num_;
-  panel = panel_;
-  setData(0, Qt::TextAlignmentRole, Qt::AlignRight);
+  init(link_, dn_flags_);
 }
 
-taiListDataNode::~taiListDataNode() {
-}
-
-
-bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
-{ //NOTE: it was tried to set display data as an int QVariant, but sorting was still lexographic
-  QTreeWidget* tw = treeWidget();
-  if (!tw) return false; // shouldn't happen
-  int col = tw->sortColumn();
-  if (col > 0)
-    return inherited::operator<(item);
-  else {
-    taiListDataNode* ldn = (taiListDataNode*)&item;
-    return (num < ldn->num);
-  } 
-}
-
-
-taiDataLink* taiListDataNode::par_link() const {
-  return (panel) ? panel->par_link() : NULL;
-}
-
-MemberDef* taiListDataNode::par_md() const {
-  return (panel) ? panel->par_md() : NULL;
-}
-
-QString taiListDataNode::text(int col) const {
-  if (col > 0)
-    return inherited::text(col);
-  else
-    return QString::number(num);
-}
-
-
-//////////////////////////
-//    iListDataPanel 	//
-//////////////////////////
-
-iListDataPanel::iListDataPanel(taiDataLink* dl_)
-:inherited(dl_)
+tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
-  list = new iTreeView(this);
-  list->setName("list"); // nn???
-  setCentralWidget(list);
-  list->setSelectionMode(QTreeWidget::ExtendedSelection);
-  list->setSortingEnabled(true);
-  //enable dnd support, at least as source
-  list->setDragEnabled(true);
-//  list->setAcceptDrops(true);
-//  list->setDropIndicatorShown(true);
+  init(link_, dn_flags_);
+}
+
+void tabListTreeDataNode::init(tabListDataLink* link_, int dn_flags_) {
+  last_list_items_node = NULL;
+}
+
+tabListTreeDataNode::~tabListTreeDataNode()
+{
+}
+
+void tabListTreeDataNode::AssertLastListItem() {
+  void* el = data()->Peek_();
+  if (el == NULL) {
+    last_list_items_node = last_member_node;
+    return;
+  }
   
-  ConfigHeader();
-  FillList();
+  last_list_items_node = this->FindChildForData(el);
+
 }
 
-iListDataPanel::~iListDataPanel() {
+void tabListTreeDataNode::CreateChildren_impl() {
+  inherited::CreateChildren_impl();
+  String tree_nm;
+  for (int i = 0; i < data()->size; ++i) {
+    // the subgroups are themselves taGroup items
+    TypeDef* typ;
+    void* el = data()->GetTA_Element(i, typ); // gets the item, and its TypeDef
+    if (!typ) continue; //TODO: maybe we should put a marker item in list???
+    // if we get a taBase item, the type might only be the base type, not the derived type of the item
+    // so we cast the item, and then grab the exact type right from the item
+    if (typ->InheritsFrom(&TA_taBase)) {
+      typ = ((taBase*)el)->GetTypeDef();
+    }
+
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    if (!dl) continue; // shouldn't happen... unless null
+
+    tree_nm = dl->GetDisplayName();
+    if (tree_nm.empty()) {
+      tree_nm = link()->AnonymousItemName(typ->name, i);
+    }
+    int dn_flags_tmp = iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_BROWSE| iTreeViewItem::DNF_CAN_DRAG;
+    last_child_node = dl->CreateTreeDataNode((MemberDef*)NULL, this, last_child_node, tree_nm, dn_flags_tmp);
+  }
+
+  last_list_items_node = last_child_node;
 }
 
-void iListDataPanel::ClearList() {
-  list->clear();
+void tabListTreeDataNode::CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after, 
+  void* el) 
+{
+  taPtrList_impl* list = data();
+  TypeDef* typ = list->GetElType();
+  if (!typ) return; //TODO: maybe we should put a marker item in list???
+  // if we get a taBase item, the type might only be the base type, not the derived type of the item
+  // so we cast the item, and then grab the exact type right from the item
+  if (typ->InheritsFrom(&TA_taBase)) {
+      typ = ((taBase*)el)->GetTypeDef();
+  }
+  taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+  if (!dl) return; // shouldn't happen unless null...
+  //note: we don't make name because it is updated anyway
+  //taiTreeDataNode* dn =
+  dl->CreateTreeDataNode((MemberDef*)NULL, par_node, after, "",
+    (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_BROWSE | iTreeViewItem::DNF_CAN_DRAG));
 }
 
-void iListDataPanel::ConfigHeader() {
-  // set up number of cols, based on link, ok to repeat this
-  list->setColumnCount(link()->NumListCols() + 1);
-  QTreeWidgetItem* hdr = list->headerItem();
-  hdr->setText(0, "#"); //note: we don't need a key, because we manage the text ourself
-  for (int i = 0; i < link()->NumListCols(); ++i) {
-    int hdr_idx = i + 1;
-    KeyString key = link()->GetListColKey(i);
-    hdr->setText(hdr_idx, link()->GetColHeading(key));
-    hdr->setData(hdr_idx, iTreeView::ColKeyRole, key);
+void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  if (!this->children_created) return;
+  switch (dcr) {
+  case DCR_LIST_INIT: break;
+  case DCR_LIST_ITEM_INSERT: {	// op1=item, op2=item_after, null=at beginning
+    taiTreeDataNode* after_node = this->FindChildForData(op2_); //null if not found
+    if (!after_node) after_node = last_member_node; // insert, after
+    CreateListItem(this, after_node, op1_);
+  }
+    break;
+  case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
+    taiTreeDataNode* gone_node = this->FindChildForData(op1_); //null if not found
+    if (gone_node) delete gone_node; // goodbye!
+  }
+    break;
+  case DCR_LIST_ITEM_MOVED: {	// op1=item, op2=item_after, null=at beginning
+    int fm_idx;
+    taiTreeDataNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
+    if (!moved_node) break; // shouldn't happen
+    int to_idx;
+    taiTreeDataNode* after_node = this->FindChildForData(op2_, to_idx); //null if not found
+    if (!after_node) to_idx = indexOfChild(last_member_node); // insert, after
+    ++to_idx; // after
+    moveChild(fm_idx, to_idx);
+  }
+    break;
+  case DCR_LIST_ITEMS_SWAP: {	// op1=item1, op2=item2
+    int n1_idx, n2_idx;
+    taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
+    taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
+    if ((!node1) || (!node2)) break; // shouldn't happen
+    swapChildren(n1_idx, n2_idx); 
+  }
+    break;
+  case DCR_LIST_SORTED: {	// no ops
+    //TODO: we will probably need to delete all the children and start again,
+    // OR, maybe we can just reshuffle ourselves!
+    int nd_idx; // index of the node
+    taList_impl* list = data(); // cache
+    for (int i = 0; i < list->size; ++i) {
+      TAPtr tab = (TAPtr)list->FastEl_(i);
+      FindChildForData(tab, nd_idx);
+      if (i == nd_idx) continue; // in right place already
+      moveChild(nd_idx, i);
+    }
+  }
+    break;
+  default: return; // don't update names
+  }
+  UpdateListNames();
+}
+
+void tabListTreeDataNode::UpdateChildNames() {
+  inherited::UpdateChildNames();
+  UpdateListNames();
+}
+
+void tabListTreeDataNode::UpdateListNames() {
+  String tree_nm;
+  for (int i = 0; i < data()->size; ++i) {
+    // the subgroups are themselves taGroup items
+    TypeDef* typ;
+    void* el = data()->GetTA_Element(i, typ); // gets the item, and its TypeDef
+    if (!typ) continue; //TODO: maybe we should put a marker item in list???
+    // if we get a taBase item, the type might only be the base type, not the derived type of the item
+    // so we cast the item, and then grab the exact type right from the item
+    if (typ->InheritsFrom(&TA_taBase)) {
+        typ = ((taBase*)el)->GetTypeDef();
+    }
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    if (!dl) continue; // shouldn't happen unless null...
+
+    tree_nm = dl->GetDisplayName();
+    if (tree_nm.empty()) {
+      tree_nm = link()->AnonymousItemName(typ->name, i);
+    }
+    taiTreeDataNode* node1 = this->FindChildForData(el); //null if not found
+    if (node1 != NULL)
+      node1->setText(0, tree_nm);
   }
 }
 
-void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (!( ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_MAX))
-    || (dcr == DCR_DATA_UPDATE_END) || (dcr == DCR_STRUCT_UPDATE_END))
-  ) return;
 
-  ClearList();
-  if (dcr == DCR_STRUCT_UPDATE_END)
-    ConfigHeader();
-  FillList();
+//////////////////////////////////
+//   taiGroupTreeDataNode 	//
+//////////////////////////////////
+
+tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_,
+  taiTreeDataNode* parent_, taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((tabListDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
 }
 
-void iListDataPanel::FillList() {
-  taiListDataNode* last_child = NULL;
-  int i = 0;
-  for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
-    if (!child) continue;
-    taiListDataNode* dn = new taiListDataNode(i + 1, this, child, list, last_child, (iTreeViewItem::DNF_CAN_DRAG));
-    dn->DecorateDataNode(); // fills in remaining columns
-    last_child = dn;
+tabGroupTreeDataNode::tabGroupTreeDataNode(tabGroupDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+:inherited((tabListDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+void tabGroupTreeDataNode::init(tabGroupDataLink* link_, int dn_flags_) {
+}
+
+tabGroupTreeDataNode::~tabGroupTreeDataNode()
+{
+}
+
+void tabGroupTreeDataNode::CreateChildren_impl() {
+  inherited::CreateChildren_impl();
+  String tree_nm;
+  for (int i = 0; i < data()->gp.size; ++i) {
+    // the subgroups are themselves taGroup items
+    TypeDef* typ;
+    void* el = data()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
+    if (!typ) continue; //TODO: maybe we should put a marker item in list???
+    // if we get a taBase item, the type might only be the base type, not the derived type of the item
+    // so we cast the item, and then grab the exact type right from the item
+    if (typ->InheritsFrom(&TA_taBase)) {
+        typ = ((taBase*)el)->GetTypeDef();
+    }
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    if (!dl) continue; // shouldn't happen unless null...
+
+    tree_nm = dl->GetDisplayName();
+    if (tree_nm.empty()) {
+      tree_nm = "(subgroup " + String(i) + ")";
+    } else {
+      tree_nm = tree_nm + " subgroup";
+    }
+    last_child_node = dl->CreateTreeDataNode(NULL, this, last_child_node, tree_nm,
+      (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG));
+    //TODO: maybe this isn't right -- we really want the root group's md, because that is the only
+          // one that has the defs
   }
 }
 
-void iListDataPanel::OnWindowBind_impl(iTabViewer* itv) {
-  inherited::OnWindowBind_impl(itv);
-  // connect the list up to the panel
-  list->Connect_SelectableHostNotifySignal(itv,
-    SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+void tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_node, void* el) {
+  taSubGroup* gp = &data()->gp;
+  TypeDef* typ = gp->GetElType();
+  // the subgroups are themselves taGroup items
+  if (!typ) return; //TODO: maybe we should put a marker item in list???
+  // if we get a taBase item, the type might only be the base type, not the derived type of the item
+  // so we cast the item, and then grab the exact type right from the item
+  if (typ->InheritsFrom(&TA_taBase)) {
+      typ = ((taBase*)el)->GetTypeDef();
+  }
+  taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+  if (!dl) return; // shouldn't happen unless null...
+
+//  taiTreeDataNode* dn =
+  dl->CreateTreeDataNode(NULL, this, after_node, "",
+    (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG)); //gets its name in rename
 }
 
-String iListDataPanel::panel_type() const {
-  static String str("List View");
-  return str;
-}
-
-
-//////////////////////////
-//    iTextDataPanel 	//
-//////////////////////////
-
-iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
-:inherited(dl_)
-{
-  txtText = new QTextEdit(this);
-  setCentralWidget(txtText);
-  // default is ro
-  setReadOnly(true);
-  connect(txtText, SIGNAL(copyAvailable(bool)),
-      this, SLOT(textText_copyAvailable(bool)) );
-}
-
-iTextDataPanel::~iTextDataPanel() {
-}
-
-void iTextDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr == DCR_ITEM_UPDATED) ;
-  //get updated text
+  if (!this->children_created) return;
+  AssertLastListItem();
+  switch (dcr) {
+  case DCR_GROUP_INSERT: {	// op1=item, op2=item_after, null=at beginning
+    taiTreeDataNode* after_node = this->FindChildForData(op2_); //null if not found
+    if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
+    CreateSubGroup(after_node, op1_);
+  }
+    break;
+  case DCR_GROUP_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
+    taiTreeDataNode* gone_node = this->FindChildForData(op1_); //null if not found
+    if (gone_node) delete gone_node; // goodbye!
+  }
+    break;
+  case DCR_GROUP_MOVED: {	// op1=item, op2=item_after, null=at beginning
+    int fm_idx;
+    taiTreeDataNode* moved_node = this->FindChildForData(op1_, fm_idx); //null if not found
+    if (!moved_node) break; // shouldn't happen
+    int to_idx;
+    taiTreeDataNode* after_node = this->FindChildForData(op2_, to_idx); //null if not found
+    if (!after_node) to_idx = indexOfChild(last_list_items_node); // insert, after
+    ++to_idx; // after
+    moveChild(fm_idx, to_idx);
+  }
+    break;
+  case DCR_GROUPS_SWAP: {	// op1=item1, op2=item2
+    int n1_idx, n2_idx;
+    taiTreeDataNode* node1 = this->FindChildForData(op1_, n1_idx); //null if not found
+    taiTreeDataNode* node2 = this->FindChildForData(op2_, n2_idx); //null if not found
+    if ((!node1) || (!node2)) break; // shouldn't happen
+    swapChildren(n1_idx, n2_idx); 
+  }
+    break;
+  default: return; // don't update names
+  }
+  UpdateGroupNames();
 }
 
-int iTextDataPanel::EditAction(int ea) {
-  int rval = 0;
-//todo
-  return rval;
+void tabGroupTreeDataNode::UpdateChildNames() {
+  inherited::UpdateChildNames();
+  UpdateGroupNames();
 }
 
+void tabGroupTreeDataNode::UpdateGroupNames() {
+  String tree_nm;
+  for (int i = 0; i < data()->gp.size; ++i) {
+    // the subgroups are themselves taGroup items
+    TypeDef* typ;
+    void* el = data()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
+    if (!typ) continue; //TODO: maybe we should put a marker item in list???
+    // if we get a taBase item, the type might only be the base type, not the derived type of the item
+    // so we cast the item, and then grab the exact type right from the item
+    if (typ->InheritsFrom(&TA_taBase)) {
+        typ = ((taBase*)el)->GetTypeDef();
+    }
+    taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+    if (!dl) continue; // shouldn't happen unless null...
 
-int iTextDataPanel::GetEditActions() {
-  int rval = 0;
-  QTextCursor tc(txtText->textCursor());
-  if (tc.hasSelection())
-    rval |= taiClipData::EA_COPY;
-//TODO: more, if not readonly
-  return rval;
+    tree_nm = dl->GetDisplayName();
+    if (tree_nm.empty()) {
+      tree_nm = "(subgroup " + String(i) + ")";
+    } else {
+      tree_nm = tree_nm + " subgroup";
+    }
+    iTreeViewItem* node1 = this->FindChildForData(el); //null if not found
+    if (node1 != NULL)
+      node1->setText(0, tree_nm);
+  }
 }
 
-bool iTextDataPanel::readOnly() {
-  return txtText->isReadOnly();
-}
-
-void iTextDataPanel::setReadOnly(bool value) {
-  txtText->setReadOnly(value);
-}
-
-void iTextDataPanel::setText(const String& value) {
-  txtText->setPlainText(value);
-}
-
-  
-void iTextDataPanel::textText_copyAvailable (bool) {
-  viewerWindow()->UpdateUi();
-}
-
-String iTextDataPanel::panel_type() const {
-  static String str("Text View");
-  return str;
-}
 

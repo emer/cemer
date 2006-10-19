@@ -31,7 +31,6 @@
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 # include "ta_qtgroup.h"
-# include "ta_qtbrowse.h"
 # include "ta_qtclipdata.h"
 
 # include  <qcolor.h>

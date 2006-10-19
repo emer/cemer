@@ -22,6 +22,46 @@
 
 #include "ta_TA_type.h"
 
+/* Node Bitmap flags
+
+The icon client (ex. Browser) will query for an icon, passing the attributes such as Open, Linked, etc.
+The icon supplier (ex. taBase object) returns an icon bitmap, and an indication of what attribute flags it
+supports. The Browser can then add its own generic modifiers for attributes not supported by the supplier.
+ex. the browser can add a generic small arrow to indicate a link
+*/
+
+enum NodeBitmapFlags {
+  NBF_FOLDER_OPEN		= 0x01,
+  NBF_LINK_ITEM			= 0x02
+};
+
+
+/* Action Names */
+
+#define _fileNewAction 		"fileNewAction"
+#define _fileOpenAction		"fileOpenAction"
+#define _fileSaveAction		"fileSaveAction"
+#define _fileSaveAsAction 	"fileSaveAsAction"
+#define _filePrintAction 	"filePrintAction"
+#define _fileCloseWindowAction 	"fileCloseWindowAction"
+#define _fileQuitAction 	"fileQuitAction"
+#define _editUndoAction 	"editUndoAction"
+#define _editRedoAction 	"editRedoAction"
+#define _editCutAction 		"editCutAction"
+#define _editCopyAction		"editCopyAction"
+#define _editPasteAction	"editPasteAction"
+#define _editLinkAction		"editLinkAction"
+#define _editDeleteAction	"editDeleteAction"
+#define _viewRefreshAction	"viewRefreshAction"
+#define _helpHelpAction		"helpHelpAction"
+#define _helpAboutAction	"helpAboutAction"
+
+/* Toolbar Names */
+
+#define _defaultToolBar		"defaultToolBar"
+
+
+
 // externals (most in in ta_qtviewer.h, some in ta_qtdata.h)
 
 class taProject;

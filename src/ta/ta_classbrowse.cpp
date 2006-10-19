@@ -35,7 +35,7 @@
 // SOFTWARE. 								      //
 ==============================================================================*/
 
-#include "ta_classbrowse.h"
+#include "ta_qtclassbrowse.h"
 
 #include "ta_type.h"
 

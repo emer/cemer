@@ -22,9 +22,8 @@
 #include "ta_TA_type.h"
 
 #ifdef TA_GUI
-  #include "ta_qtgroup.h"
-  #include "ta_qtbrowse.h"
-  #include "ta_qtclipdata.h"
+# include "ta_qtgroup.h"
+# include "ta_qtclipdata.h"
 #endif
 
 

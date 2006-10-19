@@ -2658,20 +2658,6 @@ taiEditDataHost* gpiListEdit::CreateDataHost(void* base, bool readonly) {
 }
 
 //////////////////////////////////
-// 	gpiGroupEdit		//
-//////////////////////////////////
-
-int gpiGroupEdit::BidForEdit(TypeDef* td) {
-  if (td->InheritsFrom(TA_taGroup_impl))
-    return gpiListEdit::BidForEdit(td)+1;
-  return 0;
-}
-
-taiEditDataHost* gpiGroupEdit::CreateDataHost(void* base, bool readonly) {
-  return new gpiGroupDataHost(base, typ, readonly);
-}
-
-//////////////////////////////////
 // 	gpiArrayEdit		//
 //////////////////////////////////
 
