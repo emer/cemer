@@ -28,7 +28,6 @@
   #include <QList>
 #  ifdef TA_GUI
 #    include "ta_qtgroup.h"
-#    include "ta_qtbrowse.h"
 #    include "ta_qtviewer.h"
 #    include "ta_qtclipdata.h"
 #  endif

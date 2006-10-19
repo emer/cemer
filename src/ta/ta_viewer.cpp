@@ -20,7 +20,7 @@
 #ifdef TA_GUI
 # include "ta_qt.h"
 # include "ta_qtviewer.h"
-# include "ta_classbrowse.h"
+# include "ta_qtclassbrowse.h"
 
 # include <QApplication>
 #endif

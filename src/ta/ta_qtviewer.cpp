@@ -16,8 +16,6 @@
 
 #include "ta_qtviewer.h"
 
-#include "ta_qtbrowse.h"
-#include "ta_classbrowse.h"
 #include "ta_qt.h"
 #include "ta_qtdata.h"
 #include "ta_qtdialog.h"
@@ -25,6 +23,7 @@
 #include "ta_qtclipdata.h"
 #include "ta_script.h"
 #include "ta_project.h"
+#include "ta_qtclassbrowse.h"
 
 #include "css_qt.h"
 #include "css_machine.h"
@@ -39,10 +38,10 @@
 #include <qevent.h>
 #include <QButtonGroup>
 #include <QFileInfo>
+#include <QHeaderView>
 #include <qimage.h>
 #include <QLayout>
 #include <qmenubar.h>
-//#include <qobjectlist.h>
 #include <QMenu>
 #include <QList>
 #include <QScrollArea>

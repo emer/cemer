@@ -35,13 +35,14 @@
 // SOFTWARE. 								      //
 ==============================================================================*/
 
-// ta_classbrowse.h -- class (type information) browser
+// ta_qtclassbrowse.h -- class (type information) browser
 
-#ifndef TA_CLASSBROWSE_H
-#define TA_CLASSBROWSE_H
+#ifndef TA_QTCLASSBROWSE_H
+#define TA_QTCLASSBROWSE_H
 
 #include "ta_qtdialog.h"
 #include "ta_qtviewer.h"
+#include "ta_qttype_def.h"
 
 // forwards
 
