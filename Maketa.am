@@ -1,6 +1,21 @@
 # Rules for running maketa
-${PROJNAME}_TA_type.h:	${TAHEADS}
-	${MAKE} force_ta
+${PROJNAME}_TA_type.hx:	${TAHEADS}
+	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
+
+# .hx.h:
+# 	@- $(CMP) $(<F) $(@F) || ($(CP) $(<F) $(@F))
+
+# .ccx.cc:
+# 	@- $(CMP) $(<F) $(@F) || ($(CP) $(<F) $(@F))
+
+${PROJNAME}_TA_type.h : ${PROJNAME}_TA_type.hx
+	cmp ${PROJNAME}_TA_type.h ${PROJNAME}_TA_type.hx || cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h
+
+${PROJNAME}_TA_inst.h : ${PROJNAME}_TA_inst.hx
+	cmp ${PROJNAME}_TA_inst.h ${PROJNAME}_TA_inst.hx || cp ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h
+
+${PROJNAME}_TA.cpp : ${PROJNAME}_TA.ccx
+	cmp ${PROJNAME}_TA.cpp ${PROJNAME}_TA.ccx || cp ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp
 
 force_ta:
 	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
@@ -18,6 +33,7 @@ CLEANFILES =\
 	${PROJNAME}_TA.ccx
 
 MAKETA_FLAGS =\
+	-hx \
 	-css \
 	-cpp="@CXXCPP@" \
 	-I@abs_top_builddir@ \

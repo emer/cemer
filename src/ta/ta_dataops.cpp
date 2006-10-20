@@ -127,7 +127,8 @@ bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   if(dt->rows <= 1) return false;
 
   DataTable tmp;		// temporary buffer to hold vals during swap
-  taBase::Ref(&tmp);		// keep it from getting trashed somewhere..
+  //  taBase::Ref(&tmp);		// keep it from getting trashed somewhere..
+  taBase::Own(tmp, NULL);	// activates initlinks..
   CopyDataStru(&tmp, dt);	// give it same structure
   tmp.AddBlankRow();		// always just has one row
 

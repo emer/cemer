@@ -205,7 +205,7 @@ public:
 /////////////////////////////////////////////////////////
 
 class TA_API DataProg : public ProgEl { 
-  // a program element for data operations (virtual base class)
+  // #VIRT_BASE #NO_INSTANCE a program element for data operations (virtual base class -- do not use)
 INHERITED(ProgEl)
 public:
   DataTableRef	    src_data;	// source data for operation
