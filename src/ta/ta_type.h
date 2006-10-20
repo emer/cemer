@@ -192,21 +192,17 @@ typedef taBase* TAPtr;		// pointer to a taBase type
 
 // a plain-array of strings
 class TA_API String_PArray : public taPlainArray<String> {
+INHERITED(taPlainArray<String>)
 public:
-  int	FindContains(const char* op, int start=0) const;
-  void	Add(const String& it)			{ taPlainArray<String>::Add(it); }
-  void	Add(const char* it)
-  { String fad=it; taPlainArray<String>::Add(fad); }
+  static const String	def_sep; // ", "
+  
+  int	FindContains(const String& op, int start=0) const;
 
-  bool	AddUnique(const String& it)	{ return taPlainArray<String>::AddUnique(it); }
-  bool	AddUnique(const char* it)
-  { String fad=it; return taPlainArray<String>::AddUnique(fad); }
-
-#ifdef __MAKETA__
-  const String 	AsString(const char* sep) const;
-#else
-  const String 	AsString(const char* sep = ", ") const;
-#endif
+//#ifdef __MAKETA__
+  const String 	AsString(const String& sep = def_sep) const;
+//#else
+//  const String 	AsString(const char* sep = ", ") const;
+//#endif
   void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   String_PArray()				{ };
   String_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
@@ -1064,6 +1060,8 @@ public:
   void		Copy(const TypeItem& cp);
   bool		HasOption(const String& op) const { return (opts.Find(op) >= 0); }
     // check if option is set
+  bool		HasOptionAfter(const String& prefix, const String& op) const;
+    // returns true if any prefix (Xxx_) has the value after of op; enables multi options of same prefix
   virtual String	OptionAfter(const String& op) const;
   // return portion of option after given option header
   virtual String	GetLabel() const;

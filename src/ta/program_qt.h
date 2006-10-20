@@ -125,6 +125,18 @@ protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
+class TA_API tabProgramGroupViewType: public tabGroupViewType {
+INHERITED(tabGroupViewType)
+public:
+  override int		BidForView(TypeDef*);
+  void			Initialize() {}
+  void			Destroy() {}
+  TA_VIEW_TYPE_FUNS(tabProgramGroupViewType, tabGroupViewType) //
+protected:
+//nn  override taiDataLink*	CreateDataLink_impl(taBase* data_);
+  override void		CreateDataPanel_impl(taiDataLink* dl_);
+};
+
 class TA_API iProgramEditor: public QWidget, public virtual IDataHost, 
   public virtual IDataLinkClient {
   // widget for editing entire programs
@@ -203,30 +215,63 @@ private:
 };
 
 
-class TA_API iProgramPanel: public iDataPanelFrame
-{
+class TA_API iProgramPanelBase: public iDataPanelFrame {
+//note: ProgramPanel and ProgramGroupPanel are almost identical
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
   iProgramEditor*	pe;
   
   override bool		HasChanged(); // 'true' if user has unsaved changes
-  Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
-  override String	panel_type() const; // this string is on the subpanel button for this panel
-
   void			FillList();
 
-  iProgramPanel(taiDataLink* dl_);
-  ~iProgramPanel();
+  iProgramPanelBase(taiDataLink* dl_);
   
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iProgramPanel;}
+//  override TypeDef*	GetTypeDef() const {return &TA_iProgramPanel;}
   
 protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
   override void		OnWindowBind_impl(iTabViewer* itv);
   override void		ResolveChanges_impl(CancelOp& cancel_op);
+};
+
+
+class TA_API iProgramPanel: public iProgramPanelBase {
+INHERITED(iProgramPanelBase)
+  Q_OBJECT
+public:
+  Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
+  override String	panel_type() const {return "Edit Program";}
+
+  void			FillList();
+
+  iProgramPanel(taiDataLink* dl_);
+  
+public: // IDataLinkClient interface
+//  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iProgramPanel;}
+  
+protected:
+  override void		OnWindowBind_impl(iTabViewer* itv);
+};
+
+class TA_API iProgramGroupPanel: public iProgramPanelBase {
+INHERITED(iProgramPanelBase)
+  Q_OBJECT
+public:
+  Program_Group*	progGroup() {return (m_link) ? 
+    (Program_Group*)(link()->data()) : NULL;}
+  override String	panel_type() const {return "Program Params";} 
+
+  void			FillList();
+
+  iProgramGroupPanel(taiDataLink* dl_);
+  
+public: // IDataLinkClient interface
+//  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iProgramGroupPanel;}
 };
 
 

@@ -203,6 +203,7 @@ private:
 
 
 class TA_API ProgEl_List: public taList<ProgEl> {
+// #TREEFILT_ProgGp
 INHERITED(taList<ProgEl>)
 public:
   virtual void		PreGen(int& item_id); // iterates over all items

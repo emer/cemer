@@ -413,6 +413,28 @@ void tabProgramViewType::CreateDataPanel_impl(taiDataLink* dl_)
 }
 
 //////////////////////////
+// tabProgramGroupViewType	//
+//////////////////////////
+
+int tabProgramGroupViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_Program_Group))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
+
+/*taiDataLink* tabDataTableViewType::CreateDataLink_impl(taBase* data_) {
+  return new tabListDataLink((taList_impl*)data_);
+} */
+
+void tabProgramGroupViewType::CreateDataPanel_impl(taiDataLink* dl_)
+{
+  // we create ours first, because it should be the default
+  iProgramGroupPanel* dp = new iProgramGroupPanel(dl_);
+  DataPanelCreated(dp);
+  inherited::CreateDataPanel_impl(dl_);
+}
+
+//////////////////////////
 //    iProgramEditor 	//
 //////////////////////////
 
@@ -735,36 +757,26 @@ iMainWindowViewer* iProgramEditor::window() const {
 
 
 //////////////////////////
-//    iProgramPanel 	//
+//   iProgramPanelBase 	//
 //////////////////////////
 
-iProgramPanel::iProgramPanel(taiDataLink* dl_)
+iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
 :inherited(dl_)
 {
   pe = new iProgramEditor();
   setCentralWidget(pe); //sets parent
-  Program* prog_ = prog();
-  if (prog_) {
-    taiDataLink* dl = (taiDataLink*)prog_->GetDataLink();
-    if (dl) {
-      dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
-    }
-  }
 }
 
-iProgramPanel::~iProgramPanel() {
-}
-
-void iProgramPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+void iProgramPanelBase::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
 }
 
-bool iProgramPanel::HasChanged() {
+bool iProgramPanelBase::HasChanged() {
   return pe->HasChanged();
 }
 
-void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
+void iProgramPanelBase::OnWindowBind_impl(iTabViewer* itv) {
   inherited::OnWindowBind_impl(itv);
   // connect the tree up to the panel
   pe->items->Connect_SelectableHostNotifySignal(itv,
@@ -780,17 +792,61 @@ void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
     "Program");*/
 }
 
-String iProgramPanel::panel_type() const {
-  static String str("Edit Program");
-  return str;
-}
-
-void iProgramPanel::ResolveChanges_impl(CancelOp& cancel_op) {
+void iProgramPanelBase::ResolveChanges_impl(CancelOp& cancel_op) {
  // per semantics elsewhere, we just blindly apply changes
   if (pe->HasChanged()) {
     pe->Apply();
   }
 }
+
+
+//////////////////////////
+//   iProgramPanel 	//
+//////////////////////////
+
+iProgramPanel::iProgramPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  Program* prog_ = prog();
+  if (prog_) {
+    taiDataLink* dl = (taiDataLink*)prog_->GetDataLink();
+    if (dl) {
+      dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
+    }
+  }
+}
+
+void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  // make sure the Program toolbar is created
+  MainWindowViewer* mvw = itv->viewerWindow()->viewer();
+  ProgramToolBar* ptb = (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
+    "Program");
+/*TODO: re-enable once the program toolbar is defined
+  if (!ptb)
+    ptb = (ProgramToolBar*)mvw->AddToolBarByType(&TA_ProgramToolBar,
+    "Program");*/
+}
+
+
+//////////////////////////
+//   iProgramGroupPanel //
+//////////////////////////
+
+iProgramGroupPanel::iProgramGroupPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  pe->items->AddFilter("ProgGp");
+  Program_Group* prog_ = progGroup();
+  if (prog_) {
+    taiDataLink* dl = (taiDataLink*)prog_->GetDataLink();
+    if (dl) {
+      dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
+    }
+  }
+}
+
+
 
 //////////////////////////
 //   ProgramToolBoxProc	//

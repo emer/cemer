@@ -1321,6 +1321,7 @@ protected slots:
 
 };
 
+
 class TA_API iTreeView: public iTreeWidget, public ISelectableHost {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for all views of iTreeViewItems
 INHERITED(iTreeWidget)
@@ -1343,10 +1344,13 @@ public:
     CM_END		// called after filling menu -- use to add items to end
   };
   
+  static const String  	opt_treefilt; // "TREEFILT_"
+
 #ifndef __MAKETA__  
   static void 		FillTypedList(const QList<QTreeWidgetItem*>& items,
     ISelectable_PtrList& list); // helper, for filling our own typed list
 #endif
+  
   
   const KeyString	colKey(int col) const; // the key we set for data lookup
   void			setColKey(int col, const KeyString& key); 
@@ -1355,8 +1359,13 @@ public:
   inline TreeViewFlags	tvFlags() const {return (TreeViewFlags)tv_flags;}
   void			setTvFlags(int value);
   
-
+  void			AddFilter(const String& value);
+    // add a TREEFILT_xxx expression to exclude members and/or types; note: not dynamic, must be added before items created
+  bool			HasFilter(TypeItem* ti) const;
+    // true if the typeitem has a TREEFILT_xxx filter that was added to our list
+    
   iTreeView(QWidget* parent = 0, int tv_flags = 0);
+  ~iTreeView();
    
 #ifndef __MAKETA__
 signals:
@@ -1385,6 +1394,8 @@ protected:
   
 protected:
   int			tv_flags;
+  String_PArray* 	m_filters; // only created if any added
+  
   void 			focusInEvent(QFocusEvent* ev); // override
   void			showEvent(QShowEvent* ev); // override, for expand all
   void 			ExpandAllUnder_impl(iTreeViewItem* item, int max_levels); // inner code

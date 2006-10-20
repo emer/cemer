@@ -57,11 +57,11 @@
 #include <sys/times.h>
 #endif
 
+const String String_PArray::def_sep(", ");
 
-const String String_PArray::AsString(const char* sep_) const {
+const String String_PArray::AsString(const String& sep) const {
   if (size == 0) return _nilString;
   // more efficient to know the length, so we don't resize...
-  String sep(sep_);
   int xlen = MAX(0, (size - 1) * sep.length()); // for seps
   int i;
   for (i=0; i < size; ++i) xlen += FastEl(i).length();
@@ -74,7 +74,7 @@ const String String_PArray::AsString(const char* sep_) const {
   return rval;
 }
 
-int String_PArray::FindContains(const char* op, int start) const {
+int String_PArray::FindContains(const String& op, int start) const {
   int i;
   if(start < 0) {		// search backwards if start < 0
     for(i=size-1; i>=0; i--) {
@@ -2153,6 +2153,17 @@ String TypeItem::OptionAfter(const String& op) const {
   }
   return tmp_label;
 }
+
+bool TypeItem::HasOptionAfter(const String& prefix, const String& op) const {
+  int idx = -1;
+  do {
+    if ((idx = opts.FindContains(prefix, idx + 1)) >= 0) {
+      if (opts.FastEl(idx).after(prefix) == op) return true;
+    }
+  } while (idx >= 0);
+  return false;
+}
+
 
 String TypeItem::GetLabel() const {
   String tmp_label =  OptionAfter("LABEL_");

@@ -4193,6 +4193,9 @@ String iTextDataPanel::panel_type() const {
 //    iTreeView 	//
 //////////////////////////
 
+const String iTreeView::opt_treefilt("TREEFILT_");
+
+
 void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
   ISelectable_PtrList& list)
 {
@@ -4211,6 +4214,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 :inherited(parent)
 {
   tv_flags = tv_flags_;
+  m_filters = NULL; // only created if needed
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1, 
     QColor(0xFF, 0x99, 0x99),  // pale dull red
@@ -4226,6 +4230,20 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
     this, SLOT(this_itemSelectionChanged()) );
   connect(this, SIGNAL(contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)),
     this, SLOT(this_contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)) );
+}
+
+iTreeView::~iTreeView() {
+  if (m_filters) {
+    delete m_filters;
+    m_filters = NULL;
+  }
+}
+
+void iTreeView::AddFilter(const String& value) {
+  if (!m_filters) {
+    m_filters = new String_PArray;
+  }
+  m_filters->AddUnique(value);
 }
 
 void iTreeView::CollapseAll() {
@@ -4313,6 +4331,14 @@ void iTreeView::GetSelectedItems(ISelectable_PtrList& lst) {
       lst.Add(si);
     ++it;
   }
+}
+
+bool iTreeView::HasFilter(TypeItem* ti) const {
+  if (m_filters) for (int i = 0; i < m_filters->size; ++i) {
+    if (ti->HasOptionAfter(opt_treefilt, m_filters->FastEl(i)))
+      return true; 
+  }
+  return false;
 }
 
 bool iTreeView::hasMultiSelect() const {
@@ -4808,8 +4834,13 @@ taiTreeDataNode::~taiTreeDataNode() {
 
 void taiTreeDataNode::CreateChildren_impl() {
   MemberSpace* ms = &(link()->GetDataTypeDef()->members);
+  iTreeView* tree = treeView(); //cache
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
+    // check for member/type-based filter
+    if (tree->HasFilter(md->type)) continue;
+    if (tree->HasFilter(md)) continue;
+    // check for show filter
     if (!link()->ShowMember(md, TypeItem::SC_TREE)) continue;
     TypeDef* typ = md->type;
     void* el = md->GetOff(linkData()); //note: GetDataLink automatically derefs typ and el if pointers
