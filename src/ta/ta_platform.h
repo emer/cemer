@@ -25,6 +25,7 @@
 class TA_API taPlatform { // class to hold static members for platform specific functions
 public:
 
+  static int cpuCount(); // number of physical cpus
   static int processId(); // returns a process-specific Id
   static int tickCount(); // ticks since system started -- def of a 'tick' is system dependent
 

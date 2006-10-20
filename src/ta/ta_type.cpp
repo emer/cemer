@@ -218,13 +218,19 @@ int	taMisc::strm_ver = 2;
 
 int	taMisc::dmem_proc = 0;
 int	taMisc::dmem_nprocs = 1;
+int	taMisc::cpus = 1;
 
-#ifdef __APPLE__
+#ifdef TA_OS_MAC
 String  taMisc::font_name = "Lucida Grande";
 int  	taMisc::font_size = 10;
 String  taMisc::console_font_name = "Andale Mono";
 int  	taMisc::console_font_size = 10;
-#else
+#elif defined(TA_OS_WIN)
+String  taMisc::font_name = "Verdana"; // looks nice on Win
+int  	taMisc::font_size = 10;
+String  taMisc::console_font_name = "Fixed";
+int  	taMisc::console_font_size = 8;
+#else // Linux or some Unix variant
 String  taMisc::font_name = "Nimbus Sans";
 int  	taMisc::font_size = 10;
 String  taMisc::console_font_name = "LucidaTypewriter";

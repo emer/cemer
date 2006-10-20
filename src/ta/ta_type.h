@@ -401,6 +401,7 @@ public:
 
   static int		dmem_proc; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory process number (rank in MPI, always 0 for no dmem)
   static int		dmem_nprocs; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory number of processes (comm_size in MPI, 1 for no dmem)
+  static int		cpus;	// #READ_ONLY #NO_SAVE #SHOW number of cpus to use (<= physical cpus)
 
   static String		font_name;	// #SAVE default font name to use
   static int		font_size;	// #SAVE default font size to use

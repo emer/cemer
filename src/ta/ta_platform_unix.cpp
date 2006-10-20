@@ -24,6 +24,11 @@
 
 const char    taPlatform::pathSep = '/'; 
 
+int taPlatform::cpuCount() {
+  //TODO!
+  return 2;
+}
+
 int taPlatform::exec(const String& cmd) {
   return system(cmd.chars());
 }
