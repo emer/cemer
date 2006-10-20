@@ -1,34 +1,7 @@
 WORK PRIORITY
 -------------
 
----------------
-Alpha:
-
-Brad:
-
-
-NOTES:
-
-* Program ControlPanel: extend list view for programs + their vars/args + add buttons for selected guy + step_prog + global_vars
-
-* save/restore state of viewers
-* ChangeType/UpdatePointers etc. gui patches
-* virtual console dock window, ex. be able to dock to bottom of any project window
-
-* startup pathing cleanup + platform params: redo pdproot/main code + randy
-
-Graphing/Viewing:
-* sort out DT/DA specs vs. TableView etc.
-* get working, including support for matrices
-  * T3 graphs  
-  * T3 table views
-  * T3 grid views
-* matrix view of datatable (in 3d/inventor)
-
-* bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys (esp New dialog!).
-* minimal netview cleanup: transparent layer etc
-
-Others to Prioritize:
+Items to Allocate/Prioritize:
 
 * #101 list API changes
 * Spec Editor (similar to prog editor -- shows children)
@@ -48,6 +21,45 @@ Also, just to be clear, ro should be rmv from show menu.
   * separate enumeration from loading
   * startup enumeration of plugins;
   * dynamic (user controlled) loading of plugins
+
+Brad -- two additional treefilt-like things I'd like to see, for members:
+* TREECOLLAPSED_ProgramGroup -- in the program group, this list/group is 
+initially collapsed (not expanded)
+* TREEEXPANDED_xxx - opposite
+This way, we can control what is expanded and collapsed in different contexts.  
+I think in ProgramGroup we'd want objs to be there but collapsed.  Similarly, 
+in the progeditor (Program context), the args should be default collapsed..
+Also, can we use full name like ProgramGroup instead of ProgGp -- would make 
+it more transparent..  ProgEditor is Program? 
+
+*  Program Groups: execution control
+
+---------------
+Alpha:
+
+Brad:
+
+* clean up and/or extend data notify so that DataTable finish adding of row is clearly 
+  done, so various display or calculation clients can then update themselves
+
+Graphing/Viewing:
+* sort out DT/DA specs vs. TableView etc.
+* get working, including support for matrices
+  * T3 graphs  
+  * T3 table views
+  * T3 grid views
+* matrix view of datatable (in 3d/inventor)
+
+* startup pathing cleanup + platform params: redo pdproot/main code + randy
+NOTE: Brad needs more info from Randy for next item:
+* ChangeType/UpdatePointers etc. gui patches
+* virtual console dock window, ex. be able to dock to bottom of any project window
+
+* bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys (esp New dialog!).
+* minimal netview cleanup: transparent layer etc
+* save/restore state of viewers
+
+
 
 Brad done:
 * dnd icon bar for: progedit
@@ -75,6 +87,8 @@ Brad done:
   in the object, and a factored api for doing This and Child objects
 * #104 CheckConfig rework
 * get ClassBrowser panels working again
+* Program ControlPanel: extend list view for programs + their vars/args
+
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)
