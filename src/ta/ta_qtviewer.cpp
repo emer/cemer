@@ -4521,10 +4521,18 @@ iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* pare
 void iTreeViewItem::init(const String& tree_name, taiDataLink* link_, 
   MemberDef* md_, int dn_flags_) 
 {
-  setText(0, tree_name);
-  link_->AddDataClient(this); // sets link
   m_md = md_;
   dn_flags = dn_flags_;
+  link_->AddDataClient(this); // sets link
+  // links get name italicized
+  //TODO: to avoid creating a brand new font for each item, we could
+  // get an italicized version from Tree (and everyone would share)
+  if (dn_flags & DNF_IS_LINK) {
+    QFont fnt(treeView()->font());
+    fnt.setItalic(true);
+    setData(0, Qt::FontRole, fnt);
+  }
+  setText(0, tree_name);
   setDragEnabled(dn_flags & DNF_CAN_DRAG);
   setDropEnabled(!(dn_flags & DNF_NO_CAN_DROP));
   if (dn_flags_ & DNF_LAZY_CHILDREN) {
@@ -4955,17 +4963,11 @@ void tabListTreeDataNode::AssertLastListItem() {
 void tabListTreeDataNode::CreateChildren_impl() {
   inherited::CreateChildren_impl();
   String tree_nm;
-  for (int i = 0; i < data()->size; ++i) {
-    // the subgroups are themselves taGroup items
-    TypeDef* typ;
-    void* el = data()->GetTA_Element(i, typ); // gets the item, and its TypeDef
-    if (!typ) continue; //TODO: maybe we should put a marker item in list???
-    // if we get a taBase item, the type might only be the base type, not the derived type of the item
-    // so we cast the item, and then grab the exact type right from the item
-    if (typ->InheritsFrom(&TA_taBase)) {
-      typ = ((taBase*)el)->GetTypeDef();
-    }
-
+  taList_impl* list = data(); // cache
+  for (int i = 0; i < list->size; ++i) {
+    taBase* el = (taBase*)list->FastEl_(i);
+    if (!el) continue; // generally shouldn't happen
+    TypeDef* typ = el->GetTypeDef();
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (!dl) continue; // shouldn't happen... unless null
 
@@ -4973,30 +4975,34 @@ void tabListTreeDataNode::CreateChildren_impl() {
     if (tree_nm.empty()) {
       tree_nm = link()->AnonymousItemName(typ->name, i);
     }
-    int dn_flags_tmp = iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_BROWSE| iTreeViewItem::DNF_CAN_DRAG;
+    int dn_flags_tmp = DNF_UPDATE_NAME | DNF_CAN_BROWSE | DNF_CAN_DRAG;
+    // check if this is a link
+    taBase* own = el->GetOwner(); //note: own=NULL generally means <taOBase items
+    if (own && (own != list))
+      dn_flags_tmp |= DNF_IS_LINK;
     last_child_node = dl->CreateTreeDataNode((MemberDef*)NULL, this, last_child_node, tree_nm, dn_flags_tmp);
   }
 
   last_list_items_node = last_child_node;
 }
 
-void tabListTreeDataNode::CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after, 
-  void* el) 
+void tabListTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
+  taiTreeDataNode* after, taBase* el) 
 {
-  taPtrList_impl* list = data();
-  TypeDef* typ = list->GetElType();
-  if (!typ) return; //TODO: maybe we should put a marker item in list???
-  // if we get a taBase item, the type might only be the base type, not the derived type of the item
-  // so we cast the item, and then grab the exact type right from the item
-  if (typ->InheritsFrom(&TA_taBase)) {
-      typ = ((taBase*)el)->GetTypeDef();
-  }
+  if (!el) return;
+  taList_impl* list = data(); // cache
+  TypeDef* typ = el->GetTypeDef();
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
   if (!dl) return; // shouldn't happen unless null...
   //note: we don't make name because it is updated anyway
+  int dn_flags_tmp = DNF_UPDATE_NAME | DNF_CAN_BROWSE | DNF_CAN_DRAG;
+  // check if this is a link
+  taBase* own = el->GetOwner(); //note: own=NULL generally means <taOBase items
+  if (own && (own != list))
+    dn_flags_tmp |= DNF_IS_LINK;
   //taiTreeDataNode* dn =
-  dl->CreateTreeDataNode((MemberDef*)NULL, par_node, after, "",
-    (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_BROWSE | iTreeViewItem::DNF_CAN_DRAG));
+  dl->CreateTreeDataNode((MemberDef*)NULL, par_node, after,
+    _nilString, dn_flags_tmp);
 }
 
 void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -5007,7 +5013,7 @@ void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   case DCR_LIST_ITEM_INSERT: {	// op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_); //null if not found
     if (!after_node) after_node = last_member_node; // insert, after
-    CreateListItem(this, after_node, op1_);
+    CreateListItem(this, after_node, (taBase*)op1_);
   }
     break;
   case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
@@ -5035,8 +5041,6 @@ void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   }
     break;
   case DCR_LIST_SORTED: {	// no ops
-    //TODO: we will probably need to delete all the children and start again,
-    // OR, maybe we can just reshuffle ourselves!
     int nd_idx; // index of the node
     taList_impl* list = data(); // cache
     for (int i = 0; i < list->size; ++i) {
@@ -5045,8 +5049,7 @@ void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
       if (i == nd_idx) continue; // in right place already
       moveChild(nd_idx, i);
     }
-  }
-    break;
+  }  break;
   default: return; // don't update names
   }
   UpdateListNames();

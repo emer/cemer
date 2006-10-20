@@ -1430,7 +1430,8 @@ public:
     DNF_CAN_DRAG	= 0x010, // 16 can allow drags
     DNF_NO_CAN_DROP	= 0x020, // 32 cannot accept drops
     DNF_IS_MEMBER 	= 0x040, // 64 true for members (and root), not for list/group items -- helps node configure edit ops
-    DNF_IS_LIST_NODE 	= 0x080 // true for nodes in a list view (in panel, not on tree)
+    DNF_IS_LIST_NODE 	= 0x080, // true for nodes in a list view (in panel, not on tree)
+    DNF_IS_LINK 	= 0x100 // true for nodes that are links, not owned by parent
   };
 
 /*nn  enum BrowseDropAction {
@@ -1600,7 +1601,8 @@ protected:
   taiTreeDataNode*	last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
   override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void 	CreateChildren_impl(); 
-  void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after, void* el);
+  void			CreateListItem(taiTreeDataNode* par_node,
+    taiTreeDataNode* after, taBase* el);
   void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
   void			init(tabListDataLink* link_, int dn_flags_); // #IGNORE
