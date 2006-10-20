@@ -6,15 +6,8 @@ Alpha:
 
 Brad:
 
-* #104 CheckConfig rework
 
 NOTES:
-* every guy that implements a CheckConfig behavior needs to impl the flags
-* flags are:
-  CHECKED -- means the value flags are valid; set on check; clear on UAE and similar
-  SELF_INVALID -- our own self checks indicate invalid; does not include list/grp children
-    as objects, but can include them if the guy itself does certain tests on children
-  CHILD_INVALID -- one or more children have either SELF or CHILD invalid
 
 * Program ControlPanel: extend list view for programs + their vars/args + add buttons for selected guy + step_prog + global_vars
 
@@ -38,7 +31,6 @@ Graphing/Viewing:
 Others to Prioritize:
 
 * #101 list API changes
-* get ClassBrowser panels working again
 * Spec Editor (similar to prog editor -- shows children)
 * dnd for T3
 * spec gui enhancements:
@@ -81,6 +73,8 @@ Brad done:
   layerspec args + comment dir to disambiguate (or just pop up menu).
 * substantial changes to CheckConfig, to support UI highlighting, state
   in the object, and a factored api for doing This and Child objects
+* #104 CheckConfig rework
+* get ClassBrowser panels working again
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)
