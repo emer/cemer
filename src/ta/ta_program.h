@@ -13,14 +13,14 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// program.h -- gui-based executables
+// ta_program.h -- gui-based executables
 
-#ifndef PROGRAM_H
-#define PROGRAM_H
+#ifndef TA_PROGRAM_H
+#define TA_PROGRAM_H
 
 #include "ta_group.h"
 #include "ta_script.h"
-#include "dynenum.h"
+#include "ta_dynenum.h"
 #include "ta_viewer.h"
 
 #include "ta_def.h"
@@ -550,7 +550,7 @@ public:
   
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgFlags		flags;  // control flags, for display and execution control
-  taBase_List		objs; // sundry objects that are used in this program
+  taBase_List		objs; // #TREEFILT_ProgGp sundry objects that are used in this program
   ProgVar_List		args; // global variables that are parameters (arguments) for callers
   ProgVar_List		vars; // global variables accessible outside and inside script
   ProgEl_List		init_code; // the prog els for initialization (done once); use a "return" if an error occurs 

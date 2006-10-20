@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ta_dataops.h"
-
+#include "css_machine.h"
 
 /////////////////////////////////////////////////////////
 //   DataOpEl Base class
@@ -127,6 +127,7 @@ bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   if(dt->rows <= 1) return false;
 
   DataTable tmp;		// temporary buffer to hold vals during swap
+  taBase::Ref(&tmp);		// keep it from getting trashed somewhere..
   CopyDataStru(&tmp, dt);	// give it same structure
   tmp.AddBlankRow();		// always just has one row
 
@@ -173,4 +174,22 @@ bool taDataOps::Select(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
 
 bool taDataOps::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   return true;
+}
+
+/////////////////////////////////////////////////////////
+//   programs to support data operations
+/////////////////////////////////////////////////////////
+
+void DataProg::Initialize() {
+}
+
+void DataSortProg::Initialize() {
+}
+
+const String DataSortProg::GenCssBody_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level) + "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  rval += cssMisc::Indent(indent_level+1) +
+    "taDataOps::Sort(dsp->dest_data, dsp->src_data, dsp->sort_spec);\n";
+  rval += cssMisc::Indent(indent_level) + "}\n";
+  return rval; 
 }

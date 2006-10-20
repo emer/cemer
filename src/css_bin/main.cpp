@@ -27,7 +27,7 @@
 #include "css_qt.h"
 #include "ta_qtdata.h" // for taiObjChooser
 #include "ta_qtviewer.h"
-#include "ta_qtbrowse.h"
+// #include "ta_qtbrowse.h"
 #include <QApplication>
 #endif // TA_GUI
 
@@ -143,10 +143,10 @@ int main(int argc, char *argv[]) {
 #endif
 
   //note: new 4.0 behavior is for root deletion to be the app end, so following is probably redundant
-  if (tabMisc::root) {
-    delete tabMisc::root;
-    tabMisc::root = NULL;
-  }
+//   if (tabMisc::root) {
+//     delete tabMisc::root;
+//     tabMisc::root = NULL;
+//   }
 #ifdef TA_GUI
   taiMisc::RunPending(); // do Qt defered deletes, if any
 #endif

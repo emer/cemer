@@ -13,15 +13,15 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// program_qtso.h -- executables, gui files
+// ta_program_qt.h -- executables, gui files
 
-#ifndef PROGRAM_QT_H
-#define PROGRAM_QT_H
+#ifndef TA_PROGRAM_QT_H
+#define TA_PROGRAM_QT_H
 
 #include "ta_group.h"
 #include "ta_script.h"
 
-#include "program.h"
+#include "ta_program.h"
 
 #include "ta_qtdata.h"
 #include "ta_qttype.h"

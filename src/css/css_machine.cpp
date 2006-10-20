@@ -29,7 +29,7 @@
 #include "ta_base.h"		// for debugging alloc_list
 #include "ta_matrix.h"
 #include "ta_project.h"
-#include "program.h"
+#include "ta_program.h"
 
 #ifdef TA_GUI
 # include "css_qt.h"

@@ -30,7 +30,7 @@
 
 #include "netstru.h"
 #include "netdata.h"
-#include "program.h"
+#include "ta_program.h"
 
 //////////////////////////////////////////////////
 //			Wizard			//

@@ -18,7 +18,7 @@
 #ifndef PDP_PROGRAM_H
 #define PDP_PROGRAM_H
 
-#include "program.h"
+#include "ta_program.h"
 
 #include "pdp_def.h"
 #include "pdp_TA_type.h"

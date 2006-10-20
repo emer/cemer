@@ -461,7 +461,9 @@ void taBase::Destroy() {
 
 #ifdef DEBUG
 void taBase::CheckDestroyed() {
-  assert(!HasFlag(DESTROYED) && "taBase object being multiply destroyed"); 
+  if(HasFlag(DESTROYED)) {
+    taMisc::Error("taBase object being multiply destroyed");
+  }
 }
 #endif
 

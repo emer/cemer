@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "program_qt.h"
+#include "ta_program_qt.h"
 
 #include "ta_qt.h"
 #include "ta_qtdialog.h" // for Hilight button

@@ -21,7 +21,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qtclassbrowse.h \
 	@abs_srcdir@/ta_qtgroup.h \
 	@abs_srcdir@/ta_seledit.h \
-	@abs_srcdir@/program_qt.h \
+	@abs_srcdir@/ta_program_qt.h \
 	@abs_srcdir@/../taiqtso/igeometry.h
 
 HEADS_GUI =\
@@ -39,7 +39,7 @@ HEADS_GUI =\
 	ta_qtcursors.h \
 	ta_qtclipdata.h \
 	ta_seledit.h \
-	program_qt.h  
+	ta_program_qt.h  
 
 SRCS_GUI =\
 	ta_plugin.cpp \
@@ -64,8 +64,8 @@ SRCS_GUI =\
 	ta_qtclipdata.cpp \
 	ta_qtclipdata.moc.cpp \
 	ta_seledit.cpp \
-	program_qt.cpp  \
-	program_qt.moc.cpp 
+	ta_program_qt.cpp  \
+	ta_program_qt.moc.cpp 
 
 endif
 
@@ -89,6 +89,9 @@ TAHEADS =\
 	@abs_srcdir@/ta_group.h \
 	@abs_srcdir@/ta_dmem.h \
 	@abs_srcdir@/ta_viewer.h \
+	@abs_srcdir@/ta_script.h \
+	@abs_srcdir@/ta_dynenum.h \
+	@abs_srcdir@/ta_program.h \
 	@abs_srcdir@/ta_matrix.h \
 	@abs_srcdir@/ta_math.h \
 	@abs_srcdir@/ta_data.h \
@@ -96,9 +99,6 @@ TAHEADS =\
 	@abs_srcdir@/ta_dataops.h \
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
-	@abs_srcdir@/ta_script.h \
-	@abs_srcdir@/dynenum.h \
-	@abs_srcdir@/program.h \
 	@abs_srcdir@/ta_project.h \
 	$(TAHEADS_GUI)
 
@@ -119,6 +119,9 @@ HEADS =\
 	ta_group.h \
 	ta_dmem.h \
 	ta_viewer.h \
+	ta_script.h \
+	ta_dynenum.h \
+	ta_program.h \
 	ta_matrix.h \
 	ta_data.h \
 	ta_math.h \
@@ -126,9 +129,6 @@ HEADS =\
 	ta_dataops.h \
 	ta_dump.h \
 	ta_defaults.h \
-	ta_script.h \
-	dynenum.h \
-	program.h \
 	ta_project.h \
 	$(HEADS_GUI)
 
@@ -150,15 +150,15 @@ SRCS =\
 	ta_group.cpp \
 	ta_dmem.cpp \
 	ta_viewer.cpp \
+	ta_script.cpp \
+	ta_dynenum.cpp \
+	ta_program.cpp \
 	ta_matrix.cpp \
 	ta_math.cpp \
 	ta_data.cpp \
 	ta_datatable.cpp \
 	ta_dump.cpp \
 	ta_defaults.cpp \
-	ta_script.cpp \
-	dynenum.cpp \
-	program.cpp \
 	ta_project.cpp \
 	$(SRCS_GUI) \
 	ta_qrc.cpp \

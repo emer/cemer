@@ -35,11 +35,6 @@ class BaseSpec;
 //class BaseSpec_List;
 class BaseSpec_Group; //
 
-// program.h
-class ProgVar;
-class Script; //
-class Program;
-
 // netstru.h
 class SigmoidSpec;
 class ConSpec;

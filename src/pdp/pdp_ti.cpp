@@ -45,7 +45,6 @@
 #include "pdpbase.h"
 #include "pdpshell.h"
 #include "netstru_extra.h"
-#include "program.h"
 #include "v3_compat.h"
 
 #ifdef TA_GUI
@@ -59,9 +58,6 @@ template class PDP_API taList<GpTessEl>;
 //template class PDP_API taList<NetViewGraphic>;
 //template class PDP_API taList<NetViewScaleRange>;
 template class PDP_API taGroup<TypeDefault>;
-
-// program.h
-template class PDP_API taList<ProgEl>;
 
 // pdplog.h
 template class PDP_API taGroup<PDPLog>; 

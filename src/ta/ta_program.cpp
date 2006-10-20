@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "program.h"
+#include "ta_program.h"
 
 #include "css_machine.h"
 #include "css_basic_types.h"

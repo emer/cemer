@@ -22,7 +22,7 @@
 #include "ta_qtdialog.h"
 #include "css_console.h"
 #include "netstru_qtso.h"
-#include "program.h"
+#include "ta_program.h"
 
 #include "icombobox.h"
 #include "ilineedit.h"

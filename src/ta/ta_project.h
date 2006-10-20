@@ -22,7 +22,7 @@
 #include "ta_defaults.h"
 #include "ta_viewer.h"
 #include "ta_datatable.h"
-#include "program.h"
+#include "ta_program.h"
 
 #ifdef TA_GUI
   #include "ta_seledit.h"

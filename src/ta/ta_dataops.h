@@ -18,8 +18,9 @@
 
 #include "ta_datatable.h"
 #include "ta_math.h"
+#include "ta_program.h"
 
-class TA_API DataOpEl : public taBase {
+class TA_API DataOpEl : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
   INHERITED(taBase)
 public:
@@ -170,7 +171,7 @@ private:
 //   data operations
 /////////////////////////////////////////////////////////
 
-class TA_API taDataOps : public taBase {
+class TA_API taDataOps : public taOBase {
   // ##CAT_Data collection of commonly-used datatable operations
 public:
   
@@ -199,5 +200,38 @@ public:
   TA_BASEFUNS(taDataOps);
 };
 
-#endif // ta_dataops_h
+/////////////////////////////////////////////////////////
+//   programs to support data operations
+/////////////////////////////////////////////////////////
 
+class TA_API DataProg : public ProgEl { 
+  // a program element for data operations (virtual base class)
+INHERITED(ProgEl)
+public:
+  DataTableRef	    src_data;	// source data for operation
+  DataTableRef	    dest_data;	// destination (result) data for operation
+
+  TA_SIMPLE_BASEFUNS(DataProg);
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataSortProg : public DataProg { 
+  // sorts src_data into dest_data according to sort_spec
+INHERITED(ProgEl)
+public:
+  DataSortSpec		sort_spec; // data sorting specification
+
+  TA_SIMPLE_BASEFUNS(DataSortProg);
+protected:
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+
+#endif // ta_dataops_h
