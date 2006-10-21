@@ -1535,6 +1535,11 @@ void Program::Step() {
   stop_req = false;
 }
 
+void Program::SetAsStep() {
+  if(!prog_gp) return;
+  prog_gp->step_prog = this;
+}
+
 void Program::Stop() {
   stop_req = true;
 }

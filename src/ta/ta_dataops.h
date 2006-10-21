@@ -29,10 +29,14 @@ public:
   String		col_name;	// name of column in data table to sort on (either enter directly or lookup from column)
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
+  override String GetDisplayName() const;
   void	UpdateAfterEdit();	// set col_name from column
+  TA_SIMPLE_BASEFUNS(DataOpEl);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+private:
   void  Initialize();
   void 	Destroy()		{ };
-  TA_SIMPLE_BASEFUNS(DataOpEl);
 };
 
 class TA_API DataOpList : public taList<DataOpEl> {
@@ -175,9 +179,6 @@ class TA_API taDataOps : public taOBase {
   // ##CAT_Data collection of commonly-used datatable operations
 public:
   
-  static bool	CopyDataStru(DataTable* dest, DataTable* src);
-  // copy datatable structure (columns)
-
   static bool	Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
   // sort data from src into dest according to sorting specifications in spec; dest is completely overwritten
 
@@ -224,8 +225,11 @@ INHERITED(ProgEl)
 public:
   DataSortSpec		sort_spec; // data sorting specification
 
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSortProg);
 protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
 private:

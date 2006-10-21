@@ -34,6 +34,18 @@ void DataOpEl::UpdateAfterEdit() {
   }
 }
 
+String DataOpEl::GetDisplayName() const {
+  return col_name;
+}
+
+void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(col_name.empty()) {
+    if(!quiet) taMisc::CheckError("Error in DataOpEl:",GetPath(),
+				  "col_name is empty");
+  }
+}
+
 void DataOpList::SetDataTable(DataTable* dt) {
   for(int i=0;i<size;i++) {
     DataOpEl* ds = FastEl(i);
@@ -76,19 +88,10 @@ void DataGroupEl::Initialize() {
 //   taDataOps
 /////////////////////////////////////////////////////////
 
-bool taDataOps::CopyDataStru(DataTable* dest, DataTable* src) {
-  // todo: this could be done to preserve structure in dest where possible, but
-  // this gets the job done for now, but is very expensive in copying all data
-  // so it must be replaced!!!
-  dest->Reset();
-  dest->CopyFrom(src);
-  dest->RemoveAllRows();
-}
-
 bool taDataOps::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   // just copy and operate on dest
   dest->Reset();
-  dest->CopyFrom(src);
+  *dest = *src;
   Sort_impl(dest, spec);
 }
 
@@ -97,10 +100,15 @@ void taDataOps::Sort_CopyRow(DataTable* dest, int dest_row, DataTable* src, int 
   for(int i=0;i<src->data.size;i++) {
     DataArray_impl* s_da = src->data.FastEl(i);
     DataArray_impl* d_da = dest->data.FastEl(i);
-    if(s_da->is_matrix)
+    if(s_da->is_matrix) {
       d_da->SetValAsMatrix(s_da->GetValAsMatrix(src_row), dest_row);
-    else
-      d_da->SetValAsVar(s_da->GetValAsVar(src_row), dest_row);
+    }
+    else {
+      Variant var = s_da->GetValAsVar(src_row);
+      d_da->SetValAsVar(var, dest_row);
+      Variant var2 = d_da->GetValAsVar(dest_row);
+      cerr << i << "\t" << var << "\t" << var2 << endl;
+    }
   }
 }
 
@@ -129,7 +137,7 @@ bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   DataTable tmp;		// temporary buffer to hold vals during swap
   //  taBase::Ref(&tmp);		// keep it from getting trashed somewhere..
   taBase::Own(tmp, NULL);	// activates initlinks..
-  CopyDataStru(&tmp, dt);	// give it same structure
+  tmp.Copy_NoData(*dt);		// give it same structure
   tmp.AddBlankRow();		// always just has one row
 
   spec->GetColumns(dt);		// cache column pointers & indicies from names
@@ -184,7 +192,29 @@ bool taDataOps::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
 void DataProg::Initialize() {
 }
 
+void DataSortProg::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  sort_spec.SetDataTable(src_data);
+}
+
 void DataSortProg::Initialize() {
+}
+
+String DataSortProg::GetDisplayName() const {
+  String rval = "Sort ";
+  if(src_data) {
+    rval += " from: " + src_data->name;
+  }
+  if(dest_data) {
+    rval += " to: " + dest_data->name;
+  }
+  return rval;
+}
+
+void DataSortProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  sort_spec.SetDataTable(src_data);
+  sort_spec.CheckConfig(quiet, rval);
 }
 
 const String DataSortProg::GenCssBody_impl(int indent_level) {

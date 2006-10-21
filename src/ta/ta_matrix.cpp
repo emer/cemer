@@ -299,7 +299,7 @@ void taMatrix::Copy_(const taMatrix& cp) {
     size = 0;
     geom.Reset();
     SetGeomN(cp.geom);
-    SetArray_(const_cast<void*>(cp.data()));
+//     SetArray_(const_cast<void*>(cp.data()));
     for (int i = 0; i < size; ++i) {
       El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i));
     }

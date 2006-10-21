@@ -575,6 +575,8 @@ public:
   virtual void	Stop();
   // #BUTTON #GHOST_OFF_run_state:RUN stop the running programs
   
+  virtual void	SetAsStep();
+  // #BUTTON set this program as the step level for this set of programs -- this is the grain size of stepping when the Step button is pressed (for a higher-level program)
   virtual void  Compile();
   // #BUTTON #GHOST_OFF_m_dirty:true generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
   virtual void	CmdShell();

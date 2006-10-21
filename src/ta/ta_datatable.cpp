@@ -85,11 +85,16 @@ void DataArray_impl::CutLinks() {
 }
 
 void DataArray_impl::Copy_(const DataArray_impl& cp) {
+  disp_opts = cp.disp_opts;
   mark = cp.mark;
   pin = cp.pin;
-  disp_opts = cp.disp_opts;
   is_matrix = cp.is_matrix;
   cell_geom = cp.cell_geom;
+}
+
+void DataArray_impl::Copy_NoData(const DataArray_impl& cp) {
+  taNBase::Copy(cp);
+  Copy_(cp);
 }
 
 void DataArray_impl::Init() {
@@ -225,6 +230,16 @@ void DataTableCols::Initialize() {
   SetBaseType(&TA_DataArray);
 }
 
+void DataTableCols::Copy_NoData(const DataTableCols& cp) {
+  Reset();	// get rid of ours
+  for(int i=0;i<cp.size; i++) {
+    DataArray_impl* sda = cp.FastEl(i);
+    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    Add(nda);
+    nda->Copy_NoData(*sda);
+  }
+}
+
 void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   // we only do the notifies in the context of the root group, so we exit if we aren't root
@@ -298,6 +313,10 @@ void DataTable::Copy_(const DataTable& cp) {
   data = cp.data;
   rows = cp.rows;
   save_data = cp.save_data;
+}
+
+void DataTable::Copy_NoData(const DataTable& cp) {
+  data.Copy_NoData(cp.data);
 }
 
 void DataTable::AddColDispOpt(const String& dsp_opt, int col) {

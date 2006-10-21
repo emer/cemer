@@ -72,8 +72,6 @@ public:
   MatrixGeom		cell_geom;
   // #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
   
-  bool			save_to_file; //#NO_SHOW #NO_SAVE OBSOLETE -- just included for loading projs until we resave them
-  
   virtual taMatrix* 	AR() = 0;
   // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
   virtual const taMatrix* 	AR() const = 0;
@@ -187,6 +185,9 @@ public:
   // root data table this col belongs to
 
   override bool		Dump_QuerySaveMember(MemberDef* md); // dynamically check for saving data 
+
+  void	Copy_NoData(const DataArray_impl& cp);
+  // use this to copy the structure of the datatable without getting all the data
   
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
   void  UpdateAfterEdit();
@@ -241,6 +242,9 @@ public:
   // header text for the indicated column
   override const KeyString GetListColKey(int col) const;
   
+  virtual void		Copy_NoData(const DataTableCols& cp);
+  // copy only the column structure, but no data, from other data table
+
   TA_BASEFUNS(DataTableCols);
 private:
   void	Initialize();
@@ -415,11 +419,17 @@ public:
   void 			LoadData(istream& strm, int max_recs = -1);
   // #CAT_File loads data, up to max num of recs (-1 for all)
   
+  /////////////////////////////////////////////////////////
+  // misc funs
+
   int  			MinLength();		// #IGNORE
   int  			MaxLength();		// #IGNORE
 
   DataTableModel*	GetDataModel();
   // #IGNORE returns new if none exists, or existing -- enables views to be shared
+
+  virtual void		Copy_NoData(const DataTable& cp);
+  // copy only the column structure, but no data, from other data table
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
@@ -535,7 +545,7 @@ public:
 
   void	CutLinks()
     {ar.CutLinks(); DataArray_impl::CutLinks();}
-  void	Copy_(const DataArray<T>& cp)  {ar = cp.ar;}
+  void	Copy_(const DataArray<T>& cp)  { ar = cp.ar; }
   COPY_FUNS(DataArray<T>, DataArray_impl);
   TA_ABSTRACT_TMPLT_BASEFUNS(DataArray, T); //
 public: //DO NOT ACCESS DIRECTLY
