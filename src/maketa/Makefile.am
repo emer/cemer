@@ -32,6 +32,11 @@ SRCS =\
 
 include $(top_srcdir)/mfstamp.am
 
+# Redefining this rule is dangerous, but necessary for maketa to run properly
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
+	cd ../.. && $(MAKE) force_ta
+
 mta_parse.cpp: mta_parse.y
 	bison -dtvy mta_parse.y;
 	sed -e "s/union/struct/g" y.tab.c >mta_parse.cpp;

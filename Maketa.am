@@ -48,4 +48,4 @@ MAKETA_FLAGS =\
 	-I@abs_srcdir@/../bp \
 	-I@abs_srcdir@/../tamisc
 
-BUILT_SOURCES = ${PROJNAME}_TA_type.h
+BUILT_SOURCES = ${PROJNAME}_TA_type.h ${PROJNAME}_TA_inst.h
