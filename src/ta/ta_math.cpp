@@ -24,11 +24,6 @@ void CountParam::Initialize() {
   val = 0.0;
 }
 
-void CountParam::Copy_(const CountParam& cp) {
-  rel = cp.rel;
-  val = cp.val;
-}
-
 bool CountParam::Evaluate(double cmp) const {
   switch(rel) {
   case EQUAL:
@@ -59,91 +54,28 @@ bool CountParam::Evaluate(double cmp) const {
 //////////////////////////
 
 void Aggregate::Initialize() {
-  op = SUM;
-  no0 = false;
-  n_updt = 0;
-}
-
-void Aggregate::InitLinks() {
-  taOBase::InitLinks();
-  taBase::Own(count, this);
+  op = MEAN;
 }
 
 void Aggregate::Destroy() {
 }
 
-void Aggregate::Copy_(const Aggregate& cp) {
-  op = cp.op;
-  count = cp.count;
-  n_updt = cp.n_updt;
-}
-
-void Aggregate::Init() {
-  n_updt = 0;
-}
-
-double Aggregate::InitAggVal() const {
-  if(op == Aggregate::MIN)
-    return taMath::DBL_MAX;
-  if(op == Aggregate::MAX)
-    return -taMath::DBL_MAX;
-  if(op == Aggregate::PROD)
-    return 1.0;
-  return 0;
-}
-
-bool Aggregate::ComputeAggNoUpdt(double& to, double fm) {
-  if(no0 && (fm == 0.0f)) return false;
-  switch(op) {
-  case DEFAULT:
-  case LAST:	AggLAST(to,fm); break;
-  case SUM:	AggSUM(to,fm); 	break;
-  case PROD:	AggPROD(to,fm); break;
-  case MIN:	AggMIN(to,fm); 	break;
-  case MAX:	AggMAX(to,fm); 	break;
-  case AVG:	AggAVG(to,fm); 	break;
-  case COPY:	AggCOPY(to,fm); break;
-  case COUNT: 	AggCOUNT(to,fm);break;
-  }
-  if(fm != 0.0f) return true;
-  return false;
-}
-
-void Aggregate::ComputeAgg(double& to, double fm) {
-  ComputeAggNoUpdt(to, fm);
-  if(!no0 || (fm != 0.0f))
-    n_updt++;
-}
-
 const char* Aggregate::GetAggName() const {
   switch(op) {
-  case DEFAULT:
-  case LAST:	return "lst";
-  case SUM:	return "sum";
-  case PROD:	return "prd";
   case MIN:	return "min";
   case MAX:	return "max";
-  case AVG:	return "avg";
-  case COPY:	return "cpy";
+  case ABS_MIN:	return "absmin";
+  case ABS_MAX:	return "absmax";
+  case SUM:	return "sum";
+  case PROD:	return "prd";
+  case MEAN:	return "mean";
+  case VAR:	return "mean";
+  case STDEV:	return "stdev";
+  case SEM:	return "sem";
   case COUNT: 	return "cnt";
   }
   return "n/a";
 }
-
-String Aggregate::AppendAggName(const char* nm) const {
-  String rval = nm;
-  rval += ":";
-  rval += GetAggName();
-  return rval;
-}
-
-String Aggregate::PrependAggName(const char* nm) const {
-  String rval = GetAggName();
-  rval += "_";
-  rval += nm;
-  return rval;
-}
-
 
 //////////////////////////
 //  	SimpleMathSpec 	//
@@ -154,13 +86,6 @@ void SimpleMathSpec::Initialize() {
   arg = 0.0;
   lw = -1.0;
   hi = 1.0;
-}
-
-void SimpleMathSpec::Copy_(const SimpleMathSpec& cp) {
-  opr = cp.opr;
-  arg = cp.arg;
-  lw = cp.lw;
-  hi = cp.hi;
 }
 
 double SimpleMathSpec::Evaluate(double val) const {
@@ -886,7 +811,6 @@ double taMath_double::vec_ss_len(const double_Matrix* vec) {
 }
 
 void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, double bin_size) {
-  // todo: rewrite
   vec->Reset();
   if(oth->size == 0) return;
   double_Array tmp;
@@ -907,6 +831,14 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
       src_idx++;
     }
   }
+}
+
+double taMath_double::vec_count(const double_Matrix* vec, CountParam& cnt) {
+  double rval = 0.0;
+  for(int i=0;i<vec->size;i++) {
+    if(cnt.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+  }
+  return rval;
 }
 
 ///////////////////////////////////////
@@ -1107,21 +1039,34 @@ int taMath_double::vec_threshold(double_Matrix* vec, double thresh, double low, 
   return rval;
 }
 
-void taMath_double::vec_aggregate_els(double_Matrix* oth, const double_Matrix* vec, Aggregate& agg)
-{
-  oth->EnforceFrames(vec->size);
-  for(int i=0;i<vec->size;i++)
-    agg.ComputeAggNoUpdt(oth->FastEl_Flat(i), vec->FastEl_Flat(i));
-}
-
 double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
-  double rval = agg.InitAggVal();
-  agg.Init();
-  for(int i=0;i<vec->size;i++)
-    agg.ComputeAgg(rval, vec->FastEl_Flat(i));
-  return rval;
+  int idx;
+  switch(agg.op) {
+  case Aggregate::MIN:
+    return taMath_double::vec_min(vec, idx);
+  case Aggregate::MAX:
+    return taMath_double::vec_max(vec, idx);
+  case Aggregate::ABS_MIN:
+    return taMath_double::vec_abs_min(vec, idx);
+  case Aggregate::ABS_MAX:
+    return taMath_double::vec_abs_max(vec, idx);
+  case Aggregate::SUM:
+    return taMath_double::vec_sum(vec);
+  case Aggregate::PROD:
+    return taMath_double::vec_prod(vec);
+  case Aggregate::MEAN:
+    return taMath_double::vec_mean(vec);
+  case Aggregate::VAR:
+    return taMath_double::vec_var(vec);
+  case Aggregate::STDEV:
+    return taMath_double::vec_std_dev(vec);
+  case Aggregate::SEM:
+    return taMath_double::vec_sem(vec);
+  case Aggregate::COUNT: 
+    return taMath_double::vec_count(vec, agg.count);
+  }
+  return 0.0;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix operations

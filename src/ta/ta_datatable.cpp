@@ -95,6 +95,17 @@ void DataArray_impl::Copy_(const DataArray_impl& cp) {
 void DataArray_impl::Copy_NoData(const DataArray_impl& cp) {
   taNBase::Copy(cp);
   Copy_(cp);
+  Init();			// initialize array to new geom
+}
+
+void DataArray_impl::CopyFromRow(int dest_row, const DataArray_impl& src, int src_row) {
+  if(src.is_matrix) {
+    taMatrix* mat = ((DataArray_impl&)src).GetValAsMatrix(src_row);
+    SetValAsMatrix(mat, dest_row);
+  }
+  else {
+    SetValAsVar(src.GetValAsVar(src_row), dest_row);
+  }
 }
 
 void DataArray_impl::Init() {
@@ -240,6 +251,16 @@ void DataTableCols::Copy_NoData(const DataTableCols& cp) {
   }
 }
 
+void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_row) {
+  taLeafItr di, si;
+  DataArray_impl* dar, *sar;
+  for(dar = FirstEl(di), sar = src.FirstEl(si);
+      dar && sar;
+      dar = NextEl(di), sar = src.NextEl(si)) {
+    dar->CopyFromRow(dest_row, *sar, src_row);
+  }  
+}
+
 void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   // we only do the notifies in the context of the root group, so we exit if we aren't root
@@ -317,6 +338,10 @@ void DataTable::Copy_(const DataTable& cp) {
 
 void DataTable::Copy_NoData(const DataTable& cp) {
   data.Copy_NoData(cp.data);
+}
+
+void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
+  data.CopyFromRow(dest_row, src.data, src_row);
 }
 
 void DataTable::AddColDispOpt(const String& dsp_opt, int col) {

@@ -27,6 +27,7 @@
 
 class TA_API CountParam : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP counting criteria params
+  INHERITED(taBase)
 public:
   enum Relation {
     EQUAL,		// #LABEL_=
@@ -38,72 +39,47 @@ public:
   };
 
   Relation	rel;		// #LABEL_ relation of statistic to target value
-  double		val;		// #LABEL_ target or comparison value
+  double	val;		// #LABEL_ target or comparison value
 
   bool 		Evaluate(double cmp) const;
 
   void  Initialize();
   void 	Destroy()		{ };
-  void	Copy_(const CountParam& cp);
-  COPY_FUNS(CountParam, taBase);
-  TA_BASEFUNS(CountParam);
+  TA_SIMPLE_BASEFUNS(CountParam);
 };
 
 class TA_API Aggregate : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP Basic aggregation operations
+  INHERITED(taOBase)
 public:
   enum Operator {		// Aggregate Operators
-    DEFAULT=-1,			// select the default specified for the object
-    LAST=0,			// The most recent value
-    SUM,			// Summation
-    PROD,			// Product
+    GROUP,			// group by this field
     MIN,			// Minimum
     MAX,			// Maximum
-    AVG,			// Average (mean)
-    COPY,			// Copy (keep each individual value)
-    COUNT 			// Count of the number times count relation was true
+    ABS_MIN,			// Minimum of absolute values
+    ABS_MAX,			// Maximum of absolute values
+    SUM,			// Summation
+    PROD,			// Product
+    MEAN,			// Mean of values
+    VAR,			// Variance
+    STDEV,			// Standard deviation
+    SEM,			// Standard error of the mean 
+    COUNT, 			// Count of the number times count relation was true
   };
 
   Operator      op;		// how to aggregate over the network
-  bool		no0;		// #DEF_false don't aggregate when the value is zero
   CountParam	count;		// #CONDEDIT_ON_op:COUNT parameters for the COUNT aggregation
-  int		n_updt;		// #READ_ONLY number of times agg updated (for AVG)
-
-  void 	AggLAST(double& to, double fm) const	{ to = fm; } // at this level..
-  void 	AggSUM(double& to, double fm) const	{ to += fm; }
-  void 	AggPROD(double& to, double fm) const	{ to *= fm; }
-  void 	AggMIN(double& to, double fm) const	{ to = (fm < to ) ? fm :  to; }
-  void 	AggMAX(double& to, double fm) const	{ to = (fm > to ) ?  fm :  to; }
-  void 	AggAVG(double& to, double fm) const	{ to = (to * (double)n_updt + fm) / (double)(n_updt + 1); }
-  void 	AggCOPY(double& to, double fm) const	{ to = fm; } // not defined at this level..
-  void 	AggCOUNT(double& to, double fm) const	{ if(count.Evaluate(fm)) to += 1.0; }
-
-  virtual void	ComputeAgg(double& to, double fm);
-  // compute aggregation into `to' based on current op from `fm'
-  virtual bool	ComputeAggNoUpdt(double& to, double fm);
-  // compute aggregation but don't update the n_updt counter (for lists) (return false if fm = 0, else true)
-  void		IncUpdt()		{ n_updt++; } // increment the update counter
 
   virtual const char* GetAggName() const;  // get string representation of aggregation opr
-  virtual String AppendAggName(const char* nm) const;
-  // append aggregation name to given name
-  virtual String PrependAggName(const char* nm) const;
-  // prepend aggregation name to given name
-
-  virtual void	Init();		// initialize agg variables
-  virtual double	InitAggVal() const;
-  // returns the initial aggregation value based on op (0,1,or FLT_MAX)
 
   void 	Initialize();
   void 	Destroy();
-  void	InitLinks();
-  void	Copy_(const Aggregate& cp);
-  COPY_FUNS(Aggregate, taOBase);
-  TA_BASEFUNS(Aggregate);
+  TA_SIMPLE_BASEFUNS(Aggregate);
 };
 
 class TA_API SimpleMathSpec : public taBase {
   // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS params for std kinds of simple math operators
+  INHERITED(taBase)
 public:
   enum MathOpr {
     NONE,			// no function
@@ -129,14 +105,12 @@ public:
   double		lw;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values below threshold
   double		hi;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values above threshold
 
-  double		Evaluate(double val) const; // evaluate math operator on given value
+  double	Evaluate(double val) const; // evaluate math operator on given value
   Variant&	EvaluateVar(Variant& val) const; // #IGNORE evaluate math operator on given value
 
   void 	Initialize();
   void	Destroy()	{ };
-  void	Copy_(const SimpleMathSpec& cp);
-  COPY_FUNS(SimpleMathSpec, taBase);
-  TA_BASEFUNS(SimpleMathSpec);
+  TA_SIMPLE_BASEFUNS(SimpleMathSpec);
 };
 
 class TA_API taMath : public taBase {
@@ -451,6 +425,8 @@ public:
   static void	vec_histogram(double_Matrix* hist_vec, const double_Matrix* src_vec,
 			      double bin_size);
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
+  static double	vec_count(const double_Matrix* vec, CountParam& cnt);
+  // #CAT_Statistics count number of times count relationship is true
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
@@ -491,10 +467,6 @@ public:
   static int	vec_threshold(double_Matrix* vec, double thresh=.5f,
 			      double low=0.0f, double high=1.0f);
   // #CAT_Norm threshold values in the vector, low vals go to low, etc; returns number of high values
-
-  static void	vec_aggregate_els(double_Matrix* agg_result, const double_Matrix* src_vec,
-				  Aggregate& agg);
-  // #CAT_Aggregate aggregate each element separately from source vector to agg_result using aggregation params of agg
   static double	vec_aggregate(const double_Matrix* vec, Aggregate& agg);
   // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg
 

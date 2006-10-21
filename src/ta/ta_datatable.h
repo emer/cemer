@@ -76,6 +76,12 @@ public:
   // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
   virtual const taMatrix* 	AR() const = 0;
   // #CAT_Access const version of the matrix pointer
+
+  /////////////////////////////////////////////
+  // type of data
+
+  virtual ValType 	valType() const = 0;
+  // #CAT_Access the type of data in each element
   virtual bool		is_numeric() const {return false;}
   // #CAT_Access true if data is float, int, or byte
   virtual bool		is_string() const {return false;}
@@ -90,20 +96,12 @@ public:
   int			rows() const { return AR()->frames(); }
   // #CAT_Access total number of rows of data within this column
 
-  int			displayWidth() const;
-  // #CAT_Display low level display width, in tabs (8 chars/tab), taken from spec
-  virtual int		maxColWidth() const {return -1;}
-  // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
-  virtual bool		saveToFile() const {return true;} //whether to save col -- currently always true
-  virtual ValType 	valType() const = 0; // the type of data in each element
+  /////////////////////////////////////////////
+  // Get and Set access
 
-  static const KeyString key_val_type; // "val_type"
-  static const KeyString key_disp_opts; // "disp_opts"
-  override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
-  override String	GetDisplayName() const; // #IGNORE we strip out the format characters
-  
-  // for accessor routines, row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
+  // row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
   // -ve values are from end, and are valid for both low-level col access, and DataTable access
+
   const Variant GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
   // #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVar(const Variant& val, int row) 
@@ -176,18 +174,35 @@ public:
   void		EnforceRows(int rows);
   // force data to have this many rows
 
+  /////////////////////////////////////////////
+  // misc
+
+  int			displayWidth() const;
+  // #CAT_Display low level display width, in tabs (8 chars/tab), taken from spec
+  virtual int		maxColWidth() const {return -1;}
+  // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
+  virtual bool		saveToFile() const {return true;}
+  // #IGNORE whether to save col -- currently always true
+
   bool		HasDispOption(const String& opt) const
   { return disp_opts.contains(opt); } // check if a given display option is set
   const String 	DispOptionAfter(const String& opt) const;
   void		AddDispOption(const String& opt);
 
+  static const KeyString key_val_type; // "val_type"
+  static const KeyString key_disp_opts; // "disp_opts"
+  override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
+  override String	GetDisplayName() const; // #IGNORE we strip out the format characters
+  
   DataTable*		dataTable();
   // root data table this col belongs to
 
-  override bool		Dump_QuerySaveMember(MemberDef* md); // dynamically check for saving data 
+  override bool		Dump_QuerySaveMember(MemberDef* md); 
 
-  void	Copy_NoData(const DataArray_impl& cp);
-  // use this to copy the structure of the datatable without getting all the data
+  virtual void	Copy_NoData(const DataArray_impl& cp);
+  // #CAT_ObjectMgmt copy the structure of the datatable without getting all the data
+  virtual void	CopyFromRow(int dest_row, const DataArray_impl& cp, int src_row);
+  // #CAT_ObjectMgmt copy one row from source to given row in this object
   
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
   void  UpdateAfterEdit();
@@ -242,8 +257,10 @@ public:
   // header text for the indicated column
   override const KeyString GetListColKey(int col) const;
   
-  virtual void		Copy_NoData(const DataTableCols& cp);
-  // copy only the column structure, but no data, from other data table
+  virtual void	Copy_NoData(const DataTableCols& cp);
+  // #CAT_ObjectMgmt copy only the column structure, but no data, from other data table
+  virtual void	CopyFromRow(int dest_row, const DataTableCols& cp, int src_row);
+  // #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
 
   TA_BASEFUNS(DataTableCols);
 private:
@@ -428,8 +445,10 @@ public:
   DataTableModel*	GetDataModel();
   // #IGNORE returns new if none exists, or existing -- enables views to be shared
 
-  virtual void		Copy_NoData(const DataTable& cp);
-  // copy only the column structure, but no data, from other data table
+  virtual void	Copy_NoData(const DataTable& cp);
+  // #CAT_ObjectMgmt copy only the column structure, but no data, from other data table
+  virtual void	CopyFromRow(int dest_row, const DataTable& cp, int src_row);
+  // #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 

@@ -193,6 +193,7 @@ public:
   TypeDef*		object_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   MemberDef*		member_var;	// #TYPE_ON_object_type #NULL_OK member variable to monitor -- you can also just type variable for non-members (r.wt, etc)
   String        	variable;	// Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
+  ValType		val_type;	 // type of values to create for monitored data (note: double has more support in the math library)
 
   ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
   MemberSpace   	members;	// #IGNORE memberdefs
@@ -230,8 +231,8 @@ protected:
   override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_);
 
-  ChannelSpec* 		AddScalarChan(const String& valname, ValType val_type);
-  MatrixChannelSpec* 	AddMatrixChan(const String& valname, ValType val_type,
+  ChannelSpec* 		AddScalarChan(const String& valname, ValType vt);
+  MatrixChannelSpec* 	AddMatrixChan(const String& valname, ValType vt,
     const MatrixGeom* geom = NULL);
     // caller resp for somehow setting geom if NULL; clears cell_num
   bool 			AddCellName(const String& cellname);

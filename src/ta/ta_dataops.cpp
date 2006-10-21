@@ -80,8 +80,25 @@ void DataSelectEl::Initialize() {
   rel = EQUAL;
 }
 
+bool DataSelectEl::Eval(const String& val) {
+  switch(rel) {
+  case EQUAL:
+    return val == expr;
+  case NOTEQUAL:
+    return val != expr;
+  case LESSTHAN:
+    return val < expr;
+  case GREATERTHAN:
+    return val > expr;
+  case LESSTHANOREQUAL:
+    return val <= expr;
+  case GREATERTHANOREQUAL:
+    return val >= expr;
+  }
+  return false;
+}
+
 void DataGroupEl::Initialize() {
-  op = MEAN_SEM;
 }
 
 /////////////////////////////////////////////////////////
@@ -93,23 +110,6 @@ bool taDataOps::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   dest->Reset();
   *dest = *src;
   Sort_impl(dest, spec);
-}
-
-void taDataOps::Sort_CopyRow(DataTable* dest, int dest_row, DataTable* src, int src_row) {
-  // todo: only works on flat, ungrouped guys -- not too hard to extend to leaves
-  for(int i=0;i<src->data.size;i++) {
-    DataArray_impl* s_da = src->data.FastEl(i);
-    DataArray_impl* d_da = dest->data.FastEl(i);
-    if(s_da->is_matrix) {
-      d_da->SetValAsMatrix(s_da->GetValAsMatrix(src_row), dest_row);
-    }
-    else {
-      Variant var = s_da->GetValAsVar(src_row);
-      d_da->SetValAsVar(var, dest_row);
-      Variant var2 = d_da->GetValAsVar(dest_row);
-      cerr << i << "\t" << var << "\t" << var2 << endl;
-    }
-  }
 }
 
 int taDataOps::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
@@ -134,11 +134,11 @@ int taDataOps::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row
 bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   if(dt->rows <= 1) return false;
 
-  DataTable tmp;		// temporary buffer to hold vals during swap
-  //  taBase::Ref(&tmp);		// keep it from getting trashed somewhere..
-  taBase::Own(tmp, NULL);	// activates initlinks..
-  tmp.Copy_NoData(*dt);		// give it same structure
-  tmp.AddBlankRow();		// always just has one row
+  dt->StructUpdate(true);
+  DataTable tmp_data;		// temporary buffer to hold vals during swap
+  taBase::Own(tmp_data, NULL);	// activates initlinks..
+  tmp_data.Copy_NoData(*dt);		// give it same structure
+  tmp_data.AddBlankRow();		// always just has one row
 
   spec->GetColumns(dt);		// cache column pointers & indicies from names
 
@@ -150,13 +150,13 @@ bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   ir = n;
   for(;;){
     if(l>1) {
-      Sort_CopyRow(&tmp, 0, dt, --l -1); // tmp = ra[--l]
+      tmp_data.CopyFromRow(0, *dt, --l -1); // tmp_data = ra[--l]
     }
     else {
-      Sort_CopyRow(&tmp, 0, dt, ir-1); // tmp = ra[ir]
-      Sort_CopyRow(dt, ir-1, dt, 0); // ra[ir] = ra[1]
+      tmp_data.CopyFromRow(0, *dt, ir-1); // tmp_data = ra[ir]
+      dt->CopyFromRow(ir-1, *dt, 0); // ra[ir] = ra[1]
       if(--ir == 1) {
-	Sort_CopyRow(dt, 0, &tmp, 0); // ra[1]=tmp
+	dt->CopyFromRow(0, tmp_data, 0); // ra[1]=tmp_data
 	break;
       }
     }
@@ -164,24 +164,139 @@ bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
     j=l << 1;
     while(j<= ir) {
       if(j<ir && (Sort_Compare(dt, j-1, dt, j, spec) == -1)) j++; // less-than
-      if(Sort_Compare(&tmp, 0, dt, j-1, spec) == -1) { // tmp < ra[j]
-	Sort_CopyRow(dt, i-1, dt, j-1); // ra[i]=ra[j];
+      if(Sort_Compare(&tmp_data, 0, dt, j-1, spec) == -1) { // tmp_data < ra[j]
+	dt->CopyFromRow(i-1, *dt, j-1); // ra[i]=ra[j];
 	j += (i=j);
       }
       else j = ir+1;
     }
-    Sort_CopyRow(dt, i-1, &tmp, 0); // ra[i] = tmp;
+    dt->CopyFromRow(i-1, tmp_data, 0); // ra[i] = tmp_data;
   }
 
+  dt->StructUpdate(false);
   spec->ClearColumns();
   return true;
 }
 
-bool taDataOps::Select(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
+bool taDataOps::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
+  dest->StructUpdate(true);
+  dest->Copy_NoData(*src);		// give it same structure
+  spec->GetColumns(src);		// cache column pointers & indicies from names
+  for(int row=0;row<src->rows; row++) {
+    bool incl = false;
+    bool not_incl = false;
+    for(int i=0; i<spec->size; i++) {
+      DataSelectEl* ds = (DataSelectEl*)spec->FastEl(i);
+      if(!ds->column) continue;
+      DataArray_impl* da = src->data.FastEl(ds->col_idx);
+      bool ev = ds->Eval(da->GetValAsString(row));
+      if(spec->comb_op == DataSelectSpec::AND) {
+	if(!ev) not_incl = true;
+	break;
+      }
+      else if(spec->comb_op == DataSelectSpec::OR) {
+	if(ev) incl = true;
+	break;
+      }
+      else if(spec->comb_op == DataSelectSpec::NOT_AND) {
+	if(ev) not_incl = true;
+	break;
+      }
+      else if(spec->comb_op == DataSelectSpec::NOT_OR) {
+	if(!ev) incl = true;
+	break;
+      }
+    }
+    if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
+       && not_incl) continue;
+    if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
+       && !incl) continue;
+    // continuing now..
+    dest->AddBlankRow();
+    dest->CopyFromRow(-1, *src, row);
+  }
+  dest->StructUpdate(false);
+  spec->ClearColumns();
+  return true;
+}
+
+bool taDataOps::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
+  dest->StructUpdate(true);
+  spec->GetColumns(src);		// cache column pointers & indicies from names
+  for(int i=0;i<spec->size; i++) {
+    DataOpEl* ds = spec->FastEl(i);
+    if(!ds->column) continue;
+    DataArray_impl* sda = src->data.FastEl(ds->col_idx);
+    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    dest->data.Add(nda);
+    nda->Copy_NoData(*sda);
+  }    
+  for(int row=0;row<src->rows;row++) {
+    dest->AddBlankRow();
+    for(int i=0;i<spec->size; i++) {
+      DataOpEl* ds = spec->FastEl(i);
+      if(!ds->column) continue;
+      DataArray_impl* sda = src->data.FastEl(ds->col_idx);
+      DataArray_impl* nda = dest->data.FastEl(i);
+      nda->CopyFromRow(row, *sda, row);
+    }
+  }
+  dest->StructUpdate(false);
+  spec->ClearColumns();
   return true;
 }
 
 bool taDataOps::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
+  dest->StructUpdate(true);
+  spec->GetColumns(src);		// cache column pointers & indicies from names
+
+  // todo: this is not right: needs to have just cols spec'd -- see SelectCols
+  dest->Copy_NoData(*src);		// give it same structure as src
+  // note: this is destructive -- not incremental on dest.. todo..
+
+  // sort by grouped guys, in order
+  DataSortSpec sort_spec;
+  for(int i=0;i<spec->size; i++) {
+    DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
+    if(!ds->column) continue;
+    if(ds->agg.op != Aggregate::GROUP) continue;
+    DataSortEl* ss = (DataSortEl*)sort_spec.New(1, &TA_DataSortEl);
+    ss->col_idx = ds->col_idx;
+    taBase::SetPointer((taBase**)&ss->column, ds->column);
+    ss->order = DataSortEl::ASCENDING;
+  }
+  if(sort_spec.size == 0) {
+    Group_nogp(dest, src, spec); // no group ops: just simple aggs
+  }
+  else {
+    Group_gp(dest, src, spec, &sort_spec); // grouping.
+  }
+  dest->StructUpdate(false);
+  spec->ClearColumns();
+  return true;
+}
+
+bool taDataOps::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
+  dest->AddBlankRow();
+  for(int i=0;i<spec->size; i++) {
+    DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
+    if(!ds->column) continue;
+    DataArray_impl* sda = src->data.FastEl(ds->col_idx);
+    DataArray_impl* dda = dest->data.FastEl(ds->col_idx);
+    if(sda->valType() == taBase::VT_DOUBLE) {
+      dda->SetValAsDouble(taMath_double::vec_aggregate((double_Matrix*)sda->AR(), ds->agg), 0);
+    }
+  }
+  return true;
+}
+
+bool taDataOps::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
+  // first sort by grouping critera
+  DataTable ssrc;
+  taBase::Own(ssrc, NULL);	// activates initlinks, refs
+  taDataOps::Sort(&ssrc, src, sort_spec);
+
+  
   return true;
 }
 
@@ -191,6 +306,10 @@ bool taDataOps::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
 
 void DataProg::Initialize() {
 }
+
+/////////////////////////////////////////////////////////
+//   data sort prog
+/////////////////////////////////////////////////////////
 
 void DataSortProg::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
@@ -221,6 +340,117 @@ const String DataSortProg::GenCssBody_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   rval += cssMisc::Indent(indent_level+1) +
     "taDataOps::Sort(dsp->dest_data, dsp->src_data, dsp->sort_spec);\n";
+  rval += cssMisc::Indent(indent_level) + "}\n";
+  return rval; 
+}
+
+/////////////////////////////////////////////////////////
+//   data selectRows prog
+/////////////////////////////////////////////////////////
+
+void DataSelectRowsProg::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  select_spec.SetDataTable(src_data);
+}
+
+void DataSelectRowsProg::Initialize() {
+}
+
+String DataSelectRowsProg::GetDisplayName() const {
+  String rval = "SelectRows ";
+  if(src_data) {
+    rval += " from: " + src_data->name;
+  }
+  if(dest_data) {
+    rval += " to: " + dest_data->name;
+  }
+  return rval;
+}
+
+void DataSelectRowsProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  select_spec.SetDataTable(src_data);
+  select_spec.CheckConfig(quiet, rval);
+}
+
+const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level) + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  rval += cssMisc::Indent(indent_level+1) +
+    "taDataOps::SelectRows(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
+  rval += cssMisc::Indent(indent_level) + "}\n";
+  return rval; 
+}
+
+/////////////////////////////////////////////////////////
+//   data selectCols prog
+/////////////////////////////////////////////////////////
+
+void DataSelectColsProg::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  select_spec.SetDataTable(src_data);
+}
+
+void DataSelectColsProg::Initialize() {
+}
+
+String DataSelectColsProg::GetDisplayName() const {
+  String rval = "SelectCols ";
+  if(src_data) {
+    rval += " from: " + src_data->name;
+  }
+  if(dest_data) {
+    rval += " to: " + dest_data->name;
+  }
+  return rval;
+}
+
+void DataSelectColsProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  select_spec.SetDataTable(src_data);
+  select_spec.CheckConfig(quiet, rval);
+}
+
+const String DataSelectColsProg::GenCssBody_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level) + "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  rval += cssMisc::Indent(indent_level+1) +
+    "taDataOps::SelectCols(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
+  rval += cssMisc::Indent(indent_level) + "}\n";
+  return rval; 
+}
+
+/////////////////////////////////////////////////////////
+//   data group prog
+/////////////////////////////////////////////////////////
+
+void DataGroupProg::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  group_spec.SetDataTable(src_data);
+}
+
+void DataGroupProg::Initialize() {
+}
+
+String DataGroupProg::GetDisplayName() const {
+  String rval = "Group ";
+  if(src_data) {
+    rval += " from: " + src_data->name;
+  }
+  if(dest_data) {
+    rval += " to: " + dest_data->name;
+  }
+  return rval;
+}
+
+void DataGroupProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  group_spec.SetDataTable(src_data);
+  group_spec.CheckConfig(quiet, rval);
+}
+
+const String DataGroupProg::GenCssBody_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level) + "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  rval += cssMisc::Indent(indent_level+1) +
+    "taDataOps::Group(dsp->dest_data, dsp->src_data, dsp->group_spec);\n";
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval; 
 }

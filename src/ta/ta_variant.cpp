@@ -116,8 +116,8 @@ Variant::~Variant() {
   m_type = T_Invalid; m_is_null = true; // helps avoid hard-to-find zombie problems
 }
 
-#define cmp(a,b) (((a) < (b)) ? -1 : \
-  ((a) == (b)) ?  0 : 1)
+#define cmp(a,b) (((a) < (b)) ? -1 : ((a) == (b)) ?  0 : 1)
+
 int Variant::cmpVariant(const Variant& b) const {
   // invalid never cmpuates
   if (isInvalid() || b.isInvalid()) return -2;
@@ -244,7 +244,7 @@ int  Variant::cmpChar(char val) const {
 
 int Variant::cmpString(const String& val) const {
   if (isNull()) return -2;
-  if (!isPtrType()) return -2;
+  //  if (!isStringType()) return -2;
   // otherwise, compare our string rep
   const String str(toString());
   return cmp(str, val);

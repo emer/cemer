@@ -296,7 +296,7 @@ void SE_Stat::Initialize() {
 }
 
 void MonitorStat::Initialize() {
-  net_agg.op = Aggregate::COPY;
+  net_agg.op = Aggregate::MEAN;
   variable = "act";
 }
 
@@ -584,13 +584,13 @@ void ClosestEventStat::Initialize() {
 
 void CyclesToSettle::Initialize() {
   settle = NULL;
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::GROUP;
 }
 
 void ActThreshRTStat::Initialize() {
   loop_init = INIT_START_ONLY;
   settle = NULL;
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::GROUP;
   act_thresh = .75f;
   // max_act.stopcrit.flag = true;  // don't actually stop..
   max_act.stopcrit.val = act_thresh;
@@ -607,7 +607,7 @@ void CompareStat::Initialize() {
   cmp_type = float_RArray::CORREL;
   dist_tol = 0.0f;
   norm = false;
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::GROUP;
 }
 
 void ProjectionStat::Initialize() {
@@ -615,29 +615,29 @@ void ProjectionStat::Initialize() {
   dist_metric = float_RArray::INNER_PROD;
   dist_tol = 0.0f;
   dist_norm = false;
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::GROUP;
 }
 
 void ComputeStat::Initialize() {
   stat_1 = NULL;
   stat_2 = NULL;
-  net_agg.op = Aggregate::AVG;
+  net_agg.op = Aggregate::MEAN;
 }
 
 void CopyToEnvStat::Initialize() {
   stat = NULL;
   data_env = NULL;
   accum_scope = SUPER;
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::GROUP;
 }
 
 void EpochCounterStat::Initialize() {
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::GROUP;
 }
 
 void ProcCounterStat::Initialize() {
   proc = NULL;
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::GROUP;
 }
 
 void MaxActTrgStat::Initialize() {
@@ -646,7 +646,7 @@ void MaxActTrgStat::Initialize() {
 void UnitActRFStat::Initialize() {
   data_env = NULL;
   norm_mode = NORM_UNIT;
-  net_agg.op = Aggregate::AVG;
+  net_agg.op = Aggregate::MEAN;
 }
 
 void UnitActRFStatResetProc::Initialize() {
@@ -656,7 +656,7 @@ void UnitActRFStatResetProc::Initialize() {
 void UnitEventRFStat::Initialize() {
   epoch_proc = NULL;
   data_env = NULL;
-  net_agg.op = Aggregate::AVG;
+  net_agg.op = Aggregate::MEAN;
 }
 
 void UniquePatStat::Initialize() {
@@ -667,11 +667,11 @@ void UniquePatStat::Initialize() {
   dist_tol = 0.0f;
   norm = false;
   uniq_tol = .8f;
-  net_agg.op = Aggregate::AVG;
+  net_agg.op = Aggregate::MEAN;
 }
 
 void TimeCounterStat::Initialize() {
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::MEAN;
   loop_init = INIT_START_ONLY;
 }
 

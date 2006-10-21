@@ -65,7 +65,7 @@ void LeabraSE_Stat::Initialize() {
 void LeabraGoodStat::Initialize() {
   min_layer = &TA_LeabraLayer;
   min_unit = &TA_LeabraUnit;
-  net_agg.op = Aggregate::AVG;
+  net_agg.op = Aggregate::MEAN;
   subtr_inhib = false;
 }
 
@@ -75,7 +75,7 @@ void LeabraGoodStat::Initialize() {
 
 void LeabraSharpStat::Initialize() {
   min_layer = &TA_LeabraLayer;
-  net_agg.op = Aggregate::AVG;
+  net_agg.op = Aggregate::MEAN;
 }
 
 //////////////////////////
@@ -95,7 +95,7 @@ void WrongOnStat::Initialize() {
 void LeabraPrjnRelNetinStat::Initialize() {
   min_layer = &TA_LeabraLayer;
   min_con_group = &TA_LeabraCon_Group;
-  net_agg.op = Aggregate::LAST;
+  net_agg.op = Aggregate::GROUP;
   recv_act_thr = .1f;
 }
 

@@ -634,6 +634,7 @@ void NetMonItem::Initialize() {
   object_type = NULL;
   member_var = NULL;
   variable = "act";
+  val_type = VT_DOUBLE;
   cell_num  = 0;
 }
 
@@ -666,6 +667,7 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   object_type = cp.object_type;
   member_var = cp.member_var;
   variable = cp.variable;
+  val_type = cp.val_type;
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
   pre_proc_3 = cp.pre_proc_3;
@@ -736,13 +738,13 @@ bool NetMonItem::AddCellName(const String& cellname) {
   return true;
 }
 
-MatrixChannelSpec* NetMonItem::AddMatrixChan(const String& valname, ValType val_type,
+MatrixChannelSpec* NetMonItem::AddMatrixChan(const String& valname, ValType vt,
   const MatrixGeom* geom) 
 {
   cell_num = 0;
   MatrixChannelSpec* cs = (MatrixChannelSpec*)val_specs.New(1, &TA_MatrixChannelSpec);
   cs->SetName(valname);
-  cs->val_type = val_type;
+  cs->val_type = vt;
   cs->uses_cell_names = true;
   if (geom) {
     cs->cell_geom = *geom;
@@ -753,11 +755,11 @@ MatrixChannelSpec* NetMonItem::AddMatrixChan(const String& valname, ValType val_
   return cs;
 }
 
-ChannelSpec* NetMonItem::AddScalarChan(const String& valname, ValType val_type) {
+ChannelSpec* NetMonItem::AddScalarChan(const String& valname, ValType vt) {
   cell_num = 0;//maybe should be 1!
   ChannelSpec* cs = (ChannelSpec*)val_specs.New(1, &TA_ChannelSpec);
   cs->SetName(valname);
-  cs->val_type = val_type;
+  cs->val_type = vt;
   cs->UpdateAfterEdit();
   return cs;
 }
@@ -946,7 +948,7 @@ void NetMonItem::ScanObject_ConGroup(Con_Group* mcg, String var,
   String unitname;
   //note: assume float, since really no other con types make sense, and using Variant
   // could be extremely wasteful since there are so many cons
-  MatrixChannelSpec* cs = AddMatrixChan(colname, VT_FLOAT);
+  MatrixChannelSpec* cs = AddMatrixChan(colname, val_type);
   cs->cell_names.SetGeom(1, 0); //dynamic
   //NOTE: we expand the cell names of the spec on the fly
   int i;
@@ -990,7 +992,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   } else {
     geom.SetGeom(2, lay->flat_geom.x, lay->flat_geom.y);
   }
-  MatrixChannelSpec* mcs = AddMatrixChan(valname, VT_FLOAT, &geom);
+  MatrixChannelSpec* mcs = AddMatrixChan(valname, val_type, &geom);
   int val_sz = val_specs.size; // lets us detect if new ones made
   taLeafItr i;
   Unit* u;
@@ -1106,7 +1108,7 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var, bool mk_col) {
     } else {
       geom.SetGeom(2, ug->geom.x, ug->geom.y);
     }
-    cs = AddMatrixChan(valname, VT_FLOAT, &geom);
+    cs = AddMatrixChan(valname, val_type, &geom);
   }
   int val_sz = val_specs.size; // use to detect con vals made
   Unit* u;
@@ -1429,7 +1431,7 @@ cont:
 void NetMonItem::ScanObject_IterLayer(Layer* lay, String var) {
   String valname = GetObjName(lay) + String(".") + variable;
   MatrixGeom geom(2, lay->flat_geom.x, lay->flat_geom.y);
-  MatrixChannelSpec* mcs = AddMatrixChan(valname, VT_FLOAT, &geom);
+  MatrixChannelSpec* mcs = AddMatrixChan(valname, val_type, &geom);
   int val_sz = val_specs.size; // lets us detect if new ones made
   taLeafItr i;
   Unit* u;
@@ -1457,7 +1459,7 @@ void NetMonItem::ScanObject_IterUnitGroup(Unit_Group* ug, String var) {
   String valname = GetObjName(ug) + String(".") + variable;
   MatrixChannelSpec* cs = NULL;
   MatrixGeom geom(2, ug->geom.x, ug->geom.y);
-  cs = AddMatrixChan(valname, VT_FLOAT, &geom);
+  cs = AddMatrixChan(valname, val_type, &geom);
   Unit* u;
   TwoDCoord c;
   int val_sz = val_specs.size; // use to detect con vals made

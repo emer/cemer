@@ -33,7 +33,7 @@ void CE_Stat::Initialize() {
 
 void NormDotProd_Stat::Initialize(){
 //  ndp = 0.0f;
-  net_agg.op = Aggregate::AVG;
+  net_agg.op = Aggregate::MEAN;
 }
 
 void VecCor_Stat::Initialize(){
@@ -43,7 +43,7 @@ void VecCor_Stat::Initialize(){
 
 void NormVecLen_Stat::Initialize(){
 //nn  nvl = 0.0f;
-  net_agg.op = Aggregate::AVG;
+  net_agg.op = Aggregate::MEAN;
 }
 
 

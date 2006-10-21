@@ -110,6 +110,8 @@ public:
   Relation		rel;		// relation of column to expression for selection
   String		expr;		// expression to compare column value to for selection
 
+  bool	Eval(const String& val); // evaluate expression
+
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSelectEl);
@@ -117,12 +119,20 @@ public:
 
 class TA_API DataSelectSpec : public DataOpList {
   // #CAT_Data a datatable select specification (list of select elements)
-INHERITED(DataOpList)
+  INHERITED(DataOpList)
 public:
+  enum CombOp {
+    AND,			// include only if all of the columns are true
+    OR,				// include if any one (or more) of the columns are true
+    NOT_AND,			// include only if all of the columns are false
+    NOT_OR,			// include if any of (or more) the columns are false
+  };
 
-  TA_BASEFUNS(DataSelectSpec);
+  CombOp	comb_op;	// how to combine individual expressions for each column
+
+  TA_SIMPLE_BASEFUNS(DataSelectSpec);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_DataSelectEl); }
+  void	Initialize() 		{ SetBaseType(&TA_DataSelectEl); comb_op = AND; }
   void 	Destroy()		{ };
 };
 
@@ -134,23 +144,7 @@ class TA_API DataGroupEl : public DataOpEl {
   // one element of a data grouping specification
   INHERITED(DataOpEl)
 public:
-  enum Operator {		
-    GROUP,			// group by this field
-    MIN,			// Minimum
-    MAX,			// Maximum
-    ABS_MIN,			// Minimum of absolute values
-    ABS_MAX,			// Maximum of absolute values
-    SUM,			// Summation
-    PROD,			// Product
-    MEAN,			// Mean of values
-    VAR,			// Variance
-    MEAN_STDEV,			// Mean and Standard deviation
-    MEAN_SEM,			// Mean and Standard error of the mean
-    COUNT, 			// Count of the number times count relation was true
-  };
-
-  Operator		op;		// operation to perform in grouping this column
-  CountParam		count;		// #CONDEDIT_ON_op:COUNT parameters for the COUNT grouping
+  Aggregate	agg;		// how to aggregate this information
 
   void  Initialize();
   void 	Destroy()		{ };
@@ -161,7 +155,7 @@ class TA_API DataGroupSpec : public DataOpList {
   // #CAT_Data a datatable grouping specification (list of group elements)
 INHERITED(DataOpList)
 public:
-  DataGroupEl::Operator		default_op;
+  Aggregate::Operator		default_op;
   // default operation to perform on columns not specifically listed
 
   TA_SIMPLE_BASEFUNS(DataGroupSpec);
@@ -182,19 +176,25 @@ public:
   static bool	Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
   // sort data from src into dest according to sorting specifications in spec; dest is completely overwritten
 
-  static void 	Sort_CopyRow(DataTable* dest, int dest_row, DataTable* src, int src_row);
-  // helper function for sorting: copy one row from src to dest
   static int 	Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
 			     DataSortSpec* spec);
   // helper function for sorting: compare values -1 = a is < b; 1 = a > b; 0 = a == b
   static bool 	Sort_impl(DataTable* dt, DataSortSpec* spec);
-  // actually perform sort on data table using specs
+  // #IGNORE actually perform sort on data table using specs
 
-  static bool	Select(DataTable* dest, DataTable* src, DataSelectSpec* spec);
-  // select data from src into dest according to selection specifications in spec
+  static bool	SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec);
+  // select rows of data from src into dest according to selection specifications in spec (all columns are copied)
+  static bool	SelectCols(DataTable* dest, DataTable* src, DataOpList* spec);
+  // select columns of data from src into dest according to list of columnns in spec (all rows are copied)
+
   static bool	Group(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // group data from src into dest according to grouping specifications in spec
 
+  static bool	Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec);
+  // #IGNORE helper function to do grouping when there are no GROUP items
+  static bool	Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec,
+			 DataSortSpec* sort_spec);
+  // #IGNORE helper function to do grouping when there are GROUP items, as spec'd in sort_spec
 
   void Initialize() { };
   void Destroy() { };
@@ -221,13 +221,67 @@ private:
 
 class TA_API DataSortProg : public DataProg { 
   // sorts src_data into dest_data according to sort_spec
-INHERITED(ProgEl)
+INHERITED(DataProg)
 public:
   DataSortSpec		sort_spec; // data sorting specification
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSortProg);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataSelectRowsProg : public DataProg { 
+  // selects rows from src_data into dest_data according to select_spec
+INHERITED(DataProg)
+public:
+  DataSelectSpec	select_spec; // data selection specification
+
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataSelectColsProg : public DataProg { 
+  // selects rows from src_data into dest_data according to select_spec
+INHERITED(DataProg)
+public:
+  DataOpList		select_spec; // columns to select
+
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataSelectColsProg);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataGroupProg : public DataProg { 
+  // sorts src_data into dest_data according to sort_spec
+INHERITED(DataProg)
+public:
+  DataGroupSpec		group_spec; // data grouping specification
+
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataGroupProg);
 protected:
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 

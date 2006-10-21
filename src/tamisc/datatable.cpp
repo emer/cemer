@@ -360,25 +360,28 @@ void float_RArray::Histogram(const float_RArray& oth, float bin_size) {
 void float_RArray::AggToArray(const float_RArray& oth, Aggregate& agg,
 			      int start, int end)
 {
-  if(end == -1)	end = size;  else end = MIN(size, end);
-  end = MIN(end, oth.size);
-  int i;
-  for(i=start;i<end;i++) {
-    double tmp_me = FastEl(i);
-    agg.ComputeAggNoUpdt(tmp_me, oth.FastEl(i));
-    FastEl(i) = tmp_me;
-  }
+  // todo: Agg changed
+//   if(end == -1)	end = size;  else end = MIN(size, end);
+//   end = MIN(end, oth.size);
+//   int i;
+//   for(i=start;i<end;i++) {
+//     double tmp_me = FastEl(i);
+//     agg.ComputeAggNoUpdt(tmp_me, oth.FastEl(i));
+//     FastEl(i) = tmp_me;
+//   }
   ItemsChanged_();
 }
 
 float float_RArray::AggToVal(Aggregate& agg, int start, int end) const {
-  if(end == -1)	end = size;  else end = MIN(size, end);
-  double rval = agg.InitAggVal();
-  agg.Init();
-  int i;
-  for(i=start;i<end;i++)
-    agg.ComputeAgg(rval, FastEl(i));
-  return rval;
+  // todo: Agg changed
+//   if(end == -1)	end = size;  else end = MIN(size, end);
+//   double rval = agg.InitAggVal();
+//   agg.Init();
+//   int i;
+//   for(i=start;i<end;i++)
+//     agg.ComputeAgg(rval, FastEl(i));
+//   return rval;
+  return 0.0;
 }
 
 float float_RArray::NormLen(float len, int start, int end) {
