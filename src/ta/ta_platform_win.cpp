@@ -24,6 +24,13 @@ char tmpbuf[BUFSIZE];
 
 const char    taPlatform::pathSep = '\\'; 
 
+int taPlatform::cpuCount() const {
+  SYSTEM_INFO info;
+  info.dwNumberOfProcessors = 0;
+  GetSystemInfo(&info);
+  return info.dwNumberOfProcessors;
+}
+
 String taPlatform::getTempPath() {
   String rval;
   DWORD retVal = GetTempPath(BUFSIZE, tmpbuf);

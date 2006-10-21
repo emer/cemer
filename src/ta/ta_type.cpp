@@ -437,6 +437,7 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
 
 void taMisc::Initialize() {
   not_constr = false;
+  cpus = taPlatform::cpuCount();
 }
 
 void taMisc::InitializeTypes() {// called after all type info has been loaded into types

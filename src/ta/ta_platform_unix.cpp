@@ -25,8 +25,7 @@
 const char    taPlatform::pathSep = '/'; 
 
 int taPlatform::cpuCount() {
-  //TODO!
-  return 2;
+  return sysconf(_SC_NPROCESSORS_ONLN);
 }
 
 int taPlatform::exec(const String& cmd) {
