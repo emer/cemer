@@ -20,12 +20,28 @@
 #include <unistd.h>
 #include <time.h>
 
+#ifdef TA_OS_MAC
+# include <sys/types.h>
+# include <sys/sysctl.h>
+#endif
+
 // Unix implementations
 
 const char    taPlatform::pathSep = '/'; 
 
 int taPlatform::cpuCount() {
+#ifdef TA_OS_MAC
+  int mib[2];
+  int ncpu;
+  size_t len;
+  mib[0] = CTL_HW;
+  mib[1] = HW_NCPU;
+  len = sizeof(ncpu);
+  sysctl(mib, 2, &ncpu, &len, NULL, 0);
+  return ncpu;
+#else
   return sysconf(_SC_NPROCESSORS_ONLN);
+#endif
 }
 
 int taPlatform::exec(const String& cmd) {
