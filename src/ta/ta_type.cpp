@@ -1153,7 +1153,6 @@ int taMisc::read_till_quote_semi(istream& strm, bool peek) {
 int taMisc::skip_till_start_quote_or_semi(istream& strm, bool peek) {
 // read in the stream until a start quote or a semi
   int c = skip_white(strm, true);
-  bool bs = false;		// backspace quoting of quotes, for example
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 

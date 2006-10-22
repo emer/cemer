@@ -597,14 +597,14 @@ inline String capitalize(const String& x)
 
 inline char  String::operator [] (int i) const {
 #ifdef DEBUG
-  if (((unsigned)i) >= length()) error("invalid index");
+  if (i >= length()) error("invalid index");
 #endif
   return mrep->s[i];
 }
 
 inline char&  String::operator [] (int i) {
 #ifdef DEBUG
-  if (((unsigned)i) >= length()) error("invalid index");
+  if (i >= length()) error("invalid index");
 #endif
   makeUnique();
   return mrep->s[i];
@@ -612,7 +612,7 @@ inline char&  String::operator [] (int i) {
 
 inline char  String::elem (int i) const {
 #ifdef DEBUG
-  if (((unsigned)i) >= length()) error("invalid index");
+  if (i >= length()) error("invalid index");
 #endif
   return mrep->s[i];
 }

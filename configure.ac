@@ -141,9 +141,9 @@ if test x"$debug" = x"true"; then
   export CONFIG=debug
 
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
-  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O0])
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -Wall])
   AC_DEFINE([DEBUG],,[Used when debugging])
-  AC_SUBST([OPT_LEVEL],["-g -O0"])                       # No optimization in debug mode
+  AC_SUBST([OPT_LEVEL],["-g -Wall"])                       # No optimization in debug mode
   # Checks for headers
   AC_FUNC_ALLOCA
   AC_HEADER_DIRENT

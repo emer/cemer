@@ -1092,12 +1092,8 @@ taBase* taiTokenPtrMember::GetTokenPtr(const void* base) const {
 }
 
 void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
-  TypeDef* min_type = NULL; // absolute min type -- act must inherit from this
-  TypeDef* targ_type = NULL; //always set
   taBase* tok_ptr = GetTokenPtr(base); // this is the addr of the token, in the member
   TypeDef* targ_typ = GetMinType(base);
-  
-  taBase* obj = (taBase*)base;
   
   TAPtr scope = NULL;
   if (!mbr->HasOption("NO_SCOPE")) {
@@ -1825,9 +1821,6 @@ void taiStreamArgType::GetImage_impl(taiData* dat, const void* base){
   if (arg_base == NULL)
     return;
   taiFileButton* fbut = (taiFileButton*) dat;
-  if (typ->InheritsFrom(TA_taBase)) {
-    TAPtr it = (TAPtr)base;
-  }
   fbut->SetFiler(gf);
   fbut->GetImage();
 }
@@ -1835,7 +1828,6 @@ void taiStreamArgType::GetImage_impl(taiData* dat, const void* base){
 void taiStreamArgType::GetValue_impl(taiData* dat, void*) {
   if (arg_base == NULL)
     return;
-  taiFileButton* rval = (taiFileButton*)dat;
   GetValueFromGF();
 }
 

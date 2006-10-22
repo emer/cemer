@@ -236,6 +236,7 @@ int taiListElsButtonBase::BuildChooser_0(taiItemChooser* ic, taList_impl* top_ls
     item->setText(2, tab->GetColText(taBase::key_desc));
     ++rval;
   }
+  return rval;
 }
 
 int taiListElsButtonBase::columnCount(int view) const {
@@ -1262,7 +1263,6 @@ void gpiListDataHost::Constr_ListData() {
 }
 
 void gpiListDataHost::Constr_ListLabels() {
-  int row = 0;
   for (int lf = 0; lf < lst_membs.size; ++lf) {
     //NOTE: no desc's because same name'd member could conflict
     AddMultiRowName(lf, lst_membs.FastEl(lf), "");

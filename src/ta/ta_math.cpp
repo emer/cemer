@@ -805,8 +805,7 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
     tmp.Add(oth->FastEl_Flat(i));
   tmp.Sort();
   double min_v = tmp.FastEl(0);
-  double max = tmp.Peek();
-  double max_v = 0.0;
+  double max_v = tmp.Peek();
   int src_idx = 0;
   int trg_idx = 0;
   for(double cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
@@ -1029,6 +1028,8 @@ int taMath_double::vec_threshold(double_Matrix* vec, double thresh, double low, 
 double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
   int idx;
   switch(agg.op) {
+  case Aggregate::GROUP:
+    return vec->SafeEl_Flat(0);	// first guy..
   case Aggregate::MIN:
     return taMath_double::vec_min(vec, idx);
   case Aggregate::MAX:

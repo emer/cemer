@@ -116,6 +116,7 @@ public:
 
   pager_ostream();
   pager_ostream(ostream* fo, istream* fi, int n_ln);
+  virtual ~pager_ostream() { };
 
 protected:
   int 	cur_line;

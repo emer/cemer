@@ -587,10 +587,10 @@ taMatrix* taMatrix::GetSlice_(const MatrixGeom& base,
   Check((num_slice_frames > 0),
     "num_slice_frames must be >= 1");
   // (note: we check resulting slice dims in bounds later)
-  if (slice_frame_dims = -1)
+  if (slice_frame_dims == -1)
     slice_frame_dims = dims() - 1;
   // check dim size in bounds
-  Check((slice_frame_dims >= 0) && (slice_frame_dims < (dims() - 1)),
+  Check((slice_frame_dims >= 0) && (slice_frame_dims < dims()),
     "slice_frame_dims must be >= 0 and < parent Matrix");
   // check start cell in bounds and legal
   int sl_i = SafeElIndexN(base); // -1 if out of bounds
@@ -623,7 +623,7 @@ taMatrix* taMatrix::GetFrameRangeSlice_(int st_frame, int n_frames) {
   for (int i = 0; i < dims()-1; ++i)
     base.Set(i, 0);
   base.Set(dims()-1, st_frame);
-  return GetSlice_(base, dims(), n_frames);
+  return GetSlice_(base, dims()-1, n_frames);
 }
 
 bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4) const {
@@ -808,7 +808,6 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   
   //NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
-  int old_framesize = frameSize(); // used for slice invalidating
   geom.EnforceSize(dims_);
   for (int i = 0; i < (dims_ - 1) ; ++i) {
     geom[i] = geom_[i];

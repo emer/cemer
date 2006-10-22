@@ -5,12 +5,6 @@ docs..: add all float_RArray funs, for matricies.
 
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 
-* add CONTAINS to select ops
-* add up/dn & select rel text to description
-
-* selectrows adding blanks for all existing rows
-* OR/AND not working --looks like OR all the time
-
 -------
 
 * extrew in trial monitor seems not to be working: 12ax demo

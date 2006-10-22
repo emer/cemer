@@ -29,7 +29,6 @@
 #endif
 
 #include "netstru.h"
-#include "netdata.h"
 #include "ta_program.h"
 
 //////////////////////////////////////////////////

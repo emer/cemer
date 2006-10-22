@@ -33,6 +33,7 @@
 #include "pdpbase.h"
 #include "spec.h"
 #include "pdpshell.h"
+#include "netdata.h"
 
 #include "pdp_TA_type.h"
 

@@ -932,7 +932,6 @@ void taiPolyData::GetValue_impl(void* base) const {
   ostream* rec_scrpt = taMisc::record_script; // don't record script stuff now
   taMisc::record_script = NULL;
   bool first_diff = true;
-  int cnt = 0;
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
     taiData* mb_dat = data_el.FastEl(i);

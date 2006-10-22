@@ -709,7 +709,7 @@ public:
   // set the con spec for all connections in this prjn
   virtual bool 	ApplyConSpec();
   // #BUTTON apply the default conspec to all connections in this prjn
-  virtual bool	CheckConnect(bool quiet=false) { spec->CheckConnect(this, quiet); }
+  virtual bool	CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
   // check if projection is connected
   virtual bool	CheckTypes(bool quiet=false);
   // #BUTTON #USE_RVAL check that the existing con and con gp types are of the specified types

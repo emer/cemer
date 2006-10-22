@@ -466,7 +466,7 @@ public:
     // this one is typically used in CheckXxx_impl routines; we don't do gui wrap stuff
 #endif
   bool			CheckConfig(bool quiet = false)
-    {CheckConfig_Gui(false, quiet);}
+  { return CheckConfig_Gui(false, quiet);}
   // #CAT_ObjectMgmt check the configuration of this object and all its children (defaults to no confirm of success)
   bool			CheckConfig_Gui(bool confirm_success = true,
     bool quiet = false);

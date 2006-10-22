@@ -235,7 +235,7 @@ int taGroup_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
 int taGroup_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
   int rval = inherited::Dump_SaveR(strm, par, indent);
   gp.Dump_SaveR(strm, par, indent); // subgroups get saved -- relative to parent, not this
-  return true;
+  return rval;
 }
 
 void taGroup_impl::DupeUniqNameOld(const taGroup_impl& cp) {

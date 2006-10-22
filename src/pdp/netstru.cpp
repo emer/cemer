@@ -20,6 +20,7 @@
 
 
 #include "netstru.h"
+#include "netdata.h"
 #include "pdpshell.h"
 //#include "css_qt.h"		// for the cssiSession
 #include "ta_data.h"

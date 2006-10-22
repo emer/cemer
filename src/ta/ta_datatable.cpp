@@ -103,7 +103,7 @@ void DataArray_impl::CopyFromRow(int dest_row, const DataArray_impl& src, int sr
     taMatrix* mat = ((DataArray_impl&)src).GetValAsMatrix(src_row);
     taBase::Ref(mat);
     SetValAsMatrix(mat, dest_row);
-    taBase::unRef(mat);
+    taBase::unRefDone(mat);
   }
   else {
     SetValAsVar(src.GetValAsVar(src_row), dest_row);
@@ -424,7 +424,6 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
 }
 
 DataArray_impl* DataTable::GetColData(int col) const {
-  DataTable* tbl = NULL;
   if (col >= cols()) return NULL;
   else return data.Leaf(col);
 }

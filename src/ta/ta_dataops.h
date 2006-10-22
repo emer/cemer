@@ -24,8 +24,12 @@ class TA_API DataOpEl : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
   INHERITED(taBase)
 public:
-  DataTableCols*	cols;	// #READ_ONLY #NO_SAVE data table columns -- gets set dynamically
-  DataArray_impl*	column;	// #NO_SAVE #FROM_GROUP_cols column in data table to sort on -- just to lookup the name, which is what is actually used
+  DataTableRef		data_table;
+  // #READ_ONLY #NO_SAVE data table -- gets set dynamically
+  DataTableCols*	data_cols;
+  // #READ_ONLY #NO_SAVE data table columns -- gets set dynamically
+  DataArray_impl*	column;
+  // #NO_SAVE #FROM_GROUP_data_cols column in data table to sort on -- just to lookup the name, which is what is actually used
   String		col_name;	// name of column in data table to sort on (either enter directly or lookup from column)
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
@@ -52,6 +56,7 @@ public:
   virtual void 	ClearColumns();
   // clear column pointers (don't keep these guys hanging around)
 
+  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(DataOpList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DataOpEl); }

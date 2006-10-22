@@ -269,7 +269,7 @@ bool Variant::Dump_Load_Type(istream& strm, int& c) {
 }
 
 void Variant::Dump_Save_Type(ostream& strm) const {
-  strm << " " << (int)type() << " " << (isNull()) ? '1' : '0';
+  strm << " " << (int)type() << " " << ((isNull()) ? '1' : '0');
 } 
 
 bool Variant::eqVariant(const Variant& b) const {
@@ -315,10 +315,10 @@ bool  Variant::eqInt(int val) const {
   case T_Bool: return (d.b == val);
   case T_Int: return (d.i == val);
   case T_UInt: 
-    return ((val > 0) && (d.u <= INT_MAX) && (d.u == val));
+    return ((val > 0) && (d.u <= (unsigned)INT_MAX) && (d.u == (unsigned)val));
   case T_Int64:  return (d.i64 == val);
   case T_UInt64: 
-    return ((val > 0) && (d.u64 <= INT_MAX) && (d.u64 == val));
+    return ((val > 0) && (d.u64 <= (unsigned)INT_MAX) && (d.u64 == (unsigned)val));
   default: return false;
   }
 }
@@ -327,9 +327,9 @@ bool  Variant::eqUInt(uint val) const {
   if (isNull()) return false;
   switch (m_type) {
   case T_Bool: return (d.b == val);
-  case T_Int: return ((d.i > 0) && (d.i == val));
+  case T_Int: return ((d.i > 0) && (d.i == (int)val));
   case T_UInt:  return (d.u == val);
-  case T_Int64:  return ((d.i64 > 0) && (d.i64 == val));
+  case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int64_t)val));
   case T_UInt64: return (d.u64 == val);
   default: return false;
   }
@@ -344,7 +344,7 @@ bool  Variant::eqInt64(int64_t val) const {
     return ((val > 0) && (d.u == val));
   case T_Int64:  return (d.i64 == val);
   case T_UInt64: 
-    return ((val > 0) && (d.u64 < LLONG_MAX) && (d.u64 == val));
+    return ((val > 0) && (d.u64 < (unsigned)LLONG_MAX) && (d.u64 == (unsigned)val));
   default: return false;
   }
 }
@@ -353,9 +353,9 @@ bool  Variant::eqUInt64(uint64_t val) const {
   if (isNull()) return false;
   switch (m_type) {
   case T_Bool: return (d.b == val);
-  case T_Int: return ((d.i > 0) && (d.i == val));
+  case T_Int: return ((d.i > 0) && (d.i == (int)val));
   case T_UInt:  return (d.u == val);
-  case T_Int64:  return ((d.i64 > 0) && (d.i64 == val));
+  case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int)val));
   case T_UInt64: return (d.u64 == val);
   default: return false;
   }
@@ -464,6 +464,7 @@ bool Variant::isDefault() const {
      return (d.ptr == 0) ;
 //  default: return ;
   }
+  return false;
 }
 
 bool Variant::isNull() const {

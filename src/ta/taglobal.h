@@ -472,13 +472,13 @@ inline const char* ta_exception::what() const throw() {
 #ifndef __MAKETA__
 #include <iostream>
 #endif
-inline void Assert(bool cond) {if (!(cond)) {int i=0; int k=1/i;}}
+inline void Assert(bool cond) {if (!(cond)) { int i=0; int k=1/i; std::cerr << k;}}
 inline void Assert(bool cond, const char* msg) {if (!(cond)) 
-  {std::cerr << msg << "\n"; int i=0; int k=1/i;} }
+    {std::cerr << msg << std::endl; int i=0; int k=1/i; std::cerr << k; } }
 
-inline void Check(bool cond) {if (!(cond)) {int i=0; int k=1/i;}}
+inline void Check(bool cond) {if (!(cond)) { int i=0; int k=1/i; std::cerr << k;}}
 inline void Check(bool cond, const char* msg) {if (!(cond))  
-  {std::cerr << msg << "\n"; int i=0; int k=1/i;} }
+    {std::cerr << msg << std::endl; int i=0; int k=1/i; std::cerr << k;} }
 
 /*these are the final versions, once exceptions are used
 inline void Assert(bool cond) {if (!(cond)) throw ta_exception();}

@@ -539,7 +539,7 @@ inline Variant operator^(uint64_t a, const Variant& b) {Variant r(a); r ^= b; re
 inline Variant operator^(char a, const Variant& b) {Variant r(a); r ^= b; return r;}
 
 inline bool operator==(const Variant& a, const Variant& b) {return a.eqVariant(b);}
-inline bool operator!=(const Variant& a, const Variant& b) {return a.eqVariant(b);}
+inline bool operator!=(const Variant& a, const Variant& b) {return !a.eqVariant(b);}
 inline bool operator< (const Variant& a, const Variant& b) {return a.cmpVariant(b) < 0;}
 inline bool operator<=(const Variant& a, const Variant& b) {return a.cmpVariant(b) <= 0;}
 inline bool operator> (const Variant& a, const Variant& b) {return a.cmpVariant(b) > 0;}

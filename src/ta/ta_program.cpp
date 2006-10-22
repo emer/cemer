@@ -246,6 +246,7 @@ const String ProgVar::GenCssType() {
   case T_DynEnum:
     return "c_DynEnum";
   }
+  return "";
 }
 
 const String ProgVar::GenCssInitVal() {
@@ -271,6 +272,7 @@ const String ProgVar::GenCssInitVal() {
   case T_DynEnum:
     return dyn_enum_val.NameVal();
   }
+  return "";
 }
 
 // note: *never* initialize variables because they are cptrs to actual current
@@ -307,6 +309,7 @@ cssEl* ProgVar::NewCssEl() {
   case T_DynEnum:
     return new cssCPtr_DynEnum(&dyn_enum_val, 0, name);
   }
+  return &cssMisc::Void;
 }
 
 cssEl* ProgVar::NewCssType() {
