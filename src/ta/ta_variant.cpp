@@ -390,7 +390,6 @@ bool  Variant::eqChar(char val) const {
 
 bool Variant::eqString(const String& val) const {
   if (isNull()) return false;
-  if (!isPtrType()) return false;
   // otherwise, compare our string rep
   return (toString() == val);
 }

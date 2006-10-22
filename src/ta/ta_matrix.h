@@ -416,6 +416,8 @@ public:
   // #CAT_Access return a slice, sfd=-1 indicates a frame size slice; base should be a subframe boundary
   virtual taMatrix*	GetFrameSlice_(int frame);
   // #CAT_Access return a slice, of exactly one frame; will have dim-1 of us
+  virtual taMatrix*	GetFrameRangeSlice_(int st_frame, int n_frames);
+  // #CAT_Access return a slice, of n_frames frames starting at st_frame
   
 #ifdef TA_GUI
   MatrixTableModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
@@ -743,6 +745,7 @@ public:
   y* GetSlice(const MatrixGeom& base, int sfd = -1, int nsf = 1) \
    {return (y*)GetSlice_(base, sfd, nsf);} \
   y* GetFrameSlice(int frame) {return (y*) GetFrameSlice_(frame);} \
+  y* GetFrameRangeSlice(int frame, int n_frames) {return (y*) GetFrameRangeSlice_(frame, n_frames);} \
   y(int dims_, int d0, int d1=0, int d2=0, int d3=0, int d4=0) \
     {SetGeom(dims_, d0,d1,d2,d3,d4);} \
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \

@@ -74,6 +74,7 @@ public:
 
   SortOrder		order;		// order to sort this in
 
+  override String GetDisplayName() const;
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSortEl);
@@ -104,14 +105,17 @@ public:
     LESSTHAN,		// #LABEL_<
     GREATERTHAN,	// #LABEL_>
     LESSTHANOREQUAL,	// #LABEL_<=
-    GREATERTHANOREQUAL 	// #LABEL_>=
+    GREATERTHANOREQUAL, // #LABEL_>=
+    CONTAINS,		// for strings: contains this value
+    NOT_CONTAINS,	// for strings: doesn't contain this value
   };
 
-  Relation		rel;		// relation of column to expression for selection
-  String		expr;		// expression to compare column value to for selection
+  Relation	rel;		// relation of column to expression for selection
+  Variant	cmp;		// compare value of column to this comparison value
 
-  bool	Eval(const String& val); // evaluate expression
+  bool	Eval(const Variant& val); // evaluate expression
 
+  override String GetDisplayName() const;
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSelectEl);
@@ -130,6 +134,7 @@ public:
 
   CombOp	comb_op;	// how to combine individual expressions for each column
 
+  override String GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DataSelectSpec);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DataSelectEl); comb_op = AND; }
@@ -146,6 +151,7 @@ class TA_API DataGroupEl : public DataOpEl {
 public:
   Aggregate	agg;		// how to aggregate this information
 
+  override String GetDisplayName() const;
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataGroupEl);
@@ -155,12 +161,12 @@ class TA_API DataGroupSpec : public DataOpList {
   // #CAT_Data a datatable grouping specification (list of group elements)
 INHERITED(DataOpList)
 public:
-  Aggregate::Operator		default_op;
-  // default operation to perform on columns not specifically listed
+
+  // todo: add a function to add remaining columns..
 
   TA_SIMPLE_BASEFUNS(DataGroupSpec);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_DataGroupEl); }
+  void	Initialize();
   void 	Destroy()		{ };
 };
 

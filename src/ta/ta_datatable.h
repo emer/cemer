@@ -170,6 +170,8 @@ public:
   // #CAT_Access gets the cell as a slice of the entire column (note: not const -- you can write it)
   bool	 	SetValAsMatrix(const taMatrix* val, int row);
   // #CAT_Modify set the matrix cell from a same-sized matrix 
+  taMatrix*	GetRangeAsMatrix(int st_row, int n_rows);
+  // #CAT_Access gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it)
   
   void		EnforceRows(int rows);
   // force data to have this many rows
@@ -422,6 +424,8 @@ public:
   // #CAT_Rows get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
   //#CAT_Rows  set data of any type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
+  taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
+  // #CAT_Rows get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
 
   /////////////////////////////////////////////////////////
   // saving/loading (file)

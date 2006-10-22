@@ -17,7 +17,7 @@
 #ifndef TA_MATH_H
 #define TA_MATH_H
 
-#include <math.h>
+#include <cmath>
 #include "ta_matrix.h"
 
 #ifdef HAVE_GSL
@@ -70,7 +70,7 @@ public:
   Operator      op;		// how to aggregate over the network
   CountParam	count;		// #CONDEDIT_ON_op:COUNT parameters for the COUNT aggregation
 
-  virtual const char* GetAggName() const;  // get string representation of aggregation opr
+  virtual String GetAggName() const;  // get string representation of aggregation opr
 
   void 	Initialize();
   void 	Destroy();
@@ -198,40 +198,40 @@ public:
   static double  div(double x, double y) { return x / y; }
   // #CAT_Arithmetic divide
 
-  static double  fabs(double x) { return fabs(x); }
+  static double  fabs(double x) { return std::fabs(x); }
   // #CAT_Arithmetic absolute value
-  static double copysign(double x, double y) { return copysign(x, y); }
-  // #CAT_Arithmetic copy sign from x to y
+//   static double copysign(double x, double y) { return std::copysign(x, y); }
+//   // #CAT_Arithmetic copy sign from x to y
 
-  static double nextafter(double x, double y) { return nextafter(x, y); }
-  // #CAT_Arithmetic return next largest distinct floating point number after x in direction of y
+//   static double nextafter(double x, double y) { return std::nextafter(x, y); }
+//   // #CAT_Arithmetic return next largest distinct floating point number after x in direction of y
 
   static double  min(double x, double y) { return (x < y) ? x : y; }
   // #CAT_Arithmetic minimum of x and y
   static double  max(double x, double y) { return (x > y) ? x : y; }
   // #CAT_Arithmetic maximum of x and y
-  static double fmax(double x, double y) { return fmax(x,y); }
-  // #CAT_Arithmetic maximum of x and y
-  static double fmin(double x, double y) { return fmin(x,y); }
-  // #CAT_Arithmetic minimum of x and y
+//   static double fmax(double x, double y) { return std::fmax(x,y); }
+//   // #CAT_Arithmetic maximum of x and y
+//   static double fmin(double x, double y) { return std::fmin(x,y); }
+//   // #CAT_Arithmetic minimum of x and y
 
-  static double ceil(double x) { return ceil(x); }
+  static double ceil(double x) { return std::ceil(x); }
   // #CAT_Arithmetic ceiling of x: next largest integer value from x
-  static double floor(double x) { return floor(x); }
+  static double floor(double x) { return std::floor(x); }
   // #CAT_Arithmetic floor of x: next smallest integer value from x
-  static double rint(double x) { return rint(x); }
-  // #CAT_Arithmetic round value to an integer using current rounding direction
+//   static double rint(double x) { return std::rint(x); }
+//   // #CAT_Arithmetic round value to an integer using current rounding direction
 
-  static double round(double x) { return round(x); }
-  // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
-  static double trunc(double x) { return trunc(x); }
-  // #CAT_Arithmetic round to truncated integer value (nearest lower magnitude integer) -- like floor but irrespective of sign
+//   static double round(double x) { return std::round(x); }
+//   // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
+//   static double trunc(double x) { return std::trunc(x); }
+//   // #CAT_Arithmetic round to truncated integer value (nearest lower magnitude integer) -- like floor but irrespective of sign
 
-  static double fmod(double x, double y) { return fmod(x, y); }
+  static double fmod(double x, double y) { return std::fmod(x, y); }
   // #CAT_Arithmetic floating-point modulus function: remainder of x / y
 
-  static double remainder(double x, double y) { return remainder(x, y); }
-  // #CAT_Arithmetic remainder r = x - ny where n is integer value nearest to x/y
+//   static double remainder(double x, double y) { return std::remainder(x, y); }
+//   // #CAT_Arithmetic remainder r = x - ny where n is integer value nearest to x/y
 
   /////////////////////////////////////////////////////////////////////////////////
   // ExpLog: exponential and logarithmic functions
@@ -239,19 +239,19 @@ public:
   static double e;
   // #CAT_Trigonometry #READ_ONLY e: the natural exponential number
 
-  static double exp(double x) { return exp(x); }
+  static double exp(double x) { return std::exp(x); }
   // #CAT_ExpLog The natural exponential (e to the power x: e^x)
-  static double exp2(double x) { return exp2(x); }
-  // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
-  static double log(double x) { return log(x); }
+//   static double exp2(double x) { return std::exp2(x); }
+//   // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
+  static double log(double x) { return std::log(x); }
   // #CAT_ExpLog The natural logarithm of x: ln(x)
-  static double log10(double x) { return log10(x); }
+  static double log10(double x) { return std::log10(x); }
   // #CAT_ExpLog The logarithm of x, base 10
-  static double log2(double x) { return log2(x); }
-  // #CAT_ExpLog The logarithm of x, base 2
-  static double pow(double x, double p) { return pow(x, p); }
+//   static double log2(double x) { return std::log2(x); }
+//   // #CAT_ExpLog The logarithm of x, base 2
+  static double pow(double x, double p) { return std::pow(x, p); }
   // #CAT_ExpLog x to the power p (x^p)
-  static double sqrt(double x) { return sqrt(x); }
+  static double sqrt(double x) { return std::sqrt(x); }
   // #CAT_ExpLog square root of x (i.e., x^1/2)
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -262,43 +262,43 @@ public:
   static double deg_per_rad;
   // #CAT_Trigonometry #READ_ONLY degrees per radian (180 / pi)
 
-  static double hypot(double x, double y) { return hypot(x,y); }
-  // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
-  static double  acos(double X) { return acos(X); }
+//   static double hypot(double x, double y) { return std::hypot(x,y); }
+//   // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
+  static double  acos(double X) { return std::acos(X); }
   // #CAT_Trigonometry The arc-cosine (inverse cosine) -- takes an X coordinate and returns the angle (in radians) such that cos(angle)=X
-  static double  asin(double Y) { return asin(Y); }
+  static double  asin(double Y) { return std::asin(Y); }
   // #CAT_Trigonometry The arc-sine (inverse sine) -- takes a Y coordinate and returns the angle (in radians) such that sin(angle)=Y
-  static double  atan(double Y_over_X) { return atan(Y_over_X); }
+  static double  atan(double Y_over_X) { return std::atan(Y_over_X); }
   // #CAT_Trigonometry The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle (in radians) such that tan(angle)=Y/X.
-  static double  atan2(double Y, double X) { return atan2(Y, X); }
+  static double  atan2(double Y, double X) { return std::atan2(Y, X); }
   // #CAT_Trigonometry The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle (in radians) such that tan(angle)=Y/X.
 
-  static double  cos(double angle) { return cos(angle); }
+  static double  cos(double angle) { return std::cos(angle); }
   // #CAT_Trigonometry The cosine (x-axis component) of angle (given in radians)
-  static double  cos_deg(double angle) { return cos(angle / deg_per_rad); }
+  static double  cos_deg(double angle) { return std::cos(angle / deg_per_rad); }
   // #CAT_Trigonometry The cosine (x-axis component) of angle (given in degrees)
 
-  static double  sin(double angle) { return sin(angle); }
+  static double  sin(double angle) { return std::sin(angle); }
   // #CAT_Trigonometry The sine (y-axis component) of angle (given in radians)
-  static double  sin_deg(double angle) { return sin(angle / deg_per_rad); }
+  static double  sin_deg(double angle) { return std::sin(angle / deg_per_rad); }
   // #CAT_Trigonometry The sine (y-axis component) of angle (given in degrees)
 
-  static double  tan(double angle) { return tan(angle); }
+  static double  tan(double angle) { return std::tan(angle); }
   // #CAT_Trigonometry The tangent (slope y over x) of angle (given in radians)
-  static double  tan_deg(double angle) { return tan(angle / deg_per_rad); }
+  static double  tan_deg(double angle) { return std::tan(angle / deg_per_rad); }
   // #CAT_Trigonometry The tangent (slope y over x) of angle (given in degrees)
 
-  static double  acosh(double X) { return acosh(X); }
-  // #CAT_Trigonometry The arc-hyperbolic-cosine (inverse hyperbolic cosine) -- takes an X coordinate and returns the angle (in radians) such that cosh(angle)=X
-  static double  asinh(double Y) { return asinh(Y); }
-  // #CAT_Trigonometry The arc-hyperbolic-sine (inverse hyperbolic sine) -- takes a Y coordinate and returns the angle (in radians) such that sinh(angle)=Y
-  static double  atanh(double Y_over_X) { return atanh(Y_over_X); }
-  // #CAT_Trigonometry The arc-hyperbolic-tangent (inverse hyperbolic tangent) -- takes Y over X slope and returns the angle (in radians) such that tanh(angle)=Y
-  static double  cosh(double z) { return cosh(z); }
+//   static double  acosh(double X) { return std::acosh(X); }
+//   // #CAT_Trigonometry The arc-hyperbolic-cosine (inverse hyperbolic cosine) -- takes an X coordinate and returns the angle (in radians) such that cosh(angle)=X
+//   static double  asinh(double Y) { return std::asinh(Y); }
+//   // #CAT_Trigonometry The arc-hyperbolic-sine (inverse hyperbolic sine) -- takes a Y coordinate and returns the angle (in radians) such that sinh(angle)=Y
+//   static double  atanh(double Y_over_X) { return std::atanh(Y_over_X); }
+//   // #CAT_Trigonometry The arc-hyperbolic-tangent (inverse hyperbolic tangent) -- takes Y over X slope and returns the angle (in radians) such that tanh(angle)=Y
+  static double  cosh(double z) { return std::cosh(z); }
   // #CAT_Trigonometry The hyperbolic-cosine = e^z + e^-z / 2
-  static double  sinh(double z) { return sinh(z); }
+  static double  sinh(double z) { return std::sinh(z); }
   // #CAT_Trigonometry The hyperbolic-sine = e^z - e^-z / 2
-  static double  tanh(double z) { return tanh(z); }
+  static double  tanh(double z) { return std::tanh(z); }
   // #CAT_Trigonometry The hyperbolic-tangent = sinh(z) / cosh(z)
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -312,10 +312,10 @@ public:
   // #CAT_Probability hypergeometric (j t's of sample s in n) 
   static double gamma_ln(double z);
   // #CAT_Probability natural log (ln) of gamma function (not gamma distribution): generalization of (n-1)! to real values 
-  static double  lgamma(double z) { return lgamma(z); }
-  // #CAT_Probability natural log (ln) of gamma function (not gamma distribution): generalization of (n-1)! to real values 
-  static double tgamma(double z) { return tgamma(z); }
-  // #CAT_Probability true gamma function (not gamma distribution): generalization of (n-1)! to real values 
+//   static double  lgamma(double z) { return std::lgamma(z); }
+//   // #CAT_Probability natural log (ln) of gamma function (not gamma distribution): generalization of (n-1)! to real values 
+//   static double tgamma(double z) { return std::tgamma(z); }
+//   // #CAT_Probability true gamma function (not gamma distribution): generalization of (n-1)! to real values 
 
   static double gamma_p(double a, double x);
   // #CAT_Probability incomplete gamma function 
@@ -513,40 +513,40 @@ public:
   static float  div(float x, float y) { return x / y; }
   // #CAT_Arithmetic divide
 
-  static float  fabs(float x) { return fabsf(x); }
+  static float  fabs(float x) { return std::fabs(x); }
   // #CAT_Arithmetic absolute value
-  static float copysign(float x, float y) { return copysignf(x, y); }
-  // #CAT_Arithmetic copy sign from x to y
+//   static float copysign(float x, float y) { return copysignf(x, y); }
+//   // #CAT_Arithmetic copy sign from x to y
 
-  static float nextafter(float x, float y) { return nextafterf(x, y); }
-  // #CAT_Arithmetic return next largest distinct floating point number after x in direction of y
+//   static float nextafter(float x, float y) { return nextafterf(x, y); }
+//   // #CAT_Arithmetic return next largest distinct floating point number after x in direction of y
 
   static float  min(float x, float y) { return (x < y) ? x : y; }
   // #CAT_Arithmetic minimum of x and y
   static float  max(float x, float y) { return (x > y) ? x : y; }
   // #CAT_Arithmetic maximum of x and y
-  static float fmax(float x, float y) { return fmaxf(x,y); }
-  // #CAT_Arithmetic maximum of x and y
-  static float fmin(float x, float y) { return fminf(x,y); }
-  // #CAT_Arithmetic minimum of x and y
+//   static float fmax(float x, float y) { return fmaxf(x,y); }
+//   // #CAT_Arithmetic maximum of x and y
+//   static float fmin(float x, float y) { return fminf(x,y); }
+//   // #CAT_Arithmetic minimum of x and y
 
-  static float ceil(float x) { return ceilf(x); }
+  static float ceil(float x) { return std::ceil(x); }
   // #CAT_Arithmetic ceiling of x: next largest integer value from x
-  static float floor(float x) { return floorf(x); }
+  static float floor(float x) { return std::floor(x); }
   // #CAT_Arithmetic floor of x: next smallest integer value from x
-  static float rint(float x) { return rintf(x); }
-  // #CAT_Arithmetic round value to an integer using current rounding direction
+//   static float rint(float x) { return rintf(x); }
+//   // #CAT_Arithmetic round value to an integer using current rounding direction
 
-  static float round(float x) { return roundf(x); }
-  // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
-  static float trunc(float x) { return truncf(x); }
-  // #CAT_Arithmetic round to truncated integer value (nearest lower magnitude integer) -- like floor but irrespective of sign
+//   static float round(float x) { return roundf(x); }
+//   // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
+//   static float trunc(float x) { return truncf(x); }
+//   // #CAT_Arithmetic round to truncated integer value (nearest lower magnitude integer) -- like floor but irrespective of sign
 
-  static float fmod(float x, float y) { return fmodf(x, y); }
+  static float fmod(float x, float y) { return std::fmod(x, y); }
   // #CAT_Arithmetic floating-point modulus function: remainder of x / y
 
-  static float remainder(float x, float y) { return remainderf(x, y); }
-  // #CAT_Arithmetic remainder r = x - ny where n is integer value nearest to x/y
+//   static float remainder(float x, float y) { return remainderf(x, y); }
+//   // #CAT_Arithmetic remainder r = x - ny where n is integer value nearest to x/y
 
   /////////////////////////////////////////////////////////////////////////////////
   // ExpLog: exponential and logarithmic functions
@@ -554,19 +554,19 @@ public:
   static float e;
   // #CAT_Trigonometry #READ_ONLY e: the natural exponential number
 
-  static float exp(float x) { return expf(x); }
+  static float exp(float x) { return std::exp(x); }
   // #CAT_ExpLog The natural exponential (e to the power x: e^x)
-  static float exp2(float x) { return exp2f(x); }
-  // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
-  static float log(float x) { return logf(x); }
+//   static float exp2(float x) { return exp2f(x); }
+//   // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
+  static float log(float x) { return std::log(x); }
   // #CAT_ExpLog The natural logarithm of x: ln(x)
-  static float log10(float x) { return log10f(x); }
+  static float log10(float x) { return std::log10(x); }
   // #CAT_ExpLog The logarithm of x, base 10
-  static float log2(float x) { return log2f(x); }
-  // #CAT_ExpLog The logarithm of x, base 2
-  static float pow(float x, float p) { return powf(x, p); }
+//   static float log2(float x) { return log2f(x); }
+//   // #CAT_ExpLog The logarithm of x, base 2
+  static float pow(float x, float p) { return std::pow(x, p); }
   // #CAT_ExpLog x to the power p (x^p)
-  static float sqrt(float x) { return sqrtf(x); }
+  static float sqrt(float x) { return std::sqrt(x); }
   // #CAT_ExpLog square root of x (i.e., x^1/2)
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -577,43 +577,43 @@ public:
   static float deg_per_rad;
   // #CAT_Trigonometry #READ_ONLY degrees per radian (180 / pi)
 
-  static float hypot(float x, float y) { return hypotf(x,y); }
-  // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
-  static float  acos(float X) { return acosf(X); }
+//   static float hypot(float x, float y) { return hypotf(x,y); }
+//   // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
+  static float  acos(float X) { return std::acos(X); }
   // #CAT_Trigonometry The arc-cosine (inverse cosine) -- takes an X coordinate and returns the angle (in radians) such that cos(angle)=X
-  static float  asin(float Y) { return asinf(Y); }
+  static float  asin(float Y) { return std::asin(Y); }
   // #CAT_Trigonometry The arc-sine (inverse sine) -- takes a Y coordinate and returns the angle (in radians) such that sin(angle)=Y
-  static float  atan(float Y_over_X) { return atanf(Y_over_X); }
+  static float  atan(float Y_over_X) { return std::atan(Y_over_X); }
   // #CAT_Trigonometry The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle (in radians) such that tan(angle)=Y/X.
-  static float  atan2(float Y, float X) { return atan2f(Y, X); }
+  static float  atan2(float Y, float X) { return std::atan2(Y, X); }
   // #CAT_Trigonometry The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle (in radians) such that tan(angle)=Y/X.
 
-  static float  cos(float angle) { return cosf(angle); }
+  static float  cos(float angle) { return std::cos(angle); }
   // #CAT_Trigonometry The cosine (x-axis component) of angle (given in radians)
-  static float  cos_deg(float angle) { return cosf(angle / deg_per_rad); }
+  static float  cos_deg(float angle) { return std::cos(angle / deg_per_rad); }
   // #CAT_Trigonometry The cosine (x-axis component) of angle (given in degrees)
 
-  static float  sin(float angle) { return sinf(angle); }
+  static float  sin(float angle) { return std::sin(angle); }
   // #CAT_Trigonometry The sine (y-axis component) of angle (given in radians)
-  static float  sin_deg(float angle) { return sinf(angle / deg_per_rad); }
+  static float  sin_deg(float angle) { return std::sin(angle / deg_per_rad); }
   // #CAT_Trigonometry The sine (y-axis component) of angle (given in degrees)
 
-  static float  tan(float angle) { return tanf(angle); }
+  static float  tan(float angle) { return std::tan(angle); }
   // #CAT_Trigonometry The tangent (slope y over x) of angle (given in radians)
-  static float  tan_deg(float angle) { return tanf(angle / deg_per_rad); }
+  static float  tan_deg(float angle) { return std::tan(angle / deg_per_rad); }
   // #CAT_Trigonometry The tangent (slope y over x) of angle (given in degrees)
 
-  static float  acosh(float X) { return acoshf(X); }
-  // #CAT_Trigonometry The arc-hyperbolic-cosine (inverse hyperbolic cosine) -- takes an X coordinate and returns the angle (in radians) such that cosh(angle)=X
-  static float  asinh(float Y) { return asinhf(Y); }
-  // #CAT_Trigonometry The arc-hyperbolic-sine (inverse hyperbolic sine) -- takes a Y coordinate and returns the angle (in radians) such that sinh(angle)=Y
-  static float  atanh(float Y_over_X) { return atanhf(Y_over_X); }
-  // #CAT_Trigonometry The arc-hyperbolic-tangent (inverse hyperbolic tangent) -- takes Y over X slope and returns the angle (in radians) such that tanh(angle)=Y
-  static float  cosh(float z) { return coshf(z); }
+//   static float  acosh(float X) { return acoshf(X); }
+//   // #CAT_Trigonometry The arc-hyperbolic-cosine (inverse hyperbolic cosine) -- takes an X coordinate and returns the angle (in radians) such that cosh(angle)=X
+//   static float  asinh(float Y) { return asinhf(Y); }
+//   // #CAT_Trigonometry The arc-hyperbolic-sine (inverse hyperbolic sine) -- takes a Y coordinate and returns the angle (in radians) such that sinh(angle)=Y
+//   static float  atanh(float Y_over_X) { return atanhf(Y_over_X); }
+//   // #CAT_Trigonometry The arc-hyperbolic-tangent (inverse hyperbolic tangent) -- takes Y over X slope and returns the angle (in radians) such that tanh(angle)=Y
+  static float  cosh(float z) { return std::cosh(z); }
   // #CAT_Trigonometry The hyperbolic-cosine = e^z + e^-z / 2
-  static float  sinh(float z) { return sinhf(z); }
+  static float  sinh(float z) { return std::sinh(z); }
   // #CAT_Trigonometry The hyperbolic-sine = e^z - e^-z / 2
-  static float  tanh(float z) { return tanhf(z); }
+  static float  tanh(float z) { return std::tanh(z); }
   // #CAT_Trigonometry The hyperbolic-tangent = sinh(z) / cosh(z)
 
 

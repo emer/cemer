@@ -299,7 +299,6 @@ void taMatrix::Copy_(const taMatrix& cp) {
     size = 0;
     geom.Reset();
     SetGeomN(cp.geom);
-//     SetArray_(const_cast<void*>(cp.data()));
     for (int i = 0; i < size; ++i) {
       El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i));
     }
@@ -617,6 +616,14 @@ taMatrix* taMatrix::GetSlice_(const MatrixGeom& base,
   // we do all the funky ref counting etc. in one place
   SliceInitialize(this, rval);
   return rval;
+}
+
+taMatrix* taMatrix::GetFrameRangeSlice_(int st_frame, int n_frames) {
+  MatrixGeom base = geom;
+  for (int i = 0; i < dims()-1; ++i)
+    base.Set(i, 0);
+  base.Set(dims()-1, st_frame);
+  return GetSlice_(base, dims(), n_frames);
 }
 
 bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4) const {

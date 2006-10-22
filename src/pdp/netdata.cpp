@@ -927,7 +927,8 @@ bool NetMonItem::ScanObject_InObject(TAPtr obj, String var,
 //       String valname = GetObjName(obj, own) + String(".") + var;
       String valname = name;	// always use our name!
       if (mk_col) {
-        AddScalarChan(valname, ValTypeForType(md->type));
+	// todo: maybe need a "DEFAULT" setting for val_type??
+        AddScalarChan(valname, val_type); // ValTypeForType(md->type));
       } else {
         AddCellName(valname);
       }

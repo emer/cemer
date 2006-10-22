@@ -33,9 +33,10 @@ SRCS =\
 include $(top_srcdir)/mfstamp.am
 
 # Redefining this rule is dangerous, but necessary for maketa to run properly
-all: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) all-am
-	cd ../.. && $(MAKE) force_ta
+# doesn't work properly, removing for now..
+# all: $(BUILT_SOURCES)
+# 	$(MAKE) $(AM_MAKEFLAGS) all-am
+# 	cd ../.. && $(MAKE) force_ta
 
 mta_parse.cpp: mta_parse.y
 	bison -dtvy mta_parse.y;

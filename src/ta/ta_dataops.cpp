@@ -57,6 +57,7 @@ void DataOpList::GetColumns(DataTable* dt) {
   for(int i=0;i<size;i++) {
     DataOpEl* ds = FastEl(i);
     DataArray_impl* da = dt->FindColName(ds->col_name, ds->col_idx);
+    if(ds->col_idx < 0) da = NULL;
     taBase::SetPointer((taBase**)&ds->column, da);
   }
 }
@@ -76,29 +77,61 @@ void DataSortEl::Initialize() {
   order = ASCENDING;
 }
 
+String DataSortEl::GetDisplayName() const {
+  String rval = col_name + " ";
+  if(order == ASCENDING) 
+    rval += "up";
+  else
+    rval += "dn";
+  return rval;
+}
+
 void DataSelectEl::Initialize() {
   rel = EQUAL;
 }
 
-bool DataSelectEl::Eval(const String& val) {
+String DataSelectEl::GetDisplayName() const {
+  return col_name + " " + 
+    GetTypeDef()->GetEnumString("Relation", rel)+ " " +
+    cmp.toString();
+}
+
+bool DataSelectEl::Eval(const Variant& val) {
   switch(rel) {
   case EQUAL:
-    return val == expr;
+    return val == cmp;
   case NOTEQUAL:
-    return val != expr;
+    return val != cmp;
   case LESSTHAN:
-    return val < expr;
+    return val < cmp;
   case GREATERTHAN:
-    return val > expr;
+    return val > cmp;
   case LESSTHANOREQUAL:
-    return val <= expr;
+    return val <= cmp;
   case GREATERTHANOREQUAL:
-    return val >= expr;
+    return val >= cmp;
+  case CONTAINS:
+    return val.toString().contains(cmp.toString());
+  case NOT_CONTAINS:
+    return !val.toString().contains(cmp.toString());
   }
   return false;
 }
 
+String DataSelectSpec::GetDisplayName() const {
+  return inherited::GetDisplayName() + " " +
+    GetTypeDef()->GetEnumString("CombOp", comb_op);
+}
+
 void DataGroupEl::Initialize() {
+}
+
+String DataGroupEl::GetDisplayName() const {
+  return col_name + " " + agg.GetAggName();
+}
+
+void DataGroupSpec::Initialize() {
+  SetBaseType(&TA_DataGroupEl);
 }
 
 /////////////////////////////////////////////////////////
@@ -116,7 +149,7 @@ int taDataOps::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row
 			    DataSortSpec* spec) {
   for(int i=0;i<spec->size; i++) {
     DataSortEl* ds = (DataSortEl*)spec->FastEl(i);
-    if(!ds->column) continue;
+    if(ds->col_idx < 0) continue;
     DataArray_impl* da_a = dt_a->data.FastEl(ds->col_idx);
     DataArray_impl* da_b = dt_b->data.FastEl(ds->col_idx);
     Variant va = da_a->GetValAsVar(row_a);
@@ -187,24 +220,21 @@ bool taDataOps::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec
     bool not_incl = false;
     for(int i=0; i<spec->size; i++) {
       DataSelectEl* ds = (DataSelectEl*)spec->FastEl(i);
-      if(!ds->column) continue;
+      if(ds->col_idx < 0) continue;
       DataArray_impl* da = src->data.FastEl(ds->col_idx);
-      bool ev = ds->Eval(da->GetValAsString(row));
+      Variant val = da->GetValAsVar(row);
+      bool ev = ds->Eval(val);
       if(spec->comb_op == DataSelectSpec::AND) {
-	if(!ev) not_incl = true;
-	break;
+	if(!ev) { not_incl = true;  break; }
       }
       else if(spec->comb_op == DataSelectSpec::OR) {
-	if(ev) incl = true;
-	break;
+	if(ev) { incl = true; break; }
       }
       else if(spec->comb_op == DataSelectSpec::NOT_AND) {
-	if(ev) not_incl = true;
-	break;
+	if(ev) { not_incl = true; break; }
       }
       else if(spec->comb_op == DataSelectSpec::NOT_OR) {
-	if(!ev) incl = true;
-	break;
+	if(!ev) { incl = true; break; }
       }
     }
     if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
@@ -223,9 +253,10 @@ bool taDataOps::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec
 bool taDataOps::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
+  dest->Reset();
   for(int i=0;i<spec->size; i++) {
     DataOpEl* ds = spec->FastEl(i);
-    if(!ds->column) continue;
+    if(ds->col_idx < 0) continue;
     DataArray_impl* sda = src->data.FastEl(ds->col_idx);
     DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
     dest->data.Add(nda);
@@ -235,7 +266,7 @@ bool taDataOps::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
     dest->AddBlankRow();
     for(int i=0;i<spec->size; i++) {
       DataOpEl* ds = spec->FastEl(i);
-      if(!ds->column) continue;
+      if(ds->col_idx < 0) continue;
       DataArray_impl* sda = src->data.FastEl(ds->col_idx);
       DataArray_impl* nda = dest->data.FastEl(i);
       nda->CopyFromRow(row, *sda, row);
@@ -249,18 +280,29 @@ bool taDataOps::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
 bool taDataOps::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
-
-  // todo: this is not right: needs to have just cols spec'd -- see SelectCols
-  dest->Copy_NoData(*src);		// give it same structure as src
-  // note: this is destructive -- not incremental on dest.. todo..
+  dest->Reset();
+  // add the dest columns
+  for(int i=0;i<spec->size; i++) {
+    DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
+    if(ds->col_idx < 0) continue;
+    DataArray_impl* sda = src->data.FastEl(ds->col_idx);
+    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    dest->data.Add(nda);
+    nda->Copy_NoData(*sda);
+    String dst_op = ds->agg.GetAggName();
+    dst_op.downcase();
+    nda->name += "_" + dst_op;
+  }    
 
   // sort by grouped guys, in order
   DataSortSpec sort_spec;
+  taBase::Own(sort_spec, NULL);
   for(int i=0;i<spec->size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
-    if(!ds->column) continue;
+    if(ds->col_idx < 0) continue;
     if(ds->agg.op != Aggregate::GROUP) continue;
     DataSortEl* ss = (DataSortEl*)sort_spec.New(1, &TA_DataSortEl);
+    ss->col_name = ds->col_name;
     ss->col_idx = ds->col_idx;
     taBase::SetPointer((taBase**)&ss->column, ds->column);
     ss->order = DataSortEl::ASCENDING;
@@ -280,9 +322,9 @@ bool taDataOps::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec)
   dest->AddBlankRow();
   for(int i=0;i<spec->size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
-    if(!ds->column) continue;
+    if(ds->col_idx < 0) continue;
     DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-    DataArray_impl* dda = dest->data.FastEl(ds->col_idx);
+    DataArray_impl* dda = dest->data.FastEl(i); // index is spec index
     if(sda->valType() == taBase::VT_DOUBLE) {
       dda->SetValAsDouble(taMath_double::vec_aggregate((double_Matrix*)sda->AR(), ds->agg), 0);
     }
@@ -290,13 +332,66 @@ bool taDataOps::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec)
   return true;
 }
 
+// todo: checkconfig that group is not matrix..
+
 bool taDataOps::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
   // first sort by grouping critera
   DataTable ssrc;
   taBase::Own(ssrc, NULL);	// activates initlinks, refs
   taDataOps::Sort(&ssrc, src, sort_spec);
 
-  
+  sort_spec->GetColumns(&ssrc);	// re-get columns -- they were nuked by Sort op!
+
+  Variant_Array cur_vals;
+  cur_vals.EnforceSize(sort_spec->size);
+
+  // initialize cur vals
+  for(int i=0;i<sort_spec->size; i++) {
+    DataSortEl* ds = (DataSortEl*)sort_spec->FastEl(i);
+    DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
+    Variant cval = sda->GetValAsVar(0); // start at row 0
+    cur_vals[i] = cval;
+  }
+
+  int st_row = 0;
+  int row = 1;
+  while(row < ssrc.rows) {
+    for(;row < ssrc.rows; row++) {
+      bool new_val = false;
+      for(int i=0;i<sort_spec->size; i++) {
+	DataSortEl* ds = (DataSortEl*)sort_spec->FastEl(i);
+	DataArray_impl* sda = src->data.FastEl(ds->col_idx);
+	Variant cval = sda->GetValAsVar(row);
+	if(cval != cur_vals[i]) {
+	  new_val = true;
+	  cur_vals[i] = cval;
+	}
+      }
+      if(new_val) break;
+    }
+    int n_rows = row - st_row;
+    // now go through actual group ops!
+    dest->AddBlankRow();
+    for(int i=0;i<spec->size; i++) {
+      DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
+      if(ds->col_idx < 0) continue;
+      DataArray_impl* sda = src->data.FastEl(ds->col_idx);
+      DataArray_impl* dda = dest->data.FastEl(i); // index is spec index
+      if(ds->agg.op == Aggregate::GROUP) {
+	dda->SetValAsVar(sda->GetValAsVar(st_row), -1); // -1 = last row
+      }
+      else {
+	if(sda->valType() == taBase::VT_DOUBLE) {
+	  double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	  taBase::Ref(mat);
+	  dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+	  taBase::unRef(mat);
+	}
+      }
+    }
+    st_row = row;
+    row++;			// move on to next row!
+  }
   return true;
 }
 

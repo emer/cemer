@@ -60,6 +60,8 @@ template class TA_API taArray<double>;
   const double double_Array::blank = 0.0;
 template class TA_API taArray<String>;
   const String String_Array::blank = "";
+template class TA_API taArray<Variant>;
+  const Variant Variant_Array::blank;
 template class TA_API taArray<void*>;
   const voidptr voidptr_Array::blank = NULL;
 template class TA_API taPtrList<VPUnref>;

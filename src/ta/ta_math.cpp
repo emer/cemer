@@ -60,21 +60,8 @@ void Aggregate::Initialize() {
 void Aggregate::Destroy() {
 }
 
-const char* Aggregate::GetAggName() const {
-  switch(op) {
-  case MIN:	return "min";
-  case MAX:	return "max";
-  case ABS_MIN:	return "absmin";
-  case ABS_MAX:	return "absmax";
-  case SUM:	return "sum";
-  case PROD:	return "prd";
-  case MEAN:	return "mean";
-  case VAR:	return "mean";
-  case STDEV:	return "stdev";
-  case SEM:	return "sem";
-  case COUNT: 	return "cnt";
-  }
-  return "n/a";
+String Aggregate::GetAggName() const {
+  return GetTypeDef()->GetEnumString("Operator", op);
 }
 
 //////////////////////////

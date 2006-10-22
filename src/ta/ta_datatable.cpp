@@ -101,7 +101,9 @@ void DataArray_impl::Copy_NoData(const DataArray_impl& cp) {
 void DataArray_impl::CopyFromRow(int dest_row, const DataArray_impl& src, int src_row) {
   if(src.is_matrix) {
     taMatrix* mat = ((DataArray_impl&)src).GetValAsMatrix(src_row);
+    taBase::Ref(mat);
     SetValAsMatrix(mat, dest_row);
+    taBase::unRef(mat);
   }
   else {
     SetValAsVar(src.GetValAsVar(src_row), dest_row);
@@ -194,6 +196,11 @@ String DataArray_impl::GetDisplayName() const {
 taMatrix* DataArray_impl::GetValAsMatrix(int row) {
   taMatrix* ar = AR(); 
   return ar->GetFrameSlice_(row);
+}
+
+taMatrix* DataArray_impl::GetRangeAsMatrix(int st_row, int n_rows) {
+  taMatrix* ar = AR();
+  return ar->GetFrameRangeSlice_(st_row, n_rows);
 }
 
 const String DataArray_impl::GetValAsString_impl(int row, int cell) const {
@@ -337,6 +344,8 @@ void DataTable::Copy_(const DataTable& cp) {
 }
 
 void DataTable::Copy_NoData(const DataTable& cp) {
+  rows = 0;
+  save_data = cp.save_data;
   data.Copy_NoData(cp.data);
 }
 
@@ -481,6 +490,14 @@ taMatrix* DataTable::GetValAsMatrix(int col, int row) {
   int i;
   if (da &&  idx(row, da->rows(), i))
     return da->GetValAsMatrix(i);
+  else return NULL;
+}
+
+taMatrix* DataTable::GetRangeAsMatrix(int col, int st_row, int n_rows) {
+  DataArray_impl* da = GetColData(col);
+  int i;
+  if (da &&  idx(st_row, da->rows(), i))
+    return da->GetRangeAsMatrix(i, n_rows);
   else return NULL;
 }
 

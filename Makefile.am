@@ -96,6 +96,10 @@ linecount:
 changelog:
 	svn log --xml --verbose | xsltproc /home/mingus/opt/svn2cl-0.3/svn2cl.xsl - > ChangeLog
 
+# todo: need to make some dependency on this so it gets activated..
+${abs_top_builddir}/src/ta/ta_TA_type.h: ${abs_top_builddir}/src/maketa/maketa
+	$(MAKE) force_ta
+
 force_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/tamisc && ${MAKE} force_ta

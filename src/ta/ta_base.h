@@ -1602,6 +1602,27 @@ public:
   TA_BASEFUNS(SArg_Array);
 };
 
+class TA_API Variant_Array : public taArray<Variant> {
+  // #NO_UPDATE_AFTER
+public:
+  STATIC_CONST Variant blank; // #HIDDEN #READ_ONLY 
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = &TA_Variant; return FastEl_(i); }
+  void Initialize()	{err = 0.0;};
+  void Destroy()	{ };
+  TA_BASEFUNS(Variant_Array);
+  TA_ARRAY_FUNS(Variant_Array, Variant)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((Variant*)a) > *((Variant*)b)) rval=1; else if(*((Variant*)a) == *((Variant*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((Variant*)a) == *((Variant*)b)); }
+  String	El_GetStr_(const void* it) const { return ((Variant*)it)->toString(); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { Variant tmp = (Variant)val; *((Variant*)it) = tmp; }
+};
+TA_ARRAY_OPS(Variant_Array)
+
 
 typedef void* voidptr; // for maketa, which chokes on void* in a template
 class TA_API voidptr_Array : public taArray<voidptr> {
