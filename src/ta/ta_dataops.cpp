@@ -47,6 +47,12 @@ void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(col_name.empty()) {
     if(!quiet) taMisc::CheckError("Error in DataOpEl:",GetPath(),
 				  "col_name is empty");
+    rval = false;
+  }
+  if(col_idx < 0) {
+    if(!quiet) taMisc::CheckError("Error in DataOpEl:",GetPath(),
+				  "could not find", col_name,"in datatable");
+    rval = false;
   }
 }
 
@@ -100,6 +106,17 @@ String DataSortEl::GetDisplayName() const {
   return rval;
 }
 
+void DataSortEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(column) {
+    if(column->is_matrix) {
+      if(!quiet) taMisc::CheckError("Error in DataSortEl:",GetPath(),
+				  "cannot use matrix column to sort");
+      rval = false;
+    }
+  }
+}
+
 void DataSelectEl::Initialize() {
   rel = EQUAL;
 }
@@ -132,6 +149,17 @@ bool DataSelectEl::Eval(const Variant& val) {
   return false;
 }
 
+void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(column) {
+    if(column->is_matrix) {
+      if(!quiet) taMisc::CheckError("Error in DataSelectEl:",GetPath(),
+				    "cannot use matrix column to select");
+      rval = false;
+    }
+  }
+}
+
 String DataSelectSpec::GetDisplayName() const {
   return inherited::GetDisplayName() + " " +
     GetTypeDef()->GetEnumString("CombOp", comb_op);
@@ -142,6 +170,17 @@ void DataGroupEl::Initialize() {
 
 String DataGroupEl::GetDisplayName() const {
   return col_name + " " + agg.GetAggName();
+}
+
+void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(column) {
+    if((agg.op == Aggregate::GROUP) && (column->is_matrix)) {
+      if(!quiet) taMisc::CheckError("Error in DataGroupEl:",GetPath(),
+				  "cannot use matrix column to GROUP");
+      rval = false;
+    }
+  }
 }
 
 void DataGroupSpec::Initialize() {
@@ -155,7 +194,9 @@ void DataGroupSpec::Initialize() {
 bool taDataOps::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   // just copy and operate on dest
   dest->Reset();
+  String dnm = dest->name;
   *dest = *src;
+  dest->name = dnm;
   return Sort_impl(dest, spec);
 }
 
@@ -428,6 +469,20 @@ bool taDataOps::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, D
 void DataProg::Initialize() {
 }
 
+void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(!src_data) {
+    if(!quiet) taMisc::CheckError("Error in DataProg:",GetPath(),
+				  "src_data is NULL");
+    rval = false;
+  }
+  if(!dest_data) {
+    if(!quiet) taMisc::CheckError("Error in DataProg:",GetPath(),
+				  "dest_data is NULL");
+    rval = false;
+  }
+}
+
 /////////////////////////////////////////////////////////
 //   data sort prog
 /////////////////////////////////////////////////////////
@@ -451,10 +506,11 @@ String DataSortProg::GetDisplayName() const {
   return rval;
 }
 
-void DataSortProg::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  sort_spec.SetDataTable(src_data);
+void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  sort_spec.GetColumns(src_data);
   sort_spec.CheckConfig(quiet, rval);
+  sort_spec.ClearColumns();
 }
 
 const String DataSortProg::GenCssBody_impl(int indent_level) {
@@ -488,10 +544,11 @@ String DataSelectRowsProg::GetDisplayName() const {
   return rval;
 }
 
-void DataSelectRowsProg::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  select_spec.SetDataTable(src_data);
+void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  select_spec.GetColumns(src_data);
   select_spec.CheckConfig(quiet, rval);
+  select_spec.ClearColumns();
 }
 
 const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
@@ -525,10 +582,11 @@ String DataSelectColsProg::GetDisplayName() const {
   return rval;
 }
 
-void DataSelectColsProg::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  select_spec.SetDataTable(src_data);
+void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  select_spec.GetColumns(src_data);
   select_spec.CheckConfig(quiet, rval);
+  select_spec.ClearColumns();
 }
 
 const String DataSelectColsProg::GenCssBody_impl(int indent_level) {
@@ -562,10 +620,11 @@ String DataGroupProg::GetDisplayName() const {
   return rval;
 }
 
-void DataGroupProg::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  group_spec.SetDataTable(src_data);
+void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  group_spec.GetColumns(src_data);
   group_spec.CheckConfig(quiet, rval);
+  group_spec.ClearColumns();
 }
 
 const String DataGroupProg::GenCssBody_impl(int indent_level) {

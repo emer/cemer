@@ -22,7 +22,7 @@
 
 class TA_API DataOpEl : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
-  INHERITED(taBase)
+  INHERITED(taOBase)
 public:
   DataTableRef		data_table;
   // #READ_ONLY #NO_SAVE data table -- gets set dynamically
@@ -83,6 +83,8 @@ public:
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSortEl);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
 class TA_API DataSortSpec : public DataOpList {
@@ -124,6 +126,8 @@ public:
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSelectEl);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
 class TA_API DataSelectSpec : public DataOpList {
@@ -160,6 +164,8 @@ public:
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataGroupEl);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
 class TA_API DataGroupSpec : public DataOpList {
@@ -224,7 +230,8 @@ public:
   DataTableRef	    dest_data;	// destination (result) data for operation
 
   TA_SIMPLE_BASEFUNS(DataProg);
-
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
@@ -240,7 +247,7 @@ public:
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSortProg);
 protected:
-  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
 private:
@@ -258,7 +265,7 @@ public:
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
 protected:
-  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
 private:
@@ -276,7 +283,7 @@ public:
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSelectColsProg);
 protected:
-  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
 private:
@@ -294,7 +301,7 @@ public:
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataGroupProg);
 protected:
-  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
 private:
