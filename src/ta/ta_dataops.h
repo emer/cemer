@@ -190,8 +190,11 @@ class TA_API taDataOps : public taOBase {
   // ##CAT_Data collection of commonly-used datatable operations
 public:
   
+  static bool	GetDest(DataTable*& dest, DataTable* src, const String& suffix);
+  // if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix
+
   static bool	Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
-  // sort data from src into dest according to sorting specifications in spec; dest is completely overwritten
+  // #NULL_OK sort data from src into dest according to sorting specifications in spec; dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   static int 	Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
 			     DataSortSpec* spec);
@@ -200,12 +203,12 @@ public:
   // #IGNORE actually perform sort on data table using specs
 
   static bool	SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec);
-  // select rows of data from src into dest according to selection specifications in spec (all columns are copied)
+  // select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData)
   static bool	SelectCols(DataTable* dest, DataTable* src, DataOpList* spec);
   // select columns of data from src into dest according to list of columnns in spec (all rows are copied)
 
   static bool	Group(DataTable* dest, DataTable* src, DataGroupSpec* spec);
-  // group data from src into dest according to grouping specifications in spec
+  // #NULL_OK group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   static bool	Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // #IGNORE helper function to do grouping when there are no GROUP items
@@ -227,7 +230,7 @@ class TA_API DataProg : public ProgEl {
 INHERITED(ProgEl)
 public:
   DataTableRef	    src_data;	// source data for operation
-  DataTableRef	    dest_data;	// destination (result) data for operation
+  DataTableRef	    dest_data;	// #NULL_OK destination (result) data for operation (if NULL, a new one will be automatically created)
 
   TA_SIMPLE_BASEFUNS(DataProg);
 protected:

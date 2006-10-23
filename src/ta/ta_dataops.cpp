@@ -191,8 +191,18 @@ void DataGroupSpec::Initialize() {
 //   taDataOps
 /////////////////////////////////////////////////////////
 
+bool taDataOps::GetDest(DataTable*& dest, DataTable* src, const String& suffix) {
+  if(dest != NULL) return false;
+  taProject* proj = GET_OWNER(src, taProject);
+  DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
+  dest = dgp->NewEl(1, &TA_DataTable);
+  dest->name = src->name + "_" + suffix;
+  return true;
+}
+
 bool taDataOps::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   // just copy and operate on dest
+  GetDest(dest, src, "Sort");
   dest->Reset();
   String dnm = dest->name;
   *dest = *src;
@@ -267,6 +277,7 @@ bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
 }
 
 bool taDataOps::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
+  GetDest(dest, src, "SelectRows");
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
   spec->GetColumns(src);		// cache column pointers & indicies from names
@@ -310,6 +321,7 @@ bool taDataOps::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec
 }
 
 bool taDataOps::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
+  GetDest(dest, src, "SelectCols");
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
   dest->Reset();
@@ -337,6 +349,7 @@ bool taDataOps::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
 }
 
 bool taDataOps::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
+  GetDest(dest, src, "Group");
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
   dest->Reset();
@@ -394,10 +407,6 @@ bool taDataOps::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec)
 // todo: checkconfig that group is not matrix..
 
 bool taDataOps::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
-  // first sort by grouping critera
-//   taProject* proj = GET_OWNER(dest, taProject);
-//   DataTable* ssrc_tmp = proj->data.NewEl(1, &TA_DataTable);
-//   DataTable& ssrc = *ssrc_tmp;
   DataTable ssrc;
   taBase::Own(ssrc, NULL);	// activates initlinks, refs
   taDataOps::Sort(&ssrc, src, sort_spec);
@@ -476,11 +485,12 @@ void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
 				  "src_data is NULL");
     rval = false;
   }
-  if(!dest_data) {
-    if(!quiet) taMisc::CheckError("Error in DataProg:",GetPath(),
-				  "dest_data is NULL");
-    rval = false;
-  }
+  // NULL OK!
+//   if(!dest_data) {
+//     if(!quiet) taMisc::CheckError("Error in DataProg:",GetPath(),
+// 				  "dest_data is NULL");
+//     rval = false;
+//   }
 }
 
 /////////////////////////////////////////////////////////

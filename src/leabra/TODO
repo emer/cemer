@@ -5,7 +5,13 @@ docs..: add all float_RArray funs, for matricies.
 
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 
--------
+* add data guys to prog toolbox: maybe a 2nd panel??
+
+* DataJoin function/Prog
+
+* DataCalc guy as a loop prog with extra prog for adding row to table
+
+* taImageProc class w/ highvis stuff
 
 * extrew in trial monitor seems not to be working: 12ax demo
 
