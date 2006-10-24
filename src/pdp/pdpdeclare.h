@@ -60,12 +60,6 @@ class T3DataViewer;
 class Xform; // #IGNORE
 class Xform_List; // #IGNORE
 
-class PDPView;
-class TableView; //
-class TextTableView; //
-class GridTableView; //
-class GraphTableView; //
-
 
 // net_qt.h and netstru_so.h
 //TODO

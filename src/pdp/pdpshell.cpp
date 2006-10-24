@@ -29,7 +29,6 @@
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 # include "netstru_qtso.h"
-# include "pdplog_qtso.h" // TEMP, until moved
 
 # include <qapplication.h>
 # include <QWidgetList>
@@ -236,7 +235,8 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
   FOR_ITR_EL(Layer, lay, net->layers., li) {
     if(lay->layer_type == Layer::HIDDEN) continue;
     int lay_idx = 0;
-    DataArray_impl* ld = data_table->FindMakeColName
+    //DataArray_impl* ld = 
+    data_table->FindMakeColName
       (lay->name, lay_idx, DataTable::VT_FLOAT, 2,
        MAX(lay->geom.x,1), MAX(lay->geom.y,1));
   }
@@ -646,8 +646,8 @@ const iColor* ProjectBase::GetObjColor(TypeDef* td) {
     ) return the_colors.FastEl(ProjectBase::NETWORK)->color();
   else if(td->InheritsFrom(TA_Environment))
     return the_colors.FastEl(ProjectBase::ENVIRONMENT)->color();
-  else if (td->InheritsFrom(TA_TableView)) //note: formerly logs
-    return the_colors.FastEl(ProjectBase::PDPLOG)->color();
+//  else if (td->InheritsFrom(TA_TableView)) //note: formerly logs
+//    return the_colors.FastEl(ProjectBase::PDPLOG)->color();
   else if(td->InheritsFrom(TA_SchedProcess))
     return the_colors.FastEl(ProjectBase::SCHED_PROC)->color();
   else if(td->InheritsFrom(TA_Stat))
@@ -711,7 +711,7 @@ void ProjectBase::NewGraphView(DataTable* dt, T3DataViewFrame* fr)
     if (!t3vw) return; // shouldn't happen
     fr = t3vw->NewT3DataViewFrame();
   }
-  GraphTableView::NewGraphTableView(dt, fr); // discard result
+//TODO  GraphTableView::NewGraphTableView(dt, fr); // discard result
 }
 
 void ProjectBase::UpdateColors() {

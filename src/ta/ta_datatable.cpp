@@ -1069,6 +1069,74 @@ bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
   } else return false;
 }
 
+//////////////////////////
+//  DataTableViewSpec	//
+//////////////////////////
+
+void DataTableViewSpec::Initialize(){
+  data_base = &TA_DataTable;
+  visible = true;
+  def_font.pointSize = 8;
+}
+
+void DataTableViewSpec::Destroy(){
+  CutLinks();
+}
+
+void DataTableViewSpec::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(def_font, this);
+}
+
+void DataTableViewSpec::CutLinks() {
+  def_font.CutLinks();
+  inherited::CutLinks();
+}
+
+void DataTableViewSpec::Copy_(const DataTableViewSpec& cp) {
+  display_name = cp.display_name;
+  visible = cp.visible;
+  def_font = cp.def_font;
+}
+
+bool DataTableViewSpec::BuildFromDataTable(DataTable* dt){
+  if (!dt) return false;
+  SetData(dt); // note: ok if same
+  ReBuildFromDataTable();
+  return true;
+}
+
+void DataTableViewSpec::ReBuildFromDataTable_impl() {
+//TODO
+}
+
+
+//////////////////////////
+//  DataColMoniker	//
+//////////////////////////
+
+void DataColMoniker::Initialize(){
+  index = -1;
+  val_type = VT_FLOAT;
+  is_matrix = false;
+}
+
+bool DataColMoniker::Dump_QuerySaveMember(MemberDef* md) {
+  // we only save geom if a matrix
+  if (md->name == "cell_geom") 
+    return is_matrix;
+  else return inherited::Dump_QuerySaveMember(md);
+} 
+
+//////////////////////////
+//  DataColViewSpec	//
+//////////////////////////
+
+void DataColViewSpec::Initialize(){
+  data_base = &TA_DataArray_impl;
+}
+
+
 
 //////////////////////////////////
 //   DataTableModel		//

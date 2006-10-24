@@ -299,8 +299,8 @@ protected:
  deleted or being removed from the viewing hierarchy.
 */
 
-class TA_API ISelectable: public virtual IDataLinkClient { //
-INHERITED(IDataLinkClient)
+class TA_API ISelectable: public virtual IDataLinkProxy { //
+INHERITED(IDataLinkProxy)
 friend class ISelectableHost;
 public: // Interface Properties and Methods
   virtual MemberDef*	md() const = 0; // memberdef in parent, if any, of the selected item
@@ -1086,8 +1086,6 @@ public:
   virtual void		setCentralWidget(QWidget* widg); // sets the contents
   virtual bool		dirty() {return HasChanged();}
     // true if panel should not be replaced, but a new panel should be opened for the new item
-  taiDataLink*		link() {return (taiDataLink*)m_link;}
-  const taiDataLink*	link() const {return (taiDataLink*)m_link;}
   virtual bool		lockInPlace() {return false;}
     // true if panel should not be replaced or (except by user) unfocused
   virtual String	panel_type() const {return _nilString;}
@@ -1417,7 +1415,8 @@ protected slots:
 };
 
 
-class TA_API iTreeViewItem: public iTreeWidgetItem, public ISelectable {
+class TA_API iTreeViewItem: public iTreeWidgetItem, 
+  public virtual IDataLinkClient, public virtual ISelectable {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 INHERITED(iTreeWidgetItem)
 friend class iTreeView;
@@ -1481,6 +1480,7 @@ public: // IDataLinkClient interface
   override void		DataLinkDestroying(taDataLink* dl); // called by DataLink when it is destroying --
 
 public: // ISelectable interface
+  override taiDataLink*	link() const {return IDataLinkClient::link();}
   override MemberDef*	md() const {return m_md;}
   override String	view_name() const; // for members, the member name; for list items, the name if
   override ISelectableHost* host() const;

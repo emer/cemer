@@ -31,6 +31,11 @@ int taPlatform::cpuCount() const {
   return info.dwNumberOfProcessors;
 }
 
+int taPlatform::exec(const String& cmd) {
+#error "must implement taPlatform::exec"
+//unix  return system(cmd.chars());
+}
+
 String taPlatform::getTempPath() {
   String rval;
   DWORD retVal = GetTempPath(BUFSIZE, tmpbuf);

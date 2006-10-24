@@ -20,16 +20,18 @@
 #ifndef pdpshell_h
 #define pdpshell_h 1
 
+#include "ta_fontspec.h"
 #include "ta_project.h"
+#include "ta_program.h"
+
 #include "colorscale.h"
+
 #ifdef TA_GUI
-  #include "ta_seledit.h"
-  #include "ta_qtviewer.h"
-  #include "fontspec.h"
+# include "ta_seledit.h"
+# include "ta_qtviewer.h"
 #endif
 
 #include "netstru.h"
-#include "ta_program.h"
 
 //////////////////////////////////////////////////
 //			Wizard			//

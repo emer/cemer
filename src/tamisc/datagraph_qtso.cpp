@@ -343,7 +343,7 @@ void AxisView::UpdateAxis_Z(T3Axis* t3ax, AxisSpec* as) {
 // 	GraphLine	//
 //////////////////////////
 
-GraphLine* GraphLine::New(GraphColSpec* data) {
+GraphLine* GraphLine::New(GraphLineSpec* data) {
   GraphLine* rval = new GraphLine();
   data->AddDataView(rval);
   return rval;
@@ -569,9 +569,9 @@ bool GraphLine::DrawLastPoint() {
   if (!t3gl) return rval;
 
 
-  GraphColSpec* col_spec = this->col_spec(); //cache
+  GraphLineSpec* col_spec = this->col_spec(); //cache
   // y data is our own data, unless plotting strings, then we get from another col
-  if (col_spec->line_type == GraphColSpec::STRINGS) {
+  if (col_spec->line_type == GraphLineSpec::STRINGS) {
     da_y = (col_spec->string_coords) ? col_spec->string_coords->data_array : NULL;
     da_string = col_spec->data_array;
   } else {
@@ -635,13 +635,13 @@ void GraphLine::Redraw() {
 
   T3GraphLine* t3gl = node_so(); // cache
   if (!t3gl) return;
-  GraphColSpec* col_spec = this->col_spec(); //cache
+  GraphLineSpec* col_spec = this->col_spec(); //cache
   GraphSpec* gs = graph_spec(); // cache
 
   t3gl->clear();
   // if using any of the multi-color modes, need to set that, else set the default color
-  val_color_mode = ( (col_spec->line_type == GraphColSpec::TRACE_COLORS)
-    || (col_spec->line_type == GraphColSpec::VALUE_COLORS)
+  val_color_mode = ( (col_spec->line_type == GraphLineSpec::TRACE_COLORS)
+    || (col_spec->line_type == GraphLineSpec::VALUE_COLORS)
   );
   if (!val_color_mode) {
     // default color of line is color of axis
@@ -652,7 +652,7 @@ void GraphLine::Redraw() {
 
 
   // y data is our own data, unless plotting strings, then we get from another col
-  if (col_spec->line_type == GraphColSpec::STRINGS) {
+  if (col_spec->line_type == GraphLineSpec::STRINGS) {
     da_y = (col_spec->string_coords) ? col_spec->string_coords->data_array : NULL;
     da_string = col_spec->data_array;
   } else {
@@ -719,7 +719,7 @@ void GraphLine::ReInit_impl() {
 void GraphLine::Render_impl() {
   T3GraphLine* t3gl = node_so(); // cache
   if (!t3gl) return;
-  GraphColSpec* col_spec = this->col_spec(); //cache
+  GraphLineSpec* col_spec = this->col_spec(); //cache
   int line_style = col_spec->line_style;
   //precaution: make sure stays in range of so object styles
   if (line_style < T3GraphLine::LineStyle_MIN)
@@ -741,7 +741,7 @@ void GraphLine::Render_pre() {
 bool GraphLine::RenderPoint(int row) {
   bool rval = false;
   T3GraphLine* t3gl = node_so(); // cache; note: caller checked
-  GraphColSpec* col_spec = this->col_spec(); //cache
+  GraphLineSpec* col_spec = this->col_spec(); //cache
   GraphSpec* gs = this->graph_spec(); // cache
   YAxisSpec* y_axis_spec = this->y_axis_spec();
 
@@ -774,14 +774,14 @@ bool GraphLine::RenderPoint(int row) {
   const iColor* col = NULL; // only used for color modes
 
   // next section has major subsections depending on the overall type of Y graph this is
-  if ((col_spec->line_type == GraphColSpec::LINE)
-    || (col_spec->line_type == GraphColSpec::LINE_AND_POINTS)
-    || (col_spec->line_type == GraphColSpec::TRACE_COLORS)
-    || (col_spec->line_type == GraphColSpec::VALUE_COLORS)
+  if ((col_spec->line_type == GraphLineSpec::LINE)
+    || (col_spec->line_type == GraphLineSpec::LINE_AND_POINTS)
+    || (col_spec->line_type == GraphLineSpec::TRACE_COLORS)
+    || (col_spec->line_type == GraphLineSpec::VALUE_COLORS)
   ) {
-    if (col_spec->line_type == GraphColSpec::TRACE_COLORS) {
+    if (col_spec->line_type == GraphLineSpec::TRACE_COLORS) {
       col = GetTraceColor(trace_idx);
-    } else if (col_spec->line_type == GraphColSpec::VALUE_COLORS) {
+    } else if (col_spec->line_type == GraphLineSpec::VALUE_COLORS) {
       col = GetValueColor(pt.y);
     }
     // need to do a "move to" if just starting, starting a new trace (trace mode), or
@@ -793,23 +793,23 @@ bool GraphLine::RenderPoint(int row) {
       // if doing true tracing, update trace count and update z axis
       if (trace_idx >= 0) rval = true;
       ++trace_idx;
-      if ((col_spec->line_type == GraphColSpec::TRACE_COLORS)
-        || (col_spec->line_type == GraphColSpec::VALUE_COLORS)
+      if ((col_spec->line_type == GraphLineSpec::TRACE_COLORS)
+        || (col_spec->line_type == GraphLineSpec::VALUE_COLORS)
       ) {
         t3gl->moveTo(coord, (T3Color)(*col));
       } else {
         t3gl->moveTo(coord);
       }
     } else {
-      if ((col_spec->line_type == GraphColSpec::TRACE_COLORS)
-        || (col_spec->line_type == GraphColSpec::VALUE_COLORS)
+      if ((col_spec->line_type == GraphLineSpec::TRACE_COLORS)
+        || (col_spec->line_type == GraphLineSpec::VALUE_COLORS)
       ) {
         t3gl->lineTo(coord, (T3Color)(*col));
       } else {
         t3gl->lineTo(coord);
       }
     }
-  } else if (col_spec->line_type == GraphColSpec::STRINGS) {
+  } else if (col_spec->line_type == GraphLineSpec::STRINGS) {
     String str;
     if (gs->data_table->idx(row, da_string->AR()->size, i_y)) {
       str = da_string->GetValAsString(i_y);
@@ -821,13 +821,13 @@ bool GraphLine::RenderPoint(int row) {
   }
 
   // render marker, if any
-  if ((col_spec->line_type == GraphColSpec::POINTS) ||
-      (col_spec->line_type == GraphColSpec::LINE_AND_POINTS) ||
-      (col_spec->line_type == GraphColSpec::THRESH_POINTS)
+  if ((col_spec->line_type == GraphLineSpec::POINTS) ||
+      (col_spec->line_type == GraphLineSpec::LINE_AND_POINTS) ||
+      (col_spec->line_type == GraphLineSpec::THRESH_POINTS)
   ) {
     int point_style;
     // no point drawn if thresholded and not above thresh
-    if ((col_spec->line_type == GraphColSpec::THRESH_POINTS)
+    if ((col_spec->line_type == GraphLineSpec::THRESH_POINTS)
       && (pt.y < col_spec->thresh)) goto done;
 
     point_style = col_spec->point_style;
@@ -1120,13 +1120,13 @@ void GraphView::BuildAll() {
     children.Add(av); // autoadds to y_axis list
     // lines for this axis
     taLeafItr j;
-    GraphColSpec* col;
-    FOR_ITR_EL(GraphColSpec, col, gvs->, j) {
+    GraphLineSpec* col;
+    FOR_ITR_EL(GraphLineSpec, col, gvs->, j) {
       //must be for this axis, visible, and be a graph line
       if ( (col->axis_spec != as)
         || (!col->visible)
-        || (!((col->col_type == GraphColSpec::AUTO) || (col->col_type == GraphColSpec::Y_AXIS)
-           || (col->col_type == GraphColSpec::Y_DATA)))
+        || (!((col->col_type == GraphLineSpec::AUTO) || (col->col_type == GraphLineSpec::Y_AXIS)
+           || (col->col_type == GraphLineSpec::Y_DATA)))
       ) continue;
       GraphLine* gl = GraphLine::New(col);
       gl->x_axis = x_axis;
@@ -1622,7 +1622,7 @@ void iAxisButton::drawButton(QPainter *p) {
 #define MIN_GB_WD (GBS_LINECOL_WD + GBS_VISCOL_WD + GBS_AXISCOL_WD + MIN_GBS_NAMECOL_WD)
 
 
-iGraphButton::iGraphButton(int field_, GraphColSpec* line_, AxisSpec* axis_, QWidget* parent)
+iGraphButton::iGraphButton(int field_, GraphLineSpec* line_, AxisSpec* axis_, QWidget* parent)
 :inherited(parent)
 {
   field = field_;
@@ -1732,7 +1732,7 @@ void iGraphButton::configure() {
   --updating;
 }
 
-void iGraphButton::SetColAxis(int field_, GraphColSpec* col_, AxisSpec* axis_, bool force) {
+void iGraphButton::SetColAxis(int field_, GraphLineSpec* col_, AxisSpec* axis_, bool force) {
   if (!force && (field == field_) && (line == col_) && (axis == axis_)) return;
   field = field_;
   line = col_;
@@ -1847,10 +1847,10 @@ void iGraphButton::paintLine(QPainter& p, const QRect& r) {
   bool draw_line = (line && (line->is_line()));
   if (draw_line) {
     switch (line->line_style) {
-    case GraphColSpec::SOLID: ps = SolidLine; break;
-    case GraphColSpec::DOT: ps = DotLine; break;
-    case GraphColSpec::DASH: ps = DashLine; break;
-    case GraphColSpec::DASH_DOT: ps = DashDotLine; break;
+    case GraphLineSpec::SOLID: ps = SolidLine; break;
+    case GraphLineSpec::DOT: ps = DotLine; break;
+    case GraphLineSpec::DASH: ps = DashLine; break;
+    case GraphLineSpec::DASH_DOT: ps = DashDotLine; break;
     default: ps = SolidLine; break; // shouldn't happen
     }
     color = line->def_color();
@@ -2017,10 +2017,10 @@ void iGraphButtons::Rebuild() {
   if (m_graph) {
     taLeafItr itr;
     int i = 0;
-    GraphColSpec* spec;
+    GraphLineSpec* spec;
     AxisSpec* axis;
     iGraphButton* but;
-    FOR_ITR_EL(GraphColSpec, spec, m_graph->, itr) {
+    FOR_ITR_EL(GraphLineSpec, spec, m_graph->, itr) {
       if (spec->is_axis()) {
         axis = spec->axis_spec;
       } else {

@@ -21,7 +21,7 @@
 
 #include "tdgeometry.h"
 #include "datatable.h"
-#include "datagraph.h"
+//#include "datagraph.h"
 #include "colorscale.h"
 #ifdef TA_GUI
 //#include "fontspec.h"
@@ -45,8 +45,8 @@ template class TAMISC_API DataArray<byte_Matrix>;
 template class TAMISC_API taGroup<DA_ViewSpec>; //
 
 // datagraph.h:
-template class TAMISC_API taList<YAxisSpec>; //
-template class TAMISC_API taList<GraphletSpec>; //
+//template class TAMISC_API taList<YAxisSpec>; //
+//template class TAMISC_API taList<GraphletSpec>; //
 
 //colorscale.h:
 template class TAMISC_API taList<RGBA>;

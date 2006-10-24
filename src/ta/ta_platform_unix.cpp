@@ -31,12 +31,9 @@ const char    taPlatform::pathSep = '/';
 
 int taPlatform::cpuCount() {
 #ifdef TA_OS_MAC
-  int mib[2];
+  int mib[2] = {CTL_HW, HW_NCPU};
   int ncpu;
-  size_t len;
-  mib[0] = CTL_HW;
-  mib[1] = HW_NCPU;
-  len = sizeof(ncpu);
+  size_t len = sizeof(ncpu);
   sysctl(mib, 2, &ncpu, &len, NULL, 0);
   return ncpu;
 #else

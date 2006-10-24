@@ -197,8 +197,8 @@ void T3DataView::DataStructUpdateEnd_impl() {
   Render();
 }
 
-void T3DataView::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
-  inherited::DataDataChanged(dl, dcr, op1, op2);
+void T3DataView::DataDataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataDataChanged(dcr, op1, op2);
   // if we have started a batch op, then Reset, since we will for sure eventually
   if ((dcr == DCR_STRUCT_UPDATE_BEGIN) && (dbu_cnt() == 1))
     Reset();

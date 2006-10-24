@@ -30,7 +30,6 @@
 #include "ta_qt.h"
 #include "ta_qtgroup.h"
 #include "netstru_qtso.h"
-#include "pdplog_qtso.h"
 #endif
 
 #ifdef DMEM_COMPILE
@@ -3290,7 +3289,7 @@ void Layer::UpdateAfterEdit() {
 void Layer::ApplyExternal(taMatrix* data, Unit::ExtType ext_flags,
     Random* ran, const PosTwoDCoord* offset) 
 {
-  // note: when use LayerWriters, we typically always just get a single frame of \
+  // note: when use LayerWriters, we typically always just get a single frame of 
   // the exact dimensions, and so ignore 'frame'
   if (!data) return;
   // check correct geom of data
@@ -5279,7 +5278,7 @@ void Network::ReadWeights(istream& strm) {
   epoch = (int)taMisc::LexBuf;
   c = taMisc::read_alnum_noeol(strm); // get #ReInit
   c = taMisc::read_till_eol(strm); // get re_init
-  int re_init = (int)taMisc::LexBuf;
+//nn  int re_init = (int)taMisc::LexBuf;
 
   Layer* l;
   taLeafItr i;

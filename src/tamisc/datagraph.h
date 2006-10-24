@@ -39,7 +39,6 @@
 */
 
 // forwards this file
-class GraphColSpec;
 class AxisSpec;
 class XAxisSpec;
 class YAxisSpec;
@@ -81,19 +80,11 @@ class GraphSpec;
 */
 
 
-class TAMISC_API GraphColSpec: public DA_ViewSpec {
-  // #BUTROWS_1 data-array view spec for graph-based display
-INHERITED(DA_ViewSpec)
-public:
-  enum ColumnType { // column type hints for graphing
-    AUTO,			// value on initialization, typically becomes y data
-    X_AXIS,			// column contains the X data -- only one col may have this
-    Y_AXIS,			// column contains Y data to be plotted/graphed, and will be a Y axis
-    Y_DATA,			// column contains Y data to be plotted/graphed, will use another Y axis
-    Z_AXIS,			// column contains the Z data (3D graphs only) -- only one col may have this
-    HIDE			// don't show on graph by default
-  };
 
+class TAMISC_API GraphLineSpec: public taDataView {
+  // specifies one graph line
+INHERITED(taDataView)
+public:
   enum LineType {
     LINE,			// just a line, no pts
     POINTS,			// just pts, no line
@@ -135,7 +126,6 @@ public:
   };
 
   GraphSpec*	graph_spec;	// #READ_ONLY #NO_SAVE which (root)graph do I belong in (set in InitLinks)
-  ColumnType	col_type; // column type for graphing; starts as AUTO, set elsewise during config
   RGBA		line_color;	 // color of the line
 
   // spec attributes used directly by GraphLine (for cols that are y data)
@@ -143,52 +133,52 @@ public:
   LineStyle	line_style;	// the style in which the line is drawn
   float		line_width;	// #DEF_0 width of the line in pixels; 0.0f means use default
   PointStyle	point_style;	// the style in which the points are drawn
-//nuy  Modulo	point_mod;      // when to skip the drawing of point
   bool		negative_draw;	// continue same line when X value resets in negative axis direction?
   float		thresh;		// threshold for THRESH_POINTS line style
-//nn??  FixedMinMax	range;		// display range of the axis data -- also copied to primary axis
-
-
-//  GraphColSpec* axis_spec;  // #NO_NULL spec which indicates the axis to use
-  AxisSpec* 	axis_spec;  // #READ_ONLY #NO_SAVE associates this col with axis -- ALTER ONLY VIA SetAxis()
-  GraphColSpec* string_coords;  // column that contains vertical coordinate values for positioning String data labels
+  GraphLineSpec* string_coords;  // column that contains vertical coordinate values for positioning String data labels
 
   const iColor*	def_color() const; // default color of lines
-  bool		is_axis() const; // true if this col is used for an axis
-  bool		is_line() const; // true if it is a line that will or can be drawn on the graph (ydata etc.)
+  inline GraphSpec* graphSpec() const {return parent();}
+  DATAVIEW_PARENT(GraphSpec) // GraphSpec* parent() const;
+
   bool		is_string() const; // true if data is string
 
-  bool		setVisible(bool value); // for calling from UI -- won't set true if doesn't make sense; returns resultant value
   virtual void	GpShareAxis();	// #BUTTON #CONFIRM make every element in this group share the same Y axis, which is the first in the group
   virtual void	GpSepAxes();	// #BUTTON #CONFIRM make every element in this group have its own Y axis
 
-  bool		BuildFromDataArray(DataArray_impl* tda=NULL);
   virtual void 	FindStringCoords(); // find previous float_Data for default string coordinates
 
-  virtual void	SetAxis(AxisSpec* as); // binds this column to the axis -- also clears out reciprocal ptr, if any
-  virtual void	SetStringCoords(GraphColSpec* as) {
+  virtual void	SetStringCoords(GraphLineSpec* as) {
     taBase::SetPointer((TAPtr*)&string_coords, as);
   }
 
-  void 	Initialize();
-  void	Destroy();
   void 	InitLinks();
   void  CutLinks();
   void  UpdateAfterEdit();
-  void Copy_(const GraphColSpec& cp);
-  COPY_FUNS(GraphColSpec,DA_ViewSpec);
-  TA_BASEFUNS(GraphColSpec);
+  void Copy_(const GraphLineSpec& cp);
+  COPY_FUNS(GraphLineSpec, inherited);
+  TA_BASEFUNS(GraphLineSpec);
+private:
+  void 	Initialize();
+  void	Destroy();
+};
+
+class TAMISC_API GraphLineSpec_List: public DataView_List {
+INHERITED(DataView_List)
+public:
+
+  
+  TA_DATAVIEWLISTFUNS(GraphLineSpec_List, inherited, GraphLineSpec)
+private:
+  void 	Initialize() {SetBaseType(&TA_GraphLineSpec);}
+  void	Destroy() {}
 };
 
 
-class TAMISC_API AxisSpec: public taNBase { // #VIRT_BASE #NO_INSTANCE specs of the axis on a graph, name is cloned from primary col
-INHERITED(taNBase)
+class TAMISC_API AxisSpec: public taDataView { // #VIRT_BASE specs of the axis on a graph, name is cloned from primary col
+INHERITED(taDataView)
 public:
   enum Axis {X, Y, Z}; // invariant, used internally
-
-  GraphSpec*		graph_spec;	// #READ_ONLY #NO_SAVE which graph do I belong in (set in InitLinks)
-  GraphColSpec* 	spec;		// col spec for this axis (unless DataSource=TRACE type)
-  int			spec_cnt;	// #READ_ONLY number of specs using this axis (>1 means is shared)
 
   MinMax		range;		// display range of the axis data
   MinMax		true_range;     // actual min and max of data (including fixed range) 
@@ -196,17 +186,12 @@ public:
   FixedMinMax		fixed_range;	// fixed range: optionally constrained range values
   int          		n_ticks;	// #DEF_10 number of ticks desired
 
-//nn  AxisSpec*		x_axis;		// the x axis
-//  int			n_shared;	// number of lines sharing same Y axis
-//  int			n_shared_tot;	// total number of cols sharing axis, including non-visible lines!
-//  int			share_i;	// index within set of shared Y axis points
-
   virtual Axis		axis() const {return X;}
   virtual const iColor*	def_color() const; // default color of axis -- depends on type of axis
+  inline GraphSpec*	graphSpec() const {return parent();}
+  DATAVIEW_PARENT(GraphSpec) // GraphSpec* parent() const;
 
   virtual bool 		InitUpdateAxis(bool init) {return false;}  // do an update range from data, update axis if yest
-
-  virtual void		Config(GraphColSpec* spec = NULL); // called after create or update
 
   virtual void		InitData(); // partial initializer called internally and externally in several places
   virtual void		InitRange(float first, float last);
@@ -218,7 +203,7 @@ public:
   override void		InitLinks();
   override void		CutLinks();
   void Copy_(const AxisSpec& cp);
-  COPY_FUNS(AxisSpec, taNBase);
+  COPY_FUNS(AxisSpec, inherited);
   TA_BASEFUNS(AxisSpec)
 protected:
   static MinMax		temp_range;     // #IGNORE scratch pad
@@ -240,7 +225,7 @@ public:
 
   XAxisType		axis_type;
 
-  override void		Config(GraphColSpec* spec = NULL); // called after create or update
+  override void		Config(GraphLineSpec* spec = NULL); // called after create or update
   override bool 	InitUpdateAxis(bool init);
 
   void Copy_(const XAxisSpec& cp);
@@ -277,7 +262,7 @@ public:
 
   override Axis		axis() const {return Z;}
 
-//nn  override void		Config(GraphColSpec* spec = NULL); // called after create or update
+//nn  override void		Config(GraphLineSpec* spec = NULL); // called after create or update
   override bool 	InitUpdateAxis(bool init);
 
   void Copy_(const ZAxisSpec& cp);
@@ -289,16 +274,16 @@ private:
 };
 
 
-class TAMISC_API YAxisSpec_List: public taList<YAxisSpec> {
-INHERITED(taList<AxisSpec>)
+class TAMISC_API YAxisSpec_List: public DataView_List {
+INHERITED(DataView_List)
 public:
-  YAxisSpec*		FindBySpec(const GraphColSpec* spec, int* idx = NULL);
+  YAxisSpec*		FindBySpec(const GraphLineSpec* spec, int* idx = NULL);
     // find an axis with given spec, optionally returning its index as well (NULL/-1 if not found)
-  TA_BASEFUNS(YAxisSpec_List)
+  TA_DATAVIEWLISTFUNS(YAxisSpec_List, DataView_List, YAxisSpec)
 
 private:
-  void			Initialize() {SetBaseType(&TA_YAxisSpec);}
-  void			Destroy() {}
+  void Initialize() {SetBaseType(&TA_YAxisSpec);}
+  void Destroy() {}
 };
 
 
@@ -325,9 +310,9 @@ private:
 };
 
 
-class TAMISC_API GraphSpec : public DT_ViewSpec {
+class TAMISC_API GraphSpec : public DataTableViewSpec {
   // controls display of datatable in a graph format
-INHERITED(DT_ViewSpec)
+INHERITED(DataTableViewSpec)
 public:
   enum GraphType { // overall type of the graph
     TWOD,		// #LABEL_2D standard 2d graph
@@ -372,6 +357,7 @@ public:
   XAxisSpec		x_axis_spec; // #BROWSE spec info of the x axis -- is shared by all cols
   ZAxisSpec		z_axis_spec;
     //  #BROWSE spec info of the z axis (3D only) -- is shared by all cols
+  GraphLineSpec_List	line_specs;
 
   AxisSharing		axis_sharing; // draw each group of lines sharing a Y axis using separate graphs
   PosTwoDCoord		graph_layout; 	// arrangement of graphs for separate graphs
@@ -391,14 +377,12 @@ public:
   bool			isUpdatingChildren() {return updating_children;}
 
   virtual void		AssertGraphlets();
-  virtual YAxisSpec*	FindYAxis(GraphColSpec* spec);
+  virtual YAxisSpec*	FindYAxis(GraphLineSpec* spec);
     // given a col spec, find an associated axis
-  virtual YAxisSpec*	MakeYAxis(GraphColSpec* spec);
+  virtual YAxisSpec*	MakeYAxis(GraphLineSpec* spec);
     // given a col spec, make an associated axis -- should not already exist for spec
-  virtual YAxisSpec*	FindMakeYAxis(GraphColSpec* spec);
+  virtual YAxisSpec*	FindMakeYAxis(GraphLineSpec* spec);
     // given a col spec, find and config associated axis, else make axis
-  virtual bool		RemoveAxisBySpec(GraphColSpec* spec);
-    // removes axis, if any, for spec
   virtual char*	ColorName(int color_no);
   // #MENU #MENU_ON_Actions #USE_RVAL gets color name for given line number for color_type
   virtual int 	ColorCount();		 // number of colors in palatte
@@ -406,13 +390,13 @@ public:
   // sets background color based on color type
   virtual void	UpdateLineFeatures(bool visible_only=true);
   // #MENU #MENU_ON_Actions apply specified sequences to update line features
-  virtual void	ApplyOneFeature(GraphColSpec* dagv, SequenceType seq, int val,
+  virtual void	ApplyOneFeature(GraphLineSpec* dagv, SequenceType seq, int val,
 				bool& set_ln, bool& set_pt);
   // #IGNORE
 
   virtual void	SetLineWidths(float line_width);
   // #MENU set the line widths of all lines to this value
-  virtual void	SetLineType(GraphColSpec::LineType line_type);
+  virtual void	SetLineType(GraphLineSpec::LineType line_type);
   // #MENU set all line types to given type
 
   virtual void	ShareAxes();
@@ -435,7 +419,7 @@ public:
   virtual void		ReBuildAxes();
     // builds or rebuilds axes when cols change (called from BFDT and RBFDT)
 
-  virtual void	UpdateAfterEdit_ColSpec(GraphColSpec* cs); // delegated from the ColSpec
+  virtual void	UpdateAfterEdit_ColSpec(GraphLineSpec* cs); // delegated from the ColSpec
   virtual void	UpdateAfterEdit_AxisSpec(AxisSpec* as); // delegated from the AxisSpec
 
   void	UpdateAfterEdit();
@@ -444,12 +428,12 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const GraphSpec& cp);
-  COPY_FUNS(GraphSpec, DT_ViewSpec);
+  COPY_FUNS(GraphSpec, inherited);
   TA_BASEFUNS(GraphSpec);
 protected:
   int 			updating_children; // non-zero when we are in the UAE called from children
   void 			ReBuildAxes_DoPlotRows();
-  bool			ReBuildAxes_GetXZAxis(GraphColSpec::ColumnType col_type, AxisSpec& axis,
+  bool			ReBuildAxes_GetXZAxis(AxisSpec::Axis axis, AxisSpec& axis,
     bool force = true); // called from RebuildAxes to get an X or Z axis
   virtual void		UpdateLineFeatures_impl(bool visible_only); // #IGNORE
 };
@@ -461,8 +445,8 @@ class TAMISC_API Graph: public taNBase {
 typedef taNBase inherited;
 #endif
 public:
-  static float_Data* 	GetYData(GraphColSpec* spec, String_Data*& str_ar); // get y-axis data array for this column (and string array if string)
-  static void		SetAxisFromSpec(AxisSpec* ax, GraphColSpec* spec);
+  static float_Data* 	GetYData(GraphLineSpec* spec, String_Data*& str_ar); // get y-axis data array for this column (and string array if string)
+  static void		SetAxisFromSpec(AxisSpec* ax, GraphLineSpec* spec);
 
   Axis_List		axes;	      	// all the axes (x and y) -- note: autoset when added to children
   int			x_axis_index;	// index of xaxis in array; -1 if none/not found

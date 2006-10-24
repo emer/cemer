@@ -75,7 +75,7 @@ public:
     siz_mask		= 0x00F
   };
 
-  enum FontSpec {
+  enum FontSpecEnum {
     //choose 1:
     defFontSize		= 0x000, // medium, or inherit from parent (as applicable)
     fonSmall		= 0x001,

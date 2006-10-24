@@ -16,9 +16,11 @@
 #ifndef TA_DATATABLE_H
 #define TA_DATATABLE_H
 
+#include "ta_fontspec.h"
 #include "ta_group.h"
 #include "ta_matrix.h"
 #include "ta_data.h"
+#include "ta_viewspec.h"
 #include "ta_TA_type.h"
 
 #ifndef __MAKETA__
@@ -704,6 +706,64 @@ protected:
 private:
   void	Initialize() {}
   void	Destroy() {}
+};
+
+
+class TA_API DataTableViewSpec: public ViewSpec {
+  // base class for a viewspec of a datatable
+INHERITED(ViewSpec)
+public:
+  String		display_name;	// name used in display
+  bool	        	visible; 	// visibility flag
+  FontSpec		def_font; // default font/size for text
+  
+  DataTable*		dataTable() const {return (DataTable*)m_data.ptr();}
+  
+  virtual bool		BuildFromDataTable(DataTable* dt);
+    // #MENU #NO_NULL build the spec from the given table, erasing previous spec
+  void			ReBuildFromDataTable() {ReBuildFromDataTable_impl();}
+    // #MENU conservatively rebuild the spec from the current table
+  
+  void	InitLinks();
+  void	CutLinks();
+  void Copy_(const DataTableViewSpec& cp);
+  COPY_FUNS(DataTableViewSpec, ViewSpec)
+  TA_DATAVIEWFUNS(DataTableViewSpec, inherited) //
+protected:
+  virtual void	ReBuildFromDataTable_impl();
+private:
+  void Initialize();
+  void Destroy();
+};
+
+class TA_API DataColMoniker: public taBase {
+  // #INLINE class for referencing a datacolumn so that we can get it later based on name, type, etc.
+INHERITED(taBase)
+public:
+  int			index; 
+  String		name;
+  ValType 		val_type;
+  bool			is_matrix;
+  MatrixGeom		cell_geom;
+  
+  override bool	Dump_QuerySaveMember(MemberDef* md); 
+  TA_BASEFUNS(DataColMoniker)
+private:
+  void Initialize();
+  void Destroy() {}
+};
+
+
+class TA_API DataColViewSpec: public taDataView {
+  // base class for any viewspec element based on a datatable col
+INHERITED(taDataView)
+public:
+  DataArray_impl*	dataCol() const {return (DataArray_impl*)m_data.ptr();}
+  
+  TA_DATAVIEWFUNS(DataColViewSpec, inherited)
+private:
+  void Initialize();
+  void Destroy() {}
 };
 
 

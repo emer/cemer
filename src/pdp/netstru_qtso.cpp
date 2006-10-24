@@ -348,7 +348,7 @@ void UnitGroupView::BuildAll() {
     if (!unit) break; // there won't be any more units
 
     UnitView* uv = new UnitView();
-    unit->AddDataView(uv);
+    uv->SetData(unit);//obsunit->AddDataView(uv);
     children.Add(uv);
   }
 
@@ -634,7 +634,7 @@ void LayerView::BuildAll() {
   if (lay->geom.z == 1) { // single ugrp
     ugrp = &(lay->units);
     ugv = new UnitGroupView;
-    ugrp->AddDataView(ugv);
+    ugv->SetData(ugrp);//obs ugrp->AddDataView(ugv);
     ugrps.Add(ugv);  // no side-effects -- better to add to this first
     children.Add(ugv);
     ugv->BuildAll();
@@ -646,7 +646,7 @@ void LayerView::BuildAll() {
       if (!ugrp) break; // maybe not built yet???
 
       ugv = new UnitGroupView;
-      ugrp->AddDataView(ugv);
+      ugv->SetData(ugrp);//obs ugrp->AddDataView(ugv);
       ugrps.Add(ugv);  // no side-effects -- better to add to this first
       children.Add(ugv);
       ugv->BuildAll();
@@ -797,7 +797,7 @@ void PrjnView::Reset_impl() {
 NetView* NetView::New(T3DataViewFrame* viewer, Network* net) {
   // create NetView
   NetView* nv = new NetView();
-  net->AddDataView(nv);
+  nv->SetData(net);//obs net->AddDataView(nv);
   viewer->AddView(nv);
   return nv;
 }
@@ -871,7 +871,7 @@ void NetView::BuildAll() { // populates everything
   taLeafItr i;
   FOR_ITR_EL(Layer, lay, net()->layers., i) {
     LayerView* lv = new LayerView();
-    lay->AddDataView(lv);
+    lv->SetData(lay);//obs lay->AddDataView(lv);
     //nn layers.Add(lv); // no side-effects -- better to add to this first
     children.Add(lv);
     lv->BuildAll();
@@ -881,7 +881,7 @@ void NetView::BuildAll() { // populates everything
     taLeafItr j;
     FOR_ITR_EL(Projection, prjn, lay->projections., j) {
       PrjnView* pv = new PrjnView();
-      prjn->AddDataView(pv);
+      pv->SetData(prjn);//obs prjn->AddDataView(pv);
       //nn prjns.Add(pv); // no side-effects -- better to add to this first
       children.Add(pv);
     }

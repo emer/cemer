@@ -141,6 +141,7 @@ taMatrix* ImageReader::GetDataMatrix_impl(int chan) {
     default: return NULL;
     }
   }*/
+  return NULL;
 }
 
 void ImageReader::ReadClose_impl() {

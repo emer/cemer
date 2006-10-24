@@ -21,34 +21,23 @@
 // 	DA Graph View Specs	//
 //////////////////////////////////
 
-void GraphColSpec::Initialize() {
-  col_type = AUTO;
-  graph_spec = NULL;
+void GraphLineSpec::Initialize() {
   line_type = LINE;
   line_style = LineStyle_MIN;
   line_width = 0.0f;
   point_style = PointStyle_MIN;
-  axis_spec = NULL;
   negative_draw = false;
 
   thresh = .5f;
   string_coords = NULL;
 }
 
-void GraphColSpec::Destroy() {
-  // also delete an associated axis
-  GraphSpec* own = GET_MY_OWNER(GraphSpec);
-  if (own) {
-    own->RemoveAxisBySpec(this);
-  }
-  SetAxis(NULL); // maintains integrity of ref cnts
+void GraphLineSpec::Destroy() {
   CutLinks();
 }
 
-void GraphColSpec::InitLinks(){
+void GraphLineSpec::InitLinks(){
   inherited::InitLinks();
-  graph_spec = GET_MY_OWNER(GraphSpec);
-  if (graph_spec) graph_spec = (GraphSpec*)graph_spec->root_gp; //just to be safe
 //nuy  taBase::Own(range, this);
   taBase::Own(line_color, this);
 /*nuke  if (taMisc::gui_active) {
@@ -64,83 +53,52 @@ void GraphColSpec::InitLinks(){
   if(myowner != NULL) myowner = GET_OWNER(myowner,GraphSpec);
   if(myowner != NULL) {
     myowner = GET_MY_OWNER(DT_ViewSpec);
-    //TODO: verify this! may not be equivalent to v32 which had set to the first col
+    //TODO(3.5): verify this! may not be equivalent to v32 which had set to the first col
     SetAxis(myowner->axes.SafeEl(0));
   } */
 }
 
-void GraphColSpec::CutLinks(){
+void GraphLineSpec::CutLinks(){
   taBase::DelPointer((TAPtr*)&string_coords);
 //nuy  point_mod.CutLinks();
   line_color.CutLinks();
 //nuy  range.CutLinks();
-  graph_spec = NULL;
   inherited::CutLinks();
 }
 
-void GraphColSpec::Copy_(const GraphColSpec& cp){
+void GraphLineSpec::Copy_(const GraphLineSpec& cp){
 //nuy  range = cp.range;
-  col_type = cp.col_type;
   line_color = cp.line_color;
-/*nuke  if (taMisc::gui_active) {
-    ta_color.SetColor(line_color.r,line_color.g,line_color.b,line_color.a);
-  } */
   line_type = cp.line_type;
   line_style = cp.line_style;
   point_style = cp.point_style;
 //nuy  point_mod = cp.point_mod;
   negative_draw = cp.negative_draw;
   thresh = cp.thresh;
-  axis_spec = NULL; // we set below
-  if ((cp.axis_spec != NULL) && (owner != NULL)) {
-    if (cp.axis_spec->owner == owner) {
-      SetAxis(cp.axis_spec); // in same parent object
-    } else {
-      //TODO
-      // try looking it up by name in the new owner
-/*      AxisSpec* ax = ((GraphSpec*)((GraphSpec*)owner)->RootGp())->axes.FindName(cp.axis_spec->name);
-      if (ax != NULL) {
-	SetAxis(ax);
-      } */
-    }
-  }
 
-/*TODO
+/*TODO(3.5)
   if((cp.string_coords != NULL) && (owner != NULL)) {
     if(cp.string_coords->owner == owner) {
       SetStringCoords(cp.string_coords);
     }
     else {
-      GraphColSpec* ax = (GraphColSpec*)((GraphSpec*)owner)->FindName(cp.string_coords->name);
+      GraphLineSpec* ax = (GraphLineSpec*)((GraphSpec*)owner)->FindName(cp.string_coords->name);
       if(ax != NULL) {
 	SetStringCoords(ax);
       }
     }
   } */
-/*obs  if(axis_spec == NULL) {
-    SetAxis(this); // use this instead!
-  } */
-  if((data_array != NULL) && data_array->InheritsFrom(TA_String_Data)) {
-    line_type = STRINGS;
-    if(string_coords == NULL) FindStringCoords();
-  }
 }
 
-void GraphColSpec::UpdateAfterEdit() {
-/*nuke  if(taMisc::gui_active) {
-    ta_color.SetColor(line_color.r,line_color.g,line_color.b,line_color.a);
-  } */
-
-
-
-
+void GraphLineSpec::UpdateAfterEdit() {
+  GraphSpec* graph_spec = graphSpec();
   if (graph_spec && !graph_spec->isUpdatingChildren())
     graph_spec->UpdateAfterEdit_ColSpec(this);
-//TODO: many consistency and update checks
+//TODO(3.5): many consistency and update checks
 
 
 
-/*TODO  if (axis_spec == NULL)		// don't like null axis specs..
+/*TODO(3.5)  if (axis_spec == NULL)		// don't like null axis specs..
     SetAxis(this);
   if(axis_spec != this) {
     if(axis_spec->axis_spec != axis_spec) {
@@ -148,11 +106,11 @@ void GraphColSpec::UpdateAfterEdit() {
       axis_spec->SetAxis(axis_spec);
     }
   } */
-  if((data_array != NULL) && data_array->InheritsFrom(TA_String_Data)) {
+  if((data_col) && data_col->InheritsFrom(TA_String_Data)) {
     line_type = STRINGS;
-    if (string_coords == NULL) FindStringCoords();
+    if (!string_coords) FindStringCoords();
   }
-/*TODO: transplant to axis spec
+/*TODO(3.5): transplant to axis spec
   if((vertical == NO_VERTICAL) && !((line_type == VALUE_COLORS) || (line_type == THRESH_POINTS))) {
     taMisc::Error("*** GraphViewSpec:: vertical = NO_VERTICAL only sensible with line_type = COLORS or THRESH_POINTS, resetting to FULL_VERTICAL");
     vertical = FULL_VERTICAL;
@@ -164,50 +122,18 @@ void GraphColSpec::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-bool GraphColSpec::BuildFromDataArray(DataArray_impl* tda) {
-  bool result = inherited::BuildFromDataArray(tda);
-  if (data_array == NULL)
-    return result;
-
-  if (data_array->InheritsFrom(TA_String_Data)) {
-    line_type = STRINGS;
-    // strings are normally not visible, unless marked so
-    if (!data_array->HasDispOption(" DISP_STRING,"))
-      visible = false;
-    if (string_coords == NULL) FindStringCoords();
-  }
-  // int variables, typically counters, are usually not plotted
-  if (data_array->HasDispOption(" NARROW,"))
-    visible = false;
-
-  if (data_array->HasDispOption(" NEGATIVE_DRAW,"))
-    negative_draw = true;
-
-  // coltype options -- note: not supposed to have more than one
-  if (data_array->HasDispOption(" Y_DATA,"))
-    col_type = Y_DATA;
-  else if (data_array->HasDispOption(" Y_AXIS,"))
-    col_type = Y_AXIS;
-  else if (data_array->HasDispOption(" X_AXIS,"))
-    col_type = X_AXIS;
-  else if (data_array->HasDispOption(" Z_AXIS,"))
-    col_type = Z_AXIS;
-
-  return result;
-}
-
-const iColor* GraphColSpec::def_color() const {
+const iColor* GraphLineSpec::def_color() const {
   return line_color.color();
 }
 
-void GraphColSpec::FindStringCoords() {
+void GraphLineSpec::FindStringCoords() {
   // note: use my group, not the root group
   GraphSpec* myowner = GET_MY_OWNER(GraphSpec);
   if (!myowner) return; // shouldn't happen
 
   int idx = -1;
   // first check if we have an explicit col indicated -- if so, use that col
-  String col = data_array->DispOptionAfter(" STRING_COORDS=");
+  String col = data_col->DispOptionAfter(" STRING_COORDS=");
   if (col.isInt()) {
     int idx = (int)col;
     if (idx < myowner->size)
@@ -218,10 +144,10 @@ void GraphColSpec::FindStringCoords() {
   if (idx < 0) { // initiate search from previous column if not explicitly marked
     idx = myowner->FindEl(this) - 1;
   }
-  GraphColSpec* prv_float = NULL;
+  GraphLineSpec* prv_float = NULL;
   while ((prv_float == NULL) && (idx >= 0)) {
-    prv_float = (GraphColSpec*)myowner->FastEl(idx--);
-    if (!prv_float->data_array->InheritsFrom(TA_float_Data))
+    prv_float = (GraphLineSpec*)myowner->FastEl(idx--);
+    if (!prv_float->data_col->InheritsFrom(TA_float_Data))
       prv_float = NULL;
   }
   if(prv_float == NULL) {
@@ -232,66 +158,17 @@ void GraphColSpec::FindStringCoords() {
   SetStringCoords(prv_float);
 }
 
-bool GraphColSpec::is_axis() const {
-  // will be an axis, if we are reciprocally connected to an axis
-  return (axis_spec && (axis_spec->spec == this));
+bool GraphLineSpec::is_string() const {
+  return (line_type == STRINGS);
 }
 
-bool GraphColSpec::is_line() const {
-  return (!data_array->is_string()
-    && ((col_type == Y_AXIS) || (col_type == Y_DATA) || (col_type == AUTO))
-  );
-}
-
-bool GraphColSpec::is_string() const {
-  return data_array->is_string();
-}
-
-void GraphColSpec::SetAxis(AxisSpec* as) {
-  if (axis_spec == as) return;
-  // if already set, and we are the primary, then null us out
-  if (axis_spec) {
-    --(axis_spec->spec_cnt);
-    if (axis_spec->spec == this) {
-      axis_spec->spec = NULL;
-    }
-  }
-  axis_spec = as;
-  if (axis_spec) {
-    ++(axis_spec->spec_cnt);
-    // set axis fixed_range from our display options
-    // note: these are usually only set in the primary axis col itself
-    String val = data_array->DispOptionAfter(" MIN=");
-    if (!val.empty()) {
-      axis_spec->fixed_range.min = (float)val;
-      axis_spec->fixed_range.fix_min = true;
-    }
-    val = data_array->DispOptionAfter(" MAX=");
-    if (!val.empty()) {
-      axis_spec->fixed_range.max = (float)val;
-      axis_spec->fixed_range.fix_max = true;
-    }
-
-  }
-}
-
-bool GraphColSpec::setVisible(bool value) {
-  if (visible == value) return visible;
-  if (value) { // setting on requires sanity checks; always ok to set off
-    if (!(is_line() || is_string())) return visible;
-  }
-  visible = value;
-  UpdateAfterEdit();
-  return visible;
-}
-
-void GraphColSpec::GpShareAxis() {
+void GraphLineSpec::GpShareAxis() {
   GraphSpec* myowner = GET_MY_OWNER(GraphSpec);
   if(myowner == NULL) return;
   myowner->ShareAxes();
 }
 
-void GraphColSpec::GpSepAxes() {
+void GraphLineSpec::GpSepAxes() {
   GraphSpec* myowner = GET_MY_OWNER(GraphSpec);
   if(myowner == NULL) return;
   myowner->SeparateAxes();
@@ -306,7 +183,6 @@ iColor AxisSpec::m_def_color; // black, for x and z
 MinMax AxisSpec::temp_range;     // #IGNORE scratch pad
 
 void AxisSpec::Initialize() {
-  graph_spec = NULL;
   n_ticks = 10;
 
   spec = NULL; //set later
@@ -324,8 +200,6 @@ void AxisSpec::Destroy() {
 
 void AxisSpec::InitLinks() {
   inherited::InitLinks();
-  graph_spec = GET_MY_OWNER(GraphSpec);
-  if (graph_spec) graph_spec = (GraphSpec*)graph_spec->root_gp; //just to be safe
   taBase::Own(range, this);
   taBase::Own(true_range, this);
   taBase::Own(eff_range, this);
@@ -337,53 +211,23 @@ void AxisSpec::CutLinks() {
   eff_range.CutLinks();
   true_range.CutLinks();
   range.CutLinks();
-  graph_spec = NULL;
   inherited::CutLinks();
 }
 
 //TODO: axes and specs copy of a whole object will be chicken/egg -- must fix up later
 void AxisSpec::Copy_(const AxisSpec& cp) {
-  n_ticks = cp.n_ticks;
-  //TODO: set spec based on name of src spec
-  spec_cnt = 0;
-  spec = NULL; // NOTE: for graphspec copies, parent sets this to correct local value
-  if ((cp.spec != NULL) && (owner != NULL)) {
-    if (cp.spec->owner == owner) {
-      spec = cp.spec; // in same parent object
-    } else {
-      // try looking it up by name in the new owner
-      GraphColSpec* gvs = (GraphColSpec*)(((GraphSpec*)owner)->RootGp()->FindLeafName(cp.spec->name));
-      if (gvs != NULL) {
-	spec = gvs;
-      }
-    }
-  }
-
-
   range = cp.range;
   true_range = cp.true_range;
   eff_range = cp.eff_range;
   fixed_range = cp.fixed_range;
+  n_ticks = cp.n_ticks;
 }
 
 void AxisSpec::UpdateAfterEdit() {
+  GraphSpec* graph_spec = graphSpec();
   if (graph_spec && !graph_spec->isUpdatingChildren())
     graph_spec->UpdateAfterEdit_AxisSpec(this);
   inherited::UpdateAfterEdit();
-}
-
-void AxisSpec::Config(GraphColSpec* spec_) {
-  if (spec_) {
-    name = spec_->name;
-    spec_->SetAxis(this); // sets reciprocal connection
-    spec = spec_;
-  }
-
-  InitData();
-
-//TODO: SetAxis() did a bit of state stuff, and also did some kind of funky
-//  axis replacement thingy sometimes (all in addition to creating axis gui)
-//  SetAxis();
 }
 
 const iColor* AxisSpec::def_color() const {
@@ -396,21 +240,12 @@ void AxisSpec::InitData() {
   // initializer
 
   float_Data* da = NULL;
-  if ((spec != NULL) && (spec->data_array) && (spec->data_array->InheritsFrom(&TA_float_Data))) {
-    da = (float_Data*)spec->data_array;
+  if ((spec != NULL) && (spec->data_col) && (spec->data_col->InheritsFrom(&TA_float_Data))) {
+    da = (float_Data*)spec->data_col;
   }
   if (da != NULL)  temp_range.SetRange(da->ar);
   else temp_range.Init(0.0f);
   InitRange(temp_range.min, temp_range.max);
-
-
-//  graph = NULL;
-//  axis = NULL;
-//nn  x_axis = NULL;
-/*???  n_shared = 0;
-  n_shared_tot = 0;
-  share_i = 0;
-  is_shared_axis = false; */
 }
 
 void AxisSpec::InitRange(float first, float last) {
@@ -438,18 +273,16 @@ bool AxisSpec::UpdateRange(float first, float last) {
   first = true_range.min;
   last = true_range.max;
 
-  if(((last - first) < range_min_limit) || (range.Range() < range_min_limit)) {
-    if(last - first >= range_min_limit) {
+  if (((last - first) < range_min_limit) || (range.Range() < range_min_limit)) {
+    if (last - first >= range_min_limit) {
       range.max = last;
       range.min = first;
-    }
-    else {
+    } else {
       double maxval = MAX(fabs(last), fabs(first));
-      if(maxval > .01f) {
+      if (maxval > .01f) {
 	last += range_zero_range * maxval;
 	first -= range_zero_range * maxval;
-      }
-      else {
+      } else {
 	last += .51 * range_min_limit;
 	first -= .51 * range_min_limit;
       }
@@ -484,10 +317,10 @@ void XAxisSpec::Copy_(const XAxisSpec& cp) {
   axis_type = cp.axis_type;
 }
 
-void XAxisSpec::Config(GraphColSpec* spec_) {
+void XAxisSpec::Config(GraphLineSpec* spec_) {
   inherited::Config(spec_);
   if (spec_) {
-    if (spec_->col_type == GraphColSpec::X_AXIS)
+    if (spec_->col_type == GraphLineSpec::X_AXIS)
       axis_type = COL_VALUE;
   }
 }
@@ -495,10 +328,11 @@ void XAxisSpec::Config(GraphColSpec* spec_) {
 bool XAxisSpec::InitUpdateAxis(bool init) {
   float first = 0.0f;
   float last = 0.0f;
+  GraphSpec* graph_spec = graphSpec(); // cache
   switch (axis_type) {
   case COL_VALUE:
-    if (spec->data_array->InheritsFrom(&TA_float_Data)) {
-      float_Data* da = (float_Data*)spec->data_array;
+    if (spec->data_col->InheritsFrom(&TA_float_Data)) {
+      float_Data* da = (float_Data*)spec->data_col;
       if (da != NULL)  {
         temp_range.SetRange(da->ar);
         first = temp_range.min;
@@ -541,8 +375,8 @@ bool YAxisSpec::InitUpdateAxis(bool init) {
   float first = 0.0f;
   float last = 0.0f;
 
-  if (!no_vertical && spec->data_array->InheritsFrom(&TA_float_Data)) { //note: should always be true
-    float_Data* da = (float_Data*)spec->data_array;
+  if (!no_vertical && spec->data_col->InheritsFrom(&TA_float_Data)) { //note: should always be true
+    float_Data* da = (float_Data*)spec->data_col;
     if (da != NULL)  {
       temp_range.SetRange(da->ar);
       first = temp_range.min;
@@ -573,11 +407,11 @@ void ZAxisSpec::Copy_(const ZAxisSpec& cp) {
 bool ZAxisSpec::InitUpdateAxis(bool init) {
   float first = 0.0f;
   float last = 0.0f;
-  switch (graph_spec->graph_type) {
+  switch (graphSpec()->graph_type) {
   case GraphSpec::TWOD: return false;
   case GraphSpec::THREED:
-    if (spec->data_array->InheritsFrom(&TA_float_Data)) {
-      float_Data* da = (float_Data*)spec->data_array;
+    if (spec->data_col->InheritsFrom(&TA_float_Data)) {
+      float_Data* da = (float_Data*)spec->data_col;
       if (da != NULL)  {
         temp_range.SetRange(da->ar);
         first = temp_range.min;
@@ -606,7 +440,7 @@ bool ZAxisSpec::InitUpdateAxis(bool init) {
 // 	AxisSpec_List	//
 //////////////////////////////////
 
-YAxisSpec* YAxisSpec_List::FindBySpec(const GraphColSpec* spec, int* idx) {
+YAxisSpec* YAxisSpec_List::FindBySpec(const GraphLineSpec* spec, int* idx) {
   for (int i = 0; i < size; ++i) {
     YAxisSpec* rval = FastEl(i);
     if (rval->spec == spec) {
@@ -666,6 +500,7 @@ void GraphSpec::InitLinks() {
   taBase::Own(y_axes, this);
   taBase::Own(x_axis_spec, this);
   taBase::Own(z_axis_spec, this);
+  taBase::Own(line_specs, this);
   taBase::Own(graphlets, this);
 
   if(taMisc::gui_active) {
@@ -676,6 +511,7 @@ void GraphSpec::InitLinks() {
 
 void GraphSpec::CutLinks() {
   if (scale) {scale->CutLinks(); scale = NULL;}
+  line_specs.CutLinks();
   z_axis_spec.CutLinks();
   x_axis_spec.CutLinks();
   graphlets.CutLinks();
@@ -685,14 +521,9 @@ void GraphSpec::CutLinks() {
 }
 
 void GraphSpec::Copy_(const GraphSpec& cp) {
-// items to copy in root group and every subgroup
-  //TODO: put applicable items here
-
-  if (root_gp != this) return;
-
-// items to copy in root group only
   graph_type = cp.graph_type;
   background = cp.background;
+  bg_color = cp.bg_color;
   color_type = cp.color_type;
   use_cbar = cp.use_cbar;
   sequence_1 = cp.sequence_1;
@@ -705,7 +536,7 @@ void GraphSpec::Copy_(const GraphSpec& cp) {
   if (cp.x_axis_spec.spec) {
     int idx = cp.FindLeaf(cp.x_axis_spec.spec);
     if (idx >= 0)
-      x_axis_spec.spec = (GraphColSpec*)Leaf(idx);
+      x_axis_spec.spec = (GraphLineSpec*)Leaf(idx);
   }
 
   z_axis_spec = cp.z_axis_spec;
@@ -713,22 +544,22 @@ void GraphSpec::Copy_(const GraphSpec& cp) {
   if (cp.z_axis_spec.spec) {
     int idx = cp.FindLeaf(cp.z_axis_spec.spec);
     if (idx >= 0)
-      z_axis_spec.spec = (GraphColSpec*)Leaf(idx);
+      z_axis_spec.spec = (GraphLineSpec*)Leaf(idx);
   }
 
   y_axes = cp.y_axes;
   // have to set spec pointers in y_axes to our own copies
   for (int i = 0; i < cp.y_axes.size; ++i) {
     AxisSpec* cp_as = cp.y_axes.FastEl(i);
-    GraphColSpec* cp_gvs = cp_as->spec;
+    GraphLineSpec* cp_gvs = cp_as->spec;
     if (cp_gvs) {
-      GraphColSpec* gvs = (GraphColSpec*)FindLeafName(cp_as->name);
+      GraphLineSpec* gvs = (GraphLineSpec*)FindLeafName(cp_as->name);
       AxisSpec* as = ((GraphSpec*)root_gp)->y_axes.SafeEl(i);
       if (as && gvs)
         as->spec = gvs;
     }
   }
-
+  line_specs = cp.line_specs;
   graph_layout = cp.graph_layout;
   // we need to find our own copies of graphlets
   graphlets.EnforceSize(cp.graphlets.size);
@@ -759,53 +590,29 @@ void GraphSpec::Copy_(const GraphSpec& cp) {
 }
 
 void GraphSpec::UpdateAfterEdit() {
-  ++updating_children;
   if(taMisc::gui_active) {
     bg_color.SetColor(background.r,background.g,background.b,background.a);
   }
-  //TODO: need to check some consistency items
-  //1: ZType is partly controlled by whatever Y-Axis modes there are, ex. STACK_LINES, etc.
-  // if this isn't nested (i.e., more work to do), rebuild the axes, and notify the children
-  if (updating_children == 1) {
-    this->StructUpdate(true);
-    ReBuildAxes();
-    taLeafItr itr;
-    GraphColSpec* cs;
-    FOR_ITR_EL(GraphColSpec, cs, this->, itr) {
-      cs->UpdateAfterEdit();
-    }
-
-    AxisSpec* as;
-    for(int i = 0; i < y_axes.size; ++i) {
-      as = y_axes.FastEl(i);
-      as->UpdateAfterEdit();
-    }
-    x_axis_spec.UpdateAfterEdit();
-    z_axis_spec.UpdateAfterEdit();
-
-    inherited::UpdateAfterEdit();
-    this->StructUpdate(false); // triggers a rebuild all on views
-  }
-  --updating_children;
+  inherited::UpdateAfterEdit();
 }
 
-void GraphSpec::UpdateAfterEdit_ColSpec(GraphColSpec* cs) {
+void GraphSpec::UpdateAfterEdit_ColSpec(GraphLineSpec* cs) {
   if (!cs) return;
   ++updating_children;
   // if cs specifies a Z axis, then change graph to 3D
-  if ((cs->col_type == GraphColSpec::Z_AXIS) && (graph_type == TWOD)) {
+  if ((cs->col_type == GraphLineSpec::Z_AXIS) && (graph_type == TWOD)) {
     graph_type = THREED;
   }
 
   taLeafItr itr;
-  GraphColSpec* csi;
-  FOR_ITR_EL(GraphColSpec, csi, this->, itr) {
+  GraphLineSpec* csi;
+  FOR_ITR_EL(GraphLineSpec, csi, this->, itr) {
     if (csi == cs) continue;
     // if cs specifies an x or z axis, remove that from any others
     if ((csi->col_type == cs->col_type)
-      && ((cs->col_type == GraphColSpec::X_AXIS) || (cs->col_type == GraphColSpec::Z_AXIS)))
+      && ((cs->col_type == GraphLineSpec::X_AXIS) || (cs->col_type == GraphLineSpec::Z_AXIS)))
     {
-      csi->col_type = GraphColSpec::AUTO;
+      csi->col_type = GraphLineSpec::AUTO;
     }
   }
   --updating_children;
@@ -842,16 +649,16 @@ static char* p_greyscale_colors[] = {
   "grey80", "grey90"};
 static int p_greyscale_count = 10;
 
-void GraphSpec::ApplyOneFeature(GraphColSpec* dagv, SequenceType seq,
+void GraphSpec::ApplyOneFeature(GraphLineSpec* dagv, SequenceType seq,
 				       int val, bool& set_ln, bool& set_pt) {
   if (seq == COLORS) {
     dagv->line_color.name = ColorName(val);
     dagv->line_color.UpdateAfterEdit();
   } else if(seq == LINES) {
-    dagv->line_style = (GraphColSpec::LineStyle)val;
+    dagv->line_style = (GraphLineSpec::LineStyle)val;
     set_ln = true;
-  } else if ((seq == POINTS) && (val != GraphColSpec::PointStyle_NONE)) {
-    dagv->point_style = (GraphColSpec::PointStyle)val;
+  } else if ((seq == POINTS) && (val != GraphLineSpec::PointStyle_NONE)) {
+    dagv->point_style = (GraphLineSpec::PointStyle)val;
     set_pt = true;
   }
 }
@@ -901,16 +708,16 @@ int GraphSpec::ColorCount() {
 
 void GraphSpec::CustomAxes() {
   axis_sharing = CUSTOM_AXES;
-  //TODO: need to call up a UI dialog to let user share axes
+  //TODO(3.5): need to call up a UI dialog to let user share axes
   UpdateAfterEdit();
 }
 
-YAxisSpec* GraphSpec::FindYAxis(GraphColSpec* spec) {
+YAxisSpec* GraphSpec::FindYAxis(GraphLineSpec* spec) {
   YAxisSpec* rval = y_axes.FindBySpec(spec);
   return rval;
 }
 
-YAxisSpec* GraphSpec::FindMakeYAxis(GraphColSpec* spec) {
+YAxisSpec* GraphSpec::FindMakeYAxis(GraphLineSpec* spec) {
   YAxisSpec* rval = y_axes.FindBySpec(spec);
   if (rval) {
     rval->Config(spec);
@@ -920,11 +727,11 @@ YAxisSpec* GraphSpec::FindMakeYAxis(GraphColSpec* spec) {
   return rval;
 }
 
-YAxisSpec* GraphSpec::MakeYAxis(GraphColSpec* spec) {
+YAxisSpec* GraphSpec::MakeYAxis(GraphLineSpec* spec) {
   YAxisSpec* rval = (YAxisSpec*)y_axes.New(1);
   rval->Config(spec);
   // stamp explicitly in spec
-  spec->col_type = GraphColSpec::Y_AXIS;
+  spec->col_type = GraphLineSpec::Y_AXIS;
   return rval;
 }
 
@@ -948,14 +755,14 @@ void GraphSpec::AssertGraphlets() {
     // assign each y-axis to its own list
     int g_cnt = 0;
     for (int i = 0; i < y_axes.size; ++i) {
-      /*TODO revise
+      /*TODO(3.5) revise
       AxisSpec* as = y_axes.FastEl(i);
-      GraphColSpec* gvs = as->spec;
+      GraphLineSpec* gvs = as->spec;
       // put all but x&z y_axes in list
       if (gvs && gvs->visible &&
-        !((gvs->col_type == GraphColSpec::X_AXIS) ||
-          (gvs->col_type == GraphColSpec::Z_AXIS) ||
-          (gvs->col_type == GraphColSpec::HIDE))
+        !((gvs->col_type == GraphLineSpec::X_AXIS) ||
+          (gvs->col_type == GraphLineSpec::Z_AXIS) ||
+          (gvs->col_type == GraphLineSpec::HIDE))
       ) {
         graphlets.EnforceSize(g_cnt + 1);
         GraphletSpec* gls = graphlets.FastEl(g_cnt);
@@ -966,7 +773,7 @@ void GraphSpec::AssertGraphlets() {
     }
   } break;
   case CUSTOM_AXES: {
-    //TODO: need to make sure any new y_axes are assigned to a sensible
+    //TODO(3.5): need to make sure any new y_axes are assigned to a sensible
     // existing graphlet list
   } break;
   }
@@ -980,12 +787,12 @@ void GraphSpec::ReBuildAxes() {
   // likely to be the desired Z axis (ex. Batch #)
   // we only force creation of a Z axis if not marked "NONE"
   if (graph_type == THREED) {
-    ReBuildAxes_GetXZAxis(GraphColSpec::Z_AXIS, z_axis_spec, true);
+    ReBuildAxes_GetXZAxis(AxisSpec::Z, z_axis_spec, true);
   }
 
-  ReBuildAxes_GetXZAxis(GraphColSpec::X_AXIS, x_axis_spec);
+  ReBuildAxes_GetXZAxis(AxisSpec::X, x_axis_spec);
 
-//TODO: need to do the SetOwner thingy
+//TODO(3.5): need to do the SetOwner thingy
 //      if (SetOwnerXAxis != NULL) SetOwnerXAxis(owner, x_axis_index);
 
 
@@ -1003,16 +810,16 @@ void GraphSpec::ReBuildAxes() {
   //    * AUTO with no other rule becomes its own Y axis
   taGroupItr itr;
   GraphSpec* gp;
-  GraphColSpec* spec;
+  GraphLineSpec* spec;
   DataArray_impl* da;
   FOR_ITR_GP(GraphSpec, gp, this->, itr) {
     int y_ax_cnt = 0; // axes made this group
     int i;
     // explicit y axes
     for (i = 0; i < gp->size; ++i) {
-      spec = (GraphColSpec*)gp->FastEl(i);
-      da = spec->data_array;
-      if ((spec->col_type == GraphColSpec::Y_AXIS) && (!da->is_string())) {
+      spec = (GraphLineSpec*)gp->FastEl(i);
+      da = spec->data_col;
+      if ((spec->col_type == GraphLineSpec::Y_AXIS) && (!da->is_string())) {
         MakeYAxis(spec);
         ++y_ax_cnt;
       }
@@ -1021,9 +828,9 @@ void GraphSpec::ReBuildAxes() {
 
     // make one implicit master y axis per group, if no explicit one yet
     for (i = 0; ((y_ax_cnt == 0) && (i < gp->size)); ++i) {
-      spec = (GraphColSpec*)gp->FastEl(i);
-      da = spec->data_array;
-      if ( ((spec->col_type == GraphColSpec::Y_DATA) || (spec->col_type == GraphColSpec::AUTO))
+      spec = (GraphLineSpec*)gp->FastEl(i);
+      da = spec->data_col;
+      if ( ((spec->col_type == GraphLineSpec::Y_DATA) || (spec->col_type == GraphLineSpec::AUTO))
         &&  (!da->is_string())
       ) {
         MakeYAxis(spec);
@@ -1033,9 +840,9 @@ void GraphSpec::ReBuildAxes() {
 
     // now, link all potential Y DATA or indexed lines to an axis, plus additional tasks
     for (i = 0; (i < gp->size); ++i) {
-      spec = (GraphColSpec*)gp->FastEl(i);
-      da = spec->data_array;
-      if ( ((spec->col_type == GraphColSpec::Y_DATA) || (spec->col_type == GraphColSpec::AUTO))
+      spec = (GraphLineSpec*)gp->FastEl(i);
+      da = spec->data_col;
+      if ( ((spec->col_type == GraphLineSpec::Y_DATA) || (spec->col_type == GraphLineSpec::AUTO))
         &&  (!da->is_string())
       ) {
         // if it has an explicit axis indicator, link to that
@@ -1043,7 +850,7 @@ void GraphSpec::ReBuildAxes() {
         if (axis.isInt()) {
           int ax_idx = (int)axis;
           if (ax_idx < gp->size) {
-            GraphColSpec* ax_spec = (GraphColSpec*)gp->FastEl(ax_idx);
+            GraphLineSpec* ax_spec = (GraphLineSpec*)gp->FastEl(ax_idx);
             if ((ax_spec->axis_spec && (ax_spec->axis_spec->axis() == AxisSpec::Y)))
               spec->SetAxis(ax_spec->axis_spec);
            }
@@ -1057,14 +864,14 @@ void GraphSpec::ReBuildAxes() {
 
 
 
-      if (spec->visible && ((spec->line_type == GraphColSpec::VALUE_COLORS) ||
-        (spec->line_type == GraphColSpec::TRACE_COLORS)) )
+      if (spec->visible && ((spec->line_type == GraphLineSpec::VALUE_COLORS) ||
+        (spec->line_type == GraphLineSpec::TRACE_COLORS)) )
         use_cbar = true;
     }
 
     // string data gets linked to the axis of its coords
     for (i = 0; (i < gp->size); ++i) {
-      spec = (GraphColSpec*)gp->FastEl(i);
+      spec = (GraphLineSpec*)gp->FastEl(i);
       if ( (spec->visible) &&  (da->is_string()) ) {
         if (spec->string_coords && spec->string_coords->axis_spec) {
           spec->SetAxis(spec->string_coords->axis_spec);
@@ -1080,13 +887,13 @@ void GraphSpec::ReBuildAxes() {
       y_axes.Remove(i);
   }
 
-  //TODO: for STACK_LINES mode, need to have counted number of separate lines that
+  //TODO(3.5): for STACK_LINES mode, need to have counted number of separate lines that
   // will be plotted on Z, and set in z.n_traces
   int tot_lines = 0; // total number of lines that will be plotted, for STACK_LINES
   if (graph_type == STACK_LINES) {
     taLeafItr jtr;
-    GraphColSpec* spec;
-    FOR_ITR_EL(GraphColSpec, spec, this->, jtr) {
+    GraphLineSpec* spec;
+    FOR_ITR_EL(GraphLineSpec, spec, this->, jtr) {
       if (spec->visible && spec->is_line()) ++tot_lines;
     }
 
@@ -1099,18 +906,20 @@ use_cbar = true; //TEMP
   --updating_children;
 }
 
-bool GraphSpec::ReBuildAxes_GetXZAxis(GraphColSpec::ColumnType col_type, AxisSpec& axis, bool force) {
+bool GraphSpec::ReBuildAxes_GetXZAxis(AxisSpec::Axis axis,
+  AxisSpec& axis, bool force) 
+{//TODO(3.5): fixup
   bool rval = false;
-  AxisSpec* tmp_axis = NULL;
+/*TODO  AxisSpec* tmp_axis = NULL;
 
   // first, check if a col is already marked as X/Z -- use it
-  GraphColSpec* spec;
+  GraphLineSpec* spec;
   taLeafItr itr;
-  FOR_ITR_EL(GraphColSpec, spec, this->, itr) {
+  FOR_ITR_EL(GraphLineSpec, spec, this->, itr) {
     if (spec->col_type == col_type) {
       axis.Config(spec);
       spec->visible = false; // axes not visible as lines
-      //TODO: if found, we should probably nix out any subsequent Z_AXIS
+      //TODO(3.5): if found, we should probably nix out any subsequent Z_AXIS
       rval = true;
       goto exit;
     }
@@ -1120,11 +929,11 @@ bool GraphSpec::ReBuildAxes_GetXZAxis(GraphColSpec::ColumnType col_type, AxisSpe
 
   // none explicitly marked yet, so iterate all columns to find first candidate
   // criteria: float data, still marked AUTO, not shared
-  FOR_ITR_EL(GraphColSpec, spec, this->, itr) {
-    DataArray_impl* xaa = spec->data_array;
+  FOR_ITR_EL(GraphLineSpec, spec, this->, itr) {
+    DataArray_impl* xaa = spec->data_col;
     if ((xaa == NULL) || (xaa->is_string()))
       continue;
-    if (spec->col_type == GraphColSpec::AUTO) {
+    if (spec->col_type == GraphLineSpec::AUTO) {
       tmp_axis = FindYAxis(spec);
       if (tmp_axis) {
         // if it already existed, may have been shared
@@ -1144,7 +953,7 @@ bool GraphSpec::ReBuildAxes_GetXZAxis(GraphColSpec::ColumnType col_type, AxisSpe
 exit:
   if (rval && axis.spec) {
     axis.spec->visible = false;
-  }
+  }*/
   return rval;
 }
 
@@ -1155,18 +964,6 @@ void GraphSpec::ReBuildFromDataTable() {
   ReBuildAxes();
   --updating_children;
 }
-
-bool GraphSpec::RemoveAxisBySpec(GraphColSpec* spec) {
-  bool rval = false;
-  int idx;
-  AxisSpec* ax = y_axes.FindBySpec(spec, &idx);
-  if (ax) {
-    rval = true;
-    y_axes.Remove(idx);
-  }
-  return rval;
-}
-
 
 void GraphSpec::SetBgColor() {
   switch(color_type) {
@@ -1194,12 +991,12 @@ void GraphSpec::SetBgColor() {
 }
 
 
-void GraphSpec::SetLineType(GraphColSpec::LineType line_type) {
-  if(line_type == GraphColSpec::STRINGS) return;
+void GraphSpec::SetLineType(GraphLineSpec::LineType line_type) {
+  if(line_type == GraphLineSpec::STRINGS) return;
   int i;
   for(i=0;i<size;i++) {
-    GraphColSpec* vs = (GraphColSpec*)FastEl(i);
-    if(vs->line_type != GraphColSpec::STRINGS)
+    GraphLineSpec* vs = (GraphLineSpec*)FastEl(i);
+    if(vs->line_type != GraphLineSpec::STRINGS)
       vs->line_type = line_type;
   }
   for(i=0;i<gp.size;i++) {
@@ -1212,7 +1009,7 @@ void GraphSpec::SetLineType(GraphColSpec::LineType line_type) {
 void GraphSpec::SetLineWidths(float line_width) {
   int i;
   for(i=0;i<size;i++) {
-    GraphColSpec* vs = (GraphColSpec*)FastEl(i);
+    GraphLineSpec* vs = (GraphLineSpec*)FastEl(i);
     vs->line_width = line_width;
   }
   for(i=0;i<gp.size;i++) {
@@ -1222,50 +1019,6 @@ void GraphSpec::SetLineWidths(float line_width) {
   UpdateAfterEdit();
 }
 
-/*obs void GraphSpec::ShareAxes() {
-  if(size < 2) return;
-  if(gp.size == 0) {		// only for terminal groups!
-    GraphColSpec* axis = (GraphColSpec*)FastEl(0);
-    for(int i=0;i<size;i++) {
-      GraphColSpec* vs = (GraphColSpec*)FastEl(i);
-      vs->SetAxis(axis);
-    }
-  }
-  for(int i=0;i<gp.size;i++) {
-    GraphSpec* nvs = (GraphSpec*)FastGp(i);
-    nvs->ShareAxes();
-  }
-  UpdateAfterEdit();
-}
-
-void GraphSpec::ShareAxes() {
-  // share the first axis in each subgroup with the other members of the subgroup
-  for (int i=0; i<gp.size; i++) {
-    GraphSpec* nvs = (GraphSpec*)FastGp(i);
-    if (nvs->size < 2) continue;
-    GraphColSpec* spec = (GraphColSpec*)nvs->FastEl(0);
-    YAxisSpec* as = FindMakeYAxis(spec);
-    for (int j=0; j<size; ++j) { //note: we do first one too, to make sure it wasn't shared elsewhere
-      spec = (GraphColSpec*)nvs->FastEl(j);
-      spec->SetAxis(as);
-    }
-  }
-  UpdateAfterEdit();
-}
-
-void GraphSpec::SeparateAxes() {
-  for (int i=0; i<gp.size; i++) {
-    GraphSpec* nvs = (GraphSpec*)FastGp(i);
-    if (nvs->size < 2) continue;
-    for (int j=0; j<size; ++j) { //note: we do first one too, to make sure it wasn't shared elsewhere
-      GraphColSpec* spec = (GraphColSpec*)nvs->FastEl(j);
-      AxisSpec* as = FindMakeYAxis(spec);
-      spec->SetAxis(as);
-    }
-  }
-  UpdateAfterEdit();
-}
-*/
 void GraphSpec::ShareAxes() {
   axis_sharing = SHARED_AXES;
   UpdateAfterEdit();
@@ -1284,8 +1037,8 @@ void GraphSpec::UpdateLineFeatures(bool visible_only) {
 void GraphSpec::UpdateLineFeatures_impl(bool visible_only) {
   int counts[4];
   counts[COLORS] = ColorCount();
-  counts[LINES] = (GraphColSpec::LineStyle_MAX - GraphColSpec::LineStyle_MIN) + 1;
-  counts[POINTS] = (GraphColSpec::PointStyle_MAX - GraphColSpec::PointStyle_NONE) + 1;
+  counts[LINES] = (GraphLineSpec::LineStyle_MAX - GraphLineSpec::LineStyle_MIN) + 1;
+  counts[POINTS] = (GraphLineSpec::PointStyle_MAX - GraphLineSpec::PointStyle_NONE) + 1;
   counts[NONE] = 100000;	// should cover it..
 
   SetBgColor();
@@ -1298,23 +1051,23 @@ void GraphSpec::UpdateLineFeatures_impl(bool visible_only) {
     while(true) {
       int k = 0;
       while(true) {
-	GraphColSpec* dagv = (GraphColSpec*)Leaf(cnt++);
+	GraphLineSpec* dagv = (GraphLineSpec*)Leaf(cnt++);
 	if(dagv == NULL)
 	  return;
 
 	if((visible_only == true) && !dagv->visible) { // turn off
 	  dagv->line_color.name = "black";
 	  dagv->line_color.UpdateAfterEdit();
-	  dagv->line_style = GraphColSpec::LineStyle_MIN;
-	  dagv->point_style = GraphColSpec::PointStyle_MIN;
-	  dagv->line_type = GraphColSpec::LINE;
+	  dagv->line_style = GraphLineSpec::LineStyle_MIN;
+	  dagv->point_style = GraphLineSpec::PointStyle_MIN;
+	  dagv->line_type = GraphLineSpec::LINE;
 	  dagv->UpdateAfterEdit();
 	  continue;
 	}
 
 	// initialize to default values first
-	dagv->line_style = GraphColSpec::LineStyle_MIN;
-	dagv->point_style = GraphColSpec::PointStyle_MIN;
+	dagv->line_style = GraphLineSpec::LineStyle_MIN;
+	dagv->point_style = GraphLineSpec::PointStyle_MIN;
 	bool set_ln = false;
 	bool set_pt = false;
 	if (sequence_1 != NONE)
@@ -1325,14 +1078,11 @@ void GraphSpec::UpdateLineFeatures_impl(bool visible_only) {
 	  ApplyOneFeature(dagv, sequence_3, i, set_ln, set_pt);
 
 	if (set_ln && set_pt)
-	  dagv->line_type = GraphColSpec::LINE_AND_POINTS;
+	  dagv->line_type = GraphLineSpec::LINE_AND_POINTS;
 	else if(set_pt) {
-	  dagv->line_type = GraphColSpec::POINTS;
+	  dagv->line_type = GraphLineSpec::POINTS;
 	} else	// default is line
-	  dagv->line_type = GraphColSpec::LINE;
-
-//nn--we do all in our own UAE	dagv->UpdateAfterEdit();
-
+	  dagv->line_type = GraphLineSpec::LINE;
 	k++;
 	if(k >= counts[sequence_1])			break;
       }

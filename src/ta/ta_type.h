@@ -621,12 +621,26 @@ public:
 
 
 //////////////////////////
+//   IDataLinkProxy	//
+//////////////////////////
+
+class TA_API IDataLinkProxy : public virtual ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
+public:
+#ifndef TA_NO_GUI
+  virtual taiDataLink*	link() const = 0;
+#else
+  virtual taDataLink*	link() const = 0;
+#endif
+  virtual TypeDef*	GetDataTypeDef() const; // convenience function, default gets data type from link
+};
+
+//////////////////////////
 //   IDataLinkClient	//
 //////////////////////////
 
 // Mixin interface for Node that uses datalinks, ex. tree node or Inventor node
 
-class TA_API IDataLinkClient : public virtual ITypedObject {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
+class TA_API IDataLinkClient : public virtual IDataLinkProxy {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
   // this is the interface available to the host data object
 friend class taDataLink;
 public:
@@ -635,10 +649,9 @@ public:
 #else
   taDataLink*		link() const {return m_link;}
 #endif
-  virtual TypeDef*	GetDataTypeDef() const; // convenience function, default gets data type from link
   virtual void		DataLinkDestroying(taDataLink* dl) = 0; // called by DataLink when destroying; it will remove datalink ref in dlc upon return
   virtual void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) = 0; //
-  virtual bool		IsDataView() {return false;} // 'true' for dlc's that are DataViews (see taBase)
+  
   IDataLinkClient() {m_link = NULL;}
   ~IDataLinkClient();
 protected:

@@ -123,6 +123,7 @@ void taProject::InitLinks_impl() {
   taBase::Own(edits, this);
   taBase::Own(data, this);
   taBase::Own(programs, this);
+  taBase::Own(viewspecs, this);
   taBase::Own(viewers, this);
 }
 
@@ -143,6 +144,7 @@ void taProject::CutLinks() {
 
 void taProject::CutLinks_impl() {
   viewers.CutLinks(); 
+  viewspecs.CutLinks();
   programs.CutLinks();
   data.CutLinks();
   edits.CutLinks();
@@ -154,6 +156,7 @@ void taProject::Copy_(const taProject& cp) {
   // delete things first, to avoid dangling references
   programs.Reset();
   viewers.Reset();
+  viewspecs.Reset();
   data.Reset();
   edits.Reset();
   
@@ -161,6 +164,7 @@ void taProject::Copy_(const taProject& cp) {
   wizards = cp.wizards;
   edits = cp.edits;
   data = cp.data;
+  viewspecs = cp.viewspecs;
   viewers = cp.viewers;
   programs = cp.programs;
   // NOTE: once a derived project has all the relevant stuff copied, it needs to call this:

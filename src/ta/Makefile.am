@@ -86,11 +86,13 @@ TAHEADS =\
 	@abs_srcdir@/icolor.h \
 	@abs_srcdir@/ta_type.h \
 	@abs_srcdir@/ta_base.h \
+	@abs_srcdir@/ta_fontspec.h \
 	@abs_srcdir@/ta_group.h \
 	@abs_srcdir@/ta_dmem.h \
-	@abs_srcdir@/ta_viewer.h \
 	@abs_srcdir@/ta_script.h \
 	@abs_srcdir@/ta_dynenum.h \
+	@abs_srcdir@/ta_viewspec.h \
+	@abs_srcdir@/ta_viewer.h \
 	@abs_srcdir@/ta_program.h \
 	@abs_srcdir@/ta_matrix.h \
 	@abs_srcdir@/ta_math.h \
@@ -110,17 +112,19 @@ HEADS =\
 	ta_stdef.h \
 	ta_variant.h \
 	ifont.h \
+	icolor.h \
 	ta_list.h \
 	ta_filer.h \
-	icolor.h \
 	ta_type.h \
 	ta_type_constr.h \
 	ta_base.h \
+	ta_fontspec.h \
 	ta_group.h \
 	ta_dmem.h \
-	ta_viewer.h \
 	ta_script.h \
 	ta_dynenum.h \
+	ta_viewspec.h \
+	ta_viewer.h \
 	ta_program.h \
 	ta_matrix.h \
 	ta_data.h \
@@ -140,18 +144,20 @@ SRCS =\
 	ta_string.cpp \
 	ta_variant.cpp \
 	ifont.cpp \
+	icolor.cpp \
 	ta_list.cpp \
 	ta_filer.cpp \
-	icolor.cpp \
 	ta_type.cpp \
 	ta_type.moc.cpp \
 	ta_type_constr.cpp \
 	ta_base.cpp \
+	ta_fontspec.cpp \
 	ta_group.cpp \
 	ta_dmem.cpp \
-	ta_viewer.cpp \
 	ta_script.cpp \
 	ta_dynenum.cpp \
+	ta_viewspec.cpp \
+	ta_viewer.cpp \
 	ta_program.cpp \
 	ta_matrix.cpp \
 	ta_math.cpp \

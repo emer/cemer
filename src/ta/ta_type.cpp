@@ -1365,6 +1365,15 @@ void taMisc::SREAssignment(taBase* tab,MemberDef* md){
 #endif
 
 //////////////////////////
+//   IDataLinkProxy 	//
+//////////////////////////
+
+TypeDef* IDataLinkProxy::GetDataTypeDef() const {
+  taDataLink* link_ = (taDataLink*)link();
+  return (link_) ? link_->GetDataTypeDef() : NULL;
+}
+
+//////////////////////////
 //   IDataLinkClient 	//
 //////////////////////////
 
@@ -1375,11 +1384,6 @@ IDataLinkClient::~IDataLinkClient() {
     m_link->RemoveDataClient(this); //nulls our ref
   }
 }
-
-TypeDef* IDataLinkClient::GetDataTypeDef() const {
-    return (m_link) ? m_link->GetDataTypeDef() : NULL;
-}
-
 
 //////////////////////////
 //   taDataLink 	//

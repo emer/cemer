@@ -784,7 +784,8 @@ void iProgramPanelBase::OnWindowBind_impl(iTabViewer* itv) {
   pe->m_window = itv->viewerWindow();
   // make sure the Program toolbar is created
   MainWindowViewer* mvw = itv->viewerWindow()->viewer();
-  ProgramToolBar* ptb = (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
+  //ProgramToolBar* ptb = 
+  (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
     "Program");
 /*TODO: re-enable once the program toolbar is defined
   if (!ptb)
@@ -820,7 +821,8 @@ void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {
   inherited::OnWindowBind_impl(itv);
   // make sure the Program toolbar is created
   MainWindowViewer* mvw = itv->viewerWindow()->viewer();
-  ProgramToolBar* ptb = (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
+  //ProgramToolBar* ptb = 
+  (ProgramToolBar*)mvw->FindToolBarByType(&TA_ProgramToolBar,
     "Program");
 /*TODO: re-enable once the program toolbar is defined
   if (!ptb)
@@ -909,7 +911,7 @@ IDataViewWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
 
 
 void iProgramToolBar::Constr_post() {
-  iMainWindowViewer* win = viewerWindow(); //cache
+//  iMainWindowViewer* win = viewerWindow(); //cache
 
 //TODO: add the appropriate global actions
 }

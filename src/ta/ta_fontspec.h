@@ -15,15 +15,15 @@
 
 
 
-#ifndef font_spec_h
-#define font_spec_h
+#ifndef TA_FONTSPEC_H
+#define TA_FONTSPEC_H
 
 #include "ta_base.h"
 #include "ifont.h"
-#include "tamisc_def.h"
-#include "tamisc_TA_type.h"
 
-class TAMISC_API FontSpec : public taOBase, public iFont {
+#include "ta_TA_type.h"
+
+class TA_API FontSpec : public taOBase, public iFont {
  // #INLINE #INLINE_DUMP a specification of a font (for Unix - X logical font description)
 INHERITED(taOBase)
 public:
@@ -48,4 +48,4 @@ private:
 };
 
 
-#endif // font_spec_h
+#endif // TA_FONTSPEC_H

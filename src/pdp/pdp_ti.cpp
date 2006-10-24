@@ -88,6 +88,5 @@ template class PDP_API taList<DataItem>;
 #ifdef TA_GUI
 template class PDP_API taGroup<SelectEdit>; // pdpshell.h
 template class PDP_API taPlainArray<UnitViewData>; // netstru_qtso.h
-template class PDP_API taPtrList<TableView>; // pdplog.h
 #endif
 

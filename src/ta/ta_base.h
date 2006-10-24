@@ -473,12 +473,7 @@ public:
   // #MENU #CAT_ObjectMgmt #ARGC_0 #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
   void			ClearCheckConfig(); // this can be called when a CheckConfig_impl routine blindly assert ok, ex. for an object that has an "off" or "disable" state; this routine updates the gui if the state has now changed
 
-  // viewing-related functions -- usually not overridden base
-  virtual void		AddDataView(taDataView* dv); // #CAT_Display add a dataview 
-  virtual bool		RemoveDataView(taDataView* dv); // #CAT_Display removes a dataview (not usually overridden)
 protected:
-  virtual void		DataViewAdding(taDataView* dv); // #IGNORE adds a dataview that has been validated
-  virtual void		DataViewRemoving(taDataView* dv) {} // #IGNORE signals removal of dataview
   virtual void		BatchUpdate(bool begin, bool struc);
   // #IGNORE bracket changes with (nestable) true/false calls; data clients can use it to supress change updates
   virtual void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {}
@@ -775,6 +770,7 @@ class TA_API taSmartRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKEN
 friend class taBase;
 friend class TypeDef; // for various
 friend class MemberDef; // for streaming
+friend class taDataView; // for access to link
 public:
   inline taBase*	ptr() const {return m_ptr;}
   void			set(taBase* src) {if (src == m_ptr) return;
@@ -1220,13 +1216,9 @@ public:
   However, if a dataobject is destroying, it will destroy all its views
 
 */
-class TA_API taDataView: public taOBase, public virtual IDataLinkClient {
+class TA_API taDataView: public taOBase, public virtual IDataLinkProxy {
   // #NO_TOKENS  base class for views of an object
-#ifndef __MAKETA__
-typedef taOBase inherited_taBase;
-typedef IDataLinkClient inherited_IDataLinkClient;
-#endif
-friend class taBase;
+INHERITED(taOBase)
 friend class DataView_List;
 public:
   enum DataViewAction { // #BITS enum used to (safely) manually invoke one or more _impl actions
@@ -1249,7 +1241,7 @@ public:
 #endif
   };
   
-  taBase*		m_data;		// #READ_ONLY data -- referent of the item -- the data
+  taSmartRef		m_data;		// #READ_ONLY data -- referent of the item -- the data
   TypeDef*		data_base;	// #READ_ONLY #NO_SAVE Minimum type for data object
 
   taBase*		data() {return m_data;} // subclasses usually redefine a strongly typed version
@@ -1265,9 +1257,8 @@ public:
 
   virtual MemberDef*	GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
   virtual String	GetLabel() const; // returns a label suitable for tabview tabs, etc.
-  virtual void		DataDestroying() {}
   virtual void 		ChildAdding(taDataView* child) {} // #IGNORE called from list;
-  virtual void 		ChildRemoving(taDataView* child); // #IGNORE called from list; 
+  virtual void 		ChildRemoving(taDataView* child) {} // #IGNORE called from list; 
   virtual void		ChildClearing(taDataView* child) {} // override to implement par's portion of clear
   virtual void		ChildRendered(taDataView* child) {} // override to implement par's portion of render
   virtual void		CloseChild(taDataView* child) {}
@@ -1283,34 +1274,40 @@ public:
   int	GetIndex() const {return m_index;}
   void	SetIndex(int value) {m_index = value;}
   TAPtr	SetOwner(TAPtr own); // update the parent; nulls it if not of parentType
-  void	UpdateAfterEdit();
-  void			InitLinks();
-  void			CutLinks();
+  void	CutLinks();
   TA_BASEFUNS(taDataView)
 
-public: // ITypedObject interface
-  override void*	This() {return (void*)this;} //
-//already in taBase: override TypeDef*	GetTypeDef() const;
-
-public: // IDataLinkClient interface
-  override TypeDef*	GetDataTypeDef() const {return m_data->GetTypeDef();} // TypeDef of the data
-  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
+public: // IDataLinkProxy
+  override void*	This() {return (void*)this;}
+//in taBase  virtual TypeDef*	GetTypeDef() const;
+#ifndef TA_NO_GUI
+  virtual taiDataLink*	link() const {return m_data.link();}
+#else
+  virtual taDataLink*	link() const {return m_data.link();}
+#endif
+//  virtual TypeDef*	GetDataTypeDef() const; 
+  
+public: // pseudo-IDataLinkClient-ish interface
+  virtual TypeDef*	GetDataTypeDef() const {return m_data->GetTypeDef();} // TypeDef of the data
+  virtual void		DataDataChanged(int dcr, void* op1, void* op2);
    // called when the data item has changed, esp. ex lists and groups; dispatches to the DataXxx_impl's
-  override void		DataLinkDestroying(taDataLink* dl);
-   // called by DataLink when it is destroying
-  override bool		IsDataView() {return true;}
+  virtual void		DataDestroying() {}
 
 protected:
   int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
   int			m_index; // for when in a list
   // NOTE: all Dataxxx_impl are supressed if dbu_cnt or par_dbu_cnt <> 0 -- see ta_type.h for detailed rules
   mutable taDataView* 	m_parent; // autoset on SetOwner, type checked as well
+  
+  override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
+  override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+    int dcr, void* op1_, void* op2_);
+  
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
   virtual void		DataUpdateView_impl() {Render_impl();} // called for Update All Views, and at end of a DataUpdate batch
   virtual void		DataStructUpdateEnd_impl() {Reset(); Render();} // called ONLY at end of a struct update
-  virtual void 		SetData_impl(taBase* ta); // called to actually set or clear m_data -- can be trapped
   virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 
    // typically from an owned list
   virtual void		DoActionChildren_impl(DataViewAction acts) {} // only one action called at a time, if CONSTR do children in order, if DESTR do in reverse order; call child.DoActions(act)
@@ -1335,13 +1332,7 @@ private:
 
 // for explicit lifetime management
 #define TA_DATAVIEWFUNS(b,i) \
-  TA_BASEFUNS(b); \
-  void* This() {return (void*)this;}
-
-// for ref-counting lifetime management
-#define TA_REF_DATAVIEWFUNS(b,i) \
-  TA_REF_BASEFUNS(b); \
-  void* This() {return (void*)this;}
+  TA_BASEFUNS(b)
 
 // convenience, for declaring the safe strong-typed parent
 #define DATAVIEW_PARENT(T) \

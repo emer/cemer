@@ -514,12 +514,6 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
   }
 }
 
-void taBase::AddDataView(taDataView* dv) {
-#ifdef TA_GUI
-  if (dv) dv->SetData(this);
-#endif
-}
-
 void taBase::AddDataClient(IDataLinkClient* dlc) {
   taDataLink* dl = GetDataLink(); // autocreates if necessary
   if (dl != NULL) {
@@ -643,14 +637,6 @@ void taBase::DataChanged(int dcr, void* op1, void* op2) {
   setDirty(true); // note, also then sets dirty for list ops, like Add etc.
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
-}
-
-void taBase::DataViewAdding(taDataView* dv) {
-#ifdef TA_GUI
-  taDataLink* dl = GetDataLink(); // sets data_link
-  if (dl) dl->AddDataClient(dv);
-#endif
-  dv->SetData_impl(this);
 }
 
 bool taBase::Dump_QuerySaveMember(MemberDef* md) { 
@@ -1074,19 +1060,6 @@ bool taBase::RemoveDataClient(IDataLinkClient* dlc) {
   if (dl != NULL) {
     return dl->RemoveDataClient(dlc);
   } else return false;
-}
-
-bool taBase::RemoveDataView(taDataView* dv) {
-  DataViewRemoving(dv);
-  bool rval = false;
-#ifdef TA_GUI
-  taDataLink* dl = data_link(); // doesn't autocreate
-  //note: we should already have a datalink, because we must have added it earlier
-  if (dl) rval = dl->RemoveDataClient(dv);
-  // note: data_link may be deleted by this point
-#endif
-  dv->SetData_impl(NULL);
-  return rval;
 }
 
 bool taBase::ReShowEdit(bool force) {
@@ -2490,39 +2463,21 @@ int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, ta
 // 	taDataView	//
 //////////////////////////
 
-void  taDataView::ChildRemoving(taDataView* child) {} //TEMP, just put in header
-
 void taDataView::Initialize() {
-  m_data = NULL;
+  m_data.Init(this);
   data_base = &TA_taBase;
   m_dbu_cnt = 0;
   m_parent = NULL;
   m_index = -1;
 }
 
-void taDataView::InitLinks() {
-  inherited_taBase::InitLinks();
-  //BA 2006-06-28 -- this may have been here for loading, but mdata not set yet at this point
-  // so if no other purpose, it can be removed
-  if (m_data) m_data->DataViewAdding(this); // note: is ok to make spurious calls to this
-}
-
 void taDataView::CutLinks() {
-  if (m_data) {
-    m_data->RemoveDataView(this); // nulls m_data
-  }
   m_parent = NULL;
-  inherited_taBase::CutLinks();
+  m_data = NULL;
+  inherited::CutLinks();
 }
 
-void taDataView::UpdateAfterEdit() {
-  if (taMisc::is_loading) {
-    if (m_data) m_data->DataViewAdding(this); // note: is ok to make spurious calls to this
-  }
-  inherited_taBase::UpdateAfterEdit();
-}
-
-void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
+void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
     ++m_dbu_cnt;
@@ -2558,12 +2513,6 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   else {
     DataDataChanged_impl(dcr, op1_, op2_);
   }
-}
-
-void taDataView::DataLinkDestroying(taDataLink* dl) {
-  CutLinks();
-  DataDestroying();
-  //NOTE: we may be destroyed at this point -- do not put any more code
 }
 
 void taDataView::DoActions(DataViewAction acts) {
@@ -2613,7 +2562,7 @@ String taDataView::GetLabel() const {
 }
 
 int taDataView::par_dbu_cnt() {
-  taDataView* par = GET_MY_OWNER(taDataView);
+  taDataView* par = parent();
   if (par) {
     int pdbu = par->dbu_cnt();
     if (pdbu > 0) return pdbu; //optimization -- don't need to go up the chain if parent is struct
@@ -2628,28 +2577,36 @@ int taDataView::par_dbu_cnt() {
 
 void taDataView::SetData(taBase* ta) {
   if (m_data == ta) return;
-  if (m_data) {
-    m_data->RemoveDataView(this); // nulls m_data
-  }
+  m_data = NULL;
   if (!ta) return;
   if (!ta->GetTypeDef()->InheritsFrom(data_base)) {
     taMisc::Error("*** taDataView::m_data must inherit from ", data_base->name);
   } else {
-    ta->DataViewAdding(this); // sets m_data
+    m_data = ta;
   }
-}
-
-void taDataView::SetData_impl(taBase* ta) {
-//TODO: prob don't ref count, since we are added to dude's data link
-// maybe we should use a SmartRef instead, and use that instead of dl
-//BA 9/18/06  
-  taBase::SetPointer((taBase**)&m_data, ta);
+  UpdateAfterEdit();
 }
 
 TAPtr taDataView::SetOwner(TAPtr own) {
-  TAPtr rval = inherited_taBase::SetOwner(own);
+  TAPtr rval = inherited::SetOwner(own);
   m_parent = (taDataView*)GetOwner(parentType()); // NULL if no owner, or no compatible type
   return rval;
+}
+
+void taDataView::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
+  if (ref == &m_data) {
+    DataDestroying();
+  } else
+    inherited::SmartRef_DataDestroying(ref, obj);
+}
+
+void taDataView::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+    int dcr, void* op1_, void* op2_)
+{
+  if (ref == &m_data) {
+    DataDataChanged(dcr, op1_, op2_);
+  } else
+    inherited::SmartRef_DataChanged(ref, obj, dcr, op1_, op2_);
 }
 
 //////////////////////////////////

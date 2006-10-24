@@ -108,7 +108,7 @@ class TAMISC_API GraphLine: public T3DataView { // a line on a graph -- mdata is
 typedef T3DataView inherited;
 #endif
 public:
-  static GraphLine*	New(GraphColSpec* data);
+  static GraphLine*	New(GraphLineSpec* data);
 
   iVec3f	last_data;	// #IGNORE values of last data point plotted; 0=init value
   int		last_da_idx; 	// #IGNORE index of last data array point plotted; -1=init value
@@ -127,12 +127,12 @@ public:
   AxisView*		z_axis; // #READ_ONLY #SAVE  if 3D
 
   XAxisSpec*		x_axis_spec() const
-    {return (&((GraphColSpec*)m_data)->graph_spec->x_axis_spec);}	// our y axis
-  YAxisSpec*		y_axis_spec() const {return (YAxisSpec*)(((GraphColSpec*)m_data)->axis_spec);}	// our y axis
+    {return (&((GraphLineSpec*)m_data)->graph_spec->x_axis_spec);}	// our y axis
+  YAxisSpec*		y_axis_spec() const {return (YAxisSpec*)(((GraphLineSpec*)m_data)->axis_spec);}	// our y axis
   ZAxisSpec*		z_axis_spec() const
-    {return (&((GraphColSpec*)m_data)->graph_spec->z_axis_spec);}	// our z axis (3D only)
-  GraphColSpec*		col_spec() const {return (GraphColSpec*)m_data;}
-  GraphSpec*		graph_spec() const {return ((GraphColSpec*)m_data)->graph_spec;}
+    {return (&((GraphLineSpec*)m_data)->graph_spec->z_axis_spec);}	// our z axis (3D only)
+  GraphLineSpec*		col_spec() const {return (GraphLineSpec*)m_data;}
+  GraphSpec*		graph_spec() const {return ((GraphLineSpec*)m_data)->graph_spec;}
   T3GraphLine*		node_so() const {return (T3GraphLine*)m_node_so.ptr();}
 
   void			DataToPoint(const iVec3f& data, iVec3f& pt);
@@ -214,19 +214,20 @@ typedef T3DataViewPar inherited;
 friend class GraphViews;
 public:
   static GraphView*	New(GraphletSpec* data);
-
-  GraphletSpec*	graphlet() {return (GraphletSpec*)m_data;}
-  GraphSpec*	graph_spec();
-  T3Graph*		node_so() const {return (T3Graph*)m_node_so.ptr();}
+  
+  DataTableRef		data_table;	// the data itself
 
   AxisView*		x_axis;		// #READ_ONLY #NO_SAVE the x axis
   AxisView*		z_axis;		// #READ_ONLY #NO_SAVE the z axis (3D only)
   bool			nodisp_x_axis; 	// do not display x axis
   T3DataView_PtrList	y_axes;	      	// #READ_ONLY #NO_SAVE the y axis(s) -- note: autoset when added to children
   T3DataView_PtrList	lines;	      	// #READ_ONLY #NO_SAVE the lines -- note: autoset when added to children
-
   iVec3f 		origin;		// #READ_ONLY #NO_SAVE origin of lines, in our container's units
   FloatTDCoord		geom;		// #READ_ONLY #NO_SAVE size, in Graph units
+
+  GraphletSpec*		graphlet() {return (GraphletSpec*)m_data;}
+  GraphSpec*		graph_spec();
+  T3Graph*		node_so() const {return (T3Graph*)m_node_so.ptr();}
 
   override void		BuildAll();  // generate initial data members (axes)
 
@@ -306,7 +307,7 @@ friend class iAxisButton;
   Q_OBJECT
 public:
   iGraphButtons*	parent; // set when added
-  GraphColSpec*	line;		// the column for this field (almost always exists)
+  GraphLineSpec*	line;		// the column for this field (almost always exists)
   AxisSpec*	axis;		// axis for this field, if it is an axis, else NULL
 
   void			setShowLine(bool show); //called by owner to set state
@@ -320,10 +321,10 @@ public:
   bool		IsChosen();	// is this button selected
 
 
-  void		SetColAxis(int field, GraphColSpec* line, AxisSpec* axis, bool force = false);
+  void		SetColAxis(int field, GraphLineSpec* line, AxisSpec* axis, bool force = false);
   // used to change the col/axis; force causes everything to be updated
 
-  iGraphButton(int field, GraphColSpec* col, AxisSpec* axis, QWidget* parent = NULL);
+  iGraphButton(int field, GraphLineSpec* col, AxisSpec* axis, QWidget* parent = NULL);
     //note: normally no parent on create
   ~iGraphButton();
 

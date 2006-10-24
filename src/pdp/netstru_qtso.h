@@ -131,7 +131,7 @@ public:
 #ifndef __MAKETA__
   int		picked : 1;	// #IGNORE set when unit is picked for display (note: not same as selected)
 #endif
-  Unit*			unit() const {return (Unit*)m_data;}
+  Unit*			unit() const {return (Unit*)m_data.ptr();}
   UnitGroupView*	ugrv() {return GET_MY_OWNER(UnitGroupView);}
   T3UnitNode*		node_so() const {return (T3UnitNode*)m_node_so.ptr();}
   NetView*		nv();
@@ -192,7 +192,7 @@ public:
 
   UnitViewData_PArray	uvd_arr; // #IGNORE
 
-  Unit_Group*		ugrp() const {return (Unit_Group*)m_data;}
+  Unit_Group*		ugrp() const {return (Unit_Group*)m_data.ptr();}
   UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE
   T3UnitGroupNode*	node_so() const {return (T3UnitGroupNode*)m_node_so.ptr();}
 
@@ -225,7 +225,7 @@ INHERITED(nvDataView)
 public:
   T3DataView_PtrList	ugrps; // #NO_SAVE
 
-  Layer*		layer() const {return (Layer*)m_data;}
+  Layer*		layer() const {return (Layer*)m_data.ptr();}
   T3LayerNode*		node_so() const {return (T3LayerNode*)m_node_so.ptr();}
 
   override void		BuildAll(); // creates fully populated subviews
@@ -254,7 +254,7 @@ class PDP_API PrjnView: public nvDataView {
 #endif
 friend class NetView;
 public:
-  Projection*		prjn() const {return (Projection*)m_data;}
+  Projection*		prjn() const {return (Projection*)m_data.ptr();}
   T3PrjnNode*		node_so() const {return (T3PrjnNode*)m_node_so.ptr();}
 
   T3_DATAVIEWFUNS(PrjnView, nvDataView)
@@ -324,7 +324,7 @@ public:
   UnitDisplayMode	unit_disp_mode;
   UnitTextDisplay	unit_text_disp;
 
-  Network*		net() const {return (Network*)m_data;}
+  Network*		net() const {return (Network*)m_data.ptr();}
   T3NetNode*		node_so() const {return (T3NetNode*)m_node_so.ptr();}
   void 			setUnitSrc(UnitView* uv, Unit* unit); // updates picked unit
   void			setUnitDisp(int value); // sets a new md to display, index in membs

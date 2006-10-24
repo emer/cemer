@@ -127,7 +127,6 @@ public:
   DATAVIEW_PARENT(T3DataView) // always a T3DataView (except root guy)
   FloatTransform*	transform(bool auto_create = false);  // transform, in Inventor coords
 
-  taiDataLink*		link() const {return (taiDataLink*)IDataLinkClient::m_link;}
   override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
   T3Node*		node_so() const {return m_node_so.ptr();} //
   virtual T3DataViewRoot* root();
@@ -139,8 +138,8 @@ public:
   override void 	Close(); // usually delegates to parent->CloseChild
   virtual void 		CloseChild(taDataView* child) {}
   virtual void		BuildAll() {} // subclass-dependent operation -- reinvoked after major update
-  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
-  virtual void		DataDestroying(); // called by data when it is destroying -- usual action is to destroy ourself
+  override void		DataDataChanged(int dcr, void* op1, void* op2);
+  override void		DataDestroying(); // called by data when it is destroying -- usual action is to destroy ourself
 //nn  void			EditAction(int ea); // do the edit action; invokes _impl
 //nn?  virtual void		InsertItem(T3DataView* item, T3DataView* after); // used by child's constructor
 //  void			SetPos(const TDCoord& pos); // sets origin, also doing ta->so coordinate flip
@@ -205,7 +204,6 @@ protected:
 //nn  virtual void		Render_post_children() {}
 //nn  virtual void		Reset_impl_children() {}
 
-  virtual void		DataChanged_impl(T3DataView* nd, int dcr, void* op1, void* op2) {} // called for each node when the data item has changed, esp. ex lists and groups
   override void 	DataStructUpdateEnd_impl(); // our own customized version, similar to generic base
 protected:
   T3DataView*		last_child_node; // #IGNORE last child node created, so we can pass to createnode

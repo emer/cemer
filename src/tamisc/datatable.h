@@ -23,10 +23,6 @@
 #include "colorscale.h" // for DT && DA Viewspecs
 #include "tamisc_TA_type.h"
 
-#ifdef TA_GUI
-#include "fontspec.h"
-#endif
-
 
 // forwards this file
 

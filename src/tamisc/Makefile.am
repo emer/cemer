@@ -7,31 +7,22 @@ VPATH = @srcdir@
 
 if TA_GUI
 
-TAHEADS_GUI_PRE =\
-	@abs_srcdir@/fontspec.h 
-
 TAHEADS_GUI =\
 	@abs_srcdir@/colorbar_qt.h \
 	@abs_srcdir@/../taiqtso/safeptr_so.h \
 	@abs_srcdir@/t3node_so.h \
 	@abs_srcdir@/t3viewer.h \
 	@abs_srcdir@/colorbar_so.h \
-	@abs_srcdir@/datatable_qtso.h \
-	@abs_srcdir@/datagraph_so.h \
-	@abs_srcdir@/datagraph_qtso.h 
+	@abs_srcdir@/datatable_qtso.h 
 
 HEADS_GUI =\
-	fontspec.h \
 	t3node_so.h \
 	t3viewer.h \
 	colorbar_qt.h \
 	colorbar_so.h \
-	datatable_qtso.h \
-	datagraph_so.h \
-	datagraph_qtso.h
+	datatable_qtso.h 
 
 SRCS_GUI =\
-	fontspec.cpp \
 	t3node_so.cpp \
 	t3viewer.cpp \
 	t3viewer.moc.cpp \
@@ -39,23 +30,18 @@ SRCS_GUI =\
 	colorbar_qt.moc.cpp \
 	colorbar_so.cpp \
 	datatable_qtso.cpp \
-	datatable_qtso.moc.cpp \
-	datagraph_so.cpp \
-	datagraph_qtso.cpp \
-	datagraph_qtso.moc.cpp
+	datatable_qtso.moc.cpp 
 
 endif
 
 TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
-	$(TAHEADS_GUI_PRE) \
 	@abs_srcdir@/tarandom.h \
 	@abs_srcdir@/tatime.h \
 	@abs_srcdir@/tdgeometry.h \
 	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/datatable.h \
-	@abs_srcdir@/datagraph.h \
 	@abs_srcdir@/fun_lookup.h \
 	@abs_srcdir@/ta_data_extras.h \
 	$(TAHEADS_GUI) \
@@ -70,7 +56,6 @@ HEADS =\
 	minmax.h \
 	colorscale.h \
 	datatable.h \
-	datagraph.h \
 	fun_lookup.h \
 	ta_data_extras.h \
 	$(HEADS_GUI)
@@ -82,7 +67,6 @@ SRCS =\
 	minmax.cpp \
 	colorscale.cpp \
 	datatable.cpp \
-	datagraph.cpp \
 	fun_lookup.cpp \
 	ta_data_extras.cpp \
 	$(SRCS_GUI) \

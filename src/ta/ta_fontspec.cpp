@@ -15,7 +15,7 @@
 
 
 
-#include "fontspec.h"
+#include "ta_fontspec.h"
 #include "ta_qt.h"
 
 #include <qfontdialog.h>
