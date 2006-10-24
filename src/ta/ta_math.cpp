@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ta_math.h"
+#include "ta_mtrnd.h"
 
 //////////////////////////
 //  	CountParam     	//

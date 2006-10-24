@@ -6,6 +6,7 @@ docs..: add all float_RArray funs, for matricies.
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 
 * add data guys to prog toolbox: maybe a 2nd panel??
+* need to fix "MakeTemplate" to be extensible across 
 
 * DataJoin function/Prog
 
@@ -42,6 +43,9 @@ current bugs:
 * need special menu action to save in prog_lib
 
 -------
+lower pri:
+
+* use FindMakeColName for all dt copy/constr stuff (w/orphaning)
 
 * profile: slow!!! -- probably all the uae's triggering cascade of datachanged stuff..
   (faster now!)

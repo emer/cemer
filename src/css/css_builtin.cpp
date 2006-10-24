@@ -25,6 +25,7 @@
 #include "ta_base.h"
 #include "ta_group.h"
 #include "ta_math.h"
+#include "ta_mtrnd.h"
 
 #ifdef TA_GUI
 #include "css_qt.h"

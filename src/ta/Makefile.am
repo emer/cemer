@@ -81,6 +81,7 @@ TAHEADS =\
 	@abs_srcdir@/ta_stdef.h \
 	@abs_srcdir@/ta_variant.h \
 	@abs_srcdir@/ifont.h \
+	@abs_srcdir@/ta_mtrnd.h \
 	@abs_srcdir@/ta_list.h \
 	@abs_srcdir@/ta_filer.h \
 	@abs_srcdir@/icolor.h \
@@ -113,6 +114,7 @@ HEADS =\
 	ta_variant.h \
 	ifont.h \
 	icolor.h \
+	ta_mtrnd.h \
 	ta_list.h \
 	ta_filer.h \
 	ta_type.h \
@@ -145,6 +147,7 @@ SRCS =\
 	ta_variant.cpp \
 	ifont.cpp \
 	icolor.cpp \
+	ta_mtrnd.cpp \
 	ta_list.cpp \
 	ta_filer.cpp \
 	ta_type.cpp \

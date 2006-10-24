@@ -1361,6 +1361,7 @@ bool cssCodeBlock::CleanDoubleBlock() {
   code->owner_blk = this;	// reparent
 
   cssProg::unRefDone(old_code);	// get rid of mine
+  return true;
 }
 
 cssEl::RunStat cssCodeBlock::Do(cssProg* prg) {
@@ -3785,7 +3786,6 @@ cssElPtr& cssProgSpace::FindName(const char* nm) {	// lookup by name
 
 // idx is an arbitrary number, returns NULL when no more values
 cssSpace* cssProgSpace::GetParseSpace(int idx) {
-  static int max_prog;		// highest prog to search back to
   static int n_above;		// number of guys above me
 
   int after_class = 2;
@@ -3805,7 +3805,7 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
     return cssMisc::cur_class->members;
   else if((cssMisc::cur_class) && (idx == 3))
     return cssMisc::cur_class->methods;
-  else if(idx == after_class) {		// first auto block, also set max_prog
+  else if(idx == after_class) {		// first auto block
     n_above = 0;
     cssProg* cp = Prog();
     while((cp->owner_blk) && (cp->owner_blk->owner_prog)) {
@@ -3901,7 +3901,7 @@ cssElPtr& cssProgSpace::FindTypeName(const char* nm) {
 
 cssElPtr& cssProgSpace::GetPtrType(cssEl* base_type, int ptrs) {
   // first try to find pre-existing on appropriate type space
-  cssSpace* tp_spc = tp_spc = &cssMisc::TypesSpace_ptrs;
+  cssSpace* tp_spc = &cssMisc::TypesSpace_ptrs;
   String sufx = "_ptr";
   if(ptrs >= 2) sufx += "_ptr";
 
@@ -3922,7 +3922,7 @@ cssElPtr& cssProgSpace::GetPtrType(cssEl* base_type, int ptrs) {
 
 cssElPtr& cssProgSpace::GetRefType(cssEl* base_type) {
   // first try to find pre-existing on appropriate type space
-  cssSpace* tp_spc = tp_spc = &cssMisc::TypesSpace_refs;
+  cssSpace* tp_spc = &cssMisc::TypesSpace_refs;
   String sufx = "_ref";
 
   if((cssMisc::cur_class) &&
@@ -4916,7 +4916,7 @@ void cssCmdShell::AcceptNewLine_Qt(QString ln, bool eof) {
 // this is the work-horse of the shell: a new string line is sent to it by some
 // outer-loop, and it is processed (compiled, etc).
 void cssCmdShell::AcceptNewLine(const String& ln, bool eof) {
-  int rval = cmd_prog->CompileCode(ln);
+  cmd_prog->CompileCode(ln);
   if(cmd_prog->debug >= 2) {
     cmd_prog->ListImpl();
   }

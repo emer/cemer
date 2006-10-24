@@ -38,6 +38,7 @@
 // implimentation header for the ta list classes
 
 #include "ta_list.h"
+#include "ta_mtrnd.h"
 
 // needed just for the taMisc::display_width variable..
 #include "ta_type.h"

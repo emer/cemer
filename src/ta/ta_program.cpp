@@ -1283,6 +1283,19 @@ void ProgramCall::UpdateGlobalArgs() {
 //  Program		//
 //////////////////////////
 
+void Program::MakeTemplate_fmtype(Program* prog, TypeDef* td) {
+  taBase* tok = (taBase*)td->GetInstance();
+  if(tok != NULL) {
+    taBase* o = tok->MakeToken();
+    o->SetName("New" + td->name);
+    prog->init_code.Add(o);
+  }
+  for(int i=0;i<td->children.size;i++) {
+    TypeDef* chld = td->children[i];
+    MakeTemplate_fmtype(prog, chld);
+  }
+}
+
 Program* Program::MakeTemplate() {
 //TODO: this will probably get nuked and replaced with a generic maker on .root
   Program* prog = new Program;
@@ -1290,18 +1303,21 @@ Program* Program::MakeTemplate() {
   //note: prog args go into a ProgramCall etc., so we just add the tmpl to the objects
   {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->objs.Add(o);}
   //note: put in .init since that will get searched first
-  {ProgVars* o = new ProgVars; o->SetName("NewProgVars"); prog->init_code.Add(o);}
-  {ProgList* o = new ProgList; o->SetName("NewProgList"); prog->init_code.Add(o);}
-  {UserScript* o = new UserScript; o->SetName("NewUserScript"); prog->init_code.Add(o);}
-  {ForLoop* o = new ForLoop; o->SetName("NewForLoop"); prog->init_code.Add(o);}
-  {DoLoop* o = new DoLoop; o->SetName("NewDoLoop"); prog->init_code.Add(o);}
-  {WhileLoop* o = new WhileLoop; o->SetName("NewWhileLoop"); prog->init_code.Add(o);}
-  {IfElse* o = new IfElse; o->SetName("NewIfElse"); prog->init_code.Add(o);}
-  {IfContinue* o = new IfContinue; o->SetName("NewIfContinue"); prog->init_code.Add(o);}
-  {IfBreak* o = new IfBreak; o->SetName("NewIfBreak"); prog->init_code.Add(o);}
-  {MethodCall* o = new MethodCall; o->SetName("NewMethodCall"); prog->init_code.Add(o);}
-  {MathCall* o = new MathCall; o->SetName("NewMathCall"); prog->init_code.Add(o);}
-  {ProgramCall* o = new ProgramCall; o->SetName("NewProgramCall"); prog->init_code.Add(o);}
+  
+  MakeTemplate_fmtype(prog, &TA_ProgEl);
+
+//   {ProgVars* o = new ProgVars; o->SetName("NewProgVars"); prog->init_code.Add(o);}
+//   {ProgList* o = new ProgList; o->SetName("NewProgList"); prog->init_code.Add(o);}
+//   {UserScript* o = new UserScript; o->SetName("NewUserScript"); prog->init_code.Add(o);}
+//   {ForLoop* o = new ForLoop; o->SetName("NewForLoop"); prog->init_code.Add(o);}
+//   {DoLoop* o = new DoLoop; o->SetName("NewDoLoop"); prog->init_code.Add(o);}
+//   {WhileLoop* o = new WhileLoop; o->SetName("NewWhileLoop"); prog->init_code.Add(o);}
+//   {IfElse* o = new IfElse; o->SetName("NewIfElse"); prog->init_code.Add(o);}
+//   {IfContinue* o = new IfContinue; o->SetName("NewIfContinue"); prog->init_code.Add(o);}
+//   {IfBreak* o = new IfBreak; o->SetName("NewIfBreak"); prog->init_code.Add(o);}
+//   {MethodCall* o = new MethodCall; o->SetName("NewMethodCall"); prog->init_code.Add(o);}
+//   {MathCall* o = new MathCall; o->SetName("NewMathCall"); prog->init_code.Add(o);}
+//   {ProgramCall* o = new ProgramCall; o->SetName("NewProgramCall"); prog->init_code.Add(o);}
   return prog;
 }
   

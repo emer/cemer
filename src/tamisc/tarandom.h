@@ -19,6 +19,7 @@
 #include "ta_base.h"
 #include "ta_dmem.h"
 #include "ta_math.h"
+#include "ta_mtrnd.h"
 #include "tamisc_def.h"
 #include "tamisc_TA_type.h"
 

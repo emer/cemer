@@ -603,7 +603,8 @@ public: // XxxGui versions provide feedback to the usbool no_gui = falseer
     // #MENU #MENU_ON_Actions #MENU_CONTEXT #BUTTON open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
 #endif
 
-  static Program*	MakeTemplate(); // make a template instance (with children) suitable for root.templates
+  static Program*	MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
+  static void		MakeTemplate_fmtype(Program* prog, TypeDef* td); // #IGNORE make from typedef
   
   void	UpdateAfterEdit();
   void	InitLinks();
