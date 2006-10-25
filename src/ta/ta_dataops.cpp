@@ -846,8 +846,7 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
   String il1 = cssMisc::Indent(indent_level+1);
   String il2 = cssMisc::Indent(indent_level+2);
   String rval = cssMisc::Indent(indent_level) + "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";\n";
-  rval += il1 + "dcl->src_cols.GetColumns(dcl->src_data);\n";
-  rval += il1 + "dcl->dest_cols.GetColumns(dcl->dest_data);\n";
+  rval += il1 + "dcl->dest_data.ResetData(); // all data ops clear out old existing data\n";
   
   rval += il1 + "for(int src_row=0; src_row < dcl->src_data.rows; src_row++) {\n";
   for(int i=0;i<src_cols.size; i++) {
@@ -866,8 +865,6 @@ const String DataCalcLoop::GenCssBody_impl(int indent_level) {
 
 const String DataCalcLoop::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
-  rval += cssMisc::Indent(indent_level+1) + "dcl->src_cols.ClearColumns();\n";
-  rval += cssMisc::Indent(indent_level+1) + "dcl->dest_cols.ClearColumns();\n";
   rval += cssMisc::Indent(indent_level) + "} // DataCalcLoop dcl\n";
   return rval;
 }
