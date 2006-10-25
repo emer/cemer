@@ -8,7 +8,7 @@ docs..: add all float_RArray funs, for matricies.
 * add data guys to prog toolbox: maybe a 2nd panel??
 * need to fix "MakeTemplate" to be extensible across 
 
-* DataJoin function/Prog
+* DataJoin function/Prog: copyrow of matrix not working!!
 
 * DataCalc guy as a loop prog with extra prog for adding row to table
 

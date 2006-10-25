@@ -33,6 +33,14 @@ public:
   String		col_name;	// name of column in data table to sort on (either enter directly or lookup from column)
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
+  virtual void 	SetDataTable(DataTable* dt);
+  // set the data table to enable looking up columns
+
+  virtual void 	GetColumns(DataTable* dt);
+  // get the column pointers for given data table (looking up by name)
+  virtual void 	ClearColumns();
+  // clear column pointers (don't keep these guys hanging around)
+
   override String GetDisplayName() const;
   void	UpdateAfterEdit();	// set col_name from column
   TA_SIMPLE_BASEFUNS(DataOpEl);
@@ -181,6 +189,34 @@ private:
   void 	Destroy()		{ };
 };
 
+/////////////////////////////////////////////////////////
+//   Join Spec
+/////////////////////////////////////////////////////////
+
+class TA_API DataJoinSpec : public taOBase {
+  // ##INLINE ##CAT_Data datatable join specification: combine two tables along common column values
+  INHERITED(taOBase)
+public:
+  DataOpEl	col_a;		// column from first (a) source datatable to join on (values match those in col_b)
+  DataOpEl	col_b;		// column from second (b) source datatable to join on (values match those in col_a)
+
+  virtual void 	SetDataTable(DataTable* dt_a, DataTable* dt_b);
+  // set the data table to enable looking up columns
+
+  virtual void 	GetColumns(DataTable* dt_a, DataTable* dt_b);
+  // get the column pointers for given data table (looking up by name)
+  virtual void 	ClearColumns();
+  // clear column pointers (don't keep these guys hanging around)
+
+  override String GetDisplayName() const;
+  TA_SIMPLE_BASEFUNS(DataJoinSpec);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+private:
+  void  Initialize();
+  void 	Destroy()		{ };
+};
+
 
 /////////////////////////////////////////////////////////
 //   data operations
@@ -215,6 +251,9 @@ public:
   static bool	Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec,
 			 DataSortSpec* sort_spec);
   // #IGNORE helper function to do grouping when there are GROUP items, as spec'd in sort_spec
+
+  static bool	Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec);
+  // joins two datatables (src_a and src_b) into dest datatable indexed by a common column
 
   void Initialize() { };
   void Destroy() { };
@@ -295,7 +334,7 @@ private:
 };
 
 class TA_API DataGroupProg : public DataProg { 
-  // sorts src_data into dest_data according to sort_spec
+  // groups src_data into dest_data according to group_spec
 INHERITED(DataProg)
 public:
   DataGroupSpec		group_spec; // data grouping specification
@@ -312,5 +351,82 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
+class TA_API DataJoinProg : public DataProg { 
+  // joins two datatables (src and src_b) into dest datatable indexed by a common column
+INHERITED(DataProg)
+public:
+  DataTableRef		src_b_data;	// second source data for operation
+  DataJoinSpec		join_spec; // data grouping specification
+
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataJoinProg);
+protected:
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataCalcLoop : public DataProg { 
+  // enables arbitrary calculations and operations on data by looping row-by-row
+INHERITED(DataProg)
+public:
+  DataOpList		src_cols;
+  // source columns to operate on (variables are labeled as s_xxx where xxx is col_name)
+  DataOpList		dest_cols;
+  // destination columns to operate on (variables are labeled as d_xxx where xxx is col_name)
+  ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
+
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataCalcLoop);
+protected:
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
+  override void	PreGenChildren_impl(int& item_id);
+
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataCalcAddDestRow : public DataProg { 
+  // add a new blank row into the dest data table (used in DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object)
+INHERITED(DataProg)
+public:
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataCalcAddDestRow);
+protected:
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataCalcSetDestRow : public DataProg { 
+  // set all the current values into the dest data table (used in DataCalcLoop -- automatically gets dest_data from outer DataCalcLoop object)
+INHERITED(DataProg)
+public:
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataCalcSetDestRow);
+protected:
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
 
 #endif // ta_dataops_h

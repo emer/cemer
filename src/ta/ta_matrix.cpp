@@ -134,7 +134,7 @@ bool MatrixGeom::Equal(const MatrixGeom& other) const {
 } 
 
 bool MatrixGeom::IsFrameOf(const MatrixGeom& other) const {
-  if (size != (other.size + 1)) return false;
+  if (size != (other.size - 1)) return false;
   for (int i = 0; i < size; ++i) {
     if (el[i] != other.el[i]) return false;
   }
