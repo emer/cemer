@@ -41,9 +41,6 @@ class T3LayerNode;
 class T3PrjnNode;
 class T3NetNode;
 
-class T3TableViewNode;
-class T3GridTableViewBaseNode;
-
 
 //////////////////////////
 //   T3UnitNode		//
@@ -323,120 +320,6 @@ protected:
 private:
   SoCube*		shape_; //#IGNORE
 };
-
-
-//////////////////////////
-//   T3TableViewNode	//
-//////////////////////////
-
-/* Base class for 3d log views
-
-      shapeSeparator: SoSeparator
-        txfm_shape: SoTransform
-        material: SoMaterial
-        frame: SoFrame (note: existence/display is modal)
-      canvasSeparator: SoSeparator
-        txfm_canvas: SoTransform -- translates/scales so canvas is exactly geom dimensions
-        canvas: SoSeparator
-*/
-
-class PDP_API T3TableViewNode: public T3NodeParent {
-#ifndef __MAKETA__
-typedef T3NodeParent inherited;
-
-  SO_NODE_HEADER(T3TableViewNode);
-#endif // def __MAKETA__
-public:
-  static void		initClass();
-
-  SoSeparator*		canvas() {return canvas_;} // note: transformed to compensate for frame inset, if any
-  SoFrame*		frame() {return frame_;} // note: may be null
-  bool			showFrame();
-  virtual void		setShowFrame(bool value);
-  void 			setGeom(int px, int py, int pz); // sets (actual) geom of log
-  T3TableViewNode(void* dataView_ = NULL); // dataview is a TableView object
-
-protected:
-  iVec3i		geom_; //note, not a field
-  SoSeparator*		canvas_;
-#ifndef __MAKETA__
-#endif
-  virtual void		render(); // called after geom and other changes
-  ~T3TableViewNode();
-
-private:
-  SoFrame*		frame_; // NULL if not shown
-  SoSeparator*		canvasSeparator_;
-  SoTransform*		txfm_canvas_;
-};
-
-//////////////////////////
-//   T3GridTableViewBaseNode	//
-//////////////////////////
-
-/* 3d grid and text log views
-     [...]
-      canvasSeparator: SoSeparator
-        txfm_canvas: SoTransform -- translates/scales so canvas is exactly geom dimensions
-        canvas: SoSeparator
-          header: SoGroup
-          body: SoGroup
-*/
-
-class PDP_API T3GridTableViewBaseNode: public T3TableViewNode {
-#ifndef __MAKETA__
-typedef T3TableViewNode inherited;
-
-  SO_NODE_HEADER(T3GridTableViewBaseNode);
-#endif // def __MAKETA__
-public:
-  static void		initClass();
-
-  SoGroup*		header() {return header_;}
-  SoGroup*		body() {return body_;}
-
-  T3GridTableViewBaseNode(void* dataView_ = NULL); // dataview is a TextTableView object
-
-protected:
-  ~T3GridTableViewBaseNode();
-  SoGroup*		header_;
-  SoGroup*		body_;
-};
-
-
-//////////////////////////
-//   T3GraphTableViewNode	//
-//////////////////////////
-
-/* 3d grid and text log views
-     [...]
-      canvasSeparator: SoSeparator
-        txfm_canvas: SoTransform -- translates/scales so canvas is exactly geom dimensions
-        canvas: SoSeparator
-          header: SoGroup
-          body: SoGroup
-*/
-
-class PDP_API T3GraphTableViewNode: public T3TableViewNode {
-#ifndef __MAKETA__
-typedef T3TableViewNode inherited;
-
-  SO_NODE_HEADER(T3GraphTableViewNode);
-#endif // def __MAKETA__
-public:
-  static void		initClass();
-
-/*TODO: graphs, axes, body, etc.  SoGroup*		header() {return header_;}
-  SoGroup*		body() {return body_;} */
-
-  T3GraphTableViewNode(void* dataView_ = NULL); // dataview is a TextTableView object
-
-protected:
-  ~T3GraphTableViewNode();
-//  SoGroup*		header_;
-//  SoGroup*		body_;
-};
-
 
 
 

@@ -38,6 +38,9 @@ class float_Data;
 class double_Data;
 class int_Data;
 class byte_Data;
+class DataColViewSpec;
+class DataColViewSpecs;
+class DataTableViewSpec;
 class DataTableModel;
 
 // specific ones are in the template classes: String_Data, float_Data
@@ -60,11 +63,15 @@ class TA_API DataArray_impl : public taNBase {
 INHERITED(taNBase)
 friend class DataTable;
 public:
+  static const String	udkey_width; // WIDTH=n display width, in chars
+  static const String	udkey_narrow; // NARROW=b if narrow (default for ints)
+  static const String	udkey_hidden; // HIDDEN=b defaults to not visible
+  
   static void 		DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt);
     // note: vt is -1 if unknown
 
   String		disp_opts;
-  // viewer default display options
+  // #NO_SHOW #NO_SAVE #OBSOLETE viewer default display options DELETE THIS
   bool			mark;
   // #NO_SHOW #NO_SAVE clear on new and when col confirmed, used to delete orphans
   bool			pin;
@@ -84,9 +91,10 @@ public:
 
   virtual ValType 	valType() const = 0;
   // #CAT_Access the type of data in each element
-  virtual bool		is_numeric() const {return false;}
+  inline bool		isMatrix() const {return is_matrix;} // for consistency
+  virtual bool		isNumeric() const {return false;}
   // #CAT_Access true if data is float, int, or byte
-  virtual bool		is_string() const {return false;}
+  virtual bool		isString() const {return false;}
   // #CAT_Access true if data is string
   virtual int		cell_size() const
   { return (is_matrix) ? cell_geom.Product() : 1; }
@@ -103,7 +111,7 @@ public:
 
   // row is absolute row in the matrix, not a DataTable row -- use the DataTable routines
   // -ve values are from end, and are valid for both low-level col access, and DataTable access
-
+  
   const Variant GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
   // #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVar(const Variant& val, int row) 
@@ -182,16 +190,11 @@ public:
   // misc
 
   int			displayWidth() const;
-  // #CAT_Display low level display width, in tabs (8 chars/tab), taken from spec
+  // #CAT_Display low level display width, in chars, taken from options
   virtual int		maxColWidth() const {return -1;}
   // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
   virtual bool		saveToFile() const {return true;}
   // #IGNORE whether to save col -- currently always true
-
-  bool		HasDispOption(const String& opt) const
-  { return disp_opts.contains(opt); } // check if a given display option is set
-  const String 	DispOptionAfter(const String& opt) const;
-  void		AddDispOption(const String& opt);
 
   static const KeyString key_val_type; // "val_type"
   static const KeyString key_disp_opts; // "disp_opts"
@@ -209,6 +212,7 @@ public:
   // #CAT_ObjectMgmt copy one row from source to given row in this object
   
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
+  TA_USERDATAFUNS(DataArray_impl)
   void  UpdateAfterEdit();
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
   void	CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
@@ -272,6 +276,7 @@ private:
   void	Destroy()		{}
 };
 
+SmartRef_Of(DataTableCols) // DataTableColsRef
 
 /////////////////////////////////////////////////////////
 //   DataTable
@@ -356,8 +361,6 @@ public:
 
   void			SetColName(const String& col_nm, int col);
   // #CAT_Columns set column name for given column
-  void			AddColDispOpt(const String& dsp_opt, int col);
-  // #CAT_Columns add display option for given leaf column
 
   bool 			ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
   // #CAT_Columns returns 'true' if the col has the same name and a compatible data type
@@ -403,6 +406,11 @@ public:
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
   void			RemoveAllRows() { ResetData(); }
   // #CAT_Rows remove all of the rows, but keep the column structure
+
+  const Variant		GetColUserData(const String& name,
+    int col) const; // gets user data from the col
+  void			SetColUserData(const String& name,
+    const Variant& value, int col); // sets user data into the col
 
   double 		GetValAsDouble(int col, int row);
   // #CAT_Rows get data of scalar type, in double form, for given leaf col, row; if data is NULL, then 0 is returned
@@ -458,6 +466,7 @@ public:
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
+  TA_USERDATAFUNS(DataTable)
   void	InitLinks();
   void	CutLinks();
   void 	Copy_(const DataTable& cp);
@@ -585,7 +594,7 @@ class TA_API String_Data : public DataArray<String_Matrix> {
 INHERITED(DataArray<String_Matrix>)
 friend class DataTable;
 public:
-  override bool		is_string() const {return true;} 
+  override bool		isString() const {return true;} 
   override ValType 	valType() const  {return VT_STRING;}
 
   TA_BASEFUNS(String_Data);
@@ -622,7 +631,7 @@ class TA_API double_Data : public DataArray<double_Matrix> {
 INHERITED(DataArray<double_Matrix>)
 friend class DataTable;
 public:
-  override bool		is_numeric() const {return true;} 
+  override bool		isNumeric() const {return true;} 
   override int		maxColWidth() const {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
   override ValType 	valType() const {return VT_DOUBLE;}
 
@@ -644,7 +653,7 @@ class TA_API float_Data : public DataArray<float_Matrix> {
 INHERITED(DataArray<float_Matrix>)
 friend class DataTable;
 public:
-  override bool		is_numeric() const {return true;} 
+  override bool		isNumeric() const {return true;} 
   override int		maxColWidth() const {return 7;} // assumes sign, int: 6 dig's; float: 5 dig's, decimal point
   override ValType 	valType() const {return VT_FLOAT;}
 
@@ -669,7 +678,7 @@ class TA_API int_Data : public DataArray<int_Matrix> {
 INHERITED(DataArray<int_Matrix>)
 friend class DataTable;
 public:
-  override bool		is_numeric() const {return true;} // 
+  override bool		isNumeric() const {return true;} // 
   override int		maxColWidth() const {return 11;} // assumes sign, 10 digs
   override ValType 	valType() const {return VT_INT;}
 
@@ -691,7 +700,7 @@ class TA_API byte_Data : public DataArray<byte_Matrix> {
 INHERITED(DataArray<byte_Matrix>)
 friend class DataTable;
 public:
-  override bool		is_numeric() const {return true;} // 
+  override bool		isNumeric() const {return true;} // 
   override int		maxColWidth() const {return 3;} // assumes 3 digs
   override ValType 	valType() const {return VT_BYTE;}
 
@@ -709,19 +718,52 @@ private:
 };
 
 
+class TA_API DataColViewSpec: public ViewSpec {
+  // ##SCOPE_DataColViewSpecs base specification for the display of data
+INHERITED(ViewSpec)
+public:
+
+  DataArray_impl*	dataCol() const {return (DataArray_impl*)m_data.ptr();}
+  DATAVIEW_PARENT(DataTableViewSpec)
+//DataTableViewSpec*	parent() const;
+  virtual void		setFont(const FontSpec& value) {} // for subclasses that implement
+  
+  virtual bool		BuildFromDataArray(DataArray_impl* tda);
+  
+  void 	SetDefaultName() {} // leave it blank
+  TA_BASEFUNS(DataColViewSpec);
+protected:
+  virtual void		BuildFromDataArray_impl(bool first_time);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataColViewSpecs: public DataView_List {
+INHERITED(DataView_List)
+friend class DataTableViewSpec;
+public:
+  TA_DATAVIEWLISTFUNS(DataColViewSpecs, inherited, DataColViewSpec)
+protected:
+  void 			ReBuildFromDataTable(DataTableCols* data_cols);
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
+
 class TA_API DataTableViewSpec: public ViewSpec {
   // base class for a viewspec of a datatable
 INHERITED(ViewSpec)
 public:
-  String		display_name;	// name used in display
-  bool	        	visible; 	// visibility flag
-  FontSpec		def_font; // default font/size for text
+  FontSpec		font; // font for text (can generally be customized for cols etc.)
+  DataColViewSpecs	col_specs;
   
   DataTable*		dataTable() const {return (DataTable*)m_data.ptr();}
   
-  virtual bool		BuildFromDataTable(DataTable* dt);
+  virtual bool		BuildFromDataTable(DataTable* dt, bool force = false);
     // #MENU #NO_NULL build the spec from the given table, erasing previous spec
-  void			ReBuildFromDataTable() {ReBuildFromDataTable_impl();}
+  void			ReBuildFromDataTable();
     // #MENU conservatively rebuild the spec from the current table
   
   void	InitLinks();
@@ -730,40 +772,11 @@ public:
   COPY_FUNS(DataTableViewSpec, ViewSpec)
   TA_DATAVIEWFUNS(DataTableViewSpec, inherited) //
 protected:
-  virtual void	ReBuildFromDataTable_impl();
+  virtual void		ReBuildFromDataTable_impl(); //note: only called if nonnull
+  override void		UpdateAfterEdit_impl();
 private:
   void Initialize();
   void Destroy();
-};
-
-class TA_API DataColMoniker: public taBase {
-  // #INLINE class for referencing a datacolumn so that we can get it later based on name, type, etc.
-INHERITED(taBase)
-public:
-  int			index; 
-  String		name;
-  ValType 		val_type;
-  bool			is_matrix;
-  MatrixGeom		cell_geom;
-  
-  override bool	Dump_QuerySaveMember(MemberDef* md); 
-  TA_BASEFUNS(DataColMoniker)
-private:
-  void Initialize();
-  void Destroy() {}
-};
-
-
-class TA_API DataColViewSpec: public taDataView {
-  // base class for any viewspec element based on a datatable col
-INHERITED(taDataView)
-public:
-  DataArray_impl*	dataCol() const {return (DataArray_impl*)m_data.ptr();}
-  
-  TA_DATAVIEWFUNS(DataColViewSpec, inherited)
-private:
-  void Initialize();
-  void Destroy() {}
 };
 
 

@@ -324,153 +324,89 @@ public:
   TA_BASEFUNS(ClustNode);
 };
 
-// todo: these would seem to be completely removable now!?
-
-class TAMISC_API DA_ViewSpec : public taNBase {
-  // ##SCOPE_DT_ViewSpec base specification for the display of log data_array (DA)
-INHERITED(taNBase)
-public:
-  DataArray_impl*	data_array;	// #READ_ONLY #NO_SAVE the data array
-  String		display_name;	// name used in display
-  bool	        	visible;	// visibility flag
-
-  virtual void	UpdateView(); 	// #BUTTON Update view to reflect current changes
-  virtual void	SetGpVisibility(bool visible);
-  // #BUTTON set the visibility of all members of this group of items
-  virtual void	CopyToGp(MemberDef* member);
-  // #BUTTON copy given member value setting to all view specs within this same group
-
-  virtual bool	BuildFromDataArray(DataArray_impl* tda=NULL);
-
-  virtual String	ValAsString(int row); //note: row should be valid
-  static String	CleanName(String& name);
-
-  void	UpdateAfterEdit();
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-  void	CutLinks();
-  void	Copy_(const DA_ViewSpec& cp);
-  COPY_FUNS(DA_ViewSpec,taNBase);
-  TA_BASEFUNS(DA_ViewSpec);
-};
-
-class TAMISC_API DT_ViewSpec :  public taGroup<DA_ViewSpec> {
-  // base specification for the display of log data_table (DT)
-INHERITED(taGroup<DA_ViewSpec>)
-public:
-  DataTable*		data_table;	// #READ_ONLY the data table;
-  String		display_name;	// name used in display
-  bool	        	visible; 	// visibility flag
-#ifdef TA_GUI
-  FontSpec		def_font; // default font/size for text
-#endif
-  virtual bool	BuildFromDataTable(DataTable* tdt=NULL);
-  virtual void	ReBuildFromDataTable();
-
-  virtual void	SetDispNms(const String& base_name);
-  // #BUTTON set display_name for all view specs in group to base_name + "_" + no where no is number in group
-  virtual void	RmvNmPrefix();
-  // #BUTTON set display_name for all view specs in group to current name without prefix (i.e., "prefix_rest" -> "rest")
-  virtual void	SetVisibility(bool visible);
-  // #BUTTON set the visibility of all members of this group of items
-
-  void	UpdateAfterEdit();
-  void	Initialize();
-  void	Destroy();
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const DT_ViewSpec& cp);
-  COPY_FUNS(DT_ViewSpec, taGroup<DA_ViewSpec>);
-  TA_BASEFUNS(DT_ViewSpec);
-};
-
 /*
   Additional Display Options
-    WIDTH=i (i: int) -- sets default column width to i tabs (8 chars/ tab)
-    NARROW -- in addition to base spec, also sets column with to 1 tab
-
+    WIDTH=i (i: int) -- sets default column width to i chars
+    NARROW -- in addition to base spec, also sets column with to 8 chars
 */
-class TAMISC_API DA_TextViewSpec: public DA_ViewSpec {
-  // data-array view spec for text-based display
-public:
-  int		width;			// width of the column, in tabs (8 chars/tab)
 
-  bool		BuildFromDataArray(DataArray_impl* tda=NULL);
-
-  void 	Initialize();
-  void	Destroy();
-  void Copy_(const DA_TextViewSpec& cp) { width = cp.width;}
-  COPY_FUNS(DA_TextViewSpec,DA_ViewSpec);
-  TA_BASEFUNS(DA_TextViewSpec);
-};
-
-class TAMISC_API DA_GridViewSpec : public DA_ViewSpec {
+class TAMISC_API GridColViewSpec : public DataColViewSpec {
   // information for display of a data array in a grid display
+INHERITED(DataColViewSpec)
 public:
   enum DisplayStyle {
-    TEXT,			// Draw using text only
-    BLOCK,			// Draw using color block only
-    TEXT_AND_BLOCK 		// Draw using both color block with text
+    TEXT	= 0x01,	// Draw using text only (default for scalar cells)
+    BLOCK	= 0x02,	// Draw using blocks only (default for matrix cells)
+    TEXT_AND_BLOCK = 0x03, // Draw using both blocks and text
+    IMAGE = 0x04	// Draw an image (assumes col type has BW or Color image data)
+#ifndef __MAKETA__
+    ,TEXT_MASK = 0x01 // mask to see if TEXT is in use
+    ,BLOCK_MASK = 0x02 // mask to see if BLOCK is in use
+#endif
   };
 
-  PosTDCoord	pos;		// position of the data in absolute coordinates
-  DisplayStyle  display_style;	// can display as text, block, or both
-  bool		scale_on;	// adjust overall scale including this data
+  enum MatrixLayout { // order of display for matrix cols
+    TOP_ZERO, // row zero is displayed at top of cell (ex. for images)
+    BOT_ZERO // row zero is displayed at bottom of cell (ex for patterns)
+  };
 
-  bool		BuildFromDataArray(DataArray_impl* tda=NULL);
+  enum BlockColor { // ways that grid blocks can be filled
+    COLOR,	// color indicates value
+    BW_SHADE, 	// black&white shading indicates value
+    SOLID	// no shading (only for use with Area/Linear/Height)
+  };
+  
+  enum BlockFill { // ways that grid blocks can be filled
+    FILL,	// just fill the whole block
+    AREA,	// area indicates value
+    LINEAR, 	// linear size of square side indicates value
+    HEIGHT	// extrude into view; 3D height indicates value
+  };
+  
+  DisplayStyle  display_style;	// can display as text and/or block, or image
+  int		text_width;	// #CONDEDIT_ON_display_style:TEXT for text cols, width of the column in chars
+  FontSpec	font; // font for this column
+  MatrixLayout	layout;	// #EXPERT #CONDEDIT_OFF_display_style:TEXT layout of matrix cells
+  BlockColor	block_color; // #CONDEDIT_OFF_display_style:TEXT,IMAGE color of matrix cells
+  BlockFill	block_fill; // #CONDEDIT_OFF_display_style:TEXT,IMAGE fill of matrix cells
+  bool		scale_on; // #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
+  
+  float 	col_width; // #IGNORE calculated col_width 
+  float		row_height; // #IGNORE calculated row height
 
+  override void		setFont(const FontSpec& value);
+  
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const GridColViewSpec& cp);
+  COPY_FUNS(GridColViewSpec, DataColViewSpec);
+  TA_BASEFUNS(GridColViewSpec);
+protected:
+  void			BuildFromDataArray_impl(bool first);
+  virtual void 		InitDisplayParams();
+private:
   void 	Initialize();
-  void	Destroy();
-  void 	InitLinks();
-  void	Copy_(const DA_GridViewSpec& cp);
-  COPY_FUNS(DA_GridViewSpec, DA_ViewSpec);
-  TA_BASEFUNS(DA_GridViewSpec);
+  void	Destroy() {}
 };
 
-class TAMISC_API DT_GridViewSpec : public DT_ViewSpec {
+class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
+INHERITED(DataTableViewSpec)
 public:
-  enum BlockFill {		// ways that grid blocks can be filled
-    COLOR,			// color indicates value
-    AREA,			// area indicates value
-    LINEAR 			// linear size of square side indicates value
-  };
 
-  enum MatrixLayout { // order of display of the grid elements
-    DEFAULT,			// use current default layout
-    LFT_RGT_BOT_TOP, // [3412] Incr col first, then decr row, start at bot left
-    LFT_RGT_TOP_BOT, // [1234] Incr col first, then incr row, start at top left
-    BOT_TOP_LFT_RGT, // [2413] Decr row first, then incr col, start at bot left
-    TOP_BOT_LFT_RGT  // [1324] Incr row first, then incr col, start at top left
-  };
-
-  PosTDCoord	pos;		// position of the datatable in absolute coordinates
-  PosTDCoord	geom;		// relative geometry (maximum extent) of the datatable, just for El's, not subgroups
-  PosTDCoord	full_geom;	// #HIDDEN #NO_SAVE full absolute geometry (maximum extent) of everything under this one
-  MatrixLayout	layout;		// current layout of the data table
-
-  bool          use_gp_name;    // use the group name instead of the El names
-  DA_GridViewSpec::DisplayStyle  display_style;	// can display as text, block, or both
-  bool		scale_on;	// adjust overall scale including this data (or not)
-  bool		customized;	// #READ_ONLY did the use customize the positions of elements in here?  if so, don't redo layout with new items
-
-  virtual int 	UpdateLayout(MatrixLayout ml=DEFAULT);
+  virtual int 	UpdateLayout();
   // #MENU #MENU_ON_Actions enforce the geometry to fit with no spaces or overlap, returns maxx
-  virtual void 	UpdateGeom();
-  // #MENU Get the Geometry from the positions of visibles
-
-  bool		BuildFromDataTable(DataTable* tdt=NULL);
   virtual void	GetMinMaxScale(MinMax& mm, bool first=true); // get min and max data range for scaling
 
-  void		Reset();
-
-  void 	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy();
-  void 	InitLinks();
-  void	Copy_(const DT_GridViewSpec& cp);
-  COPY_FUNS(DT_GridViewSpec, DT_ViewSpec);
-  TA_BASEFUNS(DT_GridViewSpec);
+  void	Copy_(const GridTableViewSpec& cp);
+  COPY_FUNS(GridTableViewSpec, DataTableViewSpec);
+  TA_BASEFUNS(GridTableViewSpec);
+protected:
+  override void		ReBuildFromDataTable_impl();
+  override void		Reset_impl();
+  override void 	UpdateAfterEdit_impl();
 };
 
 #endif // datatable_h

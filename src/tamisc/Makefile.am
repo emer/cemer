@@ -13,14 +13,16 @@ TAHEADS_GUI =\
 	@abs_srcdir@/t3node_so.h \
 	@abs_srcdir@/t3viewer.h \
 	@abs_srcdir@/colorbar_so.h \
-	@abs_srcdir@/datatable_qtso.h 
+	@abs_srcdir@/datatable_qtso.h \
+	@abs_srcdir@/datatable_so.h 
 
 HEADS_GUI =\
 	t3node_so.h \
 	t3viewer.h \
 	colorbar_qt.h \
 	colorbar_so.h \
-	datatable_qtso.h 
+	datatable_qtso.h \
+	datatable_so.h
 
 SRCS_GUI =\
 	t3node_so.cpp \
@@ -30,7 +32,8 @@ SRCS_GUI =\
 	colorbar_qt.moc.cpp \
 	colorbar_so.cpp \
 	datatable_qtso.cpp \
-	datatable_qtso.moc.cpp 
+	datatable_qtso.moc.cpp \
+	datatable_so.cpp
 
 endif
 

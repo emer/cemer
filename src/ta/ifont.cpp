@@ -66,6 +66,17 @@ void iFont::copy(const iFont& src) {
   stretch = src.stretch;
 }
 
+bool iFont::equals(const iFont& b) {
+//NOTE: pointSize is float, but we are basically interested in whether
+// the two fonts are clones, in which case the vals should be identical
+  return ( 
+    (fontName == b.fontName) &&
+    (attribs == b.attribs) &&
+    (pointSize == b.pointSize) &&
+    (stretch == b.stretch)
+  );
+}
+
 iFont& iFont::operator=(const iFont& val) {
   copy(val);
   return *this;

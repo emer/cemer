@@ -28,7 +28,6 @@ class TA_API FontSpec : public taOBase, public iFont {
 INHERITED(taOBase)
 public:
   String		pattern; // #READ_ONLY #NO_SAVE DEPRECATED the name of the font
-//  String		prv_pat; // #READ_ONLY #NO_SAVE the previous font that was successfully obtained
 
   virtual void	SelectFont();
   // #BUTTON opens font selection dialog
@@ -36,6 +35,7 @@ public:
   virtual void	SetFontSize(int point_size = 10);
   // #BUTTON set font to given point size
 
+  bool	Equals(const FontSpec& b);
   void	UpdateAfterEdit();
   void	CutLinks();
   void	InitLinks();

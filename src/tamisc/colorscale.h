@@ -126,6 +126,8 @@ public:
   TA_BASEFUNS(ColorScaleSpec);
 };
 
+SmartRef_Of(ColorScaleSpec) // ColorScaleSpecRef
+
 class TAMISC_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
 INHERITED(taGroup<ColorScaleSpec>)
 public:

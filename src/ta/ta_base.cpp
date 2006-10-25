@@ -468,7 +468,7 @@ void taBase::CheckDestroyed() {
 #endif
 
 void taBase::UpdateAfterEdit() {
-//obs  tabMisc::NotifyEdits(this);
+  UpdateAfterEdit_impl();
   DataChanged(DCR_ITEM_UPDATED);
   taBase* _owner = GetOwner();
   if (_owner ) {
@@ -785,6 +785,14 @@ String taBase::GetDisplayName() const {
   return rval;
 }
 
+bool taBase::HasUserData(const String& name) const {
+  UserDataItem_List* ud = GetUserDataList();
+  if (ud)
+    return (ud->FindName(name));
+  
+  return false;
+}
+
 TypeDef* taBase::GetTypeDef() const {
   return &TA_taBase;
 }
@@ -888,6 +896,28 @@ void taBase::SetFlag(int flag) {
   m_flags |= flag;
 }
 
+void taBase::SetUserData(const String& name, const Variant& value) {
+  UserDataItem_List* ud = GetUserDataList(true);
+#ifdef DEBUG
+  if (!ud) {
+    taMisc::Warning("Class does not support UserData:", GetTypeDef()->name);
+    return;
+  }
+#else
+  if (!ud) return; // not supported, shouldn't be calling
+#endif
+  
+  UserDataItemBase* udi = ud->FindName(name);
+  if (!udi) {
+    udi = new UserDataItem;
+    udi->SetName(name);
+    ud->Add(udi);
+  }
+  if (!udi->setValueAsVariant(value)) {
+    taMisc::Warning("Attempt to set existing UserData value as Variant was not supported for", name);
+  }
+}
+ 
 TAPtr taBase::GetOwner(TypeDef* td) const {
   TAPtr own = GetOwner();
   if(own == NULL)
@@ -1001,6 +1031,15 @@ TAPtr taBase::GetScopeObj(TypeDef* scp_tp) {
 String taBase::GetStringRep_impl() const {
   String rval = GetTypeDef()->name + ":" + GetPath_Long();
   return rval;
+}
+
+const Variant taBase::GetUserData(const String& name) const {
+  UserDataItem_List* ud = GetUserDataList();
+  if (ud) {
+    UserDataItemBase* udi = ud->FindName(name);
+    return udi->valueAsVariant();
+  }
+  return _nilVariant;
 }
 
 void taBase::Help() {

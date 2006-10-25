@@ -67,6 +67,8 @@ public:
 
   void		copy(const iFont& src);
 
+  bool		equals(const iFont& b);
+  
   iFont& operator=(const iFont& val); // must use value copy
 
   iFont();

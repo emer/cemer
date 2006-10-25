@@ -1149,10 +1149,10 @@ void ClustNode::GraphData(DataTable* dt) {
   dt->Reset();
   dt->NewColFloat("X");
   dt->NewColFloat("Y");
-  dt->NewColString("label");
-  dt->AddColDispOpt("DISP_STRING", 2);
-  dt->AddColDispOpt("AXIS=1", 2); // labels use same axis as y values
-  dt->AddColDispOpt("STRING_COORDS=1", 2); // use y values
+  DataArray_impl* da = dt->NewColString("label");
+  da->SetUserData("DISP_STRING", true);
+  da->SetUserData("AXIS", 1); // labels use same axis as y values
+  da->SetUserData("STRING_COORDS", 1); // use y values
   GraphData_impl(dt);
 /*TODO: ranges
   float_Matrix* xar = dt->GetColFloatArray(0);
@@ -1377,361 +1377,99 @@ float ClustNode::SetParDists(float par_d, float_RArray::DistMetric metric) {
   return max_d;
 }
 
-//////////////////////////
-// 	DA View Specs	//
-//////////////////////////
-
-void DA_ViewSpec::Initialize(){
-  visible = true;
-  data_array = NULL;
-}
-
-void DA_ViewSpec::CutLinks() {
-  taBase::DelPointer((TAPtr*)&data_array);
-  inherited::CutLinks();
-}
-
-void DA_ViewSpec::Copy_(const DA_ViewSpec& cp) {
-  display_name = cp.display_name;
-  visible = cp.visible;
-}
-
-void DA_ViewSpec::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-  if (data_array == NULL) {
-    DT_ViewSpec* dtv = GET_MY_OWNER(DT_ViewSpec);
-    if(dtv != NULL) {
-      int idx = dtv->Find(this);
-      if(idx >= 0) {
-	DataTable* dt = dtv->data_table;
-	if(dt != NULL) {
-	  DataArray_impl* da = dt->data.SafeEl(idx);
-	  if(da != NULL)
-	    taBase::SetPointer((TAPtr*)&data_array, da);
-	}
-	else
-	  taMisc::Error("*** Null data_table in:", dtv->GetPath());
-      }
-    }
-  }
-  if(!(name.empty()) && (display_name.empty()))
-    display_name = DA_ViewSpec::CleanName(name);
-}
-
-void DA_ViewSpec::UpdateView() {
-  DT_ViewSpec* dtv = GET_MY_OWNER(DT_ViewSpec);
-  if(dtv != NULL) dtv->UpdateAfterEdit();
-}
-
-void DA_ViewSpec::SetGpVisibility(bool vis) {
-  DT_ViewSpec* dtv = GET_MY_OWNER(DT_ViewSpec);
-  if(dtv != NULL) dtv->SetVisibility(vis);
-}
-
-String DA_ViewSpec::ValAsString(int row) {
-  if (data_array)
-  //TODO: go through a format string, if supplied
-    return data_array->GetValAsString(row);
-  else
-    return _nilString;
-}
-
-void DA_ViewSpec::CopyToGp(MemberDef* md) {
-  if(md == NULL) return;
-  DT_ViewSpec* dtv = GET_MY_OWNER(DT_ViewSpec);
-  if(dtv == NULL) return;
-  int i;
-  for(i=0;i<dtv->size;i++) {
-    DA_ViewSpec* vs = (DA_ViewSpec*)dtv->FastEl(i);
-    if(!vs->InheritsFrom(GetTypeDef())) continue;
-    md->CopyFromSameType((void*)vs, (void*)this);
-  }
-  UpdateView();
-}
-
-bool DA_ViewSpec::BuildFromDataArray(DataArray_impl* nda) {
-  bool first_time = false;
-  if (data_array == NULL) {
-    first_time = true;
-  }
-  if(nda != NULL) {
-    taBase::SetPointer((TAPtr*)&data_array, nda);
-  }
-  if (data_array == NULL)
-    UpdateAfterEdit();
-  if (data_array == NULL)	// still..
-    return false;
-
-  // always replace name and throwout old data
-  // don't throw out the old data if we are just now creating this
-  // view since this results in the user not being able to create
-  // an additional view of data in a current view. Since the names
-  // will never originally match up, the array's were always being reset.
-
-  if (name != data_array->name) {
-    if (!first_time)
-      data_array->AR()->Reset();
-    name = data_array->name;
-    display_name = DA_ViewSpec::CleanName(name);
-  }
-  // only copy display options first time, since user may override in view
-  if (first_time) {
-    if (data_array->HasDispOption(" HIDDEN,"))
-      visible = false;
-  }
-  return true;
-}
-
-
-String DA_ViewSpec::CleanName(String& name){
-  String result = name;
-  // <xxx> is a comment and should be removed
-  if(result.empty()) return result;
-  int pos;
-  if(((pos = result.index('<')) != -1) && ((pos = result.index('>',pos+1)) != -1))
-    result = result.after(pos);
-  if(result.empty()) return result;
-  if((result[0] == '|') || (result[0] == '$'))
-    result = result.after(0);
-  return result;
-}
-
-//////////////////////////
-// 	DT View Specs	//
-//////////////////////////
-
-void DT_ViewSpec::Initialize(){
-  data_table = NULL;
-  visible = true;
-#ifdef TA_GUI
-  def_font.pointSize = 8;
-#endif
-}
-
-void DT_ViewSpec::Destroy(){
-  CutLinks();
-}
-
-void DT_ViewSpec::InitLinks() {
-  inherited::InitLinks();
-#ifdef TA_GUI
-  taBase::Own(def_font, this);
-#endif
-}
-
-void DT_ViewSpec::CutLinks() {
-#ifdef TA_GUI
-  def_font.CutLinks();
-#endif
-  taBase::DelPointer((TAPtr*)&data_table);
-  inherited::CutLinks();
-}
-
-void DT_ViewSpec::Copy_(const DT_ViewSpec& cp) {
-  display_name = cp.display_name;
-  visible = cp.visible;
-#ifdef TA_GUI
-  def_font = cp.def_font;
-#endif
-}
-
-void DT_ViewSpec::UpdateAfterEdit(){
-  inherited::UpdateAfterEdit();
-  BuildFromDataTable(data_table);
-  if(!(name.empty()) && (display_name.empty()))
-    display_name = DA_ViewSpec::CleanName(name);
-  TAPtr own = GetOwner();
-  while((own != NULL) && (own->InheritsFrom(&TA_taList_impl))){
-    own = own->GetOwner();
-  }
-  if(own != NULL){
-    own->UpdateAfterEdit();
-  }
-}
-
-void DT_ViewSpec::SetVisibility(bool vis) {
-  visible = vis;
-  int i;
-  for(i=0;i<size;i++) {
-    DA_ViewSpec* vs = (DA_ViewSpec*)FastEl(i);
-    vs->visible = visible;	// always propagate
-  }
-  UpdateAfterEdit();
-}
-
-bool DT_ViewSpec::BuildFromDataTable(DataTable* tdt){
-  if(tdt != NULL) {
-    taBase::SetPointer((TAPtr*)&data_table, tdt);
-  }
-  if(data_table == NULL)
-    return false;
-
-  bool same_size = ((size == data_table->data.size) && (leaves == data_table->cols())
-    && (gp.size == data_table->data.gp.size));
-
-  bool same_name = (name == data_table->name);
-
-  if(same_size && same_name) {
-    return false;
-  }
-
-  ReBuildFromDataTable();
-  return true;
-}
-
-void DT_ViewSpec::ReBuildFromDataTable() {
-  // first save the current view information, then try to update based on old info
-  DT_ViewSpec* old = (DT_ViewSpec*)Clone();
-
-  int delta = (int)fabs(float(data_table->data.size - size)); // change in size
-  delta = MAX(delta, 4);	// minimum look-ahead
-  int gp_delta = (int)fabs(float(data_table->data.gp.size - gp.size)); // change in size
-  gp_delta = MAX(gp_delta, 4);
-
-  // ensure number of elements is the same;
-  EnforceSize(data_table->data.size);
-
-  name = data_table->name;	// always get the name
-  if(!name.empty() && display_name.empty())
-    display_name = DA_ViewSpec::CleanName(name);
-
-  int old_i = 0;
-  int i;
-  for(i=0;i<size;i++) {
-    DataArray_impl* nda =     ((DataArray_impl *) data_table->data.FastEl(i));
-    DA_ViewSpec*    ndavs = (DA_ViewSpec *) FastEl(i);
-    ndavs->BuildFromDataArray(nda);
-
-    if(old_i < old->size) {
-      DA_ViewSpec* oldvs = (DA_ViewSpec *)old->FastEl(old_i);
-      if(oldvs->name == nda->name) { // simple match, done
-	old_i++;
-	ndavs->CopyFrom(oldvs); // get the info from the old guy
-	continue;
-      }
-      // look ahead for other options
-      int j;
-      for(j=old_i;(j<=old_i+delta) && (j < old->size);j++) {
-	oldvs = (DA_ViewSpec *)old->FastEl(j);
-	if(oldvs->name == ndavs->name) { // simple match, done
-	  old_i = j;
-	  ndavs->CopyFrom(oldvs); // get the info from the old guy
-	  continue;
-	}
-      }
-    }
-  }
-
-  // ensure the groups matchup
-  gp.el_base = gp.el_typ = GetTypeDef();
-  gp.EnforceSize(data_table->data.gp.size);
-
-  old_i = 0;
-  for(i=0;i<data_table->data.gp.size;i++){
-    DT_ViewSpec* nvs = (DT_ViewSpec *) FastGp(i);
-    DataTable* ndt = (DataTable *) data_table->data.FastGp(i);
-    nvs->el_base = nvs->el_typ = el_typ;
-    if(!nvs->BuildFromDataTable(ndt))
-      nvs->ReBuildFromDataTable(); // make sure it is rebuilt!
-
-    if(old_i < old->gp.size) {
-      DT_ViewSpec* oldvs = (DT_ViewSpec *)old->FastGp(old_i);
-      if(oldvs->name == nvs->name) { // simple match, done
-	old_i++;
-	nvs->CopyFrom(oldvs); // get the info from the old guy
-	nvs->EnforceSize(ndt->data.size); // make sure we don't get bigger from the copy!!
-	continue;
-      }
-      int j;
-      for(j=old_i;(j<=old_i+gp_delta) && (j < old->gp.size);j++) {
-	oldvs = (DT_ViewSpec *)old->FastGp(j);
-	if(oldvs->name == nvs->name) { // simple match, done
-	  old_i = j;
-	  nvs->CopyFrom(oldvs); // get the info from the old guy
-	  nvs->EnforceSize(ndt->data.size); // make sure we don't get bigger from the copy!!!
-	  continue;
-	}
-      }
-    }
-  }
-
-  delete old;
-}
-
-void DT_ViewSpec::SetDispNms(const String& base_name) {
-  display_name = base_name;
-  int i;
-  for(i=0;i<size;i++) {
-    DA_ViewSpec* vs = (DA_ViewSpec*)FastEl(i);
-    vs->display_name = base_name;
-    vs->display_name += String("_") + String(i);
-  }
-}
-
-void DT_ViewSpec::RmvNmPrefix() {
-  int i;
-  for(i=0;i<size;i++) {
-    DA_ViewSpec* vs = (DA_ViewSpec*)FastEl(i);
-    if(vs->display_name.contains('_')) vs->display_name = vs->display_name.after('_');
-  }
-}
-
-//////////////////////////////////
-// 	DA Text View Specs	//
-//////////////////////////////////
-
-void DA_TextViewSpec::Initialize() {
-  width = 2;
-}
-
-void DA_TextViewSpec::Destroy() {
-
-}
-
-bool DA_TextViewSpec::BuildFromDataArray(DataArray_impl* tda) {
-  bool result = DA_ViewSpec::BuildFromDataArray(tda);
-  if (data_array == NULL) return result;
-
-  //set width as greater of static width, and current widest value -- this is aproximate
-  width = MAX(data_array->displayWidth(), ((data_array->maxColWidth() + 4) / 8));
-  return result;
-}
-
 
 //////////////////////////////////
 // 	DA Grid View Specs	//
 //////////////////////////////////
 
-void DA_GridViewSpec::Initialize(){
-  display_style = BLOCK;
+void GridColViewSpec::Initialize(){
+  display_style = TEXT; // updated later in build
+  text_width = 16;
+  layout = TOP_ZERO;
+  block_color = SOLID;
+  block_fill = FILL;
   scale_on = true;
+  col_width = 0.0f;
+  row_height = 0.0f;
 }
 
-void DA_GridViewSpec::Destroy() {
-
-}
-
-bool DA_GridViewSpec::BuildFromDataArray(DataArray_impl* nda){
-  bool result = DA_ViewSpec::BuildFromDataArray(nda);
-  if(data_array == NULL)
-    return result;
-  if(data_array->HasDispOption(" TEXT,"))
-    display_style = TEXT;
-  else if(data_array->HasDispOption(" NARROW,"))
-    display_style = TEXT;		// use text for narrow items as a default..
-  else if(data_array->InheritsFrom(TA_String_Data))
-    display_style = TEXT;
-  return result;
-}
-
-void DA_GridViewSpec::InitLinks(){
-  DA_ViewSpec::InitLinks();
-  taBase::Own(pos, this);
-}
-
-void DA_GridViewSpec::Copy_(const DA_GridViewSpec& cp) {
-  pos = cp.pos;
+void GridColViewSpec::Copy_(const GridColViewSpec& cp){
   display_style = cp.display_style;
+  text_width = cp.text_width;
+  font = cp.font;
+  block_color = cp.block_color;
+  block_fill = cp.block_fill;
+  layout = cp.layout;
+  scale_on = cp.scale_on;
+  // others recalced
+}
+
+void GridColViewSpec::InitLinks(){
+  inherited::InitLinks();
+  taBase::Own(font, this);
+}
+
+void GridColViewSpec::CutLinks(){
+  font.CutLinks();
+  inherited::CutLinks();
+}
+
+void GridColViewSpec::BuildFromDataArray_impl(bool first){
+  inherited::BuildFromDataArray_impl(first);
+  DataArray_impl* data_array = dataCol();
+    
+  
+  if (first) {
+    //set width as greater of static width, and current widest value -- this is aproximate
+    text_width = MAX(data_array->displayWidth(), ((data_array->maxColWidth() + 4)));
+  
+    if (data_array->isMatrix() && data_array->isNumeric()) {
+      if (data_array->GetUserData("IMAGE").toBool()) {
+        display_style = IMAGE;
+        layout = TOP_ZERO;
+      } else {
+        display_style = BLOCK;
+        layout = BOT_ZERO;
+      }
+    } else /*obs  if (data_array->GetUserData("TEXT").toBool() ||
+      data_array->GetUserData(DataArray_impl::udkey_narrow).toBool() ||
+      data_array->InheritsFrom(TA_String_Data)
+    )*/ {
+      display_style = TEXT;
+    }
+  }
+  InitDisplayParams();
+}
+
+void GridColViewSpec::InitDisplayParams() {
+//TODO: col widths
+  row_height = 0.0f;
+  col_width = 0.0f;
+  // start by calculating text height
+  if (display_style & TEXT_MASK) {
+    // row height, and number of rows
+//TODO: need to handle matrix cells
+    row_height = font.pointSize / t3Misc::pts_per_so_unit;
+    col_width = (font.pointSize * text_width)  / t3Misc::char_pts_per_so_unit;
+  }
+  if (display_style & TEXT_AND_BLOCK) {
+    row_height += 0.0f;
+//TODO: space between text and block
+  }
+  if (display_style & BLOCK_MASK) {
+    row_height += 0.0f; //TODO: block size
+    float block_width = 0.0f; // TODO
+    col_width = MAX(col_width, block_width);
+  }
+  if (display_style & IMAGE) {
+    row_height = 0.0f; //TODO: image size
+    col_width =  0.0f;
+  }
+  
+}
+
+void GridColViewSpec::setFont(const FontSpec& value) {
+  font = value;
 }
 
 
@@ -1739,214 +1477,60 @@ void DA_GridViewSpec::Copy_(const DA_GridViewSpec& cp) {
 // 	DT Grid View Specs	//
 //////////////////////////////////
 
-void DT_GridViewSpec::Initialize(){
-  use_gp_name = true;
-  display_style = DA_GridViewSpec::BLOCK;
-  layout = LFT_RGT_BOT_TOP;
-  scale_on = true;
-  customized = false;
+void GridTableViewSpec::Initialize() {
+  col_specs.SetBaseType(&TA_GridColViewSpec);
 }
 
-void DT_GridViewSpec::Destroy() {
+void GridTableViewSpec::Destroy() {
 }
 
-void DT_GridViewSpec::Reset() {
-  DT_ViewSpec::Reset();
-  customized = false;
+void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
 }
 
-void DT_GridViewSpec::InitLinks(){
-  DT_ViewSpec::InitLinks();
-  taBase::Own(pos, this);
-  taBase::Own(geom, this);
-  taBase::Own(full_geom, this);
+void GridTableViewSpec::UpdateAfterEdit_impl(){
+  inherited::UpdateAfterEdit_impl();
+  UpdateLayout();
 }
 
-void DT_GridViewSpec::Copy_(const DT_GridViewSpec& cp) {
-  pos = cp.pos;
-  geom = cp.geom;
-  full_geom = cp.full_geom;
-  use_gp_name = cp.use_gp_name;
-  display_style = cp.display_style;
+void GridTableViewSpec::ReBuildFromDataTable_impl(){
+  inherited::ReBuildFromDataTable_impl();
+  UpdateLayout();
 }
 
-bool DT_GridViewSpec::BuildFromDataTable(DataTable* tdt){
-  bool result = DT_ViewSpec::BuildFromDataTable(tdt);
-  if(!result) return result;
-  if(size <= 0) return result;
-  DA_GridViewSpec* vs = (DA_GridViewSpec *) FastEl(0); // first el determines group options!
-  if(vs->data_array->disp_opts.contains(" GEOM_X=")) {
-    String geo = vs->data_array->disp_opts;
-    geo = geo.after(" GEOM_X=");
-    String gx = geo.before(',');
-    geo = geo.after(" GEOM_Y=");
-    String gy = geo.before(',');
-    geom.x = (int)gx;
-    geom.y = (int)gy;
-  }
-  if(vs->data_array->HasDispOption(" USE_EL_NAMES,")) {
-    use_gp_name = false;
-  }
-  if(vs->data_array->HasDispOption(" USE_GP_NAME,")) {
-    use_gp_name = true;
-  }
-
-  if(customized)
-    UpdateGeom();
-  else
-    UpdateLayout();
-  return result;
+void GridTableViewSpec::Reset_impl() {
+  inherited::Reset_impl();
 }
 
-void DT_GridViewSpec::UpdateGeom() {
-  PosTDCoord gm;
-  int i;
-  for(i=0;i<size;i++) {
-    DA_GridViewSpec* vs = (DA_GridViewSpec *) FastEl(i);
-    if(!vs->visible) continue;
-    gm.x = MAX(gm.x, (vs->pos.x - pos.x) + 1);	// subtract our own position!
-    gm.y = MAX(gm.y, (vs->pos.y - pos.y) + 1);
-  }
-  full_geom.x = pos.x + gm.x;
-  full_geom.y = pos.y + gm.y;
-  for(i=0;i<gp.size;i++) {
-    DT_GridViewSpec* dt = (DT_GridViewSpec *) FastGp(i);
-    if(!dt->visible) continue;
-    dt->UpdateGeom();
-    full_geom.x = MAX(full_geom.x, dt->full_geom.x);
-    full_geom.y = MAX(full_geom.y, dt->full_geom.y);
-  }
-}
-
-void DT_GridViewSpec::UpdateAfterEdit(){
-  DT_ViewSpec::UpdateAfterEdit();
-  UpdateGeom();
-}
-
-int DT_GridViewSpec::UpdateLayout(MatrixLayout ml) {
-  customized = false;
-  if(ml == DEFAULT)
-    ml = layout;
-  else
-    layout = ml;		// set current default to be this
-
-  DA_GridViewSpec* da;
-  int vis_size = 0;
-  int i;
-  for(i=0;i<size;i++){
-    da = (DA_GridViewSpec *) FastEl(i);
-    if(!da->visible) continue;
-    vis_size++;
-    if(da->display_style == DA_GridViewSpec::TEXT) {
-      if(da->data_array->HasDispOption(" NARROW,"))
-	vis_size+=1;		// narrow text = 2
-      else
-	vis_size+=3;		// wide text = 4
-    }
-  }
-  // insufficient geometry so use sqrt
-  if((geom.x * geom.y) < vis_size) {
-    if(vis_size < 25) {		// make it linear if a reasonable width..
-      geom.x = vis_size;
-      geom.y = 1;
-    }
-    else {
-      geom.y = (int)sqrt(float(vis_size));
-      geom.x = vis_size / geom.y;
-      while((geom.x * geom.y) < vis_size)
-	geom.x++;
-    }
-  }
-  int loc[2];   int start[2];  int mod[2];
-  int limiter = 0;
-  int limit[2];  limit[0]= geom.x; limit[1] = geom.y;
+int GridTableViewSpec::UpdateLayout() {
   int maxx = 0;
-  int extrax = 0;
-  switch(ml){
-  case LFT_RGT_TOP_BOT:
-    loc[0] = start[0] = 0;   loc[1] = start[1] = geom.y-1;
-    mod[0] = 1; mod[1] = -1; limiter = 0;
-    break;
-  case LFT_RGT_BOT_TOP:
-    loc[0] = start[0] = 0;   loc[1] = start[1] = 0;
-    mod[0] = 1; mod[1] = 1;  limiter = 0;
-    break;
-  case BOT_TOP_LFT_RGT:
-    loc[0] = start[0] = 0;   loc[1] = start[1] = 0;
-    mod[0] = 1; mod[1] = 1;  limiter = 1;
-    break;
-  case TOP_BOT_LFT_RGT:
-    loc[0] = start[0] = 0;   loc[1] = start[1] = geom.y-1;
-    mod[0] = 1; mod[1] = -1; limiter = 1;  limit[1] = -1;
-    break;
-  case DEFAULT:			// just to shut up the compiler
-    break;
-  }
-  for(i=0;i<size;i++){
-    da = (DA_GridViewSpec *) FastEl(i);
-    if(!da->visible) continue;
-    da->pos.x = pos.x + loc[0];
-    da->pos.y = pos.y + loc[1];
-    if(da->display_style == DA_GridViewSpec::TEXT) {
-      int incv = 3;
-      if(da->data_array->HasDispOption(" NARROW,"))
-	incv = 1;
-      if(limiter == 0)
-	loc[0] += incv;
-      else
-	extrax = MAX(incv, extrax);
-    }
-    maxx = MAX(maxx,loc[0]);
-    loc[limiter] += mod[limiter];
-    if(loc[limiter] == limit[limiter]){
-      loc[limiter] = start[limiter];
-      loc[!limiter] += mod[!limiter];
-      if(limiter == 1)
-	loc[0] += mod[0] * extrax;
-      extrax = 0;
-    }
-  }
-  loc[0] = maxx + 2;
-  // now layout the subgroups to the right
-  for(i=0;i<gp.size;i++){
-    DT_GridViewSpec* dt = (DT_GridViewSpec*) gp.FastEl(i);
-    if(!dt->visible) continue;
-    dt->pos.x = pos.x + loc[0];
-    dt->pos.y = pos.y;		// same position as us
-    loc[0] += dt->UpdateLayout() + 2;	// always use default! and add a space between subsequent subgroups
-    maxx = MAX(maxx,loc[0]);
-  }
-  UpdateGeom();
+  //TODO: iterate the guys, updating their layout
   return maxx;
 }
 
-void DT_GridViewSpec::GetMinMaxScale(MinMax& mm, bool first) {
+void GridTableViewSpec::GetMinMaxScale(MinMax& mm, bool first) {
+/*TODO NOTE: this "frst" business is BROKEN -- can't use global static this way!!!
   static bool frst;
   if(first)
-    frst = true;
+    frst = true; */
   int i;
-  for(i=0;i<size;i++){
-    DA_GridViewSpec* vs = (DA_GridViewSpec *) FastEl(i);
-    if(!vs->visible || !vs->scale_on || (vs->display_style == DA_GridViewSpec::TEXT)) continue;
-/*nn    if(vs->data_array->AR() == NULL) {
-      vs->data_array->NewAR();
+  for (i=0;i< col_specs.size; i++){
+    GridColViewSpec* vs = (GridColViewSpec *) col_specs.FastEl(i);
+    if (!(vs->visible && vs->scale_on &&
+      (vs->display_style & GridColViewSpec::BLOCK_MASK)))
       continue;
-    }*/
-    if(!vs->data_array->InheritsFrom(&TA_float_Data)) continue;
-    float_RArray* ar = (float_RArray*)vs->data_array->AR();
-    if(frst) {
+    if (!vs->dataCol()->isNumeric()) continue; // shouldn't happen!
+/*BROKEN    if(frst) {
       frst = false;
       mm.max = ar->range.max;
       mm.min = ar->range.min;
     }
     else {
       mm.UpdateRange(ar->range);
-    }
+    } */
   }
-  for(i=0;i<gp.size;i++){
-    DT_GridViewSpec* dt = (DT_GridViewSpec*) gp.FastEl(i);
-    if(!dt->visible || !dt->scale_on) continue;
-    dt->GetMinMaxScale(mm, frst);
-  }
+//TODO: need to add ranging to datatable
+//TEMP
+  mm.min = -1.0f;
+  mm.max = 1.0f;
 }
 

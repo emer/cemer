@@ -46,6 +46,11 @@ void FontSpec::CutLinks() {
   inherited::CutLinks();
 }
 
+bool FontSpec::Equals(const FontSpec& b) {
+  bool rval = iFont::equals(b);
+  return rval;
+}
+
 void FontSpec::SetFont(char* fn) {
   pattern = fn;
   UpdateAfterEdit();

@@ -23,9 +23,8 @@
 #include "datatable.h"
 //#include "datagraph.h"
 #include "colorscale.h"
-#ifdef TA_GUI
-//#include "fontspec.h"
 #include "t3viewer.h"
+#ifdef TA_GUI
 #include "datatable_qtso.h"
 #endif
 
@@ -42,7 +41,6 @@ template class TAMISC_API DataArray<Variant_Matrix>;
 template class TAMISC_API DataArray<float_Matrix>;
 template class TAMISC_API DataArray<int_Matrix>;
 template class TAMISC_API DataArray<byte_Matrix>;
-template class TAMISC_API taGroup<DA_ViewSpec>; //
 
 // datagraph.h:
 //template class TAMISC_API taList<YAxisSpec>; //

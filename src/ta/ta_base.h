@@ -70,6 +70,8 @@ class taNBase;
 class taBase_List;
 class taBase_PtrList;
 class String_Array;
+class UserDataItem;
+class UserDataItem_List;
 
 class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase
@@ -212,6 +214,12 @@ public:
 #define SET_POINTER(var,obj) (taBase::SetPointer((TAPtr*)&(var), (TAPtr)(obj)))
 #define DEL_POINTER(var) (taBase::DelPointer((TAPtr*)&(var)))
 
+#define TA_USERDATAFUNS(T) \
+mutable UserDataItem_ListPtr user_data_; /* #OWN_POINTER #SHOW_TREE */ \
+UserDataItem_List* GetUserDataList(bool fc = false) const { \
+if (!user_data_ && fc) {user_data_ = new UserDataItem_List; \
+ taBase::Own(user_data_.ptr(), const_cast<T*>(this));} return user_data_;}
+
 /* Clipboard (Edit) operation summary
 
    Clipboard operations are of two basic types:
@@ -325,6 +333,12 @@ public: // standard keys for standard gui descriptions, mostly for list columns
   static const KeyString key_desc; // #IGNORE "desc" -- per-instance desc if available (def to type)
   static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName, never empty
   
+  virtual UserDataItem_List* GetUserDataList(bool force_create = false) const {return NULL;}
+    // gets the userdatalist for this class
+  virtual bool		HasUserData(const String& name) const;
+    // returns true if UserData exists for this name (case sens)
+  virtual const Variant	GetUserData(const String& name) const; // get specified user data; nilVariant if not present or class doesn't support user data
+  virtual void		SetUserData(const String& name, const Variant& value); // set user data; NOTE: class must support user data
   virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
   // #IGNORE default keys are: name, type, desc, disp_name
 #ifdef TA_GUI
@@ -699,6 +713,7 @@ protected:
    // impl for checking children; only clear ok (if invalid), don't set
   virtual void 		Dump_Save_pre() {} // called before _impl, enables jit updating before save
   virtual String	GetStringRep_impl() const; // string representation, ex. for variants; default is typename:fullpath
+  virtual void		UpdateAfterEdit_impl() {} // this is the preferred place to put all UAE actions, so they all take place before the notify
 };
 
 inline istream& operator>>(istream &strm, taBase &obj)
@@ -1631,6 +1646,59 @@ protected:
   bool		El_Equal_(const void* a, const void* b) const
     { return (*((voidptr*)a) == *((voidptr*)b)); }
 };
+
+
+class TA_API UserDataItemBase: public taBase {
+  // #INLINE base class for all simple user data
+INHERITED(taBase)
+public:
+  String		name;
+  
+  virtual bool		isSimple() const {return false;}
+    // only true for UserDataItem class
+    
+  virtual const Variant valueAsVariant() const {return _nilVariant;}
+  virtual bool		setValueAsVariant(const Variant& value) {return false;}
+  
+  bool	SetName(const String& value) {name = value; return true;}
+  String GetName() const {return name;}
+  TA_BASEFUNS(UserDataItemBase)
+private:
+  void Initialize() {}
+  void Destroy() {}
+};
+
+class TA_API UserDataItem: public UserDataItemBase {
+  // #INLINE an item of simple user data
+INHERITED(UserDataItemBase)
+public:
+  Variant		value;
+  
+  override bool		isSimple() const {return true;}
+  override const Variant valueAsVariant() const {return value;}
+  override bool		setValueAsVariant(const Variant& v) {value = v; return true;}
+  
+  TA_BASEFUNS(UserDataItem)
+private:
+  void Initialize() {}
+  void Destroy() {}
+};
+
+class TA_API UserDataItem_List: public taList<UserDataItemBase> {
+// #CHILDREN_INLINE
+INHERITED(taList<UserDataItem>)
+public:
+  
+  TA_BASEFUNS(UserDataItem_List)
+protected:
+
+private:
+  void Initialize() {SetBaseType(&TA_UserDataItemBase);}
+  void Destroy() {}
+};
+
+SmartPtr_Of(UserDataItem_List) // UserDataItem_ListPtr
+
 
 // define selectedit if no gui
 #ifdef TA_NO_GUI

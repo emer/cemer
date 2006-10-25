@@ -25,6 +25,10 @@
 //   DataArray_impl	//
 //////////////////////////
 
+const String DataArray_impl::udkey_width("WIDTH");
+const String DataArray_impl::udkey_narrow("NARROW");
+const String DataArray_impl::udkey_hidden("HIDDEN");
+
 void DataArray_impl::DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt) {
   base_nm = nm;
   vt = -1; // unknown
@@ -129,14 +133,6 @@ void DataArray_impl::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void DataArray_impl::AddDispOption(const String& opt) {
-  String nm = " ";		// pad with preceding blank to provide start cue
-  nm += String(opt) + ",";
-  if(HasDispOption(nm))
-    return;
-  disp_opts += nm;
-}
-
 DataTable* DataArray_impl::dataTable() {
   DataTable* rval = GET_MY_OWNER(DataTable);
   return rval;
@@ -148,21 +144,16 @@ void DataArray_impl::EnforceRows(int rws) {
   mat->EnforceFrames(rws);
 }
 
-int DataArray_impl::displayWidth() const {// low level display width, in tabs (8 chars/tab), taken from spec
-  int rval = 2; // default
+int DataArray_impl::displayWidth() const {
   // explicit width has highest priority
-  String wd = DispOptionAfter(" WIDTH=");
-  if (!wd.empty())
-    rval = (int)wd;
-  // NARROW implies width of 1
-  else if (HasDispOption(" NARROW,"))
-    rval = 1;
-  return rval;
-}
-
-const String DataArray_impl::DispOptionAfter(const String& opt) const {
-  String rval = disp_opts.after(opt);
-  rval = rval.before(',');
+  int rval = GetUserData(udkey_width).toInt();
+  if (rval == 0) {
+    // NARROW implies width of 8
+     if (GetUserData(udkey_narrow).toBool())
+       rval = 8;
+  }
+  if (rval == 0)
+    rval = 16; // default
   return rval;
 }
 
@@ -328,6 +319,7 @@ void DataTable::Destroy() {
 }
 
 void DataTable::InitLinks() {
+  data.name = "data"; // for the viewspec routines
   inherited::InitLinks();
   taBase::Own(data, this);
 }
@@ -351,11 +343,6 @@ void DataTable::Copy_NoData(const DataTable& cp) {
 
 void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
   data.CopyFromRow(dest_row, src.data, src_row);
-}
-
-void DataTable::AddColDispOpt(const String& dsp_opt, int col) {
-  DataArray_impl* da = GetColData(col);
-  if(da != NULL) da->AddDispOption(dsp_opt);
 }
 
 bool DataTable::AddRow(int n) {
@@ -452,6 +439,22 @@ taMatrix* DataTable::GetColMatrix(int col) const {
   if (da) return da->AR();
   else return NULL;
 }
+
+const Variant DataTable::GetColUserData(const String& name,
+  int col) const 
+{
+  DataArray_impl* da = GetColData(col);
+  if (da) return da->GetUserData(name);
+  else return _nilVariant;
+}
+
+void DataTable::SetColUserData(const String& name,
+  const Variant& value, int col)
+{
+  DataArray_impl* da = GetColData(col);
+  if (da) da->SetUserData(name, value);
+}
+
 
 DataTableModel* DataTable::GetDataModel() {
   if (!m_dm) {
@@ -591,7 +594,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
   case VT_DOUBLE:
     break;
   case VT_INT: 
-    rval->AddDispOption("NARROW");
+    rval->SetUserData(DataArray_impl::udkey_narrow, true);
     break;
   case VT_BYTE:  
     break;
@@ -736,13 +739,13 @@ DataTableCols* DataTable::NewGroupInt(const String& col_nm, int n) {
   if(n > 0) {
     int_Data* da = (int_Data*)NewCol(VT_INT, col_nm, rval);
     da->name = String("|<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
-    da->AddDispOption("NARROW");
+    da->SetUserData(DataArray_impl::udkey_narrow, true);
   }
   int i;
   for(i=1;i<n;i++) {
     int_Data* da = (int_Data*)NewCol(VT_INT, col_nm, rval);
     da->name = String("|") + String(col_nm) + "_" + String(i);
-    da->AddDispOption("NARROW");
+    da->SetUserData(DataArray_impl::udkey_narrow, true);
   }
   StructUpdate(false);
   return rval;
@@ -1069,64 +1072,6 @@ bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
   } else return false;
 }
 
-//////////////////////////
-//  DataTableViewSpec	//
-//////////////////////////
-
-void DataTableViewSpec::Initialize(){
-  data_base = &TA_DataTable;
-  visible = true;
-  def_font.pointSize = 8;
-}
-
-void DataTableViewSpec::Destroy(){
-  CutLinks();
-}
-
-void DataTableViewSpec::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(def_font, this);
-}
-
-void DataTableViewSpec::CutLinks() {
-  def_font.CutLinks();
-  inherited::CutLinks();
-}
-
-void DataTableViewSpec::Copy_(const DataTableViewSpec& cp) {
-  display_name = cp.display_name;
-  visible = cp.visible;
-  def_font = cp.def_font;
-}
-
-bool DataTableViewSpec::BuildFromDataTable(DataTable* dt){
-  if (!dt) return false;
-  SetData(dt); // note: ok if same
-  ReBuildFromDataTable();
-  return true;
-}
-
-void DataTableViewSpec::ReBuildFromDataTable_impl() {
-//TODO
-}
-
-
-//////////////////////////
-//  DataColMoniker	//
-//////////////////////////
-
-void DataColMoniker::Initialize(){
-  index = -1;
-  val_type = VT_FLOAT;
-  is_matrix = false;
-}
-
-bool DataColMoniker::Dump_QuerySaveMember(MemberDef* md) {
-  // we only save geom if a matrix
-  if (md->name == "cell_geom") 
-    return is_matrix;
-  else return inherited::Dump_QuerySaveMember(md);
-} 
 
 //////////////////////////
 //  DataColViewSpec	//
@@ -1136,6 +1081,136 @@ void DataColViewSpec::Initialize(){
   data_base = &TA_DataArray_impl;
 }
 
+bool DataColViewSpec::BuildFromDataArray(DataArray_impl* nda) {
+  // first time if null or changing
+  bool first_time = (dataCol() != nda);
+  SetData(nda);
+  if (!dataCol()) {
+    return false;
+  }
+  BuildFromDataArray_impl(first_time);
+  return true;
+}
+
+void DataColViewSpec::BuildFromDataArray_impl(bool first_time) {
+  DataArray_impl* data_array = dataCol();
+  if (name != data_array->name) {
+//NO, don't mess with data    if (!first_time)   data_array->AR()->Reset();
+    name = data_array->name;
+  }
+  // only copy display options first time, since user may override in view
+  if (first_time) {
+    if (data_array->GetUserData(DataArray_impl::udkey_hidden).toBool())
+      visible = false;
+  }
+}
+
+
+//////////////////////////
+//  DataColViewSpecs	//
+//////////////////////////
+
+void DataColViewSpecs::ReBuildFromDataTable(DataTableCols* data_cols) {
+  int i;
+  DataTableViewSpec* dts = GET_MY_OWNER(DataTableViewSpec);
+  DataColViewSpec* dcs = NULL;
+  DataArray_impl* da = NULL;
+//  delete orphans
+  for (i = size - 1; i >= 0; --i) {
+    dcs = FastEl(i);
+    if ((da = data_cols->FindName(dcs->GetName()))) {
+      ; //nothing
+    } else {
+      Remove(i);
+    }
+  }  
+// items: add missing, order correctly, and update existing (will be only action 1st time)
+  for (i = 0; i < data_cols->size; ++i) {
+    da = data_cols->FastEl(i);
+    int fm;
+    if ((dcs = (DataColViewSpec*)FindName(da->GetName()), fm)) {
+      if (fm != i) Move(fm, i);
+    } else {
+      dcs = (DataColViewSpec*)taBase::MakeToken(el_typ); // of correct type for this
+      Insert(dcs, i);
+      dcs->setFont(dts->font);
+    }
+    dcs->BuildFromDataArray(da);
+  }  
+}
+
+
+//////////////////////////
+// DataTableViewSpec	//
+//////////////////////////
+
+void DataTableViewSpec::Initialize() {
+  data_base = &TA_DataTable;
+  font.pointSize = 8;
+}
+
+void DataTableViewSpec::Destroy(){
+  CutLinks();
+}
+
+void DataTableViewSpec::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(col_specs, this);
+  taBase::Own(font, this);
+}
+
+void DataTableViewSpec::CutLinks() {
+  font.CutLinks();
+  col_specs.CutLinks();
+  inherited::CutLinks();
+}
+
+void DataTableViewSpec::Copy_(const DataTableViewSpec& cp) {
+  font = cp.font;
+  col_specs = cp.col_specs;
+}
+
+void DataTableViewSpec::UpdateAfterEdit_impl(){
+  BuildFromDataTable(dataTable());
+  inherited::UpdateAfterEdit_impl();
+}
+
+bool DataTableViewSpec::BuildFromDataTable(DataTable* tdt, bool force) {
+  if (dataTable() != tdt) {
+    force = true;
+    SetData(tdt);
+  }
+  if (!dataTable()) {
+    col_specs.Reset();
+    return false;
+  }
+  DataTable* data_table = dataTable(); // cache
+  if (!force) {
+    // compare sizes
+    bool same_size = (col_specs.size == data_table->data.size);
+    force = !same_size;
+  }
+  if (!force) {
+    bool same_name = (name == data_table->name);
+    force = !same_name;
+  }
+
+  if (!force) return false;
+
+  ReBuildFromDataTable_impl();
+  return true;
+}
+
+void DataTableViewSpec::ReBuildFromDataTable() {
+  if (dataTable())
+    ReBuildFromDataTable_impl();
+}
+
+void DataTableViewSpec::ReBuildFromDataTable_impl() {
+  //note: only called if data
+  DataTableCols* data_cols = &dataTable()->data;
+  col_specs.ReBuildFromDataTable(data_cols);
+}
 
 
 //////////////////////////////////
@@ -1186,7 +1261,7 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   case Qt::TextAlignmentRole: {
     if (col->is_matrix)
       return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
-    else if (col->is_numeric())
+    else if (col->isNumeric())
       return QVariant(Qt::AlignRight | Qt::AlignVCenter);
     else
       return QVariant(Qt::AlignLeft | Qt::AlignVCenter);

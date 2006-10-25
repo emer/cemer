@@ -944,6 +944,7 @@ bool V3ProjectBase::ConvertToV4_ProcScripts_impl(ProjectBase* nwproj, taBase_Gro
 			      proc->script_file.fname, null_args);
     }
   }
+  return true;
 }
 
 bool V3ProjectBase::ConvertToV4_ProcScripts(ProjectBase* nwproj) {
