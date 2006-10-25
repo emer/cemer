@@ -125,85 +125,12 @@ int TextTableView::ShowMore(int newsize) {
   }
 } */
 
-void TextTableView::RemoveLine(int index){
-  T3GridTableViewBaseNode* node_so = this->node_so();
-  if (!node_so) return;
-  if (index == -1) {
-    node_so->body()->removeAllChildren();
-  } else {
-    if (index <= (node_so->body()->getNumChildren() - 1))
-      node_so->body()->removeChild(index);
-  }
-}
-
 void TextTableView::UpdateDisplay(TAPtr) {
 /*TODO   if(!taMisc::gui_active) return;
   if(patch == NULL) return;
   patch->reallocate();
   patch->redraw();
   if(anim.capture) CaptureAnimImg(); */
-}
-
-void TextTableView::UpdateFromBuffer_impl(){
-  // this updates the data area
-  if(!taMisc::gui_active || !display_toggle) return;
-  T3GridTableViewBaseNode* node_so = this->node_so();
-  if (!node_so) return;
-  node_so->body()->removeAllChildren();
-
-  // we only need 1 font for all rows
-  SoFont* fnt = new SoFont();
-  FontSpec& fs = viewSpec()->def_font;
-  fs.copyTo(fnt);
-  node_so->body()->addChild(fnt);
-
-  // this is the index (in view_range units) of the first view line of data in the buffer
-  int row = 0;
-  int buff_offset = data_range_min_();
-  for (int ln = view_range.min; ln <= view_range.max; ln++) {
-    UpdateFromBuffer_AddLine(row, ln - buff_offset);
-    ++row;
-  }
-}
-
-void TextTableView::UpdateFromBuffer_AddLine(int row, int buff_idx){
-  T3GridTableViewBaseNode* node_so = this->node_so();
-  if (!node_so) return;
-
-  // make line container
-  SoSeparator* ln = new SoSeparator();
-
-  taLeafItr i;
-  int col = 0;
-  DA_TextViewSpec* vs;
-  DataTable* dt = dataTable(); //cache
-  String el;
-  FOR_ITR_EL(DA_TextViewSpec, vs, viewspec->, i) {
-    if((vs->visible == false) || (!vs->data_array)) continue;
-    if (col < col_range.min) {++col; continue;}
-    if (col > col_range.max) break;
-    SoTranslation* tr = new SoTranslation();
-    ln->addChild(tr);
-    if (col == col_range.min) { // translation is relative to 0,0
-      tr->translation.setValue(0.0f, geom.z - (row_height * (row + 2)), 0.0f);
-    } else {
-      tr->translation.setValue(col_widths[col - 1], 0.0f, 0.0f);
-    }
-//TODO: we really shouldn't be doing this low level stuff ourself...
-    taMatrix* mat = vs->data_array->AR();
-    int act_idx;
-    //calculate the actual row index, for the case of a jagged data tables
-    if ((mat != NULL) && dt->idx(buff_idx, mat->frames(), act_idx)) {
-      el = vs->ValAsString(act_idx);
-    } else {
-      el = "n/a";
-    }
-    SoAsciiText* txt = new SoAsciiText();
-    ln->addChild(txt);
-    txt->string.setValue(el.chars());
-    ++col;
-  }
-  node_so->body()->addChild(ln);
 }
 
 
@@ -251,18 +178,6 @@ void GridTableView::UpdateAfterEdit(){
   else UpdateDisplay();
 }
 
-
-void GridTableView::ColorBar_execute() {
-  auto_scale = false;
-/*TODO  scale_range.min = editor->cbar->min;
-  scale_range.max = editor->cbar->max;
-  editor->auto_scale = auto_scale;
-  editor->scale_range = scale_range;
-  if(auto_sc_but != NULL) {
-    auto_sc_but->setDown(auto_scale);
-  }
-  InitDisplay(); */
-}
 
 
 void GridTableView::UpdateDisplay(TAPtr){
