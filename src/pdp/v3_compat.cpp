@@ -844,7 +844,8 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
       gpcol = dt->NewColString("Group");
       st_col++;
     }
-    String_Data* nmcol = dt->NewColString("Name");
+    //String_Data* nmcol = 
+    dt->NewColString("Name");
     if(env->event_specs.size == 0) continue;
     EventSpec* es = (EventSpec*)env->event_specs[0];
     for(int pi=0; pi < es->patterns.size; pi++) {

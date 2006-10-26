@@ -69,8 +69,8 @@
 
 // called virtually, after construct
 void TableView::InitNew(DataTable* dt, T3DataViewFrame* fr) {
-  SetData(dt);
   fr->AddView(this);
+  viewSpecBase()->BuildFromDataTable(dt);
   //??
   if (fr->isMapped())
     fr->Render();
@@ -386,6 +386,15 @@ void TableView::View_FR() {
 // GridTableView	//
 //////////////////////////
 
+GridTableView* GridTableView::NewGridTableView(DataTable* dt,
+    T3DataViewFrame* fr)
+{
+  if (!dt) return NULL;
+  GridTableView* rval = new GridTableView;
+  rval->InitNew(dt, fr);
+  return rval;
+}
+
 void GridTableView::Initialize() {
   col_bufsz = 0;
   row_height = 0.1f; // non-zero dummy value
@@ -430,7 +439,6 @@ void GridTableView::CutLinks() {
 void GridTableView::Copy_(const GridTableView& cp) {
   col_bufsz = cp.col_bufsz;
   col_range = cp.col_range;
-  col_widths = cp.col_widths;
   
   block_size = cp.block_size;
   block_border_size = cp.block_border_size;
@@ -454,7 +462,8 @@ void GridTableView::AdjustColView() {
   col_range.max = col_range.min - 1;
   if (col_bufsz == 0) return;
   float wd_tot = 0.0f;
-  while ((col_range.max < (col_bufsz - 1)) && ((wd_tot += col_widths[col_range.max + 1]) <= (float)geom.x))
+  while ((col_range.max < (col_bufsz - 1)) && 
+   ((wd_tot += colWidth(col_range.max + 1)) <= (float)geom.x))
     col_range.max++;
 }
 
@@ -496,6 +505,12 @@ void GridTableView::ColorBar_execute() {
     auto_sc_but->setDown(auto_scale);
   }
   InitDisplay(); */
+}
+
+float GridTableView::colWidth(int idx) const {
+  GridColViewSpec* cs = view_spec.colSpec(idx);
+  if (cs) return cs->col_width;
+  else return 0.0f;
 }
 
 void GridTableView::InitDisplayParams() {
@@ -595,7 +610,7 @@ void GridTableView::RenderHead() {
     if (col == col_range.min) { // first trnsl positions row
       tr->translation.setValue(0.0f, geom.z - row_height, 0.0f);
     } else {
-      tr->translation.setValue(col_widths[col - 1], 0.0f, 0.0f);
+      tr->translation.setValue(colWidth(col - 1), 0.0f, 0.0f);
     }
     SoAsciiText* txt = new SoAsciiText();
     hdr->addChild(txt);
@@ -708,7 +723,7 @@ void GridTableView::UpdateFromBuffer_AddLine(int row, int buff_idx){
     if (col == col_range.min) { // translation is relative to 0,0
       tr->translation.setValue(0.0f, geom.z - (row_height * (row + 2)), 0.0f);
     } else {
-      tr->translation.setValue(col_widths[col - 1], 0.0f, 0.0f);
+      tr->translation.setValue(colWidth(col - 1), 0.0f, 0.0f);
     }
     if (vs->display_style & GridColViewSpec::TEXT_MASK) {
     //TODO: add a font, if col font differs from main font
@@ -769,6 +784,10 @@ const char* but_strs[] = {"|<","<<","<",">",">>",">|","Update","Init","Clear"};
 
 void iTableView_Panel::init(bool is_grid_log)
 {
+  t3vs = NULL; //these are created in  Constr_T3ViewspaceWidget
+  m_ra = NULL;
+  m_camera = NULL;
+  
   QWidget* widg = new QWidget();
   layOuter = new QVBoxLayout(widg);
 
@@ -818,20 +837,6 @@ void iTableView_Panel::init(bool is_grid_log)
   setCentralWidget(widg);
   connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
   connect(bgpTopButtons, SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)) );
-/*TODO  list = new iLDPListView(this, "list");
-  layOuter->addWidget(list);
-  list->setSelectionMode(QListView::Extended);
-  list->setShowSortIndicator(true);
-  // set up number of col_bufsz, based on link
-  list->addColumn("#");
-  for (int i = 0; i < link()->NumListCols(); ++i) {
-    list->addColumn(link()->GetColHeading(i));
-  }
-  connect(list, SIGNAL(contextMenuRequested(QListViewItem*, const QPoint &, int)),
-      this, SLOT(list_contextMenuRequested(QListViewItem*, const QPoint &, int)) );
-  connect(list, SIGNAL(selectionChanged()),
-      this, SLOT(list_selectionChanged()) );
-  FillList(); */
 }
 
 iTableView_Panel::~iTableView_Panel() {
@@ -977,8 +982,10 @@ void iTableView_Panel::viewAll() {
 //////////////////////////
 
 iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
-:inherited(tlv)
+:inherited(true, tlv)
 {
+  Constr_T3ViewspaceWidget();
+
   connect(chkAuto, SIGNAL(toggled(bool)), this, SLOT(chkAuto_toggled(bool)) );
   connect(chkHeaders, SIGNAL(toggled(bool)), this, SLOT(chkHeaders_toggled(bool)) );
 }

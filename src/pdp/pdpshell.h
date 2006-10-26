@@ -178,6 +178,7 @@ public:
     COLOR_COUNT
   };
 
+  static void 		NewGridView(DataTable* dt, T3DataViewFrame* fr = NULL); // #DYN_P1 #MENU #MENU_CONTEXT #NULL_OK create a new graph view of the specified table in current project browser; fr=NULL creates new frame
   static void 		NewGraphView(DataTable* dt, T3DataViewFrame* fr = NULL); // #DYN_P1 #MENU #MENU_CONTEXT #NULL_OK create a new graph view of the specified table in current project browser; NULL creates new frame
   
   Network_Group		networks;	// Networks of interconnected units

@@ -1128,7 +1128,7 @@ void DataColViewSpecs::ReBuildFromDataTable(DataTableCols* data_cols) {
   for (i = 0; i < data_cols->size; ++i) {
     da = data_cols->FastEl(i);
     int fm;
-    if ((dcs = (DataColViewSpec*)FindName(da->GetName()), fm)) {
+    if ((dcs = (DataColViewSpec*)FindName(da->GetName(), fm))) {
       if (fm != i) Move(fm, i);
     } else {
       dcs = (DataColViewSpec*)taBase::MakeToken(el_typ); // of correct type for this

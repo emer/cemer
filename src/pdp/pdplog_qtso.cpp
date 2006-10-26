@@ -735,24 +735,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* glv)
   gbs = new iGraphButtons(this);
   layGraphButtons->addWidget(gbs, 1);
 
-
-
   Constr_T3ViewspaceWidget();
-
-/*TODO  list = new iLDPListView(this, "list");
-  layOuter->addWidget(list);
-  list->setSelectionMode(QListView::Extended);
-  list->setShowSortIndicator(true);
-  // set up number of cols, based on link
-  list->addColumn("#");
-  for (int i = 0; i < link()->NumListCols(); ++i) {
-    list->addColumn(link()->GetColHeading(i));
-  }
-  connect(list, SIGNAL(contextMenuRequested(QListViewItem*, const QPoint &, int)),
-      this, SLOT(list_contextMenuRequested(QListViewItem*, const QPoint &, int)) );
-  connect(list, SIGNAL(selectionChanged()),
-      this, SLOT(list_selectionChanged()) );
-  FillList(); */
 }
 
 iGraphTableView_Panel::~iGraphTableView_Panel() {

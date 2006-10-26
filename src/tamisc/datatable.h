@@ -394,6 +394,10 @@ class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
 INHERITED(DataTableViewSpec)
 public:
 
+  inline int		colSpecCount() const {return col_specs.size;}
+  GridColViewSpec*	colSpec(int idx) const 
+    {return (GridColViewSpec*)col_specs.SafeEl(idx);}
+  
   virtual int 	UpdateLayout();
   // #MENU #MENU_ON_Actions enforce the geometry to fit with no spaces or overlap, returns maxx
   virtual void	GetMinMaxScale(MinMax& mm, bool first=true); // get min and max data range for scaling

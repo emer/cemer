@@ -338,6 +338,16 @@ public: // standard keys for standard gui descriptions, mostly for list columns
   virtual bool		HasUserData(const String& name) const;
     // returns true if UserData exists for this name (case sens)
   virtual const Variant	GetUserData(const String& name) const; // get specified user data; nilVariant if not present or class doesn't support user data
+  inline bool		GetUserDataAsBool(const String& name) const
+    {return GetUserData(name).toBool();} // strongly-typed convenience accessor
+  inline int		GetUserDataAsInt(const String& name) const
+    {return GetUserData(name).toInt();} // strongly-typed convenience accessor
+  inline float		GetUserDataAsFloat(const String& name) const
+    {return GetUserData(name).toFloat();} // strongly-typed convenience accessor
+  inline double		GetUserDataAsDouble(const String& name) const
+    {return GetUserData(name).toDouble();} // strongly-typed convenience accessor
+  inline const String	GetUserDataAsString(const String& name) const
+    {return GetUserData(name).toString();} // strongly-typed convenience accessor
   virtual void		SetUserData(const String& name, const Variant& value); // set user data; NOTE: class must support user data
   virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
   // #IGNORE default keys are: name, type, desc, disp_name
@@ -1110,8 +1120,8 @@ protected:
   TALPtr	El_GetOwner_(void* it) const { return (TABLPtr)((TAPtr)it)->GetOwner(); }
   void*		El_SetOwner_(void* it)	{ ((TAPtr)it)->SetOwner(this); return it; }
   bool		El_FindCheck_(void* it, const String& nm) const
-  { return (((TAPtr)it)->FindCheck(nm) &&
-	    ((El_GetOwner_(it) != NULL) || (El_GetOwner_(it) == (TALPtr) this))); }
+  { if (((TAPtr)it)->FindCheck(nm)) {TALPtr own = El_GetOwner_(it);
+    return ((!own) || (own == (TALPtr)this));} return false; }
 
   void*		El_Ref_(void* it)	{ taBase::Ref((TAPtr)it); return it; }
   void*		El_unRef_(void* it)	{ taBase::unRef((TAPtr)it); return it; }
@@ -1260,7 +1270,7 @@ public:
   TypeDef*		data_base;	// #READ_ONLY #NO_SAVE Minimum type for data object
 
   taBase*		data() {return m_data;} // subclasses usually redefine a strongly typed version
-  void 			SetData(taBase* ta); // set the data to which this points -- must be subclass of data_base
+  void 			SetData(taBase* ta); // #MENU set the data to which this points -- must be subclass of data_base
   int			dbu_cnt() {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
   inline int		index() const {return m_index;} // convenience accessor
   virtual bool		isMapped() const {return true;} // for DataView classes, or anything w/ separate gui classes that get created distinct from view hierarchy

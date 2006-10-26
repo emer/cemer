@@ -892,32 +892,6 @@ int taBase::SaveAs_File(const String& fname) {
   return rval;
 }
 
-void taBase::SetFlag(int flag) {
-  m_flags |= flag;
-}
-
-void taBase::SetUserData(const String& name, const Variant& value) {
-  UserDataItem_List* ud = GetUserDataList(true);
-#ifdef DEBUG
-  if (!ud) {
-    taMisc::Warning("Class does not support UserData:", GetTypeDef()->name);
-    return;
-  }
-#else
-  if (!ud) return; // not supported, shouldn't be calling
-#endif
-  
-  UserDataItemBase* udi = ud->FindName(name);
-  if (!udi) {
-    udi = new UserDataItem;
-    udi->SetName(name);
-    ud->Add(udi);
-  }
-  if (!udi->setValueAsVariant(value)) {
-    taMisc::Warning("Attempt to set existing UserData value as Variant was not supported for", name);
-  }
-}
- 
 TAPtr taBase::GetOwner(TypeDef* td) const {
   TAPtr own = GetOwner();
   if(own == NULL)
@@ -1037,7 +1011,7 @@ const Variant taBase::GetUserData(const String& name) const {
   UserDataItem_List* ud = GetUserDataList();
   if (ud) {
     UserDataItemBase* udi = ud->FindName(name);
-    return udi->valueAsVariant();
+    if (udi) return udi->valueAsVariant();
   }
   return _nilVariant;
 }
@@ -1174,6 +1148,32 @@ void taBase::SetTypeDefaults() {
   SetTypeDefaults_parents(ttd, scope);
 }
 
+void taBase::SetFlag(int flag) {
+  m_flags |= flag;
+}
+
+void taBase::SetUserData(const String& name, const Variant& value) {
+  UserDataItem_List* ud = GetUserDataList(true);
+#ifdef DEBUG
+  if (!ud) {
+    taMisc::Warning("Class does not support UserData:", GetTypeDef()->name);
+    return;
+  }
+#else
+  if (!ud) return; // not supported, shouldn't be calling
+#endif
+  
+  UserDataItemBase* udi = ud->FindName(name);
+  if (!udi) {
+    udi = new UserDataItem;
+    udi->SetName(name);
+    ud->Add(udi);
+  }
+  if (!udi->setValueAsVariant(value)) {
+    taMisc::Warning("Attempt to set existing UserData value as Variant was not supported for", name);
+  }
+}
+ 
 void taBase::UpdateAllViews() {
   DataChanged(DCR_UPDATE_VIEWS);
 }

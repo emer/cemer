@@ -52,6 +52,8 @@ class Network;
 class ProjectBase;
 class PDPRoot; //
 
+class GridTableView;
+
 #ifdef TA_GUI
 
 // externals

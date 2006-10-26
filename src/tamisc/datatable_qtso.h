@@ -61,7 +61,8 @@ public: //
   float		frame_inset;	// #DEF_0.05 inset of frame (used to calc actual inner space avail)
   int			data_range_max_() const;
   
-  virtual DataTable*	dataTable() const {return NULL;}
+  virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
+    //note: can override for more efficient direct reference
   T3TableViewNode*	node_so() const {return (T3TableViewNode*)m_node_so.ptr();}
   int			rows() const; // TODO: probably optimize this by keeping a copy
   virtual DataTableViewSpec* viewSpecBase() const {return NULL;}
@@ -120,9 +121,11 @@ class TAMISC_API GridTableView: public TableView {
   // #VIRT_BASE #NO_TOKENS 
 INHERITED(TableView)
 public:
+  static GridTableView* NewGridTableView(DataTable* dt,
+    T3DataViewFrame* fr);
+
   int		col_bufsz; // #READ_ONLY #SAVE visible columns
   MinMaxInt	col_range;	// column range that is visible
-  float_Array	col_widths;
   float		tot_col_widths; // total of all (visible) col_widths
   float		head_height; // based on font size	
   float		row_height; // #IGNORE determined from max of all cols
@@ -143,6 +146,8 @@ public:
   
   GridTableViewSpec view_spec; // baked in spec 
 
+  float			colWidth(int idx) const; // looked up from the specs
+  override DataTable*	dataTable() const {return view_spec.dataTable();}
   override DataTableViewSpec* viewSpecBase() const 
     {return const_cast<GridTableViewSpec*>(&view_spec);}
   inline GridTableViewSpec* viewSpec() const 

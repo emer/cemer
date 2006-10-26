@@ -34,6 +34,8 @@
 # include <QWidgetList>
 #endif
 
+#include "datatable_qtso.h"
+
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 #endif
@@ -519,6 +521,54 @@ void Wizard::StdLogs(SchedProcess* proc) {
 //  ProjectBase		//
 //////////////////////////
 
+void ProjectBase::NewGraphView(DataTable* dt, T3DataViewFrame* fr)
+{
+  if (!dt) {
+    taMisc::Error("You must specify a DataTable");
+    return;
+  }
+  //note: even if fr specified, need to insure it is right proj for table
+  ProjectBase* proj = (ProjectBase*)dt->GetOwner(&TA_ProjectBase);
+  
+  if (fr) {
+    if (proj != fr->GetOwner(&TA_ProjectBase)) {
+      taMisc::Error("The viewer you specified is not in the same Project as the table.");
+      return;
+    }
+  } else {
+    MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
+    if (!vw) return; // shouldn't happen
+    T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
+    if (!t3vw) return; // shouldn't happen
+    fr = t3vw->NewT3DataViewFrame();
+  }
+//TODO  GraphTableView::NewGraphTableView(dt, fr); // discard result
+}
+
+void ProjectBase::NewGridView(DataTable* dt, T3DataViewFrame* fr)
+{
+  if (!dt) {
+    taMisc::Error("You must specify a DataTable");
+    return;
+  }
+  //note: even if fr specified, need to insure it is right proj for table
+  ProjectBase* proj = (ProjectBase*)dt->GetOwner(&TA_ProjectBase);
+  
+  if (fr) {
+    if (proj != fr->GetOwner(&TA_ProjectBase)) {
+      taMisc::Error("The viewer you specified is not in the same Project as the table.");
+      return;
+    }
+  } else {
+    MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
+    if (!vw) return; // shouldn't happen
+    T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
+    if (!t3vw) return; // shouldn't happen
+    fr = t3vw->NewT3DataViewFrame();
+  }
+  GridTableView::NewGridTableView(dt, fr); // discard result
+}
+
 void ProjectBase::Initialize() {
   // up-class a few of the bases
   wizards.SetBaseType(&TA_Wizard);
@@ -688,30 +738,6 @@ void ProjectBase::AssertDefaultWiz(bool auto_opn) {
     ((Wizard*)wiz)->ThreeLayerNet();
     wiz->Edit();
   }
-}
-
-void ProjectBase::NewGraphView(DataTable* dt, T3DataViewFrame* fr)
-{
-  if (!dt) {
-    taMisc::Error("You must specify a DataTable");
-    return;
-  }
-  //note: even if fr specified, need to insure it is right proj for table
-  ProjectBase* proj = (ProjectBase*)dt->GetOwner(&TA_ProjectBase);
-  
-  if (fr) {
-    if (proj != fr->GetOwner(&TA_ProjectBase)) {
-      taMisc::Error("The viewer you specified is not in the same Project as the table.");
-      return;
-    }
-  } else {
-    MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
-    if (!vw) return; // shouldn't happen
-    T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
-    if (!t3vw) return; // shouldn't happen
-    fr = t3vw->NewT3DataViewFrame();
-  }
-//TODO  GraphTableView::NewGraphTableView(dt, fr); // discard result
 }
 
 void ProjectBase::UpdateColors() {
