@@ -1116,3 +1116,471 @@ float taMath_float::e = M_E;
 
 float taMath_float::pi = M_PI;
 float taMath_float::deg_per_rad = 180.0 / M_PI;
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// Vector operations (operate on Matrix objects, treating as a single linear guy)
+
+///////////////////////////////////////
+// arithmetic ops
+
+bool taMath_float::vec_check_same_size(const float_Matrix* a, const float_Matrix* b, bool quiet) {
+  if(a->size != b->size) {
+    if(!quiet)
+      taMisc::Error("taMath: vectors are not the same size");
+    return false;
+  }
+  if(a->size == 0) {
+    if(!quiet)
+      taMisc::Error("taMath: vectors have no elements");
+    return false;
+  }
+  return true;
+}
+
+// todo: add some update signal after mod ops?  ItemsChanged?
+
+bool taMath_float::vec_add(float_Matrix* a, const float_Matrix* b) {
+  if(!vec_check_same_size(a, b)) return false;
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) += b->FastEl_Flat(i);
+  return true;
+}
+
+bool taMath_float::vec_sub(float_Matrix* a, const float_Matrix* b) {
+  if(!vec_check_same_size(a, b)) return false;
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) -= b->FastEl_Flat(i);
+  return true;
+}
+
+bool taMath_float::vec_mult_els(float_Matrix* a, const float_Matrix* b) {
+  if(!vec_check_same_size(a, b)) return false;
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) *= b->FastEl_Flat(i);
+  return true;
+}
+
+bool taMath_float::vec_div_els(float_Matrix* a, const float_Matrix* b) {
+  if(!vec_check_same_size(a, b)) return false;
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) /= b->FastEl_Flat(i);
+  return true;
+}
+
+bool taMath_float::vec_simple_math(float_Matrix* vec, const SimpleMathSpec& math_spec) {
+  for(int i=0;i<vec->size;i++)
+    vec->FastEl_Flat(i) = math_spec.Evaluate(vec->FastEl_Flat(i));
+  return true;
+}
+
+bool taMath_float::vec_simple_math_arg(float_Matrix* vec, const float_Matrix* arg_ary,
+					const SimpleMathSpec& math_spec) {
+  if(!vec_check_same_size(vec, arg_ary)) return false;
+  SimpleMathSpec myms = math_spec;
+  for(int i=0;i<vec->size;i++) {
+    myms.arg = arg_ary->FastEl_Flat(i);
+    vec->FastEl_Flat(i) = myms.Evaluate(vec->FastEl_Flat(i));
+  }
+  return true;
+}
+
+float taMath_float::vec_max(const float_Matrix* vec, int& idx) {
+  idx = 0;
+  if(vec->size == 0) return 0.0;
+  float rval = vec->FastEl_Flat(0);
+  for(int i=1;i<vec->size;i++) {
+    if(vec->FastEl_Flat(i) > rval) {
+      idx = i;
+      rval = vec->FastEl_Flat(i);
+    }
+  }
+  return rval;
+}
+
+float taMath_float::vec_abs_max(const float_Matrix* vec, int& idx) {
+  idx = 0;
+  if(vec->size == 0) return 0.0;
+  float rval = fabs(vec->FastEl_Flat(0));
+  for(int i=1;i<vec->size;i++) {
+    if(fabs(vec->FastEl_Flat(i)) > rval) {
+      idx = i;
+      rval = fabs(vec->FastEl_Flat(i));
+    }
+  }
+  return rval;
+}
+
+float taMath_float::vec_min(const float_Matrix* vec, int& idx) {
+  idx = 0;
+  if(vec->size == 0) return 0.0;
+  float rval = vec->FastEl_Flat(0);
+  for(int i=1;i<vec->size;i++) {
+    if(vec->FastEl_Flat(i) < rval) {
+      idx = i;
+      rval = vec->FastEl_Flat(i);
+    }
+  }
+  return rval;
+}
+
+float taMath_float::vec_abs_min(const float_Matrix* vec, int& idx) {
+  idx = 0;
+  if(vec->size == 0) return 0.0;
+  float rval = fabs(vec->FastEl_Flat(0));
+  for(int i=1;i<vec->size;i++) {
+    if(fabs(vec->FastEl_Flat(i)) < rval) {
+      idx = i;
+      rval = fabs(vec->FastEl_Flat(i));
+    }
+  }
+  return rval;
+}
+
+float taMath_float::vec_sum(const float_Matrix* vec) {
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++)
+    rval += vec->FastEl_Flat(i);
+  return rval;
+}
+
+float taMath_float::vec_prod(const float_Matrix* vec) {
+  if(vec->size == 0) return 0.0;
+  float rval = vec->FastEl_Flat(0);
+  for(int i=1;i<vec->size;i++)
+    rval *= vec->FastEl_Flat(i);
+  return rval;
+}
+
+float taMath_float::vec_mean(const float_Matrix* vec) {
+  if(vec->size == 0)	return 0.0;
+  return vec_sum(vec) / (float)vec->size;
+}
+
+float taMath_float::vec_var(const float_Matrix* vec, float mean, bool use_mean) {
+  if(vec->size == 0)	return 0.0;
+  if(!use_mean)    mean = vec_mean(vec);
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++)
+    rval += (vec->FastEl_Flat(i) - mean) * (vec->FastEl_Flat(i) - mean);
+  return rval / (float)vec->size;
+}
+
+float taMath_float::vec_std_dev(const float_Matrix* vec, float mean, bool use_mean) {
+  return sqrt(vec_var(vec, mean, use_mean));
+}
+
+float taMath_float::vec_sem(const float_Matrix* vec, float mean, bool use_mean) {
+  if(vec->size == 0)	return 0.0;
+  return vec_std_dev(vec, mean, use_mean) / sqrt((float)vec->size);
+}
+
+float taMath_float::vec_ss_len(const float_Matrix* vec) {
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++)
+    rval += vec->FastEl_Flat(i) * vec->FastEl_Flat(i);
+  return rval;
+}
+
+void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, float bin_size) {
+  vec->Reset();
+  if(oth->size == 0) return;
+  float_Array tmp;
+  for(int i=0;i<oth->size;i++)
+    tmp.Add(oth->FastEl_Flat(i));
+  tmp.Sort();
+  float min_v = tmp.FastEl(0);
+  float max_v = tmp.Peek();
+  int src_idx = 0;
+  int trg_idx = 0;
+  for(float cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
+    float cur_max = cur_val + bin_size;
+    vec->Add(0);
+    float& cur_hist = vec->FastEl_Flat(trg_idx);
+    while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < cur_max)) {
+      cur_hist += 1.0;
+      src_idx++;
+    }
+  }
+}
+
+float taMath_float::vec_count(const float_Matrix* vec, CountParam& cnt) {
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++) {
+    if(cnt.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+  }
+  return rval;
+}
+
+///////////////////////////////////////
+// distance metrics (comparing two vectors)
+
+float taMath_float::vec_ss_dist(const float_Matrix* vec, const float_Matrix* oth, bool norm,
+				  float tolerance)
+{
+  if(!vec_check_same_size(vec, oth)) return -1.0;
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++) {
+    float d = vec->FastEl_Flat(i) - oth->FastEl_Flat(i);
+    if(fabs(d) > tolerance)  
+      rval += d * d;
+  }
+  if(norm) {
+    float dist = vec_ss_len(vec) + vec_ss_len(oth);
+    if(dist != 0.0f)
+      rval /= dist;
+  }
+  return rval;
+}
+
+float taMath_float::vec_euclid_dist(const float_Matrix* vec, const float_Matrix* oth, bool norm,
+				      float tolerance)
+{
+  float ssd = vec_ss_dist(vec, oth, norm, tolerance);
+  if(ssd < 0.0) return ssd;
+  return sqrt(ssd);
+}
+
+float taMath_float::vec_hamming_dist(const float_Matrix* vec, const float_Matrix* oth, bool norm,
+				      float tolerance)
+{
+  if(!vec_check_same_size(vec, oth)) return -1.0;
+  float rval = 0.0;
+  float alen = 0.0;
+  float blen = 0.0;
+  for(int i=0;i<vec->size;i++) {
+    float d = fabs(vec->FastEl_Flat(i) - oth->FastEl_Flat(i));
+    if(d <= tolerance)  d = 0.0;
+    rval += d;
+    if(norm) {
+      alen += fabs(vec->FastEl_Flat(i));
+      blen += fabs(oth->FastEl_Flat(i));
+    }
+  }
+  if(norm) {
+    float dist = alen + blen;
+    if(dist != 0.0f)
+      rval /= dist;
+  }
+  return rval;
+}
+
+float taMath_float::vec_covar(const float_Matrix* vec, const float_Matrix* oth) {
+  if(!vec_check_same_size(vec, oth)) return -1.0;
+  float my_mean = vec_mean(vec);
+  float oth_mean = vec_mean(oth);
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++)
+    rval += (vec->FastEl_Flat(i) - my_mean) * (oth->FastEl_Flat(i) - oth_mean);
+  return rval / (float)vec->size;
+}
+
+float taMath_float::vec_correl(const float_Matrix* vec, const float_Matrix* oth) {
+  if(!vec_check_same_size(vec, oth)) return -1.0;
+  float my_mean = vec_mean(vec);
+  float oth_mean = vec_mean(oth);
+  float my_var = 0.0;
+  float oth_var = 0.0;
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++) {
+    float my_val = vec->FastEl_Flat(i) - my_mean;
+    float oth_val = oth->FastEl_Flat(i) - oth_mean;
+    rval += my_val * oth_val;
+    my_var += my_val * my_val;
+    oth_var += oth_val * oth_val;
+  }
+  float var_prod = sqrt(my_var * oth_var);
+  if(var_prod != 0.0f)
+    return rval / var_prod;
+  else
+    return 0.0;
+}
+
+float taMath_float::vec_inner_prod(const float_Matrix* vec, const float_Matrix* oth, bool norm) {
+  if(!vec_check_same_size(vec, oth)) return -1.0;
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++)
+    rval += vec->FastEl_Flat(i) * oth->FastEl_Flat(i);
+  if(norm) {
+    float dist = sqrt(vec_ss_len(vec) * vec_ss_len(oth));
+    if(dist != 0.0f)
+      rval /= dist;
+  }
+  return rval;
+}
+
+float taMath_float::vec_cross_entropy(const float_Matrix* vec, const float_Matrix* oth) {
+  if(!vec_check_same_size(vec, oth)) return -1.0;
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++) {
+    float p = vec->FastEl_Flat(i);
+    float q = oth->FastEl_Flat(i);
+    q = max(q,0.000001); q = max(q,0.999999);
+    if(p >= 1.0)
+      rval += -log(q);
+    else if(p <= 0.0)
+      rval += -log(1.0 - q);
+    else
+      rval += p * log(p/q) + (1.0 - p) * log((1.0 - p) / (1.0 - q));
+  }
+  return rval;
+}
+
+float taMath_float::vec_dist(const float_Matrix* vec, const float_Matrix* oth,
+			       DistMetric metric, bool norm, float tolerance) 
+{
+  switch(metric) {
+  case SUM_SQUARES:
+    return vec_ss_dist(vec, oth, norm, tolerance);
+  case EUCLIDIAN:
+    return vec_euclid_dist(vec, oth, norm, tolerance);
+  case HAMMING:
+    return vec_hamming_dist(vec, oth, norm, tolerance);
+  case COVAR:
+    return vec_covar(vec, oth);
+  case CORREL:
+    return vec_correl(vec, oth);
+  case INNER_PROD:
+    return vec_inner_prod(vec, oth, norm);
+  case CROSS_ENTROPY:
+    return vec_cross_entropy(vec, oth);
+  }
+  return -1.0;
+}
+
+///////////////////////////////////////
+// Normalization
+
+float taMath_float::vec_norm_len(float_Matrix* vec, float len) {
+  if(vec->size == 0) 	return 0.0;
+  float scale = (len * len) / vec_ss_len(vec);
+  for(int i=0;i<vec->size;i++) {
+    float mag = (vec->FastEl_Flat(i) * vec->FastEl_Flat(i)) * scale;
+    vec->FastEl_Flat(i) = (vec->FastEl_Flat(i) >= 0.0f) ? mag : -mag;
+  }
+  return scale;
+}
+
+float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
+  if(vec->size == 0)	return 0.0;
+  float act_sum = 0.0;
+  int min_idx;
+  float cur_min = vec_min(vec, min_idx);
+  for(int i=0;i<vec->size;i++)
+    act_sum += (vec->FastEl_Flat(i) - cur_min);
+  float scale = (sum / act_sum);
+  for(int i=0;i<vec->size;i++)
+    vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - cur_min) * scale) + min_val;
+  return scale;
+}
+
+float taMath_float::vec_norm_max(float_Matrix* vec, float max) {
+  if(vec->size == 0)	return 0.0;
+  int idx;
+  float cur_max = vec_max(vec, idx);
+  if(cur_max == 0.0) return 0.0;
+  float scale = (max / cur_max);
+  for(int i=0;i<vec->size;i++)
+    vec->FastEl_Flat(i) *= scale;
+  return scale;
+}
+
+float taMath_float::vec_norm_abs_max(float_Matrix* vec, float max) {
+  if(vec->size == 0)	return 0.0;
+  int idx;
+  float cur_max = vec_abs_max(vec, idx);
+  if(cur_max == 0.0) return 0.0;
+  float scale = (max / cur_max);
+  for(int i=0;i<vec->size;i++)
+    vec->FastEl_Flat(i) *= scale;
+  return scale;
+}
+
+int taMath_float::vec_threshold(float_Matrix* vec, float thresh, float low, float high) {
+  if(vec->size == 0)  return 0;
+  int rval = 0;
+  for(int i=0;i<vec->size;i++) {
+    if(vec->FastEl_Flat(i) >= thresh) {
+      vec->FastEl_Flat(i) = high;
+      rval++;
+    }
+    else
+      vec->FastEl_Flat(i) = low;
+  }
+  return rval;
+}
+
+float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
+  int idx;
+  switch(agg.op) {
+  case Aggregate::GROUP:
+    return vec->SafeEl_Flat(0);	// first guy..
+  case Aggregate::MIN:
+    return taMath_float::vec_min(vec, idx);
+  case Aggregate::MAX:
+    return taMath_float::vec_max(vec, idx);
+  case Aggregate::ABS_MIN:
+    return taMath_float::vec_abs_min(vec, idx);
+  case Aggregate::ABS_MAX:
+    return taMath_float::vec_abs_max(vec, idx);
+  case Aggregate::SUM:
+    return taMath_float::vec_sum(vec);
+  case Aggregate::PROD:
+    return taMath_float::vec_prod(vec);
+  case Aggregate::MEAN:
+    return taMath_float::vec_mean(vec);
+  case Aggregate::VAR:
+    return taMath_float::vec_var(vec);
+  case Aggregate::STDEV:
+    return taMath_float::vec_std_dev(vec);
+  case Aggregate::SEM:
+    return taMath_float::vec_sem(vec);
+  case Aggregate::COUNT: 
+    return taMath_float::vec_count(vec, agg.count);
+  }
+  return 0.0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// Matrix operations
+
+#ifdef HAVE_GSL
+
+bool taMath_float::mat_get_gsl_fm_ta(const float_Matrix* ta_mat, gsl_matrix_float* gsl_mat)
+{
+  if(ta_mat->dims() != 2) return false;
+  gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
+  gsl_mat->size2 = ta_mat->dim(1); // "columns"
+  gsl_mat->tda = ta_mat->dim(0); // actual size of row in memory
+  gsl_mat->data = (float*)ta_mat->data();
+  gsl_mat->block = NULL;
+  gsl_mat->owner = false;
+  return true;
+}
+
+bool taMath_float::mat_add(float_Matrix* a, float_Matrix* b) {
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
+  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
+  return gsl_matrix_add(&g_a, &g_b);
+}
+
+bool taMath_float::mat_sub(float_Matrix* a, float_Matrix* b) {
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
+  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
+  return gsl_matrix_sub(&g_a, &g_b);
+}
+
+bool taMath_float::mat_mult_els(float_Matrix* a, float_Matrix* b) {
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
+  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
+  return gsl_matrix_mul_elements(&g_a, &g_b);
+}
+
+bool taMath_float::mat_div_els(float_Matrix* a, float_Matrix* b) {
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
+  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
+  return gsl_matrix_div_elements(&g_a, &g_b);
+}
+
+#endif
+

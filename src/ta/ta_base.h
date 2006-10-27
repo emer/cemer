@@ -288,34 +288,34 @@ public:
   
   // Reference counting mechanisms, all static just for consistency..
   static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
-  static void  		Ref(taBase& it)	{ it.refn++; }	     // #IGNORE
-  static void  		Ref(TAPtr it) 	{ it->refn++; }	     // #IGNORE
+  static void  		Ref(taBase& it)		{ it.refn++; }	     // #IGNORE
+  static void  		Ref(taBase* it) 	{ it->refn++; }	     // #IGNORE
 #ifdef DEBUG
-  static void		UnRef(TAPtr it);// #IGNORE
+  static void		UnRef(taBase* it);// #IGNORE
 #else
-  static void		UnRef(TAPtr it) { if (--(it->refn) == 0) delete it;}// #IGNORE
+  static void		UnRef(taBase* it) { if (--(it->refn) == 0) delete it;}// #IGNORE
 #endif
   static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
-  static void		Own(TAPtr it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
+  static void		Own(taBase* it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
   static void		Own(taSmartRef& it, TAPtr onr);	// #IGNORE for semantic compat with other Owns
   static taFiler*	StatGetFiler(TypeItem* td);
     // #IGNORE gets file dialog for the TypeItem -- clients must ref/unrefdone
 
 protected: // legacy ref counting routines, for compatability -- do not use for new code
-  static void   	unRef(TAPtr it) { it->refn--; }	     // #IGNORE
+  static void   	unRef(taBase* it) { it->refn--; }	     // #IGNORE
 #ifdef DEBUG
-  static void   	Done(TAPtr it); // #IGNORE
+  static void   	Done(taBase* it); // #IGNORE
 #else
-  static void   	Done(TAPtr it) 	{ if (it->refn == 0) delete it;} // #IGNORE
+  static void   	Done(taBase* it) 	{ if (it->refn == 0) delete it;} // #IGNORE
 #endif
-  static void		unRefDone(TAPtr it) 	{unRef(it); Done(it);}	 // #IGNORE
+  static void		unRefDone(taBase* it) 	{unRef(it); Done(it);}	 // #IGNORE
 
 public:
   // Pointer management routines (all pointers should be ref'd!!)
-  static void 		InitPointer(TAPtr* ptr) { *ptr = NULL; } // #IGNORE
-  static void 		SetPointer(TAPtr* ptr, TAPtr new_val);	 // #IGNORE
-  static void 		OwnPointer(TAPtr* ptr, TAPtr new_val, TAPtr onr); // #IGNORE
-  static void 		DelPointer(TAPtr* ptr);				  // #IGNORE
+  static void 		InitPointer(taBase** ptr) { *ptr = NULL; } // #IGNORE
+  static void 		SetPointer(taBase** ptr, taBase* new_val);	 // #IGNORE
+  static void 		OwnPointer(taBase** ptr, taBase* new_val, taBase* onr); // #IGNORE
+  static void 		DelPointer(taBase** ptr);				  // #IGNORE
 
   static int		NTokensInScope(TypeDef* type, TAPtr ref_obj, TypeDef* scp_tp=NULL);
   // #IGNORE number of tokens of taBase objects of given type in same scope as ref_obj

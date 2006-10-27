@@ -432,6 +432,7 @@ public:
 
 class PDP_API TiledRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec: connects entire receiving layer unit groups with overlapping tiled regions of sending layers
+INHERITED(ProjectionSpec)
 public:
   TwoDCoord	recv_gp_border;		// number of groups around edge of layer to not connect 
   TwoDCoord	recv_gp_ex_st; 		// start of groups to exclude (e.g., from the middle; -1 = no exclude)
@@ -439,6 +440,19 @@ public:
   TwoDCoord	send_border;		// number of units around edge of sending layer to not connect
   TwoDCoord	send_adj_rfsz;		// adjust the total number of sending units by this amount in computing rfield size
   TwoDCoord	send_adj_sndloc;	// adjust the total number of sending units by this amount in computing sending locations
+
+  // computed values below
+  TwoDCoord ru_geo;		// #READ_ONLY receiving unit geometry
+  TwoDCoord recv_gp_ed;		// #READ_ONLY recv gp end
+  TwoDCoord recv_gp_ex_ed;	// #READ_ONLY recv gp ex end
+  PosTDCoord su_act_geom;	// #READ_ONLY sending actual geometry
+  TwoDCoord n_recv_gps;		// #READ_ONLY number of recv gps
+  TwoDCoord n_send_units;	// #READ_ONLY number of sending units total 
+  TwoDCoord rf_ovlp; 		// #READ_ONLY ovlp = send / (ng + 1)
+  FloatTwoDCoord rf_move;	// #READ_ONLY how much to move sending rf per recv group
+  TwoDCoord rf_width;		// #READ_ONLY width of the sending rf 
+
+  virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
   void 	Connect_impl(Projection* prjn);
   int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
@@ -448,10 +462,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  void	InitLinks();
-  SIMPLE_COPY(TiledRFPrjnSpec);
-  COPY_FUNS(TiledRFPrjnSpec, ProjectionSpec);
-  TA_BASEFUNS(TiledRFPrjnSpec);
+  TA_SIMPLE_BASEFUNS(TiledRFPrjnSpec);
 };
 
 class PDP_API TiledGpRFPrjnSpec : public ProjectionSpec {

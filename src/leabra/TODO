@@ -3,20 +3,15 @@ leabra todo list:
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
-* add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
+* add Data static call and imgproc static call progs
 
 * add data guys to prog toolbox: maybe a 2nd panel??
-* need to fix "MakeTemplate" to be extensible across 
-
-* DataJoin function/Prog: copyrow of matrix not working!!
-
-* DataCalc guy as a loop prog with extra prog for adding row to table
 
 * taImageProc class w/ highvis stuff
 
 * extrew in trial monitor seems not to be working: 12ax demo
 
-* add "print" Progel
+* add "print" Progel?
 
 * encase programs in struct update brackets to prevent updating
 
@@ -44,6 +39,12 @@ current bugs:
 
 -------
 lower pri:
+
+* V1RFPrjnSpec in leabra_extra needs to be updated to new DOG filer spec..
+
+* add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
+
+* add SVD/Eigenvec etc to math and then as data ops and dataprog's
 
 * use FindMakeColName for all dt copy/constr stuff (w/orphaning)
 

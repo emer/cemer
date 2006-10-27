@@ -1623,6 +1623,157 @@ void DecodeTwoDValLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
   return; 			// no need to do this!
 }
 
+////////////////////////////////////////////////////////////
+//
+
+void GaborRFSpec::Initialize() {
+  n_angles = 4;
+  freq = 1.0f;
+  width = 2.0f;
+  length = 4.0f;
+  amp = 1.0f;
+}
+
+void BlobRFSpec::Initialize() {
+  n_sizes = 2;
+  wdth_st = 2.0;
+  wdth_inc = 2.0;
+}
+
+void V1RFPrjnSpec::Initialize() {
+  init_wts = true;
+}
+
+void V1RFPrjnSpec::InitLinks() {
+  TiledRFPrjnSpec::InitLinks();
+  taBase::Own(gabor_rf, this);
+  taBase::Own(blob_rf, this);
+  taBase::Own(gabor_spec, this);
+  taBase::Own(dog_spec, this);
+}
+
+// todo: new dog filter not yet supported!!!
+
+bool V1RFPrjnSpec::InitGaborDoGSpec(Projection* prjn, int recv_idx) {
+  if(!InitRFSizes(prjn)) return false;
+
+  if(recv_idx < gabor_rf.n_angles * 2) { // gabor
+    float phase_dx = (float)((recv_idx / gabor_rf.n_angles) % 2);
+    float angle_dx = (float)(recv_idx % gabor_rf.n_angles);
+
+    gabor_spec.x_size = rf_width.x;
+    gabor_spec.y_size = rf_width.y;
+    gabor_spec.ctr_x = (float)(gabor_spec.x_size - 1.0f) / 2.0f;
+    gabor_spec.ctr_y = (float)(gabor_spec.y_size - 1.0f) / 2.0f;
+    gabor_spec.angle = taMath_float::pi * angle_dx / (float)gabor_rf.n_angles;
+    gabor_spec.phase = taMath_float::pi * phase_dx;
+    gabor_spec.freq = gabor_rf.freq;
+    gabor_spec.length = gabor_rf.length;
+    gabor_spec.width = gabor_rf.width;
+    gabor_spec.amp = gabor_rf.amp;
+  }
+  else {			// dog/blob
+    /*
+    int dog_idx = recv_idx - (gabor_rf.n_angles * 2);
+    int phase_dx = ((dog_idx / blob_rf.n_sizes) % 2);
+    float sz_dx = (float)(dog_idx % blob_rf.n_sizes);
+
+    dog_spec.filter_size = rf_width.x; // assume symmetric!
+    if(phase_dx == 0) {
+      dog_spec.on_sigma = blob_rf.wdth_st + blob_rf.wdth_inc * sz_dx;
+      dog_spec.off_sigma = 2.0f * dog_spec.on_sigma;
+    }
+    else {
+      dog_spec.off_sigma = blob_rf.wdth_st + blob_rf.wdth_inc * sz_dx;
+      dog_spec.on_sigma = 2.0f * dog_spec.off_sigma;
+    }
+//     cerr << "wdth: " << dog_spec.filter_width << ", on" << dog_spec.on_sigma << ", off: " << 
+//       dog_spec.off_sigma << endl;
+    MakeDoGFilter();
+//     cerr << dog_spec.filter.size << endl;
+*/
+  }
+  return true;
+}
+
+void V1RFPrjnSpec::MakeDoGFilter() {
+  /*  dog_spec.filter.Reset();
+  float flt_ctr = (dog_spec.filter_size - 1.0f) / 2.0f;
+  float max_val = 0.0f;
+  int x,y;
+  for(y=0; y<dog_spec.filter_size; y++) {
+    for(x=0; x<dog_spec.filter_size; x++) {
+      float xf = (float)x - flt_ctr;
+      float yf = (float)y - flt_ctr;
+      float val = xf * xf + yf * yf;
+      float ong = 1.0f / (4.0 * PI * dog_spec.on_sigma * dog_spec.on_sigma) * exp(-val / (2.0 * dog_spec.on_sigma * dog_spec.on_sigma));
+      float offg = 1.0f / (4.0 * PI * dog_spec.off_sigma * dog_spec.off_sigma) * exp(-val / (2.0 * dog_spec.off_sigma * dog_spec.off_sigma));
+//       float ong = exp(-val / (2.0 * dog_spec.on_sigma * dog_spec.on_sigma));
+//       float offg = exp(-val / (2.0 * dog_spec.off_sigma * dog_spec.off_sigma));
+      float net = ong - offg;
+      if(fabs(net) > max_val)
+	max_val = fabs(net);
+      dog_spec.filter.Add(net);
+    }
+  }
+  float rescale = gabor_rf.amp / max_val;
+  int i;
+  for(i=0;i<dog_spec.filter.size;i++) {
+    dog_spec.filter[i] *= rescale;
+  }
+  */
+  //  cerr << "+ sum: " << pos_sum_2 << " - sum: " << neg_sum_2 << endl;
+}
+
+void V1RFPrjnSpec::C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru) {
+  Unit_Group* rugp = (Unit_Group*)ru->GetOwner(&TA_Unit_Group);
+  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
+
+  if(!InitGaborDoGSpec(prjn, recv_idx)) return;
+
+  bool on_rf = true;
+  if(prjn->from->name.contains("_off"))
+    on_rf = false;
+
+  int send_x = gabor_spec.x_size;
+
+  int i;
+  for(i=0; i<cg->size; i++) {
+    int su_x = i % send_x;
+    int su_y = i / send_x;
+    float val = 0.0;
+
+    if(recv_idx < gabor_rf.n_angles * 2) { // gabor
+      val = gabor_spec.Eval(su_x, su_y);
+    }
+//     else {
+//       val = dog_spec.filter[i];
+//     }
+    if(on_rf) {
+      if(val > 0.0f)
+	cg->Cn(i)->wt = val;
+      else
+	cg->Cn(i)->wt = 0.0f;
+    }
+    else {
+      if(val < 0.0f)
+	cg->Cn(i)->wt = -val;
+      else
+	cg->Cn(i)->wt = 0.0f;
+    }
+  }
+}
+
+// void V1RFPrjnSpec::GraphFilter(Projection* prjn, int recv_unit_no, GraphLog* graph_log) {
+//   if(!InitGaborDoGSpec(prjn, recv_unit_no)) return;
+//   gabor_spec.GraphFilter(graph_log);
+// }
+
+// void V1RFPrjnSpec::GridFilter(Projection* prjn, int recv_unit_no, GridLog* disp_log) {
+//   if(!InitGaborDoGSpec(prjn, recv_unit_no)) return;
+//   gabor_spec.GridFilter(disp_log);
+// }
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////

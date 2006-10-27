@@ -20,7 +20,7 @@
 #include "t3viewer.h"
 
 #include "ta_qt.h"
-#include "tdgeometry.h"
+#include "ta_geometry.h"
 #include "ta_qtclipdata.h"
 
 #include "css_machine.h" // for trace flag

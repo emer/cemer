@@ -616,8 +616,123 @@ public:
   static float  tanh(float z) { return std::tanh(z); }
   // #CAT_Trigonometry The hyperbolic-tangent = sinh(z) / cosh(z)
 
+  /////////////////////////////////////////////////////////////////////////////////
+  // Vector operations (operate on Matrix objects, treating as a single linear guy)
 
-  // todo: copy over from double and replace all w/ float when double is all good..
+  ///////////////////////////////////////
+  // arithmetic ops
+
+  static bool	vec_check_same_size(const float_Matrix* a, const float_Matrix* b, bool quiet = false);
+  // check that both vectors are the same size, and issue warning if not (unless quiet)
+
+  static bool  vec_add(float_Matrix* a, const float_Matrix* b);
+  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i)
+  static bool  vec_sub(float_Matrix* a, const float_Matrix* b);
+  // #CAT_Arithmetic subtract elements in two vectors: a(i) += b(i)
+  static bool  vec_mult_els(float_Matrix* a, const float_Matrix* b);
+  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i)
+  static bool  vec_div_els(float_Matrix* a, const float_Matrix* b);
+  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i)
+
+  static bool	vec_simple_math(float_Matrix* vec, const SimpleMathSpec& math_spec);
+  // #CAT_Arithmetic apply standard kinds of simple math operators to values in the vector
+
+  static bool	vec_simple_math_arg(float_Matrix* vec, const float_Matrix* arg_vec,
+				    const SimpleMathSpec& math_spec);
+  // #CAT_Arithmetic apply simple math operators to values in vector, other vector provides 'arg' value for math_spec
+
+  ///////////////////////////////////////
+  // basic statistics
+
+  static float	vec_max(const float_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the maximum value
+  static float	vec_abs_max(const float_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the maximum absolute value
+  static float	vec_min(const float_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the minimum value
+  static float	vec_abs_min(const float_Matrix* vec, int& idx);
+  // #CAT_Statistics value and index of the (first) element that has the minimum value
+
+  static float	vec_sum(const float_Matrix* vec);
+  // #CAT_Statistics compute the sum of the values in the vector
+  static float	vec_prod(const float_Matrix* vec);
+  // #CAT_Statistics compute the product of the values in the vector
+  static float	vec_mean(const float_Matrix* vec);
+  // #CAT_Statistics compute the mean of the values in the vector
+  static float	vec_var(const float_Matrix* vec, float mean=0, bool use_mean=false);
+  // #CAT_Statistics compute the variance of the values, opt with given mean
+  static float	vec_std_dev(const float_Matrix* vec, float mean=0, bool use_mean=false);
+  // #CAT_Statistics compute the standard deviation of the values, opt with given mean
+  static float	vec_sem(const float_Matrix* vec, float mean=0, bool use_mean=false);
+  // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
+  static float	vec_ss_len(const float_Matrix* vec);
+  // #CAT_Statistics sum-of-squares length of the vector
+  static void	vec_histogram(float_Matrix* hist_vec, const float_Matrix* src_vec,
+			      float bin_size);
+  // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
+  static float	vec_count(const float_Matrix* vec, CountParam& cnt);
+  // #CAT_Statistics count number of times count relationship is true
+
+  ///////////////////////////////////////
+  // distance metrics (comparing two vectors)
+
+  static float	vec_ss_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
+			    bool norm = false, float tolerance=0.0f);
+  // #CAT_Distance compute sum-squares dist between this and the oth, tolerance is by element
+  static float	vec_euclid_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
+				bool norm = false, float tolerance=0.0f);
+  // #CAT_Distance compute Euclidian dist between this and the oth, tolerance is by element
+  static float	vec_hamming_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
+				 bool norm = false, float tolerance=0.0f);
+  // #CAT_Distance compute Hamming dist between this and the oth, tolerance is by element
+  static float	vec_covar(const float_Matrix* vec, const float_Matrix* oth_vec);
+  // #CAT_Distance compute the covariance of this vector the oth vector
+  static float	vec_correl(const float_Matrix* vec, const float_Matrix* oth_vec);
+  // #CAT_Distance compute the correlation of this vector with the oth vector
+  static float	vec_inner_prod(const float_Matrix* vec, const float_Matrix* oth_vec,
+			       bool norm = false);
+  // #CAT_Distance compute the inner product of this vector and the oth vector
+  static float	vec_cross_entropy(const float_Matrix* vec, const float_Matrix* oth_vec);
+  // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q'
+  static float	vec_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
+			 DistMetric metric, bool norm = false, float tolerance=0.0f);
+  // #CAT_Distance compute generalized distance metric with other vector (float_Matrix* vec, calls appropriate fun above)
+
+  ///////////////////////////////////////
+  // Normalization
+
+  static float	vec_norm_len(float_Matrix* vec, float len=1.0f);
+  // #CAT_Norm normalize vector to total given length (1.0), returns scaling factor
+  static float	vec_norm_sum(float_Matrix* vec, float sum=1.0f, float min_val=0.0f);
+  // #CAT_Norm normalize vector to total given sum (1.0) and min_val (0), returns scaling factor
+  static float	vec_norm_max(float_Matrix* vec, float max=1.0f);
+  // #CAT_Norm normalize vector to given maximum value, returns scaling factor
+  static float	vec_norm_abs_max(float_Matrix* vec, float max=1.0f);
+  // #CAT_Norm normalize vector to given absolute maximum value, returns scaling factor
+  static int	vec_threshold(float_Matrix* vec, float thresh=.5f,
+			      float low=0.0f, float high=1.0f);
+  // #CAT_Norm threshold values in the vector, low vals go to low, etc; returns number of high values
+  static float	vec_aggregate(const float_Matrix* vec, Aggregate& agg);
+  // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // Matrix operations
+
+#ifdef HAVE_GSL
+  static bool mat_get_gsl_fm_ta(float_Matrix* ta_mat, gsl_matrix_float* gsl_mat);
+  // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
+
+  static bool mat_add(float_Matrix* a, float_Matrix* b);
+  // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions
+  static bool mat_sub(float_Matrix* a, float_Matrix* b);
+  // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions
+  static bool mat_mult_els(float_Matrix* a, float_Matrix* b);
+  // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions
+  static bool mat_div_els(float_Matrix* a, float_Matrix* b);
+  // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
+#endif
+
+  // todo: copy over from float and replace all w/ float when double is all good..
 
   void Initialize() { };
   void Destroy() { };

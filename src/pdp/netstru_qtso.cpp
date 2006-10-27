@@ -42,7 +42,7 @@
 #include "netstru_qtso.h"
 
 //obs #include "netstru_so.h"
-#include "tdgeometry.h"
+#include "ta_geometry.h"
 #include "pdpshell.h"
 //obs #include "stats.h"
 //obs #include "sched_proc.h"

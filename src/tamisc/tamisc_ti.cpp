@@ -19,7 +19,7 @@
 
 // tamisc_ti.cc: TAMISC_API template instantiation file for ta_misc library
 
-#include "tdgeometry.h"
+#include "ta_geometry.h"
 #include "datatable.h"
 //#include "datagraph.h"
 #include "colorscale.h"

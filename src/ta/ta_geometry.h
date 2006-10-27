@@ -13,15 +13,13 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
-
-#ifndef tdgeometry_h
-#define tdgeometry_h
+#ifndef ta_geometry_h
+#define ta_geometry_h
 
 #include "ta_base.h"
 #include "ta_matrix.h"
-#include "tamisc_def.h"
-#include "tamisc_TA_type.h"
+#include "ta_def.h"
+#include "ta_TA_type.h"
 
 #ifdef TA_GUI
 #include "igeometry.h"
@@ -36,7 +34,7 @@ class PosTDCoord;
 class FloatTwoDCoord;
 class FloatTDCoord;
 
-class TAMISC_API TwoDCoord : public taBase {
+class TA_API TwoDCoord : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 2D coordinate space
 public:
   int 		x;  		// horizontal
@@ -190,7 +188,7 @@ inline TwoDCoord operator / (int td, const TwoDCoord& v) {
   TwoDCoord rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
 }
 
-class TAMISC_API PosTwoDCoord : public TwoDCoord {
+class TA_API PosTwoDCoord : public TwoDCoord {
   // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 2D coordinate space
 public:
   void	UpdateAfterEdit();
@@ -203,7 +201,7 @@ public:
   inline PosTwoDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; return *this;}
 };
 
-class TAMISC_API TDCoord : public TwoDCoord {
+class TA_API TDCoord : public TwoDCoord {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 3D coordinate space
 public:
   int 		z;  		// depth
@@ -362,7 +360,7 @@ inline TDCoord operator / (int td, const TDCoord& v) {
   TDCoord rv; rv.x = td / v.x; rv.y = td / v.y; rv.z = td / v.z; return rv;
 }
 
-class TAMISC_API PosTDCoord : public TDCoord {
+class TA_API PosTDCoord : public TDCoord {
   // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 3D coordinate space
 public:
   void	UpdateAfterEdit();
@@ -375,7 +373,7 @@ public:
   inline PosTDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
 };
 
-class TAMISC_API FloatTwoDCoord : public taBase {
+class TA_API FloatTwoDCoord : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 2D coordinate space
 public:
   float		x;  		// horizontal
@@ -497,7 +495,7 @@ inline FloatTwoDCoord operator / (float td, const FloatTwoDCoord& v) {
   FloatTwoDCoord rv; rv.x = td / v.x; rv.y = td / v.y; return rv;
 }
 
-class TAMISC_API FloatTDCoord : public FloatTwoDCoord {
+class TA_API FloatTDCoord : public FloatTwoDCoord {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a real value in 3D coordinate space
 public:
   float 	z;  		// depth
@@ -634,7 +632,7 @@ inline FloatTDCoord operator / (float td, const FloatTDCoord& v) {
   FloatTDCoord rv; rv.x = td / v.x; rv.y = td / v.y; rv.z = td / v.z; return rv;
 }
 
-class TAMISC_API FloatRotation: public FloatTDCoord {
+class TA_API FloatRotation: public FloatTDCoord {
   //  ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP 3-d rotation data, xyz specify the rotation axis
 #ifndef __MAKETA__
 typedef FloatTDCoord inherited;
@@ -661,7 +659,7 @@ public:
   COPY_FUNS(FloatRotation, FloatTDCoord);
 };
 
-class TAMISC_API FloatTransform: public taBase {
+class TA_API FloatTransform: public taBase {
   // // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP 3-d transformation data; applied in order: s, r, t
 #ifndef __MAKETA__
 typedef taBase inherited;
@@ -685,7 +683,7 @@ private:
 
 // TODO: Brad -- you might need to update this with system-wide constructor changes, etc
 
-class TAMISC_API ValIdx : public taBase {
+class TA_API ValIdx : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a float value and an index: very useful for sorting!
 public:
   float		val;  		// value
@@ -789,7 +787,7 @@ inline ValIdx operator / (float td, const ValIdx& v) {
   ValIdx rv; rv.val = td / v.val; rv.idx = v.idx; return rv;
 }
 
-class TAMISC_API ValIdx_Array : public taArray<ValIdx> {
+class TA_API ValIdx_Array : public taArray<ValIdx> {
   // #NO_UPDATE_AFTER
 public:
   STATIC_CONST ValIdx blank; // #HIDDEN #READ_ONLY 

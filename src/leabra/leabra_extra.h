@@ -19,9 +19,10 @@
 #define leabra_extra_h
 
 #include "leabra.h"
+#include "netstru_extra.h"
+#include "ta_imgproc.h"
 
 // extra specialized classes for variations on the Leabra algorithm
-
 
 class LEABRA_API MarkerConSpec : public LeabraConSpec {
   // connection spec that marks special projections: doesn't send netin or adapt weights
@@ -808,6 +809,67 @@ public:
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }
   TA_BASEFUNS(DecodeTwoDValLayerSpec);
+};
+
+
+//////////////////////////////////////
+// 	V1RF Prjn Spec
+//////////////////////////////////////
+
+class LEABRA_API GaborRFSpec : public taBase {
+  // #INLINE #INLINE_DUMP Gabor receptive field spec
+public:
+  int		n_angles;	// number of different angles
+  float		freq;		// frequency of the sine wave
+  float		length;		// length of the gaussian perpendicular to the wave direction
+  float		width;		// width of the gaussian in the wave direction
+  float		amp;		// amplitude (maximum value)
+
+  void 	Initialize();
+  void	Destroy() { };
+  SIMPLE_COPY(GaborRFSpec);
+  COPY_FUNS(GaborRFSpec, taBase);
+  TA_BASEFUNS(GaborRFSpec);
+};
+
+class LEABRA_API BlobRFSpec : public taBase {
+  // #INLINE #INLINE_DUMP Blob receptive field specs
+public:
+  int		n_sizes;	// number of different sizes
+  float		wdth_st;	// starting center width
+  float		wdth_inc;	// increment of width per unit
+
+  void 	Initialize();
+  void	Destroy() { };
+  SIMPLE_COPY(BlobRFSpec);
+  COPY_FUNS(BlobRFSpec, taBase);
+  TA_BASEFUNS(BlobRFSpec);
+};
+
+class LEABRA_API V1RFPrjnSpec : public TiledRFPrjnSpec {
+  // V1 receptive field projection spec: does a TiledRFPrjnSpec connectivity with Gabor and Blob filter weights
+public:
+  GaborRFSpec	gabor_rf;	// parameters for gabor filter specs
+  BlobRFSpec	blob_rf;	// parameters for blob filter specs
+  GaborFilterSpec gabor_spec; // #READ_ONLY underlying gabor generator
+  DoGFilterSpec dog_spec; // #READ_ONLY underlying DoG generator TODO: not yet supported!!!
+  
+  void		C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru);
+  // set gabor weights
+
+  virtual bool 	InitGaborDoGSpec(Projection* prjn, int recv_idx);
+  // initialize gabor_spec or dog_spec data for given recv unit index
+  virtual void 	MakeDoGFilter();
+
+//   virtual void	GraphFilter(Projection* prjn, int recv_unit_no, GraphLog* disp_log); // #BUTTON #NULL_OK plot the filter  for given receiving unit number
+//   virtual void	GridFilter(Projection* prjn, int recv_unit_no, GridLog* disp_log); // #BUTTON #NULL_OK plot the filter for given receiving unit number
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  void	InitLinks();
+  SIMPLE_COPY(V1RFPrjnSpec);
+  COPY_FUNS(V1RFPrjnSpec, TiledRFPrjnSpec);
+  TA_BASEFUNS(V1RFPrjnSpec);
 };
 
 #endif // leabra_extra_h

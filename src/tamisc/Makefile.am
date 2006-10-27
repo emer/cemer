@@ -41,7 +41,6 @@ TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
 	@abs_srcdir@/tarandom.h \
 	@abs_srcdir@/tatime.h \
-	@abs_srcdir@/tdgeometry.h \
 	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/datatable.h \
@@ -55,7 +54,6 @@ HEADS =\
 	tamisc_stdef.h \
 	tarandom.h \
 	tatime.h \
-	tdgeometry.h \
 	minmax.h \
 	colorscale.h \
 	datatable.h \
@@ -66,7 +64,6 @@ HEADS =\
 SRCS =\
 	tarandom.cpp \
 	tatime.cpp \
-	tdgeometry.cpp \
 	minmax.cpp \
 	colorscale.cpp \
 	datatable.cpp \

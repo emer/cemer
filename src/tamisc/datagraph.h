@@ -22,7 +22,7 @@
 
 #include "datatable.h"
 #include "colorscale.h"
-#include "tdgeometry.h"
+#include "ta_geometry.h"
 #include "minmax.h"
 
 /* Graphing has been completely reorganized from v3.2. In v4, the non-gui and gui elements have been

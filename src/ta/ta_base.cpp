@@ -311,7 +311,7 @@ void taBase::UnRef(TAPtr it) {
     delete it;
 }
 
-void taBase::Done(TAPtr it) {
+void taBase::Done(taBase* it) {
   if (it->refn == 0)
     delete it;
 }
@@ -319,24 +319,24 @@ void taBase::Done(TAPtr it) {
 
 #define REF_SENT 0x7fffff0
 
-void taBase::DelPointer(TAPtr* ptr) {
+void taBase::DelPointer(taBase** ptr) {
   if(*ptr != NULL)
     UnRef(*ptr);
   *ptr = NULL;
 }
 
-String taBase::GetStringRep(TAPtr it) {
+String taBase::GetStringRep(taBase* it) {
   if (it == NULL) 
     return String("NULL", 4);
   else
     return it->GetStringRep_impl();
 }
 
-void taBase::Own(TAPtr it, TAPtr onr) {
+void taBase::Own(taBase* it, taBase* onr) {
   if (it != NULL) Own(*it, onr);
 }
 
-void taBase::Own(taBase& it, TAPtr onr) {
+void taBase::Own(taBase& it, taBase* onr) {
 //was causing list transfers to break
 //  if (it.GetOwner() == onr) return; // same owner, redundant
   
@@ -353,11 +353,11 @@ void taBase::Own(taBase& it, TAPtr onr) {
   }
 }
 
-void taBase::Own(taSmartRef& it, TAPtr onr) {
+void taBase::Own(taSmartRef& it, taBase* onr) {
   it.Init(onr);
 }
 
-void taBase::OwnPointer(TAPtr* ptr, TAPtr new_val, TAPtr onr) {
+void taBase::OwnPointer(taBase** ptr, taBase* new_val, taBase* onr) {
   if (*ptr == new_val) return;
   if (*ptr != NULL)
     UnRef(*ptr);
@@ -366,7 +366,7 @@ void taBase::OwnPointer(TAPtr* ptr, TAPtr new_val, TAPtr onr) {
     Own(*ptr, onr);
 }
 
-void taBase::SetPointer(TAPtr* ptr, TAPtr new_val) {
+void taBase::SetPointer(taBase** ptr, taBase* new_val) {
   //note: we ref source first, to implicitly handle identity case (which in practice is probably
   // rare) without needing to do an explicit check
   if (new_val)
@@ -493,9 +493,15 @@ void taBase::CutLinks() {
 void taBase::InitLinks_taAuto(TypeDef* td) {
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members.FastEl(i);
-    if((md->owner != &(td->members)) || !md->type->InheritsFrom(TA_taBase) || (md->type->ptr > 0)) continue;
-    taBase* mb = (taBase*)md->GetOff(this);
-    taBase::Own(*mb, this);
+    if((md->owner != &(td->members)) || (md->type->ptr > 0)) continue;
+    if(md->type->InheritsFrom(TA_taBase)) {
+      taBase* mb = (taBase*)md->GetOff(this);
+      taBase::Own(*mb, this);
+    }
+    else if(md->type->InheritsFrom(TA_taSmartRef)) {
+      taSmartRef* sr = (taSmartRef*)md->GetOff(this);
+      taBase::Own(*sr, this);
+    }
   }
 }
 

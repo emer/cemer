@@ -18,7 +18,7 @@
 
 #include "ta_datatable.h"
 #include "ta_math.h"
-#include "tdgeometry.h"
+#include "ta_geometry.h"
 #include "minmax.h"
 #include "colorscale.h" // for DT && DA Viewspecs
 #include "tamisc_TA_type.h"

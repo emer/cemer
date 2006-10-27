@@ -14,10 +14,7 @@
 //   Lesser General Public License for more details.
 
 
-
-// tdgeometry.cc
-
-#include "tdgeometry.h"
+#include "ta_geometry.h"
 
 #ifdef TA_USE_INVENTOR
 #include <Inventor/SbLinear.h>

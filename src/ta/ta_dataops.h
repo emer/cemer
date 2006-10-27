@@ -20,6 +20,8 @@
 #include "ta_math.h"
 #include "ta_program.h"
 
+// data processing operations: sort/select/group/join etc
+
 class TA_API DataOpEl : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
   INHERITED(taOBase)

@@ -1976,30 +1976,20 @@ void TiledRFPrjnSpec::Initialize() {
   send_adj_sndloc = 0;
 }
 
-void TiledRFPrjnSpec::InitLinks() {
-  ProjectionSpec::InitLinks();
-  taBase::Own(recv_gp_border, this);
-  taBase::Own(recv_gp_ex_st, this);
-  taBase::Own(recv_gp_ex_n, this);
-  taBase::Own(send_border, this);
-  taBase::Own(send_adj_rfsz, this);
-  taBase::Own(send_adj_sndloc, this);
-}
-
-void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
+  if(prjn->from == NULL)	return false;
   if(prjn->layer->units.leaves == 0) // an empty layer!
-    return;
+    return false;
   if(prjn->layer->units.gp.size == 0) {
     taMisc::Error("*** Warning: TiledRFPrjnSpec requires recv layer to have unit groups!:",name);
-    return;
+    return false;
   }
 
-  TwoDCoord ru_geo = prjn->layer->gp_geom;
-  TwoDCoord recv_gp_ed = ru_geo - recv_gp_border;
-  TwoDCoord recv_gp_ex_ed = recv_gp_ex_st + recv_gp_ex_n;
+  ru_geo = prjn->layer->gp_geom;
+  recv_gp_ed = ru_geo - recv_gp_border;
+  recv_gp_ex_ed = recv_gp_ex_st + recv_gp_ex_n;
 
-  PosTDCoord su_act_geom;  prjn->from->GetActGeomNoSpc(su_act_geom);
+  prjn->from->GetActGeomNoSpc(su_act_geom);
 
 // 0 1 2 3 4 5 6 7 8 9 a b c d e = 14+1 = 15
 // 0 0 0 0 0 0
@@ -2007,34 +1997,36 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
 //             2 2 2 2 2 2
 //                   3 3 3 3 3 3
 //
-// 4 gps, ovlp = 3, width = 6
+// 4 gps, ovlp = 3, width = 6 
 // ovlp = tot / (nr + 1) = 15 / 5 = 3
 
 // send scale:
-// ovlp / recv_gp size
+// ovlp / recv_gp size 
 
 // send off:
 // - recv off * scale
 
-  TwoDCoord n_recv_gps = ru_geo - (2 * recv_gp_border);	// total number of recv groups covered
-  TwoDCoord n_send_units = TwoDCoord(su_act_geom) - (2 * send_border);
+  n_recv_gps = ru_geo - (2 * recv_gp_border);	// total number of recv groups covered
+  n_send_units = TwoDCoord(su_act_geom) - (2 * send_border);
 
-  TwoDCoord rf_ovlp; // ovlp = send / (ng + 1)
   rf_ovlp.x = (int)floor(((float)(n_send_units.x + send_adj_rfsz.x) / (float)(n_recv_gps.x + 1)) + .5f);
   rf_ovlp.y = (int)floor(((float)(n_send_units.y + send_adj_rfsz.y) / (float)(n_recv_gps.y + 1)) + .5f);
 
   // how to move the receptive fields over the sending layer (floating point)
-  FloatTwoDCoord rf_move = FloatTwoDCoord(n_send_units + send_adj_sndloc) / FloatTwoDCoord(n_recv_gps + 1);
+  rf_move = FloatTwoDCoord(n_send_units + send_adj_sndloc) / FloatTwoDCoord(n_recv_gps + 1);
 
-  TwoDCoord rf_width = rf_ovlp * 2;
-
+  rf_width = rf_ovlp * 2;
 //   cerr << "prjn: " << name << " layer: " << prjn->layer->name << " from: " << prjn->from->name
 //        << " rf size: " << rf_ovlp.x << ", " << rf_ovlp.y
 //        << " act send size: " << rf_ovlp.x * (n_recv_gps.x + 1)
 //        << ", " << rf_ovlp.y * (n_recv_gps.y + 1)
 //        << " trg send size: " << n_send_units.x << ", " << n_send_units.y
 //        << endl;
+  return true;
+}
 
+void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!InitRFSizes(prjn)) return;
   TwoDCoord ruc;
   for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
     for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
@@ -2066,33 +2058,8 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 int TiledRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
-  if(prjn->from == NULL)	return 0;
-  if(prjn->layer->units.leaves == 0) // an empty layer!
-    return 0;
-  if(prjn->layer->units.gp.size == 0) {
-    taMisc::Error("*** Warning: TiledRFPrjnSpec requires recv layer to have unit groups!:",name);
-    return 0;
-  }
-
+  if(!InitRFSizes(prjn)) return 0;
   int rval = 0;
-
-  TwoDCoord ru_geo = prjn->layer->gp_geom;
-  TwoDCoord recv_gp_ed = ru_geo - recv_gp_border;
-  TwoDCoord recv_gp_ex_ed = recv_gp_ex_st + recv_gp_ex_n;
-
-  PosTDCoord su_act_geom;  prjn->from->GetActGeomNoSpc(su_act_geom);
-
-  TwoDCoord n_recv_gps = ru_geo - (2 * recv_gp_border);	// total number of recv groups covered
-  TwoDCoord n_send_units = TwoDCoord(su_act_geom) - (2 * send_border);
-
-  TwoDCoord rf_ovlp; // ovlp = send / (ng + 1)
-  rf_ovlp.x = (int)floor(((float)(n_send_units.x + send_adj_rfsz.x) / (float)(n_recv_gps.x + 1)) + .5f);
-  rf_ovlp.y = (int)floor(((float)(n_send_units.y + send_adj_rfsz.y) / (float)(n_recv_gps.y + 1)) + .5f);
-
-  // how to move the receptive fields over the sending layer (floating point)
-  FloatTwoDCoord rf_move = FloatTwoDCoord(n_send_units + send_adj_sndloc) / FloatTwoDCoord(n_recv_gps + 1);
-
-  TwoDCoord rf_width = rf_ovlp * 2;
 
   int n_cons = rf_width.x * rf_width.y;
   int n_new_cons = (int)(p_add_con * (float)n_cons);
@@ -2140,48 +2107,15 @@ int TiledRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_w
 }
 
 void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
-//TEMP
-taMisc::Error("*** Warning: TiledRFPrjnSpec requires recv layer to have unit groups!:",name);
-return;
-/*  if((prjn == NULL) || (prjn->from == NULL))	return;
-  if(prjn->layer->units.leaves == 0) return;
-  if(prjn->layer->units.gp.size == 0) {
-    taMisc::Error("*** Warning: TiledRFPrjnSpec requires recv layer to have unit groups!:",name);
-    return;
-  }
+  if(!InitRFSizes(prjn)) return;
 
-  Network* net = prjn->layer->own_net;
+  /*  Network* net = prjn->layer->own_net;
   if(net == NULL) return;
   NetView* nv = (NetView*)net->views.DefaultEl();
   if(nv == NULL) return;
 
   taBase_List* selgp = nv->GetSelectGroup();
   selgp->Reset();
-
-  TwoDCoord ru_geo = prjn->layer->gp_geom;
-  TwoDCoord recv_gp_ed = ru_geo - recv_gp_border;
-  TwoDCoord recv_gp_ex_ed = recv_gp_ex_st + recv_gp_ex_n;
-
-  PosTDCoord su_act_geom;  prjn->from->GetActGeomNoSpc(su_act_geom);
-
-  TwoDCoord n_recv_gps = ru_geo - (2 * recv_gp_border);	// total number of recv groups covered
-  TwoDCoord n_send_units = TwoDCoord(su_act_geom) - (2 * send_border);
-
-  TwoDCoord rf_ovlp; // ovlp = send / (ng + 1)
-  rf_ovlp.x = (int)floor(((float)(n_send_units.x + send_adj_rfsz.x) / (float)(n_recv_gps.x + 1)) + .5f);
-  rf_ovlp.y = (int)floor(((float)(n_send_units.y + send_adj_rfsz.y) / (float)(n_recv_gps.y + 1)) + .5f);
-
-  // how to move the receptive fields over the sending layer (floating point)
-  FloatTwoDCoord rf_move = FloatTwoDCoord(n_send_units + send_adj_sndloc) / FloatTwoDCoord(n_recv_gps + 1);
-
-  TwoDCoord rf_width = rf_ovlp * 2;
-
-//   cerr << "prjn: " << name << " layer: " << prjn->layer->name << " from: " << prjn->from->name
-//        << " rf size: " << rf_ovlp.x << ", " << rf_ovlp.y
-//        << " act send size: " << rf_ovlp.x * (n_recv_gps.x + 1)
-//        << ", " << rf_ovlp.y * (n_recv_gps.y + 1)
-//        << " trg send size: " << n_send_units.x << ", " << n_send_units.y
-//        << endl;
 
   TwoDCoord ruc;
   for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
@@ -2208,7 +2142,8 @@ return;
       }
     }
   }
-  nv->UpdateSelect(); */
+  nv->UpdateSelect();
+  */
 }
 
 //////////////////////////////////////////////////////////
