@@ -1171,7 +1171,7 @@ void DataTableViewSpec::Copy_(const DataTableViewSpec& cp) {
 }
 
 void DataTableViewSpec::UpdateAfterEdit_impl(){
-  BuildFromDataTable(dataTable());
+  BuildFromDataTable(dataTable(), true);
   inherited::UpdateAfterEdit_impl();
 }
 
@@ -1181,7 +1181,11 @@ bool DataTableViewSpec::BuildFromDataTable(DataTable* tdt, bool force) {
     SetData(tdt);
   }
   if (!dataTable()) {
-    col_specs.Reset();
+    // unbind the cols
+    for (int i = col_specs.size - 1; i >= 0; --i) {
+      DataColViewSpec* cs = col_specs.FastEl(i);
+      cs->BuildFromDataArray(NULL);
+    }
     return false;
   }
   DataTable* data_table = dataTable(); // cache

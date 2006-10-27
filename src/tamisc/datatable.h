@@ -371,8 +371,8 @@ public:
   BlockFill	block_fill; // #CONDEDIT_OFF_display_style:TEXT,IMAGE fill of matrix cells
   bool		scale_on; // #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
   
-  float 	col_width; // #IGNORE calculated col_width 
-  float		row_height; // #IGNORE calculated row height
+  float 	col_width; // #READ_ONLY #DETAIL #NO_SAVE calculated col_width 
+  float		row_height; // #READ_ONLY #DETAIL #NO_SAVE calculated row height
 
   override void		setFont(const FontSpec& value);
   

@@ -48,41 +48,41 @@ class T3TableViewNode;
 class T3GridTableViewNode;
 
 class TAMISC_API TableView : public T3DataViewPar {
-  // #VIRT_BASE #NO_TOKENS base class of grid and graph views
+  // #VIRT_BASE #NO_TOKENS base class of grid and graph views; the data is its own embedded DataTableViewSpec
 INHERITED(T3DataViewPar)
 public: //
     
   int		view_bufsz; // #READ_ONLY #SAVE Maximum number of lines in visible buffer
   MinMaxInt	view_range;	// range of visible lines
 
-  bool		display_toggle;  // #DEF_true 'true' if display should be updated
+  bool		display_on;  // #DEF_true 'true' if display should be updated
   TDCoord	pos;		// origin of the view in 3d space (not used for panel view)
   TDCoord	geom;		// space taken
   float		frame_inset;	// #DEF_0.05 inset of frame (used to calc actual inner space avail)
-  int			data_range_max_() const;
   
   virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
     //note: can override for more efficient direct reference
+  void			setDisplay(bool value); // use this to change display_on
   T3TableViewNode*	node_so() const {return (T3TableViewNode*)m_node_so.ptr();}
-  int			rows() const; // TODO: probably optimize this by keeping a copy
-  virtual DataTableViewSpec* viewSpecBase() const {return NULL;}
+  inline int		rows() const {return m_rows;}
+  virtual DataTableViewSpec* viewSpecBase() const 
+    {return (DataTableViewSpec*)m_data.ptr();}
+  bool			isVisible() const; // gui_active, mapped and display_on
   
-  virtual void		UpdateFromBuffer(); // update view from buffer; note: override _impl to implement
+  virtual void		ViewRangeChanged(); // called when view_range changed (override _impl to implement)
   virtual void 		ClearData();	// Clear the display and the data
 
-  void			InitDisplay();
+  
   virtual void		InitPanel();// lets panel init itself after struct changes
-  void  		UpdateDisplay(TAPtr updtr=NULL);
-  void			UpdateCallback() { UpdateDisplay(NULL); } // #IGNORE
+  virtual void		UpdatePanel();// after changes to props
 
-  virtual void 		ToggleDisplay();
-  virtual void 		SetToggle(bool value);
-
-  virtual void  	NewHead(); // create a new header (structure changed)
-  virtual void  	NewData(){} // we received new data (update)
+// routines for handling data changes -- only one should be called in any change context
+  virtual void  	DataChange_StructUpdate(); 
+   // when structure or src of data changes
+  virtual void  	DataChange_NewRows(); // we received new data (update) -- this predominant use-case can be optimized (rather than nuking/rebuilding each row)
+  virtual void  	DataChange_Other(); // all other changes
   
   virtual void		InitNew(DataTable* dt, T3DataViewFrame* fr); // #IGNORE common code for creating a new one -- creates new fr if necessary -- called virtually after construction
-  
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -101,19 +101,24 @@ public:
   virtual void 	View_FSR();	// fast rewind
   virtual void 	View_FF();	// forward to end
   virtual void 	View_FR();	// rewind to begining */
-  // view control -- col
-  virtual void 	ViewC_At(int start) {}	// start viewing at indicated column value
 
 protected:
+// view control:
+  virtual void		ClearViewRange(); // sets view range back to beginning (grid adds cols, graph adds TBA)
+
+
   iTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
+  int			m_rows; // cached rows, we use to calc deltas etc.
   override void 	UpdateAfterEdit_impl();
-  virtual void 		InitData();	// check for new source of data
-  virtual void		InitDisplayParams() {} // called in _pre
-  override void		Render_pre(); // #IGNORE -- we only set color of frame
+  virtual void 		InitViewSpec();	// called to (re)init the viewspecs
+  void			InitDisplay(); // called to (re)do all the viewing params
+  virtual void		InitDisplay_impl() {} // type-specific impl
+  
+  override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void 	Render_post();
   override void		Reset_impl();
-  virtual void		UpdateFromBuffer_impl(); // update view from buffer
+  virtual void		ViewRangeChanged_impl(){} // update view from buffer
 
 };
 
@@ -127,24 +132,17 @@ public:
   int		col_bufsz; // #READ_ONLY #SAVE visible columns
   MinMaxInt	col_range;	// column range that is visible
   float		tot_col_widths; // total of all (visible) col_widths
-  float		head_height; // based on font size	
-  float		row_height; // #IGNORE determined from max of all cols
-  float		font_width; // #IGNORE width of font spacing (for text cols)
 
-  ColorScaleSpecRef colorspec; 	// The color spectrum for this display
   int		block_size;	// *maximum* block size -- blocks will be smaller if needed to fit
   int		block_border_size; // size of the border around the blocks
   bool		header_on;	// is the table header visible?
   bool		auto_scale;	// whether to auto-scale on color block values or not
-  FontSpec	view_font;	// the font to use for the labels in the display
+  
+  ColorScaleSpecRef colorspec; 	// The color spectrum for this display
   MinMax        scale_range;	// #HIDDEN range of scalebar
   MinMaxInt	actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
 
-  // gui implementation
-  QPushButton*	auto_sc_but;	// #IGNORE toggle auto-scale button
-  QPushButton*	head_tog_but;	// #IGNORE header toggle button
-  
-  GridTableViewSpec view_spec; // baked in spec 
+  GridTableViewSpec view_spec; // #SHOW_TREE baked in spec 
 
   float			colWidth(int idx) const; // looked up from the specs
   override DataTable*	dataTable() const {return view_spec.dataTable();}
@@ -154,9 +152,6 @@ public:
     {return const_cast<GridTableViewSpec*>(&view_spec);}
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
   T3GridTableViewNode* node_so() const {return (T3GridTableViewNode*)m_node_so.ptr();}
-
-  override void  	NewHead();
-  override void  	NewData();
 
   virtual void 	SetColorSpec(ColorScaleSpec* colors);
   // #MENU #MENU_ON_Actions #NULL_OK #MENU_SEP_BEFORE set the color spectrum to use for color-coding values (NULL = use default)
@@ -176,14 +171,12 @@ public:
 
   virtual void	ToggleHeader();  // toggle header on or off
   virtual void	ToggleAutoScale();  // toggle header on or off
-  virtual void  RemoveLine(int index); // remove line from scrollbox, -1 = all
 
-
-
+// view control
   void			VScroll(bool left); // scroll left or right
-  override void 	ViewC_At(int start);	// start viewing at indicated column value
-  override void		Log_Clear() {Render();} // called by log in its Clear()
+  virtual void 		ViewC_At(int start);	// start viewing at indicated column value
 
+  
   void	InitLinks();
   void 	CutLinks();
   void	Initialize();
@@ -196,19 +189,29 @@ public:
   void ColorBar_execute();
 
 protected:
-  override void 	UpdateAfterEdit_impl();
+// grid-specific metrics and rendering primitives:
+  float			head_height; // based on font size (or 0 if off)	
+  float			row_height; // #IGNORE determined from max of all cols
+  virtual void		CalcViewMetrics(); // for entire view
+  virtual void		CalcColMetrics(); // when col start changes
+  virtual void		RemoveHeader(); // remove the header
+  virtual void  	RemoveLine(int idx); // remove line, -1 = all
+  void			RemoveLines() {RemoveLine(-1);} // remove all lines
+  virtual void		RenderHeader();
+  virtual void		RenderLines(); // render all the view_range lines
+  virtual void		RenderLine(int view_idx, int data_row); // add indicated line
+// view control:
+  override void		ClearViewRange();
+  
+  override void  	InitDisplay_impl();
+  override void		ViewRangeChanged_impl(); // note: only called if mapped
+  
   void 			AllBlockText_impl(bool on);
-  virtual void		AdjustColView(); // sets visible last column, and colsizes, based on .min, and geom
-  virtual void		InitHead();
-  override void		InitDisplayParams();
-  virtual void		RenderHead();
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		Clear_impl();
   override void		Render_pre(); // #IGNORE
   override void		Render_post(); // #IGNORE
   override void		Reset_impl();
-  override void		UpdateFromBuffer_impl();
-  virtual void 		UpdateFromBuffer_AddLine(int row, int buff_idx);
 };
 
 
@@ -234,6 +237,7 @@ public:
     BUT_CLEAR
   };
 
+  QWidget*		widg;
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
@@ -311,6 +315,7 @@ public: // IDataLinkClient interface
 protected:
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
+  override void 	GetImage_impl();
 
 protected slots:
 protected slots:

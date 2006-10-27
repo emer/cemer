@@ -3861,6 +3861,7 @@ iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
 :inherited((taiDataLink*)dv_->GetDataLink()) //NOTE: link not created yet during loads
 {
   m_dv = dv_;
+  updating = 0;
   taDataLink* dl = dv_->GetDataLink();
   dl->AddDataClient(this);
 }

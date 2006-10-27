@@ -1420,8 +1420,8 @@ void GridColViewSpec::BuildFromDataArray_impl(bool first){
     
   
   if (first) {
-    //set width as greater of static width, and current widest value -- this is aproximate
-    text_width = MAX(data_array->displayWidth(), ((data_array->maxColWidth() + 4)));
+    // just get the display width, don't worry about maxwidth
+    text_width = data_array->displayWidth();
   
     if (data_array->isMatrix() && data_array->isNumeric()) {
       if (data_array->GetUserData("IMAGE").toBool()) {

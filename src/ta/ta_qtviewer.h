@@ -1186,6 +1186,7 @@ public:
 
 
   virtual void		InitPanel(); // called on structural changes
+  inline void		UpdatePanel() {GetImage();} // more intuitive name 
   override void		ClosePanel();
   override void		GetImage(); // called when reshowing a panel, to insure latest data, or just to refresh
   override String 	TabText() const; // text for the panel tab -- usually just the text of the sel_node

@@ -1306,9 +1306,9 @@ public: // IDataLinkProxy
   override void*	This() {return (void*)this;}
 //in taBase  virtual TypeDef*	GetTypeDef() const;
 #ifndef TA_NO_GUI
-  virtual taiDataLink*	link() const {return m_data.link();}
+  override taiDataLink*	link() const {return m_data.link();}
 #else
-  virtual taDataLink*	link() const {return m_data.link();}
+  override taDataLink*	link() const {return m_data.link();}
 #endif
 //  virtual TypeDef*	GetDataTypeDef() const; 
   
