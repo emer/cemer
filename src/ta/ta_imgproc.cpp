@@ -449,6 +449,9 @@ void RetinalSpacingSpec::UpdateSizes() {
 void taImageProc::Initialize() {
 }
 
+void taImageProc::Destroy() {
+}
+
 
 bool taImageProc::ReadImageGrey_float(float_Matrix& img_data, const String& fname) {
   QImage img((const char*)fname);
