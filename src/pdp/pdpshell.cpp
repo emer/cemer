@@ -114,6 +114,7 @@ void Wizard::StdNetwork(Network* net) {
   if(net == NULL)
     net = pdpMisc::GetNewNetwork(proj);
   if(net == NULL) return;
+  net->StructUpdate(true);
   layer_cfg.EnforceSize(n_layers);
   net->layers.EnforceSize(n_layers);
   int i;
@@ -196,6 +197,7 @@ void Wizard::StdNetwork(Network* net) {
     }
   }
   net->LayerZPos_Auto();
+  net->StructUpdate(false);
   net->ShowInViewer();
   net->Build();
   net->Connect();
@@ -218,6 +220,7 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
     net = pdpMisc::GetDefNetwork(GET_MY_OWNER(ProjectBase));
   }
   if(!net) return;
+  data_table->StructUpdate(true);
   if(group) {
     int gp_idx = 0;
     data_table->FindMakeColName("Group", gp_idx, DataTable::VT_STRING, 0);
@@ -228,10 +231,12 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
   UpdateInputDataFmNet(net, data_table);
 
   data_table->AddRow(n_patterns);
+  data_table->StructUpdate(false);
 }
 
 void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
   if(!data_table || !net) return;
+  data_table->StructUpdate(true);
   taLeafItr li;
   Layer* lay;
   FOR_ITR_EL(Layer, lay, net->layers., li) {
@@ -242,6 +247,7 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
       (lay->name, lay_idx, DataTable::VT_FLOAT, 2,
        MAX(lay->geom.x,1), MAX(lay->geom.y,1));
   }
+  data_table->StructUpdate(false);
 }
 
 void Wizard::StdOutputData() {

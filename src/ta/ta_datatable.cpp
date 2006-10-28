@@ -186,11 +186,13 @@ String DataArray_impl::GetDisplayName() const {
 
 taMatrix* DataArray_impl::GetValAsMatrix(int row) {
   taMatrix* ar = AR(); 
+  if(row < 0) row = rows() + row;
   return ar->GetFrameSlice_(row);
 }
 
 taMatrix* DataArray_impl::GetRangeAsMatrix(int st_row, int n_rows) {
   taMatrix* ar = AR();
+  if(st_row < 0) st_row = rows() + st_row;
   return ar->GetFrameRangeSlice_(st_row, n_rows);
 }
 

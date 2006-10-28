@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "ta_dataops.h"
+#include "ta_dataproc.h"
 #include "css_machine.h"
 #include "ta_project.h"		// for debugging
 
@@ -235,10 +235,10 @@ void DataJoinSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 /////////////////////////////////////////////////////////
-//   taDataOps
+//   taDataProc
 /////////////////////////////////////////////////////////
 
-bool taDataOps::GetDest(DataTable*& dest, DataTable* src, const String& suffix) {
+bool taDataProc::GetDest(DataTable*& dest, DataTable* src, const String& suffix) {
   if(dest != NULL) return false;
   taProject* proj = GET_OWNER(src, taProject);
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
@@ -247,7 +247,7 @@ bool taDataOps::GetDest(DataTable*& dest, DataTable* src, const String& suffix) 
   return true;
 }
 
-bool taDataOps::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
+bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   // just copy and operate on dest
   GetDest(dest, src, "Sort");
   dest->Reset();
@@ -257,7 +257,7 @@ bool taDataOps::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   return Sort_impl(dest, spec);
 }
 
-int taDataOps::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
+int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
 			    DataSortSpec* spec) {
   for(int i=0;i<spec->size; i++) {
     DataSortEl* ds = (DataSortEl*)spec->FastEl(i);
@@ -276,7 +276,7 @@ int taDataOps::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row
   return 0;			// must be all equal!
 }
 
-bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
+bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   if(dt->rows <= 1) return false;
 
   dt->StructUpdate(true);
@@ -323,7 +323,7 @@ bool taDataOps::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   return true;
 }
 
-bool taDataOps::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
+bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
   GetDest(dest, src, "SelectRows");
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
@@ -367,7 +367,7 @@ bool taDataOps::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec
   return true;
 }
 
-bool taDataOps::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
+bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   GetDest(dest, src, "SelectCols");
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
@@ -395,7 +395,7 @@ bool taDataOps::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   return true;
 }
 
-bool taDataOps::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
+bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   GetDest(dest, src, "Group");
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
@@ -437,7 +437,7 @@ bool taDataOps::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   return true;
 }
 
-bool taDataOps::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
+bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   dest->AddBlankRow();
   for(int i=0;i<spec->size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
@@ -451,10 +451,10 @@ bool taDataOps::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec)
   return true;
 }
 
-bool taDataOps::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
+bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
   DataTable ssrc;
   taBase::Own(ssrc, NULL);	// activates initlinks, refs
-  taDataOps::Sort(&ssrc, src, sort_spec);
+  taDataProc::Sort(&ssrc, src, sort_spec);
 
   sort_spec->GetColumns(&ssrc);	// re-get columns -- they were nuked by Sort op!
 
@@ -516,7 +516,7 @@ bool taDataOps::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, D
   return true;
 }
 
-bool taDataOps::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec) {
+bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec) {
   if((spec->col_a.col_idx < 0) || (spec->col_b.col_idx < 0)) return false;
   GetDest(dest, src_a, "Join");
   dest->StructUpdate(true);
@@ -567,7 +567,7 @@ bool taDataOps::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJo
       }    
     }
     else {
-      taMisc::Warning("taDataOps::Join -- value for src_a:", (String)val_a, "not found in column",
+      taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a, "not found in column",
 		      spec->col_b.col_name, "of src_b:", src_b->name);
     }
   }
@@ -579,6 +579,11 @@ bool taDataOps::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJo
 /////////////////////////////////////////////////////////
 //   programs to support data operations
 /////////////////////////////////////////////////////////
+
+void DataProcCall::Initialize() {
+  min_type = &TA_taDataProc;
+  object_type = &TA_taDataProc;
+}
 
 void DataProg::Initialize() {
 }
@@ -631,7 +636,7 @@ void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataSortProg::GenCssBody_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   rval += cssMisc::Indent(indent_level+1) +
-    "taDataOps::Sort(dsp->dest_data, dsp->src_data, dsp->sort_spec);\n";
+    "taDataProc::Sort(dsp->dest_data, dsp->src_data, dsp->sort_spec);\n";
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval; 
 }
@@ -669,7 +674,7 @@ void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   rval += cssMisc::Indent(indent_level+1) +
-    "taDataOps::SelectRows(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
+    "taDataProc::SelectRows(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval; 
 }
@@ -707,7 +712,7 @@ void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataSelectColsProg::GenCssBody_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   rval += cssMisc::Indent(indent_level+1) +
-    "taDataOps::SelectCols(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
+    "taDataProc::SelectCols(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval; 
 }
@@ -745,7 +750,7 @@ void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataGroupProg::GenCssBody_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   rval += cssMisc::Indent(indent_level+1) +
-    "taDataOps::Group(dsp->dest_data, dsp->src_data, dsp->group_spec);\n";
+    "taDataProc::Group(dsp->dest_data, dsp->src_data, dsp->group_spec);\n";
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval; 
 }
@@ -786,7 +791,7 @@ void DataJoinProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataJoinProg::GenCssBody_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   rval += cssMisc::Indent(indent_level+1) +
-    "taDataOps::Join(dsp->dest_data, dsp->src_data, dsp->src_b_data, dsp->join_spec);\n";
+    "taDataProc::Join(dsp->dest_data, dsp->src_data, dsp->src_b_data, dsp->join_spec);\n";
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval; 
 }

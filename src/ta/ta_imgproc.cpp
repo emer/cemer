@@ -14,17 +14,140 @@
 //   Lesser General Public License for more details.
 
 #include "ta_imgproc.h"
+#include "ta_project.h"
 
-#include <QImage>
+#include <QMatrix>
+
+///////////////////////////////////////////
+//	taImage
+
+void taImage::Initialize() {
+}
+
+void taImage::Copy_(const taImage& cp) {
+  q_img = cp.q_img;
+}
+
+bool taImage::LoadImage(const String& fname) {
+  QString fn = (const char*)fname;
+  if(!q_img.load(fn)) {
+    taMisc::Error("LoadImage: could not read image file:", fname);
+    return false;
+  }
+  return true;
+}
+
+float taImage::GetPixelGrey_float(int x, int y) {
+  if(q_img.isNull()) {
+    return -1.0f;
+  }
+  QRgb pix = q_img.pixel(x, y);
+  float gval = qGray(pix) / 255.0f;
+  return gval;
+}
+
+bool taImage::GetPixelRGB_float(int x, int y, float& r, float& g, float& b) {
+  if(q_img.isNull()) {
+    return false;
+  }
+  QRgb pix = q_img.pixel(x, y);
+  r = qRed(pix) / 255.0f;
+  g = qGreen(pix) / 255.0f;
+  b = qBlue(pix) / 255.0f;
+  return true;
+}
+
+bool taImage::ImageToGrey_float(float_Matrix& img_data) {
+  if(q_img.isNull()) {
+    return false;
+  }
+  img_data.SetGeom(2, q_img.width(), q_img.height());
+
+  for(int y=0; y<q_img.height(); y++) {
+    for(int x=0; x< q_img.width(); x++) {
+      QRgb pix = q_img.pixel(x, y);
+      float gval = qGray(pix) / 255.0f;
+      img_data.Set(gval, x, y);
+    }
+  }
+  return true;
+}
+
+bool taImage::ImageToRGB_float(float_Matrix& rgb_data) {
+  if(q_img.isNull()) {
+    return false;
+  }
+  rgb_data.SetGeom(3, q_img.width(), q_img.height(), 3); // r,g,b = 3rd dim
+
+  for(int y=0; y<q_img.height(); y++) {
+    for(int x=0; x< q_img.width(); x++) {
+      QRgb pix = q_img.pixel(x, y);
+      float rval = qRed(pix) / 255.0f;
+      float gval = qGreen(pix) / 255.0f;
+      float bval = qBlue(pix) / 255.0f;
+      rgb_data.Set(rval, x, y, 0);
+      rgb_data.Set(gval, x, y, 1);
+      rgb_data.Set(bval, x, y, 2);
+    }
+  }
+  return true;
+}
+
+bool taImage::ScaleImage(float sx, float sy, bool smooth) {
+  if(q_img.isNull()) {
+    return false;
+  }
+  int wd = q_img.width();
+  int ht = q_img.height();
+  int nw_wd = (int)(sx * (float)wd);
+  int nw_ht = (int)(sy * (float)ht);
+  if(smooth)
+    q_img = q_img.scaled(nw_wd, nw_ht, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  else
+    q_img = q_img.scaled(nw_wd, nw_ht); // default is fast
+  return true;
+}
+
+bool taImage::RotateImage(float norm_deg, bool smooth) {
+  if(q_img.isNull()) {
+    return false;
+  }
+  float deg = norm_deg * 360.0f;
+  QMatrix mat;
+  mat.rotate(deg);
+  if(smooth)
+    q_img = q_img.transformed(mat, Qt::SmoothTransformation);
+  else
+    q_img = q_img.transformed(mat); // default is fast
+  return true;
+}
+
+bool taImage::TranslateImage(float dx, float dy, bool smooth) {
+  if(q_img.isNull()) {
+    return false;
+  }
+  int wd = q_img.width();
+  int ht = q_img.height();
+  int nw_dx= (int)(dx * (float)wd);
+  int nw_dy = (int)(dy * (float)ht);
+  QMatrix mat;
+  mat.translate(nw_dx, nw_dy);
+  if(smooth)
+    q_img = q_img.transformed(mat, Qt::SmoothTransformation);
+  else
+    q_img = q_img.transformed(mat); // default is fast
+  return true;
+}
 
 ///////////////////////////////////////////
 //	DoG Filter
 
 void DoGFilterSpec::Initialize() {
+  color_chan = BLACK_WHITE;
   filter_width = 8;
   filter_size = filter_width * 2 + 1;
-  ctr_sigma = 2.0f;
-  sur_sigma = 4.0f;
+  on_sigma = 2.0f;
+  off_sigma = 4.0f;
   circle_edge = true;
 }
 
@@ -34,17 +157,22 @@ void DoGFilterSpec::UpdateAfterEdit() {
   UpdateFilter();
 }
 
-float DoGFilterSpec::Eval(float x, float y) {
-  float val = x * x + y * y;
-  float dist = sqrt(val);
-  float ong = 0.0f;
-  float offg = 0.0f;
-  if(!circle_edge || (dist <= filter_width)) { // only set values inside of filter radius
-    ong = 1.0f / (4.0 * taMath_float::pi * ctr_sigma * ctr_sigma) * exp(-val / (2.0f * ctr_sigma * ctr_sigma));
-    offg = 1.0f / (4.0 * taMath_float::pi * sur_sigma * sur_sigma) * exp(-val / (2.0f * sur_sigma * sur_sigma));
+float DoGFilterSpec::FilterPoint(int x, int y, float r_val, float g_val, float b_val) {
+  if(color_chan == BLACK_WHITE) {
+    float grey = (r_val + g_val + b_val) / 3.0f;
+    return grey * (on_filter.FastEl(x+filter_width, y+filter_width) * grey - 
+		   off_filter.FastEl(x+filter_width, y+filter_width) * grey);
   }
-  float net = ong - offg;
-  return net;
+  else if(color_chan == RED_GREEN) {
+    return (on_filter.FastEl(x+filter_width, y+filter_width) * r_val - 
+	    off_filter.FastEl(x+filter_width, y+filter_width) * g_val);
+  }
+  else if(color_chan == BLUE_YELLOW) {
+    float y_val = .5f * (r_val + g_val);
+    return (on_filter.FastEl(x+filter_width, y+filter_width) * b_val - 
+	    off_filter.FastEl(x+filter_width, y+filter_width) * y_val);
+  }
+  return 0.0f;
 }
 
 void DoGFilterSpec::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
@@ -55,29 +183,26 @@ void DoGFilterSpec::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
   int x,y;
   for(y=-filter_width; y<=filter_width; y++) {
     for(x=-filter_width; x<=filter_width; x++) {
-      float val = Eval(x, y);
-      if(val > 0.0f) {
-	on_flt.Set(val, y+filter_width, x+filter_width);
-	off_flt.Set(0.0, y+filter_width, x+filter_width);
+      float sqdist = (float)(x * x + y * y);
+      float dist = sqrt(sqdist);
+      float ong = 0.0f;
+      float offg = 0.0f;
+      if(!circle_edge || (dist <= filter_width)) { // only set values inside of filter radius
+	ong = GaussVal(sqdist, on_sigma);
+	offg = GaussVal(sqdist, off_sigma);
       }
-      else {
-	off_flt.Set(-val, y+filter_width, x+filter_width);
-	on_flt.Set(0.0, y+filter_width, x+filter_width);
-      }
+      on_flt.Set(ong, y+filter_width, x+filter_width);
+      off_flt.Set(offg, y+filter_width, x+filter_width);
     }
   }
 
-  taMath_float::vec_norm_sum(&on_flt);
-  taMath_float::vec_norm_sum(&off_flt);
+  taMath_float::vec_norm_sum(&on_flt); // make sure sums to 1.0
+  taMath_float::vec_norm_sum(&off_flt); // make sure sums to 1.0
+
   for(int i=0;i<on_flt.size;i++) {
-    float on_val = on_flt.FastEl_Flat(i);
-    float off_val = off_flt.FastEl_Flat(i);
-    if(on_val > 0.0f)
-      net_flt.FastEl_Flat(i) = on_val;
-    else
-      net_flt.FastEl_Flat(i) = off_val;
+    float net = on_flt.FastEl_Flat(i) - off_flt.FastEl_Flat(i);
+    net_flt.FastEl_Flat(i) = net;
   }
-  //  cerr << "+ sum: " << pos_sum_2 << " - sum: " << neg_sum_2 << endl;
 }
 
 void DoGFilterSpec::UpdateFilter() {
@@ -411,7 +536,6 @@ float GaborFitter::ParamDist(const GaborFilterSpec& oth) {
 ///////////////////////////////////////////////////////////
 // 		Retinal Spacing
 
-
 void RetinalSpacingSpec::Initialize() {
   retina_size.x = 321;
   retina_size.y = 241;
@@ -444,6 +568,20 @@ void RetinalSpacingSpec::UpdateSizes() {
 }
 
 ///////////////////////////////////////////////////////////
+// 		DoG + Retinal Spacing
+
+void DoGRetinaSpec::Initialize() {
+  
+}
+
+void DoGRetinaSpec::UpdateAfterEdit() {
+  dog.UpdateAfterEdit();
+  spacing.UpdateAfterEdit();
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
 // 		taImageProc
 
 void taImageProc::Initialize() {
@@ -452,104 +590,74 @@ void taImageProc::Initialize() {
 void taImageProc::Destroy() {
 }
 
-
-bool taImageProc::ReadImageGrey_float(float_Matrix& img_data, const String& fname) {
-  QImage img((const char*)fname);
-  if(img.isNull()) {
-    taMisc::Error("ReadImageGrey_float: could not read image file:", fname);
-    return false;
-  }
-  img_data.SetGeom(2, img.width(), img.height());
-
-  for(int y=0; y<img.height(); y++) {
-    for(int x=0; x< img.width(); x++) {
-      QRgb pix = img.pixel(x, y);
-      float gval = qGray(pix) / 255.0f;
-      img_data.Set(gval, x, y);
+bool taImageProc::RenderBorder(float_Matrix& img_data, bool one_avg) {
+  if(img_data.dims() == 3) {	// an rgb guy
+    for(int i=0;i<3;i++) {
+      float_Matrix* cmp = img_data.GetFrameSlice(i);
+      taBase::Ref(cmp);
+      RenderBorder(*cmp, one_avg);
+      taBase::unRefDone(cmp);
     }
+    return true;
   }
-  return true;
-}
-
-bool taImageProc::ReadImageRGB_float(float_Matrix& r_img, float_Matrix& g_img,
-				     float_Matrix& b_img, const String& fname) {
-  QImage img((const char*)fname);
-  if(img.isNull()) {
-    taMisc::Error("ReadImageRGB_float: could not read image file:", fname);
-    return false;
-  }
-  r_img.SetGeom(2, img.width(), img.height());
-  g_img.SetGeom(2, img.width(), img.height());
-  b_img.SetGeom(2, img.width(), img.height());
-
-  for(int y=0; y<img.height(); y++) {
-    for(int x=0; x< img.width(); x++) {
-      QRgb pix = img.pixel(x, y);
-      float rval = qRed(pix) / 255.0f;
-      float gval = qGreen(pix) / 255.0f;
-      float bval = qBlue(pix) / 255.0f;
-      r_img.Set(rval, x, y);
-      g_img.Set(gval, x, y);
-      b_img.Set(bval, x, y);
-    }
-  }
-  return true;
-}
-
-// todo: here!
-
-/*
-
-bool taImageProc::RenderBorder(float_Matrix& img_data) {
   TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
-  int tidx = (img_size.y-1) * img_size.x;
-  int tidxm1 = (img_size.y-2) * img_size.x;
-  int bidxp1 = img_size.x;
   float tavg = 0.0f;
   float bavg = 0.0f;
-  int x;
-  for(x=1;x<img_size.x-1;x++) {
-    tavg += img_data[tidxm1 + x];
-    bavg += img_data[bidxp1 + x];
+  for(int x=0;x<img_size.x;x++) {
+    tavg += img_data.FastEl(x, img_size.y-1);
+    bavg += img_data.FastEl(x, 0);
   }
-  tavg /= (float)(img_size.x-2);
-  bavg /= (float)(img_size.x-2);
+  tavg /= (float)(img_size.x);
+  bavg /= (float)(img_size.x);
 
   float lavg = 0.0f;
   float ravg = 0.0f;
-  int y;
-  for(y=1;y<img_size.y-1;y++) {
-    ravg += img_data[y * img_size.x + img_size.x-2];
-    lavg += img_data[y * img_size.x + 1];
+  for(int y=0;y<img_size.y;y++) {
+    ravg += img_data.FastEl(img_size.x-1, y);
+    lavg += img_data.FastEl(0, y);
   }
-  lavg /= (float)(img_size.y-2);
-  ravg /= (float)(img_size.y-2);
+  lavg /= (float)(img_size.y);
+  ravg /= (float)(img_size.y);
 
-  for(x=0;x<img_size.x;x++) {
-    img_data[tidx + x] = tavg;
-    img_data[x] = bavg;
+  if(one_avg) {
+    float oavg = .25 * (tavg + bavg + lavg + ravg);
+    tavg = bavg = lavg = ravg = oavg;
   }
-  for(y=1;y<img_size.y-1;y++) {
-    img_data[y * img_size.x + img_size.x-1] = ravg;
-    img_data[y * img_size.x] = lavg;
+
+  for(int x=0;x<img_size.x;x++) {
+    img_data.FastEl(x, img_size.y-1) = tavg;
+    img_data.FastEl(x, 0) = bavg;
+  }
+  for(int y=1;y<img_size.y-1;y++) {
+    img_data.FastEl(img_size.x-1, y) = ravg;
+    img_data.FastEl(0, y) = lavg;
   }
 //   cerr << "border avgs: t: " << tavg << ", b: " << bavg
 //        << ", l: " << lavg << ", r: " << ravg << endl;
-
+  return true;
 }
 
-bool taImageProc::ScaleImageData(float_Matrix& scaled_img, TwoDCoord& scaled_size, float_Matrix& orig_img, TwoDCoord& img_size, float scale) {
+bool taImageProc::ScaleImageData(float_Matrix& scaled_img, float_Matrix& orig_img, float scale) {
   if(scale < .01f) {
     taMisc::Error("Can't scale below .01.");
-    return;
+    return false;
   }
   if(scale > 100.0f) {
     taMisc::Error("Can't scale above 100.");
-    return;
+    return false;
   }
+  TwoDCoord img_size(orig_img.dim(0), orig_img.dim(1)); 
+  TwoDCoord scaled_size; 
   scaled_size.x = 2 + (int)(scale * (img_size.x-2)); // keep border in there
   scaled_size.y = 2 + (int)(scale * (img_size.y-2));
-  scaled_img.EnforceSize(scaled_size.x * scaled_size.y);
+
+  bool rgb_img = false;
+  if(orig_img.dims() == 3) { // rgb
+    scaled_img.SetGeom(3, scaled_size.x, scaled_size.y, 3);
+    rgb_img = true;
+  }
+  else
+    scaled_img.SetGeom(2, scaled_size.x, scaled_size.y);
   float half_sc;
   if(scale < 1.0f)
     half_sc = .5f / scale; // how much on each side of the pixel to include in avg
@@ -566,6 +674,7 @@ bool taImageProc::ScaleImageData(float_Matrix& scaled_img, TwoDCoord& scaled_siz
   int n_orig_pix = half_int + 1; // number of pixels to get from original image for each scaled pixel
   //    int tot_org_pix = 2 * n_orig_pix + 1;
   float_Matrix sc_ary;
+  sc_ary.SetGeom(2, n_orig_pix*2 + 1, n_orig_pix*2 + 1);
   int x, y;
   for(y=-n_orig_pix; y<= n_orig_pix; y++) {
     float ysc = extra;
@@ -575,53 +684,53 @@ bool taImageProc::ScaleImageData(float_Matrix& scaled_img, TwoDCoord& scaled_siz
       float xsc = extra;
       if((x >= -half_int) && (x <= half_int))
 	xsc = 1.0f;
-      sc_ary.Add(ysc * xsc);
-    }
-  }
-  sc_ary.NormSum(1.0f);		// make it add to 1
-  for(y=1;y<scaled_size.y-1;y++) {
-    int oyc = (int)floor(.5f + ((float)y / scale));
-    for(x=1;x<scaled_size.x-1;x++) {
-      int oxc = (int)floor(.5f + ((float)x / scale));
-      float avg = 0.0f;
-      int sc_ctr = 0;
-      int oxi, oyi;
-      for(oyi=-n_orig_pix;oyi<=n_orig_pix;oyi++) {
-	int oy = oyc + oyi;
-	if(oy < 0) oy = 0; if(oy >= img_size.y) oy = img_size.y-1;
-	for(oxi=-n_orig_pix;oxi<=n_orig_pix;oxi++, sc_ctr++) {
-	  int ox = oxc + oxi;
-	  if(ox < 0) ox = 0; if(ox >= img_size.x) ox = img_size.x-1;
-	  avg += sc_ary[sc_ctr] * orig_img[oy * img_size.x + ox];
-	}
-      }
-      scaled_img[y * scaled_size.x + x] = avg;
+      sc_ary.Set(ysc * xsc, x + n_orig_pix, y + n_orig_pix);
     }
   }
 
-  // copy over border values:
-  {
-    float tval = orig_img[(img_size.y-1) * img_size.x + 1];
-    float bval = orig_img[1];
-    float lval = orig_img[img_size.x];
-    float rval = orig_img[2 * img_size.x - 1];
-    float avg_val = .25 * (tval + bval + lval + rval); // use avg_val instead of sep vals
-    // because sep vals leave streaks at the corners when filtered!
-    int tidx = (scaled_size.y-1) * scaled_size.x;
-    int x, y;
-    for(x=0;x<scaled_size.x;x++) {
-      scaled_img[tidx + x] = avg_val; // tval;
-      scaled_img[x] = avg_val; // bval;
-    }
-    for(y=1;y<scaled_size.y-1;y++) {
-      scaled_img[y * scaled_size.x + scaled_size.x-1] = avg_val; //rval;
-      scaled_img[y * scaled_size.x] = avg_val; // lval;
+  taMath_float::vec_norm_sum(&sc_ary);		// make it add to 1
+
+  for(y=0; y<scaled_size.y; y++) {
+    int oyc = (int)floor(.5f + ((float)y / scale));
+    for(x=0; x<scaled_size.x; x++) {
+      int oxc = (int)floor(.5f + ((float)x / scale));
+      float r_avg = 0.0f;
+      float g_avg = 0.0f;
+      float b_avg = 0.0f;
+      int oxi, oyi;
+      for(oyi=-n_orig_pix; oyi<=n_orig_pix; oyi++) {
+	int oy = oyc + oyi;
+	if(oy < 0) oy = 0; if(oy >= img_size.y) oy = img_size.y-1;
+	for(oxi=-n_orig_pix;oxi<=n_orig_pix;oxi++) {
+	  int ox = oxc + oxi;
+	  if(ox < 0) ox = 0; if(ox >= img_size.x) ox = img_size.x-1;
+	  float sc = sc_ary.FastEl(oxi + n_orig_pix, oyi + n_orig_pix);
+	  if(rgb_img) {
+	    r_avg += sc * orig_img.FastEl(ox, oy, 0);
+	    g_avg += sc * orig_img.FastEl(ox, oy, 1);
+	    b_avg += sc * orig_img.FastEl(ox, oy, 2);
+	  }
+	  else {
+	    r_avg += sc * orig_img.FastEl(ox, oy);
+	  }
+	}
+      }
+      if(rgb_img) {
+	scaled_img.FastEl(x, y, 0) = r_avg;
+	scaled_img.FastEl(x, y, 1) = g_avg;
+	scaled_img.FastEl(x, y, 2) = b_avg;
+      }
+      else {
+	scaled_img.FastEl(x, y) = r_avg;
+      }	
     }
   }
+  // note: might want to re-render border after scaling..
+  return true;
 }
 
 // get pixel coordinates (pc1, 2) with norm weights (pw1, 2) for given floating coordinate coord
-bool taImageProc::GetWeightedPixels(float coord, int size, int* pc, float* pw) {
+void taImageProc::GetWeightedPixels(float coord, int size, int* pc, float* pw) {
   //   |  .|   |  get from two closest pixels..
   pc[0] = (int)floor(coord);
   float xfrac = coord - floor(coord);
@@ -642,30 +751,33 @@ bool taImageProc::GetWeightedPixels(float coord, int size, int* pc, float* pw) {
 }
 
 
-bool taImageProc::RotateImageData(float_Matrix& rotated_img, float_Matrix& orig_img, TwoDCoord& img_size, float rotate) {
-  rotate *= 2.0f * PI;
-  rotated_img.EnforceSize(orig_img.size);
+bool taImageProc::RotateImageData(float_Matrix& rotated_img, float_Matrix& orig_img, float rotate) {
 
-  FloatTwoDCoord ctr = ((FloatTwoDCoord) img_size) / 2.0f;  // Changed to floating point
+  TwoDCoord img_size(orig_img.dim(0), orig_img.dim(1));
 
-  float_Matrix sc_ary;  sc_ary.EnforceSize(4);
+  bool rgb_img = false;
+  if(orig_img.dims() == 3) { // rgb
+    rotated_img.SetGeom(3, img_size.x, img_size.y, 3);
+    rgb_img = true;
+  }
+  else
+    rotated_img.SetGeom(2, img_size.x, img_size.y);
+  FloatTwoDCoord ctr = ((FloatTwoDCoord) img_size) / 2.0f;
+
+  rotate *= 2.0f * taMath_float::pi; // convert to radians
+  float rot_sin = sin(rotate);
+  float rot_cos = cos(rotate);
+
+  float_Matrix sc_ary;  sc_ary.SetGeom(2, 2, 2);
 
   int x,y;			// coords in new image
-  for(y=1;y<img_size.y-1;y++) {
-    for(x=1;x<img_size.x-1;x++) {
-      float cx = ((float) x) - ctr.x;  // changed to float
-      float cy = ((float) y) - ctr.y;  // changed to float
+  for(y=0;y<img_size.y;y++) {
+    for(x=0;x<img_size.x;x++) {
+      float cx = ((float) x) - ctr.x;
+      float cy = ((float) y) - ctr.y;
 
-      float rot_sin = sin(rotate);
-      float rot_cos = cos(rotate);
       float org_x = cx * rot_cos + cy * rot_sin + ctr.x;
       float org_y = cy * rot_cos - cx * rot_sin + ctr.y;
-
-      //      float r = sqrtf(cx*cx + cy*cy);
-      //float thet = atan2(cy, cx);
-      //float totang = thet - rotate;
-      //float org_x = (r * cos(totang)) + ctr.x;  // removed float cast
-      //float org_y = (r * sin(totang)) + ctr.y;  // removed float cast
 
       int pcx[2];
       int pcy[2];
@@ -675,153 +787,53 @@ bool taImageProc::RotateImageData(float_Matrix& rotated_img, float_Matrix& orig_
       GetWeightedPixels(org_x, img_size.x, pcx, pwx);
       GetWeightedPixels(org_y, img_size.y, pcy, pwy);
 
-      int sc_ctr = 0;
       int oxi, oyi;
       for(oyi=0;oyi<2;oyi++) {
-	for(oxi=0;oxi<2;oxi++, sc_ctr++) {
-	  sc_ary[sc_ctr] = pwx[oxi] + pwy[oyi];
+	for(oxi=0;oxi<2;oxi++) {
+	  sc_ary.FastEl(oxi, oyi) = pwx[oxi] + pwy[oyi];
 	}
       }
-      sc_ary.NormSum(1.0f);
+      taMath_float::vec_norm_sum(&sc_ary);
 
-      float avg = 0.0f;
-      sc_ctr = 0;
+      float r_avg = 0.0f;
+      float g_avg = 0.0f;
+      float b_avg = 0.0f;
       for(oyi=0;oyi<2;oyi++) {
-	for(oxi=0;oxi<2;oxi++, sc_ctr++) {
+	for(oxi=0;oxi<2;oxi++) {
 	  int oy = pcy[oyi];
 	  int ox = pcx[oxi];
-	  avg += sc_ary[sc_ctr] * orig_img[oy * img_size.x + ox];
+	  // use Safe below because ox,y could be out of range
+	  if(rgb_img) {
+	    r_avg += sc_ary.FastEl(oxi, oyi) * orig_img.SafeEl(ox, oy, 0); 
+	    g_avg += sc_ary.FastEl(oxi, oyi) * orig_img.SafeEl(ox, oy, 1);
+	    b_avg += sc_ary.FastEl(oxi, oyi) * orig_img.SafeEl(ox, oy, 2);
+	  }
+	  else {
+	    r_avg += sc_ary.FastEl(oxi, oyi) * orig_img.SafeEl(ox, oy);
+	  }
 	}
       }
-      rotated_img[y * img_size.x + x] = avg;
-//       rotated_img[y * img_size.x + x] = orig_img[pcy[0] * img_size.x + pcx[0]];
+      if(rgb_img) {
+	rotated_img.FastEl(x,y,0) = r_avg;
+	rotated_img.FastEl(x,y,1) = g_avg;
+	rotated_img.FastEl(x,y,2) = b_avg;
+      }
+      else {
+	rotated_img.FastEl(x,y) = r_avg;
+      }
     }
   }
-
-  // copy over border values:
-  {
-    float tval = orig_img[(img_size.y-1) * img_size.x + 1];
-    float bval = orig_img[1];
-    float lval = orig_img[img_size.x];
-    float rval = orig_img[2 * img_size.x - 1];
-    int tidx = (img_size.y-1) * img_size.x;
-    int x, y;
-    for(x=0;x<img_size.x;x++) {
-      rotated_img[tidx + x] = tval;
-      rotated_img[x] = bval;
-    }
-    for(y=1;y<img_size.y-1;y++) {
-      rotated_img[y * img_size.x + img_size.x-1] = rval;
-      rotated_img[y * img_size.x] = lval;
-    }
-  }
+  // note: might want to call renderborder after this..
+  return true;
 }
 
-// bool taImageProc::MakeEventSpecs() {
-//   if(event_specs.size < 2)
-//     event_specs.EnforceSize(2);
-//   EventSpec* imgsp = (EventSpec*)event_specs[0];
-//   imgsp->name = "Image";
-//   if(imgsp->patterns.size != 1) {
-//     imgsp->patterns.EnforceSize(1);
-//     PatternSpec* imgps = (PatternSpec*)imgsp->patterns[0];
-//     imgps->SetToLayName("None");
-//     imgps->type = PatternSpec::INACTIVE;
-//     imgps->geom.x = 800;
-//     imgps->geom.y = 600;
-//     imgps->n_vals = imgps->geom.x * imgps->geom.y;
-//     imgps->UpdateAfterEdit();
-//   }
+bool taImageProc::DoGFilterImage(float_Matrix& on_output, float_Matrix& off_output,
+				 float_Matrix& img_input, DoGRetinaSpec& spec,
+				 FloatTwoDCoord& img_ctr_off, FloatTwoDCoord& ret_ctr_off,
+				 bool superimpose) {
+  spec.dog.UpdateFilter();		// just to be sure
 
-//   EventSpec* fltsp = (EventSpec*)event_specs[1];
-//   fltsp->name = "Filter";
-//   if(fltsp->patterns.size < 2 * filters.size)
-//     fltsp->patterns.EnforceSize(2 * filters.size);
-//   int pctr = 0;
-//   int i;
-//   for(i=0;i<filters.size;i++) {
-//     DoGFilterSpec* fs = (DoGFilterSpec*)filters[i];
-//     PatternSpec* on_ps = (PatternSpec*)fltsp->patterns[pctr++];
-//     on_ps->name = fs->name + "_on";
-//     on_ps->geom.x = fs->output_size.x;
-//     on_ps->geom.y = fs->output_size.y;
-//     on_ps->n_vals = fs->output_size.x * fs->output_size.y;
-//     on_ps->SetToLayName(on_ps->name);
-//     on_ps->UpdateAfterEdit();
-
-//     PatternSpec* off_ps = (PatternSpec*)fltsp->patterns[pctr++];
-//     off_ps->name = fs->name + "_off";
-//     off_ps->geom.x = fs->output_size.x;
-//     off_ps->geom.y = fs->output_size.y;
-//     off_ps->n_vals = fs->output_size.x * fs->output_size.y;
-//     off_ps->SetToLayName(off_ps->name);
-//     off_ps->UpdateAfterEdit();
-//   }
-//   fltsp->LinearLayout(EventSpec::HORIZONTAL);
-//   UpdateAllEvents();
-//   winbMisc::DelayedMenuUpdate(this);
-// }
-
-// bool taImageProc::PlotFilters() {
-//   if(event_specs.size < 2)
-//     MakeEventSpecs();
-//   EventSpec* imgsp = (EventSpec*)event_specs[0];
-//   PatternSpec* imgps = (PatternSpec*)imgsp->patterns[0];
-//   imgps->geom.x = retina_size.x;
-//   imgps->geom.y = retina_size.y;
-//   imgps->n_vals = imgps->geom.x * imgps->geom.y;
-//   imgps->UpdateAfterEdit();
-//   UpdateAllEvents();
-
-//   if(events.size < 2)
-//     events.EnforceSize(2);
-//   Event* imgev = (Event*)events[0];
-//   float_Matrix& imgar = ((Pattern*)imgev->patterns[0])->value;
-//   imgar.InitVals(0.0f);
-
-//   for(int i=0;i<filters.size;i++) {
-//     DoGFilterSpec* fs = (DoGFilterSpec*)filters[i];
-//     int sx = fs->border.x;
-//     int sy = fs->border.y;
-//     int ex = sx + fs->input_size.x;
-//     int ey = sy + fs->input_size.y;
-//     int xc, yc;
-//     for(yc = sy; yc < ey; yc += fs->filter_spacing.y) {
-//       for(xc = sx; xc < ex; xc += fs->filter_spacing.x) {
-// 	imgar[yc * retina_size.x + xc] += 1.0f;
-//       }
-//     }
-//   }
-//   imgar.NormMax(1.0f);
-//   InitAllViews();
-// }
-
-bool taImageProc::LoadImage(istream&) {
-  String fnm = taivGetFile::last_fname;
-  //  cerr << "loading: " << fnm << endl;
-  if(event_specs.size < 2)
-    MakeEventSpecs();
-  EventSpec* imgsp = (EventSpec*)event_specs[0];
-  PatternSpec* imgps = (PatternSpec*)imgsp->patterns[0];
-  if(events.size < 2)
-    events.EnforceSize(2);
-  Event* imgev = (Event*)events[0];
-  imgev->SetSpec(imgsp);
-  TwoDCoord img_size;
-  ReadImageGrey(((Pattern*)imgev->patterns[0])->value, img_size, fnm);
-  imgps->geom.x = img_size.x;
-  imgps->geom.y = img_size.y;
-  imgps->n_vals = imgps->geom.x * imgps->geom.y;
-  imgps->UpdateAfterEdit();
-  imgev->name = String(img_size.x) + "x" + String(img_size.y) + ":" + fnm;
-  UpdateAllEvents();
-  InitAllViews();
-}
-
-bool taImageProc::DoGFilterImage(float_Matrix& flt_vals_on, float_Matrix& flt_vals_off,
-				float_Matrix& img_data,
-				TwoDCoord& img_size, FloatTwoDCoord& img_ctr_off,
-				FloatTwoDCoord& ret_ctr_off, bool add) {
+  TwoDCoord img_size(img_input.dim(0), img_input.dim(1)); 
   TwoDCoord img_ctr = img_size / 2;
   TwoDCoord img_ctr_off_sc = TwoDCoord(img_ctr_off * FloatTwoDCoord(img_ctr));
   if(img_ctr_off_sc.x < -img_ctr.x) img_ctr_off_sc.x = -img_ctr.x;
@@ -830,7 +842,7 @@ bool taImageProc::DoGFilterImage(float_Matrix& flt_vals_on, float_Matrix& flt_va
   if(img_ctr_off_sc.y > img_ctr.y) img_ctr_off_sc.y = img_ctr.y;
   TwoDCoord img_ctr_pt = img_ctr + img_ctr_off_sc;
 
-  TwoDCoord ret_ctr = retina_size / 2;
+  TwoDCoord ret_ctr = spec.spacing.retina_size / 2;
   TwoDCoord ret_ctr_off_sc = TwoDCoord(ret_ctr_off * FloatTwoDCoord(ret_ctr));
   if(ret_ctr_off_sc.x < -ret_ctr.x) ret_ctr_off_sc.x = -ret_ctr.x;
   if(ret_ctr_off_sc.x > ret_ctr.x) ret_ctr_off_sc.x = ret_ctr.x;
@@ -846,71 +858,87 @@ bool taImageProc::DoGFilterImage(float_Matrix& flt_vals_on, float_Matrix& flt_va
 
   TwoDCoord img_off = (img_ctr_pt - ret_ctr) - ret_ctr_off_sc;
 
-  int n_outputs = output_size.x * output_size.y;
-  flt_vals_on.EnforceSize(n_outputs);
-  flt_vals_off.EnforceSize(n_outputs);
+  on_output.SetGeom(2, spec.spacing.output_size.x, spec.spacing.output_size.y);
+  off_output.SetGeom(2, spec.spacing.output_size.x, spec.spacing.output_size.y);
 
-  float_Matrix* use_flt_on = &flt_vals_on;
-  float_Matrix* use_flt_off = &flt_vals_off;
+  float_Matrix* on_out = &on_output;
+  float_Matrix* off_out = &off_output;
+  static float_Matrix tmp_on_out;
+  static float_Matrix tmp_off_out;
 
-  static float_Matrix tmp_flt_on;
-  static float_Matrix tmp_flt_off;
-
-  if(add) {
-    tmp_flt_on.EnforceSize(n_outputs);
-    tmp_flt_off.EnforceSize(n_outputs);
-    tmp_flt_on.InitVals(0.0f);
-    tmp_flt_off.InitVals(0.0f);
-    use_flt_on = &tmp_flt_on;
-    use_flt_off = &tmp_flt_off;
+  if(superimpose) {
+    tmp_on_out.SetGeom(2, spec.spacing.output_size.x, spec.spacing.output_size.y);
+    tmp_off_out.SetGeom(2, spec.spacing.output_size.x, spec.spacing.output_size.y);
+    tmp_on_out.InitVals(0.0f);
+    tmp_off_out.InitVals(0.0f);
+    on_out = &tmp_on_out;
+    off_out = &tmp_off_out;
   }
   else {
-    flt_vals_on.InitVals(0.0f);
-    flt_vals_off.InitVals(0.0f);
+    on_output.InitVals(0.0f);
+    off_output.InitVals(0.0f);
   }
 
-  TwoDCoord st = border;
-  TwoDCoord ed = st + input_size;
+  bool rgb_input = false;
+  if(img_input.dims() == 3) rgb_input = true;
+
+  TwoDCoord st = spec.spacing.border;
+  TwoDCoord ed = st + spec.spacing.input_size;
   
-  int xc, yc;
-  int ctr = 0;
-  for(yc = st.y; yc < ed.y; yc += filter_spacing.y) {
-    for(xc = st.x; xc < ed.x; xc += filter_spacing.x, ctr++) {
+  for(int yo = 0; yo < spec.spacing.output_size.y; yo++) {
+    int yc = st.y + yo * spec.spacing.spacing.y; 
+    for(int xo = 0; xo < spec.spacing.output_size.x; xo++) {
+      int xc = st.x + xo * spec.spacing.spacing.x; 
+      // now convolve with dog filter
       float cnvl = 0.0f;
-      int xf, yf;
-      int fctr = 0;
-      for(yf = -filter_width; yf <= filter_width; yf++) {
+      for(int yf = -spec.dog.filter_width; yf <= spec.dog.filter_width; yf++) {
 	int iy = img_off.y + yc + yf;
 	if(iy < 0) iy = 0;  if(iy >= img_size.y) iy = img_size.y-1;
-	for(xf = -filter_width; xf <= filter_width; xf++, fctr++) {
+	for(int xf = -spec.dog.filter_width; xf <= spec.dog.filter_width; xf++) {
 	  int ix = img_off.x + xc + xf;
 	  if(ix < 0) ix = 0;  if(ix >= img_size.x) ix = img_size.x-1;
-	  int idx = iy * img_size.x + ix;
-	  cnvl += img_data[idx] * filter[fctr];
+	  if(rgb_input) {
+	    cnvl += spec.dog.FilterPoint(xf, yf, img_input.FastEl(ix, iy,0),
+					 img_input.FastEl(ix, iy, 1),
+					 img_input.FastEl(ix, iy, 2));
+	  }
+	  else {
+	    float gval = img_input.FastEl(ix, iy);
+	    cnvl += spec.dog.FilterPoint(xf, yf, gval, gval, gval);
+	  }
 	}
       }
       if(cnvl > 0.0f)
-	(*use_flt_on)[ctr] = cnvl;
-      else if(cnvl < 0.0f)
-	(*use_flt_off)[ctr] = -cnvl;
+	on_out->FastEl(xo, yo) = cnvl;
+      else 
+	off_out->FastEl(xo, yo) = -cnvl;
     }
   }
-  use_flt_on->UpdateAllRange();
-  if(use_flt_on->range.Range() > .01f)
-    use_flt_on->NormMax(1.0f);
-  use_flt_off->UpdateAllRange();
-  if(use_flt_off->range.Range() > .01f)
-    use_flt_off->NormMax(1.0f);
-  if(add) {			// add them back in!
-    SimpleMathSpec ms;  ms.opr = SimpleMathSpec::ADD;
-    flt_vals_on.SimpleMathArg(tmp_flt_on, ms);
-    flt_vals_off.SimpleMathArg(tmp_flt_off, ms);
+  
+  int idx;
+  float on_max = taMath_float::vec_max(on_out, idx);
+  if(on_max > .01f)
+     taMath_float::vec_norm_max(on_out);
+
+  float off_max = taMath_float::vec_max(off_out, idx);
+  if(off_max > .01f)
+    taMath_float::vec_norm_max(off_out);
+
+  if(superimpose) {			// add them back in!
+    taMath_float::vec_add(&on_output, on_out);
+    taMath_float::vec_add(&off_output, off_out);
   }
+  return true;
 }
 
-bool taImageProc::DoGFilterImageBox(float_Matrix& img_data,
-				    TwoDCoord& img_size, FloatTwoDCoord& img_ctr_off,
-				    FloatTwoDCoord& ret_ctr_off, float scale) {
+static void taImageProc_DrawPoint(float& val) {
+  if(val > .5) val *= .5; else val += .5;
+}
+
+bool taImageProc::DrawRetinaBox(float_Matrix& img_data, RetinalSpacingSpec& spacing,
+				FloatTwoDCoord& img_ctr_off, FloatTwoDCoord& ret_ctr_off,
+				float scale) {
+  TwoDCoord img_size(img_data.dim(0), img_data.dim(1)); 
   TwoDCoord img_ctr = img_size / 2;
   TwoDCoord img_ctr_off_sc = TwoDCoord(img_ctr_off * FloatTwoDCoord(img_ctr));
   if(img_ctr_off_sc.x < -img_ctr.x) img_ctr_off_sc.x = -img_ctr.x;
@@ -919,8 +947,8 @@ bool taImageProc::DoGFilterImageBox(float_Matrix& img_data,
   if(img_ctr_off_sc.y > img_ctr.y) img_ctr_off_sc.y = img_ctr.y;
   TwoDCoord img_ctr_pt = img_ctr + img_ctr_off_sc;
 
-  float inv_sc = 1.0 / scale;
-  TwoDCoord sc_ret = inv_sc * FloatTwoDCoord(retina_size);
+  float inv_sc = 1.0f / scale;
+  TwoDCoord sc_ret = inv_sc * FloatTwoDCoord(spacing.retina_size);
 
   TwoDCoord ret_ctr = sc_ret / 2;
   TwoDCoord ret_ctr_off_sc = TwoDCoord(ret_ctr_off * FloatTwoDCoord(ret_ctr));
@@ -931,25 +959,38 @@ bool taImageProc::DoGFilterImageBox(float_Matrix& img_data,
 
   TwoDCoord img_off = (img_ctr_pt - ret_ctr) - ret_ctr_off_sc;
 
-  TwoDCoord st = TwoDCoord(inv_sc * FloatTwoDCoord(border));
-  TwoDCoord ed = st + TwoDCoord(inv_sc * FloatTwoDCoord(input_size));
+  TwoDCoord st = TwoDCoord(inv_sc * FloatTwoDCoord(spacing.border));
+  TwoDCoord ed = st + TwoDCoord(inv_sc * FloatTwoDCoord(spacing.input_size));
   
+  bool rgb_input = false;
+  if(img_data.dims() == 3) rgb_input = true;
+
   for(int yc = st.y; yc < ed.y; yc++) {
     int iy = img_off.y + yc;
     if(iy < 0) iy = 0;  if(iy >= img_size.y) iy = img_size.y-1;
     {
       int ix = img_off.x + st.x;
       if(ix < 0) ix = 0;  if(ix >= img_size.x) ix = img_size.x-1;
-      int idx = iy * img_size.x + ix;
-      if(img_data[idx] > .5) img_data[idx] *= .5;
-      else img_data[idx] += .5;
+      if(rgb_input) {
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 0));
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 1));
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 2));
+      }
+      else {
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy));
+      }
     }
     {
       int ix = img_off.x + (ed.x -1);
       if(ix < 0) ix = 0;  if(ix >= img_size.x) ix = img_size.x-1;
-      int idx = iy * img_size.x + ix;
-      if(img_data[idx] > .5) img_data[idx] *= .5;
-      else img_data[idx] += .5;
+      if(rgb_input) {
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 0));
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 1));
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 2));
+      }
+      else {
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy));
+      }
     }
   }
   for(int xc = st.x; xc < ed.x; xc++) {
@@ -958,76 +999,237 @@ bool taImageProc::DoGFilterImageBox(float_Matrix& img_data,
     {
       int iy = img_off.y + st.y;
       if(iy < 0) iy = 0;  if(iy >= img_size.y) iy = img_size.y-1;
-      int idx = iy * img_size.x + ix;
-      if(img_data[idx] > .5) img_data[idx] *= .5;
-      else img_data[idx] += .5;
+      if(rgb_input) {
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 0));
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 1));
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 2));
+      }
+      else {
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy));
+      }
     }
     {
       int iy = img_off.y + (ed.y - 1);
       if(iy < 0) iy = 0;  if(iy >= img_size.y) iy = img_size.y-1;
-      int idx = iy * img_size.x + ix;
-      if(img_data[idx] > .5) img_data[idx] *= .5;
-      else img_data[idx] += .5;
+      if(rgb_input) {
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 0));
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 1));
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy, 2));
+      }
+      else {
+	taImageProc_DrawPoint(img_data.FastEl(ix, iy));
+      }
     }
+  }
+  return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// 		Full Retinal Spec
+
+void RetinaSpec::Initialize() {
+  color_type = MONOCHROME;
+  retina_size.x = 341; retina_size.y = 241;
+}
+
+void RetinaSpec::UpdateRetinaSize() {
+  for(int i=0;i<dogs.size; i++) {
+    DoGRetinaSpec* sp = dogs[i];
+    sp->spacing.retina_size = retina_size;
+    sp->spacing.UpdateAfterEdit();
   }
 }
 
-bool taImageProc::FilterImage(Event* fltev, float img_x_off, float img_y_off, float scale,
-			   float rotate, float ret_x_off, float ret_y_off, bool add)
+void RetinaSpec::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  UpdateRetinaSize();
+}
+
+void RetinaSpec::DefaultFilters() {
+  dogs.EnforceSize(3);
+  UpdateRetinaSize();
+  DoGRetinaSpec* sp;
+  int cnt = 0;
+  sp = dogs[cnt++];
+  sp->name = "high_freq_bw";
+  sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
+  sp->dog.filter_width = 8;
+  sp->dog.on_sigma = 2;
+  sp->dog.off_sigma = 4;
+  sp->spacing.border.x = 109; sp->spacing.border.y = 85;
+  sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
+  sp->UpdateAfterEdit();
+
+  sp = dogs[cnt++];
+  sp->name = "med_freq_bw";
+  sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
+  sp->dog.filter_width = 16;
+  sp->dog.on_sigma = 4;
+  sp->dog.off_sigma = 8;
+  sp->spacing.border.x = 6; sp->spacing.border.y = 14;
+  sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
+  sp->UpdateAfterEdit();
+
+  sp = dogs[cnt++];
+  sp->name = "low_freq_bw";
+  sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
+  sp->dog.filter_width = 32;
+  sp->dog.on_sigma = 8;
+  sp->dog.off_sigma = 16;
+  sp->spacing.border.x = 6; sp->spacing.border.y = 16;
+  sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
+  sp->UpdateAfterEdit();
+
+  if(color_type == COLOR) {
+    dogs.EnforceSize(6);
+    UpdateRetinaSize();
+
+    sp = dogs[cnt++];
+    sp->name = "med_freq_rg";
+    sp->dog.color_chan = DoGFilterSpec::RED_GREEN;
+    sp->dog.filter_width = 16;
+    sp->dog.on_sigma = 4;
+    sp->dog.off_sigma = 8;
+    sp->spacing.border.x = 6; sp->spacing.border.y = 14;
+    sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
+    sp->UpdateAfterEdit();
+
+    sp = dogs[cnt++];
+    sp->name = "med_freq_by";
+    sp->dog.color_chan = DoGFilterSpec::BLUE_YELLOW;
+    sp->dog.filter_width = 16;
+    sp->dog.on_sigma = 4;
+    sp->dog.off_sigma = 8;
+    sp->spacing.border.x = 6; sp->spacing.border.y = 14;
+    sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
+    sp->UpdateAfterEdit();
+
+    sp = dogs[cnt++];
+    sp->name = "low_freq_rg";
+    sp->dog.color_chan = DoGFilterSpec::RED_GREEN;
+    sp->dog.filter_width = 32;
+    sp->dog.on_sigma = 8;
+    sp->dog.off_sigma = 16;
+    sp->spacing.border.x = 8; sp->spacing.border.y = 16;
+    sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
+    sp->UpdateAfterEdit();
+
+    sp = dogs[cnt++];
+    sp->name = "low_freq_by";
+    sp->dog.color_chan = DoGFilterSpec::BLUE_YELLOW;
+    sp->dog.filter_width = 32;
+    sp->dog.on_sigma = 8;
+    sp->dog.off_sigma = 16;
+    sp->spacing.border.x = 8; sp->spacing.border.y = 16;
+    sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
+    sp->UpdateAfterEdit();
+  }
+}
+
+void RetinaSpec::ConfigDataTable(DataTable* dt, bool new_cols) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!dt) {
+    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
+    dt = dgp->NewEl(1, &TA_DataTable); // todo: should be in InputData
+    if(!name.empty())
+      dt->name = name + "_InputData";
+    else
+      dt->name = "RetinaSpec_InputData";
+  }
+  if(new_cols) dt->Reset();
+  dt->StructUpdate(true);
+  int idx =0;
+  dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);
+  dt->FindMakeColName("Retina", idx, DataTable::VT_FLOAT, 3,
+			      retina_size.x, retina_size.y, 3);
+  for(int i=0;i<dogs.size; i++) {
+    DoGRetinaSpec* sp = dogs[i];
+    dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+				sp->spacing.output_size.x, sp->spacing.output_size.y);
+    dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT, 2,
+				sp->spacing.output_size.x, sp->spacing.output_size.y);
+  }
+  dt->StructUpdate(false);
+}
+
+bool RetinaSpec::FilterImageData(float_Matrix& img_data, DataTable* dt,
+				 float img_x_off, float img_y_off,
+				 float scale, float rotate, float ret_x_off, float ret_y_off,
+				 bool superimpose)
 {
-  if(event_specs.size < 2)
-    MakeEventSpecs();
-  if(events.size < 1) {
-    taMisc::Error("No Image in 1st event, LoadImage first!");
-    return;
+  if(superimpose) {
+    if(dt->rows <= 0) superimpose = false; // can't do it!
   }
-  EventSpec* imgsp = (EventSpec*)event_specs[0];
-  PatternSpec* imgps = (PatternSpec*)imgsp->patterns[0];
-  EventSpec* fltsp = (EventSpec*)event_specs[1];
-  Event* imgev = (Event*)events[0];
-
-  if(fltev == imgev) {
-    if(events.leaves < 2) {
-      taMisc::Error("Cannot send filter results to image, and no other event!");
-      return;
-    }
-    taMisc::Error("Cannot send filter results to image!  Using next event");
-    fltev = (Event*)events.Leaf(1);
+  if(!superimpose) {		// might have changed!
+    dt->AddBlankRow();
   }
 
-  fltev->SetSpec(fltsp);
-
-  float_Matrix* img_data = &(((Pattern*)imgev->patterns[0])->value);
-  TwoDCoord img_size = imgps->geom;
-
+  float_Matrix* use_img = &img_data;
   float_Matrix rot_img;
-  if(rotate != 0.0f) {
-    RotateImageData(rot_img, *img_data, img_size, rotate);
-    img_data = &rot_img;
-  }
-
-  TwoDCoord sc_size;
   float_Matrix sc_img;
+  if(rotate != 0.0f) {
+    taImageProc::RotateImageData(rot_img, *use_img, rotate);
+    use_img = &rot_img;
+  }
   if(scale != 1.0f) {
-    ScaleImageData(sc_img, sc_size, *img_data, img_size, scale);
-    img_data = &sc_img;
-    img_size = sc_size;
+    taImageProc::ScaleImageData(sc_img, *use_img, scale);
+    use_img = &sc_img;
   }
 
   FloatTwoDCoord img_off(img_x_off, img_y_off);
   FloatTwoDCoord ret_off(ret_x_off, ret_y_off);
 
-  int pctr = 0;
-  int i;
-  for(i=0;i<filters.size;i++) {
-    DoGFilterSpec* fs = (DoGFilterSpec*)filters[i];
-    Pattern* on_pat = (Pattern*)fltev->patterns[pctr++];
-    Pattern* off_pat = (Pattern*)fltev->patterns[pctr++];
-    fs->FilterImage(on_pat->value, off_pat->value, *img_data, img_size, img_off, ret_off, add);
-  }  
-  InitAllViews();
+  for(int i=0;i<dogs.size;i++) {
+    DoGRetinaSpec* sp = dogs[i];
+    int idx;
+    DataArray_impl* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+						sp->spacing.output_size.x, sp->spacing.output_size.y);
+    DataArray_impl* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
+						 2, sp->spacing.output_size.x, sp->spacing.output_size.y);
+
+    float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+    float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
+    taBase::Ref(on_mat);
+    taBase::Ref(off_mat);
+    taImageProc::DoGFilterImage(*on_mat, *off_mat, *use_img, *sp, img_off, ret_off, superimpose);
+    taBase::unRefDone(on_mat);
+    taBase::unRefDone(off_mat);
+  }
+  
+  // todo: modify box routine to grab retina into retina image stuff
+  return true;
 }
 
+bool RetinaSpec::FilterImage(taImage& img, DataTable* dt,
+			     float img_x_off, float img_y_off,
+			     float scale, float rotate, float ret_x_off, float ret_y_off,
+			     bool superimpose)
+{
+  float_Matrix img_data;
+  if(color_type == COLOR) {
+    img.ImageToRGB_float(img_data);
+  }
+  else {
+    img.ImageToGrey_float(img_data);
+  }
+  return FilterImageData(img_data, dt, img_x_off, img_y_off, scale, rotate, ret_x_off, ret_y_off,
+		  superimpose);
+}
+
+bool RetinaSpec::FilterImageName(const String& img_fname, DataTable* dt,
+				 float img_x_off, float img_y_off,
+				 float scale, float rotate, float ret_x_off, float ret_y_off,
+				 bool superimpose)
+{
+  taImage img;
+  if(!img.LoadImage(img_fname)) return false;
+  return FilterImage(img, dt, img_x_off, img_y_off, scale, rotate, ret_x_off, ret_y_off,
+		     superimpose);
+}
+
+/*
 bool taImageProc::FilterImageBox(float img_x_off, float img_y_off, float scale,
 			      float rotate, float ret_x_off, float ret_y_off)
 {
@@ -1281,49 +1483,48 @@ bool taImageProc::FoveateImageBox(float box_ll_x, float box_ll_y, float box_ur_x
   FilterImageBox(img_x_off, img_y_off, scale, rotate, ret_x_off, ret_y_off);
 }
 
-bool taImageProc::ScaleImage(float scale) {
-  if(event_specs.size < 2)
-    MakeEventSpecs();
-  if(events.size < 1) {
-    taMisc::Error("No Image in 1st event, LoadImage first!");
-    return;
-  }
-  EventSpec* imgsp = (EventSpec*)event_specs[0];
-  PatternSpec* imgps = (PatternSpec*)imgsp->patterns[0];
-  Event* imgev = (Event*)events[0];
-
-  float_Matrix& img_data = ((Pattern*)imgev->patterns[0])->value;
-
-  TwoDCoord sc_size;
-  float_Matrix sc_img;
-  ScaleImageData(sc_img, sc_size, img_data, imgps->geom, scale);
-  img_data = sc_img;
-  img_data.EnforceSize(sc_img.size); // just to be sure
-
-  imgps->geom.x = sc_size.x;
-  imgps->geom.y = sc_size.y;
-  imgps->n_vals = imgps->geom.x * imgps->geom.y;
-  imgps->UpdateAfterEdit();
-  InitAllViews();
-}
-
-bool taImageProc::RotateImage(float rotate) {
-  if(event_specs.size < 2)
-    MakeEventSpecs();
-  if(events.size < 1) {
-    taMisc::Error("No Image in 1st event, LoadImage first!");
-    return;
-  }
-  EventSpec* imgsp = (EventSpec*)event_specs[0];
-  PatternSpec* imgps = (PatternSpec*)imgsp->patterns[0];
-  Event* imgev = (Event*)events[0];
-
-  float_Matrix& img_data = ((Pattern*)imgev->patterns[0])->value;
-  float_Matrix rot_img;
-  RotateImageData(rot_img, img_data, imgps->geom, rotate);
-  img_data = rot_img;
-  InitAllViews();
-}
-
 */
+
+// bool taImageProc::PlotFilters() {
+//   if(event_specs.size < 2)
+//     MakeEventSpecs();
+//   EventSpec* imgsp = (EventSpec*)event_specs[0];
+//   PatternSpec* imgps = (PatternSpec*)imgsp->patterns[0];
+//   imgps->geom.x = retina_size.x;
+//   imgps->geom.y = retina_size.y;
+//   imgps->n_vals = imgps->geom.x * imgps->geom.y;
+//   imgps->UpdateAfterEdit();
+//   UpdateAllEvents();
+
+//   if(events.size < 2)
+//     events.EnforceSize(2);
+//   Event* imgev = (Event*)events[0];
+//   float_Matrix& imgar = ((Pattern*)imgev->patterns[0])->value;
+//   imgar.InitVals(0.0f);
+
+//   for(int i=0;i<filters.size;i++) {
+//     DoGFilterSpec* fs = (DoGFilterSpec*)filters[i];
+//     int sx = fs->border.x;
+//     int sy = fs->border.y;
+//     int ex = sx + fs->input_size.x;
+//     int ey = sy + fs->input_size.y;
+//     int xc, yc;
+//     for(yc = sy; yc < ey; yc += fs->filter_spacing.y) {
+//       for(xc = sx; xc < ex; xc += fs->filter_spacing.x) {
+// 	imgar[yc * retina_size.x + xc] += 1.0f;
+//       }
+//     }
+//   }
+//   imgar.NormMax(1.0f);
+//   InitAllViews();
+// }
+
+
+///////////////////////////////////////////////////////////
+// 		program stuff
+
+void ImageProcCall::Initialize() {
+  min_type = &TA_taImageProc;
+  object_type = &TA_taImageProc;
+}
 

@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ta_dataops_h
-#define ta_dataops_h
+#ifndef ta_dataproc_h
+#define ta_dataproc_h
 
 #include "ta_datatable.h"
 #include "ta_math.h"
@@ -224,7 +224,7 @@ private:
 //   data operations
 /////////////////////////////////////////////////////////
 
-class TA_API taDataOps : public taOBase {
+class TA_API taDataProc : public taOBase {
   // ##CAT_Data collection of commonly-used datatable operations
 public:
   
@@ -259,12 +259,22 @@ public:
 
   void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS(taDataOps);
+  TA_BASEFUNS(taDataProc);
 };
 
 /////////////////////////////////////////////////////////
 //   programs to support data operations
 /////////////////////////////////////////////////////////
+
+class TA_API DataProcCall : public StaticMethodCall { 
+  // call a taDataProc function
+INHERITED(StaticMethodCall)
+public:
+  TA_BASEFUNS(DataProcCall);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+}; 
 
 class TA_API DataProg : public ProgEl { 
   // #VIRT_BASE #NO_INSTANCE a program element for data operations (virtual base class -- do not use)
@@ -431,4 +441,4 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-#endif // ta_dataops_h
+#endif // ta_dataproc_h

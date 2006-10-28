@@ -801,11 +801,13 @@ public:
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts valid format for float
+
+  virtual void		InitVals(float val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
+  // initialize values to given fixed value
     
-  void			Copy_(const float_Matrix& cp) {}
-  COPY_FUNS(float_Matrix, taMatrixT<float>)
-  TA_MATRIX_FUNS(float_Matrix, float)
-  
+  void			Copy_(const float_Matrix& cp) {};
+  COPY_FUNS(float_Matrix, taMatrixT<float>);
+  TA_MATRIX_FUNS(float_Matrix, float);
 public:
   override float	El_GetFloat_(const void* it) const { return *((float*)it); } // #IGNORE
   override const String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
@@ -834,9 +836,12 @@ public:
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts valid format for double
     
-  void			Copy_(const double_Matrix& cp) {}
-  COPY_FUNS(double_Matrix, taMatrixT<double>)
-  TA_MATRIX_FUNS(double_Matrix, double)
+  virtual void		InitVals(double val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
+  // initialize values to given fixed value
+    
+  void			Copy_(const double_Matrix& cp) {};
+  COPY_FUNS(double_Matrix, taMatrixT<double>);
+  TA_MATRIX_FUNS(double_Matrix, double);
   
 public:
   override float	El_GetFloat_(const void* it) const 
@@ -874,9 +879,9 @@ public:
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in-range for 32bit int
   
-  void			Copy_(const int_Matrix& cp) {}
-  COPY_FUNS(int_Matrix, taMatrixT<int>)
-  TA_MATRIX_FUNS(int_Matrix, int)
+  void			Copy_(const int_Matrix& cp) {};
+  COPY_FUNS(int_Matrix, taMatrixT<int>);
+  TA_MATRIX_FUNS(int_Matrix, int);
   
 public:
   override float	El_GetFloat_(const void* it) const { return (float)*((int*)it); } // #IGNORE
@@ -905,9 +910,9 @@ public:
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts 0-255 or octal or hex forms
   
-  void			Copy_(const byte_Matrix& cp) {}
-  COPY_FUNS(byte_Matrix, taMatrixT<byte>)
-  TA_MATRIX_FUNS(byte_Matrix, byte)
+  void			Copy_(const byte_Matrix& cp) {};
+  COPY_FUNS(byte_Matrix, taMatrixT<byte>);
+  TA_MATRIX_FUNS(byte_Matrix, byte);
   
 public: //
   override float	El_GetFloat_(const void* it) const { return (float)*((byte*)it); } // #IGNORE
@@ -933,9 +938,9 @@ class TA_API Variant_Matrix: public taMatrixT<Variant> {
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_Variant;} 
   
-  void			Copy_(const Variant_Matrix& cp) {}
-  COPY_FUNS(Variant_Matrix, taMatrixT<Variant>)
-  TA_MATRIX_FUNS(Variant_Matrix, Variant) //
+  void			Copy_(const Variant_Matrix& cp) {};
+  COPY_FUNS(Variant_Matrix, taMatrixT<Variant>);
+  TA_MATRIX_FUNS(Variant_Matrix, Variant);
   
 public:
   //NOTE: setString may not be exactly what is wanted -- that will change variant to String
@@ -970,9 +975,9 @@ public:
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in form: "r g b" or RRGGBB in hex
   
-  void			Copy_(const rgb_Matrix& cp) {}
-  COPY_FUNS(rgb_Matrix, taMatrixT<rgb_t>)
-  TA_MATRIX_FUNS(rgb_Matrix, rgb_t)
+  void			Copy_(const rgb_Matrix& cp) {};
+  COPY_FUNS(rgb_Matrix, taMatrixT<rgb_t>);
+  TA_MATRIX_FUNS(rgb_Matrix, rgb_t);
   
 public: //
   //note: for streaming, we use web RGB hex value
