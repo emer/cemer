@@ -247,7 +247,7 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     }
     QString str = sl.join(" ");
     if(sl.count() == 1)
-      replaceCurrentCommand(sl[0] + " ");
+      replaceCurrentCommand(sl[0]);
     else if(sl.count() > 1) {
       setTextColor(completionColor);
       append(sl.join(" "));

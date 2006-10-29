@@ -159,7 +159,7 @@ public:
     // 'true' if this is a proper frame of other
   int 			Product() const; // returns product of all elements
   
-  void			EnforceSize(int sz); // sets to size, zeroing orphaned or new dims
+  bool			EnforceSize(int sz); // sets to size, zeroing orphaned or new dims (true if changed size; false if not)
   int			SafeEl(int i) const {if (InRange(i)) return el[i]; else return 0;}
     // the element at the given index
   
@@ -398,10 +398,10 @@ public:
   
   void			SetGeom(int size, int d0, int d1=0, int d2=0, int d3=0, int d4=0)  
   { int d[5]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; d[4]=d4; SetGeom_(size, d);} 
-  // #CAT_Modify set geom for matrix
+  // #CAT_Modify set geom for matrix -- if matches current size, it is non-destructive 
   void			SetGeomN(const MatrixGeom& geom_) 
   { SetGeom_(geom_.size, geom_.el);}
-  // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify set geom for any sized matrix
+  // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify set geom for any sized matrix -- if matches current size, it is non-destructive 
   
   // Slicing -- NOTES: 
   // 1. slices are updated if parent allocation changes -- this could collapse slice to [0]
@@ -596,7 +596,7 @@ public:
   const T&		FastEl_Flat(int idx) const { return el[idx]; }
   
   T&			FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  { return el[FastElIndex(d0)]; }
+  { return el[FastElIndex(d0, d1, d2, d3, d4)]; }
   // #CAT_Access get element without range checking
   T&			FastElN(const MatrixGeom& indices)
   { return el[FastElIndexN(indices)]; }

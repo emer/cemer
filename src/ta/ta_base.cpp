@@ -2140,6 +2140,7 @@ ostream& taList_impl::OutputR(ostream& strm, int indent) const {
   for(i=0; i<size; i++) {
     if(el[i] == NULL) continue;
     ((TAPtr)el[i])->OutputR(strm, indent+1);
+    taMisc::FlushConsole();
   }
 
   taMisc::indent(strm, indent) << "}\n";

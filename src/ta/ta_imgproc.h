@@ -56,7 +56,7 @@ public:
   // scale image by given normalized scaling factors in each dimension
   virtual bool	RotateImage(float norm_deg, bool smooth=true);
   // rotate image by given normalized degrees (1 = 360deg)
-  virtual bool	TranslateImage(float dx, float dy, bool smooth=true);
+  virtual bool	TranslateImage(float move_x, float move_y, bool smooth=true);
   // translate image by given normalized factors (-1 = all the way left, +1 = all the way right, etc)
 
   void 	Initialize();
@@ -229,31 +229,38 @@ private:
 // 	taImageProc
 
 class TA_API taImageProc : public taOBase {
-  // ##CAT_Image basic image processing operations
+  // ##CAT_Image basic image processing operations; images are either rgb = 3 dimensional matrix with 3rd dim = 3 or greyscale (2 dim matrix)
 public:
 
-  static bool	RenderBorder(float_Matrix& img_data, bool one_avg=true);
-  // make a uniform border around image (either rgb=3 dim or grey=2 dim) -- makes off-screen stuff appear blank -- if one_avg, use a single average value for all edges; otherwise use separate averages for each edge (can produce corner contrast that is not necc good, but produces potentially less edge contrast)
+  static bool	RenderBorder_float(float_Matrix& img_data);
+  // make a uniform border 1 pixel wide around image, containing average value for that border region in original image: this value is what gets filled in when image is translated "off screen"
 
-  static void	GetWeightedPixels(float coord, int size, int* pc, float* pw);
-  // get pixel coordinates (pc[0], pc[1]) with norm weights (pw[0], [1]) for given floating coordinate coord
+  static void	GetWeightedPixels_float(float coord, int size, int* pc, float* pw);
+  // #IGNORE helper function: get pixel coordinates (pc[0], pc[1]) with norm weights (pw[0], [1]) for given floating coordinate coord
 
-  static bool	ScaleImageData(float_Matrix& scaled_img, float_Matrix& orig_img, float scale);
+  static bool   TranslateImage_float(float_Matrix& xlated_img, float_Matrix& orig_img, 
+				   float move_x, float move_y);
+  // move (translate) image by normalized move_x, move_y factors: 1 = center of image moves to right/top edge, -1 center moves to bottom/left
+  static bool	RotateImage_float(float_Matrix& rotated_img, float_Matrix& orig_img, float rotation);
+  // rotate the image: rotation = normalized 0-1 = 0-360 degrees 
+  static bool	ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_img, float scale);
   // change the size of the image by normalized scaling factor (either rgb=3 dim or grey=2 dim)
-  static bool	RotateImageData(float_Matrix& rotated_img, float_Matrix& orig_img, float rotation);
-  // rotate the image (either rgb=3 dim or grey=2 dim): rotation = normalized 0-1 = 0-360 degrees 
+  static bool   CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img, 
+				int crop_width, int crop_height);
+  // crop image to given size (-1 = use original image size), centered on the center of the image; border color of original image is used to fill in missing values
 
-  static bool	DoGFilterImage(float_Matrix& on_output, float_Matrix& off_output,
-			       float_Matrix& img_input, DoGRetinaSpec& spec,
-			       FloatTwoDCoord& img_ctr_off, FloatTwoDCoord& ret_ctr_off,
-			       bool superimpose = false);
-  // apply DoG filter to input image (either rgb=3 dim or grey=2 dim), result in output (on = + vals, off = - vals). img_ctr_off are normalized offsets from center of image, ret_ctr_off normalized offsets from center of retina, superimpose = add values into the outputs instead of overwriting
+  static bool	TransformImage_float(float_Matrix& xformed_img, float_Matrix& orig_img,
+				     float move_x=0.0, float move_y=0.0, float rotate=0.0,
+				     float scale=1, int crop_width=-1, int crop_height=-1);
+  // Transform an image by translation, rotation, scaling, and cropping, as determined by parameters (calls above functions; only if needed; if crop < 0 then no cropping); does RenderBorder for each step to preserve uniform background color
+  
+  static bool	DoGFilterRetina(float_Matrix& on_output, float_Matrix& off_output,
+				float_Matrix& retina_img, DoGRetinaSpec& spec,
+				bool superimpose = false);
+  // apply DoG filter to input image, result in output (on = + vals, off = - vals). superimpose = add values into the outputs instead of overwriting
 
-  static bool	DrawRetinaBox(float_Matrix& img_data, RetinalSpacingSpec& spacing,
-			      FloatTwoDCoord& img_ctr_off, FloatTwoDCoord& ret_ctr_off,
-			      float scale);
-  // Draw box in image data corresponding to paramters for RetinalSpacingSpec: img_ctr_off are normalized offsets from center of image, ret_ctr_off normalized offsets from center of retina
-
+  static bool	AttentionFilter(float_Matrix& mat, float radius_pct);
+  // apply an "attentional" filter to the matrix data: outside of radius, values are attenuated in proportion of squared distance outside of radius (r_sq / dist_sq) -- radius_pct is normalized proportion of maximum half-size of image (e.g., 1 = attention bubble extends to furthest edge of image; only corners are attenuated)
 
   void 	Initialize();
   void	Destroy();
@@ -283,43 +290,60 @@ public:
   virtual void	ConfigDataTable(DataTable* dt, bool new_cols = false);
   // #BUTTON configure a data table to hold all of the image data (if new_cols, reset any existing cols in data table before adding new ones)
 
+  ///////////////////////////////////////////////////////////////////////
+  // Basic filtering function: transforms image and then applies dog filters
+
   virtual bool	FilterImageData(float_Matrix& img_data, DataTable* dt,
-				float img_x_off=0, float img_y_off=0,
+				float move_x=0, float move_y=0,
 				float scale = 1.0f, float rotate = 0.0f,
-				float ret_x_off=0, float ret_y_off=0,
 				bool superimpose = false);
-  // filter image data into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), and with normalized retinal offset as specified, superimpose = merge into filter values into last row of table; otherwise new row is added
+  // filter image data into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), superimpose = merge into filter values into last row of table; otherwise new row is added
 
   virtual bool	FilterImage(taImage& img, DataTable* dt,
-			    float img_x_off=0, float img_y_off=0,
+			    float move_x=0, float move_y=0,
 			    float scale = 1.0f, float rotate = 0.0f,
-			    float ret_x_off=0, float ret_y_off=0,
 			    bool superimpose = false);
   // filter image into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), and with normalized retinal offset as specified, superimpose = merge into filter values into last row of table; otherwise new row is added
 
   virtual bool	FilterImageName(const String& img_fname, DataTable* dt,
-				float img_x_off=0, float img_y_off=0,
+				float move_x=0, float move_y=0,
 				float scale = 1.0f, float rotate = 0.0f,
-				float ret_x_off=0, float ret_y_off=0,
 				bool superimpose = false);
   // #BUTTON load image from file and filter into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), and with normalized retinal offset as specified, superimpose = merge into filter values into last row of table; otherwise new row is added
 
-  /*
-  virtual bool	FoveateImage(Event* toev, float box_ll_x, float box_ll_y, float box_ur_x, float box_ur_y,
-			     float scale = 1.0f, float rotate = 0.0f,
-			     float ret_x_off=0, float ret_y_off=0,
-			     float img_x_off=0, float img_y_off=0, bool add = false, bool attend=false);
-  // #MENU #FROM_GROUP_events filter current image into given event, with retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets
-  virtual bool	FilterImageBox(float img_x_off=0, float img_y_off=0, float scale = 1.0f,
-			       float rotate = 0.0f, float ret_x_off=0, float ret_y_off=0);
-  // #MENU draw filter boxes on current image, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), and with normalized retinal offset as specified
+  ///////////////////////////////////////////////////////////////////////
+  // Automatic foveation of an image based on a bounding box
 
-  virtual bool	FoveateImageBox(float box_ll_x, float box_ll_y, float box_ur_x, float box_ur_y,
-				float scale = 1.0f, float rotate = 0.0f,
-				float ret_x_off=0, float ret_y_off=0,
-				float img_x_off=0, float img_y_off=0);
-  // #MENU draw filter boxes current image, with retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets
-  */
+  virtual DoGRetinaSpec* FindFoveaSpec();
+  // utility function to find spec that corresponds to fovea (i.e., smallest input_size)
+
+  virtual bool	AttendFovea(DataTable* dt);
+  // apply attentional weighting filter to filtered values, with radius = fovea (vs full image)
+
+  virtual bool	FoveateImageData(float_Matrix& img_data, DataTable* dt,
+				 float box_ll_x, float box_ll_y,
+				 float box_ur_x, float box_ur_y,
+				 float move_x=0, float move_y=0,
+				 float scale = 1.0f, float rotate = 0.0f,
+				 bool superimpose = false, bool fill_retina = false,
+				 bool attend=false);
+  // filter image data into given datatable, with retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; fill_retina = scale to fit full retina instead of fovea; attend = apply attentional weighting filter
+  virtual bool	FoveateImage(taImage& img, DataTable* dt,
+			     float box_ll_x, float box_ll_y,
+			     float box_ur_x, float box_ur_y,
+			     float move_x=0, float move_y=0,
+			     float scale = 1.0f, float rotate = 0.0f,
+			     bool superimpose = false, bool fill_retina = false,
+			     bool attend=false);
+  // filter image data into given datatable, with retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; fill_retina = scale to fit full retina instead of fovea; attend = apply attentional weighting filter
+  virtual bool	FoveateImageName(const String& img_fname, DataTable* dt,
+				 float box_ll_x, float box_ll_y,
+				 float box_ur_x, float box_ur_y,
+				 float move_x=0, float move_y=0,
+				 float scale = 1.0f, float rotate = 0.0f,
+				 bool superimpose = false, bool fill_retina = false,
+				 bool attend=false);
+  // #BUTTON load image from file and filter into given datatable, with retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; fill_retina = scale to fit full retina instead of fovea; attend = apply attentional weighting filter
 
   // todo: need a checkconfig here..
 

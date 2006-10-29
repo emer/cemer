@@ -1,19 +1,19 @@
 leabra todo list:
 
+* taImageProc class w/ highvis stuff: first extract retina then send to dog filter.
+
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
-* add Data static call and imgproc static call progs
-
 * add data guys to prog toolbox: maybe a 2nd panel??
-
-* taImageProc class w/ highvis stuff
 
 * extrew in trial monitor seems not to be working: 12ax demo
 
 * add "print" Progel?
 
 * encase programs in struct update brackets to prevent updating
+
+* css_console.cpp: complete obj.mbr expressions..
 
 ---------
 

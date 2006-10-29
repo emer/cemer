@@ -762,6 +762,7 @@ ostream& taPtrList_impl::Indenter(ostream& strm, const String& itm, int no, int 
   strm << itm << " ";
   if((no+1) % prln == 0) {
     strm << "\n";
+    taMisc::FlushConsole();
     return strm;
   }
   int len = strlen(itm) + 1;
@@ -1278,6 +1279,10 @@ void taArray_impl::List(ostream& strm) const {
   int i;
   for(i=0;i<size;i++) {
     strm << " " << El_GetStr_(FastEl_(i)) << ",";
+    if(i+1 % 8 == 0) {
+      strm << endl;
+      taMisc::FlushConsole();
+    }
   }
   strm << "}";
 }

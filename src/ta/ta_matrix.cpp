@@ -114,8 +114,9 @@ String MatrixGeom::GeomToString() const {
   return rval;
 }
 
-void MatrixGeom::EnforceSize(int new_sz) {
-  if ((new_sz < 0) || (new_sz >= TA_MATRIX_DIMS_MAX)) return;
+bool MatrixGeom::EnforceSize(int new_sz) {
+  if ((new_sz < 0) || (new_sz >= TA_MATRIX_DIMS_MAX)) return false;
+  if(size == new_sz) return false;
   // zero out orphaned old elements
   for (int i = size - 1; i >= new_sz; --i)
     el[i] = 0;
@@ -123,6 +124,7 @@ void MatrixGeom::EnforceSize(int new_sz) {
   for (int i = size; i < new_sz; ++i)
     el[i] = 0;
   size = new_sz;
+  return true;
 }
 
 bool MatrixGeom::Equal(const MatrixGeom& other) const {
@@ -668,6 +670,10 @@ void taMatrix::List(ostream& strm) const {
   int i;
   for(i=0;i<size;i++) {
     strm << " " << El_GetStr_(FastEl_Flat_(i)) << ",";
+    if((i+1) % 8 == 0) {
+      strm << endl;
+      taMisc::FlushConsole();
+    }
   }
   strm << "}";
 }
@@ -806,23 +812,32 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   bool valid = GeomIsValid(dims_, geom_, &err_msg);
   Check(valid, err_msg);
   
-  //NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
+  // NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
-  geom.EnforceSize(dims_);
+  bool changed = geom.EnforceSize(dims_);
   for (int i = 0; i < (dims_ - 1) ; ++i) {
-    geom[i] = geom_[i];
+    if(geom[i] != geom_[i]) {
+      changed = true;
+      geom[i] = geom_[i];
+    }
   }
 
   // assign storage if not fixed
   if (isFixedData()) {
-    UpdateSlices_Collapse();
-    geom[dims_-1] = geom_[dims_-1];
-    size = geom.Product();
+    if(geom[dims_-1] != geom_[dims_-1]) {
+      changed = true;
+      geom[dims_-1] = geom_[dims_-1];
+    }
+    if(changed) {
+      UpdateSlices_Collapse();
+      size = geom.Product();
+    }
   } else {
     // if flex case, we skip this step -- it will stay zero on new, or retain value if data exists
     if (geom_[dims_-1] != 0) {
       // exact value case
       geom[dims_-1] = 0; // next step actually sets
+      // todo: should use "changed" flag to reset??
       EnforceFrames(geom_[dims_-1]); // does nothing if outer dim==0
     }
   }
