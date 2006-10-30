@@ -23,7 +23,7 @@
 #include "ta_geometry.h"
 #include "ta_datatable.h"
 
-#ifdef TA_GUI
+#if defined(TA_GUI) && !defined(__MAKETA__)
 # include <QImage>
 #endif
 

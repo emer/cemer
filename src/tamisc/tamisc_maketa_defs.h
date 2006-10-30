@@ -57,7 +57,17 @@ public:
 	int dummy; // #IGNORE
 };
 
+class SoShape: public SoNode {
+public:
+	int dummy; // #IGNORE
+};
+
 class SoSeparator: public SoGroup {
+public:
+	int dummy; // #IGNORE
+};
+
+class SoImage: public SoShape {
 public:
 	int dummy; // #IGNORE
 };

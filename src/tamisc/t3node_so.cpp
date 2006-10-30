@@ -610,13 +610,6 @@ SoMFVec3f& SoFrame::vertex() {
 //   SoImageEx		//
 //////////////////////////
 
-int32_t SoImageEx_numVtx[10] = { // hor (ver)
-  10, // bottom
-  4, 4, 4, 4, // outside: l, bk, r, fr
-  10, // top
-  4, 4, 4, 4 // inside:  l, bk, r, fr
-};
-
 SO_NODE_SOURCE(SoImageEx);
 
 void SoImageEx::initClass()
@@ -629,19 +622,22 @@ SoImageEx::SoImageEx() {
 }
 
 void SoImageEx::setImage(const QImage& src) {
+  if (src.isGrayscale())
+    setImage2(src);
+  else 
+    setImage3(src);
 }
 
 void SoImageEx::setImage(const float_Matrix& src) {
   int dims = src.dims(); //cache
   if (dims == 2) {
     setImage2(src);
-  } else if (((dims == 3) && (dim(2) == 3)) { 
+  } else if (((dims == 3) && (src.dim(2) == 3))) { 
     setImage3(src);
-  else { 
+  } else { 
     taMisc::Error("SoImageEx::setImage: must be grey or rgb matrix");
     return;
   }
-    
 }
 
 void SoImageEx::setImage2(const float_Matrix& src) {
@@ -656,7 +652,7 @@ void SoImageEx::setImage2(const float_Matrix& src) {
       ++idx;
     }
   }
-  image.setValue(SbVec2i(dx, dy), 1, img.data());
+  image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
 }
 
 void SoImageEx::setImage2(const QImage& src) {
@@ -671,7 +667,7 @@ void SoImageEx::setImage2(const QImage& src) {
       ++idx;
     }
   }
-  image.setValue(SbVec2i(dx, dy), 1, img.data());
+  image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
 }
 
 void SoImageEx::setImage3(const float_Matrix& src) {
@@ -688,7 +684,7 @@ void SoImageEx::setImage3(const float_Matrix& src) {
       img.FastEl_Flat(idx++) = (byte)(src.FastEl(x, y, 2) * 255);
     }
   }
-  image.setValue(SbVec2i(dx, dy), 3, img.data());
+  image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
 }
 
 void SoImageEx::setImage3(const QImage& src) {
@@ -707,6 +703,6 @@ void SoImageEx::setImage3(const QImage& src) {
       img.FastEl_Flat(idx++) = (byte)(qBlue(rgb));
     }
   }
-  image.setValue(SbVec2i(dx, dy), 3, img.data());
+  image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
 }
 

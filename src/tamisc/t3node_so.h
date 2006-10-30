@@ -34,6 +34,7 @@
 #include <Inventor/fields/SoSFVec2f.h>
 #include <Inventor/fields/SoMFVec3f.h>
 #include <Inventor/nodes/SoGroup.h>
+#include <Inventor/nodes/SoImage.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTriangleStripSet.h>
 #endif
@@ -354,6 +355,8 @@ typedef SoImage inherited;
   SO_NODE_HEADER(SoImageEx);
 #endif // def __MAKETA__
 
+  static void		initClass();
+  
   void		setImage(const QImage& src);
   void		setImage(const float_Matrix& src);
     // grey: X,Y; rgb: X,Y,[rgb]
@@ -362,48 +365,11 @@ typedef SoImage inherited;
 protected:
   byte_Matrix	img;
   
+  void		setImage2(const QImage& src);
+  void		setImage3(const QImage& src);
   void		setImage2(const float_Matrix& src);
   void		setImage3(const float_Matrix& src);
 };
-
-/*obs
-class TAMISC_API SoFrame: public SoSeparator { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
-#ifndef __MAKETA__
-typedef SoSeparator inherited;
-
-  SO_NODE_HEADER(SoFrame);
-#endif // def __MAKETA__
-public:
-  enum Orientation {
-    Hor,	// lies flat in x-z plane
-    Ver		// lies flat in x-y plan
-  };
-
-  static void		initClass();
-
-  float		base; //note: these could be fields
-  float		height;
-  float		depth;
-  float		inset; // #DEF_0.05
-  Orientation	orientation; // #DEF_Hor
-
-  void		setDimensions(float bs, float ht, float dp, float in);
-  void		setOrientation(Orientation ori);
-  SoFrame(Orientation ori = Hor);
-
-protected:
-  static int	numVertices[4]; // #IGNORE
-
-  const char*  	getFileFormatName() const {return SoSeparator::getFileFormatName();} // override
-  void 		render(); // #IGNORE
-  void 		renderH(); // #IGNORE
-  void 		renderV(); // #IGNORE
-private:
-  SoCoordinate3*	coords_; // #IGNORE
-  SoTriangleStripSet*	tss_; // #IGNORE
-  SoRotation*		rot_; // #IGNORE -- temp solution for ver/hor
-};
-*/
 
 
 #endif
