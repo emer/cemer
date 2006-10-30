@@ -19,6 +19,7 @@
 
 #include "datatable.h"
 
+
 #ifdef TA_GUI
 #  include "datatable_qtso.h"
 #endif
@@ -1441,29 +1442,52 @@ void GridColViewSpec::BuildFromDataArray_impl(bool first){
   InitDisplayParams();
 }
 
+float GridColViewSpec::blockSize() const {
+  GridTableViewSpec* par = parent();
+  if (par) return par->block_size;
+  else return 4.0f;
+}
+
+float GridColViewSpec::blockBorderSize() const {
+  GridTableViewSpec* par = parent();
+  if (par) return par->block_border_size;
+  else return 1.0f;
+}
+
 void GridColViewSpec::InitDisplayParams() {
+  DataArray_impl* dc = dataCol(); // cache
+  // cache some params
+  float bsz = blockSize() / t3Misc::char_pts_per_so_unit; 
+  float bbsz = blockBorderSize() / t3Misc::char_pts_per_so_unit; 
+  // get 2d equivalent cell geom values
+  iVec2i cg;
+  dc->Get2DCellGeom(cg);
+  //note: cell geom is 
 //TODO: col widths
   row_height = 0.0f;
-  col_width = 0.0f;
+  //make a first-stab at col width as being the text width of the col
+  col_width = (font.pointSize * text_width)  / t3Misc::char_pts_per_so_unit;
   // start by calculating text height
   if (display_style & TEXT_MASK) {
     // row height, and number of rows
-//TODO: need to handle matrix cells
-    row_height = font.pointSize / t3Misc::pts_per_so_unit;
-    col_width = (font.pointSize * text_width)  / t3Misc::char_pts_per_so_unit;
+    row_height = (font.pointSize / t3Misc::pts_per_so_unit) * cg.y;
+//TODO: need to handle matrix cells in x direction
+  //  col_width = (font.pointSize * text_width)  / t3Misc::char_pts_per_so_unit;
   }
   if (display_style & TEXT_AND_BLOCK) {
     row_height += 0.0f;
 //TODO: space between text and block
   }
   if (display_style & BLOCK_MASK) {
-    row_height += 0.0f; //TODO: block size
-    float block_width = 0.0f; // TODO
+    
+    row_height += ((bsz + bbsz) * cg.y) + bbsz;
+    float block_width =((bsz + bbsz) * cg.x) +
+        bbsz;
     col_width = MAX(col_width, block_width);
   }
   if (display_style & IMAGE) {
     row_height = 0.0f; //TODO: image size
-    col_width =  0.0f;
+    //TODO col_width = ;
   }
   
 }
@@ -1479,12 +1503,16 @@ void GridColViewSpec::setFont(const FontSpec& value) {
 
 void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
+  block_size = 4.0f;
+  block_border_size = 1.0f;
 }
 
 void GridTableViewSpec::Destroy() {
 }
 
 void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
+  block_size = cp.block_size;
+  block_border_size = cp.block_border_size;
 }
 
 void GridTableViewSpec::UpdateAfterEdit_impl(){

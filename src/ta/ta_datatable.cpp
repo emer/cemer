@@ -168,6 +168,15 @@ bool DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
   } else return inherited::Dump_QuerySaveMember(md);
 }
 
+void DataArray_impl::Get2DCellGeom(iVec2i& r) {
+  r.x = 1;
+  r.y = 1;
+  if (isMatrix()) {
+    r.x = cell_geom.SafeEl(0);
+    r.y = MAX(r.y, cell_geom.SafeEl(1));
+  }
+}
+
 const KeyString DataArray_impl::key_val_type("val_type");
 const KeyString DataArray_impl::key_disp_opts("disp_opts");
 

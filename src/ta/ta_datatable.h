@@ -16,6 +16,8 @@
 #ifndef TA_DATATABLE_H
 #define TA_DATATABLE_H
 
+#include "igeometry.h"
+
 #include "ta_fontspec.h"
 #include "ta_group.h"
 #include "ta_matrix.h"
@@ -26,7 +28,6 @@
 #ifndef __MAKETA__
 # include <QAbstractTableModel> 
 #endif
-
 
 // forwards this file
 
@@ -101,8 +102,9 @@ public:
   // #CAT_Access for matrix type, number of elements in each cell
   virtual int		cell_dims() const { return cell_geom.size; }
   // #CAT_Access for matrix type, number of dimensions in each cell
-  virtual int		GetCellGeom(int dim) const { return cell_geom.SafeEl(dim); }
-  // #CAT_Access for matrix type, size of given dim
+  virtual int		GetCellGeom(int dim) const { return cell_geom.SafeEl(dim); } // #CAT_Access for matrix type, size of given dim
+  void			Get2DCellGeom(iVec2i& result); // #IGNORE for rendering routines, provides standardized 2d geom (1x1 for scalar cells)
+  
   int			rows() const { return AR()->frames(); }
   // #CAT_Access total number of rows of data within this column
 

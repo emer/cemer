@@ -18,6 +18,7 @@
 #include "datatable_qtso.h"
 
 // stuff to implement graphical view of datatable
+#include "igeometry.h"
 
 #include "ta_qtgroup.h"
 #include "ta_qtclipdata.h"
@@ -123,6 +124,7 @@ void TableView::UpdateAfterEdit_impl() {
   if (!isVisible()) return;
   InitViewSpec();
   InitDisplay();
+  ViewRangeChanged();
 }
 
 void TableView::ClearData() {
@@ -391,8 +393,6 @@ void GridTableView::Initialize() {
   tot_col_widths = 0.00001f; //avoid /0
   
 //from GTV
-  block_size = 8;
-  block_border_size = 1;
   header_on = true;
   auto_scale = false;
   scale_range.min = -1.0f;
@@ -404,6 +404,7 @@ void GridTableView::Initialize() {
 void GridTableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(col_range, this);
+  taBase::Own(scale, this);
   taBase::Own(scale_range,this);
   taBase::Own(actual_range,this);
   taBase::Own(view_spec, this);
@@ -415,7 +416,7 @@ void GridTableView::CutLinks() {
   view_spec.CutLinks();
   actual_range.CutLinks();
   scale_range.CutLinks();
-  colorspec = NULL; // unlink
+  scale.CutLinks();
   col_range.CutLinks();
   inherited::CutLinks();
 }
@@ -423,12 +424,10 @@ void GridTableView::CutLinks() {
 void GridTableView::Copy_(const GridTableView& cp) {
   col_bufsz = cp.col_bufsz;
   col_range = cp.col_range;
-  block_size = cp.block_size;
-  block_border_size = cp.block_border_size;
   header_on = cp.header_on;
   auto_scale = cp.auto_scale;
   scale_range = cp.scale_range;
-  colorspec = cp.colorspec;
+  scale = cp.scale;
   actual_range = cp.actual_range;
   view_spec = cp.view_spec;
 }
@@ -522,7 +521,9 @@ void GridTableView::InitDisplay_impl() {
   if (!header_on) RemoveHeader();
   CalcViewMetrics();
   view_range.max = MIN(view_bufsz, (rows() - 1));
+  scale.SetMinMax(scale_range.min, scale_range.max);
   InitPanel();
+  RenderHeader();
 }
 /*TODO: this is basis of DataChange_NewRows
 void GridTableView::DataRowsAdded() {
@@ -581,11 +582,12 @@ void GridTableView::RenderHeader() {
   hdr->addChild(fnt);
 
   taListItr itr;
-  int col = 0;
+  int col = -1;
   GridColViewSpec* vs;
   FOR_ITR_EL(GridColViewSpec, vs, tvs->col_specs., itr) {
+    ++col;
     if ((!vs->visible) || (!vs->dataCol())) continue;
-    if (col < col_range.min) { ++col; continue;}
+    if (col < col_range.min) continue;
     if (col > col_range.max) break;
     SoTranslation* tr = new SoTranslation();
     hdr->addChild(tr);
@@ -597,7 +599,6 @@ void GridTableView::RenderHeader() {
     SoAsciiText* txt = new SoAsciiText();
     hdr->addChild(txt);
     txt->string.setValue(vs->GetDisplayName().chars());
-    ++col;
   }
   node_so->header()->addChild(hdr);
 }
@@ -611,38 +612,114 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   SoSeparator* ln = new SoSeparator();
 
   taListItr itr;
-  int col = 0;
+  int col = -1;
   GridColViewSpec* vs;
   DataTable* dt = dataTable(); //cache
   String el;
   FOR_ITR_EL(GridColViewSpec, vs, tvs->col_specs., itr) {
+    col++; // lets us continue at any point
     DataArray_impl* data_array = vs->dataCol();
     if ((!vs->visible) || (!data_array)) continue;
-    if (col < col_range.min) {++col; continue;}
+    if (col < col_range.min) continue;
     if (col > col_range.max) break;
+    
+    //calculate the actual col row index, for the case of a jagged data table
+    int act_idx; // <0 for null
+    dt->idx(data_row, data_array->rows(), act_idx);
+    
+    // translate the row and col to proper location
+    // new origin will be top-left of row
     SoTranslation* tr = new SoTranslation();
     ln->addChild(tr);
+    // 1st tr places origin for the row
     if (col == col_range.min) { // translation is relative to 0,0
-      tr->translation.setValue(0.0f, 
-        geom.z - ((row_height * (view_idx + 1)) + head_height), 0.0f);
+      tr->translation.setValue(
+        0.0f, 
+        geom.z - head_height - frame_inset - (row_height * view_idx),
+        0.0f);
     } else {
       tr->translation.setValue(colWidth(col - 1), 0.0f, 0.0f);
     }
+    
+    // cache 2d-equivalent geom info, and render according to col style
+    iVec2i cg;
+    data_array->Get2DCellGeom(cg); 
     if (vs->display_style & GridColViewSpec::TEXT_MASK) {
+      //TODO: mat cells
     //TODO: add a font, if col font differs from main font
-      int act_idx;
-      //calculate the actual view_idx index, for the case of a jagged data tables
-      if (dt->idx(data_row, data_array->rows(), act_idx)) {
+      SoSeparator* txt_sep = new SoSeparator;
+      ln->addChild(txt_sep);
+      tr = new SoTranslation;
+      txt_sep->addChild(tr);
+      // text origin is bottom left, and we want to center when 
+      // height is greater than txt height
+      float offs = ((row_height - vs->row_height) / 2) + vs->row_height;
+      tr->translation.setValue(0.0f, -offs, 0.0f);
+      if (act_idx >= 0) {
         el = data_array->GetValAsString(act_idx);
       } else {
         el = "n/a";
       }
       SoAsciiText* txt = new SoAsciiText();
-      ln->addChild(txt);
+      txt_sep->addChild(txt);
       txt->string.setValue(el.chars());
     }
-    //TODO: grid stuff
-    ++col;
+    // if val is NULL, just skip rendering remaining col types
+    if (act_idx < 0) continue;
+    
+    if (vs->display_style & GridColViewSpec::TEXT_AND_BLOCK) {
+      //TODO: space
+    }
+    if (vs->display_style & GridColViewSpec::BLOCK_MASK) {
+      float bsz = vs->blockSize() / t3Misc::char_pts_per_so_unit; 
+      float bbsz = vs->blockBorderSize() / t3Misc::char_pts_per_so_unit; 
+      SoSeparator* blk = new SoSeparator;
+      ln->addChild(blk);
+      // if using border, create it first
+      
+      T3Color col;
+      iVec2i c; // index coords
+      //note: accessor uses a linear cell value; 
+      // for TOP_ZERO, this can just iterate from zero
+      // for BOT_ZERO we need to massage it
+      int cell = 0; // accessor just uses a linear cell value
+      for (c.y = 0; c.y < cg.y; ++c.y) {
+        if (vs->layout == GridColViewSpec::BOT_ZERO)
+          cell = cg.x * (cg.y - c.y - 1);
+        SoSeparator* blk_ln = new SoSeparator;
+        blk->addChild(blk_ln);
+        // add line trans 
+        SoTranslation* tr = new SoTranslation();
+        blk_ln->addChild(tr);
+        tr->translation.setValue(
+          bbsz + (bsz / 2), // offset border plus cube center
+          - (bbsz + ((bsz + bbsz)* c.y) + (bsz / 2)), 0.0f);
+        for (c.x = 0; c.x < cg.x; ++c.x) {
+          // add block trans
+          if (c.x > 0) {
+            tr = new SoTranslation();
+            blk_ln->addChild(tr);
+            tr->translation.setValue((bsz + bbsz), 0.0f, 0.0f);
+          }
+          SoBaseColor* bc = new SoBaseColor;
+          blk_ln->addChild(bc);
+          float val = data_array->GetValAsFloatM(act_idx, cell);
+          //NOTE: following a bit dangerous, but should never be null
+          col = *(scale.GetColor(val));
+          bc->rgb = (SbColor)col;
+//TEMP
+//val = cell / float(cg.x * cg.y);
+//bc->rgb.setValue(val, val, val);
+          SoCube* cu = new SoCube;
+          cu->width = bsz;
+          cu->height = bsz;
+          cu->depth = 0.0f;
+          blk_ln->addChild(cu);
+          ++cell;
+        }
+      }        
+    }
+    //TODO: image stuff
   }
   node_so->body()->addChild(ln);
 }
@@ -684,14 +761,9 @@ void GridTableView::Reset_impl() {
   inherited::Reset_impl();
 }
 
-void GridTableView::SetBlockSizes(int block_sz, int border_sz) {
-  block_size = block_sz;
-  block_border_size = border_sz;
-  UpdateAfterEdit();
-}
-
-void GridTableView::SetColorSpec(ColorScaleSpec* colors) {
-  colorspec = colors;
+void GridTableView::SetBlockSizes(float block_sz, float border_sz) {
+  view_spec.block_size = block_sz;
+  view_spec.block_border_size = border_sz;
   UpdateAfterEdit();
 }
 

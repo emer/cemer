@@ -21,8 +21,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qtclassbrowse.h \
 	@abs_srcdir@/ta_qtgroup.h \
 	@abs_srcdir@/ta_seledit.h \
-	@abs_srcdir@/ta_program_qt.h \
-	@abs_srcdir@/../taiqtso/igeometry.h
+	@abs_srcdir@/ta_program_qt.h 
 
 HEADS_GUI =\
 	ta_plugin.h \
@@ -70,6 +69,7 @@ SRCS_GUI =\
 endif
 
 TAHEADS =\
+	@abs_srcdir@/../taiqtso/igeometry.h \
 	@abs_srcdir@/ios-g++-3.1/streambuf.h \
 	@abs_srcdir@/ios-g++-3.1/iostream.h \
 	@abs_srcdir@/ios-g++-3.1/fstream.h \

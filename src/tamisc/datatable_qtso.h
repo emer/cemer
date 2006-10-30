@@ -133,12 +133,10 @@ public:
   MinMaxInt	col_range;	// column range that is visible
   float		tot_col_widths; // total of all (visible) col_widths
 
-  int		block_size;	// *maximum* block size -- blocks will be smaller if needed to fit
-  int		block_border_size; // size of the border around the blocks
   bool		header_on;	// is the table header visible?
   bool		auto_scale;	// whether to auto-scale on color block values or not
   
-  ColorScaleSpecRef colorspec; 	// The color spectrum for this display
+  ColorScale	scale; 		// The color scale for this display
   MinMax        scale_range;	// #HIDDEN range of scalebar
   MinMaxInt	actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
 
@@ -153,14 +151,12 @@ public:
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
   T3GridTableViewNode* node_so() const {return (T3GridTableViewNode*)m_node_so.ptr();}
 
-  virtual void 	SetColorSpec(ColorScaleSpec* colors);
-  // #MENU #MENU_ON_Actions #NULL_OK #MENU_SEP_BEFORE set the color spectrum to use for color-coding values (NULL = use default)
   virtual void	SetBlockFill(
     GridColViewSpec::BlockColor color = GridColViewSpec::COLOR,
     GridColViewSpec::BlockFill fill = GridColViewSpec::FILL);
   // #MENU set the fill style of the grid blocks
-  virtual void	SetBlockSizes(int block_sz = 8, int border_sz = 1);
-  // #MENU set the MAXIMUM sizes of the blocks (could be smaller), and the border space between blocks
+  virtual void	SetBlockSizes(float block_sz = 4.0f, float border_sz = 1.0f);
+  // #MENU set the MAXIMUM sizes of all blocks (could be smaller), and the border space between blocks
 
   virtual void		SetViewFontSize(int point_size = 10);
   // #MENU #MENU_SEP_BEFORE set the point size of the font used for labels in the display
@@ -200,6 +196,7 @@ protected:
   virtual void		RenderHeader();
   virtual void		RenderLines(); // render all the view_range lines
   virtual void		RenderLine(int view_idx, int data_row); // add indicated line
+
 // view control:
   override void		ClearViewRange();
   

@@ -27,6 +27,9 @@
 // forwards this file
 
 class ClustNode; //
+class GridColViewSpec;
+class GridTableViewSpec;
+
 
 // todo: move float_RArray to v3compat
 // remaining dependencies:
@@ -366,7 +369,7 @@ public:
   DisplayStyle  display_style;	// can display as text and/or block, or image
   int		text_width;	// #CONDEDIT_ON_display_style:TEXT for text cols, width of the column in chars
   FontSpec	font; // font for this column
-  MatrixLayout	layout;	// #EXPERT #CONDEDIT_OFF_display_style:TEXT layout of matrix cells
+  MatrixLayout	layout;	// #CONDEDIT_OFF_display_style:TEXT layout of matrix cells
   BlockColor	block_color; // #CONDEDIT_OFF_display_style:TEXT,IMAGE color of matrix cells
   BlockFill	block_fill; // #CONDEDIT_OFF_display_style:TEXT,IMAGE fill of matrix cells
   bool		scale_on; // #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
@@ -374,7 +377,11 @@ public:
   float 	col_width; // #READ_ONLY #DETAIL #NO_SAVE calculated col_width 
   float		row_height; // #READ_ONLY #DETAIL #NO_SAVE calculated row height
 
+  float		blockSize() const; // block size, in points
+  float		blockBorderSize() const; // block borader size, in points
   override void		setFont(const FontSpec& value);
+  DATAVIEW_PARENT(GridTableViewSpec)
+//GridColView*  parent() const;
   
   void	InitLinks();
   void	CutLinks();
@@ -393,6 +400,8 @@ class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
 INHERITED(DataTableViewSpec)
 public:
+  float		block_size;	// #DEF_4 *maximum* block size, in points (blocks may be smaller if needed to fit)
+  float		block_border_size; // #DEF_1 size of the border around the blocks, in points
 
   inline int		colSpecCount() const {return col_specs.size;}
   GridColViewSpec*	colSpec(int idx) const 
