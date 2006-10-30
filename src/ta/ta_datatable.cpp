@@ -703,6 +703,10 @@ DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
     }
     if(da->cell_dims() != dims) {
       da->cell_geom.SetGeom(dims, d0, d1, d2, d3, d4);
+      if(dims == 0)
+	da->is_matrix = false;
+      else
+	da->is_matrix = true;
       da->Init();		// asserts geom
       da->EnforceRows(rows);	// keep row-constant
     }
@@ -956,10 +960,6 @@ int DataTable::LoadHeader(istream& strm, const char* delim) {
 int DataTable::LoadDataRow(istream& strm, const char* delim, bool quote_str) {
   StructUpdate(true);
   bool added_row = false;
-  if(data.size > 0) {
-    AddBlankRow();
-    added_row = true;
-  }
   int last_mat_col = -1;
   int col = 0;
   int c;
@@ -970,13 +970,14 @@ int DataTable::LoadDataRow(istream& strm, const char* delim, bool quote_str) {
     if(str == "_H:") {
       c = LoadHeader(strm, delim);
       if(c == EOF) break;
-      if(!added_row) {
-	AddBlankRow();		// first one didn't work: no cols!
-	added_row = true;
-      }
       continue;
     }
     if(str == "_D:") continue;
+    // at this point it is safe to add a row -- load header already called
+    if(!added_row) {
+      AddBlankRow();		
+      added_row = true;
+    }
     int use_col = col;
     if(load_col_idx.size > 0) {
       use_col = load_col_idx[col];
