@@ -23,22 +23,20 @@
 #include "ta_geometry.h"
 #include "ta_datatable.h"
 
-#ifndef __MAKETA__
-#include <QImage>
-#else
-class QImage; // #IGNORE
+#ifdef TA_GUI
+# include <QImage>
 #endif
 
 class TA_API taImage : public taNBase {
   // ##CAT_Image represents an image in TA accessible way (wrapper for QT's QImage)
   INHERITED(taNBase)
 public:
- 
+#ifdef TA_GUI
   QImage&  	GetImage() { return q_img; }
   // get the underlying qt image
-  void  	SetImage(QImage& img) { q_img = img; }
+  void  	SetImage(const QImage& img) { q_img = img; }
   // set the underlying qt image
-
+#endif
   virtual bool	LoadImage(const String& fname);
   // load the image from given file name
 
@@ -65,7 +63,9 @@ public:
   COPY_FUNS(taImage, inherited);
   TA_BASEFUNS(taImage);
 protected:
+#ifdef TA_GUI
   QImage	q_img;
+#endif
 };
 
 class TA_API DoGFilterSpec : public taNBase {

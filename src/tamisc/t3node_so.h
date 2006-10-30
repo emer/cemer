@@ -16,10 +16,11 @@
 #ifndef T3NODE_SO_H
 #define T3NODE_SO_H
 
-#include "tamisc_def.h"
-
 #include "icolor.h"
 #include "igeometry.h"
+#include "ta_matrix.h"
+
+#include "tamisc_def.h"
 
 #ifdef __MAKETA__
 //dummy defines
@@ -344,6 +345,27 @@ protected:
   void 		renderH(); // #IGNORE
   void 		renderV(); // #IGNORE
 };
+
+class TAMISC_API SoImageEx: public SoImage { 
+// ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer
+#ifndef __MAKETA__
+typedef SoImage inherited;
+
+  SO_NODE_HEADER(SoImageEx);
+#endif // def __MAKETA__
+
+  void		setImage(const QImage& src);
+  void		setImage(const float_Matrix& src);
+    // grey: X,Y; rgb: X,Y,[rgb]
+  
+  SoImageEx();
+protected:
+  byte_Matrix	img;
+  
+  void		setImage2(const float_Matrix& src);
+  void		setImage3(const float_Matrix& src);
+};
+
 /*obs
 class TAMISC_API SoFrame: public SoSeparator { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
 #ifndef __MAKETA__

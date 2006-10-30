@@ -63,6 +63,7 @@ class	Q3HButtonGroup;		// #IGNORE
 class	Q3Header;		// #IGNORE 
 class	QHostAddress;		// #IGNORE
 class	QIcon;			// #IGNORE
+class	QImage;			// #IGNORE
 class	QItemDelegate;		// #IGNORE
 class	QLabel;			// #IGNORE 
 class	QLayout;		// #IGNORE 

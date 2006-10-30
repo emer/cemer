@@ -29,6 +29,8 @@
 
 #include "t3node_so.h"
 
+#include <QImage>
+
 #include <Inventor/SbLinear.h>
 #include <Inventor/SbName.h>
 #include <Inventor/errors/SoDebugError.h>
@@ -604,212 +606,107 @@ SoMFVec3f& SoFrame::vertex() {
 }
 
 
-/*obs
-int SoFrame::numVertices[4] = {10, 10, 10, 10};
+//////////////////////////
+//   SoImageEx		//
+//////////////////////////
 
-SO_NODE_SOURCE(SoFrame);
+int32_t SoImageEx_numVtx[10] = { // hor (ver)
+  10, // bottom
+  4, 4, 4, 4, // outside: l, bk, r, fr
+  10, // top
+  4, 4, 4, 4 // inside:  l, bk, r, fr
+};
 
-void SoFrame::initClass()
+SO_NODE_SOURCE(SoImageEx);
+
+void SoImageEx::initClass()
 {
-  SO_NODE_INIT_CLASS(SoFrame, SoSeparator, "SoSeparator");
+  SO_NODE_INIT_CLASS(SoImageEx, SoImage, "SoImage");
 }
 
-SoFrame::SoFrame(Orientation ori) {
-  SO_NODE_CONSTRUCTOR(SoFrame);
-
-  base = height = 1.0f;
-  depth = 0.1f;
-  inset = 0.05f;
-  orientation = ori;
-  if (ori == Ver) {
-    rot_ = new SoRotation();
-    rot_->rotation.setValue(SbVec3f(1, 0, 0), PI / 2);
-    this->addChild(rot_);
-  } else rot_ = NULL;
-  coords_ = new SoCoordinate3();
-  coords_->point.setNum(40);
-  this->addChild(coords_);
-  tss_ = new SoTriangleStripSet();
-  tss_->numVertices.setValues(0, 4, numVertices);
-  this->addChild(tss_);
-  render();
+SoImageEx::SoImageEx() {
+  SO_NODE_CONSTRUCTOR(SoImageEx);
 }
 
-void SoFrame::render() {
-  renderH();
-/ *  switch (orientation) {
-  case Hor: renderH(); break;
-  case Ver: renderV(); break;
-  } * /
+void SoImageEx::setImage(const QImage& src) {
 }
 
-void SoFrame::renderH() {
-  float w2 = base / 2.0f;
-  float d2 = depth / 2.0f;
-  float h2 = height / 2.0f;
-  SoMFVec3f& p = coords_->point;
-  int i = 0;
-  p.startEditing();
-    // bottom
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++,-(w2-inset),-d2, (h2-inset));
-    p.set1Value(i++, w2,-d2, h2);
-    p.set1Value(i++, (w2-inset),-d2, (h2-inset));
-    p.set1Value(i++, w2,-d2,-h2);
-    p.set1Value(i++, (w2-inset),-d2,-(h2-inset));
-    p.set1Value(i++,-w2,-d2,-h2);
-    p.set1Value(i++,-(w2-inset),-d2,-(h2-inset));
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++,-(w2-inset),-d2, (h2-inset));
-    //outside
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++,-w2, d2, h2);
-    p.set1Value(i++,-w2,-d2,-h2);
-    p.set1Value(i++,-w2, d2,-h2);
-    p.set1Value(i++, w2,-d2,-h2);
-    p.set1Value(i++, w2, d2,-h2);
-    p.set1Value(i++, w2,-d2, h2);
-    p.set1Value(i++, w2, d2, h2);
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++,-w2, d2, h2);
-    // top
-    p.set1Value(i++,-w2, d2, h2);
-    p.set1Value(i++,-(w2-inset), d2, h2-inset);
-    p.set1Value(i++,-w2, d2,-h2);
-    p.set1Value(i++,-(w2-inset), d2,-(h2-inset));
-    p.set1Value(i++, w2, d2,-h2);
-    p.set1Value(i++, (w2-inset), d2,-(h2-inset));
-    p.set1Value(i++, w2, d2, h2);
-    p.set1Value(i++, (w2-inset), d2, (h2-inset));
-    p.set1Value(i++,-w2, d2, h2);
-    p.set1Value(i++,-(w2-inset), d2, h2-inset);
-    // inside
-    w2 -= inset;
-    h2 -= inset;
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++, w2, d2, h2);
-    p.set1Value(i++, w2,-d2, h2);
-    p.set1Value(i++, w2, d2,-h2);
-    p.set1Value(i++, w2,-d2,-h2);
-    p.set1Value(i++,-w2, d2,-h2);
-    p.set1Value(i++,-w2,-d2,-h2);
-    p.set1Value(i++,-w2, d2, h2);
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++,-w2,-d2, h2);
-  p.finishEditing();
-
-}
-
-void SoFrame::renderV() {
-  //TODO: change all below to draw vertical
-  float w2 = base / 2.0f;
-  float h2 = depth / 2.0f;
-  float d2 = height / 2.0f;
-  SoMFVec3f& p = coords_->point;
-  int i = 0;
-  //TODO: change all below to draw vertical
-  p.startEditing();
-    // back
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++,-(w2-inset),-h2, (d2-inset));
-    p.set1Value(i++, w2,-h2, d2);
-    p.set1Value(i++, (w2-inset),-h2, (d2-inset));
-    p.set1Value(i++, w2,-h2,-d2);
-    p.set1Value(i++, (w2-inset),-h2,-(d2-inset));
-    p.set1Value(i++,-w2,-h2,-d2);
-    p.set1Value(i++,-(w2-inset),-h2,-(d2-inset));
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++,-(w2-inset),-h2, (d2-inset));
-    //outside
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++,-w2, h2, d2);
-    p.set1Value(i++,-w2,-h2,-d2);
-    p.set1Value(i++,-w2, h2,-d2);
-    p.set1Value(i++, w2,-h2,-d2);
-    p.set1Value(i++, w2, h2,-d2);
-    p.set1Value(i++, w2,-h2, d2);
-    p.set1Value(i++, w2, h2, d2);
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++,-w2, h2, d2);
-    // front
-    p.set1Value(i++,-w2, h2, d2);
-    p.set1Value(i++,-(w2-inset), h2, d2-inset);
-    p.set1Value(i++,-w2, h2,-d2);
-    p.set1Value(i++,-(w2-inset), h2,-(d2-inset));
-    p.set1Value(i++, w2, h2,-d2);
-    p.set1Value(i++, (w2-inset), h2,-(d2-inset));
-    p.set1Value(i++, w2, h2, d2);
-    p.set1Value(i++, (w2-inset), h2, (d2-inset));
-    p.set1Value(i++,-w2, h2, d2);
-    p.set1Value(i++,-(w2-inset), h2, d2-inset);
-    // inside
-    w2 -= inset;
-    d2 -= inset;
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++, w2, h2, d2);
-    p.set1Value(i++, w2,-h2, d2);
-    p.set1Value(i++, w2, h2,-d2);
-    p.set1Value(i++, w2,-h2,-d2);
-    p.set1Value(i++,-w2, h2,-d2);
-    p.set1Value(i++,-w2,-h2,-d2);
-    p.set1Value(i++,-w2, h2, d2);
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++,-w2,-h2, d2);
-  p.finishEditing();
-
-}
-
-void SoFrame::setDimensions(float bs, float ht, float dp, float in) {
-  if ((base == bs) && (height == ht) && (depth == dp) && (inset == in)) return;
-  base = bs;  height = ht;  depth = dp;  inset = in;
-  render();
-}
-
-void SoFrame::setOrientation(Orientation ori) {
-  if (orientation == ori) return;
-  orientation = ori;
-  if (ori == Ver) {
-    rot_ = new SoRotation();
-    rot_->rotation.setValue(SbVec3f(1, 0, 0), PI / 2);
-    T3Node::insertChildAfter(this, rot_, NULL); // beginning
-  } else {
-    this->removeChild(rot_);
-    rot_ = NULL;
+void SoImageEx::setImage(const float_Matrix& src) {
+  int dims = src.dims(); //cache
+  if (dims == 2) {
+    setImage2(src);
+  } else if (((dims == 3) && (dim(2) == 3)) { 
+    setImage3(src);
+  else { 
+    taMisc::Error("SoImageEx::setImage: must be grey or rgb matrix");
+    return;
   }
-
-  render();
-}
-*/
-
-/* obs delete
-//////////////////////////
-//   T3Project	//
-//////////////////////////
-
-SO_NODE_SOURCE(T3Project);
-
-void T3Project::initClass()
-{
-  SO_NODE_INIT_CLASS(T3Project, T3NodeParent, "T3NodeParent");
+    
 }
 
-T3Project::T3Project(void* dataView_)
-:inherited(dataView_)
-{
-  SO_NODE_CONSTRUCTOR(T3Project);
-
-  font_ = new SoFont;
-  font_->setName("font");
-  topSeparator()->addChild(font_);
-
-  childList_ = new SoSeparator;
-  childList_->setName("childList");
-  topSeparator()->addChild(childList_);
+void SoImageEx::setImage2(const float_Matrix& src) {
+  int dx = src.dim(0);
+  int dy = src.dim(1);
+  img.SetGeom(2, dx, dy);
+  int idx = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+      img.FastEl_Flat(idx) = (byte)(src.FastEl(x, y) * 255);
+      ++idx;
+    }
+  }
+  image.setValue(SbVec2i(dx, dy), 1, img.data());
 }
 
-T3Project::~T3Project()
-{
+void SoImageEx::setImage2(const QImage& src) {
+  int dx = src.width();
+  int dy = src.height();
+  img.SetGeom(2, dx, dy);
+  int idx = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+      img.FastEl_Flat(idx) = (byte)(qGray(src.pixel(x, y)));
+      ++idx;
+    }
+  }
+  image.setValue(SbVec2i(dx, dy), 1, img.data());
 }
 
+void SoImageEx::setImage3(const float_Matrix& src) {
+  int dx = src.dim(0);
+  int dy = src.dim(1);
+  //NOTE: img geom is not same as input: rgb is in innermost for us
+  img.SetGeom(3, 3, dx, dy);
+  int idx = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+      img.FastEl_Flat(idx++) = (byte)(src.FastEl(x, y, 0) * 255);
+      img.FastEl_Flat(idx++) = (byte)(src.FastEl(x, y, 1) * 255);
+      img.FastEl_Flat(idx++) = (byte)(src.FastEl(x, y, 2) * 255);
+    }
+  }
+  image.setValue(SbVec2i(dx, dy), 3, img.data());
+}
 
-*/
+void SoImageEx::setImage3(const QImage& src) {
+  int dx = src.width();
+  int dy = src.height();
+  //NOTE: img geom is not same as input: rgb is in innermost for us
+  img.SetGeom(3, 3, dx, dy);
+  int idx = 0;
+  QRgb rgb;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+    rgb = src.pixel(x, y);
+      img.FastEl_Flat(idx++) = (byte)(qRed(rgb));
+      img.FastEl_Flat(idx++) = (byte)(qGreen(rgb));
+      img.FastEl_Flat(idx++) = (byte)(qBlue(rgb));
+    }
+  }
+  image.setValue(SbVec2i(dx, dy), 3, img.data());
+}
+

@@ -615,17 +615,19 @@ public:
   { return *((T*)(SafeEl_(SafeElIndex(d0,d1,d2,d3,d4)))); } 
   // #CAT_Access (safely) access the element for reading
   const T&		SafeElN(const MatrixGeom& indices) const  
-  { return *((T*)(SafeElIndexN(indices))); }  
+  { return *((T*)(SafeEl_(SafeElIndexN(indices)))); }  
   // #CAT_Access (safely) access the element for reading
   const T&		SafeEl_Flat(int idx) const
   { return *((T*)(SafeEl_(idx))); }
   // #CAT_Access (safely) access the matrix as if it were a flat vector, for reading
   
   void			Set(const T& item, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  { el[SafeElIndex(d0,d1,d2,d3,d4)] = item; }
+  { int idx = SafeElIndex(d0,d1,d2,d3,d4); 
+    if (InRange_Flat(idx)) el[idx] = item; }
   // #CAT_Access safely assign values to items in the matrix
   void			SetN(const T& item, const MatrixGeom& indices) 	
-  {  el[SafeElIndexN(indices)] = item; }
+  {  int idx = SafeElIndexN(indices); 
+    if (InRange_Flat(idx)) el[idx] = item; }
   // #CAT_Access safely assign values to items in the matrix
   void			Set_Flat(const T& item, int idx) 	
   { if (InRange_Flat(idx)) el[idx] = item; }
