@@ -29,6 +29,7 @@ void taImage::Copy_(const taImage& cp) {
 }
 
 bool taImage::LoadImage(const String& fname) {
+  name = fname;
   QString fn = (const char*)fname;
   if(!q_img.load(fn)) {
     taMisc::Error("LoadImage: could not read image file:", fname);
@@ -537,8 +538,10 @@ float GaborFitter::ParamDist(const GaborFilterSpec& oth) {
 // 		Retinal Spacing
 
 void RetinalSpacingSpec::Initialize() {
+  region = PARAFOVEA;
   retina_size.x = 321;
   retina_size.y = 241;
+  output_units = 0;
 }
 
 void RetinalSpacingSpec::UpdateAfterEdit() {
@@ -1078,6 +1081,7 @@ void RetinaSpec::DefaultFilters() {
   sp->dog.filter_width = 8;
   sp->dog.on_sigma = 2;
   sp->dog.off_sigma = 4;
+  sp->spacing.region = RetinalSpacingSpec::FOVEA;
   sp->spacing.border.x = 109; sp->spacing.border.y = 85;
   sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
   sp->UpdateAfterEdit();
@@ -1088,6 +1092,7 @@ void RetinaSpec::DefaultFilters() {
   sp->dog.filter_width = 16;
   sp->dog.on_sigma = 4;
   sp->dog.off_sigma = 8;
+  sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
   sp->spacing.border.x = 6; sp->spacing.border.y = 14;
   sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
   sp->UpdateAfterEdit();
@@ -1098,6 +1103,7 @@ void RetinaSpec::DefaultFilters() {
   sp->dog.filter_width = 32;
   sp->dog.on_sigma = 8;
   sp->dog.off_sigma = 16;
+  sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
   sp->spacing.border.x = 6; sp->spacing.border.y = 16;
   sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
   sp->UpdateAfterEdit();
@@ -1112,6 +1118,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.filter_width = 16;
     sp->dog.on_sigma = 4;
     sp->dog.off_sigma = 8;
+    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
     sp->spacing.border.x = 6; sp->spacing.border.y = 14;
     sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
     sp->UpdateAfterEdit();
@@ -1122,6 +1129,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.filter_width = 16;
     sp->dog.on_sigma = 4;
     sp->dog.off_sigma = 8;
+    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
     sp->spacing.border.x = 6; sp->spacing.border.y = 14;
     sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
     sp->UpdateAfterEdit();
@@ -1132,6 +1140,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.filter_width = 32;
     sp->dog.on_sigma = 8;
     sp->dog.off_sigma = 16;
+    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
     sp->spacing.border.x = 8; sp->spacing.border.y = 16;
     sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
     sp->UpdateAfterEdit();
@@ -1142,6 +1151,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.filter_width = 32;
     sp->dog.on_sigma = 8;
     sp->dog.off_sigma = 16;
+    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
     sp->spacing.border.x = 8; sp->spacing.border.y = 16;
     sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
     sp->UpdateAfterEdit();
@@ -1162,6 +1172,10 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool new_cols) {
   dt->StructUpdate(true);
   int idx =0;
   dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);
+  dt->FindMakeColName("LookBox", idx, DataTable::VT_FLOAT, 1, 4);
+  dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2);
+  dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0);
+  dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0);
   if(color_type == COLOR)
     dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 3,
 			retina_size.x, retina_size.y, 3);
@@ -1220,6 +1234,14 @@ bool RetinaSpec::FilterImageData(float_Matrix& img_data, DataTable* dt,
     taBase::unRefDone(off_mat);
   }
   taBase::unRefDone(ret_img);
+
+  float_Matrix* mv_mat = (float_Matrix*)dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
+  taBase::Ref(mv_mat);
+  mv_mat->FastEl(0) = move_x; mv_mat->FastEl(1) = move_y;
+  taBase::unRefDone(mv_mat);
+  
+  dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(scale, -1);
+  dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(rotate, -1);
   
   return true;
 }
@@ -1235,7 +1257,11 @@ bool RetinaSpec::FilterImage(taImage& img, DataTable* dt,
   else {
     img.ImageToGrey_float(img_data);
   }
-  return FilterImageData(img_data, dt, move_x, move_y, scale, rotate, superimpose);
+  bool rval = FilterImageData(img_data, dt, move_x, move_y, scale, rotate, superimpose);
+  int idx;
+  if(rval)
+    dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(img.name, -1);
+  return rval;
 }
 
 bool RetinaSpec::FilterImageName(const String& img_fname, DataTable* dt,
@@ -1247,21 +1273,18 @@ bool RetinaSpec::FilterImageName(const String& img_fname, DataTable* dt,
   return FilterImage(img, dt, move_x, move_y, scale, rotate, superimpose);
 }
 
-DoGRetinaSpec* RetinaSpec::FindFoveaSpec() {
-  DoGRetinaSpec* fov_spec = NULL;
-  int min_input_sz = -1;
+DoGRetinaSpec* RetinaSpec::FindRetinalRegion(RetinalSpacingSpec::Region reg) {
   for(int i=0;i<dogs.size;i++) {
     DoGRetinaSpec* fs = (DoGRetinaSpec*)dogs[i];
-    if((fs->spacing.input_size.x < min_input_sz) || (min_input_sz < 0)) {
-      fov_spec = fs;
-      min_input_sz = fs->spacing.input_size.x;
-    }
+    if(fs->spacing.region == reg)
+      return fs;
   }
-  return fov_spec;
+  return NULL;
 }
 
-bool RetinaSpec::AttendFovea(DataTable* dt) {
-  DoGRetinaSpec* fov_spec = FindFoveaSpec();
+bool RetinaSpec::AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region) {
+  DoGRetinaSpec* fov_spec = FindRetinalRegion(region);
+  if(!fov_spec) return false;
 
   float fov_x_pct = (float)fov_spec->spacing.input_size.x / (float)retina_size.x;
   float fov_y_pct = (float)fov_spec->spacing.input_size.y / (float)retina_size.y;
@@ -1291,16 +1314,18 @@ bool RetinaSpec::AttendFovea(DataTable* dt) {
 //   1: Remove image edge artifacts DIRECTLY in the filter output, like I do with attending
 // RO: not sure what this means?
 
-bool RetinaSpec::FoveateImageData(float_Matrix& img_data, DataTable* dt,
+bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
+				  RetinalSpacingSpec::Region region,
 				  float box_ll_x, float box_ll_y,
 				  float box_ur_x, float box_ur_y,
 				  float move_x, float move_y,
 				  float scale, float rotate, 
-				  bool superimpose, bool fill_retina, bool attend) {
+				  bool superimpose, bool attend) {
   if(dogs.size == 0) return false;
 
   // find the fovea filter: one with smallest input_size
-  DoGRetinaSpec* fov_spec = FindFoveaSpec();
+  DoGRetinaSpec* fov_spec = FindRetinalRegion(region);
+  if(!fov_spec) return false;
 
   // translation: find the middle of the box
   FloatTwoDCoord obj_ctr((float) (0.5 * (float) (box_ll_x + box_ur_x)),
@@ -1319,15 +1344,8 @@ bool RetinaSpec::FoveateImageData(float_Matrix& img_data, DataTable* dt,
   float pix_y = (box_ur_y - box_ll_y) * img_size.y;
 
   // scale to fit within input size of filter or retina
-  float sc_x, sc_y;
-  if(fill_retina) {
-    sc_x = (float)retina_size.x / pix_x;
-    sc_y = (float)retina_size.y / pix_y;
-  }
-  else {
-    sc_x = (float)fov_spec->spacing.input_size.x / pix_x;
-    sc_y = (float)fov_spec->spacing.input_size.y / pix_y;
-  }
+  float sc_x = (float)fov_spec->spacing.input_size.x / pix_x;
+  float sc_y = (float)fov_spec->spacing.input_size.y / pix_y;
 
   float fov_sc = MIN(sc_x, sc_y);
   scale *= fov_sc;
@@ -1337,17 +1355,26 @@ bool RetinaSpec::FoveateImageData(float_Matrix& img_data, DataTable* dt,
     scale = .01f;
 
   bool rval = FilterImageData(img_data, dt, move_x, move_y, scale, rotate, superimpose);
-  if(rval && attend)
-    AttendFovea(dt);
+  if(rval) {
+    if(attend)
+      AttendRegion(dt, region);
+    int idx;
+    float_Matrix* box_mat = (float_Matrix*)dt->FindMakeColName("LookBox", idx, DataTable::VT_FLOAT, 1, 4)->GetValAsMatrix(-1);
+    taBase::Ref(box_mat);
+    box_mat->FastEl(0) = box_ll_x; box_mat->FastEl(1) = box_ll_y;
+    box_mat->FastEl(2) = box_ur_x; box_mat->FastEl(1) = box_ur_y;
+    taBase::unRefDone(box_mat);
+  }
   return rval;
 }
 
-bool RetinaSpec::FoveateImage(taImage& img, DataTable* dt,
+bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
+			      RetinalSpacingSpec::Region region,
 			      float box_ll_x, float box_ll_y,
 			      float box_ur_x, float box_ur_y,
 			      float move_x, float move_y,
 			      float scale, float rotate, 
-			      bool superimpose, bool fill_retina, bool attend) {
+			      bool superimpose, bool attend) {
   float_Matrix img_data;
   if(color_type == COLOR) {
     img.ImageToRGB_float(img_data);
@@ -1355,20 +1382,26 @@ bool RetinaSpec::FoveateImage(taImage& img, DataTable* dt,
   else {
     img.ImageToGrey_float(img_data);
   }
-  return FoveateImageData(img_data, dt, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-			  move_x, move_y, scale, rotate, superimpose, fill_retina, attend);
+  bool rval = LookAtImageData(img_data, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
+			  move_x, move_y, scale, rotate, superimpose, attend);
+  if(rval) {
+    int idx;
+    dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(img.name, -1);
+  }
+  return rval;
 }
 
-bool RetinaSpec::FoveateImageName(const String& img_fname, DataTable* dt,
+bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
+				  RetinalSpacingSpec::Region region,
 				  float box_ll_x, float box_ll_y,
 				  float box_ur_x, float box_ur_y,
 				  float move_x, float move_y,
 				  float scale, float rotate, 
-				  bool superimpose, bool fill_retina, bool attend) {
+				  bool superimpose, bool attend) {
   taImage img;
   if(!img.LoadImage(img_fname)) return false;
-  return FoveateImage(img, dt, box_ll_x, box_ll_y, box_ur_x, box_ur_y, move_x, move_y,
-		      scale, rotate, superimpose, fill_retina, attend);
+  return LookAtImage(img, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
+		      move_x, move_y, scale, rotate, superimpose, attend);
 }
 
 ///////////////////////////////////////////////////////////

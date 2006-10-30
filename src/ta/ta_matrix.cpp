@@ -70,6 +70,59 @@ void MatrixGeom::Add(int value) {
   el[size++] = value;
 }
 
+int MatrixGeom::IndexFmDims(int d0, int d1, int d2, int d3, int d4) const {
+  int rval = -1;
+  switch (size) {
+  case 0: rval = 0;
+    break;
+  case 1: rval = d0;
+    break;
+  case 2: rval = (d1 * el[0]) + d0;
+    break;
+  case 3: rval = (((d2 * el[1]) + d1) * el[0]) + d0;
+    break;
+  case 4: rval = (((((d3 * el[2]) + d2) * el[1]) + d1) * el[0]) + d0;
+    break;
+  case 5: rval = (((((((d4 * el[3]) + d3) * el[2]) + d2) * el[1]) + d1) * el[0]) + d0;
+    break;
+  default: break;
+  }
+  return rval;
+}
+
+void MatrixGeom::DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d4) const {
+  switch (size) {
+  case 0: 
+    break;
+  case 1:
+    d0 = idx;
+    break;
+  case 2:
+    d1 = idx / el[0];
+    d0 = idx % el[0];
+    break;
+  case 3:
+    d2 = idx / (el[1] * el[0]);
+    d1 = (idx % el[1]) / el[0];
+    d0 = idx % (el[1] * el[0]);
+    break;
+  case 4: 
+    d3 = idx / (el[2] * el[1] * el[0]);
+    d2 = (idx % el[2]) / (el[1] * el[0]);
+    d1 = (idx % (el[2] * el[1])) / el[0];
+    d0 = idx % (el[2] * el[1] * el[0]);
+    break;
+  case 5: 
+    d4 = idx / (el[3] * el[2] * el[1] * el[0]);
+    d3 = (idx % el[3]) / (el[2] * el[1] * el[0]);
+    d2 = (idx % (el[3] * el[2])) / (el[1] * el[0]);
+    d1 = (idx % (el[3] * el[2] * el[1])) / el[0];
+    d0 = idx % (el[3] * el[2] * el[1] * el[0]);
+    break;
+  default: break;
+  }
+}
+
 int MatrixGeom::Dump_Save_Value(ostream& strm, TAPtr, int) {
   strm << "{ ";
   int i;
@@ -104,14 +157,31 @@ int MatrixGeom::Dump_Load_Value(istream& strm, TAPtr) {
   return true;
 }
 
-String MatrixGeom::GeomToString() const {
-  String rval("[");
-  for (int i = 0; i < size; ++i) {
-    if (i > 0) rval += ',';
-    rval += String(el[i]);
+String MatrixGeom::GeomToString(const char* ldelim, const char* rdelim) const {
+  String rval(ldelim);
+  rval += String(size) + ":";
+  int i;
+  for (i = 0; i < size-1; ++i) {
+    rval += String(el[i]) + ",";
   }
-  rval += "]";
+  rval += String(el[i]) + rdelim;
   return rval;
+}
+
+void MatrixGeom::GeomFromString(String& str, const char* ldelim, const char* rdelim) {
+  str = str.after(ldelim);
+  String ds = str.before(':');
+  str = str.after(':');
+  EnforceSize((int)ds);
+  int i;
+  for(i=0;i<size-1;i++) {
+    ds = str.before(',');
+    str = str.after(',');
+    Set(i, (int)ds);
+  }
+  ds = str.before(rdelim);
+  str = str.after(rdelim);
+  Set(i, (int)ds);
 }
 
 bool MatrixGeom::EnforceSize(int new_sz) {

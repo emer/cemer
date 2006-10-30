@@ -169,9 +169,16 @@ public:
   void			SetGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
     
   inline void		Reset() {EnforceSize(0);} // set size to 0, and clear all dims
+
+  int 			IndexFmDims(int d0, int d1, int d2, int d3, int d4) const;
+  // get index from dimension values, based on geometry
+  void 			DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d4) const;
+  // get dimension values from index, based on geometry
   
-  String		GeomToString() const;
-  // returns human-friendly text in form: "[{dim}{,dim}]"
+  String		GeomToString(const char* ldelim = "[", const char* ldelim = "]") const;
+  // returns human-friendly text in form: "[dims:{dim}{,dim}]"
+  void			GeomFromString(String& str, const char* ldelim = "[", const char* rdelim = "]");
+  // reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
 
   override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);

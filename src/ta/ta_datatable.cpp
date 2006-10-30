@@ -29,43 +29,6 @@ const String DataArray_impl::udkey_width("WIDTH");
 const String DataArray_impl::udkey_narrow("NARROW");
 const String DataArray_impl::udkey_hidden("HIDDEN");
 
-void DataArray_impl::DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt) {
-  base_nm = nm;
-  vt = -1; // unknown
-  vec_col = -1;
-  if (nm.empty()) return;
-  // check type character, float has none
-  if (nm[0] == '|') {
-    nm = nm.after('|');
-    vt = VT_INT;
-  } else if (nm[0] == '$') {
-    nm = nm.after('$');
-    vt = VT_STRING;
-  } else {
-    vt = VT_FLOAT;
-  }
-  base_nm = nm;
-  if (nm.empty()) return;
-  // check if a vec start
-  if (nm[0] == '<') {
-    nm = nm.after('<');
-    col_cnt = (int)nm.before('>');
-    base_nm = nm.after('>');
-    vec_col = 0;
-    return;
-  }
-  // check if a non-col0 vector column -- NOTE: this is not 100% bulletproof
-  String col_str = nm;
-  if (col_str.contains('_')) { // may be vec column
-    while (col_str.contains('_'))
-      col_str = col_str.after('_');
-    if (col_str.isInt()) {
-      vec_col = (int)col_str;
-      return;
-    }
-  }
-}
-
 void DataArray_impl::Initialize() {
   mark = false;
   pin = false;
@@ -130,6 +93,7 @@ void DataArray_impl::UpdateAfterEdit() {
   // TODO: check if frame size has changed (ie, dim change, or matrix change)
   //TEMP: maybe this is enough???
   Init();
+  name.gsub(" ", "_");		// no spaces in the names allowed!
   inherited::UpdateAfterEdit();
 }
 
@@ -188,9 +152,7 @@ String DataArray_impl::GetColText(const KeyString& key, int itm_idx) const {
 }
 
 String DataArray_impl::GetDisplayName() const {
-  String rval; int vt; int vec_col; int col_cnt;
-  DecodeName(name, rval, vt, vec_col, col_cnt);
-  return rval;
+  return name;
 }
 
 taMatrix* DataArray_impl::GetValAsMatrix(int row) {
@@ -239,7 +201,68 @@ bool DataArray_impl::SetValAsVar_impl(const Variant& val, int row, int cell) {
   return true;
 } 
 
+String DataArray_impl::EncodeHeaderName(int d0, int d1, int d2, int d3, int d4) {
+  String typ_info;
+  switch (valType()) {
+  case VT_STRING: 	typ_info = "$"; break;
+  case VT_FLOAT:  	typ_info = "%"; break;
+  case VT_DOUBLE:  	typ_info = "#"; break;
+  case VT_INT:  	typ_info = "|"; break;
+  case VT_BYTE:  	typ_info = "@"; break;
+  case VT_VARIANT: 	typ_info = "&"; break;
+  }
+  String mat_info;
+  if(is_matrix) {		// specify which cell in matrix this is [dims:d0,d1,d2..]
+    MatrixGeom mg(cell_geom.size, d0, d1, d2, d3, d4);
+    mat_info = mg.GeomToString("[", "]");
+    if(cell_geom.IndexFmDims(d0, d1, d2, d3, d4) == 0) { // first guy
+      mat_info += cell_geom.GeomToString("<", ">");
+    }
+  }
+  return typ_info + name + mat_info; // e.g., $StringVecCol[2:2,3]
+}
 
+void DataArray_impl::DecodeHeaderName(String nm, String& base_nm, int& vt,
+				      MatrixGeom& mat_idx, MatrixGeom& mat_geom) {
+  base_nm = nm;
+  vt = -1; // unknown
+  mat_idx.EnforceSize(0);
+  mat_geom.EnforceSize(0);
+  if (nm.empty()) return;
+
+  // first check for type info:
+  if (nm[0] == '$') {
+    nm = nm.after('$');
+    vt = VT_STRING;
+  } else if (nm[0] == '%') {
+    nm = nm.after('%');
+    vt = VT_FLOAT;
+  } else if (nm[0] == '#') {
+    nm = nm.after('#');
+    vt = VT_DOUBLE;
+  } else if (nm[0] == '|') {
+    nm = nm.after('|');
+    vt = VT_INT;
+  } else if (nm[0] == '@') {
+    nm = nm.after('@');
+    vt = VT_BYTE;
+  } else if (nm[0] == '&') {
+    nm = nm.after('&');
+    vt = VT_VARIANT;
+  } else {
+    vt = VT_FLOAT;
+  }
+  
+  if(nm.contains('[')) {
+    String mat_info = nm;
+    nm = nm.before('[');
+    mat_idx.GeomFromString(mat_info, "[", "]");
+    if(mat_info.contains('<')) {
+      mat_geom.GeomFromString(mat_info, "<", ">");
+    }
+  }
+  base_nm = nm;
+}
 
 
 //////////////////////////
@@ -261,19 +284,16 @@ void DataTableCols::Copy_NoData(const DataTableCols& cp) {
 }
 
 void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_row) {
-  taLeafItr di, si;
-  DataArray_impl* dar, *sar;
-  for(dar = FirstEl(di), sar = src.FirstEl(si);
-      dar && sar;
-      dar = NextEl(di), sar = src.NextEl(si)) {
+  int mx = MIN(size, src.size);
+  for(int i=0; i< mx; i++) {
+    DataArray_impl* dar = FastEl(i);
+    DataArray_impl* sar = src.FastEl(i);
     dar->CopyFromRow(dest_row, *sar, src_row);
   }  
 }
 
 void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
-  // we only do the notifies in the context of the root group, so we exit if we aren't root
-  if (!IsRoot()) return;
 
   // for most schema changes, we just call the datamodel layoutChanged
   // note that groups themselves don't show in the datatable editor
@@ -314,6 +334,8 @@ const KeyString DataTableCols::GetListColKey(int col) const {
 //////////////////////////
 //	DataTable	//
 //////////////////////////
+
+int DataTable::idx_def_arg = 0;
 
 void DataTable::Initialize() {
   rows = 0;
@@ -359,9 +381,8 @@ void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
 bool DataTable::AddRow(int n) {
   if ((cols() == 0) || (n < 1)) return false;
   RowsAdding(n, true);
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* ar = data.FastEl(i);
     ar->EnforceRows(ar->rows() + n);
   }
   RowsAdding(n, false);
@@ -375,9 +396,8 @@ bool DataTable::AddSinkChannel(ChannelSpec* cs) {
 }
 
 void DataTable::AllocRows(int n) {
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* ar = data.FastEl(i);
     ar->AR()->AllocFrames(n); //noop if already has more alloc'ed
   }
 }
@@ -423,25 +443,24 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
 
 DataArray_impl* DataTable::GetColData(int col) const {
   if (col >= cols()) return NULL;
-  else return data.Leaf(col);
+  else return data.SafeEl(col);
 }
 
 DataArray_impl* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
-  DataArray_impl* rval;
-  taLeafItr itr;
   cs->chan_num = -1; // we incr at beginning of loop
-  FOR_ITR_EL(DataArray_impl, rval, data., itr) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* da = data.FastEl(i);
     ++(cs->chan_num);
-    if (rval->name != cs->name) continue;
+    if (da->name != cs->name) continue;
     // if name matches, but not contents, we need to remake it...
-    if (ColMatchesChannelSpec(rval, cs)) {
-      rval->mark = false; // reset mark for orphan tracking
-      return rval;
+    if (ColMatchesChannelSpec(da, cs)) {
+      da->mark = false; // reset mark for orphan tracking
+      return da;
     } else {
-      rval->Close();
+      da->Close();
     }
   }
-  rval = NewColFromChannelSpec_impl(cs);
+  DataArray_impl* rval = NewColFromChannelSpec_impl(cs);
   return rval;
 }
 
@@ -538,9 +557,8 @@ bool DataTable::hasData(int col, int row) {
 
 
 void DataTable::MarkCols() {
-  DataArray_impl* da;
-  taLeafItr itr;
-  FOR_ITR_EL(DataArray_impl, da, data., itr) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* da = data.FastEl(i);
     da->mark = true;
   }
 }
@@ -548,22 +566,12 @@ void DataTable::MarkCols() {
 int DataTable::MaxLength() {
   return rows;
 }
-/*obs int DataTable::MaxLength() {
-  int max = 0;
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
-    max = MAX(max,ar->AR()->frames());
-  }
-  return max;
-} */
 
 int DataTable::MinLength() {
   if (cols() == 0) return 0;
   int min = INT_MAX;
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* ar = data.FastEl(i);
     min = MIN(min,ar->AR()->frames());
   }
   return min;
@@ -595,7 +603,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
   case VT_VARIANT:  td = &TA_Variant_Data; break;
   default: return NULL; // compiler food
   }
-  DataArray_impl* rval = (DataArray_impl*) col_gp->NewEl(1, td);
+  DataArray_impl* rval = (DataArray_impl*) col_gp->New(1, td);
   rval->name = col_nm;
   // additional specialized initialization
   switch (val_type) {
@@ -671,119 +679,53 @@ String_Data* DataTable::NewColString(const String& col_nm) {
   return (String_Data*)NewCol(VT_STRING, col_nm);
 }
 
-DataArray_impl* DataTable::FindColName(const String& col_nm, int& col_idx, int val_type, 
-				       int dims, int d0, int d1, int d2, int d3, int d4) {
-  if(val_type < 0 && dims < 0) {
-    DataArray_impl* rval = data.FindLeafName(col_nm, col_idx);
-    return rval;
-  }
-  int lfi = 0;
-  taLeafItr i;
-  DataArray_impl* ar;
-  for(ar = (DataArray_impl*)data.FirstEl(i); ar; ar = (DataArray_impl*)data.NextEl(i), lfi++) {
-    if(ar->name != col_nm) continue;
-    if((val_type >= 0) && (ar->valType() != (ValType)val_type)) continue;
-    if((dims > 0 ) && (ar->cell_dims() != dims)) continue;
-    // todo: set geom
-    col_idx = lfi;
-    return ar;			// found it!
-  }
-  col_idx = -1;
-  return NULL;
+DataArray_impl* DataTable::FindColName(const String& col_nm, int& col_idx) {
+  return data.FindName(col_nm, col_idx);
 }
 
 DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
-					   DataArray_impl::ValType val_type, 
-					   int dims, int d0, int d1, int d2, int d3, int d4) {
-  DataArray_impl* da = FindColName(col_nm, col_idx, val_type, dims, d0, d1, d2, d3, d4);
-  if(da) return da;
-  if(dims >= 1)
-    return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
-  else
-    return NewCol(val_type, col_nm);
-}
-
-DataTableCols* DataTable::NewGroupFloat(const String& col_nm, int n) {
-  StructUpdate(true);
-  DataTableCols* rval = (DataTableCols*)data.NewGp(1);
-  rval->el_typ = &TA_float_Data;
-  rval->EnforceSize(n);
-  rval->name = col_nm;
-  if(n > 0) {
-    float_Data* da = (float_Data*)NewCol(VT_FLOAT, col_nm, rval);
-    da->name = String("<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
+					   ValType val_type, int dims,
+					   int d0, int d1, int d2, int d3, int d4) {
+  DataArray_impl* da = FindColName(col_nm, col_idx);
+  if(da) {
+    if(da->valType() != (ValType)val_type) {
+      StructUpdate(true);
+      DataArray_impl* nda;
+      if(dims > 0)
+	nda = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
+      else
+	nda = NewCol(val_type, col_nm);
+      data.Move(data.size-1, col_idx);
+      data.RemoveEl(da);	// get rid of that guy
+      da = nda;
+      nda->EnforceRows(rows);	// keep row-constant
+      StructUpdate(false);
+    }
+    if(da->cell_dims() != dims) {
+      da->cell_geom.SetGeom(dims, d0, d1, d2, d3, d4);
+      da->Init();		// asserts geom
+      da->EnforceRows(rows);	// keep row-constant
+    }
+    else {
+      MatrixGeom mg(dims, d0, d1, d2, d3, d4);
+      if(mg != da->cell_geom) {
+	da->cell_geom = mg;
+	da->Init();
+      }
+    }
+    return da;
   }
-  int i;
-  for(i=1;i<n;i++) {
-    float_Data* da = (float_Data*)NewCol(VT_FLOAT, col_nm, rval);
-    da->name = String(col_nm) + "_" + String(i);
+  else {			// not found -- make one
+    col_idx = data.size;	// will be the next guy
+    if(dims >= 1)
+      return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
+    else
+      return NewCol(val_type, col_nm);
   }
-  StructUpdate(false);
-  return rval;
-}
-
-DataTableCols* DataTable::NewGroupDouble(const String& col_nm, int n) {
-  StructUpdate(true);
-  DataTableCols* rval = (DataTableCols*)data.NewGp(1);
-  rval->el_typ = &TA_double_Data;
-  rval->EnforceSize(n);
-  rval->name = col_nm;
-  if(n > 0) {
-    double_Data* da = (double_Data*)NewCol(VT_DOUBLE, col_nm, rval);
-    da->name = String("<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
-  }
-  int i;
-  for(i=1;i<n;i++) {
-    double_Data* da = (double_Data*)NewCol(VT_DOUBLE, col_nm, rval);
-    da->name = String(col_nm) + "_" + String(i);
-  }
-  StructUpdate(false);
-  return rval;
-}
-
-DataTableCols* DataTable::NewGroupInt(const String& col_nm, int n) {
-  StructUpdate(true);
-  DataTableCols* rval = (DataTableCols*)data.NewGp(1);
-  rval->el_typ = &TA_int_Data;
-  rval->EnforceSize(n);
-  rval->name = String("|") + col_nm;
-  if(n > 0) {
-    int_Data* da = (int_Data*)NewCol(VT_INT, col_nm, rval);
-    da->name = String("|<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
-    da->SetUserData(DataArray_impl::udkey_narrow, true);
-  }
-  int i;
-  for(i=1;i<n;i++) {
-    int_Data* da = (int_Data*)NewCol(VT_INT, col_nm, rval);
-    da->name = String("|") + String(col_nm) + "_" + String(i);
-    da->SetUserData(DataArray_impl::udkey_narrow, true);
-  }
-  StructUpdate(false);
-  return rval;
-}
-
-DataTableCols* DataTable::NewGroupString(const String& col_nm, int n) {
-//TODO: obs
-  StructUpdate(true);
-  DataTableCols* rval = (DataTableCols*)data.NewGp(1);
-  rval->el_typ = &TA_String_Data;
-  rval->EnforceSize(n);
-  rval->name = String("$") + col_nm;
-  if(n > 0) {
-    String_Data* da = (String_Data*)NewCol(VT_STRING, col_nm, rval);
-    da->name = String("$<") + (String)n + ">" + col_nm + "_0"; // <n> indicates vector
-  }
-  int i;
-  for(i=1;i<n;i++) {
-    String_Data* da = (String_Data*)NewCol(VT_STRING, col_nm, rval);
-    da->name = String("$") + String(col_nm) + "_" + String(i);
-  }
-  StructUpdate(false);
-  return rval;
 }
 
 void DataTable::RemoveCol(int col) {
-  DataArray_impl* da = data.Leaf(col);
+  DataArray_impl* da = data.SafeEl(col);
   if (!da) return;
   StructUpdate(true);
   da->Close();
@@ -794,9 +736,8 @@ void DataTable::RemoveCol(int col) {
 
 void DataTable::RemoveOrphanCols() {
   int cls_cnt = 0; // used to prevent spurious struct updates
-  DataArray_impl* da;
-  taLeafItr itr;
-  FOR_ITR_EL_REV(DataArray_impl, da, data., itr) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* da = data.FastEl(i);
     if (da->mark && !da->pin) {
       if (cls_cnt++ == 0) StructUpdate(true);
       da->Close();
@@ -812,9 +753,8 @@ void DataTable::RemoveRow(int row) {
   DataUpdate(true);
   if (m_dm) m_dm->beginRemoveRows(QModelIndex(), row, row);
   
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* ar = data.FastEl(i);
     int act_row;
     if (idx(row, ar->AR()->frames(), act_row))
       ar->AR()->RemoveFrame(act_row);
@@ -838,9 +778,8 @@ bool DataTable::RowInRangeNormalize(int& row) {
     return;
   }
   DataUpdate(true);
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* ar = data.FastEl(i);
     int act_num_rows = num_rows - (rows - ar->AR()->frames());
     if (act_num_rows > 0)
       ar->AR()->ShiftLeft(act_num_rows);
@@ -862,9 +801,8 @@ void DataTable::ResetData() {
   DataUpdate(true);
   if (m_dm) m_dm->beginRemoveRows(QModelIndex(), 0, rows - 1);
   
-  taLeafItr i;
-  DataArray_impl* ar;
-  FOR_ITR_EL(DataArray_impl, ar, data., i) {
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* ar = data.FastEl(i);
     ar->AR()->Reset();
   }
   rows = 0;
@@ -892,142 +830,202 @@ void DataTable::RowsAdding(int n, bool begin) {
   }
 }
 
-
 /*
   Header format: 
-    "+" indicates concatenated elements
-    {} indicates optionally repeated elements
-    format is tab-separated, newline-terminated
-    data-type codes are as follows:
-      | - int (aka "Narrow")
-      $ - String
-      (none) - float
-      @ - byte
-    Scalar Header name is as follows:
-      type-code+name
-    Matrix Header master name is as follows:
-      <dimcount{,dimcount}>[0{,0}]+type-code+name
-    Matrix Header slave names are as follows:
-      [dimval{,dimval}]+type-code+name
-      
-    ex:
-    &StrCol	|IntCol	FloatCol	<1,2>[0,0]@ByteMat [0,1]@ByteMat
+  $ = String
+  % = float
+  # = double
+  | = int
+  @ = byte
+  & = variant
+
+  matrix: each cell has [dims:x,y..]
+  first mat cell also has <dims:dx,dy..>
 */
-void DataTable::SaveHeader(ostream& strm) {
-/*TODO
-  bool first = true;
-  DataArray_impl* da;
-  taLeafItr itr;
-  String rootnm;
-  FOR_ITR_EL(DataArray_impl, da, data., itr) {
-    if (!da->save_to_file) goto cont1;
-    // we must precheck for invalid matrix types
-    if (da->cell_size() == 0) goto cont1; // TODO: should probably issue a warning
-    
-    // get root name, which has type info
-    rootnm = "";
-    switch (da->valType()) {
-    case VT_STRING:
-      rootnm = "$";
-      break;
-    case VT_FLOAT:
-      break;
-    case VT_INT:
-      rootnm = "|";
-      break;
-    case VT_BYTE:
-      rootnm = "@";
-      break;
-    default: goto cont1; // unknown
+
+void DataTable::SaveHeader(ostream& strm, const char* delim) {
+  strm << "_H:";		// indicates header
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* da = data.FastEl(i);
+    if(!da->saveToFile()) continue;
+    if (da->cell_size() == 0) continue;
+
+    if(da->isMatrix()) {
+      for(int j=0;j<da->cell_size(); j++) {
+	int d0, d1, d2, d3, d4;
+	da->cell_geom.DimsFmIndex(j, d0, d1, d2, d3, d4);
+	String hdnm = da->EncodeHeaderName(d0, d1, d2, d3, d4);
+	strm << delim << hdnm;
+      }
     }
-    rootnm = rootnm + da->name;
-    if (!first) {
-      ostrm << '\t';
-      first = false;
+    else {
+      String hdnm = da->EncodeHeaderName();
+      strm << delim << hdnm;
     }
-    if (da->is_matrix()) { // if matrix, we output master col, then slave cols
-      String hdnm = "<"; // for each col, esp for matrix
-      
-    } else {
-      ostrm << rootnm;
-    }
-    if ((display_labels.size > i) && !display_labels[i].empty())
-      hdnm = display_labels[i];
-    int wdth = 2;
-    if (da->HasDispOption(" NARROW,"))
-      wdth = 1;
-    LogColumn(strm, hdnm, wdth);
-cont1: ;
   }
-  strm << "\n";
-  strm.flush();
-*/
+  strm << endl;
 }
 
-void DataTable::SaveData(ostream& strm) {
+void DataTable::SaveDataRow(ostream& strm, int row, const char* delim, bool quote_str) {
+  strm << "_D:";		// indicates data row
+  for(int i=0;i<data.size;i++) {
+    DataArray_impl* da = data.FastEl(i);
+    if(!da->saveToFile()) continue;
+    if (da->cell_size() == 0) continue;
+
+    if(da->isMatrix()) {
+      for(int j=0;j<da->cell_size(); j++) {
+	String val = da->GetValAsStringM(row, j);
+	if(quote_str && (da->valType() == VT_STRING))
+	  strm << delim << "\"" << val << "\"";
+	else
+	  strm << delim << val;
+      }
+    }
+    else {
+      String val = da->GetValAsString(row);
+      if(quote_str && (da->valType() == VT_STRING))
+	strm << delim << "\"" << val << "\"";
+      else
+	strm << delim << val;
+    }
+  }
+  strm << endl;
 }
 
-void DataTable::LoadHeader(istream& strm) {
+void DataTable::SaveData(ostream& strm, const char* delim, bool quote_str) {
+  SaveHeader(strm, delim);
+  for(int row=0;row <rows; row++) {
+    SaveDataRow(strm, row, delim, quote_str);
+  }
 }
 
-void DataTable::LoadData(istream& strm, int max_recs) {
-  ResetData();
+int DataTable::ReadTillDelim(istream& strm, String& str, const char* delim, bool quote_str) {
+  int c;
+  int depth = 0;
+  if(quote_str && (strm.peek() == '\"')) {
+    strm.get();
+    depth++;
+  }
+  while(((c = strm.get()) != EOF) && (c != '\n') && !((c == delim[0]) && (depth <= 0))) {
+    if(quote_str && (depth > 0) && (c == '\"'))
+      depth--;
+    else
+      str += (char)c;
+  }
+  return c;
+}
+
+int_Array DataTable::load_col_idx;
+int_Array DataTable::load_mat_idx;
+
+int DataTable::LoadHeader(istream& strm, const char* delim) {
+  load_col_idx.Reset();
+  load_mat_idx.Reset();
+  int c;
+  while(true) {
+    String str;
+    c = ReadTillDelim(strm, str, delim, false);
+    if((c == EOF) || (c == '\n')) break;
+    String base_nm;
+    int val_typ;
+    MatrixGeom mat_idx;
+    MatrixGeom mat_geom;
+    DataArray_impl::DecodeHeaderName(str, base_nm, val_typ, mat_idx, mat_geom);
+    int idx;
+    DataArray_impl* da = FindColName(base_nm, idx);
+    if(!da || (da->valType() != val_typ)) { // only make new one if val type doesn't match
+      // geom was made on first col and should not be remade..
+      da = FindMakeColName(base_nm, idx, (ValType)val_typ, mat_geom.size,
+			   mat_geom[0], mat_geom[1], mat_geom[2],
+			   mat_geom[3], mat_geom[4]);
+    }
+    load_col_idx.Add(idx);
+    if(mat_idx.size > 0) {
+      int mdx = da->cell_geom.IndexFmDims(mat_idx[0], mat_idx[1], mat_idx[2], mat_idx[3],
+					  mat_idx[4]);
+      load_mat_idx.Add(mdx);
+    }
+    else {
+      load_mat_idx.Add(-1);	// no matrix info
+    }
+  }
+  return c;
+}
+
+int DataTable::LoadDataRow(istream& strm, const char* delim, bool quote_str) {
+  StructUpdate(true);
+  bool added_row = false;
+  if(data.size > 0) {
+    AddBlankRow();
+    added_row = true;
+  }
+  int last_mat_col = -1;
+  int col = 0;
+  int c;
+  while(true) {
+    String str;
+    c = ReadTillDelim(strm, str, delim, quote_str);
+    if((c == EOF) || (c == '\n')) break;
+    if(str == "_H:") {
+      c = LoadHeader(strm, delim);
+      if(c == EOF) break;
+      if(!added_row) {
+	AddBlankRow();		// first one didn't work: no cols!
+	added_row = true;
+      }
+      continue;
+    }
+    if(str == "_D:") continue;
+    int use_col = col;
+    if(load_col_idx.size > 0) {
+      use_col = load_col_idx[col];
+    }
+    if(use_col >= data.size) {
+      taMisc::Error("Error reading data table", name, "columns exceeded!");
+      c = EOF;
+      break;
+    }
+    DataArray_impl* da = data.FastEl(use_col);
+    if(da->isMatrix()) {
+      int mat_idx = 0;
+      if(load_mat_idx.size > 0) {
+	mat_idx = load_mat_idx[col];
+      }
+      else {
+	if(last_mat_col >= 0)
+	  mat_idx = col - last_mat_col;
+	else 
+	  last_mat_col = col;
+      }
+      da->SetValAsStringM(str, -1, mat_idx);
+    }
+    else {
+      last_mat_col = -1;
+      da->SetValAsString(str, -1);
+    }
+    col++;
+  }
+  StructUpdate(false);
+  return c;
+}
+
+void DataTable::LoadData(istream& strm, const char* delim, bool quote_str, int max_recs) {
+  load_col_idx.Reset();
+  load_mat_idx.Reset();
+  int st_row = rows;
+  while(true) {
+    int c = LoadDataRow(strm, delim, quote_str);
+    if(c == EOF) break;
+    if((max_recs > 0) && (rows - st_row >= max_recs)) break;
+  }
+  RemoveRow(-1);		// last one is empty..
 }
 
 void DataTable::SetColName(const String& col_nm, int col) {
   DataArray_impl* da = GetColData(col);
   if(da != NULL) da->name = col_nm;
 }
-
-/*obs void DataTable::SetCols(LogData& ld) {
-  int cur_i = 0;		// current item at top level
-  int subgp_gpi = 0;		// current subgroup index (of the group)
-  int subgp_i = 0;		// current subgroup index (of the items in the group)
-  int subgp_max = 0;		// max for current subgroup
-  DataTable* subgp = NULL;	// the subgroup
-
-  int ldi;
-  StructUpdate(true);
-  for (ldi=0; ldi< ld.items.size; ldi++) {
-    ChannelSpec* ditem = ld.items.FastEl(ldi);
-    if (ditem->vec_n > 1) {
-      if (gp.size > subgp_gpi)
-	subgp = (DataTable*)gp[subgp_gpi];
-      else
-	subgp = (DataTable*)NewGp(1);
-      subgp_gpi++;
-      subgp_max = ditem->vec_n;
-      subgp_i = 0;
-
-      subgp->name = ditem->name;	// group gets name of first element
-      if(!subgp->name.empty() && (subgp->name[0] == '<'))
-	subgp->name = subgp->name.after('>'); // get rid of vector notation
-
-      if(subgp->size > subgp_max)
-	subgp->EnforceSize(subgp_max); // trim excess (but don't add -- could be wrong)
-      SetFieldHead(ditem_i);
-    } else {
-      if (subgp != NULL) {	// in a subgroup
-	subgp_i++;		// increment the index
-	if (subgp_i >= subgp_max) { // done with this group
-	  subgp = NULL;
-	  SetFieldHead(ditem, this, cur_i);
-	  cur_i++;
-	} else {			// get item from this group
-	  SetFieldHead(ditem_i);
-	}
-      } else {			// in top-level group
-	SetFieldHead(ditem, this, cur_i);
-	cur_i++;
-      }
-    }
-  }
-  if(size > cur_i)		// keep it the same size
-    EnforceSize(cur_i);
-  if (gp.size > subgp_gpi)	// keep it the same size
-    gp.EnforceSize(subgp_gpi);
-  StructUpdate(false);
-} */
 
 bool DataTable::SetValAsDouble(double val, int col, int row) {
   DataArray_impl* da = GetColData(col);

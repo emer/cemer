@@ -68,9 +68,6 @@ public:
   static const String	udkey_narrow; // NARROW=b if narrow (default for ints)
   static const String	udkey_hidden; // HIDDEN=b defaults to not visible
   
-  static void 		DecodeName(String nm, String& base_nm, int& vt, int& vec_col, int& col_cnt);
-    // note: vt is -1 if unknown
-
   String		disp_opts;
   // #NO_SHOW #NO_SAVE #OBSOLETE viewer default display options DELETE THIS
   bool			mark;
@@ -206,6 +203,12 @@ public:
   DataTable*		dataTable();
   // root data table this col belongs to
 
+  String	EncodeHeaderName(int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
+  // encode header information for saving to text files
+  static void 	DecodeHeaderName(String nm, String& base_nm, int& val_typ,
+				 MatrixGeom& mat_idx, MatrixGeom& mat_geom);
+  // decode header information for loading from text files 
+
   override bool		Dump_QuerySaveMember(MemberDef* md); 
 
   virtual void	Copy_NoData(const DataArray_impl& cp);
@@ -255,9 +258,9 @@ private:
 //   DataTableCols -- group of DataArray
 /////////////////////////////////////////////////////////
 
-class TA_API DataTableCols: public taGroup<DataArray_impl> {
+class TA_API DataTableCols: public taList<DataArray_impl> {
   // ##CAT_Data columns of a datatable 
-INHERITED(taGroup<DataArray_impl>)
+INHERITED(taList<DataArray_impl>)
 public:
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   
@@ -300,7 +303,7 @@ SmartRef_Of(DataTableCols) // DataTableColsRef
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TA_API DataTable : public DataBlock_Idx {
-  // #NO_UPDATE_AFTER ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dat table of data
+  // #NO_UPDATE_AFTER ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl table of data
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
@@ -318,7 +321,7 @@ public:
   /////////////////////////////////////////////////////////
   // columns
 
-  int			cols() const { return data.leaves; }
+  int			cols() const { return data.size; }
   // #CAT_Columns number of columns
 
   DataArray_impl*	NewCol(DataArray_impl::ValType val_type, 
@@ -340,26 +343,18 @@ public:
   String_Data*		NewColString(const String& col_nm); 
   // #CAT_Columns create new column of string data
 
-  DataArray_impl*	FindColName(const String& col_nm, int& col_idx, int val_type = -1,  
-    int dims = -1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
-  // #CAT_Columns find a column of the given name.  if further parameters are specified (val_type of type taBase::ValType, number of dimensions, etc) they are also matching criteria
+  DataArray_impl*	FindColName(const String& col_nm, int& col_idx = idx_def_arg);
+  // #CAT_Columns find a column of the given name
 
-  DataArray_impl*	FindMakeColName(const String& col_nm, int& col_idx, DataArray_impl::ValType val_type,  int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
+  DataArray_impl*	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
+					ValType val_type = VT_FLOAT, int dims = 0,
+					int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
   // #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
-  DataTableCols*	NewGroupDouble(const String& base_nm, int n); 
-  // #CAT_Columns create new sub-group of doubles of size n, named as base_nm_index
-  DataTableCols*	NewGroupFloat(const String& base_nm, int n); 
-  // #CAT_Columns create new sub-group of floats of size n, named as base_nm_index
-  DataTableCols*	NewGroupInt(const String& base_nm, int n); 
-  // #CAT_Columns create new sub-group of ints of size n, named as base_nm_index
-  DataTableCols*	NewGroupString(const String& base_nm, int n); 
-  // #CAT_Columns create new sub-group of strings of size n, named as base_nm_index
-
   DataArray_impl* 	GetColData(int col) const;
-  // #CAT_Columns get col data for given leaf column 
+  // #CAT_Columns get col data for given column 
   taMatrix*		GetColMatrix(int col) const;
-  // #CAT_Columns get matrix for given leaf column -- WARNING: this is NOT row-number safe 
+  // #CAT_Columns get matrix for given column -- WARNING: this is NOT row-number safe 
 
   void			SetColName(const String& col_nm, int col);
   // #CAT_Columns set column name for given column
@@ -415,27 +410,27 @@ public:
     const Variant& value, int col); // sets user data into the col
 
   double 		GetValAsDouble(int col, int row);
-  // #CAT_Rows get data of scalar type, in double form, for given leaf col, row; if data is NULL, then 0 is returned
+  // #CAT_Rows get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
   bool 			SetValAsDouble(double val, int col, int row);
-  // #CAT_Rows set data of scalar type, in String form, for given leaf column, row; does nothing if no cell' 'true' if set
+  // #CAT_Rows set data of scalar type, in String form, for given column, row; does nothing if no cell' 'true' if set
   float 		GetValAsFloat(int col, int row);
-  // #CAT_Rows get data of scalar type, in float form, for given leaf col, row; if data is NULL, then 0 is returned
+  // #CAT_Rows get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
   bool 			SetValAsFloat(float val, int col, int row);
-  // #CAT_Rows set data of scalar type, in String form, for given leaf column, row; does nothing if no cell' 'true' if set
+  // #CAT_Rows set data of scalar type, in String form, for given column, row; does nothing if no cell' 'true' if set
   const String 		GetValAsString(int col, int row) const;
-  // #CAT_Rows get data of scalar type, in String form, for given leaf column, row; if data is NULL, then "n/a" is returned
+  // #CAT_Rows get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
   bool 			SetValAsString(const String& val, int col, int row);
-  // #CAT_Rows set data of scalar type, in String form, for given leaf column, row; does nothing if no cell; 'true if set
+  // #CAT_Rows set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
 
   const Variant 	GetValAsVar(int col, int row) const;
   // #CAT_Rows get data of scalar type, in Variant form, for given column, row; Invalid/NULL if no cell
   bool 			SetValAsVar(const Variant& val, int col, int row);
-  // #CAT_Rows set data of scalar type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
+  // #CAT_Rows set data of scalar type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
 
   taMatrix*	 	GetValAsMatrix(int col, int row);
   // #CAT_Rows get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
-  //#CAT_Rows  set data of any type, in Variant form, for given leaf column, row; does nothing if no cell; 'true' if set
+  //#CAT_Rows  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
   // #CAT_Rows get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
 
@@ -443,14 +438,26 @@ public:
   // saving/loading (file)
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  void 			SaveHeader(ostream& strm);
-  // #CAT_File saves header information, tab-separated, 
-  void 			SaveData(ostream& strm);
-  // #CAT_File saves data, one line per rec, tab-separated
-  void 			LoadHeader(istream& strm);
-  // #CAT_File loads header information -- preserves current headers if possible
-  void 			LoadData(istream& strm, int max_recs = -1);
-  // #CAT_File loads data, up to max num of recs (-1 for all)
+  void 			SaveData(ostream& strm, const char* delim = "\t", bool quote_str = true);
+  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_strm_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings
+  void 			SaveHeader(ostream& strm, const char* delim = "\t");
+  // #CAT_File #MENU #EXT_strm_dat saves header information, with delimiter between columns, and optionally quoting strings
+  void 			SaveDataRow(ostream& strm, int row=-1, const char* delim = "\t",
+				    bool quote_str = true); 
+  // #CAT_File #MENU #EXT_strm_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
+
+  static int		ReadTillDelim(istream& strm, String& str, const char* delim, bool quote_str);
+  // util function to read from stream into str until delim or newline or EOF
+  static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
+  static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
+
+  void 			LoadData(istream& strm, const char* delim = "\t",
+				 bool quote_str = true, int max_recs = -1);
+  // #CAT_File #MENU #EXT_strm_dat loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
+  int 			LoadHeader(istream& strm, const char* delim = "\t");
+  // #CAT_File #EXT_strm_dat loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
+  int 			LoadDataRow(istream& strm, const char* delim = "\t", bool quote_str = true);
+  // #CAT_File #MENU #EXT_strm_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
   /////////////////////////////////////////////////////////
   // misc funs
@@ -478,6 +485,9 @@ public:
 protected: 
   /////////////////////////////////////////////////////////
   // IMPL
+  
+  static int		idx_def_arg;
+  // default arg val for functions returning index
 
   void			RowsAdding(int n, bool begin);
   // indicate beginning and end of row adding -- you have to pass the same n each time; NOT nestable
@@ -493,9 +503,9 @@ public:
 protected:
   /////////////////////////////////////////////////////////
   // DataBlock i/f IMPL
-  inline int		channelCount() const {return data.leaves;}
+  inline int		channelCount() const {return data.size; }
   inline const String	channelName(int chan) const
-  { DataArray_impl* da = data.Leaf(chan);
+  { DataArray_impl* da = data.SafeEl(chan);
     if (da) return da->name; else return _nilString; }
 
 public:

@@ -481,9 +481,7 @@ public:
   // #CAT_ObjectMgmt bracket structural changes with (nestable) true/false calls;
   void			DataUpdate(bool begin) {BatchUpdate(begin, false);}
   // #CAT_ObjectMgmt bracket data value changes with (nestable) true/false calls;
-//  bool			CheckConfig(bool quiet = false)
-//    {return CheckConfig_impl(quiet);} // 
-  // #CAT_ObjectMgmt check the configuration of this object and all its children;  typically called before running any major processing, enabling processing to assume things are configured correctly
+
 #ifndef __MAKETA__
   void			CheckConfig(bool quiet, bool& rval)
     {if (!CheckConfig_impl(quiet)) rval = false;}
@@ -494,7 +492,7 @@ public:
   // #CAT_ObjectMgmt check the configuration of this object and all its children (defaults to no confirm of success)
   bool			CheckConfig_Gui(bool confirm_success = true,
     bool quiet = false);
-  // #MENU #CAT_ObjectMgmt #ARGC_0 #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
+  // #MENU #MENU_ON_Object #CAT_ObjectMgmt #ARGC_0 #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
   void			ClearCheckConfig(); // this can be called when a CheckConfig_impl routine blindly assert ok, ex. for an object that has an "off" or "disable" state; this routine updates the gui if the state has now changed
 
 protected:

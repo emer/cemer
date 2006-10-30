@@ -185,6 +185,13 @@ class TA_API RetinalSpacingSpec : public taNBase {
   // #INLINE ##CAT_Image defines the spacing of a filter relative to a specified retinal image size
 INHERITED(taNBase)
 public:
+  enum Region {
+    FOVEA,
+    PARAFOVEA,
+    PERIPHERY,
+  };
+
+  Region	region;		// retinal region represented by this filter 
   TwoDCoord	retina_size;	// overall size of the retina
   TwoDCoord	border;		// border around retina that we don't process
   TwoDCoord	spacing;	// spacing between centers of filters in input
@@ -314,36 +321,36 @@ public:
   ///////////////////////////////////////////////////////////////////////
   // Automatic foveation of an image based on a bounding box
 
-  virtual DoGRetinaSpec* FindFoveaSpec();
+  virtual DoGRetinaSpec* FindRetinalRegion(RetinalSpacingSpec::Region reg);
   // utility function to find spec that corresponds to fovea (i.e., smallest input_size)
 
-  virtual bool	AttendFovea(DataTable* dt);
-  // apply attentional weighting filter to filtered values, with radius = fovea (vs full image)
+  virtual bool	AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region = RetinalSpacingSpec::FOVEA);
+  // apply attentional weighting filter to filtered values, with radius = given region
 
-  virtual bool	FoveateImageData(float_Matrix& img_data, DataTable* dt,
-				 float box_ll_x, float box_ll_y,
-				 float box_ur_x, float box_ur_y,
-				 float move_x=0, float move_y=0,
-				 float scale = 1.0f, float rotate = 0.0f,
-				 bool superimpose = false, bool fill_retina = false,
-				 bool attend=false);
-  // filter image data into given datatable, with retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; fill_retina = scale to fit full retina instead of fovea; attend = apply attentional weighting filter
-  virtual bool	FoveateImage(taImage& img, DataTable* dt,
-			     float box_ll_x, float box_ll_y,
-			     float box_ur_x, float box_ur_y,
-			     float move_x=0, float move_y=0,
-			     float scale = 1.0f, float rotate = 0.0f,
-			     bool superimpose = false, bool fill_retina = false,
-			     bool attend=false);
-  // filter image data into given datatable, with retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; fill_retina = scale to fit full retina instead of fovea; attend = apply attentional weighting filter
-  virtual bool	FoveateImageName(const String& img_fname, DataTable* dt,
-				 float box_ll_x, float box_ll_y,
-				 float box_ur_x, float box_ur_y,
-				 float move_x=0, float move_y=0,
-				 float scale = 1.0f, float rotate = 0.0f,
-				 bool superimpose = false, bool fill_retina = false,
-				 bool attend=false);
-  // #BUTTON load image from file and filter into given datatable, with retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; fill_retina = scale to fit full retina instead of fovea; attend = apply attentional weighting filter
+  virtual bool	LookAtImageData(float_Matrix& img_data, DataTable* dt,
+				RetinalSpacingSpec::Region region,
+				float box_ll_x, float box_ll_y,
+				float box_ur_x, float box_ur_y,
+				float move_x=0, float move_y=0,
+				float scale = 1.0f, float rotate = 0.0f,
+				bool superimpose = false, bool attend=false);
+  // filter image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; attend = apply attentional weighting filter
+  virtual bool	LookAtImage(taImage& img, DataTable* dt,
+			    RetinalSpacingSpec::Region region,
+			    float box_ll_x, float box_ll_y,
+			    float box_ur_x, float box_ur_y,
+			    float move_x=0, float move_y=0,
+			    float scale = 1.0f, float rotate = 0.0f,
+			    bool superimpose = false, bool attend=false);
+  // filter image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; attend = apply attentional weighting filter
+  virtual bool	LookAtImageName(const String& img_fname, DataTable* dt,
+				RetinalSpacingSpec::Region region,
+				float box_ll_x, float box_ll_y,
+				float box_ur_x, float box_ur_y,
+				float move_x=0, float move_y=0,
+				float scale = 1.0f, float rotate = 0.0f,
+				bool superimpose = false, bool attend=false);
+  // #BUTTON load image from file and filter into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets; attend = apply attentional weighting filter
 
   // todo: need a checkconfig here..
 

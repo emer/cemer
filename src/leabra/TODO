@@ -1,11 +1,18 @@
 leabra todo list:
 
-* taImageProc class w/ highvis stuff: first extract retina then send to dog filter.
+* taImageProc class w/ highvis stuff:
+  - make basic directory filename datatable thing (in taDataProc; with filter..)
+    - GetMakeCol on fname -- allows other fields
+  - do program stuff to make it work: training dtable is list of files (per above)
+     (do simple extension to read dave's files into datatable)
+     applyinputs reads filename and calls fun..
+  - import network and run it!!
+* V1RFPrjnSpec in leabra_extra needs to be updated to new DOG filer spec..
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
-* add data guys to prog toolbox: maybe a 2nd panel??
+* add data guys to prog toolbox: need a 2nd panel??
 
 * extrew in trial monitor seems not to be working: 12ax demo
 
@@ -29,7 +36,7 @@ current bugs:
 
 * applyexternal should just use current network context setting, instead of arg.
 
-* change applyexternal -> applyinputdata?
+* change applyexternal -> applyinputdata?  YES
 
 * display arg value in program call
 
@@ -39,8 +46,6 @@ current bugs:
 
 -------
 lower pri:
-
-* V1RFPrjnSpec in leabra_extra needs to be updated to new DOG filer spec..
 
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 
