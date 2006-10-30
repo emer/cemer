@@ -439,12 +439,12 @@ public:
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
   void 			SaveData(ostream& strm, const char* delim = "\t", bool quote_str = true);
-  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_strm_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings
+  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings
   void 			SaveHeader(ostream& strm, const char* delim = "\t");
-  // #CAT_File #MENU #EXT_strm_dat saves header information, with delimiter between columns, and optionally quoting strings
+  // #CAT_File #MENU #EXT_dat saves header information, with delimiter between columns, and optionally quoting strings
   void 			SaveDataRow(ostream& strm, int row=-1, const char* delim = "\t",
 				    bool quote_str = true); 
-  // #CAT_File #MENU #EXT_strm_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
+  // #CAT_File #MENU #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
 
   static int		ReadTillDelim(istream& strm, String& str, const char* delim, bool quote_str);
   // util function to read from stream into str until delim or newline or EOF
@@ -453,11 +453,11 @@ public:
 
   void 			LoadData(istream& strm, const char* delim = "\t",
 				 bool quote_str = true, int max_recs = -1);
-  // #CAT_File #MENU #EXT_strm_dat loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
+  // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
   int 			LoadHeader(istream& strm, const char* delim = "\t");
-  // #CAT_File #EXT_strm_dat loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
+  // #CAT_File #EXT_dat loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
   int 			LoadDataRow(istream& strm, const char* delim = "\t", bool quote_str = true);
-  // #CAT_File #MENU #EXT_strm_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  // #CAT_File #MENU #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
   /////////////////////////////////////////////////////////
   // misc funs
