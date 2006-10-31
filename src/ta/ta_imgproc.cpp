@@ -1345,8 +1345,8 @@ bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
   // convert into center-relative coords:
   FloatTwoDCoord obj_ctr_off = 2.0f * (obj_ctr - 0.5f);
 
-  move_x += obj_ctr_off.x;
-  move_y += obj_ctr_off.y;
+  move_x -= obj_ctr_off.x;
+  move_y -= obj_ctr_off.y;
   
   // now, scale the thing to fit in fov_spec->input_size
   TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
