@@ -642,7 +642,7 @@ void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) 
     break;
   case Con_Group::TEXT_IDX:
     if((prjn == NULL) || (prjn->from == NULL)) {
-      taMisc::Error("*** Error in WriteWeights::BINARY_IDX: NULL prjn or prjn->from");
+      taMisc::Warning("Error in WriteWeights::BINARY_IDX: NULL prjn or prjn->from");
       return;
     }
     strm << "#Size " << size << "\n";
@@ -650,7 +650,7 @@ void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) 
       int lidx = prjn->from->units.FindLeafEl(Un(i));
       if(lidx < 0) {
 	lidx = 0;
-	taMisc::Error("*** Error in WriteWeights::BINARY_IDX: can't find unit in connection: ", String(i),
+	taMisc::Warning("Error in WriteWeights::BINARY_IDX: can't find unit in connection: ", String(i),
 		      "in layer:", prjn->layer->name);
       }
       strm << lidx << " " << Cn(i)->wt << "\n";
@@ -662,7 +662,7 @@ void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) 
     break;
   case Con_Group::BINARY_IDX:
     if((prjn == NULL) || (prjn->from == NULL)) {
-      taMisc::Error("*** Error in WriteWeights::BINARY_IDX: NULL prjn or prjn->from");
+      taMisc::Warning("Error in WriteWeights::BINARY_IDX: NULL prjn or prjn->from");
       return;
     }
     strm << size << "\n";
@@ -670,7 +670,7 @@ void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) 
       int lidx = prjn->from->units.FindLeafEl(Un(i));
       if(lidx < 0) {
 	lidx = 0;
-	taMisc::Error("*** Error in WriteWeights::BINARY_IDX: can't find unit in connection: ", String(i),
+	taMisc::Warning("Error in WriteWeights::BINARY_IDX: can't find unit in connection: ", String(i),
 		      "in layer:", prjn->layer->name);
       }
       strm.write((char*)&(lidx), sizeof(lidx));
@@ -699,7 +699,7 @@ static int con_group_read_weights_text_size(istream& strm, int size) {
   }
   if(c == EOF) sz = 0;
   if(sz < 0) {
-    taMisc::Error("*** Con_Group::ReadWeights: Error in reading weights -- read size < 0");
+    taMisc::Warning("Con_Group::ReadWeights: Error in reading weights -- read size < 0");
   }
   return sz;
 }
@@ -707,7 +707,7 @@ static int con_group_read_weights_text_size(istream& strm, int size) {
 static bool con_group_read_weights_idx_con(Con_Group* ths, int& i, Unit* ru, int lidx ) {
   Unit* su = ths->prjn->from->units.Leaf(lidx);
   if(su == NULL) {
-    taMisc::Error("*** Error in ReadWeights::_IDX: unit at leaf index: ",
+    taMisc::Warning("Error in ReadWeights::_IDX: unit at leaf index: ",
 		  String(lidx), "not found in layer:", ths->prjn->from->name);
     i--; ths->EnforceSize(ths->size-1);
     ru->n_recv_cons--;
@@ -715,7 +715,7 @@ static bool con_group_read_weights_idx_con(Con_Group* ths, int& i, Unit* ru, int
   }
   Con_Group* send_gp = (Con_Group*)su->send.SafeGp(ths->prjn->send_idx);
   if(send_gp == NULL) {
-    taMisc::Error("*** Error in ReadWeights::_IDX: unit at leaf index: ",
+    taMisc::Warning("Error in ReadWeights::_IDX: unit at leaf index: ",
 		  String(lidx), "does not have proper send group:", String(ths->prjn->send_idx));
     i--; ths->EnforceSize(ths->size-1);
     ru->n_recv_cons--;
@@ -755,7 +755,7 @@ void Con_Group::ReadWeights(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt
       int sz = con_group_read_weights_text_size(strm, size);
       if(sz <= 0) return ;	// zero size likely = DMEM save (or EOF) so just skip it!
       if(sz != size) {
-	taMisc::Error("*** Error in reading weights: read size (", String(sz),
+	taMisc::Warning("Error in reading weights: read size (", String(sz),
 		      ") != current size (", String(size), ")");
       }
       int minsz = MIN(sz, size);
@@ -822,11 +822,11 @@ void Con_Group::ReadWeights(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt
       strm >> sz;  strm.get();
       if(sz == 0) return;	// zero size likely = DMEM save so just skip it!
       if(sz < 0) {
-	taMisc::Error("*** Error in reading weights: read size < 0");
+	taMisc::Warning("Error in reading weights: read size < 0");
 	return;
       }
       if(sz != size) {
-	taMisc::Error("*** Error in reading weights: read size (", String(sz),
+	taMisc::Warning("Error in reading weights: read size (", String(sz),
 		      ") != current size (", String(size), ")");
       }
       int minsz = MIN(sz, size);
@@ -840,14 +840,14 @@ void Con_Group::ReadWeights(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt
   case Con_Group::BINARY_IDX:
     {
       if((prjn == NULL) || (prjn->from == NULL)) {
-	taMisc::Error("*** Error in ReadWeights::BINARY_IDX: NULL prjn or prjn->from in WriteWeights::BINARY_IDX");
+	taMisc::Warning("Error in ReadWeights::BINARY_IDX: NULL prjn or prjn->from in WriteWeights::BINARY_IDX");
 	return;
       }
       int sz;
       strm >> sz;  strm.get();
       if(sz == 0) return;	// zero size likely = DMEM save so just skip it!
       if(sz < 0) {
-	taMisc::Error("*** Error in ReadWeights::BINARY_IDX: read size < 0");
+	taMisc::Warning("Error in ReadWeights::BINARY_IDX: read size < 0");
 	return;
       }
       ru->n_recv_cons += sz - size;
@@ -923,7 +923,7 @@ int Con_Group::LesionCons(Unit* un, float p_lesion, bool permute) {
 void Con_Group::ConValuesToArray(float_RArray& ary, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Error("*** Variable:", variable, "not found or not a float on units of type:",
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
 		   el_typ->name, "in ConValuesToArray()");
     return;
   }
@@ -937,7 +937,7 @@ void Con_Group::ConValuesToArray(float_RArray& ary, const char* variable) {
 void Con_Group::ConValuesFromArray(float_RArray& ary, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Error("*** Variable:", variable, "not found or not a float on units of type:",
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
 		   el_typ->name, "in ConValuesToArray()");
     return;
   }
@@ -1042,7 +1042,7 @@ int Con_Group::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
   for(i=0; i<size; i++) {
     String un_path = Un(i)->GetPath(NULL, &(prjn->from->units));
     if(un_path == "root") {
-      taMisc::Error("*** Units in projection:", prjn->name,"in layer:",prjn->layer->name,
+      taMisc::Warning("Units in projection:", prjn->name,"in layer:",prjn->layer->name,
 		    "have a null path.  Do ConnectAll and save again.");
     }
     strm << un_path << "; ";
@@ -1078,27 +1078,27 @@ int Con_Group::Dump_Load_Value(istream& strm, TAPtr) {
   if(c == EOF) return EOF;
   c = taMisc::read_word(strm);
   if(taMisc::LexBuf != "units") {
-    taMisc::Error("*** Con_Group Expecting: 'units' in load file, got:",
+    taMisc::Warning("Con_Group Expecting: 'units' in load file, got:",
 		    taMisc::LexBuf,"instead");
     return false;
   }
   // skip =
   c = taMisc::skip_white(strm);
   if(c != '=') {
-    taMisc::Error("*** Missing '=' in dump file for unit in Con_Group");
+    taMisc::Warning("Missing '=' in dump file for unit in Con_Group");
     return false;
   }
   // skip {
   c = taMisc::skip_white(strm);
   if(c != '{') {
-    taMisc::Error("*** Missing '{' in dump file for unit in Con_Group");
+    taMisc::Warning("Missing '{' in dump file for unit in Con_Group");
     return false;
   }
 
   // prjn has to be loaded in advance of this!
   // (sender-based must have send_prjns own projection, else projection owns it)
   if((prjn == NULL) || (prjn->from == NULL) || (prjn->layer == NULL)) {
-    taMisc::Error("*** projection or ->from or ->layer is NULL");
+    taMisc::Warning("projection or ->from or ->layer is NULL");
     return false;
   }
   Unit_Group* ug = &(prjn->from->units);
@@ -1116,7 +1116,7 @@ int Con_Group::Dump_Load_Value(istream& strm, TAPtr) {
     MemberDef* md;
     Unit* un = (Unit*)ug->FindFromPath(taMisc::LexBuf, md);
     if(un == NULL) {
-      taMisc::Error("*** Connection unit not found:", taMisc::LexBuf,
+      taMisc::Warning("Connection unit not found:", taMisc::LexBuf,
 		      "in connection type", ctd->name);
       c = taMisc::skip_past_err(strm); // scan past the error
       if(c == '}') break;
@@ -1144,7 +1144,7 @@ int Con_Group::Dump_Load_Value(istream& strm, TAPtr) {
     }
     MemberDef* md = ctd->members.FindName(taMisc::LexBuf);
     if(md == NULL) {
-      taMisc::Error("*** Connection member not found:", taMisc::LexBuf,
+      taMisc::Warning("Connection member not found:", taMisc::LexBuf,
 		      "in connection type", ctd->name);
       c = taMisc::skip_past_err(strm);
       if(c == '}') break;
@@ -1153,14 +1153,14 @@ int Con_Group::Dump_Load_Value(istream& strm, TAPtr) {
     // skip =
     c = taMisc::skip_white(strm);
     if(c != '=') {
-      taMisc::Error("*** Missing '=' in dump file for unit in Con_Group");
+      taMisc::Warning("Missing '=' in dump file for unit in Con_Group");
       c = taMisc::skip_past_err(strm);
       continue;
     }
     // skip {
     c = taMisc::skip_white(strm);
     if(c != '{') {
-      taMisc::Error("*** Missing '{' in dump file for unit in Con_Group");
+      taMisc::Warning("Missing '{' in dump file for unit in Con_Group");
       c = taMisc::skip_past_err(strm);
       continue;
     }
@@ -2560,7 +2560,7 @@ void Projection::SetFrom() {
   switch(from_type) { // this is where the projection is coming from
   case NEXT:
     if (myindex == (mynet->layers.leaves - 1)) { // is it the last layer
-      taMisc::Error("*** Last Layer projects from NEXT layer in prjn:",
+      taMisc::Warning("Last Layer projects from NEXT layer in prjn:",
 		    name);
       return;
     }
@@ -2572,7 +2572,7 @@ void Projection::SetFrom() {
     break;
   case PREV:
     if (myindex == 0) { // is it the first
-      taMisc::Error("*** First Layer recieves projection from PREV layer in prjn:",
+      taMisc::Warning("First Layer recieves projection from PREV layer in prjn:",
 		    name);
       return;
     }
@@ -2588,7 +2588,7 @@ void Projection::SetFrom() {
     break;
   case CUSTOM:
     if(from == NULL) {
-      taMisc::Error("*** Warning: CUSTOM projection and from is NULL in prjn:",
+      taMisc::Warning("Warning: CUSTOM projection and from is NULL in prjn:",
 		    name, "in layer:", layer->name);
     }
     break;
@@ -3104,7 +3104,7 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
 void Unit_Group::UnitValuesToArray(float_RArray& ary, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Error("*** Variable:", variable, "not found or not a float on units of type:",
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
 		   el_typ->name, "in UnitValuesToArray()");
     return;
   }
@@ -3120,7 +3120,7 @@ void Unit_Group::UnitValuesFromArray(float_RArray& ary, const char* variable) {
   if(ary.size == 0) return;
   MemberDef* md = el_typ->members.FindName(variable);
   if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Error("*** Variable:", variable, "not found or not a float on units of type:",
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
 		   el_typ->name, "in UnitValuesToArray()");
     return;
   }

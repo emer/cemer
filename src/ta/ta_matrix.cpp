@@ -237,9 +237,9 @@ void MatrixGeom::SetGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
 //////////////////////////
 
 bool taMatrix::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
-  if ((dims_ < 1) || (dims_ > TA_MATRIX_DIMS_MAX)) { 
+  if ((dims_ < 0) || (dims_ > TA_MATRIX_DIMS_MAX)) { 
     if (err_msg != NULL)
-      *err_msg = "dims must be: 1 <= dims <= " + String(TA_MATRIX_DIMS_MAX) + 
+      *err_msg = "dims must be: 0 <= dims <= " + String(TA_MATRIX_DIMS_MAX) + 
         " was: " + String(dims_);
     return false;
   }
@@ -553,6 +553,9 @@ void taMatrix::EnforceFrames(int n, bool notify) {
       if (rm_col) m_dm->endRemoveColumns();
       if (rm_row) m_dm->endRemoveRows();
     }
+  }
+  else {
+    geom.Set(geom.size-1, n);	
   }
   DataChanged(DCR_ITEM_UPDATED);
 }

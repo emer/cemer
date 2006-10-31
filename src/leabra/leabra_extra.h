@@ -848,11 +848,12 @@ public:
 
 class LEABRA_API V1RFPrjnSpec : public TiledRFPrjnSpec {
   // V1 receptive field projection spec: does a TiledRFPrjnSpec connectivity with Gabor and Blob filter weights
+  INHERITED(TiledRFPrjnSpec)
 public:
   GaborRFSpec	gabor_rf;	// parameters for gabor filter specs
   BlobRFSpec	blob_rf;	// parameters for blob filter specs
   GaborFilterSpec gabor_spec; // #READ_ONLY underlying gabor generator
-  DoGFilterSpec dog_spec; // #READ_ONLY underlying DoG generator TODO: not yet supported!!!
+  DoGFilterSpec dog_spec; // #READ_ONLY underlying DoG generator 
   
   void		C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru);
   // set gabor weights
@@ -866,10 +867,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  void	InitLinks();
-  SIMPLE_COPY(V1RFPrjnSpec);
-  COPY_FUNS(V1RFPrjnSpec, TiledRFPrjnSpec);
-  TA_BASEFUNS(V1RFPrjnSpec);
+  TA_SIMPLE_BASEFUNS(V1RFPrjnSpec);
 };
 
 #endif // leabra_extra_h

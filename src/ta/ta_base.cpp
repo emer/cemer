@@ -1631,7 +1631,16 @@ void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
     // we only include owned items, not linked
     if (!child || (child->GetOwner() != this)) 
       continue;
+#ifdef DEBUG
+    bool prv_rval = rval;
+#endif
     child->CheckConfig(quiet, rval);
+#ifdef DEBUG
+    if(prv_rval && !rval) {
+      taMisc::CheckError("Child failed check on list:", GetPath(),
+			 "child:",String(i),"name:",child->GetName());
+    }
+#endif
   }
 }
 

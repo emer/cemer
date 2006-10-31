@@ -30,7 +30,8 @@
 // forwards
 class DataBlock;
 
-class TA_API ChannelSpec: public taNBase { // describes a channel of data in a DataBlock
+class TA_API ChannelSpec: public taNBase {
+  // ##CAT_Data describes a channel of data in a DataBlock (e.g., a column of a datatable)
 INHERITED(taNBase)
 public: 
   String		new_group_name; // if set, creates a new channel group (where supported)
@@ -53,7 +54,7 @@ private:
 };
 
 class TA_API MatrixChannelSpec: public ChannelSpec { 
-// describes a matrix channel of data in a DataBlock
+  // describes a matrix channel of data in a DataBlock
 INHERITED(ChannelSpec) 
 public:
   MatrixGeom		cell_geom; //  the geom of each cell
@@ -82,22 +83,23 @@ private:
   void		Destroy() {CutLinks();}
 };
 
-
-class TA_API ChannelSpec_List: public taList<ChannelSpec> { // 
+class TA_API ChannelSpec_List: public taList<ChannelSpec> {
+  // a list of channel specifications
 INHERITED(taList<ChannelSpec>)
 public:
   void		UpdateDataBlockSchema(DataBlock* db);
 
-  int	NumListCols() const {return 7;} // number of columns in a list view for this item type
-  String GetColHeading(int col); // header text for the indicated column
+  int		NumListCols() const {return 7;}
+  String 	GetColHeading(int col);
+
   TA_BASEFUNS(ChannelSpec_List);
 private:
   void		Initialize() {SetBaseType(&TA_ChannelSpec);}
   void		Destroy() {}
 };
 
-
-class TA_API DataBlock: public taNBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS base class for objects that provide and/or accept data
+class TA_API DataBlock: public taNBase {
+  // #VIRT_BASE #NO_INSTANCE ##TOKENS ##CAT_Data abstract base class interface for objects that provide (source) and/or accept (sink) data
 INHERITED(taNBase)
 public:
   enum DBOptions { // #BITS datablock options -- they also have individual convenience accessors
@@ -115,154 +117,192 @@ public:
   virtual DBOptions	dbOptions() const = 0; // options the instance type support
   
   inline bool		isIndexable() const {return (dbOptions() & DB_INDEXABLE);} 
-    // 'true' if can be accessed by index
+  // #CAT_Access true if can be accessed by index
   inline bool		isSequencable() const {return (dbOptions() & DB_SEQUENCABLE);} 
-    // 'true' if can be accessed sequentially
+  // #CAT_Access true if can be accessed sequentially
   inline bool		isSource() const {return (dbOptions() & DB_SOURCE);} 
-    // 'true' if is a data source
+  // #CAT_Access true if is a data source
   inline bool		isSink() const {return (dbOptions() & DB_SINK);} 
-    // 'true' if is a data sink
+  // #CAT_Access true if is a data sink
   inline bool		isSinkGrowable() const {return (dbOptions() & DB_SINK_GROWABLE);} 
-    // 'true' if sink is growable (via AddItem)
+  // #CAT_Access true if sink is growable (via AddItem)
   inline bool		isSinkDynamic() const {return (dbOptions() & DB_SINK_DYNAMIC);} 
-    // 'true' if sink schema can be modified
+  // #CAT_Access true if sink schema can be modified
   
   virtual int		ItemCount() const {return 0;} 
-    // number of items (if indexable)
+  // #CAT_Access number of items (if indexable)
   
-  virtual void		ResetData() {} // for supported devices, clears all the data (but not the schema)
-  TA_ABSTRACT_BASEFUNS(DataBlock); //
+  virtual void		ResetData() {}
+  // #CAT_Modify for supported devices, clears all the data (but not the schema)
+
+  TA_ABSTRACT_BASEFUNS(DataBlock);
   
-public: // Properties i/f
+public:
+  /////////////////////////////////////////////////////////
+  // Properties interface
   virtual void		SetProperty(const String& name, const Variant& value) {}
   virtual const Variant GetProperty(const String& name) const {return _nilVariant;}
   
-public: // DataSource i/f
-  virtual int		sourceChannelCount() const {return 0;}
-    // number of source channels
-  inline bool		sourceChannelInRange(int chan) const
-    {return ((chan >= 0) && (chan < sourceChannelCount()));}
-  virtual const String	sourceChannelName(int chan) const
-    {return _nilString;}
-  virtual bool		sourceItemAvailable() const {return false;}
-    // true when a valid item is available for reading
-  
-  virtual int		GetSourceChannelIndexByName(const String& ch_nm)
-    {int scc = sourceChannelCount();  for (int i = 0; i < scc; ++i) 
-     if (ch_nm == sourceChannelName(i)) return i;   return -1;}
-    // get the channel number for the name; -1 if none
-    
-  bool			ReadOpen() {bool ok = true; 
-    ReadOpen_impl(ok); if (ok) ReadItrInit();  return ok;}
-    // opens the block for read operation -- must be called after changing params
-  void			ReadClose() {ReadClose_impl();}
-    // closes the block for read operation -- call when done
-  bool			ReadFirst() {ReadItrInit(); return ReadNext();}
-    // (re-)initializes sequential read iteration, reads first item
+public:
+  /////////////////////////////////////////////////////////
+  // DataSource interface
+
+  //////////////////////////////////
+  // Reading Data: making it available
+
+  bool			ReadOpen() { bool ok = true; ReadOpen_impl(ok); return ok;}
+  // #CAT_Source opens the block for read operation -- call prior to reading data to perform any initialization required by data source
+  void			ReadClose() { ReadClose_impl();}
+  // #CAT_Source closes the block for read operation -- call when done reading data -- performs any cleanup/freeing of resources after reading
+
+  bool			ReadFirst() { ReadItrInit(); return ReadNext(); }
+  // #CAT_Source (re-)initializes sequential read iteration, reads first item so that it is now available for GetData routines (false if no items available)
   virtual bool		ReadNext() {return false;}
-    // if sequencable, read next item, 'true' if item available
+  // #CAT_Source read next item of data (sequential access) so that it is now available for GetData routines -- returns true if item available
+
   virtual bool		ReadItem(int idx) {return false;} 
-    // if indexable, goes to item idx, 'true' if item exists and was read
+  // #CAT_Source goes directly (random access) to item idx (in range 0 <= idx < ItemCount()) so that it is now available for GetData routines, returns true if item exists and was read
+
+  virtual bool		ReadAvailable() const { return false; }
+  // #CAT_Source true when a valid item is available for reading by GetData routines
   
-  const Variant		GetData(int chan) 
-    {if (sourceItemAvailable() && sourceChannelInRange(chan)) 
-       return GetData_impl(chan);
-     else return _nilVariant;}
-  const Variant		GetDataByChannelName(const String& ch_nm) 
-    {int chan; if (sourceItemAvailable() &&
-     ((chan = GetSourceChannelIndexByName(ch_nm)) >= 0)) 
-       return GetData_impl(chan);
-     else return _nilVariant;}
- 
-  taMatrix*		GetMatrixData(int chan) 
-    {if (sourceItemAvailable() && sourceChannelInRange(chan))
-       return GetMatrixData_impl(chan);
-     else return NULL;}
-    // get Matrix data; note: you should ref/unref the matrix
-  taMatrix*		GetMatrixDataByChannelName(const String& ch_nm) 
-    {int chan; if (sourceItemAvailable() &&
-     ((chan = GetSourceChannelIndexByName(ch_nm)) >= 0)) 
-       return GetMatrixData_impl(chan);
-     else return NULL;}
-    // get Matrix data; note: you should ref/unref the matrix
-protected: // DataSource i/f
-  virtual const Variant	GetData_impl(int chan) {return _nilVariant;}
-    // get data at current position
-  virtual taMatrix*	GetMatrixData_impl(int chan) {return NULL;}
-    // get matrix data at current position
-  virtual void		ReadItrInit() {}
-  virtual void		ReadOpen_impl(bool& ok) {} // extend
-  virtual void		ReadClose_impl() {} // extend
-  virtual bool		ReadItem_impl() {return true;} // replace
-  
-public: // DataSink i/f
-  virtual int		sinkChannelCount() const {return 0;}
-   // number of sink channels
-  inline bool		sinkChannelInRange(int chan) const
-    {return ((chan >= 0) && (chan < sinkChannelCount()));}
-  virtual const String	sinkChannelName(int chan) const {return _nilString;}
-  virtual bool		sinkItemAvailable() const {return false;}
-    // true when a valid item is available for writing
-  
-  virtual int		GetSinkChannelIndexByName(const String& ch_nm)
-    {int scc = sinkChannelCount();  for (int i = 0; i < scc; ++i) 
-     if (ch_nm == sinkChannelName(i)) return i;   return -1;}
-    // get the channel number for the name; -1 if none
+  //////////////////////////////////
+  // Source Channel Access
+
+  virtual int		SourceChannelCount() const {return 0;}
+  // #CAT_SourceChannel number of source channels available for reading
+  inline bool		SourceChannelInRange(int chan) const
+  { return ((chan >= 0) && (chan < SourceChannelCount()));}
+  // #CAT_SourceChannel is this channel number available for reading
+  virtual const String	SourceChannelName(int chan) const
+  { return _nilString;}
+  // #CAT_SourceChannel name of source channel from channel index
+  virtual int		GetSourceChannelByName(const String& ch_nm)
+  { int scc = SourceChannelCount();
+    for (int i = 0; i < scc; ++i) 
+      if (ch_nm == SourceChannelName(i)) return i;
+    return -1;}
+  // #CAT_SourceChannel get the source channel number for the name; -1 if none
     
-  // dynamic schema management
-  virtual bool		AddSinkChannel(ChannelSpec* cs) 
-    // add a sink channel; returns 'true' if ok, and sets the chan_num 
-    {return false;}
-  virtual bool		AssertSinkChannel(ChannelSpec* cs) 
-    // make sure sink channel exists; returns 'true' if ok, and sets the chan_num 
-    {return false;}
-  void			DeleteSinkChannel(int chan) 
-    {if (isSinkDynamic() && (chan >= 0) && (chan < sinkChannelCount()))
-      DeleteSinkChannel_impl(chan);}
-  void			DeleteSinkChannelByName(const String& ch_nm)
-    {DeleteSinkChannel(GetSinkChannelIndexByName(ch_nm));}
+  const Variant		GetData(int chan) 
+  { if (ReadAvailable() && SourceChannelInRange(chan)) 
+      return GetData_impl(chan);
+    else return _nilVariant;}
+  // #CAT_SourceChannel get source data from given channel index -- must have done Read first!
+  const Variant		GetDataByName(const String& ch_nm) 
+  { int chan; if (ReadAvailable() &&
+		  ((chan = GetSourceChannelByName(ch_nm)) >= 0)) 
+		return GetData_impl(chan);
+    else return _nilVariant; }
+  // #CAT_SourceChannel get source data from given channel name -- must have done Read first!
+  taMatrix*		GetMatrixData(int chan) 
+  { if (ReadAvailable() && SourceChannelInRange(chan))
+      return GetMatrixData_impl(chan);
+    else return NULL;}
+  // #CAT_SourceChannel get source data from Matrix channel -- must have done Read first; note: you must taBase::Ref/unRefDone the matrix
+  taMatrix*		GetMatrixDataByName(const String& ch_nm) 
+  { int chan; if (ReadAvailable() &&
+		  ((chan = GetSourceChannelByName(ch_nm)) >= 0)) 
+		return GetMatrixData_impl(chan);
+    else return NULL;}
+  // #CAT_SourceChannel get source data from Matrix channel -- must have done Read first; note: you must taBase::Ref/unRefDone the matrix
+
+protected:
+  /////////////////////////////////////////////////////////
+  // DataSource impl: these all must be implemented by actual source
+
+  virtual const Variant	GetData_impl(int chan) {return _nilVariant;}
+  virtual taMatrix*	GetMatrixData_impl(int chan) {return NULL;}
+  virtual void		ReadItrInit() {}
+  virtual void		ReadOpen_impl(bool& ok) {}
+  virtual void		ReadClose_impl() {}
+  virtual bool		ReadItem_impl() {return true;}
   
-  bool			WriteOpen() {bool ok = true; 
-    WriteOpen_impl(ok); if (ok) WriteItrInit(); return ok;}
-    // opens the block for write operation -- must be called after changing params
-  void			WriteClose() {WriteClose_impl();}
-    // closes the block for write operation -- call when done
-  bool			WriteFirst() {WriteItrInit(); return WriteNext();}
-    // (re-)initializes sequential write iteration, prepares first item for write
-  virtual bool		WriteNext() {return false;} 
-    // goes to next item, creating a new one if at end; 'true' if item available
+public: 
+  /////////////////////////////////////////////////////////
+  // DataSink interface
+
+  //////////////////////////////////
+  // Writing Data: sending it out
+
+  bool			WriteOpen() { bool ok = true; WriteOpen_impl(ok); return ok;}
+  // #CAT_Sink opens the block for write operation -- call prior to writing any data to perform any initialization required by data sink
+  void			WriteClose() { WriteClose_impl();}
+  // #CAT_Sink closes the block for write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, flushing of buffers, etc
+
+  bool			WriteFirst() { WriteItrInit(); return WriteNext(); }
+  // #CAT_Sink (re-)initializes sequential write iteration, makes first item of data available for wirting with SetData routines (false if no items available)
+  virtual bool		WriteNext() { return false; } 
+  // #CAT_Sink goes to next item of data (sequential acccess) for writing by SetData routines, creating a new one if at end; true if item available
+
   virtual bool		WriteItem(int idx) {return false;} 
-  // if indexable, goes to item idx, if 1+end, Adds a new item; 'true' if item available
-  virtual void		WriteDone() {} 
-    // call after writing all channels of the item, for impl-dependent commit
+  // #CAT_Sink goes directly (random access) to item idx (in range 0 <= idx < ItemCount()) for SetData writing routines, if 1+end, adds a new item; true if item available
+  virtual bool		WriteAvailable() const {return false;}
+  // #CAT_Sink true when a valid item is available for writing by SetData routines
   
+  //////////////////////////////////
+  // Sink Channel Access
+
+  virtual int		SinkChannelCount() const {return 0;}
+  // #CAT_SinkChannel number of sink channels available for writing 
+  inline bool		SinkChannelInRange(int chan) const
+  { return ((chan >= 0) && (chan < SinkChannelCount()));}
+  // #CAT_SinkChannel is this channel number available for writing
+  virtual const String	SinkChannelName(int chan) const {return _nilString;}
+  // #CAT_SinkChannel Get name of sink channel from channel index
+
+  virtual int		GetSinkChannelByName(const String& ch_nm)
+  { int scc = SinkChannelCount();
+    for (int i = 0; i < scc; ++i) 
+      if (ch_nm == SinkChannelName(i)) return i;
+    return -1;}
+  // #CAT_SinkChannel get the channel number for the name; -1 if none
+    
+  virtual bool		AddSinkChannel(ChannelSpec* cs) 
+  { return false; }
+  // #CAT_SinkChannel add a sink channel; returns true if ok, and sets the chan_num 
+  virtual bool		AssertSinkChannel(ChannelSpec* cs) 
+  // #CAT_SinkChannel make sure sink channel exists; returns true if ok, and sets the chan_num 
+  { return false; }
+  void			DeleteSinkChannel(int chan) 
+  { if (isSinkDynamic() && (chan >= 0) && (chan < SinkChannelCount()))
+      DeleteSinkChannel_impl(chan);}
+  // #CAT_SinkChannel delete given sink channel
+  void			DeleteSinkChannelByName(const String& ch_nm)
+  { DeleteSinkChannel(GetSinkChannelByName(ch_nm)); }
+  // #CAT_SinkChannel delete given sink channel indicated by name
+
   bool			SetData(const Variant& data, int chan) 
-    {if (sinkItemAvailable() && sinkChannelInRange(chan)) 
-       return SetData_impl(data, chan); else return false;}
-    // set the data, returns 'true' if successful
-  bool			SetDataByChannelName(const Variant& data, const String& ch_nm) 
-    {int chan; if (sinkItemAvailable() &&
-     ((chan = GetSinkChannelIndexByName(ch_nm)) >= 0)) 
-       return SetData_impl(data, chan); else return false;}
-    // set the data, returns 'true' if successful
+  { if (WriteAvailable() && SinkChannelInRange(chan)) 
+      return SetData_impl(data, chan); else return false;}
+  // #CAT_SinkChannel set the data for a given channel index -- must have done Write first! returns true if successful
+  bool			SetDataByName(const Variant& data, const String& ch_nm) 
+  { int chan; if (WriteAvailable() &&
+		  ((chan = GetSinkChannelByName(ch_nm)) >= 0)) 
+		return SetData_impl(data, chan); else return false;}
+  // #CAT_SinkChannel set the data for given channel name -- must have done Write first! returns true if successful
  
   bool			SetMatrixData(const taMatrix* data, int chan) 
-    {if (sinkItemAvailable() && sinkChannelInRange(chan)) 
-       return SetMatrixData_impl(data, chan); else return false;}
-    // set the data from a Matrix, returns 'true' if successful
-  bool			SetMatrixDataByChannelName(const taMatrix* data, const String& ch_nm) 
-    {int chan; if (sinkItemAvailable() &&
-     ((chan = GetSinkChannelIndexByName(ch_nm)) >= 0)) 
-       return SetMatrixData_impl(data, chan); else return false;}
-    // set the data from a Matrix, returns 'true' if successful
+  { if (WriteAvailable() && SinkChannelInRange(chan)) 
+      return SetMatrixData_impl(data, chan); else return false;}
+  // #CAT_SinkChannel set the data for given Matrix channel -- must have done Write first! returns true if successful
+  bool			SetMatrixDataByName(const taMatrix* data, const String& ch_nm) 
+  { int chan; if (WriteAvailable() &&
+		  ((chan = GetSinkChannelByName(ch_nm)) >= 0)) 
+		return SetMatrixData_impl(data, chan); else return false;}
+  // #CAT_SinkChannel set the data for given matrix channel -- must have done Write first! returns true if successful
     
   taMatrix*		GetSinkMatrix(int chan)
-    {if (sinkItemAvailable() && sinkChannelInRange(chan)) 
-       {taMatrix* rval = GetSinkMatrix_impl(chan); if (rval) taBase::Ref(rval);
+  { if (WriteAvailable() && SinkChannelInRange(chan)) 
+      {taMatrix* rval = GetSinkMatrix_impl(chan); if (rval) taBase::Ref(rval);
         return rval;} 
-     else return NULL;}
-    // gets a REF'ed matrix (you MUST UnRef when finished) that you can use to write to the channel;\nONLY guaranteed to be valid until the next write operation
+    else return NULL;}
+  // #CAT_SinkChannel gets a REF'ed matrix (you MUST UnRefDone when finished) that you can use to write to the channel; this is ONLY guaranteed to be valid until the next write operation
+
 protected:
+  /////////////////////////////////////////////////////////
+  // DataSink impl: these all must be implemented by actual source
+
   virtual bool		AddItem_impl(int n) {return false;} // adds n items
   virtual void		WriteOpen_impl(bool& ok) {} // open for writing
   virtual void		WriteClose_impl() {} // close writing
@@ -274,7 +314,7 @@ protected:
   virtual bool		WriteItem_impl() {return true;} // write the current item
 
   virtual void		DeleteSinkChannel_impl(int chan) {}
-  
+
 private:
   void			Initialize() {}
   void			Destroy() {}
@@ -282,128 +322,46 @@ private:
 
 SmartRef_Of(DataBlock); // DataBlockRef
 
-
-class TA_API DataBlock_Idx: public DataBlock { 
- // #VIRT_BASE #NO_INSTANCE partial implementation for an indexable data block
+class TA_API DataBlock_Idx : public DataBlock { 
+ // #VIRT_BASE #NO_INSTANCE base class for a data source and/or sink that supports random access to data via an index
 public: 
-  override bool		sourceItemAvailable() const
-    {return ((rd_itr >= 0) && (rd_itr < ItemCount()));}
+  override bool		ReadAvailable() const
+  { return ((rd_itr >= 0) && (rd_itr < ItemCount())); }
   
   override bool		ReadNext() 
-    {if (rd_itr < -1) return false;  ++rd_itr;
-     if (rd_itr >= ItemCount()) {rd_itr = -2; return false;}
-     return ReadItem_impl();} 
-    //  advance itr; read next item, 'true' if item available
+  { if (rd_itr < -1) return false;  ++rd_itr;
+    if (rd_itr >= ItemCount()) {rd_itr = -2; return false;}
+    return ReadItem_impl(); } 
   override bool		ReadItem(int idx) 
     {if ((idx < 0) || (idx >= ItemCount())) return false;
      rd_itr = idx;  return ReadItem_impl();} 
-    // if indexable, goes to item idx, 'true' if item exists and was read
     
-  override bool		sinkItemAvailable() const
+  override bool		WriteAvailable() const
     {return ((wr_itr >= 0) && (wr_itr < ItemCount()));}
-  
   override bool		WriteNext() 
     {if (wr_itr < -1) return false;  ++wr_itr;
      if ((wr_itr == ItemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
      if (wr_itr >= ItemCount()) {wr_itr = -2; return false;}
      return WriteItem_impl();} 
-    //  advance itr; read next item, 'true' if item available
   override bool		WriteItem(int idx) 
     {if ((idx == ItemCount()) && (isSinkGrowable())) {AddItem_impl(1);}
      if ((idx < 0) || (idx >= ItemCount())) return false;
      wr_itr = idx;  return WriteItem_impl();} 
-    // if indexable, goes to item idx, 'true' if item exists and was read
-  
-  void	Copy_(const DataBlock_Idx& cp)
-     {rd_itr = -2;}
+ 
+  void	Copy_(const DataBlock_Idx& cp) { rd_itr = -2; }
   COPY_FUNS(DataBlock_Idx, DataBlock)
-  TA_ABSTRACT_BASEFUNS(DataBlock_Idx); //
-  
+  TA_ABSTRACT_BASEFUNS(DataBlock_Idx);
 protected:
-  int			rd_itr;  // an int iterator for reading
-    // -3=ReadItem error, -2=EOF, -1=BOF, >=0 is valid item
-  int			wr_itr;  // an int iterator for writing
-    // -3=WriteItem error, -2=EOF, -1=BOF, >=0 is valid item
+  int			rd_itr;
+  // an int iterator for reading: -3=ReadItem error, -2=EOF, -1=BOF, >=0 is valid item
+  int			wr_itr;
+  // an int iterator for writing: -3=WriteItem error, -2=EOF, -1=BOF, >=0 is valid item
      
   override void		ReadItrInit() {rd_itr = -1;}
-    // initializes sequential read iteration
-    
   override void		WriteItrInit() {wr_itr = -1;}
-    // initializes sequential write iteration
 private:
   void			Initialize() {rd_itr = -2; wr_itr = -2;}
   void			Destroy() {}
 };
-
-
-/*nn??
-class TA_API ChannelSpec_List: public taList<ChannelSpec> {
-INHERITED(taList<ChannelSpec>)
-public:
-  
-  TA_BASEFUNS(ChannelSpec_List);
-  
-public:
-  override void		El_SetIndex_(void* it, int idx);
-  override int		NumListCols() const {return 5;} // number of columns in a list view for this item type
-  override String	GetColHeading(int col); // header text for the indicated column
-  
-private:
-  void		Initialize() {SetBaseType(&TA_ChannelSpec);}
-  void		Destroy() {}
-};*/
-
-
-
-/* prob NN
-class TA_API SequenceMaster { // #NO_INSTANCE singleton class
-public:
-  static SequenceMaster& instance();
-  
-  int64_t		cycle() {return m_cycle;} // global cycle counter; note: init=1 so all data is stale
-  
-  void			Next(); // advance the cycle counter
-
-  bool			UpdateClient(int64_t& client_cycle, int64_t* diff = NULL);
-    // updates a client's own cycle count, returning 'true' if it was out of date, and optionally the (+ve) number of cycles by which it was stale
-private:
-  int64_t		m_cycle; // this puppy won't be overflowing anytime soon!
-  
-  SequenceMaster();
-  ~SequenceMaster();
-  SequenceMaster(const SequenceMaster& src); // not defined
-  void operator =(const SequenceMaster& src); // not defined
-};
-*/
-/* DataCatalogs
-   A DataCatalog provides a collection of data items. Examples would be image files
-   in a file system folder, or data patterns stored in a database. 
-   Usage:
-     * set the path to the items (type-dependent, ex. folder)
-     * call OpenData()
-     * access the normal DataSource interface, data items, etc.
-     * when finished, call CloseData() (note: this may do nothing for some types)
-     * to reenumerate, call CloseData() followed by OpenData()
-   
-   A DataCatalogItemSpec 
-   
-   The Catalog provides the location/path, enumeration, and retrieval functions.
-
-*/
-/*
-class TA_API DataCatalog: public taNBase { // #VIRT_BASE #NO_INSTANCE a Catalog provides a collection of data items
-INHERITED(taNBase)
-public:
-
-  virtual bool		OpenData() = 0; // opens the data source, returns true if successful
-  virtual void		CloseData() = 0; // closes the data source
-  
-  TA_ABSTRACT_BASEFUNS(DataCatalog)
-private:
-  void			Initialize() {}
-  void			Destroy() {}
-};
-*/
-
 
 #endif

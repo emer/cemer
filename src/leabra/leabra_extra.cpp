@@ -432,9 +432,9 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   }
 
   if(bias_val.un == ScalarValBias::GC) {
-    rval = false;
     LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
     if(us->hyst.init) {
+      rval = false;
       us->SetUnique("hyst", true);
       us->hyst.init = false;
       if(!quiet) taMisc::CheckError("ScalarValLayerSpec: bias_val.un = GCH requires UnitSpec hyst.init = false, I just set it for you in spec:",
@@ -1644,16 +1644,6 @@ void V1RFPrjnSpec::Initialize() {
   init_wts = true;
 }
 
-void V1RFPrjnSpec::InitLinks() {
-  TiledRFPrjnSpec::InitLinks();
-  taBase::Own(gabor_rf, this);
-  taBase::Own(blob_rf, this);
-  taBase::Own(gabor_spec, this);
-  taBase::Own(dog_spec, this);
-}
-
-// todo: new dog filter not yet supported!!!
-
 bool V1RFPrjnSpec::InitGaborDoGSpec(Projection* prjn, int recv_idx) {
   if(!InitRFSizes(prjn)) return false;
 
@@ -1673,7 +1663,6 @@ bool V1RFPrjnSpec::InitGaborDoGSpec(Projection* prjn, int recv_idx) {
     gabor_spec.amp = gabor_rf.amp;
   }
   else {			// dog/blob
-    /*
     int dog_idx = recv_idx - (gabor_rf.n_angles * 2);
     int phase_dx = ((dog_idx / blob_rf.n_sizes) % 2);
     float sz_dx = (float)(dog_idx % blob_rf.n_sizes);
@@ -1691,38 +1680,12 @@ bool V1RFPrjnSpec::InitGaborDoGSpec(Projection* prjn, int recv_idx) {
 //       dog_spec.off_sigma << endl;
     MakeDoGFilter();
 //     cerr << dog_spec.filter.size << endl;
-*/
   }
   return true;
 }
 
 void V1RFPrjnSpec::MakeDoGFilter() {
-  /*  dog_spec.filter.Reset();
-  float flt_ctr = (dog_spec.filter_size - 1.0f) / 2.0f;
-  float max_val = 0.0f;
-  int x,y;
-  for(y=0; y<dog_spec.filter_size; y++) {
-    for(x=0; x<dog_spec.filter_size; x++) {
-      float xf = (float)x - flt_ctr;
-      float yf = (float)y - flt_ctr;
-      float val = xf * xf + yf * yf;
-      float ong = 1.0f / (4.0 * PI * dog_spec.on_sigma * dog_spec.on_sigma) * exp(-val / (2.0 * dog_spec.on_sigma * dog_spec.on_sigma));
-      float offg = 1.0f / (4.0 * PI * dog_spec.off_sigma * dog_spec.off_sigma) * exp(-val / (2.0 * dog_spec.off_sigma * dog_spec.off_sigma));
-//       float ong = exp(-val / (2.0 * dog_spec.on_sigma * dog_spec.on_sigma));
-//       float offg = exp(-val / (2.0 * dog_spec.off_sigma * dog_spec.off_sigma));
-      float net = ong - offg;
-      if(fabs(net) > max_val)
-	max_val = fabs(net);
-      dog_spec.filter.Add(net);
-    }
-  }
-  float rescale = gabor_rf.amp / max_val;
-  int i;
-  for(i=0;i<dog_spec.filter.size;i++) {
-    dog_spec.filter[i] *= rescale;
-  }
-  */
-  //  cerr << "+ sum: " << pos_sum_2 << " - sum: " << neg_sum_2 << endl;
+  dog_spec.UpdateFilter();
 }
 
 void V1RFPrjnSpec::C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru) {
@@ -1737,8 +1700,7 @@ void V1RFPrjnSpec::C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru) {
 
   int send_x = gabor_spec.x_size;
 
-  int i;
-  for(i=0; i<cg->size; i++) {
+  for(int i=0; i<cg->size; i++) {
     int su_x = i % send_x;
     int su_y = i / send_x;
     float val = 0.0;
@@ -1746,9 +1708,9 @@ void V1RFPrjnSpec::C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru) {
     if(recv_idx < gabor_rf.n_angles * 2) { // gabor
       val = gabor_spec.Eval(su_x, su_y);
     }
-//     else {
-//       val = dog_spec.filter[i];
-//     }
+    else {
+      val = gabor_rf.amp * dog_spec.net_filter.SafeEl_Flat(i);
+    }
     if(on_rf) {
       if(val > 0.0f)
 	cg->Cn(i)->wt = val;

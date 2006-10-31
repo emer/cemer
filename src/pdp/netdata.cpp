@@ -114,7 +114,7 @@ void LayerRWBase::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 int LayerRWBase::GetChanIdx(bool force_lookup) {
   if ((force_lookup || (chan_idx < 0)) && data) {
-    chan_idx = data->GetSinkChannelIndexByName(chan_name);
+    chan_idx = data->GetSinkChannelByName(chan_name);
   }
   return chan_idx; // note: could still be -1 if no name etc.
 }
@@ -245,8 +245,13 @@ void LayerWriter::ApplyExternal(int context) {
   }
   // LAYER
   if(!layer) return;
-  taMatrixPtr mat(data->GetMatrixData(GetChanIdx())); //note: refs mat
-  if(!mat) return;
+  int chan = GetChanIdx();
+  taMatrixPtr mat(data->GetMatrixData(chan)); //note: refs mat
+  if(!mat) {
+    taMisc::Warning("LayerWriter::ApplyExternal: could not get matrix data from channel:",
+		    chan_name, "index:", String(chan),"in data:",data->name);
+    return;
+  }
   // we only apply target data in TRAIN mode
   if ((context != Network::TRAIN) && (ext_flags & Unit::TARG))
     return;
@@ -276,7 +281,7 @@ void LayerWriter_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
   FOR_ITR_EL(Layer, lay, net->layers., itr) {
     //note: we only look for any lt flags, not all of them
     if (!(lay->layer_type & lt)) continue;
-    int chan = db->GetSourceChannelIndexByName(lay->name);
+    int chan = db->GetSourceChannelByName(lay->name);
     if (chan < 0) continue;
     // find matching existing, or make new
     LayerWriter* lrw = NULL;
@@ -996,7 +1001,8 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   } else {
     geom.SetGeom(2, lay->flat_geom.x, lay->flat_geom.y);
   }
-  MatrixChannelSpec* mcs = AddMatrixChan(valname, real_val_type, &geom);
+  //  MatrixChannelSpec* mcs = 
+  AddMatrixChan(valname, real_val_type, &geom);
   int val_sz = val_specs.size; // lets us detect if new ones made
   Unit* u;
   // because we can have sparse unit groups as well as units

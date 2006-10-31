@@ -119,7 +119,7 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     net->no_plus_test = false;
   }
   if(!lay->units.el_typ->InheritsFrom(TA_DaModUnit)) {
-    taMisc::CheckError("PViLayerSpec: must have DaModUnits!");
+    if(!quiet) taMisc::CheckError("PViLayerSpec: must have DaModUnits!");
     return false;
   }
 

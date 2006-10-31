@@ -896,7 +896,8 @@ static cssEl* cssElCFun_load_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
-static cssEl* cssElCFun_print_stub(int, cssEl* arg[]) {
+static cssEl* cssElCFun_print_stub(int argc, cssEl* arg[]) {
+  if(argc == 0) return &cssMisc::Void;
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
@@ -907,7 +908,8 @@ static cssEl* cssElCFun_print_stub(int, cssEl* arg[]) {
   csh->fout->flush();
   return &cssMisc::Void;
 }
-static cssEl* cssElCFun_printr_stub(int, cssEl* arg[]) {
+static cssEl* cssElCFun_printr_stub(int argc, cssEl* arg[]) {
+  if(argc == 0) return &cssMisc::Void;
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;

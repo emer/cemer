@@ -1,7 +1,5 @@
 leabra todo list:
 
-* datatable: findmakecol: detect if transitioning from a matrix to a non-matirx..
-
 * taImageProc class w/ highvis stuff:
   - make basic directory filename datatable thing (in taDataProc; with filter..)
     - GetMakeCol on fname -- allows other fields
@@ -9,7 +7,6 @@ leabra todo list:
      (do simple extension to read dave's files into datatable)
      applyinputs reads filename and calls fun..
   - import network and run it!!
-* V1RFPrjnSpec in leabra_extra needs to be updated to new DOG filer spec..
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.

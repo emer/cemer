@@ -494,7 +494,7 @@ protected:
 
 public:
   /////////////////////////////////////////////////////////
-  // DataBlock i/f and common routines: see ta_data.h for details
+  // DataBlock interface and common routines: see ta_data.h for details
 
   override DBOptions	dbOptions() const
   { return (DBOptions)(DB_IND_SEQ_SRC_SNK | DB_SINK_DYNAMIC); } 
@@ -502,41 +502,40 @@ public:
 
 protected:
   /////////////////////////////////////////////////////////
-  // DataBlock i/f IMPL
-  inline int		channelCount() const {return data.size; }
-  inline const String	channelName(int chan) const
+  // DataBlock implementation
+  inline int		ChannelCount() const {return data.size; }
+  inline const String	ChannelName(int chan) const
   { DataArray_impl* da = data.SafeEl(chan);
     if (da) return da->name; else return _nilString; }
 
 public:
   /////////////////////////////////////////////////////////
-  // DataSource i/f
+  // DataSource interface
 
-  override int		sourceChannelCount() const { return channelCount(); }
-  override const String	sourceChannelName(int chan) const { return channelName(chan); }
+  override int		SourceChannelCount() const { return ChannelCount(); }
+  override const String	SourceChannelName(int chan) const { return ChannelName(chan); }
   override void		ResetData();
   // #MENU #MENU_ON_Actions #CAT_Rows deletes all the data (rows), but keeps the column structure
 
 protected:
   /////////////////////////////////////////////////////////
-  // DataSource i/f IMPL
+  // DataSource implementation
   override const Variant GetData_impl(int chan)
   { return GetValAsVar(chan, rd_itr);}
   override taMatrix*	GetMatrixData_impl(int chan);
-  //  virtual bool		ReadItem_impl() {return true;} 
 
 public:
   /////////////////////////////////////////////////////////
-  // DataSink i/f
-  override int		sinkChannelCount() const {return channelCount();}
-  override const String	sinkChannelName(int chan) const {return channelName(chan);}
+  // DataSink interface
+  override int		SinkChannelCount() const {return ChannelCount();}
+  override const String	SinkChannelName(int chan) const {return ChannelName(chan);}
   override bool		AddSinkChannel(ChannelSpec* cs); 
   override bool		AssertSinkChannel(ChannelSpec* cs);
   override void		WriteDone();
 
 protected:
   /////////////////////////////////////////////////////////
-  // DataSink i/f IMPL
+  // DataSink implementation
   override bool		AddItem_impl(int n) {return AddRow(n);}
   override void		DeleteSinkChannel_impl(int chan) {RemoveCol(chan);}
   override taMatrix*	GetSinkMatrix_impl(int chan) 
