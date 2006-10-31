@@ -46,9 +46,9 @@ public:
   // get the pixel value as floating point RGB values for given coordinates
 
   virtual bool	ImageToGrey_float(float_Matrix& grey_data);
-  // convert image to greyscale floating point image data
+  // convert image to greyscale floating point image data: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
   virtual bool	ImageToRGB_float(float_Matrix& rgb_data);
-  // convert image to RGB floating point image data -- img_data is 3 dimensional with 3rd dim = r,g,b
+  // convert image to RGB floating point image data -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
   virtual bool	ScaleImage(float sx, float sy, bool smooth=true);
   // scale image by given normalized scaling factors in each dimension

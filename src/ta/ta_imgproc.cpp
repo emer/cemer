@@ -69,7 +69,7 @@ bool taImage::ImageToGrey_float(float_Matrix& img_data) {
     for(int x=0; x< q_img.width(); x++) {
       QRgb pix = q_img.pixel(x, y);
       float gval = qGray(pix) / 255.0f;
-      img_data.Set(gval, x, y);
+      img_data.Set(gval, x, q_img.height()-1 - y);
     }
   }
   return true;
@@ -87,9 +87,9 @@ bool taImage::ImageToRGB_float(float_Matrix& rgb_data) {
       float rval = qRed(pix) / 255.0f;
       float gval = qGreen(pix) / 255.0f;
       float bval = qBlue(pix) / 255.0f;
-      rgb_data.Set(rval, x, y, 0);
-      rgb_data.Set(gval, x, y, 1);
-      rgb_data.Set(bval, x, y, 2);
+      rgb_data.Set(rval, x, q_img.height()-1 -y, 0);
+      rgb_data.Set(gval, x, q_img.height()-1 -y, 1);
+      rgb_data.Set(bval, x, q_img.height()-1 -y, 2);
     }
   }
   return true;
@@ -908,9 +908,9 @@ bool taImageProc::TransformImage_float(float_Matrix& xformed_img, float_Matrix& 
 				       float scale, int crop_width, int crop_height)
 {
   float_Matrix* use_img = &orig_img;
-  float_Matrix xlate_img;
-  float_Matrix rot_img;
-  float_Matrix sc_img;
+  float_Matrix xlate_img;     	taBase::Ref(xlate_img);
+  float_Matrix rot_img;		taBase::Ref(rot_img);
+  float_Matrix sc_img;		taBase::Ref(sc_img);
 
   // render border after each xform to keep edges clean..
   taImageProc::RenderBorder_float(*use_img);
@@ -1076,7 +1076,10 @@ void RetinaSpec::UpdateAfterEdit() {
 }
 
 void RetinaSpec::DefaultFilters() {
-  dogs.EnforceSize(3);
+  if(color_type == COLOR)
+    dogs.EnforceSize(7);
+  else
+    dogs.EnforceSize(3);
   UpdateRetinaSize();
   DoGRetinaSpec* sp;
   int cnt = 0;
@@ -1114,9 +1117,6 @@ void RetinaSpec::DefaultFilters() {
   sp->UpdateAfterEdit();
 
   if(color_type == COLOR) {
-    dogs.EnforceSize(6);
-    UpdateRetinaSize();
-
     sp = dogs[cnt++];
     sp->name = "med_freq_rg";
     sp->dog.color_chan = DoGFilterSpec::RED_GREEN;
@@ -1261,6 +1261,7 @@ bool RetinaSpec::FilterImage(taImage& img, DataTable* dt,
 {
   if (!dt) return false;
   float_Matrix img_data;
+  taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
   if(color_type == COLOR) {
     img.ImageToRGB_float(img_data);
   }
@@ -1387,6 +1388,7 @@ bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
 			      float scale, float rotate, 
 			      bool superimpose, bool attend) {
   float_Matrix img_data;
+  taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
   if(color_type == COLOR) {
     img.ImageToRGB_float(img_data);
   }
