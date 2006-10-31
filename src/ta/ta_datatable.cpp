@@ -1084,7 +1084,7 @@ bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
   } else return false;
 }
 
-void DataTable::WriteDone() {
+void DataTable::WriteClose_impl() {
   UpdateAllViews();
 }
 

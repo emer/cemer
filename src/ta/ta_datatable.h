@@ -447,7 +447,7 @@ public:
   // #CAT_File #MENU #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
 
   static int		ReadTillDelim(istream& strm, String& str, const char* delim, bool quote_str);
-  // util function to read from stream into str until delim or newline or EOF
+  // #IGNORE util function to read from stream into str until delim or newline or EOF
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
 
@@ -531,7 +531,6 @@ public:
   override const String	SinkChannelName(int chan) const {return ChannelName(chan);}
   override bool		AddSinkChannel(ChannelSpec* cs); 
   override bool		AssertSinkChannel(ChannelSpec* cs);
-  override void		WriteDone();
 
 protected:
   /////////////////////////////////////////////////////////
@@ -544,6 +543,7 @@ protected:
   { return SetValAsVar(data, chan, wr_itr);}
   override bool		SetMatrixData_impl(const taMatrix* data, int chan) 
   { return SetValAsMatrix(data, chan, wr_itr);}
+  override void		WriteClose_impl();
 
 protected:
   DataTableModel*	m_dm; // #IGNORE note: once we create, always exists

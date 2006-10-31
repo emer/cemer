@@ -330,7 +330,7 @@ void cssTA::operator=(const String& s) {
 void cssTA::operator=(const cssEl& s) {
   if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
     *this = s.GetStr();	// use string converter
-    if(class_parent)	class_parent->UpdateAfterEdit();
+    UpdateClassParent();
     return;
   }
   if(!ROCheck()) return;
@@ -475,7 +475,7 @@ void cssTA_Base::Load(istream& fh) {
 
 void cssTA_Base::UpdateAfterEdit() {
   taBase* ths = GetTAPtr();
-  if(ths) ths->UpdateAfterEdit();
+  if(cssMisc::call_update_after_edit && ths) ths->UpdateAfterEdit();
 }
 
 bool cssTA_Base::PtrAssignPtrPtr(void* new_ptr_val) {
@@ -485,7 +485,7 @@ bool cssTA_Base::PtrAssignPtrPtr(void* new_ptr_val) {
     return false;
   }
   taBase::SetPointer((taBase**)ptr, (taBase*)new_ptr_val);
-  if(class_parent)	class_parent->UpdateAfterEdit();
+  UpdateClassParent();
   return true;
 }
 
@@ -496,7 +496,7 @@ void cssTA_Base::operator=(const String& s) {
 void cssTA_Base::operator=(const cssEl& s) {
   if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
     *this = s.GetStr();	// use string converter
-    if(class_parent)	class_parent->UpdateAfterEdit();
+    UpdateClassParent();
     return;
   }
   if(!ROCheck()) return;
@@ -514,7 +514,7 @@ void cssTA_Base::operator=(const cssEl& s) {
   cssTA& sp = (cssTA&)s;
   taBase* obj = (taBase*)ptr;
   obj->UnSafeCopy((taBase*)sp.ptr);
-  class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 
 cssEl* cssTA_Base::operator[](int i) const {
@@ -699,7 +699,7 @@ void cssSmartRef::PtrAssignPtr(const cssEl& s) {
 
 void cssSmartRef::UpdateAfterEdit() {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(sr->ptr()) {
+  if(cssMisc::call_update_after_edit && sr->ptr()) {
     sr->ptr()->UpdateAfterEdit();
     return;
   }
@@ -1143,12 +1143,12 @@ void cssTypeDef::operator=(const cssEl& s) {
 	PtrAssignPtr(s);
       else {
 	*((TypeDef**)ptr) = tmp->type_def;	// get its typedef
-	if(class_parent)	class_parent->UpdateAfterEdit();
+	UpdateClassParent();
       }
     }
     else {
       *((TypeDef**)ptr) = (TypeDef*)s;		// get the name
-      if(class_parent)	class_parent->UpdateAfterEdit();
+      UpdateClassParent();
     }
     return;
   }
@@ -1196,12 +1196,12 @@ void cssMemberDef::operator=(const cssEl& s) {
 	PtrAssignPtr(s);
       else {
 	*((MemberDef**)ptr) = (MemberDef*)s;
-	if(class_parent)	class_parent->UpdateAfterEdit();
+	UpdateClassParent();
       }
     }
     else {
       *((MemberDef**)ptr) = (MemberDef*)s;		// get the name
-      if(class_parent)	class_parent->UpdateAfterEdit();
+      UpdateClassParent();
     }
     return;
   }
@@ -1249,12 +1249,12 @@ void cssMethodDef::operator=(const cssEl& s) {
 	PtrAssignPtr(s);
       else {
 	*((MethodDef**)ptr) = (MethodDef*)s;
-	if(class_parent) class_parent->UpdateAfterEdit();
+	UpdateClassParent();
       }
     }
     else {
       *((MethodDef**)ptr) = (MethodDef*)s;		// get the name
-      if(class_parent)	class_parent->UpdateAfterEdit();
+      UpdateClassParent();
     }
   }
   cssTA::operator=(s);

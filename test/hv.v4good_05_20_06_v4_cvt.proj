@@ -269,13 +269,14 @@ LeabraProject .projects[0] {
       };
       Program @[5] { 
 	taBase_List @.objs = [2] {
-	  LayerWriter_List @[0] = [6] { 
+	  LayerWriter_List @[0] = [7] { 
 	    LayerWriter @[0] { };
 	    LayerWriter @[1] { };
 	    LayerWriter @[2] { };
 	    LayerWriter @[3] { };
 	    LayerWriter @[4] { };
 	    LayerWriter @[5] { };
+	    LayerWriter @[6] { };
 	  };
 	  RetinaSpec @[1] { 
 	    DoGRetinaSpecList @.dogs = [3] {
@@ -290,11 +291,15 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
-	ProgVar_List @.vars = [4] {
+	ProgVar_List @.vars = [8] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
 	  ProgVar @[3] { };
+	  ProgVar @[4] { };
+	  ProgVar @[5] { };
+	  ProgVar @[6] { };
+	  ProgVar @[7] { };
 	};
 
 	ProgEl_List @.init_code = [3] {
@@ -3142,6 +3147,18 @@ else min_cycles = network->min_cycles_phase2;
        noise {type=NONE: mean=0: var=0.5: par=1: };
        value_names{        };
       };
+      LayerWriter @[6] {
+       data=NULL;
+       chan_name="Name";
+       net_target=TRIAL_NAME;
+       network=NULL;
+       layer=NULL;
+       offset {x=0: y=0: };
+       use_layer_type=1;
+       ext_flags=NO_EXTERNAL;
+       noise {type=NONE: mean=0: var=0.5: par=1: };
+       value_names{        };
+      };
      };
      RetinaSpec @[1] {
       name="RetinaSpec_0";
@@ -3238,6 +3255,14 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgVar;
      el_def=0;
      ProgVar @[0] {
+      name="names";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$9$;
+      objs_ptr=0;
+      desc=;
+     };
+     ProgVar @[1] {
       name="image_data";
       var_type=T_Object;
       object_type=DataTable;
@@ -3245,7 +3270,7 @@ else min_cycles = network->min_cycles_phase2;
       objs_ptr=0;
       desc=;
      };
-     ProgVar @[1] {
+     ProgVar @[2] {
       name="lw_list";
       var_type=T_Object;
       object_type=LayerWriter_List;
@@ -3253,7 +3278,7 @@ else min_cycles = network->min_cycles_phase2;
       objs_ptr=1;
       desc=;
      };
-     ProgVar @[2] {
+     ProgVar @[3] {
       name="RetinaSpec_0";
       var_type=T_Object;
       object_type=RetinaSpec;
@@ -3261,13 +3286,33 @@ else min_cycles = network->min_cycles_phase2;
       objs_ptr=1;
       desc=;
      };
-     ProgVar @[3] {
-      name="names";
-      var_type=T_Object;
-      object_type=DataTable;
-      object_val=$9$;
+     ProgVar @[4] {
+      name="move_var";
+      var_type=T_Real;
+      real_val=0.15;
       objs_ptr=0;
-      desc=;
+      desc="range for moving image";
+     };
+     ProgVar @[5] {
+      name="scale_min";
+      var_type=T_Real;
+      real_val=0.2;
+      objs_ptr=0;
+      desc="minimum scale value";
+     };
+     ProgVar @[6] {
+      name="scale_max";
+      var_type=T_Real;
+      real_val=0.4;
+      objs_ptr=0;
+      desc="maximum scale value";
+     };
+     ProgVar @[7] {
+      name="rot_var";
+      var_type=T_Real;
+      real_val=0.02;
+      objs_ptr=0;
+      desc="rotation range";
      };
     };
     init_code {
@@ -3278,7 +3323,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=;
-      script_obj=.projects[0].programs.gp[0][5].vars[0]$35$;
+      script_obj=.projects[0].programs.gp[0][5].vars[1]$35$;
       method=DataTable::ResetData;
       args{ };
 {       };
@@ -3287,7 +3332,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=;
-      script_obj=.projects[0].programs.gp[0][5].vars[1]$36$;
+      script_obj=.projects[0].programs.gp[0][5].vars[2]$36$;
       method=LayerRWBase_List::SetAllDataNetwork;
       args{ image_data;network;};
 { DataBlock* db;Network* net;      };
@@ -3310,9 +3355,9 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=;
-      script_obj=.projects[0].programs.gp[0][5].vars[2]$37$;
+      script_obj=.projects[0].programs.gp[0][5].vars[3]$37$;
       method=RetinaSpec::FilterImageName;
-      args{ names.GetDataByName("FilePath");image_data;0;0;1.0f;0.0f;false;};
+      args{ names.GetDataByName("FilePath");image_data;0;0;1;0.0f;false;};
 { const taString& img_fname;DataTable* dt;float move_x;float move_y;float scale;float rotate;bool superimpose;      };
      };
      MethodCall @[1] {
@@ -3321,7 +3366,7 @@ else min_cycles = network->min_cycles_phase2;
       result_var=;
       script_obj=$35$;
       method=DataBlock_Idx::ReadItem;
-      args{ image_data->rows-1;};
+      args{ -1;};
 { int idx;      };
      };
      MethodCall @[2] {

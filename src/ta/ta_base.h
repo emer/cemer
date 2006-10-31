@@ -334,21 +334,23 @@ public: // standard keys for standard gui descriptions, mostly for list columns
   static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName, never empty
   
   virtual UserDataItem_List* GetUserDataList(bool force_create = false) const {return NULL;}
-    // gets the userdatalist for this class
+  // #IGNORE gets the userdatalist for this class
   virtual bool		HasUserData(const String& name) const;
-    // returns true if UserData exists for this name (case sens)
-  virtual const Variant	GetUserData(const String& name) const; // get specified user data; nilVariant if not present or class doesn't support user data
+  // #IGNORE returns true if UserData exists for this name (case sens)
+  virtual const Variant	GetUserData(const String& name) const;
+  // #IGNORE get specified user data; nilVariant if not present or class doesn't support user data
   inline bool		GetUserDataAsBool(const String& name) const
-    {return GetUserData(name).toBool();} // strongly-typed convenience accessor
+    {return GetUserData(name).toBool();} // #IGNORE strongly-typed convenience accessor
   inline int		GetUserDataAsInt(const String& name) const
-    {return GetUserData(name).toInt();} // strongly-typed convenience accessor
+    {return GetUserData(name).toInt();} // #IGNORE strongly-typed convenience accessor
   inline float		GetUserDataAsFloat(const String& name) const
-    {return GetUserData(name).toFloat();} // strongly-typed convenience accessor
+    {return GetUserData(name).toFloat();} // #IGNORE strongly-typed convenience accessor
   inline double		GetUserDataAsDouble(const String& name) const
-    {return GetUserData(name).toDouble();} // strongly-typed convenience accessor
+    {return GetUserData(name).toDouble();} // #IGNORE strongly-typed convenience accessor
   inline const String	GetUserDataAsString(const String& name) const
-    {return GetUserData(name).toString();} // strongly-typed convenience accessor
-  virtual void		SetUserData(const String& name, const Variant& value); // set user data; NOTE: class must support user data
+    {return GetUserData(name).toString();} // #IGNORE strongly-typed convenience accessor
+  virtual void		SetUserData(const String& name, const Variant& value);
+  // #IGNORE set user data; NOTE: class must support user data
   virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
   // #IGNORE default keys are: name, type, desc, disp_name
 #ifdef TA_GUI
@@ -386,7 +388,7 @@ public:
   virtual bool		isDirty() const {return false;} // #IGNORE implemented by very few, esp. Project
   virtual void 		setDirty(bool value); // #CAT_ObjectMgmt 'true' gets forwarded up; 'false' does nothing
   
-  int			baseFlags() const {return m_flags;} // flag values; see also HasFlag
+  int			baseFlags() const {return m_flags;} // #IGNORE flag values; see also HasFlag
   
   virtual taDataLink* 	GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
   void			AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
@@ -418,9 +420,12 @@ public:
   taBase(int)					{ Initialize(); } // don't register...
   virtual ~taBase() 				{ Destroy(); } //
 
-  bool			HasFlag(int flag) const; // true if flag set, or if multiple, any set
-  void			SetFlag(int flag); // sets the flag(s)
-  void			ClearFlag(int flag); // clears the flag(s)
+  bool			HasFlag(int flag) const;
+  // #CAT_ObjectMgmt true if flag set, or if multiple, any set
+  void			SetFlag(int flag);
+  // #CAT_ObjectMgmt sets the flag(s)
+  void			ClearFlag(int flag);
+  // #CAT_ObjectMgmt clears the flag(s)
   
   virtual TAPtr		Clone()			{ return new taBase(*this); } // #IGNORE
   virtual void		UnSafeCopy(TAPtr)	{ }; // #IGNORE assumes source is same type
@@ -493,7 +498,7 @@ public:
   bool			CheckConfig_Gui(bool confirm_success = true,
     bool quiet = false);
   // #MENU #MENU_ON_Object #CAT_ObjectMgmt #ARGC_0 #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
-  void			ClearCheckConfig(); // this can be called when a CheckConfig_impl routine blindly assert ok, ex. for an object that has an "off" or "disable" state; this routine updates the gui if the state has now changed
+  void			ClearCheckConfig(); // #IGNORE this can be called when a CheckConfig_impl routine blindly assert ok, ex. for an object that has an "off" or "disable" state; this routine updates the gui if the state has now changed
 
 protected:
   virtual void		BatchUpdate(bool begin, bool struc);

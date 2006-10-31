@@ -114,7 +114,7 @@ public:
     ,DB_IND_SEQ_SRC_SNK = 0x000F
 #endif
   };
-  virtual DBOptions	dbOptions() const = 0; // options the instance type support
+  virtual DBOptions	dbOptions() const = 0; // #CAT_Access options the instance type support
   
   inline bool		isIndexable() const {return (dbOptions() & DB_INDEXABLE);} 
   // #CAT_Access true if can be accessed by index
@@ -140,8 +140,9 @@ public:
 public:
   /////////////////////////////////////////////////////////
   // Properties interface
-  virtual void		SetProperty(const String& name, const Variant& value) {}
-  virtual const Variant GetProperty(const String& name) const {return _nilVariant;}
+  // todo: this is replaced by userdata, right!?
+//   virtual void		SetProperty(const String& name, const Variant& value) {}
+//   virtual const Variant GetProperty(const String& name) const {return _nilVariant;}
   
 public:
   /////////////////////////////////////////////////////////
@@ -161,7 +162,7 @@ public:
   // #CAT_Source read next item of data (sequential access) so that it is now available for GetData routines -- returns true if item available
 
   virtual bool		ReadItem(int idx) {return false;} 
-  // #CAT_Source goes directly (random access) to item idx (in range 0 <= idx < ItemCount()) so that it is now available for GetData routines, returns true if item exists and was read
+  // #CAT_Source goes directly (random access) to item idx (-1 = last item available, otherwise must be in range 0 <= idx < ItemCount()) so that it is now available for GetData routines, returns true if item exists and was read
 
   virtual bool		ReadAvailable() const { return false; }
   // #CAT_Source true when a valid item is available for reading by GetData routines
@@ -333,8 +334,8 @@ public:
     if (rd_itr >= ItemCount()) {rd_itr = -2; return false;}
     return ReadItem_impl(); } 
   override bool		ReadItem(int idx) 
-    {if ((idx < 0) || (idx >= ItemCount())) return false;
-     rd_itr = idx;  return ReadItem_impl();} 
+  { if(idx < 0) idx = ItemCount()-1; if((idx < 0) || (idx >= ItemCount())) return false;
+    rd_itr = idx;  return ReadItem_impl();} 
     
   override bool		WriteAvailable() const
     {return ((wr_itr >= 0) && (wr_itr < ItemCount()));}

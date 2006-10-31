@@ -8,6 +8,8 @@ leabra todo list:
      applyinputs reads filename and calls fun..
   - import network and run it!!
 
+* need better Random functions for getting full range of stuff -- there already??
+
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 

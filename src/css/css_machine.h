@@ -175,7 +175,8 @@ public:
   static int		init_bpoint;	// initial breakpoint location (-b arg)
   static bool		init_interactive; // user wants to run interactively (-i from arg)
   static int		refcnt_trace; // user wants refcnt tracing (-rct from arg)
-  static bool		obey_read_only; // #DEF_false actually pay attention to read-only comment directive information on pointers to C (taBase) objects
+  static bool		obey_read_only; // #DEF_true actually pay attention to read-only comment directive information on pointers to C (taBase) objects
+  static bool		call_update_after_edit;	// #DEF_false call UpdateAfterEdit on ta objects when they are modified (this slows things down a lot; user should call it when they really want it)
 
   static cssEl 		Void; 		// a void element
   static cssElPtr 	VoidElPtr;	// a void el pointer (to a void element)
@@ -1045,6 +1046,8 @@ public:
   cssCPtr_CloneFuns(cssCPtr, (void*)NULL);
 
   virtual void	SetClassParent(cssEl* cp);
+  virtual void	UpdateClassParent();
+  // call updateafteredit on class parent (only if 
 
   // converters
   virtual void*	GetVoidPtr(int cnt = 1) const;	// goes down till ptr_cnt == cnt

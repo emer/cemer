@@ -177,6 +177,7 @@ int		cssMisc::init_bpoint = -1;
 bool		cssMisc::init_interactive = false;
 int		cssMisc::refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
 bool		cssMisc::obey_read_only = true;
+bool		cssMisc::call_update_after_edit = false;
 
 cssEl 		cssMisc::Void("Void"); 	
 cssElPtr	cssMisc::VoidElPtr;		// in theory, points to voidptr
@@ -1905,7 +1906,7 @@ bool cssCPtr::PtrAssignPtrPtr(void* new_ptr_val) {
     return false;
   }
   *((void**)ptr) = new_ptr_val;
-  if(class_parent)	class_parent->UpdateAfterEdit();
+  UpdateClassParent();
   return true;
 }
 
@@ -1916,7 +1917,7 @@ void cssCPtr::PtrAssignNull() {
   else if(ptr_cnt == 2) {
     // I'm a ptr-ptr and this sets me to point to another guy
     PtrAssignPtrPtr(NULL);
-    if(class_parent)	class_parent->UpdateAfterEdit();
+    UpdateClassParent();
   }
 }
 
@@ -1974,7 +1975,7 @@ bool cssCPtr::SamePtrLevel(cssCPtr* s) {
 }
 
 void cssCPtr::UpdateAfterEdit() {
-  if(class_parent)	class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 
 bool cssCPtr::operator==(cssEl& s) {
@@ -2020,6 +2021,11 @@ void cssCPtr::SetClassParent(cssEl* cp) {
   class_parent = cp;
   if(cp)
     cssEl::Ref(class_parent);
+}
+
+void cssCPtr::UpdateClassParent() {
+  if(!cssMisc::call_update_after_edit || !class_parent) return;
+  class_parent->UpdateAfterEdit();
 }
 
 

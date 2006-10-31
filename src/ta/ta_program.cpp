@@ -93,9 +93,12 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  if((var_type == T_Object) && (object_val)) {
-    object_val->CheckConfig(quiet, rval);
-  }
+  //  todo: make this conditional on some "obsessive" setting either in program
+  // or in overall settings.  too many reduntant checks on the same object
+  // triggered by this!!
+//   if((var_type == T_Object) && (object_val)) {
+//     object_val->CheckConfig(quiet, rval);
+//   }
 }
 
 TypeDef* ProgVar::act_object_type() const {
@@ -1197,10 +1200,13 @@ Program* ProgramCall::GetTarget() {
     taMisc::CheckError("Program target is NULL in ProgramCall:",
 		       desc, "in program:", program()->name);
   }
-  if(!target->CompileScript()) {
-    taMisc::CheckError("Program target script did not compile correctly in ProgramCall:",
-		       desc, "in program:", program()->name);
-  }
+  // NOTE: we are assuming that it has been compiled from the Init process
+  // calling here causes many recompiles because of the dirty bit propagation
+  // during running
+//   if(!target->CompileScript()) {
+//     taMisc::CheckError("Program target script did not compile correctly in ProgramCall:",
+// 		       desc, "in program:", program()->name);
+//   }
   return target.ptr();
 }
 
@@ -1609,6 +1615,7 @@ void Program::ScriptCompiled() {
 }
 
 void Program::setDirty(bool value) {
+  if(run_state == RUN) return;	     // change is likely self-generated during running, don't do it!
   if(value) script_compiled = false; // make sure this always reflects dirty status -- is used as check for compiling..
   if (m_dirty == value) return;
   m_dirty = value;

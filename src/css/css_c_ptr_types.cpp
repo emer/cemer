@@ -46,7 +46,7 @@ void cssCPtr_int::operator=(const cssEl& t) {
     return;
   }
   GetIntRef("=") = (Int)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_int::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
@@ -145,7 +145,7 @@ void cssCPtr_bool::operator=(const cssEl& t) {
     *this = t.GetStr();	// use string converter
   else
     GetBoolRef("=") = (Int)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 
 void cssCPtr_bool::operator&=(cssEl& t)	{
@@ -187,7 +187,7 @@ void cssCPtr_short::operator=(const cssEl& t) {
     return;
   }
   GetShortRef("=") = (Int)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_short::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
@@ -263,7 +263,7 @@ void cssCPtr_long::operator=(const cssEl& t) {
     return;
   }
   GetLongRef("=") = (Int)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_long::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
@@ -339,7 +339,7 @@ void cssCPtr_long_long::operator=(const cssEl& t) {
     return;
   }
   GetLongLongRef("=") = (Int)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_long_long::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
@@ -418,7 +418,7 @@ void cssCPtr_char::operator=(const cssEl& t) {
     *this = t.GetStr();	// use string converter
   else
     GetCharRef("=") = (Int)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_char::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
@@ -521,7 +521,7 @@ void cssCPtr_enum::operator=(const cssEl& t) {
     *this = t.GetStr();	// use string converter
   else
     GetIntRef("=") = (Int)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 
 bool cssCPtr_enum::operator==(cssEl& t) {
@@ -563,7 +563,7 @@ void cssCPtr_double::operator=(const cssEl& t) {
     return;
   }
   GetDoubleRef("=") = (Real)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_double::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
@@ -608,7 +608,7 @@ void cssCPtr_float::operator=(const cssEl& t) {
     return;
   }
   GetFloatRef("=") = (Real)t;
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_float::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
@@ -654,7 +654,7 @@ void cssCPtr_String::operator=(const cssEl& t) {
     return;
   }
   GetStringRef("=") = t.GetStr();
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_String::operator+=(cssEl& t)	{
   if(!ROCheck()) return;
@@ -858,7 +858,7 @@ void cssCPtr_Variant::operator=(const cssEl& t) {
     return;
   }
   GetVarRef("=") = t.GetVar();
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 void cssCPtr_Variant::operator=(const Variant& val) {
   GetVarRef() = val;
@@ -1009,7 +1009,7 @@ void cssCPtr_DynEnum::operator=(const cssEl& t) {
     *this = t.GetStr();	// use string converter
   else
     GetEnumRef("=").SetNumVal((Int)t);
-  if(class_parent)     class_parent->UpdateAfterEdit();
+  UpdateClassParent();
 }
 bool cssCPtr_DynEnum::operator==(cssEl& t) {
   if(ptr_cnt > 0) return cssCPtr::operator==(t);
