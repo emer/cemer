@@ -21,7 +21,7 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 #include "css_builtin.h"
-#include "ta_css.h"
+#include "css_ta.h"
 #ifdef GUI_IV
 #include "css_iv.h"
 #endif // GUI_IV

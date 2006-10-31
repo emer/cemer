@@ -24,7 +24,7 @@
 #include "ta_seledit.h"
 #include "ta_dmem.h"
 
-#include "ta_css.h"
+#include "css_ta.h"
 
 #include "icolor.h"
 #include "ieditgrid.h"

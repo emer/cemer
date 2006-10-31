@@ -33,7 +33,7 @@ SRCS =\
 	css_c_ptr_types.cpp \
 	css_builtin.cpp \
 	css_lex.cpp \
-	ta_css.cpp \
+	css_ta.cpp \
 	xmemory.cpp \
 	css_misc_funs.cpp \
 	$(SRCS_GUI) \
@@ -46,7 +46,7 @@ HEADS =\
 	css_c_ptr_types.h \
 	css_builtin.h \
 	css_extern_support.h \
-	ta_css.h \
+	css_ta.h \
 	css_parse.h \
 	hard_of_css.h \
 	css_misc_funs.h \

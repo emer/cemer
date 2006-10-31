@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 
-#ifndef ta_css_h
-#define ta_css_h 1
+#ifndef css_ta_h
+#define css_ta_h 1
 
 // for special eveptr class
 
@@ -393,4 +393,4 @@ public:
 };
 
 
-#endif // ta_css.h
+#endif // css_ta.h

@@ -20,7 +20,7 @@
 
 #include "ta_base.h"
 #include "ta_dump.h"
-#include "ta_css.h"
+#include "css_ta.h"
 
 #ifdef TA_GUI
 # include "css_qt.h"

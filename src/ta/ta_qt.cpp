@@ -23,7 +23,7 @@
 #include "ta_qtviewer.h"
 #include "ta_qttype_def.h"
 #include "css_qt.h"
-#include "ta_css.h"
+#include "css_ta.h"
 #include "ta_qtcursors.h" //note: only place this s/b included
 #include "ta_platform.h"
 #include "ta_TA_type.h"

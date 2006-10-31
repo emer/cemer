@@ -25,7 +25,7 @@
 #include "ta_project.h"
 #include "css_qt.h"
 #include "css_basic_types.h"
-#include "ta_css.h"
+#include "css_ta.h"
 #include "ta_TA_type.h"
 //TODO: determine why classes from igeometry.h end up in ta_misc TA file, not ta file --
 // igeometry.h is included in ta_qt.h

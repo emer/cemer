@@ -28,7 +28,7 @@
 #include "ta_qtclipdata.h" // for clip-aware controls
 #include "css_basic_types.h"
 #include "css_qtdialog.h"
-#include "ta_css.h"
+#include "css_ta.h"
 #include "ta_TA_type.h"
 
 #include "icolor.h"

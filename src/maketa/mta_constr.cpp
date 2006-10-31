@@ -219,7 +219,7 @@ void TypeSpace_Includes(TypeSpace* ths, ostream& strm, const String_PArray& hv,
     if(mta->gen_css) {
       strm << "#include \"css_basic_types.h\"\n";
       strm << "#include \"css_c_ptr_types.h\"\n";
-      strm << "#include \"ta_css.h\"\n";
+      strm << "#include \"css_ta.h\"\n";
     }
   }
 
