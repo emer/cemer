@@ -60,6 +60,7 @@ class SoPackedColor; // #IGNORE
 class SoPerspectiveCamera; // #IGNORE
 class SoPickStyle; // #IGNORE
 class SoRotation; // #IGNORE
+class SoScale; // #IGNORE
 class SoSeparator; // #IGNORE
 class SoTexture2; // #IGNORE
 class SoTexture2Transform; // #IGNORE
@@ -347,18 +348,48 @@ protected:
   void 		renderV(); // #IGNORE
 };
 
-class TAMISC_API SoImageEx: public SoImage { 
+class TAMISC_API SoImageEx: public SoSeparator { 
+// ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer -- height will always be 1; width will then be w/h ratio
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+
+  SO_NODE_HEADER(SoImageEx);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+  
+  SoTexture2*		texture;
+  SoCube*		shape;
+  
+  void		setImage(const QImage& src);
+  void		setImage(const taMatrix& src);
+    // grey: X,Y; rgb: X,Y,[rgb]
+  
+  SoImageEx();
+protected:
+  byte_Matrix		img;
+  SoScale*		scale;
+  
+  void		adjustScale(); // called after setting image to adjust aspect
+  void		setImage2(const QImage& src);
+  void		setImage3(const QImage& src);
+  void		setImage2(const taMatrix& src);
+  void		setImage3(const taMatrix& src);
+  ~SoImageEx();
+};
+
+/*obs class TAMISC_API SoImageEx: public SoImage { 
 // ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer
 #ifndef __MAKETA__
 typedef SoImage inherited;
 
   SO_NODE_HEADER(SoImageEx);
 #endif // def __MAKETA__
-
+public:
   static void		initClass();
   
   void		setImage(const QImage& src);
-  void		setImage(const float_Matrix& src);
+  void		setImage(const taMatrix& src);
     // grey: X,Y; rgb: X,Y,[rgb]
   
   SoImageEx();
@@ -367,9 +398,10 @@ protected:
   
   void		setImage2(const QImage& src);
   void		setImage3(const QImage& src);
-  void		setImage2(const float_Matrix& src);
-  void		setImage3(const float_Matrix& src);
-};
+  void		setImage2(const taMatrix& src);
+  void		setImage3(const taMatrix& src);
+}; */
+
 
 
 #endif

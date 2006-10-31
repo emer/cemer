@@ -1415,6 +1415,11 @@ void GridColViewSpec::CutLinks(){
   inherited::CutLinks();
 }
 
+void GridColViewSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+
 void GridColViewSpec::BuildFromDataArray_impl(bool first){
   inherited::BuildFromDataArray_impl(first);
   DataArray_impl* data_array = dataCol();
@@ -1427,7 +1432,7 @@ void GridColViewSpec::BuildFromDataArray_impl(bool first){
     if (data_array->isMatrix() && data_array->isNumeric()) {
       if (data_array->GetUserData("IMAGE").toBool()) {
         display_style = IMAGE;
-        layout = TOP_ZERO;
+        //note: layout is n/a since images always rendered top-zero
       } else {
         display_style = BLOCK;
         layout = BOT_ZERO;
@@ -1444,26 +1449,24 @@ void GridColViewSpec::BuildFromDataArray_impl(bool first){
 
 float GridColViewSpec::blockSize() const {
   GridTableViewSpec* par = parent();
-  if (par) return par->block_size;
-  else return 4.0f;
+  float rval = (par) ? par->block_size : 4.0f;
+  return rval / t3Misc::char_pts_per_so_unit;
 }
 
 float GridColViewSpec::blockBorderSize() const {
   GridTableViewSpec* par = parent();
-  if (par) return par->block_border_size;
-  else return 1.0f;
+  float rval = (par) ? par->block_border_size : 1.0f;
+  return rval / t3Misc::char_pts_per_so_unit;
 }
 
 void GridColViewSpec::InitDisplayParams() {
   DataArray_impl* dc = dataCol(); // cache
   // cache some params
-  float bsz = blockSize() / t3Misc::char_pts_per_so_unit; 
-  float bbsz = blockBorderSize() / t3Misc::char_pts_per_so_unit; 
+  float bsz = blockSize(); 
+  float bbsz = blockBorderSize(); 
   // get 2d equivalent cell geom values
   iVec2i cg;
-  dc->Get2DCellGeom(cg);
-  //note: cell geom is 
-//TODO: col widths
+  dc->Get2DCellGeom(cg); //note: 1x1 for scalar
   row_height = 0.0f;
   //make a first-stab at col width as being the text width of the col
   col_width = (font.pointSize * text_width)  / t3Misc::char_pts_per_so_unit;
@@ -1486,11 +1489,22 @@ void GridColViewSpec::InitDisplayParams() {
     col_width = MAX(col_width, block_width);
   }
   if (display_style & IMAGE) {
-    row_height = 0.0f; //TODO: image size
-    //TODO col_width = ;
+    float pxsz = pixelSize(); 
+    float img_tmp = pxsz * cg.x;
+    col_width = MAX(col_width, img_tmp);
+    
+    img_tmp = pxsz * cg.y;
+    row_height += img_tmp;
   }
   
 }
+
+float GridColViewSpec::pixelSize() const {
+  GridTableViewSpec* par = parent();
+  float rval = (par) ? par->pixel_size : 1.0f;
+  return rval / t3Misc::char_pts_per_so_unit;
+}
+
 
 void GridColViewSpec::setFont(const FontSpec& value) {
   font = value;
@@ -1505,6 +1519,7 @@ void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
   block_size = 4.0f;
   block_border_size = 1.0f;
+  pixel_size = 1.0f;
 }
 
 void GridTableViewSpec::Destroy() {
@@ -1518,6 +1533,21 @@ void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
 void GridTableViewSpec::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
   UpdateLayout();
+}
+
+void GridTableViewSpec::DataDataChanged_impl(int dcr, void* op1, void* op2) {
+  inherited::DataDataChanged_impl(dcr, op1, op2);
+  TableView* tv = GET_MY_OWNER(TableView);
+  if (!tv) return;
+  tv->DataChanged_DataTable(dcr, op1, op2);
+}
+
+void GridTableViewSpec::DataDestroying() {
+  TableView* tv = GET_MY_OWNER(TableView);
+  if (tv) {
+    tv->DataChanged_DataTable(DCR_ITEM_DELETING, NULL, NULL);
+  }
+  inherited::DataDestroying();
 }
 
 void GridTableViewSpec::ReBuildFromDataTable_impl(){

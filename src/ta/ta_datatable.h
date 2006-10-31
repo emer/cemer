@@ -174,7 +174,7 @@ public:
   // #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
   {return SetValAsByte_impl(val, row, cell);} 
 
-  // Matrix ops
+  // Matrix ops -- you must Ref/UnRef taMatrix return types
   taMatrix*	GetValAsMatrix(int row);
   // #CAT_Access gets the cell as a slice of the entire column (note: not const -- you can write it)
   bool	 	SetValAsMatrix(const taMatrix* val, int row);
@@ -532,6 +532,7 @@ public:
   override const String	sinkChannelName(int chan) const {return channelName(chan);}
   override bool		AddSinkChannel(ChannelSpec* cs); 
   override bool		AssertSinkChannel(ChannelSpec* cs);
+  override void		WriteDone();
 
 protected:
   /////////////////////////////////////////////////////////

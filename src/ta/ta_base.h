@@ -1327,7 +1327,7 @@ protected:
     int dcr, void* op1_, void* op2_);
   
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
-   // called when the data item has changed, esp. ex lists and groups, *except* UAE
+   // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
   virtual void		DataUpdateView_impl() {Render_impl();} // called for Update All Views, and at end of a DataUpdate batch
   virtual void		DataStructUpdateEnd_impl() {Reset(); Render();} // called ONLY at end of a struct update

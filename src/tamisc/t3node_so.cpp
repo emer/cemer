@@ -37,6 +37,7 @@
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoEnvironment.h>
 #include <Inventor/nodes/SoFont.h>
@@ -45,6 +46,7 @@
 #include <Inventor/nodes/SoNormalBinding.h>
 #include <Inventor/nodes/SoPickStyle.h>
 #include <Inventor/nodes/SoRotation.h>
+#include <Inventor/nodes/SoScale.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTexture2.h>
 #include <Inventor/nodes/SoTexture2Transform.h>
@@ -605,7 +607,142 @@ SoMFVec3f& SoFrame::vertex() {
   return ((SoVertexProperty*)vertexProperty.getValue())->vertex;
 }
 
+//////////////////////////
+//   SoImageEx		//
+//////////////////////////
 
+SO_NODE_SOURCE(SoImageEx);
+
+void SoImageEx::initClass()
+{
+  SO_NODE_INIT_CLASS(SoImageEx, SoSeparator, "SoSeparator");
+}
+
+SoImageEx::SoImageEx() {
+  SO_NODE_CONSTRUCTOR(SoImageEx);
+//  scale = new SoScale;
+//  this->addChild(scale);
+  texture = new SoTexture2;
+  this->addChild(texture);
+  shape = new SoCube; //note: w/h = 1.0 so texture map maps exactly
+  this->addChild(shape);
+  shape->width = 1.0f;
+  shape->height = 1.0f;
+  shape->depth = 0;
+}
+
+SoImageEx::~SoImageEx() {
+  scale = NULL;
+  texture = NULL;
+  shape = NULL;
+}
+
+void SoImageEx::adjustScale() {
+  int dx = img.geom.SafeEl(0);
+  int dy = img.geom.SafeEl(1);
+/*  if ((dx == 0) || (dy == 0))
+    scale->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+  else
+    scale->scaleFactor.setValue(
+      ((float)dx / (float)dy), 
+      1.0f, 
+      1.0f);*/
+  if ((dx == 0) || (dy == 0))
+    shape->width = 1.0f;
+  else
+    shape->width = ((float)dx / (float)dy);
+}
+
+void SoImageEx::setImage(const QImage& src) {
+  if (src.isGrayscale())
+    setImage2(src);
+  else 
+    setImage3(src);
+  adjustScale();
+}
+
+void SoImageEx::setImage2(const QImage& src) {
+  int dx = src.width();
+  int dy = src.height();
+  img.SetGeom(2, dx, dy);
+  int idx = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+      img.FastEl_Flat(idx) = (byte)(qGray(src.pixel(x, y)));
+      ++idx;
+    }
+  }
+  texture->image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
+}
+
+void SoImageEx::setImage3(const QImage& src) {
+  int dx = src.width();
+  int dy = src.height();
+  //NOTE: img geom is not same as input: rgb is in innermost for us
+  img.SetGeom(3, 3, dx, dy);
+  int idx = 0;
+  QRgb rgb;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+    rgb = src.pixel(x, y);
+      img.FastEl_Flat(idx++) = (byte)(qRed(rgb));
+      img.FastEl_Flat(idx++) = (byte)(qGreen(rgb));
+      img.FastEl_Flat(idx++) = (byte)(qBlue(rgb));
+    }
+  }
+  texture->image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
+}
+
+void SoImageEx::setImage(const taMatrix& src) {
+  int dims = src.dims(); //cache
+  if (dims == 2) {
+    setImage2(src);
+  } else if (((dims == 3) && (src.dim(2) == 3))) { 
+    setImage3(src);
+  } else { 
+    taMisc::Error("SoImageEx::setImage: must be grey or rgb matrix");
+    return;
+  }
+  adjustScale();
+}
+
+void SoImageEx::setImage2(const taMatrix& src) {
+  int dx = src.dim(0);
+  int dy = src.dim(1);
+  img.SetGeom(2, dx, dy);
+  int idx = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+      img.FastEl_Flat(idx) = (byte)(src.FastElAsFloat(x, y) * 255);
+      ++idx;
+    }
+  }
+  texture->image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
+}
+
+void SoImageEx::setImage3(const taMatrix& src) {
+  int dx = src.dim(0);
+  int dy = src.dim(1);
+  //NOTE: img geom is not same as input: rgb is in innermost for us
+  img.SetGeom(3, 3, dx, dy);
+  int idx = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
+      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
+      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
+    }
+  }
+  texture->image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
+}
+
+
+
+/* obs
 //////////////////////////
 //   SoImageEx		//
 //////////////////////////
@@ -628,33 +765,6 @@ void SoImageEx::setImage(const QImage& src) {
     setImage3(src);
 }
 
-void SoImageEx::setImage(const float_Matrix& src) {
-  int dims = src.dims(); //cache
-  if (dims == 2) {
-    setImage2(src);
-  } else if (((dims == 3) && (src.dim(2) == 3))) { 
-    setImage3(src);
-  } else { 
-    taMisc::Error("SoImageEx::setImage: must be grey or rgb matrix");
-    return;
-  }
-}
-
-void SoImageEx::setImage2(const float_Matrix& src) {
-  int dx = src.dim(0);
-  int dy = src.dim(1);
-  img.SetGeom(2, dx, dy);
-  int idx = 0;
-  //NOTE: we have to invert the data for Coin's bottom=0 addressing
-  for (int y = dy - 1; y >= 0; --y) {
-    for (int x = 0; x < dx; ++x) {
-      img.FastEl_Flat(idx) = (byte)(src.FastEl(x, y) * 255);
-      ++idx;
-    }
-  }
-  image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
-}
-
 void SoImageEx::setImage2(const QImage& src) {
   int dx = src.width();
   int dy = src.height();
@@ -668,23 +778,6 @@ void SoImageEx::setImage2(const QImage& src) {
     }
   }
   image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
-}
-
-void SoImageEx::setImage3(const float_Matrix& src) {
-  int dx = src.dim(0);
-  int dy = src.dim(1);
-  //NOTE: img geom is not same as input: rgb is in innermost for us
-  img.SetGeom(3, 3, dx, dy);
-  int idx = 0;
-  //NOTE: we have to invert the data for Coin's bottom=0 addressing
-  for (int y = dy - 1; y >= 0; --y) {
-    for (int x = 0; x < dx; ++x) {
-      img.FastEl_Flat(idx++) = (byte)(src.FastEl(x, y, 0) * 255);
-      img.FastEl_Flat(idx++) = (byte)(src.FastEl(x, y, 1) * 255);
-      img.FastEl_Flat(idx++) = (byte)(src.FastEl(x, y, 2) * 255);
-    }
-  }
-  image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
 }
 
 void SoImageEx::setImage3(const QImage& src) {
@@ -705,4 +798,48 @@ void SoImageEx::setImage3(const QImage& src) {
   }
   image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
 }
+
+void SoImageEx::setImage(const taMatrix& src) {
+  int dims = src.dims(); //cache
+  if (dims == 2) {
+    setImage2(src);
+  } else if (((dims == 3) && (src.dim(2) == 3))) { 
+    setImage3(src);
+  } else { 
+    taMisc::Error("SoImageEx::setImage: must be grey or rgb matrix");
+    return;
+  }
+}
+
+void SoImageEx::setImage2(const taMatrix& src) {
+  int dx = src.dim(0);
+  int dy = src.dim(1);
+  img.SetGeom(2, dx, dy);
+  int idx = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+      img.FastEl_Flat(idx) = (byte)(src.FastElAsFloat(x, y) * 255);
+      ++idx;
+    }
+  }
+  image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
+}
+
+void SoImageEx::setImage3(const taMatrix& src) {
+  int dx = src.dim(0);
+  int dy = src.dim(1);
+  //NOTE: img geom is not same as input: rgb is in innermost for us
+  img.SetGeom(3, 3, dx, dy);
+  int idx = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = dy - 1; y >= 0; --y) {
+    for (int x = 0; x < dx; ++x) {
+      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
+      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
+      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
+    }
+  }
+  image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
+} */
 

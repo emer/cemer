@@ -700,8 +700,8 @@ DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       da = nda;
       nda->EnforceRows(rows);	// keep row-constant
       StructUpdate(false);
-    }
-    if(da->cell_dims() != dims) {
+    } else if(da->cell_dims() != dims) {
+      StructUpdate(true);
       da->cell_geom.SetGeom(dims, d0, d1, d2, d3, d4);
       if(dims == 0)
 	da->is_matrix = false;
@@ -709,12 +709,14 @@ DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
 	da->is_matrix = true;
       da->Init();		// asserts geom
       da->EnforceRows(rows);	// keep row-constant
-    }
-    else {
+      StructUpdate(false);
+    } else {
+      StructUpdate(true);
       MatrixGeom mg(dims, d0, d1, d2, d3, d4);
       if(mg != da->cell_geom) {
 	da->cell_geom = mg;
 	da->Init();
+      StructUpdate(false);
       }
     }
     return da;
@@ -1082,6 +1084,9 @@ bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
   } else return false;
 }
 
+void DataTable::WriteDone() {
+  UpdateAllViews();
+}
 
 //////////////////////////
 //  DataColViewSpec	//

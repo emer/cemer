@@ -142,11 +142,37 @@ void TableView::ClearViewRange() {
   view_range.max = -1;
 }
 
+void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
+  if (dcr == DCR_ITEM_DELETING) {
+    UpdateAfterEdit(); // easiest
+    return;
+  }
+  
+  DataTable* dt = dataTable(); // note: valid, otherwise we couldn't get this notify
+  if (dcr == DCR_UPDATE_VIEWS) {
+    if (dt->rows > m_rows) {
+      DataChange_NewRows();
+      return;
+    } else { // if not appending rows, treat as struct update
+      DataChange_StructUpdate();
+      return;
+    }
+  } else if (dcr == DCR_STRUCT_UPDATE_END) {
+    DataChange_StructUpdate();
+    return;
+  } else if (dcr == DCR_DATA_UPDATE_END) {
+    DataChange_Other();
+    return;
+  }
+  // we don't respond to any other kinds of updates
+}
+
 void TableView::DataChange_StructUpdate() {
   if (!isVisible()) return;
   InitViewSpec();
   ClearViewRange();
   InitDisplay();
+  ViewRangeChanged();
 }
   
 void TableView::DataChange_NewRows() {
@@ -387,6 +413,7 @@ GridTableView* GridTableView::NewGridTableView(DataTable* dt,
 }
 
 void GridTableView::Initialize() {
+  geom.SetXYZ(12, 1, 9);
   data_base = &TA_GridTableViewSpec;  //supercedes base
   col_bufsz = 0;
   row_height = 0.1f; // non-zero dummy value
@@ -449,12 +476,16 @@ void GridTableView::AllBlockText_impl(bool on) {
 }
 
 void GridTableView::CalcColMetrics() {
-  col_range.max = col_range.min - 1;
-  if (col_bufsz == 0) return;
+  if (col_bufsz == 0) {
+    col_range.max = col_range.min - 1;
+    return;
+  } else 
+    // note: we display at least one col, even if it spills over size
+    col_range.max = col_range.min;
   
   float wd_tot = 0.0f;
   while ((col_range.max < (col_bufsz - 1)) && 
-   ((wd_tot += colWidth(col_range.max + 1)) <= (float)geom.x))
+   ((wd_tot += colWidth(col_range.max)) <= (float)geom.x))//TODO: frame_inset???
     col_range.max++;
 }
 
@@ -640,6 +671,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     } else {
       tr->translation.setValue(colWidth(col - 1), 0.0f, 0.0f);
     }
+    float col_width = colWidth(col); // cache for convenience
     
     // cache 2d-equivalent geom info, and render according to col style
     iVec2i cg;
@@ -671,8 +703,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       //TODO: space
     }
     if (vs->display_style & GridColViewSpec::BLOCK_MASK) {
-      float bsz = vs->blockSize() / t3Misc::char_pts_per_so_unit; 
-      float bbsz = vs->blockBorderSize() / t3Misc::char_pts_per_so_unit; 
+      float bsz = vs->blockSize(); 
+      float bbsz = vs->blockBorderSize(); 
       SoSeparator* blk = new SoSeparator;
       ln->addChild(blk);
       // if using border, create it first
@@ -719,7 +751,31 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         }
       }        
     }
-    //TODO: image stuff
+    if (vs->display_style & GridColViewSpec::IMAGE) {
+      if ((cg.x == 0) || (cg.y == 0)) continue; // something wrong!
+      SoSeparator* img = new SoSeparator;
+      ln->addChild(img);
+      SoTransform* tr = new SoTransform();
+      img->addChild(tr);
+      // scale the image according to pixel metrics
+      //note: image defaults to 1 geom unit height, so we scale by our act height
+      float pxsz =  vs->pixelSize();
+      float scale_fact = pxsz * cg.y; // note: NOT row_height
+      tr->scaleFactor.setValue(scale_fact, scale_fact, 1.0f);
+      // center the shape in the middle of the cell
+      tr->translation.setValue((col_width / 2), -(row_height / 2), 0.0f);
+      SoImageEx* img_so = new SoImageEx;
+      img->addChild(img_so);
+      // just center it to simplify our translation
+//      img->vertAlignment = SoImageEx::HALF;
+//      img->horAlignment = SoImageEx::CENTER;
+      //note: we must unref the mat
+      taMatrix* cell_mat =  data_array->GetValAsMatrix(act_idx);
+      taBase::Ref(cell_mat);
+      img_so->setImage(*cell_mat);
+      taBase::UnRef(cell_mat);
+    }
+
   }
   node_so->body()->addChild(ln);
 }
@@ -1065,9 +1121,12 @@ void iGridTableView_Panel::InitPanel_impl() {
     }
     sb->setMinValue(0);
     sb->setMaxValue(lv->col_bufsz - 1);
-    //we make a crude estimate of page step based on ratio of act width to tot width
+/*obs    //we make a crude estimate of page step based on ratio of act width to tot width
     int pg_step = (int)(((lv->geom.x / lv->tot_col_widths) * lv->col_bufsz) + 0.5f);
-    if (pg_step == 0) pg_step = 1;
+    if (pg_step == 0) pg_step = 1; */
+    // for cols, only convenient page step is 1 because Qt forces the little arrows
+    // to also be the same step size as clicking in the blank area
+    int pg_step = 1;
     sb->setSteps(1, pg_step);
   }
   //TODO: BufferUpdated()???

@@ -1177,12 +1177,14 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool new_cols) {
   dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2);
   dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0);
   dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0);
+  DataArray_impl* col;
   if(color_type == COLOR)
-    dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 3,
+    col = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 3,
 			retina_size.x, retina_size.y, 3);
   else
-    dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 2,
+    col = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 2,
 			retina_size.x, retina_size.y);
+  col->SetUserData("IMAGE", true);
   for(int i=0;i<dogs.size; i++) {
     DoGRetinaSpec* sp = dogs[i];
     dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
@@ -1197,6 +1199,7 @@ bool RetinaSpec::FilterImageData(float_Matrix& img_data, DataTable* dt,
 				 float move_x, float move_y,
 				 float scale, float rotate, bool superimpose)
 {
+  if (!dt) return false;
   if(dogs.size == 0) return false;
   if(superimpose) {
     if(dt->rows <= 0) superimpose = false; // can't do it!
@@ -1213,6 +1216,7 @@ bool RetinaSpec::FilterImageData(float_Matrix& img_data, DataTable* dt,
   else
     da_ret = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 2,
 				 retina_size.x, retina_size.y);
+  da_ret->SetUserData("IMAGE", true);
   float_Matrix* ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
   taBase::Ref(ret_img);
 
@@ -1251,6 +1255,7 @@ bool RetinaSpec::FilterImage(taImage& img, DataTable* dt,
 			     float move_x, float move_y,
 			     float scale, float rotate, bool superimpose)
 {
+  if (!dt) return false;
   float_Matrix img_data;
   if(color_type == COLOR) {
     img.ImageToRGB_float(img_data);
@@ -1269,6 +1274,7 @@ bool RetinaSpec::FilterImageName(const String& img_fname, DataTable* dt,
 				 float move_x, float move_y,
 				 float scale, float rotate, bool superimpose)
 {
+  if (!dt) return false;
   taImage img;
   if(!img.LoadImage(img_fname)) return false;
   return FilterImage(img, dt, move_x, move_y, scale, rotate, superimpose);

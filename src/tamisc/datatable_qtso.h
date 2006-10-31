@@ -76,11 +76,8 @@ public: //
   virtual void		InitPanel();// lets panel init itself after struct changes
   virtual void		UpdatePanel();// after changes to props
 
-// routines for handling data changes -- only one should be called in any change context
-  virtual void  	DataChange_StructUpdate(); 
-   // when structure or src of data changes
-  virtual void  	DataChange_NewRows(); // we received new data (update) -- this predominant use-case can be optimized (rather than nuking/rebuilding each row)
-  virtual void  	DataChange_Other(); // all other changes
+  virtual void		DataChanged_DataTable(int dcr, void* op1, void* op2);
+    // forwarded when DataTable notifies; forwards to correct handler
   
   virtual void		InitNew(DataTable* dt, T3DataViewFrame* fr); // #IGNORE common code for creating a new one -- creates new fr if necessary -- called virtually after construction
   void 	Initialize();
@@ -113,6 +110,12 @@ protected:
   virtual void 		InitViewSpec();	// called to (re)init the viewspecs
   void			InitDisplay(); // called to (re)do all the viewing params
   virtual void		InitDisplay_impl() {} // type-specific impl
+  
+// routines for handling data changes -- only one should be called in any change context
+  virtual void  	DataChange_StructUpdate(); 
+   // when structure or src of data changes
+  virtual void  	DataChange_NewRows(); // we received new data (update) -- this predominant use-case can be optimized (rather than nuking/rebuilding each row)
+  virtual void  	DataChange_Other(); // all other changes
   
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE

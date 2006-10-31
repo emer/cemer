@@ -367,9 +367,9 @@ public:
   };
   
   DisplayStyle  display_style;	// can display as text and/or block, or image
-  int		text_width;	// #CONDEDIT_ON_display_style:TEXT for text cols, width of the column in chars
+  int		text_width;	// #CONDEDIT_ON_display_style:TEXT for text cols, width of the column in chars; for others, the min width
   FontSpec	font; // font for this column
-  MatrixLayout	layout;	// #CONDEDIT_OFF_display_style:TEXT layout of matrix cells
+  MatrixLayout	layout;	// #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK layout of matrix cells
   BlockColor	block_color; // #CONDEDIT_OFF_display_style:TEXT,IMAGE color of matrix cells
   BlockFill	block_fill; // #CONDEDIT_OFF_display_style:TEXT,IMAGE fill of matrix cells
   bool		scale_on; // #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
@@ -377,11 +377,12 @@ public:
   float 	col_width; // #READ_ONLY #DETAIL #NO_SAVE calculated col_width 
   float		row_height; // #READ_ONLY #DETAIL #NO_SAVE calculated row height
 
-  float		blockSize() const; // block size, in points
-  float		blockBorderSize() const; // block borader size, in points
+  float		blockSize() const; // block size, in geom units
+  float		blockBorderSize() const; // block border size, in geom units
   override void		setFont(const FontSpec& value);
   DATAVIEW_PARENT(GridTableViewSpec)
 //GridColView*  parent() const;
+  float		pixelSize() const; // pixel size, in geom units
   
   void	InitLinks();
   void	CutLinks();
@@ -389,6 +390,7 @@ public:
   COPY_FUNS(GridColViewSpec, DataColViewSpec);
   TA_BASEFUNS(GridColViewSpec);
 protected:
+  void			UpdateAfterEdit_impl();
   void			BuildFromDataArray_impl(bool first);
   virtual void 		InitDisplayParams();
 private:
@@ -403,6 +405,8 @@ public:
   float		block_size;	// #DEF_4 *maximum* block size, in points (blocks may be smaller if needed to fit)
   float		block_border_size; // #DEF_1 size of the border around the blocks, in points
 
+  float		pixel_size;	// #DEF_1 pixel size, in points (there is no border)
+    
   inline int		colSpecCount() const {return col_specs.size;}
   GridColViewSpec*	colSpec(int idx) const 
     {return (GridColViewSpec*)col_specs.SafeEl(idx);}
@@ -410,6 +414,7 @@ public:
   virtual int 	UpdateLayout();
   // #MENU #MENU_ON_Actions enforce the geometry to fit with no spaces or overlap, returns maxx
   virtual void	GetMinMaxScale(MinMax& mm, bool first=true); // get min and max data range for scaling
+  override void		DataDestroying();
 
   void 	Initialize();
   void	Destroy();
@@ -420,6 +425,7 @@ protected:
   override void		ReBuildFromDataTable_impl();
   override void		Reset_impl();
   override void 	UpdateAfterEdit_impl();
+  override void		DataDataChanged_impl(int dcr, void* op1, void* op2);
 };
 
 #endif // datatable_h

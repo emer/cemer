@@ -2540,12 +2540,17 @@ void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
       int pdbu = par_dbu_cnt();
       // we will only signal if no parent update, or if parent is data and we are structural
       if ((pdbu == 0)) {
-        if (stru)
+        if (stru) {
           DataStructUpdateEnd_impl();
-        else
+          DataDataChanged_impl(DCR_STRUCT_UPDATE_END, NULL, NULL);
+        } else {
           DataUpdateView_impl();
-      } else if ((pdbu < 0) && stru)
+          DataDataChanged_impl(DCR_DATA_UPDATE_END, NULL, NULL);
+        }
+      } else if ((pdbu < 0) && stru) {
           DataStructUpdateEnd_impl();
+          DataDataChanged_impl(DCR_STRUCT_UPDATE_END, NULL, NULL);
+      }
     }
     return;
   }
@@ -2554,9 +2559,10 @@ void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
   //TODO: need to confirm that supressing UAE's is not harmful...
   if (dcr == DCR_ITEM_UPDATED)
     DataUpdateAfterEdit_impl();
-  else if (dcr == DCR_UPDATE_VIEWS)
+  else if (dcr == DCR_UPDATE_VIEWS) {
     DataUpdateView_impl();
-  else {
+    DataDataChanged_impl(DCR_UPDATE_VIEWS, NULL, NULL);
+  } else {
     DataDataChanged_impl(dcr, op1_, op2_);
   }
 }
