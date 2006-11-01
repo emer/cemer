@@ -739,6 +739,7 @@ public:
   DATAVIEW_PARENT(DataTableViewSpec)
 //DataTableViewSpec*	parent() const;
   virtual void		setFont(const FontSpec& value) {} // for subclasses that implement
+  bool			isVisible() const; // bakes in check for datacol
   
   virtual bool		BuildFromDataArray(DataArray_impl* tda);
   

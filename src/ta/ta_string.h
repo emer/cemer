@@ -303,7 +303,10 @@ public:
   String         after(const char* t, int startpos = 0) const;
   // substring after (not including) target string
 
+  String 	right(int len) const; // rightmost len chars
 
+  String	elidedTo(int len) const; // return a string no more than len long, eliding chars if needed and adding ... marks
+  
 // deletion
 
 

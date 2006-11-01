@@ -124,12 +124,12 @@ public:
 
   Dimension	PDP	Inventor
   left-->right	+x	+x
-  bott->top	+z	+y
-  back->front	-y	+z
+  bott->top	+y	+y
+  back->front	-z	+z
 
-  Because of how layers are stacked, the PDP-z space is scaled with respect to the other
+  Because of how layers are stacked, the PDP-y space is scaled with respect to the other
   spaces. However, this is not done with transforms (it would distort shapes), but merely
-  by scaling the PDP z factor.
+  by scaling the PDP y factor.
 
   The letter 'p' in front of coordinate items (px, py, etc.) means PDP coordinates.
 
@@ -337,9 +337,11 @@ public:
   SoMFVec3f& 	vertex(); //  #IGNORE accessor shortcut for vertices
   SoMFVec3f& 	normal(); // #IGNORE accessor shortcut for normals
 
+  void		setDimensions(float bs, float ht, float dp); // use existing inset
   void		setDimensions(float bs, float ht, float dp, float in);
+  void		setInset(float value);
   void		setOrientation(Orientation ori);
-  SoFrame(Orientation ori = Hor);
+  SoFrame(Orientation ori = Hor, float in = 0.05f);
 
 protected:
   const char*  	getFileFormatName() const {return SoTriangleStripSet::getFileFormatName();} // override
@@ -362,46 +364,19 @@ public:
   SoCube*		shape;
   
   void		setImage(const QImage& src);
-  void		setImage(const taMatrix& src);
-    // grey: X,Y; rgb: X,Y,[rgb]
+  void		setImage(const taMatrix& src, bool top_zero = false);
+    // gray: X,Y; rgb: X,Y,[rgb] -- tz false is normal convention for pdp
   
   SoImageEx();
 protected:
   byte_Matrix		img;
-  SoScale*		scale;
   
   void		adjustScale(); // called after setting image to adjust aspect
   void		setImage2(const QImage& src);
   void		setImage3(const QImage& src);
-  void		setImage2(const taMatrix& src);
-  void		setImage3(const taMatrix& src);
+  void		setImage2(const taMatrix& src, bool top_zero);
+  void		setImage3(const taMatrix& src, bool top_zero);
   ~SoImageEx();
 };
-
-/*obs class TAMISC_API SoImageEx: public SoImage { 
-// ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer
-#ifndef __MAKETA__
-typedef SoImage inherited;
-
-  SO_NODE_HEADER(SoImageEx);
-#endif // def __MAKETA__
-public:
-  static void		initClass();
-  
-  void		setImage(const QImage& src);
-  void		setImage(const taMatrix& src);
-    // grey: X,Y; rgb: X,Y,[rgb]
-  
-  SoImageEx();
-protected:
-  byte_Matrix	img;
-  
-  void		setImage2(const QImage& src);
-  void		setImage3(const QImage& src);
-  void		setImage2(const taMatrix& src);
-  void		setImage3(const taMatrix& src);
-}; */
-
-
 
 #endif

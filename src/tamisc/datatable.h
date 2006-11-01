@@ -349,43 +349,21 @@ public:
   };
 
   enum MatrixLayout { // order of display for matrix cols
-    TOP_ZERO, // row zero is displayed at top of cell (ex. for images)
-    BOT_ZERO // row zero is displayed at bottom of cell (ex for patterns)
+    BOT_ZERO, // row zero is displayed at bottom of cell (ex for patterns)
+    TOP_ZERO // row zero is displayed at top of cell (ex. for images)
   };
 
-  enum BlockColor { // ways that grid blocks can be filled
-    COLOR,	// color indicates value
-    BW_SHADE, 	// black&white shading indicates value
-    SOLID	// no shading (only for use with Area/Linear/Height)
-  };
-  
-  enum BlockFill { // ways that grid blocks can be filled
-    FILL,	// just fill the whole block
-    AREA,	// area indicates value
-    LINEAR, 	// linear size of square side indicates value
-    HEIGHT	// extrude into view; 3D height indicates value
-  };
-  
   DisplayStyle  display_style;	// can display as text and/or block, or image
-  int		text_width;	// #CONDEDIT_ON_display_style:TEXT for text cols, width of the column in chars; for others, the min width
-  FontSpec	font; // font for this column
-  MatrixLayout	layout;	// #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK layout of matrix cells
-  BlockColor	block_color; // #CONDEDIT_OFF_display_style:TEXT,IMAGE color of matrix cells
-  BlockFill	block_fill; // #CONDEDIT_OFF_display_style:TEXT,IMAGE fill of matrix cells
+  int		text_width; // width of the column (or each matrix col) in chars; also the min width in chars
+  MatrixLayout	mat_layout; // #DEF_BOT_ZERO #CONDEDIT_OFF_display_style:TEXT layout of matrix and image cells
   bool		scale_on; // #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
   
-  float 	col_width; // #READ_ONLY #DETAIL #NO_SAVE calculated col_width 
-  float		row_height; // #READ_ONLY #DETAIL #NO_SAVE calculated row height
+  float 	col_width; // #READ_ONLY #DETAIL #NO_SAVE calculated col_width in geoms 
+  float		row_height; // #READ_ONLY #DETAIL #NO_SAVE calculated row height in geoms
 
-  float		blockSize() const; // block size, in geom units
-  float		blockBorderSize() const; // block border size, in geom units
-  override void		setFont(const FontSpec& value);
   DATAVIEW_PARENT(GridTableViewSpec)
 //GridColView*  parent() const;
-  float		pixelSize() const; // pixel size, in geom units
   
-  void	InitLinks();
-  void	CutLinks();
   void	Copy_(const GridColViewSpec& cp);
   COPY_FUNS(GridColViewSpec, DataColViewSpec);
   TA_BASEFUNS(GridColViewSpec);
@@ -402,17 +380,24 @@ class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
 INHERITED(DataTableViewSpec)
 public:
-  float		block_size;	// #DEF_4 *maximum* block size, in points (blocks may be smaller if needed to fit)
-  float		block_border_size; // #DEF_1 size of the border around the blocks, in points
-
-  float		pixel_size;	// #DEF_1 pixel size, in points (there is no border)
-    
+  float		grid_border_pts; // #DEF_2 size of border around grid cells, in points
+  float		mat_block_pts;	// #DEF_4 matrix block size, in points
+  float		mat_border_pts; // #DEF_1 size of border around matrix cells, in points
+  float		mat_sep_pts; // #EXPERT #DEF_2 sep between text and grid, etc
+  float		mat_font_scale; // #EXPERT #DEF_.8 amount to scale font for matrix cells
+  float		pixel_pts;	// #DEF_1 image pixel size, in points (there is no border)
+  
   inline int		colSpecCount() const {return col_specs.size;}
   GridColViewSpec*	colSpec(int idx) const 
-    {return (GridColViewSpec*)col_specs.SafeEl(idx);}
+    {return (GridColViewSpec*)col_specs.SafeEl(idx);} //
   
-  virtual int 	UpdateLayout();
-  // #MENU #MENU_ON_Actions enforce the geometry to fit with no spaces or overlap, returns maxx
+  //note: these are in the _qtso file
+  float		gridBorderSize() const; 
+  float		matBlockSize() const;
+  float		matBorderSize() const; 
+  float		matSepSize() const;
+  float		pixelSize() const;
+  
   virtual void	GetMinMaxScale(MinMax& mm, bool first=true); // get min and max data range for scaling
   override void		DataDestroying();
 

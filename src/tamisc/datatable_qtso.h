@@ -59,6 +59,7 @@ public: //
   TDCoord	pos;		// origin of the view in 3d space (not used for panel view)
   TDCoord	geom;		// space taken
   float		frame_inset;	// #DEF_0.05 inset of frame (used to calc actual inner space avail)
+  iBox3f	stage; // #NO_SAVE this is coords of the actual rendering area (ie, less frame)
   
   virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
     //note: can override for more efficient direct reference
@@ -107,6 +108,7 @@ protected:
   iTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
   int			m_rows; // cached rows, we use to calc deltas etc.
   override void 	UpdateAfterEdit_impl();
+  void			UpdateStage(); // updates stage after change or copy
   virtual void 		InitViewSpec();	// called to (re)init the viewspecs
   void			InitDisplay(); // called to (re)do all the viewing params
   virtual void		InitDisplay_impl() {} // type-specific impl
@@ -145,19 +147,25 @@ public:
 
   GridTableViewSpec view_spec; // #SHOW_TREE baked in spec 
 
+  void			setAutoScale(bool value);
+  
   float			colWidth(int idx) const; // looked up from the specs
+  
   override DataTable*	dataTable() const {return view_spec.dataTable();}
-  override DataTableViewSpec* viewSpecBase() const 
-    {return const_cast<GridTableViewSpec*>(&view_spec);}
-  inline GridTableViewSpec* viewSpec() const 
-    {return const_cast<GridTableViewSpec*>(&view_spec);}
+  
+  void			setHeader(bool value);
+  
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
+  
   T3GridTableViewNode* node_so() const {return (T3GridTableViewNode*)m_node_so.ptr();}
 
-  virtual void	SetBlockFill(
-    GridColViewSpec::BlockColor color = GridColViewSpec::COLOR,
-    GridColViewSpec::BlockFill fill = GridColViewSpec::FILL);
-  // #MENU set the fill style of the grid blocks
+  override DataTableViewSpec* viewSpecBase() const 
+    {return const_cast<GridTableViewSpec*>(&view_spec);}
+    
+  inline GridTableViewSpec* viewSpec() const 
+    {return const_cast<GridTableViewSpec*>(&view_spec);}
+    
+  
   virtual void	SetBlockSizes(float block_sz = 4.0f, float border_sz = 1.0f);
   // #MENU set the MAXIMUM sizes of all blocks (could be smaller), and the border space between blocks
 
@@ -167,9 +175,6 @@ public:
   // #MENU turn text on for all block displayed items
   void			AllBlockTextOff() {AllBlockText_impl(false);}
   // #MENU turn text off for all block displayed items
-
-  virtual void	ToggleHeader();  // toggle header on or off
-  virtual void	ToggleAutoScale();  // toggle header on or off
 
 // view control
   void			VScroll(bool left); // scroll left or right
@@ -194,15 +199,15 @@ protected:
   virtual void		CalcViewMetrics(); // for entire view
   virtual void		CalcColMetrics(); // when col start changes
   virtual void		RemoveHeader(); // remove the header
-  virtual void  	RemoveLine(int idx); // remove line, -1 = all
-  void			RemoveLines() {RemoveLine(-1);} // remove all lines
+  virtual void  	RemoveLines(); // remove all lines
   virtual void		RenderHeader();
   virtual void		RenderLines(); // render all the view_range lines
   virtual void		RenderLine(int view_idx, int data_row); // add indicated line
 
 // view control:
   override void		ClearViewRange();
-  
+  override void  	DataChange_NewRows();
+    
   override void  	InitDisplay_impl();
   override void		ViewRangeChanged_impl(); // note: only called if mapped
   
@@ -258,7 +263,8 @@ public:
 
   void 			viewAll(); // zooms to fit entire scenegraph in window
 
-  virtual void 		BufferUpdated() {} //called when data added/removed, or view is scrolled
+  virtual void 		InitPanel(); //called on structural changes (also does Update)
+  virtual void 		UpdatePanel(); //called when data added/removed, or view is scrolled, or other changes
 
   iTableView_Panel(TableView* lv);
   ~iTableView_Panel();
@@ -274,10 +280,9 @@ protected:
 
   iTableView_Panel(bool is_grid_log, TableView* lv); // only used by GridTableView
   void 			Constr_T3ViewspaceWidget();
-  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
-  override void 	GetImage_impl();
-
+  virtual void 		InitPanel_impl() {}
+  virtual void 		UpdatePanel_impl();
 protected slots:
   virtual void		buttonClicked(int id);
   virtual void 		chkDisplay_toggled(bool on);
@@ -295,10 +300,6 @@ public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
   GridTableView*	glv() {return (GridTableView*)m_dv;}
 
-//  override int 		EditAction(int ea);
-//  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-  override void 	BufferUpdated();
-
   iGridTableView_Panel(GridTableView* glv);
   ~iGridTableView_Panel();
 
@@ -308,21 +309,15 @@ public slots:
 
 protected:
   override void		InitPanel_impl(); // called on structural changes
+  override void		UpdatePanel_impl(); // called on structural changes
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iGridTableView_Panel;}
-protected:
-//  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
-  override void 	GetImage_impl();
 
-protected slots:
 protected slots:
   void 			chkAuto_toggled(bool on);
   void 			chkHeaders_toggled(bool on);
-//  void			list_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col);
-//  void			list_selectionChanged(); //note: must use this parameterless version in Multi mode
 };
 
 

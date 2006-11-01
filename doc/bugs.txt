@@ -34,6 +34,15 @@ it more transparent..  ProgEditor is Program?
 
 *  Program Groups: execution control
 
+* change basis of coord axes for netview, layers, etc.
+
+* Gridview:
+  * support for matrix text
+* automatically bracket gui-invoked methods with Busy/Notbusy
+* UserData
+  * persistence
+  * schema
+
 ---------------
 Alpha:
 

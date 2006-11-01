@@ -86,7 +86,7 @@ void TableView::Initialize() {
   view_range.max = -1;
   display_on = true;
   m_lvp = NULL;
-  geom.SetXYZ(4, 1, 3);
+  geom.SetXYZ(4, 3, 1);
   //TODO: new ones should offset pos in viewers so they don't overlap
   pos.SetXYZ(0-geom.x, 0, 0);
   frame_inset = 0.05f;
@@ -114,13 +114,24 @@ void TableView::Copy_(const TableView& cp) {
   view_bufsz = cp.view_bufsz;
   view_range = cp.view_range;
   pos = cp.pos;
-  pos.x++; pos.y--; pos.z++; // outset it from last one
+  pos.x++; pos.y++; pos.z--; // outset it from last one
   geom = cp.geom;
   frame_inset = cp.frame_inset;
+  UpdateStage();
+}
+
+void TableView::UpdateStage() {
+  stage.setValue(
+    frame_inset, frame_inset, -(float)(geom.z),
+    geom.x - (2 * frame_inset),
+    geom.y - (2 * frame_inset),
+    (float)0.0f
+  );
 }
 
 void TableView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateStage();
   if (!isVisible()) return;
   InitViewSpec();
   InitDisplay();
@@ -148,6 +159,7 @@ void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
     return;
   }
   
+  if (!isVisible()) return;
   DataTable* dt = dataTable(); // note: valid, otherwise we couldn't get this notify
   if (dcr == DCR_UPDATE_VIEWS) {
     if (dt->rows > m_rows) {
@@ -168,7 +180,6 @@ void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
 }
 
 void TableView::DataChange_StructUpdate() {
-  if (!isVisible()) return;
   InitViewSpec();
   ClearViewRange();
   InitDisplay();
@@ -216,8 +227,7 @@ void TableView::Render_pre() {
   }
 
   T3TableViewNode* node_so = this->node_so(); //cache
-  node_so->setShowFrame(true);
-  node_so->frame()->inset = frame_inset;
+  node_so->setShowFrame(true, frame_inset); //TODO: maybe not for graph???
   const iColor* col = GetEditColorInherit();
   if (col) {
     col->copyTo(node_so->material()->diffuseColor);
@@ -230,10 +240,10 @@ void TableView::Render_pre() {
 void TableView::Render_impl() {
   // set origin: in allocated area
   FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ(pos.x, (pos.z + 0.5f), -pos.y);
+  ft->translate.SetXYZ(pos.x, (pos.y + 0.5f), -pos.z);
 
   T3TableViewNode* node_so = this->node_so(); // cache
-  node_so->setGeom(geom.x, geom.y, geom.z);
+  node_so->setGeom(geom.x, geom.y, geom.z, frame_inset);
   SoFont* font = node_so->captionFont(true);
   float font_size = 0.4f;
   font->size.setValue(font_size); // is in same units as geometry units of network
@@ -266,15 +276,15 @@ void TableView::setDisplay(bool value) {
   }
 }
 
+void TableView::UpdatePanel() {
+  if (m_lvp)
+    m_lvp->UpdatePanel();
+}
+
 void TableView::ViewRangeChanged() {
   if (!isVisible())
      return;
   ViewRangeChanged_impl();
-  if (m_lvp)
-    m_lvp->BufferUpdated();
-}
-
-void TableView::UpdatePanel() {
   if (m_lvp)
     m_lvp->UpdatePanel();
 }
@@ -403,6 +413,18 @@ void TableView::View_FR() {
 // GridTableView	//
 //////////////////////////
 
+float  GridTableViewSpec::gridBorderSize() const {
+  return grid_border_pts * t3Misc::geoms_per_pt;} 
+float  GridTableViewSpec::matBlockSize() const {
+  return mat_block_pts * t3Misc::geoms_per_pt;}
+float  GridTableViewSpec::matBorderSize() const {
+  return mat_border_pts * t3Misc::geoms_per_pt;} 
+float  GridTableViewSpec::matSepSize() const {
+  return mat_sep_pts * t3Misc::geoms_per_pt;}
+float  GridTableViewSpec::pixelSize() const {
+  return pixel_pts * t3Misc::geoms_per_pt;}
+
+
 GridTableView* GridTableView::NewGridTableView(DataTable* dt,
     T3DataViewFrame* fr)
 {
@@ -413,7 +435,7 @@ GridTableView* GridTableView::NewGridTableView(DataTable* dt,
 }
 
 void GridTableView::Initialize() {
-  geom.SetXYZ(12, 1, 9);
+  geom.SetXYZ(12, 9, 1);
   data_base = &TA_GridTableViewSpec;  //supercedes base
   col_bufsz = 0;
   row_height = 0.1f; // non-zero dummy value
@@ -483,17 +505,21 @@ void GridTableView::CalcColMetrics() {
     // note: we display at least one col, even if it spills over size
     col_range.max = col_range.min;
   
-  float wd_tot = 0.0f;
+  float grid_bord_sz = view_spec.gridBorderSize();
+  float wd_tot = colWidth(col_range.max);
+  float act_wd = stage.width();
   while ((col_range.max < (col_bufsz - 1)) && 
-   ((wd_tot += colWidth(col_range.max)) <= (float)geom.x))//TODO: frame_inset???
+   ((wd_tot += (colWidth(col_range.max + 1) + grid_bord_sz)) <= act_wd))
     col_range.max++;
 }
 
 void GridTableView::CalcViewMetrics() {
   GridTableViewSpec* tvs = viewSpec();
-  // header height (if on)
+  float grid_bord_sz = tvs->gridBorderSize();
+  // header height (if on) -- note that font height is ~ 12/8 times width
   if (header_on)
-    head_height = tvs->font.pointSize / t3Misc::pts_per_so_unit;
+    head_height = (tvs->font.pointSize * t3Misc::char_ht_to_wd_pts * t3Misc::geoms_per_pt)
+      + grid_bord_sz;
   else head_height = 0.0f;
   
   // num vis cols, tot col width (for scrollbars), row height
@@ -501,15 +527,18 @@ void GridTableView::CalcViewMetrics() {
   tot_col_widths = 0.00001f; // avoid /0
   row_height = 0.00001f;
   taListItr itr;
-  GridColViewSpec* vs;
-  FOR_ITR_EL(GridColViewSpec, vs, tvs->col_specs., itr) {
-    if ((!vs->visible) || (!vs->dataCol())) continue;
+  GridColViewSpec* cvs;
+  FOR_ITR_EL(GridColViewSpec, cvs, tvs->col_specs., itr) {
+    if (!cvs->isVisible()) continue;
     ++col_bufsz;
-    tot_col_widths += vs->col_width;
-    row_height = MAX(row_height, vs->row_height);
+    tot_col_widths += cvs->col_width;
+    row_height = MAX(row_height, cvs->row_height);
   }
+  // add grid lines
+  tot_col_widths += (grid_bord_sz * (col_bufsz - 1));
   // calculate visible rows based on row_height and our geom
-  view_bufsz = MAX((int)((geom.z - head_height - (2 * frame_inset)) / row_height), 1);
+  view_bufsz = MAX((int)((stage.height() - head_height) / 
+    (row_height + grid_bord_sz)), 1);
   
   CalcColMetrics();
 }
@@ -548,6 +577,23 @@ float GridTableView::colWidth(int idx) const {
   else return 0.0f;
 }
 
+void GridTableView::DataChange_NewRows() {
+  DataTable* dt = dataTable(); // note: valid, otherwise we couldn't get this notify
+  int old_rows = m_rows;
+  m_rows = dt->rows;
+  // if we were not at the very end, then don't scroll, but do update the panel
+  if ((view_range.max < old_rows-1) && (view_range.max > 0)) {
+    if (m_lvp)
+      m_lvp->UpdatePanel();
+    return;
+  }
+  // scroll down to end of new data
+  view_range.max = m_rows - 1; 
+  view_range.min = m_rows - view_bufsz;
+  view_range.min = MAX(0, view_range.min);
+  ViewRangeChanged();
+}
+
 void GridTableView::InitDisplay_impl() {
   if (!header_on) RemoveHeader();
   CalcViewMetrics();
@@ -556,23 +602,6 @@ void GridTableView::InitDisplay_impl() {
   InitPanel();
   RenderHeader();
 }
-/*TODO: this is basis of DataChange_NewRows
-void GridTableView::DataRowsAdded() {
-int m_rows = rows();
-  // if we are not at the very end, then don't scroll, but do update the panel
-  if ((view_range.max < rows()-1) && (view_range.max > 0)) {
-    if (m_lvp)
-      m_lvp->BufferUpdated();
-    return;
-  }
-
-  if ((view_range.max - view_range.min + 1) >= view_bufsz) {
-    view_range.min++;
-  }
-  view_range.max++; //must update before calling AddLine
-  ViewRangeChanged();
-}*/
-
 void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
@@ -588,15 +617,10 @@ void GridTableView::RemoveHeader() {
   }
 }
 
-void GridTableView::RemoveLine(int idx){
+void GridTableView::RemoveLines(){
   T3GridTableViewNode* node_so = this->node_so();
   if (!node_so) return;
-  if (idx < 0) {
-    node_so->body()->removeAllChildren();
-  } else {
-    if (idx <= (node_so->body()->getNumChildren() - 1))
-      node_so->body()->removeChild(idx);
-  }
+  node_so->body()->removeAllChildren();
 }
 
 void GridTableView::RenderHeader() {
@@ -612,24 +636,26 @@ void GridTableView::RenderHeader() {
   fs.copyTo(fnt);
   hdr->addChild(fnt);
 
+  float grid_bord_sz = tvs->gridBorderSize(); // cache
   taListItr itr;
   int col = -1;
-  GridColViewSpec* vs;
-  FOR_ITR_EL(GridColViewSpec, vs, tvs->col_specs., itr) {
+  GridColViewSpec* cvs;
+  FOR_ITR_EL(GridColViewSpec, cvs, tvs->col_specs., itr) {
     ++col;
-    if ((!vs->visible) || (!vs->dataCol())) continue;
+    if (!cvs->isVisible()) continue;
     if (col < col_range.min) continue;
     if (col > col_range.max) break;
     SoTranslation* tr = new SoTranslation();
     hdr->addChild(tr);
     if (col == col_range.min) { // first trnsl positions row
-      tr->translation.setValue(0.0f, geom.z - head_height, 0.0f);
+      tr->translation.setValue(frame_inset, stage.top() - head_height, 0.0f);
     } else {
-      tr->translation.setValue(colWidth(col - 1), 0.0f, 0.0f);
+      tr->translation.setValue(colWidth(col - 1) + grid_bord_sz, 0.0f, 0.0f);
     }
     SoAsciiText* txt = new SoAsciiText();
     hdr->addChild(txt);
-    txt->string.setValue(vs->GetDisplayName().chars());
+    int max_chars = (int)((colWidth(col) * t3Misc::pts_per_geom) / fs.pointSize);
+    txt->string.setValue(cvs->GetDisplayName().elidedTo(max_chars).chars());
   }
   node_so->header()->addChild(hdr);
 }
@@ -638,19 +664,19 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   T3GridTableViewNode* node_so = this->node_so();
   if (!node_so) return;
   GridTableViewSpec* tvs = viewSpec();
-
+  float grid_bord_sz = tvs->gridBorderSize();
   // make line container
   SoSeparator* ln = new SoSeparator();
 
   taListItr itr;
   int col = -1;
-  GridColViewSpec* vs;
+  GridColViewSpec* cvs;
   DataTable* dt = dataTable(); //cache
   String el;
-  FOR_ITR_EL(GridColViewSpec, vs, tvs->col_specs., itr) {
+  FOR_ITR_EL(GridColViewSpec, cvs, tvs->col_specs., itr) {
     col++; // lets us continue at any point
-    DataArray_impl* data_array = vs->dataCol();
-    if ((!vs->visible) || (!data_array)) continue;
+    DataArray_impl* data_array = cvs->dataCol();
+    if ((!cvs->visible) || (!data_array)) continue;
     if (col < col_range.min) continue;
     if (col > col_range.max) break;
     
@@ -665,46 +691,58 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     // 1st tr places origin for the row
     if (col == col_range.min) { // translation is relative to 0,0
       tr->translation.setValue(
-        0.0f, 
-        geom.z - head_height - frame_inset - (row_height * view_idx),
+        frame_inset, 
+        stage.top() - head_height - (row_height * view_idx)
+          - ((view_idx == 0) ? 0.0f : (grid_bord_sz * (view_idx - 1))),
         0.0f);
     } else {
-      tr->translation.setValue(colWidth(col - 1), 0.0f, 0.0f);
+      tr->translation.setValue(colWidth(col - 1) + grid_bord_sz, 0.0f, 0.0f);
     }
     float col_width = colWidth(col); // cache for convenience
     
     // cache 2d-equivalent geom info, and render according to col style
     iVec2i cg;
     data_array->Get2DCellGeom(cg); 
-    if (vs->display_style & GridColViewSpec::TEXT_MASK) {
+    if (cvs->display_style & GridColViewSpec::TEXT_MASK) {
       //TODO: mat cells
     //TODO: add a font, if col font differs from main font
       SoSeparator* txt_sep = new SoSeparator;
       ln->addChild(txt_sep);
       tr = new SoTranslation;
       txt_sep->addChild(tr);
-      // text origin is bottom left, and we want to center when 
-      // height is greater than txt height
-      float offs = ((row_height - vs->row_height) / 2) + vs->row_height;
-      tr->translation.setValue(0.0f, -offs, 0.0f);
+      
+      // text origin is bottom left (Left) or bottom right (Right)
+      // and we want to center vertically when  height is greater than txt height
+      SoAsciiText::Justification just = SoAsciiText::LEFT;
+      float x_offs = 0.0f; // default for left
+      float y_offs = ((row_height - cvs->row_height) / 2) + cvs->row_height;
+      if (data_array->isNumeric()) {
+        just = SoAsciiText::RIGHT;
+        x_offs = col_width;
+      }
+      tr->translation.setValue(x_offs, -y_offs, 0.0f);
       if (act_idx >= 0) {
-        el = data_array->GetValAsString(act_idx);
+        int max_chars = (int)((col_width * t3Misc::pts_per_geom) / tvs->font.pointSize);
+        el = data_array->GetValAsString(act_idx).elidedTo(max_chars);
       } else {
         el = "n/a";
       }
       SoAsciiText* txt = new SoAsciiText();
       txt_sep->addChild(txt);
+      txt->justification = just;
       txt->string.setValue(el.chars());
     }
     // if val is NULL, just skip rendering remaining col types
     if (act_idx < 0) continue;
     
-    if (vs->display_style & GridColViewSpec::TEXT_AND_BLOCK) {
-      //TODO: space
+    if (cvs->display_style == GridColViewSpec::TEXT_AND_BLOCK) {
+      tr = new SoTranslation;
+      ln->addChild(tr);
+      tr->translation.setValue(0.0f, -tvs->matSepSize(), 0.0f); 
     }
-    if (vs->display_style & GridColViewSpec::BLOCK_MASK) {
-      float bsz = vs->blockSize(); 
-      float bbsz = vs->blockBorderSize(); 
+    if (cvs->display_style & GridColViewSpec::BLOCK_MASK) {
+      float bsz = tvs->matBlockSize(); 
+      float bbsz = tvs->matBorderSize(); 
       SoSeparator* blk = new SoSeparator;
       ln->addChild(blk);
       // if using border, create it first
@@ -716,7 +754,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       // for BOT_ZERO we need to massage it
       int cell = 0; // accessor just uses a linear cell value
       for (c.y = 0; c.y < cg.y; ++c.y) {
-        if (vs->layout == GridColViewSpec::BOT_ZERO)
+        if (cvs->mat_layout == GridColViewSpec::BOT_ZERO)
           cell = cg.x * (cg.y - c.y - 1);
         SoSeparator* blk_ln = new SoSeparator;
         blk->addChild(blk_ln);
@@ -735,13 +773,12 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           }
           SoBaseColor* bc = new SoBaseColor;
           blk_ln->addChild(bc);
+          
           float val = data_array->GetValAsFloatM(act_idx, cell);
           //NOTE: following a bit dangerous, but should never be null
           col = *(scale.GetColor(val));
           bc->rgb = (SbColor)col;
-//TEMP
-//val = cell / float(cg.x * cg.y);
-//bc->rgb.setValue(val, val, val);
+          
           SoCube* cu = new SoCube;
           cu->width = bsz;
           cu->height = bsz;
@@ -751,7 +788,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         }
       }        
     }
-    if (vs->display_style & GridColViewSpec::IMAGE) {
+    if (cvs->display_style == GridColViewSpec::IMAGE) {
       if ((cg.x == 0) || (cg.y == 0)) continue; // something wrong!
       SoSeparator* img = new SoSeparator;
       ln->addChild(img);
@@ -759,20 +796,18 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       img->addChild(tr);
       // scale the image according to pixel metrics
       //note: image defaults to 1 geom unit height, so we scale by our act height
-      float pxsz =  vs->pixelSize();
+      float pxsz =  tvs->pixelSize();
       float scale_fact = pxsz * cg.y; // note: NOT row_height
       tr->scaleFactor.setValue(scale_fact, scale_fact, 1.0f);
       // center the shape in the middle of the cell
       tr->translation.setValue((col_width / 2), -(row_height / 2), 0.0f);
       SoImageEx* img_so = new SoImageEx;
       img->addChild(img_so);
-      // just center it to simplify our translation
-//      img->vertAlignment = SoImageEx::HALF;
-//      img->horAlignment = SoImageEx::CENTER;
-      //note: we must unref the mat
+
       taMatrix* cell_mat =  data_array->GetValAsMatrix(act_idx);
       taBase::Ref(cell_mat);
-      img_so->setImage(*cell_mat);
+      bool top_zero = (cvs->mat_layout == GridColViewSpec::TOP_ZERO);
+      img_so->setImage(*cell_mat, top_zero);
       taBase::UnRef(cell_mat);
     }
 
@@ -817,33 +852,27 @@ void GridTableView::Reset_impl() {
   inherited::Reset_impl();
 }
 
+void GridTableView::setAutoScale(bool value) {
+  if (auto_scale == value) return;
+  //TODO:
+}
+  
+void GridTableView::setHeader(bool value) {
+  if (header_on == value) return;
+  if (header_on) RenderHeader();
+  else RemoveHeader();
+  ViewRangeChanged();
+}
+
 void GridTableView::SetBlockSizes(float block_sz, float border_sz) {
-  view_spec.block_size = block_sz;
-  view_spec.block_border_size = border_sz;
+  view_spec.mat_block_pts = block_sz;
+  view_spec.mat_border_pts = border_sz;
   UpdateAfterEdit();
 }
 
 void GridTableView::SetViewFontSize(int point_size) {
   view_spec.font.SetFontSize(point_size);
   UpdateAfterEdit();
-}
-
-void GridTableView::ToggleAutoScale() {
-  auto_scale = !auto_scale;
-//TODO  update, and update panel
-}
-
-void GridTableView::ToggleHeader() {
-  header_on = !header_on;
-//TODO  update, and update panel
-}
-
-void GridTableView::SetBlockFill(
-  GridColViewSpec::BlockColor color,
-  GridColViewSpec::BlockFill fill)
-{
-//TODO: iterate, setting for all applicable col_bufsz
-  InitDisplay();
 }
 
 void GridTableView::ViewRangeChanged_impl() {
@@ -860,11 +889,11 @@ void GridTableView::VScroll(bool left) {
 }
 
 void GridTableView::ViewC_At(int start) {
-  RemoveLines();
-  RemoveHeader(); // noop if off
   if (start < 0) start = 0;
   if (start >= col_bufsz) start = col_bufsz - 1;
   if (col_range.min == start) return;
+  RemoveLines();
+  RemoveHeader(); // noop if off
   col_range.min = start;
   CalcColMetrics();
   if (header_on) RenderHeader();
@@ -1012,76 +1041,25 @@ void iTableView_Panel::Constr_T3ViewspaceWidget() {
   layContents->addWidget(t3vs);
 }
 
-
-void iTableView_Panel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  inherited::DataChanged_impl(dcr, op1_, op2_);
-}
-/*TODO
-int iLogDataPanel::EditAction(int ea) {
-  int rval = 0;
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  ISelectable* ci = sel_list.SafeEl(0);
-  if (ci)  {
-    rval = ci->EditAction_(sel_list, ea);
-  }
-  return rval;
-}
-
-int iLogDataPanel::GetEditActions() {
-  int rval = 0;
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  ISelectable* ci = sel_list.SafeEl(0);
-  if (ci)  {
-    rval = ci->GetEditActions_(sel_list);
-    // certain things disallowed if more than one item selected
-    if (sel_list.size > 1) {
-      rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
-    }
-  }
-  return rval;
-} */
-
-void iTableView_Panel::GetImage_impl() {
-  TableView* lv = this->lv(); // cache
+void iTableView_Panel::InitPanel() {
+  if (updating) return;
   ++updating;
-  chkDisplay->setChecked(lv->display_on);
+  InitPanel_impl();
+  UpdatePanel_impl();
   --updating;
 }
 
-/* void iLogDataPanel::GetSelectedItems(ISelectable_PtrList& lst) {
-  QListViewItemIterator it(list, QListViewItemIterator::Selected);
-  while (it.current()) {
-    lst.Add((taiListDataNode*)it.current());
-    ++it;
-  }
+void iTableView_Panel::UpdatePanel() {
+  if (updating) return;
+  ++updating;
+  UpdatePanel_impl();
+  --updating;
 }
 
-void iLogDataPanel::list_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col ) {
-  //TODO: 'item' will be whatever is under the mouse, but we could have a multi select!!!
-  taiListDataNode* nd = (taiListDataNode*)item;
-  if (nd == NULL) return; //TODO: could possibly be multi select
-
-  taiMenu* menu = new taiMenu(this, taiMenu::popupmenu, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  nd->FillContextMenu(sel_list, menu); // also calls link menu filler
-
-  //TODO: any for us last (ex. delete)
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(pos);
-  }
-  delete menu;
+void iTableView_Panel::UpdatePanel_impl() {
+  TableView* lv = this->lv(); // cache
+  chkDisplay->setChecked(lv->display_on);
 }
-
-void iLogDataPanel::list_selectionChanged() {
-  viewer_win()->UpdateUi();
-} */
 
 void iTableView_Panel::viewAll() {
   m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion());
@@ -1108,9 +1086,8 @@ iGridTableView_Panel::~iGridTableView_Panel() {
 void iGridTableView_Panel::InitPanel_impl() {
   inherited::InitPanel_impl();
   GridTableView* lv = this->glv(); //cache
-  ++updating;
   // only show col slider if necessary
-  if (lv->tot_col_widths < (float)lv->geom.x) {
+  if (lv->tot_col_widths <= lv->stage.width() ) {
     t3vs->setHasHorScrollBar(false);
   } else {
     QScrollBar* sb = t3vs->horScrollBar(); // no autocreate
@@ -1129,14 +1106,13 @@ void iGridTableView_Panel::InitPanel_impl() {
     int pg_step = 1;
     sb->setSteps(1, pg_step);
   }
-  //TODO: BufferUpdated()???
-  --updating;
 }
 
-void iGridTableView_Panel::BufferUpdated() {
-  ++updating;
-  inherited::BufferUpdated();
+void iGridTableView_Panel::UpdatePanel_impl() {
+  inherited::UpdatePanel_impl();
   GridTableView* lv = this->glv(); //cache
+  chkHeaders->setChecked(lv->header_on);
+  chkAuto->setChecked(lv->auto_scale);
   // only show row slider if necessary
   if (lv->view_bufsz >= lv->rows()) {
     t3vs->setHasVerScrollBar(false);
@@ -1146,8 +1122,8 @@ void iGridTableView_Panel::BufferUpdated() {
       sb = t3vs->verScrollBar(true);
       connect(sb, SIGNAL(valueChanged(int)), this, SLOT(verScrBar_valueChanged(int)) );
       sb->setTracking(true);
+      sb->setMinValue(0);
     }
-    sb->setMinValue(0);
     //note: the max val is set so that the last page is a full page (i.e., can't scroll past end)
     int mx = MAX((lv->rows() - lv->view_bufsz), 0);
     sb->setMaxValue(mx);
@@ -1156,16 +1132,12 @@ void iGridTableView_Panel::BufferUpdated() {
     sb->setSteps(1, pg_step);
     sb->setValue(MIN(lv->view_range.min, mx));
   }
-  --updating;
-}
+  // col pos
+  QScrollBar* sb = t3vs->horScrollBar(); // no autocreate
+  if (sb) {
+    sb->setValue(lv->col_range.min);
+  }
 
-void iGridTableView_Panel::GetImage_impl() {
-  inherited::GetImage_impl();
-  GridTableView* lv = this->glv(); // cache
-  ++updating;
-  chkHeaders->setChecked(lv->header_on);
-  chkAuto->setChecked(lv->auto_scale);
-  --updating;
 }
 
 void iGridTableView_Panel::horScrBar_valueChanged(int value) {
@@ -1183,17 +1155,13 @@ void iGridTableView_Panel::verScrBar_valueChanged(int value) {
 void iGridTableView_Panel::chkAuto_toggled(bool on) {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-  if (glv->auto_scale == on) return;
-  glv->auto_scale = on;
-  glv->UpdateAfterEdit();
+  glv->setAutoScale(on);
 }
 
 void iGridTableView_Panel::chkHeaders_toggled(bool on) {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-  if (glv->header_on == on) return;
-  glv->header_on = on;
-  glv->UpdateAfterEdit();
+  glv->setHeader(on);
 }
 
 

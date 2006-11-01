@@ -1120,6 +1120,9 @@ void DataColViewSpec::BuildFromDataArray_impl(bool first_time) {
   }
 }
 
+bool DataColViewSpec::isVisible() const {
+  return (visible && m_data);
+}
 
 //////////////////////////
 //  DataColViewSpecs	//
@@ -1186,8 +1189,8 @@ void DataTableViewSpec::Copy_(const DataTableViewSpec& cp) {
 }
 
 void DataTableViewSpec::UpdateAfterEdit_impl(){
-  BuildFromDataTable(dataTable(), true);
   inherited::UpdateAfterEdit_impl();
+  BuildFromDataTable(dataTable(), true);
 }
 
 bool DataTableViewSpec::BuildFromDataTable(DataTable* tdt, bool force) {

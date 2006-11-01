@@ -57,25 +57,22 @@ typedef T3NodeParent inherited;
 public:
   static void		initClass();
 
-  SoSeparator*		canvas() {return canvas_;} // note: transformed to compensate for frame inset, if any
   SoFrame*		frame() {return frame_;} // note: may be null
   bool			showFrame();
-  virtual void		setShowFrame(bool value);
-  void 			setGeom(int px, int py, int pz); // sets (actual) geom of log
+  virtual void		setShowFrame(bool value, float inset = 0.05f);
+    // note: inset ignored when value=false
+  void 			setGeom(int px, int py, int pz); // sets (actual) geom of view
+  void 			setGeom(int px, int py, int pz, float inset); 
+   // sets (actual) geom of view, including inset (if applicable)
   T3TableViewNode(void* dataView_ = NULL); // dataview is a TableView object
 
 protected:
   iVec3i		geom_; //note, not a field
-  SoSeparator*		canvas_;
-#ifndef __MAKETA__
-#endif
-  virtual void		render(); // called after geom and other changes
+  virtual void		render(float inset); // called after geom and other changes
   ~T3TableViewNode();
 
 private:
   SoFrame*		frame_; // NULL if not shown
-  SoSeparator*		canvasSeparator_;
-  SoTransform*		txfm_canvas_;//
 };
 
 //////////////////////////
@@ -84,11 +81,8 @@ private:
 
 /* 3d grid and text views
      [...]
-      canvasSeparator: SoSeparator
-        txfm_canvas: SoTransform -- translates/scales so canvas is exactly geom dimensions
-        canvas: SoSeparator
-          header: SoGroup
-          body: SoGroup
+        header: SoGroup
+        body: SoGroup
 */
 
 class TAMISC_API T3GridTableViewNode: public T3TableViewNode {

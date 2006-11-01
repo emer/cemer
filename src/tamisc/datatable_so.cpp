@@ -57,58 +57,46 @@ T3TableViewNode::T3TableViewNode(void* dataView_)
   SO_NODE_CONSTRUCTOR(T3TableViewNode);
 
   frame_ = NULL;
-  canvasSeparator_ = new SoSeparator();
-  txfm_canvas_ = new SoTransform();
-  canvasSeparator_->addChild(txfm_canvas_);
-  canvas_ = new SoSeparator();
-  canvasSeparator_->addChild(canvas_);
-  insertChildAfter(topSeparator(), canvasSeparator_, shapeSeparator());
   geom_.setValue(1, 1, 1); // puts in valid state
 }
 
 T3TableViewNode::~T3TableViewNode()
 {
-  canvas_ = NULL;
-  txfm_canvas_ = NULL;
-  canvasSeparator_ = NULL;
   frame_ = NULL;
 }
 
-void T3TableViewNode::render() {
-  float inset = (frame_) ? frame_->inset : 0.0f;
+void T3TableViewNode::render(float inset) {
   if (frame_) {
-    frame_->setDimensions(geom_.x, geom_.z, 0.1f, 0.05f);
-    // compensate canvas area for inset of frame
-    txfm_canvas_->scaleFactor.setValue(
-      (geom_.x - (2 * inset)) / geom_.x,
-      (geom_.z - (2 * inset)) / geom_.z,
-      1.0f);
-  } else {
-    txfm_canvas_->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+    frame_->setDimensions(geom_.x, geom_.y, 0.1f, inset);
   }
-  txfm_shape()->translation.setValue(geom_.x/2.0f, geom_.z/2.0f, 0.0f);
-  txfm_canvas_->translation.setValue(inset, inset, 0.0f);
+  txfm_shape()->translation.setValue(geom_.x/2.0f, geom_.y/2.0f, 0.0f);
 }
 
 void T3TableViewNode::setGeom(int px, int py, int pz) {
-  if (px < 1) px = 1;  if (pz < 1) py = 1;  if (pz < 1) pz = 1;
-  if (geom_.isEqual(px, py, pz)) return;
-  geom_.setValue(px, py, pz);
-  render();
+  setGeom(px, py, pz, (frame_) ? frame_->inset : 0.0f); 
 }
 
-void T3TableViewNode::setShowFrame(bool value) {
-  if (showFrame() == value) return;
-  SoSeparator* ss = shapeSeparator(); // cache
-  if (value) {
-    frame_ = new SoFrame(SoFrame::Ver);
-    //frame_ = new SoFrame(SoFrame::Hor);
-    insertChildAfter(ss, frame_, material());
-  } else {
-    ss->removeChild(frame_);
-    frame_ = NULL;
+void T3TableViewNode::setGeom(int px, int py, int pz, float inset) {
+  if (px < 1) px = 1;  if (py < 1) py = 1;  if (pz < 1) pz = 1;
+  if (geom_.isEqual(px, py, pz) && 
+    (!frame_ ||  (frame_->inset == inset)) ) return;
+  geom_.setValue(px, py, pz);
+  render(inset);
+}
+
+void T3TableViewNode::setShowFrame(bool value, float inset) {
+  if (showFrame() != value) {
+    SoSeparator* ss = shapeSeparator(); // cache
+    if (value) {
+      frame_ = new SoFrame(SoFrame::Ver, inset);
+      //frame_ = new SoFrame(SoFrame::Hor);
+      insertChildAfter(ss, frame_, material());
+    } else {
+      ss->removeChild(frame_);
+      frame_ = NULL;
+    }
   }
-  render();
+  render(inset);
 }
 
 bool T3TableViewNode::showFrame() {
@@ -132,9 +120,9 @@ T3GridTableViewNode::T3GridTableViewNode(void* dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GridTableViewNode);
   header_ = new SoGroup();
-  canvas_->addChild(header_);
+  insertChildAfter(topSeparator(), header_, shapeSeparator());
   body_ = new SoGroup();
-  canvas_->addChild(body_);
+  insertChildAfter(topSeparator(), body_, header_);
 }
 
 T3GridTableViewNode::~T3GridTableViewNode()

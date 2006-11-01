@@ -1386,9 +1386,7 @@ float ClustNode::SetParDists(float par_d, float_RArray::DistMetric metric) {
 void GridColViewSpec::Initialize(){
   display_style = TEXT; // updated later in build
   text_width = 16;
-  layout = TOP_ZERO;
-  block_color = SOLID;
-  block_fill = FILL;
+  mat_layout = BOT_ZERO; // typical default for data patterns
   scale_on = true;
   col_width = 0.0f;
   row_height = 0.0f;
@@ -1397,22 +1395,9 @@ void GridColViewSpec::Initialize(){
 void GridColViewSpec::Copy_(const GridColViewSpec& cp){
   display_style = cp.display_style;
   text_width = cp.text_width;
-  font = cp.font;
-  block_color = cp.block_color;
-  block_fill = cp.block_fill;
-  layout = cp.layout;
+  mat_layout = cp.mat_layout;
   scale_on = cp.scale_on;
   // others recalced
-}
-
-void GridColViewSpec::InitLinks(){
-  inherited::InitLinks();
-  taBase::Own(font, this);
-}
-
-void GridColViewSpec::CutLinks(){
-  font.CutLinks();
-  inherited::CutLinks();
 }
 
 void GridColViewSpec::UpdateAfterEdit_impl() {
@@ -1432,10 +1417,10 @@ void GridColViewSpec::BuildFromDataArray_impl(bool first){
     if (data_array->isMatrix() && data_array->isNumeric()) {
       if (data_array->GetUserData("IMAGE").toBool()) {
         display_style = IMAGE;
-        //note: layout is n/a since images always rendered top-zero
+        mat_layout = BOT_ZERO;
       } else {
         display_style = BLOCK;
-        layout = BOT_ZERO;
+        mat_layout = BOT_ZERO;
       }
     } else /*obs  if (data_array->GetUserData("TEXT").toBool() ||
       data_array->GetUserData(DataArray_impl::udkey_narrow).toBool() ||
@@ -1447,92 +1432,79 @@ void GridColViewSpec::BuildFromDataArray_impl(bool first){
   InitDisplayParams();
 }
 
-float GridColViewSpec::blockSize() const {
-  GridTableViewSpec* par = parent();
-  float rval = (par) ? par->block_size : 4.0f;
-  return rval / t3Misc::char_pts_per_so_unit;
-}
-
-float GridColViewSpec::blockBorderSize() const {
-  GridTableViewSpec* par = parent();
-  float rval = (par) ? par->block_border_size : 1.0f;
-  return rval / t3Misc::char_pts_per_so_unit;
-}
-
 void GridColViewSpec::InitDisplayParams() {
-  DataArray_impl* dc = dataCol(); // cache
+  //NOTE: we just calc everything in points, then adjust at the end
   // cache some params
-  float bsz = blockSize(); 
-  float bbsz = blockBorderSize(); 
+  GridTableViewSpec* par = parent();
+  DataArray_impl* dc = dataCol(); // cache
+  float blk_pts = par->mat_block_pts; 
+  float brd_pts = par->mat_border_pts; 
+  float fnt_pts = par->font.pointSize;
+  // first stab at col width is the normal size text, for scalar width
+  float col_wd = fnt_pts * text_width;
+  if (dc->isMatrix()) // shrink font for mats
+    fnt_pts *=  par->mat_font_scale; 
+  
   // get 2d equivalent cell geom values
   iVec2i cg;
   dc->Get2DCellGeom(cg); //note: 1x1 for scalar
-  row_height = 0.0f;
-  //make a first-stab at col width as being the text width of the col
-  col_width = (font.pointSize * text_width)  / t3Misc::char_pts_per_so_unit;
-  // start by calculating text height
+  float row_ht = 0.0f;
+  float tmp; // to avoid multi-calcs in min/max 
   if (display_style & TEXT_MASK) {
-    // row height, and number of rows
-    row_height = (font.pointSize / t3Misc::pts_per_so_unit) * cg.y;
-//TODO: need to handle matrix cells in x direction
-  //  col_width = (font.pointSize * text_width)  / t3Misc::char_pts_per_so_unit;
+    // col width
+    tmp = (fnt_pts * text_width * cg.x) + (brd_pts * (cg.x - 1));
+    col_wd = MAX(col_wd, tmp);
+    // row height, and number of rows -- ht ~ 12/8 x wd
+    row_ht = (fnt_pts * cg.y * t3Misc::char_ht_to_wd_pts) + (brd_pts * (cg.y - 1)) ;
   }
   if (display_style & TEXT_AND_BLOCK) {
-    row_height += 0.0f;
-//TODO: space between text and block
+    row_ht += par->mat_sep_pts;
   }
   if (display_style & BLOCK_MASK) {
-    
-    row_height += ((bsz + bbsz) * cg.y) + bbsz;
-    float block_width =((bsz + bbsz) * cg.x) +
-        bbsz;
-    col_width = MAX(col_width, block_width);
+    tmp = (blk_pts * cg.x) + (brd_pts * (cg.x - 1));
+    col_wd = MAX(col_wd, tmp);
+    row_ht += (blk_pts * cg.y) + (brd_pts * (cg.y - 1));
   }
   if (display_style & IMAGE) {
-    float pxsz = pixelSize(); 
-    float img_tmp = pxsz * cg.x;
-    col_width = MAX(col_width, img_tmp);
-    
-    img_tmp = pxsz * cg.y;
-    row_height += img_tmp;
+    float px_pts = par->pixel_pts; 
+    tmp = px_pts * cg.x;
+    col_wd = MAX(col_wd, tmp);
+    row_ht += px_pts * cg.y;
   }
-  
-}
-
-float GridColViewSpec::pixelSize() const {
-  GridTableViewSpec* par = parent();
-  float rval = (par) ? par->pixel_size : 1.0f;
-  return rval / t3Misc::char_pts_per_so_unit;
-}
-
-
-void GridColViewSpec::setFont(const FontSpec& value) {
-  font = value;
+  // change to geoms
+  col_width = col_wd * t3Misc::geoms_per_pt;
+  row_height = row_ht * t3Misc::geoms_per_pt;
 }
 
 
 //////////////////////////////////
-// 	DT Grid View Specs	//
+//  GridTableViewSpec		//
 //////////////////////////////////
 
 void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
-  block_size = 4.0f;
-  block_border_size = 1.0f;
-  pixel_size = 1.0f;
+  grid_border_pts = 2.0f;
+  mat_block_pts = 4.0f;
+  mat_border_pts = 1.0f;
+  mat_sep_pts = 2.0f;
+  mat_font_scale = 0.8f;
+  pixel_pts = 1.0f;
 }
 
 void GridTableViewSpec::Destroy() {
 }
 
 void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
-  block_size = cp.block_size;
-  block_border_size = cp.block_border_size;
+  grid_border_pts = cp.grid_border_pts;
+  mat_block_pts = cp.mat_block_pts;
+  mat_border_pts = cp.mat_border_pts;
+  mat_sep_pts = cp.mat_sep_pts;
+  mat_font_scale = cp.mat_font_scale;
+  pixel_pts = cp.pixel_pts;
 }
 
 void GridTableViewSpec::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
-  UpdateLayout();
 }
 
 void GridTableViewSpec::DataDataChanged_impl(int dcr, void* op1, void* op2) {
@@ -1552,17 +1524,10 @@ void GridTableViewSpec::DataDestroying() {
 
 void GridTableViewSpec::ReBuildFromDataTable_impl(){
   inherited::ReBuildFromDataTable_impl();
-  UpdateLayout();
 }
 
 void GridTableViewSpec::Reset_impl() {
   inherited::Reset_impl();
-}
-
-int GridTableViewSpec::UpdateLayout() {
-  int maxx = 0;
-  //TODO: iterate the guys, updating their layout
-  return maxx;
 }
 
 void GridTableViewSpec::GetMinMaxScale(MinMax& mm, bool first) {

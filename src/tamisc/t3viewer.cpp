@@ -60,8 +60,9 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 
-float t3Misc::pts_per_so_unit = 36.0f;
-float t3Misc::char_pts_per_so_unit = 72.0f;
+const float t3Misc::pts_per_geom(72.0f);
+const float t3Misc::geoms_per_pt(1/pts_per_geom);
+const float t3Misc::char_ht_to_wd_pts(12.0f/8.0f);
 
 //////////////////////////
 //	T3DataView	//

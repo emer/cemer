@@ -65,9 +65,9 @@ SoPtr_Of(T3Node);
 class TAMISC_API t3Misc {
 // global params and funcs for T3 viewing system
 public:
-  static float		pts_per_so_unit; // #DEF_36 equivalent font points per so unit
-  static float		char_pts_per_so_unit; // #DEF_72 chars*pt size / so unit
-
+  static const float	pts_per_geom; // #DEF_72 chars*pt size / so unit
+  static const float	geoms_per_pt; // number of geoms per point (1/72)
+  static const float	char_ht_to_wd_pts; // ratio of ht to wd in metrics: 12/8
 };
 
 //////////////////////////

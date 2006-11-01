@@ -672,6 +672,29 @@ String& String::downcase() {
   return *this;
 }
 
+String String::elidedTo(int width) const {
+  if (length() <= width)
+    return *this;
+  // if too small to use ellipses, return chars
+  if (width <= 3)
+    return before(width);
+    
+  STRING_BUF(rval, width);
+  if (length() <= 8) {
+    // really short, just use first chars, and put ... at end
+    rval.cat(before(width - 3)).cat("...");
+  } else {
+    // try finding a space in mid third of string to elide on
+    int pos = index(' ', length() / 3);
+    if ((pos < 0) || (pos > ((length() * 2) / 3))) {
+      // just elide in center
+      pos = length() / 2;
+    }
+    rval.cat(before(pos)).cat("...").cat(right(width - pos - 3));
+  }
+  return rval;
+}
+
 void String::error(const char* msg) const {
   cerr << "String:" <<  msg << "\n";
 }
@@ -838,6 +861,10 @@ String String::through(int pos) const {
 
 String String::after(int pos) const {
   return _substr(pos + 1, length() - (pos + 1));
+}
+
+String String::right(int len) const {
+  return _substr(length() - len, len);
 }
 
 String String::from(int pos) const {

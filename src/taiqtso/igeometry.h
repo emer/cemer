@@ -176,6 +176,15 @@ public:
   iVec3f	max;  // maximum point
   iVec3f 	center() const {return iVec3f((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);}
     // center point of the box
+  float		height() const {return (max.y - min.y);} 
+  float		width() const {return (max.x - min.x);} 
+  float		depth() const {return (max.z - min.z);} 
+  float		bottom() const {return min.y;}
+  float		top() const {return max.y;}
+  float		left() const {return min.x;}
+  float		right() const {return max.x;}
+  float		far() const {return min.z;}
+  float		near() const {return max.z;}
   iVec3f	size() const {return iVec3f(max.x - min.x, max.y - min.y, max.z - min.z);}  // size of the box in each dimension
   bool		isZero() const { return (min.isZero() && max.isZero());}
 
