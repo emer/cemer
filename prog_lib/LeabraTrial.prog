@@ -13,11 +13,10 @@ Program .projects[0].programs.gp[0][2] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [9] {
-    MethodCall @[0] { };
-    NetCounterInit @[1] { };
-    MethodCall @[2] { };
-    WhileLoop @[3] { 
+  ProgEl_List @.prog_code = [7] {
+    NetCounterInit @[0] { };
+    MethodCall @[1] { };
+    WhileLoop @[2] { 
       ProgEl_List @.loop_code = [3] {
 	ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [1] {
@@ -28,15 +27,14 @@ Program .projects[0].programs.gp[0][2] {
 	MethodCall @[2] { };
       };
     };
-    MethodCall @[4] { };
-    IfElse @[5] { 
+    MethodCall @[3] { };
+    IfElse @[4] { 
       ProgEl_List @.true_code = [1] {
 	MethodCall @[0] { };
       };
     };
-    ProgramCall @[6] { };
-    NetUpdateView @[7] { };
-    MethodCall @[8] { };
+    ProgramCall @[5] { };
+    NetUpdateView @[6] { };
   };
 };
 Program .projects[0].programs.gp[0][2] {
@@ -68,7 +66,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[0] {
    name="phase_no";
    var_type=T_Int;
-   int_val=1;
+   int_val=2;
    objs_ptr=0;
    desc=;
   };
@@ -96,23 +94,14 @@ Program .projects[0].programs.gp[0][2] {
   name=;
   el_typ=MethodCall;
   el_def=0;
-  MethodCall @[0] {
-   desc="prevent automatic updating of network displays during processing";
-   off=0;
-   result_var=;
-   script_obj=$1$;
-   method=taBase::DataUpdate;
-   args{ true;};
-{ bool begin;   };
-  };
-  NetCounterInit @[1] {
+  NetCounterInit @[0] {
    desc=;
    off=0;
    network_var=$1$;
    local_ctr_var=$2$;
    counter=LeabraNetwork::phase_no;
   };
-  MethodCall @[2] {
+  MethodCall @[1] {
    desc=;
    off=0;
    result_var=;
@@ -121,7 +110,7 @@ Program .projects[0].programs.gp[0][2] {
    args{ };
 {    };
   };
-  WhileLoop @[3] {
+  WhileLoop @[2] {
    desc=;
    off=0;
    loop_code {
@@ -162,7 +151,7 @@ Program .projects[0].programs.gp[0][2] {
    };
    loop_test="phase_no < network->phase_max";
   };
-  MethodCall @[4] {
+  MethodCall @[3] {
    desc=;
    off=0;
    result_var=;
@@ -171,7 +160,7 @@ Program .projects[0].programs.gp[0][2] {
    args{ };
 {    };
   };
-  IfElse @[5] {
+  IfElse @[4] {
    desc=;
    off=0;
    condition="network->context == Network::TRAIN";
@@ -195,7 +184,7 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  ProgramCall @[6] {
+  ProgramCall @[5] {
    desc=;
    off=0;
    target=.projects[0].programs.gp[0][6]$4$;
@@ -206,20 +195,11 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  NetUpdateView @[7] {
+  NetUpdateView @[6] {
    desc=;
    off=0;
    network_var=$1$;
    update_var=.projects[0].programs.gp[0][2].vars[1]$5$;
-  };
-  MethodCall @[8] {
-   desc="allow automatic updating";
-   off=0;
-   result_var=;
-   script_obj=$1$;
-   method=taBase::DataUpdate;
-   args{ false;};
-{ bool begin;   };
   };
  };
 };

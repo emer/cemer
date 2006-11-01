@@ -1444,6 +1444,7 @@ int Program::CallInit(Program* caller) {
 void Program::Init() {
   taMisc::Busy();
   setRunState(INIT);
+  DataChanged(DCR_ITEM_UPDATED); // update button state
   taMisc::CheckConfigStart(false);
   CheckConfig(false); //sets ret_val on fail
   Run_impl();
@@ -1452,6 +1453,7 @@ void Program::Init() {
   script->Restart();		// restart script at beginning if run again
   taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   setRunState(DONE);
+  DataChanged(DCR_ITEM_UPDATED); // update after macroscopic button-press action..
 } 
 
 bool Program::PreCompileScript_impl() {
@@ -1471,8 +1473,9 @@ bool Program::PreCompileScript_impl() {
 void Program::setRunState(RunState value) {
   if (run_state == value) return;
   run_state = value;
-  // todo: this might be adding unnec overhead:?
-  DataChanged(DCR_ITEM_UPDATED);
+  // DO NOT DO THIS!! Definitely generates too much overhead
+  // datachanged called only after macroscopic action
+  //  DataChanged(DCR_ITEM_UPDATED);
 }
 
 int Program::Run_impl() {
@@ -1483,8 +1486,8 @@ int Program::Run_impl() {
   }
   if (ret_val == RV_OK) {
     script->Run();
-    //note: shared var state likely changed, so update gui
-    DataChanged(DCR_ITEM_UPDATED);
+    // DO NOT DO!
+    // DataChanged(DCR_ITEM_UPDATED);
   }
   return ret_val;
 }
@@ -1497,7 +1500,7 @@ int Program::Cont_impl() {
   script->Cont();
   // note: shared var state likely changed, so update gui
   script_compiled = true; // override any run-generated changes!!
-  // do not update this -- too tight
+  // do not update this -- too tight -- only at end!
   // DataChanged(DCR_ITEM_UPDATED);
   return ret_val;
 }
@@ -1507,6 +1510,7 @@ void Program::Run() {
   step_mode = false;
   taMisc::Busy();
   setRunState(RUN);
+  DataChanged(DCR_ITEM_UPDATED); // update button state
   Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != RV_OK) ShowRunError();
@@ -1519,6 +1523,7 @@ void Program::Run() {
     setRunState(DONE);
   }
   stop_req = false;
+  DataChanged(DCR_ITEM_UPDATED); // update after macroscopic button-press action..
 } 
 
 void Program::ShowRunError() {
@@ -1541,6 +1546,7 @@ void Program::Step() {
   step_mode = true;
   taMisc::Busy();
   setRunState(RUN);
+  DataChanged(DCR_ITEM_UPDATED); // update button state
   Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != 0) {//TODO: use enums and sensible output string
@@ -1558,6 +1564,7 @@ void Program::Step() {
     setRunState(DONE);
   }
   stop_req = false;
+  DataChanged(DCR_ITEM_UPDATED); // update after macroscopic button-press action..
 }
 
 void Program::SetAsStep() {
@@ -1572,6 +1579,7 @@ void Program::Stop() {
 void Program::Stop_impl() {
   script->Stop();
   setRunState(STOP);
+  DataChanged(DCR_ITEM_UPDATED); // update button state
 }
 
 bool Program::StopCheck() {
