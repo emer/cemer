@@ -119,8 +119,10 @@ T3GridTableViewNode::T3GridTableViewNode(void* dataView_)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GridTableViewNode);
+  grid_ = new SoSeparator;
+  insertChildAfter(topSeparator(), grid_, shapeSeparator());
   header_ = new SoGroup();
-  insertChildAfter(topSeparator(), header_, shapeSeparator());
+  insertChildAfter(topSeparator(), header_, grid_);
   body_ = new SoGroup();
   insertChildAfter(topSeparator(), body_, header_);
 }

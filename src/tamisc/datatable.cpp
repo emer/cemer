@@ -1390,6 +1390,7 @@ void GridColViewSpec::Initialize(){
   scale_on = true;
   col_width = 0.0f;
   row_height = 0.0f;
+  text_height = 0.0f;
 }
 
 void GridColViewSpec::Copy_(const GridColViewSpec& cp){
@@ -1444,6 +1445,7 @@ void GridColViewSpec::InitDisplayParams() {
   float col_wd = fnt_pts * text_width;
   if (dc->isMatrix()) // shrink font for mats
     fnt_pts *=  par->mat_font_scale; 
+  text_height = fnt_pts * t3Misc::char_ht_to_wd_pts * t3Misc::geoms_per_pt;
   
   // get 2d equivalent cell geom values
   iVec2i cg;
@@ -1457,7 +1459,7 @@ void GridColViewSpec::InitDisplayParams() {
     // row height, and number of rows -- ht ~ 12/8 x wd
     row_ht = (fnt_pts * cg.y * t3Misc::char_ht_to_wd_pts) + (brd_pts * (cg.y - 1)) ;
   }
-  if (display_style & TEXT_AND_BLOCK) {
+  if (display_style == TEXT_AND_BLOCK) {
     row_ht += par->mat_sep_pts;
   }
   if (display_style & BLOCK_MASK) {

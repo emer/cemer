@@ -94,6 +94,7 @@ typedef T3TableViewNode inherited;
 public:
   static void		initClass();
 
+  SoSeparator*		grid() {return grid_;}
   SoGroup*		header() {return header_;}
   SoGroup*		body() {return body_;}
 
@@ -101,6 +102,7 @@ public:
 
 protected:
   ~T3GridTableViewNode();
+  SoSeparator*		grid_;
   SoGroup*		header_;
   SoGroup*		body_;//
 };

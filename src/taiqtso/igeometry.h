@@ -31,7 +31,7 @@ class SbVec3s;		// #IGNORE
 #endif
 
 
-class TAIQTSO_API iPoint { // #NO_TOKENS #INSTANCE
+class TAIQTSO_API iPoint { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int	x;
   int	y;
@@ -63,7 +63,7 @@ public:
 
 typedef iPoint iVec2i; // synonym
 
-class TAIQTSO_API iVec3i: public iVec2i { // #NO_TOKENS #INSTANCE
+class TAIQTSO_API iVec3i: public iVec2i { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int	z;
 
@@ -86,7 +86,7 @@ public:
 #endif
 };
 
-class TAIQTSO_API iSize { // #NO_TOKENS #INSTANCE
+class TAIQTSO_API iSize { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int w;
   int h;
@@ -105,7 +105,7 @@ public:
 };
 
 
-class TAIQTSO_API iRect { // #NO_TOKENS #INSTANCE
+class TAIQTSO_API iRect { // #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int x;
   int y;
@@ -139,7 +139,7 @@ class SbVec3f;		// #IGNORE
 class SbBox3f;		// #IGNORE
 #endif
 
-class TAIQTSO_API iVec3f { // #NO_TOKENS #INSTANCE 3d vector, for things like points and sizes
+class TAIQTSO_API iVec3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d vector, for things like points and sizes
 public:
   float 	x;
   float 	y;
@@ -170,10 +170,11 @@ public:
 */
 
 
-class TAIQTSO_API iBox3f { // #NO_TOKENS #INSTANCE 3d box, typically used for a bounding box in a normalized coordinate system
+class TAIQTSO_API iBox3f { // #NO_TOKENS #INSTANCE #EDIT_INLINE 3d box, typically used for a bounding box in a normalized coordinate system
 public:
   iVec3f 	min; // minimum point
   iVec3f	max;  // maximum point
+  
   iVec3f 	center() const {return iVec3f((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);}
     // center point of the box
   float		height() const {return (max.y - min.y);} 

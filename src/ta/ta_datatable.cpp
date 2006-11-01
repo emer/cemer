@@ -112,12 +112,20 @@ int DataArray_impl::displayWidth() const {
   // explicit width has highest priority
   int rval = GetUserData(udkey_width).toInt();
   if (rval == 0) {
-    // NARROW implies width of 8
-     if (GetUserData(udkey_narrow).toBool())
-       rval = 8;
+    switch (valType()) {
+    case VT_STRING: rval = 10; break;
+    case VT_DOUBLE: rval = 16; break;
+    case VT_FLOAT: rval = 12; break;
+    case VT_INT: rval = 8; break;
+    case VT_BYTE: rval = 3; break;
+    case VT_VARIANT: rval = 10; break;
+    default: break;
+    }
   }
   if (rval == 0)
-    rval = 16; // default
+    rval = 8; // default
+  // include name
+  rval = MAX(rval, name.length());
   return rval;
 }
 

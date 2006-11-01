@@ -441,7 +441,7 @@ void GridTableView::Initialize() {
   row_height = 0.1f; // non-zero dummy value
   tot_col_widths = 0.00001f; //avoid /0
   
-//from GTV
+  grid_on = true;
   header_on = true;
   auto_scale = false;
   scale_range.min = -1.0f;
@@ -473,6 +473,7 @@ void GridTableView::CutLinks() {
 void GridTableView::Copy_(const GridTableView& cp) {
   col_bufsz = cp.col_bufsz;
   col_range = cp.col_range;
+  grid_on = cp.grid_on;
   header_on = cp.header_on;
   auto_scale = cp.auto_scale;
   scale_range = cp.scale_range;
@@ -553,6 +554,7 @@ void GridTableView::Clear_impl() {
 //  if (!taMisc::gui_active ) return;
   T3GridTableViewNode* node_so = this->node_so();
   if (node_so) {
+    node_so->grid()->removeAllChildren();
     node_so->header()->removeAllChildren();
     node_so->body()->removeAllChildren();
   }
@@ -600,6 +602,7 @@ void GridTableView::InitDisplay_impl() {
   view_range.max = MIN(view_bufsz, (rows() - 1));
   scale.SetMinMax(scale_range.min, scale_range.max);
   InitPanel();
+  RenderGrid();
   RenderHeader();
 }
 void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
@@ -607,6 +610,13 @@ void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   if (!m_lvp) {
     m_lvp = new iGridTableView_Panel(this);
     vw->viewerWindow()->AddPanelNewTab(lvp());
+  }
+}
+
+void GridTableView::RemoveGrid() {
+  T3GridTableViewNode* node_so = this->node_so();
+  if (node_so) {
+    node_so->grid()->removeAllChildren();
   }
 }
 
@@ -623,10 +633,56 @@ void GridTableView::RemoveLines(){
   node_so->body()->removeAllChildren();
 }
 
-void GridTableView::RenderHeader() {
-  if (!header_on) return; // normally shouldn't be called if off
-  //note: only called when node exists
+void GridTableView::RenderGrid() {
   T3GridTableViewNode* node_so = this->node_so();
+  if (!node_so) return;
+  SoSeparator* grid = node_so->grid();
+  grid->removeAllChildren(); // should have been done
+  if (!grid_on) return;
+  
+  SoTranslation* tr = new SoTranslation();
+  grid->addChild(tr);
+  // origin will be lower left of stage
+  tr->translation.setValue(
+    frame_inset, frame_inset, 0.0f);
+  
+  GridTableViewSpec* tvs = viewSpec();
+
+  float grid_bord_sz = tvs->gridBorderSize(); // cache
+//  float 
+  SoCube* ln = NULL;
+  // vertical lines
+  SoSeparator* vert = new SoSeparator;
+  for (int col = col_range.min; col <= col_range.max; ++col) {
+    GridColViewSpec* cvs = tvs->colSpec(col);
+    if (!cvs->isVisible()) continue;
+    //note: we always put a sep after the last col, because it is usually
+    // followed by blank space
+//    if (col < col_range.max) {
+      tr = new SoTranslation();
+      vert->addChild(tr);
+      float x_adj = (col == col_range.min) ? 0.0f : grid_bord_sz / 2;
+      float y_offs = (col == col_range.min) ? stage.height() / 2 : 0.0f;
+      tr->translation.setValue(
+        x_adj + colWidth(col) + (grid_bord_sz / 2),
+        y_offs, 0.0f);
+      ln = new SoCube;
+      vert->addChild(ln);
+      ln->width = grid_bord_sz * 0.5; // leave margins
+      ln->depth = 0.0f;
+      ln->height = stage.height();
+//    }
+  }
+  grid->addChild(vert);
+
+}
+
+void GridTableView::RenderHeader() {
+  T3GridTableViewNode* node_so = this->node_so();
+  if (!node_so) return;
+  node_so->header()->removeAllChildren();
+  if (!header_on) return; // normally shouldn't be called if off
+
   GridTableViewSpec* tvs = viewSpec();
   // make header
   SoSeparator* hdr = new SoSeparator();
@@ -648,7 +704,9 @@ void GridTableView::RenderHeader() {
     SoTranslation* tr = new SoTranslation();
     hdr->addChild(tr);
     if (col == col_range.min) { // first trnsl positions row
-      tr->translation.setValue(frame_inset, stage.top() - head_height, 0.0f);
+      float base_adj = (head_height - grid_bord_sz) * t3Misc::char_base_fract;
+      tr->translation.setValue(frame_inset,
+        stage.top() - head_height + base_adj, 0.0f);
     } else {
       tr->translation.setValue(colWidth(col - 1) + grid_bord_sz, 0.0f, 0.0f);
     }
@@ -715,7 +773,9 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       // and we want to center vertically when  height is greater than txt height
       SoAsciiText::Justification just = SoAsciiText::LEFT;
       float x_offs = 0.0f; // default for left
-      float y_offs = ((row_height - cvs->row_height) / 2) + cvs->row_height;
+      float base_adj = cvs->text_height * t3Misc::char_base_fract;
+      float y_offs = ((row_height - cvs->row_height) / 2) +
+         cvs->row_height + base_adj;
       if (data_array->isNumeric()) {
         just = SoAsciiText::RIGHT;
         x_offs = col_width;
@@ -842,7 +902,8 @@ void GridTableView::Render_pre() {
 }
 
 void GridTableView::Render_post() {
-  if (header_on) RenderHeader();
+  RenderGrid();
+  RenderHeader();
   ViewRangeChanged(); //TODO: should this really be here???
   inherited::Render_post();
 }
@@ -857,10 +918,17 @@ void GridTableView::setAutoScale(bool value) {
   //TODO:
 }
   
+void GridTableView::setGrid(bool value) {
+  if (grid_on == value) return;
+  grid_on = value;
+  RenderGrid(); // or remove
+  ViewRangeChanged();
+}
+
 void GridTableView::setHeader(bool value) {
   if (header_on == value) return;
-  if (header_on) RenderHeader();
-  else RemoveHeader();
+  header_on = value;
+  RenderHeader(); // or remove
   ViewRangeChanged();
 }
 
@@ -894,8 +962,10 @@ void GridTableView::ViewC_At(int start) {
   if (col_range.min == start) return;
   RemoveLines();
   RemoveHeader(); // noop if off
+  RemoveGrid();
   col_range.min = start;
   CalcColMetrics();
+  if (grid_on) RenderGrid();
   if (header_on) RenderHeader();
   RenderLines();
 }

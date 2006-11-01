@@ -52,14 +52,14 @@ class TAMISC_API TableView : public T3DataViewPar {
 INHERITED(T3DataViewPar)
 public: //
     
-  int		view_bufsz; // #READ_ONLY #SAVE Maximum number of lines in visible buffer
-  MinMaxInt	view_range;	// range of visible lines
+  int		view_bufsz; // #READ_ONLY #SAVE #DETAIL Maximum number of lines in visible buffer
+  MinMaxInt	view_range; // #READ_ONLY #SAVE #DETAIL range of visible lines
 
+  TDCoord	pos; // origin of the view in 3d space (not used for panel view)
+  TDCoord	geom; // space taken
+  float		frame_inset; // #DEF_0.05 inset of frame (used to calc actual inner space avail)
+  iBox3f	stage; // #NO_SAVE #DETAIL this is coords of the actual rendering area (ie, less frame)
   bool		display_on;  // #DEF_true 'true' if display should be updated
-  TDCoord	pos;		// origin of the view in 3d space (not used for panel view)
-  TDCoord	geom;		// space taken
-  float		frame_inset;	// #DEF_0.05 inset of frame (used to calc actual inner space avail)
-  iBox3f	stage; // #NO_SAVE this is coords of the actual rendering area (ie, less frame)
   
   virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
     //note: can override for more efficient direct reference
@@ -134,14 +134,14 @@ public:
   static GridTableView* NewGridTableView(DataTable* dt,
     T3DataViewFrame* fr);
 
-  int		col_bufsz; // #READ_ONLY #SAVE visible columns
-  MinMaxInt	col_range;	// column range that is visible
-  float		tot_col_widths; // total of all (visible) col_widths
-
+  bool		grid_on; // whether to show grid lines
   bool		header_on;	// is the table header visible?
   bool		auto_scale;	// whether to auto-scale on color block values or not
-  
   ColorScale	scale; 		// The color scale for this display
+  int		col_bufsz; // #READ_ONLY #SAVE #DETAIL visible columns
+  MinMaxInt	col_range; // #READ_ONLY #SAVE #DETAIL column range that is visible
+  float		tot_col_widths; // #READ_ONLY #SAVE #DETAIL total of all (visible) col_widths
+
   MinMax        scale_range;	// #HIDDEN range of scalebar
   MinMaxInt	actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
 
@@ -153,6 +153,7 @@ public:
   
   override DataTable*	dataTable() const {return view_spec.dataTable();}
   
+  void			setGrid(bool value);
   void			setHeader(bool value);
   
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
@@ -198,8 +199,10 @@ protected:
   float			row_height; // #IGNORE determined from max of all cols
   virtual void		CalcViewMetrics(); // for entire view
   virtual void		CalcColMetrics(); // when col start changes
+  virtual void		RemoveGrid();
   virtual void		RemoveHeader(); // remove the header
   virtual void  	RemoveLines(); // remove all lines
+  virtual void		RenderGrid();
   virtual void		RenderHeader();
   virtual void		RenderLines(); // render all the view_range lines
   virtual void		RenderLine(int view_idx, int data_row); // add indicated line

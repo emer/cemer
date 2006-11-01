@@ -360,6 +360,7 @@ public:
   
   float 	col_width; // #READ_ONLY #DETAIL #NO_SAVE calculated col_width in geoms 
   float		row_height; // #READ_ONLY #DETAIL #NO_SAVE calculated row height in geoms
+  float		text_height; // #READ_ONLY #DETAIL #NO_SAVE height of text items in this col, if applicable
 
   DATAVIEW_PARENT(GridTableViewSpec)
 //GridColView*  parent() const;
@@ -380,7 +381,7 @@ class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
 INHERITED(DataTableViewSpec)
 public:
-  float		grid_border_pts; // #DEF_2 size of border around grid cells, in points
+  float		grid_border_pts; // #DEF_5 size of border around grid cells, in points
   float		mat_block_pts;	// #DEF_4 matrix block size, in points
   float		mat_border_pts; // #DEF_1 size of border around matrix cells, in points
   float		mat_sep_pts; // #EXPERT #DEF_2 sep between text and grid, etc

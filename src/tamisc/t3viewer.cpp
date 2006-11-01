@@ -63,6 +63,7 @@
 const float t3Misc::pts_per_geom(72.0f);
 const float t3Misc::geoms_per_pt(1/pts_per_geom);
 const float t3Misc::char_ht_to_wd_pts(12.0f/8.0f);
+const float t3Misc::char_base_fract(0.20f); //TODO: find correct val from coin src
 
 //////////////////////////
 //	T3DataView	//
