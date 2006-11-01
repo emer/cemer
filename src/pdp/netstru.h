@@ -20,7 +20,6 @@
 #ifndef netstru_h
 #define netstru_h
 
-#include "tarandom.h"
 #include "ta_script.h"
 #include "datatable.h"
 

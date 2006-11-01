@@ -8,8 +8,6 @@ leabra todo list:
      applyinputs reads filename and calls fun..
   - import network and run it!!
 
-* need better Random functions for getting full range of stuff -- there already??
-
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
@@ -18,8 +16,6 @@ docs..: add all float_RArray funs, for matricies.
 * extrew in trial monitor seems not to be working: 12ax demo
 
 * add "print" Progel?
-
-* encase programs in struct update brackets to prevent updating
 
 * css_console.cpp: complete obj.mbr expressions..
 
@@ -32,8 +28,6 @@ current bugs:
 
 * Netmon should have a network variable that contextualizes everything for given network
 -- otherwize you need to set each one individually -- painful.
-
-* checkconfig -- crashes from check all vs. first fail: safety violation
 
 * applyexternal should just use current network context setting, instead of arg.
 
@@ -53,9 +47,6 @@ lower pri:
 * add SVD/Eigenvec etc to math and then as data ops and dataprog's
 
 * use FindMakeColName for all dt copy/constr stuff (w/orphaning)
-
-* profile: slow!!! -- probably all the uae's triggering cascade of datachanged stuff..
-  (faster now!)
 
 * datachanged for obj -> update corresp var; datachanged goes to obj_list --
   need hook in there, but it is a generic list..

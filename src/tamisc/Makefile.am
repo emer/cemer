@@ -39,7 +39,6 @@ endif
 
 TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
-	@abs_srcdir@/tarandom.h \
 	@abs_srcdir@/tatime.h \
 	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/colorscale.h \
@@ -52,7 +51,6 @@ TAHEADS =\
 
 HEADS =\
 	tamisc_stdef.h \
-	tarandom.h \
 	tatime.h \
 	minmax.h \
 	colorscale.h \
@@ -62,7 +60,6 @@ HEADS =\
 	$(HEADS_GUI)
 
 SRCS =\
-	tarandom.cpp \
 	tatime.cpp \
 	minmax.cpp \
 	colorscale.cpp \

@@ -1,5 +1,9 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][1] { 
+Program .projects[1].programs.gp[0][1] { 
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
   ProgVar_List @.vars = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
@@ -13,7 +17,11 @@ Program .projects[0].programs.gp[0][1] {
     NetCounterInit @[0] { };
     GroupedDataLoop @[1] { 
       ProgEl_List @.loop_code = [2] {
-	ProgramCall @[0] { };
+	ProgramCall @[0] { 
+	  ProgArg_List @.prog_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
 	NetCounterIncr @[1] { };
       };
     };
@@ -21,9 +29,9 @@ Program .projects[0].programs.gp[0][1] {
     ProgramCall @[3] { };
   };
 };
-Program .projects[0].programs.gp[0][1] {
+Program .projects[1].programs.gp[0][1] {
  name="LeabraEpoch_GpData";
- desc="iterates over all of the items in a data table and calls LeabraTrial process on them; this version uses GroupDataLoop to iterate over data table first by groups and then by items within a group";
+ desc="iterates over all of the groups and then items in a data table and calls LeabraTrial process on them";
  flags=PF_NONE;
  objs {
   name=;
@@ -34,6 +42,14 @@ Program .projects[0].programs.gp[0][1] {
   name=;
   el_typ=ProgVar;
   el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[1].networks[0]$0$;
+   objs_ptr=0;
+   desc=;
+  };
  };
  vars {
   name=;
@@ -42,7 +58,7 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[0] {
    name="trial";
    var_type=T_Int;
-   int_val=10;
+   int_val=5;
    objs_ptr=0;
    desc=;
   };
@@ -50,7 +66,7 @@ Program .projects[0].programs.gp[0][1] {
    name="train_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$0$;
+   object_val=.projects[1].data.gp[0][0]$1$;
    objs_ptr=0;
    desc=;
   };
@@ -62,8 +78,8 @@ Program .projects[0].programs.gp[0][1] {
   NetCounterInit @[0] {
    desc="initialize trial counter: note also needs to do this in regular running program";
    off=0;
-   network_var=.projects[0].programs.gp[0].global_vars[0]$1$;
-   local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$2$;
+   network_var=.projects[1].programs.gp[0][1].args[0]$2$;
+   local_ctr_var=.projects[1].programs.gp[0][1].vars[0]$3$;
    counter=Network::trial;
   };
  };
@@ -74,12 +90,12 @@ Program .projects[0].programs.gp[0][1] {
   NetCounterInit @[0] {
    desc="initialize trial counter";
    off=0;
-   network_var=$1$;
-   local_ctr_var=$2$;
+   network_var=$2$;
+   local_ctr_var=$3$;
    counter=Network::trial;
   };
   GroupedDataLoop @[1] {
-   desc="iterate over data first by group and then within group by items";
+   desc=;
    off=0;
    loop_code {
     name=;
@@ -88,34 +104,39 @@ Program .projects[0].programs.gp[0][1] {
     ProgramCall @[0] {
      desc=;
      off=0;
-     target=.projects[0].programs.gp[0][2]$3$;
+     target=.projects[1].programs.gp[0][2]$4$;
+     call_init=0;
      prog_args {
       name=;
       el_typ=ProgArg;
       el_def=0;
+      ProgArg @[0] {
+       name="network";
+       value="network";
+      };
      };
     };
     NetCounterIncr @[1] {
      desc="increment trial counter";
      off=0;
-     network_var=$1$;
-     local_ctr_var=$2$;
+     network_var=$2$;
+     local_ctr_var=$3$;
      counter=Network::trial;
     };
    };
    loop_test="This is not used here!";
-   data_var=.projects[0].programs.gp[0][1].vars[1]$4$;
+   data_var=.projects[1].programs.gp[0][1].vars[1]$5$;
    group_order=PERMUTED;
    item_order=SEQUENTIAL;
    group_col=0;
-   group_idx_list{ 79;11;105;51;98;123;128;72;0;63;42;   };
-   item_idx_list{ 79;80;81;82;83;84;85;86;87;88;89;90;91;92;93;94;95;96;97;   };
+   group_idx_list{    };
+   item_idx_list{    };
   };
   MethodCall @[2] {
    desc=;
    off=0;
    result_var=;
-   script_obj=$1$;
+   script_obj=$2$;
    method=LeabraNetwork::Compute_EpochSSE;
    args{ };
 {    };
@@ -123,7 +144,8 @@ Program .projects[0].programs.gp[0][1] {
   ProgramCall @[3] {
    desc=;
    off=0;
-   target=.projects[0].programs.gp[0][7]$5$;
+   target=.projects[1].programs.gp[0][7]$6$;
+   call_init=0;
    prog_args {
     name=;
     el_typ=ProgArg;

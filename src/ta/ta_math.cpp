@@ -14,7 +14,6 @@
 //   Lesser General Public License for more details.
 
 #include "ta_math.h"
-#include "ta_mtrnd.h"
 
 //////////////////////////
 //  	CountParam     	//
@@ -1583,4 +1582,128 @@ bool taMath_float::mat_div_els(float_Matrix* a, float_Matrix* b) {
 }
 
 #endif
+
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////
+//  	RndSeed     	//
+//////////////////////////
+
+void RndSeed::Initialize() {
+  GetCurrent();
+}
+
+void RndSeed::GetCurrent() {
+  seed.EnforceSize(MTRnd::N);
+  int i;
+  for(i=0;i<seed.size;i++) {
+    seed.FastEl(i) = (long)MTRnd::mt[i];
+  }
+  mti = MTRnd::mti;
+}
+
+void RndSeed::NewSeed() {
+  MTRnd::seed_time_pid();
+  GetCurrent();
+}
+
+void RndSeed::OldSeed() {
+  seed.EnforceSize(MTRnd::N);
+  bool all_zero = true;
+  int i;
+  for (i=0;i<seed.size;i++) {
+    if (seed.FastEl(i) != 0) {
+      all_zero = false;
+      break;
+    }
+  }
+  if (all_zero) {
+    taMisc::Error("*** RndSeed::OldSeed: random seed is all zero and this doesn't work; getting current random seed!");
+    GetCurrent();
+    return;
+  }
+  for (i=0;i<seed.size;i++) {
+    MTRnd::mt[i] = (ulong)seed.FastEl(i);
+  }
+  MTRnd::mti = mti;
+}
+
+void RndSeed::Init(ulong i) {
+  MTRnd::seed(i);
+  GetCurrent();
+}
+
+#ifdef DMEM_COMPILE
+void RndSeed::DMem_Sync(MPI_Comm comm) {
+  if(taMisc::dmem_nprocs <= 1)
+    return;
+
+  // just blast the first guy to all members of the same communicator
+  DMEM_MPICALL(MPI_Bcast(rndm_seed.seed.el, MTRnd::N, MPI_LONG, 0, comm),
+	       "Process::SyncAllSeeds", "Bcast");
+  rndm_seed.OldSeed();		// then get my seed!
+}
+
+#else
+
+void RndSeed::DMem_Sync(MPI_Comm) {
+}
+
+#endif // DMEM_COMPILE
+
+//////////////////////////
+//  	Random     	//
+//////////////////////////
+
+double Random::Gen() const {
+  if(var == 0.0f) return mean;
+  switch(type) {
+  case NONE:
+    return mean;
+  case UNIFORM:
+    return UniformMeanRange(mean, var);
+  case BINOMIAL:
+    return mean + Binom((int)par, var);
+  case POISSON:
+    return mean + Poisson(var);
+  case GAMMA:
+    return mean + Gamma(var, (int)par);
+  case GAUSSIAN:
+    return mean + Gauss(var);
+  }
+  return 0.0f;
+}
+
+double Random::Density(double x) const {
+  if(var == 0.0f) return 0.0f;
+  switch(type) {
+  case NONE:
+    return 0.0f;
+  case UNIFORM:
+    return UniformDen(x - mean, var);
+  case BINOMIAL:
+    return BinomDen((int)par, (int)(x-mean), var);
+  case POISSON:
+    return PoissonDen((int)(x-mean), var);
+  case GAMMA:
+    return GammaDen((int)par, var, x - mean);
+  case GAUSSIAN:
+    return GaussDen(x-mean, var);
+  }
+  return 0.0f;
+}
+
+void Random::Initialize() {
+  type = UNIFORM;
+  mean = 0.0f;
+  var = 1.0f;
+  par = 1.0f;
+}
+
+void Random::Copy_(const Random& cp){
+  type = cp.type;
+  mean = cp.mean;
+  var = cp.var;
+  par = cp.par;
+}
 

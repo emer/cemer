@@ -867,6 +867,7 @@ void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
 
 void NetView::BuildAll() { // populates everything
   Reset();
+  if(!net()) return;
   Layer* lay;
   taLeafItr i;
   FOR_ITR_EL(Layer, lay, net()->layers., i) {
@@ -952,6 +953,7 @@ void NetView::GetMembs() { // this fills a member group with the valid
 			     // memberdefs from the units and connections
   setUnitDispMd(NULL);
   membs.Reset();
+  if(!net()) return;
   // first do the connections
   Layer* lay;
   taLeafItr l_itr;
