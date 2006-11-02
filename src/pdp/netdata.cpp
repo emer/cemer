@@ -281,10 +281,14 @@ void LayerWriter::CheckChildConfig_impl(bool quiet, bool& rval) {
 void LayerWriter::SetDataNetwork(DataBlock* db, Network* net) {
   data = db;
   network = net;
+  layer_data.SetDataNetwork(data, network);
 }
 
 void LayerWriter::AutoConfig(bool reset_existing) {
-  if(!data || !network) return;
+  if(!data || !network) {
+    taMisc::Error("Either the data or the network variables are not set -- please set them and try again!");
+    return;
+  }
   if(reset_existing) layer_data.Reset();
   Layer* lay;
   taLeafItr itr;

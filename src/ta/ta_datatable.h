@@ -328,13 +328,13 @@ public:
   // #CAT_Columns number of columns
 
   DataArray_impl*	NewCol(DataArray_impl::ValType val_type, 
-			       const String& col_nm, DataTableCols* col_gp = NULL);
+			       const String& col_nm);
   // #MENU #MENU_ON_Table #ARG_C_2 #CAT_Columns create new scalar column of data of specified type
   DataArray_impl*	NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
   // #MENU #MENU_ON_Table #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   DataArray_impl*	NewColMatrixN(DataArray_impl::ValType val_type, 
-    const String& col_nm,  const MatrixGeom& cell_geom);
+				      const String& col_nm,  const MatrixGeom& cell_geom);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   
   double_Data*		NewColDouble(const String& col_nm); 
@@ -560,8 +560,8 @@ protected:
   DataTableModel*	m_dm; // #IGNORE note: once we create, always exists
   
   DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, 
-				    const String& col_nm, DataTableCols* col_gp = NULL);
-  // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate, col_gp=NULL means data
+				    const String& col_nm);
+  // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
   DataArray_impl*	GetColForChannelSpec_impl(ChannelSpec* cs);
   DataArray_impl*	NewColFromChannelSpec_impl(ChannelSpec* cs);
   

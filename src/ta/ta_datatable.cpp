@@ -593,9 +593,8 @@ int DataTable::MinLength() {
 }
 
 DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type, 
-  const String& col_nm, DataTableCols* col_gp) 
+				  const String& col_nm) 
 {
-  if (!col_gp) col_gp = &data;
   StructUpdate(true);
   DataArray_impl* rval = NewCol_impl(val_type, col_nm);
   rval->Init(); // asserts geom
@@ -605,9 +604,8 @@ DataArray_impl* DataTable::NewCol(DataArray_impl::ValType val_type,
 }
 
 DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type, 
-  const String& col_nm, DataTableCols* col_gp) 
+				       const String& col_nm) 
 {
-  if (!col_gp) col_gp = &data;
   TypeDef* td;
   switch (val_type) {
   case VT_STRING: td = &TA_String_Data; break;
@@ -618,7 +616,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
   case VT_VARIANT:  td = &TA_Variant_Data; break;
   default: return NULL; // compiler food
   }
-  DataArray_impl* rval = (DataArray_impl*) col_gp->New(1, td);
+  DataArray_impl* rval = (DataArray_impl*) New(1, td);
   rval->name = col_nm;
   // additional specialized initialization
   switch (val_type) {

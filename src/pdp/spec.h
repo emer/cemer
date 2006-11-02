@@ -177,7 +177,7 @@ public:
 template<class T> 
 class SpecPtr : public SpecPtr_impl {
 public:
-  T*		spec;		// the actual spec itself
+  T*		spec;		// #TYPE_ON_type the actual spec itself
 
   BaseSpec*	GetSpec() const		{ return spec; }
   void		SetSpec(BaseSpec* es)   {
