@@ -3326,7 +3326,7 @@ void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
     for(int d_x = 0; d_x < data->dim(0); d_x++) {
       int u_x = offs.x + d_x;
       Unit* un = FindUnitFmCoord(u_x, u_y);
-      if(un != NULL) {
+      if(un) {
 	float val = data->SafeElAsVar(d_x, d_y).toFloat();
 	un->ApplyInputData(val, ext_flags, ran);
       }
@@ -3345,7 +3345,7 @@ void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
 	for(int d_x = 0; d_x < data->dim(0); d_x++) {
 	  int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
 	  Unit* un = FindUnitFmCoord(u_x, u_y);
-	  if(un != NULL) {
+	  if(un) {
 	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
 	    un->ApplyInputData(val, ext_flags, ran);
 	  }
@@ -3363,7 +3363,7 @@ void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random*
       for(int d_y = 0; d_y < data->dim(1); d_y++) {
 	for(int d_x = 0; d_x < data->dim(0); d_x++) {
 	  Unit* un = FindUnitFmGpCoord(dg_x, dg_y, d_x, d_y);
-	  if(un != NULL) {
+	  if(un) {
 	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
 	    un->ApplyInputData(val, ext_flags, ran);
 	  }

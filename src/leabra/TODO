@@ -18,6 +18,8 @@ docs..: add all float_RArray funs, for matricies.
 --------
 check:
 
+* lwriter disp name incl data & net
+
 * add basic file logging stuff to datatable: just a stream and some functions..
 
 * applyexternal should just use current network context setting, instead of arg.
@@ -47,8 +49,6 @@ lower pri:
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 
 * add SVD/Eigenvec etc to math and then as data ops and dataprog's
-
-* use FindMakeColName for all dt copy/constr stuff (w/orphaning)
 
 * datachanged for obj -> update corresp var; datachanged goes to obj_list --
   need hook in there, but it is a generic list..

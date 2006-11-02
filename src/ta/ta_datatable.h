@@ -319,7 +319,7 @@ public:
   DataTableCols		data;
   // all the columns and actual data
   taFiler*		log_file;
-  // file for logging data incrementally as it is written -- only for output.  a new line is written when WriteClose() (DataSink interface) is called.
+  // #NO_SAVE #HIDDEN file for logging data incrementally as it is written -- only for output.  a new line is written when WriteClose() (DataSink interface) is called.
 
   /////////////////////////////////////////////////////////
   // columns

@@ -229,6 +229,15 @@ bool LayerWriterEl::ApplyInputData(DataBlock* db, Network* net) {
 		    chan_name, "in data:",db->name);
     return false;
   }
+  if(use_layer_type) {
+    if(lay->layer_type == Layer::INPUT)
+      ext_flags = Unit::EXT;
+    else if(lay->layer_type == Layer::TARGET)
+      ext_flags = Unit::TARG;
+    else
+      ext_flags = Unit::COMP;
+  }
+
   // we only apply target data in TRAIN mode
   if((net->context != Network::TRAIN) && (ext_flags & Unit::TARG))
     return true;
@@ -307,7 +316,8 @@ bool LayerWriter::ApplyInputData() {
   bool rval = true;
   for (int i = 0; i < layer_data.size; ++i) {
     LayerWriterEl* lw = (LayerWriterEl*)layer_data.FastEl(i);
-    rval &= lw->ApplyInputData(data, network);
+    bool nval = lw->ApplyInputData(data, network);
+    if(!nval) rval = false;
   }
   return rval;
 }
