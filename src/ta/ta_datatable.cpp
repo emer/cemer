@@ -616,7 +616,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
   case VT_VARIANT:  td = &TA_Variant_Data; break;
   default: return NULL; // compiler food
   }
-  DataArray_impl* rval = (DataArray_impl*) New(1, td);
+  DataArray_impl* rval = (DataArray_impl*) data.New(1, td);
   rval->name = col_nm;
   // additional specialized initialization
   switch (val_type) {
