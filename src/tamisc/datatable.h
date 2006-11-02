@@ -381,19 +381,21 @@ class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
 INHERITED(DataTableViewSpec)
 public:
-  float		grid_border_pts; // #DEF_5 size of border around grid cells, in points
-  float		mat_block_pts;	// #DEF_4 matrix block size, in points
+  float		grid_margin_pts; // #DEF_2 #MIN_0 size of margin inside grid cells, in points
+  float		grid_line_pts; // #EXPERT #DEF_1 #MIN_0.1 size of grid lines, in points (grid lines can be turned off in the viewer)
+  float		mat_block_pts;	// #DEF_4 #MIN_0.1 matrix block size, in points
   float		mat_border_pts; // #DEF_1 size of border around matrix cells, in points
   float		mat_sep_pts; // #EXPERT #DEF_2 sep between text and grid, etc
-  float		mat_font_scale; // #EXPERT #DEF_.8 amount to scale font for matrix cells
-  float		pixel_pts;	// #DEF_1 image pixel size, in points (there is no border)
+  float		mat_font_scale; // #EXPERT #DEF_0.8 #MIN_0.1 amount to scale font for matrix cells
+  float		pixel_pts;	// #DEF_1 #MIN_0.1 image pixel size, in points (there is no border)
   
   inline int		colSpecCount() const {return col_specs.size;}
   GridColViewSpec*	colSpec(int idx) const 
     {return (GridColViewSpec*)col_specs.SafeEl(idx);} //
   
   //note: these are in the _qtso file
-  float		gridBorderSize() const; 
+  float		gridMarginSize() const; 
+  float		gridLineSize() const; 
   float		matBlockSize() const;
   float		matBorderSize() const; 
   float		matSepSize() const;

@@ -153,6 +153,7 @@ public:
   virtual void		ReInit(); // perform a reinitialization, particularly of visual state -- overload _impl
   virtual void		UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
   
+  override void		UpdateAfterEdit(); //note: not _impl
   override void		CutLinks();
   TA_DATAVIEWFUNS(T3DataView, taDataView);
 

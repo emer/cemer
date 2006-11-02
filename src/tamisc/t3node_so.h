@@ -228,10 +228,11 @@ public:
   virtual SoFont*	captionFont(bool auto_create = false) = 0;
   SoAsciiText*		captionNode(bool auto_create = false);
   virtual SoSeparator*	topSeparator() {return this;}
-  SoTransform*		transform() {return transform_;} // the master transform, for the whole entity
+  SoTransform*		transform() const {return transform_;} // the master transform, for the whole entity
   virtual SoSeparator*	shapeSeparator() = 0;
-  SoTransform*		txfm_shape() {return txfm_shape_;} // the transform for the shape
-  SoMaterial*		material() {return material_;}
+  SoTransform*		txfm_shape() const {return txfm_shape_;} 
+    // the transform for the shape
+  SoMaterial*		material() const {return material_;}
   virtual SoSeparator*	childNodes() {return NULL;} // use this to set/get T3Node children
 
   virtual const char*	caption();

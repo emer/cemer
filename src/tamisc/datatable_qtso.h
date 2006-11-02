@@ -44,14 +44,12 @@ class iDataTableView;
 class iDataTablePanel; //
 
 // externals
-class T3TableViewNode;
-class T3GridTableViewNode;
+class T3GridViewNode;
 
 class TAMISC_API TableView : public T3DataViewPar {
   // #VIRT_BASE #NO_TOKENS base class of grid and graph views; the data is its own embedded DataTableViewSpec
 INHERITED(T3DataViewPar)
 public: //
-    
   int		view_bufsz; // #READ_ONLY #SAVE #DETAIL Maximum number of lines in visible buffer
   MinMaxInt	view_range; // #READ_ONLY #SAVE #DETAIL range of visible lines
 
@@ -61,10 +59,11 @@ public: //
   iBox3f	stage; // #NO_SAVE #DETAIL this is coords of the actual rendering area (ie, less frame)
   bool		display_on;  // #DEF_true 'true' if display should be updated
   
+  virtual const String	caption() const; // what to show in viewer
   virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
     //note: can override for more efficient direct reference
   void			setDisplay(bool value); // use this to change display_on
-  T3TableViewNode*	node_so() const {return (T3TableViewNode*)m_node_so.ptr();}
+  override void		setDirty(bool value); // set for all changes on us or below
   inline int		rows() const {return m_rows;}
   virtual DataTableViewSpec* viewSpecBase() const 
     {return (DataTableViewSpec*)m_data.ptr();}
@@ -76,6 +75,8 @@ public: //
   
   virtual void		InitPanel();// lets panel init itself after struct changes
   virtual void		UpdatePanel();// after changes to props
+  
+  virtual void		UpdateView(); // called for major changes
 
   virtual void		DataChanged_DataTable(int dcr, void* op1, void* op2);
     // forwarded when DataTable notifies; forwards to correct handler
@@ -107,16 +108,18 @@ protected:
 
   iTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
   int			m_rows; // cached rows, we use to calc deltas etc.
+  int			updating; // to prevent recursion
   override void 	UpdateAfterEdit_impl();
   void			UpdateStage(); // updates stage after change or copy
   virtual void 		InitViewSpec();	// called to (re)init the viewspecs
   void			InitDisplay(); // called to (re)do all the viewing params
   virtual void		InitDisplay_impl() {} // type-specific impl
+  virtual void 		MakeViewRangeValid(); // adjust row/col etc. to be valid
   
 // routines for handling data changes -- only one should be called in any change context
   virtual void  	DataChange_StructUpdate(); 
    // when structure or src of data changes
-  virtual void  	DataChange_NewRows(); // we received new data (update) -- this predominant use-case can be optimized (rather than nuking/rebuilding each row)
+  virtual void  	DataChange_NewRows(int rows_added); // we received new data (update) -- this predominant use-case can be optimized (rather than nuking/rebuilding each row)
   virtual void  	DataChange_Other(); // all other changes
   
   override void		Render_pre(); // #IGNORE
@@ -158,7 +161,7 @@ public:
   
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
   
-  T3GridTableViewNode* node_so() const {return (T3GridTableViewNode*)m_node_so.ptr();}
+  T3GridViewNode* node_so() const {return (T3GridViewNode*)m_node_so.ptr();}
 
   override DataTableViewSpec* viewSpecBase() const 
     {return const_cast<GridTableViewSpec*>(&view_spec);}
@@ -195,7 +198,8 @@ public:
 
 protected:
 // grid-specific metrics and rendering primitives:
-  float			head_height; // based on font size (or 0 if off)	
+  float			head_ht; // renderable portion of header (no margins etc.)	
+  float			head_ht_ex; // entire header height, incl margins etc.	
   float			row_height; // #IGNORE determined from max of all cols
   virtual void		CalcViewMetrics(); // for entire view
   virtual void		CalcColMetrics(); // when col start changes
@@ -209,15 +213,17 @@ protected:
 
 // view control:
   override void		ClearViewRange();
-  override void  	DataChange_NewRows();
+  override void  	DataChange_NewRows(int rows_added);
     
   override void  	InitDisplay_impl();
+  override void 	MakeViewRangeValid();
   override void		ViewRangeChanged_impl(); // note: only called if mapped
   
   void 			AllBlockText_impl(bool on);
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		Clear_impl();
   override void		Render_pre(); // #IGNORE
+  override void		Render_impl(); // #IGNORE
   override void		Render_post(); // #IGNORE
   override void		Reset_impl();
 };

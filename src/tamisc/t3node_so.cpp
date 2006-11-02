@@ -35,6 +35,7 @@
 #include <Inventor/SbName.h>
 #include <Inventor/errors/SoDebugError.h>
 #include <Inventor/nodes/SoAsciiText.h>
+#include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoCube.h>
@@ -635,11 +636,15 @@ SoImageEx::SoImageEx() {
   SO_NODE_CONSTRUCTOR(SoImageEx);
   texture = new SoTexture2;
   this->addChild(texture);
-  shape = new SoCube; //note: w/h = 1.0 so texture map maps exactly
+  // we set shape to white, so texture map modulates it properly
+  SoBaseColor* bc = new SoBaseColor;
+  bc->rgb.setValue(0xFF, 0xFF, 0xFF);
+  this->addChild(bc);
+  shape = new SoCube; //note: w,h = 1.0 so texture map maps exactly
   this->addChild(shape);
   shape->width = 1.0f;
   shape->height = 1.0f;
-  shape->depth = 0;
+  shape->depth = 0.001f; //TEMP: was 0
 }
 
 SoImageEx::~SoImageEx() {
@@ -709,7 +714,7 @@ void SoImageEx::setImage(const taMatrix& src, bool top_zero) {
   if (dims == 2) {
     setImage2(src, top_zero);
   } else if (((dims == 3) && (src.dim(2) == 3))) { 
-    setImage2(src, top_zero);// TEMP setImage3(src, top_zero);
+    setImage3(src, top_zero);
   } else { 
     taMisc::Error("SoImageEx::setImage: must be gray (dims=2) or rgb matrix");
     return;

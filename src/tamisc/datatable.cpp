@@ -1485,7 +1485,8 @@ void GridColViewSpec::InitDisplayParams() {
 
 void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
-  grid_border_pts = 2.0f;
+  grid_margin_pts = 2.0f;
+  grid_line_pts = 1.0f;
   mat_block_pts = 4.0f;
   mat_border_pts = 1.0f;
   mat_sep_pts = 2.0f;
@@ -1497,7 +1498,8 @@ void GridTableViewSpec::Destroy() {
 }
 
 void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
-  grid_border_pts = cp.grid_border_pts;
+  grid_margin_pts = cp.grid_margin_pts;
+  grid_line_pts = cp.grid_line_pts;
   mat_block_pts = cp.mat_block_pts;
   mat_border_pts = cp.mat_border_pts;
   mat_sep_pts = cp.mat_sep_pts;
@@ -1507,6 +1509,13 @@ void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
 
 void GridTableViewSpec::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
+  if (grid_margin_pts < 0.0f) grid_margin_pts = 0.0f;
+  if (grid_line_pts <  0.1f) grid_line_pts =  0.1f;
+  if (mat_block_pts < 0.1f) mat_block_pts = 0.1f;
+  if (mat_border_pts < 0.0f) mat_border_pts = 0.0f;
+  if (mat_sep_pts < 0.0f) mat_sep_pts = 0.0f;
+  if (mat_font_scale < 0.1f) mat_font_scale = 0.1f;
+  if (pixel_pts < 0.1f) pixel_pts = 0.1f;
 }
 
 void GridTableViewSpec::DataDataChanged_impl(int dcr, void* op1, void* op2) {

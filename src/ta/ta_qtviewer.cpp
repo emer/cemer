@@ -3789,7 +3789,9 @@ String iDataPanel::TabText() const {
   if (ci) {
     return ci->view_name();
   } else return _nilString; */
-  return link()->GetDisplayName();
+  if (m_link)
+    return link()->GetDisplayName();
+  else return _nilString;
 }
 
 

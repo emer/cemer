@@ -126,6 +126,7 @@ Randy:
 ---------------
 Beta (feature complete, bugfix to release):
 
+* complete port to Windows
 * hover notes to add methoddef desc info in MethodCall, etc..
 * multiple selection across views/trees, etc & actions (toolbars) that become
   activated in response to multiple selections: build out list of possible

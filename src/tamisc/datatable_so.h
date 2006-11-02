@@ -30,25 +30,23 @@ class SoFont; // #IGNORE
 
 // forwards
 class T3TableViewNode;
-class T3GridTableViewNode;
-class T3GraphTableViewNode; //
-
-//////////////////////////
-//   T3TableViewNode	//
-//////////////////////////
+class T3GridViewNode;
+class T3GraphViewNode; //
 
 /* Base class for 3d table views
+  legend: *-existing; +-new this class
 
-      shapeSeparator: SoSeparator
-        txfm_shape: SoTransform
-        material: SoMaterial
-        frame: SoFrame (note: existence/display is modal)
-      canvasSeparator: SoSeparator
-        txfm_canvas: SoTransform -- translates/scales so canvas is exactly geom dimensions
-        canvas: SoSeparator
+      *transform: SoTransform
+      *captionSeparator: SoSeparator  
+            shapeSeparator: SoSeparator
+        *txfm_shape: SoTransform
+        *material: SoMaterial
+        +frame: SoFrame
+        +grid: SoGroup -- for grid lines (thus, inherits frame material)
 */
 
 class TAMISC_API T3TableViewNode: public T3NodeParent {
+// ********** OBSOLETE ******************
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -76,40 +74,66 @@ private:
 };
 
 //////////////////////////
-//   T3GridTableViewNode	//
+//   T3GridViewNode	//
 //////////////////////////
 
-/* 3d grid and text views
-     [...]
-        header: SoGroup
-        body: SoGroup
+/* 3d grid views
+  legend: *-existing; +-new this class
+
+      *transform: SoTransform (for translating to pos)
+      +stage: SoSeparator -- actual area of the grid
+        +mat_stage: SoMaterial -- for setting the font color 
+        +txlt_stage: SoTranslation -- sets origin to upper-left of stage
+        +head: SoSeparator -- for header objects
+        +body: SoSeparator -- for body objects
+      *captionSeparator: SoSeparator  
+            shapeSeparator: SoSeparator
+      *txfm_shape: SoTransform
+      *material: SoMaterial
+      +frame: SoFrame
+      +txlt_grid: SoTranslation -- sets origin to upper-left of stage
+      +grid: SoGroup -- for grid lines (thus, inherits frame material)
+       
 */
 
-class TAMISC_API T3GridTableViewNode: public T3TableViewNode {
+class TAMISC_API T3GridViewNode: public T3NodeLeaf {
 #ifndef __MAKETA__
-typedef T3TableViewNode inherited;
+typedef T3NodeLeaf inherited;
 
-  SO_NODE_HEADER(T3GridTableViewNode);
+  SO_NODE_HEADER(T3GridViewNode);
 #endif // def __MAKETA__
 public:
   static void		initClass();
 
-  SoSeparator*		grid() {return grid_;}
-  SoGroup*		header() {return header_;}
-  SoGroup*		body() {return body_;}
+  SoFrame*		frame() const {return frame_;} 
+  SoGroup*		grid() const {return grid_;}
+  SoMaterial*		matStage() const {return mat_stage_;}
+  SoSeparator*		header() const {return header_;}
+  SoSeparator*		body() const {return body_;}
 
-  T3GridTableViewNode(void* dataView_ = NULL); // dataview is a TextTableView object
+  void			setInset(float inset = 0.05f);
+  void 			setGeom(int px, int py); // sets (actual) geom of view
+  void 			setGeom(int px, int py, float inset); 
+   // sets (actual) geom of view, including inset (if applicable)
+  T3GridViewNode(void* dataView_ = NULL); // dataview is a GridTableView object
 
 protected:
-  ~T3GridTableViewNode();
-  SoSeparator*		grid_;
-  SoGroup*		header_;
-  SoGroup*		body_;//
+  iVec2i		geom_; //note, not a field
+  SoSeparator*		stage_;
+  SoMaterial*		mat_stage_;
+  SoTranslation*	  txlt_stage_;
+  SoSeparator*		  header_;
+  SoSeparator*		  body_;//
+  SoFrame*		frame_; 
+  SoTranslation*	txlt_grid_;
+  SoGroup*		grid_;
+  virtual void		render(float inset); // called after geom and other changes
+  ~T3GridViewNode();
 };
 
 
 //////////////////////////
-//   T3GraphTableViewNode	//
+//   T3GraphViewNode	//
 //////////////////////////
 
 /* 3d grid and text log views
@@ -121,11 +145,11 @@ protected:
           body: SoGroup
 */
 
-class TAMISC_API T3GraphTableViewNode: public T3TableViewNode {
+class TAMISC_API T3GraphViewNode: public T3NodeParent {
 #ifndef __MAKETA__
-typedef T3TableViewNode inherited;
+typedef T3NodeParent inherited;
 
-  SO_NODE_HEADER(T3GraphTableViewNode);
+  SO_NODE_HEADER(T3GraphViewNode);
 #endif // def __MAKETA__
 public:
   static void		initClass();
@@ -133,10 +157,10 @@ public:
 /*TODO: graphs, axes, body, etc.  SoGroup*		header() {return header_;}
   SoGroup*		body() {return body_;} */
 
-  T3GraphTableViewNode(void* dataView_ = NULL); // dataview is a TextTableView object
+  T3GraphViewNode(void* dataView_ = NULL); // dataview is a TextTableView object
 
 protected:
-  ~T3GraphTableViewNode();
+  ~T3GraphViewNode();
 //  SoGroup*		header_;
 //  SoGroup*		body_;
 };

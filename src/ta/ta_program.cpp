@@ -340,20 +340,6 @@ void ProgVar_List::Copy_(const ProgVar_List& cp) {
   var_context = cp.var_context;
 }
 
-void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  // if we are in a prog, dirty prog
-  Program* prog = GET_MY_OWNER(Program);
-  if (prog) {
-    prog->setDirty(true);
-  } else {
-  // if we are in a group, dirty all progs
-    Program_Group* grp = GET_MY_OWNER(Program_Group);
-    if (grp)
-      grp->SetProgsDirty();
-  }
-}
-
 void ProgVar_List::El_SetIndex_(void* it_, int idx) {
   ProgVar* it = (ProgVar*)it_;
   if (it->name.empty()) {
@@ -378,6 +364,18 @@ const String ProgVar_List::GenCss(int indent_level) const {
     ++cnt;
   }
   return rval;
+}
+
+void ProgVar_List::setDirty(bool value) {
+  inherited::setDirty(value);
+  // if we are in a program group, dirty all progs
+  // note: we have to test if in a prog first, otherwise we'll always get a group
+  Program* prog = GET_MY_OWNER(Program);
+  if (!prog) {
+    Program_Group* grp = GET_MY_OWNER(Program_Group);
+    if (grp)
+      grp->SetProgsDirty();
+  }
 }
 
 
@@ -406,14 +404,6 @@ void ProgArg::Freshen(const ProgVar& cp) {
 
 void ProgArg_List::Initialize() {
   SetBaseType(&TA_ProgArg);
-}
-
-void ProgArg_List::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  Program* prog = GET_MY_OWNER(Program);
-  if (prog) {
-    prog->setDirty(true);
-  }
 }
 
 void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
@@ -469,22 +459,6 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
   return inherited::CheckConfig_impl(quiet);
 }
 
-void ProgEl::UpdateAfterEdit() {
-  Program* prog = GET_MY_OWNER(Program);
-  if (prog) {
-    prog->setDirty(true);
-  }
-  inherited::UpdateAfterEdit();
-}
-
-void ProgEl::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  inherited::ChildUpdateAfterEdit(child, handled);
-  Program* prog = GET_MY_OWNER(Program);
-  if (prog) {
-    prog->setDirty(true);
-  }
-}
-
 const String ProgEl::GenCss(int indent_level) {
   if(off) return "";
   STRING_BUF(rval, 120); // grows if needed, but may be good for many cases
@@ -515,15 +489,6 @@ void ProgEl_List::Initialize() {
 
 void ProgEl_List::Destroy() {
   Reset();
-}
-
-void ProgEl_List::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  if ((dcr < DCR_LIST_ITEM_MIN) || (dcr > DCR_LIST_ITEM_MAX)) return;
-  Program* prog = GET_MY_OWNER(Program);
-  if (prog) {
-    prog->setDirty(true);
-  }
 }
 
 const String ProgEl_List::GenCss(int indent_level) {
@@ -951,7 +916,8 @@ void MethodCall::Copy_(const MethodCall& cp) {
   lst_method = cp.lst_method;
 }
 
-void MethodCall::UpdateAfterEdit() {
+void MethodCall::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(script_obj)
     object_type = script_obj->act_object_type();
   else object_type = &TA_taBase; // placeholder
@@ -961,7 +927,6 @@ void MethodCall::UpdateAfterEdit() {
 
   lst_script_obj = script_obj; //note: don't ref
   lst_method = method;
-  inherited::UpdateAfterEdit();
 }
 
 void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1068,12 +1033,12 @@ void StaticMethodCall::Copy_(const StaticMethodCall& cp) {
   lst_method = cp.lst_method;
 }
 
-void StaticMethodCall::UpdateAfterEdit() {
+void StaticMethodCall::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(!taMisc::is_loading)
     CheckUpdateArgs();
 
   lst_method = method;
-  inherited::UpdateAfterEdit();
 }
 
 void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1179,12 +1144,12 @@ void ProgramCall::Copy_(const ProgramCall& cp) {
   prog_args = cp.prog_args;
 }
 
-void ProgramCall::UpdateAfterEdit() {
+void ProgramCall::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if (target.ptr() != old_target) {
     old_target = target.ptr(); // note: we don't ref, because we just need to check ptr addr
     UpdateGlobalArgs();
   }
-  inherited::UpdateAfterEdit();
 }
 
 void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1385,7 +1350,8 @@ void Program::Copy_(const Program& cp) {
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
 }
 
-void Program::UpdateAfterEdit() {
+void Program::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   //WARNING: the running css prog calls this on any changes to our vars,
   // such as ret_val -- therefore, DO NOT do things here that are incompatible
   // with the runtime, in particular, do NOT invalidate the following state flags:
@@ -1395,7 +1361,6 @@ void Program::UpdateAfterEdit() {
   // setDirty(true) if not running, and these changed:
   // name, (more TBD...)
   GetVarsForObjs();
-  inherited::UpdateAfterEdit();
 }
 
 bool Program::CheckConfig_impl(bool quiet) {
@@ -1616,21 +1581,24 @@ void Program::ExitShell() {
 
 void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
-  m_dirty = false;
   script_compiled = true;
   ret_val = 0;
-  DataChanged(DCR_ITEM_UPDATED);
+//TODO: need to globally solve the never-clean recursive dirty issue
+  m_dirty = true; //TEMP: prevents recursion
+  DataChanged(DCR_ITEM_UPDATED); // this will call setDirty
+  m_dirty = false;
 }
 
 void Program::setDirty(bool value) {
   if(run_state == RUN) return;	     // change is likely self-generated during running, don't do it!
+  if (m_dirty == value) return; // prevent recursion and spurious inherited calls!!!!
+  inherited::setDirty(value); // needed to dirty the Project
   if(value) script_compiled = false; // make sure this always reflects dirty status -- is used as check for compiling..
-  if (m_dirty == value) return;
   m_dirty = value;
   script_compiled = false; // have to assume user changed something
   sub_progs.RemoveAll(); // will need to re-enumerate
   DirtyChanged_impl();
-  DataChanged(DCR_ITEM_UPDATED);
+  DataChanged(DCR_ITEM_UPDATED); //note: recurses us, but 
 }
 
 bool Program::SetVar(const String& nm, const Variant& value) {
@@ -1843,6 +1811,7 @@ void Program_Group::Copy_(const Program_Group& cp) {
 }
 
 void Program_Group::SetProgsDirty() {
+//WARNING: this will cause us to also receive setDirty for each prog call
   taLeafItr itr;
   Program* prog;
   FOR_ITR_EL(Program, prog, this->, itr) {

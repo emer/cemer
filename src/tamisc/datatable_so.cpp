@@ -35,6 +35,7 @@
 //#include <Inventor/nodes/SoPerspectiveCamera.h>
 //#include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
 
 #include <math.h>
 #include <limits.h>
@@ -105,57 +106,101 @@ bool T3TableViewNode::showFrame() {
 
 
 //////////////////////////
-//   T3GridTableViewNode	//
+//   T3GridViewNode	//
 //////////////////////////
 
-SO_NODE_SOURCE(T3GridTableViewNode);
+SO_NODE_SOURCE(T3GridViewNode);
 
-void T3GridTableViewNode::initClass()
+void T3GridViewNode::initClass()
 {
-  SO_NODE_INIT_CLASS(T3GridTableViewNode, T3TableViewNode, "T3TableViewNode");
+  SO_NODE_INIT_CLASS(T3GridViewNode, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3GridTableViewNode::T3GridTableViewNode(void* dataView_)
+T3GridViewNode::T3GridViewNode(void* dataView_)
 :inherited(dataView_)
 {
-  SO_NODE_CONSTRUCTOR(T3GridTableViewNode);
-  grid_ = new SoSeparator;
-  insertChildAfter(topSeparator(), grid_, shapeSeparator());
-  header_ = new SoGroup();
-  insertChildAfter(topSeparator(), header_, grid_);
-  body_ = new SoGroup();
-  insertChildAfter(topSeparator(), body_, header_);
+  SO_NODE_CONSTRUCTOR(T3GridViewNode);
+  
+  stage_ = new SoSeparator;
+  mat_stage_ = new SoMaterial;
+  mat_stage_->diffuseColor.setValue(0, 0, 0); // black
+  stage_->addChild(mat_stage_);
+  txlt_stage_ = new SoTranslation;
+  stage_->addChild(txlt_stage_);
+  header_ = new SoSeparator;
+  stage_->addChild(header_);
+  body_ = new SoSeparator;
+  stage_->addChild(body_);
+  insertChildAfter(topSeparator(), stage_, transform());
+  
+  SoSeparator* ss = shapeSeparator(); // cache
+  frame_ = new SoFrame(SoFrame::Ver);
+  insertChildAfter(ss, frame_, material());
+  txlt_grid_ = new SoTranslation;
+  insertChildAfter(ss, txlt_grid_, frame_);
+  grid_ = new SoGroup;
+  insertChildAfter(ss, grid_, txlt_grid_);
 }
 
-T3GridTableViewNode::~T3GridTableViewNode()
+T3GridViewNode::~T3GridViewNode()
 {
+  stage_ = NULL;
+  mat_stage_ = NULL;
+  txlt_stage_ = NULL;
   header_ = NULL;
   body_ = NULL;
+  frame_ = NULL;
+  txlt_grid_ = NULL;
+  grid_ = NULL;
+}
+
+void T3GridViewNode::render(float inset) {
+  txlt_stage_->translation.setValue(inset, geom_.y - inset, 0.0f);
+  frame_->setDimensions(geom_.x, geom_.y, 0.1f, inset);
+  txfm_shape()->translation.setValue(geom_.x/2.0f, geom_.y/2.0f, 0.0f);
+  txlt_grid_->translation.setValue(-(geom_.x/2.0f - inset), geom_.y/2.0f - inset, 0.0f);
+}
+
+void T3GridViewNode::setGeom(int px, int py) {
+  setGeom(px, py, frame_->inset); 
+}
+
+void T3GridViewNode::setGeom(int px, int py, float inset) {
+  if (px < 1) px = 1;  if (py < 1) py = 1;
+  if (inset < 0.0f) inset = 0.0f; // TODO: make sure 0-inset is legal!
+  if (geom_.isEqual(px, py) && (frame_->inset == inset) ) return;
+  geom_.setValue(px, py);
+  render(inset);
+}
+
+void T3GridViewNode::setInset(float value) {
+  if (frame_->inset == value) return;
+  render(value);
 }
 
 
 //////////////////////////
-//   T3GraphTableViewNode	//
+//   T3GraphViewNode	//
 //////////////////////////
 
-SO_NODE_SOURCE(T3GraphTableViewNode);
+SO_NODE_SOURCE(T3GraphViewNode);
 
-void T3GraphTableViewNode::initClass()
+void T3GraphViewNode::initClass()
 {
-  SO_NODE_INIT_CLASS(T3GraphTableViewNode, T3TableViewNode, "T3TableViewNode");
+  SO_NODE_INIT_CLASS(T3GraphViewNode, T3NodeParent, "T3NodeParent");
 }
 
-T3GraphTableViewNode::T3GraphTableViewNode(void* dataView_)
+T3GraphViewNode::T3GraphViewNode(void* dataView_)
 :inherited(dataView_)
 {
-  SO_NODE_CONSTRUCTOR(T3GraphTableViewNode);
+  SO_NODE_CONSTRUCTOR(T3GraphViewNode);
 /*  header_ = new SoGroup();
   canvas_->addChild(header_);
   body_ = new SoGroup();
   canvas_->addChild(body_); */
 }
 
-T3GraphTableViewNode::~T3GraphTableViewNode()
+T3GraphViewNode::~T3GraphViewNode()
 {
 /*  header_ = NULL;
   body_ = NULL; */

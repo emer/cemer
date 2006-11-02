@@ -127,6 +127,12 @@ void T3DataView::CutLinks() {
   inherited::CutLinks();
 }
 
+void T3DataView::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  if (m_node_so.ptr())
+    Render_impl();
+}
+
 void T3DataView::AddRemoveChildNode(SoNode* node, bool adding) {
   if (m_node_so.ptr())
     AddRemoveChildNode_impl(node, adding);
@@ -264,8 +270,8 @@ void T3DataView::ReInit_impl() {
 }
 
 void T3DataView::Render_impl() {
-  T3Node* node;
-  if (m_transform && ((node = m_node_so.ptr()) != NULL)) {
+  T3Node* node = m_node_so.ptr();
+  if (m_transform && node) {
     m_transform->CopyTo(node->transform());
   }
   inherited::Render_impl();
@@ -326,20 +332,6 @@ String T3DataView::view_name() const {
   //TODO: should use centralized, base class default name
   return String("(no name)");
 }
-
-/*TODO: obs
-T3DataViewer* T3DataView::viewer() const { // note: changing caches is still "const"
-  if (!m_viewer)
-    ((T3DataView*) this)->m_viewer = GET_MY_OWNER(T3DataViewer);
-  return m_viewer;
-}
-
-iDataViewer* T3DataView::viewer_win_() const {
-  viewer(); // assert
-  if (m_viewer) return (iDataViewer*)m_viewer->window();
-  else          return NULL;
-}
-*/
 
 
 //////////////////////////

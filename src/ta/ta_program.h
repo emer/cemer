@@ -116,7 +116,7 @@ public:
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
 
-  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  void	setDirty(bool value);
   void	Copy_(const ProgVar_List& cp);
   COPY_FUNS(ProgVar_List, inherited);
   TA_BASEFUNS(ProgVar_List);
@@ -159,7 +159,6 @@ INHERITED(taList<ProgArg>)
 public:
   virtual void		ConformToTarget(ProgVar_List& targ); // make us conform to the target
   
-  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(ProgArg_List);
   
 private:
@@ -181,8 +180,6 @@ public:
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
-  void	ChildUpdateAfterEdit(TAPtr child, bool& handled); // detect children of our subclasses changing
-  void	UpdateAfterEdit();
   override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, inherited);
@@ -212,7 +209,6 @@ public:
   override int		NumListCols() const {return 2;} 
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
-  override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(ProgEl_List);
 
 private:
@@ -442,7 +438,6 @@ public:
   SArg_Array		args; // arguments to the method
   
   override String	GetDisplayName() const;
-  void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const MethodCall& cp);
@@ -453,6 +448,7 @@ protected:
   ProgVar*		lst_script_obj; 
   MethodDef*		lst_method; 
   
+  override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
   virtual void		CheckUpdateArgs(bool force = false); // called when method changes
@@ -473,7 +469,6 @@ public:
   SArg_Array		args; // arguments to the method
   
   override String	GetDisplayName() const;
-  void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const StaticMethodCall& cp);
@@ -483,6 +478,7 @@ public:
 protected:
   MethodDef*		lst_method; 
   
+  override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
   virtual void		CheckUpdateArgs(bool force = false); // called when method changes
@@ -561,7 +557,7 @@ public:
   bool		    	m_dirty; // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   
   bool			isDirty() {return m_dirty;}
-  void			setDirty(bool value); // indicates a component has changed
+  override void		setDirty(bool value); // indicates a component has changed
   void			setRunState(RunState value); // sets and updates gui
   override ScriptSource	scriptSource() {return ScriptString;}
   override const String	scriptString();
@@ -606,7 +602,6 @@ public: // XxxGui versions provide feedback to the usbool no_gui = falseer
   static Program*	MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
   static void		MakeTemplate_fmtype(Program* prog, TypeDef* td); // #IGNORE make from typedef
   
-  void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const Program& cp);
@@ -622,6 +617,7 @@ public: // ScriptBase i/f
 protected:
   String		m_scriptCache; // cache of script, managed by implementation
   bool			m_checked; // flag to help us avoid doing CheckConfig twice
+  override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
@@ -748,7 +744,6 @@ public:
 
   override String	GetDisplayName() const;
 
-  void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ProgramCall& cp);
@@ -758,6 +753,7 @@ public:
 protected:
   Program*		old_target; // the last target, used to detect changes
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
+  override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 

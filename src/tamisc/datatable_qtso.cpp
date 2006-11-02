@@ -78,6 +78,7 @@ void TableView::InitNew(DataTable* dt, T3DataViewFrame* fr) {
 
 
 void TableView::Initialize() {
+  updating = 0;
   data_base = &TA_DataTableViewSpec;  //superceded
 //obs  view_bufsz = 100;
   view_bufsz = 0; //note: set by actual class based on screen
@@ -132,10 +133,18 @@ void TableView::UpdateStage() {
 void TableView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateStage();
-  if (!isVisible()) return;
-  InitViewSpec();
-  InitDisplay();
-  ViewRangeChanged();
+  //note: UAE calls setDirty, which is where we do most of the rejigging
+}
+
+const String TableView::caption() const {
+  DataTable* dt = dataTable(); 
+  String rval;
+  if (dt) {
+    rval = dt->GetDisplayName();
+  } else rval = "(no table)";
+  //TODO: maybe we should also qualify with this view's designator
+  // since we can have many views of the same table
+  return rval;
 }
 
 void TableView::ClearData() {
@@ -154,16 +163,22 @@ void TableView::ClearViewRange() {
 }
 
 void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
-  if (dcr == DCR_ITEM_DELETING) {
-    UpdateAfterEdit(); // easiest
+// all changes to the data table (either data or struct) get monitored here
+//note: we must ALWAYS make sure m_rows accords with the actual data
+  DataTable* dt = dataTable(); // note: be very conservative...
+  if (!dt || (dcr == DCR_ITEM_DELETING)) {
+    m_rows = 0; // duh!
+    UpdateView(); 
     return;
   }
   
+  int delta_rows = dt->rows - m_rows;
+  m_rows = dt->rows;
+  
   if (!isVisible()) return;
-  DataTable* dt = dataTable(); // note: valid, otherwise we couldn't get this notify
   if (dcr == DCR_UPDATE_VIEWS) {
-    if (dt->rows > m_rows) {
-      DataChange_NewRows();
+    if (delta_rows > 0) {
+      DataChange_NewRows(delta_rows);
       return;
     } else { // if not appending rows, treat as struct update
       DataChange_StructUpdate();
@@ -180,20 +195,17 @@ void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
 }
 
 void TableView::DataChange_StructUpdate() {
-  InitViewSpec();
-  ClearViewRange();
-  InitDisplay();
-  ViewRangeChanged();
+  UpdateView();
 }
   
-void TableView::DataChange_NewRows() {
-//TEMP, or overridden in Grid
-DataChange_StructUpdate();
+void TableView::DataChange_NewRows(int) {
+//note: overridden in Grid and Graph
+  UpdateView();
 }
   
 void TableView::DataChange_Other() {
 //TEMP, or overridden in Grid
-DataChange_StructUpdate();
+  UpdateView();
 }
 
 void TableView::InitDisplay(){
@@ -218,6 +230,12 @@ bool TableView::isVisible() const {
   return (taMisc::gui_active && display_on && isMapped());
 }
 
+void TableView::MakeViewRangeValid() {
+  if (view_range.min >= m_rows) {
+    view_range.min = MAX(0, (m_rows - 1));
+  }
+}
+
 void TableView::Render_pre() {
   if (!m_node_so.ptr()) return; // shouldn't happen
 
@@ -225,9 +243,8 @@ void TableView::Render_pre() {
   if (m_lvp && m_lvp->t3vs) {
     m_lvp->t3vs->setSceneGraph(NULL);
   }
-
-  T3TableViewNode* node_so = this->node_so(); //cache
-  node_so->setShowFrame(true, frame_inset); //TODO: maybe not for graph???
+  T3Node* node_so = this->node_so(); //cache
+//TODO: maybe we shouldn't set the color here...
   const iColor* col = GetEditColorInherit();
   if (col) {
     col->copyTo(node_so->material()->diffuseColor);
@@ -241,16 +258,14 @@ void TableView::Render_impl() {
   // set origin: in allocated area
   FloatTransform* ft = transform(true);
   ft->translate.SetXYZ(pos.x, (pos.y + 0.5f), -pos.z);
+  inherited::Render_impl();
 
-  T3TableViewNode* node_so = this->node_so(); // cache
-  node_so->setGeom(geom.x, geom.y, geom.z, frame_inset);
+  T3Node* node_so = this->node_so(); // cache
   SoFont* font = node_so->captionFont(true);
   float font_size = 0.4f;
   font->size.setValue(font_size); // is in same units as geometry units of network
-  node_so->setCaption(dataTable()->GetName().chars());
-  node_so->transformCaption(iVec3f(0.0f, -font_size, 0.0f)); //move caption below the frame
-
-  inherited::Render_impl();
+  node_so->setCaption(caption().chars());
+  //NOTE: will need to move caption appropriately in subclass
 }
 
 void TableView::Render_post() {
@@ -267,13 +282,15 @@ void TableView::Reset_impl() {
   inherited::Reset_impl();
 }
 
+void TableView::setDirty(bool value) {
+  inherited::setDirty(value);
+  if (value) UpdateView();
+}
+
 void TableView::setDisplay(bool value) {
   if (display_on == value) return;
   display_on = value;
-  // if going off, just leave display as is, but if on, reinit
-  if (display_on) {
-    UpdateAfterEdit(); // does the whole kahuna
-  }
+  UpdateAfterEdit(); // does the whole kahuna
 }
 
 void TableView::UpdatePanel() {
@@ -281,12 +298,23 @@ void TableView::UpdatePanel() {
     m_lvp->UpdatePanel();
 }
 
+void TableView::UpdateView() {
+  if (updating) return;
+  if (!isVisible() || !display_on) return;
+  //note: when display goes back on, we do the full kahuna
+  ++updating;
+  InitViewSpec();
+  MakeViewRangeValid();
+  InitDisplay();
+  ViewRangeChanged();
+  --updating;
+}
+
 void TableView::ViewRangeChanged() {
   if (!isVisible())
      return;
   ViewRangeChanged_impl();
-  if (m_lvp)
-    m_lvp->UpdatePanel();
+  UpdatePanel();
 }
 
 void TableView::View_At(int start) {
@@ -413,16 +441,24 @@ void TableView::View_FR() {
 // GridTableView	//
 //////////////////////////
 
-float  GridTableViewSpec::gridBorderSize() const {
-  return grid_border_pts * t3Misc::geoms_per_pt;} 
-float  GridTableViewSpec::matBlockSize() const {
-  return mat_block_pts * t3Misc::geoms_per_pt;}
-float  GridTableViewSpec::matBorderSize() const {
-  return mat_border_pts * t3Misc::geoms_per_pt;} 
-float  GridTableViewSpec::matSepSize() const {
-  return mat_sep_pts * t3Misc::geoms_per_pt;}
-float  GridTableViewSpec::pixelSize() const {
-  return pixel_pts * t3Misc::geoms_per_pt;}
+float GridTableViewSpec::gridLineSize() const {
+  return grid_line_pts * t3Misc::geoms_per_pt;
+} 
+float GridTableViewSpec::gridMarginSize() const {
+  return grid_margin_pts * t3Misc::geoms_per_pt;
+}
+float GridTableViewSpec::matBlockSize() const {
+  return mat_block_pts * t3Misc::geoms_per_pt;
+}
+float GridTableViewSpec::matBorderSize() const {
+  return mat_border_pts * t3Misc::geoms_per_pt;
+} 
+float GridTableViewSpec::matSepSize() const {
+  return mat_sep_pts * t3Misc::geoms_per_pt;
+}
+float GridTableViewSpec::pixelSize() const {
+  return pixel_pts * t3Misc::geoms_per_pt;
+}
 
 
 GridTableView* GridTableView::NewGridTableView(DataTable* dt,
@@ -438,6 +474,7 @@ void GridTableView::Initialize() {
   geom.SetXYZ(12, 9, 1);
   data_base = &TA_GridTableViewSpec;  //supercedes base
   col_bufsz = 0;
+  head_ht = head_ht_ex = 0.0f;
   row_height = 0.1f; // non-zero dummy value
   tot_col_widths = 0.00001f; //avoid /0
   
@@ -499,47 +536,55 @@ void GridTableView::AllBlockText_impl(bool on) {
 }
 
 void GridTableView::CalcColMetrics() {
+  //note: col_range.min is usually set to a visible col
   if (col_bufsz == 0) {
     col_range.max = col_range.min - 1;
     return;
   } else 
-    // note: we display at least one col, even if it spills over size
     col_range.max = col_range.min;
-  
-  float grid_bord_sz = view_spec.gridBorderSize();
-  float wd_tot = colWidth(col_range.max);
+  GridTableViewSpec* tvs = viewSpec();
+  float gr_mg_sz = view_spec.gridMarginSize();
+  float gr_ln_sz = (grid_on) ? view_spec.gridLineSize() : 0.0f;
+  float wd_tot = 0.0f;
   float act_wd = stage.width();
-  while ((col_range.max < (col_bufsz - 1)) && 
-   ((wd_tot += (colWidth(col_range.max + 1) + grid_bord_sz)) <= act_wd))
+  // note: we display at least one col, even if it spills over size
+  while (col_range.max < (tvs->col_specs.size - 1)) { 
+    GridColViewSpec* cvs = tvs->colSpec(col_range.max);
+    if (cvs->isVisible()) {
+      wd_tot += colWidth(col_range.max) + (2 * gr_mg_sz) + gr_ln_sz;
+      if (wd_tot > act_wd) break;
+    }
     col_range.max++;
+  }
 }
 
 void GridTableView::CalcViewMetrics() {
   GridTableViewSpec* tvs = viewSpec();
-  float grid_bord_sz = tvs->gridBorderSize();
+  float gr_mg_sz = tvs->gridMarginSize();
+  float gr_ln_sz = (grid_on) ? view_spec.gridLineSize() : 0.0f;
   // header height (if on) -- note that font height is ~ 12/8 times width
-  if (header_on)
-    head_height = (tvs->font.pointSize * t3Misc::char_ht_to_wd_pts * t3Misc::geoms_per_pt)
-      + grid_bord_sz;
-  else head_height = 0.0f;
+  if (header_on) {
+    head_ht = (tvs->font.pointSize * t3Misc::char_ht_to_wd_pts *
+      t3Misc::geoms_per_pt);
+    head_ht_ex = head_ht + (2 * gr_mg_sz);
+  } else head_ht = head_ht_ex = 0.0f;
   
   // num vis cols, tot col width (for scrollbars), row height
   col_bufsz = 0;
   tot_col_widths = 0.00001f; // avoid /0
   row_height = 0.00001f;
-  taListItr itr;
-  GridColViewSpec* cvs;
-  FOR_ITR_EL(GridColViewSpec, cvs, tvs->col_specs., itr) {
+  for (int col = 0; col < tvs->col_specs.size; ++col) {
+    GridColViewSpec* cvs = tvs->colSpec(col);
     if (!cvs->isVisible()) continue;
     ++col_bufsz;
     tot_col_widths += cvs->col_width;
     row_height = MAX(row_height, cvs->row_height);
   }
-  // add grid lines
-  tot_col_widths += (grid_bord_sz * (col_bufsz - 1));
+  // add grid lines/margins
+  tot_col_widths +=  ((2 * gr_mg_sz) * col_bufsz) + (gr_ln_sz * (col_bufsz - 1));
   // calculate visible rows based on row_height and our geom
-  view_bufsz = MAX((int)((stage.height() - head_height) / 
-    (row_height + grid_bord_sz)), 1);
+  view_bufsz = MAX((int)((stage.height() - head_ht_ex) / 
+    (row_height + (2 * gr_mg_sz))), 1);
   
   CalcColMetrics();
 }
@@ -552,7 +597,7 @@ void GridTableView::ClearViewRange() {
 
 void GridTableView::Clear_impl() {
 //  if (!taMisc::gui_active ) return;
-  T3GridTableViewNode* node_so = this->node_so();
+  T3GridViewNode* node_so = this->node_so();
   if (node_so) {
     node_so->grid()->removeAllChildren();
     node_so->header()->removeAllChildren();
@@ -579,10 +624,8 @@ float GridTableView::colWidth(int idx) const {
   else return 0.0f;
 }
 
-void GridTableView::DataChange_NewRows() {
-  DataTable* dt = dataTable(); // note: valid, otherwise we couldn't get this notify
-  int old_rows = m_rows;
-  m_rows = dt->rows;
+void GridTableView::DataChange_NewRows(int rows_added) {
+  int old_rows = m_rows - rows_added;
   // if we were not at the very end, then don't scroll, but do update the panel
   if ((view_range.max < old_rows-1) && (view_range.max > 0)) {
     if (m_lvp)
@@ -605,6 +648,13 @@ void GridTableView::InitDisplay_impl() {
   RenderGrid();
   RenderHeader();
 }
+
+void GridTableView::MakeViewRangeValid() {
+  inherited::MakeViewRangeValid();
+  //TODO: adjust col.min to make sure it is valid
+}
+
+
 void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
@@ -614,129 +664,124 @@ void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
 }
 
 void GridTableView::RemoveGrid() {
-  T3GridTableViewNode* node_so = this->node_so();
+  T3GridViewNode* node_so = this->node_so();
   if (node_so) {
     node_so->grid()->removeAllChildren();
   }
 }
 
 void GridTableView::RemoveHeader() {
-  T3GridTableViewNode* node_so = this->node_so();
+  T3GridViewNode* node_so = this->node_so();
   if (node_so) {
     node_so->header()->removeAllChildren();
   }
 }
 
 void GridTableView::RemoveLines(){
-  T3GridTableViewNode* node_so = this->node_so();
+  T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
   node_so->body()->removeAllChildren();
 }
 
 void GridTableView::RenderGrid() {
-  T3GridTableViewNode* node_so = this->node_so();
+  T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
-  SoSeparator* grid = node_so->grid();
+  SoGroup* grid = node_so->grid();
   grid->removeAllChildren(); // should have been done
   if (!grid_on) return;
   
-  SoTranslation* tr = new SoTranslation();
-  grid->addChild(tr);
-  // origin will be lower left of stage
-  tr->translation.setValue(
-    frame_inset, frame_inset, 0.0f);
-  
   GridTableViewSpec* tvs = viewSpec();
 
-  float grid_bord_sz = tvs->gridBorderSize(); // cache
-//  float 
+  float gr_mg_sz = tvs->gridMarginSize();
+  float gr_ln_sz = tvs->gridLineSize();
   SoCube* ln = NULL;
   // vertical lines
+  int idx = -1;
   SoSeparator* vert = new SoSeparator;
   for (int col = col_range.min; col <= col_range.max; ++col) {
     GridColViewSpec* cvs = tvs->colSpec(col);
     if (!cvs->isVisible()) continue;
-    //note: we always put a sep after the last col, because it is usually
-    // followed by blank space
-//    if (col < col_range.max) {
-      tr = new SoTranslation();
-      vert->addChild(tr);
-      float x_adj = (col == col_range.min) ? 0.0f : grid_bord_sz / 2;
-      float y_offs = (col == col_range.min) ? stage.height() / 2 : 0.0f;
-      tr->translation.setValue(
-        x_adj + colWidth(col) + (grid_bord_sz / 2),
-        y_offs, 0.0f);
+    ++idx;
+    // everyone can share the same line
+    if (!ln) {
       ln = new SoCube;
-      vert->addChild(ln);
-      ln->width = grid_bord_sz * 0.5; // leave margins
+      ln->width = gr_ln_sz; 
       ln->depth = 0.0f;
       ln->height = stage.height();
-//    }
+    }
+    //note: we always put a sep after the last col, because it is usually
+    // followed by blank space
+    SoTranslation* tr = new SoTranslation();
+    vert->addChild(tr);
+    float x_offs = colWidth(col) + (2 * gr_mg_sz) + (gr_ln_sz / 2);
+    if (idx > 0) x_offs += (gr_ln_sz / 2);
+    float y_offs = (idx == 0) ?  -(stage.height() * 0.5) : 0.0f;
+    tr->translation.setValue(x_offs, y_offs, 0.0f);
+    vert->addChild(ln);
   }
   grid->addChild(vert);
 
 }
 
 void GridTableView::RenderHeader() {
-  T3GridTableViewNode* node_so = this->node_so();
+  T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
-  node_so->header()->removeAllChildren();
+  SoSeparator* hdr = node_so->header();
+  hdr->removeAllChildren();
   if (!header_on) return; // normally shouldn't be called if off
 
   GridTableViewSpec* tvs = viewSpec();
-  // make header
-  SoSeparator* hdr = new SoSeparator();
   SoFont* fnt = new SoFont();
   FontSpec fs(tvs->font);
   fs.setBold(true);
   fs.copyTo(fnt);
   hdr->addChild(fnt);
 
-  float grid_bord_sz = tvs->gridBorderSize(); // cache
-  taListItr itr;
-  int col = -1;
-  GridColViewSpec* cvs;
-  FOR_ITR_EL(GridColViewSpec, cvs, tvs->col_specs., itr) {
-    ++col;
+  float gr_mg_sz = tvs->gridMarginSize();
+  float gr_ln_sz = (grid_on) ? view_spec.gridLineSize() : 0.0f;
+  int idx = -1;
+  int col_lst = -1;
+  for (int col = col_range.min; col <= col_range.max; ++col) {
+    GridColViewSpec* cvs = tvs->colSpec(col);
     if (!cvs->isVisible()) continue;
-    if (col < col_range.min) continue;
-    if (col > col_range.max) break;
+    ++idx;
     SoTranslation* tr = new SoTranslation();
     hdr->addChild(tr);
-    if (col == col_range.min) { // first trnsl positions row
-      float base_adj = (head_height - grid_bord_sz) * t3Misc::char_base_fract;
-      tr->translation.setValue(frame_inset,
-        stage.top() - head_height + base_adj, 0.0f);
+    if (idx == 0) { // first trnsl positions row
+      float base_adj = (head_ht * t3Misc::char_base_fract);
+      tr->translation.setValue(gr_mg_sz,
+        - (gr_mg_sz + head_ht - base_adj), 0.0f);
     } else {
-      tr->translation.setValue(colWidth(col - 1) + grid_bord_sz, 0.0f, 0.0f);
+      tr->translation.setValue(
+        colWidth(col_lst) + (2 * gr_mg_sz) + gr_ln_sz, 0.0f, 0.0f);
     }
     SoAsciiText* txt = new SoAsciiText();
     hdr->addChild(txt);
     int max_chars = (int)((colWidth(col) * t3Misc::pts_per_geom) / fs.pointSize);
     txt->string.setValue(cvs->GetDisplayName().elidedTo(max_chars).chars());
+    col_lst = col;
   }
-  node_so->header()->addChild(hdr);
 }
 
 void GridTableView::RenderLine(int view_idx, int data_row) {
-  T3GridTableViewNode* node_so = this->node_so();
+  T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
   GridTableViewSpec* tvs = viewSpec();
-  float grid_bord_sz = tvs->gridBorderSize();
+  float gr_mg_sz = view_spec.gridMarginSize();
+  float gr_ln_sz = (grid_on) ? view_spec.gridLineSize() : 0.0f;
+  // origin is top-left of body area
   // make line container
   SoSeparator* ln = new SoSeparator();
 
-  taListItr itr;
-  int col = -1;
-  GridColViewSpec* cvs;
   DataTable* dt = dataTable(); //cache
   String el;
-  FOR_ITR_EL(GridColViewSpec, cvs, tvs->col_specs., itr) {
-    col++; // lets us continue at any point
+  int idx = -1;
+  int col_lst = -1; // last visible column we processed
+  for (int col = col_range.min; col <= col_range.max; col++) {
+    GridColViewSpec* cvs = tvs->colSpec(col);
+    if (!cvs->isVisible()) continue;
+    ++idx;
     DataArray_impl* data_array = cvs->dataCol();
-    if ((!cvs->visible) || (!data_array)) continue;
-    if (col < col_range.min) continue;
-    if (col > col_range.max) break;
     
     //calculate the actual col row index, for the case of a jagged data table
     int act_idx; // <0 for null
@@ -747,14 +792,14 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     SoTranslation* tr = new SoTranslation();
     ln->addChild(tr);
     // 1st tr places origin for the row
-    if (col == col_range.min) { // translation is relative to 0,0
+    if (idx == 0) { // translation is to top-left of row
       tr->translation.setValue(
-        frame_inset, 
-        stage.top() - head_height - (row_height * view_idx)
-          - ((view_idx == 0) ? 0.0f : (grid_bord_sz * (view_idx - 1))),
+        gr_mg_sz,
+        -(gr_mg_sz + ((row_height + (2 * gr_mg_sz)) * view_idx)),
         0.0f);
     } else {
-      tr->translation.setValue(colWidth(col - 1) + grid_bord_sz, 0.0f, 0.0f);
+      tr->translation.setValue(
+        colWidth(col_lst) + (2 * gr_mg_sz) + gr_ln_sz, 0.0f, 0.0f);
     }
     float col_width = colWidth(col); // cache for convenience
     
@@ -793,7 +838,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       txt->string.setValue(el.chars());
     }
     // if val is NULL, just skip rendering remaining col types
-    if (act_idx < 0) continue;
+    if (act_idx < 0) goto cont;
     
     if (cvs->display_style == GridColViewSpec::TEXT_AND_BLOCK) {
       tr = new SoTranslation;
@@ -870,22 +915,29 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       img_so->setImage(*cell_mat, top_zero);
       taBase::UnRef(cell_mat);
     }
-
+cont:
+    col_lst = col; 
   }
   node_so->body()->addChild(ln);
 }
 
 void GridTableView::RenderLines(){
   // this updates the data area
-  T3GridTableViewNode* node_so = this->node_so();
+  T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
-  node_so->body()->removeAllChildren(); //should already have been done
+  SoSeparator* body = node_so->body(); // cache
+  body->removeAllChildren(); //should already have been done
 
   // master font -- we only add a child font if different
   SoFont* fnt = new SoFont();
   FontSpec& fs = viewSpec()->font;
   fs.copyTo(fnt);
-  node_so->body()->addChild(fnt);
+  body->addChild(fnt);
+  if (header_on) {
+    SoTranslation* tr = new SoTranslation;
+    body->addChild(tr);
+    tr->translation.setValue(0.0f, -head_ht_ex, 0.0f);
+  }
 
   // this is the index (in view_range units) of the first view line of data in the buffer
   int view_idx = 0;
@@ -896,9 +948,17 @@ void GridTableView::RenderLines(){
 }
 
 void GridTableView::Render_pre() {
-  m_node_so = new T3GridTableViewNode(this);
+  m_node_so = new T3GridViewNode(this);
 
   inherited::Render_pre();
+}
+
+void GridTableView::Render_impl() {
+  inherited::Render_impl();
+  T3GridViewNode* node_so = this->node_so(); // cache
+  node_so->setGeom(geom.x, geom.y, frame_inset);
+  SoFont* font = node_so->captionFont(true);
+  node_so->transformCaption(iVec3f(0.0f, -((float)font->size.getValue()), 0.0f)); //move caption below the frame
 }
 
 void GridTableView::Render_post() {
