@@ -1307,6 +1307,15 @@ void NetMonitor::SetDataTable(DataTable* dt) {
   data = dt; // note: auto does UAE
 }
 
+void NetMonitor::SetNetwork(Network* net) {
+  network = net;
+}
+
+void NetMonitor::SetDataNetwork(DataTable* dt, Network* net) {
+  SetDataTable(dt);
+  SetNetwork(net);
+}
+
 void NetMonitor::UpdateMonitors(bool reset_first) {
   if (!data) return;
   if(reset_first)
