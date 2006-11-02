@@ -740,24 +740,37 @@ private:
   void	Destroy() {}
 };
 
+/*
+  DataTable ViewSpecs
+    "Rendering" for these specs is initializing all the viewable display
+      parameters -- override the various Render_xxx routines to implement
+*/
 
 class TA_API DataColViewSpec: public ViewSpec {
   // ##SCOPE_DataColViewSpecs base specification for the display of data
 INHERITED(ViewSpec)
 public:
+  bool			sticky; // #DEF_false set this to retain this colspec even if its column deletes
 
   DataArray_impl*	dataCol() const {return (DataArray_impl*)m_data.ptr();}
+  void			setDataCol(DataArray_impl* value, bool first_time = false);
+  
   DATAVIEW_PARENT(DataTableViewSpec)
 //DataTableViewSpec*	parent() const;
+
   virtual void		setFont(const FontSpec& value) {} // for subclasses that implement
   bool			isVisible() const; // bakes in check for datacol
   
-  virtual bool		BuildFromDataArray(DataArray_impl* tda);
+  override void		DataDestroying();
   
   void 	SetDefaultName() {} // leave it blank
+  void	Copy_(const DataColViewSpec& cp);
+  COPY_FUNS(DataColViewSpec, inherited);
   TA_BASEFUNS(DataColViewSpec);
 protected:
-  virtual void		BuildFromDataArray_impl(bool first_time);
+  override void		Clear_impl(); // unbinds col
+  virtual void		DataColUnlinked() {} // called if data set to NULL or destroys
+  virtual void		UpdateFromDataCol(bool first_time = false); // called if data set to column, or we otherwise need to update
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
@@ -768,8 +781,6 @@ INHERITED(DataView_List)
 friend class DataTableViewSpec;
 public:
   TA_DATAVIEWLISTFUNS(DataColViewSpecs, inherited, DataColViewSpec)
-protected:
-  void 			ReBuildFromDataTable(DataTableCols* data_cols);
 private:
   void	Initialize() {}
   void	Destroy() {}
@@ -784,11 +795,10 @@ public:
   DataColViewSpecs	col_specs;
   
   DataTable*		dataTable() const {return (DataTable*)m_data.ptr();}
+  virtual void		setDataTable(DataTable* dt);
+    // #MENU #NO_NULL build the spec from the given table
   
-  virtual bool		BuildFromDataTable(DataTable* dt, bool force = false);
-    // #MENU #NO_NULL build the spec from the given table, erasing previous spec
-  void			ReBuildFromDataTable();
-    // #MENU conservatively rebuild the spec from the current table
+  override void		DataDestroying(); //
   
   void	InitLinks();
   void	CutLinks();
@@ -796,8 +806,12 @@ public:
   COPY_FUNS(DataTableViewSpec, ViewSpec)
   TA_DATAVIEWFUNS(DataTableViewSpec, inherited) //
 protected:
-  virtual void		ReBuildFromDataTable_impl(); //note: only called if nonnull
-  override void		UpdateAfterEdit_impl();
+  override void 	DoActionChildren_impl(DataViewAction act);
+  override void		Clear_impl(); // unbinds table
+  virtual void		UpdateFromDataTable(bool first_time = false); // called if data set to table, or needs to be updated; calls _this then _child
+  virtual void		UpdateFromDataTable_this(bool first); // does me (before kids)
+  virtual void		UpdateFromDataTable_child(bool first);//does kids, usually not overridden
+  virtual void		DataTableUnlinked(); // called if data is NULL or destroys
 private:
   void Initialize();
   void Destroy();

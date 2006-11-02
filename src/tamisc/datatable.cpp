@@ -1405,39 +1405,47 @@ void GridColViewSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-
-void GridColViewSpec::BuildFromDataArray_impl(bool first){
-  inherited::BuildFromDataArray_impl(first);
-  DataArray_impl* data_array = dataCol();
-    
-  
+void GridColViewSpec::UpdateFromDataCol(bool first){
+  inherited::UpdateFromDataCol(first);
+  DataArray_impl* dc = dataCol(); //note: exists, because we were called
   if (first) {
     // just get the display width, don't worry about maxwidth
-    text_width = data_array->displayWidth();
+    text_width = dc->displayWidth();
   
-    if (data_array->isMatrix() && data_array->isNumeric()) {
-      if (data_array->GetUserData("IMAGE").toBool()) {
+    if (dc->isMatrix() && dc->isNumeric()) {
+      if (dc->GetUserData("IMAGE").toBool()) {
         display_style = IMAGE;
         mat_layout = BOT_ZERO;
       } else {
         display_style = BLOCK;
         mat_layout = BOT_ZERO;
       }
-    } else /*obs  if (data_array->GetUserData("TEXT").toBool() ||
-      data_array->GetUserData(DataArray_impl::udkey_narrow).toBool() ||
-      data_array->InheritsFrom(TA_String_Data)
+    } else /*obs  if (dc->GetUserData("TEXT").toBool() ||
+      dc->GetUserData(DataArray_impl::udkey_narrow).toBool() ||
+      dc->InheritsFrom(TA_String_Data)
     )*/ {
       display_style = TEXT;
     }
   }
-  InitDisplayParams();
 }
 
-void GridColViewSpec::InitDisplayParams() {
+void GridColViewSpec::DataColUnlinked() {
+  col_width = 0.0f;
+  row_height = 0.0f;
+  text_height = 0.0f;
+}
+
+void GridColViewSpec::Render_impl() {
+  inherited::Render_impl(); // prob nothing
   //NOTE: we just calc everything in points, then adjust at the end
   // cache some params
   GridTableViewSpec* par = parent();
   DataArray_impl* dc = dataCol(); // cache
+  col_width = 0.0f;
+  row_height = 0.0f;
+  text_height = 0.0f;
+  if (!dc) return;
+  
   float blk_pts = par->mat_block_pts; 
   float brd_pts = par->mat_border_pts; 
   float fnt_pts = par->font.pointSize;
@@ -1531,14 +1539,6 @@ void GridTableViewSpec::DataDestroying() {
     tv->DataChanged_DataTable(DCR_ITEM_DELETING, NULL, NULL);
   }
   inherited::DataDestroying();
-}
-
-void GridTableViewSpec::ReBuildFromDataTable_impl(){
-  inherited::ReBuildFromDataTable_impl();
-}
-
-void GridTableViewSpec::Reset_impl() {
-  inherited::Reset_impl();
 }
 
 void GridTableViewSpec::GetMinMaxScale(MinMax& mm, bool first) {

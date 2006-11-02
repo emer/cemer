@@ -97,7 +97,7 @@ public:
 
 #define TA_BASEFUNS(y) 	y () { Register(); Initialize(); SetDefaultName(); } \
 			y (const y& cp) { Register(); Initialize(); Copy(cp); } \
-			~y () { unRegister(); Destroy(); } \
+			~y () { unRegister(); Destroying(); Destroy(); } \
 			TAPtr Clone() { return new y(*this); }  \
 			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
 						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
@@ -110,7 +110,7 @@ public:
 
 #define TA_BASEFUNS_LITE(y) y () {Initialize();} \
 			y (const y& cp) {Initialize(); Copy(cp); } \
-			~y () {CheckDestroyed(); Destroy();} \
+			~y () {CheckDestroyed(); Destroying(); Destroy();} \
 			TAPtr Clone() { return new y(*this); }  \
 			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
 						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
@@ -133,7 +133,7 @@ public:
 			static TypeDef* StatTypeDef(int) { return &TA_##y; }
 
 // use this when you have consts in your class and can't use the generic constrs
-#define TA_CONST_BASEFUNS(y) ~y () { unRegister(); Destroy(); } \
+#define TA_CONST_BASEFUNS(y) ~y () { unRegister(); Destroying(); Destroy(); } \
 			TAPtr Clone() { return new y(*this); }  \
 			void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
 						     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
@@ -175,7 +175,7 @@ public:
 #define TA_BASEFUNS_INLINE(y) 	\
         y () { Register(); Initialize(); SetDefaultName(); } \
         y (const y& cp) { Register(); Initialize(); Copy(cp); } \
-        ~y () { unRegister(); Destroy(); } \
+        ~y () { unRegister(); Destroying(); Destroy(); } \
         TAPtr Clone() { return new y(*this); }  \
         void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(y::StatTypeDef(0))) Copy(*((y*)cp)); \
                                       else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
@@ -265,9 +265,10 @@ public:
   };
   
   enum Flags { // #BITS control flags 
-    THIS_INVALID	= 0x01, // #BIT CheckThisConfig_impl has detected a problem
-    CHILD_INVALID	= 0x02, // #BIT CheckChildConfig_impl returns issue with a child
-    DESTROYED		= 0x80 // #BIT set in base destroy (DEBUG only); lets us detect multi destroys
+    THIS_INVALID	= 0x01, // CheckThisConfig_impl has detected a problem
+    CHILD_INVALID	= 0x02, // CheckChildConfig_impl returns issue with a child
+    DESTROYING		= 0X40, // Set in Destroying at the very beginning of destroy
+    DESTROYED		= 0x80  // set in base destroy (DEBUG only); lets us detect multi destroys
 #ifndef __MAKETA__
     ,INVALID_MASK	= THIS_INVALID | CHILD_INVALID
 #endif
@@ -383,12 +384,13 @@ protected:
     int itm_idx = -1) const {return _nilKeyString;}
   
 public:
+  int			baseFlags() const {return m_flags;} // #IGNORE flag values; see also HasFlag
   virtual taDataLink* 	data_link() {return NULL;} // #IGNORE link for viewer system created when needed, deleted when 0 clients -- all delegated functions must be of form: if(data_link()) data_link->SomeFunc(); NOT autocreated by call to this func -- call GetDataLink() to force creation
-  
+  bool			isDestroying() const {return HasFlag(DESTROYING);}
+    // #CAT_ObjectMgmt true if the object is already destroying
   virtual bool		isDirty() const {return false;} // #IGNORE implemented by very few, esp. Project
   virtual void 		setDirty(bool value); // #CAT_ObjectMgmt 'true' gets forwarded up; 'false' does nothing
   
-  int			baseFlags() const {return m_flags;} // #IGNORE flag values; see also HasFlag
   
   virtual taDataLink* 	GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
   void			AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
@@ -717,7 +719,7 @@ protected:
 #else
   inline void		CheckDestroyed() {} // should get optimized out
 #endif
-
+  void			Destroying(); // non-virtual called at beginning of destroy
   virtual bool		CheckConfig_impl(bool quiet);
   // #IGNORE usually not overridden, see Check[This/Child]_impl
   virtual void		CheckThisConfig_impl(bool quiet, bool& ok) {}
@@ -1131,7 +1133,8 @@ protected:
   void		El_Done_(void* it)	{ taBase::Done((TAPtr)it); }
   void*		El_Own_(void* it)	{ taBase::Own((TAPtr)it,this); return it; }
   void		El_disOwn_(void* it)
-  { if(El_GetOwner_(it) == this) ((TAPtr)it)->CutLinks(); El_Done_(El_unRef_(it)); }
+  { if(El_GetOwner_(it) == this) {((TAPtr)it)->CutLinks(); ((TAPtr)it)->Destroying();}
+    El_Done_(El_unRef_(it)); }
   // cut links to other objects when removed from owner group
 
   void*		El_MakeToken_(void* it) { return (void*)((TAPtr)it)->MakeToken(); }

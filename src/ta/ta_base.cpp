@@ -453,6 +453,17 @@ const String taBase::ValTypeToStr(ValType vt) {
   }
 }
 
+void taBase::Destroying() {
+  if (HasFlag(DESTROYING)) return; // already done by parent
+  SetFlag(DESTROYING);
+  //note: following gets called in destructor of higher class, so 
+  // its vtable accessor for datalinks will be valid in that context
+  taDataLink* dl = data_link();
+  if (dl) {
+    dl->DataDestroying();
+  }
+}
+
 void taBase::Destroy() {
 #ifdef DEBUG
   SetFlag(DESTROYED);

@@ -1125,32 +1125,56 @@ void DataTable::WriteClose_impl() {
 //  DataColViewSpec	//
 //////////////////////////
 
+/*
+  The main DataColViewSpec operations are:
+  * initialize ("bind") a new guy from a DataCol
+  * update a bound guy (ex things change in the col)
+  * unlink a guy (ex. table unlinking)
+  * delete a guy (ex. col deletes in table (but table not deleting)
+  * bind a guy to a new col (ex., binding to a new table)
+  * calculate view-specific parameters based on current state
+    -- this is done in Render_impl
+*/
+
 void DataColViewSpec::Initialize(){
+  sticky = false;
   data_base = &TA_DataArray_impl;
 }
 
-bool DataColViewSpec::BuildFromDataArray(DataArray_impl* nda) {
-  // first time if null or changing
-  bool first_time = (dataCol() != nda);
-  SetData(nda);
-  if (!dataCol()) {
-    return false;
-  }
-  BuildFromDataArray_impl(first_time);
-  return true;
+void DataColViewSpec::Copy_(const DataColViewSpec& cp) {
+  sticky = cp.sticky;
 }
 
-void DataColViewSpec::BuildFromDataArray_impl(bool first_time) {
-  DataArray_impl* data_array = dataCol();
-  if (name != data_array->name) {
-//NO, don't mess with data    if (!first_time)   data_array->AR()->Reset();
-    name = data_array->name;
+void DataColViewSpec::Clear_impl() {
+  if (m_data) SetData(NULL);
+  inherited::Clear_impl();
+}
+
+void DataColViewSpec::setDataCol(DataArray_impl* value, bool first_time) {
+  if (dataCol() == value) return;
+  SetData(value);
+  if (value) {
+    UpdateFromDataCol(first_time);
+  } else {
+    DataColUnlinked();
+  }
+}
+
+void DataColViewSpec::UpdateFromDataCol(bool first) {
+  DataArray_impl* col = dataCol();
+  if (name != col->name) {
+    name = col->name;
   }
   // only copy display options first time, since user may override in view
-  if (first_time) {
-    if (data_array->GetUserData(DataArray_impl::udkey_hidden).toBool())
+  if (first) {
+    if (col->GetUserData(DataArray_impl::udkey_hidden).toBool())
       visible = false;
   }
+}
+
+void DataColViewSpec::DataDestroying() {
+  DataColUnlinked();
+  inherited::DataDestroying();
 }
 
 bool DataColViewSpec::isVisible() const {
@@ -1160,35 +1184,6 @@ bool DataColViewSpec::isVisible() const {
 //////////////////////////
 //  DataColViewSpecs	//
 //////////////////////////
-
-void DataColViewSpecs::ReBuildFromDataTable(DataTableCols* data_cols) {
-  int i;
-  DataTableViewSpec* dts = GET_MY_OWNER(DataTableViewSpec);
-  DataColViewSpec* dcs = NULL;
-  DataArray_impl* da = NULL;
-//  delete orphans
-  for (i = size - 1; i >= 0; --i) {
-    dcs = FastEl(i);
-    if ((da = data_cols->FindName(dcs->GetName()))) {
-      ; //nothing
-    } else {
-      Remove(i);
-    }
-  }  
-// items: add missing, order correctly, and update existing (will be only action 1st time)
-  for (i = 0; i < data_cols->size; ++i) {
-    da = data_cols->FastEl(i);
-    int fm;
-    if ((dcs = (DataColViewSpec*)FindName(da->GetName(), fm))) {
-      if (fm != i) Move(fm, i);
-    } else {
-      dcs = (DataColViewSpec*)taBase::MakeToken(el_typ); // of correct type for this
-      Insert(dcs, i);
-      dcs->setFont(dts->font);
-    }
-    dcs->BuildFromDataArray(da);
-  }  
-}
 
 
 //////////////////////////
@@ -1221,50 +1216,108 @@ void DataTableViewSpec::Copy_(const DataTableViewSpec& cp) {
   col_specs = cp.col_specs;
 }
 
-void DataTableViewSpec::UpdateAfterEdit_impl(){
-  inherited::UpdateAfterEdit_impl();
-  BuildFromDataTable(dataTable(), true);
+void DataTableViewSpec::Clear_impl() {
+  if (m_data) { 
+    SetData(NULL);
+    DataTableUnlinked();
+  }
+  inherited::Clear_impl();
 }
 
-bool DataTableViewSpec::BuildFromDataTable(DataTable* tdt, bool force) {
-  if (dataTable() != tdt) {
-    force = true;
-    SetData(tdt);
+void DataTableViewSpec::setDataTable(DataTable* dt) {
+  if (dataTable() == dt) return;
+  SetData(dt);
+  if (dt) {
+    bool first = (col_specs.size == 0);
+    UpdateFromDataTable(first);
+  } else {
+    DataTableUnlinked();
   }
-  if (!dataTable()) {
-    // unbind the cols
-    for (int i = col_specs.size - 1; i >= 0; --i) {
-      DataColViewSpec* cs = col_specs.FastEl(i);
-      cs->BuildFromDataArray(NULL);
+}
+
+void DataTableViewSpec::DataDestroying() {
+  Clear(); //unlinks everyone
+  inherited::DataDestroying();
+}
+
+void DataTableViewSpec::DataTableUnlinked() {
+  Clear(); // note: will set dt to NULL again, but that will be ignored
+}
+
+void DataTableViewSpec::DoActionChildren_impl(DataViewAction act) {
+// note: only ever called with one action
+  if (act & CONSTR_MASK) {
+    inherited::DoActionChildren_impl(act);
+    col_specs.DoAction(act);
+  } else { // DESTR_MASK
+    col_specs.DoAction(act);
+    inherited::DoActionChildren_impl(act);
+  }
+}
+
+
+void DataTableViewSpec::UpdateFromDataTable(bool first) {
+  UpdateFromDataTable_this(first);
+  UpdateFromDataTable_child(first);
+}
+
+void DataTableViewSpec::UpdateFromDataTable_this(bool first) {
+  DataTable* dt = dataTable();
+  if (first) {
+    if (name != dt->name)
+      name = dt->name;
+  }
+
+}
+
+void DataTableViewSpec::UpdateFromDataTable_child(bool first) {
+  DataTableCols* cols = &(dataTable()->data);
+  DataTableViewSpec* dts = this;
+  DataColViewSpec* dcs = NULL;
+  DataArray_impl* dc = NULL;
+  int i;
+/*TODO: revise algorithm as follows:
+(may require intermediate link list, to track guys)
+1. identify potential orphans, put them aside
+2. update existing guys
+3. attempt to rebind missing guys to potential orphans
+  ex. if cols are in same position, then probably just name difference
+4. delete true orphans
+5. add missing guys
+ALSO: need to probably revise the scheme for reordering -- maybe user
+  wants the data in the new order? (OR: maybe should provide separate
+  "view_index" in the spec, so user can reorder)
+*/
+//  delete orphans (except sticky guys)
+  for (i = col_specs.size - 1; i >= 0; --i) {
+    dcs = col_specs.FastEl(i);
+    dc = cols->FindName(dcs->GetName());
+    if (dc) {
+      // make sure it is this col bound to the guy!
+      dcs->setDataCol(dc);
+    } else {
+      if (dcs->sticky) {
+        dcs->setDataCol(NULL); //keep him, but unbind from any col
+      } else {
+        col_specs.Remove(i);
+      }
     }
-    return false;
-  }
-  DataTable* data_table = dataTable(); // cache
-  if (!force) {
-    // compare sizes
-    bool same_size = (col_specs.size == data_table->data.size);
-    force = !same_size;
-  }
-  if (!force) {
-    bool same_name = (name == data_table->name);
-    force = !same_name;
-  }
-
-  if (!force) return false;
-
-  ReBuildFromDataTable_impl();
-  return true;
-}
-
-void DataTableViewSpec::ReBuildFromDataTable() {
-  if (dataTable())
-    ReBuildFromDataTable_impl();
-}
-
-void DataTableViewSpec::ReBuildFromDataTable_impl() {
-  //note: only called if data
-  DataTableCols* data_cols = &dataTable()->data;
-  col_specs.ReBuildFromDataTable(data_cols);
+  }  
+// items: add missing, order correctly, and update existing (will be only action 1st time)
+  for (i = 0; i < cols->size; ++i) {
+    dc = cols->FastEl(i);
+    int fm;
+    bool first = false;
+    if ((dcs = (DataColViewSpec*)col_specs.FindName(dc->GetName(), fm))) {
+      if (fm != i) col_specs.Move(fm, i);
+    } else {
+      first = true;
+      dcs = (DataColViewSpec*)taBase::MakeToken(col_specs.el_typ); // of correct type for this
+      col_specs.Insert(dcs, i);
+      dcs->setFont(dts->font);
+    }
+    dcs->setDataCol(dc, first);
+  }  
 }
 
 

@@ -358,20 +358,22 @@ public:
   MatrixLayout	mat_layout; // #DEF_BOT_ZERO #CONDEDIT_OFF_display_style:TEXT layout of matrix and image cells
   bool		scale_on; // #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
   
-  float 	col_width; // #READ_ONLY #DETAIL #NO_SAVE calculated col_width in geoms 
-  float		row_height; // #READ_ONLY #DETAIL #NO_SAVE calculated row height in geoms
-  float		text_height; // #READ_ONLY #DETAIL #NO_SAVE height of text items in this col, if applicable
+  float 	col_width; // #READ_ONLY #HIDDEN #NO_SAVE calculated col_width in geoms 
+  float		row_height; // #READ_ONLY #HIDDEN #NO_SAVE calculated row height in geoms
+  float		text_height; // #READ_ONLY #HIDDEN #NO_SAVE height of text items in this col, if applicable
 
   DATAVIEW_PARENT(GridTableViewSpec)
 //GridColView*  parent() const;
+  
   
   void	Copy_(const GridColViewSpec& cp);
   COPY_FUNS(GridColViewSpec, DataColViewSpec);
   TA_BASEFUNS(GridColViewSpec);
 protected:
   void			UpdateAfterEdit_impl();
-  void			BuildFromDataArray_impl(bool first);
-  virtual void 		InitDisplayParams();
+  override void		UpdateFromDataCol(bool first_time = false);
+  override void		DataColUnlinked(); // called if data is NULL or destroys
+  override void 	Render_impl();
 private:
   void 	Initialize();
   void	Destroy() {}
@@ -410,8 +412,6 @@ public:
   COPY_FUNS(GridTableViewSpec, DataTableViewSpec);
   TA_BASEFUNS(GridTableViewSpec);
 protected:
-  override void		ReBuildFromDataTable_impl();
-  override void		Reset_impl();
   override void 	UpdateAfterEdit_impl();
   override void		DataDataChanged_impl(int dcr, void* op1, void* op2);
 };

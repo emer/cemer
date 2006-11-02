@@ -71,7 +71,7 @@
 // called virtually, after construct
 void TableView::InitNew(DataTable* dt, T3DataViewFrame* fr) {
   fr->AddView(this);
-  viewSpecBase()->BuildFromDataTable(dt);
+  viewSpecBase()->setDataTable(dt);
   if (fr->isMapped())
     fr->Render();
 }
@@ -217,8 +217,7 @@ void TableView::InitDisplay(){
 }
 
 void TableView::InitViewSpec() {
-  DataTable* data_table = dataTable();
-  viewSpecBase()->BuildFromDataTable(data_table, true);
+  viewSpecBase()->Render();
 }
 
 void TableView::InitPanel() {
