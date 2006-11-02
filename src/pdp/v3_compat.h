@@ -1821,7 +1821,7 @@ public:
 
   virtual bool 	ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj);
   // #CAT_Convert fix ApplyInputs script for first program group in nwproj, based on first enviro and network in old proj
-  virtual bool 	ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec* es,
+  virtual bool 	ConvertToV4_ApplyInputs(LayerWriter* lw, EventSpec* es,
 					Network* net, DataTable* dt);
   // #CAT_Convert make layerwriter list reflect patterns in given event spec as applied to given network
 

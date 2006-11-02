@@ -17,12 +17,11 @@
 #ifndef ta_filer_h
 #define ta_filer_h 1
 
+#include "ta_type.h"
+
 // NOTE: taFiler replaces the duo of taiGetFile and taFile from 3.x
 //	the ui portion of taiGetFile has been transferred to taFiler_impl subclass
 //	in ta_filer.cc for no gui, and ta_xxdialog.cc for gui
-#include "ta_type.h"
-
-class taFiler; //
 
 /*
   compression
@@ -45,7 +44,7 @@ class taFiler; //
 */
 
 class TA_API taFiler : public taRefN {
-  // ##NO_TOKENS associate this with each file that is managed
+  // ##NO_TOKENS #EDIT_INLINE associate this with each file that is managed
 friend class taRefN; // for deleting
 friend class taiStreamArgType; // we let it access the fstrm directly, for fstream arg types
 public:
@@ -68,48 +67,59 @@ public:
     DEF_FLAGS_COMPRESS		= 0x107 // #NO_BIT default flags for compression w/ autocompress
   };
 
-  static int	buf_size;	// size of the buffer for input operations
-  static String	last_dir;	// last directory name processed
-  static String	last_fname;	// last filename processed
+  static int	buf_size;	// #HIDDEN #NO_SAVE size of the buffer for input operations
+  static String	last_dir;	// #HIDDEN #NO_SAVE last directory name processed
+  static String	last_fname;	// #HIDDEN #NO_SAVE last filename processed
 
   static taFiler* 	New(const String& filetype_ = "All",
-    const String& ext = "", FilerFlags flags = DEF_FLAGS); // creates instance
+			    const String& ext = "", FilerFlags flags = DEF_FLAGS);
+  // creates instance
   
-  String	filter; // the QFileDialog-compatible filter expression
-  String	filetype; // the filetype, ex Project
-  String	ext; // the default extension (if any), including '.'
-  String	dir;
-  String	fname;
+  String	filter; 	// the QFileDialog-compatible filter expression
+  String	filetype; 	// the filetype, ex Project
+  String	ext; 		// the default extension (if any), including '.'
+  String	dir;		// the directory path to the file
+  String	fname;		// the name of the file
   bool		select_only;	// file is to be selected only (not opened)
-  istream*	istrm;		// #READ_ONLY
-  ostream*	ostrm;		// #READ_ONLY
-  bool		open_file;	// #READ_ONLY true if there is an open file somewhere
-  bool		file_selected;	// #READ_ONLY true if a file was selected last time..
+
+  istream*	istrm;		// #READ_ONLY #NO_SAVE
+  ostream*	ostrm;		// #READ_ONLY #NO_SAVE
+  bool		open_file;	// #READ_ONLY #NO_SAVE true if there is an open file somewhere
+  bool		file_selected;	// #READ_ONLY #NO_SAVE true if a file was selected last time..
 
   inline bool		compressEnabled() const {return (flags && COMPRESS_ENABLE);}
-    // true if client enabled use of compression
+  // true if client enabled use of compression
   inline bool		compressReq() const 
     {return ((flags && (COMPRESS_REQ | COMPRESS_ENABLE)) == (COMPRESS_REQ | COMPRESS_ENABLE));}
-    // true if client requested compression AND it is enabled)
-  bool			isOpen() const {return open_file;}  // true if file is open
+  // true if client requested compression AND it is enabled
+  bool			isOpen() const {return open_file;}
+  // true if file is open
   bool			isCompressed() const; 
-    // if open, indicates actual compr status, else indicates .gz suffix on fname
-  const String		filterText(bool incl_allfiles = true) const; // Qt-compatible filter text
+  // if open, indicates actual compr status, else indicates .gz suffix on fname
+
+  const String		filterText(bool incl_allfiles = true) const;
+  // #IGNORE Qt-compatible filter text
+
     // the low-level api functions work directly on the fname
   virtual istream*	open_read();
+  // #IGNORE 
   virtual ostream*	open_write();
+  // #IGNORE 
   virtual ostream* 	open_append();
-  virtual bool		open_write_exist_check(); // returns true if file already exists for writing
+  // #IGNORE 
+  virtual bool		open_write_exist_check();
+  // returns true if file already exists for writing
 
   virtual istream*	Open();
-  // to open an existing file for reading; starts with curr filename if any
+  // #MENU to open an existing file for reading; starts with curr filename if any
   virtual ostream*	Save();
-  // to save to an existing file; requests a new filename if doesn't exist
+  // #MENU to save to an existing file; requests a new filename if doesn't exist
   virtual ostream*	SaveAs();
-  // to save to a new file
+  // #MENU to save to a new file
   virtual ostream*	Append();
-  // to open an existing file for appending
-  virtual void		Close();	// close the stream
+  // #MENU to open an existing file for appending
+  virtual void		Close();
+  // #MENU close the stream
 
   virtual bool		GetFileName(String& fname, FileOperation filerOperation); // gui-dependent routine to get filename from user
   virtual void		FixFileName(); // make sure suffix is right

@@ -1542,7 +1542,7 @@ int Unit::dmem_this_proc = 0;
 //   taNBase::ReplacePointersHook(old);
 // }
 
-void Unit::ApplyExternal(float val, ExtType act_ext_flags, Random* ran) {
+void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran) {
   // note: not all flag values are valid, so following is a fuzzy cascade
   // ext is the default place, so we check for 
   if (ran && (ran->type != Random::NONE)) {
@@ -3286,7 +3286,7 @@ void Layer::UpdateAfterEdit() {
   }*/
 }
 
-void Layer::ApplyExternal(taMatrix* data, Unit::ExtType ext_flags,
+void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
     Random* ran, const PosTwoDCoord* offset) 
 {
   // note: when use LayerWriters, we typically always just get a single frame of 
@@ -3294,75 +3294,83 @@ void Layer::ApplyExternal(taMatrix* data, Unit::ExtType ext_flags,
   if (!data) return;
   // check correct geom of data
   if ((data->dims() != 2) && (data->dims() != 4)) {
-    taMisc::Error("Layer::ApplyExternal: data->dims must be 2 (2-d) or 4 (4-d); is: ",
+    taMisc::Error("Layer::ApplyInputData: data->dims must be 2 (2-d) or 4 (4-d); is: ",
       String(data->dims()));
     return;
   }
+  TwoDCoord offs(0,0);
+  if(offset) offs = *offset;
   
-  TxferDataStruct ads(data, ext_flags, ran, offset);
-  // TODO determine effective offset
-  
+  DataUpdate(true);
+
   // apply flags if we are the controller (zero offset)
-  if ((ads.offs_x == 0) && (ads.offs_y == 0)) {
+  if((offs.x == 0) && (offs.y == 0)) {
     ApplyLayerFlags(ext_flags);
   }
-  // apply data according to the applicable model
-  DataUpdate(true);
-  if (uses_groups()) {
-    if (data->dims() == 4) {
-      ApplyExternal_Gp4d(ads);
-    } else {
-      ApplyExternal_Gp2d(ads);
-    }
-  } else {
-    if (data->dims() == 4) {
-      ApplyExternal_Flat4d(ads);
-    } else {
-      ApplyExternal_Flat2d(ads);
-    }
+  if(data->dims() == 2) {
+    ApplyInputData_2d(data, ext_flags, ran, offs);
+  }
+  else {
+    if(uses_groups())
+      ApplyInputData_Gp4d(data, ext_flags, ran); // note: no offsets -- layerwriter does check
+    else
+      ApplyInputData_Flat4d(data, ext_flags, ran, offs);
   }
   DataUpdate(false);
 }
 
-void Layer::ApplyExternal_Flat2d(const TxferDataStruct& ads) {
-  Unit* un; 	// current unit
-  int u_x = ads.offs_x;  int u_y = ads.offs_y; // current unit coord
-  int d_x = 0;  int d_y = 0; // current data coord
-  Unit_Group* ug = &(this->units);
-  float val;
-  //note: a partially filled this will return a null unit when we reach the end of actual units
-  while (u_y < this->geom.y) {
-    while (u_x < this->geom.x) {
-      // if we've run out of data for this row, go to next row
-      if (d_x >= ads.data->dim(0)) break;
-      un = ug->FindUnitFmCoord(u_x, u_y);
-      // if we run out of units, there will be no more, period
-      if (un == NULL) goto break1;
-      val = ads.data->SafeElAsVar(d_x, d_y).toFloat();
-      un->ApplyExternal(val, ads.ext_flags, ads.ran);
-      ++d_x;
-      ++u_x;
+void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+				  Random* ran, const TwoDCoord& offs) {
+  for(int d_y = 0; d_y < data->dim(1); d_y++) {
+    int u_y = offs.y + d_y;
+    for(int d_x = 0; d_x < data->dim(0); d_x++) {
+      int u_x = offs.x + d_x;
+      Unit* un = FindUnitFmCoord(u_x, u_y);
+      if(un != NULL) {
+	float val = data->SafeElAsVar(d_x, d_y).toFloat();
+	un->ApplyInputData(val, ext_flags, ran);
+      }
     }
-    ++d_y;
-    if (d_y >= ads.data->dim(1)) break;
-    d_x = 0;
-    u_x = ads.offs_x;
-    ++u_y;
   }
-break1:
-  ;
 }
 
-void Layer::ApplyExternal_Flat4d(const TxferDataStruct& ads) {
-  //TODO:
+void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+				  Random* ran, const TwoDCoord& offs) {
+  // outer-loop is data-group (groups of x-y data items)
+  for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
+    for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
+
+      for(int d_y = 0; d_y < data->dim(1); d_y++) {
+	int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
+	for(int d_x = 0; d_x < data->dim(0); d_x++) {
+	  int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
+	  Unit* un = FindUnitFmCoord(u_x, u_y);
+	  if(un != NULL) {
+	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+	    un->ApplyInputData(val, ext_flags, ran);
+	  }
+	}
+      }
+    }
+  }
 }
 
-void Layer::ApplyExternal_Gp2d(const TxferDataStruct& ads) {
-  //TODO:
-}
+void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random* ran) {
+  // outer-loop is data-group (groups of x-y data items)
+  for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
+    for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
 
-void Layer::ApplyExternal_Gp4d(const TxferDataStruct& ads) {
-  //TODO:
+      for(int d_y = 0; d_y < data->dim(1); d_y++) {
+	for(int d_x = 0; d_x < data->dim(0); d_x++) {
+	  Unit* un = FindUnitFmGpCoord(dg_x, dg_y, d_x, d_y);
+	  if(un != NULL) {
+	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+	    un->ApplyInputData(val, ext_flags, ran);
+	  }
+	}
+      }
+    }
+  }
 }
 
 

@@ -1,10 +1,12 @@
 // ta_Dump File v2.0
 Program .projects[0].programs.gp[0][5] { 
   taBase_List @.objs = [1] {
-    LayerWriter_List @[0] = [3] { 
-      LayerWriter @[0] { };
-      LayerWriter @[1] { };
-      LayerWriter @[2] { };
+    LayerWriter @[0] { 
+      LayerDataEl_List @.layer_data = [3] {
+	LayerWriterEl @[0] { };
+	LayerWriterEl @[1] { };
+	LayerWriterEl @[2] { };
+      };
     };
   };
 
@@ -32,47 +34,46 @@ Program .projects[0].programs.gp[0][5] {
  flags=PF_NONE;
  objs {
   name=;
-  el_typ=LayerWriter_List;
+  el_typ=LayerWriter;
   el_def=0;
-  LayerWriter_List @[0] {
-   name="lw_list";
-   el_typ=LayerWriter;
-   el_def=0;
-   LayerWriter @[0] {
-    data=.projects[0].data.gp[0][0]$0$;
-    chan_name="Input";
-    net_target=LAYER;
-    network=.projects[0].networks[0]$1$;
-    layer=.projects[0].networks[0].layers[0]$2$;
-    offset {x=0: y=0: };
-    use_layer_type=1;
-    ext_flags=EXT;
-    noise {type=NONE: mean=0: var=0.5: par=1: };
-    value_names{     };
-   };
-   LayerWriter @[1] {
-    data=$0$;
-    chan_name="Output";
-    net_target=LAYER;
-    network=$1$;
-    layer=.projects[0].networks[0].layers[2]$3$;
-    offset {x=0: y=0: };
-    use_layer_type=1;
-    ext_flags=TARG;
-    noise {type=NONE: mean=0: var=0.5: par=1: };
-    value_names{     };
-   };
-   LayerWriter @[2] {
-    data=$0$;
-    chan_name="Name";
-    net_target=TRIAL_NAME;
-    network=$1$;
-    layer=$3$;
-    offset {x=0: y=0: };
-    use_layer_type=1;
-    ext_flags=TARG;
-    noise {type=NONE: mean=0: var=0.5: par=1: };
-    value_names{     };
+  LayerWriter @[0] {
+   name="LayerWriter_0";
+   data=.projects[0].data.gp[0][0]$0$;
+   network=.projects[0].networks[0]$1$;
+   layer_data {
+    name=;
+    el_typ=LayerWriterEl;
+    el_def=0;
+    LayerWriterEl @[0] {
+     chan_name="Input";
+     net_target=LAYER;
+     layer_name="Input";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=NO_EXTERNAL;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+    LayerWriterEl @[1] {
+     chan_name="Output";
+     net_target=LAYER;
+     layer_name="Output";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=NO_EXTERNAL;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+    LayerWriterEl @[2] {
+     chan_name="Name";
+     net_target=TRIAL_NAME;
+     layer_name="Name";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=NO_EXTERNAL;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
    };
   };
  };
@@ -102,10 +103,10 @@ Program .projects[0].programs.gp[0][5] {
    desc=;
   };
   ProgVar @[1] {
-   name="lw_list";
+   name="LayerWriter_0";
    var_type=T_Object;
-   object_type=LayerWriter_List;
-   object_val=.projects[0].programs.gp[0][5].objs[0]$4$;
+   object_type=LayerWriter;
+   object_val=.projects[0].programs.gp[0][5].objs[0]$2$;
    objs_ptr=1;
    desc=;
   };
@@ -118,8 +119,8 @@ Program .projects[0].programs.gp[0][5] {
    desc=;
    off=0;
    result_var=;
-   script_obj=.projects[0].programs.gp[0][5].vars[1]$5$;
-   method=LayerRWBase_List::SetAllDataNetwork;
+   script_obj=.projects[0].programs.gp[0][5].vars[1]$3$;
+   method=LayerWriter::SetDataNetwork;
    args{ data;network;};
 { DataBlock* db;Network* net;   };
   };
@@ -127,7 +128,7 @@ Program .projects[0].programs.gp[0][5] {
    desc=;
    off=0;
    result_var=;
-   script_obj=$5$;
+   script_obj=$3$;
    method=taList_impl::CheckConfig;
    args{ false;};
 { bool quiet;   };
@@ -138,13 +139,13 @@ Program .projects[0].programs.gp[0][5] {
   el_typ=MethodCall;
   el_def=0;
   MethodCall @[0] {
-   desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
+   desc="apply inputs to the network!";
    off=0;
    result_var=;
-   script_obj=$5$;
-   method=LayerWriter_List::ApplyExternal;
-   args{ network->context;};
-{ int context;   };
+   script_obj=$3$;
+   method=LayerWriter::ApplyInputData;
+   args{ };
+{    };
   };
  };
 };

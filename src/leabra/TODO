@@ -1,23 +1,28 @@
 leabra todo list:
 
-* taImageProc class w/ highvis stuff:
-  - make basic directory filename datatable thing (in taDataProc; with filter..)
-    - GetMakeCol on fname -- allows other fields
-  - do program stuff to make it work: training dtable is list of files (per above)
-     (do simple extension to read dave's files into datatable)
-     applyinputs reads filename and calls fun..
-  - import network and run it!!
+* Netmon should have a network variable that contextualizes everything for given network
+-- otherwize you need to set each one individually -- painful.
+
+* ApplyInputsImage: needs to use same vals in plus and minus phases: just check for 
+  phase_no == 0 for filtering the data..
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
-* add data guys to prog toolbox: need a 2nd panel??
-
 * extrew in trial monitor seems not to be working: 12ax demo
 
-* add "print" Progel?
+* relnet stat
 
-* css_console.cpp: complete obj.mbr expressions..
+* startup script
+
+--------
+check:
+
+* add basic file logging stuff to datatable: just a stream and some functions..
+
+* applyexternal should just use current network context setting, instead of arg.
+
+* change applyexternal -> applyinputdata?  YES
 
 ---------
 
@@ -26,21 +31,18 @@ current bugs:
 * need to be able to update args without changing program call target: check for
   mismatch in arg count!
 
-* Netmon should have a network variable that contextualizes everything for given network
--- otherwize you need to set each one individually -- painful.
-
-* applyexternal should just use current network context setting, instead of arg.
-
-* change applyexternal -> applyinputdata?  YES
-
 * display arg value in program call
-
-* actions menu comes before object in program, other places?
 
 * need special menu action to save in prog_lib
 
 -------
 lower pri:
+
+* add data guys to prog toolbox: need a 2nd panel??  BRAD doing
+
+* add "print" Progel?
+
+* css_console.cpp: complete obj.mbr expressions..
 
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 
@@ -54,54 +56,10 @@ lower pri:
 * test FILE string_stream.css: ptr = 0?
 
 ---
-
-* datatable aggregation:
-
-  -------
-  taDataOps static class:
-
-  helper classes
-
-  * DataSortEls = column ref/name, op; DataSortSpec object = list
-  * DataSelectEls = column ref/name, expr; DataSortSpec object = list
-
-  void Select(DataTable* dest, DataTable* src, 
-  void Sort(DataTable* dest, DataTable* src, DataSortSpec& sort_spec);
-
-
-
-  -------
-  ProgEl's:
-
-  DataProg -- just has DataTableRef, and some common convenience funs..
-
-  need to be able to choose columns from datatable from menu (dt->data els)
-
-  DataFilter: (select)
-    implied loop over all rows of data table
-    for each: local vars created with names = colum names (UAE in dt needs to 
-      enforce good css-names)
-    filter expr string: e.g., Name == "horiz" && sse > .5
-
-  DataSort:
-    * column, op list of sort fields (alpha, etc), in order: a DataSortSpec object -- list
-      of DataSortEls; need database
-
-   
-    
-  
-   
-
-
-
-
 * deal with small-batch weight updates
 * deal with dmem: network counters aggregate across epoch.. rndseed aggregate, etc
 
 * add #CAT to everything in netstru and leabra.h, and fixup comments
-
-* bugs: network display updates at start of trial with weird state info, despite wrap
-  by DataUpdate guys, etc
 
 ----------
 arg directives

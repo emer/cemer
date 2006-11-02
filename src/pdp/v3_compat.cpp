@@ -985,8 +985,8 @@ bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
   Program* apply_ins = ((Program_Group*)nwproj->programs.gp[0])->FindName("ApplyInputs");
   if(!apply_ins) return false;
   
-  LayerWriter_List* lw_list = (LayerWriter_List*)apply_ins->objs.FindName("lw_list");
-  if(!lw_list) return false;
+  LayerWriter* lw = (LayerWriter*)apply_ins->objs.FindName("layer_writer");
+  if(!lw) return false;
 
   if(environments.leaves <= 0) return false;
   Environment* env = (Environment*)environments.Leaf(0);
@@ -1000,46 +1000,35 @@ bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
   if(networks.leaves <= 0) return false;
   Network* net = (Network*)nwproj->networks.Leaf(0);
 
-  return ConvertToV4_ApplyInputs(lw_list, es, net, dt);
+  return ConvertToV4_ApplyInputs(lw, es, net, dt);
 }
 
-bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter_List* lw_list, EventSpec* es,
+bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter* lw, EventSpec* es,
 					    Network* net, DataTable* dt) {
-  lw_list->Reset();
+  lw->layer_data.Reset();
+  lw->data = dt;
+  lw->network = net;
   for(int i=0; i<es->patterns.size; i++) {
     PatternSpec* ps = (PatternSpec*)es->patterns[i];
     if(ps->type == PatternSpec::INACTIVE) continue;
-    LayerWriter* lw = (LayerWriter*)lw_list->New(1, &TA_LayerWriter);
-    lw->data = dt;
-    lw->network = net;
-    lw->net_target = LayerRWBase::LAYER;
-    lw->chan_name = ps->name;
-    Layer* lay = (Layer*)net->layers.FindName(ps->layer_name);
-    lw->layer = lay;
-    lw->value_names = ps->value_names;
+    LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeLayerData(ps->name, ps->layer_name);
+    le->value_names = ps->value_names;
+    Layer* lay = (Layer*)net->layers.FindLeafName(ps->layer_name);
     if(lay) {
       if(ps->type == PatternSpec::INPUT) lay->layer_type = Layer::INPUT;
       else if(ps->type == PatternSpec::TARGET) lay->layer_type = Layer::TARGET;
       else if(ps->type == PatternSpec::COMPARE) lay->layer_type = Layer::OUTPUT;
     }
-    lw->UpdateAfterEdit();
   }
   { // trial_name
-    LayerWriter* lw = (LayerWriter*)lw_list->New(1, &TA_LayerWriter);
-    lw->net_target = LayerRWBase::TRIAL_NAME;
-    lw->data = dt;
-    lw->network = net;
-    lw->chan_name = "Name";
-    lw->UpdateAfterEdit();
+    LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeChanName("Name");
+    le->net_target = LayerDataEl::TRIAL_NAME;
   }
   if(dt->data.FindName("Group"))
   { // groupl_name
-    LayerWriter* lw = (LayerWriter*)lw_list->New(1, &TA_LayerWriter);
-    lw->net_target = LayerRWBase::GROUP_NAME;
-    lw->data = dt;
-    lw->network = net;
-    lw->chan_name = "Group";
-    lw->UpdateAfterEdit();
+    LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeChanName("Group");
+    le->net_target = LayerDataEl::GROUP_NAME;
   }
+  lw->UpdateAfterEdit();	// sets subguys
   return true;
 }

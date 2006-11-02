@@ -34,7 +34,7 @@ class Program_Group;
 class Program_List;
 
 class TA_API ProgVar: public taNBase {
-  // ##INSTANCE #INLINE #SCOPE_Program a program variable, accessible from the outer system, and inside the script in .vars and args
+  // ##INSTANCE #INLINE #SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)
 public:
   enum VarType {
@@ -104,7 +104,7 @@ private:
 };
 
 class TA_API ProgVar_List : public taList<ProgVar> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of script variables
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of script variables
 INHERITED(taList<ProgVar>)
 public:
   enum VarContext {
@@ -132,7 +132,7 @@ private:
 SmartRef_Of(ProgVar); // ProgVarRef
 
 class TA_API ProgArg: public taOBase {
-  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE a program or method argument
+  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program a program or method argument
 INHERITED(taOBase)
 public:
   String		name; // #SHOW #READ_ONLY the name of the argument (always same as the target)
@@ -154,7 +154,7 @@ private:
 
 
 class TA_API ProgArg_List : public taList<ProgArg> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of arguments
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of arguments
 INHERITED(taList<ProgArg>)
 public:
   virtual void		ConformToTarget(ProgVar_List& targ); // make us conform to the target
@@ -168,7 +168,7 @@ private:
 
 
 class TA_API ProgEl: public taOBase {
-  // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE definition of a program element
+  // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##CAT_Program definition of a program element
 INHERITED(taOBase)
 public:
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
@@ -200,7 +200,7 @@ private:
 
 
 class TA_API ProgEl_List: public taList<ProgEl> {
-// #TREEFILT_ProgGp
+  // #TREEFILT_ProgGp list of program elements: a block of code
 INHERITED(taList<ProgEl>)
 public:
   virtual void		PreGen(int& item_id); // iterates over all items
@@ -221,19 +221,14 @@ class TA_API ProgList: public ProgEl {
   // list of ProgEl's, each executed in sequence
 INHERITED(ProgEl)
 public:
-  ProgEl_List	    	prog_code; // list of ProgEl's
+  ProgEl_List	    	prog_code; // list of Program elements: the block of code
   
   override String	GetDisplayName() const;
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const ProgList& cp);
-  COPY_FUNS(ProgList, inherited);
-  TA_BASEFUNS(ProgList);
-
+  TA_SIMPLE_BASEFUNS(ProgList);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
@@ -242,18 +237,16 @@ private:
 
 
 class TA_API ProgVars: public ProgEl {
+  // local program variables (not globally accessible)
 INHERITED(ProgEl)
 public:
-  ProgVar_List	script_vars;
+  ProgVar_List		local_vars;	// the list of variables
   
   override String	GetDisplayName() const;
-  void	InitLinks();
-  void	CutLinks();
-  TA_BASEFUNS(ProgVars);
-
+  TA_SIMPLE_BASEFUNS(ProgVars);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
@@ -262,10 +255,10 @@ private:
 
 
 class TA_API UserScript: public ProgEl { 
-  // ProgEl for a user scriptlet
+  // a user-defined css script (can access all program variables, etc)
 INHERITED(ProgEl)
 public:
-  String	    user_script; // #EDIT_DIALOG content of the user scriptlet
+  String	    user_script; // #EDIT_DIALOG content of the user script
 
   virtual void	    ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
   virtual void	    ImportFromFileName(const String& fnm); // import script from file
@@ -273,10 +266,7 @@ public:
   virtual void	    ExportToFileName(const String& fnm); // export script to file
   
   override String	GetDisplayName() const;
-  void	Copy_(const UserScript& cp);
-  COPY_FUNS(UserScript, inherited);
-  TA_BASEFUNS(UserScript);
-
+  TA_SIMPLE_BASEFUNS(UserScript);
 protected:
   override const String	GenCssBody_impl(int indent_level);
 
@@ -408,11 +398,7 @@ public:
   ProgEl_List	    false_code; // #BROWSE items to execute if condition false
   
   override String	GetDisplayName() const;
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const IfElse& cp);
-  COPY_FUNS(IfElse, inherited);
-  TA_BASEFUNS(IfElse);
+  TA_SIMPLE_BASEFUNS(IfElse);
 
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
@@ -438,11 +424,7 @@ public:
   SArg_Array		args; // arguments to the method
   
   override String	GetDisplayName() const;
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const MethodCall& cp);
-  COPY_FUNS(MethodCall, inherited);
-  TA_BASEFUNS(MethodCall);
+  TA_SIMPLE_BASEFUNS(MethodCall);
 
 protected:
   ProgVar*		lst_script_obj; 
@@ -469,11 +451,7 @@ public:
   SArg_Array		args; // arguments to the method
   
   override String	GetDisplayName() const;
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const StaticMethodCall& cp);
-  COPY_FUNS(StaticMethodCall, inherited);
-  TA_BASEFUNS(StaticMethodCall);
+  TA_SIMPLE_BASEFUNS(StaticMethodCall);
 
 protected:
   MethodDef*		lst_method; 
@@ -499,11 +477,11 @@ private:
 }; 
 
 class TA_API Program_List : public taList<Program> {
-INHERITED(taList<Program>)
+  // ##CAT_Program a list of programs
+  INHERITED(taList<Program>)
 public:
   
   TA_BASEFUNS(Program_List);
-
 private:
   void	Initialize();
   void 	Destroy()		{Reset(); }; //
@@ -511,7 +489,7 @@ private:
 
 
 class TA_API Program: public taNBase, public AbstractScriptBase {
-  // ##TOKENS ##INSTANCE ##EXT_prog a structured gui-buildable program that generates css script code to actually run
+  // ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program a structured gui-buildable program that generates css script code to actually run
 INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS mode flags
@@ -645,7 +623,7 @@ SmartRef_Of(Program); // ProgramRef
 //////////////////////////////////
 
 class TA_API ProgLibEl: public taNBase {
-  // #INSTANCE #INLINE an element in the program library
+  // #INSTANCE #INLINE #CAT_Program an element in the program library
 INHERITED(taNBase)
 public:
   bool		is_group;	// this is a group of related programs
@@ -670,7 +648,7 @@ private:
 };
 
 class TA_API ProgLibEl_List : public taList<ProgLibEl> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE list of program library elements
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program library elements
 INHERITED(taList<ProgLibEl>)
 public:
   TA_SIMPLE_BASEFUNS(ProgLibEl_List);
@@ -682,7 +660,7 @@ private:
 };
 
 class TA_API ProgLib: public ProgLibEl_List {
-  // #INSTANCE #INLINE the program library
+  // #INSTANCE #INLINE #CAT_Program the program library
 INHERITED(ProgLibEl_List)
 public:
   String_Array		paths;	// list of paths to search for programs
@@ -703,7 +681,7 @@ private:
 };
 
 class TA_API Program_Group : public taGroup<Program> {
-  // ##EXT_progp a collection of programs sharing common global variables and a control panel interface
+  // ##EXT_progp ##FILETYPE_ProgramGroup #CAT_Program a collection of programs sharing common global variables and a control panel interface
 INHERITED(taGroup<Program>)
 public:
   ProgramRef		step_prog; // the program that will be stepped when the Step button is pressed
@@ -731,7 +709,7 @@ private:
 
 class TA_API ProgramCall: public ProgEl { 
   // call (run) another program, setting any arguments before hand
-  INHERITED(ProgEl)
+INHERITED(ProgEl)
 public:
   ProgramRef		target; // the program to be called
   bool			call_init; // if true, run the init_code on that program, not prog_code
@@ -744,12 +722,7 @@ public:
 
   override String	GetDisplayName() const;
 
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const ProgramCall& cp);
-  COPY_FUNS(ProgramCall, inherited);
-  TA_BASEFUNS(ProgramCall);
-
+  TA_SIMPLE_BASEFUNS(ProgramCall);
 protected:
   Program*		old_target; // the last target, used to detect changes
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one

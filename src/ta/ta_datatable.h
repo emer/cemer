@@ -22,6 +22,7 @@
 #include "ta_group.h"
 #include "ta_matrix.h"
 #include "ta_data.h"
+#include "ta_filer.h"
 #include "ta_viewspec.h"
 #include "ta_TA_type.h"
 
@@ -317,6 +318,8 @@ public:
   // 'true' if data should be saved in project; typically false for logs, true for data patterns
   DataTableCols		data;
   // all the columns and actual data
+  taFiler*		log_file;
+  // file for logging data incrementally as it is written -- only for output.  a new line is written when WriteClose() (DataSink interface) is called.
 
   /////////////////////////////////////////////////////////
   // columns
@@ -437,6 +440,9 @@ public:
   /////////////////////////////////////////////////////////
   // saving/loading (file)
 
+  taFiler* GetFiler(TypeItem* td)
+  { if(log_file) return log_file; return inherited::GetFiler(td); }
+
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
   void 			SaveData(ostream& strm, const char* delim = "\t", bool quote_str = true);
   // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings
@@ -445,6 +451,11 @@ public:
   void 			SaveDataRow(ostream& strm, int row=-1, const char* delim = "\t",
 				    bool quote_str = true); 
   // #CAT_File #MENU #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
+
+  void			SaveDataLog(const String& fname, bool append=false);
+  // #CAT_File #EXT_dat #MENU_SEP_BEFORE incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file
+  void			CloseDataLog();
+  // #CAT_File #EXT_dat #MENU_SEP_BEFORE close the data log file if it was previously open
 
   static int		ReadTillDelim(istream& strm, String& str, const char* delim, bool quote_str);
   // #IGNORE util function to read from stream into str until delim or newline or EOF

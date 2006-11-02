@@ -30,9 +30,9 @@
 //	Layer Reader / Writer		//
 //////////////////////////////////////////
 
-class PDP_API LayerRWBase: public taOBase  {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS controls the reading/writing of information to/from layers and data blocks/tables
-friend class LayerRWBase_List;
+class PDP_API LayerDataEl: public taOBase  {
+  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS ##CAT_Network controls the reading/writing of information to/from layers and data blocks/tables
+friend class LayerDataEl_List;
 friend class LayerWriter_List;
 INHERITED(taOBase)
 public:
@@ -42,120 +42,152 @@ public:
     GROUP_NAME,			// read/write the network group_name field
   };
 
-  DataBlockRef		data; // #AKA_data_block source or sink of the data to apply to layer, or store layer output (as appropriate)
-  String		chan_name; // name of the channel/column in the data table use 
-  NetTarget		net_target;  // what to read/write from on the network
-  NetworkRef 		network;  // the network to operate on
-  LayerRef 		layer;	// #CONDEDIT_ON_net_target:LAYER the Layer that will get read or written
-  PosTwoDCoord		offset;	// #EXPERT offset in layer or unit group at which to start reading/writing
+  DataBlockRef		data;
+  // #READ_ONLY #HIDDEN #NO_SAVE source or sink of the data to apply to layer, or store layer output (as appropriate) -- managed by owner
+  DataTableCols*	data_cols;
+  // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically if data is a datatable, just for choosing column..
+
+  DataArray_impl*	column;
+  // #NO_SAVE #FROM_GROUP_data_cols column/channel in data table use -- just to lookup the chan_name, which is what is actually used -- this is reset to NULL after column is selected
+  String		chan_name;
+  // name of the channel/column in the data to use 
+
+  NetTarget		net_target;
+  // what to read/write from on the network
+
+  NetworkRef 		network;
+  // #READ_ONLY #HIDDEN #NO_SAVE the network to operate on -- managed by owner
+  Layer_Group* 		layer_group;
+  // #READ_ONLY #HIDDEN #NO_SAVE the group of layers on the network -- just for choosing the layer from a list
+  LayerRef 		layer;
+  // #NO_SAVE #CONDEDIT_ON_net_target:LAYER #FROM_GROUP_layer_group the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
+  String 		layer_name;
+  // #CONDEDIT_ON_net_target:LAYER the name of the Layer that will get read or written
+
+  PosTwoDCoord		offset;
+  // #EXPERT offset in layer or unit group at which to start reading/writing
   
+  virtual void 	SetDataNetwork(DataBlock* db, Network* net);
+  // #CAT_LayerData set the data table and network pointers enable looking up columns/layer names
+
+  virtual int	GetChanIdx(DataBlock* db) { return -1; }
+  // #CAT_LayerData get channel index from data block: depends on source or sink (override in subclass)
+
   override String	GetDisplayName() const;
 
   void  UpdateAfterEdit();
-  void  InitLinks();
-  void	CutLinks();
-  void 	Copy_(const LayerRWBase& cp); 
-  COPY_FUNS(LayerRWBase, taOBase);
-  TA_BASEFUNS(LayerRWBase);
-  
+  TA_SIMPLE_BASEFUNS(LayerDataEl);
 protected:
-  int			chan_idx; // cached col, -1 = not looked up, or invalid
-  
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  int			GetChanIdx(bool force_lookup = false); // recalcs if needed
+
 private:
   void	Initialize();
   void 	Destroy();
 };
 
-
-class PDP_API LayerRWBase_List: public taList<LayerRWBase> {
-  // #VIRT_BASE #NO_INSTANCE list of individual LayerRWBase objects
-INHERITED(taList<LayerRWBase>)
+class PDP_API LayerDataEl_List: public taList<LayerDataEl> {
+  // ##CAT_Network list of individual LayerDataEl objects
+INHERITED(taList<LayerDataEl>)
 public:
-  virtual LayerRWBase*	FindByDataBlockLayer(DataBlock* db, Layer* lay);
-// find the item by source and target -- note: finds first if multiple the same
 
-  virtual void	FillFromDataBlock(DataBlock* db, Network* net, bool freshen_only);
-  // #MENU_ON_Data #MENU #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE do a 'best guess' fill of items by matching up like-named Channels and Layers
-  virtual void	FillFromTable(DataTable* dt, Network* net, bool freshen_only);
-  // #MENU #MENU_CONTEXT #BUTTON do a 'best guess' fill of items by matching up like-named Columns and Layers
+  virtual void 	SetDataNetwork(DataBlock* db, Network* net);
+  // #CAT_LayerData set the data table and network pointers enable looking up columns/layer names
 
-  virtual void	SetAllData(DataBlock* db);
-  // #MENU #MENU_CONTEXT #BUTTON set all the data pointers for list elements to given datablock/data table
-  virtual void	SetAllNetwork(Network* net);
-  // #MENU #MENU_CONTEXT #BUTTON set all the network pointers for list elements
-  virtual void	SetAllDataNetwork(DataBlock* db, Network* net);
-  // set all the data and network pointers for list elements
+  virtual LayerDataEl* FindChanName(const String& chn_name);
+  // #CAT_LayerData find (first) layer data that applies to given data channel name
+  virtual LayerDataEl* FindMakeChanName(const String& chn_name);
+  // #CAT_LayerData find (first) layer data that applies to given data channel name -- make it if it doesn't exist
 
-  TA_ABSTRACT_BASEFUNS(LayerRWBase_List);
-protected:
-  virtual void		FillFromDataBlock_impl(DataBlock* db, Network* net,
-    bool freshen, Layer::LayerType lt){}
-    
+  virtual LayerDataEl* FindLayerName(const String& lay_name);
+  // #CAT_LayerData find (first) layer data that applies to given layer name
+  virtual LayerDataEl* FindMakeLayerName(const String& lay_name);
+  // #CAT_LayerData find (first) layer data that applies to given layer name -- make it if it doesn't exist 
+
+  virtual LayerDataEl* FindLayerData(const String& chn_name, const String& lay_name);
+  // #CAT_LayerData find (first) layer data that applies to given data channel name and layer name
+  virtual LayerDataEl* FindMakeLayerData(const String& chn_name, const String& lay_name);
+  // #CAT_LayerData find (first) layer data that applies to given data channel name and layer name -- make it if it doesn't exist
+
+  TA_BASEFUNS(LayerDataEl_List);
 private:
-  void	Initialize() { SetBaseType(&TA_LayerRWBase); }
+  void	Initialize() { SetBaseType(&TA_LayerDataEl); }
   void 	Destroy() {}
 };
 
+//////////////////////////////////////////////
+//		Layer Writer
 
-class PDP_API LayerWriter: public LayerRWBase {
-  // object that writes data from a DataSource to a layer
-INHERITED(LayerRWBase)
+class PDP_API LayerWriterEl : public LayerDataEl {
+  // controls the writing of input data from a data source to a network layer
+INHERITED(LayerDataEl)
 public: 
   bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
   Unit::ExtType	ext_flags;	// #EXPERT #CONDEDIT_OFF_use_layer_type:true how to flag the unit/layer's external input status
   Random	noise;		// #EXPERT noise optionally added to values when applied
   String_Array  value_names;	// #EXPERT display names of the individual pattern values
-  // todo: not sure if above belongs here..
 
-  virtual void 		ApplyExternal(int context);
-  // apply data to the layers, using the supplied context (TEST, TRAIN, etc)
+  virtual bool	ApplyInputData(DataBlock* db, Network* net);
+  // #CAT_LayerWriter apply data to the layer on network, using the network's current context settings (TEST,TRAIN,etc) -- returns success
+
+  override int	GetChanIdx(DataBlock* db) { return db->GetSourceChannelByName(chan_name); }
 
   override String	GetDisplayName() const;
 
-  void	UpdateAfterEdit();
-  void  InitLinks();
-  void	CutLinks();
-  void 	Copy_(const LayerWriter& cp);
-  COPY_FUNS(LayerWriter, LayerRWBase);
-  TA_BASEFUNS(LayerWriter); //
-  
+  TA_SIMPLE_BASEFUNS(LayerWriterEl);
+protected:
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+
 private:
   void	Initialize();
   void 	Destroy();
 };
 
-class PDP_API LayerWriter_List: public LayerRWBase_List {
-  // ##TOKENS #INSTANCE list of individual LayerWriter objects
-INHERITED(LayerRWBase_List)
+class PDP_API LayerWriter : public taNBase {
+  // ##CAT_Network controls the writing of input data from a data source to network layers
+INHERITED(taNBase)
 public:
-  
-  inline LayerWriter*	FastEl(int i) {return (LayerWriter*)FastEl_(i);}
-  virtual void		ApplyExternal(int context);
-  // apply data to the layers, using the supplied context (TEST, TRAIN, etc)
+  DataBlockRef	data;
+  // the data object with input data to present to the network
+  NetworkRef	network;
+  // the network to present the input data to
+  LayerDataEl_List	layer_data;
+  // the layers/input data channel mappings to present to the network
 
-  TA_BASEFUNS(LayerWriter_List);
+  virtual void 	SetDataNetwork(DataBlock* db, Network* net);
+  // #CAT_LayerWriter set the data table and network pointers -- convenience function for programs 
+
+  virtual void	AutoConfig(bool reset_existing = true);
+  // #MENU_ON_Actions #MENU_CONTEXT #BUTTON #MENU_SEP_BEFORE #CAT_LayerWriter do a 'best guess' configuration of items by matching up like-named data Channels and network Layers
+
+  virtual bool	ApplyInputData();
+  // #CAT_LayerWriter apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success
+
+  void	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(LayerWriter);
 protected:
-  override void		FillFromDataBlock_impl(DataBlock* db, Network* net,
-    bool freshen, Layer::LayerType lt);
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
     
 private:
-  void	Initialize() {SetBaseType(&TA_LayerWriter);}
+  void	Initialize();
   void 	Destroy() {}
 };
 
+
+//////////////////////////////////////////////
+//		Layer Reader
+
 /*TODO
-class PDP_API LayerReader: public LayerRWBase {
+class PDP_API LayerReader: public LayerDataEl {
   // object that reads data from a Layer to a DataSink 
-INHERITED(LayerRWBase)
+INHERITED(LayerDataEl)
 public:
 
   
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const LayerReader& cp);
-  COPY_FUNS(LayerReader, LayerRWBase);
+  COPY_FUNS(LayerReader, LayerDataEl);
   TA_BASEFUNS(LayerReader);
   
 private:
@@ -164,14 +196,14 @@ private:
 };
 
 
-class PDP_API LayerReader_List: public LayerRWBase_List {
+class PDP_API LayerReader_List: public LayerDataEl_List {
   // ##TOKENS #INSTANCE list of LayerReader objects
-INHERITED(LayerRWBase_List)
+INHERITED(LayerDataEl_List)
 public:
   TA_BASEFUNS(LayerReader_List); //
 
 protected:
-  override void		FillFromDataBlock_impl(DataBlock* db, Network* net,
+  override void		AutoConfig_impl(DataBlock* db, Network* net,
     bool freshen, Layer::LayerType lt);
     
 private:
@@ -181,7 +213,7 @@ private:
 */
 
 class PDP_API NetMonItem: public taNBase {
-  // #NO_TOKENS used for monitoring the value of an object\n(special support for network variables, including Layer, Projection, UnitGroup, Unit)
+  // #NO_TOKENS ##CAT_Network used for monitoring the value of an object\n(special support for network variables, including Layer, Projection, UnitGroup, Unit)
 INHERITED(taNBase)
 public:
   static const String 	GetObjName(TAPtr obj, TAPtr own = NULL); 
@@ -203,20 +235,20 @@ public:
   SimpleMathSpec 	pre_proc_3;	// #EXPERT third step of pre-processing to perform
   
 
-  void		SetMonVals(TAPtr obj, const String& var); 
-    // set object and variable, and update appropriately
-//TODO: add funcs for specific object types, and put in gui directives
-
-  void		ScanObject();	// #IGNORE update the schema
+  void		SetMonVals(taBase* obj, const String& var); 
+  // set object and variable, and update appropriately
   virtual void 	GetMonVals(DataBlock* db);
   // get the monitor data and stick it in the current row of the datablock/datatable
-  void		ResetMonVals(); // deletes the cached vars
+  void		ResetMonVals();
+  // deletes the cached vars
 
-  
+  void		ScanObject();	// #IGNORE update the schema
+
   static const KeyString key_obj_name;
   static const KeyString key_obj_type;
   static const KeyString key_obj_var;
   String GetColText(const KeyString& key, int itm_idx = -1) const;
+
   void  InitLinks();
   void	CutLinks();
   void	UpdateAfterEdit();
@@ -229,37 +261,29 @@ protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
   override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
-    int dcr, void* op1_, void* op2_);
+					     int dcr, void* op1_, void* op2_);
 
   ChannelSpec* 		AddScalarChan(const String& valname, ValType vt);
   MatrixChannelSpec* 	AddMatrixChan(const String& valname, ValType vt,
-    const MatrixGeom* geom = NULL);
-    // caller resp for somehow setting geom if NULL; clears cell_num
+				      const MatrixGeom* geom = NULL);
+  // caller resp for somehow setting geom if NULL; clears cell_num
   bool 			AddCellName(const String& cellname);
   bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
+
   // these are for finding the members and building the stat
   // out of the objects and the variable
   
-/*  void 			ScanObject_InObject(TAPtr obj, String var);
-  void			ScanObject_IterLayer(Layer* lay, String var); // #IGNORE
-  void			ScanObject_IterUnitGroup(Unit_Group* ug, String var);	// #IGNORE
-  void			ScanObject_IterGroup(taGroup_impl* gp, String var);	// #IGNORE
-  void			ScanObject_IterList(taList_impl* list, String var);	// #IGNORE
-*/  
-  
   bool 			ScanObject_InObject(TAPtr obj, String var, 
-    bool mk_col = false, TAPtr own = NULL);
+					    bool mk_col = false, TAPtr own = NULL);
   void			ScanObject_Network(Network* net, String var); // #IGNORE
   void			ScanObject_Layer(Layer* lay, String var); // #IGNORE
   void			ScanObject_Projection(Projection* p, String var); // #IGNORE
   void			ScanObject_UnitGroup(Unit_Group* ug, String var, 
-    bool mk_col = false);	// #IGNORE
+					     bool mk_col = false);	// #IGNORE
   void			ScanObject_Unit(Unit* u, String var,
-    Projection* p = NULL, bool mk_col = false); // #IGNORE
+					Projection* p = NULL, bool mk_col = false); // #IGNORE
   void			ScanObject_ConGroup(Con_Group* cg, String var,
-    Projection* p = NULL); // #IGNORE note: always makes a col
-  
-// following return 'true' if the routine handled making the colspecs
+					    Projection* p = NULL); // #IGNORE note: always makes a col
 
 private:
   void	Initialize();
@@ -268,6 +292,7 @@ private:
 
 
 class PDP_API NetMonItem_List: public taList<NetMonItem> { 
+  // ##CAT_Network list of network monitor items
 INHERITED(taList<NetMonItem>)
 public:
 
@@ -281,40 +306,51 @@ private:
   void		Destroy() {}
 };
 
-class PDP_API NetMonitor: public taNBase { // ##TOKENS #NO_UPDATE_AFTER used for monitoring values of network objects
+class PDP_API NetMonitor: public taNBase {
+  // ##TOKENS #NO_UPDATE_AFTER ##CAT_Network monitors values from network (or other) objects and sends them to a data table/sink
 INHERITED(taNBase)
 public:
-  NetMonItem_List	items; // the list of items being monitored
-  DataTableRef		data; // the data table that will be used to hold the monitor data
-  bool			rmv_orphan_cols; // #DEF_true remove orphan columns when updating table schema
+  NetMonItem_List	items;
+  // the list of items being monitored
+  NetworkRef		network;
+  // the overall network object that is being monitored -- if changed, any sub-objects will be updated based on path to new network
+  DataTableRef		data;
+  // the data table that will be used to hold the monitor data
+  bool			rmv_orphan_cols;
+  // #DEF_true remove orphan columns when updating table schema
 
-  void		SetDataTable(DataTable* dt); // #MENU #MENU_ON_Action set the data table used
+  void		SetNetwork(Network* net);
+  // #MENU #MENU_ON_Action #MENU_CONTEXT #BUTTON set the overall network -- will update any sub-objects to corresponding ones on this network
+  void		SetDataTable(DataTable* dt);
+  // #MENU #MENU_CONTEXT #BUTTON set the data table used
+  void		SetDataNetwork(DataTable* dt, Network* net);
+  // #MENU #MENU_CONTEXT #BUTTON set both the data table and network -- convenient for programs
+
   void		AddNetwork(Network* net, const String& variable)
-    {AddObject(net, variable);}
-    // #MENU #MENU_ON_Action #MENU_SEP_BEFORE monitor a value in the Network or its subobjects
+  { AddObject(net, variable);}
+  // #MENU #MENU_ON_Action #MENU_SEP_BEFORE monitor a value in the Network or its subobjects
   void		AddLayer(Layer* lay, const String& variable)
-    {AddObject(lay, variable);}
-    // #MENU monitor a value in the Layer or its subobjects
+  { AddObject(lay, variable);}
+  // #MENU monitor a value in the Layer or its subobjects
   void		AddProjection(Projection* prj, const String& variable)
-    {AddObject(prj, variable);}
-    // #MENU monitor a value in the Projection or its subobjects
+  { AddObject(prj, variable);}
+  // #MENU monitor a value in the Projection or its subobjects
   void		AddUnitGroup(Unit_Group* ug, const String& variable)
-    {AddObject(ug, variable);}
-    // monitor a value in the UnitGroup or its subobjects
+  { AddObject(ug, variable);}
+  // monitor a value in the UnitGroup or its subobjects
   void		AddUnit(Unit* un, const String& variable)
-    {AddObject(un, variable);}
-    // monitor a value in the Unit or its subobjects
+  { AddObject(un, variable);}
+  // monitor a value in the Unit or its subobjects
   
   void		AddObject(TAPtr obj, const String& variable);
-    // monitor a value in the object or its subobjects
+  // monitor a value in the object or its subobjects
   void 		UpdateMonitors(bool reset_first = false);
-  // #MENU #MENU_SEP_BEFORE create or update the channels -- call this during Init.\n  if reset_first, then existing data columns are removed first
+  // #MENU #MENU_SEP_BEFORE create or update the channels -- call this during Init.\n if reset_first, then existing data columns are removed first
+
   void 		GetMonVals();
   // get all the values and store in current row of data table -- call in program to get new data
-  
   void		RemoveMonitors();
   // #IGNORE called by the network to remove the objs from lists
-
   
   void	InitLinks();
   void	CutLinks();

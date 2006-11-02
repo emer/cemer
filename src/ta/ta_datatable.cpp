@@ -349,6 +349,7 @@ void DataTable::Initialize() {
   rows = 0;
   save_data = true;
   m_dm = NULL; // returns new if none exists, or existing -- enables views to be shared
+  log_file = NULL;
 }
 
 void DataTable::Destroy() {
@@ -363,10 +364,16 @@ void DataTable::InitLinks() {
   data.name = "data"; // for the viewspec routines
   inherited::InitLinks();
   taBase::Own(data, this);
+  log_file = taFiler::New("DataTable", ".dat");
+  taRefN::Ref(log_file);
 }
 
 void DataTable::CutLinks() {
   data.CutLinks();
+  if(log_file) {
+    taRefN::unRefDone(log_file);
+    log_file = NULL;
+  }
   inherited::CutLinks();
 }
 
@@ -914,6 +921,23 @@ void DataTable::SaveData(ostream& strm, const char* delim, bool quote_str) {
   }
 }
 
+void DataTable::SaveDataLog(const String& fname, bool append) {
+  if(!log_file) return;
+  log_file->fname = fname;
+  if(append) 
+    log_file->Append();
+  else {
+    log_file->SaveAs();
+    if(log_file->isOpen())
+      SaveHeader(*log_file->ostrm);
+  }
+}
+
+void DataTable::CloseDataLog() {
+  if(!log_file) return;
+  log_file->Close();
+}
+
 int DataTable::ReadTillDelim(istream& strm, String& str, const char* delim, bool quote_str) {
   int c;
   int depth = 0;
@@ -1094,6 +1118,9 @@ bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
 
 void DataTable::WriteClose_impl() {
   UpdateAllViews();
+  if(log_file && log_file->isOpen()) {
+    SaveDataRow(*log_file->ostrm);
+  }
 }
 
 //////////////////////////

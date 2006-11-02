@@ -21,294 +21,296 @@
 #include "netdata.h"
 
 //////////////////////
-//   LayerRWBase    //
+//   LayerDataEl    //
 //////////////////////
 
-void LayerRWBase::Initialize() {
+void LayerDataEl::Initialize() {
   net_target = LAYER;
+  data_cols = NULL;
+  column = NULL;
+  layer_group = NULL;
 }
 
-void LayerRWBase::Destroy() {
+void LayerDataEl::Destroy() {
   CutLinks();
 }
 
-void LayerRWBase::Copy_(const LayerRWBase& cp) {
-  data = cp.data;
-  chan_name = cp.chan_name;
-  net_target = cp.net_target;
-  network = cp.network;
-  layer = cp.layer;
-  offset = cp.offset;
-}
-
-void LayerRWBase::InitLinks(){
-  inherited::InitLinks();
-  taBase::Own(data, this);
-  taBase::Own(network, this);
-  taBase::Own(layer, this);
-  taBase::Own(offset, this);
-}
-
-void LayerRWBase::CutLinks() {
-  offset.CutLinks();
-  layer.CutLinks();
-  network.CutLinks();
-  data.CutLinks();
-  inherited::CutLinks();
-}
-
-void LayerRWBase::UpdateAfterEdit() {
-  GetChanIdx(true);
+void LayerDataEl::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  if(column) {
+    chan_name = column->name;
+    taBase::SetPointer((taBase**)&column, NULL); // reset as soon as used -- just a temp guy!
+  }
+  if(!data) {
+    taBase::SetPointer((taBase**)&data_cols, NULL);
+  }
+  if(layer) {
+    layer_name = layer->name;
+    layer = NULL;		// smart ref
+  }
+  if(!network) {
+    taBase::SetPointer((taBase**)&layer_group, NULL);
+  }
+  if(!chan_name.empty() && layer_name.empty()) {
+    layer_name = chan_name;
+  }
+  if(chan_name.empty() && !layer_name.empty()) {
+    chan_name = layer_name;
+  }
 }
 
-String LayerRWBase::GetDisplayName() const {
-  String rval = "to: " + chan_name;
-  if(data)
-    rval += " on: " + data->name;
-  if(network)
-    rval += " fm: " + network->name;
-  rval += " " + GetTypeDef()->GetEnumString("NetTarget", net_target);
-  if((net_target == LAYER) && layer) {
-    rval += " " + layer->name;
+String LayerDataEl::GetDisplayName() const {
+  String rval = "data chan: " + chan_name;
+  rval += " net: " + GetTypeDef()->GetEnumString("NetTarget", net_target);
+  if(net_target == LAYER) {
+    rval += " " + layer_name;
   }
   return rval;
 }
 
-void LayerRWBase::CheckThisConfig_impl(bool quiet, bool& rval) {
+void LayerDataEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!data) {
-    if(!quiet) taMisc::CheckError("LayerRWBase Error: data is NULL");
-    rval =  false;
-    return;			// this is fatal
-  }
+  // these data/network things are set by parent prior to this being called (hopefully)
+  if(!data || ! network) return;
   if(chan_name.empty()) {
-    if(!quiet) taMisc::CheckError("LayerRWBase Error: chan_name is empty");
+    if(!quiet) taMisc::CheckError("LayerDataEl Error: chan_name is empty");
     rval =  false;
   }
-  if(GetChanIdx(true) < 0) {
-    if(!quiet) taMisc::CheckError("LayerRWBase Error: channel/column named",
+  if(GetChanIdx(data) < 0) {
+    if(!quiet) taMisc::CheckError("LayerDataEl Error: channel/column named",
 			     chan_name, "not found in data:", data->name);
     rval =  false;
   }
-  if(!network) {
-    if(!quiet) taMisc::CheckError("LayerRWBase Error: network is NULL for channel named:",
-			     chan_name, "for data:", data->name);
-    rval =  false;
-    return;			// this is fatal
-  }
   if(net_target == LAYER) {
-    if(!layer) {
-      if(!quiet) taMisc::CheckError("LayerRWBase Error: layer is NULL for channel named:",
-			       chan_name, "for data:", data->name);
+    Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
+    if(!lay) {
+      if(!quiet) taMisc::CheckError("LayerDataEl Error: cannot find layer named:",
+				    layer_name, "in network:", network->name);
       rval =  false;
+      return; // fatal
     }
-    if(layer && layer->own_net != network) {
-      if(!quiet) taMisc::CheckError("LayerRWBase Error: layer named:",layer->name,
-			       "is not on network:", network->name, "for channel named:",
-			       chan_name, "for data:", data->name);
-      rval = false;
-    }
-  }    
-}
-
-int LayerRWBase::GetChanIdx(bool force_lookup) {
-  if ((force_lookup || (chan_idx < 0)) && data) {
-    chan_idx = data->GetSinkChannelByName(chan_name);
   }
-  return chan_idx; // note: could still be -1 if no name etc.
 }
 
-
+void LayerDataEl::SetDataNetwork(DataBlock* db, Network* net) {
+  data = db;
+  if(db && db->InheritsFrom(&TA_DataTable))
+    taBase::SetPointer((taBase**)&data_cols, &((DataTable*)db)->data);
+  else
+    taBase::SetPointer((taBase**)&data_cols, NULL);
+  network = net;
+  if(net)
+    taBase::SetPointer((taBase**)&layer_group, &(network->layers));
+  else
+    taBase::SetPointer((taBase**)&layer_group, NULL);
+}
 
 //////////////////////////
-//  LayerRWBase_List	//
+//  LayerDataEl_List	//
 //////////////////////////
 
-void LayerRWBase_List::FillFromDataBlock(DataBlock* db, Network* net, 
-  bool freshen_only) 
-{
-  if (!db & !net) return;
-  Layer::LayerType lt;
-  if (GetTypeDef()->InheritsFrom(&TA_LayerWriter_List))
-    lt = (Layer::LayerType)(Layer::INPUT | Layer::TARGET);
-  else lt = (Layer::LayerType)(Layer::OUTPUT);
-  FillFromDataBlock_impl(db, net, freshen_only, lt);
-}
-
-void LayerRWBase_List::FillFromTable(DataTable* dt, Network* net, 
-  bool freshen_only) 
-{
-  FillFromDataBlock(dt, net, freshen_only);
-}
-
-LayerRWBase* LayerRWBase_List::FindByDataBlockLayer(DataBlock* db, Layer* lay) {
-  LayerRWBase* it;
+void LayerDataEl_List::SetDataNetwork(DataBlock* db, Network* net) {
   for(int i = 0; i < size; ++i) {
-    it = FastEl(i);
-    if ((it->data == db) && (it->layer == lay))
-      return it;
+    LayerDataEl* it = FastEl(i);
+    it->SetDataNetwork(db, net);
+  }
+}
+
+LayerDataEl* LayerDataEl_List::FindChanName(const String& cnm) {
+  for(int i = 0; i < size; ++i) {
+    LayerDataEl* it = FastEl(i);
+    if(it->chan_name == cnm) return it;
   }
   return NULL;
 }
 
-void LayerRWBase_List::SetAllData(DataBlock* db) {
-  for(int i = 0; i < size; ++i) {
-    LayerRWBase* it = FastEl(i);
-    it->data = db;
-  }
+LayerDataEl* LayerDataEl_List::FindMakeChanName(const String& cnm) {
+  LayerDataEl* ld = FindChanName(cnm);
+  if(ld) return ld;
+  ld = (LayerDataEl*)New(1);
+  ld->chan_name = cnm;
+  return ld;
 }
 
-void LayerRWBase_List::SetAllNetwork(Network* net) {
+LayerDataEl* LayerDataEl_List::FindLayerName(const String& lnm) {
   for(int i = 0; i < size; ++i) {
-    LayerRWBase* it = FastEl(i);
-    it->network = net;
+    LayerDataEl* it = FastEl(i);
+    if(it->layer_name == lnm) return it;
   }
+  return NULL;
 }
 
-void LayerRWBase_List::SetAllDataNetwork(DataBlock* db, Network* net) {
-  SetAllData(db);
-  SetAllNetwork(net);
+LayerDataEl* LayerDataEl_List::FindMakeLayerName(const String& lnm) {
+  LayerDataEl* ld = FindLayerName(lnm);
+  if(ld) return ld;
+  ld = (LayerDataEl*)New(1);
+  ld->layer_name = lnm;
+  return ld;
 }
+
+LayerDataEl* LayerDataEl_List::FindLayerData(const String& cnm, const String& lnm) {
+  for(int i = 0; i < size; ++i) {
+    LayerDataEl* it = FastEl(i);
+    if((it->layer_name == lnm) && (it->chan_name == cnm)) return it;
+  }
+  return NULL;
+}
+
+LayerDataEl* LayerDataEl_List::FindMakeLayerData(const String& cnm, const String& lnm) {
+  LayerDataEl* ld = FindLayerData(cnm, lnm);
+  if(ld) return ld;
+  ld = (LayerDataEl*)New(1);
+  ld->chan_name = cnm;
+  ld->layer_name = lnm;
+  return ld;
+}
+
 
 //////////////////////
-//   LayerWriter    //
+//   LayerWriterEl    //
 //////////////////////
 
-void LayerWriter::Initialize() {
+void LayerWriterEl::Initialize() {
   use_layer_type = true;
   ext_flags = Unit::NO_EXTERNAL;
   noise.type = Random::NONE;
   noise.mean = 0.0f;
   noise.var = 0.5f;
-  chan_idx = -1;
 }
 
-void LayerWriter::Destroy() {
+void LayerWriterEl::Destroy() {
   CutLinks();
 }
 
-void LayerWriter::InitLinks(){
-  inherited::InitLinks();
-  taBase::Own(noise,this);
-  taBase::Own(value_names, this);
-}
-
-void LayerWriter::CutLinks() {
-  value_names.CutLinks();
-  noise.CutLinks();
-  inherited::CutLinks();
-}
-
-void LayerWriter::Copy_(const LayerWriter& cp) {
-  use_layer_type = cp.use_layer_type;
-  ext_flags = cp.ext_flags;
-  noise = cp.noise;
-  value_names = cp.value_names;
-  chan_idx = -1; // redo lookup
-}
-
-void LayerWriter::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-  if(use_layer_type && layer) {
-    if(layer->layer_type == Layer::INPUT) {
-      ext_flags = Unit::EXT;
-    }
-    else if(layer->layer_type == Layer::TARGET) {
-      ext_flags = Unit::TARG;
-    }
-    else if(layer->layer_type == Layer::OUTPUT) {
-      ext_flags = Unit::COMP;
-    }
-    else {
-      taMisc::Warning("Warning: LayerwWriter:", chan_name, "for layer", layer->name,
+void LayerWriterEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(!network) return;
+  if(net_target == LAYER) {
+    Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
+    if(!lay) return;		// already checked in parent
+    if(lay->layer_type == Layer::HIDDEN) {
+      taMisc::Warning("Warning: LayerwWriterEl:", chan_name, "for layer", layer_name,
 		      "layer_type is HIDDEN -- not appropriate for writing to (by default).  Turn use_layer_type off and set appropriate ext_flags if this is intentional.");
     }
+    // todo: do this check
+    // if(data->dims() == 4 && layer->uses_groups())
+//     if(offs.x != 0 || offs.y != 0) {
+//       taMisc::Error("Layer::ApplyInputData: cannot have offsets for 4d data to unit groups");
+//     }
   }
 }
 
-String LayerWriter::GetDisplayName() const {
+String LayerWriterEl::GetDisplayName() const {
   String rval = inherited::GetDisplayName();
   // todo: could add some expert stuff..
   return rval;
 }
 
-void LayerWriter::ApplyExternal(int context) {
-  if(!data || !network) return;
+// note: we always do the lookup by name every time -- it just doesn't cost
+// that much and it makes everything so much simpler!
+bool LayerWriterEl::ApplyInputData(DataBlock* db, Network* net) {
+  if(!db || !net) return false;
+  int chan_idx = db->GetSourceChannelByName(chan_name);
+  if(chan_idx < 0) return false;
   if(net_target == TRIAL_NAME) {
-    network->trial_name = data->GetData(GetChanIdx());
-    return;
+    net->trial_name = db->GetData(chan_idx);
+    return true;
   }
   else if(net_target == GROUP_NAME) {
-    network->group_name = data->GetData(GetChanIdx());
-    return;
+    net->group_name = db->GetData(chan_idx);
+    return true;
   }
   // LAYER
-  if(!layer) return;
-  int chan = GetChanIdx();
-  taMatrixPtr mat(data->GetMatrixData(chan)); //note: refs mat
+  Layer* lay = (Layer*)net->layers.FindLeafName(layer_name);
+  if(!lay) return false;
+  taMatrixPtr mat(db->GetMatrixData(chan_idx)); //note: refs mat
   if(!mat) {
-    taMisc::Warning("LayerWriter::ApplyExternal: could not get matrix data from channel:",
-		    chan_name, "index:", String(chan),"in data:",data->name);
-    return;
+    taMisc::Warning("LayerWriterEl::ApplyInputData: could not get matrix data from channel:",
+		    chan_name, "in data:",db->name);
+    return false;
   }
   // we only apply target data in TRAIN mode
-  if ((context != Network::TRAIN) && (ext_flags & Unit::TARG))
-    return;
+  if((net->context != Network::TRAIN) && (ext_flags & Unit::TARG))
+    return true;
   // get the data as a slice -- therefore, frame is always 0
-  layer->ApplyExternal(mat, ext_flags, &noise, &offset);
+  lay->ApplyInputData(mat, ext_flags, &noise, &offset);
   // mat unrefs at this point, or on exit from routine
+  return true;
 }
 
-
 //////////////////////////
-//  LayerWriter_List	//
+//  	LayerWriter	//
 //////////////////////////
 
-void LayerWriter_List::ApplyExternal(int context) {
-  for (int i = 0; i < size; ++i) {
-    LayerWriter* lrw = FastEl(i);
-    lrw->ApplyExternal(context);
+void LayerWriter::Initialize() {
+  layer_data.SetBaseType(&TA_LayerWriterEl);
+}
+
+void LayerWriter::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  layer_data.SetDataNetwork(data, network);
+}
+
+void LayerWriter::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(!data) {
+    if(!quiet) taMisc::CheckError("LayerWriter Error: data is NULL");
+    rval =  false;
+  }
+  if(!network) {
+    if(!quiet) taMisc::CheckError("LayerWriter Error: network is NULL");
+    rval =  false;
   }
 }
 
-void LayerWriter_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
-  bool freshen, Layer::LayerType lt) 
-{
-  if (!freshen) Reset();
+void LayerWriter::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  layer_data.SetDataNetwork(data, network); // make sure it has ptrs first!
+  layer_data.CheckConfig(quiet, rval);
+}
+
+void LayerWriter::SetDataNetwork(DataBlock* db, Network* net) {
+  data = db;
+  network = net;
+}
+
+void LayerWriter::AutoConfig(bool reset_existing) {
+  if(!data || !network) return;
+  if(reset_existing) layer_data.Reset();
   Layer* lay;
   taLeafItr itr;
-  FOR_ITR_EL(Layer, lay, net->layers., itr) {
-    //note: we only look for any lt flags, not all of them
-    if (!(lay->layer_type & lt)) continue;
-    int chan = db->GetSourceChannelByName(lay->name);
-    if (chan < 0) continue;
-    // find matching existing, or make new
-    LayerWriter* lrw = NULL;
-    if (freshen) 
-      lrw = (LayerWriter*)FindByDataBlockLayer(db, lay);
-    if (!lrw) {
-      lrw = (LayerWriter*)New(1);
-      lrw->chan_name = lay->name;
+  FOR_ITR_EL(Layer, lay, network->layers., itr) {
+    if(lay->layer_type == Layer::HIDDEN) continue;
+    int chan_idx = data->GetSourceChannelByName(lay->name);
+    if (chan_idx < 0) {
+      taMisc::Warning("LayerWriter AutoConfig: did not find channel/data column for layer named:", lay->name, "of type:", TA_Layer.GetEnumString("LayerType", lay->layer_type));
+      continue;	// not found
     }
-    lrw->chan_idx = chan; // might as well avoid another lookup!
-    lrw->data = db; //smart=
-    lrw->layer = lay; // smart=
-    
-    // note, we only follow hints, and only change if not freshening
-    if (!freshen) {
-      /*Unit::ExtType*/ int ext_flags = lrw->ext_flags;
-      if (lay->layer_type & Layer::INPUT)
-        ext_flags |= Unit::EXT;
-      if (lay->layer_type & Layer::TARGET)
-        ext_flags |= Unit::TARG;
-      lrw->ext_flags = (Unit::ExtType)ext_flags;
-    }
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeLayerData(lay->name, lay->name);
+    lrw->SetDataNetwork(data, network);
     lrw->DataChanged(DCR_ITEM_UPDATED);
+  }
+  int nm_idx = data->GetSourceChannelByName("Name");
+  if(nm_idx >= 0) {
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Name");
+    lrw->net_target = LayerDataEl::TRIAL_NAME;
+  }
+  int gp_idx = data->GetSourceChannelByName("Group");
+  if(gp_idx >= 0) {
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Group");
+    lrw->net_target = LayerDataEl::GROUP_NAME;
   }
 }
 
-
+bool LayerWriter::ApplyInputData() {
+  if(!data || !network) return false;
+  bool rval = true;
+  for (int i = 0; i < layer_data.size; ++i) {
+    LayerWriterEl* lw = (LayerWriterEl*)layer_data.FastEl(i);
+    rval &= lw->ApplyInputData(data, network);
+  }
+  return rval;
+}
 
 /*TODO
 //////////////////////
@@ -340,7 +342,7 @@ void LayerReader::Copy_(const LayerReader& cp) {
 //  LayerReader_List	//
 //////////////////////////
 
-void LayerReader_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
+void LayerReader_List::AutoConfig_impl(DataBlock* db, Network* net,
   bool freshen, Layer::LayerType lt) 
 {
   if (!freshen) Reset();
@@ -354,7 +356,7 @@ void LayerReader_List::FillFromDataBlock_impl(DataBlock* db, Network* net,
     // find matching existing, or make new
     LayerReader* lrw = NULL;
     if (freshen) 
-      lrw = (LayerReader*)FindByDataBlockLayer(db, lay);
+      lrw = (LayerReader*)FindByDataAndLayer(db, lay);
     if (!lrw) {
       lrw = (LayerReader*)New(1);
       SET_POINTER(lrw->data, db);

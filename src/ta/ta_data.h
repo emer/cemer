@@ -46,7 +46,7 @@ public:
   
   String GetColText(int col, int);
   void 	Copy_(const ChannelSpec& cp);
-  COPY_FUNS(ChannelSpec, taNBase);
+  COPY_FUNS(ChannelSpec, inherited);
   TA_BASEFUNS(ChannelSpec);
 private:
   void		Initialize();
@@ -98,9 +98,9 @@ private:
   void		Destroy() {}
 };
 
-class TA_API DataBlock: public taNBase {
+class TA_API DataBlock: public taFBase {
   // #VIRT_BASE #NO_INSTANCE ##TOKENS ##CAT_Data abstract base class interface for objects that provide (source) and/or accept (sink) data
-INHERITED(taNBase)
+INHERITED(taFBase)
 public:
   enum DBOptions { // #BITS datablock options -- they also have individual convenience accessors
     DB_NONE		= 0,      // #NO_BIT 

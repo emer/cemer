@@ -27,11 +27,11 @@ class TA_API DataOpEl : public taOBase {
   INHERITED(taOBase)
 public:
   DataTableRef		data_table;
-  // #READ_ONLY #NO_SAVE data table -- gets set dynamically
+  // #READ_ONLY #HIDDEN #NO_SAVE data table -- gets set dynamically
   DataTableCols*	data_cols;
-  // #READ_ONLY #NO_SAVE data table columns -- gets set dynamically
+  // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically -- just to lookup column
   DataArray_impl*	column;
-  // #NO_SAVE #FROM_GROUP_data_cols column in data table to sort on -- just to lookup the name, which is what is actually used
+  // #NO_SAVE #FROM_GROUP_data_cols column in data table to sort on -- just to lookup the name (sets col_name field), which is what is actually used -- this is automatically set to NULL after selection is applied
   String		col_name;	// name of column in data table to sort on (either enter directly or lookup from column)
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
@@ -109,6 +109,37 @@ private:
 };
 
 /////////////////////////////////////////////////////////
+//   Grouping Spec
+/////////////////////////////////////////////////////////
+
+class TA_API DataGroupEl : public DataOpEl {
+  // one element of a data grouping specification
+  INHERITED(DataOpEl)
+public:
+  Aggregate	agg;		// how to aggregate this information
+
+  override String GetDisplayName() const;
+  void  Initialize();
+  void 	Destroy()		{ };
+  TA_SIMPLE_BASEFUNS(DataGroupEl);
+protected:
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+};
+
+class TA_API DataGroupSpec : public DataOpList {
+  // #CAT_Data a datatable grouping specification (list of group elements)
+INHERITED(DataOpList)
+public:
+
+  // todo: add a function to add remaining columns..
+
+  TA_SIMPLE_BASEFUNS(DataGroupSpec);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+/////////////////////////////////////////////////////////
 //   Selecting Spec
 /////////////////////////////////////////////////////////
 
@@ -161,37 +192,6 @@ private:
 };
 
 /////////////////////////////////////////////////////////
-//   Grouping Spec
-/////////////////////////////////////////////////////////
-
-class TA_API DataGroupEl : public DataOpEl {
-  // one element of a data grouping specification
-  INHERITED(DataOpEl)
-public:
-  Aggregate	agg;		// how to aggregate this information
-
-  override String GetDisplayName() const;
-  void  Initialize();
-  void 	Destroy()		{ };
-  TA_SIMPLE_BASEFUNS(DataGroupEl);
-protected:
-  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
-};
-
-class TA_API DataGroupSpec : public DataOpList {
-  // #CAT_Data a datatable grouping specification (list of group elements)
-INHERITED(DataOpList)
-public:
-
-  // todo: add a function to add remaining columns..
-
-  TA_SIMPLE_BASEFUNS(DataGroupSpec);
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-};
-
-/////////////////////////////////////////////////////////
 //   Join Spec
 /////////////////////////////////////////////////////////
 
@@ -229,24 +229,25 @@ class TA_API taDataProc : public taOBase {
 public:
   
   static bool	GetDest(DataTable*& dest, DataTable* src, const String& suffix);
-  // if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix
+  // #IGNORE helper function: if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix
+
+  ///////////////////////////////////////////////////////////////////
+  // reordering functions
 
   static bool	Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
-  // #NULL_OK sort data from src into dest according to sorting specifications in spec; dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Order sort data from src into dest according to sorting specifications in spec; dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   static int 	Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
 			     DataSortSpec* spec);
-  // helper function for sorting: compare values -1 = a is < b; 1 = a > b; 0 = a == b
+  // #IGNORE helper function for sorting: compare values -1 = a is < b; 1 = a > b; 0 = a == b
   static bool 	Sort_impl(DataTable* dt, DataSortSpec* spec);
   // #IGNORE actually perform sort on data table using specs
 
-  static bool	SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec);
-  // select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData)
-  static bool	SelectCols(DataTable* dest, DataTable* src, DataOpList* spec);
-  // select columns of data from src into dest according to list of columnns in spec (all rows are copied)
+  static bool	Permute(DataTable* dest, DataTable* src);
+  // #NULL_OK #CAT_Order permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items
 
   static bool	Group(DataTable* dest, DataTable* src, DataGroupSpec* spec);
-  // #NULL_OK group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Order group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   static bool	Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // #IGNORE helper function to do grouping when there are no GROUP items
@@ -254,8 +255,46 @@ public:
 			 DataSortSpec* sort_spec);
   // #IGNORE helper function to do grouping when there are GROUP items, as spec'd in sort_spec
 
+  ///////////////////////////////////////////////////////////////////
+  // row-wise functions: selecting/splitting
+
+  static bool	SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec);
+  // #NULL_OK select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData)
+
+  static bool	SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
+			  DataSelectSpec* spec);
+  // #NULL_OK splits the source datatable rows into two sets, those that match the selection specifications go into dest_a, else dest_b (if dest are NULL, new ones are created in proj.data.AnalysisData)
+
+  static bool	SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
+			 DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
+			 DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
+  // #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder) (new dest datatables are created if NULL)
+  static bool	SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
+				   DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
+				   DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
+  // #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets
+
+  ///////////////////////////////////////////////////////////////////
+  // column-wise functions: selecting, joining
+
+  static bool	SelectCols(DataTable* dest, DataTable* src, DataOpList* spec);
+  // #NULL_OK select columns of data from src into dest according to list of columnns in spec (all rows are copied)
+
   static bool	Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec);
-  // joins two datatables (src_a and src_b) into dest datatable indexed by a common column
+  // #NULL_OK joins two datatables (src_a and src_b) into dest datatable.  each row of src_a is included, and the value of col_a for a given row is used to search col_b of src_b for the row to include from it.  all columns are included (without repeating the common column)
+
+  static bool	JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b);
+  // #NULL_OK joins two datatables into one datatable on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)). all columns from both tables are included.
+
+
+  ///////////////////////////////////////////////////////////////////
+  // misc data functions
+
+  static bool	GetDirFiles(DataTable* dest, const String& dir_path, 
+			    const String& filter = "", bool recursive = false,
+			    const String& fname_col_nm = "FileName",
+			    const String& path_col_nm = "FilePath");
+  // read file names from given directory into rows of the data table (must be passed non-null), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist)
 
   void Initialize() { };
   void Destroy() { };
@@ -309,6 +348,24 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
+class TA_API DataGroupProg : public DataProg { 
+  // groups src_data into dest_data according to group_spec
+INHERITED(DataProg)
+public:
+  DataGroupSpec		group_spec; // data grouping specification
+
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataGroupProg);
+protected:
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
 class TA_API DataSelectRowsProg : public DataProg { 
   // selects rows from src_data into dest_data according to select_spec
 INHERITED(DataProg)
@@ -336,24 +393,6 @@ public:
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSelectColsProg);
-protected:
-  override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
-
-private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class TA_API DataGroupProg : public DataProg { 
-  // groups src_data into dest_data according to group_spec
-INHERITED(DataProg)
-public:
-  DataGroupSpec		group_spec; // data grouping specification
-
-  override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
-  TA_SIMPLE_BASEFUNS(DataGroupProg);
 protected:
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 

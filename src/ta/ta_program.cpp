@@ -532,20 +532,6 @@ void ProgEl_List::PreGen(int& item_id) {
 void ProgList::Initialize() {
 }
 
-void ProgList::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(prog_code, this);
-}
-
-void ProgList::CutLinks() {
-  prog_code.CutLinks();
-  inherited::CutLinks();
-}
-
-void ProgList::Copy_(const ProgList& cp) {
-  prog_code = cp.prog_code; //TODO: need to make sure this is a value copy
-}
-
 void ProgList::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   prog_code.CheckConfig(quiet, rval);
@@ -574,29 +560,19 @@ void ProgVars::Destroy() {
   CutLinks();
 }
 
-void ProgVars::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(script_vars, this);
-}
-
-void ProgVars::CutLinks() {
-  script_vars.CutLinks();
-  inherited::CutLinks();
-}
-
 void ProgVars::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  script_vars.CheckConfig(quiet, rval);
+  local_vars.CheckConfig(quiet, rval);
 }
 
 const String ProgVars::GenCssBody_impl(int indent_level) {
-  return script_vars.GenCss(indent_level);
+  return local_vars.GenCss(indent_level);
 }
 
 String ProgVars::GetDisplayName() const {
   STRING_BUF(rval, 30);
   rval += "ProgVars (";
-  rval += String(script_vars.size);
+  rval += String(local_vars.size);
   rval += " vars)";
   return rval;
 }
@@ -608,10 +584,6 @@ String ProgVars::GetDisplayName() const {
 void UserScript::Initialize() {
   static String _def_user_script("// TODO: Add your CSS script code here.\n");
   user_script = _def_user_script;
-}
-
-void UserScript::Copy_(const UserScript& cp) {
-  user_script = cp.user_script;
 }
 
 const String UserScript::GenCssBody_impl(int indent_level) {
@@ -821,24 +793,6 @@ void IfElse::Initialize() {
   //  condition = "true";
 }
 
-void IfElse::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(true_code, this);
-  taBase::Own(false_code, this);
-}
-
-void IfElse::CutLinks() {
-  false_code.CutLinks();
-  true_code.CutLinks();
-  inherited::CutLinks();
-}
-
-void IfElse::Copy_(const IfElse& cp) {
-  condition = cp.condition;
-  true_code = cp.true_code;
-  false_code = cp.false_code;
-}
-
 void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if (condition.empty()) {
@@ -891,29 +845,6 @@ void MethodCall::Initialize() {
   object_type = &TA_taBase; // placeholder
   lst_script_obj = NULL;
   lst_method = NULL;
-}
-
-void MethodCall::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(script_obj, this);
-  taBase::Own(args, this);
-}
-
-void MethodCall::CutLinks() {
-  args.CutLinks();
-  script_obj.CutLinks();
-  method = NULL;
-  lst_script_obj = NULL;
-  lst_method = NULL;
-  inherited::CutLinks();
-}
-
-void MethodCall::Copy_(const MethodCall& cp) {
-  script_obj = cp.script_obj;
-  method = cp.method;
-  args = cp.args;
-  lst_script_obj = cp.lst_script_obj;
-  lst_method = cp.lst_method;
 }
 
 void MethodCall::UpdateAfterEdit_impl() {
@@ -1013,26 +944,6 @@ void StaticMethodCall::Initialize() {
   lst_method = NULL;
 }
 
-void StaticMethodCall::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(args, this);
-}
-
-void StaticMethodCall::CutLinks() {
-  args.CutLinks();
-  method = NULL;
-  lst_method = NULL;
-  inherited::CutLinks();
-}
-
-void StaticMethodCall::Copy_(const StaticMethodCall& cp) {
-  min_type = cp.min_type;
-  object_type = cp.object_type;
-  method = cp.method;
-  args = cp.args;
-  lst_method = cp.lst_method;
-}
-
 void StaticMethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(!taMisc::is_loading)
@@ -1123,25 +1034,6 @@ void MathCall::Initialize() {
 void ProgramCall::Initialize() {
   old_target = NULL;
   call_init = false;
-}
-
-void ProgramCall::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(prog_args, this);
-  taBase::Own(target, this);
-}
-
-void ProgramCall::CutLinks() {
-  target.CutLinks();
-  prog_args.CutLinks();
-  old_target = NULL;
-  inherited::CutLinks();
-}
-
-void ProgramCall::Copy_(const ProgramCall& cp) {
-  target = cp.target;
-  call_init = cp.call_init;
-  prog_args = cp.prog_args;
 }
 
 void ProgramCall::UpdateAfterEdit_impl() {

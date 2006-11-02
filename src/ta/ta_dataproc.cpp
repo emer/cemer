@@ -17,6 +17,8 @@
 #include "css_machine.h"
 #include "ta_project.h"		// for debugging
 
+#include <QDir>
+
 /////////////////////////////////////////////////////////
 //   DataOpEl Base class
 /////////////////////////////////////////////////////////
@@ -133,6 +135,30 @@ void DataSortEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 ///////////////////////////
 
+void DataGroupEl::Initialize() {
+}
+
+String DataGroupEl::GetDisplayName() const {
+  return col_name + " " + agg.GetAggName();
+}
+
+void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(column) {
+    if((agg.op == Aggregate::GROUP) && (column->is_matrix)) {
+      if(!quiet) taMisc::CheckError("Error in DataGroupEl:",GetPath(),
+				  "cannot use matrix column to GROUP");
+      rval = false;
+    }
+  }
+}
+
+void DataGroupSpec::Initialize() {
+  SetBaseType(&TA_DataGroupEl);
+}
+
+///////////////////////////
+
 void DataSelectEl::Initialize() {
   rel = EQUAL;
 }
@@ -179,30 +205,6 @@ void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 String DataSelectSpec::GetDisplayName() const {
   return inherited::GetDisplayName() + " " +
     GetTypeDef()->GetEnumString("CombOp", comb_op);
-}
-
-///////////////////////////
-
-void DataGroupEl::Initialize() {
-}
-
-String DataGroupEl::GetDisplayName() const {
-  return col_name + " " + agg.GetAggName();
-}
-
-void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  if(column) {
-    if((agg.op == Aggregate::GROUP) && (column->is_matrix)) {
-      if(!quiet) taMisc::CheckError("Error in DataGroupEl:",GetPath(),
-				  "cannot use matrix column to GROUP");
-      rval = false;
-    }
-  }
-}
-
-void DataGroupSpec::Initialize() {
-  SetBaseType(&TA_DataGroupEl);
 }
 
 ///////////////////////////
@@ -279,6 +281,9 @@ int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int ro
 bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   if(dt->rows <= 1) return false;
 
+  // todo: seems like you can just sort an index and then read that off.
+  // but the tmp copy stuff isn't going to work.  
+
   dt->StructUpdate(true);
   DataTable tmp_data;		// temporary buffer to hold vals during swap
   taBase::Own(tmp_data, NULL);	// activates initlinks..
@@ -323,75 +328,20 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
   return true;
 }
 
-bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
-  GetDest(dest, src, "SelectRows");
+bool taDataProc::Permute(DataTable* dest, DataTable* src) {
+  GetDest(dest, src, "Permute");
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
-  spec->GetColumns(src);		// cache column pointers & indicies from names
+  // this just uses the index technique..
+  int_Array idxs;
+  idxs.EnforceSize(src->rows);
+  idxs.FillSeq();
+  idxs.Permute();
   for(int row=0;row<src->rows; row++) {
-    bool incl = false;
-    bool not_incl = false;
-    for(int i=0; i<spec->size; i++) {
-      DataSelectEl* ds = (DataSelectEl*)spec->FastEl(i);
-      if(ds->col_idx < 0) continue;
-      DataArray_impl* da = src->data.FastEl(ds->col_idx);
-      Variant val = da->GetValAsVar(row);
-      bool ev = ds->Eval(val);
-//       cerr << "cmp: " << ds->col_name << " idx: " << ds->col_idx
-//       << " val: " << val << " ev: " << ev << endl;
-      if(spec->comb_op == DataSelectSpec::AND) {
-	if(!ev) { not_incl = true;  break; }
-      }
-      else if(spec->comb_op == DataSelectSpec::OR) {
-	if(ev) { incl = true; break; }
-      }
-      else if(spec->comb_op == DataSelectSpec::NOT_AND) {
-	if(ev) { not_incl = true; break; }
-      }
-      else if(spec->comb_op == DataSelectSpec::NOT_OR) {
-	if(!ev) { incl = true; break; }
-      }
-    }
-//     cerr << "not_incl: " << not_incl << " incl: " << incl << endl;
-    if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
-       && not_incl) continue;
-    if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
-       && !incl) continue;
-    // continuing now..
-//     cerr << "added!" << endl;
     dest->AddBlankRow();
-    dest->CopyFromRow(-1, *src, row);
+    dest->CopyFromRow(-1, *src, idxs[row]);
   }
   dest->StructUpdate(false);
-  spec->ClearColumns();
-  return true;
-}
-
-bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
-  GetDest(dest, src, "SelectCols");
-  dest->StructUpdate(true);
-  spec->GetColumns(src);		// cache column pointers & indicies from names
-  dest->Reset();
-  for(int i=0;i<spec->size; i++) {
-    DataOpEl* ds = spec->FastEl(i);
-    if(ds->col_idx < 0) continue;
-    DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
-    dest->data.Add(nda);
-    nda->Copy_NoData(*sda);
-  }    
-  for(int row=0;row<src->rows;row++) {
-    dest->AddBlankRow();
-    for(int i=0;i<spec->size; i++) {
-      DataOpEl* ds = spec->FastEl(i);
-      if(ds->col_idx < 0) continue;
-      DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-      DataArray_impl* nda = dest->data.FastEl(i);
-      nda->CopyFromRow(row, *sda, row);
-    }
-  }
-  dest->StructUpdate(false);
-  spec->ClearColumns();
   return true;
 }
 
@@ -516,6 +466,218 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   return true;
 }
 
+///////////////////////////////////////////////////////////////////
+// row-wise functions: selecting/splitting
+
+bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
+  GetDest(dest, src, "SelectRows");
+  dest->StructUpdate(true);
+  dest->Copy_NoData(*src);		// give it same structure
+  spec->GetColumns(src);		// cache column pointers & indicies from names
+  for(int row=0;row<src->rows; row++) {
+    bool incl = false;
+    bool not_incl = false;
+    for(int i=0; i<spec->size; i++) {
+      DataSelectEl* ds = (DataSelectEl*)spec->FastEl(i);
+      if(ds->col_idx < 0) continue;
+      DataArray_impl* da = src->data.FastEl(ds->col_idx);
+      Variant val = da->GetValAsVar(row);
+      bool ev = ds->Eval(val);
+//       cerr << "cmp: " << ds->col_name << " idx: " << ds->col_idx
+//       << " val: " << val << " ev: " << ev << endl;
+      if(spec->comb_op == DataSelectSpec::AND) {
+	if(!ev) { not_incl = true;  break; }
+      }
+      else if(spec->comb_op == DataSelectSpec::OR) {
+	if(ev) { incl = true; break; }
+      }
+      else if(spec->comb_op == DataSelectSpec::NOT_AND) {
+	if(ev) { not_incl = true; break; }
+      }
+      else if(spec->comb_op == DataSelectSpec::NOT_OR) {
+	if(!ev) { incl = true; break; }
+      }
+    }
+//     cerr << "not_incl: " << not_incl << " incl: " << incl << endl;
+    if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
+       && not_incl) continue;
+    if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
+       && !incl) continue;
+    // continuing now..
+//     cerr << "added!" << endl;
+    dest->AddBlankRow();
+    dest->CopyFromRow(-1, *src, row);
+  }
+  dest->StructUpdate(false);
+  spec->ClearColumns();
+  return true;
+}
+
+bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
+			   DataSelectSpec* spec) {
+  GetDest(dest_a, src, "SplitRows_a");
+  GetDest(dest_b, src, "SplitRows_b");
+  dest_a->StructUpdate(true);
+  dest_a->Copy_NoData(*src);		// give it same structure
+  dest_b->StructUpdate(true);
+  dest_b->Copy_NoData(*src);		// give it same structure
+  spec->GetColumns(src);		// cache column pointers & indicies from names
+  for(int row=0;row<src->rows; row++) {
+    bool incl = false;
+    bool not_incl = false;
+    for(int i=0; i<spec->size; i++) {
+      DataSelectEl* ds = (DataSelectEl*)spec->FastEl(i);
+      if(ds->col_idx < 0) continue;
+      DataArray_impl* da = src->data.FastEl(ds->col_idx);
+      Variant val = da->GetValAsVar(row);
+      bool ev = ds->Eval(val);
+      if(spec->comb_op == DataSelectSpec::AND) {
+	if(!ev) { not_incl = true;  break; }
+      }
+      else if(spec->comb_op == DataSelectSpec::OR) {
+	if(ev) { incl = true; break; }
+      }
+      else if(spec->comb_op == DataSelectSpec::NOT_AND) {
+	if(ev) { not_incl = true; break; }
+      }
+      else if(spec->comb_op == DataSelectSpec::NOT_OR) {
+	if(!ev) { incl = true; break; }
+      }
+    }
+    bool sel_a = true;
+    if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
+       && not_incl) sel_a = false;
+    if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
+       && !incl) sel_a = false;
+    if(sel_a) {
+      dest_a->AddBlankRow();
+      dest_a->CopyFromRow(-1, *src, row);
+    }
+    else {
+      dest_b->AddBlankRow();
+      dest_b->CopyFromRow(-1, *src, row);
+    }
+  }
+  dest_a->StructUpdate(false);
+  dest_b->StructUpdate(false);
+  spec->ClearColumns();
+  return true;
+}
+
+bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
+			    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
+			    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
+  int nary[6] = {n1, n2, n3, n4, n5, n6};
+  DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
+  for(int i=0;i<6;i++) {
+    if(nary[i] != 0) {
+      GetDest(dary[i], src, "SplitByN_" + String(i));
+      dary[i]->StructUpdate(true);
+      dary[i]->Copy_NoData(*src);
+    }
+  }
+  int st_n = 0;
+  int end_n = n1;
+  int ni = 0;
+  for(int row=0;row<src->rows; row++) {
+    if(row < end_n) {
+      dary[ni]->AddBlankRow();
+      dary[ni]->CopyFromRow(-1, *src, row);
+    }
+    else {
+      ni++;
+      if((nary[ni] == 0) || !dary[ni]) break;
+      if(nary[ni] < 0) nary[ni] = src->rows - row;
+      st_n = row;
+      end_n = st_n + nary[ni];
+
+      dary[ni]->AddBlankRow();
+      dary[ni]->CopyFromRow(-1, *src, row);
+    }
+  }
+  for(int i=0;i<6;i++) {
+    if(nary[i] != 0) {
+      dary[i]->StructUpdate(false);
+    }
+  }
+  return true;
+}
+
+bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
+				    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
+				    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
+
+  int nary[6] = {n1, n2, n3, n4, n5, n6};
+  DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
+  for(int i=0;i<6;i++) {
+    if(nary[i] != 0) {
+      GetDest(dary[i], src, "SplitByN_" + String(i));
+      dary[i]->StructUpdate(true);
+      dary[i]->Copy_NoData(*src);
+    }
+  }
+  int_Array idxs;
+  idxs.EnforceSize(src->rows);
+  idxs.FillSeq();
+  idxs.Permute();
+  int st_n = 0;
+  int end_n = n1;
+  int ni = 0;
+  for(int row=0;row<src->rows; row++) {
+    if(row < end_n) {
+      dary[ni]->AddBlankRow();
+      dary[ni]->CopyFromRow(-1, *src, idxs[row]);
+    }
+    else {
+      ni++;
+      if((nary[ni] == 0) || !dary[ni]) break;
+      if(nary[ni] < 0) nary[ni] = src->rows - row;
+      st_n = row;
+      end_n = st_n + nary[ni];
+
+      dary[ni]->AddBlankRow();
+      dary[ni]->CopyFromRow(-1, *src, idxs[row]);
+    }
+  }
+  for(int i=0;i<6;i++) {
+    if(nary[i] != 0) {
+      dary[i]->StructUpdate(false);
+    }
+  }
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////
+// column-wise functions: selecting, joining
+
+bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
+  GetDest(dest, src, "SelectCols");
+  dest->StructUpdate(true);
+  spec->GetColumns(src);		// cache column pointers & indicies from names
+  dest->Reset();
+  for(int i=0;i<spec->size; i++) {
+    DataOpEl* ds = spec->FastEl(i);
+    if(ds->col_idx < 0) continue;
+    DataArray_impl* sda = src->data.FastEl(ds->col_idx);
+    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    dest->data.Add(nda);
+    nda->Copy_NoData(*sda);
+  }    
+  for(int row=0;row<src->rows;row++) {
+    dest->AddBlankRow();
+    for(int i=0;i<spec->size; i++) {
+      DataOpEl* ds = spec->FastEl(i);
+      if(ds->col_idx < 0) continue;
+      DataArray_impl* sda = src->data.FastEl(ds->col_idx);
+      DataArray_impl* nda = dest->data.FastEl(i);
+      nda->CopyFromRow(row, *sda, row);
+    }
+  }
+  dest->StructUpdate(false);
+  spec->ClearColumns();
+  return true;
+}
+
 bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec) {
   if((spec->col_a.col_idx < 0) || (spec->col_b.col_idx < 0)) return false;
   GetDest(dest, src_a, "Join");
@@ -574,6 +736,86 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
   dest->StructUpdate(false);
   spec->ClearColumns();
   return true;
+}
+
+bool taDataProc::JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b) {
+  GetDest(dest, src_a, "Join");
+  dest->StructUpdate(true);
+  dest->Reset();
+  for(int i=0; i < src_a->data.size; i++) {
+    DataArray_impl* sda = src_a->data.FastEl(i);
+    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    dest->data.Add(nda);	// todo: AddUniqueName?? + no reset + orphan?
+    nda->Copy_NoData(*sda);
+  }
+  int a_cols = src_a->data.size; // -1 if skipping index value
+  for(int i=0; i < src_b->data.size; i++) {
+    DataArray_impl* sdb = src_b->data.FastEl(i);
+    DataArray_impl* nda = (DataArray_impl*)sdb->MakeToken();
+    dest->data.Add(nda);
+    nda->Copy_NoData(*sdb);
+  }    
+  for(int row=0;row<src_a->rows;row++) {
+    dest->AddBlankRow();
+    for(int i=0;i<src_a->data.size; i++) {
+      DataArray_impl* sda = src_a->data.FastEl(i);
+      DataArray_impl* nda = dest->data.FastEl(i); // todo: change above if uncommented
+      nda->CopyFromRow(row, *sda, row); // just copy
+    }
+    int col_idx = a_cols;
+    for(int i=0; i < src_b->data.size; i++) {
+      DataArray_impl* sdb = src_b->data.FastEl(i);
+      DataArray_impl* nda = dest->data.FastEl(col_idx);
+      nda->CopyFromRow(row, *sdb, row); // just copy
+      col_idx++;
+    }    
+  }
+  dest->StructUpdate(false);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////
+// misc data functions
+
+bool taDataProc::GetDirFiles(DataTable* dest, const String& dir_path, 
+			     const String& filter, bool recursive,
+			     const String& fname_col_nm,
+			     const String& path_col_nm) {
+  if(!dest) return false;
+  dest->StructUpdate(true);
+
+  if(recursive) {
+    taMisc::Warning("Warning: GetDirFiles does not yet support the recursive flag!");
+  }
+
+  int fname_idx = -1;
+  if(!fname_col_nm.empty())
+    dest->FindMakeColName(fname_col_nm, fname_idx, DataTable::VT_STRING, 0);
+
+  int path_idx = -1;
+  if(!path_col_nm.empty())
+    dest->FindMakeColName(path_col_nm, path_idx, DataTable::VT_STRING, 0);
+
+  bool found_some = false;
+  QDir dir(dir_path);
+  QStringList files = dir.entryList();
+  if(files.size() == 0) return false;
+  for(int i=0;i<files.size();i++) {
+    String fl = files[i];
+    if(filter.empty() || fl.contains(filter)) {
+      dest->AddBlankRow();
+      found_some = true;
+      if(fname_idx >= 0) {
+	dest->SetValAsString(fl, fname_idx, -1);
+      }
+      if(path_idx >= 0) {
+	dest->SetValAsString(fl, path_idx, -1);
+      }
+    }
+    // todo: deal with recursive flag
+  }
+  
+  return found_some;
 }
 
 /////////////////////////////////////////////////////////

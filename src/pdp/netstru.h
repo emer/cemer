@@ -293,9 +293,9 @@ public:
   virtual void	Copy_Weights(const Con_Group* src);
   // copies weights from other con_group
   virtual void	WriteWeights(ostream& strm, Unit* ru, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_strm_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual void	ReadWeights(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary format)
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary format)
 
   // overload some functions to manage both connections and units
   // leave most ops separate for flexibility
@@ -487,9 +487,9 @@ public: //
   virtual void	Copy_Weights(const Unit* src, Projection* prjn = NULL);
   // copies weights from other unit (incl wts assoc with unit bias member)
   virtual void	WriteWeights(ostream& strm, Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_strm_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual void	ReadWeights(istream& strm, Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
 
   // #MENU #MENU_ON_Actions initialize unit external input variables
   void		SetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag | flg); }
@@ -517,7 +517,7 @@ public: //
 
   float	Compute_SSE()		{ return spec->Compute_SSE(this); }
   
-  virtual void 	ApplyExternal(float val, ExtType act_ext_flags, Random* ran = NULL);
+  virtual void 	ApplyInputData(float val, ExtType act_ext_flags, Random* ran = NULL);
   // apply external input or target value to unit
   virtual bool	Build();
   // build unit: make sure bias connection is created and right type
@@ -670,9 +670,9 @@ public:
   virtual void	Copy_Weights(const Projection* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other projection
   virtual void	WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual void	ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
 
   // convenience functions for those defined in the spec
   void 	RemoveCons()		{ spec->RemoveCons(this); }
@@ -839,9 +839,9 @@ public:
   virtual void	Copy_Weights(const Unit_Group* src);
   // #MENU #MENU_ON_Object copies weights from other unit group (incl wts assoc with unit bias member)
   virtual void	WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual void	ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
 
   virtual bool	Build();
   // #MENU #MENU_ON_Actions for subgroups: build units to specs (true if changed)
@@ -969,9 +969,9 @@ public:
   virtual void	Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other layer (incl wts assoc with unit bias member)
   virtual void	WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual void	ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
 
   virtual void  Build();
   // #MENU #MENU_ON_Actions #CONFIRM build the units based on n_units, geom
@@ -1069,7 +1069,7 @@ public:
   void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
 
-  virtual void	ApplyExternal(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
+  virtual void	ApplyInputData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
     Random* ran = NULL, const PosTwoDCoord* offset = NULL);
   // apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
 
@@ -1106,35 +1106,18 @@ public:
 #endif
 
 protected:
-  class TxferDataStruct { // #
-  public:
-    taMatrix*		data;
-    Unit::ExtType	ext_flags;
-    Random* 		ran;
-    int			offs_x;
-    int			offs_y;
-    TxferDataStruct(
-      taMatrix*		data_,
-      Unit::ExtType	ext_flags_,
-      Random* 		ran_,
-      const PosTwoDCoord* offs
-    ) 
-#ifndef __MAKETA__
-    :data(data_), ext_flags(ext_flags_), ran(ran_)
-#endif
-    {if (offs) {offs_x=offs->x; offs_y=offs->y;} else {offs_x=0; offs_y=0;}} // maketa can't parse :syntax
-  };
-  
   virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
-  virtual void		ApplyExternal_Flat2d(const TxferDataStruct& ads);
-  // #IGNORE flat layer, 2d data
-  virtual void		ApplyExternal_Flat4d(const TxferDataStruct& ads);
+  virtual void		ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+					       Random* ran, const TwoDCoord& offs);
+  // #IGNORE 2d data is always treated the same: FindUnitFmCoord deals with unit grouping
+  virtual void		ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+					       Random* ran, const TwoDCoord& offs);
   // #IGNORE flat layer, 4d data
-  virtual void		ApplyExternal_Gp2d(const TxferDataStruct& ads);
-  // #IGNORE grouped layer, 2d data
-  virtual void		ApplyExternal_Gp4d(const TxferDataStruct& ads);
-  // #IGNORE grouped layer, 4d data
+  virtual void		ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
+					     Random* ran);
+  // #IGNORE grouped layer, 4d data -- note this cannot have offsets..
+
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
     // #IGNORE this is the guy that *additionally* delegates to the Spec
   override void		CheckChildConfig_impl(bool quiet, bool& rval);// #IGNORE 
@@ -1143,9 +1126,9 @@ protected:
 PosGroup_of(Layer);
 SmartRef_Of(Layer); // LayerRef
 
-class PDP_API Network : public taNBase {
+class PDP_API Network : public taFBase {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network A network, containing layers, units, etc..
-INHERITED(taNBase)
+INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
@@ -1248,9 +1231,9 @@ public:
   virtual void	Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other network (incl wts assoc with unit bias member)
   virtual void	WriteWeights(ostream& strm, WtSaveFormat fmt = TEXT);
-  // #MENU #EXT_strm_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual void	ReadWeights(istream& strm);
-  // #MENU #EXT_strm_wts #COMPRESS read weight values in from a simple ordered list of weights (fmt is read from file)
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (fmt is read from file)
 
   virtual void  Build();
   // #MENU #MENU_ON_Actions Build the network according to geometry
@@ -1404,7 +1387,7 @@ public:
   void 	InitLinks();
   void	CutLinks();
   void 	Copy_(const Network& cp);
-  COPY_FUNS(Network, taNBase);
+  COPY_FUNS(Network, inherited);
   TA_BASEFUNS(Network);
   
 protected:
