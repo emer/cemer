@@ -165,6 +165,9 @@ public:
 
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
 
+  taBase* GetOwner() const {return owner;}
+  USING(inherited::GetOwner)
+  TAPtr SetOwner(TAPtr ta) { owner = ta; return ta; }
   void	UpdateAfterEdit();	// check, update the spec type
   void	Initialize();
   void 	Destroy()		{ };
