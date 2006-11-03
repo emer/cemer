@@ -116,7 +116,7 @@ bool taTypeInfoDataLink::HasChildItems() {
   case taMisc::TIK_METHOD: break;
   case taMisc::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
-    if (td->internal) {
+    if (td->internal && !td->InheritsFormal(TA_template)) {
       break;
     }
     rval = true;
@@ -408,7 +408,7 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     break;
   case taMisc::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
-    if (td->internal) {
+    if (td->internal && !td->InheritsFormal(TA_template)) {
       break;
     }
     taiDataLink* dl = NULL;
@@ -615,7 +615,6 @@ bool taTypeSpaceTreeDataNode::ShowType(TypeDef* td) const {
   // first, check with dm of link
   taTypeSpaceDataLink* tsdl = static_cast<taTypeSpaceDataLink*>(link());
   if (!tsdl->ShowChild(td)) return false;
-  
   if (!ShowItem(td)) return false;
   // basic behavior is that we don't show derivitive types, ex. consts, refs, ptrs, etc.
   if ((td->ptr > 0) 

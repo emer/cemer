@@ -816,6 +816,7 @@ public:
 protected:
   override void 	DoActionChildren_impl(DataViewAction act);
   override void		Clear_impl(); // unbinds table
+  override void		DataStructUpdateEnd_impl();
   virtual void		UpdateFromDataTable(bool first_time = false); // called if data set to table, or needs to be updated; calls _this then _child
   virtual void		UpdateFromDataTable_this(bool first); // does me (before kids)
   virtual void		UpdateFromDataTable_child(bool first);//does kids, usually not overridden

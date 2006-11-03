@@ -1250,6 +1250,10 @@ void DataTableViewSpec::DataDestroying() {
   inherited::DataDestroying();
 }
 
+void DataTableViewSpec::DataStructUpdateEnd_impl() {
+  UpdateFromDataTable();
+}
+ 
 void DataTableViewSpec::DataTableUnlinked() {
   Clear(); // note: will set dt to NULL again, but that will be ignored
 }

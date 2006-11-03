@@ -1338,7 +1338,7 @@ protected:
    // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
   virtual void		DataUpdateView_impl() {Render_impl();} // called for Update All Views, and at end of a DataUpdate batch
-  virtual void		DataStructUpdateEnd_impl() {Reset(); Render();} // called ONLY at end of a struct update
+  virtual void		DataStructUpdateEnd_impl() {} // called ONLY at end of a struct update -- derived classes usually do some kind of rebuild or render
   virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 
    // typically from an owned list
   virtual void		DoActionChildren_impl(DataViewAction acts) {} // only one action called at a time, if CONSTR do children in order, if DESTR do in reverse order; call child.DoActions(act)

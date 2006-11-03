@@ -3075,8 +3075,15 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   if(parents.LinkUnique(it))
     par_off.Add(p_off);		// it was unique, add offset
   // only add to children if not internal (except when parent is)
-  if(InheritsFormal(TA_template) || (!internal || it->internal))
+  bool templ = InheritsFormal(TA_template); // cache
+  if (templ || (!internal || it->internal))
     it->children.Link(this);
+  // since templs don't call AddParClass, we have to determine
+#ifndef NO_TA_BASE
+  // if it is a subclass here...
+  if (templ && it->InheritsFormal(TA_class))
+    is_subclass = true;
+#endif
 
   opts.Duplicate(it->inh_opts);
   inh_opts.Duplicate(it->inh_opts);	// and so on
@@ -3085,7 +3092,7 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
     opts.AddUnique(opt_instance);	// ta_bases always have an instance
 
   // no need to get all this junk for internals
-  if(internal && !InheritsFormal(&TA_template)) return it;
+  if(internal && !templ) return it;
 
   // use the old one because the parent does not have precidence over existing
   enum_vals.BorrowUniqNameOld(it->enum_vals);
