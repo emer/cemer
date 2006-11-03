@@ -236,11 +236,11 @@ public:
   
 
   void		SetMonVals(taBase* obj, const String& var); 
-  // set object and variable, and update appropriately
+  // #CAT_Monitor set object and variable, and update appropriately
   virtual void 	GetMonVals(DataBlock* db);
-  // get the monitor data and stick it in the current row of the datablock/datatable
+  // #CAT_Monitor get the monitor data and stick it in the current row of the datablock/datatable
   void		ResetMonVals();
-  // deletes the cached vars
+  // #CAT_Monitor deletes the cached vars
 
   void		ScanObject();	// #IGNORE update the schema
 
@@ -320,37 +320,37 @@ public:
   // #DEF_true remove orphan columns when updating table schema
 
   void		SetNetwork(Network* net);
-  // #MENU #MENU_ON_Action #MENU_CONTEXT #BUTTON set the overall network -- will update any sub-objects to corresponding ones on this network
+  // #MENU #MENU_ON_Action #MENU_CONTEXT #BUTTON #CAT_Monitor set the overall network -- will update any sub-objects to corresponding ones on this network
   void		SetDataTable(DataTable* dt);
-  // #MENU #MENU_CONTEXT #BUTTON set the data table used
+  // #MENU #MENU_CONTEXT #BUTTON #CAT_Monitor set the data table used
   void		SetDataNetwork(DataTable* dt, Network* net);
-  // #MENU #MENU_CONTEXT #BUTTON set both the data table and network -- convenient for programs
+  // #MENU #MENU_CONTEXT #BUTTON #CAT_Monitor set both the data table and network -- convenient for programs
 
   void		AddNetwork(Network* net, const String& variable)
   { AddObject(net, variable);}
-  // #MENU #MENU_ON_Action #MENU_SEP_BEFORE monitor a value in the Network or its subobjects
+  // #MENU #MENU_ON_Action #MENU_SEP_BEFORE #CAT_Monitor monitor a value in the Network or its subobjects
   void		AddLayer(Layer* lay, const String& variable)
   { AddObject(lay, variable);}
-  // #MENU monitor a value in the Layer or its subobjects
+  // #MENU #CAT_Monitor monitor a value in the Layer or its subobjects
   void		AddProjection(Projection* prj, const String& variable)
   { AddObject(prj, variable);}
-  // #MENU monitor a value in the Projection or its subobjects
+  // #MENU #CAT_Monitor monitor a value in the Projection or its subobjects
   void		AddUnitGroup(Unit_Group* ug, const String& variable)
   { AddObject(ug, variable);}
-  // monitor a value in the UnitGroup or its subobjects
+  // #CAT_Monitor monitor a value in the UnitGroup or its subobjects
   void		AddUnit(Unit* un, const String& variable)
   { AddObject(un, variable);}
-  // monitor a value in the Unit or its subobjects
+  // #CAT_Monitor monitor a value in the Unit or its subobjects
   
   void		AddObject(TAPtr obj, const String& variable);
-  // monitor a value in the object or its subobjects
+  // #CAT_Monitor monitor a value in the object or its subobjects
   void 		UpdateMonitors(bool reset_first = false);
-  // #MENU #MENU_SEP_BEFORE create or update the channels -- call this during Init.\n if reset_first, then existing data columns are removed first
+  // #MENU #MENU_SEP_BEFORE #CAT_Monitor create or update the channels -- call this during Init.\n if reset_first, then existing data columns are removed first
 
   void 		GetMonVals();
-  // get all the values and store in current row of data table -- call in program to get new data
+  // #CAT_Monitor get all the values and store in current row of data table -- call in program to get new data
   void		RemoveMonitors();
-  // #IGNORE called by the network to remove the objs from lists
+  // #IGNORE #CAT_Monitor called by the network to remove the objs from lists
   
   void	InitLinks();
   void	CutLinks();

@@ -33,7 +33,11 @@ Program .projects[0].programs.gp[0][2] {
 	MethodCall @[0] { };
       };
     };
-    ProgramCall @[5] { };
+    ProgramCall @[5] { 
+      ProgArg_List @.prog_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
     NetUpdateView @[6] { };
   };
 };
@@ -66,7 +70,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[0] {
    name="phase_no";
    var_type=T_Int;
-   int_val=2;
+   int_val=0;
    objs_ptr=0;
    desc=;
   };
@@ -193,6 +197,10 @@ Program .projects[0].programs.gp[0][2] {
     name=;
     el_typ=ProgArg;
     el_def=0;
+    ProgArg @[0] {
+     name="network";
+     value="network";
+    };
    };
   };
   NetUpdateView @[6] {

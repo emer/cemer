@@ -1,10 +1,6 @@
 leabra todo list:
 
-* Netmon should have a network variable that contextualizes everything for given network
--- otherwize you need to set each one individually -- painful.
-
-* ApplyInputsImage: needs to use same vals in plus and minus phases: just check for 
-  phase_no == 0 for filtering the data..
+* lwriter disp name incl data & net
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
@@ -18,24 +14,24 @@ docs..: add all float_RArray funs, for matricies.
 --------
 check:
 
-* lwriter disp name incl data & net
-
-* add basic file logging stuff to datatable: just a stream and some functions..
-
-* applyexternal should just use current network context setting, instead of arg.
-
-* change applyexternal -> applyinputdata?  YES
-
 ---------
 
 current bugs:
+
+* Netmon setnetwork not working: subguys are all still same: just because of null??
+
+* not reading last col & row of test.dat!
+
+* not passing network args!;  also, init is not passing args -- not good because many 
+  init funs depend on the network..
+
+* need special menu action to save in prog_lib: for groups too!
 
 * need to be able to update args without changing program call target: check for
   mismatch in arg count!
 
 * display arg value in program call
 
-* need special menu action to save in prog_lib
 
 -------
 lower pri:

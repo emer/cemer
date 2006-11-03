@@ -916,6 +916,7 @@ String MethodCall::GetDisplayName() const {
   return rval;
 }
 
+// todo: this should be more like ProgramCall: nondestructive conform so you can call it anytime..
 void MethodCall::CheckUpdateArgs(bool force) {
   if ((method == lst_method) && (!force)) return;
   args.Reset(); args.labels.Reset();
@@ -1040,8 +1041,8 @@ void ProgramCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (target.ptr() != old_target) {
     old_target = target.ptr(); // note: we don't ref, because we just need to check ptr addr
-    UpdateGlobalArgs();
   }
+  UpdateGlobalArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
 }
 
 void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1643,6 +1644,17 @@ void Program::GetVarsForObjs() {
   }
 }
 
+void Program::SaveToProgLib(ProgLibs library) {
+  // todo: quick and dirty!
+  String path = "./";
+  if(library == USER_LIB)
+    path = "";
+  else if(library == SYSTEM_LIB)
+    path = "../../prog_lib/";
+  // todo web!?
+  String fname = path + name + ".prog";
+  SaveAs_File(fname);
+}
 
 void Program::SaveScript(ostream& strm) {
   strm << scriptString();

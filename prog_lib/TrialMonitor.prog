@@ -14,15 +14,20 @@ Program .projects[0].programs.gp[0][6] {
     };
   };
 
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
   ProgVar_List @.vars = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
   };
 
-  ProgEl_List @.init_code = [3] {
+  ProgEl_List @.init_code = [4] {
     MethodCall @[0] { };
     MethodCall @[1] { };
     MethodCall @[2] { };
+    MethodCall @[3] { };
   };
 
   ProgEl_List @.prog_code = [3] {
@@ -50,6 +55,7 @@ Program .projects[0].programs.gp[0][6] {
      object=.projects[0].networks[0]$0$;
      member_var=Network::epoch;
      variable="epoch";
+     real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -59,6 +65,7 @@ Program .projects[0].programs.gp[0][6] {
      object=$0$;
      member_var=Network::trial;
      variable="trial";
+     real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -68,6 +75,7 @@ Program .projects[0].programs.gp[0][6] {
      object=$0$;
      member_var=Network::trial_name;
      variable="trial_name";
+     real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -77,6 +85,7 @@ Program .projects[0].programs.gp[0][6] {
      object=$0$;
      member_var=LeabraNetwork::phase_no;
      variable="phase_no";
+     real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -86,6 +95,7 @@ Program .projects[0].programs.gp[0][6] {
      object=$0$;
      member_var=Network::cycle;
      variable="cycle";
+     real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -95,6 +105,7 @@ Program .projects[0].programs.gp[0][6] {
      object=$0$;
      member_var=Network::sse;
      variable="sse";
+     real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -104,11 +115,13 @@ Program .projects[0].programs.gp[0][6] {
      object=$0$;
      member_var=LeabraNetwork::ext_rew;
      variable="ext_rew";
+     real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
+   network=$0$;
    data=.projects[0].data.gp[1][0]$1$;
    rmv_orphan_cols=1;
   };
@@ -117,6 +130,14 @@ Program .projects[0].programs.gp[0][6] {
   name=;
   el_typ=ProgVar;
   el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=Network;
+   object_val=$0$;
+   objs_ptr=0;
+   desc=;
+  };
  };
  vars {
   name=;
@@ -148,11 +169,20 @@ Program .projects[0].programs.gp[0][6] {
    off=0;
    result_var=;
    script_obj=.projects[0].programs.gp[0][6].vars[1]$3$;
+   method=NetMonitor::SetDataNetwork;
+   args{ trial_mon_data;network;};
+{ DataTable* dt;Network* net;   };
+  };
+  MethodCall @[1] {
+   desc=;
+   off=0;
+   result_var=;
+   script_obj=$3$;
    method=taBase::CheckConfig;
    args{ false;};
 { bool quiet;   };
   };
-  MethodCall @[1] {
+  MethodCall @[2] {
    desc="Initialize monitoring data (get rid of any existing)";
    off=0;
    result_var=;
@@ -161,7 +191,7 @@ Program .projects[0].programs.gp[0][6] {
    args{ };
 {    };
   };
-  MethodCall @[2] {
+  MethodCall @[3] {
    desc="update the monitor items and data schema";
    off=0;
    result_var=;
@@ -195,10 +225,10 @@ Program .projects[0].programs.gp[0][6] {
   };
   MethodCall @[2] {
    desc="update after writing new data to monitor data table";
-   off=1;
+   off=0;
    result_var=;
    script_obj=$4$;
-   method=DataBlock::WriteDone;
+   method=DataBlock::WriteClose;
    args{ };
 {    };
   };

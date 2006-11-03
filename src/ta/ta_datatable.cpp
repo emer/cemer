@@ -862,7 +862,8 @@ void DataTable::RowsAdding(int n, bool begin) {
   first mat cell also has <dims:dx,dy..>
 */
 
-void DataTable::SaveHeader(ostream& strm, const char* delim) {
+void DataTable::SaveHeader(ostream& strm, Delimiters delim) {
+  char cdlm = GetDelim(delim);
   strm << "_H:";		// indicates header
   for(int i=0;i<data.size;i++) {
     DataArray_impl* da = data.FastEl(i);
@@ -874,18 +875,19 @@ void DataTable::SaveHeader(ostream& strm, const char* delim) {
 	int d0, d1, d2, d3, d4;
 	da->cell_geom.DimsFmIndex(j, d0, d1, d2, d3, d4);
 	String hdnm = da->EncodeHeaderName(d0, d1, d2, d3, d4);
-	strm << delim << hdnm;
+	strm << cdlm << hdnm;
       }
     }
     else {
       String hdnm = da->EncodeHeaderName();
-      strm << delim << hdnm;
+      strm << cdlm << hdnm;
     }
   }
   strm << endl;
 }
 
-void DataTable::SaveDataRow(ostream& strm, int row, const char* delim, bool quote_str) {
+void DataTable::SaveDataRow(ostream& strm, int row, Delimiters delim, bool quote_str) {
+  char cdlm = GetDelim(delim);
   strm << "_D:";		// indicates data row
   for(int i=0;i<data.size;i++) {
     DataArray_impl* da = data.FastEl(i);
@@ -896,23 +898,23 @@ void DataTable::SaveDataRow(ostream& strm, int row, const char* delim, bool quot
       for(int j=0;j<da->cell_size(); j++) {
 	String val = da->GetValAsStringM(row, j);
 	if(quote_str && (da->valType() == VT_STRING))
-	  strm << delim << "\"" << val << "\"";
+	  strm << cdlm << "\"" << val << "\"";
 	else
-	  strm << delim << val;
+	  strm << cdlm << val;
       }
     }
     else {
       String val = da->GetValAsString(row);
       if(quote_str && (da->valType() == VT_STRING))
-	strm << delim << "\"" << val << "\"";
+	strm << cdlm << "\"" << val << "\"";
       else
-	strm << delim << val;
+	strm << cdlm << val;
     }
   }
   strm << endl;
 }
 
-void DataTable::SaveData(ostream& strm, const char* delim, bool quote_str) {
+void DataTable::SaveData(ostream& strm, Delimiters delim, bool quote_str) {
   SaveHeader(strm, delim);
   for(int row=0;row <rows; row++) {
     SaveDataRow(strm, row, delim, quote_str);
@@ -936,14 +938,20 @@ void DataTable::CloseDataLog() {
   log_file->Close();
 }
 
-int DataTable::ReadTillDelim(istream& strm, String& str, const char* delim, bool quote_str) {
+char DataTable::GetDelim(Delimiters delim) {
+  if(delim == TAB) return '\t';
+  if(delim == SPACE) return ' ';
+  if(delim == COMMA) return ',';
+}
+
+int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool quote_str) {
   int c;
   int depth = 0;
   if(quote_str && (strm.peek() == '\"')) {
     strm.get();
     depth++;
   }
-  while(((c = strm.get()) != EOF) && (c != '\n') && !((c == delim[0]) && (depth <= 0))) {
+  while(((c = strm.get()) != EOF) && (c != '\n') && !((c == delim) && (depth <= 0))) {
     if(quote_str && (depth > 0) && (c == '\"'))
       depth--;
     else
@@ -955,13 +963,14 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char* delim, bool
 int_Array DataTable::load_col_idx;
 int_Array DataTable::load_mat_idx;
 
-int DataTable::LoadHeader(istream& strm, const char* delim) {
+int DataTable::LoadHeader(istream& strm, Delimiters delim) {
+  char cdlm = GetDelim(delim);
   load_col_idx.Reset();
   load_mat_idx.Reset();
   int c;
   while(true) {
     String str;
-    c = ReadTillDelim(strm, str, delim, false);
+    c = ReadTillDelim(strm, str, cdlm, false);
     if((c == EOF) || (c == '\n')) break;
     String base_nm;
     int val_typ;
@@ -989,7 +998,8 @@ int DataTable::LoadHeader(istream& strm, const char* delim) {
   return c;
 }
 
-int DataTable::LoadDataRow(istream& strm, const char* delim, bool quote_str) {
+int DataTable::LoadDataRow(istream& strm, Delimiters delim, bool quote_str) {
+  char cdlm = GetDelim(delim);
   StructUpdate(true);
   bool added_row = false;
   int last_mat_col = -1;
@@ -997,7 +1007,7 @@ int DataTable::LoadDataRow(istream& strm, const char* delim, bool quote_str) {
   int c;
   while(true) {
     String str;
-    c = ReadTillDelim(strm, str, delim, quote_str);
+    c = ReadTillDelim(strm, str, cdlm, quote_str);
     if((c == EOF) || (c == '\n')) break;
     if(str == "_H:") {
       c = LoadHeader(strm, delim);
@@ -1043,7 +1053,7 @@ int DataTable::LoadDataRow(istream& strm, const char* delim, bool quote_str) {
   return c;
 }
 
-void DataTable::LoadData(istream& strm, const char* delim, bool quote_str, int max_recs) {
+void DataTable::LoadData(istream& strm, Delimiters delim, bool quote_str, int max_recs) {
   load_col_idx.Reset();
   load_mat_idx.Reset();
   int st_row = rows;

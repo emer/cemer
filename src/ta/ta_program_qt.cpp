@@ -898,15 +898,26 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   // add other spec meth calls here..
 
   sec = tb->AssertSection("Data"); //note: need to keep it short
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data proc",
+    tabMisc::root->GetTemplateInstance(&TA_DataProcCall)));
+  tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("sort",
     tabMisc::root->GetTemplateInstance(&TA_DataSortProg)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("group",
+    tabMisc::root->GetTemplateInstance(&TA_DataGroupProg)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("sel rows",
     tabMisc::root->GetTemplateInstance(&TA_DataSelectRowsProg)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("sel cols",
     tabMisc::root->GetTemplateInstance(&TA_DataSelectColsProg)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("group",
-    tabMisc::root->GetTemplateInstance(&TA_DataGroupProg)));
-
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("join",
+    tabMisc::root->GetTemplateInstance(&TA_DataJoinProg)));
+  tb->AddSeparator(sec);
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("calc",
+    tabMisc::root->GetTemplateInstance(&TA_DataCalcLoop)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("add row",
+    tabMisc::root->GetTemplateInstance(&TA_DataCalcAddDestRow)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("set row",
+    tabMisc::root->GetTemplateInstance(&TA_DataCalcSetDestRow)));
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);

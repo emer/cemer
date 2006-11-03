@@ -443,31 +443,39 @@ public:
   taFiler* GetFiler(TypeItem* td)
   { if(log_file) return log_file; return inherited::GetFiler(td); }
 
+  enum Delimiters {
+    TAB,
+    SPACE,
+    COMMA,
+  };
+
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  void 			SaveData(ostream& strm, const char* delim = "\t", bool quote_str = true);
+  void 			SaveData(ostream& strm, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings
-  void 			SaveHeader(ostream& strm, const char* delim = "\t");
+  void 			SaveHeader(ostream& strm, Delimiters delim = TAB);
   // #CAT_File #MENU #EXT_dat saves header information, with delimiter between columns, and optionally quoting strings
-  void 			SaveDataRow(ostream& strm, int row=-1, const char* delim = "\t",
+  void 			SaveDataRow(ostream& strm, int row=-1, Delimiters delim = TAB,
 				    bool quote_str = true); 
   // #CAT_File #MENU #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
 
   void			SaveDataLog(const String& fname, bool append=false);
-  // #CAT_File #EXT_dat #MENU_SEP_BEFORE incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file
+  // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file
   void			CloseDataLog();
-  // #CAT_File #EXT_dat #MENU_SEP_BEFORE close the data log file if it was previously open
+  // #CAT_File #MENU #EXT_dat close the data log file if it was previously open
 
-  static int		ReadTillDelim(istream& strm, String& str, const char* delim, bool quote_str);
+  static char		GetDelim(Delimiters delim);
+  // #IGNORE get delimiter from enum
+  static int		ReadTillDelim(istream& strm, String& str, const char delim, bool quote_str);
   // #IGNORE util function to read from stream into str until delim or newline or EOF
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
 
-  void 			LoadData(istream& strm, const char* delim = "\t",
+  void 			LoadData(istream& strm, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1);
   // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
-  int 			LoadHeader(istream& strm, const char* delim = "\t");
+  int 			LoadHeader(istream& strm, Delimiters delim = TAB);
   // #CAT_File #EXT_dat loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  int 			LoadDataRow(istream& strm, const char* delim = "\t", bool quote_str = true);
+  int 			LoadDataRow(istream& strm, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
   /////////////////////////////////////////////////////////

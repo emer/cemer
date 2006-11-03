@@ -1248,10 +1248,12 @@ void NetMonitor::InitLinks() {
   inherited::InitLinks();
   taBase::Own(items, this);
   taBase::Own(data, this);
+  taBase::Own(network, this);
 }
 
 void NetMonitor::CutLinks() {
   data.CutLinks();
+  network.CutLinks();
   items.CutLinks();
   inherited::CutLinks();
 }
@@ -1260,13 +1262,19 @@ void NetMonitor::Copy_(const NetMonitor& cp) {
   items = cp.items;
   rmv_orphan_cols = cp.rmv_orphan_cols;
   data = cp.data; //warning: generates a UAE, but we ignore it
+  network = cp.network;
 }
 
 void NetMonitor::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!data) {
     if(!quiet) taMisc::CheckError("NetMonitor named:", name, "path:", GetPath(),
-			     "data is NULL");
+				  "data is NULL");
+    rval = false;
+  }
+  if(!network) {
+    if(!quiet) taMisc::CheckError("NetMonitor named:", name, "path:", GetPath(),
+				  "network is NULL");
     rval = false;
   }
 }
@@ -1308,6 +1316,9 @@ void NetMonitor::SetDataTable(DataTable* dt) {
 }
 
 void NetMonitor::SetNetwork(Network* net) {
+  Network* old_net = network.ptr();
+  if(old_net && net && (old_net != net))
+    items.UpdatePointers_NewPar(old_net, net);
   network = net;
 }
 
@@ -1342,175 +1353,4 @@ void NetMonitor::GetMonVals() {
   }
 }
 
-/* todo: brad: what is the status of the following commented out code!? */
-
-/*
-void NetMonItem::ScanObject_InObject(TAPtr obj, String var) {
-  if (!obj) return; 
-  String valname = GetObjName(obj) + String(".") + var;
-  TypeDef* td = obj->GetTypeDef(); //note: we don't use this everywhere
-  MemberDef* md = NULL;
-  
-  // first, try the recursive end, look for terminal member in ourself
-  if (!var.contains('.')) {
-    md = obj->FindMember(varname);
-    if (md) {
-      AddScalarChan(valname, ValTypeForType(md->type));
-      ptrs.Link(ths);
-      members.Link(md);
-      return;
-    }
-    // ok, not in us, so do default iteration of object
-  } else {
-    String membname = var.before('.');
-    // look for membs that require special or default handling
-    // or pseudo members that we translate
-    if (td->InheritsFrom(&TA_Layer) && (membname == "units")) {
-      // just do the default special processing
-      var = var.after('.');
-      goto defs;
-    } else if (td->InheritsFrom(&TA_Unit)) {
-      // for Units, s. and r. are shortcuts for send and recv con groups
-      if (membname == "s") membname = "send";
-      else if (membname == "r") membname = "recv";
-    } else if (td->InheritsFrom(&TA_Projection)) {
-      // for projections where var is s. or r. we go into 
-      // the correct layer for those connections, but we pass in
-      // the same var
-      if (membname == "s") {
-        ScanObject_InObject(&((Projection*)obj)->from, var);
-        return;
-      } else if (membname == "r") {
-        ScanObject_InObject(&((Projection*)obj)->layer, var);
-        return;
-      }
-    }
-    
-    md = obj->FindMember(membname);
-    //note: if memb not found, then we assume it is in an iterated subobj...
-    if (md) {
-      if (!md->type->InheritsFrom(&TA_taBase)) {
-        taMisc::Error("NetMonitor can only monitor taBase objects, not: ",
-          md->type->name, " var: ", var);
-        return; //no var, but we did handle it
-      }
-      // we can only handle embedded objs and ptrs to objs
-      if (md->type->ptr == 0)
-	ths = (TAPtr) md->GetOff((void*)obj);
-      else if (md->type->ptr == 1)
-	ths = *((TAPtr*)md->GetOff((void*)obj));
-      else {
-        taMisc::Error("NetMonitor can only handle embedded taBase objects"
-          " or ptrs to them, not level=",
-          String(md->type->ptr), " var: ", var);
-        return; //no var, but we did handle it
-      }
-      // because we found the subobj, we deref the var and invoke ourself recursively
-      var = var.after('.');
-      ScanObject_InObject(ths, var);
-      return;
-    }
-  }
-defs:
-  // at this point, we are doing the default iteration on this object
-  // first we check the specialized net types, with special iters, then generic
-  td = obj->GetTypeDef();
-  if (td->InheritsFrom(&TA_Network)) {
-    // net iters the layers
-    ScanObject_IterGroup(&((Network*)obj)->layers, var);
-  } else if (td->InheritsFrom(&TA_Layer)) {
-    //layer iters the units in flat 2d matrix format
-    ScanObject_IterLayer((Layer*)obj, var);
-  } else if (td->InheritsFrom(&TA_Unit_Group)) {
-    //ug iters the units in 2d matrix format
-    ScanObject_IterUnitGroup((Unit_Group*)obj, var);
-  } else if (td->InheritsFrom(&TA_taGroup_impl)) {
-    ScanObject_IterGroup((taGroup_impl*)obj, var);
-  } else if (td->InheritsFrom(&TA_taList_impl)) {
-    ScanObject_IterList((taList_impl*)obj, var);
-  } 
-  // if nothing handled it, but that isn't necessarily an error, if 
-  // scanning polymorphically, some objs won't handle the var
-}
-
-void NetMonItem::ScanObject_IterGroup(taGroup_impl* gp, String var) {
-  String valname = GetObjName(gp) + String(".") + var;
-  MatrixChannelSpec* mcs = AddMatrixChan(valname, VT_VARIANT);
-  int val_sz = val_specs.size; // lets us detect if new ones made
-  taLeafItr i;
-  Unit* u;
-  TwoDCoord c;
-  for (c.y = 0; c.y < lay->flat_geom.y; ++c.y) {
-    for (c.x = 0; c.x < lay->flat_geom.x; ++c.x) {
-      u = lay->FindUnitFmCoord(c); // NULL if odd size or not built
-      //TODO: Forbid this evil capability!!!!!
-      if (!u) { 
-        taMisc::Error("Monitoring of partially full Layers is not supported! Please use full Layers (N = XxY)");
-        goto cont;
-      }
-      ScanObject_InObject(u, var);
-    }
-  }
-cont:
-  // if nested objs made chans, delete ours and mark a new group
-  if (val_sz < val_specs.size) {
-    val_specs.Remove(val_sz - 1);
-    val_specs.FastEl(val_sz)->new_group_name = valname;
-  } 
-}
-
-void NetMonItem::ScanObject_IterLayer(Layer* lay, String var) {
-  String valname = GetObjName(lay) + String(".") + variable;
-  MatrixGeom geom(2, lay->flat_geom.x, lay->flat_geom.y);
-  MatrixChannelSpec* mcs = AddMatrixChan(valname, real_val_type, &geom);
-  int val_sz = val_specs.size; // lets us detect if new ones made
-  taLeafItr i;
-  Unit* u;
-  TwoDCoord c;
-  for (c.y = 0; c.y < lay->flat_geom.y; ++c.y) {
-    for (c.x = 0; c.x < lay->flat_geom.x; ++c.x) {
-      u = lay->FindUnitFmCoord(c); // NULL if odd size or not built
-      //TODO: Forbid this evil capability!!!!!
-      if (!u) { 
-        taMisc::Error("Monitoring of partially full Layers is not supported! Please use full Layers (N = XxY)");
-        goto cont;
-      }
-      ScanObject_InObject(u, var);
-    }
-  }
-cont:
-  // if nested objs made chans, delete ours and mark a new group
-  if (val_sz < val_specs.size) {
-    val_specs.Remove(val_sz - 1);
-    val_specs.FastEl(val_sz)->new_group_name = valname;
-  } 
-}
-
-void NetMonItem::ScanObject_IterUnitGroup(Unit_Group* ug, String var) {
-  String valname = GetObjName(ug) + String(".") + variable;
-  MatrixChannelSpec* cs = NULL;
-  MatrixGeom geom(2, ug->geom.x, ug->geom.y);
-  cs = AddMatrixChan(valname, real_val_type, &geom);
-  Unit* u;
-  TwoDCoord c;
-  int val_sz = val_specs.size; // use to detect con vals made
-  for (c.y = 0; c.y < ug->geom.y; ++c.y) {
-    for (c.x = 0; c.x < ug->geom.x; ++c.x) {
-      u = ug->FindUnitFmCoord(c); // NULL if odd size geom, remainder will be NULL
-      //TODO: Forbid this evil capability!!!!!
-      if (!u) { 
-        taMisc::Error("Monitoring of partially full UnitGroups is not supported! Please use full UnitGroups (N = XxY)");
-        goto cont;
-      }
-      ScanObject_InObject(u, var);
-    }
-  }
-cont:
-  // if nested objs made chans, delete ours and mark a new group
-  if (val_sz < val_specs.size) {
-    val_specs.Remove(val_sz - 1);
-    val_specs.FastEl(val_sz)->new_group_name = valname;
-  }
-}
-*/
 
