@@ -919,34 +919,64 @@ int Con_Group::LesionCons(Unit* un, float p_lesion, bool permute) {
   return rval;
 }
 
-// todo: replace with matrix versions!
-void Con_Group::ConValuesToArray(float_RArray& ary, const char* variable) {
+bool Con_Group::ConValuesToArray(float_Array& ary, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
     taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
 		   el_typ->name, "in ConValuesToArray()");
-    return;
+    return false;
   }
-  int i;
-  for(i=0; i<size; i++) {
+  for(int i=0; i<size; i++) {
     float* val = (float*)md->GetOff((void*)Cn(i));
     ary.Add(*val);
   }
+  return true;
 }
 
-void Con_Group::ConValuesFromArray(float_RArray& ary, const char* variable) {
+bool Con_Group::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
     taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in ConValuesToArray()");
-    return;
+		   el_typ->name, "in ConValuesToMatrix()");
+    return false;
+  }
+  if(mat.size < size) return false;
+
+  for(int i=0; i<size; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    mat.FastEl_Flat(i) = *val;
+  }
+  return true;
+}
+
+bool Con_Group::ConValuesFromArray(float_Array& ary, const char* variable) {
+  MemberDef* md = el_typ->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   el_typ->name, "in ConValuesFromArray()");
+    return false;
   }
   int mx = MIN(size, ary.size);
-  int i;
-  for(i=0; i<mx; i++) {
+  for(int i=0; i<mx; i++) {
     float* val = (float*)md->GetOff((void*)Cn(i));
     *val = ary[i];
   }
+  return true;
+}
+
+bool Con_Group::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
+  MemberDef* md = el_typ->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   el_typ->name, "in ConValuesFromMatrix()");
+    return false;
+  }
+  int mx = MIN(size, mat.size);
+  for(int i=0; i<mx; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    *val = mat.FastEl_Flat(i);
+  }
+  return true;
 }
 
 int Con_Group::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
@@ -3100,13 +3130,12 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
   return rval;
 }
 
-// todo: replace with matrix versions
-void Unit_Group::UnitValuesToArray(float_RArray& ary, const char* variable) {
+bool Unit_Group::UnitValuesToArray(float_Array& ary, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
     taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
 		   el_typ->name, "in UnitValuesToArray()");
-    return;
+    return false;
   }
   Unit* u;
   taLeafItr i;
@@ -3114,15 +3143,34 @@ void Unit_Group::UnitValuesToArray(float_RArray& ary, const char* variable) {
     float* val = (float*)md->GetOff((void*)u);
     ary.Add(*val);
   }
+  return true;
 }
 
-void Unit_Group::UnitValuesFromArray(float_RArray& ary, const char* variable) {
-  if(ary.size == 0) return;
+bool Unit_Group::UnitValuesToMatrix(float_Matrix& mat, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
     taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in UnitValuesToArray()");
-    return;
+		   el_typ->name, "in UnitValuesToMatrix()");
+    return false;
+  }
+  if(mat.size < leaves) return false;
+  int cnt=0;
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, this->, i) {
+    float* val = (float*)md->GetOff((void*)u);
+    mat.FastEl_Flat(cnt++) = *val;
+  }
+  return true;
+}
+
+bool Unit_Group::UnitValuesFromArray(float_Array& ary, const char* variable) {
+  if(ary.size == 0) return false;
+  MemberDef* md = el_typ->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   el_typ->name, "in UnitValuesFromArray()");
+    return false;
   }
   int cnt=0;
   Unit* u;
@@ -3133,6 +3181,27 @@ void Unit_Group::UnitValuesFromArray(float_RArray& ary, const char* variable) {
     if(cnt >= ary.size)
       break;
   }
+  return true;
+}
+
+bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const char* variable) {
+  if(mat.size == 0) return false;
+  MemberDef* md = el_typ->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   el_typ->name, "in UnitValuesFromMatrix()");
+    return false;
+  }
+  int cnt=0;
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, this->, i) {
+    float* val = (float*)md->GetOff((void*)u);
+    *val = mat.FastEl_Flat(cnt++);
+    if(cnt >= mat.size)
+      break;
+  }
+  return true;
 }
 
 Unit* Unit_Group::FindUnitFmCoord(int x, int y) {

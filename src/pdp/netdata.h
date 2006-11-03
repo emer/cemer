@@ -162,6 +162,8 @@ public:
   virtual bool	ApplyInputData();
   // #CAT_LayerWriter apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success
 
+  String	GetDisplayName() const;
+
   void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(LayerWriter);
 protected:
@@ -211,6 +213,10 @@ private:
   void 	Destroy() {}
 };
 */
+
+/////////////////////////////////////////////////////////////////
+//	Network Monitor: record values from objects!
+
 
 class PDP_API NetMonItem: public taNBase {
   // #NO_TOKENS ##CAT_Network used for monitoring the value of an object\n(special support for network variables, including Layer, Projection, UnitGroup, Unit)
@@ -350,7 +356,11 @@ public:
   void 		GetMonVals();
   // #CAT_Monitor get all the values and store in current row of data table -- call in program to get new data
   void		RemoveMonitors();
-  // #IGNORE #CAT_Monitor called by the network to remove the objs from lists
+  // #IGNORE called by the network to remove the objs from lists
+  void		UpdateNetwork(Network* old_net, Network* new_net);
+  // #IGNORE update pointers to objects within old_net to new_net
+
+  String	GetDisplayName() const;
   
   void	InitLinks();
   void	CutLinks();
@@ -360,6 +370,8 @@ public:
   TA_BASEFUNS(NetMonitor);
   
 protected:
+  Network*	old_network;	// #IGNORE just for UAE to know when network has changed
+
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
 private:

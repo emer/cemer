@@ -398,6 +398,10 @@ void ProgArg::Freshen(const ProgVar& cp) {
   // currently a no-op because we don't have any type info ourselves.
 } 
 
+String ProgArg::GetDisplayName() const {
+  return name + "=" + value;
+}
+
 //////////////////////////
 //   ProgArg_List	//
 //////////////////////////
@@ -1123,8 +1127,16 @@ const String ProgramCall::GenCssPost_impl(int indent_level) {
 
 String ProgramCall::GetDisplayName() const {
   String rval = "Call ";
-  if (target)
+  if (target) {
     rval += target->GetName();
+//     if(prog_args.size > 0) {
+//     rval += "(";
+//     for(int i=0;i<prog_args.size;i++) {
+//       ProgArg* pa = prog_args.FastEl(i);
+//       rval += pa->GetDisplayName();
+//     }
+//     rval += ")";
+  }
   else
     rval += "(no program set)";
   return rval;
@@ -1495,6 +1507,7 @@ void Program::setDirty(bool value) {
 }
 
 bool Program::SetVar(const String& nm, const Variant& value) {
+  if(!script) return false;
   cssElPtr& el_ptr = script->prog_vars.FindName(nm);
   if (el_ptr == cssMisc::VoidElPtr) return false;
   cssEl* el = el_ptr.El();
@@ -1531,11 +1544,24 @@ const String Program::scriptString() {
       if (init_code.size >0) m_scriptCache += "\n";
       m_scriptCache += "  // init any subprogs that could be called from this one\n";
       m_scriptCache += "  { Program* target;\n";
-      // todo: this needs to be a list of ProgramCall's, not the actual prog itself!
+      // note: this is a list of ProgramCall's, not the actual prog itself!
       for (int i = 0; i < sub_progs.size; ++i) {
         ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
         m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
         m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
+        m_scriptCache += "    target->CompileScript(); // needs to be compiled before setting vars\n";
+	// set args for guys that are just passing our existing args/vars along
+	for (int j = 0; j < sp->prog_args.size; ++j) {
+	  ProgArg* ths_arg = sp->prog_args.FastEl(j);
+	  ProgVar* prg_var = sp->target->args.FindName(ths_arg->name);
+	  if (!prg_var || ths_arg->value.empty()) continue;
+	  // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
+	  ProgVar* arg_chk = args.FindName(ths_arg->value);
+	  ProgVar* var_chk = vars.FindName(ths_arg->value);
+	  if(!arg_chk && !var_chk) continue; 
+	  m_scriptCache += "    target->SetVar(\"" + prg_var->name + "\", "
+	    + ths_arg->value + ");\n";
+	}
         m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
       }
       m_scriptCache += "  }\n";
@@ -1645,7 +1671,7 @@ void Program::GetVarsForObjs() {
 }
 
 void Program::SaveToProgLib(ProgLibs library) {
-  // todo: quick and dirty!
+  // todo: quick and dirty -- fix when paths etc are all fixed up
   String path = "./";
   if(library == USER_LIB)
     path = "";
@@ -1712,6 +1738,18 @@ void Program_Group::Copy_(const Program_Group& cp) {
   desc = cp.desc;
   if(cp.step_prog)
     step_prog = FindName(cp.step_prog->name);
+}
+
+void Program_Group::SaveToProgLib(Program::ProgLibs library) {
+  // todo: quick and dirty -- fix when paths etc are all fixed up
+  String path = "./";
+  if(library == Program::USER_LIB)
+    path = "";
+  else if(library == Program::SYSTEM_LIB)
+    path = "../../prog_lib/";
+  // todo web!?
+  String fname = path + name + ".progp";
+  SaveAs_File(fname);
 }
 
 void Program_Group::SetProgsDirty() {

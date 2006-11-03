@@ -140,7 +140,9 @@ public:
   
   virtual void		Freshen(const ProgVar& cp); 
   // updates our value/type information and commensurable fields from compatible type (but not name)
-  
+
+  String 	GetDisplayName() const;
+
   void 	SetDefaultName() {} // name is always the same as the referent
   void	Copy_(const ProgArg& cp);
   bool 	SetName(const String& nm) {name = nm; return true;}
@@ -702,6 +704,9 @@ public:
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib create a new program from a library of existing program types
   taBase* NewFromLibByName(const String& prog_nm);
   // create a new program from a library of existing program types, looking up by name (NULL if name not found)
+
+  void		SaveToProgLib(Program::ProgLibs library = Program::USER_LIB);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT save the program group to given program library -- file name = object name -- be sure to add good desc comments!!
 
   void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
   

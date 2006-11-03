@@ -989,7 +989,7 @@ static cssEl* cssElCFun_setout_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_source_stub(int, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
+//   cssProg* cp = arg[0]->prog;
   // todo: not clear what to do about this one!  it requires self-modification.  the one
   // case of a do-after flag required..
 //   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
@@ -1082,11 +1082,12 @@ static void Install_Commands() {
  at the usual source level. Levels greater than 2 provide increasing\
  amounts of detail about the inner workings of CSS, which should not be\
  relevant to most users.");
-//   cssElCFun_inst(cssMisc::Commands, define, 		0, CSS_COMMAND,
-// "Toggles the mode where statements that are typed in become part of the\
-//  current program to be executed later (define mode), as opposed the\
-//  default (run mode) where statements are executed immediately after entering\
-//  them.");
+  /*
+  cssElCFun_inst(cssMisc::Commands, define, 		0, CSS_COMMAND,
+"Toggles the mode where statements that are typed in become part of the\
+ current program to be executed later (define mode), as opposed the\
+ default (run mode) where statements are executed immediately after entering\
+ them."); */
   cssElCFun_inst(cssMisc::Commands, edit,   		cssEl::VarArg, CSS_COMMAND,
 "If the TA_GUI (graphical user interface) is active (i.e., by using\
  -gui to start up CSS), edit will bring up a graphical edit\

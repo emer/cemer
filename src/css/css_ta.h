@@ -140,6 +140,8 @@ public:
   // operators
   void operator=(const String& s);
   void operator=(const cssEl& s); // use obj->UnSafeCopy for ptr_cnt == 0
+  void operator=(taBase*);
+  void operator=(taBase**);
 
   override bool PtrAssignPtrPtr(void* new_ptr_val);
   // use SetPointer..
@@ -187,11 +189,14 @@ public:
   void* 	GetVoidPtrOfType(const char* td) const;
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
+  Variant GetVar() const;
   String GetStr() const;
   operator void*() const;
 
   void operator=(const String& s);
   void operator=(const cssEl& s);
+  void operator=(taBase*);
+  void operator=(taBase**);
 
   // operators
   void PtrAssignPtr(const cssEl& s);

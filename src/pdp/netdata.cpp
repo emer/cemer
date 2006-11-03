@@ -278,6 +278,13 @@ void LayerWriter::CheckChildConfig_impl(bool quiet, bool& rval) {
   layer_data.CheckConfig(quiet, rval);
 }
 
+String LayerWriter::GetDisplayName() const {
+  String rval = name;
+  if(data) rval += " fm data: " + data->name;
+  if(network) rval += " to net: " + network->name;
+  return rval;
+}
+
 void LayerWriter::SetDataNetwork(DataBlock* db, Network* net) {
   data = db;
   network = net;
@@ -1242,6 +1249,7 @@ const KeyString NetMonItem_List::GetListColKey(int col) const {
 
 void NetMonitor::Initialize() {
   rmv_orphan_cols = true;
+  old_network = NULL;
 }
 
 void NetMonitor::InitLinks() {
@@ -1252,6 +1260,7 @@ void NetMonitor::InitLinks() {
 }
 
 void NetMonitor::CutLinks() {
+  old_network = NULL;
   data.CutLinks();
   network.CutLinks();
   items.CutLinks();
@@ -1286,11 +1295,21 @@ void NetMonitor::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void NetMonitor::UpdateAfterEdit() {
   if (taMisc::is_loading || taMisc::is_duplicating) return;
-  
+  if(network != old_network) {
+    if(old_network != NULL) 
+      UpdateNetwork(old_network, network);
+    old_network = network;
+  }
   UpdateMonitors();
   inherited::UpdateAfterEdit();
 }
 
+String NetMonitor::GetDisplayName() const {
+  String rval = name;
+  if(network) rval += " fm net: " + network->name;
+  if(data) rval += " to data: " + data->name;
+  return rval;
+}
 
 void NetMonitor::AddObject(TAPtr obj, const String& variable) {
   // check for exact obj/variable already there, otherwise add one
@@ -1318,13 +1337,18 @@ void NetMonitor::SetDataTable(DataTable* dt) {
 void NetMonitor::SetNetwork(Network* net) {
   Network* old_net = network.ptr();
   if(old_net && net && (old_net != net))
-    items.UpdatePointers_NewPar(old_net, net);
+    UpdateNetwork(old_net, network);
   network = net;
 }
 
+void NetMonitor::UpdateNetwork(Network* old_net, Network* new_net) {
+  items.UpdatePointers_NewPar(old_net, new_net);
+  items.UpdatePointers_NewObj(old_net, new_net);
+}
+
 void NetMonitor::SetDataNetwork(DataTable* dt, Network* net) {
-  SetDataTable(dt);
   SetNetwork(net);
+  SetDataTable(dt);
 }
 
 void NetMonitor::UpdateMonitors(bool reset_first) {

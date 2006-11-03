@@ -1,6 +1,9 @@
 leabra todo list:
 
-* lwriter disp name incl data & net
+* nuke float_RArray totally
+
+* netmon: UpdatePointers_Type -- pass a type and get owner of that type and repl with 
+  given type -- doesn't require old_new.  add to ta_base
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
@@ -11,27 +14,17 @@ docs..: add all float_RArray funs, for matricies.
 
 * startup script
 
---------
-check:
-
 ---------
 
 current bugs:
 
-* Netmon setnetwork not working: subguys are all still same: just because of null??
-
 * not reading last col & row of test.dat!
 
-* not passing network args!;  also, init is not passing args -- not good because many 
-  init funs depend on the network..
+--------
+check:
 
-* need special menu action to save in prog_lib: for groups too!
-
-* need to be able to update args without changing program call target: check for
-  mismatch in arg count!
-
-* display arg value in program call
-
+* Netmon setnetwork not working: subguys are all still same.  problem is it isn't replacing net w/net! only subgys 
+  works for that.  need to cache the old_net and add UAE to detect user changes.  add UpdatePointers_old/new guy..
 
 -------
 lower pri:

@@ -724,9 +724,6 @@ cssCPtr_String::operator MethodDef*() const {
 }
 
 int cssCPtr_String::GetMethodNo(const char* memb) const {
-  void* sp = GetVoidPtr();
-  if(!sp) return -1;
-  String& val = *((String*)sp);
   return GetMethodNo_impl(&TA_taString, memb);
 }
 

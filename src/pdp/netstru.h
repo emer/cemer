@@ -353,10 +353,14 @@ public:
   virtual bool CheckOtherIdx_Recv(); // check validity of other_idx for recv con groups
   virtual bool CheckOtherIdx_Send();// check validity of other_idx for send con groups
 
-  virtual void	ConValuesToArray(float_RArray& ary, const char* variable);
-  // adds values of variable from the connections into the given array
-  virtual void	ConValuesFromArray(float_RArray& ary, const char* variable);
-  // sets values of variable in the connections from the given array
+  virtual bool	ConValuesToArray(float_Array& ary, const char* variable);
+  // adds values of variable from the connections into the given array (false if var not found)
+  virtual bool	ConValuesToMatrix(float_Matrix& mat, const char* variable);
+  // sets values of variable from the connections into the given matrix (uses flat index of cons to set: 0..size-1), returns false if matrix is not appropriately sized
+  virtual bool	ConValuesFromArray(float_Array& ary, const char* variable);
+  // sets values of variable in the connections from the given array (false if var not found)
+  virtual bool	ConValuesFromMatrix(float_Matrix& mat, const char* variable);
+  // sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
 
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // switch any connections using old_sp to using new_sp
@@ -869,9 +873,13 @@ public:
   virtual int	LesionUnits(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL remove units with prob p_lesion (permute = fixed no. lesioned)
 
-  virtual void	UnitValuesToArray(float_RArray& ary, const char* variable);
+  virtual bool	UnitValuesToArray(float_Array& ary, const char* variable);
   // adds values of variable from the units into the given array
-  virtual void	UnitValuesFromArray(float_RArray& ary, const char* variable);
+  virtual bool	UnitValuesToMatrix(float_Matrix& mat, const char* variable);
+  // adds values of variable from the units into the given matrix
+  virtual bool	UnitValuesFromArray(float_Array& ary, const char* variable);
+  // sets unit values from values in the given array
+  virtual bool	UnitValuesFromMatrix(float_Matrix& mat, const char* variable);
   // sets unit values from values in the given array
 
   Unit*		FindUnitFmCoord(int x, int y);

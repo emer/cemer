@@ -489,6 +489,62 @@ bool cssTA_Base::PtrAssignPtrPtr(void* new_ptr_val) {
   return true;
 }
 
+void cssTA_Base::operator=(taBase* cp) {
+  if((ptr_cnt == 0) && ptr) {
+    if(!ptr) {
+      cssMisc::Error(prog,  "Failed to assign taBase object of type:", GetTypeName(),
+		     "our ptr is NULL");
+      return;
+    }
+    if(!cp) {
+      cssMisc::Error(prog,  "Failed to assign taBase object of type:", GetTypeName(),
+		     "copy pointer is NULL");
+      return;
+    }
+    taBase* obj = (taBase*)ptr;
+    obj->UnSafeCopy(cp);
+    UpdateClassParent();
+  }
+  if(ptr_cnt == 1) {
+    ptr = cp;
+    if(ptr)
+      type_def = ((taBase*)ptr)->GetTypeDef();
+  }
+  else if(ptr_cnt == 2) {
+    PtrAssignPtrPtr(cp);
+  }
+}
+
+void cssTA_Base::operator=(taBase** cp) {
+  if(!cp) {
+    cssMisc::Error(prog, "Failed to assign from taBase** -- pointer is NULL");
+    return;
+  }
+  if((ptr_cnt == 0) && ptr) {
+    if(!ptr) {
+      cssMisc::Error(prog,  "Failed to assign taBase object of type:", GetTypeName(),
+		     "our ptr is NULL");
+      return;
+    }
+    if(!*cp) {
+      cssMisc::Error(prog,  "Failed to assign taBase object of type:", GetTypeName(),
+		     "copy pointer is NULL");
+      return;
+    }
+    taBase* obj = (taBase*)ptr;
+    obj->UnSafeCopy(*cp);
+    UpdateClassParent();
+  }
+  if(ptr_cnt == 1) {
+    ptr = *cp;
+    if(ptr)
+      type_def = ((taBase*)ptr)->GetTypeDef();
+  }
+  else if(ptr_cnt == 2) {
+    ptr = cp;
+  }
+}
+
 void cssTA_Base::operator=(const String& s) {
   cssTA::operator=(s);		// just do same thing
 }
@@ -674,6 +730,15 @@ void* cssSmartRef::GetVoidPtrOfType(const char* td) const {
   return cssTA::GetVoidPtrOfType(td);
 }  
 
+Variant cssSmartRef::GetVar() const {
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return _nilVariant;
+  if(sr->ptr()) {
+    return Variant(sr->ptr());
+  }
+  return cssTA::GetVar();
+}
+
 String cssSmartRef::GetStr() const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(!sr) return "NULL";
@@ -681,6 +746,22 @@ String cssSmartRef::GetStr() const {
     return sr->ptr()->GetTypeDef()->GetValStr(sr->ptr());
   }
   return cssTA::GetStr();
+}
+
+void cssSmartRef::operator=(taBase* cp) {
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return;
+  sr->set(cp);
+}
+
+void cssSmartRef::operator=(taBase** cp) {
+  if(!cp) {
+    cssMisc::Error(prog, "Failed to assign from taBase** -- pointer is NULL");
+    return;
+  }
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return;
+  sr->set(*cp);
 }
 
 void cssSmartRef::operator=(const String& s) {
