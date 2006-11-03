@@ -1405,8 +1405,8 @@ void GridColViewSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-void GridColViewSpec::UpdateFromDataCol(bool first){
-  inherited::UpdateFromDataCol(first);
+void GridColViewSpec::UpdateFromDataCol_impl(bool first){
+  inherited::UpdateFromDataCol_impl(first);
   DataArray_impl* dc = dataCol(); //note: exists, because we were called
   if (first) {
     // just get the display width, don't worry about maxwidth

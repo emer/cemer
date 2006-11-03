@@ -1171,6 +1171,11 @@ void DataColViewSpec::setDataCol(DataArray_impl* value, bool first_time) {
 }
 
 void DataColViewSpec::UpdateFromDataCol(bool first) {
+  UpdateFromDataCol_impl(first);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void DataColViewSpec::UpdateFromDataCol_impl(bool first) {
   DataArray_impl* col = dataCol();
   if (name != col->name) {
     name = col->name;
@@ -1183,8 +1188,11 @@ void DataColViewSpec::UpdateFromDataCol(bool first) {
 }
 
 void DataColViewSpec::DataDestroying() {
-  DataColUnlinked();
+  // note: if table destroys, ex. on close, we will already be unlinked, so won't get this
   inherited::DataDestroying();
+  if (sticky)
+    DataColUnlinked();
+  else Close(); // we will delete!
 }
 
 bool DataColViewSpec::isVisible() const {
@@ -1273,6 +1281,7 @@ void DataTableViewSpec::DoActionChildren_impl(DataViewAction act) {
 void DataTableViewSpec::UpdateFromDataTable(bool first) {
   UpdateFromDataTable_this(first);
   UpdateFromDataTable_child(first);
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
 void DataTableViewSpec::UpdateFromDataTable_this(bool first) {

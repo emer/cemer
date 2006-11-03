@@ -778,8 +778,8 @@ public:
 protected:
   override void		Clear_impl(); // unbinds col
   virtual void		DataColUnlinked() {} // called if data set to NULL or destroys
-  virtual void		UpdateFromDataCol(bool first_time = false); // called if data set to column, or we otherwise need to update
-private:
+  void			UpdateFromDataCol(bool first_time = false); // called if data set to column, or we otherwise need to update
+  virtual void		UpdateFromDataCol_impl(bool first_time); 
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
@@ -817,7 +817,7 @@ protected:
   override void 	DoActionChildren_impl(DataViewAction act);
   override void		Clear_impl(); // unbinds table
   override void		DataStructUpdateEnd_impl();
-  virtual void		UpdateFromDataTable(bool first_time = false); // called if data set to table, or needs to be updated; calls _this then _child
+  void			UpdateFromDataTable(bool first_time = false); // called if data set to table, or needs to be updated; calls _this then _child
   virtual void		UpdateFromDataTable_this(bool first); // does me (before kids)
   virtual void		UpdateFromDataTable_child(bool first);//does kids, usually not overridden
   virtual void		DataTableUnlinked(); // called if data is NULL or destroys

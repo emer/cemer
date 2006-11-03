@@ -185,10 +185,13 @@ public:
   virtual int 		Edit(void* base=NULL, bool read_only=false, const iColor* bgcol = NULL); //edit wherever found (note: rarely overridden)
   virtual int 		EditDialog(void* base, bool read_only = false,
     const iColor* bgcol = NULL); //edit in a Dialog (note: rarely overridden)
+  virtual EditDataPanel* EditNewPanel(taiDataLink* link, void* base=NULL,
+    bool read_only = false, const iColor* bgcol = NULL); 
+    //edit in a new panel (note: rarely overridden)
   virtual EditDataPanel* EditPanel(taiDataLink* link, void* base=NULL,
     bool read_only = false, const iColor* bgcol = NULL,
     iMainWindowViewer* not_in_win = NULL); 
-    //edit in a panel (note: rarely overridden)
+    //edit in a panel, prefer existing, else created new (note: rarely overridden)
   virtual int 		BidForType(TypeDef*) { return 0;}
   virtual int 		BidForEdit(TypeDef*) { return 1;}
 //

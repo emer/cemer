@@ -28,7 +28,7 @@
 
 class ClustNode; //
 class GridColViewSpec;
-class GridTableViewSpec;
+class GridTableViewSpec; //
 
 
 // todo: move float_RArray to v3compat
@@ -371,7 +371,7 @@ public:
   TA_BASEFUNS(GridColViewSpec);
 protected:
   void			UpdateAfterEdit_impl();
-  override void		UpdateFromDataCol(bool first_time = false);
+  override void		UpdateFromDataCol_impl(bool first_time);
   override void		DataColUnlinked(); // called if data is NULL or destroys
   override void 	Render_impl();
 private:

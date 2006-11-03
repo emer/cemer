@@ -810,6 +810,15 @@ int taiEdit::EditDialog(void* base, bool read_only, const iColor* bgcol) {
   }
 }
 
+EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
+   bool read_only, const iColor* bgcol) 
+{
+  taiEditDataHost* host = CreateDataHost(base, read_only);
+  if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+  host->Constr("", "", bgcol, taiDataHost::HT_PANEL);
+  return host->EditPanel(link); 
+}
+
 EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
    bool read_only, const iColor* bgcol, iMainWindowViewer* not_in_win) 
 {
@@ -819,10 +828,7 @@ EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
     host->Raise();
     return host->dataPanel();
   } else { 
-    host = CreateDataHost(base, read_only);
-    if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
-    host->Constr("", "", bgcol, taiDataHost::HT_PANEL);
-    return host->EditPanel(link); 
+    return EditNewPanel(link, base, read_only, bgcol);
   }
 }
 
@@ -2796,7 +2802,7 @@ void tabViewType::CreateDataPanel_impl(taiDataLink* dl)
   taiEdit* taie = td->ie;
   //TODO: need to determine read_only
   //note: we cache this panel for the menu/method box fixup step
-  edit_panel = taie->EditPanel(dl, dl->data(), false, GetEditColorInherit(dl));
+  edit_panel = taie->EditNewPanel(dl, dl->data(), false, GetEditColorInherit(dl));
   DataPanelCreated(edit_panel);
 }
 
