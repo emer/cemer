@@ -88,13 +88,22 @@ void DataArray_impl::Init() {
   }
 }
 
-void DataArray_impl::UpdateAfterEdit() {
-  //TODO: is_matrix needs to be true if framesize > 1
-  // TODO: check if frame size has changed (ie, dim change, or matrix change)
-  //TEMP: maybe this is enough???
+void DataArray_impl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   Init();
   name.gsub(" ", "_");		// no spaces in the names allowed!
-  inherited::UpdateAfterEdit();
+}
+
+void DataArray_impl::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  // treat item changes here as struct changes to the table
+  if (dcr == DCR_ITEM_UPDATED) {
+    DataTable* dt = dataTable();
+    if (dt) {
+      dt->StructUpdate(true);
+      dt->StructUpdate(false);
+    }
+  }
 }
 
 DataTable* DataArray_impl::dataTable() {
@@ -303,11 +312,16 @@ void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_
 void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
 
-  // for most schema changes, we just call the datamodel layoutChanged
-  // note that groups themselves don't show in the datatable editor
-  if ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_GROUP_ITEM_MAX)) {
-    DataTable* dt = GET_MY_OWNER(DataTable);
-    if (!dt || !dt->m_dm) return;
+  if ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_ITEM_MAX)) {
+    DataTable* dt = GET_MY_OWNER(DataTable); // cache
+    if (!dt) return;
+    // treat changes here as Struct changes on the table
+    dt->StructUpdate(true);
+    dt->StructUpdate(false);
+    
+    
+    // for most schema changes, we just call the datamodel layoutChanged
+    // note that groups themselves don't show in the datatable editor
 /*wrong    // it seems to handle Adds and Moves ok, but Deletes leave it
     // with the same number of cols, unless we also send a removeColumn notify
     if (dcr == DCR_GROUP_ITEM_REMOVE) {
@@ -317,7 +331,9 @@ void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
       dt->m_dm->beginRemoveColumns(QModelIndex(), col, col);
       dt->m_dm->endRemoveColumns();
     }*/
-    dt->m_dm->emit_layoutChanged();
+    if (dt->m_dm) {
+      dt->m_dm->emit_layoutChanged();
+    }
   }
   
 }
@@ -942,6 +958,7 @@ char DataTable::GetDelim(Delimiters delim) {
   if(delim == TAB) return '\t';
   if(delim == SPACE) return ' ';
   if(delim == COMMA) return ',';
+  return ','; // must return something
 }
 
 int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool quote_str) {
@@ -1156,8 +1173,13 @@ void DataColViewSpec::Copy_(const DataColViewSpec& cp) {
 }
 
 void DataColViewSpec::Clear_impl() {
-  if (m_data) SetData(NULL);
+  if (m_data) setDataCol(NULL);
   inherited::Clear_impl();
+}
+
+void DataColViewSpec::DataDestroying() {
+  inherited::DataDestroying();
+  DataColUnlinked();
 }
 
 void DataColViewSpec::setDataCol(DataArray_impl* value, bool first_time) {
@@ -1185,14 +1207,6 @@ void DataColViewSpec::UpdateFromDataCol_impl(bool first) {
     if (col->GetUserData(DataArray_impl::udkey_hidden).toBool())
       visible = false;
   }
-}
-
-void DataColViewSpec::DataDestroying() {
-  // note: if table destroys, ex. on close, we will already be unlinked, so won't get this
-  inherited::DataDestroying();
-  if (sticky)
-    DataColUnlinked();
-  else Close(); // we will delete!
 }
 
 bool DataColViewSpec::isVisible() const {
@@ -1239,17 +1253,17 @@ void DataTableViewSpec::Clear_impl() {
     SetData(NULL);
     DataTableUnlinked();
   }
-  inherited::Clear_impl();
+  inherited::Clear_impl(); // will unlink kids
 }
 
 void DataTableViewSpec::setDataTable(DataTable* dt) {
   if (dataTable() == dt) return;
-  SetData(dt);
   if (dt) {
+    SetData(dt);
     bool first = (col_specs.size == 0);
     UpdateFromDataTable(first);
   } else {
-    DataTableUnlinked();
+    Clear(); // also does kids
   }
 }
 
@@ -1263,7 +1277,6 @@ void DataTableViewSpec::DataStructUpdateEnd_impl() {
 }
  
 void DataTableViewSpec::DataTableUnlinked() {
-  Clear(); // note: will set dt to NULL again, but that will be ignored
 }
 
 void DataTableViewSpec::DoActionChildren_impl(DataViewAction act) {
@@ -1314,11 +1327,17 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
 //  delete orphans (except sticky guys)
   for (i = col_specs.size - 1; i >= 0; --i) {
     dcs = col_specs.FastEl(i);
+    // first, see if it is bound to our table, if so, just update it (name may have changed, etc.
+    if (cols->Find(dcs->dataCol()) >= 0) {
+      dcs->UpdateFromDataCol();
+      continue;
+    }
+    // if not bound, try to find it by name
     dc = cols->FindName(dcs->GetName());
     if (dc) {
       // make sure it is this col bound to the guy!
       dcs->setDataCol(dc);
-    } else {
+    } else { // no target found in table
       if (dcs->sticky) {
         dcs->setDataCol(NULL); //keep him, but unbind from any col
       } else {

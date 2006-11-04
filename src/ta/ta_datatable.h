@@ -218,8 +218,8 @@ public:
   // #CAT_ObjectMgmt copy one row from source to given row in this object
   
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
+  override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_USERDATAFUNS(DataArray_impl)
-  void  UpdateAfterEdit();
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
   void	CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
   void 	Copy_(const DataArray_impl& cp);
@@ -227,6 +227,7 @@ public:
   TA_ABSTRACT_BASEFUNS(DataArray_impl);
   
 protected:
+  override void  UpdateAfterEdit_impl();
   // in all accessor routines, -ve row is from end (-1=last)
   int			IndexOfEl_Flat(int row, int cell) const; 
     // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
@@ -757,6 +758,7 @@ private:
 class TA_API DataColViewSpec: public ViewSpec {
   // ##SCOPE_DataColViewSpecs base specification for the display of data
 INHERITED(ViewSpec)
+friend class DataTableViewSpec;
 public:
   bool			sticky; // #DEF_false set this to retain this colspec even if its column deletes
 

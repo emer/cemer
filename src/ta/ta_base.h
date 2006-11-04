@@ -393,7 +393,7 @@ public:
   
   
   virtual taDataLink* 	GetDataLink(); // #IGNORE forces creation; can still be NULL if the type doesn't support datalinks
-  void			AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
+  bool			AddDataClient(IDataLinkClient* dlc); // #IGNORE note: only applicable for classes that implement datalinks
   bool			RemoveDataClient(IDataLinkClient* dlc); // #IGNORE WARNING: link is undefined after this 
   
   virtual void		InitLinks()		{ };
@@ -804,8 +804,8 @@ friend class taDataView; // for access to link
 public:
   inline taBase*	ptr() const {return m_ptr;}
   void			set(taBase* src) {if (src == m_ptr) return;
-    if (m_ptr) {m_ptr->RemoveDataClient(this);}
-    if (src) {src->AddDataClient(this);}  m_ptr = src;}
+    if (m_ptr) m_ptr->RemoveDataClient(this); m_ptr = NULL;
+    if (src && src->AddDataClient(this)) m_ptr = src;} 
   
   virtual TypeDef*	GetBaseType() const {return &TA_taBase;}
   

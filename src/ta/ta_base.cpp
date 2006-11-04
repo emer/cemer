@@ -531,11 +531,20 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
   }
 }
 
-void taBase::AddDataClient(IDataLinkClient* dlc) {
+bool taBase::AddDataClient(IDataLinkClient* dlc) {
+  // refuse new links while destroying!
+  if (isDestroying()) {
+#ifdef DEBUG
+    taMisc::Warning("Attempt to add a client DataLink to a destructing object");
+#endif
+    return false;
+  }
   taDataLink* dl = GetDataLink(); // autocreates if necessary
   if (dl != NULL) {
     dl->AddDataClient(dlc);
+    return true;
   }
+  return false;
 }
 
 void taBase::BatchUpdate(bool begin, bool struc) {
@@ -2656,7 +2665,7 @@ void taDataView::SetData(taBase* ta) {
   } else {
     m_data = ta;
   }
-  UpdateAfterEdit();
+//no!shouldn't be automatic  UpdateAfterEdit();
 }
 
 TAPtr taDataView::SetOwner(TAPtr own) {
