@@ -259,32 +259,32 @@ public:
   // row-wise functions: selecting/splitting
 
   static bool	SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec);
-  // #NULL_OK select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Select select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   static bool	SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
 			  DataSelectSpec* spec);
-  // #NULL_OK splits the source datatable rows into two sets, those that match the selection specifications go into dest_a, else dest_b (if dest are NULL, new ones are created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Select splits the source datatable rows into two sets, those that match the selection specifications go into dest_a, else dest_b (if dest are NULL, new ones are created in proj.data.AnalysisData)
 
   static bool	SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
 			 DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
 			 DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
-  // #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder) (new dest datatables are created if NULL)
+  // #NULL_OK #CAT_Select splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder) (new dest datatables are created if NULL)
   static bool	SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
 				   DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
 				   DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
-  // #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets
+  // #NULL_OK #CAT_Select splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets
 
   ///////////////////////////////////////////////////////////////////
   // column-wise functions: selecting, joining
 
   static bool	SelectCols(DataTable* dest, DataTable* src, DataOpList* spec);
-  // #NULL_OK select columns of data from src into dest according to list of columnns in spec (all rows are copied)
+  // #NULL_OK #CAT_Columns select columns of data from src into dest according to list of columnns in spec (all rows are copied)
 
   static bool	Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec);
-  // #NULL_OK joins two datatables (src_a and src_b) into dest datatable.  each row of src_a is included, and the value of col_a for a given row is used to search col_b of src_b for the row to include from it.  all columns are included (without repeating the common column)
+  // #NULL_OK #CAT_Columns joins two datatables (src_a and src_b) into dest datatable.  each row of src_a is included, and the value of col_a for a given row is used to search col_b of src_b for the row to include from it.  all columns are included (without repeating the common column)
 
   static bool	JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b);
-  // #NULL_OK joins two datatables into one datatable on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)). all columns from both tables are included.
+  // #NULL_OK #CAT_Columns joins two datatables into one datatable on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)). all columns from both tables are included.
 
 
   ///////////////////////////////////////////////////////////////////
@@ -294,7 +294,7 @@ public:
 			    const String& filter = "", bool recursive = false,
 			    const String& fname_col_nm = "FileName",
 			    const String& path_col_nm = "FilePath");
-  // read file names from given directory into rows of the data table (must be passed non-null), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist)
+  // #CAT_Misc read file names from given directory into rows of the data table (must be passed non-null), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist)
 
   void Initialize() { };
   void Destroy() { };

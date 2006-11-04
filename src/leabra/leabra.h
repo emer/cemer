@@ -1619,6 +1619,10 @@ public:
   int		cycle_max;	// #DEF_60 #CAT_Counter maximum number of cycles to settle for
   int		min_cycles;	// #DEF_15 #CAT_Counter minimum number of cycles to settle for
   int		min_cycles_phase2; // #DEF_15 #CAT_Counter minimum number of cycles to settle for in second phase
+  float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles (computed over previous epoch)
+  float		avg_cycles_sum; // #READ_ONLY #CAT_Statistic sum for computing current average cycles in this epoch
+  int		avg_cycles_n;	// #READ_ONLY #CAT_Statistic N for average cycles computation for this epoch
+
   int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)
   bool		send_delta;	// #DEF_false #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
 
@@ -1676,9 +1680,10 @@ public:
   virtual void	Compute_dWt_NStdLay(); // #CAT_TrialFinal compute weight change on non-nstandard layers (depends on which phase is being run)
   virtual void	Compute_dWt();	// #CAT_TrialFinal compute weight change on all layers
   virtual void	Compute_ExtRew(); // #CAT_Statistic compute external reward information
-  override void	Compute_SSE();	// #CAT_Statistic compute sum squared error AND also call Compute_ExtRew
+  override void	Compute_SSE();	// #CAT_Statistic compute sum squared error AND also call Compute_ExtRew and increment avg_cycles -- to be called at end of minus phase
   virtual void	Trial_Final();	// #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
 
+  virtual void	Compute_AvgCycles(); // #CAT_Statistic compute average cycles (at an epoch-level timescale)
   virtual void	Compute_AvgExtRew(); // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
   override void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics, INCLUDING AvgExtRew
 

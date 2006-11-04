@@ -1,377 +1,377 @@
 // ta_Dump File v2.0
 Program .projects[0].programs.gp[0][5] { 
-taBase_List @.objs = [2] {
-LayerWriter @[0] { 
-LayerDataEl_List @.layer_data = [7] {
-LayerWriterEl @[0] { };
-LayerWriterEl @[1] { };
-LayerWriterEl @[2] { };
-LayerWriterEl @[3] { };
-LayerWriterEl @[4] { };
-LayerWriterEl @[5] { };
-LayerWriterEl @[6] { };
-};
-};
-RetinaSpec @[1] { 
-DoGRetinaSpecList @.dogs = [3] {
-DoGRetinaSpec @[0] { };
-DoGRetinaSpec @[1] { };
-DoGRetinaSpec @[2] { };
-};
-};
-};
+  taBase_List @.objs = [2] {
+    LayerWriter @[0] { 
+      LayerDataEl_List @.layer_data = [7] {
+	LayerWriterEl @[0] { };
+	LayerWriterEl @[1] { };
+	LayerWriterEl @[2] { };
+	LayerWriterEl @[3] { };
+	LayerWriterEl @[4] { };
+	LayerWriterEl @[5] { };
+	LayerWriterEl @[6] { };
+      };
+    };
+    RetinaSpec @[1] { 
+      DoGRetinaSpecList @.dogs = [3] {
+	DoGRetinaSpec @[0] { };
+	DoGRetinaSpec @[1] { };
+	DoGRetinaSpec @[2] { };
+      };
+    };
+  };
 
-ProgVar_List @.args = [1] {
-ProgVar @[0] { };
-};
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
 
-ProgVar_List @.vars = [8] {
-ProgVar @[0] { };
-ProgVar @[1] { };
-ProgVar @[2] { };
-ProgVar @[3] { };
-ProgVar @[4] { };
-ProgVar @[5] { };
-ProgVar @[6] { };
-ProgVar @[7] { };
-};
+  ProgVar_List @.vars = [8] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
+  };
 
-ProgEl_List @.init_code = [3] {
-MethodCall @[0] { };
-MethodCall @[1] { };
-MethodCall @[2] { };
-};
+  ProgEl_List @.init_code = [3] {
+    MethodCall @[0] { };
+    MethodCall @[1] { };
+    MethodCall @[2] { };
+  };
 
-ProgEl_List @.prog_code = [3] {
-IfElse @[0] { 
-ProgEl_List @.true_code = [1] {
-MethodCall @[0] { };
-};
-};
-MethodCall @[1] { };
-MethodCall @[2] { };
-};
+  ProgEl_List @.prog_code = [3] {
+    IfElse @[0] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
+    MethodCall @[1] { };
+    MethodCall @[2] { };
+  };
 };
 Program .projects[0].programs.gp[0][5] {
-name="ApplyInputsImage";
-desc=;
-flags=PF_NONE;
-objs {
-name=;
-el_typ=LayerWriter;
-el_def=0;
-LayerWriter @[0] {
-name="LayerWriter_0";
-data=.projects[0].data.gp[0][1]$0$;
-network=.projects[0].networks[0]$1$;
-layer_data {
-name=;
-el_typ=LayerWriterEl;
-el_def=0;
-LayerWriterEl @[0] {
-chan_name="high_freq_bw_off";
-net_target=LAYER;
-layer_name="high_freq_bw_off";
-offset {x=0: y=0: };
-use_layer_type=1;
-ext_flags=EXT;
-noise {type=NONE: mean=0: var=0.5: par=1: };
-value_names{ };
-};
-LayerWriterEl @[1] {
-chan_name="high_freq_bw_on";
-net_target=LAYER;
-layer_name="high_freq_bw_on";
-offset {x=0: y=0: };
-use_layer_type=1;
-ext_flags=EXT;
-noise {type=NONE: mean=0: var=0.5: par=1: };
-value_names{ };
-};
-LayerWriterEl @[2] {
-chan_name="med_freq_bw_on";
-net_target=LAYER;
-layer_name="med_freq_bw_on";
-offset {x=0: y=0: };
-use_layer_type=1;
-ext_flags=EXT;
-noise {type=NONE: mean=0: var=0.5: par=1: };
-value_names{ };
-};
-LayerWriterEl @[3] {
-chan_name="med_freq_bw_off";
-net_target=LAYER;
-layer_name="med_freq_bw_off";
-offset {x=0: y=0: };
-use_layer_type=1;
-ext_flags=EXT;
-noise {type=NONE: mean=0: var=0.5: par=1: };
-value_names{ };
-};
-LayerWriterEl @[4] {
-chan_name="low_freq_bw_off";
-net_target=LAYER;
-layer_name="low_freq_bw_off";
-offset {x=0: y=0: };
-use_layer_type=1;
-ext_flags=EXT;
-noise {type=NONE: mean=0: var=0.5: par=1: };
-value_names{ };
-};
-LayerWriterEl @[5] {
-chan_name="low_freq_bw_on";
-net_target=LAYER;
-layer_name="low_freq_bw_on";
-offset {x=0: y=0: };
-use_layer_type=1;
-ext_flags=EXT;
-noise {type=NONE: mean=0: var=0.5: par=1: };
-value_names{ };
-};
-LayerWriterEl @[6] {
-chan_name="Name";
-net_target=TRIAL_NAME;
-layer_name="Name";
-offset {x=0: y=0: };
-use_layer_type=1;
-ext_flags=NO_EXTERNAL;
-noise {type=NONE: mean=0: var=0.5: par=1: };
-value_names{ };
-};
-};
-};
-RetinaSpec @[1] {
-name="RetinaSpec_0";
-color_type=MONOCHROME;
-retina_size {x=341: y=241: };
-dogs {
-name=;
-el_typ=DoGRetinaSpec;
-el_def=0;
-DoGRetinaSpec @[0] {
-name="high_freq_bw";
-dog {
-name="DoGFilterSpec_9";
-color_chan=BLACK_WHITE;
-filter_width=8;
-filter_size=17;
-on_sigma=2;
-off_sigma=4;
-circle_edge=1;
-};
-spacing {
-name="RetinalSpacingSpec_0";
-region=FOVEA;
-retina_size {x=341: y=241: };
-border {x=109: y=85: };
-spacing {x=2: y=2: };
-input_size {x=123: y=71: };
-output_size {x=62: y=36: };
-output_units=2232;
-};
-};
-DoGRetinaSpec @[1] {
-name="med_freq_bw";
-dog {
-name="DoGFilterSpec_10";
-color_chan=BLACK_WHITE;
-filter_width=16;
-filter_size=33;
-on_sigma=4;
-off_sigma=8;
-circle_edge=1;
-};
-spacing {
-name="RetinalSpacingSpec_1";
-region=PARAFOVEA;
-retina_size {x=341: y=241: };
-border {x=6: y=14: };
-spacing {x=4: y=4: };
-input_size {x=329: y=213: };
-output_size {x=83: y=54: };
-output_units=4482;
-};
-};
-DoGRetinaSpec @[2] {
-name="low_freq_bw";
-dog {
-name="DoGFilterSpec_11";
-color_chan=BLACK_WHITE;
-filter_width=32;
-filter_size=65;
-on_sigma=8;
-off_sigma=16;
-circle_edge=1;
-};
-spacing {
-name="RetinalSpacingSpec_2";
-region=PARAFOVEA;
-retina_size {x=341: y=241: };
-border {x=6: y=16: };
-spacing {x=8: y=8: };
-input_size {x=329: y=209: };
-output_size {x=42: y=27: };
-output_units=1134;
-};
-};
-};
-};
-};
-args {
-name=;
-el_typ=ProgVar;
-el_def=0;
-ProgVar @[0] {
-name="network";
-var_type=T_Object;
-object_type=LeabraNetwork;
-object_val=$1$;
-objs_ptr=0;
-desc=;
-};
-};
-vars {
-name=;
-el_typ=ProgVar;
-el_def=0;
-ProgVar @[0] {
-name="image_data";
-var_type=T_Object;
-object_type=DataBlock;
-object_val=$0$;
-objs_ptr=0;
-desc=;
-};
-ProgVar @[1] {
-name="names";
-var_type=T_Object;
-object_type=DataTable;
-object_val=.projects[0].data.gp[0][0]$2$;
-objs_ptr=0;
-desc=;
-};
-ProgVar @[2] {
-name="LayerWriter_0";
-var_type=T_Object;
-object_type=LayerWriter;
-object_val=.projects[0].programs.gp[0][5].objs[0]$3$;
-objs_ptr=1;
-desc=;
-};
-ProgVar @[3] {
-name="RetinaSpec_0";
-var_type=T_Object;
-object_type=RetinaSpec;
-object_val=.projects[0].programs.gp[0][5].objs[1]$4$;
-objs_ptr=1;
-desc=;
-};
-ProgVar @[4] {
-name="move_var";
-var_type=T_Real;
-real_val=0.15;
-objs_ptr=0;
-desc="range for moving image";
-};
-ProgVar @[5] {
-name="scale_min";
-var_type=T_Real;
-real_val=0.2;
-objs_ptr=0;
-desc="minimum scale value";
-};
-ProgVar @[6] {
-name="scale_max";
-var_type=T_Real;
-real_val=0.4;
-objs_ptr=0;
-desc="maximum scale value";
-};
-ProgVar @[7] {
-name="rot_var";
-var_type=T_Real;
-real_val=0.02;
-objs_ptr=0;
-desc="rotation range";
-};
-};
-init_code {
-name=;
-el_typ=MethodCall;
-el_def=0;
-MethodCall @[0] {
-desc=;
-off=0;
-result_var=;
-script_obj=.projects[0].programs.gp[0][5].vars[0]$5$;
-method=DataTable::ResetData;
-args{ };
-{ };
-};
-MethodCall @[1] {
-desc=;
-off=0;
-result_var=;
-script_obj=.projects[0].programs.gp[0][5].vars[2]$6$;
-method=LayerWriter::SetDataNetwork;
-args{ image_data;network;};
-{ DataBlock* db;Network* net;};
-};
-MethodCall @[2] {
-desc=;
-off=0;
-result_var=;
-script_obj=$6$;
-method=taList_impl::CheckConfig;
-args{ false;};
-{ bool quiet;};
-};
-};
-prog_code {
-name=;
-el_typ=MethodCall;
-el_def=0;
-IfElse @[0] {
-desc=;
-off=0;
-condition="network->phase_no == 0";
-true_code {
-name=;
-el_typ=ProgEl;
-el_def=0;
-MethodCall @[0] {
-desc=;
-off=0;
-result_var=;
-script_obj=.projects[0].programs.gp[0][5].vars[3]$7$;
-method=RetinaSpec::FilterImageName;
-args{ names.GetDataByName("FilePath");image_data;Random::UniformMeanRange(0, move_var);Random::UniformMeanRange(0, move_var);Random::UniformMinMax(scale_min, scale_max);Random::UniformMeanRange(0, rot_var);false;};
-{ const taString& img_fname;DataTable* dt;float move_x;float move_y;float scale;float rotate;bool superimpose;};
-};
-};
-false_code {
-name=;
-el_typ=ProgEl;
-el_def=0;
-};
-};
-MethodCall @[1] {
-desc=;
-off=0;
-result_var=;
-script_obj=$5$;
-method=DataBlock_Idx::ReadItem;
-args{ -1;};
-{ int idx;};
-};
-MethodCall @[2] {
-desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
-off=0;
-result_var=;
-script_obj=$6$;
-method=LayerWriter::ApplyInputData;
-args{ };
-{ };
-};
-};
+ name="ApplyInputsImage";
+ desc="apply input data to the network, using a RetinaSpec to process a bitmap image.  epoch should iterate over a datatable with names of images to load, and the current value of that is used here to load the image and process into a second datatable (image_data) which is actually presented to the network.";
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=LayerWriter;
+  el_def=0;
+  LayerWriter @[0] {
+   name="LayerWriter_0";
+   data=.projects[0].data.gp[0][1]$0$;
+   network=.projects[0].networks[0]$1$;
+   layer_data {
+    name=;
+    el_typ=LayerWriterEl;
+    el_def=0;
+    LayerWriterEl @[0] {
+     chan_name="high_freq_bw_off";
+     net_target=LAYER;
+     layer_name="high_freq_bw_off";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=EXT;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+    LayerWriterEl @[1] {
+     chan_name="high_freq_bw_on";
+     net_target=LAYER;
+     layer_name="high_freq_bw_on";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=EXT;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+    LayerWriterEl @[2] {
+     chan_name="med_freq_bw_on";
+     net_target=LAYER;
+     layer_name="med_freq_bw_on";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=EXT;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+    LayerWriterEl @[3] {
+     chan_name="med_freq_bw_off";
+     net_target=LAYER;
+     layer_name="med_freq_bw_off";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=EXT;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+    LayerWriterEl @[4] {
+     chan_name="low_freq_bw_off";
+     net_target=LAYER;
+     layer_name="low_freq_bw_off";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=EXT;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+    LayerWriterEl @[5] {
+     chan_name="low_freq_bw_on";
+     net_target=LAYER;
+     layer_name="low_freq_bw_on";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=EXT;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+    LayerWriterEl @[6] {
+     chan_name="Name";
+     net_target=TRIAL_NAME;
+     layer_name="Name";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=NO_EXTERNAL;
+     noise {type=NONE: mean=0: var=0.5: par=1: };
+     value_names{      };
+    };
+   };
+  };
+  RetinaSpec @[1] {
+   name="RetinaSpec_0";
+   color_type=MONOCHROME;
+   retina_size {x=341: y=241: };
+   dogs {
+    name=;
+    el_typ=DoGRetinaSpec;
+    el_def=0;
+    DoGRetinaSpec @[0] {
+     name="high_freq_bw";
+     dog {
+      name="DoGFilterSpec_9";
+      color_chan=BLACK_WHITE;
+      filter_width=8;
+      filter_size=17;
+      on_sigma=2;
+      off_sigma=4;
+      circle_edge=1;
+     };
+     spacing {
+      name="RetinalSpacingSpec_0";
+      region=FOVEA;
+      retina_size {x=341: y=241: };
+      border {x=109: y=85: };
+      spacing {x=2: y=2: };
+      input_size {x=123: y=71: };
+      output_size {x=62: y=36: };
+      output_units=2232;
+     };
+    };
+    DoGRetinaSpec @[1] {
+     name="med_freq_bw";
+     dog {
+      name="DoGFilterSpec_10";
+      color_chan=BLACK_WHITE;
+      filter_width=16;
+      filter_size=33;
+      on_sigma=4;
+      off_sigma=8;
+      circle_edge=1;
+     };
+     spacing {
+      name="RetinalSpacingSpec_1";
+      region=PARAFOVEA;
+      retina_size {x=341: y=241: };
+      border {x=6: y=14: };
+      spacing {x=4: y=4: };
+      input_size {x=329: y=213: };
+      output_size {x=83: y=54: };
+      output_units=4482;
+     };
+    };
+    DoGRetinaSpec @[2] {
+     name="low_freq_bw";
+     dog {
+      name="DoGFilterSpec_11";
+      color_chan=BLACK_WHITE;
+      filter_width=32;
+      filter_size=65;
+      on_sigma=8;
+      off_sigma=16;
+      circle_edge=1;
+     };
+     spacing {
+      name="RetinalSpacingSpec_2";
+      region=PARAFOVEA;
+      retina_size {x=341: y=241: };
+      border {x=6: y=16: };
+      spacing {x=8: y=8: };
+      input_size {x=329: y=209: };
+      output_size {x=42: y=27: };
+      output_units=1134;
+     };
+    };
+   };
+  };
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=$1$;
+   objs_ptr=0;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="image_data";
+   var_type=T_Object;
+   object_type=DataBlock;
+   object_val=$0$;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[1] {
+   name="names";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][3]$2$;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[2] {
+   name="LayerWriter_0";
+   var_type=T_Object;
+   object_type=LayerWriter;
+   object_val=.projects[0].programs.gp[0][5].objs[0]$3$;
+   objs_ptr=1;
+   desc=;
+  };
+  ProgVar @[3] {
+   name="RetinaSpec_0";
+   var_type=T_Object;
+   object_type=RetinaSpec;
+   object_val=.projects[0].programs.gp[0][5].objs[1]$4$;
+   objs_ptr=1;
+   desc=;
+  };
+  ProgVar @[4] {
+   name="move_var";
+   var_type=T_Real;
+   real_val=0.15;
+   objs_ptr=0;
+   desc="range for moving image";
+  };
+  ProgVar @[5] {
+   name="scale_min";
+   var_type=T_Real;
+   real_val=0.2;
+   objs_ptr=0;
+   desc="minimum scale value";
+  };
+  ProgVar @[6] {
+   name="scale_max";
+   var_type=T_Real;
+   real_val=0.4;
+   objs_ptr=0;
+   desc="maximum scale value";
+  };
+  ProgVar @[7] {
+   name="rot_var";
+   var_type=T_Real;
+   real_val=0.02;
+   objs_ptr=0;
+   desc="rotation range";
+  };
+ };
+ init_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc=;
+   off=0;
+   result_var=;
+   script_obj=.projects[0].programs.gp[0][5].vars[0]$5$;
+   method=DataTable::ResetData;
+   args{ };
+{    };
+  };
+  MethodCall @[1] {
+   desc=;
+   off=0;
+   result_var=;
+   script_obj=.projects[0].programs.gp[0][5].vars[2]$6$;
+   method=LayerWriter::SetDataNetwork;
+   args{ image_data;network;};
+{ DataBlock* db;Network* net;   };
+  };
+  MethodCall @[2] {
+   desc=;
+   off=0;
+   result_var=;
+   script_obj=$6$;
+   method=taList_impl::CheckConfig;
+   args{ false;};
+{ bool quiet;   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  IfElse @[0] {
+   desc=;
+   off=0;
+   condition="network->phase_no == 0";
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     off=0;
+     result_var=;
+     script_obj=.projects[0].programs.gp[0][5].vars[3]$7$;
+     method=RetinaSpec::FilterImageName;
+     args{ names.GetDataByName("FilePath");image_data;Random::UniformMeanRange(0, move_var);Random::UniformMeanRange(0, move_var);Random::UniformMinMax(scale_min, scale_max);Random::UniformMeanRange(0, rot_var);false;};
+{ const taString& img_fname;DataTable* dt;float move_x;float move_y;float scale;float rotate;bool superimpose;     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  MethodCall @[1] {
+   desc=;
+   off=0;
+   result_var=;
+   script_obj=$5$;
+   method=DataBlock_Idx::ReadItem;
+   args{ -1;};
+{ int idx;   };
+  };
+  MethodCall @[2] {
+   desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
+   off=0;
+   result_var=;
+   script_obj=$6$;
+   method=LayerWriter::ApplyInputData;
+   args{ };
+{    };
+  };
+ };
 };

@@ -357,8 +357,8 @@ public:
   // #CAT_Monitor get all the values and store in current row of data table -- call in program to get new data
   void		RemoveMonitors();
   // #IGNORE called by the network to remove the objs from lists
-  void		UpdateNetwork(Network* old_net, Network* new_net);
-  // #IGNORE update pointers to objects within old_net to new_net
+  void		UpdateNetworkPtrs();
+  // #IGNORE update pointers to objects within current network
 
   String	GetDisplayName() const;
   
@@ -370,8 +370,6 @@ public:
   TA_BASEFUNS(NetMonitor);
   
 protected:
-  Network*	old_network;	// #IGNORE just for UAE to know when network has changed
-
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
 private:

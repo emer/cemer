@@ -199,6 +199,12 @@ int taGroup_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   return nchg;
 }
 
+int taGroup_impl::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
+  int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
+  nchg += gp.UpdatePointers_NewParType(par_typ, new_par);
+  return nchg;
+}
+
 int taGroup_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
   nchg += gp.UpdatePointers_NewObj(old_ptr, new_ptr);

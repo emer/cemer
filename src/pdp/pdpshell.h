@@ -23,6 +23,7 @@
 #include "ta_fontspec.h"
 #include "ta_project.h"
 #include "ta_program.h"
+#include "ta_imgproc.h"
 
 #include "colorscale.h"
 
@@ -77,6 +78,8 @@ public:
 
   virtual void	StdNetwork(Network* net=NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)
+  virtual void	RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net=NULL);
+  // #MENU_BUTTON #MENU_ON_Network #NULL_OK configure the input layers of the network to accept the output of the image processing performed by retina_spec (if net == NULL, new network is created)
 
   virtual void	StdInputData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
   // #MENU_BUTTON #MENU_ON_Data #NULL_OK make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences 
@@ -178,12 +181,22 @@ public:
     COLOR_COUNT
   };
 
+ enum BuildNetsMode {
+   AUTO_BUILD,			// build the networks after loading
+   PROMPT_BUILD,		// prompt about building after loading
+   NO_BUILD,			// do not build networks after loading
+ };
+
   static void 		NewGridView(DataTable* dt, T3DataViewFrame* fr = NULL); // #DYN_P1 #MENU #MENU_CONTEXT #NULL_OK create a new graph view of the specified table in current project browser; fr=NULL creates new frame
   static void 		NewGraphView(DataTable* dt, T3DataViewFrame* fr = NULL); // #DYN_P1 #MENU #MENU_CONTEXT #NULL_OK create a new graph view of the specified table in current project browser; NULL creates new frame
   
   Network_Group		networks;	// Networks of interconnected units
 
-  bool			save_rmv_units; // #DEF_true don't include units in network when saving (makes project file much smaller!)
+  bool			save_rmv_units;
+  // #DEF_true don't include units in network when saving (makes project file much smaller!)
+  BuildNetsMode		build_nets;
+  // what to do with networks after loading them -- if units are removed, then they can be rebuilt after loading
+  
   TAColor_List		the_colors; 	// #IGNORE actual colors
   RGBA_List		view_colors; 	// colors to use in the project view
   
@@ -191,12 +204,17 @@ public:
   
   virtual void	UpdateColors();	// #BUTTON update the actual colors based on settings (
   virtual void	GetDefaultColors(); // #BUTTON get default colors for various project objects (in view and edit dialogs)
-  
+
   override const iColor* GetObjColor(TypeDef* td); // #IGNORE get default color for object (for edit, project view)
   override const iColor* GetObjColor(int vc); // #IGNORE get default color for object (for edit, project view)
   override void 	AssertDefaultWiz(bool auto_opn); // make the default wizard(s)
 
-//TEMP methods until we add dynamic methods for DataTable
+  //TEMP methods until we add dynamic methods for DataTable
+
+  virtual void	AutoBuildNets(BuildNetsMode bld_mode);
+  // build networks according to bulid mode
+  
+  override int		Load(istream& strm, TAPtr par=NULL, void** el = NULL);
 
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only

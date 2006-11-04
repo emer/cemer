@@ -204,6 +204,27 @@ void Wizard::StdNetwork(Network* net) {
 //obs  taMisc::DelayedMenuUpdate(net);
 }
 
+void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  if(net == NULL)
+    net = pdpMisc::GetNewNetwork(proj);
+  if(net == NULL) return;
+  net->StructUpdate(true);
+  for(int i=0;i<retina_spec->dogs.size; i++) {
+    DoGRetinaSpec* sp = retina_spec->dogs[i];
+    Layer* on_lay = net->FindMakeLayer(sp->name + "_on");
+    on_lay->geom.x = sp->spacing.output_size.x;
+    on_lay->geom.y = sp->spacing.output_size.y;
+    on_lay->n_units = sp->spacing.output_units;
+    on_lay->layer_type = Layer::INPUT;
+    Layer* off_lay = net->FindMakeLayer(sp->name + "_off");
+    off_lay->geom.x = sp->spacing.output_size.x;
+    off_lay->geom.y = sp->spacing.output_size.y;
+    off_lay->n_units = sp->spacing.output_units;
+    off_lay->layer_type = Layer::INPUT;
+  }
+  net->StructUpdate(false);
+}
 
 //////////////////////////////////
 // 	Enviro Wizard		//
@@ -580,6 +601,7 @@ void ProjectBase::Initialize() {
   wizards.SetBaseType(&TA_Wizard);
   // now the rest
   save_rmv_units = true; // default is not to save units
+  build_nets = AUTO_BUILD;
 }
 
 void ProjectBase::InitLinks_impl() {
@@ -619,6 +641,28 @@ void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 
   UpdateColors();
+}
+
+void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
+  if(bld_mode == NO_BUILD)
+    return;
+  Network* net;
+  taLeafItr i;
+  FOR_ITR_EL(Network, net, networks., i) {
+    if(bld_mode == PROMPT_BUILD) {
+      int chs = taMisc::Choice("Build network: " + net->name, "Yes", "No");
+      if(chs == 1) continue;
+    }
+    net->Build();
+    net->Connect();
+  }
+}
+
+int ProjectBase::Load(istream& strm, TAPtr par, void** el) {
+  int rval = inherited::Load(strm, par, el); // load-em-up
+  if(rval)
+    AutoBuildNets(build_nets);
+  return rval;
 }
 
 DataTable_Group* ProjectBase::analysisDataGroup() {

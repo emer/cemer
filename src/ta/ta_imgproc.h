@@ -297,8 +297,8 @@ public:
   virtual void	DefaultFilters();
   // #BUTTON #CAT_Filter create a set of default filters
 
-  virtual void	ConfigDataTable(DataTable* dt, bool new_cols = false);
-  // #BUTTON #CAT_Filter configure a data table to hold all of the image data (if new_cols, reset any existing cols in data table before adding new ones)
+  virtual void	ConfigDataTable(DataTable* dt, bool reset_cols = false);
+  // #BUTTON #CAT_Config #NULL_OK configure a data table to hold all of the image data (if reset_cols, reset any existing cols in data table before adding new ones) (if dt == NULL, a new one is created in data.InputData)
 
   ///////////////////////////////////////////////////////////////////////
   // Basic filtering function: transforms image and then applies dog filters

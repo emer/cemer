@@ -1163,7 +1163,7 @@ void RetinaSpec::DefaultFilters() {
   }
 }
 
-void RetinaSpec::ConfigDataTable(DataTable* dt, bool new_cols) {
+void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!dt) {
     DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
@@ -1173,7 +1173,7 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool new_cols) {
     else
       dt->name = "RetinaSpec_InputData";
   }
-  if(new_cols) dt->Reset();
+  if(reset_cols) dt->Reset();
   dt->StructUpdate(true);
   int idx =0;
   dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);

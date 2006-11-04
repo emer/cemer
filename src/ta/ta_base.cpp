@@ -1258,6 +1258,10 @@ bool taBase::ChangeMyType(TypeDef* new_type) {
 bool taBase::UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* new_par,
 				 bool null_not_found) {
   if(!*ptr || !old_par || !new_par) return false;
+  if(*ptr == old_par) {
+    taBase::SetPointer(ptr, new_par);
+    return true;
+  }
   taBase* old_own = (*ptr)->GetOwner(old_par->GetTypeDef());
   if(old_own != old_par) return false;
   String old_path = (*ptr)->GetPath(NULL, old_par);
@@ -1276,6 +1280,10 @@ bool taBase::UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* ne
 bool taBase::UpdatePointers_NewPar_SmPtr(taSmartPtr& ref, taBase* old_par, taBase* new_par,
 					 bool null_not_found) {
   if(!ref.ptr() || !old_par || !new_par) return false;
+  if(ref.ptr() == old_par) {
+    ref.set(new_par);
+    return true;
+  }
   taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
   if(old_own != old_par) return false;
   String old_path = ref.ptr()->GetPath(NULL, old_par);
@@ -1294,6 +1302,10 @@ bool taBase::UpdatePointers_NewPar_SmPtr(taSmartPtr& ref, taBase* old_par, taBas
 bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase* new_par,
 				 bool null_not_found) {
   if(!ref.ptr() || !old_par || !new_par) return false;
+  if(ref.ptr() == old_par) {
+    ref.set(new_par);
+    return true;
+  }
   taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
   if(old_own != old_par) return false;
   String old_path = ref.ptr()->GetPath(NULL, old_par);
@@ -1335,6 +1347,100 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   }
   return nchg;
 }
+
+///////////////////
+
+bool taBase::UpdatePointers_NewParType_Ptr(taBase** ptr, TypeDef* par_typ, taBase* new_par,
+					   bool null_not_found) {
+  if(!*ptr || !new_par) return false;
+  if((*ptr)->InheritsFrom(par_typ)) {
+    taBase::SetPointer(ptr, new_par);
+    return true;
+  }
+  taBase* old_own = (*ptr)->GetOwner(par_typ);
+  String old_path = (*ptr)->GetPath(NULL, old_own);
+  taBase* new_guy = new_par->FindFromPath(old_path);
+  if(new_guy)
+    taBase::SetPointer(ptr, new_guy);
+  else {
+    if(null_not_found)
+      taBase::SetPointer(ptr, NULL);
+    return false;
+  }
+  // note: this does not call UAE: assumption is that it is a like-for-like switch..
+  return true;
+}
+
+bool taBase::UpdatePointers_NewParType_SmPtr(taSmartPtr& ref, TypeDef* par_typ,
+					     taBase* new_par, bool null_not_found) {
+  if(!ref.ptr() || !new_par) return false;
+  if(ref.ptr()->InheritsFrom(par_typ)) {
+    ref.set(new_par);
+    return true;
+  }
+  taBase* old_own = ref.ptr()->GetOwner(par_typ);
+  String old_path = ref.ptr()->GetPath(NULL, old_own);
+  taBase* new_guy = new_par->FindFromPath(old_path);
+  if(new_guy)
+    ref.set(new_guy);
+  else {
+    if(null_not_found)
+      ref.set(NULL);		// reset to null if not found!
+    return false;
+  }
+  // note: this does not call UAE: assumption is that it is a like-for-like switch..
+  return true;
+}
+
+bool taBase::UpdatePointers_NewParType_Ref(taSmartRef& ref, TypeDef* par_typ, taBase* new_par,
+				       bool null_not_found) {
+  if(!ref.ptr() || !new_par) return false;
+  if(ref.ptr()->InheritsFrom(par_typ)) {
+    ref.set(new_par);
+    return true;
+  }
+  taBase* old_own = ref.ptr()->GetOwner(par_typ);
+  String old_path = ref.ptr()->GetPath(NULL, old_own);
+  taBase* new_guy = new_par->FindFromPath(old_path);
+  if(new_guy)
+    ref.set(new_guy);
+  else {
+    if(null_not_found)
+      ref.set(NULL);		// reset to null if not found!
+    return false;
+  }
+  // note: this does not call UAE: assumption is that it is a like-for-like switch..
+  return true;
+}
+
+int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
+  TypeDef* td = GetTypeDef();
+  int nchg = 0;
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members[m];
+    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)) {
+      taBase** ptr = (taBase**)md->GetOff(this);
+      nchg += taBase::UpdatePointers_NewParType_Ptr(ptr, par_typ, new_par);
+    }
+    else if(md->type->ptr == 0) {
+      if(md->type->InheritsFrom(TA_taSmartRef)) {
+	taSmartRef* ref = (taSmartRef*)md->GetOff(this);
+	nchg += taBase::UpdatePointers_NewParType_Ref(*ref, par_typ, new_par);
+      }
+      if(md->type->InheritsFrom(TA_taSmartPtr)) {
+	taSmartPtr* ref = (taSmartPtr*)md->GetOff(this);
+	nchg += taBase::UpdatePointers_NewParType_SmPtr(*ref, par_typ, new_par);
+      }
+      else if(md->type->InheritsFrom(TA_taBase)) {
+	taBase* obj = (taBase*)md->GetOff(this);
+	nchg += obj->UpdatePointers_NewParType(par_typ, new_par);
+      }
+    }
+  }
+  return nchg;
+}
+
+/////////////
 
 bool taBase::UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner, 
 				       taBase* old_ptr, taBase* new_ptr) {
@@ -2242,6 +2348,27 @@ int taList_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       }
       else {
 	Remove(i);
+      }
+    }
+  }
+  return nchg;
+}
+
+int taList_impl::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
+  int nchg = taOBase::UpdatePointers_NewParType(par_typ, new_par);
+  for(int i=size-1; i>=0; i--) {
+    taBase* itm = (taBase*)el[i];
+    if(!itm) continue;
+    if(itm->GetOwner() == this) { // for guys we own (not links; prevents loops)
+      nchg += itm->UpdatePointers_NewParType(par_typ, new_par);
+    }
+    else {			// linked item: could be to something outside of scope!
+      taBase* old_own = itm->GetOwner(par_typ);
+      String old_path = itm->GetPath(NULL, old_own);
+      taBase* nitm = new_par->FindFromPath(old_path);
+      if(nitm) {
+	ReplaceLink_(i, nitm);
+	nchg++;
       }
     }
   }

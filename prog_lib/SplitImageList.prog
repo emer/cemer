@@ -1,0 +1,111 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[1][1] { 
+  ProgVar_List @.args = [4] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+  };
+
+  ProgVar_List @.vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+    UserScript @[0] { };
+    DataProcCall @[1] { };
+  };
+};
+Program .projects[0].programs.gp[1][1] {
+ name="SplitImageList";
+ desc="split set of image names into training and testing";
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="PctTrain";
+   var_type=T_Real;
+   real_val=0.5;
+   objs_ptr=0;
+   desc="percent of total images to use for training";
+  };
+  ProgVar @[1] {
+   name="all_images";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][2]$0$;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[2] {
+   name="train_images";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][3]$1$;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[3] {
+   name="test_images";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][4]$2$;
+   objs_ptr=0;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="NTrain";
+   var_type=T_Int;
+   int_val=50;
+   objs_ptr=0;
+   desc="actual number of images to use for training";
+  };
+  ProgVar @[1] {
+   name="NTest";
+   var_type=T_Int;
+   int_val=50;
+   objs_ptr=0;
+   desc="remainder to use for testing";
+  };
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  UserScript @[0] {
+   desc="compute n's from pcts";
+   off=0;
+   user_script="NTrain = PctTrain * all_images.rows;
+NTest = all_images.rows - NTrain;
+
+";
+  };
+  DataProcCall @[1] {
+   desc=;
+   off=0;
+   result_var=;
+   object_type=taDataProc;
+   method=taDataProc::SplitRowsNPermuted;
+   args{ all_images;train_images;NTrain;test_images;NTest;};
+{ DataTable* src;DataTable* dest_1;int n1;DataTable* dest_2;int n2;   };
+  };
+ };
+};

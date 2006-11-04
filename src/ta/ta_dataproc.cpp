@@ -809,7 +809,7 @@ bool taDataProc::GetDirFiles(DataTable* dest, const String& dir_path,
 	dest->SetValAsString(fl, fname_idx, -1);
       }
       if(path_idx >= 0) {
-	dest->SetValAsString(fl, path_idx, -1);
+	dest->SetValAsString(dir_path + "/" + fl, path_idx, -1);
       }
     }
     // todo: deal with recursive flag

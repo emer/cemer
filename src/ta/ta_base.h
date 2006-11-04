@@ -664,6 +664,19 @@ public:
   virtual int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   // #IGNORE update pointers for a new parent (e.g., after a copy operation): and anything that lives under old_par and points to something else that lives under old_par is updated to point to new_par: this default impl uses TA info to walk the members and find the guys to change; returns number changed
 
+  static bool	UpdatePointers_NewParType_Ptr(taBase** ptr, TypeDef* par_typ, taBase* new_par,
+					  bool null_not_found = false);
+  // #IGNORE update pointer if it used to point to an object under par_typ parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.
+  static bool	UpdatePointers_NewParType_SmPtr(taSmartPtr& ptr, TypeDef* par_typ,
+						taBase* new_par, bool null_not_found = false);
+  // #IGNORE update pointer if it used to point to an object under par_typ parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.
+  static bool	UpdatePointers_NewParType_Ref(taSmartRef& ref, TypeDef* par_typ,
+					  taBase* new_par, bool null_not_found = false);
+  // #IGNORE update reference if it used to point to an object under par_typ parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.
+
+  virtual int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
+  // #IGNORE update pointers for a new parent of given type -- any pointer under this object that points to an object that lives under an object of par_typ (type of new_par): and anything that lives under old_par and points to something else that lives under old_par is updated to point to new_par: this default impl uses TA info to walk the members and find the guys to change; returns number changed
+
   static bool	UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner, 
 					  taBase* old_ptr, taBase* new_ptr);
   // #IGNORE update pointer to new_ptr if it used to point to old_ptr; call UAE on ptr_owner
@@ -1057,6 +1070,7 @@ public:
   override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   override int	UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
 

@@ -1249,7 +1249,6 @@ const KeyString NetMonItem_List::GetListColKey(int col) const {
 
 void NetMonitor::Initialize() {
   rmv_orphan_cols = true;
-  old_network = NULL;
 }
 
 void NetMonitor::InitLinks() {
@@ -1260,7 +1259,6 @@ void NetMonitor::InitLinks() {
 }
 
 void NetMonitor::CutLinks() {
-  old_network = NULL;
   data.CutLinks();
   network.CutLinks();
   items.CutLinks();
@@ -1295,11 +1293,7 @@ void NetMonitor::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void NetMonitor::UpdateAfterEdit() {
   if (taMisc::is_loading || taMisc::is_duplicating) return;
-  if(network != old_network) {
-    if(old_network != NULL) 
-      UpdateNetwork(old_network, network);
-    old_network = network;
-  }
+  UpdateNetworkPtrs();
   UpdateMonitors();
   inherited::UpdateAfterEdit();
 }
@@ -1335,15 +1329,13 @@ void NetMonitor::SetDataTable(DataTable* dt) {
 }
 
 void NetMonitor::SetNetwork(Network* net) {
-  Network* old_net = network.ptr();
-  if(old_net && net && (old_net != net))
-    UpdateNetwork(old_net, network);
   network = net;
+  UpdateNetworkPtrs();
 }
 
-void NetMonitor::UpdateNetwork(Network* old_net, Network* new_net) {
-  items.UpdatePointers_NewPar(old_net, new_net);
-  items.UpdatePointers_NewObj(old_net, new_net);
+void NetMonitor::UpdateNetworkPtrs() {
+  if(network)
+    items.UpdatePointers_NewParType(&TA_Network, network);
 }
 
 void NetMonitor::SetDataNetwork(DataTable* dt, Network* net) {

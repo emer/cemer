@@ -895,6 +895,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("math",
     tabMisc::root->GetTemplateInstance(&TA_MathCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("img proc",
+    tabMisc::root->GetTemplateInstance(&TA_ImageProcCall)));
   // add other spec meth calls here..
 
   sec = tb->AssertSection("Data"); //note: need to keep it short

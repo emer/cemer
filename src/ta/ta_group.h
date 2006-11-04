@@ -108,6 +108,7 @@ public:
   override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
 
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   override int 	UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
 

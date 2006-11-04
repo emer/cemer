@@ -3380,6 +3380,16 @@ void LeabraNetwork::Compute_ExtRew() {
 void LeabraNetwork::Compute_SSE() {
   inherited::Compute_SSE();
   Compute_ExtRew();
+  avg_cycles_sum += cycle;
+  avg_cycles_n++;
+}
+
+void LeabraNetwork::Compute_AvgCycles() {
+  if(avg_cycles_n > 0) {
+    avg_cycles = avg_cycles_sum / (float)avg_cycles_n;
+  }
+  avg_cycles_sum = 0.0f;
+  avg_cycles_n = 0;
 }
 
 void LeabraNetwork::Compute_AvgExtRew() {
@@ -3392,6 +3402,7 @@ void LeabraNetwork::Compute_AvgExtRew() {
 
 void LeabraNetwork::Compute_EpochSSE() {
   inherited::Compute_EpochSSE();
+  Compute_AvgCycles();
   Compute_AvgExtRew();
 }
 

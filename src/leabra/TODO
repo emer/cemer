@@ -1,9 +1,6 @@
 leabra todo list:
 
-* nuke float_RArray totally
-
-* netmon: UpdatePointers_Type -- pass a type and get owner of that type and repl with 
-  given type -- doesn't require old_new.  add to ta_base
+* nuke float_RArray totally: fun lookup
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
@@ -18,18 +15,23 @@ docs..: add all float_RArray funs, for matricies.
 
 current bugs:
 
+* trim Item Detail in progeditor if > 50 or so..
+
+* autobuild etc -- this stuff needs to be in dump_load because it is not called
+  during load from project_group..
+
 * not reading last col & row of test.dat!
 
 --------
 check:
 
-* Netmon setnetwork not working: subguys are all still same.  problem is it isn't replacing net w/net! only subgys 
-  works for that.  need to cache the old_net and add UAE to detect user changes.  add UpdatePointers_old/new guy..
+* auto-build network upon loading flag (with prompt option!)
+
+* add avg_cycles to network, monitor
+
 
 -------
 lower pri:
-
-* add data guys to prog toolbox: need a 2nd panel??  BRAD doing
 
 * add "print" Progel?
 
