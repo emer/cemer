@@ -1,6 +1,5 @@
 leabra todo list:
 
-* nuke float_RArray totally: fun lookup
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
@@ -15,19 +14,24 @@ docs..: add all float_RArray funs, for matricies.
 
 current bugs:
 
-* trim Item Detail in progeditor if > 50 or so..
-
-* autobuild etc -- this stuff needs to be in dump_load because it is not called
-  during load from project_group..
-
 * not reading last col & row of test.dat!
 
 --------
 check:
 
+* autobuild etc -- this stuff needs to be in dump_load because it is not called
+  during load from project_group: put in UAE with is_loading..
+
+* nuke float_RArray totally: fun lookup
+
+* program: Reset() - remove all elements + LoadFromProgLib(USER/SYSTEM) -- does Reset 
+  first and loads based on filename: for updating.  function on group to LoadAllFromProgLib
+
 * auto-build network upon loading flag (with prompt option!)
 
 * add avg_cycles to network, monitor
+
+* trim Item Detail in progeditor if > 50 or so..
 
 
 -------

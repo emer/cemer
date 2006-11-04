@@ -21,7 +21,7 @@
 #include "datatable.h"
 #include "tamisc_TA_type.h"
 
-class TAMISC_API FunLookup : public float_RArray {
+class TAMISC_API FunLookup : public float_Array {
   // function lookup for non-computable functions and optimization
 public:
   MinMaxRange	x_range;	// range of the x axis
@@ -57,7 +57,7 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   void 	Copy_(const FunLookup& cp);
-  COPY_FUNS(FunLookup, float_RArray);
+  COPY_FUNS(FunLookup, float_Array);
   TA_BASEFUNS(FunLookup);
 };
 
@@ -88,6 +88,7 @@ public:
 };
 
 // the following was written by Dan Cer (modified by O'Reilly)
+// todo: could be re-written using float_Matrix
 class TAMISC_API FunLookupND : public taNBase {
   // #NO_UPDATE_AFTER n-dimensional function lookup: function is defined for n_dims inputs and produces a corresponding interpolated output
 public:

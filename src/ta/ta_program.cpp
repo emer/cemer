@@ -911,11 +911,14 @@ String MethodCall::GetDisplayName() const {
   rval += "->";
   rval += method->name;
   rval += "(";
-  for(int i=0;i<args.size;i++) {
+  int mx_args = MIN(args.size, 2); // for display purposes: don't put in more than 2
+  for(int i=0;i<mx_args;i++) {
     rval += args.labels[i] + "=" + args[i];
     if(i < args.size-1)
       rval += ", ";
   }
+  if(args.size > 2)
+    rval += "...";
   rval += ")";
   return rval;
 }
@@ -1000,11 +1003,14 @@ String StaticMethodCall::GetDisplayName() const {
   rval += "::";
   rval += method->name;
   rval += "(";
-  for(int i=0;i<args.size;i++) {
+  int mx_args = MIN(args.size, 2); // for display purposes: don't put in more than 2
+  for(int i=0;i<mx_args;i++) {
     rval += args.labels[i] + "=" + args[i];
     if(i < args.size-1)
       rval += ", ";
   }
+  if(args.size > 2)
+    rval += "...";
   rval += ")";
   return rval;
 }
@@ -1234,6 +1240,15 @@ void Program::CutLinks() {
   objs.CutLinks();
   prog_gp = NULL;
   inherited::CutLinks();
+}
+
+void Program::Reset() {
+  sub_progs.Reset();
+  prog_code.Reset();
+  init_code.Reset();
+  vars.Reset();
+  args.Reset();
+  objs.Reset();
 }
 
 void Program::Copy_(const Program& cp) {
@@ -1679,7 +1694,31 @@ void Program::SaveToProgLib(ProgLibs library) {
     path = "../../prog_lib/";
   // todo web!?
   String fname = path + name + ".prog";
+  int acc = access(fname, F_OK);
+  if (acc == 0) {
+    int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
+			     "Ok", "Cancel");
+    if(chs == 1) return;
+  }
   SaveAs_File(fname);
+}
+
+void Program::LoadFromProgLib(ProgLibs library) {
+  // todo: quick and dirty -- fix when paths etc are all fixed up
+  String path = "./";
+  if(library == USER_LIB)
+    path = "";
+  else if(library == SYSTEM_LIB)
+    path = "../../prog_lib/";
+  // todo web!?
+  String fname = path + name + ".prog";
+  int acc = access(fname, F_OK);
+  if (acc != 0) {
+    taMisc::Choice("Program library file: " + fname + " not found!", "Ok");
+    return;
+  }
+  Reset();
+  LoadAs_File(fname);
 }
 
 void Program::SaveScript(ostream& strm) {
@@ -1749,6 +1788,12 @@ void Program_Group::SaveToProgLib(Program::ProgLibs library) {
     path = "../../prog_lib/";
   // todo web!?
   String fname = path + name + ".progp";
+  int acc = access(fname, F_OK);
+  if (acc == 0) {
+    int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
+			     "Ok", "Cancel");
+    if(chs == 1) return;
+  }
   SaveAs_File(fname);
 }
 

@@ -35,7 +35,7 @@ void FunLookup::Initialize() {
 }
 
 void FunLookup::InitLinks() {
-  float_RArray::InitLinks();
+  float_Array::InitLinks();
   taBase::Own(x_range, this);
 }
 
@@ -46,7 +46,7 @@ void FunLookup::Copy_(const FunLookup& cp) {
 }
 
 void FunLookup::UpdateAfterEdit() {
-  float_RArray::UpdateAfterEdit();
+  float_Array::UpdateAfterEdit();
   res_inv = 1.0f / res;
   x_range.UpdateAfterEdit();
 }

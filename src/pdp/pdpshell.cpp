@@ -640,6 +640,8 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
 void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 
+  if(taMisc::is_loading)
+    AutoBuildNets(build_nets);
   UpdateColors();
 }
 
@@ -660,8 +662,7 @@ void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
 
 int ProjectBase::Load(istream& strm, TAPtr par, void** el) {
   int rval = inherited::Load(strm, par, el); // load-em-up
-  if(rval)
-    AutoBuildNets(build_nets);
+  // todo: was hook for AutoBuild -- not called on project_Group based loads (i.e., typical case)!
   return rval;
 }
 

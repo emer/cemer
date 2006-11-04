@@ -513,7 +513,9 @@ void LeabraUnitSpec::CreateNXX1Fun() {
   }
 
   // normalize it
-  float sum = noise_conv.Sum();
+  float sum = 0.0f;
+  for(i=0; i < noise_conv.size; i++)
+    sum += noise_conv[i];
   for(i=0; i < noise_conv.size; i++)
     noise_conv[i] /= sum;
 
