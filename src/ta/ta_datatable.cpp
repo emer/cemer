@@ -1172,9 +1172,9 @@ void DataColViewSpec::Copy_(const DataColViewSpec& cp) {
   sticky = cp.sticky;
 }
 
-void DataColViewSpec::Clear_impl() {
+void DataColViewSpec::Unbind_impl() {
   if (m_data) setDataCol(NULL);
-  inherited::Clear_impl();
+  inherited::Unbind_impl();
 }
 
 void DataColViewSpec::DataDestroying() {
@@ -1248,12 +1248,12 @@ void DataTableViewSpec::Copy_(const DataTableViewSpec& cp) {
   col_specs = cp.col_specs;
 }
 
-void DataTableViewSpec::Clear_impl() {
+void DataTableViewSpec::Unbind_impl() {
   if (m_data) { 
     SetData(NULL);
     DataTableUnlinked();
   }
-  inherited::Clear_impl(); // will unlink kids
+  inherited::Unbind_impl(); // will unlink kids
 }
 
 void DataTableViewSpec::setDataTable(DataTable* dt) {
@@ -1263,12 +1263,12 @@ void DataTableViewSpec::setDataTable(DataTable* dt) {
     bool first = (col_specs.size == 0);
     UpdateFromDataTable(first);
   } else {
-    Clear(); // also does kids
+    Unbind(); // also does kids
   }
 }
 
 void DataTableViewSpec::DataDestroying() {
-  Clear(); //unlinks everyone
+  Unbind(); //unlinks everyone
   inherited::DataDestroying();
 }
 

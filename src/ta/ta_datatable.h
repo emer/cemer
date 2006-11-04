@@ -778,7 +778,7 @@ public:
   COPY_FUNS(DataColViewSpec, inherited);
   TA_BASEFUNS(DataColViewSpec);
 protected:
-  override void		Clear_impl(); // unbinds col
+  override void		Unbind_impl(); // unbinds col
   virtual void		DataColUnlinked() {} // called if data set to NULL or destroys
   void			UpdateFromDataCol(bool first_time = false); // called if data set to column, or we otherwise need to update
   virtual void		UpdateFromDataCol_impl(bool first_time); 
@@ -817,7 +817,7 @@ public:
   TA_DATAVIEWFUNS(DataTableViewSpec, inherited) //
 protected:
   override void 	DoActionChildren_impl(DataViewAction act);
-  override void		Clear_impl(); // unbinds table
+  override void		Unbind_impl(); // unbinds table
   override void		DataStructUpdateEnd_impl();
   void			UpdateFromDataTable(bool first_time = false); // called if data set to table, or needs to be updated; calls _this then _child
   virtual void		UpdateFromDataTable_this(bool first); // does me (before kids)

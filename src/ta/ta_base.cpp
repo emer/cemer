@@ -2605,6 +2605,9 @@ void taDataView::DoActions(DataViewAction acts) {
     // note: only ever called manually
     Constr_post();
   }
+  if (acts & UNBIND_IMPL) {
+    Unbind_impl();
+  }
   if (acts & CLEAR_IMPL) {
     // must be mapped to do clear
     if (isMapped())

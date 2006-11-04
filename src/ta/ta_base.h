@@ -1259,11 +1259,13 @@ public:
     RENDER_IMPL		= 0x08, // #BIT
     RENDER_POST		= 0x10, // #BIT
     CLOSE_WIN_IMPL	= 0x20,  // #BIT (only used by DataViewer)
-    RESET_IMPL		= 0x40 // #BIT
+    RESET_IMPL		= 0x40, // #BIT
+    UNBIND_IMPL		= 0x80 // #BIT disconnect everyone from a data source
 #ifndef __MAKETA__
     ,CLEAR_ACTS		= CLEAR_IMPL | CLOSE_WIN_IMPL // for Clear
     ,RENDER_ACTS	= CLEAR_IMPL | RENDER_PRE | RENDER_IMPL | RENDER_POST // for Render
     ,RESET_ACTS		= CLEAR_IMPL | CLOSE_WIN_IMPL | RESET_IMPL // for Reset
+    ,UNBIND_ACTS	= UNBIND_IMPL
     
     ,CONSTR_MASK	= CONSTR_POST | RENDER_PRE | RENDER_IMPL | RENDER_POST 
       // mask for doing child delegations in forward order
@@ -1297,6 +1299,8 @@ public:
     // renders the visible contents (usually override the _impls) -- MUST BE DEFINED IN SUB
   virtual void		Clear(taDataView* par = NULL) {DoActions(CLEAR_ACTS);} // clears the view (but doesn't delete any components) (usually override _impl)
   virtual void		Reset() {DoActions(RESET_ACTS);} 
+    // clears, and deletes any components (usually override _impls)
+  virtual void		Unbind() {DoActions(UNBIND_ACTS);} 
     // clears, and deletes any components (usually override _impls)
   virtual void		DoActions(DataViewAction acts); // do the indicated action(s) if safe in this context (ex loading, whether gui exists, etc.); par only needed when a _impl needs it
   
@@ -1356,6 +1360,8 @@ protected:
     // extend with post-rendering code, if needed
   virtual void		Reset_impl() {DoActionChildren_impl(RESET_IMPL);}
     // extend to implement reset
+  virtual void		Unbind_impl() {DoActionChildren_impl(UNBIND_IMPL);}
+    // extend to implement unbind
 private:
   void			Initialize();
   void			Destroy() {CutLinks();}

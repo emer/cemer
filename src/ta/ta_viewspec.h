@@ -28,7 +28,7 @@ public:
   String		name;
   String		display_name; // name used in display IF DIFFERENT THAN name
   bool	        	visible; 	// visibility flag
-
+  
   String GetName() const {return name;}
   bool	SetName(const String& value);
   String GetDisplayName() const;

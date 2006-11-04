@@ -209,6 +209,7 @@ void TableView::DataChange_Other() {
 }
 
 void TableView::InitDisplay(){
+  UpdateStage();
   DataTable* data_table = dataTable();
   if (data_table)
     m_rows = data_table->rows;
@@ -559,6 +560,7 @@ void GridTableView::CalcColMetrics() {
 
 void GridTableView::CalcViewMetrics() {
   GridTableViewSpec* tvs = viewSpec();
+  tvs->Render(); // updates all the view stuff
   float gr_mg_sz = tvs->gridMarginSize();
   float gr_ln_sz = (grid_on) ? view_spec.gridLineSize() : 0.0f;
   // header height (if on) -- note that font height is ~ 12/8 times width
