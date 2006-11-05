@@ -15,10 +15,10 @@
 
 
 
-// pdpshell.h
+// pdp_project.h
 
-#ifndef pdpshell_h
-#define pdpshell_h 1
+#ifndef pdp_project_h
+#define pdp_project_h 1
 
 #include "ta_fontspec.h"
 #include "ta_project.h"
@@ -255,4 +255,4 @@ private:
 };
 
 
-#endif // pdpshell_h
+#endif // pdp_project_h

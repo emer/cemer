@@ -21,7 +21,7 @@
 
 #include "netstru.h"
 #include "netdata.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 //#include "css_qt.h"		// for the cssiSession
 #include "ta_data.h"
 #include "ta_filer.h"
@@ -5601,7 +5601,7 @@ void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 }
 
 
-// new monitor is in pdpshell.cc
+// new monitor is in pdp_project.cc
 
 ////////////////////////////////////////////
 //  	Wizard functions

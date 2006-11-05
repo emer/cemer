@@ -31,7 +31,7 @@
 #include "pdpdeclare.h"
 #include "pdpbase.h"
 #include "spec.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 #include "netdata.h"
 
 #include "pdp_TA_type.h"
@@ -79,7 +79,7 @@ class Environment; //
 //TODO class ScriptEnv;
 //TODO class TimeEnvironment;
 
-// from pdpshell.h
+// from pdp_project.h
 class V3ProjectBase; //
 
 // from pdplog.h
@@ -1792,12 +1792,12 @@ class PDP_API V3ProjectBase : public ProjectBase {
   // #HIDDEN for loading legacy (v3.x) projects only
 INHERITED(ProjectBase)
 public:
-  TypeDefault_Group	defaults;	// type defaults
-  BaseSpec_Group	specs;		// network specifications and parameters
-  Environment_Group	environments;	// Environments of patterns to present to networks
-  Process_Group		processes;	// Processes to coordinate training/testing, etc
-  PDPLog_Group		logs;		// V3 compatibility only: Logs to display statistics in processes
-  Script_Group		scripts;	// V3 compatibility only: Scripts to control arbitrary actions
+  TypeDefault_Group	defaults;	// #CAT_V3_Compat type defaults
+  BaseSpec_Group	specs;		// #CAT_V3_Compat network specifications and parameters (moved to Network in V4)
+  Environment_Group	environments;	// #CAT_V3_Compat Environments of patterns to present to networks (replaced with datatables in V4)
+  Process_Group		processes;	// #CAT_V3_Compat Processes to coordinate training/testing, etc (replaced with programs in V4)
+  PDPLog_Group		logs;		// #CAT_V3_Compat Logs to display statistics in processes (replaced with datatables in V4)
+  Script_Group		scripts;	// #CAT_V3_Compat Scripts to control arbitrary actions (replaced with programs in V4)
   String		desc1;
   String		desc2;
   String		desc3;

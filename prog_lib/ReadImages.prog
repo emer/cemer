@@ -1,0 +1,83 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[1][0] { 
+  ProgVar_List @.args = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+    MethodCall @[0] { };
+    DataProcCall @[1] { };
+  };
+};
+Program .projects[0].programs.gp[1][0] {
+ name="ReadImages";
+ desc="read list of images from a directory";
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="directory";
+   var_type=T_String;
+   string_val="images/objs100_330";
+   objs_ptr=0;
+   desc="where to look for images";
+  };
+  ProgVar @[1] {
+   name="filter";
+   var_type=T_String;
+   string_val=".jpg";
+   objs_ptr=0;
+   desc="filter to apply in selecting image files";
+  };
+  ProgVar @[2] {
+   name="names_table";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][2]$0$;
+   objs_ptr=0;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=ImageProcCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc=;
+   off=0;
+   result_var=;
+   script_obj=.projects[0].programs.gp[1][0].args[2]$1$;
+   method=DataTable::ResetData;
+   args{ };
+{    };
+  };
+  DataProcCall @[1] {
+   desc=;
+   off=0;
+   result_var=;
+   object_type=taDataProc;
+   method=taDataProc::GetDirFiles;
+   args{ names_table;directory;filter;false;"FileName";"FilePath";};
+{ DataTable* dest;const taString& dir_path;const taString& filter;bool recursive;const taString& fname_col_nm;const taString& path_col_nm;   };
+  };
+ };
+};

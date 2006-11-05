@@ -43,7 +43,7 @@
 
 
 #include "pdpbase.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 #include "netstru_extra.h"
 #include "v3_compat.h"
 
@@ -62,9 +62,9 @@ template class PDP_API taGroup<TypeDefault>;
 // pdplog.h
 template class PDP_API taGroup<PDPLog>; 
 
-// pdpshell.h
+// pdp_project.h
 template class PDP_API taGroup<ProjectBase>; 
-template class PDP_API taGroup<Wizard>; // pdpshell.h
+template class PDP_API taGroup<Wizard>; // pdp_project.h
 
 // netstru.h
 template class PDP_API taList<SchedItem>;
@@ -86,7 +86,7 @@ template class PDP_API taGroup<Process>;
 template class PDP_API taList<DataItem>; 
 
 #ifdef TA_GUI
-template class PDP_API taGroup<SelectEdit>; // pdpshell.h
+template class PDP_API taGroup<SelectEdit>; // pdp_project.h
 template class PDP_API taPlainArray<UnitViewData>; // netstru_qtso.h
 #endif
 

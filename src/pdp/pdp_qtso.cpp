@@ -17,7 +17,7 @@
 
 
 #include "pdp_qtso.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
 #include "css_console.h"

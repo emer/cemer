@@ -43,7 +43,7 @@ private:
 };
 
 
-// all of these functions are cached out in pdpshell.cc
+// all of these functions are cached out in pdp_project.cc
 
 class PDP_API pdpMisc { 
   // #NO_TOKENS miscellaneous things for pdp, extension of basic tabMisc app stuff

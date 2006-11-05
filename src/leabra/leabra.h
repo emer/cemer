@@ -20,7 +20,7 @@
 
 #include "pdpbase.h"
 #include "netstru.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 
 #include "fun_lookup.h"
 

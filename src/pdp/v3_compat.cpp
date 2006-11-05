@@ -19,7 +19,7 @@
 
 #include "css_ta.h"
 #include "netstru.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 
 #ifdef TA_GUI
 #include "ta_qtviewer.h"

@@ -20,7 +20,7 @@
 
 #include "pdpbase.h"
 #include "netstru.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 
 #include "bp_def.h"
 #include "bp_TA_type.h"

@@ -43,7 +43,7 @@
 
 //obs #include "netstru_so.h"
 #include "ta_geometry.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 //obs #include "stats.h"
 //obs #include "sched_proc.h"
 #include "ta_qtclipdata.h"

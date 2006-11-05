@@ -24,7 +24,7 @@
 //#include "pdp_qtso.h"
 #include "pdplog_qtso.h"
 #include "netstru_so.h" // TEMP
-//#include "pdpshell.h"
+//#include "pdp_project.h"
 
 #include "icolor.h"
 

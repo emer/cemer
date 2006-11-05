@@ -22,7 +22,7 @@
 #include "ta_qt.h"
 #endif
 
-#include "pdpshell.h"
+#include "pdp_project.h"
 
 #include <memory.h>
 #include <malloc.h>

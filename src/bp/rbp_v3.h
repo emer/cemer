@@ -21,7 +21,7 @@
 #define rbp_v3_h
 
 #include "bp.h"
-#include "pdpshell.h"	// needed for Wizard
+#include "pdp_project.h"	// needed for Wizard
 
 class RBpConSpec;
 class RBpUnit;

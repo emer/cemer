@@ -118,6 +118,8 @@ bool V3LeabraProject::ConvertToV4_impl() {
   PDPRoot* root = (PDPRoot*)tabMisc::root;
   LeabraProject* nwproj = (LeabraProject*)root->projects.NewEl(1, &TA_LeabraProject);
 
+  nwproj->desc = desc1 + "\n" + desc2 + "\n" + desc3 + "\n" + desc4;
+
   LeabraWizard* lwiz = (LeabraWizard*)nwproj->wizards[0];
 
   lwiz->StdOutputData();	// need this for std procs

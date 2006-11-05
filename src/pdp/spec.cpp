@@ -18,7 +18,7 @@
 // spec.cc
 
 #include "spec.h"
-#include "pdpshell.h"
+#include "pdp_project.h"
 #ifdef TA_GUI
   #include "ta_qtgroup.h"
 #endif

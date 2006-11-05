@@ -24,7 +24,7 @@
 #include <QTextDocument>
 #endif
 
-#include "pdpshell.h"
+#include "pdp_project.h"
 
 #include <signal.h>
 #include <memory.h>
