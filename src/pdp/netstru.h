@@ -25,7 +25,7 @@
 
 #include "spec.h"
 
-#include "pdpbase.h"
+#include "pdp_base.h"
 
 #ifdef TA_GUI
 //#include "ta_qtbrowse_def.h"

@@ -17,7 +17,7 @@
 
 // this is the main that is included to make pdplib executable
 
-#include "pdpbase.h"
+#include "pdp_base.h"
 
 int main(int argc, char* argv[]) {
   return pdpMisc::Main(argc, argv);

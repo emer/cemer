@@ -41,7 +41,7 @@ TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
 	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
 	@abs_srcdir@/pdpdeclare.h \
-	@abs_srcdir@/pdpbase.h \
+	@abs_srcdir@/pdp_base.h \
 	@abs_srcdir@/spec.h \
 	@abs_srcdir@/netstru.h \
 	@abs_srcdir@/netstru_extra.h \
@@ -54,7 +54,7 @@ TAHEADS =\
 
 HEADS =\
 	pdpdeclare.h \
-	pdpbase.h \
+	pdp_base.h \
 	spec.h \
 	netstru.h \
 	netstru_extra.h \
@@ -66,8 +66,8 @@ HEADS =\
 	$(HEADS_GUI)
 
 SRCS =\
-	pdpbase.cpp \
-	pdpbase_unix.cpp \
+	pdp_base.cpp \
+	pdp_base_unix.cpp \
 	spec.cpp \
 	netstru.cpp \
 	netstru_extra.cpp \

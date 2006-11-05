@@ -42,7 +42,7 @@
 // pdp_ti.cc: template instantiation file for pdp library
 
 
-#include "pdpbase.h"
+#include "pdp_base.h"
 #include "pdp_project.h"
 #include "netstru_extra.h"
 #include "v3_compat.h"

@@ -20,7 +20,7 @@
 #ifndef pdp_qt_h
 #define pdp_qt_h 1
 
-#include "pdpbase.h"
+#include "pdp_base.h"
 #include "spec.h"
 #include "ta_qttype.h"
 #include "ta_qtdata.h"
