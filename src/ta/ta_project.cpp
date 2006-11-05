@@ -174,6 +174,9 @@ void taProject::Copy_(const taProject& cp) {
 
 void taProject::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  if(taMisc::is_loading) {
+    PostLoadAutos();
+  }
 }
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
@@ -188,24 +191,21 @@ MainWindowViewer* taProject::GetDefaultProjectBrowser() {
   return NULL;
 }
 
-int taProject::Load(istream& strm, TAPtr par, void** el) {
-  int rval = inherited::Load(strm, par, el); // load-em-up
-  if (rval) {	 // don't do this as a dump_load_value cuz we need an updateafteredit..
-    if (taMisc::gui_active) {
-      tabMisc::post_load_opr.Link(&wizards);
-//       pdpMisc::post_load_opr.Link(&programs);
+void taProject::PostLoadAutos() {
+  // todo: have option or make default to open a panel instead of dialog
+  if (taMisc::gui_active) {
+    tabMisc::post_load_opr.Link(&wizards);
+    //       pdpMisc::post_load_opr.Link(&programs);
 #ifdef TA_GUI
-      tabMisc::post_load_opr.Link(&edits);
+    tabMisc::post_load_opr.Link(&edits);
 #endif
-    } else {
-      wizards.AutoEdit();
-//       programs.AutoRun();
+  } else {
+    wizards.AutoEdit();
+    //       programs.AutoRun();
 #ifdef TA_GUI
-      edits.AutoEdit();
+    edits.AutoEdit();
 #endif
-    }
   }
-  return rval;
 }
 
 void taProject::AssertDefaultProjectBrowser(bool auto_open) {
@@ -290,34 +290,6 @@ void taProject::UpdateSimLog() {
 //////////////////////////
 //   Project_Group	//
 //////////////////////////
-
-int Project_Group::Load(istream& strm, TAPtr par) {
-/*obs  if ((ta_file != NULL) && !ta_file->dir.empty() && (ta_file->dir != ".")) {
-    // change directories to where the project was loaded!
-    ta_file->GetDir();
-    chdir(ta_file->dir);
-    String fnm = ta_file->fname.after('/',-1);
-    ta_file->dir = "";
-    ta_file->fname = fnm;
-  } */
-  int rval = inherited::Load(strm, par);
-  if (rval) {
-    taProject* p;
-    taLeafItr i;
-    FOR_ITR_EL(taProject, p, this->, i) {
-      if (taMisc::gui_active) {
-	tabMisc::post_load_opr.Add(&(p->wizards));
-// 	tabMisc::post_load_opr.Add(&(p->programs));
-	tabMisc::post_load_opr.Add(&(p->edits));
-      } else {
-	p->wizards.AutoEdit();
-// 	p->programs.AutoRun();
-	p->edits.AutoEdit();
-      }
-    }
-  }
-  return rval;
-}
 
 
 //////////////////////////

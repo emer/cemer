@@ -107,8 +107,10 @@ public:
   virtual void	UpdateSimLog();
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
   
-  override int		Load(istream& strm, TAPtr par=NULL, void** el = NULL);
   override int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
+
+  virtual void		PostLoadAutos();
+  // perform post-loading automatic functions
 
   String GetDesc() const {return desc;}
   void	UpdateAfterEdit();
@@ -134,7 +136,6 @@ class TA_API Project_Group : public taGroup<taProject> {
 INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
-  int		Load(istream& strm, TAPtr par=NULL);
 
   void	Initialize() 		{SetBaseType(&TA_taBase);} // upclassed in pdp
   void 	Destroy()		{ };
