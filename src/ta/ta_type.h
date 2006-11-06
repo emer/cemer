@@ -197,12 +197,9 @@ public:
   static const String	def_sep; // ", "
   
   int	FindContains(const String& op, int start=0) const;
+  // find item that contains string -- start < 0 = start from end
 
-//#ifdef __MAKETA__
   const String 	AsString(const String& sep = def_sep) const;
-//#else
-//  const String 	AsString(const char* sep = ", ") const;
-//#endif
   void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   String_PArray()				{ };
   String_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
@@ -232,6 +229,33 @@ protected:
   void		El_SetFmStr_(void* it, const String& val)
   { int tmp = (int)val; *((int*)it) = tmp; }
 };
+
+// a plain-array of strings
+class TA_API NameVar_PArray : public taPlainArray<NameVar> {
+INHERITED(taPlainArray<NameVar>)
+public:
+  static const String	def_sep; // ", "
+  
+  int	FindName(const String& nm, int start=0) const;
+  // find by name  (start < 0 = from end)
+  int	FindNameContains(const String& nm, int start=0) const;
+  // find by name containing nm (start < 0 = from end)
+  int	FindValue(const Variant& var, int start=0) const;
+  // find by value (start < 0 = from end)  
+
+  const String 	AsString(const String& sep = def_sep) const;
+  void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
+  NameVar_PArray()				{ };
+  NameVar_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(((NameVar*)a)->value > ((NameVar*)b)->value) rval=1; else if(((NameVar*)a)->value == ((NameVar*)b)->value) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+  { return (((NameVar*)a)->value == ((NameVar*)b)->value); }
+  String	El_GetStr_(const void* it) const { return ((NameVar*)it)->GetStr(); }
+  void		El_SetFmStr_(void* it, const String& val) { ((NameVar*)it)->SetFmStr(val); }
+};
+
 
 #ifndef NO_TA_BASE
 enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing 
@@ -302,6 +326,9 @@ private:
 };
 #endif // __MAKETA__
 
+
+/////////////////////////////////////////////////////////////////////
+// 	taMisc
 
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
@@ -385,80 +412,122 @@ public:
   };
 
   static String		version_no; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
+
+  ////////////////////////////////////////////////////////
+  // 	TA GUI parameters
+
+  static String		font_name;	// #SAVE #CAT_GUI default font name to use
+  static int		font_size;	// #SAVE #CAT_GUI default font size to use
+  static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
+  static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
+
+  static int		display_width;	// #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console
+  static int		sep_tabs;	// #SAVE #CAT_GUI number of tabs to separate items by
+  static int		max_menu;	// #SAVE #CAT_GUI maximum number of items in a menu
+  static int		search_depth;   // #SAVE #CAT_GUI depth recursive find will search for a path object
+  static int		color_scale_size; // #SAVE #CAT_GUI number of colors to put in a color scale
+  static int		mono_scale_size;  // #SAVE #CAT_GUI number of monochrome bit-patterns to put in a color scale
+  static int		jpeg_quality; 	// #SAVE #CAT_GUI jpeg quality for dumping jpeg files (1-100; 95 default)
+
+  static ShowMembs	show;		// #SAVE #CAT_GUI what to show in general (eg. css)
+  static ShowMembs	show_gui;	// #SAVE #CAT_GUI what to show in the gui
+  static TypeInfo	type_info;	// #SAVE #CAT_GUI what to show when displaying type information
+  static KeepTokens	keep_tokens;	// #SAVE #CAT_GUI default for keeping tokens
+  static SaveFormat	save_format;	// #SAVE #CAT_GUI format to use when saving things (dump files)
+  static bool		auto_edit; 	// #SAVE #CAT_GUI automatic edit dialog after creation?
+  static AutoRevert	auto_revert;    // #SAVE #CAT_GUI when dialogs are automatically updated (reverted), what to do about changes?
+  static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
+
+  ////////////////////////////////////////////////////////
+  // 	File/Paths Info
+
+  static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
+  static bool		save_compress;	// #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
+  static LoadVerbosity	verbose_load;	// #SAVE #CAT_File report the names of things during loading
+  static LoadVerbosity  gui_verbose_load; // #SAVE #CAT_File what to report in the load dialog
+
+  static String		inst_prefix;
+  // #SAVE #CAT_File prefix for software installation (e.g., /usr/local)
+  static String	       	pkg_dir;
+  // #SAVE #CAT_File directory name for current software package (e.g., ta_css or pdp++)
+  static String		pkg_home;
+  // #SAVE #CAT_File path to location of installed system files for current software package (e.g, /usr/local/ta_css) (should be inst_prefix + pkg_dir)
+  static String		tmp_dir;
+  // #SAVE #CAT_File location of temporary files (e.g., inst_prefix/tmp)
+
+  static String_PArray 	css_include_paths;
+  // #SAVE #CAT_File paths to be used for finding css files (e.g., in #include or load statements -- searched in order)
+  static String_PArray 	load_paths;
+  // #SAVE #CAT_File paths to be used for loading object files for the ta dump file system
+  static NameVar_PArray	prog_lib_paths;
+  // #SAVE #CAT_File paths/url's for specific categories of program library files (e.g., System, User, Web)
+
+  static String		compress_cmd;	// #SAVE #CAT_File command to use for compressing files
+  static String		uncompress_cmd;	// #SAVE #CAT_File for uncompressing files
+  static String		compress_sfx;	// #SAVE #CAT_File suffix to use for compressing files
+
+  static ostream*	record_script;  // #IGNORE #CAT_File stream to use for recording a script of interface activity (NULL if no record)
+
+  static String		help_file_tmplt; // #SAVE #CAT_File template for converting type name into a help file (%t = type name)
+  static String		help_cmd;	// #SAVE #CAT_File how to run html browser to get help, %s is entire path to help file
+  static String		edit_cmd;	// #SAVE #CAT_File how to run editor
+  
+  ////////////////////////////////////////////////////////
+  // 	Args
+
+  static String_PArray	args_raw;
+  // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args raw list of arguments passed to program at startup (in order, no filtering or modification)
+  static NameVar_PArray	arg_names;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_Args conversions between arg flags (as a String in value field, e.g., -f or --file) and a canonical functional name (in name field, e.g., CssStartupFile)
+  static NameVar_PArray	args;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_Args startup arguments processed by arg_names into name/value pairs -- this is the list that should be used!
+
+
+  ////////////////////////////////////////////////////////
+  // 	DMEM: Distributed Memory
+
+  static int		dmem_proc; 	
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_DMem distributed memory process number (rank in MPI, always 0 for no dmem)
+  static int		dmem_nprocs;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_DMem distributed memory number of processes (comm_size in MPI, 1 for no dmem)
+  static int		cpus;
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_DMem number of cpus to use (<= physical cpus)
+  static bool		dmem_debug;
+  // #SAVE #CAT_DMem turn on debug messages for distributed memory processing
+
+  ////////////////////////////////////////////////////////
+  // 	Global State, Flags Etc
+
   static TypeSpace 	types;		// #READ_ONLY #NO_SAVE list of all the active types
+  static TypeDef*	default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
   static bool		in_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if in ta initialization function
   static signed char	quitting;	// #READ_ONLY #NO_SAVE #NO_SHOW true, via one of QuitFlag values, once we are quitting
-  static bool		not_constr;	// #READ_ONLY #NO_SHOW true if ta types are not yet constructed (or are destructed)
+  static bool		not_constr;	// #READ_ONLY #NO_SAVE #NO_SHOW true if ta types are not yet constructed (or are destructed)
 
   static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has been started up or not
   static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
   static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object
   static ContextFlag	is_duplicating;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently duplicating an object
   static ContextFlag	is_checking;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently doing batch CheckConfig on objects
+
   static String		last_check_msg; // #READ_ONLY #NO_SAVE #SHOW #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
-  static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
-
-  static int		dmem_proc; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory process number (rank in MPI, always 0 for no dmem)
-  static int		dmem_nprocs; 	// #READ_ONLY #NO_SAVE #SHOW distributed memory number of processes (comm_size in MPI, 1 for no dmem)
-  static int		cpus;	// #READ_ONLY #NO_SAVE #SHOW number of cpus to use (<= physical cpus)
-
-  static String		font_name;	// #SAVE default font name to use
-  static int		font_size;	// #SAVE default font size to use
-  static String		console_font_name;	// #SAVE font name for the css console
-  static int		console_font_size;	// #SAVE font size for the css console
-
-  static int		display_width;	// #SAVE #HIDDEN width of shell display (in chars) -- no longer used
-  static int		sep_tabs;	// #SAVE number of tabs to separate items by
-  static int		max_menu;	// #SAVE maximum number of items in a menu
-  static int		search_depth;   // #SAVE depth recursive find will search for a path object
-  static int		color_scale_size; // #SAVE number of colors to put in a color scale
-  static int		mono_scale_size;  // #SAVE number of monochrome bit-patterns to put in a color scale
-  static float		window_decor_offset_x; // #SAVE some window managers (e.g., KDE) add an offset to location of windows -- add this amount to x position to compensate
-  static float		window_decor_offset_y;  // #SAVE some window managers (e.g., KDE) add an offset to location of windows -- add this amount to y position to compensate
-  static float		mswin_scale; 	// #SAVE window size scaling parameter for MS Windows
-  static int		jpeg_quality; 	// #SAVE jpeg quality for dumping jpeg files (1-100; 85 default)
-
-  static ShowMembs	show;		// #SAVE what to show in general (eg. css)
-  static ShowMembs	show_gui;	// #SAVE what to show in the gui
-  static TypeInfo	type_info;	// #SAVE what to show when displaying type information
-  static KeepTokens	keep_tokens;	// #SAVE default for keeping tokens
-  static SaveFormat	save_format;	// #SAVE format to use when saving things (dump files)
-  static bool		save_compress;	// #SAVE #DEF_false compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
-  static LoadVerbosity	verbose_load;	// #SAVE report the names of things during loading
-  static LoadVerbosity  gui_verbose_load; // #SAVE what to report in the load dialog
-  static bool		dmem_debug; 	// #SAVE turn on debug messages for distributed memory processing
-  static TypeDef*	default_scope;  // type of object to use to determine if two objects are in the same scope
-
-  static bool		auto_edit; 	// #SAVE automatic edit dialog after creation?
-  static AutoRevert	auto_revert;    // #SAVE when dialogs are automatically updated (reverted), what to do about changes?
-
-  static String_PArray 	include_paths;  // #SAVE paths to be used for finding files
-
-  static String		pdp_dir;	// normal install path ("/usr/local/pdp++" on unix)
-  static String		tmp_dir;	// #SAVE location of temporary files
-  static String		compress_cmd;	// #SAVE command to use for compressing files
-  static String		uncompress_cmd;	// #SAVE for uncompressing files
-  static String		compress_sfx;	// #SAVE suffix to use for compressing files
-  static String		help_file_tmplt; // #SAVE template for converting type name into a help file (%t = type name)
-  static String		help_cmd;	// #SAVE how to run html browser to get help, %s is entire path to help file
-  static String		edit_cmd;	// #SAVE how to run editor
-  static ostream*	record_script;// #IGNORE // stream to use for recording a script of interface activity (NULL if no record)
-  static bool		beep_on_error; // #SAVE #DEF_false beep when an error message is printed on the console
-  static bool		check_quiet; // #IGNORE mode we are in; set by CheckConfigStart
+  static bool		check_quiet; 	// #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart
-  static bool		check_ok; // #IGNORE cumulative AND of all nested oks
-  
+  static bool		check_ok; 	// #IGNORE cumulative AND of all nested oks
+
   static void	(*WaitProc)();
   // #IGNORE set this to a work process for idle time processing
   static void (*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
 
+  /////////////////////////////////////////////////
+  //	Configuration -- object as settings
+
   void	SaveConfig();		// #BUTTON #CONFIRM save configuration defaults to ~/.taconfig file that is loaded automatically at startup
   void	LoadConfig();		// #BUTTON #CONFIRM load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)
 
-  static void	FlushConsole();
-  // flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
-
+  /////////////////////////////////////////////////
+  //	Errors, Warnings, Simple Dialogs
 
   static String	SuperCat(const char* a, const char* b, const char* c,
 		      const char* d, const char* e, const char* f,
@@ -485,16 +554,18 @@ public:
 		       const char* i=0);
   // allows user to choose among different options in window if iv_active or stdin/out
 
+  /////////////////////////////////////////////////
+  //	Global state management
+
+  static void	FlushConsole();
+  // flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
+
   static void 	Busy();		// puts system in a 'busy' state
   static void	DoneBusy();	// when no longer busy, call this function
 
   static void 	CheckConfigStart(bool confirm_success = true, bool quiet = false); 
    // we are starting checkconfig, nestable, 1st guy controls params
   static void	CheckConfigEnd(bool ok = true); // ending checkconfig, last exit handles display etc.
-
-  static void	Initialize();	// initialize type system, called in ta_TA.cc
-  static void	InitializeTypes();// called after all type info has been loaded into types
-  static void	DMem_Initialize(); // #IGNORE initialize distributed memory stuff
 
   static void	MallocInfo(ostream& strm);
   // generate malloc memory statistic information to given stream
@@ -509,6 +580,22 @@ public:
 #endif
   static void	Decode_Signal(int err);	// printout translation of signal on cerr
 #endif // WINDOWS
+
+  /////////////////////////////////////////////////
+  //	Startup/Args
+
+  static void	Initialize();
+  // #IGNORE initialize type system, called in ta_TA.cc
+  static void	InitializeTypes();
+  // #IGNORE called after all type info has been loaded into types
+  static void	DMem_Initialize();
+  // #IGNORE initialize distributed memory stuff
+  static void	Init_Args(int argc, const char* argv[]);
+  // #IGNORE initialize more elaborated argument info
+
+  /////////////////////////////////////////////////
+  //	Commonly used utility functions on strings/arrays/values
+  // todo: these perhaps indicate shortcomings of associated objects -- fix them!
 
   static void	CharToStrArray(String_PArray& sa, const char* ch);
   // convert space-delimeted character string to a string array
@@ -529,6 +616,21 @@ public:
   static String	StringEnforceLen(const String& str, int len);
   // returns string enforced to given length (spaces added to make length)
 
+  /////////////////////////////////////////////////
+  //	File Paths etc
+
+  // path manips
+  static String	remove_name(String& path);
+
+  static String	FindFileOnPath(String_PArray& paths, const char* fname);
+  // helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)
+
+  static String	FindFileOnLoadPath(const char* fname);
+  // try to find file fnm in one of the load_include paths -- returns complete path to file  (or empty str if not found)
+
+  /////////////////////////////////////////////////
+  //	Recording GUI actions to css script
+
   static void	StartRecording(ostream* strm); // sets record_strm and record_cursor
   static void   StopRecording();	       // unsets record_strm and record_cursor
   static bool	RecordScript(const char* cmd);
@@ -541,12 +643,10 @@ public:
   static void 	SREAssignment(taBase* tab,MemberDef* md);
   // record enum md assignment
 #endif
-  // path manips
-  static String	remove_name(String& path);
-  static String	FindFileInclude(const char* fname);
-  // try to find file fnm in one of the include paths -- returns complete path to file
 
-  // parsing stuff
+  ////////////////////////////////////////////////////////////////////////
+  // 	File Parsing Stuff for Dump routines: Input
+
   static String	LexBuf;	// #HIDDEN a buffer, contains last thing read by read_ funs
 
   // return value is the next character in the stream
@@ -555,7 +655,7 @@ public:
   static int	skip_white(istream& strm, bool peek = false);
   static int	skip_white_noeol(istream& strm, bool peek = false); // don't skip end-of-line
   static int	skip_till_start_quote_or_semi(istream& strm, bool peek = false);      
-    // used to seek up to an opening " for a string; will terminate on a ;
+  // used to seek up to an opening " for a string; will terminate on a ;
   static int	read_word(istream& strm, bool peek = false);
   static int	read_alnum(istream& strm, bool peek = false); 		// alpha-numeric
   static int    read_alnum_noeol(istream& strm, bool peek = false);
@@ -566,24 +666,29 @@ public:
   static int	read_till_rbracket(istream& strm, bool peek = false);
   static int	read_till_rb_or_semi(istream& strm, bool peek = false);
   static int 	read_till_end_quote(istream& strm, bool peek = false);
-    // read-counterpart to write_quoted_string; read-escaping, until "
+  // read-counterpart to write_quoted_string; read-escaping, until "
   static int	read_till_end_quote_semi(istream& strm, bool peek = false); 
-    // read-counterpart to write_quoted_string; read-escaping, until "; (can be ws btwn " and ;)
+  // read-counterpart to write_quoted_string; read-escaping, until "; (can be ws btwn " and ;)
   static int	skip_past_err(istream& strm, bool peek = false);
   // skips to next rb or semi (robust)
   static int	skip_past_err_rb(istream& strm, bool peek = false);
   // skips to next rbracket (robust)
 
-  // output functions
+  ////////////////////////////////////////////////////////////////////////
+  // 	File Parsing Stuff for Dump routines: Output
+
   static ostream& indent(ostream& strm, int indent, int tsp=2);
   static ostream& write_quoted_string(ostream& strm, const String& str, 
-    bool write_if_empty = false);
-    // writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
+				      bool write_if_empty = false);
+  // writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
   static ostream& fmt_sep(ostream& strm, const String& itm, int no, int indent,
 			  int tsp=2);
   static ostream& fancy_list(ostream& strm, const String& itm, int no, int prln,
 			     int tabs);
 };
+
+//////////////////////////////////////////////////////////
+// 	taRefN
 
 class TA_API taRefN {
   // #NO_TOKENS #NO_MEMBERS #NO_CSS reference counting base class

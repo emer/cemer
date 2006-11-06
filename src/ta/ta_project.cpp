@@ -372,3 +372,13 @@ taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
   return NULL;
     
 } 
+
+/////////////////////////////////////////
+// 	startup code
+
+void taRootBase::Startup_MakeMainWin() {
+}
+
+void taRootBase::Startup_Console() {
+}
+  	

@@ -403,8 +403,10 @@ void taFiler::FixFileName() {
 void taFiler::GetDir() {
   QFileInfo fi(fname);
   dir = fi.absolutePath(); // note: doesn't deref symlinks, which is probably what we want
-  if (!dir.empty() && (dir != "."))
-    taMisc::include_paths.AddUnique(dir); // make sure its on the include path..
+  if (!dir.empty() && (dir != ".")) {
+    taMisc::load_paths.AddUnique(dir); // make sure its on the include path..
+    taMisc::css_include_paths.AddUnique(dir); // make sure its on the include path..
+  }
 }
 
 bool taFiler::isCompressed() const {

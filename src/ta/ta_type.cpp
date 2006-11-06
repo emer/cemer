@@ -91,6 +91,74 @@ int String_PArray::FindContains(const String& op, int start) const {
   return -1;
 }
 
+///////////////////////////////////////
+// NameVar_PArray
+
+const String NameVar_PArray::def_sep(", ");
+
+const String NameVar_PArray::AsString(const String& sep) const {
+  if (size == 0) return _nilString;
+  int i;
+  String rval;
+  for (i = 0; i < size; ++i) {
+    if (i > 0) 
+      rval.cat(sep);
+    rval.cat(FastEl(i).GetStr());
+  }
+  return rval;
+}
+
+int NameVar_PArray::FindName(const String& op, int start) const {
+  int i;
+  if(start < 0) {		// search backwards if start < 0
+    for(i=size-1; i>=0; i--) {
+      if(FastEl(i).name == op)
+	return i;
+    }
+  }
+  else {
+    for(i=start; i<size; i++) {
+      if(FastEl(i).name == op)
+	return i;
+    }
+  }
+  return -1;
+}
+
+int NameVar_PArray::FindNameContains(const String& op, int start) const {
+  int i;
+  if(start < 0) {		// search backwards if start < 0
+    for(i=size-1; i>=0; i--) {
+      if(FastEl(i).name.contains(op))
+	return i;
+    }
+  }
+  else {
+    for(i=start; i<size; i++) {
+      if(FastEl(i).name.contains(op))
+	return i;
+    }
+  }
+  return -1;
+}
+
+int NameVar_PArray::FindValue(const Variant& op, int start) const {
+  int i;
+  if(start < 0) {		// search backwards if start < 0
+    for(i=size-1; i>=0; i--) {
+      if(FastEl(i).value == op)
+	return i;
+    }
+  }
+  else {
+    for(i=start; i<size; i++) {
+      if(FastEl(i).value == op)
+	return i;
+    }
+  }
+  return -1;
+}
+
 //////////////////////////
 //  taiMiscCore		//
 //////////////////////////
@@ -199,26 +267,10 @@ void taiMiscCore::timer_timeout() {
 // 	     taMisc		//
 //////////////////////////////////
 
-// give the main typespace a big hash table..
-TypeSpace taMisc::types("taMisc::types", 2000);
-
 String	taMisc::version_no = "3.5";
 
-String 	taMisc::LexBuf;
-bool	taMisc::in_init = false;
-signed char	taMisc::quitting = QF_RUNNING;
-bool	taMisc::not_constr = true;
-bool 	taMisc::gui_active = false;
-ContextFlag	taMisc::is_loading;
-ContextFlag	taMisc::is_saving;
-ContextFlag	taMisc::is_duplicating;
-ContextFlag	taMisc::is_checking;
-String	taMisc::last_check_msg;
-int	taMisc::strm_ver = 2;
-
-int	taMisc::dmem_proc = 0;
-int	taMisc::dmem_nprocs = 1;
-int	taMisc::cpus = 1;
+////////////////////////////////////////////////////////
+// 	TA GUI parameters
 
 #ifdef TA_OS_MAC
 String  taMisc::font_name = "Lucida Grande";
@@ -238,49 +290,49 @@ int  	taMisc::console_font_size = 8;
 #endif
 int	taMisc::display_width = 80;
 int	taMisc::sep_tabs = 2;
-int	taMisc::max_menu = 25;
-int 	taMisc::search_depth = 1;
+int	taMisc::max_menu = 50;
+int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
 int	taMisc::mono_scale_size = 16;
-
-float	taMisc::window_decor_offset_x = 0.0f;
-float	taMisc::window_decor_offset_y = 0.0f;
-float	taMisc::mswin_scale = .85f;
-int	taMisc::jpeg_quality = 85;
-
-bool	taMisc::auto_edit = false;
-taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
+int	taMisc::jpeg_quality = 95;
 
 taMisc::ShowMembs  	taMisc::show = taMisc::NO_HIDDEN;
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
 taMisc::TypeInfo  	taMisc::type_info = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
-taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
-  //note: PRETTY is barely more expensive, since we compress files
+bool			taMisc::auto_edit = false;
+taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
+bool taMisc::beep_on_error = false;
+
+////////////////////////////////////////////////////////
+// 	File/Path/Arg Info
+
+int	taMisc::strm_ver = 2;
 bool 			taMisc::save_compress = false; // compression not the default in v4
+#ifdef DEBUG
+taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
+#else
+taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
+#endif
+// note: PRETTY is barely more expensive, since we compress files
+// todo: but it just said that compression is not the default!  only for debug mode!
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 taMisc::LoadVerbosity	taMisc::gui_verbose_load = taMisc::QUIET;
-bool	taMisc::dmem_debug = false;
 
-TypeDef*	taMisc::default_scope = NULL;
+String	taMisc::inst_prefix = "/usr/local"; // todo: get from config.h
+String	taMisc::pkg_dir = "ta_css"; // todo: get from config.h
+String	taMisc::pkg_home = "/usr/local/ta_css"; // todo: get from config.h
+String	taMisc::tmp_dir = "/tmp"; // todo: should be inst_prefix/tmp??
 
-String_PArray	taMisc::include_paths;
+String_PArray	taMisc::css_include_paths;
+String_PArray	taMisc::load_paths;
+NameVar_PArray	taMisc::prog_lib_paths;
 
-String	taMisc::pdp_dir = "/usr/local/pdp++"; // TODO: set on startup
-String	taMisc::tmp_dir = "/tmp";
 String	taMisc::compress_cmd = "gzip -c";
 String	taMisc::uncompress_cmd = "gzip -dc";
 String	taMisc::compress_sfx = ".gz";
 String	taMisc::help_file_tmplt = "manual/html/Help_%t.html";
-// this is for remote accessing:
-//String	taMisc::help_cmd = "netscape -remote openURL\\(file:%s\\)";
 ostream*	taMisc::record_script = NULL;
-bool taMisc::beep_on_error = false;
-bool taMisc::check_quiet;
-bool taMisc::check_confirm_success;
-bool taMisc::check_ok;
-void (*taMisc::WaitProc)() = NULL;
-void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 
 // NOTE: we quote all filenames in case they have spaces
 #ifdef TA_OS_WIN
@@ -289,8 +341,7 @@ String	taMisc::help_cmd = "\"C:/Program Files/Internet Explorer/iexplore.exe\" f
 String	taMisc::edit_cmd = "Notepad.exe \"%s\"";
 #else
 #ifdef TA_OS_MAC
-//TODO: set default to be Safari
-String	taMisc::help_cmd = "open -a \"Internet Explorer\" \"%s\" &";
+String	taMisc::help_cmd = "open \"%s\" &";
 String	taMisc::edit_cmd = "emacs \"%s\" &";
 #else // prob Linux, or some Unix for sure
 String	taMisc::help_cmd = "firefox file:\"%s\" &";
@@ -298,18 +349,52 @@ String	taMisc::edit_cmd = "emacs \"%s\" &";
 #endif
 #endif
 
+////////////////////////////////////////////////////////
+// 	Args
 
-void taMisc::Busy() {
-#ifndef NO_TA_BASE
-  if (taiMC_) taiMC_->Busy_(true);
-#endif
-}
+String_PArray	taMisc::args_raw;
+NameVar_PArray	taMisc::arg_names;
+NameVar_PArray	taMisc::args;
 
-void taMisc::DoneBusy() {
-#ifndef NO_TA_BASE
-  if (taiMC_) taiMC_->Busy_(false);
-#endif
-}
+////////////////////////////////////////////////////////
+// 	DMEM: Distributed Memory
+
+int	taMisc::dmem_proc = 0;
+int	taMisc::dmem_nprocs = 1;
+int	taMisc::cpus = 1;
+bool	taMisc::dmem_debug = false;
+
+////////////////////////////////////////////////////////
+// 	Global State, Flags Etc
+
+// give the main typespace a big hash table..
+TypeSpace taMisc::types("taMisc::types", 2000);
+TypeDef*	taMisc::default_scope = NULL;
+
+bool	taMisc::in_init = false;
+signed char	taMisc::quitting = QF_RUNNING;
+bool	taMisc::not_constr = true;
+bool 	taMisc::gui_active = false;
+ContextFlag	taMisc::is_loading;
+ContextFlag	taMisc::is_saving;
+ContextFlag	taMisc::is_duplicating;
+ContextFlag	taMisc::is_checking;
+
+String	taMisc::last_check_msg;
+bool taMisc::check_quiet;
+bool taMisc::check_confirm_success;
+bool taMisc::check_ok;
+
+void (*taMisc::WaitProc)() = NULL;
+void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
+
+String 	taMisc::LexBuf;
+
+/////////////////////////////////////////////////////////////////
+// 		taMisc funs
+
+/////////////////////////////////////////////////
+//	Configuration -- object as settings
 
 void taMisc::SaveConfig() {
 #ifndef NO_TA_BASE
@@ -334,12 +419,8 @@ void taMisc::LoadConfig() {
 #endif
 }
 
-void taMisc::FlushConsole() {
-#ifndef NO_TA_BASE
-  if(!cssMisc::TopShell) return;
-  cssMisc::TopShell->FlushConsole();
-#endif
-}
+/////////////////////////////////////////////////
+//	Errors, Warnings, Simple Dialogs
 
 void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
@@ -434,27 +515,26 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
 
 #endif // def TA_NO_GUI
 
+/////////////////////////////////////////////////
+//	Global state management
 
-void taMisc::Initialize() {
-  not_constr = false;
-  cpus = taPlatform::cpuCount();
+void taMisc::FlushConsole() {
+#ifndef NO_TA_BASE
+  if(!cssMisc::TopShell) return;
+  cssMisc::TopShell->FlushConsole();
+#endif
 }
 
-void taMisc::InitializeTypes() {// called after all type info has been loaded into types
-  // initialize all classes that have an initClass method (ex. Inventor subtypes)
-//TEMP:
-char typ_name[64];
-  for (int i = 0; i < types.size; ++i) {
-    TypeDef* typ = types.FastEl(i);
-strncpy(typ_name, typ->name.chars(), 63);
-    if ((typ->ptr > 0) || (typ->ref)) continue;
-    // look for an initClass method
-    MethodDef* md = typ->methods.SafeEl(typ->methods.Find("initClass"));
-    if (!md) continue;
-    if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
-    // call the init function
-    md->addr();
-  }
+void taMisc::Busy() {
+#ifndef NO_TA_BASE
+  if (taiMC_) taiMC_->Busy_(true);
+#endif
+}
+
+void taMisc::DoneBusy() {
+#ifndef NO_TA_BASE
+  if (taiMC_) taiMC_->Busy_(false);
+#endif
 }
 
 void taMisc::CheckConfigStart(bool confirm_success, bool quiet) {
@@ -482,21 +562,6 @@ void taMisc::CheckConfigEnd(bool ok) {
     taiMC_->CheckConfigResult_(check_ok);
   }
 #endif
-}
-
-void taMisc::DMem_Initialize() {
-#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
-  MPI_Comm_size(MPI_COMM_WORLD, &dmem_nprocs);
-  MPI_Comm_rank(MPI_COMM_WORLD, &dmem_proc);
-  MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
-  if(dmem_proc == 0) {
-    cerr << "DMEM Running on " << dmem_nprocs << " processors." << endl;
-  }
-#endif
-}
-
-void taMisc::ListAllTokens(ostream& strm) {
-  types.ListAllTokens(strm);
 }
 
 #if 1
@@ -537,52 +602,9 @@ void taMisc::MallocInfo(ostream& strm) {
 }
 #endif
 
-/* obs
-#if !defined(TA_NO_GUI) && !defined(NO_TA_BASE) && !defined(WINDOWS) && !defined(DARWIN)
-extern "C" {
-  int taHandleXError(Display* disp, XErrorEvent* err);
-  int taHandleXIOError(Display* disp);
+void taMisc::ListAllTokens(ostream& strm) {
+  types.ListAllTokens(strm);
 }
-
-int taHandleXError(Display* disp, XErrorEvent* err) {
-  static int prev_err = -1;
-  static int prev_serial = -1;
-  //  static bool already_saved = false;
-  static bool already_saved = true;// disable saving for time being
-
-  if((int)err->error_code == prev_err) { // && ((int)err->serial == prev_serial + 1)) {
-    cerr << ".";		// indicate that it happened again
-    prev_serial = err->serial;
-  }
-  else {
-    prev_err = err->error_code;
-    prev_serial = err->serial;
-    char err_txt[256];
-    XGetErrorText(disp, err->error_code, err_txt, 255);
-    cerr << "TA X Error: " << err_txt << "\n"
-	 << "\tMajor op-code of failed request: " << (int)err->request_code << "\n"
-	 << "\tMinor op-code of failed request: " << (int)err->minor_code << "\n"
-	 << "\tSerial number of failed request: " << err->serial << "\n"
-	 << "\tResource ID: " << err->resourceid << "\n"
-	 << "\rcontinuing, repeats of same error indicated by '.')\n";
-    if(!already_saved) {
-      cerr << "\t(sending SIGUSR2 to save state for later recovery)\n";
-      kill(getpid(), SIGUSR2);
-      already_saved = true;
-    }
-  }
-  return 0;
-}
-
-int taHandleXIOError(Display*) {
-  cerr << "TA FATAL X I/O Error\n"
-       << "\t(sending SIGABRT to save state, and exiting..)\n";
-  kill(getpid(), SIGABRT);
-  return 0;
-}
-#endif
-*/
-
 
 taMisc::TypeInfoKind taMisc::TypeToTypeInfoKind(TypeDef* td) {
   if (!td) return TIK_UNKNOWN; 
@@ -631,7 +653,6 @@ void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
 #endif */
 }
 
-
 void taMisc::Decode_Signal(int err) {
   switch(err) {
   case SIGHUP:	cerr << "hangup"; break;
@@ -653,26 +674,67 @@ void taMisc::Decode_Signal(int err) {
 }
 #endif // WINDOWS
 
-// try to find file fnm in one of the include paths -- returns complete path to file
-String taMisc::FindFileInclude(const char* fname) {
-  fstream fh;
-  fh.open(fname, ios::in);
-  if(fh.good()) {
-    fh.close(); fh.clear();
-    return fname;
-  }
 
-  int i;
-  for(i=0; i<include_paths.size; i++) {
-    fh.close(); fh.clear();
-    String trynm = include_paths.FastEl(i) + "/" + fname;
-    fh.open(trynm, ios::in);
-    if(fh.good()) {
-      fh.close(); fh.clear();
-      return trynm;
-    }
+/////////////////////////////////////////////////
+//	Startup
+
+void taMisc::Initialize() {
+  not_constr = false;
+  cpus = taPlatform::cpuCount();
+}
+
+void taMisc::InitializeTypes() {// called after all type info has been loaded into types
+  // initialize all classes that have an initClass method (ex. Inventor subtypes)
+  for (int i = 0; i < types.size; ++i) {
+    TypeDef* typ = types.FastEl(i);
+    if ((typ->ptr > 0) || (typ->ref)) continue;
+    // look for an initClass method
+    MethodDef* md = typ->methods.SafeEl(typ->methods.Find("initClass"));
+    if (!md) continue;
+    if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
+    // call the init function
+    md->addr();
   }
-  return "";
+}
+
+void taMisc::DMem_Initialize() {
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  MPI_Comm_size(MPI_COMM_WORLD, &dmem_nprocs);
+  MPI_Comm_rank(MPI_COMM_WORLD, &dmem_proc);
+  MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+  if(dmem_proc == 0) {
+    cerr << "DMEM Running on " << dmem_nprocs << " processors." << endl;
+  }
+#endif
+}
+
+void taMisc::Init_Args(int argc, const char* argv[]) {
+  // todo: write this
+}
+
+/////////////////////////////////////////////////
+//	Commonly used utility functions on strings/arrays/values
+
+void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
+  String tmp = ch;
+  while (!tmp.empty()) {
+    sa.Add(tmp.before(" "));
+    tmp = tmp.after(" ");
+  }
+}
+
+String taMisc::StrArrayToChar(const String_PArray& sa) {
+//NOTE: for historical reasons, this adds an extra sep on the end
+// more efficient to know the length, so we don't resize...  
+  uint xlen = sa.size; // for seps  
+  int i;  
+  for (i=0; i < sa.size; i++) xlen += sa.FastEl(i).length();  
+  String tmp(0, xlen, '\0');  
+  for (i = 0; i < sa.size; i++) {  
+    tmp += sa.FastEl(i);  
+    tmp += " ";  
+  }  
+  return tmp; 
 }
 
 // add spaces to a label
@@ -728,57 +790,6 @@ String taMisc::FormatValue(float val, int width, int precision) {
 //    return sval;
 }
 
-ostream& taMisc::fancy_list(ostream& strm, const String& itm, int no, int prln, int tabs) {
-  strm << itm << " ";
-  if((no+1) % prln == 0) {
-    strm << "\n";
-    return strm;
-  }
-  int len = itm.length() + 1;
-  int i;
-  for(i=tabs; i>=0; i--) {
-    if(len < i * 8)
-      strm << "\t";
-  }
-  return strm;
-}
-
-// no == 0 = indent
-ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, int tsp) {
-  int i;
-  int itabs = (indent * tsp) / 8;
-  int ispcs = (indent * tsp) % 8;
-  if(no == 0) {			// indent
-    for(i=0; i<itabs; i++)
-      strm << "\t";
-    for(i=0; i<ispcs; i++)
-      strm << " ";
-  }
-
-  strm << itm << " ";
-
-  int len = itm.length() + 1 + ispcs;
-  for(i=taMisc::sep_tabs; i>=0; i--) {
-    if(len < i * 8)
-      strm << "\t";
-  }
-  for(i=0; i<ispcs; i++)
-    strm << " ";
-  return strm;
-}
-
-ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
-  if(is_saving && (save_format == PLAIN))	return strm;
-  int i;
-  int itabs = (indent * tsp) / 8;
-  int ispcs = (indent * tsp) % 8;
-  for(i=0; i<itabs; i++)
-    strm << "\t";
-  for(i=0; i<ispcs; i++)
-    strm << " ";
-  return strm;
-}
-
 String taMisc::StringMaxLen(const String& str, int len) {
   if((int)str.length() <= len) return str;
   String rval = ((String)str).before(len);
@@ -795,27 +806,101 @@ String taMisc::StringEnforceLen(const String& str, int len) {
   return rval;
 }
 
-void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
-  String tmp = ch;
-  while (!tmp.empty()) {
-    sa.Add(tmp.before(" "));
-    tmp = tmp.after(" ");
+
+/////////////////////////////////////////////////
+//	File Paths etc
+
+// todo: could be more accurately named
+String taMisc::remove_name(String& path) {
+  if(path.contains("("))
+    return path.before("(") + path.after(")");
+
+  return path;
+}
+
+// try to find file fnm in one of the include paths -- returns complete path to file
+String taMisc::FindFileOnPath(String_PArray& paths, const char* fname) {
+  int acc = access(fname, F_OK);
+  if (acc == 0) {
+    return fname;
+  }
+
+  for(int i=0; i<paths.size; i++) {
+    String trynm = paths.FastEl(i) + "/" + fname;
+    int acc = access(trynm, F_OK);
+    if (acc == 0) {
+      return trynm;
+    }
+  }
+  return "";
+}
+
+String taMisc::FindFileOnLoadPath(const char* fname) {
+  return FindFileOnPath(load_paths, fname);
+}
+
+/////////////////////////////////////////////////
+//	Recording GUI actions to css script
+
+void taMisc::StartRecording(ostream* strm){
+  record_script = strm;
+  if (ScriptRecordingGui_Hook)
+    ScriptRecordingGui_Hook(true);
+}
+
+void taMisc::StopRecording(){
+  record_script = NULL;
+  if (ScriptRecordingGui_Hook)
+    ScriptRecordingGui_Hook(false);
+}
+
+bool taMisc::RecordScript(const char* cmd) {
+  if (record_script == NULL)
+    return false;
+  if (record_script->bad() || record_script->eof()) {
+    taMisc::Error("*** Error: recording script is bad or eof, no script command recorded!!",
+		  cmd);
+    return false;
+  }
+  *record_script << cmd;
+  if(cmd[strlen(cmd)-1] != '\n') {
+    taMisc::Error("*** Warning: cmd must end in a newline, but doesn't -- should be fixed:",
+		  cmd);
+    *record_script << '\n';
+  }
+  record_script->flush();
+  return true;
+}
+
+#ifndef NO_TA_BASE
+// normal non quoted members
+void taMisc::ScriptRecordAssignment(taBase* tab,MemberDef* md){
+  if(taMisc::record_script != NULL)  {
+    *taMisc::record_script << tab->GetPath() << "." << md->name << " = " <<
+      md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
+  }
+}
+// Script Record Inline Assignment
+void taMisc::SRIAssignment(taBase* tab,MemberDef* md){
+  if(taMisc::record_script != NULL)  {
+    *taMisc::record_script << tab->GetPath() << "." << md->name << " = \"" <<
+      md->type->GetValStr(md->GetOff(tab)) << "\";\n";
+    *taMisc::record_script << tab->GetPath() << "." << "UpdateAfterEdit();" << endl;
   }
 }
 
-String taMisc::StrArrayToChar(const String_PArray& sa) {
-//NOTE: for historical reasons, this adds an extra sep on the end
-// more efficient to know the length, so we don't resize...  
-  uint xlen = sa.size; // for seps  
-  int i;  
-  for (i=0; i < sa.size; i++) xlen += sa.FastEl(i).length();  
-  String tmp(0, xlen, '\0');  
-  for (i = 0; i < sa.size; i++) {  
-    tmp += sa.FastEl(i);  
-    tmp += " ";  
-  }  
-  return tmp; 
+// Script Record Enum Assignment
+void taMisc::SREAssignment(taBase* tab,MemberDef* md){
+  if(taMisc::record_script != NULL)  {
+    *taMisc::record_script << tab->GetPath() << "." << md->name << " = " <<
+      tab->GetTypeDef()->name << "::" <<
+      md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
+  }
 }
+#endif
+
+////////////////////////////////////////////////////////////////////////
+// 	File Parsing Stuff for Dump routines
 
 int taMisc::skip_white(istream& strm, bool peek) {
   int c;
@@ -1064,92 +1149,6 @@ int taMisc::read_till_rb_or_semi(istream& strm, bool peek) {
   return c;
 }
 
-/*obs, 3.x
-int taMisc::read_till_quote(istream& strm, bool peek) {
-  int c = skip_white(strm, true);
-  bool bs = false;		// backspace quoting of quotes, for example
-  LexBuf = "";
-  if(taMisc::verbose_load >= taMisc::SOURCE) {
-    while (((c = strm.peek()) != EOF) && (bs || !((c == '\"')))) { // "
-      if (bs)
-        bs = false;
-      else
-        bs = (c == '\\');
-      cerr << (char)c;
-      LexBuf += (char)c; strm.get();
-    }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
-  }
-  else {
-    while (((c = strm.peek()) != EOF) && (bs || !((c == '\"')))) {  // "
-      if (bs)
-        bs = false;
-      else
-        bs = (c == '\\');
-      LexBuf += (char)c; strm.get();
-    }
-  }
-  if(!peek)
-    strm.get();
-  return c;
-}
-
-int taMisc::read_till_quote_semi(istream& strm, bool peek) {
-  // don't skip initial whitespace because we're presumably reading a string literal
-  int c;
-  bool bs = false;
-  LexBuf = "";
-  if(taMisc::verbose_load >= taMisc::SOURCE) {
-    while(true) {
-      while (((c = strm.peek()) != EOF) && (bs || (!((c == '\"')) && !((c == '\\'))))) {  // "
-        bs = false;
-        cerr << (char)c;
-        LexBuf += (char)c; strm.get();
-      }
-      if(c == EOF) break;
-      cerr << (char)c;
-      if(c == '\\') {
-        strm.get();             // get the backslash (don't put in LexBuf)
-        bs = true;              // backslash-quoted character coming
-      }
-      else if(c == '\"') {      // "
-        strm.get();             // get the quote
-        c = strm.peek();        // get next char
-        cerr << (char)c;
-	if(c == ';') break;	// done
-	LexBuf += '\"';		// add the quote..
-      }
-    }
-    taMisc::FlushConsole();
-  }
-  else {
-    while(true) {
-      while (((c = strm.peek()) != EOF) && (bs || (!((c == '\"')) && !((c == '\\'))))) {  // "
-        bs = false;
-        LexBuf += (char)c; strm.get();
-      }
-      if(c == EOF) break;
-      if(c == '\\') {
-        strm.get();             // get the backslash (don't put in LexBuf)
-        bs = true;              // backslash-quoted character coming
-      }
-      else if(c == '\"') {           // "
-        strm.get();             // get the quote
-        c = strm.peek();        // get next char
-        if(c == ';') break;     // done
-	LexBuf += '\"';		// add the quote..
-      }
-    }
-  }
-  if(!peek)
-    strm.get();
-  return c;
-}
-
-
-*/
-
 int taMisc::skip_till_start_quote_or_semi(istream& strm, bool peek) {
 // read in the stream until a start quote or a semi
   int c = skip_white(strm, true);
@@ -1279,6 +1278,21 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
   return c;
 }
 
+////////////////////////////////////////////////////////////////////////
+// 	File Parsing Stuff for Dump routines: Output
+
+ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
+  if(is_saving && (save_format == PLAIN))	return strm;
+  int i;
+  int itabs = (indent * tsp) / 8;
+  int ispcs = (indent * tsp) % 8;
+  for(i=0; i<itabs; i++)
+    strm << "\t";
+  for(i=0; i<ispcs; i++)
+    strm << " ";
+  return strm;
+}
+
 ostream& taMisc::write_quoted_string(ostream& strm, const String& str, bool write_if_empty) {
   if (!write_if_empty && str.empty()) return strm;
   
@@ -1297,72 +1311,45 @@ ostream& taMisc::write_quoted_string(ostream& strm, const String& str, bool writ
   return strm;
 }
 
-// removes a name from the path
-String taMisc::remove_name(String& path) {
-  if(path.contains("("))
-    return path.before("(") + path.after(")");
-
-  return path;
-}
-
-// Script recording
-
-void taMisc::StartRecording(ostream* strm){
-  record_script = strm;
-  if (ScriptRecordingGui_Hook)
-    ScriptRecordingGui_Hook(true);
-}
-
-void taMisc::StopRecording(){
-  record_script = NULL;
-  if (ScriptRecordingGui_Hook)
-    ScriptRecordingGui_Hook(false);
-}
-
-bool taMisc::RecordScript(const char* cmd) {
-  if (record_script == NULL)
-    return false;
-  if (record_script->bad() || record_script->eof()) {
-    taMisc::Error("*** Error: recording script is bad or eof, no script command recorded!!",
-		  cmd);
-    return false;
+ostream& taMisc::fancy_list(ostream& strm, const String& itm, int no, int prln, int tabs) {
+  strm << itm << " ";
+  if((no+1) % prln == 0) {
+    strm << "\n";
+    return strm;
   }
-  *record_script << cmd;
-  if(cmd[strlen(cmd)-1] != '\n') {
-    taMisc::Error("*** Warning: cmd must end in a newline, but doesn't -- should be fixed:",
-		  cmd);
-    *record_script << '\n';
+  int len = itm.length() + 1;
+  int i;
+  for(i=tabs; i>=0; i--) {
+    if(len < i * 8)
+      strm << "\t";
   }
-  record_script->flush();
-  return true;
+  return strm;
 }
 
-#ifndef NO_TA_BASE
-// normal non quoted members
-void taMisc::ScriptRecordAssignment(taBase* tab,MemberDef* md){
-  if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPath() << "." << md->name << " = " <<
-      md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
+// no == 0 = indent
+ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, int tsp) {
+  int i;
+  int itabs = (indent * tsp) / 8;
+  int ispcs = (indent * tsp) % 8;
+  if(no == 0) {			// indent
+    for(i=0; i<itabs; i++)
+      strm << "\t";
+    for(i=0; i<ispcs; i++)
+      strm << " ";
   }
-}
-// Script Record Inline Assignment
-void taMisc::SRIAssignment(taBase* tab,MemberDef* md){
-  if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPath() << "." << md->name << " = \"" <<
-      md->type->GetValStr(md->GetOff(tab)) << "\";\n";
-    *taMisc::record_script << tab->GetPath() << "." << "UpdateAfterEdit();" << endl;
+
+  strm << itm << " ";
+
+  int len = itm.length() + 1 + ispcs;
+  for(i=taMisc::sep_tabs; i>=0; i--) {
+    if(len < i * 8)
+      strm << "\t";
   }
+  for(i=0; i<ispcs; i++)
+    strm << " ";
+  return strm;
 }
 
-// Script Record Enum Assignment
-void taMisc::SREAssignment(taBase* tab,MemberDef* md){
-  if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPath() << "." << md->name << " = " <<
-      tab->GetTypeDef()->name << "::" <<
-      md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
-  }
-}
-#endif
 
 //////////////////////////
 //   IDataLinkProxy 	//

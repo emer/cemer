@@ -713,5 +713,26 @@ inline bool operator==(const taMatrix* a, const Variant& b) {return b.eqMatrix(a
 inline bool operator!=(const taMatrix* a, const Variant& b) {return !b.eqMatrix(a);}
 #endif
 
+
+class TA_API NameVar {
+  // a name-value representation, using a String and a Variant
+public:
+  String	name;		// the name
+  Variant	value;		// the value
+
+  String	GetStr() const	{ return name + "=" + value.toString(); }
+  void		SetFmStr(const String& val);
+
+  bool	operator>(const NameVar& cm) { return value > cm.value; }
+  bool	operator<(const NameVar& cm) { return value < cm.value; }
+  bool	operator>=(const NameVar& cm) { return value >= cm.value; }
+  bool	operator<=(const NameVar& cm) { return value <= cm.value; }
+  bool	operator==(const NameVar& cm) { return value == cm.value; }
+
+  NameVar(const NameVar& cp) { name = cp.name; value = cp.value; }
+  NameVar()	{ };
+  ~NameVar()	{ };
+};
+
 #endif
 

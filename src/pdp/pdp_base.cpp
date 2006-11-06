@@ -337,15 +337,15 @@ int pdpMisc::Main(int argc, char *argv[]) {
   if(home_dir_env != NULL)
     home_dir = home_dir_env;
 
-  taMisc::include_paths.AddUnique(pdp_dir);
-  taMisc::include_paths.AddUnique(pdp_dir+"/css/include");
-  taMisc::include_paths.AddUnique(pdp_dir+"/defaults");
+  taMisc::css_include_paths.AddUnique(pdp_dir);
+  taMisc::css_include_paths.AddUnique(pdp_dir+"/css/include");
+  taMisc::css_include_paths.AddUnique(pdp_dir+"/defaults");
 //TODO: NO!! can't have these during devel
 /*  if(!home_dir.empty()) {
-    taMisc::include_paths.AddUnique(home_dir+"/mypdp++");
-    taMisc::include_paths.AddUnique(home_dir+"/pdp++");
-    taMisc::include_paths.AddUnique(home_dir+"/mypdp++/defaults");
-    taMisc::include_paths.AddUnique(home_dir+"/pdp++/defaults");
+    taMisc::css_include_paths.AddUnique(home_dir+"/mypdp++");
+    taMisc::css_include_paths.AddUnique(home_dir+"/pdp++");
+    taMisc::css_include_paths.AddUnique(home_dir+"/mypdp++/defaults");
+    taMisc::css_include_paths.AddUnique(home_dir+"/pdp++/defaults");
   } */
 
   String prognm = argv[0];

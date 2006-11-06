@@ -1048,7 +1048,7 @@ void taBase::Help() {
   while((mytd != NULL) && full_file.empty()) {
     String help_file = taMisc::help_file_tmplt;
     help_file.gsub("%t", mytd->name);
-    full_file = taMisc::FindFileInclude(help_file);
+    full_file = taMisc::FindFileOnLoadPath(help_file);
     mytd = mytd->parents.SafeEl(0);	// go with the parent
   }
   if(full_file.empty()) {

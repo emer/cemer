@@ -2387,8 +2387,8 @@ int cssMisc::Initialize() {
   cssMisc::HardVars.Push(cssMisc::s_argc);
 
   // setting variables
-  cssMisc::Settings.Push(new cssTA(&taMisc::include_paths, 1, &TA_String_PArray,
-				    "include_paths"));
+  cssMisc::Settings.Push(new cssTA(&taMisc::css_include_paths, 1, &TA_String_PArray,
+				    "css_include_paths"));
 
   cssMisc::Settings.Push(new cssTA(TA_taMisc.GetInstance(), 1, &TA_taMisc,
 				    "cssSettings"));
@@ -2398,7 +2398,7 @@ int cssMisc::Initialize() {
   cssMisc::Constants.Sort();		// must sort before anything happens
 
   String home = getenv("HOME");
-  taMisc::include_paths.AddUnique(home); // this is first on the list..
+  taMisc::css_include_paths.AddUnique(home); // this is first on the list..
 
 #ifdef TA_OS_WIN
   String css_dir = "C:/PDP++"; // default pdp home directory
@@ -2409,8 +2409,8 @@ int cssMisc::Initialize() {
   if(css_dir_env != NULL)
     css_dir = css_dir_env;
 
-  taMisc::include_paths.AddUnique(css_dir);
-  taMisc::include_paths.AddUnique(css_dir+"/css/include");
+  taMisc::css_include_paths.AddUnique(css_dir);
+  taMisc::css_include_paths.AddUnique(css_dir+"/css/include");
 
   if(argc > 0) {
     // args can get munged together when #!/usr/local/css, so need to pre-process

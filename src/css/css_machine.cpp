@@ -3964,14 +3964,14 @@ int cssProgSpace::GetFile(fstream& fh, const char* fname) {
   fh.close(); fh.clear();
 
   int i;
-  for(i=0; i<taMisc::include_paths.size; i++) {
-    String trynm = taMisc::include_paths.FastEl(i) + "/" + fname;
+  for(i=0; i<taMisc::css_include_paths.size; i++) {
+    String trynm = taMisc::css_include_paths.FastEl(i) + "/" + fname;
     fh.open(trynm, ios::in);
     if(fh.good())
       return true;
     fh.close(); fh.clear();
 
-    trynm = taMisc::include_paths.FastEl(i) + "/" + fname + ".css";
+    trynm = taMisc::css_include_paths.FastEl(i) + "/" + fname + ".css";
     fh.open(trynm, ios::in);
     if(fh.good())
       return true;
@@ -4033,7 +4033,7 @@ bool cssProgSpace::Compile(const char* fname) {
     // make sure directory is in include path
     String dir = taPlatform::getFilePath(fnm);
     if(!dir.empty())
-      taMisc::include_paths.AddUnique(dir);
+      taMisc::css_include_paths.AddUnique(dir);
     SetName(fname);
     rval = Compile(fh);
     fh.close(); fh.clear();
@@ -4460,7 +4460,7 @@ void cssProgSpace::ListSettings() {
   ostream& fh = *cmd_shell->fout;
 
   fh << "Include Paths:\n";
-  taMisc::include_paths.List(fh);
+  taMisc::css_include_paths.List(fh);
   fh << "\n";
   for(int i=1; i<cssMisc::Settings.size; i++) {
     cssMisc::Settings.FastEl(i)->Print(fh);

@@ -621,7 +621,7 @@ void UserScript::ImportFromFile(istream& strm) {
 }
 
 void UserScript::ImportFromFileName(const String& fnm) {
-  String full_fnm = taMisc::FindFileInclude(fnm);
+  String full_fnm = taMisc::FindFileOnLoadPath(fnm);
   fstream strm;
   strm.open(full_fnm, ios::in);
   ImportFromFile(strm);
@@ -633,9 +633,8 @@ void UserScript::ExportToFile(ostream& strm) {
 }
 
 void UserScript::ExportToFileName(const String& fnm) {
-  String full_fnm = taMisc::FindFileInclude(fnm);
   fstream strm;
-  strm.open(full_fnm, ios::out);
+  strm.open(fnm, ios::out);
   ExportToFile(strm);
   strm.close();
 }

@@ -150,11 +150,11 @@ public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
   taBase_List		templates;	// #NO_SAVE #SHOW objects used as templates -- do not use or mess with these!
   Project_Group		projects; 	// #NO_SAVE The projects
-  DataViewer_List	viewers;	// global viewers (not saved)
+  DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   
   virtual void  Settings() = 0;		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
-  virtual void	SaveConfig() = 0;		// #MENU #CONFIRM save current configuration to file ~/.pdpconfig that is automatically loaded at startup: IMPORTANT: DO NOT HAVE A PROJECT LOADED!
-  virtual void	LoadConfig() = 0;		// #MENU #CONFIRM load current configuration from file ~/.pdpconfig that is automatically loaded at startup
+  virtual void	SaveConfig() = 0;		// #MENU #CONFIRM save current configuration to file ~/.xxxconfig that is automatically loaded at startup
+  virtual void	LoadConfig() = 0;		// #MENU #CONFIRM load current configuration from file ~/.xxxconfig that is automatically loaded at startup
   virtual void	Info() = 0;			// #MENU get information/copyright notice
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
   virtual void	SaveAll() = 0; // saves all the contents of the app object
@@ -162,6 +162,11 @@ public:
   taBase*		GetTemplateInstance(TypeDef* typ); // get an instance of the indicated tab type, or NULL if not found
   
   virtual const iColor*	GetObjColor(taBase* inst) {return NULL;}  //#IGNORE
+
+  static void	Startup_MakeMainWin();
+  // open the main window (browser of root object)
+  static void	Startup_Console();
+  // start the console shell
   	
   void	InitLinks();
   void	CutLinks();

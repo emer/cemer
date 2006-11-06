@@ -2177,3 +2177,15 @@ void test1() {
   var1 = var2 + 2.0;
 }
 //#endif
+
+
+/////////////////////////////////////////////////////////
+// NameVar
+
+void NameVar::SetFmStr(const String& val) {
+  if(val.contains('=')) {
+    name = val.before('=');
+    value.updateFromString(val.after('='));
+  }
+  // else error!  todo.
+}
