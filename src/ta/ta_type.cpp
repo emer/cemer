@@ -20,6 +20,7 @@
 #include "ta_platform.h"
 #include "ta_variant.h"
 
+#include <QDir>
 
 #ifndef NO_TA_BASE
 # include "ta_group.h"
@@ -34,11 +35,6 @@
 #  include "ta_qttype.h"
 #  include "igeometry.h"
 # endif // TA_GUI
-
-//note: kinda sleezy...
-/*obs # ifndef WINDOWS
-#  include <X11/Xlib.h>
-# endif // TA_GUI */
 
 #else // ndef NO_TA_BASE
 //# include "maketa.h"
@@ -159,6 +155,41 @@ int NameVar_PArray::FindValue(const Variant& op, int start) const {
   return -1;
 }
 
+int NameVar_PArray::FindValueContains(const String& op, int start) const {
+  int i;
+  if(start < 0) {		// search backwards if start < 0
+    for(i=size-1; i>=0; i--) {
+      if(FastEl(i).value.toString().contains(op))
+	return i;
+    }
+  }
+  else {
+    for(i=start; i<size; i++) {
+      if(FastEl(i).value.toString().contains(op))
+	return i;
+    }
+  }
+  return -1;
+}
+
+Variant NameVar_PArray::GetVal(const String& nm) {
+  int idx = FindName(nm);
+  if(idx < 0) return _nilVariant;
+  return FastEl(idx).value;
+}
+
+bool NameVar_PArray::SetVal(const String& nm, const Variant& vl) {
+  int idx = FindName(nm);
+  if(idx < 0) {
+    Add(NameVar(nm, vl));
+    return true;
+  }
+  else {
+    FastEl(idx).value = vl;
+    return false;
+  }
+}
+
 //////////////////////////
 //  taiMiscCore		//
 //////////////////////////
@@ -263,6 +294,10 @@ void taiMiscCore::timer_timeout() {
 
 #endif // NO_TA_BASE
 
+InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
+  taMisc::AddInitHook(init_proc);
+}
+
 //////////////////////////////////
 // 	     taMisc		//
 //////////////////////////////////
@@ -322,11 +357,14 @@ taMisc::LoadVerbosity	taMisc::gui_verbose_load = taMisc::QUIET;
 String	taMisc::inst_prefix = "/usr/local"; // todo: get from config.h
 String	taMisc::pkg_dir = "ta_css"; // todo: get from config.h
 String	taMisc::pkg_home = "/usr/local/ta_css"; // todo: get from config.h
+String  taMisc::user_home;			// this will be set in init call
+String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
 String	taMisc::tmp_dir = "/tmp"; // todo: should be inst_prefix/tmp??
 
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
 NameVar_PArray	taMisc::prog_lib_paths;
+NameVar_PArray	taMisc::named_paths;
 
 String	taMisc::compress_cmd = "gzip -c";
 String	taMisc::uncompress_cmd = "gzip -dc";
@@ -354,6 +392,7 @@ String	taMisc::edit_cmd = "emacs \"%s\" &";
 
 String_PArray	taMisc::args_raw;
 NameVar_PArray	taMisc::arg_names;
+NameVar_PArray	taMisc::arg_name_descs;
 NameVar_PArray	taMisc::args;
 
 ////////////////////////////////////////////////////////
@@ -371,9 +410,12 @@ bool	taMisc::dmem_debug = false;
 TypeSpace taMisc::types("taMisc::types", 2000);
 TypeDef*	taMisc::default_scope = NULL;
 
+taPtrList_impl*	taMisc::init_hook_list = NULL;
+
 bool	taMisc::in_init = false;
 signed char	taMisc::quitting = QF_RUNNING;
 bool	taMisc::not_constr = true;
+bool	taMisc::use_gui = true;
 bool 	taMisc::gui_active = false;
 ContextFlag	taMisc::is_loading;
 ContextFlag	taMisc::is_saving;
@@ -683,7 +725,80 @@ void taMisc::Initialize() {
   cpus = taPlatform::cpuCount();
 }
 
-void taMisc::InitializeTypes() {// called after all type info has been loaded into types
+void taMisc::AddInitHook(init_proc_t init_proc) {
+  if(!init_hook_list)
+    init_hook_list = new taPtrList_impl;
+  init_hook_list->Add_((void*)init_proc);
+}
+
+#ifndef NO_TA_BASE
+
+void taMisc::Init_Hooks() {
+  for (int i = 0; i < init_hook_list->size; ++i) {
+    init_proc_t ip = (init_proc_t)init_hook_list->FastEl_(i);
+    ip();
+  }
+}
+
+void taMisc::Init_Defaults_PreLoadConfig() {
+  // set any default settings prior to loading config file (will be overwritten)
+  user_home = QDir::homeDirPath();
+}
+
+void taMisc::Init_Defaults_PostLoadConfig() {
+#ifdef DEBUG
+  // note: this is just for temporary use until config.h is updated to include path
+  pkg_home = QDir::homeDirPath() + "/pdp4.0/trunk";
+#endif
+
+  // set any default settings after loading config file (ensures certain key settings in place)
+  css_include_paths.AddUnique(pkg_home + "/css_stdlib");
+  css_include_paths.AddUnique(user_home + "/css_mylib");
+
+  prog_lib_paths.AddUnique(NameVar("SystemLib", (Variant)(pkg_home + "/prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("UserLib", (Variant)(user_home + "/my_prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("WebLib", (Variant)(web_home + "/prog_lib")));
+}
+
+void taMisc::Init_Args(int argc, const char* argv[]) {
+  for(int i=0;i<argc;i++) {
+    String av = argv[i];
+    if(av.length() == 0) continue;
+    args_raw.Add(av);
+    NameVar nv;
+    if(av[0] == '-') { // a flag
+      Variant vl = arg_names.GetVal(av);
+      if(vl.isNull()) {
+	nv.name = av;
+      }
+      else {
+	nv.name = vl.toString();
+      }
+      if(i < argc-1) {
+	String nxt = argv[i+1];
+	if((nxt[0] != '-') && !nxt.contains('=')) {
+	  // not another flag or n=v; treat as value for this guy
+	  nv.value = nxt;
+	}
+	// don't consume this arg in any case: it will show up as argv[i+1] too
+      }
+    }
+    else if(av.contains('=')) {	// name=value arg
+      nv.name = av.before('=');
+      nv.value = av.after('=');
+      Variant vl = arg_names.GetVal(nv.name + "="); // register "flag=" to convert to names
+      if(!vl.isNull())
+	nv.name = vl.toString();
+    }
+    else {			// regular arg: enter name as argv[x]
+      nv.name = "argv[" + String(i) + "]";
+      nv.value = av;
+    }
+    args.Add(nv);
+  }
+}
+
+void taMisc::Init_Types() {// called after all type info has been loaded into types
   // initialize all classes that have an initClass method (ex. Inventor subtypes)
   for (int i = 0; i < types.size; ++i) {
     TypeDef* typ = types.FastEl(i);
@@ -697,8 +812,9 @@ void taMisc::InitializeTypes() {// called after all type info has been loaded in
   }
 }
 
-void taMisc::DMem_Initialize() {
+void taMisc::Init_DMem(int argc, const char* argv[]) {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  MPI_Init(&argc, &argv); // note mpi's extra level of indirection
   MPI_Comm_size(MPI_COMM_WORLD, &dmem_nprocs);
   MPI_Comm_rank(MPI_COMM_WORLD, &dmem_proc);
   MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
@@ -708,9 +824,49 @@ void taMisc::DMem_Initialize() {
 #endif
 }
 
-void taMisc::Init_Args(int argc, const char* argv[]) {
-  // todo: write this
+void taMisc::HelpMsg(ostream& strm) {
+  strm << "TA/CSS Help Info, version: " << version_no << endl;
+  strm << "Startup arguments: " << endl;
+  for(int i=0;i<arg_names.size; i++) {
+    NameVar nv = arg_names.FastEl(i);
+    Variant dvar = arg_name_descs.GetVal(nv.value.toString());
+    String desc = dvar.toString();
+    strm << "  " << nv.name << "    \t" << desc << endl;
+  }
 }
+
+void taMisc::AddArgName(const String& flag, const String& nm) {
+  taMisc::arg_names.Add(NameVar(flag, (Variant)nm));
+}
+
+void taMisc::AddArgNameDesc(const String& nm, const String& desc) {
+  taMisc::arg_name_descs.Add(NameVar(nm, (Variant)desc));
+}
+
+bool taMisc::CheckArgByName(const String& nm) {
+  if(args.FindName(nm) < 0) return false;
+  return true;
+}
+
+String taMisc::FindArgByName(const String& nm) {
+  Variant vl = args.GetVal(nm);
+  if(vl.isNull()) return _nilString;
+  return vl.toString();
+}
+
+bool taMisc::CheckArgValContains(const String& vl) {
+  int idx = args.FindValueContains(vl);
+  if(idx < 0) return false;
+  return true;
+}
+
+String taMisc::FindArgValContains(const String& vl) {
+  int idx = args.FindValueContains(vl);
+  if(idx < 0) return _nilString;
+  return args.FastEl(idx).value.toString();
+}
+
+#endif // NO_TA_BASE for al startup/args functions
 
 /////////////////////////////////////////////////
 //	Commonly used utility functions on strings/arrays/values

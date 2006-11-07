@@ -242,6 +242,13 @@ public:
   // find by name containing nm (start < 0 = from end)
   int	FindValue(const Variant& var, int start=0) const;
   // find by value (start < 0 = from end)  
+  int	FindValueContains(const String& vl, int start=0) const;
+  // find by value.toString() containing vl (start < 0 = from end)
+
+  Variant	GetVal(const String& nm);
+  // get value from name; isNull if not found
+  bool		SetVal(const String& nm, const Variant& vl);
+  // set value by name; if name already on list, it is updated (rval = true); else new item added
 
   const String 	AsString(const String& sep = def_sep) const;
   void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
@@ -308,6 +315,18 @@ extern TA_API taiMiscCore* taiMC_; // note: use taiM macro instead
 #endif
 #endif
 
+typedef  void (*init_proc_t)() ;	// initialization proc
+
+class TA_API InitProcRegistrar {
+  // #IGNORE object used as a module static instance to register an init_proc
+public:
+  InitProcRegistrar(init_proc_t init_proc);
+private:
+  InitProcRegistrar(const InitProcRegistrar&);
+  InitProcRegistrar& operator =(const InitProcRegistrar&);
+};
+
+
 #ifdef __MAKETA__
 //typedef unsigned char ContextFlag; // binary-compat alias for CSS
 #define ContextFlag unsigned char
@@ -333,6 +352,8 @@ private:
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
 public:
+friend class InitProcRegistrar;
+
   enum ShowMembs { // #BITS
     NO_HIDDEN 		= 0x01, // don't show items marked HIDDEN
     NO_READ_ONLY 	= 0x02, // don't show items marked READ_ONLY
@@ -452,6 +473,10 @@ public:
   // #SAVE #CAT_File directory name for current software package (e.g., ta_css or pdp++)
   static String		pkg_home;
   // #SAVE #CAT_File path to location of installed system files for current software package (e.g, /usr/local/ta_css) (should be inst_prefix + pkg_dir)
+  static String		user_home;
+  // #SAVE #CAT_File location of user's home directory
+  static String		web_home;
+  // #SAVE #CAT_File url for location of web repository of package information
   static String		tmp_dir;
   // #SAVE #CAT_File location of temporary files (e.g., inst_prefix/tmp)
 
@@ -461,6 +486,8 @@ public:
   // #SAVE #CAT_File paths to be used for loading object files for the ta dump file system
   static NameVar_PArray	prog_lib_paths;
   // #SAVE #CAT_File paths/url's for specific categories of program library files (e.g., System, User, Web)
+  static NameVar_PArray	named_paths;
+  // #SAVE #CAT_File paths/url's for misc purposes -- search by name, value = path
 
   static String		compress_cmd;	// #SAVE #CAT_File command to use for compressing files
   static String		uncompress_cmd;	// #SAVE #CAT_File for uncompressing files
@@ -478,9 +505,11 @@ public:
   static String_PArray	args_raw;
   // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args raw list of arguments passed to program at startup (in order, no filtering or modification)
   static NameVar_PArray	arg_names;
-  // #READ_ONLY #NO_SAVE #SHOW #CAT_Args conversions between arg flags (as a String in value field, e.g., -f or --file) and a canonical functional name (in name field, e.g., CssStartupFile)
+  // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args conversions between arg flags (as a String in name field, e.g., -f or --file) and a canonical functional name (in value field, e.g., CssScript)
+  static NameVar_PArray	arg_name_descs;
+  // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args descriptions of arg names for help -- name is canonical functional name (e.g., CssScript) and value is string describing what this arg does
   static NameVar_PArray	args;
-  // #READ_ONLY #NO_SAVE #SHOW #CAT_Args startup arguments processed by arg_names into name/value pairs -- this is the list that should be used!
+  // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args startup arguments processed by arg_names into name/value pairs -- this is the list that should be used!
 
 
   ////////////////////////////////////////////////////////
@@ -501,10 +530,13 @@ public:
   static TypeSpace 	types;		// #READ_ONLY #NO_SAVE list of all the active types
   static TypeDef*	default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
+  static taPtrList_impl* init_hook_list; // #IGNORE list of init hook's to call during initialization
+
   static bool		in_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if in ta initialization function
   static signed char	quitting;	// #READ_ONLY #NO_SAVE #NO_SHOW true, via one of QuitFlag values, once we are quitting
   static bool		not_constr;	// #READ_ONLY #NO_SAVE #NO_SHOW true if ta types are not yet constructed (or are destructed)
 
+  static bool		use_gui;	// #READ_ONLY #NO_SAVE #NO_SHOW whether the user has specified to use the gui or not (default = true)
   static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has been started up or not
   static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
   static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object
@@ -585,13 +617,42 @@ public:
   //	Startup/Args
 
   static void	Initialize();
-  // #IGNORE initialize type system, called in ta_TA.cc
-  static void	InitializeTypes();
-  // #IGNORE called after all type info has been loaded into types
-  static void	DMem_Initialize();
-  // #IGNORE initialize distributed memory stuff
+  // #IGNORE very first initialize of type system prior to loading _TA.cpp information (called by ta_TA.cpp file -- hardcoded into maketa
+
+  static void	AddInitHook(init_proc_t init_proc);
+  // #IGNORE add an init hook -- invoked by InitProccalled during module initialization, before main()
+
+#ifndef NO_TA_BASE
+  static void 	Init_Hooks();
+  // #IGNORE calls initialization hooks for plugins
+  static void 	Init_Defaults_PreLoadConfig();
+  // #IGNORE sets up default parameters for taMisc settings, prior to loading from config file
+  static void 	Init_Defaults_PostLoadConfig();
+  // #IGNORE sets up default parameters for taMisc settings, after loading from config file
   static void	Init_Args(int argc, const char* argv[]);
-  // #IGNORE initialize more elaborated argument info
+  // #IGNORE initialize taMisc startup argument information (note: arg_names must be initialized prior to this!)
+  static void	Init_Types();
+  // #IGNORE called after all type info has been loaded into types -- calls initClass methods on classes that have them (and possibly other type post-init info)
+  static void	Init_DMem(int argc, const char* argv[]);
+  // #IGNORE initialize distributed memory stuff
+
+  static void	HelpMsg(ostream& strm = cerr);
+  // generate a help message about program args, usage, etc
+
+  static void	AddArgName(const String& flag, const String& name);
+  // #IGNORE add an argument flag name to be processed from startup args (e.g., flag = -f, name = CssScript; see arg_names)
+  static void	AddArgNameDesc(const String& name, const String& desc);
+  // #IGNORE add a description of an argument flag name (see arg_name_descs)
+
+  static bool	CheckArgByName(const String& nm);
+  // was the given arg name set?
+  static String	FindArgByName(const String& nm);
+  // get the value for given named argument (argv[x] for unnamed args)
+  static bool	CheckArgValContains(const String& vl);
+  // check if there is an arg that contains string fragment in its value
+  static String	FindArgValContains(const String& vl);
+  // get full arg value that contains string fragment
+#endif // NO_TA_BASE
 
   /////////////////////////////////////////////////
   //	Commonly used utility functions on strings/arrays/values
@@ -1524,7 +1585,7 @@ public:
   bool 		FindChild(TypeDef* it) const;
   // recursively tries to  find child, returns true if successful
 
-  TypeDef*		GetTemplParent() const;
+  TypeDef*	GetTemplParent() const;
   // returns immediate parent which is a template (or NULL if none found)
   String	GetTemplName(const TypeSpace& inst_pars) const;
   void		SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars);
@@ -1540,7 +1601,7 @@ public:
   // we must be the enumtypedef; get the C string for given value in enum list of given type (e.g., enum defined within class); for BIT types, will compose the bits and cast; worst case will cast int to type
   
 #ifndef NO_TA_BASE  
-  void*			GetInstance() const
+  void*		GetInstance() const
   { void* rval=NULL; if(instance != NULL) rval = *instance; return rval; }
   int		FindTokenR(void* addr, TypeDef*& ptr) const;
   int		FindTokenR(const char* nm, TypeDef*& ptr) const;

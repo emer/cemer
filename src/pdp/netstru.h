@@ -1131,7 +1131,20 @@ protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);// #IGNORE 
 };
 
-PosGroup_of(Layer);
+class PDP_API Layer_Group : public taGroup<Layer> {
+  // group of layers
+  INHERITED(taGroup<Layer>)
+public:
+  TDCoord	pos;		// Position of Group
+
+  void	Initialize() 		{ };
+  void 	Destroy()		{ };
+  void	InitLinks()		{ inherited::InitLinks(); taBase::Own(pos,this); }
+  void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; }
+  COPY_FUNS(Layer_Group, inherited);
+  TA_BASEFUNS(Layer_Group);
+};
+
 SmartRef_Of(Layer); // LayerRef
 
 class PDP_API Network : public taFBase {

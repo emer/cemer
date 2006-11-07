@@ -144,7 +144,7 @@ public:
 
 
 class TA_API taRootBase: public taNBase {
-  // #VIRT_BASE #NO_INSTANCE #NO_TOKENS basic methods that the root/app object must support
+  // base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taNBase)
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
@@ -152,21 +152,64 @@ public:
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   
-  virtual void  Settings() = 0;		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
-  virtual void	SaveConfig() = 0;		// #MENU #CONFIRM save current configuration to file ~/.xxxconfig that is automatically loaded at startup
-  virtual void	LoadConfig() = 0;		// #MENU #CONFIRM load current configuration from file ~/.xxxconfig that is automatically loaded at startup
-  virtual void	Info() = 0;			// #MENU get information/copyright notice
-  // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
-  virtual void	SaveAll() = 0; // saves all the contents of the app object
+  virtual void  Settings() {};
+  // #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
+  virtual void	SaveConfig() { };
+  // #MENU #CONFIRM save current configuration to file ~/.xxxconfig that is automatically loaded at startup
+  virtual void	LoadConfig() { };
+  // #MENU #CONFIRM load current configuration from file ~/.xxxconfig that is automatically loaded at startup
+  virtual void	Info();
+  // #MENU get information/copyright notice
+  virtual void	SaveAll() { };
+  // saves all the contents of the app object
   
-  taBase*		GetTemplateInstance(TypeDef* typ); // get an instance of the indicated tab type, or NULL if not found
+  taBase*	GetTemplateInstance(TypeDef* typ);
+  // get an instance of the indicated tab type, or NULL if not found
   
   virtual const iColor*	GetObjColor(taBase* inst) {return NULL;}  //#IGNORE
 
-  static void	Startup_MakeMainWin();
-  // open the main window (browser of root object)
-  static void	Startup_Console();
-  // start the console shell
+  ///////////////////////////////////////////////////////////////////////////////
+  //		Startup Code	(in order of calling by Startup_Main)
+
+  static bool	Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun = NULL,
+			     TypeDef* root_typ = &TA_taRootBase);
+  // #IGNORE this is the main function call to startup the software -- creates a root object of given type, processes args, sets global state vars, starts up css, and opens a browser window on the root object if in gui mode
+
+  static bool	Startup_InitApp(int argc, const char* argv[]);
+  // #IGNORE init application stuff (qapp etc)
+  static bool	Startup_InitTA(ta_void_fun ta_init_fun);
+  // #IGNORE basic type-access system intializaton
+  static bool	Startup_LoadPlugins();
+  // #IGNORE load any extension plugins
+  static bool	Startup_InitArgs(int argc, const char* argv[]);
+  // #IGNORE process args into more usable form
+  static bool	Startup_InitDMem(int argc, const char* argv[]);
+  // #IGNORE init distributed memory (MPI) stuff
+  static bool	Startup_ProcessGuiArg();
+  // #IGNORE process the -gui/-nogui arg
+  static bool	Startup_MakeRoot(TypeDef* root_typ);
+  // #IGNORE make and install root object of given type
+  static bool	Startup_InitTypes();
+  // #IGNORE final init of typedefs
+  static bool	Startup_InitCss();
+  // #IGNORE initialize css script system
+  static bool	Startup_InitGui();
+  // #IGNORE initialize gui system
+  static bool	Startup_InitPlugins();
+  // #IGNORE final initialize of plugins 
+  static bool	Startup_MakeMainWin();
+  // #IGNORE open the main window (browser of root object) (returns success)
+  static bool	Startup_Console();
+  // #IGNORE start the console shell (returns success)
+  static bool	Startup_ProcessArgs();
+  // #IGNORE process general args
+  static bool 	Startup_DMem();
+  // #IGNORE distributed memory startup: requires different things on different procs (for gui)
+
+  static bool	Startup_Run();
+  // #IGNORE go ahead and run the main event loop
+  static bool	Cleanup_Main();
+  // #IGNORE after running, do final cleanups (called by Startup_Run)
   	
   void	InitLinks();
   void	CutLinks();

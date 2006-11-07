@@ -45,7 +45,6 @@
 #ifdef TA_OS_LINUX
 #include <sys/time.h>
 #endif
-#include <locale.h>
 
 #if (defined(TA_OS_WIN))
 #include <complex>
@@ -2350,10 +2349,9 @@ char* css_scoped_generator(char* text, int state) {
 //	Initialize		//
 //////////////////////////////////
 
-int cssMisc::Initialize() {
-  taMisc::InitializeTypes();
-  setlocale(LC_ALL, "");
+extern int yydebug;
 
+bool cssMisc::Initialize() {
   // use our completion function
   rl_attempted_completion_function = (rl_function*)css_attempted_completion;
 
@@ -2393,110 +2391,39 @@ int cssMisc::Initialize() {
   cssMisc::Settings.Push(new cssTA(TA_taMisc.GetInstance(), 1, &TA_taMisc,
 				    "cssSettings"));
 
+  cssMisc::HardVars.Push(cssBI::root = new cssTA_Base(tabMisc::root, 1, &TA_taRootBase, "root"));
+//   cssMisc::Top->name = app_root;	// changes prompt
+
   cssMisc::Commands.Sort();
   cssMisc::Functions.Sort();		// must sort before anything happens
   cssMisc::Constants.Sort();		// must sort before anything happens
 
-  String home = getenv("HOME");
-  taMisc::css_include_paths.AddUnique(home); // this is first on the list..
+  //////////////////////////////////////////////////////////////
+  // 	Process Args
+  
+  // note: these names are defined in ta_project.cpp: taRootBase::Startup_InitArgs
+  // todo: could fork off a call to css to have it do its own thing but it is
+  // so integrated anyway that who cares.
+  cssMisc::startup_file = taMisc::FindArgByName("CssScript");
+  cssMisc::startup_code = taMisc::FindArgByName("CssCode");
+  if(!cssMisc::startup_code.empty())
+    cssMisc::startup_code += "\n";		  // add a final cr for good measure
 
-#ifdef TA_OS_WIN
-  String css_dir = "C:/PDP++"; // default pdp home directory
-#else
-  String css_dir = "/usr/local/pdp++"; // default css home directory
-#endif
-  char* css_dir_env = getenv("CSSDIR");
-  if(css_dir_env != NULL)
-    css_dir = css_dir_env;
+  cssMisc::init_interactive = taMisc::CheckArgByName("CssInteractive");
+  cssMisc::init_debug = taMisc::FindArgByName("CssDebug");
+  cssMisc::init_bpoint = taMisc::FindArgByName("CssBreakpoint");
+  cssMisc::refcnt_trace = taMisc::CheckArgByName("RefCountTrace");
 
-  taMisc::css_include_paths.AddUnique(css_dir);
-  taMisc::css_include_paths.AddUnique(css_dir+"/css/include");
-
-  if(argc > 0) {
-    // args can get munged together when #!/usr/local/css, so need to pre-process
-    String_Array act_args;
-    int i;
-    for(i=0;i<argc;i++) {
-      String tmp = argv[i];
-      if(tmp.contains('-') && tmp.contains(' ')) { // args munged from auto start script
-	while(tmp.contains('-') && tmp.contains(' ')) {
-	  String t2 = tmp.before(' ');
-	  tmp = tmp.after(' ');
-	  act_args.Add(t2);
-	}
-	if(tmp.contains('-'))
-	  act_args.Add(tmp);
-      }
-      else
-	act_args.Add(tmp);
-    }
-    cssMisc::s_argv->Alloc(act_args.size); // allocate proper number of args
-    *cssMisc::s_argc = 0;
-    i = 0;
-    while(i < act_args.size) {
-      String tmp = act_args[i];
-      if(((tmp == "-f") || (tmp == "-file")) && (i+1 < act_args.size)) { // compile the file
-	cssMisc::startup_file = act_args[++i];
-      }
-      else if(((tmp == "-e") || (tmp == "-exec")) && (i+1 < act_args.size)) { // compile the file
-	cssMisc::startup_code = act_args[++i];
-//	cssMisc::startup_code.gsub(";\\n", ";\n"); // translate cr.s
-	cssMisc::startup_code += "\n";		  // add a final cr for good measure
-      }
-      else if((tmp == "-i") || (tmp == "-interactive")) {
-	cssMisc::init_interactive = true;
-      }
-      else if(tmp(0,2) == "-v") {
-	String vls = tmp.after(1);
-	int vl = (int)vls;
-	if(vl > 0)
-	  cssMisc::init_debug = vl;
-	else
-	  cssMisc::init_debug = 1;
-      }
-      else if(((tmp == "-b") || (tmp == "-bp")) && (i+1 < act_args.size)) {
-	int vl = (int)act_args[++i];
-	cssMisc::init_bpoint = vl;
-      }
-      else {	   // pass the arg to the script
-	int ac = (int)(*cssMisc::s_argc);
-	cssString* av = (cssString*)(*cssMisc::s_argv)[ac];
-	*av = tmp;
-	*cssMisc::s_argc = (int)(*cssMisc::s_argc) + 1;
-	if(i == 0) {
-	  if(tmp.contains('/'))
-	    tmp = tmp.after('/',-1);
-	  cssMisc::prompt = tmp; // default prompt is this program
-	}
-      }
-      i++;
-    }
-  } // if arc> 0
-
-  // grok whether we will be using gui or not -- very bad to request gui if not compiled for it!
-
-#ifdef TA_GUI
-  gui = true;
-#else
-  gui = false;
-#endif // TA_GUI
-  int gui_idx = 1;
-  int no_gui_idx = 1;
-  if (!cssMisc::HasCmdLineSwitch("-gui", gui_idx))
-    gui_idx = -1; // -1 if none
-  if (!cssMisc::HasCmdLineSwitch("-nogui", no_gui_idx))
-    no_gui_idx = -1; // -1 if none
-  if      (gui_idx > no_gui_idx) gui = true;
-  else if (gui_idx < no_gui_idx) gui = false;
-
-#ifndef TA_GUI
-  if (gui) {
-    taMisc::Error("main", "cannot specify '-gui' switch when compiled without gui support");
-    return 1;
+  // todo: what is this again??
+  if(cssMisc::init_debug > 2) {
+    yydebug = 1;
   }
-  //NOTE: not sure if we are allowed to set this yet... (BA 9/14/06)
-  taMisc::gui_active = gui;
-#endif // TA_GUI
 
-  return 0;
+  // todo: need to get the args for css scripts!?  or should they just use
+  // the new taMisc funs!?
+
+//   cssMisc::s_argv->Alloc(act_args.size); // allocate proper number of args
+//   *cssMisc::s_argc = 0;
+
+  return true;
 }

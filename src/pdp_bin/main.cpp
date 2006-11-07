@@ -18,11 +18,7 @@
 // this is the main that is included to make pdplib executable
 
 #include "pdp_base.h"
-#include "pdp_project.h"
-//#include "pdp_TA_type.h"
 
-int main(int argc, char* argv[]) {
-//obs  pdpMisc::Init_Hook = ta_Init_pdp; // use the pdp program to startup..
-//  pdpMisc::def_wizard = &TA_Wizard;
+int main(int argc, const char* argv[]) {
   return pdpMisc::Main(argc, argv);
 }

@@ -192,10 +192,6 @@ cssClassType	cssMisc::VoidClassType("VoidClass");
 
 cssRef		cssMisc::VoidRef;  // for maketoken
 
-int		cssMisc::argc = 0;		// number of args passed by commandline to app
-char**		cssMisc::argv = NULL;		// args passed by commandline to app
-bool		cssMisc::gui = false;
-
 void cssMisc::CodeConstExpr() {
   code_cur_top = ConstExprTop;
   ConstExprTop->Reset();
@@ -203,41 +199,6 @@ void cssMisc::CodeConstExpr() {
 
 void cssMisc::CodeTop() {
   code_cur_top = NULL;
-}
-
-bool cssMisc::HasCmdLineSwitch(const String& sw_name, bool starts_with) {
-  int dummy = 1;
-  return HasCmdLineSwitch(sw_name, dummy, starts_with);
-}
-
-bool cssMisc::HasCmdLineSwitch(const String& sw_name, int& index,
-  bool starts_with) 
-{
-  // looks for the switch value (include the '-' if applicable)
-  bool rval = false;
-  String tmp;
-  while (!rval && (index < argc)) {
-    tmp = argv[index];
-    if (starts_with)
-      rval = tmp.matches(sw_name); 
-    else rval = (tmp == sw_name);
-    ++index;
-  }
-  return rval;
-}
-
-bool cssMisc::CmdLineSwitchValue(const String& sw_name, int& index, 
-  String& sw_value, bool starts_with) 
-{
-  bool rval = HasCmdLineSwitch(sw_name, index, starts_with); //note: index advanced
-  if (rval) {
-    if (index < argc) {
-      sw_value = argv[index++];
-    } else {
-      sw_value = "";
-    }
-  }
-  return rval;
 }
 
 void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
@@ -342,40 +303,6 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
   fh->flush();
 }
 
-void cssMisc::PreInitialize(int argc_, char** argv_) {
-// ref all the statics, just to be sure
-/*temp  cssEl::Ref(&Void);
-  cssEl::Ref(&VoidPtr);
-  cssEl::Ref(&VoidRef);
-  cssEl::Ref(&VoidArray);
-  cssEl::Ref(&VoidArrayType);
-  cssEl::Ref(&VoidString);
-  cssEl::Ref(&VoidVariant);
-  cssEl::Ref(&VoidEnumType);
-  cssEl::Ref(&VoidClassType);
-*/  
-// ok
-  cssMisc::argc = argc_;
-  cssMisc::argv = argv_; // cast away constness -- we still treat it as const
-  int i = 1;
-  String sw_val;
-  CmdLineSwitchValue("-rct", i, sw_val);
-  if (!sw_val.empty()) {
-    refcnt_trace = sw_val.toInt();
-  }
-  QFileInfo fi(argv[0]);
-#ifdef TA_GUI
-# ifdef TA_USE_INVENTOR
-  SoQt::init(argc, argv, prompt.chars()); // creates a special Coin QApplication instance
-# else
-  new iApplication(argc, (char**)argv); // accessed as qApp
-# endif
-#else
-  new QCoreApplication(argc, (char**)argv); // accessed as qApp
-#endif
-  QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
-}
-
 #if (!defined(TA_OS_WIN))
 // no longer trapping -- doesn't work!  now trapping proactively in div operation!
 // void cssMisc::fpecatch(int) {
@@ -394,6 +321,7 @@ void cssMisc::intrcatch(int) {
   top->external_stop = true;
 }
 #endif
+
 //////////////////////////
 // 	cssElPtr    	//
 //////////////////////////

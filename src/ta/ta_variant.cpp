@@ -2211,3 +2211,4 @@ void NameVar::SetFmStr(const String& val) {
   }
   // else error!  todo.
 }
+

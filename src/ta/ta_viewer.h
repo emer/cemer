@@ -469,6 +469,20 @@ private:
 };
 
 
+class TA_API ConsoleDockViewer: public DockViewer {
+  // #NO_TOKENS encapsulates the console into a dock viewer window
+INHERITED(DockViewer)
+public:
+
+  TA_DATAVIEWFUNS(ConsoleDockViewer, DockViewer)
+protected:
+  override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE note: we just use base window, and put the console into it
+  override void		MakeWinName_impl(); // set win_name, impl in subs
+private:
+  void			Initialize();
+  void			Destroy() {}
+};
+
 class TA_API ToolBoxDockViewer : public DockViewer {
   // floatable dockable toolbox window
 INHERITED(DockViewer)

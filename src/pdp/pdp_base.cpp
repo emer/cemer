@@ -13,51 +13,16 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// for debugging the qconsole, uncomment this define and it will revert to qandd console
-// #define QANDD_CONSOLE 1
-
 #include "pdp_base.h"
-
-#include "ta_type.h"
-#include "ta_filer.h"
-#include "css_ta.h"
-#include "css_builtin.h"
-#include "css_console.h"
-
-#include "datatable.h"
-
+#include "css_machine.h"
 #include "pdp_project.h"
 
 #ifdef TA_GUI
 # include "ta_qt.h"
-# include "css_qt.h"
-# include "ta_qtdata.h" // for taiObjChooser
-# include "ta_qtviewer.h"
-# include "pdp_qtso.h"
-# include <qbitmap.h>
-# include <QApplication>
-# include <QFont>
-#endif
-
-#ifdef TA_USE_INVENTOR
-  #include <Inventor/Qt/SoQt.h>
-#endif
-
-#include <QCoreApplication>
-
-#ifdef DMEM_COMPILE
-#include <mpi.h>
+//# include <qbitmap.h>
 #endif
 
 #include <signal.h>
-#include <memory.h>
-//obs #include <malloc.h>
-//nn?? #include <unistd.h>
-//#include <sstream>
-#include <time.h>
-
-#include <QDir>
-#include <ta_plugin.h>
 
 #ifdef TA_GUI
 #define pdp_bitmap_width 64
@@ -110,275 +75,32 @@ static unsigned char pdp_bitmap_bits[] = {
 #endif
 
 
-InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
-  pdpMisc::initHookList()->Add_((void*)init_proc);
-}
-
 //////////////////////////
 //	pdpMisc		//
 //////////////////////////
 
 bool 		pdpMisc::nw_itm_def_arg = false;
 PDPRoot* 	pdpMisc::root = NULL;
-String_Array	pdpMisc::proj_to_load;
 String		pdpMisc::user_spec_def;
 float		pdpMisc::pdpZScale = 4.0f;
 
+int pdpMisc::Main(int argc, const char *argv[]) {
+  cssMisc::prompt = "pdp++> ";
+  if(!taRootBase::Startup_Main(argc, argv, ta_Init_pdp, &TA_PDPRoot)) return 1;
 
-taPtrList_impl* pdpMisc::initHookList() {
-  static taPtrList_impl* p_initHookList = NULL;
-  if (p_initHookList == NULL) {
-    p_initHookList = new taPtrList_impl();
-  }
-  return p_initHookList;
-}
-
-// startup code common to several scenarios -- all might have local gui
-void Startup_MakeMainWin() {
-#ifdef TA_GUI
-//TODO: need to better orchestrate the "OpenWindows" call below with
-  // create the default application window
-  MainWindowViewer* db = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
-#ifndef QANDD_CONSOLE
-  ConsoleDockViewer* cdv = new ConsoleDockViewer;
-  db->docks.Add(cdv);
-#endif    
-// create the console docked in the main project window
-    
-  db->ViewWindow();
-  iMainWindowViewer* bw = db->viewerWindow();
-  if (bw) {
-    // resize to a custom size: 3/4 width, 3/4 height;
-    bw->resize((taiM->scrn_s.w * 3)/4, (taiM->scrn_s.h * 3)/4);
-    bw->show(); // when we start event loop
-  }
-//TODO: following prob not necessary
-  if (taMisc::gui_active) taiMisc::OpenWindows();
-#endif // TA_GUI
-}
-
-// startup code common to several scenarios -- all might have local gui
-void Startup_InvokeShells() {
-  if (cssMisc::gui) {
-//TODO: we need event loop in gui AND non-gui, so check about Shell_NoGui_Rl
-#ifndef QANDD_CONSOLE
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-    cssMisc::TopShell->Shell_Qt_Console("pdp++> ");
-#else
-    // todo: only for debugging: remove later!
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
-    cssMisc::TopShell->Shell_QandD_Console("pdp++> ");
-#endif
-  } else {
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-    cssMisc::TopShell->Shell_NoGui_Rl("pdp++> ");
-  }
-  qApp->exec();
-}
-
-// code only used for dmem
-#ifdef DMEM_COMPILE
-static void Startup_dmem() {
-  if (taMisc::dmem_nprocs > 1) {
-    if (cssMisc::gui) {
-      if (taMisc::dmem_proc == 0) { // master dmem
-	DMemShare::InitCmdStream();
-	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
-	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
-	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-	Startup_MakeMainWin();
-	Startup_InvokeShells();
-	DMemShare::CloseCmdStream();
-	cerr << "proc: 0 quitting!" << endl;
-      } else { // slave dmems
-	cssMisc::gui = false;	// not for subguys
-	cssMisc::init_interactive = false; // don't stay in startup shell
-//TODO: dmem subs still need to use Qt event loop!!!
-// 	if(taMisc::dmem_debug)
-// 	  cerr << "proc " << taMisc::dmem_proc << " starting shell." << endl;
-	// get rid of wait proc for rl -- we call it ourselves
-	extern int (*rl_event_hook)(void);
- 	rl_event_hook = NULL;
- 	cssMisc::Top->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-	//	cssMisc::Top->debug = 2;
-	DMem_SubEventLoop();	// this is the "shell" for a dmem sub guy
-	cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
-      }
-    } else {			// nogui
-      Startup_InvokeShells();  
-    }
-  } else { // dmem, but only one guy, so pretty much like normal
-    Startup_MakeMainWin();
-    Startup_InvokeShells();
-  }
-}
-#endif // DMEM_COMPILE
-// this is the main that should be called..
-
-/* NOTES
-  Project autoloads were removed, because ALL versions of pdp must now
-  have an event loop, so all can load in the event loop. BA 9/21/06
-
-*/
-int pdpMisc::Main(int argc, char *argv[]) {
-// misc todos:
-//TODO: should accept - or -- for switches
-
-/* following creates QApplication and event loop -- these
-   must get created first, and are needed even if we don't open a gui
-   Set cssMisc::gui, according to command line switch and compilation mode (TA_GUI/NO_GUI)
-*/
-  //TODO: need a coherent way to establish path names etc.
-  String app_root = "pdp4.0";
-  
-  cssMisc::PreInitialize(argc, argv);
-
-#ifdef DMEM_COMPILE
-  MPI_Init(&argc, &argv); // note mpi's extra level of indirection
-  taMisc::DMem_Initialize();
-#endif
-
-  // check for special case of a project as first arg (no switch needed)
-  String tmp;
-  int idx_start = 1; // default start for searching for switches
-  if (argc >= 2) {
-    String tmp = argv[1];
-    if (tmp.contains(".proj")) {
-      idx_start = 2;
-      proj_to_load.Add(tmp);
-    }
-  }
-  // check for projects to load
-  int idx = idx_start;
-  while (idx < argc) {
-    if (!cssMisc::CmdLineSwitchValue("-p", idx, tmp)) break;
-    proj_to_load.Add(tmp);
-  }
-  
-  // check for defaults
-  String user_spec_def;
-  idx = idx_start;
-  cssMisc::CmdLineSwitchValue("-d", idx, user_spec_def, true);
-
-  // initialize type system for us, followed by the various clients, ex. bp, leabra, etc.
-  ta_Init_pdp();
-
-  // load plugin system
-  // TODO: Check if directory exists and allow for /usr/local/pdp++/plugins
-  const QString& localdir = String(QDir::homeDirPath()).cat("/").cat(app_root).cat("/plugins") ;
-
-
-  taPlugins::AddPluginFolder(localdir);
-  taPlugins::LoadPlugins();
-
-  taPtrList_impl* ihl = initHookList();
-  for (int i = 0; i < ihl->size; ++i) {
-    init_proc_t ip = (init_proc_t)ihl->FastEl_(i);
-    ip();
-  }
-
-  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
-  // need this config to get mswin_scale (in taiMisc::Initialize) before opening root window.
-
-  root = new PDPRoot();
-  taBase::Ref(root); // ref=1
-  root->InitLinks();	// normally the owner would do this, but..
-
-  // tabMisc stuff
-  tabMisc::root = root;
-  taMisc::default_scope = &TA_ProjectBase;
-
-  // cssMisc stuff
-  cssMisc::HardVars.Push(cssBI::root = new cssTA_Base(root, 1, &TA_PDPRoot,"root"));
-  cssMisc::Initialize();
-  cssMisc::Top->name = app_root;	// changes prompt
-
-#ifdef TA_GUI
-  if(cssMisc::gui && (taMisc::dmem_proc == 0)) {
-    taiM_ = taiMisc::New(cssMisc::gui);
-    taiMC_ = taiM_;
-    taiM->icon_bitmap = new QBitmap(pdp_bitmap_width,
-    	pdp_bitmap_height, pdp_bitmap_bits);
-//    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
-  } else
-#endif // TA_GUI
-  { 
-    taiMC_ = taiMiscCore::New();
-  }
-  // create colorspecs even if nogui, since they are referred to in projects
-  root->colorspecs.SetDefaultColor();	// set color after starting up..
-
+  root = (PDPRoot*)tabMisc::root;
    //always use our wait proc, since there is a predefined chain backwards anyways...
   taMisc::WaitProc = pdpMisc::WaitProc;
-
 #if ((!defined(DMEM_COMPILE)) && (!defined(TA_OS_WIN))) 
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFile);
 #endif
-
-//TODO: these need to be fixed!!!!!
-#if (defined(TA_OS_WIN))
-  String pdp_dir("C:/").cat(app_root); // default pdp home directory
-#else
-//TODO: this is ALL HORRIBLE!!!!!! MUST FIX!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#ifdef DEBUG
-  String pdp_dir = String("~/").cat(app_root).cat("/trunk"); // default pdp home directory
-#else
-  String pdp_dir = String("/usr/local/").cat(app_root); // default pdp home directory
-#endif
-#endif
-  char* pdp_dir_env = getenv("PDP4DIR");
-  if(pdp_dir_env != NULL)
-    pdp_dir = pdp_dir_env;
-
-  String home_dir;
-  char* home_dir_env = getenv("HOME");
-  if(home_dir_env != NULL)
-    home_dir = home_dir_env;
-
-  taMisc::css_include_paths.AddUnique(pdp_dir);
-  taMisc::css_include_paths.AddUnique(pdp_dir+"/css/include");
-  taMisc::css_include_paths.AddUnique(pdp_dir+"/defaults");
-//TODO: NO!! can't have these during devel
-/*  if(!home_dir.empty()) {
-    taMisc::css_include_paths.AddUnique(home_dir+"/mypdp++");
-    taMisc::css_include_paths.AddUnique(home_dir+"/pdp++");
-    taMisc::css_include_paths.AddUnique(home_dir+"/mypdp++/defaults");
-    taMisc::css_include_paths.AddUnique(home_dir+"/pdp++/defaults");
-  } */
-
-  String prognm = argv[0];
-//TODO: this should just print the version and quit (so should be moved way earlier, before any init
-  if (cssMisc::HasCmdLineSwitch("-version")) {
-    root->Info();
-  }
-
-  // Initialize plugin system
-  taPlugins::InitPlugins();
-
+  root->colorspecs.SetDefaultColor();	// create colorspecs even if nogui, since they are referred to in projects
   root->LoadConfig();
-
   cssMisc::TopShell->cmd_prog->CompileRunClear(".pdpinitrc");
-
-#ifdef DMEM_COMPILE
-  Startup_dmem();
-#else // NOT DMEM_COMPILE
-  Startup_MakeMainWin();
-  Startup_InvokeShells();
-#endif // DMEM_COMPILE
-
-  tabMisc::DeleteRoot();
-  taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
-
-#ifdef TA_USE_INVENTOR
-  SoQt::done();
-#endif
-#ifdef DMEM_COMPILE
-  MPI_Finalize();
-#endif // DMEM_COMPILE
-  
-  return 0;
+  if(taRootBase::Startup_Run())
+    return 0;
+  else
+    return 2;
 }
 
 #ifdef TA_GUI
@@ -415,64 +137,7 @@ int get_unique_file_number(int st_no, const char* prefix, const char* suffix) {
   return i;
 }
 
-void pdpMisc::WaitProc_LoadProj() {
-  taFiler* gf = NULL;
-  if(taMisc::gui_active) {
-//obs    root->GetFileDlg();
-//    gf = root->projects.ta_file;
-  }
-  if (gf == NULL) {
-    gf = taFiler::New();
-  }
-  taRefN::Ref(gf); //refs regardless if our own, or external
-
-  taMisc::Busy();
-  int i;
-  for(i=0; i<proj_to_load.size; i++) {
-    String fnm = proj_to_load[i];
-    gf->fname = fnm;
-    istream* strm = gf->open_read();
-    if((strm == NULL) || !(gf->open_file))
-      taMisc::Error("ProjectBase Load: could not open file", fnm);
-    else {
-//obs      taiM->CreateLoadDialog();
-      root->projects.Load(*strm);
-      if(root->projects.size > i)
-	((ProjectBase*)root->projects[i])->file_name = fnm;
-//obs      taiM->RemoveLoadDialog();
-    }
-    gf->Close();
-  }
-  taRefN::unRefDone(gf);
-  proj_to_load.Reset();
-  taMisc::DoneBusy();
-}
-
-void pdpMisc::WaitProc_PostLoadOpr() {
-  int i;
-  for (i=0; i< tabMisc::post_load_opr.size; i++) {
-    TAPtr obj = tabMisc::post_load_opr[i];
-//     if(obj->InheritsFrom(TA_Script_Group)) {
-//       ((Script_Group*)obj)->AutoRun();
-//     }
-    if(obj->InheritsFrom(TA_SelectEdit_Group)) {
-      ((SelectEdit_Group*)obj)->AutoEdit();
-    }
-    else if(obj->InheritsFrom(TA_Wizard_Group)) {
-      ((Wizard_Group*)obj)->AutoEdit();
-    }
-  }
-  tabMisc::post_load_opr.Reset();
-}
-
 void pdpMisc::WaitProc() {
-  if(proj_to_load.size > 0) {
-    WaitProc_LoadProj();
-  }
-  else if(tabMisc::post_load_opr.size > 0) {
-    WaitProc_PostLoadOpr();
-  }
-
 #ifdef DMEM_COMPILE
   if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc == 0)) {
     DMem_WaitProc();
@@ -503,10 +168,8 @@ Network* pdpMisc::GetDefNetwork(ProjectBase* prj) {
   return (Network*)prj->networks.DefaultEl();
 }
 
-
-
-
 #ifdef DMEM_COMPILE
+// todo: move this stuff down to ta
 
 static cssProgSpace* dmem_space1 = NULL;
 static cssProgSpace* dmem_space2 = NULL;

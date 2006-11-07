@@ -12,18 +12,10 @@ docs..: add all float_RArray funs, for matricies.
 
 * add param on datatable for dmem diff log file names or not
 -----------
-* move most stuff from pdpbase -> static funs on tarootbase
 
-* css always creates a root too -- unifies this code instead of having a css 
-fork and a non-css fork
+* .cssinitrc not being run
 
-* one static function is the overal Main; creates root token etc
-
-* args processed into two name-value arrays: Flag-Value & decoded flag->value
-(e.g., -f -> StartupScript)
-
-* some global static path code on taMisc -- pdpdir, homedir, curdir, 
-css_include_paths, load_include_paths
+* ta_program lib files: use new taMisc::prog_lib  stuff
 
 * taProject has base_fname -- name w/out .proj[.gz]
 

@@ -13,14 +13,18 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// 
+// for debugging the qconsole, uncomment this define and it will revert to qandd console
+// #define QANDD_CONSOLE 1
 
 #include "ta_project.h"
-
 #include "ta_dump.h"
+#include "ta_plugin.h"
+
 #include "css_ta.h"
+#include "css_console.h"
 
 #include <QCoreApplication>
+#include <QFileInfo>
 
 #ifdef TA_GUI
 # include "css_qt.h"
@@ -29,13 +33,19 @@
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 
+# include <QApplication>
 # include <QWidgetList>
 #endif
 
 #include <time.h>
+#include <locale.h>
 
 #ifdef DMEM_COMPILE
 # include <mpi.h>
+#endif
+
+#ifdef TA_USE_INVENTOR
+  #include <Inventor/Qt/SoQt.h>
 #endif
 
 //////////////////////////////////
@@ -330,6 +340,36 @@ void taRootBase::CutLinks() {
   inherited::CutLinks();
 }
 
+void taRootBase::Info() {
+  String info;
+  info += "TA/CSS Info\n";
+  info += "This is the TA/CSS software package, version: ";
+  info += taMisc::version_no;
+  info += "\n\n";
+  info += "Mailing List:       http://psych.colorado.edu/~oreilly/PDP++/pdp-discuss.html\n";
+  info += "WWW Page:           http://psych.colorado.edu/~oreilly/PDP++/PDP++.html\n";
+  info += "Anonymous FTP Site: ftp://grey.colorado.edu/pub/oreilly/pdp++/\n";
+  info += "\n\n";
+
+  info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\
+Carnegie Mellon University, Princeton University.\n\
+ \n\
+TA/PDP++ is free software; you can redistribute it and/or modify\n\
+it under the terms of the GNU General Public License as published by\n\
+the Free Software Foundation; either version 2 of the License, or\n\
+(at your option) any later version.\n\
+ \n\
+TA/PDP++ is distributed in the hope that it will be useful,\n\
+but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
+GNU General Public License for more details.\n\
+ \n\
+Note that the taString class was derived from the GNU String class\n\
+Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
+is covered by the GNU General Public License, see ta_string.h\n";
+  taMisc::Choice(info, "Ok");
+}
+
 void taRootBase::AddTemplates() {
   templates.Add(Program::MakeTemplate());
 }
@@ -376,9 +416,330 @@ taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
 /////////////////////////////////////////
 // 	startup code
 
-void taRootBase::Startup_MakeMainWin() {
+
+bool taRootBase::Startup_InitApp(int argc, const char* argv[]) {
+  setlocale(LC_ALL, "");
+
+  QFileInfo fi(argv[0]);
+#ifdef TA_GUI
+# ifdef TA_USE_INVENTOR
+  SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
+# else
+  new iApplication(argc, (char**)argv); // accessed as qApp
+# endif
+#else
+  new QCoreApplication(argc, (char**)argv); // accessed as qApp
+#endif
+  QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
+  return true;
 }
 
-void taRootBase::Startup_Console() {
+bool taRootBase::Startup_InitDMem(int argc, const char* argv[]) {
+#ifdef DMEM_COMPILE
+  taMisc::Init_DMem(argc, argv);
+#endif
+  return true;
+}
+
+bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
+  // first initialize the types
+  if(ta_init_fun)
+    (*ta_init_fun)();
+
+  // then load configuration info: sets lots of user-defined config info
+  taMisc::Init_Defaults_PreLoadConfig();
+  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
+  taMisc::Init_Defaults_PostLoadConfig();
+
+  taMisc::default_scope = &TA_taProject; // this is general default
+  
+  return true;
 }
   	
+bool taRootBase::Startup_LoadPlugins() {
+  taPlugins::AddPluginFolder(taMisc::pkg_home + "/plugins");
+  taPlugins::AddPluginFolder(taMisc::user_home + "/ta_plugins");
+  taPlugins::LoadPlugins();
+
+  taMisc::Init_Hooks();		// plugins register init hooks -- this calls them!
+  return true;
+}
+
+bool taRootBase::Startup_InitArgs(int argc, const char* argv[]) {
+  taMisc::AddArgName("-nogui", "NoGui");
+  taMisc::AddArgName("--nogui", "NoGui");
+  taMisc::AddArgNameDesc("NoGui", "\
+Disables the GUI (graphical user interface), for running in background");
+
+  taMisc::AddArgName("-gui", "Gui");
+  taMisc::AddArgName("--gui", "Gui");
+  taMisc::AddArgNameDesc("Gui", "\
+Enables the GUI (graphical user interface) -- it is on by default in most programs except css");
+
+  taMisc::AddArgName("-version", "Version");
+  taMisc::AddArgName("--version", "Version");
+  taMisc::AddArgNameDesc("Version", "\
+Prints out version and other information");
+
+  taMisc::AddArgName("-h", "Help");
+  taMisc::AddArgName("--help", "Help");
+  taMisc::AddArgNameDesc("Help", "\
+Prints out help on startup arguments and other usage information");
+
+  taMisc::AddArgName("-p", "Project");
+  taMisc::AddArgName("--proj", "Project");
+  taMisc::AddArgName("proj=", "Project");
+  taMisc::AddArgNameDesc("Project", "\
+Specifies a project file to be loaded upon startup");
+
+  taMisc::AddArgName("-f", "CssScript");
+  taMisc::AddArgName("--file", "CssScript");
+  taMisc::AddArgName("file=", "CssScript");
+  taMisc::AddArgName("-s", "CssScript");
+  taMisc::AddArgName("--script", "CssScript");
+  taMisc::AddArgName("script=", "CssScript");
+  taMisc::AddArgNameDesc("CssScript", "\
+Specifies a css script file to be loaded and executed upon startup");
+
+  taMisc::AddArgName("-e", "CssCode");
+  taMisc::AddArgName("--exec", "CssCode");
+  taMisc::AddArgName("exec=", "CssCode");
+  taMisc::AddArgNameDesc("CssCode", "\
+Specifies css script code to be executed upon startup");
+
+  taMisc::AddArgName("-i", "CssInteractive");
+  taMisc::AddArgName("--interactive", "CssInteractive");
+  taMisc::AddArgNameDesc("CssInteractive", "\
+Specifies that the css console should remain active after running a css script file upon startup");
+
+  taMisc::AddArgName("-v", "CssDebug");
+  taMisc::AddArgName("--verbose", "CssDebug");
+  taMisc::AddArgName("verbose=", "CssDebug");
+  taMisc::AddArgNameDesc("CssDebug", "\
+Specifies an initial debug level for css upon startup");
+
+  taMisc::AddArgName("-b", "CssBreakpoint");
+  taMisc::AddArgName("--breakpoint", "CssBreakpoint");
+  taMisc::AddArgName("breakpoint=", "CssBreakpoint");
+  taMisc::AddArgNameDesc("CssBreakpoint", "\
+Specifies an initial breakpoint at given line number of the startup script file");
+
+  taMisc::AddArgName("-rct", "CssRefCountTrace");
+  taMisc::AddArgName("--ref_count_trace", "CssRefCountTrace");
+  taMisc::AddArgNameDesc("CssRefCountTrace", "\
+Specifies that css reference count tracing should be performed (debugging tool)");
+
+  taMisc::Init_Args(argc, argv);
+  return true;
+}
+
+bool taRootBase::Startup_ProcessGuiArg() {
+#ifndef TA_GUI
+  taMisc::use_gui = false;
+#endif
+
+  // process gui flag right away -- has other implications
+  if(taMisc::CheckArgByName("NoGui"))
+    taMisc::use_gui = false;
+  if(taMisc::CheckArgByName("Gui"))
+    taMisc::use_gui = true;
+
+#ifndef TA_GUI
+  if(taMisc::use_gui) {
+    taMisc::Error("Startup_InitArgs: cannot specify '-gui' switch when compiled without gui support");
+    return false;
+  }
+#endif
+  return true;
+}
+  	
+bool taRootBase::Startup_MakeRoot(TypeDef* root_typ) {
+  taRootBase* rb = (taRootBase*)root_typ->GetInstance();
+  if(!rb) {
+    taMisc::Error("Startup_MakeRoot: Error -- no instance of root type!");
+    return false;
+  }
+  tabMisc::root = (taRootBase*)rb->MakeToken();
+  taBase::Ref(tabMisc::root);
+  tabMisc::root->InitLinks();
+  return true;
+}
+
+bool taRootBase::Startup_InitTypes() {
+  taMisc::Init_Types();
+  return true;
+}
+  	
+bool taRootBase::Startup_InitCss() {
+  return cssMisc::Initialize();
+}
+  	
+bool taRootBase::Startup_InitGui() {
+#ifdef TA_GUI
+  if(taMisc::use_gui && (taMisc::dmem_proc == 0)) {
+    taiM_ = taiMisc::New(taMisc::use_gui);
+    taiMC_ = taiM_;
+//     taiM->icon_bitmap = new QBitmap(pdp_bitmap_width,
+//     	pdp_bitmap_height, pdp_bitmap_bits);
+//    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
+    taMisc::gui_active = true;	// officially active!
+  }
+  else
+#endif // TA_GUI
+  { 
+    taiMC_ = taiMiscCore::New();
+  }
+  return true;
+}
+  	
+bool taRootBase::Startup_InitPlugins() {
+  taPlugins::InitPlugins();
+  return true;
+}
+
+bool taRootBase::Startup_MakeMainWin() {
+#ifdef TA_GUI
+  // TODO: need to better orchestrate the "OpenWindows" call below with
+  // create the default application window
+  MainWindowViewer* db = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
+#ifndef QANDD_CONSOLE
+  ConsoleDockViewer* cdv = new ConsoleDockViewer;
+  db->docks.Add(cdv);
+#endif    
+  // create the console docked in the main project window
+  db->ViewWindow();
+  iMainWindowViewer* bw = db->viewerWindow();
+  if (bw) {
+    // resize to a custom size: 11/12 width, 3/4 height;
+    bw->resize((taiM->scrn_s.w * 11)/12, (taiM->scrn_s.h * 3)/4);
+    bw->show(); // when we start event loop
+  }
+  //TODO: following prob not necessary
+  if (taMisc::gui_active) taiMisc::OpenWindows();
+#endif // TA_GUI
+  return true;
+}
+
+bool taRootBase::Startup_Console() {
+  if (taMisc::use_gui) {
+//TODO: we need event loop in gui AND non-gui, so check about Shell_NoGui_Rl
+#ifndef QANDD_CONSOLE
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
+    cssMisc::TopShell->Shell_Qt_Console(cssMisc::prompt);
+#else
+    // todo: only for debugging: remove later!
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
+    cssMisc::TopShell->Shell_QandD_Console(cssMisc::prompt);
+#endif
+  } else {
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
+    //    cssMisc::TopShell->Shell_NoGui_Rl(cssMisc::prompt);
+  }
+  return true;
+}
+
+bool taRootBase::Startup_ProcessArgs() {
+  if(taMisc::CheckArgByName("Version")) {
+    tabMisc::root->Info();
+  }
+  if(taMisc::CheckArgByName("Help")) {
+    taMisc::HelpMsg();
+  }
+
+  // just load the thing!?
+  String proj_ld = taMisc::FindArgByName("Project");
+  if(proj_ld.empty())
+    proj_ld = taMisc::FindArgValContains(".proj");
+
+  if(!proj_ld.empty())
+    tabMisc::root->projects.LoadAs_File(proj_ld);	// todo: get correct command here..
+
+  return true;
+}
+
+bool taRootBase::Startup_DMem() {
+#ifdef DMEM_COMPILE
+  if (taMisc::dmem_nprocs > 1) {
+    if (cssMisc::gui) {
+      if (taMisc::dmem_proc == 0) { // master dmem
+	DMemShare::InitCmdStream();
+	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
+	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
+	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
+	Startup_MakeMainWin();
+	Startup_InvokeShells();
+	DMemShare::CloseCmdStream();
+	cerr << "proc: 0 quitting!" << endl;
+      } else { // slave dmems
+	cssMisc::gui = false;	// not for subguys
+	cssMisc::init_interactive = false; // don't stay in startup shell
+//TODO: dmem subs still need to use Qt event loop!!!
+// 	if(taMisc::dmem_debug)
+// 	  cerr << "proc " << taMisc::dmem_proc << " starting shell." << endl;
+	// get rid of wait proc for rl -- we call it ourselves
+	extern int (*rl_event_hook)(void);
+ 	rl_event_hook = NULL;
+ 	cssMisc::Top->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
+	//	cssMisc::Top->debug = 2;
+	DMem_SubEventLoop();	// this is the "shell" for a dmem sub guy
+	cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
+      }
+    } else {			// nogui
+      Startup_InvokeShells();  
+    }
+  } else { // dmem, but only one guy, so pretty much like normal
+    Startup_MakeMainWin();
+    Startup_Console();
+  }
+#endif
+  return true;
+}
+  	
+bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun, 
+			      TypeDef* root_typ) {
+  if(!Startup_InitApp(argc, argv)) return false;
+  if(!Startup_InitDMem(argc, argv)) return false;
+  if(!Startup_InitTA(ta_init_fun)) return false;
+  if(!Startup_LoadPlugins()) return false;
+  if(!Startup_InitArgs(argc, argv)) return false;
+  if(!Startup_InitTypes()) return false;
+  if(!Startup_ProcessGuiArg()) return false;
+  if(!Startup_MakeRoot(root_typ)) return false;
+  if(!Startup_InitCss()) return false;
+  if(!Startup_InitGui()) return false;
+  if(!Startup_InitPlugins()) return false;
+#ifdef DMEM_COMPILE
+  if(!Startup_DMem()) return false;
+#else 
+  if(!Startup_MakeMainWin()) return false;
+  if(!Startup_Console()) return false;
+#endif
+  if(!Startup_ProcessArgs()) return false;
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Run & Cleanup
+
+bool taRootBase::Startup_Run() {
+  // todo: there is a non-gui version of this in css that need to checkout..
+  if(taMisc::gui_active)
+    qApp->exec();
+  else
+    cssMisc::TopShell->Shell_NoGui_Rl(cssMisc::prompt);
+  return Cleanup_Main();
+}
+
+// todo: could partition these out into separate guys..  	
+bool taRootBase::Cleanup_Main() {
+  tabMisc::DeleteRoot();
+  taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
+
+#ifdef TA_USE_INVENTOR
+  SoQt::done();
+#endif
+#ifdef DMEM_COMPILE
+  MPI_Finalize();
+#endif
+  return true;
+}

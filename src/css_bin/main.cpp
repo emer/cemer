@@ -16,34 +16,11 @@
 
 // C^c C Super Script
 
+#include "ta_project.h"
 #include "css_machine.h"
-#include "css_builtin.h"
-#include "css_console.h"
-#include "css_ta.h"
 
 #ifdef TA_GUI
-#include "ta_qt.h"
-#include "ta_TA_type.h" //NOTE: this will be an issue building Qt phase1 BA
-#include "css_qt.h"
-#include "ta_qtdata.h" // for taiObjChooser
-#include "ta_qtviewer.h"
-// #include "ta_qtbrowse.h"
-#include <QApplication>
 #endif // TA_GUI
-
-#ifdef TA_USE_INVENTOR
-  #include <Inventor/Qt/SoQt.h>
-#endif
-
-#include <QCoreApplication>
-
-#ifdef DMEM_COMPILE
-#include <mpi.h>
-#endif
-
-//#include <malloc.h>
-
-extern int yydebug;
 
 void css_cleanup(int err) {
   signal(err, SIG_DFL);
@@ -63,97 +40,15 @@ void css_cleanup(int err) {
   kill(getpid(), err);		// activate signal
 }
 
-int main(int argc, char *argv[]) {
-/* following creates QApplication and event loop -- these
-   must get created first, and are needed even if we don't open a gui
-   Set cssMisc::gui, according to command line switch and compilation mode (TA_GUI/NO_GUI)
-*/
-  cssMisc::PreInitialize(argc, argv);
+int main(int argc, const char *argv[]) {
+  cssMisc::prompt = "css> ";
+  taMisc::use_gui = true;	// set opposite default from normal
 
-  ta_Init_ta();
+  if(!taRootBase::Startup_Main(argc, argv, ta_Init_ta, &TA_taRootBase)) return 1;
+
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) css_cleanup);
-
-  int rval = cssMisc::Initialize();
-  if (rval != 0) return rval;
-
-#ifdef TA_GUI
-  cssMisc::gui = true; // false;		// default for css is always false! (except when debugging!)
-#else
-  cssMisc::gui = false;
-#endif // TA_GUI
-
-  if (argc > 1) {
-    for (int i = 1; i < argc; ++i) {
-      String tmp = argv[i];
-      if (tmp == "-gui")
-	cssMisc::gui = true;
-      else if (tmp == "-nogui")
-	cssMisc::gui = false;
-    }
-  }
-
-#ifdef TA_GUI
-  if(cssMisc::gui && (taMisc::dmem_proc == 0)) {
-    taiM_ = taiMisc::New(cssMisc::gui);
-    taiMC_ = taiM_;
-//   QApplication a( argc, argv );
-
-    //Create and show the main window
-    QMainWindow* mw = new QMainWindow(0, "Application window");
-    mw->setMinimumSize(640, 720);
-    // todo: I don't see any way to set a preferred size different from min size..
-//     mw->setBaseSize(640, 720);
-    QcssConsole* console = QcssConsole::getInstance(mw, cssMisc::TopShell);
-    mw->setFocusProxy((QWidget*)console);
-    mw->setCentralWidget((QWidget*)console);
-    qApp->setMainWidget(mw);	// todo: deprecated version
-    mw->show();
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-  }
-  
-#else  // NO TA_GUI
-  if(cssMisc::gui) {
-    cerr << "Cannot specify 'gui' flag when not compiled for gui.\n ";
-    return 1;
-  }
-  taiMC_ = taiMiscCore::New();
-#endif  // TA_GUI
-  if(!cssMisc::gui || (taMisc::dmem_proc > 0)) {
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-  }
-
-  yydebug = 0;
-
-#ifdef TA_GUI
-  if(cssMisc::gui && (taMisc::dmem_proc == 0)) {
-    cssMisc::TopShell->Shell_Qt_Console("css> ");
-    qApp->exec();
-  }
+  if(taRootBase::Startup_Run())
+    return 0;
   else
-#endif
-    {
-      cssMisc::TopShell->Shell_NoGui_Rl("css> ");
-    }
-
-  // after this point, we have dropped out of the main event loop and are quitting!
-#ifdef TA_GUI
-#ifdef TA_USE_INVENTOR
-  SoQt::done();
-#endif
-#endif
-
-  //note: new 4.0 behavior is for root deletion to be the app end, so following is probably redundant
-//   if (tabMisc::root) {
-//     delete tabMisc::root;
-//     tabMisc::root = NULL;
-//   }
-#ifdef TA_GUI
-  taiMisc::RunPending(); // do Qt defered deletes, if any
-#endif
-  taMisc::types.RemoveAll();	// get rid of types before global dtor!
-  return 0;
+    return 2;
 }
-
-
-
-

@@ -189,20 +189,11 @@ public:
   static cssEnumType	VoidEnumType; 	// a void enum type
   static cssClassType	VoidClassType; 	// a void class type
 
-  static int		argc;		// number of args passed by commandline to app
-  static char**		argv;		// args passed by commandline to app
-  static bool		gui;		// startup switch, whether using gui or not
-  
   static int		readline_waitproc(); // note: not used in GUI mode, see css_qt.h
-  static void		PreInitialize(int argc_, char** argv_);
-  // this must be called immediately after main(), and before any other css/ta initialization
-//  static void 		Initialize(int argc, const char** argv);
-  static int 		Initialize();
-  // this is called to install builtin funcs, setup system, etc.; returns 0 if ok
-  static bool		HasCmdLineSwitch(const String& sw_name, bool starts_with = false); // looks for the switch value (include the '-' if applicable)
-  static bool		HasCmdLineSwitch(const String& sw_name, int& index, bool starts_with = false); // looks for the switch value (include the '-' if applicable) starting from index; index advanced
-  static bool		CmdLineSwitchValue(const String& sw_name, int& index, 
-    String& sw_value, bool starts_with = false); // looks for the switch value from index and returns following string; advances index
+
+  static bool 		Initialize();
+  // this is called to install builtin funcs, setup system, etc.; returns true if ok
+
   static String	    	Indent(int indent_level, int indent_spc = 2);
   static String	    	IndentLines(const String& lines, int indent_level); 
     // indent every line by the indent amount

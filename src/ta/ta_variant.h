@@ -736,9 +736,13 @@ public:
   bool	operator==(const NameVar& cm) { return value == cm.value; }
 
   NameVar(const NameVar& cp) { name = cp.name; value = cp.value; }
+  NameVar(const String& nm, const Variant& vl) { name = nm; value = vl; }
+  NameVar(const char* nm, const Variant& vl) { name = nm; value = vl; }
   NameVar()	{ };
   ~NameVar()	{ };
 };
+
+// see ta_type.h for a NameVar_PArray -- array of name-values..
 
 #endif
 

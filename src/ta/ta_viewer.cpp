@@ -21,8 +21,9 @@
 # include "ta_qt.h"
 # include "ta_qtviewer.h"
 # include "ta_qtclassbrowse.h"
-
+# include "css_console.h"
 # include <QApplication>
+# include <QScrollArea>
 #endif
 
 //TODO: this file will need to have many routines modalized for TA_GUI
@@ -637,6 +638,31 @@ IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iDockViewer(this, gui_parent);
 }
 
+//////////////////////////
+//   ConsoleDockViewer
+//////////////////////////
+
+void ConsoleDockViewer::Initialize() {
+  dock_flags = (DockViewerFlags)(DV_MOVABLE | DV_FLOATABLE);
+}
+
+IDataViewWidget* ConsoleDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
+  iDockViewer* dv = new iDockViewer(this, gui_parent); // par usually NULL
+
+  QScrollArea* sa = new QScrollArea(dv);
+  sa->setWidgetResizable(true);
+  dv->setWidget(sa);
+  
+  QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+  //note: don't set size, let it resize in the scroll area
+//  sa->setFocusProxy((QWidget*)con);
+  sa->setWidget((QWidget*)con);
+  return dv;
+}
+
+void ConsoleDockViewer::MakeWinName_impl() {
+  win_name = "css Console";
+}
 
 //////////////////////////
 //   ToolBoxDockViewer	//
