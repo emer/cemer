@@ -181,14 +181,11 @@ public:
     COLOR_COUNT
   };
 
- enum BuildNetsMode {
-   AUTO_BUILD,			// build the networks after loading
-   PROMPT_BUILD,		// prompt about building after loading
-   NO_BUILD,			// do not build networks after loading
- };
-
-  static void 		NewGridView(DataTable* dt, T3DataViewFrame* fr = NULL); // #DYN_P1 #MENU #MENU_CONTEXT #NULL_OK create a new graph view of the specified table in current project browser; fr=NULL creates new frame
-  static void 		NewGraphView(DataTable* dt, T3DataViewFrame* fr = NULL); // #DYN_P1 #MENU #MENU_CONTEXT #NULL_OK create a new graph view of the specified table in current project browser; NULL creates new frame
+  enum BuildNetsMode {
+    AUTO_BUILD,			// build the networks after loading
+    PROMPT_BUILD,		// prompt about building after loading
+    NO_BUILD,			// do not build networks after loading
+  };
   
   Network_Group		networks;	// Networks of interconnected units
 

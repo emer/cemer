@@ -384,13 +384,21 @@ class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
 INHERITED(DataTableViewSpec)
 public:
+  enum MetricsModel { // model that adjusts all metrics values based on data size
+    CUSTOM_METRICS,		// used to change individual values
+    SMALL_BLOCKS,	// for "small" blocks -- use for large matrix cells and images
+    MEDIUM_BLOCKS,	// for "medium" blocks -- use for average matrix cells and images
+    LARGE_BLOCKS	// for "large" blocks -- use for small matrix cells and images
+  };
+  
   float		grid_margin_pts; // #DEF_4 #MIN_0 size of margin inside grid cells, in points
-  float		grid_line_pts; // #EXPERT #DEF_3 #MIN_0.1 size of grid lines, in points (grid lines can be turned off in the viewer)
-  float		mat_block_pts;	// #DEF_8 #MIN_0.1 matrix block size, in points
-  float		mat_border_pts; // #DEF_2 size of border around matrix cells, in points
-  float		mat_sep_pts; // #EXPERT #DEF_2 sep between text and grid, etc
-  float		mat_font_scale; // #EXPERT #DEF_0.75 #MIN_0.1 amount to scale font for matrix cells
-  float		pixel_pts;	// #DEF_1 #MIN_0.1 image pixel size, in points (there is no border)
+  float		grid_line_pts; // #DEF_3 #MIN_0.1 size of grid lines, in points (grid lines can be turned off in the viewer)
+  MetricsModel	metrics_model;
+  float		mat_block_pts;	// #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 matrix block size, in points
+  float		mat_border_pts; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #DEF_2 size of border around matrix cells, in points
+  float		mat_sep_pts; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS sep between text and grid, etc
+  float		mat_font_scale; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 amount to scale font for matrix cells
+  float		pixel_pts;	// #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 image pixel size, in points (there is no border)
   
   inline int		colSpecCount() const {return col_specs.size;}
   GridColViewSpec*	colSpec(int idx) const 
@@ -416,6 +424,7 @@ public:
 protected:
   override void 	UpdateAfterEdit_impl();
   override void		DataDataChanged_impl(int dcr, void* op1, void* op2);
+  void			SetMetricsModel_impl(MetricsModel mm);
 };
 
 #endif // datatable_h

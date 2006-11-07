@@ -30,6 +30,9 @@
 # include <QAbstractTableModel> 
 #endif
 
+// externals
+class T3DataViewFrame;
+
 // forwards this file
 
 class DataTable;
@@ -398,11 +401,11 @@ public:
   void			AllocRows(int n);
   // #CAT_Rows allocate space for at least n rows
   void			AddBlankRow() {if (AddRow(1)) wr_itr = rows - 1;}
-  // #MENU #CAT_Rows add a new row to the data table
+  // #MENU #MENU_ON_Data #CAT_Rows add a new row to the data table
   bool			AddRow(int n);
   // #CAT_Rows add n rows, 'true' if added
   void			RemoveRow(int row_num);
-  // #MENU #CAT_Rows Remove an entire row of data
+  // #MENU #MENU_ON_Data #CAT_Rows Remove an entire row of data
 //TODO if needed:  virtual void	ShiftUp(int num_rows);
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
   void			RemoveAllRows() { ResetData(); }
@@ -479,6 +482,10 @@ public:
   int 			LoadDataRow(istream& strm, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
+  // viewing NOTE: these are actually linked to tamisc in order to work...
+  void 			NewGridView(T3DataViewFrame* fr);
+  // #MENU
+  
   /////////////////////////////////////////////////////////
   // misc funs
 
@@ -535,7 +542,7 @@ public:
   override int		SourceChannelCount() const { return ChannelCount(); }
   override const String	SourceChannelName(int chan) const { return ChannelName(chan); }
   override void		ResetData();
-  // #MENU #MENU_ON_Actions #CAT_Rows deletes all the data (rows), but keeps the column structure
+  // #MENU #MENU_ON_Data #CAT_Rows deletes all the data (rows), but keeps the column structure
 
 protected:
   /////////////////////////////////////////////////////////

@@ -63,6 +63,28 @@
 
 #define DIST(x,y) sqrt((double) ((x * x) + (y*y)))
 
+void DataTable::NewGridView(T3DataViewFrame* fr)
+{
+  DataTable* dt = this;
+  //note: even if fr specified, need to insure it is right proj for table
+  taProject* proj = (taProject*)dt->GetOwner(&TA_taProject);
+  
+  if (fr) {
+    if (proj != fr->GetOwner(&TA_taProject)) {
+      taMisc::Error("The viewer you specified is not in the same Project as the table.");
+      return;
+    }
+  } else {
+    MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
+    if (!vw) return; // shouldn't happen
+    T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
+    if (!t3vw) return; // shouldn't happen
+    fr = t3vw->NewT3DataViewFrame();
+  }
+  GridTableView::NewGridTableView(dt, fr); // discard result
+}
+
+
 //////////////////////////
 //  TableView		//
 //////////////////////////
@@ -231,9 +253,12 @@ bool TableView::isVisible() const {
 }
 
 void TableView::MakeViewRangeValid() {
-  if (view_range.min >= m_rows) {
-    view_range.min = MAX(0, (m_rows - 1));
+  int rows = this->rows();
+  if (view_range.min >= rows) {
+    view_range.min = MAX(0, (rows - 1));
   }
+  view_range.max = view_range.min + view_bufsz - 1; // always keep min and max valid
+  view_range.MaxLT(rows - 1); // keep it less than max
 }
 
 void TableView::Render_pre() {
@@ -324,10 +349,7 @@ void TableView::View_At(int start) {
     start = rows - 1;
   if (start < 0)
     start = 0;
-
-  view_range.min = start;
-  view_range.max = view_range.min + view_bufsz -1; // always keep min and max valid
-  view_range.MaxLT(rows - 1); // keep it less than max
+  MakeViewRangeValid();
   ViewRangeChanged();
 }
 
@@ -1164,6 +1186,7 @@ void GridTableView::ViewC_At(int start) {
   RemoveGrid();
   col_range.min = start;
   CalcColMetrics();
+  MakeViewRangeValid();
   if (grid_on) RenderGrid();
   if (header_on) RenderHeader();
   RenderLines();

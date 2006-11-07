@@ -411,5 +411,25 @@ protected:
 /*protected slots: */
 };
 
+/* TODO
+class TA_API DataTableGridViewWizard: public taWizard {
+  // wizard for automating construction of DataTableGridView objects
+INHERITED(taWizard)
+public:
 
+  DataTableRef		dt; // #NO_NULL the data table being viewed
+  
+
+  void 	InitLinks();
+  void	CutLinks(); 
+  SIMPLE_COPY(DataTableGridViewWizard);
+  COPY_FUNS(DataTableGridViewWizard, taWizard);
+  TA_BASEFUNS(DataTableGridViewWizard); //
+protected:
+//  override void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
+};
+*/
 #endif

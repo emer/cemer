@@ -36,8 +36,6 @@ it more transparent..  ProgEditor is Program?
 
 * change basis of coord axes for netview, layers, etc.
 
-* Gridview:
-  * support for matrix text
 * automatically bracket gui-invoked methods with Busy/Notbusy
 * UserData
   * persistence
@@ -53,22 +51,12 @@ Brad:
 * clean up and/or extend data notify so that DataTable finish adding of row is clearly 
   done, so various display or calculation clients can then update themselves
 
-Graphing/Viewing:
-* sort out DT/DA specs vs. TableView etc.
-* get working, including support for matrices
-  * T3 graphs  
-  * T3 table views
-  * T3 grid views
-* matrix view of datatable (in 3d/inventor)
-
 * startup pathing cleanup + platform params: redo pdproot/main code + randy
 NOTE: Brad needs more info from Randy for next item:
 * ChangeType/UpdatePointers etc. gui patches
-* virtual console dock window, ex. be able to dock to bottom of any project window
 
 * bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys (esp New dialog!).
 * minimal netview cleanup: transparent layer etc
-* save/restore state of viewers
 
 
 
@@ -99,11 +87,15 @@ Brad done:
 * #104 CheckConfig rework
 * get ClassBrowser panels working again
 * Program ControlPanel: extend list view for programs + their vars/args
+Graphing/Viewing:
+  * sort out DT/DA specs vs. TableView etc.
+  * T3 table/grid views
 
 
 Brad deferred:
 * add window menu (not hi pri, since likely only 2 or 3 wins anyway)
-
+* virtual console dock window, ex. be able to dock to bottom of any project window
+  (is this REALLY necessary??? there is only so much room...)
 Brad cancelled:
 * yellow surround for non-default values (NOTE: non-defaults already use BOLD captions)
 
@@ -126,6 +118,7 @@ Randy:
 ---------------
 Beta (feature complete, bugfix to release):
 
+General:
 * complete port to Windows
 * hover notes to add methoddef desc info in MethodCall, etc..
 * multiple selection across views/trees, etc & actions (toolbars) that become
@@ -139,6 +132,11 @@ Beta (feature complete, bugfix to release):
 * network layer shortcut view: "sheet view" & iconify.
 * key shortcuts, particularly to invoke a string editor for string fields (all of them)
 * multi-cpu
+
+Brad:
+
+* T3 graphs  
+* save/restore state of viewers
 
 
 ---------------

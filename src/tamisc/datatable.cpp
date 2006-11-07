@@ -1482,7 +1482,7 @@ void GridColViewSpec::Render_impl() {
     col_wd = MAX(col_wd, tmp);
     row_ht += px_pts * cg.y;
   }
-  col_wd = MIN(col_wd, min_col_wd);
+  col_wd = MAX(col_wd, min_col_wd);
   // change to geoms
   col_width = col_wd * t3Misc::geoms_per_pt;
   row_height = row_ht * t3Misc::geoms_per_pt;
@@ -1497,11 +1497,7 @@ void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
   grid_margin_pts = 4.0f;
   grid_line_pts = 3.0f;
-  mat_block_pts = 8.0f;
-  mat_border_pts = 2.0f;
-  mat_sep_pts = 4.0f;
-  mat_font_scale = 0.75f;
-  pixel_pts = 1.0f;
+  SetMetricsModel_impl(MEDIUM_BLOCKS);
 }
 
 void GridTableViewSpec::Destroy() {
@@ -1510,6 +1506,7 @@ void GridTableViewSpec::Destroy() {
 void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
   grid_margin_pts = cp.grid_margin_pts;
   grid_line_pts = cp.grid_line_pts;
+  metrics_model = cp.metrics_model;
   mat_block_pts = cp.mat_block_pts;
   mat_border_pts = cp.mat_border_pts;
   mat_sep_pts = cp.mat_sep_pts;
@@ -1519,6 +1516,7 @@ void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
 
 void GridTableViewSpec::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
+  // just blindly enforce all minimums
   if (grid_margin_pts < 0.0f) grid_margin_pts = 0.0f;
   if (grid_line_pts <  0.1f) grid_line_pts =  0.1f;
   if (mat_block_pts < 0.1f) mat_block_pts = 0.1f;
@@ -1526,6 +1524,8 @@ void GridTableViewSpec::UpdateAfterEdit_impl(){
   if (mat_sep_pts < 0.0f) mat_sep_pts = 0.0f;
   if (mat_font_scale < 0.1f) mat_font_scale = 0.1f;
   if (pixel_pts < 0.1f) pixel_pts = 0.1f;
+  // now, unconditionally apply any model
+  SetMetricsModel_impl(metrics_model);
 }
 
 void GridTableViewSpec::DataDataChanged_impl(int dcr, void* op1, void* op2) {
@@ -1570,3 +1570,30 @@ void GridTableViewSpec::GetMinMaxScale(MinMax& mm, bool first) {
   mm.max = 1.0f;
 }
 
+void GridTableViewSpec::SetMetricsModel_impl(MetricsModel mm){
+  metrics_model = mm;
+  switch (mm) {
+  case CUSTOM_METRICS: break;
+  case SMALL_BLOCKS:
+    mat_block_pts = 4.0f;
+    mat_border_pts = 1.0f;
+    mat_sep_pts = 2.0f;
+    mat_font_scale = 0.5f;
+    pixel_pts = 1.0f;
+    break;
+  case MEDIUM_BLOCKS:
+    mat_block_pts = 8.0f;
+    mat_border_pts = 2.0f;
+    mat_sep_pts = 4.0f;
+    mat_font_scale = 0.75f;
+    pixel_pts = 2.0f;
+    break;
+  case LARGE_BLOCKS:
+    mat_block_pts = 16.0f;
+    mat_border_pts = 4.0f;
+    mat_sep_pts = 4.0f;
+    mat_font_scale = 0.8f;
+    pixel_pts = 4.0f;
+    break;
+  }
+}

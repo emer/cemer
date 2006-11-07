@@ -54,6 +54,31 @@ using namespace Qt;
 #define AXIS_WIDTH 0.2f // how much space we use, not including the offset
 #define T3BAR_HEIGHT 0.2f // height of color bar when it appears
 
+void ProjectBase::NewGraphView(DataTable* dt, T3DataViewFrame* fr)
+{
+  if (!dt) {
+    taMisc::Error("You must specify a DataTable");
+    return;
+  }
+  //note: even if fr specified, need to insure it is right proj for table
+  ProjectBase* proj = (ProjectBase*)dt->GetOwner(&TA_ProjectBase);
+  
+  if (fr) {
+    if (proj != fr->GetOwner(&TA_ProjectBase)) {
+      taMisc::Error("The viewer you specified is not in the same Project as the table.");
+      return;
+    }
+  } else {
+    MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
+    if (!vw) return; // shouldn't happen
+    T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
+    if (!t3vw) return; // shouldn't happen
+    fr = t3vw->NewT3DataViewFrame();
+  }
+//TODO  GraphTableView::NewGraphTableView(dt, fr); // discard result
+}
+
+
 //////////////////////////
 // 	AxisView	//
 //////////////////////////

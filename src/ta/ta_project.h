@@ -41,7 +41,7 @@ public:
   void 	InitLinks();
   void	CutLinks(); 
   SIMPLE_COPY(taWizard);
-  COPY_FUNS(taWizard, taWizard);
+  COPY_FUNS(taWizard, inherited);
   TA_BASEFUNS(taWizard);
 private:
   void 	Initialize();
