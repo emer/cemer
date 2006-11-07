@@ -70,7 +70,7 @@ void DataTable::NewGridView(T3DataViewFrame* fr)
   taProject* proj = (taProject*)dt->GetOwner(&TA_taProject);
   
   if (fr) {
-    if (proj != fr->GetOwner(&TA_taProject)) {
+    if (proj != (taProject*)fr->GetOwner(&TA_taProject)) {
       taMisc::Error("The viewer you specified is not in the same Project as the table.");
       return;
     }

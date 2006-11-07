@@ -21,8 +21,10 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qtclassbrowse.h \
 	@abs_srcdir@/ta_qtgroup.h \
 	@abs_srcdir@/ta_seledit.h \
-	@abs_srcdir@/ta_program_qt.h 
-
+	@abs_srcdir@/ta_program_qt.h \
+	@abs_srcdir@/../taiqtso/safeptr_so.h \
+	@abs_srcdir@/../tamisc/t3node_so.h \
+	@abs_srcdir@/../tamisc/t3viewer.h
 HEADS_GUI =\
 	ta_plugin.h \
 	ta_qt.h \
@@ -197,7 +199,8 @@ libta@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../css \
-	-I@srcdir@/../taiqtso
+	-I@srcdir@/../taiqtso \
+	-I@srcdir@/../tamisc
 
 libta@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
