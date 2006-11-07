@@ -355,12 +355,13 @@ public:
 
   DisplayStyle  display_style;	// can display as text and/or block, or image
   int		text_width; // width of the column (or each matrix col) in chars; also the min width in chars
-  MatrixLayout	mat_layout; // #DEF_BOT_ZERO #CONDEDIT_OFF_display_style:TEXT layout of matrix and image cells
+  String	text_format; // #CONDEDIT_ON_display_style:TEXT,TEXT_AND_BLOCK c-style format string (typically for numbers)
+  short		num_prec; // #DEF_5 numeric precision (decimals) for floating numbers
+  MatrixLayout	mat_layout; // #DEF_BOT_ZERO layout of matrix and image cells
   bool		scale_on; // #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
   
   float 	col_width; // #READ_ONLY #HIDDEN #NO_SAVE calculated col_width in geoms 
   float		row_height; // #READ_ONLY #HIDDEN #NO_SAVE calculated row height in geoms
-  float		text_height; // #READ_ONLY #HIDDEN #NO_SAVE height of text items in this col, if applicable
 
   DATAVIEW_PARENT(GridTableViewSpec)
 //GridColView*  parent() const;
@@ -383,12 +384,12 @@ class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
 INHERITED(DataTableViewSpec)
 public:
-  float		grid_margin_pts; // #DEF_2 #MIN_0 size of margin inside grid cells, in points
-  float		grid_line_pts; // #EXPERT #DEF_1 #MIN_0.1 size of grid lines, in points (grid lines can be turned off in the viewer)
-  float		mat_block_pts;	// #DEF_4 #MIN_0.1 matrix block size, in points
-  float		mat_border_pts; // #DEF_1 size of border around matrix cells, in points
+  float		grid_margin_pts; // #DEF_4 #MIN_0 size of margin inside grid cells, in points
+  float		grid_line_pts; // #EXPERT #DEF_3 #MIN_0.1 size of grid lines, in points (grid lines can be turned off in the viewer)
+  float		mat_block_pts;	// #DEF_8 #MIN_0.1 matrix block size, in points
+  float		mat_border_pts; // #DEF_2 size of border around matrix cells, in points
   float		mat_sep_pts; // #EXPERT #DEF_2 sep between text and grid, etc
-  float		mat_font_scale; // #EXPERT #DEF_0.8 #MIN_0.1 amount to scale font for matrix cells
+  float		mat_font_scale; // #EXPERT #DEF_0.75 #MIN_0.1 amount to scale font for matrix cells
   float		pixel_pts;	// #DEF_1 #MIN_0.1 image pixel size, in points (there is no border)
   
   inline int		colSpecCount() const {return col_specs.size;}
@@ -402,6 +403,7 @@ public:
   float		matBorderSize() const; 
   float		matSepSize() const;
   float		pixelSize() const;
+  float		textHeight() const; // text height, based on font
   
   virtual void	GetMinMaxScale(MinMax& mm, bool first=true); // get min and max data range for scaling
   override void		DataDestroying();

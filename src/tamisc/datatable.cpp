@@ -1386,16 +1386,17 @@ float ClustNode::SetParDists(float par_d, float_RArray::DistMetric metric) {
 void GridColViewSpec::Initialize(){
   display_style = TEXT; // updated later in build
   text_width = 16;
+  num_prec = 5;
   mat_layout = BOT_ZERO; // typical default for data patterns
   scale_on = true;
   col_width = 0.0f;
   row_height = 0.0f;
-  text_height = 0.0f;
 }
 
 void GridColViewSpec::Copy_(const GridColViewSpec& cp){
   display_style = cp.display_style;
   text_width = cp.text_width;
+  num_prec = cp.num_prec;
   mat_layout = cp.mat_layout;
   scale_on = cp.scale_on;
   // others recalced
@@ -1403,6 +1404,8 @@ void GridColViewSpec::Copy_(const GridColViewSpec& cp){
 
 void GridColViewSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if (text_width < 2) text_width = 2; // smallest practical
+  if (num_prec < 2) num_prec = 2;
 }
 
 void GridColViewSpec::UpdateFromDataCol_impl(bool first){
@@ -1432,7 +1435,6 @@ void GridColViewSpec::UpdateFromDataCol_impl(bool first){
 void GridColViewSpec::DataColUnlinked() {
   col_width = 0.0f;
   row_height = 0.0f;
-  text_height = 0.0f;
 }
 
 void GridColViewSpec::Render_impl() {
@@ -1443,44 +1445,44 @@ void GridColViewSpec::Render_impl() {
   DataArray_impl* dc = dataCol(); // cache
   col_width = 0.0f;
   row_height = 0.0f;
-  text_height = 0.0f;
   if (!dc) return;
   
   float blk_pts = par->mat_block_pts; 
   float brd_pts = par->mat_border_pts; 
   float fnt_pts = par->font.pointSize;
   // first stab at col width is the normal size text, for scalar width
-  float col_wd = fnt_pts * text_width;
+  float min_col_wd = fnt_pts * text_width;
   if (dc->isMatrix()) // shrink font for mats
     fnt_pts *=  par->mat_font_scale; 
-  text_height = fnt_pts * t3Misc::char_ht_to_wd_pts * t3Misc::geoms_per_pt;
   
   // get 2d equivalent cell geom values
   iVec2i cg;
   dc->Get2DCellGeom(cg); //note: 1x1 for scalar
   float row_ht = 0.0f;
+  float col_wd = 0.0f;
   float tmp; // to avoid multi-calcs in min/max 
-  if (display_style & TEXT_MASK) {
-    // col width
-    tmp = (fnt_pts * text_width * cg.x) + (brd_pts * (cg.x - 1));
-    col_wd = MAX(col_wd, tmp);
-    // row height, and number of rows -- ht ~ 12/8 x wd
-    row_ht = (fnt_pts * cg.y * t3Misc::char_ht_to_wd_pts) + (brd_pts * (cg.y - 1)) ;
+  if (display_style & BLOCK_MASK) {
+    col_wd += (blk_pts * cg.x) + (brd_pts * (cg.x - 1));
+    tmp =  (blk_pts * cg.y) + (brd_pts * (cg.y - 1));
+    row_ht = MAX(row_ht, tmp);
   }
   if (display_style == TEXT_AND_BLOCK) {
-    row_ht += par->mat_sep_pts;
+    col_wd += par->mat_sep_pts;
   }
-  if (display_style & BLOCK_MASK) {
-    tmp = (blk_pts * cg.x) + (brd_pts * (cg.x - 1));
-    col_wd = MAX(col_wd, tmp);
-    row_ht += (blk_pts * cg.y) + (brd_pts * (cg.y - 1));
+  if (display_style & TEXT_MASK) {
+    col_wd += (fnt_pts * text_width * cg.x) + (brd_pts * (cg.x - 1));
+    // row height, and number of rows -- ht ~ 12/8 x wd
+    tmp = (fnt_pts * cg.y * t3Misc::char_ht_to_wd_pts) +
+      (brd_pts * (cg.y - 1));
+    row_ht = MAX(row_ht, tmp);
   }
-  if (display_style & IMAGE) {
+  if (display_style == IMAGE) {
     float px_pts = par->pixel_pts; 
     tmp = px_pts * cg.x;
     col_wd = MAX(col_wd, tmp);
     row_ht += px_pts * cg.y;
   }
+  col_wd = MIN(col_wd, min_col_wd);
   // change to geoms
   col_width = col_wd * t3Misc::geoms_per_pt;
   row_height = row_ht * t3Misc::geoms_per_pt;
@@ -1493,12 +1495,12 @@ void GridColViewSpec::Render_impl() {
 
 void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
-  grid_margin_pts = 2.0f;
-  grid_line_pts = 1.0f;
-  mat_block_pts = 4.0f;
-  mat_border_pts = 1.0f;
-  mat_sep_pts = 2.0f;
-  mat_font_scale = 0.8f;
+  grid_margin_pts = 4.0f;
+  grid_line_pts = 3.0f;
+  mat_block_pts = 8.0f;
+  mat_border_pts = 2.0f;
+  mat_sep_pts = 4.0f;
+  mat_font_scale = 0.75f;
   pixel_pts = 1.0f;
 }
 

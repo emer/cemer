@@ -58,6 +58,10 @@ public:
 #endif
   };
 
+  static const String	formatNumber(const Variant& val,
+     short prec, bool hex = false) // format a number (hex for integral types only)
+     {return val.formatNumber_impl(prec, hex);} 
+
   const void*		addrData() const {return &d;} // this is for low-level routines
   
   bool			isAtomic() const {return (m_type <= T_String);} 
@@ -382,6 +386,8 @@ protected:
     bool is_numeric_valid_ = 0, bool is_null_ = 1) 
     { m_type = type_; m_is_numeric = is_numeric_; 
     m_is_numeric_valid = is_numeric_valid_;  m_is_null = is_null_;}
+  const String	formatNumber_impl(const Variant& val,
+     short prec, bool hex = false) const; // format a number 
   void			releaseType(); // #IGNORE handles undoing of specials
   //note: following ops don't affect m_is_null -- context must determine that
   

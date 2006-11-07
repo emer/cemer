@@ -71,16 +71,14 @@ public: //
   
   virtual void		ViewRangeChanged(); // called when view_range changed (override _impl to implement)
   virtual void 		ClearData();	// Clear the display and the data
-
+  // view control -- row
+  virtual void 	View_At(int start);	// start viewing at indicated viewrange value
   
   virtual void		InitPanel();// lets panel init itself after struct changes
   virtual void		UpdatePanel();// after changes to props
-  
   virtual void		UpdateView(); // called for major changes
-
   virtual void		DataChanged_DataTable(int dcr, void* op1, void* op2);
     // forwarded when DataTable notifies; forwards to correct handler
-  
   virtual void		InitNew(DataTable* dt, T3DataViewFrame* fr); // #IGNORE common code for creating a new one -- creates new fr if necessary -- called virtually after construction
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -89,17 +87,6 @@ public: //
   void	Copy_(const TableView& cp);
   COPY_FUNS(TableView, T3DataViewPar);
   T3_DATAVIEWFUNS(TableView, T3DataViewPar) //
-
-public:
-  // view control -- row
-  virtual void 	View_At(int start);	// start viewing at indicated viewrange value
-  virtual void 	View_FF();	// forward to end
-/*obs  virtual void 	View_F();	// forward by view_shift
-  virtual void 	View_R();	// rewind by view_shift
-  virtual void 	View_FSF();	// fast forward
-  virtual void 	View_FSR();	// fast rewind
-  virtual void 	View_FF();	// forward to end
-  virtual void 	View_FR();	// rewind to begining */
 
 protected:
 // view control:
@@ -139,6 +126,7 @@ public:
 
   bool		grid_on; // whether to show grid lines
   bool		header_on;	// is the table header visible?
+  bool		row_num_on; // row number col visible?
   bool		auto_scale;	// whether to auto-scale on color block values or not
   ColorScale	scale; 		// The color scale for this display
   int		col_bufsz; // #READ_ONLY #SAVE #DETAIL visible columns
@@ -183,7 +171,7 @@ public:
 // view control
   void			VScroll(bool left); // scroll left or right
   virtual void 		ViewC_At(int start);	// start viewing at indicated column value
-
+  virtual void 		ViewC_VisibleAt(int ord_idx);	// start viewing at the indicated ordinal visible column (used by vertical scroll bars)
   
   void	InitLinks();
   void 	CutLinks();
@@ -201,6 +189,8 @@ protected:
   float			head_ht; // renderable portion of header (no margins etc.)	
   float			head_ht_ex; // entire header height, incl margins etc.	
   float			row_height; // #IGNORE determined from max of all cols
+  float			row_num_wd; // width of rownum col; 0 if off
+  float			row_num_wd_ex; // with margins and 1 sep spaced added
   virtual void		CalcViewMetrics(); // for entire view
   virtual void		CalcColMetrics(); // when col start changes
   virtual void		RemoveGrid();

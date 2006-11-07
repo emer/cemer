@@ -152,9 +152,13 @@ bool DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
 void DataArray_impl::Get2DCellGeom(iVec2i& r) {
   r.x = 1;
   r.y = 1;
-  if (isMatrix()) {
-    r.x = cell_geom.SafeEl(0);
-    r.y = MAX(r.y, cell_geom.SafeEl(1));
+  if (isMatrix() && (cell_geom.size > 0)) {
+    r.x = cell_geom[0]; // always, regardless of dimensions
+    if (cell_geom.size >= 2) { // 1d, return # flat rows
+      r.y = cell_geom[1]; // this is it if 2d
+      for (int i = cell_geom.size - 1; i > 1; --i)
+        r.y *= cell_geom[i];
+    }
   }
 }
 
