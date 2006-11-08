@@ -387,7 +387,6 @@ public:
   static void		initClass();
   
   SoTexture2*		texture;
-  SoCube*		shape;
   
   void		setImage(const QImage& src);
   void		setImage(const taMatrix& src, bool top_zero = false);
@@ -395,6 +394,7 @@ public:
   
   SoImageEx();
 protected:
+  SoRect*		shape;
   byte_Matrix		img;
   
   void		adjustScale(); // called after setting image to adjust aspect

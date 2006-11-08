@@ -666,12 +666,12 @@ void SoRect::render() {
   n.startEditing();
     // front
     n.set1Value(j++, 0, 0, 1);
-    p.set1Value(i++,-w2, 0,  h2);
-    p.set1Value(i++, w2, 0,  h2);
-    p.set1Value(i++, w2, 0, -h2);
-    p.set1Value(i++,-w2, 0,  h2);
-    p.set1Value(i++,-w2, 0, -h2);
-    p.set1Value(i++, w2, 0, -h2);
+    p.set1Value(i++,-w2,  h2, 0);
+    p.set1Value(i++, w2,  h2, 0);
+    p.set1Value(i++, w2, -h2, 0);
+    p.set1Value(i++,-w2,  h2, 0);
+    p.set1Value(i++,-w2, -h2, 0);
+    p.set1Value(i++, w2, -h2, 0);
   n.finishEditing();
   p.finishEditing();
 
@@ -706,11 +706,8 @@ SoImageEx::SoImageEx() {
   SoBaseColor* bc = new SoBaseColor;
   bc->rgb.setValue(0xFF, 0xFF, 0xFF);
   this->addChild(bc);
-  shape = new SoCube; //note: w,h = 1.0 so texture map maps exactly
+  shape = new SoRect; //note: w,h = 1.0 so texture map maps exactly
   this->addChild(shape);
-  shape->width = 1.0f;
-  shape->height = 1.0f;
-  shape->depth = 0.001f; //TEMP: was 0
 }
 
 SoImageEx::~SoImageEx() {
@@ -721,10 +718,12 @@ SoImageEx::~SoImageEx() {
 void SoImageEx::adjustScale() {
   int dx = img.geom.SafeEl(0);
   int dy = img.geom.SafeEl(1);
+  float wd;
   if ((dx == 0) || (dy == 0))
-    shape->width = 1.0f;
+    wd = 1.0f;
   else
-    shape->width = ((float)dx / (float)dy);
+    wd = ((float)dx / (float)dy);
+  shape->setDimensions(wd, shape->height);
   // set proper type
   if (img.dims() == 2) {
     texture->model = SoTexture2::REPLACE;

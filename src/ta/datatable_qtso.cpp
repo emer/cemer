@@ -928,11 +928,9 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       // for TOP_ZERO, this can just iterate from zero
       // for BOT_ZERO we need to massage it
       int cell = 0; // accessor just uses a linear cell value
-      SoCube* cu = new SoCube; // all can share!!!
+      SoRect* cu = new SoRect; // all can share!!!
       cu->ref();
-      cu->width = bsz;
-      cu->height = bsz;
-      cu->depth = 0.0f;
+      cu->setDimensions(bsz, bsz);
       for (c.y = 0; c.y < cg.y; ++c.y) {
         if (cvs->mat_layout == GridColViewSpec::BOT_ZERO)
           cell = cg.x * (cg.y - c.y - 1);
