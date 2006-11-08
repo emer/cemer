@@ -19,8 +19,7 @@
 #define colorscale_h
 
 #include "ta_group.h"
-#include "tamisc_def.h"
-#include "tamisc_TA_type.h"
+#include "ta_TA_type.h"
 
 #include "icolor.h"
 
@@ -41,7 +40,7 @@ class ScaleRange_List;
 class ColorScale;
 
 
-class TAMISC_API RGBA : public taNBase {
+class TA_API RGBA : public taNBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS Red Green Blue Alpha color specification
 INHERITED(taNBase)
 public:
@@ -67,7 +66,7 @@ private:
   void 	Destroy();
 };
 
-class TAMISC_API RGBA_List : public taList<RGBA> {
+class TA_API RGBA_List : public taList<RGBA> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of RGBA objects
 public:
   void	Initialize() 		{SetBaseType(&TA_RGBA); };
@@ -75,7 +74,7 @@ public:
   TA_BASEFUNS(RGBA_List);
 };
 
-class TAMISC_API TAColor : public taBase { // ##NO_TOKENS Color
+class TA_API TAColor : public taBase { // ##NO_TOKENS Color
 public:
   const iColor* color() {return &color_;}		// #IGNORE
   const iColor*	contrastcolor() {return &contrastcolor_;}	// #IGNORE
@@ -95,7 +94,7 @@ protected:
   iColor	contrastcolor_;	// #IGNORE
 };
 
-class TAMISC_API TAColor_List : public taList<TAColor> {
+class TA_API TAColor_List : public taList<TAColor> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of TAColor objects
 public:
   void	Initialize() 		{SetBaseType(&TA_TAColor); };
@@ -103,7 +102,7 @@ public:
   TA_BASEFUNS(TAColor_List);
 };
 
-class TAMISC_API ColorScaleSpec : public taNBase { // Color Spectrum Data
+class TA_API ColorScaleSpec : public taNBase { // Color Spectrum Data
 INHERITED(taNBase)
 public:
   RGBA		background;	// background color
@@ -128,7 +127,7 @@ public:
 
 SmartRef_Of(ColorScaleSpec) // ColorScaleSpecRef
 
-class TAMISC_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
+class TA_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
 INHERITED(taGroup<ColorScaleSpec>)
 public:
   virtual void 		NewDefaults(); 	// create a set of default colors
@@ -147,7 +146,7 @@ public:
 //   ScaleRange		//
 //////////////////////////
 
-class TAMISC_API ScaleRange : public taNBase {
+class TA_API ScaleRange : public taNBase {
   // ##NO_TOKENS saves scale ranges for different variables viewed in netview
 #ifndef __MAKETA__
 typedef taNBase inherited;
@@ -169,7 +168,7 @@ private:
 };
 
 
-class TAMISC_API ScaleRange_List : public taList<ScaleRange> {
+class TA_API ScaleRange_List : public taList<ScaleRange> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of ScaleRange objects
 #ifndef __MAKETA__
 typedef taList<ScaleRange> inherited;
@@ -182,7 +181,7 @@ public:
 
 
 
-class TAMISC_API ColorScale : public taNBase {
+class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER defines a range of colors to code data values with
 public:
   int			chunks;		// number of chunks to divide scale into

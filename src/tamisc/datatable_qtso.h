@@ -46,7 +46,7 @@ class iDataTablePanel; //
 // externals
 class T3GridViewNode;
 
-class TAMISC_API TableView : public T3DataViewPar {
+class TA_API TableView : public T3DataViewPar {
   // #VIRT_BASE #NO_TOKENS base class of grid and graph views; the data is its own embedded DataTableViewSpec
 INHERITED(T3DataViewPar)
 public: //
@@ -62,6 +62,7 @@ public: //
   virtual const String	caption() const; // what to show in viewer
   virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
     //note: can override for more efficient direct reference
+  void			setDataTable(DataTable* dt); // convenience, for building
   void			setDisplay(bool value); // use this to change display_on
   override void		setDirty(bool value); // set for all changes on us or below
   inline int		rows() const {return m_rows;}
@@ -76,10 +77,11 @@ public: //
   
   virtual void		InitPanel();// lets panel init itself after struct changes
   virtual void		UpdatePanel();// after changes to props
+  virtual void		InitView(); // same as UpdateView, but also resets row/col starts
   virtual void		UpdateView(); // called for major changes
   virtual void		DataChanged_DataTable(int dcr, void* op1, void* op2);
     // forwarded when DataTable notifies; forwards to correct handler
-  virtual void		InitNew(DataTable* dt, T3DataViewFrame* fr); // #IGNORE common code for creating a new one -- creates new fr if necessary -- called virtually after construction
+  
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -117,12 +119,11 @@ protected:
 
 };
 
-class TAMISC_API GridTableView: public TableView {
+class TA_API GridTableView: public TableView {
   // #VIRT_BASE #NO_TOKENS 
 INHERITED(TableView)
 public:
-  static GridTableView* NewGridTableView(DataTable* dt,
-    T3DataViewFrame* fr);
+  static GridTableView* New(DataTable* dt, T3DataViewFrame*& fr);
 
   bool		grid_on; // whether to show grid lines
   bool		header_on;	// is the table header visible?
@@ -223,7 +224,7 @@ protected:
 //  iTableView_Panel 	//
 //////////////////////////
 
-class TAMISC_API iTableView_Panel: public iViewPanelFrame {
+class TA_API iTableView_Panel: public iViewPanelFrame {
   // abstract base for logview panels
 INHERITED(iViewPanelFrame)
   Q_OBJECT
@@ -292,7 +293,7 @@ private:
 };
 
 
-class TAMISC_API iGridTableView_Panel: public iTableView_Panel {
+class TA_API iGridTableView_Panel: public iTableView_Panel {
   Q_OBJECT
 INHERITED(iTableView_Panel)
 public:
@@ -320,7 +321,7 @@ protected slots:
 };
 
 
-class TAMISC_API tabDataTableViewType: public tabOViewType {
+class TA_API tabDataTableViewType: public tabOViewType {
 INHERITED(tabOViewType)
 public:
   override int		BidForView(TypeDef*);
@@ -333,7 +334,7 @@ protected:
 };
 
 
-class TAMISC_API DataTableDelegate: public QItemDelegate {
+class TA_API DataTableDelegate: public QItemDelegate {
   Q_OBJECT
 INHERITED(QItemDelegate)
 public:
@@ -344,7 +345,7 @@ public:
 };
 
 #ifndef __MAKETA__ // too much crud to parse
-class TAMISC_API iDataTableView: public QTableView {
+class TA_API iDataTableView: public QTableView {
   // widget with some customizations to display submatrix views
 INHERITED(QTableView)
   Q_OBJECT
@@ -360,7 +361,7 @@ protected:
 };
 #endif // MAKETA
 
-class TAMISC_API iDataTableEditor: public QWidget {
+class TA_API iDataTableEditor: public QWidget {
   Q_OBJECT
 INHERITED(QWidget)
 public:
@@ -385,7 +386,7 @@ protected:
 };
 
 
-class TAMISC_API iDataTablePanel: public iDataPanelFrame {
+class TA_API iDataTablePanel: public iDataPanelFrame {
   Q_OBJECT
 INHERITED(iDataPanelFrame)
 public:

@@ -621,6 +621,72 @@ SoMFVec3f& SoFrame::vertex() {
   return ((SoVertexProperty*)vertexProperty.getValue())->vertex;
 }
 
+
+
+//////////////////////////
+//   SoRect		//
+//////////////////////////
+
+int32_t SoRect_numVtx[1] = {
+  6
+};
+
+SO_NODE_SOURCE(SoRect);
+
+void SoRect::initClass()
+{
+  SO_NODE_INIT_CLASS(SoRect, SoTriangleStripSet, "SoTriangleStripSet");
+}
+
+SoRect::SoRect(Orientation ori, float in) {
+  SO_NODE_CONSTRUCTOR(SoRect);
+
+  vertexProperty.setValue(new SoVertexProperty); // note: vp refs/unrefs automatically
+  width = height = 1.0f;
+
+  vertex().setNum(6);
+  this->numVertices.setValues(0, 1, SoRect_numVtx);
+  normal().setNum(1);
+  ((SoVertexProperty*)vertexProperty.getValue())->normalBinding.setValue(SoNormalBinding::PER_PART);
+  render();
+}
+
+SoMFVec3f& SoRect::normal() {
+  return ((SoVertexProperty*)vertexProperty.getValue())->normal;
+}
+
+void SoRect::render() {
+  float w2 = width * 0.5f; // x
+  float h2 = height * 0.5f; // y
+  SoMFVec3f& p = vertex();
+  SoMFVec3f& n = normal();
+  int i = 0; // vertex index
+  int j = 0; // normal index
+  p.startEditing();
+  n.startEditing();
+    // front
+    n.set1Value(j++, 0, 0, 1);
+    p.set1Value(i++,-w2, 0,  h2);
+    p.set1Value(i++, w2, 0,  h2);
+    p.set1Value(i++, w2, 0, -h2);
+    p.set1Value(i++,-w2, 0,  h2);
+    p.set1Value(i++,-w2, 0, -h2);
+    p.set1Value(i++, w2, 0, -h2);
+  n.finishEditing();
+  p.finishEditing();
+
+}
+
+void SoRect::setDimensions(float wd, float ht) {
+  if ((width == wd) && (height == ht)) return;
+  width = wd;  height = ht;
+  render();
+}
+
+SoMFVec3f& SoRect::vertex() {
+  return ((SoVertexProperty*)vertexProperty.getValue())->vertex;
+}
+
 //////////////////////////
 //   SoImageEx		//
 //////////////////////////

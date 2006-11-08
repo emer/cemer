@@ -651,6 +651,9 @@ public:
   virtual void		Help();
   // #MENU #CAT_Display get help on using this object
 
+  virtual void		BrowseMe();
+  // #MENU #MENU_CONTEXT #CAT_Display show this object in its own browser 
+  
   static bool	UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* new_par,
 					  bool null_not_found = true);
   // #IGNORE update pointer if it used to point to an object under old_par parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.  used for updating after a copy operation: returns true if updated

@@ -794,11 +794,31 @@ void PrjnView::Reset_impl() {
   (ex. "act", "r.wt", etc.), the scale system is keyed to this value.
 
 */
-NetView* NetView::New(T3DataViewFrame* viewer, Network* net) {
+NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
+  if (!net) return NULL;
+  if (fr) {
+    //note: even if fr specified, need to insure it is right proj for object
+    if (!net->SameScope(fr, &TA_taProject)) {
+      taMisc::Error("The viewer you specified is not in the same Project as the net.");
+      return NULL;
+    }
+    // check if already viewing this obj there, warn user
+    T3DataView* dv = fr->FindRootViewOfData(net);
+    if (dv) {
+      if (taMisc::Choice("This network is already shown in that frame -- would you like"
+          " to show it in a new frame?", "&Ok", "&Cancel") != 0) return NULL;
+      fr = NULL; // make a new one
+    }
+  } 
+  if (!fr) {
+    fr = T3DataViewer::GetBlankOrNewT3DataViewFrame(net);
+  }
+  if (!fr) return NULL; // unexpected...
+  
   // create NetView
   NetView* nv = new NetView();
-  nv->SetData(net);//obs net->AddDataView(nv);
-  viewer->AddView(nv);
+  nv->SetData(net);
+  fr->AddView(nv);
   return nv;
 }
 

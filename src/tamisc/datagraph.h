@@ -81,7 +81,7 @@ class GraphSpec;
 
 
 
-class TAMISC_API GraphLineSpec: public taDataView {
+class TA_API GraphLineSpec: public taDataView {
   // specifies one graph line
 INHERITED(taDataView)
 public:
@@ -163,7 +163,7 @@ private:
   void	Destroy();
 };
 
-class TAMISC_API GraphLineSpec_List: public DataView_List {
+class TA_API GraphLineSpec_List: public DataView_List {
 INHERITED(DataView_List)
 public:
 
@@ -175,7 +175,7 @@ private:
 };
 
 
-class TAMISC_API AxisSpec: public taDataView { // #VIRT_BASE specs of the axis on a graph, name is cloned from primary col
+class TA_API AxisSpec: public taDataView { // #VIRT_BASE specs of the axis on a graph, name is cloned from primary col
 INHERITED(taDataView)
 public:
   enum Axis {X, Y, Z}; // invariant, used internally
@@ -215,7 +215,7 @@ private:
   void			Destroy();
 };
 
-class TAMISC_API XAxisSpec: public AxisSpec { // specs of the X axis on a graph, name is cloned from primary col
+class TA_API XAxisSpec: public AxisSpec { // specs of the X axis on a graph, name is cloned from primary col
 INHERITED(AxisSpec)
 public:
   enum XAxisType { // source of data for the X axis; determines ranges, etc.
@@ -236,7 +236,7 @@ private:
   void			Destroy() {}
 };
 
-class TAMISC_API YAxisSpec: public AxisSpec { // specs of the Y axis on a graph, name is cloned from primary col
+class TA_API YAxisSpec: public AxisSpec { // specs of the Y axis on a graph, name is cloned from primary col
 INHERITED(AxisSpec)
 friend class YAxisSpec_List;
 public:
@@ -255,7 +255,7 @@ private:
   void			Destroy() {}
 };
 
-class TAMISC_API ZAxisSpec: public AxisSpec { // specs of the Z axis on a graph, name is cloned from primary col
+class TA_API ZAxisSpec: public AxisSpec { // specs of the Z axis on a graph, name is cloned from primary col
 INHERITED(AxisSpec)
 public:
   int			n_traces;	// #READ_ONLY for STACK_TRACES and STACK_LINES, # of traces
@@ -274,7 +274,7 @@ private:
 };
 
 
-class TAMISC_API YAxisSpec_List: public DataView_List {
+class TA_API YAxisSpec_List: public DataView_List {
 INHERITED(DataView_List)
 public:
   YAxisSpec*		FindBySpec(const GraphLineSpec* spec, int* idx = NULL);
@@ -287,7 +287,7 @@ private:
 };
 
 
-class TAMISC_API GraphletSpec: public YAxisSpec_List {
+class TA_API GraphletSpec: public YAxisSpec_List {
   // link list of axes, plus additional per-graphlet info
 INHERITED(YAxisSpec_List)
 public:
@@ -299,7 +299,7 @@ private:
   void			Destroy() {}
 };
 
-class TAMISC_API GraphletSpec_List: public taList<GraphletSpec> {
+class TA_API GraphletSpec_List: public taList<GraphletSpec> {
 INHERITED(taList<GraphletSpec>)
 public:
   TA_BASEFUNS(GraphletSpec_List)
@@ -310,7 +310,7 @@ private:
 };
 
 
-class TAMISC_API GraphSpec : public DataTableViewSpec {
+class TA_API GraphSpec : public DataTableViewSpec {
   // controls display of datatable in a graph format
 INHERITED(DataTableViewSpec)
 public:
@@ -439,7 +439,7 @@ protected:
 };
 
 /*
-class TAMISC_API Graph: public taNBase {
+class TA_API Graph: public taNBase {
   // represents one entire graph object, including axes
 #ifndef __MAKETA__
 typedef taNBase inherited;

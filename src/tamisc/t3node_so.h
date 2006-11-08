@@ -20,7 +20,7 @@
 #include "igeometry.h"
 #include "ta_matrix.h"
 
-#include "tamisc_def.h"
+#include "ta_def.h"
 
 #ifdef __MAKETA__
 //dummy defines
@@ -76,7 +76,7 @@ class SoUnits; // #IGNORE
 // yet **another** color class!! but SbColor is not very convenient or intuitive, so
 // we use this to facilitate api simplification
 
-class TAMISC_API T3Color { // ##NO_INSTANCE ##NO_TOKENS
+class TA_API T3Color { // ##NO_INSTANCE ##NO_TOKENS
 public:
 #ifdef __MAKETA__
   float 	r;
@@ -206,7 +206,7 @@ NOTE: T3Node may be changed to look like this -- this change will be transparent
 
 
 */
-class TAMISC_API T3Node: public SoSeparator {
+class TA_API T3Node: public SoSeparator {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
@@ -265,7 +265,7 @@ private:
   SoMaterial*		material_; // #IGNORE NOTE: must be created in subclass init
 };
 
-class TAMISC_API T3NodeLeaf: public T3Node {
+class TA_API T3NodeLeaf: public T3Node {
 // ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef T3Node inherited;
@@ -288,7 +288,7 @@ protected:
 };
 
 
-class TAMISC_API T3NodeParent: public T3Node {
+class TA_API T3NodeParent: public T3Node {
 // ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef T3Node inherited;
@@ -315,7 +315,7 @@ private:
   SoSeparator*		childNodes_; // #IGNORE
 };
 
-class TAMISC_API SoFrame: public SoTriangleStripSet { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
+class TA_API SoFrame: public SoTriangleStripSet { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
 #ifndef __MAKETA__
 typedef SoTriangleStripSet inherited;
 
@@ -351,7 +351,32 @@ protected:
   void 		renderV(); // #IGNORE
 };
 
-class TAMISC_API SoImageEx: public SoSeparator { 
+class TA_API SoRect: public SoTriangleStripSet { // ##NO_INSTANCE ##NO_TOKENS  2d rectangle, primarily for images, table images, etc.
+#ifndef __MAKETA__
+typedef SoTriangleStripSet inherited;
+
+  SO_NODE_HEADER(SoRect);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+
+  float		width;
+  float		height;
+
+  SoMFVec3f& 	vertex(); //  #IGNORE accessor shortcut for vertices
+  SoMFVec3f& 	normal(); // #IGNORE accessor shortcut for normals
+
+  void		setDimensions(float wd, float ht);
+  SoRect();
+
+protected:
+  const char*  	getFileFormatName() const {return SoTriangleStripSet::getFileFormatName();} // override
+  void 		render(); // #IGNORE
+  void 		renderH(); // #IGNORE
+  void 		renderV(); // #IGNORE
+};
+
+class TA_API SoImageEx: public SoSeparator { 
 // ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer -- height will always be 1; width will then be w/h ratio
 #ifndef __MAKETA__
 typedef SoSeparator inherited;

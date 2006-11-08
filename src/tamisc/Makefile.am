@@ -7,67 +7,9 @@ VPATH = @srcdir@
 
 if TA_GUI
 
-TAHEADS_GUI =\
-	@abs_srcdir@/colorbar_qt.h \
-	@abs_srcdir@/../taiqtso/safeptr_so.h \
-	@abs_srcdir@/t3node_so.h \
-	@abs_srcdir@/t3viewer.h \
-	@abs_srcdir@/colorbar_so.h \
-	@abs_srcdir@/datatable_qtso.h \
-	@abs_srcdir@/datatable_so.h 
-
-HEADS_GUI =\
-	t3node_so.h \
-	t3viewer.h \
-	colorbar_qt.h \
-	colorbar_so.h \
-	datatable_qtso.h \
-	datatable_so.h
-
-SRCS_GUI =\
-	t3node_so.cpp \
-	t3viewer.cpp \
-	t3viewer.moc.cpp \
-	colorbar_qt.cpp \
-	colorbar_qt.moc.cpp \
-	colorbar_so.cpp \
-	datatable_qtso.cpp \
-	datatable_qtso.moc.cpp \
-	datatable_so.cpp
 
 endif
 
-TAHEADS =\
-	@abs_srcdir@/../ta/ta_TA_type.h \
-	@abs_srcdir@/tatime.h \
-	@abs_srcdir@/minmax.h \
-	@abs_srcdir@/colorscale.h \
-	@abs_srcdir@/datatable.h \
-	@abs_srcdir@/fun_lookup.h \
-	@abs_srcdir@/ta_data_extras.h \
-	$(TAHEADS_GUI) \
-	@abs_srcdir@/tamisc_maketa_defs.h \
-	@abs_srcdir@/tamisc_stdef.h
-
-HEADS =\
-	tamisc_stdef.h \
-	tatime.h \
-	minmax.h \
-	colorscale.h \
-	datatable.h \
-	fun_lookup.h \
-	ta_data_extras.h \
-	$(HEADS_GUI)
-
-SRCS =\
-	tatime.cpp \
-	minmax.cpp \
-	colorscale.cpp \
-	datatable.cpp \
-	fun_lookup.cpp \
-	ta_data_extras.cpp \
-	$(SRCS_GUI) \
-	tamisc_ti.cpp
 
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am

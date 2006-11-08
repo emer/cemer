@@ -1497,7 +1497,7 @@ void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
   grid_margin_pts = 4.0f;
   grid_line_pts = 3.0f;
-  SetMetricsModel_impl(MEDIUM_BLOCKS);
+  SetMatSizeModel_impl(SMALL_BLOCKS);
 }
 
 void GridTableViewSpec::Destroy() {
@@ -1525,7 +1525,7 @@ void GridTableViewSpec::UpdateAfterEdit_impl(){
   if (mat_font_scale < 0.1f) mat_font_scale = 0.1f;
   if (pixel_pts < 0.1f) pixel_pts = 0.1f;
   // now, unconditionally apply any model
-  SetMetricsModel_impl(metrics_model);
+  SetMatSizeModel_impl(mat_size_model);
 }
 
 void GridTableViewSpec::DataDataChanged_impl(int dcr, void* op1, void* op2) {
@@ -1570,16 +1570,16 @@ void GridTableViewSpec::GetMinMaxScale(MinMax& mm, bool first) {
   mm.max = 1.0f;
 }
 
-void GridTableViewSpec::SetMetricsModel_impl(MetricsModel mm){
-  metrics_model = mm;
+void GridTableViewSpec::SetMatSizeModel_impl(MatSizeModel mm){
+  mat_size_model = mm;
   switch (mm) {
   case CUSTOM_METRICS: break;
   case SMALL_BLOCKS:
-    mat_block_pts = 4.0f;
-    mat_border_pts = 1.0f;
+    mat_block_pts = 2.0f;
+    mat_border_pts = 0.5f;
     mat_sep_pts = 2.0f;
     mat_font_scale = 0.5f;
-    pixel_pts = 1.0f;
+    pixel_pts = 0.5f;
     break;
   case MEDIUM_BLOCKS:
     mat_block_pts = 8.0f;
@@ -1591,7 +1591,7 @@ void GridTableViewSpec::SetMetricsModel_impl(MetricsModel mm){
   case LARGE_BLOCKS:
     mat_block_pts = 16.0f;
     mat_border_pts = 4.0f;
-    mat_sep_pts = 4.0f;
+    mat_sep_pts = 6.0f;
     mat_font_scale = 0.8f;
     pixel_pts = 4.0f;
     break;

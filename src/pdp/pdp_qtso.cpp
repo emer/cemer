@@ -113,7 +113,7 @@ taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
 }
 
 void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
-  IDataHost* host_ = dat->host;
+//nn  IDataHost* host_ = dat->host;
   if (no_check_box) {
     if (m_sub_types != NULL)
       sub_types()->GetImage(dat,base);
@@ -143,7 +143,7 @@ void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
 }
 
 void taiSpecMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-  IDataHost* host_ = dat->host;
+//nn  IDataHost* host_ = dat->host;
   if (no_check_box) {
     if (m_sub_types != NULL)
       sub_types()->GetMbrValue(dat, base, first_diff);

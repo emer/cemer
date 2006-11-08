@@ -18,7 +18,7 @@
 #ifndef DATATABLE_SO_H
 #define DATATABLE_SO_H
 
-#include "tamisc_def.h"
+#include "ta_def.h"
 #include "t3node_so.h"
 
 // externals
@@ -45,7 +45,7 @@ class T3GraphViewNode; //
         +grid: SoGroup -- for grid lines (thus, inherits frame material)
 */
 
-class TAMISC_API T3TableViewNode: public T3NodeParent {
+class TA_API T3TableViewNode: public T3NodeParent {
 // ********** OBSOLETE ******************
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
@@ -96,7 +96,7 @@ private:
        
 */
 
-class TAMISC_API T3GridViewNode: public T3NodeLeaf {
+class TA_API T3GridViewNode: public T3NodeLeaf {
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
@@ -145,7 +145,7 @@ protected:
           body: SoGroup
 */
 
-class TAMISC_API T3GraphViewNode: public T3NodeParent {
+class TA_API T3GraphViewNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 

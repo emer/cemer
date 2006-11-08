@@ -21,13 +21,11 @@
 #define T3VIEWER_H
 
 #include "ta_group.h"
-//#include "ta_qt.h"
 #include "ta_qtviewer.h"
-//#include "ta_qtdata_def.h"
-#include "ta_TA_type.h"
 #include "t3node_so.h"
-#include "tamisc_def.h"
-#include "tamisc_TA_type.h"
+#include "ta_def.h"
+
+#include "ta_TA_type.h"
 
 #include "igeometry.h"
 #include "safeptr_so.h"
@@ -62,7 +60,7 @@ class T3DataViewer;
 
 SoPtr_Of(T3Node);
 
-class TAMISC_API t3Misc {
+class TA_API t3Misc {
 // global params and funcs for T3 viewing system
 public:
   static const float	pts_per_geom; // #DEF_72 chars*pt size / so unit
@@ -75,7 +73,7 @@ public:
 //   T3DataView_List	//
 //////////////////////////
 
-class TAMISC_API T3DataView_List: public DataView_List { // ##NO_TOKENS
+class TA_API T3DataView_List: public DataView_List { // ##NO_TOKENS
 INHERITED(DataView_List)
 friend class T3DataView;
 public:
@@ -96,7 +94,7 @@ private:
 
 */
 
-class TAMISC_API T3DataView: public taDataView, public virtual ISelectable {
+class TA_API T3DataView: public taDataView, public virtual ISelectable {
   // ##NO_TOKENS base class for 3d-based DataView objects
 #ifndef __MAKETA__
   typedef taDataView	inherited;
@@ -227,7 +225,7 @@ private:
 //   T3DataView_PtrList	//
 //////////////////////////
 
-class TAMISC_API T3DataView_PtrList: public taPtrList<T3DataView> { // for selection lists, aux lists, etc.
+class TA_API T3DataView_PtrList: public taPtrList<T3DataView> { // for selection lists, aux lists, etc.
 #ifndef __MAKETA__
 typedef taPtrList<T3DataView> inherited;
 #endif
@@ -245,7 +243,7 @@ protected:
 //   T3DataViewPar	//
 //////////////////////////
 
-class TAMISC_API T3DataViewPar: public T3DataView { // T3DataView that has child T3DataView's
+class TA_API T3DataViewPar: public T3DataView { // T3DataView that has child T3DataView's
 #ifndef __MAKETA__
 typedef T3DataView inherited;
 #endif
@@ -279,7 +277,7 @@ private:
   void			Destroy() {CutLinks();}
 };
 
-class TAMISC_API T3DataViewRoot: public T3DataViewPar { // Root item for a viewwidget type
+class TA_API T3DataViewRoot: public T3DataViewPar { // Root item for a viewwidget type
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
 #endif
@@ -306,7 +304,7 @@ private:
 //   iSoSelectionEvent	//
 //////////////////////////
 
-class TAMISC_API iSoSelectionEvent { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS note: this is not a Qt event
+class TA_API iSoSelectionEvent { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS note: this is not a Qt event
 public:
   bool 			is_selected;
   const SoPath*		path;
@@ -325,7 +323,7 @@ public:
     SoSeparator* items -- the actual items get rendered
 
 */
-class TAMISC_API iT3ViewspaceWidget: public QWidget, public ISelectableHost { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
+class TA_API iT3ViewspaceWidget: public QWidget, public ISelectableHost { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS widget that encapsulates an Inventor viewer; adds context menu handling, and optional scroll bars
   Q_OBJECT
 #ifndef __MAKETA__
 typedef QWidget inherited;
@@ -396,7 +394,7 @@ private:
 //   iT3DataViewFrame	//
 //////////////////////////
 
-class TAMISC_API iT3DataViewFrame : public QWidget, public IDataViewWidget {
+class TA_API iT3DataViewFrame : public QWidget, public IDataViewWidget {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS panel widget that contains 3D data views
   Q_OBJECT
 INHERITED(QWidget)
@@ -441,7 +439,7 @@ private:
 };
 
 
-class TAMISC_API T3DataViewFrame : public DataViewer {
+class TA_API T3DataViewFrame : public DataViewer {
   // top-level taDataViewer object that contains one 3D data view of multiple objects
 INHERITED(DataViewer)
 friend class T3DataView;
@@ -480,7 +478,7 @@ private:
   void			Destroy();
 };
 
-class TAMISC_API T3DataViewFrame_List: public DataViewer_List { // #NO_TOKENS
+class TA_API T3DataViewFrame_List: public DataViewer_List { // #NO_TOKENS
 INHERITED(DataViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(T3DataViewFrame_List, DataViewer_List, T3DataViewFrame)
@@ -494,7 +492,7 @@ private:
 //   iT3DataViewer	//
 //////////////////////////
 
-class TAMISC_API iT3DataViewer : public iFrameViewer {
+class TA_API iT3DataViewer : public iFrameViewer {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS panel widget that contains 3D data views
   Q_OBJECT
 INHERITED(iFrameViewer)
@@ -518,17 +516,21 @@ private:
 };
 
 
-class TAMISC_API T3DataViewer : public FrameViewer {
+class TA_API T3DataViewer : public FrameViewer {
   // top-level taDataViewer object that contains one 3D data view of multiple objects
 INHERITED(FrameViewer)
 friend class T3DataView;
 public:
+  static T3DataViewFrame* GetBlankOrNewT3DataViewFrame(taBase* obj);
+    // gets the first blank, or a new, frame, in the default proj browser for the obj -- used by all the view-creating routines for various viewable objs (tables, nets, etc.)
+    
   T3DataViewFrame_List	frames; // 
 
   inline iT3DataViewer*	widget() {return (iT3DataViewer*)inherited::widget();} // lex override
 
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
+  virtual T3DataViewFrame* FirstEmptyT3DataViewFrame(); // find the first frame with no contents (to avoid making a new one)
   virtual T3DataViewFrame* NewT3DataViewFrame(); // #MENU #MENU_ON_Object #MENU_CONTEXT create and map a new frame
   void			FrameChanged(T3DataViewFrame* frame); 
     // called by frame if changes, we update names

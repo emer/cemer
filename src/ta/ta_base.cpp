@@ -563,6 +563,17 @@ void taBase::BatchUpdate(bool begin, bool struc) {
   }
 }
 
+void taBase::BrowseMe() {
+  // try to determine whether this is member obj, or not
+  taBase* own = GetOwner();
+  MemberDef* md = NULL;
+  if (own) {
+    md = own->FindMember((void*)this);
+  }
+  MainWindowViewer* wv = MainWindowViewer::NewBrowser(this, md);
+  if (wv) wv->ViewWindow();
+}
+
 void taBase::CallFun(const String& fun_name) {
 #ifdef TA_GUI
   if(!taMisc::gui_active) return;

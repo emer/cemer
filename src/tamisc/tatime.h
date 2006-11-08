@@ -17,10 +17,9 @@
 #define tatime_h
 
 #include "ta_base.h"
-#include "tamisc_def.h"
-#include "tamisc_TA_type.h"
+#include "ta_TA_type.h"
 
-class TAMISC_API taTime : public taBase {
+class TA_API taTime : public taBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER raw time information
 INHERITED(taBase)
 public:
@@ -48,7 +47,7 @@ public:
   TA_BASEFUNS(taTime);
 };
 
-class TAMISC_API TimeUsed : public taNBase {
+class TA_API TimeUsed : public taNBase {
   // #INLINE #INLINE_DUMP computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
 INHERITED(taNBase)
 public:

@@ -50,7 +50,7 @@ class VCScaleBar; // #IGNORE
 //   Bar		//
 //////////////////////////
 
-class Bar : public QWidget { // #IGNORE Basic properties of a bar
+class TA_API Bar : public QWidget { // #IGNORE Basic properties of a bar
 #ifndef __MAKETA__
 typedef QWidget inherited;
 #endif
@@ -70,7 +70,7 @@ public:
 //   HCBar		//
 //////////////////////////
 
-class HCBar : public Bar { // Horizontal ColorBlocks bar
+class TA_API HCBar : public Bar { // Horizontal ColorBlocks bar
 #ifndef __MAKETA__
 typedef Bar inherited;
 #endif
@@ -86,7 +86,7 @@ protected:
 //   VCBar		//
 //////////////////////////
 
-class VCBar : public Bar { // #IGNORE Vertical ColorBlocks Bar
+class TA_API VCBar : public Bar { // #IGNORE Vertical ColorBlocks Bar
 #ifndef __MAKETA__
 typedef Bar inherited;
 #endif
@@ -125,7 +125,7 @@ public:
 
 */
 
-class TAMISC_API ColorPad : public QWidget { // #IGNORE color pads for palletes
+class TA_API ColorPad : public QWidget { // #IGNORE color pads for palletes
 #ifndef __MAKETA__
 typedef QWidget inherited;
 #endif
@@ -161,7 +161,7 @@ public:
 };
 
 
-class TAMISC_API ScaleBar : public QWidget { // #IGNORE  Scalebar
+class TA_API ScaleBar : public QWidget { // #IGNORE  Scalebar
 #ifndef __MAKETA__
 typedef QWidget inherited;
 #endif
@@ -250,7 +250,7 @@ private:
 };
 
 
-class TAMISC_API HCScaleBar : public ScaleBar { //  scale bar with horizontal color blocks
+class TA_API HCScaleBar : public ScaleBar { //  scale bar with horizontal color blocks
 #ifndef __MAKETA__
 typedef ScaleBar inherited;
 #endif
@@ -264,7 +264,7 @@ private:
 };
 
 
-class TAMISC_API VCScaleBar : public ScaleBar {//  #IGNORE scale bar with vertical color blocks
+class TA_API VCScaleBar : public ScaleBar {//  #IGNORE scale bar with vertical color blocks
 #ifndef __MAKETA__
 typedef ScaleBar inherited;
 #endif
@@ -277,7 +277,7 @@ private:
   void		Init(ColorScale* c);
 };
 
-class TAMISC_API ColorMatrixGrid: QWidget {
+class TA_API ColorMatrixGrid: QWidget {
   // a grid for visually depicting and/or editing grid data (usually 2d)
 INHERITED(QWidget)
   Q_OBJECT
@@ -297,7 +297,7 @@ private:
 };
 
 /*TODO
-class TAMISC_API PScaleBar : public ScaleBar {
+class TA_API PScaleBar : public ScaleBar {
   //  Scalebar with a pallete
 public:
 
@@ -327,7 +327,7 @@ public:
   float GetSelectedVal();
 };
 
-class TAMISC_API HPScaleBar : public PScaleBar {
+class TA_API HPScaleBar : public PScaleBar {
   //  Horizontal Scalebar with a pallete
 public:
 
@@ -341,7 +341,7 @@ public:
 	     int b=16,int h=16, int w=16);
 };
 
-class TAMISC_API VPScaleBar : public PScaleBar {
+class TA_API VPScaleBar : public PScaleBar {
   //  Vertical Scalebar with a pallete
 public:
   virtual DAStepper* GenEnlarger();
@@ -355,7 +355,7 @@ public:
 };
 
 
-class TAMISC_API PadButton : public ivActiveHandler {
+class TA_API PadButton : public ivActiveHandler {
 public:
   ColorPad* 	cp;
 
@@ -366,7 +366,7 @@ public:
 	    ColorPad::BlockFill sh=ColorPad::COLOR, int w=8,int h=8);
 };
 
-class TAMISC_API PaintPad : public ivInputHandler {
+class TA_API PaintPad : public ivInputHandler {
 public:
   ColorPad* pb;
   void* obj;			    // object to pass to change_notify
@@ -380,7 +380,7 @@ public:
   PaintPad(ColorPad* c,void* o, void (*cn)(void*));
 };
 
-class TAMISC_API DynamicBackground : public ivMonoGlyph {
+class TA_API DynamicBackground : public ivMonoGlyph {
 public:
   DynamicBackground(ivGlyph* body, const iColor*);
   virtual ~DynamicBackground();
@@ -393,7 +393,7 @@ protected:
 };
 
 
-class TAMISC_API CachePatch_Impl {
+class TA_API CachePatch_Impl {
 public:
   enum FakeLevel {
     FIRST,
@@ -407,7 +407,7 @@ public:
   ~CachePatch_Impl(){};
 };
 
-class TAMISC_API CachePatch : public ivPatch {
+class TA_API CachePatch : public ivPatch {
 public:
   void request(ivRequisition&) const;
   CachePatch_Impl *impl;

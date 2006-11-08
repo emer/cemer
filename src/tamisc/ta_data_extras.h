@@ -20,12 +20,11 @@
 #ifndef TA_DATA_EXTRAS_H
 #define TA_DATA_EXTRAS_H
 
-#include "tamisc_def.h"
 #include "ta_data.h"
 #include "ta_geometry.h"
-#include "tamisc_TA_type.h"
+#include "ta_TA_type.h"
 
-class TAMISC_API DirectoryCatalog: public DataBlock_Idx {
+class TA_API DirectoryCatalog: public DataBlock_Idx {
   // #INSTANCE a DirectoryCatalog provides a list of files in a directory
 INHERITED(DataBlock_Idx)
 public:
@@ -58,7 +57,7 @@ private:
 
 
 
-class TAMISC_API ImageReader: public DataBlock {
+class TA_API ImageReader: public DataBlock {
   // #INSTANCE provides ability to read image files, sequential only
 INHERITED(DataBlock)
 public:

@@ -7,6 +7,34 @@ VPATH = @srcdir@
 
 if TA_GUI
 
+TAHEADS_TAMISC_GUI =\
+	@abs_srcdir@/colorbar_qt.h \
+	@abs_srcdir@/../taiqtso/safeptr_so.h \
+	@abs_srcdir@/t3node_so.h \
+	@abs_srcdir@/t3viewer.h \
+	@abs_srcdir@/colorbar_so.h \
+	@abs_srcdir@/datatable_qtso.h \
+	@abs_srcdir@/datatable_so.h 
+
+HEADS_TAMISC_GUI =\
+	t3node_so.h \
+	t3viewer.h \
+	colorbar_qt.h \
+	colorbar_so.h \
+	datatable_qtso.h \
+	datatable_so.h
+
+SRCS_TAMISC_GUI =\
+	t3node_so.cpp \
+	t3viewer.cpp \
+	t3viewer.moc.cpp \
+	colorbar_qt.cpp \
+	colorbar_qt.moc.cpp \
+	colorbar_so.cpp \
+	datatable_qtso.cpp \
+	datatable_qtso.moc.cpp \
+	datatable_so.cpp
+
 TAHEADS_GUI =\
 	@abs_srcdir@/ta_plugin.h \
 	@abs_srcdir@/ta_qt.h \
@@ -21,10 +49,8 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qtclassbrowse.h \
 	@abs_srcdir@/ta_qtgroup.h \
 	@abs_srcdir@/ta_seledit.h \
-	@abs_srcdir@/ta_program_qt.h \
-	@abs_srcdir@/../taiqtso/safeptr_so.h \
-	@abs_srcdir@/../tamisc/t3node_so.h \
-	@abs_srcdir@/../tamisc/t3viewer.h
+	@abs_srcdir@/ta_program_qt.h 
+	
 HEADS_GUI =\
 	ta_plugin.h \
 	ta_qt.h \
@@ -70,6 +96,30 @@ SRCS_GUI =\
 
 endif
 
+TAHEADS_TAMISC =\
+	@abs_srcdir@/tatime.h \
+	@abs_srcdir@/minmax.h \
+	@abs_srcdir@/colorscale.h \
+	@abs_srcdir@/datatable.h \
+	@abs_srcdir@/fun_lookup.h \
+	@abs_srcdir@/ta_data_extras.h \
+
+HEADS_TAMISC =\
+	tatime.h \
+	minmax.h \
+	colorscale.h \
+	datatable.h \
+	fun_lookup.h \
+	ta_data_extras.h
+
+SRCS_TAMISC =\
+	tatime.cpp \
+	minmax.cpp \
+	colorscale.cpp \
+	datatable.cpp \
+	fun_lookup.cpp \
+	ta_data_extras.cpp 
+
 TAHEADS =\
 	@abs_srcdir@/../taiqtso/igeometry.h \
 	@abs_srcdir@/ios-g++-3.1/streambuf.h \
@@ -107,7 +157,9 @@ TAHEADS =\
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
 	@abs_srcdir@/ta_project.h \
-	$(TAHEADS_GUI)
+	$(TAHEADS_GUI) \
+	$(TAHEADS_TAMISC) \
+	$(TAHEADS_TAMISC_GUI)
 
 HEADS =\
 	ta_def.h \
@@ -142,7 +194,9 @@ HEADS =\
 	ta_dump.h \
 	ta_defaults.h \
 	ta_project.h \
-	$(HEADS_GUI)
+	$(HEADS_GUI) \
+	$(HEADS_TAMISC) \
+	$(HEADS_TAMISC_GUI)
 
 SRCS =\
 	ta_imgproc.cpp \
@@ -179,7 +233,9 @@ SRCS =\
 	ta_project.cpp \
 	$(SRCS_GUI) \
 	ta_qrc.cpp \
-	ta_ti.cpp
+	ta_ti.cpp \
+	$(SRCS_TAMISC_GUI) \
+	$(SRCS_TAMISC)
 
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am
@@ -199,8 +255,7 @@ libta@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
 	-I@abs_top_builddir@ \
 	-I@srcdir@ \
 	-I@srcdir@/../css \
-	-I@srcdir@/../taiqtso \
-	-I@srcdir@/../tamisc
+	-I@srcdir@/../taiqtso 
 
 libta@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 

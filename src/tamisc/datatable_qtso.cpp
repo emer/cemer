@@ -63,25 +63,11 @@
 
 #define DIST(x,y) sqrt((double) ((x * x) + (y*y)))
 
-void DataTable::NewGridView(T3DataViewFrame* fr)
-{
-  DataTable* dt = this;
-  //note: even if fr specified, need to insure it is right proj for table
-  taProject* proj = (taProject*)dt->GetOwner(&TA_taProject);
-  
-  if (fr) {
-    if (proj != (taProject*)fr->GetOwner(&TA_taProject)) {
-      taMisc::Error("The viewer you specified is not in the same Project as the table.");
-      return;
-    }
-  } else {
-    MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
-    if (!vw) return; // shouldn't happen
-    T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
-    if (!t3vw) return; // shouldn't happen
-    fr = t3vw->NewT3DataViewFrame();
-  }
-  GridTableView::NewGridTableView(dt, fr); // discard result
+void DataTable::ShowInViewer(T3DataViewFrame* fr) {
+  GridTableView* vw = GridTableView::New(this, fr);
+  if (!vw) return;
+//  vw->BuildAll();
+  fr->Render();
 }
 
 
@@ -90,14 +76,9 @@ void DataTable::NewGridView(T3DataViewFrame* fr)
 //////////////////////////
 
 
-// called virtually, after construct
-void TableView::InitNew(DataTable* dt, T3DataViewFrame* fr) {
-  fr->AddView(this);
+void TableView::setDataTable(DataTable* dt) {
   viewSpecBase()->setDataTable(dt);
-  if (fr->isMapped())
-    fr->Render();
 }
-
 
 void TableView::Initialize() {
   updating = 0;
@@ -181,7 +162,7 @@ void TableView::ClearData() {
 
 void TableView::ClearViewRange() {
   view_range.min = 0;
-  view_range.max = -1;
+  view_range.max = -1; // gets adjusted later
 }
 
 void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
@@ -237,6 +218,11 @@ void TableView::InitDisplay(){
     m_rows = data_table->rows;
   else m_rows = 0;
   InitDisplay_impl();
+}
+
+void TableView::InitView() {
+  ClearViewRange();
+  UpdateView();
 }
 
 void TableView::InitViewSpec() {
@@ -349,6 +335,7 @@ void TableView::View_At(int start) {
     start = rows - 1;
   if (start < 0)
     start = 0;
+  view_range.min = start;
   MakeViewRangeValid();
   ViewRangeChanged();
 }
@@ -480,13 +467,32 @@ float GridTableViewSpec::textHeight() const {
   return font.pointSize * t3Misc::char_ht_to_wd_pts * t3Misc::geoms_per_pt;
 }
 
-GridTableView* GridTableView::NewGridTableView(DataTable* dt,
-    T3DataViewFrame* fr)
+GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr)
 {
   if (!dt) return NULL;
-  GridTableView* rval = new GridTableView;
-  rval->InitNew(dt, fr);
-  return rval;
+  if (fr) {
+    //note: even if fr specified, need to insure it is right proj for object
+    if (!dt->SameScope(fr, &TA_taProject)) {
+      taMisc::Error("The viewer you specified is not in the same Project as the table.");
+      return NULL;
+    }
+    // check if already viewing this obj there, warn user
+    T3DataView* dv = fr->FindRootViewOfData(dt);
+    if (dv) {
+      if (taMisc::Choice("This table is already shown in that frame -- would you like"
+          " to show it in a new frame?", "&Ok", "&Cancel") != 0) return NULL;
+      fr = NULL; // make a new one
+    }
+  } 
+  if (!fr) {
+    fr = T3DataViewer::GetBlankOrNewT3DataViewFrame(dt);
+  }
+  if (!fr) return NULL; // unexpected...
+  
+  GridTableView* vw = new GridTableView;
+  fr->AddView(vw);
+  vw->setDataTable(dt);
+  return vw;
 }
 
 void GridTableView::Initialize() {
@@ -559,25 +565,21 @@ void GridTableView::AllBlockText_impl(bool on) {
 
 void GridTableView::CalcColMetrics() {
   //note: col_range.min is usually set to a visible col
-  if (col_bufsz == 0) {
-    col_range.max = col_range.min - 1;
-    return;
-  } else 
-    col_range.max = col_range.min;
   GridTableViewSpec* tvs = viewSpec();
   float gr_mg_sz = view_spec.gridMarginSize();
   float gr_ln_sz = (grid_on) ? view_spec.gridLineSize() : 0.0f;
   float wd_tot = 0.0f;
   float act_wd = stage.width() - row_num_wd_ex;
   // note: we display at least one col, even if it spills over size
-  while (col_range.max < (tvs->col_specs.size - 1)) { 
-    GridColViewSpec* cvs = tvs->colSpec(col_range.max);
-    if (cvs->isVisible()) {
-      wd_tot += colWidth(col_range.max) + (2 * gr_mg_sz) + gr_ln_sz;
-      if (wd_tot > act_wd) break;
-    }
-    col_range.max++;
+  int last_col = col_range.min;
+  for (int col = col_range.min; col < tvs->col_specs.size; ++col) { 
+    GridColViewSpec* cvs = tvs->colSpec(col);
+    if (!cvs->isVisible()) continue;
+    wd_tot += colWidth(col) + (2 * gr_mg_sz) + gr_ln_sz;
+    if (wd_tot > act_wd) break;
+    last_col = col;
   }
+  col_range.max = last_col;
 }
 
 void GridTableView::CalcViewMetrics() {
@@ -664,7 +666,7 @@ void GridTableView::DataChange_NewRows(int rows_added) {
   }
   // scroll down to end of new data
   view_range.max = m_rows - 1; 
-  view_range.min = m_rows - view_bufsz;
+  view_range.min = view_range.max - view_bufsz + 1;
   view_range.min = MAX(0, view_range.min);
   ViewRangeChanged();
 }
@@ -926,6 +928,11 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       // for TOP_ZERO, this can just iterate from zero
       // for BOT_ZERO we need to massage it
       int cell = 0; // accessor just uses a linear cell value
+      SoCube* cu = new SoCube; // all can share!!!
+      cu->ref();
+      cu->width = bsz;
+      cu->height = bsz;
+      cu->depth = 0.0f;
       for (c.y = 0; c.y < cg.y; ++c.y) {
         if (cvs->mat_layout == GridColViewSpec::BOT_ZERO)
           cell = cg.x * (cg.y - c.y - 1);
@@ -951,15 +958,11 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           //NOTE: following a bit dangerous, but should never be null
           col = *(scale.GetColor(val));
           bc->rgb = (SbColor)col;
-          
-          SoCube* cu = new SoCube;
-          cu->width = bsz;
-          cu->height = bsz;
-          cu->depth = 0.0f;
           blk_ln->addChild(cu);
           ++cell;
         }
-      }        
+      }
+      cu->unref(); 
     }
     if (cvs->display_style == GridColViewSpec::TEXT_AND_BLOCK) {
       tr = new SoTranslation;
@@ -1306,9 +1309,10 @@ void iTableView_Panel::buttonClicked(int id) {
     break;
 
   case BUT_UPDATE:
+    lv->UpdateView();
     break;
   case BUT_INIT:
-    lv->UpdateView();
+    lv->InitView();
     break;
   case BUT_CLEAR:
     lv->ClearData();

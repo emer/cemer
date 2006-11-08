@@ -2069,9 +2069,18 @@ void iBrowseViewer::ApplyRoot() {
   if (m_root == tabMisc::root)
     node = dl->CreateTreeDataNode(root_md(), lvwDataTree, NULL, "root",
       dn_flags_ | iTreeViewItem::DNF_IS_MEMBER);
-  else //TODO: should really have a better scheme for root name -- what if it is unnamed???
-    node = dl->CreateTreeDataNode(root_md(), lvwDataTree, NULL, dl->GetName(), 
+  else {
+    // if root is a member, we use that name, else the obj name
+    MemberDef* md = root_md();
+    String root_nm;
+    if (md) 
+      root_nm = md->name;
+    else {
+      root_nm = dl->GetName();
+    }
+    node = dl->CreateTreeDataNode(md, lvwDataTree, NULL, root_nm, 
       dn_flags_ | iTreeViewItem::DNF_UPDATE_NAME);
+  }
   // always show the first items under the root
   node->CreateChildren();
   lvwDataTree->setCurItem(node);

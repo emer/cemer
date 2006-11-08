@@ -31,7 +31,7 @@
    the 0,0 is at the centre of the rectangle
 */
 
-class TAMISC_API T3CBar : public T3NodeLeaf {
+class TA_API T3CBar : public T3NodeLeaf {
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 

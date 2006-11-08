@@ -56,7 +56,7 @@
 
 */
 
-class TAMISC_API T3Axis: public T3NodeLeaf { //
+class TA_API T3Axis: public T3NodeLeaf { //
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
@@ -116,7 +116,7 @@ protected:
 
 */
 
-class TAMISC_API T3GraphLine: public T3NodeLeaf { //
+class TA_API T3GraphLine: public T3NodeLeaf { //
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
@@ -210,7 +210,7 @@ protected:
 //   T3Graph		//
 //////////////////////////
 
-class TAMISC_API T3Graph: public T3NodeParent {
+class TA_API T3Graph: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 

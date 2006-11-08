@@ -21,7 +21,7 @@
 #include "ta_geometry.h"
 #include "minmax.h"
 #include "colorscale.h" // for DT && DA Viewspecs
-#include "tamisc_TA_type.h"
+#include "ta_TA_type.h"
 
 
 // forwards this file
@@ -38,10 +38,10 @@ class GridTableViewSpec; //
 // src/pdp/netstru.h:  virtual void        UnitValuesToArray(float_RArray& ary, const char* variable);
 // src/pdp/netstru.h:  virtual void        UnitValuesFromArray(float_RArray& ary, const char* variable);
 // src/tamisc/datagraph.h:  float_RArray           rows_x_axis;    // x axis values for plot rows mode
-// src/tamisc/fun_lookup.h:class TAMISC_API FunLookup : public float_RArray {
+// src/tamisc/fun_lookup.h:class TA_API FunLookup : public float_RArray {
 // src/tamisc/fun_lookup.h:  COPY_FUNS(FunLookup, float_RArray);
 
-class TAMISC_API float_RArray : public float_Array {
+class TA_API float_RArray : public float_Array {
   // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
 public:
   enum DistMetric {		// generalized distance metrics
@@ -241,7 +241,7 @@ protected:
 
 // todo: move this to taMath::Cluster routine!
 
-class TAMISC_API ClustLink : public taBase {
+class TA_API ClustLink : public taBase {
   // #INLINE #INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER a link in the cluster tree with distance
 public:
   float		dist;		// distance to this node from parent
@@ -256,7 +256,7 @@ public:
 };
 
 
-class TAMISC_API ClustNode : public taNBase {
+class TA_API ClustNode : public taNBase {
   /* ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER node in clustering algorithm
      use one with leaves as children as a root node for cluster */
 INHERITED(taNBase)
@@ -333,7 +333,7 @@ public:
     NARROW -- in addition to base spec, also sets column with to 8 chars
 */
 
-class TAMISC_API GridColViewSpec : public DataColViewSpec {
+class TA_API GridColViewSpec : public DataColViewSpec {
   // information for display of a data array in a grid display
 INHERITED(DataColViewSpec)
 public:
@@ -380,11 +380,11 @@ private:
   void	Destroy() {}
 };
 
-class TAMISC_API GridTableViewSpec : public DataTableViewSpec {
+class TA_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
 INHERITED(DataTableViewSpec)
 public:
-  enum MetricsModel { // model that adjusts all metrics values based on data size
+  enum MatSizeModel { // convenience to set all mat metrics to commensurable values
     CUSTOM_METRICS,		// used to change individual values
     SMALL_BLOCKS,	// for "small" blocks -- use for large matrix cells and images
     MEDIUM_BLOCKS,	// for "medium" blocks -- use for average matrix cells and images
@@ -393,9 +393,9 @@ public:
   
   float		grid_margin_pts; // #DEF_4 #MIN_0 size of margin inside grid cells, in points
   float		grid_line_pts; // #DEF_3 #MIN_0.1 size of grid lines, in points (grid lines can be turned off in the viewer)
-  MetricsModel	metrics_model;
+  MatSizeModel	mat_size_model; // sets all matrix metrics to convenient values
   float		mat_block_pts;	// #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 matrix block size, in points
-  float		mat_border_pts; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #DEF_2 size of border around matrix cells, in points
+  float		mat_border_pts; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS size of border around matrix cells, in points
   float		mat_sep_pts; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS sep between text and grid, etc
   float		mat_font_scale; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 amount to scale font for matrix cells
   float		pixel_pts;	// #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 image pixel size, in points (there is no border)
@@ -424,7 +424,7 @@ public:
 protected:
   override void 	UpdateAfterEdit_impl();
   override void		DataDataChanged_impl(int dcr, void* op1, void* op2);
-  void			SetMetricsModel_impl(MetricsModel mm);
+  void			SetMatSizeModel_impl(MatSizeModel mm);
 };
 
 #endif // datatable_h

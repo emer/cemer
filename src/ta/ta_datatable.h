@@ -46,7 +46,7 @@ class byte_Data;
 class DataColViewSpec;
 class DataColViewSpecs;
 class DataTableViewSpec;
-class DataTableModel;
+class DataTableModel; //
 
 // specific ones are in the template classes: String_Data, float_Data
 
@@ -483,8 +483,8 @@ public:
   // #CAT_File #MENU #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
   // viewing NOTE: these are actually linked to tamisc in order to work...
-  void 			NewGridView(T3DataViewFrame* fr);
-  // #MENU
+  void			ShowInViewer(T3DataViewFrame* fr = NULL);
+  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT open a view on this table (NULL=use blank if any, else make new frame)
   
   /////////////////////////////////////////////////////////
   // misc funs

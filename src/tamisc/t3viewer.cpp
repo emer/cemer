@@ -986,6 +986,22 @@ void iT3DataViewer::UpdateTabNames() {
 //	T3DataViewer	//
 //////////////////////////
 
+T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
+  if (!obj) return NULL;
+  T3DataViewFrame* fr = NULL;
+  taProject* proj = (taProject*)obj->GetOwner(&TA_taProject);
+  //TODO: this would be more intuitive if done in current or top-most proj browser
+  MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
+  if (!vw) return NULL; // shouldn't happen
+  T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
+  if (!t3vw) return NULL; // shouldn't happen
+  // make in default, if default is empty
+  fr = t3vw->FirstEmptyT3DataViewFrame();
+  if (!fr)
+    fr = t3vw->NewT3DataViewFrame();
+  return fr;
+}
+
 void T3DataViewer::Initialize() {
 //  link_type = &TA_T3DataLink;
 }
@@ -1062,6 +1078,15 @@ T3DataView* T3DataViewer::FindRootViewOfData(TAPtr data) {
     T3DataViewFrame* f = frames.FastEl(i);
     T3DataView* dv = f->FindRootViewOfData(data);
     if (dv) return dv;
+  }
+  return NULL;
+}
+
+T3DataViewFrame* T3DataViewer::FirstEmptyT3DataViewFrame() {
+  for (int i = 0; i < frames.size; ++i) {
+    T3DataViewFrame* fv = frames.FastEl(i);
+    if (fv->root_view.children.size == 0) 
+      return fv;
   }
   return NULL;
 }
