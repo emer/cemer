@@ -102,7 +102,7 @@ TAHEADS_TAMISC =\
 	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/datatable.h \
 	@abs_srcdir@/fun_lookup.h \
-	@abs_srcdir@/ta_data_extras.h \
+	@abs_srcdir@/ta_data_extras.h 
 
 HEADS_TAMISC =\
 	tatime.h \

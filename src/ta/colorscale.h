@@ -38,13 +38,13 @@ class ColorScaleSpec_Group;
 class ScaleRange;
 class ScaleRange_List;
 class ColorScale;
-
+typedef iColor* ptr_iColor; // hacks needed to force creation of TA_const_iColor
+typedef ptr_iColor const_iColor;
 
 class TA_API RGBA : public taNBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS Red Green Blue Alpha color specification
 INHERITED(taNBase)
 public:
-
   float	r;			// red
   float	g;			// green
   float	b;			// blue

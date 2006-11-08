@@ -38,8 +38,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libta.a
 %{_libdir}/libcss.la
 %{_libdir}/libcss.a
-%{_libdir}/libtamisc.la
-%{_libdir}/libtamisc.a
 %{_libdir}/libpdp.la
 %{_libdir}/libpdp.a
 %{_datadir}/pdp/AUTHORS
@@ -128,8 +126,7 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/maketa/Makefile.am,
 	  pdp4.0/trunk/src/pdp/Makefile.am,
 	  pdp4.0/trunk/src/ta/Makefile.am,
-	  pdp4.0/trunk/src/taiqtso/Makefile.am,
-	  pdp4.0/trunk/src/tamisc/Makefile.am: New rules for maketa do not
+	  pdp4.0/trunk/src/taiqtso/Makefile.am: New rules for maketa do not
 	  result in a race condition when doing a parallel build.
 
 * Fri Oct 28 2005 02:22 mingus
@@ -158,8 +155,7 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/maketa/Makefile.am,
 	  pdp4.0/trunk/src/pdp/Makefile.am,
 	  pdp4.0/trunk/src/ta/Makefile.am,
-	  pdp4.0/trunk/src/taiqtso/Makefile.am,
-	  pdp4.0/trunk/src/tamisc/Makefile.am:
+	  pdp4.0/trunk/src/taiqtso/Makefile.am:
 
 * Fri Oct 28 2005 02:06 mingus
 
@@ -278,10 +274,7 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/ta/ta_TA_inst.h,
 	  pdp4.0/trunk/src/ta/ta_TA_type.h,
 	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_inst.h,
-	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_type.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA_inst.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA_type.h: removing TA files
+	  pdp4.0/trunk/src/taiqtso/taiqtso_TA_type.h: removing TA files
 
 * Sat Oct 01 2005 04:21 mingus
 
@@ -319,8 +312,7 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/leabra/Makefile.am,
 	  pdp4.0/trunk/src/maketa/Makefile.am,
 	  pdp4.0/trunk/src/ta/Makefile.am,
-	  pdp4.0/trunk/src/taiqtso/Makefile.am,
-	  pdp4.0/trunk/src/tamisc/Makefile.am:
+	  pdp4.0/trunk/src/taiqtso/Makefile.am:
 - pdp4.0/trunk/acsite.m4, pdp4.0/trunk/configure.ac:
 
 * Thu Sep 29 2005 22:08 mingus
@@ -336,7 +328,6 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/ta/ta_base.h, pdp4.0/trunk/src/ta/ta_list.cpp,
 	  pdp4.0/trunk/src/ta/ta_list.h, pdp4.0/trunk/src/ta/ta_type.h,
 	  pdp4.0/trunk/src/ta/taglobal.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
 	  pdp4.0/trunk/src/test/test_TA.cpp,
 	  pdp4.0/trunk/src/test/test_TA_type.h: misc changes
 
@@ -355,64 +346,6 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/pdp/enviro_qtso.cpp,
 	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
 	  pdp4.0/trunk/src/ta/ta_qttype.cpp: misc copyright
-
-* Wed Sep 28 2005 22:34 mingus
-
-- pdp4.0/trunk/src/tamisc/aggregate.cpp,
-	  pdp4.0/trunk/src/tamisc/aggregate.h,
-	  pdp4.0/trunk/src/tamisc/axis.cpp,
-	  pdp4.0/trunk/src/tamisc/axis.h,
-	  pdp4.0/trunk/src/tamisc/colorbar_qt.cpp,
-	  pdp4.0/trunk/src/tamisc/colorbar_qt.h,
-	  pdp4.0/trunk/src/tamisc/colorbar_so.cpp,
-	  pdp4.0/trunk/src/tamisc/colorbar_so.h,
-	  pdp4.0/trunk/src/tamisc/colorscale.cpp,
-	  pdp4.0/trunk/src/tamisc/colorscale.h,
-	  pdp4.0/trunk/src/tamisc/datagraph.cpp,
-	  pdp4.0/trunk/src/tamisc/datagraph.h,
-	  pdp4.0/trunk/src/tamisc/datagraph_qtso.cpp,
-	  pdp4.0/trunk/src/tamisc/datagraph_qtso.h,
-	  pdp4.0/trunk/src/tamisc/datagraph_so.cpp,
-	  pdp4.0/trunk/src/tamisc/datagraph_so.h,
-	  pdp4.0/trunk/src/tamisc/datatable.cpp,
-	  pdp4.0/trunk/src/tamisc/datatable.h,
-	  pdp4.0/trunk/src/tamisc/datatable_qtso.cpp,
-	  pdp4.0/trunk/src/tamisc/datatable_qtso.h,
-	  pdp4.0/trunk/src/tamisc/fontspec.cpp,
-	  pdp4.0/trunk/src/tamisc/fontspec.h,
-	  pdp4.0/trunk/src/tamisc/fun_lookup.cpp,
-	  pdp4.0/trunk/src/tamisc/fun_lookup.h,
-	  pdp4.0/trunk/src/tamisc/graphic.cpp,
-	  pdp4.0/trunk/src/tamisc/graphic.h,
-	  pdp4.0/trunk/src/tamisc/graphic_objs.cpp,
-	  pdp4.0/trunk/src/tamisc/graphic_objs.h,
-	  pdp4.0/trunk/src/tamisc/graphic_text.cpp,
-	  pdp4.0/trunk/src/tamisc/graphic_text.h,
-	  pdp4.0/trunk/src/tamisc/graphic_viewer.cpp,
-	  pdp4.0/trunk/src/tamisc/graphic_viewer.h,
-	  pdp4.0/trunk/src/tamisc/minmax.cpp,
-	  pdp4.0/trunk/src/tamisc/minmax.h,
-	  pdp4.0/trunk/src/tamisc/t3node_so.cpp,
-	  pdp4.0/trunk/src/tamisc/t3node_so.h,
-	  pdp4.0/trunk/src/tamisc/t3viewer.cpp,
-	  pdp4.0/trunk/src/tamisc/t3viewer.h,
-	  pdp4.0/trunk/src/tamisc/ta_data.cpp,
-	  pdp4.0/trunk/src/tamisc/ta_data.h,
-	  pdp4.0/trunk/src/tamisc/ta_data_defs.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA_inst.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA_type.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_maketa_defs.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_stdef.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_test.cpp,
-	  pdp4.0/trunk/src/tamisc/tamisc_ti.cpp,
-	  pdp4.0/trunk/src/tamisc/tarandom.cpp,
-	  pdp4.0/trunk/src/tamisc/tarandom.h,
-	  pdp4.0/trunk/src/tamisc/tdgeometry.cpp,
-	  pdp4.0/trunk/src/tamisc/tdgeometry.h,
-	  pdp4.0/trunk/src/tamisc/xform.cpp,
-	  pdp4.0/trunk/src/tamisc/xform.h: LGPL - not sure why some files
-	  end up with the copyright change and others don't.
 
 * Wed Sep 28 2005 22:25 mingus
 
@@ -601,63 +534,6 @@ rm -rf $RPM_BUILD_ROOT
 - pdp4.0/trunk/COPYING: COPYING contains the GPL, while
 	  COPYING.LIB contains the LGPL. This followes the GNU coding
 	  standards. See: http://www.gnu.org/prep/standards/standards.html
-
-* Wed Sep 28 2005 21:42 mingus
-
-- pdp4.0/trunk/src/tamisc/aggregate.cpp,
-	  pdp4.0/trunk/src/tamisc/aggregate.h,
-	  pdp4.0/trunk/src/tamisc/axis.cpp,
-	  pdp4.0/trunk/src/tamisc/axis.h,
-	  pdp4.0/trunk/src/tamisc/colorbar_qt.cpp,
-	  pdp4.0/trunk/src/tamisc/colorbar_qt.h,
-	  pdp4.0/trunk/src/tamisc/colorbar_so.cpp,
-	  pdp4.0/trunk/src/tamisc/colorbar_so.h,
-	  pdp4.0/trunk/src/tamisc/colorscale.cpp,
-	  pdp4.0/trunk/src/tamisc/colorscale.h,
-	  pdp4.0/trunk/src/tamisc/datagraph.cpp,
-	  pdp4.0/trunk/src/tamisc/datagraph.h,
-	  pdp4.0/trunk/src/tamisc/datagraph_qtso.cpp,
-	  pdp4.0/trunk/src/tamisc/datagraph_qtso.h,
-	  pdp4.0/trunk/src/tamisc/datagraph_so.cpp,
-	  pdp4.0/trunk/src/tamisc/datagraph_so.h,
-	  pdp4.0/trunk/src/tamisc/datatable.cpp,
-	  pdp4.0/trunk/src/tamisc/datatable.h,
-	  pdp4.0/trunk/src/tamisc/datatable_qtso.cpp,
-	  pdp4.0/trunk/src/tamisc/datatable_qtso.h,
-	  pdp4.0/trunk/src/tamisc/fontspec.cpp,
-	  pdp4.0/trunk/src/tamisc/fontspec.h,
-	  pdp4.0/trunk/src/tamisc/fun_lookup.cpp,
-	  pdp4.0/trunk/src/tamisc/fun_lookup.h,
-	  pdp4.0/trunk/src/tamisc/graphic.cpp,
-	  pdp4.0/trunk/src/tamisc/graphic.h,
-	  pdp4.0/trunk/src/tamisc/graphic_objs.cpp,
-	  pdp4.0/trunk/src/tamisc/graphic_objs.h,
-	  pdp4.0/trunk/src/tamisc/graphic_text.cpp,
-	  pdp4.0/trunk/src/tamisc/graphic_text.h,
-	  pdp4.0/trunk/src/tamisc/graphic_viewer.cpp,
-	  pdp4.0/trunk/src/tamisc/graphic_viewer.h,
-	  pdp4.0/trunk/src/tamisc/minmax.cpp,
-	  pdp4.0/trunk/src/tamisc/minmax.h,
-	  pdp4.0/trunk/src/tamisc/t3node_so.cpp,
-	  pdp4.0/trunk/src/tamisc/t3node_so.h,
-	  pdp4.0/trunk/src/tamisc/t3viewer.cpp,
-	  pdp4.0/trunk/src/tamisc/t3viewer.h,
-	  pdp4.0/trunk/src/tamisc/ta_data.cpp,
-	  pdp4.0/trunk/src/tamisc/ta_data.h,
-	  pdp4.0/trunk/src/tamisc/ta_data_defs.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA_inst.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA_type.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_maketa_defs.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_stdef.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_test.cpp,
-	  pdp4.0/trunk/src/tamisc/tamisc_ti.cpp,
-	  pdp4.0/trunk/src/tamisc/tarandom.cpp,
-	  pdp4.0/trunk/src/tamisc/tarandom.h,
-	  pdp4.0/trunk/src/tamisc/tdgeometry.cpp,
-	  pdp4.0/trunk/src/tamisc/tdgeometry.h,
-	  pdp4.0/trunk/src/tamisc/xform.cpp,
-	  pdp4.0/trunk/src/tamisc/xform.h: tamisc copyright update LGPL
 
 * Wed Sep 28 2005 21:41 mingus
 
@@ -925,8 +801,7 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/maketa/Makefile.am,
 	  pdp4.0/trunk/src/pdp/Makefile.am,
 	  pdp4.0/trunk/src/ta/Makefile.am,
-	  pdp4.0/trunk/src/taiqtso/Makefile.am,
-	  pdp4.0/trunk/src/tamisc/Makefile.am:
+	  pdp4.0/trunk/src/taiqtso/Makefile.am:
 
 * Wed Sep 28 2005 20:45 mingus
 
@@ -962,21 +837,6 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/pdp/pdplog.cpp,
 	  pdp4.0/trunk/src/pdp/procs_extra.cpp: data-related changes
 
-* Tue Sep 27 2005 18:24 baisa
-
-- pdp4.0/trunk/src/tamisc/Makefile.am,
-	  pdp4.0/trunk/src/tamisc/datatable.cpp,
-	  pdp4.0/trunk/src/tamisc/datatable.h,
-	  pdp4.0/trunk/src/tamisc/fun_lookup.h,
-	  pdp4.0/trunk/src/tamisc/ta_data.cpp,
-	  pdp4.0/trunk/src/tamisc/ta_data.h,
-	  pdp4.0/trunk/src/tamisc/ta_data_defs.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA.cpp,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA_inst.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_TA_type.h,
-	  pdp4.0/trunk/src/tamisc/tamisc_ti.cpp,
-	  pdp4.0/trunk/src/tamisc/tdgeometry.h: added ta_data
-
 * Tue Sep 27 2005 18:21 baisa
 
 - pdp4.0/trunk/src/ta/Makefile.am: added ta_matrix
@@ -989,8 +849,7 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/leabra/Makefile.am,
 	  pdp4.0/trunk/src/pdp/Makefile.am,
 	  pdp4.0/trunk/src/ta/Makefile.am,
-	  pdp4.0/trunk/src/taiqtso/Makefile.am,
-	  pdp4.0/trunk/src/tamisc/Makefile.am:
+	  pdp4.0/trunk/src/taiqtso/Makefile.am:
 
 * Tue Sep 27 2005 01:59 mingus
 
@@ -1096,8 +955,7 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/leabra/Makefile.am,
 	  pdp4.0/trunk/src/pdp/Makefile.am,
 	  pdp4.0/trunk/src/ta/Makefile.am,
-	  pdp4.0/trunk/src/taiqtso/Makefile.am,
-	  pdp4.0/trunk/src/tamisc/Makefile.am: misc
+	  pdp4.0/trunk/src/taiqtso/Makefile.am: misc
 - pdp4.0/trunk/Conditionals.am, pdp4.0/trunk/Makefile.am,
 	  pdp4.0/trunk/configure.ac: misc
 
@@ -1108,10 +966,6 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Sep 20 2005 22:26 mingus
 
 - pdp4.0/trunk/src/pdp/main.cpp: const char --> char
-
-* Tue Sep 20 2005 01:28 mingus
-
-- pdp4.0/trunk/src/tamisc/Makefile.am: Make distcheck changes
 
 * Tue Sep 20 2005 01:27 mingus
 
@@ -1182,10 +1036,6 @@ rm -rf $RPM_BUILD_ROOT
 
 - pdp4.0/trunk/Conditionals.am: minor
 
-* Sun Sep 18 2005 21:14 mingus
-
-- pdp4.0/trunk/src/tamisc/tarandom.cpp: missing newline @ EOF
-
 * Sun Sep 18 2005 21:10 mingus
 
 - pdp4.0/trunk/src/taiqtso/Makefile.am: reverting to old moc
@@ -1198,8 +1048,7 @@ rm -rf $RPM_BUILD_ROOT
 	  pdp4.0/trunk/src/pdp/Makefile.am,
 	  pdp4.0/trunk/src/ta/Makefile.am, pdp4.0/trunk/src/ta/ta_TA.cpp,
 	  pdp4.0/trunk/src/ta/ta_TA_inst.h,
-	  pdp4.0/trunk/src/ta/ta_TA_type.h,
-	  pdp4.0/trunk/src/tamisc/Makefile.am: I had to revert moc back to
+	  pdp4.0/trunk/src/ta/ta_TA_type.h: I had to revert moc back to
 	  the old rules as the GNU Make pattern rules broke the automatic
 	  dependency tracking and automake would not finish without
 	  erroring out.

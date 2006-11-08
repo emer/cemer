@@ -21,16 +21,22 @@
 #include "ta_list.h"
 #include "ta_type.h"
 #ifndef NO_TA_BASE
-  #include "ta_matrix.h"
-  #include "ta_group.h"
-  #include "ta_dump.h"
-  #include "ta_script.h"
-  #include <QList>
-#  ifdef TA_GUI
-#    include "ta_qtgroup.h"
-#    include "ta_qtviewer.h"
-#    include "ta_qtclipdata.h"
-#  endif
+# include "ta_matrix.h"
+# include "ta_group.h"
+# include "ta_dump.h"
+# include "ta_script.h"
+# include "ta_geometry.h"
+# include "datatable.h"
+//#include "datagraph.h"
+# include "colorscale.h"
+# include "t3viewer.h"
+# include <QList>
+# ifdef TA_GUI
+#   include "ta_qtgroup.h"
+#   include "ta_qtviewer.h"
+#   include "ta_qtclipdata.h"
+#   include "datatable_qtso.h"
+# endif
 #endif
 
 template class TA_API taPtrList<taHashEl>;
@@ -91,6 +97,29 @@ template class TA_API taGroup<taBase>;
 template class TA_API taPtrList<ScriptBase>; // in script_base.h
 // template class TA_API taGroup<Script>; // in script_base.h
 
+// tdgeometry
+template class TA_API taArray<ValIdx>;
+  const ValIdx ValIdx_Array::blank;
+
+// datatable.h:
+template class TA_API taGroup<DataArray_impl>;
+template class TA_API DataArray<String_Matrix>;
+template class TA_API DataArray<Variant_Matrix>;
+template class TA_API DataArray<float_Matrix>;
+template class TA_API DataArray<int_Matrix>;
+template class TA_API DataArray<byte_Matrix>;
+
+// datagraph.h:
+//template class TA_API taList<YAxisSpec>; //
+//template class TA_API taList<GraphletSpec>; //
+
+//colorscale.h:
+template class TA_API taList<RGBA>;
+template class TA_API taList<TAColor>;
+template class TA_API taGroup<ColorScaleSpec>;
+template class TA_API taList<ScaleRange>;
+
+
 #ifdef TA_OS_MAC // for some reason, these need to be here for MacOS
   template class TA_API QList<QObject*>;
   template class TA_API QList<int>;
@@ -117,6 +146,14 @@ template class TA_API taPtrList<DynMethodDesc>; // in ta_qtviewer.h
 template class TA_API taList<DataViewer>; // in ta_qtviewer.h
 template class TA_API taPtrList<iDataPanel>; // in ta_qtviewer.h
 template class TA_API taPtrList<iTabView>;
+//template class TA_API taList<Xform>; // xform.h
+template class TA_API SoPtr<T3Node>; // in t3node_so.h
+template class TA_API taPtrList<T3DataView>; // in t3viewer.h
+template class TA_API taList<T3DataView>; // in t3viewer.h
+
+// datatable_qtso.h
+template class TA_API taPlainArray<Qt::Alignment>;
 #endif // def TA_GUI
 
 #endif // !def NO_TA_BASE
+

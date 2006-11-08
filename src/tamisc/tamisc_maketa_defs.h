@@ -35,49 +35,6 @@
 
 #include "ta_maketa_defs.h"
 
-#ifdef TA_USE_INVENTOR
-class SoBase {// ##NO_INSTANCE ##NO_TOKENS
-public:
-	int dummy; // #IGNORE
-	virtual ~SoBase() {}
-};
-
-class SoFieldContainer: public SoBase {
-public:
-	int dummy; // #IGNORE
-};
-
-class SoNode: public SoFieldContainer {
-public:
-	int dummy; // #IGNORE
-};
-
-class SoGroup: public SoNode {
-public:
-	int dummy; // #IGNORE
-};
-
-class SoShape: public SoNode {
-public:
-	int dummy; // #IGNORE
-};
-
-class SoSeparator: public SoGroup {
-public:
-	int dummy; // #IGNORE
-};
-
-class SoImage: public SoShape {
-public:
-	int dummy; // #IGNORE
-};
-
-class SoTriangleStripSet: public SoBase {
-public:
-  int dummy; // #IGNORE
-};
-
-#endif
 
 #endif // __MAKETA__
 #endif // QTMAKETA_H

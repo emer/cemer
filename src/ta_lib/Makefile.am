@@ -8,7 +8,6 @@ libtacss@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES =
 nodist_EXTRA_libtacss@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = dummy.cxx
 
 libtacss@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD =\
-	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@@PDP_VERSION@.la \
 	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@@PDP_VERSION@.la \
 	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@@PDP_VERSION@.la
 

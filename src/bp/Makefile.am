@@ -7,7 +7,6 @@ VPATH = @srcdir@
 
 TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
-	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
 	@abs_srcdir@/../pdp/pdp_TA_type.h \
 	@abs_srcdir@/../bp/bp.h \
 	@abs_srcdir@/../bp/rbp.h \

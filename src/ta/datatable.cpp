@@ -1506,7 +1506,7 @@ void GridTableViewSpec::Destroy() {
 void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
   grid_margin_pts = cp.grid_margin_pts;
   grid_line_pts = cp.grid_line_pts;
-  metrics_model = cp.metrics_model;
+  mat_size_model = cp.mat_size_model;
   mat_block_pts = cp.mat_block_pts;
   mat_border_pts = cp.mat_border_pts;
   mat_sep_pts = cp.mat_sep_pts;

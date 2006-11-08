@@ -11,7 +11,6 @@ DIST_SUBDIRS =\
 	src/taiqtso \
 	src/ta \
 	src/css \
-	src/tamisc \
 	src/ta_lib \
         src/css_bin \
 	src/pdp \
@@ -26,7 +25,6 @@ SUBDIRS =\
 	@WANT_TAIQTSO@ \
 	src/ta \
 	src/css \
-	src/tamisc \
 	@WANT_LIBTA@ \
 	@WANT_CSS_BIN@ \
 	src/pdp \
@@ -60,7 +58,6 @@ DISTCLEANFILES =\
 	src/taiqtso/do-mfstamp \
 	src/ta/do-mfstamp \
 	src/css/do-mfstamp \
-	src/tamisc/do-mfstamp \
 	src/css_bin/do-mfstamp \
 	src/pdp/do-mfstamp \
 	src/leabra/do-mfstamp \
@@ -80,8 +77,6 @@ dist-hook:
 	cp -cp $(srcdir)/src/ta/taglobal.h \
 		$(srcdir)/src/ta/qtdefs.h\
 		$(distdir)/src/ta
-	cp -cp $(srcdir)/src/tamisc/tamisc_maketa_defs.h \
-		$(distdir)/src/tamisc/tamisc_maketa_defs.h
 # 	cp -cp $(srcdir)/src/ta/ta_maketa_defs.h \
 # 		$(distdir)/src/ta/ta_maketa_defs.h
 #	cp -p $(srcdir)/spec.tmpl.in $(distdir)/spec.tmpl.in
@@ -102,14 +97,12 @@ ${abs_top_builddir}/src/ta/ta_TA_type.h: ${abs_top_builddir}/src/maketa/maketa
 
 force_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/tamisc && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/pdp && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
 
 do_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} do_ta
-	cd ${abs_top_builddir}/src/tamisc && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/pdp && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/bp && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} do_ta

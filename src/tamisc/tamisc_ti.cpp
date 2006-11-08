@@ -19,45 +19,6 @@
 
 // tamisc_ti.cc: TAMISC_API template instantiation file for ta_misc library
 
-#include "ta_geometry.h"
-#include "datatable.h"
-//#include "datagraph.h"
-#include "colorscale.h"
-#include "t3viewer.h"
-#ifdef TA_GUI
-#include "datatable_qtso.h"
-#endif
 
 //template class TAMISC_API taPtrList<GraphLine>;
 
-// tdgeometry
-template class TAMISC_API taArray<ValIdx>;
-  const ValIdx ValIdx_Array::blank;
-
-// datatable.h:
-template class TAMISC_API taGroup<DataArray_impl>;
-template class TAMISC_API DataArray<String_Matrix>;
-template class TAMISC_API DataArray<Variant_Matrix>;
-template class TAMISC_API DataArray<float_Matrix>;
-template class TAMISC_API DataArray<int_Matrix>;
-template class TAMISC_API DataArray<byte_Matrix>;
-
-// datagraph.h:
-//template class TAMISC_API taList<YAxisSpec>; //
-//template class TAMISC_API taList<GraphletSpec>; //
-
-//colorscale.h:
-template class TAMISC_API taList<RGBA>;
-template class TAMISC_API taList<TAColor>;
-template class TAMISC_API taGroup<ColorScaleSpec>;
-template class TAMISC_API taList<ScaleRange>;
-
-#ifdef TA_GUI
-//template class TAMISC_API taList<Xform>; // xform.h
-template class TAMISC_API SoPtr<T3Node>; // in t3node_so.h
-template class TAMISC_API taPtrList<T3DataView>; // in t3viewer.h
-template class TAMISC_API taList<T3DataView>; // in t3viewer.h
-
-// datatable_qtso.h
-template class TAMISC_API taPlainArray<Qt::Alignment>;
-#endif

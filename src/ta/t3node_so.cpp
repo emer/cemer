@@ -638,7 +638,7 @@ void SoRect::initClass()
   SO_NODE_INIT_CLASS(SoRect, SoTriangleStripSet, "SoTriangleStripSet");
 }
 
-SoRect::SoRect(Orientation ori, float in) {
+SoRect::SoRect() {
   SO_NODE_CONSTRUCTOR(SoRect);
 
   vertexProperty.setValue(new SoVertexProperty); // note: vp refs/unrefs automatically

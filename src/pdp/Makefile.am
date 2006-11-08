@@ -39,7 +39,6 @@ endif
 
 TAHEADS =\
 	@abs_srcdir@/../ta/ta_TA_type.h \
-	@abs_srcdir@/../tamisc/tamisc_TA_type.h \
 	@abs_srcdir@/pdpdeclare.h \
 	@abs_srcdir@/pdp_base.h \
 	@abs_srcdir@/spec.h \

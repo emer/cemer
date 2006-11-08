@@ -14,7 +14,6 @@ libpdp@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD =\
 	@abs_top_builddir@/src/leabra/libleabra@PDP_SUFFIX@@PDP_VERSION@.la
 else
 libpdp@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD =\
-	@abs_top_builddir@/src/tamisc/libtamisc@PDP_SUFFIX@@PDP_VERSION@.la \
 	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@@PDP_VERSION@.la \
 	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@@PDP_VERSION@.la \
 	@abs_top_builddir@/src/pdp/libpdp@PDP_SUFFIX@@PDP_VERSION@.la \

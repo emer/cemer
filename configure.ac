@@ -275,7 +275,6 @@ AC_CONFIG_FILES([Makefile
 		src/ta/Makefile
 		src/css/Makefile
 		src/css_bin/Makefile
-		src/tamisc/Makefile
 		src/ta_lib/Makefile
 		src/bp/Makefile
 		src/leabra/Makefile

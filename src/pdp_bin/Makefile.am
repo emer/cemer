@@ -26,7 +26,6 @@ endif
 
 pdp@PDP_SUFFIX@___CPPFLAGS =\
 	-I@abs_top_builddir@ \
-	-I@srcdir@/../tamisc \
 	-I@srcdir@/../css \
 	-I@srcdir@/../pdp \
 	-I@srcdir@/../taiqtso \
