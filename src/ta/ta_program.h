@@ -577,6 +577,9 @@ public:
   virtual void		Reset();
   // #MENU #MENU_ON_Object #MENU_CONTEXT reset (remove) all program elements -- typically in preparation for loading a new program over this one
 
+  static String		GetProgLibPath(ProgLibs library);
+  // get path to given program library
+
   virtual void		SaveToProgLib(ProgLibs library = USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT save the program to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void		LoadFromProgLib(ProgLibs library = USER_LIB);

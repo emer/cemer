@@ -1,0 +1,39 @@
+// startup and run a project in the background, use like this:
+
+// [nice +10] pdp++ -nogui -p <myproj> -f leabra_startup.css [epochs=xxx batches=xxx...] &
+
+// * nice +10 is optional but is nice to other users/processes.
+// * -nogui runs w/out the gui
+// * -f startup.css loads and runs this script
+// * <myproj> is the full name of your project file 
+// * [epochs=...] are other optional arguments as defined in the script to control
+//	programs 
+// * & at the end puts the job in the background.
+
+void Startup() {
+  if(.projects.size == 0) {
+    taMisc::Error("Error: project file not found!");
+    return;
+  }
+
+  taMisc::AddArgName("epochs=", "EpochMax");
+  taMisc::AddArgName("batches=", "BatchMax");
+  taMisc::UpdateArgs();
+
+  Program* train = .programs.LeabraTrain;
+  if(!train) {
+    taMisc::Error("Error: train program not found!");
+    return;
+  }    
+
+  String epc_str = taMisc::FindArgByName("EpochMax");
+  if(!epc_str.empty()) {
+    train.SetVar("epoch_max", (int)epc_str);
+  }
+
+  //  train.Init();
+  //  train.Run();
+}
+
+Startup();
+

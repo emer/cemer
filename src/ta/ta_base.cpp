@@ -377,9 +377,6 @@ void taBase::SetPointer(taBase** ptr, taBase* new_val) {
 }
 
 taFiler* taBase::StatGetFiler(TypeItem* td) {
-  if (!taMisc::gui_active) //TODO: shouldn't we always get it???
-    return NULL;
-
   bool cmprs = (td->HasOption("COMPRESS"));
   String filetype = td->OptionAfter("FILETYPE_");
   if (filetype.empty()) filetype = td->name;
@@ -926,6 +923,13 @@ int taBase::SaveAs_File(const String& fname) {
   }
   
   taRefN::unRefDone(flr);
+  return rval;
+}
+
+String taBase::GetFileNameFmProject(const String& ext, const String& tag) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return _nilString;
+  String rval = proj->base_fname + tag + ext;
   return rval;
 }
 

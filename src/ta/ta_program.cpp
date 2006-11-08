@@ -1684,15 +1684,20 @@ void Program::GetVarsForObjs() {
   }
 }
 
-void Program::SaveToProgLib(ProgLibs library) {
-  // todo: quick and dirty -- fix when paths etc are all fixed up
+String Program::GetProgLibPath(ProgLibs library) {
   String path = "./";
   if(library == USER_LIB)
-    path = "";
+    path = taMisc::prog_lib_paths.GetVal("UserLib").toString();
   else if(library == SYSTEM_LIB)
-    path = "../../prog_lib/";
-  // todo web!?
-  String fname = path + name + ".prog";
+    path = taMisc::prog_lib_paths.GetVal("SystemLib").toString();
+  else if(library == WEB_LIB)
+    path = taMisc::prog_lib_paths.GetVal("WebLib").toString();
+  return path;
+}
+
+void Program::SaveToProgLib(ProgLibs library) {
+  String path = GetProgLibPath(library);
+  String fname = path + "/" + name + ".prog";
   int acc = access(fname, F_OK);
   if (acc == 0) {
     int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
@@ -1703,14 +1708,8 @@ void Program::SaveToProgLib(ProgLibs library) {
 }
 
 void Program::LoadFromProgLib(ProgLibs library) {
-  // todo: quick and dirty -- fix when paths etc are all fixed up
-  String path = "./";
-  if(library == USER_LIB)
-    path = "";
-  else if(library == SYSTEM_LIB)
-    path = "../../prog_lib/";
-  // todo web!?
-  String fname = path + name + ".prog";
+  String path = GetProgLibPath(library);
+  String fname = path + "/" + name + ".prog";
   int acc = access(fname, F_OK);
   if (acc != 0) {
     taMisc::Choice("Program library file: " + fname + " not found!", "Ok");
@@ -1762,7 +1761,9 @@ void Program_Group::InitLinks() {
   taBase::Own(step_prog, this);
   if(prog_lib.not_init) {
     taBase::Ref(prog_lib);
-    prog_lib.paths.Add("../../prog_lib"); // todo: hack for testing from pdp_lib location!
+    prog_lib.paths.Add(Program::GetProgLibPath(Program::USER_LIB));
+    prog_lib.paths.Add(Program::GetProgLibPath(Program::SYSTEM_LIB));
+    prog_lib.paths.Add(Program::GetProgLibPath(Program::WEB_LIB));
     prog_lib.FindPrograms();
   }
 }
@@ -1779,14 +1780,8 @@ void Program_Group::Copy_(const Program_Group& cp) {
 }
 
 void Program_Group::SaveToProgLib(Program::ProgLibs library) {
-  // todo: quick and dirty -- fix when paths etc are all fixed up
-  String path = "./";
-  if(library == Program::USER_LIB)
-    path = "";
-  else if(library == Program::SYSTEM_LIB)
-    path = "../../prog_lib/";
-  // todo web!?
-  String fname = path + name + ".progp";
+  String path = Program::GetProgLibPath(library);
+  String fname = path + "/" + name + ".progp";
   int acc = access(fname, F_OK);
   if (acc == 0) {
     int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",

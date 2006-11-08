@@ -2392,7 +2392,7 @@ bool cssMisc::Initialize() {
 				    "cssSettings"));
 
   cssMisc::HardVars.Push(cssBI::root = new cssTA_Base(tabMisc::root, 1, &TA_taRootBase, "root"));
-//   cssMisc::Top->name = app_root;	// changes prompt
+  cssMisc::Top->name = cssMisc::prompt;	// changes prompt?
 
   cssMisc::Commands.Sort();
   cssMisc::Functions.Sort();		// must sort before anything happens
@@ -2414,16 +2414,38 @@ bool cssMisc::Initialize() {
   cssMisc::init_bpoint = taMisc::FindArgByName("CssBreakpoint");
   cssMisc::refcnt_trace = taMisc::CheckArgByName("RefCountTrace");
 
-  // todo: what is this again??
   if(cssMisc::init_debug > 2) {
-    yydebug = 1;
+    yydebug = 1;		// this prints parse trace
   }
 
-  // todo: need to get the args for css scripts!?  or should they just use
-  // the new taMisc funs!?
+  //////////////////////////////////////////////////////////////////////////////
+  // support legacy v3 arg info: new projects should use taMisc::*Arg* code
 
-//   cssMisc::s_argv->Alloc(act_args.size); // allocate proper number of args
-//   *cssMisc::s_argc = 0;
+  cssMisc::s_argv->Alloc(taMisc::args_raw.size); // allocate proper number of args
+  *cssMisc::s_argc = 0;
+  for(int i=0;i<taMisc::args_raw.size;i++) {
+    String tmp = taMisc::args_raw[i];
+
+    if(((tmp == "-f") || (tmp == "-file")) && (i+1 < taMisc::args_raw.size)) {
+      i++;			// skip over next
+    }
+    else if(((tmp == "-e") || (tmp == "-exec")) && (i+1 < taMisc::args_raw.size)) {
+      i++;			// skip over next
+    }
+    else if((tmp == "-i") || (tmp == "-interactive")) {
+    }
+    else if(tmp(0,2) == "-v") {
+    }
+    else if(((tmp == "-b") || (tmp == "-bp")) && (i+1 < taMisc::args_raw.size)) {
+      i++;			// skip over next
+    }
+    else {	   // pass the arg to the script
+      int ac = (int)(*cssMisc::s_argc);
+      cssString* av = (cssString*)(*cssMisc::s_argv)[ac];
+      *av = tmp;
+      *cssMisc::s_argc = (int)(*cssMisc::s_argc) + 1;
+    }
+  }
 
   return true;
 }

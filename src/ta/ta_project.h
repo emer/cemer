@@ -87,6 +87,8 @@ public:
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			use_sim_log; 	// record project changes in the SimLog file
+  String		base_fname;
+  // base file name (without .proj extension) -- useful for saving files associated with a project with their own extensions (updated when project is loaded and saved)
 
   override bool		isDirty() const {return m_dirty;}
   override void 	setDirty(bool value); 
@@ -107,7 +109,9 @@ public:
   virtual void	UpdateSimLog();
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
   
+  override int	 	LoadAs_File(const String& fname, TypeDef* td = NULL, void** el = NULL);
   override int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int		SaveAs_File(const String& fname = ""); 
 
   virtual void		PostLoadAutos();
   // perform post-loading automatic functions

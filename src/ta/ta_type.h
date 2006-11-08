@@ -640,9 +640,12 @@ friend class InitProcRegistrar;
   // generate a help message about program args, usage, etc
 
   static void	AddArgName(const String& flag, const String& name);
-  // #IGNORE add an argument flag name to be processed from startup args (e.g., flag = -f, name = CssScript; see arg_names)
+  // add an argument flag name to be processed from startup args (e.g., flag = -f, name = CssScript; see arg_names)
   static void	AddArgNameDesc(const String& name, const String& desc);
-  // #IGNORE add a description of an argument flag name (see arg_name_descs)
+  // add a description of an argument flag name (see arg_name_descs)
+
+  static void	UpdateArgs();
+  // update arg information after adding new arg names
 
   static bool	CheckArgByName(const String& nm);
   // was the given arg name set?

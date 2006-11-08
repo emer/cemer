@@ -254,6 +254,15 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
   
 }
 
+int taProject::LoadAs_File(const String& fname, TypeDef* td, void** el_) {
+  int rval = inherited::LoadAs_File(fname, td, el_);
+  if(fname.contains(".proj"))
+    base_fname = fname.before(".proj");
+  else
+    base_fname = fname;		// whatever
+  return rval;
+}
+
 int taProject::SaveAs(ostream& strm, TAPtr par, int indent) {
 #ifdef TA_GUI
   if (use_sim_log) {
@@ -261,6 +270,15 @@ int taProject::SaveAs(ostream& strm, TAPtr par, int indent) {
   }
 #endif
   return inherited::SaveAs(strm, par, indent);
+}
+
+int taProject::SaveAs_File(const String& fname) {
+  int rval = inherited::SaveAs_File(fname);
+  if(fname.contains(".proj"))
+    base_fname = fname.before(".proj");
+  else
+    base_fname = fname;		// whatever
+  return rval;
 }
 
 void taProject::setDirty(bool value) {
@@ -469,28 +487,28 @@ bool taRootBase::Startup_InitArgs(int argc, const char* argv[]) {
   taMisc::AddArgName("-nogui", "NoGui");
   taMisc::AddArgName("--nogui", "NoGui");
   taMisc::AddArgNameDesc("NoGui", "\
-Disables the GUI (graphical user interface), for running in background");
+ -- Disables the GUI (graphical user interface), for running in background");
 
   taMisc::AddArgName("-gui", "Gui");
   taMisc::AddArgName("--gui", "Gui");
   taMisc::AddArgNameDesc("Gui", "\
-Enables the GUI (graphical user interface) -- it is on by default in most programs except css");
+ -- Enables the GUI (graphical user interface) -- it is on by default in most programs except css");
 
   taMisc::AddArgName("-version", "Version");
   taMisc::AddArgName("--version", "Version");
   taMisc::AddArgNameDesc("Version", "\
-Prints out version and other information");
+ -- Prints out version and other information");
 
   taMisc::AddArgName("-h", "Help");
   taMisc::AddArgName("--help", "Help");
   taMisc::AddArgNameDesc("Help", "\
-Prints out help on startup arguments and other usage information");
+ -- Prints out help on startup arguments and other usage information");
 
   taMisc::AddArgName("-p", "Project");
   taMisc::AddArgName("--proj", "Project");
   taMisc::AddArgName("proj=", "Project");
   taMisc::AddArgNameDesc("Project", "\
-Specifies a project file to be loaded upon startup");
+ <projname.proj> -- Specifies a project file to be loaded upon startup");
 
   taMisc::AddArgName("-f", "CssScript");
   taMisc::AddArgName("--file", "CssScript");
@@ -499,35 +517,35 @@ Specifies a project file to be loaded upon startup");
   taMisc::AddArgName("--script", "CssScript");
   taMisc::AddArgName("script=", "CssScript");
   taMisc::AddArgNameDesc("CssScript", "\
-Specifies a css script file to be loaded and executed upon startup");
+ <scriptname.css> -- Specifies a css script file to be loaded and executed upon startup");
 
   taMisc::AddArgName("-e", "CssCode");
   taMisc::AddArgName("--exec", "CssCode");
   taMisc::AddArgName("exec=", "CssCode");
   taMisc::AddArgNameDesc("CssCode", "\
-Specifies css script code to be executed upon startup");
+ <scriptcode> Specifies css script code to be executed upon startup");
 
   taMisc::AddArgName("-i", "CssInteractive");
   taMisc::AddArgName("--interactive", "CssInteractive");
   taMisc::AddArgNameDesc("CssInteractive", "\
-Specifies that the css console should remain active after running a css script file upon startup");
+ -- Specifies that the css console should remain active after running a css script file upon startup");
 
   taMisc::AddArgName("-v", "CssDebug");
   taMisc::AddArgName("--verbose", "CssDebug");
   taMisc::AddArgName("verbose=", "CssDebug");
   taMisc::AddArgNameDesc("CssDebug", "\
-Specifies an initial debug level for css upon startup");
+ -- Specifies an initial debug level for css upon startup");
 
   taMisc::AddArgName("-b", "CssBreakpoint");
   taMisc::AddArgName("--breakpoint", "CssBreakpoint");
   taMisc::AddArgName("breakpoint=", "CssBreakpoint");
   taMisc::AddArgNameDesc("CssBreakpoint", "\
-Specifies an initial breakpoint at given line number of the startup script file");
+ <line_no> -- Specifies an initial breakpoint at given line number of the startup script file");
 
   taMisc::AddArgName("-rct", "CssRefCountTrace");
   taMisc::AddArgName("--ref_count_trace", "CssRefCountTrace");
   taMisc::AddArgNameDesc("CssRefCountTrace", "\
-Specifies that css reference count tracing should be performed (debugging tool)");
+ -- Specifies that css reference count tracing should be performed (debugging tool)");
 
   taMisc::Init_Args(argc, argv);
   return true;
@@ -652,7 +670,9 @@ bool taRootBase::Startup_ProcessArgs() {
     proj_ld = taMisc::FindArgValContains(".proj");
 
   if(!proj_ld.empty())
-    tabMisc::root->projects.LoadAs_File(proj_ld);	// todo: get correct command here..
+    tabMisc::root->projects.LoadAs_File(proj_ld);
+
+  cssMisc::TopShell->RunStartupScript();
 
   return true;
 }
@@ -715,6 +735,7 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
   if(!Startup_Console()) return false;
 #endif
   if(!Startup_ProcessArgs()) return false;
+  QCoreApplication::processEvents();
   return true;
 }
 

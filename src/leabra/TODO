@@ -13,27 +13,17 @@ docs..: add all float_RArray funs, for matricies.
 * add param on datatable for dmem diff log file names or not
 -----------
 
-* .cssinitrc not being run
-
-* ta_program lib files: use new taMisc::prog_lib  stuff
-
-* taProject has base_fname -- name w/out .proj[.gz]
-
-* functions on taFBase::SaveAsProjBase(const String& ext), LoadAsProjBase, and 
-on DataTable SaveLogAsProjBase: get base_fname and add ext -- this is 
-essentially what most of the startup.css code does
-
 * SaveNetwork[Weights] program -- uses above
 
 * some helper wrapper code to find and set variables in programs upon startup.
-
-
 
 ---------
 
 current bugs:
 
 * not reading last col & row of test.dat!
+
+* can't run startup.css in -nogui or -gui!
 
 --------
 check:

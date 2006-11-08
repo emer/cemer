@@ -754,6 +754,7 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   // set any default settings after loading config file (ensures certain key settings in place)
   css_include_paths.AddUnique(pkg_home + "/css_stdlib");
   css_include_paths.AddUnique(user_home + "/css_mylib");
+  css_include_paths.AddUnique(user_home); // needed for .init files
 
   prog_lib_paths.AddUnique(NameVar("SystemLib", (Variant)(pkg_home + "/prog_lib")));
   prog_lib_paths.AddUnique(NameVar("UserLib", (Variant)(user_home + "/my_prog_lib")));
@@ -765,37 +766,8 @@ void taMisc::Init_Args(int argc, const char* argv[]) {
     String av = argv[i];
     if(av.length() == 0) continue;
     args_raw.Add(av);
-    NameVar nv;
-    if(av[0] == '-') { // a flag
-      Variant vl = arg_names.GetVal(av);
-      if(vl.isNull()) {
-	nv.name = av;
-      }
-      else {
-	nv.name = vl.toString();
-      }
-      if(i < argc-1) {
-	String nxt = argv[i+1];
-	if((nxt[0] != '-') && !nxt.contains('=')) {
-	  // not another flag or n=v; treat as value for this guy
-	  nv.value = nxt;
-	}
-	// don't consume this arg in any case: it will show up as argv[i+1] too
-      }
-    }
-    else if(av.contains('=')) {	// name=value arg
-      nv.name = av.before('=');
-      nv.value = av.after('=');
-      Variant vl = arg_names.GetVal(nv.name + "="); // register "flag=" to convert to names
-      if(!vl.isNull())
-	nv.name = vl.toString();
-    }
-    else {			// regular arg: enter name as argv[x]
-      nv.name = "argv[" + String(i) + "]";
-      nv.value = av;
-    }
-    args.Add(nv);
   }
+  UpdateArgs();
 }
 
 void taMisc::Init_Types() {// called after all type info has been loaded into types
@@ -831,7 +803,44 @@ void taMisc::HelpMsg(ostream& strm) {
     NameVar nv = arg_names.FastEl(i);
     Variant dvar = arg_name_descs.GetVal(nv.value.toString());
     String desc = dvar.toString();
-    strm << "  " << nv.name << "    \t" << desc << endl;
+    strm << "  " << nv.name << desc << endl;
+  }
+}
+
+void taMisc::UpdateArgs() {
+  args.Reset();
+  for(int i=0;i<args_raw.size;i++) {
+    String av = args_raw[i];
+    NameVar nv;
+    if(av[0] == '-') { // a flag
+      Variant vl = arg_names.GetVal(av);
+      if(vl.isNull()) {
+	nv.name = av;
+      }
+      else {
+	nv.name = vl.toString();
+      }
+      if(i < args_raw.size-1) {
+	String nxt = args_raw[i+1];
+	if((nxt[0] != '-') && !nxt.contains('=')) {
+	  // not another flag or n=v; treat as value for this guy
+	  nv.value = nxt;
+	}
+	// don't consume this arg in any case: it will show up as argv[i+1] too
+      }
+    }
+    else if(av.contains('=')) {	// name=value arg
+      nv.name = av.before('=');
+      nv.value = av.after('=');
+      Variant vl = arg_names.GetVal(nv.name + "="); // register "flag=" to convert to names
+      if(!vl.isNull())
+	nv.name = vl.toString();
+    }
+    else {			// regular arg: enter name as argv[x]
+      nv.name = "argv[" + String(i) + "]";
+      nv.value = av;
+    }
+    args.Add(nv);
   }
 }
 

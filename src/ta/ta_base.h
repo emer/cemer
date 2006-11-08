@@ -573,12 +573,17 @@ public:
   virtual ostream& 	OutputR(ostream& strm, int indent = 0) const // #IGNORE
     { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
 
-  virtual int	 	Load(istream& strm, TAPtr par=NULL, void** el = NULL);
-  // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #MENU_CONTEXT #CAT_File Load object data from a file
   virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
+
+  virtual int	 	Load(istream& strm, TAPtr par=NULL, void** el = NULL);
+  // #CAT_File Load object data from a file -- el is what!?
+  virtual int	 	Load_File(TypeDef* td = NULL, void** el = NULL);
+  // #IGNORE load object data from a file -- gets the filename from user
+  virtual int	 	LoadAs_File(const String& fname="", TypeDef* td = NULL, void** el = NULL);
+  // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #LABEL_Load #CAT_File Load object data from given file name (if empty, prompt user for a name) -- use this in programs
 
   virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0);
   // #CAT_File Save object data to a file
@@ -586,14 +591,12 @@ public:
   // #ARGC_1 #CAT_File Save object data to a new file
     { return Save(strm,par,indent); }
   virtual int		Save_File(); 
-  // #MENU #MENU_ON_Object #LABEL_Save #CAT_File saves the object to a file
+  // #MENU #MENU_ON_Object #LABEL_Save #CAT_File saves the object to a file using current file name -- use this in programs
   virtual int		SaveAs_File(const String& fname = ""); 
-  // #MENU #ARGC_0 #LABEL_Save_As #CAT_File Saves object data to a new file
-  virtual int	 	Load_File(TypeDef* td = NULL, void** el = NULL);
-  // #IGNORE load object data from a file -- gets the filename
-  virtual int	 	LoadAs_File(const String& fname, TypeDef* td = NULL
-    , void** el = NULL);
-  //  #IGNORE Load object data from a file
+  // #MENU #ARGC_0 #LABEL_Save_As #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user -- use this in programs
+
+  virtual String	GetFileNameFmProject(const String& ext, const String& tag = "");
+  // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; fname = proj->base_name + tag + ext; empty if project not found
   
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
     { Dump_Save_pre(); 

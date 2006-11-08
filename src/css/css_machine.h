@@ -1665,6 +1665,9 @@ public:
   void		Shell_NoGui_Rl(const char* prmpt);
   // run a nogui readline-based shell
 
+  bool		RunStartupScript();
+  // run any startup scripts that might have been specified by startup args
+
   void		FlushConsole();	// flush the console output
   void		SetPrompt(const char* prmpt, bool disp_prompt = false);
   void		UpdatePrompt(bool disp_prompt = false);

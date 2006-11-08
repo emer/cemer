@@ -4898,30 +4898,29 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, ConsoleType cons_
 //   signal(SIGTRAP, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
 #endif
-  bool run_flag = false;
+}
 
+bool cssCmdShell::RunStartupScript() {
+  bool ran = false;
   if(cssMisc::startup_file != "") {
-    cmd_prog->Reset();
-    cmd_prog->Compile((const char*)cssMisc::startup_file);
-    run_flag = true;
-  }
-  if(src_prog && (cssMisc::init_bpoint >= 0)) {
-    src_prog->SetBreak(cssMisc::init_bpoint);
-  }
-
-  if(run_flag) {
-    cmd_prog->Run();
-    cmd_prog->EndRunPop();
+    src_prog->Reset();
+    src_prog->Compile((const char*)cssMisc::startup_file);
+    if(cssMisc::init_bpoint >= 0)
+      src_prog->SetBreak(cssMisc::init_bpoint);
+    src_prog->Run();
+    src_prog->EndRunPop();
+    ran = true;
   }
 
   // allow both startup_file and startup_code to co-exist..
   if (cssMisc::startup_code != "") {
-    cmd_prog->Reset();
-    cmd_prog->CompileCode(cssMisc::startup_code);
-    cmd_prog->Run();
-    cmd_prog->EndRunPop();
-    run_flag = true;
+    src_prog->Reset();
+    src_prog->CompileCode(cssMisc::startup_code);
+    src_prog->Run();
+    src_prog->EndRunPop();
+    ran = true;
   }
+  return ran;
 }
 
 void cssCmdShell::SetPrompt(const char* prmpt, bool disp_prompt) {
