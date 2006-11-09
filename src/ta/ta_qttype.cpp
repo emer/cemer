@@ -1376,7 +1376,7 @@ int taiFunPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiFunPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  taiMenu* rval = new taiMenu(taiMenu::radio_update, taiMisc::fonSmall,
+  taiButtonMenu* rval = new taiButtonMenu(taiMenu::radio_update, taiMisc::fonSmall,
       typ, host_, par, gui_parent_, flags_);
   rval->AddItem("NULL");
   rval->AddSep();
@@ -1391,7 +1391,7 @@ taiData* taiFunPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidge
 
 void taiFunPtrMember::GetImage_impl(taiData* dat, const void* base){
   void* new_base = mbr->GetOff(base);
-  taiMenu* rval = (taiMenu*)dat;
+  taiButtonMenu* rval = (taiButtonMenu*)dat;
   if(*((void**)new_base) == NULL) {
     rval->GetImageByData(Variant(0));
     return;
@@ -1406,7 +1406,7 @@ void taiFunPtrMember::GetImage_impl(taiData* dat, const void* base){
 
 void taiFunPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   void* new_base = mbr->GetOff(base);
-  taiMenu* rval = (taiMenu*)dat;
+  taiButtonMenu* rval = (taiButtonMenu*)dat;
   taiAction* cur = rval->curSel();
   if (cur != NULL)
     *((void**)new_base) = cur->usr_data.toPtr();

@@ -356,7 +356,8 @@ public: // standard keys for standard gui descriptions, mostly for list columns
   // #IGNORE default keys are: name, type, desc, disp_name
 #ifdef TA_GUI
 public:
-//friend class tabDataLink;
+  virtual void		BrowseMe();
+  // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
   virtual void		ChildQueryEditActions(const MemberDef* md, const taBase* child, taiMimeSource* ms,
     int& allowed, int& forbidden);
     // #IGNORE gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
@@ -654,8 +655,6 @@ public:
   virtual void		Help();
   // #MENU #CAT_Display get help on using this object
 
-  virtual void		BrowseMe();
-  // #MENU #MENU_CONTEXT #CAT_Display show this object in its own browser 
   
   static bool	UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* new_par,
 					  bool null_not_found = true);

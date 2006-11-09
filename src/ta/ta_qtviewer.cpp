@@ -885,7 +885,7 @@ void tabDataLink::fileSaveAs() {
 
 /* Context Menus are filled in the following order (with indicated separators)
 ------
-Browser/gui framework items (ex. "Browse from here")
+Browser/gui framework items 
 ------
 Standard Edit menu items (Cut, Copy, etc.)
 ------
@@ -3402,8 +3402,8 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   if (m_panel) {
     setTabText(idx, m_panel->TabText());
 //    m_panel->mtab_cnt++;
-    // make sure we show latest data
-    m_panel->GetImage();
+    // make sure we show latest data -- OBS: notify should always keep panels uptodate
+//nn    m_panel->GetImage();
   } else {
     setTabText(idx, "");
   }
@@ -4876,11 +4876,11 @@ void taiTreeDataNode::CreateChildren_impl() {
 }
 
 void taiTreeDataNode::FillContextMenu_impl(taiActions* menu) {
-  if (dn_flags & DNF_CAN_BROWSE) {
+/*obs, nuke, superceded by taBase::BrowseMe  if (dn_flags & DNF_CAN_BROWSE) {
      //taiAction* mel =
      menu->AddItem("New Browser from here", taiMenu::use_default,
        taiAction::men_act, treeView(), SLOT(mnuNewBrowser(taiAction*)), this);
-  }
+  } */
   inherited::FillContextMenu_impl(menu);
 }
 

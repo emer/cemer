@@ -425,7 +425,7 @@ void LeabraUnitSpec::Defaults() {
 
 void LeabraUnitSpec::InitLinks() {
   bias_spec.type = &TA_LeabraBiasSpec;
-  UnitSpec::InitLinks();
+  inherited::InitLinks();
   taBase::Own(act, this);
   taBase::Own(spike, this);
   taBase::Own(depress, this);
@@ -446,8 +446,8 @@ void LeabraUnitSpec::InitLinks() {
   taBase::Own(noise_conv, this);
 }
 
-void LeabraUnitSpec::UpdateAfterEdit() {
-  UnitSpec::UpdateAfterEdit();
+void LeabraUnitSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   clamp_range.UpdateAfterEdit();
   vm_range.UpdateAfterEdit();
   depress.UpdateAfterEdit();

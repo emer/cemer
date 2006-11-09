@@ -436,7 +436,6 @@ public:
 
   virtual int	UseCount(); // return number of times this spec is used
 
-  void  UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()		{ };
   void	InitLinks();
@@ -444,6 +443,9 @@ public:
   void 	Copy_(const UnitSpec& cp);
   COPY_FUNS(UnitSpec, BaseSpec);
   TA_BASEFUNS(UnitSpec);
+protected:
+  override void  	UpdateAfterEdit_impl();
+  override void		CheckThisConfig_impl(bool quiet, bool& ok);
 };
 
 SpecPtr_of(UnitSpec);
@@ -1224,7 +1226,6 @@ public:
   int		n_cons;		// #READ_ONLY #DETAIL total number of connections in the network
   PosTDCoord	max_size;	// #READ_ONLY #DETAIL maximum size in each dimension of the net
 
-  bool		deleting; 	// #IGNORE if object is currently being deleted
   bool		copying; 	// #IGNORE if object is currently being copied
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
 

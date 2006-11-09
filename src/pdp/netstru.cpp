@@ -196,7 +196,7 @@ void ConSpec::InitLinks() {
 
 void ConSpec::CutLinks() {
   Network* net = (Network *) GET_MY_OWNER(Network);
-  if((net) && !net->deleting) {
+  if((net) && !net->isDestroying()) {
     ConSpec* rsp = (ConSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
       rsp = (ConSpec*)net->specs.FindSpecInheritsNotMe(&TA_ConSpec, this);
@@ -1255,26 +1255,23 @@ bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
-void UnitSpec::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-  act_range.UpdateAfterEdit();
-  bias_spec.CheckSpec();
-  if((bias_con_type) && (bias_spec.spec) && !bias_con_type->InheritsFrom(bias_spec.spec->min_con_type)) {
-    taMisc::Error("Bias con type of:", bias_con_type->name,
+void UnitSpec::CheckThisConfig_impl(bool quiet, bool& ok) {
+  inherited::CheckThisConfig_impl(quiet, ok);
+  if (bias_con_type && bias_spec.spec &&
+    !bias_con_type->InheritsFrom(bias_spec.spec->min_con_type)) 
+  {
+    ok = false;
+    if (!quiet) taMisc::CheckError("Bias con type of:", bias_con_type->name,
 		  "is not of the correct type for the bias con spec,"
 		  "which needs at least a:", bias_spec.spec->min_con_type->name);
-    return;
-  }
-  if(taMisc::is_loading) return;
 
-  if(!taMisc::gui_active) return;
-//   Network* net = (Network *) GET_MY_OWNER(Network);
-//   if (!net) return;
-/*TODO    NetView* vw;
-    taLeafItr vi;
-    FOR_ITR_EL(NetView, vw, net->views., vi) {
-      vw->UpdateButtons();	// update buttons to reflect need to build or not..
-    } */
+  }
+}
+
+void UnitSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  act_range.UpdateAfterEdit();
+  bias_spec.CheckSpec();
 }
 
 int UnitSpec::UseCount() {
@@ -1292,7 +1289,7 @@ void UnitSpec::BuildBiasCons() {
 
 void UnitSpec::CutLinks() {
   Network* net = (Network *) GET_MY_OWNER(Network);
-  if((net) && !net->deleting) {
+  if((net) && !net->isDestroying()) {
     UnitSpec* rsp = (UnitSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
       rsp = (UnitSpec*)net->specs.FindSpecInheritsNotMe(&TA_UnitSpec, this);
@@ -2110,7 +2107,7 @@ void ProjectionSpec::InitLinks() {
 
 void ProjectionSpec::CutLinks() {
   Network* net = (Network *) GET_MY_OWNER(Network);
-  if((net) && !net->deleting) {
+  if((net) && !net->isDestroying()) {
     ProjectionSpec* rsp = (ProjectionSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
       rsp = (ProjectionSpec*)net->specs.FindSpecInheritsNotMe(&TA_ProjectionSpec, this);
@@ -3234,7 +3231,7 @@ void LayerSpec::InitLinks() {
 
 void LayerSpec::CutLinks() {
   Network* net = (Network *) GET_MY_OWNER(Network);
-  if(net && !net->deleting) {
+  if(net && !net->isDestroying()) {
     LayerSpec* rsp = (LayerSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
     if(rsp == NULL) {
       rsp = (LayerSpec*)net->specs.FindSpecInheritsNotMe(&TA_LayerSpec, this);
@@ -4307,7 +4304,6 @@ void Network::Initialize() {
   max_size.y = 1;
   max_size.z = 1;
 
-  deleting = false;
   copying = false;
   proj = NULL;
 #ifdef DMEM_COMPILE
@@ -4330,7 +4326,6 @@ void Network::InitLinks() {
 void Network::CutLinks() {
   static bool in_repl = false;
   if(in_repl || (owner == NULL)) return; // already replacing or already dead
-  deleting = true;
 #ifdef DMEM_COMPILE
   if(dmem_share_units.comm != MPI_COMM_SELF) {
     DMEM_MPICALL(MPI_Comm_free((MPI_Comm*)&dmem_share_units.comm),

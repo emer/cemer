@@ -10,6 +10,11 @@ Items to Allocate/Prioritize:
   * make a link and tree node for making subspecs be direct children
   * enhance BaseSpec edit/drop to accept compatible subspec objects
 
+* various net objs have significant code in their CutLinks -- this is
+  Very Bad (TM) since CL is a destructive-like operation which should 
+  avoid significant operations
+  ex: UnitSpec::CutLinks()
+  
 * Show changes:
 Ps force expert idea is good & should just be the default: if there is a 
 def ant it is not set to that, then show.
@@ -35,6 +40,7 @@ it more transparent..  ProgEditor is Program?
 *  Program Groups: execution control
 
 * change basis of coord axes for netview, layers, etc.
+* unit/group geom specification changes for layers
 
 * automatically bracket gui-invoked methods with Busy/Notbusy
 * UserData

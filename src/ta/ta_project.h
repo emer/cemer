@@ -82,7 +82,7 @@ public:
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
   DataTable_Group	data;	// data, such as patterns for network input
   Program_Group		programs; // Gui-based programs to run simulations and other processing
-  ViewSpec_Group	viewspecs; // specs for views of objects, esp. tables, ex. graphs
+  ViewSpec_Group	viewspecs; // #NO_SAVE #OBS specs for views of objects, esp. tables, ex. graphs
   DataViewer_List	viewers; // any top-level viewers that have been saved
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE

@@ -530,6 +530,7 @@ public:
 
 class LEABRA_API LeabraUnitSpec : public UnitSpec {
   // Leabra unit specifications, point-neuron approximation
+INHERITED(UnitSpec)
 public:
   enum ActFun {
     NOISY_XX1,			// x over x plus 1 convolved with Gaussian noise (noise is nvar)
@@ -700,13 +701,14 @@ public:
 
   override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
 
-  void	UpdateAfterEdit();	// to set _impl sig
   void 	Initialize();
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(LeabraUnitSpec);
   COPY_FUNS(LeabraUnitSpec, UnitSpec);
   TA_BASEFUNS(LeabraUnitSpec);
+protected:
+  override void		UpdateAfterEdit_impl();	// to set _impl sig
 };
 
 class LEABRA_API VChanBasis : public taBase {
