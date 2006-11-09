@@ -771,14 +771,12 @@ String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
 }
 
 taDataLink* taBase::GetDataLink() {
-#ifdef TA_GUI
   if (!data_link()) {
     taiViewType* iv;
     if ((iv = GetTypeDef()->iv) != NULL) {
       iv->GetDataLink(this, GetTypeDef()); // sets data_link
     }
   }
-#endif
   return data_link();
 }
 

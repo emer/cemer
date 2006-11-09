@@ -59,15 +59,18 @@ istream& operator>>(istream& s, Variant& x) {
 const String Variant::formatNumber_impl(const Variant& val,
      short prec, bool hex) const 
 {
-  String p = String("%.").cat(String(prec));
   switch (m_type) {
   case T_Invalid: return _nilString;
 //case T_Bool:
-  case T_Int: return String(d.i, p.cat((hex) ? "X" : "d"));
-  case T_UInt: return String(d.u, p.cat((hex) ? "X" : "u"));
+  case T_Int: return String(d.i, (hex) ? "%X" : "%d");
+  case T_UInt: return String(d.u, (hex) ? "%X" : "%u");
   case T_Int64: return String(d.i64); //TODO: formats
   case T_UInt64: return String(d.u64); // TODO: formats
-  case T_Double: return String(d.d, p.cat("g")); // hex ignored
+  case T_Double: {
+    if ((prec < 1) || ( prec > 16)) prec = 5; // prob an error
+    String p = String("%.").cat(String(prec)).cat("G");
+    return String(d.d, p); // hex ignored
+  }
 //case T_Char:
 //case T_String: 
 //case T_Ptr: 

@@ -581,6 +581,7 @@ void BpNetwork::Compute_Act() {
     }
     lay->Compute_Act();
   }
+  taiMiscCore::RunPending();
 }
 
 void BpNetwork::Compute_dEdA_dEdNet() {
@@ -610,6 +611,7 @@ void BpNetwork::Compute_dEdA_dEdNet() {
       u->Compute_dEdA_dEdNet();
 #endif
   }
+  taiMiscCore::RunPending();
 }
 
 void BpNetwork::Compute_Error() {
@@ -627,6 +629,7 @@ void BpNetwork::Compute_Error() {
       u->Compute_Error();
     }
   }
+  taiMiscCore::RunPending();
 }
 
 void BpNetwork::Trial_Run() {

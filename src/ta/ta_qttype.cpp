@@ -2880,7 +2880,7 @@ taiDataLink* tabGroupViewType::CreateDataLink_impl(taBase* data_) {
 
 
 
-void taiTypeBase::InitializeTypes() {
+void taiTypeBase::InitializeTypes(bool gui) {
   int i,j,k;
   TypeDef* td;
 
@@ -2894,7 +2894,7 @@ void taiTypeBase::InitializeTypes() {
     td = taMisc::types.FastEl(i);
 
     // generate a list of all the qt types
-    if (td->InheritsFrom(TA_taiType) && (td->instance != NULL)
+    if (gui && td->InheritsFrom(TA_taiType) && (td->instance != NULL)
        && !(td->InheritsFrom(TA_taiMember) || td->InheritsFrom(TA_taiMethod) ||
 	    td->InheritsFrom(TA_taiArgType) || td->InheritsFrom(TA_taiEdit)))
       i_type_space.Link(td);
@@ -2905,27 +2905,27 @@ void taiTypeBase::InitializeTypes() {
       v_type_space.Link(td);
 
     // generate a list of all the member_i types
-    if (td->InheritsFrom(TA_taiMember) && (td->instance != NULL))
+    if (gui && td->InheritsFrom(TA_taiMember) && (td->instance != NULL))
       i_memb_space.Link(td);
 
     // generate a list of all the method_i types
-    if (td->InheritsFrom(TA_taiMethod) && (td->instance != NULL))
+    if (gui && td->InheritsFrom(TA_taiMethod) && (td->instance != NULL))
       i_meth_space.Link(td);
 
     // generate a list of all the method arg types to be used later
-    if (td->InheritsFrom(TA_taiArgType) && (td->instance != NULL))
+    if (gui && td->InheritsFrom(TA_taiArgType) && (td->instance != NULL))
       taiMisc::arg_types.Link(td);
 
     // generate a list of all the ie types (edit dialogs)
-    if (td->InheritsFrom(TA_taiEdit) && (td->instance != NULL))
+    if (gui && td->InheritsFrom(TA_taiEdit) && (td->instance != NULL))
       i_edit_space.Link(td);
   }
 
-  if (i_type_space.size == 0)
+  if (gui && (i_type_space.size == 0))
     taMisc::Error("taiInit: warning: no taiType's found with instance != NULL");
-  if (i_memb_space.size == 0)
+  if (gui && (i_memb_space.size == 0))
     taMisc::Error("taiInit: warning: no taiMembers's found with instance != NULL");
-  if (i_edit_space.size == 0)
+  if (gui && (i_edit_space.size == 0))
     taMisc::Error("taiInit: warning: no taiEdit's found with instance != NULL");
 
   // go through all the types and assign the highest bid for
@@ -2934,7 +2934,7 @@ void taiTypeBase::InitializeTypes() {
 
   for (i=0; i < taMisc::types.size; ++i){
     td = taMisc::types.FastEl(i);
-    for (j=0; j <i_type_space.size; ++j) {
+    if (gui) for (j=0; j <i_type_space.size; ++j) {
       taiType* tit_i = (taiType*) i_type_space.FastEl(j)->GetInstance();
       if ((bid = tit_i->BidForType(td)) > 0) {
 	taiType* tit = (taiType*)tit_i->TypInst(td); // make one
@@ -2952,7 +2952,7 @@ void taiTypeBase::InitializeTypes() {
       }
     }
 
-    for (j=0; j < i_edit_space.size; ++j) {
+    if (gui) for (j=0; j < i_edit_space.size; ++j) {
       taiEdit* tie_i = (taiEdit*) i_edit_space.FastEl(j)->GetInstance();
       if ((bid = tie_i->BidForEdit(td)) > 0) {
 	taiEdit* tie = (taiEdit*)tie_i->TypInst(td);
@@ -2966,7 +2966,7 @@ void taiTypeBase::InitializeTypes() {
     // the highest bid for the member's it (may be based on opts field)
     // and do the enum types since they are not global and only on members
 
-    if (td->InheritsFormal(TA_class)) {
+    if (gui && td->InheritsFormal(TA_class)) {
       for (j=0; j < td->members.size; ++j) {
 	MemberDef* md = td->members.FastEl(j);
 	if (md->owner->owner != td) continue; // if we do not own this mdef, skip

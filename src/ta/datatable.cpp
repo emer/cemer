@@ -1477,10 +1477,11 @@ void GridColViewSpec::Render_impl() {
     row_ht = MAX(row_ht, tmp);
   }
   if (display_style == IMAGE) {
+    //note: cg.y will be #comps*image.y (ex image.y for b&w, 3*image.y for rgb)
     float px_pts = par->pixel_pts; 
     tmp = px_pts * cg.x;
     col_wd = MAX(col_wd, tmp);
-    row_ht += px_pts * cg.y;
+    row_ht += (px_pts * cg.y) / dc->imageComponents(); // need to comp
   }
   col_wd = MAX(col_wd, min_col_wd);
   // change to geoms

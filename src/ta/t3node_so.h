@@ -377,7 +377,7 @@ protected:
 };
 
 class TA_API SoImageEx: public SoSeparator { 
-// ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer -- height will always be 1; width will then be w/h ratio
+// ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer -- width will always be 1; height will then be h/w ratio
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
@@ -396,6 +396,7 @@ public:
 protected:
   SoRect*		shape;
   byte_Matrix		img;
+  iVec2i		d; // cached for clarity
   
   void		adjustScale(); // called after setting image to adjust aspect
   void		setImage2(const QImage& src);

@@ -46,7 +46,8 @@ Alpha:
 
 Brad:
 
-* "diabled" generic state for viewing; "disabled" gui state for treeviews
+* nuke float_RArray from datagraph
+* "disabled" generic state for viewing; "disabled" gui state for treeviews
 
 * clean up and/or extend data notify so that DataTable finish adding of row is clearly 
   done, so various display or calculation clients can then update themselves
@@ -90,6 +91,7 @@ Brad done:
 Graphing/Viewing:
   * sort out DT/DA specs vs. TableView etc.
   * T3 table/grid views
+* view_spec in GridTableView doesn't show in a panel anymore!
 
 
 Brad deferred:

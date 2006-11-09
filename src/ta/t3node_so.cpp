@@ -716,14 +716,12 @@ SoImageEx::~SoImageEx() {
 }
 
 void SoImageEx::adjustScale() {
-  int dx = img.geom.SafeEl(0);
-  int dy = img.geom.SafeEl(1);
-  float wd;
-  if ((dx == 0) || (dy == 0))
-    wd = 1.0f;
+  float ht;
+  if ((d.x == d.y) || (d.x == 0) || (d.y == 0))
+    ht = 1.0f;
   else
-    wd = ((float)dx / (float)dy);
-  shape->setDimensions(wd, shape->height);
+    ht = ((float)d.y) / ((float)d.x);
+  shape->setDimensions(shape->width, ht);
   // set proper type
   if (img.dims() == 2) {
     texture->model = SoTexture2::REPLACE;
@@ -741,37 +739,37 @@ void SoImageEx::setImage(const QImage& src) {
 }
 
 void SoImageEx::setImage2(const QImage& src) {
-  int dx = src.width();
-  int dy = src.height();
-  img.SetGeom(2, dx, dy);
+  d.x = src.width();
+  d.y = src.height();
+  img.SetGeom(2, d.x, d.y);
   int idx = 0;
   //NOTE: we have to invert the data for Coin's bottom=0 addressing
-  for (int y = dy - 1; y >= 0; --y) {
-    for (int x = 0; x < dx; ++x) {
+  for (int y = d.y - 1; y >= 0; --y) {
+    for (int x = 0; x < d.x; ++x) {
       img.FastEl_Flat(idx) = (byte)(qGray(src.pixel(x, y)));
       ++idx;
     }
   }
-  texture->image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
+  texture->image.setValue(SbVec2s(d.x, d.y), 1, (const unsigned char*)img.data());
 }
 
 void SoImageEx::setImage3(const QImage& src) {
-  int dx = src.width();
-  int dy = src.height();
+  d.x = src.width();
+  d.y = src.height();
   //NOTE: img geom is not same as input: rgb is in innermost for us
-  img.SetGeom(3, 3, dx, dy);
+  img.SetGeom(3, 3, d.x, d.y);
   int idx = 0;
   QRgb rgb;
   //NOTE: we have to invert the data for Coin's bottom=0 addressing
-  for (int y = dy - 1; y >= 0; --y) {
-    for (int x = 0; x < dx; ++x) {
+  for (int y = d.y - 1; y >= 0; --y) {
+    for (int x = 0; x < d.x; ++x) {
       rgb = src.pixel(x, y);
       img.FastEl_Flat(idx++) = (byte)(qRed(rgb));
       img.FastEl_Flat(idx++) = (byte)(qGreen(rgb));
       img.FastEl_Flat(idx++) = (byte)(qBlue(rgb));
     }
   }
-  texture->image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
+  texture->image.setValue(SbVec2s(d.x, d.y), 3, (const unsigned char*)img.data());
 }
 
 void SoImageEx::setImage(const taMatrix& src, bool top_zero) {
@@ -788,52 +786,52 @@ void SoImageEx::setImage(const taMatrix& src, bool top_zero) {
 }
 
 void SoImageEx::setImage2(const taMatrix& src, bool top_zero) {
-  int dx = src.dim(0);
-  int dy = src.dim(1);
-  img.SetGeom(2, dx, dy);
+  d.x = src.dim(0);
+  d.y = src.dim(1);
+  img.SetGeom(2, d.x, d.y);
   int idx = 0;
   if (top_zero) {
-    for (int y = dy - 1; y >= 0; --y) {
-      for (int x = 0; x < dx; ++x) {
+    for (int y = d.y - 1; y >= 0; --y) {
+      for (int x = 0; x < d.x; ++x) {
         img.FastEl_Flat(idx) = (byte)(src.FastElAsFloat(x, y) * 255);
         ++idx;
       }
     }
   } else {
-    for (int y = 0; y < dy; ++y) {
-      for (int x = 0; x < dx; ++x) {
+    for (int y = 0; y < d.y; ++y) {
+      for (int x = 0; x < d.x; ++x) {
         img.FastEl_Flat(idx) = (byte)(src.FastElAsFloat(x, y) * 255);
         ++idx;
       }
     }
   }
-  texture->image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
+  texture->image.setValue(SbVec2s(d.x, d.y), 1, (const unsigned char*)img.data());
 }
 
 void SoImageEx::setImage3(const taMatrix& src, bool top_zero) {
-  int dx = src.dim(0);
-  int dy = src.dim(1);
+  d.x = src.dim(0);
+  d.y = src.dim(1);
   //NOTE: img geom is not same as input: rgb is in innermost for us
-  img.SetGeom(3, 3, dx, dy);
+  img.SetGeom(3, 3, d.x, d.y);
   int idx = 0;
   if (top_zero) {
-    for (int y = dy - 1; y >= 0; --y) {
-      for (int x = 0; x < dx; ++x) {
+    for (int y = d.y - 1; y >= 0; --y) {
+      for (int x = 0; x < d.x; ++x) {
         img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
         img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
         img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
       }
     }
   } else {
-    for (int y = 0; y < dy; ++y) {
-      for (int x = 0; x < dx; ++x) {
+    for (int y = 0; y < d.y; ++y) {
+      for (int x = 0; x < d.x; ++x) {
         img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
         img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
         img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
       }
     }
   }
-  texture->image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
+  texture->image.setValue(SbVec2s(d.x, d.y), 3, (const unsigned char*)img.data());
 }
 
 

@@ -344,7 +344,7 @@ void ClassBrowseViewer::RootToStr() {
     root_str = _nilString;
     return;
   }
-  taMisc::TypeInfoKind tik = taMisc::TypeToTypeInfoKind(root_typ);
+//nn  taMisc::TypeInfoKind tik = taMisc::TypeToTypeInfoKind(root_typ);
   //TODO: full description of type, requires support from ta_type for searching/converting
   // for now, we only support the root typespace
   if (m_root == &taMisc::types)

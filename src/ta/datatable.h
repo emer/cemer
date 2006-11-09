@@ -394,11 +394,11 @@ public:
   float		grid_margin_pts; // #DEF_4 #MIN_0 size of margin inside grid cells, in points
   float		grid_line_pts; // #DEF_3 #MIN_0.1 size of grid lines, in points (grid lines can be turned off in the viewer)
   MatSizeModel	mat_size_model; // sets all matrix metrics to convenient values
-  float		mat_block_pts;	// #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 matrix block size, in points
-  float		mat_border_pts; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS size of border around matrix cells, in points
-  float		mat_sep_pts; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS sep between text and grid, etc
-  float		mat_font_scale; // #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 amount to scale font for matrix cells
-  float		pixel_pts;	// #CONDEDIT_ON_metrics_model:CUSTOM_METRICS #MIN_0.1 image pixel size, in points (there is no border)
+  float		mat_block_pts;	// #CONDEDIT_ON_mat_size_model:CUSTOM_METRICS #MIN_0.1 matrix block size, in points
+  float		mat_border_pts; // #CONDEDIT_ON_mat_size_model:CUSTOM_METRICS size of border around matrix cells, in points
+  float		mat_sep_pts; // #CONDEDIT_ON_mat_size_model:CUSTOM_METRICS sep between text and grid, etc
+  float		mat_font_scale; // #CONDEDIT_ON_mat_size_model:CUSTOM_METRICS #MIN_0.1 amount to scale font for matrix cells
+  float		pixel_pts;	// #CONDEDIT_ON_mat_size_model:CUSTOM_METRICS #MIN_0.1 image pixel size, in points (there is no border)
   
   inline int		colSpecCount() const {return col_specs.size;}
   GridColViewSpec*	colSpec(int idx) const 

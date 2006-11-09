@@ -179,19 +179,16 @@ void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
   m_rows = dt->rows;
   
   if (!isVisible()) return;
-  if (dcr == DCR_UPDATE_VIEWS) {
+  if ((dcr == DCR_UPDATE_VIEWS) || (dcr == DCR_DATA_UPDATE_END)) {
     if (delta_rows > 0) {
       DataChange_NewRows(delta_rows);
       return;
-    } else { // if not appending rows, treat as struct update
-      DataChange_StructUpdate();
+    } else { // if not appending rows, treat as misc update
+      DataChange_Other();
       return;
     }
   } else if (dcr == DCR_STRUCT_UPDATE_END) {
     DataChange_StructUpdate();
-    return;
-  } else if (dcr == DCR_DATA_UPDATE_END) {
-    DataChange_Other();
     return;
   }
   // we don't respond to any other kinds of updates
@@ -315,8 +312,8 @@ void TableView::UpdateView() {
   //note: when display goes back on, we do the full kahuna
   ++updating;
   InitViewSpec();
-  MakeViewRangeValid();
   InitDisplay();
+  MakeViewRangeValid();
   ViewRangeChanged();
   --updating;
 }
@@ -619,6 +616,7 @@ void GridTableView::CalcViewMetrics() {
     (row_height + (2 * gr_mg_sz))), 1);
   
   CalcColMetrics();
+  MakeViewRangeValid();
 }
 
 void GridTableView::ClearViewRange() {
@@ -750,7 +748,7 @@ void GridTableView::RenderGrid() {
   int idx = -1;
   for (int col = col_range.min; col <= col_range.max; ++col) {
     GridColViewSpec* cvs = tvs->colSpec(col);
-    if (!cvs->isVisible()) continue;
+    if (!cvs || !cvs->isVisible()) continue;
     ++idx;
     //note: we always put a sep after the last col, because it is usually
     // followed by blank space
@@ -799,7 +797,7 @@ void GridTableView::RenderHeader() {
   int idx = -1;
   for (int col = col_range.min; col <= col_range.max; ++col) {
     GridColViewSpec* cvs = tvs->colSpec(col);
-    if (!cvs->isVisible()) continue;
+    if (!cvs || !cvs->isVisible()) continue;
     ++idx;
     if (col_wd_lst > 0.0f) { 
       tr = new SoTranslation();
@@ -861,7 +859,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   int idx = -1;
   for (int col = col_range.min; col <= col_range.max; col++) {
     GridColViewSpec* cvs = tvs->colSpec(col);
-    if (!cvs->isVisible()) continue;
+    if (!cvs || !cvs->isVisible()) continue;
     ++idx;
     
     DataArray_impl* dc = cvs->dataCol();
@@ -931,6 +929,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       SoRect* cu = new SoRect; // all can share!!!
       cu->ref();
       cu->setDimensions(bsz, bsz);
+      bool is_image = dc->isImage(); // use true color for images
+      int comps = (is_image) ? dc->imageComponents() : 1; //only used for images
       for (c.y = 0; c.y < cg.y; ++c.y) {
         if (cvs->mat_layout == GridColViewSpec::BOT_ZERO)
           cell = cg.x * (cg.y - c.y - 1);
@@ -951,10 +951,31 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           }
           SoBaseColor* bc = new SoBaseColor;
           blk_ln->addChild(bc);
-          
           float val = dc->GetValAsFloatM(act_idx, cell);
-          //NOTE: following a bit dangerous, but should never be null
-          col = *(scale.GetColor(val));
+          if (is_image) {
+            if (comps > 2) { // color of some kind
+              // rgb val correct for topzero, inverted for bot zero (g always right)
+              int rgb_mod = (c.y / (cg.y / comps)) % comps; //r=0,g=1,b=2
+              if (rgb_mod == 1)
+                col.setValue(0, val, 0);
+              else  if ((rgb_mod >= 0) && (rgb_mod <= 2)) {
+                if (cvs->mat_layout == GridColViewSpec::BOT_ZERO) {
+                  if (rgb_mod == 0) //aka blue
+                    col.setValue(0, 0, val);
+                  else // 2, aka red
+                    col.setValue(val, 0, 0);
+                } else {
+                  col.setValue(0,0,0);
+                  col.rgb[rgb_mod] = val;
+                }
+              } else // unknown component (ex alpha)
+                col.setValue(val, val, val);
+            } else // b&w
+              col.setValue(val, val, val);
+          } else { // just use color scale
+            //NOTE: following a bit dangerous, but should never be null
+            col = *(scale.GetColor(val));
+          }
           bc->rgb = (SbColor)col;
           blk_ln->addChild(cu);
           ++cell;
@@ -1057,15 +1078,16 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     } //text
     
     if (cvs->display_style == GridColViewSpec::IMAGE) {
+      //note: y will be #comps*image.y, but this doesn't affect us here
       if ((cg.x == 0) || (cg.y == 0)) continue; // something wrong!
       SoSeparator* img = new SoSeparator;
       ln->addChild(img);
       SoTransform* tr = new SoTransform();
       img->addChild(tr);
       // scale the image according to pixel metrics
-      //note: image defaults to 1 geom unit height, so we scale by our act height
+      //note: image defaults to 1 geom unit width, so we scale by our act width
       float pxsz =  tvs->pixelSize();
-      float scale_fact = pxsz * cg.y; // note: NOT row_height
+      float scale_fact = pxsz * cg.x; // note: NOT row_height
       tr->scaleFactor.setValue(scale_fact, scale_fact, 1.0f);
       // center the shape in the middle of the cell
       tr->translation.setValue((col_width / 2), -(row_height / 2), 0.0f);

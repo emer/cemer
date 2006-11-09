@@ -3014,6 +3014,7 @@ void LeabraNetwork::Cycle_Run() {
     Compute_InhibAvg();
   }
   Compute_Act();
+  taiMiscCore::RunPending();
 }
 
 //////////////////////////////////

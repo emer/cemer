@@ -47,7 +47,7 @@ class taiTypeHier; //
 class TA_API taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
-  static void		InitializeTypes();  // called at startup to initialize the type system
+  static void		InitializeTypes(bool gui);  // called at startup to initialize the type system
   TypeDef*		typ;		// typedef of base object
   int			bid;		// its bid
   taiTypeBase* 		m_sub_types;	// lower bid type (which has lower one, and so on) -- is cast to correct type

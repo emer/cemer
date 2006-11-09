@@ -88,6 +88,15 @@ void DataArray_impl::Init() {
   }
 }
 
+bool DataArray_impl::isImage() const {
+  return GetUserDataAsBool("IMAGE");
+}
+
+int DataArray_impl::imageComponents() const {
+  if (cell_geom.size <= 2) return 1;
+  else return cell_geom.FastEl(2);
+}
+
 void DataArray_impl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Init();

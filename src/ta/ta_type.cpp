@@ -272,10 +272,15 @@ void taiMiscCore::Init(bool gui) {
   
   connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()),
     this, SLOT(app_aboutToQuit()) );
-  // special timeout=0 does idle processing in Qt
+
+  // initialize the type system
+  taiTypeBase::InitializeTypes(gui);
+
+  // does idle processing in Qt
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
   timer->start(50);
+  
 }
 
 void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {

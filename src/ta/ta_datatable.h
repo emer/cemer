@@ -98,6 +98,11 @@ public:
   // #CAT_Access true if data is float, int, or byte
   virtual bool		isString() const {return false;}
   // #CAT_Access true if data is string
+  virtual bool		isImage() const;
+  // #CAT_Access true if the cell contains an image
+  virtual int		imageComponents() const;
+  // #CAT_Access if an image, then: b&w=1, b&w+a=2, rgb=3, rgba=4
+  
   virtual int		cell_size() const
   { return (is_matrix) ? cell_geom.Product() : 1; }
   // #CAT_Access for matrix type, number of elements in each cell

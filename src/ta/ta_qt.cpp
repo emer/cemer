@@ -129,9 +129,6 @@ taiMisc::taiMisc(QObject* parent)
 void taiMisc::Init(bool gui) {
   inherited::Init(gui);
 
-  // initialize the type system
-  taiType::InitializeTypes();
-
   taMisc::WaitProc = &WaitProc; // typically gets replaced in pdpbase.cpp
 
   taMisc::ScriptRecordingGui_Hook = &ScriptRecordingGui_; // note: ok to do more than once
