@@ -1609,6 +1609,8 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   if (!(nv_ = nv())) return;
   // iterate the list -- remove unselected items, and add selected items
   int i = 0;
+  //redo the list each time, to guard against stale values
+  nv_->ordered_uvg_list.Reset(); 
   Q3ListViewItemIterator it(lvDisplayValues);
   Q3ListViewItem* item;
   while ((item = it.current())) {
