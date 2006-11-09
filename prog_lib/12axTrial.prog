@@ -75,8 +75,8 @@ Program .projects[0].programs.gp[1][1] {
 	IfElse @[2] { 
 	  ProgEl_List @.true_code = [3] {
 	    RandomCall @[0] { };
-	    UserScript @[1] { };
-	    UserScript @[2] { };
+	    AssignExpr @[1] { };
+	    AssignExpr @[2] { };
 	  };
 
 	  ProgEl_List @.false_code = [2] {
@@ -150,7 +150,7 @@ Program .projects[0].programs.gp[1][1] {
   ProgVar @[2] {
    name="n_inner_trials";
    var_type=T_Int;
-   int_val=1;
+   int_val=2;
    objs_ptr=0;
    desc="number of inner-loop trials";
   };
@@ -193,7 +193,7 @@ Program .projects[0].programs.gp[1][1] {
     name="Cue";
     el_typ=DynEnumItem;
     el_def=0;
-    value_idx=2;
+    value_idx=0;
     DynEnumItem @[0] {
      name="A";
      value=0;
@@ -329,7 +329,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[1] {
    desc="make Group column";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=.projects[0].programs.gp[1][1].args[0]$1$;
    method=DataTable::FindMakeColName;
    args{ "Group";group_col;taBase::VT_STRING;0;0;0;0;0;0;};
@@ -338,7 +338,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[2] {
    desc="make Name column";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "Name";name_col;taBase::VT_STRING;0;0;0;0;0;0;};
@@ -347,7 +347,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[3] {
    desc="make Input column";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "Input";input_col;taBase::VT_FLOAT;2;3;3;0;0;0;};
@@ -356,7 +356,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[4] {
    desc="make Output column";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "Output";output_col;taBase::VT_FLOAT;2;2;1;0;0;0;};
@@ -365,7 +365,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[5] {
    desc="make RewTarg column";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "RewTarg";rewtarg_col;taBase::VT_FLOAT;2;1;1;0;0;0;};
@@ -379,7 +379,7 @@ Program .projects[0].programs.gp[1][1] {
   RandomCall @[0] {
    desc=;
    off=0;
-   result_var="task";
+   result_var=.projects[0].programs[0].vars[4]$2$;
    object_type=Random;
    method=Random::IntZeroN;
    args{ 2;};
@@ -388,7 +388,7 @@ Program .projects[0].programs.gp[1][1] {
   RandomCall @[1] {
    desc=;
    off=0;
-   result_var="n_inner_trials";
+   result_var=.projects[0].programs[0].vars[3]$3$;
    object_type=Random;
    method=Random::IntMinMax;
    args{ 1;max_maint;};
@@ -397,7 +397,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[2] {
    desc=;
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::AddBlankRow;
    args{ };
@@ -406,7 +406,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[3] {
    desc="group is the task name";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::SetValAsString;
    args{ task;group_col;-1;};
@@ -415,7 +415,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[4] {
    desc="name is task";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::SetValAsString;
    args{ task;name_col;-1;};
@@ -424,7 +424,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[5] {
    desc="set task as input";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::SetValAsFloatM;
    args{ 1.0;input_col;-1;task;};
@@ -433,7 +433,7 @@ Program .projects[0].programs.gp[1][1] {
   MethodCall @[6] {
    desc="set left as output";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$1$;
    method=DataTable::SetValAsFloatM;
    args{ 1.0;output_col;-1;Output::L;};
@@ -472,7 +472,7 @@ Program .projects[0].programs.gp[1][1] {
     RandomCall @[1] {
      desc=;
      off=0;
-     result_var="trg_rnd_prob";
+     result_var=.projects[0].programs.gp[1][1].prog_code[7].loop_code[0].local_vars[0]$4$;
      object_type=Random;
      method=Random::ZeroOne;
      args{ };
@@ -489,23 +489,23 @@ Program .projects[0].programs.gp[1][1] {
       RandomCall @[0] {
        desc=;
        off=0;
-       result_var="a_or_b";
+       result_var=.projects[0].programs.gp[1][1].prog_code[7].loop_code[0].local_vars[1]$5$;
        object_type=Random;
        method=Random::IntZeroN;
        args{ 2;};
 { int n;       };
       };
-      UserScript @[1] {
-       desc="cue/probe is either A-X or B-Y";
-       off=0;
-       user_script="cue = Cue::A + a_or_b;
-";
-      };
-      UserScript @[2] {
+      AssignExpr @[1] {
        desc=;
        off=0;
-       user_script="probe = Probe::X + a_or_b;
-";
+       result_var=.projects[0].programs.gp[1][1].vars[4]$6$;
+       expr="Cue::A + a_or_b";
+      };
+      AssignExpr @[2] {
+       desc=;
+       off=0;
+       result_var=.projects[0].programs.gp[1][1].vars[5]$7$;
+       expr="Probe::X + a_or_b";
       };
      };
      false_code {
@@ -515,7 +515,7 @@ Program .projects[0].programs.gp[1][1] {
       RandomCall @[0] {
        desc=;
        off=0;
-       result_var="cue";
+       result_var=.projects[0].programs[0].vars[5]$8$;
        object_type=Random;
        method=Random::IntZeroN;
        args{ Cue::N_CUES;};
@@ -524,7 +524,7 @@ Program .projects[0].programs.gp[1][1] {
       RandomCall @[1] {
        desc=;
        off=0;
-       result_var="probe";
+       result_var=.projects[0].programs[0].vars[6]$9$;
        object_type=Random;
        method=Random::IntZeroN;
        args{ Probe::N_PROBES;};
@@ -535,7 +535,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[3] {
      desc=;
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::AddBlankRow;
      args{ };
@@ -544,7 +544,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[4] {
      desc="group is the task name";
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::SetValAsString;
      args{ task;group_col;-1;};
@@ -553,7 +553,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[5] {
      desc="name is cue";
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::SetValAsString;
      args{ cue;name_col;-1;};
@@ -562,7 +562,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[6] {
      desc="set cue as input";
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::SetValAsFloatM;
      args{ 1.0;input_col;-1;Task::N_TASKS + cue;};
@@ -571,7 +571,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[7] {
      desc="set left as output";
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::SetValAsFloatM;
      args{ 1.0;output_col;-1;Output::L;};
@@ -580,7 +580,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[8] {
      desc=;
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::AddBlankRow;
      args{ };
@@ -589,7 +589,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[9] {
      desc="group is the task name";
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::SetValAsString;
      args{ task;group_col;-1;};
@@ -598,7 +598,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[10] {
      desc="name is probe";
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::SetValAsString;
      args{ probe;name_col;-1;};
@@ -607,7 +607,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[11] {
      desc="set as reward target trial: generates dopamine!";
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::SetValAsFloatM;
      args{ 1.0;rewtarg_col;-1;0;};
@@ -616,7 +616,7 @@ Program .projects[0].programs.gp[1][1] {
     MethodCall @[12] {
      desc="set probe as input";
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=$1$;
      method=DataTable::SetValAsFloatM;
      args{ 1.0;input_col;-1;Task::N_TASKS + Cue::N_CUES + probe;};
@@ -633,7 +633,7 @@ Program .projects[0].programs.gp[1][1] {
       MethodCall @[0] {
        desc="set RIGHT as output (TARGET!)";
        off=0;
-       result_var=;
+       result_var=NULL;
        script_obj=$1$;
        method=DataTable::SetValAsFloatM;
        args{ 1.0;output_col;-1;Output::R;};
@@ -647,7 +647,7 @@ Program .projects[0].programs.gp[1][1] {
       MethodCall @[0] {
        desc="set left as output";
        off=0;
-       result_var=;
+       result_var=NULL;
        script_obj=$1$;
        method=DataTable::SetValAsFloatM;
        args{ 1.0;output_col;-1;Output::L;};

@@ -16,18 +16,22 @@ docs..: add all float_RArray funs, for matricies.
 -----------
 Program issues
 
+need to update proglib when saving a new proglib!
+
+css:
 * prompt is now messed up: pdp++ > >xxx and just > for program cmd shell
 * syntax error ^ doesn't show up in right place..
 * Output::R should work even though R is a defined constant variable: need
    a more inclusive type for things after the :: scoper
-
-* for program args: if var of same name exists in caller, set as default init arg..
 * register VT_xx in global css namespace..
+
+program:
+* more color highlighting in general of programs?
+
+check:
 * sometimes method s_args don't copy, sometimes they do..
-* add "assign" Progel (result,  expr)
 * add "print" Progel?
 * add "comment" progel -- just displays a comment in display, perhaps with diff color?
-* more color highlighting in general of programs?
 * warn about = in if condition (instead of ==) -- maybe even in css?
 
 -----------

@@ -64,7 +64,7 @@ Program .projects[0].programs.gp[1][0] {
   MethodCall @[0] {
    desc=;
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=.projects[0].programs.gp[1][0].args[2]$1$;
    method=DataTable::ResetData;
    args{ };
@@ -73,7 +73,7 @@ Program .projects[0].programs.gp[1][0] {
   DataProcCall @[1] {
    desc=;
    off=0;
-   result_var=;
+   result_var=NULL;
    object_type=taDataProc;
    method=taDataProc::GetDirFiles;
    args{ names_table;directory;filter;false;"FileName";"FilePath";};

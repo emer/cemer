@@ -1327,17 +1327,11 @@ LeabraProject .projects[0] {
       };
 
       Layer_Group @.layers = [25] {
-	LeabraLayer @[0] { 
-	  Unit_Group @.units = [1] {
-	  };
-	};
+	LeabraLayer @[0] { };
 	LeabraLayer @[1] { 
 	  Projection_Group @.projections = [2] {
 	    Projection @[0] { };
 	    Projection @[1] { };
-	  };
-
-	  Unit_Group @.units = [4] {
 	  };
 	};
 	LeabraLayer @[2] { 
@@ -1346,18 +1340,12 @@ LeabraProject .projects[0] {
 	    Projection @[1] { };
 	    Projection @[2] { };
 	  };
-
-	  Unit_Group @.units = [4] {
-	  };
 	};
 	LeabraLayer @[3] { 
 	  Projection_Group @.projections = [3] {
 	    Projection @[0] { };
 	    Projection @[1] { };
 	    Projection @[2] { };
-	  };
-
-	  Unit_Group @.units = [4] {
 	  };
 	};
 	LeabraLayer @[4] { 
@@ -1366,18 +1354,12 @@ LeabraProject .projects[0] {
 	    Projection @[1] { };
 	    Projection @[2] { };
 	  };
-
-	  Unit_Group @.units = [4] {
-	  };
 	};
 	LeabraLayer @[5] { 
 	  Projection_Group @.projections = [3] {
 	    Projection @[0] { };
 	    Projection @[1] { };
 	    Projection @[2] { };
-	  };
-
-	  Unit_Group @.units = [1] {
 	  };
 	};
 	LeabraLayer @[6] { 
@@ -1387,234 +1369,18 @@ LeabraProject .projects[0] {
 	    Projection @[2] { };
 	    Projection @[3] { };
 	  };
-
-	  Unit_Group @.units = [225] {
-	  };
 	};
 	LeabraLayer @[7] { };
-	LeabraLayer @[8] { 
-	  Unit_Group @.units = [1872] {
-	  };
-	};
-	LeabraLayer @[9] { 
-	  Unit_Group @.units = [1872] {
-	  };
-	};
-	LeabraLayer @[10] { 
-	  Unit_Group @.units = [4212] {
-	  };
-	};
-	LeabraLayer @[11] { 
-	  Unit_Group @.units = [4212] {
-	  };
-	};
-	LeabraLayer @[12] { 
-	  Unit_Group @.units = [1053] {
-	  };
-	};
-	LeabraLayer @[13] { 
-	  Unit_Group @.units = [1053] {
-	  };
-	};
+	LeabraLayer @[8] { };
+	LeabraLayer @[9] { };
+	LeabraLayer @[10] { };
+	LeabraLayer @[11] { };
+	LeabraLayer @[12] { };
+	LeabraLayer @[13] { };
 	LeabraLayer @[14] { 
 	  Projection_Group @.projections = [2] {
 	    Projection @[0] { };
 	    Projection @[1] { };
-	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [16] { 
-	    };
 	  };
 	};
 	LeabraLayer @[15] { 
@@ -1622,401 +1388,11 @@ LeabraProject .projects[0] {
 	    Projection @[0] { };
 	    Projection @[1] { };
 	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [16] { 
-	    };
-	  };
 	};
 	LeabraLayer @[16] { 
 	  Projection_Group @.projections = [2] {
 	    Projection @[0] { };
 	    Projection @[1] { };
-	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [16] { 
-	    };
 	  };
 	};
 	LeabraLayer @[17] { 
@@ -2026,18 +1402,9 @@ LeabraProject .projects[0] {
 	    Projection @[2] { };
 	    Projection @[3] { };
 	  };
-
-	  Unit_Group @.units = [110] {
-	  };
 	};
-	LeabraLayer @[18] { 
-	  Unit_Group @.units = [110] {
-	  };
-	};
-	LeabraLayer @[19] { 
-	  Unit_Group @.units = [110] {
-	  };
-	};
+	LeabraLayer @[18] { };
+	LeabraLayer @[19] { };
 	LeabraLayer @[20] { 
 	  Projection_Group @.projections = [6] {
 	    Projection @[0] { };
@@ -2047,458 +1414,26 @@ LeabraProject .projects[0] {
 	    Projection @[4] { };
 	    Projection @[5] { };
 	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [1] { 
-	    };
-	  };
 	};
 	LeabraLayer @[21] { 
 	  Projection_Group @.projections = [2] {
 	    Projection @[0] { };
 	    Projection @[1] { };
 	  };
-
-	  Unit_Group @.units = [270] {
-	  };
 	};
 	LeabraLayer @[22] { 
 	  Projection_Group @.projections = [1] {
 	    Projection @[0] { };
 	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [1] { 
-	    };
-	  };
 	};
-	LeabraLayer @[23] { 
-	  Unit_Group @.units = [96] {
-	  };
-	};
-	LeabraLayer @[24] { 
-	  Unit_Group @.units = [96] {
-	  };
-	};
+	LeabraLayer @[23] { };
+	LeabraLayer @[24] { };
 	Layer_Group @.gp[0] = [3] { 
 	  LeabraLayer @[0] { 
 	    Projection_Group @.projections = [3] {
 	      Projection @[0] { };
 	      Projection @[1] { };
 	      Projection @[2] { };
-	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[8] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[9] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[10] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[11] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[12] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[13] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[14] = [81] { 
-	      };
 	    };
 	  };
 	  LeabraLayer @[1] { 
@@ -2508,39 +1443,6 @@ LeabraProject .projects[0] {
 	      Projection @[2] { };
 	      Projection @[3] { };
 	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[8] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[9] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[10] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[11] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[12] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[13] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[14] = [81] { 
-	      };
-	    };
 	  };
 	  LeabraLayer @[2] { 
 	    Projection_Group @.projections = [4] {
@@ -2548,39 +1450,6 @@ LeabraProject .projects[0] {
 	      Projection @[1] { };
 	      Projection @[2] { };
 	      Projection @[3] { };
-	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[8] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[9] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[10] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[11] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[12] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[13] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[14] = [81] { 
-	      };
 	    };
 	  };
 	};
@@ -2592,25 +1461,6 @@ LeabraProject .projects[0] {
 	      Projection @[2] { };
 	      Projection @[3] { };
 	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
-	    };
 	  };
 	  LeabraLayer @[1] { 
 	    Projection_Group @.projections = [6] {
@@ -2620,25 +1470,6 @@ LeabraProject .projects[0] {
 	      Projection @[3] { };
 	      Projection @[4] { };
 	      Projection @[5] { };
-	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
 	    };
 	  };
 	};
@@ -3321,7 +2152,7 @@ LeabraProject .projects[0] {
      MethodCall @[0] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][0].args[0]$4$;
       method=taBase::CheckConfig;
       args{ false;};
@@ -3337,7 +2168,7 @@ LeabraProject .projects[0] {
      MethodCall @[2] {
       desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][0].vars[3]$6$;
       method=RndSeed::OldSeed;
       args{ };
@@ -3346,7 +2177,7 @@ LeabraProject .projects[0] {
      MethodCall @[3] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$4$;
       method=Network::InitWtState;
       args{ };
@@ -3360,7 +2191,7 @@ LeabraProject .projects[0] {
      MethodCall @[0] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][0].vars[4]$7$;
       method=TimeUsed::StartTimer;
       args{ true;};
@@ -3411,7 +2242,7 @@ LeabraProject .projects[0] {
      MethodCall @[3] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$7$;
       method=TimeUsed::EndTimer;
       args{ };
@@ -3522,7 +2353,7 @@ LeabraProject .projects[0] {
      MethodCall @[2] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$9$;
       method=LeabraNetwork::Compute_EpochSSE;
       args{ };
@@ -3608,7 +2439,7 @@ LeabraProject .projects[0] {
      MethodCall @[1] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$14$;
       method=LeabraNetwork::Trial_Init;
       args{ };
@@ -3646,7 +2477,7 @@ LeabraProject .projects[0] {
        MethodCall @[2] {
 	desc=;
 	off=0;
-	result_var=;
+	result_var=NULL;
 	script_obj=$14$;
 	method=LeabraNetwork::Trial_UpdatePhase;
 	args{ };
@@ -3658,7 +2489,7 @@ LeabraProject .projects[0] {
      MethodCall @[3] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$14$;
       method=LeabraNetwork::Trial_Final;
       args{ };
@@ -3675,7 +2506,7 @@ LeabraProject .projects[0] {
        MethodCall @[0] {
 	desc=;
 	off=0;
-	result_var=;
+	result_var=NULL;
 	script_obj=$14$;
 	method=Network::UpdateWeights;
 	args{ };
@@ -3781,7 +2612,7 @@ LeabraProject .projects[0] {
      MethodCall @[1] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$19$;
       method=Network::InitExterns;
       args{ };
@@ -3805,7 +2636,7 @@ LeabraProject .projects[0] {
      MethodCall @[3] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$19$;
       method=LeabraNetwork::Settle_Init;
       args{ };
@@ -3865,7 +2696,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[6] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$19$;
       method=LeabraNetwork::Settle_Final;
       args{ };
@@ -3882,7 +2713,7 @@ else min_cycles = network->min_cycles_phase2;
        MethodCall @[0] {
 	desc=;
 	off=0;
-	result_var=;
+	result_var=NULL;
 	script_obj=$19$;
 	method=Network::Compute_SSE;
 	args{ };
@@ -3949,7 +2780,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[0] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][4].args[0]$24$;
       method=LeabraNetwork::Cycle_Run;
       args{ };
@@ -4213,7 +3044,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[0] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][5].vars[0]$29$;
       method=DataTable::ResetData;
       args{ };
@@ -4222,7 +3053,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[1] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][5].vars[2]$30$;
       method=LayerWriter::SetDataNetwork;
       args{ image_data;network;};
@@ -4231,7 +3062,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[2] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$30$;
       method=taList_impl::CheckConfig;
       args{ false;};
@@ -4253,7 +3084,7 @@ else min_cycles = network->min_cycles_phase2;
        MethodCall @[0] {
 	desc=;
 	off=0;
-	result_var=;
+	result_var=NULL;
 	script_obj=.projects[0].programs.gp[0][5].vars[3]$31$;
 	method=RetinaSpec::FilterImageName;
 	args{ names.GetDataByName("FilePath");image_data;Random::UniformMeanRange(0, move_var);Random::UniformMeanRange(0, move_var);Random::UniformMinMax(scale_min, scale_max);Random::UniformMeanRange(0, rot_var);false;};
@@ -4269,7 +3100,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[1] {
       desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$30$;
       method=LayerWriter::ApplyInputData;
       args{ -1;};
@@ -4400,7 +3231,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[0] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][6].vars[1]$34$;
       method=taBase::CheckConfig;
       args{ false;};
@@ -4409,7 +3240,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[1] {
       desc="Initialize monitoring data (get rid of any existing)";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][6].vars[0]$35$;
       method=DataTable::ResetData;
       args{ };
@@ -4418,7 +3249,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[2] {
       desc="update the monitor items and data schema";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$34$;
       method=NetMonitor::UpdateMonitors;
       args{ true;};
@@ -4432,7 +3263,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[0] {
       desc="add a new blank row to the data";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$35$;
       method=DataTable::AddBlankRow;
       args{ };
@@ -4441,7 +3272,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[1] {
       desc="get the new monitor data.";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$34$;
       method=NetMonitor::GetMonVals;
       args{ };
@@ -4450,7 +3281,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[2] {
       desc="update after writing new data to monitor data table";
       off=1;
-      result_var=;
+      result_var=NULL;
       script_obj=$35$;
       method=NULL;
       args{ };
@@ -4551,7 +3382,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[0] {
       desc=;
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][7].vars[1]$38$;
       method=taBase::CheckConfig;
       args{ false;};
@@ -4560,7 +3391,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[1] {
       desc="Initialize monitoring data (get rid of any existing)";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=.projects[0].programs.gp[0][7].vars[0]$39$;
       method=DataTable::ResetData;
       args{ };
@@ -4569,7 +3400,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[2] {
       desc="update the monitor items and data schema";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$38$;
       method=NetMonitor::UpdateMonitors;
       args{ true;};
@@ -4583,7 +3414,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[0] {
       desc="add a new blank row to the data";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$39$;
       method=DataTable::AddBlankRow;
       args{ };
@@ -4592,7 +3423,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[1] {
       desc="get the new monitor data.";
       off=0;
-      result_var=;
+      result_var=NULL;
       script_obj=$38$;
       method=NetMonitor::GetMonVals;
       args{ };
@@ -4601,7 +3432,7 @@ else min_cycles = network->min_cycles_phase2;
      MethodCall @[2] {
       desc="update after writing new data to monitor data table";
       off=1;
-      result_var=;
+      result_var=NULL;
       script_obj=$39$;
       method=NULL;
       args{ };
@@ -8585,7 +7416,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  display=1;
-	  ordered_uvg_list{ 8;	  };
+	  ordered_uvg_list{ 	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	 };
@@ -25791,8 +24622,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    usr1_save_fmt=JUST_WEIGHTS;
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
-   n_units=25050;
-   n_cons=3944145;
+   n_units=0;
+   n_cons=0;
    max_size {x=268: y=80: z=42: };
    phase_order=MINUS_PLUS;
    no_plus_test=0;

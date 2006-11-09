@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][2] { 
+Program .projects[0].programs.gp[0][1] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -20,7 +20,7 @@ Program .projects[0].programs.gp[0][2] {
 	ProgArg @[0] { };
       };
     };
-    BasicDataLoop @[2] { 
+    GroupedDataLoop @[2] { 
       ProgEl_List @.loop_code = [2] {
 	ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [1] {
@@ -38,9 +38,9 @@ Program .projects[0].programs.gp[0][2] {
     };
   };
 };
-Program .projects[0].programs.gp[0][2] {
- name="LeabraEpoch";
- desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
+Program .projects[0].programs.gp[0][1] {
+ name="LeabraEpochGpData";
+ desc="iterates over all of the groups and then items in a data table and calls LeabraTrial process on them";
  flags=PF_NONE;
  objs {
   name=;
@@ -67,7 +67,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[0] {
    name="trial";
    var_type=T_Int;
-   int_val=0;
+   int_val=14;
    objs_ptr=0;
    desc=;
   };
@@ -87,8 +87,8 @@ Program .projects[0].programs.gp[0][2] {
   NetCounterInit @[0] {
    desc="initialize trial counter: note also needs to do this in regular running program";
    off=0;
-   network_var=.projects[0].programs.gp[0][2].args[0]$2$;
-   local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$3$;
+   network_var=.projects[0].programs.gp[0][1].args[0]$2$;
+   local_ctr_var=.projects[0].programs.gp[0][1].vars[0]$3$;
    counter=Network::trial;
   };
  };
@@ -106,7 +106,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgramCall @[1] {
    desc=;
    off=0;
-   target=.projects[0].programs.gp[0][7]$4$;
+   target=.projects[0].programs.gp[0][6]$4$;
    call_init=1;
    prog_args {
     name=;
@@ -118,17 +118,17 @@ Program .projects[0].programs.gp[0][2] {
     };
    };
   };
-  BasicDataLoop @[2] {
+  GroupedDataLoop @[2] {
    desc=;
    off=0;
    loop_code {
     name=;
-    el_typ=ProgramCall;
+    el_typ=ProgEl;
     el_def=0;
     ProgramCall @[0] {
      desc=;
      off=0;
-     target=.projects[0].programs.gp[0][3]$5$;
+     target=.projects[0].programs.gp[0][2]$5$;
      call_init=0;
      prog_args {
       name=;
@@ -148,10 +148,13 @@ Program .projects[0].programs.gp[0][2] {
      counter=Network::trial;
     };
    };
-   loop_test="This is not used here";
-   data_var=.projects[0].programs.gp[0][2].vars[1]$6$;
-   order=PERMUTED;
-   item_idx_list{ 3;0;4;2;1;   };
+   loop_test="This is not used here!";
+   data_var=.projects[0].programs.gp[0][1].vars[1]$6$;
+   group_order=PERMUTED;
+   item_order=SEQUENTIAL;
+   group_col=0;
+   group_idx_list{ 71;108;54;27;7;44;120;17;32;78;103;90;126;93;24;0;   };
+   item_idx_list{ 108;109;110;111;112;113;114;115;116;117;118;119;   };
   };
   MethodCall @[3] {
    desc=;
@@ -165,7 +168,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgramCall @[4] {
    desc=;
    off=0;
-   target=.projects[0].programs.gp[0][8]$7$;
+   target=.projects[0].programs.gp[0][7]$7$;
    call_init=0;
    prog_args {
     name=;

@@ -186,7 +186,7 @@ public:
   virtual bool	RemoveGp(int idx) 			{ return gp.Remove(idx); }
   // #CAT_Modify remove group at given index
   virtual bool	RemoveGp(TAGPtr group)			{ return gp.Remove(group); }
-  // #MENU #FROM_GROUP_gp #MENU_ON_Edit #UPDATE_MENUS #CAT_Modify remove given group
+  // #MENU #FROM_GROUP_gp #MENU_ON_Edit #CAT_Modify remove given group
   virtual TALOG* EditSubGps() 				{ return &gp; }
   // #MENU #USE_RVAL #CAT_Access edit the list of sub-groups (e.g., so you can move around subgroups)
 

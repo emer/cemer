@@ -1,0 +1,775 @@
+// ta_Dump File v2.0
+Program_Group .projects[0].programs.gp[1] { 
+  Program_Group .projects[0].programs.gp[1] = [2] {
+    Program @[0] { 
+      ProgVar_List @.args = [2] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+      };
+
+      ProgEl_List @.prog_code = [2] {
+	MethodCall @[0] { };
+	ForLoop @[1] { 
+	  ProgEl_List @.loop_code = [1] {
+	    ProgramCall @[0] { 
+	      ProgArg_List @.prog_args = [1] {
+		ProgArg @[0] { };
+	      };
+	    };
+	  };
+	};
+      };
+    };
+    Program @[1] { 
+      ProgVar_List @.args = [1] {
+	ProgVar @[0] { };
+      };
+
+      ProgVar_List @.vars = [12] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { 
+	  DynEnum @.dyn_enum_val = [4] {
+	    DynEnumItem @[0] { };
+	    DynEnumItem @[1] { };
+	    DynEnumItem @[2] { };
+	    DynEnumItem @[3] { };
+	  };
+	};
+	ProgVar @[4] { 
+	  DynEnum @.dyn_enum_val = [4] {
+	    DynEnumItem @[0] { };
+	    DynEnumItem @[1] { };
+	    DynEnumItem @[2] { };
+	    DynEnumItem @[3] { };
+	  };
+	};
+	ProgVar @[5] { 
+	  DynEnum @.dyn_enum_val = [4] {
+	    DynEnumItem @[0] { };
+	    DynEnumItem @[1] { };
+	    DynEnumItem @[2] { };
+	    DynEnumItem @[3] { };
+	  };
+	};
+	ProgVar @[6] { 
+	  DynEnum @.dyn_enum_val = [3] {
+	    DynEnumItem @[0] { };
+	    DynEnumItem @[1] { };
+	    DynEnumItem @[2] { };
+	  };
+	};
+	ProgVar @[7] { };
+	ProgVar @[8] { };
+	ProgVar @[9] { };
+	ProgVar @[10] { };
+	ProgVar @[11] { };
+      };
+
+      ProgEl_List @.init_code = [6] {
+	ProgVars @[0] { };
+	MethodCall @[1] { };
+	MethodCall @[2] { };
+	MethodCall @[3] { };
+	MethodCall @[4] { };
+	MethodCall @[5] { };
+      };
+
+      ProgEl_List @.prog_code = [8] {
+	RandomCall @[0] { };
+	RandomCall @[1] { };
+	MethodCall @[2] { };
+	MethodCall @[3] { };
+	MethodCall @[4] { };
+	MethodCall @[5] { };
+	MethodCall @[6] { };
+	ForLoop @[7] { 
+	  ProgEl_List @.loop_code = [14] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [2] {
+		ProgVar @[0] { };
+		ProgVar @[1] { };
+	      };
+	    };
+	    RandomCall @[1] { };
+	    IfElse @[2] { 
+	      ProgEl_List @.true_code = [3] {
+		RandomCall @[0] { };
+		AssignExpr @[1] { };
+		AssignExpr @[2] { };
+	      };
+
+	      ProgEl_List @.false_code = [2] {
+		RandomCall @[0] { };
+		RandomCall @[1] { };
+	      };
+	    };
+	    MethodCall @[3] { };
+	    MethodCall @[4] { };
+	    MethodCall @[5] { };
+	    MethodCall @[6] { };
+	    MethodCall @[7] { };
+	    MethodCall @[8] { };
+	    MethodCall @[9] { };
+	    MethodCall @[10] { };
+	    MethodCall @[11] { };
+	    MethodCall @[12] { };
+	    IfElse @[13] { 
+	      ProgEl_List @.true_code = [1] {
+		MethodCall @[0] { };
+	      };
+
+	      ProgEl_List @.false_code = [1] {
+		MethodCall @[0] { };
+	      };
+	    };
+	  };
+	};
+      };
+    };
+  };
+};
+Program_Group .projects[0].programs.gp[1] {
+ name="12axAll";
+ el_typ=Program;
+ el_def=0;
+ step_prog=NULL;
+ desc="Generate InputData for 12-AX CPT task: Epoch + Trial";
+ Program @[0] {
+  name="12axEpoch";
+  desc="Generate a full epoch's worth of trials for the 12-AX CPT task";
+  flags=PF_NONE;
+  objs {
+   name=;
+   el_typ=taOBase;
+   el_def=0;
+  };
+  args {
+   name=;
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name="data_table";
+    var_type=T_Object;
+    object_type=DataTable;
+    object_val=.projects[0].data.gp[0][0]$0$;
+    objs_ptr=0;
+    desc=;
+   };
+   ProgVar @[1] {
+    name="n_per_epc";
+    var_type=T_Int;
+    int_val=25;
+    objs_ptr=0;
+    desc="number of trials (cue-probe pairs) per epoch";
+   };
+  };
+  vars {
+   name=;
+   el_typ=ProgVar;
+   el_def=0;
+  };
+  init_code {
+   name=;
+   el_typ=ProgEl;
+   el_def=0;
+  };
+  prog_code {
+   name=;
+   el_typ=ProgEl;
+   el_def=0;
+   MethodCall @[0] {
+    desc=;
+    off=0;
+    result_var=NULL;
+    script_obj=.projects[0].programs.gp[1][0].args[0]$1$;
+    method=DataTable::ResetData;
+    args{ };
+{     };
+   };
+   ForLoop @[1] {
+    desc=;
+    off=0;
+    loop_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     ProgramCall @[0] {
+      desc=;
+      off=0;
+      target=.projects[0].programs.gp[1][1]$2$;
+      call_init=0;
+      prog_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	name="data_table";
+	value="data_table";
+       };
+      };
+     };
+    };
+    loop_test="i < n_per_epc";
+    init_expr="int i = 0";
+    loop_iter="i++";
+   };
+  };
+ };
+ Program @[1] {
+  name="12axTrial";
+  desc="Generate one trial (outer loop with multiple inner loops) of the 12-AX CPT Task";
+  flags=PF_NONE;
+  objs {
+   name=;
+   el_typ=taOBase;
+   el_def=0;
+  };
+  args {
+   name=;
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name="data_table";
+    var_type=T_Object;
+    object_type=DataTable;
+    object_val=$0$;
+    objs_ptr=0;
+    desc=;
+   };
+  };
+  vars {
+   name=;
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
+    name="max_maint";
+    var_type=T_Int;
+    int_val=4;
+    objs_ptr=0;
+    desc="maximum maintenance duration for outer loop";
+   };
+   ProgVar @[1] {
+    name="targ_pct";
+    var_type=T_Real;
+    real_val=0.5;
+    objs_ptr=0;
+    desc="percent (proportion) of trials that are targets";
+   };
+   ProgVar @[2] {
+    name="n_inner_trials";
+    var_type=T_Int;
+    int_val=2;
+    objs_ptr=0;
+    desc="number of inner-loop trials";
+   };
+   ProgVar @[3] {
+    name="task";
+    var_type=T_DynEnum;
+    dyn_enum_val {
+     name="Task";
+     el_typ=DynEnumItem;
+     el_def=0;
+     value_idx=0;
+     DynEnumItem @[0] {
+      name="ONE";
+      value=0;
+      desc=;
+     };
+     DynEnumItem @[1] {
+      name="TWO";
+      value=1;
+      desc=;
+     };
+     DynEnumItem @[2] {
+      name="THREE";
+      value=2;
+      desc=;
+     };
+     DynEnumItem @[3] {
+      name="N_TASKS";
+      value=3;
+      desc=;
+     };
+    };
+    objs_ptr=0;
+    desc="outer-loop task stimulus";
+   };
+   ProgVar @[4] {
+    name="cue";
+    var_type=T_DynEnum;
+    dyn_enum_val {
+     name="Cue";
+     el_typ=DynEnumItem;
+     el_def=0;
+     value_idx=0;
+     DynEnumItem @[0] {
+      name="A";
+      value=0;
+      desc=;
+     };
+     DynEnumItem @[1] {
+      name="B";
+      value=1;
+      desc=;
+     };
+     DynEnumItem @[2] {
+      name="C";
+      value=2;
+      desc=;
+     };
+     DynEnumItem @[3] {
+      name="N_CUES";
+      value=3;
+      desc=;
+     };
+    };
+    objs_ptr=0;
+    desc="first stimulus in cue-probe pair";
+   };
+   ProgVar @[5] {
+    name="probe";
+    var_type=T_DynEnum;
+    dyn_enum_val {
+     name="Probe";
+     el_typ=DynEnumItem;
+     el_def=0;
+     value_idx=2;
+     DynEnumItem @[0] {
+      name="X";
+      value=0;
+      desc=;
+     };
+     DynEnumItem @[1] {
+      name="Y";
+      value=1;
+      desc=;
+     };
+     DynEnumItem @[2] {
+      name="Z";
+      value=2;
+      desc=;
+     };
+     DynEnumItem @[3] {
+      name="N_PROBES";
+      value=3;
+      desc=;
+     };
+    };
+    objs_ptr=0;
+    desc="second stimulus in cue-probe pair";
+   };
+   ProgVar @[6] {
+    name="output";
+    var_type=T_DynEnum;
+    dyn_enum_val {
+     name="Output";
+     el_typ=DynEnumItem;
+     el_def=0;
+     value_idx=-1;
+     DynEnumItem @[0] {
+      name="L";
+      value=0;
+      desc=;
+     };
+     DynEnumItem @[1] {
+      name="R";
+      value=1;
+      desc=;
+     };
+     DynEnumItem @[2] {
+      name="N_OUTPUTS";
+      value=2;
+      desc=;
+     };
+    };
+    objs_ptr=0;
+    desc="output responses";
+   };
+   ProgVar @[7] {
+    name="group_col";
+    var_type=T_Int;
+    int_val=0;
+    objs_ptr=0;
+    desc=;
+   };
+   ProgVar @[8] {
+    name="name_col";
+    var_type=T_Int;
+    int_val=1;
+    objs_ptr=0;
+    desc=;
+   };
+   ProgVar @[9] {
+    name="input_col";
+    var_type=T_Int;
+    int_val=2;
+    objs_ptr=0;
+    desc=;
+   };
+   ProgVar @[10] {
+    name="output_col";
+    var_type=T_Int;
+    int_val=3;
+    objs_ptr=0;
+    desc=;
+   };
+   ProgVar @[11] {
+    name="rewtarg_col";
+    var_type=T_Int;
+    int_val=4;
+    objs_ptr=0;
+    desc=;
+   };
+  };
+  init_code {
+   name=;
+   el_typ=ProgEl;
+   el_def=0;
+   ProgVars @[0] {
+    desc=;
+    off=0;
+    local_vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+   };
+   MethodCall @[1] {
+    desc="make Group column";
+    off=0;
+    result_var=NULL;
+    script_obj=.projects[0].programs.gp[1][1].args[0]$3$;
+    method=DataTable::FindMakeColName;
+    args{ "Group";group_col;taBase::VT_STRING;0;0;0;0;0;0;};
+{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+   };
+   MethodCall @[2] {
+    desc="make Name column";
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::FindMakeColName;
+    args{ "Name";name_col;taBase::VT_STRING;0;0;0;0;0;0;};
+{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+   };
+   MethodCall @[3] {
+    desc="make Input column";
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::FindMakeColName;
+    args{ "Input";input_col;taBase::VT_FLOAT;2;3;3;0;0;0;};
+{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+   };
+   MethodCall @[4] {
+    desc="make Output column";
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::FindMakeColName;
+    args{ "Output";output_col;taBase::VT_FLOAT;2;2;1;0;0;0;};
+{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+   };
+   MethodCall @[5] {
+    desc="make RewTarg column";
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::FindMakeColName;
+    args{ "RewTarg";rewtarg_col;taBase::VT_FLOAT;2;1;1;0;0;0;};
+{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+   };
+  };
+  prog_code {
+   name=;
+   el_typ=UserScript;
+   el_def=0;
+   RandomCall @[0] {
+    desc=;
+    off=0;
+    result_var=.projects[0].programs[0].vars[4]$4$;
+    object_type=Random;
+    method=Random::IntZeroN;
+    args{ 2;};
+{ int n;    };
+   };
+   RandomCall @[1] {
+    desc=;
+    off=0;
+    result_var=.projects[0].programs[0].vars[3]$5$;
+    object_type=Random;
+    method=Random::IntMinMax;
+    args{ 1;max_maint;};
+{ int min;int max;    };
+   };
+   MethodCall @[2] {
+    desc=;
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::AddBlankRow;
+    args{ };
+{     };
+   };
+   MethodCall @[3] {
+    desc="group is the task name";
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::SetValAsString;
+    args{ task;group_col;-1;};
+{ const taString& val;int col;int row;    };
+   };
+   MethodCall @[4] {
+    desc="name is task";
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::SetValAsString;
+    args{ task;name_col;-1;};
+{ const taString& val;int col;int row;    };
+   };
+   MethodCall @[5] {
+    desc="set task as input";
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::SetValAsFloatM;
+    args{ 1.0;input_col;-1;task;};
+{ float val;int col;int row;int cell;    };
+   };
+   MethodCall @[6] {
+    desc="set left as output";
+    off=0;
+    result_var=NULL;
+    script_obj=$3$;
+    method=DataTable::SetValAsFloatM;
+    args{ 1.0;output_col;-1;Output::L;};
+{ float val;int col;int row;int cell;    };
+   };
+   ForLoop @[7] {
+    desc="generate the cue-probe trials";
+    off=0;
+    loop_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     ProgVars @[0] {
+      desc=;
+      off=0;
+      local_vars {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @[0] {
+	name="trg_rnd_prob";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	desc="random probability value for generating a target";
+       };
+       ProgVar @[1] {
+	name="a_or_b";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	desc="random A or B cue/probe value";
+       };
+      };
+     };
+     RandomCall @[1] {
+      desc=;
+      off=0;
+      result_var=.projects[0].programs.gp[1][1].prog_code[7].loop_code[0].local_vars[0]$6$;
+      object_type=Random;
+      method=Random::ZeroOne;
+      args{ };
+{       };
+     };
+     IfElse @[2] {
+      desc=;
+      off=0;
+      condition="trg_rnd_prob < targ_pct";
+      true_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       RandomCall @[0] {
+	desc=;
+	off=0;
+	result_var=.projects[0].programs.gp[1][1].prog_code[7].loop_code[0].local_vars[1]$7$;
+	object_type=Random;
+	method=Random::IntZeroN;
+	args{ 2;};
+{ int n;	};
+       };
+       AssignExpr @[1] {
+	desc=;
+	off=0;
+	result_var=.projects[0].programs.gp[1][1].vars[4]$8$;
+	expr="Cue::A + a_or_b";
+       };
+       AssignExpr @[2] {
+	desc=;
+	off=0;
+	result_var=.projects[0].programs.gp[1][1].vars[5]$9$;
+	expr="Probe::X + a_or_b";
+       };
+      };
+      false_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       RandomCall @[0] {
+	desc=;
+	off=0;
+	result_var=.projects[0].programs[0].vars[5]$10$;
+	object_type=Random;
+	method=Random::IntZeroN;
+	args{ Cue::N_CUES;};
+{ int n;	};
+       };
+       RandomCall @[1] {
+	desc=;
+	off=0;
+	result_var=.projects[0].programs[0].vars[6]$11$;
+	object_type=Random;
+	method=Random::IntZeroN;
+	args{ Probe::N_PROBES;};
+{ int n;	};
+       };
+      };
+     };
+     MethodCall @[3] {
+      desc=;
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::AddBlankRow;
+      args{ };
+{       };
+     };
+     MethodCall @[4] {
+      desc="group is the task name";
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::SetValAsString;
+      args{ task;group_col;-1;};
+{ const taString& val;int col;int row;      };
+     };
+     MethodCall @[5] {
+      desc="name is cue";
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::SetValAsString;
+      args{ cue;name_col;-1;};
+{ const taString& val;int col;int row;      };
+     };
+     MethodCall @[6] {
+      desc="set cue as input";
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::SetValAsFloatM;
+      args{ 1.0;input_col;-1;Task::N_TASKS + cue;};
+{ float val;int col;int row;int cell;      };
+     };
+     MethodCall @[7] {
+      desc="set left as output";
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::SetValAsFloatM;
+      args{ 1.0;output_col;-1;Output::L;};
+{ float val;int col;int row;int cell;      };
+     };
+     MethodCall @[8] {
+      desc=;
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::AddBlankRow;
+      args{ };
+{       };
+     };
+     MethodCall @[9] {
+      desc="group is the task name";
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::SetValAsString;
+      args{ task;group_col;-1;};
+{ const taString& val;int col;int row;      };
+     };
+     MethodCall @[10] {
+      desc="name is probe";
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::SetValAsString;
+      args{ probe;name_col;-1;};
+{ const taString& val;int col;int row;      };
+     };
+     MethodCall @[11] {
+      desc="set as reward target trial: generates dopamine!";
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::SetValAsFloatM;
+      args{ 1.0;rewtarg_col;-1;0;};
+{ float val;int col;int row;int cell;      };
+     };
+     MethodCall @[12] {
+      desc="set probe as input";
+      off=0;
+      result_var=NULL;
+      script_obj=$3$;
+      method=DataTable::SetValAsFloatM;
+      args{ 1.0;input_col;-1;Task::N_TASKS + Cue::N_CUES + probe;};
+{ float val;int col;int row;int cell;      };
+     };
+     IfElse @[13] {
+      desc="check for targets";
+      off=0;
+      condition="((task == Task::ONE) && (cue == Cue::A) && (probe == Probe::X)) || ((task == Task::TWO) && (cue == Cue::B) && (probe == Probe::Y))";
+      true_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       MethodCall @[0] {
+	desc="set RIGHT as output (TARGET!)";
+	off=0;
+	result_var=NULL;
+	script_obj=$3$;
+	method=DataTable::SetValAsFloatM;
+	args{ 1.0;output_col;-1;Output::R;};
+{ float val;int col;int row;int cell;	};
+       };
+      };
+      false_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       MethodCall @[0] {
+	desc="set left as output";
+	off=0;
+	result_var=NULL;
+	script_obj=$3$;
+	method=DataTable::SetValAsFloatM;
+	args{ 1.0;output_col;-1;Output::L;};
+{ float val;int col;int row;int cell;	};
+       };
+      };
+     };
+    };
+    loop_test="i < n_inner_trials";
+    init_expr="int i = 0";
+    loop_iter="i++";
+   };
+  };
+ };
+};

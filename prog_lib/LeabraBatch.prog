@@ -1,0 +1,132 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][0] { 
+  ProgVar_List @.args = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgEl_List @.init_code = [1] {
+    NetCounterInit @[0] { };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+    NetCounterInit @[0] { };
+    WhileLoop @[1] { 
+      ProgEl_List @.loop_code = [2] {
+	ProgramCall @[0] { 
+	  ProgArg_List @.prog_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	NetCounterIncr @[1] { };
+      };
+    };
+  };
+};
+Program .projects[0].programs.gp[0][0] {
+ name="LeabraBatch";
+ desc="Iterate over training runs";
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[1] {
+   name="max_batch";
+   var_type=T_Int;
+   int_val=10;
+   objs_ptr=0;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="batch";
+   var_type=T_Int;
+   int_val=0;
+   objs_ptr=0;
+   desc="batch counter";
+  };
+ };
+ init_code {
+  name=;
+  el_typ=NetCounterInit;
+  el_def=0;
+  NetCounterInit @[0] {
+   desc=;
+   off=0;
+   network_var=.projects[0].programs.gp[0][0].args[0]$1$;
+   local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$2$;
+   counter=Network::batch;
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  NetCounterInit @[0] {
+   desc=;
+   off=0;
+   network_var=$1$;
+   local_ctr_var=$2$;
+   counter=Network::batch;
+  };
+  WhileLoop @[1] {
+   desc=;
+   off=0;
+   loop_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    ProgramCall @[0] {
+     desc=;
+     off=0;
+     target=.projects[0].programs.gp[0][1]$3$;
+     call_init=0;
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       name="network";
+       value="network";
+      };
+      ProgArg @[1] {
+       name="max_epoch";
+       value="500";
+      };
+     };
+    };
+    NetCounterIncr @[1] {
+     desc=;
+     off=0;
+     network_var=$1$;
+     local_ctr_var=$2$;
+     counter=Network::batch;
+    };
+   };
+   loop_test="batch < max_batch";
+  };
+ };
+};

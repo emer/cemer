@@ -1,16 +1,14 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][7] { 
+Program .projects[0].programs.gp[0][8] { 
   taBase_List @.objs = [1] {
     NetMonitor @[0] { 
-      NetMonItem_List @.items = [8] {
+      NetMonItem_List @.items = [6] {
 	NetMonItem @[0] { };
 	NetMonItem @[1] { };
 	NetMonItem @[2] { };
 	NetMonItem @[3] { };
 	NetMonItem @[4] { };
 	NetMonItem @[5] { };
-	NetMonItem @[6] { };
-	NetMonItem @[7] { };
       };
     };
   };
@@ -37,16 +35,16 @@ Program .projects[0].programs.gp[0][7] {
     MethodCall @[2] { };
   };
 };
-Program .projects[0].programs.gp[0][7] {
- name="TrialMonitor";
- desc="monitor trial-level data from the network";
+Program .projects[0].programs.gp[0][8] {
+ name="LeabraEpochMonitor";
+ desc="monitor epoch-level data from the network";
  flags=PF_NONE;
  objs {
   name=;
   el_typ=NetMonitor;
   el_def=0;
   NetMonitor @[0] {
-   name="trial_netmon";
+   name="epoch_netmon";
    items {
     name=;
     el_typ=NetMonItem;
@@ -72,60 +70,40 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[2] {
-     name="trial";
+     name="avg_sse";
      object=$0$;
-     member_var=Network::trial;
-     variable="trial";
+     member_var=Network::avg_sse;
+     variable="avg_sse";
      real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[3] {
-     name="trial_name";
+     name="cnt_err";
      object=$0$;
-     member_var=Network::trial_name;
-     variable="trial_name";
+     member_var=Network::cnt_err;
+     variable="cnt_err";
      real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[4] {
-     name="phase_no";
+     name="avg_ext_rew";
      object=$0$;
-     member_var=LeabraNetwork::phase_no;
-     variable="phase_no";
+     member_var=LeabraNetwork::avg_ext_rew;
+     variable="avg_ext_rew";
      real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[5] {
-     name="cycle";
+     name="avg_cycles";
      object=$0$;
-     member_var=Network::cycle;
-     variable="cycle";
-     real_val_type=VT_DOUBLE;
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[6] {
-     name="sse";
-     object=$0$;
-     member_var=Network::sse;
-     variable="sse";
-     real_val_type=VT_DOUBLE;
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[7] {
-     name="ext_rew";
-     object=$0$;
-     member_var=LeabraNetwork::ext_rew;
-     variable="ext_rew";
+     member_var=LeabraNetwork::avg_cycles;
+     variable="avg_cycles";
      real_val_type=VT_DOUBLE;
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -133,7 +111,7 @@ Program .projects[0].programs.gp[0][7] {
     };
    };
    network=$0$;
-   data=.projects[0].data.gp[1][0]$1$;
+   data=.projects[0].data.gp[1][1]$1$;
    rmv_orphan_cols=1;
   };
  };
@@ -155,7 +133,7 @@ Program .projects[0].programs.gp[0][7] {
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
-   name="trial_mon_data";
+   name="epoch_mon_data";
    var_type=T_Object;
    object_type=DataTable;
    object_val=$1$;
@@ -163,10 +141,10 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
   };
   ProgVar @[1] {
-   name="trial_netmon";
+   name="epoch_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][7].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][8].objs[0]$2$;
    objs_ptr=1;
    desc=;
   };
@@ -179,9 +157,9 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    off=0;
    result_var=NULL;
-   script_obj=.projects[0].programs.gp[0][7].vars[1]$3$;
+   script_obj=.projects[0].programs.gp[0][8].vars[1]$3$;
    method=NetMonitor::SetDataNetwork;
-   args{ trial_mon_data;network;};
+   args{ epoch_mon_data;network;};
 { DataTable* dt;Network* net;   };
   };
   MethodCall @[1] {
@@ -197,7 +175,7 @@ Program .projects[0].programs.gp[0][7] {
    desc="Initialize monitoring data (get rid of any existing)";
    off=0;
    result_var=NULL;
-   script_obj=.projects[0].programs.gp[0][7].vars[0]$4$;
+   script_obj=.projects[0].programs.gp[0][8].vars[0]$4$;
    method=DataTable::ResetData;
    args{ };
 {    };

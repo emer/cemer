@@ -415,27 +415,44 @@ private:
   void	Destroy()	{CutLinks();} //
 };
 
+class TA_API AssignExpr: public ProgEl { 
+  // assign a variable to an expression (use method call for simple assignment to function call)
+INHERITED(ProgEl)
+public:
+  ProgVarRef		result_var; // result variable (optional -- can be NULL)
+  String		expr;	    // expression to assign variable to
+  
+  override String	GetDisplayName() const;
+  TA_SIMPLE_BASEFUNS(AssignExpr);
+
+protected:
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
 class TA_API MethodCall: public ProgEl { 
   // call a method (member function) on an object
 INHERITED(ProgEl)
 public:
-  String		result_var; // result variable (optional)
+  ProgVarRef		result_var; // result variable (optional -- can be NULL)
   ProgVarRef		script_obj; // the previously defined script object that has the method
   TypeDef*		object_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.object_type
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
   SArg_Array		args; // arguments to the method
+
+  static void		UpdateArgs(SArg_Array& ar, MethodDef* md);
   
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(MethodCall);
 
 protected:
-  ProgVar*		lst_script_obj; 
-  MethodDef*		lst_method; 
-  
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
-  virtual void		CheckUpdateArgs(bool force = false); // called when method changes
+  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
@@ -446,7 +463,7 @@ class TA_API StaticMethodCall: public ProgEl {
   // call a static method (member function) on a type 
 INHERITED(ProgEl)
 public:
-  String		result_var; // result variable (optional)
+  ProgVarRef		result_var; // result variable (optional -- can be NULL)
   TypeDef*		min_type; // #NO_SHOW #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
   TypeDef*		object_type; // #TYPE_ON_min_type The object type to look for methods on
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
@@ -456,12 +473,9 @@ public:
   TA_SIMPLE_BASEFUNS(StaticMethodCall);
 
 protected:
-  MethodDef*		lst_method; 
-  
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
-  virtual void		CheckUpdateArgs(bool force = false); // called when method changes
 
 private:
   void	Initialize();
@@ -486,6 +500,42 @@ public:
 private:
   void	Initialize();
   void	Destroy()	{ };
+}; 
+
+class TA_API PrintVar: public ProgEl { 
+  // print out the value of a variable
+INHERITED(ProgEl)
+public:
+  ProgVarRef		print_var; 	// print out the value of this variable
+  
+  override String	GetDisplayName() const;
+  TA_SIMPLE_BASEFUNS(PrintVar);
+
+protected:
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+// todo: highlight this in diff color:
+class TA_API Comment: public ProgEl { 
+  // insert a comment -- useful for describing an upcoming chunk of code
+INHERITED(ProgEl)
+public:
+  String		comment; // #EDIT_DIALOG the comment
+  
+  override String	GetDisplayName() const;
+  TA_SIMPLE_BASEFUNS(Comment);
+
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
 }; 
 
 class TA_API Program_List : public taList<Program> {

@@ -325,7 +325,7 @@ public:
   virtual bool	RemoveLast();
   // #CAT_Modify remove the last element on the list
   virtual void	RemoveAll();
-  // #MENU #MENU_ON_Edit #CONFIRM #UPDATE_MENUS #CAT_Modify Remove all elements on the list
+  // #MENU #MENU_ON_Edit #CONFIRM #CAT_Modify Remove all elements on the list
 
   virtual bool	Move(int from, int to);
   // #CAT_Modify Move element from (from) to position (to) in list
@@ -336,9 +336,9 @@ public:
   // #CAT_Modify pop all elements off the stack
 
   virtual void	Permute();
-  // #MENU #CONFIRM #UPDATE_MENUS #CAT_Order permute the items in the list into a random order
+  // #MENU #CONFIRM #CAT_Order permute the items in the list into a random order
   virtual void	Sort(bool descending=false);
-  // #MENU #CONFIRM #UPDATE_MENUS #CAT_Order sort the items in the list in alpha order according to name (or El_Compare_)
+  // #MENU #CONFIRM #CAT_Order sort the items in the list in alpha order according to name (or El_Compare_)
   virtual void	Sort_(bool descending=false);	// implementation of sorting function
   virtual void 	UpdateAllIndicies();	// #IGNORE update all indices of elements in list
 
@@ -704,10 +704,10 @@ public:
   virtual bool	Remove(int idx)			{ return taPtrList_impl::Remove(idx); }
   // Remove element at given index
   virtual bool	RemoveEl(T* item)		{ return Remove(item); }
-  // #MENU #LABEL_Remove #ARG_ON_OBJ #UPDATE_MENUS Remove given item from list
+  // #MENU #LABEL_Remove #ARG_ON_OBJ Remove given item from list
 
   virtual bool 	DuplicateEl(T* item)		{ return DuplicateEl_((void*)item); }
-  // #MENU #ARG_ON_OBJ #UPDATE_MENUS Duplicate given list item and Add to list
+  // #MENU #ARG_ON_OBJ Duplicate given list item and Add to list
 
   virtual void 	Link(T* item)			{ Link_((void*)item); }
   // Link an item to list without owning it
@@ -716,7 +716,7 @@ public:
   virtual bool	LinkUniqNameNew(T* item)		{ return LinkUniqNameNew_((void*)item); }
   // link so that name is unique, true if unique, new replaces existing
   virtual bool	InsertLink(T* item, int idx= -1) { return InsertLink_((void*)item, idx);}
-  // #MENU #LABEL_Link #UPDATE_MENUS Insert a link at index (-1 for end)
+  // #MENU #LABEL_Link Insert a link at index (-1 for end)
   virtual bool 	ReplaceLink(T* old_it, T* new_it)	{ return ReplaceLink_((void*)old_it, (void*)new_it); }
   virtual bool 	ReplaceLink(const String& old_nm, T* new_it) { return ReplaceLink_(old_nm, (void*)new_it); }
   virtual bool 	ReplaceLink(int old_idx, T* new_it)	{ return ReplaceLink_(old_idx, (void*)new_it); }
@@ -730,9 +730,9 @@ public:
   // push item on stack (for temporary use, not "owned")
 
   virtual bool 	MoveEl(T* from, T* to)		{ return Move(Find(from), Find(to)); }
-  // #MENU #LABEL_Move #ARG_ON_OBJ #UPDATE_MENUS Move item (from) to position of (to)
+  // #MENU #LABEL_Move #ARG_ON_OBJ Move item (from) to position of (to)
   virtual bool 	Transfer(T* item)  		{ return Transfer_((void*)item); }
-  // #MENU #MENU_ON_Edit #NO_SCOPE #UPDATE_MENUS Transfer item to this list
+  // #MENU #MENU_ON_Edit #NO_SCOPE Transfer item to this list
 
   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
   // move item so that it appears just before the target item trg in the list
@@ -874,10 +874,10 @@ public:
   virtual bool	Remove(T* item)			{ return Remove_((void*)item); }
   virtual bool	Remove(int i)			{ return taPtrList_impl::Remove(i); }
   virtual bool	RemoveEl(T* item)		{ return Remove(item); }
-  // #MENU #LABEL_Remove #ARG_ON_OBJ #UPDATE_MENUS Remove given item from list
+  // #MENU #LABEL_Remove #ARG_ON_OBJ Remove given item from list
 
   virtual bool 	DuplicateEl(T* item)		{ return DuplicateEl_((void*)item); }
-  // #MENU #ARG_ON_OBJ #UPDATE_MENUS Duplicate given list item and Add to list
+  // #MENU #ARG_ON_OBJ Duplicate given list item and Add to list
 
   virtual void 	Link(T* item)			{ Link_((void*)item); }
   // Link an item to list without owning it
@@ -886,7 +886,7 @@ public:
   virtual bool	LinkUniqNameNew(T* item)		{ return LinkUniqNameNew_((void*)item); }
   // link so that name is unique, true if unique, new replaces existing
   virtual bool	InsertLink(T* item, int idx= -1)	{ return InsertLink_((void*)item, idx);}
-  // #MENU #LABEL_Link #UPDATE_MENUS Insert a link at index (-1 for end)
+  // #MENU #LABEL_Link Insert a link at index (-1 for end)
   virtual bool 	ReplaceLink(T* old_it, T* new_it)	{ return ReplaceLink_((void*)old_it, (void*)new_it); }
   virtual bool 	ReplaceLink(const String& old_nm, T* new_it) { return ReplaceLink_(old_nm, (void*)new_it); }
   virtual bool 	ReplaceLink(int old_idx, T* new_it)	{ return ReplaceLink_(old_idx, (void*)new_it); }
@@ -900,9 +900,9 @@ public:
   // push item on stack (for temporary use, not "owned")
 
   virtual bool 	MoveEl(T* from, T* to)		{ return Move(Find(from), Find(to)); }
-  // #MENU #LABEL_Move #ARG_ON_OBJ #UPDATE_MENUS Move item (from) to position of (to)
+  // #MENU #LABEL_Move #ARG_ON_OBJ Move item (from) to position of (to)
   virtual bool 	Transfer(T* item)  		{ return Transfer_((void*)item); }
-  // #MENU #MENU_ON_Edit #NO_SCOPE #UPDATE_MENUS Transfer element to this list
+  // #MENU #MENU_ON_Edit #NO_SCOPE Transfer element to this list
 
   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
   // move item so that it appears just before the target item trg in the list

@@ -302,7 +302,7 @@ Program .projects[0].programs.gp[0][5] {
   MethodCall @[0] {
    desc=;
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=.projects[0].programs.gp[0][5].vars[0]$5$;
    method=DataTable::ResetData;
    args{ };
@@ -311,7 +311,7 @@ Program .projects[0].programs.gp[0][5] {
   MethodCall @[1] {
    desc=;
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=.projects[0].programs.gp[0][5].vars[2]$6$;
    method=LayerWriter::SetDataNetwork;
    args{ image_data;network;};
@@ -320,7 +320,7 @@ Program .projects[0].programs.gp[0][5] {
   MethodCall @[2] {
    desc=;
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$6$;
    method=taList_impl::CheckConfig;
    args{ false;};
@@ -342,7 +342,7 @@ Program .projects[0].programs.gp[0][5] {
     MethodCall @[0] {
      desc=;
      off=0;
-     result_var=;
+     result_var=NULL;
      script_obj=.projects[0].programs.gp[0][5].vars[3]$7$;
      method=RetinaSpec::FilterImageName;
      args{ names.GetDataByName("FilePath");image_data;Random::UniformMeanRange(0, move_var);Random::UniformMeanRange(0, move_var);Random::UniformMinMax(scale_min, scale_max);Random::UniformMeanRange(0, rot_var);false;};
@@ -358,7 +358,7 @@ Program .projects[0].programs.gp[0][5] {
   MethodCall @[1] {
    desc=;
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$5$;
    method=DataBlock_Idx::ReadItem;
    args{ -1;};
@@ -367,7 +367,7 @@ Program .projects[0].programs.gp[0][5] {
   MethodCall @[2] {
    desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
    off=0;
-   result_var=;
+   result_var=NULL;
    script_obj=$6$;
    method=LayerWriter::ApplyInputData;
    args{ };

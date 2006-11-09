@@ -1,0 +1,111 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][9] { 
+  ProgEl_List @.prog_code = [1] {
+    DataCalcLoop @[0] { 
+      DataOpList @.src_cols = [2] {
+	DataOpEl @[0] { };
+	DataOpEl @[1] { };
+      };
+
+      DataOpList @.dest_cols = [2] {
+	DataOpEl @[0] { };
+	DataOpEl @[1] { };
+      };
+
+      ProgEl_List @.loop_code = [4] {
+	IfContinue @[0] { };
+	DataCalcAddDestRow @[1] { };
+	UserScript @[2] { };
+	DataCalcSetDestRow @[3] { };
+      };
+    };
+  };
+};
+Program .projects[0].programs.gp[0][9] {
+ name="DataCalcSample";
+ desc="Example of how to use DataCalLoop and associated functions";
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=DataSortProg;
+  el_def=0;
+  DataCalcLoop @[0] {
+   desc=;
+   off=0;
+   src_data=NULL;
+   dest_data=NULL;
+   src_cols {
+    name=;
+    el_typ=DataOpEl;
+    el_def=0;
+    DataOpEl @[0] {
+     col_name="trial_name";
+    };
+    DataOpEl @[1] {
+     col_name="sse";
+    };
+   };
+   dest_cols {
+    name=;
+    el_typ=DataOpEl;
+    el_def=0;
+    DataOpEl @[0] {
+     col_name="trial_name";
+    };
+    DataOpEl @[1] {
+     col_name="sse";
+    };
+   };
+   loop_code {
+    name=;
+    el_typ=IfContinue;
+    el_def=0;
+    IfContinue @[0] {
+     desc=;
+     off=0;
+     condition="!s_trial_name.contains(\"diag\")";
+    };
+    DataCalcAddDestRow @[1] {
+     desc=;
+     off=0;
+     src_data=NULL;
+     dest_data=NULL;
+    };
+    UserScript @[2] {
+     desc=;
+     off=0;
+     user_script="d_trial_name = s_trial_name + \"_cmp\";
+d_sse = s_sse * 5.0;
+
+";
+    };
+    DataCalcSetDestRow @[3] {
+     desc=;
+     off=0;
+     src_data=NULL;
+     dest_data=NULL;
+    };
+   };
+  };
+ };
+};

@@ -583,7 +583,7 @@ public:
   virtual int	 	Load_File(TypeDef* td = NULL, void** el = NULL);
   // #IGNORE load object data from a file -- gets the filename from user
   virtual int	 	LoadAs_File(const String& fname="", TypeDef* td = NULL, void** el = NULL);
-  // #MENU #MENU_ON_Object #ARGC_1 #UPDATE_MENUS #LABEL_Load #CAT_File Load object data from given file name (if empty, prompt user for a name) -- use this in programs
+  // #MENU #MENU_ON_Object #ARGC_1 #LABEL_Load #CAT_File Load object data from given file name (if empty, prompt user for a name) -- use this in programs
 
   virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0);
   // #CAT_File Save object data to a file
@@ -634,15 +634,15 @@ public:
   virtual bool		Close_Child(TAPtr obj);
   // #IGNORE actually closes a child object (should be immediate child)
   virtual bool		CopyFrom(TAPtr cpy_from);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_ON_this #NO_SCOPE #UPDATE_MENUS #CAT_ObjectMgmt Copy from given object into this object
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy from given object into this object
   // this is a safe interface to UnSafeCopy
   virtual bool		CopyTo(TAPtr cpy_to);
-  // #MENU #TYPE_ON_this #NO_SCOPE #UPDATE_MENUS #CAT_ObjectMgmt Copy to given object from this object
+  // #MENU #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
   virtual bool		DuplicateMe();
-  // #MENU #CONFIRM #UPDATE_MENUS #CAT_ObjectMgmt Make another copy of myself (done through owner)
+  // #MENU #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
-  // #MENU #TYPE_this #UPDATE_MENUS #CAT_ObjectMgmt Change me into a different type of object, copying current info (done through owner)
+  // #MENU #TYPE_this #CAT_ObjectMgmt Change me into a different type of object, copying current info (done through owner)
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
   // #MENU #CAT_Display select a given member for editing --\n if already on dialog, removes it & returns false (else true)
   virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor, const String& extra_label);
@@ -1050,7 +1050,7 @@ public:
     {return taPtrList_ta_base::GetTA_Element_(i, eltd); } // #IGNORE a bracket opr
 
   TAPtr		New(int n_objs=0, TypeDef* typ=NULL);
-  // #MENU #MENU_ON_Edit #ARGC_0 #UPDATE_MENUS #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
+  // #MENU #MENU_ON_Edit #ARGC_0 #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
 
   String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
   String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
@@ -1113,9 +1113,9 @@ public:
   virtual bool	ChangeType(int idx, TypeDef* new_type);
   // change type of item at index
   virtual bool	ChangeType(TAPtr itm, TypeDef* new_type);
-  // #MENU #UPDATE_MENUS #ARG_ON_OBJ #CAT_Modify #TYPE_ON_el_base change type of item to new type, copying current info
+  // #MENU #ARG_ON_OBJ #CAT_Modify #TYPE_ON_el_base change type of item to new type, copying current info
   virtual int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
-  // #MENU #USE_RVAL #UPDATE_MENUS #CAT_Modify #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
+  // #MENU #USE_RVAL #CAT_Modify #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
 
   virtual TAPtr	FindType_(TypeDef* item_tp, int& idx) const; 	// #IGNORE
 

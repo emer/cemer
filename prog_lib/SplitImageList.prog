@@ -101,7 +101,7 @@ NTest = all_images.rows - NTrain;
   DataProcCall @[1] {
    desc=;
    off=0;
-   result_var=;
+   result_var=NULL;
    object_type=taDataProc;
    method=taDataProc::SplitRowsNPermuted;
    args{ all_images;train_images;NTrain;test_images;NTest;};

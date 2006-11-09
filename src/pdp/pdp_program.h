@@ -93,7 +93,7 @@ public:
   ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
-  MemberDef*	counter;	// #TYPE_ON_network_type #DEF_CAT_Counter counter variable on network to operate on
+  MemberDef*	counter;	// #TYPE_ON_network_type #CATDEF_Counter counter variable on network to operate on
   
   override String	GetDisplayName() const;
 
@@ -118,7 +118,7 @@ public:
   ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
-  MemberDef*	counter;	// #TYPE_ON_network_type  #DEF_CAT_Counter counter variable on network to operate on
+  MemberDef*	counter;	// #TYPE_ON_network_type  #CATDEF_Counter counter variable on network to operate on
   
   override String	GetDisplayName() const;
 

@@ -283,14 +283,14 @@ const String ProgVar::GenCssInitVal() {
 // note: *never* initialize variables because they are cptrs to actual current
 // value in object..
 const String ProgVar::GenCssArg_impl() {
-  String rval(0, 80, '\0'); //note: buffer will extend if needed
+  String rval;
   rval += GenCssType() + " ";
   rval += name;
   return rval;
 }
 
 const String ProgVar::GenCssVar_impl() {
-  STRING_BUF(rval, 80); //note: buffer will extend if needed
+  String rval;
   rval += GenCssType() + " ";
   rval += name;
   rval += ";\n";
@@ -467,7 +467,7 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
 
 const String ProgEl::GenCss(int indent_level) {
   if(off) return "";
-  STRING_BUF(rval, 120); // grows if needed, but may be good for many cases
+  String rval;
   if (!desc.empty())
     rval.cat(cssMisc::Indent(indent_level)).cat("//").cat(desc).cat("\n");
   rval += GenCssPre_impl(indent_level);
@@ -576,7 +576,7 @@ const String ProgVars::GenCssBody_impl(int indent_level) {
 }
 
 String ProgVars::GetDisplayName() const {
-  STRING_BUF(rval, 30);
+  String rval;
   rval += "ProgVars (";
   rval += String(local_vars.size);
   rval += " vars)";
@@ -750,6 +750,11 @@ void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in IfContinue in program:", program()->name, "condition expression is empty");
     rval = false;
   }
+  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<="))) {
+    if(!quiet) taMisc::CheckError("Error in IfContinue in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
+    condition.gsub("=", "==");
+    rval = false;
+  }
 }
 
 const String IfContinue::GenCssBody_impl(int indent_level) {
@@ -777,6 +782,11 @@ void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in IfBreak in program:", program()->name, "condition expression is empty");
     rval = false;
   }
+  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<="))) {
+    if(!quiet) taMisc::CheckError("Error in IfBreak in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
+    condition.gsub("=", "==");
+    rval = false;
+  }
 }
 
 const String IfBreak::GenCssBody_impl(int indent_level) {
@@ -802,6 +812,11 @@ void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if (condition.empty()) {
     if(!quiet) taMisc::CheckError("Error in IfElse in program:", program()->name, "condition expression is empty");
+    rval = false;
+  }
+  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<="))) {
+    if(!quiet) taMisc::CheckError("Error in IfElse in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
+    condition.gsub("=", "==");
     rval = false;
   }
 }
@@ -842,14 +857,51 @@ void IfElse::PreGenChildren_impl(int& item_id) {
 }
 
 //////////////////////////
+//    AssignExpr	//
+//////////////////////////
+
+void AssignExpr::Initialize() {
+}
+
+void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  String prognm;
+  Program* prg = GET_MY_OWNER(Program);
+  if(prg) prognm = prg->name;
+  if(!result_var) {
+    if(!quiet) taMisc::CheckError("Error in AssignExpr in program:", prognm, "result_var is NULL");
+    rval = false;
+  }
+}
+
+const String AssignExpr::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level);
+  if (!result_var) {
+    rval += "//WARNING: AssignExpr not generated here -- result_var not specified\n";
+    return rval;
+  }
+  
+  rval += result_var->name + " = " + expr + ";\n";
+  return rval;
+}
+
+String AssignExpr::GetDisplayName() const {
+  if(!result_var)
+    return "(result_var not selected)";
+  
+  String rval;
+  rval += result_var->name + "=" + expr;
+  return rval;
+}
+
+//////////////////////////
 //    MethodCall	//
 //////////////////////////
 
 void MethodCall::Initialize() {
   method = NULL;
   object_type = &TA_taBase; // placeholder
-  lst_script_obj = NULL;
-  lst_method = NULL;
 }
 
 void MethodCall::UpdateAfterEdit_impl() {
@@ -858,11 +910,8 @@ void MethodCall::UpdateAfterEdit_impl() {
     object_type = script_obj->act_object_type();
   else object_type = &TA_taBase; // placeholder
 
-  if(!taMisc::is_loading)
-    CheckUpdateArgs();
-
-  lst_script_obj = script_obj; //note: don't ref
-  lst_method = method;
+  if(!taMisc::is_loading && method)
+    UpdateArgs(args, method);
 }
 
 void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -881,15 +930,15 @@ void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String MethodCall::GenCssBody_impl(int indent_level) {
-  STRING_BUF(rval, 80); // more allocated if needed
+  String rval;
   rval += cssMisc::Indent(indent_level);
   if (!(script_obj && method)) {
     rval += "//WARNING: MethodCall not generated here -- obj or method not specified\n";
    return rval;
   }
   
-  if (!result_var.empty())
-    rval += result_var + " = ";
+  if(result_var)
+    rval += result_var->name + " = ";
   rval += script_obj->name;
   rval += "->";
   rval += method->name;
@@ -907,9 +956,9 @@ String MethodCall::GetDisplayName() const {
   if (!script_obj || !method)
     return "(object or method not selected)";
   
-  STRING_BUF(rval, 40); // more allocated if needed
-  if(!result_var.empty())
-    rval += result_var + "=";
+  String rval;
+  if(result_var)
+    rval += result_var->name + "=";
   rval += script_obj->name;
   rval += "->";
   rval += method->name;
@@ -926,23 +975,33 @@ String MethodCall::GetDisplayName() const {
   return rval;
 }
 
-// todo: this should be more like ProgramCall: nondestructive conform so you can call it anytime..
-void MethodCall::CheckUpdateArgs(bool force) {
-  if ((method == lst_method) && (!force)) return;
-  args.Reset(); args.labels.Reset();
-  if (!method) return;
-  MethodDef* md = method; //cache
-  String arg_nm;
-  for (int i = 0; i < md->arg_types.size; ++i) {
-    TypeDef* arg_typ = md->arg_types.FastEl(i);
-    arg_nm = arg_typ->Get_C_Name() + " " + md->arg_names[i] ;
-    args.labels.Add(arg_nm);
-    // preseed the arg value with the default
-    args.Add(md->arg_defs.SafeEl(i)); 
+void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
+  int i;  int ti;
+  // delete args not in md list
+  for (i = ar.size - 1; i >= 0; --i) {
+    String an = ar.labels[i];
+    String mnm = an.after(" ");	// past type
+    int ti = md->arg_names.Find(mnm);
+    if (ti < 0) {
+      ar.Remove(i);
+      ar.labels.Remove(i);
+    }
   }
-  args.UpdateAfterEdit(); // note: arrays don't have very good data notify
-  lst_method = method;
+  // add args in target not in us, and put in the right order
+  for (ti = 0; ti < md->arg_names.size; ++ti) {
+    TypeDef* arg_typ = md->arg_types.FastEl(ti);
+    String arg_nm = arg_typ->Get_C_Name() + " " + md->arg_names[ti];
+    int i = ar.labels.Find(arg_nm);
+    if (i < 0) {
+      ar.labels.Insert(arg_nm, ti);
+      ar.Insert("", ti);
+    } else if (i != ti) {
+      ar.labels.Move(i, ti);
+      ar.Move(i, ti);
+    }
+  }
 }
+
 
 //////////////////////////
 //    StaticMethodCall	//
@@ -952,15 +1011,12 @@ void StaticMethodCall::Initialize() {
   method = NULL;
   min_type = &TA_taBase;
   object_type = &TA_taBase;
-  lst_method = NULL;
 }
 
 void StaticMethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(!taMisc::is_loading)
-    CheckUpdateArgs();
-
-  lst_method = method;
+  if(!taMisc::is_loading && method)
+    MethodCall::UpdateArgs(args, method);
 }
 
 void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -975,15 +1031,15 @@ void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String StaticMethodCall::GenCssBody_impl(int indent_level) {
-  STRING_BUF(rval, 80); // more allocated if needed
+  String rval;
   rval += cssMisc::Indent(indent_level);
   if (!method) {
     rval += "//WARNING: StaticMethodCall not generated here -- obj or method not specified\n";
     return rval;
   }
   
-  if (!result_var.empty())
-    rval += result_var + " = ";
+  if (result_var)
+    rval += result_var->name + " = ";
   rval += object_type->name;
   rval += "::";
   rval += method->name;
@@ -1001,9 +1057,9 @@ String StaticMethodCall::GetDisplayName() const {
   if (!method)
     return "(method not selected)";
   
-  STRING_BUF(rval, 40); // more allocated if needed
-  if(!result_var.empty())
-    rval += result_var + "=";
+  String rval;
+  if(result_var)
+    rval += result_var->name + "=";
   rval += object_type->name;
   rval += "::";
   rval += method->name;
@@ -1020,23 +1076,6 @@ String StaticMethodCall::GetDisplayName() const {
   return rval;
 }
 
-void StaticMethodCall::CheckUpdateArgs(bool force) {
-  if ((method == lst_method) && (!force)) return;
-  args.Reset(); args.labels.Reset();
-  if (!method) return;
-  MethodDef* md = method; //cache
-  String arg_nm;
-  for (int i = 0; i < md->arg_types.size; ++i) {
-    TypeDef* arg_typ = md->arg_types.FastEl(i);
-    arg_nm = arg_typ->Get_C_Name() + " " + md->arg_names[i] ;
-    args.labels.Add(arg_nm);
-    // preseed the arg value with the default
-    args.Add(md->arg_defs.SafeEl(i)); 
-  }
-  args.UpdateAfterEdit(); // note: arrays don't have very good data notify
-  lst_method = method;
-}
-
 void MathCall::Initialize() {
   min_type = &TA_taMath;
   object_type = &TA_taMath;
@@ -1046,6 +1085,69 @@ void RandomCall::Initialize() {
   min_type = &TA_Random;
   object_type = &TA_Random;
 }
+
+//////////////////////////
+//      PrintVar	//
+//////////////////////////
+
+void PrintVar::Initialize() {
+}
+
+void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  String prognm;
+  Program* prg = GET_MY_OWNER(Program);
+  if(prg) prognm = prg->name;
+  if(!print_var) {
+    if(!quiet) taMisc::CheckError("Error in PrintVar in program:", prognm, "print_var is NULL");
+    rval = false;
+  }
+}
+
+const String PrintVar::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level);
+  if (!print_var) {
+    rval += "//WARNING: PrintVar not generated here -- print_var not specified\n";
+    return rval;
+  }
+  
+  rval += "cerr << \"" + print_var->name + "\" = " + print_var->name + " << endl;\n";
+  return rval;
+}
+
+String PrintVar::GetDisplayName() const {
+  if(!print_var)
+    return "(print_var not selected)";
+  
+  String rval;
+  rval += "Print: " + print_var->name;
+  return rval;
+}
+
+
+//////////////////////////
+//      Comment	//
+//////////////////////////
+
+void Comment::Initialize() {
+}
+
+const String Comment::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level);
+  rval += "////////////////////////////////////////////////////////////////////////////\n";
+  rval += cssMisc::Indent(indent_level);
+  rval += "//  " + comment + "\n";
+  return rval;
+}
+
+String Comment::GetDisplayName() const {
+  String rval;
+  rval += "//// " + comment; 
+  return rval;
+}
+
 
 //////////////////////////
 //   ProgramCall	//
@@ -1089,7 +1191,7 @@ Program* ProgramCall::GetTarget() {
 }
 
 const String ProgramCall::GenCssPre_impl(int indent_level) {
-  STRING_BUF(rval, 50);
+  String rval;
   rval = cssMisc::Indent(indent_level);
   rval += "{ // call program: "; 
   if (target)
@@ -1100,7 +1202,7 @@ const String ProgramCall::GenCssPre_impl(int indent_level) {
 
 const String ProgramCall::GenCssBody_impl(int indent_level) {
   if (!target) return _nilString;
-  STRING_BUF(rval, 250);
+  String rval;
   indent_level++;		// everything is indented from outer block
   rval += cssMisc::Indent(indent_level);
   rval += "Program* target = this" + GetPath(NULL, program())+ "->GetTarget();\n";
@@ -1169,6 +1271,17 @@ void ProgramCall::PreGenMe_impl(int item_id) {
 void ProgramCall::UpdateGlobalArgs() {
   if (!target) return; // just leave existing stuff for now
   prog_args.ConformToTarget(target->args);
+  // now go through and set default value for variables of same name in this program
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return;
+  for(int i=0;i<prog_args.size; i++) {
+    ProgArg* pa = prog_args.FastEl(i);
+    if(!pa->value.empty()) continue; // skip if already set
+    ProgVar* arg_chk = prg->args.FindName(pa->name);
+    ProgVar* var_chk = prg->vars.FindName(pa->name);
+    if(!arg_chk && !var_chk) continue; 
+    pa->value = pa->name;	// we found var of same name; set as arg value
+  }
 }
 
 //////////////////////////
