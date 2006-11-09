@@ -3,8 +3,6 @@ leabra todo list:
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
-* call trialmon init in default epoch prog: only has one epoch full of trials
-
 * extrew in trial monitor seems not to be working: 12ax demo
 
 * relnet stat
@@ -12,6 +10,8 @@ docs..: add all float_RArray funs, for matricies.
 * startup script
 
 * add param on datatable for dmem diff log file names or not
+
+* SaveNetwork[Weights] program -- uses above
 
 -----------
 Program issues
@@ -35,10 +35,6 @@ check:
 * warn about = in if condition (instead of ==) -- maybe even in css?
 
 -----------
-
-* LeabraBatch
-
-* SaveNetwork[Weights] program -- uses above
 
 ---------
 

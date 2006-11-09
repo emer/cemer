@@ -905,6 +905,12 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_ImageProcCall)));
   // add other spec meth calls here..
 
+  tb->AddSeparator(sec);
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("print",
+    tabMisc::root->GetTemplateInstance(&TA_PrintVar)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("comment",
+    tabMisc::root->GetTemplateInstance(&TA_Comment)));
+
   sec = tb->AssertSection("Data"); //note: need to keep it short
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data proc()",
     tabMisc::root->GetTemplateInstance(&TA_DataProcCall)));
