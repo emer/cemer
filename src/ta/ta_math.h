@@ -742,7 +742,7 @@ public:
 };
 
 class TA_API RndSeed : public taNBase {
-  // random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
+  // #CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
 INHERITED(taNBase)
 public:
   int_Array		seed;	// #READ_ONLY the seed, 624 elements long
@@ -765,8 +765,8 @@ public:
   TA_SIMPLE_BASEFUNS(RndSeed);
 };
 
-class TA_API Random : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP Random Number Generation
+class TA_API Random : public taOBase {
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP #CAT_Math Random Number Generation
 INHERITED(taBase)
 public:
   enum Type {
@@ -794,9 +794,6 @@ public:
   static int	IntZeroN(int n)
   { if(n > 0) return (int)(MTRnd::genrand_int32() % (uint)n); return 0; }
   // #CAT_Int uniform random integer in the range between 0 and n, exclusive of n: [0,n)
-  static double ZeroOne() 		{ return MTRnd::genrand_res53(); }
-  // #CAT_Int uniform random number between zero and one (inclusive of 1 due to rounding!)
-
   static int	IntMinMax(int min, int max)
   { return min + IntZeroN(max - min); }
   // #CAT_Int uniform random integer in range between min and max, exclusive of max: [min,max)
@@ -804,33 +801,35 @@ public:
   { return mean + (IntZeroN(2 * range + 1) - range); }
   // #CAT_Int uniform random integer with given range on either side of the mean: [mean - range, mean + range]
 
+  static double ZeroOne() 		{ return MTRnd::genrand_res53(); }
+  // #CAT_Float uniform random number between zero and one (inclusive of 1 due to rounding!)
   static double UniformMinMax(double min, double max)
   { return min + (max - min) * ZeroOne(); }
-  // uniform random number between min and max values (inclusive)
+  // #CAT_Float uniform random number between min and max values (inclusive)
   static double UniformMeanRange(double mean, double range)
   { return mean + range * 2.0 * (ZeroOne() - 0.5); }
-  // uniform random number with given range on either size of the mean: [mean - range, mean + range]
+  // #CAT_Float uniform random number with given range on either size of the mean: [mean - range, mean + range]
 
   static double Binom(int n, double p) 	{ return taMath_double::binom_dev(n,p); }
-  // binomial with n trials (par) each of probability p (var)
+  // #CAT_Float binomial with n trials (par) each of probability p (var)
   static double Poisson(double l)   	{ return taMath_double::poisson_dev(l); }
-  // poisson with parameter l (var)
+  // #CAT_Float poisson with parameter l (var)
   static double Gamma(double var, int j)  { return var * taMath_double::gamma_dev(j); }
-  // gamma with given variance, number of exponential stages (par)
+  // #CAT_Float gamma with given variance, number of exponential stages (par)
   static double Gauss(double var)  	{ return var * taMath_double::gauss_dev(); }
-  // gaussian (normal) random number with given variance
+  // #CAT_Float gaussian (normal) random number with given variance
 
   static double UniformDen(double x, double range)
   { double rval = 0.0; if(fabs(x) <= range) rval = 1.0 / (2.0 * range); return rval; }
-  // uniform density at x with given range on either size of 0 (subtr mean from x before)
+  // #CAT_Float uniform density at x with given range on either size of 0 (subtr mean from x before)
   static double BinomDen(int n, int j, double p) { return taMath_double::binom_den(n,j,p); }
-  // binomial density at j with n trials (par) each of probability p (var)
+  // #CAT_Float binomial density at j with n trials (par) each of probability p (var)
   static double PoissonDen(int j, double l) { return taMath_double::poisson_den(j,l); }
-  // poisson density with parameter l (var)
+  // #CAT_Float poisson density with parameter l (var)
   static double GammaDen(int j, double l, double t)  { return taMath_double::gamma_den(j,l,t); }
-  // gamma density at time t with given number of stages (par), lambda (var)
+  // #CAT_Float gamma density at time t with given number of stages (par), lambda (var)
   static double GaussDen(double x, double var)  	{ return taMath_double::gauss_den(x / var); }
-  // gaussian (normal) density for given variance (0 mean)
+  // #CAT_Float gaussian (normal) density for given variance (0 mean)
 
   void	Initialize();
   void	Destroy()		 { };

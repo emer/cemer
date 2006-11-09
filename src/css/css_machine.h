@@ -677,6 +677,8 @@ public:
 
   static ostream& fancy_list(ostream& fh, const String& itm, int no, int prln,
 			     int tabs, int indent = 0);
+  static pager_ostream& fancy_list(pager_ostream& fh, const String& itm, int no, int prln,
+			     int tabs, int indent = 0);
   static String& fancy_list(String& fh, const String& itm, int no, int prln,
 			    int tabs, int indent = 0);
 

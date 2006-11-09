@@ -416,35 +416,51 @@ public:
   void			RemoveAllRows() { ResetData(); }
   // #CAT_Rows remove all of the rows, but keep the column structure
 
-  const Variant		GetColUserData(const String& name,
-    int col) const; // gets user data from the col
-  void			SetColUserData(const String& name,
-    const Variant& value, int col); // sets user data into the col
+  const Variant		GetColUserData(const String& name, int col) const;
+  // #CAT_Config gets user data from the col
+  void			SetColUserData(const String& name, const Variant& value, int col);
+  // #CAT_Config sets user data into the col
 
   double 		GetValAsDouble(int col, int row);
-  // #CAT_Rows get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
+  // #CAT_Access get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
   bool 			SetValAsDouble(double val, int col, int row);
-  // #CAT_Rows set data of scalar type, in String form, for given column, row; does nothing if no cell' 'true' if set
+  // #CAT_Access set data of scalar type, in String form, for given column, row; does nothing if no cell' 'true' if set
   float 		GetValAsFloat(int col, int row);
-  // #CAT_Rows get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
+  // #CAT_Access get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
   bool 			SetValAsFloat(float val, int col, int row);
-  // #CAT_Rows set data of scalar type, in String form, for given column, row; does nothing if no cell' 'true' if set
+  // #CAT_Access set data of scalar type, in String form, for given column, row; does nothing if no cell' 'true' if set
   const String 		GetValAsString(int col, int row) const;
-  // #CAT_Rows get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
+  // #CAT_Access get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
   bool 			SetValAsString(const String& val, int col, int row);
-  // #CAT_Rows set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
-
+  // #CAT_Access set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
   const Variant 	GetValAsVar(int col, int row) const;
-  // #CAT_Rows get data of scalar type, in Variant form, for given column, row; Invalid/NULL if no cell
+  // #CAT_Access get data of scalar type, in Variant form, for given column, row; Invalid/NULL if no cell
   bool 			SetValAsVar(const Variant& val, int col, int row);
-  // #CAT_Rows set data of scalar type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  // #CAT_Access set data of scalar type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+
+  double 		GetValAsDoubleM(int col, int row, int cell);
+  // #CAT_Access get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  bool 			SetValAsDoubleM(double val, int col, int row, int cell);
+  // #CAT_Access set data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  float 		GetValAsFloatM(int col, int row, int cell);
+  // #CAT_Access get data of scalar type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  bool 			SetValAsFloatM(float val, int col, int row, int cell);
+  // #CAT_Access set data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  const String 		GetValAsStringM(int col, int row, int cell) const;
+  // #CAT_Access get data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then "n/a" is returned
+  bool 			SetValAsStringM(const String& val, int col, int row, int cell);
+  // #CAT_Access set data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
+  const Variant 	GetValAsVarM(int col, int row, int cell) const;
+  // #CAT_Access get data of scalar type, in Variant form, for given column, row, and cell (flat index) in matrix; Invalid/NULL if no cell
+  bool 			SetValAsVarM(const Variant& val, int col, int row, int cell);
+  // #CAT_Access set data of scalar type, in Variant form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true' if set
 
   taMatrix*	 	GetValAsMatrix(int col, int row);
-  // #CAT_Rows get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+  // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
-  //#CAT_Rows  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  //#CAT_Access  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
-  // #CAT_Rows get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+  // #CAT_Access get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
 
   /////////////////////////////////////////////////////////
   // saving/loading (file)

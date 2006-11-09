@@ -478,6 +478,16 @@ private:
   void	Destroy()	{ };
 }; 
 
+class TA_API RandomCall : public StaticMethodCall { 
+  // call a Random number generation function
+INHERITED(StaticMethodCall)
+public:
+  TA_BASEFUNS(RandomCall);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+}; 
+
 class TA_API Program_List : public taList<Program> {
   // ##CAT_Program a list of programs
   INHERITED(taList<Program>)

@@ -1325,12 +1325,12 @@ static void Install_Math() {
 #endif // HP800
 
   cssReal_inst_nm(cssMisc::Constants, 3.14159265358979323846,  "PI"   );
-  cssReal_inst(cssMisc::Constants, 2.71828182845904523536,  E     );
+//   cssReal_inst(cssMisc::Constants, 2.71828182845904523536,  E     );
   cssReal_inst(cssMisc::Constants, 0.57721566490153286060,  GAMMA ); // Euler
   cssReal_inst(cssMisc::Constants, 57.29577951308232087680, DEG   ); // deg/radian
   cssReal_inst(cssMisc::Constants, 1.61803398874989484820,  PHI   ); // golden ratio
   cssReal_inst(cssMisc::Constants, 96484.56,                FARADAY); // coulombs/mole
-  cssReal_inst(cssMisc::Constants, 8.31441,                 R     );  // molar gas constant, joules/mole/deg-K
+//   cssReal_inst(cssMisc::Constants, 8.31441,                 R     );  // molar gas constant, joules/mole/deg-K
 
   cssReal_inst_nm(cssMisc::Constants, FLT_MAX,             "FLT_MAX");
   cssReal_inst_nm(cssMisc::Constants, FLT_MAX_10_EXP,      "FLT_MAX_10_EXP");

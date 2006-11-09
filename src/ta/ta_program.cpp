@@ -70,6 +70,8 @@ void ProgVar::Copy_(const ProgVar& cp) {
   object_val = cp.object_val;
   hard_enum_type = cp.hard_enum_type;
   dyn_enum_val = cp.dyn_enum_val;
+  objs_ptr = cp.objs_ptr;
+  desc = cp.desc;
 }
 
 void ProgVar::UpdateAfterEdit() {
@@ -906,6 +908,8 @@ String MethodCall::GetDisplayName() const {
     return "(object or method not selected)";
   
   STRING_BUF(rval, 40); // more allocated if needed
+  if(!result_var.empty())
+    rval += result_var + "=";
   rval += script_obj->name;
   rval += "->";
   rval += method->name;
@@ -998,6 +1002,8 @@ String StaticMethodCall::GetDisplayName() const {
     return "(method not selected)";
   
   STRING_BUF(rval, 40); // more allocated if needed
+  if(!result_var.empty())
+    rval += result_var + "=";
   rval += object_type->name;
   rval += "::";
   rval += method->name;
@@ -1034,6 +1040,11 @@ void StaticMethodCall::CheckUpdateArgs(bool force) {
 void MathCall::Initialize() {
   min_type = &TA_taMath;
   object_type = &TA_taMath;
+}
+
+void RandomCall::Initialize() {
+  min_type = &TA_Random;
+  object_type = &TA_Random;
 }
 
 //////////////////////////
@@ -1186,19 +1197,6 @@ Program* Program::MakeTemplate() {
   //note: put in .init since that will get searched first
   
   MakeTemplate_fmtype(prog, &TA_ProgEl);
-
-//   {ProgVars* o = new ProgVars; o->SetName("NewProgVars"); prog->init_code.Add(o);}
-//   {ProgList* o = new ProgList; o->SetName("NewProgList"); prog->init_code.Add(o);}
-//   {UserScript* o = new UserScript; o->SetName("NewUserScript"); prog->init_code.Add(o);}
-//   {ForLoop* o = new ForLoop; o->SetName("NewForLoop"); prog->init_code.Add(o);}
-//   {DoLoop* o = new DoLoop; o->SetName("NewDoLoop"); prog->init_code.Add(o);}
-//   {WhileLoop* o = new WhileLoop; o->SetName("NewWhileLoop"); prog->init_code.Add(o);}
-//   {IfElse* o = new IfElse; o->SetName("NewIfElse"); prog->init_code.Add(o);}
-//   {IfContinue* o = new IfContinue; o->SetName("NewIfContinue"); prog->init_code.Add(o);}
-//   {IfBreak* o = new IfBreak; o->SetName("NewIfBreak"); prog->init_code.Add(o);}
-//   {MethodCall* o = new MethodCall; o->SetName("NewMethodCall"); prog->init_code.Add(o);}
-//   {MathCall* o = new MathCall; o->SetName("NewMathCall"); prog->init_code.Add(o);}
-//   {ProgramCall* o = new ProgramCall; o->SetName("NewProgramCall"); prog->init_code.Add(o);}
   return prog;
 }
   

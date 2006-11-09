@@ -178,7 +178,8 @@ typedef int taListItr; // pseudo class, compatible with the FOR_ITR_EL macro in 
 //typedef uintptr_t taHashVal;
 typedef unsigned long taHashVal;
 
-class TA_API  taPtrList_impl { // ##NO_TOKENS implementation of the pointer list class
+class TA_API  taPtrList_impl {
+  // ##NO_TOKENS implementation of the pointer list class
 protected:
 //  static String		 no_el_name;	// when the el has no name..
   static taPtrList_impl scratch_list;	// a list for any temporary processing needs

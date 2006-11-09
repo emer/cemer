@@ -1050,7 +1050,7 @@ public:
     {return taPtrList_ta_base::GetTA_Element_(i, eltd); } // #IGNORE a bracket opr
 
   TAPtr		New(int n_objs=0, TypeDef* typ=NULL);
-  // #MENU #MENU_ON_Object #ARGC_0 #UPDATE_MENUS #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
+  // #MENU #MENU_ON_Edit #ARGC_0 #UPDATE_MENUS #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
 
   String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
   String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
@@ -1093,18 +1093,18 @@ public:
 
   virtual int	Find(const taBase* item) const		{ return taPtrList_ta_base::Find(item); }
   virtual int	Find(TypeDef* item) const;
-  // find element of given type
   virtual int	Find(const String& item_nm) const	{ return taPtrList_ta_base::Find(item_nm); }
+  // #CAT_Access find item with given name
 
   virtual bool	Remove(const String& item_nm)	{ return taPtrList_ta_base::Remove(item_nm); }
   virtual bool	Remove(TAPtr item)	{ return taPtrList_ta_base::Remove(item); }
   virtual bool	Remove(int idx);
   // Remove object at given index on list
   virtual bool	RemoveEl(TAPtr item)	{ return Remove(item); }
-  // Remove given item from the list
+  // #MENU #ARG_ON_OBJ #CAT_Modify Remove given item from the list
 
   virtual void	EnforceSize(int sz);
-  // add or remove elements to force list to be of given size
+  // #MENU add or remove elements to force list to be of given size
   virtual void	EnforceType();
   // enforce current type (all elements have to be of this type)
   void	EnforceSameStru(const taList_impl& cp);
@@ -1113,9 +1113,9 @@ public:
   virtual bool	ChangeType(int idx, TypeDef* new_type);
   // change type of item at index
   virtual bool	ChangeType(TAPtr itm, TypeDef* new_type);
-  // #MENU #MENU_ON_Object #UPDATE_MENUS #ARG_ON_OBJ #TYPE_ON_el_base change type of item to new type, copying current info
+  // #MENU #UPDATE_MENUS #ARG_ON_OBJ #CAT_Modify #TYPE_ON_el_base change type of item to new type, copying current info
   virtual int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
-  // #MENU #MENU_ON_Object #USE_RVAL #UPDATE_MENUS #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
+  // #MENU #USE_RVAL #UPDATE_MENUS #CAT_Modify #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
 
   virtual TAPtr	FindType_(TypeDef* item_tp, int& idx) const; 	// #IGNORE
 
@@ -1195,7 +1195,7 @@ public:
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
 
   virtual T*	FindName(const String& item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
-  // #MENU #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find element with given name (item_nm)
+  // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element with given name (item_nm)
   virtual T* 	FindType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindType_(item_tp, idx); }
   // #CAT_Access find given type element (NULL = not here), sets idx
 

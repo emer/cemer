@@ -4489,6 +4489,10 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
     else if (DerivesFrom(TA_taString))
       *((String*)trg_base) = *((String*)src_base);
 #ifndef NO_TA_BASE
+    else if(DerivesFrom(TA_taSmartRef))
+      *((taSmartRef*)trg_base) = *((taSmartRef*)src_base);
+    else if(DerivesFrom(TA_taSmartPtr))
+      *((taSmartPtr*)trg_base) = *((taSmartPtr*)src_base);
     else if(DerivesFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)trg_base;
       TAPtr sbase = (TAPtr)src_base;

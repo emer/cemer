@@ -2201,6 +2201,21 @@ ostream& cssSpace::fancy_list(ostream& fh, const String& itm, int no, int prln, 
   fh << itm << " ";
   if((no+1) % prln == 0) {
     fh << "\n";
+    taMisc::FlushConsole();
+    fh << cssMisc::Indent(indent);
+    return fh;
+  }
+  int len = itm.length() + 1;
+  int spc_ln = tabs * 8 - len;
+  spc_ln = MAX(1, spc_ln);
+  fh << String(spc_ln , 0, ' ');
+  return fh;
+}
+pager_ostream& cssSpace::fancy_list(pager_ostream& fh, const String& itm, int no, int prln, int tabs, int indent) {
+  fh << itm << " ";
+  if((no+1) % prln == 0) {
+    fh << "\n";
+    taMisc::FlushConsole();
     fh << cssMisc::Indent(indent);
     return fh;
   }
@@ -2251,11 +2266,12 @@ void cssSpace::NameList(pager_ostream& fh, int indent, int per_line) const {
     prln = taMisc::display_width / (tabs * 8);
     if(prln <= 0) prln = 1;
   }
-  String fl = cssMisc::Indent(indent);
+//   String fl = cssMisc::Indent(indent);
+  fh << cssMisc::Indent(indent);
   for(int i=0; i<size; i++) {
-    cssSpace::fancy_list(fl, els[i]->name, i, prln, tabs, indent);
+    cssSpace::fancy_list(fh, els[i]->name, i, prln, tabs, indent);
   }
-  fh << fl;
+//   fh << fl;
   fh << "\n";
 }
 void cssSpace::NameList(ostream& fh, int indent, int per_line) const {
@@ -2294,6 +2310,7 @@ void cssSpace::TypeNameList(ostream& fh, int indent) const {
       fh << '[' << ar->size << ']';
     }
     fh << "\n";
+    taMisc::FlushConsole();
     fh << cssMisc::Indent(indent);
   }
 }
@@ -2321,6 +2338,7 @@ void cssSpace::TypeNameValList(ostream& fh, int indent) const {
     else
       fh << "\t\t\t";
     fh << mbr->name << " = " << mbr->PrintFStr() << "\n";
+    taMisc::FlushConsole();
     fh << cssMisc::Indent(indent);
   }
 }

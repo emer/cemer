@@ -545,6 +545,8 @@ taMatrix* DataTable::GetMatrixData_impl(int chan) {
   return da->AR()->GetFrameSlice_(i);
 }
 
+/////////////////////
+
 double DataTable::GetValAsDouble(int col, int row) {
   DataArray_impl* da = GetColData(col);
   int i;
@@ -559,6 +561,22 @@ float DataTable::GetValAsFloat(int col, int row) {
   if (da &&  idx(row, da->rows(), i))
     return da->GetValAsFloat(i);
   else return 0.0f;
+}
+
+const String DataTable::GetValAsString(int col, int row) const {
+  DataArray_impl* da = GetColData(col);
+  int i;
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsString(i);
+  else return "n/a";
+}
+
+const Variant DataTable::GetValAsVar(int col, int row) const {
+  DataArray_impl* da = GetColData(col);
+  int i;
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsVar(i);
+  else return _nilVariant;
 }
 
 taMatrix* DataTable::GetValAsMatrix(int col, int row) {
@@ -577,21 +595,143 @@ taMatrix* DataTable::GetRangeAsMatrix(int col, int st_row, int n_rows) {
   else return NULL;
 }
 
-const String DataTable::GetValAsString(int col, int row) const {
+////////////////////////////
+
+bool DataTable::SetValAsDouble(double val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsDouble(val, i);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsFloat(float val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsFloat(val, i);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsString(const String& val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsString(val, i);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsVar(val, i);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsMatrix(const taMatrix* val, int col, int row) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (!da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    return da->SetValAsMatrix(val, i);
+  } else return false;
+}
+
+////////////////////////
+
+double DataTable::GetValAsDoubleM(int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   int i;
   if (da &&  idx(row, da->rows(), i))
-    return da->GetValAsString(i);
+    return da->GetValAsDoubleM(i, cell);
+  else return 0.0f;
+}
+
+float DataTable::GetValAsFloatM(int col, int row, int cell) {
+  DataArray_impl* da = GetColData(col);
+  int i;
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsFloatM(i, cell);
+  else return 0.0f;
+}
+
+const String DataTable::GetValAsStringM(int col, int row, int cell) const {
+  DataArray_impl* da = GetColData(col);
+  int i;
+  if (da &&  idx(row, da->rows(), i))
+    return da->GetValAsStringM(i, cell);
   else return "n/a";
 }
 
-const Variant DataTable::GetValAsVar(int col, int row) const {
+const Variant DataTable::GetValAsVarM(int col, int row, int cell) const {
   DataArray_impl* da = GetColData(col);
   int i;
   if (da &&  idx(row, da->rows(), i))
-    return da->GetValAsVar(i);
+    return da->GetValAsVarM(i, cell);
   else return _nilVariant;
 }
+
+////////////////////////
+
+bool DataTable::SetValAsDoubleM(double val, int col, int row, int cell) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsDoubleM(val, i, cell);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsFloatM(float val, int col, int row, int cell) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsFloatM(val, i, cell);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsStringM(const String& val, int col, int row, int cell) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsStringM(val, i, cell);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsVarM(const Variant& val, int col, int row, int cell) {
+  DataArray_impl* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix) return false;
+  int i;
+  if (idx(row, da->rows(), i)) {
+    da->SetValAsVarM(val, i, cell);
+    return true;
+  } else return false;
+}
+
+////////////////////////
 
 bool DataTable::hasData(int col, int row) {
   DataArray_impl* da = GetColData(col);
@@ -1098,60 +1238,6 @@ void DataTable::LoadData(istream& strm, Delimiters delim, bool quote_str, int ma
 void DataTable::SetColName(const String& col_nm, int col) {
   DataArray_impl* da = GetColData(col);
   if(da != NULL) da->name = col_nm;
-}
-
-bool DataTable::SetValAsDouble(double val, int col, int row) {
-  DataArray_impl* da = GetColData(col);
-  if (!da) return false;
-  if (da->is_matrix) return false;
-  int i;
-  if (idx(row, da->rows(), i)) {
-    da->SetValAsDouble(val, i);
-    return true;
-  } else return false;
-}
-
-bool DataTable::SetValAsFloat(float val, int col, int row) {
-  DataArray_impl* da = GetColData(col);
-  if (!da) return false;
-  if (da->is_matrix) return false;
-  int i;
-  if (idx(row, da->rows(), i)) {
-    da->SetValAsFloat(val, i);
-    return true;
-  } else return false;
-}
-
-bool DataTable::SetValAsMatrix(const taMatrix* val, int col, int row) {
-  DataArray_impl* da = GetColData(col);
-  if (!da) return false;
-  if (!da->is_matrix) return false;
-  int i;
-  if (idx(row, da->rows(), i)) {
-    return da->SetValAsMatrix(val, i);
-  } else return false;
-}
-
-bool DataTable::SetValAsString(const String& val, int col, int row) {
-  DataArray_impl* da = GetColData(col);
-  if (!da) return false;
-  if (da->is_matrix) return false;
-  int i;
-  if (idx(row, da->rows(), i)) {
-    da->SetValAsString(val, i);
-    return true;
-  } else return false;
-}
-
-bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
-  DataArray_impl* da = GetColData(col);
-  if (!da) return false;
-  if (da->is_matrix) return false;
-  int i;
-  if (idx(row, da->rows(), i)) {
-    da->SetValAsVar(val, i);
-    return true;
-  } else return false;
 }
 
 void DataTable::WriteClose_impl() {
