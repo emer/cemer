@@ -690,7 +690,7 @@ const Variant DataTable::GetValAsVarM(int col, int row, int cell) const {
 bool DataTable::SetValAsDoubleM(double val, int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   if (!da) return false;
-  if (da->is_matrix) return false;
+  if (!da->is_matrix) return false;
   int i;
   if (idx(row, da->rows(), i)) {
     da->SetValAsDoubleM(val, i, cell);
@@ -701,7 +701,7 @@ bool DataTable::SetValAsDoubleM(double val, int col, int row, int cell) {
 bool DataTable::SetValAsFloatM(float val, int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   if (!da) return false;
-  if (da->is_matrix) return false;
+  if (!da->is_matrix) return false;
   int i;
   if (idx(row, da->rows(), i)) {
     da->SetValAsFloatM(val, i, cell);
@@ -712,7 +712,7 @@ bool DataTable::SetValAsFloatM(float val, int col, int row, int cell) {
 bool DataTable::SetValAsStringM(const String& val, int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   if (!da) return false;
-  if (da->is_matrix) return false;
+  if (!da->is_matrix) return false;
   int i;
   if (idx(row, da->rows(), i)) {
     da->SetValAsStringM(val, i, cell);
@@ -723,7 +723,7 @@ bool DataTable::SetValAsStringM(const String& val, int col, int row, int cell) {
 bool DataTable::SetValAsVarM(const Variant& val, int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   if (!da) return false;
-  if (da->is_matrix) return false;
+  if (!da->is_matrix) return false;
   int i;
   if (idx(row, da->rows(), i)) {
     da->SetValAsVarM(val, i, cell);

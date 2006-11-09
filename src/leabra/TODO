@@ -3,6 +3,8 @@ leabra todo list:
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
+* call trialmon init in default epoch prog: only has one epoch full of trials
+
 * extrew in trial monitor seems not to be working: 12ax demo
 
 * relnet stat
@@ -19,6 +21,7 @@ Program issues
 * Output::R should work even though R is a defined constant variable: need
    a more inclusive type for things after the :: scoper
 
+* for program args: if var of same name exists in caller, set as default init arg..
 * register VT_xx in global css namespace..
 * sometimes method s_args don't copy, sometimes they do..
 * add "assign" Progel (result,  expr)
@@ -28,8 +31,6 @@ Program issues
 * warn about = in if condition (instead of ==) -- maybe even in css?
 
 -----------
-
-
 
 * LeabraBatch
 
