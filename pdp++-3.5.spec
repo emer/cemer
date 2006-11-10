@@ -1,10 +1,10 @@
 Summary: The PDP++ software is a neural-network simulation system written in C++.
 Name: pdp
-Version: 4.0
+Version: 3.5
 Release: 0
 License: GPL
 Group: Productivity/Networking
-Source0: pdp-4.0.tar.gz
+Source0: pdp++-3.5.tar.gz
 URL: http://psych.colorado.edu/~oreilly/PDP++/PDP++.html
 BuildRoot: %{_tmppath}/%{name}-root
 Prefix: %{_prefix}
