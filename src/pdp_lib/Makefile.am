@@ -24,5 +24,4 @@ if TA_GUI
 libpdp@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD +=\
 	@abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@@PDP_VERSION@.la
 endif
-
 endif

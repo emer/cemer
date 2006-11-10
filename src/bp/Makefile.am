@@ -32,16 +32,7 @@ noinst_LTLIBRARIES =\
 
 libbp@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
 
-libbp@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
-	-I@srcdir@/.. \
-	-I@abs_top_builddir@ \
-	-I@abs_srcdir@ \
-	-I@srcdir@/../ta \
-	-I@srcdir@/../pdp \
-	-I@srcdir@/../tamisc \
-	-I@srcdir@/../css \
-	-I@srcdir@/../taiqtso
-
+libbp@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
 libbp@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
 libbp@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD = libbp_TypeAccess@PDP_SUFFIX@.la
@@ -56,3 +47,5 @@ libbp_TypeAccess@PDP_SUFFIX@_la_SOURCES =\
 libbp_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libbp@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS)
 
 libbp_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0
+
+bp_def.h:

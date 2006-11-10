@@ -1,5 +1,13 @@
 CLEAN_FILES =
-EXTRA_DIST =
+EXTRA_DIST =\
+	src/ta/taglobal.h \
+	src/ta/ta_maketa_defs.h \
+	src/ta/qtdefs.h \
+	src/css/css_def.h \
+	src/pdp/pdp_def.h \
+	src/bp/bp_def.h \
+	src/leabra/leabra_def.h \
+	spec.tmpl.in 
 
 dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 
@@ -69,17 +77,9 @@ DISTCLEANFILES =\
 
 endif
 
-
 # These actions occur immediately before a distribution tarball is created.
-
 dist-hook:
 	rm -fr $(distdir)/src/ta/ios-g++-3.1/.svn
-	cp -cp $(srcdir)/src/ta/taglobal.h \
-		$(srcdir)/src/ta/qtdefs.h\
-		$(distdir)/src/ta
-# 	cp -cp $(srcdir)/src/ta/ta_maketa_defs.h \
-# 		$(distdir)/src/ta/ta_maketa_defs.h
-#	cp -p $(srcdir)/spec.tmpl.in $(distdir)/spec.tmpl.in
 
 # Count the number of lines in *.h and *.cpp files
 linecount:
@@ -110,3 +110,5 @@ do_ta:
 ifnames:
 	ifnames `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` > ifnames.log
 	echo "Defines printed to ifnames.log"
+
+spec.tmpl.in:

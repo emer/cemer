@@ -3,8 +3,9 @@
 #*********************************************************
 LIBS=
 DEFS= @NOOP_MAKETA@
-
 PROJNAME = maketa
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 HEADS =\
 	../ta/ta_stdef.h \
@@ -34,18 +35,11 @@ SRCS =\
 
 include $(top_srcdir)/mfstamp.am
 
-# Redefining this rule is dangerous, but necessary for maketa to run properly
-# doesn't work properly, removing for now..
-# all: $(BUILT_SOURCES)
-# 	$(MAKE) $(AM_MAKEFLAGS) all-am
-# 	cd ../.. && $(MAKE) force_ta
-
-mta_parse.cpp: mta_parse.y
+mta_parse.cpp:
 	bison -dtvy mta_parse.y;
 	sed -e "s/union/struct/g" y.tab.c >mta_parse.cpp;
 	sed -e "s/union/struct/g" y.tab.h >mta_parse.hx;
 	cmp -s mta_parse.hx mta_parse.h || (cp mta_parse.hx mta_parse.h);
-
 
 ta_TA_type.h ta_TA_inst.h:
 	if [ ! -f ta_TA_type.h ];\
@@ -54,17 +48,7 @@ ta_TA_type.h ta_TA_inst.h:
 ta_ti.cpp ta_platform.cpp ta_platform_unix.cpp ta_string.cpp ta_variant.cpp ta_mtrnd.cpp ta_list.cpp ta_type.cpp:
 
 bin_PROGRAMS = maketa
-
 maketa_SOURCES = $(HEADS) $(SRCS)
-
-maketa_CPPFLAGS =\
-	-I@abs_srcdir@/../ta \
-	-I@abs_srcdir@/.. \
-	-I@abs_top_builddir@ \
-	-I@abs_srcdir@ \
-	-DNO_TA_BASE @MAKETA_OPT@
-
+maketa_CPPFLAGS = @PDP_INCLUDES@ -DNO_TA_BASE @MAKETA_OPT@
 BUILT_SOURCES = ta_TA_type.h
-
 CLEANFILES = ta_TA_type.h ta_TA_inst.h
-

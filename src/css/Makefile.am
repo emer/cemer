@@ -55,23 +55,15 @@ HEADS =\
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
-css_parse.cpp: css_parse.y
+css_parse.cpp:
 	bison -dtvy css_parse.y;
 	sed -e "s/union/struct/g" y.tab.c >css_parse.cpp;
 	sed -e "s/union/struct/g" y.tab.h >css_parse.hx;
 	cmp -s css_parse.hx css_parse.h || (cp css_parse.hx css_parse.h);
 
-
 noinst_LTLIBRARIES = libcss@PDP_SUFFIX@@PDP_VERSION@.la
-
 libcss@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
-
-libcss@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
-	-I@srcdir@/../ \
-	-I@abs_top_builddir@ \
-	-I@srcdir@ \
-	-I@srcdir@/../ta \
-	-I@srcdir@/../tamisc \
-	-I@srcdir@/../taiqtso
-
+libcss@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
 libcss@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+
+cssdef.h:

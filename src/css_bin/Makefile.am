@@ -26,13 +26,7 @@ if TA_GUI
 css@PDP_SUFFIX@_LDADD +=\
 	@abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@@PDP_VERSION@.la
 endif
-
 endif
-css@PDP_SUFFIX@_CPPFLAGS = \
-	-I@abs_top_builddir@ \
-	-I@srcdir@/../tamisc \
-	-I@srcdir@/../css \
-	-I@srcdir@/../taiqtso \
-	-I@srcdir@/../ta
 
+css@PDP_SUFFIX@_CPPFLAGS = @PDP_INCLUDES@
 css@PDP_SUFFIX@_CXXFLAGS = @OPT_LEVEL@

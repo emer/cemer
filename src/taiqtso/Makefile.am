@@ -70,14 +70,6 @@ irenderarea.moc.cpp:
 	$(QT_MOC) -DTA_USE_INVENTOR -o irenderarea.moc.cpp irenderarea.h
 
 noinst_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@@PDP_VERSION@.la
-
 libtaiqtso@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
-
-libtaiqtso@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
-	-I@srcdir@/.. \
-	-I@srcdir@ \
-	-I@abs_top_builddir@ \
-	-I@srcdir@/../ta
-
+libtaiqtso@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
 libtaiqtso@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
-

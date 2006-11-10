@@ -50,7 +50,7 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qtgroup.h \
 	@abs_srcdir@/ta_seledit.h \
 	@abs_srcdir@/ta_program_qt.h 
-	
+
 HEADS_GUI =\
 	ta_plugin.h \
 	ta_qt.h \
@@ -249,16 +249,8 @@ libta@PDP_SUFFIX@@PDP_VERSION@_la_DEPENDENCIES =\
 	libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@.la
 
 libta@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
-
-libta@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
-	-I@srcdir@/../ \
-	-I@abs_top_builddir@ \
-	-I@srcdir@ \
-	-I@srcdir@/../css \
-	-I@srcdir@/../taiqtso 
-
+libta@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
 libta@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
-
 libta@PDP_SUFFIX@@PDP_VERSION@_la_LIBADD =\
 	libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@.la
 
@@ -271,3 +263,5 @@ libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS =\
 	$(libta@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS)
 
 libtaTypeAccess@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = -g -O0
+
+taglobal.h ta_maketa_defs.h qtdefs.h:

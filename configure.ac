@@ -84,6 +84,12 @@ if test x"$debug" = x"false"; then
   PDP_PROG_PDP
 fi
 
+# A generic set of systemwide includes. Not all sub libraries
+# require all of these includes, but this is less error-prone
+# than manually specifying them for each library
+
+AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../pdp -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
+
 #Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
 LDFLAGS="$LDFLAGS -L/opt/local/lib" #Harmless insertion for DarwinPorts
 AC_CHECK_LIB([m],[main])
@@ -178,11 +184,6 @@ else
 fi
 
   SIM_AC_CHECK_QT([AC_DEFINE([QT3_SUPPORT],,[Set when building with Qt4 support for Qt3])]
-dnl                    if test x"$debug" = x"true"; then
-dnl                      sim_ac_qt_libs="$sim_ac_qt_libs -lQtTest_debug"
-dnl                      sim_ac_qt_cppflags="$sim_ac_qt_cppflags -I${QTDIR}/include/QtTest"
-dnl #                     sim_ac_qt_libs="`echo $sim_ac_qt_libs | sed -r 's/(\-lQt[A-Za-z0-9]*)/\1_debug/g'`"
-dnl                    fi
                    LIBS="$LIBS $sim_ac_qt_libs"
                    CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"
                    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"

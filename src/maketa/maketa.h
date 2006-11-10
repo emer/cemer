@@ -52,10 +52,10 @@ extern TypeDef TA_ta_Globals;
 extern TypeDef TA_taString;
 extern TypeDef TA_void_ptr;
 */
-#include "ta/ta_type.h"
+#include "ta_type.h"
 
 #ifndef TYPE
-#include "ta_parse.h"
+#include "mta_parse.h"
 #endif
 
 int yyparse(void);
