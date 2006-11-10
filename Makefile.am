@@ -1,4 +1,10 @@
-CLEAN_FILES =
+CLEAN_FILES =\
+	src/manual/pdp-user \
+	src/manual/pdp-user-1 \
+	src/manual/pdp-user-2 \
+	src/manual/pdp-user-3 \
+	src/manual/pdp-user-4
+
 EXTRA_DIST =\
 	src/ta/taglobal.h \
 	src/ta/ta_maketa_defs.h \
@@ -54,7 +60,7 @@ EXTRA_DIST += aminclude.am spec.tmpl.in
 
 CLEANFILES =\
 	*do-stamp* \
-	PDP++-4.0.0.spec \
+	PDP++-3.5.spec \
 	RPMChangeLog 
 
 DISTCLEANFILES =\
