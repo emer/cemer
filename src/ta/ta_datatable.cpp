@@ -1141,7 +1141,7 @@ int DataTable::LoadHeader(istream& strm, Delimiters delim) {
   while(true) {
     String str;
     c = ReadTillDelim(strm, str, cdlm, false);
-    if((c == EOF) || (c == '\n')) break;
+    if(c == EOF) break;
     String base_nm;
     int val_typ;
     MatrixGeom mat_idx;
@@ -1164,6 +1164,7 @@ int DataTable::LoadHeader(istream& strm, Delimiters delim) {
     else {
       load_mat_idx.Add(-1);	// no matrix info
     }
+    if(c == '\n') break;
   }
   return c;
 }
@@ -1178,7 +1179,7 @@ int DataTable::LoadDataRow(istream& strm, Delimiters delim, bool quote_str) {
   while(true) {
     String str;
     c = ReadTillDelim(strm, str, cdlm, quote_str);
-    if((c == EOF) || (c == '\n')) break;
+    if(c == EOF) break;
     if(str == "_H:") {
       c = LoadHeader(strm, delim);
       if(c == EOF) break;
@@ -1218,6 +1219,7 @@ int DataTable::LoadDataRow(istream& strm, Delimiters delim, bool quote_str) {
       da->SetValAsString(str, -1);
     }
     col++;
+    if(c == '\n') break;
   }
   StructUpdate(false);
   return c;
@@ -1232,7 +1234,7 @@ void DataTable::LoadData(istream& strm, Delimiters delim, bool quote_str, int ma
     if(c == EOF) break;
     if((max_recs > 0) && (rows - st_row >= max_recs)) break;
   }
-  RemoveRow(-1);		// last one is empty..
+  //  RemoveRow(-1);		// last one is empty..
 }
 
 void DataTable::SetColName(const String& col_nm, int col) {

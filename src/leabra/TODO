@@ -13,7 +13,6 @@ docs..: add all float_RArray funs, for matricies.
 Program issues
 
 css:
-* prompt is now messed up: pdp++ > >xxx and just > for program cmd shell
 * syntax error ^ doesn't show up in right place..
 * Output::R should work even though R is a defined constant variable: need
    a more inclusive type for things after the :: scoper
@@ -25,6 +24,7 @@ program:
 check:
 * sometimes method s_args don't copy, sometimes they do..
   * add a n_args thing so you can spec less than total?  or, just leave with defaults..
+* prompt is now messed up: pdp++ > >xxx and just > for program cmd shell
 
 * add "comment" progel -- just displays a comment in display, perhaps with diff color?
 * warn about = in if condition (instead of ==) -- maybe even in css?
@@ -32,7 +32,6 @@ check:
 -----------
 current bugs:
 
-* not reading last col & row of test.dat!
 
 -------
 lower pri:
