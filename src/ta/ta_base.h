@@ -1152,7 +1152,7 @@ protected:
   void		El_Done_(void* it)	{ taBase::Done((TAPtr)it); }
   void*		El_Own_(void* it)	{ taBase::Own((TAPtr)it,this); return it; }
   void		El_disOwn_(void* it)
-  { if(El_GetOwner_(it) == this) {((TAPtr)it)->CutLinks(); ((TAPtr)it)->Destroying();}
+  { if(El_GetOwner_(it) == this) {((TAPtr)it)->Destroying(); ((TAPtr)it)->CutLinks();}
     El_Done_(El_unRef_(it)); }
   // cut links to other objects when removed from owner group
 
