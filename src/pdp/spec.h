@@ -71,7 +71,7 @@ public:
 
   String_Array unique; // #HIDDEN string list of unique members
   TypeDef*		min_obj_type;
-  // #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
+  // #NO_SAVE #TYPE_taBase mimimal object type required for spec
   BaseSpec_Group 	children;
   // #NO_INHERIT #IN_GPMENU sub-specs descending from this one and inheriting values
 

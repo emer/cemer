@@ -288,7 +288,8 @@ public:
   virtual void  SetRevert();	// set the revert button on
   virtual void  UnSetRevert();	// set the revert button off
   virtual void  NotifyChanged(); // called by our object when it has changed (by us, or other)
-  virtual void		ReShow(); // rebuild; called on major obj change, or when new Show option
+//obs  virtual void		ReShow(); // rebuild; called on major obj change, or when new Show option
+  virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor
   virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
@@ -424,7 +425,6 @@ public:
   virtual void		SetCurMenu(MethodDef* md); // sets or creates the cur_menu, for subsequent adding of items
   virtual void		SetCurMenuButton(MethodDef* md);
   override void		Raise() {if (isPanel()) DoRaise_Panel(); else taiDataHost::Raise();}
-  virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
     // check for unsaved changes and prompt to save/discard; called by several places prior to closing tab window, closing dialog, shutting down app, etc.
 public: // ITypedObject i/f (common to IDLC and IDH)

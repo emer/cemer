@@ -3,6 +3,10 @@ WORK PRIORITY
 
 Items to Allocate/Prioritize:
 
+* in netstru and possible other, move the code from the CutLinks that
+  does all the fixups -- instead, checks should be put in the ConfigCheck thing,
+  etc.
+
 * #101 list API changes
 * Spec Editor (similar to prog editor -- shows children)
 * dnd for T3

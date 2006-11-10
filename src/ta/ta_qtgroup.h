@@ -326,6 +326,7 @@ protected:
   bool		header_row; // set false if you don't want the header row
   override void Constr_Box(); // add the multi box
   override void 	Constr_Body();
+  void			RebuildMultiBody(); // calls clear/constr, disabling updates
   virtual void		Constr_MultiBody(); // added in after Constr_Body -- also used for reshowing multi-body
   virtual void		ClearMultiBody_impl(); // clears multi-body for reshowing
 };

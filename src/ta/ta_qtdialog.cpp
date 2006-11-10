@@ -715,9 +715,11 @@ void taiDataHost::Changed() {
 }
 
 void taiDataHost::ClearBody() {
+  widget()->setUpdatesEnabled(false);
   ClearBody_impl();
   taiMiscCore::RunPending(); // not a bad idea to update gui before proceeding
   BodyCleared(); //rebuilds if ShowChanged
+  widget()->setUpdatesEnabled(true);
 }
 
 void taiDataHost::ClearBody_impl() {
@@ -1024,7 +1026,7 @@ void taiDataHost::ReConstr_Body() {
   GetImage();
 }
 
-void taiDataHost::ReShow() {
+/*obs void taiDataHost::ReShow() {
   if (no_revert_hilight) return; // it is us that caused this
   if (HasChanged()) {
     warn_clobber = true; //TODO: prob should have a state variable, so we will rebuild
@@ -1033,6 +1035,34 @@ void taiDataHost::ReShow() {
     // clear body -- much of the deleting is deferred, so event loop must pick up when it changes
     ClearBody();
   }
+} */
+
+bool taiDataHost::ReShow(bool force) {
+//note: only called with force from ReShowEdits, typ only from a SelEdit dialog
+  if (no_revert_hilight) return false; // it is us that caused this
+  if (force) {
+      // get confirmation if changed, and possibly exit
+    if (HasChanged()) {
+      int chs = taMisc::Choice("Changes must be applied before rebuilding", "&Apply", "&Cancel");
+      switch (chs) {
+      case  1: // just ignore and exit
+        return false;
+        break;
+      case  0:
+      default:
+        Apply();
+        break;
+      }
+    }
+  } else { // not forced, normal situation for datachanged notifies
+    if (HasChanged()) {
+      warn_clobber = true; //TODO: prob should have a state variable, so we will rebuild
+      return false;
+    }
+  }
+  state |= SHOW_CHANGED; 
+  ClearBody(); // rebuilds body after clearing
+  return true;
 }
 
 void taiDataHost::Revert() {
@@ -1664,27 +1694,6 @@ void taiEditDataHost::GetValueInline_impl(void* base) const {
   taiData* mb_dat = data_el.SafeEl(0);
   if (mb_dat) 
     typ->it->GetValue(mb_dat, base);
-}
-
-bool taiEditDataHost::ReShow(bool force) {
-  if (!force) {
-      // get confirmation if changed, and possibly exit
-    if (HasChanged()) {
-      int chs = taMisc::Choice("Changes must be applied before rebuilding", "&Apply", "&Cancel");
-      switch (chs) {
-      case  1: // just ignore and exit
-        return false;
-        break;
-      case  0:
-      default:
-        Apply();
-        break;
-      }
-    }
-  }
-  state |= SHOW_CHANGED; 
-  ClearBody(); // rebuilds body after clearing
-  return true;
 }
 
 void taiEditDataHost::Constr_ShowMenu() {

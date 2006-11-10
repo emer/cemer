@@ -88,8 +88,10 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
 }
 
 
-taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_) {
-  no_check_box = NoCheckBox(host_);
+taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent, int flags_) 
+{
+  bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
     taiData* rdat;
     if (m_sub_types != NULL)
@@ -98,7 +100,8 @@ taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
       rdat = taiMember::GetDataRep_impl(host_, par, gui_parent, flags_);
     return rdat;
   } else {
-    taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent);
+    int pt_flags = taiData::flgToggleReadOnly; // only for informing user, not changing
+    taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent, pt_flags);
     rval->InitLayout();
     taiData* rdat;
     if (m_sub_types)
@@ -113,7 +116,8 @@ taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
 }
 
 void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
-//nn  IDataHost* host_ = dat->host;
+  IDataHost* host_ = dat->host;
+  bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
     if (m_sub_types != NULL)
       sub_types()->GetImage(dat,base);
@@ -143,7 +147,8 @@ void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
 }
 
 void taiSpecMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-//nn  IDataHost* host_ = dat->host;
+  IDataHost* host_ = dat->host;
+  bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
     if (m_sub_types != NULL)
       sub_types()->GetMbrValue(dat, base, first_diff);

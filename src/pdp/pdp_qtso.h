@@ -43,7 +43,6 @@ public:
 
   TAQT_MEMBER_INSTANCE(taiSpecMember, taiMember);
 protected:
-  bool		no_check_box; // complicated test, result cached for safety
   override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void		GetImage_impl(taiData* dat, const void* base);
 };

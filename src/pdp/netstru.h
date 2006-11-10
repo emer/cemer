@@ -407,7 +407,7 @@ INHERITED(BaseSpec)
 public:
   MinMaxRange	act_range;		// range of activation for units
   TypeDef*	bias_con_type;
-  // #TYPE_Connection #NULL_OK type of bias connection to make
+  // #HIDDEN #TYPE_Connection #NULL_OK type of bias connection to make
   ConSpec_SPtr 	bias_spec;
   // con spec that controls the bias connection on the unit
   float		sse_tol;	// tolerance for computing sum-squared error on a per-unit basis

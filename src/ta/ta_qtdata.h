@@ -156,7 +156,7 @@ class TA_API taiPlusToggle : public taiCompData {
   Q_OBJECT
 public:
   taiData*	data; // set by caller after creating contained class
-  QCheckBox* 	but_rep;
+  iCheckBox* 	but_rep;
   QFrame* 	rep() {return (QFrame*)m_rep;} //parent of contained controls
 
   taiPlusToggle(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);

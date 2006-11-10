@@ -1174,6 +1174,14 @@ void gpiMultiEditDataHost::Constr_MultiBody() {
   // nothing
 }
 
+void gpiMultiEditDataHost::RebuildMultiBody() {
+//note: don't disable updates before clear, because it really doesn't help,
+// and just requires recursive descent into everything to be nuked
+  ClearMultiBody_impl();
+  multi->setUpdatesEnabled(false);
+    Constr_MultiBody();
+  multi->setUpdatesEnabled(true);
+}
 
 
 //////////////////////////////////
@@ -1314,8 +1322,7 @@ void gpiListDataHost::GetImage() {
   }
 
   if (rebuild) {
-    ClearMultiBody_impl();
-    Constr_MultiBody(); 
+    RebuildMultiBody(); 
   /*obs lst_data_el.Reset();
     ivGlyphIndex i;
     for(i=lst_data_g->count()-1; i >= 0; i--)
@@ -1476,8 +1483,7 @@ void gpiCompactListDataHost::GetImage() {
   }
 
   if (rebuild) {
-    ClearMultiBody_impl();
-    Constr_MultiBody(); 
+    RebuildMultiBody(); 
   } 
 
   // first for the List-structure members

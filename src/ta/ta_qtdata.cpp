@@ -621,10 +621,14 @@ taiPlusToggle::~taiPlusToggle() {
 
 void taiPlusToggle::InitLayout() {
   taiCompData::InitLayout();
-  but_rep = new QCheckBox(rep());
+  but_rep = new iCheckBox(rep());
   AddChildWidget(but_rep, taiM->hsep_c);
-  connect(but_rep, SIGNAL(toggled(bool)),
-      this, SLOT(Toggle_Callback()) );
+  if (HasFlag(flgToggleReadOnly)) {
+    but_rep->setReadOnly(true);
+  } else {
+    connect(but_rep, SIGNAL(toggled(bool)),
+        this, SLOT(Toggle_Callback()) );
+  }
 }
 
 int taiPlusToggle::GetValue() {
