@@ -924,10 +924,14 @@ int taBase::SaveAs_File(const String& fname) {
   return rval;
 }
 
-String taBase::GetFileNameFmProject(const String& ext, const String& tag) {
+String taBase::GetFileNameFmProject(const String& ext, const String& tag, bool dmem_proc_no) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return _nilString;
-  String rval = proj->base_fname + tag + ext;
+  String dms;
+  if(dmem_proc_no && (taMisc::dmem_nprocs > 1)) {
+    dms = ".p" + taMisc::LeadingZeros(dmem_proc_no, 2);
+  }
+  String rval = proj->base_fname + tag + dms + ext;
   return rval;
 }
 
@@ -1214,7 +1218,8 @@ void taBase::SetUserData(const String& name, const Variant& value) {
 }
  
 void taBase::UpdateAllViews() {
-  DataChanged(DCR_UPDATE_VIEWS);
+  if(taMisc::gui_active)
+    DataChanged(DCR_UPDATE_VIEWS);
 }
 
 

@@ -220,9 +220,9 @@ void ConSpec::CutLinks() {
 	  conspec_repl_bias_ptr(us, this, rsp);
       }
     }
-    else {
-      taMisc::Error("Warning: Deleting ConSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
-    }
+//     else {
+//       taMisc::Error("Warning: Deleting ConSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
+//     }
   }
   BaseSpec::CutLinks();
 }
@@ -1300,9 +1300,9 @@ void UnitSpec::CutLinks() {
 	taMisc::Error("Warning: UnitSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
       }
     }
-    else {
-      taMisc::Error("Warning: Deleting UnitSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
-    }
+//     else {
+//       taMisc::Error("Warning: Deleting UnitSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
+//     }
   }
   BaseSpec::CutLinks();
   bias_spec.CutLinks();
@@ -2118,9 +2118,9 @@ void ProjectionSpec::CutLinks() {
 	taMisc::Error("Warning: ProjectionSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
       }
     }
-    else {
-      taMisc::Error("Warning: Deleting ProjectionSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
-    }
+//     else {
+//       taMisc::Error("Warning: Deleting ProjectionSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
+//     }
   }
   BaseSpec::CutLinks();
 }
@@ -3242,9 +3242,9 @@ void LayerSpec::CutLinks() {
 	taMisc::Error("Warning: LayerSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
       }
     }
-    else {
-      taMisc::Error("Warning: Deleting LayerSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
-    }
+//     else {
+//       taMisc::Error("Warning: Deleting LayerSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
+//     }
   }
   BaseSpec::CutLinks();
 }
@@ -5165,7 +5165,8 @@ void Network::InitWtState() {
 }
 
 void Network::InitCounters() {
-  batch = 0;
+  // this is one you do not reinit: loops over inits!
+//   batch = 0;
   epoch = 0;
   trial = 0;
   cycle = 0;

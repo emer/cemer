@@ -555,8 +555,10 @@ friend class InitProcRegistrar;
   /////////////////////////////////////////////////
   //	Configuration -- object as settings
 
-  void	SaveConfig();		// #BUTTON #CONFIRM save configuration defaults to ~/.taconfig file that is loaded automatically at startup
-  void	LoadConfig();		// #BUTTON #CONFIRM load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)
+  void	SaveConfig();
+  // #BUTTON #CONFIRM #CAT_Config save configuration defaults to ~/.taconfig file that is loaded automatically at startup
+  void	LoadConfig();
+  // #BUTTON #CONFIRM #CAT_Config load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)
 
   /////////////////////////////////////////////////
   //	Errors, Warnings, Simple Dialogs
@@ -564,53 +566,59 @@ friend class InitProcRegistrar;
   static String	SuperCat(const char* a, const char* b, const char* c,
 		      const char* d, const char* e, const char* f,
 		      const char* g, const char* h, const char* i);
+  // #CAT_Dialog concatenate strings with spaces between
   
   static void 	Error(const char* a, const char* b=0, const char* c=0,
 		      const char* d=0, const char* e=0, const char* f=0,
 		      const char* g=0, const char* h=0, const char* i=0);
-  // displays error either in a window+stderr if gui_active or to stderr only
+  // #CAT_Dialog displays error either in a window+stderr if gui_active or to stderr only
 
   static void 	CheckError(const char* a, const char* b=0, const char* c=0,
 		      const char* d=0, const char* e=0, const char* f=0,
 		      const char* g=0, const char* h=0, const char* i=0);
-  // called by CheckConfig routines; enables batching up of errors for display
+  // #CAT_Dialog called by CheckConfig routines; enables batching up of errors for display
   
   static void 	Warning(const char* a, const char* b=0, const char* c=0,
 		      const char* d=0, const char* e=0, const char* f=0,
 		      const char* g=0, const char* h=0, const char* i=0);
-  // displays warning to stderr and/or other logging mechanism
+  // #CAT_Dialog displays warning to stderr and/or other logging mechanism
 
   static int 	Choice(const char* text="Choice", const char* a="Ok", const char* b=0,
 		       const char* c=0, const char* d=0, const char* e=0,
 		       const char* f=0, const char* g=0, const char* h=0,
 		       const char* i=0);
-  // allows user to choose among different options in window if iv_active or stdin/out
+  // #CAT_Dialog allows user to choose among different options in window if iv_active or stdin/out
 
   /////////////////////////////////////////////////
   //	Global state management
 
   static void	FlushConsole();
-  // flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
+  // #CAT_GlobalState flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
 
-  static void 	Busy();		// puts system in a 'busy' state
-  static void	DoneBusy();	// when no longer busy, call this function
+  static void 	Busy();
+  // #CAT_GlobalState puts system in a 'busy' state
+  static void	DoneBusy();
+  // #CAT_GlobalState when no longer busy, call this function
 
   static void 	CheckConfigStart(bool confirm_success = true, bool quiet = false); 
-   // we are starting checkconfig, nestable, 1st guy controls params
-  static void	CheckConfigEnd(bool ok = true); // ending checkconfig, last exit handles display etc.
+  // #CAT_GlobalState we are starting checkconfig, nestable, 1st guy controls params
+  static void	CheckConfigEnd(bool ok = true);
+  // #CAT_GlobalState ending checkconfig, last exit handles display etc.
 
   static void	MallocInfo(ostream& strm);
-  // generate malloc memory statistic information to given stream
+  // #CAT_GlobalState generate malloc memory statistic information to given stream
   static void	ListAllTokens(ostream& strm);
-  // generate a list and count of all types that keep tokens, with a count of tokens
+  // #CAT_GlobalState generate a list and count of all types that keep tokens, with a count of tokens
   static TypeInfoKind TypeToTypeInfoKind(TypeDef* typ);
+  // #CAT_GlobalState 
   
 #if ((defined(TA_OS_UNIX)))
 #ifndef __MAKETA__
   static void	Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun));
-  // register a cleanup process in response to all terminal signals
+  // #IGNORE register a cleanup process in response to all terminal signals
 #endif
-  static void	Decode_Signal(int err);	// printout translation of signal on cerr
+  static void	Decode_Signal(int err);
+  // #IGNORE printout translation of signal on cerr
 #endif // WINDOWS
 
   /////////////////////////////////////////////////
@@ -637,24 +645,24 @@ friend class InitProcRegistrar;
   // #IGNORE initialize distributed memory stuff
 
   static void	HelpMsg(ostream& strm = cerr);
-  // generate a help message about program args, usage, etc
+  // #CAT_Args generate a help message about program args, usage, etc
 
   static void	AddArgName(const String& flag, const String& name);
-  // add an argument flag name to be processed from startup args (e.g., flag = -f, name = CssScript; see arg_names)
+  // #CAT_Args add an argument flag name to be processed from startup args (e.g., flag = -f, name = CssScript; see arg_names)
   static void	AddArgNameDesc(const String& name, const String& desc);
-  // add a description of an argument flag name (see arg_name_descs)
+  // #CAT_Args add a description of an argument flag name (see arg_name_descs)
 
   static void	UpdateArgs();
-  // update arg information after adding new arg names
+  // #CAT_Args update arg information after adding new arg names
 
   static bool	CheckArgByName(const String& nm);
-  // was the given arg name set?
+  // #CAT_Args was the given arg name set?
   static String	FindArgByName(const String& nm);
-  // get the value for given named argument (argv[x] for unnamed args)
+  // #CAT_Args get the value for given named argument (argv[x] for unnamed args)
   static bool	CheckArgValContains(const String& vl);
-  // check if there is an arg that contains string fragment in its value
+  // #CAT_Args check if there is an arg that contains string fragment in its value
   static String	FindArgValContains(const String& vl);
-  // get full arg value that contains string fragment
+  // #CAT_Args get full arg value that contains string fragment
 #endif // NO_TA_BASE
 
   /////////////////////////////////////////////////
@@ -662,50 +670,53 @@ friend class InitProcRegistrar;
   // todo: these perhaps indicate shortcomings of associated objects -- fix them!
 
   static void	CharToStrArray(String_PArray& sa, const char* ch);
-  // convert space-delimeted character string to a string array
+  // #CAT_Utility convert space-delimeted character string to a string array
   static String	StrArrayToChar(const String_PArray& sa);
-  // convert a string array to a space-delimeted character string
+  // #CAT_Utility convert a string array to a space-delimeted character string
 
   static void	SpaceLabel(String& lbl);
-  // add spaces to a label in place of _'s and upper-lower transitions
+  // #CAT_Utility add spaces to a label in place of _'s and upper-lower transitions
 
   static String	LeadingZeros(int num, int len);
-  // returns num converted to a string with leading zeros up to len
+  // #CAT_Utility returns num converted to a string with leading zeros up to len
 
   static String	FormatValue(float val, int width, int precision);
-  // format output of value according to width and precision
+  // #CAT_Utility format output of value according to width and precision
 
   static String	StringMaxLen(const String& str, int len);
-  // returns string up to maximum length given (enforces string to be len or less in length)
+  // #CAT_Utility returns string up to maximum length given (enforces string to be len or less in length)
   static String	StringEnforceLen(const String& str, int len);
-  // returns string enforced to given length (spaces added to make length)
+  // #CAT_Utility returns string enforced to given length (spaces added to make length)
 
   /////////////////////////////////////////////////
   //	File Paths etc
 
   // path manips
   static String	remove_name(String& path);
+  // #IGNORE 
 
   static String	FindFileOnPath(String_PArray& paths, const char* fname);
-  // helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)
+  // #CAT_File helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)
 
   static String	FindFileOnLoadPath(const char* fname);
-  // try to find file fnm in one of the load_include paths -- returns complete path to file  (or empty str if not found)
+  // #CAT_File try to find file fnm in one of the load_include paths -- returns complete path to file  (or empty str if not found)
 
   /////////////////////////////////////////////////
   //	Recording GUI actions to css script
 
-  static void	StartRecording(ostream* strm); // sets record_strm and record_cursor
-  static void   StopRecording();	       // unsets record_strm and record_cursor
+  static void	StartRecording(ostream* strm);
+  // #CAT_Script sets record_strm and record_cursor
+  static void   StopRecording();
+  // #CAT_Script unsets record_strm and record_cursor
   static bool	RecordScript(const char* cmd);
-  // record the given script command, if the script is open (just sends cmd to stream)
+  // #CAT_Script record the given script command, if the script is open (just sends cmd to stream)
 #ifndef NO_TA_BASE
   static void  ScriptRecordAssignment(taBase* tab,MemberDef* md);
-  // record last script assignment of tab's md value;
+  // #CAT_Script record last script assignment of tab's md value;
   static void 	SRIAssignment(taBase* tab,MemberDef* md);
-  // record inline md assignment
+  // #CAT_Script record inline md assignment
   static void 	SREAssignment(taBase* tab,MemberDef* md);
-  // record enum md assignment
+  // #CAT_Script record enum md assignment
 #endif
 
   ////////////////////////////////////////////////////////////////////////
@@ -716,39 +727,43 @@ friend class InitProcRegistrar;
   // return value is the next character in the stream
   // peek=true means that return value was not read, but was just peek'd
 
-  static int	skip_white(istream& strm, bool peek = false);
-  static int	skip_white_noeol(istream& strm, bool peek = false); // don't skip end-of-line
+  static int	skip_white(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	skip_white_noeol(istream& strm, bool peek = false); // #CAT_Parse don't skip end-of-line
   static int	skip_till_start_quote_or_semi(istream& strm, bool peek = false);      
-  // used to seek up to an opening " for a string; will terminate on a ;
-  static int	read_word(istream& strm, bool peek = false);
-  static int	read_alnum(istream& strm, bool peek = false); 		// alpha-numeric
-  static int    read_alnum_noeol(istream& strm, bool peek = false);
-  static int	read_till_eol(istream& strm, bool peek = false);
-  static int	read_till_semi(istream& strm, bool peek = false);
-  static int	read_till_lbracket(istream& strm, bool peek = false);
-  static int	read_till_lb_or_semi(istream& strm, bool peek = false);
-  static int	read_till_rbracket(istream& strm, bool peek = false);
-  static int	read_till_rb_or_semi(istream& strm, bool peek = false);
-  static int 	read_till_end_quote(istream& strm, bool peek = false);
-  // read-counterpart to write_quoted_string; read-escaping, until "
+  // #CAT_Parse used to seek up to an opening " for a string; will terminate on a ;
+  static int	read_word(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	read_alnum(istream& strm, bool peek = false);
+  // #CAT_Parse alpha-numeric
+  static int    read_alnum_noeol(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	read_till_eol(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	read_till_semi(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	read_till_lbracket(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	read_till_lb_or_semi(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	read_till_rbracket(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	read_till_rb_or_semi(istream& strm, bool peek = false); // #CAT_Parse 
+  static int 	read_till_end_quote(istream& strm, bool peek = false); // #CAT_Parse 
+  // #CAT_Parse read-counterpart to write_quoted_string; read-escaping, until "
   static int	read_till_end_quote_semi(istream& strm, bool peek = false); 
-  // read-counterpart to write_quoted_string; read-escaping, until "; (can be ws btwn " and ;)
+  // #CAT_Parse read-counterpart to write_quoted_string; read-escaping, until "; (can be ws btwn " and ;)
   static int	skip_past_err(istream& strm, bool peek = false);
-  // skips to next rb or semi (robust)
+  // #CAT_Parse skips to next rb or semi (robust)
   static int	skip_past_err_rb(istream& strm, bool peek = false);
-  // skips to next rbracket (robust)
+  // #CAT_Parse skips to next rbracket (robust)
 
   ////////////////////////////////////////////////////////////////////////
   // 	File Parsing Stuff for Dump routines: Output
 
   static ostream& indent(ostream& strm, int indent, int tsp=2);
+  // #CAT_File
   static ostream& write_quoted_string(ostream& strm, const String& str, 
 				      bool write_if_empty = false);
-  // writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
+  // #CAT_File writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
   static ostream& fmt_sep(ostream& strm, const String& itm, int no, int indent,
 			  int tsp=2);
+  // #CAT_File
   static ostream& fancy_list(ostream& strm, const String& itm, int no, int prln,
 			     int tabs);
+  // #CAT_File 
 };
 
 //////////////////////////////////////////////////////////

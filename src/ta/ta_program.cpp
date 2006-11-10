@@ -21,6 +21,8 @@
 #include "css_ta.h"
 
 #include <QCoreApplication>
+#include <QDir>
+
 #ifdef TA_GUI
 # include "ta_qt.h"
 # include "ta_qtdialog.h"
@@ -1112,7 +1114,7 @@ const String PrintVar::GenCssBody_impl(int indent_level) {
     return rval;
   }
   
-  rval += "cerr << \"" + print_var->name + "\" = " + print_var->name + " << endl;\n";
+  rval += "cerr << \"" + print_var->name + " = \" << " + print_var->name + " << endl;\n";
   return rval;
 }
 
@@ -1803,6 +1805,14 @@ String Program::GetProgLibPath(ProgLibs library) {
     path = taMisc::prog_lib_paths.GetVal("SystemLib").toString();
   else if(library == WEB_LIB)
     path = taMisc::prog_lib_paths.GetVal("WebLib").toString();
+  if(library != WEB_LIB) {
+    int acc = access(path, F_OK);
+    if (acc != 0) {
+      QDir qd;
+      qd.mkpath(path);		// attempt to make it..
+      taMisc::Warning("Attempted to make program library directory:", path);
+    }
+  }
   return path;
 }
 
@@ -1816,6 +1826,7 @@ void Program::SaveToProgLib(ProgLibs library) {
     if(chs == 1) return;
   }
   SaveAs_File(fname);
+  Program_Group::prog_lib.FindPrograms();
 }
 
 void Program::LoadFromProgLib(ProgLibs library) {
@@ -1900,6 +1911,7 @@ void Program_Group::SaveToProgLib(Program::ProgLibs library) {
     if(chs == 1) return;
   }
   SaveAs_File(fname);
+  Program_Group::prog_lib.FindPrograms();
 }
 
 void Program_Group::SetProgsDirty() {
@@ -2004,8 +2016,6 @@ void ProgLibEl_List::Initialize() {
 void ProgLib::Initialize() {
   not_init = true;
 }
-
-#include <QDir>
 
 void ProgLib::FindPrograms() {
   Reset();			// clear existing

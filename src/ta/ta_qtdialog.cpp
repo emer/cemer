@@ -1916,8 +1916,14 @@ void taiFileDialogExtension::init() {
   lay2->addStretch();
 }
 
-bool taFiler::GetFileName(String& fname, FileOperation filerOperation) 
-{
+bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
+  if(!taMisc::gui_active) {
+    if(fname.empty()) {
+      cout << "Please provide file name: ";
+      cin >> fname;
+    }
+    return true;
+  }
   bool result = false;
 //qt3: QFileDialog ( const QString & dirName, const QString & filter = QString::null, QWidget * parent = 0, const char * name = 0, bool modal = FALSE ) 
 //qt4 QFileDialog ( QWidget * parent = 0, const QString & caption = QString(), const QString & directory = QString(), const QString & filter = QString() )

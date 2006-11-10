@@ -7,16 +7,10 @@ docs..: add all float_RArray funs, for matricies.
 
 * relnet stat
 
-* startup script
-
-* add param on datatable for dmem diff log file names or not
-
 * SaveNetwork[Weights] program -- uses above
 
 -----------
 Program issues
-
-need to update proglib when saving a new proglib!
 
 css:
 * prompt is now messed up: pdp++ > >xxx and just > for program cmd shell
@@ -30,25 +24,15 @@ program:
 
 check:
 * sometimes method s_args don't copy, sometimes they do..
-* add "print" Progel?
+  * add a n_args thing so you can spec less than total?  or, just leave with defaults..
+
 * add "comment" progel -- just displays a comment in display, perhaps with diff color?
 * warn about = in if condition (instead of ==) -- maybe even in css?
 
 -----------
-
----------
-
 current bugs:
 
 * not reading last col & row of test.dat!
-
-* can't run startup.css in -nogui or -gui!
-
---------
-check:
-
-* add avg_cycles to network, monitor
-
 
 -------
 lower pri:

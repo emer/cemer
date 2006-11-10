@@ -174,7 +174,7 @@ String		cssMisc::startup_file;
 String		cssMisc::startup_code;
 int		cssMisc::init_debug = -1;
 int		cssMisc::init_bpoint = -1;
-bool		cssMisc::init_interactive = false;
+bool		cssMisc::init_interactive = true;
 int		cssMisc::refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
 bool		cssMisc::obey_read_only = true;
 bool		cssMisc::call_update_after_edit = false;
@@ -5027,7 +5027,9 @@ void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
   external_exit = false;
 
   cssMisc::TopShell->PushSrcProg(cssMisc::Top);
+}
 
+void cssCmdShell::Shell_NoGui_Rl_Run() {
   while(!external_exit) {
     char* curln = rl_readline((char*)act_prompt);
     if(curln == (char*)0) {

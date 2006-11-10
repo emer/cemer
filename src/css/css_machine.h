@@ -1665,6 +1665,8 @@ public:
   void		Shell_Qt_Console(const char* prmpt);
   // configure qt gui-based shell that links with QcssConsole
   void		Shell_NoGui_Rl(const char* prmpt);
+  // configure a nogui readline-based shell
+  void		Shell_NoGui_Rl_Run();
   // run a nogui readline-based shell
 
   bool		RunStartupScript();

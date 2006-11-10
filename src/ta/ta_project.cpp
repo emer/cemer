@@ -370,21 +370,21 @@ void taRootBase::Info() {
   info += "\n\n";
 
   info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\
-Carnegie Mellon University, Princeton University.\n\
+ Carnegie Mellon University, Princeton University.\n\
  \n\
-TA/PDP++ is free software; you can redistribute it and/or modify\n\
-it under the terms of the GNU General Public License as published by\n\
-the Free Software Foundation; either version 2 of the License, or\n\
-(at your option) any later version.\n\
+ TA/PDP++ is free software; you can redistribute it and/or modify\n\
+ it under the terms of the GNU General Public License as published by\n\
+ the Free Software Foundation; either version 2 of the License, or\n\
+ (at your option) any later version.\n\
  \n\
-TA/PDP++ is distributed in the hope that it will be useful,\n\
-but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
-GNU General Public License for more details.\n\
+ TA/PDP++ is distributed in the hope that it will be useful,\n\
+ but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
+ GNU General Public License for more details.\n\
  \n\
-Note that the taString class was derived from the GNU String class\n\
-Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
-is covered by the GNU General Public License, see ta_string.h\n";
+ Note that the taString class was derived from the GNU String class\n\
+ Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
+ is covered by the GNU General Public License, see ta_string.h\n";
   taMisc::Choice(info, "Ok");
 }
 
@@ -651,7 +651,7 @@ bool taRootBase::Startup_Console() {
 #endif
   } else {
     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-    //    cssMisc::TopShell->Shell_NoGui_Rl(cssMisc::prompt);
+    cssMisc::TopShell->Shell_NoGui_Rl(cssMisc::prompt);
   }
   return true;
 }
@@ -744,10 +744,13 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
 
 bool taRootBase::Startup_Run() {
   // todo: there is a non-gui version of this in css that need to checkout..
-  if(taMisc::gui_active)
-    qApp->exec();
-  else
-    cssMisc::TopShell->Shell_NoGui_Rl(cssMisc::prompt);
+  if(taMisc::gui_active) {
+    qApp->exec();		// gui version is always interactive
+  }
+  else {
+    if(cssMisc::init_interactive)
+      cssMisc::TopShell->Shell_NoGui_Rl_Run();
+  }
   return Cleanup_Main();
 }
 

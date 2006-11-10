@@ -2409,9 +2409,16 @@ bool cssMisc::Initialize() {
   if(!cssMisc::startup_code.empty())
     cssMisc::startup_code += "\n";		  // add a final cr for good measure
 
-  cssMisc::init_interactive = taMisc::CheckArgByName("CssInteractive");
+  if(taMisc::CheckArgByName("CssScript") || taMisc::CheckArgByName("CssCode")) {
+    // if code specified, default is then to not run in interactive mode (otherwise yes)
+    cssMisc::init_interactive = false;
+  }
+  if(taMisc::CheckArgByName("CssInteractive")) // override
+    cssMisc::init_interactive = true;
+
   cssMisc::init_debug = taMisc::FindArgByName("CssDebug");
-  cssMisc::init_bpoint = taMisc::FindArgByName("CssBreakpoint");
+  String ibp = taMisc::FindArgByName("CssBreakpoint");
+  if(!ibp.empty()) cssMisc::init_bpoint = ibp;
   cssMisc::refcnt_trace = taMisc::CheckArgByName("RefCountTrace");
 
   if(cssMisc::init_debug > 2) {

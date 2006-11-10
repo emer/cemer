@@ -584,7 +584,7 @@ public:
   virtual int	 	Load_File(TypeDef* td = NULL, void** el = NULL);
   // #IGNORE load object data from a file -- gets the filename from user
   virtual int	 	LoadAs_File(const String& fname="", TypeDef* td = NULL, void** el = NULL);
-  // #MENU #MENU_ON_Object #ARGC_1 #LABEL_Load #CAT_File Load object data from given file name (if empty, prompt user for a name) -- use this in programs
+  // #MENU #MENU_ON_Object #ARGC_0 #LABEL_Load #CAT_File Load object data from given file name (if empty, prompt user for a name) -- use this in programs
 
   virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0);
   // #CAT_File Save object data to a file
@@ -596,8 +596,8 @@ public:
   virtual int		SaveAs_File(const String& fname = ""); 
   // #MENU #ARGC_0 #LABEL_Save_As #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user -- use this in programs
 
-  virtual String	GetFileNameFmProject(const String& ext, const String& tag = "");
-  // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; fname = proj->base_name + tag + ext; empty if project not found
+  virtual String	GetFileNameFmProject(const String& ext, const String& tag = "", bool dmem_proc_no = false);
+  // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; fname = proj->base_name + tag + ext; if dmem_proc_no, add dmem proc no to file name.  empty if project not found
   
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
     { Dump_Save_pre(); 
@@ -1360,7 +1360,7 @@ protected:
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
-  virtual void		DataUpdateView_impl() {Render_impl();} // called for Update All Views, and at end of a DataUpdate batch
+  virtual void		DataUpdateView_impl() { if(taMisc::gui_active) Render_impl(); } // called for Update All Views, and at end of a DataUpdate batch
   virtual void		DataStructUpdateEnd_impl() {} // called ONLY at end of a struct update -- derived classes usually do some kind of rebuild or render
   virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 
    // typically from an owned list

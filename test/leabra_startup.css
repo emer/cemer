@@ -10,29 +10,59 @@
 //	programs 
 // * & at the end puts the job in the background.
 
+void SetArg(String arg_nm, String var_nm, Program* prog) {
+  String arg_str = taMisc::FindArgByName(arg_nm);
+  if(!arg_str.empty()) {
+    if(!prog->SetVar(var_nm, arg_str))
+      taMisc::Error("SetArg Error: variable:",var_nm,"not found in program:", prog->name);
+    else
+      cerr << "Set " << var_nm << " in " << prog->name << " to: " << arg_str << endl;
+  }
+}
+
+void SetLogFile(String ext, String tag, DataTable* dt) {	
+  String log_nm = dt->GetFileNameFmProject(ext, tag);
+  dt->SaveDataLog(log_nm);
+  cerr << "Saving data log of: " << dt->name << " to: " << log_nm << endl;
+}
+
 void Startup() {
   if(.projects.size == 0) {
     taMisc::Error("Error: project file not found!");
     return;
   }
 
+  taMisc::AddArgName("tag=", "FileTag");
   taMisc::AddArgName("epochs=", "EpochMax");
   taMisc::AddArgName("batches=", "BatchMax");
   taMisc::UpdateArgs();
+
+  cerr << "Loaded project: " << .projects[0].file_name << endl;
 
   Program* train = .programs.LeabraTrain;
   if(!train) {
     taMisc::Error("Error: train program not found!");
     return;
   }    
+  Program* batch = .programs.LeabraBatch;
+  if(!batch) {
+    taMisc::Error("Error: batch program not found!");
+    return;
+  }    
 
-  String epc_str = taMisc::FindArgByName("EpochMax");
-  if(!epc_str.empty()) {
-    train.SetVar("epoch_max", (int)epc_str);
-  }
+  cerr << "Initializing: " << batch->name << endl;
+  batch.Init();			// init first: required before vars are avail
 
-  //  train.Init();
-  //  train.Run();
+  String tag = taMisc::FindArgByName("FileTag");
+
+  SetArg("EpochMax", "max_epoch", train);
+  SetArg("BatchMax", "max_batch", batch);
+
+  SetLogFile(".epc.dat", tag, .data.EpochOutputData);
+  SetLogFile(".trl.dat", tag, .data.TrialOutputData);
+
+  cerr << "Starting to run: " << batch->name << endl;
+  batch.Run();
 }
 
 Startup();

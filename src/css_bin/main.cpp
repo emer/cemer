@@ -41,7 +41,7 @@ void css_cleanup(int err) {
 }
 
 int main(int argc, const char *argv[]) {
-  cssMisc::prompt = "css> ";
+  cssMisc::prompt = "css";
   taMisc::use_gui = true;	// set opposite default from normal
 
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_ta, &TA_taRootBase)) return 1;
