@@ -75,6 +75,8 @@ public:
   void 		setPaletteBackgroundColor3 (const QColor& color); //override
   void 		setColors(const QColor& hilight, const QColor& bg); // convenient way to set both
   void 		setHiLightColor (const QColor& color);
+  int		minVisibleRows() const {return mmin_vis_rows;}
+  void		setMinVisibleRows(int value);
   int		rows() {return mrows;}
   void		setRowNameWidget(int row, QWidget* name);
  // void		setSpacing(int hor, int ver); // set spacing between items
@@ -107,6 +109,8 @@ protected:
 //  int mvisibleCols;  // num of cols to make visible in the data area
   int mrow_height; // row heights
   bool mnames; // if uses names on left
+  int mmin_vis_rows;
+  void		adjustMinHeight(); // rejigs min size for hor scroll bar
   void		resizeRows_impl(); // resize the name heights, after the data heights have been established
 //  virtual void		setVisibleCols_impl(int num);
   void			checkSetParent(QWidget* widget, QWidget* parent); // sets parent, if necessary

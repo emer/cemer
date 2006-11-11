@@ -138,6 +138,7 @@ iEditGrid::iEditGrid (bool names_, bool header_, int hmargin_, int vmargin_, int
 void iEditGrid::init(bool header_, int hmargin_, int vmargin_,
   int rows_, int cols_, bool names_) 
 {
+  mmin_vis_rows = 2;
   mnames = names_;
   mhead = (header_) ? 1 : 0;
   if (hmargin_ < 0) hmargin_ = 0;
@@ -154,6 +155,17 @@ void iEditGrid::init(bool header_, int hmargin_, int vmargin_,
     layNames = NULL;
   }
   createContent();
+  adjustMinHeight();
+}
+
+void iEditGrid::adjustMinHeight() {
+  int min_rows = MAX(mmin_vis_rows, mrows);
+  // provide room for scrollbar
+  int new_body_ht = ((min_rows + mhead) * (mrow_height + (2 * mvmargin))) + 
+    (((mrow_height + (2 * mvmargin)) * 2) / 3);
+  body->setMinimumHeight(new_body_ht);
+  scrBody->setMinimumHeight(new_body_ht);
+  this->setMinimumHeight(new_body_ht);
 }
 
 void iEditGrid::createContent() {
@@ -181,10 +193,11 @@ void iEditGrid::createContent() {
   }
 //nn  layOuter->addSpacing(mhmargin);
   scrBody = new QScrollArea(this);
+//  scrBody->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);  
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // use outer container for scrolling, to keep names in sync
   scrBody->setWidgetResizable(true);
   body = new iStripeWidget();		// parent for the data items
-  body->resize(1, 1); // let it expand
+//  body->resize(1, 1); // let it expand
   scrBody->setWidget(body);
 
   vbl = new QVBoxLayout(body);
@@ -290,6 +303,13 @@ void iEditGrid::setDimensions(int rows_, int cols_) {
   resizeRows_impl();
 }
 
+void iEditGrid::setMinVisibleRows(int value) {
+  if (value < 0) value = 0;
+  if (mmin_vis_rows == value) return;
+  mmin_vis_rows = value;
+  adjustMinHeight();
+}
+
 void iEditGrid::setHiLightColor(const QColor& val) {
   mhilightColor = val; // cached for rebuild
   if (mnames) {
@@ -310,6 +330,7 @@ void iEditGrid::setRowHeight(int value, bool force) {
   }
   body->setStripeHeight(sh);
   body->setTopMargin(tm);
+  adjustMinHeight();
   resizeRows_impl();
 }
 
@@ -342,7 +363,7 @@ void iEditGrid::setRowNameWidget(int row, QWidget* name) {
 void iEditGrid::updateDimensions(int row, int col) {
   // note: we get passed ordinals, not counts, -1 ignores that dim
   if (row >= mrows) {
-    mrows = row - 1;
+    mrows = row + 1;
     // make sure the n+1 row is valid so we have room for the bottom scroll bar
     // need to do both, otherwise one will try to squish
     // setting rowMinimumHeight didn't work -- so what we do, is make an invisible
@@ -363,4 +384,5 @@ void iEditGrid::updateDimensions(int row, int col) {
     layBody->setRowMinimumHeight(row + mhead + 1,  mrow_height + (2 * mvmargin)); */
   }
   if (col >= mcols) mcols = col - 1;
+  adjustMinHeight();
 }
