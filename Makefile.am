@@ -1,9 +1,4 @@
-CLEAN_FILES =\
-	src/manual/pdp-user \
-	src/manual/pdp-user-1 \
-	src/manual/pdp-user-2 \
-	src/manual/pdp-user-3 \
-	src/manual/pdp-user-4
+CLEAN_FILES =
 
 EXTRA_DIST =\
 	src/ta/taglobal.h \
@@ -31,8 +26,7 @@ DIST_SUBDIRS =\
 	src/bp \
 	src/leabra \
 	src/pdp_lib \
-	src/pdp_bin \
-	manual
+	src/pdp_bin
 
 SUBDIRS =\
 	src/maketa \
@@ -45,8 +39,7 @@ SUBDIRS =\
 	src/bp \
 	src/leabra \
 	src/pdp_lib \
-	src/pdp_bin \
-	manual
+	src/pdp_bin
 
 EXTRA_DIST += src/ta/ios-g++-3.1
 

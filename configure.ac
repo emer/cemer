@@ -281,7 +281,6 @@ AC_CONFIG_FILES([Makefile
 		src/leabra/Makefile
 		src/pdp/Makefile
 		src/pdp_lib/Makefile
-		src/pdp_bin/Makefile
-		manual/Makefile])
+		src/pdp_bin/Makefile])
 AC_OUTPUT
 SIM_AC_CONFIGURATION_SUMMARY
