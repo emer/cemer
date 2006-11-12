@@ -1,1 +1,2 @@
-dist_pkgdata_DATA = leabra_startup.css
+dist_pkgdata_DATA =\
+	leabra_startup.css
