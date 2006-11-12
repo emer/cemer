@@ -388,15 +388,19 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
-	ProgVar_List @.vars = [3] {
+	ProgVar_List @.vars = [4] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
+	  ProgVar @[3] { };
 	};
 
-	ProgEl_List @.prog_code = [2] {
-	  StaticMethodCall @[0] { };
-	  MethodCall @[1] { };
+	ProgEl_List @.prog_code = [5] {
+	  MiscCall @[0] { };
+	  MiscCall @[1] { };
+	  AssignExpr @[2] { };
+	  MethodCall @[3] { };
+	  MethodCall @[4] { };
 	};
       };
     };
@@ -417,7 +421,7 @@ LeabraProject .projects[0] {
 	    T3DataViewFrame @[1] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
-		  T3DataView_List @.children = [138] {
+		  T3DataView_List @.children = [150] {
 		    LayerView @[0] { };
 		    LayerView @[1] { };
 		    LayerView @[2] { };
@@ -556,6 +560,18 @@ LeabraProject .projects[0] {
 		    PrjnView @[135] { };
 		    PrjnView @[136] { };
 		    PrjnView @[137] { };
+		    LayerView @[138] { };
+		    LayerView @[139] { };
+		    LayerView @[140] { };
+		    PrjnView @[141] { };
+		    PrjnView @[142] { };
+		    PrjnView @[143] { };
+		    LayerView @[144] { };
+		    LayerView @[145] { };
+		    LayerView @[146] { };
+		    PrjnView @[147] { };
+		    PrjnView @[148] { };
+		    PrjnView @[149] { };
 		  };
 
 		  ScaleRange_List @.scale_ranges = [1] {
@@ -1030,6 +1046,11 @@ LeabraProject .projects[0] {
       desc="batch counter";
      };
     };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
     init_code {
      name=;
      el_typ=NetCounterInit;
@@ -1169,6 +1190,11 @@ LeabraProject .projects[0] {
       desc=;
      };
     };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
     init_code {
      name=;
      el_typ=MethodCall;
@@ -1177,7 +1203,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][1].args[0]$7$;
+      obj=.projects[0].programs.gp[0][1].args[0]$7$;
       method=taBase::CheckConfig;
       args{ false;};
 { bool quiet;      };
@@ -1193,7 +1219,7 @@ LeabraProject .projects[0] {
       desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][1].vars[3]$9$;
+      obj=.projects[0].programs.gp[0][1].vars[3]$9$;
       method=RndSeed::OldSeed;
       args{ };
 {       };
@@ -1202,7 +1228,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$7$;
+      obj=$7$;
       method=Network::InitWtState;
       args{ };
 {       };
@@ -1216,7 +1242,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][1].vars[4]$10$;
+      obj=.projects[0].programs.gp[0][1].vars[4]$10$;
       method=TimeUsed::StartTimer;
       args{ true;};
 { bool reset_used;      };
@@ -1237,7 +1263,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$7$;
+      obj=$7$;
       method=Network::InitWtState;
       args{ };
 {       };
@@ -1283,7 +1309,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$10$;
+      obj=$10$;
       method=TimeUsed::EndTimer;
       args{ };
 {       };
@@ -1331,6 +1357,11 @@ LeabraProject .projects[0] {
       objs_ptr=0;
       desc=;
      };
+    };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
     };
     init_code {
      name=;
@@ -1409,7 +1440,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$12$;
+      obj=$12$;
       method=LeabraNetwork::Compute_EpochSSE;
       args{ };
 {       };
@@ -1472,6 +1503,11 @@ LeabraProject .projects[0] {
       desc=;
      };
     };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
     init_code {
      name=;
      el_typ=NetCounterInit;
@@ -1499,7 +1535,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$18$;
+      obj=$18$;
       method=LeabraNetwork::Trial_Init;
       args{ };
 {       };
@@ -1537,7 +1573,7 @@ LeabraProject .projects[0] {
 	desc=;
 	off=0;
 	result_var=NULL;
-	script_obj=$18$;
+	obj=$18$;
 	method=LeabraNetwork::Trial_UpdatePhase;
 	args{ };
 { 	};
@@ -1549,7 +1585,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$18$;
+      obj=$18$;
       method=LeabraNetwork::Trial_Final;
       args{ };
 {       };
@@ -1566,7 +1602,7 @@ LeabraProject .projects[0] {
 	desc=;
 	off=0;
 	result_var=NULL;
-	script_obj=$18$;
+	obj=$18$;
 	method=Network::UpdateWeights;
 	args{ };
 { 	};
@@ -1649,6 +1685,11 @@ LeabraProject .projects[0] {
       desc=;
      };
     };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
     init_code {
      name=;
      el_typ=NetCounterInit;
@@ -1676,7 +1717,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$22$;
+      obj=$22$;
       method=Network::InitExterns;
       args{ };
 {       };
@@ -1700,7 +1741,7 @@ LeabraProject .projects[0] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$22$;
+      obj=$22$;
       method=LeabraNetwork::Settle_Init;
       args{ };
 {       };
@@ -1760,7 +1801,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$22$;
+      obj=$22$;
       method=LeabraNetwork::Settle_Final;
       args{ };
 {       };
@@ -1777,7 +1818,7 @@ else min_cycles = network->min_cycles_phase2;
 	desc=;
 	off=0;
 	result_var=NULL;
-	script_obj=$22$;
+	obj=$22$;
 	method=Network::Compute_SSE;
 	args{ };
 { 	};
@@ -1831,6 +1872,11 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
      };
     };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
     init_code {
      name=;
      el_typ=ProgEl;
@@ -1844,7 +1890,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][5].args[0]$27$;
+      obj=.projects[0].programs.gp[0][5].args[0]$27$;
       method=LeabraNetwork::Cycle_Run;
       args{ };
 {       };
@@ -1940,6 +1986,11 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
      };
     };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
     init_code {
      name=;
      el_typ=MethodCall;
@@ -1948,7 +1999,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][6].vars[1]$30$;
+      obj=.projects[0].programs.gp[0][6].vars[1]$30$;
       method=LayerWriter::SetDataNetwork;
       args{ data;network;};
 { DataBlock* db;Network* net;      };
@@ -1957,7 +2008,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$30$;
+      obj=$30$;
       method=taList_impl::CheckConfig;
       args{ false;};
 { bool quiet;      };
@@ -1971,7 +2022,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="apply inputs to the network!";
       off=0;
       result_var=NULL;
-      script_obj=$30$;
+      obj=$30$;
       method=LayerWriter::ApplyInputData;
       args{ };
 {       };
@@ -2112,6 +2163,11 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
      };
     };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
     init_code {
      name=;
      el_typ=MethodCall;
@@ -2120,7 +2176,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][7].vars[1]$33$;
+      obj=.projects[0].programs.gp[0][7].vars[1]$33$;
       method=NetMonitor::SetDataNetwork;
       args{ trial_mon_data;network;};
 { DataTable* dt;Network* net;      };
@@ -2129,7 +2185,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$33$;
+      obj=$33$;
       method=taBase::CheckConfig;
       args{ false;};
 { bool quiet;      };
@@ -2138,7 +2194,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="Initialize monitoring data (get rid of any existing)";
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][7].vars[0]$34$;
+      obj=.projects[0].programs.gp[0][7].vars[0]$34$;
       method=DataTable::ResetData;
       args{ };
 {       };
@@ -2147,7 +2203,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="update the monitor items and data schema";
       off=0;
       result_var=NULL;
-      script_obj=$33$;
+      obj=$33$;
       method=NetMonitor::UpdateMonitors;
       args{ true;};
 { bool reset_first;      };
@@ -2161,7 +2217,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="add a new blank row to the data";
       off=0;
       result_var=NULL;
-      script_obj=$34$;
+      obj=$34$;
       method=DataTable::AddBlankRow;
       args{ };
 {       };
@@ -2170,7 +2226,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="get the new monitor data.";
       off=0;
       result_var=NULL;
-      script_obj=$33$;
+      obj=$33$;
       method=NetMonitor::GetMonVals;
       args{ };
 {       };
@@ -2179,7 +2235,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="update after writing new data to monitor data table";
       off=0;
       result_var=NULL;
-      script_obj=$34$;
+      obj=$34$;
       method=DataBlock::WriteClose;
       args{ };
 {       };
@@ -2300,6 +2356,11 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
      };
     };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
     init_code {
      name=;
      el_typ=MethodCall;
@@ -2308,7 +2369,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][8].vars[1]$37$;
+      obj=.projects[0].programs.gp[0][8].vars[1]$37$;
       method=NetMonitor::SetDataNetwork;
       args{ epoch_mon_data;network;};
 { DataTable* dt;Network* net;      };
@@ -2317,7 +2378,7 @@ else min_cycles = network->min_cycles_phase2;
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=$37$;
+      obj=$37$;
       method=taBase::CheckConfig;
       args{ false;};
 { bool quiet;      };
@@ -2326,7 +2387,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="Initialize monitoring data (get rid of any existing)";
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][8].vars[0]$38$;
+      obj=.projects[0].programs.gp[0][8].vars[0]$38$;
       method=DataTable::ResetData;
       args{ };
 {       };
@@ -2335,7 +2396,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="update the monitor items and data schema";
       off=0;
       result_var=NULL;
-      script_obj=$37$;
+      obj=$37$;
       method=NetMonitor::UpdateMonitors;
       args{ true;};
 { bool reset_first;      };
@@ -2349,7 +2410,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="add a new blank row to the data";
       off=0;
       result_var=NULL;
-      script_obj=$38$;
+      obj=$38$;
       method=DataTable::AddBlankRow;
       args{ };
 {       };
@@ -2358,7 +2419,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="get the new monitor data.";
       off=0;
       result_var=NULL;
-      script_obj=$37$;
+      obj=$37$;
       method=NetMonitor::GetMonVals;
       args{ };
 {       };
@@ -2367,7 +2428,7 @@ else min_cycles = network->min_cycles_phase2;
       desc="update after writing new data to monitor data table";
       off=0;
       result_var=NULL;
-      script_obj=$38$;
+      obj=$38$;
       method=DataBlock::WriteClose;
       args{ };
 {       };
@@ -2375,8 +2436,8 @@ else min_cycles = network->min_cycles_phase2;
     };
    };
    Program @[9] {
-    name="Program_10";
-    desc=;
+    name="SaveWeights";
+    desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
     flags=PF_NONE;
     objs {
      name=;
@@ -2412,15 +2473,27 @@ else min_cycles = network->min_cycles_phase2;
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      desc=;
+      desc="string rep of epoch with leading zeros";
      };
      ProgVar @[2] {
       name="batch_str";
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      desc=;
+      desc="string rep of batch with leading zeros";
      };
+     ProgVar @[3] {
+      name="tag";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      desc="batch + epoch";
+     };
+    };
+    functions {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
     };
     init_code {
      name=;
@@ -2431,23 +2504,47 @@ else min_cycles = network->min_cycles_phase2;
      name=;
      el_typ=MethodCall;
      el_def=0;
-     StaticMethodCall @[0] {
+     MiscCall @[0] {
       desc=;
       off=0;
       result_var=.projects[0].programs.gp[0][9].vars[2]$39$;
-      object_type=taBase;
-      method=NULL;
-      args{ };
-{       };
+      object_type=taMisc;
+      method=taMisc::LeadingZeros;
+      args{ network->batch;2;};
+{ int num;int len;      };
      };
-     MethodCall @[1] {
+     MiscCall @[1] {
+      desc=;
+      off=0;
+      result_var=.projects[0].programs.gp[0][9].vars[1]$40$;
+      object_type=taMisc;
+      method=taMisc::LeadingZeros;
+      args{ network->epoch;4;};
+{ int num;int len;      };
+     };
+     AssignExpr @[2] {
+      desc=;
+      off=0;
+      result_var=.projects[0].programs.gp[0][9].vars[3]$41$;
+      expr="\".\" + batch_str + \"_\" + epoch_str";
+     };
+     MethodCall @[3] {
+      desc=;
+      off=0;
+      result_var=.projects[0].programs.gp[0][9].vars[0]$42$;
+      obj=.projects[0].programs.gp[0][9].args[0]$43$;
+      method=taBase::GetFileNameFmProject;
+      args{ ".wts.gz";tag;false;};
+{ const taString& ext;const taString& tag;bool dmem_proc_no;      };
+     };
+     MethodCall @[4] {
       desc=;
       off=0;
       result_var=NULL;
-      script_obj=.projects[0].programs.gp[0][9].args[0]$40$;
-      method=taBase::GetFileNameFmProject;
-      args{ ;;;};
-{ const taString& ext;const taString& tag;bool dmem_proc_no;      };
+      obj=$43$;
+      method=Network::WriteWeights;
+      args{ fname;Network::TEXT_IDX;};
+{ ostream& strm;Network::WtSaveFormat fmt;      };
      };
     };
    };
@@ -2489,7 +2586,7 @@ else min_cycles = network->min_cycles_phase2;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=.projects[0]$41$;
+     m_root=.projects[0]$44$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -2542,19 +2639,19 @@ else min_cycles = network->min_cycles_phase2;
 	   el_typ=T3DataView;
 	   el_def=0;
 	   LayerView @[0] {
-	    m_data=.projects[0].networks[0].layers[0]$42$;
+	    m_data=.projects[0].networks[0].layers[0]$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[1] {
-	    m_data=.projects[0].networks[0].layers[1]$43$;
+	    m_data=.projects[0].networks[0].layers[1]$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[2] {
-	    m_data=.projects[0].networks[0].layers[2]$44$;
+	    m_data=.projects[0].networks[0].layers[2]$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[3] {
-	    m_data=.projects[0].networks[0].layers[1].projections[0]$45$;
+	    m_data=.projects[0].networks[0].layers[1].projections[0]$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2563,7 +2660,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[4] {
-	    m_data=.projects[0].networks[0].layers[1].projections[1]$46$;
+	    m_data=.projects[0].networks[0].layers[1].projections[1]$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2572,7 +2669,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[5] {
-	    m_data=.projects[0].networks[0].layers[2].projections[0]$47$;
+	    m_data=.projects[0].networks[0].layers[2].projections[0]$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2581,19 +2678,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[6] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[7] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[8] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[9] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2602,7 +2699,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[10] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2611,7 +2708,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[11] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2620,19 +2717,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[12] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[13] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[14] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[15] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2641,7 +2738,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[16] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2650,7 +2747,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[17] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2659,19 +2756,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[18] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[19] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[20] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[21] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2680,7 +2777,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[22] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2689,7 +2786,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[23] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2698,19 +2795,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[24] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[25] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[26] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[27] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2719,7 +2816,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[28] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2728,7 +2825,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[29] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2737,19 +2834,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[30] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[31] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[32] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[33] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2758,7 +2855,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[34] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2767,7 +2864,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[35] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2776,19 +2873,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[36] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[37] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[38] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[39] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2797,7 +2894,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[40] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2806,7 +2903,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[41] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2815,19 +2912,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[42] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[43] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[44] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[45] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2836,7 +2933,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[46] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2845,7 +2942,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[47] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2854,19 +2951,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[48] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[49] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[50] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[51] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2875,7 +2972,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[52] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2884,7 +2981,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[53] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2893,19 +2990,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[54] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[55] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[56] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[57] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2914,7 +3011,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[58] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2923,7 +3020,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[59] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2932,19 +3029,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[60] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[61] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[62] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[63] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2953,7 +3050,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[64] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2962,7 +3059,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[65] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2971,19 +3068,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[66] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[67] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[68] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[69] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -2992,7 +3089,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[70] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3001,7 +3098,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[71] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3010,19 +3107,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[72] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[73] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[74] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[75] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3031,7 +3128,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[76] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3040,7 +3137,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[77] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3049,19 +3146,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[78] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[79] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[80] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[81] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3070,7 +3167,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[82] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3079,7 +3176,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[83] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3088,19 +3185,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[84] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[85] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[86] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[87] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3109,7 +3206,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[88] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3118,7 +3215,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[89] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3127,19 +3224,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[90] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[91] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[92] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[93] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3148,7 +3245,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[94] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3157,7 +3254,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[95] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3166,19 +3263,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[96] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[97] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[98] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[99] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3187,7 +3284,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[100] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3196,7 +3293,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[101] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3205,19 +3302,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[102] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[103] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[104] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[105] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3226,7 +3323,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[106] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3235,7 +3332,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[107] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3244,19 +3341,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[108] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[109] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[110] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[111] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3265,7 +3362,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[112] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3274,7 +3371,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[113] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3283,19 +3380,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[114] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[115] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[116] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[117] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3304,7 +3401,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[118] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3313,7 +3410,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[119] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3322,19 +3419,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[120] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[121] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[122] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[123] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3343,7 +3440,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[124] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3352,7 +3449,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[125] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3361,19 +3458,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[126] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[127] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[128] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[129] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3382,7 +3479,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[130] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3391,7 +3488,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[131] {
-	    m_data=$47$;
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3400,19 +3497,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   LayerView @[132] {
-	    m_data=$42$;
+	    m_data=$45$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[133] {
-	    m_data=$43$;
+	    m_data=$46$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
 	   };
 	   LayerView @[134] {
-	    m_data=$44$;
+	    m_data=$47$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
 	   };
 	   PrjnView @[135] {
-	    m_data=$45$;
+	    m_data=$48$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3421,7 +3518,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[136] {
-	    m_data=$46$;
+	    m_data=$49$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3430,7 +3527,85 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[137] {
+	    m_data=$50$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   LayerView @[138] {
+	    m_data=$45$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	   };
+	   LayerView @[139] {
+	    m_data=$46$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
+	   };
+	   LayerView @[140] {
 	    m_data=$47$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
+	   };
+	   PrjnView @[141] {
+	    m_data=$48$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[142] {
+	    m_data=$49$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[143] {
+	    m_data=$50$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   LayerView @[144] {
+	    m_data=$45$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	   };
+	   LayerView @[145] {
+	    m_data=$46$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
+	   };
+	   LayerView @[146] {
+	    m_data=$47$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
+	   };
+	   PrjnView @[147] {
+	    m_data=$48$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[148] {
+	    m_data=$49$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[149] {
+	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {
 	     name=;
@@ -3446,7 +3621,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$48$;
+	   spec=.colorspecs[0]$51$;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -3509,7 +3684,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$49$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$52$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.0049999999: avg_dt=0.0049999999: send_delta=0: i_thr=STD: };
@@ -3681,7 +3856,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       geom {x=5: y=5: z=1: };
       units_lesioned=0;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$50$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$53$: };
      lesion=0;
      ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
@@ -3695,7 +3870,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=0: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.2: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$51$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$54$: };
      stm_gain=0.5;
      hard_clamped=1;
      prv_phase=0;
@@ -3720,11 +3895,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=$42$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$52$: };
+       from=$45$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$55$: };
        con_type=LeabraCon;
        con_gp_type=LeabraCon_Group;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$53$: };
+       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$56$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -3734,11 +3909,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[1] {
        name="Fm_Output";
        from_type=CUSTOM;
-       from=$44$;
-       spec {type=FullPrjnSpec: spec=$52$: };
+       from=$47$;
+       spec {type=FullPrjnSpec: spec=$55$: };
        con_type=LeabraCon;
        con_gp_type=LeabraCon_Group;
-       con_spec {type=LeabraConSpec: spec=$53$: };
+       con_spec {type=LeabraConSpec: spec=$56$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -3761,7 +3936,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       geom {x=5: y=5: z=1: };
       units_lesioned=0;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$50$: };
+     unit_spec {type=LeabraUnitSpec: spec=$53$: };
      lesion=0;
      ext_flag=NO_EXTERNAL;
      dmem_dist=DMEM_DIST_DEFAULT;
@@ -3775,7 +3950,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=3.3806257: g_i=3.3806257: gp_g_i=0: g_i_orig=3.3806257: };
      un_g_i {avg=3.3806257: max=3.3806257: max_i=0: };
      adapt_i {avg_avg=0.23831263: i_kwta_pt=0.60000002: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$54$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$57$: };
      stm_gain=0.5;
      hard_clamped=0;
      prv_phase=0;
@@ -3800,11 +3975,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=$43$;
-       spec {type=FullPrjnSpec: spec=$52$: };
+       from=$46$;
+       spec {type=FullPrjnSpec: spec=$55$: };
        con_type=LeabraCon;
        con_gp_type=LeabraCon_Group;
-       con_spec {type=LeabraConSpec: spec=$53$: };
+       con_spec {type=LeabraConSpec: spec=$56$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -3827,7 +4002,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       geom {x=5: y=5: z=1: };
       units_lesioned=0;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$50$: };
+     unit_spec {type=LeabraUnitSpec: spec=$53$: };
      lesion=0;
      ext_flag=TARG;
      dmem_dist=DMEM_DIST_DEFAULT;
@@ -3841,7 +4016,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=3.4064293: g_i=3.4064293: gp_g_i=0: g_i_orig=3.4064293: };
      un_g_i {avg=3.40643: max=3.4064293: max_i=0: };
      adapt_i {avg_avg=0.19893107: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=$51$: };
+     spec {type=LeabraLayerSpec: spec=$54$: };
      stm_gain=0.5;
      hard_clamped=0;
      prv_phase=0;

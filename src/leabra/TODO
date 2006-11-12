@@ -1,6 +1,12 @@
 leabra todo list:
 
-* SaveNetwork[Weights] program -- uses above
+* SaveNetwork[Weights] program -- uses above (needs taMisc call -- in leabra_ra)
+
+* change WriteWeights etc to take String arg + getfile stuff -- need a coherent strategy
+  on this: regular visible fun takes fname arg, _strm takes the stream arg..
+  change this for all ta_base !!?
+
+* fix c_String conversion to -> ostream*
 
 * extrew in trial monitor seems not to be working: 12ax demo
 * change gp name to include unique ctr so group fun works.
@@ -13,17 +19,15 @@ docs..: add all float_RArray funs, for matricies.
 -----------
 Program issues
 
+* checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
+* fix String name arg -- should work -- find parse class
+
+* for enum args, add TypeName:: to def arg in methodcall
+* use taMisc::prog_lib_paths directly instead of separate one in proglib, and use
+  the name labels so they show up in chooser..
+
 css:
 * syntax error ^ doesn't show up in right place..
-* register VT_xx in global css namespace..
-
-* sargs: get default arg vals for new args
-
-User def'd subroutine within programs:
-
-* special obj like prog_code that is: functions; gen before __Init..
-* function progel: contains progvar args
-* funcall progel..
 
 -----------
 current bugs:

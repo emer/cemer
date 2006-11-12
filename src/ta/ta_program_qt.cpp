@@ -901,6 +901,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_MathCall)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("random()",
     tabMisc::root->GetTemplateInstance(&TA_RandomCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("misc()",
+    tabMisc::root->GetTemplateInstance(&TA_MiscCall)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("img proc()",
     tabMisc::root->GetTemplateInstance(&TA_ImageProcCall)));
   // add other spec meth calls here..
