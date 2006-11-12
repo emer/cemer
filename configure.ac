@@ -47,8 +47,6 @@ This file is part of TA/PDP++
   GNU General Public License for more details.
 ])
 
-
-
 AC_DISABLE_STATIC                                      # Disable static libraries
 AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /cfg
 AC_CONFIG_SRCDIR([src/ta/taglobal.h])                  # Make sure we're in the right place
@@ -102,6 +100,9 @@ AC_CHECK_LIB([gsl],[main],
 
 # Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
+
+# Let the codebase know where to find auxiliary files
+CXXFLAGS="$CXXFLAGS -DWHEREAMI=$datadir"
 
 # --with-readline
 if test "$readline" = "true"; then
@@ -255,6 +256,8 @@ PDP_VERSION=-$AX_MAJOR_VERSION.$AX_MINOR_VERSION
 AX_LIB_MAJOR_VERSION=`echo "$LIB_VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
 AX_LIB_MINOR_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
 AX_LIB_POINT_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.[[^.]][[^.]]*.\(.*\)/\1/'`
+
+
 
 AC_SUBST([AX_MAJOR_VERSION])
 AC_SUBST([AX_MINOR_VERSION])
