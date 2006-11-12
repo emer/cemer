@@ -1,4 +1,6 @@
-dist_pkgdata_DATA =\
+pkgdata_prog_libdir = $(pkgdatadir)/prog_lib
+
+dist_pkgdata_prog_lib_DATA =\
 	12axAll.progp \
 	DataCalcSample.prog \
 	LeabraEpoch.prog \

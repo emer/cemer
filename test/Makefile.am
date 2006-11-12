@@ -1,4 +1,6 @@
-dist_pkgdata_DATA =\
+pkgdata_testdir = $(pkgdatadir)/test
+
+dist_pkgdata_test_DATA =\
 	12ax4s_demo.proj \
 	SimpleLines5x5.dtbl \
 	hv.v4good_05_20_06_v4_cvt.proj \

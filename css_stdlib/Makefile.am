@@ -1,2 +1,4 @@
-dist_pkgdata_DATA =\
+pkgdata_css_stdlibdir = $(pkgdatadir)/css_stdlib
+
+dist_pkgdata_css_stdlib_DATA =\
 	leabra_startup.css
