@@ -26,7 +26,10 @@ DIST_SUBDIRS =\
 	src/bp \
 	src/leabra \
 	src/pdp_lib \
-	src/pdp_bin
+	src/pdp_bin \
+	prog_lib \
+	css_stdlib \
+	test
 
 SUBDIRS =\
 	src/maketa \
@@ -39,7 +42,12 @@ SUBDIRS =\
 	src/bp \
 	src/leabra \
 	src/pdp_lib \
-	src/pdp_bin
+	src/pdp_bin \
+	prog_lib \
+	css_stdlib \
+	test
+
+
 
 EXTRA_DIST += src/ta/ios-g++-3.1
 
@@ -79,6 +87,12 @@ endif
 # These actions occur immediately before a distribution tarball is created.
 dist-hook:
 	rm -fr $(distdir)/src/ta/ios-g++-3.1/.svn
+
+# 	mkdir $(distdir)/prog_lib $(distdir)/css_stdlib $(distdir)/tests
+# 	cp -pR $(srcdir)/prog_lib $(distdir)/prog_lib
+# 	cp -pR $(srcdir)/css_stdlib $(distdir)/css_stdlib
+# 	cp -pR $(srcdir)/test $(distdir)/test
+# 	rm -fr $(distdir)/prog_lib/.svn $(distdir)/css_stdlib/.svn $(distdir)/test/.svn
 
 # Count the number of lines in *.h and *.cpp files
 linecount:
