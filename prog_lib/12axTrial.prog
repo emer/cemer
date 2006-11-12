@@ -46,29 +46,58 @@ Program .projects[0].programs.gp[1][1] {
     ProgVar @[11] { };
   };
 
-  ProgEl_List @.init_code = [6] {
-    ProgVars @[0] { };
+  ProgEl_List @.functions = [1] {
+    Function @[0] { 
+      ProgVar_List @.args = [5] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+	ProgVar @[4] { };
+      };
+
+      ProgEl_List @.fun_code = [6] {
+	MethodCall @[0] { };
+	MethodCall @[1] { };
+	MethodCall @[2] { };
+	MethodCall @[3] { };
+	MethodCall @[4] { };
+	IfElse @[5] { 
+	  ProgEl_List @.true_code = [1] {
+	    MethodCall @[0] { };
+	  };
+	};
+      };
+    };
+  };
+
+  ProgEl_List @.init_code = [5] {
+    MethodCall @[0] { };
     MethodCall @[1] { };
     MethodCall @[2] { };
     MethodCall @[3] { };
     MethodCall @[4] { };
-    MethodCall @[5] { };
   };
 
-  ProgEl_List @.prog_code = [8] {
+  ProgEl_List @.prog_code = [4] {
     RandomCall @[0] { };
     RandomCall @[1] { };
-    MethodCall @[2] { };
-    MethodCall @[3] { };
-    MethodCall @[4] { };
-    MethodCall @[5] { };
-    MethodCall @[6] { };
-    ForLoop @[7] { 
-      ProgEl_List @.loop_code = [14] {
+    FunctionCall @[2] { 
+      ProgArg_List @.fun_args = [5] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+      };
+    };
+    ForLoop @[3] { 
+      ProgEl_List @.loop_code = [6] {
 	ProgVars @[0] { 
-	  ProgVar_List @.local_vars = [2] {
+	  ProgVar_List @.local_vars = [3] {
 	    ProgVar @[0] { };
 	    ProgVar @[1] { };
+	    ProgVar @[2] { };
 	  };
 	};
 	RandomCall @[1] { };
@@ -84,23 +113,31 @@ Program .projects[0].programs.gp[1][1] {
 	    RandomCall @[1] { };
 	  };
 	};
-	MethodCall @[3] { };
-	MethodCall @[4] { };
-	MethodCall @[5] { };
-	MethodCall @[6] { };
-	MethodCall @[7] { };
-	MethodCall @[8] { };
-	MethodCall @[9] { };
-	MethodCall @[10] { };
-	MethodCall @[11] { };
-	MethodCall @[12] { };
-	IfElse @[13] { 
+	IfElse @[3] { 
 	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { };
+	    AssignExpr @[0] { };
 	  };
 
 	  ProgEl_List @.false_code = [1] {
-	    MethodCall @[0] { };
+	    AssignExpr @[0] { };
+	  };
+	};
+	FunctionCall @[4] { 
+	  ProgArg_List @.fun_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	  };
+	};
+	FunctionCall @[5] { 
+	  ProgArg_List @.fun_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
 	  };
 	};
       };
@@ -150,7 +187,7 @@ Program .projects[0].programs.gp[1][1] {
   ProgVar @[2] {
    name="n_inner_trials";
    var_type=T_Int;
-   int_val=2;
+   int_val=1;
    objs_ptr=0;
    desc="number of inner-loop trials";
   };
@@ -161,7 +198,7 @@ Program .projects[0].programs.gp[1][1] {
     name="Task";
     el_typ=DynEnumItem;
     el_def=0;
-    value_idx=0;
+    value_idx=1;
     DynEnumItem @[0] {
      name="ONE";
      value=0;
@@ -313,60 +350,182 @@ Program .projects[0].programs.gp[1][1] {
    desc=;
   };
  };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  Function @[0] {
+   desc=;
+   off=0;
+   return_val {
+    name="rval";
+    var_type=T_Int;
+    int_val=0;
+    objs_ptr=0;
+    desc=;
+   };
+   name="MakeEvent";
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="group";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     desc="name for the group column";
+    };
+    ProgVar @[1] {
+     name="nm";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     desc="Name for the Name Column";
+    };
+    ProgVar @[2] {
+     name="in_idx";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     desc="Index of input unit to turn on";
+    };
+    ProgVar @[3] {
+     name="out_idx";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     desc="Index of output unit to turn on";
+    };
+    ProgVar @[4] {
+     name="rew_targ";
+     var_type=T_Bool;
+     bool_val=0;
+     objs_ptr=0;
+     desc="is this a reward target trial?";
+    };
+   };
+   fun_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     off=0;
+     result_var=NULL;
+     obj=.projects[0].programs.gp[1][1].args[0]$1$;
+     method=DataTable::AddBlankRow;
+     args{ };
+{      };
+    };
+    MethodCall @[1] {
+     desc="group is the task name";
+     off=0;
+     result_var=NULL;
+     obj=$1$;
+     method=DataTable::SetValAsString;
+     args{ group;group_col;-1;};
+{ const taString& val;int col;int row;     };
+    };
+    MethodCall @[2] {
+     desc="name is task";
+     off=0;
+     result_var=NULL;
+     obj=$1$;
+     method=DataTable::SetValAsString;
+     args{ nm;name_col;-1;};
+{ const taString& val;int col;int row;     };
+    };
+    MethodCall @[3] {
+     desc="set task as input";
+     off=0;
+     result_var=NULL;
+     obj=$1$;
+     method=DataTable::SetValAsFloatM;
+     args{ 1.0;input_col;-1;in_idx;};
+{ float val;int col;int row;int cell;     };
+    };
+    MethodCall @[4] {
+     desc="set left as output";
+     off=0;
+     result_var=NULL;
+     obj=$1$;
+     method=DataTable::SetValAsFloatM;
+     args{ 1.0;output_col;-1;out_idx;};
+{ float val;int col;int row;int cell;     };
+    };
+    IfElse @[5] {
+     desc=;
+     off=0;
+     condition="rew_targ";
+     true_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      MethodCall @[0] {
+       desc="set as reward target trial: generates dopamine!";
+       off=0;
+       result_var=NULL;
+       obj=$1$;
+       method=DataTable::SetValAsFloatM;
+       args{ 1.0;rewtarg_col;-1;0;};
+{ float val;int col;int row;int cell;       };
+      };
+     };
+     false_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+     };
+    };
+   };
+  };
+ };
  init_code {
   name=;
   el_typ=ProgEl;
   el_def=0;
-  ProgVars @[0] {
-   desc=;
-   off=0;
-   local_vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-  };
-  MethodCall @[1] {
+  MethodCall @[0] {
    desc="make Group column";
    off=0;
    result_var=NULL;
-   script_obj=.projects[0].programs.gp[1][1].args[0]$1$;
+   obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "Group";group_col;taBase::VT_STRING;0;0;0;0;0;0;};
 { const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;   };
   };
-  MethodCall @[2] {
+  MethodCall @[1] {
    desc="make Name column";
    off=0;
    result_var=NULL;
-   script_obj=$1$;
+   obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "Name";name_col;taBase::VT_STRING;0;0;0;0;0;0;};
 { const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;   };
   };
-  MethodCall @[3] {
+  MethodCall @[2] {
    desc="make Input column";
    off=0;
    result_var=NULL;
-   script_obj=$1$;
+   obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "Input";input_col;taBase::VT_FLOAT;2;3;3;0;0;0;};
 { const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;   };
   };
-  MethodCall @[4] {
+  MethodCall @[3] {
    desc="make Output column";
    off=0;
    result_var=NULL;
-   script_obj=$1$;
+   obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "Output";output_col;taBase::VT_FLOAT;2;2;1;0;0;0;};
 { const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;   };
   };
-  MethodCall @[5] {
+  MethodCall @[4] {
    desc="make RewTarg column";
    off=0;
    result_var=NULL;
-   script_obj=$1$;
+   obj=$1$;
    method=DataTable::FindMakeColName;
    args{ "RewTarg";rewtarg_col;taBase::VT_FLOAT;2;1;1;0;0;0;};
 { const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;   };
@@ -394,52 +553,38 @@ Program .projects[0].programs.gp[1][1] {
    args{ 1;max_maint;};
 { int min;int max;   };
   };
-  MethodCall @[2] {
-   desc=;
+  FunctionCall @[2] {
+   desc="Create the Task Event";
    off=0;
    result_var=NULL;
-   script_obj=$1$;
-   method=DataTable::AddBlankRow;
-   args{ };
-{    };
+   fun=.projects[0].programs.gp[1][1].functions[0]$4$;
+   fun_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     name="group";
+     value="task";
+    };
+    ProgArg @[1] {
+     name="nm";
+     value="task";
+    };
+    ProgArg @[2] {
+     name="in_idx";
+     value="task";
+    };
+    ProgArg @[3] {
+     name="out_idx";
+     value="Output::L";
+    };
+    ProgArg @[4] {
+     name="rew_targ";
+     value="false";
+    };
+   };
   };
-  MethodCall @[3] {
-   desc="group is the task name";
-   off=0;
-   result_var=NULL;
-   script_obj=$1$;
-   method=DataTable::SetValAsString;
-   args{ task;group_col;-1;};
-{ const taString& val;int col;int row;   };
-  };
-  MethodCall @[4] {
-   desc="name is task";
-   off=0;
-   result_var=NULL;
-   script_obj=$1$;
-   method=DataTable::SetValAsString;
-   args{ task;name_col;-1;};
-{ const taString& val;int col;int row;   };
-  };
-  MethodCall @[5] {
-   desc="set task as input";
-   off=0;
-   result_var=NULL;
-   script_obj=$1$;
-   method=DataTable::SetValAsFloatM;
-   args{ 1.0;input_col;-1;task;};
-{ float val;int col;int row;int cell;   };
-  };
-  MethodCall @[6] {
-   desc="set left as output";
-   off=0;
-   result_var=NULL;
-   script_obj=$1$;
-   method=DataTable::SetValAsFloatM;
-   args{ 1.0;output_col;-1;Output::L;};
-{ float val;int col;int row;int cell;   };
-  };
-  ForLoop @[7] {
+  ForLoop @[3] {
    desc="generate the cue-probe trials";
    off=0;
    loop_code {
@@ -467,12 +612,19 @@ Program .projects[0].programs.gp[1][1] {
        objs_ptr=0;
        desc="random A or B cue/probe value";
       };
+      ProgVar @[2] {
+       name="probe_output";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       desc="output value for the probe trial: depends on whether this is a target cue-probe sequence for given task";
+      };
      };
     };
     RandomCall @[1] {
      desc=;
      off=0;
-     result_var=.projects[0].programs.gp[1][1].prog_code[7].loop_code[0].local_vars[0]$4$;
+     result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[0]$5$;
      object_type=Random;
      method=Random::ZeroOne;
      args{ };
@@ -489,7 +641,7 @@ Program .projects[0].programs.gp[1][1] {
       RandomCall @[0] {
        desc=;
        off=0;
-       result_var=.projects[0].programs.gp[1][1].prog_code[7].loop_code[0].local_vars[1]$5$;
+       result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[1]$6$;
        object_type=Random;
        method=Random::IntZeroN;
        args{ 2;};
@@ -498,13 +650,13 @@ Program .projects[0].programs.gp[1][1] {
       AssignExpr @[1] {
        desc=;
        off=0;
-       result_var=.projects[0].programs.gp[1][1].vars[4]$6$;
+       result_var=.projects[0].programs.gp[1][1].vars[4]$7$;
        expr="Cue::A + a_or_b";
       };
       AssignExpr @[2] {
        desc=;
        off=0;
-       result_var=.projects[0].programs.gp[1][1].vars[5]$7$;
+       result_var=.projects[0].programs.gp[1][1].vars[5]$8$;
        expr="Probe::X + a_or_b";
       };
      };
@@ -515,7 +667,7 @@ Program .projects[0].programs.gp[1][1] {
       RandomCall @[0] {
        desc=;
        off=0;
-       result_var=.projects[0].programs[0].vars[5]$8$;
+       result_var=.projects[0].programs[0].vars[5]$9$;
        object_type=Random;
        method=Random::IntZeroN;
        args{ Cue::N_CUES;};
@@ -524,7 +676,7 @@ Program .projects[0].programs.gp[1][1] {
       RandomCall @[1] {
        desc=;
        off=0;
-       result_var=.projects[0].programs[0].vars[6]$9$;
+       result_var=.projects[0].programs[0].vars[6]$10$;
        object_type=Random;
        method=Random::IntZeroN;
        args{ Probe::N_PROBES;};
@@ -532,126 +684,93 @@ Program .projects[0].programs.gp[1][1] {
       };
      };
     };
-    MethodCall @[3] {
-     desc=;
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::AddBlankRow;
-     args{ };
-{      };
-    };
-    MethodCall @[4] {
-     desc="group is the task name";
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::SetValAsString;
-     args{ task;group_col;-1;};
-{ const taString& val;int col;int row;     };
-    };
-    MethodCall @[5] {
-     desc="name is cue";
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::SetValAsString;
-     args{ cue;name_col;-1;};
-{ const taString& val;int col;int row;     };
-    };
-    MethodCall @[6] {
-     desc="set cue as input";
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::SetValAsFloatM;
-     args{ 1.0;input_col;-1;Task::N_TASKS + cue;};
-{ float val;int col;int row;int cell;     };
-    };
-    MethodCall @[7] {
-     desc="set left as output";
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::SetValAsFloatM;
-     args{ 1.0;output_col;-1;Output::L;};
-{ float val;int col;int row;int cell;     };
-    };
-    MethodCall @[8] {
-     desc=;
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::AddBlankRow;
-     args{ };
-{      };
-    };
-    MethodCall @[9] {
-     desc="group is the task name";
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::SetValAsString;
-     args{ task;group_col;-1;};
-{ const taString& val;int col;int row;     };
-    };
-    MethodCall @[10] {
-     desc="name is probe";
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::SetValAsString;
-     args{ probe;name_col;-1;};
-{ const taString& val;int col;int row;     };
-    };
-    MethodCall @[11] {
-     desc="set as reward target trial: generates dopamine!";
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::SetValAsFloatM;
-     args{ 1.0;rewtarg_col;-1;0;};
-{ float val;int col;int row;int cell;     };
-    };
-    MethodCall @[12] {
-     desc="set probe as input";
-     off=0;
-     result_var=NULL;
-     script_obj=$1$;
-     method=DataTable::SetValAsFloatM;
-     args{ 1.0;input_col;-1;Task::N_TASKS + Cue::N_CUES + probe;};
-{ float val;int col;int row;int cell;     };
-    };
-    IfElse @[13] {
+    IfElse @[3] {
      desc="check for targets";
      off=0;
-     condition="((task == Task::ONE) && (cue == Cue::A) && (probe == Probe::X)) || ((task == Task::TWO) && (cue == Cue::B) && (probe == Probe::Y))";
+     condition="((task == Task::ONE) && (cue == Cue::A) && (probe == Probe::X)) 
+  || ((task == Task::TWO) && (cue == Cue::B) && (probe == Probe::Y))";
      true_code {
       name=;
       el_typ=ProgEl;
       el_def=0;
-      MethodCall @[0] {
-       desc="set RIGHT as output (TARGET!)";
+      AssignExpr @[0] {
+       desc=;
        off=0;
-       result_var=NULL;
-       script_obj=$1$;
-       method=DataTable::SetValAsFloatM;
-       args{ 1.0;output_col;-1;Output::R;};
-{ float val;int col;int row;int cell;       };
+       result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[2]$11$;
+       expr="Output::R";
       };
      };
      false_code {
       name=;
       el_typ=ProgEl;
       el_def=0;
-      MethodCall @[0] {
-       desc="set left as output";
+      AssignExpr @[0] {
+       desc=;
        off=0;
-       result_var=NULL;
-       script_obj=$1$;
-       method=DataTable::SetValAsFloatM;
-       args{ 1.0;output_col;-1;Output::L;};
-{ float val;int col;int row;int cell;       };
+       result_var=$11$;
+       expr="Output::L";
+      };
+     };
+    };
+    FunctionCall @[4] {
+     desc="Create the Cue Event";
+     off=0;
+     result_var=NULL;
+     fun=$4$;
+     fun_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       name="group";
+       value="task";
+      };
+      ProgArg @[1] {
+       name="nm";
+       value="cue";
+      };
+      ProgArg @[2] {
+       name="in_idx";
+       value="Task::N_TASKS + cue";
+      };
+      ProgArg @[3] {
+       name="out_idx";
+       value="Output::L";
+      };
+      ProgArg @[4] {
+       name="rew_targ";
+       value="false";
+      };
+     };
+    };
+    FunctionCall @[5] {
+     desc="Create the Probe Event";
+     off=0;
+     result_var=NULL;
+     fun=$4$;
+     fun_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       name="group";
+       value="task";
+      };
+      ProgArg @[1] {
+       name="nm";
+       value="probe";
+      };
+      ProgArg @[2] {
+       name="in_idx";
+       value="Task::N_TASKS + Cue::N_CUES + probe";
+      };
+      ProgArg @[3] {
+       name="out_idx";
+       value="probe_output";
+      };
+      ProgArg @[4] {
+       name="rew_targ";
+       value="true";
       };
      };
     };

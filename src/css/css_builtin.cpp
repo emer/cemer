@@ -1969,6 +1969,14 @@ static void Install_MiscFun() {
   cssMisc::Internal.Push(cssBI::false_int);
   cssInt_inst	(cssMisc::Constants, 0, NULL);
   cssMisc::Constants.Push(new cssVariant(_nilVariant, "_nilVariant"));
+
+  // taBase enums that should be generally accessible to all objs..
+  cssEnum_inst_nm(cssMisc::Enums, taBase::VT_STRING, "VT_STRING");
+  cssEnum_inst_nm(cssMisc::Enums, taBase::VT_DOUBLE, "VT_DOUBLE");
+  cssEnum_inst_nm(cssMisc::Enums, taBase::VT_FLOAT, "VT_FLOAT");
+  cssEnum_inst_nm(cssMisc::Enums, taBase::VT_INT, "VT_INT");
+  cssEnum_inst_nm(cssMisc::Enums, taBase::VT_BYTE, "VT_BYTE");
+  cssEnum_inst_nm(cssMisc::Enums, taBase::VT_VARIANT, "VT_VARIANT");
 }
 
 

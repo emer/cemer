@@ -859,15 +859,15 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   // for vars
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("var",
     tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("arg",
-    tabMisc::root->GetTemplateInstance(&TA_ProgArg)));
+//   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("arg",
+//     tabMisc::root->GetTemplateInstance(&TA_ProgArg)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("loc vars",
     tabMisc::root->GetTemplateInstance(&TA_ProgVars)));
 
   // for els
   tb->AddSeparator(sec);
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("list",
-    tabMisc::root->GetTemplateInstance(&TA_ProgList)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("block",
+    tabMisc::root->GetTemplateInstance(&TA_CodeBlock)));
 
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("script",
     tabMisc::root->GetTemplateInstance(&TA_UserScript)));
@@ -906,6 +906,10 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   // add other spec meth calls here..
 
   tb->AddSeparator(sec);
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("fun def",
+    tabMisc::root->GetTemplateInstance(&TA_Function)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("fun()",
+    tabMisc::root->GetTemplateInstance(&TA_FunctionCall)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("print",
     tabMisc::root->GetTemplateInstance(&TA_PrintVar)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("comment",

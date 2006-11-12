@@ -1,0 +1,69 @@
+// startup and run a project in the background, use like this:
+
+// [nice +10] pdp++ -nogui -p <myproj> -f leabra_startup.css [epochs=xxx batches=xxx...] &
+
+// * nice +10 is optional but is nice to other users/processes.
+// * -nogui runs w/out the gui
+// * -f startup.css loads and runs this script
+// * <myproj> is the full name of your project file 
+// * [epochs=...] are other optional arguments as defined in the script to control
+//	programs 
+// * & at the end puts the job in the background.
+
+void SetArg(String arg_nm, String var_nm, Program* prog) {
+  String arg_str = taMisc::FindArgByName(arg_nm);
+  if(!arg_str.empty()) {
+    if(!prog->SetVar(var_nm, arg_str))
+      taMisc::Error("SetArg Error: variable:",var_nm,"not found in program:", prog->name);
+    else
+      cerr << "Set " << var_nm << " in " << prog->name << " to: " << arg_str << endl;
+  }
+}
+
+void SetLogFile(String ext, String tag, DataTable* dt) {	
+  String log_nm = dt->GetFileNameFmProject(ext, tag);
+  dt->SaveDataLog(log_nm);
+  cerr << "Saving data log of: " << dt->name << " to: " << log_nm << endl;
+}
+
+void Startup() {
+  if(.projects.size == 0) {
+    taMisc::Error("Error: project file not found!");
+    return;
+  }
+
+  taMisc::AddArgName("tag=", "FileTag");
+  taMisc::AddArgName("epochs=", "EpochMax");
+  taMisc::AddArgName("batches=", "BatchMax");
+  taMisc::UpdateArgs();
+
+  cerr << "Loaded project: " << .projects[0].file_name << endl;
+
+  Program* train = .programs.LeabraTrain;
+  if(!train) {
+    taMisc::Error("Error: train program not found!");
+    return;
+  }    
+  Program* batch = .programs.LeabraBatch;
+  if(!batch) {
+    taMisc::Error("Error: batch program not found!");
+    return;
+  }    
+
+  cerr << "Initializing: " << batch->name << endl;
+  batch.Init();			// init first: required before vars are avail
+
+  String tag = taMisc::FindArgByName("FileTag");
+
+  SetArg("EpochMax", "max_epoch", train);
+  SetArg("BatchMax", "max_batch", batch);
+
+  SetLogFile(".epc.dat", tag, .data.EpochOutputData);
+  SetLogFile(".trl.dat", tag, .data.TrialOutputData);
+
+  cerr << "Starting to run: " << batch->name << endl;
+  batch.Run();
+}
+
+Startup();
+

@@ -60,8 +60,8 @@ public:
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
   
   void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
-  virtual const String	GenCssType(); // type name
-  virtual const String	GenCssInitVal(); // intial value
+  virtual const String	GenCssType() const; // type name
+  virtual const String	GenCssInitVal() const; // intial value
 
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   
@@ -170,7 +170,7 @@ private:
 
 
 class TA_API ProgEl: public taOBase {
-  // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##CAT_Program definition of a program element
+  // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element
 INHERITED(taOBase)
 public:
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
@@ -219,14 +219,14 @@ private:
 };
 
 
-class TA_API ProgList: public ProgEl { 
-  // list of ProgEl's, each executed in sequence
+class TA_API CodeBlock: public ProgEl { 
+  // a block of code (list of program elements), each executed in sequence
 INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of Program elements: the block of code
   
   override String	GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(ProgList);
+  TA_SIMPLE_BASEFUNS(CodeBlock);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
@@ -419,8 +419,10 @@ class TA_API AssignExpr: public ProgEl {
   // assign a variable to an expression (use method call for simple assignment to function call)
 INHERITED(ProgEl)
 public:
-  ProgVarRef		result_var; // result variable (optional -- can be NULL)
-  String		expr;	    // expression to assign variable to
+  ProgVarRef		result_var;
+  // where to store the result of the epxression
+  String		expr;
+  // expression to assign variable to
   
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(AssignExpr);
@@ -438,11 +440,16 @@ class TA_API MethodCall: public ProgEl {
   // call a method (member function) on an object
 INHERITED(ProgEl)
 public:
-  ProgVarRef		result_var; // result variable (optional -- can be NULL)
-  ProgVarRef		script_obj; // the previously defined script object that has the method
-  TypeDef*		object_type; // #NO_SHOW #NO_SAVE temp copy of script_obj.object_type
-  MethodDef*		method; //  #TYPE_ON_object_type the method to call
-  SArg_Array		args; // arguments to the method
+  ProgVarRef		result_var;
+  // where to store the result of the method call (optional -- can be NULL)
+  ProgVarRef		obj;
+  // #AKA_script_obj program variable that points to the object with the method to call
+  TypeDef*		obj_type;
+  // #NO_SHOW #NO_SAVE temp copy of obj.object_type
+  MethodDef*		method;
+  // #TYPE_ON_obj_type the method to call on object obj
+  SArg_Array		args;
+  // arguments to the method
 
   static void		UpdateArgs(SArg_Array& ar, MethodDef* md);
   
@@ -502,6 +509,16 @@ private:
   void	Destroy()	{ };
 }; 
 
+class TA_API MiscCall : public StaticMethodCall { 
+  // call a taMisc function
+INHERITED(StaticMethodCall)
+public:
+  TA_BASEFUNS(MiscCall);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+}; 
+
 class TA_API PrintVar: public ProgEl { 
   // print out the value of a variable
 INHERITED(ProgEl)
@@ -538,17 +555,58 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class TA_API Program_List : public taList<Program> {
-  // ##CAT_Program a list of programs
-  INHERITED(taList<Program>)
+class TA_API Function: public ProgEl { 
+  // a user-defined function that can be called within the program where it is defined -- must live in the functions of a Program, not in init_code or prog_code 
+INHERITED(ProgEl)
 public:
+  ProgVar		return_val;
+  // The return value of the function
+  String		name;
+  // The function name
+  ProgVar_List		args;
+  // The arguments to the function
+  ProgEl_List	    	fun_code;
+  // the function code (list of program elements)
   
-  TA_BASEFUNS(Program_List);
+  override String	GetDisplayName() const;
+  TA_SIMPLE_BASEFUNS(Function);
+protected:
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  override void		PreGenChildren_impl(int& item_id);
+  override const String	GenCssBody_impl(int indent_level);
+
 private:
   void	Initialize();
-  void 	Destroy()		{Reset(); }; //
-}; //
+  void	Destroy()	{CutLinks();}
+};
 
+SmartRef_Of(Function);
+
+class TA_API FunctionCall: public ProgEl { 
+  // call a function
+INHERITED(ProgEl)
+public:
+  ProgVarRef		result_var;
+  // where to store the result (return value) of the function (optional -- can be NULL)
+  FunctionRef		fun;
+  // the function to be called
+  ProgArg_List		fun_args;
+  // arguments to the function: passed when called
+
+  virtual void		UpdateArgs(); 
+  // updates the arguments (automatically called in updateafteredit)
+
+  override String	GetDisplayName() const;
+
+  TA_SIMPLE_BASEFUNS(FunctionCall);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
 
 class TA_API Program: public taNBase, public AbstractScriptBase {
   // ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program a structured gui-buildable program that generates css script code to actually run
@@ -584,23 +642,39 @@ public:
     WEB_LIB,			// web-based library
   };
 
-  Program_Group*	prog_gp;   // #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
+  Program_Group*	prog_gp;
+  // #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
 
-  RunState		run_state; // #READ_ONLY #NO_SAVE this program's run state
-  static bool		stop_req;  // #READ_ONLY a stop was requested by someone -- stop at next chance
-  static bool		step_mode; // #READ_ONLY the program was run in step mode -- check for stepping
+  RunState		run_state;
+  // #READ_ONLY #NO_SAVE this program's run state
+  static bool		stop_req;
+  // #READ_ONLY a stop was requested by someone -- stop at next chance
+  static bool		step_mode;
+  // #READ_ONLY the program was run in step mode -- check for stepping
   
-  String		desc; // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
-  ProgFlags		flags;  // control flags, for display and execution control
-  taBase_List		objs; // #TREEFILT_ProgGp sundry objects that are used in this program
-  ProgVar_List		args; // global variables that are parameters (arguments) for callers
-  ProgVar_List		vars; // global variables accessible outside and inside script
-  ProgEl_List		init_code; // the prog els for initialization (done once); use a "return" if an error occurs 
-  ProgEl_List		prog_code; // the prog els for the main program
+  String		desc;
+  // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
+  ProgFlags		flags;
+  // control flags, for display and execution control
+  taBase_List		objs;
+  // #TREEFILT_ProgGp sundry objects that are used in this program
+  ProgVar_List		args;
+  // global variables that are parameters (arguments) for callers
+  ProgVar_List		vars;
+  // global variables accessible outside and inside script
+  ProgEl_List		functions;
+  // function code (for defining subroutines): goes at top of script and can be called from init or prog code
+  ProgEl_List		init_code;
+  // initialization code: run when the Init button is pressed
+  ProgEl_List		prog_code;
+  // program code: run when the Run/Step button is pressed: this is the main code
   
-  int			ret_val; // #HIDDEN #GUI_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
-  ProgEl_List		sub_progs; // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCall's, not the actual Program's)
-  bool		    	m_dirty; // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
+  int			ret_val;
+  // #HIDDEN #GUI_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
+  ProgEl_List		sub_progs;
+  // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCall's, not the actual Program's)
+  bool		    	m_dirty;
+  // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   
   bool			isDirty() {return m_dirty;}
   override void		setDirty(bool value); // indicates a component has changed
@@ -696,6 +770,18 @@ private:
 };
 
 SmartRef_Of(Program); // ProgramRef
+
+class TA_API Program_List : public taList<Program> {
+  // ##CAT_Program a list of programs
+  INHERITED(taList<Program>)
+public:
+  
+  TA_BASEFUNS(Program_List);
+private:
+  void	Initialize();
+  void 	Destroy()		{Reset(); }; //
+}; //
+
 
 //////////////////////////////////
 // 	Program Library 	//
@@ -797,16 +883,16 @@ public:
   bool			call_init; // if true, run the init_code on that program, not prog_code
   ProgArg_List		prog_args; // arguments to the program--copied to prog before call
 
-  virtual void		UpdateGlobalArgs(); 
-  // #MENU #MENU_ON_Object #BUTTON called when target changed, or manually by user
+  virtual void		UpdateArgs(); 
+  // updates the arguments (automatically called in updateafteredit)
 
-  virtual Program*	GetTarget(); // safe call to get target: emits error if target is null
+  virtual Program*	GetTarget();
+  // safe call to get target: emits error if target is null (used by program)
 
   override String	GetDisplayName() const;
 
   TA_SIMPLE_BASEFUNS(ProgramCall);
 protected:
-  Program*		old_target; // the last target, used to detect changes
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);

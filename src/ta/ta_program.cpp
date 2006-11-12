@@ -230,7 +230,7 @@ const String ProgVar::GenCss(bool is_arg) {
   return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
 } 
 
-const String ProgVar::GenCssType() {
+const String ProgVar::GenCssType() const {
   switch(var_type) {
   case T_Int:
     return "int";
@@ -256,7 +256,7 @@ const String ProgVar::GenCssType() {
   return "";
 }
 
-const String ProgVar::GenCssInitVal() {
+const String ProgVar::GenCssInitVal() const {
   switch(var_type) {
   case T_Int:
     return int_val;
@@ -471,7 +471,7 @@ const String ProgEl::GenCss(int indent_level) {
   if(off) return "";
   String rval;
   if (!desc.empty())
-    rval.cat(cssMisc::Indent(indent_level)).cat("//").cat(desc).cat("\n");
+    rval.cat(cssMisc::Indent(indent_level)).cat("// ").cat(desc).cat("\n");
   rval += GenCssPre_impl(indent_level);
   rval += GenCssBody_impl(indent_level);
   rval += GenCssPost_impl(indent_level);
@@ -532,28 +532,27 @@ void ProgEl_List::PreGen(int& item_id) {
   }
 }
 
-
 //////////////////////////
-//  ProgList		//
+//  CodeBlock		//
 //////////////////////////
 
-void ProgList::Initialize() {
+void CodeBlock::Initialize() {
 }
 
-void ProgList::CheckChildConfig_impl(bool quiet, bool& rval) {
+void CodeBlock::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   prog_code.CheckConfig(quiet, rval);
 }
 
-const String ProgList::GenCssBody_impl(int indent_level) {
+const String CodeBlock::GenCssBody_impl(int indent_level) {
   return prog_code.GenCss(indent_level);
 }
 
-String ProgList::GetDisplayName() const {
-  return "ProgList (" + String(prog_code.size) + " items)";
+String CodeBlock::GetDisplayName() const {
+  return "CodeBlock (" + String(prog_code.size) + " items)";
 }
 
-void ProgList::PreGenChildren_impl(int& item_id) {
+void CodeBlock::PreGenChildren_impl(int& item_id) {
   prog_code.PreGen(item_id);
 }
 
@@ -903,14 +902,14 @@ String AssignExpr::GetDisplayName() const {
 
 void MethodCall::Initialize() {
   method = NULL;
-  object_type = &TA_taBase; // placeholder
+  obj_type = &TA_taBase; // placeholder
 }
 
 void MethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(script_obj)
-    object_type = script_obj->act_object_type();
-  else object_type = &TA_taBase; // placeholder
+  if(obj)
+    obj_type = obj->act_object_type();
+  else obj_type = &TA_taBase; // placeholder
 
   if(!taMisc::is_loading && method)
     UpdateArgs(args, method);
@@ -921,8 +920,8 @@ void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;
-  if(!script_obj) {
-    if(!quiet) taMisc::CheckError("Error in MethodCall in program:", prognm, "script_obj is NULL");
+  if(!obj) {
+    if(!quiet) taMisc::CheckError("Error in MethodCall in program:", prognm, "obj is NULL");
     rval = false;
   }
   if(!method) {
@@ -934,14 +933,14 @@ void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
 const String MethodCall::GenCssBody_impl(int indent_level) {
   String rval;
   rval += cssMisc::Indent(indent_level);
-  if (!(script_obj && method)) {
+  if (!(obj && method)) {
     rval += "//WARNING: MethodCall not generated here -- obj or method not specified\n";
    return rval;
   }
   
   if(result_var)
     rval += result_var->name + " = ";
-  rval += script_obj->name;
+  rval += obj->name;
   rval += "->";
   rval += method->name;
   rval += "(";
@@ -955,13 +954,13 @@ const String MethodCall::GenCssBody_impl(int indent_level) {
 }
 
 String MethodCall::GetDisplayName() const {
-  if (!script_obj || !method)
+  if (!obj || !method)
     return "(object or method not selected)";
   
   String rval;
   if(result_var)
     rval += result_var->name + "=";
-  rval += script_obj->name;
+  rval += obj->name;
   rval += "->";
   rval += method->name;
   rval += "(";
@@ -982,7 +981,7 @@ void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
   // delete args not in md list
   for (i = ar.size - 1; i >= 0; --i) {
     String an = ar.labels[i];
-    String mnm = an.after(" ");	// past type
+    String mnm = an.after(" ",-1);// past type
     int ti = md->arg_names.Find(mnm);
     if (ti < 0) {
       ar.Remove(i);
@@ -996,7 +995,7 @@ void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
     int i = ar.labels.Find(arg_nm);
     if (i < 0) {
       ar.labels.Insert(arg_nm, ti);
-      ar.Insert("", ti);
+      ar.Insert(md->arg_defs.SafeEl(ti), ti);
     } else if (i != ti) {
       ar.labels.Move(i, ti);
       ar.Move(i, ti);
@@ -1036,7 +1035,7 @@ const String StaticMethodCall::GenCssBody_impl(int indent_level) {
   String rval;
   rval += cssMisc::Indent(indent_level);
   if (!method) {
-    rval += "//WARNING: StaticMethodCall not generated here -- obj or method not specified\n";
+    rval += "//WARNING: StaticMethodCall not generated here -- object or method not specified\n";
     return rval;
   }
   
@@ -1086,6 +1085,11 @@ void MathCall::Initialize() {
 void RandomCall::Initialize() {
   min_type = &TA_Random;
   object_type = &TA_Random;
+}
+
+void MiscCall::Initialize() {
+  min_type = &TA_taMisc;
+  object_type = &TA_taMisc;
 }
 
 //////////////////////////
@@ -1157,16 +1161,12 @@ String Comment::GetDisplayName() const {
 
 
 void ProgramCall::Initialize() {
-  old_target = NULL;
   call_init = false;
 }
 
 void ProgramCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (target.ptr() != old_target) {
-    old_target = target.ptr(); // note: we don't ref, because we just need to check ptr addr
-  }
-  UpdateGlobalArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
+  UpdateArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
 }
 
 void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1270,7 +1270,7 @@ void ProgramCall::PreGenMe_impl(int item_id) {
   prog->sub_progs.LinkUnique(this);
 }
 
-void ProgramCall::UpdateGlobalArgs() {
+void ProgramCall::UpdateArgs() {
   if (!target) return; // just leave existing stuff for now
   prog_args.ConformToTarget(target->args);
   // now go through and set default value for variables of same name in this program
@@ -1285,6 +1285,108 @@ void ProgramCall::UpdateGlobalArgs() {
     pa->value = pa->name;	// we found var of same name; set as arg value
   }
 }
+
+
+//////////////////////////
+//  Function		//
+//////////////////////////
+
+void Function::Initialize() {
+  args.var_context = ProgVar_List::VC_FuncArgs;
+  return_val.name = "rval";
+}
+
+void Function::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  args.CheckConfig(quiet, rval);
+  fun_code.CheckConfig(quiet, rval);
+}
+
+const String Function::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level) + return_val.GenCssType() + " " + name + "(";
+  if(args.size > 0) {
+    rval += args.GenCss(0);
+  }
+  rval += ") {\n";
+  rval += fun_code.GenCss(indent_level + 1);
+  rval += cssMisc::Indent(indent_level) + "}\n";
+  return rval;
+}
+
+String Function::GetDisplayName() const {
+  String rval;
+  rval += return_val.GenCssType() + " " + name + "(";
+  if(args.size > 0) {
+    rval += args.GenCss(0);
+  }
+  rval += ")";
+  return rval;
+}
+
+void Function::PreGenChildren_impl(int& item_id) {
+  fun_code.PreGen(item_id);
+}
+
+
+//////////////////////////
+//   FunctionCall	//
+//////////////////////////
+
+void FunctionCall::Initialize() {
+}
+
+void FunctionCall::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateArgs();		// always do this.. nondestructive and sometimes stuff changes anyway
+}
+
+void FunctionCall::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(!fun) {
+    if(!quiet) taMisc::CheckError("Error in FunctionCall in program:", program()->name, "fun is NULL");
+    rval = false;
+  }
+}
+
+const String FunctionCall::GenCssBody_impl(int indent_level) {
+  if (!fun) return _nilString;
+  String rval = cssMisc::Indent(indent_level);
+  if(result_var) {
+    rval += result_var->name + "=";
+  }
+  rval += fun->name + "(";
+  for (int i = 0; i < fun_args.size; ++i) {
+    ProgArg* ths_arg = fun_args.FastEl(i);
+    if(i > 0) rval += ", ";
+    rval += ths_arg->value;
+  }
+  rval += ");\n";
+  return rval;
+}
+
+String FunctionCall::GetDisplayName() const {
+  String rval = "Call ";
+  if (fun) {
+    rval += fun->name;
+//     if(fun_args.size > 0) {
+//     rval += "(";
+//     for(int i=0;i<fun_args.size;i++) {
+//       ProgArg* pa = fun_args.FastEl(i);
+//       rval += pa->GetDisplayName();
+//     }
+//     rval += ")";
+  }
+  else
+    rval += "(no function set)";
+  return rval;
+}
+
+void FunctionCall::UpdateArgs() {
+  if(!fun) return; // just leave existing stuff for now
+  fun_args.ConformToTarget(fun->args);
+}
+
 
 //////////////////////////
 //  Program		//
@@ -1337,6 +1439,7 @@ void Program::InitLinks() {
   taBase::Own(objs, this);
   taBase::Own(args, this);
   taBase::Own(vars, this);
+  taBase::Own(functions, this);
   taBase::Own(init_code, this);
   taBase::Own(prog_code, this);
   taBase::Own(sub_progs, this);
@@ -1347,6 +1450,7 @@ void Program::CutLinks() {
   sub_progs.CutLinks();
   prog_code.CutLinks();
   init_code.CutLinks();
+  functions.CutLinks();
   vars.CutLinks();
   args.CutLinks();
   objs.CutLinks();
@@ -1358,6 +1462,7 @@ void Program::Reset() {
   sub_progs.Reset();
   prog_code.Reset();
   init_code.Reset();
+  functions.Reset();
   vars.Reset();
   args.Reset();
   objs.Reset();
@@ -1372,6 +1477,7 @@ void Program::Copy_(const Program& cp) {
   objs = cp.objs;
   args = cp.args;
   vars = cp.vars;
+  functions = cp.functions;
   init_code = cp.init_code;
   prog_code = cp.prog_code;
   ret_val = 0; // redo
@@ -1408,8 +1514,10 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   args.CheckConfig(quiet, rval);
   vars.CheckConfig(quiet, rval);
+  functions.CheckConfig(quiet, rval);
   init_code.CheckConfig(quiet, rval);
   prog_code.CheckConfig(quiet, rval);
+  // todo: go through and check that the functions contains valid function els!?
 }
 
 int Program::Call(Program* caller) {
@@ -1663,6 +1771,9 @@ const String Program::scriptString() {
       m_scriptCache += vars.GenCss(0);
     }
     m_scriptCache += "*/\n\n";
+
+    // Functions
+    m_scriptCache += functions.GenCss(0); // ok if empty, returns nothing
     
     // __Init() routine, for our own els, and calls to subprog Init()
     m_scriptCache += "void __Init() {\n";

@@ -1421,6 +1421,7 @@ membnms:  CSS_VAR
         | CSS_PTR
         | CSS_FUN
 	| CSS_PTRTYPE
+        | CSS_NUMBER
         | anycmd
         ;
 

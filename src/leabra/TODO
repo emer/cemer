@@ -1,33 +1,29 @@
 leabra todo list:
 
-* create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
-docs..: add all float_RArray funs, for matricies.
+* SaveNetwork[Weights] program -- uses above
 
 * extrew in trial monitor seems not to be working: 12ax demo
+* change gp name to include unique ctr so group fun works.
 
 * relnet stat
 
-* SaveNetwork[Weights] program -- uses above
+* create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
+docs..: add all float_RArray funs, for matricies.
 
 -----------
 Program issues
 
 css:
 * syntax error ^ doesn't show up in right place..
-* Output::R should work even though R is a defined constant variable: need
-   a more inclusive type for things after the :: scoper
 * register VT_xx in global css namespace..
 
-program:
-* more color highlighting in general of programs?
+* sargs: get default arg vals for new args
 
-check:
-* sometimes method s_args don't copy, sometimes they do..
-  * add a n_args thing so you can spec less than total?  or, just leave with defaults..
-* prompt is now messed up: pdp++ > >xxx and just > for program cmd shell
+User def'd subroutine within programs:
 
-* add "comment" progel -- just displays a comment in display, perhaps with diff color?
-* warn about = in if condition (instead of ==) -- maybe even in css?
+* special obj like prog_code that is: functions; gen before __Init..
+* function progel: contains progvar args
+* funcall progel..
 
 -----------
 current bugs:
@@ -35,6 +31,8 @@ current bugs:
 
 -------
 lower pri:
+
+* more color highlighting in general of programs?
 
 * css_console.cpp: complete obj.mbr expressions..
 

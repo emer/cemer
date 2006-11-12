@@ -1780,10 +1780,10 @@ void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
 #endif
     child->CheckConfig(quiet, rval);
 #ifdef DEBUG
-    if(prv_rval && !rval) {
-      taMisc::CheckError("Child failed check on list:", GetPath(),
-			 "child:",String(i),"name:",child->GetName());
-    }
+//     if(prv_rval && !rval) {
+//       taMisc::CheckError("Child failed check on list:", GetPath(),
+// 			 "child:",String(i),"name:",child->GetName());
+//     }
 #endif
   }
 }
