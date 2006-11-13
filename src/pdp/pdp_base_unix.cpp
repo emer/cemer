@@ -87,7 +87,7 @@ void pdpMisc::SaveRecoverFile(int err) {
 	  if(net->usr1_save_fmt == Network::JUST_WEIGHTS)
 	    net->WriteWeights(*strm, net->wt_save_fmt);
 	  else
-	    net->Save(*strm);
+	    net->Save_strm(*strm);
 	}
 	gf->Close();
 	cnt++;
@@ -111,7 +111,7 @@ void pdpMisc::SaveRecoverFile(int err) {
       if((strm == NULL) || strm->bad())
 	cerr << "SaveRecoverFile: could not open file: " << gf->fname << "\n";
       else
-	p->Save(*strm);
+	p->Save_strm(*strm);
       gf->Close();
       cnt++;
     }

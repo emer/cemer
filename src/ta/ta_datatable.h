@@ -465,9 +465,6 @@ public:
   /////////////////////////////////////////////////////////
   // saving/loading (file)
 
-  taFiler* GetFiler(TypeItem* td)
-  { if(log_file) return log_file; return inherited::GetFiler(td); }
-
   enum Delimiters {
     TAB,
     SPACE,
@@ -475,16 +472,24 @@ public:
   };
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  void 			SaveData(ostream& strm, Delimiters delim = TAB, bool quote_str = true);
-  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings
-  void 			SaveHeader(ostream& strm, Delimiters delim = TAB);
-  // #CAT_File #MENU #EXT_dat saves header information, with delimiter between columns, and optionally quoting strings
-  void 			SaveDataRow(ostream& strm, int row=-1, Delimiters delim = TAB,
-				    bool quote_str = true); 
-  // #CAT_File #MENU #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
+  void 			SaveData_strm(ostream& strm, Delimiters delim = TAB, bool quote_str = true);
+  // #CAT_File #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings
+  void 			SaveHeader_strm(ostream& strm, Delimiters delim = TAB);
+  // #CAT_File #EXT_dat saves header information, with delimiter between columns, and optionally quoting strings
+  void 			SaveDataRow_strm(ostream& strm, int row=-1, Delimiters delim = TAB,
+					 bool quote_str = true); 
+  // #CAT_File #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
 
-  void			SaveDataLog(const String& fname, bool append=false);
-  // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file
+  void 			SaveData(const String& fname="", Delimiters delim = TAB, bool quote_str = true);
+  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
+  void 			SaveHeader(const String& fname="", Delimiters delim = TAB);
+  // #CAT_File #MENU #EXT_dat saves header information, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
+  void 			SaveDataRow(const String& fname="", int row=-1, Delimiters delim = TAB,
+					 bool quote_str = true); 
+  // #CAT_File #MENU #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
+
+  void			SaveDataLog(const String& fname="", bool append=false);
+  // #CAT_File #MENU #MENU_SEP_BEFORE #ARGC_0 #EXT_dat incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file
   void			CloseDataLog();
   // #CAT_File #MENU #EXT_dat close the data log file if it was previously open
 
@@ -495,12 +500,20 @@ public:
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
 
-  void 			LoadData(istream& strm, Delimiters delim = TAB,
+  void 			LoadData_strm(istream& strm, Delimiters delim = TAB,
+				 bool quote_str = true, int max_recs = -1);
+  // #CAT_File #EXT_dat loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
+  int 			LoadHeader_strm(istream& strm, Delimiters delim = TAB);
+  // #CAT_File #EXT_dat loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
+  int 			LoadDataRow_strm(istream& strm, Delimiters delim = TAB, bool quote_str = true);
+  // #CAT_File #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+
+  void 			LoadData(const String& fname, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1);
   // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
-  int 			LoadHeader(istream& strm, Delimiters delim = TAB);
+  int 			LoadHeader(const String& fname, Delimiters delim = TAB);
   // #CAT_File #EXT_dat loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  int 			LoadDataRow(istream& strm, Delimiters delim = TAB, bool quote_str = true);
+  int 			LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
   // viewing NOTE: these are actually linked to tamisc in order to work...

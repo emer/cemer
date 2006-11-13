@@ -1460,7 +1460,7 @@ void Variant::save(ostream& s) const {
      s << "TA_void"; // indicates NULL
     } else {
       s << d.tab->GetTypeDef()->name;
-      d.tab->Save(s);
+      d.tab->Save_strm(s);
     }
     break;
 #endif

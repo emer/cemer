@@ -359,9 +359,11 @@ taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 taMisc::LoadVerbosity	taMisc::gui_verbose_load = taMisc::QUIET;
 
-String	taMisc::inst_prefix = "/usr/local"; // todo: get from config.h
-String	taMisc::pkg_dir = "ta_css"; // todo: get from config.h
-String	taMisc::pkg_home = "/usr/local/ta_css"; // todo: get from config.h
+#define STRINGIFY(x) #x
+
+String	taMisc::inst_prefix = STRINGIFY(WHEREAMI); // e.g., /usr/local/share
+String	taMisc::pkg_dir = "pdp++"; // "ta_css"; // todo: get from config.h
+String	taMisc::pkg_home; // is concat in Init_Defaults_PostLoadConfig
 String  taMisc::user_home;			// this will be set in init call
 String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
 String	taMisc::tmp_dir = "/tmp"; // todo: should be inst_prefix/tmp??
@@ -748,13 +750,14 @@ void taMisc::Init_Hooks() {
 void taMisc::Init_Defaults_PreLoadConfig() {
   // set any default settings prior to loading config file (will be overwritten)
   user_home = QDir::homeDirPath();
+  pkg_home = inst_prefix + "/" + pkg_dir;
 }
 
 void taMisc::Init_Defaults_PostLoadConfig() {
-#ifdef DEBUG
-  // note: this is just for temporary use until config.h is updated to include path
-  pkg_home = QDir::homeDirPath() + "/pdp4.0/trunk";
-#endif
+// #ifdef DEBUG
+//   // note: this is just for temporary use until config.h is updated to include path
+//   pkg_home = QDir::homeDirPath() + "/pdp4.0/trunk";
+// #endif
 
   // set any default settings after loading config file (ensures certain key settings in place)
   css_include_paths.AddUnique(pkg_home + "/css_stdlib");

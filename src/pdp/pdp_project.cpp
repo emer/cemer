@@ -612,12 +612,6 @@ void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
   }
 }
 
-int ProjectBase::Load(istream& strm, TAPtr par, void** el) {
-  int rval = inherited::Load(strm, par, el); // load-em-up
-  // todo: was hook for AutoBuild -- not called on project_Group based loads (i.e., typical case)!
-  return rval;
-}
-
 DataTable_Group* ProjectBase::analysisDataGroup() {
   DataTable_Group* rval = (DataTable_Group*)data.FindMakeGpName("AnalysisData");
   return rval;
@@ -844,7 +838,7 @@ void PDPRoot::LoadConfig() {
   fstream strm;
   strm.open(cfgfn, ios::in);
   if(!strm.bad() && !strm.eof())
-    Load(strm);
+    Load_strm(strm);
   strm.close(); strm.clear();
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
 }
@@ -858,7 +852,7 @@ void PDPRoot::SaveConfig() {
   String cfgfn = home_dir + "/.pdpconfig";
   fstream strm;
   strm.open(cfgfn, ios::out);
-  Save(strm);
+  Save_strm(strm);
   strm.close(); strm.clear();
   ((taMisc*)TA_taMisc.GetInstance())->SaveConfig();
 }
@@ -913,27 +907,11 @@ exit:
 }*/
 
 void PDPRoot::SaveAll() {
-//#ifdef TA_GUI
   taLeafItr i;
   ProjectBase* pr;
   FOR_ITR_EL(ProjectBase, pr, projects., i) {
-    pr->Save_File(); // does SaveAs if no filename
-/*    taFiler* taf = pr->GetFileDlg();
-    if (taf) {
-      taRefN::Ref(taf);
-      ostream* strm = taf->Save();
-      if ((strm != NULL) && strm->good()) {
-        taMisc::RecordScript(pr->GetPath() + ".Save(" + taf->fname + ");\n");
-        pr->SetFileName(taf->fname);
-        DMEM_GUI_RUN_IF {
-          pr->Save(*strm);
-        }
-      }
-      taRefN::unRef(taf); //don't do Done in case supplier isn't using refcounts to manage lifetime
-    } // taf
-  */
+    pr->Save(); // does SaveAs if no filename
   }
-//#endif
 }
 
 /*obs??

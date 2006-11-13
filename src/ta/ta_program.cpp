@@ -1936,7 +1936,7 @@ void Program::SaveToProgLib(ProgLibs library) {
 			     "Ok", "Cancel");
     if(chs == 1) return;
   }
-  SaveAs_File(fname);
+  SaveAs(fname);
   Program_Group::prog_lib.FindPrograms();
 }
 
@@ -1949,7 +1949,7 @@ void Program::LoadFromProgLib(ProgLibs library) {
     return;
   }
   Reset();
-  LoadAs_File(fname);
+  Load(fname);
 }
 
 void Program::SaveScript(ostream& strm) {
@@ -2021,7 +2021,7 @@ void Program_Group::SaveToProgLib(Program::ProgLibs library) {
 			     "Ok", "Cancel");
     if(chs == 1) return;
   }
-  SaveAs_File(fname);
+  SaveAs(fname);
   Program_Group::prog_lib.FindPrograms();
 }
 
@@ -2068,18 +2068,12 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
     path = path.after("file:");
   if(is_group) {
     Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
-    fstream strm;
-    strm.open(path, ios::in);
-    pg->Load(strm);
-    strm.close();
+    pg->Load(path);
     return pg;
   }
 
   Program* pg = new_owner->NewEl(1, &TA_Program);
-  fstream strm;
-  strm.open(path, ios::in);
-  pg->Load(strm);
-  strm.close();
+  pg->Load(path);
   return pg;
 }
 

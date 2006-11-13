@@ -242,6 +242,11 @@ if (!user_data_ && fc) {user_data_ = new UserDataItem_List; \
 
 */
 
+////////////////////////////////////////////////////////////////////////////////////
+//		ta Base	  --- 	The Base of all type-aware classes
+
+// todo: organize all this stuff into sensible groupings w/ good docs!
+
 class TA_API taBase {
   // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER Base type for all type-aware classes
   // has auto instances for all taBases unless NO_INSTANCE
@@ -299,9 +304,6 @@ public:
   static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
   static void		Own(taBase* it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
   static void		Own(taSmartRef& it, TAPtr onr);	// #IGNORE for semantic compat with other Owns
-  static taFiler*	StatGetFiler(TypeItem* td);
-    // #IGNORE gets file dialog for the TypeItem -- clients must ref/unrefdone
-
 protected: // legacy ref counting routines, for compatability -- do not use for new code
   static void   	unRef(taBase* it) { it->refn--; }	     // #IGNORE
 #ifdef DEBUG
@@ -445,10 +447,6 @@ public:
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const; // #IGNORE can be overridden to provide synthetic name, or to strip out chars from mangled names (ex. DataTable column names) -- will/must never be empty
   virtual String	GetDesc() const {return _nilString;} // #IGNORE a type-specific "description" of the instance
-  virtual bool		SetFileName(const String& val)  {return false;} // #CAT_File set file name for object
-  virtual String	GetFileName() const 	{ return _nilString; } // #CAT_File get file name object was last saved with
-  taFiler*		GetFiler(TypeItem* td = NULL);
-  // #IGNORE gets filer for the TypeItem if specified, or this object-- clients must ref/unrefdone
   virtual void 		SetDefaultName();			    // #IGNORE
   virtual void		SetTypeDefaults();			    // #IGNORE
   virtual void		SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope); // #IGNORE
@@ -579,22 +577,30 @@ public:
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
     { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
 
-  virtual int	 	Load(istream& strm, TAPtr par=NULL, void** el = NULL);
-  // #CAT_File Load object data from a file -- el is what!?
-  virtual int	 	Load_File(TypeDef* td = NULL, void** el = NULL);
-  // #IGNORE load object data from a file -- gets the filename from user
-  virtual int	 	LoadAs_File(const String& fname="", TypeDef* td = NULL, void** el = NULL);
-  // #MENU #MENU_ON_Object #ARGC_0 #LABEL_Load #CAT_File Load object data from given file name (if empty, prompt user for a name) -- use this in programs
+  ////////////////////////////////////////////////////////////////////// 
+  // 	visible input/output interface
 
-  virtual int 		Save(ostream& strm, TAPtr par=NULL, int indent=0);
-  // #CAT_File Save object data to a file
-  virtual int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0)
-  // #ARGC_1 #CAT_File Save object data to a new file
-    { return Save(strm,par,indent); }
-  virtual int		Save_File(); 
-  // #MENU #MENU_ON_Object #LABEL_Save #CAT_File saves the object to a file using current file name -- use this in programs
-  virtual int		SaveAs_File(const String& fname = ""); 
-  // #MENU #ARGC_0 #LABEL_Save_As #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user -- use this in programs
+  virtual bool		SetFileName(const String& val)  {return false;} // #CAT_File set file name for object
+  virtual String	GetFileName() const 	{ return _nilString; } // #CAT_File get file name object was last saved with
+  static taFiler*	StatGetFiler(TypeItem* td, const String& ext="", int compress=-1);
+  // #IGNORE gets file dialog for the TypeItem -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes
+  taFiler*		GetFiler(TypeItem* td = NULL, const String& ext="", int compress=-1);
+  // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes
+  virtual int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
+  // #CAT_File Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
+  virtual taFiler* 	GetLoadFiler(const String& fname, const String& ext="", int compress=-1);
+  // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
+  virtual int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
+  // #MENU #MENU_ON_Object #ARGC_0 #CAT_File Load object data from given file name (if empty, prompt user for a name) -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
+
+  virtual int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
+  // #CAT_File Save object data to a file stream
+  virtual taFiler* 	GetSaveFiler(const String& fname, const String& ext="", int compress=-1);
+  // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
+  virtual int		Save(); 
+  // #MENU #MENU_ON_Object #CAT_File saves the object to a file using current file name (from GetFileName() function)
+  virtual int		SaveAs(const String& fname = ""); 
+  // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user
 
   virtual String	GetFileNameFmProject(const String& ext, const String& tag = "", bool dmem_proc_no = false);
   // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; fname = proj->base_name + tag + ext; if dmem_proc_no, add dmem proc no to file name.  empty if project not found
@@ -750,9 +756,9 @@ protected:
 };
 
 inline istream& operator>>(istream &strm, taBase &obj)
-{ obj.Load(strm); return strm; }
+{ obj.Load_strm(strm); return strm; }
 inline ostream& operator<<(ostream &strm, taBase &obj)
-{ obj.Save(strm); return strm; }
+{ obj.Save_strm(strm); return strm; }
 
 class TA_API taSmartPtr { // ##NO_INSTANCE ##NO_TOKENS "safe" ptr for taBase objects -- automatically does ref counts; designed to be binary compatible with taBase*
 public:

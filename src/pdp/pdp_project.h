@@ -211,8 +211,6 @@ public:
   virtual void	AutoBuildNets(BuildNetsMode bld_mode);
   // build networks according to bulid mode
   
-  override int		Load(istream& strm, TAPtr par=NULL, void** el = NULL);
-
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only
   void	CutLinks_impl(); // special, so we can do base class guys first (esp. viewers)

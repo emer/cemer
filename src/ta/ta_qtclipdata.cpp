@@ -314,7 +314,7 @@ void tabSndMimeItem::RemDataTaken() {
 
 void tabSndMimeItem::SetData(ostream& ost) {
   if (mobj) {
-    mobj->Save(ost);
+    mobj->Save_strm(ost);
   }
 }
 

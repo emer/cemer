@@ -3059,8 +3059,8 @@ void iMainWindowViewer::fileOpen() {
   }
   // if proj has a value, then we should view the existing, else open it
   if (!proj) {
-    void* el = NULL;
-    tabMisc::root->projects.LoadAs_File(fname, td, &el);
+    taBase* el = NULL;
+    tabMisc::root->projects.Load(fname, &el);
     proj = (taProject*)el;
   }
   
@@ -3077,13 +3077,13 @@ void iMainWindowViewer::fileQuit() {
 void iMainWindowViewer::fileSave() {
   taProject* proj = curProject();
   if (!proj) return;
-  proj->Save_File();
+  proj->Save();
 }
 
 void iMainWindowViewer::fileSaveAs() {
   taProject* proj = curProject();
   if (!proj) return;
-  proj->SaveAs_File();
+  proj->SaveAs();
 }
 
 void iMainWindowViewer::fileSaveAll() {
@@ -3163,7 +3163,7 @@ void iMainWindowViewer::SaveData() {
   taProject* proj = curProject(); // only if projviwer
    // only impl for projects, because they are only thing we know how to save
   if (proj) 
-    proj->Save_File();
+    proj->Save();
 }
 
 void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int op) {

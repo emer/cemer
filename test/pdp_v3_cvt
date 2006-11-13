@@ -27,7 +27,7 @@ foreach i (${argv[2-]})
   endif
   set newfl=$fl:r"_v4.proj"
 
-  sed -E -e "s/_MGroup/_Group/g" \
+  sed -e "s/_MGroup/_Group/g" \
     -e "s/Project/$projnm/g" -e "s/$projgp/Project_Group/g" -e "s/$projection/Projection/g" \
     -e "s/Network/$netnm/g" -e "s/$netgp/Network_Group/g" \
     -e "s/LeabraWiz/Wizard/g" -e "s/Wizard/$wiznm/g" -e "s/$wizgp/Wizard_Group/g" \

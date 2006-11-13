@@ -465,12 +465,12 @@ void cssTA_Base::InheritInfo(ostream& fh) const {
 void cssTA_Base::Save(ostream& fh) {
   taBase* ths = GetTAPtr();
   if(ths)
-    ths->Save(fh);
+    ths->Save_strm(fh);
 }
 void cssTA_Base::Load(istream& fh) {
   taBase* ths = GetTAPtr();
   if(ths)
-    ths->Load(fh);
+    ths->Load_strm(fh);
 }
 
 void cssTA_Base::UpdateAfterEdit() {

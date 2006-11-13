@@ -638,6 +638,16 @@ void cssCPtr_float::operator/=(cssEl& t)	{
 
 String cssCPtr_String::null_string;
 
+
+cssCPtr_String::~cssCPtr_String() {
+  if(gf != NULL)
+    taRefN::unRefDone(gf);
+  gf = NULL;
+}
+
+void cssCPtr_String::Constr() {
+  gf = NULL;
+}
 String& cssCPtr_String::GetStringRef(const char* opr) const {
   if(ptr_cnt == 0) {
     void* nnp = GetNonNullVoidPtr(opr);
@@ -721,6 +731,38 @@ cssCPtr_String::operator MethodDef*() const {
     return NULL;
   }
   return md;
+}
+
+cssCPtr_String::operator ostream*() const {
+  String& nm = GetStringRef();
+  cssCPtr_String* ths = (cssCPtr_String*)this;
+  if(ths->gf == NULL) {
+    ths->gf = taFiler::New();
+    taRefN::Ref(ths->gf);
+  }
+  ths->gf->fname = nm;
+  ostream* strm = ths->gf->open_write();
+  if((strm == NULL) || !(ths->gf->open_file)) {
+    cssMisc::Error(prog, "String -> ostream*: could not open file", nm);
+    return (ostream*)NULL;
+  }
+  return strm;
+}
+
+cssCPtr_String::operator istream*() const {
+  String& nm = GetStringRef();
+  cssCPtr_String* ths = (cssCPtr_String*)this;
+  if(ths->gf == NULL) {
+    ths->gf = taFiler::New();
+    taRefN::Ref(ths->gf);
+  }
+  ths->gf->fname = nm;
+  istream* strm = ths->gf->open_read();
+  if((strm == NULL) || !(ths->gf->open_file)) {
+    cssMisc::Error(prog, "String -> istream*: could not open file", nm);
+    return (istream*)NULL;
+  }
+  return strm;
 }
 
 int cssCPtr_String::GetMethodNo(const char* memb) const {

@@ -109,9 +109,9 @@ public:
   virtual void	UpdateSimLog();
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
   
-  override int	 	LoadAs_File(const String& fname, TypeDef* td = NULL, void** el = NULL);
-  override int 		SaveAs(ostream& strm, TAPtr par=NULL, int indent=0);
-  override int		SaveAs_File(const String& fname = ""); 
+  override int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
+  override int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int		SaveAs(const String& fname = ""); 
 
   virtual void		PostLoadAutos();
   // perform post-loading automatic functions

@@ -643,6 +643,7 @@ public:
 class CSS_API cssCPtr_String : public cssCPtr {
 public:
   static String	null_string;	// for null pointers
+  taFiler*	gf;		// this allows strings to be converted into filenames
 
   String&	GetStringRef(const char* opr="") const;
 
@@ -651,11 +652,13 @@ public:
   const char*	GetTypeName() const  	{ return "(c_String)"; }
 
   // constructors
-  cssCPtr_String() 				: cssCPtr(){};
+  void		Constr();
+  cssCPtr_String() 				: cssCPtr() { Constr(); }
   cssCPtr_String(void* it, int pc, const char* nm=NULL, cssEl* cp=NULL, bool ro=false)
-  : cssCPtr(it,pc,nm,cp,ro){};
-  cssCPtr_String(const cssCPtr_String& cp) 		: cssCPtr(cp){};
-  cssCPtr_String(const cssCPtr_String& cp, const char* nm) : cssCPtr(cp,nm){};
+    : cssCPtr(it,pc,nm,cp,ro) { Constr(); }
+  cssCPtr_String(const cssCPtr_String& cp) 		: cssCPtr(cp) { Constr(); }
+  cssCPtr_String(const cssCPtr_String& cp, const char* nm) : cssCPtr(cp,nm) { Constr(); }
+  ~cssCPtr_String();
 
   cssCPtr_CloneFuns(cssCPtr_String, (void*)NULL);
 
@@ -672,6 +675,8 @@ public:
   operator TypeDef*() const;	// lookup as name
   operator MemberDef*() const;
   operator MethodDef*() const;
+  operator ostream*() const; // convert to stream as file-name of a file
+  operator istream*() const;
 
   void operator=(Real cp) 	{ GetStringRef("=") = String(cp); }
   void operator=(Int cp)	{ GetStringRef("=") = String(cp); }

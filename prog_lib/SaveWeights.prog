@@ -1,0 +1,134 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][9] { 
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [4] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+  };
+
+  ProgEl_List @.prog_code = [5] {
+    MiscCall @[0] { };
+    MiscCall @[1] { };
+    AssignExpr @[2] { };
+    MethodCall @[3] { };
+    MethodCall @[4] { };
+  };
+};
+Program .projects[0].programs.gp[0][9] {
+ name="SaveWeights";
+ desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="fname";
+   var_type=T_String;
+   string_val=;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[1] {
+   name="epoch_str";
+   var_type=T_String;
+   string_val=;
+   objs_ptr=0;
+   desc="string rep of epoch with leading zeros";
+  };
+  ProgVar @[2] {
+   name="batch_str";
+   var_type=T_String;
+   string_val=;
+   objs_ptr=0;
+   desc="string rep of batch with leading zeros";
+  };
+  ProgVar @[3] {
+   name="tag";
+   var_type=T_String;
+   string_val=;
+   objs_ptr=0;
+   desc="batch + epoch";
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MiscCall @[0] {
+   desc=;
+   off=0;
+   result_var=.projects[0].programs.gp[0][9].vars[2]$1$;
+   object_type=taMisc;
+   method=taMisc::LeadingZeros;
+   args{ network->batch;2;};
+{ int num;int len;   };
+  };
+  MiscCall @[1] {
+   desc=;
+   off=0;
+   result_var=.projects[0].programs.gp[0][9].vars[1]$2$;
+   object_type=taMisc;
+   method=taMisc::LeadingZeros;
+   args{ network->epoch;4;};
+{ int num;int len;   };
+  };
+  AssignExpr @[2] {
+   desc=;
+   off=0;
+   result_var=.projects[0].programs.gp[0][9].vars[3]$3$;
+   expr="\".\" + batch_str + \"_\" + epoch_str";
+  };
+  MethodCall @[3] {
+   desc=;
+   off=0;
+   result_var=.projects[0].programs.gp[0][9].vars[0]$4$;
+   obj=.projects[0].programs.gp[0][9].args[0]$5$;
+   method=taBase::GetFileNameFmProject;
+   args{ ".wts.gz";tag;false;};
+{ const taString& ext;const taString& tag;bool dmem_proc_no;   };
+  };
+  MethodCall @[4] {
+   desc=;
+   off=0;
+   result_var=NULL;
+   obj=$5$;
+   method=Network::WriteWeights;
+   args{ fname;Network::TEXT_IDX;};
+{ ostream& strm;Network::WtSaveFormat fmt;   };
+  };
+ };
+};

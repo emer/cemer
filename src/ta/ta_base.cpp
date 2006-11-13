@@ -376,17 +376,6 @@ void taBase::SetPointer(taBase** ptr, taBase* new_val) {
   *ptr = new_val;
 }
 
-taFiler* taBase::StatGetFiler(TypeItem* td) {
-  bool cmprs = (td->HasOption("COMPRESS"));
-  String filetype = td->OptionAfter("FILETYPE_");
-  if (filetype.empty()) filetype = td->name;
-  String ext = td->OptionAfter("EXT_");
-  if (ext.nonempty()) ext = "." + ext;
-  taFiler::FilerFlags ff = (cmprs) ? taFiler::DEF_FLAGS_COMPRESS :  taFiler::DEF_FLAGS;
-  taFiler* result = taFiler::New(filetype, ext, ff);
-  return result;
-}
-
 TypeDef* taBase::StatTypeDef(int) {
   return &TA_taBase;
 }
@@ -797,11 +786,6 @@ const iColor* taBase::GetEditColorInherit() {
   return bgclr;
 }
 
-taFiler* taBase::GetFiler(TypeItem* td) {
-  if (!td) td = GetTypeDef();
-  return StatGetFiler(td);
-}
-
 String taBase::GetDisplayName() const { 
   String rval = GetName(); 
   if (rval.nonempty()) return rval;
@@ -833,93 +817,108 @@ bool taBase::HasFlag(int flag) const {
   return (m_flags & flag);
 }
 
-int taBase::Load(istream& strm, TAPtr par, void** el_) { 
-  int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, el_); 
-  if (el_) {
-    taBase* el = *((taBase**)el_); // better be!!!
-    if (el) el->setDirty(false);
-  }
-  return rval;
-}
+////////////////////////////////////////////////////////////////////// 
+// 	visible input/output interface
 
-int taBase::Load_File(TypeDef* td, void** el_) {
-  int rval = false;
-  taFiler* flr = GetFiler(td); 
-  taRefN::Ref(flr);
-  istream* strm = flr->Open();
-  taBase* el = NULL;
-  if (strm)
-    rval = Load(*strm, NULL, (void**)&el);
-  
-  if (rval && el) {
-    el->SetFileName(flr->fname);
-  }
-  
-  taRefN::unRefDone(flr);
-  if (el_)
-    *el_ = (void*)el;
-  return rval;
-}
-
-int taBase::LoadAs_File(const String& fname, TypeDef* td, void** el_) {
-  if (fname.empty())
-    return Load_File(td, el_);
-    
-  int rval = false;
-  taFiler* flr = GetFiler(td); 
-  taRefN::Ref(flr);
-  flr->fname = fname;
-  istream* strm = flr->open_read();
-  if (strm) {
-    taBase* el = NULL;
-    rval = Load(*strm, NULL, (void**)&el);
-  
-    if (rval && el) {
-      
-      el->SetFileName(flr->fname);
+taFiler* taBase::StatGetFiler(TypeItem* td, const String& ext, int compress) {
+  bool cmprs = (td->HasOption("COMPRESS"));
+  if(compress >= 0) cmprs = compress;
+  String filetype = td->OptionAfter("FILETYPE_");
+  if (filetype.empty()) filetype = td->name;
+  String aext = ext;
+  if(aext.empty()) {
+    aext = td->OptionAfter("EXT_");
+    if(aext.nonempty() && (aext[0] != '.')) {
+      aext = "." + aext;
     }
-    if (el_)
-      *el_ = (void*)el;
   }
+  taFiler::FilerFlags ff = (cmprs) ? taFiler::DEF_FLAGS_COMPRESS : taFiler::DEF_FLAGS;
+  taFiler* result = taFiler::New(filetype, aext, ff);
+  return result;
+}
+
+taFiler* taBase::GetFiler(TypeItem* td, const String& ext, int compress) {
+  if (!td) td = GetTypeDef();
+  return StatGetFiler(td,ext,compress);
+}
+
+int taBase::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
+  int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, (void**)loaded_obj_ptr); 
+  if(loaded_obj_ptr) {
+    if(*loaded_obj_ptr) (*loaded_obj_ptr)->setDirty(false);
+  }
+  return rval;
+}
+
+taFiler* taBase::GetLoadFiler(const String& fname, const String& ext, int compress) {
+  taFiler* flr = GetFiler(NULL, ext, compress); 
+  taRefN::Ref(flr);
+   
+  if(fname.nonempty()) {
+    flr->fname = fname;
+    flr->open_read();
+  } else { 
+    flr->fname = GetName(); // filer etc. does auto extension
+    flr->Open();
+  }
+  if(flr->istrm) {
+    SetFileName(flr->fname);
+  }
+  return flr;
+}
+
+int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
+  int rval = false;
+  taFiler* flr = GetLoadFiler(fname);
+  if(flr->istrm) {
+    taBase* lobj = NULL;
+    rval = Load_strm(*flr->istrm, NULL, &lobj);
+    if (loaded_obj_ptr)
+      *loaded_obj_ptr = lobj;
+    if(rval && lobj) {
+      lobj->SetFileName(flr->fname);
+    }
+  }
+  flr->Close();
   taRefN::unRefDone(flr);
   return rval;
 }
 
-int taBase::Save(ostream& strm, TAPtr par, int indent) { 
+int taBase::Save_strm(ostream& strm, TAPtr par, int indent) { 
   int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); 
   setDirty(false);
   return rval;
 }
 
-int taBase::Save_File() { 
-  String fname = GetFileName(); // empty if 1st or not supported
-  return SaveAs_File(fname);
-}
-
-int taBase::SaveAs_File(const String& fname) {
-  int rval = false;
-  taFiler* flr = GetFiler(); 
+taFiler* taBase::GetSaveFiler(const String& fname, const String& ext, int compress) {
+  taFiler* flr = GetFiler(NULL, ext, compress); 
   taRefN::Ref(flr);
-  ostream* strm = NULL;
    
   if (fname.nonempty()) {
-    // Save mode
     flr->fname = fname;
-    strm = flr->Save();
-    if (strm)
-      rval = Save(*strm);
+    flr->Save();
   } else { 
-    // SaveAs mode
     flr->fname = GetName(); // filer etc. does auto extension
-    strm = flr->SaveAs();
-    if (strm)
-      rval = SaveAs(*strm);
+    flr->SaveAs();
   }
   
-  if (rval) {
+  if(flr->ostrm) {
     SetFileName(flr->fname);
   }
-  
+  return flr;
+}
+
+int taBase::Save() { 
+  String fname = GetFileName(); // empty if 1st or not supported
+  return SaveAs(fname);
+}
+
+int taBase::SaveAs(const String& fname) {
+  int rval = false;
+  taFiler* flr = GetSaveFiler(fname);
+  if(flr->ostrm)
+    rval = Save_strm(*flr->ostrm);
+  flr->Close();
   taRefN::unRefDone(flr);
   return rval;
 }
@@ -1775,16 +1774,16 @@ void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
     // we only include owned items, not linked
     if (!child || (child->GetOwner() != this)) 
       continue;
-#ifdef DEBUG
-    bool prv_rval = rval;
-#endif
+// #ifdef DEBUG
+//     bool prv_rval = rval;
+// #endif
     child->CheckConfig(quiet, rval);
-#ifdef DEBUG
+// #ifdef DEBUG
 //     if(prv_rval && !rval) {
 //       taMisc::CheckError("Child failed check on list:", GetPath(),
 // 			 "child:",String(i),"name:",child->GetName());
 //     }
-#endif
+// #endif
   }
 }
 

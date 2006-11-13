@@ -1018,6 +1018,9 @@ void DataTable::RowsAdding(int n, bool begin) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+///		Saving / Loading from Plain Text Files
+
 /*
   Header format: 
   $ = String
@@ -1031,7 +1034,7 @@ void DataTable::RowsAdding(int n, bool begin) {
   first mat cell also has <dims:dx,dy..>
 */
 
-void DataTable::SaveHeader(ostream& strm, Delimiters delim) {
+void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim) {
   char cdlm = GetDelim(delim);
   strm << "_H:";		// indicates header
   for(int i=0;i<data.size;i++) {
@@ -1055,7 +1058,7 @@ void DataTable::SaveHeader(ostream& strm, Delimiters delim) {
   strm << endl;
 }
 
-void DataTable::SaveDataRow(ostream& strm, int row, Delimiters delim, bool quote_str) {
+void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim, bool quote_str) {
   char cdlm = GetDelim(delim);
   strm << "_D:";		// indicates data row
   for(int i=0;i<data.size;i++) {
@@ -1083,12 +1086,37 @@ void DataTable::SaveDataRow(ostream& strm, int row, Delimiters delim, bool quote
   strm << endl;
 }
 
-void DataTable::SaveData(ostream& strm, Delimiters delim, bool quote_str) {
-  SaveHeader(strm, delim);
+void DataTable::SaveData_strm(ostream& strm, Delimiters delim, bool quote_str) {
+  SaveHeader_strm(strm, delim);
   for(int row=0;row <rows; row++) {
-    SaveDataRow(strm, row, delim, quote_str);
+    SaveDataRow_strm(strm, row, delim, quote_str);
   }
 }
+
+void DataTable::SaveHeader(const String& fname, Delimiters delim) {
+  taFiler* flr = GetSaveFiler(fname, ".dat", false);
+  if(flr->ostrm)
+    SaveHeader_strm(*flr->ostrm, delim);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool quote_str) {
+  taFiler* flr = GetSaveFiler(fname, ".dat", false);
+  if(flr->ostrm)
+    SaveDataRow_strm(*flr->ostrm, row, delim, quote_str);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) {
+  taFiler* flr = GetSaveFiler(fname, ".dat", false);
+  if(flr->ostrm)
+    SaveData_strm(*flr->ostrm, delim, quote_str);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
 
 void DataTable::SaveDataLog(const String& fname, bool append) {
   if(!log_file) return;
@@ -1098,7 +1126,7 @@ void DataTable::SaveDataLog(const String& fname, bool append) {
   else {
     log_file->SaveAs();
     if(log_file->isOpen())
-      SaveHeader(*log_file->ostrm);
+      SaveHeader_strm(*log_file->ostrm);
   }
 }
 
@@ -1133,7 +1161,7 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
 int_Array DataTable::load_col_idx;
 int_Array DataTable::load_mat_idx;
 
-int DataTable::LoadHeader(istream& strm, Delimiters delim) {
+int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
   char cdlm = GetDelim(delim);
   load_col_idx.Reset();
   load_mat_idx.Reset();
@@ -1169,7 +1197,7 @@ int DataTable::LoadHeader(istream& strm, Delimiters delim) {
   return c;
 }
 
-int DataTable::LoadDataRow(istream& strm, Delimiters delim, bool quote_str) {
+int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str) {
   char cdlm = GetDelim(delim);
   StructUpdate(true);
   bool added_row = false;
@@ -1181,7 +1209,7 @@ int DataTable::LoadDataRow(istream& strm, Delimiters delim, bool quote_str) {
     c = ReadTillDelim(strm, str, cdlm, quote_str);
     if(c == EOF) break;
     if(str == "_H:") {
-      c = LoadHeader(strm, delim);
+      c = LoadHeader_strm(strm, delim);
       if(c == EOF) break;
       continue;
     }
@@ -1225,16 +1253,44 @@ int DataTable::LoadDataRow(istream& strm, Delimiters delim, bool quote_str) {
   return c;
 }
 
-void DataTable::LoadData(istream& strm, Delimiters delim, bool quote_str, int max_recs) {
+void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, int max_recs) {
   load_col_idx.Reset();
   load_mat_idx.Reset();
   int st_row = rows;
   while(true) {
-    int c = LoadDataRow(strm, delim, quote_str);
+    int c = LoadDataRow_strm(strm, delim, quote_str);
     if(c == EOF) break;
     if((max_recs > 0) && (rows - st_row >= max_recs)) break;
   }
   //  RemoveRow(-1);		// last one is empty..
+}
+
+int DataTable::LoadHeader(const String& fname, Delimiters delim) {
+  taFiler* flr = GetLoadFiler(fname, ".dat", false);
+  int rval = 0;
+  if(flr->istrm)
+    rval = LoadHeader_strm(*flr->istrm, delim);
+  flr->Close();
+  taRefN::unRefDone(flr);
+  return rval;
+}
+
+int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str) {
+  taFiler* flr = GetLoadFiler(fname, ".dat", false);
+  int rval = 0;
+  if(flr->istrm)
+    rval = LoadDataRow_strm(*flr->istrm, delim, quote_str);
+  flr->Close();
+  taRefN::unRefDone(flr);
+  return rval;
+}
+
+void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, int max_recs) {
+  taFiler* flr = GetLoadFiler(fname, ".dat", false);
+  if(flr->istrm)
+    LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
+  flr->Close();
+  taRefN::unRefDone(flr);
 }
 
 void DataTable::SetColName(const String& col_nm, int col) {
@@ -1245,7 +1301,7 @@ void DataTable::SetColName(const String& col_nm, int col) {
 void DataTable::WriteClose_impl() {
   UpdateAllViews();
   if(log_file && log_file->isOpen()) {
-    SaveDataRow(*log_file->ostrm);
+    SaveDataRow_strm(*log_file->ostrm);
   }
 }
 

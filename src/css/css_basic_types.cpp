@@ -154,22 +154,6 @@ cssString::operator ostream*() const {
     taRefN::Ref(ths->gf);
   }
   ths->gf->fname = val;
-#ifdef DMEM_COMPILE
-  // provide different names for all the non-primary processors
-  if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc > 0)) {
-    String fnm = ths->gf->fname;
-    if(fnm.contains(taMisc::compress_sfx)) {
-      fnm = fnm.before(taMisc::compress_sfx) +
-	String(".p") + taMisc::LeadingZeros(taMisc::dmem_proc, 3) + taMisc::compress_sfx;
-    }
-    else {
-      fnm += String(".p") + taMisc::LeadingZeros(taMisc::dmem_proc, 3);
-    }
-    ths->gf->fname = fnm;
-    if(taMisc::dmem_debug)
-      cerr << "proc: " << taMisc::dmem_proc << " setting fname to: " << ths->gf->fname << endl;
-  }
-#endif
   ostream* strm = ths->gf->open_write();
   if((strm == NULL) || !(ths->gf->open_file)) {
     cssMisc::Error(prog, "String -> ostream*: could not open file", val);

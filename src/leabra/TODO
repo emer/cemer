@@ -1,12 +1,17 @@
 leabra todo list:
 
-* SaveNetwork[Weights] program -- uses above (needs taMisc call -- in leabra_ra)
-
 * change WriteWeights etc to take String arg + getfile stuff -- need a coherent strategy
   on this: regular visible fun takes fname arg, _strm takes the stream arg..
   change this for all ta_base !!?
+* SaveNetwork[Weights] program -- test with above
 
-* fix c_String conversion to -> ostream*
+* Network geom:
+> new:
+> un_geom (or "geom"): x, y
+> un_count: n // #EXPERT
+> bool: use_gps
+> gp_geom: x, y
+> gp_count: n // #EXPERT
 
 * extrew in trial monitor seems not to be working: 12ax demo
 * change gp name to include unique ctr so group fun works.
@@ -28,6 +33,11 @@ Program issues
 
 css:
 * syntax error ^ doesn't show up in right place..
+
+
+-----------
+Check:
+
 
 -----------
 current bugs:

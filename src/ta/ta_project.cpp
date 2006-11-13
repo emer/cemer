@@ -254,8 +254,8 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
   
 }
 
-int taProject::LoadAs_File(const String& fname, TypeDef* td, void** el_) {
-  int rval = inherited::LoadAs_File(fname, td, el_);
+int taProject::Load(const String& fname, taBase** loaded_obj_ptr) {
+  int rval = inherited::Load(fname, loaded_obj_ptr);
   if(fname.contains(".proj"))
     base_fname = fname.before(".proj");
   else
@@ -263,17 +263,17 @@ int taProject::LoadAs_File(const String& fname, TypeDef* td, void** el_) {
   return rval;
 }
 
-int taProject::SaveAs(ostream& strm, TAPtr par, int indent) {
+int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
 #ifdef TA_GUI
   if (use_sim_log) {
     UpdateSimLog();
   }
 #endif
-  return inherited::SaveAs(strm, par, indent);
+  return inherited::Save_strm(strm, par, indent);
 }
 
-int taProject::SaveAs_File(const String& fname) {
-  int rval = inherited::SaveAs_File(fname);
+int taProject::SaveAs(const String& fname) {
+  int rval = inherited::SaveAs(fname);
   if(fname.contains(".proj"))
     base_fname = fname.before(".proj");
   else
@@ -670,7 +670,7 @@ bool taRootBase::Startup_ProcessArgs() {
     proj_ld = taMisc::FindArgValContains(".proj");
 
   if(!proj_ld.empty())
-    tabMisc::root->projects.LoadAs_File(proj_ld);
+    tabMisc::root->projects.Load(proj_ld);
 
   cssMisc::TopShell->RunStartupScript();
 
