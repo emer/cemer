@@ -34,9 +34,8 @@
 
 //NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
 // no Qt-dependencies
-//TODO: (short term) need to add this path to makea
 //TODO: longer-term, we should push these into our config.h
-#include </usr/local/Trolltech/Qt-4.1/src/corelib/global/qconfig.h>
+#include </usr/local/Trolltech/Qt-4.1/include/QtCore/qconfig.h>
 // define our own versions of stuff we need from qconfig.h, so remainder
 // of the file is independent of that stuff
 #define TA_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT // usually 64
@@ -217,7 +216,10 @@
 
 #include <stdint.h>
 
-// define useful types -- these will be defined by QT, so don't define them if using QT
+// define useful types -- some will be defined by QT, so don't define them if using QT
+
+typedef void* voidptr; // for maketa, which chokes on void* in a template
+
 #if ((defined TA_GUI) && (!defined __MAKETA__))
 // replicate the builtin bool type for those that don't have it
 #ifdef NO_BUILTIN_BOOL

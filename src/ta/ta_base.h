@@ -1677,7 +1677,6 @@ protected:
 TA_ARRAY_OPS(Variant_Array)
 
 
-typedef void* voidptr; // for maketa, which chokes on void* in a template
 class TA_API voidptr_Array : public taArray<voidptr> {
   // #NO_UPDATE_AFTER
 public:
