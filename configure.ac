@@ -102,7 +102,7 @@ AC_CHECK_LIB([gsl],[main],
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
 # Let the codebase know where to find auxiliary files
-CXXFLAGS="$CXXFLAGS -DWHEREAMI=$datadir"
+CXXFLAGS="$CXXFLAGS -DWHEREAMI=\"\$(datadir)\""
 
 # --with-readline
 if test "$readline" = "true"; then

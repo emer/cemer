@@ -44,6 +44,7 @@ MAKETA_FLAGS =\
 	-I@abs_srcdir@/../css \
 	-I@abs_srcdir@/../leabra \
 	-I@abs_srcdir@/../taiqtso \
-	-I@abs_srcdir@/../bp 
+	-I@abs_srcdir@/../bp \
+	-I${QTDIR}/include/QtCore
 
 BUILT_SOURCES = ${PROJNAME}_TA_type.h ${PROJNAME}_TA_inst.h
