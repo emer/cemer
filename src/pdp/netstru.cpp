@@ -631,7 +631,7 @@ void Con_Group::Copy_Weights(const Con_Group* src) {
     Cn(i)->wt = src->Cn(i)->wt;
 }
 
-void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) {
+void Con_Group::SaveWeights_strm(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) {
   // this saves writing weights for recv-based linked weights
   if(!own_cons) return;
   int i;
@@ -642,7 +642,7 @@ void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) 
     break;
   case Con_Group::TEXT_IDX:
     if((prjn == NULL) || (prjn->from == NULL)) {
-      taMisc::Warning("Error in WriteWeights::BINARY_IDX: NULL prjn or prjn->from");
+      taMisc::Warning("Error in SaveWeights::BINARY_IDX: NULL prjn or prjn->from");
       return;
     }
     strm << "#Size " << size << "\n";
@@ -650,7 +650,7 @@ void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) 
       int lidx = prjn->from->units.FindLeafEl(Un(i));
       if(lidx < 0) {
 	lidx = 0;
-	taMisc::Warning("Error in WriteWeights::BINARY_IDX: can't find unit in connection: ", String(i),
+	taMisc::Warning("Error in SaveWeights::BINARY_IDX: can't find unit in connection: ", String(i),
 		      "in layer:", prjn->layer->name);
       }
       strm << lidx << " " << Cn(i)->wt << "\n";
@@ -662,7 +662,7 @@ void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) 
     break;
   case Con_Group::BINARY_IDX:
     if((prjn == NULL) || (prjn->from == NULL)) {
-      taMisc::Warning("Error in WriteWeights::BINARY_IDX: NULL prjn or prjn->from");
+      taMisc::Warning("Error in SaveWeights::BINARY_IDX: NULL prjn or prjn->from");
       return;
     }
     strm << size << "\n";
@@ -670,7 +670,7 @@ void Con_Group::WriteWeights(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) 
       int lidx = prjn->from->units.FindLeafEl(Un(i));
       if(lidx < 0) {
 	lidx = 0;
-	taMisc::Warning("Error in WriteWeights::BINARY_IDX: can't find unit in connection: ", String(i),
+	taMisc::Warning("Error in SaveWeights::BINARY_IDX: can't find unit in connection: ", String(i),
 		      "in layer:", prjn->layer->name);
       }
       strm.write((char*)&(lidx), sizeof(lidx));
@@ -699,7 +699,7 @@ static int con_group_read_weights_text_size(istream& strm, int size) {
   }
   if(c == EOF) sz = 0;
   if(sz < 0) {
-    taMisc::Warning("Con_Group::ReadWeights: Error in reading weights -- read size < 0");
+    taMisc::Warning("Con_Group::LoadWeights: Error in reading weights -- read size < 0");
   }
   return sz;
 }
@@ -707,7 +707,7 @@ static int con_group_read_weights_text_size(istream& strm, int size) {
 static bool con_group_read_weights_idx_con(Con_Group* ths, int& i, Unit* ru, int lidx ) {
   Unit* su = ths->prjn->from->units.Leaf(lidx);
   if(su == NULL) {
-    taMisc::Warning("Error in ReadWeights::_IDX: unit at leaf index: ",
+    taMisc::Warning("Error in LoadWeights::_IDX: unit at leaf index: ",
 		  String(lidx), "not found in layer:", ths->prjn->from->name);
     i--; ths->EnforceSize(ths->size-1);
     ru->n_recv_cons--;
@@ -715,7 +715,7 @@ static bool con_group_read_weights_idx_con(Con_Group* ths, int& i, Unit* ru, int
   }
   Con_Group* send_gp = (Con_Group*)su->send.SafeGp(ths->prjn->send_idx);
   if(send_gp == NULL) {
-    taMisc::Warning("Error in ReadWeights::_IDX: unit at leaf index: ",
+    taMisc::Warning("Error in LoadWeights::_IDX: unit at leaf index: ",
 		  String(lidx), "does not have proper send group:", String(ths->prjn->send_idx));
     i--; ths->EnforceSize(ths->size-1);
     ru->n_recv_cons--;
@@ -745,7 +745,7 @@ static bool con_group_read_weights_idx_con(Con_Group* ths, int& i, Unit* ru, int
   return true;
 }
 
-void Con_Group::ReadWeights(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt) {
+void Con_Group::LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt) {
   // this saves writing weights for recv-based linked weights
   if(!own_cons) return;
   int i;
@@ -840,14 +840,14 @@ void Con_Group::ReadWeights(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt
   case Con_Group::BINARY_IDX:
     {
       if((prjn == NULL) || (prjn->from == NULL)) {
-	taMisc::Warning("Error in ReadWeights::BINARY_IDX: NULL prjn or prjn->from in WriteWeights::BINARY_IDX");
+	taMisc::Warning("Error in LoadWeights::BINARY_IDX: NULL prjn or prjn->from in SaveWeights::BINARY_IDX");
 	return;
       }
       int sz;
       strm >> sz;  strm.get();
       if(sz == 0) return;	// zero size likely = DMEM save so just skip it!
       if(sz < 0) {
-	taMisc::Warning("Error in ReadWeights::BINARY_IDX: read size < 0");
+	taMisc::Warning("Error in LoadWeights::BINARY_IDX: read size < 0");
 	return;
       }
       ru->n_recv_cons += sz - size;
@@ -862,6 +862,22 @@ void Con_Group::ReadWeights(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt
     }
     break;
   }
+}
+
+void Con_Group::SaveWeights(const String& fname, Unit* ru, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  if(flr->ostrm)
+    SaveWeights_strm(*flr->ostrm, ru, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void Con_Group::LoadWeights(const String& fname, Unit* ru, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  if(flr->istrm)
+    LoadWeights_strm(*flr->istrm, ru, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
 }
 
 void Con_Group::TransformWeights(const SimpleMathSpec& trans) {
@@ -1922,7 +1938,7 @@ void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
   }
 }
 
-void Unit::WriteWeights(ostream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt) {
+void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt) {
   if(fmt == Con_Group::TEXT)
     strm << "#Unit " << name << "\n";
   if(bias) {
@@ -1945,11 +1961,11 @@ void Unit::WriteWeights(ostream& strm, Projection* prjn, Con_Group::WtSaveFormat
     if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
     if(fmt == Con_Group::TEXT)
       strm << "#Con_Group " << g << "\n";
-    cg->WriteWeights(strm, this, fmt);
+    cg->SaveWeights_strm(strm, this, fmt);
   }
 }
 
-void Unit::ReadWeights(istream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt) {
+void Unit::LoadWeights_strm(istream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt) {
   if(bias) {
     switch(fmt) {
     case Con_Group::TEXT:
@@ -2038,9 +2054,25 @@ void Unit::ReadWeights(istream& strm, Projection* prjn, Con_Group::WtSaveFormat 
   for(g = 0; g < recv.gp.size; g++) {
     Con_Group* cg = (Con_Group*)recv.gp.FastEl(g);
     if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
-    cg->ReadWeights(strm, this, fmt);
+    cg->LoadWeights_strm(strm, this, fmt);
     if(strm.eof()) break;
   }
+}
+
+void Unit::SaveWeights(const String& fname, Projection* prjn, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  if(flr->ostrm)
+    SaveWeights_strm(*flr->ostrm, prjn, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void Unit::LoadWeights(const String& fname, Projection* prjn, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  if(flr->istrm)
+    LoadWeights_strm(*flr->istrm, prjn, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
 }
 
 void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
@@ -2815,20 +2847,36 @@ void Projection::Copy_Weights(const Projection* src) {
   }
 }
 
-void Projection::WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt) {
+void Projection::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i)
-    u->WriteWeights(strm, this, fmt);
+    u->SaveWeights_strm(strm, this, fmt);
 }
 
-void Projection::ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt) {
+void Projection::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
-    u->ReadWeights(strm, this, fmt);
+    u->LoadWeights_strm(strm, this, fmt);
     if(strm.eof()) break;
   }
+}
+
+void Projection::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  if(flr->ostrm)
+    SaveWeights_strm(*flr->ostrm, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void Projection::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  if(flr->istrm)
+    LoadWeights_strm(*flr->istrm, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
 }
 
 void Projection::TransformWeights(const SimpleMathSpec& trans) {
@@ -3035,20 +3083,36 @@ void Unit_Group::Copy_Weights(const Unit_Group* src) {
   }
 }
 
-void Unit_Group::WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt) {
+void Unit_Group::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, this->, i)
-    u->WriteWeights(strm, NULL, fmt);
+    u->SaveWeights_strm(strm, NULL, fmt);
 }
 
-void Unit_Group::ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt) {
+void Unit_Group::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, this->, i) {
     if(strm.eof()) break;
-    u->ReadWeights(strm, NULL, fmt);
+    u->LoadWeights_strm(strm, NULL, fmt);
   }
+}
+
+void Unit_Group::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  if(flr->ostrm)
+    SaveWeights_strm(*flr->ostrm, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void Unit_Group::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  if(flr->istrm)
+    LoadWeights_strm(*flr->istrm, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
 }
 
 void Unit_Group::TransformWeights(const SimpleMathSpec& trans) {
@@ -4014,13 +4078,29 @@ float Layer::Compute_SSE() {
 void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
 }
-void Layer::WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt) {
+void Layer::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
   if(fmt == Con_Group::TEXT)
     strm << "#Layer " << name << "\n";
-  units.WriteWeights(strm, fmt);
+  units.SaveWeights_strm(strm, fmt);
 }
-void Layer::ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt) {
-  units.ReadWeights(strm, fmt);
+void Layer::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt) {
+  units.LoadWeights_strm(strm, fmt);
+}
+
+void Layer::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  if(flr->ostrm)
+    SaveWeights_strm(*flr->ostrm, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void Layer::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  if(flr->istrm)
+    LoadWeights_strm(*flr->istrm, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
 }
 
 void Layer::TransformWeights(const SimpleMathSpec& trans) {
@@ -5284,7 +5364,7 @@ void Network::Copy_Weights(const Network* src) {
   taMisc::DoneBusy();
 }
 
-void Network::WriteWeights(ostream& strm, Network::WtSaveFormat fmt) {
+void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
   taMisc::Busy();
   strm << "#Fmt " << fmt << "\n"
        << "#Name " << GetName() << "\n"
@@ -5294,22 +5374,22 @@ void Network::WriteWeights(ostream& strm, Network::WtSaveFormat fmt) {
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesion)
-      l->WriteWeights(strm, (Con_Group::WtSaveFormat)fmt);
+      l->SaveWeights_strm(strm, (Con_Group::WtSaveFormat)fmt);
   }
   taMisc::DoneBusy();
 }
 
-void Network::ReadWeights(istream& strm) {
+void Network::LoadWeights_strm(istream& strm) {
   taMisc::Busy();
   int c = strm.peek();
   if(c != '#') {
-    taMisc::Error("ReadWeights: file format is incorrect, expected #");
+    taMisc::Error("LoadWeights: file format is incorrect, expected #");
     return;
   }
   strm.get();
   c = strm.peek();
   if(!((c == 'F') || (c == 'N'))) {
-    taMisc::Error("ReadWeights: file format is incorrect, expected Fmt or Name");
+    taMisc::Error("LoadWeights: file format is incorrect, expected Fmt or Name");
     return;
   }
   if(c == 'F') {
@@ -5334,11 +5414,27 @@ void Network::ReadWeights(istream& strm) {
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesion)
-      l->ReadWeights(strm, (Con_Group::WtSaveFormat)wt_save_fmt);
+      l->LoadWeights_strm(strm, (Con_Group::WtSaveFormat)wt_save_fmt);
     if(strm.eof()) break;
   }
   UpdateAllViews();
   taMisc::DoneBusy();
+}
+
+void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
+  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  if(flr->ostrm)
+    SaveWeights_strm(*flr->ostrm, fmt);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void Network::LoadWeights(const String& fname) {
+  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  if(flr->istrm)
+    LoadWeights_strm(*flr->istrm);
+  flr->Close();
+  taRefN::unRefDone(flr);
 }
 
 void Network::LayerZPos_Add(int add_to_z) {

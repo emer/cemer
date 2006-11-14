@@ -1,9 +1,7 @@
 leabra todo list:
 
-* change WriteWeights etc to take String arg + getfile stuff -- need a coherent strategy
-  on this: regular visible fun takes fname arg, _strm takes the stream arg..
-  change this for all ta_base !!?
-* SaveNetwork[Weights] program -- test with above
+* fix Load/Save weights to write unit indicies so are totally robust.
+  * new format
 
 * Network geom:
 > new:
@@ -12,6 +10,8 @@ leabra todo list:
 > bool: use_gps
 > gp_geom: x, y
 > gp_count: n // #EXPERT
+
+* don't show paths in taMisc -- no edits for them anyway
 
 * extrew in trial monitor seems not to be working: 12ax demo
 * change gp name to include unique ctr so group fun works.

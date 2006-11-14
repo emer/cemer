@@ -421,7 +421,7 @@ LeabraProject .projects[0] {
 	    T3DataViewFrame @[1] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
-		  T3DataView_List @.children = [174] {
+		  T3DataView_List @.children = [186] {
 		    LayerView @[0] { };
 		    LayerView @[1] { };
 		    LayerView @[2] { };
@@ -596,6 +596,18 @@ LeabraProject .projects[0] {
 		    PrjnView @[171] { };
 		    PrjnView @[172] { };
 		    PrjnView @[173] { };
+		    LayerView @[174] { };
+		    LayerView @[175] { };
+		    LayerView @[176] { };
+		    PrjnView @[177] { };
+		    PrjnView @[178] { };
+		    PrjnView @[179] { };
+		    LayerView @[180] { };
+		    LayerView @[181] { };
+		    LayerView @[182] { };
+		    PrjnView @[183] { };
+		    PrjnView @[184] { };
+		    PrjnView @[185] { };
 		  };
 
 		  ScaleRange_List @.scale_ranges = [1] {
@@ -2488,28 +2500,28 @@ else min_cycles = network->min_cycles_phase2;
      ProgVar @[0] {
       name="fname";
       var_type=T_String;
-      string_val=;
+      string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
       objs_ptr=0;
       desc=;
      };
      ProgVar @[1] {
       name="epoch_str";
       var_type=T_String;
-      string_val=;
+      string_val="0036";
       objs_ptr=0;
       desc="string rep of epoch with leading zeros";
      };
      ProgVar @[2] {
       name="batch_str";
       var_type=T_String;
-      string_val=;
+      string_val="03";
       objs_ptr=0;
       desc="string rep of batch with leading zeros";
      };
      ProgVar @[3] {
       name="tag";
       var_type=T_String;
-      string_val=;
+      string_val=".03_0036";
       objs_ptr=0;
       desc="batch + epoch";
      };
@@ -2566,9 +2578,9 @@ else min_cycles = network->min_cycles_phase2;
       off=0;
       result_var=NULL;
       obj=$43$;
-      method=Network::WriteWeights;
+      method=Network::SaveWeights;
       args{ fname;Network::TEXT_IDX;};
-{ ostream& strm;Network::WtSaveFormat fmt;      };
+{ const taString& fname;Network::WtSaveFormat fmt;      };
      };
     };
    };
@@ -3785,6 +3797,84 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[173] {
+	    m_data=$50$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   LayerView @[174] {
+	    m_data=$45$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	   };
+	   LayerView @[175] {
+	    m_data=$46$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
+	   };
+	   LayerView @[176] {
+	    m_data=$47$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
+	   };
+	   PrjnView @[177] {
+	    m_data=$48$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[178] {
+	    m_data=$49$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[179] {
+	    m_data=$50$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   LayerView @[180] {
+	    m_data=$45$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	   };
+	   LayerView @[181] {
+	    m_data=$46$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
+	   };
+	   LayerView @[182] {
+	    m_data=$47$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
+	   };
+	   PrjnView @[183] {
+	    m_data=$48$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[184] {
+	    m_data=$49$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[185] {
 	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {

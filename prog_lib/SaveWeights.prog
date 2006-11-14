@@ -48,28 +48,28 @@ Program .projects[0].programs.gp[0][9] {
   ProgVar @[0] {
    name="fname";
    var_type=T_String;
-   string_val=;
+   string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
    objs_ptr=0;
    desc=;
   };
   ProgVar @[1] {
    name="epoch_str";
    var_type=T_String;
-   string_val=;
+   string_val="0036";
    objs_ptr=0;
    desc="string rep of epoch with leading zeros";
   };
   ProgVar @[2] {
    name="batch_str";
    var_type=T_String;
-   string_val=;
+   string_val="03";
    objs_ptr=0;
    desc="string rep of batch with leading zeros";
   };
   ProgVar @[3] {
    name="tag";
    var_type=T_String;
-   string_val=;
+   string_val=".03_0036";
    objs_ptr=0;
    desc="batch + epoch";
   };
@@ -126,9 +126,9 @@ Program .projects[0].programs.gp[0][9] {
    off=0;
    result_var=NULL;
    obj=$5$;
-   method=Network::WriteWeights;
+   method=Network::SaveWeights;
    args{ fname;Network::TEXT_IDX;};
-{ ostream& strm;Network::WtSaveFormat fmt;   };
+{ const taString& fname;Network::WtSaveFormat fmt;   };
   };
  };
 };

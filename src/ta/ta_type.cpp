@@ -359,9 +359,7 @@ taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 taMisc::LoadVerbosity	taMisc::gui_verbose_load = taMisc::QUIET;
 
-#define STRINGIFY(x) #x
-
-String	taMisc::inst_prefix = STRINGIFY(WHEREAMI); // e.g., /usr/local/share
+String	taMisc::inst_prefix = WHEREAMI; // e.g., /usr/local/share
 String	taMisc::pkg_dir = "pdp++"; // "ta_css"; // todo: get from config.h
 String	taMisc::pkg_home; // is concat in Init_Defaults_PostLoadConfig
 String  taMisc::user_home;			// this will be set in init call

@@ -292,10 +292,14 @@ public:
 
   virtual void	Copy_Weights(const Con_Group* src);
   // copies weights from other con_group
-  virtual void	WriteWeights(ostream& strm, Unit* ru, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual void	ReadWeights(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary format)
+  virtual void	SaveWeights_strm(ostream& strm, Unit* ru, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  virtual void	LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary format)
+  virtual void	SaveWeights(const String& fname="", Unit* ru = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  virtual void	LoadWeights(const String& fname="", Unit* ru = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary format) (leave fname empty to pull up file chooser)
 
   // overload some functions to manage both connections and units
   // leave most ops separate for flexibility
@@ -492,10 +496,14 @@ public: //
   Unit_Group*	ugrp() {return GET_MY_OWNER(Unit_Group);}
   virtual void	Copy_Weights(const Unit* src, Projection* prjn = NULL);
   // copies weights from other unit (incl wts assoc with unit bias member)
-  virtual void	WriteWeights(ostream& strm, Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual void	ReadWeights(istream& strm, Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  virtual void	SaveWeights_strm(ostream& strm, Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  virtual void	LoadWeights_strm(istream& strm, Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  virtual void	SaveWeights(const String& fname="", Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  virtual void	LoadWeights(const String& fname="", Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   // #MENU #MENU_ON_Actions initialize unit external input variables
   void		SetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag | flg); }
@@ -675,10 +683,14 @@ public:
 
   virtual void	Copy_Weights(const Projection* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other projection
-  virtual void	WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual void	ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  virtual void	SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  virtual void	LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  virtual void	SaveWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  virtual void	LoadWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   // convenience functions for those defined in the spec
   void 	RemoveCons()		{ spec->RemoveCons(this); }
@@ -844,10 +856,14 @@ public:
 
   virtual void	Copy_Weights(const Unit_Group* src);
   // #MENU #MENU_ON_Object copies weights from other unit group (incl wts assoc with unit bias member)
-  virtual void	WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual void	ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  virtual void	SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  virtual void	LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  virtual void	SaveWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  virtual void	LoadWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual bool	Build();
   // #MENU #MENU_ON_Actions for subgroups: build units to specs (true if changed)
@@ -978,10 +994,14 @@ public:
 
   virtual void	Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other layer (incl wts assoc with unit bias member)
-  virtual void	WriteWeights(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual void	ReadWeights(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  virtual void	SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  virtual void	LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  virtual void	SaveWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  virtual void	LoadWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual void  Build();
   // #MENU #MENU_ON_Actions #CONFIRM build the units based on n_units, geom
@@ -1252,10 +1272,14 @@ public:
 #endif
   virtual void	Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other network (incl wts assoc with unit bias member)
-  virtual void	WriteWeights(ostream& strm, WtSaveFormat fmt = TEXT);
-  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual void	ReadWeights(istream& strm);
-  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (fmt is read from file)
+  virtual void	SaveWeights_strm(ostream& strm, WtSaveFormat fmt = TEXT);
+  // #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  virtual void	LoadWeights_strm(istream& strm);
+  // #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (fmt is read from file)
+  virtual void	SaveWeights(const String& fname="", WtSaveFormat fmt = TEXT);
+  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  virtual void	LoadWeights(const String& fname="");
+  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
   virtual void  Build();
   // #MENU #MENU_ON_Actions Build the network according to geometry
