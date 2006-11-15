@@ -75,6 +75,24 @@ void PosTwoDCoord::UpdateAfterEdit() {
   SetGtEq(0);
 }
 
+void XYNGeom::Initialize() {
+  x = 1;
+  y = 1;
+  n_not_xy = false;
+  n = 1;
+  z = 0;
+}
+
+void XYNGeom::UpdateAfterEdit() {
+  PosTwoDCoord::UpdateAfterEdit();
+  if(n_not_xy && n > 0) {
+    FitN(n);
+  }
+  else {
+    n = x * y;
+  }
+}
+
 
 TypeDef* TDCoord::StatTypeDef(int) 	{ return &TA_TDCoord; }
 

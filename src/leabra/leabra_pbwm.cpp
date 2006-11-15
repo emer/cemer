@@ -927,7 +927,7 @@ bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   if(matrix_lay->units.gp.size != lay->units.gp.size) {
     if (!quiet) taMisc::CheckError("SNrThalLayerSpec: MatrixLayer unit groups must = SNrThalLayer unit groups!");
-    lay->geom.z = matrix_lay->units.gp.size;
+    lay->gp_geom.n = matrix_lay->units.gp.size;
     return false;
   }
 
@@ -1158,7 +1158,7 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
   }
   if(snrthal_lay->units.gp.size != lay->units.gp.size) {
     if (!quiet) taMisc::CheckError("PFCLayerSpec: Gating Layer unit groups must = PFCLayer unit groups!");
-    snrthal_lay->geom.z = lay->units.gp.size;
+    snrthal_lay->gp_geom.n = lay->units.gp.size;
     return false;
   }
 
@@ -1421,7 +1421,8 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   }
   if(snrthal_lay->units.gp.size != lay->units.gp.size) {
     if (!quiet) taMisc::CheckError("PFCOutLayerSpec: Gating Layer unit groups must = PFCOutLayer unit groups!");
-    snrthal_lay->geom.z = lay->units.gp.size;
+    snrthal_lay->unit_groups = true;
+    snrthal_lay->gp_geom.n = lay->units.gp.size;
     return false;
   }
 
@@ -1434,12 +1435,13 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   if(pfc_lay->units.gp.size != lay->units.gp.size) {
     if(!quiet)
       taMisc::CheckError("PFCOutLayerSpec: PFC Layer unit groups must = PFCOutLayer unit groups, copiped from PFC Layer; Please do a Build of network");
-    lay->geom.z = pfc_lay->units.gp.size;
+    lay->unit_groups = true;
+    lay->gp_geom.n = pfc_lay->units.gp.size;
   }
   if(pfc_lay->units.leaves != lay->units.leaves) {
     if(!quiet)
       taMisc::CheckError("PFCOutLayerSpec: PFC Layer units must = PFCOutLayer units, copied from PFC Layer; Please do a Build of network");
-    lay->geom = pfc_lay->geom;
+    lay->un_geom = pfc_lay->un_geom;
   }
 
   PFCLayerSpec* pfcsp = (PFCLayerSpec*)pfc_lay->spec.spec;
@@ -1538,8 +1540,9 @@ void PFCOutLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
 static void set_n_stripes(LeabraNetwork* net, char* nm, int n_stripes, int n_units, bool sp) {
   LeabraLayer* lay = (LeabraLayer*)net->FindLayer(nm);
   if(lay == NULL) return;
-  lay->geom.z = n_stripes;
-  if(n_units > 0) lay->n_units = n_units;
+  lay->gp_geom.n = n_stripes;
+  lay->unit_groups = true;
+  if(n_units > 0) lay->un_geom.n = n_units;
   if(sp) {
     lay->gp_spc.x = 1;
     lay->gp_spc.y = 1;
@@ -1558,10 +1561,8 @@ static void set_n_stripes(LeabraNetwork* net, char* nm, int n_stripes, int n_uni
 }
 
 static void lay_set_geom(LeabraLayer* lay, int half_stripes) {
-  if(lay->n_units == 0) {
-    lay->geom.x = 1; lay->geom.y = 1; lay->n_units = 1;
-  }
-  lay->geom.z = half_stripes * 2;
+  lay->unit_groups = true;
+  lay->gp_geom.n = half_stripes * 2;
   lay->gp_geom.y = 2; lay->gp_geom.x = half_stripes;
   lay->UpdateAfterEdit();
 }
@@ -2094,7 +2095,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
-  snc->n_units = 1;
+  snc->un_geom.n = 1;
   if(snc_new) { 
     snc->pos.z = 0; snc->pos.y = 3; snc->pos.x = vta->pos.x; 
   }
@@ -2104,21 +2105,21 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     pfc_m->pos.z = 2; pfc_m->pos.y = 0; pfc_m->pos.x = mx_z2 + 1;
     if(nolrn_pfc && (input_lays.size > 0)) {
       Layer* il = (Layer*)input_lays[0];
-      pfc_m->n_units = il->n_units; pfc_m->geom.x = il->geom.x; pfc_m->geom.y = il->geom.y;
+      pfc_m->un_geom = il->un_geom;
     }
     else {
-      pfc_m->n_units = 30; pfc_m->geom.x = 5; pfc_m->geom.y = 6;
+      pfc_m->un_geom.n = 30; pfc_m->un_geom.x = 5; pfc_m->un_geom.y = 6;
     }
   }
   lay_set_geom(pfc_m, half_stripes);
 
   if(matrix_m_new) { 
     matrix_m->pos.z = 1; matrix_m->pos.y = 0; matrix_m->pos.x = mx_z1 + 1; 
-    matrix_m->n_units = 28; matrix_m->geom.x = 4; matrix_m->geom.y = 7;
+    matrix_m->un_geom.n = 28; matrix_m->un_geom.x = 4; matrix_m->un_geom.y = 7;
   }
   lay_set_geom(matrix_m, half_stripes);
 
-  snrthal_m->n_units = 1;
+  snrthal_m->un_geom.n = 1;
   if(snrthal_m_new) {
     snrthal_m->pos.z = 0; snrthal_m->pos.y = 6; snrthal_m->pos.x = snc->pos.x;
   }
@@ -2133,10 +2134,10 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
       pfc_o->pos.x = pfc_m->pos.x + pfc_m->act_geom.x + 2;
       if(nolrn_pfc && (input_lays.size > 0)) {
 	Layer* il = (Layer*)input_lays[0];
-	pfc_o->n_units = il->n_units; pfc_o->geom.x = il->geom.x; pfc_o->geom.y = il->geom.y;
+	pfc_o->un_geom = il->un_geom;
       }
       else {
-	pfc_o->n_units = pfc_m->n_units; pfc_o->geom = pfc_m->geom;
+	pfc_o->un_geom = pfc_m->un_geom;
       }
     }
     lay_set_geom(pfc_o, half_stripes);
@@ -2144,11 +2145,11 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     if(matrix_o_new) { 
       matrix_o->pos.z = matrix_m->pos.z; matrix_o->pos.y = matrix_m->pos.y;
       matrix_o->pos.x = matrix_m->pos.x + matrix_m->act_geom.x + 2; 
-      matrix_o->n_units = 28; matrix_o->geom.x = 4; matrix_o->geom.y = 7;
+      matrix_o->un_geom.n = 28; matrix_o->un_geom.x = 4; matrix_o->un_geom.y = 7;
     }
     lay_set_geom(matrix_o, half_stripes);
 
-    snrthal_o->n_units = 1;
+    snrthal_o->un_geom.n = 1;
     if(snrthal_o_new) {
       snrthal_o->pos.z = 0; snrthal_o->pos.y = 6;
       snrthal_o->pos.x = snrthal_m->pos.x + snrthal_m->act_geom.x + 2;
@@ -2160,7 +2161,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 //     if(patch_new) {
 //       matrix_m->UpdateAfterEdit();
 //       patch->pos.z = 1; patch->pos.y = 0; patch->pos.x = matrix_m->pos.x + matrix_m->act_geom.x + 2; 
-//       patch->n_units = 20; patch->geom.x = 20; patch->geom.y = 1;
+//       patch->un_geom.n = 20; patch->un_geom.x = 20; patch->un_geom.y = 1;
 //       patch->gp_geom.x = 1; patch->gp_geom.y = n_stripes;
 //       patch->UpdateAfterEdit();
 //     }

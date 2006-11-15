@@ -3579,14 +3579,14 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
       ilay->name = inm;
       ilay->pos.z = lay->pos.z;
       ilay->pos.x = lay->pos.x + lay->act_geom.x + 1;
-      ilay->n_units = n_inhib_units;
+      ilay->un_geom.n = n_inhib_units;
       if(n_inhib_units <= 20) {
-	ilay->geom.x = 2; ilay->geom.y = n_inhib_units / 2;
-	while(ilay->geom.x * ilay->geom.y < n_inhib_units) ilay->geom.y++;
+	ilay->un_geom.x = 2; ilay->un_geom.y = n_inhib_units / 2;
+	while(ilay->un_geom.x * ilay->un_geom.y < n_inhib_units) ilay->un_geom.y++;
       }
       else if(n_inhib_units <= 40) {
-	ilay->geom.x = 4; ilay->geom.y = n_inhib_units / 4;
-	while(ilay->geom.x * ilay->geom.y < n_inhib_units) ilay->geom.y++;
+	ilay->un_geom.x = 4; ilay->un_geom.y = n_inhib_units / 4;
+	while(ilay->un_geom.x * ilay->un_geom.y < n_inhib_units) ilay->un_geom.y++;
       }
     }
     ilay->SetLayerSpec(inhib_ls);

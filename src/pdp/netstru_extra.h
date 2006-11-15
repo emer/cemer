@@ -445,7 +445,7 @@ public:
   TwoDCoord ru_geo;		// #READ_ONLY receiving unit geometry
   TwoDCoord recv_gp_ed;		// #READ_ONLY recv gp end
   TwoDCoord recv_gp_ex_ed;	// #READ_ONLY recv gp ex end
-  PosTDCoord su_act_geom;	// #READ_ONLY sending actual geometry
+  PosTwoDCoord su_act_geom;	// #READ_ONLY sending actual geometry
   TwoDCoord n_recv_gps;		// #READ_ONLY number of recv gps
   TwoDCoord n_send_units;	// #READ_ONLY number of sending units total 
   TwoDCoord rf_ovlp; 		// #READ_ONLY ovlp = send / (ng + 1)
@@ -489,7 +489,7 @@ public:
   bool		reciprocal;	// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
 
   TwoDCoord ru_geo;		// #READ_ONLY receiving unit geometry
-  PosTDCoord su_act_geom;	// #READ_ONLY sending actual geometry
+  PosTwoDCoord su_act_geom;	// #READ_ONLY sending actual geometry
   FloatTwoDCoord rf_width;	// #READ_ONLY how much to move sending rf per recv group
 
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes

@@ -201,6 +201,23 @@ public:
   inline PosTwoDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; return *this;}
 };
 
+class TA_API XYNGeom : public PosTwoDCoord {
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP two-dimensional X-Y geometry with possibility of total number n != x*y
+public:
+  bool	       	n_not_xy;	// #DEF_false total number of units is less than x * y
+  int		n;		// #CONDEDIT_ON_n_not_xy:true total number of units (=x*y unless n_not_xy is true)
+
+  int 		z;
+  // #HIDDEN #READ_ONLY #NO_SAVE legacy v3 third dimension -- used for conversion only -- do not use!!  to be removed at some later date
+
+  void 	Copy(const XYNGeom& cp)
+  { PosTwoDCoord::Copy(cp); n_not_xy = cp.n_not_xy; n = cp.n; z = cp.z; }
+  void	UpdateAfterEdit();
+  void	Initialize();
+  void	Destroy()		{ };
+  TA_BASEFUNS(XYNGeom);
+};
+
 class TA_API TDCoord : public TwoDCoord {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 3D coordinate space
 public:

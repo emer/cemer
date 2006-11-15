@@ -1056,12 +1056,12 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
     lve->pos.z = 0; lve->pos.y = 0; lve->pos.x = 0;
   }
 
-  if(pvi->n_units != n_lv_u) { pvi->n_units = n_lv_u; pvi->geom.x = n_lv_u; pvi->geom.y = 1; }
-  if(lve->n_units != n_lv_u) { lve->n_units = n_lv_u; lve->geom.x = n_lv_u; lve->geom.y = 1; }
-  if(lvi->n_units != n_lv_u) { lvi->n_units = n_lv_u; lvi->geom.x = n_lv_u; lvi->geom.y = 1; }
-  if(pve->n_units != n_lv_u) { pve->n_units = n_lv_u; pve->geom.x = n_lv_u; pve->geom.y = 1; }
-  vta->n_units = 1;
-  rew_targ_lay->n_units = 1;
+  if(pvi->un_geom.n != n_lv_u) { pvi->un_geom.n = n_lv_u; pvi->un_geom.x = n_lv_u; pvi->un_geom.y = 1; }
+  if(lve->un_geom.n != n_lv_u) { lve->un_geom.n = n_lv_u; lve->un_geom.x = n_lv_u; lve->un_geom.y = 1; }
+  if(lvi->un_geom.n != n_lv_u) { lvi->un_geom.n = n_lv_u; lvi->un_geom.x = n_lv_u; lvi->un_geom.y = 1; }
+  if(pve->un_geom.n != n_lv_u) { pve->un_geom.n = n_lv_u; pve->un_geom.x = n_lv_u; pve->un_geom.y = 1; }
+  vta->un_geom.n = 1;
+  rew_targ_lay->un_geom.n = 1;
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects

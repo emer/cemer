@@ -3,6 +3,15 @@ leabra todo list:
 * fix Load/Save weights to write unit indicies so are totally robust.
   * new format
 
+LayerGeom : TwoDGeom {
+  bool n_not_xy;     // #DEF_false total number is less than x * y
+  int  n;	     // #CONDEDIT_n_not_xy:true total number (=x*y unless n_not_xy is set)
+}
+
+use for un_geom & gp_geom;  
+
+use bool use_gps?  ignore params if not??  or 1x1 = 1 is not using??
+
 * Network geom:
 > new:
 > un_geom (or "geom"): x, y

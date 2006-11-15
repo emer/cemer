@@ -308,7 +308,7 @@ void TesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
 }
 
 void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn) {
-  PosTDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
+  PosTwoDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
   // positions of center of recv in sending layer
   TwoDCoord sctr;
   GetCtrFmRecv(sctr, ruc);
@@ -329,7 +329,7 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projecti
 }
 
 void TesselPrjnSpec::Connect_NonLinked(Projection* prjn) {
-  PosTDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
+  PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
 
   TwoDCoord use_recv_n = recv_n;
 
@@ -355,8 +355,8 @@ void TesselPrjnSpec::Connect_NonLinked(Projection* prjn) {
 
 // gp link ignores skipping!!
 void TesselPrjnSpec::Connect_GpLinkFmSrc(Projection* prjn) {
-  PosTDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
-  PosTDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
+  PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
+  PosTwoDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
 
   if((recv_skip.x != 1) || (recv_skip.y != 1)) {
     taMisc::Error("*** recv_skip != 1 is ignored for linked tessel prjn specs in TesselPrjnSpec:",name);
@@ -439,7 +439,7 @@ void TesselPrjnSpec::Connect_GpLinkFmSrc(Projection* prjn) {
 }
 
 void TesselPrjnSpec::Connect_GpLinked(Projection* prjn) {
-  PosTDCoord ru_geo;
+  PosTwoDCoord ru_geo;
   prjn->layer->GetActGeomNoSpc(ru_geo);
   TwoDCoord use_recv_n = recv_off;
   use_recv_n += recv_group;	// just do the group here
@@ -466,8 +466,8 @@ void TesselPrjnSpec::Connect_GpLinked(Projection* prjn) {
 
 // just connects linked units, assuming link_src is already connected!
 void TesselPrjnSpec::Connect_UnLinkFmSrc(Projection* prjn) {
-  PosTDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
-  PosTDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
+  PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
+  PosTwoDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
   TwoDCoord use_recv_n = recv_n;
 
   if((recv_n.x == -1) || (recv_n.y == -1)) {
@@ -789,8 +789,8 @@ float PolarRndPrjnSpec::UnitDist(UnitDistType typ, Projection* prjn,
 			       const TwoDCoord& ru, const TwoDCoord& su)
 {
   FloatTwoDCoord half(.5f);
-  PosTDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
-  PosTDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
+  PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
+  PosTwoDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
   switch(typ) {
   case XY_DIST:
     return ru.Dist(su);
@@ -821,8 +821,8 @@ Unit* PolarRndPrjnSpec::GetUnitFmOff(UnitDistType typ, bool wrap, Projection* pr
 				   const TwoDCoord& ru, const FloatTwoDCoord& su_off)
 {
   FloatTwoDCoord half(.5f);
-  PosTDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
-  PosTDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
+  PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
+  PosTwoDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
   TwoDCoord suc;		// actual su coordinates
   switch(typ) {
   case XY_DIST: {
@@ -869,7 +869,7 @@ float PolarRndPrjnSpec::GetDistProb(Projection* prjn, Unit* ru, Unit* su) {
     return p_con;
   float prob = p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, su->pos));
   if(wrap) {
-    PosTDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
+    PosTwoDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
     TwoDCoord suc = su->pos;
     suc.x += su_geom.x; // wrap around in x
     prob += p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
@@ -895,7 +895,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(same_seed)
     rndm_seed.OldSeed();
 
-  PosTDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
+  PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
   TwoDCoord ru_pos;		// do this according to act_geom..
   int cnt = 0;
   Unit* ru;
@@ -1907,7 +1907,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
 }
 
 void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc, Projection* prjn) {
-  TDCoord& su_geo = prjn->from->gp_geom;
+  TwoDCoord& su_geo = prjn->from->gp_geom;
   // positions of center of recv in sending layer
   TwoDCoord sctr;
   GetCtrFmRecv(sctr, ruc);
@@ -1941,7 +1941,7 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
     return;
   }
 
-  TDCoord& ru_geo = prjn->layer->gp_geom;
+  TwoDCoord& ru_geo = prjn->layer->gp_geom;
   TwoDCoord use_recv_gp_n = recv_gp_n;
 
   if(recv_gp_n.x == -1)

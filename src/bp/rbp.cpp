@@ -458,8 +458,7 @@ void BpWizard::SRNContext(Network* net) {
   if((hidden == NULL) || (ctxt == NULL)) return;
 
   ctxt->SetUnitSpec(ctxts);
-  ctxt->n_units = hidden->n_units;
-  ctxt->geom = hidden->geom;
+  ctxt->un_geom = hidden->un_geom;
 
   net->layers.MoveAfter(hidden, ctxt);
   net->FindMakePrjn(ctxt, hidden, otop); // one-to-one into the ctxt layer

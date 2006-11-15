@@ -1336,11 +1336,11 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // set geometries
 
-  if(tdrp->n_units != n_rp_u) { tdrp->n_units = n_rp_u; tdrp->geom.x = n_rp_u; tdrp->geom.y = 1; }
-  if(extrew->n_units != 8) { extrew->n_units = 8; extrew->geom.x = 8; extrew->geom.y = 1; }
-  if(tdint->n_units != n_rp_u) { tdint->n_units = n_rp_u; tdint->geom.x = n_rp_u; tdint->geom.y = 1; }
-  tdda->n_units = 1;
-  rew_targ_lay->n_units = 1;
+  if(tdrp->un_geom.n != n_rp_u) { tdrp->un_geom.n = n_rp_u; tdrp->un_geom.x = n_rp_u; tdrp->un_geom.y = 1; }
+  if(extrew->un_geom.n != 8) { extrew->un_geom.n = 8; extrew->un_geom.x = 8; extrew->un_geom.y = 1; }
+  if(tdint->un_geom.n != n_rp_u) { tdint->un_geom.n = n_rp_u; tdint->un_geom.x = n_rp_u; tdint->un_geom.y = 1; }
+  tdda->un_geom.n = 1;
+  rew_targ_lay->un_geom.n = 1;
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects

@@ -403,20 +403,20 @@ void ScalarValLayerSpec::HelpConfig() {
 bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
-  if(lay->n_units < 3) {
+  if(lay->un_geom.n < 3) {
     rval = false;
-    if(!quiet) taMisc::CheckError("ScalarValLayerSpec: coarse-coded scalar representation requires at least 3 units, I just set n_units");
+    if(!quiet) taMisc::CheckError("ScalarValLayerSpec: coarse-coded scalar representation requires at least 3 units, I just set un_geom.n");
     if(scalar.rep == ScalarValSpec::LOCALIST) {
-      lay->n_units = 4;
-      lay->geom.x = 4;
+      lay->un_geom.n = 4;
+      lay->un_geom.x = 4;
     }
     else if(scalar.rep == ScalarValSpec::GAUSSIAN) {
-      lay->n_units = 12;
-      lay->geom.x = 12;
+      lay->un_geom.n = 12;
+      lay->un_geom.x = 12;
     }
     else if(scalar.rep == ScalarValSpec::SUM_BAR) {
-      lay->n_units = 12;
-      lay->geom.x = 12;
+      lay->un_geom.n = 12;
+      lay->un_geom.x = 12;
     }
   }
 
@@ -500,8 +500,8 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
     if(lay->spec.spec != this) continue;
     
     if(n_units > 0) {
-      lay->n_units = n_units;
-      lay->geom.x = n_units;
+      lay->un_geom.n = n_units;
+      lay->un_geom.x = n_units;
     }
 
     LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
@@ -1128,18 +1128,18 @@ void TwoDValLayerSpec::HelpConfig() {
 bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
-  if(lay->n_units < 3) {
+  if(lay->un_geom.n < 3) {
     rval = false;
-    if(!quiet) taMisc::CheckError("TwoDValLayerSpec: coarse-coded twod representation requires at least 3 units, I just set n_units");
+    if(!quiet) taMisc::CheckError("TwoDValLayerSpec: coarse-coded twod representation requires at least 3 units, I just set un_geom.n");
     if(twod.rep == TwoDValSpec::LOCALIST) {
-      lay->n_units = 12;
-      lay->geom.x = 3;
-      lay->geom.y = 4;
+      lay->un_geom.n = 12;
+      lay->un_geom.x = 3;
+      lay->un_geom.y = 4;
     }
     else if(twod.rep == TwoDValSpec::GAUSSIAN) {
-      lay->n_units = 132;
-      lay->geom.x = 11;
-      lay->geom.y = 12;
+      lay->un_geom.n = 132;
+      lay->un_geom.x = 11;
+      lay->un_geom.y = 12;
     }
   }
 
@@ -1209,8 +1209,8 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
     if(lay->spec.spec != this) continue;
     
     if(n_units > 0) {
-      lay->n_units = n_units;
-      lay->geom.x = n_units;
+      lay->un_geom.n = n_units;
+      lay->un_geom.x = n_units;
     }
 
     LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
@@ -1284,9 +1284,9 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
 void TwoDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_val) {
   if(ugp->size < 3) return;	// must be at least a few units..
   Layer* lay = ugp->own_lay;
-  twod.InitVal(x_val, y_val, lay->geom.x, lay->geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
+  twod.InitVal(x_val, y_val, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
   int i;
-  for(i=lay->geom.x;i<ugp->size;i++) {
+  for(i=lay->un_geom.x;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     float act = .03f * bias_val.wt_gain * twod.GetUnitAct(i);
     LeabraCon_Group* recv_gp;
@@ -1310,9 +1310,9 @@ void TwoDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_
 void TwoDValLayerSpec::Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_val) {
   if(ugp->size < 3) return;	// must be at least a few units..
   Layer* lay = ugp->own_lay;
-  twod.InitVal(x_val, y_val, lay->geom.x, lay->geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
+  twod.InitVal(x_val, y_val, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
   int i;
-  for(i=lay->geom.x;i<ugp->size;i++) {
+  for(i=lay->un_geom.x;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     float act = bias_val.un_gain * twod.GetUnitAct(i);
     if(bias_val.un == TwoDValBias::GC)
@@ -1359,14 +1359,14 @@ void TwoDValLayerSpec::Compute_ActAvg_ugp(LeabraLayer* lay, Unit_Group* ug, Leab
   taLeafItr i;
   int lf = 0;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    if(lf < lay->geom.x) { lf++; continue; }
+    if(lf < lay->un_geom.x) { lf++; continue; }
     thr->acts.avg += u->act_eq;
     if(u->act_eq > thr->acts.max) {
       thr->acts.max = u->act_eq;  thr->acts.max_i = lf;
     }
     lf++;
   }
-  if(ug->leaves > lay->geom.x) thr->acts.avg /= (float)(ug->leaves - lay->geom.x);
+  if(ug->leaves > lay->un_geom.x) thr->acts.avg /= (float)(ug->leaves - lay->un_geom.x);
 }
 
 void TwoDValLayerSpec::Compute_ActMAvg_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
@@ -1377,14 +1377,14 @@ void TwoDValLayerSpec::Compute_ActMAvg_ugp(LeabraLayer* lay, Unit_Group* ug, Lea
   taLeafItr i;
   int lf = 0;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    if(lf < lay->geom.x) { lf++; continue; }
+    if(lf < lay->un_geom.x) { lf++; continue; }
     thr->acts_m.avg += u->act_m;
     if(u->act_m > thr->acts_m.max) {
       thr->acts_m.max = u->act_m;  thr->acts_m.max_i = lf;
     }
     lf++;
   }
-  if(ug->leaves > lay->geom.x) thr->acts.avg /= (float)(ug->leaves - lay->geom.x);
+  if(ug->leaves > lay->un_geom.x) thr->acts.avg /= (float)(ug->leaves - lay->un_geom.x);
 }
 
 void TwoDValLayerSpec::Compute_ActPAvg_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
@@ -1395,21 +1395,21 @@ void TwoDValLayerSpec::Compute_ActPAvg_ugp(LeabraLayer* lay, Unit_Group* ug, Lea
   taLeafItr i;
   int lf = 0;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    if(lf < lay->geom.x) { lf++; continue; }
+    if(lf < lay->un_geom.x) { lf++; continue; }
     thr->acts_p.avg += u->act_p;
     if(u->act_p > thr->acts_p.max) {
       thr->acts_p.max = u->act_p;  thr->acts_p.max_i = lf;
     }
     lf++;
   }
-  if(ug->leaves > lay->geom.x) thr->acts.avg /= (float)(ug->leaves - lay->geom.x);
+  if(ug->leaves > lay->un_geom.x) thr->acts.avg /= (float)(ug->leaves - lay->un_geom.x);
 }
 
 void TwoDValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale) {
   if(ugp->size < 3) return;	// must be at least a few units..
   Layer* lay = ugp->own_lay;
   // first initialize to zero
-  for(int i=lay->geom.x;i<ugp->size;i++) {
+  for(int i=lay->un_geom.x;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     u->SetExtFlag(Unit::EXT);
     u->ext = 0.0;
@@ -1421,8 +1421,8 @@ void TwoDValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale
     x_u->SetExtFlag(Unit::EXT); y_u->SetExtFlag(Unit::EXT);
     float x_val = x_val_range.Clip(x_u->ext);
     float y_val = y_val_range.Clip(y_u->ext);
-    twod.InitVal(x_val, y_val, lay->geom.x, lay->geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
-    for(int i=lay->geom.x;i<ugp->size;i++) {
+    twod.InitVal(x_val, y_val, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
+    for(int i=lay->un_geom.x;i<ugp->size;i++) {
       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
       float act = rescale * twod.GetUnitAct(i);
       if(act < us->opt_thresh.send)
@@ -1435,11 +1435,11 @@ void TwoDValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale
 void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
   if(ugp->size < 3) return;	// must be at least a few units..
   Layer* lay = ugp->own_lay;
-  twod.InitVal(0.0f, 0.0f, lay->geom.x, lay->geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
+  twod.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
   if(twod.n_vals == 1) {	// special case
     float x_avg = 0.0f; float y_avg = 0.0f;
     float sum_act = 0.0f;
-    for(int i=lay->geom.x;i<ugp->size;i++) {
+    for(int i=lay->un_geom.x;i<ugp->size;i++) {
       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
       LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
       float x_cur, y_cur;  twod.GetUnitVal(i, x_cur, y_cur);
@@ -1457,7 +1457,7 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
     LeabraUnit* y_u = (LeabraUnit*)ugp->FastEl(1);
     x_u->act_eq = x_avg;  x_u->act = 0.0f;  x_u->da = 0.0f;	
     y_u->act_eq = y_avg;  y_u->act = 0.0f;  y_u->da = 0.0f;
-    for(int i=2;i<lay->geom.x;i++) {	// reset the rest!
+    for(int i=2;i<lay->un_geom.x;i++) {	// reset the rest!
       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
       u->act_eq = u->act = 0.0f; u->da = 0.0f;
     }
@@ -1466,13 +1466,13 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
     // first find the max values, using sum of -1..+1 region
     static ValIdx_Array sort_ary;
     sort_ary.Reset();
-    for(int i=lay->geom.x;i<ugp->size;i++) {
+    for(int i=lay->un_geom.x;i<ugp->size;i++) {
       float sum = 0.0f;
       float nsum = 0.0f;
       for(int x=-1;x<=1;x++) {
 	for(int y=-1;y<=1;y++) {
-	  int idx = i + y * lay->geom.x + x;
-	  if(idx < lay->geom.x || idx >= ugp->size) continue;
+	  int idx = i + y * lay->un_geom.x + x;
+	  if(idx < lay->un_geom.x || idx >= ugp->size) continue;
 	  LeabraUnit* u = (LeabraUnit*)ugp->FastEl(idx);
 	  LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
 	  float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
@@ -1509,7 +1509,7 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
       y_u->act_eq = y_cur;  y_u->act = 0.0f;  y_u->da = 0.0f;
       j++; outi++;
     }
-    for(int i=2 * twod.n_vals;i<lay->geom.x;i++) {	// reset the rest!
+    for(int i=2 * twod.n_vals;i<lay->un_geom.x;i++) {	// reset the rest!
       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
       u->act_eq = u->act = 0.0f; u->da = 0.0f;
     }
@@ -1519,8 +1519,8 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
 void TwoDValLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
   if(ugp->size < 3) return;	// must be at least a few units..
   Layer* lay = ugp->own_lay;
-  twod.InitVal(0.0f, 0.0f, lay->geom.x, lay->geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
-  for(int i=lay->geom.x;i<ugp->size;i++) {
+  twod.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
+  for(int i=lay->un_geom.x;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     float x_cur, y_cur; twod.GetUnitVal(i, x_cur, y_cur);
     u->name = (String)x_cur + "," + String(y_cur);
@@ -1543,7 +1543,7 @@ void TwoDValLayerSpec::LabelUnitsNet(Network* net) {
 void TwoDValLayerSpec::ResetAfterClamp(LeabraLayer* lay, LeabraNetwork*) {
   UNIT_GP_ITR(lay, 
 	      if(ugp->size > 2) {
-		for(int i=0; i<lay->geom.x; i++) {
+		for(int i=0; i<lay->un_geom.x; i++) {
 		  LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
 		  u->act = 0.0f;		// must reset so it doesn't contribute!
 		  u->act_eq = u->ext;	// avoid clamp_range!
@@ -1577,7 +1577,7 @@ void TwoDValLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, Leabra
 }
 
 void TwoDValLayerSpec::Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net) {
-  for(int i=lay->geom.x;i<ugp->size;i++) {
+  for(int i=lay->un_geom.x;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     u->Compute_dWt(lay, net);
   }
@@ -1765,8 +1765,7 @@ void LeabraWizard::SRNContext(LeabraNetwork* net) {
   if((hidden == NULL) || (ctxt == NULL)) return;
 
   ctxt->SetLayerSpec(ctxts);
-  ctxt->n_units = hidden->n_units;
-  ctxt->geom = hidden->geom;
+  ctxt->un_geom = hidden->un_geom;
 
   net->layers.MoveAfter(hidden, ctxt);
   net->FindMakePrjn(ctxt, hidden, otop); // one-to-one into the ctxt layer

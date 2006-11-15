@@ -342,16 +342,16 @@ void UnitGroupView::BuildAll() {
   //TODO: summary mode
   Unit_Group* ugrp = this->ugrp(); //cache
   TwoDCoord coord;
-  for (coord.y = 0; coord.y < ugrp->geom.y; ++(coord.y))
-  for (coord.x = 0; coord.x < ugrp->geom.x; ++(coord.x)) {
-    Unit* unit = ugrp->FindUnitFmCoord(coord);
-    if (!unit) break; // there won't be any more units
+  for (coord.y = 0; coord.y < ugrp->geom.y; ++(coord.y)) {
+    for (coord.x = 0; coord.x < ugrp->geom.x; ++(coord.x)) {
+      Unit* unit = ugrp->FindUnitFmCoord(coord);
+      if (!unit) break; // there won't be any more units
 
-    UnitView* uv = new UnitView();
-    uv->SetData(unit);//obsunit->AddDataView(uv);
-    children.Add(uv);
+      UnitView* uv = new UnitView();
+      uv->SetData(unit);//obsunit->AddDataView(uv);
+      children.Add(uv);
+    }
   }
-
 }
 
 float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags) {
@@ -631,7 +631,7 @@ void LayerView::BuildAll() {
   Layer* lay = layer(); //cache
   Unit_Group* ugrp;
   UnitGroupView* ugv;
-  if (lay->geom.z == 1) { // single ugrp
+  if (!lay->unit_groups) { // single ugrp
     ugrp = &(lay->units);
     ugv = new UnitGroupView;
     ugv->SetData(ugrp);//obs ugrp->AddDataView(ugv);
@@ -641,7 +641,7 @@ void LayerView::BuildAll() {
 
 //    int flags = 0;// BrListViewItem::DNF_UPDATE_NAME | BrListViewItem::DNF_CAN_BROWSE| BrListViewItem::DNF_CAN_DRAG;
   } else { // multi-ugrps
-    for (int j = 0; j < lay->geom.z; ++j) {
+    for (int j = 0; j < lay->gp_geom.n; ++j) {
       ugrp = (Unit_Group*)lay->units.SafeGp(j);
       if (!ugrp) break; // maybe not built yet???
 

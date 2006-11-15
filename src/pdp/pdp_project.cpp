@@ -132,7 +132,7 @@ void Wizard::StdNetwork(Network* net) {
 	lay->pos.z = 0;
 	if(i > 0) {
 	  Layer* prv = (Layer*)net->layers[i-1];
-	  lay->pos.x = prv->pos.x + prv->geom.x + 1;
+	  lay->pos.x = prv->pos.x + prv->un_geom.x + 1;
 	}
       }
       else if(el->io_type == LayerWizEl::HIDDEN) {
@@ -148,12 +148,16 @@ void Wizard::StdNetwork(Network* net) {
 	  LayerWizEl* prvel = (LayerWizEl*)layer_cfg[i-1];
 	  if(prvel->io_type == LayerWizEl::OUTPUT) {
 	    Layer* prv = (Layer*)net->layers[i-1];
-	    lay->pos.x = prv->pos.x + prv->geom.x + 1;
+	    lay->pos.x = prv->pos.x + prv->un_geom.x + 1;
 	  }
 	}
       }
     }
-    lay->n_units = el->n_units;
+    lay->un_geom.n = el->n_units;
+    lay->un_geom.FitN(lay->un_geom.n);
+    if(lay->un_geom.x * lay->un_geom.y != lay->un_geom.n) {
+      lay->un_geom.n_not_xy = true;
+    }
     lay->UpdateAfterEdit();
   }
   int hid_ctr = 0;
@@ -213,14 +217,14 @@ void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
   for(int i=0;i<retina_spec->dogs.size; i++) {
     DoGRetinaSpec* sp = retina_spec->dogs[i];
     Layer* on_lay = net->FindMakeLayer(sp->name + "_on");
-    on_lay->geom.x = sp->spacing.output_size.x;
-    on_lay->geom.y = sp->spacing.output_size.y;
-    on_lay->n_units = sp->spacing.output_units;
+    on_lay->un_geom.x = sp->spacing.output_size.x;
+    on_lay->un_geom.y = sp->spacing.output_size.y;
+    on_lay->un_geom.n = sp->spacing.output_units;
     on_lay->layer_type = Layer::INPUT;
     Layer* off_lay = net->FindMakeLayer(sp->name + "_off");
-    off_lay->geom.x = sp->spacing.output_size.x;
-    off_lay->geom.y = sp->spacing.output_size.y;
-    off_lay->n_units = sp->spacing.output_units;
+    off_lay->un_geom.x = sp->spacing.output_size.x;
+    off_lay->un_geom.y = sp->spacing.output_size.y;
+    off_lay->un_geom.n = sp->spacing.output_units;
     off_lay->layer_type = Layer::INPUT;
   }
   net->StructUpdate(false);
@@ -266,7 +270,7 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
     //DataArray_impl* ld = 
     data_table->FindMakeColName
       (lay->name, lay_idx, DataTable::VT_FLOAT, 2,
-       MAX(lay->geom.x,1), MAX(lay->geom.y,1));
+       MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1));
   }
   data_table->StructUpdate(false);
 }

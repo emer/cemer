@@ -849,10 +849,12 @@ class PDP_API Unit_Group: public taGroup<Unit> {
 INHERITED(taGroup<Unit>)
 public:
   Layer*	own_lay;	// #READ_ONLY #NO_SAVE layer owner
-  int		n_units;	// number of units to create in the group (0 = use layer n_units)
-  PosTDCoord	pos;		// position of group relative to the layer
-  PosTDCoord	geom;		// geometry of the group
+  PosTDCoord	pos;		// #CAT_Geometry position of group relative to the layer
+  bool		unique_geom;	// #DEF_false #CAT_Geometry if true, this unit group has a unique geometry different from the layer geometry (otherwise, geom is always copied from lay->un_geom)
+  XYNGeom	geom;		// #CONDEDIT_ON_unique_geom:true #CAT_Geometry geometry of the group: layout and number of units
   bool		units_lesioned;	// #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
+
+  int		n_units;	// #READ_ONLY #HIDDEN #NO_SAVE obsolete v3 compatibility: number of units to create in the group (0 = use layer n_units)
 
   virtual void	Copy_Weights(const Unit_Group* src);
   // #MENU #MENU_ON_Object copies weights from other unit group (incl wts assoc with unit bias member)
@@ -953,88 +955,75 @@ public:
     OUTPUT	// layer produces a visible output response but is not a target.  any external input serves as a comparison (COMP) against current activations.
   };
   
-  int			numUnits() const; // count of N units, regardless of geom
-  bool			isSparse() const; // true if N units doesn't fit evenly into geom or 4-d geom
-  
   Network*		own_net;	// #READ_ONLY #NO_SAVE Network this layer is in
   LayerType		layer_type;
-  // type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
-  int			n_units;
-  // number of units to create with Build command (0=use geometry)
-  PosTDCoord		geom;
-  // geometry (size) of units in layer (or of each subgroup if geom.z > 1)
-  PosTDCoord		pos;		// position of layer
-  PosTDCoord		gp_geom;	// #CONDEDIT_OFF_geom.z:1 geometry of sub-groups (if geom.z > 1)
-  PosTDCoord		gp_spc;		// #CONDEDIT_OFF_geom.z:1 spacing between sub-groups (if geom.z > 1)
-  TwoDCoord		flat_geom;	// #SHOW #READ_ONLY #NO_SAVE flat unit geometry (esp. when geom.z > 1)
-  PosTDCoord		act_geom;	// #HIDDEN actual view geometry, incl spaces and with gps
-  Projection_Group  	projections;	// group of receiving projections
-  Projection_Group  	send_prjns;	// #HIDDEN #LINK_GROUP group of sending projections
-  Unit_Group		units;		// units or groups of units
-  UnitSpec_SPtr 	unit_spec;	// default unit specification for units in this layer
-  bool			lesion;		// #DEF_false inactivate this layer from processing (reversable)
-  Unit::ExtType		ext_flag;	// #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
-  int_Array		sent_already; 	// #READ_ONLY #NO_SAVE array of layer addresses for coordinating sending of net input to this layer
-  DMemDist		dmem_dist; 	// how to distribute units across multiple distributed memory processors
+  // #CAT_InputData type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
+  PosTDCoord		pos;		// #CAT_Geometry position of layer relative to the overall network position (0,0,0 is lower left hand corner)
+  XYNGeom		un_geom;
+  // #AKA_geom #CAT_Geometry two-dimensional layout and number of units within the layer or each unit group within the layer 
+  bool			unit_groups;	// #CAT_Geometry organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom
+  XYNGeom		gp_geom;	// #CONDEDIT_ON_unit_groups:true #CAT_Geometry geometry of sub-groups (if unit_groups)
+  PosTwoDCoord		gp_spc;		// #CONDEDIT_ON_unit_groups:true #CAT_Geometry spacing between sub-groups (if unit_groups)
+  XYNGeom		flat_geom;	// #EXPERT #READ_ONLY #NO_SAVE #CAT_Geometry geometry of the units flattening out over unit groups (same as un_geom if !unit_groups; un_geom * gp_geom otherwise)
+  XYNGeom		act_geom;	// #HIDDEN #READ_ONLY #CAT_Geometry actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
 
-  bool			uses_groups() {return (geom.z > 1);}
-  
+  Projection_Group  	projections;	// #CAT_Conns group of receiving projections
+  Projection_Group  	send_prjns;	// #CAT_Conns #HIDDEN #LINK_GROUP group of sending projections
+  Unit_Group		units;		// #CAT_Units units or groups of units
+  UnitSpec_SPtr 	unit_spec;	// #CAT_Units default unit specification for units in this layer
+  bool			lesion;		// #DEF_false inactivate this layer from processing (reversable)
+  Unit::ExtType		ext_flag;	// #CAT_InputData #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
+  int_Array		sent_already; 	// #CAT_Netinput #READ_ONLY #NO_SAVE array of layer addresses for coordinating sending of net input to this layer
+  DMemDist		dmem_dist; 	// #CAT_DMem how to distribute units across multiple distributed memory processors
+
+  int			n_units;
+  // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
+
   ProjectBase*		project(); // this layer's project
   	
-#ifdef DMEM_COMPILE
-  DMemShare 	dmem_share_units;    	// #IGNORE the shared units
-  virtual void	DMem_SyncNRecvCons();   // #IGNORE syncronize number of receiving connections (share set 0)
-  virtual void	DMem_SyncNet();       	// #IGNORE syncronize just the netinputs (share set 1)
-  virtual void	DMem_SyncAct();         // #IGNORE syncronize just the activations (share set 2)
-  virtual void 	DMem_DistributeUnits();	// #IGNORE distribute units to different nodes (for this layer)
-  virtual bool	DMem_DistributeUnits_impl(DMemShare& dms); // #IGNORE implementation: if true, a non-standard distribution was used (i.e., unit_groups)
-#else
-  virtual bool	DMem_DistributeUnits_impl(DMemShare&) { return false; } // #IGNORE to keep the ta file consistent..
-#endif
-
   virtual void	Copy_Weights(const Layer* src);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE copies weights from other layer (incl wts assoc with unit bias member)
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
   virtual void	SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual void	LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt)
+  // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt)
   virtual void	SaveWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual void	LoadWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #EXT_wts #COMPRESS read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual void  Build();
-  // #MENU #MENU_ON_Actions #CONFIRM build the units based on n_units, geom
+  // #MENU #MENU_ON_Actions #CONFIRM #CAT_Build build the units based current geometry configuration
   virtual void	RecomputeGeometry();
-  // recompute the layer's geometry specifcations
+  // #CAT_Build recompute the layer's geometry specifcations
   virtual void  LayoutUnits(Unit* u=NULL);
-  // #ARGC_0 layout the units according to layer geometry
+  // #ARGC_0 #CAT_Build layout the units according to layer geometry
   virtual void  LayoutUnitGroups();
-  // #MENU #CONFIRM layout the unit groups according to layer group geometry and spacing
+  // #MENU #CONFIRM #CAT_Build layout the unit groups according to layer group geometry and spacing
   virtual void  ConnectFrom(Layer* lay);
-  // #DYN12N connect one or more other layers to this layer
+  // #DYN12N #CAT_Build connect one or more other layers to this layer
   virtual void  Connect();
-  // #MENU #CONFIRM connect the layer
+  // #MENU #CONFIRM #CAT_Build connect the layer
   virtual bool	CheckBuild(bool quiet=false);
-  // check if network is built 
+  // #CAT_Build check if network is built 
   virtual bool	CheckConnect(bool quiet=false);
-  // check if network is connected
+  // #CAT_Build check if network is connected
   virtual void	RemoveCons();
-  // #MENU #CONFIRM #MENU_SEP_BEFORE remove all connections in this layer
+  // #MENU #CONFIRM #MENU_SEP_BEFORE #CAT_Build remove all connections in this layer
   virtual void	RemoveUnits();
-  // #MENU #DYN1 remove all units in this layer (preserving groups)
+  // #MENU #DYN1 #CAT_Build remove all units in this layer (preserving groups)
   virtual void	RemoveUnitGroups();
-  // #MENU #DYN1 remove all unit groups in this layer
-  virtual void  PreConnect();	// prepare to connect the layer (create con_groups)
+  // #MENU #DYN1 #CAT_Build remove all unit groups in this layer
+  virtual void  PreConnect();	// #CAT_Build prepare to connect the layer (create con_groups)
   virtual void	SyncSendPrjns();
-  // synchronize sending projections with the recv projections so everyone's happy
-  virtual void  ReConnect_Load();		// #IGNORE re-connect the layer after loading
+  // #CAT_Build synchronize sending projections with the recv projections so everyone's happy
+  virtual void  ReConnect_Load();  // #IGNORE re-connect the layer after loading
   virtual void	DisConnect();
-  // #MENU #CONFIRM disconnect layer from all others
-  virtual int CountRecvCons();
-  // count recv connections for all units in layer
+  // #MENU #CONFIRM #CAT_Build disconnect layer from all others
+  virtual int 	CountRecvCons();
+  // #CAT_Build count recv connections for all units in layer
 
-  virtual void  InitExterns();	// Initializes external and target inputs
+  virtual void  InitExterns();	// #CAT_Acts Initializes external and target inputs
   virtual void  InitDelta();	// Initialize the unit deltas
   virtual void  InitState();	// Initialize the unit state variables
   virtual void	ModifyState(); 	// Alters state in an algorithm-specific way (e.g., decay)
@@ -1042,6 +1031,13 @@ public:
   virtual void  InitWtState();
   // #MENU #LABEL_Init_Weights #CONFIRM Initialize the weights
   virtual void	InitWtState_post(); // #IGNORE run after init wt state (ie. to scale wts..)
+
+  void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
+  void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
+
+  virtual void	ApplyInputData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
+    Random* ran = NULL, const PosTwoDCoord* offset = NULL);
+  // apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
 
   virtual void	Compute_Net();	// Compute NetInput
   virtual void	Send_Net();	// sender-based compute net-input sending to all layers
@@ -1096,13 +1092,6 @@ public:
   virtual void	WeightsToTable(DataTable* dt, Layer* send_lay);
   // #MENU #NULL_OK TODO:define send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
-  void		SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
-  void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
-
-  virtual void	ApplyInputData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
-    Random* ran = NULL, const PosTwoDCoord* offset = NULL);
-  // apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting;\nuses a flat 2-d model where grouped layer or 4-d data are flattened to 2d;\nframe<0 means from end
-
   Unit*		FindUnitFmCoord(int x, int y);
   Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
   // get unit from coordinates, taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
@@ -1113,7 +1102,7 @@ public:
   Unit_Group* 	FindUnitGpFmCoord(int gp_x, int gp_y);
   Unit_Group* 	FindUnitGpFmCoord(const TwoDCoord& coord) {return FindUnitGpFmCoord(coord.x,coord.y);}
   // get unit group from group coordinates (i.e., within gp_geom, not unit coordinates)
-  virtual void	GetActGeomNoSpc(PosTDCoord& nospc_geom);
+  virtual void	GetActGeomNoSpc(PosTwoDCoord& nospc_geom);
   // get the actual geometry of the layer, subtracting any gp_spc that might be present (as if there were no spaces between unit groups)
 
   void		SetDefaultPos(); // #IGNORE initialize position of layer
@@ -1121,6 +1110,17 @@ public:
   virtual void	CopyNetwork(Network* net, Network* cn, Layer* cp); // #IGNORE copy entire network
   virtual void	CopyPtrs(Layer* cp); // #IGNORE the pointers
   
+#ifdef DMEM_COMPILE
+  DMemShare 	dmem_share_units;    	// #IGNORE the shared units
+  virtual void	DMem_SyncNRecvCons();   // #IGNORE syncronize number of receiving connections (share set 0)
+  virtual void	DMem_SyncNet();       	// #IGNORE syncronize just the netinputs (share set 1)
+  virtual void	DMem_SyncAct();         // #IGNORE syncronize just the activations (share set 2)
+  virtual void 	DMem_DistributeUnits();	// #IGNORE distribute units to different nodes (for this layer)
+  virtual bool	DMem_DistributeUnits_impl(DMemShare& dms); // #IGNORE implementation: if true, a non-standard distribution was used (i.e., unit_groups)
+#else
+  virtual bool	DMem_DistributeUnits_impl(DMemShare&) { return false; } // #IGNORE to keep the ta file consistent..
+#endif
+
   void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }

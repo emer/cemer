@@ -1019,10 +1019,16 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   // we make a chan spec assuming the var is on units, but we can delete it
   // we have to make a flat col if using a sparse geom
   MatrixGeom geom;
-  if (lay->isSparse()) {
-    geom.SetGeom(1, lay->numUnits());
+  if(lay->unit_groups) {
+    if(lay->gp_geom.n_not_xy || lay->un_geom.n_not_xy)
+      geom.SetGeom(1, lay->units.leaves);	// irregular: flatten!
+    else
+      geom.SetGeom(4, lay->un_geom.x, lay->un_geom.y, lay->gp_geom.x, lay->gp_geom.y);
   } else {
-    geom.SetGeom(2, lay->flat_geom.x, lay->flat_geom.y);
+    if(lay->un_geom.n_not_xy)
+      geom.SetGeom(1, lay->units.leaves);	// irregular: flatten!
+    else
+      geom.SetGeom(2, lay->un_geom.x, lay->un_geom.y);
   }
   //  MatrixChannelSpec* mcs = 
   AddMatrixChan(valname, real_val_type, &geom);
@@ -1036,17 +1042,30 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
       u = lay->units.Leaf(i); 
       ScanObject_Unit(u, var);
     }
-  } else {
+  } else if(geom.size == 2) {
     TwoDCoord c;
-    for (c.y = 0; c.y < lay->flat_geom.y; ++c.y) {
-      for (c.x = 0; c.x < lay->flat_geom.x; ++c.x) {
+    for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
+      for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
         u = lay->FindUnitFmCoord(c); // NULL if odd size or not built
-        if (!u) goto cont;
-        ScanObject_Unit(u, var);
+        if(u) 
+	  ScanObject_Unit(u, var);
+      }
+    }
+  } else if(geom.size == 4) {
+    TwoDCoord gc;
+    for (gc.y = 0; gc.y < lay->gp_geom.y; ++gc.y) {
+      for (gc.x = 0; gc.x < lay->gp_geom.x; ++gc.x) {
+	TwoDCoord c;
+	for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
+	  for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
+	    u = lay->FindUnitFmGpCoord(gc, c);
+	    if(u) 
+	      ScanObject_Unit(u, var);
+	  }
+	}
       }
     }
   }
-cont:
   // if nested objs made chans, delete ours and mark a new group
   if (val_sz < val_specs.size) {
     val_specs.Remove(val_sz - 1);

@@ -1493,13 +1493,6 @@ void Unit::CutLinks() {
   send.CutLinks();
   taBase::DelPointer((TAPtr*)&bias);
   spec.CutLinks();
-/*obs -- datalink mechanism automatically updates
-  if((owner) && taMisc::gui_active && (pos.z >= 0)) { // if z = -1, then don't update display
-    Layer* lay = ((Unit_Group*)owner)->own_lay;
-    owner = NULL;
-    if((lay) && (lay->own_net) && !lay->own_net->net_will_updt)
-      lay->own_net->InitAllViews();
-  } */
   inherited::CutLinks();
 }
 
@@ -1521,23 +1514,13 @@ void Unit::Copy_(const Unit& cp) {
 void Unit::UpdateAfterEdit() {
   taNBase::UpdateAfterEdit();
   spec.CheckSpec();
-  // this updates the unit's representation int the netviews
   // no negative positions
   pos.x = MAX(0,pos.x); pos.y = MAX(0,pos.y);  pos.z = MAX(0,pos.z);
-  // stay within layer->geom
+  // stay within layer->un_geom
   Layer* lay = GET_MY_OWNER(Layer);
   if(lay == NULL) return;
-  pos.x = MIN(lay->geom.x-1,pos.x); pos.y = MIN(lay->geom.y-1,pos.y);
-  pos.z = MIN(lay->geom.z-1,pos.z);
-  if(taMisc::is_loading || !taMisc::gui_active) return;
-  Network* mynet = GET_MY_OWNER(Network);
-  if(mynet == NULL)	return;
-/*TODO  NetView* view;
-  taLeafItr i;
-  FOR_ITR_EL(NetView, view, mynet->views., i) {
-    if(view->display_toggle)
-      view->FixUnit(this,lay);
-  }*/
+  pos.x = MIN(lay->un_geom.x-1,pos.x); pos.y = MIN(lay->un_geom.y-1,pos.y);
+  pos.z = 0;			// always zero: can't go out of plane
 }
 
 #ifdef DMEM_COMPILE
@@ -2920,9 +2903,9 @@ int Projection::LesionCons(float p_lesion, bool permute) {
 
 void Unit_Group::Initialize() {
   own_lay = NULL;
-  n_units = 0;
-  geom.z = 1;
+  unique_geom = false;
   units_lesioned = false;
+  n_units = 0;			// todo: v3compat obs
 }
 
 void Unit_Group::InitLinks() {
@@ -2938,55 +2921,42 @@ void Unit_Group::CutLinks() {
 }
 
 void Unit_Group::Copy_(const Unit_Group& cp) {
-  n_units = cp.n_units;
   pos = cp.pos;
+  unique_geom = false;
   geom = cp.geom;
+  n_units = cp.n_units;		// todo: v3compat obs
 }
 
 void Unit_Group::UpdateAfterEdit() {
   taGroup<Unit>::UpdateAfterEdit();
   if((own_lay == NULL) || (own_lay->own_net == NULL)) return;
+  if(n_units != 0) {		// v3compat obs: conversion; remove at some point
+    unique_geom = true;
+    if(n_units != geom.x * geom.y) {
+      geom.n_not_xy = true;
+      geom.n = n_units;
+    }
+    n_units = 0;
+  }
   RecomputeGeometry();
-  if(taMisc::is_loading || !taMisc::gui_active) return;
-/*TODO  NetView* view;
-  taLeafItr i;
-  FOR_ITR_EL(NetView, view, own_lay->own_net->views., i) {
-    if(view->display_toggle)
-      view->FixUnitGroup(this, own_lay);
-  }*/
 }
 
 void Unit_Group::RemoveAll() {
   units_lesioned = false;
-  int i;
-  for(i=0; i<size; i++) {
-    if(FastEl(i)->owner == this)
-      FastEl(i)->pos.z = -1;		// signal not to update display when units are removed
-  }
+  // todo: obs?
+//   for(int i=0; i<size; i++) {
+//     if(FastEl(i)->owner == this)
+//       FastEl(i)->pos.z = -1;		// signal not to update display when units are removed
+//   }
   inherited::RemoveAll();
-/*obs  // then update here
-  if(taMisc::gui_active && (owner) && (own_lay) &&
-     (own_lay->own_net) && !own_lay->own_net->net_will_updt)
-    own_lay->own_net->InitAllViews(); */
 }
 
 void Unit_Group::RecomputeGeometry() {
   if((own_lay == NULL) || (own_lay->own_net == NULL)) return;
-  int use_n_units = n_units;
-  if(n_units == 0) {
-    geom = own_lay->geom;
-    geom.z = 1;
-    use_n_units = own_lay->n_units;
-  }
-  if((use_n_units == 0) && (size > 0)) {
-    use_n_units = size;
-    n_units = size;
-  }
-  geom.FitNinXY(use_n_units);
-  if (use_n_units == 0) {
-    use_n_units = geom.x * geom.y;
-    n_units = geom.x * geom.y;
-  }
+  if(!unique_geom)
+    geom = own_lay->un_geom;
+  else 
+    geom.UpdateAfterEdit();
 }
 
 void Unit_Group::LayoutUnits(Unit* u) {
@@ -3001,7 +2971,7 @@ void Unit_Group::LayoutUnits(Unit* u) {
       if(i >= size)
         break;
       un = (Unit*)FastEl(i++);
-      if((un) && (u==NULL || un==u)) un->pos = mygeo;
+      if((un) && (!u || un==u)) un->pos = mygeo;
       if(un==u) break;
     }
     if(un==u) break;
@@ -3012,13 +2982,10 @@ bool Unit_Group::Build() {
   if((own_lay == NULL) || (owner == own_lay))	return false;
   StructUpdate(true);
   RecomputeGeometry();
-  int use_n_units = n_units;
-  if(n_units == 0)
-    use_n_units = own_lay->n_units;
   bool units_changed = false;
-  if(size != use_n_units)
+  if(size != geom.n)
     units_changed = true;
-  EnforceSize(use_n_units);
+  EnforceSize(geom.n);
   EnforceType();
   Unit* u;
   taLeafItr i;
@@ -3030,19 +2997,10 @@ bool Unit_Group::Build() {
 }
 
 bool Unit_Group::CheckBuild(bool quiet) {
-  if(n_units == 0) {
-    if(own_lay == NULL) return false;		      // was true
-    if(!units_lesioned && (size != own_lay->n_units)) {
-      if(!quiet)
-	taMisc::CheckError("Unit_Group CheckBuild: no units and this is not what is specified in group",
-		      GetPath(),"in layer:", own_lay->name);
-      return false;
-    }
-  }
-  else if(!units_lesioned && (size != n_units)) {
+  if(!units_lesioned && (size != geom.n)) {
     if(!quiet)
       taMisc::CheckError("Unit_Group CheckBuild: number of units != target in group",
-		    GetPath(),"in layer:", own_lay->name);
+			 GetPath(),"in layer:", own_lay->name);
     return false;
   }
   return true;
@@ -3165,7 +3123,7 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
     for(j=ary.size-1; j>=0; j--) {
       Unit* un = Leaf(ary.FastEl(j));
       un->DisConnectAll();
-      un->pos.z = -1;		// don't update yet!
+//       un->pos.z = -1;		// don't update yet!
       RemoveLeaf(un);
     }
   }
@@ -3175,7 +3133,7 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
       if(Random::ZeroOne() <= p_lesion) {
 	Unit* un = (Unit*)Leaf(j);
 	un->DisConnectAll();
-	un->pos.z = -1;		// don't update yet!
+// 	un->pos.z = -1;		// don't update yet!
 	RemoveLeaf(j);
 	rval++;
       }
@@ -3324,14 +3282,14 @@ int LayerSpec::UseCount() {
 void Layer::Initialize() {
   own_net = NULL;
   layer_type = HIDDEN;
+  unit_groups = false;
   projections.SetBaseType(&TA_Projection);
   units.SetBaseType(&TA_Unit);
-  n_units = 0;
   lesion = false;
   ext_flag = Unit::NO_EXTERNAL;
-  geom.y =1;  geom.z =1;  geom.x =0;
-  act_geom = geom;
+  act_geom = un_geom;
   dmem_dist = DMEM_DIST_DEFAULT;
+  n_units = 0;			// todo: v3compat obs
 }
 
 void Layer::InitLinks() {
@@ -3341,7 +3299,7 @@ void Layer::InitLinks() {
   taBase::Own(projections, this);
   taBase::Own(send_prjns, this);
   taBase::Own(pos, this);
-  taBase::Own(geom, this);
+  taBase::Own(un_geom, this);
   taBase::Own(gp_geom, this);
   taBase::Own(gp_spc, this);
   taBase::Own(flat_geom, this);
@@ -3365,7 +3323,7 @@ void Layer::CutLinks() {
   flat_geom.CutLinks();
   gp_spc.CutLinks();
   gp_geom.CutLinks();
-  geom.CutLinks();
+  un_geom.CutLinks();
   pos.CutLinks();
   send_prjns.CutLinks();
   projections.CutLinks();
@@ -3377,10 +3335,9 @@ void Layer::CutLinks() {
 
 void Layer::Copy_(const Layer& cp) {
   layer_type = cp.layer_type;
-  n_units = cp.n_units;
-  geom = cp.geom;
   pos = cp.pos;
-  pos.x+=2; // move it over so it can be seen!
+  un_geom = cp.un_geom;
+  unit_groups = cp.unit_groups;
   gp_geom = cp.gp_geom;
   gp_spc = cp.gp_spc;
   flat_geom = cp.flat_geom;
@@ -3391,6 +3348,8 @@ void Layer::Copy_(const Layer& cp) {
   lesion = cp.lesion;
   ext_flag = cp.ext_flag;
 
+  n_units = cp.n_units;		// todo: v3compat obs
+
   // not copied
   //  send_prjns.BorrowUnique(cp.send_prjns); // link group
 }
@@ -3400,112 +3359,28 @@ void Layer::UpdateAfterEdit() {
   unit_spec.CheckSpec();
   // no negative geoms., y,z must be 1 (for display)
   SyncSendPrjns();
+  if(n_units > 0) {		// todo: v3compat conversion obs remove later
+    if(n_units != un_geom.x * un_geom.y) {
+      un_geom.n_not_xy = true;
+      un_geom.n = n_units;
+    }
+    n_units = 0;
+  }
+  if(un_geom.z > 1) {		// todo: v3compat conversion obs remove later
+    gp_geom.UpdateAfterEdit();	// get n from xy
+    unit_groups = true;
+    if(gp_geom.n != un_geom.z) {
+      gp_geom.n_not_xy = true;
+      gp_geom.n = un_geom.z;
+    }
+    un_geom.z = 0;
+  }
   RecomputeGeometry();
 
   inherited::UpdateAfterEdit();
   if(taMisc::is_loading) return;
   if (own_net == NULL) return;
-  own_net->UpdtAfterNetMod();
-
-  if(!taMisc::gui_active) return;
-/*TODO  NetView* view;
-  taLeafItr i;
-  FOR_ITR_EL(NetView, view, own_net->views., i) {
-    if(view->display_toggle)
-      view->FixLayer(this);
-  }*/
-}
-
-void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
-    Random* ran, const PosTwoDCoord* offset) 
-{
-  // note: when use LayerWriters, we typically always just get a single frame of 
-  // the exact dimensions, and so ignore 'frame'
-  if (!data) return;
-  // check correct geom of data
-  if ((data->dims() != 2) && (data->dims() != 4)) {
-    taMisc::Error("Layer::ApplyInputData: data->dims must be 2 (2-d) or 4 (4-d); is: ",
-      String(data->dims()));
-    return;
-  }
-  TwoDCoord offs(0,0);
-  if(offset) offs = *offset;
-  
-  DataUpdate(true);
-
-  // apply flags if we are the controller (zero offset)
-  if((offs.x == 0) && (offs.y == 0)) {
-    ApplyLayerFlags(ext_flags);
-  }
-  if(data->dims() == 2) {
-    ApplyInputData_2d(data, ext_flags, ran, offs);
-  }
-  else {
-    if(uses_groups())
-      ApplyInputData_Gp4d(data, ext_flags, ran); // note: no offsets -- layerwriter does check
-    else
-      ApplyInputData_Flat4d(data, ext_flags, ran, offs);
-  }
-  DataUpdate(false);
-}
-
-void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs) {
-  for(int d_y = 0; d_y < data->dim(1); d_y++) {
-    int u_y = offs.y + d_y;
-    for(int d_x = 0; d_x < data->dim(0); d_x++) {
-      int u_x = offs.x + d_x;
-      Unit* un = FindUnitFmCoord(u_x, u_y);
-      if(un) {
-	float val = data->SafeElAsVar(d_x, d_y).toFloat();
-	un->ApplyInputData(val, ext_flags, ran);
-      }
-    }
-  }
-}
-
-void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs) {
-  // outer-loop is data-group (groups of x-y data items)
-  for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
-    for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
-
-      for(int d_y = 0; d_y < data->dim(1); d_y++) {
-	int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
-	for(int d_x = 0; d_x < data->dim(0); d_x++) {
-	  int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
-	  Unit* un = FindUnitFmCoord(u_x, u_y);
-	  if(un) {
-	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-	    un->ApplyInputData(val, ext_flags, ran);
-	  }
-	}
-      }
-    }
-  }
-}
-
-void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random* ran) {
-  // outer-loop is data-group (groups of x-y data items)
-  for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
-    for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
-
-      for(int d_y = 0; d_y < data->dim(1); d_y++) {
-	for(int d_x = 0; d_x < data->dim(0); d_x++) {
-	  Unit* un = FindUnitFmGpCoord(dg_x, dg_y, d_x, d_y);
-	  if(un) {
-	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-	    un->ApplyInputData(val, ext_flags, ran);
-	  }
-	}
-      }
-    }
-  }
-}
-
-
-void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
-  SetExtFlag(act_ext_flags);
+  own_net->UpdtAfterNetMod();	// todo: is this a good idea??
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {
@@ -3589,22 +3464,19 @@ void Layer::SyncSendPrjns() {
 }
 
 void Layer::RecomputeGeometry() {
-  geom.y = MAX(1,geom.y);  geom.z = MAX(1,geom.z);
-//BA 10/18/06 NO! if user resets n_units, that should force rebuild
-/*  if((n_units == 0) && (units.size > 0))
-    n_units = units.size; */
-  geom.FitNinXY(n_units);
-  if(n_units == 0)
-    n_units = geom.x * geom.y;
-  if (geom.z > 1) {
-    gp_geom.FitNinXY(geom.z);	// fit all groups in there..
-    flat_geom.x = geom.x * gp_geom.x;
-    flat_geom.y = geom.y * gp_geom.y;
-    //NOTE: act_geom must get computed later....
+  un_geom.UpdateAfterEdit();
+  gp_geom.UpdateAfterEdit();
+  if(unit_groups) {
+    flat_geom.x = un_geom.x * gp_geom.x;
+    flat_geom.y = un_geom.y * gp_geom.y;
+    flat_geom.n = un_geom.n * gp_geom.n;
+    if(flat_geom.n != flat_geom.x * flat_geom.y)
+      flat_geom.n_not_xy = true;
+    // NOTE: act_geom must get computed later....
   } else {
-    flat_geom.x = geom.x;
-    flat_geom.y = geom.y;
-    act_geom = geom;
+    flat_geom.x = un_geom.x;
+    flat_geom.y = un_geom.y;
+    act_geom = un_geom;
   }
 }
 
@@ -3631,9 +3503,8 @@ void Layer::SetDefaultPos() {
     pos.y = 0;
     int i;
     for(i=0;i<index;i++) {
-      pos.y =
-	MAX(pos.y, ((Layer*) own_net->layers.Leaf(i))->pos.y +
-	    ((Layer*) own_net->layers.Leaf(i))->geom.y) + 2;
+      Layer* lay = (Layer*)own_net->layers.Leaf(i);
+      pos.y = MAX(pos.y, lay->pos.y + lay->un_geom.y) + 2;
     }
   }
 }
@@ -3642,7 +3513,7 @@ void Layer::LayoutUnits(Unit* u) {
   StructUpdate(true);
   RecomputeGeometry();
   units.pos.z = 0;
-  if(geom.z > 1) {		// create groups for each z dimension
+  if(unit_groups) {
     TDCoord mygeo;
     PosTDCoord ungeo;
     act_geom.x = 0; act_geom.y = 0;
@@ -3658,7 +3529,7 @@ void Layer::LayoutUnits(Unit* u) {
 	// always update to new position!
 	ug->pos = ungeo;
         ug->LayoutUnits();
-	ungeo.x = ug->pos.x + MAX(ug->geom.x, geom.x) + gp_spc.x;
+	ungeo.x = ug->pos.x + MAX(ug->geom.x, un_geom.x) + gp_spc.x;
 	max_y = MAX(ug->pos.y + ug->geom.y, max_y);
 	act_geom.x = MAX(act_geom.x, ungeo.x);
       }
@@ -3670,16 +3541,16 @@ void Layer::LayoutUnits(Unit* u) {
   }
   else {
     TDCoord mygeo;
-    act_geom = geom;
-    units.geom = geom;		// default is to have layer's geom
+    act_geom = un_geom;
+    units.geom = un_geom;		// default is to have layer's geom
     int i = 0;
     Unit* un = NULL;
-    for(mygeo.y=0; mygeo.y < geom.y; mygeo.y++) {
-      for(mygeo.x=0; mygeo.x <geom.x; mygeo.x++) {
+    for(mygeo.y=0; mygeo.y < un_geom.y; mygeo.y++) {
+      for(mygeo.x=0; mygeo.x <un_geom.x; mygeo.x++) {
 	if(i >= units.leaves)
 	  break;
 	un = (Unit*)units.Leaf(i++);
-	if((un) && (u==NULL || un==u)) un->pos = mygeo;
+	if((un) && (!u || un==u)) un->pos = mygeo;
 	if(un==u) break;
       }
       if(un==u) break;
@@ -3693,25 +3564,24 @@ void Layer::Build() {
   StructUpdate(true);
   RecomputeGeometry();
   bool units_changed = false;
-  geom.z = MAX(geom.z, 1);
-  if(geom.z > 1) {		// create groups for each z dimension
+  if(unit_groups) {
     while(units.size > 0) {
-      ((Unit*)units.FastEl(units.size-1))->pos.z = -1; // do not update
+//       ((Unit*)units.FastEl(units.size-1))->pos.z = -1; // do not update
       units.Remove(units.size-1); // get rid of any in top-level
     }
-    units.gp.EnforceSize(geom.z);
-    int k;
-    for(k=0; k< units.gp.size; k++) {
+    units.gp.EnforceSize(gp_geom.n);
+    for(int k=0; k< units.gp.size; k++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
       ug->UpdateAfterEdit();
-      units_changed = ug->Build();
+      if(ug->Build())
+	units_changed = true;
     }
   }
   else {
     units.gp.RemoveAll();	// in case there were any subgroups..
-    if(!units_changed && (units.leaves != n_units))
+    if(!units_changed && (units.leaves != un_geom.n))
       units_changed = true;
-    units.EnforceLeaves(n_units);
+    units.EnforceLeaves(un_geom.n);
     units.EnforceType();
     Unit* u;
     taLeafItr i;
@@ -3758,7 +3628,7 @@ void Layer::LayoutUnitGroups() {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(i++);
       ug->pos = ungeo;
       ug->LayoutUnits();
-      ungeo.x = ug->pos.x + MAX(ug->geom.x, geom.x) + gp_spc.x;
+      ungeo.x = ug->pos.x + MAX(ug->geom.x, un_geom.x) + gp_spc.x;
       max_y = MAX(ug->pos.y + ug->geom.y, max_y);
       act_geom.x = MAX(act_geom.x, ungeo.x);
     }
@@ -3780,7 +3650,7 @@ bool Layer::CheckBuild(bool quiet) {
     }
   }
   else {
-    if(!units.units_lesioned && (units.size != n_units)) {
+    if(!units.units_lesioned && (units.size != un_geom.n)) {
       if(!quiet)
 	taMisc::CheckError("Layer CheckBuild: number of units != target in layer", name);
       return false;
@@ -3793,7 +3663,7 @@ bool Layer::CheckBuild(bool quiet) {
     if(u->GetTypeDef() != units.el_typ) {
       if(!quiet)
 	taMisc::CheckError("Layer CheckBuild: unit type not correct in layer", name,
-		      "syould be:", units.el_typ->name);
+			   "syould be:", units.el_typ->name);
       return false;
     }
     if(!u->CheckBuild(quiet))
@@ -3849,18 +3719,6 @@ void Layer::FixPrjnIndexes() {
   taLeafItr i;
   FOR_ITR_EL(Projection, p, projections., i)
     p->FixIndexes();
-}
-
-bool Layer::isSparse() const {
-  // not sparse if requesting geom
-  if (n_units == 0) return false;
-  // if 2d
-  // we are sparse if num units not same as flat geom
-  return (flat_geom.Product() != units.leaves);
-}
-
-int Layer::numUnits() const {
-  return units.leaves;
 }
 
 void Layer::RemoveCons() {
@@ -4009,6 +3867,97 @@ void Layer::InitWtState_post() {
   taLeafItr i;
   FOR_ITR_EL(Unit, u, units., i)
     u->InitWtState_post();
+}
+
+void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
+    Random* ran, const PosTwoDCoord* offset) 
+{
+  // note: when use LayerWriters, we typically always just get a single frame of 
+  // the exact dimensions, and so ignore 'frame'
+  if (!data) return;
+  // check correct geom of data
+  if ((data->dims() != 2) && (data->dims() != 4)) {
+    taMisc::Error("Layer::ApplyInputData: data->dims must be 2 (2-d) or 4 (4-d); is: ",
+      String(data->dims()));
+    return;
+  }
+  TwoDCoord offs(0,0);
+  if(offset) offs = *offset;
+  
+  DataUpdate(true);
+
+  // apply flags if we are the controller (zero offset)
+  if((offs.x == 0) && (offs.y == 0)) {
+    ApplyLayerFlags(ext_flags);
+  }
+  if(data->dims() == 2) {
+    ApplyInputData_2d(data, ext_flags, ran, offs);
+  }
+  else {
+    if(unit_groups)
+      ApplyInputData_Gp4d(data, ext_flags, ran); // note: no offsets -- layerwriter does check
+    else
+      ApplyInputData_Flat4d(data, ext_flags, ran, offs);
+  }
+  DataUpdate(false);
+}
+
+void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+				  Random* ran, const TwoDCoord& offs) {
+  for(int d_y = 0; d_y < data->dim(1); d_y++) {
+    int u_y = offs.y + d_y;
+    for(int d_x = 0; d_x < data->dim(0); d_x++) {
+      int u_x = offs.x + d_x;
+      Unit* un = FindUnitFmCoord(u_x, u_y);
+      if(un) {
+	float val = data->SafeElAsVar(d_x, d_y).toFloat();
+	un->ApplyInputData(val, ext_flags, ran);
+      }
+    }
+  }
+}
+
+void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+				  Random* ran, const TwoDCoord& offs) {
+  // outer-loop is data-group (groups of x-y data items)
+  for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
+    for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
+
+      for(int d_y = 0; d_y < data->dim(1); d_y++) {
+	int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
+	for(int d_x = 0; d_x < data->dim(0); d_x++) {
+	  int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
+	  Unit* un = FindUnitFmCoord(u_x, u_y);
+	  if(un) {
+	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+	    un->ApplyInputData(val, ext_flags, ran);
+	  }
+	}
+      }
+    }
+  }
+}
+
+void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random* ran) {
+  // outer-loop is data-group (groups of x-y data items)
+  for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
+    for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
+
+      for(int d_y = 0; d_y < data->dim(1); d_y++) {
+	for(int d_x = 0; d_x < data->dim(0); d_x++) {
+	  Unit* un = FindUnitFmGpCoord(dg_x, dg_y, d_x, d_y);
+	  if(un) {
+	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+	    un->ApplyInputData(val, ext_flags, ran);
+	  }
+	}
+      }
+    }
+  }
+}
+
+void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
+  SetExtFlag(act_ext_flags);
 }
 
 void Layer::Compute_Net() {
@@ -4244,9 +4193,9 @@ void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
 Unit* Layer::FindUnitFmCoord(int x, int y) {
   if(units.gp.size == 0)	// no group structure, just do it
     return units.FindUnitFmCoord(x,y);
-  int un_x = x % geom.x;
-  int un_y = y % geom.y;
-  int gpidx = (y / geom.y) * gp_geom.x + (x / geom.x);
+  int un_x = x % un_geom.x;
+  int un_y = y % un_geom.y;
+  int gpidx = (y / un_geom.y) * gp_geom.x + (x / un_geom.x);
   if ((gpidx >= 0) && (gpidx < units.gp.size))
     return ((Unit_Group*)units.gp.FastEl(gpidx))->FindUnitFmCoord(un_x, un_y);
   return NULL;
@@ -4268,9 +4217,9 @@ Unit_Group* Layer::FindUnitGpFmCoord(int gp_x, int gp_y) {
   return (Unit_Group*)units.gp.FastEl(gidx);
 }
 
-void Layer::GetActGeomNoSpc(PosTDCoord& nospc_geom) {
+void Layer::GetActGeomNoSpc(PosTwoDCoord& nospc_geom) {
   nospc_geom = act_geom;
-  if(units.gp.size == 0) return;
+  if(!unit_groups) return;
   nospc_geom.x -= (gp_geom.x - 1) * gp_spc.x;
   nospc_geom.y -= (gp_geom.y - 1) * gp_spc.y;
 }
