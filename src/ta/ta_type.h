@@ -480,14 +480,16 @@ friend class InitProcRegistrar;
   static String		tmp_dir;
   // #SAVE #CAT_File location of temporary files (e.g., inst_prefix/tmp)
 
+  // don't save these paths: they are generated from above which are saved, and can
+  // be modified more reliably in a .cssinitrc or similar..
   static String_PArray 	css_include_paths;
-  // #SAVE #CAT_File paths to be used for finding css files (e.g., in #include or load statements -- searched in order)
+  // #NO_SAVE #HIDDEN #CAT_File paths to be used for finding css files (e.g., in #include or load statements -- searched in order)
   static String_PArray 	load_paths;
-  // #SAVE #CAT_File paths to be used for loading object files for the ta dump file system
+  // #NO_SAVE #HIDDEN #CAT_File paths to be used for loading object files for the ta dump file system
   static NameVar_PArray	prog_lib_paths;
-  // #SAVE #CAT_File paths/url's for specific categories of program library files (e.g., System, User, Web)
+  // #NO_SAVE #HIDDEN #CAT_File paths/url's for specific categories of program library files (e.g., System, User, Web)
   static NameVar_PArray	named_paths;
-  // #SAVE #CAT_File paths/url's for misc purposes -- search by name, value = path
+  // #NO_SAVE #HIDDEN #CAT_File paths/url's for misc purposes -- search by name, value = path
 
   static String		compress_cmd;	// #SAVE #CAT_File command to use for compressing files
   static String		uncompress_cmd;	// #SAVE #CAT_File for uncompressing files

@@ -305,6 +305,9 @@ String 	taBase::no_name;
 int	taBase::no_idx = -1;
 MemberDef* taBase::no_mdef = NULL;
 
+///////////////////////////////////////////////////////////////////////////
+// 	Reference counting mechanisms, all static just for consistency..
+
 #ifdef DEBUG
 void taBase::UnRef(TAPtr it) {
   if (--(it->refn) == 0) 
@@ -319,19 +322,6 @@ void taBase::Done(taBase* it) {
 
 #define REF_SENT 0x7fffff0
 
-void taBase::DelPointer(taBase** ptr) {
-  if(*ptr != NULL)
-    UnRef(*ptr);
-  *ptr = NULL;
-}
-
-String taBase::GetStringRep(taBase* it) {
-  if (it == NULL) 
-    return String("NULL", 4);
-  else
-    return it->GetStringRep_impl();
-}
-
 void taBase::Own(taBase* it, taBase* onr) {
   if (it != NULL) Own(*it, onr);
 }
@@ -341,30 +331,24 @@ void taBase::Own(taBase& it, taBase* onr) {
 //  if (it.GetOwner() == onr) return; // same owner, redundant
   
   Ref(it);
-  bool prv_own = (it.GetOwner() != NULL);
+//   bool prv_own = (it.GetOwner() != NULL);
   it.SetOwner(onr);
-  if (!prv_own)
-    it.SetTypeDefaults();
+//   if (!prv_own)
+//     it.SetTypeDefaults();
   it.InitLinks();
-  if(prv_own) {
+//   if(prv_own) {
 //     if(it.InheritsFrom(TA_taNBase))
 //       taMisc::Error("*** Warning: Object:",it.GetPath(),
 // 		    "was transfered to a new owner, some parameters might have been reset");
-  }
+//   }
 }
 
 void taBase::Own(taSmartRef& it, taBase* onr) {
   it.Init(onr);
 }
 
-void taBase::OwnPointer(taBase** ptr, taBase* new_val, taBase* onr) {
-  if (*ptr == new_val) return;
-  if (*ptr != NULL)
-    UnRef(*ptr);
-  *ptr = new_val;
-  if(*ptr != NULL)
-    Own(*ptr, onr);
-}
+///////////////////////////////////////////////////////////////////////////
+// 	Pointer management routines (all pointers should be ref'd!!)
 
 void taBase::SetPointer(taBase** ptr, taBase* new_val) {
   //note: we ref source first, to implicitly handle identity case (which in practice is probably
@@ -376,113 +360,23 @@ void taBase::SetPointer(taBase** ptr, taBase* new_val) {
   *ptr = new_val;
 }
 
-TypeDef* taBase::StatTypeDef(int) {
-  return &TA_taBase;
+void taBase::OwnPointer(taBase** ptr, taBase* new_val, taBase* onr) {
+  if (*ptr == new_val) return;
+  if (*ptr != NULL)
+    UnRef(*ptr);
+  *ptr = new_val;
+  if(*ptr != NULL)
+    Own(*ptr, onr);
 }
 
-taBase::ValType taBase::ValTypeForType(TypeDef* td) {
-  if (td->ptr == 0) {
-    if (td->DerivesFrom(TA_bool)) {
-      return VT_INT;
-    }
-    // note: char is generic char, and typically we won't use signed char
-    else if (td->DerivesFrom(TA_char)) {
-      return VT_STRING; 
-    }
-    // note: explicit use of signed char is treated like a number
-    else if (td->DerivesFrom(TA_unsigned_char))
-      return VT_BYTE;
-    else if (td->DerivesFrom(TA_signed_char) 
-      || td->DerivesFrom(TA_short)
-      || td->DerivesFrom(TA_unsigned_short)
-      || td->DerivesFrom(TA_int)
-      || td->DerivesFrom(TA_unsigned_int)
-      ) 
-    {
-      return VT_INT; 
-    }
-    else if (td->DerivesFrom(TA_double)) 
-    {
-      return VT_DOUBLE; 
-    }
-    else if (td->DerivesFrom(TA_float)) 
-    {
-      return VT_FLOAT; 
-    }
-    else if(td->DerivesFormal(TA_enum)) { //maybe we should use String's for these???
-      return VT_INT; 
-    }
-    else if(td->DerivesFrom(TA_taString))
-      return VT_STRING;
-    else if(td->DerivesFrom(TA_Variant)) {
-      return VT_VARIANT;
-    }
-  }
-  return VT_VARIANT;
+void taBase::DelPointer(taBase** ptr) {
+  if(*ptr != NULL)
+    UnRef(*ptr);
+  *ptr = NULL;
 }
 
-const String taBase::ValTypeToStr(ValType vt) {
-  static String str_String("String");
-  static String str_double("double");
-  static String str_float("float");
-  static String str_int("int");
-  static String str_byte("byte");
-  static String str_Variant("Variant");
-  switch (vt) {
-  case VT_STRING: return str_String;
-  case VT_DOUBLE: return str_double;
-  case VT_FLOAT: return str_float;
-  case VT_INT: return str_int;
-  case VT_BYTE: return str_byte;
-  case VT_VARIANT: return str_Variant;
-  default: return _nilString; // compiler food
-  }
-}
-
-void taBase::Destroying() {
-  if (HasFlag(DESTROYING)) return; // already done by parent
-  SetFlag(DESTROYING);
-  //note: following gets called in destructor of higher class, so 
-  // its vtable accessor for datalinks will be valid in that context
-  taDataLink* dl = data_link();
-  if (dl) {
-    dl->DataDestroying();
-  }
-}
-
-void taBase::Destroy() {
-#ifdef DEBUG
-  SetFlag(DESTROYED);
-#endif
-}
-
-#ifdef DEBUG
-void taBase::CheckDestroyed() {
-  if(HasFlag(DESTROYED)) {
-    taMisc::Error("taBase object being multiply destroyed");
-  }
-}
-#endif
-
-void taBase::UpdateAfterEdit() {
-  UpdateAfterEdit_impl();
-  DataChanged(DCR_ITEM_UPDATED);
-  taBase* _owner = GetOwner();
-  if (_owner ) {
-    bool handled = false;
-    _owner->ChildUpdateAfterEdit(this, handled);
-  }
-}
-
-void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  if (handled) return; // note: really shouldn't have been handled already if we are called...
-  // call notify if it is an owned member object (but not list/group items)
-  if (((char*)child >= ((char*)this)) && ((char*)child < ((char*)this + GetTypeDef()->size))) {
-    handled = true;
-    DataChanged(DCR_CHILD_ITEM_UPDATED);
-    return;
-  }
-}
+///////////////////////////////////////////////////////////////////////////
+//	Basic constructor/destructor ownership/initlink etc interface
 
 void taBase::CutLinks() {
 }
@@ -517,177 +411,200 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
   }
 }
 
-bool taBase::AddDataClient(IDataLinkClient* dlc) {
-  // refuse new links while destroying!
-  if (isDestroying()) {
+void taBase::Destroy() {
 #ifdef DEBUG
-    taMisc::Warning("Attempt to add a client DataLink to a destructing object");
+  SetFlag(DESTROYED);
 #endif
-    return false;
-  }
-  taDataLink* dl = GetDataLink(); // autocreates if necessary
-  if (dl != NULL) {
-    dl->AddDataClient(dlc);
-    return true;
-  }
-  return false;
 }
 
-void taBase::BatchUpdate(bool begin, bool struc) {
+#ifdef DEBUG
+void taBase::CheckDestroyed() {
+  if(HasFlag(DESTROYED)) {
+    taMisc::Error("taBase object being multiply destroyed");
+  }
+}
+#endif
+
+void taBase::Destroying() {
+  if (HasFlag(DESTROYING)) return; // already done by parent
+  SetFlag(DESTROYING);
+  //note: following gets called in destructor of higher class, so 
+  // its vtable accessor for datalinks will be valid in that context
   taDataLink* dl = data_link();
-  if (!dl) return;
-  if (begin) {
-    if (struc)
-      DataChanged(DCR_STRUCT_UPDATE_BEGIN);
-    else
-      DataChanged(DCR_DATA_UPDATE_BEGIN);
-  } else {
-    if (struc)
-      DataChanged(DCR_STRUCT_UPDATE_END);
-    else
-      DataChanged(DCR_DATA_UPDATE_END);
+  if (dl) {
+    dl->DataDestroying();
   }
 }
 
-void taBase::BrowseMe() {
-  // try to determine whether this is member obj, or not
-  taBase* own = GetOwner();
-  MemberDef* md = NULL;
-  if (own) {
-    md = own->FindMember((void*)this);
+void taBase::SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope) {
+  if(ttd->defaults == NULL) return;
+  int i;
+  for(i=0; i<ttd->defaults->size; i++) {
+    TypeDefault* td = (TypeDefault*)ttd->defaults->FastEl(i);
+    TAPtr tdscope = td->GetScopeObj(taMisc::default_scope);
+    if(tdscope == scope) {
+      td->SetTypeDefaults(this);
+      break;
+    }
   }
-  MainWindowViewer* wv = MainWindowViewer::NewBrowser(this, md);
-  if (wv) wv->ViewWindow();
 }
 
-void taBase::CallFun(const String& fun_name) {
-#ifdef TA_GUI
-  if(!taMisc::gui_active) return;
-#endif
-  MethodDef* md = GetTypeDef()->methods.FindName(fun_name);
-  if(md != NULL)
-    md->CallFun((void*)this);
+void taBase::SetTypeDefaults_parents(TypeDef* ttd, TAPtr scope) {
+  int i;
+  for(i=0; i<ttd->parents.size; i++) {
+    TypeDef* par = ttd->parents.FastEl(i);
+    if(!par->InheritsFrom(TA_taBase)) continue;	// only ta-bases
+    SetTypeDefaults_parents(par, scope); // first do parents of parent
+    if(par->defaults != NULL)
+      SetTypeDefaults_impl(par, scope);    // then actually do parent
+  }
+  if(ttd->defaults != NULL)
+    SetTypeDefaults_impl(ttd, scope);    // then actually do it
+}
+
+void taBase::SetTypeDefaults() {
+  TypeDef* ttd = GetTypeDef();	// this typedef = ttd
+  TAPtr scope = GetScopeObj(taMisc::default_scope); // scope for default vals
+  SetTypeDefaults_parents(ttd, scope);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// actual constructors/destructors and related: defined in TA_BASEFUNS for derived classes
+
+TAPtr taBase::MakeToken(TypeDef* td) {
+  if(td->GetInstance() != NULL) {
+    return ((TAPtr)td->GetInstance())->MakeToken();
+  }
   else
-    taMisc::Error("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
+    return NULL;
 }
 
-bool taBase::CheckConfig_Gui(bool confirm_success, bool quiet) {
-  taMisc::CheckConfigStart(confirm_success, quiet);
-  bool ok = CheckConfig_impl(quiet);
-  taMisc::CheckConfigEnd(ok);
-  return ok;
+TAPtr taBase::MakeTokenAry(TypeDef* td, int no) {
+  if(td->GetInstance() != NULL) {
+    return ((TAPtr)td->GetInstance())->MakeTokenAry(no);
+  }
+  else
+    return NULL;
 }
 
-bool taBase::CheckConfig_impl(bool quiet) {
-  int cp_flags = m_flags; 
-  bool this_rval = true;
-  CheckThisConfig_impl(quiet, this_rval);
-  if (this_rval) {
-    ClearFlag(THIS_INVALID);
-  } else {
-    SetFlag(THIS_INVALID);
-  }
-  bool child_rval = true;
-  CheckChildConfig_impl(quiet, child_rval);
-  if (child_rval) {
-    ClearFlag(CHILD_INVALID);
-  } else {
-    SetFlag(CHILD_INVALID);
-  }
-  if (cp_flags != m_flags)
-    DataChanged(DCR_ITEM_UPDATED);
-  return (this_rval && child_rval);
+TypeDef* taBase::GetTypeDef() const {
+  return &TA_taBase;
 }
 
-void taBase::ClearCheckConfig() {
-  if (m_flags & INVALID_MASK) {
-    ClearFlag(INVALID_MASK);
-    DataChanged(DCR_ITEM_UPDATED);
-  }
+TypeDef* taBase::StatTypeDef(int) {
+  return &TA_taBase;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+//	Object managment flags (taBase supports up to 8 flags for basic object mgmt purposes)
+
+bool taBase::HasFlag(int flag) const {
+  return (m_flags & flag);
+}
+
+void taBase::SetFlag(int flag) {
+  m_flags |= flag;
 }
 
 void taBase::ClearFlag(int flag) {
   m_flags &= ~flag;
 }
 
-void taBase::Close() {
-  TAPtr own = GetOwner();
-  if (own && own->Close_Child(this))
+///////////////////////////////////////////////////////////////////////////
+//	Basic object properties: index in list, owner, name, description, etc
+
+String taBase::GetDisplayName() const { 
+  String rval = GetName(); 
+  if (rval.nonempty()) return rval;
+  // no name, so try the Owner.path name
+  taBase* own = GetOwner();
+  if (own) {
+    rval.cat(own->GetName()).cat(GetPath(NULL, own));
+    if (rval.nonempty()) return rval; // shouldn't be empty!
+  }
+  // last resort: (TypeName@HexAddr)
+  rval = "(" + GetTypeDef()->name + "@" 
+      + String(QString::number((intptr_t)this, 16)) + ")";
+  return rval;
+}
+
+void taBase::SetDefaultName() {
+  if(taMisc::not_constr || taMisc::in_init)
     return;
-  taBase::UnRef(this);
-}
-
-void taBase::CloseLater() {
-  tabMisc::Close_Obj(this);
-}
-
-bool taBase::Close_Child(TAPtr) {
-  return false;
-}
-
-/*obsbool taBase::CloseEdit() {
-#ifdef TA_GUI
-  return taiMisc::CloseEdits((void*)this, GetTypeDef());
-#endif
-  return false;
-} */
-
-bool taBase::CopyFrom(TAPtr cpy_from) {
-  if(cpy_from == NULL) return false;
-  if(!cpy_from->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_from->GetTypeDef())) {
-    taMisc::Error("Cannot copy from given object of type:",cpy_from->GetTypeDef()->name,
-		  "which does not inherit from:", GetTypeDef()->name,
-		  "(or I don't inherit from it)", GetPath());
-    return false;
+  TypeDef* td = GetTypeDef();
+  int tok;
+  if(td->tokens.keep && ((tok = td->tokens.Find((void *)this)) >= 0)) {
+    String nm = td->name + "_" + String(tok);
+    SetName(nm);
   }
-  UnSafeCopy(cpy_from);
-  return true;
 }
 
-bool taBase::CopyTo(TAPtr cpy_to) {
-  if(cpy_to == NULL) return false;
-  if(!cpy_to->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_to->GetTypeDef())) {
-    taMisc::Error("Cannot copy to given object of type:",cpy_to->GetTypeDef()->name,
-		  "which does not inherit from:", GetTypeDef()->name,
-		  "(or I don't inherit from it)",GetPath());
-    return false;
+TAPtr taBase::GetOwner(TypeDef* td) const {
+  TAPtr own = GetOwner();
+  if(own == NULL)
+    return NULL;
+  if(own->InheritsFrom(td))
+    return own;
+
+  return own->GetOwner(td);
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Paths in the structural hierarchy
+
+String taBase::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
+  if((this == par_stop) && (ta == NULL))
+    return ".";
+  String rval;
+
+  taBase* par = GetOwner();
+  if(par == NULL) {
+    if(ta == NULL) rval = "root";
   }
-  cpy_to->UnSafeCopy(this);
-  return true;
-}
+  else if(this != par_stop)
+    rval = par->GetPath_Long((TAPtr)this, par_stop);
 
-void taBase::DataChanged(int dcr, void* op1, void* op2) {
-  setDirty(true); // note, also then sets dirty for list ops, like Add etc.
-  taDataLink* dl = data_link();
-  if (dl) dl->DataDataChanged(dcr, op1, op2);
-}
+  if((par != NULL) && (GetName() != ""))
+    rval += "(" + GetName() + ")";
 
-bool taBase::Dump_QuerySaveMember(MemberDef* md) { 
-  // default is to save, unless explicit comment directive
-  return !md->HasOption("NO_SAVE");
-}
-
-bool taBase::DuplicateMe() {
-  TAPtr ownr = GetOwner();
-  if(ownr == NULL) return false;
-  if(!ownr->InheritsFrom(TA_taList_impl)) {
-    taMisc::Error("Cannot duplicate me because owner is not a list/group!",GetPath());
-    return false;
+  if(ta != NULL) {
+    MemberDef* md;
+    if((md = FindMember(ta)) != NULL) {
+      rval += "." + md->name;
+    }
+    else if((md = FindMemberPtr(ta)) != NULL) {
+      rval = String("*(") + rval + "." + md->name + ")";
+    }
+    else {
+      rval += ".?.";
+    }
   }
-  taList_impl* own = (taList_impl*)ownr;
-  own->DuplicateEl(this);
-  return true;
+  return rval;
 }
 
-int taBase::Edit() {
-#ifdef TA_GUI
-  taiEdit* ie;
-  if((ie = GetTypeDef()->ie) != NULL) {
-    const iColor* bgclr = GetEditColorInherit();
-    return ie->Edit((void*)this, false, bgclr);
+String taBase::GetPath(TAPtr ta, TAPtr par_stop) const {
+  if ((this == par_stop) && (ta == NULL))
+    return ".";
+
+  String rval;
+  taBase* par = GetOwner();
+  if (par == NULL) {
+    if (ta == NULL) rval = "root";
+  } else if (this != par_stop)
+    rval = par->GetPath((TAPtr)this, par_stop);
+
+  if (ta != NULL) {
+    MemberDef* md;
+    if ((md = FindMember(ta)) != NULL) {
+      rval += "." + md->name;
+    } else if ((md = FindMemberPtr(ta)) != NULL) {
+      rval = String("*(") + rval + "." + md->name + ")";
+    } else {
+      rval += ".?.";
+    }
   }
-#endif
-  return false;
+  return rval;
 }
 
 TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) const {
@@ -743,82 +660,92 @@ TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) co
   return NULL;
 }
 
-const KeyString taBase::key_name("name");
-const KeyString taBase::key_type("type");
-const KeyString taBase::key_type_desc("type_desc");
-const KeyString taBase::key_desc("desc"); 
-const KeyString taBase::key_disp_name("disp_name"); 
+int taBase::GetNextPathDelimPos(const String& path, int start) {
+  int point_idx = path.index('.', start+1); // skip any possible starting delim
+  int brack_idx = path.index('[', start+1);
 
-String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
-       if (key == key_name) return GetName();
-  else if (key == key_type) return GetTypeDef()->name;
-  else if (key == key_type_desc) return GetTypeDef()->desc;
-// note: some classes override desc with dynamic desc's
-  else if (key == key_desc) return GetDesc(); 
-  else if (key == key_disp_name) return GetDisplayName(); 
-  else return _nilString;
-}
-
-taDataLink* taBase::GetDataLink() {
-  if (!data_link()) {
-    taiViewType* iv;
-    if ((iv = GetTypeDef()->iv) != NULL) {
-      iv->GetDataLink(this, GetTypeDef()); // sets data_link
-    }
+  // if there is a period but not a bracket, or the period is before the bracket
+  if(((brack_idx < start) && (point_idx >= start)) ||
+     ((point_idx < brack_idx ) && (point_idx >= start)))
+  {
+    return point_idx;
   }
-  return data_link();
-}
-
-const iColor* taBase::GetEditColor() {
-  if (tabMisc::root) return tabMisc::root->GetObjColor(this);
-  else return NULL;
-}
-
-const iColor* taBase::GetEditColorInherit() {
-  const iColor* bgclr = GetEditColor();
-  if (!bgclr) {
-    TAPtr ownr = GetOwner();
-    while ((ownr != NULL) && (bgclr == NULL)) {
-      bgclr = ownr->GetEditColor();
-      ownr = ownr->GetOwner();
-    }
+  else if(brack_idx >= start) {		// else try the bracket
+    return brack_idx;
   }
-  return bgclr;
+  return path.length();			// delimiter is end of string (its all element)
 }
 
-String taBase::GetDisplayName() const { 
-  String rval = GetName(); 
-  if (rval.nonempty()) return rval;
-  // no name, so try the Owner.path name
-  taBase* own = GetOwner();
-  if (own) {
-    rval.cat(own->GetName()).cat(GetPath(NULL, own));
-    if (rval.nonempty()) return rval; // shouldn't be empty!
+int taBase::GetLastPathDelimPos(const String& path) {
+  int point_idx = path.index('.',-1);
+  int brack_idx = path.index('[',-1);
+
+  if(point_idx > brack_idx) {		// point comes after bracket
+    return point_idx;
   }
-  // last resort: (TypeName@HexAddr)
-  rval = "(" + GetTypeDef()->name + "@" 
-      + String(QString::number((intptr_t)this, 16)) + ")";
-  return rval;
+  else if(brack_idx >= 0) {
+    return brack_idx;
+  }
+  return 0;
 }
 
-bool taBase::HasUserData(const String& name) const {
-  UserDataItem_List* ud = GetUserDataList();
-  if (ud)
-    return (ud->FindName(name));
-  
+TypeDef* taBase::GetScopeType() {
+  TypeDef* scp_tp = NULL;
+  String scp_nm  = GetTypeDef()->OptionAfter("SCOPE_");
+  if (scp_nm.nonempty())
+    scp_tp = taMisc::types.FindName(scp_nm);
+  if (scp_tp) return scp_tp;
+  else return taMisc::default_scope;
+}
+
+TAPtr taBase::GetScopeObj(TypeDef* scp_tp) {
+  if (!scp_tp)
+    scp_tp = GetScopeType();
+  if (!scp_tp)
+    return tabMisc::root;
+  return GetOwner(scp_tp);
+}
+
+bool taBase::SameScope(TAPtr ref_obj, TypeDef* scp_tp) {
+  if (!ref_obj)
+    return true;
+  if (!scp_tp)
+    scp_tp = GetScopeType();
+  if (!scp_tp)
+    return true;
+
+  TAPtr my_scp = GetOwner(scp_tp);
+  if ((!my_scp) || (my_scp == ref_obj) || (my_scp == ref_obj->GetOwner(scp_tp)))
+    return true;
   return false;
 }
 
-TypeDef* taBase::GetTypeDef() const {
-  return &TA_taBase;
-}
-
-bool taBase::HasFlag(int flag) const {
-  return (m_flags & flag);
+int taBase::NTokensInScope(TypeDef* td, TAPtr ref_obj, TypeDef* scp_tp) {
+  if(ref_obj == NULL)
+    return td->tokens.size;
+  int cnt = 0;
+  int i;
+  for(i=0; i<td->tokens.size; i++) {
+    TAPtr tmp = (TAPtr)td->tokens.FastEl(i);
+    if(tmp->SameScope(ref_obj, scp_tp))
+      cnt++;
+  }
+  return cnt;
 }
 
 ////////////////////////////////////////////////////////////////////// 
-// 	visible input/output interface
+// 	Saving and Loading to/from files
+
+String taBase::GetFileNameFmProject(const String& ext, const String& tag, bool dmem_proc_no) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return _nilString;
+  String dms;
+  if(dmem_proc_no && (taMisc::dmem_nprocs > 1)) {
+    dms = ".p" + taMisc::LeadingZeros(dmem_proc_no, 2);
+  }
+  String rval = proj->base_fname + tag + dms + ext;
+  return rval;
+}
 
 taFiler* taBase::StatGetFiler(TypeItem* td, const String& ext, int compress) {
   bool cmprs = (td->HasOption("COMPRESS"));
@@ -923,230 +850,43 @@ int taBase::SaveAs(const String& fname) {
   return rval;
 }
 
-String taBase::GetFileNameFmProject(const String& ext, const String& tag, bool dmem_proc_no) {
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!proj) return _nilString;
-  String dms;
-  if(dmem_proc_no && (taMisc::dmem_nprocs > 1)) {
-    dms = ".p" + taMisc::LeadingZeros(dmem_proc_no, 2);
-  }
-  String rval = proj->base_fname + tag + dms + ext;
-  return rval;
+bool taBase::Dump_QuerySaveMember(MemberDef* md) { 
+  // default is to save, unless explicit comment directive
+  return !md->HasOption("NO_SAVE");
 }
 
-TAPtr taBase::GetOwner(TypeDef* td) const {
-  TAPtr own = GetOwner();
-  if(own == NULL)
-    return NULL;
-  if(own->InheritsFrom(td))
-    return own;
+///////////////////////////////////////////////////////////////////////////
+// 	Updating of object properties
 
-  return own->GetOwner(td);
+void taBase::UpdateAfterEdit() {
+  UpdateAfterEdit_impl();
+  DataChanged(DCR_ITEM_UPDATED);
+  taBase* _owner = GetOwner();
+  if (_owner ) {
+    bool handled = false;
+    _owner->ChildUpdateAfterEdit(this, handled);
+  }
 }
 
-String taBase::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
-  if((this == par_stop) && (ta == NULL))
-    return ".";
-  String rval;
-
-  taBase* par = GetOwner();
-  if(par == NULL) {
-    if(ta == NULL) rval = "root";
-  }
-  else if(this != par_stop)
-    rval = par->GetPath_Long((TAPtr)this, par_stop);
-
-  if((par != NULL) && (GetName() != ""))
-    rval += "(" + GetName() + ")";
-
-  if(ta != NULL) {
-    MemberDef* md;
-    if((md = FindMember(ta)) != NULL) {
-      rval += "." + md->name;
-    }
-    else if((md = FindMemberPtr(ta)) != NULL) {
-      rval = String("*(") + rval + "." + md->name + ")";
-    }
-    else {
-      rval += ".?.";
-    }
-  }
-  return rval;
-}
-
-String taBase::GetPath(TAPtr ta, TAPtr par_stop) const {
-  if ((this == par_stop) && (ta == NULL))
-    return ".";
-
-  String rval;
-  taBase* par = GetOwner();
-  if (par == NULL) {
-    if (ta == NULL) rval = "root";
-  } else if (this != par_stop)
-    rval = par->GetPath((TAPtr)this, par_stop);
-
-  if (ta != NULL) {
-    MemberDef* md;
-    if ((md = FindMember(ta)) != NULL) {
-      rval += "." + md->name;
-    } else if ((md = FindMemberPtr(ta)) != NULL) {
-      rval = String("*(") + rval + "." + md->name + ")";
-    } else {
-      rval += ".?.";
-    }
-  }
-  return rval;
-}
-
-int taBase::GetNextPathDelimPos(const String& path, int start) {
-  int point_idx = path.index('.', start+1); // skip any possible starting delim
-  int brack_idx = path.index('[', start+1);
-
-  // if there is a period but not a bracket, or the period is before the bracket
-  if(((brack_idx < start) && (point_idx >= start)) ||
-     ((point_idx < brack_idx ) && (point_idx >= start)))
-  {
-    return point_idx;
-  }
-  else if(brack_idx >= start) {		// else try the bracket
-    return brack_idx;
-  }
-  return path.length();			// delimiter is end of string (its all element)
-}
-
-int taBase::GetLastPathDelimPos(const String& path) {
-  int point_idx = path.index('.',-1);
-  int brack_idx = path.index('[',-1);
-
-  if(point_idx > brack_idx) {		// point comes after bracket
-    return point_idx;
-  }
-  else if(brack_idx >= 0) {
-    return brack_idx;
-  }
-  return 0;
-}
-
-TypeDef* taBase::GetScopeType() {
-  TypeDef* scp_tp = NULL;
-  String scp_nm  = GetTypeDef()->OptionAfter("SCOPE_");
-  if (scp_nm.nonempty())
-    scp_tp = taMisc::types.FindName(scp_nm);
-  if (scp_tp) return scp_tp;
-  else return taMisc::default_scope;
-}
-
-TAPtr taBase::GetScopeObj(TypeDef* scp_tp) {
-  if (!scp_tp)
-    scp_tp = GetScopeType();
-  if (!scp_tp)
-    return tabMisc::root;
-  return GetOwner(scp_tp);
-}
-
-String taBase::GetStringRep_impl() const {
-  String rval = GetTypeDef()->name + ":" + GetPath_Long();
-  return rval;
-}
-
-const Variant taBase::GetUserData(const String& name) const {
-  UserDataItem_List* ud = GetUserDataList();
-  if (ud) {
-    UserDataItemBase* udi = ud->FindName(name);
-    if (udi) return udi->valueAsVariant();
-  }
-  return _nilVariant;
-}
-
-void taBase::Help() {
-  TypeDef* mytd = GetTypeDef();
-  String full_file;
-  while((mytd != NULL) && full_file.empty()) {
-    String help_file = taMisc::help_file_tmplt;
-    help_file.gsub("%t", mytd->name);
-    full_file = taMisc::FindFileOnLoadPath(help_file);
-    mytd = mytd->parents.SafeEl(0);	// go with the parent
-  }
-  if(full_file.empty()) {
-    taMisc::Error("Sorry, no help available for type:", GetTypeDef()->name);
+void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
+  if (handled) return; // note: really shouldn't have been handled already if we are called...
+  // call notify if it is an owned member object (but not list/group items)
+  if (((char*)child >= ((char*)this)) && ((char*)child < ((char*)this + GetTypeDef()->size))) {
+    handled = true;
+    DataChanged(DCR_CHILD_ITEM_UPDATED);
     return;
   }
-
-  String help_cmd = taMisc::help_cmd;
-  help_cmd.gsub("%s", full_file);
-  system(help_cmd);
 }
 
-TAPtr taBase::MakeToken(TypeDef* td) {
-  if(td->GetInstance() != NULL) {
-    return ((TAPtr)td->GetInstance())->MakeToken();
-  }
-  else
-    return NULL;
+void taBase::UpdateAllViews() {
+  if(taMisc::gui_active)
+    DataChanged(DCR_UPDATE_VIEWS);
 }
 
-TAPtr taBase::MakeTokenAry(TypeDef* td, int no) {
-  if(td->GetInstance() != NULL) {
-    return ((TAPtr)td->GetInstance())->MakeTokenAry(no);
-  }
-  else
-    return NULL;
-}
-
-TAPtr taBase::New(int, TypeDef*) {
-  return NULL;
-}
-
-int taBase::NTokensInScope(TypeDef* td, TAPtr ref_obj, TypeDef* scp_tp) {
-  if(ref_obj == NULL)
-    return td->tokens.size;
-  int cnt = 0;
-  int i;
-  for(i=0; i<td->tokens.size; i++) {
-    TAPtr tmp = (TAPtr)td->tokens.FastEl(i);
-    if(tmp->SameScope(ref_obj, scp_tp))
-      cnt++;
-  }
-  return cnt;
-}
-
-bool taBase::RemoveDataClient(IDataLinkClient* dlc) {
-  taDataLink* dl = data_link(); // doesn't autocreate
-  if (dl != NULL) {
-    return dl->RemoveDataClient(dlc);
-  } else return false;
-}
-
-bool taBase::ReShowEdit(bool force) {
-#ifdef TA_GUI
-  return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);
-#endif
-  return false;
-}
-
-bool taBase::SameScope(TAPtr ref_obj, TypeDef* scp_tp) {
-  if (!ref_obj)
-    return true;
-  if (!scp_tp)
-    scp_tp = GetScopeType();
-  if (!scp_tp)
-    return true;
-
-  TAPtr my_scp = GetOwner(scp_tp);
-  if ((!my_scp) || (my_scp == ref_obj) || (my_scp == ref_obj->GetOwner(scp_tp)))
-    return true;
-  return false;
-}
-
-void taBase::SetDefaultName() {
-  if(taMisc::not_constr || taMisc::in_init)
-    return;
-  TypeDef* td = GetTypeDef();
-  int tok;
-  if(td->tokens.keep && ((tok = td->tokens.Find((void *)this)) >= 0)) {
-    String nm = td->name + "_" + String(tok);
-    SetName(nm);
-  }
+void taBase::DataChanged(int dcr, void* op1, void* op2) {
+  setDirty(true); // note, also then sets dirty for list ops, like Add etc.
+  taDataLink* dl = data_link();
+  if (dl) dl->DataDataChanged(dcr, op1, op2);
 }
 
 void taBase::setDirty(bool value) {
@@ -1158,70 +898,134 @@ void taBase::setDirty(bool value) {
   }
 }
 
-void taBase::SetTypeDefaults_impl(TypeDef* ttd, TAPtr scope) {
-  if(ttd->defaults == NULL) return;
-  int i;
-  for(i=0; i<ttd->defaults->size; i++) {
-    TypeDefault* td = (TypeDefault*)ttd->defaults->FastEl(i);
-    TAPtr tdscope = td->GetScopeObj(taMisc::default_scope);
-    if(tdscope == scope) {
-      td->SetTypeDefaults(this);
-      break;
+///////////////////////////////////////////////////////////////////////////
+//	Data Links -- notify other guys when you change
+
+taDataLink* taBase::GetDataLink() {
+  if (!data_link()) {
+    taiViewType* iv;
+    if ((iv = GetTypeDef()->iv) != NULL) {
+      iv->GetDataLink(this, GetTypeDef()); // sets data_link
     }
   }
+  return data_link();
 }
 
-void taBase::SetTypeDefaults_parents(TypeDef* ttd, TAPtr scope) {
-  int i;
-  for(i=0; i<ttd->parents.size; i++) {
-    TypeDef* par = ttd->parents.FastEl(i);
-    if(!par->InheritsFrom(TA_taBase)) continue;	// only ta-bases
-    SetTypeDefaults_parents(par, scope); // first do parents of parent
-    if(par->defaults != NULL)
-      SetTypeDefaults_impl(par, scope);    // then actually do parent
-  }
-  if(ttd->defaults != NULL)
-    SetTypeDefaults_impl(ttd, scope);    // then actually do it
-}
-
-void taBase::SetTypeDefaults() {
-  TypeDef* ttd = GetTypeDef();	// this typedef = ttd
-  TAPtr scope = GetScopeObj(taMisc::default_scope); // scope for default vals
-  SetTypeDefaults_parents(ttd, scope);
-}
-
-void taBase::SetFlag(int flag) {
-  m_flags |= flag;
-}
-
-void taBase::SetUserData(const String& name, const Variant& value) {
-  UserDataItem_List* ud = GetUserDataList(true);
+bool taBase::AddDataClient(IDataLinkClient* dlc) {
+  // refuse new links while destroying!
+  if (isDestroying()) {
 #ifdef DEBUG
-  if (!ud) {
-    taMisc::Warning("Class does not support UserData:", GetTypeDef()->name);
-    return;
-  }
-#else
-  if (!ud) return; // not supported, shouldn't be calling
+    taMisc::Warning("Attempt to add a client DataLink to a destructing object");
 #endif
-  
-  UserDataItemBase* udi = ud->FindName(name);
-  if (!udi) {
-    udi = new UserDataItem;
-    udi->SetName(name);
-    ud->Add(udi);
+    return false;
   }
-  if (!udi->setValueAsVariant(value)) {
-    taMisc::Warning("Attempt to set existing UserData value as Variant was not supported for", name);
+  taDataLink* dl = GetDataLink(); // autocreates if necessary
+  if (dl != NULL) {
+    dl->AddDataClient(dlc);
+    return true;
   }
-}
- 
-void taBase::UpdateAllViews() {
-  if(taMisc::gui_active)
-    DataChanged(DCR_UPDATE_VIEWS);
+  return false;
 }
 
+bool taBase::RemoveDataClient(IDataLinkClient* dlc) {
+  taDataLink* dl = data_link(); // doesn't autocreate
+  if (dl != NULL) {
+    return dl->RemoveDataClient(dlc);
+  } else return false;
+}
 
+void taBase::BatchUpdate(bool begin, bool struc) {
+  taDataLink* dl = data_link();
+  if (!dl) return;
+  if (begin) {
+    if (struc)
+      DataChanged(DCR_STRUCT_UPDATE_BEGIN);
+    else
+      DataChanged(DCR_DATA_UPDATE_BEGIN);
+  } else {
+    if (struc)
+      DataChanged(DCR_STRUCT_UPDATE_END);
+    else
+      DataChanged(DCR_DATA_UPDATE_END);
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Checking the configuration of objects prior to using them
+
+bool taBase::CheckConfig_Gui(bool confirm_success, bool quiet) {
+  taMisc::CheckConfigStart(confirm_success, quiet);
+  bool ok = CheckConfig_impl(quiet);
+  taMisc::CheckConfigEnd(ok);
+  return ok;
+}
+
+bool taBase::CheckConfig_impl(bool quiet) {
+  int cp_flags = m_flags; 
+  bool this_rval = true;
+  CheckThisConfig_impl(quiet, this_rval);
+  if (this_rval) {
+    ClearFlag(THIS_INVALID);
+  } else {
+    SetFlag(THIS_INVALID);
+  }
+  bool child_rval = true;
+  CheckChildConfig_impl(quiet, child_rval);
+  if (child_rval) {
+    ClearFlag(CHILD_INVALID);
+  } else {
+    SetFlag(CHILD_INVALID);
+  }
+  if (cp_flags != m_flags)
+    DataChanged(DCR_ITEM_UPDATED);
+  return (this_rval && child_rval);
+}
+
+void taBase::ClearCheckConfig() {
+  if (m_flags & INVALID_MASK) {
+    ClearFlag(INVALID_MASK);
+    DataChanged(DCR_ITEM_UPDATED);
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Copying and changing type 
+
+bool taBase::CopyFrom(TAPtr cpy_from) {
+  if(cpy_from == NULL) return false;
+  if(!cpy_from->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_from->GetTypeDef())) {
+    taMisc::Error("Cannot copy from given object of type:",cpy_from->GetTypeDef()->name,
+		  "which does not inherit from:", GetTypeDef()->name,
+		  "(or I don't inherit from it)", GetPath());
+    return false;
+  }
+  UnSafeCopy(cpy_from);
+  return true;
+}
+
+bool taBase::CopyTo(TAPtr cpy_to) {
+  if(cpy_to == NULL) return false;
+  if(!cpy_to->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_to->GetTypeDef())) {
+    taMisc::Error("Cannot copy to given object of type:",cpy_to->GetTypeDef()->name,
+		  "which does not inherit from:", GetTypeDef()->name,
+		  "(or I don't inherit from it)",GetPath());
+    return false;
+  }
+  cpy_to->UnSafeCopy(this);
+  return true;
+}
+
+bool taBase::DuplicateMe() {
+  TAPtr ownr = GetOwner();
+  if(ownr == NULL) return false;
+  if(!ownr->InheritsFrom(TA_taList_impl)) {
+    taMisc::Error("Cannot duplicate me because owner is not a list/group!",GetPath());
+    return false;
+  }
+  taList_impl* own = (taList_impl*)ownr;
+  own->DuplicateEl(this);
+  return true;
+}
 
 #ifdef TA_GUI
 static void tabase_base_closing_all_gp(TAPtr obj) {
@@ -1271,6 +1075,396 @@ bool taBase::ChangeMyType(TypeDef* new_type) {
   return own->ChangeType(this, new_type);
   // owner will used delayed remove to make this safe!
 }
+
+///////////////////////////////////////////////////////////////////////////
+//	Type information
+
+taBase::ValType taBase::ValTypeForType(TypeDef* td) {
+  if (td->ptr == 0) {
+    if (td->DerivesFrom(TA_bool)) {
+      return VT_INT;
+    }
+    // note: char is generic char, and typically we won't use signed char
+    else if (td->DerivesFrom(TA_char)) {
+      return VT_STRING; 
+    }
+    // note: explicit use of signed char is treated like a number
+    else if (td->DerivesFrom(TA_unsigned_char))
+      return VT_BYTE;
+    else if (td->DerivesFrom(TA_signed_char) 
+      || td->DerivesFrom(TA_short)
+      || td->DerivesFrom(TA_unsigned_short)
+      || td->DerivesFrom(TA_int)
+      || td->DerivesFrom(TA_unsigned_int)
+      ) 
+    {
+      return VT_INT; 
+    }
+    else if (td->DerivesFrom(TA_double)) 
+    {
+      return VT_DOUBLE; 
+    }
+    else if (td->DerivesFrom(TA_float)) 
+    {
+      return VT_FLOAT; 
+    }
+    else if(td->DerivesFormal(TA_enum)) { //maybe we should use String's for these???
+      return VT_INT; 
+    }
+    else if(td->DerivesFrom(TA_taString))
+      return VT_STRING;
+    else if(td->DerivesFrom(TA_Variant)) {
+      return VT_VARIANT;
+    }
+  }
+  return VT_VARIANT;
+}
+
+const String taBase::ValTypeToStr(ValType vt) {
+  static String str_String("String");
+  static String str_double("double");
+  static String str_float("float");
+  static String str_int("int");
+  static String str_byte("byte");
+  static String str_Variant("Variant");
+  switch (vt) {
+  case VT_STRING: return str_String;
+  case VT_DOUBLE: return str_double;
+  case VT_FLOAT: return str_float;
+  case VT_INT: return str_int;
+  case VT_BYTE: return str_byte;
+  case VT_VARIANT: return str_Variant;
+  default: return _nilString; // compiler food
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Printing out object state values
+
+String taBase::GetStringRep(taBase* it) {
+  if (it == NULL) 
+    return String("NULL", 4);
+  else
+    return it->GetStringRep_impl();
+}
+
+String taBase::GetStringRep_impl() const {
+  String rval = GetTypeDef()->name + ":" + GetPath_Long();
+  return rval;
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	User Data: optional configuration settings for objects
+
+bool taBase::HasUserData(const String& name) const {
+  UserDataItem_List* ud = GetUserDataList();
+  if (ud)
+    return (ud->FindName(name));
+  
+  return false;
+}
+
+const Variant taBase::GetUserData(const String& name) const {
+  UserDataItem_List* ud = GetUserDataList();
+  if (ud) {
+    UserDataItemBase* udi = ud->FindName(name);
+    if (udi) return udi->valueAsVariant();
+  }
+  return _nilVariant;
+}
+
+void taBase::SetUserData(const String& name, const Variant& value) {
+  UserDataItem_List* ud = GetUserDataList(true);
+#ifdef DEBUG
+  if (!ud) {
+    taMisc::Warning("Class does not support UserData:", GetTypeDef()->name);
+    return;
+  }
+#else
+  if (!ud) return; // not supported, shouldn't be calling
+#endif
+  
+  UserDataItemBase* udi = ud->FindName(name);
+  if (!udi) {
+    udi = new UserDataItem;
+    udi->SetName(name);
+    ud->Add(udi);
+  }
+  if (!udi->setValueAsVariant(value)) {
+    taMisc::Warning("Attempt to set existing UserData value as Variant was not supported for", name);
+  }
+}
+
+ 
+///////////////////////////////////////////////////////////////////////////
+//   Clipboard Edit Actions (for drag-n-drop, cut/paste etc)
+
+#ifdef TA_GUI
+
+/*  ClipBoard operations
+
+For the EditActions and Queries, we follow the pattern below:
+
+  Action result:
+    1 - action was performed by the called function
+    0 - action was not performed
+    -1 - action was forbidden by the called function
+    -2 - an error occurred executing the called function
+
+  For Drag init operations, there will be no mime object (NULL).
+
+  QUERIES:
+  If Has Parents:
+    Call ChildQuery_impl function(s) of parent
+  Then:
+    Call Object Query_impl function
+
+  ACTIONS:
+  If Has Parents:
+    Call ChildAction_impl function(s) of parent
+  Then:
+    If parent action !=0: Call Object Action_impl function (see below)
+
+  This lets the parent have first dibs on the action taken -- if it
+
+  The above general calling pattern is established non-virtually in the taBase class.
+  However, the virtual _impl functions provide the ability to do inheritance and/or overrides of behavior.
+
+*/
+
+/*
+  We generally allow COPY, and on single or multi-, since that is not typically mediated by the owner
+
+*/
+
+void taBase::QueryEditActions_impl(const taiMimeSource* ms, int& allowed, int& forbidden)
+{
+  allowed |= taiClipData::EA_COPY;
+}
+
+int taBase::EditAction_impl(taiMimeSource* ms, int ea) {
+  //note: follows same logic as the Query
+  if (ea & taiClipData::EA_COPY) return 1; //note: Ui actually puts the data on the clipboard, when it sees the 1
+
+  return 0;
+}
+
+// gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
+void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child, taiMimeSource* ms,
+    int& allowed, int& forbidden)
+{
+  if (ms && ms->is_multi()) {
+    int item_allowed = 0;
+    int item_allowed_accum = -1;
+    for (int i = 0; i < ms->count(); ++i) {
+      ms->setIndex(i);
+      // try it for every item -- we only ultimately allow what is allowed for all items
+      ChildQueryEditActions_impl(md, child, ms, item_allowed, forbidden);
+      item_allowed_accum &= item_allowed;
+    }
+    allowed |= item_allowed_accum;
+  } else {
+    ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
+  }
+}
+
+void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child, const taiMimeSource* ms,
+  int& allowed, int& forbidden)
+{
+  if (ms == NULL) return; // querying for src ops only
+
+  // if src action was Cut, that limits the Dst ops
+  if (ms->src_action() & (taiClipData::EA_SRC_CUT))
+   forbidden |= taiClipData::EA_FORB_ON_SRC_CUT;
+
+  // can't link etc. if not in this process
+  if (!ms->IsThisProcess())
+    forbidden |= taiClipData::EA_IN_PROC_OPS;
+}
+
+int taBase::ChildEditAction(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea)
+{
+  int rval = 0;
+  if (ms && ms->is_multi()) {
+    // note: we go backwards, since that seems to work best (ex. causes pasted items to end up in correct order)
+    for (int i = ms->count() - 1; i >= 0 ; --i) {
+      ms->setIndex(i);
+      // if a src op, then child is the operand so look up each iteration, else it is dest, so leave it be
+      if (ea & taiClipData::EA_SRC_OPS)
+        child = ms->tab_object();
+      rval = ChildEditAction_impl(md, child, ms, ea); //note: we just return the last value
+    }
+  } else {
+    rval = ChildEditAction_impl(md, child, ms, ea);
+  }
+  return rval;
+}
+
+// this routine just decodes the major category of operation: src, dst and then dispatches
+int taBase::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea) {
+  if (ea & taiClipData::EA_SRC_OPS) {
+    return ChildEditActionS_impl(md, child, ea);
+  } else {
+    return ChildEditActionD_impl(md, child, ms, ea);
+  }
+}
+
+#endif // TA_GUI
+
+///////////////////////////////////////////////////////////////////////////
+// 	Browser gui
+
+const KeyString taBase::key_name("name");
+const KeyString taBase::key_type("type");
+const KeyString taBase::key_type_desc("type_desc");
+const KeyString taBase::key_desc("desc"); 
+const KeyString taBase::key_disp_name("disp_name"); 
+
+String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
+       if (key == key_name) return GetName();
+  else if (key == key_type) return GetTypeDef()->name;
+  else if (key == key_type_desc) return GetTypeDef()->desc;
+// note: some classes override desc with dynamic desc's
+  else if (key == key_desc) return GetDesc(); 
+  else if (key == key_disp_name) return GetDisplayName(); 
+  else return _nilString;
+}
+
+void taBase::BrowseMe() {
+  // try to determine whether this is member obj, or not
+  taBase* own = GetOwner();
+  MemberDef* md = NULL;
+  if (own) {
+    md = own->FindMember((void*)this);
+  }
+  MainWindowViewer* wv = MainWindowViewer::NewBrowser(this, md);
+  if (wv) wv->ViewWindow();
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Edit Dialog gui
+
+int taBase::Edit() {
+#ifdef TA_GUI
+  taiEdit* ie;
+  if((ie = GetTypeDef()->ie) != NULL) {
+    const iColor* bgclr = GetEditColorInherit();
+    return ie->Edit((void*)this, false, bgclr);
+  }
+#endif
+  return false;
+}
+
+bool taBase::ReShowEdit(bool force) {
+#ifdef TA_GUI
+  return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);
+#endif
+  return false;
+}
+
+const iColor* taBase::GetEditColor() {
+  if (tabMisc::root) return tabMisc::root->GetObjColor(this);
+  else return NULL;
+}
+
+const iColor* taBase::GetEditColorInherit() {
+  const iColor* bgclr = GetEditColor();
+  if (!bgclr) {
+    TAPtr ownr = GetOwner();
+    while ((ownr != NULL) && (bgclr == NULL)) {
+      bgclr = ownr->GetEditColor();
+      ownr = ownr->GetOwner();
+    }
+  }
+  return bgclr;
+}
+
+void taBase::CallFun(const String& fun_name) {
+#ifdef TA_GUI
+  if(!taMisc::gui_active) return;
+#endif
+  MethodDef* md = GetTypeDef()->methods.FindName(fun_name);
+  if(md != NULL)
+    md->CallFun((void*)this);
+  else
+    taMisc::Error("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
+}
+
+bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
+  if((editor == NULL) || (member == NULL)) return false;
+#ifdef TA_GUI
+  return editor->SelectMember(this, member, extra_label);
+#else
+  return false;
+#endif
+}
+
+bool taBase::SelectForEditNm(const String& member, SelectEdit* editor, const String& extra_label) {
+  if (!editor) return false;
+#ifdef TA_GUI
+  return editor->SelectMemberNm(this, member, extra_label);
+#else
+  return false;
+#endif
+}
+
+bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label) {
+  if (!editor) return false;
+#ifdef TA_GUI
+  return editor->SelectMethod(this, function, extra_label);
+#else
+  return false;
+#endif
+}
+
+bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor, const String& extra_label) {
+  if (!editor) return false;
+#ifdef TA_GUI
+  return editor->SelectMethodNm(this, function, extra_label);
+#else
+  return false;
+#endif
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Closing 
+
+void taBase::Close() {
+  TAPtr own = GetOwner();
+  if (own && own->Close_Child(this))
+    return;
+  taBase::UnRef(this);
+}
+
+void taBase::CloseLater() {
+  tabMisc::Close_Obj(this);
+}
+
+bool taBase::Close_Child(TAPtr) {
+  return false;
+}
+
+void taBase::Help() {
+  TypeDef* mytd = GetTypeDef();
+  String full_file;
+  while((mytd != NULL) && full_file.empty()) {
+    String help_file = taMisc::help_file_tmplt;
+    help_file.gsub("%t", mytd->name);
+    full_file = taMisc::FindFileOnLoadPath(help_file);
+    mytd = mytd->parents.SafeEl(0);	// go with the parent
+  }
+  if(full_file.empty()) {
+    taMisc::Error("Sorry, no help available for type:", GetTypeDef()->name);
+    return;
+  }
+
+  String help_cmd = taMisc::help_cmd;
+  help_cmd.gsub("%s", full_file);
+  system(help_cmd);
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Updating pointers (when objects change type or are copied)
 
 bool taBase::UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* new_par,
 				 bool null_not_found) {
@@ -1547,43 +1741,6 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   }
   return nchg;
 }
-
-bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
-  if((editor == NULL) || (member == NULL)) return false;
-#ifdef TA_GUI
-  return editor->SelectMember(this, member, extra_label);
-#else
-  return false;
-#endif
-}
-
-bool taBase::SelectForEditNm(const String& member, SelectEdit* editor, const String& extra_label) {
-  if (!editor) return false;
-#ifdef TA_GUI
-  return editor->SelectMemberNm(this, member, extra_label);
-#else
-  return false;
-#endif
-}
-
-bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label) {
-  if (!editor) return false;
-#ifdef TA_GUI
-  return editor->SelectMethod(this, function, extra_label);
-#else
-  return false;
-#endif
-}
-
-bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor, const String& extra_label) {
-  if (!editor) return false;
-#ifdef TA_GUI
-  return editor->SelectMethodNm(this, function, extra_label);
-#else
-  return false;
-#endif
-}
-
 
 //////////////////////////
 //  taSmartPtr		//
@@ -2251,7 +2408,7 @@ String taList_impl::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
   return rval;
 }
 
-TAPtr taList_impl::New(int no, TypeDef* typ) {
+taBase* taList_impl::New(int no, TypeDef* typ) {
   if(no == 0) {
 #ifdef TA_GUI
     if (taMisc::gui_active)
@@ -2266,7 +2423,7 @@ TAPtr taList_impl::New(int no, TypeDef* typ) {
 		   "in list with base type:", el_base->name);
     return NULL;
   }
-  TAPtr rval = NULL;
+  taBase* rval = NULL;
   Alloc(size + no);		// pre-allocate!
   if((size == 0) || (no > 1))
     el_typ = typ;	// first item or multiple items set el_typ
@@ -2941,117 +3098,6 @@ void int_Array::FillSeq(int start, int inc) {
   for(i=0,v=start; i<size; i++, v += inc)
     FastEl(i) = v;
 }
-
-
-#ifdef TA_GUI
-
-/*  ClipBoard operations
-
-For the EditActions and Queries, we follow the pattern below:
-
-  Action result:
-    1 - action was performed by the called function
-    0 - action was not performed
-    -1 - action was forbidden by the called function
-    -2 - an error occurred executing the called function
-
-  For Drag init operations, there will be no mime object (NULL).
-
-  QUERIES:
-  If Has Parents:
-    Call ChildQuery_impl function(s) of parent
-  Then:
-    Call Object Query_impl function
-
-  ACTIONS:
-  If Has Parents:
-    Call ChildAction_impl function(s) of parent
-  Then:
-    If parent action !=0: Call Object Action_impl function (see below)
-
-  This lets the parent have first dibs on the action taken -- if it
-
-  The above general calling pattern is established non-virtually in the taBase class.
-  However, the virtual _impl functions provide the ability to do inheritance and/or overrides of behavior.
-
-*/
-
-/*
-  We generally allow COPY, and on single or multi-, since that is not typically mediated by the owner
-
-*/
-void taBase::QueryEditActions_impl(const taiMimeSource* ms, int& allowed, int& forbidden)
-{
-  allowed |= taiClipData::EA_COPY;
-}
-
-int taBase::EditAction_impl(taiMimeSource* ms, int ea) {
-  //note: follows same logic as the Query
-  if (ea & taiClipData::EA_COPY) return 1; //note: Ui actually puts the data on the clipboard, when it sees the 1
-
-  return 0;
-}
-
-// gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
-void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child, taiMimeSource* ms,
-    int& allowed, int& forbidden)
-{
-  if (ms && ms->is_multi()) {
-    int item_allowed = 0;
-    int item_allowed_accum = -1;
-    for (int i = 0; i < ms->count(); ++i) {
-      ms->setIndex(i);
-      // try it for every item -- we only ultimately allow what is allowed for all items
-      ChildQueryEditActions_impl(md, child, ms, item_allowed, forbidden);
-      item_allowed_accum &= item_allowed;
-    }
-    allowed |= item_allowed_accum;
-  } else {
-    ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
-  }
-}
-
-void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child, const taiMimeSource* ms,
-  int& allowed, int& forbidden)
-{
-  if (ms == NULL) return; // querying for src ops only
-
-  // if src action was Cut, that limits the Dst ops
-  if (ms->src_action() & (taiClipData::EA_SRC_CUT))
-   forbidden |= taiClipData::EA_FORB_ON_SRC_CUT;
-
-  // can't link etc. if not in this process
-  if (!ms->IsThisProcess())
-    forbidden |= taiClipData::EA_IN_PROC_OPS;
-}
-
-int taBase::ChildEditAction(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea)
-{
-  int rval = 0;
-  if (ms && ms->is_multi()) {
-    // note: we go backwards, since that seems to work best (ex. causes pasted items to end up in correct order)
-    for (int i = ms->count() - 1; i >= 0 ; --i) {
-      ms->setIndex(i);
-      // if a src op, then child is the operand so look up each iteration, else it is dest, so leave it be
-      if (ea & taiClipData::EA_SRC_OPS)
-        child = ms->tab_object();
-      rval = ChildEditAction_impl(md, child, ms, ea); //note: we just return the last value
-    }
-  } else {
-    rval = ChildEditAction_impl(md, child, ms, ea);
-  }
-  return rval;
-}
-
-// this routine just decodes the major category of operation: src, dst and then dispatches
-int taBase::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea) {
-  if (ea & taiClipData::EA_SRC_OPS) {
-    return ChildEditActionS_impl(md, child, ea);
-  } else {
-    return ChildEditActionD_impl(md, child, ms, ea);
-  }
-}
-#endif // TA_GUI
 
 
 //////////////////////////

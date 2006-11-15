@@ -468,7 +468,7 @@ void taGroup_impl::List(ostream& strm) const {
     FastGp_(i)->List(strm);
 }
 
-TAPtr taGroup_impl::New(int no, TypeDef* typ) {
+taBase* taGroup_impl::New(int no, TypeDef* typ) {
   if (typ == NULL)
     typ = el_typ;
   if(no == 0) {
@@ -482,7 +482,7 @@ TAPtr taGroup_impl::New(int no, TypeDef* typ) {
   // if requested typ inherits from the list el type, then 
   // we assume it is for a list el, and create the instances
   if (typ->InheritsFrom(el_base)) {
-    TAPtr rval = taList_impl::New(no, typ);
+    taBase* rval = taList_impl::New(no, typ);
     return rval;
   }
   
@@ -497,7 +497,7 @@ TAPtr taGroup_impl::New(int no, TypeDef* typ) {
       typ = GetTypeDef(); 
     } else if (!typ->InheritsFrom(GetTypeDef()))
       goto err;
-    TAPtr rval = gp.New(no, typ);
+    taBase* rval = gp.New(no, typ);
 //    UpdateAfterEdit();
     return rval;
   }

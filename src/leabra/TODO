@@ -3,25 +3,6 @@ leabra todo list:
 * fix Load/Save weights to write unit indicies so are totally robust.
   * new format
 
-LayerGeom : TwoDGeom {
-  bool n_not_xy;     // #DEF_false total number is less than x * y
-  int  n;	     // #CONDEDIT_n_not_xy:true total number (=x*y unless n_not_xy is set)
-}
-
-use for un_geom & gp_geom;  
-
-use bool use_gps?  ignore params if not??  or 1x1 = 1 is not using??
-
-* Network geom:
-> new:
-> un_geom (or "geom"): x, y
-> un_count: n // #EXPERT
-> bool: use_gps
-> gp_geom: x, y
-> gp_count: n // #EXPERT
-
-* don't show paths in taMisc -- no edits for them anyway
-
 * extrew in trial monitor seems not to be working: 12ax demo
 * change gp name to include unique ctr so group fun works.
 
@@ -34,13 +15,13 @@ docs..: add all float_RArray funs, for matricies.
 Program issues
 
 * checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
-* fix String name arg -- should work -- find parse class
 
 * for enum args, add TypeName:: to def arg in methodcall
 * use taMisc::prog_lib_paths directly instead of separate one in proglib, and use
   the name labels so they show up in chooser..
 
 css:
+* fix String name arg -- should work -- find parse class
 * syntax error ^ doesn't show up in right place..
 
 

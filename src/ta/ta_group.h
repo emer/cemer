@@ -95,7 +95,7 @@ public:
   bool		IsRoot() const	{ return (root_gp == this); } // 'true' if this is the root
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
-  TAPtr 	New(int no=0, TypeDef* typ = NULL);
+  taBase* 	New(int no=0, TypeDef* typ = NULL);
 
   MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;
   MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const;
