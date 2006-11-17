@@ -302,7 +302,7 @@ Program_Group .projects[0].programs.gp[1] {
    ProgVar @[2] {
     name="n_inner_trials";
     var_type=T_Int;
-    int_val=1;
+    int_val=2;
     objs_ptr=0;
     desc="number of inner-loop trials";
    };
@@ -313,7 +313,7 @@ Program_Group .projects[0].programs.gp[1] {
      name="Task";
      el_typ=DynEnumItem;
      el_def=0;
-     value_idx=1;
+     value_idx=0;
      DynEnumItem @[0] {
       name="ONE";
       value=0;
@@ -345,7 +345,7 @@ Program_Group .projects[0].programs.gp[1] {
      name="Cue";
      el_typ=DynEnumItem;
      el_def=0;
-     value_idx=0;
+     value_idx=2;
      DynEnumItem @[0] {
       name="A";
       value=0;
@@ -492,7 +492,7 @@ Program_Group .projects[0].programs.gp[1] {
       desc="name for the group column";
      };
      ProgVar @[1] {
-      name="nm";
+      name="name";
       var_type=T_String;
       string_val=;
       objs_ptr=0;
@@ -534,7 +534,7 @@ Program_Group .projects[0].programs.gp[1] {
 {       };
      };
      MethodCall @[1] {
-      desc="group is the task name";
+      desc="set the task name";
       off=0;
       result_var=NULL;
       obj=$3$;
@@ -543,16 +543,16 @@ Program_Group .projects[0].programs.gp[1] {
 { const taString& val;int col;int row;      };
      };
      MethodCall @[2] {
-      desc="name is task";
+      desc="set the name";
       off=0;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsString;
-      args{ nm;name_col;-1;};
+      args{ name;name_col;-1;};
 { const taString& val;int col;int row;      };
      };
      MethodCall @[3] {
-      desc="set task as input";
+      desc="set the input";
       off=0;
       result_var=NULL;
       obj=$3$;
@@ -561,7 +561,7 @@ Program_Group .projects[0].programs.gp[1] {
 { float val;int col;int row;int cell;      };
      };
      MethodCall @[4] {
-      desc="set left as output";
+      desc="set the output";
       off=0;
       result_var=NULL;
       obj=$3$;
@@ -682,7 +682,7 @@ Program_Group .projects[0].programs.gp[1] {
       value="task";
      };
      ProgArg @[1] {
-      name="nm";
+      name="name";
       value="task";
      };
      ProgArg @[2] {
@@ -841,7 +841,7 @@ Program_Group .projects[0].programs.gp[1] {
 	value="task";
        };
        ProgArg @[1] {
-	name="nm";
+	name="name";
 	value="cue";
        };
        ProgArg @[2] {
@@ -872,7 +872,7 @@ Program_Group .projects[0].programs.gp[1] {
 	value="task";
        };
        ProgArg @[1] {
-	name="nm";
+	name="name";
 	value="probe";
        };
        ProgArg @[2] {

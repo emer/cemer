@@ -55,10 +55,15 @@ HEADS =\
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
-css_parse.cpp:
+css_parse.ccx:	css_parse.y
 	bison -dtvy css_parse.y;
-	sed -e "s/union/struct/g" y.tab.c >css_parse.cpp;
+	sed -e "s/union/struct/g" y.tab.c >css_parse.ccx;
 	sed -e "s/union/struct/g" y.tab.h >css_parse.hx;
+
+css_parse.cpp: 	css_parse.ccx
+	cmp -s css_parse.ccx css_parse.cpp || (cp css_parse.ccx css_parse.cpp);
+
+css_parse.h:	css_parse.hx
 	cmp -s css_parse.hx css_parse.h || (cp css_parse.hx css_parse.h);
 
 noinst_LTLIBRARIES = libcss@PDP_SUFFIX@@PDP_VERSION@.la

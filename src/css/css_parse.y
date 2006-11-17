@@ -814,7 +814,7 @@ subargdefn:
 	    cssMisc::parsing_args = true;
 	    $$ = cssMisc::ConstExpr->Stack()->Push(new cssString($2));
 	    ($1.El())->MakeToken(cssMisc::ConstExpr); }
-        | type CSS_VAR	{
+        | type membnms	{
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if($1.El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
@@ -1475,9 +1475,9 @@ void yyerror(char* s) { 	/* called for yacc syntax error */
   if(strcmp(s, "parse error") == 0) {
     String src = cssMisc::cur_top->Prog()->GetSrcLC(cssMisc::cur_top->Prog()->tok_line);
     src.gsub('\t',' ');		// replace tabs
-    *(fh) << "Syntax Error, line " << cssMisc::cur_top->src_ln << ":\t"
+    *(fh) << "Syntax Error, line " << cssMisc::cur_top->src_ln << ":\n"
       << src;
-    *(fh) << "\t\t\t";
+/*     *(fh) << "\t\t\t"; */
     for(i=0; i < cssMisc::cur_top->Prog()->tok_col; i++)
       *(fh) << " ";
     *(fh) << "^\n";

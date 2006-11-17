@@ -1132,7 +1132,7 @@ int taMisc::read_word(istream& strm, bool peek) {
   return c;
 }
 
-int taMisc::read_alnum(istream& strm, bool peek) {
+int taMisc::read_nonwhite(istream& strm, bool peek) {
   int c = skip_white(strm, true);
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
@@ -1153,7 +1153,7 @@ int taMisc::read_alnum(istream& strm, bool peek) {
   return c;
 }
 
-int taMisc::read_alnum_noeol(istream& strm, bool peek) {
+int taMisc::read_nonwhite_noeol(istream& strm, bool peek) {
   int c = skip_white_noeol(strm,true);
   taMisc::LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
@@ -1446,6 +1446,65 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
     strm.get();
     if((c != EOF) && (strm.peek() == ';')) strm.get(); // skip next semi
   }
+  return c;
+}
+
+
+////////////////////////////////////////////////////////////////////////
+//	HTML-style tags
+
+taMisc::ReadTagStatus taMisc::read_tag(istream& strm, String& tag, String& val) {
+  int c = skip_white(strm, true);
+  if(c == EOF) return TAG_EOF;
+  if(c != '<') return TAG_NONE;
+  strm.get();
+  c = strm.peek();
+  if(c == EOF) return TAG_EOF;
+  ReadTagStatus rval = TAG_GOT;
+  if(c == '/') {
+    strm.get();
+    rval = TAG_END;
+  }
+  read_till_rangle(strm, false);
+  if(LexBuf.contains(' ')) {
+    tag = LexBuf.before(' ');
+    val = LexBuf.after(' ');
+  }
+  else {
+    tag = LexBuf;
+    val = "";
+  }
+  c = strm.peek();
+  if(c == '\n') strm.get();	// absorb an immediate cr after tag, which is common
+  return rval;
+}
+  
+int taMisc::read_till_rangle(istream& strm, bool peek) {
+  int c;
+  LexBuf = "";
+  int depth = 0;
+  if(taMisc::verbose_load >= taMisc::SOURCE) {
+    while (((c = strm.peek()) != EOF) && !((c == '>') && (depth <= 0))) {
+      cerr << (char)c;
+      if(c == '\n') 	taMisc::FlushConsole();
+      LexBuf += (char)c;
+      if(c == '<')      depth++;
+      if(c == '>')      depth--;
+      strm.get();
+    }
+    if(c != EOF) cerr << (char)c;
+    taMisc::FlushConsole();
+  }
+  else {
+    while (((c = strm.peek()) != EOF) && !((c == '>') && (depth <= 0))) {
+      LexBuf += (char)c;
+      if(c == '<')      depth++;
+      if(c == '>')      depth--;
+      strm.get();
+    }
+  }
+  if(!peek)
+    strm.get();
   return c;
 }
 

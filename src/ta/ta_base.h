@@ -651,6 +651,8 @@ public:
   // #CAT_ObjectMgmt get the enum value corresponding to the given enum name (-1 if not found), and sets enum_tp_nm to name of type this enum belongs in (empty if not found)
   virtual uint		GetSize() const		{ return GetTypeDef()->size; }  // #IGNORE
 
+  virtual String	GetTypeName() const 			// #IGNORE 
+  { return GetTypeDef()->name; }
   virtual ostream&  	OutputType(ostream& strm) const		// #IGNORE
   { return GetTypeDef()->OutputType(strm); }
   virtual ostream&  	OutputInherit(ostream& strm) const 	// #IGNORE
@@ -793,7 +795,8 @@ public:
 
   virtual void		CloseLater();
   // #MENU #CONFIRM #NO_REVERT_AFTER #LABEL_Close_(Destroy) #NO_MENU_CONTEXT #CAT_ObjectMgmt PERMANENTLY Destroy this object!  This is not Iconify.
-  virtual void		Close(); // #IGNORE an immediate version of Close for use in code (no waitproc delay)
+  virtual void		Close();
+  // #IGNORE an immediate version of Close for use in code (no waitproc delay)
   virtual bool		Close_Child(TAPtr obj);
   // #IGNORE actually closes a child object (should be immediate child)
 
@@ -1185,12 +1188,11 @@ public:
   bool 		SetName(const String& nm)    	{name = nm; return true;}
   String	GetName() const		{ return name; }
 
-  override TypeDef* 	GetElType() const {return el_typ;}		// #IGNORE Default type for objects in group
+  override TypeDef* 	GetElType() const {return el_typ;}
+  // #IGNORE Default type for objects in group
   override void* 	GetTA_Element(int i, TypeDef*& eltd)
-    {return taPtrList_ta_base::GetTA_Element_(i, eltd); } // #IGNORE a bracket opr
-
-  virtual taBase* New(int n_objs=0, TypeDef* typ=NULL);
-  // #MENU #MENU_ON_Edit #ARGC_0 #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
+  { return taPtrList_ta_base::GetTA_Element_(i, eltd); }
+  // #IGNORE a bracket opr
 
   String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
   String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
@@ -1236,6 +1238,11 @@ public:
   virtual int	Find(const String& item_nm) const	{ return taPtrList_ta_base::Find(item_nm); }
   // #CAT_Access find item with given name
 
+  virtual taBase* New(int n_objs=0, TypeDef* typ=NULL);
+  // #MENU #MENU_ON_Edit #ARGC_0 #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
+  virtual void	EnforceSize(int sz);
+  // #MENU #MENU_ON_Edit add or remove elements to force list to be of given size
+
   virtual bool	Remove(const String& item_nm)	{ return taPtrList_ta_base::Remove(item_nm); }
   virtual bool	Remove(TAPtr item)	{ return taPtrList_ta_base::Remove(item); }
   virtual bool	Remove(int idx);
@@ -1243,8 +1250,6 @@ public:
   virtual bool	RemoveEl(TAPtr item)	{ return Remove(item); }
   // #MENU #ARG_ON_OBJ #CAT_Modify Remove given item from the list
 
-  virtual void	EnforceSize(int sz);
-  // #MENU add or remove elements to force list to be of given size
   virtual void	EnforceType();
   // enforce current type (all elements have to be of this type)
   void	EnforceSameStru(const taList_impl& cp);

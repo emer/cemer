@@ -1,12 +1,11 @@
 leabra todo list:
 
-* fix Load/Save weights to write unit indicies so are totally robust.
-  * new format
-
 * extrew in trial monitor seems not to be working: 12ax demo
 * change gp name to include unique ctr so group fun works.
 
 * relnet stat
+
+* change progs to pass data_table in same way network is passed?  maybe not?  why??
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
@@ -16,18 +15,14 @@ Program issues
 
 * checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
 
-* for enum args, add TypeName:: to def arg in methodcall
-* use taMisc::prog_lib_paths directly instead of separate one in proglib, and use
-  the name labels so they show up in chooser..
+* LoadFromProgLib() take optional 2nd arg which is name, and also lib type can
+  be SEARCH_LIBS, in which case it searches throug libraries in USER, SYSTEM, WEB order
+  to find it..
 
 css:
-* fix String name arg -- should work -- find parse class
-* syntax error ^ doesn't show up in right place..
-
 
 -----------
 Check:
-
 
 -----------
 current bugs:

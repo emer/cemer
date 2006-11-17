@@ -516,12 +516,12 @@ public:
   int 			LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
-  // viewing NOTE: these are actually linked to tamisc in order to work...
-  void			ShowInViewer(T3DataViewFrame* fr = NULL);
-  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT open a view on this table (NULL=use blank if any, else make new frame)
-  
+ 
   /////////////////////////////////////////////////////////
   // misc funs
+
+  void			ShowInViewer(T3DataViewFrame* fr = NULL);
+  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #CAT_Display open a view on this table (NULL=use blank if any, else make new frame)
 
   int  			MinLength();		// #IGNORE
   int  			MaxLength();		// #IGNORE

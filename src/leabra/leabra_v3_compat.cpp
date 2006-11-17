@@ -138,10 +138,12 @@ bool V3LeabraProject::ConvertToV4_impl() {
       grouped_data = true;
   }
 
-  if(grouped_data)
-    nwproj->programs.prog_lib.NewProgramFmName("LeabraAll_GpData", &(nwproj->programs));
-  else
-    nwproj->programs.prog_lib.NewProgramFmName("LeabraAll_Std", &(nwproj->programs));
+  nwproj->programs.prog_lib.NewProgramFmName("LeabraAll_Std", &(nwproj->programs));
+  Program* epc = ((Program_Group*)nwproj->programs.gp[0])->FindName("LeabraEpoch");
+  if(epc) {
+    epc->name = "LeabraEpochGpData";
+    epc->LoadFromProgLib(Program::SYSTEM_LIB);
+  }
 
   ConvertToV4_DefaultApplyInputs(nwproj);
 

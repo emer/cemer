@@ -995,7 +995,14 @@ void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
     int i = ar.labels.Find(arg_nm);
     if (i < 0) {
       ar.labels.Insert(arg_nm, ti);
-      ar.Insert(md->arg_defs.SafeEl(ti), ti);
+      String def_val = md->arg_defs.SafeEl(ti);
+      if(arg_typ->is_enum()) {
+	TypeDef* ot = arg_typ->GetOwnerType();
+	if(ot)
+	  def_val = ot->name + "::" + def_val;
+      }
+      def_val.gsub(" ", "");
+      ar.Insert(def_val, ti);
     } else if (i != ti) {
       ar.labels.Move(i, ti);
       ar.Move(i, ti);
@@ -1994,9 +2001,6 @@ void Program_Group::InitLinks() {
   taBase::Own(step_prog, this);
   if(prog_lib.not_init) {
     taBase::Ref(prog_lib);
-    prog_lib.paths.Add(Program::GetProgLibPath(Program::USER_LIB));
-    prog_lib.paths.Add(Program::GetProgLibPath(Program::SYSTEM_LIB));
-    prog_lib.paths.Add(Program::GetProgLibPath(Program::WEB_LIB));
     prog_lib.FindPrograms();
   }
 }
@@ -2077,8 +2081,6 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
   return pg;
 }
 
-#include "css_misc_funs.h"
-
 bool ProgLibEl::ParseProgFile(const String& fnm, const String& path) {
   filename = fnm;
   if(filename.contains(".progp"))
@@ -2124,14 +2126,17 @@ void ProgLib::Initialize() {
 
 void ProgLib::FindPrograms() {
   Reset();			// clear existing
-  for(int pi=0; pi< paths.size; pi++) {
-    String path = paths[pi];
+  for(int pi=0; pi< taMisc::prog_lib_paths.size; pi++) {
+    NameVar pathvar = taMisc::prog_lib_paths[pi];
+    String path = pathvar.value.toString();
+    String lib_name = pathvar.name;
     QDir dir(path);
     QStringList files = dir.entryList();
     for(int i=0;i<files.size();i++) {
       String fl = files[i];
       if(!fl.contains(".prog")) continue;
       ProgLibEl* pe = new ProgLibEl;
+      pe->lib_name = lib_name;
       if(pe->ParseProgFile(fl, path))
 	Add(pe);
       else

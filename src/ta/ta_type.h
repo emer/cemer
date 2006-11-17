@@ -729,20 +729,30 @@ friend class InitProcRegistrar;
   // return value is the next character in the stream
   // peek=true means that return value was not read, but was just peek'd
 
-  static int	skip_white(istream& strm, bool peek = false); // #CAT_Parse 
-  static int	skip_white_noeol(istream& strm, bool peek = false); // #CAT_Parse don't skip end-of-line
+  static int	skip_white(istream& strm, bool peek = false);
+  // #CAT_Parse skip over all whitespace
+  static int	skip_white_noeol(istream& strm, bool peek = false);
+  // #CAT_Parse don't skip end-of-line
   static int	skip_till_start_quote_or_semi(istream& strm, bool peek = false);      
   // #CAT_Parse used to seek up to an opening " for a string; will terminate on a ;
-  static int	read_word(istream& strm, bool peek = false); // #CAT_Parse 
-  static int	read_alnum(istream& strm, bool peek = false);
-  // #CAT_Parse alpha-numeric
-  static int    read_alnum_noeol(istream& strm, bool peek = false); // #CAT_Parse 
-  static int	read_till_eol(istream& strm, bool peek = false); // #CAT_Parse 
-  static int	read_till_semi(istream& strm, bool peek = false); // #CAT_Parse 
-  static int	read_till_lbracket(istream& strm, bool peek = false); // #CAT_Parse 
-  static int	read_till_lb_or_semi(istream& strm, bool peek = false); // #CAT_Parse 
-  static int	read_till_rbracket(istream& strm, bool peek = false); // #CAT_Parse 
-  static int	read_till_rb_or_semi(istream& strm, bool peek = false); // #CAT_Parse 
+  static int	read_word(istream& strm, bool peek = false);
+  // #CAT_Parse reads only contiguous 'isalnum' and _ -- does skip_white first
+  static int	read_nonwhite(istream& strm, bool peek = false);
+  // #CAT_Parse read any contiguous non-whitespace string -- does skip_white first
+  static int    read_nonwhite_noeol(istream& strm, bool peek = false);
+  // #CAT_Parse read any contiguous non-whitespace string, does skip_white_noeol first (string must be on this line)
+  static int	read_till_eol(istream& strm, bool peek = false);
+  // #CAT_Parse eol = end of line
+  static int	read_till_semi(istream& strm, bool peek = false);
+  // #CAT_Parse semi = ;
+  static int	read_till_lbracket(istream& strm, bool peek = false);
+  // #CAT_Parse lbracket = {
+  static int	read_till_lb_or_semi(istream& strm, bool peek = false);
+  // #CAT_Parse lb = { or ;
+  static int	read_till_rbracket(istream& strm, bool peek = false);
+  // #CAT_Parse rbracket = } -- does depth counting to skip over intervening paired { }
+  static int	read_till_rb_or_semi(istream& strm, bool peek = false);
+  // #CAT_Parse rbracket } or ; -- does depth counting to skip over intervening paired { }
   static int 	read_till_end_quote(istream& strm, bool peek = false); // #CAT_Parse 
   // #CAT_Parse read-counterpart to write_quoted_string; read-escaping, until "
   static int	read_till_end_quote_semi(istream& strm, bool peek = false); 
@@ -752,6 +762,21 @@ friend class InitProcRegistrar;
   static int	skip_past_err_rb(istream& strm, bool peek = false);
   // #CAT_Parse skips to next rbracket (robust)
 
+  ////////////////////////////////////////////////////////////////////////
+  //	HTML-style tags
+
+  enum ReadTagStatus {
+    TAG_GOT,			// got a starting tag <xxx...>
+    TAG_END,			// got an ending tag </xx> 
+    TAG_NONE,			// no start of < tag there
+    TAG_EOF,			// got an EOF
+  };
+
+  static ReadTagStatus read_tag(istream& strm, String& tag, String& val);
+  // #CAT_Parse read an html-style tag from the file: <XXX ...> tag = XXX, val = ... (optional)
+  static int	read_till_rangle(istream& strm, bool peek = false);
+  // #CAT_Parse rangle = >
+  
   ////////////////////////////////////////////////////////////////////////
   // 	File Parsing Stuff for Dump routines: Output
 

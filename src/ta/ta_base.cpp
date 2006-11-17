@@ -1322,7 +1322,7 @@ const KeyString taBase::key_disp_name("disp_name");
 
 String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
        if (key == key_name) return GetName();
-  else if (key == key_type) return GetTypeDef()->name;
+  else if (key == key_type) return GetTypeName();
   else if (key == key_type_desc) return GetTypeDef()->desc;
 // note: some classes override desc with dynamic desc's
   else if (key == key_desc) return GetDesc(); 

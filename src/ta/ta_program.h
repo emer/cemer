@@ -793,6 +793,7 @@ INHERITED(taNBase)
 public:
   bool		is_group;	// this is a group of related programs
   String	desc; 		// #EDIT_DIALOG description of what this program does and when it should be used
+  String	lib_name;	// name of library that contains this program
   String	URL;		// full URL to find this program
   String	filename;	// file name given to this program
   
@@ -803,6 +804,8 @@ public:
   // get program information from program or program group file. is_group is set based on extension of file name (.prog or .progp)
 
   override String GetDesc() const { return desc; }
+  override String GetTypeName() const { return lib_name; }
+  // This shows up in chooser instead of ProgLibEl!
 
   TA_SIMPLE_BASEFUNS(ProgLibEl);
 protected:
@@ -828,7 +831,6 @@ class TA_API ProgLib: public ProgLibEl_List {
   // #INSTANCE #INLINE #CAT_Program the program library
 INHERITED(ProgLibEl_List)
 public:
-  String_Array		paths;	// list of paths to search for programs
   bool			not_init; // list has not been initialized yet
 
   void	FindPrograms();		// search paths to find all available programs

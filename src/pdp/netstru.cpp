@@ -531,10 +531,21 @@ Con_Group* Con_Group::FindPrjn(Projection* aprjn, int& idx) const {
 }
 
 Con_Group* Con_Group::FindFrom(Layer* from, int& idx) const {
-  int g;
-  for(g=0; g<gp.size; g++) {
+  for(int g=0; g<gp.size; g++) {
     Con_Group* cg = (Con_Group*)gp.FastEl(g);
     if((cg->prjn) && (cg->prjn->from == from)) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+Con_Group* Con_Group::FindFromName(const String& fm_nm, int& idx) const {
+  for(int g=0; g<gp.size; g++) {
+    Con_Group* cg = (Con_Group*)gp.FastEl(g);
+    if((cg->prjn) && (cg->prjn->from->name == fm_nm)) {
       idx = g;
       return cg;
     }
@@ -632,236 +643,172 @@ void Con_Group::Copy_Weights(const Con_Group* src) {
 }
 
 void Con_Group::SaveWeights_strm(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) {
-  // this saves writing weights for recv-based linked weights
-  if(!own_cons) return;
-  int i;
+  if(!own_cons || (prjn == NULL) || (prjn->from == NULL)) {
+    strm << "<Cn 0>\n";
+    goto end_tag;		// don't do anything
+  }
+  strm << "<Cn " << size << ">\n";
   switch(fmt) {
   case Con_Group::TEXT:
-    strm << "#Size " << size << "\n";
-    for(i=0; i < size; i++) strm << Cn(i)->wt << "\n";
-    break;
-  case Con_Group::TEXT_IDX:
-    if((prjn == NULL) || (prjn->from == NULL)) {
-      taMisc::Warning("Error in SaveWeights::BINARY_IDX: NULL prjn or prjn->from");
-      return;
-    }
-    strm << "#Size " << size << "\n";
-    for(i=0; i < size; i++) {
-      int lidx = prjn->from->units.FindLeafEl(Un(i));
+    for(int i=0; i < size; i++) {
+      int lidx = Un(i)->GetMyLeafIndex();
       if(lidx < 0) {
 	lidx = 0;
-	taMisc::Warning("Error in SaveWeights::BINARY_IDX: can't find unit in connection: ", String(i),
-		      "in layer:", prjn->layer->name);
+	taMisc::Warning("Error in SaveWeights: can't find unit in connection: ", String(i),
+			"in layer:", prjn->layer->name);
       }
       strm << lidx << " " << Cn(i)->wt << "\n";
     }
     break;
   case Con_Group::BINARY:
-    strm << size << "\n";
-    for(i=0; i < size; i++) strm.write((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
-    break;
-  case Con_Group::BINARY_IDX:
-    if((prjn == NULL) || (prjn->from == NULL)) {
-      taMisc::Warning("Error in SaveWeights::BINARY_IDX: NULL prjn or prjn->from");
-      return;
-    }
-    strm << size << "\n";
-    for(i=0; i < size; i++) {
-      int lidx = prjn->from->units.FindLeafEl(Un(i));
+    for(int i=0; i < size; i++) {
+      int lidx = Un(i)->GetMyLeafIndex();
       if(lidx < 0) {
 	lidx = 0;
-	taMisc::Warning("Error in SaveWeights::BINARY_IDX: can't find unit in connection: ", String(i),
+	taMisc::Warning("Error in SaveWeights: can't find unit in connection: ", String(i),
 		      "in layer:", prjn->layer->name);
       }
       strm.write((char*)&(lidx), sizeof(lidx));
       strm.write((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
     }
+    strm << "\n";
     break;
   }
+ end_tag:
+  strm << "</Cn>\n";
 }
 
-static int con_group_read_weights_text_size(istream& strm, int size) {
-  int sz = size;
-  int c = strm.peek();
-  while(c == '#') {
-    strm.get();
-    c = taMisc::read_alnum_noeol(strm);
-    if(c == EOF) break;
-    if(taMisc::LexBuf == "Size") {
-      c = taMisc::read_till_eol(strm);
-      sz = (int)taMisc::LexBuf;
-      break;
-    }
-    else {
-      c = taMisc::read_till_eol(strm);
-    }
-    c = strm.peek();
+// return values:
+// TAG_END = successfully got to end of thing;
+// TAG_NONE = some kind of error
+// TAG_EOF = EOF
+
+int Con_Group::LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet) {
+  String in_tag;
+  int stat = taMisc::read_tag(strm, in_tag, val);
+  if(stat == taMisc::TAG_END) return taMisc::TAG_NONE; // some other end -- not good
+  if(stat != taMisc::TAG_GOT) {
+    if(!quiet)
+      taMisc::Warning("LoadWeights: Error -- bad read of start tag:", tag);
+    return stat;
   }
-  if(c == EOF) sz = 0;
+  if(in_tag != tag) {
+    if(!quiet)
+      taMisc::Warning("LoadWeights: Error -- read different start tag:", in_tag,
+		      "expecting:", tag);
+    return taMisc::TAG_NONE; // bumping up against some other tag
+  }
+  return stat;
+}
+
+int Con_Group::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet) {
+  String val;
+  if(stat != taMisc::TAG_END)	// haven't already hit the end
+    stat = taMisc::read_tag(strm, cur_tag, val);
+  if((stat != taMisc::TAG_END) || (cur_tag != trg_tag)) {
+    if(!quiet)
+      taMisc::Warning("LoadWeights: Error -- bad read of end tag:", trg_tag, "got:",
+		      cur_tag, "stat:", String(stat));
+    if(stat == taMisc::TAG_END) stat = taMisc::TAG_NONE;
+  }
+  return stat;
+}
+
+int Con_Group::LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt, bool quiet) {
+  if(!own_cons || (prjn == NULL) || (prjn->from == NULL)) {
+    return SkipWeights_strm(strm, fmt, quiet); // bail
+  }
+  String tag, val;
+  int stat = Con_Group::LoadWeights_StartTag(strm, "Cn", val, quiet);
+  if(stat != taMisc::TAG_GOT) return stat;
+
+  int sz = (int)val;
   if(sz < 0) {
-    taMisc::Warning("Con_Group::LoadWeights: Error in reading weights -- read size < 0");
+    if(!quiet)
+      taMisc::Warning("Con_Group::LoadWeights: Error in reading weights -- read size < 0");
+    return taMisc::TAG_NONE;
   }
-  return sz;
+  ru->n_recv_cons += sz - size;
+  EnforceSize(sz);
+
+  for(int i=0; i < size; i++) {
+    int lidx;
+    if(fmt == Con_Group::TEXT) {
+      taMisc::read_till_eol(strm);
+      lidx = (int)taMisc::LexBuf.before(' ');
+      Cn(i)->wt = (float)taMisc::LexBuf.after(' ');
+    }
+    else {			// binary
+      strm.read((char*)&(lidx), sizeof(lidx));
+      strm.read((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
+    }
+
+    Unit* su = prjn->from->units.Leaf(lidx);
+    if(!su) {
+      if(!quiet)
+	taMisc::Warning("Error in LoadWeights: unit at leaf index: ",
+			String(lidx), "not found in layer:", prjn->from->name);
+      i--; EnforceSize(size-1);
+      ru->n_recv_cons--;
+      continue;
+    }
+    Con_Group* send_gp = (Con_Group*)su->send.SafeGp(prjn->send_idx);
+    if(!send_gp) {
+      if(!quiet)
+	taMisc::Warning("Error in LoadWeights: unit at leaf index: ",
+			String(lidx), "does not have proper send group:", String(prjn->send_idx));
+      i--; EnforceSize(size-1);
+      ru->n_recv_cons--;
+      continue;
+    }
+    if(units.size <= i) {
+      units.Link(su);
+      int sidx = send_gp->units.Find(ru);
+      if(sidx >= 0) {
+	send_gp->ReplaceLink(sidx, Cn(i));
+      }
+      else {
+	send_gp->LinkCon(Cn(i), ru);
+      }
+    }
+    else if(su != Un(i)) {
+      units.ReplaceLink(i, su);
+      int sidx = send_gp->units.Find(ru);
+      if(sidx >= 0) {
+	send_gp->ReplaceLink(sidx, Cn(i));
+      }
+      else {
+	send_gp->LinkCon(Cn(i), ru);
+      }
+    }
+  }
+  Con_Group::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
+  return stat;			// should be tag end!
 }
 
-static bool con_group_read_weights_idx_con(Con_Group* ths, int& i, Unit* ru, int lidx ) {
-  Unit* su = ths->prjn->from->units.Leaf(lidx);
-  if(su == NULL) {
-    taMisc::Warning("Error in LoadWeights::_IDX: unit at leaf index: ",
-		  String(lidx), "not found in layer:", ths->prjn->from->name);
-    i--; ths->EnforceSize(ths->size-1);
-    ru->n_recv_cons--;
-    return false;
-  }
-  Con_Group* send_gp = (Con_Group*)su->send.SafeGp(ths->prjn->send_idx);
-  if(send_gp == NULL) {
-    taMisc::Warning("Error in LoadWeights::_IDX: unit at leaf index: ",
-		  String(lidx), "does not have proper send group:", String(ths->prjn->send_idx));
-    i--; ths->EnforceSize(ths->size-1);
-    ru->n_recv_cons--;
-    return false;
-  }
-  if(ths->units.size <= i) {
-    if(su == NULL) su = ths->prjn->from->units.Leaf(0);
-    ths->units.Link(su);
-    int sidx = send_gp->units.Find(ru);
-    if(sidx >= 0) {
-      send_gp->ReplaceLink(sidx, ths->Cn(i));
-    }
-    else {
-      send_gp->LinkCon(ths->Cn(i), ru);
-    }
-  }
-  else if(su != ths->Un(i)) {
-    ths->units.ReplaceLink(i, su);
-    int sidx = send_gp->units.Find(ru);
-    if(sidx >= 0) {
-      send_gp->ReplaceLink(sidx, ths->Cn(i));
-    }
-    else {
-      send_gp->LinkCon(ths->Cn(i), ru);
-    }
-  }
-  return true;
-}
+int Con_Group::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+  String tag, val;
+  int stat = Con_Group::LoadWeights_StartTag(strm, "Cn", val, quiet);
+  if(stat != taMisc::TAG_GOT) return stat;
 
-void Con_Group::LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt) {
-  // this saves writing weights for recv-based linked weights
-  if(!own_cons) return;
-  int i;
-  switch(fmt) {
-  case Con_Group::TEXT:
-    {
-      int sz = con_group_read_weights_text_size(strm, size);
-      if(sz <= 0) return ;	// zero size likely = DMEM save (or EOF) so just skip it!
-      if(sz != size) {
-	taMisc::Warning("Error in reading weights: read size (", String(sz),
-		      ") != current size (", String(size), ")");
-      }
-      int minsz = MIN(sz, size);
-      for(i=0; i < minsz; i++) {
-	int c = taMisc::read_alnum_noeol(strm);
-	if(c == EOF) break;
-	if(taMisc::LexBuf.empty()) {
-	  i--; continue;		// re-read it
-	}
-	if(taMisc::LexBuf.firstchar() == '#') { // skip comments
-	  if(c != '\n')
-	    taMisc::read_till_eol(strm); // bag rest of line
-	  i--;			// re-read this one
-	  continue;
-	}
-	Cn(i)->wt = (float)taMisc::LexBuf;
-      }
-      if(sz > size) {
-	for(;i < sz; i++) {
-	  int c = taMisc::read_alnum_noeol(strm);
-	  if(c == EOF) break;
-	  if(taMisc::LexBuf.empty()) {
-	    i--; continue;		// re-read it
-	  }
-	  if(taMisc::LexBuf.firstchar() == '#') { // skip comments
-	    if(c != '\n')
-	      taMisc::read_till_eol(strm); // bag rest of line
-	    i--;			// re-read this one
-	    continue;
-	  }
-	}
-      }
-    }
-    break;
-  case Con_Group::TEXT_IDX:
-    {
-      int sz = con_group_read_weights_text_size(strm, size);
-      if(sz <= 0) return ;	// zero size likely = DMEM save (or EOF) so just skip it!
-      ru->n_recv_cons += sz - size;
-      EnforceSize(sz);
-      for(i=0; i < size; i++) {
-	int c = taMisc::read_alnum_noeol(strm);
-	if(c == EOF) break;
-	if(taMisc::LexBuf.empty()) {
-	  i--; continue;		// re-read it
-	}
-	if(taMisc::LexBuf.firstchar() == '#') { // skip comments
-	  if(c != '\n')
-	    taMisc::read_till_eol(strm); // bag rest of line
-	  i--;			// re-read this one
-	  continue;
-	}
-	int lidx = (int)taMisc::LexBuf;
-	c = taMisc::read_till_eol(strm);
-	Cn(i)->wt = (float)taMisc::LexBuf;
-
-	con_group_read_weights_idx_con(this, i, ru, lidx);
-      }
-    }
-    break;
-  case Con_Group::BINARY:
-    {
-      int sz;
-      strm >> sz;  strm.get();
-      if(sz == 0) return;	// zero size likely = DMEM save so just skip it!
-      if(sz < 0) {
-	taMisc::Warning("Error in reading weights: read size < 0");
-	return;
-      }
-      if(sz != size) {
-	taMisc::Warning("Error in reading weights: read size (", String(sz),
-		      ") != current size (", String(size), ")");
-      }
-      int minsz = MIN(sz, size);
-      for(i=0; i < minsz; i++) strm.read((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
-      if(sz > size) {
-	float dumy;
-	for(;i<sz;i++) strm.read((char*)&(dumy), sizeof(dumy));
-      }
-    }
-    break;
-  case Con_Group::BINARY_IDX:
-    {
-      if((prjn == NULL) || (prjn->from == NULL)) {
-	taMisc::Warning("Error in LoadWeights::BINARY_IDX: NULL prjn or prjn->from in SaveWeights::BINARY_IDX");
-	return;
-      }
-      int sz;
-      strm >> sz;  strm.get();
-      if(sz == 0) return;	// zero size likely = DMEM save so just skip it!
-      if(sz < 0) {
-	taMisc::Warning("Error in LoadWeights::BINARY_IDX: read size < 0");
-	return;
-      }
-      ru->n_recv_cons += sz - size;
-      EnforceSize(sz);
-      for(i=0; i < size; i++) {
-	int lidx;
-	strm.read((char*)&(lidx), sizeof(lidx));
-	strm.read((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
-
-	con_group_read_weights_idx_con(this, i, ru, lidx);
-      }
-    }
-    break;
+  int sz = (int)val;
+  if(sz < 0) {
+    return taMisc::TAG_NONE;
   }
+
+  for(int i=0; i < sz; i++) {
+    int lidx;
+    float wt;
+    if(fmt == Con_Group::TEXT) {
+      taMisc::read_till_eol(strm);
+    }
+    else {			// binary
+      strm.read((char*)&(lidx), sizeof(lidx));
+      strm.read((char*)&(wt), sizeof(wt));
+    }
+  }
+  Con_Group::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
+  return stat;
 }
 
 void Con_Group::SaveWeights(const String& fname, Unit* ru, Con_Group::WtSaveFormat fmt) {
@@ -872,12 +819,14 @@ void Con_Group::SaveWeights(const String& fname, Unit* ru, Con_Group::WtSaveForm
   taRefN::unRefDone(flr);
 }
 
-void Con_Group::LoadWeights(const String& fname, Unit* ru, Con_Group::WtSaveFormat fmt) {
+int Con_Group::LoadWeights(const String& fname, Unit* ru, Con_Group::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  int rval = 0;
   if(flr->istrm)
-    LoadWeights_strm(*flr->istrm, ru, fmt);
+    rval = LoadWeights_strm(*flr->istrm, ru, fmt, quiet);
   flr->Close();
   taRefN::unRefDone(flr);
+  return rval;
 }
 
 void Con_Group::TransformWeights(const SimpleMathSpec& trans) {
@@ -1470,6 +1419,7 @@ void Unit::Initialize() {
   act = 0.0f;
   net = 0.0f;
   n_recv_cons = 0;
+  idx = -1;
 }
 
 void Unit::Destroy() {
@@ -1493,6 +1443,7 @@ void Unit::CutLinks() {
   send.CutLinks();
   taBase::DelPointer((TAPtr*)&bias);
   spec.CutLinks();
+  idx = -1;
   inherited::CutLinks();
 }
 
@@ -1518,9 +1469,25 @@ void Unit::UpdateAfterEdit() {
   pos.x = MAX(0,pos.x); pos.y = MAX(0,pos.y);  pos.z = MAX(0,pos.z);
   // stay within layer->un_geom
   Layer* lay = GET_MY_OWNER(Layer);
-  if(lay == NULL) return;
+  if(!lay) return;
   pos.x = MIN(lay->un_geom.x-1,pos.x); pos.y = MIN(lay->un_geom.y-1,pos.y);
   pos.z = 0;			// always zero: can't go out of plane
+}
+
+int Unit::GetMyLeafIndex() {
+  if(idx < 0) return idx;
+  Layer* lay = GET_MY_OWNER(Layer);
+  if(!lay) return -1;
+  Unit_Group* ug = GET_MY_OWNER(Unit_Group);
+  if(ug->owner == lay) return idx; // simple: we're the only unit group
+  // note: this assumes only one layer of subgroups, which is all that is supported anyway
+  int cum_idx = 0;
+  for(int i=0;i<lay->units.gp.size;i++) {
+    Unit_Group* sg = (Unit_Group*)lay->units.gp.FastEl(i);
+    if(sg == ug) return cum_idx + idx;
+    cum_idx += sg->size;
+  }
+  return -1;			// not found
 }
 
 #ifdef DMEM_COMPILE
@@ -1922,124 +1889,130 @@ void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
 }
 
 void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt) {
-  if(fmt == Con_Group::TEXT)
-    strm << "#Unit " << name << "\n";
-  if(bias) {
-    switch(fmt) {
-    case Con_Group::TEXT:
-    case Con_Group::TEXT_IDX:
-      strm << bias->wt << "\n";
-      break;
-    case Con_Group::BINARY:
-    case Con_Group::BINARY_IDX:
-      strm.write((char*)&(bias->wt), sizeof(bias->wt));
-      break;
-    }
+  strm << "<Un>\n";
+  float bwt = 0.0;
+  if(bias) bwt = bias->wt;
+  // always write this for a consistent format
+  switch(fmt) {
+  case Con_Group::TEXT:
+    strm << bwt << "\n";
+    break;
+  case Con_Group::BINARY:
+    strm.write((char*)&(bwt), sizeof(bwt));
+    strm << "\n";
+    break;
   }
   // not using ITR here in case of DMEM where we write separate files for
   // each process -- need to include size=0 place holders for non-local units
-  int g;
-  for(g = 0; g < recv.gp.size; g++) {
+  for(int g = 0; g < recv.gp.size; g++) {
     Con_Group* cg = (Con_Group*)recv.gp.FastEl(g);
-    if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
-    if(fmt == Con_Group::TEXT)
-      strm << "#Con_Group " << g << "\n";
+    if(cg->prjn->from->lesion || (prjn && (cg->prjn != prjn))) continue;
+    strm << "<Cg " << g << " Fm:" << cg->prjn->from->name << ">\n";
     cg->SaveWeights_strm(strm, this, fmt);
+    strm << "</Cg>\n";
   }
+  strm << "</Un>\n";
 }
 
-void Unit::LoadWeights_strm(istream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt) {
-  if(bias) {
-    switch(fmt) {
-    case Con_Group::TEXT:
-    case Con_Group::TEXT_IDX:
-      {
-	int c;
-	while(true) {
-	  c = taMisc::read_alnum_noeol(strm);
-	  if(c == EOF) return;
-	  if(taMisc::LexBuf.empty()) {
-	    continue;		// re-read it
-	  }
-	  if(taMisc::LexBuf.firstchar() == '#') { // skip comments
-	    if(c != '\n')			      // only if didn't read last line
-	      taMisc::read_till_eol(strm); // bag rest of line
-	    continue;
-	  }
-	  bias->wt = (float)taMisc::LexBuf;
-	  break;
-	}
-      }
-      break;
-    case Con_Group::BINARY:
-    case Con_Group::BINARY_IDX:
-      strm.read((char*)&(bias->wt), sizeof(bias->wt));
-      break;
-    }
+int Unit::LoadWeights_strm(istream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt, bool quiet) {
+  String tag, val;
+  int stat = Con_Group::LoadWeights_StartTag(strm, "Un", val, quiet);
+  if(stat != taMisc::TAG_GOT) return stat;
+
+  //   String lidx = val.before(' ');
+  // todo: could compare lidx with GetMyLeafIdx()...
+  float bwt = 0.0;
+  switch(fmt) {
+  case Con_Group::TEXT:
+    taMisc::read_till_eol(strm);
+    bwt = (float)taMisc::LexBuf;
+    break;
+  case Con_Group::BINARY:
+    strm.read((char*)&bwt, sizeof(bwt));
+    strm.get();		// get the /n
+    break;
   }
+  if(bias) {
+    bias->wt = bwt;
+  }
+
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal()) {
     // bypass non-local connections!
-    if(fmt == Con_Group::TEXT) {
-      int tot_sz = n_recv_cons;
-      int read_sz = 0;		// total sizes actually read from the file
-      for(int i=0; i<tot_sz; i++) {
-	int c = taMisc::read_alnum_noeol(strm);
-	if(c == EOF) break;
-	if(taMisc::LexBuf.empty()) {
-	  i--; continue;		// re-read it
-	}
-	if(taMisc::LexBuf.firstchar() == '#') { // skip comments
-	  if(taMisc::LexBuf == "#Size") {
-	    taMisc::read_till_eol(strm);
-	    int sz = (int)taMisc::LexBuf;
-	    read_sz += sz;
-	    if(read_sz > tot_sz) tot_sz = read_sz;
-	  }
-	  else if(taMisc::LexBuf == "#Unit") {
-	    taMisc::read_till_eol(strm);
-	    break; // we just went into the second unit, bail!
-	  }
-	  else {
-	    if(c != '\n')
-	      taMisc::read_till_eol(strm); // bag rest of line
-	    i--;			// re-read this one
-	    continue;
-	  }
-	}
-      }
+    while(true) {
+      stat = taMisc::read_tag(strm, tag, val);
+      if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END of Un
+      if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
+      stat = Con_Group::SkipWeights_strm(strm, fmt, quiet); // skip over
+      if(stat != taMisc::TAG_END) break; // something is wrong
+      stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+      Con_Group::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
+      if(stat != taMisc::TAG_END) break;
+    }
+  }
+  else {
+#endif
+  while(true) {
+    stat = taMisc::read_tag(strm, tag, val);
+    if(stat != taMisc::TAG_GOT) break;			// *should* break at TAG_END
+    if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
+    int gi = (int)val.before(' ');
+    String fm = val.after("Fm:");
+    Con_Group* cg = NULL;
+    if(recv.gp.size > gi) {
+      cg = (Con_Group*)recv.gp.FastEl(gi);
+      if(cg->prjn->from->name != fm)
+	cg = recv.FindFromName(fm);
     }
     else {
-      int g;
-      for(g = 0; g < recv.gp.size; g++) {
-	Con_Group* cg = (Con_Group*)recv.gp.FastEl(g);
-	if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
-	int sz;
-	strm >> sz;  strm.get();
-	float dumy;
-	if(fmt == Con_Group::BINARY) {
-	  for(int i=0;i<sz; i++) strm.read((char*)&(dumy), sizeof(dumy));
-	}
-	else {
-	  float lidx;
-	  for(int i=0;i<sz; i++) {
-	    strm.read((char*)&(lidx), sizeof(lidx));
-	    strm.read((char*)&(dumy), sizeof(dumy));
-	  }
-	}
-      }
+      cg = recv.FindFromName(fm); 
     }
-    return;
+    if(cg) {		
+      stat = cg->LoadWeights_strm(strm, this, fmt, quiet);
+    }
+    else {
+      stat = Con_Group::SkipWeights_strm(strm, fmt, quiet); // skip over
+    }
+    if(stat != taMisc::TAG_END) break; // something is wrong
+    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    Con_Group::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
+    if(stat != taMisc::TAG_END) break;
+  }
+#ifdef DMEM_COMPILE
   }
 #endif
-  if(strm.eof()) return;
-  int g;
-  for(g = 0; g < recv.gp.size; g++) {
-    Con_Group* cg = (Con_Group*)recv.gp.FastEl(g);
-    if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
-    cg->LoadWeights_strm(strm, this, fmt);
-    if(strm.eof()) break;
+  Con_Group::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
+  return stat;
+}
+
+int Unit::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+  String tag, val;
+  int stat = Con_Group::LoadWeights_StartTag(strm, "Un", val, quiet);
+  if(stat != taMisc::TAG_GOT) return stat;
+
+  float bwt = 0.0;
+  switch(fmt) {
+  case Con_Group::TEXT:
+    taMisc::read_till_eol(strm);
+    bwt = (float)taMisc::LexBuf;
+    break;
+  case Con_Group::BINARY:
+    strm.read((char*)&bwt, sizeof(bwt));
+    strm.get();		// get the /n
+    break;
   }
+  while(true) {
+    stat = taMisc::read_tag(strm, tag, val);
+    if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
+    if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
+    stat = Con_Group::SkipWeights_strm(strm, fmt, quiet); // skip over
+    if(stat != taMisc::TAG_END) break; // something is wrong
+    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    Con_Group::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
+    if(stat != taMisc::TAG_END) break;
+  }
+  Con_Group::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
+  return stat;
 }
 
 void Unit::SaveWeights(const String& fname, Projection* prjn, Con_Group::WtSaveFormat fmt) {
@@ -2050,12 +2023,14 @@ void Unit::SaveWeights(const String& fname, Projection* prjn, Con_Group::WtSaveF
   taRefN::unRefDone(flr);
 }
 
-void Unit::LoadWeights(const String& fname, Projection* prjn, Con_Group::WtSaveFormat fmt) {
+int Unit::LoadWeights(const String& fname, Projection* prjn, Con_Group::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  int rval = false;
   if(flr->istrm)
-    LoadWeights_strm(*flr->istrm, prjn, fmt);
+    rval = LoadWeights_strm(*flr->istrm, prjn, fmt, quiet);
   flr->Close();
   taRefN::unRefDone(flr);
+  return rval;
 }
 
 void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
@@ -2837,13 +2812,15 @@ void Projection::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
     u->SaveWeights_strm(strm, this, fmt);
 }
 
-void Projection::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt) {
+int Projection::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+  int rval = 0;
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
-    u->LoadWeights_strm(strm, this, fmt);
-    if(strm.eof()) break;
+    rval = u->LoadWeights_strm(strm, this, fmt, quiet);
+    if(rval != taMisc::TAG_END) break;
   }
+  return rval;
 }
 
 void Projection::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
@@ -2854,12 +2831,14 @@ void Projection::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-void Projection::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+int Projection::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  int rval = false;
   if(flr->istrm)
-    LoadWeights_strm(*flr->istrm, fmt);
+    rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
   flr->Close();
   taRefN::unRefDone(flr);
+  return rval;
 }
 
 void Projection::TransformWeights(const SimpleMathSpec& trans) {
@@ -3042,19 +3021,61 @@ void Unit_Group::Copy_Weights(const Unit_Group* src) {
 }
 
 void Unit_Group::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i)
-    u->SaveWeights_strm(strm, NULL, fmt);
-}
-
-void Unit_Group::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt) {
+  strm << "<Ug>\n";
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, this->, i) {
-    if(strm.eof()) break;
-    u->LoadWeights_strm(strm, NULL, fmt);
+    int lfi = u->GetMyLeafIndex();
+    strm << "<UgUn " << lfi << " " << u->name << ">\n";
+    u->SaveWeights_strm(strm, NULL, fmt);
+    strm << "</UgUn>\n";
   }
+  strm << "</Ug>\n";
+}
+
+int Unit_Group::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+  String tag, val;
+  int stat = Con_Group::LoadWeights_StartTag(strm, "Ug", val, quiet);
+  if(stat != taMisc::TAG_GOT) return stat;
+
+  while(true) {
+    stat = taMisc::read_tag(strm, tag, val);
+    if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
+    if(tag != "UgUn") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
+    int lfi = (int)val.before(' ');
+    if(leaves > lfi) {
+      Unit* u = Leaf(lfi);
+      stat = u->LoadWeights_strm(strm, NULL, fmt, quiet);
+    }
+    else {
+      stat = Unit::SkipWeights_strm(strm, fmt, quiet);
+    }
+    if(stat != taMisc::TAG_END) break;
+    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    Con_Group::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
+    if(stat != taMisc::TAG_END) break;
+  }
+  Con_Group::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
+  return stat;
+}
+
+int Unit_Group::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+  String val, tag;
+  int stat = Con_Group::LoadWeights_StartTag(strm, "Ug", val, quiet);
+  if(stat != taMisc::TAG_GOT) return stat;
+
+  while(true) {
+    stat = taMisc::read_tag(strm, tag, val);
+    if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
+    if(tag != "UgUn") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
+    stat = Unit::SkipWeights_strm(strm, fmt, quiet);
+    if(stat != taMisc::TAG_END) break;
+    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    Con_Group::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
+    if(stat != taMisc::TAG_END) break;
+  }
+  Con_Group::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
+  return stat;
 }
 
 void Unit_Group::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
@@ -3065,12 +3086,14 @@ void Unit_Group::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-void Unit_Group::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+int Unit_Group::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  int rval = false;
   if(flr->istrm)
-    LoadWeights_strm(*flr->istrm, fmt);
+    rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
   flr->Close();
   taRefN::unRefDone(flr);
+  return rval;
 }
 
 void Unit_Group::TransformWeights(const SimpleMathSpec& trans) {
@@ -4028,12 +4051,14 @@ void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
 }
 void Layer::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
-  if(fmt == Con_Group::TEXT)
-    strm << "#Layer " << name << "\n";
+  // name etc is saved & processed by network level guy -- this is equiv to unit group
   units.SaveWeights_strm(strm, fmt);
 }
-void Layer::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt) {
-  units.LoadWeights_strm(strm, fmt);
+int Layer::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+  return units.LoadWeights_strm(strm, fmt, quiet);
+}
+int Layer::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+  return Unit_Group::SkipWeights_strm(strm, fmt, quiet);
 }
 
 void Layer::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
@@ -4044,12 +4069,14 @@ void Layer::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-void Layer::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+int Layer::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  int rval = false;
   if(flr->istrm)
-    LoadWeights_strm(*flr->istrm, fmt);
+    rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
   flr->Close();
   taRefN::unRefDone(flr);
+  return rval;
 }
 
 void Layer::TransformWeights(const SimpleMathSpec& trans) {
@@ -4425,6 +4452,8 @@ void Network::Copy_(const Network& cp) {
 
 void Network::UpdateAfterEdit(){
   inherited::UpdateAfterEdit();
+  if(wt_save_fmt == NET_FMT)
+    wt_save_fmt = TEXT;
   UpdtAfterNetMod();
 }
 
@@ -5315,59 +5344,67 @@ void Network::Copy_Weights(const Network* src) {
 
 void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
   taMisc::Busy();
-  strm << "#Fmt " << fmt << "\n"
-       << "#Name " << GetName() << "\n"
-       << "#Epoch " << epoch << "\n"
-       << "#ReInit " << 0 << "\n"; // todo: remove this!
+  if(fmt == NET_FMT) fmt = wt_save_fmt;
+
+  strm << "<Fmt " << GetTypeDef()->GetEnumString("WtSaveFormat", fmt) << ">\n"
+       << "<Name " << GetName() << ">\n"
+       << "<Epoch " << epoch << ">\n";
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
-      l->SaveWeights_strm(strm, (Con_Group::WtSaveFormat)fmt);
+    if(l->lesion) continue;
+    strm << "<Lay " << l->name << ">\n";
+    l->SaveWeights_strm(strm, (Con_Group::WtSaveFormat)fmt);
+    strm << "</Lay>\n";
   }
   taMisc::DoneBusy();
 }
 
-void Network::LoadWeights_strm(istream& strm) {
+bool Network::LoadWeights_strm(istream& strm, bool quiet) {
   taMisc::Busy();
   int c = strm.peek();
-  if(c != '#') {
-    taMisc::Error("LoadWeights: file format is incorrect, expected #");
-    return;
+  if(c == '#') {
+    taMisc::Error("LoadWeights: cannot read old formats from version 3.2 -- must use network save");
+    return false;
   }
-  strm.get();
-  c = strm.peek();
-  if(!((c == 'F') || (c == 'N'))) {
-    taMisc::Error("LoadWeights: file format is incorrect, expected Fmt or Name");
-    return;
-  }
-  if(c == 'F') {
-    c = taMisc::read_alnum_noeol(strm);
-    c = taMisc::read_till_eol(strm);
-    wt_save_fmt = (WtSaveFormat)(int)taMisc::LexBuf;
-  }
-  else {
-    wt_save_fmt = TEXT;		// default is text for old files that don't have Fmt saved
-  }
-  c = taMisc::read_alnum_noeol(strm);
-  c = taMisc::read_till_eol(strm);
-  SetName(taMisc::LexBuf);
-  c = taMisc::read_alnum_noeol(strm); // get #Epoch
-  c = taMisc::read_till_eol(strm); // get epoch
-  epoch = (int)taMisc::LexBuf;
-  c = taMisc::read_alnum_noeol(strm); // get #ReInit
-  c = taMisc::read_till_eol(strm); // get re_init
-//nn  int re_init = (int)taMisc::LexBuf;
+  String tag, val;
+  int stat = taMisc::read_tag(strm, tag, val);
+  if((stat != taMisc::TAG_GOT) || (tag != "Fmt")) return false;
 
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
-      l->LoadWeights_strm(strm, (Con_Group::WtSaveFormat)wt_save_fmt);
-    if(strm.eof()) break;
+  String enum_typ_nm;
+  Con_Group::WtSaveFormat fmt = (Con_Group::WtSaveFormat)TA_Con_Group.GetEnumVal(val, enum_typ_nm);
+
+  stat = taMisc::read_tag(strm, tag, val);
+  if((stat != taMisc::TAG_GOT) || (tag != "Name")) return false;
+  name = val;
+
+  stat = taMisc::read_tag(strm, tag, val);
+  if((stat != taMisc::TAG_GOT) || (tag != "Epoch")) return false;
+  epoch = (int)val;
+
+  while(true) {
+    stat = taMisc::read_tag(strm, tag, val);
+    if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
+    if(tag != "Lay") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
+    Layer* lay = layers.FindName(val);
+    if(lay) {
+      stat = lay->LoadWeights_strm(strm, fmt, quiet);
+    }
+    else {
+      if(!quiet)
+	taMisc::Warning("LoadWeights: Layer not found:", val);
+      stat = Layer::SkipWeights_strm(strm, fmt, quiet);
+    }
+    if(stat != taMisc::TAG_END) break;
+    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    Con_Group::LoadWeights_EndTag(strm, "Lay", tag, stat, quiet);
+    if(stat != taMisc::TAG_END) break;
   }
+  // could try to read end tag but what is the point?
+
   UpdateAllViews();
   taMisc::DoneBusy();
+  return true;
 }
 
 void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
@@ -5378,12 +5415,14 @@ void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-void Network::LoadWeights(const String& fname) {
+bool Network::LoadWeights(const String& fname, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  bool rval = false;
   if(flr->istrm)
-    LoadWeights_strm(*flr->istrm);
+    rval = LoadWeights_strm(*flr->istrm, quiet);
   flr->Close();
   taRefN::unRefDone(flr);
+  return rval;
 }
 
 void Network::LayerZPos_Add(int add_to_z) {

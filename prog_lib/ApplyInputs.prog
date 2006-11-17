@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][5] { 
+Program .projects[0].programs.gp[0][6] { 
   taBase_List @.objs = [1] {
     LayerWriter @[0] { 
       LayerDataEl_List @.layer_data = [3] {
@@ -28,9 +28,9 @@ Program .projects[0].programs.gp[0][5] {
     MethodCall @[0] { };
   };
 };
-Program .projects[0].programs.gp[0][5] {
+Program .projects[0].programs.gp[0][6] {
  name="ApplyInputs";
- desc=;
+ desc="apply inputdata from data table to network using a layerwriter object to deterimne the column/layer mappings";
  flags=PF_NONE;
  objs {
   name=;
@@ -50,7 +50,7 @@ Program .projects[0].programs.gp[0][5] {
      layer_name="Input";
      offset {x=0: y=0: };
      use_layer_type=1;
-     ext_flags=NO_EXTERNAL;
+     ext_flags=EXT;
      noise {type=NONE: mean=0: var=0.5: par=1: };
      value_names{      };
     };
@@ -60,7 +60,7 @@ Program .projects[0].programs.gp[0][5] {
      layer_name="Output";
      offset {x=0: y=0: };
      use_layer_type=1;
-     ext_flags=NO_EXTERNAL;
+     ext_flags=TARG;
      noise {type=NONE: mean=0: var=0.5: par=1: };
      value_names{      };
     };
@@ -106,10 +106,15 @@ Program .projects[0].programs.gp[0][5] {
    name="LayerWriter_0";
    var_type=T_Object;
    object_type=LayerWriter;
-   object_val=.projects[0].programs.gp[0][5].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
    objs_ptr=1;
    desc=;
   };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
  };
  init_code {
   name=;
@@ -118,8 +123,8 @@ Program .projects[0].programs.gp[0][5] {
   MethodCall @[0] {
    desc=;
    off=0;
-   result_var=;
-   script_obj=.projects[0].programs.gp[0][5].vars[1]$3$;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][6].vars[1]$3$;
    method=LayerWriter::SetDataNetwork;
    args{ data;network;};
 { DataBlock* db;Network* net;   };
@@ -127,8 +132,8 @@ Program .projects[0].programs.gp[0][5] {
   MethodCall @[1] {
    desc=;
    off=0;
-   result_var=;
-   script_obj=$3$;
+   result_var=NULL;
+   obj=$3$;
    method=taList_impl::CheckConfig;
    args{ false;};
 { bool quiet;   };
@@ -141,8 +146,8 @@ Program .projects[0].programs.gp[0][5] {
   MethodCall @[0] {
    desc="apply inputs to the network!";
    off=0;
-   result_var=;
-   script_obj=$3$;
+   result_var=NULL;
+   obj=$3$;
    method=LayerWriter::ApplyInputData;
    args{ };
 {    };
