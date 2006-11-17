@@ -484,6 +484,8 @@ public:
   // #CAT_File Save object data to a file stream
   virtual taFiler* 	GetSaveFiler(const String& fname, const String& ext="", int compress=-1);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
+  virtual taFiler* 	GetAppendFiler(const String& fname, const String& ext="", int compress=-1);
+  // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int		Save(); 
   // #MENU #MENU_ON_Object #CAT_File saves the object to a file using current file name (from GetFileName() function)
   virtual int		SaveAs(const String& fname = ""); 

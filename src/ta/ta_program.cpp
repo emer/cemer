@@ -996,12 +996,18 @@ void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
     if (i < 0) {
       ar.labels.Insert(arg_nm, ti);
       String def_val = md->arg_defs.SafeEl(ti);
+      def_val.gsub(" ", "");
       if(arg_typ->is_enum()) {
 	TypeDef* ot = arg_typ->GetOwnerType();
 	if(ot)
 	  def_val = ot->name + "::" + def_val;
       }
-      def_val.gsub(" ", "");
+      else if(arg_typ->InheritsFrom(TA_taString)) {
+	if(def_val.empty()) def_val = "\"\""; // empty string
+      }
+      else if(def_val == "__null") {
+	def_val = "NULL";
+      }
       ar.Insert(def_val, ti);
     } else if (i != ti) {
       ar.labels.Move(i, ti);
@@ -1947,12 +1953,29 @@ void Program::SaveToProgLib(ProgLibs library) {
   Program_Group::prog_lib.FindPrograms();
 }
 
-void Program::LoadFromProgLib(ProgLibs library) {
+void Program::LoadFromProgLib(ProgLibs library, const String& file_nm) {
+  if(!file_nm.empty())
+    name = file_nm;
+  if(library == SEARCH_LIBS) {
+    for(int lib = USER_LIB; lib < SEARCH_LIBS; lib++) {
+      String path = GetProgLibPath((ProgLibs)lib);
+      String fname = path + "/" + name + ".prog";
+      int acc = access(fname, F_OK);
+      if (acc == 0) {
+	library = (ProgLibs)lib;
+	break;
+      }
+    }
+    if(library == SEARCH_LIBS) {
+      taMisc::Error("Program library file:",name," not found in any libraries");
+      return;
+    }
+  }
   String path = GetProgLibPath(library);
   String fname = path + "/" + name + ".prog";
   int acc = access(fname, F_OK);
   if (acc != 0) {
-    taMisc::Choice("Program library file: " + fname + " not found!", "Ok");
+    taMisc::Error("Program library file:",fname,"not found");
     return;
   }
   Reset();

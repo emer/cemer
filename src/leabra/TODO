@@ -5,19 +5,26 @@ leabra todo list:
 
 * relnet stat
 
-* change progs to pass data_table in same way network is passed?  maybe not?  why??
+* deal with small-batch weight updates
+* deal with dmem: 
+  * sync datatable: every proc gets all rows (interleaved in proc order) from other
+    procs, into a new datatable.
+
+  * dmem dataloop: does usual doling out of items % nprocs
+
+  * dmem proc group: function to deal with netstru dmem vs. this one
+
+* add #CAT to everything in netstru and leabra.h, and fixup comments
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
+
+* change progs to pass data_table in same way network is passed?  maybe not?  why??
 
 -----------
 Program issues
 
 * checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
-
-* LoadFromProgLib() take optional 2nd arg which is name, and also lib type can
-  be SEARCH_LIBS, in which case it searches throug libraries in USER, SYSTEM, WEB order
-  to find it..
 
 css:
 
@@ -43,12 +50,6 @@ lower pri:
   need hook in there, but it is a generic list..
 
 * test FILE string_stream.css: ptr = 0?
-
----
-* deal with small-batch weight updates
-* deal with dmem: network counters aggregate across epoch.. rndseed aggregate, etc
-
-* add #CAT to everything in netstru and leabra.h, and fixup comments
 
 ----------
 arg directives

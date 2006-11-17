@@ -835,6 +835,24 @@ taFiler* taBase::GetSaveFiler(const String& fname, const String& ext, int compre
   return flr;
 }
 
+taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int compress) {
+  taFiler* flr = GetFiler(NULL, ext, compress); 
+  taRefN::Ref(flr);
+   
+  if (fname.nonempty()) {
+    flr->fname = fname;
+    flr->Append();
+  } else { 
+    flr->fname = GetName(); // filer etc. does auto extension
+    flr->Append();
+  }
+  
+  if(flr->ostrm) {
+    SetFileName(flr->fname);
+  }
+  return flr;
+}
+
 int taBase::Save() { 
   String fname = GetFileName(); // empty if 1st or not supported
   return SaveAs(fname);

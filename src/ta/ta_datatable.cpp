@@ -861,6 +861,18 @@ String_Data* DataTable::NewColString(const String& col_nm) {
   return (String_Data*)NewCol(VT_STRING, col_nm);
 }
 
+void DataTable::SetColName(const String& col_nm, int col) {
+  DataArray_impl* da = GetColData(col);
+  if(da) da->name = col_nm;
+}
+
+bool DataTable::RenameCol(const String& cur_nm, const String& new_nm) {
+  DataArray_impl* da = FindColName(cur_nm);
+  if(!da) return false;
+  da->name = new_nm;
+  return true;
+}
+
 DataArray_impl* DataTable::FindColName(const String& col_nm, int& col_idx) {
   return data.FindName(col_nm, col_idx);
 }
@@ -1086,11 +1098,15 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim, bool 
   strm << endl;
 }
 
-void DataTable::SaveData_strm(ostream& strm, Delimiters delim, bool quote_str) {
-  SaveHeader_strm(strm, delim);
+void DataTable::SaveDataRows_strm(ostream& strm, Delimiters delim, bool quote_str) {
   for(int row=0;row <rows; row++) {
     SaveDataRow_strm(strm, row, delim, quote_str);
   }
+}
+
+void DataTable::SaveData_strm(ostream& strm, Delimiters delim, bool quote_str) {
+  SaveHeader_strm(strm, delim);
+  SaveDataRows_strm(strm, delim, quote_str);
 }
 
 void DataTable::SaveHeader(const String& fname, Delimiters delim) {
@@ -1117,6 +1133,13 @@ void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) 
   taRefN::unRefDone(flr);
 }
 
+void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str) {
+  taFiler* flr = GetAppendFiler(fname, ".dat", false);
+  if(flr->ostrm)
+    SaveDataRows_strm(*flr->ostrm, delim, quote_str);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
 
 void DataTable::SaveDataLog(const String& fname, bool append) {
   if(!log_file) return;
@@ -1254,6 +1277,7 @@ int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str)
 }
 
 void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, int max_recs) {
+  StructUpdate(true);
   load_col_idx.Reset();
   load_mat_idx.Reset();
   int st_row = rows;
@@ -1263,6 +1287,7 @@ void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, i
     if((max_recs > 0) && (rows - st_row >= max_recs)) break;
   }
   //  RemoveRow(-1);		// last one is empty..
+  StructUpdate(false);
 }
 
 int DataTable::LoadHeader(const String& fname, Delimiters delim) {
@@ -1291,11 +1316,6 @@ void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, 
     LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
   flr->Close();
   taRefN::unRefDone(flr);
-}
-
-void DataTable::SetColName(const String& col_nm, int col) {
-  DataArray_impl* da = GetColData(col);
-  if(da != NULL) da->name = col_nm;
 }
 
 void DataTable::WriteClose_impl() {

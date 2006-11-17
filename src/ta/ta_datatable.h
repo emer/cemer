@@ -355,6 +355,11 @@ public:
   String_Data*		NewColString(const String& col_nm); 
   // #CAT_Columns create new column of string data
 
+  void			SetColName(const String& col_nm, int col);
+  // #CAT_Columns set column name for given column
+  bool			RenameCol(const String& cur_nm, const String& new_nm);
+  // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
+
   DataArray_impl*	FindColName(const String& col_nm, int& col_idx = idx_def_arg);
   // #CAT_Columns find a column of the given name
 
@@ -367,9 +372,6 @@ public:
   // #CAT_Columns get col data for given column 
   taMatrix*		GetColMatrix(int col) const;
   // #CAT_Columns get matrix for given column -- WARNING: this is NOT row-number safe 
-
-  void			SetColName(const String& col_nm, int col);
-  // #CAT_Columns set column name for given column
 
   bool 			ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
   // #CAT_Columns returns 'true' if the col has the same name and a compatible data type
@@ -479,9 +481,15 @@ public:
   void 			SaveDataRow_strm(ostream& strm, int row=-1, Delimiters delim = TAB,
 					 bool quote_str = true); 
   // #CAT_File #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
+  void 			SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
+					 bool quote_str = true); 
+  // #CAT_File #EXT_dat saves all rows of data (no header) with delimiter between columns, and optionally quoting strings
 
   void 			SaveData(const String& fname="", Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
+  void 			AppendData(const String& fname="", Delimiters delim = TAB,
+				   bool quote_str = true); 
+  // #CAT_File #MENU #EXT_dat appends all of current datatable data to given file (does not output header; file assumed to be of same data structure
   void 			SaveHeader(const String& fname="", Delimiters delim = TAB);
   // #CAT_File #MENU #EXT_dat saves header information, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
   void 			SaveDataRow(const String& fname="", int row=-1, Delimiters delim = TAB,
