@@ -27,6 +27,9 @@
 #include <sstream>
 #include <mpi.h>
 
+//////////////////////////////////////////////////////////////
+// 	Debug code wrappers etc
+
 static String dmem_mpi_decode_err(int ercd) {
   char errstr[MPI_MAX_ERROR_STRING];
   int errlen;
@@ -35,9 +38,6 @@ static String dmem_mpi_decode_err(int ercd) {
 }
 
 void DMemShare::DebugCmd(const char* function, const char* mpi_call) {
-//   String fn = function;
-//   if(fn.contains("Symmetrize")) return;
-//   if(fn.contains("Sync set") || fn.contains("Symmetrize")) return;
   if(taMisc::dmem_debug) {
     cerr << "proc: " << taMisc::dmem_proc << " fun: "
 	 << function << " MPI_" << mpi_call
@@ -47,9 +47,6 @@ void DMemShare::DebugCmd(const char* function, const char* mpi_call) {
 
 bool DMemShare::ProcErr(int ercd, const char* function, const char* mpi_call) {
   if(ercd == MPI_SUCCESS) {
-//     String fn = function;
-//     if(fn.contains("Symmetrize")) return true;
-//     if(fn.contains("Sync set") || fn.contains("Symmetrize")) return true;
     if(taMisc::dmem_debug) {
       cerr << "proc: " << taMisc::dmem_proc << " fun: "
 	   << function << " MPI_" << mpi_call
@@ -62,6 +59,108 @@ bool DMemShare::ProcErr(int ercd, const char* function, const char* mpi_call) {
        << " FAILED with code: " << dmem_mpi_decode_err(ercd) << endl;
   return false;
 }
+
+///////////////////////////////////////////////////////////
+//		DMemComm
+
+void DMemComm::Initialize() {
+  comm = MPI_COMM_WORLD;
+  group = MPI_GROUP_NULL;
+  nprocs = taMisc::dmem_nprocs;
+}
+
+void DMemComm::Destroy() {
+  FreeComm();
+  CutLinks();
+}
+
+void DMemComm::FreeComm() {
+  if(comm != MPI_COMM_WORLD) {
+    DMEM_MPICALL(MPI_Comm_free((MPI_Comm*)&comm), "DMemComm::FreeComm", "Comm free");
+    DMEM_MPICALL(MPI_Group_free((MPI_Group*)&group), "DMemComm::FreeComm", "Group free");
+  }
+  comm = MPI_COMM_WORLD;
+  group = MPI_GROUP_NULL;
+  nprocs = taMisc::dmem_nprocs;
+}
+
+void DMemComm::MakeCommFmRanks() {
+  int cursz = 0; MPI_Comm_size((MPI_Comm)comm, &cursz);
+  if(cursz == nprocs) return;	// already configured!
+  FreeComm();			// free any existing
+  MPI_Group worldgp;
+  DMEM_MPICALL(MPI_Comm_group(MPI_COMM_WORLD, &worldgp), "DMemComm::CommSubGrouped",
+	       "Comm_group");
+
+  DMEM_MPICALL(MPI_Group_incl(worldgp, nprocs, ranks.el, (MPI_Group*)&group),
+	       "DMemComm::CommSubGrouped", "Group_incl");
+  DMEM_MPICALL(MPI_Comm_create(MPI_COMM_WORLD, (MPI_Group)group, (MPI_Comm*)&comm),
+	       "DMemComm::CommSubGrouped", "Comm_create");
+}
+
+void DMemComm::CommAll() {
+  FreeComm();			// defaults to world!
+}
+
+void DMemComm::CommSubGpInner(int sub_gp_size) {
+  if(taMisc::dmem_nprocs <= 1 || sub_gp_size <= 1) {
+    CommAll();
+    return;
+  }
+  if(taMisc::dmem_nprocs % sub_gp_size != 0) {
+    taMisc::Error("CommSubGrouped: the total number of processes:",
+		  String(taMisc::dmem_nprocs),
+		  "is not an even multiple of the subgroup size:", String(sub_gp_size));
+    CommAll();
+    return;
+  }
+  if(sub_gp_size > taMisc::dmem_nprocs)
+    sub_gp_size = taMisc::dmem_nprocs;
+
+  nprocs = sub_gp_size; // inner-group size
+
+  // o0:   o1:    <- outer loop
+  // i0 i1 i0 i1  <- inner loop
+  // 0  1  2  3   <- proc no
+  // *  *         <- in group, e.g. if I'm an odd #'d proc
+  ranks.EnforceSize(nprocs);
+  int myouter = taMisc::dmem_proc / sub_gp_size;
+  int stinner = myouter * sub_gp_size;
+  for(int i = 0;i<nprocs; i++)
+    ranks[i] = stinner + i;
+  MakeCommFmRanks();
+}
+
+void DMemComm::CommSubGpOuter(int sub_gp_size) {
+  if(taMisc::dmem_nprocs <= 1 || sub_gp_size <= 1) {
+    CommAll();
+    return;
+  }
+  if(taMisc::dmem_nprocs % sub_gp_size != 0) {
+    taMisc::Error("CommSubGrouped: the total number of processes:",
+		  String(taMisc::dmem_nprocs),
+		  "is not an even multiple of the subgroup size:", String(sub_gp_size));
+    CommAll();
+    return;
+  }
+  if(sub_gp_size > taMisc::dmem_nprocs)
+    sub_gp_size = taMisc::dmem_nprocs;
+
+  nprocs = taMisc::dmem_nprocs / sub_gp_size; // outer-group size
+
+  // o0:   o1:    <- outer loop
+  // i0 i1 i0 i1  <- inner loop
+  // 0  1  2  3   <- proc no
+  //    *     *   <- in group, e.g. if I'm an odd #'d proc
+  ranks.EnforceSize(nprocs);
+  int myinner = taMisc::dmem_proc % sub_gp_size;
+  for(int i = 0;i<nprocs; i++)
+    ranks[i] = myinner + (i * sub_gp_size);
+  MakeCommFmRanks();
+}
+
+//////////////////////////////////////////////////
+// 		ShareVar
 
 void DMemShareVar::Initialize() {
   comm = -1;
