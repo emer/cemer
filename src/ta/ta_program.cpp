@@ -1922,6 +1922,10 @@ void Program::GetVarsForObjs() {
 }
 
 String Program::GetProgLibPath(ProgLibs library) {
+  if(library == SEARCH_LIBS) {
+    taMisc::Error("Cannot do SEARCH_LIBS for saving -- program saved in local directory!");
+    return "";
+  }
   String path = "./";
   if(library == USER_LIB)
     path = taMisc::prog_lib_paths.GetVal("UserLib").toString();

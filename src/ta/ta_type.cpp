@@ -432,6 +432,10 @@ bool taMisc::check_quiet;
 bool taMisc::check_confirm_success;
 bool taMisc::check_ok;
 
+#ifdef TA_GUI
+QMainWindow* taMisc::console_win = NULL;
+#endif
+
 void (*taMisc::WaitProc)() = NULL;
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 

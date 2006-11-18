@@ -171,7 +171,7 @@ String GroupedDataLoop::GetDisplayName() const {
   String item_ord_str = GetTypeDef()->GetEnumString("Order", item_order);
   String data_nm;
   if(data_var) data_nm = data_var->name;
-  return "grouped table loop (gp: " + group_ord_str + " itm: " + item_ord_str
+  return "grouped table loop (gp: " + group_ord_str + "\n itm: " + item_ord_str
     + " over: " + data_nm + ")";
 }
 

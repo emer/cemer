@@ -2796,6 +2796,30 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
   closeEvent_Handler(e, cancel_op);
 }
 
+void iMainWindowViewer::moveEvent(QMoveEvent* e) {
+  QMainWindow::moveEvent(e);
+  taProject* prj = curProject();
+  if(!prj) return;
+  if(!taMisc::console_win) return;
+  QRect r = frameGeometry();
+  int nw_top = r.bottom() + 1;
+  int nw_ht = (int)(.9 * (taiM->scrn_s.h - nw_top));
+  taMisc::console_win->resize(r.width(), nw_ht);
+  taMisc::console_win->move(r.left(), nw_top);
+}
+
+void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
+  QMainWindow::resizeEvent(e);
+  taProject* prj = curProject();
+  if(!prj) return;
+  if(!taMisc::console_win) return;
+  QRect r = frameGeometry();
+  int nw_top = r.bottom() + 1;
+  int nw_ht = (int)(.9 * (taiM->scrn_s.h - nw_top));
+  taMisc::console_win->resize(r.width(), nw_ht);
+  taMisc::console_win->move(r.left(), nw_top);
+}
+
 void iMainWindowViewer::Constr_impl() {
   Constr_MainMenu_impl();
   Constr_Menu_impl();

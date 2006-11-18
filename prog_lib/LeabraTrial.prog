@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][2] { 
+Program .projects[0].programs.gp[0][3] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -13,7 +13,7 @@ Program .projects[0].programs.gp[0][2] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [7] {
+  ProgEl_List @.prog_code = [6] {
     NetCounterInit @[0] { };
     MethodCall @[1] { };
     WhileLoop @[2] { 
@@ -28,20 +28,15 @@ Program .projects[0].programs.gp[0][2] {
       };
     };
     MethodCall @[3] { };
-    IfElse @[4] { 
-      ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { };
-      };
-    };
-    ProgramCall @[5] { 
+    ProgramCall @[4] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    NetUpdateView @[6] { };
+    NetUpdateView @[5] { };
   };
 };
-Program .projects[0].programs.gp[0][2] {
+Program .projects[0].programs.gp[0][3] {
  name="LeabraTrial";
  desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
  flags=PF_NONE;
@@ -82,6 +77,11 @@ Program .projects[0].programs.gp[0][2] {
    desc=;
   };
  };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=NetCounterInit;
@@ -89,8 +89,8 @@ Program .projects[0].programs.gp[0][2] {
   NetCounterInit @[0] {
    desc=;
    off=0;
-   network_var=.projects[0].programs.gp[0][2].args[0]$1$;
-   local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$2$;
+   network_var=.projects[0].programs.gp[0][3].args[0]$1$;
+   local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$2$;
    counter=LeabraNetwork::phase_no;
   };
  };
@@ -108,8 +108,8 @@ Program .projects[0].programs.gp[0][2] {
   MethodCall @[1] {
    desc=;
    off=0;
-   result_var=;
-   script_obj=$1$;
+   result_var=NULL;
+   obj=$1$;
    method=LeabraNetwork::Trial_Init;
    args{ };
 {    };
@@ -124,7 +124,7 @@ Program .projects[0].programs.gp[0][2] {
     ProgramCall @[0] {
      desc=;
      off=0;
-     target=.projects[0].programs.gp[0][3]$3$;
+     target=.projects[0].programs.gp[0][4]$3$;
      call_init=0;
      prog_args {
       name=;
@@ -146,8 +146,8 @@ Program .projects[0].programs.gp[0][2] {
     MethodCall @[2] {
      desc=;
      off=0;
-     result_var=;
-     script_obj=$1$;
+     result_var=NULL;
+     obj=$1$;
      method=LeabraNetwork::Trial_UpdatePhase;
      args{ };
 {      };
@@ -156,42 +156,18 @@ Program .projects[0].programs.gp[0][2] {
    loop_test="phase_no < network->phase_max";
   };
   MethodCall @[3] {
-   desc=;
+   desc="does Compute_dWt etc";
    off=0;
-   result_var=;
-   script_obj=$1$;
+   result_var=NULL;
+   obj=$1$;
    method=LeabraNetwork::Trial_Final;
    args{ };
 {    };
   };
-  IfElse @[4] {
+  ProgramCall @[4] {
    desc=;
    off=0;
-   condition="network->context == Network::TRAIN";
-   true_code {
-    name=;
-    el_typ=MethodCall;
-    el_def=0;
-    MethodCall @[0] {
-     desc=;
-     off=0;
-     result_var=;
-     script_obj=$1$;
-     method=Network::UpdateWeights;
-     args{ };
-{      };
-    };
-   };
-   false_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-  };
-  ProgramCall @[5] {
-   desc=;
-   off=0;
-   target=.projects[0].programs.gp[0][6]$4$;
+   target=.projects[0].programs.gp[0][7]$4$;
    call_init=0;
    prog_args {
     name=;
@@ -203,11 +179,11 @@ Program .projects[0].programs.gp[0][2] {
     };
    };
   };
-  NetUpdateView @[6] {
+  NetUpdateView @[5] {
    desc=;
    off=0;
    network_var=$1$;
-   update_var=.projects[0].programs.gp[0][2].vars[1]$5$;
+   update_var=.projects[0].programs.gp[0][3].vars[1]$5$;
   };
  };
 };

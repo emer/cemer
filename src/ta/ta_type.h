@@ -172,6 +172,7 @@ class taiEdit; //
 class taiViewType; //
 class taiMember; //
 class taiMethod; //
+class QMainWindow;
 #endif
 
 // for css support
@@ -549,6 +550,10 @@ friend class InitProcRegistrar;
   static bool		check_quiet; 	// #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_ok; 	// #IGNORE cumulative AND of all nested oks
+
+#ifdef TA_GUI
+  static QMainWindow*	console_win;	// #IGNORE the console window 
+#endif
 
   static void	(*WaitProc)();
   // #IGNORE set this to a work process for idle time processing

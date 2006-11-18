@@ -408,8 +408,8 @@ void WindowState::Initialize() {
     lft = 0.0f;
     top = 0.0f;
   }
-  wd = 0.75f;
-  ht = 0.8f; // default window size
+  wd = 0.95f;
+  ht = 0.7f; // default window size
   iconified = false;
 }
 

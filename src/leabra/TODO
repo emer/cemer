@@ -3,6 +3,13 @@ leabra todo list:
 * extrew in trial monitor seems not to be working: 12ax demo
 * change gp name to include unique ctr so group fun works.
 
+* datatable - make unique col names; call for join op..
+
+* dataops: random patterns!
+
+* program update var from obj trigger -- get this working!
+* datacalc update problem: still?
+
 * relnet stat
 
 * deal with small-batch weight updates

@@ -937,6 +937,8 @@ protected:
   bool			m_is_proj_viewer; // true if this is a project viewer (false for simple browsers)
   int			m_last_action_idx; // index of last static action in actionMenu
   override void 	closeEvent(QCloseEvent* ev);
+  override void 	resizeEvent(QResizeEvent* ev);
+  override void 	moveEvent(QMoveEvent* ev);
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
   override void 	windowActivationChange(bool oldActive); // we manage active_wins in order of activation
 
