@@ -59,6 +59,11 @@ css_parse.ccx:	css_parse.y
 	sed -e "s/union/struct/g" y.tab.c >css_parse.ccx;
 	sed -e "s/union/struct/g" y.tab.h >css_parse.hx;
 
+css_parse.hx:	css_parse.y
+	bison -dtvy css_parse.y;
+	sed -e "s/union/struct/g" y.tab.c >css_parse.ccx;
+	sed -e "s/union/struct/g" y.tab.h >css_parse.hx;
+
 css_parse.cpp: 	css_parse.ccx
 	cmp -s css_parse.ccx css_parse.cpp || (cp css_parse.ccx css_parse.cpp);
 
