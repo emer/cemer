@@ -435,23 +435,6 @@ taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
 // 	startup code
 
 
-bool taRootBase::Startup_InitApp(int argc, const char* argv[]) {
-  setlocale(LC_ALL, "");
-
-  QFileInfo fi(argv[0]);
-#ifdef TA_GUI
-# ifdef TA_USE_INVENTOR
-  SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
-# else
-  new iApplication(argc, (char**)argv); // accessed as qApp
-# endif
-#else
-  new QCoreApplication(argc, (char**)argv); // accessed as qApp
-#endif
-  QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
-  return true;
-}
-
 bool taRootBase::Startup_InitDMem(int argc, const char* argv[]) {
 #ifdef DMEM_COMPILE
   taMisc::Init_DMem(argc, argv);
@@ -571,6 +554,26 @@ bool taRootBase::Startup_ProcessGuiArg() {
   return true;
 }
   	
+bool taRootBase::Startup_InitApp(int argc, const char* argv[]) {
+  setlocale(LC_ALL, "");
+
+  if(taMisc::use_gui) {
+#ifdef TA_GUI
+# ifdef TA_USE_INVENTOR
+    SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
+# else
+    new iApplication(argc, (char**)argv); // accessed as qApp
+# endif
+#endif
+  }
+  else {
+    new QCoreApplication(argc, (char**)argv); // accessed as qApp
+    QFileInfo fi(argv[0]);
+    QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
+  }
+  return true;
+}
+
 bool taRootBase::Startup_MakeRoot(TypeDef* root_typ) {
   taRootBase* rb = (taRootBase*)root_typ->GetInstance();
   if(!rb) {
@@ -616,7 +619,7 @@ bool taRootBase::Startup_InitPlugins() {
 }
 
 bool taRootBase::Startup_MakeMainWin() {
-  if(!taMisc::gui_active) return false;
+  if(!taMisc::gui_active) return true;
 #ifdef TA_GUI
   // TODO: need to better orchestrate the "OpenWindows" call below with
   // create the default application window
@@ -688,13 +691,13 @@ bool taRootBase::Startup_ProcessArgs() {
 
 bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun, 
 			      TypeDef* root_typ) {
-  if(!Startup_InitApp(argc, argv)) return false;
   if(!Startup_InitDMem(argc, argv)) return false;
   if(!Startup_InitTA(ta_init_fun)) return false;
-  if(!Startup_LoadPlugins()) return false;
   if(!Startup_InitArgs(argc, argv)) return false;
-  if(!Startup_InitTypes()) return false;
   if(!Startup_ProcessGuiArg()) return false;
+  if(!Startup_InitApp(argc, argv)) return false;
+  if(!Startup_LoadPlugins()) return false;
+  if(!Startup_InitTypes()) return false;
   if(!Startup_MakeRoot(root_typ)) return false;
   if(!Startup_InitCss()) return false;
   if(!Startup_InitGui()) return false;
@@ -735,7 +738,8 @@ bool taRootBase::Cleanup_Main() {
   taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
 
 #ifdef TA_USE_INVENTOR
-  SoQt::done();
+  if(taMisc::gui_active)
+    SoQt::done();
 #endif
 #ifdef DMEM_COMPILE
   MPI_Finalize();

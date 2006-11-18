@@ -105,7 +105,8 @@ void TAColor::SetColor(float r, float g, float b, float a, RGBA* background){
     bgc = ((background->r + background->g + background->b)/3.0f) *  background->a;
   float 	dr=0.0f,dg=0.0f,db=0.0f;
 #ifdef TA_GUI
-  ((iColor)(QApplication::palette().color(QPalette::Active, QColorGroup::Background))).intensities(dr, dg, db);
+  if(taMisc::gui_active)
+    ((iColor)(QApplication::palette().color(QPalette::Active, QColorGroup::Background))).intensities(dr, dg, db);
 #endif
   bgc += ((dr+dg+db)/3.0f) * ((background == NULL) ? 1.0 :
                               (1.0 - background->a));
