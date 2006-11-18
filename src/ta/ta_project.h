@@ -207,13 +207,20 @@ public:
   // #IGNORE start the console shell (returns success)
   static bool	Startup_ProcessArgs();
   // #IGNORE process general args
-  static bool 	Startup_DMem();
-  // #IGNORE distributed memory startup: requires different things on different procs (for gui)
 
   static bool	Startup_Run();
   // #IGNORE go ahead and run the main event loop
   static bool	Cleanup_Main();
   // #IGNORE after running, do final cleanups (called by Startup_Run)
+
+#ifdef DMEM_COMPILE
+  static bool 	Run_GuiDMem();
+  // #IGNORE run the gui under dmem: requires special code.. 
+  static int 	DMem_SubEventLoop();
+  // #IGNORE for dmem sub-process (dmem_proc > 0), event-processing loop
+  static void	DMem_WaitProc(bool send_stop_to_subs = false);
+  // #IGNORE waiting process for dmem_proc = 0, if send_stop_to_subs, sends a stop command to sub procs so they bail out of sub loop
+#endif
   	
   void	InitLinks();
   void	CutLinks();

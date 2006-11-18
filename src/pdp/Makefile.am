@@ -26,14 +26,11 @@ HEADS_GUI =\
 SRCS_GUI =\
 	pdpview_qt.cpp \
 	pdpserver_qt.cpp \
-	pdpserver_qt.moc.cpp \
 	netstru_so.cpp \
 	pdp_qtso.cpp \
-	pdp_qtso.moc.cpp \
 	netstru_qtso.cpp \
 	netstru_qtso.moc.cpp \
-	pdp_program_qtso.cpp  \
-	pdp_program_qtso.moc.cpp 
+	pdp_program_qtso.cpp
 
 endif
 

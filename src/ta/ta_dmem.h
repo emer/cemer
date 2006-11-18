@@ -69,8 +69,8 @@ public:
   double_Array	double_recv; 	// #IGNORE
   int_Array	int_send; 	// #IGNORE
   int_Array	int_recv; 	// #IGNORE
-  long_Array	long_send; 	// #IGNORE
-  long_Array	long_recv; 	// #IGNORE
+  int_Array	long_send; 	// #IGNORE
+  int_Array	long_recv; 	// #IGNORE
 
   virtual void	Compile_Var(MPI_Comm cm); // #IGNORE call this after updating the variable info
   virtual void 	SyncVar();	// #IGNORE synchronize variable across procs (allgather, so all procs have all data)

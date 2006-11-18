@@ -24,6 +24,7 @@
 
 #ifdef DMEM_COMPILE
 
+#include <sstream>
 #include <mpi.h>
 
 static String dmem_mpi_decode_err(int ercd) {

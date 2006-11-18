@@ -138,11 +138,12 @@ int get_unique_file_number(int st_no, const char* prefix, const char* suffix) {
 }
 
 void pdpMisc::WaitProc() {
-#ifdef DMEM_COMPILE
-  if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc == 0)) {
-    DMem_WaitProc();
-  }
-#endif
+  // todo: move this to ta
+// #ifdef DMEM_COMPILE
+//   if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc == 0)) {
+//     DMem_WaitProc();
+//   }
+// #endif
 
 #ifdef TA_GUI
   if(taMisc::gui_active) {
@@ -168,124 +169,4 @@ Network* pdpMisc::GetDefNetwork(ProjectBase* prj) {
   return (Network*)prj->networks.DefaultEl();
 }
 
-#ifdef DMEM_COMPILE
-// todo: move this stuff down to ta
-
-static cssProgSpace* dmem_space1 = NULL;
-static cssProgSpace* dmem_space2 = NULL;
-
-void pdpMisc::DMem_WaitProc(bool send_stop_to_subs) {
-  if(dmem_space1 == NULL) dmem_space1 = new cssProgSpace;
-  if(dmem_space2 == NULL) dmem_space2 = new cssProgSpace;
-
-  if(DMemShare::cmdstream->bad() || DMemShare::cmdstream->eof()) {
-    taMisc::Error("DMem: Error! cmstream is bad or eof.",
-		  "Software will not respond to any commands, must quit!!");
-  }
-  while(DMemShare::cmdstream->tellp() > DMemShare::cmdstream->tellg()) {
-    DMemShare::cmdstream->seekg(0, ios::beg);
-    string str = DMemShare::cmdstream->str();
-    String cmdstr = str.c_str();
-    cmdstr = cmdstr.before((int)(DMemShare::cmdstream->tellp() - DMemShare::cmdstream->tellg()));
-    // make sure to only get the part that is current -- other junk might be in there.
-    cmdstr += '\n';
-    if(taMisc::dmem_debug) {
-      cerr << "proc 0 sending cmd: " << cmdstr;
-    }
-    DMemShare::cmdstream->seekp(0, ios::beg);
-
-    int cmdlen = cmdstr.length();
-
-    DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
-		 "Proc 0 WaitProc", "MPI_Bcast - cmdlen");
-
-    DMEM_MPICALL(MPI_Bcast((void*)(const char*)cmdstr, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
-		 "Proc 0 WaitProc", "MPI_Bcast - cmd");
-
-    if(taMisc::dmem_debug) {
-      cerr << "proc 0 running cmd: " << cmdstr << endl;
-    }
-    // now run the command: it wasn't run before!
-    cssProgSpace* sp = dmem_space1; // if first space is currently running, use another
-    if(sp->state & (cssProg::State_Run | cssProg::State_Cont)) {
-      if(taMisc::dmem_debug)
-	cerr << "proc 0 using 2nd space!" << endl;
-      sp = dmem_space2;
-    }
-
-    sp->CompileCode(cmdstr);
-    sp->Run();
-    sp->ClearAll();
-  }
-  if(send_stop_to_subs) {
-    String cmdstr = "stop";
-    int cmdlen = cmdstr.length();
-    DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
-		 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdlen");
-    DMEM_MPICALL(MPI_Bcast((void*)(const char*)cmdstr, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
-		 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdstr");
-  }
-}
-
-int pdpMisc::DMem_SubEventLoop() {
-  if(taMisc::dmem_debug) {
-    cerr << "proc: " << taMisc::dmem_proc << " event loop start" << endl;
-  }
-
-  if(dmem_space1 == NULL) dmem_space1 = new cssProgSpace;
-  if(dmem_space2 == NULL) dmem_space2 = new cssProgSpace;
-
-  while(true) {
-    int cmdlen;
-    DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
-		 "Proc n SubEventLoop", "MPI_Bcast");
-    char* recv_buf = new char[cmdlen+2];
-    DMEM_MPICALL(MPI_Bcast(recv_buf, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
-		 "Proc n SubEventLoop", "MPI_Bcast");
-    recv_buf[cmdlen] = '\0';
-    String cmd = recv_buf;
-    delete recv_buf;
-
-    if(cmd.length() > 0) {
-      if(taMisc::dmem_debug) {
-       cerr << "proc " << taMisc::dmem_proc << " recv cmd: " << cmd << endl << endl;
-      }
-      if(cmd == "stop") {
-	if(taMisc::dmem_debug)
-	  cerr << "proc " << taMisc::dmem_proc << " got stop command, stopping out of sub event processing loop." << endl;
-	return 1;
-      }
-      else if(!cmd.contains("Save(") && !cmd.contains("SaveAs(")) {
-	if(taMisc::dmem_debug) {
-	  cerr << "proc " << taMisc::dmem_proc << " running cmd: " << cmd << endl;
-	}
-
-	cssProgSpace* sp = dmem_space1; // if first space is currenntly running, use another
-	if(sp->state & (cssProg::State_Run | cssProg::State_Cont)) {
-	  if(taMisc::dmem_debug)
-	    cerr << "proc " << taMisc::dmem_proc << " using 2nd space!" << endl;
-	  sp = dmem_space2;
-	}
-
-	sp->CompileCode(cmd);
-	sp->Run();
-	sp->ClearAll();
-
-	if(cmd.contains("Quit()")) {
-	  if(taMisc::dmem_debug)
-	    cerr << "proc " << taMisc::dmem_proc << " got quit command, quitting." << endl;
-	  return 1;
-	}
-      }
-    }
-    else {
-      cerr << "proc " << taMisc::dmem_proc << " received null command!" << endl;
-    }
-    // do basic wait proc here..
-    tabMisc::WaitProc();
-  }
-  return 0;
-}
-
-#endif // DMEM
 

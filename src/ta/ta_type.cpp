@@ -790,9 +790,13 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
   }
 }
 
+#ifdef DMEM_COMPILE
+#include <mpi.h>
+#endif
+
 void taMisc::Init_DMem(int argc, const char* argv[]) {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
-  MPI_Init(&argc, &argv); // note mpi's extra level of indirection
+  MPI_Init(&argc, (char***)&argv); // note mpi's extra level of indirection
   MPI_Comm_size(MPI_COMM_WORLD, &dmem_nprocs);
   MPI_Comm_rank(MPI_COMM_WORLD, &dmem_proc);
   MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);

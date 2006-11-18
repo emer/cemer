@@ -1639,9 +1639,9 @@ void RndSeed::DMem_Sync(MPI_Comm comm) {
     return;
 
   // just blast the first guy to all members of the same communicator
-  DMEM_MPICALL(MPI_Bcast(rndm_seed.seed.el, MTRnd::N, MPI_LONG, 0, comm),
+  DMEM_MPICALL(MPI_Bcast(seed.el, MTRnd::N, MPI_LONG, 0, comm),
 	       "Process::SyncAllSeeds", "Bcast");
-  rndm_seed.OldSeed();		// then get my seed!
+  OldSeed();		// then get my seed!
 }
 
 #else

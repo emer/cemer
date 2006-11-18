@@ -41,7 +41,7 @@
 #include <locale.h>
 
 #ifdef DMEM_COMPILE
-# include <mpi.h>
+#include "ta_dmem.h"
 #endif
 
 #ifdef TA_USE_INVENTOR
@@ -338,7 +338,7 @@ void taRootBase::Destroy() {
 #ifdef DMEM_COMPILE
     if(taMisc::dmem_nprocs > 1) {
       taMisc::RecordScript(".Quit();\n");
-    } else
+    }
 #endif
   }
 }
@@ -616,6 +616,7 @@ bool taRootBase::Startup_InitPlugins() {
 }
 
 bool taRootBase::Startup_MakeMainWin() {
+  if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
   // TODO: need to better orchestrate the "OpenWindows" call below with
   // create the default application window
@@ -677,44 +678,6 @@ bool taRootBase::Startup_ProcessArgs() {
   return true;
 }
 
-bool taRootBase::Startup_DMem() {
-#ifdef DMEM_COMPILE
-  if (taMisc::dmem_nprocs > 1) {
-    if (cssMisc::gui) {
-      if (taMisc::dmem_proc == 0) { // master dmem
-	DMemShare::InitCmdStream();
-	// need to have some initial string in the stream, otherwise it goes EOF and is bad!
-	*(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
-	taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-	Startup_MakeMainWin();
-	Startup_InvokeShells();
-	DMemShare::CloseCmdStream();
-	cerr << "proc: 0 quitting!" << endl;
-      } else { // slave dmems
-	cssMisc::gui = false;	// not for subguys
-	cssMisc::init_interactive = false; // don't stay in startup shell
-//TODO: dmem subs still need to use Qt event loop!!!
-// 	if(taMisc::dmem_debug)
-// 	  cerr << "proc " << taMisc::dmem_proc << " starting shell." << endl;
-	// get rid of wait proc for rl -- we call it ourselves
-	extern int (*rl_event_hook)(void);
- 	rl_event_hook = NULL;
- 	cssMisc::Top->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-	//	cssMisc::Top->debug = 2;
-	DMem_SubEventLoop();	// this is the "shell" for a dmem sub guy
-	cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
-      }
-    } else {			// nogui
-      Startup_InvokeShells();  
-    }
-  } else { // dmem, but only one guy, so pretty much like normal
-    Startup_MakeMainWin();
-    Startup_Console();
-  }
-#endif
-  return true;
-}
-  	
 bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun, 
 			      TypeDef* root_typ) {
   if(!Startup_InitApp(argc, argv)) return false;
@@ -728,12 +691,8 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
   if(!Startup_InitCss()) return false;
   if(!Startup_InitGui()) return false;
   if(!Startup_InitPlugins()) return false;
-#ifdef DMEM_COMPILE
-  if(!Startup_DMem()) return false;
-#else 
   if(!Startup_MakeMainWin()) return false;
   if(!Startup_Console()) return false;
-#endif
   if(!Startup_ProcessArgs()) return false;
   QCoreApplication::processEvents();
   return true;
@@ -743,7 +702,12 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
 //	Run & Cleanup
 
 bool taRootBase::Startup_Run() {
-  // todo: there is a non-gui version of this in css that need to checkout..
+#ifdef DMEM_COMPILE
+  if((taMisc::dmem_nprocs > 1) && taMisc::gui_active) {
+    Run_GuiDMem();
+  }
+  else {
+#endif
   if(taMisc::gui_active) {
     qApp->exec();		// gui version is always interactive
   }
@@ -751,6 +715,9 @@ bool taRootBase::Startup_Run() {
     if(cssMisc::init_interactive)
       cssMisc::TopShell->Shell_NoGui_Rl_Run();
   }
+#ifdef DMEM_COMPILE
+  }
+#endif
   return Cleanup_Main();
 }
 
@@ -767,3 +734,140 @@ bool taRootBase::Cleanup_Main() {
 #endif
   return true;
 }
+
+#ifdef DMEM_COMPILE
+
+bool taRootBase::Run_GuiDMem() {
+  if (taMisc::dmem_proc == 0) { // master dmem
+    DMemShare::InitCmdStream();
+    // need to have some initial string in the stream, otherwise it goes EOF and is bad!
+    *(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
+    taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
+    qApp->exec();  // normal run..
+    DMemShare::CloseCmdStream();
+    cerr << "proc: 0 quitting!" << endl;
+  } else { // slave dmems
+    cssMisc::init_interactive = false; // don't stay in startup shell
+    DMem_SubEventLoop();	// this is the "shell" for a dmem sub guy
+    cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
+  }
+  return true;
+}
+  	
+static cssProgSpace* dmem_space1 = NULL;
+static cssProgSpace* dmem_space2 = NULL;
+
+void taRootBase::DMem_WaitProc(bool send_stop_to_subs) {
+  if(dmem_space1 == NULL) dmem_space1 = new cssProgSpace;
+  if(dmem_space2 == NULL) dmem_space2 = new cssProgSpace;
+
+  if(DMemShare::cmdstream->bad() || DMemShare::cmdstream->eof()) {
+    taMisc::Error("DMem: Error! cmstream is bad or eof.",
+		  "Software will not respond to any commands, must quit!!");
+  }
+  while(DMemShare::cmdstream->tellp() > DMemShare::cmdstream->tellg()) {
+    DMemShare::cmdstream->seekg(0, ios::beg);
+    string str = DMemShare::cmdstream->str();
+    String cmdstr = str.c_str();
+    cmdstr = cmdstr.before((int)(DMemShare::cmdstream->tellp() - DMemShare::cmdstream->tellg()));
+    // make sure to only get the part that is current -- other junk might be in there.
+    cmdstr += '\n';
+    if(taMisc::dmem_debug) {
+      cerr << "proc 0 sending cmd: " << cmdstr;
+    }
+    DMemShare::cmdstream->seekp(0, ios::beg);
+
+    int cmdlen = cmdstr.length();
+
+    DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
+		 "Proc 0 WaitProc", "MPI_Bcast - cmdlen");
+
+    DMEM_MPICALL(MPI_Bcast((void*)(const char*)cmdstr, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
+		 "Proc 0 WaitProc", "MPI_Bcast - cmd");
+
+    if(taMisc::dmem_debug) {
+      cerr << "proc 0 running cmd: " << cmdstr << endl;
+    }
+    // now run the command: it wasn't run before!
+    cssProgSpace* sp = dmem_space1; // if first space is currently running, use another
+    if(sp->state & cssProg::State_Run) {
+      if(taMisc::dmem_debug)
+	cerr << "proc 0 using 2nd space!" << endl;
+      sp = dmem_space2;
+    }
+
+    sp->CompileCode(cmdstr);
+    sp->Run();
+    sp->ClearAll();
+  }
+  if(send_stop_to_subs) {
+    String cmdstr = "stop";
+    int cmdlen = cmdstr.length();
+    DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
+		 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdlen");
+    DMEM_MPICALL(MPI_Bcast((void*)(const char*)cmdstr, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
+		 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdstr");
+  }
+}
+
+int taRootBase::DMem_SubEventLoop() {
+  if(taMisc::dmem_debug) {
+    cerr << "proc: " << taMisc::dmem_proc << " event loop start" << endl;
+  }
+
+  if(dmem_space1 == NULL) dmem_space1 = new cssProgSpace;
+  if(dmem_space2 == NULL) dmem_space2 = new cssProgSpace;
+
+  while(true) {
+    int cmdlen;
+    DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
+		 "Proc n SubEventLoop", "MPI_Bcast");
+    char* recv_buf = new char[cmdlen+2];
+    DMEM_MPICALL(MPI_Bcast(recv_buf, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
+		 "Proc n SubEventLoop", "MPI_Bcast");
+    recv_buf[cmdlen] = '\0';
+    String cmd = recv_buf;
+    delete recv_buf;
+
+    if(cmd.length() > 0) {
+      if(taMisc::dmem_debug) {
+       cerr << "proc " << taMisc::dmem_proc << " recv cmd: " << cmd << endl << endl;
+      }
+      if(cmd == "stop") {
+	if(taMisc::dmem_debug)
+	  cerr << "proc " << taMisc::dmem_proc << " got stop command, stopping out of sub event processing loop." << endl;
+	return 1;
+      }
+      else if(!cmd.contains("Save(") && !cmd.contains("SaveAs(")) {
+	if(taMisc::dmem_debug) {
+	  cerr << "proc " << taMisc::dmem_proc << " running cmd: " << cmd << endl;
+	}
+
+	cssProgSpace* sp = dmem_space1; // if first space is currenntly running, use another
+	if(sp->state & cssProg::State_Run) {
+	  if(taMisc::dmem_debug)
+	    cerr << "proc " << taMisc::dmem_proc << " using 2nd space!" << endl;
+	  sp = dmem_space2;
+	}
+
+	sp->CompileCode(cmd);
+	sp->Run();
+	sp->ClearAll();
+
+	if(cmd.contains("Quit()")) {
+	  if(taMisc::dmem_debug)
+	    cerr << "proc " << taMisc::dmem_proc << " got quit command, quitting." << endl;
+	  return 1;
+	}
+      }
+    }
+    else {
+      cerr << "proc " << taMisc::dmem_proc << " received null command!" << endl;
+    }
+    // do basic wait proc here..
+    tabMisc::WaitProc();
+  }
+  return 0;
+}
+
+#endif // DMEM

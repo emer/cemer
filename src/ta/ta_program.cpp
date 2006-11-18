@@ -1934,7 +1934,7 @@ String Program::GetProgLibPath(ProgLibs library) {
     if (acc != 0) {
       QDir qd;
       qd.mkpath(path);		// attempt to make it..
-      taMisc::Warning("Attempted to make program library directory:", path);
+      taMisc::Warning("Note: did mkdir for program library directory:", path);
     }
   }
   return path;

@@ -60,13 +60,6 @@ public:
   static SelectEdit* FindMakeSelectEdit(ProjectBase* prj);
   // find a select edit if it exists, otherwise make it
 #endif
-
-  // todo: move these guys to ta_project
-#ifdef DMEM_COMPILE
-  static int 	DMem_SubEventLoop(); 	// #IGNORE for dmem sub-process (dmem_proc > 0), event-processing loop
-  static int	DMem_WaitProc(bool send_stop_to_subs = false);
-  // #IGNORE waiting process for dmem_proc = 0, if send_stop_to_subs, sends a stop command to sub procs so they bail out of sub loop
-#endif
 };
 
 int get_unique_file_number(int st_no, const char* prefix, const char* suffix);
