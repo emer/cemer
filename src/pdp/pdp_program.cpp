@@ -58,10 +58,10 @@ const String BasicDataLoop::GenCssPre_impl(int indent_level) {
   rval += id1 + data_nm + "->ReadOpen();\n";
   rval += id1 + "int st_idx = data_loop->dmem_this_proc; // start with different items in dmem (0 if not)\n";
   rval += id1 + "int inc_idx = data_loop->dmem_nprocs;  // this is 1 if no dmem\n";
-  rval += id1 + "int mx_idx = data_loop->item_idx_list.size / inc_idx;\n";
+  rval += id1 + "int mx_idx = data_loop->item_idx_list.size;\n";
   rval += id1 + "bool dmem_even = true; // is the total number an even multiple of dmem_nprocs?\n";
-  rval += id1 + "if(data_loop->item_idx_list.size % inc_idx != 0) {\n";
-  rval += id2 + "dmem_even = false;  mx_idx += 1; // round up\n";
+  rval += id1 + "if(mx_idx % inc_idx != 0) {\n";
+  rval += id2 + "dmem_even = false;  mx_idx = ((mx_idx / inc_idx) + 1) * inc_idx; // round up\n";
   rval += id1 + "}\n";
   rval += id1 + "for(int list_idx = st_idx; list_idx < mx_idx; list_idx += inc_idx) {\n";
   rval += id2 + "int data_idx;\n";

@@ -254,15 +254,6 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
   
 }
 
-int taProject::Load(const String& fname, taBase** loaded_obj_ptr) {
-  int rval = inherited::Load(fname, loaded_obj_ptr);
-  if(fname.contains(".proj"))
-    base_fname = fname.before(".proj");
-  else
-    base_fname = fname;		// whatever
-  return rval;
-}
-
 int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
 #ifdef TA_GUI
   if (use_sim_log) {
@@ -270,15 +261,6 @@ int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
   }
 #endif
   return inherited::Save_strm(strm, par, indent);
-}
-
-int taProject::SaveAs(const String& fname) {
-  int rval = inherited::SaveAs(fname);
-  if(fname.contains(".proj"))
-    base_fname = fname.before(".proj");
-  else
-    base_fname = fname;		// whatever
-  return rval;
 }
 
 void taProject::setDirty(bool value) {

@@ -67,6 +67,7 @@ void DMemComm::Initialize() {
   comm = MPI_COMM_WORLD;
   group = MPI_GROUP_NULL;
   nprocs = taMisc::dmem_nprocs;
+  this_proc = taMisc::dmem_proc;
 }
 
 void DMemComm::Destroy() {
@@ -82,6 +83,7 @@ void DMemComm::FreeComm() {
   comm = MPI_COMM_WORLD;
   group = MPI_GROUP_NULL;
   nprocs = taMisc::dmem_nprocs;
+  this_proc = taMisc::dmem_proc;
 }
 
 void DMemComm::MakeCommFmRanks() {

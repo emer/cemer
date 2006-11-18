@@ -739,11 +739,14 @@ int taBase::NTokensInScope(TypeDef* td, TAPtr ref_obj, TypeDef* scp_tp) {
 String taBase::GetFileNameFmProject(const String& ext, const String& tag, bool dmem_proc_no) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return _nilString;
+  String proj_base_nm = proj->file_name;
+  if(proj_base_nm.contains(".proj"))
+    proj_base_nm = proj_base_nm.before(".proj");
   String dms;
   if(dmem_proc_no && (taMisc::dmem_nprocs > 1)) {
-    dms = ".p" + taMisc::LeadingZeros(dmem_proc_no, 2);
+    dms = ".p" + taMisc::LeadingZeros(taMisc::dmem_proc, 2);
   }
-  String rval = proj->base_fname + tag + dms + ext;
+  String rval = proj_base_nm + tag + dms + ext;
   return rval;
 }
 
