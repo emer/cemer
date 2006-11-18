@@ -362,6 +362,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     dst_op.downcase();
     nda->name += "_" + dst_op;
   }    
+  dest->UniqueColNames();	// make them unique!
 
   // sort by grouped guys, in order
   DataSortSpec sort_spec;
@@ -698,7 +699,8 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
     DataArray_impl* nda = (DataArray_impl*)sdb->MakeToken();
     dest->data.Add(nda);
     nda->Copy_NoData(*sdb);
-  }    
+  }
+  dest->UniqueColNames();	// make them unique!
   for(int row=0;row<src_a->rows;row++) {
     dest->AddBlankRow();
     for(int i=0;i<src_a->data.size; i++) {
@@ -755,6 +757,7 @@ bool taDataProc::JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b) 
     dest->data.Add(nda);
     nda->Copy_NoData(*sdb);
   }    
+  dest->UniqueColNames();	// make them unique!
   for(int row=0;row<src_a->rows;row++) {
     dest->AddBlankRow();
     for(int i=0;i<src_a->data.size; i++) {

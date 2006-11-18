@@ -542,8 +542,12 @@ public:
   virtual void	CopyFromRow(int dest_row, const DataTable& cp, int src_row);
   // #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
 
+  virtual void	UniqueColNames();
+  // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)
+
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
+  void	UpdateAfterEdit();
   TA_USERDATAFUNS(DataTable)
   void	InitLinks();
   void	CutLinks();

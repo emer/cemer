@@ -422,6 +422,11 @@ void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
   data.CopyFromRow(dest_row, src.data, src_row);
 }
 
+void DataTable::UpdateAfterEdit() {
+  UniqueColNames();
+  inherited::UpdateAfterEdit();
+}
+
 bool DataTable::AddRow(int n) {
   if ((cols() == 0) || (n < 1)) return false;
   RowsAdding(n, true);
@@ -921,6 +926,20 @@ DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
     else
       return NewCol(val_type, col_nm);
+  }
+}
+
+void DataTable::UniqueColNames() {
+  for(int i=0;i<data.size; i++) {
+    DataArray_impl* da = data.FastEl(i);
+    int dupl = 0;
+    for(int j=i+1;j<data.size; j++) {
+      DataArray_impl* oda = data.FastEl(j);
+      if(da->name == oda->name) {
+	dupl++;
+	oda->name += "_" + String(dupl);
+      }
+    }
   }
 }
 
