@@ -96,10 +96,16 @@ void DMemComm::MakeCommFmRanks() {
 	       "DMemComm::CommSubGrouped", "Group_incl");
   DMEM_MPICALL(MPI_Comm_create(MPI_COMM_WORLD, (MPI_Group)group, (MPI_Comm*)&comm),
 	       "DMemComm::CommSubGrouped", "Comm_create");
+  GetThisProc();
 }
 
 void DMemComm::CommAll() {
   FreeComm();			// defaults to world!
+}
+
+int DMemComm::GetThisProc() {
+  MPI_Comm_rank(comm, &this_proc);
+  return this_proc;
 }
 
 void DMemComm::CommSubGpInner(int sub_gp_size) {
@@ -118,6 +124,8 @@ void DMemComm::CommSubGpInner(int sub_gp_size) {
     sub_gp_size = taMisc::dmem_nprocs;
 
   nprocs = sub_gp_size; // inner-group size
+  int cursz = 0; MPI_Comm_size((MPI_Comm)comm, &cursz);
+  if(cursz == nprocs) return;	// already configured!
 
   // o0:   o1:    <- outer loop
   // i0 i1 i0 i1  <- inner loop
@@ -147,6 +155,8 @@ void DMemComm::CommSubGpOuter(int sub_gp_size) {
     sub_gp_size = taMisc::dmem_nprocs;
 
   nprocs = taMisc::dmem_nprocs / sub_gp_size; // outer-group size
+  int cursz = 0; MPI_Comm_size((MPI_Comm)comm, &cursz);
+  if(cursz == nprocs) return;	// already configured!
 
   // o0:   o1:    <- outer loop
   // i0 i1 i0 i1  <- inner loop

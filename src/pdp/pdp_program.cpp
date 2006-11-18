@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "pdp_program.h"
-
+#include "netstru.h"
 #include "css_machine.h"
 #include "datatable.h"
 
@@ -46,18 +46,30 @@ void BasicDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 const String BasicDataLoop::GenCssPre_impl(int indent_level) {
   String id1 = cssMisc::Indent(indent_level+1);
   String id2 = cssMisc::Indent(indent_level+2);
+  String id3 = cssMisc::Indent(indent_level+3);
   String data_nm = data_var->name;
 
   String rval = cssMisc::Indent(indent_level) + "{ // BasicDataLoop " + data_nm + "\n";
   rval += id1 + "BasicDataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
+  rval += id1 + "data_loop->DMem_Initialize(network); // note: this assumes network variable exists!\n";
   rval += id1 + "data_loop->item_idx_list.EnforceSize(" + data_nm + "->ItemCount());\n";
   rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
   rval += id1 + "if(data_loop->order == BasicDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
   rval += id1 + data_nm + "->ReadOpen();\n";
-  rval += id1 + "for(int list_idx = 0; list_idx < data_loop->item_idx_list.size; list_idx++) {\n";
+  rval += id1 + "int st_idx = dmem_this_proc; // start with different items in dmem (0 if not)\n";
+  rval += id1 + "int inc_idx = dmem_nprocs;  // this is 1 if no dmem\n";
+  rval += id1 + "int mx_idx = data_loop->item_idx_list.size / dmem_nprocs;\n";
+  rval += id1 + "bool dmem_even = true; // is the total number an even multiple of dmem_nprocs?\n";
+  rval += id1 + "if(data_loop->item_idx_list.size % dmem_nprocs != 0) {\n";
+  rval += id2 + "dmem_even = false;  mx_idx += 1; // round up\n";
+  rval += id1 + "}\n";
+  rval += id1 + "for(int list_idx = st_idx; list_idx < mx_idx; list_idx += inc_idx) {\n";
   rval += id2 + "int data_idx;\n";
   rval += id2 + "if(data_loop->order == BasicDataLoop::RANDOM) data_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
-  rval += id2 + "else data_idx = data_loop->item_idx_list[list_idx];\n";
+  rval += id2 + "else {\n";
+  rval += id3 + "if(list_idx < data_loop->item_idx_list.size) data_idx = data_loop->item_idx_list[list_idx];\n";
+  rval += id3 + "else data_idx = Random::IntZeroN(data_loop->item_idx_list.size); // draw at random from list if over max -- need to process something for dmem to stay in sync\n";
+  rval += id3 + "}\n";
   rval += id2 + "if(!" + data_nm + "->ReadItem(data_idx)) break;\n";
   return rval;
 }
@@ -70,6 +82,17 @@ const String BasicDataLoop::GenCssPost_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
   rval += cssMisc::Indent(indent_level) + "} // BasicDataLoop " + data_var->name + "\n";
   return rval;
+}
+
+void BasicDataLoop::DMem_Initialize(Network* net) {
+#ifdef DMEM_COMPILE
+  dmem_comm.CommSubGpOuter(net->dmem_nprocs_actual);
+  dmem_nprocs = dmem_comm.nprocs;
+  dmem_this_proc = dmem_comm.this_proc;
+#else
+  dmem_nprocs = 1;
+  dmem_this_proc = 0;
+#endif
 }
 
 String BasicDataLoop::GetDisplayName() const {

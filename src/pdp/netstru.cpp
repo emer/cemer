@@ -32,10 +32,6 @@
 #include "netstru_qtso.h"
 #endif
 
-#ifdef DMEM_COMPILE
-#include <mpi.h>
-#endif
-
 //////////////////////////
 //  	Schedule	//
 //////////////////////////
@@ -4363,8 +4359,7 @@ void Network::Initialize() {
   copying = false;
   proj = NULL;
 #ifdef DMEM_COMPILE
-  dmem_gp = -1;
-  dmem_share_units.comm = (MPI_Comm)MPI_COMM_SELF;
+  dmem_share_units.comm = (MPI_Comm)MPI_COMM_WORLD;
 #endif
 }
 
@@ -4374,6 +4369,7 @@ void Network::InitLinks() {
   taBase::Own(layers, this);
   taBase::Own(max_size, this);
 #ifdef DMEM_COMPILE
+  taBase::Own(dmem_comm, this);
   taBase::Own(dmem_share_units, this);
 #endif
   inherited::InitLinks();
@@ -4383,12 +4379,7 @@ void Network::CutLinks() {
   static bool in_repl = false;
   if(in_repl || (owner == NULL)) return; // already replacing or already dead
 #ifdef DMEM_COMPILE
-  if(dmem_share_units.comm != MPI_COMM_SELF) {
-    DMEM_MPICALL(MPI_Comm_free((MPI_Comm*)&dmem_share_units.comm),
-		       "Network::CutLinks", "net Comm_free");
-    DMEM_MPICALL(MPI_Group_free((MPI_Group*)&dmem_gp),
-		       "Network::CutLinks", "net Group_free");
-  }
+  dmem_comm.FreeComm();
 #endif
 //TODO  views.Reset();
   layers.CutLinks();
@@ -4428,7 +4419,6 @@ void Network::Copy_(const Network& cp) {
   dmem_sync_level = cp.dmem_sync_level;
   dmem_nprocs = cp.dmem_nprocs;
   dmem_nprocs_actual = cp.dmem_nprocs_actual;
-  dmem_gp = cp.dmem_gp;
 
   usr1_save_fmt = cp.usr1_save_fmt;
   wt_save_fmt = cp.wt_save_fmt;
@@ -4890,35 +4880,8 @@ void Network::DMem_SyncAct() {
 void Network::DMem_DistributeUnits() {
   //  cerr << "proc " << taMisc::dmem_proc << " in distribunits" << endl;
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
-
-  if(dmem_nprocs_actual > 1) {
-    MPI_Group worldgp;
-    DMEM_MPICALL(MPI_Comm_group(MPI_COMM_WORLD, &worldgp),
-		       "Network::DMem_DistributeUnits", "Comm_group");
-
-    if(dmem_share_units.comm != MPI_COMM_SELF) {
-      DMEM_MPICALL(MPI_Comm_free((MPI_Comm*)&dmem_share_units.comm),
-			 "Network::DMem_DistributeUnits", "net Comm_free");
-      DMEM_MPICALL(MPI_Group_free((MPI_Group*)&dmem_gp),
-			 "Network::DMem_DistributeUnits", "net Group_free");
-    }
-
-    int myepc = taMisc::dmem_proc / dmem_nprocs_actual;
-    // outer-loop is epoch-wise: if there are extra procs they are for that
-    int stnet = myepc * dmem_nprocs_actual;
-    int net_ranks[dmem_nprocs_actual];
-    for(int i = 0; i<dmem_nprocs_actual; i++)
-      net_ranks[i] = stnet + i;
-
-    DMEM_MPICALL(MPI_Group_incl(worldgp, dmem_nprocs_actual, net_ranks, (MPI_Group*)&dmem_gp),
-		       "Network::DMem_DistributeUnits", "net Group_incl");
-    DMEM_MPICALL(MPI_Comm_create(MPI_COMM_WORLD, (MPI_Group)dmem_gp, (MPI_Comm*)&dmem_share_units.comm),
-		       "Network::DMem_DistributeUnits", "net Comm_create");
-  }
-  else {
-    dmem_share_units.comm = MPI_COMM_SELF;
-    dmem_gp = -1;
-  }
+  dmem_comm.CommSubGpInner(dmem_nprocs_actual);	// network is inner-group
+  dmem_share_units.comm = dmem_comm.comm;
 
   dmem_share_units.Reset();
   bool any_custom_distrib = false;
@@ -5181,7 +5144,6 @@ void Network::ModifyState(){
     if(!l->lesion)
       l->ModifyState();
   }
-
 }
 
 void Network::InitWtDelta(){

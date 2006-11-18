@@ -35,9 +35,7 @@
 
 #include <math.h>
 
-#ifdef DMEM_COMPILE
-#include <mpi.h>
-#endif
+#include "ta_dmem.h"
 
 // forwards this file
 class Unit_Group; //
@@ -807,7 +805,7 @@ inline void ConSpec::C_InitWtState(Con_Group*, Connection* cn, Unit* ru, Unit* s
     cn->wt = rnd.Gen();
   }
   else {
-    Random::ZeroOne();		// keep random seeds syncronized for dmem
+    rnd.Gen();		// keep random seeds syncronized for dmem
   }
   C_ApplyLimits(cn,ru,su);
 }
@@ -1271,7 +1269,6 @@ public:
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
   int		dmem_nprocs_actual; // #READ_ONLY #NO_SAVE actual number of processors being used
-  int		dmem_gp;	// #IGNORE the group for the network communicator
 
   Usr1SaveFmt	usr1_save_fmt;	// #CAT_File save network for -USR1 signal: full net or weights
   WtSaveFormat	wt_save_fmt;	// #CAT_File format to save weights in if saving weights
@@ -1285,6 +1282,7 @@ public:
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
 
 #ifdef DMEM_COMPILE
+  DMemComm	dmem_comm;	// #IGNORE the dmem communicator defining groups to communicate over
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
   virtual void	DMem_SyncNRecvCons();   // syncronize number of receiving connections (share set 0)
   virtual void	DMem_SyncNet();       	// #IGNORE synchronize just the netinputs (share set 1)

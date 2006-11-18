@@ -19,12 +19,18 @@
 #define PDP_PROGRAM_H
 
 #include "ta_program.h"
+#include "ta_dmem.h"
+
+class Network;
 
 #include "pdp_def.h"
 #include "pdp_TA_type.h"
 
+// note: the motivation for supporting dmem within the basic data loops is so that the
+// same project can be run transparently in dmem or non-dmem mode without modification
+
 class TA_API BasicDataLoop: public Loop { 
-  // loops over items in a DataTable, in different basic orderings, using index to select current data table item (not using datatable's own iterator)
+  // loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data; Note: assumes that there is a network variable defined in program!!
 INHERITED(Loop)
 public:
   enum Order {
@@ -36,6 +42,15 @@ public:
   ProgVarRef	data_var;	// program variable pointing to the data table to use
   Order		order;		// order to process data items in
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies 
+  int		dmem_nprocs;	// number of processors to use for distributed memory processing (input data distributed over nodes) -- computed automatically if dmem is active; else set to 1
+  int		dmem_this_proc;	// processor rank for this processor relative to communicator group
+
+#ifdef DMEM_COMPILE
+  DMemComm	dmem_comm;	// #IGNORE the dmem communicator group
+#endif
+
+  virtual void	DMem_Initialize(Network* net);
+  // configure the dmem communicator stuff: depends on dmem setup of network
 
   override String	GetDisplayName() const;
 
@@ -52,7 +67,7 @@ private:
 };
 
 class TA_API GroupedDataLoop: public Loop { 
-  // loops over items in a DataTable, in different basic orderings, using index to select current data table item (not using datatable's own iterator)
+  // loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data
 INHERITED(Loop)
 public:
   enum Order {

@@ -38,37 +38,44 @@
   DMemShare::DebugCmd(fun, mpi_call); \
   DMemShare::ProcErr(mpicmd, fun, mpi_call)
 
-class TA_API DMemComm : public taNBase {
-  // defines a communicator group for dmem communication
-  INHERITED(taNBase)
-public:
-  MPI_Comm	comm;		// the mpi communicator id
-  MPI_Group	group;		// the mpi group id
-  int		nprocs;		// number of processors in comm
-  int_Array	ranks;		// proc numbers of members of the group
-
-  void	CommAll();
-  // all the processors (world group)
-  void	CommSubGpInner(int sub_gp_size);
-  // procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the inner group for this processor (gp size = sub_gp_size)
-  void	CommSubGpOuter(int sub_gp_size);
-  // procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the outer group for this processor
-
-  void	MakeCommFmRanks();
-  // make the comm from the ranks
-  void	FreeComm();
-  // free the comm & group 
-
-  void 	Initialize();
-  void 	Destroy();
-  TA_SIMPLE_BASEFUNS(DMemComm);
-};
-
 // use the following to conditionalize running of functions directly as opposed
 // to having them be called later via the cmdstream script calls
 // it is necessary to do this to sychronize all dmem procs so they all call the
 // exact same function scripts at exactly the same time!
 #define DMEM_GUI_RUN_IF if(taMisc::dmem_nprocs == 1)
+
+/////////////////////////////////////////////////////////////////
+//	communicator: use this to define groups of communicating units
+
+class TA_API DMemComm : public taNBase {
+  // defines a communicator group for dmem communication
+  INHERITED(taNBase)
+public:
+  MPI_Comm	comm;		// #IGNORE the mpi communicator id
+  MPI_Group	group;		// #IGNORE the mpi group id
+  int		nprocs;		// #IGNORE number of processors in comm
+  int_Array	ranks;		// #IGNORE proc numbers of members of the group
+  int		this_proc;	// #IGNORE the rank of this processor within communicator
+
+  void	CommAll();
+  // #IGNORE use all the processors (world group)
+  void	CommSubGpInner(int sub_gp_size);
+  // #IGNORE procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the inner group for this processor (gp size = sub_gp_size)
+  void	CommSubGpOuter(int sub_gp_size);
+  // #IGNORE procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the outer group for this processor
+
+  int	GetThisProc();
+  // #IGNORE get the rank of this processor relative to communicator
+
+  void	MakeCommFmRanks();
+  // #IGNORE make the comm from the ranks
+  void	FreeComm();
+  // #IGNORE free the comm & group 
+
+  void 	Initialize();
+  void 	Destroy();
+  TA_BASEFUNS(DMemComm);
+};
 
 class TA_API DMemShareVar : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
@@ -170,8 +177,9 @@ class TA_API DMemComm : public taNBase {
   INHERITED(taNBase)
 public:
 
-  void 	Initialize();
-  void 	Destroy();
+  //  void	Dummy(const DMemComm&) { };
+  void 	Initialize() { };
+  void 	Destroy() { };
   TA_BASEFUNS(DMemComm);
 };
 
