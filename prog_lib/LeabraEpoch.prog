@@ -29,9 +29,8 @@ Program .projects[0].programs.gp[0][2] {
 	  };
 	};
 	IfElse @[1] { 
-	  ProgEl_List @.true_code = [2] {
-	    PrintVar @[0] { };
-	    MethodCall @[1] { };
+	  ProgEl_List @.true_code = [1] {
+	    MethodCall @[0] { };
 	  };
 	};
 	NetCounterIncr @[2] { };
@@ -89,9 +88,9 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[2] {
    name="small_batch_n";
    var_type=T_Int;
-   int_val=2;
+   int_val=1;
    objs_ptr=0;
-   desc=;
+   desc="how many trials are run before the weigts update -- integrating weight changes over multiple trials can result in better learning, and is also what happens in dmem across trials";
   };
  };
  functions {
@@ -168,12 +167,7 @@ Program .projects[0].programs.gp[0][2] {
       name=;
       el_typ=MethodCall;
       el_def=0;
-      PrintVar @[0] {
-       desc=;
-       off=0;
-       print_var=$3$;
-      };
-      MethodCall @[1] {
+      MethodCall @[0] {
        desc=;
        off=0;
        result_var=NULL;
@@ -200,7 +194,7 @@ Program .projects[0].programs.gp[0][2] {
    loop_test="This is not used here";
    data_var=.projects[0].programs.gp[0][2].vars[1]$7$;
    order=PERMUTED;
-   item_idx_list{ 3;2;0;1;4;5;   };
+   item_idx_list{ 3;1;0;2;5;4;   };
    dmem_nprocs=1;
    dmem_this_proc=0;
   };
@@ -209,7 +203,7 @@ Program .projects[0].programs.gp[0][2] {
    off=0;
    result_var=NULL;
    obj=$2$;
-   method=LeabraNetwork::Compute_EpochSSE;
+   method=LeabraNetwork::Compute_EpochStats;
    args{ };
 {    };
   };

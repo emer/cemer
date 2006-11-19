@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][3] { 
+Program .projects[0].programs.gp[0][4] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -14,7 +14,7 @@ Program .projects[0].programs.gp[0][3] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [9] {
+  ProgEl_List @.prog_code = [10] {
     NetCounterInit @[0] { };
     MethodCall @[1] { };
     ProgramCall @[2] { 
@@ -42,10 +42,15 @@ Program .projects[0].programs.gp[0][3] {
 	MethodCall @[0] { };
       };
     };
-    NetUpdateView @[8] { };
+    IfElse @[8] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
+    NetUpdateView @[9] { };
   };
 };
-Program .projects[0].programs.gp[0][3] {
+Program .projects[0].programs.gp[0][4] {
  name="LeabraSettle";
  desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
  flags=PF_NONE;
@@ -74,7 +79,7 @@ Program .projects[0].programs.gp[0][3] {
   ProgVar @[0] {
    name="cycle";
    var_type=T_Int;
-   int_val=3;
+   int_val=15;
    objs_ptr=0;
    desc=;
   };
@@ -93,6 +98,11 @@ Program .projects[0].programs.gp[0][3] {
    desc=;
   };
  };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=NetCounterInit;
@@ -100,8 +110,8 @@ Program .projects[0].programs.gp[0][3] {
   NetCounterInit @[0] {
    desc=;
    off=0;
-   network_var=.projects[0].programs.gp[0][3].args[0]$1$;
-   local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$2$;
+   network_var=.projects[0].programs.gp[0][4].args[0]$1$;
+   local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$2$;
    counter=Network::cycle;
   };
  };
@@ -119,8 +129,8 @@ Program .projects[0].programs.gp[0][3] {
   MethodCall @[1] {
    desc=;
    off=0;
-   result_var=;
-   script_obj=$1$;
+   result_var=NULL;
+   obj=$1$;
    method=Network::InitExterns;
    args{ };
 {    };
@@ -128,7 +138,7 @@ Program .projects[0].programs.gp[0][3] {
   ProgramCall @[2] {
    desc=;
    off=0;
-   target=.projects[0].programs.gp[0][5]$3$;
+   target=.projects[0].programs.gp[0][6]$3$;
    call_init=0;
    prog_args {
     name=;
@@ -143,8 +153,8 @@ Program .projects[0].programs.gp[0][3] {
   MethodCall @[3] {
    desc=;
    off=0;
-   result_var=;
-   script_obj=$1$;
+   result_var=NULL;
+   obj=$1$;
    method=LeabraNetwork::Settle_Init;
    args{ };
 {    };
@@ -167,7 +177,7 @@ else min_cycles = network->min_cycles_phase2;
     ProgramCall @[0] {
      desc=;
      off=0;
-     target=.projects[0].programs.gp[0][4]$4$;
+     target=.projects[0].programs.gp[0][5]$4$;
      call_init=0;
      prog_args {
       name=;
@@ -203,8 +213,8 @@ else min_cycles = network->min_cycles_phase2;
   MethodCall @[6] {
    desc=;
    off=0;
-   result_var=;
-   script_obj=$1$;
+   result_var=NULL;
+   obj=$1$;
    method=LeabraNetwork::Settle_Final;
    args{ };
 {    };
@@ -220,9 +230,9 @@ else min_cycles = network->min_cycles_phase2;
     MethodCall @[0] {
      desc=;
      off=0;
-     result_var=;
-     script_obj=$1$;
-     method=Network::Compute_SSE;
+     result_var=NULL;
+     obj=$1$;
+     method=LeabraNetwork::Compute_TrialStats;
      args{ };
 {      };
     };
@@ -233,11 +243,35 @@ else min_cycles = network->min_cycles_phase2;
     el_def=0;
    };
   };
-  NetUpdateView @[8] {
+  IfElse @[8] {
+   desc="this stat must be called in plus phase when reward information is avail";
+   off=0;
+   condition="network->phase_no == 1";
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     off=0;
+     result_var=NULL;
+     obj=$1$;
+     method=LeabraNetwork::Compute_ExtRew;
+     args{ };
+{      };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  NetUpdateView @[9] {
    desc=;
    off=0;
    network_var=$1$;
-   update_var=.projects[0].programs.gp[0][3].vars[2]$5$;
+   update_var=.projects[0].programs.gp[0][4].vars[2]$5$;
   };
  };
 };
