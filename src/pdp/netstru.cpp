@@ -5325,6 +5325,10 @@ void Network::Compute_SSE() {
     cur_cnt_err += 1.0;
 }
 
+void Network::Compute_TrialStats() {
+  Compute_SSE();
+}
+
 void Network::Compute_EpochSSE() {
   sum_sse = cur_sum_sse;
   if(avg_sse_n > 0)
