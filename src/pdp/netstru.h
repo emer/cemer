@@ -1388,15 +1388,21 @@ public:
   virtual void	Compute_Act_default(); // default version, may be replaced or extended
 
   virtual void	Compute_dWt(); // update weights for whole net
-  virtual void	DMem_TrialSync_dWt();
-  // call this after trial-level processing to sync across procs (if no dmem, nothing happens); uses the outer-group trial-level dmem communicator on DMem_SumDWts 
-  virtual void	DMem_TrialSync_NetStats();
-  // call this after trial-level processing to sync across procs (if no dmem, nothing happens); uses the outer-group trial-level dmem communicator on DMem_ComputeAggs
 
-  virtual void	UpdateWeights(); // update weights for whole net
+  virtual void	UpdateWeights();
+  // update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode
+  virtual void	UpdateWeights_impl();
+  // just the weight update routine
 
-  virtual void	Compute_SSE(); // #CAT_Statistic compute sum squared error over the entire network
-  virtual void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics
+  virtual void	Compute_SSE();
+  // #CAT_Statistic compute sum squared error over the entire network
+  virtual void	Compute_TrialStats();
+  // #CAT_Statistic compute trial-level statistics (SSE and others defined by specific algorithms)
+
+  virtual void	Compute_EpochSSE();
+  // #CAT_Statistic compute epoch-level sum squared error and related statistics
+  virtual void	Compute_EpochStats();
+  // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
 
   virtual void	LayerZPos_Add(int add_to_z = 1);
   // #MENU #MENU_SEP_BEFORE Add add_to_z to layer vertical positions in proportion to current positions:\n new layer.pos.z += layer.pos.z * add_to_z -- makes display look better \n -- negative values will subtract or compact the layers

@@ -5295,25 +5295,20 @@ void Network::Compute_dWt() {
   }
 }
 
-void Network::DMem_TrialSync_dWt() {
-#ifdef DMEM_COMPILE
-  DMem_SumDWts(dmem_trl_comm.comm);
-#endif
-}
-
-void Network::DMem_TrialSync_NetStats() {
-#ifdef DMEM_COMPILE
-  DMem_ComputeAggs(dmem_trl_comm.comm);
-#endif
-}
-
-void Network::UpdateWeights() {
+void Network::UpdateWeights_impl() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesion)
       l->UpdateWeights();
   }
+}
+
+void Network::UpdateWeights() {
+#ifdef DMEM_COMPILE
+  DMem_SumDWts(dmem_trl_comm.comm);
+#endif
+  UpdateWeights_impl();
 }
 
 void Network::Compute_SSE() {
@@ -5340,6 +5335,14 @@ void Network::Compute_EpochSSE() {
   avg_sse_n = 0;
   cur_cnt_err = 0.0f;
 }
+
+void Network::Compute_EpochStats() {
+#ifdef DMEM_COMPILE
+  DMem_ComputeAggs(dmem_trl_comm.comm);
+#endif
+  Compute_EpochSSE();
+}
+
 
 void Network::Copy_Weights(const Network* src) {
   taMisc::Busy();

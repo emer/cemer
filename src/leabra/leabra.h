@@ -1677,17 +1677,25 @@ public:
 
   virtual void	Trial_UpdatePhase(); // update phase based on phase_no -- return false if no more phases need to be run
 
-  virtual void	EncodeState();	// #CAT_TrialFinal encode final state information for subsequent use
-  virtual void	Compute_dWt_NStdLay(); // #CAT_TrialFinal compute weight change on non-nstandard layers (depends on which phase is being run)
-  virtual void	Compute_dWt();	// #CAT_TrialFinal compute weight change on all layers
-  virtual void	Compute_ExtRew(); // #CAT_Statistic compute external reward information
-  override void	Compute_SSE();	// #CAT_Statistic compute sum squared error AND also call Compute_ExtRew and increment avg_cycles -- to be called at end of minus phase
-  virtual void	Trial_Final();	// #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
+  virtual void	EncodeState();
+  // #CAT_TrialFinal encode final state information for subsequent use
+  virtual void	Compute_dWt_NStdLay();
+  // #CAT_TrialFinal compute weight change on non-nstandard layers (depends on which phase is being run)
+  virtual void	Compute_dWt();
+  // #CAT_TrialFinal compute weight change on all layers
+  virtual void	Compute_ExtRew();
+  // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
+  override void	Compute_TrialStats();
+  // #CAT_Statistic compute trial-level statistics, including SSE and increment avg_cycles -- to be called at end of minus phase
+  virtual void	Trial_Final();
+  // #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
 
-  virtual void	Compute_AvgCycles(); // #CAT_Statistic compute average cycles (at an epoch-level timescale)
-  virtual void	Compute_AvgExtRew(); // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
-  override void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics, INCLUDING AvgExtRew
-
+  virtual void	Compute_AvgCycles();
+  // #CAT_Statistic compute average cycles (at an epoch-level timescale)
+  virtual void	Compute_AvgExtRew();
+  // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
+  override void	Compute_EpochStats();
+  // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
   void	Initialize();
