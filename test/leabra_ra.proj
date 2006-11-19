@@ -161,21 +161,19 @@ LeabraProject .projects[0] {
 	    };
 	  };
 	  BasicDataLoop @[2] { 
-	    ProgEl_List @.loop_code = [4] {
+	    ProgEl_List @.loop_code = [3] {
 	      ProgramCall @[0] { 
 		ProgArg_List @.prog_args = [1] {
 		  ProgArg @[0] { };
 		};
 	      };
-	      MethodCall @[1] { };
-	      IfElse @[2] { 
-		ProgEl_List @.true_code = [3] {
+	      IfElse @[1] { 
+		ProgEl_List @.true_code = [2] {
 		  PrintVar @[0] { };
 		  MethodCall @[1] { };
-		  MethodCall @[2] { };
 		};
 	      };
-	      NetCounterIncr @[3] { };
+	      NetCounterIncr @[2] { };
 	    };
 	  };
 	  MethodCall @[3] { };
@@ -423,7 +421,7 @@ LeabraProject .projects[0] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
-		  T3DataView_List @.children = [78] {
+		  T3DataView_List @.children = [90] {
 		    LayerView @[0] { };
 		    LayerView @[1] { };
 		    LayerView @[2] { };
@@ -502,6 +500,18 @@ LeabraProject .projects[0] {
 		    PrjnView @[75] { };
 		    PrjnView @[76] { };
 		    PrjnView @[77] { };
+		    LayerView @[78] { };
+		    LayerView @[79] { };
+		    LayerView @[80] { };
+		    PrjnView @[81] { };
+		    PrjnView @[82] { };
+		    PrjnView @[83] { };
+		    LayerView @[84] { };
+		    LayerView @[85] { };
+		    LayerView @[86] { };
+		    PrjnView @[87] { };
+		    PrjnView @[88] { };
+		    PrjnView @[89] { };
 		  };
 
 		  ScaleRange_List @.scale_ranges = [1] {
@@ -1356,16 +1366,7 @@ LeabraProject .projects[0] {
 	 };
 	};
        };
-       MethodCall @[1] {
-	desc="sync the network stats variables (only used for dmem -- else ignored)";
-	off=0;
-	result_var=NULL;
-	obj=$12$;
-	method=Network::DMem_TrialSync_NetStats;
-	args{ };
-{ 	};
-       };
-       IfElse @[2] {
+       IfElse @[1] {
 	desc="Update weights in epoch -- allows for batching of weight changes (small_batch_n, which is only in effect if not using dmem)";
 	off=0;
 	condition="(network->context == Network::TRAIN) &&
@@ -1380,15 +1381,6 @@ LeabraProject .projects[0] {
 	  print_var=$13$;
 	 };
 	 MethodCall @[1] {
-	  desc="sync the network weight changes from distributed trial procs -- only used for dmem;";
-	  off=0;
-	  result_var=NULL;
-	  obj=$12$;
-	  method=Network::DMem_TrialSync_dWt;
-	  args{ };
-{ 	  };
-	 };
-	 MethodCall @[2] {
 	  desc=;
 	  off=0;
 	  result_var=NULL;
@@ -1404,7 +1396,7 @@ LeabraProject .projects[0] {
 	 el_def=0;
 	};
        };
-       NetCounterIncr @[3] {
+       NetCounterIncr @[2] {
 	desc="increment trial counter";
 	off=0;
 	network_var=$12$;
@@ -3080,6 +3072,84 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[77] {
+	    m_data=$50$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   LayerView @[78] {
+	    m_data=$45$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	   };
+	   LayerView @[79] {
+	    m_data=$46$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
+	   };
+	   LayerView @[80] {
+	    m_data=$47$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
+	   };
+	   PrjnView @[81] {
+	    m_data=$48$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[82] {
+	    m_data=$49$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[83] {
+	    m_data=$50$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   LayerView @[84] {
+	    m_data=$45$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+	   };
+	   LayerView @[85] {
+	    m_data=$46$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
+	   };
+	   LayerView @[86] {
+	    m_data=$47$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
+	   };
+	   PrjnView @[87] {
+	    m_data=$48$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[88] {
+	    m_data=$49$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[89] {
 	    m_data=$50$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
 	    children {

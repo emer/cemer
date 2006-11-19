@@ -1,5 +1,17 @@
 leabra todo list:
 
+* deal with dmem: 
+  * sync netstru stat variables: not working -- weird.
+
+  * need checkconfig in unitspec to turn off opt.updt_wts when dmem_nprocs > 1!!
+    (can check the network comm np to get trl level np which is what matters)
+
+  * sync datatable: every proc gets all rows (interleaved in proc order) from other
+    procs, into a new datatable.
+
+  * 
+
+
 * extrew in trial monitor seems not to be working: 12ax demo
 * change gp name to include unique ctr so group fun works.
 
@@ -11,14 +23,6 @@ leabra todo list:
 * datacalc update problem: still?
 
 * relnet stat
-
-* deal with small-batch weight updates
-* deal with dmem: 
-  * sync datatable: every proc gets all rows (interleaved in proc order) from other
-    procs, into a new datatable.
-
-  * sync netstru stat variables
-  * sync wts.
 
 * add #CAT to everything in netstru and leabra.h, and fixup comments
 
