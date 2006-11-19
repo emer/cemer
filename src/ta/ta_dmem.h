@@ -59,6 +59,8 @@ public:
 
   void	CommAll();
   // #IGNORE use all the processors (world group)
+  void	CommSelf();
+  // #IGNORE we are a group of just our self
   void	CommSubGpInner(int sub_gp_size);
   // #IGNORE procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the inner group for this processor (gp size = sub_gp_size)
   void	CommSubGpOuter(int sub_gp_size);

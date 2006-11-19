@@ -36,12 +36,11 @@ class BpUnitSpec;
 class BP_API BpCon : public Connection {
   // Bp connection
 public:
-  float 		dwt; 		// #NO_SAVE Change in weight
   float 		dEdW; 		// #NO_SAVE derivative of Error wrt weight
 
-  void 	Initialize()		{ dwt = dEdW = 0.0f; }
+  void 	Initialize()		{ dEdW = 0.0f; }
   void 	Destroy()		{ };
-  void	Copy_(const BpCon& cp)	{ dwt = cp.dwt; dEdW = cp.dEdW; }
+  void	Copy_(const BpCon& cp)	{ dEdW = cp.dEdW; }
   COPY_FUNS(BpCon, Connection);
   TA_BASEFUNS(BpCon);
 };
@@ -99,6 +98,7 @@ public:
   virtual void	SetCurLrate(int epoch);
   // set current learning rate based on schedule given epoch
 
+  // todo: this is no longer supported -- dwt is hard coded.  hmm.
   MemberDef* DMem_EpochShareDwtVar() { return min_con_type->members.FindName("dEdW"); }
   // name of weight-change variable to share across dmem processors in BATCH mode learning
 

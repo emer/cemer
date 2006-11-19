@@ -121,17 +121,21 @@ public:
 // the connection is managed fully by the ConSpec and the Con_Group
 // don't put any functions on the connection itself
 
+// todo: get rid of weight linking and make this a non-virtual non-tabase 
+// object that gets put in an array instead of a list..
+
 class PDP_API Connection : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network Generic Connections
 public:
   float 	wt;		// weight of connection
+  float		dwt;		// #NO_VIEW #NO_SAVE resulting net weight change
 
   bool		ChangeMyType(TypeDef* new_type);
   void 	SetTypeDefaults()	{ }; // overload this to do nothing (faster)
   void	UpdateAfterEdit();	     // might want to override any default updates..
-  void 	Initialize() 		{ wt = 0.0f; }
+  void 	Initialize() 		{ wt = dwt = 0.0f; }
   void 	Destroy()		{ };
-  void	Copy_(const Connection& cp)	{ wt = cp.wt; }
+  void	Copy_(const Connection& cp)	{ wt = cp.wt; dwt = cp.dwt; }
   COPY_FUNS(Connection, taBase);
   TA_BASEFUNS(Connection);
 };
@@ -237,8 +241,6 @@ public:
 
   virtual bool	 DMem_AlwaysLocal() { return false; }
   // #CAT_DMem overload this function to prevent this projection from being pruned for non-local units under dmem processing (for "special" connection types)
-  virtual MemberDef* DMem_EpochShareDwtVar() { return min_con_type->members.FindName("dwt"); }
-  // #CAT_DMem name of weight-change variable to share across dmem processors in BATCH mode learning
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }

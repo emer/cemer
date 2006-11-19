@@ -102,10 +102,9 @@ class LeabraProject;
 class LeabraCon : public Connection {
   // Leabra connection
 public:
-  float		dwt;		// #NO_VIEW #NO_SAVE resulting net weight change
   float		pdw;		// #NO_SAVE previous delta-weight change
 
-  void 	Initialize()		{ dwt = pdw = 0.0f; }
+  void 	Initialize()		{ pdw = 0.0f; }
   void	Destroy()		{ };
   void	Copy_(const LeabraCon& cp);
   COPY_FUNS(LeabraCon, Connection);

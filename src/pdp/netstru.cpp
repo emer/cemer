@@ -4675,6 +4675,7 @@ void Network::CheckThisConfig_impl(bool quiet, bool& rval) {
   if (!CheckBuild(quiet)) {rval = false; return;}
   if (!CheckConnect(quiet)) {rval = false; return;}
   if (!CheckTypes(quiet)) {rval = false; return;}
+  UpdtAfterNetMod();		// just to be sure..
   inherited::CheckThisConfig_impl(quiet, rval);
 }
 
@@ -4864,6 +4865,18 @@ void Network::DMem_SyncNRecvCons() {
   else {
     dmem_share_units.Sync(0);
   }
+  // need to re-agg all the cons after syncing!
+  n_cons = 0;
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesion) continue;
+    Unit* u;
+    taLeafItr i;
+    FOR_ITR_EL(Unit, u, l->units., i) {
+      n_cons += u->n_recv_cons;
+    }
+  }
 }
 
 void Network::DMem_SyncNet() {
@@ -4894,6 +4907,7 @@ void Network::DMem_DistributeUnits() {
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
+    if(lay->lesion) continue;
     lay->dmem_share_units.comm = dmem_share_units.comm;
     if(dmem_sync_level == DMEM_SYNC_LAYER) {
       lay->DMem_DistributeUnits();
@@ -4923,6 +4937,7 @@ void Network::DMem_PruneNonLocalCons() {
   Unit* u;
   Layer *l;
   FOR_ITR_EL(Layer, l, layers., li) {
+    if(l->lesion) continue;
     FOR_ITR_EL(Unit, u, l->units., ui) {
       if(u->DMem_IsLocal()) {
 	continue;
@@ -4954,50 +4969,38 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->projections.size == 0) continue;
-    Projection* prjn = (Projection*)lay->projections.FastEl(0);
-    MemberDef* md = prjn->con_spec->DMem_EpochShareDwtVar();
-    if(md == NULL) continue;
-    int dwt_off = (int)md->GetOff((void*)0x100) - 0x100;
+    if(lay->lesion) continue;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
-      if(un->bias) {
-	values.FastEl(cidx++) = *((float*)((char*)(un->bias) + dwt_off));
-      }
-
+      if(un->bias)
+	values.FastEl(cidx++) = un->bias->dwt;
       Con_Group* cg;
       int gi;
       FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
 	for(int i = 0;i<cg->size;i++)
-	  values.FastEl(cidx++) = *((float*)((char*)(cg->Cn(i)) + dwt_off));
+	  values.FastEl(cidx++) = cg->Cn(i)->dwt;
       }
     }
   }
 
   results.EnforceSize(cidx);
   DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
-		     "Network::SumDWts", "Allreduce");
+	       "Network::SumDWts", "Allreduce");
 
   cidx = 0;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->projections.size == 0) continue;
-    Projection* prjn = (Projection*)lay->projections.FastEl(0);
-    MemberDef* md = prjn->con_spec->DMem_EpochShareDwtVar();
-    if(md == NULL) continue;
-    int dwt_off = (int)md->GetOff((void*)0x100) - 0x100;
-
+    if(lay->lesion) continue;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
-      if(un->bias) {
-	*((float*)((char*)(un->bias) + dwt_off)) = results.FastEl(cidx++);
-      }
+      if(un->bias)
+	un->bias->dwt = results.FastEl(cidx++);
       Con_Group* cg;
       int gi;
       FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
 	for(int i = 0;i<cg->size;i++)
-	  *((float*)((char*)(cg->Cn(i)) + dwt_off)) = results.FastEl(cidx++);
+	  cg->Cn(i)->dwt = results.FastEl(cidx++);
       }
     }
   }
@@ -5016,14 +5019,12 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->projections.size == 0) continue;
+    if(lay->lesion) continue;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
-      if(un->bias) {
+      if(un->bias)
 	values.FastEl(cidx++) = un->bias->wt;
-      }
-
       Con_Group* cg;
       int gi;
       FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
@@ -5040,13 +5041,12 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
   float avg_mult = 1.0f / (float)np;
   cidx = 0;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->projections.size == 0) continue;
+    if(lay->lesion) continue;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
-      if(un->bias) {
+      if(un->bias)
 	un->bias->wt = avg_mult * results.FastEl(cidx++);
-      }
       Con_Group* cg;
       int gi;
       FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
@@ -5076,6 +5076,7 @@ void Network::DMem_SymmetrizeWts() {
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
+    if(lay->lesion) continue;
     if(lay->projections.size == 0) continue;
     Unit* un;
     taLeafItr ui;

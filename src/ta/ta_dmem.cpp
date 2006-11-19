@@ -76,7 +76,7 @@ void DMemComm::Destroy() {
 }
 
 void DMemComm::FreeComm() {
-  if(comm != MPI_COMM_WORLD) {
+  if((comm != MPI_COMM_WORLD) && (comm != MPI_COMM_SELF)) {
     DMEM_MPICALL(MPI_Comm_free((MPI_Comm*)&comm), "DMemComm::FreeComm", "Comm free");
     DMEM_MPICALL(MPI_Group_free((MPI_Group*)&group), "DMemComm::FreeComm", "Group free");
   }
@@ -105,6 +105,14 @@ void DMemComm::CommAll() {
   FreeComm();			// defaults to world!
 }
 
+void DMemComm::CommSelf() {
+  FreeComm();
+  comm = MPI_COMM_SELF;
+  group = MPI_GROUP_NULL;
+  nprocs = 1;
+  this_proc = 0;
+}
+
 int DMemComm::GetThisProc() {
   MPI_Comm_rank(comm, &this_proc);
   return this_proc;
@@ -112,18 +120,18 @@ int DMemComm::GetThisProc() {
 
 void DMemComm::CommSubGpInner(int sub_gp_size) {
   if(taMisc::dmem_nprocs <= 1 || sub_gp_size <= 1) {
-    CommAll();
-    return;
-  }
-  if(taMisc::dmem_nprocs % sub_gp_size != 0) {
-    taMisc::Error("CommSubGrouped: the total number of processes:",
-		  String(taMisc::dmem_nprocs),
-		  "is not an even multiple of the subgroup size:", String(sub_gp_size));
-    CommAll();
+    CommSelf();
     return;
   }
   if(sub_gp_size > taMisc::dmem_nprocs)
     sub_gp_size = taMisc::dmem_nprocs;
+  if(taMisc::dmem_nprocs % sub_gp_size != 0) {
+    taMisc::Error("CommSubGrouped: the total number of processes:",
+		  String(taMisc::dmem_nprocs),
+		  "is not an even multiple of the subgroup size:", String(sub_gp_size));
+    CommSelf();
+    return;
+  }
 
   nprocs = sub_gp_size; // inner-group size
   int cursz = 0; MPI_Comm_size((MPI_Comm)comm, &cursz);
@@ -146,6 +154,8 @@ void DMemComm::CommSubGpOuter(int sub_gp_size) {
     CommAll();
     return;
   }
+  if(sub_gp_size > taMisc::dmem_nprocs)
+    sub_gp_size = taMisc::dmem_nprocs;
   if(taMisc::dmem_nprocs % sub_gp_size != 0) {
     taMisc::Error("CommSubGrouped: the total number of processes:",
 		  String(taMisc::dmem_nprocs),
@@ -153,8 +163,6 @@ void DMemComm::CommSubGpOuter(int sub_gp_size) {
     CommAll();
     return;
   }
-  if(sub_gp_size > taMisc::dmem_nprocs)
-    sub_gp_size = taMisc::dmem_nprocs;
 
   nprocs = taMisc::dmem_nprocs / sub_gp_size; // outer-group size
   int cursz = 0; MPI_Comm_size((MPI_Comm)comm, &cursz);
