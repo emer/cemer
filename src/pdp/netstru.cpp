@@ -5294,9 +5294,14 @@ void Network::Compute_dWt() {
   }
 }
 
-void Network::DMem_TrialSync() {
+void Network::DMem_TrialSync_dWt() {
 #ifdef DMEM_COMPILE
   DMem_SumDWts(dmem_trl_comm.comm);
+#endif
+}
+
+void Network::DMem_TrialSync_NetStats() {
+#ifdef DMEM_COMPILE
   DMem_ComputeAggs(dmem_trl_comm.comm);
 #endif
 }

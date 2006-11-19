@@ -1386,8 +1386,10 @@ public:
   virtual void	Compute_Act_default(); // default version, may be replaced or extended
 
   virtual void	Compute_dWt(); // update weights for whole net
-  virtual void	DMem_TrialSync();
-  // call this after trial-level processing to sync across procs (if no dmem, nothing happens); uses the outer-group trial-level dmem communicator on DMem_SumDWts and DMem_ComputeAggs
+  virtual void	DMem_TrialSync_dWt();
+  // call this after trial-level processing to sync across procs (if no dmem, nothing happens); uses the outer-group trial-level dmem communicator on DMem_SumDWts 
+  virtual void	DMem_TrialSync_NetStats();
+  // call this after trial-level processing to sync across procs (if no dmem, nothing happens); uses the outer-group trial-level dmem communicator on DMem_ComputeAggs
 
   virtual void	UpdateWeights(); // update weights for whole net
 
