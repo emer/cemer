@@ -17,9 +17,8 @@ leabra todo list:
   * sync datatable: every proc gets all rows (interleaved in proc order) from other
     procs, into a new datatable.
 
-  * dmem dataloop: does usual doling out of items % nprocs
-
-  * dmem proc group: function to deal with netstru dmem vs. this one
+  * sync netstru stat variables
+  * sync wts.
 
 * add #CAT to everything in netstru and leabra.h, and fixup comments
 
