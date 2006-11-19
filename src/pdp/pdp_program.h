@@ -45,10 +45,6 @@ public:
   int		dmem_nprocs;	// number of processors to use for distributed memory processing (input data distributed over nodes) -- computed automatically if dmem is active; else set to 1
   int		dmem_this_proc;	// processor rank for this processor relative to communicator group
 
-#ifdef DMEM_COMPILE
-  DMemComm	dmem_comm;	// #IGNORE the dmem communicator group
-#endif
-
   virtual void	DMem_Initialize(Network* net);
   // configure the dmem communicator stuff: depends on dmem setup of network
 

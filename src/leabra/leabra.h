@@ -1622,8 +1622,8 @@ public:
   int		min_cycles;	// #DEF_15 #CAT_Counter minimum number of cycles to settle for
   int		min_cycles_phase2; // #DEF_15 #CAT_Counter minimum number of cycles to settle for in second phase
   float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles (computed over previous epoch)
-  float		avg_cycles_sum; // #READ_ONLY #CAT_Statistic sum for computing current average cycles in this epoch
-  int		avg_cycles_n;	// #READ_ONLY #CAT_Statistic N for average cycles computation for this epoch
+  float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
+  int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
 
   int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)
   bool		send_delta;	// #DEF_false #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
@@ -1636,8 +1636,8 @@ public:
 
   float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic external reward value (on this trial)
   float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
-  float		avg_ext_rew_sum; // #READ_ONLY #CAT_Statistic sum for computing current average external reward value in this epoch
-  int		avg_ext_rew_n;	// #READ_ONLY #CAT_Statistic N for average external reward value computation for this epoch
+  float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
+  int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
 
   override void	InitCounters();
   override void	InitStats();

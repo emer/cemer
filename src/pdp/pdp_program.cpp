@@ -86,9 +86,8 @@ const String BasicDataLoop::GenCssPost_impl(int indent_level) {
 
 void BasicDataLoop::DMem_Initialize(Network* net) {
 #ifdef DMEM_COMPILE
-  dmem_comm.CommSubGpOuter(net->dmem_nprocs_actual);
-  dmem_nprocs = dmem_comm.nprocs;
-  dmem_this_proc = dmem_comm.this_proc;
+  dmem_nprocs = net->dmem_trl_comm.nprocs;
+  dmem_this_proc = net->dmem_trl_comm.this_proc;
 #else
   dmem_nprocs = 1;
   dmem_this_proc = 0;

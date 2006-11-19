@@ -4360,6 +4360,7 @@ void Network::Initialize() {
   proj = NULL;
 #ifdef DMEM_COMPILE
   dmem_share_units.comm = (MPI_Comm)MPI_COMM_WORLD;
+  dmem_agg_sum.agg_op = MPI_SUM;
 #endif
 }
 
@@ -4369,8 +4370,11 @@ void Network::InitLinks() {
   taBase::Own(layers, this);
   taBase::Own(max_size, this);
 #ifdef DMEM_COMPILE
-  taBase::Own(dmem_comm, this);
+  taBase::Own(dmem_net_comm, this);
+  taBase::Own(dmem_trl_comm, this);
   taBase::Own(dmem_share_units, this);
+  taBase::Own(dmem_agg_sum, this);
+  DMem_InitAggs();
 #endif
   inherited::InitLinks();
 }
@@ -4379,7 +4383,8 @@ void Network::CutLinks() {
   static bool in_repl = false;
   if(in_repl || (owner == NULL)) return; // already replacing or already dead
 #ifdef DMEM_COMPILE
-  dmem_comm.FreeComm();
+  dmem_net_comm.FreeComm();
+  dmem_trl_comm.FreeComm();
 #endif
 //TODO  views.Reset();
   layers.CutLinks();
@@ -4880,8 +4885,9 @@ void Network::DMem_SyncAct() {
 void Network::DMem_DistributeUnits() {
   //  cerr << "proc " << taMisc::dmem_proc << " in distribunits" << endl;
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
-  dmem_comm.CommSubGpInner(dmem_nprocs_actual);	// network is inner-group
-  dmem_share_units.comm = dmem_comm.comm;
+  dmem_net_comm.CommSubGpInner(dmem_nprocs_actual);	// network is inner-group
+  dmem_trl_comm.CommSubGpOuter(dmem_nprocs_actual);	// trial is outer-group
+  dmem_share_units.comm = dmem_net_comm.comm;
 
   dmem_share_units.Reset();
   bool any_custom_distrib = false;
@@ -4904,6 +4910,11 @@ void Network::DMem_DistributeUnits() {
     else
       dmem_share_units.Compile_ShareTypes(); // use custom distribution: just compile it
   }
+}
+
+void Network::DMem_InitAggs() {
+  dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
+  dmem_agg_sum.CompileVars();
 }
 
 void Network::DMem_PruneNonLocalCons() {
@@ -4930,18 +4941,12 @@ void Network::DMem_PruneNonLocalCons() {
   }
 }
 
-void Network::DMem_SyncWts(MPI_Comm comm, bool sum_dwts) {
+void Network::DMem_SumDWts(MPI_Comm comm) {
   static float_Array values;
   static float_Array results;
 
   int np = 0; MPI_Comm_size(comm, &np);
   if(np <= 1) return;
-
-//   if(taMisc::dmem_debug)
-//     cerr << "proc: " << taMisc::dmem_proc << " at syncwts barrier!" << endl;
-//   DMEM_MPICALL(MPI_Barrier(comm),"Network::SyncWts", "Barrier");
-//   if(taMisc::dmem_debug && (taMisc::dmem_proc == 0))
-//     cerr << "---------- past syncwts barrier ---------" << endl;
 
   values.EnforceSize(n_cons + n_units);
 
@@ -4950,76 +4955,110 @@ void Network::DMem_SyncWts(MPI_Comm comm, bool sum_dwts) {
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
     if(lay->projections.size == 0) continue;
-    int dwt_off = 0;
-    if(sum_dwts) {
-      Projection* prjn = (Projection*)lay->projections.FastEl(0);
-      MemberDef* md = prjn->con_spec->DMem_EpochShareDwtVar();
-      if(md == NULL) continue;
-      dwt_off = (int)md->GetOff((void*)0x100) - 0x100;
-    }
+    Projection* prjn = (Projection*)lay->projections.FastEl(0);
+    MemberDef* md = prjn->con_spec->DMem_EpochShareDwtVar();
+    if(md == NULL) continue;
+    int dwt_off = (int)md->GetOff((void*)0x100) - 0x100;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias) {
-	if(sum_dwts) {
-	  values.FastEl(cidx++) = *((float*)((char*)(un->bias) + dwt_off));
-	}
-	else {
-	  values.FastEl(cidx++) = un->bias->wt;
-	}
+	values.FastEl(cidx++) = *((float*)((char*)(un->bias) + dwt_off));
       }
 
       Con_Group* cg;
       int gi;
       FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
-	if(sum_dwts) {
-	  for(int i = 0;i<cg->size;i++) values.FastEl(cidx++) = *((float*)((char*)(cg->Cn(i)) + dwt_off));
-	}
-	else {
-	  for(int i = 0;i<cg->size;i++) values.FastEl(cidx++) = cg->Cn(i)->wt;
-	}
+	for(int i = 0;i<cg->size;i++)
+	  values.FastEl(cidx++) = *((float*)((char*)(cg->Cn(i)) + dwt_off));
       }
     }
   }
 
   results.EnforceSize(cidx);
   DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
-		     "Network::SyncWts", "Allreduce");
+		     "Network::SumDWts", "Allreduce");
+
+  cidx = 0;
+  FOR_ITR_EL(Layer, lay, layers., li) {
+    if(lay->projections.size == 0) continue;
+    Projection* prjn = (Projection*)lay->projections.FastEl(0);
+    MemberDef* md = prjn->con_spec->DMem_EpochShareDwtVar();
+    if(md == NULL) continue;
+    int dwt_off = (int)md->GetOff((void*)0x100) - 0x100;
+
+    Unit* un;
+    taLeafItr ui;
+    FOR_ITR_EL(Unit, un, lay->units., ui) {
+      if(un->bias) {
+	*((float*)((char*)(un->bias) + dwt_off)) = results.FastEl(cidx++);
+      }
+      Con_Group* cg;
+      int gi;
+      FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
+	for(int i = 0;i<cg->size;i++)
+	  *((float*)((char*)(cg->Cn(i)) + dwt_off)) = results.FastEl(cidx++);
+      }
+    }
+  }
+}
+
+void Network::DMem_AvgWts(MPI_Comm comm) {
+  static float_Array values;
+  static float_Array results;
+
+  int np = 0; MPI_Comm_size(comm, &np);
+  if(np <= 1) return;
+
+  values.EnforceSize(n_cons + n_units);
+
+  int cidx = 0;
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, layers., li) {
+    if(lay->projections.size == 0) continue;
+    Unit* un;
+    taLeafItr ui;
+    FOR_ITR_EL(Unit, un, lay->units., ui) {
+      if(un->bias) {
+	values.FastEl(cidx++) = un->bias->wt;
+      }
+
+      Con_Group* cg;
+      int gi;
+      FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
+	for(int i = 0;i<cg->size;i++)
+	  values.FastEl(cidx++) = cg->Cn(i)->wt;
+      }
+    }
+  }
+
+  results.EnforceSize(cidx);
+  DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
+		     "Network::AvgWts", "Allreduce");
 
   float avg_mult = 1.0f / (float)np;
   cidx = 0;
   FOR_ITR_EL(Layer, lay, layers., li) {
     if(lay->projections.size == 0) continue;
-    int dwt_off = 0;
-    if(sum_dwts) {
-      Projection* prjn = (Projection*)lay->projections.FastEl(0);
-      MemberDef* md = prjn->con_spec->DMem_EpochShareDwtVar();
-      if(md == NULL) continue;
-      dwt_off = (int)md->GetOff((void*)0x100) - 0x100;
-    }
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias) {
-	if(sum_dwts) {
-	  *((float*)((char*)(un->bias) + dwt_off)) = results.FastEl(cidx++);
-	}
-	else {
-	  un->bias->wt = avg_mult * results.FastEl(cidx++);
-	}
+	un->bias->wt = avg_mult * results.FastEl(cidx++);
       }
       Con_Group* cg;
       int gi;
       FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
-	if(sum_dwts) {
-	  for(int i = 0;i<cg->size;i++) *((float*)((char*)(cg->Cn(i)) + dwt_off)) = results.FastEl(cidx++);
-	}
-	else {
-	  for(int i = 0;i<cg->size;i++) cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
-	}
+	for(int i = 0;i<cg->size;i++)
+	  cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
       }
     }
   }
+}
+
+void Network::DMem_ComputeAggs(MPI_Comm comm) {
+  dmem_agg_sum.AggVar(comm, MPI_SUM);
 }
 
 void Network::DMem_SymmetrizeWts() {
@@ -5246,21 +5285,28 @@ void Network::Compute_Act_default() {
   }
 }
 
-void Network::UpdateWeights() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
-      l->UpdateWeights();
-  }
-}
-
 void Network::Compute_dWt() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesion)
       l->Compute_dWt();
+  }
+}
+
+void Network::DMem_TrialSync() {
+#ifdef DMEM_COMPILE
+  DMem_SumDWts(dmem_trl_comm.comm);
+  DMem_ComputeAggs(dmem_trl_comm.comm);
+#endif
+}
+
+void Network::UpdateWeights() {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesion)
+      l->UpdateWeights();
   }
 }
 

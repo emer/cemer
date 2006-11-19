@@ -1262,9 +1262,9 @@ public:
   float		cnt_err_tol;	// #CAT_Statistic tolerance for computing the count of number of errors over current epoch
   float		cnt_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
 
-  float	       	cur_sum_sse;	// #READ_ONLY current sum_sse -- used during computation of sum_sse
-  int	       	avg_sse_n;	// #READ_ONLY number of times cur_sum_sse updated: for computing avg_sse
-  float	       	cur_cnt_err;	// #READ_ONLY current cnt_err -- used for computing cnt_err
+  float	       	cur_sum_sse;	// #READ_ONLY #DMEM_AGG_SUM current sum_sse -- used during computation of sum_sse
+  int	       	avg_sse_n;	// #READ_ONLY #DMEM_AGG_SUM number of times cur_sum_sse updated: for computing avg_sse
+  float	       	cur_cnt_err;	// #READ_ONLY #DMEM_AGG_SUM current cnt_err -- used for computing cnt_err
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -1282,15 +1282,25 @@ public:
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
 
 #ifdef DMEM_COMPILE
-  DMemComm	dmem_comm;	// #IGNORE the dmem communicator defining groups to communicate over
+  DMemComm	dmem_net_comm;	// #IGNORE the dmem communicator for the network-level dmem computations (the inner subgroup of units, each of size dmem_nprocs_actual)
+  DMemComm	dmem_trl_comm;	// #IGNORE the dmem communicator for the trial-level (each node processes a different set of trials) -- this is the outer subgroup
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
+  DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
   virtual void	DMem_SyncNRecvCons();   // syncronize number of receiving connections (share set 0)
   virtual void	DMem_SyncNet();       	// #IGNORE synchronize just the netinputs (share set 1)
   virtual void	DMem_SyncAct();         // #IGNORE synchronize just the activations (share set 2)
   virtual void 	DMem_DistributeUnits();	// distribute units to different nodes
-  virtual void 	DMem_PruneNonLocalCons(); // #IGNORE prune non-local connections from all units: units only have their own local connections
-  virtual void  DMem_SyncWts(MPI_Comm comm, bool sum_dwts = false); // #IGNORE sync weights by averaging together across comm (sum_dwts = sum all dwts instead)
-  virtual void	DMem_SymmetrizeWts(); 	// #IGNORE symmetrize the weights (if necessary) by sharing weight values across processors
+  virtual void 	DMem_InitAggs();	// initialize aggregation stuff
+  virtual void 	DMem_PruneNonLocalCons();
+  // #IGNORE prune non-local connections from all units: units only have their own local connections
+  virtual void  DMem_SumDWts(MPI_Comm comm);
+  // #IGNORE sync weights across trial-level dmem by summing delta-weights across processors (prior to computing weight updates)
+  virtual void  DMem_AvgWts(MPI_Comm comm);
+  // #IGNORE sync weights across trial-level dmem by averaging weight values across processors (this is not mathematically equivalent to anything normally done, but it may be useful in some situations)
+  virtual void	DMem_ComputeAggs(MPI_Comm comm);
+  // #IGNORE aggregate network variables across procs for trial-level dmem 
+  virtual void	DMem_SymmetrizeWts();
+  // #IGNORE symmetrize the weights (if necessary) by sharing weight values across processors
 #else
   virtual void	DMem_SyncNRecvCons() { };   // syncronize number of receiving connections (share set 0)
   virtual void 	DMem_DistributeUnits() { };	// distribute units to different nodes
@@ -1371,11 +1381,15 @@ public:
 
   virtual void	Compute_Net();	// Compute NetInput
   virtual void	Send_Net();	// sender-based computation of net input
-  virtual void	Compute_Act() {Compute_Act_default();}
-  	// Compute Activation; subtypes may replace with their own algorithm
+  virtual void	Compute_Act() { Compute_Act_default(); }
+  // Compute Activation -- subtypes may replace with their own algorithm
   virtual void	Compute_Act_default(); // default version, may be replaced or extended
-  virtual void	UpdateWeights(); // update weights for whole net
+
   virtual void	Compute_dWt(); // update weights for whole net
+  virtual void	DMem_TrialSync();
+  // call this after trial-level processing to sync across procs (if no dmem, nothing happens); uses the outer-group trial-level dmem communicator on DMem_SumDWts and DMem_ComputeAggs
+
+  virtual void	UpdateWeights(); // update weights for whole net
 
   virtual void	Compute_SSE(); // #CAT_Statistic compute sum squared error over the entire network
   virtual void	Compute_EpochSSE(); // #CAT_Statistic compute epoch-level sum squared error and related statistics

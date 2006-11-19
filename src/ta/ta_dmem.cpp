@@ -195,8 +195,6 @@ void DMemShareVar::InitLinks() {
   taBase::Own(double_recv, this);
   taBase::Own(int_send, this);
   taBase::Own(int_recv, this);
-  taBase::Own(long_send, this);
-  taBase::Own(long_recv, this);
 }
 
 void DMemShareVar::CutLinks() {
@@ -235,8 +233,6 @@ void DMemShareVar::ResetVar() {
   double_recv.Reset();
   int_send.Reset();
   int_recv.Reset();
-  long_send.Reset();
-  long_recv.Reset();
 }
 
 void DMemShareVar::Compile_Var(MPI_Comm cm) {
@@ -295,11 +291,6 @@ void DMemShareVar::Compile_Var(MPI_Comm cm) {
   case MPI_INT: {
     int_send.EnforceSize(addrs_recv.size);
     int_recv.EnforceSize(addrs_recv.size);
-    break;
-  }
-  case MPI_LONG: {
-    long_send.EnforceSize(addrs_recv.size);
-    long_recv.EnforceSize(addrs_recv.size);
     break;
   }
   }
@@ -374,17 +365,6 @@ void DMemShareVar::SyncVar() {
     }
     break;
   }
-  case MPI_LONG: {
-    for(int i=0;i<my_n;i++, my_idx++)  long_send[i] = *((long*)addrs_recv[my_idx]);
-    DMEM_MPICALL(MPI_Allgather(long_send.el, max_per_proc, mpi_type, long_recv.el, max_per_proc,
-			       mpi_type, comm), "SyncVar", "Allgather");
-    for(int proc=0;proc<n_procs;proc++) {
-      if(proc == this_proc) continue;
-      int p_idx = recv_idx[proc];
-      for(int i=0; i<n_local[proc]; i++, p_idx++) *((long*)addrs_recv[p_idx]) = long_recv[p_idx];
-    }
-    break;
-  }
   }
 }
 
@@ -425,15 +405,9 @@ void DMemShareVar::AggVar(MPI_Op op) {
     for(int i=0; i< addrs.size; i++) *((int*)addrs[i]) = int_recv[i];
     break;
   }
-  case MPI_LONG: {
-    for(int i=0; i< addrs.size; i++)  long_send[i] = *((long*)addrs[i]);
-    DMEM_MPICALL(MPI_Allreduce(long_send.el, long_recv.el, addrs.size, mpi_type, op, comm),
-		 "AggVar", "Allreduce");
-    for(int i=0; i< addrs.size; i++) *((long*)addrs[i]) = long_recv[i];
-    break;
-  }
   }
 }
+
 
 //////////////////////////////////////////////////////////
 
@@ -508,9 +482,6 @@ void DMemShare::Compile_ShareVar(TypeDef* td, taBase* shr_item, MemberDef* par_m
     }
     else if (md->type->InheritsFrom(TA_enum)) {
       new_type = (int)MPI_INT;
-    }
-    else if (md->type->InheritsFrom(TA_long)) {
-      new_type = (int)MPI_LONG;
     }
     else {
       taMisc::Error("WARNING: DMEM_SHARE_SET Specified for an unrecognized type.",
@@ -627,5 +598,207 @@ void DMemShare::CloseCmdStream() {
   if(cmdstream != NULL) delete cmdstream;
   cmdstream = NULL;
 }
+
+//////////////////////////////////////////////////
+// 		AggVars
+
+void DMemAggVars::Initialize() {
+  comm = -1;
+  agg_op = -1;
+}
+
+void DMemAggVars::InitLinks() {
+  taBase::InitLinks();
+  taBase::Own(addrs, this);
+  taBase::Own(types, this);
+  taBase::Own(data_idx, this);
+  taBase::Own(float_send, this);
+  taBase::Own(float_recv, this);
+  taBase::Own(double_send, this);
+  taBase::Own(double_recv, this);
+  taBase::Own(int_send, this);
+  taBase::Own(int_recv, this);
+}
+
+void DMemAggVars::CutLinks() {
+  ResetVar();
+  taBase::CutLinks();
+}
+
+void DMemAggVars::Copy_(const DMemAggVars& cp) {
+  // do we want to actually copy anything here?  ok.
+  comm = cp.comm;
+  agg_op = cp.agg_op;
+
+  addrs = cp.addrs;
+  types = cp.types;
+}
+
+void DMemAggVars::ResetVar() {
+  comm = -1;
+  agg_op = -1;
+  addrs.Reset();
+  types.Reset();
+  data_idx.Reset();
+  float_send.Reset();
+  float_recv.Reset();
+  double_send.Reset();
+  double_recv.Reset();
+  int_send.Reset();
+  int_recv.Reset();
+}
+
+String DMemAggVars::OpToStr(MPI_Op op) {
+  String op_str;
+  switch(op) {
+  case MPI_SUM:
+    op_str = "SUM";
+    break;
+  case MPI_PROD:
+    op_str = "PROD";
+    break;
+  case MPI_MAX:
+    op_str = "MAX";
+    break;
+  case MPI_MIN:
+    op_str = "MIN";
+    break;
+  default:
+    break;
+  }
+  return op_str;
+}
+
+void DMemAggVars::ScanMembers(TypeDef* td, void* base) {
+  String trg_op_str = OpToStr(agg_op);
+
+  addrs.Reset();
+  types.Reset();
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members.FastEl(m);
+    String opstr = md->OptionAfter("DMEM_AGG_");
+    if(opstr.empty()) continue;
+    if(!((trg_op_str.empty() && (opstr == "DYN")) || (opstr == trg_op_str))) continue;
+
+    int new_type = -1;
+    if(md->type->InheritsFormal(TA_class)) {
+      ScanMembers(md->type, md->GetOff(base));
+      continue;
+    }
+    else if(md->type->InheritsFrom(TA_double)) {
+      new_type = (int)MPI_DOUBLE;
+    }
+    else if(md->type->InheritsFrom(TA_float)) {
+      new_type = (int)MPI_FLOAT;
+    }
+    else if(md->type->InheritsFrom(TA_int)) {
+      new_type = (int)MPI_INT;
+    }
+    else if(md->type->InheritsFrom(TA_enum)) {
+      new_type = (int)MPI_INT;
+    }
+    else {
+      taMisc::Error("WARNING: DMEM_AGG Specified for an unrecognized type.",
+		    td->name, ", member:", md->name,
+		    "unrecoginized types can not be shared.");
+      continue;
+    }
+    void* addr = md->GetOff(base);
+    types.Add(new_type);
+    addrs.Add(addr);
+  }
+}
+
+void DMemAggVars::CompileVars() {
+  data_idx.Reset();
+  float_send.Reset();
+  float_recv.Reset();
+  double_send.Reset();
+  double_recv.Reset();
+  int_send.Reset();
+  int_recv.Reset();
+
+  for(int i=0;i<types.size;i++) {
+    int mpi_type = types[i];
+    switch(mpi_type) {
+    case MPI_FLOAT: {
+      float_send.Add(0.0f);
+      float_recv.Add(0.0f);
+      data_idx.Add(float_send.size-1);
+      break;
+    }
+    case MPI_DOUBLE: {
+      double_send.Add(0.0f);
+      double_recv.Add(0.0f);
+      data_idx.Add(double_send.size-1);
+      break;
+    }
+    case MPI_INT: {
+      int_send.Add(0);
+      int_recv.Add(0);
+      data_idx.Add(int_send.size-1);
+      break;
+    }
+    }
+  }
+}
+
+void DMemAggVars::AggVar(MPI_Comm cm, MPI_Op op) {
+  if(op < 0)
+    op = agg_op;
+  if(op < 0) {
+    taMisc::Error("ERROR: DMemAggVars::AggVar -- no default agg op!");
+    return;
+  }
+
+  for(int i=0; i< types.size; i++)  {
+    int mpi_type = types[i];
+    switch(mpi_type) {
+    case MPI_FLOAT: {
+      float_send[data_idx[i]] = *((float*)addrs[i]);
+      break;
+    }
+    case MPI_DOUBLE: {
+      double_send[data_idx[i]] = *((double*)addrs[i]);
+      break;
+    }
+    case MPI_INT: {
+      int_send[data_idx[i]] = *((int*)addrs[i]);
+      break;
+    }
+    }
+  }
+  if(float_send.size > 0) {
+    DMEM_MPICALL(MPI_Allreduce(float_send.el, float_recv.el, float_send.size, MPI_FLOAT, op, cm),
+		 "DMemAggVars::AggVar", "Allreduce");
+  }
+  if(double_send.size > 0) {
+    DMEM_MPICALL(MPI_Allreduce(double_send.el, double_recv.el, double_send.size, MPI_DOUBLE, op, cm),
+		 "DMemAggVars::AggVar", "Allreduce");
+  }
+  if(int_send.size > 0) {
+    DMEM_MPICALL(MPI_Allreduce(int_send.el, int_recv.el, int_send.size, MPI_INT, op, cm),
+		 "DMemAggVars::AggVar", "Allreduce");
+
+  }
+  for(int i=0; i< types.size; i++)  {
+    int mpi_type = types[i];
+    switch(mpi_type) {
+    case MPI_FLOAT: {
+      *((float*)addrs[i]) = float_recv[data_idx[i]];
+      break;
+    }
+    case MPI_DOUBLE: {
+      *((double*)addrs[i]) = double_recv[data_idx[i]];
+      break;
+    }
+    case MPI_INT: {
+      *((int*)addrs[i]) = int_recv[data_idx[i]];
+      break;
+    }
+    }
+  }
+}
+
 
 #endif // DMEM_COMPILE
