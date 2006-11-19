@@ -21,19 +21,20 @@ Program .projects[0].programs.gp[0][2] {
       };
     };
     BasicDataLoop @[2] { 
-      ProgEl_List @.loop_code = [3] {
+      ProgEl_List @.loop_code = [4] {
 	ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	IfElse @[1] { 
+	MethodCall @[1] { };
+	IfElse @[2] { 
 	  ProgEl_List @.true_code = [2] {
 	    MethodCall @[0] { };
 	    MethodCall @[1] { };
 	  };
 	};
-	NetCounterIncr @[2] { };
+	NetCounterIncr @[3] { };
       };
     };
     MethodCall @[3] { };
@@ -151,7 +152,16 @@ Program .projects[0].programs.gp[0][2] {
       };
      };
     };
-    IfElse @[1] {
+    MethodCall @[1] {
+     desc="sync the network stats variables (only used for dmem -- else ignored)";
+     off=0;
+     result_var=NULL;
+     obj=$2$;
+     method=Network::DMem_TrialSync_NetStats;
+     args{ };
+{      };
+    };
+    IfElse @[2] {
      desc="Update weights in epoch -- allows for batching of weight changes if desired";
      off=0;
      condition="network->context == Network::TRAIN";
@@ -160,11 +170,11 @@ Program .projects[0].programs.gp[0][2] {
       el_typ=MethodCall;
       el_def=0;
       MethodCall @[0] {
-       desc=;
+       desc="sync the network weight changes from distributed trial procs -- only used for dmem;";
        off=0;
        result_var=NULL;
        obj=$2$;
-       method=Network::DMem_TrialSync;
+       method=Network::DMem_TrialSync_dWt;
        args{ };
 {        };
       };
@@ -184,7 +194,7 @@ Program .projects[0].programs.gp[0][2] {
       el_def=0;
      };
     };
-    NetCounterIncr @[2] {
+    NetCounterIncr @[3] {
      desc="increment trial counter";
      off=0;
      network_var=$2$;
