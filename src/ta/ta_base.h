@@ -1756,6 +1756,27 @@ protected:
 };
 TA_ARRAY_OPS(double_Array)
 
+class TA_API char_Array : public taArray<char> {
+  // #NO_UPDATE_AFTER
+public:
+  STATIC_CONST char blank; // #HIDDEN #READ_ONLY 
+  override void*	GetTA_Element(int i, TypeDef*& eltd) 
+  { eltd = &TA_char; return FastEl_(i); }
+  void Initialize()	{err = ' ';};
+  void Destroy()	{ };
+  TA_BASEFUNS(char_Array);
+  TA_ARRAY_FUNS(char_Array, char)
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((char*)a) > *((char*)b)) rval=1; else if(*((char*)a) == *((char*)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((char*)a) == *((char*)b)); }
+  String	El_GetStr_(const void* it) const { return (*((char*)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { char tmp = val[0]; *((char*)it) = tmp; }
+};
+TA_ARRAY_OPS(char_Array)
+
 
 class TA_API String_Array : public taArray<String> {
   // #NO_UPDATE_AFTER

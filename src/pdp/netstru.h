@@ -1398,6 +1398,8 @@ public:
   // #CAT_Statistic compute sum squared error over the entire network
   virtual void	Compute_TrialStats();
   // #CAT_Statistic compute trial-level statistics (SSE and others defined by specific algorithms)
+  virtual void	DMem_ShareTrialData(DataTable* dt, int n_rows = 1);
+  // #CAT_DMem share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient
 
   virtual void	Compute_EpochSSE();
   // #CAT_Statistic compute epoch-level sum squared error and related statistics

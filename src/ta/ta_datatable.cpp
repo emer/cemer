@@ -1344,6 +1344,97 @@ void DataTable::WriteClose_impl() {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////
+//		DMEM
+
+void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
+#ifdef DMEM_COMPILE
+  if(rows == 0) return;
+  if(n_rows < 1) n_rows = rows;
+  if(n_rows > rows) n_rows = rows;
+  int np = 0; MPI_Comm_size(comm, &np);
+  int this_proc = 0; MPI_Comm_rank(comm, &this_proc);
+  if(np <= 1) return;
+
+  StructUpdate(true);
+
+  int st_send_row = rows - n_rows;
+  int st_recv_row = rows;
+  int n_recv_rows = np * n_rows;
+  AddRow(n_recv_rows);		// make room for new ones
+
+  static char_Array char_send;
+  static char_Array char_recv;
+  const int max_str_len = 1024;
+
+  for(int i=0;i<data.size; i++) {
+    DataArray_impl* da = data.FastEl(i);
+    taMatrix* da_mat = da->AR();
+
+    int frsz = da_mat->frameSize();
+    int send_idx = st_send_row * frsz;
+    int n_send = n_rows * frsz;
+    int recv_idx = st_recv_row * frsz;
+
+    switch(da->valType()) {
+    case VT_FLOAT:
+      DMEM_MPICALL(MPI_Allgather(&(((float_Matrix*)da_mat)->el[send_idx]), n_send, MPI_FLOAT,
+				 &(((float_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_FLOAT,
+				 comm), "DataTable::DMem_ShareRows", "Allgather");
+      break;
+    case VT_DOUBLE:
+      DMEM_MPICALL(MPI_Allgather(&(((double_Matrix*)da_mat)->el[send_idx]), n_send, MPI_DOUBLE,
+				 &(((double_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_DOUBLE,
+				 comm), "DataTable::DMem_ShareRows", "Allgather");
+      break;
+    case VT_INT:
+      DMEM_MPICALL(MPI_Allgather(&(((int_Matrix*)da_mat)->el[send_idx]), n_send, MPI_INT,
+				 &(((int_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_INT,
+				 comm), "DataTable::DMem_ShareRows", "Allgather");
+      break;
+    case VT_BYTE:
+      DMEM_MPICALL(MPI_Allgather(&(((byte_Matrix*)da_mat)->el[send_idx]), n_send, MPI_BYTE,
+				 &(((byte_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_BYTE,
+				 comm), "DataTable::DMem_ShareRows", "Allgather");
+      break;
+    case VT_STRING: {
+      int n_recv = n_recv_rows * frsz;
+      char_send.EnforceSize(n_send * max_str_len);
+      char_recv.EnforceSize(n_recv * max_str_len);
+      for(int i=0;i<n_send;i++) {
+	String& str = ((String_Matrix*)da_mat)->FastEl_Flat(send_idx + i);
+	int st_idx = i * max_str_len;
+	int mxln = MIN(str.length(), max_str_len-1);
+	int j;
+	for(j=0;j<mxln;j++) {
+	  char_send[st_idx + j] = str[j];
+	}
+	char_send[st_idx + j] = '\0';
+      }
+      DMEM_MPICALL(MPI_Allgather(char_send.el, n_send * max_str_len, MPI_CHAR,
+				 char_recv.el, n_send * max_str_len, MPI_CHAR,
+				 comm), "DataTable::DMem_ShareRows", "Allgather");
+      for(int i=0;i<n_recv;i++) {
+	String& str = ((String_Matrix*)da_mat)->FastEl_Flat(recv_idx + i);
+	int st_idx = i * max_str_len;
+	str = &(char_recv[st_idx]);
+      }
+      break;
+    }
+    }
+    // todo: deal with variant?
+  }
+
+  // remove sending rows -- they were all received already!
+  for(int i=0;i<n_rows;i++) {
+    RemoveRow(st_send_row);
+  }
+  StructUpdate(false);
+#endif  // DMEM_COMPILE
+}
+
+
+
 //////////////////////////
 //  DataColViewSpec	//
 //////////////////////////

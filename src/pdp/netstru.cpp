@@ -5329,6 +5329,12 @@ void Network::Compute_TrialStats() {
   Compute_SSE();
 }
 
+void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
+#ifdef DMEM_COMPILE
+  dt->DMem_ShareRows(dmem_trl_comm.comm, n_rows);
+#endif  
+}
+
 void Network::Compute_EpochSSE() {
   sum_sse = cur_sum_sse;
   if(avg_sse_n > 0)

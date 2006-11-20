@@ -24,6 +24,7 @@
 #include "ta_data.h"
 #include "ta_filer.h"
 #include "ta_viewspec.h"
+#include "ta_dmem.h"
 #include "ta_TA_type.h"
 
 #ifndef __MAKETA__
@@ -544,6 +545,9 @@ public:
 
   virtual void	UniqueColNames();
   // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)
+
+  virtual void	DMem_ShareRows(MPI_Comm comm, int n_rows = 1);
+  // #CAT_DMem Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
