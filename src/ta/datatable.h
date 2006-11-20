@@ -33,13 +33,7 @@ class GridTableViewSpec; //
 
 // todo: move float_RArray to v3compat
 // remaining dependencies:
-// src/pdp/netstru.h:  virtual void        ConValuesToArray(float_RArray& ary, const char* variable);
-// src/pdp/netstru.h:  virtual void        ConValuesFromArray(float_RArray& ary, const char* variable);
-// src/pdp/netstru.h:  virtual void        UnitValuesToArray(float_RArray& ary, const char* variable);
-// src/pdp/netstru.h:  virtual void        UnitValuesFromArray(float_RArray& ary, const char* variable);
 // src/tamisc/datagraph.h:  float_RArray           rows_x_axis;    // x axis values for plot rows mode
-// src/tamisc/fun_lookup.h:class TA_API FunLookup : public float_RArray {
-// src/tamisc/fun_lookup.h:  COPY_FUNS(FunLookup, float_RArray);
 
 class TA_API float_RArray : public float_Array {
   // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
@@ -242,7 +236,7 @@ protected:
 // todo: move this to taMath::Cluster routine!
 
 class TA_API ClustLink : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER a link in the cluster tree with distance
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Math a link in the cluster tree with distance
 public:
   float		dist;		// distance to this node from parent
   ClustNode*	node;		// cluster node
@@ -257,8 +251,7 @@ public:
 
 
 class TA_API ClustNode : public taNBase {
-  /* ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER node in clustering algorithm
-     use one with leaves as children as a root node for cluster */
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math node in clustering algorithm use one with leaves as children as a root node for cluster
 INHERITED(taNBase)
 public:
   float_RArray*	pat;		// pattern I point to (if leaf)

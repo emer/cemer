@@ -22,7 +22,7 @@
 #include "ta_TA_type.h"
 
 class TA_API FunLookup : public float_Array {
-  // function lookup for non-computable functions and optimization
+  // ##CAT_Math function lookup for non-computable functions and optimization
 public:
   MinMaxRange	x_range;	// range of the x axis
   float		res;		// resolution of the function
@@ -90,7 +90,7 @@ public:
 // the following was written by Dan Cer (modified by O'Reilly)
 // todo: could be re-written using float_Matrix
 class TA_API FunLookupND : public taNBase {
-  // #NO_UPDATE_AFTER n-dimensional function lookup: function is defined for n_dims inputs and produces a corresponding interpolated output
+  // #NO_UPDATE_AFTER ##CAT_Math n-dimensional function lookup: function is defined for n_dims inputs and produces a corresponding interpolated output
 public:
   int 		n_dims;		// number of dimensions
   float_Array 	mesh_pts;	// the n-dimensional mesh of function values at specific points in n_dims space

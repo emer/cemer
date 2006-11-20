@@ -937,10 +937,12 @@ gpiListNew::~gpiListNew() {
 void gpiListNew::Constr_Body() {
   inherited::Constr_Body();
   num_rep = new taiIncrField(NULL, this, NULL, body);//, taiData::flgPosOnly);
-  typ_rep = new gpiElTypes(taiMenu::buttonmenu, taiMisc::fonSmall,
-			       ths->GetTypeDef(), ths->el_base, this, NULL, body);
-  typ_rep->GetMenu();
+//   typ_rep = new gpiElTypes(taiMenu::buttonmenu, taiMisc::fonSmall,
+// 			       ths->GetTypeDef(), ths->el_base, this, NULL, body);
+//   typ_rep->GetMenu();
 //  typ_rep->GetImage(typ);
+  typ_rep = new taiTypeDefButton(ths->el_base, this, NULL, body);
+  typ_rep->GetImage(ths->el_typ, ths->el_base);
 
   fun_list = gpiNewFuns::CondNew(ths->el_base, this, NULL, body); // only creates if there are funcs
 
@@ -983,7 +985,7 @@ void gpiListNew::Constr_Final() {
 
 void gpiListNew::GetImage() {
   num_rep->GetImage(num);
-  typ_rep->GetImage(typ);
+  typ_rep->GetImage(typ, ths->el_base);
 //no!  taiDialog::GetImage();
 }
 

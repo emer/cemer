@@ -48,7 +48,7 @@ public:
 //////////////////////////////////////////
 
 class LEABRA_API CtxtUpdateSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER context updating specifications
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context updating specifications
 public:
   float		fm_hid;		// from hidden (inputs to context layer)
   float		fm_prv;		// from previous context layer values (maintenance)
@@ -148,7 +148,7 @@ public:
 };
 
 class LEABRA_API SynDepSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for synaptic depression
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
 public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
@@ -280,7 +280,7 @@ public:
 };
 
 class LEABRA_API FastWtSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specificiations for fast weights
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specificiations for fast weights
 public:
   enum DecayMode {
     ALWAYS,			// always decay all weights toward slow weight (swt)
@@ -440,7 +440,7 @@ public:
 };
 
 class LEABRA_API ActAvgHebbMixSpec : public taBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER mixture of average activation hebbian learning and regular hebbian learning (on current act value)
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra mixture of average activation hebbian learning and regular hebbian learning (on current act value)
 public:
   float		act_avg;	// what proportion of average activation to include in hebbian receiving unit activation learning term
   float		cur_act;	// #READ_ONLY #SHOW 1.0 - act_avg -- proportion of current activation for hebbian learning
@@ -454,9 +454,9 @@ public:
 };
 
 class LEABRA_API ActAvgHebbConSpec : public LeabraConSpec {
-  // 
+  // hebbian learning that includes a proportion of average activation over time, in addition to standard current unit activation;  produces a trace-based learning effect for learning over trajectories
 public:
-  ActAvgHebbMixSpec	act_avg_hebb; // hebbian learning that includes a proportion of average activation over time, in addition to standard current unit activation;  produces a trace-based learning effect for learning over trajectories
+  ActAvgHebbMixSpec	act_avg_hebb; // mixture of current and average activations to use in hebbian learning
 
   inline float C_Compute_Hebb(LeabraCon* cn, LeabraCon_Group* cg,
 			      float ru_act, float su_act, float ru_avg_act)
@@ -512,7 +512,7 @@ public:
 // spikes, because of syndep..
 
 class LEABRA_API ScalarValSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for scalar values
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -548,7 +548,7 @@ public:
 };
 
 class LEABRA_API ScalarValBias : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -670,7 +670,7 @@ public:
 //////////////////////////////////
 
 class LEABRA_API TwoDValSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for two-dimensional values
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -710,7 +710,7 @@ public:
 };
 
 class LEABRA_API TwoDValBias : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER initial bias for given activation value for scalar value units
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -817,7 +817,7 @@ public:
 //////////////////////////////////////
 
 class LEABRA_API GaborRFSpec : public taBase {
-  // #INLINE #INLINE_DUMP Gabor receptive field spec
+  // #INLINE #INLINE_DUMP ##CAT_Spec Gabor receptive field spec
 public:
   int		n_angles;	// number of different angles
   float		freq;		// frequency of the sine wave
@@ -833,7 +833,7 @@ public:
 };
 
 class LEABRA_API BlobRFSpec : public taBase {
-  // #INLINE #INLINE_DUMP Blob receptive field specs
+  // #INLINE #INLINE_DUMP ##CAT_Spec Blob receptive field specs
 public:
   int		n_sizes;	// number of different sizes
   float		wdth_st;	// starting center width

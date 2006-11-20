@@ -1415,7 +1415,7 @@ public:
 
 */
 class TA_API taDataView: public taOBase, public virtual IDataLinkProxy {
-  // #NO_TOKENS  base class for views of an object
+  // #NO_TOKENS ##CAT_Display base class for views of an object
 INHERITED(taOBase)
 friend class DataView_List;
 public:
@@ -1549,7 +1549,8 @@ private:
   T* FastEl(int i) const {return (T*)FastEl_(i);} \
   TA_BASEFUNS(B);
 
-class TA_API DataView_List: public taList<taDataView> { // #NO_TOKENS
+class TA_API DataView_List: public taList<taDataView> {
+  // #NO_TOKENS ##CAT_Display
 INHERITED(taList<taDataView>)
 public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
@@ -1574,7 +1575,7 @@ private:
 
 
 class TA_API taArray_base : public taOBase, public taArray_impl {
-  // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER base for arrays (from taBase)
+  // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER ##CAT_Data base for arrays (from taBase)
 public:
   ostream& 	Output(ostream& strm, int indent = 0) const;
   ostream& 	OutputR(ostream& strm, int indent = 0) const
@@ -1801,7 +1802,7 @@ TA_ARRAY_OPS(String_Array)
 
 
 class TA_API SArg_Array : public String_Array {
-  // string argument array: has labels for each argument to make it easier in the interface
+  // ##CAT_Program string argument array: has labels for each argument to make it easier in the interface
 INHERITED(String_Array)
 public:
   String_Array	labels;		// #HIDDEN labels for each argument

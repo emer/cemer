@@ -39,7 +39,7 @@
 //////////////////////////////////////////////////
 
 class PDP_API LayerWizEl : public taNBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER specifies basic parameters for a layer
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Wizard specifies basic parameters for a layer
 public:
   enum InputOutput {
     INPUT,
@@ -154,7 +154,7 @@ public:
 };
 
 class PDP_API ProjectBase : public taProject {
-  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN A ProjectBase has everything
+  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE Base class for a pdp project (do not create one of these -- create an algorithm-specific version)
 INHERITED(taProject)
 public:
   enum ViewColors {		// indicies for view_colors

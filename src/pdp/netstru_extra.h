@@ -37,7 +37,7 @@ public:
 };
 
 class PDP_API TessEl : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER one element of a tesselation specification
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification
 public:
   TwoDCoord	send_off;	// offset from current receiving unit
   float		wt_val;		// value to assign to weight
@@ -51,7 +51,7 @@ public:
 };
 
 class PDP_API TessEl_List : public taList<TessEl> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER list of TessEl objects
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of TessEl objects
 public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
@@ -207,7 +207,7 @@ public:
 };
 
 class PDP_API LinkPrjnConPtr : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER specifies a connection to link
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec specifies a connection to link: todo -- soon to be obsolete because no links!
 public:
   String	recv_layer;	// layer name receiving unit is in
   int		recv_idx;	// leaf index of receiving unit within layer
@@ -226,7 +226,7 @@ public:
 };
 
 class PDP_API LinkPrjnConPtr_List : public taList<LinkPrjnConPtr> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER list of LinkPrjnConPtr objects
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of LinkPrjnConPtr objects: todo -- soon to be obsolete because no links!
 public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
@@ -368,7 +368,7 @@ public:
 };
 
 class PDP_API GpTessEl : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER one element of a tesselation specification for groups
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification for groups
 public:
   TwoDCoord	send_gp_off;	// offset of group from current receiving group
   float		p_con;		// proportion connectivity from this group -- negative value means just make symmetric cons
@@ -382,7 +382,7 @@ public:
 };
 
 class PDP_API GpTessEl_List : public taList<GpTessEl> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER list of GpTessEl objects
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of GpTessEl objects
 public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };

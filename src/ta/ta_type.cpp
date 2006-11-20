@@ -900,7 +900,7 @@ String taMisc::FindArgValContains(const String& vl) {
 void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
   String tmp = ch;
   while (!tmp.empty()) {
-    sa.Add(tmp.before(" "));
+    sa.AddUnique(tmp.before(" "));
     tmp = tmp.after(" ");
   }
 }
@@ -3005,6 +3005,7 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
   taMisc::CharToStrArray(opts,op);
   taMisc::CharToStrArray(inh_opts,inop);
   taMisc::CharToStrArray(lists,lis);
+  CleanupCats();
   size = siz; 
   ptr = ptrs;
   ref = refnc;
@@ -3087,6 +3088,23 @@ TypeDef::~TypeDef() {
     taMisc::not_constr = true;
 }
 #endif // TA_NO_GUI
+
+void TypeDef::CleanupCats() {
+  bool got_op = false;
+  for(int i=0; i< opts.size;i++) {
+    String op = opts[i];
+    if(!op.contains("CAT_")) continue;
+    if(got_op) { opts.Remove(i); i--; }	// remove all other previous ones
+    else got_op = true;
+  }
+  got_op = false;
+  for(int i=0; i<inh_opts.size;i++) {
+    String op = inh_opts[i];
+    if(!op.contains("CAT_")) continue;
+    if(got_op) {inh_opts.Remove(i); i--; } // remove all other previous ones
+    else got_op = true;
+  }
+}
 
 void TypeDef::DuplicateMDFrom(const TypeDef* old) {
   int i;
@@ -3313,11 +3331,13 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
     is_subclass = true;
 #endif
 
-  opts.Duplicate(it->inh_opts);
-  inh_opts.Duplicate(it->inh_opts);	// and so on
+  opts.DupeUnique(it->inh_opts);
+  inh_opts.DupeUnique(it->inh_opts);	// and so on
 
   if(InheritsFrom(TA_taBase))
     opts.AddUnique(opt_instance);	// ta_bases always have an instance
+
+  CleanupCats();
 
   // no need to get all this junk for internals
   if(internal && !templ) return it;

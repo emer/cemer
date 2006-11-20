@@ -644,7 +644,7 @@ SmartRef_Of(DataTable) // DataTableRef
 /////////////////////////////////////////////////////////
 
 class TA_API DataTable_Group : public taGroup<DataTable> {
-  // group of data objects
+  // ##CAT_Data group of data objects
 INHERITED(taGroup<DataTable>)
 public:
   TA_BASEFUNS(DataTable_Group);

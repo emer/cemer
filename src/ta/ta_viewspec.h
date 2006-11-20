@@ -22,7 +22,7 @@
 #include "ta_TA_type.h"
 
 class TA_API ViewSpec: public taDataView {
-  // generic specification for a view of some item
+  // ##CAT_Display generic specification for a view of some item
 INHERITED(taDataView)
 public:
   String		name;
@@ -42,6 +42,7 @@ private:
 
   
 class TA_API ViewSpec_Group: public taGroup<ViewSpec> {
+  // ##CAT_Display group of view specs
 public:
   TA_BASEFUNS(ViewSpec_Group) //
 private:

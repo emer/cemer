@@ -202,7 +202,7 @@ private:
 
 
 class TA_API ProgEl_List: public taList<ProgEl> {
-  // #TREEFILT_ProgGp list of program elements: a block of code
+  // #TREEFILT_ProgGp ##CAT_Program list of program elements: a block of code
 INHERITED(taList<ProgEl>)
 public:
   virtual void		PreGen(int& item_id); // iterates over all items
@@ -608,6 +608,22 @@ private:
   void	Destroy()	{}
 };
 
+class ProgObjList: public taBase_List {
+  // ##CAT_Program A list of program objects (just a taBase list with proper update actions to update variables associated with objects)
+INHERITED(taBase_List)
+public:
+
+  override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  virtual void	GetVarsForObjs();
+  // automatically create variables for objects in parent program
+
+  TA_BASEFUNS(ProgObjList);
+private:
+  void Initialize() { };
+  void Destroy() { };
+};
+
+
 class TA_API Program: public taNBase, public AbstractScriptBase {
   // ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program a structured gui-buildable program that generates css script code to actually run
 INHERITED(taNBase)
@@ -657,8 +673,8 @@ public:
   // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgFlags		flags;
   // control flags, for display and execution control
-  taBase_List		objs;
-  // #TREEFILT_ProgGp sundry objects that are used in this program
+  ProgObjList		objs;
+  // #TREEFILT_ProgGp create persistent objects of any type here that are needed for the program -- each object will automatically create an associated variable 
   ProgVar_List		args;
   // global variables that are parameters (arguments) for callers
   ProgVar_List		vars;
@@ -759,7 +775,6 @@ protected:
   virtual int		Cont_impl(); 
   override void 	ScriptCompiled(); // #IGNORE
   virtual void		UpdateProgVars(); // put global vars in script, set values
-  virtual void	       	GetVarsForObjs(); // automatically create variables for objects in objs
   void 			ShowRunError(); // factored error msg code
 #ifdef TA_GUI
   virtual void		ViewScript_impl();

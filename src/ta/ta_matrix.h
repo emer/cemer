@@ -566,7 +566,7 @@ public:
 
 
 class TA_API taMatrix_Group: public taGroup<taMatrix> {
-  // group that can hold matrix items -- typically used for dataset elements
+  // ##CAT_Data group that can hold matrix items -- typically used for dataset elements
 INHERITED(taGroup<taMatrix>)
 public:
 

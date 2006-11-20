@@ -28,7 +28,7 @@
 #endif
 
 class TA_API CountParam : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP counting criteria params
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math counting criteria params
   INHERITED(taBase)
 public:
   enum Relation {
@@ -51,7 +51,7 @@ public:
 };
 
 class TA_API Aggregate : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP Basic aggregation operations
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Basic aggregation operations
   INHERITED(taOBase)
 public:
   enum Operator {		// Aggregate Operators
@@ -80,7 +80,7 @@ public:
 };
 
 class TA_API SimpleMathSpec : public taBase {
-  // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS params for std kinds of simple math operators
+  // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS ##CAT_Math params for std kinds of simple math operators
   INHERITED(taBase)
 public:
   enum MathOpr {
@@ -742,7 +742,7 @@ public:
 };
 
 class TA_API RndSeed : public taNBase {
-  // #CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
+  // ##CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
 INHERITED(taNBase)
 public:
   int_Array		seed;	// #READ_ONLY the seed, 624 elements long
@@ -766,7 +766,7 @@ public:
 };
 
 class TA_API Random : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP #CAT_Math Random Number Generation
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Random Number Generation
 INHERITED(taBase)
 public:
   enum Type {

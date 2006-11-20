@@ -1400,6 +1400,65 @@ void FunctionCall::UpdateArgs() {
   fun_args.ConformToTarget(fun->args);
 }
 
+///////////////////////////////////////////////////////////////
+//  	ProgObjList
+
+void ProgObjList::GetVarsForObjs() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return;
+  for(int i = 0; i < size; ++i) {
+    taBase* obj = FastEl(i);
+    String nm = obj->GetName();
+    if(nm.empty()) continue;
+    ProgVar* var = prog->vars.FindName(nm);
+    if(var) {
+      if((var->var_type != ProgVar::T_Object) || (var->object_val != obj)) {
+	taMisc::Error("Program error: variable named:", nm,
+		      "exists, but does not refer to object in objs list -- rename either to avoid conflict");
+      }
+      else {
+	var->objs_ptr = true;	// make sure
+	var->object_type = obj->GetTypeDef();
+      }
+    }
+    else {
+      bool found_it = false;
+      for(int j=0;j<prog->vars.size; j++) {
+	ProgVar* tv = prog->vars[j];
+	if((tv->var_type == ProgVar::T_Object) && (tv->object_val == obj)) {
+	  found_it = true;
+	  tv->name = nm;	// update the name
+	  tv->objs_ptr = true;	// make sure
+	  tv->object_type = obj->GetTypeDef();
+	  break;
+	}
+      }
+      if(!found_it) {
+	var = (ProgVar*)prog->vars.New(1, &TA_ProgVar);
+	var->name = nm;
+	var->var_type = ProgVar::T_Object;
+	var->object_val = obj;
+	var->objs_ptr = true;
+	var->object_type = obj->GetTypeDef();
+      }
+    }
+  }
+  // now cleanup any orphaned 
+  for(int i = prog->vars.size-1; i >= 0; --i) {
+    ProgVar* var = prog->vars[i];
+    if(!var->objs_ptr) continue;
+    taBase* obj = FindName(var->name);
+    if(obj == NULL)
+      prog->vars.Remove(i);		// get rid of it
+  }
+}
+
+void ProgObjList::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if(!taMisc::is_loading && !taMisc::is_duplicating)
+    GetVarsForObjs();
+}
+
 
 //////////////////////////
 //  Program		//
@@ -1511,7 +1570,6 @@ void Program::UpdateAfterEdit_impl() {
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
   // name, (more TBD...)
-  GetVarsForObjs();
 }
 
 bool Program::CheckConfig_impl(bool quiet) {
@@ -1581,7 +1639,7 @@ bool Program::PreCompileScript_impl() {
   // to by a pointer to the space and an index off of it, which is important for autos
   // but actually not for these guys (but they are/were that way anyway).
   if(!AbstractScriptBase::PreCompileScript_impl()) return false;
-  GetVarsForObjs();
+  objs.GetVarsForObjs();
   UpdateProgVars();
   //Note: following may be a nested invocation
   if (!CheckConfig(false)) return false; 
@@ -1871,54 +1929,6 @@ void  Program::UpdateProgVars() {
     if(el != NULL)
       script->prog_types.Push(el);
   } 
-}
-
-void Program::GetVarsForObjs() {
-  for(int i = 0; i < objs.size; ++i) {
-    taBase* obj = objs[i];
-    String nm = obj->GetName();
-    if(nm.empty()) continue;
-    ProgVar* var = vars.FindName(nm);
-    if(var) {
-      if((var->var_type != ProgVar::T_Object) || (var->object_val != obj)) {
-	taMisc::Error("Program error: variable named:", nm,
-		      "exists, but does not refer to object in objs list -- rename either to avoid conflict");
-      }
-      else {
-	var->objs_ptr = true;	// make sure
-	var->object_type = obj->GetTypeDef();
-      }
-    }
-    else {
-      bool found_it = false;
-      for(int j=0;j<vars.size; j++) {
-	ProgVar* tv = vars[j];
-	if((tv->var_type == ProgVar::T_Object) && (tv->object_val == obj)) {
-	  found_it = true;
-	  tv->name = nm;	// update the name
-	  tv->objs_ptr = true;	// make sure
-	  tv->object_type = obj->GetTypeDef();
-	  break;
-	}
-      }
-      if(!found_it) {
-	var = (ProgVar*)vars.New(1, &TA_ProgVar);
-	var->name = nm;
-	var->var_type = ProgVar::T_Object;
-	var->object_val = obj;
-	var->objs_ptr = true;
-	var->object_type = obj->GetTypeDef();
-      }
-    }
-  }
-  // now cleanup any orphaned 
-  for(int i = vars.size-1; i >= 0; --i) {
-    ProgVar* var = vars[i];
-    if(!var->objs_ptr) continue;
-    taBase* obj = objs.FindName(var->name);
-    if(obj == NULL)
-      vars.Remove(i);		// get rid of it
-  }
 }
 
 String Program::GetProgLibPath(ProgLibs library) {

@@ -90,7 +90,7 @@ typedef TextLog NetLog;
 typedef PDPLog GraphLog;
 
 class PDP_API CritParam : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP stopping criteria params
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat stopping criteria params
 public:
   enum Relation {
     EQUAL,		// #LABEL_=
@@ -121,7 +121,7 @@ public:
 
 #ifdef TA_GUI
 class PDP_API CtrlPanelData : public taOBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP data for the control panel
+  // ##NO_TOKENS #INLINE #INLINE_DUMP ##CAT_v3Compat data for the control panel
 INHERITED(taOBase)
 public:
   bool		active;		// is panel active (save this state)
@@ -135,7 +135,7 @@ public:
 #endif
 
 class PDP_API V3ScriptFile : public taOBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP V3 compat format for reading script files
+  // ##NO_TOKENS #INLINE #INLINE_DUMP ##CAT_v3Compat V3 compat format for reading script files
 INHERITED(taOBase)
 public:
   String	fname;
@@ -146,7 +146,7 @@ public:
 };
 
 class TA_API Script : public taNBase {
-  // ##EXT_scr an object for maintaining and running arbitrary scripts
+  // ##EXT_scr ##CAT_v3Compat an object for maintaining and running arbitrary scripts
 INHERITED(taNBase)
 public:
   V3ScriptFile	script_file;
@@ -189,6 +189,7 @@ private:
 };
 
 class TA_API Script_Group : public taGroup<Script> {
+  // ##CAT_v3Compat 
 public:
 //   virtual void	StopRecording();
 //   virtual void	AutoRun();
@@ -199,7 +200,7 @@ public:
 };
 
 class PDP_API Process : public taNBase {
-  // ##EXT_proc simple processes for controlling and coordinating execution
+  // ##EXT_proc ##CAT_v3Compat simple processes for controlling and coordinating execution
 INHERITED(taNBase)
 public:
   enum Type {
@@ -237,7 +238,7 @@ public:
 };
 
 class PDP_API Process_Group : public taGroup<Process> {
-  // ##NO_TOKENS a menu group for processes
+  // ##NO_TOKENS ##CAT_v3Compat a menu group for processes
 INHERITED(taGroup<Process>)
 public:
 
@@ -248,7 +249,7 @@ public:
 
 
 class PDP_API DataItem : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP source of a piece of data
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat source of a piece of data
 INHERITED(taOBase)
 public:
 
@@ -263,7 +264,7 @@ public:
 };
 
 class PDP_API DataItem_List : public taList<DataItem> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER list of DataItem objects
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat list of DataItem objects
 INHERITED(taList<DataItem>)
 public:
   void	Initialize() 		{SetBaseType(&TA_DataItem); };
@@ -273,7 +274,7 @@ public:
 
 
 class PDP_API StatVal : public DataItem {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP Statistic value
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat Statistic value
 INHERITED(DataItem)
 public:
   float		val;		// value of statistic
@@ -287,7 +288,7 @@ public:
 
 
 class PDP_API StatVal_List : public taBase_List {
-  // ##NO_UPDATE_AFTER group of stat values
+  // ##NO_UPDATE_AFTER ##CAT_v3Compat group of stat values
 INHERITED(taBase_List)
 public:
   void	Initialize() 		{ SetBaseType(&TA_StatVal); }
@@ -297,7 +298,7 @@ public:
 
 
 class PDP_API StatValAgg : public Aggregate {
-  // #INLINE #INLINE_DUMP Aggregation for StatVal-based values
+  // #INLINE #INLINE_DUMP ##CAT_v3Compat Aggregation for StatVal-based values
 INHERITED(Aggregate)
 public:
 
@@ -349,7 +350,7 @@ public:
 };
 
 class PDP_API Stat_Group : public taBase_Group {
-  // ##NO_TOKENS a group of statistics
+  // ##NO_TOKENS ##CAT_v3Compat a group of statistics
 INHERITED(taBase_Group)
 public:
   void	Initialize() 		{ SetBaseType(&TA_Stat); }
@@ -391,7 +392,7 @@ public:
 
 
 class PDP_API Counter : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER Holds the value of a loop counter
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat Holds the value of a loop counter
 INHERITED(taBase)
 public:
   String	name;			// #HIDDEN not an taNBase to hide name
@@ -407,7 +408,7 @@ public:
 
 
 class PDP_API StepParams : public taBase {
-  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER Holds steping process parameters
+  // #INLINE #INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_v3Compat Holds steping process parameters
 INHERITED(taBase)
 public:
   SchedProcess* owner;		// #READ_ONLY #NO_SAVE use this to find the subtypes
@@ -676,7 +677,7 @@ class Pattern_Group;
 class PSChannel; // #IGNORE impl class for SourceChannel
 
 class PDP_API PatternSpec : public BaseSubSpec {
-  // ##SCOPE_Environment sub-spec for patterns within an eventspec
+  // ##SCOPE_Environment ##CAT_v3Compat sub-spec for patterns within an eventspec
 INHERITED(BaseSubSpec)
 friend class Environment;
 public:
@@ -753,7 +754,7 @@ public:
 };
 
 class PDP_API PatternSpec_Group : public taBase_Group {
-  // ##SCOPE_Environment group of pattern specs (acts like a template for pattern groups)
+  // ##SCOPE_Environment ##CAT_v3Compat group of pattern specs (acts like a template for pattern groups)
 INHERITED(taBase_Group)
 public:
   TypeDef*	pat_gp_type;	// #TYPE_Pattern_Group type of pattern group to use
@@ -764,7 +765,7 @@ public:
 };
 
 class PDP_API EventSpec : public BaseSpec {
-  // ##SCOPE_Environment ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE event specification
+  // ##SCOPE_Environment ##MEMB_IN_GPMENU ##IMMEDIATE_UPDATE ##CAT_v3Compat event specification
 INHERITED(BaseSpec)
 public:
   enum PatternLayout {
@@ -786,6 +787,7 @@ public:
 };
 
 class PDP_API EventSpec_SPtr : public SpecPtr<EventSpec> {
+  // ##CAT_v3Compat 
 INHERITED(SpecPtr<EventSpec>)
 public:
   void 	Initialize() 		{ };
@@ -799,7 +801,7 @@ public:
 ////////////////////////
 
 class PDP_API Pattern : public taOBase {
-  // ##SCOPE_Environment ##EXT_pat ##NO_TOKENS ##NO_UPDATE_AFTER Contains activation values to be applied to a network layer
+  // ##SCOPE_Environment ##EXT_pat ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_v3Compat Contains activation values to be applied to a network layer
 INHERITED(taOBase)
 public:
   float_RArray 	value;  	// Values of Pattern
@@ -810,11 +812,18 @@ public:
   TA_SIMPLE_BASEFUNS(Pattern);
 };
 
-BaseGroup_of(Pattern);
+class PDP_API Pattern_Group : public taGroup<Pattern> {
+  // ##CAT_v3Compat Group of patterns
+INHERITED(taGroup<Pattern>)
+public:
 
+  void	Initialize() {SetBaseType(&TA_Pattern);}
+  void 	Destroy()		{ }
+  TA_BASEFUNS(Pattern_Group);
+};
 
 class PDP_API Event : public taNBase {
-  // ##SCOPE_Environment ##EXT_evt ##NO_TOKENS ##NO_UPDATE_AFTER Contains patterns of activation for different layers in the network specifying one event
+  // ##SCOPE_Environment ##EXT_evt ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_v3Compat Contains patterns of activation for different layers in the network specifying one event
 INHERITED(taNBase)
 public:
   int			index;		// #NO_SAVE #READ_ONLY Index of this event within group
@@ -835,7 +844,7 @@ public:
 // understand them.
 
 class PDP_API Event_Group : public taGroup<Event> {
-  // ##SCOPE_Environment Group of events
+  // ##SCOPE_Environment ##CAT_v3Compat Group of events
 INHERITED(taGroup<Event>)
 protected:
   void	El_SetIndex_(void* base, int idx) { ((Event*)base)->index = idx; }
@@ -851,7 +860,7 @@ public:
 ////////////////////////
 
 class PDP_API Environment : public taNBase {
-  // ##EXT_env ##COMPRESS basic environment: contains events to present to the network, and can be used to hold data for analysis
+  // ##EXT_env ##COMPRESS ##CAT_v3Compat basic environment: contains events to present to the network, and can be used to hold data for analysis
 INHERITED(taNBase)
 public:
   enum TextFmt {
@@ -878,7 +887,7 @@ public:
 
 // note: Environment_Group name is for compatiblity with v3.2 files
 class PDP_API Environment_Group : public taGroup<Environment> {
-  // group of environments
+  // ##CAT_v3Compat group of environments
 INHERITED(taGroup<Environment>)
 public:
   void  Initialize()            { SetBaseType(&TA_Environment); }
@@ -888,7 +897,7 @@ public:
 
 // note: Environment_Group name is for compatiblity with v3.2 files
 class PDP_API Environment_List : public taList<Environment> {
-  // group of environments
+  // ##CAT_v3Compat group of environments
 INHERITED(taList<Environment>)
 public:
   void  Initialize()            { SetBaseType(&TA_Environment); }
@@ -1743,7 +1752,7 @@ public:
 /// end: procs_extra.h
 
 class TA_API TypeDefault_Group : public taGroup<TypeDefault> {
-  // #DEF_PATH_$PDPDIR$/defaults group of type default objects
+  // #DEF_PATH_$PDPDIR$/defaults ##CAT_v3Compat group of type default objects
 INHERITED(taGroup<TypeDefault>)
 public:
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
@@ -1759,6 +1768,7 @@ public:
 // PDPLog -- legacy logs
 
 class PDP_API PDPLog : public taNBase {
+  // ##CAT_v3Compat v3 obsolete log object
 INHERITED(taNBase)
 public:
   taFiler*	log_file;	// optional file for saving
@@ -1778,6 +1788,7 @@ public:
 };
 
 class PDP_API PDPLog_Group : public taGroup<PDPLog> {
+  // ##CAT_v3Compat 
 public:
   void	Initialize() 		{SetBaseType(&TA_PDPLog);}
   void 	Destroy()		{ }
@@ -1789,7 +1800,7 @@ public:
 // V3ProjectBase -- base class for loading and converting
 
 class PDP_API V3ProjectBase : public ProjectBase {
-  // #HIDDEN for loading legacy (v3.x) projects only
+  // #HIDDEN ##CAT_v3Compat for loading legacy (v3.x) projects only
 INHERITED(ProjectBase)
 public:
   TypeDefault_Group	defaults;	// #CAT_V3_Compat type defaults

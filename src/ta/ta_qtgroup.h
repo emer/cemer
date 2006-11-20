@@ -256,7 +256,8 @@ public:
   int			num;
   TypeDef*		typ;
   taiIncrField*		num_rep;
-  gpiElTypes* 		typ_rep;
+//   gpiElTypes* 		typ_rep;
+  taiTypeDefButton* 	typ_rep;
   gpiNewFuns*		fun_list;
 
   gpiListNew(TABLPtr lst, int n_els=1, TypeDef* td = NULL, bool read_only_ = false,

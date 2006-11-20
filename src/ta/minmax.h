@@ -145,7 +145,7 @@ public:
 };
 
 class TA_API Modulo : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP modulo for things that happen periodically
+  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math modulo for things that happen periodically
 public:
   bool	         flag;		// Modulo is active?
   int		 m;	        // Modulo N mod m, where N is counter

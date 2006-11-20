@@ -20,7 +20,7 @@
 #include "ta_TA_type.h"
 
 class TA_API taTime : public taBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER raw time information
+  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Program raw time information
 INHERITED(taBase)
 public:
   double	usr;		// user clock ticks
@@ -48,7 +48,7 @@ public:
 };
 
 class TA_API TimeUsed : public taNBase {
-  // #INLINE #INLINE_DUMP computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
+  // #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
 INHERITED(taNBase)
 public:
   taTime	start;		// starting time

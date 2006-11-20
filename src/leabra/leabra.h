@@ -100,7 +100,7 @@ class LeabraProject;
   } 
   
 class LeabraCon : public Connection {
-  // Leabra connection
+  // ##CAT_Leabra Leabra connection
 public:
   float		pdw;		// #NO_SAVE previous delta-weight change
 
@@ -112,7 +112,7 @@ public:
 };
 
 class LEABRA_API WtScaleSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER weight scaling specification
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight scaling specification
 public:
   float		abs;		// #DEF_1 absolute scaling (not subject to normalization: directly multiplies weight values)
   float		rel;		// [Default: 1] relative scaling (subject to normalization across all other projections into unit)
@@ -127,7 +127,7 @@ public:
 };
 
 class LEABRA_API WtSigSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER sigmoidal weight function specification
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
 public:
   float		gain;		// #DEF_6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1.25 offset of the function (1=centered at .5, >1=higher, <1=lower)
@@ -154,7 +154,7 @@ public:
 };
 
 class LEABRA_API LearnMixSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER mixture of learning factors (hebbian vs. error-driven) specification
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra mixture of learning factors (hebbian vs. error-driven) specification
 public:
   float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
@@ -169,7 +169,7 @@ public:
 };
 
 class LEABRA_API SAvgCorSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER sending average activation correction specifications: affects hebbian learning and netinput computation
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: affects hebbian learning and netinput computation
 public:
   float		cor;		// #DEF_0.4 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
@@ -183,7 +183,7 @@ public:
 };
 
 class LEABRA_API LeabraConSpec : public ConSpec {
-  // Leabra connection specs
+  // ##CAT_Leabra Leabra connection specs
 public:
   enum	LRSValue {		// what value to drive the learning rate schedule with
     NO_LRS,			// don't use a learning rate schedule
@@ -321,7 +321,7 @@ public:
 };
 
 class LEABRA_API LeabraCon_Group : public Con_Group {
-  // Leabra connection group
+  // ##CAT_Leabra Leabra connection group
 public:
   float		scale_eff;	// #NO_SAVE effective scale parameter for netin
   float		savg_cor;	// #NO_SAVE savg correction factor for hebbian learning
@@ -352,7 +352,7 @@ public:
 };
 
 class LEABRA_API ActFunSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER activation function specifications
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications
 public:
   enum IThrFun {	       
     STD,			// include all currents (except bias weights) in inhibitory threshold computation
@@ -376,7 +376,7 @@ public:
 };
 
 class LEABRA_API SpikeFunSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER spiking activation function specs
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs
 public:
   float		decay;		// #DEF_0.05 exponential decay of activation produced by a spike (act(t+1) = act(t) * (1-decay))
   float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect
@@ -392,7 +392,7 @@ public:
 };
 
 class LEABRA_API DepressSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER depressing synapses activation function specs
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra depressing synapses activation function specs
 public:
   enum PSpike {
     P_NXX1,			// probability of spiking is based on NOISY_XX1 f(Vm - Q)
@@ -414,7 +414,7 @@ public:
 };
 
 class LEABRA_API OptThreshSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER optimization thresholds for faster processing
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
 public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
   float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraSettle::send_delta is on!
@@ -430,7 +430,7 @@ public:
 };
 
 class LEABRA_API DtSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER time constants
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time constants
 public:
   float		vm;		// #DEF_0.3 membrane potential time constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
   float		net;		// #DEF_0.7 net input time constant -- how fast to update net input (damps oscillations)
@@ -446,7 +446,7 @@ public:
 };
 
 class LEABRA_API LeabraChannels : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER channels used in Leabra
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
 public:
   float		e;		// Excitatory (glutamatergic synaptic sodium (Na) channel)
   float		l;		// Constant leak (potassium, K+) channel 
@@ -462,7 +462,7 @@ public:
 };
 
 class LEABRA_API VChanSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER voltage gated channel specs
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra voltage gated channel specs
 public:
   bool		on;		// #DEF_false true if channel is on
   float		b_dt;		// #CONDEDIT_ON_on:true time constant for integrating basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
@@ -490,7 +490,7 @@ public:
 };
 
 class LEABRA_API ActRegSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER activity regulation via weight adjustment
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activity regulation via weight adjustment
 public:
   bool		on;		// whether to activity regulation is on (active) or not
   float		min;		// #CONDEDIT_ON_on:true #DEF_0 increase weights for units below this level of average activation
@@ -505,7 +505,7 @@ public:
 };
 
 class LEABRA_API MaxDaSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER how to compute the maxda value, which serves as a stopping criterion for settling
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to compute the maxda value, which serves as a stopping criterion for settling
 public:
   enum dAValue {
     DA_ONLY,			// just use da
@@ -525,7 +525,7 @@ public:
 };
 
 class LEABRA_API LeabraUnitSpec : public UnitSpec {
-  // Leabra unit specifications, point-neuron approximation
+  // ##CAT_Leabra Leabra unit specifications, point-neuron approximation
 INHERITED(UnitSpec)
 public:
   enum ActFun {
@@ -725,7 +725,7 @@ public:
 };
 
 class LEABRA_API LeabraUnitChans : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER channels used in Leabra units
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra units
 public:
   float		l;		// leak
   float		i;		// #DMEM_SHARE_SET_1 inhibitory
@@ -740,7 +740,7 @@ public:
 };
 
 class LEABRA_API LeabraUnit : public Unit {
-  // ##DMEM_SHARE_SETS_5 Leabra unit, point-neuron approximation
+  // ##DMEM_SHARE_SETS_5 ##CAT_Leabra Leabra unit, point-neuron approximation
 public:
   float		act_eq;		// #NO_SAVE rate-code equivalent activity value (time-averaged spikes or just act)
   float		act_avg;	// average activation over long time intervals (dt = act.avg_dt)
@@ -852,7 +852,7 @@ public:
 };
 
 class LEABRA_API LeabraSort : public taPtrList<LeabraUnit> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER used for sorting units in kwta computation
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Leabra used for sorting units in kwta computation
 protected:
   int		El_Compare_(void* a, void* b) const
   { int rval=-1; if(((LeabraUnit*)a)->net < ((LeabraUnit*)b)->net) rval=1;
@@ -866,7 +866,7 @@ public:
 // misc data-holding structures
 
 class LEABRA_API KWTASpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies k-winner-take-all parameters
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies k-winner-take-all parameters
 public:
   enum K_From {
     USE_K,			// use the k specified directly
@@ -891,7 +891,7 @@ public:
 };
 
 class LEABRA_API KwtaTieBreak : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
 public:
   bool		on;		// whether to perform the tie breaking function at all
   float		k_thr; 		// #CONDEDIT_ON_on:true #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
@@ -905,7 +905,7 @@ public:
 };
 
 class LEABRA_API AdaptISpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specifies adaptive kwta specs (esp for avg-based)
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies adaptive kwta specs (esp for avg-based)
 public:
   enum AdaptType {
     NONE,			// don't adapt anything
@@ -929,7 +929,7 @@ public:
 };
 
 class LEABRA_API ClampSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for clamping 
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping 
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs to this layer or not
   float		gain;		// #CONDEDIT_OFF_hard:true #DEF_0.5 starting soft clamp gain factor (net = gain * ext)
@@ -943,7 +943,7 @@ public:
 };
 
 class LEABRA_API DecaySpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds decay values
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values
 public:
   float		event;		// #DEF_1 proportion decay of state vars between events
   float		phase;		// #DEF_1 proportion decay of state vars between minus and plus phases 
@@ -958,7 +958,7 @@ public:
 };
 
 class LEABRA_API LayNetRescaleSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER global rescale of layer netinputs to prevent blowup
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra global rescale of layer netinputs to prevent blowup
 public:
   bool		on;		// whether to apply layer netinput rescaling
   float		max_net; 	// #CONDEDIT_ON_on:true #DEF_0.6 target maximum netinput value
@@ -972,7 +972,7 @@ public:
 };
 
 class LEABRA_API LeabraLayerSpec : public LayerSpec {
-  // Leabra layer specs, computes inhibitory input for all units in layer
+  // ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 public:
   enum Compute_I {		// how to compute the inhibition
     KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
@@ -1158,7 +1158,7 @@ public:
 SpecPtr_of(LeabraLayerSpec);
 
 class LEABRA_API AvgMaxVals : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds average and max statistics
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
 public:
   float		avg;		// average value
   float		max;		// maximum value
@@ -1172,7 +1172,7 @@ public:
 };
 
 class LEABRA_API KWTAVals : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for kwta stuff
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for kwta stuff
 public:
   int		k;       	// target number of active units for this collection
   float		pct;		// actual percent activity in group
@@ -1195,7 +1195,7 @@ public:
 };
 
 class LEABRA_API AdaptIVals : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for adapting kwta stuff
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for adapting kwta stuff
 public:
   float		avg_avg;	// average of the average activation in a layer
   float		i_kwta_pt;	// adapting point to place inhibition between k and k+1 for kwta
@@ -1210,7 +1210,7 @@ public:
 };
 
 class LEABRA_API InhibVals : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER holds values for inhibition
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for inhibition
 public:
   float		kwta;		// inhibition due to kwta function
   float		g_i;		// overall value of the inhibition
@@ -1225,7 +1225,7 @@ public:
 };
 
 class LEABRA_API LeabraInhib {
-  // holds threshold-computation values, used as a parent class for layers, etc
+  // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
 public:
   LeabraSort 	active_buf;	// #HIDDEN #NO_SAVE list of active units
   LeabraSort 	inact_buf;	// #HIDDEN #NO_SAVE list of inactive units
@@ -1250,7 +1250,7 @@ public:
 };
 
 class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
-  // Leabra Layer: implicit inhibition for soft kWTA behavior
+  // ##CAT_Leabra Leabra Layer: implicit inhibition for soft kWTA behavior
 INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// the spec for this layer: controls all functions of layer
@@ -1324,7 +1324,7 @@ protected:
 };
 
 class LEABRA_API LeabraUnit_Group : public Unit_Group, public LeabraInhib {
-  // for independent subgroups of competing units within a single layer
+  // ##CAT_Leabra for independent subgroups of competing units within a single layer
 public:
   int		misc_state;	// miscellaneous state variable
   int		misc_state1;	// second miscellaneous state variable 
@@ -1572,7 +1572,7 @@ inline void LeabraBiasSpec::B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
 //////////////////////////
 
 class LEABRA_API LeabraNetwork : public Network {
-  // Leabra network: has specific functions to operate on Leabra Networks
+  // ##CAT_Leabra Leabra network: has specific functions to operate on Leabra Networks
 INHERITED(Network)
 public:
   enum StateInit {		// ways of initializing the state of the network
@@ -1748,7 +1748,7 @@ void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* 
 //////////////////////////////////
 
 class LEABRA_API LeabraWizard : public Wizard {
-  // Leabra-specific wizard for automating construction of simulation objects
+  // ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 public:
   override void StdNetwork(Network* net = NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)

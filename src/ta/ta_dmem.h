@@ -47,9 +47,9 @@
 /////////////////////////////////////////////////////////////////
 //	communicator: use this to define groups of communicating units
 
-class TA_API DMemComm : public taNBase {
-  // defines a communicator group for dmem communication
-  INHERITED(taNBase)
+class TA_API DMemComm : public taBase {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem defines a communicator group for dmem communication
+  INHERITED(taBase)
 public:
   MPI_Comm	comm;		// #IGNORE the mpi communicator id
   MPI_Group	group;		// #IGNORE the mpi group id
@@ -80,7 +80,7 @@ public:
 };
 
 class TA_API DMemShareVar : public taBase {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
 public:
   MPI_Comm	comm;		// #IGNORE communicator associated with these shared objs
   int		mpi_type;	// #IGNORE mpi's type for this variable
@@ -121,7 +121,7 @@ public:
 };
 
 class TA_API DMemShare : public taBase_List {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS collection of objects that are shared across distributed processes: link the objects into this list to share them
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem collection of objects that are shared across distributed processes: link the objects into this list to share them
 public:
   taBase_List	vars;		// #IGNORE list of DMemShareVar variables, one for each share_set (set of variables to be shared at the same time)
   // NOTE: a share_set must all have the same variable type (e.g., all must be FLOAT or DOUBLE, etc)!
@@ -166,7 +166,7 @@ public:
 };
 
 class TA_API DMemAggVars : public taBase {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##CAT_DMem collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)
 public:
   MPI_Comm	comm;		// #IGNORE communicator to use in aggregating these variables
   MPI_Op	agg_op;		// #IGNORE operator to use in aggregation, if this is fixed and determined by the member comment directive (if dynamic, leave as -1)
@@ -213,9 +213,9 @@ public:
 #define DMEM_GUI_RUN_IF
 typedef int MPI_Comm;		// mpi communicator
 
-class TA_API DMemComm : public taNBase {
-  // defines a communicator group for dmem communication
-  INHERITED(taNBase)
+class TA_API DMemComm : public taBase {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem defines a communicator group for dmem communication
+  INHERITED(taBase)
 public:
 
   //  void	Dummy(const DMemComm&) { };
@@ -225,7 +225,7 @@ public:
 };
 
 class TA_API DMemShareVar : public taBase {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
 public:
 
   void	Dummy(const DMemShareVar&) { };
@@ -235,7 +235,7 @@ public:
 };
 
 class TA_API DMemShare : public taBase_List {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS collection of objects that are shared across distributed processes: link the objects into this list to share them
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem collection of objects that are shared across distributed processes: link the objects into this list to share them
 public:
   static void 	ExtractLocalFromList(taPtrList_impl&, taPtrList_impl&) { };
   // #IGNORE
@@ -247,7 +247,7 @@ public:
 };
 
 class TA_API DMemAggVars : public taBase {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)
 public:
 
   void	Dummy(const DMemAggVars&) { };

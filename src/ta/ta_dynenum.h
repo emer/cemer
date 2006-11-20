@@ -22,7 +22,7 @@
 #include "ta_TA_type.h"
 
 class TA_API DynEnumItem : public taNBase {
-  // #NO_TOKENS #NO_UPDATE_AFTER #INLINE dynamic enumerated type value (name and numerical int value)
+  // #NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Program dynamic enumerated type value (name and numerical int value)
 public:
   int		value;		// numerical (integer) value of this enum
   String	desc;		// description of item
@@ -35,7 +35,7 @@ public:
 };
 
 class TA_API DynEnum : public taList<DynEnumItem> {
-  // #NO_TOKENS #NO_UPDATE_AFTER #CHILDREN_INLINE dynamic enumerated type: list of dyn enum items
+  // #NO_TOKENS #NO_UPDATE_AFTER #CHILDREN_INLINE ##CAT_Program dynamic enumerated type: list of dyn enum items
 INHERITED(taList<DynEnumItem>)
 public:
   int	value_idx;		// index of current value in list of enums (-1 = not set)

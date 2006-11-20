@@ -1541,6 +1541,9 @@ public:
   TypeDef*		Clone()		{ return new TypeDef(*this); }
   TypeDef*		MakeToken()	{ return new TypeDef(); }
 
+  void			CleanupCats();
+  // cleanup the #CAT_ category options (allow for derived types to set new categories)
+
   void			DuplicateMDFrom(const TypeDef* old);
   // duplicates members, methods from given type
   void			UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw);

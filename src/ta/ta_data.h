@@ -84,7 +84,7 @@ private:
 };
 
 class TA_API ChannelSpec_List: public taList<ChannelSpec> {
-  // a list of channel specifications
+  // ##CAT_Data a list of channel specifications
 INHERITED(taList<ChannelSpec>)
 public:
   void		UpdateDataBlockSchema(DataBlock* db);

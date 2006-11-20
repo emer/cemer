@@ -39,7 +39,7 @@ public:
 };
 
 class LEABRA_API DaModSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for effects of da-based modulation: plus-phase = learning effects
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
 public:
   enum ModType {
     PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner
@@ -91,7 +91,7 @@ public:
 //////////////////////////////////////////
 
 class LEABRA_API AvgExtRewSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing average external rewards
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing average external rewards
 public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
   float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
@@ -104,7 +104,7 @@ public:
 };
 
 class LEABRA_API OutErrSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards based on output performance of network
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards based on output performance of network
 public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
   bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
@@ -119,7 +119,7 @@ public:
 };
 
 class LEABRA_API ExtRewSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER specs for computing external rewards
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards
 public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)
   float		norew_val;	// #DEF_0.5 reward value when no feedback information is present
@@ -264,7 +264,7 @@ public:
 //////////////////////////////////////////
 
 class LEABRA_API TDRewIntegSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER misc specs for TDRewIntegLayerSpec
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegLayerSpec
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
 

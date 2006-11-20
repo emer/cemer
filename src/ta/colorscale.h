@@ -42,7 +42,7 @@ typedef iColor* ptr_iColor; // hacks needed to force creation of TA_const_iColor
 typedef ptr_iColor const_iColor;
 
 class TA_API RGBA : public taNBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS Red Green Blue Alpha color specification
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color specification
 INHERITED(taNBase)
 public:
   float	r;			// red
@@ -67,7 +67,7 @@ private:
 };
 
 class TA_API RGBA_List : public taList<RGBA> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER list of RGBA objects
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of RGBA objects
 public:
   void	Initialize() 		{SetBaseType(&TA_RGBA); };
   void 	Destroy()		{ };
@@ -95,14 +95,15 @@ protected:
 };
 
 class TA_API TAColor_List : public taList<TAColor> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER list of TAColor objects
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of TAColor objects
 public:
   void	Initialize() 		{SetBaseType(&TA_TAColor); };
   void 	Destroy()		{ };
   TA_BASEFUNS(TAColor_List);
 };
 
-class TA_API ColorScaleSpec : public taNBase { // Color Spectrum Data
+class TA_API ColorScaleSpec : public taNBase {
+  // ##CAT_Display Color Spectrum Data
 INHERITED(taNBase)
 public:
   RGBA		background;	// background color
@@ -127,7 +128,9 @@ public:
 
 SmartRef_Of(ColorScaleSpec) // ColorScaleSpecRef
 
+// todo: should be a list?
 class TA_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
+  // ##CAT_Display group of color scale specs
 INHERITED(taGroup<ColorScaleSpec>)
 public:
   virtual void 		NewDefaults(); 	// create a set of default colors
@@ -147,7 +150,7 @@ public:
 //////////////////////////
 
 class TA_API ScaleRange : public taNBase {
-  // ##NO_TOKENS saves scale ranges for different variables viewed in netview
+  // ##NO_TOKENS ##CAT_Display saves scale ranges for different variables viewed in netview
 #ifndef __MAKETA__
 typedef taNBase inherited;
 #endif
@@ -169,7 +172,7 @@ private:
 
 
 class TA_API ScaleRange_List : public taList<ScaleRange> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER list of ScaleRange objects
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ScaleRange objects
 #ifndef __MAKETA__
 typedef taList<ScaleRange> inherited;
 #endif
@@ -182,7 +185,7 @@ public:
 
 
 class TA_API ColorScale : public taNBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER defines a range of colors to code data values with
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
 public:
   int			chunks;		// number of chunks to divide scale into
   float 		min;

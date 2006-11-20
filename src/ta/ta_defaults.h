@@ -32,7 +32,7 @@ public:
 #define MAX_DFT_LONGS (int)((256 / (sizeof(long) * 8)) + 1)
 
 class TA_API TypeDefault : public taNBase {
-  // ##EXT_def #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER Contains a default object of a type
+  // ##EXT_def #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER ##CAT_Project Contains a default object of a type
 public:
   TypeDef*	old_type;	// #HIDDEN #NO_SAVE has previous type (if default_type changes)
   TypeDef*	default_type;	// #TYPE_taBase type of the default

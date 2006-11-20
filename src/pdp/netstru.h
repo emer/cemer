@@ -842,7 +842,13 @@ protected:
 #endif
 };
 
-BaseGroup_of(Projection);
+class PDP_API Projection_Group: public taGroup<Projection> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network 
+public:
+  void	Initialize() 		{ SetBaseType(&TA_Projection); }
+  void 	Destroy()		{ };
+  TA_BASEFUNS(Projection_Group);
+};
 
 //////////////////////////////////////////////////////////
 // 	Inline Connection-level functions (fast)	//
@@ -1267,7 +1273,7 @@ protected:
 };
 
 class PDP_API Layer_Group : public taGroup<Layer> {
-  // group of layers
+  // ##CAT_Network group of layers
   INHERITED(taGroup<Layer>)
 public:
   TDCoord	pos;		// Position of Group of layers relative to network

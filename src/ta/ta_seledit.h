@@ -25,7 +25,7 @@
 //////////////////////////////////
 
 class TA_API SelectEditConfig : public taBase {
-  // #EDIT_INLINE ##NO_TOKENS special parameters for controlling the select edit display
+  // #EDIT_INLINE ##NO_TOKENS ##CAT_Display special parameters for controlling the select edit display
 public:
   bool		auto_edit;	// automatically bring up edit dialog upon loading
   String_Array	mbr_labels;	// extra labels at the start of each member label for the selected fields
@@ -40,7 +40,7 @@ public:
 };
 
 class TA_API SelectEdit : public taNBase {
-  // ##EXT_edit Selectively edit members from different objects
+  // ##EXT_edit ##CAT_Display Selectively edit members from different objects
 public:
   SelectEditConfig config;	// special parameters for controlling the display
 

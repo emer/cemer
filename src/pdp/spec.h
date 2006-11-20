@@ -28,7 +28,7 @@
 class BaseSpec;
 
 class PDP_API BaseSpec_Group: public taBase_Group {
-  // group of specs
+  // ##CAT_Spec group of specs
 INHERITED(taBase_Group)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
@@ -64,7 +64,7 @@ public:
 };
 
 class PDP_API BaseSpec : public taNBase {
-  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network base specification class
+  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##CAT_Spec base specification class
 INHERITED(taNBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
@@ -117,7 +117,7 @@ public:
 };
 
 class PDP_API BaseSubSpec : public taNBase {
-  // ##EXT_spec ##MEMB_IN_GPMENU specification class for sub-objects of specs
+  // ##EXT_spec ##MEMB_IN_GPMENU ##CAT_Spec specification class for sub-objects of specs
 INHERITED(taNBase)
 public:
   String_Array unique; // #HIDDEN string list of unique members
@@ -146,7 +146,7 @@ public:
 };
 
 class PDP_API SpecPtr_impl : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER magic pointer to a spec
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec magic pointer to a spec
 INHERITED(taBase)
 public:
   TAPtr		owner;		// #NO_SAVE #READ_ONLY to get to proj..

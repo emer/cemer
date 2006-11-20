@@ -1,9 +1,5 @@
 leabra todo list:
 
-* deal with dmem: 
-  * need checkconfig in unitspec to turn off opt.updt_wts when dmem_nprocs > 1!!
-    (can check the network comm np to get trl level np which is what matters)
-
 * dataops: random patterns!
 
 * program update var from obj trigger -- get this working!
@@ -13,17 +9,15 @@ leabra todo list:
 
 * relnet stat
 
-* add #CAT to everything in netstru and leabra.h, and fixup comments
-
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
 * change progs to pass data_table in same way network is passed?  maybe not?  why??
 
+* add #CAT to everything in netstru and leabra.h, and fixup comments
+
 -----------
 Program issues
-
-* checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
 
 css:
 
@@ -44,6 +38,8 @@ current bugs:
 
 -------
 lower pri:
+
+* checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
 
 * more color highlighting in general of programs?
 

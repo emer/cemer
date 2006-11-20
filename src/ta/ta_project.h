@@ -32,7 +32,7 @@
 class taProject;
 
 class TA_API taWizard : public taNBase {
-  // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
+  // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Wizard wizard for automating construction of simulation objects
 INHERITED(taNBase)
 public:
   bool		auto_open;	// open this wizard upon startup
@@ -49,7 +49,7 @@ private:
 };
 
 class TA_API Wizard_Group : public taGroup<taWizard> {
-  // group of wizard objects
+  // ##CAT_Wizard group of wizard objects
 INHERITED(taGroup<taWizard>)
 public:
   virtual void	AutoEdit();
@@ -60,7 +60,7 @@ public:
 };
 
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {
-  // group of select edit dialog objects
+  // ##CAT_Display group of select edit dialog objects
 INHERITED(taGroup<SelectEdit>)
 public:
   virtual void	AutoEdit();
@@ -72,7 +72,7 @@ public:
 
 
 class TA_API taProject : public taFBase {
-  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #HIDDEN Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
+  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
   String		desc;	// #EDIT_DIALOG description of the project
@@ -133,6 +133,7 @@ private:
 
 
 class TA_API Project_Group : public taGroup<taProject> {
+  //  ##CAT_Project group of projects
 INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
@@ -144,7 +145,7 @@ public:
 
 
 class TA_API taRootBase: public taNBase {
-  // base class for the root of the structural hierarchy (root. or . in css / paths)
+  // ##CAT_Project base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taNBase)
 public:
   String		version_no; 	// #READ_ONLY #SHOW current version number
