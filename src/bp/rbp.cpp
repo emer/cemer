@@ -78,8 +78,8 @@ void RBpUnitSpec::InitLinks() {
   taBase::Own(initial_act, this);
 }
 
-void RBpUnitSpec::InitState(Unit* u) {
-  BpUnitSpec::InitState(u);
+void RBpUnitSpec::Init_Acts(Unit* u) {
+  BpUnitSpec::Init_Acts(u);
   RBpUnit* ru = (RBpUnit*)u;
   ru->act = initial_act.Gen();
   // set initial net value too..
@@ -130,13 +130,13 @@ void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru) {
     Layer* fmlay = recv_gp->prjn->from;
     if(fmlay->lesion || !(fmlay->ext_flag & Unit::EXT))
       continue;		// don't get from the non-clamped layers!
-    ru->clmp_net += recv_gp->Compute_Net(ru);
+    ru->clmp_net += recv_gp->Compute_Netin(ru);
   }
   if(ru->bias != NULL)
     ru->clmp_net += ru->bias->wt;
 }
 
-void RBpUnitSpec::Compute_Net(Unit* u) {
+void RBpUnitSpec::Compute_Netin(Unit* u) {
   RBpUnit* ru = (RBpUnit*)u;
   ru->prv_net = ru->net; // save current net as previous
   if(fast_hard_clamp_net) {
@@ -147,11 +147,11 @@ void RBpUnitSpec::Compute_Net(Unit* u) {
       Layer* fmlay = recv_gp->prjn->from;
       if(fmlay->lesion || (fmlay->ext_flag & Unit::EXT))
 	continue;		// don't get from the clamped layers
-      u->net += recv_gp->Compute_Net(u);
+      u->net += recv_gp->Compute_Netin(u);
     }
   }
   else {
-    BpUnitSpec::Compute_Net(u);
+    BpUnitSpec::Compute_Netin(u);
   }
 }
 
@@ -224,10 +224,10 @@ void RBpUnitSpec::Compute_dWt(Unit* u) {
   ((BpConSpec*)bias_spec.spec)->B_Compute_dWt((BpCon*)u->bias, (BpUnit*)u);
 }
 
-void RBpUnitSpec::UpdateWeights(Unit* u) {
+void RBpUnitSpec::Compute_Weights(Unit* u) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts) return; // don't update for clamped units
-  UnitSpec::UpdateWeights(u);
-  ((BpConSpec*)bias_spec.spec)->B_UpdateWeights((BpCon*)u->bias, (BpUnit*)u);
+  UnitSpec::Compute_Weights(u);
+  ((BpConSpec*)bias_spec.spec)->B_Compute_Weights((BpCon*)u->bias, (BpUnit*)u);
 }
 
 
@@ -273,11 +273,11 @@ void RBpUnit::Copy_(const RBpUnit& cp) {
   acts = cp.acts;
 }
 
-void RBpUnit::InitExterns() {
+void RBpUnit::Init_InputData() {
   prv_ext_flag = ext_flag;
   prv_targ = targ;
   prv_ext = ext;
-  BpUnit::InitExterns();
+  BpUnit::Init_InputData();
 }
 
 void RBpUnit::StoreState() {

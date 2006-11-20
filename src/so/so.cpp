@@ -55,8 +55,8 @@ void SoUnitSpec::Initialize() {
   min_obj_type = &TA_SoUnit;
 }
 
-void SoUnitSpec::InitState(Unit* u) {
-  UnitSpec::InitState(u);
+void SoUnitSpec::Init_Acts(Unit* u) {
+  UnitSpec::Init_Acts(u);
   ((SoUnit*)u)->act_i = 0.0f;
 }
 
@@ -168,11 +168,11 @@ SoUnit* SoLayerSpec::FindWinner(SoLayer* lay) {
 }
 
 // default layerspec just iterates over units
-void SoLayerSpec::Compute_Net(SoLayer* lay) {
+void SoLayerSpec::Compute_Netin(SoLayer* lay) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, lay->units., i)
-    u->Compute_Net();
+    u->Compute_Netin();
 }
 
 void SoLayerSpec::Compute_Act(SoLayer* lay) {
@@ -191,11 +191,11 @@ void SoLayerSpec::Compute_dWt(SoLayer* lay) {
     u->Compute_dWt();
 }
 
-void SoLayerSpec::UpdateWeights(SoLayer* lay) {
+void SoLayerSpec::Compute_Weights(SoLayer* lay) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, lay->units., i)
-    u->UpdateWeights();
+    u->Compute_Weights();
 }
 
 void SoLayerSpec::Compute_AvgAct(SoLayer* lay) {
@@ -260,7 +260,7 @@ void SoTrial::Compute_Act() {
   Layer* lay;
   taLeafItr l;
   FOR_ITR_EL(Layer, lay, network->layers., l) {
-    lay->Compute_Net();
+    lay->Compute_Netin();
 #ifdef DMEM_COMPILE    
     lay->DMem_SyncNet();
 #endif
@@ -273,7 +273,7 @@ void SoTrial::Compute_dWt() {
 }
 
 void SoTrial::Loop() {
-  network->InitExterns();
+  network->Init_InputData();
   if(cur_event) {      
     cur_event->ApplyPatterns(network);
   }

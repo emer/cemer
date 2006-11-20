@@ -288,7 +288,7 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
 
 // todo: this assumes that things are in order.. (can't really check otherwise)
 // which breaks for clipped patterns
-void TesselPrjnSpec::C_InitWtState(Projection*, Con_Group* cg, Unit*) {
+void TesselPrjnSpec::C_Init_Weights(Projection*, Con_Group* cg, Unit*) {
   int mxi = MIN(cg->size, send_offs.size);
   int i;
   for(i=0; i<mxi; i++) {
@@ -936,7 +936,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
-void PolarRndPrjnSpec::C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru) {
+void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru) {
   int i;
   for(i=0; i<cg->size; i++) {
     cg->Cn(i)->wt = GetDistProb(prjn, ru, cg->Un(i));

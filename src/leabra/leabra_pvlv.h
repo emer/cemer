@@ -44,7 +44,7 @@
 // TODO: the syndep in this code cannot be parallelized over dwt's because the dynamics will
 // be different!!!
 // need to have a dmem small_batch over sequences type mode that does a SyncWts using sum_dwts = false
-// and calls UpdateWeights after each trial..
+// and calls Compute_Weights after each trial..
 // problem is that this does averaging of dwts;  one soln is to keep the
 // orig wt from last wt change, apply dwt every trial, and then subtract wt - origwt ->dwt
 // aggretate these dwts as a SUM, apply to wts!

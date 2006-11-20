@@ -1292,7 +1292,7 @@ public:
 };
 
 class InitWtsProc : public Process {
-  // initialize the network's weights (InitWtState)
+  // initialize the network's weights (Init_Weights)
 INHERITED(Process)
 public:
   

@@ -51,14 +51,13 @@ class CsGoodStat;
 class CsCon : public Connection {
   // connection values for constraint satisfaction
 public:
-  float 	dwt;		// #NO_SAVE the current change in weight
   float		pdw;		// #NO_SAVE the previous delta-weight (for momentum)
   float		dwt_agg;	// #NO_VIEW #NO_SAVE variable for aggregating the outer-prods
 
-  void 	Initialize()		{ dwt = dwt_agg = pdw= 0.0f; }
+  void 	Initialize()		{ dwt_agg = pdw= 0.0f; }
   void 	Destroy()		{ };
   void	Copy_(const CsCon& cp)
-  { dwt = cp.dwt; dwt_agg = cp.dwt_agg; pdw = cp.pdw; }
+  { dwt_agg = cp.dwt_agg; pdw = cp.pdw; }
   COPY_FUNS(CsCon, Connection);
   TA_BASEFUNS(CsCon);
 };
@@ -79,11 +78,8 @@ public:
   void 		(*decay_fun)(CsConSpec* spec, CsCon* cn, Unit* ru, Unit* su);
   // #LIST_CsConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  void 		C_InitWtDelta(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_InitWtDelta(cg, cn, ru, su); CsCon* c = (CsCon*)cn; c->dwt=0.0f; }
-
-  void 		C_InitWtState(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_InitWtState(cg, cn, ru, su); ((CsCon*)cn)->pdw = 0.0f; }
+  void 		C_Init_Weights(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
+  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((CsCon*)cn)->pdw = 0.0f; }
 
   inline void		C_Aggregate_dWt(CsCon* cn, CsUnit* ru, 
 				      CsUnit* su, float phase);
@@ -98,9 +94,9 @@ public:
   inline void		Compute_dWt(Con_Group* cg, Unit* ru);
   inline virtual void	B_Compute_dWt(CsCon* cn, CsUnit* ru);
   
-  inline void		C_UpdateWeights(CsCon* cn, Unit* ru, Unit* su);
-  inline void		UpdateWeights(Con_Group* cg, Unit* ru);
-  inline virtual void	B_UpdateWeights(CsCon* cn, Unit* ru);
+  inline void		C_Compute_Weights(CsCon* cn, Unit* ru, Unit* su);
+  inline void		Compute_Weights(Con_Group* cg, Unit* ru);
+  inline virtual void	B_Compute_Weights(CsCon* cn, Unit* ru);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -158,16 +154,15 @@ public:
   bool		use_sharp;		// true if gain sched is used to sharpen acts
   Schedule	gain_sched;		// #CONDEDIT_ON_use_sharp:true schedule of gain multipliers
 
-  void		InitState(Unit* u);
-  void		ModifyState(Unit* u);   // decay unit state towards midpoint (or rest)
-  void 		InitWtState(Unit* u); 	// also init aggregation stuff
+  void		Init_Acts(Unit* u);
+  void 		Init_Weights(Unit* u); 	// also init aggregation stuff
 
   virtual void 	Compute_ClampAct(CsUnit* u);
   // hard-fast-clamp inputs (at start of settling)
   virtual void 	Compute_ClampNet(CsUnit* u);
   // compute net input from clamped inputs (at start of settling)
 
-  void 		Compute_Net(Unit* u); 		// add bias
+  void 		Compute_Netin(Unit* u); 		// add bias
   void		Compute_Act(Unit* u)		// if no cycle is passed
   { Compute_Act(u,-1, 0); }
   virtual void 	Compute_Act(Unit* u, int cycle, int phase);
@@ -176,7 +171,7 @@ public:
   
   void		Aggregate_dWt(Unit* u, int phase);
   void		Compute_dWt(Unit* u);
-  void		UpdateWeights(Unit* u);		// add update bias weight
+  void		Compute_Weights(Unit* u);		// add update bias weight
 
   virtual void	PostSettle(CsUnit* u, int phase);
   // set stuff after settling is over
@@ -235,7 +230,7 @@ public:
   // pay attn to send_thresh? if so, need SYNC_SENDER_BASED in cycle proc, sender based netin
   float		send_thresh;	// #CONDEDIT_ON_use_send_thresh:true threshold below which unit does not send act
 
-  void		Send_Net(Unit* u, Layer* tolay);	// do sender-based stuff
+  void		Send_Netin(Unit* u, Layer* tolay);	// do sender-based stuff
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
   void	UpdateAfterEdit();	// update gain from decay
@@ -280,7 +275,7 @@ public:
   float		act_p;		// plus phase activation
   int		n_dwt_aggs;	// number of delta-weight aggregations performed
 
-  void 	InitDelta()	{ net = bias->wt + clmp_net; } // for sender based
+  void 	Init_Netin()	{ net = bias->wt + clmp_net; } // for sender based
   void		Compute_ClampAct() 
   { ((CsUnitSpec*)spec.spec)->Compute_ClampAct(this); }
   void		Compute_ClampNet() 
@@ -343,7 +338,7 @@ inline void CsConSpec::C_Compute_WtDecay(CsCon* cn, Unit* ru, Unit* su) {
     (*decay_fun)(this, cn, ru, su);
 }
 
-inline void CsConSpec::C_UpdateWeights(CsCon* cn, Unit* ru, Unit* su) {
+inline void CsConSpec::C_Compute_Weights(CsCon* cn, Unit* ru, Unit* su) {
   C_Compute_WtDecay(cn, ru, su);
 // normalized
 //  cn->pdw = (momentum_c * cn->dwt) + (momentum * cn->pdw);
@@ -352,12 +347,12 @@ inline void CsConSpec::C_UpdateWeights(CsCon* cn, Unit* ru, Unit* su) {
   cn->wt += lrate * cn->pdw;	
   cn->dwt = 0.0f;
 }
-inline void CsConSpec::UpdateWeights(Con_Group* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_UpdateWeights((CsCon*)cg->Cn(i), ru, cg->Un(i)));
+inline void CsConSpec::Compute_Weights(Con_Group* cg, Unit* ru) {
+  CON_GROUP_LOOP(cg, C_Compute_Weights((CsCon*)cg->Cn(i), ru, cg->Un(i)));
   ApplyLimits(cg, ru);
 }
-inline void CsConSpec::B_UpdateWeights(CsCon* cn, Unit* ru) {
-  C_UpdateWeights(cn, ru, NULL);
+inline void CsConSpec::B_Compute_Weights(CsCon* cn, Unit* ru) {
+  C_Compute_Weights(cn, ru, NULL);
   C_ApplyLimits(cn, ru, NULL);
 }
 

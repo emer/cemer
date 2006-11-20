@@ -63,8 +63,8 @@ void DaModUnitSpec::Defaults() {
   Initialize();
 }
 
-void DaModUnitSpec::InitState(LeabraUnit* u, LeabraLayer* lay) {
-  LeabraUnitSpec::InitState(u, lay);
+void DaModUnitSpec::Init_Acts(LeabraUnit* u, LeabraLayer* lay) {
+  LeabraUnitSpec::Init_Acts(u, lay);
   DaModUnit* lu = (DaModUnit*)u;
   lu->act_m2 = 0.0f;
   lu->act_p2 = 0.0f;
@@ -127,18 +127,18 @@ void DaModUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* 
   Compute_dWt_impl(u, lay, net);
 }
 
-void DaModUnitSpec::UpdateWeights(Unit* u) {
+void DaModUnitSpec::Compute_Weights(Unit* u) {
   if(!da_mod.p_dwt) {
-    LeabraUnitSpec::UpdateWeights(u);
+    LeabraUnitSpec::Compute_Weights(u);
     return;
   }
   DaModUnit* lu = (DaModUnit*)u;
-  ((LeabraConSpec*)bias_spec.spec)->B_UpdateWeights((LeabraCon*)u->bias, lu, this);
+  ((LeabraConSpec*)bias_spec.spec)->B_Compute_Weights((LeabraCon*)u->bias, lu, this);
   if(opt_thresh.updt_wts && 
      ((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)) &&
       ((lu->p_act_p <= opt_thresh.learn) && (lu->p_act_m <= opt_thresh.learn)))
     return;
-  UnitSpec::UpdateWeights(lu);
+  UnitSpec::Compute_Weights(lu);
 }
 
 void DaModUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net) {
@@ -707,8 +707,8 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return true;
 }
 
-void TDRewPredLayerSpec::InitState(LeabraLayer* lay) {
-  ScalarValLayerSpec::InitState(lay);
+void TDRewPredLayerSpec::Init_Acts(LeabraLayer* lay) {
+  ScalarValLayerSpec::Init_Acts(lay);
   // initialize the misc_1 variable to 0.0 -- no prior predictions!
   UNIT_GP_ITR(lay, 
       LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
@@ -779,7 +779,7 @@ void TDRewPredLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
   }
   else {
     lay->hard_clamped = false;	// run free: generate prediction of future reward
-    lay->InitExterns();
+    lay->Init_InputData();
   }
 }
 

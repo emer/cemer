@@ -321,12 +321,12 @@ int  	taMisc::console_font_size = 10;
 String  taMisc::font_name = "Verdana"; // looks nice on Win
 int  	taMisc::font_size = 10;
 String  taMisc::console_font_name = "Fixed";
-int  	taMisc::console_font_size = 8;
+int  	taMisc::console_font_size = 10;
 #else // Linux or some Unix variant
 String  taMisc::font_name = "Nimbus Sans";
 int  	taMisc::font_size = 10;
 String  taMisc::console_font_name = "LucidaTypewriter";
-int  	taMisc::console_font_size = 8;
+int  	taMisc::console_font_size = 10;
 #endif
 int	taMisc::display_width = 80;
 int	taMisc::sep_tabs = 2;

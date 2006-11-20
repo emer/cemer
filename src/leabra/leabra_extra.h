@@ -28,11 +28,11 @@ class LEABRA_API MarkerConSpec : public LeabraConSpec {
   // connection spec that marks special projections: doesn't send netin or adapt weights
 public:
   // don't send regular net inputs or learn!
-  inline float 	Compute_Net(Con_Group*, Unit*) { return 0.0f; }
-  inline void 	Send_Net(Con_Group*, Unit*) { };
-  inline void 	Send_NetDelta(LeabraCon_Group*, LeabraUnit*) { };
+  inline float 	Compute_Netin(Con_Group*, Unit*) { return 0.0f; }
+  inline void 	Send_Netin(Con_Group*, Unit*) { };
+  inline void 	Send_NetinDelta(LeabraCon_Group*, LeabraUnit*) { };
   inline void 	Compute_dWt(Con_Group*, Unit*) { };
-  inline void	UpdateWeights(Con_Group*, Unit*) { };
+  inline void	Compute_Weights(Con_Group*, Unit*) { };
 
   bool	 DMem_AlwaysLocal() { return true; }
   // these connections always need to be there on all nodes..
@@ -107,7 +107,7 @@ public:
   float		decay;		// rate of weight decay towards zero 
   bool		updt_immed;	// update weights immediately when weights are changed
 
-  inline void	B_UpdateWeights(LeabraCon* cn, LeabraUnit* ru, LeabraUnitSpec* rus) {
+  inline void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru, LeabraUnitSpec* rus) {
     if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
       if(ru->act_avg < rus->act_reg.min)
 	cn->dwt += cur_lrate * rus->act_reg.wt_dt;
@@ -125,7 +125,7 @@ public:
 
   inline void	B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
     LeabraBiasSpec::B_Compute_dWt(cn, ru);
-    if(updt_immed) B_UpdateWeights(cn, ru, (LeabraUnitSpec*)ru->spec.spec);
+    if(updt_immed) B_Compute_Weights(cn, ru, (LeabraUnitSpec*)ru->spec.spec);
   }
 
   void 	Initialize();
@@ -206,16 +206,16 @@ public:
     CON_GROUP_LOOP(cg, C_Reset_EffWt((TrialSynDepCon*)cg->Cn(i)));
   }
 
-  void 	C_InitWtState_Post(Con_Group*, Connection* cn, Unit*, Unit*) {
+  void 	C_Init_Weights_Post(Con_Group*, Connection* cn, Unit*, Unit*) {
     TrialSynDepCon* lcn = (TrialSynDepCon*)cn; lcn->effwt = lcn->wt;
   }
 
-  float C_Compute_Net(TrialSynDepCon* cn, Unit*, Unit* su) {
+  float C_Compute_Netin(TrialSynDepCon* cn, Unit*, Unit* su) {
     return cn->effwt * su->act;
   }
-  float Compute_Net(Con_Group* cg, Unit* ru) {
+  float Compute_Netin(Con_Group* cg, Unit* ru) {
     float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Net((TrialSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((TrialSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
     return ((LeabraCon_Group*)cg)->scale_eff * rval;
   }
   void C_Send_Inhib(LeabraCon_Group* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
@@ -224,14 +224,14 @@ public:
   void Send_Inhib(LeabraCon_Group* cg, LeabraUnit* su) {
     CON_GROUP_LOOP(cg, C_Send_Inhib(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
   }
-  void C_Send_Net(LeabraCon_Group* cg, TrialSynDepCon* cn, Unit* ru, Unit* su) {
+  void C_Send_Netin(LeabraCon_Group* cg, TrialSynDepCon* cn, Unit* ru, Unit* su) {
     ru->net += ((LeabraCon_Group*)ru->recv.FastGp(cg->other_idx))->scale_eff * su->act * cn->effwt;
   }
-  void Send_Net(Con_Group* cg, Unit* su) {
+  void Send_Netin(Con_Group* cg, Unit* su) {
     if(inhib)
       Send_Inhib((LeabraCon_Group*)cg, (LeabraUnit*)su);
     else {
-      CON_GROUP_LOOP(cg, C_Send_Net((LeabraCon_Group*)cg, (TrialSynDepCon*)cg->Cn(i), cg->Un(i), su));
+      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraCon_Group*)cg, (TrialSynDepCon*)cg->Cn(i), cg->Un(i), su));
     }
   }
   void C_Send_InhibDelta(LeabraCon_Group* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
@@ -240,14 +240,14 @@ public:
   void Send_InhibDelta(LeabraCon_Group* cg, LeabraUnit* su) {
     CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
   }
-  void C_Send_NetDelta(LeabraCon_Group* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  void C_Send_NetinDelta(LeabraCon_Group* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     ru->net_delta += ((LeabraCon_Group*)ru->recv.FastGp(cg->other_idx))->scale_eff * su->act_delta * cn->effwt;
   }
-  void Send_NetDelta(LeabraCon_Group* cg, LeabraUnit* su) {
+  void Send_NetinDelta(LeabraCon_Group* cg, LeabraUnit* su) {
     if(inhib)
       Send_InhibDelta(cg, su);
     else {
-      CON_GROUP_LOOP(cg, C_Send_NetDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
     }
   }
   void C_Send_ClampNet(LeabraCon_Group* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
@@ -305,7 +305,7 @@ public:
 // TODO: the decay in this code cannot be parallelized over dwt's because the dynamics will
 // be different!!!
 // need to have a dmem small_batch over sequences type mode that does a SyncWts using sum_dwts = false
-// and calls UpdateWeights after each trial..
+// and calls Compute_Weights after each trial..
 
 // TODO: following code is not dealing with contrast enhancement on the swt vals!!!!
 
@@ -314,12 +314,12 @@ class LEABRA_API FastWtConSpec : public LeabraConSpec {
 public:
   FastWtSpec	fast_wt;	// fast weight specs: fast weights are added in separately to overall weight value as an increment (
 
-  void 		C_InitWtState_Post(Con_Group*, Connection* cn, Unit*, Unit*) {
+  void 		C_Init_Weights_Post(Con_Group*, Connection* cn, Unit*, Unit*) {
     FastWtCon* lcn = (FastWtCon*)cn; lcn->swt = lcn->wt;
   }
 
-  void 		C_InitWtDelta(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_InitWtDelta(cg, cn, ru, su); ((FastWtCon*)cn)->sdwt=0.0f; }
+  void 		C_Init_dWt(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
+  { ConSpec::C_Init_dWt(cg, cn, ru, su); ((FastWtCon*)cn)->sdwt=0.0f; }
 
   void SetCurLrate(int epoch, LeabraNetwork* net);
 
@@ -386,7 +386,7 @@ public:
     }
   }
 
-  inline void C_UpdateWeights(FastWtCon* cn, LeabraCon_Group* cg,
+  inline void C_Compute_Weights(FastWtCon* cn, LeabraCon_Group* cg,
 			      LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
   {
     if(cn->sdwt != 0.0f) {
@@ -410,22 +410,22 @@ public:
     cn->sdwt = 0.0f;
   }
 
-  inline void C_UpdateWeightsActReg(FastWtCon* cn, LeabraCon_Group* cg,
+  inline void C_Compute_WeightsActReg(FastWtCon* cn, LeabraCon_Group* cg,
 				    LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus)
   {
     C_Compute_ActReg(cn, cg, ru, su, rus);
-    C_UpdateWeights(cn, cg, ru, su, rus);
+    C_Compute_Weights(cn, cg, ru, su, rus);
   }
 
-  inline void UpdateWeights(Con_Group* cg, Unit* ru) {
+  inline void Compute_Weights(Con_Group* cg, Unit* ru) {
     LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->spec.spec;
     LeabraCon_Group* lcg = (LeabraCon_Group*)cg;
     if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
-      CON_GROUP_LOOP(cg, C_UpdateWeightsActReg((FastWtCon*)cg->Cn(i), lcg,
+      CON_GROUP_LOOP(cg, C_Compute_WeightsActReg((FastWtCon*)cg->Cn(i), lcg,
 					       (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
     }
     else {
-      CON_GROUP_LOOP(cg, C_UpdateWeights((FastWtCon*)cg->Cn(i), lcg,
+      CON_GROUP_LOOP(cg, C_Compute_Weights((FastWtCon*)cg->Cn(i), lcg,
 					 (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
     }
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
@@ -615,8 +615,8 @@ public:
   virtual void	Compute_BiasVal(LeabraLayer* lay);
   // initialize the bias value 
 
-  void 	InitWtState(LeabraLayer* lay);
-  void	Compute_NetScale(LeabraLayer* lay, LeabraNetwork* net);
+  void 	Init_Weights(LeabraLayer* lay);
+  void	Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
@@ -654,7 +654,7 @@ public:
 
   virtual void	Connect_UnitGroup(Unit_Group* gp, Projection* prjn);
   void		Connect_impl(Projection* prjn);
-  void		C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru);
+  void		C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru);
   // uses weight values as specified in the tesselel's
 
   void	Initialize();
@@ -769,8 +769,8 @@ public:
   virtual void	Compute_BiasVal(LeabraLayer* lay);
   // initialize the bias value 
 
-  void 	InitWtState(LeabraLayer* lay);
-  void	Compute_NetScale(LeabraLayer* lay, LeabraNetwork* net);
+  void 	Init_Weights(LeabraLayer* lay);
+  void	Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
 
@@ -855,7 +855,7 @@ public:
   GaborFilterSpec gabor_spec; // #READ_ONLY underlying gabor generator
   DoGFilterSpec dog_spec; // #READ_ONLY underlying DoG generator 
   
-  void		C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru);
+  void		C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru);
   // set gabor weights
 
   virtual bool 	InitGaborDoGSpec(Projection* prjn, int recv_idx);

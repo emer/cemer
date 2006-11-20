@@ -35,12 +35,11 @@ class SoLayerSpec;
 class SoCon : public Connection {
   // generic self-organizing algorithm connection
 public:
-  float		dwt;		// #NO_VIEW #NO_SAVE resulting net weight change
   float		pdw;		// #NO_SAVE previous delta-weight change
 
-  void 	Initialize()		{ dwt = pdw = 0.0f; }
+  void 	Initialize()		{ pdw = 0.0f; }
   void	Destroy()		{ };
-  void	Copy_(const SoCon& cp)	{ dwt = cp.dwt; pdw = cp.pdw; }
+  void	Copy_(const SoCon& cp)	{ pdw = cp.pdw; }
   COPY_FUNS(SoCon, Connection);
   TA_BASEFUNS(SoCon);
 };
@@ -56,14 +55,11 @@ public:
   float		lrate;		// learning rate
   AvgInActSource avg_act_source; // source of average input actviation value
 
-  void 		C_InitWtDelta(Con_Group* cg, Connection* cn, Unit* ru, Unit* su) 
-  { ConSpec::C_InitWtDelta(cg, cn, ru, su); ((SoCon*)cn)->dwt=0.0f; }
+  void 		C_Init_Weights(Con_Group* cg, Connection* cn, Unit* ru, Unit* su) 
+  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((SoCon*)cn)->pdw=0.0f; }
 
-  void 		C_InitWtState(Con_Group* cg, Connection* cn, Unit* ru, Unit* su) 
-  { ConSpec::C_InitWtState(cg, cn, ru, su); ((SoCon*)cn)->pdw=0.0f; }
-
-  inline void	C_UpdateWeights(SoCon* cn, Unit* ru, Unit* su); 
-  inline void	UpdateWeights(Con_Group* cg, Unit* ru);
+  inline void	C_Compute_Weights(SoCon* cn, Unit* ru, Unit* su); 
+  inline void	Compute_Weights(Con_Group* cg, Unit* ru);
 
   inline virtual void	Compute_AvgInAct(SoCon_Group* cg, Unit* ru);
   // compute the average input activation 
@@ -96,7 +92,7 @@ public:
 class SoUnitSpec : public UnitSpec {
   // generic self-organizing unit spec: linear act of std dot-product netin
 public:
-  void		InitState(Unit* u);
+  void		Init_Acts(Unit* u);
 
   void		Compute_Act(Unit* u);
 
@@ -156,11 +152,11 @@ public:
   virtual SoUnit*	FindWinner(SoLayer* lay);
   // finds the winning unit according to netin_type (clears acts too)
 
-  virtual void	Compute_Net(SoLayer* lay);
+  virtual void	Compute_Netin(SoLayer* lay);
   virtual void	Compute_Act(SoLayer* lay);
   virtual void	Compute_AvgAct(SoLayer* lay);
   virtual void	Compute_dWt(SoLayer* lay);
-  virtual void	UpdateWeights(SoLayer* lay);
+  virtual void	Compute_Weights(SoLayer* lay);
 
   void	Initialize();
   void	Destroy()	{ };
@@ -180,11 +176,11 @@ public:
   Unit*		winner;		// #READ_ONLY winning unit
 
   // the spec now does all of the updating..
-  void		Compute_Net()		{ spec->Compute_Net(this); }
+  void		Compute_Netin()		{ spec->Compute_Netin(this); }
   void		Compute_Act()		{ spec->Compute_Act(this); }
   void		Compute_AvgAct()	{ spec->Compute_AvgAct(this); }
   void		Compute_dWt()		{ spec->Compute_dWt(this); }
-  void		UpdateWeights()		{ spec->UpdateWeights(this); }
+  void		Compute_Weights()		{ spec->Compute_Weights(this); }
 
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
@@ -203,13 +199,13 @@ public:
 //	Inline Functions	//
 //////////////////////////////////
 
-inline void SoConSpec::C_UpdateWeights(SoCon* cn, Unit*, Unit*) {
+inline void SoConSpec::C_Compute_Weights(SoCon* cn, Unit*, Unit*) {
   cn->pdw = cn->dwt;
   cn->wt += lrate * cn->dwt;
   cn->dwt = 0.0f;
 }
-inline void SoConSpec::UpdateWeights(Con_Group* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_UpdateWeights((SoCon*)cg->Cn(i), ru, cg->Un(i)));
+inline void SoConSpec::Compute_Weights(Con_Group* cg, Unit* ru) {
+  CON_GROUP_LOOP(cg, C_Compute_Weights((SoCon*)cg->Cn(i), ru, cg->Un(i)));
   ApplyLimits(cg, ru);
 }
 

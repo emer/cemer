@@ -25,7 +25,7 @@
 class SomUnitSpec : public SoUnitSpec {
   // self-organizing feature maps: net input is distance, not raw netin
 public:
-  void 		Compute_Net(Unit* u); // redefine to call compute_dist
+  void 		Compute_Netin(Unit* u); // redefine to call compute_dist
 
   void	Initialize()	{ };
   void	Destroy()	{ };

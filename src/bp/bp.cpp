@@ -112,8 +112,8 @@ void BpUnitSpec::SetCurLrate(BpUnit* u, int epoch) {
     recv_gp->SetCurLrate(epoch);
 }
 
-void BpUnitSpec::InitState(Unit* u) {
-  UnitSpec::InitState(u);
+void BpUnitSpec::Init_Acts(Unit* u) {
+  UnitSpec::Init_Acts(u);
   BpUnit* bu = (BpUnit*)u;
   bu->err = bu->dEdA = bu->dEdNet = 0.0f;
 }
@@ -151,10 +151,10 @@ void BpUnitSpec::Compute_dWt(Unit* u) {
   ((BpConSpec*)bias_spec.spec)->B_Compute_dWt((BpCon*)u->bias, (BpUnit*)u);
 }
 
-void BpUnitSpec::UpdateWeights(Unit* u) {
+void BpUnitSpec::Compute_Weights(Unit* u) {
   if(u->ext_flag & Unit::EXT)  return; // don't update for clamped units
-  UnitSpec::UpdateWeights(u);
-  ((BpConSpec*)bias_spec.spec)->B_UpdateWeights((BpCon*)u->bias, (BpUnit*)u);
+  UnitSpec::Compute_Weights(u);
+  ((BpConSpec*)bias_spec.spec)->B_Compute_Weights((BpCon*)u->bias, (BpUnit*)u);
 }
 
 /*TODO void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
@@ -308,8 +308,8 @@ void BpContextSpec::UpdateAfterEdit() {
   return true;
 } */
 
-void BpContextSpec::InitState(Unit* u) {
-  BpUnitSpec::InitState(u);
+void BpContextSpec::Init_Acts(Unit* u) {
+  BpUnitSpec::Init_Acts(u);
   u->act = initial_act.Gen();
 }
 
@@ -441,7 +441,7 @@ void RBFBpUnitSpec::UpdateAfterEdit() {
   denom_const = 0.5f / var;
 }
 
-void RBFBpUnitSpec::Compute_Net(Unit* u) {
+void RBFBpUnitSpec::Compute_Netin(Unit* u) {
   // do distance instead of net input
   u->net = 0.0f;
   Con_Group* recv_gp;
@@ -574,7 +574,7 @@ void BpNetwork::Compute_Act() {
   FOR_ITR_EL(Layer, lay, layers., l_itr) {
     if (lay->lesion)	continue;
     if (!(lay->ext_flag & Unit::EXT)) {
-      lay->Compute_Net();
+      lay->Compute_Netin();
 #ifdef DMEM_COMPILE
       lay->DMem_SyncNet();
 #endif

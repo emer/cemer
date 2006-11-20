@@ -18,7 +18,7 @@
 #include "som.h"
 #include <pdp/net_iv.h>		// for the "from netview" thing
 
-void SomUnitSpec::Compute_Net(Unit* u) {
+void SomUnitSpec::Compute_Netin(Unit* u) {
   // Modified by Danke, Feb. 9, 2003
   if (u->ext_flag & Unit::EXT)
     u->net = u->ext;

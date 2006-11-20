@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][2] { 
+Program .projects[1].programs.gp[0][2] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -13,20 +13,14 @@ Program .projects[0].programs.gp[0][2] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [6] {
+  ProgEl_List @.prog_code = [7] {
     NetCounterInit @[0] { };
     ProgramCall @[1] { 
-      ProgArg_List @.prog_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-      };
-    };
-    ProgramCall @[2] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    GroupedDataLoop @[3] { 
+    GroupedDataLoop @[2] { 
       ProgEl_List @.loop_code = [3] {
 	ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [1] {
@@ -41,17 +35,23 @@ Program .projects[0].programs.gp[0][2] {
 	NetCounterIncr @[2] { };
       };
     };
-    MethodCall @[4] { };
-    ProgramCall @[5] { 
+    BasicDataLoop @[3] { };
+    IfElse @[4] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
+    MethodCall @[5] { };
+    ProgramCall @[6] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
     };
   };
 };
-Program .projects[0].programs.gp[0][2] {
+Program .projects[1].programs.gp[0][2] {
  name="LeabraEpochGpData";
- desc="iterates over all of the groups and then items in a data table and calls LeabraTrial process on them";
+ desc="iterates over all of the items in a data table and calls LeabraTrial process on them (GroupedDataLoop version)";
  flags=PF_NONE;
  objs {
   name=;
@@ -66,7 +66,7 @@ Program .projects[0].programs.gp[0][2] {
    name="network";
    var_type=T_Object;
    object_type=LeabraNetwork;
-   object_val=.projects[0].networks[0]$0$;
+   object_val=.projects[1].networks[0]$0$;
    objs_ptr=0;
    desc=;
   };
@@ -78,7 +78,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[0] {
    name="trial";
    var_type=T_Int;
-   int_val=9;
+   int_val=19;
    objs_ptr=0;
    desc=;
   };
@@ -86,7 +86,7 @@ Program .projects[0].programs.gp[0][2] {
    name="train_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$1$;
+   object_val=.projects[1].data.gp[0][0]$1$;
    objs_ptr=0;
    desc=;
   };
@@ -103,8 +103,8 @@ Program .projects[0].programs.gp[0][2] {
   NetCounterInit @[0] {
    desc="initialize trial counter: note also needs to do this in regular running program";
    off=0;
-   network_var=.projects[0].programs.gp[0][2].args[0]$2$;
-   local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$3$;
+   network_var=.projects[1].programs.gp[0][2].args[0]$2$;
+   local_ctr_var=.projects[1].programs.gp[0][2].vars[0]$3$;
    counter=Network::trial;
   };
  };
@@ -120,28 +120,9 @@ Program .projects[0].programs.gp[0][2] {
    counter=Network::trial;
   };
   ProgramCall @[1] {
-   desc="get a new epoch's worth of trials..";
+   desc="initialize the trial monitor data so trial log only has most recent epoch's worth of data (can turn off to keep all data)";
    off=0;
-   target=.projects[0].programs.gp[1][0]$4$;
-   call_init=0;
-   prog_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     name="data_table";
-     value="train_data";
-    };
-    ProgArg @[1] {
-     name="n_per_epc";
-     value="25";
-    };
-   };
-  };
-  ProgramCall @[2] {
-   desc=;
-   off=0;
-   target=.projects[0].programs.gp[0][7]$5$;
+   target=.projects[1].programs.gp[0][7]$4$;
    call_init=1;
    prog_args {
     name=;
@@ -153,7 +134,7 @@ Program .projects[0].programs.gp[0][2] {
     };
    };
   };
-  GroupedDataLoop @[3] {
+  GroupedDataLoop @[2] {
    desc=;
    off=0;
    loop_code {
@@ -163,7 +144,7 @@ Program .projects[0].programs.gp[0][2] {
     ProgramCall @[0] {
      desc=;
      off=0;
-     target=.projects[0].programs.gp[0][3]$6$;
+     target=.projects[1].programs.gp[0][3]$5$;
      call_init=0;
      prog_args {
       name=;
@@ -176,9 +157,9 @@ Program .projects[0].programs.gp[0][2] {
      };
     };
     IfElse @[1] {
-     desc="update weights in epoch to allow for batched updates";
+     desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
      off=0;
-     condition="network->context == Network::TRAIN";
+     condition="network->Compute_Weights_Test(trial+1)";
      true_code {
       name=;
       el_typ=MethodCall;
@@ -187,8 +168,8 @@ Program .projects[0].programs.gp[0][2] {
        desc=;
        off=0;
        result_var=NULL;
-       obj=.projects[0].programs.gp[0][3].args[0]$7$;
-       method=Network::UpdateWeights;
+       obj=.projects[1].programs.gp[0][3].args[0]$6$;
+       method=Network::Compute_Weights;
        args{ };
 {        };
       };
@@ -200,7 +181,7 @@ Program .projects[0].programs.gp[0][2] {
      };
     };
     NetCounterIncr @[2] {
-     desc="increment trial counter";
+     desc=;
      off=0;
      network_var=$2$;
      local_ctr_var=$3$;
@@ -208,26 +189,65 @@ Program .projects[0].programs.gp[0][2] {
     };
    };
    loop_test="This is not used here!";
-   data_var=.projects[0].programs.gp[0][2].vars[1]$8$;
+   data_var=.projects[1].programs.gp[0][2].vars[1]$7$;
    group_order=PERMUTED;
    item_order=SEQUENTIAL;
    group_col=0;
-   group_idx_list{ 71;108;54;27;7;44;120;17;32;78;103;90;126;93;24;0;   };
-   item_idx_list{ 108;109;110;111;112;113;114;115;116;117;118;119;   };
+   group_idx_list{ 63;11;72;123;0;51;128;42;79;105;98;   };
+   item_idx_list{ 11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40;41;   };
   };
-  MethodCall @[4] {
+  BasicDataLoop @[3] {
+   desc=;
+   off=0;
+   loop_code {
+    name=;
+    el_typ=ProgramCall;
+    el_def=0;
+   };
+   loop_test="This is not used here";
+   data_var=$7$;
+   order=PERMUTED;
+   item_idx_list{ 5;4;2;1;0;3;   };
+   dmem_nprocs=1;
+   dmem_this_proc=0;
+  };
+  IfElse @[4] {
+   desc="if full batch mode, update only at end of epoch";
+   off=0;
+   condition="network->wt_update == Network::BATCH";
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     off=0;
+     result_var=NULL;
+     obj=$6$;
+     method=Network::Compute_Weights;
+     args{ };
+{      };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  MethodCall @[5] {
    desc=;
    off=0;
    result_var=NULL;
    obj=$2$;
-   method=LeabraNetwork::Compute_EpochSSE;
+   method=LeabraNetwork::Compute_EpochStats;
    args{ };
 {    };
   };
-  ProgramCall @[5] {
+  ProgramCall @[6] {
    desc=;
    off=0;
-   target=.projects[0].programs.gp[0][8]$9$;
+   target=.projects[1].programs.gp[0][8]$8$;
    call_init=0;
    prog_args {
     name=;

@@ -327,7 +327,7 @@ public:
   virtual void 	Compute_MotorGate(LeabraLayer* lay, LeabraNetwork* net);
   // compute gating signal for OUTPUT Matrix_out
 
-  void	InitWtState(LeabraLayer* lay);
+  void	Init_Weights(LeabraLayer* lay);
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void	PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both=false);

@@ -418,8 +418,8 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return true;
 }
 
-void MatrixLayerSpec::InitWtState(LeabraLayer* lay) {
-  LeabraLayerSpec::InitWtState(lay);
+void MatrixLayerSpec::Init_Weights(LeabraLayer* lay) {
+  LeabraLayerSpec::Init_Weights(lay);
   UNIT_GP_ITR(lay, 
 	      DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
 	      u->misc_1 = avgda_rnd_go.avgda_thr;	// initialize to above rnd go val..
@@ -431,7 +431,7 @@ bool MatrixLayerSpec::Check_RndGoAvgRew(LeabraLayer* lay, LeabraNetwork* net) {
   float avg_rew = -1.0f;
 
   // if in a test process, don't do random go's!
-  if((net->epoch >= 1) && (net->context != Network::TEST))
+  if((net->epoch >= 1) && (net->train_mode != Network::TEST))
     avg_rew = net->avg_ext_rew;
 
   if(avg_rew == -1.0f) {	// didn't get from stat, use value on layer
@@ -1312,7 +1312,7 @@ void PFCLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   else {
     // not to hard clamp: needs to update in 2nd plus phase!
     lay->hard_clamped = false;
-    lay->InitExterns();
+    lay->Init_InputData();
   }
 }
 
@@ -1472,7 +1472,7 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 void PFCOutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork*) {
   // not to hard clamp: needs to update in 2nd plus phase!
   lay->hard_clamped = false;
-  lay->InitExterns();
+  lay->Init_InputData();
   return;
 }
 

@@ -77,7 +77,7 @@ public:
   float         norm_const;     // #HIDDEN normalization const for Gaussian
   float         denom_const;    // #HIDDEN denominator const for Gaussian
 
-  void 		Compute_Net(Unit* u); // redefine to call compute_dist
+  void 		Compute_Netin(Unit* u); // redefine to call compute_dist
   void 		Compute_Act(Unit* u);
   // activation is a gaussian function of the net input
 

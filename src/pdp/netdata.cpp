@@ -239,7 +239,7 @@ bool LayerWriterEl::ApplyInputData(DataBlock* db, Network* net) {
   }
 
   // we only apply target data in TRAIN mode
-  if((net->context != Network::TRAIN) && (ext_flags & Unit::TARG))
+  if((net->train_mode != Network::TRAIN) && (ext_flags & Unit::TARG))
     return true;
   // get the data as a slice -- therefore, frame is always 0
   lay->ApplyInputData(mat, ext_flags, &noise, &offset);

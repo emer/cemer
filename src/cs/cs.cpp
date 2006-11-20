@@ -88,8 +88,8 @@ void CsUnitSpec::UpdateAfterEdit() {
   sqrt_step = sqrt(step);
 }
 
-void CsUnitSpec::InitState(Unit* u) {
-  UnitSpec::InitState(u);
+void CsUnitSpec::Init_Acts(Unit* u) {
+  UnitSpec::Init_Acts(u);
   CsUnit* cu = (CsUnit*)u;
   cu->da = 0.0f;
   cu->prv_net = 0.0f;
@@ -97,21 +97,22 @@ void CsUnitSpec::InitState(Unit* u) {
   cu->act = act_range.Clip(initial_act.Gen());
 }
 
-void CsUnitSpec::ModifyState(Unit* u) {
-  u->InitExterns();
-  u->InitDelta();
-  CsUnit* cu = (CsUnit*)u;
-  float trgact = act_range.Clip(initial_act.Gen());
-  cu->act -= modify_decay * (cu->act - trgact);
-  cu->da = 0.0f;
-  //  cu->prv_net -= modify_decay * cu->prv_net;
-  cu->prv_net = 0.0f;
-  cu->clmp_net = 0.0f;
-}
+// todo: obsolete
+// void CsUnitSpec::ModifyState(Unit* u) {
+//   u->Init_InputData();
+//   u->Init_Netin();
+//   CsUnit* cu = (CsUnit*)u;
+//   float trgact = act_range.Clip(initial_act.Gen());
+//   cu->act -= modify_decay * (cu->act - trgact);
+//   cu->da = 0.0f;
+//   //  cu->prv_net -= modify_decay * cu->prv_net;
+//   cu->prv_net = 0.0f;
+//   cu->clmp_net = 0.0f;
+// }
 
 
-void CsUnitSpec::InitWtState(Unit* u) {
-  UnitSpec::InitWtState(u);
+void CsUnitSpec::Init_Weights(Unit* u) {
+  UnitSpec::Init_Weights(u);
   CsUnit* cu = (CsUnit*)u;
   cu->n_dwt_aggs = 0; // initialize it here
   cu->act_m = cu->act_p = 0.0f;
@@ -134,11 +135,11 @@ void CsUnitSpec::Compute_ClampNet(CsUnit* u) {
     Layer* lay = recv_gp->prjn->from;
     if(lay->lesion || !(lay->ext_flag & Unit::EXT))
       continue;
-    u->clmp_net += recv_gp->Compute_Net(u);
+    u->clmp_net += recv_gp->Compute_Netin(u);
   }
 }
 
-void CsUnitSpec::Compute_Net(Unit* u) {
+void CsUnitSpec::Compute_Netin(Unit* u) {
   CsUnit* cu = (CsUnit*)u;
   if(clamp_type == HARD_FAST_CLAMP) {
     if(cu->ext_flag & Unit::EXT)
@@ -150,17 +151,17 @@ void CsUnitSpec::Compute_Net(Unit* u) {
       Layer* lay = recv_gp->prjn->from;
       if(lay->lesion || (lay->ext_flag & Unit::EXT)) // don't add from clamped!
 	continue;
-      u->net += recv_gp->Compute_Net(u);
+      u->net += recv_gp->Compute_Netin(u);
     }
     u->net += u->bias->wt;
   }
   else if(clamp_type == HARD_CLAMP) {
     if(cu->ext_flag & Unit::EXT) // no point in computing net for clamped units!
       return;
-    UnitSpec::Compute_Net(u);
+    UnitSpec::Compute_Netin(u);
   }
   else {			// soft clamping (or soft-then-hard), always compute net
-    UnitSpec::Compute_Net(u);
+    UnitSpec::Compute_Netin(u);
   }
   cu->net += cu->clmp_net; // add in clamped input
 }
@@ -233,9 +234,9 @@ void CsUnitSpec::Compute_dWt(Unit* u) {
   cu->n_dwt_aggs = 0;		// reset after wts are aggd
 }
 
-void CsUnitSpec::UpdateWeights(Unit* u) {
-  UnitSpec::UpdateWeights(u);
-  ((CsConSpec*)bias_spec.spec)->B_UpdateWeights((CsCon*)u->bias, u);
+void CsUnitSpec::Compute_Weights(Unit* u) {
+  UnitSpec::Compute_Weights(u);
+  ((CsConSpec*)bias_spec.spec)->B_Compute_Weights((CsCon*)u->bias, u);
 }
 
 void CsUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max, int ncycles) {
@@ -375,7 +376,7 @@ void IACUnitSpec::UpdateAfterEdit() {
   gain = 1.0f / decay;		// keep gain and decay aligned
 }
 
-void IACUnitSpec::Send_Net(Unit* u, Layer* tolay) {
+void IACUnitSpec::Send_Netin(Unit* u, Layer* tolay) {
   if(u->act > send_thresh) {	// send to others
     if((clamp_type == HARD_FAST_CLAMP) || (clamp_type == HARD_CLAMP)) {
       if((clamp_type == HARD_FAST_CLAMP) && (u->ext_flag & Unit::EXT))
@@ -386,7 +387,7 @@ void IACUnitSpec::Send_Net(Unit* u, Layer* tolay) {
 	Layer* lay = send_gp->prjn->layer;
 	if(lay->lesion || (lay->ext_flag & Unit::EXT) || (lay != tolay)) // do not send to clamped!
 	  continue;
-	send_gp->Send_Net(u);
+	send_gp->Send_Netin(u);
       }
     }
     else {			// soft clamping, always compute net
@@ -395,7 +396,7 @@ void IACUnitSpec::Send_Net(Unit* u, Layer* tolay) {
       FOR_ITR_GP(Con_Group, send_gp, u->send., g) {
 	Layer* lay = send_gp->prjn->layer;
 	if(lay->lesion || (lay != tolay))    continue;
-	send_gp->Send_Net(u);
+	send_gp->Send_Netin(u);
       }
     }
   }
@@ -536,7 +537,7 @@ void CsCycle::Compute_AsyncAct() {
       if(rnd_num < (lay_prob + total_prob)) {
 	int whichunitleaf = rnd_num - total_prob;
 	CsUnit* u = (CsUnit*) lay->units.Leaf(whichunitleaf);	
-	u->Compute_Net();
+	u->Compute_Netin();
 	u->Compute_Act(cs_settle->cycle.val, cs_trial->phase); // update this one unit...
 	break;
       } else {
@@ -561,12 +562,12 @@ void CsCycle::Aggregate_dWt() {
 
 void CsCycle::Loop() {
   if(update_mode == SYNCHRONOUS) {
-    network->Compute_Net();	// two-stage update of nets and acts
+    network->Compute_Netin();	// two-stage update of nets and acts
     Compute_SyncAct();
   }
   else if(update_mode == SYNC_SENDER_BASED) {
-    network->InitDelta();	// initialize netin values
-    network->Send_Net();	// send the netinput
+    network->Init_Netin();	// initialize netin values
+    network->Send_Netin();	// send the netinput
     Compute_SyncAct();
   }
   else
@@ -701,9 +702,9 @@ void CsSettle::Init_impl() {
 
   if(cs_trial->phase == CsTrial::PLUS_PHASE) {
     if(between_phases == INIT_STATE)
-      network->InitState();
+      network->Init_Acts();
     else
-      network->InitExterns();
+      network->Init_InputData();
   }
 
   if((cs_trial != NULL) && (cs_trial->cur_event != NULL)) {
@@ -797,11 +798,9 @@ void CsTrial::Init_impl() {
   }
 
   if(trial_init == INIT_STATE)
-    network->InitState();
-  else if(trial_init == MODIFY_STATE)
-    network->ModifyState();
+    network->Init_Acts();
   else
-    network->InitExterns();
+    network->Init_InputData();
 
   if((cur_event == NULL) || (network == NULL))
      return;

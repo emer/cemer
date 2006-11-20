@@ -1,25 +1,14 @@
 leabra todo list:
 
 * deal with dmem: 
-  * sync netstru stat variables: not working -- weird.
-
   * need checkconfig in unitspec to turn off opt.updt_wts when dmem_nprocs > 1!!
     (can check the network comm np to get trl level np which is what matters)
-
-  * sync datatable: every proc gets all rows (interleaved in proc order) from other
-    procs, into a new datatable.
-
-  * 
-
-
-* extrew in trial monitor seems not to be working: 12ax demo
-* change gp name to include unique ctr so group fun works.
-
-* datatable - make unique col names; call for join op..
 
 * dataops: random patterns!
 
 * program update var from obj trigger -- get this working!
+* datachanged for obj -> update corresp var; datachanged goes to obj_list --
+  need hook in there, but it is a generic list..
 * datacalc update problem: still?
 
 * relnet stat
@@ -38,8 +27,16 @@ Program issues
 
 css:
 
+* set display_width from console (overload qconsole resize event and update)
+
 -----------
 Check:
+
+* extrew in trial monitor seems not to be working: 12ax demo
+* 12ax: change gp name to include unique ctr so group fun works.
+
+* datatable - make unique col names; call for join op..
+
 
 -----------
 current bugs:
@@ -55,9 +52,6 @@ lower pri:
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 
 * add SVD/Eigenvec etc to math and then as data ops and dataprog's
-
-* datachanged for obj -> update corresp var; datachanged goes to obj_list --
-  need hook in there, but it is a generic list..
 
 * test FILE string_stream.css: ptr = 0?
 

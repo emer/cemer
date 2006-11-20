@@ -54,7 +54,7 @@ void SoftClUnitSpec::UpdateAfterEdit() {
   denom_const = 0.5f / var;
 }
 
-void SoftClUnitSpec::Compute_Net(Unit* u) {
+void SoftClUnitSpec::Compute_Netin(Unit* u) {
   // do distance instead of net input
   u->net = 0.0f;
   Con_Group* recv_gp;

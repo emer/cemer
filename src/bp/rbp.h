@@ -49,7 +49,7 @@ class APBpMaxDa_De;
 // are kept.  at each act step, the time is shifted forward (cur becomes prv)
 // and at each bp step, time is shifted backwards (prv becomes cur)
 
-// forward passes: do Compute_Net() on whole net, then Compute_Act()
+// forward passes: do Compute_Netin() on whole net, then Compute_Act()
 // store resulting act values, etc.
 
 // backward passes: do Compute_Error, then Compute_Send_dEdNet, the Step_Back
@@ -105,15 +105,15 @@ public:
   virtual void  Compute_ClampExt(RBpUnit* u);
   // compute activations resulting from clamped external input (for initial state)
 
-  void		InitState(Unit* u);
+  void		Init_Acts(Unit* u);
   virtual void	Compute_HardClampNet(RBpUnit* u); // for fast-hard-clamp-net: call this first
-  void		Compute_Net(Unit* u);
+  void		Compute_Netin(Unit* u);
   virtual void	Compute_Act_impl(RBpUnit* u);
   void		Compute_Act(Unit* u);
   void		Compute_dEdA(BpUnit* u);
   void 		Compute_dEdNet(BpUnit* u);
   void 		Compute_dWt(Unit* u);
-  void 		UpdateWeights(Unit* u);
+  void 		Compute_Weights(Unit* u);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -173,7 +173,7 @@ public:
   float_CircBuffer exts;	// #NO_VIEW array of external input values
   float_CircBuffer acts;	// #NO_VIEW array of activation values
 
-  void 		InitExterns();	// keep prv_values..
+  void 		Init_InputData();	// keep prv_values..
   virtual void	StoreState();
   // store state information in buffers
   void		InitForBP()	{ prv_dEdA = prv_dEdNet = 0.0f; }
@@ -233,10 +233,10 @@ public:
   void 		Compute_Act(Unit* u);
 
   // nullify all other functions..
-  void 		Compute_Net(Unit*) 	{ };
-  void 		InitWtDelta(Unit*) 	{ };
+  void 		Compute_Netin(Unit*) 	{ };
+  void 		Init_dWt(Unit*) 	{ };
   void 		Compute_dWt(Unit*) 	{ };
-  void 		UpdateWeights(Unit*) 	{ };
+  void 		Compute_Weights(Unit*) 	{ };
 
   // bp special functions
   void	Compute_HardClampNet(RBpUnit*) { };

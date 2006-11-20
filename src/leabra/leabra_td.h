@@ -51,7 +51,7 @@ public:
   ModType	mod;		// #CONDEDIT_ON_on:true how to apply DA modulation
   float		gain;		// #CONDEDIT_ON_on:true gain multiplier of da values
   float		neg_rec;	// #CONDEDIT_ON_mod:NEG_DIP recovery time constant for NEG_DIP case (how much to decay negative current per trial)
-  bool		p_dwt;		// whether units learn based on prior activation states, as in TD and other algorithms (not really to do with DA modulation; just stuck here.. affects Compute_dWt and UpdateWeights calls)
+  bool		p_dwt;		// whether units learn based on prior activation states, as in TD and other algorithms (not really to do with DA modulation; just stuck here.. affects Compute_dWt and Compute_Weights calls)
 
   void	Initialize();
   void 	Destroy()	{ };
@@ -67,11 +67,11 @@ public:
 
   void 		Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
 
-  void		InitState(LeabraUnit* u, LeabraLayer* lay);
-  void		InitState(Unit* u)	{ LeabraUnitSpec::InitState(u); }
+  void		Init_Acts(LeabraUnit* u, LeabraLayer* lay);
+  void		Init_Acts(Unit* u)	{ LeabraUnitSpec::Init_Acts(u); }
   void		Compute_dWt(Unit*) { };
   void 		Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  void 		UpdateWeights(Unit* u);
+  void 		Compute_Weights(Unit* u);
   void 		EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   void		DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay);
   void		PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
@@ -241,7 +241,7 @@ public:
   virtual void 	Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations for learning including the td values
 
-  void	InitState(LeabraLayer* lay);
+  void	Init_Acts(LeabraLayer* lay);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void	PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both=false);
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);

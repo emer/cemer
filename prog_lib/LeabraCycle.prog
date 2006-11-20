@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][4] { 
+Program .projects[0].programs.gp[0][5] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -13,7 +13,7 @@ Program .projects[0].programs.gp[0][4] {
     NetUpdateView @[1] { };
   };
 };
-Program .projects[0].programs.gp[0][4] {
+Program .projects[0].programs.gp[0][5] {
  name="LeabraCycle";
  desc="runs one cycle of leabra processing (updating net inputs and activations)";
  flags=PF_NONE;
@@ -47,6 +47,11 @@ Program .projects[0].programs.gp[0][4] {
    desc=;
   };
  };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=ProgEl;
@@ -59,8 +64,8 @@ Program .projects[0].programs.gp[0][4] {
   MethodCall @[0] {
    desc=;
    off=0;
-   result_var=;
-   script_obj=.projects[0].programs.gp[0][4].args[0]$1$;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][5].args[0]$1$;
    method=LeabraNetwork::Cycle_Run;
    args{ };
 {    };
@@ -69,7 +74,7 @@ Program .projects[0].programs.gp[0][4] {
    desc=;
    off=0;
    network_var=$1$;
-   update_var=.projects[0].programs.gp[0][4].vars[0]$2$;
+   update_var=.projects[0].programs.gp[0][5].vars[0]$2$;
   };
  };
 };

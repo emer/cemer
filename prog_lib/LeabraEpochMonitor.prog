@@ -149,6 +149,11 @@ Program .projects[0].programs.gp[0][8] {
    desc=;
   };
  };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=MethodCall;
@@ -157,7 +162,7 @@ Program .projects[0].programs.gp[0][8] {
    desc=;
    off=0;
    result_var=NULL;
-   script_obj=.projects[0].programs.gp[0][8].vars[1]$3$;
+   obj=.projects[0].programs.gp[0][8].vars[1]$3$;
    method=NetMonitor::SetDataNetwork;
    args{ epoch_mon_data;network;};
 { DataTable* dt;Network* net;   };
@@ -166,7 +171,7 @@ Program .projects[0].programs.gp[0][8] {
    desc=;
    off=0;
    result_var=NULL;
-   script_obj=$3$;
+   obj=$3$;
    method=taBase::CheckConfig;
    args{ false;};
 { bool quiet;   };
@@ -175,7 +180,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="Initialize monitoring data (get rid of any existing)";
    off=0;
    result_var=NULL;
-   script_obj=.projects[0].programs.gp[0][8].vars[0]$4$;
+   obj=.projects[0].programs.gp[0][8].vars[0]$4$;
    method=DataTable::ResetData;
    args{ };
 {    };
@@ -184,7 +189,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="update the monitor items and data schema";
    off=0;
    result_var=NULL;
-   script_obj=$3$;
+   obj=$3$;
    method=NetMonitor::UpdateMonitors;
    args{ true;};
 { bool reset_first;   };
@@ -198,7 +203,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="add a new blank row to the data";
    off=0;
    result_var=NULL;
-   script_obj=$4$;
+   obj=$4$;
    method=DataTable::AddBlankRow;
    args{ };
 {    };
@@ -207,7 +212,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="get the new monitor data.";
    off=0;
    result_var=NULL;
-   script_obj=$3$;
+   obj=$3$;
    method=NetMonitor::GetMonVals;
    args{ };
 {    };
@@ -216,7 +221,7 @@ Program .projects[0].programs.gp[0][8] {
    desc="update after writing new data to monitor data table";
    off=0;
    result_var=NULL;
-   script_obj=$4$;
+   obj=$4$;
    method=DataBlock::WriteClose;
    args{ };
 {    };

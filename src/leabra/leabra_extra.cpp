@@ -612,7 +612,7 @@ void ScalarValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float val) {
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
 	if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
-	recv_gp->C_InitWtState_Post(cn, u, recv_gp->Un(ci));
+	recv_gp->C_Init_Weights_Post(cn, u, recv_gp->Un(ci));
       }
     }
   }
@@ -677,13 +677,13 @@ void ScalarValLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
   }
 }
 
-void ScalarValLayerSpec::InitWtState(LeabraLayer* lay) {
-  LeabraLayerSpec::InitWtState(lay);
+void ScalarValLayerSpec::Init_Weights(LeabraLayer* lay) {
+  LeabraLayerSpec::Init_Weights(lay);
   Compute_BiasVal(lay);
 }
 
-void ScalarValLayerSpec::Compute_NetScale(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayerSpec::Compute_NetScale(lay, net);
+void ScalarValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraLayerSpec::Compute_NetinScale(lay, net);
   if(lay->hard_clamped) return;
   LeabraUnit* u;
   taLeafItr i;
@@ -968,7 +968,7 @@ void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn) {
   UNIT_GP_ITR(lay, Connect_UnitGroup(ugp, prjn); );
 }
 
-void ScalarValSelfPrjnSpec::C_InitWtState(Projection*, Con_Group* cg, Unit* ru) {
+void ScalarValSelfPrjnSpec::C_Init_Weights(Projection*, Con_Group* cg, Unit* ru) {
   float neigh1 = 1.0f / wt_width;
   float val1 = expf(-(neigh1 * neigh1));
   float scale_val = wt_max / val1;
@@ -1301,7 +1301,7 @@ void TwoDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
 	if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
-	recv_gp->C_InitWtState_Post(cn, u, recv_gp->Un(ci));
+	recv_gp->C_Init_Weights_Post(cn, u, recv_gp->Un(ci));
       }
     }
   }
@@ -1331,13 +1331,13 @@ void TwoDValLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
   }
 }
 
-void TwoDValLayerSpec::InitWtState(LeabraLayer* lay) {
-  LeabraLayerSpec::InitWtState(lay);
+void TwoDValLayerSpec::Init_Weights(LeabraLayer* lay) {
+  LeabraLayerSpec::Init_Weights(lay);
   Compute_BiasVal(lay);
 }
 
-void TwoDValLayerSpec::Compute_NetScale(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraLayerSpec::Compute_NetScale(lay, net);
+void TwoDValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraLayerSpec::Compute_NetinScale(lay, net);
   if(lay->hard_clamped) return;
   LeabraUnit* u;
   taLeafItr i;
@@ -1688,7 +1688,7 @@ void V1RFPrjnSpec::MakeDoGFilter() {
   dog_spec.UpdateFilter();
 }
 
-void V1RFPrjnSpec::C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru) {
+void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru) {
   Unit_Group* rugp = (Unit_Group*)ru->GetOwner(&TA_Unit_Group);
   int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
 

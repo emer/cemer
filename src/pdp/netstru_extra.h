@@ -87,7 +87,7 @@ public:
 
   void		Connect_impl(Projection* prjn);
   void 		ReConnect_Load(Projection* prjn); // #IGNORE
-  void		C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru);
+  void		C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru);
   // uses weight values as specified in the tesselel's
 
   virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
@@ -174,7 +174,7 @@ public:
 
   void	Connect_impl(Projection* prjn);
 
-  void	C_InitWtState(Projection* prjn, Con_Group* cg, Unit* ru);
+  void	C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru);
   // uses weight values equal to the distance probability
 
   static float	UnitDist(UnitDistType typ, Projection* prjn,

@@ -4,17 +4,16 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[0] { };
   };
 
-  ProgVar_List @.vars = [3] {
+  ProgVar_List @.vars = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
-    ProgVar @[2] { };
   };
 
   ProgEl_List @.init_code = [1] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [5] {
+  ProgEl_List @.prog_code = [6] {
     NetCounterInit @[0] { };
     ProgramCall @[1] { 
       ProgArg_List @.prog_args = [1] {
@@ -23,21 +22,26 @@ Program .projects[0].programs.gp[0][2] {
     };
     BasicDataLoop @[2] { 
       ProgEl_List @.loop_code = [3] {
-	ProgramCall @[0] { 
+	UserScript @[0] { };
+	ProgramCall @[1] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	IfElse @[1] { 
+	IfElse @[2] { 
 	  ProgEl_List @.true_code = [1] {
 	    MethodCall @[0] { };
 	  };
 	};
-	NetCounterIncr @[2] { };
       };
     };
-    MethodCall @[3] { };
-    ProgramCall @[4] { 
+    IfElse @[3] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
+    MethodCall @[4] { };
+    ProgramCall @[5] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
@@ -73,7 +77,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[0] {
    name="trial";
    var_type=T_Int;
-   int_val=6;
+   int_val=0;
    objs_ptr=0;
    desc=;
   };
@@ -84,13 +88,6 @@ Program .projects[0].programs.gp[0][2] {
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
    desc=;
-  };
-  ProgVar @[2] {
-   name="small_batch_n";
-   var_type=T_Int;
-   int_val=1;
-   objs_ptr=0;
-   desc="how many trials are run before the weigts update -- integrating weight changes over multiple trials can result in better learning, and is also what happens in dmem across trials";
   };
  };
  functions {
@@ -122,7 +119,7 @@ Program .projects[0].programs.gp[0][2] {
    counter=Network::trial;
   };
   ProgramCall @[1] {
-   desc=;
+   desc="initialize the trial monitor data so trial log only has most recent epoch's worth of data (can turn off to keep all data)";
    off=0;
    target=.projects[0].programs.gp[0][7]$4$;
    call_init=1;
@@ -143,7 +140,12 @@ Program .projects[0].programs.gp[0][2] {
     name=;
     el_typ=ProgramCall;
     el_def=0;
-    ProgramCall @[0] {
+    UserScript @[0] {
+     desc="set trial to list_idx of data loop -- for dmem code this is the correct trial number";
+     off=0;
+     user_script="trial = list_idx; network->trial = list_idx;";
+    };
+    ProgramCall @[1] {
      desc=;
      off=0;
      target=.projects[0].programs.gp[0][3]$5$;
@@ -158,11 +160,10 @@ Program .projects[0].programs.gp[0][2] {
       };
      };
     };
-    IfElse @[1] {
-     desc="Update weights in epoch -- allows for batching of weight changes (small_batch_n, which is only in effect if not using dmem)";
+    IfElse @[2] {
+     desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
      off=0;
-     condition="(network->context == Network::TRAIN) &&
- ((taMisc::dmem_nprocs > 1) || ((trial+1) % small_batch_n == 0))";
+     condition="network->Compute_Weights_Test(trial+1)";
      true_code {
       name=;
       el_typ=MethodCall;
@@ -172,7 +173,7 @@ Program .projects[0].programs.gp[0][2] {
        off=0;
        result_var=NULL;
        obj=.projects[0].programs.gp[0][3].args[0]$6$;
-       method=Network::UpdateWeights;
+       method=Network::Compute_Weights;
        args{ };
 {        };
       };
@@ -183,22 +184,39 @@ Program .projects[0].programs.gp[0][2] {
       el_def=0;
      };
     };
-    NetCounterIncr @[2] {
-     desc="increment trial counter";
-     off=0;
-     network_var=$2$;
-     local_ctr_var=$3$;
-     counter=Network::trial;
-    };
    };
    loop_test="This is not used here";
    data_var=.projects[0].programs.gp[0][2].vars[1]$7$;
    order=PERMUTED;
-   item_idx_list{ 3;1;0;2;5;4;   };
+   item_idx_list{ 5;4;2;1;0;3;   };
    dmem_nprocs=1;
    dmem_this_proc=0;
   };
-  MethodCall @[3] {
+  IfElse @[3] {
+   desc="if full batch mode, update only at end of epoch";
+   off=0;
+   condition="network->wt_update == Network::BATCH";
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     off=0;
+     result_var=NULL;
+     obj=$6$;
+     method=Network::Compute_Weights;
+     args{ };
+{      };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  MethodCall @[4] {
    desc=;
    off=0;
    result_var=NULL;
@@ -207,7 +225,7 @@ Program .projects[0].programs.gp[0][2] {
    args{ };
 {    };
   };
-  ProgramCall @[4] {
+  ProgramCall @[5] {
    desc=;
    off=0;
    target=.projects[0].programs.gp[0][8]$8$;
