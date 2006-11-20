@@ -38,7 +38,7 @@ public:
   // #CAT_Image set the underlying qt image
 #endif
   virtual bool	LoadImage(const String& fname);
-  // #CAT_Image load the image from given file name
+  // #CAT_Image load the image from given file name (leave file name blank to get a chooser)
 
   virtual float	GetPixelGrey_float(int x, int y);
   // #CAT_Image get the pixel value as a greyscale for given coordinates

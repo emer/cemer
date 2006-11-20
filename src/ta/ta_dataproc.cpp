@@ -67,6 +67,7 @@ void DataOpEl::SetDataTable(DataTable* dt) {
 }
 
 void DataOpEl::GetColumns(DataTable* dt) {
+  if(dt == NULL) return;
   DataArray_impl* da = dt->FindColName(col_name, col_idx);
   if(col_idx < 0) da = NULL;	// just to be sure..
   taBase::SetPointer((taBase**)&column, da);
@@ -873,6 +874,7 @@ String DataSortProg::GetDisplayName() const {
 
 void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
+  if(!src_data) return;
   sort_spec.GetColumns(src_data);
   sort_spec.CheckConfig(quiet, rval);
   sort_spec.ClearColumns();
@@ -911,6 +913,7 @@ String DataSelectRowsProg::GetDisplayName() const {
 
 void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
+  if(!src_data) return;
   select_spec.GetColumns(src_data);
   select_spec.CheckConfig(quiet, rval);
   select_spec.ClearColumns();
@@ -949,6 +952,7 @@ String DataSelectColsProg::GetDisplayName() const {
 
 void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
+  if(!src_data) return;
   select_spec.GetColumns(src_data);
   select_spec.CheckConfig(quiet, rval);
   select_spec.ClearColumns();
@@ -987,6 +991,7 @@ String DataGroupProg::GetDisplayName() const {
 
 void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
+  if(!src_data) return;
   group_spec.GetColumns(src_data);
   group_spec.CheckConfig(quiet, rval);
   group_spec.ClearColumns();
@@ -1028,6 +1033,7 @@ String DataJoinProg::GetDisplayName() const {
 
 void DataJoinProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
+  if(!src_data) return;
   join_spec.GetColumns(src_data, src_b_data);
   join_spec.CheckConfig(quiet, rval);
   join_spec.ClearColumns();
@@ -1078,12 +1084,16 @@ String DataCalcLoop::GetDisplayName() const {
 
 void DataCalcLoop::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  src_cols.GetColumns(src_data);
-  src_cols.CheckConfig(quiet, rval);
-  src_cols.ClearColumns();
-  dest_cols.GetColumns(dest_data);
-  dest_cols.CheckConfig(quiet, rval);
-  dest_cols.ClearColumns();
+  if(src_data) {
+    src_cols.GetColumns(src_data);
+    src_cols.CheckConfig(quiet, rval);
+    src_cols.ClearColumns();
+  }
+  if(dest_data) {
+    dest_cols.GetColumns(dest_data);
+    dest_cols.CheckConfig(quiet, rval);
+    dest_cols.ClearColumns();
+  }
   loop_code.CheckConfig(quiet, rval);
 }
 
@@ -1137,9 +1147,11 @@ String DataCalcAddDestRow::GetDisplayName() const {
 void DataCalcAddDestRow::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) return;
-  src_data = dcl->src_data;
-  dest_data = dcl->dest_data;
+  if(!dcl || dcl->isDestroying()) return;
+  if(!dcl->src_data || !dcl->src_data->isDestroying())
+    src_data = dcl->src_data;
+  if(!dcl->dest_data || !dcl->dest_data->isDestroying())
+    dest_data = dcl->dest_data;
 }
 
 void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1187,9 +1199,11 @@ String DataCalcSetDestRow::GetDisplayName() const {
 void DataCalcSetDestRow::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) return;
-  src_data = dcl->src_data;
-  dest_data = dcl->dest_data;
+  if(!dcl || dcl->isDestroying()) return;
+  if(!dcl->src_data || !dcl->src_data->isDestroying())
+    src_data = dcl->src_data;
+  if(!dcl->dest_data || !dcl->dest_data->isDestroying())
+    dest_data = dcl->dest_data;
 }
 
 void DataCalcSetDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {

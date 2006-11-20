@@ -30,10 +30,18 @@ void taImage::Copy_(const taImage& cp) {
 }
 
 bool taImage::LoadImage(const String& fname) {
-  name = fname;
-  QString fn = (const char*)fname;
+  if(fname.empty()) {
+    taFiler* flr = GetLoadFiler(fname);
+    name = flr->fname;
+    flr->Close();
+    taRefN::unRefDone(flr);
+  }
+  else {
+    name = fname;
+  }
+  QString fn = (const char*)name;
   if(!q_img.load(fn)) {
-    taMisc::Error("LoadImage: could not read image file:", fname);
+    taMisc::Error("LoadImage: could not read image file:", name);
     return false;
   }
   return true;

@@ -1,13 +1,13 @@
 leabra todo list:
 
+* program dirty not getting set -- init not recompiling
+
 * dataops: random patterns!
 
-* program update var from obj trigger -- get this working!
-* datachanged for obj -> update corresp var; datachanged goes to obj_list --
-  need hook in there, but it is a generic list..
-* datacalc update problem: still?
-
 * relnet stat
+
+* convert Connection to basic object, Con_Group to an obj that owns an 
+  array of such things, and recv. send. to list of such objs.
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
