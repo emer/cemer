@@ -125,6 +125,7 @@ class	QFocusEvent;		// #IGNORE
 class	QHideEvent;		// #IGNORE 
 class	QKeyEvent;		// #IGNORE 
 class	QMouseEvent;		// #IGNORE 
+class	QMoveEvent;		// #IGNORE 
 class	QPaintEvent;		// #IGNORE 
 class	QResizeEvent;		// #IGNORE 
 class	QShowEvent;		// #IGNORE 

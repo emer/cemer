@@ -1003,10 +1003,13 @@ public: // IDataLinkClient interface
   override void		DataLinkDestroying(taDataLink* dl);
 };
 
+#ifdef _MSC_VER 
+// evil msvc won't automatically promote to type to compare, but g++ chokes
 inline bool operator ==(taBase* a, const taSmartRef& b)
   {return a == b.ptr();}
 inline bool operator ==(const taSmartRef& a, taBase* b)
   {return a.ptr() == b;}
+#endif
 
 template<class T>
 class taSmartRefT: public taSmartRef { 

@@ -65,7 +65,7 @@ template class TA_API taArray<float>;
 template class TA_API taArray<double>;
   const double double_Array::blank = 0.0;
 template class TA_API taArray<char>;
-  const char char_Array::blank = 0.0;
+  const char char_Array::blank = '\0';
 template class TA_API taArray<String>;
   const String String_Array::blank = "";
 template class TA_API taArray<Variant>;

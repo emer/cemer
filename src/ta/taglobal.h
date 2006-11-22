@@ -166,7 +166,6 @@
 #elif !defined(TA_OS_UNIX)
 #  define TA_OS_UNIX
 #endif
-
 /* prob not needed
 #if defined(TA_OS_DARWIN) && !defined(QT_LARGEFILE_SUPPORT)
 # define TA_LARGEFILE_SUPPORT 64
@@ -262,7 +261,6 @@ typedef unsigned char   byte;
   // type differences to cause compile issues
 # define strtoll _strtoi64
 # define strtoull _strtoui64
-  #define sleep(msec) Sleep(msec)
 #elif (defined(TA_OS_MAC))
 // and god bless Trolltech and Mac OS...
 # if (TA_POINTER_SIZE == 4)

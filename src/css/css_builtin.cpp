@@ -26,6 +26,7 @@
 #include "ta_group.h"
 #include "ta_math.h"
 #include "ta_mtrnd.h"
+#include "ta_platform.h"
 
 #ifdef TA_GUI
 #include "css_qt.h"
@@ -1230,11 +1231,9 @@ static cssRealFun_stub1(tanh);
 static cssRealFun_stub1(acosh);
 static cssRealFun_stub1(asinh);
 static cssRealFun_stub1(atanh);
-#endif
-
-#if (!defined(TA_OS_WIN))
-static cssRealFun_stub1(erf);
-static cssRealFun_stub1(erfc);
+//TODO: following were defined, but not used anywhere
+//static cssRealFun_stub1(erf);
+//static cssRealFun_stub1(erfc);
 #endif
 
 
@@ -1626,12 +1625,14 @@ static cssEl* cssElCFun_setuid_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_sleep_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = (int)sleep((int)*arg[1]);
+  taPlatform::sleep((int)*arg[1]);
+  rval->val = 0;
   return rval;
 }
 static cssEl* cssElCFun_sleepms_stub(int, cssEl* arg[]) {
   cssInt* rval = new cssInt();
-  rval->val = (int)usleep((int)*arg[1] * 1000);
+  taPlatform::msleep((int)*arg[1]);
+  rval->val = 0;
   return rval;
 }
 static cssEl* cssElCFun_tcgetpgrp_stub(int, cssEl* arg[]) {

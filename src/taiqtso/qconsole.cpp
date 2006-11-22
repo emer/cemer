@@ -16,6 +16,8 @@
  ***************************************************************************/
 
 #include "qconsole.h"
+#include "ta_platform.h"
+
 #include <qfile.h>
 
 #include <QMouseEvent>
@@ -126,7 +128,7 @@ void QConsole::flushOutput(bool wait_for_pager) {
     }
     if(wait_for_pager && waiting) {
       QCoreApplication::processEvents();
-      sleep(1); //note: 1ms is fine, shorter values result in cpu thrashing
+      taPlatform::msleep(1); //note: 1ms is fine, shorter values result in cpu thrashing
     }
   } while(wait_for_pager && waiting);
 }

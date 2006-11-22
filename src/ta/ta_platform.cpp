@@ -16,7 +16,6 @@
 
 #include "ta_platform.h"
 
-// Code common to all platforms
 
 String taPlatform::finalSep(const String& in) {
   if (in.length() == 0)
@@ -52,3 +51,119 @@ int taPlatform::posFinalSep(const String& in) {
   return rval;
 }
 
+void taPlatform::sleep(int sec) {
+  msleep(sec * 1000);
+}
+
+#ifdef TA_OS_WIN
+
+// Windows implementation
+
+#include "windows.h"
+
+#define BUFSIZE 1024
+char tmpbuf[BUFSIZE];
+
+const char    taPlatform::pathSep = '\\'; 
+
+int taPlatform::cpuCount() {
+  SYSTEM_INFO info;
+  info.dwNumberOfProcessors = 0;
+  GetSystemInfo(&info);
+  return info.dwNumberOfProcessors;
+}
+
+int taPlatform::exec(const String& cmd) {
+  int rval = system(cmd.chars());
+  // if allegedly successful, still need to test for error
+  if (rval == 0) { 
+    if (errno == ENOENT)
+      rval = -1;
+  }
+  return rval;
+}
+
+String taPlatform::getTempPath() {
+  String rval;
+  DWORD retVal = GetTempPath(BUFSIZE, tmpbuf);
+  if (retVal != 0)
+    rval = String(tmpbuf);
+  return rval;
+}
+
+int taPlatform::processId() {
+  return (int)GetCurrentProcessId();
+}
+
+void taPlatform::msleep(int msec) {
+  Sleep(msec);
+}
+
+void taPlatform::usleep(int usec) {
+#error "must implement usleep on Windows"
+}
+
+int taPlatform::tickCount() {
+  return (int)GetTickCount(); // is in ms
+}
+
+#elif defined(TA_OS_UNIX)
+
+#include <unistd.h>
+#include <time.h>
+
+#ifdef TA_OS_MAC
+# include <sys/types.h>
+# include <sys/sysctl.h>
+#endif
+
+// Unix implementations
+
+const char    taPlatform::pathSep = '/'; 
+
+int taPlatform::cpuCount() {
+#ifdef TA_OS_MAC
+  int mib[2] = {CTL_HW, HW_NCPU};
+  int ncpu;
+  size_t len = sizeof(ncpu);
+  sysctl(mib, 2, &ncpu, &len, NULL, 0);
+  return ncpu;
+#else
+  return sysconf(_SC_NPROCESSORS_ONLN);
+#endif
+}
+
+int taPlatform::exec(const String& cmd) {
+  return system(cmd.chars());
+}
+
+String taPlatform::getTempPath() {
+  String rval = "/tmp";
+  return rval;
+}
+
+int taPlatform::processId() {
+  return (int)getpid();
+}
+
+void taPlatform::msleep(int msec) {
+  //note: specs say max usleep value is 1s, so we loop if necessary
+  while (msec > 1000) {
+    usleep(1000000);
+    msec -= 1000;
+  }
+  usleep(msec * 1000);
+}
+
+void taPlatform::usleep(int usec) {
+  ::usleep(usec);
+}
+
+
+int taPlatform::tickCount() {
+  return (int)clock();
+}
+
+#else // unknown platform
+# error "undefined platform"
+#endif // platform-specific routines

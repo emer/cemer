@@ -17,45 +17,4 @@
 // Windows implementations
 
 #include "ta_platform.h"
-#include "windows.h"
 
-#define BUFSIZE 1024
-char tmpbuf[BUFSIZE];
-
-const char    taPlatform::pathSep = '\\'; 
-
-int taPlatform::cpuCount() {
-  SYSTEM_INFO info;
-  info.dwNumberOfProcessors = 0;
-  GetSystemInfo(&info);
-  return info.dwNumberOfProcessors;
-}
-
-int taPlatform::exec(const String& cmd) {
-  int rval = system(cmd.chars());
-  // if allegedly successful, still need to test for error
-  if (rval == 0) { 
-    if (errno == ENOENT)
-      rval = -1;
-  }
-  return rval;
-}
-
-String taPlatform::getTempPath() {
-  String rval;
-  DWORD retVal = GetTempPath(BUFSIZE, tmpbuf);
-  if (retVal != 0)
-    rval = String(tmpbuf);
-  return rval;
-}
-int taPlatform::processId() {
-  return (int)GetCurrentProcessId();
-}
-
-void taPlatform::sleep(int msec) {
-  Sleep(msec);
-}
-
-int taPlatform::tickCount() {
-  return (int)GetTickCount(); // is in ms
-}
