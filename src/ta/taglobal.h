@@ -93,8 +93,12 @@
 #  error "Cygwin is not supported for TA/PDP"
 #elif defined(WIN64) || defined(_WIN64) || defined(__WIN64__)
 #  define TA_OS_WIN64
+#  undef TA_POINTER_SIZE
+#  define TA_POINTER_SIZE 8
 #  error "Win64 is not yet supported for TA/PDP"
 #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#  undef TA_POINTER_SIZE
+#  define TA_POINTER_SIZE 4
 #  define TA_OS_WIN32
 #elif defined(__MWERKS__) && defined(__INTEL__)
 #  define TA_OS_WIN32
@@ -188,12 +192,10 @@
 #ifdef TA_DLL
 #  define TAIQTSO_DLL
 #  define CSS_DLL
-#  define TAMISC_DLL
 #endif
 #ifdef TA_EXPORTS
 #  define TAIQTSO_EXPORTS
 #  define CSS_EXPORTS
-#  define TAMISC_EXPORTS
 #endif
 
 #ifdef PDP_DLL
@@ -214,7 +216,10 @@
 
 #define override virtual  // makes override situation more clear -- use for all descendants
 
-#include <stdint.h>
+#ifdef TA_OS_WIN
+#else
+# include <stdint.h>
+#endif
 
 // define useful types -- some will be defined by QT, so don't define them if using QT
 
@@ -242,7 +247,8 @@ typedef unsigned char   byte;
 
 // god bless Microsoft c++...
 #ifdef TA_OS_WIN
-
+  typedef unsigned int		uint;
+  typedef unsigned char		uint8_t;
   typedef signed __int64      	int64_t;
   typedef unsigned __int64    	uint64_t;
 # if defined(_WIN64)
@@ -256,7 +262,7 @@ typedef unsigned char   byte;
   // type differences to cause compile issues
 # define strtoll _strtoi64
 # define strtoull _strtoui64
-
+  #define sleep(msec) Sleep(msec)
 #elif (defined(TA_OS_MAC))
 // and god bless Trolltech and Mac OS...
 # if (TA_POINTER_SIZE == 4)

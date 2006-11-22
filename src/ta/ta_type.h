@@ -334,7 +334,7 @@ private:
 #else
 class TA_API ContextFlag { // replacement for is_xxx flags that retains bool test semantics, but does proper enter/exit counting; use in ++ ... -- pairs
 public:
-  operator bool() {return (cnt);}
+  operator bool() {return (cnt != 0);}
   signed char 	operator++() {return ++cnt;}
   signed char 	operator++(int) {return cnt++;} // post
   signed char 	operator--() {return --cnt;}

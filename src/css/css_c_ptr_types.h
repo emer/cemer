@@ -622,7 +622,7 @@ public:
 
   // implement the to-the-power of operator as ^
   cssEl* operator^(cssEl &t)
-  { cssReal *r = new cssReal(); r->val = pow(GetFloatRef("^"), (Real)t); return r; }
+  { cssReal *r = new cssReal(); r->val = pow((Real)GetFloatRef("^"), (Real)t); return r; }
 
   cssEl* operator-()
   { cssReal *r = new cssReal(GetFloatRef("-"),""); r->val = -r->val; return r; }

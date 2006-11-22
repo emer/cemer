@@ -20,15 +20,15 @@
 #include "ta_platform.h"
 #include "ta_variant.h"
 
-#include <QDir>
 
 #ifndef NO_TA_BASE
 # include "ta_group.h"
 # include "ta_dump.h"
 # include "ta_project.h" // for taRootBase
 # include "ta_TA_type.h"
-# include  <QCoreApplication>
-# include  <QTimer>
+# include <QDir>
+# include <QCoreApplication>
+# include <QTimer>
 #include "css_machine.h"	// for setting error code in taMisc::Error
 # ifdef TA_GUI
 #  include "ta_qtdata.h"

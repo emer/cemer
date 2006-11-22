@@ -416,7 +416,6 @@ void MTA::TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm) {
 
 void MethodSpace_Generate_Stubs(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
   int i;
-  int idx;
   for(i=0; i<ths->size; i++) {
     MethodDef* md = ths->FastEl(i);
     if(!MethodSpace_Filter_Method(ths, md))

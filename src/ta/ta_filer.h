@@ -90,7 +90,7 @@ public:
   inline bool		compressEnabled() const {return (flags && COMPRESS_ENABLE);}
   // true if client enabled use of compression
   inline bool		compressReq() const 
-    {return ((flags && (COMPRESS_REQ | COMPRESS_ENABLE)) == (COMPRESS_REQ | COMPRESS_ENABLE));}
+    {return ((flags & (COMPRESS_REQ | COMPRESS_ENABLE)) == (COMPRESS_REQ | COMPRESS_ENABLE));}
   // true if client requested compression AND it is enabled
   bool			isOpen() const {return open_file;}
   // true if file is open

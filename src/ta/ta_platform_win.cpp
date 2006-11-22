@@ -24,7 +24,7 @@ char tmpbuf[BUFSIZE];
 
 const char    taPlatform::pathSep = '\\'; 
 
-int taPlatform::cpuCount() const {
+int taPlatform::cpuCount() {
   SYSTEM_INFO info;
   info.dwNumberOfProcessors = 0;
   GetSystemInfo(&info);
@@ -32,8 +32,13 @@ int taPlatform::cpuCount() const {
 }
 
 int taPlatform::exec(const String& cmd) {
-#error "must implement taPlatform::exec"
-//unix  return system(cmd.chars());
+  int rval = system(cmd.chars());
+  // if allegedly successful, still need to test for error
+  if (rval == 0) { 
+    if (errno == ENOENT)
+      rval = -1;
+  }
+  return rval;
 }
 
 String taPlatform::getTempPath() {
@@ -46,6 +51,11 @@ String taPlatform::getTempPath() {
 int taPlatform::processId() {
   return (int)GetCurrentProcessId();
 }
+
+void taPlatform::sleep(int msec) {
+  Sleep(msec);
+}
+
 int taPlatform::tickCount() {
   return (int)GetTickCount(); // is in ms
 }

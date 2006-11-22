@@ -25,8 +25,4 @@ nmake /f %PDP4DIR%\build\msvc7\Makefile ta_files
 nmake /f %PDP4DIR%\build\msvc7\Makefile css_files
 @if errorlevel 1 goto end
 
-@cd %PDP4DIR%\src\tamisc
-nmake /f %PDP4DIR%\build\msvc7\Makefile tamisc_files
-@if errorlevel 1 goto end
-
 :end

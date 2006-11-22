@@ -38,7 +38,10 @@ public:
   static int	posFinalSep(const String& in); // position of final path separator, -1 if not found
 
 // Process execution
-  static int	exec(const String& cmd);
+  static int	exec(const String& cmd); //
+  
+// Sleeping
+  static void	sleep(int msec); // sleep the specified number of milliseconds
 
 };
 

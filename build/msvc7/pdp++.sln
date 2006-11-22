@@ -3,11 +3,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maketa", "maketa\maketa.vcp
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdp", "pdp\pdp.vcproj", "{CE66086C-AB6B-42B5-916F-4060AC936B55}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ta", "ta\ta.vcproj", "{8469AE41-9D63-4819-B0F0-C30849686581}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ta", "ta\ta.vcproj", "{8469AE41-9D63-4819-B0F0-C30849686581}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdp", "pdp\pdp.vcproj", "{CE66086C-AB6B-42B5-916F-4060AC936B55}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject

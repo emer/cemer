@@ -765,10 +765,10 @@ ostream& taPtrList_impl::Indenter(ostream& strm, const String& itm, int no, int 
     taMisc::FlushConsole();
     return strm;
   }
-  int len = strlen(itm) + 1;
+  int len = (int)strlen(itm) + 1;
   int i;
   for(i=tabs; i>=0; i--) {
-    if(len < i * 8)
+    if(len < (i * 8))
       strm << "\t";
   }
   return strm;

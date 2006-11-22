@@ -905,6 +905,7 @@ public:
   inline void		set(taBase* src) {taBase::SetPointer(&m_ptr, src);}
   
   inline		operator bool() const {return (m_ptr);}
+  inline bool		operator !() const {return !(m_ptr);}
     // needed to avoid ambiguities when we have derived T* operators
   inline 		operator taBase*() const {return m_ptr;}
   inline taBase* 	operator->() const {return m_ptr;}
@@ -971,6 +972,7 @@ public:
   
   inline		operator bool() const {return (m_ptr);}
     // needed to avoid ambiguities when we have derived T* operators
+  inline bool		operator !() const {return !(m_ptr);}
   inline 		operator taBase*() const {return m_ptr;}
   inline taBase* 	operator->() const {return m_ptr;}
   taBase* 		operator=(const taSmartRef& src) 
@@ -1001,6 +1003,10 @@ public: // IDataLinkClient interface
   override void		DataLinkDestroying(taDataLink* dl);
 };
 
+inline bool operator ==(taBase* a, const taSmartRef& b)
+  {return a == b.ptr();}
+inline bool operator ==(const taSmartRef& a, taBase* b)
+  {return a.ptr() == b;}
 
 template<class T>
 class taSmartRefT: public taSmartRef { 

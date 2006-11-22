@@ -15,6 +15,8 @@
 
 #include "ta_math.h"
 
+#include <math.h>
+
 //////////////////////////
 //  	CountParam     	//
 //////////////////////////

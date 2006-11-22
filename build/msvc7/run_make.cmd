@@ -1,3 +1,4 @@
+@echo off
 if not "%PDP4DIR%" == "" goto cont1
 echo PDP4DIR environment variable must be set
 rem set error level
@@ -30,3 +31,4 @@ nmake /f %PDP4DIR%\build\msvc7\Makefile tamisc_files
 @if errorlevel 1 goto end
 
 :end
+@cd %PDP4DIR%\build\msvc7

@@ -54,6 +54,10 @@ int taPlatform::processId() {
   return (int)getpid();
 }
 
+void taPlatform::sleep(int msec) {
+  Sleep(msec);
+}
+
 int taPlatform::tickCount() {
   return (int)clock();
 }

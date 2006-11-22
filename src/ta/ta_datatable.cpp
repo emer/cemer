@@ -1497,7 +1497,7 @@ void DataColViewSpec::UpdateFromDataCol_impl(bool first) {
 }
 
 bool DataColViewSpec::isVisible() const {
-  return (visible && m_data);
+  return (visible && (bool)m_data);
 }
 
 //////////////////////////

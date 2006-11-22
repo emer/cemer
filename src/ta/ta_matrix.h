@@ -175,7 +175,7 @@ public:
   void 			DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d4) const;
   // get dimension values from index, based on geometry
   
-  String		GeomToString(const char* ldelim = "[", const char* ldelim = "]") const;
+  String		GeomToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // returns human-friendly text in form: "[dims:{dim}{,dim}]"
   void			GeomFromString(String& str, const char* ldelim = "[", const char* rdelim = "]");
   // reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"

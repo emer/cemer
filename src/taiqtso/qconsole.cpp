@@ -126,7 +126,7 @@ void QConsole::flushOutput(bool wait_for_pager) {
     }
     if(wait_for_pager && waiting) {
       QCoreApplication::processEvents();
-      usleep(1000); //note: 1ms is fine, shorter values result in cpu thrashing
+      sleep(1); //note: 1ms is fine, shorter values result in cpu thrashing
     }
   } while(wait_for_pager && waiting);
 }

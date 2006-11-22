@@ -5,7 +5,9 @@
 // License:  Public domain
 //
 
-#include <unistd.h>
+#ifndef TA_OS_WIN
+# include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <stdio.h>
 #include <iostream>

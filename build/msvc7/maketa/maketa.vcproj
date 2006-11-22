@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PDP4DIR)\src&quot;;&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(SolutionDir)&quot;;&quot;$(QTDIR)\include\QtCore&quot;"
 				PreprocessorDefinitions="NO_TA_BASE;WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -68,7 +68,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(PDP4DIR)\src&quot;;&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(PDP4DIR)\src&quot;;&quot;$(SolutionDir)&quot;;&quot;$(QTDIR)\include\QtCore&quot;"
 				PreprocessorDefinitions="NO_TA_BASE;WIN32;_WINDOWS"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
@@ -146,6 +146,9 @@
 				RelativePath="..\..\..\src\ta\ta_list.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\ta\ta_mtrnd.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\ta\ta_platform.cpp">
 			</File>
 			<File
@@ -190,7 +193,13 @@
 				RelativePath="..\..\..\src\ta\ta_list.h">
 			</File>
 			<File
+				RelativePath="..\..\..\src\ta\ta_mtrnd.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\ta\ta_platform.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\ta\ta_stdef.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\ta\ta_string.h">

@@ -640,7 +640,7 @@ String& String::convert(double f,const char* format) {
 
 void String::del(int pos, int len)
 {
-  if ((pos < 0) || (len <= 0) || (unsigned)(pos + len) > length()) return;
+  if ((pos < 0) || (len <= 0) || ((pos + len) > length())) return;
   int nlen = length() - len;
   int first = pos + len;
   makeUnique();
@@ -835,7 +835,7 @@ String& String::upcase() {
 // a helper needed by at, before, etc.
 
 String String::_substr(int first, int l) const {
-  if ((first < 0) || (l == 0) || ((unsigned)(first + l) > length()))
+  if ((first < 0) || (l == 0) || ((first + l) > length()))
     return _nilString;
   else if ((first == 0) && (l == (int)length())) // same as us, so don't make a new rep!
     return String(*this);
@@ -1162,7 +1162,7 @@ TA_API int readline(istream& s, String& x, char terminator, int discard) {
 int String::freq(const String& y) const
 {
   int found = 0;
-  for (unsigned int i = 0; i < length(); i++)
+  for (int i = 0; i < length(); i++)
     if (match(i,length(),0,y.chars(),y.length()) >= 0) found++;
   return(found);
 }
@@ -1170,7 +1170,7 @@ int String::freq(const String& y) const
 int String::freq(const char* t) const
 {
   int found = 0;
-  for (unsigned int i = 0; i < length(); i++)
+  for (int i = 0; i < length(); i++)
     if (match(i,length(),0,t) >= 0) found++;
   return(found);
 }
@@ -1178,7 +1178,7 @@ int String::freq(const char* t) const
 int String::freq(char c) const
 {
   int found = 0;
-  for (unsigned int i = 0; i < length(); i++)
+  for (int i = 0; i < length(); i++)
     if (match(i,length(),0,&c,1) >= 0) found++;
   return(found);
 }
