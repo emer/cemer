@@ -308,10 +308,11 @@ void ConArray::Copy_(const ConArray& cp) {
 void ConArray::SetType(TypeDef* cn_tp) {
   if(con_type == cn_tp) return;
   Reset();
-  if(cn_tp->size > (uint)con_size)
-    Alloc(alloc_size + 1);	// force realloc with new con_size
+  int old_sz = con_size;
   con_type = cn_tp;
   con_size = cn_tp->size;
+  if(con_size > old_sz)
+    Alloc(alloc_size + 1);	// force realloc with new con_size
 }
 
 void ConArray::Alloc(int sz) {
@@ -372,7 +373,7 @@ void RecvCons::CutLinks() {
 
 void RecvCons::Copy_(const RecvCons& cp) {
   // just do a full copy here
-  con_type = cp.con_type;
+  SetConType(cp.con_type);
   cons = cp.cons;
   units.Borrow(cp.units);
   spec = cp.spec;
@@ -1077,9 +1078,10 @@ RecvCons* RecvCons_List::FindLayer(Layer* lay, int& idx) const {
 
 bool RecvCons_List::RemovePrjn(Projection* aprjn) {
   bool rval = false;
-  for(int g=size-1; g>=0; g--) {
+  int g;
+  for(g=size-1; g>=0; g--) {
     RecvCons* cg = FastEl(g);
-    if(cg && (cg->prjn == aprjn)) {
+    if(cg->prjn == aprjn) {
       cg->prjn->projected = false;
       Remove(cg);
       rval = true;
@@ -1130,7 +1132,7 @@ void SendCons::CutLinks() {
 
 void SendCons::Copy_(const SendCons& cp) {
   // just do a full copy here
-  con_type = cp.con_type;
+  SetConType(cp.con_type);
   cons.Borrow(cp.cons);
   units.Borrow(cp.units);
   spec = cp.spec;
@@ -1514,8 +1516,8 @@ void UnitSpec::Init_Acts(Unit* u) {
 void UnitSpec::Init_dWt(Unit* u) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(!recv_gp->prjn->from->lesion)
-      recv_gp->Init_dWt(u);
+    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    recv_gp->Init_dWt(u);
   }
   if(u->bias.cons.size)
     bias_spec->C_Init_dWt(&u->bias, u->bias.Cn(0), u, NULL); // this is a virtual fun
@@ -1547,8 +1549,8 @@ void UnitSpec::Init_Weights(Unit* u) {
 void UnitSpec::Init_Weights_post(Unit* u) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(!recv_gp->prjn->from->lesion)
-      recv_gp->Init_Weights_post(u);
+    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    recv_gp->Init_Weights_post(u);
   }
 }
 
@@ -1556,8 +1558,8 @@ void UnitSpec::Compute_Netin(Unit* u) {
   u->net = 0.0f;
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(!recv_gp->prjn->from->lesion)
-      u->net += recv_gp->Compute_Netin(u);
+    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    u->net += recv_gp->Compute_Netin(u);
   }
   if(u->bias.cons.size)
     u->net += u->bias.Cn(0)->wt;
@@ -1570,8 +1572,8 @@ void UnitSpec::Send_Netin(Unit* u) {
   for(int g = 0; g < u->send.size; g++) {
     SendCons* send_gp = u->send.FastEl(g);
     Layer* tol = send_gp->prjn->layer;
-    if(!tol->lesion)
-      send_gp->Send_Netin(u);
+    if(tol->lesion || !send_gp->cons.size) continue;
+    send_gp->Send_Netin(u);
   }
   if(u->bias.cons.size)
     u->net += u->bias.Cn(0)->wt;
@@ -1584,8 +1586,8 @@ void UnitSpec::Send_NetinToLay(Unit* u, Layer* tolay) {
   for(int g = 0; g < u->send.size; g++) {
     SendCons* send_gp = u->send.FastEl(g);
     Layer* tol = send_gp->prjn->layer;
-    if(!tol->lesion && (tol == tolay))
-      send_gp->Send_Netin(u);
+    if(tol->lesion || (tol != tolay) || !send_gp->cons.size) continue;
+    send_gp->Send_Netin(u);
   }
   if(u->bias.cons.size)
     u->net += u->bias.Cn(0)->wt;
@@ -1601,8 +1603,8 @@ void UnitSpec::Compute_Act(Unit* u) {
 void UnitSpec::Compute_dWt(Unit* u) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(!recv_gp->prjn->from->lesion)
-      recv_gp->Compute_dWt(u);
+    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    recv_gp->Compute_dWt(u);
   }
   // NOTE: derived classes must supply bias.Cn(0)->Compute_dWt call because C_Compute_dWt
   // is not virtual, so if called here, only ConSpec version would be called.
@@ -1612,8 +1614,8 @@ void UnitSpec::Compute_dWt(Unit* u) {
 void UnitSpec::Compute_Weights(Unit* u) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(!recv_gp->prjn->from->lesion)
-      recv_gp->Compute_Weights(u);
+    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    recv_gp->Compute_Weights(u);
   }
   // NOTE: derived classes must supply bias.Cn(0)->Compute_Weights call because C_Compute_Weights
   // is not virtual, so if called here, only ConSpec version would be called.
@@ -2306,7 +2308,7 @@ void ProjectionSpec::Init_Weights(Projection* prjn) {
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
     for(int g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
-      if(cg && (cg->prjn == prjn))
+      if(cg->prjn == prjn)
 	cg->Init_Weights(u);
     }
   }
@@ -2318,7 +2320,7 @@ void ProjectionSpec::Init_Weights_post(Projection* prjn) {
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
     for(int g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
-      if(cg && (cg->prjn == prjn))
+      if(cg->prjn == prjn)
 	cg->Init_Weights_post(u);
     }
   }

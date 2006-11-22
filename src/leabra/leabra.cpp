@@ -568,6 +568,7 @@ void LeabraUnitSpec::SetCurLrate(LeabraUnit* u, LeabraNetwork* net, int epoch) {
   ((LeabraConSpec*)bias_spec.spec)->SetCurLrate(epoch, net);
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(!recv_gp->cons.size) continue;
     recv_gp->SetCurLrate(epoch, net);
   }
 }
@@ -641,7 +642,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
-    if(lay->lesion)		continue;
+    if(lay->lesion || !recv_gp->cons.size)	continue;
      // this is the normalization value: takes into account target activity of layer
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
     WtScaleSpec& wt_scale = cs->wt_scale;
@@ -664,7 +665,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
-    if(lay->lesion)		continue;
+    if(lay->lesion || !recv_gp->cons.size)	continue;
     recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
   }
 }
@@ -673,7 +674,7 @@ void LeabraUnitSpec::Compute_NetinRescale(LeabraUnit* u, LeabraLayer*, LeabraNet
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
-    if(lay->lesion)		continue;
+    if(lay->lesion || !recv_gp->cons.size)	continue;
     recv_gp->scale_eff *= new_scale;
   }
   // rescale existing netins so that the delta is not even noticed!
@@ -693,7 +694,7 @@ void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
   if(u->act > opt_thresh.send) {
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-      if(send_gp->prjn->layer->lesion) continue;
+      if(send_gp->prjn->layer->lesion || !send_gp->cons.size) continue;
       if(((LeabraConSpec*)send_gp->spec.spec)->inhib) {
 	taMisc::Error("*** Error: cannot send inhibition from a hard-clamped layer!  Set layerspec clamp.hard off!");
 	continue;
@@ -713,7 +714,7 @@ void LeabraUnitSpec::Send_Netin(LeabraUnit* u, LeabraLayer*) {
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(tol->lesion || tol->hard_clamped)	continue;
+      if(tol->lesion || tol->hard_clamped || !send_gp->cons.size) continue;
       send_gp->Send_Netin(u);
     }
   }
@@ -725,7 +726,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*) {
       for(int g=0; g<u->send.size; g++) {
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-	if(tol->lesion || tol->hard_clamped)	continue;
+	if(tol->lesion || tol->hard_clamped || !send_gp->cons.size)	continue;
 	send_gp->Send_NetinDelta(u);
       }
       u->act_sent = u->act;	// cache the last sent value
@@ -736,7 +737,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*) {
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(tol->lesion || tol->hard_clamped)	continue;
+      if(tol->lesion || tol->hard_clamped || !send_gp->cons.size)	continue;
       send_gp->Send_NetinDelta(u);
     }
     u->act_sent = 0.0f;		// now it effectively sent a 0..
@@ -1142,7 +1143,7 @@ void LeabraUnitSpec::Compute_WtFmLin(LeabraUnit* u, LeabraLayer*, LeabraNetwork*
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
-    if(lay->lesion)	continue;
+    if(lay->lesion || !recv_gp->cons.size)	continue;
     recv_gp->Compute_WtFmLin();
   }
 }

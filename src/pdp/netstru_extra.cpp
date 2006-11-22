@@ -945,26 +945,26 @@ void GpFullPrjnSpec::Connect_impl(Projection* prjn) {
 void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->from == NULL)	return;
 
-  Unit_Group* recv_gp = &(prjn->layer->units);
-  Unit_Group* send_gp = &(prjn->from->units);
+  Unit_Group* ru_gp = &(prjn->layer->units);
+  Unit_Group* su_gp = &(prjn->from->units);
   int i;
   int max_n = n_conns;
   if(n_conns < 0)
-    max_n = recv_gp->size - recv_start;
-  max_n = MIN(recv_gp->size - recv_start, max_n);
-  max_n = MIN(send_gp->size - send_start, max_n);
+    max_n = ru_gp->gp.size - recv_start;
+  max_n = MIN(ru_gp->gp.size - recv_start, max_n);
+  max_n = MIN(su_gp->gp.size - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
   for(i=0; i<max_n; i++) {
     Unit_Group* rgp, *sgp;
     // revert to main group if no sub groups
-    if(recv_gp->size > 0)
-      rgp = (Unit_Group*)recv_gp->gp.FastEl(recv_start + i);
+    if(ru_gp->gp.size > 0)
+      rgp = (Unit_Group*)ru_gp->gp.FastEl(recv_start + i);
     else
-      rgp = recv_gp;
-    if(send_gp->size > 0)
-      sgp = (Unit_Group*)send_gp->gp.FastEl(send_start + i);
+      rgp = ru_gp;
+    if(su_gp->gp.size > 0)
+      sgp = (Unit_Group*)su_gp->gp.FastEl(send_start + i);
     else
-      sgp = send_gp;
+      sgp = su_gp;
 
     // then its full connectivity..
     Unit* ru, *su;
@@ -1006,28 +1006,28 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   if(same_seed)
     rndm_seed.OldSeed();
 
-  Unit_Group* recv_gp = &(prjn->layer->units);
-  Unit_Group* send_gp = &(prjn->from->units);
+  Unit_Group* ru_gp = &(prjn->layer->units);
+  Unit_Group* su_gp = &(prjn->from->units);
   int i;
   int max_n = n_conns;
   if(n_conns < 0)
-    max_n = recv_gp->size - recv_start;
-  if(recv_gp->size > 0)
-    max_n = MIN(recv_gp->size - recv_start, max_n);
-  if(send_gp->size > 0)
-    max_n = MIN(send_gp->size - send_start, max_n);
+    max_n = ru_gp->gp.size - recv_start;
+  if(ru_gp->size > 0)
+    max_n = MIN(ru_gp->gp.size - recv_start, max_n);
+  if(su_gp->size > 0)
+    max_n = MIN(su_gp->gp.size - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
   for(i=0; i<max_n; i++) {
     Unit_Group* rgp, *sgp;
     // revert to main group if no sub groups
-    if(recv_gp->size > 0)
-      rgp = (Unit_Group*)recv_gp->gp.FastEl(recv_start + i);
+    if(ru_gp->gp.size > 0)
+      rgp = (Unit_Group*)ru_gp->gp.FastEl(recv_start + i);
     else
-      rgp = recv_gp;
-    if(send_gp->size > 0)
-      sgp = (Unit_Group*)send_gp->gp.FastEl(send_start + i);
+      rgp = ru_gp;
+    if(su_gp->gp.size > 0)
+      sgp = (Unit_Group*)su_gp->gp.FastEl(send_start + i);
     else
-      sgp = send_gp;
+      sgp = su_gp;
 
     int no = (int) (p_con * (float)sgp->leaves);
     if(!self_con && (rgp == sgp))
