@@ -834,13 +834,16 @@ String& String::upcase() {
 
 // a helper needed by at, before, etc.
 
-String String::_substr(int first, int l) const {
-  if ((first < 0) || (l == 0) || ((first + l) > length()))
+String String::_substr(int first, int len) const {
+  if ((first < 0) || (len <= 0) || (first >= length()))
     return _nilString;
-  else if ((first == 0) && (l == (int)length())) // same as us, so don't make a new rep!
+  else if ((first == 0) && (len == length())) // same as us, so don't make a new rep!
     return String(*this);
-  else
-    return String(&(mrep->s[first]), l);
+  else {
+    if ((first + len) > length()) 
+      len = length() - first;
+    return String(&(mrep->s[first]), len);
+  }
 }
 
 String String::at(int first, int len) const {

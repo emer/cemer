@@ -1510,7 +1510,7 @@ private:
 class TA_API taiListDataNode: public iTreeViewItem {
 INHERITED(iTreeViewItem)
 public:
-  int			num; // item number, starting from 1
+  int			num; // item number, starting from 0
   iListDataPanel*	panel; // logical parent node of the list items
 
   QString		text(int col) const; // override

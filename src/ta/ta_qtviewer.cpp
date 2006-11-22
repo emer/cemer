@@ -4143,7 +4143,7 @@ void iListDataPanel::FillList() {
   int i = 0;
   for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
     if (!child) continue;
-    taiListDataNode* dn = new taiListDataNode(i + 1, this, child, list, last_child, (iTreeViewItem::DNF_CAN_DRAG));
+    taiListDataNode* dn = new taiListDataNode(i, this, child, list, last_child, (iTreeViewItem::DNF_CAN_DRAG));
     dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
   }

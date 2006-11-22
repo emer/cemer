@@ -32,6 +32,7 @@
 #include "iflowlayout.h"
 
 #include <qapplication.h>
+#include <QCursor>
 #include <qdesktopwidget.h>
 #include <qdialog.h>
 #include <qevent.h>
@@ -170,14 +171,18 @@ int taiChoiceDialog::ChoiceDialog(QWidget* win, const char* prompt,
   if (win == NULL) win = QApplication::activeWindow();
   taiChoiceDialog* dlg = new taiChoiceDialog(win, prompt, win_title, no_cancel);
   // show the dialog
+  QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   int rval = dlg->exec();
+  QApplication::restoreOverrideCursor();
   delete dlg;
   return rval;
 }
 
 void taiChoiceDialog::ErrorDialog(QWidget* parent_, const char* msg, const char* win_title)
 {
-     QMessageBox::warning(parent_, win_title, msg);
+  QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  QMessageBox::warning(parent_, win_title, msg);
+  QApplication::restoreOverrideCursor();
 }
 
 taiChoiceDialog::taiChoiceDialog(QWidget* par, const char* prompt,
@@ -381,7 +386,10 @@ void iDialog::closeEvent(QCloseEvent* ev) {
 
 bool iDialog::post(bool modal) {
   if (modal) {
-    return (exec() == Accepted);
+    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+    bool rval = (exec() == Accepted);
+    QApplication::restoreOverrideCursor();
+    return rval;
   } else {
     show();
     return true;
@@ -1984,7 +1992,10 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
 
   fd->setCaption(caption);
 
-  if (fd->exec() == QDialog::Accepted) {
+  QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  int rval = fd->exec();
+  QApplication::restoreOverrideCursor();
+  if (rval == QDialog::Accepted) {
     fname = fd->selectedFile();
     // note: if we further fixup partial filenames, then compress could be true
     if (fd->fileMode() & QFileDialog::ExistingFile)
