@@ -133,7 +133,7 @@ void DaModUnitSpec::Compute_Weights(Unit* u) {
     return;
   }
   DaModUnit* lu = (DaModUnit*)u;
-  ((LeabraConSpec*)bias_spec.spec)->B_Compute_Weights((LeabraCon*)u->bias, lu, this);
+  ((LeabraConSpec*)bias_spec.spec)->B_Compute_Weights((LeabraCon*)u->bias.Cn(0), lu, this);
   if(opt_thresh.updt_wts && 
      ((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)) &&
       ((lu->p_act_p <= opt_thresh.learn) && (lu->p_act_m <= opt_thresh.learn)))
@@ -313,9 +313,8 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool got_marker = false;
   LeabraLayer* rew_targ_lay = NULL;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec)) {
       if(recv_gp->prjn->from->name == "RewTarg")
 	rew_targ_lay = (LeabraLayer*)recv_gp->prjn->from;
@@ -385,9 +384,8 @@ void ExtRewLayerSpec::Compute_UnitDa(float er, DaModUnit* u, Unit_Group* ugp, Le
 bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   bool got_some = false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
       if(rew_lay->name != "RewTarg") continue;
@@ -403,13 +401,12 @@ bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
 
 float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
 
   // first pass: find the layers: use COMP if no TARG is found
   int	n_targs = 0;		// number of target layers
   int	n_comps = 0;		// number of comp layers
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(!recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec))
       continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
@@ -424,7 +421,8 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
 
   float totposs = 0.0f;		// total possible error (unitwise)
   float toterr = 0.0f;		// total error
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(!recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec))
       continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
@@ -683,9 +681,8 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   // check for conspecs with correct params
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
@@ -875,9 +872,8 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraLayer* ext_rew_lay = NULL;
 
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
@@ -922,9 +918,8 @@ void TDRewIntegLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   bool ext_rew_avail = true;
 
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(!recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec)) {
       continue;
     }
@@ -1041,9 +1036,8 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   // check recv connection
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   LeabraLayer* rewinteg_lay = NULL;
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
     if(fmlay == NULL) {
       taMisc::CheckError("TdLayerSpec: null from layer in recv projection:", (String)g);
@@ -1052,7 +1046,7 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if(recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec)
 	&& fmlay->spec.spec->InheritsFrom(TA_TDRewIntegLayerSpec)) {
       rewinteg_lay = fmlay;
-      if(recv_gp->size <= 0) {
+      if(recv_gp->cons.size <= 0) {
 	taMisc::CheckError("TdLayerSpec: requires one recv projection with at least one unit!");
 	return false;
       }
@@ -1106,7 +1100,7 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork*) {
   DaModUnit* u;
   taLeafItr i;
   FOR_ITR_EL(DaModUnit, u, lay->units., i) {
-    LeabraCon_Group* cg = (LeabraCon_Group*)u->recv.gp[ri_prjn_idx];
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[ri_prjn_idx];
     // just taking the first unit = scalar val
     DaModUnit* su = (DaModUnit*)cg->Un(0);
     u->dav = su->act_eq - su->act_m; // subtract current minus previous!
@@ -1121,13 +1115,11 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    LeabraCon_Group* send_gp;
-    int g;
-    FOR_ITR_GP(LeabraCon_Group, send_gp, u->send., g) {
+    for(int g=0; g<u->send.size; g++) {
+      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesion)	continue;
-      int j;
-      for(j=0;j<send_gp->size; j++) {
+      for(int j=0;j<send_gp->cons.size; j++) {
 	((DaModUnit*)send_gp->Un(j))->dav = u->act;
       }
     }

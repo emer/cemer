@@ -53,7 +53,6 @@
 #endif
 
 template class PDP_API taList<TessEl>;
-template class PDP_API taList<LinkPrjnConPtr>;
 template class PDP_API taList<GpTessEl>;
 //template class PDP_API taList<NetViewGraphic>;
 //template class PDP_API taList<NetViewScaleRange>;

@@ -165,17 +165,9 @@ static int conspec_repl_bias_ptr(UnitSpec* us, ConSpec* old, ConSpec* nw) {
   return cnt;
 }
 
-void Connection::UpdateAfterEdit() {
-  taBase::UpdateAfterEdit();
-}
-
-bool Connection::ChangeMyType(TypeDef*) {
-  taMisc::Error("Cannot change type of connections -- change type setting in projection and reconnect network instead");
-  return false;
-}
-
 void ConSpec::Initialize() {
-  min_obj_type = &TA_Con_Group;
+  //  min_obj_type = &TA_RecvCons;
+  min_obj_type = &TA_taOBase;	// negate -- could be either Recv or Send..
   min_con_type = &TA_Connection;
   rnd.type = Random::UNIFORM;
   rnd.mean = 0.0f;
@@ -229,7 +221,7 @@ void ConSpec::Copy_(const ConSpec& cp) {
   wt_limits = cp.wt_limits;
 }
 
-bool ConSpec::CheckConfig_ConGroup(Con_Group* cg, bool quiet) {
+bool ConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
   return true;
 }
 
@@ -260,7 +252,7 @@ void ConSpec::Init_Weights_Net() {
 }
 
 bool ConSpec::CheckObjectType_impl(taBase* obj) {
-  if(obj->InheritsFrom(TA_Con_Group)) {
+  if(obj->InheritsFrom(TA_RecvCons)) {
     if((obj->GetOwner()) && obj->GetOwner()->InheritsFrom(TA_Unit))
       return true;		// don't do checking on 1st con group in unit..
   }
@@ -277,103 +269,198 @@ bool ConSpec::CheckObjectType_impl(taBase* obj) {
   return BaseSpec::CheckObjectType_impl(obj);
 }
 
-void ConSpec::ApplySymmetry(Con_Group* cg, Unit* ru) {
+void ConSpec::ApplySymmetry(RecvCons* cg, Unit* ru) {
   if(!wt_limits.sym) return;
   Connection* rc, *su_rc;
-  int i;
-  for(i=0; i<cg->size;i++) {
+  for(int i=0; i<cg->cons.size;i++) {
     rc = cg->Cn(i);
-    su_rc = cg->FindRecipRecvCon(cg->Un(i), ru);
+    su_rc = RecvCons::FindRecipRecvCon(cg->Un(i), ru);
     if(su_rc)
       su_rc->wt = rc->wt;	// set other's weight to ours (otherwise no random..)
   }
 }
 
-void Con_Group::Initialize() {
-  units.SetBaseType(&TA_Unit);
+/////////////////////////////////////////////////////////////////////
+//	ConArray
+
+void ConArray::Initialize() {
+  con_size = sizeof(Connection);
+  con_type = &TA_Connection;
+  size = 0;
+  alloc_size = 0;
+  cons = NULL;
+}
+
+void ConArray::Destroy() {
+  CutLinks();
+  Free();
+}
+
+void ConArray::CutLinks() {
+  Reset();
+}
+
+void ConArray::Copy_(const ConArray& cp) {
+  SetType(cp.con_type);
+  CopyCons(cp);
+}
+
+void ConArray::SetType(TypeDef* cn_tp) {
+  if(con_type == cn_tp) return;
+  Reset();
+  if(cn_tp->size > (uint)con_size)
+    Alloc(alloc_size + 1);	// force realloc with new con_size
+  con_type = cn_tp;
+  con_size = cn_tp->size;
+}
+
+void ConArray::Alloc(int sz) {
+  if (alloc_size < sz)	{
+    // start w/ 4, double up to 64, then 1.5x thereafter
+    if (alloc_size == 0) alloc_size = MAX(4, sz);
+    else if (alloc_size < 64) alloc_size = MAX((alloc_size * 2), sz);
+    else alloc_size =  MAX(((alloc_size * 3) / 2) , sz);
+    if(!cons)
+      cons = (char*)malloc(alloc_size * con_size);
+    else
+      cons = (char*)realloc(cons, alloc_size * con_size);
+  }
+}
+
+void ConArray::Free() {
+  if(cons) { free(cons); cons = NULL; }
+  size = 0;
+  alloc_size = 0;
+}
+
+bool ConArray::RemoveIdx(int i) {
+  if(!InRange(i)) return false;
+  // note: doing this piecewize because memcpy is undefined if overlapping
+  // and we don't need the full non-destructive memmove
+  for(int j=i; j<size-1; j++)
+    memcpy((void*)FastEl(j), (void*)FastEl(j+1), con_size);
+  size--;
+  return true;
+}
+
+/////////////////////////////////////////////////////////////////////
+//	RecvCons
+
+int RecvCons::Idx = 0;
+
+void RecvCons::Initialize() {
+  // derived classes need to set new basic con types
+  con_type = &TA_Connection;
+  // cons.SetType(&TA_Connection);
   prjn = NULL;
-  other_idx = -1;
-  own_cons = false;
-  SetBaseType(&TA_Connection);
+  send_idx = -1;
 }
 
-void Con_Group::InitLinks() {
-  taBase_Group::InitLinks();
+void RecvCons::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(cons, this);
   spec.SetDefaultSpec(this);
-  taBase::Own(units, this);
 }
 
-void Con_Group::CutLinks() {
-  units.CutLinks();
+void RecvCons::CutLinks() {
+  cons.CutLinks();
+  units.Reset();
   taBase::DelPointer((taBase**)&prjn);
   spec.CutLinks();
-  taBase_Group::CutLinks();
+  inherited::CutLinks();
 }
 
-void Con_Group::Copy(const Con_Group& cp) {
-  Copy_Common(cp);		// just copy values across common connections
-  Copy_(cp);			// then copy our stuff.
-  gp.Copy(cp.gp);		// copy the sub-groups
-}
-
-void Con_Group::Copy_(const Con_Group& cp) {
-  if(!cp.name.empty())
-    name = cp.name;
-  el_base = cp.el_base;
-  el_typ = cp.el_typ;
-  el_def = cp.el_def;
+void RecvCons::Copy_(const RecvCons& cp) {
+  // just do a full copy here
+  con_type = cp.con_type;
+  cons = cp.cons;
+  units.Borrow(cp.units);
   spec = cp.spec;
-
-  // stuff that doesn't get copied!
-  // taBase::SetPointer((taBase**)&prjn, cp.prjn);
-  // other_idx = cp.other_idx;
-  // own_cons = cp.own_cons;
+  taBase::SetPointer((taBase**)&prjn, cp.prjn);
+  send_idx = -1;		// reset, who knows!
 }
 
-//static TimeUsed debug_time;
+void RecvCons::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  cons.SetType(con_type);	// always impose our type on it..
+  spec.CheckSpec();
+}
 
-void Con_Group::CheckThisConfig_impl(bool quiet, bool& rval) { 
+void RecvCons::SetConType(TypeDef* cn_tp) {
+  con_type = cn_tp;
+  cons.SetType(con_type);
+}
+
+void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
   inherited::CheckThisConfig_impl(quiet, rval);
-  if (!spec->CheckConfig_ConGroup(this, quiet)) 
+  if (!spec->CheckConfig_RecvCons(this, quiet)) 
     rval = false; 
 }
 
-void Con_Group::CopyNetwork(Network* net, Network* cn, Con_Group* cp) {
+bool RecvCons::CheckTypes(bool quiet) {
+  if(!spec.CheckSpec())
+    return false;
+  if((prjn == NULL) && (cons.size > 0)) {
+    if(!quiet)
+      taMisc::CheckError("ConGroup:",GetPath(),"has null projection!, do Connect All");
+    return false;
+  }
+  if((cons.size > 0) && (send_idx < 0)) {
+    if(!quiet)
+      taMisc::CheckError("ConGroup:", GetPath(), "has unset send_idx, do FixPrjnIndexes or Connect All");
+    return false;
+  }
+  return true;
+}
+
+bool RecvCons::CheckSendIdx() {
+  if(cons.size == 0) return true;
+  if((send_idx < 0) || (send_idx != prjn->send_idx)) {
+    taMisc::CheckError("recv ConGroup:", GetPath(), "has unset send_idx or doesn't match prjn, do FixPrjnIndexes or Connect All");
+    return false;
+  }
+  Unit* su = Un(0);
+  if(su->send.size <= send_idx) {
+    taMisc::CheckError("recv ConGroup:", GetPath(), "send_idx", String(send_idx),
+		  "is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network");
+    return false;
+  }
+  SendCons* sucg = su->send.FastEl(send_idx);
+  if(sucg->prjn != prjn) {
+    taMisc::CheckError("recv ConGroup:", GetPath(), "send_idx", String(send_idx),
+		  "doesn't have correct prjn on sending unit.  Do Actions/Remove Cons, then Build, Connect on Network");
+    return false;
+  }
+  return true;
+}
+
+void RecvCons::Copy_Weights(const RecvCons* src) {
+  int mx = MIN(cons.size, src->cons.size);
+  int i;
+  for(i=0; i < mx; i++)
+    Cn(i)->wt = src->Cn(i)->wt;
+}
+
+void RecvCons::CopyNetwork(Network* net, Network* cn, RecvCons* cp) {
+  // basically does replacepointers on the relevant stuff..
   MemberDef* md;
   String path;
-  if(!cp->own_cons) {		// just a link (i.e., send group)
-    if(size > 0) {
-      Reset();			// get rid of any existing actual cons
-      units.Reset();
-    }
-    // don't copy any elements --- need to get pointers to *our* connections via ReConnect_Load
-    own_cons = cp->own_cons;
-    other_idx = cp->other_idx;
-  }
-  else {			// we actually own them
-    if(!own_cons && (size > 0)) {
-      Reset();
-    }
-    own_cons = cp->own_cons;
-    other_idx = cp->other_idx;
-    units.Reset();		// always reset the units, cuz they're going to be wrong..
-    taList_impl::Copy(*cp);	// do a standard copy of the connections only
-    int i;
-    for(i=0; i<cp->units.size; i++) {
-      Unit* au = cp->Un(i);
-      if(au) {
-	Layer* au_lay = GET_OWNER(au,Layer);
-	if(au_lay->own_net) {
-	  int lidx = au_lay->own_net->layers.FindLeaf(au_lay);
-	  int uidx = au_lay->units.FindLeaf(au);
-	  if((lidx >= 0) && (uidx >= 0)) {
-	    Layer* nw_lay = (Layer*)net->layers.Leaf(lidx);
-	    if(nw_lay) {
-	      Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
-	      if(nw_un)
-		units.Link(nw_un);
-	    }
-	  }
+  send_idx = cp->send_idx;
+  units.Reset();		// always reset the units, cuz they're going to be wrong..
+  cons = cp->cons;	// do a standard copy of the connections only
+  for(int i=0; i<cp->units.size; i++) {
+    Unit* au = cp->Un(i);
+    if(!au) continue;
+    Layer* au_lay = GET_OWNER(au,Layer);
+    if(au_lay->own_net) {
+      int lidx = au_lay->own_net->layers.FindLeaf(au_lay);
+      int uidx = au->GetMyLeafIndex();
+      if((lidx >= 0) && (uidx >= 0)) {
+	Layer* nw_lay = (Layer*)net->layers.Leaf(lidx);
+	if(nw_lay) {
+	  Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
+	  if(nw_un)
+	    units.Link(nw_un);
 	}
       }
     }
@@ -386,232 +473,61 @@ void Con_Group::CopyNetwork(Network* net, Network* cn, Con_Group* cp) {
   }
 }
 
-void Con_Group::CopyPtrs(Con_Group* cp) {
-  if(!cp->own_cons) {		// just a link (i.e., send group)
-    if(size > 0) {
-      Reset();			// get rid of any existing actual cons
-      units.Reset();
-    }
-    // don't copy any elements --- need to get pointers to *our* connections via ReConnect_Load
-    own_cons = cp->own_cons;
-    other_idx = cp->other_idx;
-    units.Borrow(cp->units);
-    Borrow(*cp);
-  }
-  else {			// we actually own them
-    if(!own_cons && (size > 0)) {
-      Reset();
-    }
-    own_cons = cp->own_cons;
-    other_idx = cp->other_idx;
-    units.Reset();
-    taList_impl::Copy(*cp);	// do a standard copy of the connections only
-    units.Borrow(cp->units);
-  }
-  taBase::SetPointer((taBase**)&prjn, cp->prjn);
-}
-
-bool Con_Group::ChangeMyType(TypeDef*) {
+bool RecvCons::ChangeMyType(TypeDef*) {
   taMisc::Error("Cannot change type of con_groups -- change type setting in projection and reconnect network instead");
   return false;
 }
 
-void Con_Group::UpdateAfterEdit() {
-  taBase_Group::UpdateAfterEdit();
-  spec.CheckSpec();
+int RecvCons::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
+  if(spec.spec != old_sp) return 0;
+  taBase::SetPointer((taBase**)&spec.spec, new_sp);
+//   spec.SetSpec(new_sp);
+  return 1;
 }
 
-Connection* Con_Group::NewCon(TypeDef* typ, Unit* un) {
+/////////////////////////////////////////////////////////////
+// 	Connection Creation/Deletion
+
+void RecvCons::AllocCons(int no) {
+  if(no <= 0) return;
+  cons.Alloc(no);
+  units.Alloc(no);
+}
+
+Connection* RecvCons::NewCon(Unit* un) {
   units.Link(un);
-  Connection* rval;
-  if(size > units.size-1)	// connections were preallocated
-    rval = Cn(units.size-1);
-  else
-    rval = (Connection*)taBase_Group::NewEl(1, typ);
-  return rval;
+  cons.New(1);
+  return cons.FastEl(cons.size-1);
 }
 
-void Con_Group::LinkCon(Connection* cn, Unit* un) {
-  units.Link(un);
-  if(size > units.size-1)	// connections were preallocated
-    ReplaceLink(units.size-1, cn);
-  else
-    Link(cn);
+bool RecvCons::RemoveConIdx(int i) {
+  units.Remove(i);
+  return cons.RemoveIdx(i);
 }
 
-bool Con_Group::RemoveCon(Unit* un) {
+bool RecvCons::RemoveConUn(Unit* un) {
   int idx;
   if((idx = units.Find(un)) < 0)
     return false;
-  return Remove(idx);
+  return RemoveConIdx(idx);
 }
 
-void Con_Group::AllocCon(int no, TypeDef* typ) {
-  if(no <= 0) return;
-  Alloc(no);
-  taBase_Group::NewEl(no, typ);	// subvert the redefinition, call old version of New
+void RecvCons::RemoveAll() {
+  cons.Reset();
+  units.Reset();
 }
 
-Connection* Con_Group::FindConFrom(Unit* un, int& idx) const {
+Connection* RecvCons::FindConFrom(Unit* un, int& idx) const {
   if((idx = units.Find(un)) < 0)
     return NULL;
-  return (Connection*)SafeEl(idx);
+  return cons.SafeEl(idx);
 }
 
-void Con_Group::Alloc(int sz) {
-  units.Alloc(sz);
-  taBase_Group::Alloc(sz);
-}
-
-taBase* Con_Group::New(int no, TypeDef* typ) {
-  if(no == 0) {
-#ifdef TA_GUI
-    if(taMisc::gui_active)
-      return gpiGroupNew::New(this,typ);
-#endif
-    return NULL;
-  }
-  if(typ == NULL)
-    typ = el_typ;
-
-  taBase* rval = taBase_Group::New(no, typ);
-
-  if(!typ->InheritsFrom(&TA_taGroup_impl)) {
-    int i;
-    for(i=0; i <no; i++)
-      units.Add(NULL);
-  }
-  return rval;
-}
-taBase* Con_Group::NewEl(int no, TypeDef* typ) {
-  if(no == 0) {
-#ifdef TA_GUI
-    if(taMisc::gui_active)
-      return gpiGroupNew::New(this,typ);
-#endif
-    return NULL;
-  }
-  int i;
-  for(i=0; i <no; i++)
-    units.Add(NULL);
-  return taBase_Group::NewEl(no, typ);
-}
-
-bool Con_Group::Remove(int i) {
-  units.Remove(i);
-  return taBase_Group::Remove(i);
-}
-
-Con_Group* Con_Group::NewPrjn(Projection* aprjn, bool own) {
-  Con_Group* rval = (Con_Group*)NewGp(1, aprjn->con_gp_type);
-  taBase::SetPointer((taBase**)&(rval->prjn), aprjn);
-  spec = aprjn->con_spec;	// set our spec to this one too..
-  rval->el_typ = aprjn->con_type; // set type of connection to this type..
-  el_typ = aprjn->con_type;	// ditto
-  rval->spec = aprjn->con_spec;
-  rval->own_cons = own;
-  return rval;
-}
-
-Con_Group* Con_Group::FindPrjn(Projection* aprjn, int& idx) const {
-  int g;
-  for(g=0; g<gp.size; g++) {
-    Con_Group* cg = (Con_Group*)gp.FastEl(g);
-    if(cg->prjn == aprjn) {
-      idx = g;
-      return cg;
-    }
-  }
-  idx = -1;
-  return NULL;
-}
-
-Con_Group* Con_Group::FindFrom(Layer* from, int& idx) const {
-  for(int g=0; g<gp.size; g++) {
-    Con_Group* cg = (Con_Group*)gp.FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from)) {
-      idx = g;
-      return cg;
-    }
-  }
-  idx = -1;
-  return NULL;
-}
-
-Con_Group* Con_Group::FindFromName(const String& fm_nm, int& idx) const {
-  for(int g=0; g<gp.size; g++) {
-    Con_Group* cg = (Con_Group*)gp.FastEl(g);
-    if((cg->prjn) && (cg->prjn->from->name == fm_nm)) {
-      idx = g;
-      return cg;
-    }
-  }
-  idx = -1;
-  return NULL;
-}
-
-Con_Group* Con_Group::FindTypeFrom(TypeDef* prjn_td, Layer* from, int& idx) const {
-  int g;
-  for(g=0; g<gp.size; g++) {
-    Con_Group* cg = (Con_Group*)gp.FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from) &&
-       (cg->prjn->InheritsFrom(prjn_td)))
-    {
-      idx = g;
-      return cg;
-    }
-  }
-  idx = -1;
-  return NULL;
-}
-
-
-Con_Group* Con_Group::FindLayer(Layer* lay, int& idx) const {
-  int g;
-  for(g=0; g<gp.size; g++) {
-    Con_Group* cg = (Con_Group*)gp.FastEl(g);
-    if((cg->prjn) && (cg->prjn->layer == lay)) {
-      idx = g;
-      return cg;
-    }
-  }
-  idx = -1;
-  return NULL;
-}
-
-bool Con_Group::RemovePrjn(Projection* aprjn) {
-  bool rval = false;
-  int g;
-  for(g=gp.size-1; g>=0; g--) {
-    Con_Group* cg = (Con_Group*)gp.FastEl(g);
-    if(cg->prjn == aprjn) {
-      cg->prjn->projected = false;
-      gp.Remove(cg);
-      rval = true;
-    }
-  }
-  return rval;
-}
-
-bool Con_Group::RemoveFrom(Layer* from) {
-  bool rval = false;
-  int g;
-  for(g=gp.size-1; g>=0; g--) {
-    Con_Group* cg = (Con_Group*)gp.FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from)) {
-      cg->prjn->projected = false;
-      gp.Remove(cg);
-      rval = true;
-    }
-  }
-  return rval;
-}
-
-Connection* Con_Group::FindRecipRecvCon(Unit* su, Unit* ru) {
+Connection* RecvCons::FindRecipRecvCon(Unit* su, Unit* ru) {
   Layer* my_lay = GET_OWNER(ru,Layer);
   int g;
-  for(g=0; g<su->recv.gp.size; g++) {
-    Con_Group* cg = (Con_Group*)su->recv.gp.FastEl(g);
+  for(g=0; g<su->recv.size; g++) {
+    RecvCons* cg = su->recv.FastEl(g);
     if((cg->prjn == NULL) && (cg->prjn->from != my_lay)) continue;
     Connection* con = cg->FindConFrom(ru);
     if(con) return con;
@@ -619,11 +535,11 @@ Connection* Con_Group::FindRecipRecvCon(Unit* su, Unit* ru) {
   return NULL;
 }
 
-Connection* Con_Group::FindRecipSendCon(Unit* ru, Unit* su) {
+Connection* RecvCons::FindRecipSendCon(Unit* ru, Unit* su) {
   Layer* my_lay = GET_OWNER(su,Layer);
   int g;
-  for(g=0; g<ru->send.gp.size; g++) {
-    Con_Group* cg = (Con_Group*)ru->send.gp.FastEl(g);
+  for(g=0; g<ru->send.size; g++) {
+    SendCons* cg = ru->send.FastEl(g);
     if((cg->prjn == NULL) && (cg->prjn->layer != my_lay)) continue;
     Connection* con = cg->FindConFrom(su);
     if(con) return con;
@@ -631,22 +547,139 @@ Connection* Con_Group::FindRecipSendCon(Unit* ru, Unit* su) {
   return NULL;
 }
 
-void Con_Group::Copy_Weights(const Con_Group* src) {
-  int mx = MIN(size, src->size);
+/////////////////////////////////////////////////////////////
+// 	Weight ops
+
+void RecvCons::TransformWeights(const SimpleMathSpec& trans) {
   int i;
-  for(i=0; i < mx; i++)
-    Cn(i)->wt = src->Cn(i)->wt;
+  for(i=0; i < cons.size; i++)
+    Cn(i)->wt = trans.Evaluate(Cn(i)->wt);
 }
 
-void Con_Group::SaveWeights_strm(ostream& strm, Unit*, Con_Group::WtSaveFormat fmt) {
-  if(!own_cons || (prjn == NULL) || (prjn->from == NULL)) {
+void RecvCons::AddNoiseToWeights(const Random& noise_spec) {
+  int i;
+  for(i=0; i < cons.size; i++)
+    Cn(i)->wt += noise_spec.Gen();
+}
+
+int RecvCons::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
+			    CountParam::Relation rel, float cmp_val)
+{
+  CountParam cond;
+  cond.rel = rel; cond.val = cmp_val;
+  int rval = 0;
+  int j;
+  for(j=cons.size-1; j>=0; j--) {
+    if(cond.Evaluate(pre_proc.Evaluate(Cn(j)->wt))) {
+      un->DisConnectFrom(Un(j), prjn);
+      rval++;
+    }
+  }
+  return rval;
+}
+
+int RecvCons::LesionCons(Unit* un, float p_lesion, bool permute) {
+  int rval = 0;
+  if(permute) {
+    rval = (int) (p_lesion * (float)cons.size);
+    if(rval == 0) return 0;
+    int_Array ary;
+    int j;
+    for(j=0; j<cons.size; j++)
+      ary.Add(j);
+    ary.Permute();
+    ary.size = rval;
+    ary.Sort();
+    for(j=ary.size-1; j>=0; j--)
+      un->DisConnectFrom(Un(ary.FastEl(j)), prjn);
+  }
+  else {
+    int j;
+    for(j=cons.size-1; j>=0; j--) {
+      if(Random::ZeroOne() <= p_lesion) {
+	un->DisConnectFrom(Un(j), prjn);
+	rval++;
+      }
+    }
+  }
+  return rval;
+}
+
+/////////////////////////////////////////////////////////////
+// 	To/From Arrays/Matrix
+
+bool RecvCons::ConValuesToArray(float_Array& ary, const char* variable) {
+  MemberDef* md = con_type->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   con_type->name, "in ConValuesToArray()");
+    return false;
+  }
+  for(int i=0; i<cons.size; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    ary.Add(*val);
+  }
+  return true;
+}
+
+bool RecvCons::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
+  MemberDef* md = con_type->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   con_type->name, "in ConValuesToMatrix()");
+    return false;
+  }
+  if(mat.size < cons.size) return false;
+
+  for(int i=0; i<cons.size; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    mat.FastEl_Flat(i) = *val;
+  }
+  return true;
+}
+
+bool RecvCons::ConValuesFromArray(float_Array& ary, const char* variable) {
+  MemberDef* md = con_type->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   con_type->name, "in ConValuesFromArray()");
+    return false;
+  }
+  int mx = MIN(cons.size, ary.size);
+  for(int i=0; i<mx; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    *val = ary[i];
+  }
+  return true;
+}
+
+bool RecvCons::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
+  MemberDef* md = con_type->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   con_type->name, "in ConValuesFromMatrix()");
+    return false;
+  }
+  int mx = MIN(cons.size, mat.size);
+  for(int i=0; i<mx; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    *val = mat.FastEl_Flat(i);
+  }
+  return true;
+}
+
+/////////////////////////////////////////////////////////////
+// 	Save/Load Weights
+
+void RecvCons::SaveWeights_strm(ostream& strm, Unit*, RecvCons::WtSaveFormat fmt) {
+  if((prjn == NULL) || (prjn->from == NULL)) {
     strm << "<Cn 0>\n";
     goto end_tag;		// don't do anything
   }
-  strm << "<Cn " << size << ">\n";
+  strm << "<Cn " << cons.size << ">\n";
   switch(fmt) {
-  case Con_Group::TEXT:
-    for(int i=0; i < size; i++) {
+  case RecvCons::TEXT:
+    for(int i=0; i < cons.size; i++) {
       int lidx = Un(i)->GetMyLeafIndex();
       if(lidx < 0) {
 	lidx = 0;
@@ -656,8 +689,8 @@ void Con_Group::SaveWeights_strm(ostream& strm, Unit*, Con_Group::WtSaveFormat f
       strm << lidx << " " << Cn(i)->wt << "\n";
     }
     break;
-  case Con_Group::BINARY:
-    for(int i=0; i < size; i++) {
+  case RecvCons::BINARY:
+    for(int i=0; i < cons.size; i++) {
       int lidx = Un(i)->GetMyLeafIndex();
       if(lidx < 0) {
 	lidx = 0;
@@ -679,7 +712,7 @@ void Con_Group::SaveWeights_strm(ostream& strm, Unit*, Con_Group::WtSaveFormat f
 // TAG_NONE = some kind of error
 // TAG_EOF = EOF
 
-int Con_Group::LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet) {
+int RecvCons::LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet) {
   String in_tag;
   int stat = taMisc::read_tag(strm, in_tag, val);
   if(stat == taMisc::TAG_END) return taMisc::TAG_NONE; // some other end -- not good
@@ -697,7 +730,7 @@ int Con_Group::LoadWeights_StartTag(istream& strm, const String& tag, String& va
   return stat;
 }
 
-int Con_Group::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet) {
+int RecvCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet) {
   String val;
   if(stat != taMisc::TAG_END)	// haven't already hit the end
     stat = taMisc::read_tag(strm, cur_tag, val);
@@ -710,26 +743,26 @@ int Con_Group::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& 
   return stat;
 }
 
-int Con_Group::LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt, bool quiet) {
-  if(!own_cons || (prjn == NULL) || (prjn->from == NULL)) {
+int RecvCons::LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat fmt, bool quiet) {
+  if((prjn == NULL) || (prjn->from == NULL)) {
     return SkipWeights_strm(strm, fmt, quiet); // bail
   }
   String tag, val;
-  int stat = Con_Group::LoadWeights_StartTag(strm, "Cn", val, quiet);
+  int stat = RecvCons::LoadWeights_StartTag(strm, "Cn", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   int sz = (int)val;
   if(sz < 0) {
     if(!quiet)
-      taMisc::Warning("Con_Group::LoadWeights: Error in reading weights -- read size < 0");
+      taMisc::Warning("RecvCons::LoadWeights: Error in reading weights -- read size < 0");
     return taMisc::TAG_NONE;
   }
-  ru->n_recv_cons += sz - size;
-  EnforceSize(sz);
+  ru->n_recv_cons += sz - cons.size;
+  cons.SetSize(sz);
 
-  for(int i=0; i < size; i++) {
+  for(int i=0; i < cons.size; i++) {
     int lidx;
-    if(fmt == Con_Group::TEXT) {
+    if(fmt == RecvCons::TEXT) {
       taMisc::read_till_eol(strm);
       lidx = (int)taMisc::LexBuf.before(' ');
       Cn(i)->wt = (float)taMisc::LexBuf.after(' ');
@@ -744,16 +777,16 @@ int Con_Group::LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat
       if(!quiet)
 	taMisc::Warning("Error in LoadWeights: unit at leaf index: ",
 			String(lidx), "not found in layer:", prjn->from->name);
-      i--; EnforceSize(size-1);
+      i--; cons.SetSize(cons.size-1);
       ru->n_recv_cons--;
       continue;
     }
-    Con_Group* send_gp = (Con_Group*)su->send.SafeGp(prjn->send_idx);
+    SendCons* send_gp = su->send.SafeEl(prjn->send_idx);
     if(!send_gp) {
       if(!quiet)
 	taMisc::Warning("Error in LoadWeights: unit at leaf index: ",
 			String(lidx), "does not have proper send group:", String(prjn->send_idx));
-      i--; EnforceSize(size-1);
+      i--; cons.SetSize(cons.size-1);
       ru->n_recv_cons--;
       continue;
     }
@@ -761,7 +794,7 @@ int Con_Group::LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat
       units.Link(su);
       int sidx = send_gp->units.Find(ru);
       if(sidx >= 0) {
-	send_gp->ReplaceLink(sidx, Cn(i));
+	send_gp->cons.ReplaceLink(sidx, Cn(i));
       }
       else {
 	send_gp->LinkCon(Cn(i), ru);
@@ -771,20 +804,20 @@ int Con_Group::LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat
       units.ReplaceLink(i, su);
       int sidx = send_gp->units.Find(ru);
       if(sidx >= 0) {
-	send_gp->ReplaceLink(sidx, Cn(i));
+	send_gp->cons.ReplaceLink(sidx, Cn(i));
       }
       else {
 	send_gp->LinkCon(Cn(i), ru);
       }
     }
   }
-  Con_Group::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
+  RecvCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
   return stat;			// should be tag end!
 }
 
-int Con_Group::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+int RecvCons::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   String tag, val;
-  int stat = Con_Group::LoadWeights_StartTag(strm, "Cn", val, quiet);
+  int stat = RecvCons::LoadWeights_StartTag(strm, "Cn", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   int sz = (int)val;
@@ -795,7 +828,7 @@ int Con_Group::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool
   for(int i=0; i < sz; i++) {
     int lidx;
     float wt;
-    if(fmt == Con_Group::TEXT) {
+    if(fmt == RecvCons::TEXT) {
       taMisc::read_till_eol(strm);
     }
     else {			// binary
@@ -803,11 +836,11 @@ int Con_Group::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool
       strm.read((char*)&(wt), sizeof(wt));
     }
   }
-  Con_Group::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
+  RecvCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
   return stat;
 }
 
-void Con_Group::SaveWeights(const String& fname, Unit* ru, Con_Group::WtSaveFormat fmt) {
+void RecvCons::SaveWeights(const String& fname, Unit* ru, RecvCons::WtSaveFormat fmt) {
   taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, ru, fmt);
@@ -815,7 +848,7 @@ void Con_Group::SaveWeights(const String& fname, Unit* ru, Con_Group::WtSaveForm
   taRefN::unRefDone(flr);
 }
 
-int Con_Group::LoadWeights(const String& fname, Unit* ru, Con_Group::WtSaveFormat fmt, bool quiet) {
+int RecvCons::LoadWeights(const String& fname, Unit* ru, RecvCons::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
   int rval = 0;
   if(flr->istrm)
@@ -825,202 +858,15 @@ int Con_Group::LoadWeights(const String& fname, Unit* ru, Con_Group::WtSaveForma
   return rval;
 }
 
-void Con_Group::TransformWeights(const SimpleMathSpec& trans) {
-  int i;
-  for(i=0; i < size; i++)
-    Cn(i)->wt = trans.Evaluate(Cn(i)->wt);
-}
-
-void Con_Group::AddNoiseToWeights(const Random& noise_spec) {
-  int i;
-  for(i=0; i < size; i++)
-    Cn(i)->wt += noise_spec.Gen();
-}
-
-int Con_Group::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
-			    CountParam::Relation rel, float cmp_val)
-{
-  CountParam cond;
-  cond.rel = rel; cond.val = cmp_val;
-  int rval = 0;
-  int j;
-  for(j=size-1; j>=0; j--) {
-    if(cond.Evaluate(pre_proc.Evaluate(Cn(j)->wt))) {
-      un->DisConnectFrom(Un(j), prjn);
-      rval++;
-    }
-  }
-  return rval;
-}
-
-int Con_Group::LesionCons(Unit* un, float p_lesion, bool permute) {
-  int rval = 0;
-  if(permute) {
-    rval = (int) (p_lesion * (float)size);
-    if(rval == 0) return 0;
-    int_Array ary;
-    int j;
-    for(j=0; j<size; j++)
-      ary.Add(j);
-    ary.Permute();
-    ary.size = rval;
-    ary.Sort();
-    for(j=ary.size-1; j>=0; j--)
-      un->DisConnectFrom(Un(ary.FastEl(j)), prjn);
-  }
-  else {
-    int j;
-    for(j=size-1; j>=0; j--) {
-      if(Random::ZeroOne() <= p_lesion) {
-	un->DisConnectFrom(Un(j), prjn);
-	rval++;
-      }
-    }
-  }
-  return rval;
-}
-
-bool Con_Group::ConValuesToArray(float_Array& ary, const char* variable) {
-  MemberDef* md = el_typ->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in ConValuesToArray()");
-    return false;
-  }
-  for(int i=0; i<size; i++) {
-    float* val = (float*)md->GetOff((void*)Cn(i));
-    ary.Add(*val);
-  }
-  return true;
-}
-
-bool Con_Group::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
-  MemberDef* md = el_typ->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in ConValuesToMatrix()");
-    return false;
-  }
-  if(mat.size < size) return false;
-
-  for(int i=0; i<size; i++) {
-    float* val = (float*)md->GetOff((void*)Cn(i));
-    mat.FastEl_Flat(i) = *val;
-  }
-  return true;
-}
-
-bool Con_Group::ConValuesFromArray(float_Array& ary, const char* variable) {
-  MemberDef* md = el_typ->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in ConValuesFromArray()");
-    return false;
-  }
-  int mx = MIN(size, ary.size);
-  for(int i=0; i<mx; i++) {
-    float* val = (float*)md->GetOff((void*)Cn(i));
-    *val = ary[i];
-  }
-  return true;
-}
-
-bool Con_Group::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
-  MemberDef* md = el_typ->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in ConValuesFromMatrix()");
-    return false;
-  }
-  int mx = MIN(size, mat.size);
-  for(int i=0; i<mx; i++) {
-    float* val = (float*)md->GetOff((void*)Cn(i));
-    *val = mat.FastEl_Flat(i);
-  }
-  return true;
-}
-
-int Con_Group::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
-  if(spec.spec != old_sp) return 0;
-  taBase::SetPointer((taBase**)&spec.spec, new_sp);
-//   spec.SetSpec(new_sp);
-  return 1;
-}
-
-bool Con_Group::CheckTypes(bool quiet) {
-  if(!spec.CheckSpec())
-    return false;
-  if((prjn == NULL) && (size > 0)) {
-    if(!quiet)
-      taMisc::CheckError("ConGroup:",GetPath(),"has null projection!, do Connect All");
-    return false;
-  }
-  if((size > 0) && (other_idx < 0)) {
-    if(!quiet)
-      taMisc::CheckError("ConGroup:", GetPath(), "has unset other_idx, do FixPrjnIndexes or Connect All");
-    return false;
-  }
-  return true;
-}
-
-bool Con_Group::CheckOtherIdx_Recv() {
-  if(size == 0) return true;
-  if((other_idx < 0) || (other_idx != prjn->send_idx)) {
-    taMisc::CheckError("recv ConGroup:", GetPath(), "has unset other_idx or doesn't match prjn, do FixPrjnIndexes or Connect All");
-    return false;
-  }
-  Unit* su = Un(0);
-  if(su->send.gp.size <= other_idx) {
-    taMisc::CheckError("recv ConGroup:", GetPath(), "other_idx", String(other_idx),
-		  "is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network");
-    return false;
-  }
-  Con_Group* sucg = (Con_Group*)su->send.FastGp(other_idx);
-  if(sucg->prjn != prjn) {
-    taMisc::CheckError("recv ConGroup:", GetPath(), "other_idx", String(other_idx),
-		  "doesn't have correct prjn on sending unit.  Do Actions/Remove Cons, then Build, Connect on Network");
-    return false;
-  }
-  return true;
-}
-
-bool Con_Group::CheckOtherIdx_Send() {
-  if(size == 0) return true;
-  if((other_idx < 0) || (other_idx != prjn->recv_idx)) {
-    taMisc::CheckError("send ConGroup:", GetPath(), "has unset other_idx or doesn't match prjn, do FixPrjnIndexes or Connect All");
-    return false;
-  }
-  Unit* ru = Un(0);
-  if(ru->recv.gp.size <= other_idx) {
-    taMisc::CheckError("send ConGroup:", GetPath(), "other_idx", String(other_idx),
-		  "is out of range on recv unit. Do Actions/Remove Cons, then Build, Connect on Network");
-    return false;
-  }
-  Con_Group* rucg = (Con_Group*)ru->recv.FastGp(other_idx);
-  if(rucg->prjn != prjn) {
-    taMisc::CheckError("send ConGroup:", GetPath(), "other_idx", String(other_idx),
-		  "doesn't have correct prjn on recv unit.  Do Actions/Remove Cons, then Build, Connect on Network");
-    return false;
-  }
-  return true;
-}
-
-// only dump sub-group stuff
-int Con_Group::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
-  return gp.Dump_Save_PathR(strm, par, indent);
-}
-int Con_Group::Dump_SaveR(ostream& strm, taBase* par, int indent) {
-  return gp.Dump_SaveR(strm, par, indent);
-}
+/////////////////////////////////////////////////////////////
+// 	Dump Load/Save
 
 // have to implement after save_value because we're not saving a real
 // path that can be loaded with Load
 
-int Con_Group::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
-  if(size == 0)			// don't own any if you don't got 'em
-    own_cons = false;		// and, own_cons is used as a flag for loading..
-  int rval = taBase_Group::Dump_Save_Value(strm, par, indent); // first dump members
-  if((size == 0) || !own_cons || !rval || (prjn == NULL))
+int RecvCons::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
+  int rval = inherited::Dump_Save_Value(strm, par, indent); // first dump members
+  if(!rval)
     return rval;
 
   // close off the regular members
@@ -1028,99 +874,79 @@ int Con_Group::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
 
   // output the units
   taMisc::indent(strm, indent, 1) << "{ units = {";
-
-  int i;
-  for(i=0; i<size; i++) {
-    String un_path = Un(i)->GetPath(NULL, &(prjn->from->units));
-    if(un_path == "root") {
-      taMisc::Warning("Units in projection:", prjn->name,"in layer:",prjn->layer->name,
-		    "have a null path.  Do ConnectAll and save again.");
-    }
-    strm << un_path << "; ";
-    if(((i+1) % 8) == 0)
-      strm << "\n";
+  for(int i=0; i<units.size; i++) {
+    if(Un(i))
+      strm << Un(i)->GetMyLeafIndex() << "; ";
+    else
+      strm << -1 << "; ";	// null..
   }
   strm << "};\n";
 
   // output the connection values
-  TypeDef* ctd = Cn(0)->GetTypeDef();
-  int j;
-  for(j=0; j<ctd->members.size; j++) {
-    MemberDef* md = ctd->members.FastEl(j);
+  for(int j=0; j<con_type->members.size; j++) {
+    MemberDef* md = con_type->members.FastEl(j);
     if((md->type->ptr > 0) || (md->HasOption("NO_SAVE")))
       continue;
     taMisc::indent(strm, indent+1,1) << md->name << " = {";
-    for(i=0; i<size; i++) {
+    for(int i=0; i<cons.size; i++) {
       strm << md->type->GetValStr(md->GetOff((void*)Cn(i))) << "; ";
-      if((((i+1) % 8) == 0) && (i < (size-1)))
-	strm << "\n";
     }
     strm << "};\n";
   }
   return true;
 }
 
-int Con_Group::Dump_Load_Value(istream& strm, taBase*) {
-  int rval = taBase_Group::Dump_Load_Value(strm); // first dump members
-  if(!own_cons || (rval == EOF) || (rval == 2))
+int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
+  int rval = inherited::Dump_Load_Value(strm); // first dump members
+  if((rval == EOF) || (rval == 2))
     return rval;
 
   int c = taMisc::read_till_lbracket(strm);	// get past opening bracket
   if(c == EOF) return EOF;
   c = taMisc::read_word(strm);
   if(taMisc::LexBuf != "units") {
-    taMisc::Warning("Con_Group Expecting: 'units' in load file, got:",
+    taMisc::Warning("RecvCons Expecting: 'units' in load file, got:",
 		    taMisc::LexBuf,"instead");
     return false;
   }
   // skip =
   c = taMisc::skip_white(strm);
   if(c != '=') {
-    taMisc::Warning("Missing '=' in dump file for unit in Con_Group");
+    taMisc::Warning("Missing '=' in dump file for unit in RecvCons");
     return false;
   }
   // skip {
   c = taMisc::skip_white(strm);
   if(c != '{') {
-    taMisc::Warning("Missing '{' in dump file for unit in Con_Group");
+    taMisc::Warning("Missing '{' in dump file for unit in RecvCons");
     return false;
   }
 
-  // prjn has to be loaded in advance of this!
-  // (sender-based must have send_prjns own projection, else projection owns it)
-  if((prjn == NULL) || (prjn->from == NULL) || (prjn->layer == NULL)) {
-    taMisc::Warning("projection or ->from or ->layer is NULL");
-    return false;
-  }
-  Unit_Group* ug = &(prjn->from->units);
-
-  TypeDef* ctd = prjn->con_type;
-
-  // now read them all in..
+  // first read in the units
+  Unit_Group* ug = NULL;
+  if(prjn && prjn->from) 
+    ug = &(prjn->from->units);
   int c_count = 0;		// number of connections
   while(true) {
     c = taMisc::read_till_rb_or_semi(strm);
     if(c == EOF) return EOF;
     if(c == '}') break;
-
-    // find ptr (optimized to search relative to ug_md..
-    MemberDef* md;
-    Unit* un = (Unit*)ug->FindFromPath(taMisc::LexBuf, md);
-    if(un == NULL) {
-      taMisc::Warning("Connection unit not found:", taMisc::LexBuf,
-		      "in connection type", ctd->name);
-      c = taMisc::skip_past_err(strm); // scan past the error
-      if(c == '}') break;
-      continue;
-    }
-    else {
-      if(units.size > c_count)
-	units.ReplaceLink(c_count, un);
-      else {
-	units.Link(un);
-	if(size < units.size)
-	  Add(taBase::MakeToken(ctd)); // keep synced..
+    Unit* un = NULL;
+    int lfidx = (int)taMisc::LexBuf;
+    if(ug && (lfidx >= 0)) {
+      un = (Unit*)ug->Leaf(lfidx);
+      if(!un) {
+	taMisc::Warning("Connection unit at not found at index:", String(lfidx),
+			"in connection type", con_type->name);
+	continue;
       }
+    }
+    if(units.size > c_count)
+      units.ReplaceLink(c_count, un);
+    else {
+      units.Link(un);
+      if(cons.size < units.size)
+	cons.SetSize(units.size);
     }
     c_count++;
   }
@@ -1133,10 +959,10 @@ int Con_Group::Dump_Load_Value(istream& strm, taBase*) {
       if(strm.peek() == ';') strm.get(); // get the semi
       break;		// done
     }
-    MemberDef* md = ctd->members.FindName(taMisc::LexBuf);
+    MemberDef* md = con_type->members.FindName(taMisc::LexBuf);
     if(md == NULL) {
       taMisc::Warning("Connection member not found:", taMisc::LexBuf,
-		      "in connection type", ctd->name);
+		      "in connection type", con_type->name);
       c = taMisc::skip_past_err(strm);
       if(c == '}') break;
       continue;
@@ -1144,14 +970,14 @@ int Con_Group::Dump_Load_Value(istream& strm, taBase*) {
     // skip =
     c = taMisc::skip_white(strm);
     if(c != '=') {
-      taMisc::Warning("Missing '=' in dump file for unit in Con_Group");
+      taMisc::Warning("Missing '=' in dump file for unit in RecvCons");
       c = taMisc::skip_past_err(strm);
       continue;
     }
     // skip {
     c = taMisc::skip_white(strm);
     if(c != '{') {
-      taMisc::Warning("Missing '{' in dump file for unit in Con_Group");
+      taMisc::Warning("Missing '{' in dump file for unit in RecvCons");
       c = taMisc::skip_past_err(strm);
       continue;
     }
@@ -1161,7 +987,7 @@ int Con_Group::Dump_Load_Value(istream& strm, taBase*) {
       c = taMisc::read_till_rb_or_semi(strm);
       if(c == EOF) return EOF;
       if(c == '}') break;
-      if(i >= size) {
+      if(i >= cons.size) {
 	c = taMisc::skip_past_err_rb(strm); // bail to ending rb
 	break;
       }
@@ -1171,6 +997,417 @@ int Con_Group::Dump_Load_Value(istream& strm, taBase*) {
     }
   }
   return true;
+}
+
+/////////////////////////////////////////////////////////////////////
+//	RecvCons_List
+
+RecvCons* RecvCons_List::NewPrjn(Projection* aprjn) {
+  RecvCons* rval = (RecvCons*)New(1, aprjn->recvcons_type);
+  taBase::SetPointer((taBase**)&(rval->prjn), aprjn);
+  rval->SetConType(aprjn->con_type); // set type of connection to this type..
+  rval->spec = aprjn->con_spec;
+  return rval;
+}
+
+RecvCons* RecvCons_List::FindPrjn(Projection* aprjn, int& idx) const {
+  for(int g=0; g<size; g++) {
+    RecvCons* cg = FastEl(g);
+    if(cg->prjn == aprjn) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+RecvCons* RecvCons_List::FindFrom(Layer* from, int& idx) const {
+  for(int g=0; g<size; g++) {
+    RecvCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->from == from)) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+RecvCons* RecvCons_List::FindFromName(const String& fm_nm, int& idx) const {
+  for(int g=0; g<size; g++) {
+    RecvCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->from->name == fm_nm)) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+RecvCons* RecvCons_List::FindTypeFrom(TypeDef* prjn_td, Layer* from, int& idx) const {
+  int g;
+  for(g=0; g<size; g++) {
+    RecvCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->from == from) &&
+       (cg->prjn->InheritsFrom(prjn_td)))
+    {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+
+RecvCons* RecvCons_List::FindLayer(Layer* lay, int& idx) const {
+  int g;
+  for(g=0; g<size; g++) {
+    RecvCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->layer == lay)) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+bool RecvCons_List::RemovePrjn(Projection* aprjn) {
+  bool rval = false;
+  for(int g=size-1; g>=0; g--) {
+    RecvCons* cg = FastEl(g);
+    if(cg && (cg->prjn == aprjn)) {
+      cg->prjn->projected = false;
+      Remove(cg);
+      rval = true;
+    }
+  }
+  return rval;
+}
+
+bool RecvCons_List::RemoveFrom(Layer* from) {
+  bool rval = false;
+  int g;
+  for(g=size-1; g>=0; g--) {
+    RecvCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->from == from)) {
+      cg->prjn->projected = false;
+      Remove(cg);
+      rval = true;
+    }
+  }
+  return rval;
+}
+
+/////////////////////////////////////////////////////////////////////
+//	SendCons
+
+int SendCons::Idx = 0;
+
+void SendCons::Initialize() {
+  // derived classes need to set new basic con types
+  con_type = &TA_Connection;
+  // cons.SetType(&TA_Connection);
+  prjn = NULL;
+  recv_idx = -1;
+}
+
+void SendCons::InitLinks() {
+  inherited::InitLinks();
+  spec.SetDefaultSpec(this);
+}
+
+void SendCons::CutLinks() {
+  cons.Reset();
+  units.Reset();
+  taBase::DelPointer((taBase**)&prjn);
+  spec.CutLinks();
+  inherited::CutLinks();
+}
+
+void SendCons::Copy_(const SendCons& cp) {
+  // just do a full copy here
+  con_type = cp.con_type;
+  cons.Borrow(cp.cons);
+  units.Borrow(cp.units);
+  spec = cp.spec;
+  taBase::SetPointer((taBase**)&prjn, cp.prjn);
+  recv_idx = -1;		// reset, who knows!
+}
+
+void SendCons::UpdateAfterEdit() {
+  taOBase::UpdateAfterEdit();
+  spec.CheckSpec();
+}
+
+bool SendCons::CheckTypes(bool quiet) {
+  if(!spec.CheckSpec())
+    return false;
+  if((prjn == NULL) && (cons.size > 0)) {
+    if(!quiet)
+      taMisc::CheckError("SendCons:",GetPath(),"has null projection!, do Connect All");
+    return false;
+  }
+  if((cons.size > 0) && (recv_idx < 0)) {
+    if(!quiet)
+      taMisc::CheckError("SendCons:", GetPath(), "has unset send_idx, do FixPrjnIndexes or Connect All");
+    return false;
+  }
+  return true;
+}
+
+bool SendCons::CheckRecvIdx() {
+  if(cons.size == 0) return true;
+  if((recv_idx < 0) || (recv_idx != prjn->recv_idx)) {
+    taMisc::CheckError("SendCons:", GetPath(), "has unset recv_idx or doesn't match prjn, do FixPrjnIndexes or Connect All");
+    return false;
+  }
+  Unit* ru = Un(0);
+  if(ru->recv.size <= recv_idx) {
+    taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
+		  "is out of range on recv unit. Do Actions/Remove Cons, then Build, Connect on Network");
+    return false;
+  }
+  RecvCons* rucg = ru->recv.FastEl(recv_idx);
+  if(rucg->prjn != prjn) {
+    taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
+		  "doesn't have correct prjn on recv unit.  Do Actions/Remove Cons, then Build, Connect on Network");
+    return false;
+  }
+  return true;
+}
+
+bool SendCons::ChangeMyType(TypeDef*) {
+  taMisc::Error("Cannot change type of con_groups -- change type setting in projection and reconnect network instead");
+  return false;
+}
+
+int SendCons::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
+  if(spec.spec != old_sp) return 0;
+  taBase::SetPointer((taBase**)&spec.spec, new_sp);
+//   spec.SetSpec(new_sp);
+  return 1;
+}
+
+void SendCons::CopyNetwork(Network* net, Network* cn, SendCons* cp) {
+  // basically does replacepointers on the relevant stuff..
+  MemberDef* md;
+  String path;
+  recv_idx = cp->recv_idx;
+  units.Reset();		// always reset the units, cuz they're going to be wrong..
+  cons.Reset();			// same with these -- links
+  // just have both of these copied in ReConnect_Load
+  if(cp->prjn) {
+    path = cp->prjn->GetPath(NULL, cn);
+    Projection* nw_prjn = (Projection*)net->FindFromPath(path, md);
+    if(nw_prjn)
+      taBase::SetPointer((taBase**)&prjn, nw_prjn);
+  }
+}
+
+void SendCons::SetConType(TypeDef* cn_tp) {
+  con_type = cn_tp;
+}
+
+/////////////////////////////////////////////////////////////
+// 	Connection Creation/Deletion
+
+void SendCons::LinkCon(Connection* cn, Unit* un) {
+  cons.Link(cn);
+  units.Link(un);
+}
+
+bool SendCons::RemoveConIdx(int i) {
+  units.Remove(i);
+  return cons.Remove(i);
+}
+
+bool SendCons::RemoveConUn(Unit* un) {
+  int idx;
+  if((idx = units.Find(un)) < 0)
+    return false;
+  return RemoveConIdx(idx);
+}
+
+void SendCons::RemoveAll() {
+  cons.Reset();
+  units.Reset();
+}
+
+Connection* SendCons::FindConFrom(Unit* un, int& idx) const {
+  if((idx = units.Find(un)) < 0)
+    return NULL;
+  return cons.SafeEl(idx);
+}
+
+/////////////////////////////////////////////////////////////
+// 	To/From Arrays/Matrix
+
+bool SendCons::ConValuesToArray(float_Array& ary, const char* variable) {
+  MemberDef* md = con_type->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   con_type->name, "in ConValuesToArray()");
+    return false;
+  }
+  for(int i=0; i<cons.size; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    ary.Add(*val);
+  }
+  return true;
+}
+
+bool SendCons::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
+  MemberDef* md = con_type->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   con_type->name, "in ConValuesToMatrix()");
+    return false;
+  }
+  if(mat.size < cons.size) return false;
+
+  for(int i=0; i<cons.size; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    mat.FastEl_Flat(i) = *val;
+  }
+  return true;
+}
+
+bool SendCons::ConValuesFromArray(float_Array& ary, const char* variable) {
+  MemberDef* md = con_type->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   con_type->name, "in ConValuesFromArray()");
+    return false;
+  }
+  int mx = MIN(cons.size, ary.size);
+  for(int i=0; i<mx; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    *val = ary[i];
+  }
+  return true;
+}
+
+bool SendCons::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
+  MemberDef* md = con_type->members.FindName(variable);
+  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
+    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
+		   con_type->name, "in ConValuesFromMatrix()");
+    return false;
+  }
+  int mx = MIN(cons.size, mat.size);
+  for(int i=0; i<mx; i++) {
+    float* val = (float*)md->GetOff((void*)Cn(i));
+    *val = mat.FastEl_Flat(i);
+  }
+  return true;
+}
+
+/////////////////////////////////////////////////////////////////////
+//	RecvCons_List
+
+SendCons* SendCons_List::NewPrjn(Projection* aprjn) {
+  SendCons* rval = (SendCons*)New(1, aprjn->sendcons_type);
+  taBase::SetPointer((taBase**)&(rval->prjn), aprjn);
+  rval->con_type = aprjn->con_type; // set type of connection to this type..
+  rval->spec = aprjn->con_spec;
+  return rval;
+}
+
+SendCons* SendCons_List::FindPrjn(Projection* aprjn, int& idx) const {
+  for(int g=0; g<size; g++) {
+    SendCons* cg = FastEl(g);
+    if(cg->prjn == aprjn) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+SendCons* SendCons_List::FindFrom(Layer* from, int& idx) const {
+  for(int g=0; g<size; g++) {
+    SendCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->from == from)) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+SendCons* SendCons_List::FindFromName(const String& fm_nm, int& idx) const {
+  for(int g=0; g<size; g++) {
+    SendCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->from->name == fm_nm)) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+SendCons* SendCons_List::FindTypeFrom(TypeDef* prjn_td, Layer* from, int& idx) const {
+  int g;
+  for(g=0; g<size; g++) {
+    SendCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->from == from) &&
+       (cg->prjn->InheritsFrom(prjn_td)))
+    {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+
+SendCons* SendCons_List::FindLayer(Layer* lay, int& idx) const {
+  int g;
+  for(g=0; g<size; g++) {
+    SendCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->layer == lay)) {
+      idx = g;
+      return cg;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+bool SendCons_List::RemovePrjn(Projection* aprjn) {
+  bool rval = false;
+  int g;
+  for(g=size-1; g>=0; g--) {
+    SendCons* cg = FastEl(g);
+    if(cg->prjn == aprjn) {
+      cg->prjn->projected = false;
+      Remove(cg);
+      rval = true;
+    }
+  }
+  return rval;
+}
+
+bool SendCons_List::RemoveFrom(Layer* from) {
+  bool rval = false;
+  int g;
+  for(g=size-1; g>=0; g--) {
+    SendCons* cg = FastEl(g);
+    if((cg->prjn) && (cg->prjn->from == from)) {
+      cg->prjn->projected = false;
+      Remove(cg);
+      rval = true;
+    }
+  }
+  return rval;
 }
 
 ////////////////////////
@@ -1207,10 +1444,9 @@ void UnitSpec::Copy_(const UnitSpec& cp) {
 }
 
 bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  Con_Group* recv_gp;
-  int g;
   bool rval = true;
-  FOR_ITR_GP(Con_Group, recv_gp, un->recv., g) {
+  for(int g = 0; g < un->recv.size; g++) {
+    RecvCons* recv_gp = un->recv.FastEl(g);
     recv_gp->CheckConfig(quiet, rval);
   }
   return rval;
@@ -1276,14 +1512,13 @@ void UnitSpec::Init_Acts(Unit* u) {
 }
 
 void UnitSpec::Init_dWt(Unit* u) {
-  Con_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, u->recv., g) {
+  for(int g = 0; g < u->recv.size; g++) {
+    RecvCons* recv_gp = u->recv.FastEl(g);
     if(!recv_gp->prjn->from->lesion)
       recv_gp->Init_dWt(u);
   }
-  if(u->bias)
-    bias_spec->C_Init_dWt(NULL, u->bias, u, NULL); // this is a virtual fun
+  if(u->bias.cons.size)
+    bias_spec->C_Init_dWt(&u->bias, u->bias.Cn(0), u, NULL); // this is a virtual fun
 }
 
 void UnitSpec::Init_Weights(Unit* u) {
@@ -1295,70 +1530,65 @@ void UnitSpec::Init_Weights(Unit* u) {
   else
 #endif
     {
-      Con_Group* recv_gp;
-      int g;
-      FOR_ITR_GP(Con_Group, recv_gp, u->recv., g) {
+      for(int g = 0; g < u->recv.size; g++) {
+	RecvCons* recv_gp = u->recv.FastEl(g);
 	// ignore lesion here because n_recv_cons does not take into account lesioned layers, so dmem would get out of sync
 	//    if(!recv_gp->prjn->from->lesion)
 	recv_gp->Init_Weights(u);
       }
     }
 
-  if(u->bias) {
-    bias_spec->C_Init_Weights(NULL, u->bias, u, NULL); // this is a virtual fun
-    bias_spec->C_Init_dWt(NULL, u->bias, u, NULL); // don't forget delta too!!
+  if(u->bias.cons.size) {
+    bias_spec->C_Init_Weights(&u->bias, u->bias.Cn(0), u, NULL); // this is a virtual fun
+    bias_spec->C_Init_dWt(&u->bias, u->bias.Cn(0), u, NULL); // don't forget delta too!!
   }
 }
 
 void UnitSpec::Init_Weights_post(Unit* u) {
-  Con_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, u->recv., g) {
+  for(int g = 0; g < u->recv.size; g++) {
+    RecvCons* recv_gp = u->recv.FastEl(g);
     if(!recv_gp->prjn->from->lesion)
       recv_gp->Init_Weights_post(u);
   }
 }
 
 void UnitSpec::Compute_Netin(Unit* u) {
-  Con_Group* recv_gp;
   u->net = 0.0f;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, u->recv., g) {
+  for(int g = 0; g < u->recv.size; g++) {
+    RecvCons* recv_gp = u->recv.FastEl(g);
     if(!recv_gp->prjn->from->lesion)
       u->net += recv_gp->Compute_Netin(u);
   }
-  if(u->bias)
-    u->net += u->bias->wt;
+  if(u->bias.cons.size)
+    u->net += u->bias.Cn(0)->wt;
 }
 
 void UnitSpec::Send_Netin(Unit* u) {
   // typically the whole point of using sender based net input is that you want to check
   // here if the sending unit's activation (i.e., this one) is above some threshold
   // so you don't send if it isn't above that threshold..  this isn't implemented here though.
-  Con_Group* send_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, send_gp, u->send., g) {
+  for(int g = 0; g < u->send.size; g++) {
+    SendCons* send_gp = u->send.FastEl(g);
     Layer* tol = send_gp->prjn->layer;
     if(!tol->lesion)
       send_gp->Send_Netin(u);
   }
-  if(u->bias)
-    u->net += u->bias->wt;
+  if(u->bias.cons.size)
+    u->net += u->bias.Cn(0)->wt;
 }
 
 void UnitSpec::Send_NetinToLay(Unit* u, Layer* tolay) {
   // typically the whole point of using sender based net input is that you want to check
   // here if the sending unit's activation (i.e., this one) is above some threshold
   // so you don't send if it isn't above that threshold..  this isn't implemented here though.
-  Con_Group* send_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, send_gp, u->send., g) {
+  for(int g = 0; g < u->send.size; g++) {
+    SendCons* send_gp = u->send.FastEl(g);
     Layer* tol = send_gp->prjn->layer;
     if(!tol->lesion && (tol == tolay))
       send_gp->Send_Netin(u);
   }
-  if(u->bias)
-    u->net += u->bias->wt;
+  if(u->bias.cons.size)
+    u->net += u->bias.Cn(0)->wt;
 }
 
 void UnitSpec::Compute_Act(Unit* u) {
@@ -1369,25 +1599,23 @@ void UnitSpec::Compute_Act(Unit* u) {
 }
 
 void UnitSpec::Compute_dWt(Unit* u) {
-  Con_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, u->recv., g) {
+  for(int g = 0; g < u->recv.size; g++) {
+    RecvCons* recv_gp = u->recv.FastEl(g);
     if(!recv_gp->prjn->from->lesion)
       recv_gp->Compute_dWt(u);
   }
-  // NOTE: derived classes must supply bias->Compute_dWt call because C_Compute_dWt
+  // NOTE: derived classes must supply bias.Cn(0)->Compute_dWt call because C_Compute_dWt
   // is not virtual, so if called here, only ConSpec version would be called.
   // This is not true of Init_Weights and Init_dWt, which are virtual.
 }
 
 void UnitSpec::Compute_Weights(Unit* u) {
-  Con_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, u->recv., g) {
+  for(int g = 0; g < u->recv.size; g++) {
+    RecvCons* recv_gp = u->recv.FastEl(g);
     if(!recv_gp->prjn->from->lesion)
       recv_gp->Compute_Weights(u);
   }
-  // NOTE: derived classes must supply bias->Compute_Weights call because C_Compute_Weights
+  // NOTE: derived classes must supply bias.Cn(0)->Compute_Weights call because C_Compute_Weights
   // is not virtual, so if called here, only ConSpec version would be called.
   // This is not true of Init_Weights and Init_dWt, which are virtual.
 }
@@ -1406,9 +1634,6 @@ float UnitSpec::Compute_SSE(Unit* u) {
 /////// Unit ///////
 
 void Unit::Initialize() {
-  recv.SetBaseType(&TA_Connection);
-  send.SetBaseType(&TA_Connection);
-  bias = NULL;
   ext_flag = NO_EXTERNAL;
   targ = 0.0f;
   ext = 0.0f;
@@ -1426,6 +1651,7 @@ void Unit::InitLinks() {
   taNBase::InitLinks();
   taBase::Own(recv, this);	// always own your constitutents
   taBase::Own(send, this);
+  taBase::Own(bias, this);
   taBase::Own(pos, this);
   spec.SetDefaultSpec(this);
   Build();
@@ -1437,15 +1663,13 @@ void Unit::InitLinks() {
 void Unit::CutLinks() {
   recv.CutLinks();
   send.CutLinks();
-  taBase::DelPointer((taBase**)&bias);
+  bias.CutLinks();
   spec.CutLinks();
   idx = -1;
   inherited::CutLinks();
 }
 
 void Unit::Copy_(const Unit& cp) {
-  if((bias) && (cp.bias))
-    *bias = *(cp.bias);
   spec = cp.spec;
   pos = cp.pos;
   ext_flag = cp.ext_flag;
@@ -1455,6 +1679,7 @@ void Unit::Copy_(const Unit& cp) {
   net = cp.net;
   recv = cp.recv;
   send = cp.send;
+  bias = cp.bias;
   n_recv_cons = cp.n_recv_cons;
 }
 
@@ -1495,7 +1720,6 @@ int Unit::dmem_this_proc = 0;
 
 // void Unit::ReplacePointersHook(taBase* old) {
 //   Unit* ou = (Unit*)old;
-//   CopyPtrs(ou);
 //   // now go through and replace all pointers to unit
 //   Network* own_net = GET_MY_OWNER(Network);
 //   if(own_net) {
@@ -1507,16 +1731,16 @@ int Unit::dmem_this_proc = 0;
 //       FOR_ITR_EL(Unit, u, l->units., ui) {
 // 	if(u == ou) continue;
 // 	int g;
-// 	for(g=0; g < u->recv.gp.size; g++) {
-// 	  Con_Group* cg = (Con_Group*)u->recv.gp.FastEl(g);
+// 	for(g=0; g < u->recv.size; g++) {
+// 	  RecvCons* cg = u->recv.FastEl(g);
 // 	  int i;
 // 	  for(i=0;i<cg->units.size;i++) {
 // 	    if(cg->Un(i) == ou)
 // 	      cg->units.ReplaceLink(i, this);
 // 	  }
 // 	}
-// 	for(g=0; g < u->send.gp.size; g++) {
-// 	  Con_Group* cg = (Con_Group*)u->send.gp.FastEl(g);
+// 	for(g=0; g < u->send.size; g++) {
+// 	  SendCons* cg = u->send.FastEl(g);
 // 	  int i;
 // 	  for(i=0;i<cg->units.size;i++) {
 // 	    if(cg->Un(i) == ou)
@@ -1551,32 +1775,12 @@ void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran) {
 
 void Unit::CopyNetwork(Network* anet, Network* cn, Unit* cp) {
   int g;
-  for(g=0; g<recv.gp.size && g<cp->recv.gp.size; g++) {
-    ((Con_Group*)recv.gp.FastEl(g))->CopyNetwork(anet, cn, (Con_Group*)cp->recv.gp.FastEl(g));
+  for(g=0; g<recv.size && g<cp->recv.size; g++) {
+    (recv.FastEl(g))->CopyNetwork(anet, cn, cp->recv.FastEl(g));
   }
-  for(g=0; g<send.gp.size && g<send.gp.size; g++) {
-    ((Con_Group*)send.gp.FastEl(g))->CopyNetwork(anet, cn, (Con_Group*)cp->send.gp.FastEl(g));
+  for(g=0; g<send.size && g<send.size; g++) {
+    (send.FastEl(g))->CopyNetwork(anet, cn, cp->send.FastEl(g));
   }
-}
-
-void Unit::CopyPtrs(Unit* cp) {
-  int g;
-  for(g=0; g<recv.gp.size && g<cp->recv.gp.size; g++) {
-    ((Con_Group*)recv.gp.FastEl(g))->CopyPtrs((Con_Group*)cp->recv.gp.FastEl(g));
-  }
-  for(g=0; g<send.gp.size && g<send.gp.size; g++) {
-    ((Con_Group*)send.gp.FastEl(g))->CopyPtrs((Con_Group*)cp->send.gp.FastEl(g));
-  }
-}
-
-// the 'New' function is used during loading to create objects if they are
-// not of the correct type, this will accomplish that
-taBase* Unit::New(int, TypeDef* type) {
-  if(!type->InheritsFrom(TA_Connection))
-    return NULL;
-  Connection* new_bias = (Connection*)taBase::MakeToken(type);
-  taBase::SetPointer((taBase**)&bias, new_bias);
-  return new_bias;
 }
 
 bool Unit::Build() {
@@ -1585,17 +1789,13 @@ bool Unit::Build() {
     return false;
   TypeDef* bstd = spec->bias_con_type;
   if(bstd == NULL) {
-    if(bias) {
-      taBase::DelPointer((taBase**)&bias);
-      rval = true;
-    }
+    bias.Reset();
+    rval = true;
   }
   else {
-    if((bias == NULL) || (bias->GetTypeDef() != bstd)) {
-      rval = true;
-      Connection* new_bias = (Connection*)taBase::MakeToken(bstd);
-      taBase::SetPointer((taBase**)&bias, new_bias);
-    }
+    bias.SetConType(bstd);
+    if(bias.cons.size == 0)
+      bias.NewCon(NULL);		// null unit (or should it be this!?)
   }
   return rval;
 }
@@ -1607,19 +1807,19 @@ bool Unit::CheckBuild(bool quiet) {
     return false;
   }
   if(spec->bias_con_type == NULL) {
-    if(bias) {
+    if(bias.cons.size) {
       if(!quiet)
 	taMisc::CheckError("Unit CheckBuild: bias weight exists but no type for unit:", GetPath());
       return false;		// todo: error messages
     }
   }
   else {
-    if((bias == NULL) || (bias->GetTypeDef() != spec->bias_con_type)) {
+    if((bias.cons.size == 0) || (bias.con_type != spec->bias_con_type)) {
       if(!quiet)
 	taMisc::CheckError("Unit CheckBuild: bias weight null or not same type for unit:",
-		      GetPath()," type should be:", spec->bias_con_type->name);
-      return false;
-    }
+ 		      GetPath()," type should be:", spec->bias_con_type->name);
+       return false;
+     }
   }
   return true;
 }
@@ -1627,17 +1827,18 @@ bool Unit::CheckBuild(bool quiet) {
 bool Unit::CheckTypes(bool quiet) {
   if(!spec.CheckSpec())
     return false;
-  if(spec->bias_con_type) {
-    if(!spec->bias_spec.CheckSpec(bias))
-      return false;
+  // todo: not working; not clear if useful..
+//   if(spec->bias_con_type) {
+//     if(!spec->bias_spec.CheckSpec(&bias))
+//       return false;
+//   }
+  for(int g = 0; g < recv.size; g++) {
+    RecvCons* recv_gp = recv.FastEl(g);
+    if(!recv_gp->CheckTypes(quiet)) return false;
   }
-  Con_Group* cg;
-  int i;
-  FOR_ITR_GP(Con_Group, cg, recv., i) {
-    if(!cg->CheckTypes(quiet)) return false;
-  }
-  FOR_ITR_GP(Con_Group, cg, send., i) {
-    if(!cg->CheckTypes(quiet)) return false;
+  for(int g = 0; g < send.size; g++) {
+    SendCons* sg = send.FastEl(g);
+    if(!sg->CheckTypes(quiet)) return false;
   }
   return true;
 }
@@ -1651,8 +1852,8 @@ void Unit::RemoveCons() {
 bool Unit::SetConSpec(ConSpec* sp) {
   if(sp == NULL)	return false;
   int g;
-  for(g=0; g<recv.gp.size; g++) {
-    Con_Group* recv_gp = (Con_Group*)recv.gp.FastEl(g);
+  for(g=0; g<recv.size; g++) {
+    RecvCons* recv_gp = recv.FastEl(g);
     if(sp->CheckObjectType(recv_gp))
       recv_gp->spec.SetSpec(sp);
     else
@@ -1671,144 +1872,96 @@ int Unit::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
 int Unit::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   int nchg = 0;
   int g;
-  nchg += recv.ReplaceConSpec(old_sp, new_sp);
-  for(g=0; g<recv.gp.size; g++) {
-    Con_Group* recv_gp = (Con_Group*)recv.gp.FastEl(g);
+  for(g=0; g<recv.size; g++) {
+    RecvCons* recv_gp = recv.FastEl(g);
     nchg += recv_gp->ReplaceConSpec(old_sp, new_sp);
   }
-  nchg += send.ReplaceConSpec(old_sp, new_sp);
-  for(g=0; g<send.gp.size; g++) {
-    Con_Group* send_gp = (Con_Group*)send.gp.FastEl(g);
+  for(g=0; g<send.size; g++) {
+    SendCons* send_gp = send.FastEl(g);
     nchg += send_gp->ReplaceConSpec(old_sp, new_sp);
   }
   return nchg;
 }
 
-Con_Group* Unit::rcg_rval = NULL;
-Con_Group* Unit::scg_rval = NULL;
+RecvCons* Unit::rcg_rval = NULL;
+SendCons* Unit::scg_rval = NULL;
 
-void Unit::ConnectAlloc(int no, Projection* prjn, Con_Group*& cgp) {
+void Unit::ConnectAlloc(int no, Projection* prjn, RecvCons*& cgp) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return;
 #endif
-  if((prjn->recv_idx < 0) || ((cgp = (Con_Group*)recv.SafeGp(prjn->recv_idx)) == NULL)) {
-    cgp = recv.NewPrjn(prjn, true); // owns the connections
-    prjn->recv_idx = recv.gp.size-1;
+  if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
+    cgp = recv.NewPrjn(prjn); // sets the type
+    prjn->recv_idx = recv.size-1;
   }
-  cgp->AllocCon(no, cgp->prjn->con_type);
+  cgp->AllocCons(no);
 }
 
-Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, Con_Group*& recv_gp,
-			      Con_Group*& send_gp) {
+Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, RecvCons*& recv_gp,
+			      SendCons*& send_gp) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
-  if((prjn->recv_idx < 0) || ((recv_gp = (Con_Group*)recv.SafeGp(prjn->recv_idx)) == NULL)) {
-    recv_gp = recv.NewPrjn(prjn, true);
-    prjn->recv_idx = recv.gp.size-1;
+  if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
+    recv_gp = recv.NewPrjn(prjn);
+    prjn->recv_idx = recv.size-1;
   }
-  if((prjn->send_idx < 0) || ((send_gp = (Con_Group*)su->send.SafeGp(prjn->send_idx)) == NULL)) {
-    send_gp = su->send.NewPrjn(prjn, false);
-    prjn->send_idx = su->send.gp.size-1;
+  if((prjn->send_idx < 0) || ((send_gp = su->send.SafeEl(prjn->send_idx)) == NULL)) {
+    send_gp = su->send.NewPrjn(prjn);
+    prjn->send_idx = su->send.size-1;
   }
-  if(recv_gp->other_idx < 0)
-    recv_gp->other_idx = prjn->send_idx;
-  if(send_gp->other_idx < 0)
-    send_gp->other_idx = prjn->recv_idx;
+  if(recv_gp->send_idx < 0)
+    recv_gp->send_idx = prjn->send_idx;
+  if(send_gp->recv_idx < 0)
+    send_gp->recv_idx = prjn->recv_idx;
 
-  Connection* con = recv_gp->NewCon(prjn->con_type, su);
+  Connection* con = recv_gp->NewCon(su);
   send_gp->LinkCon(con, this);
   n_recv_cons++;
   return con;
 }
 
-Connection* Unit::ConnectFromLink(Unit* su, Projection* prjn, Connection* src_con,
-				  Con_Group*& recv_gp, Con_Group*& send_gp) {
+Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
+			      SendCons*& send_gp) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
-  if((prjn->recv_idx < 0) || ((recv_gp = (Con_Group*)recv.SafeGp(prjn->recv_idx)) == NULL)) {
-    recv_gp = recv.NewPrjn(prjn, false); // doesn't own the connections!
-    prjn->recv_idx = recv.gp.size-1;
+  if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
+    recv_gp = recv.NewPrjn(prjn);
+    prjn->recv_idx = recv.size-1;
   }
-  if((prjn->send_idx < 0) || ((send_gp = (Con_Group*)su->send.SafeGp(prjn->send_idx)) == NULL)) {
-    send_gp = su->send.NewPrjn(prjn, false);
-    prjn->send_idx = su->send.gp.size-1;
+  if((prjn->send_idx < 0) || ((send_gp = su->send.SafeEl(prjn->send_idx)) == NULL)) {
+    send_gp = su->send.NewPrjn(prjn);
+    prjn->send_idx = su->send.size-1;
   }
-  if(recv_gp->other_idx < 0)
-    recv_gp->other_idx = prjn->send_idx;
-  if(send_gp->other_idx < 0)
-    send_gp->other_idx = prjn->recv_idx;
-
-  recv_gp->LinkCon(src_con, su);
-  send_gp->LinkCon(src_con, this);
-  n_recv_cons++;
-  return src_con;
-}
-
-Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn, Con_Group*& recv_gp,
-			      Con_Group*& send_gp) {
-#ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
-#endif
-  if((prjn->recv_idx < 0) || ((recv_gp = (Con_Group*)recv.SafeGp(prjn->recv_idx)) == NULL)) {
-    recv_gp = recv.NewPrjn(prjn, true);
-    prjn->recv_idx = recv.gp.size-1;
-  }
-  if((prjn->send_idx < 0) || ((send_gp = (Con_Group*)su->send.SafeGp(prjn->send_idx)) == NULL)) {
-    send_gp = su->send.NewPrjn(prjn, false);
-    prjn->send_idx = su->send.gp.size-1;
-  }
-  if(recv_gp->other_idx < 0)
-    recv_gp->other_idx = prjn->send_idx;
-  if(send_gp->other_idx < 0)
-    send_gp->other_idx = prjn->recv_idx;
+  if(recv_gp->send_idx < 0)
+    recv_gp->send_idx = prjn->send_idx;
+  if(send_gp->recv_idx < 0)
+    send_gp->recv_idx = prjn->recv_idx;
 
   if(recv_gp->units.Find(su) >= 0) // already connected!
     return NULL;
 
-  Connection* con = recv_gp->NewCon(prjn->con_type, su);
+  Connection* con = recv_gp->NewCon(su);
   send_gp->LinkCon(con, this);
   n_recv_cons++;
   return con;
-}
-
-Connection* Unit::ConnectFromLinkCk(Unit* su, Projection* prjn, Connection* src_con,
-				  Con_Group*& recv_gp, Con_Group*& send_gp) {
-#ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
-#endif
-  if((prjn->recv_idx < 0) || ((recv_gp = (Con_Group*)recv.SafeGp(prjn->recv_idx)) == NULL)) {
-    recv_gp = recv.NewPrjn(prjn, false); // doesn't own the connections!
-    prjn->recv_idx = recv.gp.size-1;
-  }
-
-  if((prjn->send_idx < 0) || ((send_gp = (Con_Group*)su->send.SafeGp(prjn->send_idx)) == NULL)) {
-    send_gp = su->send.NewPrjn(prjn, false);
-    prjn->send_idx = su->send.gp.size-1;
-  }
-
-  if(recv_gp->units.Find(su) >= 0) // already connected!
-    return NULL;
-
-  recv_gp->LinkCon(src_con, su);
-  send_gp->LinkCon(src_con, this);
-  return src_con;
 }
 
 bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
-  Con_Group* recv_gp, *send_gp;
+  RecvCons* recv_gp;
+  SendCons* send_gp;
   if(prjn) {
-    if((prjn->recv_idx < 0) || ((recv_gp = (Con_Group*)recv.SafeGp(prjn->recv_idx)) == NULL))
+    if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL))
       return false;
-    if((prjn->send_idx < 0) || ((send_gp = (Con_Group*)su->send.SafeGp(prjn->send_idx)) == NULL))
+    if((prjn->send_idx < 0) || ((send_gp = su->send.SafeEl(prjn->send_idx)) == NULL))
       return false;
   }
   else {
     Layer* su_lay = GET_OWNER(su,Layer);
     if((recv_gp = recv.FindFrom(su_lay)) == NULL)	return false;
-    if(recv_gp->other_idx >= 0)
-      send_gp = (Con_Group*)su->send.SafeGp(recv_gp->other_idx);
+    if(recv_gp->send_idx >= 0)
+      send_gp = su->send.SafeEl(recv_gp->send_idx);
     else
       send_gp = NULL;
     if(send_gp == NULL)
@@ -1817,91 +1970,89 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
     prjn = recv_gp->prjn;
   }
 
-  recv_gp->RemoveCon(su);
+  recv_gp->RemoveConUn(su);
   n_recv_cons--;
-  return send_gp->RemoveCon(this);
+  return send_gp->RemoveConUn(this);
 }
 
 void Unit::DisConnectAll() {
-  Con_Group* recv_gp, *send_gp;
+  RecvCons* recv_gp;
+  SendCons* send_gp;
   int g;
   int i;
-  for(g=0; g<recv.gp.size; g++) { // the removes cause the leaf_gp to crash..
-    recv_gp = (Con_Group*)recv.gp.FastEl(g);
-    for(i=recv_gp->size-1; i>=0; i--) {
-      if(recv_gp->other_idx >= 0)
-	send_gp = (Con_Group*)recv_gp->Un(i)->send.SafeGp(recv_gp->other_idx);
+  for(g=0; g<recv.size; g++) { // the removes cause the leaf_gp to crash..
+    recv_gp = recv.FastEl(g);
+    for(i=recv_gp->cons.size-1; i>=0; i--) {
+      if(recv_gp->send_idx >= 0)
+	send_gp = recv_gp->Un(i)->send.SafeEl(recv_gp->send_idx);
       else
 	send_gp = NULL;
       if(send_gp == NULL)
 	send_gp = recv_gp->Un(i)->send.FindPrjn(recv_gp->prjn);
       if(send_gp)
-	send_gp->RemoveCon(this);
-      recv_gp->Remove(i);
+	send_gp->RemoveConUn(this);
+      recv_gp->RemoveConIdx(i);
     }
-    recv_gp->other_idx = -1;
+    recv_gp->send_idx = -1;
   }
-  for(g=0; g<send.gp.size; g++) { // the removes cause the leaf_gp to crash..
-    send_gp = (Con_Group*)send.gp.FastEl(g);
-    for(i=send_gp->size-1; i>=0; i--) {
-      if(send_gp->other_idx >= 0)
-	recv_gp = (Con_Group*)send_gp->Un(i)->recv.SafeGp(send_gp->other_idx);
+  for(g=0; g<send.size; g++) { // the removes cause the leaf_gp to crash..
+    send_gp = send.FastEl(g);
+    for(i=send_gp->cons.size-1; i>=0; i--) {
+      if(send_gp->recv_idx >= 0)
+	recv_gp = send_gp->Un(i)->recv.SafeEl(send_gp->recv_idx);
       else
 	recv_gp = NULL;
       if(recv_gp == NULL)
 	recv_gp = send_gp->Un(i)->recv.FindPrjn(send_gp->prjn);
       if(recv_gp)
-	recv_gp->RemoveCon(this);
-      send_gp->Remove(i);
+	recv_gp->RemoveConUn(this);
+      send_gp->RemoveConIdx(i);
     }
-    send_gp->other_idx = -1;
+    send_gp->recv_idx = -1;
   }
   n_recv_cons = 0;
 }
 
 int Unit::CountRecvCons() {
   n_recv_cons = 0;
-  Con_Group* cg;
-  int g;
-  FOR_ITR_GP(Con_Group, cg, recv., g) {
-    n_recv_cons += cg->size;
+  for(int g = 0; g < recv.size; g++) {
+    RecvCons* cg = recv.FastEl(g);
+    n_recv_cons += cg->cons.size;
   }
   return n_recv_cons;
 }
 
 void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
-  if((bias) && (src->bias)) {
-    bias->wt = src->bias->wt;
+  if((bias.cons.size) && (src->bias.cons.size)) {
+    bias.Cn(0)->wt = src->bias.Cn(0)->wt;
   }
-  Con_Group* cg, *scg;
-  int i,si;
-  for(cg = (Con_Group*)recv.FirstGp(i), scg = (Con_Group*)src->recv.FirstGp(si);
-      (cg) && (scg);
-      cg = (Con_Group*)recv.NextGp(i), scg = (Con_Group*)src->recv.NextGp(si))
-  {
+  int mx = MIN(recv.size, src->recv.size);
+  for(int i=0; i<mx; i++) {
+    RecvCons* cg = recv.FastEl(i);
+    RecvCons* scg = src->recv.FastEl(i);
     if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
     cg->Copy_Weights(scg);
   }
 }
 
-void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt) {
+void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFormat fmt) {
   strm << "<Un>\n";
   float bwt = 0.0;
-  if(bias) bwt = bias->wt;
+  if(bias.cons.size) bwt = bias.Cn(0)->wt;
   // always write this for a consistent format
   switch(fmt) {
-  case Con_Group::TEXT:
+  case RecvCons::TEXT:
     strm << bwt << "\n";
     break;
-  case Con_Group::BINARY:
+  case RecvCons::BINARY:
     strm.write((char*)&(bwt), sizeof(bwt));
     strm << "\n";
     break;
   }
   // not using ITR here in case of DMEM where we write separate files for
   // each process -- need to include size=0 place holders for non-local units
-  for(int g = 0; g < recv.gp.size; g++) {
-    Con_Group* cg = (Con_Group*)recv.gp.FastEl(g);
+  for(int g = 0; g < recv.size; g++) {
+    RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesion || (prjn && (cg->prjn != prjn))) continue;
     strm << "<Cg " << g << " Fm:" << cg->prjn->from->name << ">\n";
     cg->SaveWeights_strm(strm, this, fmt);
@@ -1910,26 +2061,26 @@ void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, Con_Group::WtSaveFo
   strm << "</Un>\n";
 }
 
-int Unit::LoadWeights_strm(istream& strm, Projection* prjn, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveFormat fmt, bool quiet) {
   String tag, val;
-  int stat = Con_Group::LoadWeights_StartTag(strm, "Un", val, quiet);
+  int stat = RecvCons::LoadWeights_StartTag(strm, "Un", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   //   String lidx = val.before(' ');
   // todo: could compare lidx with GetMyLeafIdx()...
   float bwt = 0.0;
   switch(fmt) {
-  case Con_Group::TEXT:
+  case RecvCons::TEXT:
     taMisc::read_till_eol(strm);
     bwt = (float)taMisc::LexBuf;
     break;
-  case Con_Group::BINARY:
+  case RecvCons::BINARY:
     strm.read((char*)&bwt, sizeof(bwt));
     strm.get();		// get the /n
     break;
   }
-  if(bias) {
-    bias->wt = bwt;
+  if(bias.cons.size) {
+    bias.Cn(0)->wt = bwt;
   }
 
 #ifdef DMEM_COMPILE
@@ -1939,10 +2090,10 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, Con_Group::WtSaveFor
       stat = taMisc::read_tag(strm, tag, val);
       if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END of Un
       if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
-      stat = Con_Group::SkipWeights_strm(strm, fmt, quiet); // skip over
+      stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
       if(stat != taMisc::TAG_END) break; // something is wrong
       stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
-      Con_Group::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
+      RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
       if(stat != taMisc::TAG_END) break;
     }
   }
@@ -1954,9 +2105,9 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, Con_Group::WtSaveFor
     if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
     int gi = (int)val.before(' ');
     String fm = val.after("Fm:");
-    Con_Group* cg = NULL;
-    if(recv.gp.size > gi) {
-      cg = (Con_Group*)recv.gp.FastEl(gi);
+    RecvCons* cg = NULL;
+    if(recv.size > gi) {
+      cg = recv.FastEl(gi);
       if(cg->prjn->from->name != fm)
 	cg = recv.FindFromName(fm);
     }
@@ -1967,32 +2118,32 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, Con_Group::WtSaveFor
       stat = cg->LoadWeights_strm(strm, this, fmt, quiet);
     }
     else {
-      stat = Con_Group::SkipWeights_strm(strm, fmt, quiet); // skip over
+      stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
     }
     if(stat != taMisc::TAG_END) break; // something is wrong
     stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
-    Con_Group::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
+    RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
 #ifdef DMEM_COMPILE
   }
 #endif
-  Con_Group::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
+  RecvCons::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
   return stat;
 }
 
-int Unit::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Unit::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   String tag, val;
-  int stat = Con_Group::LoadWeights_StartTag(strm, "Un", val, quiet);
+  int stat = RecvCons::LoadWeights_StartTag(strm, "Un", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   float bwt = 0.0;
   switch(fmt) {
-  case Con_Group::TEXT:
+  case RecvCons::TEXT:
     taMisc::read_till_eol(strm);
     bwt = (float)taMisc::LexBuf;
     break;
-  case Con_Group::BINARY:
+  case RecvCons::BINARY:
     strm.read((char*)&bwt, sizeof(bwt));
     strm.get();		// get the /n
     break;
@@ -2001,17 +2152,17 @@ int Unit::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quie
     stat = taMisc::read_tag(strm, tag, val);
     if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
     if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
-    stat = Con_Group::SkipWeights_strm(strm, fmt, quiet); // skip over
+    stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
     if(stat != taMisc::TAG_END) break; // something is wrong
     stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
-    Con_Group::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
+    RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-  Con_Group::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
+  RecvCons::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
   return stat;
 }
 
-void Unit::SaveWeights(const String& fname, Projection* prjn, Con_Group::WtSaveFormat fmt) {
+void Unit::SaveWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFormat fmt) {
   taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, prjn, fmt);
@@ -2019,7 +2170,7 @@ void Unit::SaveWeights(const String& fname, Projection* prjn, Con_Group::WtSaveF
   taRefN::unRefDone(flr);
 }
 
-int Unit::LoadWeights(const String& fname, Projection* prjn, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Unit::LoadWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
   int rval = false;
   if(flr->istrm)
@@ -2030,18 +2181,16 @@ int Unit::LoadWeights(const String& fname, Projection* prjn, Con_Group::WtSaveFo
 }
 
 void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
-  Con_Group* cg;
-  int g;
-  FOR_ITR_GP(Con_Group, cg, recv., g) {
+  for(int g = 0; g < recv.size; g++) {
+    RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
     cg->TransformWeights(trans);
   }
 }
 
 void Unit::AddNoiseToWeights(const Random& noise_spec, Projection* prjn) {
-  Con_Group* cg;
-  int g;
-  FOR_ITR_GP(Con_Group, cg, recv., g) {
+  for(int g = 0; g < recv.size; g++) {
+    RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
     cg->AddNoiseToWeights(noise_spec);
   }
@@ -2052,8 +2201,8 @@ int Unit::PruneCons(const SimpleMathSpec& pre_proc, CountParam::Relation rel,
 {
   int rval = 0;
   int g;
-  for(g=0; g<recv.gp.size; g++) {
-    Con_Group* cg = (Con_Group*)recv.gp.FastEl(g);
+  for(g=0; g<recv.size; g++) {
+    RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->PruneCons(this, pre_proc, rel, cmp_val);
   }
@@ -2064,8 +2213,8 @@ int Unit::PruneCons(const SimpleMathSpec& pre_proc, CountParam::Relation rel,
 int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
   int rval = 0;
   int g;
-  for(g=0; g<recv.gp.size; g++) {
-    Con_Group* cg = (Con_Group*)recv.gp.FastEl(g);
+  for(g=0; g<recv.size; g++) {
+    RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->LesionCons(this, p_lesion, permute);
   }
@@ -2155,10 +2304,9 @@ void ProjectionSpec::Init_Weights(Projection* prjn) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
-    int g;
-    for(g=0; g < u->recv.gp.size; g++) {
-      Con_Group* cg = (Con_Group*)u->recv.gp.FastEl(g);
-      if(cg->prjn == prjn)
+    for(int g=0; g < u->recv.size; g++) {
+      RecvCons* cg = u->recv.FastEl(g);
+      if(cg && (cg->prjn == prjn))
 	cg->Init_Weights(u);
     }
   }
@@ -2168,16 +2316,15 @@ void ProjectionSpec::Init_Weights_post(Projection* prjn) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
-    int g;
-    for(g=0; g < u->recv.gp.size; g++) {
-      Con_Group* cg = (Con_Group*)u->recv.gp.FastEl(g);
-      if(cg->prjn == prjn)
+    for(int g=0; g < u->recv.size; g++) {
+      RecvCons* cg = u->recv.FastEl(g);
+      if(cg && (cg->prjn == prjn))
 	cg->Init_Weights_post(u);
     }
   }
 }
 
-void ProjectionSpec::C_Init_Weights(Projection*, Con_Group* cg, Unit* ru) {
+void ProjectionSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit* ru) {
   // default is just to do same thing as the conspec would have done..
   CON_GROUP_LOOP(cg, cg->C_Init_Weights(cg->Cn(i), ru, cg->Un(i)));
 }
@@ -2187,8 +2334,8 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
     int g;
-    for(g=0; g < u->recv.gp.size; g++) {
-      Con_Group* cg = (Con_Group*)u->recv.gp.FastEl(g);
+    for(g=0; g < u->recv.size; g++) {
+      RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
 	cg->Init_dWt(u);
     }
@@ -2197,42 +2344,35 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
 
 // reconnect based on data in the recv groups only (ie after loading)
 void ProjectionSpec::ReConnect_Load(Projection* prjn) {
-//  prjn->SetFrom();		// justin case
-
   if((prjn->from == NULL) || (prjn->layer == NULL))
     return;
 
-  Con_Group* send_gp;
-  Con_Group* recv_gp;
-  Unit* ru, *su;
+  Unit* ru;
   taLeafItr ru_itr;
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
     if(ru->spec.spec == NULL)
       taMisc::Error("Spec is NULL in Unit:",ru->GetPath(),"will crash if not fixed!");
-    int rg;
-    FOR_ITR_GP(Con_Group, recv_gp, ru->recv., rg) {
+    for(int g = 0; g < ru->recv.size; g++) {
+      RecvCons* recv_gp = ru->recv.FastEl(g);
       if(recv_gp->prjn != prjn)
 	continue;
       if(recv_gp->spec.spec == NULL)
-	taMisc::Error("Spec is NULL in Con_Group:",recv_gp->GetPath(),"will crash if not fixed!");
-      int j;
-      for(j=0; j<recv_gp->units.size; j++) {
-	su = recv_gp->Un(j);
+	taMisc::Error("Spec is NULL in RecvCons:",recv_gp->GetPath(),"will crash if not fixed!");
+      for(int j=0; j<recv_gp->units.size; j++) {
+	Unit* su = recv_gp->Un(j);
 	if(su == NULL)
 	  continue;
 
-	if(recv_gp->other_idx >= 0)
-	  send_gp = (Con_Group*)su->send.SafeGp(recv_gp->other_idx);
-	else
-	  send_gp = NULL;
-	if(send_gp == NULL)
+	SendCons* send_gp = NULL;
+	if(recv_gp->send_idx >= 0)
+	  send_gp = su->send.SafeEl(recv_gp->send_idx);
+	if(!send_gp)
 	  send_gp = su->send.FindPrjn(prjn);
 	if(send_gp) {
-	  if(send_gp->spec.spec == NULL)
-	    taMisc::Error("Spec is NULL in Con_Group:",send_gp->GetPath(),"will crash if not fixed!");
-	  send_gp->own_cons = false; // sender doesn't own
+	  if(!send_gp->spec.spec)
+	    taMisc::Error("Spec is NULL in RecvCons:",send_gp->GetPath(),"will crash if not fixed!");
 	  send_gp->units.LinkUnique(ru);
-	  send_gp->LinkUnique(recv_gp->Cn(j));
+	  send_gp->cons.LinkUnique(recv_gp->Cn(j));
 	}
       }
     }
@@ -2255,15 +2395,6 @@ void ProjectionSpec::CopyNetwork(Network* net, Network* cn, Projection* prjn, Pr
   prjn->projected = cp->projected;
 }
 
-void Projection::CopyPtrs(Projection* cp) {
-  taBase::SetPointer((taBase**)&from, cp->from);
-  recv_idx = cp->recv_idx;
-  send_idx = cp->send_idx;
-  recv_n = cp->recv_n;
-  send_n = cp->send_n;
-  projected = cp->projected;
-}
-
 void ProjectionSpec::PreConnect(Projection* prjn) {
   if(prjn->from == NULL)	return;
 
@@ -2272,26 +2403,26 @@ void ProjectionSpec::PreConnect(Projection* prjn) {
   Unit* first_su = (Unit*)prjn->from->units.Leaf(0);
   if((first_ru == NULL) || (first_su == NULL))
     return;
-  Con_Group* recv_gp = first_ru->recv.NewPrjn(prjn, true);
-  prjn->recv_idx = first_ru->recv.gp.size - 1;
-  Con_Group* send_gp = first_su->send.NewPrjn(prjn, false);
-  prjn->send_idx = first_su->send.gp.size - 1;
+  RecvCons* recv_gp = first_ru->recv.NewPrjn(prjn);
+  prjn->recv_idx = first_ru->recv.size - 1;
+  SendCons* send_gp = first_su->send.NewPrjn(prjn);
+  prjn->send_idx = first_su->send.size - 1;
   // set reciprocal indicies
-  recv_gp->other_idx = prjn->send_idx;
-  send_gp->other_idx = prjn->recv_idx;
+  recv_gp->send_idx = prjn->send_idx;
+  send_gp->recv_idx = prjn->recv_idx;
 
   // then crank out for remainder of units..
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
     if(u == first_ru)	continue; // skip over first one..
-    recv_gp = u->recv.NewPrjn(prjn, true);
-    recv_gp->other_idx = prjn->send_idx;
+    recv_gp = u->recv.NewPrjn(prjn);
+    recv_gp->send_idx = prjn->send_idx;
   }
   FOR_ITR_EL(Unit, u, prjn->from->units., i) {
     if(u == first_su)	continue; // skip over first one..
-    send_gp = u->send.NewPrjn(prjn, false);
-    send_gp->other_idx = prjn->recv_idx;
+    send_gp = u->send.NewPrjn(prjn);
+    send_gp->recv_idx = prjn->recv_idx;
   }
 }
 
@@ -2322,7 +2453,8 @@ void Projection::Initialize() {
   layer = from = NULL;
   from_type = PREV;
   con_type = &TA_Connection;
-  con_gp_type = &TA_Con_Group;
+  recvcons_type = &TA_RecvCons;
+  sendcons_type = &TA_SendCons;
   recv_idx = -1;
   send_idx = -1;
   recv_n = 1;
@@ -2384,7 +2516,8 @@ void Projection::Copy_(const Projection& cp) {
   taBase::SetPointer((taBase**)&from, cp.from);
   spec = cp.spec;
   con_type = cp.con_type;
-  con_gp_type = cp.con_gp_type;
+  recvcons_type = cp.recvcons_type;
+  sendcons_type = cp.sendcons_type;
   con_spec = cp.con_spec;
   // not to copy!
   // recv_idx = cp.recv_idx;
@@ -2471,7 +2604,7 @@ void Projection::UpdateAfterEdit() {
 	uni += layer->act_geom.x - rx; break;
       }
       Unit* un = (Unit*)layer->units.Leaf(uni);
-      Con_Group* cg = un->recv.FindFrom(from);
+      RecvCons* cg = un->recv.FindFrom(from);
       if(cg == NULL)
 	break;
       int wi;
@@ -2523,7 +2656,7 @@ void Projection::WeightsToTable(DataTable* dt) {
   taLeafItr ri;
   Unit* ru;
   FOR_ITR_EL(Unit, ru, layer->units., ri) {
-    Con_Group* cg = ru->recv.FindFrom(from);
+    RecvCons* cg = ru->recv.FindFrom(from);
     if(cg == NULL)
       break;
     Event* ev = (Event*)env->events.NewEl(1);
@@ -2631,10 +2764,17 @@ bool Projection::SetConType(TypeDef* td) {
   return true;
 }
 
-bool Projection::SetConGpType(TypeDef* td) {
-  if(con_gp_type == td) return false;
+bool Projection::SetRecvConsType(TypeDef* td) {
+  if(recvcons_type == td) return false;
   projected = false;
-  con_gp_type = td;
+  recvcons_type = td;
+  return true;
+}
+
+bool Projection::SetSendConsType(TypeDef* td) {
+  if(sendcons_type == td) return false;
+  projected = false;
+  sendcons_type = td;
   return true;
 }
 
@@ -2644,8 +2784,8 @@ bool Projection::ApplyConSpec() {
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
     int g;
-    for(g=0; g<u->recv.gp.size; g++) {
-      Con_Group* recv_gp = (Con_Group*)u->recv.gp.FastEl(g);
+    for(g=0; g<u->recv.size; g++) {
+      RecvCons* recv_gp = u->recv.FastEl(g);
       if(recv_gp->prjn == this) {
 	if(con_spec.spec->CheckObjectType(recv_gp))
 	  recv_gp->spec.SetSpec(con_spec.spec);
@@ -2657,8 +2797,8 @@ bool Projection::ApplyConSpec() {
   // also do the from!
   FOR_ITR_EL(Unit, u, from->units., i) {
     int g;
-    for(g=0; g<u->send.gp.size; g++) {
-      Con_Group* send_gp = (Con_Group*)u->send.gp.FastEl(g);
+    for(g=0; g<u->send.size; g++) {
+      SendCons* send_gp = u->send.FastEl(g);
       if(send_gp->prjn == this) {
 	if(con_spec.spec->CheckObjectType(send_gp))
 	  send_gp->spec.SetSpec(con_spec.spec);
@@ -2676,19 +2816,19 @@ void Projection::FixIndexes() {
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
     int g;
-    for(g=0; g<u->recv.gp.size; g++) {
-      Con_Group* recv_gp = (Con_Group*)u->recv.gp.FastEl(g);
+    for(g=0; g<u->recv.size; g++) {
+      RecvCons* recv_gp = u->recv.FastEl(g);
       if(recv_gp->prjn == this) {
-	recv_gp->other_idx = send_idx;
+	recv_gp->send_idx = send_idx;
       }
     }
   }
   FOR_ITR_EL(Unit, u, from->units., i) {
     int g;
-    for(g=0; g<u->send.gp.size; g++) {
-      Con_Group* send_gp = (Con_Group*)u->send.gp.FastEl(g);
+    for(g=0; g<u->send.size; g++) {
+      SendCons* send_gp = u->send.FastEl(g);
       if(send_gp->prjn == this) {
-	send_gp->other_idx = recv_idx;
+	send_gp->recv_idx = recv_idx;
       }
     }
   }
@@ -2722,7 +2862,7 @@ bool Projection::CheckTypes(bool quiet) {
     return false;
   if(!CheckTypes_impl(quiet)) {
     if(!quiet)
-      taMisc::CheckError("Projection CheckTypes: Connection, Con_Group, or spec types for projection:",GetPath(),
+      taMisc::CheckError("Projection CheckTypes: Connection, RecvCons, or spec types for projection:",GetPath(),
 		    "are not correct, perform 'Connect' to rectify");
     return false;
   }
@@ -2740,20 +2880,20 @@ bool Projection::CheckTypes_impl(bool quiet) {
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
     int g;
-    for(g=0; g<u->recv.gp.size; g++) {
-      Con_Group* recv_gp = (Con_Group*)u->recv.gp.FastEl(g);
+    for(g=0; g<u->recv.size; g++) {
+      RecvCons* recv_gp = u->recv.FastEl(g);
       if(recv_gp->prjn == this) {
 	if(!con_spec.CheckSpec(recv_gp)) {
 	  projected = false;
 	  return false;
 	}
-	if(recv_gp->GetTypeDef() != con_gp_type) {
+	if(recv_gp->GetTypeDef() != recvcons_type) {
 	  if(!quiet)
-	    taMisc::CheckError("Projection CheckTypes: recv_gp type does not match con_gp_type for projection:",GetPath(), "type should be:", con_gp_type->name);
+	    taMisc::CheckError("Projection CheckTypes: recv_gp type does not match recvcons_type for projection:",GetPath(), "type should be:", recvcons_type->name);
 	  projected = false;
 	  return false;
 	}
-	if(recv_gp->el_typ != con_type) {
+	if(recv_gp->con_type != con_type) {
 	  if(!quiet)
 	    taMisc::CheckError("Projection CheckTypes: recv connection type does not match con_type for projection:",GetPath(), "type should be:", con_type->name);
 	  projected = false;
@@ -2765,20 +2905,20 @@ bool Projection::CheckTypes_impl(bool quiet) {
   // also do the from!
   FOR_ITR_EL(Unit, u, from->units., i) {
     int g;
-    for(g=0; g<u->send.gp.size; g++) {
-      Con_Group* send_gp = (Con_Group*)u->send.gp.FastEl(g);
+    for(g=0; g<u->send.size; g++) {
+      SendCons* send_gp = u->send.FastEl(g);
       if(send_gp->prjn == this) {
 	if(!con_spec.CheckSpec(send_gp)) {
 	  projected = false;
 	  return false;
 	}
-	if(send_gp->GetTypeDef() != con_gp_type) {
+	if(send_gp->GetTypeDef() != sendcons_type) {
 	  if(!quiet)
-	    taMisc::CheckError("Projection CheckTypes: send_gp type does not match con_gp_type for projection:",GetPath(), "type should be:", con_gp_type->name);
+	    taMisc::CheckError("Projection CheckTypes: send_gp type does not match sendcons_type for projection:",GetPath(), "type should be:", sendcons_type->name);
 	  projected = false;
 	  return false;
 	}
-	if(send_gp->el_typ != con_type) {
+	if(send_gp->con_type != con_type) {
 	  if(!quiet)
 	    taMisc::CheckError("Projection CheckTypes: send connection type does not match con_type for projection:",GetPath(), "type should be:", con_type->name);
 	  projected = false;
@@ -2801,14 +2941,14 @@ void Projection::Copy_Weights(const Projection* src) {
   }
 }
 
-void Projection::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
+void Projection::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i)
     u->SaveWeights_strm(strm, this, fmt);
 }
 
-int Projection::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Projection::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   int rval = 0;
   Unit* u;
   taLeafItr i;
@@ -2819,7 +2959,7 @@ int Projection::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, boo
   return rval;
 }
 
-void Projection::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+void Projection::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
   taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
@@ -2827,7 +2967,7 @@ void Projection::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-int Projection::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Projection::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
   int rval = false;
   if(flr->istrm)
@@ -3016,7 +3156,7 @@ void Unit_Group::Copy_Weights(const Unit_Group* src) {
   }
 }
 
-void Unit_Group::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
+void Unit_Group::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
   strm << "<Ug>\n";
   Unit* u;
   taLeafItr i;
@@ -3029,9 +3169,9 @@ void Unit_Group::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
   strm << "</Ug>\n";
 }
 
-int Unit_Group::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   String tag, val;
-  int stat = Con_Group::LoadWeights_StartTag(strm, "Ug", val, quiet);
+  int stat = RecvCons::LoadWeights_StartTag(strm, "Ug", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   while(true) {
@@ -3048,16 +3188,16 @@ int Unit_Group::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, boo
     }
     if(stat != taMisc::TAG_END) break;
     stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
-    Con_Group::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
+    RecvCons::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-  Con_Group::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
+  RecvCons::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
   return stat;
 }
 
-int Unit_Group::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   String val, tag;
-  int stat = Con_Group::LoadWeights_StartTag(strm, "Ug", val, quiet);
+  int stat = RecvCons::LoadWeights_StartTag(strm, "Ug", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   while(true) {
@@ -3067,14 +3207,14 @@ int Unit_Group::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, boo
     stat = Unit::SkipWeights_strm(strm, fmt, quiet);
     if(stat != taMisc::TAG_END) break;
     stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
-    Con_Group::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
+    RecvCons::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-  Con_Group::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
+  RecvCons::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
   return stat;
 }
 
-void Unit_Group::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+void Unit_Group::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
   taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
@@ -3082,7 +3222,7 @@ void Unit_Group::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-int Unit_Group::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
   int rval = false;
   if(flr->istrm)
@@ -3252,7 +3392,7 @@ Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
 
 bool Unit_Group::Dump_QuerySaveChildren() {
   ProjectBase* prj = GET_MY_OWNER(ProjectBase);
-  if(prj && prj->save_rmv_units)
+  if(prj && prj->no_save_units)
     return false;
   return true;
 }
@@ -3427,40 +3567,6 @@ void Layer::CopyNetwork(Network* net, Network* cn, Layer* lay) {
       u && cu;
       u = (Unit*)units.NextEl(ui), cu = (Unit*)lay->units.NextEl(cui)) {
     u->CopyNetwork(net, cn, cu);
-  }
-}
-
-void Layer::CopyPtrs(Layer* lay) {
-  Projection* p;
-  taLeafItr pi;
-  Projection* cp;
-  taLeafItr cpi;
-  for(p = (Projection*)projections.FirstEl(pi), cp = (Projection*)lay->projections.FirstEl(cpi);
-      p && cp;
-      p = (Projection*)projections.NextEl(pi), cp = (Projection*)lay->projections.NextEl(cpi)) {
-    p->CopyPtrs(cp);
-  }
-  int pip;
-  for(pip=lay->send_prjns.size-1; pip>=0; pip--) {
-    Projection* p = (Projection*)lay->send_prjns.FastEl(pip);
-    if(p == NULL) continue;
-    if(p->layer != lay)
-      send_prjns.LinkUnique(p);
-    else {
-      int lfidx = lay->projections.FindEl(p);
-      if((lfidx >= 0) && (lfidx < projections.size)) {
-	send_prjns.LinkUnique(projections.FastEl(lfidx));
-      }
-    }
-  }
-  Unit* u;
-  taLeafItr ui;
-  Unit* cu;
-  taLeafItr cui;
-  for(u = (Unit*)units.FirstEl(ui), cu = (Unit*)lay->units.FirstEl(cui);
-      u && cu;
-      u = (Unit*)units.NextEl(ui), cu = (Unit*)lay->units.NextEl(cui)) {
-    u->CopyPtrs(cu);
   }
 }
 
@@ -4038,18 +4144,18 @@ float Layer::Compute_SSE() {
 void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
 }
-void Layer::SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt) {
+void Layer::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
   units.SaveWeights_strm(strm, fmt);
 }
-int Layer::LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Layer::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   return units.LoadWeights_strm(strm, fmt, quiet);
 }
-int Layer::SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Layer::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   return Unit_Group::SkipWeights_strm(strm, fmt, quiet);
 }
 
-void Layer::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
+void Layer::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
   taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
@@ -4057,7 +4163,7 @@ void Layer::SaveWeights(const String& fname, Con_Group::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-int Layer::LoadWeights(const String& fname, Con_Group::WtSaveFormat fmt, bool quiet) {
+int Layer::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
   int rval = false;
   if(flr->istrm)
@@ -4540,6 +4646,20 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
   return rval;
 }
 
+int Network::Save_strm(ostream& strm, TAPtr par, int indent) {
+  bool reset_flag = false;
+  ProjectBase* prj = GET_MY_OWNER(ProjectBase);
+  if(prj && prj->no_save_units) {
+    prj->no_save_units = false;	// override!
+    reset_flag = true;
+  }
+  int rval = inherited::Save_strm(strm, par, indent);
+  if(reset_flag) {
+    prj->no_save_units = true;
+  }    
+  return rval;
+}
+
 int Network::GetDefaultX(){
   int rval = 1;
   switch(lay_layout) {
@@ -4942,10 +5062,10 @@ void Network::DMem_PruneNonLocalCons() {
 	continue;
       }
       // only non-local
-      Con_Group* recv_gp;
+      RecvCons* recv_gp;
       int g;
-      for (g = 0; g < u->recv.gp.size; g++) {
-	recv_gp = (Con_Group *)u->recv.FastGp(g);
+      for (g = 0; g < u->recv.size; g++) {
+	recv_gp = (RecvCons *)u->recv.FastGp(g);
 	if(recv_gp->spec->DMem_AlwaysLocal()) continue;
 	for (int sui = recv_gp->size-1; sui >= 0; sui--) {
 	  u->DisConnectFrom(recv_gp->Un(sui), NULL);
@@ -4972,11 +5092,10 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
-      if(un->bias)
-	values.FastEl(cidx++) = un->bias->dwt;
-      Con_Group* cg;
-      int gi;
-      FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
+      if(un->bias.cons.size)
+	values.FastEl(cidx++) = un->bias.Cn(0)->dwt;
+      for(int g = 0; g < un->recv.size; g++) {
+	RecvCons* cg = un->recv.FastEl(g);
 	for(int i = 0;i<cg->size;i++)
 	  values.FastEl(cidx++) = cg->Cn(i)->dwt;
       }
@@ -4993,11 +5112,10 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
-      if(un->bias)
-	un->bias->dwt = results.FastEl(cidx++);
-      Con_Group* cg;
-      int gi;
-      FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
+      if(un->bias.cons.size)
+	un->bias.Cn(0)->dwt = results.FastEl(cidx++);
+      for(int g = 0; g < un->recv.size; g++) {
+	RecvCons* cg = un->recv.FastEl(g);
 	for(int i = 0;i<cg->size;i++)
 	  cg->Cn(i)->dwt = results.FastEl(cidx++);
       }
@@ -5022,11 +5140,10 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
-      if(un->bias)
-	values.FastEl(cidx++) = un->bias->wt;
-      Con_Group* cg;
-      int gi;
-      FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
+      if(un->bias.cons.size)
+	values.FastEl(cidx++) = un->bias.Cn(0)->wt;
+      for(int g = 0; g < un->recv.size; g++) {
+	RecvCons* cg = un->recv.FastEl(g);
 	for(int i = 0;i<cg->size;i++)
 	  values.FastEl(cidx++) = cg->Cn(i)->wt;
       }
@@ -5044,11 +5161,10 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
-      if(un->bias)
-	un->bias->wt = avg_mult * results.FastEl(cidx++);
-      Con_Group* cg;
-      int gi;
-      FOR_ITR_GP(Con_Group, cg, un->recv., gi) {
+      if(un->bias.cons.size)
+	un->bias.Cn(0)->wt = avg_mult * results.FastEl(cidx++);
+      for(int g = 0; g < un->recv.size; g++) {
+	RecvCons* cg = un->recv.FastEl(g);
 	for(int i = 0;i<cg->size;i++)
 	  cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
       }
@@ -5081,8 +5197,8 @@ void Network::DMem_SymmetrizeWts() {
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       int gi;
-      for(gi=0;gi<un->recv.gp.size;gi++) {
-	Con_Group* cg = (Con_Group*)un->recv.gp[gi];
+      for(gi=0;gi<un->recv.size;gi++) {
+	RecvCons* cg = un->recv[gi];
 	if(!cg->spec->wt_limits.sym) continue;
 
 	// check for presence of reciprocal connections in the first place..
@@ -5123,8 +5239,7 @@ void Network::DMem_SymmetrizeWts() {
 	    }
 	  }
 	  // now have all the data collected, to through and get the sym values!
-	  int i;
-	  for(i=0;i<cg->size;i++) {
+	  for(int i=0;i<cg->size;i++) {
 	    Unit* fm = cg->Un(i);
 	    int uidx = cg->prjn->from->units.FindLeaf(fm);
 	    if(uidx < 0) continue;
@@ -5141,9 +5256,8 @@ void Network::DMem_SymmetrizeWts() {
 	  for(uni=0;uni<fmlay->units.leaves;uni++) {
 	    Unit* fm = fmlay->units.Leaf(uni);
 	    if(!fm->DMem_IsLocal()) continue;
-	    int fmgi;
-	    Con_Group* fmg;
-	    FOR_ITR_GP(Con_Group, fmg, fm->recv., fmgi) {
+	    for(int g = 0; g < fm->recv.size; g++) {
+	      RecvCons* fmg = fm->recv.FastEl(g);
 	      if(fmg->prjn->from != lay) continue;
 	      Connection* con = fmg->FindConFrom(un);
 	      if(con) {
@@ -5381,7 +5495,7 @@ void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
   FOR_ITR_EL(Layer, l, layers., i) {
     if(l->lesion) continue;
     strm << "<Lay " << l->name << ">\n";
-    l->SaveWeights_strm(strm, (Con_Group::WtSaveFormat)fmt);
+    l->SaveWeights_strm(strm, (RecvCons::WtSaveFormat)fmt);
     strm << "</Lay>\n";
   }
   taMisc::DoneBusy();
@@ -5399,7 +5513,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
   if((stat != taMisc::TAG_GOT) || (tag != "Fmt")) return false;
 
   String enum_typ_nm;
-  Con_Group::WtSaveFormat fmt = (Con_Group::WtSaveFormat)TA_Con_Group.GetEnumVal(val, enum_typ_nm);
+  RecvCons::WtSaveFormat fmt = (RecvCons::WtSaveFormat)TA_RecvCons.GetEnumVal(val, enum_typ_nm);
 
   stat = taMisc::read_tag(strm, tag, val);
   if((stat != taMisc::TAG_GOT) || (tag != "Name")) return false;
@@ -5424,7 +5538,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
     }
     if(stat != taMisc::TAG_END) break;
     stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
-    Con_Group::LoadWeights_EndTag(strm, "Lay", tag, stat, quiet);
+    RecvCons::LoadWeights_EndTag(strm, "Lay", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
   // could try to read end tag but what is the point?

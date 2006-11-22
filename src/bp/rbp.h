@@ -59,7 +59,7 @@ class BP_API RBpConSpec : public BpConSpec {
   // Recurrent Backprop Con Spec
 public:
   inline void 		C_Compute_dWt(BpCon* cn, RBpUnit* ru, RBpUnit* su);
-  inline void 		Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
   // Compute dE with respect to the weights (using prv_act) as sender
 
   void 	Initialize()		{ };
@@ -73,7 +73,7 @@ public:
   bool	sym_wt_updt;		// if true, use symmetric weight updates
 
   inline void 		C_Compute_dWt_Sym(BpCon* cn, RBpUnit* ru, RBpUnit* su);
-  inline void 		Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
   // Compute dE with respect to the weights (using prv_act) as sender
 
   void 	Initialize()		{ sym_wt_updt = true; }
@@ -202,7 +202,7 @@ public:
 inline void RBpConSpec::C_Compute_dWt(BpCon* cn, RBpUnit* ru, RBpUnit* su) {
   cn->dEdW += su->prv_act * ru->dEdNet;
 }
-inline void RBpConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void RBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
 }
 
@@ -211,7 +211,7 @@ inline void SymRBpConSpec::C_Compute_dWt_Sym(BpCon* cn, RBpUnit* ru, RBpUnit* su
   // just take the average of the two different weight changes
   cn->dEdW += 0.5f * (su->prv_act * ru->dEdNet + ru->prv_act * su->dEdNet);
 }
-inline void SymRBpConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void SymRBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   if(sym_wt_updt) {
     CON_GROUP_LOOP(cg,C_Compute_dWt_Sym((BpCon*)cg->Cn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
   }

@@ -569,8 +569,8 @@ const String NetMonItem::GetObjName(TAPtr obj, TAPtr own) {
       nm = DotCat(pfx, nm);;
     }
   }
-  else if (obj->InheritsFrom(TA_Con_Group)) {
-    Con_Group* cg = (Con_Group*)obj;
+  else if (obj->InheritsFrom(TA_RecvCons)) {
+    RecvCons* cg = (RecvCons*)obj;
     Unit* un = GET_OWNER(obj, Unit);
     // note: con groups are not named, will be rooted in send or recv
     if (un) {
@@ -670,7 +670,6 @@ void NetMonItem::InitLinks() {
   inherited::InitLinks();
   taBase::Own(val_specs,this);
   taBase::Own(ptrs,this);
-  ptrs.SetBaseType(&TA_taBase);
   taBase::Own(pre_proc_1,this);
   taBase::Own(pre_proc_2,this);
   taBase::Own(pre_proc_3,this);
@@ -807,7 +806,7 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
   void* obj = NULL;
   MemberDef* md = NULL;
   if (i < ptrs.size) {
-    obj = (void*)ptrs.FastEl(i);
+    obj = ptrs.FastEl(i);
     md = members.FastEl(i);
   }
   if (!md || !obj) {
@@ -818,13 +817,13 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
   // pre-process.. 
   // note: NONE op leaves Variant in same format, otherwise converted to float
   // todo: is this evil or not?
-//   pre_proc_3.EvaluateVar(pre_proc_2.EvaluateVar(pre_proc_1.EvaluateVar(rval)));
+  pre_proc_3.EvaluateVar(pre_proc_2.EvaluateVar(pre_proc_1.EvaluateVar(rval)));
   return true;
 }
 
 void NetMonItem::ResetMonVals() {
   val_specs.RemoveAll();
-  ptrs.RemoveAll();
+  ptrs.Reset();
   members.RemoveAll();
 }
 
@@ -914,9 +913,7 @@ Generic patternDoObj (obj, var):
       call DoObj(sub, var after .
     
 */
-bool NetMonItem::ScanObject_InObject(TAPtr obj, String var, 
-  bool mk_col, TAPtr own) 
-{
+bool NetMonItem::ScanObject_InObject(TAPtr obj, String var, bool mk_col, TAPtr own) {
   if (!obj) return false; 
   MemberDef* md = NULL;
   
@@ -963,52 +960,12 @@ bool NetMonItem::ScanObject_InObject(TAPtr obj, String var,
       } else {
         AddCellName(valname);
       }
-      ptrs.Link(obj);
+      ptrs.Add(obj);
       members.Link(md);
       return true;
     }
   }
   return false;
-}
-
-void NetMonItem::ScanObject_ConGroup(Con_Group* mcg, String var,
-  Projection* p) 
-{
-  MemberDef* md;
-//   String colname = GetObjName(mcg) + String(".") + var;
-  String colname = name;	// always use name of mon, not pre-gen name!
-  String unitname;
-  //note: assume float, since really no other con types make sense, and using Variant
-  // could be extremely wasteful since there are so many cons
-  MatrixChannelSpec* cs = AddMatrixChan(colname, real_val_type);
-  cs->cell_names.SetGeom(1, 0); //dynamic
-  //NOTE: we expand the cell names of the spec on the fly
-  int i;
-  Con_Group* cg;
-  String valname;
-  FOR_ITR_GP(Con_Group, cg, mcg->, i) {
-    if ((p) && (cg->prjn != p)) continue;
-    md = cg->el_typ->members.FindNameR(var);
-    if (!md) continue;
-    Unit* u = GET_OWNER(cg,Unit);
-    if (!u) continue;
-    unitname = GetObjName(u) + String("[") + String(i) + "]";
-    int j;
-    for (j=0; j<cg->size; ++j) {
-      Connection* c = (Connection *) cg->Cn(j);
-      ptrs.Link(c);
-      members.Link(md);
-      valname = unitname.cat("[").cat(String(j)).cat("].").cat(var);
-      AddCellName(valname);
-    }
-  }
-  // if no units, then remove group, else update
-  if (cs->cell_names.size == 0) {
-    cs->Close();
-  } else {
-    cs->cell_geom = cs->cell_names.geom;
-    cs->UpdateAfterEdit();
-  }
 }
 
 void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
@@ -1109,37 +1066,6 @@ void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
   } 
 }
 
-void NetMonItem::ScanObject_Unit(Unit* u, String var, 
-  Projection* p, bool mk_col) 
-{
-  //InObject will handle direct membs and subojects, like biases etc.
-  if (ScanObject_InObject(u, var, mk_col)) return;
-  
-  // otherwise, we only grok the special s. and r. indicating conns
-  if (!var.contains('.')) return;
-  String varname = var.before('.');
-  if (varname=="r") varname = "recv";
-  else if(varname=="s") varname = "send";
-  else return;
-  TAPtr ths = u;
-  void* temp;
-  //note: this should always succeed...
-  MemberDef* md = u->FindMembeR(varname,temp);
-  if ((md == NULL) || (temp == NULL)) return;
-  ths = (TAPtr) temp; // embedded objects (not ptrs to)
-  varname = var.after('.');
-  int val_sz= val_specs.size; // for marking current spot
-  if (ths->InheritsFrom(&TA_Con_Group)) {
-    ScanObject_ConGroup((Con_Group *) ths, varname, p);
-    // if nested objs made chans, mark a new group
-    if (val_sz < val_specs.size) {
-      String valname = GetObjName(u) + String(".") + var;
-      val_specs.FastEl(val_sz)->new_group_name = valname;
-    } 
-    return;
-  }
-}
-
 void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var, bool mk_col) {
   if (ScanObject_InObject(ug, var, mk_col)) return;
   
@@ -1187,6 +1113,119 @@ cont:
     else if (cell_num == 0) {
       val_specs.Remove(val_sz - 1);
     }
+  }
+}
+
+void NetMonItem::ScanObject_Unit(Unit* u, String var, Projection* p, bool mk_col) {
+  //InObject will handle direct membs and subojects, like biases etc.
+  if (ScanObject_InObject(u, var, mk_col)) return;
+  
+  // otherwise, we only grok the special s. and r. indicating conns
+  if (!var.contains('.')) return;
+  // todo: fix this scan
+  String varname = var.before('.');
+  if (varname=="r") varname = "recv";
+  else if(varname=="s") varname = "send";
+  else return;
+  TAPtr ths = u;
+  void* temp;
+  //note: this should always succeed...
+  MemberDef* md = u->FindMembeR(varname,temp);
+  if ((md == NULL) || (temp == NULL)) return;
+  ths = (TAPtr) temp; // embedded objects (not ptrs to)
+  varname = var.after('.');
+  int val_sz= val_specs.size; // for marking current spot
+  if(ths->InheritsFrom(&TA_RecvCons_List)) {
+    ScanObject_RecvCons((RecvCons_List*) ths, varname, p);
+    // if nested objs made chans, mark a new group
+    if (val_sz < val_specs.size) {
+      String valname = GetObjName(u) + String(".") + var;
+      val_specs.FastEl(val_sz)->new_group_name = valname;
+    } 
+    return;
+  }
+  else if(ths->InheritsFrom(&TA_SendCons_List)) {
+    ScanObject_SendCons((SendCons_List*) ths, varname, p);
+    // if nested objs made chans, mark a new group
+    if (val_sz < val_specs.size) {
+      String valname = GetObjName(u) + String(".") + var;
+      val_specs.FastEl(val_sz)->new_group_name = valname;
+    } 
+    return;
+  }
+}
+
+void NetMonItem::ScanObject_RecvCons(RecvCons_List* mcg, String var, Projection* p) {
+  MemberDef* md;
+//   String colname = GetObjName(mcg) + String(".") + var;
+  String colname = name;	// always use name of mon, not pre-gen name!
+  String unitname;
+  //note: assume float, since really no other con types make sense, and using Variant
+  // could be extremely wasteful since there are so many cons
+  MatrixChannelSpec* cs = AddMatrixChan(colname, real_val_type);
+  cs->cell_names.SetGeom(1, 0); //dynamic
+  //NOTE: we expand the cell names of the spec on the fly
+  String valname;
+  for(int g = 0; g < mcg->size; g++) {
+    RecvCons* cg = mcg->FastEl(g);
+    if(p && (cg->prjn != p)) continue;
+    if(ScanObject_InObject(cg, var, false)) continue;
+    md = cg->con_type->members.FindNameR(var);
+    if (!md) continue;
+    Unit* u = GET_OWNER(cg,Unit);
+    if (!u) continue;
+    unitname = GetObjName(u) + String("[") + String(g) + "]";
+    for(int j=0; j<cg->cons.size; ++j) {
+      Connection* c = cg->Cn(j);
+      ptrs.Add(c);
+      members.Link(md);
+      valname = unitname.cat("[").cat(String(j)).cat("].").cat(var);
+      AddCellName(valname);
+    }
+  }
+  // if no units, then remove group, else update
+  if (cs->cell_names.size == 0) {
+    cs->Close();
+  } else {
+    cs->cell_geom = cs->cell_names.geom;
+    cs->UpdateAfterEdit();
+  }
+}
+
+void NetMonItem::ScanObject_SendCons(SendCons_List* mcg, String var, Projection* p) {
+  MemberDef* md;
+//   String colname = GetObjName(mcg) + String(".") + var;
+  String colname = name;	// always use name of mon, not pre-gen name!
+  String unitname;
+  //note: assume float, since really no other con types make sense, and using Variant
+  // could be extremely wasteful since there are so many cons
+  MatrixChannelSpec* cs = AddMatrixChan(colname, real_val_type);
+  cs->cell_names.SetGeom(1, 0); //dynamic
+  //NOTE: we expand the cell names of the spec on the fly
+  String valname;
+  for(int g = 0; g < mcg->size; g++) {
+    SendCons* cg = mcg->FastEl(g);
+    if(p && (cg->prjn != p)) continue;
+    if(ScanObject_InObject(cg, var, false)) continue;
+    md = cg->con_type->members.FindNameR(var);
+    if (!md) continue;
+    Unit* u = GET_OWNER(cg,Unit);
+    if (!u) continue;
+    unitname = GetObjName(u) + String("[") + String(g) + "]";
+    for(int j=0; j<cg->cons.size; ++j) {
+      Connection* c = cg->Cn(j);
+      ptrs.Add(c);
+      members.Link(md);
+      valname = unitname.cat("[").cat(String(j)).cat("].").cat(var);
+      AddCellName(valname);
+    }
+  }
+  // if no units, then remove group, else update
+  if (cs->cell_names.size == 0) {
+    cs->Close();
+  } else {
+    cs->cell_geom = cs->cell_names.geom;
+    cs->UpdateAfterEdit();
   }
 }
 

@@ -63,12 +63,12 @@ public:
   }
 
   // this computes weight changes based on sender at time t-1
-  inline void Compute_dWt(Con_Group* cg, Unit* ru) {
+  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
     LeabraUnit* lru = (LeabraUnit*)ru;
-    LeabraCon_Group* lcg = (LeabraCon_Group*) cg;
+    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
     Compute_SAvgCor(lcg, lru);
     if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->size; i++) {
+      for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
@@ -148,12 +148,12 @@ public:
     return err;
   }
 
-  inline void Compute_dWt(Con_Group* cg, Unit* ru) {
+  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
     LeabraUnit* lru = (LeabraUnit*)ru;
-    LeabraCon_Group* lcg = (LeabraCon_Group*) cg;
+    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
     Compute_SAvgCor(lcg, lru);
     if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->size; i++) {
+      for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&

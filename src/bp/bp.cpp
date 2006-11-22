@@ -36,7 +36,7 @@ InitProcRegistrar mod_init(ta_Init_bp);
 //////////////////////////
 
 void BpConSpec::Initialize() {
-  min_obj_type = &TA_BpCon_Group;
+  //  min_obj_type = &TA_BpRecvCons; // not applicable
   min_con_type = &TA_BpCon;
   lrate = .25f;
   cur_lrate = .25f;
@@ -63,8 +63,14 @@ void BpConSpec::SetCurLrate(int epoch) {
   cur_lrate = lrate * lrate_sched.GetVal(epoch);
 }
 
-void BpCon_Group::Initialize() {
+void BpRecvCons::Initialize() {
   spec.SetBaseType(&TA_BpConSpec);
+  SetConType(&TA_BpCon);
+}
+
+void BpSendCons::Initialize() {
+  spec.SetBaseType(&TA_BpConSpec);
+  SetConType(&TA_BpCon);
 }
 
 void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit*, BpUnit*) {
@@ -106,10 +112,10 @@ void BpUnitSpec::Copy_(const BpUnitSpec& cp) {
 
 void BpUnitSpec::SetCurLrate(BpUnit* u, int epoch) {
   ((BpConSpec*)bias_spec.spec)->SetCurLrate(epoch);
-  BpCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(BpCon_Group, recv_gp, u->recv., g)
+  for(int g=0; g<u->recv.size; g++) {
+    BpRecvCons* recv_gp = (BpRecvCons*)u->recv.FastEl(g);
     recv_gp->SetCurLrate(epoch);
+  }
 }
 
 void BpUnitSpec::Init_Acts(Unit* u) {
@@ -132,9 +138,8 @@ void BpUnitSpec::Compute_Error(BpUnit* u) {
 void BpUnitSpec::Compute_dEdA(BpUnit* u) {
   u->dEdA = 0.0f;
   u->err = 0.0f;
-  BpCon_Group* send_gp;
-  int g;
-  FOR_ITR_GP(BpCon_Group, send_gp, u->send., g) {
+  for(int g=0; g<u->send.size; g++) {
+    BpSendCons* send_gp = (BpSendCons*)u->send.FastEl(g);
     if(!send_gp->prjn->layer->lesion)
       u->dEdA += send_gp->Compute_dEdA(u);
   }
@@ -148,13 +153,13 @@ void BpUnitSpec::Compute_dEdNet(BpUnit* u) {
 void BpUnitSpec::Compute_dWt(Unit* u) {
   if(u->ext_flag & Unit::EXT)  return; // don't compute dwts for clamped units
   UnitSpec::Compute_dWt(u);
-  ((BpConSpec*)bias_spec.spec)->B_Compute_dWt((BpCon*)u->bias, (BpUnit*)u);
+  ((BpConSpec*)bias_spec.spec)->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
 void BpUnitSpec::Compute_Weights(Unit* u) {
   if(u->ext_flag & Unit::EXT)  return; // don't update for clamped units
   UnitSpec::Compute_Weights(u);
-  ((BpConSpec*)bias_spec.spec)->B_Compute_Weights((BpCon*)u->bias, (BpUnit*)u);
+  ((BpConSpec*)bias_spec.spec)->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
 /*TODO void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
@@ -286,7 +291,7 @@ void BpContextSpec::UpdateAfterEdit() {
     taMisc::Error("BpContextSpec: could not find variable:",variable,"in BpUnit type");
     return false;
   }
-  Con_Group* recv_gp = (Con_Group*)un->recv.SafeGp(0); // first group
+  RecvCons* recv_gp = (RecvCons*)un->recv.SafeGp(0); // first group
   if(recv_gp == NULL) {
     taMisc::Error("BpContextSpec: expecting one one-to-one projection from layer",
 		   "did not find con group");
@@ -314,7 +319,8 @@ void BpContextSpec::Init_Acts(Unit* u) {
 }
 
 void BpContextSpec::Compute_Act(Unit* u) {
-  Con_Group* recv_gp = (Con_Group*)u->recv.SafeGp(0); // first group
+// todo: add a checkconfig to ensure this congroup exists!
+  RecvCons* recv_gp = (RecvCons*)u->recv.SafeEl(0); // first group
   Unit* hu = (Unit*)recv_gp->Un(0);
   float* varptr = (float*)var_md->GetOff((void*)u);
   *varptr = hysteresis_c * hu->act + hysteresis * (*varptr);
@@ -444,10 +450,10 @@ void RBFBpUnitSpec::UpdateAfterEdit() {
 void RBFBpUnitSpec::Compute_Netin(Unit* u) {
   // do distance instead of net input
   u->net = 0.0f;
-  Con_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, u->recv., g)
+  for(int g=0; g<u->recv.size; g++) {
+    RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
     u->net += recv_gp->Compute_Dist(u);
+  }
 }
 
 void RBFBpUnitSpec::Compute_Act(Unit* u) {
@@ -508,14 +514,14 @@ void ExpBpUnitSpec::Compute_dEdNet(BpUnit* u) {
 }
 
 void SoftMaxBpUnitSpec::Compute_Act(Unit* u) {
-  if((u->recv.gp.size < 2) || (((Con_Group*)u->recv.gp[0])->size == 0)
-     || (((Con_Group*)u->recv.gp[1])->size == 0)) {
+  if((u->recv.size < 2) || (((RecvCons*)u->recv[0])->cons.size == 0)
+     || (((RecvCons*)u->recv[1])->cons.size == 0)) {
     taMisc::Error("*** SoftMaxBpUnitSpec: expecting one one-to-one projection from",
 		  "exponential units (in first projection) and from linear sum unit (in second), did not find these.");
     return;
   }
-  BpUnit* exp_unit = (BpUnit*)((Con_Group*)u->recv.gp[0])->Un(0);
-  BpUnit* sum_unit = (BpUnit*)((Con_Group*)u->recv.gp[1])->Un(0);
+  BpUnit* exp_unit = (BpUnit*)((RecvCons*)u->recv[0])->Un(0);
+  BpUnit* sum_unit = (BpUnit*)((RecvCons*)u->recv[1])->Un(0);
 
   float sum_act = sum_unit->act;
   if(sum_act < FLT_MIN)
@@ -551,7 +557,8 @@ void BpNetwork::Initialize() {
 void BpNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);
   prjn->con_type = &TA_BpCon;
-  prjn->con_gp_type = &TA_BpCon_Group;
+  prjn->recvcons_type = &TA_BpRecvCons;
+  prjn->sendcons_type = &TA_BpSendCons;
   prjn->con_spec.SetBaseType(&TA_BpConSpec);
 }
 

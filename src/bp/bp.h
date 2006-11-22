@@ -28,7 +28,8 @@
 // forwards this file
 class BpConSpec;
 class BpCon;
-class BpCon_Group;
+class BpRecvCons;
+class BpSendCons;
 class BpUnit;
 class BpUnitSpec;
 
@@ -38,11 +39,7 @@ class BP_API BpCon : public Connection {
 public:
   float 		dEdW; 		// #NO_SAVE derivative of Error wrt weight
 
-  void 	Initialize()		{ dEdW = 0.0f; }
-  void 	Destroy()		{ };
-  void	Copy_(const BpCon& cp)	{ dEdW = cp.dEdW; }
-  COPY_FUNS(BpCon, Connection);
-  TA_BASEFUNS(BpCon);
+  BpCon() { dEdW = 0.0f; }
 };
 
 // todo: need to figure out why bp uses dEdW like others use dwt -- now that 
@@ -73,18 +70,18 @@ public:
   void 		(*decay_fun)(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su);
   // #LIST_BpConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  void 		C_Init_dWt(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
+  void 		C_Init_dWt(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
   { ConSpec::C_Init_dWt(cg, cn, ru, su); ((BpCon*)cn)->dEdW = 0.0f; }
 
-  void 		C_Init_Weights(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
+  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
   { ConSpec::C_Init_Weights(cg, cn, ru, su); ((BpCon*)cn)->dwt = 0.0f;}
 
   inline float		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline virtual float 	Compute_dEdA(BpCon_Group* cg, BpUnit* su);
+  inline virtual float 	Compute_dEdA(BpSendCons* cg, BpUnit* su);
   // get error from units I send to
 
   inline void 		C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline void 		Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
   inline virtual void	B_Compute_dWt(BpCon* cn, BpUnit* ru);
   // Compute dE with respect to the weights
 
@@ -94,7 +91,7 @@ public:
   inline void	C_BEF_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // BEFORE_LRATE
   inline void	C_AFT_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // AFTER_LRATE
   inline void	C_NRM_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // NORMALIZED
-  inline void	Compute_Weights(Con_Group* cg, Unit* ru);
+  inline void	Compute_Weights(RecvCons* cg, Unit* ru);
   inline virtual void	B_Compute_Weights(BpCon* cn, BpUnit* ru);
   // for the bias unit
 
@@ -125,19 +122,29 @@ BP_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su
 // #LIST_BpConSpec_WtDecay Weight Elimination (Rumelhart) weight decay
      ;				// term here so scanner picks up comment
 
-class BP_API BpCon_Group : public Con_Group {
-  // group of Bp connections
+class BP_API BpRecvCons : public RecvCons {
+  // group of Bp recv connections
 public:
   // these are "convenience" functions for those defined in the spec
 
   void	SetCurLrate(int epoch) { ((BpConSpec*)spec.spec)->SetCurLrate(epoch); }
+
+  void	Initialize();
+  void 	Destroy()		{ };
+  TA_BASEFUNS(BpRecvCons);
+};
+
+class BP_API BpSendCons : public RecvCons {
+  // group of Bp sending connections
+public:
+  // these are "convenience" functions for those defined in the spec
+
   float Compute_dEdA(BpUnit* su) { return ((BpConSpec*)spec.spec)->Compute_dEdA(this, su); }
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(BpCon_Group);
+  TA_BASEFUNS(BpSendCons);
 };
-
 
 class BpUnit;
 
@@ -213,7 +220,7 @@ public:
 inline float BpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
   return cn->wt * ru->dEdNet;
 }
-inline float BpConSpec::Compute_dEdA(BpCon_Group* cg, BpUnit* su) {
+inline float BpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su) {
   float rval = 0.0f;
   CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->Cn(i), (BpUnit*)cg->Un(i), su));
   return rval;
@@ -223,7 +230,7 @@ inline float BpConSpec::Compute_dEdA(BpCon_Group* cg, BpUnit* su) {
 inline void BpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
   cn->dEdW += su->act * ru->dEdNet;
 }
-inline void BpConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void BpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
 }
 inline void BpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
@@ -253,7 +260,7 @@ inline void BpConSpec::C_NRM_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) 
   cn->dEdW = 0.0f;
 }
 
-inline void BpConSpec::Compute_Weights(Con_Group* cg, Unit* ru) {
+inline void BpConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   if(momentum_type == AFTER_LRATE) {
     CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((BpCon*)cg->Cn(i),
 					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
@@ -287,7 +294,7 @@ class BP_API HebbBpConSpec : public BpConSpec {
   // Simple Hebbian wt update (send act * recv act)
 public:
   inline void 		C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline void 		Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
 
   inline void		B_Compute_dWt(BpCon* cn, BpUnit* ru);
 
@@ -300,7 +307,7 @@ inline void HebbBpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
   cn->dEdW += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act) * su->act;
 }
 
-inline void HebbBpConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void HebbBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
 }
 
@@ -314,7 +321,7 @@ public:
   float		err_scale;	// the scaling parameter
 
   inline float 		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline float 		Compute_dEdA(BpCon_Group* cg, BpUnit* su);
+  inline float 		Compute_dEdA(BpRecvCons* cg, BpUnit* su);
 
   void 	Initialize()	{ err_scale = 1.0f; }
   void 	Destroy()	{ };
@@ -326,7 +333,7 @@ public:
 inline float ErrScaleBpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
   return err_scale * cn->wt * ru->dEdNet;
 }
-inline float ErrScaleBpConSpec::Compute_dEdA(BpCon_Group* cg, BpUnit* su) {
+inline float ErrScaleBpConSpec::Compute_dEdA(BpRecvCons* cg, BpUnit* su) {
   float rval = 0.0f;
   CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->Cn(i), (BpUnit*)cg->Un(i), su));
   return rval;
@@ -337,11 +344,7 @@ class BP_API DeltaBarDeltaBpCon : public BpCon {
 public:
   float 		lrate; 		// #NO_SAVE local learning rate
 
-  void 	Initialize()		{ lrate = 0.0f; }
-  void 	Destroy()		{ };
-  void	Copy_(const DeltaBarDeltaBpCon& cp)	{ lrate = cp.lrate; }
-  COPY_FUNS(DeltaBarDeltaBpCon, BpCon);
-  TA_BASEFUNS(DeltaBarDeltaBpCon);
+  DeltaBarDeltaBpCon() { lrate = 0.0f; }
 };
 
 class BP_API DeltaBarDeltaBpConSpec : public BpConSpec {
@@ -351,7 +354,7 @@ public:
   float		lrate_decr;	// rate of learning rate decrease (multiplicative)
   float		act_lrate_incr;	// #HIDDEN actual lrate increase (times lrate)
 
-  void 		C_Init_Weights(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
+  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
   { ConSpec::C_Init_Weights(cg, cn, ru, su); ((DeltaBarDeltaBpCon*)cn)->lrate = lrate;}
   // set initial learning rate
 
@@ -359,7 +362,7 @@ public:
   inline void	C_BEF_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
   inline void	C_AFT_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
   inline void	C_NRM_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
-  inline virtual void	Compute_Weights(Con_Group* cg, Unit* ru);
+  inline virtual void	Compute_Weights(RecvCons* cg, Unit* ru);
   inline virtual void	B_Compute_Weights(BpCon* cn, BpUnit* ru);
 
   void	UpdateAfterEdit();
@@ -409,7 +412,7 @@ inline void DeltaBarDeltaBpConSpec::C_NRM_Compute_Weights
   cn->dEdW = 0.0f;
 }
 
-inline void DeltaBarDeltaBpConSpec::Compute_Weights(Con_Group* cg, Unit* ru) {
+inline void DeltaBarDeltaBpConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   if(momentum_type == AFTER_LRATE) {
     CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((DeltaBarDeltaBpCon*)cg->Cn(i),
 					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));

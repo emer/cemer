@@ -389,6 +389,8 @@ void UnitGroupView::UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u) {
     UpdateUnitViewBase_Unit_impl(disp_md);
   } else if ((nm=="s") || (nm == "r")) {
     UpdateUnitViewBase_Con_impl((nm=="s"), disp_md->name.after('.'), src_u);
+  } else if (nm=="bias") {
+    UpdateUnitViewBase_Bias_impl(disp_md);
   } else { // sub-member of unit
     UpdateUnitViewBase_Sub_impl(disp_md);
   }
@@ -405,23 +407,44 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
     uvd.disp_base = NULL;
     if (!unit) continue;  // rest will be null too, but we loop to null disp_base
 
-    Con_Group* cong;
-    if (is_send)
-      cong = &(unit->recv);
-    else
-      cong = &(unit->send);
-    MemberDef* act_md = NULL;
-    Con_Group* tcong;
-    int g;
-    FOR_ITR_GP(Con_Group, tcong, cong->, g) {
-      act_md = tcong->prjn->con_type->members.FindName(nm);
-      if (act_md == NULL)	continue;
-      Connection* con = tcong->FindConFrom(src_u);
-      if (con == NULL) continue;
-      uvd.disp_base = act_md->GetOff(con);
-//old v3.2      FixType(); return;
-      break; //TODO: is this right????
+    if (is_send) {
+      for(int g=0;g<unit->recv.size;g++) {
+	RecvCons* tcong = unit->recv.FastEl(g);
+	MemberDef* act_md = tcong->con_type->members.FindName(nm);
+	if (act_md == NULL)	continue;
+	Connection* con = tcong->FindConFrom(src_u);
+	if (con == NULL) continue;
+	uvd.disp_base = act_md->GetOff(con);
+	break; //TODO: is this right????
+      }
     }
+    else {
+      for(int g=0;g<unit->send.size;g++) {
+	SendCons* tcong = unit->send.FastEl(g);
+	MemberDef* act_md = tcong->con_type->members.FindName(nm);
+	if (act_md == NULL)	continue;
+	Connection* con = tcong->FindConFrom(src_u);
+	if (con == NULL) continue;
+	uvd.disp_base = act_md->GetOff(con);
+	break; //TODO: is this right????
+      }
+    }
+  }
+}
+
+void UnitGroupView::UpdateUnitViewBase_Bias_impl(MemberDef* disp_md) {
+  Unit_Group* ugrp = this->ugrp(); //cache
+  TwoDCoord coord;
+  while ((coord.x < ugrp->geom.x) && (coord.y < ugrp->geom.y)) {
+    Unit* unit = ugrp->FindUnitFmCoord(coord);
+    UnitViewData& uvd = uvd_arr.FastEl(coord);
+    //NOTE: do loop advance here, so we can continue -- ***coord's are now next beyond current***
+    if (++(coord.x) >= ugrp->geom.x) {coord.x = 0; ++(coord.y);}
+    uvd.disp_base = NULL;
+    if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+    if(unit->bias.cons.size == 0) continue;
+    Connection* con = unit->bias.Cn(0);
+    uvd.disp_base = disp_md->GetOff(con);
   }
 }
 
@@ -1017,8 +1040,27 @@ void NetView::GetMembs() { // this fills a member group with the valid
       TypeDef* td = u->GetTypeDef();
       if(td == prv_td) continue; // don't re-scan!
       prv_td = td;
-      int m;
-      for(m=0; m<td->members.size; m++) {
+
+      if(u->bias.cons.size) {
+	TypeDef* td = u->bias.con_type;
+	for(int k=0; k<td->members.size; k++) {
+	  MemberDef* smd = td->members.FastEl(k);
+	  if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+	    if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+		smd->HasOption("READ_ONLY")))
+	      continue;
+	    String nm = "bias." + smd->name;
+	    if(membs.FindName(nm)==NULL) {
+	      MemberDef* nmd = smd->Clone();
+	      nmd->name = nm;
+	      membs.Add(nmd);
+	      nmd->idx = smd->idx;
+	    }
+	  }
+	}
+      }
+
+      for(int m=0; m<td->members.size; m++) {
 	MemberDef* md = td->members.FastEl(m);
 	if((md->HasOption("NO_VIEW") || md->HasOption("HIDDEN") ||
 	    md->HasOption("READ_ONLY")))

@@ -28,11 +28,6 @@ InitProcRegistrar mod_init_leabra(ta_Init_leabra);
 //  	Con, Spec	//
 //////////////////////////
 
-void LeabraCon::Copy_(const LeabraCon& cp) {
-  dwt = cp.dwt;
-  pdw = cp.pdw;
-}
-
 void WtScaleSpec::Initialize() {
   rel = 1.0f;
   abs = 1.0f;
@@ -61,7 +56,7 @@ void SAvgCorSpec::Initialize() {
 }
 
 void LeabraConSpec::Initialize() {
-  min_obj_type = &TA_LeabraCon_Group;
+  //  min_obj_type = &TA_LeabraRecvCons;  // not applicable
   min_con_type = &TA_LeabraCon;
   wt_limits.min = 0.0f;
   wt_limits.max = 1.0f;
@@ -214,22 +209,27 @@ void LeabraConSpec::CreateWtSigFun() {
 //   graph_log->ViewAllData();
 }*/
 
-void LeabraCon_Group::Initialize() {
+void LeabraRecvCons::Initialize() {
   spec.SetBaseType(&TA_LeabraConSpec);
-  SetBaseType(&TA_LeabraCon);
+  SetConType(&TA_LeabraCon);
   scale_eff = 0.0f;
   savg_cor = 1.0f;
   net = 0.0;
 }
 
-void LeabraCon_Group::Copy_(const LeabraCon_Group& cp) {
+void LeabraRecvCons::Copy_(const LeabraRecvCons& cp) {
   scale_eff = cp.scale_eff;
   savg_cor = cp.savg_cor;
   net = cp.net;
 }
 
+void LeabraSendCons::Initialize() {
+  spec.SetBaseType(&TA_LeabraConSpec);
+  SetConType(&TA_LeabraCon);
+}
+
 void LeabraBiasSpec::Initialize() {
-  min_obj_type = &TA_LeabraUnitSpec;
+  //   min_obj_type = &TA_RecvCons; // don't bother..
   SetUnique("rnd", true);
   SetUnique("wt_limits", true);
   SetUnique("wt_scale", true);
@@ -464,14 +464,13 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
   act.send_delta = ((LeabraNetwork*)net)->send_delta; // always copy from network, so it is global..
 
-  int g;
-  Con_Group* send_gp;
-  FOR_ITR_GP(Con_Group, send_gp, un->send., g) {
-    if(send_gp->size < 2) continue;
+  for(int g=0; g<un->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)un->send.FastEl(g);
+    if(send_gp->cons.size < 2) continue;
     Unit* ru = send_gp->Un(0);
-    float first_sc = ((LeabraCon_Group*)ru->recv.FastGp(send_gp->other_idx))->scale_eff;
-    for(int j=1; j<send_gp->size; j++) {
-      float sc = ((LeabraCon_Group*)ru->recv.FastGp(send_gp->other_idx))->scale_eff;
+    float first_sc = ((LeabraRecvCons*)ru->recv.FastEl(send_gp->recv_idx))->scale_eff;
+    for(int j=1; j<send_gp->cons.size; j++) {
+      float sc = ((LeabraRecvCons*)ru->recv.FastEl(send_gp->recv_idx))->scale_eff;
       if(sc != first_sc) {
 	if(!quiet) taMisc::CheckError("Leabra CheckConfig Error: the effective weight scales for\
  different sending connections within a group are not all the same!  Sending Layer:",
@@ -567,10 +566,10 @@ void LeabraUnitSpec::InitActAvg(LeabraUnit* u) {
 
 void LeabraUnitSpec::SetCurLrate(LeabraUnit* u, LeabraNetwork* net, int epoch) {
   ((LeabraConSpec*)bias_spec.spec)->SetCurLrate(epoch, net);
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g)
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     recv_gp->SetCurLrate(epoch, net);
+  }
 }
 
 ////////////////////////////////////////////
@@ -590,9 +589,9 @@ void LeabraUnitSpec::Init_Netin(LeabraUnit* u) {
   }
 
   // not initialized by default.
-//   LeabraCon_Group* recv_gp;
+//   LeabraRecvCons* recv_gp;
 //   int g;
-//   FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+//   FOR_ITR_GP(LeabraRecvCons, recv_gp, u->recv., g) {
 //     recv_gp->net = 0.0f;
 //   } 
 }
@@ -639,9 +638,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
   // this is all receiver-based and done only at beginning of settling
   u->net_scale = 0.0f;	// total of scale values for this unit's inputs
 
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
     if(lay->lesion)		continue;
      // this is the normalization value: takes into account target activity of layer
@@ -649,13 +647,13 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
     WtScaleSpec& wt_scale = cs->wt_scale;
     float savg = lay->kwta.pct;
     if(cs->savg_cor.norm_con_n)	// sometimes it makes sense to just do it by the group n
-      recv_gp->scale_eff = wt_scale.NetScale() * (1.0f / ((float)recv_gp->size * savg));
+      recv_gp->scale_eff = wt_scale.NetScale() * (1.0f / ((float)recv_gp->cons.size * savg));
     else
       recv_gp->scale_eff = wt_scale.NetScale() * (1.0f / ((float)lay->units.leaves * savg));
     u->net_scale += wt_scale.rel;
   }
   // add the bias weight into the netinput, scaled by 1/n
-  if(u->bias != NULL) {
+  if(u->bias.cons.size) {
     LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.spec;
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
     if(u->n_recv_cons > 0)
@@ -663,7 +661,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
   }
   // now renormalize
   if(u->net_scale == 0.0f) return;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
     if(lay->lesion)		continue;
     recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
@@ -671,9 +670,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
 }
 
 void LeabraUnitSpec::Compute_NetinRescale(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, float new_scale) {
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
     if(lay->lesion)		continue;
     recv_gp->scale_eff *= new_scale;
@@ -686,16 +684,15 @@ void LeabraUnitSpec::Compute_NetinRescale(LeabraUnit* u, LeabraLayer*, LeabraNet
 
 void LeabraUnitSpec::Init_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   u->clmp_net = 0.0f;
-  if(u->bias != NULL) {		// add bias weight
-    u->clmp_net += u->bias_scale * u->bias->wt;
+  if(u->bias.cons.size) {		// add bias weight
+    u->clmp_net += u->bias_scale * u->bias.Cn(0)->wt;
   }
 }
 
 void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   if(u->act > opt_thresh.send) {
-    LeabraCon_Group* send_gp;
-    int g;
-    FOR_ITR_GP(LeabraCon_Group, send_gp, u->send., g) {
+    for(int g=0; g<u->send.size; g++) {
+      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       if(send_gp->prjn->layer->lesion) continue;
       if(((LeabraConSpec*)send_gp->spec.spec)->inhib) {
 	taMisc::Error("*** Error: cannot send inhibition from a hard-clamped layer!  Set layerspec clamp.hard off!");
@@ -713,9 +710,8 @@ void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
 void LeabraUnitSpec::Send_Netin(LeabraUnit* u, LeabraLayer*) {
   // sender-based (and this fun not called on hard_clamped EXT layers)
   if(u->act > opt_thresh.send) {
-    LeabraCon_Group* send_gp;
-    int g;
-    FOR_ITR_GP(LeabraCon_Group, send_gp, u->send., g) {
+    for(int g=0; g<u->send.size; g++) {
+      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesion || tol->hard_clamped)	continue;
       send_gp->Send_Netin(u);
@@ -726,9 +722,8 @@ void LeabraUnitSpec::Send_Netin(LeabraUnit* u, LeabraLayer*) {
 void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*) {
   if(u->act > opt_thresh.send) {
     if(fabs(u->act_delta) > opt_thresh.delta) {
-      LeabraCon_Group* send_gp;
-      int g;
-      FOR_ITR_GP(LeabraCon_Group, send_gp, u->send., g) {
+      for(int g=0; g<u->send.size; g++) {
+	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	if(tol->lesion || tol->hard_clamped)	continue;
 	send_gp->Send_NetinDelta(u);
@@ -738,9 +733,8 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*) {
   }
   else if(u->act_sent > opt_thresh.send) {
     u->act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
-    LeabraCon_Group* send_gp;
-    int g;
-    FOR_ITR_GP(LeabraCon_Group, send_gp, u->send., g) {
+    for(int g=0; g<u->send.size; g++) {
+      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesion || tol->hard_clamped)	continue;
       send_gp->Send_NetinDelta(u);
@@ -801,8 +795,8 @@ bool LeabraUnitSpec::Compute_SoftClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNe
 
 float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   float non_bias_net = u->net;
-  if(u->bias != NULL)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias->wt;
+  if(u->bias.cons.size)		// subtract out bias weights so they can change k
+    non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
 
   // including the ga and gh terms
   return ((non_bias_net * (e_rev.e - act.thr) + u->gc.l * (e_rev.l - act.thr)
@@ -812,8 +806,8 @@ float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraLayer*, LeabraNetw
 
 float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   float non_bias_net = u->net;
-  if(u->bias != NULL)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias->wt;
+  if(u->bias.cons.size)		// subtract out bias weights so they can change k
+    non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
 
   // NOT including the ga term
   return ((non_bias_net * (e_rev.e - act.thr) + u->gc.l * (e_rev.l - act.thr)
@@ -823,8 +817,8 @@ float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraLayer*, LeabraNetw
 
 float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   float non_bias_net = u->net;
-  if(u->bias != NULL)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias->wt;
+  if(u->bias.cons.size)		// subtract out bias weights so they can change k
+    non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
 
   // NOT including the gh terms
   return ((non_bias_net * (e_rev.e - act.thr) + u->gc.l * (e_rev.l - act.thr)
@@ -834,8 +828,8 @@ float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraLayer*, LeabraNetw
 
 float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   float non_bias_net = u->net;
-  if(u->bias != NULL)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias->wt;
+  if(u->bias.cons.size)		// subtract out bias weights so they can change k
+    non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
 
   // NOT including the ga and gh terms
   return ((non_bias_net * (e_rev.e - act.thr) + u->gc.l * (e_rev.l - act.thr)) /
@@ -1139,15 +1133,14 @@ void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer*, LeabraNetwork
   // don't adapt bias weights on clamped inputs..: why?  what possible consequence could it have!?
   // furthermore: it is not right for units that are clamped in 2nd plus phase!
   //  if(!((u->ext_flag & Unit::EXT) && !(u->ext_flag & Unit::TARG))) {
-  ((LeabraConSpec*)bias_spec.spec)->B_Compute_dWt((LeabraCon*)u->bias, u);
+  ((LeabraConSpec*)bias_spec.spec)->B_Compute_dWt((LeabraCon*)u->bias.Cn(0), u);
     //  }
   UnitSpec::Compute_dWt(u);
 }
 
 void LeabraUnitSpec::Compute_WtFmLin(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
     if(lay->lesion)	continue;
     recv_gp->Compute_WtFmLin();
@@ -1158,7 +1151,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u) {
   LeabraUnit* lu = (LeabraUnit*)u;
   // see above commment
   //  if(!((lu->ext_flag & Unit::EXT) && !(lu->ext_flag & Unit::TARG))) {
-  ((LeabraConSpec*)bias_spec.spec)->B_Compute_Weights((LeabraCon*)u->bias, lu, this);
+  ((LeabraConSpec*)bias_spec.spec)->B_Compute_Weights((LeabraCon*)u->bias.Cn(0), lu, this);
     //  }
   if(opt_thresh.updt_wts && 
      ((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)))
@@ -1285,8 +1278,6 @@ void LeabraUnitChans::Copy_(const LeabraUnitChans& cp) {
 
 void LeabraUnit::Initialize() {
   spec.SetBaseType(&TA_LeabraUnitSpec);
-  recv.spec.SetBaseType(&TA_LeabraConSpec);
-  send.spec.SetBaseType(&TA_LeabraConSpec);
 
   act_eq = 0.0f;
   act_avg = 0.1f;
@@ -2906,7 +2897,8 @@ void LeabraNetwork::Init_Stats() {
 void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);
   prjn->con_type = &TA_LeabraCon;
-  prjn->con_gp_type = &TA_LeabraCon_Group;
+  prjn->recvcons_type = &TA_LeabraRecvCons;
+  prjn->sendcons_type = &TA_LeabraSendCons;
   prjn->con_spec.SetBaseType(&TA_LeabraConSpec);
 }
 

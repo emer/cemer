@@ -206,6 +206,7 @@ protected:
   void 			UpdateUnitViewBase_Unit_impl(MemberDef* disp_md); // for unit members
   void 			UpdateUnitViewBase_Sub_impl(MemberDef* disp_md); // for unit submembers
   void 			UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* src_u); // for cons
+  void 			UpdateUnitViewBase_Bias_impl(MemberDef* disp_md); // for bias vals
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void 	Render_impl_children(); // #IGNORE

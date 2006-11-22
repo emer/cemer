@@ -61,33 +61,18 @@ public:
 class PDP_API TesselPrjnSpec : public ProjectionSpec {
   // arbitrary tesselations (repeating patterns) of connectivity
 public:
-  enum LinkType {
-    NO_LINK,			// weights are not linked
-    GP_LINK,			// weights are linked by groups of units
-    UN_LINK			// weights are linked among all units
-  };
-
   TwoDCoord	recv_off;	// offset in layer for start of recv units to begin connecting
   TwoDCoord	recv_n;		// number of receiving units to connect in each dimension (-1 for all)
   TwoDCoord	recv_skip;	// increment for recv units in each dimension -- 1 = connect all units; 2 = skip every other unit, etc
   TwoDCoord	recv_group;	// group together this many units under the same starting coord, resulting in a tile pattern
   bool		wrap;		// whether to wrap coordinates around (else clip)
-  LinkType	link_type;	// type of weight linking to use
-  TwoDCoord	link_src;	// #CONDEDIT_OFF_link_type:NO_LINK index for source unit for unit linking (should have full set of connections)
   FloatTwoDCoord send_scale;	// scale to apply to transform receiving unit coords into sending unit coords
   TwoDCoord	send_border;	// border size around sending layer (constant offset to add to sending offsets)
 
   TessEl_List	send_offs;	// offsets of the sending units
 
-  virtual void	Connect_NonLinked(Projection* prjn); // connect non-linked units
-  virtual void	Connect_GpLinked(Projection* prjn); // connect group linked units
-  virtual void	Connect_GpLinkFmSrc(Projection* prjn); // connect group linked units from source
-  virtual void	Connect_UnLinked(Projection* prjn); // connect linked units
-  virtual void	Connect_UnLinkFmSrc(Projection* prjn); // connect linked units from source
-
   void		Connect_impl(Projection* prjn);
-  void 		ReConnect_Load(Projection* prjn); // #IGNORE
-  void		C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru);
+  void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // uses weight values as specified in the tesselel's
 
   virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
@@ -174,7 +159,7 @@ public:
 
   void	Connect_impl(Projection* prjn);
 
-  void	C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru);
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // uses weight values equal to the distance probability
 
   static float	UnitDist(UnitDistType typ, Projection* prjn,
@@ -204,52 +189,6 @@ public:
   void	Initialize()	{ };
   void	Destroy()	{ };
   TA_BASEFUNS(SymmetricPrjnSpec);
-};
-
-class PDP_API LinkPrjnConPtr : public taOBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec specifies a connection to link: todo -- soon to be obsolete because no links!
-public:
-  String	recv_layer;	// layer name receiving unit is in
-  int		recv_idx;	// leaf index of receiving unit within layer
-  String	send_layer;	// layer name sending unit is in
-  int		send_idx;	// leaf index of sending unit within layer
-
-  virtual Con_Group* GetCon(Network* net, int& idx, Unit*& ru, Unit*& su,
-			    Con_Group*& su_cg, int& sg_idx);
-  // #IGNORE get both sides of the connection (sending and receiving)
-
-  void	Initialize();
-  void	Destroy()	{ };
-  void 	Copy_(const LinkPrjnConPtr& cp);
-  COPY_FUNS(LinkPrjnConPtr, taOBase);
-  TA_BASEFUNS(LinkPrjnConPtr);
-};
-
-class PDP_API LinkPrjnConPtr_List : public taList<LinkPrjnConPtr> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of LinkPrjnConPtr objects: todo -- soon to be obsolete because no links!
-public:
-  void	Initialize() 		{ };
-  void 	Destroy()		{ };
-  TA_BASEFUNS(LinkPrjnConPtr_List);
-};
-
-class PDP_API LinkPrjnSpec : public ProjectionSpec {
-  // links an arbitrary set of wts, which must already be created!
-public:
-  LinkPrjnConPtr_List	links;
-
-  void		PreConnect(Projection*)		{ }; // don't preconnect
-  void		Connect_impl(Projection* prjn);
-  void		ReConnect_Load(Projection* prjn);
-  void		CopyNetwork(Network* net, Network* cn, Projection* prjn, Projection* cp);
-
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const LinkPrjnSpec& cp);
-  COPY_FUNS(LinkPrjnSpec, ProjectionSpec);
-  TA_BASEFUNS(LinkPrjnSpec);
 };
 
 class PDP_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {

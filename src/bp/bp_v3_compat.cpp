@@ -22,7 +22,7 @@
 
 void BpTrial::Initialize() {
   min_unit = &TA_BpUnit;
-  min_con_group = &TA_BpCon_Group;
+  min_con_group = &TA_BpRecvCons;
   min_con = &TA_BpCon;
   bp_to_inputs = false;
 }
@@ -63,7 +63,7 @@ void RBpTrial::Initialize() {
   log_counter = true;
 
   min_unit = &TA_RBpUnit;
-  min_con_group = &TA_BpCon_Group;
+  min_con_group = &TA_BpRecvCons;
   min_con = &TA_BpCon;
 }
 
@@ -83,7 +83,7 @@ void APBpCycle::Initialize() {
   apbp_trial = NULL;
 
   min_unit = &TA_RBpUnit;
-  min_con_group = &TA_BpCon_Group;
+  min_con_group = &TA_BpRecvCons;
   min_con = &TA_BpCon;
 }
 
@@ -93,7 +93,7 @@ void APBpSettle::Initialize() {
   cycle.max = 50;
 
   min_unit = &TA_RBpUnit;
-  min_con_group = &TA_BpCon_Group;
+  min_con_group = &TA_BpRecvCons;
   min_con = &TA_BpCon;
 }
 
@@ -106,7 +106,7 @@ void APBpTrial::Initialize() {
   trial_init = INIT_STATE;
 
   min_unit = &TA_RBpUnit;
-  min_con_group = &TA_BpCon_Group;
+  min_con_group = &TA_BpRecvCons;
   min_con = &TA_BpCon;
 }
 

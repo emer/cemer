@@ -38,7 +38,10 @@ class BaseSpec_Group; //
 class SigmoidSpec;
 class ConSpec;
 class Connection;
-class Con_Group;
+class RecvCons;
+class SendCons;
+class RecvCons_List;
+class SendCons_List;
 class UnitSpec;
 class Unit;
 class Unit_Group;

@@ -153,9 +153,8 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   // check for conspecs with correct params
   LeabraLayer* ext_rew_lay = NULL;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
@@ -373,9 +372,8 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   // check for conspecs with correct params
   LeabraLayer* pvi_lay = NULL;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
@@ -416,9 +414,8 @@ void LVeLayerSpec::Compute_DepressWt(Unit_Group* ugp, LeabraLayer*, LeabraNetwor
   int ui;
   for(ui=1;ui<ugp->size;ui++) {	// don't bother with first unit!
     DaModUnit* u = (DaModUnit*)ugp->FastEl(ui);
-    LeabraCon_Group* recv_gp;
-    int g;
-    FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       if(!recv_gp->spec.spec->InheritsFrom(TA_LVConSpec)) continue;
       LVConSpec* cs = (LVConSpec*)recv_gp->spec.spec;
       cs->Depress_Wt(recv_gp, u);
@@ -557,14 +554,13 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraLayer* lve_lay = NULL;
   LeabraLayer* lvi_lay = NULL;
   LeabraLayer* pvi_lay = NULL;
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.spec;
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
-      if(recv_gp->size <= 0) {
+      if(recv_gp->cons.size <= 0) {
 	if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: requires one recv projection with at least one unit!");
 	return false;
       }
@@ -650,11 +646,11 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   DaModUnit* u;
   taLeafItr i;
   FOR_ITR_EL(DaModUnit, u, lay->units., i) {
-    LeabraCon_Group* lvecg = (LeabraCon_Group*)u->recv.gp[lve_prjn_idx];
+    LeabraRecvCons* lvecg = (LeabraRecvCons*)u->recv[lve_prjn_idx];
     DaModUnit* lvesu = (DaModUnit*)lvecg->Un(0);
-    LeabraCon_Group* lvicg = (LeabraCon_Group*)u->recv.gp[lvi_prjn_idx];
+    LeabraRecvCons* lvicg = (LeabraRecvCons*)u->recv[lvi_prjn_idx];
     DaModUnit* lvisu = (DaModUnit*)lvicg->Un(0);
-    LeabraCon_Group* pvicg = (LeabraCon_Group*)u->recv.gp[pvi_prjn_idx];
+    LeabraRecvCons* pvicg = (LeabraRecvCons*)u->recv[pvi_prjn_idx];
     DaModUnit* pvisu = (DaModUnit*)pvicg->Un(0);
     float eff_lvi = MAX(lvisu->act_eq, da.min_lvi); // effective lvi value
     float lv_da = lvesu->act_eq - eff_lvi; 
@@ -690,14 +686,13 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    LeabraCon_Group* send_gp;
-    int g;
-    FOR_ITR_GP(LeabraCon_Group, send_gp, u->send., g) {
+    for(int g=0; g<u->send.size; g++) {
+      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesion)	continue;
       if(send_gp->spec.spec->InheritsFrom(TA_MarkerConSpec)) {
 	int j;
-	for(j=0;j<send_gp->size; j++) {
+	for(j=0;j<send_gp->cons.size; j++) {
 	  ((DaModUnit*)send_gp->Un(j))->dav = u->act;
 	}
       }

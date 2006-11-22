@@ -556,7 +556,7 @@ void ProjectBase::Initialize() {
   // up-class a few of the bases
   wizards.SetBaseType(&TA_Wizard);
   // now the rest
-  save_rmv_units = true; // default is not to save units
+  no_save_units = true; // default is not to save units
   build_nets = AUTO_BUILD;
 }
 
@@ -691,7 +691,10 @@ const iColor* ProjectBase::GetObjColor(TypeDef* td) {
     td->InheritsFrom(TA_Unit_Group) ||
     td->InheritsFrom(TA_Projection) ||
     td->InheritsFrom(TA_Connection) ||
-    td->InheritsFrom(TA_Con_Group) ||
+    td->InheritsFrom(TA_RecvCons) ||
+    td->InheritsFrom(TA_SendCons) ||
+    td->InheritsFrom(TA_RecvCons_List) ||
+    td->InheritsFrom(TA_SendCons_List) ||
     td->InheritsFrom(TA_Unit) ||
     td->InheritsFrom(TA_Network_Group)
     ) return the_colors.FastEl(ProjectBase::NETWORK)->color();

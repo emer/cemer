@@ -133,7 +133,6 @@ void TesselPrjnSpec::Initialize() {
   recv_skip = 1;
   recv_group = 1;
   wrap = true;
-  link_type = NO_LINK;
   send_scale = 1.0f;
   send_offs.SetBaseType(&TA_TessEl);
 }
@@ -144,7 +143,6 @@ void TesselPrjnSpec::InitLinks() {
   taBase::Own(recv_n, this);
   taBase::Own(recv_skip, this);
   taBase::Own(recv_group, this);
-  taBase::Own(link_src, this);
   taBase::Own(send_scale, this);
   taBase::Own(send_border, this);
   taBase::Own(send_offs, this);
@@ -156,8 +154,6 @@ void TesselPrjnSpec::Copy_(const TesselPrjnSpec& cp) {
   recv_skip = cp.recv_skip;
   recv_group = cp.recv_group;
   wrap = cp.wrap;
-  link_type = cp.link_type;
-  link_src = cp.link_src;
   send_scale = cp.send_scale;
   send_border = cp.send_border;
   send_offs = cp.send_offs;
@@ -288,8 +284,8 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
 
 // todo: this assumes that things are in order.. (can't really check otherwise)
 // which breaks for clipped patterns
-void TesselPrjnSpec::C_Init_Weights(Projection*, Con_Group* cg, Unit*) {
-  int mxi = MIN(cg->size, send_offs.size);
+void TesselPrjnSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit*) {
+  int mxi = MIN(cg->cons.size, send_offs.size);
   int i;
   for(i=0; i<mxi; i++) {
     TessEl* te = (TessEl*)send_offs.FastEl(i);
@@ -328,7 +324,15 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projecti
   }
 }
 
-void TesselPrjnSpec::Connect_NonLinked(Projection* prjn) {
+void TesselPrjnSpec::Connect_impl(Projection* prjn) {
+  if(prjn->from == NULL)	return;
+
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+
+  if(!wrap && init_wts) {
+    taMisc::Error("*** Warning: TesselPrjnSpec non-wrapped tessel prjn spec with init_wts does not usually work!:",name);
+  }
   PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
 
   TwoDCoord use_recv_n = recv_n;
@@ -351,252 +355,6 @@ void TesselPrjnSpec::Connect_NonLinked(Projection* prjn) {
       Connect_RecvUnit(ru_u, ruc, prjn);
     }
   }
-}
-
-// gp link ignores skipping!!
-void TesselPrjnSpec::Connect_GpLinkFmSrc(Projection* prjn) {
-  PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
-  PosTwoDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
-
-  if((recv_skip.x != 1) || (recv_skip.y != 1)) {
-    taMisc::Error("*** recv_skip != 1 is ignored for linked tessel prjn specs in TesselPrjnSpec:",name);
-  }
-
-  TwoDCoord use_recv_n = recv_off;
-  use_recv_n += recv_group;	// just do the group here
-
-  Unit_List src_gp;		// list of source units!
-  TwoDCoord ruc, nuc;
-  for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
-      ruc.y++, nuc.y++)
-  {
-    for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
-	ruc.x++, nuc.x++)
-    {
-      Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
-      if(ru_u == NULL)
-	continue;
-      src_gp.Link(ru_u);
-    }
-  }
-
-  use_recv_n = recv_n;
-  if((recv_n.x == -1) || (recv_n.y == -1)) {
-    use_recv_n = ru_geo;
-  }
-
-  for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
-      ruc.y++, nuc.y++)
-  {
-    for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
-	ruc.x++, nuc.x++)
-    {
-      Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
-      if((ru_u == NULL) || (src_gp.FindEl(ru_u) >= 0))
-	continue; // already done it..
-
-      Con_Group* ru_cg = ru_u->recv.FindPrjn(prjn);
-      if(ru_cg != NULL) {
-	ru_cg->Reset();		// get rid of existing connections if present..
-      }
-
-      TwoDCoord srcc = ruc;
-      srcc -= recv_off;
-      srcc %= recv_group;
-      int src_ru_idx = srcc.y * recv_group.x + srcc.x;
-      if(src_ru_idx >= src_gp.size)
-	continue;		// some kind of bug here...
-      Unit* src_ru_u = src_gp.FastEl(src_ru_idx);
-      Con_Group* src_ru_cg = src_ru_u->recv.FindPrjn(prjn);
-      if(src_ru_cg == NULL)	// must not have been saved with connections..
-	continue;
-
-      // positions of center of recv in sending layer
-      TwoDCoord sctr;
-      GetCtrFmRecv(sctr, ruc);
-      int i;
-      TessEl* te;
-      for(i = 0; i< send_offs.size; i++) {
-	te = (TessEl*)send_offs.FastEl(i);
-	TwoDCoord suc = te->send_off + sctr;
-	if(suc.WrapClip(wrap, su_geo))
-	  continue;
-	Unit* su_u = prjn->from->FindUnitFmCoord(suc);
-	if((su_u == NULL) || (!self_con && (su_u == ru_u)))
-	  continue;
-	Connection* src_cn = (Connection*)src_ru_cg->SafeEl(i);
-	if(src_cn == NULL) {
-	  taMisc::Error("*** Source unit:",String(src_ru_idx),"for linking in TesselPrjnSpec:",name,
-			"does not have all the connections");
-	  continue;
-	}
-
-	ru_u->ConnectFromLinkCk(su_u, prjn, src_cn, ru_cg);
-	ru_cg->own_cons = false; // doesn't own them..
-      }
-    }
-  }
-}
-
-void TesselPrjnSpec::Connect_GpLinked(Projection* prjn) {
-  PosTwoDCoord ru_geo;
-  prjn->layer->GetActGeomNoSpc(ru_geo);
-  TwoDCoord use_recv_n = recv_off;
-  use_recv_n += recv_group;	// just do the group here
-
-  if((recv_skip.x != 1) || (recv_skip.y != 1)) {
-    taMisc::Error("*** recv_skip != 1 is ignored for linked tessel prjn specs in TesselPrjnSpec:",name);
-  }
-
-  TwoDCoord ruc, nuc;
-  for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
-      ruc.y++, nuc.y++)
-  {
-    for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
-	ruc.x++, nuc.x++)
-    {
-      Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
-      if(ru_u == NULL)
-	continue;
-      Connect_RecvUnit(ru_u, ruc, prjn);
-    }
-  }
-  Connect_GpLinkFmSrc(prjn);
-}
-
-// just connects linked units, assuming link_src is already connected!
-void TesselPrjnSpec::Connect_UnLinkFmSrc(Projection* prjn) {
-  PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
-  PosTwoDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
-  TwoDCoord use_recv_n = recv_n;
-
-  if((recv_n.x == -1) || (recv_n.y == -1)) {
-    use_recv_n = ru_geo;
-  }
-
-  TwoDCoord ruc, nuc;		// receving unit coords
-  // the "source" unit for linked weights
-  Unit* src_ru_u = prjn->layer->FindUnitFmCoord(link_src);
-  if(src_ru_u == NULL) {
-    taMisc::Error("Can't find source unit for wt linking in TesselPrjnSpec:", name);
-    return;
-  }
-  Con_Group* src_ru_cg = src_ru_u->recv.FindPrjn(prjn);
-  if(src_ru_cg == NULL)	// must not have been saved with connections..
-    return;
-
-  for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
-      ruc.y += recv_skip.y, nuc.y++)
-  {
-    for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
-	ruc.x += recv_skip.x, nuc.x++)
-    {
-      Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
-      if((ru_u == NULL) || (ru_u == src_ru_u))	continue; // already done it..
-
-      Con_Group* ru_cg = ru_u->recv.FindPrjn(prjn);
-      if(ru_cg != NULL) {
-	ru_cg->Reset();		// get rid of existing connections if present..
-      }
-
-      // positions of center of recv in sending layer
-      TwoDCoord sctr;
-      GetCtrFmRecv(sctr, ruc);
-      int i;
-      TessEl* te;
-      for(i = 0; i< send_offs.size; i++) {
-	te = (TessEl*)send_offs.FastEl(i);
-	TwoDCoord suc = te->send_off + sctr;
-	if(suc.WrapClip(wrap, su_geo))
-	  continue;
-	Unit* su_u = prjn->from->FindUnitFmCoord(suc);
-	if((su_u == NULL) || (!self_con && (su_u == ru_u)))
-	  continue;
-	Connection* src_cn = (Connection*)src_ru_cg->SafeEl(i);
-	if(src_cn == NULL) {
-	  taMisc::Error("*** Source unit for linking in TesselPrjnSpec:",name,
-			"does not have all the connections");
-	  continue;
-	}
-
-	ru_u->ConnectFromLinkCk(su_u, prjn, src_cn, ru_cg);
-	ru_cg->own_cons = false; // doesn't own them..
-      }
-    }
-  }
-}
-
-void TesselPrjnSpec::Connect_UnLinked(Projection* prjn) {
-  Unit* src_ru_u = prjn->layer->FindUnitFmCoord(link_src);
-  if(src_ru_u == NULL) {
-    taMisc::Error("Can't find source unit for wt linking in TesselPrjnSpec:", name);
-    return;
-  }
-  // make connections for the source
-  Connect_RecvUnit(src_ru_u, link_src, prjn);
-  // then just get everybody else to copy from it!
-  Connect_UnLinkFmSrc(prjn);
-}
-
-void TesselPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
-
-  if(prjn->layer->units.leaves == 0) // an empty layer!
-    return;
-
-  if(!wrap && init_wts) {
-    taMisc::Error("*** Warning: TesselPrjnSpec non-wrapped tessel prjn spec with init_wts does not usually work!:",name);
-  }
-
-#ifdef DMEM_COMPILE
-  if(prjn->layer->dmem_dist != Layer::DMEM_DIST_UNITGP) {
-    if(link_type != NO_LINK) {
-      taMisc::Error("Error: linked connections (TesselPrjnSpec::link_type != NO_LINK) do not work with DMEM dist_units != DMEM_DIST_UNITGP -- NO_LINK will be used!");
-    }
-    Connect_NonLinked(prjn);
-  }
-  else
-#endif
-    {
-      switch(link_type) {
-      case NO_LINK:
-	Connect_NonLinked(prjn);
-	break;
-      case GP_LINK:
-	Connect_GpLinked(prjn);
-	break;
-      case UN_LINK:
-	Connect_UnLinked(prjn);
-	break;
-      }
-    }
-}
-
-void TesselPrjnSpec::ReConnect_Load(Projection* prjn) {
-#ifdef DMEM_COMPILE
-  if(prjn->layer->dmem_dist != Layer::DMEM_DIST_UNITGP) {
-    if(link_type != NO_LINK) {
-      taMisc::Error("Error: linked connections (TesselPrjnSpec::link_type != NO_LINK) do not work with DMEM dist_units != DMEM_DIST_UNITGP -- NO_LINK will be used!");
-    }
-  }
-  else
-#endif
-    {
-      if(prjn->layer->units.leaves != 0) {
-	switch(link_type) {
-	case NO_LINK:
-	  break;
-	case GP_LINK:
-	  Connect_GpLinkFmSrc(prjn);
-	  break;
-	case UN_LINK:
-	  Connect_UnLinkFmSrc(prjn);
-	  break;
-	}
-      }
-    }
-  // then deal with other in a generic way..
-  ProjectionSpec::ReConnect_Load(prjn);
 }
 
 
@@ -668,7 +426,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
 	  if(!self_con && (ru == su)) continue;
 	  // don't connect to anyone who already recvs from me cuz that will make
 	  // a symmetric connection which isn't good: symmetry will be enforced later
-	  Con_Group* scg = su->recv.FindPrjn(prjn);
+	  RecvCons* scg = su->recv.FindPrjn(prjn);
 	  if(scg->units.Find(ru) >= 0) continue;
 	  perm_list.Link(su);
 	}
@@ -695,7 +453,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
 	Unit* su = lay->units.Leaf(sidx);
 	// don't connect to anyone who already recvs from me cuz that will make
 	// a symmetric connection which isn't good: symmetry will be enforced later
-	Con_Group* scg = su->recv.FindPrjn(prjn);
+	RecvCons* scg = su->recv.FindPrjn(prjn);
 	if(scg->units.Find(ru) >= 0) continue;
 	if(ru->ConnectFrom(su, prjn) != NULL)
 	  cnt++;
@@ -705,10 +463,10 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
     Unit* ru;
     taLeafItr ru_itr;
     FOR_ITR_EL(Unit, ru, lay->units., ru_itr) {
-      Con_Group* scg = ru->send.FindPrjn(prjn);
+      SendCons* scg = ru->send.FindPrjn(prjn);
       if(scg == NULL) continue;
       int i;
-      for(i=0;i<scg->size;i++) {
+      for(i=0;i<scg->cons.size;i++) {
 	Unit* su = scg->Un(i);
 	ru->ConnectFromCk(su, prjn);
       }
@@ -904,7 +662,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
       ru = (Unit*)prjn->layer->units.NextEl(ru_itr), cnt++) {
     ru_pos.y = cnt / ru_geom.x;
     ru_pos.x = cnt % ru_geom.x;
-    Con_Group* recv_gp = NULL;
+    RecvCons* recv_gp = NULL;
     int n_leaves = prjn->from->units.leaves;
     if(!self_con && (prjn->from == prjn->layer))
       n_leaves--;
@@ -936,9 +694,9 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
-void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru) {
+void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   int i;
-  for(i=0; i<cg->size; i++) {
+  for(i=0; i<cg->cons.size; i++) {
     cg->Cn(i)->wt = GetDistProb(prjn, ru, cg->Un(i));
   }
 }
@@ -955,7 +713,7 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
   taLeafItr ru_itr, su_itr;
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
     FOR_ITR_EL(Unit, su, prjn->from->units., su_itr) {
-      if(ru->recv.FindRecipRecvCon(su, ru) != NULL)
+      if(RecvCons::FindRecipRecvCon(su, ru) != NULL)
 	if(ru->ConnectFrom(su, prjn) != NULL)
 	  cnt++;
     }
@@ -965,124 +723,6 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
 		  "Note that this layer must be *earlier* in list of layers than the one you are trying to symmetrize from.");
   }
 }
-
-
-//////////////////////////
-//	LinkPrjnSpec	//
-//////////////////////////
-
-void LinkPrjnConPtr::Initialize() {
-  recv_idx = 0;
-  send_idx = 0;
-}
-
-void LinkPrjnConPtr::Copy_(const LinkPrjnConPtr& cp) {
-  recv_layer = cp.recv_layer;
-  recv_idx = cp.recv_idx;
-  send_layer = cp.send_layer;
-  send_idx = cp.send_idx;
-}
-
-Con_Group* LinkPrjnConPtr::GetCon(Network* net, int& idx, Unit*& ru, Unit*& su,
-				  Con_Group*& su_cg, int& sg_idx)
-{
-  Layer* recv_lay = (Layer*)net->layers.FindName(recv_layer);
-  if(recv_lay == NULL) {
-    taMisc::Error("LinkPrjnConPtr: Couldn't find layer named:", recv_layer,
-		  "in network:",net->GetName());
-    return NULL;
-  }
-  Layer* send_lay = (Layer*)net->layers.FindName(send_layer);
-  if(send_lay == NULL) {
-    taMisc::Error("LinkPrjnConPtr: Couldn't find layer named:", send_layer,
-		  "in network:",net->GetName());
-    return NULL;
-  }
-  ru = recv_lay->units.Leaf(recv_idx);
-  su = send_lay->units.Leaf(send_idx);
-  if((ru == NULL) || (su == NULL))
-    return NULL;
-
-  Con_Group* rval;
-  int g;
-  FOR_ITR_GP(Con_Group, rval, ru->recv., g) {
-    if(rval->prjn->from == send_lay) { 	// receives from sending layer
-      idx = rval->units.Find(su);
-      if(idx >= 0) {
-	int sg;
-	for(sg=0; sg < su->send.gp.size; sg++) { // can't use iterator cause empty gps
-	  su_cg = (Con_Group*)su->send.gp.FastEl(sg);
-	  if((su_cg == NULL) || (su_cg->prjn == NULL) || (su_cg->prjn->layer != recv_lay))
-	    continue;
-	  sg_idx = su_cg->units.Find(ru);
-	  if(sg_idx >= 0)
-	    return rval;
-	}
-      }
-    }
-  }
-  return NULL;
-}
-
-void LinkPrjnSpec::Initialize() {
-  links.SetBaseType(&TA_LinkPrjnConPtr);
-}
-
-void LinkPrjnSpec::InitLinks() {
-  ProjectionSpec::InitLinks();
-  taBase::Own(links, this);
-}
-
-void LinkPrjnSpec::CutLinks() {
-  links.RemoveAll();
-  ProjectionSpec::CutLinks();
-}
-
-void LinkPrjnSpec::Copy_(const LinkPrjnSpec& cp) {
-  links = cp.links;
-}
-
-void LinkPrjnSpec::Connect_impl(Projection* prjn) {
-  if(links.size < 2)
-    return;
-
-  Network* net = prjn->layer->own_net;
-  if(net == NULL)
-    return;
-
-  Unit* m_ru, *m_su;
-  int m_rg_idx, m_sg_idx;
-  Con_Group* m_su_cg;
-  Con_Group* m_ru_cg = links.FastEl(0)->GetCon(net,m_rg_idx, m_ru, m_su,
-					       m_su_cg, m_sg_idx);
-  if(m_ru_cg == NULL)
-    return;
-  Connection* m_cn = m_ru_cg->Cn(m_rg_idx);
-  if(m_cn == NULL)
-    return;
-
-  int i;
-  for(i=1; i<links.size; i++) {
-    Unit* ru, *su;
-    int rg_idx, sg_idx;
-    Con_Group* su_cg;
-    Con_Group* ru_cg = links.FastEl(i)->GetCon(net,rg_idx, ru, su, su_cg, sg_idx);
-    if(ru_cg == NULL)
-      continue;
-    ru_cg->ReplaceLink(rg_idx, m_cn); // replace on both sides of the connection
-    su_cg->ReplaceLink(sg_idx, m_cn);
-  }
-}
-
-void LinkPrjnSpec::ReConnect_Load(Projection* prjn) {
-  Connect(prjn);
-}
-
-void LinkPrjnSpec::CopyNetwork(Network* net, Network* cn, Projection* prjn, Projection* cp) {
-  ProjectionSpec::CopyNetwork(net, cn, prjn, cp);
-  Connect(prjn);
-}
-
 
 /////////////////////////////
 //	  Script	   //
@@ -1144,7 +784,7 @@ void CustomPrjnSpec::Connect(Projection* prjn) {
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
     int idx;
-    Con_Group* cg = u->recv.FindPrjn(prjn, idx);
+    RecvCons* cg = u->recv.FindPrjn(prjn, idx);
     if(cg != NULL) {
       prjn->recv_idx = idx;
       break;
@@ -1152,7 +792,7 @@ void CustomPrjnSpec::Connect(Projection* prjn) {
   }
   FOR_ITR_EL(Unit, u, prjn->from->units., i) {
     int idx;
-    Con_Group* cg = u->send.FindPrjn(prjn, idx);
+    SendCons* cg = u->send.FindPrjn(prjn, idx);
     if(cg != NULL) {
       prjn->send_idx = idx;
       break;
@@ -1208,25 +848,25 @@ void GpFullPrjnSpec::PreConnect(Projection* prjn) {
   Unit* first_su = (Unit*)send_ugp->Leaf(0);
   if((first_ru == NULL) || (first_su == NULL))
     return;
-  Con_Group* recv_gp = first_ru->recv.NewPrjn(prjn, true);
-  prjn->recv_idx = first_ru->recv.gp.size - 1;
-  Con_Group* send_gp = first_su->send.NewPrjn(prjn, false);
-  prjn->send_idx = first_su->send.gp.size - 1;
+  RecvCons* recv_gp = first_ru->recv.NewPrjn(prjn);
+  prjn->recv_idx = first_ru->recv.size - 1;
+  SendCons* send_gp = first_su->send.NewPrjn(prjn);
+  prjn->send_idx = first_su->send.size - 1;
   // set reciprocal indicies
-  recv_gp->other_idx = prjn->send_idx;
-  send_gp->other_idx = prjn->recv_idx;
+  recv_gp->send_idx = prjn->send_idx;
+  send_gp->recv_idx = prjn->recv_idx;
 
   // use basic connectivity routine to set indicies..
   int r, s;
   for(r=0; r<r_n_ugp; r++) {
     Unit_Group* rgp;
-    if(recv_ugp->gp.size > 0)
+    if(recv_ugp->size > 0)
       rgp = (Unit_Group*)recv_ugp->gp.FastEl(r);
     else
       rgp = recv_ugp;
     for(s=0; s<s_n_ugp; s++) {
       Unit_Group* sgp;
-      if(send_ugp->gp.size > 0)
+      if(send_ugp->size > 0)
 	sgp = (Unit_Group*)send_ugp->gp.FastEl(s);
       else
 	sgp = send_ugp;
@@ -1241,13 +881,13 @@ void GpFullPrjnSpec::PreConnect(Projection* prjn) {
       taLeafItr u_itr;
       FOR_ITR_EL(Unit, u, rgp->, u_itr) {
 	if((u == first_ru) && (s == 0))	continue; // skip this one
-	recv_gp = u->recv.NewPrjn(prjn, true);
-	recv_gp->other_idx = send_idx;
+	recv_gp = u->recv.NewPrjn(prjn);
+	recv_gp->send_idx = send_idx;
       }
       FOR_ITR_EL(Unit, u, sgp->, u_itr) {
 	if((u == first_su) && (r == 0))	continue; // skip this one
-	send_gp = u->send.NewPrjn(prjn, false);
-	send_gp->other_idx = recv_idx;
+	send_gp = u->send.NewPrjn(prjn);
+	send_gp->recv_idx = recv_idx;
       }
     }
   }
@@ -1267,13 +907,13 @@ void GpFullPrjnSpec::Connect_impl(Projection* prjn) {
   int r, s;
   for(r=0; r<r_n_ugp; r++) {
     Unit_Group* rgp;
-    if(recv_ugp->gp.size > 0)
+    if(recv_ugp->size > 0)
       rgp = (Unit_Group*)recv_ugp->gp.FastEl(r);
     else
       rgp = recv_ugp;
     for(s=0; s<s_n_ugp; s++) {
       Unit_Group* sgp;
-      if(send_ugp->gp.size > 0)
+      if(send_ugp->size > 0)
 	sgp = (Unit_Group*)send_ugp->gp.FastEl(s);
       else
 	sgp = send_ugp;
@@ -1310,18 +950,18 @@ void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   int i;
   int max_n = n_conns;
   if(n_conns < 0)
-    max_n = recv_gp->gp.size - recv_start;
-  max_n = MIN(recv_gp->gp.size - recv_start, max_n);
-  max_n = MIN(send_gp->gp.size - send_start, max_n);
+    max_n = recv_gp->size - recv_start;
+  max_n = MIN(recv_gp->size - recv_start, max_n);
+  max_n = MIN(send_gp->size - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
   for(i=0; i<max_n; i++) {
     Unit_Group* rgp, *sgp;
     // revert to main group if no sub groups
-    if(recv_gp->gp.size > 0)
+    if(recv_gp->size > 0)
       rgp = (Unit_Group*)recv_gp->gp.FastEl(recv_start + i);
     else
       rgp = recv_gp;
-    if(send_gp->gp.size > 0)
+    if(send_gp->size > 0)
       sgp = (Unit_Group*)send_gp->gp.FastEl(send_start + i);
     else
       sgp = send_gp;
@@ -1371,20 +1011,20 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   int i;
   int max_n = n_conns;
   if(n_conns < 0)
-    max_n = recv_gp->gp.size - recv_start;
-  if(recv_gp->gp.size > 0)
-    max_n = MIN(recv_gp->gp.size - recv_start, max_n);
-  if(send_gp->gp.size > 0)
-    max_n = MIN(send_gp->gp.size - send_start, max_n);
+    max_n = recv_gp->size - recv_start;
+  if(recv_gp->size > 0)
+    max_n = MIN(recv_gp->size - recv_start, max_n);
+  if(send_gp->size > 0)
+    max_n = MIN(send_gp->size - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
   for(i=0; i<max_n; i++) {
     Unit_Group* rgp, *sgp;
     // revert to main group if no sub groups
-    if(recv_gp->gp.size > 0)
+    if(recv_gp->size > 0)
       rgp = (Unit_Group*)recv_gp->gp.FastEl(recv_start + i);
     else
       rgp = recv_gp;
-    if(send_gp->gp.size > 0)
+    if(send_gp->size > 0)
       sgp = (Unit_Group*)send_gp->gp.FastEl(send_start + i);
     else
       sgp = send_gp;
@@ -1444,12 +1084,12 @@ void GpOneToManyPrjnSpec::GetNGroups(Projection* prjn, int& r_n_ugp, int& s_n_ug
 
   s_n_ugp = n_conns;
   if(n_conns < 0)
-    s_n_ugp = send_ugp->gp.size - send_start;
-  s_n_ugp = MIN(send_ugp->gp.size - send_start, s_n_ugp);
+    s_n_ugp = send_ugp->size - send_start;
+  s_n_ugp = MIN(send_ugp->size - send_start, s_n_ugp);
   s_n_ugp = MAX(1, s_n_ugp);	// lower limit of 1
 
-  if(recv_ugp->gp.size > 0)
-    r_n_ugp = recv_ugp->gp.size;
+  if(recv_ugp->size > 0)
+    r_n_ugp = recv_ugp->size;
   else
     r_n_ugp = 1;
 
@@ -1490,25 +1130,25 @@ void GpOneToManyPrjnSpec::PreConnect(Projection* prjn) {
   Unit* first_su = (Unit*)send_ugp->Leaf(0);
   if((first_ru == NULL) || (first_su == NULL))
     return;
-  Con_Group* recv_gp = first_ru->recv.NewPrjn(prjn, true);
-  prjn->recv_idx = first_ru->recv.gp.size - 1;
-  Con_Group* send_gp = first_su->send.NewPrjn(prjn, false);
-  prjn->send_idx = first_su->send.gp.size - 1;
+  RecvCons* recv_gp = first_ru->recv.NewPrjn(prjn);
+  prjn->recv_idx = first_ru->recv.size - 1;
+  SendCons* send_gp = first_su->send.NewPrjn(prjn);
+  prjn->send_idx = first_su->send.size - 1;
   // set reciprocal indicies
-  recv_gp->other_idx = prjn->send_idx;
-  send_gp->other_idx = prjn->recv_idx;
+  recv_gp->send_idx = prjn->send_idx;
+  send_gp->recv_idx = prjn->recv_idx;
 
   // use basic connectivity routine to set indicies..
   int r, s;
   for(r=0; r<r_n_ugp; r++) {
     Unit_Group* rgp;
-    if(recv_ugp->gp.size > 0)
+    if(recv_ugp->size > 0)
       rgp = (Unit_Group*)recv_ugp->gp.FastEl(r);
     else
       rgp = recv_ugp;
     for(s=0; s<s_n_ugp; s++) {
       Unit_Group* sgp;
-      if(send_ugp->gp.size > 0)
+      if(send_ugp->size > 0)
 	sgp = (Unit_Group*)send_ugp->gp.FastEl(s);
       else
 	sgp = send_ugp;
@@ -1525,13 +1165,13 @@ void GpOneToManyPrjnSpec::PreConnect(Projection* prjn) {
       taLeafItr u_itr;
       FOR_ITR_EL(Unit, u, rgp->, u_itr) {
 	if((u == first_ru) && (s == 0))	continue; // skip this one
-	recv_gp = u->recv.NewPrjn(prjn, true);
-	recv_gp->other_idx = send_idx;
+	recv_gp = u->recv.NewPrjn(prjn);
+	recv_gp->send_idx = send_idx;
       }
       FOR_ITR_EL(Unit, u, sgp->, u_itr) {
 	if((u == first_su) && (r == 0))	continue; // skip this one
-	send_gp = u->send.NewPrjn(prjn, false);
-	send_gp->other_idx = recv_idx;
+	send_gp = u->send.NewPrjn(prjn);
+	send_gp->recv_idx = recv_idx;
       }
     }
   }
@@ -1551,13 +1191,13 @@ void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn) {
   int r, s;
   for(r=0; r<r_n_ugp; r++) {
     Unit_Group* rgp;
-    if(recv_ugp->gp.size > 0)
+    if(recv_ugp->size > 0)
       rgp = (Unit_Group*)recv_ugp->gp.FastEl(r);
     else
       rgp = recv_ugp;
     for(s=0; s<s_n_ugp; s++) {
       Unit_Group* sgp;
-      if(send_ugp->gp.size > 0)
+      if(send_ugp->size > 0)
 	sgp = (Unit_Group*)send_ugp->gp.FastEl(send_start + s);
       else
 	sgp = send_ugp;
@@ -1741,12 +1381,12 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
     taLeafItr ru_itr;
     FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
       int g;
-      for(g=0;g<ru->send.gp.size;g++) {
-	Con_Group* scg = (Con_Group*)ru->send.gp.FastEl(g);
+      for(g=0;g<ru->send.size;g++) {
+	SendCons* scg = ru->send.FastEl(g);
 	if((scg->prjn->layer != scg->prjn->from) || (scg->prjn->layer != prjn->layer))
 	  continue;		// only deal with self projections to this same layer
 	int i;
-	for(i=0;i<scg->size;i++) {
+	for(i=0;i<scg->cons.size;i++) {
 	  Unit* su = scg->Un(i);
 	  if(GET_OWNER(su, Unit_Group) == su_gp) { // this sender is in actual group I'm trying to connect
 	    ru->ConnectFromCk(su, prjn);
@@ -1787,7 +1427,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
 	  if(!self_con && (ru == su)) continue;
 	  // don't connect to anyone who already recvs from me cuz that will make
 	  // a symmetric connection which isn't good: symmetry will be enforced later
-	  Con_Group* scg = su->recv.FindPrjn(prjn);
+	  RecvCons* scg = su->recv.FindPrjn(prjn);
 	  if(scg->units.Find(ru) >= 0) continue;
 	  perm_list.Link(su);
 	}
@@ -1814,7 +1454,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
 	Unit* su = su_gp->Leaf(sidx);
 	// don't connect to anyone who already recvs from me cuz that will make
 	// a symmetric connection which isn't good: symmetry will be enforced later
-	Con_Group* scg = su->recv.FindPrjn(prjn);
+	RecvCons* scg = su->recv.FindPrjn(prjn);
 	if(scg->units.Find(ru) >= 0) continue;
 	if(ru->ConnectFromCk(su, prjn) != NULL)
 	  cnt++;
@@ -1825,10 +1465,10 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
     Unit* ru;
     taLeafItr ru_itr;
     FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
-      Con_Group* scg = ru->send.FindPrjn(prjn);
+      SendCons* scg = ru->send.FindPrjn(prjn);
       if(scg == NULL) continue;
       int i;
-      for(i=0;i<scg->size;i++) {
+      for(i=0;i<scg->cons.size;i++) {
 	Unit* su = scg->Un(i);
 	ru->ConnectFromCk(su, prjn);
       }
@@ -1841,17 +1481,17 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
       // so I should just make symmetric versions of its connections
       // take first send unit and find if it recvs from anyone in this prjn yet
       Unit* su = (Unit*)su_gp->Leaf(0);
-      Con_Group* scg = su->recv.FindPrjn(prjn);
-      if((scg != NULL) && (scg->size > 0)) {	// sender has been connected already: try to connect me!
+      RecvCons* scg = su->recv.FindPrjn(prjn);
+      if((scg != NULL) && (scg->cons.size > 0)) {	// sender has been connected already: try to connect me!
 	int n_con = 0;		// number of actual connections made
 
 	Unit* ru;
 	taLeafItr ru_itr;
 	FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
-	  Con_Group* scg = ru->send.FindPrjn(prjn);
+	  SendCons* scg = ru->send.FindPrjn(prjn);
 	  if(scg == NULL) continue;
 	  int i;
-	  for(i=0;i<scg->size;i++) {
+	  for(i=0;i<scg->cons.size;i++) {
 	    Unit* su = scg->Un(i);
 	    if(GET_OWNER(su, Unit_Group) == su_gp) { // this sender is in actual group I'm trying to connect
 	      if(ru->ConnectFromCk(su, prjn) != NULL)
@@ -1932,11 +1572,11 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
 
-  if(prjn->layer->units.gp.size == 0) {
+  if(prjn->layer->units.size == 0) {
     taMisc::Error("*** Warning: GpRndTesselPrjnSpec requires recv layer to have unit groups!:",name);
     return;
   }
-  if(prjn->from->units.gp.size == 0) {
+  if(prjn->from->units.size == 0) {
     taMisc::Error("*** Warning: GpRndTesselPrjnSpec requires send layer to have unit groups!:",name);
     return;
   }
@@ -1980,7 +1620,7 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
   if(prjn->from == NULL)	return false;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return false;
-  if(prjn->layer->units.gp.size == 0) {
+  if(prjn->layer->units.size == 0) {
     taMisc::Error("*** Warning: TiledRFPrjnSpec requires recv layer to have unit groups!:",name);
     return false;
   }
@@ -2165,11 +1805,11 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->from == NULL)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
-  if(prjn->layer->units.gp.size == 0) {
+  if(prjn->layer->units.size == 0) {
     taMisc::Error("*** Warning: TiledGpRFPrjnSpec requires recv layer to have unit groups!:",name);
     return;
   }
-  if(prjn->from->units.gp.size == 0) {
+  if(prjn->from->units.size == 0) {
     taMisc::Error("*** Warning: TiledGpRFPrjnSpec requires send layer to have unit groups!:",name);
     return;
   }
@@ -2220,11 +1860,11 @@ int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init
   if(prjn->from == NULL)	return 0;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return 0;
-  if(prjn->layer->units.gp.size == 0) {
+  if(prjn->layer->units.size == 0) {
     taMisc::Error("*** Warning: TiledGpRFPrjnSpec requires recv layer to have unit groups!:",name);
     return 0;
   }
-  if(prjn->from->units.gp.size == 0) {
+  if(prjn->from->units.size == 0) {
     taMisc::Error("*** Warning: TiledGpRFPrjnSpec requires send layer to have unit groups!:",name);
     return 0;
   }
@@ -2310,7 +1950,7 @@ bool TiledNovlpPrjnSpec::InitRFSizes(Projection* prjn) {
     send_lay = prjn->layer;
   }
 
-  if(recv_lay->units.gp.size == 0) {
+  if(recv_lay->units.size == 0) {
     taMisc::Error("*** Warning: TiledNovlpPrjnSpec requires recv layer to have unit groups!:",name);
     return false;
   }

@@ -32,7 +32,8 @@
 class LeabraCon;
 class LeabraConSpec;
 class LeabraBiasSpec;
-class LeabraCon_Group;
+class LeabraRecvCons;
+class LeabraSendCons;
 
 class LeabraUnitSpec;
 class LeabraUnit;
@@ -103,12 +104,8 @@ class LeabraCon : public Connection {
   // ##CAT_Leabra Leabra connection
 public:
   float		pdw;		// #NO_SAVE previous delta-weight change
-
-  void 	Initialize()		{ pdw = 0.0f; }
-  void	Destroy()		{ };
-  void	Copy_(const LeabraCon& cp);
-  COPY_FUNS(LeabraCon, Connection);
-  TA_BASEFUNS(LeabraCon);
+  
+  LeabraCon() { pdw = 0.0f; }
 };
 
 class LEABRA_API WtScaleSpec : public taBase {
@@ -207,53 +204,53 @@ public:
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
   float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT last values of resolution parameters for which the wt_sig_fun's were computed
 
-  void		C_Compute_WtFmLin(LeabraCon_Group*, LeabraCon* cn)
+  void		C_Compute_WtFmLin(LeabraRecvCons*, LeabraCon* cn)
   { if(cn->wt < 0.0f) cn->wt = wt_sig_fun.Eval(-cn->wt);  }
   // weight is negative if it is in its linear form, only perform if negative
-  inline virtual void	Compute_WtFmLin(LeabraCon_Group* gp);
+  inline virtual void	Compute_WtFmLin(LeabraRecvCons* gp);
   // compute actual weight value from linear weight value
 
-  void		C_Compute_LinFmWt(LeabraCon_Group*, LeabraCon* cn)
+  void		C_Compute_LinFmWt(LeabraRecvCons*, LeabraCon* cn)
   { if(cn->wt >= 0.0f) cn->wt = - wt_sig_fun_inv.Eval(cn->wt); }
   // weight is negative if it is in its linear form, only perform if positive
-  inline virtual void	Compute_LinFmWt(LeabraCon_Group* gp);
+  inline virtual void	Compute_LinFmWt(LeabraRecvCons* gp);
   // compute linear weight value from actual weight value
 
-  virtual void	C_Init_Weights_Post(Con_Group*, Connection*, Unit*, Unit*) { };
+  virtual void	C_Init_Weights_Post(RecvCons*, Connection*, Unit*, Unit*) { };
   // hook for setting other weight-like values after initializing the weight value
 
-  void 		C_Init_Weights(Con_Group* cg, Connection* cn, Unit* ru, Unit* su) {
+  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     ConSpec::C_Init_Weights(cg, cn, ru, su); LeabraCon* lcn = (LeabraCon*)cn;
     lcn->pdw = 0.0f; C_Init_Weights_Post(cg, cn, ru, su); }
 
   inline float 	C_Compute_Netin(LeabraCon* cn, Unit*, Unit* su);
-  inline float 	Compute_Netin(Con_Group* cg, Unit* ru);
+  inline float 	Compute_Netin(RecvCons* cg, Unit* ru);
   // receiver-based net input 
 
-  inline void 	C_Send_Netin(LeabraCon_Group* cg, LeabraCon* cn, Unit* ru, float su_act_eff);
-  inline void 	Send_Netin(Con_Group* cg, Unit* su);
+  inline void 	C_Send_Netin(LeabraSendCons* cg, LeabraCon* cn, Unit* ru, float su_act_eff);
+  inline void 	Send_Netin(SendCons* cg, Unit* su);
   // sender-based net input computation
 
-  inline void 	C_Send_Inhib(LeabraCon_Group* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
-  inline virtual void Send_Inhib(LeabraCon_Group* cg, LeabraUnit* su);
+  inline void 	C_Send_Inhib(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
+  inline virtual void Send_Inhib(LeabraSendCons* cg, LeabraUnit* su);
   // sender-based inhibitiory net input computation
 
-  inline void 	C_Send_NetinDelta(LeabraCon_Group* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
-  inline virtual void Send_NetinDelta(LeabraCon_Group* cg, LeabraUnit* su);
+  inline void 	C_Send_NetinDelta(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
+  inline virtual void Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su);
   // sender-based delta net input computation (send_delta mode only)
 
-  inline void 	C_Send_InhibDelta(LeabraCon_Group* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
-  inline virtual void Send_InhibDelta(LeabraCon_Group* cg, LeabraUnit* su);
+  inline void 	C_Send_InhibDelta(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
+  inline virtual void Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su);
   // sender-based delta inhibitiory net input computation (send_delta mode only)
 
-  inline void 	C_Send_ClampNet(LeabraCon_Group* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
-  inline virtual void Send_ClampNet(LeabraCon_Group* cg, LeabraUnit* su);
+  inline void 	C_Send_ClampNet(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
+  inline virtual void Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su);
   // sender-based net input computation for clamp net
 
-  inline virtual void Compute_SAvgCor(LeabraCon_Group* cg, LeabraUnit* ru);
+  inline virtual void Compute_SAvgCor(LeabraRecvCons* cg, LeabraUnit* ru);
   // compute hebb correction scaling term for sending average act (cg->savg_cor) based on layer target activity percent
 
-  inline float	C_Compute_Hebb(LeabraCon* cn, LeabraCon_Group* cg,
+  inline float	C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg,
 			       float ru_act, float su_act);
   // compute Hebbian associative learning
 
@@ -264,22 +261,22 @@ public:
   inline void 	C_Compute_dWt(LeabraCon* cn, LeabraUnit* ru, float heb, float err);
   // combine associative and error-driven weight change, actually update dwt
 
-  inline void 	Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
   // compute weight change: make new one of these for any C_ change above: hebb, err, dwt
 
   inline virtual void	B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru);
   // compute bias weight change for netin model of bias weight
 
-  inline void		C_Compute_Weights(LeabraCon* cn, LeabraCon_Group* cg, 
+  inline void		C_Compute_Weights(LeabraCon* cn, LeabraRecvCons* cg, 
 					LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus);
   // update weights, if activation regulation is NOT in effect
-  inline void		C_Compute_ActReg(LeabraCon* cn, LeabraCon_Group* cg, 
+  inline void		C_Compute_ActReg(LeabraCon* cn, LeabraRecvCons* cg, 
 					 LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus);
   // compute dwt for activation regulation
-  inline void		C_Compute_WeightsActReg(LeabraCon* cn, LeabraCon_Group* cg, 
+  inline void		C_Compute_WeightsActReg(LeabraCon* cn, LeabraRecvCons* cg, 
 					      LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus);
   // update weights, if activation regulation is in effect
-  inline void		Compute_Weights(Con_Group* cg, Unit* ru);
+  inline void		Compute_Weights(RecvCons* cg, Unit* ru);
   inline virtual void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru, LeabraUnitSpec* rus);
 
   virtual void	SetCurLrate(int epoch, LeabraNetwork* net);
@@ -320,8 +317,8 @@ public:
   TA_BASEFUNS(LeabraBiasSpec);
 };
 
-class LEABRA_API LeabraCon_Group : public Con_Group {
-  // ##CAT_Leabra Leabra connection group
+class LEABRA_API LeabraRecvCons : public RecvCons {
+  // ##CAT_Leabra Leabra receiving connection group
 public:
   float		scale_eff;	// #NO_SAVE effective scale parameter for netin
   float		savg_cor;	// #NO_SAVE savg correction factor for hebbian learning
@@ -338,6 +335,16 @@ public:
 
   void	SetCurLrate(int epoch, LeabraNetwork* net) { ((LeabraConSpec*)spec.spec)->SetCurLrate(epoch, net); }
 
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Copy_(const LeabraRecvCons& cp);
+  COPY_FUNS(LeabraRecvCons, RecvCons);
+  TA_BASEFUNS(LeabraRecvCons);
+};
+
+class LEABRA_API LeabraSendCons : public SendCons {
+  // ##CAT_Leabra Leabra sending connection group
+public:
   inline void 	Send_ClampNet(LeabraUnit* su)
   { ((LeabraConSpec*)spec.spec)->Send_ClampNet(this, su); }
 
@@ -346,9 +353,7 @@ public:
 
   void 	Initialize();
   void	Destroy()		{ };
-  void	Copy_(const LeabraCon_Group& cp);
-  COPY_FUNS(LeabraCon_Group, Con_Group);
-  TA_BASEFUNS(LeabraCon_Group);
+  TA_BASEFUNS(LeabraSendCons);
 };
 
 class LEABRA_API ActFunSpec : public taBase {
@@ -1347,11 +1352,11 @@ public:
 //     WtSigFun 	//
 //////////////////////////
 
-void LeabraConSpec::Compute_LinFmWt(LeabraCon_Group* cg) {
+void LeabraConSpec::Compute_LinFmWt(LeabraRecvCons* cg) {
   CON_GROUP_LOOP(cg, C_Compute_LinFmWt(cg, (LeabraCon*)cg->Cn(i)));
 }
 
-void LeabraConSpec::Compute_WtFmLin(LeabraCon_Group* cg) {
+void LeabraConSpec::Compute_WtFmLin(LeabraRecvCons* cg) {
   CON_GROUP_LOOP(cg, C_Compute_WtFmLin(cg, (LeabraCon*)cg->Cn(i)));
 }
 
@@ -1362,56 +1367,56 @@ void LeabraConSpec::Compute_WtFmLin(LeabraCon_Group* cg) {
 float LeabraConSpec::C_Compute_Netin(LeabraCon* cn, Unit*, Unit* su) {
   return cn->wt * su->act;
 }
-float LeabraConSpec::Compute_Netin(Con_Group* cg, Unit* ru) {
+float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
   float rval=0.0f;
   CON_GROUP_LOOP(cg, rval += C_Compute_Netin((LeabraCon*)cg->Cn(i), ru, cg->Un(i)));
-  return ((LeabraCon_Group*)cg)->scale_eff * rval;
+  return ((LeabraRecvCons*)cg)->scale_eff * rval;
 }
 
-void LeabraConSpec::C_Send_Inhib(LeabraCon_Group*, LeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
+void LeabraConSpec::C_Send_Inhib(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
   ru->gc.i += su_act_eff * cn->wt;
 }
-void LeabraConSpec::Send_Inhib(LeabraCon_Group* cg, LeabraUnit* su) {
+void LeabraConSpec::Send_Inhib(LeabraSendCons* cg, LeabraUnit* su) {
   // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
   // LeabraUnitSpec::CheckConfig checks that this is ok.
   Unit* ru = cg->Un(0);
-  float su_act_eff = ((LeabraCon_Group*)ru->recv.FastGp(cg->other_idx))->scale_eff * su->act;
+  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
   CON_GROUP_LOOP(cg, C_Send_Inhib(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
 }
 
-void LeabraConSpec::C_Send_Netin(LeabraCon_Group*, LeabraCon* cn, Unit* ru, float su_act_eff) {
+void LeabraConSpec::C_Send_Netin(LeabraSendCons*, LeabraCon* cn, Unit* ru, float su_act_eff) {
   ru->net += su_act_eff * cn->wt;
 }
-void LeabraConSpec::Send_Netin(Con_Group* cg, Unit* su) {
+void LeabraConSpec::Send_Netin(SendCons* cg, Unit* su) {
   // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
   // LeabraUnitSpec::CheckConfig checks that this is ok.
   Unit* ru = cg->Un(0);
-  float su_act_eff = ((LeabraCon_Group*)ru->recv.FastGp(cg->other_idx))->scale_eff * su->act;
+  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
   if(inhib)
-    CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraCon_Group*)cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+    CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
   else {
-    CON_GROUP_LOOP(cg, C_Send_Netin((LeabraCon_Group*)cg, (LeabraCon*)cg->Cn(i), cg->Un(i), su_act_eff));
+    CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (LeabraCon*)cg->Cn(i), cg->Un(i), su_act_eff));
   }
 }
 
 ///////////////////
 
-void LeabraConSpec::C_Send_InhibDelta(LeabraCon_Group*, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+void LeabraConSpec::C_Send_InhibDelta(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
   ru->g_i_delta += su_act_delta_eff * cn->wt;
 }
-void LeabraConSpec::Send_InhibDelta(LeabraCon_Group* cg, LeabraUnit* su) {
+void LeabraConSpec::Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su) {
   Unit* ru = cg->Un(0);
-  float su_act_delta_eff = ((LeabraCon_Group*)ru->recv.FastGp(cg->other_idx))->scale_eff * su->act_delta;
+  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
   CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
 }
 
-void LeabraConSpec::C_Send_NetinDelta(LeabraCon_Group*, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+void LeabraConSpec::C_Send_NetinDelta(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
   ru->net_delta += su_act_delta_eff * cn->wt;
 }
 
-void LeabraConSpec::Send_NetinDelta(LeabraCon_Group* cg, LeabraUnit* su) {
+void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su) {
   Unit* ru = cg->Un(0);
-  float su_act_delta_eff = ((LeabraCon_Group*)ru->recv.FastGp(cg->other_idx))->scale_eff * su->act_delta;
+  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
   if(inhib)
     CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
   else {
@@ -1421,12 +1426,12 @@ void LeabraConSpec::Send_NetinDelta(LeabraCon_Group* cg, LeabraUnit* su) {
 
 ///////////////////
 
-void LeabraConSpec::C_Send_ClampNet(LeabraCon_Group*, LeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
+void LeabraConSpec::C_Send_ClampNet(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
   ru->clmp_net += su_act_eff * cn->wt;
 }
-void LeabraConSpec::Send_ClampNet(LeabraCon_Group* cg, LeabraUnit* su) {
+void LeabraConSpec::Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su) {
   Unit* ru = cg->Un(0);
-  float su_act_eff = ((LeabraCon_Group*)ru->recv.FastGp(cg->other_idx))->scale_eff * su->act;
+  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
   CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
 }
 
@@ -1434,14 +1439,14 @@ void LeabraConSpec::Send_ClampNet(LeabraCon_Group* cg, LeabraUnit* su) {
 //     Computing dWt 	//
 //////////////////////////
 
-inline void LeabraConSpec::Compute_SAvgCor(LeabraCon_Group* cg, LeabraUnit*) {
+inline void LeabraConSpec::Compute_SAvgCor(LeabraRecvCons* cg, LeabraUnit*) {
   LeabraLayer* fm = (LeabraLayer*)cg->prjn->from;
   float savg = .5f + savg_cor.cor * (fm->kwta.pct - .5f);
   savg = MAX(savg_cor.thresh, savg); // keep this computed value within bounds
   cg->savg_cor = .5f / savg;
 }
 
-inline float LeabraConSpec::C_Compute_Hebb(LeabraCon* cn, LeabraCon_Group* cg,
+inline float LeabraConSpec::C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg,
 					   float ru_act, float su_act)
 {
   // wt is negative in linear form, so using opposite sign of usual here
@@ -1467,12 +1472,12 @@ inline void LeabraConSpec::C_Compute_dWt(LeabraCon* cn, LeabraUnit*, float heb, 
   cn->dwt += cur_lrate * dwt;
 }
 
-inline void LeabraConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void LeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   LeabraUnit* lru = (LeabraUnit*)ru;
-  LeabraCon_Group* lcg = (LeabraCon_Group*) cg;
+  LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
   Compute_SAvgCor(lcg, lru);
   if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
-    for(int i=0; i<cg->size; i++) {
+    for(int i=0; i<cg->cons.size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       if(!(su->in_subgp &&
@@ -1488,7 +1493,7 @@ inline void LeabraConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
   }
 }
 
-inline void LeabraConSpec::C_Compute_Weights(LeabraCon* cn, LeabraCon_Group* cg,
+inline void LeabraConSpec::C_Compute_Weights(LeabraCon* cn, LeabraRecvCons* cg,
 					   LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
 {
   // no act reg!
@@ -1505,7 +1510,7 @@ inline void LeabraConSpec::C_Compute_Weights(LeabraCon* cn, LeabraCon_Group* cg,
   cn->dwt = 0.0f;
 }
 
-inline void LeabraConSpec::C_Compute_ActReg(LeabraCon* cn, LeabraCon_Group*,
+inline void LeabraConSpec::C_Compute_ActReg(LeabraCon* cn, LeabraRecvCons*,
 					    LeabraUnit* ru, LeabraUnit*, LeabraUnitSpec* rus)
 {
   // do this in update so inactive units can be reached (no opt_thresh.updt)
@@ -1521,16 +1526,16 @@ inline void LeabraConSpec::C_Compute_ActReg(LeabraCon* cn, LeabraCon_Group*,
   }
 }
 
-inline void LeabraConSpec::C_Compute_WeightsActReg(LeabraCon* cn, LeabraCon_Group* cg,
+inline void LeabraConSpec::C_Compute_WeightsActReg(LeabraCon* cn, LeabraRecvCons* cg,
 						 LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus)
 {
   C_Compute_ActReg(cn, cg, ru, su, rus);
   C_Compute_Weights(cn, cg, ru, su, rus);
 }
 
-inline void LeabraConSpec::Compute_Weights(Con_Group* cg, Unit* ru) {
+inline void LeabraConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->spec.spec;
-  LeabraCon_Group* lcg = (LeabraCon_Group*)cg;
+  LeabraRecvCons* lcg = (LeabraRecvCons*)cg;
   if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
     CON_GROUP_LOOP(cg, C_Compute_WeightsActReg((LeabraCon*)cg->Cn(i), lcg,
 					     (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));

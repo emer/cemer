@@ -124,26 +124,24 @@ void RBpUnitSpec::Compute_ClampExt(RBpUnit* u) {
 void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru) {
   ru->clmp_net = 0.0f;
   if(!fast_hard_clamp_net) return;
-  Con_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, ru->recv., g) {
+  for(int g=0; g<ru->recv.size; g++) {
+    RecvCons* recv_gp = (RecvCons*)ru->recv.FastEl(g);
     Layer* fmlay = recv_gp->prjn->from;
     if(fmlay->lesion || !(fmlay->ext_flag & Unit::EXT))
       continue;		// don't get from the non-clamped layers!
     ru->clmp_net += recv_gp->Compute_Netin(ru);
   }
-  if(ru->bias != NULL)
-    ru->clmp_net += ru->bias->wt;
+  if(ru->bias.cons.size)
+    ru->clmp_net += ru->bias.Cn(0)->wt;
 }
 
 void RBpUnitSpec::Compute_Netin(Unit* u) {
   RBpUnit* ru = (RBpUnit*)u;
   ru->prv_net = ru->net; // save current net as previous
   if(fast_hard_clamp_net) {
-    Con_Group* recv_gp;
     ru->net = ru->clmp_net;
-    int g;
-    FOR_ITR_GP(Con_Group, recv_gp, u->recv., g) {
+    for(int g=0; g<u->recv.size; g++) {
+      RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
       Layer* fmlay = recv_gp->prjn->from;
       if(fmlay->lesion || (fmlay->ext_flag & Unit::EXT))
 	continue;		// don't get from the clamped layers
@@ -221,13 +219,13 @@ void RBpUnitSpec::Compute_dEdNet(BpUnit* u) {
 void RBpUnitSpec::Compute_dWt(Unit* u) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts)  return; // don't compute dwts for clamped units
   UnitSpec::Compute_dWt(u);
-  ((BpConSpec*)bias_spec.spec)->B_Compute_dWt((BpCon*)u->bias, (BpUnit*)u);
+  ((BpConSpec*)bias_spec.spec)->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
 void RBpUnitSpec::Compute_Weights(Unit* u) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts) return; // don't update for clamped units
   UnitSpec::Compute_Weights(u);
-  ((BpConSpec*)bias_spec.spec)->B_Compute_Weights((BpCon*)u->bias, (BpUnit*)u);
+  ((BpConSpec*)bias_spec.spec)->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
 
@@ -363,7 +361,7 @@ void RBpContextSpec::UpdateAfterEdit() {
     taMisc::Error("RBpContextSpec: could not find variable:",variable,"in RBpUnit type");
     return false;
   }
-  Con_Group* recv_gp = (Con_Group*)un->recv.SafeGp(0); // first group
+  RecvCons* recv_gp = (RecvCons*)un->recv.SafeGp(0); // first group
   if(recv_gp == NULL) {
     taMisc::Error("RBpContextSpec: expecting one one-to-one projection from layer",
 		   "did not find con group");
@@ -379,7 +377,8 @@ void RBpContextSpec::UpdateAfterEdit() {
 } */
 
 void RBpContextSpec::CopyContext(RBpUnit* u) {
-  Con_Group* recv_gp = (Con_Group*)u->recv.SafeGp(0); // first group
+  // todo: checkconfig should test for this!
+  RecvCons* recv_gp = (RecvCons*)u->recv.SafeEl(0); // first group
   Unit* hu = (Unit*)recv_gp->Un(0);
   float* varptr = (float*)var_md->GetOff((void*)u);
   *varptr = hysteresis_c * hu->act + hysteresis * (*varptr);
@@ -444,7 +443,6 @@ void BpWizard::SRNContext(Network* net) {
     taMisc::Error("SRNContext: must have basic constructed network first");
     return;
   }
-  BpProject* proj = GET_MY_OWNER(BpProject);
   OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)net->FindMakeSpec("CtxtPrjn", &TA_OneToOnePrjnSpec);
   BpContextSpec* ctxts = (BpContextSpec*)net->FindMakeSpec("CtxtUnits", &TA_BpContextSpec);
 

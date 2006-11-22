@@ -189,7 +189,7 @@ public:
   
   Network_Group		networks;	// Networks of interconnected units
 
-  bool			save_rmv_units;
+  bool			no_save_units;
   // #DEF_true don't include units in network when saving (makes project file much smaller!)
   BuildNetsMode		build_nets;
   // what to do with networks after loading them -- if units are removed, then they can be rebuilt after loading

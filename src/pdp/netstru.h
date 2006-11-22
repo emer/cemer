@@ -118,29 +118,27 @@ public:
 };
 
 
-// the connection is managed fully by the ConSpec and the Con_Group
+// the connection is managed fully by the ConSpec and the RecvCons
 // don't put any functions on the connection itself
 
-// todo: get rid of weight linking and make this a non-virtual non-tabase 
-// object that gets put in an array instead of a list..
+// note: v4.0 connection stuff is not backwards compatible with v3.2
 
-class PDP_API Connection : public taBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network Generic Connections
+// note: connection must be just a bag of bits with *no* functions of its own
+// especially no virtual functions!  it is managed with raw bit copy ops
+// although the sending connections have pointers to connection objects
+// it is up to the connection management code to ensure that when a
+// connection is removed, its associated sending link is also removed
+
+class PDP_API Connection {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network base connection between two units
 public:
   float 	wt;		// weight of connection
   float		dwt;		// #NO_VIEW #NO_SAVE resulting net weight change
 
-  bool		ChangeMyType(TypeDef* new_type);
-  void 	SetTypeDefaults()	{ }; // overload this to do nothing (faster)
-  void	UpdateAfterEdit();	     // might want to override any default updates..
-  void 	Initialize() 		{ wt = dwt = 0.0f; }
-  void 	Destroy()		{ };
-  void	Copy_(const Connection& cp)	{ wt = cp.wt; dwt = cp.dwt; }
-  COPY_FUNS(Connection, taBase);
-  TA_BASEFUNS(Connection);
+  Connection() { wt = dwt = 0.0f; }
 };
 
-SmartRef_Of(Connection); // ConnectionSRef
+// SmartRef_Of(Connection); // ConnectionSRef
 
 // the ConSpec has 2 versions of every function: one to go through the group
 // and the other to apply to a single connection.
@@ -154,7 +152,7 @@ SmartRef_Of(Connection); // ConnectionSRef
 // The following macro makes this process easier:
 
 #define	CON_GROUP_LOOP(cg, expr) \
-  for(int i=0; i<cg->size; i++) \
+  for(int i=0; i<cg->cons.size; i++) \
     expr
 
 class PDP_API WeightLimits : public taBase {
@@ -187,51 +185,54 @@ public:
 };
 
 class PDP_API ConSpec: public BaseSpec {
-  // ##CAT_Spec Connection Group Specs: for processing over connections
+  // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection 
 public:
   TypeDef*	min_con_type;
   // #HIDDEN #NO_SAVE #TYPE_Connection mimimal con type required for spec (obj is con group)
-  Random	rnd;		// Weight randomization specification
-  WeightLimits	wt_limits;	// limits on weight sign, symmetry
+  Random	rnd;		// #CAT_ConSpec Weight randomization specification
+  WeightLimits	wt_limits;	// #CAT_ConSpec limits on weight sign, symmetry
 
   inline void		C_ApplyLimits(Connection* cn, Unit*, Unit*)
   { wt_limits.ApplyLimits(cn->wt); }
-  inline virtual void	ApplyLimits(Con_Group* cg, Unit* ru);
+  // #CAT_Learning apply weight limits to single connection
+  inline virtual void	ApplyLimits(RecvCons* cg, Unit* ru);
   // #CAT_Learning apply weight limits (sign, magnitude)
 
-  virtual void		ApplySymmetry(Con_Group* cg, Unit* ru);
+  virtual void		ApplySymmetry(RecvCons* cg, Unit* ru);
   // #CAT_Learning apply weight symmetrizing between reciprocal units
 
-  inline virtual void	C_Init_Weights(Con_Group* cg, Connection* cn, Unit* ru, Unit* su);
-  inline virtual void 	Init_Weights(Con_Group* cg, Unit* ru);
+  inline virtual void	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su);
+  inline virtual void 	Init_Weights(RecvCons* cg, Unit* ru);
   // #CAT_Learning initialize state variables (ie. at beginning of training)
-  inline virtual void	C_Init_Weights_post(Con_Group*, Connection*, Unit*, Unit*) { };
+  inline virtual void	C_Init_Weights_post(RecvCons*, Connection*, Unit*, Unit*) { };
   // #IGNORE
-  inline virtual void 	Init_Weights_post(Con_Group* cg, Unit* ru);
+  inline virtual void 	Init_Weights_post(RecvCons* cg, Unit* ru);
   // #IGNORE post-initialize state variables (ie. for scaling symmetrical weights, etc)
-  inline virtual void 	C_Init_dWt(Con_Group*, Connection* cn, Unit*, Unit*)	{ cn->dwt=0.0f; }
-  inline virtual void 	Init_dWt(Con_Group* cg, Unit* ru);
-  // #CAT_Learning initialize variables that change every delta-weight computation
+  inline virtual void 	C_Init_dWt(RecvCons*, Connection* cn, Unit*, Unit*)
+  { cn->dwt=0.0f; }
+  // #CAT_Learning initialize weight-change variables on a single connecdtion
+  inline virtual void 	Init_dWt(RecvCons* cg, Unit* ru);
+  // #CAT_Learning initialize weight-change variables for whole set
 
   inline float 		C_Compute_Netin(Connection* cn, Unit* ru, Unit* su);
-  inline virtual float 	Compute_Netin(Con_Group* cg, Unit* ru);
+  inline virtual float 	Compute_Netin(RecvCons* cg, Unit* ru);
   // #CAT_Activation compute net input for weights in this con group
   inline void 		C_Send_Netin(Connection* cn, Unit* ru, Unit* su);
-  inline virtual void 	Send_Netin(Con_Group* cg, Unit* su);
+  inline virtual void 	Send_Netin(SendCons* cg, Unit* su);
   // #CAT_Activation sender-based net input for con group (send net input to receivers)
   inline float 		C_Compute_Dist(Connection* cn, Unit* ru, Unit* su);
-  inline virtual float 	Compute_Dist(Con_Group* cg, Unit* ru);
+  inline virtual float 	Compute_Dist(RecvCons* cg, Unit* ru);
   // #CAT_Activation compute net distance for con group (ie. euclidean distance)
   inline void		C_Compute_dWt(Connection*, Unit*, Unit*)	{ };
-  inline virtual void	Compute_dWt(Con_Group* cg, Unit* ru);
+  inline virtual void	Compute_dWt(RecvCons* cg, Unit* ru);
   // #CAT_Learning compute the delta-weight change
   inline void 		C_Compute_Weights(Connection*, Unit*, Unit*)	{ };
-  inline virtual void 	Compute_Weights(Con_Group* cg, Unit* ru);
+  inline virtual void 	Compute_Weights(RecvCons* cg, Unit* ru);
   // #CAT_Learning update weights (ie. add delta-wt to wt, zero delta-wt)
 
   bool	CheckObjectType_impl(taBase* obj); // don't do checking on 1st con group in units
 
-  virtual bool  	CheckConfig_ConGroup(Con_Group* cg, bool quiet=false);
+  virtual bool  	CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
   virtual int		UseCount();
@@ -254,138 +255,125 @@ public:
 
 SpecPtr_of(ConSpec);
 
-// assumes no USE_TEMPLATE_GROUPS
 
-class PDP_API Unit_List: public taList<Unit> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network 
+/////////////////////////////////////////////////////////////////////////////////
+//		RecvCons
+
+
+class PDP_API  ConArray : public taOBase {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group
+  INHERITED(taOBase)
 public:
-  void	Initialize() 		{ };
-  void 	Destroy()		{ };
-  TA_BASEFUNS(Unit_List);
+  int		con_size;	// sizeof() connection object being stored
+  TypeDef*	con_type;	// type of connection object being stored
+  int 		size;		// #NO_SAVE #READ_ONLY number of elements in the array
+  int		alloc_size;	// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size, in con_size units
+  char*		cons;		// #IGNORE the connection memory, alloc_size * con_size
+
+  inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
+  // #CAT_Access is index in range?
+  inline Connection*	SafeEl(int idx) const
+  { if(!InRange(idx)) return NULL; return (Connection*)&(cons[con_size * idx]); }
+  // #CAT_Access safely access connection at given index, consumer must cast to appropriate sub-type (for type safety, check con_type)
+  inline Connection*	FastEl(int idx) const
+  { return (Connection*)&(cons[con_size * idx]); }
+  // #CAT_Access fast access (no range checking) connection at given index, consumer must cast to appropriate type (for type safety, check con_type)
+
+  void			SetType(TypeDef* cn_tp);
+  // #CAT_Modify set new connection type -- resets any existing conections
+  void			Alloc(int n);
+  // #CAT_Modify allocate storage for at least the given size
+  void			Free();
+  // #CAT_Modify deallocate all storage
+  inline void		SetSize(int sz)
+  { if(sz > size) { Alloc(sz); bzero((void*)FastEl(size), (sz - size) * con_size); }
+    size = sz; }
+  // #CAT_Modify set size of array to given number of elements, with new items initialized to zero
+  inline void		New(int n) { SetSize(size + n); }
+  // #CAT_Modify add n new connections (initialized to all zeros)
+  inline void		Reset()	{ SetSize(0); }
+  // #CAT_Modify reset size of array to zero (does not free underlying memory)
+
+  inline void		Add(const Connection* it)
+  { SetSize(size + 1); memcpy((void*)FastEl(size-1), (void*)it, con_size); }
+  // #CAT_Modify add a connection 
+  bool			RemoveIdx(int i);
+  // #CAT_Modify remove connection at given index, moving others down to fill in
+
+  inline void		CopyCons_impl(const ConArray& cp)
+  { SetSize(cp.size); if(size > 0) memcpy(cons, (char*)cp.cons, size * con_size); }
+  // #IGNORE copy connections from other con array, ASSUMES they are both of same type
+  inline bool		CopyCons(const ConArray& cp)
+  { if(con_type != cp.con_type) return false; CopyCons_impl(cp); return true; }
+  // #CAt_Modify copy connections from other con array, checking to make sure they are the same type (false if not)
+
+  void 	Initialize();
+  void 	Destroy();
+  void	CutLinks();
+  void	Copy_(const ConArray& cp);
+  COPY_FUNS(ConArray, inherited);
+  TA_BASEFUNS(ConArray);
 };
 
-class PDP_API Con_Group: public taBase_Group {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network Group of connections, controlls processing over them -- entire group must have same connection object type
-INHERITED(taBase_Group)
+class PDP_API UnitPtrList: public taPtrList<Unit> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of unit pointers, for sending connections
 public:
+  ~UnitPtrList()             { Reset(); }
+};
+
+class PDP_API RecvCons : public taOBase {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network receiving connections: owns all the connection objects
+INHERITED(taOBase)
+public:
+  static int	Idx;			// #HIDDEN pass to find if you don't want one
+
   // note: follwing must be coordinated with the Network enum
   enum WtSaveFormat {
     TEXT,			// weights are saved as ascii text representation of digits (completely portable)
     BINARY,			// weights are written directly to the file in binary format (no loss in accuracy and more space efficient, but possibly non-portable)
   };
 
-  Unit_List	units;
-  // #NO_FIND #NO_SAVE #CAT_Structure pointers to units that correspond (by index) to cons
+  // note: the cons and units are saved in an optimized fashion
+
+  TypeDef*	con_type;
+  // #CAT_Structure #AKA_el_typ type of connections to make
+  ConArray	cons;
+  // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
+  UnitPtrList	units;
+  // #NO_FIND #NO_SAVE #CAT_Structure pointers to the sending units of this connection (in index correspondence with cons)
   ConSpec_SPtr 	spec;
   // #CAT_Structure specification for connections
   Projection*	prjn;
   // #CAT_Structure pointer the the projection which created this Group
-  int		other_idx;
-  // #READ_ONLY index of other side of con group (for recv_gp = send_idx, send_gp = recv_idx)
-  bool		own_cons;
-  // #READ_ONLY true if this group "owns" the connections (must be receiver!)
+  int		send_idx;
+  // #READ_ONLY index into sending unit's send. list of SendCons
 
-  Connection* 	Cn(int i) const { return (Connection*)FastEl(i); }
+  Connection* 	Cn(int i) const { return cons.FastEl(i); }
   // #CAT_Structure gets the connection at the given index
   Unit*		Un(int i) const { return units.FastEl(i); }
   // #CAT_Structure gets the unit at the given index
 
-  virtual void	Copy_Weights(const Con_Group* src);
-  // #CAT_ObjectMgmt copies weights from other con_group
-
-  static int	LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet);
-  // #IGNORE read in a start tag -- makes sure it matches tag, returns TAG_GOT if got it
-  static int	LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet);
-  // #IGNORE read in an end tag -- makes sure it matches trg_tag, cur_tag, stat are current read_tag & status (if !END_TAG, will try to read end)
-
-  virtual void	SaveWeights_strm(ostream& strm, Unit* ru, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int	LoadWeights_strm(istream& strm, Unit* ru, Con_Group::WtSaveFormat fmt = Con_Group::TEXT, bool quiet = true);
-  // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) -- rval is taMisc::ReadTagStatus, TAG_END if successful
-  static int 	SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT,
-				 bool quiet = true);
-  // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
-
-  virtual void	SaveWeights(const String& fname="", Unit* ru = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual int	LoadWeights(const String& fname="", Unit* ru = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT, bool quiet = true);
-  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) (leave fname empty to pull up file chooser)
-
-  // overload some functions to manage both connections and units
-  // leave most ops separate for flexibility
-  virtual Connection*	NewCon(TypeDef* typ, Unit* un);
-  // #CAT_Structure create a connection of given type to given unit
-  virtual void		LinkCon(Connection* cn, Unit* un);
-  // #CAT_Structure make a link connection from given connection, unit (for sending groups)
-  virtual bool		RemoveCon(Unit* un);
+  virtual void		SetConType(TypeDef* cn_tp);
+  // #CAT_Structure set the type of connection to make
+  virtual void		AllocCons(int no);
+  // #CAT_Structure allocate given number of new connections (if projection knows this in advance, it is more efficient than doing them incrementally)
+  virtual Connection*	NewCon(Unit* un);
+  // #CAT_Structure create a connection to given unit
+  virtual bool		RemoveConIdx(int i);
+  // #CAT_Structure remove connection at given index
+  virtual bool		RemoveConUn(Unit* un);
   // #CAT_Structure remove connection from given unit
-  virtual void		AllocCon(int no, TypeDef* typ);
-  // #CAT_Structure allocate given number of new connections
+  virtual void		RemoveAll();
+  // #CAT_Structure remove all conections
+  virtual void		Reset() { RemoveAll(); }
+  // #CAT_Structure remove all conections
+
   virtual Connection*	FindConFrom(Unit* un, int& idx=Idx) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
-
-  void		Alloc(int sz);
-  taBase*		NewEl(int n_els=0, TypeDef* typ=NULL);
-  taBase*		New(int n_ojbs=0, TypeDef* typ=NULL);
-  bool		Remove(const char* it)	{ return taBase_Group::Remove(it); }
-  bool		Remove(taBase* it)	{ return taBase_Group::Remove(it); }
-  bool		Remove(int i);
-
-  // projection-related functions for operations on sub-groups of the group
-  virtual Con_Group*	NewPrjn(Projection* prjn, bool own=false);
-  // #CAT_Structure create a new sub_group from given projection, with given ownership (own_cons)
-  virtual Con_Group*	FindPrjn(Projection* prjn, int& idx=Idx) const;
-  // #CAT_Structure find sub group associated with given projection
-  virtual Con_Group*	FindFrom(Layer* from, int& idx=Idx) const;
-  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sub group that receives from given layer
-  virtual Con_Group*	FindFromName(const String& fm_nm, int& idx=Idx) const;
-  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sub group that receives from given layer named fm_nm
-  virtual Con_Group*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx=Idx) const;
-  // #MENU #USE_RVAL #ARGC_2 #CAT_Structure find sub group that recvs prjn of given type from layer
-  virtual Con_Group*	FindLayer(Layer* lay, int& idx=Idx) const;
-  // #CAT_Structure find sub group where projection is in the given layer
-  virtual bool		RemovePrjn(Projection* prjn);
-  // #CAT_Structure remove sub group associated with given projection
-  virtual bool		RemoveFrom(Layer* from);
-  // #MENU #CAT_Structure remove sub group that receives from given layer
-
-  virtual Connection* FindRecipRecvCon(Unit* su, Unit* ru);
+  static Connection* 	FindRecipRecvCon(Unit* su, Unit* ru);
   // #CAT_Structure find the reciprocal for sending unit su to this receiving unit ru
-  virtual Connection* FindRecipSendCon(Unit* ru, Unit* su);
+  static Connection* 	FindRecipSendCon(Unit* ru, Unit* su);
   // #CAT_Structure find the reciprocal for receiving unit ru from this sending unit su
-
-  virtual void	TransformWeights(const SimpleMathSpec& trans);
-  // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
-  virtual void	AddNoiseToWeights(const Random& noise_spec);
-  // #MENU #CAT_Learning add noise to weights using given noise specification
-  virtual int	PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
-			     CountParam::Relation rel, float cmp_val);
-  // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
-  virtual int	LesionCons(Unit* un, float p_lesion, bool permute=true);
-  // #MENU #USE_RVAL #CAT_Structure remove weights with prob p_lesion (permute = fixed no. lesioned)
-
-  virtual bool	CheckTypes(bool quiet=false);
-  // #MENU #USE_RVAL #CAT_ObjectMgmt check that the object and spec types are all ok
-  virtual bool CheckOtherIdx_Recv();
-  // #CAT_ObjectMgmt check validity of other_idx for recv con groups
-  virtual bool CheckOtherIdx_Send();
-  // #CAT_ObjectMgmt check validity of other_idx for send con groups
-
-  virtual bool	ConValuesToArray(float_Array& ary, const char* variable);
-  // #CAT_Structure adds values of variable from the connections into the given array (false if var not found)
-  virtual bool	ConValuesToMatrix(float_Matrix& mat, const char* variable);
-  // #CAT_Structure sets values of variable from the connections into the given matrix (uses flat index of cons to set: 0..size-1), returns false if matrix is not appropriately sized
-  virtual bool	ConValuesFromArray(float_Array& ary, const char* variable);
-  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found)
-  virtual bool	ConValuesFromMatrix(float_Matrix& mat, const char* variable);
-  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
-
-  virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
-  // #CAT_ObjectMgmt switch any connections using old_sp to using new_sp
-  virtual void	CopyNetwork(Network* net, Network* cn, Con_Group* cp);
-  // #IGNORE copy entire network
-  virtual void	CopyPtrs(Con_Group* cp);
-  // #IGNORE copy the pointers directly!
 
   // these are convenience functions for those defined in the spec
   void 	Init_Weights(Unit* ru)	 	{ spec->Init_Weights(this,ru); }
@@ -400,19 +388,64 @@ public:
 
   float Compute_Netin(Unit* ru)	 	{ return spec->Compute_Netin(this,ru); }
   // #CAT_Activation compute net input (receiver based; recv group)
-  void 	Send_Netin(Unit* su)		{ spec->Send_Netin(this, su); }
-  // #CAT_Activation send net input (sender based; send group)
   float Compute_Dist(Unit* ru)	 	{ return spec->Compute_Dist(this,ru); }
   // #CAT_Activation compute net input as distance between activation and weights
   void  Compute_dWt(Unit* ru)	 	{ spec->Compute_dWt(this,ru); }
   // #CAT_Learning compute weight changes (the fundamental learning problem)
-  void 	Compute_Weights(Unit* ru)	 	{ spec->Compute_Weights(this,ru); }
+  void 	Compute_Weights(Unit* ru)	{ spec->Compute_Weights(this,ru); }
   // #CAT_Learning update weight values from deltas
   
+  virtual void	TransformWeights(const SimpleMathSpec& trans);
+  // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
+  virtual void	AddNoiseToWeights(const Random& noise_spec);
+  // #MENU #CAT_Learning add noise to weights using given noise specification
+  virtual int	PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
+			     CountParam::Relation rel, float cmp_val);
+  // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
+  virtual int	LesionCons(Unit* un, float p_lesion, bool permute=true);
+  // #MENU #USE_RVAL #CAT_Structure remove weights with prob p_lesion (permute = fixed no. lesioned)
+
+  virtual bool	ConValuesToArray(float_Array& ary, const char* variable);
+  // #CAT_Structure adds values of variable from the connections into the given array (false if var not found)
+  virtual bool	ConValuesToMatrix(float_Matrix& mat, const char* variable);
+  // #CAT_Structure sets values of variable from the connections into the given matrix (uses flat index of cons to set: 0..size-1), returns false if matrix is not appropriately sized
+  virtual bool	ConValuesFromArray(float_Array& ary, const char* variable);
+  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found)
+  virtual bool	ConValuesFromMatrix(float_Matrix& mat, const char* variable);
+  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
+
+  static int	LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet);
+  // #IGNORE read in a start tag -- makes sure it matches tag, returns TAG_GOT if got it
+  static int	LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet);
+  // #IGNORE read in an end tag -- makes sure it matches trg_tag, cur_tag, stat are current read_tag & status (if !END_TAG, will try to read end)
+
+  virtual void	SaveWeights_strm(ostream& strm, Unit* ru, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
+  virtual int	LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+  // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) -- rval is taMisc::ReadTagStatus, TAG_END if successful
+  static int 	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
+				 bool quiet = true);
+  // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
+
+  virtual void	SaveWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  virtual int	LoadWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) (leave fname empty to pull up file chooser)
+
   int 	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
-  int	Dump_SaveR(ostream& strm, taBase* par=NULL, int indent = 0);
-  int	Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent = 0);
   int	Dump_Load_Value(istream& strm, taBase* par=NULL);
+
+  virtual void	CopyNetwork(Network* net, Network* cn, RecvCons* cp);
+  // #IGNORE copy entire network
+  virtual void	Copy_Weights(const RecvCons* src);
+  // #CAT_ObjectMgmt copies weights from other con_group
+  virtual bool	CheckTypes(bool quiet=false);
+  // #MENU #USE_RVAL #CAT_ObjectMgmt check that the object and spec types are all ok
+  virtual bool  CheckSendIdx();
+  // #CAT_ObjectMgmt check validity of send_idx for recv con groups
+
+  virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
+  // #CAT_ObjectMgmt switch any connections using old_sp to using new_sp
 
   bool	ChangeMyType(TypeDef* new_type);
   
@@ -421,18 +454,165 @@ public:
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
-  void	Copy_(const Con_Group& cp);
-  void	Copy(const Con_Group& cp);
-  TA_BASEFUNS(Con_Group);
+  void	Copy_(const RecvCons& cp);
+  COPY_FUNS(RecvCons, inherited);
+  TA_BASEFUNS(RecvCons);
 protected:
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
+// use this macro to replace the prevalent FOR_ITR_GP used to traverse connection groups
+// in 3.2
+
+#define	FOR_ITR_CON_GP(typ, ptr, gp, idx) \
+  for(idx=0; idx<gp size; idx++) {   \
+    typ* ptr = gp FastEl(idx);
+
+
+class PDP_API RecvCons_List: public taList<RecvCons> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of receiving connections, one per projection
+public:
+  virtual RecvCons*	NewPrjn(Projection* prjn);
+  // #CAT_Structure create a new sub_group from given projection, with given ownership (own_cons)
+  virtual RecvCons*	FindPrjn(Projection* prjn, int& idx=Idx) const;
+  // #CAT_Structure find sub group associated with given projection
+  virtual RecvCons*	FindFrom(Layer* from, int& idx=Idx) const;
+  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sub group that receives from given layer
+  virtual RecvCons*	FindFromName(const String& fm_nm, int& idx=Idx) const;
+  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sub group that receives from given layer named fm_nm
+  virtual RecvCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx=Idx) const;
+  // #MENU #USE_RVAL #ARGC_2 #CAT_Structure find sub group that recvs prjn of given type from layer
+  virtual RecvCons*	FindLayer(Layer* lay, int& idx=Idx) const;
+  // #CAT_Structure find sub group where projection is in the given layer
+  virtual bool		RemovePrjn(Projection* prjn);
+  // #CAT_Structure remove sub group associated with given projection
+  virtual bool		RemoveFrom(Layer* from);
+  // #MENU #CAT_Structure remove sub group that receives from given layer
+
+  void	Initialize() 		{ SetBaseType(&TA_RecvCons); }
+  void 	Destroy()		{ };
+  TA_BASEFUNS(RecvCons_List);
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+//		SendCons
+
+class PDP_API ConPtrList: public taPtrList<Connection> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of connection pointers, for sending connections
+public:
+  ~ConPtrList()             { Reset(); }
+};
+
+
+class PDP_API SendCons : public taOBase {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network sending connections: points to receiving connections
+INHERITED(taOBase)
+public:
+  static int	Idx;			// #HIDDEN pass to find if you don't want one
+
+  TypeDef*	con_type;
+  // #CAT_Structure #AKA_el_typ type of connections to make
+  ConPtrList	cons;
+  // #NO_FIND #NO_SAVE #CAT_Structure list of pointers to receiving connections, in index correspondence with units;
+  UnitPtrList	units;
+  // #NO_FIND #NO_SAVE #CAT_Structure pointers to the receiving units of this connection, in index correspondence with cons
+  ConSpec_SPtr 	spec;
+  // #CAT_Structure specification for connections
+  Projection*	prjn;
+  // #CAT_Structure pointer the the projection which created this Group
+  int		recv_idx;
+  // #READ_ONLY index into recv unit's list of RecvCons for this projection
+
+  Connection* 	Cn(int i) const { return cons.FastEl(i); }
+  // #CAT_Structure gets the connection at the given index
+  Unit*		Un(int i) const { return units.FastEl(i); }
+  // #CAT_Structure gets the unit at the given index
+
+  virtual void		SetConType(TypeDef* cn_tp);
+  // #CAT_Structure set the type of connection to make
+  virtual void		LinkCon(Connection* cn, Unit* un);
+  // #CAT_Structure make a link connection from given connection, unit (for sending groups)
+  virtual bool		RemoveConIdx(int i);
+  // #CAT_Structure remove connection at given index
+  virtual bool		RemoveConUn(Unit* un);
+  // #CAT_Structure remove connection from given unit
+  virtual void		RemoveAll();
+  // #CAT_Structure remove all conections
+  virtual void		Reset() { RemoveAll(); }
+  // #CAT_Structure remove all conections
+  virtual Connection*	FindConFrom(Unit* un, int& idx=Idx) const;
+  // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
+
+  void 	Send_Netin(Unit* su)		{ spec->Send_Netin(this, su); }
+  // #CAT_Activation send net input (sender based; send group)
+  
+  virtual bool	ConValuesToArray(float_Array& ary, const char* variable);
+  // #CAT_Structure adds values of variable from the connections into the given array (false if var not found)
+  virtual bool	ConValuesToMatrix(float_Matrix& mat, const char* variable);
+  // #CAT_Structure sets values of variable from the connections into the given matrix (uses flat index of cons to set: 0..size-1), returns false if matrix is not appropriately sized
+  virtual bool	ConValuesFromArray(float_Array& ary, const char* variable);
+  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found)
+  virtual bool	ConValuesFromMatrix(float_Matrix& mat, const char* variable);
+  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
+
+  virtual void	CopyNetwork(Network* net, Network* cn, SendCons* cp);
+  // #IGNORE copy entire network: doesn't actually copy here -- just resets and reconnect_load does the work..
+  virtual bool	CheckTypes(bool quiet=false);
+  // #MENU #USE_RVAL #CAT_ObjectMgmt check that the object and spec types are all ok
+  virtual bool 	CheckRecvIdx();
+  // #CAT_ObjectMgmt check validity of recv_idx for send con groups
+
+  virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
+  // #CAT_ObjectMgmt switch any connections using old_sp to using new_sp
+
+
+  bool	ChangeMyType(TypeDef* new_type);
+  
+  void	UpdateAfterEdit();
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
+  void 	InitLinks();
+  void	CutLinks();
+  void	Copy_(const SendCons& cp);
+  COPY_FUNS(SendCons, inherited);
+  TA_BASEFUNS(SendCons);
+};
+
+class PDP_API SendCons_List: public taList<SendCons> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of sending connections, one per projection
+public:
+  // projection-related functions for operations on sub-groups of the group
+  virtual SendCons*	NewPrjn(Projection* prjn);
+  // #CAT_Structure create a new sub_group from given projection, with given ownership (own_cons)
+  virtual SendCons*	FindPrjn(Projection* prjn, int& idx=Idx) const;
+  // #CAT_Structure find sending connections associated with given projection
+  virtual SendCons*	FindFrom(Layer* from, int& idx=Idx) const;
+  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sending connections that receive from given layer
+  virtual SendCons*	FindFromName(const String& fm_nm, int& idx=Idx) const;
+  // #MENU #USE_RVAL #ARGC_1 #CAT_Structure find sending connections that receive from given layer named fm_nm
+  virtual SendCons*	FindTypeFrom(TypeDef* prjn_typ, Layer* from, int& idx=Idx) const;
+  // #MENU #USE_RVAL #ARGC_2 #CAT_Structure find sending connections that recvs prjn of given type from layer
+  virtual SendCons*	FindLayer(Layer* lay, int& idx=Idx) const;
+  // #CAT_Structure find sending connections where projection is in the given layer
+  virtual bool		RemovePrjn(Projection* prjn);
+  // #CAT_Structure remove sending connections associated with given projection
+  virtual bool		RemoveFrom(Layer* from);
+  // #MENU #CAT_Structure remove sending connections from given layer
+
+  void	Initialize() 		{ SetBaseType(&TA_SendCons); }
+  void 	Destroy()		{ };
+  TA_BASEFUNS(SendCons_List);
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+//		Units and UnitSpec
+
 class PDP_API UnitSpec: public BaseSpec {
   // ##CAT_Spec Generic Unit Specification
 INHERITED(BaseSpec)
-  static Con_Group*	rcg_rval; // return value for connecting
-  static Con_Group*	scg_rval; // return value for connecting
+  static RecvCons*	rcg_rval; // return value for connecting
+  static SendCons*	scg_rval; // return value for connecting
 public:
   MinMaxRange	act_range;
   // #CAT_Activation range of activation for units
@@ -496,8 +676,8 @@ class PDP_API Unit: public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit
 INHERITED(taNBase)
 protected:
-  static Con_Group*	rcg_rval; // return value for connecting
-  static Con_Group*	scg_rval; // return value for connecting
+  static RecvCons*	rcg_rval; // return value for connecting
+  static SendCons*	scg_rval; // return value for connecting
 public: //
   enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
     NO_EXTERNAL 	= 0x00,	// #NO_BIT no input
@@ -522,12 +702,12 @@ public: //
   // #DMEM_SHARE_SET_2 #CAT_Activation activation value -- what the unit communicates to others
   float 	net;
   // #DMEM_SHARE_SET_1 #CAT_Activation net input value -- what the unit receives from others
-  Con_Group 	recv;
-  // #CAT_Structure Receiving connection groups -- subgroups for each projection (collection of connections) received from other units
-  Con_Group 	send;
-  // #CAT_Structure Sending connection groups -- subgroups for each projection (collection of connections) sent to other units
-  Connection*	bias;
-  // #OWN_POINTER #CAT_Structure bias weight (type determined in unit spec) -- provides intrinsic activation in absence of other inputs
+  RecvCons_List	recv;
+  // #CAT_Structure Receiving connections, one set of connections for each projection (collection of connections) received from other units
+  SendCons_List send;
+  // #CAT_Structure Sending connections, one set of connections for each projection (collection of connections) sent from other units
+  RecvCons	bias;
+  // #CAT_Structure bias weight connection (type determined in unit spec) -- provides intrinsic activation in absence of other inputs
   int		n_recv_cons;
   // #DMEM_SHARE_SET_0 #CAT_Structure total number of receiving connections
   TDCoord       pos;
@@ -549,17 +729,17 @@ public: //
 
   virtual void	Copy_Weights(const Unit* src, Projection* prjn = NULL);
   // #CAT_ObjectMgmt copies weights from other unit (incl wts assoc with unit bias member)
-  virtual void	SaveWeights_strm(ostream& strm, Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  virtual void	SaveWeights_strm(ostream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int	LoadWeights_strm(istream& strm, Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT, bool quiet = true);
+  virtual int	LoadWeights_strm(istream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus, TAG_END if successful
-  static int	SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT,
+  static int	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
 				 bool quiet = true);
   // #IGNORE skip over saved weight values -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
-  virtual void	SaveWeights(const String& fname="", Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  virtual void	SaveWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual int	LoadWeights(const String& fname="", Projection* prjn = NULL, Con_Group::WtSaveFormat fmt = Con_Group::TEXT, bool quiet = true);
+  virtual int	LoadWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   void		SetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag | flg); }
@@ -602,27 +782,17 @@ public: //
   // #CAT_Structure build unit: make sure bias connection is created and right type
   virtual bool	CheckBuild(bool quiet=false);
   // #CAT_Structure check if network is built 
-  taBase*	New(int n_objs=0, TypeDef* type=NULL);
-  // #CAT_Structure create a bias weight of the specified type (for loading existing nets)
   virtual void	RemoveCons();
   // #IGNORE remove all of unit's sending and receiving connections
   // since this doesn't affect other units, it should not be called individually
-  virtual void		ConnectAlloc(int no, Projection* prjn, Con_Group*& cgp = rcg_rval);
+  virtual void		ConnectAlloc(int no, Projection* prjn, RecvCons*& cgp = rcg_rval);
   // #CAT_Structure pre-allocate given no of connections (for better memory layout)
-  virtual Connection* 	ConnectFrom(Unit* su, Projection* prjn, Con_Group*& recv_gp = rcg_rval,
-				    Con_Group*& send_gp = scg_rval);
+  virtual Connection* 	ConnectFrom(Unit* su, Projection* prjn, RecvCons*& recv_gp = rcg_rval,
+				    SendCons*& send_gp = scg_rval);
   // #CAT_Structure make a recv connection from given unit to this unit using given projection
-  virtual Connection* 	ConnectFromLink(Unit* su, Projection* prjn, Connection* src_con,
-					Con_Group*& recv_gp = rcg_rval,
-					Con_Group*& send_gp = scg_rval);
-  // #CAT_Structure make linked recv con from given unit to this using prjn and given src connection -- todo: this will be disabled soon!
-  virtual Connection* 	ConnectFromCk(Unit* su, Projection* prjn, Con_Group*& recv_gp = rcg_rval,
-				      Con_Group*& send_gp = scg_rval);
+  virtual Connection* 	ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp = rcg_rval,
+				      SendCons*& send_gp = scg_rval);
   // #CAT_Structure does ConnectFrom but checks for an existing connection to prevent double-connections! -- note that this is expensive!
-  virtual Connection* 	ConnectFromLinkCk(Unit* su, Projection* prjn, Connection* src_con,
-					  Con_Group*& recv_gp = rcg_rval,
-					  Con_Group*& send_gp = scg_rval);
-  // #CAT_Structure does ConnectFromLink but checks for an existing connection to prevent double-connections! -- todo: this will be disabled soon
   virtual bool	DisConnectFrom(Unit* su, Projection* prjn=NULL);
   // #CAT_Structure remove connection from given unit (projection is optional)
   virtual void	DisConnectAll();
@@ -651,7 +821,6 @@ public: //
   // #CAT_Structure switch any connections/projections using old_sp to using new_sp
 
   virtual void	CopyNetwork(Network* anet, Network* cn, Unit* cp); // #IGNORE copy network
-  virtual void	CopyPtrs(Unit* cp); // #IGNORE copy the pointers directly
 
   override int	GetIndex() { return idx; }
   override void	SetIndex(int i) { idx = i; }
@@ -703,7 +872,7 @@ public:
   virtual bool	CheckConnect(Projection* prjn, bool quiet=false);
   // #CAT_ObjectMgmt check if projection is connected
 
-  virtual void	C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru);
+  virtual void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
 
   virtual void 	CopyNetwork(Network* net, Network* cn, Projection* prjn, Projection* cp);
@@ -738,7 +907,8 @@ public:
   Layer*		from;		// #CAT_Projection layer receiving from (set this for custom)
   ProjectionSpec_SPtr	spec;		// #CAT_Projection spec for this item
   TypeDef*		con_type;	// #TYPE_Connection #CAT_Projection Type of connection
-  TypeDef*		con_gp_type;	// #TYPE_Con_Group #CAT_Projection Type of connection group
+  TypeDef*		recvcons_type;	// #TYPE_RecvCons #CAT_Projection Type of receiving connection group to make
+  TypeDef*		sendcons_type;	// #TYPE_SendCons #CAT_Projection Type of sending connection group to make
   ConSpec_SPtr 		con_spec;	// #CAT_Projection conspec to use for creating connections
   int			recv_idx;	// #READ_ONLY #CAT_Projection receiving con_group index
   int			send_idx;	// #READ_ONLY #CAT_Projection sending con_group index
@@ -755,15 +925,15 @@ public:
 
   virtual void	Copy_Weights(const Projection* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_Weights copies weights from other projection
-  virtual void	SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  virtual void	SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int	LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT,
+  virtual int	LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
 				 bool quiet = true);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt)
-  virtual void	SaveWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
-			    Con_Group::WtSaveFormat fmt = Con_Group::TEXT, bool quiet = true);
+			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   // convenience functions for those defined in the spec
@@ -785,7 +955,7 @@ public:
   // #BUTTON #CONFIRM #CAT_Weights Initialize weight state for this projection
   void 	Init_Weights_post() 	{ spec->Init_Weights_post(this); } // #IGNORE
 
-  void 	C_Init_Weights(Con_Group* cg, Unit* ru)  { spec->C_Init_Weights(this, cg, ru); }
+  void 	C_Init_Weights(RecvCons* cg, Unit* ru)  { spec->C_Init_Weights(this, cg, ru); }
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
@@ -816,9 +986,11 @@ public:
   // #CAT_Projection switch any projections using old_sp to using new_sp
 
   virtual bool 	SetConType(TypeDef* td);
-  // #CAT_Projection set the connection type for all connections in this prjn
-  virtual bool 	SetConGpType(TypeDef* td);
-  // #CAT_Projection set the connection group type for all connections in this prjn
+  // #CAT_Projection #TYPE_Connection set the connection type for all connections in this prjn
+  virtual bool 	SetRecvConsType(TypeDef* td);
+  // #CAT_Projection #TYPE_RecvCons set the receiving connection group type for all connections in this prjn
+  virtual bool 	SetSendConsType(TypeDef* td);
+  // #CAT_Projection #TYPE_SendCons set the connection group type for all connections in this prjn
 
 //obs  virtual void	GridViewWeights(GridLog* grid_log, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
   /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of projection weights (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
@@ -826,8 +998,6 @@ public:
   virtual void	WeightsToTable(DataTable* dt);
   // #MENU #NULL_OK #CAT_Projection TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
-  void 	CopyPtrs(Projection* cp); // #IGNORE copy the pointers
-  
   void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy();
@@ -854,13 +1024,13 @@ public:
 // 	Inline Connection-level functions (fast)	//
 //////////////////////////////////////////////////////////
 
-inline void ConSpec::ApplyLimits(Con_Group* cg, Unit* ru) {
+inline void ConSpec::ApplyLimits(RecvCons* cg, Unit* ru) {
   if(wt_limits.type != WeightLimits::NONE) {
     CON_GROUP_LOOP(cg, C_ApplyLimits(cg->Cn(i), ru, cg->Un(i)));
   }
 }
 
-inline void ConSpec::C_Init_Weights(Con_Group*, Connection* cn, Unit* ru, Unit* su) {
+inline void ConSpec::C_Init_Weights(RecvCons*, Connection* cn, Unit* ru, Unit* su) {
   if(rnd.type != Random::NONE)	{ // don't do anything (e.g. so connect fun can do it)
     cn->wt = rnd.Gen();
   }
@@ -870,7 +1040,7 @@ inline void ConSpec::C_Init_Weights(Con_Group*, Connection* cn, Unit* ru, Unit* 
   C_ApplyLimits(cn,ru,su);
 }
 
-inline void ConSpec::Init_Weights(Con_Group* cg, Unit* ru) {
+inline void ConSpec::Init_Weights(RecvCons* cg, Unit* ru) {
   if(cg->prjn->spec->init_wts) {
        cg->prjn->C_Init_Weights(cg, ru);
   } else {
@@ -881,18 +1051,18 @@ inline void ConSpec::Init_Weights(Con_Group* cg, Unit* ru) {
   ApplySymmetry(cg,ru);
 }
 
-inline void ConSpec::Init_Weights_post(Con_Group* cg, Unit* ru) {
+inline void ConSpec::Init_Weights_post(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Init_Weights_post(cg, cg->Cn(i), ru, cg->Un(i)));
 }
 
-inline void ConSpec::Init_dWt(Con_Group* cg, Unit* ru) {
+inline void ConSpec::Init_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Init_dWt(cg, cg->Cn(i), ru, cg->Un(i)));
 }
 
 inline float ConSpec::C_Compute_Netin(Connection* cn, Unit*, Unit* su) {
   return cn->wt * su->act;
 }
-inline float ConSpec::Compute_Netin(Con_Group* cg, Unit* ru) {
+inline float ConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
   float rval=0.0f;
   CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->Cn(i), ru, cg->Un(i)));
   return rval;
@@ -901,27 +1071,26 @@ inline float ConSpec::Compute_Netin(Con_Group* cg, Unit* ru) {
 inline void ConSpec::C_Send_Netin(Connection* cn, Unit* ru, Unit* su) {
   ru->net += cn->wt * su->act;
 }
-inline void ConSpec::Send_Netin(Con_Group* cg, Unit* su) {
-CON_GROUP_LOOP(cg, C_Send_Netin(cg->Cn(i),
-		 cg->Un(i), su));
+inline void ConSpec::Send_Netin(SendCons* cg, Unit* su) {
+  CON_GROUP_LOOP(cg, C_Send_Netin(cg->Cn(i), cg->Un(i), su));
 }
 
 inline float ConSpec::C_Compute_Dist(Connection* cn, Unit*, Unit* su) {
   float tmp = su->act - cn->wt;
   return tmp * tmp;
 }
-inline float ConSpec::Compute_Dist(Con_Group* cg, Unit* ru) {
+inline float ConSpec::Compute_Dist(RecvCons* cg, Unit* ru) {
   float rval=0.0f;
   CON_GROUP_LOOP(cg, rval += C_Compute_Dist(cg->Cn(i), ru, cg->Un(i)));
   return rval;
 }
 
-inline void ConSpec::Compute_Weights(Con_Group* cg, Unit* ru) {
+inline void ConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Compute_Weights(cg->Cn(i), ru, cg->Un(i)));
   ApplyLimits(cg,ru); // ApplySymmetry(cg,ru);  don't apply symmetry during learning..
 }
 
-inline void ConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Compute_dWt(cg->Cn(i), ru, cg->Un(i)));
 }
 
@@ -940,19 +1109,19 @@ public:
 
   virtual void	Copy_Weights(const Unit_Group* src);
   // #MENU #MENU_ON_Object #CAT_ObjectMgmt copies weights from other unit group (incl wts assoc with unit bias member)
-  virtual void	SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  virtual void	SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int	LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT,
+  virtual int	LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
 				 bool quiet = true);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
-  static int	SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT,
+  static int	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
 				 bool quiet = true);
   // #EXT_wts #COMPRESS #CAT_File skip over weight values -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
-  virtual void	SaveWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
-			    Con_Group::WtSaveFormat fmt = Con_Group::TEXT, bool quiet = true);
+			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual bool	Build();
@@ -1073,19 +1242,19 @@ public:
   	
   virtual void	Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
-  virtual void	SaveWeights_strm(ostream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  virtual void	SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int	LoadWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT,
+  virtual int	LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
 			         bool quiet = true);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
-  static int	SkipWeights_strm(istream& strm, Con_Group::WtSaveFormat fmt = Con_Group::TEXT,
+  static int	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
 			         bool quiet = true);
   // #EXT_wts #COMPRESS #CAT_File skip over weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
-  virtual void	SaveWeights(const String& fname="", Con_Group::WtSaveFormat fmt = Con_Group::TEXT);
+  virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
-			    Con_Group::WtSaveFormat fmt = Con_Group::TEXT, bool quiet = true);
+			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual void  Build();
@@ -1226,8 +1395,6 @@ public:
 
   virtual void	CopyNetwork(Network* net, Network* cn, Layer* cp);
   // #IGNORE copy entire network
-  virtual void	CopyPtrs(Layer* cp);
-  // #IGNORE the pointers
   
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
@@ -1591,6 +1758,7 @@ public:
 
 //TODO???  TypeDef*	GetDefaultView() { return &TA_NetView; } // #IGNORE default view
   int		Dump_Load_Value(istream& strm, taBase* par=NULL);
+  override int 	Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -1613,7 +1781,7 @@ protected:
 SmartRef_Of(Network)
 
 class PDP_API Network_Group : public taGroup<Network> {
-  // ##CAT_Network a group of networks
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network a group of networks
 INHERITED(taGroup<Network>)
 public:
   

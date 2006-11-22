@@ -1,27 +1,41 @@
 leabra todo list:
 
+* 12ax failing on connect: probably a bug with different con_type during load -- trial syn dep
+  overwriting the memory of the projection (getting null RecvCons)
+
+  * network copy probably not working..  send should not copy. recv not getting units..
+    figure out better system for this
+  * scan_congroups in netdata netmonitor; check
+
+* consolidate the netstru checkconfig stuff once and for all -- not using proper
+  checkerror messages, is confusing, etc
+
+* Explicit Save net needs to override not-saving-weights setting from project!!
+  * rename save_rmv_units -> net_save_no_units;
+
 * program dirty not getting set -- init not recompiling
 
 * dataops: random patterns!
 
 * relnet stat
 
-* convert Connection to basic object, Con_Group to an obj that owns an 
-  array of such things, and recv. send. to list of such objs.
+
 
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
 * change progs to pass data_table in same way network is passed?  maybe not?  why??
 
-* add #CAT to everything in netstru and leabra.h, and fixup comments
+* add #CAT to everything in leabra.h, and fixup comments
 
 -----------
 Program issues
 
 css:
 
+* console cursor only at end
 * set display_width from console (overload qconsole resize event and update)
+* css_console.cpp: complete obj.mbr expressions..
 
 -----------
 Check:
@@ -42,8 +56,6 @@ lower pri:
 * checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
 
 * more color highlighting in general of programs?
-
-* css_console.cpp: complete obj.mbr expressions..
 
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 

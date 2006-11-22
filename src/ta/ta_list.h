@@ -532,7 +532,7 @@ class TA_API int_FixedArray: public taFixedArray<int> { // #INLINE #INLINE_DUMP
 };
 
 class TA_API  taArray_impl {
-  // ##NO_TOKENS Base Type for Arrays, no tokens of which are ever kept
+  // ##NO_TOKENS Base Type for Arrays: physically contiguous allocation of an array of objects
 public:
   int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
   int		alloc_size;		// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size

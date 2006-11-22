@@ -94,7 +94,7 @@ void WrongOnStat::Initialize() {
 
 void LeabraPrjnRelNetinStat::Initialize() {
   min_layer = &TA_LeabraLayer;
-  min_con_group = &TA_LeabraCon_Group;
+  min_con_group = &TA_LeabraRecvCons;
   net_agg.op = Aggregate::GROUP;
   recv_act_thr = .1f;
 }

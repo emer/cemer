@@ -89,7 +89,7 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, Le
     u->ext = u->act_m;		// just use previous minus phase value!
   }
   else {
-    LeabraCon_Group* cg = (LeabraCon_Group*)u->recv.gp[0];
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[0];
     if(cg == NULL) {
       taMisc::Error("*** LeabraContextLayerSpec requires one recv projection!");
       return;
@@ -455,10 +455,9 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     taMisc::CheckError("Error: ScalarValLayerSpec: scalar val layer doesn't have any units:", lay->name);
     rval = false;
   }
-    
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
     if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
@@ -515,9 +514,8 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
       us->g_bar.h = .1f; us->g_bar.a = .1f;
       unit_range.min = 0.0; unit_range.max = 1.0f;
 
-      LeabraCon_Group* recv_gp;
-      int g;
-      FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+      for(int g=0; g<u->recv.size; g++) {
+	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
 	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
 	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
@@ -543,9 +541,8 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
       bias_val.wt = ScalarValBias::NO_WT;
       unit_range.min = 0.0f; unit_range.max = 1.0f;
 
-      LeabraCon_Group* recv_gp;
-      int g;
-      FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+      for(int g=0; g<u->recv.size; g++) {
+	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
 	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
 	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
@@ -571,9 +568,8 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
       bias_val.wt = ScalarValBias::NO_WT;
       unit_range.min = -.5f; unit_range.max = 1.5f;
 
-      LeabraCon_Group* recv_gp;
-      int g;
-      FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+      for(int g=0; g<u->recv.size; g++) {
+	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
 	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
 	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
@@ -600,14 +596,12 @@ void ScalarValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float val) {
   for(i=1;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     float act = .03f * bias_val.wt_gain * scalar.GetUnitAct(i);
-    LeabraCon_Group* recv_gp;
-    int g;
-    FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
       if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
-      int ci;
-      for(ci=0;ci<recv_gp->size;ci++) {
+      for(int ci=0;ci<recv_gp->cons.size;ci++) {
 	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
@@ -628,7 +622,7 @@ void ScalarValLayerSpec::Compute_UnBias_Val(Unit_Group* ugp, float val) {
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_h = act;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias->wt = act;
+      u->bias.Cn(0)->wt = act;
   }
 }
 
@@ -642,7 +636,7 @@ void ScalarValLayerSpec::Compute_UnBias_NegSlp(Unit_Group* ugp) {
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_a = val;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias->wt = -val;
+      u->bias.Cn(0)->wt = -val;
   }
 }
 
@@ -656,7 +650,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp(Unit_Group* ugp) {
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_h = val;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias->wt = val;
+      u->bias.Cn(0)->wt = val;
   }
 }
 
@@ -689,11 +683,11 @@ void ScalarValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
     LeabraConSpec* bspec = (LeabraConSpec*)u->spec.spec->bias_spec.spec;
-    u->clmp_net -= u->bias_scale * u->bias->wt;
+    u->clmp_net -= u->bias_scale * u->bias.Cn(0)->wt;
 
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
     u->bias_scale /= 100.0f; 		  // keep a constant scaling so it doesn't depend on network size!
-    u->clmp_net += u->bias_scale * u->bias->wt;
+    u->clmp_net += u->bias_scale * u->bias.Cn(0)->wt;
   }
 }
 
@@ -968,15 +962,14 @@ void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn) {
   UNIT_GP_ITR(lay, Connect_UnitGroup(ugp, prjn); );
 }
 
-void ScalarValSelfPrjnSpec::C_Init_Weights(Projection*, Con_Group* cg, Unit* ru) {
+void ScalarValSelfPrjnSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit* ru) {
   float neigh1 = 1.0f / wt_width;
   float val1 = expf(-(neigh1 * neigh1));
   float scale_val = wt_max / val1;
 
   int ru_idx = ((Unit_Group*)ru->owner)->Find(ru);
 
-  int i;
-  for(i=0; i<cg->size; i++) {
+  for(int i=0; i<cg->cons.size; i++) {
     Unit* su = cg->Un(i);
     int su_idx = ((Unit_Group*)su->owner)->Find(su);
     float dist = (float)(ru_idx - su_idx) / wt_width;
@@ -1174,9 +1167,8 @@ bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     rval = false;
   }
     
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
     if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
@@ -1231,9 +1223,8 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
       x_range.min = 0.0f; x_range.max = 1.0f;
       y_range.min = 0.0f; y_range.max = 1.0f;
 
-      LeabraCon_Group* recv_gp;
-      int g;
-      FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+      for(int g=0; g<u->recv.size; g++) {
+	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
 	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
 	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
@@ -1259,9 +1250,8 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
       x_range.min = -.5f; x_range.max = 1.5f;
       y_range.min = -.5f; y_range.max = 1.5f;
 
-      LeabraCon_Group* recv_gp;
-      int g;
-      FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+      for(int g=0; g<u->recv.size; g++) {
+	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
 	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
 	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
 	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
@@ -1289,14 +1279,12 @@ void TwoDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_
   for(i=lay->un_geom.x;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     float act = .03f * bias_val.wt_gain * twod.GetUnitAct(i);
-    LeabraCon_Group* recv_gp;
-    int g;
-    FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
       if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
-      int ci;
-      for(ci=0;ci<recv_gp->size;ci++) {
+      for(int ci=0;ci<recv_gp->cons.size;ci++) {
 	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
 	cn->wt += act;
 	if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
@@ -1318,7 +1306,7 @@ void TwoDValLayerSpec::Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_
     if(bias_val.un == TwoDValBias::GC)
       u->vcb.g_h = act;
     else if(bias_val.un == TwoDValBias::BWT)
-      u->bias->wt = act;
+      u->bias.Cn(0)->wt = act;
   }
 }
 
@@ -1343,11 +1331,11 @@ void TwoDValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net) 
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
     LeabraConSpec* bspec = (LeabraConSpec*)u->spec.spec->bias_spec.spec;
-    u->clmp_net -= u->bias_scale * u->bias->wt;
+    u->clmp_net -= u->bias_scale * u->bias.Cn(0)->wt;
 
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
     u->bias_scale /= 100.0f; 		  // keep a constant scaling so it doesn't depend on network size!
-    u->clmp_net += u->bias_scale * u->bias->wt;
+    u->clmp_net += u->bias_scale * u->bias.Cn(0)->wt;
   }
 }
 
@@ -1608,9 +1596,9 @@ void DecodeTwoDValLayerSpec::Compute_Act_impl(LeabraLayer*, Unit_Group* ug, Leab
   LeabraUnit* u;
   taLeafItr ui;
   FOR_ITR_EL(LeabraUnit, u, ug->, ui) {
-    if(u->recv.gp.size == 0) continue;
-    LeabraCon_Group* cg = (LeabraCon_Group*)u->recv.gp[0];
-    if(cg->size == 0) continue;
+    if(u->recv.size == 0) continue;
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[0];
+    if(cg->cons.size == 0) continue;
     LeabraUnit* su = (LeabraUnit*)cg->Un(0);
     u->net = su->net;
     u->act = su->act;
@@ -1688,7 +1676,7 @@ void V1RFPrjnSpec::MakeDoGFilter() {
   dog_spec.UpdateFilter();
 }
 
-void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru) {
+void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   Unit_Group* rugp = (Unit_Group*)ru->GetOwner(&TA_Unit_Group);
   int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
 
@@ -1700,7 +1688,7 @@ void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, Con_Group* cg, Unit* ru) {
 
   int send_x = gabor_spec.x_size;
 
-  for(int i=0; i<cg->size; i++) {
+  for(int i=0; i<cg->cons.size; i++) {
     int su_x = i % send_x;
     int su_y = i / send_x;
     float val = 0.0;

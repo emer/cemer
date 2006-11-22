@@ -198,12 +198,12 @@ public:
   }
 
   // this computes weight changes based on sender at time t-1
-  inline void Compute_dWt(Con_Group* cg, Unit* ru) {
+  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
     DaModUnit* lru = (DaModUnit*)ru;
-    LeabraCon_Group* lcg = (LeabraCon_Group*) cg;
+    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
     Compute_SAvgCor(lcg, lru);
     if(lru->p_act_p >= 0.0f) {
-      for(int i=0; i<lcg->size; i++) {
+      for(int i=0; i<lcg->cons.size; i++) {
 	DaModUnit* su = (DaModUnit*)lcg->Un(i);
 	LeabraCon* cn = (LeabraCon*)lcg->Cn(i);
 	float orig_wt = cn->wt;

@@ -259,7 +259,7 @@ void Process::Initialize() {
   min_network = &TA_Network;
   min_layer = &TA_Layer;
   min_unit = &TA_Unit;
-  min_con_group = &TA_Con_Group;
+  min_con_group = &TA_RecvCons;
   min_con = &TA_Connection;
   type=C_CODE;
   network = NULL;

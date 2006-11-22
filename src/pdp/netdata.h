@@ -235,7 +235,7 @@ public:
 
   ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
   MemberSpace   	members;	// #IGNORE memberdefs
-  taBase_List		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
+  voidptr_Array		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
   SimpleMathSpec 	pre_proc_1;	// #EXPERT first step of pre-processing to perform
   SimpleMathSpec 	pre_proc_2;	// #EXPERT second step of pre-processing to perform
   SimpleMathSpec 	pre_proc_3;	// #EXPERT third step of pre-processing to perform
@@ -279,17 +279,14 @@ protected:
   // these are for finding the members and building the stat
   // out of the objects and the variable
   
-  bool 			ScanObject_InObject(TAPtr obj, String var, 
-					    bool mk_col = false, TAPtr own = NULL);
-  void			ScanObject_Network(Network* net, String var); // #IGNORE
-  void			ScanObject_Layer(Layer* lay, String var); // #IGNORE
-  void			ScanObject_Projection(Projection* p, String var); // #IGNORE
-  void			ScanObject_UnitGroup(Unit_Group* ug, String var, 
-					     bool mk_col = false);	// #IGNORE
-  void			ScanObject_Unit(Unit* u, String var,
-					Projection* p = NULL, bool mk_col = false); // #IGNORE
-  void			ScanObject_ConGroup(Con_Group* cg, String var,
-					    Projection* p = NULL); // #IGNORE note: always makes a col
+  bool 	ScanObject_InObject(TAPtr obj, String var, bool mk_col = false, TAPtr own = NULL);
+  void	ScanObject_Network(Network* net, String var);
+  void	ScanObject_Layer(Layer* lay, String var);
+  void	ScanObject_Projection(Projection* p, String var);
+  void	ScanObject_UnitGroup(Unit_Group* ug, String var, bool mk_col = false);
+  void	ScanObject_Unit(Unit* u, String var, Projection* p = NULL, bool mk_col = false);
+  void	ScanObject_RecvCons(RecvCons_List* cg, String var, Projection* p = NULL);
+  void	ScanObject_SendCons(SendCons_List* cg, String var, Projection* p = NULL);
 
 private:
   void	Initialize();

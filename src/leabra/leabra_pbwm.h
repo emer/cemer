@@ -92,7 +92,7 @@ public:
 
   LearnRule	learn_rule;	// learning rule to use
 
-  inline float C_Compute_Hebb(LeabraCon* cn, LeabraCon_Group* cg, DaModUnit* ru, DaModUnit* su) {
+  inline float C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg, DaModUnit* ru, DaModUnit* su) {
     // wt is negative in linear form, so using opposite sign of usual here
     float rval;
     if((learn_rule == OUTPUT_DELTA) || (learn_rule == OUTPUT_CHL))
@@ -123,12 +123,12 @@ public:
     return err;
   }
 
-  inline void Compute_dWt(Con_Group* cg, Unit* ru) {
+  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
     DaModUnit* lru = (DaModUnit*)ru;
-    LeabraCon_Group* lcg = (LeabraCon_Group*) cg;
+    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
     Compute_SAvgCor(lcg, lru);
     if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<lcg->size; i++) {
+      for(int i=0; i<lcg->cons.size; i++) {
 	DaModUnit* su = (DaModUnit*)lcg->Un(i);
 	LeabraCon* cn = (LeabraCon*)lcg->Cn(i);
 	if(!(su->in_subgp &&

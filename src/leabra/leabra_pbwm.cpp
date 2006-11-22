@@ -361,9 +361,8 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraLayer* da_lay = NULL;
   LeabraLayer* snr_lay = NULL;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, recv_gp, u->recv., g) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from == recv_gp->prjn->layer) // self projection, skip it
       continue;
     if(recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec)) {
@@ -690,7 +689,7 @@ void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mug
   taLeafItr i;
   FOR_ITR_EL(DaModUnit, u, mugp->, i) {
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx % 2); // GO = 0, NOGO = 1
-    LeabraCon_Group* snrcg = (LeabraCon_Group*)u->recv.gp[snr_prjn_idx];
+    LeabraRecvCons* snrcg = (LeabraRecvCons*)u->recv[snr_prjn_idx];
     DaModUnit* snrsu = (DaModUnit*)snrcg->Un(0);
 
     float gating_act = 0.0f;	// activity of the unit during the gating action firing
@@ -761,7 +760,7 @@ void MatrixLayerSpec::Compute_AvgGoDa(LeabraLayer* lay, LeabraNetwork*) {
     if(gate_sig != PFCGateSpec::GATE_GO) continue; // no action
 
     DaModUnit* u = (DaModUnit*)mugp->FastEl(0);
-    LeabraCon_Group* snccg = (LeabraCon_Group*)u->recv.gp[snc_prjn_idx];
+    LeabraRecvCons* snccg = (LeabraRecvCons*)u->recv[snc_prjn_idx];
     DaModUnit* sncsu = (DaModUnit*)snccg->Un(0);
     float raw_da = sncsu->dav;	// need to use raw da here because otherwise negatives don't show up!!
 
@@ -1136,10 +1135,8 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
   }
 
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  LeabraCon_Group* recv_gp;
-  int g;
-  for(g=0;g<u->recv.gp.size; g++) {
-    recv_gp = (LeabraCon_Group*)u->recv.gp[g];
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
     if(fmlay == NULL) {
       if (!quiet) taMisc::CheckError("*** PFCLayerSpec: null from layer in recv projection:", (String)g);
@@ -1174,9 +1171,8 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
 }
 
 void PFCLayerSpec::ResetSynDep(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
-  LeabraCon_Group* send_gp;
-  int g;
-  FOR_ITR_GP(LeabraCon_Group, send_gp, u->send., g) {
+  for(int g=0; g<u->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     if(!send_gp->spec.spec->InheritsFrom(TA_TrialSynDepConSpec)) continue;
     TrialSynDepConSpec* cs = (TrialSynDepConSpec*)send_gp->spec.spec;
     cs->Reset_EffWt(send_gp);
