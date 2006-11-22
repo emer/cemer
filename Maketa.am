@@ -2,12 +2,6 @@
 ${PROJNAME}_TA_type.hx:	${TAHEADS}
 	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
 
-# .hx.h:
-# 	@- $(CMP) $(<F) $(@F) || ($(CP) $(<F) $(@F))
-
-# .ccx.cc:
-# 	@- $(CMP) $(<F) $(@F) || ($(CP) $(<F) $(@F))
-
 ${PROJNAME}_TA_type.h : ${PROJNAME}_TA_type.hx
 	cmp ${PROJNAME}_TA_type.h ${PROJNAME}_TA_type.hx || cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h
 
@@ -22,6 +16,8 @@ force_ta:
 
 do_ta:
 	../maketa/./maketa ${MAKETA_FLAGS} -autohx ${PROJNAME} ${TAHEADS}
+
+${PROJNAME}_TA_inst.hx ${PROJNAME}_TA.ccx:
 
 # Instruct automake to clean these files on make clean
 CLEANFILES =\
