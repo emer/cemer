@@ -1,23 +1,26 @@
-# Rules for running maketa
-${PROJNAME}_TA_type.hx:	${TAHEADS}
-	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
+${PROJNAME}_TA.ccx: ${TAHEADS}
+	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
 
-${PROJNAME}_TA_type.h : ${PROJNAME}_TA_type.hx
-	cmp ${PROJNAME}_TA_type.h ${PROJNAME}_TA_type.hx || cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h
+${PROJNAME}_TA_type.hx ${PROJNAME}_TA_inst.hx: ${PROJNAME}_TA.ccx
+	@if test -f $@; then \
+	  touch $@; \
+	else \
+     ## Recover from the removal of $@
+	  rm -f ${PROJNAME}_TA.ccx; \
+	  $(MAKE) ${PROJNAME}_TA.ccx; \
+	fi
 
-${PROJNAME}_TA_inst.h : ${PROJNAME}_TA_inst.hx
-	cmp ${PROJNAME}_TA_inst.h ${PROJNAME}_TA_inst.hx || cp ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h
+.hx.h:
+	cmp $@ $< || cp $< $@
 
-${PROJNAME}_TA.cpp : ${PROJNAME}_TA.ccx
-	cmp ${PROJNAME}_TA.cpp ${PROJNAME}_TA.ccx || cp ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp
+.ccx.cpp:
+	cmp $@ $< || cp $< $@
 
 force_ta:
-	../maketa/./maketa ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
+	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
 
 do_ta:
-	../maketa/./maketa ${MAKETA_FLAGS} -autohx ${PROJNAME} ${TAHEADS}
-
-${PROJNAME}_TA_inst.hx ${PROJNAME}_TA.ccx:
+	${MAKETA} ${MAKETA_FLAGS} -autohx ${PROJNAME} ${TAHEADS}
 
 # Instruct automake to clean these files on make clean
 CLEANFILES =\
@@ -43,4 +46,6 @@ MAKETA_FLAGS =\
 	-I@abs_srcdir@/../bp \
 	-I${QTDIR}/include/QtCore
 
-BUILT_SOURCES = ${PROJNAME}_TA_type.h ${PROJNAME}_TA_inst.h
+BUILT_SOURCES = ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_inst.hx
+
+MAKETA = ../maketa/./maketa
