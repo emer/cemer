@@ -1,9 +1,6 @@
 dnl 					         PDP_SVN_REVISION
 dnl *************************************************************
-dnl Set SVN_REVISION to the revision of the specified repository
-dnl I suggest you use config.site to make these your default.
-dnl Note that you must pass all three svn args to configure or
-dnl this macro will bail, and SVN_REVISION will be set to 0
+dnl Set SVN_REV to the revision of the local repository
 dnl *************************************************************
 dnl Copyright, 1995-2005, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
@@ -22,46 +19,24 @@ dnl   GNU General Public License for more details.
 AC_DEFUN([PDP_SVN_REVISION],[
 AC_ARG_ENABLE([svn],
 	      AC_HELP_STRING([--enable-svn],
-		             [Try to detect current svn revision]),
+		             [Runs `svn info .' and defines SVN_REV to its output]),
                              [svn=true],
                              [svn=false])
-              
-AC_ARG_ENABLE([svnuser],
-	      AC_HELP_STRING([--enable-svnuser],
-		             [Passes --username=foo to svn]),
-                             [svnuser=true],
-                             [svnuser=false])
-AC_ARG_ENABLE([svnpwd],
-	      AC_HELP_STRING([--enable-svnpwd],
-		             [Passes --password=foo to svn]),
-                             [svnpwd=true],
-                             [svnpwd=false])
-AC_ARG_ENABLE([svnrepo],
-	      AC_HELP_STRING([--enable-svnrepo],
-		             [Passes repository location to svn. Can be http: or svn:]),
-                             [svnrepo=true],
-                             [svnrepo=false])
 
-# If all three were set, proceed
-if test x"$svn" = x"true"; then
-  if test x"$svnuser" -a x"$svnpwd" -a x"$svnrepo"; then
-    AC_CHECK_PROG([HAVE_SVN],[svn],[true],[false])
-    if test x"$HAVE_SVN" = x"true"; then
-      SVN_REV=`svn info --username=$with_svnuser --password=$with_svnpwd $with_svnrepo | grep Revision | sed -r 's/Revision: (@<:@0-9@:>@*)/\1/'`
-      CXXFLAGS="$CXXFLAGS -DSVN_REV=`echo $SVN_REV`"
-    else
-      # Give a warning about the things they must set
-      SIM_AC_CONFIGURATION_WARNING([You must accurately set all four of --enable-svn/svnuser/svnpwd/svnrepo. Revision set to 0.])
-      CXXFLAGS="$CXXFLAGS -DSVN_REV=0"
-      SVN_REV=0
-    fi
+# Run this if either --enable-svn or --enable-debug was set
+if test x"$svn" = x"true" -o x"$debug" = x"true"; then
+  AC_CHECK_PROG([HAVE_SVN],[svn],[true],[false])
+  if test x"$HAVE_SVN" = x"true"; then
+    SVN_REV=`svn info . | grep Revision | sed -r 's/Revision: (@<:@0-9@:>@*)/\1/'`
+  else
+    SIM_AC_CONFIGURATION_WARNING([Unable to locate svn. Revision not set.])
   fi
-else
-  CXXFLAGS="$CXXFLAGS -DSVN_REV=0"
-  SVN_REV=0
+
+CXXFLAGS="$CXXFLAGS -DSVN_REV=`echo $SVN_REV`"
+SIM_AC_CONFIGURATION_SETTING([Svn revision],["$SVN_REV"])
+
 fi
 
-SIM_AC_CONFIGURATION_SETTING([Subversion revision],["$SVN_REV"])
 
 ])
 
@@ -178,10 +153,8 @@ SIM_AC_COMPILER_OPTIMIZATION
 
 dnl 					             PDP_PROG_PDP
 dnl *************************************************************
-dnl This macro checks for the existence of the pdp and css
-dnl executeables in the chosen installation path. E.g., we will
-dnl refuse to overwrite the executeables, instead preferring that
-dnl the user renames them using configure name mangling options.
+dnl This macro checks for the existence of the pdp
+dnl executable in the chosen installation path and emits a warning
 dnl ************************************************************
 AC_DEFUN([PDP_PROG_PDP],[
 # Did the user specify an installation path?
@@ -192,11 +165,6 @@ test x"$exec_prefix" != xNONE && check_path=$exec_prefix/bin
 AC_CHECK_PROG([pdpexists],[pdp++],[true],[false],[${check_path}])
 if test x"${pdpexists}" = x"true"; then
    SIM_AC_CONFIGURATION_WARNING([pdp++ is already installed in ${check_path}. Consider renaming with --program-suffix=SUFFIX])
-fi
-
-AC_CHECK_PROG([cssexists],[css++],[true],[false],[${check_path}])
-if test x"${cssexists}" = x"true"; then
-   SIM_AC_CONFIGURATION_WARNING([css++ is already installed in ${check_path}. Consider renaming with --program-suffix=SUFFIX])
 fi
 ])
 
