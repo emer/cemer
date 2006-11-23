@@ -1,4 +1,4 @@
-#					     -*- Autoconf -*-
+					     -*- Autoconf -*-
 #*************************************************************
 # Process this file with autoconf to produce a configure script.
 #*************************************************************
@@ -88,7 +88,7 @@ fi
 
 AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../pdp -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
 
-#Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
+# Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
 LDFLAGS="$LDFLAGS -L/opt/local/lib" #Harmless insertion for DarwinPorts
 AC_CHECK_LIB([m],[main])
 AC_CHECK_LIB([gslcblas],[main])
@@ -98,11 +98,15 @@ AC_CHECK_LIB([gsl],[main],
               [SIM_AC_CONFIGURATION_SETTING([gsl],[Enabled])],
                [SIM_AC_CONFIGURATION_WARNING([Failed to detect the GNU Scientific Library])])
 
+# svn revision number support
+PDP_SVN_REVISION
+
 # Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
-# Let the codebase know where to find auxiliary files
-CXXFLAGS="$CXXFLAGS -DWHEREAMI=\\\"\$(datadir)\\\""
+# Let the codebase know where to find auxiliary files (in config.h)
+AH_TEMPLATE([WHEREAMI],[blah])
+AC_DEFINE_DIR([WHEREAMI],[datadir])
 
 # --with-readline
 if test "$readline" = "true"; then
