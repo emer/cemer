@@ -197,13 +197,13 @@ public:
   bool		CheckSpec(TAPtr own_obj)   {
     if(own_obj == NULL) return false;
     if(spec == NULL) {
-      taMisc::Error("CheckSpec: spec is NULL in", own_obj->GetPath());
+      taMisc::CheckError("CheckSpec: spec is NULL in", own_obj->GetPath());
       return false;
     }
     if(!spec->InheritsFrom(base_type)) {
-      taMisc::Error("CheckSpec: incorrect type of spec:", spec->GetPath(),
-		    "of type:", spec->GetTypeDef()->name,
-		    "should be at least:", base_type->name,"in object:",own_obj->GetPath());
+      taMisc::CheckError("CheckSpec: incorrect type of spec:", spec->GetPath(),
+			 "of type:", spec->GetTypeDef()->name,
+			 "should be at least:", base_type->name,"in object:",own_obj->GetPath());
       return false;
     }
     return spec->CheckObjectType(own_obj);

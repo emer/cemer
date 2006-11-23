@@ -187,8 +187,6 @@ public:
 class PDP_API ConSpec: public BaseSpec {
   // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection 
 public:
-  TypeDef*	min_con_type;
-  // #HIDDEN #NO_SAVE #TYPE_Connection mimimal con type required for spec (obj is con group)
   Random	rnd;		// #CAT_ConSpec Weight randomization specification
   WeightLimits	wt_limits;	// #CAT_ConSpec limits on weight sign, symmetry
 
@@ -318,6 +316,9 @@ public:
 class PDP_API UnitPtrList: public taPtrList<Unit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of unit pointers, for sending connections
 public:
+  int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  int UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+
   ~UnitPtrList()             { Reset(); }
 };
 
@@ -435,18 +436,16 @@ public:
   int 	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
   int	Dump_Load_Value(istream& strm, taBase* par=NULL);
 
-  virtual void	CopyNetwork(Network* net, Network* cn, RecvCons* cp);
-  // #IGNORE copy entire network
   virtual void	Copy_Weights(const RecvCons* src);
   // #CAT_ObjectMgmt copies weights from other con_group
-  virtual bool	CheckTypes(bool quiet=false);
-  // #MENU #USE_RVAL #CAT_ObjectMgmt check that the object and spec types are all ok
-  virtual bool  CheckSendIdx();
-  // #CAT_ObjectMgmt check validity of send_idx for recv con groups
-
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // #CAT_ObjectMgmt switch any connections using old_sp to using new_sp
 
+  virtual void 	LinkSendCons(Unit* ru);
+  // #CAT_Structure make connection links in all the sending units (assumes that these are initially empty, as after loading or copying)
+
+  int 	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   bool	ChangeMyType(TypeDef* new_type);
   
   void	UpdateAfterEdit();
@@ -460,14 +459,6 @@ public:
 protected:
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
-
-// use this macro to replace the prevalent FOR_ITR_GP used to traverse connection groups
-// in 3.2
-
-#define	FOR_ITR_CON_GP(typ, ptr, gp, idx) \
-  for(idx=0; idx<gp size; idx++) {   \
-    typ* ptr = gp FastEl(idx);
-
 
 class PDP_API RecvCons_List: public taList<RecvCons> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of receiving connections, one per projection
@@ -555,17 +546,10 @@ public:
   virtual bool	ConValuesFromMatrix(float_Matrix& mat, const char* variable);
   // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
 
-  virtual void	CopyNetwork(Network* net, Network* cn, SendCons* cp);
-  // #IGNORE copy entire network: doesn't actually copy here -- just resets and reconnect_load does the work..
-  virtual bool	CheckTypes(bool quiet=false);
-  // #MENU #USE_RVAL #CAT_ObjectMgmt check that the object and spec types are all ok
-  virtual bool 	CheckRecvIdx();
-  // #CAT_ObjectMgmt check validity of recv_idx for send con groups
-
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // #CAT_ObjectMgmt switch any connections using old_sp to using new_sp
 
-
+  int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   bool	ChangeMyType(TypeDef* new_type);
   
   void	UpdateAfterEdit();
@@ -576,6 +560,8 @@ public:
   void	Copy_(const SendCons& cp);
   COPY_FUNS(SendCons, inherited);
   TA_BASEFUNS(SendCons);
+protected:
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
 class PDP_API SendCons_List: public taList<SendCons> {
@@ -812,15 +798,14 @@ public: //
 
   virtual bool	SetConSpec(ConSpec* con_spec);
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE #CAT_Structure set all recv conspecs to con_spec
-  virtual bool	CheckTypes(bool quiet=false);
-  // #MENU #USE_RVAL #CAT_ObjectMgmt check that the object and spec types are all ok
 
   virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // #CAT_Structure switch any units/layers using old_sp to using new_sp
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // #CAT_Structure switch any connections/projections using old_sp to using new_sp
 
-  virtual void	CopyNetwork(Network* anet, Network* cn, Unit* cp); // #IGNORE copy network
+  virtual void 	LinkSendCons();
+  // #CAT_Structure link sending connections based on recv cons (after load, copy)
 
   override int	GetIndex() { return idx; }
   override void	SetIndex(int i) { idx = i; }
@@ -837,8 +822,7 @@ public: //
   TA_BASEFUNS(Unit);
 
 protected:
-  override bool  CheckConfig_impl(bool quiet)
-  { return spec->CheckConfig_Unit(this, quiet); }
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)
@@ -858,8 +842,6 @@ public:
   // #CAT_Projection actually implements specific connection code
   virtual void 	Connect(Projection* prjn);
   // #CAT_Projection connects the network, first removing existing cons, and inits weights
-  virtual void 	ReConnect_Load(Projection* prjn);
-  // #IGNORE re-connects the network after loading based on recv groups only
   virtual int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
   // #CAT_Projection probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
   virtual void 	Init_dWt(Projection* prjn);
@@ -875,8 +857,6 @@ public:
   virtual void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
 
-  virtual void 	CopyNetwork(Network* net, Network* cn, Projection* prjn, Projection* cp);
-  // #CAT_ObjectMgmt copy projection from one network to the other
   virtual int	UseCount();
   // #CAT_ObjectMgmt return number of times this spec is used
   
@@ -912,8 +892,8 @@ public:
   ConSpec_SPtr 		con_spec;	// #CAT_Projection conspec to use for creating connections
   int			recv_idx;	// #READ_ONLY #CAT_Projection receiving con_group index
   int			send_idx;	// #READ_ONLY #CAT_Projection sending con_group index
-  int			recv_n;		// #READ_ONLY #CAT_Projection number of receiving con_groups
-  int			send_n;		// #READ_ONLY #CAT_Projection number of sending con_groups
+  int			recv_n;		// #READ_ONLY #CAT_Projection #DEF_1 number of receiving con_groups allocated to this projection: almost always 1 -- some things won't work right if > 1 (e.g., copying)
+  int			send_n;		// #READ_ONLY #CAT_Projection number of sending con_groups: almost always 1 -- some things won't work right if > 1 (e.g., copying)
 
   bool			projected; 	 // #HIDDEN #CAT_Projection t/f if connected
 
@@ -945,10 +925,8 @@ public:
   // #BUTTON #CONFIRM #CAT_Projection Make all connections for this projection (resets first)
   void 	Connect_impl()		{ spec->Connect_impl(this); }
   // #CAT_Projection actually do the connecting
-  void 	ReConnect_Load();	// #IGNORE
   int 	ProbAddCons(float p_add_con, float init_wt = 0.0) { return spec->ProbAddCons(this, p_add_con, init_wt); }
   // #MENU #USE_RVAL #CAT_Projection probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
-  void 	CopyNetwork(Network* net, Network* cn, Projection* cp) { spec->CopyNetwork(net,cn,this,cp); } // #IGNORE
   void 	Init_dWt()		{ spec->Init_dWt(this); }
   // #MENU #MENU_SEP_BEFORE #CAT_Weights Initialize weight changes for this projection
   void 	Init_Weights()		{ spec->Init_Weights(this); }
@@ -974,11 +952,8 @@ public:
   // #BUTTON #CAT_Projection apply the default conspec to all connections in this prjn
   virtual bool	CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
   // #CAT_Projection check if projection is connected
-  virtual bool	CheckTypes(bool quiet=false);
-  // #BUTTON #USE_RVAL #CAT_ObjectMgmt check that the existing con and con gp types are of the specified types
-  virtual void	FixIndexes();
-  // #MENU #CAT_Projection fix the indicies of the connection groups (other_idx)
-  virtual bool	CheckTypes_impl(bool quiet=false); // #IGNORE
+  virtual void	FixPrjnIndexes();
+  // #MENU #CAT_Projection fix the indicies of the connection groups (recv_idx, send_idx)
 
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // #CAT_Projection switch any connections/projections using old_sp to using new_sp
@@ -1008,6 +983,8 @@ public:
   TA_BASEFUNS(Projection);
 #ifdef TA_GUI
 protected:
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
+
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
 #endif
 };
@@ -1283,7 +1260,7 @@ public:
   // #CAT_Structure prepare to connect the layer (create con_groups)
   virtual void	SyncSendPrjns();
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
-  virtual void  ReConnect_Load();
+  virtual void  LinkSendCons();
   // #IGNORE re-connect the layer after loading
   virtual void	DisConnect();
   // #MENU #CONFIRM #CAT_Structure disconnect layer from all others
@@ -1354,8 +1331,6 @@ public:
   // #MENU #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
   virtual bool	SetConSpec(ConSpec* conspec);
   // #MENU #CAT_Structure set for all unit's connections in layer
-  virtual bool	CheckTypes(bool quiet=false);
-  // #MENU #USE_RVAL #CAT_Structure check that the object and spec types are all ok
   virtual void	FixPrjnIndexes();
   // #MENU #CAT_Structure fix the projection indicies of the connection groups (other_idx)
 
@@ -1393,9 +1368,6 @@ public:
   void		SetDefaultPos();
   // #IGNORE initialize position of layer
 
-  virtual void	CopyNetwork(Network* net, Network* cn, Layer* cp);
-  // #IGNORE copy entire network
-  
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
   virtual void	DMem_SyncNRecvCons();   // #IGNORE syncronize number of receiving connections (share set 0)
@@ -1560,8 +1532,6 @@ public:
   // #CAT_Structure check if network is built 
   virtual bool	CheckConnect(bool quiet=false);
   // #CAT_Structure check if network is connected
-  virtual bool	CheckTypes(bool quiet=false);
-  // #MENU #MENU_ON_Actions #USE_RVAL #MENU_SEP_BEFORE #CAT_ObjectMgmt check that the object and spec types are all ok
 
   virtual void	UpdtAfterNetMod();
   // #CAT_ObjectMgmt update network after any network modification (calls appropriate functions)
@@ -1584,13 +1554,11 @@ public:
   // #MENU #CONFIRM #CAT_Structure layout all the layer's unit groups according to layer group geometry and spacing
   virtual void	PreConnect();
   // #CAT_Structure Prepare to connect this network (make con_groups)
-  virtual void	ReConnect_Load();
-  // #IGNORE ReConnect network after loading
-  virtual void	CopyNetwork(Network* net);
-  // #IGNORE copy entire network
 
+  virtual void	LinkSendCons();
+  // #IGNORE link the sending connections (after loading or copying)
   virtual void	FixPrjnIndexes();
-  // #CAT_Structure fix the projection indicies of the connection groups (other_idx)
+  // #CAT_Structure fix the projection indicies of the connection groups (recv_idx, send_idx)
 
   virtual void	RemoveMonitors();
   // #CAT_ObjectMgmt Remove monitoring of all objects in all processes associated with parent project

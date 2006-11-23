@@ -36,8 +36,7 @@ InitProcRegistrar mod_init(ta_Init_bp);
 //////////////////////////
 
 void BpConSpec::Initialize() {
-  //  min_obj_type = &TA_BpRecvCons; // not applicable
-  min_con_type = &TA_BpCon;
+  min_obj_type = &TA_BpCon;
   lrate = .25f;
   cur_lrate = .25f;
   lrate_sched.interpolate = false;
@@ -230,7 +229,7 @@ void BpUnit::Copy_(const BpUnit& cp) {
 //////////////////////////////////////////
 
 void DeltaBarDeltaBpConSpec::Initialize() {
-  min_con_type = &TA_DeltaBarDeltaBpCon;
+  min_obj_type = &TA_DeltaBarDeltaBpCon;
   lrate_incr = .1f;
   lrate_decr = .9f;
   act_lrate_incr = lrate * lrate_incr;

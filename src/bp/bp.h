@@ -99,7 +99,7 @@ public:
   // set current learning rate based on schedule given epoch
 
   // todo: this is no longer supported -- dwt is hard coded.  hmm.
-  MemberDef* DMem_EpochShareDwtVar() { return min_con_type->members.FindName("dEdW"); }
+  MemberDef* DMem_EpochShareDwtVar() { return min_obj_type->members.FindName("dEdW"); }
   // name of weight-change variable to share across dmem processors in BATCH mode learning
 
   void	UpdateAfterEdit();

@@ -174,7 +174,7 @@ void SynDepSpec::Initialize() {
 }
 
 void TrialSynDepConSpec::Initialize() {
-  min_con_type = &TA_TrialSynDepCon;
+  min_obj_type = &TA_TrialSynDepCon;
 }
 
 void TrialSynDepConSpec::InitLinks() {
@@ -202,7 +202,7 @@ void FastWtSpec::Initialize() {
 }
 
 void FastWtConSpec::Initialize() {
-  min_con_type = &TA_FastWtCon;
+  min_obj_type = &TA_FastWtCon;
 }
 
 void FastWtConSpec::InitLinks() {

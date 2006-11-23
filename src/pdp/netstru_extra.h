@@ -231,7 +231,7 @@ public:
 //////////////////////////////////////////
 
 class PDP_API GpFullPrjnSpec : public FullPrjnSpec {
-  // unit_group based full connectivity with distinct con_groups for each unit group
+  // unit_group based full connectivity with distinct con_groups for each unit group -- this is non-standard and prevents proper copying of a network
 public:
   enum NConGroups {		// number of connection groups for this projection
     RECV_SEND_PAIR,		// create separate con_groups for each recv_send pair

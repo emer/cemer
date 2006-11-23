@@ -22,7 +22,6 @@
 #include "netstru.h"
 #include "netdata.h"
 #include "pdp_project.h"
-//#include "css_qt.h"		// for the cssiSession
 #include "ta_data.h"
 #include "ta_filer.h"
 
@@ -166,9 +165,7 @@ static int conspec_repl_bias_ptr(UnitSpec* us, ConSpec* old, ConSpec* nw) {
 }
 
 void ConSpec::Initialize() {
-  //  min_obj_type = &TA_RecvCons;
-  min_obj_type = &TA_taOBase;	// negate -- could be either Recv or Send..
-  min_con_type = &TA_Connection;
+  min_obj_type = &TA_Connection;
   rnd.type = Random::UNIFORM;
   rnd.mean = 0.0f;
   rnd.var = .5f;
@@ -252,21 +249,19 @@ void ConSpec::Init_Weights_Net() {
 }
 
 bool ConSpec::CheckObjectType_impl(taBase* obj) {
+  TypeDef* con_tp = &TA_Connection;
   if(obj->InheritsFrom(TA_RecvCons)) {
-    if((obj->GetOwner()) && obj->GetOwner()->InheritsFrom(TA_Unit))
-      return true;		// don't do checking on 1st con group in unit..
+    con_tp = ((RecvCons*)obj)->con_type;
   }
-  else if(obj->InheritsFrom(TA_Connection)) {
-    if(!obj->InheritsFrom(min_con_type))
-      return false;
-    return true;
+  else if(obj->InheritsFrom(TA_SendCons)) {
+    con_tp = ((SendCons*)obj)->con_type;
   }
   else if(obj->InheritsFrom(TA_Projection)) {
-    if(!((Projection*)obj)->con_type->InheritsFrom(min_con_type))
-      return false;
-    return true;
+    con_tp = ((Projection*)obj)->con_type;
   }
-  return BaseSpec::CheckObjectType_impl(obj);
+  if(!con_tp->InheritsFrom(min_obj_type))
+    return false;
+  return true;
 }
 
 void ConSpec::ApplySymmetry(RecvCons* cg, Unit* ru) {
@@ -345,6 +340,72 @@ bool ConArray::RemoveIdx(int i) {
 }
 
 /////////////////////////////////////////////////////////////////////
+//	UnitPtrList
+
+int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) { 
+  int nchg = 0;
+  if(old_par->InheritsFrom(&TA_Network) && new_par->InheritsFrom(&TA_Network)) {
+    // this is optimized for networks to use the getmyleafindex
+    Network* nw_net = (Network*)new_par;
+    Network* old_net = (Network*)old_par;
+    for(int i=size-1; i >= 0; i--) {
+      Unit* itm = FastEl(i);
+      if(!itm) continue;
+      Layer* old_lay = GET_OWNER(itm,Layer);
+      int lidx = old_net->layers.FindLeaf(old_lay);
+      int uidx = itm->GetMyLeafIndex();
+      if((lidx >= 0) && (uidx >= 0)) {
+	Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
+	if(nw_lay) {
+	  Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
+	  if(nw_un) {
+	    ReplaceLink(i, nw_un);
+	    nchg++;
+	  }
+	  else {
+	    Remove(i);
+	  }
+	}
+      }
+    }
+  }
+  else {
+    for(int i=size-1; i >= 0; i--) {
+      Unit* itm = FastEl(i);
+      if(!itm) continue;
+      taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
+      if(old_own != old_par) continue;
+      String old_path = itm->GetPath(NULL, old_par);
+      Unit* nitm = (Unit*)new_par->FindFromPath(old_path);
+      if(nitm) {
+	ReplaceLink(i, nitm);
+	nchg++;
+      }
+      else {
+	Remove(i);
+      }
+    }
+  }
+  return nchg;
+}
+
+int UnitPtrList::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  int nchg = 0;
+  for(int i=size-1; i>=0; i--) {
+    Unit* itm = FastEl(i);
+    if(!itm) continue;
+    if(itm == old_ptr) {	   // if it is the old guy, it is by defn a link because we're not the owner..
+      if(!new_ptr)		   // if replacement is null, just remove it
+	Remove(i);
+      else
+	ReplaceLink(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
+      nchg++;
+    }
+  }
+  return nchg;
+}
+
+/////////////////////////////////////////////////////////////////////
 //	RecvCons
 
 int RecvCons::Idx = 0;
@@ -352,7 +413,6 @@ int RecvCons::Idx = 0;
 void RecvCons::Initialize() {
   // derived classes need to set new basic con types
   con_type = &TA_Connection;
-  // cons.SetType(&TA_Connection);
   prjn = NULL;
   send_idx = -1;
 }
@@ -375,10 +435,10 @@ void RecvCons::Copy_(const RecvCons& cp) {
   // just do a full copy here
   SetConType(cp.con_type);
   cons = cp.cons;
-  units.Borrow(cp.units);
+  units.Borrow(cp.units);	// note: updated in UpdatePointers_newpar after network copy
   spec = cp.spec;
   taBase::SetPointer((taBase**)&prjn, cp.prjn);
-  send_idx = -1;		// reset, who knows!
+//   send_idx = cp.send_idx;	// do not copy: updated in FixPrjnIndexes after network copy
 }
 
 void RecvCons::UpdateAfterEdit() {
@@ -394,45 +454,70 @@ void RecvCons::SetConType(TypeDef* cn_tp) {
 
 void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
   inherited::CheckThisConfig_impl(quiet, rval);
+
+  if(!spec.CheckSpec()) {
+    rval = false;
+    return;			// fatal!
+  }
+  if(!prjn) {
+    if(!quiet)
+      taMisc::CheckError("RecvCons:",GetPath(),"has null projection! (Connect will fix)");
+    rval = false;
+    return; 			// fatal!
+  }
+  if(GetTypeDef() != prjn->recvcons_type) {
+    if(!quiet)
+      taMisc::CheckError("RecvCons:",GetPath(),"type does not match recvcons_type for projection:",prjn->GetPath(), "type should be:", prjn->recvcons_type->name);
+    prjn->projected = false;
+    rval = false;
+  }
+  if(con_type != prjn->con_type) {
+    if(!quiet)
+      taMisc::CheckError("RecvCons:",GetPath(),"connection type does not match con_type for projection:",prjn->GetPath(), "type should be:", prjn->con_type->name);
+    prjn->projected = false;
+    rval = false;
+  }
+  if(cons.size > 0) {		// connections exist
+    if((send_idx < 0) || (send_idx != prjn->send_idx)) {
+      if(!quiet)
+	taMisc::CheckError("RecvCons:", GetPath(), "has unset send_idx, do FixPrjnIndexes or Connect");
+      prjn->projected = false;
+      rval = false;
+    }
+
+    Unit* su = Un(0);
+    if(su->send.size <= send_idx) {
+      if(!quiet)
+	taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
+			 "is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network");
+      prjn->projected = false;
+      rval = false;
+    }
+    else {
+      SendCons* sucg = su->send.FastEl(send_idx);
+      if(sucg->prjn != prjn) {
+	if(!quiet)
+	  taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
+			   "doesn't have correct prjn on sending unit.  Do Actions/Remove Cons, then Build, Connect on Network");
+	prjn->projected = false;
+	rval = false;
+      }
+    }
+  }
   if (!spec->CheckConfig_RecvCons(this, quiet)) 
     rval = false; 
 }
 
-bool RecvCons::CheckTypes(bool quiet) {
-  if(!spec.CheckSpec())
-    return false;
-  if((prjn == NULL) && (cons.size > 0)) {
-    if(!quiet)
-      taMisc::CheckError("ConGroup:",GetPath(),"has null projection!, do Connect All");
-    return false;
-  }
-  if((cons.size > 0) && (send_idx < 0)) {
-    if(!quiet)
-      taMisc::CheckError("ConGroup:", GetPath(), "has unset send_idx, do FixPrjnIndexes or Connect All");
-    return false;
-  }
-  return true;
+int RecvCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) { 
+  int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
+  nchg += units.UpdatePointers_NewPar(old_par, new_par);
+  return nchg;
 }
 
-bool RecvCons::CheckSendIdx() {
-  if(cons.size == 0) return true;
-  if((send_idx < 0) || (send_idx != prjn->send_idx)) {
-    taMisc::CheckError("recv ConGroup:", GetPath(), "has unset send_idx or doesn't match prjn, do FixPrjnIndexes or Connect All");
-    return false;
-  }
-  Unit* su = Un(0);
-  if(su->send.size <= send_idx) {
-    taMisc::CheckError("recv ConGroup:", GetPath(), "send_idx", String(send_idx),
-		  "is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network");
-    return false;
-  }
-  SendCons* sucg = su->send.FastEl(send_idx);
-  if(sucg->prjn != prjn) {
-    taMisc::CheckError("recv ConGroup:", GetPath(), "send_idx", String(send_idx),
-		  "doesn't have correct prjn on sending unit.  Do Actions/Remove Cons, then Build, Connect on Network");
-    return false;
-  }
-  return true;
+int RecvCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
+  nchg += units.UpdatePointers_NewObj(old_ptr, new_ptr);
+  return nchg;
 }
 
 void RecvCons::Copy_Weights(const RecvCons* src) {
@@ -440,38 +525,6 @@ void RecvCons::Copy_Weights(const RecvCons* src) {
   int i;
   for(i=0; i < mx; i++)
     Cn(i)->wt = src->Cn(i)->wt;
-}
-
-void RecvCons::CopyNetwork(Network* net, Network* cn, RecvCons* cp) {
-  // basically does replacepointers on the relevant stuff..
-  MemberDef* md;
-  String path;
-  send_idx = cp->send_idx;
-  units.Reset();		// always reset the units, cuz they're going to be wrong..
-  cons = cp->cons;	// do a standard copy of the connections only
-  for(int i=0; i<cp->units.size; i++) {
-    Unit* au = cp->Un(i);
-    if(!au) continue;
-    Layer* au_lay = GET_OWNER(au,Layer);
-    if(au_lay->own_net) {
-      int lidx = au_lay->own_net->layers.FindLeaf(au_lay);
-      int uidx = au->GetMyLeafIndex();
-      if((lidx >= 0) && (uidx >= 0)) {
-	Layer* nw_lay = (Layer*)net->layers.Leaf(lidx);
-	if(nw_lay) {
-	  Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
-	  if(nw_un)
-	    units.Link(nw_un);
-	}
-      }
-    }
-  }
-  if(cp->prjn) {
-    path = cp->prjn->GetPath(NULL, cn);
-    Projection* nw_prjn = (Projection*)net->FindFromPath(path, md);
-    if(nw_prjn)
-      taBase::SetPointer((taBase**)&prjn, nw_prjn);
-  }
 }
 
 bool RecvCons::ChangeMyType(TypeDef*) {
@@ -485,6 +538,24 @@ int RecvCons::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
 //   spec.SetSpec(new_sp);
   return 1;
 }
+
+void RecvCons::LinkSendCons(Unit* ru) {
+  for(int j=0; j< units.size; j++) {
+    Unit* su = Un(j);
+    if(!su) continue;
+
+    SendCons* send_gp = NULL;
+    if(send_idx >= 0)
+      send_gp = su->send.SafeEl(send_idx);
+    if(!send_gp)
+      send_gp = su->send.FindPrjn(prjn);
+    if(send_gp) {
+      send_gp->units.LinkUnique(ru);
+      send_gp->cons.LinkUnique(Cn(j));
+    }
+  }
+}
+
 
 /////////////////////////////////////////////////////////////
 // 	Connection Creation/Deletion
@@ -1112,7 +1183,6 @@ int SendCons::Idx = 0;
 void SendCons::Initialize() {
   // derived classes need to set new basic con types
   con_type = &TA_Connection;
-  // cons.SetType(&TA_Connection);
   prjn = NULL;
   recv_idx = -1;
 }
@@ -1131,13 +1201,13 @@ void SendCons::CutLinks() {
 }
 
 void SendCons::Copy_(const SendCons& cp) {
-  // just do a full copy here
   SetConType(cp.con_type);
-  cons.Borrow(cp.cons);
-  units.Borrow(cp.units);
+  // do not copy these: they are updated in LinkSendCons after network copy
+//   cons.Borrow(cp.cons);
+//   units.Borrow(cp.units);
   spec = cp.spec;
   taBase::SetPointer((taBase**)&prjn, cp.prjn);
-  recv_idx = -1;		// reset, who knows!
+//   recv_idx = cp.recv_idx; // do not copy: updated in FixPrjnIndexes after network copy
 }
 
 void SendCons::UpdateAfterEdit() {
@@ -1145,41 +1215,59 @@ void SendCons::UpdateAfterEdit() {
   spec.CheckSpec();
 }
 
-bool SendCons::CheckTypes(bool quiet) {
-  if(!spec.CheckSpec())
-    return false;
-  if((prjn == NULL) && (cons.size > 0)) {
-    if(!quiet)
-      taMisc::CheckError("SendCons:",GetPath(),"has null projection!, do Connect All");
-    return false;
-  }
-  if((cons.size > 0) && (recv_idx < 0)) {
-    if(!quiet)
-      taMisc::CheckError("SendCons:", GetPath(), "has unset send_idx, do FixPrjnIndexes or Connect All");
-    return false;
-  }
-  return true;
+int SendCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
+  nchg += units.UpdatePointers_NewObj(old_ptr, new_ptr);
+  return nchg;
 }
 
-bool SendCons::CheckRecvIdx() {
-  if(cons.size == 0) return true;
-  if((recv_idx < 0) || (recv_idx != prjn->recv_idx)) {
-    taMisc::CheckError("SendCons:", GetPath(), "has unset recv_idx or doesn't match prjn, do FixPrjnIndexes or Connect All");
-    return false;
+void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
+  inherited::CheckThisConfig_impl(quiet, rval);
+
+  if(!spec.CheckSpec()) {
+    rval = false;
+    return;			// fatal!
   }
-  Unit* ru = Un(0);
-  if(ru->recv.size <= recv_idx) {
-    taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
-		  "is out of range on recv unit. Do Actions/Remove Cons, then Build, Connect on Network");
-    return false;
+  if(!prjn) {
+    if(!quiet)
+      taMisc::CheckError("SendCons:",GetPath(),"has null projection! (Connect will fix)");
+    rval = false;
+    return; 			// fatal!
   }
-  RecvCons* rucg = ru->recv.FastEl(recv_idx);
-  if(rucg->prjn != prjn) {
-    taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
-		  "doesn't have correct prjn on recv unit.  Do Actions/Remove Cons, then Build, Connect on Network");
-    return false;
+  if(GetTypeDef() != prjn->sendcons_type) {
+    if(!quiet)
+      taMisc::CheckError("SendCons:",GetPath(),"type does not match sendcons_type for projection:",prjn->GetPath(), "type should be:", prjn->sendcons_type->name);
+    prjn->projected = false;
+    rval = false;
   }
-  return true;
+  if(con_type != prjn->con_type) {
+    if(!quiet)
+      taMisc::CheckError("SendCons:",GetPath(),"connection type does not match con_type for projection:",prjn->GetPath(), "type should be:", prjn->con_type->name);
+    prjn->projected = false;
+    rval = false;
+  }
+  if(cons.size > 0) {		// connections exist
+    if((recv_idx < 0) || (recv_idx != prjn->recv_idx)) {
+      if(!quiet)
+	taMisc::CheckError("SendCons:", GetPath(), "has unset recv_idx, do FixPrjnIndexes or Connect");
+      rval = false;
+    }
+
+    Unit* ru = Un(0);
+    if(ru->recv.size <= recv_idx) {
+      taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
+			 "is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network");
+      rval = false;
+    }
+    else {
+      RecvCons* rucg = ru->recv.FastEl(recv_idx);
+      if(rucg->prjn != prjn) {
+	taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
+			   "doesn't have correct prjn on recv unit.  Do Actions/Remove Cons, then Build, Connect on Network");
+	rval = false;
+      }
+    }
+  }
 }
 
 bool SendCons::ChangeMyType(TypeDef*) {
@@ -1192,22 +1280,6 @@ int SendCons::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   taBase::SetPointer((taBase**)&spec.spec, new_sp);
 //   spec.SetSpec(new_sp);
   return 1;
-}
-
-void SendCons::CopyNetwork(Network* net, Network* cn, SendCons* cp) {
-  // basically does replacepointers on the relevant stuff..
-  MemberDef* md;
-  String path;
-  recv_idx = cp->recv_idx;
-  units.Reset();		// always reset the units, cuz they're going to be wrong..
-  cons.Reset();			// same with these -- links
-  // just have both of these copied in ReConnect_Load
-  if(cp->prjn) {
-    path = cp->prjn->GetPath(NULL, cn);
-    Projection* nw_prjn = (Projection*)net->FindFromPath(path, md);
-    if(nw_prjn)
-      taBase::SetPointer((taBase**)&prjn, nw_prjn);
-  }
 }
 
 void SendCons::SetConType(TypeDef* cn_tp) {
@@ -1446,24 +1518,19 @@ void UnitSpec::Copy_(const UnitSpec& cp) {
 }
 
 bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  bool rval = true;
-  for(int g = 0; g < un->recv.size; g++) {
-    RecvCons* recv_gp = un->recv.FastEl(g);
-    recv_gp->CheckConfig(quiet, rval);
-  }
-  return rval;
+  return true;
 }
 
 void UnitSpec::CheckThisConfig_impl(bool quiet, bool& ok) {
   inherited::CheckThisConfig_impl(quiet, ok);
   if (bias_con_type && bias_spec.spec &&
-    !bias_con_type->InheritsFrom(bias_spec.spec->min_con_type)) 
+    !bias_con_type->InheritsFrom(bias_spec.spec->min_obj_type)) 
   {
     ok = false;
-    if (!quiet) taMisc::CheckError("Bias con type of:", bias_con_type->name,
-		  "is not of the correct type for the bias con spec,"
-		  "which needs at least a:", bias_spec.spec->min_con_type->name);
-
+    if (!quiet)
+      taMisc::CheckError("Bias con type of:", bias_con_type->name,
+			 "is not of the correct type for the bias con spec,"
+			 "which needs at least a:", bias_spec.spec->min_obj_type->name);
   }
 }
 
@@ -1717,46 +1784,6 @@ int Unit::GetMyLeafIndex() {
 int Unit::dmem_this_proc = 0;
 #endif
 
-// todo: change con_group's replacepointers fun to only op on cons or units
-// and to properly get the units..
-
-// void Unit::ReplacePointersHook(taBase* old) {
-//   Unit* ou = (Unit*)old;
-//   // now go through and replace all pointers to unit
-//   Network* own_net = GET_MY_OWNER(Network);
-//   if(own_net) {
-//     Layer* l;
-//     taLeafItr li;
-//     FOR_ITR_EL(Layer, l, own_net->layers., li) {
-//       Unit* u;
-//       taLeafItr ui;
-//       FOR_ITR_EL(Unit, u, l->units., ui) {
-// 	if(u == ou) continue;
-// 	int g;
-// 	for(g=0; g < u->recv.size; g++) {
-// 	  RecvCons* cg = u->recv.FastEl(g);
-// 	  int i;
-// 	  for(i=0;i<cg->units.size;i++) {
-// 	    if(cg->Un(i) == ou)
-// 	      cg->units.ReplaceLink(i, this);
-// 	  }
-// 	}
-// 	for(g=0; g < u->send.size; g++) {
-// 	  SendCons* cg = u->send.FastEl(g);
-// 	  int i;
-// 	  for(i=0;i<cg->units.size;i++) {
-// 	    if(cg->Un(i) == ou)
-// 	      cg->units.ReplaceLink(i, this);
-// 	  }
-// 	}
-//       }
-//     }
-//   }
-//   ou->recv.Reset();		// get rid of old connectivity
-//   ou->send.Reset();
-//   taNBase::ReplacePointersHook(old);
-// }
-
 void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran) {
   // note: not all flag values are valid, so following is a fuzzy cascade
   // ext is the default place, so we check for 
@@ -1772,16 +1799,6 @@ void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran) {
       SetExtFlag(Unit::TARG);
     else if (act_ext_flags & Unit::COMP)
       SetExtFlag(Unit::COMP);
-  }
-}
-
-void Unit::CopyNetwork(Network* anet, Network* cn, Unit* cp) {
-  int g;
-  for(g=0; g<recv.size && g<cp->recv.size; g++) {
-    (recv.FastEl(g))->CopyNetwork(anet, cn, cp->recv.FastEl(g));
-  }
-  for(g=0; g<send.size && g<send.size; g++) {
-    (send.FastEl(g))->CopyNetwork(anet, cn, cp->send.FastEl(g));
   }
 }
 
@@ -1802,45 +1819,37 @@ bool Unit::Build() {
   return rval;
 }
 
+void Unit::CheckThisConfig_impl(bool quiet, bool& rval) { 
+  inherited::CheckThisConfig_impl(quiet, rval);
+
+  if(!spec.CheckSpec()) {
+    rval = false;
+    return;			// fatal
+  }
+  if(!spec->CheckConfig_Unit(this, quiet))
+    rval = false;
+}
+
 bool Unit::CheckBuild(bool quiet) {
   if(!spec.spec) {
     if(!quiet)
       taMisc::CheckError("Unit CheckBuild: no unit spec set for unit:", GetPath());
     return false;
   }
-  if(spec->bias_con_type == NULL) {
+  if(!spec->bias_con_type) {
     if(bias.cons.size) {
       if(!quiet)
 	taMisc::CheckError("Unit CheckBuild: bias weight exists but no type for unit:", GetPath());
-      return false;		// todo: error messages
+      return false;
     }
   }
   else {
-    if((bias.cons.size == 0) || (bias.con_type != spec->bias_con_type)) {
+    if(!bias.cons.size || (bias.con_type != spec->bias_con_type)) {
       if(!quiet)
 	taMisc::CheckError("Unit CheckBuild: bias weight null or not same type for unit:",
  		      GetPath()," type should be:", spec->bias_con_type->name);
        return false;
-     }
-  }
-  return true;
-}
-
-bool Unit::CheckTypes(bool quiet) {
-  if(!spec.CheckSpec())
-    return false;
-  // todo: not working; not clear if useful..
-//   if(spec->bias_con_type) {
-//     if(!spec->bias_spec.CheckSpec(&bias))
-//       return false;
-//   }
-  for(int g = 0; g < recv.size; g++) {
-    RecvCons* recv_gp = recv.FastEl(g);
-    if(!recv_gp->CheckTypes(quiet)) return false;
-  }
-  for(int g = 0; g < send.size; g++) {
-    SendCons* sg = send.FastEl(g);
-    if(!sg->CheckTypes(quiet)) return false;
+    }
   }
   return true;
 }
@@ -1883,6 +1892,13 @@ int Unit::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
     nchg += send_gp->ReplaceConSpec(old_sp, new_sp);
   }
   return nchg;
+}
+
+void Unit::LinkSendCons() {
+  for(int g=0; g<recv.size; g++) {
+    RecvCons* recv_gp = recv.FastEl(g);
+    recv_gp->LinkSendCons(this);
+  }
 }
 
 RecvCons* Unit::rcg_rval = NULL;
@@ -2344,59 +2360,6 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
   }
 }
 
-// reconnect based on data in the recv groups only (ie after loading)
-void ProjectionSpec::ReConnect_Load(Projection* prjn) {
-  if((prjn->from == NULL) || (prjn->layer == NULL))
-    return;
-
-  Unit* ru;
-  taLeafItr ru_itr;
-  FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
-    if(ru->spec.spec == NULL)
-      taMisc::Error("Spec is NULL in Unit:",ru->GetPath(),"will crash if not fixed!");
-    for(int g = 0; g < ru->recv.size; g++) {
-      RecvCons* recv_gp = ru->recv.FastEl(g);
-      if(recv_gp->prjn != prjn)
-	continue;
-      if(recv_gp->spec.spec == NULL)
-	taMisc::Error("Spec is NULL in RecvCons:",recv_gp->GetPath(),"will crash if not fixed!");
-      for(int j=0; j<recv_gp->units.size; j++) {
-	Unit* su = recv_gp->Un(j);
-	if(su == NULL)
-	  continue;
-
-	SendCons* send_gp = NULL;
-	if(recv_gp->send_idx >= 0)
-	  send_gp = su->send.SafeEl(recv_gp->send_idx);
-	if(!send_gp)
-	  send_gp = su->send.FindPrjn(prjn);
-	if(send_gp) {
-	  if(!send_gp->spec.spec)
-	    taMisc::Error("Spec is NULL in RecvCons:",send_gp->GetPath(),"will crash if not fixed!");
-	  send_gp->units.LinkUnique(ru);
-	  send_gp->cons.LinkUnique(recv_gp->Cn(j));
-	}
-      }
-    }
-  }
-}
-
-void ProjectionSpec::CopyNetwork(Network* net, Network* cn, Projection* prjn, Projection* cp) {
-  MemberDef* md;
-  String path;
-  if(cp->from) {
-    path = cp->from->GetPath(NULL, cn); // path of old layer
-    Layer* nw_lay = (Layer*)net->FindFromPath(path, md);	// find under nw net
-    if(nw_lay)
-      taBase::SetPointer((taBase**)&(prjn->from), nw_lay);
-  }
-  prjn->recv_idx = cp->recv_idx;
-  prjn->send_idx = cp->send_idx;
-  prjn->recv_n = cp->recv_n;
-  prjn->send_n = cp->send_n;
-  prjn->projected = cp->projected;
-}
-
 void ProjectionSpec::PreConnect(Projection* prjn) {
   if(prjn->from == NULL)	return;
 
@@ -2434,7 +2397,7 @@ bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
       taMisc::CheckError("Projection CheckConnect: ", prjn->name, "is not connected!");
     return false;
   }
-  if(prjn->con_spec.spec == NULL) {
+  if(!prjn->con_spec.spec) {
     if(!quiet)
       taMisc::CheckError("Projection CheckConnect: ", prjn->name, "has null con_spec");
     return false;
@@ -2521,12 +2484,12 @@ void Projection::Copy_(const Projection& cp) {
   recvcons_type = cp.recvcons_type;
   sendcons_type = cp.sendcons_type;
   con_spec = cp.con_spec;
-  // not to copy!
-  // recv_idx = cp.recv_idx;
-  // send_idx = cp.send_idx;
-  // recv_n = cp.recv_n;
-  // send_n = cp.send_n;
-  // projected = cp.projected;
+  // note: these are not copied; fixed after network copy in FixPrjnIndexes
+//   recv_idx = cp.recv_idx;
+//   send_idx = cp.send_idx;
+//   recv_n = cp.recv_n;
+//   send_n = cp.send_n;
+//   projected = cp.projected;
 }
 
 void Projection::UpdateAfterEdit() {
@@ -2538,7 +2501,6 @@ void Projection::UpdateAfterEdit() {
     name = "Fm_" + from->name;
   if(taMisc::is_loading) return;
   ApplyConSpec();
-  CheckTypes_impl(false);	// not quiet
   if(!taMisc::gui_active) return;
   Network* net = GET_MY_OWNER(Network);
   if(!net) return;
@@ -2676,25 +2638,7 @@ void Projection::WeightsToTable(DataTable* dt) {
   //TODO: in v4, clients like env must add their own datalink to net and act on the DataXXX events
 //  env->InitAllViews(); */
 }
-/*obs #ifdef TA_GUI
-void Projection::SetFromPoints(float x1,float y1){
-  if(proj_points == NULL){
-    proj_points = new Xform();
-    taBase::Own(proj_points,this);
-  }
-  proj_points->a00 = x1;
-  proj_points->a01 = y1;
-}
 
-void Projection::SetToPoints(float x1,float y1){
-  if(proj_points == NULL){
-    proj_points = new Xform();
-    taBase::Own(proj_points,this);
-  }
-  proj_points->a10 = x1;
-  proj_points->a11 = y1;
-}
-#endif */
 void Projection::SetFrom() {
   if(layer == NULL) {
     from = NULL;
@@ -2812,28 +2756,32 @@ bool Projection::ApplyConSpec() {
   return true;
 }
 
-void Projection::FixIndexes() {
+void Projection::FixPrjnIndexes() {
+  projected = false;
   if((layer == NULL) || (from == NULL)) return;
+  if((layer->units.leaves == 0) || (from->units.leaves == 0)) return;
+  Unit* ru = layer->units.Leaf(0);
+  Unit* su = from->units.Leaf(0);
+  ru->recv.FindPrjn(this, recv_idx);
+  su->recv.FindPrjn(this, send_idx);
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
-    int g;
-    for(g=0; g<u->recv.size; g++) {
+    for(int g=0; g<u->recv.size; g++) {
       RecvCons* recv_gp = u->recv.FastEl(g);
-      if(recv_gp->prjn == this) {
-	recv_gp->send_idx = send_idx;
-      }
+      if(recv_gp->prjn != this) continue;
+      recv_gp->send_idx = send_idx;
     }
   }
   FOR_ITR_EL(Unit, u, from->units., i) {
     int g;
     for(g=0; g<u->send.size; g++) {
       SendCons* send_gp = u->send.FastEl(g);
-      if(send_gp->prjn == this) {
-	send_gp->recv_idx = recv_idx;
-      }
+      if(send_gp->prjn != this) continue;
+      send_gp->recv_idx = recv_idx;
     }
   }
+  projected = true;
 }
 
 int Projection::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
@@ -2850,86 +2798,25 @@ int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) 
   return 1;
 }
 
-
-void Projection::ReConnect_Load() {
-  if(spec.spec == NULL) {
-    taMisc::Error("Spec is NULL in projection:",GetPath(),"will crash if not fixed!");
-    return;
+void Projection::CheckThisConfig_impl(bool quiet, bool& rval) { 
+  inherited::CheckThisConfig_impl(quiet, rval);
+  
+  if(!spec.CheckSpec()) {
+    rval = false;
+    return;			// fatal!
   }
-  spec->ReConnect_Load(this);
-}
-
-bool Projection::CheckTypes(bool quiet) {
-  if(!spec.CheckSpec())
-    return false;
-  if(!CheckTypes_impl(quiet)) {
+  if(recvcons_type == &TA_RecvCons) {
     if(!quiet)
-      taMisc::CheckError("Projection CheckTypes: Connection, RecvCons, or spec types for projection:",GetPath(),
-		    "are not correct, perform 'Connect' to rectify");
-    return false;
+      taMisc::CheckError("Projection:",GetPath(),"recvcons_type is base type; should be special one for specific algorithm");
+    projected = false;
+    rval = false;
   }
-  return true;
-}
-
-bool Projection::CheckTypes_impl(bool quiet) {
-  if(!layer || !from) return true; // silent bail for unconnected?
-  if(!spec.spec) {
+  if(sendcons_type == &TA_SendCons) {
     if(!quiet)
-      taMisc::CheckError("Projection CheckTypes: spec is null for projection:",GetPath());
-    return false;
+      taMisc::CheckError("Projection:",GetPath(),"sendcons_type is base type; should be special one for specific algorithm");
+    projected = false;
+    rval = false;
   }
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i) {
-    int g;
-    for(g=0; g<u->recv.size; g++) {
-      RecvCons* recv_gp = u->recv.FastEl(g);
-      if(recv_gp->prjn == this) {
-	if(!con_spec.CheckSpec(recv_gp)) {
-	  projected = false;
-	  return false;
-	}
-	if(recv_gp->GetTypeDef() != recvcons_type) {
-	  if(!quiet)
-	    taMisc::CheckError("Projection CheckTypes: recv_gp type does not match recvcons_type for projection:",GetPath(), "type should be:", recvcons_type->name);
-	  projected = false;
-	  return false;
-	}
-	if(recv_gp->con_type != con_type) {
-	  if(!quiet)
-	    taMisc::CheckError("Projection CheckTypes: recv connection type does not match con_type for projection:",GetPath(), "type should be:", con_type->name);
-	  projected = false;
-	  return false;
-	}
-      }
-    }
-  }
-  // also do the from!
-  FOR_ITR_EL(Unit, u, from->units., i) {
-    int g;
-    for(g=0; g<u->send.size; g++) {
-      SendCons* send_gp = u->send.FastEl(g);
-      if(send_gp->prjn == this) {
-	if(!con_spec.CheckSpec(send_gp)) {
-	  projected = false;
-	  return false;
-	}
-	if(send_gp->GetTypeDef() != sendcons_type) {
-	  if(!quiet)
-	    taMisc::CheckError("Projection CheckTypes: send_gp type does not match sendcons_type for projection:",GetPath(), "type should be:", sendcons_type->name);
-	  projected = false;
-	  return false;
-	}
-	if(send_gp->con_type != con_type) {
-	  if(!quiet)
-	    taMisc::CheckError("Projection CheckTypes: send connection type does not match con_type for projection:",GetPath(), "type should be:", con_type->name);
-	  projected = false;
-	  return false;
-	}
-      }
-    }
-  }
-  return true;
 }
 
 void Projection::Copy_Weights(const Projection* src) {
@@ -3551,27 +3438,6 @@ void Layer::ConnectFrom(Layer* from_lay) {
   net->FindMakePrjn(this, from_lay);
 }
 
-void Layer::CopyNetwork(Network* net, Network* cn, Layer* lay) {
-  Projection* p;
-  taLeafItr pi;
-  Projection* cp;
-  taLeafItr cpi;
-  for(p = (Projection*)projections.FirstEl(pi), cp = (Projection*)lay->projections.FirstEl(cpi);
-      p && cp;
-      p = (Projection*)projections.NextEl(pi), cp = (Projection*)lay->projections.NextEl(cpi)) {
-    p->CopyNetwork(net, cn, cp);
-  }
-  Unit* u;
-  taLeafItr ui;
-  Unit* cu;
-  taLeafItr cui;
-  for(u = (Unit*)units.FirstEl(ui), cu = (Unit*)lay->units.FirstEl(cui);
-      u && cu;
-      u = (Unit*)units.NextEl(ui), cu = (Unit*)lay->units.NextEl(cui)) {
-    u->CopyNetwork(net, cn, cu);
-  }
-}
-
 void Layer::SyncSendPrjns() {
   Projection* p;
   taLeafItr i;
@@ -3769,8 +3635,7 @@ void Layer::LayoutUnitGroups() {
 
 bool Layer::CheckBuild(bool quiet) {
   if(units.gp.size > 0) {
-    int g;
-    for(g=0; g<units.gp.size; g++) {
+    for(int g=0; g<units.gp.size; g++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
       if(!ug->CheckBuild(quiet))
 	return false;
@@ -3808,30 +3673,13 @@ bool Layer::CheckConnect(bool quiet) {
   return true;
 }
 
-bool Layer::CheckTypes(bool quiet) {
-  // don't check layerspec by default, but layers that have them should!
-  Unit* u;
-  taLeafItr ui;
-  FOR_ITR_EL(Unit, u, units., ui) {
-    if(!u->CheckTypes(quiet))
-      return false;
-  }
-  Projection* prjn;
-  taLeafItr j;
-  FOR_ITR_EL(Projection, prjn, projections.,j) {
-    if(!prjn->CheckTypes(quiet)) 
-      return false;
-  }
-  return true;
-}
-
 void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
-  //note: network also called our checks
+  // note: network also called our checks
   // slightly non-standard, since we bail on first error
   if (!CheckBuild(quiet)) {rval = false; return;}
   if (!CheckConnect(quiet)) {rval = false; return;}
-  if (!CheckTypes(quiet)) {rval = false; return;}
   inherited::CheckThisConfig_impl(quiet, rval);
+  // could also checkspec for layers w/ specs
 }
 
 void Layer::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -3845,7 +3693,7 @@ void Layer::FixPrjnIndexes() {
   Projection* p;
   taLeafItr i;
   FOR_ITR_EL(Projection, p, projections., i)
-    p->FixIndexes();
+    p->FixPrjnIndexes();
 }
 
 void Layer::RemoveCons() {
@@ -3935,11 +3783,11 @@ int Layer::CountRecvCons() {
   return n_cons;
 }
 
-void Layer::ReConnect_Load() {
-  Projection* p;
+void Layer::LinkSendCons() {
+  Unit* u;
   taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i)
-    p->ReConnect_Load();
+  FOR_ITR_EL(Unit, u, units., i)
+    u->LinkSendCons();
 }
 
 void Layer::Init_InputData() {
@@ -4531,16 +4379,13 @@ void Network::Copy_(const Network& cp) {
 
   max_size = cp.max_size;
 
-//    ReplaceSpecs_Gp(cp.specs, specs);
-  //  CopyNetwork((Network*)&cp);
-  
-  UpdatePointers_NewPar((taBase*)&cp, this); // should do the work of the two above funs!
-
-  ReConnect_Load();		// set the send cons
+  UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
+  FixPrjnIndexes();			     // fix the recv_idx and send_idx (not copied!)
+  LinkSendCons();		// set the send cons (not copied!)
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
 #endif
-  ((Network&)cp).SyncSendPrjns(); // these get screwed up in there somewhere..
+//   ((Network&)cp).SyncSendPrjns(); // these get screwed up in there somewhere..
   //note: batch update in tabase copy
   copying = false;
 }
@@ -4638,7 +4483,7 @@ void Network::UpdtAfterNetMod() {
 int Network::Dump_Load_Value(istream& strm, taBase* par) {
   int rval = inherited::Dump_Load_Value(strm, par);
   if(rval)
-    ReConnect_Load();
+    LinkSendCons();
 
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
@@ -4781,21 +4626,10 @@ bool Network::CheckConnect(bool quiet) {
   return true;
 }
 
-bool Network::CheckTypes(bool quiet) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->CheckTypes(quiet))
-      return false;
-  }
-  return true;
-}
-
 void Network::CheckThisConfig_impl(bool quiet, bool& rval) {
   //NOTE: slightly non-standard, because we bail on first detected issue
-  if (!CheckBuild(quiet)) {rval = false; return;}
-  if (!CheckConnect(quiet)) {rval = false; return;}
-  if (!CheckTypes(quiet)) {rval = false; return;}
+  if (!CheckBuild(quiet)) { rval = false; return; }
+  if (!CheckConnect(quiet)) { rval = false; return; }
   UpdtAfterNetMod();		// just to be sure..
   inherited::CheckThisConfig_impl(quiet, rval);
 }
@@ -4822,9 +4656,7 @@ void Network::FixPrjnIndexes() {
   }
 }
 
-void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record,
-			   ConSpec* conspec)
-{
+void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* conspec) {
   if(u_to == NULL) return; // must have reciever
   if(u_from == NULL)    u_from = u_to; // assume self con if no from
 
@@ -4869,25 +4701,13 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record,
   lay->UpdateAfterEdit();
 }
 
-void Network::ReConnect_Load() {
+void Network::LinkSendCons() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
-    l->ReConnect_Load();
+    l->LinkSendCons();
 }
 
-void Network::CopyNetwork(Network* net) {
-  Layer* l;
-  taLeafItr li;
-  Layer* cl;
-  taLeafItr cli;
-  for(l = (Layer*)layers.FirstEl(li), cl = (Layer*)net->layers.FirstEl(cli);
-      l && cl;
-      l = (Layer*)layers.NextEl(li), cl = (Layer*)net->layers.NextEl(cli)) {
-    l->CopyNetwork(this, net, cl);
-  }
-  UpdtAfterNetMod();
-}
 #ifdef TA_GUI
 void Network::ShowInViewer(T3DataViewFrame* fr) {
   NetView* nv = NetView::New(this, fr);
@@ -5891,7 +5711,7 @@ Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, 
     use_prj->spec.SetSpec(ps);
   }
   if(cs) {
-    use_prj->SetConType(cs->min_con_type);
+    use_prj->SetConType(cs->min_obj_type);
     use_prj->con_spec.SetSpec(cs);
   }
   return use_prj;
@@ -5917,7 +5737,7 @@ Projection* Network::FindMakePrjnAdd(Layer* recv, Layer* send, ProjectionSpec* p
     prj->spec.SetSpec(ps);
   }
   if(cs) {
-    prj->SetConType(cs->min_con_type);
+    prj->SetConType(cs->min_obj_type);
     prj->con_spec.SetSpec(cs);
   }
   return prj;

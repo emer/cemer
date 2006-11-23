@@ -1,17 +1,7 @@
 leabra todo list:
 
-* 12ax failing on connect: probably a bug with different con_type during load -- trial syn dep
-  overwriting the memory of the projection (getting null RecvCons)
 
-  * network copy probably not working..  send should not copy. recv not getting units..
-    figure out better system for this
-  * scan_congroups in netdata netmonitor; check
-
-* consolidate the netstru checkconfig stuff once and for all -- not using proper
-  checkerror messages, is confusing, etc
-
-* Explicit Save net needs to override not-saving-weights setting from project!!
-  * rename save_rmv_units -> net_save_no_units;
+* scan_congroups in netdata netmonitor; check
 
 * program dirty not getting set -- init not recompiling
 
@@ -48,6 +38,8 @@ Check:
 
 -----------
 current bugs:
+
+* copy of layerspec is not getting LeabraLayerSpec::compute_i properly!
 
 
 -------

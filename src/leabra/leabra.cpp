@@ -56,8 +56,7 @@ void SAvgCorSpec::Initialize() {
 }
 
 void LeabraConSpec::Initialize() {
-  //  min_obj_type = &TA_LeabraRecvCons;  // not applicable
-  min_con_type = &TA_LeabraCon;
+  min_obj_type = &TA_LeabraCon;
   wt_limits.min = 0.0f;
   wt_limits.max = 1.0f;
   wt_limits.sym = true;
@@ -2622,7 +2621,8 @@ void LeabraLayer::Compute_Weights() {
 bool LeabraLayer::CheckConfig_impl(bool quiet) {
   //note: inherited does so much, we only augment with spec
   bool rval = inherited::CheckConfig_impl(quiet);
-  rval = rval && spec->CheckConfig_Layer(this, quiet); 
+  if(!spec->CheckConfig_Layer(this, quiet))
+    rval = false;
   return rval;
 }
 
@@ -2805,11 +2805,6 @@ bool LeabraLayer::SetLayerSpec(LayerSpec* sp) {
     return false;
   return true;
 } 
-
-bool LeabraLayer::CheckTypes() {
-  if(!spec.CheckSpec()) return false;
-  return Layer::CheckTypes();
-}
 
 void LeabraLayer::Build() {
   ResetSortBuf();

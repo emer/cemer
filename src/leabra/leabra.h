@@ -1313,7 +1313,6 @@ public:
 
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
-  bool		CheckTypes();
 
   void	UpdateAfterEdit();	// reset sort_buf after any edits..
 
