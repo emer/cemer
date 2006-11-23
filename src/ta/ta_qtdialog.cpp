@@ -1956,6 +1956,7 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   fde->cbCompress->setChecked(compressEnabled() && compressReq());
   fd->setExtension(fde);
   fd->setOrientation(Qt::Vertical);
+  int rval;
 
   String caption;
   switch (filerOperation) {
@@ -1993,7 +1994,7 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   fd->setCaption(caption);
 
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
-  int rval = fd->exec();
+  rval = fd->exec();
   QApplication::restoreOverrideCursor();
   if (rval == QDialog::Accepted) {
     fname = fd->selectedFile();
