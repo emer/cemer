@@ -1,0 +1,120 @@
+Beta TODO list
+-------------
+
+--------------------------
+Brad:
+
+* fix netview crashing on remove units, display of r.wt stuff, add transparent layer
+
+* program dirty not getting set -- init not recompiling: brad
+
+* Fix tabs & auto-apply edits
+  ? add "pin/unpin" capability to panels, and extend panel tab context menu 
+
+* JIT rendering of list elements in properties dialog (massively slow!)
+
+* spec gui enhancements:
+  * make a link and tree node for making subspecs be direct children
+  * enhance BaseSpec edit/drop to accept compatible subspec objects
+* Spec Editor (similar to prog editor -- shows children) -- should be quick & easy
+
+* Program Groups: execution control (popup always-on-top window with ctrl buttons only)
+
+* Show changes:
+  force expert idea is good & should just be the default: if there is a 
+  def and it is not set to that, then show.
+  Also, just to be clear, RO should be rmv from show menu.  srch & replace
+  RO -> RO & HIDDEN unless RO SHOW 
+
+* Browser stuff
+ * "disabled" generic state for viewing; "disabled" gui state for treeviews
+   (program "off" button is this, also layer "lesioned")
+ * TREECOLLAPSED_ProgramGroup -- in the program group, this list/group is 
+  initially collapsed (not expanded)
+  * TREEEXPANDED_xxx - opposite
+  This way, we can control what is expanded and collapsed in different contexts.  
+  I think in ProgramGroup we'd want objs to be there but collapsed.  Similarly, 
+  in the progeditor (Program context), the args should be default collapsed..
+  Also, can we use full name like ProgramGroup instead of ProgGp -- would make 
+  it more transparent..  ProgEditor is Program? 
+
+* T3 graphs  
+
+* nuke float_RArray from datagraph, get rid of ta/datatable.* (very confusing
+  with ta_datatable.*) -- move float_RArray to pdp/v3compat
+
+* netview optimized display of units managed by layer, not separate unit guys
+  (network layer shortcut view: "sheet view" & iconify.)
+
+* dnd for T3
+
+* upgrade and test plugin system:
+  * tags in type info to check dependencies
+  * prefix or similar in proj files to indicate required plugins
+  * naming/registry spec for class and plugin naming
+  * separate enumeration from loading
+  * startup enumeration of plugins;
+  * dynamic (user controlled) loading of plugins
+
+* UserData
+  * persistence
+  * schema
+  * save/restore state of viewers
+
+* automatically bracket gui-invoked methods with Busy/Notbusy
+
+* hover notes to add methoddef desc info in MethodCall, etc..?
+
+* multiple selection across views/trees, etc & actions (toolbars) that become
+  activated in response to multiple selections: build out list of possible
+  actions by walking typedefs & looking at comment directives; traverse
+  list each time selection is updated and activate actions that match.  
+  order matters.
+
+* key shortcuts, particularly to invoke a string editor for string fields (all of them)
+
+* multi-cpu pthread without mutex
+
+* complete port to Windows
+
+--------------------------
+Randy: (active list in src/leabra/TODO)
+
+* replace spec* with smartref, get rid of massive cutlinks code
+
+* BUTTON_MENUs for changing specs & obj types etc in Netstru objs -- select obj
+  do in its panel
+
+* more wizard stuff for env + procs
+
+* relnet stat & adaptation of lay act_pct and wtscale.
+
+* more dataproc, math etc
+
+* console cursor only at end
+* set display_width from console (overload qconsole resize event and update)
+* css_console.cpp: complete obj.mbr expressions..
+
+---------------
+Questions:
+
+* WriteClose() is this, right?  done!?
+  * clean up and/or extend data notify so that DataTable finish adding of row is clearly 
+   done, so various display or calculation clients can then update themselves
+
+---------------
+Omega:
+
+* import data tables and matrixes
+
+* record scripts for gui operations: requied for dmem operation in gui mode.
+
+* revamp the 3D display of net objects: smart projection pointers,
+  etc....
+
+* 4-panel view of network, to enable rational moving/sizing of objects
+  - the moving/sizing
+  - dnd icon bar for netview/designer
+
+* Printing Analysis, Design, and Implementation -- MAJOR
+
