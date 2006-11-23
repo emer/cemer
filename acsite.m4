@@ -1,3 +1,70 @@
+dnl 					         PDP_SVN_REVISION
+dnl *************************************************************
+dnl Set SVN_REVISION to the revision of the specified repository
+dnl I suggest you use config.site to make these your default.
+dnl Note that you must pass all three svn args to configure or
+dnl this macro will bail, and SVN_REVISION will be set to 0
+dnl *************************************************************
+dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Carnegie Mellon University, Princeton University.
+dnl
+dnl This file is part of TA/PDP++
+dnl
+dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation; either version 2 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details. 
+AC_DEFUN([PDP_SVN_REVISION],[
+AC_ARG_ENABLE([svn],
+	      AC_HELP_STRING([--enable-svn],
+		             [Try to detect current svn revision]),
+                             [svn=true],
+                             [svn=false])
+              
+AC_ARG_ENABLE([svnuser],
+	      AC_HELP_STRING([--enable-svnuser],
+		             [Passes --username=foo to svn]),
+                             [svnuser=true],
+                             [svnuser=false])
+AC_ARG_ENABLE([svnpwd],
+	      AC_HELP_STRING([--enable-svnpwd],
+		             [Passes --password=foo to svn]),
+                             [svnpwd=true],
+                             [svnpwd=false])
+AC_ARG_ENABLE([svnrepo],
+	      AC_HELP_STRING([--enable-svnrepo],
+		             [Passes repository location to svn. Can be http: or svn:]),
+                             [svnrepo=true],
+                             [svnrepo=false])
+
+# If all three were set, proceed
+if test x"$svn" = x"true"; then
+  if test x"$svnuser" -a x"$svnpwd" -a x"$svnrepo"; then
+    AC_CHECK_PROG([HAVE_SVN],[svn],[true],[false])
+    if test x"$HAVE_SVN" = x"true"; then
+      SVN_REV=`svn info --username=$with_svnuser --password=$with_svnpwd $with_svnrepo | grep Revision | sed -r 's/Revision: (@<:@0-9@:>@*)/\1/'`
+      CXXFLAGS="$CXXFLAGS -DSVN_REV=`echo $SVN_REV`"
+    else
+      # Give a warning about the things they must set
+      SIM_AC_CONFIGURATION_WARNING([You must accurately set all four of --enable-svn/svnuser/svnpwd/svnrepo. Revision set to 0.])
+      CXXFLAGS="$CXXFLAGS -DSVN_REV=0"
+      SVN_REV=0
+    fi
+  fi
+else
+  CXXFLAGS="$CXXFLAGS -DSVN_REV=0"
+  SVN_REV=0
+fi
+
+SIM_AC_CONFIGURATION_SETTING([Subversion revision],["$SVN_REV"])
+
+])
+
 dnl 					       PDP_SET_BUILD_MODE
 dnl *************************************************************
 dnl Figure out what kind of build mode we are doing, and prep
@@ -4310,3 +4377,52 @@ AC_DEFUN([VL_LIB_READLINE], [
     SIM_AC_CONFIGURATION_SETTING([Readline],[$vl_cv_lib_readline])
   fi
 ])dnl
+
+##### http://autoconf-archive.cryp.to/ac_define_dir.html
+#
+# SYNOPSIS
+#
+#   AC_DEFINE_DIR(VARNAME, DIR [, DESCRIPTION])
+#
+# DESCRIPTION
+#
+#   This macro sets VARNAME to the expansion of the DIR variable,
+#   taking care of fixing up ${prefix} and such.
+#
+#   VARNAME is then offered as both an output variable and a C
+#   preprocessor symbol.
+#
+#   Example:
+#
+#      AC_DEFINE_DIR([DATADIR], [datadir], [Where data are placed to.])
+#
+# LAST MODIFICATION
+#
+#   2006-10-13
+#
+# COPYLEFT
+#
+#   Copyright (c) 2006 Stepan Kasal <kasal@ucw.cz>
+#   Copyright (c) 2006 Andreas Schwab <schwab@suse.de>
+#   Copyright (c) 2006 Guido U. Draheim <guidod@gmx.de>
+#   Copyright (c) 2006 Alexandre Oliva
+#
+#   Copying and distribution of this file, with or without
+#   modification, are permitted in any medium without royalty provided
+#   the copyright notice and this notice are preserved.
+
+AC_DEFUN([AC_DEFINE_DIR], [
+  prefix_NONE=
+  exec_prefix_NONE=
+  test "x$prefix" = xNONE && prefix_NONE=yes && prefix=$ac_default_prefix
+  test "x$exec_prefix" = xNONE && exec_prefix_NONE=yes && exec_prefix=$prefix
+dnl In Autoconf 2.60, ${datadir} refers to ${datarootdir}, which in turn
+dnl refers to ${prefix}.  Thus we have to use `eval' twice.
+  eval ac_define_dir="\"[$]$2\""
+  eval ac_define_dir="\"$ac_define_dir\""
+  AC_SUBST($1, "$ac_define_dir")
+  AC_DEFINE_UNQUOTED($1, "$ac_define_dir", [$3])
+  test "$prefix_NONE" && prefix=NONE
+  test "$exec_prefix_NONE" && exec_prefix=NONE
+])
+
