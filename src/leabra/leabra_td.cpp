@@ -345,8 +345,8 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       taMisc::CheckError("ExtRewLayerSpec: RewTarg layer must have one unit (has zero) -- please fix!");
       rval = false;
     }
-    int myidx = lay->own_net->layers.FindLeaf(lay);
-    int rtidx = lay->own_net->layers.FindLeaf(rew_targ_lay);
+    int myidx = lay->own_net->layers.FindLeafEl(lay);
+    int rtidx = lay->own_net->layers.FindLeafEl(rew_targ_lay);
     if(rtidx > myidx) {
       taMisc::CheckError("ExtRewLayerSpec: reward target (RewTarg) layer must be *before* this layer in list of layers -- it is now after, won't work");
       rval = false;
@@ -891,8 +891,8 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     taMisc::CheckError("TDRewIntegLayerSpec: requires recv projection from TDRewPredLayerSpec!");
     return false;
   }
-  int myidx = lay->own_net->layers.FindLeaf(lay);
-  int rpidx = lay->own_net->layers.FindLeaf(rew_pred_lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int rpidx = lay->own_net->layers.FindLeafEl(rew_pred_lay);
   if(rpidx > myidx) {
     taMisc::CheckError("TDRewIntegLayerSpec: reward prediction layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
@@ -902,7 +902,7 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     taMisc::CheckError("TDRewIntegLayerSpec: TD requires recv projection from ExtRewLayerSpec!");
     return false;
   }
-  int eridx = lay->own_net->layers.FindLeaf(ext_rew_lay);
+  int eridx = lay->own_net->layers.FindLeafEl(ext_rew_lay);
   if(eridx > myidx) {
     taMisc::CheckError("TDRewIntegLayerSpec: external reward layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
@@ -1062,8 +1062,8 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     return false;
   }
 
-  int myidx = lay->own_net->layers.FindLeaf(lay);
-  int rpidx = lay->own_net->layers.FindLeaf(rewinteg_lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int rpidx = lay->own_net->layers.FindLeafEl(rewinteg_lay);
   if(rpidx > myidx) {
     taMisc::CheckError("TdLayerSpec: reward integration layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;

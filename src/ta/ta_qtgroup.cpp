@@ -1260,7 +1260,7 @@ void gpiListDataHost::Constr_ListData() {
     for (int i = 0; i < lf_el->typ->members.size; ++i) {
       MemberDef* md = lf_el->typ->members.FastEl(i);
       if (!ShowMember(md)) continue;
-      int lst_idx = lst_membs.Find(md->name);
+      int lst_idx = lst_membs.FindEl(md->name);
       if (lst_idx < 0) continue; //note: shouldn't happen!!!
       cur_row = lst_idx; 
       taiData* mb_dat = md->im->GetDataRep(this, NULL, multi_body->dataGridWidget());

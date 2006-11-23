@@ -967,11 +967,11 @@ void ScalarValSelfPrjnSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit* ru) 
   float val1 = expf(-(neigh1 * neigh1));
   float scale_val = wt_max / val1;
 
-  int ru_idx = ((Unit_Group*)ru->owner)->Find(ru);
+  int ru_idx = ((Unit_Group*)ru->owner)->FindEl(ru);
 
   for(int i=0; i<cg->cons.size; i++) {
     Unit* su = cg->Un(i);
-    int su_idx = ((Unit_Group*)su->owner)->Find(su);
+    int su_idx = ((Unit_Group*)su->owner)->FindEl(su);
     float dist = (float)(ru_idx - su_idx) / wt_width;
     float wtval = scale_val * expf(-(dist * dist));
     cg->Cn(i)->wt = wtval;

@@ -787,7 +787,7 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
       TypeDef* typ = types.FastEl(i);
       if ((typ->ptr > 0) || (typ->ref)) continue;
       // look for an initClass method
-      MethodDef* md = typ->methods.SafeEl(typ->methods.Find("initClass"));
+      MethodDef* md = typ->methods.FindName("initClass");
       if (!md) continue;
       if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
       // call the init function
@@ -1679,7 +1679,7 @@ bool taDataLink::RemoveDataClient(IDataLinkClient* dlc) {
   // NOTE: in case where client calls us back during call to their DataLinkDestroying,
   // we will not find the client on our list, and so must return and not attempt to
   // destroy ourselves, otherwise we may destroy twice!
-  if (!clients.Remove(dlc)) return false;
+  if (!clients.RemoveEl(dlc)) return false;
   if (clients.size > 0) return true;
 
   delete this;
@@ -1785,7 +1785,7 @@ bool TypeSpace::ReplaceLinkAll(TypeDef* ol, TypeDef* nw) {
   for(i=0; i<size; i++) {
     if(FastEl(i) == ol) {
       rval = true;
-      ReplaceLink(i, nw);
+      ReplaceLinkIdx(i, nw);
     }
   }
   return rval;
@@ -1965,10 +1965,10 @@ MemberDef* MemberSpace::FindCheck(const char* nm, void* base, void*& ptr) const 
 // MemberSpace: Find By Name	//
 //////////////////////////////////
 
-int MemberSpace::Find(const char *nm) const {	// lookup by name
+int MemberSpace::FindNameOrType(const char *nm) const {	// lookup by name
   int rval;
   // first check names
-  if((rval = taPtrList<MemberDef>::Find(nm)) >= 0)
+  if(FindName(nm),rval)
     return rval;
 
   // then type names
@@ -1986,7 +1986,7 @@ int MemberSpace::FindTypeName(const char* nm) const {
 
 MemberDef* MemberSpace::FindNameR(const char* nm) const {
   MemberDef* rval;
-  if((rval = FindName(nm)) != NULL)
+  if((rval = FindName(nm)))
     return rval;
 
   int i;
@@ -2000,7 +2000,7 @@ MemberDef* MemberSpace::FindNameR(const char* nm) const {
 
 MemberDef* MemberSpace::FindNameAddr(const char* nm, void* base, void*& ptr) const {
   MemberDef* rval;
-  if((rval = FindName(nm)) != NULL) {
+  if((rval = FindName(nm))) {
     ptr = rval->GetOff(base);
     return rval;
   }
@@ -2049,24 +2049,21 @@ MemberDef* MemberSpace::FindNameAddrR(const char* nm, void* base, void*& ptr) co
 // MemberSpace: Find By Type	//
 //////////////////////////////////
 
-int MemberSpace::Find(TypeDef* it) const {
+MemberDef* MemberSpace::FindType(TypeDef* it, int& idx) const {
   int i;
   for(i=0; i<size; i++) {
-    if(FastEl(i)->type->InheritsFrom(it))
-      return i;
+    if(FastEl(i)->type->InheritsFrom(it)) {
+      idx = i;
+      return FastEl(i);
+    }
   }
-  return -1;
-}
-
-MemberDef* MemberSpace::FindType(TypeDef* it, int& idx) const {
-  idx = Find(it);
-  if(idx >= 0) return FastEl(idx);
+  idx = -1;
   return NULL;
 }
 
 MemberDef* MemberSpace::FindTypeR(TypeDef* it) const {
   MemberDef* rval;
-  if((rval = FindType(it)) != NULL)
+  if((rval = FindType(it)))
     return rval;
 
   int i;
@@ -2080,7 +2077,7 @@ MemberDef* MemberSpace::FindTypeR(TypeDef* it) const {
 
 MemberDef* MemberSpace::FindTypeAddr(TypeDef* it, void* base, void*& ptr) const {
   MemberDef* rval;
-  if((rval = FindType(it)) != NULL) {
+  if((rval = FindType(it))) {
     ptr = rval->GetOff(base);
     return rval;
   }
@@ -2138,18 +2135,15 @@ MemberDef* MemberSpace::FindTypeDerives(TypeDef* it, int& idx) const {
   return NULL;
 }
 
-int MemberSpace::Find(void* base, void* mbr) const {
+MemberDef* MemberSpace::FindAddr(void* base, void* mbr, int& idx) const {
   int i;
   for(i=0; i<size; i++) {
-    if(mbr == FastEl(i)->GetOff(base))
-      return i;
+    if(mbr == FastEl(i)->GetOff(base)) {
+      idx = i;
+      return FastEl(i);
+    }
   }
-  return -1;
-}
-
-MemberDef* MemberSpace::FindAddr(void* base, void* mbr, int& idx) const {
-  idx = Find(base, mbr);
-  if(idx >= 0) return FastEl(idx);
+  idx = -1;
   return NULL;
 }
 
@@ -2259,7 +2253,7 @@ if (it->name == "SetLayerSpec") {
     }
   }
   if (replace) {
-    Replace(idx, it);		// new one replaces old if overloaded or overridden
+    ReplaceIdx(idx, it);		// new one replaces old if overloaded or overridden
     return false;
   }
   taPtrList<MethodDef>::Add(it);
@@ -2462,7 +2456,7 @@ void EnumDef::Copy(const EnumDef& cp) {
 bool EnumDef::CheckList(const String_PArray& lst) const {
   int i;
   for(i=0; i<lists.size; i++) {
-    if(lst.Find(lists.FastEl(i)) >= 0)
+    if(lst.FindEl(lists.FastEl(i)) >= 0)
       return true;
   }
   return false;
@@ -2547,7 +2541,7 @@ MemberDef::~MemberDef() {
 bool MemberDef::CheckList(const String_PArray& lst) const {
   int i;
   for(i=0; i<lists.size; i++) {
-    if(lst.Find(lists.FastEl(i)) >= 0)
+    if(lst.FindEl(lists.FastEl(i)) >= 0)
       return true;
   }
   return false;
@@ -2757,7 +2751,7 @@ void MethodDef::Copy(const MethodDef& cp) {
 bool MethodDef::CheckList(const String_PArray& lst) const {
   int i;
   for(i=0; i<lists.size; i++) {
-    if(lst.Find(lists.FastEl(i)) >= 0)
+    if(lst.FindEl(lists.FastEl(i)) >= 0)
       return true;
   }
   return false;
@@ -3094,14 +3088,14 @@ void TypeDef::CleanupCats() {
   for(int i=0; i< opts.size;i++) {
     String op = opts[i];
     if(!op.contains("CAT_")) continue;
-    if(got_op) { opts.Remove(i); i--; }	// remove all other previous ones
+    if(got_op) { opts.RemoveIdx(i); i--; }	// remove all other previous ones
     else got_op = true;
   }
   got_op = false;
   for(int i=0; i<inh_opts.size;i++) {
     String op = inh_opts[i];
     if(!op.contains("CAT_")) continue;
-    if(got_op) {inh_opts.Remove(i); i--; } // remove all other previous ones
+    if(got_op) {inh_opts.RemoveIdx(i); i--; } // remove all other previous ones
     else got_op = true;
   }
 }
@@ -3111,12 +3105,12 @@ void TypeDef::DuplicateMDFrom(const TypeDef* old) {
   for(i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
     if(md->owner == &(old->members))
-      members.Replace(i, md->Clone());
+      members.ReplaceIdx(i, md->Clone());
   }
   for(i=0; i<methods.size; i++) {
     MethodDef* md = methods.FastEl(i);
     if(md->owner == &(old->methods))
-      methods.Replace(i, md->Clone());
+      methods.ReplaceIdx(i, md->Clone());
   }
 }
 
@@ -3183,7 +3177,7 @@ TypeDef*  TypeDef::FindTypeWithMember(const char* nm, MemberDef** md){
 bool TypeDef::CheckList(const String_PArray& lst) const {
   int i;
   for(i=0; i<lists.size; i++) {
-    if(lst.Find(lists.FastEl(i)) >= 0)
+    if(lst.FindEl(lists.FastEl(i)) >= 0)
       return true;
   }
   return false;
@@ -3411,7 +3405,7 @@ void TypeDef::ComputeMembBaseOff() {
     if(base_off > 0) {		// only those that need it!
       MemberDef* nmd = md->Clone();
       nmd->base_off = base_off;
-      members.Replace(i, nmd);
+      members.ReplaceIdx(i, nmd);
     }
     else if(base_off < 0) {
       taMisc::Error("ComputeMembBaseOff(): parent type not found:",mo->name,
@@ -3420,18 +3414,18 @@ void TypeDef::ComputeMembBaseOff() {
   }
 }
 
-bool TypeDef::FindChild(const char* nm) const {
-  if(children.Find(nm) >= 0)
+bool TypeDef::FindChildName(const char* nm) const {
+  if(children.FindName(nm))
     return true;
   int i;
   for(i=0; i < children.size; i++) {
-    if(children.FastEl(i)->FindChild(nm))
+    if(children.FastEl(i)->FindChildName(nm))
       return true;
   }
   return false;
 }
 bool TypeDef::FindChild(TypeDef* it) const {
-  if(children.Find(it) >= 0)
+  if(children.FindEl(it) >= 0)
     return true;
   int i;
   for(i=0; i < children.size; i++) {
@@ -3441,19 +3435,19 @@ bool TypeDef::FindChild(TypeDef* it) const {
   return false;
 }
 
-bool TypeDef::FindParent(const char* nm) const {
-  if(parents.Find(nm) >= 0)
+bool TypeDef::FindParentName(const char* nm) const {
+  if(parents.FindName(nm))
     return true;
   int i;
   for(i=0; i < parents.size; i++) {
-    if(parents.FastEl(i)->FindParent(nm))
+    if(parents.FastEl(i)->FindParentName(nm))
       return true;
   }
   return false;
 }
 
 bool TypeDef::FindParent(const TypeDef* it) const {
-  if(parents.Find(it) >= 0)
+  if(parents.FindEl(it) >= 0)
     return true;
   int i;
   for(i=0; i < parents.size; i++) {
@@ -3466,7 +3460,7 @@ bool TypeDef::FindParent(const TypeDef* it) const {
 void* TypeDef::GetParAddr(const char* it, void* base) const {
   if(name == it) return base;	// you are it!
   int anidx;
-  if((anidx = parents.Find(it)) >= 0)
+  if((parents.FindName(it, anidx)))
     return (void*)((char*)base + par_off[anidx]);
   int i;
   for(i=0; i < parents.size; i++) {
@@ -3481,7 +3475,7 @@ void* TypeDef::GetParAddr(const char* it, void* base) const {
 void* TypeDef::GetParAddr(TypeDef* it, void* base) const {
   if(it==this) return base;	// you are it!
   int anidx;
-  if((anidx = parents.Find(it)) >= 0)
+  if((anidx = parents.FindEl(it)) >= 0)
     return (void*)((char*)base + par_off[anidx]);
   int i;
   for(i=0; i < parents.size; i++) {
@@ -3500,7 +3494,7 @@ int TypeDef::GetParOff(TypeDef* it, int boff) const {
     use_boff = boff;
   if(it==this) return use_boff;	// you are it!
   int anidx;
-  if((anidx = parents.Find(it)) >= 0)
+  if((anidx = parents.FindEl(it)) >= 0)
     return use_boff + par_off[anidx];
   int i;
   for(i=0; i < parents.size; i++) {
@@ -3526,16 +3520,14 @@ const String TypeDef::GetPathName() const {
 }
 
 TypeDef* TypeDef::GetPtrType() const {
-  TypeDef* rval = NULL;
-  int i = children.Find(name + "_ptr");
-  if (i >= 0) {
-    rval = children.FastEl(i);
+  TypeDef* rval = children.FindName(name + "_ptr");
+  if (rval) {
     // make sure its ptr count is one more than ours!
     if (rval->ptr != (ptr + 1)) {
       rval = NULL;
     }
   }
-  if (rval == NULL) {
+  if (!rval) {
     // need to make one, we use same pattern as maketa 
     rval = new TypeDef(name + "_ptr", internal, ptr + 1, 0, 0, 0);
     taMisc::types.Add(rval);
@@ -3566,7 +3558,7 @@ TypeDef* TypeDef::GetTemplParent() const {
 bool TypeDef::IgnoreMeth(const String& nm) const {
   if(!InheritsFormal(TA_class))
     return false;
-  if(ignore_meths.Find(nm) >= 0)
+  if(ignore_meths.FindEl(nm) >= 0)
     return true;
 
   int i;
@@ -3666,7 +3658,7 @@ const String TypeDef::Get_C_EnumString(int enum_val) const {
 #ifndef NO_TA_BASE
 int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
   int rval;
-  if((rval = tokens.Find(addr)) >= 0) {
+  if((rval = tokens.FindEl(addr)) >= 0) {
     aptr = (TypeDef*)this;
     return rval;
   }
@@ -3683,7 +3675,7 @@ int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
 
 int TypeDef::FindTokenR(const char* nm, TypeDef*& aptr) const {
   int rval;
-  if((rval = tokens.Find(nm)) >= 0) {
+  if((tokens.FindName(nm, rval))) {
     aptr = (TypeDef*)this;
     return rval;
   }
@@ -3730,9 +3722,9 @@ void TypeDef::Register(void* it) {
   int pos;
   if(par && (par->tokens.keep ||
 	     (taMisc::keep_tokens == taMisc::ForceTokens))
-     && ((pos = par->tokens.Find(it)) >= 0))
+     && ((pos = par->tokens.FindEl(it)) >= 0))
   {
-    par->tokens.Remove(pos);
+    par->tokens.RemoveIdx(pos);
     par->tokens.sub_tokens++;	// sub class got a new token..
   }
   if(par)			// only register if you have a parent...
@@ -3741,8 +3733,8 @@ void TypeDef::Register(void* it) {
 
 bool TypeDef::ReplaceParent(TypeDef* old_tp, TypeDef* new_tp) {
   int anidx;
-  if((anidx = parents.Find(old_tp)) >= 0) {
-    parents.ReplaceLink(anidx, new_tp);
+  if((anidx = parents.FindEl(old_tp)) >= 0) {
+    parents.ReplaceLinkIdx(anidx, new_tp);
     name.gsub(old_tp->name, new_tp->name);
     return true;
   }
@@ -3772,7 +3764,7 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
 
   parents.Reset();			// bag the template's parents
   parents.LinkUnique(templ_par);	// parent is the templ_par
-  par_formal.Remove(&TA_template);
+  par_formal.RemoveEl(&TA_template);
   par_formal.Link(&TA_templ_inst); 	// now a template instantiation
   templ_par->children.LinkUnique(this);
   internal = false;			// not internal any more
@@ -3783,7 +3775,7 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
     TypeDef* defn_tp = templ_par->templ_pars.FastEl(i); // type as defined
     TypeDef* inst_tp = inst_pars.FastEl(i);  // type as instantiated
 
-    templ_pars.ReplaceLink(i, inst_tp); // actually replace it
+    templ_pars.ReplaceLinkIdx(i, inst_tp); // actually replace it
 
     // update sub-types based on defn_tp (go backwards to get most extended types 1st)
     int j;
@@ -3801,7 +3793,7 @@ void TypeDef::unRegister(void* it) {
      (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
     return;
 
-  if(!tokens.Remove(it)) {	// if we couldn't find this one, must be a sub-tok..
+  if(!tokens.RemoveEl(it)) {	// if we couldn't find this one, must be a sub-tok..
     int subt = (int)(tokens.sub_tokens) - 1;
     tokens.sub_tokens = MAX(subt, 0); // might blow down..
   }

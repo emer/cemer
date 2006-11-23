@@ -275,7 +275,7 @@ void taiCompData::ChildAdd(taiData* child) {
 void taiCompData::ChildRemove(taiData* child) {
   //NOTE: this will get called while being removed/deleted from an own list!
   //2004-08-31 workaround, change taListptr to remove items from list before deleting, thus item not found
-  data_el.Remove(child);
+  data_el.RemoveEl(child);
 }
 
 void taiCompData::InitLayout() { //virtual/overridable
@@ -917,9 +917,9 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
 }
 
 void taiPolyData::ChildRemove(taiData* child) {
-  int i = data_el.Find(child);
+  int i = data_el.FindEl(child);
   if (i > 0)
-    memb_el.Remove(i);
+    memb_el.RemoveIdx(i);
   inherited::ChildRemove(child);
 }
 
@@ -1667,7 +1667,7 @@ void taiActions::DeleteItem(uint idx) {
   if (idx >= (uint)items.size) return;
   taiAction* act = items[idx];
   ActionRemoving(act);
-  items.Remove(idx); // deletes if ref==0
+  items.RemoveIdx(idx); // deletes if ref==0
 }
 
 void taiActions::emitLabelChanged(const String& val) {
@@ -4591,7 +4591,7 @@ void taiMethodData::GenerateScript() {
     if (i > 1)
       arg_str += ", ";
     int idx;
-    if((idx = tmp_objs.Find(i)) >= 0)
+    if((idx = tmp_objs.FindEl(i)) >= 0)
       arg_str += "tmp_" + String(idx);
     else {
       cssEl* argv = arg_dlg->obj->members->FastEl(i);

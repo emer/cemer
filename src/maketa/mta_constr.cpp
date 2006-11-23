@@ -125,7 +125,7 @@ bool TypeSpace_Sort_Order(TypeSpace* ths) {
 	  cerr << "Switching order of: " << td->name << " fm: " << td->idx << " to: "
 	       << par_td->idx+1 << "\n";
 	// child comes before parent..
-	ths->Move(td->idx, par_td->idx+1); // move after parent
+	ths->MoveIdx(td->idx, par_td->idx+1); // move after parent
 	move_occurred = true;
       }
     }
@@ -299,8 +299,8 @@ String TypeDef_Gen_Ref_Of(TypeDef* ths) {
 // no need to save all that instance stuff (make sure not to get the NO_)
 
 void MTA::TypeDef_FixOpts(String_PArray& op) {
-  op.Remove("INSTANCE");
-  op.Remove("NO_TOKENS");
+  op.RemoveEl("INSTANCE");
+  op.RemoveEl("NO_TOKENS");
 }
 
 void MTA::TypeDef_Generate_Types(TypeDef* ths, ostream& strm) {

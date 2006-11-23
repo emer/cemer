@@ -266,7 +266,7 @@ bool taMatrix::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
 }
 
 void taMatrix::SliceDestroying(taMatrix* par_slice, taMatrix* child_slice) {
-  par_slice->slices->Remove(child_slice);
+  par_slice->slices->RemoveEl(child_slice);
   // note: having already sliced, we leave the list now in place
   taBase::UnRef(par_slice);
 }

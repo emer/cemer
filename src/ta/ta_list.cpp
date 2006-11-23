@@ -125,9 +125,9 @@ taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
   }
 }
 
-int taPtrList_impl::Find_(const void* it) const {
+int taPtrList_impl::FindEl_(const void* it) const {
   if (hash_table && (hash_table->key_type == taHashTable::KT_PTR))
-    return hash_table->FindIndex(HashCode_Ptr(it));
+    return hash_table->FindListEl(HashCode_Ptr(it));
 
   int i;
   for(i=0; i < size; i++) {
@@ -136,21 +136,21 @@ int taPtrList_impl::Find_(const void* it) const {
   }
   return -1;
 }
-int taPtrList_impl::Find(const String& nm) const {
-  if (hash_table && (hash_table->key_type == taHashTable::KT_NAME))
-    return hash_table->FindIndex(HashCode_String(nm));
 
-  int i;
-  for(i=0; i < size; i++) {
-    if(El_FindCheck_(el[i], nm))
-      return i;
+void* taPtrList_impl::FindName_(const String& nm, int& idx) const {
+  if (hash_table && (hash_table->key_type == taHashTable::KT_NAME)) {
+    idx = hash_table->FindListEl(HashCode_String(nm));
+    if(idx >=0 )
+      return el[idx];
+    return NULL;
   }
-  return -1;
-}
-
-void* taPtrList_impl::FindName_(const String& it, int& idx) const {
-  idx = Find(it);
-  if(idx >= 0) return el[idx];
+  for(int i=0; i < size; i++) {
+    if(El_FindCheck_(el[i], nm)) {
+      idx = i;
+      return el[i];
+    }
+  }
+  idx = -1;
   return NULL;
 }
 
@@ -163,7 +163,7 @@ void taPtrList_impl::UpdateIndex_(int idx) {
     hash_table->UpdateIndex(El_GetName_(el[idx]), idx);
 }
 
-bool taPtrList_impl::Move(int fm, int to) {
+bool taPtrList_impl::MoveIdx(int fm, int to) {
   if (fm == to) return true; // nop
   if ((fm < 0) || (fm >= size) || (to < 0) || (to >= size)) return false;
 
@@ -184,20 +184,20 @@ bool taPtrList_impl::Move(int fm, int to) {
 }
 
 bool taPtrList_impl::MoveBefore_(void* trg, void* item) {
-  int trgi = Find_(trg);
-  int iti = Find_(item);
+  int trgi = FindEl_(trg);
+  int iti = FindEl_(item);
   if((trgi < 0) || (iti < 0) || (iti = trgi - 1)) return false;
-  return Move(iti, trgi);
+  return MoveIdx(iti, trgi);
 }
 
 bool taPtrList_impl::MoveAfter_(void* trg, void* item) {
-  int trgi = Find_(trg);
-  int iti = Find_(item);
+  int trgi = FindEl_(trg);
+  int iti = FindEl_(item);
   if((trgi < 0) || (iti < 0) || (iti = trgi + 1)) return false;
-  return Move(iti, trgi+1);
+  return MoveIdx(iti, trgi+1);
 }
 
-bool taPtrList_impl::Swap(int pos1, int pos2) {
+bool taPtrList_impl::SwapIdx(int pos1, int pos2) {
   if((size == 0) || (pos1 >= size) || (pos2 >= size)) return false;
 
   void* tmp = el[pos1];
@@ -214,7 +214,7 @@ bool taPtrList_impl::Swap(int pos1, int pos2) {
 //        Add          //
 /////////////////////////
 
-void taPtrList_impl::AddEl_(void* it) {
+void taPtrList_impl::AddOnly_(void* it) {
 //TODO: note, the logistics of the DataChanged are wrong, since ex. Add_
 // causes the notification before it has set the index and owned the item, renaming it
   if(size+1 >= alloc_size)
@@ -224,7 +224,7 @@ void taPtrList_impl::AddEl_(void* it) {
 
 void taPtrList_impl::Add_(void* it, bool no_notify) {
   int idx = size; // the new item index, once added
-  AddEl_(it);
+  AddOnly_(it);
   if (it != NULL) {
     El_SetIndex_(El_Own_(it), idx);
     if (El_GetName_(it).empty()) {
@@ -238,15 +238,15 @@ void taPtrList_impl::Add_(void* it, bool no_notify) {
 }
 
 bool taPtrList_impl::AddUnique_(void* it) {
-  if(Find_(it) >= 0)
+  if(FindEl_(it) >= 0)
     return false;
   Add_(it);
   return true;
 }
 bool taPtrList_impl::AddUniqNameNew_(void* it) {
   int i;
-  if((i=Find(El_GetName_(it))) >= 0) {
-    Replace_(i,it);
+  if((FindName_(El_GetName_(it),i))) {
+    ReplaceIdx_(i,it);
     return false;
   }
   Add_(it);
@@ -254,21 +254,21 @@ bool taPtrList_impl::AddUniqNameNew_(void* it) {
 }
 void* taPtrList_impl::AddUniqNameOld_(void* it) {
   int i;
-  if((i=Find(El_GetName_(it))) >= 0) {
+  if((FindName_(El_GetName_(it),i))) {
     return el[i];
   }
   Add_(it);
   return it;
 }
 
-bool taPtrList_impl::Remove(int i) {
+bool taPtrList_impl::RemoveIdx(int i) {
   if((size == 0) || (i >= size))
     return false;
   void* tel = el[i];
   //note: change in 4.0 - don't disown until after removed from list
   if(tel != NULL) {
     if(hash_table != NULL)
-      hash_table->Remove(El_GetName_(tel));
+      hash_table->RemoveName(El_GetName_(tel));
   }
   int j;
   for(j=i; j < size-1; j++) {		// compact, if necc
@@ -283,21 +283,21 @@ bool taPtrList_impl::Remove(int i) {
   return true;
 }
 
-bool taPtrList_impl::Remove_(void* it) {
+bool taPtrList_impl::RemoveEl_(void* it) {
   int i;
-  if((i = Find_(it)) < 0)
+  if((i = FindEl_(it)) < 0)
     return false;
-  return Remove(i);
+  return RemoveIdx(i);
 }
-bool taPtrList_impl::Remove(const String& it) {
+bool taPtrList_impl::RemoveName(const String& it) {
   int i;
-  if((i = Find(it)) < 0)
-    return false;
-  return Remove(i);
+  if(FindName_(it, i))
+    return RemoveIdx(i);
+  return false;
 }
 bool taPtrList_impl::RemoveLast() {
   if(size == 0) return false;
-  return Remove(size-1);
+  return RemoveIdx(size-1);
 }
 
 void taPtrList_impl::RemoveAll() {
@@ -311,7 +311,7 @@ bool taPtrList_impl::Insert_(void* it, int where) {
     Add_(it);
     return true;
   }
-  AddEl_(NULL); 
+  AddOnly_(NULL); 
   int i;
   for(i=size-1; i > where; i--) {
     el[i] = el[i-1];
@@ -326,25 +326,25 @@ bool taPtrList_impl::Insert_(void* it, int where) {
   }
   return true;
 }
-bool taPtrList_impl::Replace_(void* ol, void* nw) {
+bool taPtrList_impl::ReplaceEl_(void* ol, void* nw) {
   int i;
-  if((i = Find_(ol)) < 0)
+  if((i = FindEl_(ol)) < 0)
     return false;
-  Replace_(i, nw);
+  ReplaceIdx_(i, nw);
   return true;
 }
-bool taPtrList_impl::Replace_(const String& ol, void* nw) {
+bool taPtrList_impl::ReplaceName_(const String& ol, void* nw) {
   int i;
-  if((i = Find(ol)) < 0)
-    return false;
-  return Replace_(i, nw);
+  if(FindName_(ol, i))
+    return ReplaceIdx_(i, nw);
+  return false;
 }
-bool taPtrList_impl::Replace_(int ol, void* nw, bool no_notify_insert) {
+bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
   if((size == 0) || (ol >= size))
     return false;
   if(el[ol] != NULL) {
     if(hash_table != NULL)
-      hash_table->Remove(El_GetName_(el[ol]));
+      hash_table->RemoveName(El_GetName_(el[ol]));
     DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
@@ -366,7 +366,7 @@ bool taPtrList_impl::Transfer_(void* it) {
   El_Ref_(it);			// extra ref so no delete on remove
   El_SetOwner_(it);		// change owner to us so it doesn't call CutLinks with Remove..
   if (old_own)
-    old_own->Remove_(it);
+    old_own->RemoveEl_(it);
   Add_(it);
   El_unRef_(it);
   return true;
@@ -378,7 +378,7 @@ bool taPtrList_impl::Transfer_(void* it) {
 /////////////////////////
 
 void taPtrList_impl::Link_(void* it) {
-  AddEl_(it);
+  AddOnly_(it);
   if(it != NULL) {
     El_Ref_(it);
     if(hash_table != NULL)
@@ -389,7 +389,7 @@ void taPtrList_impl::Link_(void* it) {
 }
 
 bool taPtrList_impl::LinkUnique_(void* it) {
-  if(Find_(it) >= 0)
+  if(FindEl_(it) >= 0)
     return false;
   Link_(it);
   return true;
@@ -397,8 +397,8 @@ bool taPtrList_impl::LinkUnique_(void* it) {
 
 bool taPtrList_impl::LinkUniqNameNew_(void* it) {
   int i;
-  if((i=Find(El_GetName_(it))) >= 0) {
-    ReplaceLink_(i,it);	// semantics of LinkUniqName is to update..
+  if(FindName_(El_GetName_(it),i)) {
+    ReplaceLinkIdx_(i,it);	// semantics of LinkUniqName is to update..
     return false;
   }
   Link_(it);
@@ -407,7 +407,7 @@ bool taPtrList_impl::LinkUniqNameNew_(void* it) {
 
 void* taPtrList_impl::LinkUniqNameOld_(void* it) {
   int i;
-  if((i=Find(El_GetName_(it))) >= 0) {
+  if(FindName_(El_GetName_(it),i)) {
     return el[i];
   }
   Link_(it);
@@ -420,7 +420,7 @@ bool taPtrList_impl::InsertLink_(void* it, int where) {
     return true;
   }
   if(size > 0)
-    AddEl_(NULL);
+    AddOnly_(NULL);
   int i;
   for(i=size-1; i>where; i--) {
     el[i] = el[i-1];
@@ -436,28 +436,27 @@ bool taPtrList_impl::InsertLink_(void* it, int where) {
   return true;
 }
 
-bool taPtrList_impl::ReplaceLink_(void* ol, void* nw) {
+bool taPtrList_impl::ReplaceLinkEl_(void* ol, void* nw) {
   int i;
-  if((i = Find_(ol)) < 0)
+  if((i = FindEl_(ol)) < 0)
     return false;
-  ReplaceLink_(i, nw);
+  ReplaceLinkIdx_(i, nw);
   return true;
 }
 
-bool taPtrList_impl::ReplaceLink_(const String& ol, void* nw) {
+bool taPtrList_impl::ReplaceLinkName_(const String& ol, void* nw) {
   int i;
-  if((i = Find(ol)) < 0)
-    return false;
-  ReplaceLink_(i, nw);
-  return true;
+  if(FindName_(ol, i))
+    return ReplaceLinkIdx_(i, nw);
+  return false;
 }
 
-bool taPtrList_impl::ReplaceLink_(int ol, void* nw) {
+bool taPtrList_impl::ReplaceLinkIdx_(int ol, void* nw) {
   if((size == 0) || (ol >= size))
     return false;
   if(el[ol] != NULL) {
     if(hash_table != NULL)
-      hash_table->Remove(El_GetName_(el[ol]));
+      hash_table->RemoveName(El_GetName_(el[ol]));
     DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
@@ -477,7 +476,7 @@ bool taPtrList_impl::ReplaceLink_(int ol, void* nw) {
 /////////////////////////
 
 void taPtrList_impl::Push_(void* it) {
-  AddEl_(it);
+  AddOnly_(it);
   if(it != NULL) {
     El_Ref_(it);
     if(hash_table != NULL)
@@ -491,7 +490,7 @@ void* taPtrList_impl::Pop_() {
   void* rval = el[--size];
   if(rval != NULL) {
     if(hash_table != NULL)
-      hash_table->Remove(El_GetName_(rval));
+      hash_table->RemoveName(El_GetName_(rval));
     DataChanged(DCR_LIST_ITEM_REMOVE, rval);
     El_unRef_(rval);
   }
@@ -512,7 +511,7 @@ void taPtrList_impl::Permute() {
   int i, nv;
   for(i=0; i<size; i++) {
     nv = (int) ((MTRnd::genrand_int32() % (size - i)) + i); // get someone from the future
-    Swap(i, nv);
+    SwapIdx(i, nv);
   }
 }
 
@@ -589,7 +588,7 @@ void taPtrList_impl::Stealth_Borrow(const taPtrList_impl& cp) {
   Alloc(size + cp.size);
   int i;
   for(i=0; i < cp.size; i++) {
-    AddEl_(cp.el[i]);
+    AddOnly_(cp.el[i]);
   }
 }
 
@@ -636,7 +635,7 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
     void* it = El_MakeToken_(cp.el[i]);
     int idx;
     if((idx=Scratch_Find_(El_GetName_(cp.el[i]))) >= 0) {
-      Replace_(idx,it, true); //note: only insert notify is suppressed
+      ReplaceIdx_(idx,it, true); //note: only insert notify is suppressed
       El_Copy_(it, cp.el[i]);
       DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(idx - 1)); 
     }  else {
@@ -680,7 +679,7 @@ void taPtrList_impl::BorrowUnique(const taPtrList_impl& cp) {
   int i;
   for(i=0; i < cp.size; i++) {
     void* it = cp.el[i];
-    if(scratch_list.Find_(it) < 0)
+    if(scratch_list.FindEl_(it) < 0)
       Link_(it);
   }
   scratch_list.size = 0;
@@ -694,7 +693,7 @@ void taPtrList_impl::BorrowUniqNameNew(const taPtrList_impl& cp) {
     void* it = cp.el[i];
     int idx;
     if((idx=Scratch_Find_(El_GetName_(it))) >= 0)
-      ReplaceLink_(idx, it);
+      ReplaceLinkIdx_(idx, it);
     else
       Link_(it);
   }
@@ -839,7 +838,7 @@ void taHashTable::Add(taHashVal hash, int index) {
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) {
     bucket = new taHashBucket();
-    Replace(buck_no, bucket);
+    ReplaceIdx(buck_no, bucket);
   }
   bucket->Add(new taHashEl(hash, index));
   bucket_max = MAX(bucket_max, bucket->size);
@@ -854,10 +853,10 @@ void taHashTable::Alloc(int sz) {
   taPtrList<taHashBucket>::Alloc(act_sz);
   int i;
   for(i=0; i<act_sz; i++)	// initialize with nulls
-    AddEl_(NULL);
+    AddOnly_(NULL);
 }
 
-int taHashBucket::Find(taHashVal hash) const {
+int taHashBucket::FindHashEl(taHashVal hash) const {
   int i;
   for(i=0; i < size; i++) {
     if(FastEl(i)->hash_code == hash)
@@ -866,7 +865,7 @@ int taHashBucket::Find(taHashVal hash) const {
   return -1;
 }
 
-int taHashBucket::FindIndex(taHashVal hash) const {
+int taHashBucket::FindListEl(taHashVal hash) const {
   int i;
   for(i=0; i < size; i++) {
     if(FastEl(i)->hash_code == hash)
@@ -875,12 +874,12 @@ int taHashBucket::FindIndex(taHashVal hash) const {
   return -1;
 }
 
-int taHashTable::FindIndex(taHashVal hash) const {
+int taHashTable::FindListEl(taHashVal hash) const {
   if(size == 0)	return -1;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return -1;
-  return bucket->FindIndex(hash);
+  return bucket->FindListEl(hash);
 }
 
 bool taHashTable::UpdateIndex(taHashVal hash, int index) {
@@ -888,21 +887,21 @@ bool taHashTable::UpdateIndex(taHashVal hash, int index) {
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return false;
-  int idx = bucket->Find(hash);
+  int idx = bucket->FindHashEl(hash);
   if(idx < 0)    return false;
   bucket->FastEl(idx)->list_idx = index;
   return true;
 }
 
-bool taHashTable::Remove(taHashVal hash) {
+bool taHashTable::RemoveHash(taHashVal hash) {
   if(size == 0)	return false;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return false;
-  int idx = bucket->Find(hash);
+  int idx = bucket->FindHashEl(hash);
   if(idx == -1)
     return false;
-  return bucket->Remove(idx);
+  return bucket->RemoveIdx(idx);
 }
 
 void taHashTable::RemoveAll() {
@@ -1025,7 +1024,7 @@ void taArray_impl::Add_(const void* it) {
 }
 
 bool taArray_impl::AddUnique_(const void* it) {
-  if(Find_(it) >= 0)
+  if(FindEl_(it) >= 0)
     return false;
   Add_(it);
   return true;
@@ -1078,7 +1077,7 @@ bool taArray_impl::Equal_(const taArray_impl& ar) const {
   return true;
 }
 
-int taArray_impl::Find_(const void* it, int where) const {
+int taArray_impl::FindEl_(const void* it, int where) const {
   int i;
   for(i=where; i<size; i++) {
     if(El_Compare_(it, FastEl_(i)) == 0)
@@ -1115,7 +1114,7 @@ void taArray_impl::Insert_(const void* it, int where, int n) {
     El_Copy_(FastEl_(i), it);
 }
 
-bool taArray_impl::Move(int fm, int to) {
+bool taArray_impl::MoveIdx(int fm, int to) {
   if((size == 0) || (fm >= size) || (to >= size)) return false;
 
   void* tmp = El_GetTmp_();
@@ -1142,14 +1141,14 @@ void taArray_impl::Permute() {
   }
 }
 
-bool taArray_impl::Remove_(const void* it) {
+bool taArray_impl::RemoveEl_(const void* it) {
   int i;
-  if((i = Find_(it)) < 0)
+  if((i = FindEl_(it)) < 0)
     return false;
-  return Remove(i);
+  return RemoveIdx(i);
 }
 
-bool taArray_impl::Remove(uint i, int n) {
+bool taArray_impl::RemoveIdx(uint i, int n) {
   if((int)i >= size) return false;
   n = MIN(n, size-(int)i);
   int j;
@@ -1232,7 +1231,7 @@ int taArray_impl::V_Flip(int width){
       Add_(FastEl_(from_start+j));
       El_Copy_(FastEl_(from_start+j),FastEl_(from_end+j));
       El_Copy_(FastEl_(from_end+j),FastEl_(size-1));
-      Remove(size-1);
+      RemoveIdx(size-1);
     }
   }
   return true;

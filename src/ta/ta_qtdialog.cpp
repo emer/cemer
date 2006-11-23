@@ -1231,8 +1231,8 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
 taiEditDataHost::~taiEditDataHost() {
   data_el.Reset();
   meth_el.Reset();
-  taiMisc::active_edits.Remove(this);
-  taiMisc::css_active_edits.Remove(this);
+  taiMisc::active_edits.RemoveEl(this);
+  taiMisc::css_active_edits.RemoveEl(this);
   // remove data client -- harmless if already done in Cancel
   if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
     ((taBase*)cur_base)->RemoveDataClient(this);

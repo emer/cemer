@@ -155,7 +155,7 @@ void tabMisc::WaitProc() {
     TAPtr it = delayed_remove.FastEl(i);
     // we need to grab count, because we always remove, and it could delete
     int refn = taBase::GetRefn(it); 
-    delayed_remove.Remove(i);
+    delayed_remove.RemoveIdx(i);
     //TODO: maybe should warn if refn>2, since that will mean refs remain
     if (refn > 1) {
       it->Close(); // tries owner if any, else just unrefs, which should delete
@@ -534,7 +534,7 @@ void taBase::SetDefaultName() {
     return;
   TypeDef* td = GetTypeDef();
   int tok;
-  if(td->tokens.keep && ((tok = td->tokens.Find((void *)this)) >= 0)) {
+  if(td->tokens.keep && ((tok = td->tokens.FindEl((void *)this)) >= 0)) {
     String nm = td->name + "_" + String(tok);
     SetName(nm);
   }
@@ -2020,13 +2020,13 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
       if(new_type->InheritsFrom(itd->GetParent())) {
 	ChangeType(idx, itd->GetParent());
 	itm = (TAPtr)el[idx];
-	Remove(size-1);			// remove the last guy!
+	RemoveIdx(size-1);			// remove the last guy!
       }
       else if((itd->GetParent()->parents.size >= 1) &&
 	      new_type->InheritsFrom(itd->GetParent()->GetParent())) {
 	ChangeType(idx, itd->GetParent()->GetParent());
 	itm = (TAPtr)el[idx];
-	Remove(size-1);			// remove the last guy!
+	RemoveIdx(size-1);			// remove the last guy!
       }
       else {
 	taMisc::Error("Cannot change to new type:",new_type->name,
@@ -2051,7 +2051,7 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   String nwnm = rval->GetName();
   if(nwnm.contains(itm->GetTypeDef()->name))
     rval->SetName(orgnm);
-  Swap(idx, size-1);		// switch positions, so old guy is now at end!
+  SwapIdx(idx, size-1);		// switch positions, so old guy is now at end!
   itm->UpdatePointersToMe(rval); // allow us to update all things that might point to us
   tabMisc::Close_Obj(itm);
   // then do a delayed remove of this object (in case called by itself!)
@@ -2059,7 +2059,7 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
 }
 
 bool taList_impl::ChangeType(TAPtr itm, TypeDef* new_type) {
-  int idx = Find(itm);
+  int idx = FindEl(itm);
   if(idx >= 0)
     return ChangeType(idx, new_type);
   return false;
@@ -2073,7 +2073,7 @@ void taList_impl::Close() {
 }
 
 bool taList_impl::Close_Child(TAPtr obj) {
-  return Remove(obj);
+  return RemoveEl(obj);
 }
 
 int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
@@ -2200,7 +2200,7 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	  MemberDef* md;
 	  TAPtr tp = tabMisc::root->FindFromPath(lnk_path, md);
 	  if(idx < size)
-	    ReplaceLink(idx, tp); // if already room, replace it..
+	    ReplaceLinkIdx(idx, tp); // if already room, replace it..
 	  else {
 	    Link(tp);		// otherwise, add it..
 	    idx = size-1;
@@ -2261,12 +2261,12 @@ void taList_impl::EnforceSameStru(const taList_impl& cp) {
 	continue;
       TAPtr rval = inherited_taBase::MakeToken(citm->GetTypeDef());
       if(rval != NULL)
-	Replace(i, rval);
+	ReplaceIdx(i, rval);
     }
   }
   if(size > cp.size)
     for(i=size-1; i>=cp.size; i--)
-      Remove(i);
+      RemoveIdx(i);
 }
 
 void taList_impl::EnforceSize(int sz) {
@@ -2275,7 +2275,7 @@ void taList_impl::EnforceSize(int sz) {
   else {
     int i;
     for(i=size-1; i>=sz; i--)
-      Remove(i);
+      RemoveIdx(i);
   }
 }
 
@@ -2288,17 +2288,8 @@ void taList_impl::EnforceType() {
 
     TAPtr rval = inherited_taBase::MakeToken(el_typ);
     if(rval != NULL)
-      Replace(i, rval);
+      ReplaceIdx(i, rval);
   }
-}
-
-int taList_impl::Find(TypeDef* it) const {
-  int i;
-  for(i=0; i < size; i++) {
-    if(((TAPtr)el[i])->InheritsFrom(it))
-      return i;
-  }
-  return -1;
 }
 
 MemberDef* taList_impl::FindMembeR(const String& nm, void*& ptr) const {
@@ -2316,7 +2307,7 @@ MemberDef* taList_impl::FindMembeR(const String& nm, void*& ptr) const {
   }
 
   int i;
-  if((i = Find(nm)) >= 0) {
+  if((FindName_(nm, i))) {
     ptr = el[i];
     return ReturnFindMd();
   }
@@ -2338,7 +2329,7 @@ MemberDef* taList_impl::FindMembeR(const String& nm, void*& ptr) const {
 
 MemberDef* taList_impl::FindMembeR(TypeDef* it, void*& ptr) const {
   int i;
-  if((i = Find(it)) >= 0) {
+  if((FindType_(it,i))) {
     ptr = el[i];
     return ReturnFindMd();
   }
@@ -2358,9 +2349,15 @@ MemberDef* taList_impl::FindMembeR(TypeDef* it, void*& ptr) const {
   return NULL;
 }
 
-TAPtr taList_impl::FindType_(TypeDef* it, int& idx) const {
-  idx = Find(it);
-  if(idx >= 0) return (TAPtr)el[idx];
+taBase* taList_impl::FindType_(TypeDef* it, int& idx) const {
+  int i;
+  for(i=0; i < size; i++) {
+    if(((taBase*)el[i])->InheritsFrom(it)) {
+      idx = i;
+      return (taBase*)el[i];
+    }
+  }
+  idx = -1;
   return NULL;
 }
 
@@ -2385,7 +2382,7 @@ String taList_impl::GetPath(TAPtr ta, TAPtr par_stop) const {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {
-      int gidx = Find_(ta);
+      int gidx = FindEl_(ta);
       if(gidx >= 0)
 	rval += "[" + String(gidx) + "]";
       else
@@ -2419,7 +2416,7 @@ String taList_impl::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
       rval = String("*(") + rval + "." + md->name + ")";
     }
     else {
-      int gidx = Find_(ta);
+      int gidx = FindEl_(ta);
       if(gidx >= 0)
 	rval += "[" + String(gidx) + "]";
       else
@@ -2477,11 +2474,11 @@ ostream& taList_impl::OutputR(ostream& strm, int indent) const {
   return strm;
 }
 
-bool taList_impl::Remove(int i) {
+bool taList_impl::RemoveIdx(int i) {
   // default could be out of range..
   if(el_def >= size-1)
     el_def = 0;
-  return taPtrList_ta_base::Remove(i);
+  return taPtrList_ta_base::RemoveIdx(i);
 }
 
 int taList_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {
@@ -2507,19 +2504,21 @@ void taList_impl::SetBaseType(TypeDef* it) {
 }
 
 int taList_impl::SetDefaultEl(TAPtr it) {
-  int idx = Find(it);
+  int idx = FindEl(it);
   if(idx >= 0)    el_def = idx;
   return idx;
 }
 
 int taList_impl::SetDefaultEl(const String& nm) {
-  int idx = Find(nm);
+  int idx;
+  FindName_(nm, idx);
   if(idx >= 0)    el_def = idx;
   return idx;
 }
 
 int taList_impl::SetDefaultEl(TypeDef* it) {
-  int idx = Find(it);
+  int idx;
+  FindType_(it, idx);
   if(idx >= 0)    el_def = idx;
   return idx;
 }
@@ -2538,11 +2537,11 @@ int taList_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       String old_path = itm->GetPath(NULL, old_par);
       taBase* nitm = new_par->FindFromPath(old_path);
       if(nitm) {
-	ReplaceLink_(i, nitm);
+	ReplaceLinkIdx_(i, nitm);
 	nchg++;
       }
       else {
-	Remove(i);
+	RemoveIdx(i);
       }
     }
   }
@@ -2562,7 +2561,7 @@ int taList_impl::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
       String old_path = itm->GetPath(NULL, old_own);
       taBase* nitm = new_par->FindFromPath(old_path);
       if(nitm) {
-	ReplaceLink_(i, nitm);
+	ReplaceLinkIdx_(i, nitm);
 	nchg++;
       }
     }
@@ -2580,9 +2579,9 @@ int taList_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
     bool we_own = (itm->GetOwner() == this);
     if(itm == old_ptr) {	   // if it is the old guy, it is by defn a link because we're not the owner..
       if(!new_ptr)		   // if replacement is null, just remove it
-	Remove(i);
+	RemoveIdx(i);
       else
-	ReplaceLink_(i, new_ptr);    // it is a link to old guy; replace it!
+	ReplaceLinkIdx_(i, new_ptr);    // it is a link to old guy; replace it!
       nchg++;
     }
     else if(we_own) {		// only for guys we own (not links; prevents loops)
@@ -2632,7 +2631,7 @@ void taList_impl::ChildQueryEditActions_impl(const MemberDef* md, const taBase* 
   // for the paste-like ops, we will generally allow insertions of compatible child
   // specific classes will need to replace this method to allow things like linking
   int item_idx = -1;
-  if (child) item_idx = Find(child);
+  if (child) item_idx = FindEl(child);
 
   // if it is a list item, or is null, then we can do list operations, so we call our L version
   if ((child == NULL) || (item_idx >= 0))
@@ -2688,7 +2687,7 @@ int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMim
   // if child exists, but is not a list item, then just delegate down to base
   int item_idx = -1;
   if (child) {
-    item_idx = Find(child);
+    item_idx = FindEl(child);
     if (item_idx < 0)
       return inherited_taBase::ChildEditAction_impl(md, child, ms, ea);
   }
@@ -2735,7 +2734,7 @@ int taList_impl::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, in
     return taiClipData::ER_OK;
   }
   case taiClipData::EA_UNLINK: {
-    Remove(lst_itm);
+    RemoveEl(lst_itm);
     return taiClipData::ER_OK;
   }
   default: break; // compiler food
@@ -2760,7 +2759,7 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
       return taiClipData::ER_ERROR;
     }
     // already in this list? (affects how we do drops/copies, etc.)
-    obj_idx = Find(obj);
+    obj_idx = FindEl(obj);
   }
   
   // All non-move paste ops (i.e., copy an object)
@@ -2795,14 +2794,14 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     if (obj_idx >= 0) { // in this list: just do a list move
       // to_idx will differ depending on whether dst is before or after the src object
       if (itm_idx < obj_idx) { // for before, to will be dst + 1
-        Move(obj_idx, itm_idx + 1);
+        MoveIdx(obj_idx, itm_idx + 1);
       } else if (itm_idx > obj_idx) { // for after, to will just be the dst
-        Move(obj_idx, itm_idx);
+        MoveIdx(obj_idx, itm_idx);
       } else return taiClipData::ER_OK; // do nothing case of drop on self
     } else { // not in this list, need to do a transfer
       if (Transfer(obj)) { // should always succeed -- only fails if we already own item
       // was added at end, fix up location, if necessary
-        Move(size - 1, itm_idx + 1);
+        MoveIdx(size - 1, itm_idx + 1);
       } else return taiClipData::ER_ERROR;
     }
     //NOTE: we never issue a data_taken() because we have actually moved the item ourself

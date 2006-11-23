@@ -425,7 +425,7 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
     if (ti >= 0) {
       pa->Freshen(*pv);
     } else {
-      Remove(i);
+      RemoveIdx(i);
     }
   }
   // add args in target not in us, and put in the right order
@@ -437,7 +437,7 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
       pa->name = pv->name;
       Insert(pa, ti);
     } else if (i != ti) {
-      Move(i, ti);
+      MoveIdx(i, ti);
     }
   }
 }
@@ -982,17 +982,17 @@ void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
   for (i = ar.size - 1; i >= 0; --i) {
     String an = ar.labels[i];
     String mnm = an.after(" ",-1);// past type
-    int ti = md->arg_names.Find(mnm);
+    int ti = md->arg_names.FindEl(mnm);
     if (ti < 0) {
-      ar.Remove(i);
-      ar.labels.Remove(i);
+      ar.RemoveIdx(i);
+      ar.labels.RemoveIdx(i);
     }
   }
   // add args in target not in us, and put in the right order
   for (ti = 0; ti < md->arg_names.size; ++ti) {
     TypeDef* arg_typ = md->arg_types.FastEl(ti);
     String arg_nm = arg_typ->Get_C_Name() + " " + md->arg_names[ti];
-    int i = ar.labels.Find(arg_nm);
+    int i = ar.labels.FindEl(arg_nm);
     if (i < 0) {
       ar.labels.Insert(arg_nm, ti);
       String def_val = md->arg_defs.SafeEl(ti);
@@ -1010,8 +1010,8 @@ void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
       }
       ar.Insert(def_val, ti);
     } else if (i != ti) {
-      ar.labels.Move(i, ti);
-      ar.Move(i, ti);
+      ar.labels.MoveIdx(i, ti);
+      ar.MoveIdx(i, ti);
     }
   }
 }
@@ -1449,7 +1449,7 @@ void ProgObjList::GetVarsForObjs() {
     if(!var->objs_ptr) continue;
     taBase* obj = FindName(var->name);
     if(obj == NULL)
-      prog->vars.Remove(i);		// get rid of it
+      prog->vars.RemoveIdx(i);		// get rid of it
   }
 }
 

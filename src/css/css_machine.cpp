@@ -3177,7 +3177,7 @@ void cssProg::RunDebugInfo(cssInst* nxt) {
 }
 
 bool cssProg::IsBreak(css_progdx pcval) {
-  int idx = breaks.Find(pcval);
+  int idx = breaks.FindEl(pcval);
   if(idx >= 0) {
     if((top->last_bp_prog == this) && (top->last_bp_pc == pcval)) {
       top->last_bp_prog = NULL;
@@ -4769,7 +4769,7 @@ bool cssProgSpace::DelWatch(cssEl* watch) {
   for(int i=watchpoints.size-1; i >= 0; i--) {
     cssWatchPoint* wp = watchpoints[i];
     if(wp->watch == watch) {
-      watchpoints.Remove(i);
+      watchpoints.RemoveIdx(i);
       got = true;
     }
   }
@@ -4777,7 +4777,7 @@ bool cssProgSpace::DelWatch(cssEl* watch) {
 }
 
 bool cssProgSpace::DelWatchIdx(int idx) {
-  bool got = watchpoints.Remove(idx);
+  bool got = watchpoints.RemoveIdx(idx);
   return got;
 }
 

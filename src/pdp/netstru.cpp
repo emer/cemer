@@ -85,7 +85,7 @@ void Schedule::UpdateAfterEdit() {
     int j;
     for(j=0; (j < size) && (itm->start_ctr > FastEl(j)->start_ctr); j++);
     Insert(itm,j);		// always insert item in new spot
-    temp.Remove(0);
+    temp.RemoveIdx(0);
   }
 
   if(size > 0)
@@ -352,18 +352,18 @@ int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       Unit* itm = FastEl(i);
       if(!itm) continue;
       Layer* old_lay = GET_OWNER(itm,Layer);
-      int lidx = old_net->layers.FindLeaf(old_lay);
+      int lidx = old_net->layers.FindLeafEl(old_lay);
       int uidx = itm->GetMyLeafIndex();
       if((lidx >= 0) && (uidx >= 0)) {
 	Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
 	if(nw_lay) {
 	  Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
 	  if(nw_un) {
-	    ReplaceLink(i, nw_un);
+	    ReplaceLinkIdx(i, nw_un);
 	    nchg++;
 	  }
 	  else {
-	    Remove(i);
+	    RemoveIdx(i);
 	  }
 	}
       }
@@ -378,11 +378,11 @@ int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       String old_path = itm->GetPath(NULL, old_par);
       Unit* nitm = (Unit*)new_par->FindFromPath(old_path);
       if(nitm) {
-	ReplaceLink(i, nitm);
+	ReplaceLinkIdx(i, nitm);
 	nchg++;
       }
       else {
-	Remove(i);
+	RemoveIdx(i);
       }
     }
   }
@@ -396,9 +396,9 @@ int UnitPtrList::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
     if(!itm) continue;
     if(itm == old_ptr) {	   // if it is the old guy, it is by defn a link because we're not the owner..
       if(!new_ptr)		   // if replacement is null, just remove it
-	Remove(i);
+	RemoveIdx(i);
       else
-	ReplaceLink(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
+	ReplaceLinkIdx(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
       nchg++;
     }
   }
@@ -573,13 +573,13 @@ Connection* RecvCons::NewCon(Unit* un) {
 }
 
 bool RecvCons::RemoveConIdx(int i) {
-  units.Remove(i);
+  units.RemoveIdx(i);
   return cons.RemoveIdx(i);
 }
 
 bool RecvCons::RemoveConUn(Unit* un) {
   int idx;
-  if((idx = units.Find(un)) < 0)
+  if((idx = units.FindEl(un)) < 0)
     return false;
   return RemoveConIdx(idx);
 }
@@ -590,7 +590,7 @@ void RecvCons::RemoveAll() {
 }
 
 Connection* RecvCons::FindConFrom(Unit* un, int& idx) const {
-  if((idx = units.Find(un)) < 0)
+  if((idx = units.FindEl(un)) < 0)
     return NULL;
   return cons.SafeEl(idx);
 }
@@ -864,19 +864,19 @@ int RecvCons::LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat f
     }
     if(units.size <= i) {
       units.Link(su);
-      int sidx = send_gp->units.Find(ru);
+      int sidx = send_gp->units.FindEl(ru);
       if(sidx >= 0) {
-	send_gp->cons.ReplaceLink(sidx, Cn(i));
+	send_gp->cons.ReplaceLinkIdx(sidx, Cn(i));
       }
       else {
 	send_gp->LinkCon(Cn(i), ru);
       }
     }
     else if(su != Un(i)) {
-      units.ReplaceLink(i, su);
-      int sidx = send_gp->units.Find(ru);
+      units.ReplaceLinkIdx(i, su);
+      int sidx = send_gp->units.FindEl(ru);
       if(sidx >= 0) {
-	send_gp->cons.ReplaceLink(sidx, Cn(i));
+	send_gp->cons.ReplaceLinkIdx(sidx, Cn(i));
       }
       else {
 	send_gp->LinkCon(Cn(i), ru);
@@ -1014,7 +1014,7 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
       }
     }
     if(units.size > c_count)
-      units.ReplaceLink(c_count, un);
+      units.ReplaceLinkIdx(c_count, un);
     else {
       units.Link(un);
       if(cons.size < units.size)
@@ -1154,7 +1154,7 @@ bool RecvCons_List::RemovePrjn(Projection* aprjn) {
     RecvCons* cg = FastEl(g);
     if(cg->prjn == aprjn) {
       cg->prjn->projected = false;
-      Remove(cg);
+      RemoveEl(cg);
       rval = true;
     }
   }
@@ -1168,7 +1168,7 @@ bool RecvCons_List::RemoveFrom(Layer* from) {
     RecvCons* cg = FastEl(g);
     if((cg->prjn) && (cg->prjn->from == from)) {
       cg->prjn->projected = false;
-      Remove(cg);
+      RemoveEl(cg);
       rval = true;
     }
   }
@@ -1295,13 +1295,13 @@ void SendCons::LinkCon(Connection* cn, Unit* un) {
 }
 
 bool SendCons::RemoveConIdx(int i) {
-  units.Remove(i);
-  return cons.Remove(i);
+  units.RemoveIdx(i);
+  return cons.RemoveIdx(i);
 }
 
 bool SendCons::RemoveConUn(Unit* un) {
   int idx;
-  if((idx = units.Find(un)) < 0)
+  if((idx = units.FindEl(un)) < 0)
     return false;
   return RemoveConIdx(idx);
 }
@@ -1312,7 +1312,7 @@ void SendCons::RemoveAll() {
 }
 
 Connection* SendCons::FindConFrom(Unit* un, int& idx) const {
-  if((idx = units.Find(un)) < 0)
+  if((idx = units.FindEl(un)) < 0)
     return NULL;
   return cons.SafeEl(idx);
 }
@@ -1463,7 +1463,7 @@ bool SendCons_List::RemovePrjn(Projection* aprjn) {
     SendCons* cg = FastEl(g);
     if(cg->prjn == aprjn) {
       cg->prjn->projected = false;
-      Remove(cg);
+      RemoveEl(cg);
       rval = true;
     }
   }
@@ -1477,7 +1477,7 @@ bool SendCons_List::RemoveFrom(Layer* from) {
     SendCons* cg = FastEl(g);
     if((cg->prjn) && (cg->prjn->from == from)) {
       cg->prjn->projected = false;
-      Remove(cg);
+      RemoveEl(cg);
       rval = true;
     }
   }
@@ -1957,7 +1957,7 @@ Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn, RecvCons*& recv_gp,
   if(send_gp->recv_idx < 0)
     send_gp->recv_idx = prjn->recv_idx;
 
-  if(recv_gp->units.Find(su) >= 0) // already connected!
+  if(recv_gp->units.FindEl(su) >= 0) // already connected!
     return NULL;
 
   Connection* con = recv_gp->NewCon(su);
@@ -2439,7 +2439,7 @@ void Projection::CutLinks() {
   if(from) {
     // remove from sending links, being sure to protect against a spurious re-delete
     taBase::Ref(this);
-    from->send_prjns.Remove(this);
+    from->send_prjns.RemoveEl(this);
     taBase::unRef(this);
   }
   RemoveCons();		// remove actual connections
@@ -2470,7 +2470,7 @@ void Projection::InitLinks() {
   con_spec.SetDefaultSpec(this);
   layer = GET_MY_OWNER(Layer);
   if(mynet) {
-    int myindex = mynet->layers.FindLeaf(layer);
+    int myindex = mynet->layers.FindLeafEl(layer);
     if(!(myindex == 0) && (from_type == PREV)) // is it not the first?
       UpdateAfterEdit();
   }
@@ -2647,7 +2647,7 @@ void Projection::SetFrom() {
   Network* mynet = layer->own_net;
   if(mynet == NULL)
     return;
-  int myindex = mynet->layers.FindLeaf(layer);
+  int myindex = mynet->layers.FindLeafEl(layer);
 
   switch(from_type) { // this is where the projection is coming from
   case NEXT:
@@ -3172,7 +3172,7 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
       Unit* un = Leaf(ary.FastEl(j));
       un->DisConnectAll();
 //       un->pos.z = -1;		// don't update yet!
-      RemoveLeaf(un);
+      RemoveLeafEl(un);
     }
   }
   else {
@@ -3182,7 +3182,7 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
 	Unit* un = (Unit*)Leaf(j);
 	un->DisConnectAll();
 // 	un->pos.z = -1;		// don't update yet!
-	RemoveLeaf(j);
+	RemoveLeafIdx(j);
 	rval++;
       }
     }
@@ -3452,7 +3452,7 @@ void Layer::SyncSendPrjns() {
     p = (Projection*)send_prjns.FastEl(pi);
     if(p == NULL) continue;
     if((p->layer == NULL) || (p->from != this))
-      send_prjns.Remove(pi);	// get rid of it!
+      send_prjns.RemoveIdx(pi);	// get rid of it!
   }
 }
 
@@ -3486,7 +3486,7 @@ bool Layer::SetLayerSpec(LayerSpec*) {
 
 void Layer::SetDefaultPos() {
   if (own_net == NULL) return;
-  int index = own_net->layers.FindLeaf(this);
+  int index = own_net->layers.FindLeafEl(this);
   switch(own_net->lay_layout) {
   case Network::THREE_D:
     pos.z = index; pos.y=0;
@@ -3560,7 +3560,7 @@ void Layer::Build() {
   if(unit_groups) {
     while(units.size > 0) {
 //       ((Unit*)units.FastEl(units.size-1))->pos.z = -1; // do not update
-      units.Remove(units.size-1); // get rid of any in top-level
+      units.RemoveIdx(units.size-1); // get rid of any in top-level
     }
     units.gp.EnforceSize(gp_geom.n);
     for(int k=0; k< units.gp.size; k++) {
@@ -3763,10 +3763,10 @@ void Layer::DisConnect() {
     Projection* p = (Projection*)send_prjns.FastEl(pi);
     if(p == NULL) continue;
     if(p->layer == NULL) {
-      send_prjns.Remove(pi);
+      send_prjns.RemoveIdx(pi);
       continue;
     }
-    p->layer->projections.RemoveLeaf(p);
+    p->layer->projections.RemoveLeafEl(p);
   }
   send_prjns.Reset();
   projections.Reset();
@@ -3958,7 +3958,7 @@ void Layer::Send_NetinToMe() {
   FOR_ITR_EL(Projection, p, projections., i) {
     if(p->from->lesion) continue;
     int addr = (int)(long)p->from;
-    if(sent_already.Find(addr) >= 0) continue;
+    if(sent_already.FindEl(addr) >= 0) continue;
     p->from->Send_NetinToLay(this);
     sent_already.Add(addr);
   }
@@ -5406,7 +5406,7 @@ void Network::LayerZPos_Unitize() {
   }
   zvals.Sort();
   FOR_ITR_EL(Layer, l, layers., i) {
-    l->pos.z = zvals.Find(l->pos.z); // replace with its index on sorted list..
+    l->pos.z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
   }
   UpdateMax();
 }
@@ -5673,7 +5673,7 @@ Layer* Network::FindMakeLayer(const char* nm, TypeDef* td, bool& nw_itm, const c
     nw_itm = true;
   }
   if((td) && !lay->InheritsFrom(td)) {
-    layers.Remove(lay);
+    layers.RemoveEl(lay);
     lay = (Layer*)layers.NewEl(1, td);
     lay->name = nm;
     nw_itm = true;
@@ -5808,7 +5808,7 @@ bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* 
 	   (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
 	    ps->InheritsFrom(TA_FullPrjnSpec)))
        && ((cs == NULL) || (prj->con_spec.spec == cs))) {
-      recv->projections.Remove(prj);
+      recv->projections.RemoveEl(prj);
       return true;
     }
   }

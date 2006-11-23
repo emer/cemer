@@ -354,7 +354,7 @@ void T3DataViewPar::Clear_impl_children() {
 }
 
 void T3DataViewPar::CloseChild(taDataView* child) {
-  children.Remove(child);
+  children.RemoveEl(child);
 }
 
 /*nn??

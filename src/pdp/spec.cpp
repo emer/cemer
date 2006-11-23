@@ -165,7 +165,7 @@ BaseSpec* BaseSpec_Group::FindMakeSpec(const char* nm, TypeDef* tp, bool& nw_itm
     nw_itm = true;
   }
   else if(!sp->InheritsFrom(tp)) {
-    Remove(sp);
+    RemoveEl(sp);
     sp = (BaseSpec*)NewEl(1, tp);
     if(nm)
       sp->name = nm;
@@ -178,9 +178,10 @@ bool BaseSpec_Group::RemoveSpec(const char* nm, TypeDef* tp) {
   if(nm)
     return RemoveName(nm);
 
-  int idx = Find(tp);
+  int idx;
+  FindType(tp, idx);
   if(idx >= 0)
-    return Remove(idx);
+    return RemoveIdx(idx);
   return false;
 }
 
@@ -287,7 +288,7 @@ bool BaseSpec::GetUnique(int memb_no) {
 		  GetTypeDef()->name);
     return false;
   }
-  if(unique.Find(md->name) >= 0) return true;
+  if(unique.FindEl(md->name) >= 0) return true;
   return false;
 }
 
@@ -486,7 +487,7 @@ bool BaseSubSpec::GetUnique(int memb_no) {
 		  GetTypeDef()->name);
     return false;
   }
-  if(unique.Find(md->name) >= 0) return true;
+  if(unique.FindEl(md->name) >= 0) return true;
   return false;
 }
 

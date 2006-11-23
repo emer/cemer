@@ -291,7 +291,7 @@ int MTA::lex() {
 	  break;
 	}
       }
-      if((state != Skip_File) && (included.Find(cur_fname) >= 0)) {
+      if((state != Skip_File) && (included.FindEl(cur_fname) >= 0)) {
 	if(verbose > 1)
 	  cout << "\nSkipping: " << cur_fname << " because prev included\n";
 	state = Skip_File;

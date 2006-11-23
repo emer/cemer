@@ -167,25 +167,22 @@ public:
   virtual void	InitLeafGp() const;
   // #CAT_Access Initialize the leaf group iter list, always ok to call
   virtual void	InitLeafGp_impl(TALOG* lg) const; // #IGNORE impl of init leaf gp
-  virtual void	AddEl_(void* it); 		// #IGNORE update leaf count
+  virtual void	AddOnly_(void* it); 		// #IGNORE update leaf count
 //  virtual bool	Remove(const char* item_nm)	{ return taList_impl::Remove(item_nm); }
 //  virtual bool	Remove(TAPtr item)		{ return taList_impl::Remove(item); }
 
-  virtual bool 	RemoveLeaf(TAPtr item);
+  virtual bool 	RemoveLeafEl(TAPtr item);
   // #CAT_Modify remove given leaf element
-  virtual bool	RemoveLeaf(const char* item_nm);
-  virtual bool  RemoveLeaf(int idx);
-  // #CAT_Modify Remove leaf element at leaf index
-  virtual bool	RemoveLeafName(const char* item_nm)	{ return RemoveLeaf(item_nm); }
+  virtual bool	RemoveLeafName(const char* item_nm);
   // #CAT_Modify remove given named leaf element
-  virtual bool	RemoveLeafEl(TAPtr item)		{ return RemoveLeaf(item); }
-  // #CAT_Modify Remove given leaf element
+  virtual bool  RemoveLeafIdx(int idx);
+  // #CAT_Modify Remove leaf element at leaf index
   virtual void 	RemoveAll();
   // #CAT_Modify Remove all elements of the group
 
-  virtual bool	RemoveGp(int idx) 			{ return gp.Remove(idx); }
+  virtual bool	RemoveGpIdx(int idx) 			{ return gp.RemoveIdx(idx); }
   // #CAT_Modify remove group at given index
-  virtual bool	RemoveGp(TAGPtr group)			{ return gp.Remove(group); }
+  virtual bool	RemoveGpEl(TAGPtr group)		{ return gp.RemoveEl(group); }
   // #MENU #FROM_GROUP_gp #MENU_ON_Edit #CAT_Modify remove given group
   virtual TALOG* EditSubGps() 				{ return &gp; }
   // #MENU #USE_RVAL #CAT_Access edit the list of sub-groups (e.g., so you can move around subgroups)
@@ -197,11 +194,7 @@ public:
 
   int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
 
-  virtual int	FindLeaf(TAPtr item) const;  // find given leaf element (-1 = not here)
-  virtual int	FindLeaf(TypeDef* item) const;
-  virtual int	FindLeaf(const char* item_nm) const;
-  // #CAT_Access find named leaf element
-  virtual int	FindLeafEl(TAPtr item) const	{ return FindLeaf(item); }
+  virtual int	FindLeafEl(TAPtr item) const;  // find given leaf element (-1 = not here)
   // #CAT_Access find given leaf element -1 = not here.
 
   void	Duplicate(const taGroup_impl& cp);
@@ -249,7 +242,7 @@ public:
   // #CAT_Access returns the element specified as the default for this group
 
   // note that the following is just to get this on the menu (it doesn't actually edit)
-  T*		Edit_El(T* item) const		{ return SafeEl(Find((TAPtr)item)); }
+  T*		Edit_El(T* item) const		{ return SafeEl(FindEl((TAPtr)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given group item
 
   taGroup<T>*	SafeGp(int idx) const		{ return (taGroup<T>*)gp.SafeEl(idx); }

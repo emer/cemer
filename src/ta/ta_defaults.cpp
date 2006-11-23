@@ -37,7 +37,7 @@ void TypeDefault::Destroy() {
     if(gp != NULL) {
       taBase::Ref(this);
       taBase::Ref(this);	// make sure that the remove doesn't cause a delete..
-      gp->Remove(this);
+      gp->RemoveEl(this);
     }
   }
   token = NULL;
@@ -104,7 +104,7 @@ void TypeDefault::UpdateAfterEdit() {
       taBase_List* gp = old_type->defaults;
       if(gp != NULL) {
 	taBase::Ref(this);	// make sure that the remove doesn't cause a delete..
-	gp->Remove(this);
+	gp->RemoveEl(this);
       }
     }
 
@@ -121,7 +121,7 @@ void TypeDefault::UpdateAfterEdit() {
       taBase::Ref(token);
       token->SetName("Default_" + default_type->name);
       SetName(default_type->name);
-      default_type->tokens.Remove(token); // don't count on list of tokens..
+      default_type->tokens.RemoveEl(token); // don't count on list of tokens..
     }
     else {
       taMisc::Error("A default of", default_type->name," cannot be created",
@@ -135,7 +135,7 @@ void TypeDefault::UpdateAfterEdit() {
       default_type->defaults->SetBaseType(&TA_TypeDefault);
     }
     taBase_List* gp = default_type->defaults;
-    if(gp->Find(this) < 0) {	// add to the list
+    if(gp->FindEl(this) < 0) {	// add to the list
       gp->Link(this);
       taBase::unRef(this);	// don't inc the refcount, else it won't get killed..
       old_type = default_type;	// this is now the old type

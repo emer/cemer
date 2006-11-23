@@ -894,7 +894,7 @@ DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
 	nda = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
       else
 	nda = NewCol(val_type, col_nm);
-      data.Move(data.size-1, col_idx);
+      data.MoveIdx(data.size-1, col_idx);
       data.RemoveEl(da);	// get rid of that guy
       da = nda;
       nda->EnforceRows(rows);	// keep row-constant
@@ -1615,7 +1615,7 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
   for (i = col_specs.size - 1; i >= 0; --i) {
     dcs = col_specs.FastEl(i);
     // first, see if it is bound to our table, if so, just update it (name may have changed, etc.
-    if (cols->Find(dcs->dataCol()) >= 0) {
+    if (cols->FindEl(dcs->dataCol()) >= 0) {
       dcs->UpdateFromDataCol();
       continue;
     }
@@ -1628,7 +1628,7 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
       if (dcs->sticky) {
         dcs->setDataCol(NULL); //keep him, but unbind from any col
       } else {
-        col_specs.Remove(i);
+        col_specs.RemoveIdx(i);
       }
     }
   }  
@@ -1638,7 +1638,7 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
     int fm;
     bool first = false;
     if ((dcs = (DataColViewSpec*)col_specs.FindName(dc->GetName(), fm))) {
-      if (fm != i) col_specs.Move(fm, i);
+      if (fm != i) col_specs.MoveIdx(fm, i);
     } else {
       first = true;
       dcs = (DataColViewSpec*)taBase::MakeToken(col_specs.el_typ); // of correct type for this

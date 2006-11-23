@@ -1843,7 +1843,7 @@ void ISelectableHost::DoDynAction(int idx) {
 }
 
 bool ISelectableHost::RemoveSelectedItem(ISelectable* item,  bool forced) {
-  bool rval = sel_items.Remove(item); // use raw list, because we are building
+  bool rval = sel_items.RemoveEl(item); // use raw list, because we are building
   if ((rval || forced) && (m_sel_chg_cnt == 0))
     SelectionChanged(forced);
   return rval;
@@ -2200,8 +2200,8 @@ end:
 }
 
 void iTabViewer::TabView_Destroying(iTabView* tv) {
-  int idx = m_tabViews->Find(tv);
-  m_tabViews->Remove(idx);
+  int idx = m_tabViews->FindEl(tv);
+  m_tabViews->RemoveIdx(idx);
   if (m_curTabView != tv) return;
   // focus next, if any, or prev, if any
   if (idx >= m_tabViews->size) --idx;
@@ -2680,7 +2680,7 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 } */
 
 iMainWindowViewer::~iMainWindowViewer() {
-  taiMisc::active_wins.Remove(this);
+  taiMisc::active_wins.RemoveEl(this);
 //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
 // has already deleted the menu items
 //  if (menu) delete menu;
@@ -3330,13 +3330,13 @@ void iMainWindowViewer::viewSplitHorizontal() {}
 
 void iMainWindowViewer::windowActivationChange(bool oldActive) {
   if (isActiveWindow()) {
-    int idx = taiMisc::active_wins.Find(this);
+    int idx = taiMisc::active_wins.FindEl(this);
     if (idx < 0) {
       taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
     } else {
       if (idx < (taiMisc::active_wins.size - 1)) {
         // move us to the end
-        taiMisc::active_wins.Move(idx, taiMisc::active_wins.size - 1);
+        taiMisc::active_wins.MoveIdx(idx, taiMisc::active_wins.size - 1);
       }
     }
   }
@@ -3646,7 +3646,7 @@ void iTabView::OnWindowBind(iTabViewer* itv) {
 
 void iTabView::RemoveDataPanel(iDataPanel* panel) {
   // we guard for destructing case by clearing panels, so don't detect it
-  if (panels.Remove(panel)) { // Remove unrefs us in panel
+  if (panels.RemoveEl(panel)) { // Remove unrefs us in panel
     wsPanels->removeWidget(panel); // superfluous, but safe, if panel is destroying
     // remove any associated tabs, except leave last tab (will get deleted anyway if we are
     // destructing)
@@ -4049,7 +4049,7 @@ void iDataPanelSet::OnWindowBind_impl(iTabViewer* itv) {
 }
 
 void iDataPanelSet::removeChild(QObject* obj) {
-  panels.Remove_(obj); // harmless if not a panel
+  panels.RemoveEl_(obj); // harmless if not a panel
   inherited::removeChild(obj);
 }
 
@@ -4513,8 +4513,8 @@ void iTreeView::UpdateSelectedItems_impl() {
   while ( (item = *it) ) {
   ISelectable* si = dynamic_cast<ISelectable*>(item);
     if (si) {
-      if ((lst_idx = sel_items.Find(si)) >= 0) 
-        sel_items.Remove(lst_idx);
+      if ((lst_idx = sel_items.FindEl(si)) >= 0) 
+        sel_items.RemoveIdx(lst_idx);
       else setItemSelected(item, false); // hope this is ok while iterating!!!!
     }
     ++it;

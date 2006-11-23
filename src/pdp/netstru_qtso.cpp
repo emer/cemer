@@ -683,7 +683,7 @@ void LayerView::BuildAll() {
 void LayerView::ChildRemoving(taDataView* child_) {
   T3DataView* child = dynamic_cast<T3DataView*>(child_);
   if (!child) goto done;
-  if (ugrps.Remove(child)) goto done;
+  if (ugrps.RemoveEl(child)) goto done;
 done:
   inherited::ChildRemoving(child_);
 }
@@ -757,7 +757,7 @@ void PrjnView::Render_impl() {
   Layer* lay_fr = prjn->from;
   Layer* lay_to = prjn->layer;
 
-  int rcv_num = lay_to->projections.FindLeaf(prjn);
+  int rcv_num = lay_to->projections.FindLeafEl(prjn);
   int tot_num = lay_to->projections.leaves;
   if (tot_num == 0) return; // error, shouldn't happen
 
@@ -947,8 +947,8 @@ void NetView::ChildAdding(taDataView* child_) {
 void NetView::ChildRemoving(taDataView* child_) {
   T3DataView* child = dynamic_cast<T3DataView*>(child_);
   if (!child) goto done;
-  if (layers.Remove(child)) goto done;
-  if (prjns.Remove(child)) goto done;
+  if (layers.RemoveEl(child)) goto done;
+  if (prjns.RemoveEl(child)) goto done;
 done:
   inherited::ChildRemoving(child_);
 }
@@ -1107,7 +1107,7 @@ void NetView::GetMembs() { // this fills a member group with the valid
   int i;
   for(i=oul.size-1; i>=0; i--) { // make sure no oul index is beyond number of membs
     if(oul[i] >= membs.size)
-      oul.Remove((uint)i,1);
+      oul.RemoveIdx(i,1);
   }
 }
 
@@ -1262,7 +1262,7 @@ void NetView::SelectVar(const char* var_name, bool add, bool update) {
     ordered_uvg_list.Reset();
   MemberDef* md = (MemberDef*)membs.FindName(var_name, idx);
   if (md) {
-    if (ordered_uvg_list.Find(idx) < 0)
+    if (ordered_uvg_list.FindEl(idx) < 0)
       ordered_uvg_list.Add(idx);
   }
   setUnitDispMd(md);
@@ -1611,7 +1611,7 @@ void NetViewPanel::GetImage_impl() {
   Q3ListViewItemIterator it(lvDisplayValues);
   Q3ListViewItem* item;
   while ((item = it.current())) {
-    bool is_selected = (nv->ordered_uvg_list.Find(i) >= 0);
+    bool is_selected = (nv->ordered_uvg_list.FindEl(i) >= 0);
     lvDisplayValues->setSelected(item, is_selected);
     // if list is size 1 make sure that there is a scale_range entry for this one
     ++it;
@@ -1657,11 +1657,11 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   Q3ListViewItem* item;
   while ((item = it.current())) {
     if (lvDisplayValues->isSelected(item)) {
-      if (nv_->ordered_uvg_list.Find(i) < 0) {
+      if (nv_->ordered_uvg_list.FindEl(i) < 0) {
         nv_->ordered_uvg_list.Add(i);
       }
     } else {
-      nv_->ordered_uvg_list.Remove(i); // note: may not exist
+      nv_->ordered_uvg_list.RemoveIdx(i); // note: may not exist
     }
     ++it;
     ++i;

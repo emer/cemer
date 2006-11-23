@@ -153,8 +153,8 @@ void taGroup_impl::Copy(const taGroup_impl& cp) {
   gp.Copy(cp.gp);
 }
 
-void taGroup_impl::AddEl_(void* it) {
-  taList_impl::AddEl_(it);
+void taGroup_impl::AddOnly_(void* it) {
+  taList_impl::AddOnly_(it);
   UpdateLeafCount_(1);		// not the most efficient, but gets it at a low level
 }
 
@@ -261,7 +261,7 @@ void taGroup_impl::Duplicate(const taGroup_impl& cp) {
 
 void taGroup_impl::EnforceLeaves(int sz){
   if(sz > leaves)  New(sz - leaves,el_typ);
-  while(leaves > sz) RemoveLeaf(leaves-1);
+  while(leaves > sz) RemoveLeafIdx(leaves-1);
 }
 
 void taGroup_impl::EnforceSameStru(const taGroup_impl& cp) {
@@ -273,9 +273,9 @@ void taGroup_impl::EnforceSameStru(const taGroup_impl& cp) {
   }
 }
 
-int taGroup_impl::FindLeaf(const char* nm) const {
+int taGroup_impl::FindLeafEl(TAPtr it) const {
   int idx;
-  if((idx = Find(nm)) >= 0)
+  if((idx = FindEl(it)) >= 0)
     return idx;
 
   int new_idx = size;
@@ -283,56 +283,50 @@ int taGroup_impl::FindLeaf(const char* nm) const {
   TAGPtr sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
-    if((idx = sbg->FindLeaf(nm)) >= 0)
+    if((idx = sbg->FindLeafEl(it)) >= 0)
       return idx + new_idx;
     new_idx += (int)sbg->leaves;
   }
   return -1;
 }
 
-int taGroup_impl::FindLeaf(TAPtr it) const {
-  int idx;
-  if((idx = Find(it)) >= 0)
-    return idx;
+TAPtr taGroup_impl::FindLeafName_(const char* nm, int& idx) const {
+  taBase* rval;
+  if((rval = (taBase*)FindName_(nm,idx)))
+    return rval;
 
   int new_idx = size;
   int i;
   TAGPtr sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
-    if((idx = sbg->FindLeaf(it)) >= 0)
-      return idx + new_idx;
+    if((rval =(taBase*) sbg->FindName_(nm, idx))) {
+      idx += new_idx;
+      return rval;
+    }
     new_idx += (int)sbg->leaves;
   }
-  return -1;
-}
-
-int taGroup_impl::FindLeaf(TypeDef* it) const {
-  int idx;
-  if((idx = Find(it)) >= 0)
-    return idx;
-
-  int new_idx = size;
-  int i;
-  TAGPtr sbg;
-  for(i=0; i<gp.size; i++) {
-    sbg = FastGp_(i);
-    if((idx = sbg->FindLeaf(it)) >= 0)
-      return idx + new_idx;
-    new_idx += (int)sbg->leaves;
-  }
-  return -1;
-}
-
-TAPtr taGroup_impl::FindLeafName_(const char* it, int& idx) const {
-  idx = FindLeaf(it);
-  if(idx >= 0) return Leaf_(idx);
+  idx = -1;
   return NULL;
 }
 
 TAPtr taGroup_impl::FindLeafType_(TypeDef* it, int& idx) const {
-  idx = FindLeaf(it);
-  if(idx >= 0) return Leaf_(idx);
+  taBase* rval;
+  if((rval = FindType_(it,idx)))
+    return rval;
+
+  int new_idx = size;
+  int i;
+  TAGPtr sbg;
+  for(i=0; i<gp.size; i++) {
+    sbg = FastGp_(i);
+    if((rval = sbg->FindType_(it, idx))) {
+      idx += new_idx;
+      return rval;
+    }
+    new_idx += (int)sbg->leaves;
+  }
+  idx = -1;
   return NULL;
 }
 
@@ -359,8 +353,7 @@ MemberDef* taGroup_impl::FindMembeR(const String& nm, void*& ptr) const {
   }
 
   int i;
-  if((i = FindLeaf(nm)) >= 0) {
-    ptr = Leaf_(i);
+  if((ptr = FindLeafName_(nm, i))) {
     return ReturnFindMd();
   }
 
@@ -381,8 +374,7 @@ MemberDef* taGroup_impl::FindMembeR(const String& nm, void*& ptr) const {
 
 MemberDef* taGroup_impl::FindMembeR(TypeDef* it, void*& ptr) const {
   int i;
-  if((i = FindLeaf(it)) >= 0) {
-    ptr = Leaf_(i);
+  if((ptr = FindLeafType_(it, i))) {
     return ReturnFindMd();
   }
 
@@ -571,11 +563,11 @@ void taGroup_impl::RemoveAll() {
   leaves = 0;
 }
 
-bool taGroup_impl::RemoveLeaf(int idx) {
+bool taGroup_impl::RemoveLeafIdx(int idx) {
   if(idx >= leaves)
     return false;
   if(size && (idx < size))
-    return Remove(idx);
+    return RemoveIdx(idx);
 
   int nw_idx = (int)idx - size;
   int i;
@@ -583,24 +575,24 @@ bool taGroup_impl::RemoveLeaf(int idx) {
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     if(sbg->leaves && (sbg->leaves > nw_idx))
-      return sbg->RemoveLeaf(nw_idx);
+      return sbg->RemoveLeafIdx(nw_idx);
     nw_idx -= (int)sbg->leaves;
   }
   return false;
 }
 
-bool taGroup_impl::RemoveLeaf(const char* it) {
+bool taGroup_impl::RemoveLeafName(const char* it) {
   int i;
-  if((i = FindLeaf(it)) < 0)
-    return false;
-  return RemoveLeaf(i);
+  if((FindLeafName_(it, i)))
+    return RemoveLeafIdx(i);
+  return false;
 }
 
-bool taGroup_impl::RemoveLeaf(TAPtr it) {
+bool taGroup_impl::RemoveLeafEl(TAPtr it) {
   int i;
-  if((i = FindLeaf(it)) < 0)
+  if((i = FindLeafEl(it)) < 0)
     return false;
-  return RemoveLeaf(i);
+  return RemoveLeafIdx(i);
 }
 
 int taGroup_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {
@@ -639,7 +631,7 @@ void taGroup_impl::ChildQueryEditActions_impl(const MemberDef* md, const taBase*
   int& allowed, int& forbidden)
 {
   int subgrp_idx = -1;
-  if (child) subgrp_idx = gp.Find(child);
+  if (child) subgrp_idx = gp.FindEl(child);
 
   // if it is a group item, or is null, then we can do group operations, so we call our G version
   if ((child == NULL) || (subgrp_idx >= 0))
@@ -685,7 +677,7 @@ int taGroup_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMi
   // if child exists, but is not a group item, then just delegate down to base
   int subgrp_idx = -1;
   if (child) {
-    subgrp_idx = gp.Find(child);
+    subgrp_idx = gp.FindEl(child);
     if (subgrp_idx < 0)
       return taList_impl::ChildEditAction_impl(md, child, ms, ea);
   }
@@ -726,7 +718,7 @@ int taGroup_impl::ChildEditActionGS_impl(const MemberDef* md, int subgrp_idx, ta
   case taiClipData::EA_CUT: return 1; //nothing to do, just acknowledge -- deletion triggered by the dst, whether local or remote
   case taiClipData::EA_DELETE: {
     if (subgrp) {
-      RemoveGp(subgrp_idx);
+      RemoveGpIdx(subgrp_idx);
       return taiClipData::ER_OK;
     } else return taiClipData::ER_ERROR; // error TODO: error message
   }
@@ -754,7 +746,7 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
       return taiClipData::ER_ERROR;
     }
     // already in this list? (affects how we do drops/copies, etc.)
-    srcgrp_idx = gp.Find(srcobj);
+    srcgrp_idx = gp.FindEl(srcobj);
   }
 /*TODO: work out logistics for this... maybe this should only be for when the src is a group
   // All non-move paste ops (i.e., copy an object)
@@ -788,14 +780,14 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
     if (srcgrp_idx >= 0) { // in this group: just do a group move
       // to_idx will differ depending on whether dst is before or after the src object
       if (subgrp_idx < srcgrp_idx) { // for before, to will be dst + 1
-        gp.Move(srcgrp_idx, subgrp_idx + 1);
+        gp.MoveIdx(srcgrp_idx, subgrp_idx + 1);
       } else if (subgrp_idx > srcgrp_idx) { // for after, to will just be the dst
-        gp.Move(srcgrp_idx, subgrp_idx);
+        gp.MoveIdx(srcgrp_idx, subgrp_idx);
       } else return taiClipData::ER_OK; // do nothing case of drop on self
     } else { // not directly in this group, need to do a transfer
       if (gp.Transfer(srcobj)) { // should always succeed -- only fails if we already own item
       // was added at end, fix up location, if necessary
-        gp.Move(gp.size - 1, subgrp_idx + 1);
+        gp.MoveIdx(gp.size - 1, subgrp_idx + 1);
       } else return taiClipData::ER_ERROR; //TODO: error message
     }
     // NOTE: we don't acknowledge action to source because we moved the item ourself

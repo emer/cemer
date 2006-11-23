@@ -618,8 +618,8 @@ public:
   { return GetTypeDef()->InheritsFrom(it); }
   bool		InheritsFrom(const TypeDef& it) const
   { return GetTypeDef()->InheritsFrom(it); }
-  bool 		InheritsFrom(const char* nm) const
-  { return GetTypeDef()->InheritsFrom(nm); }
+  bool 		InheritsFromName(const char* nm) const
+  { return GetTypeDef()->InheritsFromName(nm); }
   // #CAT_ObjectMgmt does this inherit from given type name?
 
   bool		InheritsFormal(TypeDef* it) const	// #IGNORE
@@ -643,7 +643,7 @@ public:
   { return GetTypeDef()->members.FindTypeAddrR(it, (void*)this, ptr); }
 
   virtual bool		FindCheck(const String& nm) const // #IGNORE check this for the name
-  { return ((GetName() == nm) || InheritsFrom(nm)); }
+  { return ((GetName() == nm) || InheritsFromName(nm)); }
 
   virtual String	GetEnumString(const String& enum_tp_nm, int enum_val) const
   { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
@@ -1209,7 +1209,7 @@ public:
   String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
 
   bool 		FindCheck(const String& nm) const // also check for el_typ
-  { return ((name == nm) || InheritsFrom(nm) || el_typ->InheritsFrom(nm)); }
+  { return ((name == nm) || InheritsFromName(nm) || el_typ->InheritsFromName(nm)); }
 
   MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;
   // #CAT_Access extended to search in the list
@@ -1244,22 +1244,12 @@ public:
   virtual int	SetDefaultElType(TypeDef* it)	{ return SetDefaultEl(it); }
   // set the default element to be item with given type
 
-  virtual int	Find(const taBase* item) const		{ return taPtrList_ta_base::Find(item); }
-  virtual int	Find(TypeDef* item) const;
-  virtual int	Find(const String& item_nm) const	{ return taPtrList_ta_base::Find(item_nm); }
-  // #CAT_Access find item with given name
-
   virtual taBase* New(int n_objs=0, TypeDef* typ=NULL);
   // #MENU #MENU_ON_Edit #ARGC_0 #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
   virtual void	EnforceSize(int sz);
   // #MENU #MENU_ON_Edit add or remove elements to force list to be of given size
 
-  virtual bool	Remove(const String& item_nm)	{ return taPtrList_ta_base::Remove(item_nm); }
-  virtual bool	Remove(TAPtr item)	{ return taPtrList_ta_base::Remove(item); }
-  virtual bool	Remove(int idx);
-  // Remove object at given index on list
-  virtual bool	RemoveEl(TAPtr item)	{ return Remove(item); }
-  // #MENU #ARG_ON_OBJ #CAT_Modify Remove given item from the list
+  override bool	RemoveIdx(int idx);
 
   virtual void	EnforceType();
   // enforce current type (all elements have to be of this type)
@@ -1273,7 +1263,7 @@ public:
   virtual int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
   // #MENU #USE_RVAL #CAT_Modify #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
 
-  virtual TAPtr	FindType_(TypeDef* item_tp, int& idx) const; 	// #IGNORE
+  virtual taBase* FindType_(TypeDef* item_tp, int& idx) const; 	// #IGNORE
 
   void	SetBaseType(TypeDef* it); // set base (and default) type to given td
 
@@ -1347,7 +1337,7 @@ public:
   T*		DefaultEl() const		{ return (T*)DefaultEl_(); }
   // #CAT_Access returns the element specified as the default for this list
 
-  T*		Edit_El(T* item) const		{ return SafeEl(Find((TAPtr)item)); }
+  T*		Edit_El(T* item) const		{ return SafeEl(FindEl((TAPtr)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
 
   virtual T*	FindName(const String& item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
@@ -1656,12 +1646,12 @@ public:
   // push the item on the end of the array (same as add)
   void	Insert(const T& item, int indx, int n_els=1)	{ Insert_((void*)&item, indx, n_els); }
   // #MENU Insert (n_els) item(s) at indx (-1 for end) in the array
-  int	Find(const T& item, int indx=0) const { return Find_((void*)&item, indx); }
+  int	FindEl(const T& item, int indx=0) const { return FindEl_((void*)&item, indx); }
   // #MENU #USE_RVAL Find item starting from indx in the array (-1 if not there)
 //  virtual bool	Remove(const T& item)		{ return Remove_((void*)&item); }
 //  virtual bool	Remove(uint indx, int n_els=1)	{ return taArray_impl::Remove(indx,n_els); }
   // Remove (n_els) item(s) at indx, returns success
-  virtual bool	RemoveEl(const T& item)		{ return Remove_((void*)&item); }
+  virtual bool	RemoveEl(const T& item)		{ return RemoveEl_((void*)&item); }
   // remove given item, returns success
   virtual void	InitVals(const T& item, int start=0, int end=-1) { InitVals_((void*)&item, start, end); }
   // set array elements to specified value starting at start through end (-1 = size)

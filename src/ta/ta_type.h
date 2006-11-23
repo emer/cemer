@@ -1101,8 +1101,7 @@ public:
   virtual MemberDef*	FindCheck(const char* nm, void* base, void*& ptr) const;
   // breadth-first find pass for the recursive procedures
 
-  int			Find(MemberDef* it) const { return taPtrList<MemberDef>::Find(it); }
-  int			Find(const char* nm) const;
+  int			FindNameOrType(const char* nm) const;
   // checks name and type name in 2 passes
   virtual int		FindTypeName(const char* nm) const;
   // find by name of type
@@ -1113,7 +1112,6 @@ public:
   virtual MemberDef*	FindNameAddrR(const char* nm, void* base, void*& ptr) const;
   // recursive find of name returning address of found member
 
-  virtual int		Find(TypeDef* it) const;
   virtual MemberDef*	FindType(TypeDef* it, int& idx=Idx) const;
   // find by type, inherits from
   virtual MemberDef*	FindTypeR(TypeDef* it) const;
@@ -1127,7 +1125,6 @@ public:
   virtual MemberDef*	FindTypeDerives(TypeDef* it,  int& idx=Idx) const;
   // find by type, derives from
 
-  virtual int		Find(void* base, void* mbr) const;
   virtual MemberDef*	FindAddr(void* base, void* mbr, int& idx=Idx) const;
   // find by address given base of class and address of member
   virtual int		FindPtr(void* base, void* mbr) const;
@@ -1288,7 +1285,7 @@ public:
     // name used for saving a reference in stream files, can be used to lookup again
     
   void		Copy(const TypeItem& cp);
-  bool		HasOption(const String& op) const { return (opts.Find(op) >= 0); }
+  bool		HasOption(const String& op) const { return (opts.FindEl(op) >= 0); }
     // check if option is set
   bool		HasOptionAfter(const String& prefix, const String& op) const;
     // returns true if any prefix (Xxx_) has the value after of op; enables multi options of same prefix
@@ -1579,25 +1576,25 @@ public:
   bool			HasSubTypes() const; // true if any non-enum subtypes
 
   // you inherit from yourself.  This ensures that you are a "base" class (ptr == 0)
-  bool 			InheritsFrom(const char *nm) const
-  { bool rval=0; if((ptr == 0) && ((name == nm) || (par_cache.Find(nm)>=0) || FindParent(nm))) rval=1; return rval; }
+  bool 			InheritsFromName(const char *nm) const
+  { bool rval=0; if((ptr == 0) && ((name == nm) || (par_cache.FindName(nm)) || FindParentName(nm))) rval=1; return rval; }
   bool			InheritsFrom(const TypeDef* td) const
-  { bool rval=0; if((ptr == 0) && ((this == td) || (par_cache.Find(td)>=0) || FindParent(td))) rval=1; return rval; }
+  { bool rval=0; if((ptr == 0) && ((this == td) || (par_cache.FindEl(td)>=0) || FindParent(td))) rval=1; return rval; }
   bool 			InheritsFrom(const TypeDef& it) const { return InheritsFrom((TypeDef*)&it); }
 
   // pointers to a type, etc, can be Derives from a given type (looser than inherits)
-  bool 			DerivesFrom(const char *nm) const
-  { bool rval=0; if((name == nm) || (par_cache.Find(nm)>=0) || FindParent(nm)) rval=1; return rval; }
+  bool 			DerivesFromName(const char *nm) const
+  { bool rval=0; if((name == nm) || (par_cache.FindName(nm)) || FindParentName(nm)) rval=1; return rval; }
   bool 			DerivesFrom(TypeDef* td) const
-  { bool rval=0; if((this == td) || (par_cache.Find(td)>=0) || FindParent(td)) rval=1; return rval; }
+  { bool rval=0; if((this == td) || (par_cache.FindEl(td)>=0) || FindParent(td)) rval=1; return rval; }
   bool 			DerivesFrom(const TypeDef& it) const { return DerivesFrom((TypeDef*)&it); }
 
   // inheritance from a formal class (e.g. const, static, class)
   bool			InheritsFormal(TypeDef* it) const
-  { bool rval=0; if((ptr == 0) && (par_formal.Find(it)>=0)) rval=1; return rval; }
+  { bool rval=0; if((ptr == 0) && (par_formal.FindEl(it)>=0)) rval=1; return rval; }
   bool 			InheritsFormal(const TypeDef& it) const { return InheritsFormal((TypeDef*)&it); }
   bool			DerivesFormal(TypeDef* it) const
-  { bool rval=0; if(par_formal.Find(it)>=0) rval=1; return rval; }
+  { bool rval=0; if(par_formal.FindEl(it)>=0) rval=1; return rval; }
   bool 			DerivesFormal(const TypeDef& it) const { return DerivesFormal((TypeDef*)&it); }
 
   bool			InheritsNonAtomicClass() const; // true *only* for classes that are not considered atoms by the streaming system, i.e. does not include taString and Variant 
@@ -1624,7 +1621,7 @@ public:
   bool		IgnoreMeth(const String& nm) const;
   // check if given method should be ignored (also checks parents, etc)
 
-  bool	 	FindParent(const char* nm) const;
+  bool	 	FindParentName(const char* nm) const;
   bool 		FindParent(const TypeDef* it) const;
   // recursively tries to find parent, returns true if successful
   void*		GetParAddr(const char* par, void* base) const;
@@ -1634,7 +1631,7 @@ public:
   // return the given parent's offset (par must be a parent!)
   bool 		ReplaceParent(TypeDef* old_tp, TypeDef* new_tp);
   // replace parent of old_tp with parent of new_tp (recursive)
-  bool	 	FindChild(const char* nm) const;
+  bool	 	FindChildName(const char* nm) const;
   bool 		FindChild(TypeDef* it) const;
   // recursively tries to  find child, returns true if successful
 

@@ -169,7 +169,7 @@ defn:     type tyname term		{
         | type term			{
 	    TypeDef* td = $1->parents[1]; mta->type_stack.Pop();
 	    TypeSpace* sp = $1->owner;
-	    sp->Remove($1); /* get rid of new one, cuz it is bogus */
+	    sp->RemoveEl($1); /* get rid of new one, cuz it is bogus */
 	    /* not on list that it would be placed on now.. */
 	    if((td->owner != mta->spc) && (mta->spc->FindName(td->name) == NULL)) {
 	      if(mta->verbose >= 3)
@@ -189,7 +189,7 @@ defn:     type tyname term		{
 		  if(already_there == NULL)
 		    mta->spc->Transfer(par); /* move parent to this list too */
 		  else
-		    td->parents.ReplaceLink(0, already_there);
+		    td->parents.ReplaceLinkIdx(0, already_there);
 		}
 	      }
 	    }
@@ -481,12 +481,12 @@ membdefn:
 	    if(mta->last_memb != NULL) {
 	      SETDESC(mta->last_memb, $1);
 	      if(mta->last_memb->HasOption("IGNORE"))
-		mta->cur_class->members.Remove(mta->last_memb); }
+		mta->cur_class->members.RemoveEl(mta->last_memb); }
 	    else if(mta->last_meth != NULL) {
 	      SETDESC(mta->last_meth, $1);
 	      if(mta->last_meth->HasOption("IGNORE")) {
 		mta->cur_class->ignore_meths.AddUnique(mta->last_meth->name);
-		mta->cur_class->methods.Remove(mta->last_meth);
+		mta->cur_class->methods.RemoveEl(mta->last_meth);
 		mta->last_meth = NULL; }
 	      else if((mta->last_meth->opts.size > 0) || (mta->last_meth->lists.size > 0)) {
 		mta->cur_class->methods.AddUniqNameNew(mta->last_meth);

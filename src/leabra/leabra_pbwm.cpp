@@ -70,12 +70,12 @@ void SNcLayerSpec::HelpConfig() {
 bool SNcLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   if(!PVLVDaLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
 
-  int myidx = lay->own_net->layers.FindLeaf(lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
 
   int pc_prjn_idx;
   LeabraLayer* pclay = FindLayerFmSpec(lay, pc_prjn_idx, &TA_PatchLayerSpec);
   if(pclay != NULL) {
-    int patchidx = lay->own_net->layers.FindLeaf(pclay);
+    int patchidx = lay->own_net->layers.FindLeafEl(pclay);
     if(patchidx > myidx) {
       if (!quiet) taMisc::CheckError("SNcLayerSpec: Patch layer must be *before* this layer in list of layers -- it is now after, won't work");
       return false;
@@ -408,8 +408,8 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     return false;
   }
   // vta/snc must be before matrix!  good.
-  int myidx = lay->own_net->layers.FindLeaf(lay);
-  int daidx = lay->own_net->layers.FindLeaf(da_lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int daidx = lay->own_net->layers.FindLeafEl(da_lay);
   if(daidx > myidx) {
     if (!quiet) taMisc::CheckError("MatrixLayerSpec: DA layer (PVLVDaLayerSpec, VTA or SNc) must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
@@ -930,8 +930,8 @@ bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     return false;
   }
 
-  int myidx = lay->own_net->layers.FindLeaf(lay);
-  int matidx = lay->own_net->layers.FindLeaf(matrix_lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int matidx = lay->own_net->layers.FindLeafEl(matrix_lay);
   if(matidx > myidx) {
     if (!quiet) taMisc::CheckError("SNrThalLayerSpec: Matrix layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
@@ -1160,8 +1160,8 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
   }
 
   // check for ordering of layers!
-  int myidx = lay->own_net->layers.FindLeaf(lay);
-  int gateidx = lay->own_net->layers.FindLeaf(snrthal_lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int gateidx = lay->own_net->layers.FindLeafEl(snrthal_lay);
   if(gateidx > myidx) {
     if (!quiet) taMisc::CheckError("PFCLayerSpec: SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
@@ -1448,15 +1448,15 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   i_kwta_pt = pfcsp->i_kwta_pt;
 
   // check for ordering of layers!
-  int myidx = lay->own_net->layers.FindLeaf(lay);
-  int gateidx = lay->own_net->layers.FindLeaf(snrthal_lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int gateidx = lay->own_net->layers.FindLeafEl(snrthal_lay);
   if(gateidx > myidx) {
     if (!quiet) taMisc::CheckError("PFCOutLayerSpec: SNrThal Layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
 
   // check for ordering of layers!
-  int pfcidx = lay->own_net->layers.FindLeaf(pfc_lay);
+  int pfcidx = lay->own_net->layers.FindLeafEl(pfc_lay);
   if(pfcidx > myidx) {
     if (!quiet) taMisc::CheckError("PFCOutLayerSpec: PFC Layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;

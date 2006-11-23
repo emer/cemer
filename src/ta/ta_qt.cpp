@@ -465,7 +465,7 @@ void taiMisc::PurgeDialogs() {
   for (int i = active_dialogs.size - 1; i >= 0; --i) {
     taiDataHost* dlg = active_dialogs.FastEl(i);
     if ((dlg->state == taiDataHost::ACCEPTED) || (dlg->state == taiDataHost::CANCELED)) {
-      active_dialogs.Remove(i);
+      active_dialogs.RemoveIdx(i);
       did_purge = true;
     }
   }

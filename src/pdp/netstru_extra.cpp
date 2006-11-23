@@ -427,7 +427,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
 	  // don't connect to anyone who already recvs from me cuz that will make
 	  // a symmetric connection which isn't good: symmetry will be enforced later
 	  RecvCons* scg = su->recv.FindPrjn(prjn);
-	  if(scg->units.Find(ru) >= 0) continue;
+	  if(scg->units.FindEl(ru) >= 0) continue;
 	  perm_list.Link(su);
 	}
 	perm_list.Permute();
@@ -454,7 +454,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
 	// don't connect to anyone who already recvs from me cuz that will make
 	// a symmetric connection which isn't good: symmetry will be enforced later
 	RecvCons* scg = su->recv.FindPrjn(prjn);
-	if(scg->units.Find(ru) >= 0) continue;
+	if(scg->units.FindEl(ru) >= 0) continue;
 	if(ru->ConnectFrom(su, prjn) != NULL)
 	  cnt++;
       }
@@ -1428,7 +1428,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
 	  // don't connect to anyone who already recvs from me cuz that will make
 	  // a symmetric connection which isn't good: symmetry will be enforced later
 	  RecvCons* scg = su->recv.FindPrjn(prjn);
-	  if(scg->units.Find(ru) >= 0) continue;
+	  if(scg->units.FindEl(ru) >= 0) continue;
 	  perm_list.Link(su);
 	}
 	perm_list.Permute();
@@ -1455,7 +1455,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
 	// don't connect to anyone who already recvs from me cuz that will make
 	// a symmetric connection which isn't good: symmetry will be enforced later
 	RecvCons* scg = su->recv.FindPrjn(prjn);
-	if(scg->units.Find(ru) >= 0) continue;
+	if(scg->units.FindEl(ru) >= 0) continue;
 	if(ru->ConnectFromCk(su, prjn) != NULL)
 	  cnt++;
       }

@@ -175,8 +175,8 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if (!quiet) taMisc::CheckError("PViLayerSpec: requires MarkerConSpec connection from PVe/ExtRewLayerSpec layer to get external rewards!");
     return false;
   }
-  int myidx = lay->own_net->layers.FindLeaf(lay);
-  int eridx = lay->own_net->layers.FindLeaf(ext_rew_lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int eridx = lay->own_net->layers.FindLeafEl(ext_rew_lay);
   if(eridx > myidx) {
     if (!quiet) taMisc::CheckError("PViLayerSpec: PVe/ExtRew layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
@@ -587,18 +587,18 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     return false;
   }
 
-  int myidx = lay->own_net->layers.FindLeaf(lay);
-  int lvidx = lay->own_net->layers.FindLeaf(lve_lay);
+  int myidx = lay->own_net->layers.FindLeafEl(lay);
+  int lvidx = lay->own_net->layers.FindLeafEl(lve_lay);
   if(lvidx > myidx) {
     if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: LVe layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
-  lvidx = lay->own_net->layers.FindLeaf(lvi_lay);
+  lvidx = lay->own_net->layers.FindLeafEl(lvi_lay);
   if(lvidx > myidx) {
     if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: LVi layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;
   }
-  lvidx = lay->own_net->layers.FindLeaf(pvi_lay);
+  lvidx = lay->own_net->layers.FindLeafEl(pvi_lay);
   if(lvidx > myidx) {
     if (!quiet) taMisc::CheckError("PVLVDaLayerSpec: PVi layer must be *before* this layer in list of layers -- it is now after, won't work");
     return false;

@@ -78,14 +78,14 @@ class TA_API TAColor : public taBase { // ##NO_TOKENS Color
 public:
   const iColor* color() {return &color_;}		// #IGNORE
   const iColor*	contrastcolor() {return &contrastcolor_;}	// #IGNORE
-  void SetColor(float r,float g, float b, float a=1.0,	RGBA* background=NULL);
-  // #USE_RVAL #ARGC=4 #NEW_FUN
-  void SetColor(RGBA* c, RGBA* background = NULL) {
-    SetColor(c->r, c->g, c->b, c->a, background);
-  }
   void SetColor(const iColor* c, RGBA* background = NULL){
     SetColor(c->redf(), c->greenf(), c->bluef(), c->alpha(), background);
   }
+  void SetColor(RGBA* c, RGBA* background = NULL) {
+    SetColor(c->r, c->g, c->b, c->a, background);
+  }
+  void SetColor(float r,float g, float b, float a=1.0,	RGBA* background=NULL);
+  // #USE_RVAL #ARGC=4 #NEW_FUN
   void Initialize()	{}
   void Destroy() {}
   TA_BASEFUNS(TAColor);
@@ -208,6 +208,7 @@ public:
   virtual const iColor*	GetColor(int idx);
   virtual const iColor* GetColor(float val, const iColor** maincolor=NULL,
 			    const iColor** contrast=NULL);
+  // #IGNORE
   virtual const iColor*	GetContrastColor(int idx);
   int 			GetIdx(float val);
   void			DefaultChunks();

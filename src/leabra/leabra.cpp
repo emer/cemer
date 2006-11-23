@@ -1762,11 +1762,11 @@ void LeabraLayerSpec::Compute_SoftClamp(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraSort::FastInsertLink(void* it, int where) {
   if((where >= size) || (where < 0)) {
-    AddEl_(it);
+    AddOnly_(it);
     return;
   }
   if(size > 0)
-    AddEl_(NULL);
+    AddOnly_(NULL);
   int i;
   for(i=size-1; i>where; i--)
     el[i] = el[i-1];
@@ -1922,7 +1922,7 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer*, Unit_Group* ug, LeabraInh
 	continue;
       }
       thr->inact_buf.Add(thr->active_buf[k1_idx]); // now inactive
-      thr->active_buf.Replace(k1_idx, u);// replace the smallest with it
+      thr->active_buf.ReplaceIdx(k1_idx, u);// replace the smallest with it
       net_k1 = u->i_thr;		// assume its the smallest
       for(j=0; j < k_plus_1; j++) { 	// and recompute the actual smallest
 	float tmp = thr->active_buf[j]->i_thr;
@@ -1944,8 +1944,8 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer*, Unit_Group* ug, LeabraInh
       u = thr->inact_buf[j];
       if(u->i_thr <=  net_k1)		// not bigger than smallest one in sort buffer
 	continue;
-      thr->inact_buf.Replace(j, thr->active_buf[k1_idx]);	// now inactive
-      thr->active_buf.Replace(k1_idx, u);// replace the smallest with it
+      thr->inact_buf.ReplaceIdx(j, thr->active_buf[k1_idx]);	// now inactive
+      thr->active_buf.ReplaceIdx(k1_idx, u);// replace the smallest with it
       net_k1 = u->i_thr;		// assume its the smallest
       int i;
       for(i=0; i < k_plus_1; i++) { 	// and recompute the actual smallest
@@ -2020,7 +2020,7 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer*, Unit_Group* ug, Leabr
 	continue;
       }
       thr->inact_buf.Add(thr->active_buf[k1_idx]); // now inactive
-      thr->active_buf.Replace(k1_idx, u);// replace the smallest with it
+      thr->active_buf.ReplaceIdx(k1_idx, u);// replace the smallest with it
       net_k1 = u->i_thr;		// assume its the smallest
       for(j=0; j < k_plus_1; j++) { 	// and recompute the actual smallest
 	float tmp = thr->active_buf[j]->i_thr;
@@ -2042,8 +2042,8 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer*, Unit_Group* ug, Leabr
       u = thr->inact_buf[j];
       if(u->i_thr <=  net_k1)		// not bigger than smallest one in sort buffer
 	continue;
-      thr->inact_buf.Replace(j, thr->active_buf[k1_idx]);	// now inactive
-      thr->active_buf.Replace(k1_idx, u);// replace the smallest with it
+      thr->inact_buf.ReplaceIdx(j, thr->active_buf[k1_idx]);	// now inactive
+      thr->active_buf.ReplaceIdx(k1_idx, u);// replace the smallest with it
       net_k1 = u->i_thr;		// assume its the smallest
       int i;
       for(i=0; i < k_plus_1; i++) { 	// and recompute the actual smallest
@@ -2122,7 +2122,7 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* ne
 	continue;
       }
       lay->inact_buf.Add(lay->active_buf[k1_idx]); // now inactive
-      lay->active_buf.Replace(k1_idx, (LeabraUnit*)u);// replace the smallest with it
+      lay->active_buf.ReplaceIdx(k1_idx, (LeabraUnit*)u);// replace the smallest with it
       net_k1 = u->i_val.g_i;		// assume its the smallest
       for(j=0; j < k_plus_1; j++) { 	// and recompute the actual smallest
 	float tmp = ((LeabraUnit_Group*)lay->active_buf[j])->i_val.g_i;
@@ -2144,8 +2144,8 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* ne
       u = (LeabraUnit_Group*)lay->inact_buf[j];
       if(u->i_val.g_i <=  net_k1)		// not bigger than smallest one in sort buffer
 	continue;
-      lay->inact_buf.Replace(j, lay->active_buf[k1_idx]);	// now inactive
-      lay->active_buf.Replace(k1_idx, (LeabraUnit*)u);// replace the smallest with it
+      lay->inact_buf.ReplaceIdx(j, lay->active_buf[k1_idx]);	// now inactive
+      lay->active_buf.ReplaceIdx(k1_idx, (LeabraUnit*)u);// replace the smallest with it
       net_k1 = u->i_val.g_i;		// assume its the smallest
       int i;
       for(i=0; i < k_plus_1; i++) { 	// and recompute the actual smallest

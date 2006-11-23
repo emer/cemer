@@ -1052,7 +1052,7 @@ bool ClustNode::RemoveChild(ClustNode* nd) {
   int i;
   for(i=children.size-1;i>=0;i--) {
     if(GetChild(i) == nd) {
-      children.Remove(i);
+      children.RemoveIdx(i);
       rval = true;
     }
   }
@@ -1230,7 +1230,7 @@ bool ClustNode::ClustOnClosest(float_RArray::DistMetric) {
   AddChild(new_clust, min_d);
   // add the min node and its nearest neighbors to the new cluster
   new_clust->AddChild(nd);
-  children.Remove(min_idx);
+  children.RemoveIdx(min_idx);
   for(i=0;i<nd->nns.size; i++) {
     ClustLink* nlk = (ClustLink*)nd->nns[i];
     if(fabs(nlk->dist - min_d) > clust_dist_tol)

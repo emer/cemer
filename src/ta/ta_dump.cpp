@@ -95,7 +95,7 @@ void VPUList::Resolve() {
   int i=0;
   do {
     if(FastEl(i)->Resolve() != NULL)
-      Remove(i);		// take off the list if resolved!
+      RemoveIdx(i);		// take off the list if resolved!
     else {
       VPUnref* vp = (VPUnref*)FastEl(i);
       String par_path;

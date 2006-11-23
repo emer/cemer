@@ -553,7 +553,7 @@ const String NetMonItem::GetObjName(TAPtr obj, TAPtr own) {
     Layer* lay = GET_OWNER(obj, Layer);
     if (lay) {
       if (nm.empty()) {
-        int index = ((Unit_Group*)u->owner)->Find(u);
+        int index = ((Unit_Group*)u->owner)->FindEl(u);
         nm = String("[") + String(index) + "]";
       }
       nm = DotCat(lay->name, nm);;
@@ -1025,12 +1025,12 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   }
   // if nested objs made chans, delete ours and mark a new group
   if (val_sz < val_specs.size) {
-    val_specs.Remove(val_sz - 1);
+    val_specs.RemoveIdx(val_sz - 1);
     val_specs.FastEl(val_sz)->new_group_name = valname;
   }
   // if no vals scanned, delete ours
   else if (cell_num == 0) {
-    val_specs.Remove(val_sz - 1);
+    val_specs.RemoveIdx(val_sz - 1);
   }
 }
 
@@ -1106,12 +1106,12 @@ cont:
   if (mk_col) {
     // if nested objs made chans, delete ours and mark a new group
     if (val_sz < val_specs.size) {
-      val_specs.Remove(val_sz - 1);
+      val_specs.RemoveIdx(val_sz - 1);
       val_specs.FastEl(val_sz)->new_group_name = valname;
     }
     // if no vals scanned, delete ours
     else if (cell_num == 0) {
-      val_specs.Remove(val_sz - 1);
+      val_specs.RemoveIdx(val_sz - 1);
     }
   }
 }

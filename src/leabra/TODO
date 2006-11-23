@@ -1,9 +1,13 @@
 leabra todo list:
 
+* look for ConnectFromCk -- always necessary?  very expensive.
 
-* scan_congroups in netdata netmonitor; check
+* scan_congroups in netdata netmonitor -- not getting sending layer geom.
+  do quick try at this
 
-* program dirty not getting set -- init not recompiling
+* fix Remove( and Find( functions to not be overloaded -- doesn't look too bad.
+
+* program dirty not getting set -- init not recompiling: brad
 
 * dataops: random patterns!
 
