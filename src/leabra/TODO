@@ -1,11 +1,9 @@
 leabra todo list:
 
-* BUTTON_MENUs for changing specs & obj types etc in Netstru objs -- select obj
-  do in its panel
-
-* look for ConnectFromCk -- always necessary?  very expensive.
-
 * replace spec* with smartptr or ref
+
+* BUTTON_MENUs for changing specs & obj types etc in Netstru objs -- select obj
+  do in its panel (was prev in view menu?)
 
 * scan_congroups in netdata netmonitor -- not getting sending layer geom.
   do quick try at this

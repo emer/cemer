@@ -180,35 +180,6 @@ void ConSpec::InitLinks() {
 }
 
 void ConSpec::CutLinks() {
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if((net) && !net->isDestroying()) {
-    ConSpec* rsp = (ConSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
-    if(rsp == NULL) {
-      rsp = (ConSpec*)net->specs.FindSpecInheritsNotMe(&TA_ConSpec, this);
-    }
-    if(rsp) {
-      int cnt = net->ReplaceConSpec(this, rsp);
-      if(cnt > 0) {
-	taMisc::Error("Warning: ConSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
-      }
-
-      // now go through specs!
-      BaseSpec* sp;
-      taLeafItr si;
-      FOR_ITR_EL(BaseSpec, sp, net->specs., si) {
-	if(!sp->InheritsFrom(TA_UnitSpec)) continue;
-	UnitSpec* us = (UnitSpec*)sp;
-	if(us->bias_spec.spec == this) {
-	  us->bias_spec.SetSpec(rsp); // update to new
-	}
-	if(us->children.leaves > 0)
-	  conspec_repl_bias_ptr(us, this, rsp);
-      }
-    }
-//     else {
-//       taMisc::Error("Warning: Deleting ConSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
-//     }
-  }
   BaseSpec::CutLinks();
 }
 
@@ -250,13 +221,13 @@ void ConSpec::Init_Weights_Net() {
 
 bool ConSpec::CheckObjectType_impl(taBase* obj) {
   TypeDef* con_tp = &TA_Connection;
-  if(obj->InheritsFrom(TA_RecvCons)) {
+  if(obj->InheritsFrom(&TA_RecvCons)) {
     con_tp = ((RecvCons*)obj)->con_type;
   }
-  else if(obj->InheritsFrom(TA_SendCons)) {
+  else if(obj->InheritsFrom(&TA_SendCons)) {
     con_tp = ((SendCons*)obj)->con_type;
   }
-  else if(obj->InheritsFrom(TA_Projection)) {
+  else if(obj->InheritsFrom(&TA_Projection)) {
     con_tp = ((Projection*)obj)->con_type;
   }
   if(!con_tp->InheritsFrom(min_obj_type))
@@ -420,14 +391,16 @@ void RecvCons::Initialize() {
 void RecvCons::InitLinks() {
   inherited::InitLinks();
   taBase::Own(cons, this);
-  spec.SetDefaultSpec(this);
+  if(owner && !owner->InheritsFrom(&TA_Unit)) // don't do this for bias cons
+    spec.SetDefaultSpec(this);
 }
 
 void RecvCons::CutLinks() {
   cons.CutLinks();
   units.Reset();
   taBase::DelPointer((taBase**)&prjn);
-  spec.CutLinks();
+  if(owner && !owner->InheritsFrom(&TA_Unit)) // don't do this for bias cons
+    spec.CutLinks();
   inherited::CutLinks();
 }
 
@@ -444,7 +417,8 @@ void RecvCons::Copy_(const RecvCons& cp) {
 void RecvCons::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   cons.SetType(con_type);	// always impose our type on it..
-  spec.CheckSpec();
+  if(owner && !owner->InheritsFrom(&TA_Unit)) // don't do this for bias cons
+    spec.CheckSpec();
 }
 
 void RecvCons::SetConType(TypeDef* cn_tp) {
@@ -1554,24 +1528,8 @@ void UnitSpec::BuildBiasCons() {
 }
 
 void UnitSpec::CutLinks() {
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if((net) && !net->isDestroying()) {
-    UnitSpec* rsp = (UnitSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
-    if(rsp == NULL) {
-      rsp = (UnitSpec*)net->specs.FindSpecInheritsNotMe(&TA_UnitSpec, this);
-    }
-    if(rsp) {
-      int cnt = net->ReplaceUnitSpec(this, rsp);
-      if(cnt > 0) {
-	taMisc::Error("Warning: UnitSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
-      }
-    }
-//     else {
-//       taMisc::Error("Warning: Deleting UnitSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
-//     }
-  }
-  BaseSpec::CutLinks();
   bias_spec.CutLinks();
+  BaseSpec::CutLinks();
 }
 
 void UnitSpec::Init_Acts(Unit* u) {
@@ -1817,6 +1775,12 @@ bool Unit::Build() {
       bias.NewCon(NULL);		// null unit (or should it be this!?)
   }
   return rval;
+}
+
+void Unit::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  recv.CheckConfig(quiet, rval);
+  send.CheckConfig(quiet, rval);
 }
 
 void Unit::CheckThisConfig_impl(bool quiet, bool& rval) { 
@@ -2259,22 +2223,6 @@ void ProjectionSpec::InitLinks() {
 }
 
 void ProjectionSpec::CutLinks() {
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if((net) && !net->isDestroying()) {
-    ProjectionSpec* rsp = (ProjectionSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
-    if(rsp == NULL) {
-      rsp = (ProjectionSpec*)net->specs.FindSpecInheritsNotMe(&TA_ProjectionSpec, this);
-    }
-    if(rsp) {
-      int cnt = net->ReplacePrjnSpec(this, rsp);
-      if(cnt > 0) {
-	taMisc::Error("Warning: ProjectionSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
-      }
-    }
-//     else {
-//       taMisc::Error("Warning: Deleting ProjectionSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
-//     }
-  }
   BaseSpec::CutLinks();
 }
 
@@ -2444,9 +2392,6 @@ void Projection::CutLinks() {
   }
   RemoveCons();		// remove actual connections
   taBase::DelPointer((taBase**)&from);
-/*obs #ifdef TA_GUI
-  taBase::DelPointer((taBase**)&proj_points);
-#endif */
   spec.CutLinks();
   con_spec.CutLinks();
   if((layer) && taMisc::gui_active) {
@@ -2726,6 +2671,7 @@ bool Projection::SetSendConsType(TypeDef* td) {
 
 bool Projection::ApplyConSpec() {
   if((layer == NULL) || (from == NULL)) return false;
+  if(!con_spec.spec) return false;
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
@@ -3300,22 +3246,6 @@ void LayerSpec::InitLinks() {
 }
 
 void LayerSpec::CutLinks() {
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if(net && !net->isDestroying()) {
-    LayerSpec* rsp = (LayerSpec*)net->specs.FindSpecTypeNotMe(GetTypeDef(), this);
-    if(rsp == NULL) {
-      rsp = (LayerSpec*)net->specs.FindSpecInheritsNotMe(&TA_LayerSpec, this);
-    }
-    if(rsp) {
-      int cnt = net->ReplaceLayerSpec(this, rsp);
-      if(cnt > 0) {
-	taMisc::Error("Warning: LayerSpec",this->GetPath(),"was used in the network, replaced with",rsp->GetPath());
-      }
-    }
-//     else {
-//       taMisc::Error("Warning: Deleting LayerSpec",this->GetPath(),"and couldn't find replacement - network will have NULL spec and crash!");
-//     }
-  }
   BaseSpec::CutLinks();
 }
 
@@ -3363,8 +3293,7 @@ void Layer::InitLinks() {
 }
 
 void Layer::CutLinks() {
-  static bool in_repl = false;
-  if (in_repl || (owner == NULL)) return; // already replacing or already dead
+  if(!owner) return; // already replacing or already dead
   DisConnect();
   sent_already.CutLinks();
   act_geom.CutLinks();
@@ -4328,8 +4257,7 @@ void Network::InitLinks() {
 }
 
 void Network::CutLinks() {
-  static bool in_repl = false;
-  if(in_repl || (owner == NULL)) return; // already replacing or already dead
+  if(!owner) return; // already replacing or already dead
 #ifdef DMEM_COMPILE
   dmem_net_comm.FreeComm();
   dmem_trl_comm.FreeComm();

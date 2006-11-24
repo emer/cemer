@@ -823,6 +823,7 @@ public: //
 
 protected:
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
+  override void	 CheckChildConfig_impl(bool quiet, bool& rval);
 };
 
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)

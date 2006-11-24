@@ -145,7 +145,7 @@ public:
   TA_BASEFUNS(BaseSubSpec);
 };
 
-class PDP_API SpecPtr_impl : public taBase {
+class PDP_API SpecPtr_impl : public taBase, public IDataLinkClient {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec magic pointer to a spec
 INHERITED(taBase)
 public:
@@ -174,6 +174,15 @@ public:
   void	Copy_(const SpecPtr_impl& cp);
   COPY_FUNS(SpecPtr_impl, taBase);
   TA_BASEFUNS(SpecPtr_impl);
+
+public: // ITypedObject interface
+  override void*	This() {return (void*)this;} 
+
+public: // IDataLinkClient interface
+  override TypeDef*	GetDataTypeDef() const 
+  { return (GetSpec()) ? GetSpec()->GetTypeDef() : type; } // TypeDef of the data
+  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
+  override void		DataLinkDestroying(taDataLink* dl);
 };
 
 
@@ -184,9 +193,10 @@ public:
 
   BaseSpec*	GetSpec() const		{ return spec; }
   void		SetSpec(BaseSpec* es)   {
-    if((es == NULL) || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
+    if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
+      if(spec) spec->RemoveDataClient(this);
       taBase::SetPointer((TAPtr*)&spec,es);
-      if(es != NULL) type = es->GetTypeDef();
+      if(es) { type = es->GetTypeDef(); es->AddDataClient(this); }
     }
     else {
       taMisc::Error("SetSpec: incorrect type of Spec:",
@@ -222,16 +232,18 @@ public:
   T* 		operator=(T* cp)	{ SetSpec(cp); return cp; }
   bool 		operator!=(T* cp) const	{ return (spec != cp); }
   bool 		operator==(T* cp) const	{ return (spec == cp); }
-
+  
   operator T*()	const		{ return spec; }
   operator BaseSpec*() const	{ return spec; }
+  operator bool() const 	{ return (spec); }
 
   void 	Initialize()		{ spec = NULL; }
   void	Destroy()		{ CutLinks(); }
   void  CutLinks()
   { SpecPtr_impl::CutLinks(); taBase::DelPointer((TAPtr*)&spec); }
   void	Copy_(const SpecPtr<T>& cp)
-  { taBase::SetPointer((TAPtr*)&spec, cp.spec); UpdateAfterEdit(); }
+  { SetSpec(cp.spec); UpdateAfterEdit(); }
+  //  { taBase::SetPointer((TAPtr*)&spec, cp.spec); UpdateAfterEdit(); }
   COPY_FUNS(SpecPtr<T>, SpecPtr_impl);
   TA_TMPLT_BASEFUNS(SpecPtr, T);
 };
@@ -245,6 +257,3 @@ public:									      \
 }
 
 #endif // spec_h
-
-
-

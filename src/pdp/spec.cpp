@@ -55,8 +55,9 @@ BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {
   }
   // then check the children
   FOR_ITR_EL(BaseSpec, bs, this->, i) {
-    if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef())))
-      continue;			// no hope..
+    // this is not true -- bad!!
+//     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef())))
+//       continue;			// no hope..
     BaseSpec* rval = bs->children.FindSpecType(td);
     if(rval)
       return rval;
@@ -554,13 +555,17 @@ void SpecPtr_impl::UpdateAfterEdit() {
 
   BaseSpec* sp = GetSpec();
   if(sp) {
-    if(sp->GetTypeDef() == type)
+    if(sp->GetTypeDef() != type) {
+      sp->AddDataClient(this);  // always make sure we are a data client
       return;
-    else
+    }
+    else {
       SetSpec(NULL);		// get rid of existing spec
+    }
   }
-
   GetSpecOfType();
+  if(GetSpec())			// always make sure we are a data client
+    GetSpec()->AddDataClient(this);
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {
@@ -631,4 +636,17 @@ void SpecPtr_impl::GetSpecOfType() {
   }
 }
 
+void SpecPtr_impl::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
+  // no special calls for specs..
+//   if (owner) {
+//     owner->SmartRef_DataChanged(this, GetSpec(), dcr, op1, op2);
+//   }
+}
+void SpecPtr_impl::DataLinkDestroying(taDataLink* dl) {
+  if (owner) {
+//     owner->SmartRef_DataDestroying(this, GetSpec()); 
+    SetSpec(NULL);
+    owner->UpdateAfterEdit();
+  }
+}
 

@@ -1277,6 +1277,8 @@ void LeabraUnitChans::Copy_(const LeabraUnitChans& cp) {
 }
 
 void LeabraUnit::Initialize() {
+  bias.con_type = &TA_LeabraCon;
+ //  bias.spec.SetBaseType(&TA_LeabraBiasSpec);
   spec.SetBaseType(&TA_LeabraUnitSpec);
 
   act_eq = 0.0f;
