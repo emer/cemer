@@ -80,8 +80,6 @@ Brad:
 --------------------------
 Randy: (active list in src/leabra/TODO)
 
-* replace spec* with smartref, get rid of massive cutlinks code
-
 * BUTTON_MENUs for changing specs & obj types etc in Netstru objs -- select obj
   do in its panel
 
