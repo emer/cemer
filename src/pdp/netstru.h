@@ -948,9 +948,9 @@ public:
   // #MENU #USE_RVAL #CAT_Projection remove connections with prob p_lesion (permute = fixed no. lesioned)
 
   virtual bool 	SetConSpec(ConSpec* sp);
-  // #CAT_Projection set the con spec for all connections in this prjn
+  // #BUTTON #CAT_Projection set the con spec for all connections in this prjn
   virtual bool 	ApplyConSpec();
-  // #BUTTON #CAT_Projection apply the default conspec to all connections in this prjn
+  // #CAT_Projection apply the current con_spec to all connections in this prjn
   virtual bool	CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
   // #CAT_Projection check if projection is connected
   virtual void	FixPrjnIndexes();
@@ -962,11 +962,11 @@ public:
   // #CAT_Projection switch any projections using old_sp to using new_sp
 
   virtual bool 	SetConType(TypeDef* td);
-  // #CAT_Projection #TYPE_Connection set the connection type for all connections in this prjn
+  // #BUTTON #CAT_Projection #TYPE_Connection set the connection type for all connections in this prjn
   virtual bool 	SetRecvConsType(TypeDef* td);
-  // #CAT_Projection #TYPE_RecvCons set the receiving connection group type for all connections in this prjn
+  // #BUTTON #CAT_Projection #TYPE_RecvCons set the receiving connection group type for all connections in this prjn
   virtual bool 	SetSendConsType(TypeDef* td);
-  // #CAT_Projection #TYPE_SendCons set the connection group type for all connections in this prjn
+  // #BUTTON #CAT_Projection #TYPE_SendCons set the connection group type for all connections in this prjn
 
 //obs  virtual void	GridViewWeights(GridLog* grid_log, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
   /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of projection weights (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
@@ -1323,15 +1323,15 @@ public:
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
   virtual bool	SetLayerSpec(LayerSpec* layspec);
-  // #MENU #MENU_SEP_BEFORE #CAT_Structure set the layer specification
+  // #BUTTON #CAT_Structure set the layer specification
   virtual LayerSpec* GetLayerSpec()		{ return (LayerSpec*)NULL; }
   // #CAT_Structure get the layer spec for this layer (if used)
   virtual bool	SetUnitSpec(UnitSpec* unitspec);
-  // #MENU #CAT_Structure set for all units in layer
+  // #BUTTON #CAT_Structure set unit spec for all units in layer
   virtual void	SetUnitType(TypeDef* td);
-  // #MENU #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
+  // #BUTTON #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
   virtual bool	SetConSpec(ConSpec* conspec);
-  // #MENU #CAT_Structure set for all unit's connections in layer
+  // #BUTTON #CAT_Structure set for all unit's connections in layer
   virtual void	FixPrjnIndexes();
   // #MENU #CAT_Structure fix the projection indicies of the connection groups (other_idx)
 
@@ -1526,9 +1526,9 @@ public:
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
   virtual void  Build();
-  // #MENU #MENU_ON_Actions #CAT_Structure Build the network according to geometry
+  // #BUTTON #CAT_Structure Build the network according to geometry
   virtual void	Connect();
-  // #MENU #MENU_ON_Actions #CAT_Structure Connect this network according to projections on Layers
+  // #BUTTON #CAT_Structure Connect this network according to projections on Layers
   virtual bool	CheckBuild(bool quiet=false);
   // #CAT_Structure check if network is built 
   virtual bool	CheckConnect(bool quiet=false);
@@ -1536,6 +1536,9 @@ public:
 
   virtual void	UpdtAfterNetMod();
   // #CAT_ObjectMgmt update network after any network modification (calls appropriate functions)
+  virtual void	SetUnitType(TypeDef* td);
+  // #BUTTON #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
+
   virtual void	SyncSendPrjns();
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
   virtual void 	CountRecvCons();

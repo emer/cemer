@@ -1,12 +1,12 @@
 // ta_Dump File v2.0
 Program .projects[0].programs.gp[0][2] { 
-  ProgVar_List @.args = [1] {
-    ProgVar @[0] { };
-  };
-
-  ProgVar_List @.vars = [2] {
+  ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
   };
 
   ProgEl_List @.init_code = [1] {
@@ -24,8 +24,9 @@ Program .projects[0].programs.gp[0][2] {
       ProgEl_List @.loop_code = [3] {
 	UserScript @[0] { };
 	ProgramCall @[1] { 
-	  ProgArg_List @.prog_args = [1] {
+	  ProgArg_List @.prog_args = [2] {
 	    ProgArg @[0] { };
+	    ProgArg @[1] { };
 	  };
 	};
 	IfElse @[2] { 
@@ -69,6 +70,14 @@ Program .projects[0].programs.gp[0][2] {
    objs_ptr=0;
    desc=;
   };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$1$;
+   objs_ptr=0;
+   desc=;
+  };
  };
  vars {
   name=;
@@ -78,14 +87,6 @@ Program .projects[0].programs.gp[0][2] {
    name="trial";
    var_type=T_Int;
    int_val=0;
-   objs_ptr=0;
-   desc=;
-  };
-  ProgVar @[1] {
-   name="train_data";
-   var_type=T_Object;
-   object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
    desc=;
   };
@@ -158,6 +159,10 @@ Program .projects[0].programs.gp[0][2] {
        name="network";
        value="network";
       };
+      ProgArg @[1] {
+       name="input_data";
+       value="input_data";
+      };
      };
     };
     IfElse @[2] {
@@ -186,9 +191,9 @@ Program .projects[0].programs.gp[0][2] {
     };
    };
    loop_test="This is not used here";
-   data_var=.projects[0].programs.gp[0][2].vars[1]$7$;
+   data_var=.projects[0].programs.gp[0][2].args[1]$7$;
    order=PERMUTED;
-   item_idx_list{ 5;4;2;1;0;3;   };
+   item_idx_list{ 0;5;1;4;2;3;   };
    dmem_nprocs=1;
    dmem_this_proc=0;
   };

@@ -18,4 +18,6 @@ dist_pkgdata_prog_lib_DATA =\
 	ApplyInputsImage.prog \
 	LeabraCycle.prog \
 	LeabraSettle.prog \
-	ReadImages.prog
+	ReadImages.prog \
+	LeabraTrainBatchSeedList.prog \
+	MultiInputData.prog

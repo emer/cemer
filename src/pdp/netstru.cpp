@@ -4568,6 +4568,14 @@ void Network::CheckChildConfig_impl(bool quiet, bool& rval) {
   layers.CheckConfig(quiet, rval);
 }
 
+void Network::SetUnitType(TypeDef* td) {
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    l->SetUnitType(td);
+  }
+}
+
 void Network::SyncSendPrjns() {
   Layer* l;
   taLeafItr i;

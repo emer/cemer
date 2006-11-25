@@ -44,6 +44,10 @@ String DataOpEl::GetDisplayName() const {
   return col_name;
 }
 
+String DataOpEl::GetName() const {
+  return col_name;
+}
+
 void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_name.empty()) {
@@ -81,8 +85,8 @@ void DataOpEl::ClearColumns() {
 
 void DataOpList::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
-  if(owner != NULL)
-    owner->UpdateAfterEdit();	// this should set data table stuff on new guys
+  if(owner && owner->GetOwner() && owner->GetOwner()->InheritsFrom(&TA_DataProg))
+    owner->GetOwner()->UpdateAfterEdit();
 }
 
 void DataOpList::SetDataTable(DataTable* dt) {
@@ -104,6 +108,9 @@ void DataOpList::ClearColumns() {
     DataOpEl* ds = FastEl(i);
     ds->ClearColumns();
   }
+}
+
+void DataOpBaseSpec::Initialize() {
 }
 
 /////////////////////////////////////////////////////////
@@ -134,6 +141,10 @@ void DataSortEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
+void DataSortSpec::Initialize() {
+  ops.SetBaseType(&TA_DataSortEl);
+}
+
 ///////////////////////////
 
 void DataGroupEl::Initialize() {
@@ -155,7 +166,7 @@ void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void DataGroupSpec::Initialize() {
-  SetBaseType(&TA_DataGroupEl);
+  ops.SetBaseType(&TA_DataGroupEl);
 }
 
 ///////////////////////////
@@ -201,6 +212,11 @@ void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
       rval = false;
     }
   }
+}
+
+void DataSelectSpec::Initialize() {
+  ops.SetBaseType(&TA_DataSelectEl);
+  comb_op = AND;
 }
 
 String DataSelectSpec::GetDisplayName() const {
@@ -262,8 +278,8 @@ bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
 
 int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
 			    DataSortSpec* spec) {
-  for(int i=0;i<spec->size; i++) {
-    DataSortEl* ds = (DataSortEl*)spec->FastEl(i);
+  for(int i=0;i<spec->ops.size; i++) {
+    DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
     DataArray_impl* da_a = dt_a->data.FastEl(ds->col_idx);
     DataArray_impl* da_b = dt_b->data.FastEl(ds->col_idx);
@@ -352,8 +368,8 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   spec->GetColumns(src);		// cache column pointers & indicies from names
   dest->Reset();
   // add the dest columns
-  for(int i=0;i<spec->size; i++) {
-    DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
+  for(int i=0;i<spec->ops.size; i++) {
+    DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
     DataArray_impl* sda = src->data.FastEl(ds->col_idx);
     DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
@@ -368,17 +384,17 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   // sort by grouped guys, in order
   DataSortSpec sort_spec;
   taBase::Own(sort_spec, NULL);
-  for(int i=0;i<spec->size; i++) {
-    DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
+  for(int i=0;i<spec->ops.size; i++) {
+    DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
     if(ds->agg.op != Aggregate::GROUP) continue;
-    DataSortEl* ss = (DataSortEl*)sort_spec.New(1, &TA_DataSortEl);
+    DataSortEl* ss = (DataSortEl*)sort_spec.ops.New(1, &TA_DataSortEl);
     ss->col_name = ds->col_name;
     ss->col_idx = ds->col_idx;
     taBase::SetPointer((taBase**)&ss->column, ds->column);
     ss->order = DataSortEl::ASCENDING;
   }
-  if(sort_spec.size == 0) {
+  if(sort_spec.ops.size == 0) {
     Group_nogp(dest, src, spec); // no group ops: just simple aggs
   }
   else {
@@ -391,8 +407,8 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
 
 bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   dest->AddBlankRow();
-  for(int i=0;i<spec->size; i++) {
-    DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
+  for(int i=0;i<spec->ops.size; i++) {
+    DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
     DataArray_impl* sda = src->data.FastEl(ds->col_idx);
     DataArray_impl* dda = dest->data.FastEl(i); // index is spec index
@@ -411,11 +427,11 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   sort_spec->GetColumns(&ssrc);	// re-get columns -- they were nuked by Sort op!
 
   Variant_Array cur_vals;
-  cur_vals.EnforceSize(sort_spec->size);
+  cur_vals.EnforceSize(sort_spec->ops.size);
 
   // initialize cur vals
-  for(int i=0;i<sort_spec->size; i++) {
-    DataSortEl* ds = (DataSortEl*)sort_spec->FastEl(i);
+  for(int i=0;i<sort_spec->ops.size; i++) {
+    DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
     DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
     Variant cval = sda->GetValAsVar(0); // start at row 0
     cur_vals[i] = cval;
@@ -428,8 +444,8 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     for(;row < ssrc.rows; row++) {
 //       cerr << "row: " << row;
       bool new_val = false;
-      for(int i=0;i<sort_spec->size; i++) {
-	DataSortEl* ds = (DataSortEl*)sort_spec->FastEl(i);
+      for(int i=0;i<sort_spec->ops.size; i++) {
+	DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
 	DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
 	Variant cval = sda->GetValAsVar(row);
 	if(cval != cur_vals[i]) {
@@ -445,8 +461,8 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 //     cerr << "adding: row: " << row << " st_row: " << st_row << endl;
     // now go through actual group ops!
     dest->AddBlankRow();
-    for(int i=0;i<spec->size; i++) {
-      DataGroupEl* ds = (DataGroupEl*)spec->FastEl(i);
+    for(int i=0;i<spec->ops.size; i++) {
+      DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
       if(ds->col_idx < 0) continue;
       DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
       DataArray_impl* dda = dest->data.FastEl(i); // index is spec index
@@ -479,8 +495,8 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
   for(int row=0;row<src->rows; row++) {
     bool incl = false;
     bool not_incl = false;
-    for(int i=0; i<spec->size; i++) {
-      DataSelectEl* ds = (DataSelectEl*)spec->FastEl(i);
+    for(int i=0; i<spec->ops.size; i++) {
+      DataSelectEl* ds = (DataSelectEl*)spec->ops.FastEl(i);
       if(ds->col_idx < 0) continue;
       DataArray_impl* da = src->data.FastEl(ds->col_idx);
       Variant val = da->GetValAsVar(row);
@@ -527,8 +543,8 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
   for(int row=0;row<src->rows; row++) {
     bool incl = false;
     bool not_incl = false;
-    for(int i=0; i<spec->size; i++) {
-      DataSelectEl* ds = (DataSelectEl*)spec->FastEl(i);
+    for(int i=0; i<spec->ops.size; i++) {
+      DataSelectEl* ds = (DataSelectEl*)spec->ops.FastEl(i);
       if(ds->col_idx < 0) continue;
       DataArray_impl* da = src->data.FastEl(ds->col_idx);
       Variant val = da->GetValAsVar(row);
@@ -1060,6 +1076,11 @@ void DataCalcLoop::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   src_cols.SetDataTable(src_data);
   dest_cols.SetDataTable(src_data);
+  for(int i=0;i<loop_code.size;i++) {
+    ProgEl* pe = loop_code[i];
+    if(pe->InheritsFrom(&TA_DataCalcAddDestRow) || pe->InheritsFrom(&TA_DataCalcSetDestRow))
+      pe->UpdateAfterEdit();	// get the data tables!
+  }
 }
 
 void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {

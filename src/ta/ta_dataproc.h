@@ -36,13 +36,14 @@ public:
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
   virtual void 	SetDataTable(DataTable* dt);
-  // set the data table to enable looking up columns
+  // #CAT_DataOp set the data table to enable looking up columns
 
   virtual void 	GetColumns(DataTable* dt);
-  // get the column pointers for given data table (looking up by name)
+  // #CAT_DataOp get the column pointers for given data table (looking up by name)
   virtual void 	ClearColumns();
-  // clear column pointers (don't keep these guys hanging around)
+  // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
+  override String GetName() const;
   override String GetDisplayName() const;
   void	UpdateAfterEdit();	// set col_name from column
   TA_SIMPLE_BASEFUNS(DataOpEl);
@@ -59,17 +60,37 @@ INHERITED(taList<DataOpEl>)
 public:
 
   virtual void 	SetDataTable(DataTable* dt);
-  // set the data table to enable looking up columns
+  // #CAT_DataOp set the data table to enable looking up columns
 
   virtual void 	GetColumns(DataTable* dt);
-  // get the column pointers for given data table (looking up by name)
+  // #CAT_DataOp get the column pointers for given data table (looking up by name)
   virtual void 	ClearColumns();
-  // clear column pointers (don't keep these guys hanging around)
+  // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(DataOpList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DataOpEl); }
+  void 	Destroy()		{ };
+};
+
+class TA_API DataOpBaseSpec : public taNBase {
+  // ##CAT_Data a datatable operation specification -- contains a list of operation elements associated with different data columns
+INHERITED(taNBase)
+public:
+  DataOpList	ops;		// #SHOW_TREE the list of operation elements, associated with different data columns
+
+  virtual void 	SetDataTable(DataTable* dt) { ops.SetDataTable(dt); }
+  // #CAT_DataOp set the data table to enable looking up columns
+
+  virtual void 	GetColumns(DataTable* dt) { ops.GetColumns(dt); }
+  // #CAT_DataOp get the column pointers for given data table (looking up by name)
+  virtual void 	ClearColumns() { ops.ClearColumns(); }
+  // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
+
+  TA_SIMPLE_BASEFUNS(DataOpBaseSpec);
+private:
+  void	Initialize();
   void 	Destroy()		{ };
 };
 
@@ -97,14 +118,14 @@ protected:
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
-class TA_API DataSortSpec : public DataOpList {
+class TA_API DataSortSpec : public DataOpBaseSpec {
   // a datatable sort specification (list of sort elements)
-INHERITED(DataOpList)
+INHERITED(DataOpBaseSpec)
 public:
 
   TA_BASEFUNS(DataSortSpec);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_DataSortEl); }
+ void	Initialize();
   void 	Destroy()		{ };
 };
 
@@ -126,9 +147,9 @@ protected:
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
-class TA_API DataGroupSpec : public DataOpList {
+class TA_API DataGroupSpec : public DataOpBaseSpec {
   // #CAT_Data a datatable grouping specification (list of group elements)
-INHERITED(DataOpList)
+INHERITED(DataOpBaseSpec)
 public:
 
   // todo: add a function to add remaining columns..
@@ -171,9 +192,9 @@ protected:
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
-class TA_API DataSelectSpec : public DataOpList {
+class TA_API DataSelectSpec : public DataOpBaseSpec {
   // #CAT_Data a datatable select specification (list of select elements)
-  INHERITED(DataOpList)
+  INHERITED(DataOpBaseSpec)
 public:
   enum CombOp {
     AND,			// include only if all of the columns are true
@@ -187,7 +208,7 @@ public:
   override String GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DataSelectSpec);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_DataSelectEl); comb_op = AND; }
+  void	Initialize();
   void 	Destroy()		{ };
 };
 
@@ -334,7 +355,7 @@ class TA_API DataSortProg : public DataProg {
   // sorts src_data into dest_data according to sort_spec
 INHERITED(DataProg)
 public:
-  DataSortSpec		sort_spec; // data sorting specification
+  DataSortSpec		sort_spec; // #SHOW_TREE data sorting specification
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -352,7 +373,7 @@ class TA_API DataGroupProg : public DataProg {
   // groups src_data into dest_data according to group_spec
 INHERITED(DataProg)
 public:
-  DataGroupSpec		group_spec; // data grouping specification
+  DataGroupSpec		group_spec; // #SHOW_TREE data grouping specification
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -370,7 +391,7 @@ class TA_API DataSelectRowsProg : public DataProg {
   // selects rows from src_data into dest_data according to select_spec
 INHERITED(DataProg)
 public:
-  DataSelectSpec	select_spec; // data selection specification
+  DataSelectSpec	select_spec; // #SHOW_TREE data selection specification
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -388,7 +409,7 @@ class TA_API DataSelectColsProg : public DataProg {
   // selects rows from src_data into dest_data according to select_spec
 INHERITED(DataProg)
 public:
-  DataOpList		select_spec; // columns to select
+  DataOpList		select_spec; // #SHOW_TREE columns to select
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -407,7 +428,7 @@ class TA_API DataJoinProg : public DataProg {
 INHERITED(DataProg)
 public:
   DataTableRef		src_b_data;	// second source data for operation
-  DataJoinSpec		join_spec; // data grouping specification
+  DataJoinSpec		join_spec; // #SHOW_TREE data grouping specification
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();

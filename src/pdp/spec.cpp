@@ -531,6 +531,7 @@ void SpecPtr_impl::Initialize() {
   owner = NULL;
   type = NULL;
   base_type = &TA_BaseSpec;
+  prv_spec = NULL;
 }
 
 void SpecPtr_impl::Copy_(const SpecPtr_impl& cp) {
@@ -550,22 +551,28 @@ int SpecPtr_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
 void SpecPtr_impl::UpdateAfterEdit() {
   taBase::UpdateAfterEdit();
 
-  if((owner == NULL) || (type == NULL))
+  if(!owner || !type)
     return;
 
   BaseSpec* sp = GetSpec();
   if(sp) {
-    if(sp->GetTypeDef() != type) {
-      sp->AddDataClient(this);  // always make sure we are a data client
-      return;
+    if(sp->GetTypeDef() == type) {
+      goto updt_spec;
     }
     else {
       SetSpec(NULL);		// get rid of existing spec
     }
   }
   GetSpecOfType();
-  if(GetSpec())			// always make sure we are a data client
-    GetSpec()->AddDataClient(this);
+ updt_spec:
+  sp = GetSpec();
+  if(prv_spec != sp) {		
+    if(prv_spec)		// get rid of previous data client
+      prv_spec->RemoveDataClient(this);
+    prv_spec = sp;
+  }
+  if(sp)			// always make sure we are a data client
+    sp->AddDataClient(this);
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {

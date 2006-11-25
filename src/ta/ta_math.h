@@ -748,21 +748,36 @@ public:
   int_Array		seed;	// #READ_ONLY the seed, 624 elements long
   int			mti;	// #READ_ONLY the index into the seed, also needs to be saved
 
-  void	 NewSeed();
+  virtual void	 NewSeed();
   // set the seed to a new random value (based on time and process id)
-  void	 OldSeed();
+  virtual void	 OldSeed();
   // restore current seed to random num generator
-  void	 GetCurrent();
+  virtual void	 GetCurrent();
   // get the current seed in use by the generator
-  void   Init(ulong i);
+  virtual void   Init(ulong i);
   // initialize the seed based on given initializer
 
-  void	DMem_Sync(MPI_Comm comm);
+  virtual void	DMem_Sync(MPI_Comm comm);
    // synchronize seeds across all procs -- uses the first proc's seed
 
   void	Initialize();
   void	Destroy()		 { CutLinks(); }
   TA_SIMPLE_BASEFUNS(RndSeed);
+};
+
+class TA_API RndSeed_List : public taList<RndSeed> {
+  // ##CAT_Math list of random seeds
+INHERITED(taList<RndSeed>)
+public:
+  virtual void	 NewSeeds();
+  // #MENU #MENU_ON_Actions #MENU_CONTEXT get new seeds for all items in the list
+  virtual void	 UseSeed(int idx);
+  // #MENU #MENU_ON_Actions #MENU_CONTEXT use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)
+
+  TA_BASEFUNS(RndSeed_List);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_RndSeed); }
+  void 	Destroy()		{ };
 };
 
 class TA_API Random : public taOBase {

@@ -3003,7 +3003,9 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
   taMisc::CharToStrArray(opts,op);
   taMisc::CharToStrArray(inh_opts,inop);
   taMisc::CharToStrArray(lists,lis);
-  CleanupCats();
+#ifndef NO_TA_BASE
+  CleanupCats(true);		// save the last one for initialization
+#endif
   size = siz; 
   ptr = ptrs;
   ref = refnc;
@@ -3087,20 +3089,42 @@ TypeDef::~TypeDef() {
 }
 #endif // TA_NO_GUI
 
-void TypeDef::CleanupCats() {
-  bool got_op = false;
-  for(int i=0; i< opts.size;i++) {
-    String op = opts[i];
-    if(!op.contains("CAT_")) continue;
-    if(got_op) { opts.RemoveIdx(i); i--; }	// remove all other previous ones
-    else got_op = true;
+void TypeDef::CleanupCats(bool save_last) {
+  if(save_last) {
+    bool got_op = false;
+    for(int i=opts.size-1; i>=0; i--) {
+      String op = opts[i];
+      if(!op.contains("CAT_")) continue;
+      if(got_op) {
+	opts.RemoveIdx(i);
+      }	// remove all other previous ones
+      else got_op = true;
+    }
+    got_op = false;
+    for(int i=inh_opts.size-1; i>=0; i--) {
+      String op = inh_opts[i];
+      if(!op.contains("CAT_")) continue;
+      if(got_op) {
+	inh_opts.RemoveIdx(i);
+      } // remove all other previous ones
+      else got_op = true;
+    }
   }
-  got_op = false;
-  for(int i=0; i<inh_opts.size;i++) {
-    String op = inh_opts[i];
-    if(!op.contains("CAT_")) continue;
-    if(got_op) {inh_opts.RemoveIdx(i); i--; } // remove all other previous ones
-    else got_op = true;
+  else {			// save first
+    bool got_op = false;
+    for(int i=0; i< opts.size;i++) {
+      String op = opts[i];
+      if(!op.contains("CAT_")) continue;
+      if(got_op) { opts.RemoveIdx(i); i--; }	// remove all other previous ones
+      else got_op = true;
+    }
+    got_op = false;
+    for(int i=0; i<inh_opts.size;i++) {
+      String op = inh_opts[i];
+      if(!op.contains("CAT_")) continue;
+      if(got_op) {inh_opts.RemoveIdx(i); i--; } // remove all other previous ones
+      else got_op = true;
+    }
   }
 }
 
@@ -3335,7 +3359,9 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   if(InheritsFrom(TA_taBase))
     opts.AddUnique(opt_instance);	// ta_bases always have an instance
 
-  CleanupCats();
+#ifndef NO_TA_BASE
+  CleanupCats(false);		// save first guy for add parent!
+#endif
 
   // no need to get all this junk for internals
   if(internal && !templ) return it;

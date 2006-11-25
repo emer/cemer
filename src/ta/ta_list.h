@@ -184,7 +184,7 @@ typedef unsigned long taHashVal;
 /////////////////////////////////////////////////////////////////////
 
 class TA_API  taPtrList_impl {
-  // ##NO_TOKENS implementation of the pointer list class
+  // #NO_TOKENS implementation of the pointer list class
 protected:
 //  static String		 no_el_name;	// when the el has no name..
   static taPtrList_impl scratch_list;	// a list for any temporary processing needs
@@ -244,6 +244,7 @@ public:
   virtual ~taPtrList_impl();
 
   static ostream& Indenter(ostream& strm, const String& itm, int no, int prln, int tabs);
+  // #IGNORE
   static int	Idx;			// #HIDDEN pass to find if you don't want one
 
 
@@ -340,7 +341,7 @@ public:
   // #MENU #CONFIRM #CAT_Order permute the items in the list into a random order
   virtual void	Sort(bool descending=false);
   // #MENU #CONFIRM #CAT_Order sort the items in the list in alpha order according to name (or El_Compare_)
-  virtual void	Sort_(bool descending=false);	// implementation of sorting function
+  virtual void	Sort_(bool descending=false);	// #IGNORE implementation of sorting function
   virtual void 	UpdateAllIndicies();	// #IGNORE update all indices of elements in list
 
   void*		FirstEl(taListItr& itr) {itr = 0; return SafeEl_(0);}
@@ -553,7 +554,7 @@ public:
   // #CAT_Modify replace element with a link to the new one
 
   virtual void	Push(T* item)			{ Push_((void*)item); }
-  // push item on stack (for temporary use, not "owned")
+  // #CAT_Modify push item on stack (for temporary use, not "owned")
 
   virtual bool 	MoveEl(T* from, T* to)		{ return MoveIdx(FindEl(from), FindEl(to)); }
   // #MENU #ARG_ON_OBJ Move #CAT_Modify item (from) to position of (to)
@@ -650,7 +651,7 @@ public:
 /////////////////////////////////////////////////////////////////////
 
 class TA_API  taArray_impl {
-  // ##NO_TOKENS Base Type for Arrays: physically contiguous allocation of an array of objects
+  // #NO_TOKENS Base Type for Arrays: physically contiguous allocation of an array of objects
 public:
   int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
   int		alloc_size;		// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size
@@ -766,14 +767,9 @@ public:
   operator T() const { return s;} // forces implicit conversion to T
 }; */
 
-#ifdef __MAKETA__
 template<class T> 
-class taPlainArray : public taArray_impl { // #INSTANCE
-#else
-//template<class T, class SC = DefaultStringConverter<T> > 
-template<class T> 
-class taPlainArray : public taArray_impl { // #INSTANCE
-#endif
+class taPlainArray : public taArray_impl {
+  // #INSTANCE ##NO_TOKENS a plain array
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
   T		err;		// #HIDDEN what is returned when out of range -- MUST INIT IN CONSTRUCTOR
@@ -846,7 +842,7 @@ protected:
 
 
 class TA_API  taFixedArray_impl {
-  // #VIRT_BASE ##NO_INSTANCE ##NO_TOKENS basic subtype for FixedArray, no tokens of which are ever kept
+  // #VIRT_BASE ##NO_INSTANCE #NO_TOKENS basic subtype for FixedArray, no tokens of which are ever kept
 public:
   int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
 
@@ -927,7 +923,8 @@ protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
 template<class T> 
-class taFixedArray : public taFixedArray_impl { // #INSTANCE rudimentary array, primarily intended as an OO replacement for C arrays
+class taFixedArray : public taFixedArray_impl {
+  // #INSTANCE #NO_TOKENS rudimentary array, primarily intended as an OO replacement for C arrays
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
@@ -972,7 +969,8 @@ protected:
   override uint		El_SizeOf_() const	{ return sizeof(T); }
 };
 
-class TA_API int_FixedArray: public taFixedArray<int> { // #INLINE #INLINE_DUMP
+class TA_API int_FixedArray: public taFixedArray<int> {
+  // #INLINE #INLINE_DUMP #NO_TOKENS
   TA_FIXED_ARRAY_FUNS(int_FixedArray, int)
 };
 

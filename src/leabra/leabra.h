@@ -1269,14 +1269,14 @@ public:
 
   void	Build();
 
-  void	Init_Weights() 	{ spec->Init_Weights(this); }
+  void	Init_Weights() 	{ if(spec) spec->Init_Weights(this); }
   void	InitActAvg() 	{ spec->InitActAvg(this); }
   void	InitInhib() 	{ spec->InitInhib(this); } // initialize inhibitory state
 
   void	SetCurLrate(LeabraNetwork* net, int epoch) { spec->SetCurLrate(this, net, epoch); }
   
   void	Compute_Active_K()			{ spec->Compute_Active_K(this); }
-  void	Init_Acts() 				{ spec->Init_Acts(this); }
+  void	Init_Acts() 				{ if(spec) spec->Init_Acts(this); }
 
   void	Compute_HardClamp(LeabraNetwork* net) 	{ spec->Compute_HardClamp(this, net); }
   void	Compute_NetinScale(LeabraNetwork* net) 	{ spec->Compute_NetinScale(this, net); }
@@ -1284,7 +1284,7 @@ public:
   void	Send_ClampNet(LeabraNetwork* net) 	{ spec->Send_ClampNet(this, net); }
 
   void	Send_Netin()				{ spec->Send_Netin(this); }
-  void	Send_NetinDelta()				{ spec->Send_NetinDelta(this); }
+  void	Send_NetinDelta()			{ spec->Send_NetinDelta(this); }
 
   void	Compute_Clamp_NetAvg(LeabraNetwork* net)  { spec->Compute_Clamp_NetAvg(this, net); }
 
@@ -1293,18 +1293,18 @@ public:
   void	Compute_InhibAvg(LeabraNetwork* net)	{ spec->Compute_InhibAvg(this, net); }
 
   void	Compute_Act()				{ spec->Compute_Act(this, NULL); }
-  void	Compute_Act(LeabraNetwork* net) 		{ spec->Compute_Act(this, net); }
+  void	Compute_Act(LeabraNetwork* net) 	{ spec->Compute_Act(this, net); }
 
   void	PhaseInit(LeabraNetwork* net)		{ spec->PhaseInit(this, net); }
   void	DecayEvent(LeabraNetwork* net)		{ spec->DecayEvent(this, net); } // decay between events
   void	DecayPhase(LeabraNetwork* net)    	{ spec->DecayPhase(this, net); } // decay between phases
-  void	DecayPhase2(LeabraNetwork* net)  		{ spec->DecayPhase2(this, net); } // decay between 2nd set of phases
+  void	DecayPhase2(LeabraNetwork* net)  	{ spec->DecayPhase2(this, net); } // decay between 2nd set of phases
 
   void	ExtToComp(LeabraNetwork* net)		{ spec->ExtToComp(this, net); }
-  void	TargExtToComp(LeabraNetwork* net)		{ spec->TargExtToComp(this, net); }
+  void	TargExtToComp(LeabraNetwork* net)	{ spec->TargExtToComp(this, net); }
   void	PostSettle(LeabraNetwork* net, bool set_both=false) { spec->PostSettle(this, net, set_both); }
 
-  void	Compute_dWt(LeabraNetwork* net) 		{ spec->Compute_dWt(this, net); }
+  void	Compute_dWt(LeabraNetwork* net) 	{ spec->Compute_dWt(this, net); }
   void	Compute_dWt() 				{ spec->Compute_dWt(this, NULL); }
   void	Compute_WtFmLin(LeabraNetwork* net) 	{ spec->Compute_WtFmLin(this, net); }
   void	Compute_Weights();

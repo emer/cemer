@@ -183,6 +183,8 @@ public: // IDataLinkClient interface
   { return (GetSpec()) ? GetSpec()->GetTypeDef() : type; } // TypeDef of the data
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
   override void		DataLinkDestroying(taDataLink* dl);
+protected:
+  BaseSpec*	prv_spec;	// for removing data client when changing
 };
 
 
@@ -197,6 +199,7 @@ public:
       if(spec) spec->RemoveDataClient(this);
       taBase::SetPointer((TAPtr*)&spec,es);
       if(es) { type = es->GetTypeDef(); es->AddDataClient(this); }
+      prv_spec = spec;
     }
     else {
       taMisc::Error("SetSpec: incorrect type of Spec:",

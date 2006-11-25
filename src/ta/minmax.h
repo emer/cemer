@@ -31,7 +31,7 @@ class float_Matrix;
 
 
 class TA_API MinMax : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP minimum-maximum values
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum values
 public:
   float		min;	// minimum value
   float		max;	// maximum value
@@ -123,7 +123,7 @@ public:
 };
 
 class TA_API FixedMinMax : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP minimum-maximum values with toggles for usage
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum values with toggles for usage
 public:
   bool		fix_min;	// use fixed minimum value?
   float		min;		// minimum value
@@ -160,7 +160,7 @@ public:
 };
 
 class TA_API MinMaxInt : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP minimum-maximum values
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum integer values
 public:
   int		min;	// minimum value
   int		max;	// maximum value

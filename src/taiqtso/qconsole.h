@@ -85,6 +85,9 @@ protected:
   void keyPressEvent(QKeyEvent* e);
   void resizeEvent(QResizeEvent* e);
   void paste();
+  void mousePressEvent(QMouseEvent *e);
+  void mouseMoveEvent(QMouseEvent *e);
+  void mouseReleaseEvent(QMouseEvent *e);
 
   virtual void getDisplayGeom();
 

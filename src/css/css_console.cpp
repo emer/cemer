@@ -177,6 +177,11 @@ QString QcssConsole::interpretCommand(QString command, int* res) {
   return "";
 }
 
+void QcssConsole::resizeEvent(QResizeEvent* e) {
+  inherited::resizeEvent(e);
+  taMisc::display_width = maxCols;
+}
+
 void QcssConsole::keyPressEvent( QKeyEvent *e ) {
   if((e->key() == Qt::Key_C) && (e->modifiers() == Qt::ControlModifier)) {
     cmd_shell->src_prog->Stop();

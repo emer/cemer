@@ -191,8 +191,8 @@ typedef int ta_memb_ptr_class::* ta_memb_ptr;
 class taBase;
 typedef taBase* TAPtr;		// pointer to a taBase type
 
-// a plain-array of strings
 class TA_API String_PArray : public taPlainArray<String> {
+  // #NO_TOKENS a plain-array of strings
 INHERITED(taPlainArray<String>)
 public:
   static const String	def_sep; // ", "
@@ -216,6 +216,7 @@ protected:
 };
 
 class int_PArray: public taPlainArray<int> {
+  // #NO_TOKENS a plain-array of ints
 public:
   void	operator=(const int_PArray& cp)	{ Copy_Duplicate(cp); }
   int_PArray()				{ };
@@ -231,8 +232,8 @@ protected:
   { int tmp = (int)val; *((int*)it) = tmp; }
 };
 
-// a plain-array of strings
 class TA_API NameVar_PArray : public taPlainArray<NameVar> {
+  // #NO_TOKENS a plain-array of name value (variant) items
 INHERITED(taPlainArray<NameVar>)
 public:
   static const String	def_sep; // ", "
@@ -1538,8 +1539,8 @@ public:
   TypeDef*		Clone()		{ return new TypeDef(*this); }
   TypeDef*		MakeToken()	{ return new TypeDef(); }
 
-  void			CleanupCats();
-  // cleanup the #CAT_ category options (allow for derived types to set new categories)
+  void			CleanupCats(bool save_last);
+  // cleanup the #CAT_ category options (allow for derived types to set new categories); if save_last it saves the last cat on the list (for typedef initialization); otherwise saves first (for addparent)
 
   void			DuplicateMDFrom(const TypeDef* old);
   // duplicates members, methods from given type

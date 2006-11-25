@@ -2509,14 +2509,14 @@ int taList_impl::SetDefaultEl(TAPtr it) {
   return idx;
 }
 
-int taList_impl::SetDefaultEl(const String& nm) {
+int taList_impl::SetDefaultElName(const String& nm) {
   int idx;
   FindName_(nm, idx);
   if(idx >= 0)    el_def = idx;
   return idx;
 }
 
-int taList_impl::SetDefaultEl(TypeDef* it) {
+int taList_impl::SetDefaultElType(TypeDef* it) {
   int idx;
   FindType_(it, idx);
   if(idx >= 0)    el_def = idx;

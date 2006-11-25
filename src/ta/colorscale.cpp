@@ -423,7 +423,7 @@ void ColorScaleSpec_Group::SetDefaultColor() {
   if(guiname == "monochrome")
     SetDefaultEl("M_DarkLight");
   else */
-    SetDefaultEl("C_ColdHot");
+    SetDefaultElName("C_ColdHot");
 }
 
 //////////////////////////

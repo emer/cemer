@@ -1,7 +1,8 @@
 // ta_Dump File v2.0
 Program .projects[0].programs.gp[0][3] { 
-  ProgVar_List @.args = [1] {
+  ProgVar_List @.args = [2] {
     ProgVar @[0] { };
+    ProgVar @[1] { };
   };
 
   ProgVar_List @.vars = [2] {
@@ -57,6 +58,14 @@ Program .projects[0].programs.gp[0][3] {
    objs_ptr=0;
    desc=;
   };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$1$;
+   objs_ptr=0;
+   desc=;
+  };
  };
  vars {
   name=;
@@ -89,8 +98,8 @@ Program .projects[0].programs.gp[0][3] {
   NetCounterInit @[0] {
    desc=;
    off=0;
-   network_var=.projects[0].programs.gp[0][3].args[0]$1$;
-   local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$2$;
+   network_var=.projects[0].programs.gp[0][3].args[0]$2$;
+   local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$3$;
    counter=LeabraNetwork::phase_no;
   };
  };
@@ -101,15 +110,15 @@ Program .projects[0].programs.gp[0][3] {
   NetCounterInit @[0] {
    desc=;
    off=0;
-   network_var=$1$;
-   local_ctr_var=$2$;
+   network_var=$2$;
+   local_ctr_var=$3$;
    counter=LeabraNetwork::phase_no;
   };
   MethodCall @[1] {
    desc=;
    off=0;
    result_var=NULL;
-   obj=$1$;
+   obj=$2$;
    method=LeabraNetwork::Trial_Init;
    args{ };
 {    };
@@ -124,7 +133,7 @@ Program .projects[0].programs.gp[0][3] {
     ProgramCall @[0] {
      desc=;
      off=0;
-     target=.projects[0].programs.gp[0][4]$3$;
+     target=.projects[0].programs.gp[0][4]$4$;
      call_init=0;
      prog_args {
       name=;
@@ -139,15 +148,15 @@ Program .projects[0].programs.gp[0][3] {
     NetCounterIncr @[1] {
      desc=;
      off=0;
-     network_var=$1$;
-     local_ctr_var=$2$;
+     network_var=$2$;
+     local_ctr_var=$3$;
      counter=LeabraNetwork::phase_no;
     };
     MethodCall @[2] {
      desc=;
      off=0;
      result_var=NULL;
-     obj=$1$;
+     obj=$2$;
      method=LeabraNetwork::Trial_UpdatePhase;
      args{ };
 {      };
@@ -159,7 +168,7 @@ Program .projects[0].programs.gp[0][3] {
    desc="does Compute_dWt etc";
    off=0;
    result_var=NULL;
-   obj=$1$;
+   obj=$2$;
    method=LeabraNetwork::Trial_Final;
    args{ };
 {    };
@@ -167,7 +176,7 @@ Program .projects[0].programs.gp[0][3] {
   ProgramCall @[4] {
    desc=;
    off=0;
-   target=.projects[0].programs.gp[0][7]$4$;
+   target=.projects[0].programs.gp[0][7]$5$;
    call_init=0;
    prog_args {
     name=;
@@ -182,8 +191,8 @@ Program .projects[0].programs.gp[0][3] {
   NetUpdateView @[5] {
    desc=;
    off=0;
-   network_var=$1$;
-   update_var=.projects[0].programs.gp[0][3].vars[1]$5$;
+   network_var=$2$;
+   update_var=.projects[0].programs.gp[0][3].vars[1]$6$;
   };
  };
 };

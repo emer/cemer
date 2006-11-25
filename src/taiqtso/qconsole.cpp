@@ -321,10 +321,41 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     cursor.deleteChar();
     setTextCursor(cursor);
   }
+  else if((e->key() == Qt::Key_Y) && ctrl_pressed) {
+    e->accept();
+    paste();
+  }
+  else if((e->key() == Qt::Key_W) && ctrl_pressed) {
+    e->accept();
+    cut();
+  }
   else {
     QTextEdit::keyPressEvent( e );
   }
 }
+
+void QConsole::mousePressEvent(QMouseEvent *e) {
+  inherited::mousePressEvent(e);
+}
+
+void QConsole::mouseMoveEvent(QMouseEvent *e) {
+  inherited::mouseMoveEvent(e);
+}
+
+void QConsole::mouseReleaseEvent(QMouseEvent *e) {
+  inherited::mouseReleaseEvent(e);
+  if(e->button() & Qt::MidButton) {
+    paste();
+  }
+  else if(e->button() & Qt::LeftButton) {
+    copy();			// always copy!
+  }
+  QTextCursor cursor(textCursor());
+  // displays the prompt
+  gotoEnd(cursor, false);
+  setTextCursor(cursor);
+}
+
 
 //Get the current command
 QString QConsole::getCurrentCommand() {

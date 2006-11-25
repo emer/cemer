@@ -23,7 +23,7 @@
 #include <sstream>
 #endif
 
-class 	TA_API taGroup_impl;		// pre-declare
+class 	TA_API taGroup_impl;
 typedef taGroup_impl* 	TAGPtr;
 
 typedef taList<taGroup_impl> TALOG; // list of groups (LOG)
@@ -60,7 +60,7 @@ for(el = (T*) grp FirstGp(itr); el; el = (T*) grp NextGp(itr))
 
 
 class TA_API taGroup_impl : public taList_impl {
-  // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER implementation of a group
+  // #INSTANCE #NO_UPDATE_AFTER implementation of a group
 #ifndef __MAKETA__
 typedef taList_impl inherited;
 #endif
@@ -225,7 +225,7 @@ protected:
 };
 
 template<class T> class taGroup : public taGroup_impl {
-  // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
+  // #INSTANCE #NO_UPDATE_AFTER
 public:
   ////////////////////////////////////////////////
   // 	functions that return the type		//

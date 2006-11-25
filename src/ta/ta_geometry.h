@@ -35,7 +35,7 @@ class FloatTwoDCoord;
 class FloatTDCoord;
 
 class TA_API TwoDCoord : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 2D coordinate space
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
 public:
   int 		x;  		// horizontal
   int 		y;  		// vertical
@@ -391,7 +391,7 @@ public:
 };
 
 class TA_API FloatTwoDCoord : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 2D coordinate space
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
 public:
   float		x;  		// horizontal
   float		y;  		// vertical
@@ -677,7 +677,7 @@ public:
 };
 
 class TA_API FloatTransform: public taBase {
-  // // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP 3-d transformation data; applied in order: s, r, t
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math 3-d transformation data; applied in order: s, r, t
 #ifndef __MAKETA__
 typedef taBase inherited;
 #endif
@@ -701,7 +701,7 @@ private:
 // TODO: Brad -- you might need to update this with system-wide constructor changes, etc
 
 class TA_API ValIdx : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a float value and an index: very useful for sorting!
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a float value and an index: very useful for sorting!
 public:
   float		val;  		// value
   int		idx;		// index
@@ -805,7 +805,7 @@ inline ValIdx operator / (float td, const ValIdx& v) {
 }
 
 class TA_API ValIdx_Array : public taArray<ValIdx> {
-  // #NO_UPDATE_AFTER
+  // #NO_UPDATE_AFTER ##CAT_Math array of value & index items
 public:
   STATIC_CONST ValIdx blank; // #HIDDEN #READ_ONLY 
   String	El_GetStr_(void* it) const { return (String)((ValIdx*)it); } // #IGNORE

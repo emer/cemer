@@ -1,7 +1,10 @@
 leabra todo list:
 
-* BUTTON_MENUs for changing specs & obj types etc in Netstru objs -- select obj
-  do in its panel (was prev in view menu?)
+* pbatch & same-seed batch
+
+* dataops: group mean/sse: int columns not being processed properly: convert to double?
+  also support float
+  also check on matrix data: does it just work?
 
 * scan_congroups in netdata netmonitor -- not getting sending layer geom.
   do quick try at this
@@ -13,8 +16,6 @@ leabra todo list:
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
-* change progs to pass data_table in same way network is passed?  maybe not?  why??
-
 * add #CAT to everything in leabra.h, and fixup comments
 
 -----------
@@ -22,8 +23,6 @@ Program issues
 
 css:
 
-* console cursor only at end
-* set display_width from console (overload qconsole resize event and update)
 * css_console.cpp: complete obj.mbr expressions..
 
 -----------
@@ -34,6 +33,10 @@ Check:
 
 * datatable - make unique col names; call for join op..
 
+-----------
+Broader issues:
+
+* configuring network properties: currently various button menus but need more efficient?
 
 -----------
 current bugs:

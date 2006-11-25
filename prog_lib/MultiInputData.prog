@@ -1,0 +1,131 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][10] { 
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgEl_List @.init_code = [1] {
+    AssignExpr @[0] { };
+  };
+
+  ProgEl_List @.prog_code = [1] {
+    ForLoop @[0] { 
+      ProgEl_List @.loop_code = [2] {
+	AssignExpr @[0] { };
+	ProgramCall @[1] { 
+	  ProgArg_List @.prog_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+      };
+    };
+  };
+};
+Program .projects[0].programs.gp[0][10] {
+ name="MultiInputData";
+ desc="iterate over multiple input data tables (e.g., multiple different types of training)";
+ flags=PF_NONE;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="data_table_group";
+   var_type=T_Object;
+   object_type=DataTable_Group;
+   object_val=.projects[0].data.gp[0]$1$;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$2$;
+   objs_ptr=0;
+   desc=;
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  AssignExpr @[0] {
+   desc="get first data table";
+   off=0;
+   result_var=.projects[0].programs.gp[0][10].vars[1]$3$;
+   expr="data_table_group[0]";
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  ForLoop @[0] {
+   desc="iterate over elements of the data table group";
+   off=0;
+   loop_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc="get current data table";
+     off=0;
+     result_var=$3$;
+     expr="data_table_group[i]";
+    };
+    ProgramCall @[1] {
+     desc="call the program with current data table";
+     off=0;
+     target=.projects[0].programs.gp[0][1]$4$;
+     call_init=0;
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       name="network";
+       value="network";
+      };
+      ProgArg @[1] {
+       name="input_data";
+       value="input_data";
+      };
+     };
+    };
+   };
+   loop_test="i < data_table_group.size";
+   init_expr="int i = 0";
+   loop_iter="i++";
+  };
+ };
+};

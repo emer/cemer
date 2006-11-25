@@ -2623,8 +2623,9 @@ void LeabraLayer::Compute_Weights() {
 bool LeabraLayer::CheckConfig_impl(bool quiet) {
   //note: inherited does so much, we only augment with spec
   bool rval = inherited::CheckConfig_impl(quiet);
+  if(!spec.CheckSpec()) return false; // fatal
   if(!spec->CheckConfig_Layer(this, quiet))
-    rval = false;
+      rval = false;
   return rval;
 }
 

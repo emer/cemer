@@ -1,7 +1,8 @@
 // ta_Dump File v2.0
 Program .projects[0].programs.gp[0][4] { 
-  ProgVar_List @.args = [1] {
+  ProgVar_List @.args = [2] {
     ProgVar @[0] { };
+    ProgVar @[1] { };
   };
 
   ProgVar_List @.vars = [3] {
@@ -18,8 +19,9 @@ Program .projects[0].programs.gp[0][4] {
     NetCounterInit @[0] { };
     MethodCall @[1] { };
     ProgramCall @[2] { 
-      ProgArg_List @.prog_args = [1] {
+      ProgArg_List @.prog_args = [2] {
 	ProgArg @[0] { };
+	ProgArg @[1] { };
       };
     };
     MethodCall @[3] { };
@@ -71,6 +73,14 @@ Program .projects[0].programs.gp[0][4] {
    objs_ptr=0;
    desc=;
   };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$1$;
+   objs_ptr=0;
+   desc=;
+  };
  };
  vars {
   name=;
@@ -110,8 +120,8 @@ Program .projects[0].programs.gp[0][4] {
   NetCounterInit @[0] {
    desc=;
    off=0;
-   network_var=.projects[0].programs.gp[0][4].args[0]$1$;
-   local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$2$;
+   network_var=.projects[0].programs.gp[0][4].args[0]$2$;
+   local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$3$;
    counter=Network::cycle;
   };
  };
@@ -122,15 +132,15 @@ Program .projects[0].programs.gp[0][4] {
   NetCounterInit @[0] {
    desc=;
    off=0;
-   network_var=$1$;
-   local_ctr_var=$2$;
+   network_var=$2$;
+   local_ctr_var=$3$;
    counter=Network::cycle;
   };
   MethodCall @[1] {
    desc=;
    off=0;
    result_var=NULL;
-   obj=$1$;
+   obj=$2$;
    method=Network::Init_InputData;
    args{ };
 {    };
@@ -138,7 +148,7 @@ Program .projects[0].programs.gp[0][4] {
   ProgramCall @[2] {
    desc=;
    off=0;
-   target=.projects[0].programs.gp[0][6]$3$;
+   target=.projects[0].programs.gp[0][6]$4$;
    call_init=0;
    prog_args {
     name=;
@@ -148,13 +158,17 @@ Program .projects[0].programs.gp[0][4] {
      name="network";
      value="network";
     };
+    ProgArg @[1] {
+     name="input_data";
+     value="input_data";
+    };
    };
   };
   MethodCall @[3] {
    desc=;
    off=0;
    result_var=NULL;
-   obj=$1$;
+   obj=$2$;
    method=LeabraNetwork::Settle_Init;
    args{ };
 {    };
@@ -177,7 +191,7 @@ else min_cycles = network->min_cycles_phase2;
     ProgramCall @[0] {
      desc=;
      off=0;
-     target=.projects[0].programs.gp[0][5]$4$;
+     target=.projects[0].programs.gp[0][5]$5$;
      call_init=0;
      prog_args {
       name=;
@@ -192,8 +206,8 @@ else min_cycles = network->min_cycles_phase2;
     NetCounterIncr @[1] {
      desc=;
      off=0;
-     network_var=$1$;
-     local_ctr_var=$2$;
+     network_var=$2$;
+     local_ctr_var=$3$;
      counter=Network::cycle;
     };
     IfContinue @[2] {
@@ -214,7 +228,7 @@ else min_cycles = network->min_cycles_phase2;
    desc=;
    off=0;
    result_var=NULL;
-   obj=$1$;
+   obj=$2$;
    method=LeabraNetwork::Settle_Final;
    args{ };
 {    };
@@ -231,7 +245,7 @@ else min_cycles = network->min_cycles_phase2;
      desc=;
      off=0;
      result_var=NULL;
-     obj=$1$;
+     obj=$2$;
      method=LeabraNetwork::Compute_TrialStats;
      args{ };
 {      };
@@ -255,7 +269,7 @@ else min_cycles = network->min_cycles_phase2;
      desc=;
      off=0;
      result_var=NULL;
-     obj=$1$;
+     obj=$2$;
      method=LeabraNetwork::Compute_ExtRew;
      args{ };
 {      };
@@ -270,8 +284,8 @@ else min_cycles = network->min_cycles_phase2;
   NetUpdateView @[9] {
    desc=;
    off=0;
-   network_var=$1$;
-   update_var=.projects[0].programs.gp[0][4].vars[2]$5$;
+   network_var=$2$;
+   update_var=.projects[0].programs.gp[0][4].vars[2]$6$;
   };
  };
 };

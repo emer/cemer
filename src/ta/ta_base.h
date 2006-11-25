@@ -614,10 +614,11 @@ public:
   //	Type information
 public:
 
-  bool 		InheritsFrom(TypeDef* it) const
-  { return GetTypeDef()->InheritsFrom(it); }
   bool		InheritsFrom(const TypeDef& it) const
   { return GetTypeDef()->InheritsFrom(it); }
+  bool 		InheritsFrom(TypeDef* it) const
+  { return GetTypeDef()->InheritsFrom(it); }
+  // #CAT_ObjectMgmt does this inherit from given type 
   bool 		InheritsFromName(const char* nm) const
   { return GetTypeDef()->InheritsFromName(nm); }
   // #CAT_ObjectMgmt does this inherit from given type name?
@@ -1225,7 +1226,7 @@ public:
 
   override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
-  virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); 
+  virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); // #IGNORE
   override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
@@ -1235,26 +1236,24 @@ public:
 
   TAPtr		DefaultEl_() const	{ return (TAPtr)SafeEl_(el_def); } // #IGNORE
 
-  virtual int	SetDefaultEl(TypeDef* it);
-  virtual int	SetDefaultEl(const String& nm);
+  virtual int	SetDefaultElType(TypeDef* it);
+  // #CAT_Access set the default element to be item with given type
+  virtual int	SetDefaultElName(const String& nm);
+  // #CAT_Access set the default element to be item with given name
   virtual int	SetDefaultEl(TAPtr it);
-  // set the default element to be given item
-  virtual int	SetDefaultElName(const String& nm)	{ return SetDefaultEl(nm); }
-  // set the default element to be item with given name
-  virtual int	SetDefaultElType(TypeDef* it)	{ return SetDefaultEl(it); }
-  // set the default element to be item with given type
+  // #CAT_Access set the default element to be given item
 
   virtual taBase* New(int n_objs=0, TypeDef* typ=NULL);
   // #MENU #MENU_ON_Edit #ARGC_0 #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
   virtual void	EnforceSize(int sz);
-  // #MENU #MENU_ON_Edit add or remove elements to force list to be of given size
+  // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 
   override bool	RemoveIdx(int idx);
 
   virtual void	EnforceType();
-  // enforce current type (all elements have to be of this type)
+  // #CAT_Modify enforce current type (all elements have to be of this type)
   void	EnforceSameStru(const taList_impl& cp);
-  // make the two lists identical in terms of size and types of objects
+  // #CAT_Modify make the two lists identical in terms of size and types of objects
 
   virtual bool	ChangeType(int idx, TypeDef* new_type);
   // change type of item at index
@@ -1265,9 +1264,10 @@ public:
 
   virtual taBase* FindType_(TypeDef* item_tp, int& idx) const; 	// #IGNORE
 
-  void	SetBaseType(TypeDef* it); // set base (and default) type to given td
+  void	SetBaseType(TypeDef* it); // #CAT_Modify set base (and default) type to given td
 
-  MemberDef*	ReturnFindMd() const;	// return the find_md variable, initialized if necessary
+  MemberDef*	ReturnFindMd() const;
+  // #IGNORE return the find_md variable, initialized if necessary
 #ifdef TA_GUI
   override const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const;
 #endif
@@ -1326,7 +1326,8 @@ protected:
 };
 
 template<class T> 
-class taList: public taList_impl { // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER
+class taList: public taList_impl {
+  // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER a base list template
 public:
   T*		SafeEl(int idx) const		{ return (T*)SafeEl_(idx); }
   // #CAT_Access get element at index
@@ -1395,7 +1396,7 @@ public:
 
 // define default base list to not keep tokens
 class TA_API taBase_List : public taList<taBase> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER list of objects
+  // #NO_TOKENS ##NO_UPDATE_AFTER list of objects
 public:
   void	Initialize() 		{ SetBaseType(&TA_taBase); }
   void 	Destroy()		{ };
@@ -1643,7 +1644,7 @@ public:
   bool	AddUnique(const T& item)	{ return AddUnique_((void*)&item); }
   // add the item to the array if it isn't already on it, returns true if unique
   void	Push(const T& item)		{ Add(item); }
-  // push the item on the end of the array (same as add)
+  // #CAT_Modify push the item on the end of the array (same as add)
   void	Insert(const T& item, int indx, int n_els=1)	{ Insert_((void*)&item, indx, n_els); }
   // #MENU Insert (n_els) item(s) at indx (-1 for end) in the array
   int	FindEl(const T& item, int indx=0) const { return FindEl_((void*)&item, indx); }
@@ -1682,7 +1683,7 @@ protected:
 
 
 class TA_API int_Array : public taArray<int> {
-  // #NO_UPDATE_AFTER
+  // #NO_UPDATE_AFTER array of ints
 public:
   STATIC_CONST int blank; // #HIDDEN #READ_ONLY 
   virtual void	FillSeq(int start=0, int inc=1);
@@ -1714,7 +1715,7 @@ TA_ARRAY_OPS(int_Array)
 
 
 class TA_API float_Array : public taArray<float> {
-  // #NO_UPDATE_AFTER
+  // #NO_UPDATE_AFTER array of floats
 public:
   STATIC_CONST float blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1736,7 +1737,7 @@ TA_ARRAY_OPS(float_Array)
 
 
 class TA_API double_Array : public taArray<double> {
-  // #NO_UPDATE_AFTER
+  // #NO_UPDATE_AFTER array of doubles
 public:
   STATIC_CONST double blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1757,7 +1758,7 @@ protected:
 TA_ARRAY_OPS(double_Array)
 
 class TA_API char_Array : public taArray<char> {
-  // #NO_UPDATE_AFTER
+  // #NO_UPDATE_AFTER array of chars (bytes)
 public:
   STATIC_CONST char blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1779,7 +1780,7 @@ TA_ARRAY_OPS(char_Array)
 
 
 class TA_API String_Array : public taArray<String> {
-  // #NO_UPDATE_AFTER
+  // #NO_UPDATE_AFTER array of Strings
 public:
   STATIC_CONST String blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1819,7 +1820,7 @@ public:
 };
 
 class TA_API Variant_Array : public taArray<Variant> {
-  // #NO_UPDATE_AFTER
+  // #NO_UPDATE_AFTER array of variants
 public:
   STATIC_CONST Variant blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1841,7 +1842,7 @@ TA_ARRAY_OPS(Variant_Array)
 
 
 class TA_API voidptr_Array : public taArray<voidptr> {
-  // #NO_UPDATE_AFTER
+  // #NO_UPDATE_AFTER array of void pointers
 public:
   STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY 
 
@@ -1894,7 +1895,7 @@ private:
 };
 
 class TA_API UserDataItem_List: public taList<UserDataItemBase> {
-// #CHILDREN_INLINE
+  // #CHILDREN_INLINE
 INHERITED(taList<UserDataItem>)
 public:
   

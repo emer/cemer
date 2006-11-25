@@ -1654,6 +1654,30 @@ void RndSeed::DMem_Sync(MPI_Comm) {
 #endif // DMEM_COMPILE
 
 //////////////////////////
+//  	RndSeed_List   	//
+//////////////////////////
+
+
+void RndSeed_List::NewSeeds() {
+  for(int i=0;i<size;i++) {
+    FastEl(i)->NewSeed();
+  }
+}
+
+void RndSeed_List::UseSeed(int idx) {
+  if(!size) {
+    taMisc::Error("RndSeed_List: no seeds present in list!");
+    return;
+  }
+  int use_idx = idx % size;
+  if(idx != use_idx) {
+    taMisc::Warning("RndSeed_List: Warning -- requested seed beyond end of list:",
+		    String(idx),"list size:", String(size),"wrapping around!");
+  }
+  FastEl(use_idx)->OldSeed();
+}
+
+//////////////////////////
 //  	Random     	//
 //////////////////////////
 
