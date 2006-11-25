@@ -44,7 +44,8 @@ void Startup() {
 
   cerr << "Loaded project: " << .projects[0].file_name << endl;
 
-  Program* train = .programs.LeabraTrain;
+  //  Program* train = .programs.LeabraTrain;
+  Program* train = .programs.LeabraTrainBatchSeedList;
   if(!train) {
     taMisc::Error("Error: train program not found!");
     return;
@@ -55,8 +56,8 @@ void Startup() {
 //     return;
 //   }    
 
-  cerr << "Initializing: " << batch->name << endl;
-  batch.Init();			// init first: required before vars are avail
+  cerr << "Initializing: " << train->name << endl;
+  train.Init();			// init first: required before vars are avail
 
   String tag = taMisc::FindArgByName("FileTag");
 
@@ -74,7 +75,8 @@ void Startup() {
        << " b_end: " << b_end << endl;
 
   // get network from train proc
-  Network* network = train.args.network.object_val;
+//   Network* network = train.args.network.object_val;
+  Network* network = .networks[0];
 
   for(int bv = b_start; bv <= b_end; bv++) {
     cerr << "batch: " << bv << endl;
