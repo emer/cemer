@@ -17,7 +17,10 @@ ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_inst.hx: ${PROJNAME}_TA.ccx
 	cmp $@ $< || cp $< $@
 
 force_ta:
-	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
+	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}; \
+	cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h; \
+	cp ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h; \
+	cp ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp
 
 do_ta:
 	${MAKETA} ${MAKETA_FLAGS} -autohx ${PROJNAME} ${TAHEADS}
