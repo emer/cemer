@@ -1,6 +1,6 @@
 leabra todo list:
 
-* pbatch & same-seed batch
+* qconsole: can still cursor backwards past prompt (left arrow, etc). fix!
 
 * dataops: group mean/sse: int columns not being processed properly: convert to double?
   also support float
@@ -27,6 +27,8 @@ css:
 
 -----------
 Check:
+
+* pbatch & same-seed batch
 
 * extrew in trial monitor seems not to be working: 12ax demo
 * 12ax: change gp name to include unique ctr so group fun works.
