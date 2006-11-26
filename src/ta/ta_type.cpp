@@ -307,7 +307,7 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 // 	     taMisc		//
 //////////////////////////////////
 
-#ifdef DEBUG
+#ifdef SVN_REV
 String	taMisc::version_no = "3.5 svn revision: " + String(SVN_REV);
 #else
 String	taMisc::version_no = "3.5";
