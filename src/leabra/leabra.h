@@ -1620,7 +1620,9 @@ public:
   int		cycle_max;	// #DEF_60 #CAT_Counter maximum number of cycles to settle for
   int		min_cycles;	// #DEF_15 #CAT_Counter minimum number of cycles to settle for
   int		min_cycles_phase2; // #DEF_15 #CAT_Counter minimum number of cycles to settle for in second phase
-  float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles (computed over previous epoch)
+
+  float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic cycles to settle in the minus phase -- this is the typical settling time statistic to record
+  float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
   float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
   int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
 
@@ -1685,8 +1687,10 @@ public:
   // #CAT_TrialFinal compute weight change on all layers
   virtual void	Compute_ExtRew();
   // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
+  virtual void	Compute_MinusCycles();
+  // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
   override void	Compute_TrialStats();
-  // #CAT_Statistic compute trial-level statistics, including SSE and increment avg_cycles -- to be called at end of minus phase
+  // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase
   virtual void	Trial_Final();
   // #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
 

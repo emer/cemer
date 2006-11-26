@@ -331,7 +331,7 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
     return;
 
   if(!wrap && init_wts) {
-    taMisc::Error("*** Warning: TesselPrjnSpec non-wrapped tessel prjn spec with init_wts does not usually work!:",name);
+    taMisc::Warning("*** Warning: TesselPrjnSpec non-wrapped tessel prjn spec with init_wts does not usually work!:",name);
   }
   PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
 
@@ -688,7 +688,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
       }
     }
     if(n_con < trg_con) {
-      taMisc::Error("*** Warning: PolarRndPrjnSpec target no of connections:",String(trg_con),
+      taMisc::Warning("*** Warning: PolarRndPrjnSpec target no of connections:",String(trg_con),
 		    "not made, only made:",String(n_con));
     }
   }
@@ -1573,11 +1573,11 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
     return;
 
   if(prjn->layer->units.gp.size == 0) {
-    taMisc::Error("*** Warning: GpRndTesselPrjnSpec requires recv layer to have unit groups!:",name);
+    taMisc::Warning("*** Warning: GpRndTesselPrjnSpec requires recv layer to have unit groups!:",name);
     return;
   }
   if(prjn->from->units.gp.size == 0) {
-    taMisc::Error("*** Warning: GpRndTesselPrjnSpec requires send layer to have unit groups!:",name);
+    taMisc::Warning("*** Warning: GpRndTesselPrjnSpec requires send layer to have unit groups!:",name);
     return;
   }
 
@@ -1621,7 +1621,7 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return false;
   if(prjn->layer->units.gp.size == 0) {
-    taMisc::Error("*** Warning: TiledRFPrjnSpec requires recv layer to have unit groups!:",name);
+    taMisc::Warning("*** Warning: TiledRFPrjnSpec requires recv layer to have unit groups!:",name);
     return false;
   }
 
@@ -1806,11 +1806,11 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
   if(prjn->layer->units.gp.size == 0) {
-    taMisc::Error("*** Warning: TiledGpRFPrjnSpec requires recv layer to have unit groups!:",name);
+    taMisc::Warning("*** Warning: TiledGpRFPrjnSpec requires recv layer to have unit groups!:",name);
     return;
   }
   if(prjn->from->units.gp.size == 0) {
-    taMisc::Error("*** Warning: TiledGpRFPrjnSpec requires send layer to have unit groups!:",name);
+    taMisc::Warning("*** Warning: TiledGpRFPrjnSpec requires send layer to have unit groups!:",name);
     return;
   }
 
@@ -1861,11 +1861,11 @@ int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return 0;
   if(prjn->layer->units.gp.size == 0) {
-    taMisc::Error("*** Warning: TiledGpRFPrjnSpec requires recv layer to have unit groups!:",name);
+    taMisc::Warning("*** Warning: TiledGpRFPrjnSpec requires recv layer to have unit groups!:",name);
     return 0;
   }
   if(prjn->from->units.gp.size == 0) {
-    taMisc::Error("*** Warning: TiledGpRFPrjnSpec requires send layer to have unit groups!:",name);
+    taMisc::Warning("*** Warning: TiledGpRFPrjnSpec requires send layer to have unit groups!:",name);
     return 0;
   }
 
@@ -1951,7 +1951,7 @@ bool TiledNovlpPrjnSpec::InitRFSizes(Projection* prjn) {
   }
 
   if(recv_lay->units.gp.size == 0) {
-    taMisc::Error("*** Warning: TiledNovlpPrjnSpec requires recv layer to have unit groups!:",name);
+    taMisc::Warning("*** Warning: TiledNovlpPrjnSpec requires recv layer to have unit groups!:",name);
     return false;
   }
 

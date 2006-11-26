@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ta_math.h"
+#include "ta_platform.h"
 
 #include <math.h>
 
@@ -1620,7 +1621,7 @@ void RndSeed::OldSeed() {
     }
   }
   if (all_zero) {
-    taMisc::Error("*** RndSeed::OldSeed: random seed is all zero and this doesn't work; getting current random seed!");
+    taMisc::Warning("*** RndSeed::OldSeed: random seed is all zero and this doesn't work; getting current random seed!");
     GetCurrent();
     return;
   }
@@ -1657,10 +1658,13 @@ void RndSeed::DMem_Sync(MPI_Comm) {
 //  	RndSeed_List   	//
 //////////////////////////
 
-
 void RndSeed_List::NewSeeds() {
+  if(size == 0) return;
+  MTRnd::seed_time_pid();
+  int rnd = MTRnd::genrand_int31();
   for(int i=0;i<size;i++) {
-    FastEl(i)->NewSeed();
+    int seed = rnd + i;
+    FastEl(i)->Init(seed);
   }
 }
 

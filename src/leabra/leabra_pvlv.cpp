@@ -152,6 +152,7 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   // check for conspecs with correct params
   LeabraLayer* ext_rew_lay = NULL;
+  if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -371,6 +372,7 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   // check for conspecs with correct params
   LeabraLayer* pvi_lay = NULL;
+  if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -550,6 +552,7 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   }
 
   // check recv connection
+  if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   LeabraLayer* lve_lay = NULL;
   LeabraLayer* lvi_lay = NULL;

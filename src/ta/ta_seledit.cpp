@@ -135,7 +135,7 @@ void SelectEdit::GetMembsFmStrs() {
   for(i=0;i<mbr_bases.size;i++) {
     TAPtr bs = mbr_bases.FastEl(i);
     if(bs == NULL) { // didn't get loaded, bail..
-      taMisc::Error("*** SelectEdit: couldn't find object:", config.mbr_labels[i], mbr_strs[i], "in object to edit");
+      taMisc::Warning("*** SelectEdit: couldn't find object:", config.mbr_labels[i], mbr_strs[i], "in object to edit");
       mbr_bases.RemoveIdx(i);      mbr_strs.RemoveIdx(i);      config.mbr_labels.RemoveIdx(i);
       i--;
       continue;
@@ -143,7 +143,7 @@ void SelectEdit::GetMembsFmStrs() {
     String nm = mbr_strs.FastEl(i);
     MemberDef* md = bs->FindMember((const char*)nm);
     if(md == NULL) {
-      taMisc::Error("*** SelectEdit: couldn't find member:", nm, "in object to edit:",bs->GetPath());
+      taMisc::Warning("*** SelectEdit: couldn't find member:", nm, "in object to edit:",bs->GetPath());
       mbr_bases.RemoveIdx(i);      mbr_strs.RemoveIdx(i);      config.mbr_labels.RemoveIdx(i);
       i--;
       continue;
@@ -157,7 +157,7 @@ void SelectEdit::GetMethsFmStrs() {
   for(i=0;i<meth_bases.size;i++) {
     TAPtr bs = meth_bases.FastEl(i);
     if(bs == NULL) { // didn't get loaded, bail..
-      taMisc::Error("*** SelectEdit: couldn't find object:", config.meth_labels[i], meth_strs[i], "in object to edit");
+      taMisc::Warning("*** SelectEdit: couldn't find object:", config.meth_labels[i], meth_strs[i], "in object to edit");
       meth_bases.RemoveIdx(i);      meth_strs.RemoveIdx(i);      config.meth_labels.RemoveIdx(i);
       i--;
       continue;
@@ -165,7 +165,7 @@ void SelectEdit::GetMethsFmStrs() {
     String nm = meth_strs.FastEl(i);
     MethodDef* md = bs->GetTypeDef()->methods.FindName((const char*)nm);
     if(md == NULL) {
-      taMisc::Error("*** SelectEdit: couldn't find method:", nm, "in object to edit:",bs->GetPath());
+      taMisc::Warning("*** SelectEdit: couldn't find method:", nm, "in object to edit:",bs->GetPath());
       meth_bases.RemoveIdx(i);      meth_strs.RemoveIdx(i);      config.meth_labels.RemoveIdx(i);
       i--;
       continue;

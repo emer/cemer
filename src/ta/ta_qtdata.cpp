@@ -2243,7 +2243,7 @@ taiObjChooser::taiObjChooser(TypeDef* td, const char* captn, TAPtr scope_ref_, Q
   init(captn, true, par_window_); //select_only = true always true for typedef!
 
   if(!td->InheritsFrom(TA_taBase)) {
-    taMisc::Error("*** warning, will not be able to select non-taBase tokens in chooser");
+    taMisc::Warning("*** warning, will not be able to select non-taBase tokens in chooser");
   }
   typ_par_obj = td;
 

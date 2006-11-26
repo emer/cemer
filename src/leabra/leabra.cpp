@@ -2859,6 +2859,7 @@ void LeabraNetwork::Initialize() {
   phase_no = 0;
   phase_max = 2;
 
+  minus_cycles = 0.0f;
   cycle_max = 60;
   min_cycles = 15;
   min_cycles_phase2 = 15;
@@ -2887,6 +2888,7 @@ void LeabraNetwork::Init_Stats() {
   inherited::Init_Stats();
   maxda = 0.0f;
   trg_max_act = 0.0f;
+  minus_cycles = 0.0f;
   ext_rew = 0.0f;
   avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
@@ -3370,10 +3372,15 @@ void LeabraNetwork::Compute_ExtRew() {
   }
 }
 
+void LeabraNetwork::Compute_MinusCycles() {
+  minus_cycles = cycle;
+  avg_cycles_sum += minus_cycles;
+  avg_cycles_n++;
+}
+
 void LeabraNetwork::Compute_TrialStats() {
   inherited::Compute_TrialStats();
-  avg_cycles_sum += cycle;
-  avg_cycles_n++;
+  Compute_MinusCycles();
 }
 
 void LeabraNetwork::Compute_AvgCycles() {

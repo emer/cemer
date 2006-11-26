@@ -332,6 +332,13 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
   else {
     QTextEdit::keyPressEvent( e );
   }
+
+  // make sure we never go past prompt..
+  QTextCursor end_cursor(textCursor());
+  if(end_cursor.position() < curPromptPos) {
+    gotoPrompt(end_cursor);
+    setTextCursor(end_cursor);
+  }
 }
 
 void QConsole::mousePressEvent(QMouseEvent *e) {

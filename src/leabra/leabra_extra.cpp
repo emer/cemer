@@ -453,7 +453,7 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   if(u == NULL) {
     taMisc::CheckError("Error: ScalarValLayerSpec: scalar val layer doesn't have any units:", lay->name);
-    rval = false;
+    return false;		// fatal
   }
   
   for(int g=0; g<u->recv.size; g++) {
@@ -1164,7 +1164,7 @@ bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   if(u == NULL) {
     if (!quiet)
     taMisc::CheckError("Error: TwoDValLayerSpec: twod val layer doesn't have any units:", lay->name);
-    rval = false;
+    return false;		// fatal
   }
     
   for(int g=0; g<u->recv.size; g++) {

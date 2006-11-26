@@ -499,7 +499,7 @@ void taiMisc::SetWinCursors() {
     return;
   }
 
-  taMisc::Error("*** Unexpected call to SetWinCursors -- not busy or recording.");
+  taMisc::Warning("*** Unexpected call to SetWinCursors -- not busy or recording.");
 }
 
 
@@ -813,7 +813,7 @@ void taiMisc::DumpJpeg(XDisplay* dpy, XWindow win, const char* fnm, int quality,
 
   XImage* image = XGetImage(dpy, win, xstart, ystart, width, height, AllPlanes, ZPixmap);
   if(image == NULL) {
-    taMisc::Error("*** DumpJPEG: XGetImage failed!");
+    taMisc::Warning("*** DumpJPEG: XGetImage failed!");
     return;
   }
 
@@ -913,7 +913,7 @@ void taiMisc::DumpTiff(XDisplay* dpy, XWindow win, const char* fnm, int xstart, 
 
   XImage* image = XGetImage(dpy, win, xstart, ystart, width, height, AllPlanes, ZPixmap);
   if(image == NULL) {
-    taMisc::Error("*** DumpTIFF: XGetImage failed!");
+    taMisc::Warning("*** DumpTIFF: XGetImage failed!");
     return;
   }
 

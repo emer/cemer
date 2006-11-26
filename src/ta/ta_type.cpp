@@ -1044,13 +1044,13 @@ bool taMisc::RecordScript(const char* cmd) {
   if (record_script == NULL)
     return false;
   if (record_script->bad() || record_script->eof()) {
-    taMisc::Error("*** Error: recording script is bad or eof, no script command recorded!!",
+    taMisc::Warning("*** Error: recording script is bad or eof, no script command recorded!!",
 		  cmd);
     return false;
   }
   *record_script << cmd;
   if(cmd[strlen(cmd)-1] != '\n') {
-    taMisc::Error("*** Warning: cmd must end in a newline, but doesn't -- should be fixed:",
+    taMisc::Warning("*** Warning: cmd must end in a newline, but doesn't -- should be fixed:",
 		  cmd);
     *record_script << '\n';
   }
@@ -1410,10 +1410,12 @@ int taMisc::skip_past_err(istream& strm, bool peek) {
   int c;
   int depth = 0;
   if(taMisc::verbose_load >= taMisc::SOURCE) {
+    int lst_flush = 0;
+    int cur_pos = 0;
     cerr << "<<err_skp ->>";
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
-      cerr << (char)c; 
-      if(c == '\n') 	taMisc::FlushConsole();
+      cerr << (char)c; cur_pos++;
+      if((c == '\n') || ((cur_pos - lst_flush) > taMisc::display_width * 4)) { taMisc::FlushConsole(); lst_flush = cur_pos; }
       if(c == '{')      depth++;
       if(c == '}')      depth--;
       strm.get();
@@ -2789,7 +2791,7 @@ void MethodDef::CallFun(void* base) const {
       (*(stubp))(base, 0, (cssEl**)NULL);
     }
     else {
-      taMisc::Error("*** CallFun Error: function:", name,
+      taMisc::Warning("*** CallFun Error: function:", name,
 		    "not available, because args are required and no dialog requestor can be opened",
 		    "(must be gui, and function must have #MENU or #BUTTON");
       return;
@@ -4330,17 +4332,17 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	  MemberDef* md = NULL;
 	  bs = tabMisc::root->FindFromPath(tmp_val, md);
 	  if((md == NULL) || (bs == NULL)) {
-	    taMisc::Error("*** Invalid Path in SetValStr:",val);
+	    taMisc::Warning("*** Invalid Path in SetValStr:",val);
 	    return;
 	  }
 	  if (md->type->ptr == 1) {
 	    bs = *((TAPtr*)bs);
 	    if(bs == NULL) {
-	      taMisc::Error("*** Null object at end of path in SetValStr:",val);
+	      taMisc::Warning("*** Null object at end of path in SetValStr:",val);
 	      return;
 	    }
 	  } else if(md->type->ptr != 0) {
-	    taMisc::Error("*** ptr count greater than 1 in path:", val);
+	    taMisc::Warning("*** ptr count greater than 1 in path:", val);
 	    return;
 	  }
 	}
@@ -4420,24 +4422,24 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	  MemberDef* md = NULL;
 	  bs = tabMisc::root->FindFromPath(tmp_val, md);
 	  if((md == NULL) || (bs == NULL)) {
-	    taMisc::Error("*** Invalid Path in SetValStr:",val);
+	    taMisc::Warning("*** Invalid Path in SetValStr:",val);
 	    return;
 	  }
 	  if (md->type->ptr == 1) {
 	    bs = *((TAPtr*)bs);
 	    if(bs == NULL) {
-	      taMisc::Error("*** Null object at end of path in SetValStr:",val);
+	      taMisc::Warning("*** Null object at end of path in SetValStr:",val);
 	      return;
 	    }
 	  } else if(md->type->ptr != 0) {
-	    taMisc::Error("*** ptr count greater than 1 in path:", val);
+	    taMisc::Warning("*** ptr count greater than 1 in path:", val);
 	    return;
 	  }
 	}
       }
       if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
 	if(par == NULL)
-	  taMisc::Error("*** NULL parent for owned pointer:",val);
+	  taMisc::Warning("*** NULL parent for owned pointer:",val);
 	else
 	  taBase::OwnPointer((TAPtr*)base, bs, (TAPtr)par);
       }
@@ -4596,6 +4598,9 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
     // internal types can simply be bit copied
     if (internal) {
       memcpy(trg_base, src_base, size);
+    }
+    else if(DerivesFormal(&TA_enum)) {
+      memcpy(trg_base, src_base, size); // bit copy
     }
     else if (DerivesFrom(TA_Variant))
       *((Variant*)trg_base) = *((Variant*)src_base);

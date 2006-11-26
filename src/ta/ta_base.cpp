@@ -338,7 +338,7 @@ void taBase::Own(taBase& it, taBase* onr) {
   it.InitLinks();
 //   if(prv_own) {
 //     if(it.InheritsFrom(TA_taNBase))
-//       taMisc::Error("*** Warning: Object:",it.GetPath(),
+//       taMisc::Warning("*** Warning: Object:",it.GetPath(),
 // 		    "was transfered to a new owner, some parameters might have been reset");
 //   }
 }
@@ -1408,7 +1408,7 @@ void taBase::CallFun(const String& fun_name) {
   if(md != NULL)
     md->CallFun((void*)this);
   else
-    taMisc::Error("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
+    taMisc::Warning("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
 }
 
 bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
@@ -2190,7 +2190,7 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	  String typ_nm = taMisc::LexBuf;
 	  TypeDef* eltd = taMisc::types.FindName(typ_nm);
 	  if((eltd == NULL) || !(eltd->InheritsFrom(el_base))) {
-	    taMisc::Error("*** Null or invalid type:",typ_nm,"to link into group:",
+	    taMisc::Warning("*** Null or invalid type:",typ_nm,"to link into list:",
 			    GetPath(),"of types:",el_base->name);
 	    return false;
 	  }
@@ -2220,7 +2220,7 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	  String typ_nm = taMisc::LexBuf;
 	  TypeDef* eltd = taMisc::types.FindName(typ_nm);
 	  if((eltd == NULL) || !(eltd->InheritsFrom(el_base))) {
-	    taMisc::Error("*** Null or invalid type:",typ_nm,"to create into group:",
+	    taMisc::Warning("*** Null or invalid type:",typ_nm,"to create into list:",
 			  GetPath(),"of types:",el_base->name);
 	    return false;
 	  }
@@ -2235,12 +2235,12 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	}
       }
     }
-    taMisc::Error("*** Bad formatting for link in group",GetPath(),
+    taMisc::Warning("*** Bad formatting for link in group",GetPath(),
 		    "of type:",GetTypeDef()->name);
     return false;
   }
 
-  taMisc::Error("*** Missing '{', '=', or '[' in dump file for group:",
+  taMisc::Warning("*** Missing '{', '=', or '[' in dump file for group:",
 		GetPath(),"of type:",GetTypeDef()->name);
   return false;
 }
@@ -2437,8 +2437,8 @@ taBase* taList_impl::New(int no, TypeDef* typ) {
   if(typ == NULL)
     typ = el_typ;
   if(!typ->InheritsFrom(el_base)) {
-    taMisc::Error("*** Attempt to create type:", typ->name,
-		   "in list with base type:", el_base->name);
+    taMisc::Warning("*** Attempt to create type:", typ->name,
+		    "in list with base type:", el_base->name);
     return NULL;
   }
   taBase* rval = NULL;
@@ -2985,7 +2985,7 @@ void taDataView::SetData(taBase* ta) {
   m_data = NULL;
   if (!ta) return;
   if (!ta->GetTypeDef()->InheritsFrom(data_base)) {
-    taMisc::Error("*** taDataView::m_data must inherit from ", data_base->name);
+    taMisc::Warning("*** taDataView::m_data must inherit from ", data_base->name);
   } else {
     m_data = ta;
   }

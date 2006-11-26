@@ -1,6 +1,6 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][5] { 
-  taBase_List @.objs = [2] {
+Program .projects[0].programs.gp[0][6] { 
+  ProgObjList @.objs = [2] {
     LayerWriter @[0] { 
       LayerDataEl_List @.layer_data = [7] {
 	LayerWriterEl @[0] { };
@@ -21,8 +21,9 @@ Program .projects[0].programs.gp[0][5] {
     };
   };
 
-  ProgVar_List @.args = [1] {
+  ProgVar_List @.args = [2] {
     ProgVar @[0] { };
+    ProgVar @[1] { };
   };
 
   ProgVar_List @.vars = [8] {
@@ -44,15 +45,16 @@ Program .projects[0].programs.gp[0][5] {
 
   ProgEl_List @.prog_code = [3] {
     IfElse @[0] { 
-      ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { };
+      ProgEl_List @.true_code = [2] {
+	AssignExpr @[0] { };
+	MethodCall @[1] { };
       };
     };
     MethodCall @[1] { };
     MethodCall @[2] { };
   };
 };
-Program .projects[0].programs.gp[0][5] {
+Program .projects[0].programs.gp[0][6] {
  name="ApplyInputsImage";
  desc="apply input data to the network, using a RetinaSpec to process a bitmap image.  epoch should iterate over a datatable with names of images to load, and the current value of that is used here to load the image and process into a second datatable (image_data) which is actually presented to the network.";
  flags=PF_NONE;
@@ -62,7 +64,7 @@ Program .projects[0].programs.gp[0][5] {
   el_def=0;
   LayerWriter @[0] {
    name="LayerWriter_0";
-   data=.projects[0].data.gp[0][1]$0$;
+   data=.projects[0].data.gp[0][3]$0$;
    network=.projects[0].networks[0]$1$;
    layer_data {
     name=;
@@ -229,6 +231,14 @@ Program .projects[0].programs.gp[0][5] {
    objs_ptr=0;
    desc=;
   };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][1]$2$;
+   objs_ptr=0;
+   desc=;
+  };
  };
  vars {
   name=;
@@ -243,28 +253,27 @@ Program .projects[0].programs.gp[0][5] {
    desc=;
   };
   ProgVar @[1] {
-   name="names";
-   var_type=T_Object;
-   object_type=DataTable;
-   object_val=.projects[0].data.gp[0][3]$2$;
-   objs_ptr=0;
-   desc=;
-  };
-  ProgVar @[2] {
    name="LayerWriter_0";
    var_type=T_Object;
    object_type=LayerWriter;
-   object_val=.projects[0].programs.gp[0][5].objs[0]$3$;
+   object_val=.projects[0].programs.gp[0][6].objs[0]$3$;
+   objs_ptr=1;
+   desc=;
+  };
+  ProgVar @[2] {
+   name="RetinaSpec_0";
+   var_type=T_Object;
+   object_type=RetinaSpec;
+   object_val=.projects[0].programs.gp[0][6].objs[1]$4$;
    objs_ptr=1;
    desc=;
   };
   ProgVar @[3] {
-   name="RetinaSpec_0";
-   var_type=T_Object;
-   object_type=RetinaSpec;
-   object_val=.projects[0].programs.gp[0][5].objs[1]$4$;
-   objs_ptr=1;
-   desc=;
+   name="cur_image";
+   var_type=T_String;
+   string_val="images/objs100_330/chain_330.jpg";
+   objs_ptr=0;
+   desc="current image file name (from input_data)";
   };
   ProgVar @[4] {
    name="move_var";
@@ -295,6 +304,11 @@ Program .projects[0].programs.gp[0][5] {
    desc="rotation range";
   };
  };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=MethodCall;
@@ -303,7 +317,7 @@ Program .projects[0].programs.gp[0][5] {
    desc=;
    off=0;
    result_var=NULL;
-   script_obj=.projects[0].programs.gp[0][5].vars[0]$5$;
+   obj=.projects[0].programs.gp[0][6].vars[0]$5$;
    method=DataTable::ResetData;
    args{ };
 {    };
@@ -312,7 +326,7 @@ Program .projects[0].programs.gp[0][5] {
    desc=;
    off=0;
    result_var=NULL;
-   script_obj=.projects[0].programs.gp[0][5].vars[2]$6$;
+   obj=.projects[0].programs.gp[0][6].vars[1]$6$;
    method=LayerWriter::SetDataNetwork;
    args{ image_data;network;};
 { DataBlock* db;Network* net;   };
@@ -321,7 +335,7 @@ Program .projects[0].programs.gp[0][5] {
    desc=;
    off=0;
    result_var=NULL;
-   script_obj=$6$;
+   obj=$6$;
    method=taList_impl::CheckConfig;
    args{ false;};
 { bool quiet;   };
@@ -339,13 +353,19 @@ Program .projects[0].programs.gp[0][5] {
     name=;
     el_typ=ProgEl;
     el_def=0;
-    MethodCall @[0] {
+    AssignExpr @[0] {
+     desc="get current image from input_data from column named FilePath";
+     off=0;
+     result_var=.projects[0].programs.gp[0][6].vars[3]$7$;
+     expr="input_data.GetDataByName(\"FilePath\")";
+    };
+    MethodCall @[1] {
      desc=;
      off=0;
      result_var=NULL;
-     script_obj=.projects[0].programs.gp[0][5].vars[3]$7$;
+     obj=.projects[0].programs.gp[0][6].vars[2]$8$;
      method=RetinaSpec::FilterImageName;
-     args{ names.GetDataByName("FilePath");image_data;Random::UniformMeanRange(0, move_var);Random::UniformMeanRange(0, move_var);Random::UniformMinMax(scale_min, scale_max);Random::UniformMeanRange(0, rot_var);false;};
+     args{ cur_image;image_data;Random::UniformMeanRange(0, move_var);Random::UniformMeanRange(0, move_var);Random::UniformMinMax(scale_min, scale_max);Random::UniformMeanRange(0, rot_var);false;};
 { const taString& img_fname;DataTable* dt;float move_x;float move_y;float scale;float rotate;bool superimpose;     };
     };
    };
@@ -359,7 +379,7 @@ Program .projects[0].programs.gp[0][5] {
    desc=;
    off=0;
    result_var=NULL;
-   script_obj=$5$;
+   obj=$5$;
    method=DataBlock_Idx::ReadItem;
    args{ -1;};
 { int idx;   };
@@ -368,7 +388,7 @@ Program .projects[0].programs.gp[0][5] {
    desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
    off=0;
    result_var=NULL;
-   script_obj=$6$;
+   obj=$6$;
    method=LayerWriter::ApplyInputData;
    args{ };
 {    };

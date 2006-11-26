@@ -1,6 +1,8 @@
 leabra todo list:
 
-* qconsole: can still cursor backwards past prompt (left arrow, etc). fix!
+* new on group doesn't show group option anymore; add a separate NewGp function instead to context menu!
+
+* select edit not working: can't edit anything
 
 * dataops: group mean/sse: int columns not being processed properly: convert to double?
   also support float
@@ -28,9 +30,6 @@ css:
 -----------
 Check:
 
-* pbatch & same-seed batch
-
-* extrew in trial monitor seems not to be working: 12ax demo
 * 12ax: change gp name to include unique ctr so group fun works.
 
 * datatable - make unique col names; call for join op..
@@ -43,7 +42,6 @@ Broader issues:
 -----------
 current bugs:
 
-* copy of layerspec is not getting LeabraLayerSpec::compute_i properly!
 
 
 -------

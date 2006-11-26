@@ -163,7 +163,7 @@ Tokenizer::~Tokenizer() {
 }
 
 void Tokenizer::error_msg(char *msg_part1, char *msg_part2) {
-  taMisc::Error("*** Tokenizer: Parse error on line: ", String(line_num),
+  taMisc::Warning("*** Tokenizer: Parse error on line: ", String(line_num),
 		msg_part1, msg_part2);
 }
 
@@ -490,7 +490,7 @@ float FunLookupND::EvalArgs(float d0, float d1, float d2, float d3, float d4,
 {
   float rval = 0.0f;
   if(n_dims > 10) {
-    taMisc::Error("*** FunLookupND::EvalArgs: n_dims:", String(n_dims),
+    taMisc::Warning("*** FunLookupND::EvalArgs: n_dims:", String(n_dims),
 		  "larger than max number of args (9)!");
     return rval;
   }

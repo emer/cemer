@@ -862,6 +862,10 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
 	  dt->SetValAsString(eg->name, 0, -1); // -1 = last row
       }
       dt->SetValAsString(ev->name, st_col, -1); // -1 = last row
+      if(ev->spec.spec != es) {			// not default spec, and not child thereof
+	if(ev->spec.spec->GetOwner(&TA_EventSpec) != es) 
+	  continue;
+      }
       for(int pi=0; pi < ev->patterns.size; pi++) {
 	Pattern* pat = (Pattern*)ev->patterns[pi];
 	taMatrix* mat = dt->GetValAsMatrix(st_col + 1 + pi, -1);

@@ -345,12 +345,12 @@ void BaseSpec::UpdateChildren() {
 
 bool BaseSpec::CheckType(TypeDef* td) {
   if(td == NULL) {
-    taMisc::Error("*** For spec:", name, ", NULL type.",
+    taMisc::Warning("*** For spec:", name, ", NULL type.",
                   "should be at least:", min_obj_type->name);
     return false;
   }
   if(!CheckType_impl(td)) {
-    taMisc::Error("*** For spec:", name, ", incorrect type:", td->name,
+    taMisc::Warning("*** For spec:", name, ", incorrect type:", td->name,
                    "should be at least:", min_obj_type->name);
     return false;
   }
@@ -359,12 +359,12 @@ bool BaseSpec::CheckType(TypeDef* td) {
 
 bool BaseSpec::CheckObjectType(TAPtr obj) {
   if(obj == NULL) {
-    taMisc::Error("*** For spec:", name, ", NULL Object.",
+    taMisc::Warning("*** For spec:", name, ", NULL Object.",
 		  "should be at least:", min_obj_type->name);
     return false;
   }
   if(!CheckObjectType_impl(obj)) {
-    taMisc::Error("*** For spec:", name, ", incorrect type of obj:", obj->GetPath(),
+    taMisc::Warning("*** For spec:", name, ", incorrect type of obj:", obj->GetPath(),
 		   "of type:", obj->GetTypeDef()->name,
 		   "should be at least:", min_obj_type->name);
     return false;

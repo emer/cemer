@@ -986,7 +986,7 @@ taBase @*(.proj_points) { };
 };
 
 Environment_Group @.environments = [1] {
-ImageEnv @[0] { 
+ScriptEnv @[0] { 
 taBase_Group @.views = [2] {
 taNBase @[0] { };
 taNBase @[1] { };
@@ -20124,11 +20124,11 @@ max_size {x=266: y=81: z=2: };
 };
 };
 environments {
-el_typ=ImageEnv;
+el_typ=ScriptEnv;
 el_def=0;
 name="";
-ImageEnv @[0] {
-name="ImageEnv_0";
+ScriptEnv @[0] {
+name="ScriptEnv_0";
 file_name="../lesson/caltech/101_ObjectCategories/cougar_face/image_0001.jpg";
 win_pos {lft=0: bot=0: wd=0: ht=0: };
 iconified=false;
@@ -20137,7 +20137,7 @@ el_typ=taNBase;
 el_def=0;
 name="";
 taNBase @[0] {
-name="ImageEnv_0_0";
+name="ScriptEnv_0_0";
 file_name="../lesson/caltech/101_ObjectCategories/cougar_face/image_0001.jpg";
 win_pos {lft=828.48: bot=432: wd=1010.88: ht=617.28: };
 iconified=false;
@@ -20163,7 +20163,7 @@ pattern_blocks="Pattern::values";
 scale_range {min=-1: max=0.9999: };
 };
 taNBase @[1] {
-name="ImageEnv_0_1";
+name="ScriptEnv_0_1";
 file_name="../lesson/caltech/101_ObjectCategories/cougar_face/image_0001.jpg";
 win_pos {lft=539.52: bot=397.44: wd=991.68: ht=712.32: };
 iconified=true;
@@ -27493,7 +27493,7 @@ taBase_List @. = [33] = TwoDValLayerSpec .projects[0].specs[1].children[7];
 taBase_List @. = [34] = TwoDValLayerSpec .projects[0].specs[1].children[7];
 taBase_List @. = [35] = DaModUnitSpec .projects[0].specs[0].children[2];
 taBase_List @. = [36] = LeabraLayerSpec .projects[0].specs[1];
-taBase_List @. = [37] = ImageEnv .projects[0].environments[0];
+taBase_List @. = [37] = ScriptEnv .projects[0].environments[0];
 taBase_List @. = [38] = LeabraLayer .projects[0].networks[0].layers[21];
 taBase_List @. = [39] = LeabraLayer .projects[0].networks[0].layers[22];
 taBase_List @. = [40] = LeabraLayer .projects[0].networks[0].layers[20];

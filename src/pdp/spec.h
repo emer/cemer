@@ -195,6 +195,7 @@ public:
 
   BaseSpec*	GetSpec() const		{ return spec; }
   void		SetSpec(BaseSpec* es)   {
+    if(!owner) return;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
       if(spec) spec->RemoveDataClient(this);
       taBase::SetPointer((TAPtr*)&spec,es);
@@ -202,9 +203,9 @@ public:
       prv_spec = spec;
     }
     else {
-      taMisc::Error("SetSpec: incorrect type of Spec:",
-		    es->GetPath(), "of type:", es->GetTypeDef()->name,
-		    "should be at least:", base_type->name,"in object:",owner->GetPath());
+	taMisc::Error("SetSpec: incorrect type of Spec:",
+		      es->GetPath(), "of type:", es->GetTypeDef()->name,
+		      "should be at least:", base_type->name,"in object:",owner->GetPath());
     }
   }
   bool		CheckSpec(TAPtr own_obj)   {

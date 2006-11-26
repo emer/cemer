@@ -112,11 +112,11 @@ void GraphLineSpec::UpdateAfterEdit() {
   }
 /*TODO(3.5): transplant to axis spec
   if((vertical == NO_VERTICAL) && !((line_type == VALUE_COLORS) || (line_type == THRESH_POINTS))) {
-    taMisc::Error("*** GraphViewSpec:: vertical = NO_VERTICAL only sensible with line_type = COLORS or THRESH_POINTS, resetting to FULL_VERTICAL");
+    taMisc::Warning("*** GraphViewSpec:: vertical = NO_VERTICAL only sensible with line_type = COLORS or THRESH_POINTS, resetting to FULL_VERTICAL");
     vertical = FULL_VERTICAL;
   }
   if((vertical == STACK_TRACES) && ((trace_incr.x != 0.0f) || (trace_incr.y != 0.0f))) {
-    taMisc::Error("*** GraphViewSpec:: vertical = STACK_TRACES cannot be combined with trace_incr != 0, resetting trace_incr = 0");
+    taMisc::Warning("*** GraphViewSpec:: vertical = STACK_TRACES cannot be combined with trace_incr != 0, resetting trace_incr = 0");
     trace_incr.x = 0.0f; trace_incr.y = 0.0f;
   } */
   inherited::UpdateAfterEdit();

@@ -312,6 +312,7 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   // check for conspecs with correct params
   bool got_marker = false;
   LeabraLayer* rew_targ_lay = NULL;
+  if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -339,7 +340,7 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if(rew_targ_lay == NULL) {
       taMisc::CheckError("ExtRewLayerSpec: requires a recv MarkerConSpec connection from layer called RewTarg",
 		    "that signals (act > .5) when output error should be used for computing rewards.  This was not found -- please fix!");
-      rval = false;
+      return false;			// fatal
     }
     if(rew_targ_lay->units.size == 0) {
       taMisc::CheckError("ExtRewLayerSpec: RewTarg layer must have one unit (has zero) -- please fix!");
@@ -680,6 +681,7 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   us->UpdateAfterEdit();
 
   // check for conspecs with correct params
+  if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -871,6 +873,7 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraLayer* rew_pred_lay = NULL;
   LeabraLayer* ext_rew_lay = NULL;
 
+  if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -1034,6 +1037,7 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   }
 
   // check recv connection
+  if(lay->units.leaves == 0) return false;
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   LeabraLayer* rewinteg_lay = NULL;
   for(int g=0; g<u->recv.size; g++) {

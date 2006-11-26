@@ -1395,7 +1395,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   } else if(taMisc::LexBuf.contains("// ta_Dump File v2.0")) {
     taMisc::strm_ver = 2;
   } else {
-    taMisc::Error("*** Dump file does not have proper format id:", taMisc::LexBuf);
+    taMisc::Warning("*** Dump file does not have proper format id:", taMisc::LexBuf);
     return false;
   }
 
@@ -1403,12 +1403,12 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   String path;
   int rval = Dump_Load_Path(strm, base, par, td, path); // non-null base just gets type
   if(rval <= 0) {
-    taMisc::Error("*** Dump load aborted due to errors");
+    taMisc::Warning("*** Dump load aborted due to errors");
     return false;
   }
 
   if(!td->InheritsFrom(TA_taBase)) {
-    taMisc::Error("*** Only taBase objects may be loaded, not:", td->name);
+    taMisc::Warning("*** Only taBase objects may be loaded, not:", td->name);
     return false;
   }
 

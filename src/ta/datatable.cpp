@@ -652,7 +652,7 @@ void float_RArray::CopyFmTriMat(int dim, const float_RArray& tri_mat) {
 
 bool float_RArray::TriDiagMatRed(int n, float_RArray& d, float_RArray& e) {
   if(size != n * n) {
-    taMisc::Error("*** TriDiagMatRed: matrix is not of appropriate size for dimensionality:",String(n));
+    taMisc::Warning("*** TriDiagMatRed: matrix is not of appropriate size for dimensionality:",String(n));
     return false;
   }
 
@@ -749,7 +749,7 @@ bool float_RArray::TriDiagQL(int n, float_RArray& d, float_RArray& e) {
       }
       if(m != l) {
 	if (iter++ == 30) {
-	  taMisc::Error("*** TriDiagQL: Too many iterations!");
+	  taMisc::Warning("*** TriDiagQL: Too many iterations!");
 	  return false;
 	}
 	g=(d.FastEl1(l+1)-d.FastEl1(l))/(2.0*e.FastEl1(l));
@@ -796,7 +796,7 @@ bool float_RArray::Eigens(int n, float_RArray& evals) {
   evals.EnforceSize(n);
 
   if(size != n * n) {
-    taMisc::Error("*** Eigens: matrix is not of appropriate size for dimensionality:",String(n));
+    taMisc::Warning("*** Eigens: matrix is not of appropriate size for dimensionality:",String(n));
     return false;
   }
   float_RArray off_diags;
@@ -809,15 +809,15 @@ bool float_RArray::Eigens(int n, float_RArray& evals) {
 
 bool float_RArray::MDS(int dim, float_RArray& xcoords, float_RArray& ycoords, int x_axis_c, int y_axis_c, bool print_evals) {
   if(size != dim * dim) {
-    taMisc::Error("*** MDS: matrix is not of appropriate size for dimensionality:",String(dim));
+    taMisc::Warning("*** MDS: matrix is not of appropriate size for dimensionality:",String(dim));
     return false;
   }
   if((x_axis_c < 0) || (x_axis_c >= dim)) {
-    taMisc::Error("*** MDS: x_axis component must be between 0 and",String(dim-1));
+    taMisc::Warning("*** MDS: x_axis component must be between 0 and",String(dim-1));
     return false;
   }
   if((y_axis_c < 0) || (y_axis_c >= dim)) {
-    taMisc::Error("*** MDS: y_axis component must be between 0 and",String(dim-1));
+    taMisc::Warning("*** MDS: y_axis component must be between 0 and",String(dim-1));
     return false;
   }
 

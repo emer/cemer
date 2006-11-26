@@ -187,7 +187,7 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[2] {
    name="n_inner_trials";
    var_type=T_Int;
-   int_val=2;
+   int_val=1;
    objs_ptr=0;
    desc="number of inner-loop trials";
   };
@@ -230,7 +230,7 @@ Program .projects[0].programs.gp[0][1] {
     name="Cue";
     el_typ=DynEnumItem;
     el_def=0;
-    value_idx=0;
+    value_idx=1;
     DynEnumItem @[0] {
      name="A";
      value=0;
@@ -262,7 +262,7 @@ Program .projects[0].programs.gp[0][1] {
     name="Probe";
     el_typ=DynEnumItem;
     el_def=0;
-    value_idx=0;
+    value_idx=1;
     DynEnumItem @[0] {
      name="X";
      value=0;

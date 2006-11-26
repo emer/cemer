@@ -417,8 +417,6 @@ void RecvCons::Copy_(const RecvCons& cp) {
 void RecvCons::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   cons.SetType(con_type);	// always impose our type on it..
-  if(owner && !owner->InheritsFrom(&TA_Unit)) // don't do this for bias cons
-    spec.CheckSpec();
 }
 
 void RecvCons::SetConType(TypeDef* cn_tp) {
@@ -1186,7 +1184,6 @@ void SendCons::Copy_(const SendCons& cp) {
 
 void SendCons::UpdateAfterEdit() {
   taOBase::UpdateAfterEdit();
-  spec.CheckSpec();
 }
 
 int SendCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
@@ -1511,7 +1508,6 @@ void UnitSpec::CheckThisConfig_impl(bool quiet, bool& ok) {
 void UnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   act_range.UpdateAfterEdit();
-  bias_spec.CheckSpec();
 }
 
 int UnitSpec::UseCount() {
@@ -1651,7 +1647,7 @@ float UnitSpec::Compute_SSE(Unit* u) {
   float sse = 0.0f;
   if(u->ext_flag & Unit::TARG) {
     float uerr = u->targ - u->act;
-    if(fabs(uerr) >= sse_tol)
+    if(fabsf(uerr) >= sse_tol)
       sse = uerr * uerr;
   }
   return sse;
@@ -1712,7 +1708,6 @@ void Unit::Copy_(const Unit& cp) {
 
 void Unit::UpdateAfterEdit() {
   taNBase::UpdateAfterEdit();
-  spec.CheckSpec();
   // no negative positions
   pos.x = MAX(0,pos.x); pos.y = MAX(0,pos.y);  pos.z = MAX(0,pos.z);
   // stay within layer->un_geom
@@ -2439,8 +2434,6 @@ void Projection::Copy_(const Projection& cp) {
 
 void Projection::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-  spec.CheckSpec();
-  con_spec.CheckSpec();
   SetFrom();
   if(from)
     name = "Fm_" + from->name;
@@ -2749,7 +2742,9 @@ void Projection::CheckThisConfig_impl(bool quiet, bool& rval) {
   
   if(!spec.CheckSpec()) {
     rval = false;
-    return;			// fatal!
+  }
+  if(!con_spec.CheckSpec()) {
+    rval = false;
   }
   if(recvcons_type == &TA_RecvCons) {
     if(!quiet)
@@ -3332,8 +3327,6 @@ void Layer::Copy_(const Layer& cp) {
 }
 
 void Layer::UpdateAfterEdit() {
-  //  spec.CheckSpec();  // ADD THIS TO ANY LAYERS WITH SPECS!
-  unit_spec.CheckSpec();
   // no negative geoms., y,z must be 1 (for display)
   SyncSendPrjns();
   if(n_units > 0) {		// todo: v3compat conversion obs remove later
@@ -3780,8 +3773,6 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
   TwoDCoord offs(0,0);
   if(offset) offs = *offset;
   
-  DataUpdate(true);
-
   // apply flags if we are the controller (zero offset)
   if((offs.x == 0) && (offs.y == 0)) {
     ApplyLayerFlags(ext_flags);
@@ -3795,7 +3786,6 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
     else
       ApplyInputData_Flat4d(data, ext_flags, ran, offs);
   }
-  DataUpdate(false);
 }
 
 void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
