@@ -95,7 +95,7 @@ public:
   bool		IsRoot() const	{ return (root_gp == this); } // 'true' if this is the root
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
-  taBase* 	New(int no=0, TypeDef* typ = NULL);
+  taBase* 	New(int n_objs=1, TypeDef* typ = NULL);
 
   MemberDef* 	FindMembeR(const String& nm, void*& ptr) const;
   MemberDef* 	FindMembeR(TypeDef* it, void*& ptr) const;
@@ -152,7 +152,7 @@ public:
     return (TAPtr)lf.cgp->el[lf.i];}
 
   virtual TAGPtr NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
-  virtual TAPtr	 NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
+  virtual TAPtr	 NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
 
   virtual TAPtr FindLeafName_(const char* it, int& idx=Idx) const; 	// #IGNORE
   virtual TAPtr	FindLeafType_(TypeDef* it, int& idx=Idx) const;	// #IGNORE
@@ -275,10 +275,10 @@ public:
   taGroup<T>*	NextGp(int& g) const		{ return (taGroup<T>*)NextGp_(g); }
   // #CAT_Access returns next leaf group and incs index
 
-  virtual T* 	NewEl(int n_els=0, TypeDef* typ=NULL) { return (T*)NewEl_(n_els, typ);}
-  // #CAT_Modify Create and add (n_els) new element(s) of given type
-  virtual taGroup<T>* NewGp(int n_gps=0, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
-  // #CAT_Modify Create and add (n_gps) new group(s) of given type
+  virtual T* 	NewEl(int n_els=1, TypeDef* typ=NULL) { return (T*)NewEl_(n_els, typ);}
+  // #CAT_Modify Create and add n_els new element(s) of given type to the group (NULL = default type, el_typ)
+  virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
+  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Edit #TYPE_this Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
   virtual T*	FindName(const char* item_nm, int& idx=Idx)  const { return (T*)FindName_(item_nm, idx); }
   // #CAT_Access Find element with given name (nm) (NULL = not here), sets idx

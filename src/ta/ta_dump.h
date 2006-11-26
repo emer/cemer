@@ -24,6 +24,7 @@
 class 	VPUList;
 class	DumpPathSubList;
 class	DumpPathTokenList;
+class	DumpFileCvtList;
 
 class TA_API dumpMisc {
   // #NO_TOKENS ##NO_CSS ##NO_MEMBERS miscellaneous stuff for dump files
@@ -125,6 +126,5 @@ public:
 
   ~DumpPathTokenList()          { Reset(); }
 };
-
 
 #endif // ta_dump_h

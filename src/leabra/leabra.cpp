@@ -21,8 +21,34 @@
 #include <limits.h>
 #include <float.h>
 
+static void leabra_converter_init() {
+  DumpFileCvt* cvt = new DumpFileCvt("Leabra", "LeabraUnit");
+  cvt->repl_strs.Add(NameVar("_MGroup", "_Group"));
+  cvt->repl_strs.Add(NameVar("Project", "V3LeabraProject"));
+  cvt->repl_strs.Add(NameVar("V3LeabraProject_Group", "Project_Group")); // fix prev
+  cvt->repl_strs.Add(NameVar("V3LeabraProjection", "Projection"));       // fix prev
+  cvt->repl_strs.Add(NameVar("Network", "LeabraNetwork"));
+  cvt->repl_strs.Add(NameVar("LeabraNetwork_Group", "Network_Group")); // fix prev
+  cvt->repl_strs.Add(NameVar("LeabraWiz", "LeabraWizard"));
+  // obsolete types get replaced with taBase..
+  cvt->repl_strs.Add(NameVar("WinView_Group", "taBase_Group"));
+  cvt->repl_strs.Add(NameVar("ProjViewState_List", "taBase_List"));
+  cvt->repl_strs.Add(NameVar("NetView", "taNBase"));
+  cvt->repl_strs.Add(NameVar("DataTable", "taNBase"));
+  cvt->repl_strs.Add(NameVar("EnviroView", "taNBase"));
+  cvt->repl_strs.Add(NameVar("Xform", "taBase"));
+  cvt->repl_strs.Add(NameVar("ImageEnv", "ScriptEnv"));
+  cvt->repl_strs.Add(NameVar("unique/w=", "unique")); // todo: need to make this work!
+  taMisc::file_converters.Add(cvt);
+}
+
+void leabra_module_init() {
+  ta_Init_leabra();		// initialize types
+  leabra_converter_init();	// configure converter
+}
+
 // module initialization
-InitProcRegistrar mod_init_leabra(ta_Init_leabra);
+InitProcRegistrar mod_init_leabra(leabra_module_init);
 
 //////////////////////////
 //  	Con, Spec	//
@@ -3404,6 +3430,9 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgCycles();
   Compute_AvgExtRew();
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+// 	LeabraProject
 
 void LeabraProject::Initialize() {
   networks.SetBaseType(&TA_LeabraNetwork);

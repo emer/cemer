@@ -463,13 +463,14 @@ void taGroup_impl::List(ostream& strm) const {
 taBase* taGroup_impl::New(int no, TypeDef* typ) {
   if (typ == NULL)
     typ = el_typ;
-  if(no == 0) {
-#ifdef TA_GUI
-  if(taMisc::gui_active)
-    return gpiGroupNew::New(this, NULL, no, typ);
-#endif
-    return NULL;
-  }
+  // obsolete
+//   if(no == 0) {
+// #ifdef TA_GUI
+//   if(taMisc::gui_active)
+//     return gpiGroupNew::New(this, NULL, no, typ);
+// #endif
+//     return NULL;
+//   }
 
   // if requested typ inherits from the list el type, then 
   // we assume it is for a list el, and create the instances
@@ -501,13 +502,14 @@ err:
 }
 
 TAPtr taGroup_impl::NewEl_(int no, TypeDef* typ) {
-  if(no == 0) {
-#ifdef TA_GUI
-  if(taMisc::gui_active)
-    return gpiGroupNew::New(this, NULL, no, typ);
-#endif
-    return NULL;
-  }
+  // obsolete
+//   if(no == 0) {
+// #ifdef TA_GUI
+//   if(taMisc::gui_active)
+//     return gpiGroupNew::New(this, NULL, no, typ);
+// #endif
+//     return NULL;
+//   }
   if(typ == NULL)
     typ = el_typ;
   TAPtr rval = taList_impl::New(no, typ);
@@ -515,15 +517,16 @@ TAPtr taGroup_impl::NewEl_(int no, TypeDef* typ) {
 }
 
 TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ) {
-  if(no == 0) {
-#ifdef TA_GUI
-  if(taMisc::gui_active) {
-    gpiGroupNew::New(this, NULL, no, typ);
-    return NULL;		// not sure if rval is a group or not
-  }
-#endif
-    return NULL;
-  }
+  // obsolete
+//   if(no == 0) {
+// #ifdef TA_GUI
+//   if(taMisc::gui_active) {
+//     gpiGroupNew::New(this, NULL, no, typ);
+//     return NULL;		// not sure if rval is a group or not
+//   }
+// #endif
+//     return NULL;
+//   }
   if(typ == NULL)
     typ = GetTypeDef();		// always create one of yourself..
   TAGPtr rval = (TAGPtr)gp.New(no, typ);

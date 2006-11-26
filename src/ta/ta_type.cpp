@@ -352,7 +352,8 @@ bool taMisc::beep_on_error = false;
 // 	File/Path/Arg Info
 
 int	taMisc::strm_ver = 2;
-bool 			taMisc::save_compress = false; // compression not the default in v4
+bool 		taMisc::save_compress = false; // compression not the default in v4
+TypeDef*	taMisc::default_proj_type = NULL;
 #ifdef DEBUG
 taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
 #else
@@ -374,6 +375,8 @@ String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
 NameVar_PArray	taMisc::prog_lib_paths;
 NameVar_PArray	taMisc::named_paths;
+
+DumpFileCvtList taMisc::file_converters; 
 
 String	taMisc::compress_cmd = "gzip -c";
 String	taMisc::uncompress_cmd = "gzip -dc";
@@ -1466,6 +1469,42 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
   return c;
 }
 
+int taMisc::replace_strings(istream& istrm, ostream& ostrm, NameVar_PArray& repl_list) {
+  int n_repl = 0;
+  int c;
+  String nwln;
+  while((c = read_till_eol(istrm)) != EOF) {
+    nwln = LexBuf;
+    for(int i=0;i<repl_list.size;i++) {
+      String repl = repl_list[i].name;
+      if(repl.contains("/w")) { // special whitespace flag
+	String pre = repl.before("/w");
+	if(!nwln.contains(pre)) continue;
+	String post = repl.after("/w");
+	if(!nwln.contains(post)) continue;
+	String nwpre = nwln.before(pre);
+	String nwpost = nwln.after(post);
+	nwln = nwpre + repl_list[i].value.toString() + nwpost;
+      }
+      else {
+	n_repl += nwln.gsub(repl, repl_list[i].value.toString());
+      }
+    }
+    ostrm << nwln << endl;
+  }
+  return n_repl;
+}
+
+int taMisc::find_strings(istream& istrm, String_PArray& strs) {
+  int c;
+  String nwln;
+  while((c = read_till_eol(istrm)) != EOF) {
+    for(int i=0;i<strs.size;i++) {
+      if(LexBuf.contains(strs[i])) return i;
+    }
+  }
+  return -1; // none found
+}
 
 ////////////////////////////////////////////////////////////////////////
 //	HTML-style tags

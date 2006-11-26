@@ -869,9 +869,11 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
       for(int pi=0; pi < ev->patterns.size; pi++) {
 	Pattern* pat = (Pattern*)ev->patterns[pi];
 	taMatrix* mat = dt->GetValAsMatrix(st_col + 1 + pi, -1);
+	taBase::Ref(mat);
 	for(int vi=0; vi<pat->value.size; vi++) {
 	  mat->SetFmVar_Flat(pat->value[vi], vi);
 	}
+	taBase::unRefDone(mat);
       }
     }
     if(env->InheritsFrom(&TA_ScriptEnv)) {
@@ -989,7 +991,7 @@ bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
   Program* apply_ins = ((Program_Group*)nwproj->programs.gp[0])->FindName("ApplyInputs");
   if(!apply_ins) return false;
   
-  LayerWriter* lw = (LayerWriter*)apply_ins->objs.FindName("layer_writer");
+  LayerWriter* lw = (LayerWriter*)apply_ins->objs.FindType(&TA_LayerWriter);
   if(!lw) return false;
 
   if(environments.leaves <= 0) return false;

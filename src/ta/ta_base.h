@@ -388,7 +388,7 @@ public:
   // #IGNORE static version to make a token of the given type
   static TAPtr 		MakeTokenAry(TypeDef* td, int no);
   // #IGNORE static version to make an array of tokens of the given type
-  virtual taBase*	New(int n_objs=0, TypeDef* type=NULL) { return NULL; }
+  virtual taBase*	New(int n_objs=1, TypeDef* type=NULL) { return NULL; }
   // #CAT_ObjectMgmt Create n_objs objects of given type (type is optional)
 
   ///////////////////////////////////////////////////////////////////////////
@@ -479,6 +479,8 @@ public:
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
   // #MENU #MENU_ON_Object #ARGC_0 #CAT_File Load object data from given file name (if empty, prompt user for a name) -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
+  virtual int 		Load_cvt(taFiler*& flr);
+  // #IGNORE convert stream from old to new format (if needed)
 
   virtual int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
   // #CAT_File Save object data to a file stream
@@ -1243,8 +1245,8 @@ public:
   virtual int	SetDefaultEl(TAPtr it);
   // #CAT_Access set the default element to be given item
 
-  virtual taBase* New(int n_objs=0, TypeDef* typ=NULL);
-  // #MENU #MENU_ON_Edit #ARGC_0 #NO_SCRIPT #MENU_CONTEXT #CAT_Modify create n_objs new objects of given type
+  virtual taBase* New(int n_objs=1, TypeDef* typ=NULL);
+  // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual void	EnforceSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 

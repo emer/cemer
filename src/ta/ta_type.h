@@ -265,6 +265,25 @@ protected:
   void		El_SetFmStr_(void* it, const String& val) { ((NameVar*)it)->SetFmStr(val); }
 };
 
+class TA_API DumpFileCvt {
+  // ##NO_TOKENS #CAT_File parameters to convert a dump file
+public:
+  String	proj_type_base;	// base name  of project (e.g., "Leabra" for "LeabraProject")
+  String	key_srch_str;	// search string to identify this project type
+  NameVar_PArray repl_strs; // search/replace strings (name -> value) 
+
+  DumpFileCvt(const String& prj_typ, const String& srch_st)
+    { proj_type_base = prj_typ; key_srch_str = srch_st; }
+};
+
+class TA_API DumpFileCvtList : public taPtrList<DumpFileCvt> {
+  // #CAT_File list of available dump file converters
+protected:
+  void		El_Done_(void* it)	{ delete (DumpFileCvt*)it; }
+  String El_GetName_(void* it) const { return ((DumpFileCvt*)it)->proj_type_base; }
+public:
+  ~DumpFileCvtList()                            { Reset(); }
+};
 
 #ifndef NO_TA_BASE
 enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing 
@@ -466,6 +485,7 @@ friend class InitProcRegistrar;
 
   static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool		save_compress;	// #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
+  static TypeDef*	default_proj_type; // #SAVE #CAT_File default type of project to create
   static LoadVerbosity	verbose_load;	// #SAVE #CAT_File report the names of things during loading
   static LoadVerbosity  gui_verbose_load; // #SAVE #CAT_File what to report in the load dialog
 
@@ -492,6 +512,8 @@ friend class InitProcRegistrar;
   // #NO_SAVE #HIDDEN #CAT_File paths/url's for specific categories of program library files (e.g., System, User, Web)
   static NameVar_PArray	named_paths;
   // #NO_SAVE #HIDDEN #CAT_File paths/url's for misc purposes -- search by name, value = path
+
+  static DumpFileCvtList file_converters;   // #CAT_File conversion parameters (from v.3 to v.4)
 
   static String		compress_cmd;	// #SAVE #CAT_File command to use for compressing files
   static String		uncompress_cmd;	// #SAVE #CAT_File for uncompressing files
@@ -767,6 +789,11 @@ friend class InitProcRegistrar;
   // #CAT_Parse skips to next rb or semi (robust)
   static int	skip_past_err_rb(istream& strm, bool peek = false);
   // #CAT_Parse skips to next rbracket (robust)
+
+  static int	replace_strings(istream& istrm, ostream& ostrm, NameVar_PArray& repl_list);
+  // #CAT_File replace a list of strings (no regexp) in input file istrm to output file ostrm (name -> value) -- reads one line at a time; returns number replaced
+  static int  	find_strings(istream& istrm, String_PArray& strs);
+  // #CAT_File find first occurrence of any of the given strings in file (reading one line at a time); returns index of string or -1 if none found
 
   ////////////////////////////////////////////////////////////////////////
   //	HTML-style tags

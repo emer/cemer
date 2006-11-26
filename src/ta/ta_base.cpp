@@ -797,10 +797,63 @@ taFiler* taBase::GetLoadFiler(const String& fname, const String& ext, int compre
   return flr;
 }
 
+int taBase::Load_cvt(taFiler*& flr) {
+  int c = taMisc::read_till_eol(*flr->istrm);
+  if(c == EOF) return EOF;
+  if(!taMisc::LexBuf.contains("// ta_Dump File v1.0")) {
+    flr->Close();
+    flr->open_read();
+    return false;			// not converted
+  }
+  // first determine file type
+  String_PArray key_strs;
+  for(int i=0;i<taMisc::file_converters.size;i++) {
+    DumpFileCvt* cvt = taMisc::file_converters[i];
+    key_strs.Add(cvt->key_srch_str);
+  }
+  int typ_id = taMisc::find_strings(*flr->istrm, key_strs);
+  flr->Close();			// file is done with anyway
+  flr->open_read();		// read again in any case
+  if(typ_id < 0) {
+    taMisc::Warning("*** Old format file could not be identified; not converting -- attempting to load as is!");
+    return false;
+  }
+  DumpFileCvt* cvt = taMisc::file_converters[typ_id];
+  taFiler* cvt_flr = taFiler::New(flr->filetype, flr->ext);
+  taRefN::Ref(cvt_flr);
+  String cvt_fname = flr->fname;
+  String cvt_tag = "_v4precvt";
+  if(!flr->ext.empty()) {
+    if(cvt_fname.contains(flr->ext)) cvt_fname = cvt_fname.before(flr->ext);
+    cvt_fname += cvt_tag + flr->ext;
+  }
+  else {
+    String ex;
+    if(cvt_fname.contains('.')) {
+      ex = cvt_fname.after('.',-1);
+      cvt_fname = cvt_fname.before('.',-1);
+    }
+    cvt_fname += cvt_tag + "." + ex;
+  }
+  cvt_flr->fname = cvt_fname;
+  cvt_flr->open_write();
+  taMisc::replace_strings(*flr->istrm, *cvt_flr->ostrm, cvt->repl_strs);
+  flr->Close();
+  cvt_flr->Close();
+  taRefN::unRefDone(flr);	// get rid of orig filer
+  flr = cvt_flr;		// use new one
+  flr->open_read();		// read the converted file
+  taMisc::Warning("*** Note: converting old file of type:", cvt->proj_type_base,
+		  "created intermediate cvt file as:", cvt_fname,
+		  "many error messages are likely; and probably some post-loading conversion will also be required");
+  return true;	
+}
+
 int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
   int rval = false;
   taFiler* flr = GetLoadFiler(fname);
   if(flr->istrm) {
+    Load_cvt(flr);		// do conversion if needed
     taBase* lobj = NULL;
     rval = Load_strm(*flr->istrm, NULL, &lobj);
     if (loaded_obj_ptr)
@@ -2427,13 +2480,14 @@ String taList_impl::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
 }
 
 taBase* taList_impl::New(int no, TypeDef* typ) {
-  if(no == 0) {
-#ifdef TA_GUI
-    if (taMisc::gui_active)
-      return gpiListNew::New(this, no, typ);
-#endif
-    return NULL;
-  }
+  // note: this is unnecessary/obsolete:
+//   if(no == 0) {
+// #ifdef TA_GUI
+//     if (taMisc::gui_active)
+//       return gpiListNew::New(this, no, typ);
+// #endif
+//     return NULL;
+//   }
   if(typ == NULL)
     typ = el_typ;
   if(!typ->InheritsFrom(el_base)) {
