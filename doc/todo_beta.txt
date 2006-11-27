@@ -6,21 +6,17 @@ test
 --------------------------
 Brad:
 
-trac bugs of High priority or higher
 
 * program dirty not getting set -- init not recompiling: brad
 
 * netview bugs:
   * fix netview crashing on remove units
-
-* new net visualization, plus related fixes/changes:
-  * simpler unit views (no separators, light shows activation etc.) 
-  * add transparent layer
-  * network layer shortcut view: "sheet view" & iconify
   * proper display of r.wt stuff (bug fix)
 
 * Fix tabs & auto-apply edits
   ? add "pin/unpin" capability to panels, and extend panel tab context menu 
+
+trac bugs of High priority or higher
 
 * UserData
   * persistence
@@ -58,9 +54,22 @@ trac bugs of High priority or higher
   with ta_datatable.*) -- move float_RArray to pdp/v3compat
   (+ changes in advance of T3 graphs)
 
+* upgrade and test plugin system:
+  * tags in type info to check dependencies
+  * prefix or similar in proj files to indicate required plugins
+  * naming/registry spec for class and plugin naming
+  * separate enumeration from loading
+  * startup enumeration of plugins;
+  * dynamic (user controlled) loading of plugins
+
 * T3 graphs  
 
 * dnd for T3
+
+* new net visualization, plus related fixes/changes:
+  * simpler unit views (no separators, light shows activation etc.) 
+  * add transparent layer
+  * network layer shortcut view: "sheet view" & iconify
 
 * spec gui enhancements:
   * make a link and tree node for making subspecs be direct children
@@ -78,14 +87,6 @@ trac bugs of High priority or higher
   actions by walking typedefs & looking at comment directives; traverse
   list each time selection is updated and activate actions that match.  
   order matters.
-
-* upgrade and test plugin system:
-  * tags in type info to check dependencies
-  * prefix or similar in proj files to indicate required plugins
-  * naming/registry spec for class and plugin naming
-  * separate enumeration from loading
-  * startup enumeration of plugins;
-  * dynamic (user controlled) loading of plugins
 
 * complete port to Windows, including plugins
 
