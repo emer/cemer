@@ -6,19 +6,33 @@ test
 --------------------------
 Brad:
 
-* fix netview crashing on remove units, display of r.wt stuff, add transparent layer
+trac bugs of High priority or higher
 
 * program dirty not getting set -- init not recompiling: brad
+
+* netview bugs:
+  * fix netview crashing on remove units
+
+* new net visualization, plus related fixes/changes:
+  * simpler unit views (no separators, light shows activation etc.) 
+  * add transparent layer
+  * network layer shortcut view: "sheet view" & iconify
+  * proper display of r.wt stuff (bug fix)
 
 * Fix tabs & auto-apply edits
   ? add "pin/unpin" capability to panels, and extend panel tab context menu 
 
+* UserData
+  * persistence
+  * schema
+  * save/restore state of viewers
+
 * JIT rendering of list elements in properties dialog (massively slow!)
 
-* spec gui enhancements:
-  * make a link and tree node for making subspecs be direct children
-  * enhance BaseSpec edit/drop to accept compatible subspec objects
-* Spec Editor (similar to prog editor -- shows children) -- should be quick & easy
+* misc usability enhancements:
+  * key shortcuts, particularly to invoke a string editor for string fields (all of them)
+  * automatically bracket gui-invoked methods with Busy/Notbusy
+  * hover notes to add methoddef desc info in MethodCall, etc..?
 
 * Program Groups: execution control (popup always-on-top window with ctrl buttons only)
 
@@ -40,15 +54,30 @@ Brad:
   Also, can we use full name like ProgramGroup instead of ProgGp -- would make 
   it more transparent..  ProgEditor is Program? 
 
-* T3 graphs  
-
 * nuke float_RArray from datagraph, get rid of ta/datatable.* (very confusing
   with ta_datatable.*) -- move float_RArray to pdp/v3compat
+  (+ changes in advance of T3 graphs)
 
-* netview optimized display of units managed by layer, not separate unit guys
-  (network layer shortcut view: "sheet view" & iconify.)
+* T3 graphs  
 
 * dnd for T3
+
+* spec gui enhancements:
+  * make a link and tree node for making subspecs be direct children
+  * enhance BaseSpec edit/drop to accept compatible subspec objects
+* Spec Editor (similar to prog editor -- shows children) -- should be quick & easy
+
+* parallelism:
+  * multi-cpu pthread without mutex
+  * alternative dmem approach(es), 
+    esp. layer/unitgroup-oriented assignment to nodes, without full connectivity
+    for every node
+
+* multiple selection across views/trees, etc & actions (toolbars) that become
+  activated in response to multiple selections: build out list of possible
+  actions by walking typedefs & looking at comment directives; traverse
+  list each time selection is updated and activate actions that match.  
+  order matters.
 
 * upgrade and test plugin system:
   * tags in type info to check dependencies
@@ -58,26 +87,7 @@ Brad:
   * startup enumeration of plugins;
   * dynamic (user controlled) loading of plugins
 
-* UserData
-  * persistence
-  * schema
-  * save/restore state of viewers
-
-* automatically bracket gui-invoked methods with Busy/Notbusy
-
-* hover notes to add methoddef desc info in MethodCall, etc..?
-
-* multiple selection across views/trees, etc & actions (toolbars) that become
-  activated in response to multiple selections: build out list of possible
-  actions by walking typedefs & looking at comment directives; traverse
-  list each time selection is updated and activate actions that match.  
-  order matters.
-
-* key shortcuts, particularly to invoke a string editor for string fields (all of them)
-
-* multi-cpu pthread without mutex
-
-* complete port to Windows
+* complete port to Windows, including plugins
 
 --------------------------
 Randy: (active list in src/leabra/TODO)
