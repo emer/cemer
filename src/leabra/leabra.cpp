@@ -2832,6 +2832,11 @@ void LeabraLayer::InitLinks() {
   taBase::Own(adapt_i, this);
 
   taBase::Own(misc_iar, this);
+
+  taBase::Own(netin_avg, this);
+  taBase::Own(netin_rel, this);
+  taBase::Own(netin_avg_cnt, this);
+
   spec.SetDefaultSpec(this);
   units.gp.SetBaseType(&TA_LeabraUnit_Group);
 }
