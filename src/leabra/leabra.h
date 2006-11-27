@@ -189,35 +189,35 @@ public:
     EXT_REW_AVG			// uses average reward computed by ExtRew layer (if present): value is units[0].act_avg (avg_rew) * 100 (0..100) 
   };
 
-  bool		inhib;		// #DEF_false makes the connection inhibitory (to g_i instead of net)
-  WtScaleSpec	wt_scale;	// scale weight values, both relative and absolute factors
-  WtSigSpec	wt_sig;		// sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
-  float		lrate;		// #DEF_0.01 learning rate -- how fast do the weights change per experience
-  float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
-  LRSValue	lrs_value;	// what value to drive the learning rate schedule with (Important: affects values entered in start_ctr fields of schedule!)
-  Schedule	lrate_sched;	// schedule of learning rate over training epochs (multiplies lrate!)
-  LearnMixSpec	lmix;		// mixture of hebbian & err-driven learning
-  SAvgCorSpec	savg_cor;	// #AKA_fix_savg for Hebbian and netinput computation: correction for sending average act levels (i.e., renormalization); also norm_con_n for normalizing netinput computation
+  bool		inhib;		// #DEF_false #CAT_Activation makes the connection inhibitory (to g_i instead of net)
+  WtScaleSpec	wt_scale;	// #CAT_Activation scale weight values, both relative and absolute factors
+  WtSigSpec	wt_sig;		// #CAT_Learning sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  float		lrate;		// #DEF_0.01 #CAT_Learning learning rate -- how fast do the weights change per experience
+  float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
+  LRSValue	lrs_value;	// #CAT_Learning what value to drive the learning rate schedule with (Important: affects values entered in start_ctr fields of schedule!)
+  Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs (multiplies lrate!)
+  LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning
+  SAvgCorSpec	savg_cor;	// #CAT_Learning for Hebbian and netinput computation: correction for sending average act levels (i.e., renormalization); also norm_con_n for normalizing netinput computation
   
-  FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT computes wt sigmoidal fun
-  FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT computes inverse of wt sigmoidal fun
-  WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
-  float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT last values of resolution parameters for which the wt_sig_fun's were computed
+  FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun
+  FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun
+  WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
+  float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the wt_sig_fun's were computed
 
   void		C_Compute_WtFmLin(LeabraRecvCons*, LeabraCon* cn)
   { if(cn->wt < 0.0f) cn->wt = wt_sig_fun.Eval(-cn->wt);  }
-  // weight is negative if it is in its linear form, only perform if negative
+  // #CAT_Learning weight is negative if it is in its linear form, only perform if negative
   inline virtual void	Compute_WtFmLin(LeabraRecvCons* gp);
-  // compute actual weight value from linear weight value
+  // #CAT_Learning compute actual weight value from linear weight value
 
   void		C_Compute_LinFmWt(LeabraRecvCons*, LeabraCon* cn)
   { if(cn->wt >= 0.0f) cn->wt = - wt_sig_fun_inv.Eval(cn->wt); }
-  // weight is negative if it is in its linear form, only perform if positive
+  // #CAT_Learning weight is negative if it is in its linear form, only perform if positive
   inline virtual void	Compute_LinFmWt(LeabraRecvCons* gp);
-  // compute linear weight value from actual weight value
+  // #CAT_Learning compute linear weight value from actual weight value
 
   virtual void	C_Init_Weights_Post(RecvCons*, Connection*, Unit*, Unit*) { };
-  // hook for setting other weight-like values after initializing the weight value
+  // #CAT_Learning hook for setting other weight-like values after initializing the weight value
 
   void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     ConSpec::C_Init_Weights(cg, cn, ru, su); LeabraCon* lcn = (LeabraCon*)cn;
@@ -225,66 +225,72 @@ public:
 
   inline float 	C_Compute_Netin(LeabraCon* cn, Unit*, Unit* su);
   inline float 	Compute_Netin(RecvCons* cg, Unit* ru);
-  // receiver-based net input 
+  // #CAT_Activation receiver-based net input 
 
   inline void 	C_Send_Netin(LeabraSendCons* cg, LeabraCon* cn, Unit* ru, float su_act_eff);
   inline void 	Send_Netin(SendCons* cg, Unit* su);
-  // sender-based net input computation
+  // #CAT_Activation sender-based net input computation
 
   inline void 	C_Send_Inhib(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
+  // #CAT_Activation sender-based inhibitiory net input computation
   inline virtual void Send_Inhib(LeabraSendCons* cg, LeabraUnit* su);
-  // sender-based inhibitiory net input computation
+  // #CAT_Activation sender-based inhibitiory net input computation
 
   inline void 	C_Send_NetinDelta(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
+  // #CAT_Activation sender-based delta net input computation (send_delta mode only)
   inline virtual void Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su);
-  // sender-based delta net input computation (send_delta mode only)
+  // #CAT_Activation sender-based delta net input computation (send_delta mode only)
 
   inline void 	C_Send_InhibDelta(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
+  // #CAT_Activation sender-based delta inhibitiory net input computation (send_delta mode only)
   inline virtual void Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su);
-  // sender-based delta inhibitiory net input computation (send_delta mode only)
+  // #CAT_Activation sender-based delta inhibitiory net input computation (send_delta mode only)
 
   inline void 	C_Send_ClampNet(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
+  // #CAT_Activation sender-based net input computation for clamp net
   inline virtual void Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su);
-  // sender-based net input computation for clamp net
+  // #CAT_Activation sender-based net input computation for clamp net
 
   inline virtual void Compute_SAvgCor(LeabraRecvCons* cg, LeabraUnit* ru);
-  // compute hebb correction scaling term for sending average act (cg->savg_cor) based on layer target activity percent
+  // #CAT_Learning compute hebb correction scaling term for sending average act (cg->savg_cor) based on layer target activity percent
 
   inline float	C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg,
 			       float ru_act, float su_act);
-  // compute Hebbian associative learning
+  // #CAT_Learning compute Hebbian associative learning
 
   inline float 	C_Compute_Err(LeabraCon*, float ru_act_p, float ru_act_m,
 				  float su_act_p, float su_act_m);
-  // compute generec error term, sigmoid case
+  // #CAT_Learning compute generec error term, sigmoid case
 
   inline void 	C_Compute_dWt(LeabraCon* cn, LeabraUnit* ru, float heb, float err);
-  // combine associative and error-driven weight change, actually update dwt
+  // #CAT_Learning combine associative and error-driven weight change, actually update dwt
 
   inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
-  // compute weight change: make new one of these for any C_ change above: hebb, err, dwt
+  // #CAT_Learning compute weight change: make new one of these for any C_ change above: hebb, err, dwt
 
   inline virtual void	B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru);
-  // compute bias weight change for netin model of bias weight
+  // #CAT_Learning compute bias weight change for netin model of bias weight
 
   inline void		C_Compute_Weights(LeabraCon* cn, LeabraRecvCons* cg, 
 					LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus);
-  // update weights, if activation regulation is NOT in effect
+  // #CAT_Learning update weights, if activation regulation is NOT in effect
   inline void		C_Compute_ActReg(LeabraCon* cn, LeabraRecvCons* cg, 
 					 LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus);
-  // compute dwt for activation regulation
+  // #CAT_Learning compute dwt for activation regulation
   inline void		C_Compute_WeightsActReg(LeabraCon* cn, LeabraRecvCons* cg, 
 					      LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus);
-  // update weights, if activation regulation is in effect
+  // #CAT_Learning update weights, if activation regulation is in effect
   inline void		Compute_Weights(RecvCons* cg, Unit* ru);
+  // #CAT_Learning update weights
   inline virtual void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru, LeabraUnitSpec* rus);
+  // #CAT_Learning update weights for bias connection
 
   virtual void	SetCurLrate(int epoch, LeabraNetwork* net);
-  // set current learning rate based on schedule given epoch (or error value)
+  // #CAT_Learning set current learning rate based on schedule given epoch (or error value)
 
-  virtual void	CreateWtSigFun(); // create the wt_sig_fun and wt_sig_fun_inv
+  virtual void	CreateWtSigFun(); // #CAT_Learning create the wt_sig_fun and wt_sig_fun_inv
 
-  virtual void	Defaults();	// #BUTTON #CONFIRM restores default parameter settings: warning -- you will lose any unique parameters you might have set!
+  virtual void	Defaults();	// #BUTTON #CONFIRM #CAT_ObjectMgmt restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
 //TEMP  virtual void	GraphWtSigFun(GraphLog* graph_log);
   // #BUTTON #NULL_OK graph the sigmoidal weight contrast enhancement function (NULL = new graph log)
@@ -301,12 +307,12 @@ public:
 class LEABRA_API LeabraBiasSpec : public LeabraConSpec {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
 public:
-  float		dwt_thresh;  // #DEF_0.1 don't change if dwt < thresh, prevents buildup of small changes
+  float		dwt_thresh;  // #DEF_0.1 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
   inline void	B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru);
+  // #CAT_Learning update bias weights
 
   bool	CheckObjectType_impl(TAPtr obj);
-  // make sure this can only go with a unitspec, not a project or a congroup
 
   void	Defaults();
 
@@ -320,20 +326,23 @@ public:
 class LEABRA_API LeabraRecvCons : public RecvCons {
   // ##CAT_Leabra Leabra receiving connection group
 public:
-  float		scale_eff;	// #NO_SAVE effective scale parameter for netin
-  float		savg_cor;	// #NO_SAVE savg correction factor for hebbian learning
-  float		net;		// #NO_SAVE netinput to this con_group: not normally computed!
+  float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin
+  float		savg_cor;	// #NO_SAVE #CAT_Learning savg correction factor for hebbian learning
+  float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
 
   void	Compute_LinFmWt()  { ((LeabraConSpec*)spec.spec)->Compute_LinFmWt(this); }
+  // #CAT_Learning compute linear weight value 
 
   void	Compute_WtFmLin()  { ((LeabraConSpec*)spec.spec)->Compute_WtFmLin(this); }
+  // #CAT_Learning compute sigmoidal contrast enhanced weight value
 
   void	C_Init_Weights_Post(Connection* cn, Unit* ru, Unit* su) { 
     ((LeabraConSpec*)spec.spec)->C_Init_Weights_Post(this, cn, ru, su);
   }
-  // hook for setting other weight-like values after initializing the weight value
+  // #CAT_Learning hook for setting other weight-like values after initializing the weight value
 
   void	SetCurLrate(int epoch, LeabraNetwork* net) { ((LeabraConSpec*)spec.spec)->SetCurLrate(epoch, net); }
+  //#CAT_Learning set current learning rate based on lrate schedule and network values
 
   void 	Initialize();
   void	Destroy()		{ };
@@ -347,9 +356,11 @@ class LEABRA_API LeabraSendCons : public SendCons {
 public:
   inline void 	Send_ClampNet(LeabraUnit* su)
   { ((LeabraConSpec*)spec.spec)->Send_ClampNet(this, su); }
+  // #CAT_Activation send input from clamped layers
 
   inline void 	Send_NetinDelta(LeabraUnit* su)
   { ((LeabraConSpec*)spec.spec)->Send_NetinDelta(this, su); }
+  // #CAT_Activation send delta-netin
 
   void 	Initialize();
   void	Destroy()		{ };
@@ -549,33 +560,34 @@ public:
     ACT_NOISE			// noise in the activations
   };
 
-  ActFun	act_fun;	// activation function to use
-  ActFunSpec	act;		// activation function specs
-  SpikeFunSpec	spike;		// #CONDEDIT_ON_act_fun:SPIKE spiking function specs (only for act_fun = SPIKE)
-  DepressSpec	depress;	// #CONDEDIT_ON_act_fun:DEPRESS depressing synapses activation function specs, note that act_range deterimines range of spk_amp spiking amplitude, max should be > 1
-  OptThreshSpec	opt_thresh;	// optimization thresholds for speeding up processing when units are basically inactive
-  MinMaxRange	clamp_range;	// range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
-  MinMaxRange	vm_range;	// membrane potential range (min, max, 0-1 for normalized, -90-50 for bio-based)
-  Random	v_m_init;	// what to initialize the membrane potential to (mean = .15, var = 0 std)
-  DtSpec	dt;		// time constants (rate of updating): membrane potential (vm) and net input (net)
-  LeabraChannels g_bar;		// [Defaults: 1, .1, 1, .1, .5] maximal conductances for channels
-  LeabraChannels e_rev;		// [Defaults: 1, .15, .15, 1, 0] reversal potentials for each channel
-  VChanSpec	hyst;		// [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
-  VChanSpec	acc;		// [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
-  ActRegSpec	act_reg;	// activity regulation via global scaling of weight values
-  MaxDaSpec	maxda;		// maximum change in activation (da) computation -- regulates settling
-  NoiseType	noise_type;	// where to add random noise in the processing (if at all)
-  Random	noise;		// #CONDEDIT_OFF_noise_type:NO_NOISE distribution parameters for random added noise
-  Schedule	noise_sched;	// #CONDEDIT_OFF_noise_type:NO_NOISE schedule of noise variance over settling cycles
+  ActFun	act_fun;	// #CAT_Activation activation function to use
+  ActFunSpec	act;		// #CAT_Activation activation function specs
+  SpikeFunSpec	spike;		// #CONDEDIT_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
+  DepressSpec	depress;	// #CONDEDIT_ON_act_fun:DEPRESS #CAT_Activation depressing synapses activation function specs, note that act_range deterimines range of spk_amp spiking amplitude, max should be > 1
+  OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
+  MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
+  MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-1 for normalized, -90-50 for bio-based)
+  Random	v_m_init;	// #CAT_Activation what to initialize the membrane potential to (mean = .15, var = 0 std)
+  DtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
+  LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1, .1, .5] maximal conductances for channels
+  LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .15, .15, 1, 0] reversal potentials for each channel
+  VChanSpec	hyst;		// #CAT_Activation [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
+  VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
+  ActRegSpec	act_reg;	// #CAT_Learning activity regulation via global scaling of weight values
+  MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
+  NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
+  Random	noise;		// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
+  Schedule	noise_sched;	// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance over settling cycles
 
-  FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT convolved gaussian and x/x+1 function as lookup table
-  FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT gaussian for convolution
+  FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
+  FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
 
   void 		Init_Weights(Unit* u);
-  virtual void 	InitActAvg(LeabraUnit* u);
+  virtual void 	Init_ActAvg(LeabraUnit* u);
+  // #CAT_Activation initialize average activation values, used to control learning
 
   virtual void	SetCurLrate(LeabraUnit* u, LeabraNetwork* net, int epoch);
-  // set current learning rate based on epoch
+  // #CAT_Learning set current learning rate based on epoch
 
   //////////////////////////////////////////
   //	Stage 0: at start of settling	  // 
@@ -586,52 +598,54 @@ public:
   void		Init_Acts(Unit* u)	{ UnitSpec::Init_Acts(u); }
 
   virtual void 	Compute_NetinScale(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // compute net input scaling values and input from hard-clamped inputs
+  // #CAT_Activation compute net input scaling values and input from hard-clamped inputs
   virtual void 	Compute_NetinRescale(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float new_scale);
-  // rescale netinput scales by given amount
+  // #CAT_Activation rescale netinput scales by given amount
   virtual void 	Init_ClampNet(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // init clam net value prior to sending
+  // #CAT_Activation init clam net value prior to sending
   virtual void 	Send_ClampNet(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // compute net input from hard-clamped inputs (sender based)
+  // #CAT_Activation compute net input from hard-clamped inputs (sender based)
 
   //////////////////////////////////
   //	Stage 1: netinput 	  //
   //////////////////////////////////
 
   void 		Send_Netin(Unit* u) { UnitSpec::Send_Netin(u); }
-  void 		Send_Netin(LeabraUnit* u, LeabraLayer* lay);  // add ext input, sender-based
+  void 		Send_Netin(LeabraUnit* u, LeabraLayer* lay);
+  // #CAT_Activation send netinput; add ext input, sender-based
 
   virtual void 	Send_NetinDelta(LeabraUnit* u, LeabraLayer* lay);
+  // #CAT_Activation send netinput; sender based and only when act changes above a threshold
 
   ////////////////////////////////////////////////////////////////
   //	Stage 2: netinput averages and clamping (if necc)	//
   ////////////////////////////////////////////////////////////////
 
   inline virtual void	Compute_NetinAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  // compute netin average
+  // #CAT_Activation compute netin average
   inline virtual void	Compute_InhibAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  // compute inhib netin average
+  // #CAT_Activation compute inhib netin average
   virtual void	Compute_HardClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // force units to external values provided by environment: also optimizes settling by only computing netinput once
+  // #CAT_Activation force units to external values provided by environment: also optimizes settling by only computing netinput once
   virtual void	Compute_HardClampNoClip(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // hard-clamp units without clipping values to clamp_range (use for second plus phase clamping to settled values)
+  // #CAT_Activation hard-clamp units without clipping values to clamp_range (use for second plus phase clamping to settled values)
   virtual bool	Compute_SoftClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // soft-clamps unit, returns true if unit is not above .5
+  // #CAT_Activation soft-clamps unit, returns true if unit is not above .5
 
   ////////////////////////////////////////
   //	Stage 3: inhibition		//
   ////////////////////////////////////////
 
   virtual float	Compute_IThresh(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // compute inhibitory value that would place unit directly at threshold
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold
   virtual float	Compute_IThreshAll(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // compute inhibitory value that would place unit directly at threshold, using all currents
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold, using all currents
   virtual float	Compute_IThreshNoA(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // compute inhibitory value that would place unit directly at threshold, excluding gc.a current
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding gc.a current
   virtual float	Compute_IThreshNoH(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // compute inhibitory value that would place unit directly at threshold, excluding gc.a current
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding gc.a current
   virtual float	Compute_IThreshNoAH(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents
 
   ////////////////////////////////////////
   //	Stage 4: the final activation 	//
@@ -639,36 +653,37 @@ public:
 
   override void	Compute_Act(Unit* u)	{ UnitSpec::Compute_Act(u); }
   virtual void 	Compute_Act(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  // compute the final activation: calls following function steps
+  // #CAT_Activation compute the final activation: calls following function steps
 
   virtual void	Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation compute the maximum delta-activation (change in activation); used to control settling
 
   virtual void Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  // compute input conductance values in the gc variables
+  // #CAT_Activation compute input conductance values in the gc variables
   virtual void Compute_Vm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  // compute the membrante potential from input conductances
+  // #CAT_Activation compute the membrante potential from input conductances
   virtual void Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  // compute the activation from membrane potential
+  // #CAT_Activation compute the activation from membrane potential
   virtual void Compute_SelfReg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  // compute self-regulatory currents (hysteresis, accommodation)
+  // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation)
 
   ////////////////////////////////////////
   //	Stage 5: Between Events 	//
   ////////////////////////////////////////
 
   virtual void	PhaseInit(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // initialize external input flags based on phase
+  // #CAT_Activation initialize external input flags based on phase
   virtual void	DecayPhase(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay);
-  // decay activation states towards initial values: at phase-level boundary
+  // #CAT_Activation decay activation states towards initial values: at phase-level boundary
   virtual void	DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay);
-  // decay activation states towards initial values: at event-level boundary
+  // #CAT_Activation decay activation states towards initial values: at event-level boundary
   virtual void	ExtToComp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // change external inputs to comparisons (remove input)
+  // #CAT_Activation change external inputs to comparisons (remove input)
   virtual void	TargExtToComp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // change target & external inputs to comparisons (remove targ & input)
+  // #CAT_Activation change target & external inputs to comparisons (remove targ & input)
   virtual void	PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
 			   LeabraNetwork* net, bool set_both=false);
-  // set stuff after settling is over (set_both = both _m and _p for current)
+  // #CAT_Activation set stuff after settling is over (set_both = both _m and _p for current)
 
   ////////////////////////////////////////
   //	Stage 6: Learning 		//
@@ -677,21 +692,21 @@ public:
   override void	Compute_dWt(Unit*)	{ };
   virtual void	Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   virtual void	Compute_dWt_impl(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // actually do wt change
+  // #CAT_Learning actually do wt change: learn!
 
   virtual void	Compute_WtFmLin(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // if weights need to be updated from linear values without doing updatewts
+  // #CAT_Learning if weights need to be updated from linear values without doing updatewts
 
   override void	Compute_Weights(Unit* u);
 
   virtual void	EncodeState(LeabraUnit*, LeabraLayer*, LeabraNetwork*)	{ };
-  // encode current state information (hook for time-based learning)
+  // #CAT_Learning encode current state information (hook for time-based learning)
 
-  override float Compute_SSE(Unit* u);	// compute sum squared error for this unit
+  override float Compute_SSE(Unit* u);
 
-  virtual void	CreateNXX1Fun();  // create convolved gaussian and x/x+1 
+  virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
 
-  virtual void	Defaults();	// #BUTTON #CONFIRM restores default parameter settings: warning -- you will lose any unique parameters you might have set!
+  virtual void	Defaults();	// #BUTTON #CONFIRM #CAT_ObjectMgmt restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
 //TEMP  virtual void	GraphVmFun(GraphLog* graph_log, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .01);
   // #BUTTON #NULL_OK graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph log)
@@ -747,37 +762,38 @@ public:
 class LEABRA_API LeabraUnit : public Unit {
   // ##DMEM_SHARE_SETS_5 ##CAT_Leabra Leabra unit, point-neuron approximation
 public:
-  float		act_eq;		// #NO_SAVE rate-code equivalent activity value (time-averaged spikes or just act)
-  float		act_avg;	// average activation over long time intervals (dt = act.avg_dt)
-  float		act_m;		// minus_phase activation, set after settling, used for learning
-  float		act_p;		// plus_phase activation, set after settling, used for learning
-  float		act_dif;	// difference between plus and minus phase acts, gives unit err contribution
-  float		da;		// #NO_SAVE delta activation: change in act from one cycle to next, used to stop settling
-  VChanBasis	vcb;		// voltage-gated channel basis variables
-  LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE current unit channel conductances
-  float		I_net;		// #NO_SAVE net current produced by all channels
-  float		v_m;		// #NO_SAVE membrane potential
+  float		act_eq;		// #NO_SAVE #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act)
+  float		act_avg;	// #CAT_Activation average activation over long time intervals (dt = act.avg_dt)
+  float		act_m;		// #CAT_Activation minus_phase activation, set after settling, used for learning
+  float		act_p;		// #CAT_Activation plus_phase activation, set after settling, used for learning
+  float		act_dif;	// #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
+  float		da;		// #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
+  VChanBasis	vcb;		// #CAT_Activation voltage-gated channel basis variables
+  LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE #CAT_Activation current unit channel conductances
+  float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
+  float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
 
-  bool		in_subgp;	// #READ_ONLY #NO_SAVE determine if unit is in a subgroup
-  float		clmp_net;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_4 hard-clamp net input (no need to recompute)
-  float		net_scale;	// #NO_VIEW #NO_SAVE #DETAIL total netinput scaling basis
-  float		bias_scale;	// #NO_VIEW #NO_SAVE #DETAIL bias weight scaling factor
-  float		prv_net;	// #NO_VIEW #NO_SAVE #DETAIL previous net input (for time averaging)
-  float		prv_g_i;	// #NO_VIEW #NO_SAVE #DETAIL previous inhibitory conductance value (for time averaging)
+  bool		in_subgp;	// #READ_ONLY #NO_SAVE #CAT_Structure determine if unit is in a subgroup
+  float		clmp_net;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_4 #CAT_Activation hard-clamp net input (no need to recompute)
+  float		net_scale;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation total netinput scaling basis
+  float		bias_scale;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation bias weight scaling factor
+  float		prv_net;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation previous net input (for time averaging)
+  float		prv_g_i;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation previous inhibitory conductance value (for time averaging)
 
-  float		act_sent;	// #NO_VIEW #NO_SAVE #DETAIL last activation value sent (only send when diff is over threshold)
+  float		act_sent;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation last activation value sent (only send when diff is over threshold)
   float		act_delta;	// #NO_VIEW #NO_SAVE #DETAIL change in activation to send to other units
-  float		net_raw;	// #NO_VIEW #NO_SAVE #DETAIL raw net input received from sending units (increments the deltas in send_delta)
-  float		net_delta;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_3 change in netinput received from other units  (send_delta mode only)
-  float		g_i_raw;	// #NO_VIEW #NO_SAVE #DETAIL raw inhib net input received from sending units (increments the deltas in send_delta)
-  float		g_i_delta;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_3 change in inhibitory netinput received from other units (send_delta mode only)
+  float		net_raw;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation raw net input received from sending units (increments the deltas in send_delta)
+  float		net_delta;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_3 #CAT_Activation change in netinput received from other units  (send_delta mode only)
+  float		g_i_raw;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
+  float		g_i_delta;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_3 #CAT_Activation change in inhibitory netinput received from other units (send_delta mode only)
 
-  float		i_thr;		// #NO_SAVE inhibitory threshold value for computing kWTA
-  float		spk_amp;	// amplitude of spiking output (for depressing synapse activation function)
-  float		misc_1;		// #NO_VIEW miscellaneous variable for other algorithms that need it (e.g., TdLayerSpec)
+  float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
+  float		spk_amp;	// #CAT_Activation amplitude of spiking output (for depressing synapse activation function)
+  float		misc_1;		// #NO_VIEW #CAT_Activation miscellaneous variable for other algorithms that need it (e.g., TdLayerSpec)
 
-  void		InitActAvg()
-  { ((LeabraUnitSpec*)spec.spec)->InitActAvg(this); }
+  void		Init_ActAvg()
+  { ((LeabraUnitSpec*)spec.spec)->Init_ActAvg(this); }
+  // #CAT_Activation initialize average activation
 
   void		Init_Netin()
   { ((LeabraUnitSpec*)spec.spec)->Init_Netin(this); }
@@ -786,65 +802,90 @@ public:
 
   void		SetCurLrate(LeabraNetwork* net, int epoch)
   { ((LeabraUnitSpec*)spec.spec)->SetCurLrate(this, net, epoch); }
+  // #CAT_Learning set current learning rate based on epoch
 
   void		Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->Compute_NetinScale(this, lay, net); }
+  // #CAT_Activation compute net input scaling values and input from hard-clamped inputs
   void		Compute_NetinRescale(LeabraLayer* lay, LeabraNetwork* net, float new_scale)
   { ((LeabraUnitSpec*)spec.spec)->Compute_NetinRescale(this, lay, net, new_scale); }
+  // #CAT_Activation rescale netinput scales by given amount
   void		Init_ClampNet(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->Init_ClampNet(this, lay, net); }
+  // #CAT_Activation init clam net value prior to sending
   void		Send_ClampNet(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->Send_ClampNet(this, lay, net); }
+  // #CAT_Activation compute net input from hard-clamped inputs (sender based)
 
   void		Send_Netin(LeabraLayer* lay)
   { ((LeabraUnitSpec*)spec.spec)->Send_Netin(this, lay); }
+  // #CAT_Activation send netinput; add ext input, sender-based
   void		Send_NetinDelta(LeabraLayer* lay)
   { ((LeabraUnitSpec*)spec.spec)->Send_NetinDelta(this, lay); }
+  // #CAT_Activation send netinput; sender based and only when act changes above a threshold
 
   void		Compute_NetinAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->Compute_NetinAvg(this, lay, athr, net); }
+  // #CAT_Activation compute netin average
   void		Compute_InhibAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->Compute_InhibAvg(this, lay, athr, net); }
+  // #CAT_Activation compute inhib netin average
   void		Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)spec.spec)->Compute_HardClamp(this, lay, net); }
+  // #CAT_Activation force units to external values provided by environment: also optimizes settling by only computing netinput once
   void		Compute_HardClampNoClip(LeabraLayer* lay, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)spec.spec)->Compute_HardClampNoClip(this, lay, net); }
+  // #CAT_Activation hard-clamp units without clipping values to clamp_range (use for second plus phase clamping to settled values)
   bool		Compute_SoftClamp(LeabraLayer* lay, LeabraNetwork* net) 
   { return ((LeabraUnitSpec*)spec.spec)->Compute_SoftClamp(this, lay, net); }
+  // #CAT_Activation soft-clamps unit, returns true if unit is not above .5
 
   float		Compute_IThresh(LeabraLayer* lay, LeabraNetwork* net)
   { return ((LeabraUnitSpec*)spec.spec)->Compute_IThresh(this, lay, net); }
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold
   float		Compute_IThreshNoAH(LeabraLayer* lay, LeabraNetwork* net)
   { return ((LeabraUnitSpec*)spec.spec)->Compute_IThreshNoAH(this, lay, net); }
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents
 
   void		Compute_Act()	{ Unit::Compute_Act(); }
   void 		Compute_Act(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)spec.spec)->Compute_Act(this, lay, athr, net); }
+  // #CAT_Activation compute the final activation: calls following function steps
 
   void 		Compute_MaxDa(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)spec.spec)->Compute_MaxDa(this, lay, athr, net); }
+  // #CAT_Activation compute the maximum delta-activation (change in activation); used to control settling
 
   void		PhaseInit(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->PhaseInit(this, lay, net); }
-  void		DecayEvent(LeabraLayer* lay, LeabraNetwork* net, float decay)
-  { ((LeabraUnitSpec*)spec.spec)->DecayEvent(this, lay, net, decay); }
+  // #CAT_Activation initialize external input flags based on phase
   void		DecayPhase(LeabraLayer* lay, LeabraNetwork* net, float decay)
   { ((LeabraUnitSpec*)spec.spec)->DecayPhase(this, lay, net, decay); }
+  // #CAT_Activation decay activation states towards initial values: at phase-level boundary
+  void		DecayEvent(LeabraLayer* lay, LeabraNetwork* net, float decay)
+  { ((LeabraUnitSpec*)spec.spec)->DecayEvent(this, lay, net, decay); }
+  // #CAT_Activation decay activation states towards initial values: at event-level boundary
   void		ExtToComp(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->ExtToComp(this, lay, net); }
+  // #CAT_Activation change external inputs to comparisons (remove input)
   void		TargExtToComp(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->TargExtToComp(this, lay, net); }
+  // #CAT_Activation change target & external inputs to comparisons (remove targ & input)
   void		PostSettle(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net, bool set_both=false)
   { ((LeabraUnitSpec*)spec.spec)->PostSettle(this, lay, athr, net, set_both); }
+  // #CAT_Activation set stuff after settling is over (set_both = both _m and _p for current)
 
   void 		Compute_dWt(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->Compute_dWt(this, lay, net); }	  
+  // #CAT_Learning actually do wt change: learn!
 
   void 		Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)spec.spec)->Compute_WtFmLin(this, lay, net); }
+  // #CAT_Learning if weights need to be updated from linear values without doing updatewts
 
   void 		EncodeState(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)spec.spec)->EncodeState(this, lay, net); }
+  // #CAT_Learning encode current state information (hook for time-based learning)
 
   void		GetInSubGp();
 
@@ -992,163 +1033,180 @@ public:
     LAY_AND_GPS			// compute inhib over both groups and whole layer, inhibi is max of layer and group inhib
   };
 
-  KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
-  KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
-  InhibGroup	inhib_group;	// what to consider the inhibitory group (layer or unit subgroups, or both)
-  Compute_I	compute_i;	// how to compute inhibition (g_i): two forms of kwta or unit-level inhibition
-  float		i_kwta_pt;	// [Default: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
-  float		gp_i_pt;	// #CONDEDIT_ON_compute_i:AVG_MAX_PT_INHIB [Default: .2] for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
-  KwtaTieBreak	tie_brk;	// break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
-  AdaptISpec	adapt_i;	// #AKA_adapt_pt adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
-  ClampSpec	clamp;		// how to clamp external inputs to units (hard vs. soft)
-  DecaySpec	decay;		// decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
-  LayNetRescaleSpec net_rescale; // rescale layer-wide netinputs to prevent blowup, when max net exceeds specified net value
+  KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
+  KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
+  InhibGroup	inhib_group;	// #CAT_Activation what to consider the inhibitory group (layer or unit subgroups, or both)
+  Compute_I	compute_i;	// #CAT_Activation how to compute inhibition (g_i): two forms of kwta or unit-level inhibition
+  float		i_kwta_pt;	// #CAT_Activation [Default: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
+  float		gp_i_pt;	// #CAT_Activation #CONDEDIT_ON_compute_i:AVG_MAX_PT_INHIB [Default: .2] for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
+  KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
+  AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
+  ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
+  DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
+  LayNetRescaleSpec net_rescale; // #CAT_Activation rescale layer-wide netinputs to prevent blowup, when max net exceeds specified net value
 
   virtual void	Init_Weights(LeabraLayer* lay);
-  // initialize weight values and other permanent state
-  virtual void	InitActAvg(LeabraLayer* lay);
-  // initialize act_avg values
+  // #CAT_Learning initialize weight values and other permanent state
+  virtual void	Init_ActAvg(LeabraLayer* lay);
+  // #CAT_Activation initialize act_avg values
 
   virtual void	SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoch);
-  // set current learning rate based on epoch
+  // #CAT_Learning set current learning rate based on epoch
 
   //////////////////////////////////////////
   //	Stage 0: at start of settling	  // 
   //////////////////////////////////////////
 
   virtual void	Compute_Active_K(LeabraLayer* lay);
-  // prior to settling: compute actual activity levels based on spec, inputs, etc
+  // #CAT_Activation prior to settling: compute actual activity levels based on spec, inputs, etc
   virtual void	Compute_Active_K_impl(LeabraLayer* lay, Unit_Group* ug,
 				      LeabraInhib* thr, KWTASpec& kwtspec);
   virtual int	Compute_Pat_K(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr);
-  // above are implementation helpers
+  // #CAT_Activation above are implementation helpers
 
   virtual void	Init_Acts(LeabraLayer* lay);
-  // prior to settling: initialize dynamic state variables
+  // #CAT_Activation prior to settling: initialize dynamic state variables
   virtual void	Compute_HardClampPhase2(LeabraLayer* lay, LeabraNetwork* net);
-  // prior to settling: hard-clamp inputs (special code for hard clamping in phase 2 based on prior acts)
+  // #CAT_Activation prior to settling: hard-clamp inputs (special code for hard clamping in phase 2 based on prior acts)
   virtual void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  // prior to settling: hard-clamp inputs
+  // #CAT_Activation prior to settling: hard-clamp inputs
   virtual void	Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net);
-  // prior to settling: compute netinput scaling values
+  // #CAT_Activation prior to settling: compute netinput scaling values
   virtual void	Init_ClampNet(LeabraLayer* lay, LeabraNetwork* net);
-  // prior to settling: init clamp net variable prior to sending
+  // #CAT_Activation prior to settling: init clamp net variable prior to sending
   virtual void	Send_ClampNet(LeabraLayer* lay, LeabraNetwork* net);
-  // prior to settling: compute input from hard-clamped
+  // #CAT_Activation prior to settling: compute input from hard-clamped
 
   //////////////////////////////////
   //	Stage 1: netinput 	  //
   //////////////////////////////////
 
   virtual void 	Send_Netin(LeabraLayer* lay);
-  // compute net inputs
+  // #CAT_Activation compute net inputs
   virtual void 	Send_NetinDelta(LeabraLayer* lay);
-  // compute net inputs as changes in activation
+  // #CAT_Activation compute net inputs as changes in activation
 
   ////////////////////////////////////////////////////////////////
   //	Stage 2: netinput averages and clamping (if necc)	//
   ////////////////////////////////////////////////////////////////
 
   virtual void	Compute_Clamp_NetAvg(LeabraLayer* lay, LeabraNetwork* net);
-  // clamp and compute averages of net inputs that were already computed
+  // #CAT_Activation clamp and compute averages of net inputs that were already computed
   virtual void	Compute_NetinAvg(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   virtual void	Compute_SoftClamp(LeabraLayer* lay, LeabraNetwork* net);
-  // soft-clamp inputs by adding to net input
+  // #CAT_Activation soft-clamp inputs by adding to net input
 
   ////////////////////////////////////////
   //	Stage 3: inhibition		//
   ////////////////////////////////////////
 
-  virtual void	InitInhib(LeabraLayer* lay);
-  // initialize the inhibitory state values
+  virtual void	Init_Inhib(LeabraLayer* lay);
+  // #CAT_Activation initialize the inhibitory state values
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
-  // stage two: compute the inhibition for layer
+  // #CAT_Activation stage two: compute the inhibition for layer
   virtual void	Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
-  // implementation of inhibition computation for either layer or unit group
+  // #CAT_Activation implementation of inhibition computation for either layer or unit group
   virtual void	Compute_Inhib_kWTA(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
-  // implementation of basic kwta inhibition computation
+  // #CAT_Activation implementation of basic kwta inhibition computation
   virtual void	Compute_Inhib_kWTA_Avg(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
-  // implementation of kwta avg-based inhibition computation
+  // #CAT_Activation implementation of kwta avg-based inhibition computation
   virtual void	Compute_Inhib_AvgMaxPt(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
-  // implementation of avg-max-pt inhibition computation
+  // #CAT_Activation implementation of avg-max-pt inhibition computation
   virtual void	Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net);
-  // implementation of GPS_THEN_UNITS kwta on groups
+  // #CAT_Activation implementation of GPS_THEN_UNITS kwta on groups
   virtual void 	Compute_Inhib_BreakTie(LeabraInhib* thr);
-  // break any ties in the kwta function
+  // #CAT_Activation break any ties in the kwta function
 
   virtual void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);
-  // Stage 3.25: for layer groups, need to propagate inhib out to unit groups
+  // #CAT_Activation Stage 3.25: for layer groups, need to propagate inhib out to unit groups
 
   ////// Stage 3.5: second pass of inhibition to do averaging
 
   virtual void 	Compute_InhibAvg(LeabraLayer* lay, LeabraNetwork* net);
-  // stage three: compute final activation
+  // #CAT_Activation stage three: compute average inhibition value
   virtual void 	Compute_InhibAvg_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation stage three: compute average inhibition value
 
   ////////////////////////////////////////
   //	Stage 4: the final activation 	//
   ////////////////////////////////////////
 
   virtual void 	Compute_ActAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  // #CAT_Activation compute acts.avg from act_eq
   virtual void	Compute_ActAvg(LeabraLayer* lay, LeabraNetwork* net);
-  // helper function to compute acts.avg from act_eq
+  // #CAT_Activation compute acts.avg from act_eq
+  virtual void 	Compute_MaxDa_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  // #CAT_Activation compute maximum delta-activation in layer (used for stopping criterion)
+  virtual void	Compute_MaxDa(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute maximum delta-activation in layer (used for stopping criterion)
+
   virtual void 	Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  // #CAT_Activation compute acts_m.avg from act_m
   virtual void	Compute_ActMAvg(LeabraLayer* lay, LeabraNetwork* net);
-  // helper function to compute acts_m.avg from act_m
+  // #CAT_Activation compute acts_m.avg from act_m
   virtual void 	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  // #CAT_Activation compute acts_p.avg from act_p
   virtual void	Compute_ActPAvg(LeabraLayer* lay, LeabraNetwork* net);
-  // helper function to compute acts_p.avg from act_p
+  // #CAT_Activation compute acts_p.avg from act_p
 
   virtual void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
-  // stage three: compute final activation
+  // #CAT_Activation stage three: compute final activation
   virtual void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation stage three: compute final activation
   virtual void 	Compute_NetinRescale(LeabraLayer* lay, LeabraNetwork* net);
-  // do net rescaling to prevent blowup based on netin.max
+  // #CAT_Activation do net rescaling to prevent blowup based on netin.max
 
   ////////////////////////////////////////
   //	Stage 5: Between Events 	//
   ////////////////////////////////////////
 
   virtual void	PhaseInit(LeabraLayer* lay, LeabraNetwork* net);
-  // initialize start of a setting phase, set input flags appropriately, etc
+  // #CAT_Activation initialize start of a setting phase, set input flags appropriately, etc
 
   virtual void	DecayEvent(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation decay activations and other state between events
   virtual void	DecayPhase(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation decay activations and other state between phases
   virtual void	DecayPhase2(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation decay activations and other state between second phase
 
   virtual void	ExtToComp(LeabraLayer* lay, LeabraNetwork* net);
-  // change external inputs to comparisons (remove input)
+  // #CAT_Activation change external inputs to comparisons (remove input)
   virtual void	TargExtToComp(LeabraLayer* lay, LeabraNetwork* net);
-  // change target & external inputs to comparisons (remove targ & input)
+  // #CAT_Activation change target & external inputs to comparisons (remove targ & input)
   virtual void	PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both=false);
-  // after settling, keep track of phase variables, etc.
+  // #CAT_Activation after settling, keep track of phase variables, etc.
 //   virtual void	NormMPActs(LeabraLayer* lay, LeabraNetwork* net);
 //   // normalize minus and plus phase activations to the same average level
   virtual void	AdaptGBarI(LeabraLayer* lay, LeabraNetwork* net);
-  // adapt inhibitory conductances based on target activation values relative to current values
+  // #CAT_Activation adapt inhibitory conductances based on target activation values relative to current values
+
+  virtual void	Compute_RelNetin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute the relative netinput from different projections into this layer
 
   ////////////////////////////////////////
   //	Stage 6: Learning 		//
   ////////////////////////////////////////
 
   virtual void	AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork* net);
-  // adapt the kwta point based on average activity
+  // #CAT_Activation adapt the kwta point based on average activity
   virtual void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning learn: compute the weight changes
   virtual void	Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net);
-  // use this if weights will be used again for activations prior to being updated
+  // #CAT_Learning use this if weights will be used again for activations prior to being updated
 
   virtual LeabraLayer* FindLayerFmSpec(LeabraLayer* lay, int& prjn_idx, TypeDef* layer_spec);
-  // find a layer that given layer receives from based on the type of layer spec
+  // #CAT_Structure find a layer that given layer receives from based on the type of layer spec
   virtual LeabraLayer* FindLayerFmSpecExact(LeabraLayer* lay, int& prjn_idx, TypeDef* layer_spec);
-  // find a layer that given layer receives from based on the type of layer spec: uses exact type match, not inherits!
+  // #CAT_Structure find a layer that given layer receives from based on the type of layer spec: uses exact type match, not inherits!
   static  LeabraLayer* FindLayerFmSpecNet(Network* net, TypeDef* layer_spec);
-  // find a layer in network based on the type of layer spec
+  // #CAT_Structure find a layer in network based on the type of layer spec
 
-  virtual void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  virtual void	HelpConfig();	// #BUTTON #CAT_Structure get help message for configuring this spec
   override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   // check for for misc configuration settings required by different algorithms, including settings on the processes NOTE: this routine augments the default layer checks, it doesn't replace them
 
-  virtual void	Defaults();	// #BUTTON #CONFIRM restores default parameter settings: warning -- you will lose any unique parameters you might have set!
+  virtual void	Defaults();	// #BUTTON #CONFIRM #CAT_ObjectMgmt restores default parameter settings: warning -- you will lose any unique parameters you might have set!
 
   void	UpdateAfterEdit();
   void 	Initialize();
@@ -1232,20 +1290,20 @@ public:
 class LEABRA_API LeabraInhib {
   // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
 public:
-  LeabraSort 	active_buf;	// #HIDDEN #NO_SAVE list of active units
-  LeabraSort 	inact_buf;	// #HIDDEN #NO_SAVE list of inactive units
+  LeabraSort 	active_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of active units
+  LeabraSort 	inact_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of inactive units
 
-  AvgMaxVals	netin;		// #READ_ONLY net input values for the layer
-  AvgMaxVals	i_thrs;		// #READ_ONLY inhibitory threshold values for the layer
-  AvgMaxVals	acts;		// #READ_ONLY activation values for the layer
-  AvgMaxVals	acts_p;		// #READ_ONLY plus-phase activation stats for the layer
-  AvgMaxVals	acts_m;		// #READ_ONLY minus-phase activation stats for the layer
-  float		phase_dif_ratio; // #READ_ONLY #SHOW phase-difference ratio (acts_m.avg / acts_p.avg)
+  AvgMaxVals	netin;		// #READ_ONLY #CAT_Activation net input values for the layer
+  AvgMaxVals	i_thrs;		// #READ_ONLY #CAT_Activation inhibitory threshold values for the layer
+  AvgMaxVals	acts;		// #READ_ONLY #CAT_Activation activation values for the layer
+  AvgMaxVals	acts_p;		// #READ_ONLY #CAT_Activation plus-phase activation stats for the layer
+  AvgMaxVals	acts_m;		// #READ_ONLY #CAT_Activation minus-phase activation stats for the layer
+  float		phase_dif_ratio; // #READ_ONLY #SHOW #CAT_Activation phase-difference ratio (acts_m.avg / acts_p.avg)
  
-  KWTAVals	kwta;		// #READ_ONLY values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
-  InhibVals	i_val;		// #READ_ONLY #SHOW inhibitory values computed by kwta
-  AvgMaxVals	un_g_i;		// #READ_ONLY average and stdev (not max) values for unit inhib-to-thresh
-  AdaptIVals	adapt_i;	// #READ_ONLY #AKA_adapt_pt adapting inhibition values
+  KWTAVals	kwta;		// #READ_ONLY #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
+  InhibVals	i_val;		// #READ_ONLY #SHOW #CAT_Activation inhibitory values computed by kwta
+  AvgMaxVals	un_g_i;		// #READ_ONLY #CAT_Activation average and stdev (not max) values for unit inhib-to-thresh
+  AdaptIVals	adapt_i;	// #READ_ONLY #AKA_adapt_pt #CAT_Activation adapting inhibition values
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   void	Inhib_ResetSortBuf() 		{ active_buf.size = 0; inact_buf.size = 0; }
@@ -1258,55 +1316,86 @@ class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
   // ##CAT_Leabra Leabra Layer: implicit inhibition for soft kWTA behavior
 INHERITED(Layer)
 public:
-  LeabraLayerSpec_SPtr	spec;	// the spec for this layer: controls all functions of layer
-  float		stm_gain;	// actual stim gain for soft clamping, can be incremented to ensure clamped units active
-  bool		hard_clamped;	// this layer is actually hard clamped
-  int		prv_phase;	// #READ_ONLY previous phase value (needed for 2nd plus phases and the like)
-  float		dav;		// #READ_ONLY dopamine-like modulatory value (where applicable)
-  float		net_rescale;	// #READ_ONLY computed netinput rescaling factor (updated by net_rescale)
-  int		da_updt;	// #READ_ONLY true if da triggered an update (either + to store or - reset)
-  int_Array	misc_iar;	// #HIDDEN misc int array of data
+  LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
+  float		stm_gain;	// #READ_ONLY #EXPERT #CAT_Activation actual stim gain for soft clamping, can be incremented to ensure clamped units active
+  bool		hard_clamped;	// #CAT_Activation this layer is actually hard clamped
+  float		dav;		// #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
+  float		net_rescale;	// #READ_ONLY #EXPERT #CAT_Activation computed netinput rescaling factor (updated by net_rescale)
+  int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
+  int_Array	misc_iar;	// #HIDDEN #CAT_Activation misc int array of data
+  float_Array	netin_avg;	// #READ_ONLY #EXPERT #CAT_Activation average netinput values for the recv projections into this layer
+  float_Array	netin_rel;	// #READ_ONLY #EXPERT #CAT_Activation relative netinput values for the recv projections into this layer
+  float_Array	netin_avg_cnt;	// #READ_ONLY #NO_SAVE #HIDDEN #CAT_Activation relative netinput values for the recv projections into this layer -- counter for computing avg
 
   void	Build();
 
   void	Init_Weights() 	{ if(spec) spec->Init_Weights(this); }
-  void	InitActAvg() 	{ spec->InitActAvg(this); }
-  void	InitInhib() 	{ spec->InitInhib(this); } // initialize inhibitory state
+  // #CAT_Learning initialize weight values and other permanent state
+  void	Init_ActAvg() 	{ spec->Init_ActAvg(this); }
+  // #CAT_Activation initialize act_avg values
+  void	Init_Inhib() 	{ spec->Init_Inhib(this); } // initialize inhibitory state
+  // #CAT_Activation initialize the inhibitory state values
 
   void	SetCurLrate(LeabraNetwork* net, int epoch) { spec->SetCurLrate(this, net, epoch); }
+  // #CAT_Learning set current learning rate based on epoch
   
   void	Compute_Active_K()			{ spec->Compute_Active_K(this); }
+  // #CAT_Activation prior to settling: compute actual activity levels based on spec, inputs, etc
   void	Init_Acts() 				{ if(spec) spec->Init_Acts(this); }
+  // #CAT_Activation prior to settling: initialize dynamic state variables
 
   void	Compute_HardClamp(LeabraNetwork* net) 	{ spec->Compute_HardClamp(this, net); }
+  // #CAT_Activation prior to settling: hard-clamp inputs
   void	Compute_NetinScale(LeabraNetwork* net) 	{ spec->Compute_NetinScale(this, net); }
+  // #CAT_Activation prior to settling: compute netinput scaling values
   void	Init_ClampNet(LeabraNetwork* net) 	{ spec->Init_ClampNet(this, net); }
+  // #CAT_Activation prior to settling: init clamp net variable prior to sending
   void	Send_ClampNet(LeabraNetwork* net) 	{ spec->Send_ClampNet(this, net); }
+  // #CAT_Activation prior to settling: compute input from hard-clamped
 
   void	Send_Netin()				{ spec->Send_Netin(this); }
+  // #CAT_Activation compute net inputs
   void	Send_NetinDelta()			{ spec->Send_NetinDelta(this); }
+  // #CAT_Activation compute net inputs as changes in activation
 
   void	Compute_Clamp_NetAvg(LeabraNetwork* net)  { spec->Compute_Clamp_NetAvg(this, net); }
+  // #CAT_Activation clamp and compute averages of net inputs that were already computed
 
   void	Compute_Inhib(LeabraNetwork* net) 	{ spec->Compute_Inhib(this, net); }
+  // #CAT_Activation stage two: compute the inhibition for layer
   void	Compute_LayInhibToGps(LeabraNetwork* net) { spec->Compute_LayInhibToGps(this, net); }
+  // #CAT_Activation Stage 3.25: for layer groups, need to propagate inhib out to unit groups
   void	Compute_InhibAvg(LeabraNetwork* net)	{ spec->Compute_InhibAvg(this, net); }
+  // #CAT_Activation stage three: compute average inhibition value
 
   void	Compute_Act()				{ spec->Compute_Act(this, NULL); }
   void	Compute_Act(LeabraNetwork* net) 	{ spec->Compute_Act(this, net); }
+  // #CAT_Activation stage three: compute final activation
 
   void	PhaseInit(LeabraNetwork* net)		{ spec->PhaseInit(this, net); }
-  void	DecayEvent(LeabraNetwork* net)		{ spec->DecayEvent(this, net); } // decay between events
-  void	DecayPhase(LeabraNetwork* net)    	{ spec->DecayPhase(this, net); } // decay between phases
-  void	DecayPhase2(LeabraNetwork* net)  	{ spec->DecayPhase2(this, net); } // decay between 2nd set of phases
+  // #CAT_Activation initialize start of a setting phase, set input flags appropriately, etc
+  void	DecayEvent(LeabraNetwork* net)		{ spec->DecayEvent(this, net); }
+  // #CAT_Activation decay activations and other state between events
+  void	DecayPhase(LeabraNetwork* net)    	{ spec->DecayPhase(this, net); }
+  // #CAT_Activation decay activations and other state between phases
+  void	DecayPhase2(LeabraNetwork* net)  	{ spec->DecayPhase2(this, net); }
+  // #CAT_Activation decay activations and other state between second phase
 
   void	ExtToComp(LeabraNetwork* net)		{ spec->ExtToComp(this, net); }
+  // #CAT_Activation change external inputs to comparisons (remove input)
   void	TargExtToComp(LeabraNetwork* net)	{ spec->TargExtToComp(this, net); }
+  // #CAT_Activation change target & external inputs to comparisons (remove targ & input)
   void	PostSettle(LeabraNetwork* net, bool set_both=false) { spec->PostSettle(this, net, set_both); }
+  // #CAT_Activation after settling, keep track of phase variables, etc.
 
-  void	Compute_dWt(LeabraNetwork* net) 	{ spec->Compute_dWt(this, net); }
+  void	Compute_RelNetin(LeabraNetwork* net)	{ spec->Compute_RelNetin(this, net); }
+  // #CAT_Statistic compute the relative netinput from different projections into this layer
+
   void	Compute_dWt() 				{ spec->Compute_dWt(this, NULL); }
+  void	Compute_dWt(LeabraNetwork* net) 	{ spec->Compute_dWt(this, net); }
+  // #CAT_Learning learn: compute the weight changes
   void	Compute_WtFmLin(LeabraNetwork* net) 	{ spec->Compute_WtFmLin(this, net); }
+  // #CAT_Learning use this if weights will be used again for activations prior to being updated
   void	Compute_Weights();
 
   virtual void	ResetSortBuf();
@@ -1330,9 +1419,9 @@ protected:
 class LEABRA_API LeabraUnit_Group : public Unit_Group, public LeabraInhib {
   // ##CAT_Leabra for independent subgroups of competing units within a single layer
 public:
-  int		misc_state;	// miscellaneous state variable
-  int		misc_state1;	// second miscellaneous state variable 
-  int		misc_state2;	// third miscellaneous state variable 
+  int		misc_state;	// #CAT_Activation miscellaneous state variable
+  int		misc_state1;	// #CAT_Activation second miscellaneous state variable 
+  int		misc_state2;	// #CAT_Activation third miscellaneous state variable 
 
   void	Initialize();
   void	Destroy()		{ };
@@ -1619,7 +1708,7 @@ public:
 
   int		cycle_max;	// #DEF_60 #CAT_Counter maximum number of cycles to settle for
   int		min_cycles;	// #DEF_15 #CAT_Counter minimum number of cycles to settle for
-  int		min_cycles_phase2; // #DEF_15 #CAT_Counter minimum number of cycles to settle for in second phase
+  int		min_cycles_phase2; // #DEF_35 #CAT_Counter minimum number of cycles to settle for in second phase
 
   float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic cycles to settle in the minus phase -- this is the typical settling time statistic to record
   float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
@@ -1693,6 +1782,9 @@ public:
   // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase
   virtual void	Trial_Final();
   // #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
+
+  virtual void	Compute_RelNetin();
+  // #CAT_Statistic compute the relative netinput from different projections into layers in network
 
   virtual void	Compute_AvgCycles();
   // #CAT_Statistic compute average cycles (at an epoch-level timescale)

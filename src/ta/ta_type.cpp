@@ -308,9 +308,9 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 //////////////////////////////////
 
 #ifdef SVN_REV
-String	taMisc::version_no = "3.5 svn revision: " + String(SVN_REV);
+String	taMisc::version_no = "4.0a svn revision: " + String(SVN_REV);
 #else
-String	taMisc::version_no = "3.5";
+String	taMisc::version_no = "4.0a";
 #endif
 
 ////////////////////////////////////////////////////////

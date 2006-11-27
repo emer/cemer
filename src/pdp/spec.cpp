@@ -50,7 +50,7 @@ BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {
   BaseSpec* bs;
   taLeafItr i;
   FOR_ITR_EL(BaseSpec, bs, this->, i) {
-    if(bs->GetTypeDef() == td)
+    if(!bs->isDestroying() && (bs->GetTypeDef() == td))
       return bs;    // use equals to find type of spec object
   }
   // then check the children
@@ -222,6 +222,8 @@ void BaseSpec::CutLinks() {
 
 void BaseSpec::UpdateAfterEdit() {
   taNBase::UpdateAfterEdit();
+  Network* net = GET_MY_OWNER(Network);
+  if(isDestroying() || !net || net->isDestroying()) return;
   UpdateSpec();
 }
 
@@ -551,12 +553,18 @@ int SpecPtr_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
 void SpecPtr_impl::UpdateAfterEdit() {
   taBase::UpdateAfterEdit();
 
-  if(!owner || !type)
+  if(!owner || !type || owner->isDestroying())
     return;
+
+  Network* net = GET_OWNER(owner,Network);
+  if(!net || net->isDestroying()) return;
 
   BaseSpec* sp = GetSpec();
   if(sp) {
-    if(sp->GetTypeDef() == type) {
+    if(sp->isDestroying()) {	// shouldn't happen, but just in case
+      SetSpec(NULL);
+    }
+    else if(sp->GetTypeDef() == type) {
       goto updt_spec;
     }
     else {
@@ -571,7 +579,7 @@ void SpecPtr_impl::UpdateAfterEdit() {
       prv_spec->RemoveDataClient(this);
     prv_spec = sp;
   }
-  if(sp)			// always make sure we are a data client
+  if(sp && !sp->isDestroying())			// always make sure we are a data client
     sp->AddDataClient(this);
 }
 
@@ -650,7 +658,7 @@ void SpecPtr_impl::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
 //   }
 }
 void SpecPtr_impl::DataLinkDestroying(taDataLink* dl) {
-  if (owner) {
+  if (owner && !owner->isDestroying()) {
 //     owner->SmartRef_DataDestroying(this, GetSpec()); 
     SetSpec(NULL);
     owner->UpdateAfterEdit();

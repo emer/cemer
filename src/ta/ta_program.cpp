@@ -1464,6 +1464,8 @@ void ProgObjList::DataChanged(int dcr, void* op1, void* op2) {
 //  Program		//
 //////////////////////////
 
+ProgLib* Program::prog_lib = NULL;
+
 void Program::MakeTemplate_fmtype(Program* prog, TypeDef* td) {
   taBase* tok = (taBase*)td->GetInstance();
   if(tok != NULL) {
@@ -1500,6 +1502,8 @@ void Program::Initialize() {
   m_dirty = true; 
   prog_gp = NULL;
   m_checked = false;
+  if(!prog_lib)
+    prog_lib = &Program_Group::prog_lib;
 }
 
 void Program::Destroy()	{ 
@@ -1967,33 +1971,10 @@ void Program::SaveToProgLib(ProgLibs library) {
   Program_Group::prog_lib.FindPrograms();
 }
 
-void Program::LoadFromProgLib(ProgLibs library, const String& file_nm) {
-  if(!file_nm.empty())
-    name = file_nm;
-  if(library == SEARCH_LIBS) {
-    for(int lib = USER_LIB; lib < SEARCH_LIBS; lib++) {
-      String path = GetProgLibPath((ProgLibs)lib);
-      String fname = path + "/" + name + ".prog";
-      int acc = access(fname, F_OK);
-      if (acc == 0) {
-	library = (ProgLibs)lib;
-	break;
-      }
-    }
-    if(library == SEARCH_LIBS) {
-      taMisc::Error("Program library file:",name," not found in any libraries");
-      return;
-    }
-  }
-  String path = GetProgLibPath(library);
-  String fname = path + "/" + name + ".prog";
-  int acc = access(fname, F_OK);
-  if (acc != 0) {
-    taMisc::Error("Program library file:",fname,"not found");
-    return;
-  }
+void Program::LoadFromProgLib(ProgLibEl* prog_type) {
+  if(!prog_type) return;
   Reset();
-  Load(fname);
+  prog_type->LoadProgram(this);
 }
 
 void Program::SaveScript(ostream& strm) {
@@ -2116,6 +2097,19 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
   Program* pg = new_owner->NewEl(1, &TA_Program);
   pg->Load(path);
   return pg;
+}
+
+bool ProgLibEl::LoadProgram(Program* prog) {
+  // todo: need to support full URL types -- assumed to be file right now
+  String path = URL;
+  if(path.contains("file:"))
+    path = path.after("file:");
+  if(is_group) {
+    taMisc::Error("ProgLibEl::LoadProgram -- cannot load a program group file into a single program!");
+    return false;
+  }
+  prog->Load(path);
+  return true;
 }
 
 bool ProgLibEl::ParseProgFile(const String& fnm, const String& path) {

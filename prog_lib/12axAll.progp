@@ -1,6 +1,6 @@
 // ta_Dump File v2.0
-Program_Group .projects[0].programs.gp[0] { 
-  Program_Group .projects[0].programs.gp[0] = [2] {
+Program_Group .projects[0].programs.gp[1] { 
+  Program_Group .projects[0].programs.gp[1] = [2] {
     Program @[0] { 
       ProgVar_List @.args = [2] {
 	ProgVar @[0] { };
@@ -167,11 +167,11 @@ Program_Group .projects[0].programs.gp[0] {
     };
   };
 };
-Program_Group .projects[0].programs.gp[0] {
+Program_Group .projects[0].programs.gp[1] {
  name="12axAll";
  el_typ=Program;
  el_def=0;
- step_prog=.projects[0].programs.gp[0][1]$0$;
+ step_prog=.projects[0].programs.gp[1][1]$0$;
  desc="Generate InputData for 12-AX CPT task: Epoch + Trial";
  Program @[0] {
   name="12axEpoch";
@@ -187,7 +187,7 @@ Program_Group .projects[0].programs.gp[0] {
    el_typ=ProgVar;
    el_def=0;
    ProgVar @[0] {
-    name="data_table";
+    name="input_data";
     var_type=T_Object;
     object_type=DataTable;
     object_val=.projects[0].data.gp[0][0]$1$;
@@ -225,7 +225,7 @@ Program_Group .projects[0].programs.gp[0] {
     desc=;
     off=0;
     result_var=NULL;
-    obj=.projects[0].programs.gp[0][0].args[0]$2$;
+    obj=.projects[0].programs.gp[1][0].args[0]$2$;
     method=DataTable::ResetData;
     args{ };
 {     };
@@ -247,8 +247,8 @@ Program_Group .projects[0].programs.gp[0] {
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
-	name="data_table";
-	value="data_table";
+	name="input_data";
+	value="input_data";
        };
       };
      };
@@ -273,7 +273,7 @@ Program_Group .projects[0].programs.gp[0] {
    el_typ=ProgVar;
    el_def=0;
    ProgVar @[0] {
-    name="data_table";
+    name="input_data";
     var_type=T_Object;
     object_type=DataTable;
     object_val=$1$;
@@ -313,7 +313,7 @@ Program_Group .projects[0].programs.gp[0] {
      name="Task";
      el_typ=DynEnumItem;
      el_def=0;
-     value_idx=0;
+     value_idx=1;
      DynEnumItem @[0] {
       name="ONE";
       value=0;
@@ -377,7 +377,7 @@ Program_Group .projects[0].programs.gp[0] {
      name="Probe";
      el_typ=DynEnumItem;
      el_def=0;
-     value_idx=1;
+     value_idx=2;
      DynEnumItem @[0] {
       name="X";
       value=0;
@@ -528,7 +528,7 @@ Program_Group .projects[0].programs.gp[0] {
       desc=;
       off=0;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][1].args[0]$3$;
+      obj=.projects[0].programs.gp[1][1].args[0]$3$;
       method=DataTable::AddBlankRow;
       args{ };
 {       };
@@ -653,7 +653,7 @@ Program_Group .projects[0].programs.gp[0] {
    RandomCall @[0] {
     desc=;
     off=0;
-    result_var=.projects[0].programs.gp[0][1].vars[3]$4$;
+    result_var=.projects[0].programs.gp[1][1].vars[3]$4$;
     object_type=Random;
     method=Random::IntZeroN;
     args{ 2;};
@@ -662,7 +662,7 @@ Program_Group .projects[0].programs.gp[0] {
    RandomCall @[1] {
     desc=;
     off=0;
-    result_var=.projects[0].programs.gp[0][1].vars[2]$5$;
+    result_var=.projects[0].programs.gp[1][1].vars[2]$5$;
     object_type=Random;
     method=Random::IntMinMax;
     args{ 1;max_maint;};
@@ -672,7 +672,7 @@ Program_Group .projects[0].programs.gp[0] {
     desc="Create the Task Event";
     off=0;
     result_var=NULL;
-    fun=.projects[0].programs.gp[0][1].functions[0]$6$;
+    fun=.projects[0].programs.gp[1][1].functions[0]$6$;
     fun_args {
      name=;
      el_typ=ProgArg;
@@ -739,7 +739,7 @@ Program_Group .projects[0].programs.gp[0] {
      RandomCall @[1] {
       desc=;
       off=0;
-      result_var=.projects[0].programs.gp[0][1].prog_code[3].loop_code[0].local_vars[0]$7$;
+      result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[0]$7$;
       object_type=Random;
       method=Random::ZeroOne;
       args{ };
@@ -756,7 +756,7 @@ Program_Group .projects[0].programs.gp[0] {
        RandomCall @[0] {
 	desc=;
 	off=0;
-	result_var=.projects[0].programs.gp[0][1].prog_code[3].loop_code[0].local_vars[1]$8$;
+	result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[1]$8$;
 	object_type=Random;
 	method=Random::IntZeroN;
 	args{ 2;};
@@ -765,13 +765,13 @@ Program_Group .projects[0].programs.gp[0] {
        AssignExpr @[1] {
 	desc=;
 	off=0;
-	result_var=.projects[0].programs.gp[0][1].vars[4]$9$;
+	result_var=.projects[0].programs.gp[1][1].vars[4]$9$;
 	expr="Cue::A + a_or_b";
        };
        AssignExpr @[2] {
 	desc=;
 	off=0;
-	result_var=.projects[0].programs.gp[0][1].vars[5]$10$;
+	result_var=.projects[0].programs.gp[1][1].vars[5]$10$;
 	expr="Probe::X + a_or_b";
        };
       };
@@ -811,7 +811,7 @@ Program_Group .projects[0].programs.gp[0] {
        AssignExpr @[0] {
 	desc=;
 	off=0;
-	result_var=.projects[0].programs.gp[0][1].prog_code[3].loop_code[0].local_vars[2]$11$;
+	result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[2]$11$;
 	expr="Output::R";
        };
       };

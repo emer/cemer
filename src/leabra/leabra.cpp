@@ -585,7 +585,7 @@ void LeabraUnitSpec::Init_Weights(Unit* u) {
   lu->vcb.acc_on = false;
 }
 
-void LeabraUnitSpec::InitActAvg(LeabraUnit* u) {
+void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u) {
   u->act_avg = .5 * (act_reg.max + MAX(act_reg.min, 0.0f));
 }  
 
@@ -1461,14 +1461,14 @@ void LeabraLayerSpec::Init_Weights(LeabraLayer* lay) {
       gp->misc_state = gp->misc_state1 = gp->misc_state2 = 0;
     }
   }
-  InitInhib(lay);		// initialize inhibition at start..
+  Init_Inhib(lay);		// initialize inhibition at start..
 }
 
-void LeabraLayerSpec::InitActAvg(LeabraLayer* lay) {
+void LeabraLayerSpec::Init_ActAvg(LeabraLayer* lay) {
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i)
-    u->InitActAvg();
+    u->Init_ActAvg();
 }
 
 void LeabraLayerSpec::SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoch) {
@@ -1604,7 +1604,6 @@ void LeabraLayerSpec::Init_Acts(LeabraLayer* lay) {
   lay->ext_flag = Unit::NO_EXTERNAL;
   lay->stm_gain = clamp.gain;
   lay->hard_clamped = false;
-  lay->prv_phase = LeabraNetwork::MINUS_PHASE;
   lay->net_rescale = 1.0f;
   lay->ResetSortBuf();
   Compute_Active_K(lay);	// need kwta.pct for init
@@ -1823,7 +1822,7 @@ int LeabraSort::FindNewNetPos(float nw_net) {
   }
 }
 
-void LeabraLayerSpec::InitInhib(LeabraLayer* lay) {
+void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay) {
   lay->adapt_i.avg_avg = lay->kwta.pct;
   lay->adapt_i.i_kwta_pt = i_kwta_pt;
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
@@ -2271,7 +2270,8 @@ void LeabraLayerSpec::Compute_InhibAvg_impl(LeabraLayer* lay, Unit_Group* ug, Le
 //	Stage 4: the final activation 	//
 //////////////////////////////////////////
 
-void LeabraLayerSpec::Compute_ActAvg_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net) {
+void LeabraLayerSpec::Compute_ActAvg_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+					 LeabraNetwork* net) {
   thr->acts.avg = 0.0f;
   thr->acts.max = -FLT_MAX;
   thr->acts.max_i = -1;
@@ -2283,7 +2283,6 @@ void LeabraLayerSpec::Compute_ActAvg_ugp(LeabraLayer* lay, Unit_Group* ug, Leabr
     if(u->act_eq > thr->acts.max) {
       thr->acts.max = u->act_eq;  thr->acts.max_i = lf;
     }
-    u->Compute_MaxDa(lay, thr, net);
     lf++;
   }
   if(ug->leaves > 0) thr->acts.avg /= (float)ug->leaves;
@@ -2310,7 +2309,29 @@ void LeabraLayerSpec::Compute_ActAvg(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void LeabraLayerSpec::Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
+void LeabraLayerSpec::Compute_MaxDa_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+					 LeabraNetwork* net) {
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
+    u->Compute_MaxDa(lay, thr, net);
+  }
+}
+
+void LeabraLayerSpec::Compute_MaxDa(LeabraLayer* lay, LeabraNetwork* net) {
+  if(lay->units.gp.size > 0) {
+    for(int g=0; g<lay->units.gp.size; g++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+      Compute_MaxDa_ugp(lay, rugp, (LeabraInhib*)rugp, net);
+    }
+  }
+  else {
+    Compute_MaxDa_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
+  }
+}
+
+void LeabraLayerSpec::Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr,
+					  LeabraNetwork*) {
   thr->acts_m.avg = 0.0f;
   thr->acts_m.max = -FLT_MAX;
   thr->acts_m.max_i = -1;
@@ -2402,6 +2423,7 @@ void LeabraLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   }
 
   Compute_ActAvg(lay, net);
+  Compute_MaxDa(lay, net);
   Compute_NetinRescale(lay, net);
   if(lay->ext_flag & Unit::TARG) {
     net->trg_max_act = MAX(net->trg_max_act, lay->acts.max);
@@ -2583,8 +2605,40 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_
   if((adapt_i.type == AdaptISpec::G_BAR_I) || (adapt_i.type == AdaptISpec::G_BAR_IL)) {
     AdaptGBarI(lay, net);
   }
+}
 
-  lay->prv_phase = net->phase;	// record previous phase
+void LeabraLayerSpec::Compute_RelNetin(LeabraLayer* lay, LeabraNetwork*) {
+  lay->netin_rel.EnforceSize(lay->projections.size);
+  lay->netin_avg.EnforceSize(lay->projections.size);
+  lay->netin_avg_cnt.EnforceSize(lay->projections.size);
+
+  const float recv_act_thr = .1f; // todo: could put this in a param..
+
+  for(int i=0;i<lay->projections.size;i++) {
+    Projection* prjn = (Projection*)lay->projections[i];
+    LeabraUnit* u;
+    taLeafItr ui;
+    FOR_ITR_EL(LeabraUnit, u, lay->units., ui) {
+      if(u->act_eq < recv_act_thr) continue;
+      LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
+      if(!cg) continue;
+      float net = cg->Compute_Netin(u);
+      cg->net = net;
+      lay->netin_avg[i] += net;
+      lay->netin_avg_cnt[i] += 1.0f;
+    }
+  }
+
+  float sum_net = 0.0f;
+  for(int i=0;i<lay->netin_avg.size;i++) {
+    if(lay->netin_avg_cnt[i] > 0.0f)
+      lay->netin_avg[i] /= lay->netin_avg_cnt[i];
+    sum_net += lay->netin_avg[i];
+  }
+  for(int i=0;i<lay->netin_avg.size;i++) {
+    if(sum_net > 0)
+      lay->netin_avg[i] /= sum_net;
+  }
 }
 
 //////////////////////////////////////////
@@ -2759,7 +2813,6 @@ void LeabraLayer::Initialize() {
   Inhib_Initialize();
   stm_gain = .5f;
   hard_clamped = false;
-  prv_phase = LeabraNetwork::MINUS_PHASE;
   dav = 0.0f;
   da_updt = false;
   net_rescale = 1.0f;
@@ -2885,10 +2938,15 @@ void LeabraNetwork::Initialize() {
   phase_no = 0;
   phase_max = 2;
 
-  minus_cycles = 0.0f;
   cycle_max = 60;
   min_cycles = 15;
-  min_cycles_phase2 = 15;
+  min_cycles_phase2 = 35;
+
+  minus_cycles = 0.0f;
+  avg_cycles = 0.0f;
+  avg_cycles_sum = 0.0f;
+  avg_cycles_n = 0;
+
   netin_mod = 1;
   send_delta = false;
 
@@ -2914,7 +2972,12 @@ void LeabraNetwork::Init_Stats() {
   inherited::Init_Stats();
   maxda = 0.0f;
   trg_max_act = 0.0f;
+
   minus_cycles = 0.0f;
+  avg_cycles = 0.0f;
+  avg_cycles_sum = 0.0f;
+  avg_cycles_n = 0;
+
   ext_rew = 0.0f;
   avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
@@ -3020,7 +3083,7 @@ void LeabraNetwork::Compute_Act() {
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(lay->lesion)	continue;
-    lay->Compute_Act(this);
+    lay->Compute_Act(this);	// note: maxda is updated in here
   }
 }
 
@@ -3407,6 +3470,15 @@ void LeabraNetwork::Compute_MinusCycles() {
 void LeabraNetwork::Compute_TrialStats() {
   inherited::Compute_TrialStats();
   Compute_MinusCycles();
+}
+
+void LeabraNetwork::Compute_RelNetin() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(!lay->lesion)
+      lay->Compute_RelNetin(this);
+  }
 }
 
 void LeabraNetwork::Compute_AvgCycles() {

@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][1] { 
+Program .projects[0].programs.gp[1][1] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -144,7 +144,7 @@ Program .projects[0].programs.gp[0][1] {
     };
   };
 };
-Program .projects[0].programs.gp[0][1] {
+Program .projects[0].programs.gp[1][1] {
  name="12axTrial";
  desc="Generate one trial (outer loop with multiple inner loops) of the 12-AX CPT Task";
  flags=PF_NONE;
@@ -158,7 +158,7 @@ Program .projects[0].programs.gp[0][1] {
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
-   name="data_table";
+   name="input_data";
    var_type=T_Object;
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$0$;
@@ -198,7 +198,7 @@ Program .projects[0].programs.gp[0][1] {
     name="Task";
     el_typ=DynEnumItem;
     el_def=0;
-    value_idx=0;
+    value_idx=1;
     DynEnumItem @[0] {
      name="ONE";
      value=0;
@@ -262,7 +262,7 @@ Program .projects[0].programs.gp[0][1] {
     name="Probe";
     el_typ=DynEnumItem;
     el_def=0;
-    value_idx=1;
+    value_idx=2;
     DynEnumItem @[0] {
      name="X";
      value=0;
@@ -413,7 +413,7 @@ Program .projects[0].programs.gp[0][1] {
      desc=;
      off=0;
      result_var=NULL;
-     obj=.projects[0].programs.gp[0][1].args[0]$1$;
+     obj=.projects[0].programs.gp[1][1].args[0]$1$;
      method=DataTable::AddBlankRow;
      args{ };
 {      };
@@ -538,7 +538,7 @@ Program .projects[0].programs.gp[0][1] {
   RandomCall @[0] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][1].vars[3]$2$;
+   result_var=.projects[0].programs.gp[1][1].vars[3]$2$;
    object_type=Random;
    method=Random::IntZeroN;
    args{ 2;};
@@ -547,7 +547,7 @@ Program .projects[0].programs.gp[0][1] {
   RandomCall @[1] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][1].vars[2]$3$;
+   result_var=.projects[0].programs.gp[1][1].vars[2]$3$;
    object_type=Random;
    method=Random::IntMinMax;
    args{ 1;max_maint;};
@@ -557,7 +557,7 @@ Program .projects[0].programs.gp[0][1] {
    desc="Create the Task Event";
    off=0;
    result_var=NULL;
-   fun=.projects[0].programs.gp[0][1].functions[0]$4$;
+   fun=.projects[0].programs.gp[1][1].functions[0]$4$;
    fun_args {
     name=;
     el_typ=ProgArg;
@@ -624,7 +624,7 @@ Program .projects[0].programs.gp[0][1] {
     RandomCall @[1] {
      desc=;
      off=0;
-     result_var=.projects[0].programs.gp[0][1].prog_code[3].loop_code[0].local_vars[0]$5$;
+     result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[0]$5$;
      object_type=Random;
      method=Random::ZeroOne;
      args{ };
@@ -641,7 +641,7 @@ Program .projects[0].programs.gp[0][1] {
       RandomCall @[0] {
        desc=;
        off=0;
-       result_var=.projects[0].programs.gp[0][1].prog_code[3].loop_code[0].local_vars[1]$6$;
+       result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[1]$6$;
        object_type=Random;
        method=Random::IntZeroN;
        args{ 2;};
@@ -650,13 +650,13 @@ Program .projects[0].programs.gp[0][1] {
       AssignExpr @[1] {
        desc=;
        off=0;
-       result_var=.projects[0].programs.gp[0][1].vars[4]$7$;
+       result_var=.projects[0].programs.gp[1][1].vars[4]$7$;
        expr="Cue::A + a_or_b";
       };
       AssignExpr @[2] {
        desc=;
        off=0;
-       result_var=.projects[0].programs.gp[0][1].vars[5]$8$;
+       result_var=.projects[0].programs.gp[1][1].vars[5]$8$;
        expr="Probe::X + a_or_b";
       };
      };
@@ -696,7 +696,7 @@ Program .projects[0].programs.gp[0][1] {
       AssignExpr @[0] {
        desc=;
        off=0;
-       result_var=.projects[0].programs.gp[0][1].prog_code[3].loop_code[0].local_vars[2]$9$;
+       result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[2]$9$;
        expr="Output::R";
       };
      };

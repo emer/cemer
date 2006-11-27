@@ -138,11 +138,15 @@ bool V3LeabraProject::ConvertToV4_impl() {
       grouped_data = true;
   }
 
+  // process the new programs
   nwproj->programs.prog_lib.NewProgramFmName("LeabraAll_Std", &(nwproj->programs));
+  Program_Group* progs = (Program_Group*)nwproj->programs.gp[0];
+  LeabraNetwork* new_net = (LeabraNetwork*)nwproj->networks[0];
+
   if(grouped_data) {
-    Program* epc = ((Program_Group*)nwproj->programs.gp[0])->FindName("LeabraEpoch");
+    Program* epc = progs->FindName("LeabraEpoch");
     if(epc) {
-      epc->LoadFromProgLib(Program::SEARCH_LIBS, "LeabraEpochGpData");
+      epc->LoadFromProgLib(Program_Group::prog_lib.FindName("LeabraEpochGpData"));
     }
   }
 
@@ -150,7 +154,21 @@ bool V3LeabraProject::ConvertToV4_impl() {
 
   ConvertToV4_Edits(nwproj);
 
-  // todo: copy network params from processes
+  LeabraSettle* old_settle = (LeabraSettle*)processes.FindLeafType(&TA_LeabraSettle);
+  if(old_settle && new_net) {
+    new_net->cycle_max = old_settle->cycle.max;
+    new_net->send_delta = old_settle->send_delta;
+    new_net->netin_mod = old_settle->netin_mod;
+  }
+
+  LeabraTrial* old_trial = (LeabraTrial*)processes.FindLeafType(&TA_LeabraTrial);
+  if(old_trial && new_net) {
+    new_net->trial_init = (LeabraNetwork::StateInit)old_trial->trial_init;
+    new_net->phase_order = (LeabraNetwork::PhaseOrder)old_trial->phase_order;
+    new_net->no_plus_test = old_trial->no_plus_test;
+    new_net->first_plus_dwt = (LeabraNetwork::FirstPlusdWt)old_trial->first_plus_dwt;
+  }
+
   // todo: make a standard leabra process for each process group
 
   return true;

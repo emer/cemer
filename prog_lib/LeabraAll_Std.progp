@@ -1183,7 +1183,7 @@ Program_Group .projects[1].programs.gp[0] {
    UserScript @[4] {
     desc="get min cycles";
     off=0;
-    user_script="if(network->phase_no > 1) min_cycles = network->min_cycles;
+    user_script="if(network->phase_no <= 1) min_cycles = network->min_cycles;
 else min_cycles = network->min_cycles_phase2;
 
 ";

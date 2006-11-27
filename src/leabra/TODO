@@ -1,7 +1,5 @@
 leabra todo list:
 
-* new on group doesn't show group option anymore; add a separate NewGp function instead to context menu!
-
 * select edit not working: can't edit anything
 
 * dataops: group mean/sse: int columns not being processed properly: convert to double?
