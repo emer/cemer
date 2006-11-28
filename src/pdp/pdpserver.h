@@ -26,7 +26,7 @@
 #include "pdp_TA_type.h"
 
 #ifndef __MAKETA__
-# include <QAbstractSocket> // for state defines
+# include <QtNetwork/QAbstractSocket> // for state defines
 #endif
 
 // forwards

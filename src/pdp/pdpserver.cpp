@@ -16,9 +16,9 @@
 
 #include "pdpserver.h"
 
-#include <QHostAddress>
-#include <QTcpServer>
-#include <QTcpSocket>
+#include <QtNetwork/QHostAddress>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QTcpSocket>
 //TEMP
 #include <QByteArray>
 #include <QDataStream>
