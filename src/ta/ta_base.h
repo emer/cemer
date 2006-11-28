@@ -1201,6 +1201,7 @@ public:
   // stuff for the taBase
   bool 		SetName(const String& nm)    	{name = nm; return true;}
   String	GetName() const		{ return name; }
+  void 		SetDefaultName();
 
   override TypeDef* 	GetElType() const {return el_typ;}
   // #IGNORE Default type for objects in group

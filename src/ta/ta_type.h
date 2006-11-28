@@ -485,7 +485,7 @@ friend class InitProcRegistrar;
 
   static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool		save_compress;	// #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
-  static TypeDef*	default_proj_type; // #SAVE #CAT_File default type of project to create
+  static TypeDef*	default_proj_type; // #SAVE #CAT_File #TYPE_taProject default type of project to create
   static LoadVerbosity	verbose_load;	// #SAVE #CAT_File report the names of things during loading
   static LoadVerbosity  gui_verbose_load; // #SAVE #CAT_File what to report in the load dialog
 

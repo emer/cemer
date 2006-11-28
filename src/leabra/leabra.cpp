@@ -26,7 +26,8 @@ static void leabra_converter_init() {
   cvt->repl_strs.Add(NameVar("_MGroup", "_Group"));
   cvt->repl_strs.Add(NameVar("Project", "V3LeabraProject"));
   cvt->repl_strs.Add(NameVar("V3LeabraProject_Group", "Project_Group")); // fix prev
-  cvt->repl_strs.Add(NameVar("V3LeabraProjection", "Projection"));       // fix prev
+  cvt->repl_strs.Add(NameVar("V3LeabraProjection", "LeabraPrjn"));       // new prjn type!
+  cvt->repl_strs.Add(NameVar("LeabraPrjn_Group", "Projection_Group"));
   cvt->repl_strs.Add(NameVar("Network", "LeabraNetwork"));
   cvt->repl_strs.Add(NameVar("LeabraNetwork_Group", "Network_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("LeabraWiz", "LeabraWizard"));
@@ -1348,6 +1349,40 @@ void LeabraUnit::GetInSubGp() {
     in_subgp = false;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//			Projection Level Code
+
+void LeabraPrjn::Initialize() {
+  netin_avg = 0.0f;
+  netin_rel = 0.0f;
+  netin_avg_cnt = 0.0f;
+
+  avg_netin_avg = 0.0f;
+  avg_netin_avg_sum = 0.0f;
+  avg_netin_rel = 0.0f;
+  avg_netin_rel_sum = 0.0f;
+  avg_netin_cnt = 0.0f;
+}
+
+void LeabraPrjn::Destroy() {
+}
+
+void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
+  netin_avg = cp.netin_avg;
+  netin_rel = cp.netin_rel;
+  netin_avg_cnt = cp.netin_avg_cnt;
+
+  avg_netin_avg = cp.avg_netin_avg;
+  avg_netin_avg_sum = cp.avg_netin_avg_sum;
+  avg_netin_rel = cp.avg_netin_rel;
+  avg_netin_rel_sum = cp.avg_netin_rel_sum;
+  avg_netin_cnt = cp.avg_netin_cnt;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//			Layer Level Code
+
+
 //////////////////////////
 //  	Layer, Spec	//
 //////////////////////////
@@ -1433,8 +1468,22 @@ void LeabraLayerSpec::CutLinks() {
 }
 
 bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  // basic guy doesn't check anything yet..
-  return true;
+  bool rval = true;
+  if(!lay->projections.el_base->InheritsFrom(&TA_LeabraPrjn)) {
+    taMisc::CheckError("Layer:", lay->name,"does not have LeabraPrjn projection base type!",
+		       "project must be updated and projections remade");
+    return false;
+  }
+  for(int i=0;i<lay->projections.size;i++) {
+    Projection* prjn = (Projection*)lay->projections[i];
+    if(!prjn->InheritsFrom(&TA_LeabraPrjn)) {
+      taMisc::CheckError("Projection:", prjn->name, "in Layer:", lay->name,
+			 "does not have LeabraPrjn projection base type!",
+			 "Projection must be re-made");
+      rval = false;
+    }
+  }
+  return rval;
 }
 
 void LeabraLayerSpec::HelpConfig() {
@@ -2608,36 +2657,50 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_
 }
 
 void LeabraLayerSpec::Compute_RelNetin(LeabraLayer* lay, LeabraNetwork*) {
-  lay->netin_rel.EnforceSize(lay->projections.size);
-  lay->netin_avg.EnforceSize(lay->projections.size);
-  lay->netin_avg_cnt.EnforceSize(lay->projections.size);
-
-  const float recv_act_thr = .1f; // todo: could put this in a param..
-
   for(int i=0;i<lay->projections.size;i++) {
-    Projection* prjn = (Projection*)lay->projections[i];
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     LeabraUnit* u;
     taLeafItr ui;
     FOR_ITR_EL(LeabraUnit, u, lay->units., ui) {
-      if(u->act_eq < recv_act_thr) continue;
+      LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
+      if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
       LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
       float net = cg->Compute_Netin(u);
       cg->net = net;
-      lay->netin_avg[i] += net;
-      lay->netin_avg_cnt[i] += 1.0f;
+      prjn->netin_avg += net;
+      prjn->netin_avg_cnt += 1.0f;
     }
   }
 
   float sum_net = 0.0f;
-  for(int i=0;i<lay->netin_avg.size;i++) {
-    if(lay->netin_avg_cnt[i] > 0.0f)
-      lay->netin_avg[i] /= lay->netin_avg_cnt[i];
-    sum_net += lay->netin_avg[i];
+  for(int i=0;i<lay->projections.size;i++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(prjn->netin_avg_cnt > 0.0f)
+      prjn->netin_avg /= prjn->netin_avg_cnt;
+    sum_net += prjn->netin_avg;
   }
-  for(int i=0;i<lay->netin_avg.size;i++) {
-    if(sum_net > 0)
-      lay->netin_avg[i] /= sum_net;
+  for(int i=0;i<lay->projections.size;i++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(sum_net > 0.0f)
+      prjn->netin_rel = prjn->netin_avg / sum_net;
+    // increment epoch-level
+    prjn->avg_netin_avg_sum += prjn->netin_avg;
+    prjn->avg_netin_rel_sum += prjn->netin_rel;
+    prjn->avg_netin_cnt += 1.0f;
+  }
+}
+
+void LeabraLayerSpec::Compute_AvgRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+  for(int i=0;i<lay->projections.size;i++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(prjn->avg_netin_cnt > 0.0f) {
+      prjn->avg_netin_avg = prjn->avg_netin_avg_sum / prjn->avg_netin_cnt;
+      prjn->avg_netin_rel = prjn->avg_netin_rel_sum / prjn->avg_netin_cnt;
+    }
+    prjn->avg_netin_cnt = 0.0f;
+    prjn->avg_netin_avg_sum = 0.0f;
+    prjn->avg_netin_rel_sum = 0.0f;
   }
 }
 
@@ -2806,6 +2869,8 @@ void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
 
 void LeabraLayer::Initialize() {
   spec.SetBaseType(&TA_LeabraLayerSpec);
+  projections.SetBaseType(&TA_LeabraPrjn);
+  send_prjns.SetBaseType(&TA_LeabraPrjn);
   units.SetBaseType(&TA_LeabraUnit);
   units.gp.SetBaseType(&TA_LeabraUnit_Group);
   unit_spec.SetBaseType(&TA_LeabraUnitSpec);
@@ -2832,10 +2897,6 @@ void LeabraLayer::InitLinks() {
   taBase::Own(adapt_i, this);
 
   taBase::Own(misc_iar, this);
-
-  taBase::Own(netin_avg, this);
-  taBase::Own(netin_rel, this);
-  taBase::Own(netin_avg_cnt, this);
 
   spec.SetDefaultSpec(this);
   units.gp.SetBaseType(&TA_LeabraUnit_Group);
@@ -3483,6 +3544,15 @@ void LeabraNetwork::Compute_RelNetin() {
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(!lay->lesion)
       lay->Compute_RelNetin(this);
+  }
+}
+
+void LeabraNetwork::Compute_AvgRelNetin() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(!lay->lesion)
+      lay->Compute_AvgRelNetin(this);
   }
 }
 

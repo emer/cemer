@@ -24,6 +24,7 @@
 #include "ta_script.h"
 #include "ta_project.h"
 #include "ta_qtclassbrowse.h"
+#include "ta_qtgroup.h"
 
 #include "css_qt.h"
 #include "css_machine.h"
@@ -3048,7 +3049,11 @@ void iMainWindowViewer::fileCloseWindow() {
 //  unless they are applicable (ex Save only if it is a viewer)
 void iMainWindowViewer::fileNew() {
   if (!tabMisc::root) return;
-  taProject* proj = (taProject*)tabMisc::root->projects.New(); // let user choose type
+  TypeDef* prj_typ = NULL;
+  if(taMisc::default_proj_type)
+    prj_typ = taMisc::default_proj_type;
+  gpiListNew::New(&tabMisc::root->projects, 1, prj_typ);
+  //  taProject* proj = (taProject*)tabMisc::root->projects.New(); // let user choose type
   //should automatically open
 }
 

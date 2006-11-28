@@ -1,6 +1,7 @@
 leabra todo list:
 
-* select edit not working: can't edit anything
+* relnet stat & adaptation of lay act_pct and wtscale.
+  * monitor does not pickup Layer or layer.projections for projection-level data.
 
 * dataops: group mean/sse: int columns not being processed properly: convert to double?
   also support float
@@ -11,12 +12,8 @@ leabra todo list:
 
 * dataops: random patterns!
 
-* relnet stat & adaptation of lay act_pct and wtscale.
-
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
-
-* add #CAT to everything in leabra.h, and fixup comments
 
 -----------
 Program issues
@@ -27,8 +24,6 @@ css:
 
 -----------
 Check:
-
-* 12ax: change gp name to include unique ctr so group fun works.
 
 * datatable - make unique col names; call for join op..
 
@@ -44,6 +39,8 @@ current bugs:
 
 -------
 lower pri:
+
+* add #CAT to everything in leabra_*.h, and fixup comments
 
 * checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
 

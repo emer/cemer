@@ -38,8 +38,8 @@ int yylex();
 
 %}
 
-/* five expected shift-reduce conflicts */
-%expect 5
+/* fifteen expected shift-reduce conflicts */
+%expect 15
 
 %union {
   TypeDef* 	typ;

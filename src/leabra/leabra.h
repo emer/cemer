@@ -367,6 +367,10 @@ public:
   TA_BASEFUNS(LeabraSendCons);
 };
 
+
+//////////////////////////////////////////////////////////////////////////
+//			Unit Level Code
+
 class LEABRA_API ActFunSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications
 public:
@@ -433,7 +437,7 @@ class LEABRA_API OptThreshSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
 public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
-  float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraSettle::send_delta is on!
+  float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
   float		learn;		// #DEF_0.01 don't learn on recv unit weights when both phase acts <= learn
   bool		updt_wts;	// #DEF_true whether to apply learn threshold to updating weights (otherwise always update)
   float		phase_dif;	// #DEF_0 don't learn when +/- phase difference ratio (- / +) < phase_dif (.8 when used, but off by default)
@@ -897,6 +901,33 @@ public:
   TA_BASEFUNS(LeabraUnit);
 };
 
+//////////////////////////////////////////////////////////////////////////
+//			Projection Level Code
+
+class PDP_API LeabraPrjn: public Projection {
+  // ##CAT_Network leabra specific projection -- has special variables at the projection-level
+INHERITED(Projection)
+public:
+  float		netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer
+  float		netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer
+  float		netin_avg_cnt;	// #READ_ONLY #NO_SAVE #HIDDEN #CAT_Statistic relative netinput values for the recv projections into this layer -- counter for computing avg
+
+  float		avg_netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
+  float		avg_netin_avg_sum;// #READ_ONLY #HIDDEN #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch
+  float		avg_netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
+  float		avg_netin_rel_sum; // #READ_ONLY #HIDDEN #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
+  float		avg_netin_cnt; // #READ_ONLY #HIDDEN #CAT_Statistic count for computing epoch-level averages
+
+  void 	Initialize();
+  void 	Destroy();
+  void	Copy_(const LeabraPrjn& cp);
+  COPY_FUNS(LeabraPrjn, Projection);
+  TA_BASEFUNS(LeabraPrjn);
+};
+
+//////////////////////////////////////////////////////////////////////////
+//			Layer Level Code
+
 class LEABRA_API LeabraSort : public taPtrList<LeabraUnit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Leabra used for sorting units in kwta computation
 protected:
@@ -1183,6 +1214,8 @@ public:
 
   virtual void	Compute_RelNetin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the relative netinput from different projections into this layer
+  virtual void	Compute_AvgRelNetin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute time-average relative netinput from different projections into this layer (e.g., every epoch)
 
   ////////////////////////////////////////
   //	Stage 6: Learning 		//
@@ -1323,9 +1356,6 @@ public:
   float		net_rescale;	// #READ_ONLY #EXPERT #CAT_Activation computed netinput rescaling factor (updated by net_rescale)
   int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   int_Array	misc_iar;	// #HIDDEN #CAT_Activation misc int array of data
-  float_Array	netin_avg;	// #READ_ONLY #EXPERT #CAT_Activation average netinput values for the recv projections into this layer
-  float_Array	netin_rel;	// #READ_ONLY #EXPERT #CAT_Activation relative netinput values for the recv projections into this layer
-  float_Array	netin_avg_cnt;	// #READ_ONLY #NO_SAVE #HIDDEN #CAT_Activation relative netinput values for the recv projections into this layer -- counter for computing avg
 
   void	Build();
 
@@ -1389,6 +1419,8 @@ public:
   // #CAT_Activation after settling, keep track of phase variables, etc.
 
   void	Compute_RelNetin(LeabraNetwork* net)	{ spec->Compute_RelNetin(this, net); }
+  // #CAT_Statistic compute the relative netinput from different projections into this layer
+  void	Compute_AvgRelNetin(LeabraNetwork* net)	{ spec->Compute_AvgRelNetin(this, net); }
   // #CAT_Statistic compute the relative netinput from different projections into this layer
 
   void	Compute_dWt() 				{ spec->Compute_dWt(this, NULL); }
@@ -1785,6 +1817,8 @@ public:
 
   virtual void	Compute_RelNetin();
   // #CAT_Statistic compute the relative netinput from different projections into layers in network
+  virtual void	Compute_AvgRelNetin();
+  // #CAT_Statistic compute time-average relative netinput from different projections into layers in network (e.g. over epoch timescale)
 
   virtual void	Compute_AvgCycles();
   // #CAT_Statistic compute average cycles (at an epoch-level timescale)

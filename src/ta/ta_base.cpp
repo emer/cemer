@@ -815,7 +815,7 @@ int taBase::Load_cvt(taFiler*& flr) {
   flr->Close();			// file is done with anyway
   flr->open_read();		// read again in any case
   if(typ_id < 0) {
-    taMisc::Warning("*** Old format file could not be identified; not converting -- attempting to load as is!");
+    taMisc::Error("Old format file could not be identified; not converting -- attempting to load as is!");
     return false;
   }
   DumpFileCvt* cvt = taMisc::file_converters[typ_id];
@@ -843,9 +843,11 @@ int taBase::Load_cvt(taFiler*& flr) {
   taRefN::unRefDone(flr);	// get rid of orig filer
   flr = cvt_flr;		// use new one
   flr->open_read();		// read the converted file
-  taMisc::Warning("*** Note: converting old file of type:", cvt->proj_type_base,
-		  "created intermediate cvt file as:", cvt_fname,
-		  "many error messages are likely; and probably some post-loading conversion will also be required");
+  taMisc::Choice("Note: converting old file of type: " + cvt->proj_type_base + 
+		".\n Created intermediate cvt file as: " + cvt_fname + 
+		".\n Many error messages are likely (and should be ignored)," +
+		 "\n and you will probably need to convert object using convert button",
+		 "Continue");
   return true;	
 }
 
@@ -1994,6 +1996,10 @@ void taList_impl::Copy(const taList_impl& cp) {
 
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
+}
+
+void taList_impl::SetDefaultName() {
+  // nop; no default names for list/group objects
 }
 
 void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {

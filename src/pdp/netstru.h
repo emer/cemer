@@ -982,12 +982,9 @@ public:
   void	Copy_(const Projection& cp);
   COPY_FUNS(Projection, taNBase);
   TA_BASEFUNS(Projection);
-#ifdef TA_GUI
 protected:
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
-
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
-#endif
 };
 
 class PDP_API Projection_Group: public taGroup<Projection> {
