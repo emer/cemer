@@ -261,7 +261,7 @@ void taiMisc::InitMetrics() {
   max_button_width = fm.size(Qt::TextSingleLine,"12345678901234567890").width();
   delete w;
 
-  mbig_dialog_font = QApplication::font(NULL); // use the default font
+  mbig_dialog_font = QApplication::font(w); // use the default font
 
   w = new QMenuBar();
     mbig_menu_font = QApplication::font(w);
