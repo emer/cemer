@@ -188,6 +188,7 @@ else
   AC_SUBST([OPT_LEVEL],["-g -O2"])
 fi
 
+#  BNV_HAVE_QT
   SIM_AC_CHECK_QT([AC_DEFINE([QT3_SUPPORT],,[Set when building with Qt4 support for Qt3])]
                    LIBS="$LIBS $sim_ac_qt_libs"
                    CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"

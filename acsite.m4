@@ -1136,166 +1136,6 @@ done
 fi
 ]) # SIM_AC_CONFIGURATION_SUMMARY
 
-# **************************************************************************
-# SIM_AC_SETUP_MSVC_IFELSE( IF-FOUND, IF-NOT-FOUND )
-#
-# This macro invokes IF-FOUND if the wrapmsvc wrapper can be run, and
-# IF-NOT-FOUND if not.
-#
-# Authors:
-#   Morten Eriksen <mortene@coin3d.org>
-#   Lars J. Aas <larsa@coin3d.org>
-
-# **************************************************************************
-
-AC_DEFUN([SIM_AC_MSVC_DISABLE_OPTION], [
-AC_ARG_ENABLE([msvc],
-  [AC_HELP_STRING([--disable-msvc], [don't require MS Visual C++ on Cygwin])],
-  [case $enableval in
-  no | false) sim_ac_try_msvc=false ;;
-  *)          sim_ac_try_msvc=true ;;
-  esac],
-  [sim_ac_try_msvc=true])
-])
-
-# **************************************************************************
-
-AC_DEFUN([SIM_AC_MSVC_VERSION], [
-AC_MSG_CHECKING([Visual Studio C++ version])
-AC_TRY_COMPILE([],
-  [long long number = 0;],
-  [sim_ac_msvc_version=7]
-  [sim_ac_msvc_version=6])
-AC_MSG_RESULT($sim_ac_msvc_version)
-])
-
-# **************************************************************************
-# Note: the SIM_AC_SETUP_MSVC_IFELSE macro has been OBSOLETED and
-# replaced by the one below.
-#
-# If the Microsoft Visual C++ cl.exe compiler is available, set us up for
-# compiling with it and to generate an MSWindows .dll file.
-
-AC_DEFUN([SIM_AC_SETUP_MSVCPP_IFELSE],
-[
-AC_REQUIRE([SIM_AC_MSVC_DISABLE_OPTION])
-AC_REQUIRE([SIM_AC_SPACE_IN_PATHS])
-
-: ${BUILD_WITH_MSVC=false}
-if $sim_ac_try_msvc; then
-  if test -z "$CC" -a -z "$CXX"; then
-    sim_ac_wrapmsvc=`cd $ac_aux_dir; pwd`/wrapmsvc.exe
-    echo "$as_me:$LINENO: sim_ac_wrapmsvc=$sim_ac_wrapmsvc" >&AS_MESSAGE_LOG_FD
-    AC_MSG_CHECKING([setup for wrapmsvc.exe])
-    if $sim_ac_wrapmsvc >&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD; then
-      m4_ifdef([$0_VISITED],
-        [AC_FATAL([Macro $0 invoked multiple times])])
-      m4_define([$0_VISITED], 1)
-      CC=$sim_ac_wrapmsvc
-      CXX=$sim_ac_wrapmsvc
-      export CC CXX
-      BUILD_WITH_MSVC=true
-      AC_MSG_RESULT([working])
-
-      # FIXME: why is this here, larsa? 20050714 mortene.
-      # SIM_AC_MSVC_VERSION
-
-      # Robustness: we had multiple reports of Cygwin ''link'' getting in
-      # the way of MSVC link.exe, so do a little sanity check for that.
-      #
-      # FIXME: a better fix would be to call link.exe with full path from
-      # the wrapmsvc wrapper, to avoid any trouble with this -- I believe
-      # that should be possible, using the dirname of the full cl.exe path.
-      # 20050714 mortene.
-      sim_ac_check_link=`type link`
-      AC_MSG_CHECKING([whether Cygwin's /usr/bin/link shadows MSVC link.exe])
-      case x"$sim_ac_check_link" in
-      x"link is /usr/bin/link"* )
-        AC_MSG_RESULT(yes)
-        AC_MSG_ERROR([cygwin-link])
-        ;;
-      * )
-        AC_MSG_RESULT(no)
-        ;;
-      esac
-
-    else
-      case $host in
-      *-cygwin)
-        AC_MSG_RESULT([not working])
-        AC_MSG_ERROR([no-msvc++]) ;;
-      *)
-        AC_MSG_RESULT([not working (as expected)])
-        ;;
-      esac
-    fi
-  fi
-fi
-export BUILD_WITH_MSVC
-AC_SUBST(BUILD_WITH_MSVC)
-
-if $BUILD_WITH_MSVC; then
-  ifelse([$1], , :, [$1])
-else
-  ifelse([$2], , :, [$2])
-fi
-]) # SIM_AC_SETUP_MSVC_IFELSE
-
-# **************************************************************************
-# SIM_AC_SETUP_MSVCRT
-#
-# This macro sets up compiler flags for the MS Visual C++ C library of
-# choice.
-
-AC_DEFUN([SIM_AC_SETUP_MSVCRT],
-[sim_ac_msvcrt_LDFLAGS=""
-sim_ac_msvcrt_LIBS=""
-
-AC_ARG_WITH([msvcrt],
-  [AC_HELP_STRING([--with-msvcrt=<crt>],
-                  [set which C run-time library to build against])],
-  [case `echo "$withval" | tr "[A-Z]" "[a-z]"` in
-  default | singlethread-static | ml | /ml | libc | libc\.lib )
-    sim_ac_msvcrt=singlethread-static
-    sim_ac_msvcrt_CFLAGS="/ML"
-    sim_ac_msvcrt_CXXFLAGS="/ML"
-    ;;
-  default-debug | singlethread-static-debug | mld | /mld | libcd | libcd\.lib )
-    sim_ac_msvcrt=singlethread-static-debug
-    sim_ac_msvcrt_CFLAGS="/MLd"
-    sim_ac_msvcrt_CXXFLAGS="/MLd"
-    ;;
-  multithread-static | mt | /mt | libcmt | libcmt\.lib )
-    sim_ac_msvcrt=multithread-static
-    sim_ac_msvcrt_CFLAGS="/MT"
-    sim_ac_msvcrt_CXXFLAGS="/MT"
-    ;;
-  multithread-static-debug | mtd | /mtd | libcmtd | libcmtd\.lib )
-    sim_ac_msvcrt=multithread-static-debug
-    sim_ac_msvcrt_CFLAGS="/MTd"
-    sim_ac_msvcrt_CXXFLAGS="/MTd"
-    ;;
-  multithread-dynamic | md | /md | msvcrt | msvcrt\.lib )
-    sim_ac_msvcrt=multithread-dynamic
-    sim_ac_msvcrt_CFLAGS="/MD"
-    sim_ac_msvcrt_CXXFLAGS="/MD"
-    ;;
-  multithread-dynamic-debug | mdd | /mdd | msvcrtd | msvcrtd\.lib )
-    sim_ac_msvcrt=multithread-dynamic-debug
-    sim_ac_msvcrt_CFLAGS="/MDd"
-    sim_ac_msvcrt_CXXFLAGS="/MDd"
-    ;;
-  *)
-    AC_MSG_ERROR([invalid-msvcrt])
-    ;;
-  esac],
-  [sim_ac_msvcrt=singlethread-static])
-
-AC_MSG_CHECKING([MSVC++ C library choice])
-AC_MSG_RESULT([$sim_ac_msvcrt])
-
-$1
-]) # SIM_AC_SETUP_MSVCRT
 
 # **************************************************************************
 # SIM_AC_SPACE_IN_PATHS
@@ -1313,498 +1153,6 @@ if test -z "`echo $sim_ac_full_builddir | tr -cd ' '`"; then :; else
 fi
 ]) # SIM_AC_SPACE_IN_PATHS
 
-#SoQt
-
-
-# Helper macros for the SIM_AC_CHECK_QT macro below.
-
-# SIM_AC_WITH_QT
-#
-# Sets sim_ac_with_qt (from --with-qt=[true|false]) and
-# sim_ac_qtdir (from either --with-qt=DIR or $QTDIR).
-
-AC_DEFUN([SIM_AC_WITH_QT], [
-sim_ac_qtdir=
-AC_ARG_WITH(
-  [qt],
-  AC_HELP_STRING([--with-qt=[DIR]],
-                 [specify the location of the Qt library]),
-  [case $withval in
-  no | false ) sim_ac_with_qt=false ;;
-  yes | true ) sim_ac_with_qt=true ;;
-  *)
-    sim_ac_with_qt=true
-    sim_ac_qtdir=$withval
-    ;;
-  esac],
-  [sim_ac_with_qt=true])
-
-if $sim_ac_with_qt; then
-  if test -z "$sim_ac_qtdir"; then
-    # The Cygwin environment needs to invoke moc with a POSIX-style path.
-    AC_PATH_PROG(sim_ac_qt_cygpath, cygpath, false)
-    if test $sim_ac_qt_cygpath = "false"; then
-      sim_ac_qtdir=$QTDIR
-    else
-      # Quote $QTDIR in case it's empty.
-      sim_ac_qtdir=`$sim_ac_qt_cygpath -u "$QTDIR"`
-    fi
-
-    AC_MSG_CHECKING([value of the QTDIR environment variable])
-    if test x"$sim_ac_qtdir" = x""; then
-      AC_MSG_RESULT([empty])
-    else
-      AC_MSG_RESULT([$sim_ac_qtdir])
-
-      # list contents of what's in the qt dev environment into config.log
-      for i in "" bin lib; do
-        echo "Listing contents of $sim_ac_qtdir/$i:" >&5
-        ls -l $sim_ac_qtdir/$i >&5 2>&1
-      done
-    fi
-  fi
-fi
-])
-
-
-# SIM_AC_QT_PROG(VARIABLE, PROG-TO-CHECK-FOR)
-#
-# Substs VARIABLE to the path of the PROG-TO-CHECK-FOR, if found
-# in either $PATH, $QTDIR/bin or the --with-qt=DIR directories.
-#
-# If not found, VARIABLE will be set to false.
-
-AC_DEFUN([SIM_AC_QT_PROG], [
-AC_REQUIRE([SIM_AC_WITH_QT])
-
-if $sim_ac_with_qt; then
-
-  sim_ac_path=$PATH
-  if test -n "$sim_ac_qtdir"; then
-    sim_ac_path=$sim_ac_qtdir/bin:$PATH
-  fi
-
-  AC_PATH_PROG([$1], $2, false, $sim_ac_path)
-  if test x"$$1" = x"false"; then
-    if test -z "$QTDIR"; then
-      AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
-    fi
-    AC_MSG_WARN([the ``$2'' Qt pre-processor tool not found])
-  fi
-else
-  AC_SUBST([$1], [false])
-fi
-])
-
-# Usage:
-#  SIM_AC_CHECK_QT([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-#
-#  Try to find the Qt development system. If it is found, these
-#  shell variables are set:
-#
-#    $sim_ac_qt_cppflags (extra flags the compiler needs for Qt lib)
-#    $sim_ac_qt_ldflags  (extra flags the linker needs for Qt lib)
-#    $sim_ac_qt_libs     (link libraries the linker needs for Qt lib)
-#
-#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
-#  In addition, the variable $sim_ac_qt_avail is set to "yes" if
-#  the Qt development system is found.
-#
-# Authors:
-#   Morten Eriksen <mortene@sim.no>.
-#   Lars J. Aas <larsa@sim.no>.
-
-AC_DEFUN([SIM_AC_CHECK_QT], [
-
-AC_REQUIRE([SIM_AC_WITH_QT])
-
-AC_ARG_ENABLE(
-  [qt-debug],
-  AC_HELP_STRING([--enable-qt-debug], [win32: link with debug versions of Qt libraries]),
-  [case $enableval in
-  yes | true ) sim_ac_qt_debug=true ;;
-  *) sim_ac_qt_debug=false ;;
-  esac],
-  [sim_ac_qt_debug=false])
-
-sim_ac_qt_avail=no
-
-if $sim_ac_with_qt; then
-
-  sim_ac_save_cppflags=$CPPFLAGS
-  sim_ac_save_ldflags=$LDFLAGS
-  sim_ac_save_libs=$LIBS
-
-  if test -n "$sim_ac_qtdir"; then
-    sim_ac_qt_incpath="-I$sim_ac_qtdir/include"
-    sim_ac_qt_ldflags="-L$sim_ac_qtdir/lib"
-  fi
-
-  CPPFLAGS="$sim_ac_qt_incpath $CPPFLAGS"
-  LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
-
-  sim_ac_qt_libs=UNRESOLVED
-
-  # Check for Mac OS framework installation
-  if test -z "$QTDIR"; then
-    sim_ac_qt_framework_dir=/Library/Frameworks
-    # FIXME: Should we also look for the Qt framework in other  
-    # default framework locations (such as ~/Library/Frameworks)?
-    # Or require the user to specify this explicitly, e.g. by
-    # passing --with-qt-framework=xxx? 20050802 kyrah.
-  else
-    sim_ac_qt_framework_dir=$sim_ac_qtdir/lib
-  fi
-
-  SIM_AC_HAVE_QT_FRAMEWORK
-
-  if $sim_ac_have_qt_framework; then 
-    sim_ac_qt_cppflags="-I$sim_ac_qt_framework_dir/QtCore.framework/Headers -I$sim_ac_qt_framework_dir/QtOpenGL.framework/Headers -I$sim_ac_qt_framework_dir/QtGui.framework/Headers -I$sim_ac_qt_framework_dir/Qt3Support.framework/Headers -I$sim_ac_qt_framework_dir/QtNetwork.framework/Headers -F$sim_ac_qt_framework_dir"
-    sim_ac_qt_libs="-Wl,-F$sim_ac_qt_framework_dir -Wl,-framework,QtGui -Wl,-framework,QtOpenGL -Wl,-framework,QtCore -Wl,-framework,Qt3Support -Wl,-framework,QtXml -Wl,-framework,QtNetwork -Wl,-framework,QtSql"
-
-  else
-
-  sim_ac_qglobal=false
-  SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
-    [sim_ac_qglobal=true],
-    [
-     # Debian Linux and Darwin fink have the Qt-dev installation headers in 
-     # a separate subdir, so we reset CPPFLAGS and try with those.
-     CPPFLAGS="$sim_ac_save_cppflags"
-     sim_ac_debian_qtheaders=/usr/include/qt
-     if test -d $sim_ac_debian_qtheaders; then
-       sim_ac_qt_incpath="-I$sim_ac_debian_qtheaders $sim_ac_qt_incpath"
-       CPPFLAGS="-I$sim_ac_debian_qtheaders $CPPFLAGS"
-       SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
-     else
-       sim_ac_fink_qtheaders=/sw/include/qt
-       if test -d $sim_ac_fink_qtheaders; then
-         sim_ac_qt_incpath="-I$sim_ac_fink_qtheaders $sim_ac_qt_incpath"
-         CPPFLAGS="-I$sim_ac_fink_qtheaders $CPPFLAGS"
-         SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
-       else
-       sim_ac_darwinports_qtheaders=/opt/local/include/qt3
-         if test -d $sim_ac_darwinports_qtheaders; then
-           sim_ac_qt_incpath="-I$sim_ac_darwinports_qtheaders $sim_ac_qt_incpath"
-           sim_ac_qt_ldflags="-L/opt/local/lib $sim_ac_qt_ldflags"
-           CPPFLAGS="-I$sim_ac_darwinports_qtheaders $CPPFLAGS"
-           LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
-           SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal=true])
-         fi     
-       fi
-     fi])
-
-  # Qt 4 has the headers in various new subdirectories vs Qt 3.
-  if $sim_ac_qglobal; then :; else
-    AC_MSG_CHECKING([if Qt4 include paths must be used])
-    CPPFLAGS="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_save_cppflags"
-    SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
-                               [sim_ac_qglobal=true
-                                sim_ac_qt_incpath="$sim_ac_qt_incpath $sim_ac_qt_incpath/Qt $sim_ac_qt_incpath/QtOpenGL $sim_ac_qt_incpath/QtCore $sim_ac_qt_incpath/QtGui $sim_ac_qt_incpath/QtNetwork $sim_ac_qt_incpath/QtXml $sim_ac_qt_incpath/QtTest $sim_ac_qt_incpath/Qt3Support"
-                                ])
-    AC_MSG_RESULT($sim_ac_qglobal)
-  fi
-
-  if $sim_ac_qglobal; then
-
-    # Find version of the Qt library (MSWindows .dll is named with the
-    # version number.)
-    AC_MSG_CHECKING([version of Qt library])
-    cat > conftest.c << EOF
-#include <qglobal.h>
-int VerQt = QT_VERSION;
-EOF
-    # The " *"-parts of the last sed-expression on the next line are necessary
-    # because at least the Solaris/CC preprocessor adds extra spaces before and
-    # after the trailing semicolon.
-    sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *; *$%%'`
-
-    case $sim_ac_qt_version in
-    0x* )
-      sim_ac_qt_version=`echo $sim_ac_qt_version | sed -e 's/^0x.\(.\).\(.\).\(.\)/\1\2\3/;'`
-      ;;
-    * )
-      # nada
-      ;;
-    esac
-    sim_ac_qt_major_version=`echo $sim_ac_qt_version | cut -c1`
-
-    rm -f conftest.c
-    AC_MSG_RESULT($sim_ac_qt_version)
-
-    if test $sim_ac_qt_version -lt 200; then
-      SIM_AC_ERROR([too-old-qt])
-    fi
-
-    # Too hard to feature-check for the Qt-on-Mac problems, as they involve
-    # obscure behavior of the QGLWidget -- so we just resort to do platform
-    # and version checking instead.
-    case $host_os in
-    darwin*)
-      if test $sim_ac_qt_version -lt 302; then
-        SIM_AC_CONFIGURATION_WARNING([The version of Qt you are using is
-known to contain some serious bugs on MacOS X. We strongly recommend you to
-upgrade. (See $srcdir/README.MAC for details.)])
-      fi
-
-      if test x$sim_ac_enable_darwin_x11 = xfalse; then
-      # Using Qt/X11 but option --enable-darwin-x11 not given
-      AC_TRY_COMPILE([#include <qapplication.h>],
-                  [#if defined(__APPLE__) && defined(Q_WS_X11)
-                   #error blah!
-                   #endif],[],
-                  [SIM_AC_ERROR([x11-qt-but-no-x11-requested])])
-      else 
-      # --enable-darwin-x11 specified but attempting Qt/Mac linkage
-      AC_TRY_COMPILE([#include <qapplication.h>],
-                  [#if defined(__APPLE__) && defined(Q_WS_MAC)
-                   #error blah!
-                   #endif],[],
-                  [SIM_AC_ERROR([mac-qt-but-x11-requested])])
-      fi
-      ;;
-    esac
-
-    # Known problems:
-    #
-    #   * Qt v3.0.1 has a bug where SHIFT-PRESS + CTRL-PRESS + CTRL-RELEASE
-    #     results in the last key-event coming out completely wrong under X11.
-    #     Known to be fixed in 3.0.3, unknown status in 3.0.2.  <mortene@sim.no>.
-    #
-    if test $sim_ac_qt_version -lt 303; then
-      SIM_AC_CONFIGURATION_WARNING([The version of Qt you are compiling against
-is known to contain bugs which influences functionality in SoQt. We strongly
-recommend you to upgrade.])
-    fi
-
-    sim_ac_qt_cppflags=
-
-    # Do not cache the result, as we might need to play tricks with
-    # CPPFLAGS under MSWin.
-
-    # It should be helpful to be able to override the libs-checking with
-    # environment variables. Then people won't get completely stuck
-    # when the check fails -- we can just take a look at the
-    # config.log and give them advice on how to proceed with no updates
-    # necessary.
-    #
-    # (Note also that this makes it possible to select whether to use the
-    # mt-safe or the "standard" Qt library if both are installed on the
-    # user's system.)
-    #
-    # mortene.
-  
-    if test x"$CONFIG_QTLIBS" != x""; then
-      AC_MSG_CHECKING([for Qt linking with $CONFIG_QTLIBS])
-
-      for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
-        CPPFLAGS="$sim_ac_qt_incpath $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
-        LIBS="$CONFIG_QTLIBS $sim_ac_save_libs"
-        AC_TRY_LINK([#include <qapplication.h>],
-                    [
-                     // FIXME: assignment to qApp does no longer work with Qt 4,
-                     // should try to find another way to do the same thing. 20050629 mortene.
-                     #if QT_VERSION < 0x040000
-                     qApp = NULL; /* QT_DLL must be defined for assignment to global variables to work */
-                     #endif
-                     qApp->exit(0);],
-                    [sim_ac_qt_libs="$CONFIG_QTLIBS"
-                     sim_ac_qt_cppflags="$sim_ac_qt_incpath $sim_ac_qt_cppflags_loop"])
-      done
-
-      if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
-        AC_MSG_RESULT([failed!])
-      else
-        AC_MSG_RESULT([ok])
-      fi
-
-    else
-      AC_MSG_CHECKING([for Qt library devkit])
-
-      ## Test all known possible combinations of linking against the
-      ## Troll Tech Qt library:
-      ##
-      ## * "-lQtGui -lQt3Support": Qt 4 on UNIX-like systems (with some
-      ##   obsoleted Qt 3 widgets)
-      ##
-      ## * "-lqt-gl": links against the standard Debian version of the
-      ##   Qt library with embedded QGL
-      ##
-      ## * "-lqt": should work for most UNIX(-derived) platforms on
-      ##   dynamic and static linking with the non-mtsafe library
-      ##
-      ## * "-lqt-mt": should work for most UNIX(-derived) platforms on
-      ##   dynamic and static linking with the mtsafe library
-      ##
-      ## * "-lqt{version} -lqtmain -lgdi32": w/QT_DLL defined should
-      ##   cover dynamic Enterprise Edition linking on Win32 platforms
-      ##
-      ## * "-lqt -lqtmain -lgdi32": ...unless the {version} suffix is missing,
-      ##   which we've had reports about
-      ##
-      ## * "-lqt-mt{version} -lqtmain -lgdi32": w/QT_DLL defined should
-      ##   cover dynamic multi-thread Enterprise Edition linking on Win32
-      ##   platforms
-      ##
-      ## * "-lqt-mt{version}nc -lqtmain -lgdi32": w/QT_DLL defined should
-      ##   cover dynamic Non-Commercial Edition linking on Win32 platforms
-      ##
-      ## * "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32": should cover
-      ##   static linking on Win32 platforms
-      ##
-      ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32":
-      ##   added for the benefit of the Qt 3.0.0 Evaluation Version
-      ##   (update: "advapi32.lib" seems to be a new dependency for Qt 3.1.0)
-      ##   (update: "ws2_32.lib" seems to be a new dependency for Qt 3.1.2)
-      ##
-      ## * "-lqt-mt-eval": the Qt/Mac evaluation version
-      ##
-      ## * "-lqt-mtnc{version}": the non-commercial Qt version that
-      ##   comes on the CD with the book "C++ Gui Programming with Qt 3"
-      ##   (version==321 there)
-
-      ## FIXME: could probably improve check to not have to go through
-      ## all of the above. See bug item #028 in SoQt/BUGS.txt.
-      ## 20040805 mortene.
-
-#       sim_ac_qt_suffix=
-#       if $sim_ac_qt_debug; then
-#         sim_ac_qt_suffix=d
-#       f
-
-      # Enable Qt Debugging
-      if test x"$debug" = x"true"; then
-        sim_ac_qt_suffix=_debug
-      fi
-
-      # Note that we need to always check for -lqt-mt before -lqt, because
-      # at least the most recent Debian platforms (as of 2003-02-20) comes
-      # with a -lqt which is missing QGL support, while it also has a
-      # -lqt-mt *with* QGL support. The reason for this is because the
-      # default GL (Mesa) library on Debian is built in mt-safe mode,
-      # so a non-mt-safe Qt can't use it.
-#            "-lQtGui${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtCore${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQt3Support${sim_ac_qt_suffix}${sim_ac_qt_major_version}" \
-
-      for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
-        for sim_ac_qt_libcheck in \
-            "-lQtGui${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtCore${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQt3Support${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtOpenGL${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtNetwork${sim_ac_qt_suffix}${sim_ac_qt_major_version}" \
-            "-lQtGui${sim_ac_qt_suffix} -lQt3Support${sim_ac_qt_suffix} -lQtOpenGL${sim_ac_qt_suffix} -lQtNetwork${sim_ac_qt_suffix}" \
-            "-lqt-gl" \
-            "-lqt-mt" \
-            "-lqt" \
-            "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32" \
-            "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-            "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-            "-lqt-mtedu${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-            "-lqt -lqtmain -lgdi32" \
-            "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-            "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
-            "-lqt-mt-eval" \
-            "-lqt-mteval${sim_ac_qt_version}" \
-            "-lqt-mtnc${sim_ac_qt_version}"
-        do
-          if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
-            CPPFLAGS="$sim_ac_qt_incpath $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
-            LIBS="$sim_ac_qt_libcheck $sim_ac_save_libs"
-            AC_TRY_LINK([#include <qapplication.h>],
-                        [
-                         // FIXME: assignment to qApp does no longer work with Qt 4,
-                         // should try to find another way to do the same thing. 20050629 mortene.
-                         #if QT_VERSION < 0x040000
-                         qApp = NULL; /* QT_DLL must be defined for assignment to global variables to work */
-                         #endif
-                         qApp->exit(0);],
-                        [sim_ac_qt_libs="$sim_ac_qt_libcheck"
-                         sim_ac_qt_cppflags="$sim_ac_qt_incpath $sim_ac_qt_cppflags_loop"])
-          fi
-        done
-      done
-
-      AC_MSG_RESULT([yes])
-#      AC_MSG_RESULT([$sim_ac_qt_cppflags $sim_ac_qt_ldflags $sim_ac_qt_libs])
-    fi
-
-  else # sim_ac_qglobal = false
-    AC_MSG_WARN([header file qglobal.h not found, can not compile Qt code])
-  fi
-
-  fi # sim_ac_have_qt_framework
-
-  # We should only *test* availability, not mutate the LIBS/CPPFLAGS
-  # variables ourselves inside this macro. 20041021 larsa
-  CPPFLAGS=$sim_ac_save_cppflags
-  LDFLAGS=$sim_ac_save_ldflags
-  LIBS=$sim_ac_save_libs
-  if test ! x"$sim_ac_qt_libs" = xUNRESOLVED; then
-    sim_ac_qt_avail=yes
-    #CPPFLAGS="$sim_ac_qt_cppflags $sim_ac_save_cppflags"
-    #LIBS="$sim_ac_qt_libs $sim_ac_save_libs"
-    $1
-
-    sim_ac_qt_install=`cd $sim_ac_qtdir; pwd`/bin/install
-    AC_MSG_CHECKING([whether Qt's install tool shadows the system install])
-    case $INSTALL in
-    "${sim_ac_qt_install}"* )
-      AC_MSG_RESULT(yes)
-      SIM_AC_ERROR([qt-install])
-      ;;
-    * )
-      AC_MSG_RESULT(no)
-      ;;
-    esac
-
-  else
-    if test -z "$QTDIR"; then
-      AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
-    fi
-    $2
-  fi
-fi
-])
-
-
-# SIM_AC_HAVE_QT_FRAMEWORK
-# ----------------------
-#
-# Determine whether Qt is installed as a Mac OS X framework.  
-#
-# Uses the variable $sim_ac_qt_framework_dir which should either 
-# point to /Library/Frameworks or $QTDIR/lib. 
-#
-# Sets sim_ac_have_qt_framework to true if Qt is installed as 
-# a framework, and to false otherwise. 
-#
-# Author: Karin Kosina, <kyrah@sim.no>.
-
-AC_DEFUN([SIM_AC_HAVE_QT_FRAMEWORK], [
-case $host_os in
-  darwin*)
-    # First check if framework exists in the specified location, then
-    # try to actually link against the framework. This precaution is
-    # needed to catch the case where Qt-4 is installed in the default
-    # location /Library/Frameworks, but the user wants to override it
-    # by setting QTDIR to point to a non-framework install.
-    if test -d $sim_ac_qt_framework_dir/QtCore.framework; then
-      sim_ac_save_ldflags_fw=$LDFLAGS 
-      LDFLAGS="$LDFLAGS -F$sim_ac_qt_framework_dir -framework QtCore"
-      AC_CACHE_CHECK(
-        [whether Qt is installed as a framework],
-        sim_ac_have_qt_framework,
-        [AC_TRY_LINK([#include <QtCore/qglobal.h>],
-                 [],
-                 [sim_ac_have_qt_framework=true],
-                 [sim_ac_have_qt_framework=false])
-        ])
-        LDFLAGS=$sim_ac_save_ldflags_fw
-    else 
-      sim_ac_have_qt_framework=false
-    fi 
-    ;;
-  *)
-    sim_ac_have_qt_framework=false
-    ;;
-esac
-])
 
 # **************************************************************************
 # SIM_AC_ERROR_MESSAGE_FILE( FILENAME )
@@ -1878,7 +1226,7 @@ AC_MSG_ERROR([invalid value "${enableval}" for "$1" configure argument])
 # **************************************************************************
 # SIM_AC_CHECK_HEADER_SILENT([header], [if-found], [if-not-found], [includes])
 # 
-# This macro will not output any header checking information, nor will it
+# This macro will not output information, nor will it
 # cache the result, so it can be used multiple times on the same header,
 # trying out different compiler options.
 
@@ -4392,5 +3740,1326 @@ dnl refers to ${prefix}.  Thus we have to use `eval' twice.
   AC_DEFINE_UNQUOTED($1, "$ac_define_dir", [$3])
   test "$prefix_NONE" && prefix=NONE
   test "$exec_prefix_NONE" && exec_prefix=NONE
+])
+
+##### http://autoconf-archive.cryp.to/bnv_have_qt.html
+#
+# SYNOPSIS
+#
+#   BNV_HAVE_QT [--with-Qt-dir=DIR] [--with-Qt-lib-dir=DIR] [--with-Qt-lib=LIB]
+#   BNV_HAVE_QT [--with-Qt-include-dir=DIR] [--with-Qt-bin-dir=DIR] [--with-Qt-lib-dir=DIR] [--with-Qt-lib=LIB]
+#
+# DESCRIPTION
+#
+#   Searches common directories for Qt include files, libraries and Qt
+#   binary utilities. The macro supports several different versions of
+#   the Qt framework being installed on the same machine. Without
+#   options, the macro is designed to look for the latest library,
+#   i.e., the highest definition of QT_VERSION in qglobal.h. By use of
+#   one or more options a different library may be selected. There are
+#   two different sets of options. Both sets contain the option
+#   --with-Qt-lib=LIB which can be used to force the use of a
+#   particular version of the library file when more than one are
+#   available. LIB must be in the form as it would appear behind the
+#   "-l" option to the compiler. Examples for LIB would be "qt-mt" for
+#   the multi-threaded version and "qt" for the regular version. In
+#   addition to this, the first set consists of an option
+#   --with-Qt-dir=DIR which can be used when the installation conforms
+#   to Trolltech's standard installation, which means that header files
+#   are in DIR/include, binary utilities are in DIR/bin and the library
+#   is in DIR/lib. The second set of options can be used to indicate
+#   individual locations for the header files, the binary utilities and
+#   the library file, in addition to the specific version of the
+#   library file.
+#
+#   The following shell variable is set to either "yes" or "no":
+#
+#     have_qt
+#
+#   Additionally, the following variables are exported:
+#
+#     QT_CXXFLAGS
+#     QT_LIBS
+#     QT_MOC
+#     QT_UIC
+#     QT_DIR
+#
+#   which respectively contain an "-I" flag pointing to the Qt include
+#   directory (and "-DQT_THREAD_SUPPORT" when LIB is "qt-mt"), link
+#   flags necessary to link with Qt and X, the name of the meta object
+#   compiler and the user interface compiler both with full path, and
+#   finaly the variable QTDIR as Trolltech likes to see it defined (if
+#   possible).
+#
+#   Example lines for Makefile.in:
+#
+#     CXXFLAGS = @QT_CXXFLAGS@
+#     MOC      = @QT_MOC@
+#
+#   After the variables have been set, a trial compile and link is
+#   performed to check the correct functioning of the meta object
+#   compiler. This test may fail when the different detected elements
+#   stem from different releases of the Qt framework. In that case, an
+#   error message is emitted and configure stops.
+#
+#   No common variables such as $LIBS or $CFLAGS are polluted.
+#
+#   Options:
+#
+#   --with-Qt-dir=DIR: DIR is equal to $QTDIR if you have followed the
+#   installation instructions of Trolltech. Header files are in
+#   DIR/include, binary utilities are in DIR/bin and the library is in
+#   DIR/lib.
+#
+#   --with-Qt-include-dir=DIR: Qt header files are in DIR.
+#
+#   --with-Qt-bin-dir=DIR: Qt utilities such as moc and uic are in DIR.
+#
+#   --with-Qt-lib-dir=DIR: The Qt library is in DIR.
+#
+#   --with-Qt-lib=LIB: Use -lLIB to link with the Qt library.
+#
+#   If some option "=no" or, equivalently, a --without-Qt-* version is
+#   given in stead of a --with-Qt-*, "have_qt" is set to "no" and the
+#   other variables are set to the empty string.
+#
+# LAST MODIFICATION
+#
+#   2006-03-12
+#
+# COPYLEFT
+#
+#   Copyright (c) 2006 Bastiaan Veelo <Bastiaan@Veelo.net>
+#
+#   Copying and distribution of this file, with or without
+#   modification, are permitted in any medium without royalty provided
+#   the copyright notice and this notice are preserved.
+
+dnl Copyright (C) 2001, 2002, 2003, 2005, 2006 Bastiaan Veelo
+
+dnl THANKS! This code includes bug fixes and contributions made by:
+dnl Tim McClarren,
+dnl Dennis R. Weilert,
+dnl Qingning Huo,
+dnl Brian Mingus,
+dnl Jens Hannemann,
+dnl Pavel Roskin,
+dnl Scott J. Bertin.
+
+dnl ChangeLog
+dnl 2006-03-12  * Hide output of ls and fix an m4 quoting problem (due to Scott J. Bertin).
+dnl 2006-02-13  * Check compiler return value instead of parsing the error stream,
+dnl               which detected warnings as false negatives (due to Jens Hannemann).
+dnl 2006-02-02  * Spelling of "Success".
+dnl             * Fixed unsave test for $bnv_qt_lib without quotes.
+dnl             * Put dnl in front of all comments.
+dnl             * Changed -l$bnv_qt_lib_dir into -L$bnv_qt_lib_dir (all due to Pavel Roskin).
+dnl 2006-01-19  * Support for 64bit architectures.
+dnl             * Updated documentation.
+dnl 2006-01-18: * Fix "cat: bnv_qt_test.c: No such file or directory" (due to Jens Hannemann).
+dnl             * Hide output of failing ls.
+dnl 2006-01-11: * Check in /Developer on Mac OS X; Check in $QTDIR (due to Brian Mingus).
+
+dnl Calls BNV_PATH_QT_DIRECT (contained in this file) as a subroutine.
+AC_DEFUN([BNV_HAVE_QT],
+[
+  AC_REQUIRE([AC_PROG_CXX])
+  AC_REQUIRE([AC_PATH_X])
+  AC_REQUIRE([AC_PATH_XTRA])
+
+  AC_MSG_CHECKING(for Qt)
+
+  AC_ARG_WITH([Qt-dir],
+    [  --with-Qt-dir=DIR       DIR is equal to $QTDIR if you have followed the
+                          installation instructions of Trolltech. Header
+                          files are in DIR/include, binary utilities are
+                          in DIR/bin. The library is in DIR/lib, unless
+			  --with-Qt-lib-dir is also set.])
+  AC_ARG_WITH([Qt-include-dir],
+    [  --with-Qt-include-dir=DIR
+                          Qt header files are in DIR])
+  AC_ARG_WITH([Qt-bin-dir],
+    [  --with-Qt-bin-dir=DIR   Qt utilities such as moc and uic are in DIR])
+  AC_ARG_WITH([Qt-lib-dir],
+    [  --with-Qt-lib-dir=DIR   The Qt library is in DIR])
+  AC_ARG_WITH([Qt-lib],
+    [  --with-Qt-lib=LIB       Use -lLIB to link with the Qt library])
+  if test x"$with_Qt_dir" = x"no" ||
+     test x"$with_Qt_include-dir" = x"no" ||
+     test x"$with_Qt_bin_dir" = x"no" ||
+     test x"$with_Qt_lib_dir" = x"no" ||
+     test x"$with_Qt_lib" = x"no"; then
+    # user disabled Qt. Leave cache alone.
+    have_qt="User disabled Qt."
+  else
+    # "yes" is a bogus option
+    if test x"$with_Qt_dir" = xyes; then
+      with_Qt_dir=
+    fi
+    if test x"$with_Qt_include_dir" = xyes; then
+      with_Qt_include_dir=
+    fi
+    if test x"$with_Qt_bin_dir" = xyes; then
+      with_Qt_bin_dir=
+    fi
+    if test x"$with_Qt_lib_dir" = xyes; then
+      with_Qt_lib_dir=
+    fi
+    if test x"$with_Qt_lib" = xyes; then
+      with_Qt_lib=
+    fi
+    # No Qt unless we discover otherwise
+    have_qt=no
+    # Check whether we are requested to link with a specific version
+    if test x"$with_Qt_lib" != x; then
+      bnv_qt_lib="$with_Qt_lib"
+    fi
+    # Check whether we were supplied with an answer already
+    if test x"$with_Qt_dir" != x; then
+      have_qt=yes
+      bnv_qt_dir="$with_Qt_dir"
+      bnv_qt_include_dir="$with_Qt_dir/include"
+      bnv_qt_bin_dir="$with_Qt_dir/bin"
+      bnv_qt_lib_dir="$with_Qt_dir/lib"
+      # Only search for the lib if the user did not define one already
+      if test x"$bnv_qt_lib" = x; then
+        bnv_qt_lib="`ls $bnv_qt_lib_dir/libqt* | sed -n 1p |
+                     sed s@$bnv_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
+      fi
+      bnv_qt_LIBS="-L$bnv_qt_lib_dir -l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+    else
+      # Use cached value or do search, starting with suggestions from
+      # the command line
+      AC_CACHE_VAL(bnv_cv_have_qt,
+      [
+        # We are not given a solution and there is no cached value.
+        bnv_qt_dir=NO
+        bnv_qt_include_dir=NO
+        bnv_qt_lib_dir=NO
+        if test x"$bnv_qt_lib" = x; then
+          bnv_qt_lib=NO
+        fi
+        BNV_PATH_QT_DIRECT
+        if test "$bnv_qt_dir" = NO ||
+           test "$bnv_qt_include_dir" = NO ||
+           test "$bnv_qt_lib_dir" = NO ||
+           test "$bnv_qt_lib" = NO; then
+          # Problem with finding complete Qt.  Cache the known absence of Qt.
+          bnv_cv_have_qt="have_qt=no"
+        else
+          # Record where we found Qt for the cache.
+          bnv_cv_have_qt="have_qt=yes                  \
+                       bnv_qt_dir=$bnv_qt_dir          \
+               bnv_qt_include_dir=$bnv_qt_include_dir  \
+                   bnv_qt_bin_dir=$bnv_qt_bin_dir      \
+                      bnv_qt_LIBS=\"$bnv_qt_LIBS\""
+        fi
+      ])dnl
+      eval "$bnv_cv_have_qt"
+    fi # all $bnv_qt_* are set
+  fi   # $have_qt reflects the system status
+  if test x"$have_qt" = xyes; then
+    QT_CXXFLAGS="-I$bnv_qt_include_dir"
+    if test x"$bnv_qt_lib" = xqt-mt; then
+        QT_CXXFLAGS="$QT_CXXFLAGS -DQT_THREAD_SUPPORT"
+    fi
+    QT_DIR="$bnv_qt_dir"
+    QT_LIBS="$bnv_qt_LIBS"
+    # If bnv_qt_dir is defined, utilities are expected to be in the
+    # bin subdirectory
+    if test x"$bnv_qt_dir" != x; then
+        if test -x "$bnv_qt_dir/bin/uic"; then
+          QT_UIC="$bnv_qt_dir/bin/uic"
+        else
+          # Old versions of Qt don't have uic
+          QT_UIC=
+        fi
+      QT_MOC="$bnv_qt_dir/bin/moc"
+    else
+      # Or maybe we are told where to look for the utilities
+      if test x"$bnv_qt_bin_dir" != x; then
+        if test -x "$bnv_qt_bin_dir/uic"; then
+          QT_UIC="$bnv_qt_bin_dir/uic"
+        else
+          # Old versions of Qt don't have uic
+          QT_UIC=
+        fi
+        QT_MOC="$bnv_qt_bin_dir/moc"
+      else
+      # Last possibility is that they are in $PATH
+        QT_UIC="`which uic`"
+        QT_MOC="`which moc`"
+      fi
+    fi
+    # All variables are defined, report the result
+    AC_MSG_RESULT([$have_qt:
+    QT_CXXFLAGS=$QT_CXXFLAGS
+    QT_DIR=$QT_DIR
+    QT_LIBS=$QT_LIBS
+    QT_UIC=$QT_UIC
+    QT_MOC=$QT_MOC])
+  else
+    # Qt was not found
+    QT_CXXFLAGS=
+    QT_DIR=
+    QT_LIBS=
+    QT_UIC=
+    QT_MOC=
+    AC_MSG_RESULT($have_qt)
+  fi
+  AC_SUBST(QT_CXXFLAGS)
+  AC_SUBST(QT_DIR)
+  AC_SUBST(QT_LIBS)
+  AC_SUBST(QT_UIC)
+  AC_SUBST(QT_MOC)
+
+  #### Being paranoid:
+  if test x"$have_qt" = xyes; then
+    AC_MSG_CHECKING(correct functioning of Qt installation)
+    AC_CACHE_VAL(bnv_cv_qt_test_result,
+    [
+      cat > bnv_qt_test.h << EOF
+#include <qobject.h>
+class Test : public QObject
+{
+Q_OBJECT
+public:
+  Test() {}
+  ~Test() {}
+public slots:
+  void receive() {}
+signals:
+  void send();
+};
+EOF
+
+      cat > bnv_qt_main.$ac_ext << EOF
+#include "bnv_qt_test.h"
+#include <qapplication.h>
+int main( int argc, char **argv )
+{
+  QApplication app( argc, argv );
+  Test t;
+  QObject::connect( &t, SIGNAL(send()), &t, SLOT(receive()) );
+}
+EOF
+
+      bnv_cv_qt_test_result="failure"
+      bnv_try_1="$QT_MOC bnv_qt_test.h -o moc_bnv_qt_test.$ac_ext >/dev/null 2>/dev/null"
+      AC_TRY_EVAL(bnv_try_1)
+      if test x"$ac_status" != x0; then
+        echo "$bnv_err_1" >&AC_FD_CC
+        echo "configure: could not run $QT_MOC on:" >&AC_FD_CC
+        cat bnv_qt_test.h >&AC_FD_CC
+      else
+        bnv_try_2="$CXX $QT_CXXFLAGS -c $CXXFLAGS -o moc_bnv_qt_test.o moc_bnv_qt_test.$ac_ext >/dev/null 2>/dev/null"
+        AC_TRY_EVAL(bnv_try_2)
+        if test x"$ac_status" != x0; then
+          echo "$bnv_err_2" >&AC_FD_CC
+          echo "configure: could not compile:" >&AC_FD_CC
+          cat moc_bnv_qt_test.$ac_ext >&AC_FD_CC
+        else
+          bnv_try_3="$CXX $QT_CXXFLAGS -c $CXXFLAGS -o bnv_qt_main.o bnv_qt_main.$ac_ext >/dev/null 2>/dev/null"
+          AC_TRY_EVAL(bnv_try_3)
+          if test x"$ac_status" != x0; then
+            echo "$bnv_err_3" >&AC_FD_CC
+            echo "configure: could not compile:" >&AC_FD_CC
+            cat bnv_qt_main.$ac_ext >&AC_FD_CC
+          else
+            bnv_try_4="$CXX $QT_LIBS $LIBS -o bnv_qt_main bnv_qt_main.o moc_bnv_qt_test.o >/dev/null 2>/dev/null"
+            AC_TRY_EVAL(bnv_try_4)
+            if test x"$ac_status" != x0; then
+              echo "$bnv_err_4" >&AC_FD_CC
+            else
+              bnv_cv_qt_test_result="success"
+            fi
+          fi
+        fi
+      fi
+    ])dnl AC_CACHE_VAL bnv_cv_qt_test_result
+    AC_MSG_RESULT([$bnv_cv_qt_test_result]);
+    if test x"$bnv_cv_qt_test_result" = "xfailure"; then
+      AC_MSG_ERROR([Failed to find matching components of a complete
+                  Qt installation. Try using more options,
+                  see ./configure --help.])
+    fi
+
+    rm -f bnv_qt_test.h moc_bnv_qt_test.$ac_ext moc_bnv_qt_test.o \
+          bnv_qt_main.$ac_ext bnv_qt_main.o bnv_qt_main
+  fi
+])
+
+dnl Internal subroutine of BNV_HAVE_QT
+dnl Set bnv_qt_dir bnv_qt_include_dir bnv_qt_bin_dir bnv_qt_lib_dir bnv_qt_lib
+AC_DEFUN([BNV_PATH_QT_DIRECT],
+[
+  ## Binary utilities ##
+  if test x"$with_Qt_bin_dir" != x; then
+    bnv_qt_bin_dir=$with_Qt_bin_dir
+  fi
+  ## Look for header files ##
+  if test x"$with_Qt_include_dir" != x; then
+    bnv_qt_include_dir="$with_Qt_include_dir"
+  else
+    # The following header file is expected to define QT_VERSION.
+    qt_direct_test_header=qglobal.h
+    # Look for the header file in a standard set of common directories.
+    bnv_include_path_list="
+      /usr/include
+      `ls -dr ${QTDIR}/include 2>/dev/null`
+      `ls -dr /usr/include/qt* 2>/dev/null`
+      `ls -dr /usr/lib/qt*/include 2>/dev/null`
+      `ls -dr /usr/local/qt*/include 2>/dev/null`
+      `ls -dr /opt/qt*/include 2>/dev/null`
+      `ls -dr /Developer/qt*/include 2>/dev/null`
+    "
+    for bnv_dir in $bnv_include_path_list; do
+      if test -r "$bnv_dir/$qt_direct_test_header"; then
+        bnv_dirs="$bnv_dirs $bnv_dir"
+      fi
+    done
+    # Now look for the newest in this list
+    bnv_prev_ver=0
+    for bnv_dir in $bnv_dirs; do
+      bnv_this_ver=`egrep -w '#define QT_VERSION' $bnv_dir/$qt_direct_test_header | sed s/'#define QT_VERSION'//`
+      if expr $bnv_this_ver '>' $bnv_prev_ver > /dev/null; then
+        bnv_qt_include_dir=$bnv_dir
+        bnv_prev_ver=$bnv_this_ver
+      fi
+    done
+  fi dnl Found header files.
+
+  # Are these headers located in a traditional Trolltech installation?
+  # That would be $bnv_qt_include_dir stripped from its last element:
+  bnv_possible_qt_dir=`dirname $bnv_qt_include_dir`
+  if (test -x $bnv_possible_qt_dir/bin/moc) &&
+     ((ls $bnv_possible_qt_dir/lib/libqt* > /dev/null 2>/dev/null) ||
+      (ls $bnv_possible_qt_dir/lib64/libqt* > /dev/null 2>/dev/null)); then
+    # Then the rest is a piece of cake
+    bnv_qt_dir=$bnv_possible_qt_dir
+    bnv_qt_bin_dir="$bnv_qt_dir/bin"
+    if test x"$with_Qt_lib_dir" != x; then
+      bnv_qt_lib_dir="$with_Qt_lib_dir"
+    else
+      if (test -d $bnv_qt_dir/lib64); then
+	bnv_qt_lib_dir="$bnv_qt_dir/lib64"
+      else
+	bnv_qt_lib_dir="$bnv_qt_dir/lib"
+      fi
+    fi
+    # Only look for lib if the user did not supply it already
+    if test x"$bnv_qt_lib" = xNO; then
+      bnv_qt_lib="`ls $bnv_qt_lib_dir/libqt* | sed -n 1p |
+                   sed s@$bnv_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
+    fi
+    bnv_qt_LIBS="-L$bnv_qt_lib_dir -l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+  else
+    # There is no valid definition for $QTDIR as Trolltech likes to see it
+    bnv_qt_dir=
+    ## Look for Qt library ##
+    if test x"$with_Qt_lib_dir" != x; then
+      bnv_qt_lib_dir="$with_Qt_lib_dir"
+      # Only look for lib if the user did not supply it already
+      if test x"$bnv_qt_lib" = xNO; then
+        bnv_qt_lib="`ls $bnv_qt_lib_dir/libqt* | sed -n 1p |
+                     sed s@$bnv_qt_lib_dir/lib@@ | [sed s@[.].*@@]`"
+      fi
+      bnv_qt_LIBS="-L$bnv_qt_lib_dir -l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+    else
+      # Normally, when there is no traditional Trolltech installation,
+      # the library is installed in a place where the linker finds it
+      # automatically.
+      # If the user did not define the library name, try with qt
+      if test x"$bnv_qt_lib" = xNO; then
+        bnv_qt_lib=qt
+      fi
+      qt_direct_test_header=qapplication.h
+      qt_direct_test_main="
+        int argc;
+        char ** argv;
+        QApplication app(argc,argv);
+      "
+      # See if we find the library without any special options.
+      # Don't add top $LIBS permanently yet
+      bnv_save_LIBS="$LIBS"
+      LIBS="-l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+      bnv_qt_LIBS="$LIBS"
+      bnv_save_CXXFLAGS="$CXXFLAGS"
+      CXXFLAGS="-I$bnv_qt_include_dir"
+      AC_TRY_LINK([#include <$qt_direct_test_header>],
+        $qt_direct_test_main,
+      [
+        # Success.
+        # We can link with no special library directory.
+        bnv_qt_lib_dir=
+      ], [
+        # That did not work. Try the multi-threaded version
+        echo "Non-critical error, please neglect the above." >&AC_FD_CC
+        bnv_qt_lib=qt-mt
+        LIBS="-l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+        AC_TRY_LINK([#include <$qt_direct_test_header>],
+          $qt_direct_test_main,
+        [
+          # Success.
+          # We can link with no special library directory.
+          bnv_qt_lib_dir=
+        ], [
+          # That did not work. Try the OpenGL version
+          echo "Non-critical error, please neglect the above." >&AC_FD_CC
+          bnv_qt_lib=qt-gl
+          LIBS="-l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+          AC_TRY_LINK([#include <$qt_direct_test_header>],
+            $qt_direct_test_main,
+          [
+            # Success.
+            # We can link with no special library directory.
+            bnv_qt_lib_dir=
+          ], [
+            # That did not work. Maybe a library version I don't know about?
+            echo "Non-critical error, please neglect the above." >&AC_FD_CC
+            # Look for some Qt lib in a standard set of common directories.
+            bnv_dir_list="
+              `echo $bnv_qt_includes | sed ss/includess`
+              /lib
+	      /usr/lib64
+              /usr/lib
+	      /usr/local/lib64
+              /usr/local/lib
+	      /opt/lib64
+              /opt/lib
+              `ls -dr /usr/lib64/qt* 2>/dev/null`
+              `ls -dr /usr/lib64/qt*/lib64 2>/dev/null`
+              `ls -dr /usr/lib/qt* 2>/dev/null`
+              `ls -dr /usr/local/qt* 2>/dev/null`
+              `ls -dr /opt/qt* 2>/dev/null`
+            "
+            for bnv_dir in $bnv_dir_list; do
+              if ls $bnv_dir/libqt* >/dev/null 2>/dev/null; then
+                # Gamble that it's the first one...
+                bnv_qt_lib="`ls $bnv_dir/libqt* | sed -n 1p |
+                            sed s@$bnv_dir/lib@@ | sed s/[[.]].*//`"
+                bnv_qt_lib_dir="$bnv_dir"
+                break
+              fi
+            done
+            # Try with that one
+            LIBS="-l$bnv_qt_lib $X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
+            AC_TRY_LINK([#include <$qt_direct_test_header>],
+              $qt_direct_test_main,
+            [
+              # Success.
+              # We can link with no special library directory.
+              bnv_qt_lib_dir=
+            ], [
+              # Leave bnv_qt_lib_dir defined
+            ])
+          ])
+        ])
+      ])
+      if test x"$bnv_qt_lib_dir" != x; then
+        bnv_qt_LIBS="-L$bnv_qt_lib_dir $LIBS"
+      else
+        bnv_qt_LIBS="$LIBS"
+      fi
+      LIBS="$bnv_save_LIBS"
+      CXXFLAGS="$bnv_save_CXXFLAGS"
+    fi dnl $with_Qt_lib_dir was not given
+  fi dnl Done setting up for non-traditional Trolltech installation
+])
+
+############################################################################
+# Helper macros for the SIM_AC_CHECK_QT macro below.
+
+# SIM_AC_WITH_QT
+#
+# Sets sim_ac_with_qt (from --with-qt=[true|false]) and
+# sim_ac_qtdir (from either --with-qt=DIR or $QTDIR).
+
+AC_DEFUN([SIM_AC_WITH_QT], [
+sim_ac_qtdir=
+AC_ARG_WITH(
+  [qt],
+  AC_HELP_STRING([--with-qt=[true|false|DIR]],
+                 [specify if Qt should be used, and optionally the location of the Qt library [default=true]]),
+  [case $withval in
+  no | false ) sim_ac_with_qt=false ;;
+  yes | true ) sim_ac_with_qt=true ;;
+  *)
+    sim_ac_with_qt=true
+    sim_ac_qtdir=$withval
+    ;;
+  esac],
+  [sim_ac_with_qt=true])
+
+if $sim_ac_with_qt; then
+  if test -z "$sim_ac_qtdir"; then
+    # The Cygwin environment needs to invoke moc with a POSIX-style path.
+    AC_PATH_PROG(sim_ac_qt_cygpath, cygpath, false)
+    if test $sim_ac_qt_cygpath = "false"; then
+      sim_ac_qtdir=$QTDIR
+    else
+      # Quote $QTDIR in case it's empty.
+      sim_ac_qtdir=`$sim_ac_qt_cygpath -u "$QTDIR"`
+    fi
+
+    AC_MSG_CHECKING([value of the QTDIR environment variable])
+    if test x"$sim_ac_qtdir" = x""; then
+      AC_MSG_RESULT([empty])
+    else
+      AC_MSG_RESULT([$sim_ac_qtdir])
+
+      # list contents of what's in the qt dev environment into config.log
+      for i in "" bin lib; do
+        echo "Listing contents of $sim_ac_qtdir/$i:" >&5
+        ls -l $sim_ac_qtdir/$i >&5 2>&1
+      done
+    fi
+  fi
+fi
+])
+
+# SIM_AC_QT_PROG(VARIABLE, PROG-TO-CHECK-FOR)
+#
+# Substs VARIABLE to the path of the PROG-TO-CHECK-FOR, if found
+# in either $PATH, $QTDIR/bin or the --with-qt=DIR directories.
+#
+# If not found, VARIABLE will be set to false.
+
+AC_DEFUN([SIM_AC_QT_PROG], [
+AC_REQUIRE([SIM_AC_WITH_QT])
+
+if $sim_ac_with_qt; then
+
+  sim_ac_path=$PATH
+  if test -n "$sim_ac_qtdir"; then
+    sim_ac_path=$sim_ac_qtdir/bin:$PATH
+  fi
+
+  AC_PATH_PROG([$1], $2, false, $sim_ac_path)
+  if test x"$$1" = x"false"; then
+#     if test -z "$QTDIR"; then
+#       AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
+#     fi
+    AC_MSG_WARN([the ``$2'' Qt pre-processor tool not found])
+  fi
+else
+  AC_SUBST([$1], [false])
+fi
+])
+
+############################################################################
+# Usage:
+#  SIM_AC_QT_VERSION
+#
+# Find version number of the Qt library. sim_ac_qt_version will contain
+# the full version number string, and sim_ac_qt_major_version will contain
+# only the major version number.
+
+AC_DEFUN([SIM_AC_QT_VERSION], [
+
+AC_MSG_CHECKING([version of Qt library])
+
+cat > conftest.c << EOF
+#include <qglobal.h>
+int VerQt = QT_VERSION;
+EOF
+
+# The " *"-parts of the last sed-expression on the next line are necessary
+# because at least the Solaris/CC preprocessor adds extra spaces before and
+# after the trailing semicolon.
+sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *;.*$%%'`
+
+case $sim_ac_qt_version in
+0x* )
+  sim_ac_qt_version=`echo $sim_ac_qt_version | sed -e 's/^0x.\(.\).\(.\).\(.\)/\1\2\3/;'`
+  ;;
+* )
+  # nada
+  ;;
+esac
+sim_ac_qt_major_version=`echo $sim_ac_qt_version | cut -c1`
+
+rm -f conftest.c
+AC_MSG_RESULT($sim_ac_qt_version)
+])
+
+############################################################################
+# Usage:
+#  SIM_AC_CHECK_QT([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Try to find the Qt development system. If it is found, these
+#  shell variables are set:
+#
+#    $sim_ac_qt_cppflags (extra flags the compiler needs for Qt lib)
+#    $sim_ac_qt_ldflags  (extra flags the linker needs for Qt lib)
+#    $sim_ac_qt_libs     (link libraries the linker needs for Qt lib)
+#
+#  The CPPFLAGS, LDFLAGS and LIBS flags will also be modified accordingly.
+#  In addition, the variable $sim_ac_qt_avail is set to "yes" if
+#  the Qt development system is found.
+#
+# Authors:
+#   Morten Eriksen <mortene@sim.no>.
+#   Lars J. Aas <larsa@sim.no>.
+
+AC_DEFUN([SIM_AC_CHECK_QT], [
+
+AC_REQUIRE([SIM_AC_WITH_QT])
+
+sim_ac_qt_debug=false
+
+sim_ac_qt_avail=no
+
+if $sim_ac_with_qt; then
+
+  sim_ac_save_cppflags=$CPPFLAGS
+  sim_ac_save_ldflags=$LDFLAGS
+  sim_ac_save_libs=$LIBS
+
+  sim_ac_qt_libs=UNRESOLVED
+
+  # Check for Mac OS framework installation
+  if test -z "$QTDIR"; then
+    sim_ac_qt_framework_dir=/Library/Frameworks
+    # FIXME: Should we also look for the Qt framework in other  
+    # default framework locations (such as ~/Library/Frameworks)?
+    # Or require the user to specify this explicitly, e.g. by
+    # passing --with-qt-framework=xxx? 20050802 kyrah.
+  else
+    sim_ac_qt_framework_dir=$sim_ac_qtdir/lib
+  fi
+
+  SIM_AC_HAVE_QT_FRAMEWORK
+
+  if $sim_ac_have_qt_framework; then 
+    sim_ac_qt_cppflags="-I$sim_ac_qt_framework_dir/QtCore.framework/Headers -I$sim_ac_qt_framework_dir/QtOpenGL.framework/Headers -I$sim_ac_qt_framework_dir/QtGui.framework/Headers -I$sim_ac_qt_framework_dir/Qt3Support.framework/Headers -F$sim_ac_qt_framework_dir"
+    sim_ac_qt_libs="-Wl,-F$sim_ac_qt_framework_dir -Wl,-framework,QtGui -Wl,-framework,QtOpenGL -Wl,-framework,QtCore -Wl,-framework,Qt3Support -Wl,-framework,QtXml -Wl,-framework,QtNetwork -Wl,-framework,QtSql"
+  else
+
+    sim_ac_qglobal_unresolved=true
+
+    sim_ac_QTDIR_cppflags=
+    sim_ac_QTDIR_ldflags=
+    if test -n "$sim_ac_qtdir"; then
+      sim_ac_QTDIR_cppflags="-I$sim_ac_qtdir/include -I$sim_ac_qtdir/include/qt4/"
+      sim_ac_QTDIR_ldflags="-L$sim_ac_qtdir/lib"
+      CPPFLAGS="$sim_ac_QTDIR_cppflags $CPPFLAGS"
+      LDFLAGS="$LDFLAGS $sim_ac_QTDIR_ldflags"
+    fi
+
+    # This should take care of detecting qglobal.h for Qt 3 if QTDIR was set,
+    # or if Qt is in default locations, or if it is in any additional "-I..."
+    # set up by the user with CPPFLAGS:
+    sim_ac_temp="$CPPFLAGS"
+    SIM_AC_CHECK_HEADER_SILENT([qglobal.h], [sim_ac_qglobal_unresolved=false])
+
+    # If we're to use Qt 4 and QTDIR is set, this should be able to find it:
+    if $sim_ac_qglobal_unresolved; then
+      SIM_AC_CHECK_HEADER_SILENT([Qt/qglobal.h],
+                                 [sim_ac_qglobal_unresolved=false])
+      if $sim_ac_qglobal_unresolved; then
+        :
+      else
+        if test -z "$sim_ac_QTDIR_cppflags"; then
+          AC_MSG_ERROR([Qt/qglobal.h detected, but no QTDIR environment variable set. Do not know where the Qt include files are.])
+        else
+          sim_ac_QTDIR_cppflags="$sim_ac_QTDIR_cppflags $sim_ac_QTDIR_cppflags/Qt"
+        fi
+      fi
+    fi
+    CPPFLAGS="$sim_ac_temp"
+
+    # Check for known default locations of Qt installation on various
+    # systems:
+    if $sim_ac_qglobal_unresolved; then
+      sim_ac_temp="$CPPFLAGS"
+      # /usr/include/qt: Debian-installations with Qt 3
+      # /usr/include/qt4: Debian-installations with Qt 4
+      # /sw/include/qt: Mac OS X Fink
+      for i in "/usr/include/qt" "/usr/include/qt4" "/sw/include/qt"; do
+        if $sim_ac_qglobal_unresolved; then
+          CPPFLAGS="-I$i $sim_ac_temp"
+          SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
+                                     [sim_ac_qglobal_unresolved=false
+                                      sim_ac_QTDIR_cppflags="-I$i"
+                                     ])
+          if $sim_ac_qglobal_unresolved; then
+            SIM_AC_CHECK_HEADER_SILENT([Qt/qglobal.h],
+                                       [sim_ac_qglobal_unresolved=false
+                                        sim_ac_QTDIR_cppflags="-I$i -I$i/Qt -I$i/QtCore -I$i/QtNetwork -I$i/Qt3Support"
+                                       ])
+          fi
+        fi
+      done
+      CPPFLAGS="$sim_ac_temp"
+    fi
+
+    # Mac OS X Darwin ports
+    if $sim_ac_qglobal_unresolved; then
+      sim_ac_temp="$CPPFLAGS"
+      sim_ac_i="-I/opt/local/include/qt3"
+      CPPFLAGS="$sim_ac_i $CPPFLAGS"
+      SIM_AC_CHECK_HEADER_SILENT([qglobal.h],
+                                 [sim_ac_qglobal_unresolved=false
+                                  sim_ac_QTDIR_cppflags="$sim_ac_i"
+                                  sim_ac_QTDIR_ldflags="-L/opt/local/lib"
+                                 ])
+      CPPFLAGS="$sim_ac_temp"
+    fi
+
+    if $sim_ac_qglobal_unresolved; then
+      AC_MSG_WARN([header file qglobal.h not found, can not compile Qt code])
+    else
+      CPPFLAGS="$sim_ac_QTDIR_cppflags $CPPFLAGS"
+      LDFLAGS="$LDFLAGS $sim_ac_QTDIR_ldflags"
+
+      SIM_AC_QT_VERSION
+
+      if test $sim_ac_qt_version -lt 200; then
+        SIM_AC_ERROR([too-old-qt])
+      fi
+
+      # Too hard to feature-check for the Qt-on-Mac problems, as they involve
+      # obscure behavior of the QGLWidget -- so we just resort to do platform
+      # and version checking instead.
+      case $host_os in
+      darwin*)
+        if test $sim_ac_qt_version -lt 302; then
+          SIM_AC_CONFIGURATION_WARNING([The version of Qt you are using is known to contain some serious bugs on MacOS X. We strongly recommend you to upgrade. (See $srcdir/README.MAC for details.)])
+        fi
+
+        if $sim_ac_enable_darwin_x11; then
+          # --enable-darwin-x11 specified but attempting Qt/Mac linkage
+          AC_TRY_COMPILE([#include <qapplication.h>],
+                      [#if defined(__APPLE__) && defined(Q_WS_MAC)
+                       #error blah!
+                       #endif],[],
+                      [SIM_AC_ERROR([mac-qt-but-x11-requested])])
+        else 
+          # Using Qt/X11 but option --enable-darwin-x11 not given
+          AC_TRY_COMPILE([#include <qapplication.h>],
+                    [#if defined(__APPLE__) && defined(Q_WS_X11)
+                     #error blah!
+                     #endif],[],
+                    [SIM_AC_ERROR([x11-qt-but-no-x11-requested])])
+        fi
+        ;;
+      esac
+
+      # Known problems:
+      #
+      #   * Qt v3.0.1 has a bug where SHIFT-PRESS + CTRL-PRESS + CTRL-RELEASE
+      #     results in the last key-event coming out completely wrong under X11.
+      #     Known to be fixed in 3.0.3, unknown status in 3.0.2.  <mortene@sim.no>.
+      #
+      if test $sim_ac_qt_version -lt 303; then
+        SIM_AC_CONFIGURATION_WARNING([The version of Qt you are compiling against is known to contain bugs which influences functionality in SoQt. We strongly recommend you to upgrade.])
+      fi
+
+      sim_ac_qt_cppflags=
+
+      # Do not cache the result, as we might need to play tricks with
+      # CPPFLAGS under MSWin.
+
+      # It should be helpful to be able to override the libs-checking with
+      # environment variables. Then people won't get completely stuck
+      # when the check fails -- we can just take a look at the
+      # config.log and give them advice on how to proceed with no updates
+      # necessary.
+      #
+      # (Note also that this makes it possible to select whether to use the
+      # mt-safe or the "standard" Qt library if both are installed on the
+      # user's system.)
+      #
+      # mortene.
+  
+      if test x"$CONFIG_QTLIBS" != x""; then
+        AC_MSG_CHECKING([for Qt linking with $CONFIG_QTLIBS])
+
+        for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
+          CPPFLAGS="$sim_ac_QTDIR_cppflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
+          LIBS="$CONFIG_QTLIBS $sim_ac_save_libs"
+          AC_TRY_LINK([#include <qapplication.h>],
+                      [
+                       // FIXME: assignment to qApp does no longer work with Qt 4,
+                       // should try to find another way to do the same thing. 20050629 mortene.
+                       #if QT_VERSION < 0x040000
+                       qApp = NULL; /* QT_DLL must be defined for assignment to global variables to work */
+                       #endif
+                       qApp->exit(0);],
+                      [sim_ac_qt_libs="$CONFIG_QTLIBS"
+                       sim_ac_qt_cppflags="$sim_ac_QTDIR_cppflags $sim_ac_qt_cppflags_loop"
+                       sim_ac_qt_ldflags="$sim_ac_QTDIR_ldflags"
+                      ])
+        done
+
+        if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
+          AC_MSG_RESULT([failed!])
+        else
+          AC_MSG_RESULT([ok])
+        fi
+
+      else
+        AC_MSG_CHECKING([for Qt library devkit])
+
+        ## Test all known possible combinations of linking against the
+        ## Troll Tech Qt library:
+        ##
+        ## * "-lQtGui -lQt3Support": Qt 4 on UNIX-like systems (with some
+        ##   obsoleted Qt 3 widgets)
+        ##
+        ## * "-lqt-gl": links against the standard Debian version of the
+        ##   Qt library with embedded QGL
+        ##
+        ## * "-lqt": should work for most UNIX(-derived) platforms on
+        ##   dynamic and static linking with the non-mtsafe library
+        ##
+        ## * "-lqt-mt": should work for most UNIX(-derived) platforms on
+        ##   dynamic and static linking with the mtsafe library
+        ##
+        ## * "-lqt{version} -lqtmain -lgdi32": w/QT_DLL defined should
+        ##   cover dynamic Enterprise Edition linking on Win32 platforms
+        ##
+        ## * "-lqt -lqtmain -lgdi32": ...unless the {version} suffix is missing,
+        ##   which we've had reports about
+        ##
+        ## * "-lqt-mt{version} -lqtmain -lgdi32": w/QT_DLL defined should
+        ##   cover dynamic multi-thread Enterprise Edition linking on Win32
+        ##   platforms
+        ##
+        ## * "-lqt-mt{version}nc -lqtmain -lgdi32": w/QT_DLL defined should
+        ##   cover dynamic Non-Commercial Edition linking on Win32 platforms
+        ##
+        ## * "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32": should cover
+        ##   static linking on Win32 platforms
+        ##
+        ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32":
+        ##   added for the benefit of the Qt 3.0.0 Evaluation Version
+        ##   (update: "advapi32.lib" seems to be a new dependency for Qt 3.1.0)
+        ##   (update: "ws2_32.lib" seems to be a new dependency for Qt 3.1.2)
+        ##
+        ## * "-lqt-mt-eval": the Qt/Mac evaluation version
+        ##
+        ## * "-lqt-mtnc{version}": the non-commercial Qt version that
+        ##   comes on the CD with the book "C++ Gui Programming with Qt 3"
+        ##   (version==321 there)
+
+        ## FIXME: could probably improve check to not have to go through
+        ## all of the above. See bug item #028 in SoQt/BUGS.txt.
+        ## 20040805 mortene.
+
+        sim_ac_qt_suffix=
+        if $sim_ac_qt_debug; then
+          sim_ac_qt_suffix=d
+        fi
+
+        # Note that we need to always check for -lqt-mt before -lqt, because
+        # at least the most recent Debian platforms (as of 2003-02-20) comes
+        # with a -lqt which is missing QGL support, while it also has a
+        # -lqt-mt *with* QGL support. The reason for this is because the
+        # default GL (Mesa) library on Debian is built in mt-safe mode,
+        # so a non-mt-safe Qt can't use it.
+
+
+
+        for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
+          for sim_ac_qt_libcheck in \
+              "-lQtGui${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtCore${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQt3Support${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtNetwork${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtOpenGL${sim_ac_qt_suffix}${sim_ac_qt_major_version}" \
+              "-lQtGui -lQt3Support -lQtNetwork -lQtOpenGL -lQtCore" \
+              "-lqt-gl" \
+              "-lqt-mt" \
+              "-lqt" \
+              "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32" \
+              "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
+              "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32" \
+              "-lqt-mtedu${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
+              "-lqt -lqtmain -lgdi32" \
+              "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
+              "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
+              "-lqt-mt-eval" \
+              "-lqt-mteval${sim_ac_qt_version}" \
+              "-lqt-mtnc${sim_ac_qt_version}"
+          do
+            if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
+              CPPFLAGS="$sim_ac_QTDIR_cppflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
+              LIBS="$sim_ac_qt_libcheck $sim_ac_save_libs"
+              AC_TRY_LINK([#include <qapplication.h>],
+                          [
+                           // FIXME: assignment to qApp does no longer work with Qt 4,
+                           // should try to find another way to do the same thing. 20050629 mortene.
+                           #if QT_VERSION < 0x040000
+                           qApp = NULL; /* QT_DLL must be defined for assignment to global variables to work */
+                           #endif
+                           qApp->exit(0);],
+                          [sim_ac_qt_libs="$sim_ac_qt_libcheck"
+                           sim_ac_qt_cppflags="$sim_ac_QTDIR_cppflags $sim_ac_qt_cppflags_loop"
+                           sim_ac_qt_ldflags="$sim_ac_QTDIR_ldflags"
+                          ])
+            fi
+          done
+        done
+
+        AC_MSG_RESULT($sim_ac_qt_cppflags $sim_ac_QTDIR_ldflags $sim_ac_qt_libs)
+      fi
+
+    fi # sim_ac_qglobal_unresolved = false
+
+  fi # sim_ac_have_qt_framework
+
+  # We should only *test* availability, not mutate the LIBS/CPPFLAGS
+  # variables ourselves inside this macro. 20041021 larsa
+  CPPFLAGS=$sim_ac_save_cppflags
+  LDFLAGS=$sim_ac_save_ldflags
+  LIBS=$sim_ac_save_libs
+  if test ! x"$sim_ac_qt_libs" = xUNRESOLVED; then
+    sim_ac_qt_avail=yes
+    $1
+
+    sim_ac_qt_install=`cd $sim_ac_qtdir; pwd`/bin/install
+    AC_MSG_CHECKING([whether Qt's install tool shadows the system install])
+    case $INSTALL in
+    "${sim_ac_qt_install}"* )
+      AC_MSG_RESULT(yes)
+      echo "\$INSTALL is '$INSTALL', which matches '$QTDIR/bin/install*'." >&5
+      echo "\$QTDIR part is '$QTDIR'." >&5
+      SIM_AC_ERROR([qt-install])
+      ;;
+    * )
+      AC_MSG_RESULT(no)
+      ;;
+    esac
+
+  else
+#     if test -z "$QTDIR"; then
+#       AC_MSG_WARN([QTDIR environment variable not set -- this might be an indication of a problem])
+#     fi
+    $2
+  fi
+fi
+])
+
+############################################################################
+# Usage:
+#  SIM_AC_CHECK_QGL([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Try to find the QGL widget for interfacing Qt with OpenGL. If it
+#  is found, these shell variables are set:
+#
+#    $sim_ac_qgl_cppflags (extra flags the compiler needs for QGL lib)
+#    $sim_ac_qgl_ldflags  (extra flags the linker needs for QGL lib)
+#    $sim_ac_qgl_libs     (link libraries the linker needs for QGL lib)
+#
+#  The LIBS flag will also be modified accordingly. In addition, the
+#  variable $sim_ac_qgl_avail is set to "yes" if the QGL extension
+#  library is found.
+#
+# Note that all "modern" variants of Qt should come with QGL embedded.
+# There's one important deviation: Debian comes with a -lqt which is
+# missing QGL support, while it also has a -lqt-mt *with* QGL support.
+# The reason for this is because the default GL (Mesa) library on Debian
+# is built in mt-safe mode.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_AC_CHECK_QGL], [
+
+AC_REQUIRE([SIM_AC_WITH_QT])
+
+sim_ac_qgl_avail=no
+sim_ac_qgl_cppflags=
+sim_ac_qgl_ldflags=
+sim_ac_qgl_libs=
+
+if $sim_ac_with_qt; then
+  # first check if we can link with the QGL widget already
+  AC_CACHE_CHECK(
+    [whether the QGL widget is part of main Qt library],
+    sim_cv_lib_qgl_integrated,
+    [AC_TRY_LINK([#include <qgl.h>],
+                 [QGLFormat * f = new QGLFormat; f->setDepth(true); ],
+                 [sim_cv_lib_qgl_integrated=yes],
+                 [sim_cv_lib_qgl_integrated=no])])
+
+  if test x"$sim_cv_lib_qgl_integrated" = xyes; then
+    sim_ac_qgl_avail=yes
+    $1
+  else
+    sim_ac_save_LIBS=$LIBS
+    LIBS="$sim_ac_qgl_libs $LIBS"
+
+    AC_MSG_CHECKING([for the QGL extension library])
+
+    sim_ac_qgl_libs=UNRESOLVED
+    for sim_ac_qgl_libcheck in "-lQtOpenGL4" "-lQtOpenGL" "-lqgl" "-lqgl -luser32"; do
+      if test "x$sim_ac_qgl_libs" = "xUNRESOLVED"; then
+        LIBS="$sim_ac_qgl_libcheck $sim_ac_save_LIBS"
+        AC_TRY_LINK([#include <qgl.h>],
+                    [QGLFormat * f = new QGLFormat; f->setDepth(true); ],
+                    [sim_ac_qgl_libs="$sim_ac_qgl_libcheck"])
+      fi
+    done
+
+    if test x"$sim_ac_qgl_libs" != xUNRESOLVED; then
+      AC_MSG_RESULT($sim_ac_qgl_libs)
+      sim_ac_qgl_avail=yes
+      $1
+    else
+      AC_MSG_RESULT([unavailable])
+      LIBS=$sim_ac_save_LIBS
+      $2
+    fi
+  fi
+fi
+])
+
+# SIM_AC_QGLWIDGET_SETAUTOBUFFERSWAP
+# ----------------------------------
+#
+# Use the macro for its side-effect: it defines
+#
+#       HAVE_QGLWIDGET_SETAUTOBUFFERSWAP
+#
+# to 1 in config.h if QGLWidget::setAutoBufferSwap() is available.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_AC_QGLWIDGET_SETAUTOBUFFERSWAP], [
+AC_CACHE_CHECK(
+  [whether the QGLWidget::setAutoBufferSwap() is available],
+  sim_cv_func_qglwidget_setautobufferswap,
+  [AC_TRY_LINK([#include <qgl.h>
+class MyGLWidget : public QGLWidget {
+public: MyGLWidget() {setAutoBufferSwap(FALSE);} };],
+               [MyGLWidget * w = new MyGLWidget;],
+               [sim_cv_func_qglwidget_setautobufferswap=yes],
+               [sim_cv_func_qglwidget_setautobufferswap=no])])
+
+if test x"$sim_cv_func_qglwidget_setautobufferswap" = xyes; then
+  AC_DEFINE([HAVE_QGLWIDGET_SETAUTOBUFFERSWAP], 1,
+    [Define this to 1 if QGLWidget::setAutoBufferSwap() is available])
+fi
+])
+
+
+# SIM_AC_QGLFORMAT_SETOVERLAY
+# ---------------------------
+#
+# Use the macro for its side-effect: it defines
+#
+#       HAVE_QGLFORMAT_SETOVERLAY
+#
+# to 1 in config.h if QGLFormat::setOverlay() is available.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_AC_QGLFORMAT_SETOVERLAY], [
+AC_CACHE_CHECK(
+  [whether QGLFormat::setOverlay() is available],
+  sim_cv_func_qglformat_setoverlay,
+  [AC_TRY_LINK([#include <qgl.h>],
+               [/* The basics: */
+                QGLFormat f; f.setOverlay(TRUE);
+                /* We've had a bug report about soqt.dll linking fail due
+                   to missing the QGLWidget::overlayContext() symbol: */
+                QGLWidget * w = NULL; (void)w->overlayContext();
+               ],
+               [sim_cv_func_qglformat_setoverlay=yes],
+               [sim_cv_func_qglformat_setoverlay=no])])
+
+if test x"$sim_cv_func_qglformat_setoverlay" = xyes; then
+  AC_DEFINE([HAVE_QGLFORMAT_SETOVERLAY], 1,
+    [Define this to 1 if QGLFormat::setOverlay() is available])
+fi
+])
+
+
+# SIM_AC_QGLFORMAT_EQ_OP
+# ----------------------
+#
+# Use the macro for its side-effect: it defines
+#
+#       HAVE_QGLFORMAT_EQ_OP
+#
+# to 1 in config.h if operator==(QGLFormat&, QGLFormat&) is available.
+# (For Qt v2.2.2 at least, Troll Tech forgot to include this method
+# in the publicly exported API for MSWindows DLLs.)
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_AC_QGLFORMAT_EQ_OP], [
+AC_CACHE_CHECK(
+  [whether operator==(QGLFormat&,QGLFormat&) is available],
+  sim_cv_func_qglformat_eq_op,
+  [AC_TRY_LINK([#include <qgl.h>],
+               [QGLFormat f; if (f == f) f.setDepth(true);],
+               [sim_cv_func_qglformat_eq_op=true],
+               [sim_cv_func_qglformat_eq_op=false])])
+
+if $sim_cv_func_qglformat_eq_op; then
+  AC_DEFINE([HAVE_QGLFORMAT_EQ_OP], 1,
+    [Define this to 1 if operator==(QGLFormat&, QGLFormat&) is available])
+fi
+])
+
+
+# SIM_AC_QWIDGET_SHOWFULLSCREEN
+# -----------------------------
+#
+# Use the macro for its side-effect: it defines HAVE_QWIDGET_SHOWFULLSCREEN
+# to 1 in config.h if QWidget::showFullScreen() is available (that
+# function wasn't introduced in Qt until version 2.1.0).
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_AC_QWIDGET_SHOWFULLSCREEN], [
+AC_CACHE_CHECK(
+  [whether QWidget::showFullScreen() is available],
+  sim_cv_def_qwidget_showfullscreen,
+  [AC_TRY_LINK([#include <qwidget.h>],
+               [QWidget * w = new QWidget(); w->showFullScreen();],
+               [sim_cv_def_qwidget_showfullscreen=true],
+               [sim_cv_def_qwidget_showfullscreen=false])])
+
+if $sim_cv_def_qwidget_showfullscreen; then
+  AC_DEFINE([HAVE_QWIDGET_SHOWFULLSCREEN], 1,
+            [Define this if QWidget::showFullScreen() is available])
+fi
+]) # SIM_AC_QWIDGET_SHOWFULLSCREEN
+
+# SIM_AC_QAPPLICATION_HASPENDINGEVENTS
+# -----------------------------
+#
+# Use the macro for its side-effect: it defines 
+# HAVE_QAPPLICATION_HASPENDINGEVENTS to 1 in config.h if 
+# QApplication::hasPendingEvents() is available (that
+# function wasn't introduced in Qt until version 3.0).
+#
+# Author: Peder Blekken <pederb@sim.no>.
+
+AC_DEFUN([SIM_AC_QAPPLICATION_HASPENDINGEVENTS], [
+AC_CACHE_CHECK(
+  [whether QApplication::hasPendingEvents() is available],
+  sim_cv_def_qapplication_haspendingevents,
+  [AC_TRY_LINK([#include <qapplication.h>],
+               [int argc; char ** argv; QApplication app(argc, argv); (void) app.hasPendingEvents();],
+               [sim_cv_def_qapplication_haspendingevents=true],
+               [sim_cv_def_qapplication_haspendingevents=false])])
+
+if $sim_cv_def_qapplication_haspendingevents; then
+  AC_DEFINE([HAVE_QAPPLICATION_HASPENDINGEVENTS], 1,
+            [Define this if QApplication::hasPendingEvents() is available])
+fi
+]) # SIM_AC_QAPPLICATION_HASPENDINGEVENTS
+
+
+# SIM_AC_QT_KEYPAD_DEFINE
+# -----------------------
+#
+# Use the macro for its side-effect: it defines HAVE_QT_KEYPAD_DEFINE
+# to 1 in config.h if Qt::Keypad is available.
+#
+# Author: Morten Eriksen, <mortene@sim.no>.
+
+AC_DEFUN([SIM_AC_QT_KEYPAD_DEFINE], [
+AC_CACHE_CHECK(
+  [whether Qt::Keypad is defined],
+  sim_cv_def_qt_keypad,
+  [AC_TRY_LINK([#include <qkeycode.h>],
+               [Qt::ButtonState s = Qt::Keypad;],
+               [sim_cv_def_qt_keypad=true],
+               [sim_cv_def_qt_keypad=false])])
+
+if $sim_cv_def_qt_keypad; then
+  AC_DEFINE([HAVE_QT_KEYPAD_DEFINE], 1,
+            [Define this if Qt::Keypad is available])
+fi
+]) # SIM_AC_QT_KEYPAD_DEFINE
+
+
+# SIM_AC_QWIDGET_HASSETWINDOWSTATE
+# --------------------------------
+# QWidget->setWindowState() was added around Qt 3.3
+
+AC_DEFUN([SIM_AC_QWIDGET_HASSETWINDOWSTATE], [
+AC_CACHE_CHECK(
+  [whether QWidget::setWindowState() exists],
+  sim_cv_exists_qwidget_setwindowstate,
+
+  [AC_TRY_LINK([#include <qwidget.h>],
+               [QWidget * w = NULL; w->setWindowState(0);],
+               [sim_cv_exists_qwidget_setwindowstate=true],
+               [sim_cv_exists_qwidget_setwindowstate=false])])
+
+if $sim_cv_exists_qwidget_setwindowstate; then
+  AC_DEFINE([HAVE_QWIDGET_SETWINDOWSTATE], 1,
+            [Define this if QWidget::setWindowState() is available])
+fi
+]) # SIM_AC_QWIDGET_HASSETWINDOWSTATE
+
+
+
+# SIM_AC_QLINEEDIT_HASSETINPUTMASK
+# --------------------------------
+# QLineEdit->setInputMask() was added around Qt 3.3
+
+AC_DEFUN([SIM_AC_QLINEEDIT_HASSETINPUTMASK], [
+AC_CACHE_CHECK(
+  [whether QLineEdit::setInputMask() exists],
+  sim_cv_exists_qlineedit_setinputmask,
+
+  [AC_TRY_LINK([#include <qlineedit.h>],
+               [QLineEdit * le = NULL; le->setInputMask(0);],
+               [sim_cv_exists_qlineedit_setinputmask=true],
+               [sim_cv_exists_qlineedit_setinputmask=false])])
+
+if $sim_cv_exists_qlineedit_setinputmask; then
+  AC_DEFINE([HAVE_QLINEEDIT_SETINPUTMASK], 1,
+            [Define this if QLineEdit::setInputMask() is available])
+fi
+]) # SIM_AC_QLINEEDIT_HASSETINPUTMASK
+
+
+
+# SIM_AC_HAVE_QT_FRAMEWORK
+# ----------------------
+#
+# Determine whether Qt is installed as a Mac OS X framework.  
+#
+# Uses the variable $sim_ac_qt_framework_dir which should either 
+# point to /Library/Frameworks or $QTDIR/lib. 
+#
+# Sets sim_ac_have_qt_framework to true if Qt is installed as 
+# a framework, and to false otherwise. 
+#
+# Author: Karin Kosina, <kyrah@sim.no>.
+
+AC_DEFUN([SIM_AC_HAVE_QT_FRAMEWORK], [
+case $host_os in
+  darwin*)
+    # First check if framework exists in the specified location, then
+    # try to actually link against the framework. This precaution is
+    # needed to catch the case where Qt-4 is installed in the default
+    # location /Library/Frameworks, but the user wants to override it
+    # by setting QTDIR to point to a non-framework install.
+    if test -d $sim_ac_qt_framework_dir/QtCore.framework; then
+      sim_ac_save_ldflags_fw=$LDFLAGS 
+      LDFLAGS="$LDFLAGS -F$sim_ac_qt_framework_dir -framework QtCore"
+      AC_CACHE_CHECK(
+        [whether Qt is installed as a framework],
+        sim_ac_have_qt_framework,
+        [AC_TRY_LINK([#include <QtCore/qglobal.h>],
+                 [],
+                 [sim_ac_have_qt_framework=true],
+                 [sim_ac_have_qt_framework=false])
+        ])
+        LDFLAGS=$sim_ac_save_ldflags_fw
+    else 
+      sim_ac_have_qt_framework=false
+    fi 
+    ;;
+  *)
+    sim_ac_have_qt_framework=false
+    ;;
+esac
 ])
 
