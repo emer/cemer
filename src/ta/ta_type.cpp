@@ -439,6 +439,11 @@ bool taMisc::check_quiet;
 bool taMisc::check_confirm_success;
 bool taMisc::check_ok;
 
+#ifndef NO_TA_BASE
+String_PArray* taMisc::deferred_schema_names; 
+UserDataItem_List* taMisc::deferred_schema_items; 
+#endif
+
 #ifdef TA_GUI
 QMainWindow* taMisc::console_win = NULL;
 #endif
@@ -801,7 +806,53 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
       md->addr();
     }
   }
+  // add any Schema that couldn't be added earlier
+  AddDeferredUserDataSchema();
   // other stuff could happen here..
+}
+
+void taMisc::AddUserDataSchema(const String& type_name, UserDataItemBase* item) {
+  // calls could come very early in startup, even before .types or its contents
+  // are created (static data gets created in "random" order in C++)
+  // so we will add now if the type exists, otherwise we add to a deferred list
+  TypeDef* typ = NULL;
+  if (&types) {
+    typ = types.FindName(type_name);
+  }
+  if (typ) {
+    typ->AddUserDataSchema(item);
+  } else { // too early, or bad type_name
+    if (!deferred_schema_names) {
+      deferred_schema_names = new String_PArray;
+      deferred_schema_items = new UserDataItem_List;
+    }
+    taBase::Ref(item); // extra ref so doesn't get deleted later
+    deferred_schema_names->Add(type_name);
+    deferred_schema_items->Link(item); // don't do the owner thang...
+  }
+}
+
+void taMisc::AddDeferredUserDataSchema() {
+  if (!deferred_schema_names) return;
+  String type_name;
+  while (deferred_schema_names->size > 0) {
+    type_name = deferred_schema_names->Pop();
+    //note: has an extra refn, so not deleted on Pop
+    UserDataItemBase* item = deferred_schema_items->Pop();
+    TypeDef* typ = types.FindName(type_name);
+    if (typ) {
+      typ->AddUserDataSchema(item);
+    } else {
+      Warning("Type:", type_name, " not found trying to add UserDataSchema for key:",
+        item->name);
+    }
+    taBase::UnRef(item); // only deleted if not added to new list
+  }
+  // don't need these anymore
+  delete deferred_schema_names;
+  deferred_schema_names = NULL;
+  delete deferred_schema_items;
+  deferred_schema_items = NULL;
 }
 
 #ifdef DMEM_COMPILE
@@ -2576,12 +2627,13 @@ void MemberDef::Copy(const MemberDef& cp) {
   show_tree = 0;
 }
 
-#ifdef TA_NO_GUI // Qt version is in ta_type_qt.cc
 MemberDef::~MemberDef() {
 #ifndef NO_TA_BASE
+# ifndef NO_TA_GUI
+  if (im != NULL) {delete im; im = NULL;}
+# endif
 #endif
 }
-#endif // def TA_NO_GUI
 
 bool MemberDef::CheckList(const String_PArray& lst) const {
   int i;
@@ -2986,6 +3038,7 @@ void TypeDef::Initialize() {
   is_subclass = false;
   instance = NULL;
   defaults = NULL;
+  schema = NULL;
 #endif
 
   parents.name = "parents";
@@ -3083,6 +3136,7 @@ void TypeDef::Copy(const TypeDef& cp) {
 #else
   is_subclass	= cp.is_subclass;
   instance	= cp.instance ;
+  //TODO: copy the schema
 // don't copy the tokens..
 #endif
   c_name	= cp.c_name;
@@ -3117,18 +3171,34 @@ void TypeDef::Copy(const TypeDef& cp) {
   UpdateMDTypes(cp.sub_types, sub_types); // since sub-types are new, point to them
 }
 
-#ifdef TA_NO_GUI // note: Qt version is in ta_type_qt.cc
 TypeDef::~TypeDef() {
 #ifndef NO_TA_BASE
-  if(defaults != NULL) {
+  if (defaults) {
     taBase::UnRef(defaults);
     defaults = NULL;
   }
-#endif
+  if (schema) {
+    delete schema;
+    schema = NULL;
+  }
+# ifndef NO_TA_GUI
+  if (it) {delete it; it = NULL;}
+  if (ie) {delete ie; ie = NULL;}
+  if (iv) {delete iv; iv = NULL;}
+# endif // !NO_TA_GUI
+#endif // !NO_TA_BASE
   if((owner == &taMisc::types) && !taMisc::not_constr) // destroying..
     taMisc::not_constr = true;
 }
-#endif // TA_NO_GUI
+
+#ifndef NO_TA_BASE
+void TypeDef::AddUserDataSchema(UserDataItemBase* item) {
+  if (!schema) {
+    schema = new UserDataItem_List;
+  }
+  schema->Add(item);
+}
+#endif
 
 void TypeDef::CleanupCats(bool save_last) {
   if(save_last) {

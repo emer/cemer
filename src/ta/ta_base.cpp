@@ -3218,4 +3218,26 @@ int SArg_Array::Dump_Load_Value(istream& strm, TAPtr par) {
 }
 
 
+//////////////////////////
+// UserDataItemBase	//
+//////////////////////////
+
+UserDataItemBase::UserDataItemBase(const String& type_name, const String& key_) 
+:inherited()
+{
+  name = key_;
+  taMisc::AddUserDataSchema(type_name, this);
+}
+
+//////////////////////////
+// UserDataItem	//
+//////////////////////////
+
+UserDataItem::UserDataItem(const String& type_name, const String& key_,
+  const Variant& value_,  const String& desc_)
+:inherited(type_name, key_)
+{
+  value = value_;
+  desc = desc_;
+}
 

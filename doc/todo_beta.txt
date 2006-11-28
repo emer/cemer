@@ -6,7 +6,6 @@ test
 --------------------------
 Brad:
 
-
 * program dirty not getting set -- init not recompiling: brad
 
 * netview bugs:
@@ -89,6 +88,9 @@ trac bugs of High priority or higher
   order matters.
 
 * complete port to Windows, including plugins
+
+--------------------------
+Brad: (done)
 
 --------------------------
 Randy: (active list in src/leabra/TODO)

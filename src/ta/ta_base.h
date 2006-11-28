@@ -691,25 +691,25 @@ protected:  // Impl
   ///////////////////////////////////////////////////////////////////////////
   //	User Data: optional configuration settings for objects
 public:
-  
-  virtual UserDataItem_List* GetUserDataList(bool force_create = false) const {return NULL;}
-  // #IGNORE gets the userdatalist for this class
-  virtual bool		HasUserData(const String& name) const;
-  // #IGNORE returns true if UserData exists for this name (case sens)
-  virtual const Variant	GetUserData(const String& name) const;
-  // #IGNORE get specified user data; nilVariant if not present or class doesn't support user data
-  inline bool		GetUserDataAsBool(const String& name) const
-    {return GetUserData(name).toBool();} // #IGNORE strongly-typed convenience accessor
-  inline int		GetUserDataAsInt(const String& name) const
-    {return GetUserData(name).toInt();} // #IGNORE strongly-typed convenience accessor
-  inline float		GetUserDataAsFloat(const String& name) const
-    {return GetUserData(name).toFloat();} // #IGNORE strongly-typed convenience accessor
-  inline double		GetUserDataAsDouble(const String& name) const
-    {return GetUserData(name).toDouble();} // #IGNORE strongly-typed convenience accessor
-  inline const String	GetUserDataAsString(const String& name) const
-    {return GetUserData(name).toString();} // #IGNORE strongly-typed convenience accessor
-  virtual void		SetUserData(const String& name, const Variant& value);
-  // #IGNORE set user data; NOTE: class must support user data
+  virtual UserDataItem_List* GetUserDataList(bool force_create = false) const
+    {return NULL;}
+  // #CAT_UserData #EXPERT gets the userdatalist for this class
+  virtual bool		HasUserData(const String& key) const;
+  // #CAT_UserData #EXPERT returns true if UserData exists for this key (case sens)
+  virtual const Variant	GetUserData(const String& key) const;
+  // #CAT_UserData get specified user data; returns class default value if not present, or nilVariant if no default user data or class doesn't support UserData
+  inline bool		GetUserDataAsBool(const String& key) const
+    {return GetUserData(key).toBool();} // #CAT_UserData #EXPERT get specified user data as bool (see GetUserData)
+  inline int		GetUserDataAsInt(const String& key) const
+    {return GetUserData(key).toInt();} // #CAT_UserData #EXPERT get specified user data as int (see GetUserData)
+  inline float		GetUserDataAsFloat(const String& key) const
+    {return GetUserData(key).toFloat();} // #CAT_UserData #EXPERT get specified user data as float (see GetUserData)
+  inline double		GetUserDataAsDouble(const String& key) const
+    {return GetUserData(key).toDouble();} // #CAT_UserData #EXPERT get specified user data as double (see GetUserData)
+  inline const String	GetUserDataAsString(const String& key) const
+    {return GetUserData(key).toString();} // #CAT_UserData #EXPERT get specified user data as String (see GetUserData)
+  virtual void		SetUserData(const String& key, const Variant& value);
+  // #CAT_UserData #EXPERT set user data; ignored if class does not support user data
 
   bool		HasOption(const char* op) const
   { return GetTypeDef()->HasOption(op); }
@@ -1876,6 +1876,8 @@ public:
   bool	SetName(const String& value) {name = value; return true;}
   String GetName() const {return name;}
   TA_BASEFUNS(UserDataItemBase)
+protected:
+  UserDataItemBase(const String& type_name, const String& key); // for schema constructors
 private:
   void Initialize() {}
   void Destroy() {}
@@ -1886,12 +1888,17 @@ class TA_API UserDataItem: public UserDataItemBase {
 INHERITED(UserDataItemBase)
 public:
   Variant		value;
+  String		desc; // optional description (typ. used for schema, not items)
   
   override bool		isSimple() const {return true;}
   override const Variant valueAsVariant() const {return value;}
   override bool		setValueAsVariant(const Variant& v) {value = v; return true;}
   
+  override String	GetDesc() const {return desc;}
   TA_BASEFUNS(UserDataItem)
+  UserDataItem(const String& type_name, const String& key, const Variant& value,
+    const String& desc = _nilString);
+  // #IGNORE constructor for creating static (compile-time) schema instances
 private:
   void Initialize() {}
   void Destroy() {}

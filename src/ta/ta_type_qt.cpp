@@ -108,26 +108,3 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
   }
   return m;
 }
-
-MemberDef::~MemberDef() {
-#ifndef NO_TA_BASE
-  if (im != NULL) delete im;
-  im = NULL;
-#endif
-}
-
-TypeDef::~TypeDef() {
-#ifndef NO_TA_BASE
-  if (it != NULL) delete it;
-  if (ie != NULL) delete ie;
-  it = NULL;
-  ie = NULL;
-  if (defaults != NULL) {
-    taBase::UnRef(defaults);
-    defaults = NULL;
-  }
-#endif
-  if((owner == &taMisc::types) && !taMisc::not_constr) // destroying..
-    taMisc::not_constr = true;
-}
-

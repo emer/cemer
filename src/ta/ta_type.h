@@ -286,6 +286,10 @@ public:
 };
 
 #ifndef NO_TA_BASE
+
+class UserDataItem_List;
+class UserDataItemBase;
+
 enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing 
   CO_PROCEED,		// tells caller to proceed with operation (typical default)
   CO_CANCEL,		// client can set this to tell caller to cancel the operation
@@ -693,6 +697,13 @@ friend class InitProcRegistrar;
   // #CAT_Args check if there is an arg that contains string fragment in its value
   static String	FindArgValContains(const String& vl);
   // #CAT_Args get full arg value that contains string fragment
+  static void	AddUserDataSchema(const String& type_name, UserDataItemBase* item); 
+  // #CAT_UserData adds the item as schema, putting on deferred list if type not avail yet
+  static void	AddDeferredUserDataSchema(); // #IGNORE call during init to resolve
+protected:
+  static String_PArray* deferred_schema_names; // for early startup if type not defined yet
+  static UserDataItem_List* deferred_schema_items; // for early startup if type not defined yet
+public:
 #endif // NO_TA_BASE
 
   /////////////////////////////////////////////////
@@ -1531,6 +1542,7 @@ public:
   bool		is_subclass;	// true if is a class, and inherits from another
   void**	instance;	// pointer to the instance ptr of this type
   taBase_List*	defaults;	// default values registered for this type
+  UserDataItem_List* schema;	// default schema (only created if used)
 #endif
 
   // the following only apply to enums or classes
@@ -1684,6 +1696,7 @@ public:
   int		FindTokenR(void* addr, TypeDef*& ptr) const;
   int		FindTokenR(const char* nm, TypeDef*& ptr) const;
   // recursive search for token among children
+  void		AddUserDataSchema(UserDataItemBase* item); // adds the item as schema
 #endif
   // for token management
   void 		Register(void* it);
