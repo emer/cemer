@@ -280,7 +280,7 @@ bool taDataProc::GetDest(DataTable*& dest, DataTable* src, const String& suffix)
 }
 
 ///////////////////////////////////////////////////////////////////
-// basic copying and concatenating
+// manipulating lists of columns
 
 bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest_cols,
 			       DataOpList* src_cols) {
@@ -309,6 +309,32 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
   // note: client should do this when done with info:
 //   src_cols->ClearColumns();
 //   dest_cols->ClearColumns();
+  return true;
+}
+
+bool taDataProc::GetColIntersection(DataOpList* trg_cols, DataOpList* ref_cols) {
+  for(int i=trg_cols->size-1; i>=0; i--) {
+    DataOpEl* top = trg_cols->FastEl(i);
+    if(!ref_cols->FindName(top->col_name))
+      trg_cols->RemoveIdx(i);
+  }
+  return true;
+}
+
+
+///////////////////////////////////////////////////////////////////
+// basic copying and concatenating
+
+bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* dest_cols,
+				   DataOpList* src_cols, int dest_row, int src_row) {
+  if(!dest || !src || !dest_cols || !src_cols) return false;
+  for(int j=0;j<src_cols->size;j++) {
+    DataOpEl* sop = src_cols->FastEl(j);
+    DataOpEl* dop = dest_cols->FastEl(j);
+    DataArray_impl* sda = src->data[sop->col_idx];
+    DataArray_impl* dda = dest->data[dop->col_idx];
+    dda->CopyFromRow(dest_row, *sda, src_row);
+  }
   return true;
 }
 
@@ -1231,8 +1257,19 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
   String il1 = cssMisc::Indent(indent_level+1);
   String il2 = cssMisc::Indent(indent_level+2);
   String rval = cssMisc::Indent(indent_level) + "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";\n";
-  if(dest_data)
+  if(dest_data) {
     rval += il1 + "dcl->dest_data.ResetData(); // all data ops clear out old existing data\n";
+    rval += il1 + "DataOpList common_dest_cols; // pre-initialize, for CopyCommonCols\n";
+    rval += il1 + "DataOpList common_src_cols;\n";
+    rval += il1 + "DataOpList common_dest_cols_named; // only the cols named in dest_cols\n";
+    rval += il1 + "DataOpList common_src_cols_named;  // only the cols named in src_cols\n";
+    rval += il1 + "taDataProc::GetCommonCols(dcl->dest_data, dcl->src_data, common_dest_cols, common_src_cols);\n";
+    rval += il1 + "common_dest_cols_named = common_dest_cols; common_src_cols_named = common_src_cols;\n";
+    rval += il1 + "taDataProc::GetColIntersection(common_dest_cols_named, dcl->dest_cols);\n";
+    rval += il1 + "taDataProc::GetColIntersection(common_dest_cols_named, dcl->src_cols);\n";
+    rval += il1 + "taDataProc::GetColIntersection(common_src_cols_named, dcl->dest_cols);\n";
+    rval += il1 + "taDataProc::GetColIntersection(common_src_cols_named, dcl->src_cols);\n";
+  }    
   
   rval += il1 + "for(int src_row=0; src_row < dcl->src_data.rows; src_row++) {\n";
   for(int i=0;i<src_cols.size; i++) {
@@ -1280,8 +1317,7 @@ String DataCalcAddDestRow::GetDisplayName() const {
   return rval;
 }
 
-void DataCalcAddDestRow::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataCalcAddDestRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
   if(!dcl->src_data || !dcl->src_data->isDestroying())
@@ -1289,6 +1325,16 @@ void DataCalcAddDestRow::UpdateAfterEdit() {
   if(!dcl->dest_data || !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
+
+void DataCalcAddDestRow::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  GetDataPtrsFmLoop();
+}
+
+void DataCalcAddDestRow::InitLinks() {
+  inherited::InitLinks();
+  GetDataPtrsFmLoop();
+}  
 
 void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
@@ -1340,8 +1386,7 @@ String DataCalcSetDestRow::GetDisplayName() const {
   return rval;
 }
 
-void DataCalcSetDestRow::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataCalcSetDestRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
   if(!dcl->src_data || !dcl->src_data->isDestroying())
@@ -1349,6 +1394,16 @@ void DataCalcSetDestRow::UpdateAfterEdit() {
   if(!dcl->dest_data || !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
+
+void DataCalcSetDestRow::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  GetDataPtrsFmLoop();
+}
+
+void DataCalcSetDestRow::InitLinks() {
+  inherited::InitLinks();
+  GetDataPtrsFmLoop();
+}  
 
 void DataCalcSetDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
@@ -1370,11 +1425,14 @@ const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) return "// DataCalcSetDestRow Error -- DataCalcLoop not found!!\n";
 
+  String il = cssMisc::Indent(indent_level);
+
   String rval;
+  rval += il + "if(dcl->dest_data.rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }\n";
   dcl->dest_cols.GetColumns(dcl->dest_data);
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
-    rval += cssMisc::Indent(indent_level) + "dcl->dest_data.SetValAsVar(" +
+    rval += il + "dcl->dest_data.SetValAsVar(" +
       "d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
   }
   dcl->dest_cols.ClearColumns();
@@ -1399,8 +1457,7 @@ String DataCalcSetSrcRow::GetDisplayName() const {
   return rval;
 }
 
-void DataCalcSetSrcRow::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataCalcSetSrcRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
   if(!dcl->src_data || !dcl->src_data->isDestroying())
@@ -1408,6 +1465,16 @@ void DataCalcSetSrcRow::UpdateAfterEdit() {
   if(!dcl->dest_data || !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
+
+void DataCalcSetSrcRow::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  GetDataPtrsFmLoop();
+}
+
+void DataCalcSetSrcRow::InitLinks() {
+  inherited::InitLinks();
+  GetDataPtrsFmLoop();
+}  
 
 void DataCalcSetSrcRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
@@ -1432,6 +1499,78 @@ const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
       "s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
   }
   dcl->dest_cols.ClearColumns();
+  return rval;
+}
+
+/////////////////////////////////////////////////////////
+//   data calc copy common cols
+/////////////////////////////////////////////////////////
+
+void DataCalcCopyCommonCols::Initialize() {
+  only_named_cols = false;
+}
+
+String DataCalcCopyCommonCols::GetDisplayName() const {
+  String rval = "Copy Common Cols from: ";
+  if(src_data)
+    rval += src_data->name;
+  else
+    rval += "ERR! src_data is NULL";
+  rval += " to: ";
+  if(dest_data)
+    rval += dest_data->name;
+  else
+    rval += "ERR! dest_data is NULL";
+  return rval;
+}
+
+void DataCalcCopyCommonCols::GetDataPtrsFmLoop() {
+  DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
+  if(!dcl || dcl->isDestroying()) return;
+  if(!dcl->src_data || !dcl->src_data->isDestroying())
+    src_data = dcl->src_data;
+  if(!dcl->dest_data || !dcl->dest_data->isDestroying())
+    dest_data = dcl->dest_data;
+}
+
+void DataCalcCopyCommonCols::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  GetDataPtrsFmLoop();
+}
+
+void DataCalcCopyCommonCols::InitLinks() {
+  inherited::InitLinks();
+  GetDataPtrsFmLoop();
+}  
+
+void DataCalcCopyCommonCols::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
+  if(!dcl) {
+    if(!quiet) taMisc::CheckError("DataCalcCopyCommonCols: parent DataCalcLoop not found in:",
+				  GetPath());
+    rval = false;
+  }
+  if(dcl && !dcl->dest_data) {		// not ok!
+     if(!quiet) taMisc::CheckError("Error in DataCalcCopyCommonCols:",GetPath(),
+				   "DataCalcLoop::dest_data is NULL, but CopyCommonCols exists!");
+     rval = false;
+  }
+}
+
+const String DataCalcCopyCommonCols::GenCssBody_impl(int indent_level) {
+  // can assume that the dcl variable has already been declared!!
+  DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
+  if(!dcl) return "// DataCalcCopyCommonCols Error -- DataCalcLoop not found!!\n";
+
+  String il = cssMisc::Indent(indent_level);
+
+  String rval;
+  rval += il + "if(dcl->dest_data.rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }\n";
+  if(only_named_cols) 
+    rval += il + "taDataProc::CopyCommonColsRow(dcl->dest_data, dcl->src_data, common_dest_cols_named, common_src_cols_named, -1, src_row);\n";
+  else
+    rval += il + "taDataProc::CopyCommonColsRow(dcl->dest_data, dcl->src_data, common_dest_cols, common_src_cols, -1, src_row);\n";
   return rval;
 }
 

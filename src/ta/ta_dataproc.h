@@ -257,10 +257,18 @@ public:
   // #IGNORE helper function: if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix
 
   ///////////////////////////////////////////////////////////////////
-  // basic copying and concatenating
+  // manipulating lists of columns
 
   static bool	GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest_cols, DataOpList* src_cols);
-  // #CAT_Copy find common columns between dest and src by name, cell_size, and type if matrix 
+  // #CAT_ColumnLists find common columns between dest and src by name, cell_size, and type if matrix 
+  static bool	GetColIntersection(DataOpList* trg_cols, DataOpList* ref_cols);
+  // #CAT_ColumnLists get the intersection (common columns) between two lists of columns: trg_cols and ref_cols (based only on name) -- i.e., remove any columns in trg_cols that are not in the ref_cols list
+
+  ///////////////////////////////////////////////////////////////////
+  // basic copying and concatenating
+
+  static bool	CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* dest_cols, DataOpList* src_cols, int dest_row, int src_row);
+  // #CAT_Copy copy one row of data from src to dest for the common cols
   static bool	CopyCommonColData(DataTable* dest, DataTable* src);
   // #CAT_Copy copy data from src to dest for all columns that are common between the two (adds to end of data)
   static bool	AppendRows(DataTable* dest, DataTable* src);
@@ -504,9 +512,13 @@ class TA_API DataCalcAddDestRow : public DataProg {
   // add a new blank row into the dest data table (used in DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object)
 INHERITED(DataProg)
 public:
+  virtual void	GetDataPtrsFmLoop();
+  // get my data table ptrs from parent calc loop obj
+
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
-  TA_SIMPLE_BASEFUNS(DataCalcAddDestRow);
+  void	InitLinks();
+  TA_BASEFUNS(DataCalcAddDestRow);
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
@@ -520,9 +532,13 @@ class TA_API DataCalcSetDestRow : public DataProg {
   // set all the current values into the dest data table (used in DataCalcLoop -- automatically gets dest_data from outer DataCalcLoop object)
 INHERITED(DataProg)
 public:
+  virtual void	GetDataPtrsFmLoop();
+  // get my data table ptrs from parent calc loop obj
+
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
-  TA_SIMPLE_BASEFUNS(DataCalcSetDestRow);
+  void 	InitLinks();
+  TA_BASEFUNS(DataCalcSetDestRow);
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
@@ -536,9 +552,38 @@ class TA_API DataCalcSetSrcRow : public DataProg {
   // set all the current values into the src data table (used in DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)
 INHERITED(DataProg)
 public:
+  virtual void	GetDataPtrsFmLoop();
+  // get my data table ptrs from parent calc loop obj
+
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
-  TA_SIMPLE_BASEFUNS(DataCalcSetSrcRow);
+  void 	InitLinks();
+  TA_BASEFUNS(DataCalcSetSrcRow);
+protected:
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataCalcCopyCommonCols : public DataProg { 
+  // copy all of the columns from source to dest that have the same name and type
+INHERITED(DataProg)
+public:
+  bool		only_named_cols;
+  // only copy columns that are named in src_cols and dest_cols (otherwise just operates on all the datatable columns)
+
+  virtual void	GetDataPtrsFmLoop();
+  // get my data table ptrs from parent calc loop obj
+
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  void 	InitLinks();
+  SIMPLE_COPY(DataCalcCopyCommonCols);
+  COPY_FUNS(DataCalcCopyCommonCols, inherited);
+  TA_BASEFUNS(DataCalcCopyCommonCols);
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 

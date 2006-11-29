@@ -9,6 +9,9 @@ leabra todo list:
   also support float
   also check on matrix data: does it just work?
 
+ * Small suggestion, there should be a "Last" and "First" operator in the Group
+   operations.  Not urgent but I know I've used these a lot in the past.
+
 * scan_congroups in netdata netmonitor -- not getting sending layer geom.
   do quick try at this
 
