@@ -687,7 +687,8 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
   if(!Startup_MakeMainWin()) return false;
   if(!Startup_Console()) return false;
   if(!Startup_ProcessArgs()) return false;
-  QCoreApplication::processEvents();
+//TODO: shouldn't call event loop yet, because we haven't initialized main event loop!
+//  QCoreApplication::processEvents();
   return true;
 }
 

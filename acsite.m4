@@ -4441,7 +4441,7 @@ if $sim_ac_with_qt; then
     sim_ac_QTDIR_cppflags=
     sim_ac_QTDIR_ldflags=
     if test -n "$sim_ac_qtdir"; then
-      sim_ac_QTDIR_cppflags="-I$sim_ac_qtdir/include -I$sim_ac_qtdir/include/qt4/"
+      sim_ac_QTDIR_cppflags="-I$sim_ac_qtdir/include -I$sim_ac_qtdir/include/Qt/ -I$sim_ac_qtdir/include/Qt3Support/ -I$sim_ac_qtdir/include/ -I$sim_ac_qtdir/include/QtCore/ -I$sim_ac_qtdir/include/QtGui/ -I$sim_ac_qtdir/include/QtNetwork/ -I$sim_ac_qtdir/include/QtOpenGL/ -I$sim_ac_qtdir/include/QtSql/ -I$sim_ac_qtdir/include/QtXml/"
       sim_ac_QTDIR_ldflags="-L$sim_ac_qtdir/lib"
       CPPFLAGS="$sim_ac_QTDIR_cppflags $CPPFLAGS"
       LDFLAGS="$LDFLAGS $sim_ac_QTDIR_ldflags"
