@@ -14,6 +14,7 @@ Brad:
 
 * Fix tabs & auto-apply edits
   ? add "pin/unpin" capability to panels, and extend panel tab context menu 
+  * when clicking an existing item, focus that tab, don't show in the new tab (maybe?)
 
 trac bugs of High priority or higher
 
@@ -87,9 +88,13 @@ trac bugs of High priority or higher
   list each time selection is updated and activate actions that match.  
   order matters.
 
+* "Primary Children" -- provide a way to let an object directly express children
+  in a subsidiary list, ex. the cols in a datatable, child specs in a spec, etc.
+
 * Datatable bugs and usability
   * annoying up/down control: either fix, or (preferably) replace with field
   * consider the row-oriented editor (one field per column)
+  * hide the .data cols list, and add a main panel button view that lists the cols
 
 * complete port to Windows, including plugins
 
