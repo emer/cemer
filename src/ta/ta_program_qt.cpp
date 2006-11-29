@@ -934,10 +934,12 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("calc",
     tabMisc::root->GetTemplateInstance(&TA_DataCalcLoop)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("add row",
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("+dest row",
     tabMisc::root->GetTemplateInstance(&TA_DataCalcAddDestRow)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("set row",
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("=dest row",
     tabMisc::root->GetTemplateInstance(&TA_DataCalcSetDestRow)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("=src row",
+    tabMisc::root->GetTemplateInstance(&TA_DataCalcSetSrcRow)));
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);
