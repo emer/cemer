@@ -4106,7 +4106,7 @@ AC_DEFUN([BNV_PATH_QT_DIRECT],
     # Look for the header file in a standard set of common directories.
     bnv_include_path_list="
       /usr/include
-      `ls -dr ${QTDIR}/include 2>/dev/null`
+      `ls -dr ${QTDIR}/include/QtCore 2>/dev/null`
       `ls -dr /usr/include/qt* 2>/dev/null`
       `ls -dr /usr/lib/qt*/include 2>/dev/null`
       `ls -dr /usr/local/qt*/include 2>/dev/null`
@@ -4607,78 +4607,18 @@ if $sim_ac_with_qt; then
         ##
         ## * "-lQtGui -lQt3Support": Qt 4 on UNIX-like systems (with some
         ##   obsoleted Qt 3 widgets)
-        ##
-        ## * "-lqt-gl": links against the standard Debian version of the
-        ##   Qt library with embedded QGL
-        ##
-        ## * "-lqt": should work for most UNIX(-derived) platforms on
-        ##   dynamic and static linking with the non-mtsafe library
-        ##
-        ## * "-lqt-mt": should work for most UNIX(-derived) platforms on
-        ##   dynamic and static linking with the mtsafe library
-        ##
-        ## * "-lqt{version} -lqtmain -lgdi32": w/QT_DLL defined should
-        ##   cover dynamic Enterprise Edition linking on Win32 platforms
-        ##
-        ## * "-lqt -lqtmain -lgdi32": ...unless the {version} suffix is missing,
-        ##   which we've had reports about
-        ##
-        ## * "-lqt-mt{version} -lqtmain -lgdi32": w/QT_DLL defined should
-        ##   cover dynamic multi-thread Enterprise Edition linking on Win32
-        ##   platforms
-        ##
-        ## * "-lqt-mt{version}nc -lqtmain -lgdi32": w/QT_DLL defined should
-        ##   cover dynamic Non-Commercial Edition linking on Win32 platforms
-        ##
-        ## * "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32": should cover
-        ##   static linking on Win32 platforms
-        ##
-        ## * "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32":
-        ##   added for the benefit of the Qt 3.0.0 Evaluation Version
-        ##   (update: "advapi32.lib" seems to be a new dependency for Qt 3.1.0)
-        ##   (update: "ws2_32.lib" seems to be a new dependency for Qt 3.1.2)
-        ##
-        ## * "-lqt-mt-eval": the Qt/Mac evaluation version
-        ##
-        ## * "-lqt-mtnc{version}": the non-commercial Qt version that
-        ##   comes on the CD with the book "C++ Gui Programming with Qt 3"
-        ##   (version==321 there)
-
-        ## FIXME: could probably improve check to not have to go through
-        ## all of the above. See bug item #028 in SoQt/BUGS.txt.
-        ## 20040805 mortene.
 
         sim_ac_qt_suffix=
-        if $sim_ac_qt_debug; then
-          sim_ac_qt_suffix=d
-        fi
-
-        # Note that we need to always check for -lqt-mt before -lqt, because
-        # at least the most recent Debian platforms (as of 2003-02-20) comes
-        # with a -lqt which is missing QGL support, while it also has a
-        # -lqt-mt *with* QGL support. The reason for this is because the
-        # default GL (Mesa) library on Debian is built in mt-safe mode,
-        # so a non-mt-safe Qt can't use it.
-
-
+        ##NOTE: BA 2006-11-28 -- we can't use Qt3 so don't try to support them
+        ## also, we only have the _debug ones on the Mac
+        ##if $sim_ac_qt_debug; then
+        ##  sim_ac_qt_suffix=d
+        ##fi
 
         for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
           for sim_ac_qt_libcheck in \
-              "-lQtGui${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtCore${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQt3Support${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtNetwork${sim_ac_qt_suffix}${sim_ac_qt_major_version} -lQtOpenGL${sim_ac_qt_suffix}${sim_ac_qt_major_version}" \
-              "-lQtGui -lQt3Support -lQtNetwork -lQtOpenGL -lQtCore" \
-              "-lqt-gl" \
-              "-lqt-mt" \
-              "-lqt" \
-              "-lqt-mt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32 -lwinspool -lwinmm -ladvapi32 -lws2_32" \
-              "-lqt-mt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-              "-lqt-mt${sim_ac_qt_version}nc${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-              "-lqt-mtedu${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-              "-lqt -lqtmain -lgdi32" \
-              "-lqt${sim_ac_qt_version}${sim_ac_qt_suffix} -lqtmain -lgdi32" \
-              "-lqt -luser32 -lole32 -limm32 -lcomdlg32 -lgdi32" \
-              "-lqt-mt-eval" \
-              "-lqt-mteval${sim_ac_qt_version}" \
-              "-lqt-mtnc${sim_ac_qt_version}"
+               "-lQtGui_debug -lQt3Support_debug -lQtNetwork_debug -lQtOpenGL_debug -lQtCore_debug" \
+             "-lQtGui -lQt3Support -lQtNetwork -lQtOpenGL -lQtCore" 
           do
             if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
               CPPFLAGS="$sim_ac_QTDIR_cppflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"

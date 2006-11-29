@@ -87,6 +87,10 @@ trac bugs of High priority or higher
   list each time selection is updated and activate actions that match.  
   order matters.
 
+* Datatable bugs and usability
+  * annoying up/down control: either fix, or (preferably) replace with field
+  * consider the row-oriented editor (one field per column)
+
 * complete port to Windows, including plugins
 
 --------------------------
