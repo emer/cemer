@@ -1,7 +1,9 @@
 leabra todo list:
 
 * relnet stat & adaptation of lay act_pct and wtscale.
-  * monitor does not pickup Layer or layer.projections for projection-level data.
+  * not getting multiple relnets for multiple prjns
+  * geom for recvcons is only being set for one (last) unit -- need layer geom there
+    too..
 
 * dataops: group mean/sse: int columns not being processed properly: convert to double?
   also support float

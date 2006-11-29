@@ -67,6 +67,9 @@ public:
   virtual void 	ClearColumns();
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
+  virtual void	AddAllColumns(DataTable* dt);
+  // #CAT_DataOp #BUTTON add all columns from given data table
+
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS(DataOpList);
 private:
@@ -87,6 +90,9 @@ public:
   // #CAT_DataOp get the column pointers for given data table (looking up by name)
   virtual void 	ClearColumns() { ops.ClearColumns(); }
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
+
+  virtual void	AddAllColumns(DataTable* dt) { ops.AddAllColumns(dt); }
+  // #CAT_DataOp #BUTTON add all columns from given data table
 
   TA_SIMPLE_BASEFUNS(DataOpBaseSpec);
 private:
@@ -151,8 +157,6 @@ class TA_API DataGroupSpec : public DataOpBaseSpec {
   // #CAT_Data a datatable grouping specification (list of group elements)
 INHERITED(DataOpBaseSpec)
 public:
-
-  // todo: add a function to add remaining columns..
 
   TA_SIMPLE_BASEFUNS(DataGroupSpec);
 private:
@@ -251,6 +255,16 @@ public:
   
   static bool	GetDest(DataTable*& dest, DataTable* src, const String& suffix);
   // #IGNORE helper function: if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix
+
+  ///////////////////////////////////////////////////////////////////
+  // basic copying and concatenating
+
+  static bool	GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest_cols, DataOpList* src_cols);
+  // #CAT_Copy find common columns between dest and src by name, cell_size, and type if matrix 
+  static bool	CopyCommonColData(DataTable* dest, DataTable* src);
+  // #CAT_Copy copy data from src to dest for all columns that are common between the two (adds to end of data)
+  static bool	AppendRows(DataTable* dest, DataTable* src);
+  // #CAT_Copy append rows of src to the end of dest (structure must be the same -- more efficient than CopyCommonColData when this is true)
 
   ///////////////////////////////////////////////////////////////////
   // reordering functions
@@ -357,6 +371,9 @@ INHERITED(DataProg)
 public:
   DataSortSpec		sort_spec; // #SHOW_TREE data sorting specification
 
+  virtual void	AddAllColumns();
+  // #BUTTON add all columns from src_data to the sort_spec list of ops columns 
+
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSortProg);
@@ -374,6 +391,9 @@ class TA_API DataGroupProg : public DataProg {
 INHERITED(DataProg)
 public:
   DataGroupSpec		group_spec; // #SHOW_TREE data grouping specification
+
+  virtual void	AddAllColumns();
+  // #BUTTON add all columns from src_data to the group_spec list of ops columns 
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -393,6 +413,9 @@ INHERITED(DataProg)
 public:
   DataSelectSpec	select_spec; // #SHOW_TREE data selection specification
 
+  virtual void	AddAllColumns();
+  // #BUTTON add all columns from src_data to the select_spec list of ops columns 
+
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
@@ -410,6 +433,9 @@ class TA_API DataSelectColsProg : public DataProg {
 INHERITED(DataProg)
 public:
   DataOpList		select_spec; // #SHOW_TREE columns to select
+
+  virtual void	AddAllColumns();
+  // #BUTTON add all columns from src_data to the select_spec list of ops columns 
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -443,7 +469,7 @@ private:
 };
 
 class TA_API DataCalcLoop : public DataProg { 
-  // enables arbitrary calculations and operations on data by looping row-by-row
+  // enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
 INHERITED(DataProg)
 public:
   DataOpList		src_cols;
@@ -451,6 +477,11 @@ public:
   DataOpList		dest_cols;
   // destination columns to operate on (variables are labeled as d_xxx where xxx is col_name)
   ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
+
+  virtual void	AddAllSrcColumns();
+  // #BUTTON add all columns from src_data to the src_cols list of columns 
+  virtual void	AddAllDestColumns();
+  // #BUTTON add all columns from dest_data to the dest_cols list of columns 
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -492,6 +523,22 @@ public:
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataCalcSetDestRow);
+protected:
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataCalcSetSrcRow : public DataProg { 
+  // set all the current values into the src data table (used in DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)
+INHERITED(DataProg)
+public:
+  override String GetDisplayName() const;
+  void 	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DataCalcSetSrcRow);
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 

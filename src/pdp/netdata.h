@@ -283,6 +283,7 @@ protected:
   void	ScanObject_Network(Network* net, String var);
   void	ScanObject_Layer(Layer* lay, String var);
   void	ScanObject_Projection(Projection* p, String var);
+  void	ScanObject_ProjectionGroup(Projection_Group* p, String var);
   void	ScanObject_UnitGroup(Unit_Group* ug, String var, bool mk_col = false);
   void	ScanObject_Unit(Unit* u, String var, Projection* p = NULL, bool mk_col = false);
   void	ScanObject_RecvCons(RecvCons_List* cg, String var, Projection* p = NULL);

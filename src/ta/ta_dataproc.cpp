@@ -71,7 +71,7 @@ void DataOpEl::SetDataTable(DataTable* dt) {
 }
 
 void DataOpEl::GetColumns(DataTable* dt) {
-  if(dt == NULL) return;
+  if(!dt) return;
   DataArray_impl* da = dt->FindColName(col_name, col_idx);
   if(col_idx < 0) da = NULL;	// just to be sure..
   taBase::SetPointer((taBase**)&column, da);
@@ -109,6 +109,19 @@ void DataOpList::ClearColumns() {
     ds->ClearColumns();
   }
 }
+
+void DataOpList::AddAllColumns(DataTable* dt) {
+  if(!dt) return;
+  for(int i=0;i<dt->data.size; i++) {
+    DataArray_impl* da = dt->data[i];
+    DataOpEl* dop = FindName(da->name);
+    if(dop) continue;
+    dop = (DataOpEl*)New(1);
+    dop->col_name = da->name;
+  }
+  SetDataTable(dt);
+}
+
 
 void DataOpBaseSpec::Initialize() {
 }
@@ -265,6 +278,77 @@ bool taDataProc::GetDest(DataTable*& dest, DataTable* src, const String& suffix)
   dest->name = src->name + "_" + suffix;
   return true;
 }
+
+///////////////////////////////////////////////////////////////////
+// basic copying and concatenating
+
+bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest_cols,
+			       DataOpList* src_cols) {
+  if(!dest || !src) return false;
+  src_cols->Reset(); dest_cols->Reset();
+  src_cols->AddAllColumns(src);
+  src_cols->GetColumns(src);
+  for(int i=0; i<src_cols->size;i++) {
+    DataOpEl* sop = src_cols->FastEl(i);
+    int d_idx;
+    DataArray_impl* dda = dest->FindColName(sop->col_name, d_idx);
+    if(!dda) {
+      src_cols->RemoveIdx(i); i--;
+      continue;
+    }
+    DataArray_impl* sda = src->data[sop->col_idx];
+    if(dda->cell_size() != sda->cell_size()) continue; // incompatible
+    if(sda->cell_size() > 1) {
+      if(sda->valType() != dda->valType()) continue; // must be compatible var types
+    }
+    DataOpEl* dop = (DataOpEl*)dest_cols->New(1);
+    dop->SetDataTable(dest);
+    dop->col_name = dda->name;
+    dop->col_idx = d_idx;
+  }
+  // note: client should do this when done with info:
+//   src_cols->ClearColumns();
+//   dest_cols->ClearColumns();
+  return true;
+}
+
+bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
+  if(!dest || !src) return false;
+  DataOpList dest_cols;
+  DataOpList src_cols;
+  GetCommonCols(dest, src, &dest_cols, &src_cols);
+  for(int i=0;i<src->rows;i++) {
+    dest->AddBlankRow();
+    for(int j=0;j<src_cols.size;j++) {
+      DataOpEl* sop = src_cols.FastEl(j);
+      DataOpEl* dop = dest_cols.FastEl(j);
+      DataArray_impl* sda = src->data[sop->col_idx];
+      DataArray_impl* dda = dest->data[dop->col_idx];
+      dda->CopyFromRow(-1, *sda, i);
+    }
+  }
+  return true;
+}
+
+bool taDataProc::AppendRows(DataTable* dest, DataTable* src) {
+  if(!dest || !src) return false;
+  if(dest->data.size != src->data.size) {
+    taMisc::Error("taDataProc::AppendRows -- tables do not have same number of columns -- use CopyCommonColData instead!");
+    return false;
+  }
+  for(int i=0;i<src->rows;i++) {
+    dest->AddBlankRow();
+    for(int j=0;j<src->data.size;j++) {
+      DataArray_impl* sda = src->data[j];
+      DataArray_impl* dda = dest->data[j];
+      dda->CopyFromRow(-1, *sda, i);
+    }
+  }
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////
+// reordering functions
 
 bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   // just copy and operate on dest
@@ -904,6 +988,10 @@ const String DataSortProg::GenCssBody_impl(int indent_level) {
   return rval; 
 }
 
+void DataSortProg::AddAllColumns() {
+  sort_spec.AddAllColumns(src_data);
+}
+
 /////////////////////////////////////////////////////////
 //   data selectRows prog
 /////////////////////////////////////////////////////////
@@ -941,6 +1029,10 @@ const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
     "taDataProc::SelectRows(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval; 
+}
+
+void DataSelectRowsProg::AddAllColumns() {
+  select_spec.AddAllColumns(src_data);
 }
 
 /////////////////////////////////////////////////////////
@@ -982,6 +1074,10 @@ const String DataSelectColsProg::GenCssBody_impl(int indent_level) {
   return rval; 
 }
 
+void DataSelectColsProg::AddAllColumns() {
+  select_spec.AddAllColumns(src_data);
+}
+
 /////////////////////////////////////////////////////////
 //   data group prog
 /////////////////////////////////////////////////////////
@@ -1019,6 +1115,10 @@ const String DataGroupProg::GenCssBody_impl(int indent_level) {
     "taDataProc::Group(dsp->dest_data, dsp->src_data, dsp->group_spec);\n";
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval; 
+}
+
+void DataGroupProg::AddAllColumns() {
+  group_spec.AddAllColumns(src_data);
 }
 
 /////////////////////////////////////////////////////////
@@ -1085,17 +1185,21 @@ void DataCalcLoop::UpdateAfterEdit() {
 
 void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!dest_data) {		// not ok!
-    if(!quiet) taMisc::CheckError("Error in DataCalcLoop:",GetPath(),
-				  "dest_data is NULL");
-    rval = false;
-  }
+  // ok! just as long as you don't call set dest!
+//   if(!dest_data) {		// not ok!
+//     if(!quiet) taMisc::CheckError("Error in DataCalcLoop:",GetPath(),
+// 				  "dest_data is NULL");
+//     rval = false;
+//   }
 }
 
 String DataCalcLoop::GetDisplayName() const {
   String rval = "Calc Loop ";
   if(src_data) {
     rval += " from: " + src_data->name;
+  }
+  else {
+    rval += "ERR! src_data is NULL";
   }
   if(dest_data) {
     rval += " to: " + dest_data->name;
@@ -1127,7 +1231,8 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
   String il1 = cssMisc::Indent(indent_level+1);
   String il2 = cssMisc::Indent(indent_level+2);
   String rval = cssMisc::Indent(indent_level) + "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";\n";
-  rval += il1 + "dcl->dest_data.ResetData(); // all data ops clear out old existing data\n";
+  if(dest_data)
+    rval += il1 + "dcl->dest_data.ResetData(); // all data ops clear out old existing data\n";
   
   rval += il1 + "for(int src_row=0; src_row < dcl->src_data.rows; src_row++) {\n";
   for(int i=0;i<src_cols.size; i++) {
@@ -1150,6 +1255,13 @@ const String DataCalcLoop::GenCssPost_impl(int indent_level) {
   return rval;
 }
 
+void DataCalcLoop::AddAllSrcColumns() {
+  src_cols.AddAllColumns(src_data);
+}
+void DataCalcLoop::AddAllDestColumns() {
+  dest_cols.AddAllColumns(dest_data);
+}
+
 /////////////////////////////////////////////////////////
 //   data calc add dest row
 /////////////////////////////////////////////////////////
@@ -1161,6 +1273,9 @@ String DataCalcAddDestRow::GetDisplayName() const {
   String rval = "Add Row to: ";
   if(dest_data) {
     rval += dest_data->name;
+  }
+  else {
+    rval += "ERR! dest_data is NULL";
   }
   return rval;
 }
@@ -1183,6 +1298,11 @@ void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
 				  GetPath());
     rval = false;
   }
+  if(dcl && !dcl->dest_data) {		// not ok!
+     if(!quiet) taMisc::CheckError("Error in DataCalcAddDestRow:",GetPath(),
+				   "DataCalcLoop::dest_data is NULL, but AddDestRow exists!");
+     rval = false;
+  }
 }
 
 const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
@@ -1203,7 +1323,7 @@ const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
 }
 
 /////////////////////////////////////////////////////////
-//   data calc add dest row
+//   data calc set dest row
 /////////////////////////////////////////////////////////
 
 void DataCalcSetDestRow::Initialize() {
@@ -1213,6 +1333,9 @@ String DataCalcSetDestRow::GetDisplayName() const {
   String rval = "Set Row in: ";
   if(dest_data) {
     rval += dest_data->name;
+  }
+  else {
+    rval += "ERR! dest_data is NULL";
   }
   return rval;
 }
@@ -1235,6 +1358,11 @@ void DataCalcSetDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
 				  GetPath());
     rval = false;
   }
+  if(dcl && !dcl->dest_data) {		// not ok!
+     if(!quiet) taMisc::CheckError("Error in DataCalcSetDestRow:",GetPath(),
+				   "DataCalcLoop::dest_data is NULL, but SetDestRow exists!");
+     rval = false;
+  }
 }
 
 const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
@@ -1248,6 +1376,60 @@ const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
     DataOpEl* ds = dcl->dest_cols[i];
     rval += cssMisc::Indent(indent_level) + "dcl->dest_data.SetValAsVar(" +
       "d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
+  }
+  dcl->dest_cols.ClearColumns();
+  return rval;
+}
+
+/////////////////////////////////////////////////////////
+//   data calc set src row
+/////////////////////////////////////////////////////////
+
+void DataCalcSetSrcRow::Initialize() {
+}
+
+String DataCalcSetSrcRow::GetDisplayName() const {
+  String rval = "Set Row in: ";
+  if(src_data) {
+    rval += src_data->name;
+  }
+  else {
+    rval += "ERR! src_data is NULL";
+  }
+  return rval;
+}
+
+void DataCalcSetSrcRow::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
+  if(!dcl || dcl->isDestroying()) return;
+  if(!dcl->src_data || !dcl->src_data->isDestroying())
+    src_data = dcl->src_data;
+  if(!dcl->dest_data || !dcl->dest_data->isDestroying())
+    dest_data = dcl->dest_data;
+}
+
+void DataCalcSetSrcRow::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
+  if(!dcl) {
+    if(!quiet) taMisc::CheckError("DataCalcSetSrcRow: parent DataCalcLoop not found in:",
+				  GetPath());
+    rval = false;
+  }
+}
+
+const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
+  // can assume that the dcl variable has already been declared!!
+  DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
+  if(!dcl) return "// DataCalcSetSrcRow Error -- DataCalcLoop not found!!\n";
+
+  String rval;
+  dcl->src_cols.GetColumns(dcl->src_data);
+  for(int i=0;i<dcl->src_cols.size; i++) {
+    DataOpEl* ds = dcl->src_cols[i];
+    rval += cssMisc::Indent(indent_level) + "dcl->src_data.SetValAsVar(" +
+      "s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
   }
   dcl->dest_cols.ClearColumns();
   return rval;

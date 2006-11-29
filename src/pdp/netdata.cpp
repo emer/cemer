@@ -19,6 +19,7 @@
 
 
 #include "netdata.h"
+#include "ta_geometry.h"
 
 //////////////////////
 //   LayerDataEl    //
@@ -553,7 +554,7 @@ const String NetMonItem::GetObjName(TAPtr obj, TAPtr own) {
     Layer* lay = GET_OWNER(obj, Layer);
     if (lay) {
       if (nm.empty()) {
-        int index = ((Unit_Group*)u->owner)->FindEl(u);
+        int index = u->GetMyLeafIndex();
         nm = String("[") + String(index) + "]";
       }
       nm = DotCat(lay->name, nm);;
@@ -722,8 +723,10 @@ void NetMonItem::UpdateAfterEdit() {
   if(!owner) return;
   if(!object) return;
   object_type = object->GetTypeDef();
-  if(member_var)
+  if(member_var) {
     variable = member_var->name;
+    member_var = NULL;
+  }
   if(variable.empty()) return;
   
   if (!taMisc::is_loading) {
@@ -840,6 +843,8 @@ void NetMonItem::ScanObject() {
     ScanObject_UnitGroup((Unit_Group*)object.ptr(), variable, true);
   else if (object->InheritsFrom(&TA_Projection))
     ScanObject_Projection((Projection*)object.ptr(), variable);
+  else if (object->InheritsFrom(&TA_Projection_Group))
+    ScanObject_ProjectionGroup((Projection_Group*)object.ptr(), variable);
   else if (object->InheritsFrom(&TA_Network))
     ScanObject_Network((Network*)object.ptr(), variable);
   else {
@@ -1043,6 +1048,19 @@ void NetMonItem::ScanObject_Network(Network* net, String var) {
     ScanObject_Layer(lay, var);
 }
 
+void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
+  if (ScanObject_InObject(pg, var, true)) return;
+  
+  String varname = var;
+  // String valname = GetObjName(ug) + String(".") + var;
+  String valname = name;
+
+  for(int i=0;i<pg->size;i++) {
+    Projection* prjn = pg->FastEl(i);
+    ScanObject_Projection(prjn, var);
+  }
+}
+
 void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
   if (ScanObject_InObject(prjn, var, true)) return;
   
@@ -1162,9 +1180,6 @@ void NetMonItem::ScanObject_RecvCons(RecvCons_List* mcg, String var, Projection*
   String unitname;
   //note: assume float, since really no other con types make sense, and using Variant
   // could be extremely wasteful since there are so many cons
-  MatrixChannelSpec* cs = AddMatrixChan(colname, real_val_type);
-  cs->cell_names.SetGeom(1, 0); //dynamic
-  //NOTE: we expand the cell names of the spec on the fly
   String valname;
   for(int g = 0; g < mcg->size; g++) {
     RecvCons* cg = mcg->FastEl(g);
@@ -1174,21 +1189,42 @@ void NetMonItem::ScanObject_RecvCons(RecvCons_List* mcg, String var, Projection*
     if (!md) continue;
     Unit* u = GET_OWNER(cg,Unit);
     if (!u) continue;
+    // todo: add the prjn name
+    String prjnm = colname + "_" + taMisc::StringMaxLen(cg->prjn->name.after("Fm_"), 4);
+    MatrixChannelSpec* cs = AddMatrixChan(prjnm, real_val_type);
+    cs->cell_names.SetGeom(1, 0); //dynamic
+    //NOTE: we expand the cell names of the spec on the fly
     unitname = GetObjName(u) + String("[") + String(g) + "]";
+    TwoDCoord geom_max;
+    TwoDCoord geom_min(INT_MAX, INT_MAX);
     for(int j=0; j<cg->cons.size; ++j) {
       Connection* c = cg->Cn(j);
       ptrs.Add(c);
       members.Link(md);
       valname = unitname.cat("[").cat(String(j)).cat("].").cat(var);
       AddCellName(valname);
+      Unit* su = cg->Un(j);
+      if(!su) continue;
+      geom_max.Max(su->pos);
+      geom_min.Min(su->pos);
     }
-  }
-  // if no units, then remove group, else update
-  if (cs->cell_names.size == 0) {
-    cs->Close();
-  } else {
-    cs->cell_geom = cs->cell_names.geom;
-    cs->UpdateAfterEdit();
+    // if no units, then remove group, else update
+    if (cs->cell_names.size == 0) {
+      cs->Close();
+    } else {
+      TwoDCoord net_geom = geom_max - geom_min;
+      int n_cons = cs->cell_names.geom.Product();
+      if(net_geom.Product() == n_cons) {
+	cs->cell_names.SetGeom(2, net_geom.x, net_geom.y);
+      }
+      else if(n_cons > 20) {
+	net_geom.FitN(n_cons);
+	if(net_geom.Product() == n_cons)
+	  cs->cell_names.SetGeom(2, net_geom.x, net_geom.y);
+      }
+      cs->cell_geom = cs->cell_names.geom;
+      cs->UpdateAfterEdit();
+    }
   }
 }
 
