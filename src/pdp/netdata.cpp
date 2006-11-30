@@ -825,6 +825,8 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
     }
   }
   con_geom_max += 1;		// add one for sizing
+  if((con_geom_min.x == INT_MAX) || (con_geom_min.y == INT_MAX))
+    con_geom_min = 0;
   TwoDCoord con_geom = con_geom_max - con_geom_min;
   int n_cons = con_geom.Product();
   MatrixGeom geom;
@@ -963,6 +965,8 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
     con_geom_min.Min(upos);
   }
   con_geom_max += 1;		// add one for sizing
+  if((con_geom_min.x == INT_MAX) || (con_geom_min.y == INT_MAX))
+    con_geom_min = 0;
   TwoDCoord con_geom = con_geom_max - con_geom_min;
   int n_cons = con_geom.Product();
   MatrixGeom geom;
@@ -998,6 +1002,8 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
     con_geom_min.Min(upos);
   }
   con_geom_max += 1;		// add one for sizing
+  if((con_geom_min.x == INT_MAX) || (con_geom_min.y == INT_MAX))
+    con_geom_min = 0;
   TwoDCoord con_geom = con_geom_max - con_geom_min;
   int n_cons = con_geom.Product();
   MatrixGeom geom;
