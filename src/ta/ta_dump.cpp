@@ -348,15 +348,31 @@ bool MemberDef::DumpMember(void* par) {
   TypeDef* par_typ = GetOwnerType();
   if (par && par_typ && par_typ->InheritsFrom(&TA_taBase)) {
     taBase* par_ = (taBase*)par;
-    return par_->Dump_QuerySaveMember(this); 
-  }
+    taBase::DumpQueryResult dqr = par_->Dump_QuerySaveMember(this); 
+    if (dqr == taBase::DQR_NO_SAVE) return false;
+    else if (dqr == taBase::DQR_SAVE) return true;
+    // else default, so fall through
+  } 
   
-  if((type->ptr == 0) || type->DerivesFrom(TA_taBase) ||
+  // first, check explicit rules
+  if (HasOption("SAVE"))
+    return true;
+  else if (HasOption("NO_SAVE"))
+    return false;
+  else if (HasOption("NO_SAVE_EMPTY")) {
+    void* new_base = GetOff(par);
+    return !(type->ValIsEmpty(new_base, this));
+  }
+  // embedded types (simple or objects) get saved by default
+  else if ((type->ptr == 0))
+    return true;
+  // ok, so it is a ptr -- some types get saved by default
+  else if (type->DerivesFrom(TA_taBase) ||
      type->DerivesFrom(TA_TypeDef) || type->DerivesFrom(TA_MemberDef))
     return true;
-
-  // if its a pointer object you own
-  return false;
+  else
+    // if its a pointer object you own
+    return false;
 }
 
 
@@ -564,7 +580,7 @@ int TypeDef::Dump_Save_Value(ostream& strm, void* base, void* par, int indent) {
   else */
   if (InheritsNonAtomicClass()) {
     if(HasOption("INLINE_DUMP")) {
-      strm << " " << GetValStr(base, par) << ";\n";
+      strm << " " << GetValStr(base, par, NULL, TypeDef::SC_STREAMING) << ";\n";
     }
     else {
       strm << " {\n";

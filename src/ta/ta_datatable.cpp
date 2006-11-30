@@ -147,14 +147,14 @@ int DataArray_impl::displayWidth() const {
   return rval;
 }
 
-bool DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
+taBase::DumpQueryResult DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
   if (md->name == "ar") {
     // if no save, don't need to check DataTable global
-    if (!saveToFile()) return false;
-    DataTable* dt = dataTable();
-    if (dt)
-      return dt->save_data;
-    else return true;
+    if (saveToFile()) {
+      DataTable* dt = dataTable();
+      if (dt && dt->save_data) return DQR_SAVE;
+    }
+    return DQR_NO_SAVE;
   } else return inherited::Dump_QuerySaveMember(md);
 }
 

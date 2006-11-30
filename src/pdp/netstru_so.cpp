@@ -467,9 +467,9 @@ void T3PrjnNode::init() {
   ss->addChild(trln_prjn);
 
   //color and material
-  material()->diffuseColor.setValue(SbColor(.5f, .5f, .5f)); // medium gray
+  material()->diffuseColor.setValue(SbColor(1, 1, 1)); // white
 
-  float rad = 0.01f;
+  float rad = 0.02f;
   line_prjn = new SoCylinder();
   line_prjn->radius = rad; //height is variable, depends on length
   ss->addChild(line_prjn);

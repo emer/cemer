@@ -4053,8 +4053,14 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       String rval("{");
       for(i=0; i<members.size; i++) {
 	MemberDef* md = members.FastEl(i);
-	if(md->HasOption("NO_SAVE"))
-	  continue;
+	// if streaming, do full save check, else just check for NO_SAVE
+	if (sc == SC_STREAMING) {
+	  if (!md->DumpMember(base))
+	    continue;
+	} else {
+	  if(md->HasOption("NO_SAVE"))
+	    continue;
+        }
 	rval += md->name + "=";
 	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
 	rval += md->type->GetValStr(md->GetOff(base), base, md, sc);
@@ -4305,6 +4311,90 @@ const Variant TypeDef::GetValVar(const void* base_, void*, const MemberDef* memb
   }
   // other types and degress of indirection not really supported
   return _nilVariant; 
+}
+
+bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const 
+{
+  void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
+  // if its void, odds are its a function..
+  if (InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) {
+    int lidx;
+    MethodDef* fun;
+    if(memb_def != NULL)
+      fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
+						 memb_def->lists, lidx);
+    else
+      fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
+    if (fun)
+      return false;
+    else 
+      return !(*((void**)base)); 
+  }
+  if (ptr == 0) {
+    if (DerivesFrom(TA_bool)) {
+      bool b = *((bool*)base);
+      return !b; //T_Bool
+    }
+    // note: char is generic char, and typically we won't use signed char
+    else if (DerivesFrom(TA_char)) {
+      return (*((char*)base) == '\0');
+    }
+    // note: explicit use of signed char is treated like a number
+    else if ((DerivesFrom(TA_signed_char))) {
+      return (*((signed char*)base) == 0);
+    }
+    // note: explicit use of unsigned char is "byte" in ta/pdp
+    else if ((DerivesFrom(TA_unsigned_char))) {
+      return (*((unsigned char*)base) == 0);
+    }
+    else if(DerivesFrom(TA_short)) {
+      return (*((short*)base) == 0); 
+    }
+    else if(DerivesFrom(TA_unsigned_short)) {
+      return (*((unsigned short*)base) == 0);  
+    }
+    else if(DerivesFrom(TA_int)) {
+      return (*((int*)base) == 0);
+    }
+    else if(DerivesFrom(TA_unsigned_int)) {
+      return (*((uint*)base) == 0);
+    }
+    else if(DerivesFrom(TA_int64_t)) {
+      return (*((int64_t*)base) == 0);
+    }
+    else if(DerivesFrom(TA_uint64_t)) {
+      return (*((uint64_t*)base) == 0);  // T_UInt64
+    }
+    else if(DerivesFrom(TA_float)) {
+      return (*((float*)base) == 0); // T_Double
+    }
+    else if(DerivesFrom(TA_double)) {
+      return (*((double*)base) == 0); // T_Double
+    }
+    else if(DerivesFormal(TA_enum)) {
+      return (*((int*)base) == 0); // T_Int
+    }
+    else if(DerivesFrom(TA_taString))
+      return ((*((String*)base)).empty()); // T_String
+    else if(DerivesFrom(TA_Variant)) {
+      return ((*((Variant*)base)).isDefault());
+    }
+#ifndef NO_TA_BASE
+    else if (DerivesFrom(TA_taSmartPtr)) {
+      TAPtr rbase = (TAPtr)base;
+      return !(rbase); // T_Base
+    }
+    else if (DerivesFrom(TA_taSmartRef)) {
+      TAPtr rbase = *((taSmartRef*)base);
+      return !(rbase); // T_Base
+    }
+#endif
+    // must be some other value or a class -- default to saying no to empty
+    else return false; 
+    // NOTE: other value types are not really supported, just fall through to return invalid
+  }
+  else // (ptr >= 1) 
+    return !(*((void**)base)); // only empty if NULL
 }
 
 void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 

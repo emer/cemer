@@ -1708,6 +1708,8 @@ public:
   const Variant	GetValVar(const void* base, void* par=NULL,
     const MemberDef* memb_def = NULL) const;
   // get a Variant representation of value; primarily for value types (int, etc.); NOTE: returns TAPtr types as the Base value (not a pointer to the pointer), which is usually what you want (see source for more detail)
+  bool 		ValIsEmpty(const void* base_, const MemberDef* memb_def) const;
+    // true only if value is empty, ex 0 or "" 
   void		SetValStr(const String& val, void* base, void* par=NULL,
     MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
   // set the value from a string representation

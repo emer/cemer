@@ -219,7 +219,7 @@ public:
 				 MatrixGeom& mat_idx, MatrixGeom& mat_geom);
   // decode header information for loading from text files 
 
-  override bool		Dump_QuerySaveMember(MemberDef* md); 
+  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
 
   virtual void	Copy_NoData(const DataArray_impl& cp);
   // #CAT_ObjectMgmt copy the structure of the datatable without getting all the data
@@ -228,7 +228,6 @@ public:
   
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-  TA_USERDATAFUNS(DataArray_impl)
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
   void	CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
   void 	Copy_(const DataArray_impl& cp);
@@ -553,7 +552,6 @@ public:
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
   void	UpdateAfterEdit();
-  TA_USERDATAFUNS(DataTable)
   void	InitLinks();
   void	CutLinks();
   void 	Copy_(const DataTable& cp);

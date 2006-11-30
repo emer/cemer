@@ -214,11 +214,6 @@ public:
 #define SET_POINTER(var,obj) (taBase::SetPointer((TAPtr*)&(var), (TAPtr)(obj)))
 #define DEL_POINTER(var) (taBase::DelPointer((TAPtr*)&(var)))
 
-#define TA_USERDATAFUNS(T) \
-mutable UserDataItem_ListPtr user_data_; /* #OWN_POINTER #SHOW_TREE */ \
-UserDataItem_List* GetUserDataList(bool fc = false) const { \
-if (!user_data_ && fc) {user_data_ = new UserDataItem_List; \
- taBase::Own(user_data_.ptr(), const_cast<T*>(this));} return user_data_;}
 
 /* Clipboard (Edit) operation summary
 
@@ -279,6 +274,12 @@ public:
 #ifndef __MAKETA__
     ,INVALID_MASK	= THIS_INVALID | CHILD_INVALID
 #endif
+  };
+  
+  enum DumpQueryResult { // #IGNORE Dump_QuerySaveMember response
+    DQR_NO_SAVE,	// definitely do not save
+    DQR_SAVE,		// definitely save
+    DQR_DEFAULT		// do default for this member (this is the base result)
   };
 
   ///////////////////////////////////////////////////////////////////////////
@@ -517,7 +518,7 @@ public:
   { return GetTypeDef()->Dump_SaveR(strm, (void*)this, par, indent); } 	// #IGNORE
   virtual int 		Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0)
   { return GetTypeDef()->Dump_Save_PathR(strm, (void*)this, par, indent); } // #IGNORE
-  virtual bool		Dump_QuerySaveMember(MemberDef* md); 
+  virtual DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
   // #IGNORE default checks NO_SAVE directive; override to make save decision at runtime
   virtual bool		Dump_QuerySaveChildren() 
   {return true;} // #IGNORE override to make save decision at runtime
@@ -1052,21 +1053,22 @@ class TA_API taOBase : public taBase {
 INHERITED(taBase)
 public:
   TAPtr			owner;	// #READ_ONLY #NO_SAVE pointer to owner
+  mutable UserDataItem_List* user_data_; // #OWN_POINTER #SHOW_TREE #NO_SAVE_EMPTY storage for user data (created if needed)
 
   taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
   override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
 //  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
 
-  TAPtr 	GetOwner() const	{ return owner; }
-  TAPtr		GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
-  TAPtr 	SetOwner(TAPtr ta)	{ owner = ta; return ta; }
-
+  TAPtr 		GetOwner() const	{ return owner; }
+  TAPtr			GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
+  TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
+  UserDataItem_List* 	GetUserDataList(bool fc = false) const;  
   void	CutLinks();
   TA_BASEFUNS(taOBase); //
 protected:
   taDataLink*		m_data_link; //
 private:
-  void 	Initialize()	{ owner = NULL; m_data_link = NULL;}
+  void 	Initialize()	{owner = NULL; user_data_ = NULL; m_data_link = NULL;}
   void	Destroy();
 }; //
 

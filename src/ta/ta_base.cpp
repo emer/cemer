@@ -926,9 +926,8 @@ int taBase::SaveAs(const String& fname) {
   return rval;
 }
 
-bool taBase::Dump_QuerySaveMember(MemberDef* md) { 
-  // default is to save, unless explicit comment directive
-  return !md->HasOption("NO_SAVE");
+taBase::DumpQueryResult taBase::Dump_QuerySaveMember(MemberDef* md) { 
+  return DQR_DEFAULT;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1874,12 +1873,19 @@ void taOBase::CutLinks() {
     m_data_link->DataDestroying(); // link NULLs our pointer
   }
   owner = NULL;
-// maybe don't do this for only obases, just for nbases..
-// #ifdef TA_GUI
-//   if(taMisc::gui_active)
-//     taiMisc::CloseEdits((void*)this, GetTypeDef());
-// #endif
+  if (user_data_) {
+    delete user_data_;
+    user_data_ = NULL;
+  }
   inherited::CutLinks();
+}
+
+UserDataItem_List* taOBase::GetUserDataList(bool fc) const { 
+  if (!user_data_ && fc) {
+    user_data_ = new UserDataItem_List; 
+    taBase::Own(user_data_, const_cast<taOBase*>(this));
+  } 
+  return user_data_;
 }
 
 /* all in taBase void taOBase::UpdateAfterEdit(){

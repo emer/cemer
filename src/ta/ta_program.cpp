@@ -207,23 +207,25 @@ String ProgVar::GetDisplayName() const {
   return "invalid type!";
 }
 
-bool ProgVar::Dump_QuerySaveMember(MemberDef* md) {
+taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
+  DumpQueryResult rval = DQR_SAVE; // only used for membs we match below
   if (md->name == "int_val")
-    return ((var_type == T_Int) || (var_type == T_HardEnum));
+    rval = ((var_type == T_Int) || (var_type == T_HardEnum)) ? DQR_SAVE : DQR_NO_SAVE;
   else if (md->name == "real_val")
-    return (var_type == T_Real);
+    rval = (var_type == T_Real) ? DQR_SAVE : DQR_NO_SAVE;
   else if (md->name == "string_val")
-    return (var_type == T_String);
+    rval = (var_type == T_String) ? DQR_SAVE : DQR_NO_SAVE;
   else if (md->name == "bool_val")
-    return (var_type == T_Bool);
+    rval = (var_type == T_Bool) ? DQR_SAVE : DQR_NO_SAVE;
   else if ((md->name == "object_type") || (md->name == "object_val"))
-    return (var_type == T_Object);
+    rval = (var_type == T_Object) ? DQR_SAVE : DQR_NO_SAVE;
   else if (md->name == "hard_enum_type")
-    return (var_type == T_HardEnum);
+    rval = (var_type == T_HardEnum) ? DQR_SAVE : DQR_NO_SAVE;
   else if (md->name == "dyn_enum_val")
-    return (var_type == T_DynEnum);
+    rval = (var_type == T_DynEnum) ? DQR_SAVE : DQR_NO_SAVE;
   else 
     return inherited::Dump_QuerySaveMember(md);
+  return rval;
 }
 
 const String ProgVar::GenCss(bool is_arg) {

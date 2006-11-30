@@ -696,9 +696,10 @@ void LayerView::DataUpdateAfterEdit_impl() {
   nv->Layer_DataUAE(this);
 }
 
-bool LayerView::Dump_QuerySaveMember(MemberDef* md) {
+taBase::DumpQueryResult LayerView::Dump_QuerySaveMember(MemberDef* md) {
   static String str_ch("children");
-  if (md->name == str_ch) return false;
+  // for this class only, we never save groups/units
+  if (md->name == str_ch) return DQR_NO_SAVE;
   else return inherited::Dump_QuerySaveMember(md);
 }
 

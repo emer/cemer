@@ -171,6 +171,9 @@ const char* T3Node::caption() {
 SoAsciiText* T3Node::captionNode(bool auto_create) {
   if (captionNode_ || !auto_create) return captionNode_;
   SoSeparator* cs = captionSeparator(auto_create); //note: ac is true
+  SoBaseColor* bc = new SoBaseColor;
+  bc->rgb.setValue(0, 0, 0); //black is default for text
+  insertChildBefore(cs, bc, NULL); // at end
   captionNode_ = new SoAsciiText();
 //  captionNode_->setName("captionNode");
   insertChildBefore(cs, captionNode_, NULL); // at end

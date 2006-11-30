@@ -86,7 +86,7 @@ public:
 
   TypeDef*		act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
   
-  override bool		Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
+  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void 	SetDefaultName() {} // make it local to list, set by list
   void	UpdateAfterEdit(); // we always nuke the cached cssEl -- it will get regenerated

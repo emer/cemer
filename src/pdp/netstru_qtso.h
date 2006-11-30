@@ -231,7 +231,7 @@ public:
 
   override void		BuildAll(); // creates fully populated subviews
 
-  override bool		Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
+  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerView, nvDataView)
 protected:
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
