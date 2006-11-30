@@ -1772,7 +1772,7 @@ cssCPtr::cssCPtr(const cssCPtr& cp) {
   Constr(); Copy(cp);
   ptr_cnt = cp.ptr_cnt;
   flags = cp.flags;
-  if(ptr_cnt > 0)		// don't copy the ptr if ptr_cnt == 0 -- we own it!
+  if(!(flags & OWN_OBJ))
     ptr = cp.ptr;
   if(cp.class_parent) SetClassParent(cp.class_parent);
 }
@@ -1780,7 +1780,7 @@ cssCPtr::cssCPtr(const cssCPtr& cp, const char* nm) 	{
   Constr(); Copy(cp);
   ptr_cnt = cp.ptr_cnt;
   flags = cp.flags;
-  if(ptr_cnt > 0)		// don't copy the ptr if ptr_cnt == 0 -- we own it!
+  if(!(flags & OWN_OBJ))
     ptr = cp.ptr;
   if(cp.class_parent) SetClassParent(cp.class_parent);
   name = nm;

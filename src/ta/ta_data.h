@@ -34,7 +34,6 @@ class TA_API ChannelSpec: public taNBase {
   // ##CAT_Data describes a channel of data in a DataBlock (e.g., a column of a datatable)
 INHERITED(taNBase)
 public: 
-  String		new_group_name; // if set, creates a new channel group (where supported)
   int			chan_num; // #SHOW #READ_ONLY #NO_SAVE the column number (-1=at end)
   ValType 		val_type; // the type of data the channel uses
   //String		disp_opts;	// viewer display options
@@ -89,7 +88,7 @@ INHERITED(taList<ChannelSpec>)
 public:
   void		UpdateDataBlockSchema(DataBlock* db);
 
-  int		NumListCols() const {return 7;}
+  int		NumListCols() const {return 6;}
   String 	GetColHeading(int col);
 
   TA_BASEFUNS(ChannelSpec_List);

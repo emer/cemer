@@ -659,11 +659,17 @@ exit:
   return "no_nm"; */
 }
 
+String NetMonItem::GetChanName(taBase* obj, taBase* own, int col_idx) {
+  return name;
+}
+
+
 void NetMonItem::Initialize() {
   object_type = NULL;
   member_var = NULL;
   variable = "act";
   real_val_type = VT_DOUBLE;
+  name_style = MY_NAME;
   cell_num  = 0;
 }
 
@@ -819,7 +825,6 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
   rval = md->GetValVar(obj);
   // pre-process.. 
   // note: NONE op leaves Variant in same format, otherwise converted to float
-  // todo: is this evil or not?
   pre_proc_3.EvaluateVar(pre_proc_2.EvaluateVar(pre_proc_1.EvaluateVar(rval)));
   return true;
 }
@@ -831,7 +836,7 @@ void NetMonItem::ResetMonVals() {
 }
 
 void NetMonItem::ScanObject() {
-//TODO: what about orphaned columns in the sink?????
+  // TODO: what about orphaned columns in the sink?????
   ResetMonVals();
   if (!object) return;
   
@@ -853,71 +858,6 @@ void NetMonItem::ScanObject() {
   }
 }
 
-/*
-  // new rule: you must provide a logically complete path?
-  // or maybe, you *should* provide it, if not, there is a default search
-  
-  // what are special case:
-  Layer: do 2d flat iteration of Units
-  UG: do 2d iteration of Units
-  Projection: ?? special treatment of s/r?
-  Unit: ?? special treatment of s/r?
-  // any . in name?
-  y: 
-    find subobject
-    call ourself recursively on that obj
-  
-  n: 
-    first, try flat check on obj itself
-    else:
-    do case on object:
-    special, that we handle? ex Layer or UnitGroup
-      call that special handler
-    Group? Y: call(or do) the Group handler
-    List? Y: call(or do) the list handler
-    
-Generic InObject(obj, var)
-  does var contain .
-  y: 
-    first, do special handling of certain subobjs
-    Layer & units. : do a flat 2d iter on Units "IterLayer"
-      : strip 'units.' and fall through (does default)
-    Unit & s. send., r. recv. : iter the congroup
-    Prjn & s. from., r. layer : delegate to the appr Layer
-    
-    second, try looking up the subobject
-    if find subobject
-      return InObject(subobj, after. )
-    
-  n: 
-    if find in ourself
-      add value
-      return true
-  //try default subobject or subiteration
-  type of obj:
-  Layer: flat iter on the Units "IterLayer"
-  UG: iter on the Units "IterUGs"
-  Group: iter on the Lists, mark new group
-  List: iter on the objects
-  
-  Prjn: iter on s or r cons
-  
-  
-  return false
-  
-Generic patternDoObj (obj, var):
-  does var contain .
-  n: 
-    if find in ourself
-      add value
-      exit
-    //need to do our default iteration:
-    call DoObj(default iter subobj, var)
-  y: 
-    if find subobject
-      call DoObj(sub, var after .
-    
-*/
 bool NetMonItem::ScanObject_InObject(TAPtr obj, String var, bool mk_col, TAPtr own) {
   if (!obj) return false; 
   MemberDef* md = NULL;
@@ -954,10 +894,8 @@ bool NetMonItem::ScanObject_InObject(TAPtr obj, String var, bool mk_col, TAPtr o
     if (!own) own = obj->GetOwner(); // might still be null
     md = obj->FindMember(var);
     if (md) {
-//       String valname = GetObjName(obj, own) + String(".") + var;
       String valname = name;	// always use our name!
       if (mk_col) {
-	// todo: maybe need a "DEFAULT" setting for val_type??
 	ValType vt = ValTypeForType(md->type);
 	if(vt == VT_FLOAT || vt == VT_DOUBLE)
 	  vt = real_val_type;
@@ -975,7 +913,6 @@ bool NetMonItem::ScanObject_InObject(TAPtr obj, String var, bool mk_col, TAPtr o
 
 void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   if (ScanObject_InObject(lay, var, true)) return;
-  //  String valname = GetObjName(lay) + String(".") + var;
   String valname = name;
   // the default is to scan the units for the var
   // we make a chan spec assuming the var is on units, but we can delete it
@@ -1028,10 +965,9 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
       }
     }
   }
-  // if nested objs made chans, delete ours and mark a new group
+  // if nested objs made chans, delete ours
   if (val_sz < val_specs.size) {
     val_specs.RemoveIdx(val_sz - 1);
-    val_specs.FastEl(val_sz)->new_group_name = valname;
   }
   // if no vals scanned, delete ours
   else if (cell_num == 0) {
@@ -1077,11 +1013,6 @@ void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
   Unit* u;
   FOR_ITR_EL(Unit, u, lay->units., i)
     ScanObject_Unit(u, var, prjn);
-  // if nested objs made chans, mark a new group
-  if (val_sz < val_specs.size) {
-    String valname = GetObjName(prjn);
-    val_specs.FastEl(val_sz)->new_group_name = valname;
-  } 
 }
 
 void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var, bool mk_col) {
@@ -1122,10 +1053,9 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var, bool mk_col) {
   }
 cont:
   if (mk_col) {
-    // if nested objs made chans, delete ours and mark a new group
+    // if nested objs made chans, delete ours
     if (val_sz < val_specs.size) {
       val_specs.RemoveIdx(val_sz - 1);
-      val_specs.FastEl(val_sz)->new_group_name = valname;
     }
     // if no vals scanned, delete ours
     else if (cell_num == 0) {
@@ -1155,20 +1085,10 @@ void NetMonItem::ScanObject_Unit(Unit* u, String var, Projection* p, bool mk_col
   int val_sz= val_specs.size; // for marking current spot
   if(ths->InheritsFrom(&TA_RecvCons_List)) {
     ScanObject_RecvCons((RecvCons_List*) ths, varname, p);
-    // if nested objs made chans, mark a new group
-    if (val_sz < val_specs.size) {
-      String valname = GetObjName(u) + String(".") + var;
-      val_specs.FastEl(val_sz)->new_group_name = valname;
-    } 
     return;
   }
   else if(ths->InheritsFrom(&TA_SendCons_List)) {
     ScanObject_SendCons((SendCons_List*) ths, varname, p);
-    // if nested objs made chans, mark a new group
-    if (val_sz < val_specs.size) {
-      String valname = GetObjName(u) + String(".") + var;
-      val_specs.FastEl(val_sz)->new_group_name = valname;
-    } 
     return;
   }
 }

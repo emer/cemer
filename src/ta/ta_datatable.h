@@ -242,23 +242,20 @@ protected:
     // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
   virtual const Variant GetValAsVar_impl(int row, int cell) const; 
   virtual const String 	GetValAsString_impl(int row, int cell) const; 
-  virtual double 	GetValAsDouble_impl(int row, int cell) const 
-    {return GetValAsFloat_impl(row, cell);}
-  virtual float 	GetValAsFloat_impl(int row, int cell) const 
-    {return (float)GetValAsInt_impl(row, cell);}
-  virtual int	 	GetValAsInt_impl(int row, int cell) const 
-    {return (int)GetValAsByte_impl(row, cell);}
-  virtual byte	 	GetValAsByte_impl(int row, int cell) const {return 0;} 
-  
-  virtual bool	 	SetValAsVar_impl(const Variant& val, int row, int cell); // true if set 
-  virtual bool	 	SetValAsString_impl(const String& val, int row, int cell);  // true if set 
-  virtual bool	 	SetValAsDouble_impl(double val, int row, int cell) {return false;}  // true if set 
-  virtual bool	 	SetValAsFloat_impl(float val, int row, int cell) 
-    {return SetValAsDouble_impl(val, row, cell);}  // true if set 
-  virtual bool	 	SetValAsInt_impl(int val, int row, int cell)  // true if set 
-    {return SetValAsFloat_impl((float)val, row, cell);} 
-  virtual bool	 	SetValAsByte_impl(byte val, int row, int cell)  // true if set 
-    {return SetValAsInt_impl((int)val, row, cell);} 
+  virtual double 	GetValAsDouble_impl(int row, int cell) const { return 0.0; }
+  virtual float 	GetValAsFloat_impl(int row, int cell) const { return 0.0f; }
+  virtual int	 	GetValAsInt_impl(int row, int cell) const { return 0; }
+  virtual byte	 	GetValAsByte_impl(int row, int cell) const
+  { return (byte)GetValAsInt_impl(row, cell); } 
+
+  // these all return true if value is successfully set
+  virtual bool	 SetValAsVar_impl(const Variant& val, int row, int cell);
+  virtual bool	 SetValAsString_impl(const String& val, int row, int cell);
+  virtual bool	 SetValAsDouble_impl(double val, int row, int cell) {return false;} 
+  virtual bool	 SetValAsFloat_impl(float val, int row, int cell) { return false; }
+  virtual bool	 SetValAsInt_impl(int val, int row, int cell)  { return false; }
+  virtual bool	 SetValAsByte_impl(byte val, int row, int cell)
+  { return SetValAsInt_impl((int)val, row, cell); } 
   
 private:
   void	Initialize();
@@ -275,6 +272,10 @@ INHERITED(taList<DataArray_impl>)
 public:
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   
+  override taBase* New(int n_objs = 1, TypeDef* typ = NULL)
+   { return inherited::New(n_objs, typ); }
+  // #NO_MENU create new data array -- note, this should not be used by users to create new colums -- use the datatable functions instead (NewCol, NewMatrixCol, etc)
+
   override int		NumListCols() const {return 3;}
   // name, val_type (float, etc.), disp_opts
   override String	GetColHeading(const KeyString& key) const;
@@ -688,6 +689,25 @@ public:
 
   TA_BASEFUNS(String_Data);
 
+protected:
+  override double 	GetValAsDouble_impl(int row, int cell) const
+  { return (double)GetValAsString_impl(row, cell); }
+  override float 	GetValAsFloat_impl(int row, int cell) const
+  { return (float)GetValAsString_impl(row, cell); }
+  override int	 	GetValAsInt_impl(int row, int cell) const
+  { return (int)GetValAsString_impl(row, cell); }
+  override byte	 	GetValAsByte_impl(int row, int cell) const
+  { return GetValAsString_impl(row, cell)[0]; } 
+
+  override bool	 SetValAsDouble_impl(double val, int row, int cell)
+  { return SetValAsString_impl((String)val, row, cell); }
+  override bool	 SetValAsFloat_impl(float val, int row, int cell)
+  { return SetValAsString_impl((String)val, row, cell); }
+  override bool	 SetValAsInt_impl(int val, int row, int cell)
+  { return SetValAsString_impl((String)val, row, cell); }
+  override bool	 SetValAsByte_impl(byte val, int row, int cell)
+  { return SetValAsString_impl((String)val, row, cell); }
+
 private:
   void	Initialize() {}
   void	Destroy() {}
@@ -705,9 +725,23 @@ public:
 
 protected:
   override const Variant GetValAsVar_impl(int row, int cell) const
-    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
-  override bool	 	SetValAsVar_impl(const Variant& val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+  { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+  override bool	 SetValAsVar_impl(const Variant& val, int row, int cell)
+  { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
+
+  override double 	GetValAsDouble_impl(int row, int cell) const
+  { return GetValAsVar_impl(row, cell).toDouble(); }
+  override float 	GetValAsFloat_impl(int row, int cell) const
+  { return (float)GetValAsVar_impl(row, cell).toFloat(); }
+  override int	 	GetValAsInt_impl(int row, int cell) const
+  { return (int)GetValAsVar_impl(row, cell).toInt(); }
+
+  override bool	 SetValAsDouble_impl(double val, int row, int cell)
+  { return SetValAsVar_impl(val, row, cell); }
+  override bool	 SetValAsFloat_impl(float val, int row, int cell)
+  { return SetValAsVar_impl(val, row, cell); }
+  override bool	 SetValAsInt_impl(int val, int row, int cell)
+  { return SetValAsVar_impl(val, row, cell); }
 
 private:
   void	Initialize() {}
@@ -728,9 +762,18 @@ public:
   
 protected:
   override double 	GetValAsDouble_impl(int row, int cell) const
-    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
+  { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+  override float 	GetValAsFloat_impl(int row, int cell) const
+  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+  override int 		GetValAsInt_impl(int row, int cell) const
+  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+
   override bool	 	SetValAsDouble_impl(double val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+  { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
+  override bool	 	SetValAsFloat_impl(float val, int row, int cell)
+  { ar.Set_Flat((double)val, IndexOfEl_Flat(row, cell)); return true; }
+  override bool	 	SetValAsInt_impl(int val, int row, int cell)
+  { ar.Set_Flat((double)val, IndexOfEl_Flat(row, cell)); return true; }
 
 private:
   void	Initialize() {}
@@ -749,13 +792,19 @@ public:
   TA_BASEFUNS(float_Data);
   
 protected:
+  override double 	GetValAsDouble_impl(int row, int cell) const
+  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
   override float 	GetValAsFloat_impl(int row, int cell) const
-    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
-  override bool	 	SetValAsFloat_impl(float val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+  { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+  override int 		GetValAsInt_impl(int row, int cell) const
+  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+
   override bool	 	SetValAsDouble_impl(double val, int row, int cell)
-    {ar.Set_Flat((float)val, IndexOfEl_Flat(row, cell)); return true;}
-    //NOTE: can result in loss of precision and/or underflow/overflow
+  { ar.Set_Flat((float)val, IndexOfEl_Flat(row, cell)); return true; }
+  override bool	 	SetValAsFloat_impl(float val, int row, int cell)
+  { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
+  override bool	 	SetValAsInt_impl(int val, int row, int cell)
+  { ar.Set_Flat((float)val, IndexOfEl_Flat(row, cell)); return true; }
 
 private:
   void	Initialize() {}
@@ -774,10 +823,19 @@ public:
   TA_BASEFUNS(int_Data);
   
 protected:
+  override double 	GetValAsDouble_impl(int row, int cell) const
+  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+  override float 	GetValAsFloat_impl(int row, int cell) const
+  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
   override int 		GetValAsInt_impl(int row, int cell) const
-    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
+  { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+
+  override bool	 	SetValAsDouble_impl(double val, int row, int cell)
+  { ar.Set_Flat((int)val, IndexOfEl_Flat(row, cell)); return true; }
+  override bool	 	SetValAsFloat_impl(float val, int row, int cell)
+  { ar.Set_Flat((int)val, IndexOfEl_Flat(row, cell)); return true; }
   override bool	 	SetValAsInt_impl(int val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+  { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
 
 private:
   void	Initialize() {}
@@ -796,10 +854,23 @@ public:
   TA_BASEFUNS(byte_Data);
   
 protected:
+  override double 	GetValAsDouble_impl(int row, int cell) const
+  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+  override float 	GetValAsFloat_impl(int row, int cell) const
+  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+  override int 		GetValAsInt_impl(int row, int cell) const
+  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
   override byte 	GetValAsByte_impl(int row, int cell) const
-    {return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell));}
+  { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
+
+  override bool	 	SetValAsDouble_impl(double val, int row, int cell)
+  { ar.Set_Flat((byte)val, IndexOfEl_Flat(row, cell)); return true; }
+  override bool	 	SetValAsFloat_impl(float val, int row, int cell)
+  { ar.Set_Flat((byte)val, IndexOfEl_Flat(row, cell)); return true; }
+  override bool	 	SetValAsInt_impl(int val, int row, int cell)
+  { ar.Set_Flat((byte)val, IndexOfEl_Flat(row, cell)); return true; }
   override bool	 	SetValAsByte_impl(byte val, int row, int cell)
-    {ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true;}
+  { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
 
 private:
   void	Initialize() {}

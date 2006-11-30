@@ -28,7 +28,6 @@ void ChannelSpec::Initialize() {
 }
 
 void ChannelSpec::Copy_(const ChannelSpec& cp) {
-  new_group_name = cp.new_group_name;
   chan_num = cp.chan_num;
   val_type = cp.val_type; 
 }
@@ -51,7 +50,6 @@ String ChannelSpec::GetColText(int col, int) {
   case 3: return isMatrix();
   case 4: return isMatrix() ? cellGeom().GeomToString() : _nilString;
   case 5: return isMatrix() ? String(usesCellNames()) : _nilString;
-  case 6: return new_group_name;
   default: return _nilString; // compiler food
   }
 }

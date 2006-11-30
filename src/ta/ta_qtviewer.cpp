@@ -2804,7 +2804,8 @@ void iMainWindowViewer::moveEvent(QMoveEvent* e) {
   if(!taMisc::console_win) return;
   QRect r = frameGeometry();
   int nw_top = r.bottom() + 1;
-  int nw_ht = (int)(.9 * (taiM->scrn_s.h - nw_top));
+  int nw_ht = taiM->scrn_s.h - nw_top - 64; // leave a fixed amount of space at bottom.
+  if(nw_ht < 40) nw_ht = 40;
   taMisc::console_win->resize(r.width(), nw_ht);
   taMisc::console_win->move(r.left(), nw_top);
 }
@@ -2816,7 +2817,8 @@ void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
   if(!taMisc::console_win) return;
   QRect r = frameGeometry();
   int nw_top = r.bottom() + 1;
-  int nw_ht = (int)(.9 * (taiM->scrn_s.h - nw_top));
+  int nw_ht = taiM->scrn_s.h - nw_top - 64; // leave a fixed amount of space at bottom.
+  if(nw_ht < 40) nw_ht = 40;
   taMisc::console_win->resize(r.width(), nw_ht);
   taMisc::console_win->move(r.left(), nw_top);
 }

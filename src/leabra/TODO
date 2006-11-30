@@ -1,7 +1,11 @@
 leabra todo list:
 
+* css: p voidfun = crash; bindargs seems to not be getting the void??
+  e.g., p taMisc::include_paths.List();
+
 * relnet stat & adaptation of lay act_pct and wtscale.
-  * not getting multiple relnets for multiple prjns
+  * naming is key -- do namestyle impl
+  * not getting multiple relnets for multiple prjns:
   * geom for recvcons is only being set for one (last) unit -- need layer geom there
     too..
 
