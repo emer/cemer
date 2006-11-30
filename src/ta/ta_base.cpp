@@ -1026,6 +1026,11 @@ void taBase::BatchUpdate(bool begin, bool struc) {
   }
 }
 
+void taBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
+  UpdateAfterEdit();
+}
+
+
 ///////////////////////////////////////////////////////////////////////////
 //	Checking the configuration of objects prior to using them
 
@@ -1848,9 +1853,10 @@ void taSmartRef::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
 }
 void taSmartRef::DataLinkDestroying(taDataLink* dl) {
   if (m_own) {
-    m_own->SmartRef_DataDestroying(this, m_ptr); 
+    taBase* tmp_ptr = m_ptr;
     m_ptr = NULL;
-    m_own->UpdateAfterEdit();
+    m_own->SmartRef_DataDestroying(this, tmp_ptr); 
+    //NO MORE CODE HERE -- object may have destroyed itself
   } else 
     m_ptr = NULL;
 }

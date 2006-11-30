@@ -1,15 +1,34 @@
-Debugging Maketa issue
+debugging remove units crashing
 
-* happens under several runtimes, debug and release
+ex. leabra_ra.proj
+set Input from 5x5 to 5x4 then Build net
 
+* occurs when you do the network rebuild, in the layer rebuild
+happens on the EnforceLeaves(20) for the layer
 
-* happens on the same file in each enviro
+0x01c4731c in taSmartRef::DataLinkDestroying (this=0x202a7e20, dl=0x202c1c20) at ta_base.cpp:1853
+1853        m_own->UpdateAfterEdit();
+(gdb) ba
+#0  0x01c4731c in taSmartRef::DataLinkDestroying (this=0x202a7e20, dl=0x202c1c20) at ta_base.cpp:1853
+#1  0x01d4980a in taDataLink::DataDestroying (this=0x202c1c20) at ta_type.cpp:1742
+#2  0x01c415e8 in taBase::Destroying (this=0x202ef7f0) at ta_base.cpp:435
+#3  0x02064aec in taList_impl::El_disOwn_ (this=0xc1c0da4, it=0x202ef7f0) at ./../ta/ta_base.h:1305
+#4  0x01c76526 in taPtrList_impl::RemoveIdx (this=0xc1c0db4, i=24) at ta_list.cpp:281
+#5  0x01c40f6c in taList_impl::RemoveIdx (this=0xc1c0da4, i=24) at ta_base.cpp:2541
 
-* (for msvc/ta) happens on same file, even if that file is put earlier
-  in the list
+the m_own is a UnitView object
 
-* happens different files between enviros
-  msvc,ta: ta_qtdata.h
-  msvc,tamisc: t3viewer.h (file 15)
-  MSVC, pdp: netstru.h (6)
+problem is that the 
+m_own->SmartRef_DataDestroying
+actually causes the UnitView to be removed from the parent object, and destroyed;
+therefore, when we get to the UAE call, it is destroyed
+
+proposed fix:
+
+* make temp copy of m_ptr
+* NULL the m_ptr before notifying the client
+* call client, passing the temp m_ptr, in case it needs it
+* don't do anything after this call
+
+* in taBase, put a default behavior of UAE in a base handler
 

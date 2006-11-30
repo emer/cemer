@@ -565,8 +565,8 @@ public:
 protected:	// Impl
   virtual void		BatchUpdate(bool begin, bool struc);
   // #IGNORE bracket changes with (nestable) true/false calls; data clients can use it to supress change updates
-  virtual void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {}
-  // #IGNORE the obj (to which we have a ref) is about to destroy (the ref will null its ptr on return)
+  virtual void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
+  // #IGNORE the obj (to which we had a ref) is about to destroy (the ref has already been NULL'ed)
   virtual void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_) {}
   // #IGNORE the obj (to which we have a ref) has signalled the indicated data change

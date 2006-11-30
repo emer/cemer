@@ -6,17 +6,23 @@ test
 --------------------------
 Brad:
 
+trac bugs of High priority or higher
+Mac and Qt4 bugs:
+  * DND not working right anymore
+  * selectEdit not working right
+  * can't select anything anymore in T3 viewer
+
 * program dirty not getting set -- init not recompiling: brad
 
 * netview bugs:
-  * fix netview crashing on remove units
   * proper display of r.wt stuff (bug fix)
+
+  * UnitView objs seem to get made, even if no gui interaction w/user
+    they were supposed to only get made on demand!
 
 * Fix tabs & auto-apply edits
   ? add "pin/unpin" capability to panels, and extend panel tab context menu 
   * when clicking an existing item, focus that tab, don't show in the new tab (maybe?)
-
-trac bugs of High priority or higher
 
 * UserData
   * persistence
@@ -100,6 +106,9 @@ trac bugs of High priority or higher
 
 --------------------------
 Brad: (done)
+
+* updated all PCs to Qt4
+* fix netview crashing on remove units
 
 --------------------------
 Randy: (active list in src/leabra/TODO)

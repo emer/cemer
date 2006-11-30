@@ -1194,6 +1194,7 @@ void NetMonItem::SetMonVals(TAPtr obj, const String& var) {
 
 void NetMonItem::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
   ResetMonVals();
+  inherited::SmartRef_DataDestroying(ref, obj);//does UAE
 }
 
 void NetMonItem::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
