@@ -556,7 +556,7 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
   else {
     if(obj->InheritsFrom(&TA_Network)) // special case
       return variable;
-    base_nm = GetObjName(object);
+    base_nm = GetObjName(obj);
   }
   return base_nm + "." + variable;
 }
