@@ -1610,7 +1610,7 @@ protected: \
 
 template<class T>
 class taArray : public taArray_base {
-  // #VIRT_BASE #NO_TOKENS #NO_INSTANCE #NO_UPDATE_AFTER
+  // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
   T		err;		// #HIDDEN what is returned when out of range; MUST INIT IN CONSTRUCTOR
@@ -1684,9 +1684,8 @@ protected:
 
 };
 
-
 class TA_API int_Array : public taArray<int> {
-  // #NO_UPDATE_AFTER array of ints
+  // #NO_UPDATE_AFTER #NO_TOKENS array of ints
 public:
   STATIC_CONST int blank; // #HIDDEN #READ_ONLY 
   virtual void	FillSeq(int start=0, int inc=1);
@@ -1718,7 +1717,7 @@ TA_ARRAY_OPS(int_Array)
 
 
 class TA_API float_Array : public taArray<float> {
-  // #NO_UPDATE_AFTER array of floats
+  // #NO_UPDATE_AFTER #NO_TOKENS array of floats
 public:
   STATIC_CONST float blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1738,9 +1737,8 @@ protected:
 };
 TA_ARRAY_OPS(float_Array)
 
-
 class TA_API double_Array : public taArray<double> {
-  // #NO_UPDATE_AFTER array of doubles
+  // #NO_UPDATE_AFTER #NO_TOKENS array of doubles
 public:
   STATIC_CONST double blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1761,7 +1759,7 @@ protected:
 TA_ARRAY_OPS(double_Array)
 
 class TA_API char_Array : public taArray<char> {
-  // #NO_UPDATE_AFTER array of chars (bytes)
+  // #NO_UPDATE_AFTER #NO_TOKENS array of chars (bytes)
 public:
   STATIC_CONST char blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1783,7 +1781,7 @@ TA_ARRAY_OPS(char_Array)
 
 
 class TA_API String_Array : public taArray<String> {
-  // #NO_UPDATE_AFTER array of Strings
+  // #NO_UPDATE_AFTER #NO_TOKENS array of Strings
 public:
   STATIC_CONST String blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1823,7 +1821,7 @@ public:
 };
 
 class TA_API Variant_Array : public taArray<Variant> {
-  // #NO_UPDATE_AFTER array of variants
+  // #NO_UPDATE_AFTER #NO_TOKENS array of variants
 public:
   STATIC_CONST Variant blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
@@ -1845,7 +1843,7 @@ TA_ARRAY_OPS(Variant_Array)
 
 
 class TA_API voidptr_Array : public taArray<voidptr> {
-  // #NO_UPDATE_AFTER array of void pointers
+  // #NO_UPDATE_AFTER #NO_TOKENS array of void pointers
 public:
   STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY 
 

@@ -1733,6 +1733,18 @@ int Unit::GetMyLeafIndex() {
   return -1;			// not found
 }
 
+TwoDCoord Unit::GetMyAbsPos() {
+  TwoDCoord rval;
+  Layer* lay = GET_MY_OWNER(Layer);
+  if(!lay) return rval;
+  Unit_Group* ug = GET_MY_OWNER(Unit_Group);
+  if(ug->owner == lay) return pos; // simple: we're the only unit group
+  rval.x = ug->pos.x * lay->un_geom.x + pos.x;
+  rval.y = ug->pos.y * lay->un_geom.y + pos.y;
+  // todo: is ug->pos actually in ug units??
+  return rval;
+}
+
 #ifdef DMEM_COMPILE
 int Unit::dmem_this_proc = 0;
 #endif

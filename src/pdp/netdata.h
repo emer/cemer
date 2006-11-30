@@ -223,14 +223,9 @@ class PDP_API NetMonItem: public taNBase {
 INHERITED(taNBase)
 public:
   enum	NameStyle {		// how to name the datatable columns
-    MY_NAME,			// always use my name; if multiple columns, then add a subscript index for later ones (_1 _2, etc.)
     AUTO_NAME,			// auto-generate a name based on the object name etc
+    MY_NAME,			// always use my (net monitor item) name; if multiple columns, then add a subscript index for later ones (_1 _2, etc.)
   };
-
-  static const String 	GetObjName(TAPtr obj, TAPtr own = NULL); 
-   // get name of object for naming stats, etc. qualifies up to Layer; looks up own if NULL
-  static const String	DotCat(const String& lhs, const String& rhs); 
-  // cat with . except if either empty, just return the other
 
   taSmartRef 		object;		// the network object being monitored
   TypeDef*		object_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
@@ -238,6 +233,7 @@ public:
   String        	variable;	// Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
   ValType		real_val_type;	 // type of values to create for real-valued monitored data (note: double has more support in the math library)
   NameStyle		name_style;	 // how to name the columns/channels generated from this data?
+  int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
 
   ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
   MemberSpace   	members;	// #IGNORE memberdefs
@@ -246,8 +242,10 @@ public:
   SimpleMathSpec 	pre_proc_2;	// #EXPERT second step of pre-processing to perform
   SimpleMathSpec 	pre_proc_3;	// #EXPERT third step of pre-processing to perform
   
-  String	GetChanName(taBase* obj, taBase* own, int col_idx);
-  // get name for given column/channel of data, taking into account namestyle preferences
+  String  	GetObjName(TAPtr obj); 
+  // get name of object for naming monitored values -- uses GetDisplayName by default but is optimized for various network objects; uses max_name_len constraint
+  String	GetChanName(taBase* obj, int chan_idx);
+  // get name for given column/channel of data, taking into account namestyle preferences; chan_idx is index within the channelspec_list for this guy
 
   void		SetMonVals(taBase* obj, const String& var); 
   // #CAT_Monitor set object and variable, and update appropriately
@@ -256,7 +254,8 @@ public:
   void		ResetMonVals();
   // #CAT_Monitor deletes the cached vars
 
-  void		ScanObject();	// #IGNORE update the schema
+  void		ScanObject();
+  // #CAT_Monitor get the monitor data information from the object
 
   static const KeyString key_obj_name;
   static const KeyString key_obj_type;
@@ -281,23 +280,28 @@ protected:
   MatrixChannelSpec* 	AddMatrixChan(const String& valname, ValType vt,
 				      const MatrixGeom* geom = NULL);
   // caller resp for somehow setting geom if NULL; clears cell_num
-  bool 			AddCellName(const String& cellname);
   bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
 
   // these are for finding the members and building the stat
   // out of the objects and the variable
   
   // mk_col means add an entirely new column; otherwise it just adds cell to existing matrix
-
-  bool 	ScanObject_InObject(TAPtr obj, String var, bool mk_col = false, TAPtr own = NULL);
+  bool 	ScanObject_InObject(TAPtr obj, String var, bool mk_col = true);
   void	ScanObject_Network(Network* net, String var);
   void	ScanObject_Layer(Layer* lay, String var);
   void	ScanObject_Projection(Projection* p, String var);
   void	ScanObject_ProjectionGroup(Projection_Group* p, String var);
-  void	ScanObject_UnitGroup(Unit_Group* ug, String var, bool mk_col = false);
-  void	ScanObject_Unit(Unit* u, String var, Projection* p = NULL, bool mk_col = false);
-  void	ScanObject_RecvCons(RecvCons_List* cg, String var, Projection* p = NULL);
-  void	ScanObject_SendCons(SendCons_List* cg, String var, Projection* p = NULL);
+  void	ScanObject_UnitGroup(Unit_Group* ug, String var);
+  void	ScanObject_Unit(Unit* u, String var);
+  // this is only when the object itself is a unit
+
+  // these are only for r. and s. con variables
+  void	ScanObject_LayerCons(Layer* lay, String var);
+  void	ScanObject_PrjnCons(Projection* p, String var);
+  // known to be a connection variable (r.x or s.x); matrix already allocated
+
+  void	ScanObject_RecvCons(RecvCons* cg, String var);
+  void	ScanObject_SendCons(SendCons* cg, String var);
 
 private:
   void	Initialize();

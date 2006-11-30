@@ -811,6 +811,8 @@ public: //
   override void	SetIndex(int i) { idx = i; }
   virtual int	GetMyLeafIndex();
   // compute leaf index from my individual index in an efficient manner
+  virtual TwoDCoord GetMyAbsPos();
+  // get the absolute position of this unit relative to the layer, taking into account any unit groups
   
   void  UpdateAfterEdit();
   void	Initialize();
