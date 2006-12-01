@@ -368,7 +368,9 @@ bool MemberDef::DumpMember(void* par) {
     return true;
   // ok, so it is a ptr -- some types get saved by default
   else if (type->DerivesFrom(TA_taBase) ||
-     type->DerivesFrom(TA_TypeDef) || type->DerivesFrom(TA_MemberDef))
+     type->DerivesFrom(TA_TypeDef) ||
+     type->DerivesFrom(TA_MemberDef) ||
+     type->DerivesFrom(TA_MethodDef))
     return true;
   else
     // if its a pointer object you own
