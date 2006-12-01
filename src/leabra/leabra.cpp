@@ -82,6 +82,24 @@ void SAvgCorSpec::Initialize() {
   norm_con_n = false;
 }
 
+void AdaptRelNetinSpec::Initialize() {
+  on = false;
+  trg_fm_input = .85f;
+  trg_fm_output = .15f;
+  trg_lateral = 0.0f;
+  trg_sum = 1.0f;
+  tol = 0.05f;
+  rel_lrate = .05f;
+}
+
+void AdaptRelNetinSpec::UpdateAfterEdit() {
+  taBase::UpdateAfterEdit();
+  trg_sum = trg_fm_input + trg_fm_output + trg_lateral;
+  if(fabsf(trg_sum - 1.0f) > .01) {
+    taMisc::Warning("*** AdaptRelNetinSpec: target values do not sum to 1");
+  }
+}
+
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
   wt_limits.min = 0.0f;
@@ -118,6 +136,7 @@ void LeabraConSpec::InitLinks() {
   taBase::Own(lrate_sched, this);
   taBase::Own(lmix, this);
   taBase::Own(savg_cor, this);
+  taBase::Own(rel_net_adapt, this);
   taBase::Own(wt_sig_fun, this);
   taBase::Own(wt_sig_fun_inv, this);
   taBase::Own(wt_sig_fun_lst, this);
@@ -748,7 +767,7 @@ void LeabraUnitSpec::Send_Netin(LeabraUnit* u, LeabraLayer*) {
 
 void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*) {
   if(u->act > opt_thresh.send) {
-    if(fabs(u->act_delta) > opt_thresh.delta) {
+    if(fabsf(u->act_delta) > opt_thresh.delta) {
       for(int g=0; g<u->send.size; g++) {
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -1190,7 +1209,7 @@ float LeabraUnitSpec::Compute_SSE(Unit* u) {
   LeabraUnit* lu = (LeabraUnit*)u;
   if(lu->ext_flag & Unit::TARG) {
     float uerr = lu->targ - lu->act_m;
-    if(fabs(uerr) < sse_tol)
+    if(fabsf(uerr) < sse_tol)
       return 0.0f;
     return uerr * uerr;
   }
@@ -1355,13 +1374,14 @@ void LeabraUnit::GetInSubGp() {
 void LeabraPrjn::Initialize() {
   netin_avg = 0.0f;
   netin_rel = 0.0f;
-  netin_avg_cnt = 0.0f;
 
   avg_netin_avg = 0.0f;
   avg_netin_avg_sum = 0.0f;
   avg_netin_rel = 0.0f;
   avg_netin_rel_sum = 0.0f;
-  avg_netin_cnt = 0.0f;
+  avg_netin_n = 0;
+
+  trg_netin_rel = -1.0f;		// indicates not set
 }
 
 void LeabraPrjn::Destroy() {
@@ -1370,13 +1390,14 @@ void LeabraPrjn::Destroy() {
 void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
   netin_avg = cp.netin_avg;
   netin_rel = cp.netin_rel;
-  netin_avg_cnt = cp.netin_avg_cnt;
 
   avg_netin_avg = cp.avg_netin_avg;
   avg_netin_avg_sum = cp.avg_netin_avg_sum;
   avg_netin_rel = cp.avg_netin_rel;
   avg_netin_rel_sum = cp.avg_netin_rel_sum;
-  avg_netin_cnt = cp.avg_netin_cnt;
+  avg_netin_n = cp.avg_netin_n;
+
+  trg_netin_rel = cp.trg_netin_rel;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1432,6 +1453,13 @@ void LayNetRescaleSpec::Initialize() {
   net_extra = 0.2f;
 }
 
+void LayAbsNetAdaptSpec::Initialize() {
+  on = false;
+  trg_net = .5f;
+  tol = .1f;
+  abs_lrate = .05f;
+}
+
 void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
   inhib_group = ENTIRE_LAYER;
@@ -1461,6 +1489,7 @@ void LeabraLayerSpec::InitLinks() {
   taBase::Own(clamp, this);
   taBase::Own(decay, this);
   taBase::Own(net_rescale, this);
+  taBase::Own(abs_net_adapt, this);
 }
 
 void LeabraLayerSpec::CutLinks() {
@@ -2570,7 +2599,7 @@ void LeabraLayerSpec::TargExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::AdaptGBarI(LeabraLayer* lay, LeabraNetwork*) {
   float diff = lay->kwta.pct - lay->acts.avg;
-  if(fabs(diff) > adapt_i.tol) {
+  if(fabsf(diff) > adapt_i.tol) {
     float p_i = 1.0f;
     if(adapt_i.type == AdaptISpec::G_BAR_IL) {
       p_i = 1.0f - adapt_i.l;
@@ -2656,9 +2685,17 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_
   }
 }
 
-void LeabraLayerSpec::Compute_RelNetin(LeabraLayer* lay, LeabraNetwork*) {
+void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+  lay->avg_netin_sum.avg += lay->netin.avg;
+  lay->avg_netin_sum.max += lay->netin.max;
+  lay->avg_netin_n++;
+
+  float sum_net = 0.0f;
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(!prjn->from || prjn->from->lesion) continue;
+    prjn->netin_avg = 0.0f;
+    int netin_avg_n = 0;
     LeabraUnit* u;
     taLeafItr ui;
     FOR_ITR_EL(LeabraUnit, u, lay->units., ui) {
@@ -2669,17 +2706,13 @@ void LeabraLayerSpec::Compute_RelNetin(LeabraLayer* lay, LeabraNetwork*) {
       float net = cg->Compute_Netin(u);
       cg->net = net;
       prjn->netin_avg += net;
-      prjn->netin_avg_cnt += 1.0f;
+      netin_avg_n++;
     }
-  }
-
-  float sum_net = 0.0f;
-  for(int i=0;i<lay->projections.size;i++) {
-    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(prjn->netin_avg_cnt > 0.0f)
-      prjn->netin_avg /= prjn->netin_avg_cnt;
+    if(netin_avg_n > 0)
+      prjn->netin_avg /= (float)netin_avg_n;
     sum_net += prjn->netin_avg;
   }
+
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     if(sum_net > 0.0f)
@@ -2687,22 +2720,82 @@ void LeabraLayerSpec::Compute_RelNetin(LeabraLayer* lay, LeabraNetwork*) {
     // increment epoch-level
     prjn->avg_netin_avg_sum += prjn->netin_avg;
     prjn->avg_netin_rel_sum += prjn->netin_rel;
-    prjn->avg_netin_cnt += 1.0f;
+    prjn->avg_netin_n++;
   }
 }
 
-void LeabraLayerSpec::Compute_AvgRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+  if(lay->avg_netin_n > 0) {
+    lay->avg_netin.avg = lay->avg_netin_sum.avg / (float)lay->avg_netin_n;
+    lay->avg_netin.max = lay->avg_netin_sum.max / (float)lay->avg_netin_n;
+  }
+  lay->avg_netin_sum.avg = 0.0f;
+  lay->avg_netin_sum.max = 0.0f;
+  lay->avg_netin_n = 0;
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(prjn->avg_netin_cnt > 0.0f) {
-      prjn->avg_netin_avg = prjn->avg_netin_avg_sum / prjn->avg_netin_cnt;
-      prjn->avg_netin_rel = prjn->avg_netin_rel_sum / prjn->avg_netin_cnt;
+    if(prjn->avg_netin_n > 0) {
+      prjn->avg_netin_avg = prjn->avg_netin_avg_sum / (float)prjn->avg_netin_n;
+      prjn->avg_netin_rel = prjn->avg_netin_rel_sum / (float)prjn->avg_netin_n;
     }
-    prjn->avg_netin_cnt = 0.0f;
+    prjn->avg_netin_n = 0;
     prjn->avg_netin_avg_sum = 0.0f;
     prjn->avg_netin_rel_sum = 0.0f;
   }
 }
+
+void LeabraLayerSpec::Compute_TrgRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+  int n_in = 0;
+  int n_out = 0;
+  int n_lat = 0;
+  for(int i=0;i<lay->projections.size;i++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(!prjn->from || prjn->from->lesion) continue;
+    if(prjn->direction == Projection::FM_INPUT) n_in++;
+    else if(prjn->direction == Projection::FM_OUTPUT) n_out++;
+    else if(prjn->direction == Projection::LATERAL) n_lat++;
+  }
+  for(int i=0;i<lay->projections.size;i++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(!prjn->from || prjn->from->lesion) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
+    if(prjn->direction == Projection::FM_INPUT)
+      prjn->trg_netin_rel = cs->rel_net_adapt.trg_fm_input / (float)n_in;
+    else if(prjn->direction == Projection::FM_OUTPUT)
+      prjn->trg_netin_rel = cs->rel_net_adapt.trg_fm_output / (float)n_out;
+    else if(prjn->direction == Projection::LATERAL) 
+      prjn->trg_netin_rel = cs->rel_net_adapt.trg_lateral / (float)n_lat;
+  }
+}
+
+void LeabraLayerSpec::Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+  for(int i=0;i<lay->projections.size;i++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(!prjn->from || prjn->from->lesion) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
+    if(prjn->trg_netin_rel < 0.0f) continue; // not set
+    if(!cs->rel_net_adapt.on) continue;
+    float dst = prjn->trg_netin_rel - prjn->avg_netin_avg;
+    if(fabsf(dst) >= cs->rel_net_adapt.tol) continue;
+    cs->SetUnique("wt_scale", true);
+    cs->wt_scale.rel += cs->rel_net_adapt.rel_lrate * dst;
+    if(cs->wt_scale.rel <= 0.0f) cs->wt_scale.rel = 0.0f;
+  }
+}
+
+void LeabraLayerSpec::Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork*) {
+  if(!abs_net_adapt.on) return;
+  float dst = abs_net_adapt.trg_net - lay->avg_netin.max;
+  if(fabsf(dst) >= abs_net_adapt.tol) return;
+  for(int i=0;i<lay->projections.size;i++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(!prjn->from || prjn->from->lesion) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
+    cs->SetUnique("wt_scale", true);
+    cs->wt_scale.abs += abs_net_adapt.abs_lrate * dst;
+  }
+}
+
 
 //////////////////////////////////////////
 //	Stage 6: Learning 		//
@@ -2881,6 +2974,8 @@ void LeabraLayer::Initialize() {
   dav = 0.0f;
   da_updt = false;
   net_rescale = 1.0f;
+
+  avg_netin_n = 0;
 }  
 
 void LeabraLayer::InitLinks() {
@@ -3538,21 +3633,48 @@ void LeabraNetwork::Compute_TrialStats() {
   Compute_MinusCycles();
 }
 
-void LeabraNetwork::Compute_RelNetin() {
+void LeabraNetwork::Compute_AbsRelNetin() {
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(!lay->lesion)
-      lay->Compute_RelNetin(this);
+      lay->Compute_AbsRelNetin(this);
   }
 }
 
-void LeabraNetwork::Compute_AvgRelNetin() {
+void LeabraNetwork::Compute_AvgAbsRelNetin() {
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(!lay->lesion)
-      lay->Compute_AvgRelNetin(this);
+      lay->Compute_AvgAbsRelNetin(this);
+  }
+}
+
+void LeabraNetwork::Compute_TrgRelNetin() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(!lay->lesion)
+      lay->Compute_TrgRelNetin(this);
+  }
+}
+
+void LeabraNetwork::Compute_AdaptRelNetin() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(!lay->lesion)
+      lay->Compute_AdaptRelNetin(this);
+  }
+}
+
+void LeabraNetwork::Compute_AdaptAbsNetin() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(!lay->lesion)
+      lay->Compute_AdaptAbsNetin(this);
   }
 }
 

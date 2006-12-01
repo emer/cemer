@@ -262,9 +262,9 @@ class PDP_API  ConArray : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group
   INHERITED(taOBase)
 public:
-  int		con_size;	// sizeof() connection object being stored
+  int		con_size;	// #READ_ONLY #EXPERT #NO_SAVE sizeof() connection object being stored
   TypeDef*	con_type;	// type of connection object being stored
-  int 		size;		// #NO_SAVE #READ_ONLY number of elements in the array
+  int 		size;		// #NO_SAVE #READ_ONLY #SHOW number of elements in the array
   int		alloc_size;	// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size, in con_size units
   char*		cons;		// #IGNORE the connection memory, alloc_size * con_size
 
@@ -885,6 +885,13 @@ public:
     CUSTOM 		// Recv from the layer spec'd in the projection
   };
 
+  enum PrjnDirection {	// which direction does this projection come from
+    FM_INPUT,		// from layer is closer to input signals than recv layer
+    FM_OUTPUT,		// from layer is closer to output signals than recv layer
+    LATERAL,		// from layer is same distance from input and output signals as this layer
+    DIR_UNKNOWN,	// direction not set
+  };
+
   Layer* 		layer;    	// #READ_ONLY #NO_SAVE layer this prjn is in
   PrjnSource 		from_type;	// #CAT_Projection Source of the projections
   Layer*		from;		// #CAT_Projection layer receiving from (set this for custom)
@@ -893,6 +900,7 @@ public:
   TypeDef*		recvcons_type;	// #TYPE_RecvCons #CAT_Projection Type of receiving connection group to make
   TypeDef*		sendcons_type;	// #TYPE_SendCons #CAT_Projection Type of sending connection group to make
   ConSpec_SPtr 		con_spec;	// #CAT_Projection conspec to use for creating connections
+
   int			recv_idx;	// #READ_ONLY #CAT_Projection receiving con_group index
   int			send_idx;	// #READ_ONLY #CAT_Projection sending con_group index
   int			recv_n;		// #READ_ONLY #CAT_Projection #DEF_1 number of receiving con_groups allocated to this projection: almost always 1 -- some things won't work right if > 1 (e.g., copying)
@@ -900,6 +908,8 @@ public:
 
   bool			projected; 	 // #HIDDEN #CAT_Projection t/f if connected
 
+  PrjnDirection		direction; 	// #CAT_Projection which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection or you can manually set; optionally used by only some algorithms
+  
   virtual void 	SetFrom();
   // #CAT_Projection set where to receive from based on selections
 
@@ -1177,6 +1187,19 @@ public:
   TA_BASEFUNS(LayerSpec); //
 };
 
+class PDP_API LayerDistances : public taBase {
+  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Network specifies distance from input/output layers
+public:
+  int	fm_input;		// how many layers between closest input layer and me (-1 if unknown)
+  int	fm_output;		// how many layers between closest output layer and me (-1 if unknown)
+
+  void 	Initialize()		{ fm_input = -1; fm_output = -1; }
+  void	Destroy()		{ };
+  SIMPLE_COPY(LayerDistances);
+  COPY_FUNS(LayerDistances, taBase);
+  TA_BASEFUNS(LayerDistances);
+};
+
 class PDP_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS ##CAT_Network layer containing units
 INHERITED(taNBase)
@@ -1211,6 +1234,8 @@ public:
   Unit::ExtType		ext_flag;	// #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
   int_Array		sent_already; 	// #CAT_Activation #READ_ONLY #NO_SAVE array of layer addresses for coordinating sending of net input to this layer
   DMemDist		dmem_dist; 	// #CAT_DMem how to distribute units across multiple distributed memory processors
+
+  LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
 
   int			n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
@@ -1306,6 +1331,13 @@ public:
 
   virtual float	Compute_SSE();
   // #CAT_Statistic compute sum squared error of activation vs targt over the entire layer
+
+  virtual void	PropagateInputDistance();
+  // #CAT_Structure propagate my input distance (dist.fm_input) to layers I send to
+  virtual void	PropagateOutputDistance();
+  // #CAT_Structure propagate my output distance (dist.fm_output) to layers I receive from
+  virtual void	Compute_PrjnDirections();
+  // #CAT_Structure compute the directions of projections based on the relative distances from input/output layers
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
@@ -1623,6 +1655,11 @@ public:
   // #CAT_Structure set layer z axis positions to unitary increments (0, 1, 2.. etc)
   virtual void	LayerZPos_Auto(float y_mult_factor = .5f);
   // #MENU #CAT_Structure auto stretch out z positions in proportion to the maximum y axis size of the network
+
+  virtual void	Compute_LayerDistances();
+  // #CAT_Structure compute distances between layers and input/output layers
+  virtual void	Compute_PrjnDirections();
+  // #CAT_Structure compute the directions of projections based on the relative distances from input/output layers (calls Compute_LayerDistances first)
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights

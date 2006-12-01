@@ -85,8 +85,9 @@ void DataOpEl::ClearColumns() {
 
 void DataOpList::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
-  if(owner && owner->GetOwner() && owner->GetOwner()->InheritsFrom(&TA_DataProg))
-    owner->GetOwner()->UpdateAfterEdit();
+  DataProg* own_prog = GET_MY_OWNER(DataProg);
+  if(own_prog)
+    own_prog->UpdateAfterEdit(); // will update columns from data table
 }
 
 void DataOpList::SetDataTable(DataTable* dt) {

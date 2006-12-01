@@ -802,7 +802,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   Unit* u;
   FOR_ITR_EL(Unit, u, lay->units., uitr) {
     if(recv) {
-      RecvCons* cg = u->recv.FindPrjn(prjn);
+      RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
       for(int j=0; j<cg->cons.size; ++j) {
 	Unit* su = cg->Un(j);
@@ -813,7 +813,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       }
     }
     else {			// send
-      SendCons* cg = u->send.FindPrjn(prjn);
+      SendCons* cg = u->send.SafeEl(prjn->send_idx);
       if(!cg) continue;
       for(int j=0; j<cg->cons.size; ++j) {
 	Unit* su = cg->Un(j);
@@ -841,7 +841,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       ptrs.Add(NULL); members.Link(con_md);
     }
     if(recv) {
-      RecvCons* cg = u->recv.FindPrjn(prjn);
+      RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
       for(int j=0; j<cg->cons.size; ++j) {
 	Unit* su = cg->Un(j);
@@ -852,7 +852,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       }
     }
     else {			// send
-      SendCons* cg = u->send.FindPrjn(prjn);
+      SendCons* cg = u->send.SafeEl(prjn->send_idx);
       if(!cg) continue;
       for(int j=0; j<cg->cons.size; ++j) {
 	Unit* su = cg->Un(j);

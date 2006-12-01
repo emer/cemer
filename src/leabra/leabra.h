@@ -179,6 +179,26 @@ public:
   TA_BASEFUNS(SAvgCorSpec);
 };
 
+class LEABRA_API AdaptRelNetinSpec : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters to adapt the relative netinput strength of different projections (to be used at epoch-level in AdaptRelNetin call, after AvgAbsRelNetin vals on projection have been computed)
+public:
+  bool		on;		// whether to adapt relative netinput values for this connection (only applied if AdaptAbsNetin is called, after AbsRelNetin and AvgAbsRelNetin)
+  float		trg_fm_input;	// #CONDEDIT_ON_on:true (typically 0.85, w/no lateral) auto-set trg_netin_rel on fm_input projections (by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1
+  float		trg_fm_output;	// #CONDEDIT_ON_on:true (typically 0.15, w/no lateral) auto-set trg_netin_rel on fm_output projections (by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1
+  float		trg_lateral;	// #CONDEDIT_ON_on:true auto-set trg_netin_rel on lateral projections (by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)
+  float		trg_sum;	// #CONDEDIT_ON_on:true #READ_ONLY #SHOW sum of trg values -- should be 1!
+
+  float		tol;		// #CONDEDIT_ON_on:true #DEF_0.05 tolerance from target value, below which parameters are not adapted
+  float		rel_lrate;	// #CONDEDIT_ON_on:true #DEF_0.05 adpatation 'learning' rate on wt_scale.rel parameter
+
+  void	UpdateAfterEdit();
+  void	Initialize();
+  void	Destroy()	{ };
+  SIMPLE_COPY(AdaptRelNetinSpec);
+  COPY_FUNS(AdaptRelNetinSpec, taBase);
+  TA_BASEFUNS(AdaptRelNetinSpec);
+};
+
 class LEABRA_API LeabraConSpec : public ConSpec {
   // ##CAT_Leabra Leabra connection specs
 public:
@@ -198,6 +218,7 @@ public:
   Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs (multiplies lrate!)
   LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning
   SAvgCorSpec	savg_cor;	// #CAT_Learning for Hebbian and netinput computation: correction for sending average act levels (i.e., renormalization); also norm_con_n for normalizing netinput computation
+  AdaptRelNetinSpec rel_net_adapt; // #CAT_Learning adapt relative netinput values based on targets for fm_input, fm_output, and lateral projections -- not used by default (call Compute_RelNetinAdapt to activate; requires Compute_RelNetin and Compute_AvgRelNetin for underlying data)
   
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun
   FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun
@@ -910,13 +931,14 @@ INHERITED(Projection)
 public:
   float		netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer
   float		netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer
-  float		netin_avg_cnt;	// #READ_ONLY #NO_SAVE #HIDDEN #CAT_Statistic relative netinput values for the recv projections into this layer -- counter for computing avg
 
   float		avg_netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
   float		avg_netin_avg_sum;// #READ_ONLY #HIDDEN #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch
   float		avg_netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
   float		avg_netin_rel_sum; // #READ_ONLY #HIDDEN #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
-  float		avg_netin_cnt; // #READ_ONLY #HIDDEN #CAT_Statistic count for computing epoch-level averages
+  int		avg_netin_n; // #READ_ONLY #HIDDEN #CAT_Statistic count for computing epoch-level averages
+
+  float		trg_netin_rel;	// #CAT_Learning target value for avg_netin_rel -- used for adapting scaling and actual layer activations to achieve desired relative netinput levels -- important for large multilayered networks, where bottom-up projections should be stronger than top-down ones.  this value can be set automatically based on the projection direction and other projections, as determined by the con spec
 
   void 	Initialize();
   void 	Destroy();
@@ -1048,6 +1070,21 @@ public:
   TA_BASEFUNS(LayNetRescaleSpec);
 };
 
+class LEABRA_API LayAbsNetAdaptSpec : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt absolute netinput values by adjusting the wt_scale.abs parameters in the conspecs of projections into this layer, based on differences between time-averaged max netinput values and the target
+public:
+  bool		on;		// whether to apply layer netinput rescaling
+  float		trg_net; 	// #CONDEDIT_ON_on:true #DEF_0.5 target maximum netinput value
+  float		tol;		// #CONDEDIT_ON_on:true #DEF_0.1 tolerance around target value -- if actual value is within this tolerance from target, then do not adapt
+  float		abs_lrate;	// #CONDEDIT_ON_on:true #DEF_0.05 learning rate for adapting the wt_scale.abs parameters for all projections into layer
+
+  void	Initialize();
+  void 	Destroy()	{ };
+  SIMPLE_COPY(LayAbsNetAdaptSpec);
+  COPY_FUNS(LayAbsNetAdaptSpec, taBase);
+  TA_BASEFUNS(LayAbsNetAdaptSpec);
+};
+
 class LEABRA_API LeabraLayerSpec : public LayerSpec {
   // ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 public:
@@ -1075,6 +1112,7 @@ public:
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
   LayNetRescaleSpec net_rescale; // #CAT_Activation rescale layer-wide netinputs to prevent blowup, when max net exceeds specified net value
+  LayAbsNetAdaptSpec abs_net_adapt; // #CAT_Learning adapt absolute netinput values (must call AbsRelNetin functions, and AdaptAbsNetin)
 
   virtual void	Init_Weights(LeabraLayer* lay);
   // #CAT_Learning initialize weight values and other permanent state
@@ -1212,11 +1250,6 @@ public:
   virtual void	AdaptGBarI(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation adapt inhibitory conductances based on target activation values relative to current values
 
-  virtual void	Compute_RelNetin(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute the relative netinput from different projections into this layer
-  virtual void	Compute_AvgRelNetin(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute time-average relative netinput from different projections into this layer (e.g., every epoch)
-
   ////////////////////////////////////////
   //	Stage 6: Learning 		//
   ////////////////////////////////////////
@@ -1227,6 +1260,24 @@ public:
   // #CAT_Learning learn: compute the weight changes
   virtual void	Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning use this if weights will be used again for activations prior to being updated
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //	Stage 7: Parameter Adaptation over longer timesales
+
+  virtual void	Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
+  virtual void	Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute time-average relative netinput from different projections into this layer (e.g., every epoch)
+
+  virtual void	Compute_TrgRelNetin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
+  virtual void	Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
+  virtual void	Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning adapt the absolute net input values by changing the conspec wt_scale.abs parameter
+
+  ////////////////////////////////////////////
+  //	Misc structural routines
 
   virtual LeabraLayer* FindLayerFmSpec(LeabraLayer* lay, int& prjn_idx, TypeDef* layer_spec);
   // #CAT_Structure find a layer that given layer receives from based on the type of layer spec
@@ -1354,6 +1405,9 @@ public:
   bool		hard_clamped;	// #CAT_Activation this layer is actually hard clamped
   float		dav;		// #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
   float		net_rescale;	// #READ_ONLY #EXPERT #CAT_Activation computed netinput rescaling factor (updated by net_rescale)
+  AvgMaxVals	avg_netin;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
+  AvgMaxVals	avg_netin_sum;	// #READ_ONLY #EXPERT #CAT_Activation sum of net input values for the layer, for computing average over an epoch-level timescale
+  int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation number of times sum is updated for computing average
   int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   int_Array	misc_iar;	// #HIDDEN #CAT_Activation misc int array of data
 
@@ -1418,17 +1472,24 @@ public:
   void	PostSettle(LeabraNetwork* net, bool set_both=false) { spec->PostSettle(this, net, set_both); }
   // #CAT_Activation after settling, keep track of phase variables, etc.
 
-  void	Compute_RelNetin(LeabraNetwork* net)	{ spec->Compute_RelNetin(this, net); }
-  // #CAT_Statistic compute the relative netinput from different projections into this layer
-  void	Compute_AvgRelNetin(LeabraNetwork* net)	{ spec->Compute_AvgRelNetin(this, net); }
-  // #CAT_Statistic compute the relative netinput from different projections into this layer
-
   void	Compute_dWt() 				{ spec->Compute_dWt(this, NULL); }
   void	Compute_dWt(LeabraNetwork* net) 	{ spec->Compute_dWt(this, net); }
   // #CAT_Learning learn: compute the weight changes
   void	Compute_WtFmLin(LeabraNetwork* net) 	{ spec->Compute_WtFmLin(this, net); }
   // #CAT_Learning use this if weights will be used again for activations prior to being updated
   void	Compute_Weights();
+
+  void	Compute_AbsRelNetin(LeabraNetwork* net)	{ spec->Compute_AbsRelNetin(this, net); }
+  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
+  void	Compute_AvgAbsRelNetin(LeabraNetwork* net) { spec->Compute_AvgAbsRelNetin(this, net); }
+  // #CAT_Statistic compute the average absolute layer-level and relative netinput from different projections into this layer (over an epoch-level timescale)
+
+  void	Compute_TrgRelNetin(LeabraNetwork* net) { spec->Compute_TrgRelNetin(this, net); }
+  // #CAT_Statistic compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
+  void	Compute_AdaptRelNetin(LeabraNetwork* net) { spec->Compute_AdaptRelNetin(this, net); }
+  // #CAT_Statistic adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
+  void	Compute_AdaptAbsNetin(LeabraNetwork* net) { spec->Compute_AdaptAbsNetin(this, net); }
+  // #CAT_Statistic adapt the absolute net input values by changing the conspec wt_scale.abs parameter
 
   virtual void	ResetSortBuf();
 
@@ -1815,10 +1876,16 @@ public:
   virtual void	Trial_Final();
   // #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
 
-  virtual void	Compute_RelNetin();
-  // #CAT_Statistic compute the relative netinput from different projections into layers in network
-  virtual void	Compute_AvgRelNetin();
-  // #CAT_Statistic compute time-average relative netinput from different projections into layers in network (e.g. over epoch timescale)
+  virtual void	Compute_AbsRelNetin();
+  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network
+  virtual void	Compute_AvgAbsRelNetin();
+  // #CAT_Statistic compute time-average absolute layer-level and relative netinput from different projections into layers in network (e.g. over epoch timescale)
+  virtual void	Compute_TrgRelNetin();
+  // #CAT_Learning compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
+  virtual void	Compute_AdaptRelNetin();
+  // #CAT_Learning adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
+  virtual void	Compute_AdaptAbsNetin();
+  // #CAT_Learning adapt the absolute net input values by changing the conspec wt_scale.abs parameter
 
   virtual void	Compute_AvgCycles();
   // #CAT_Statistic compute average cycles (at an epoch-level timescale)

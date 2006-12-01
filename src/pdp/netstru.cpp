@@ -2380,9 +2380,7 @@ void Projection::Initialize() {
   recv_n = 1;
   send_n = 1;
   projected = false;
-/* obs #ifdef TA_GUI
-  proj_points = NULL;
-#endif */
+  direction = DIR_UNKNOWN;
 }
 
 void Projection::Destroy(){
@@ -2442,6 +2440,7 @@ void Projection::Copy_(const Projection& cp) {
 //   recv_n = cp.recv_n;
 //   send_n = cp.send_n;
 //   projected = cp.projected;
+  direction = cp.direction;
 }
 
 void Projection::UpdateAfterEdit() {
@@ -3954,6 +3953,63 @@ int Layer::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool qui
   return rval;
 }
 
+void Layer::PropagateInputDistance() {
+  int new_dist = dist.fm_input + 1;
+  Projection* p;
+  taLeafItr i;
+  FOR_ITR_EL(Projection, p, send_prjns., i) {
+    if(!p->layer || p->layer->lesion) continue;
+    if(p->layer->dist.fm_input >= 0) { // already set
+      if(new_dist < p->layer->dist.fm_input) { // but we're closer
+	p->layer->dist.fm_input = new_dist;
+	p->layer->PropagateInputDistance(); // note: this could lead back to us, but big deal.
+	// the < sign prevents loops from continuing indefinitely.
+      }
+    }
+    else { // not set yet
+      p->layer->dist.fm_input = new_dist;
+      p->layer->PropagateInputDistance();
+    }
+  }
+}
+
+void Layer::PropagateOutputDistance() {
+  int new_dist = dist.fm_output + 1;
+  Projection* p;
+  taLeafItr i;
+  FOR_ITR_EL(Projection, p, projections., i) {
+    if(!p->from || p->from->lesion) continue;
+    if(p->from->dist.fm_output >= 0) { // already set
+      if(new_dist < p->from->dist.fm_output) { // but we're closer
+	p->from->dist.fm_output = new_dist;
+	p->from->PropagateOutputDistance(); // note: this could lead back to us, but big deal.
+	// the < sign prevents loops from continuing indefinitely.
+      }
+    }
+    else { // not set yet
+      p->from->dist.fm_output = new_dist;
+      p->from->PropagateOutputDistance();
+    }
+  }
+}
+
+void Layer::Compute_PrjnDirections() {
+  Projection* p;
+  taLeafItr i;
+  FOR_ITR_EL(Projection, p, projections., i) {
+    if(!p->from || p->from->lesion) continue;
+    if(p->from->dist.fm_input < dist.fm_input) {
+      p->direction = Projection::FM_INPUT;
+    }
+    else if(p->from->dist.fm_output < dist.fm_output) {
+      p->direction = Projection::FM_OUTPUT;
+    }
+    else {
+      p->direction = Projection::LATERAL;
+    }
+  }  
+}
+
 void Layer::TransformWeights(const SimpleMathSpec& trans) {
   units.TransformWeights(trans);
 }
@@ -5354,6 +5410,41 @@ void Network::LayerZPos_Auto(float y_mult_factor) {
   int add_to_z = (int)((float)y_mult_factor * max_size.y);
   if(add_to_z <= 0) add_to_z = 1;
   LayerZPos_Add(add_to_z);
+}
+
+void Network::Compute_LayerDistances() {
+  // first reset all 
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesion) continue;
+    l->dist.fm_input = -1; l->dist.fm_output = -1;
+  }
+
+  // next go through and find inputs
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesion) continue;
+    if(l->layer_type != Layer::INPUT) continue;
+    l->dist.fm_input = 0;
+    l->PropagateInputDistance();
+  }
+  // then outputs
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesion) continue;
+    if(!((l->layer_type == Layer::OUTPUT) || (l->layer_type == Layer::TARGET))) continue;
+    l->dist.fm_output = 0;
+    l->PropagateOutputDistance();
+  }
+}
+
+void Network::Compute_PrjnDirections() {
+  Compute_LayerDistances();	// required data
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesion) continue;
+    l->Compute_PrjnDirections();
+  }
 }
 
 void Network::TransformWeights(const SimpleMathSpec& trans) {

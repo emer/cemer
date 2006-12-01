@@ -77,6 +77,28 @@ void DataArray_impl::CopyFromRow(int dest_row, const DataArray_impl& src, int sr
   }
 }
 
+void DataArray_impl::CopyFromRow_Robust(int dest_row, const DataArray_impl& src, int src_row) {
+  if(src.is_matrix) {
+    if(is_matrix) {
+      int mx_sz = MIN(cell_size(), src.cell_size());
+      for(int i=0; i<mx_sz; i++) {
+	SetValAsVarM(src.GetValAsVarM(src_row, i), dest_row, i);
+      }
+    }
+    else {
+      SetValAsVar(src.GetValAsVarM(src_row, 0), dest_row);
+    }
+  }
+  else {
+    if(is_matrix) {
+      SetValAsVarM(src.GetValAsVar(src_row), dest_row, 0);
+    }
+    else {
+      SetValAsVar(src.GetValAsVar(src_row), dest_row);
+    }
+  }
+}
+
 void DataArray_impl::Init() {
   taMatrix* ar = AR(); //cache
   if (is_matrix) {
@@ -420,6 +442,18 @@ void DataTable::Copy_NoData(const DataTable& cp) {
 
 void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
   data.CopyFromRow(dest_row, src.data, src_row);
+}
+
+
+bool DataTable::CopyColRow(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row) {
+  DataArray_impl* dar = data.SafeEl(dest_col);
+  DataArray_impl* sar = src.data.SafeEl(src_col);
+  if(!dar || !sar) {
+    taMisc::Error("CopyColRow: column(s) out of range, not copied!");
+    return false;
+  }
+  dar->CopyFromRow_Robust(dest_row, *sar, src_row);
+  return true;
 }
 
 void DataTable::UpdateAfterEdit() {

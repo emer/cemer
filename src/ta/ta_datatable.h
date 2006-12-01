@@ -224,7 +224,9 @@ public:
   virtual void	Copy_NoData(const DataArray_impl& cp);
   // #CAT_ObjectMgmt copy the structure of the datatable without getting all the data
   virtual void	CopyFromRow(int dest_row, const DataArray_impl& cp, int src_row);
-  // #CAT_ObjectMgmt copy one row from source to given row in this object
+  // #CAT_ObjectMgmt copy one row from source to given row in this object, assumes that the two have the same type and, if matrix, cell_size
+  virtual void	CopyFromRow_Robust(int dest_row, const DataArray_impl& cp, int src_row);
+  // #CAT_ObjectMgmt copy one row from source to given row in this object, robust to differences in type and format of the cells
   
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
@@ -542,6 +544,8 @@ public:
   // #CAT_ObjectMgmt copy only the column structure, but no data, from other data table
   virtual void	CopyFromRow(int dest_row, const DataTable& cp, int src_row);
   // #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
+  virtual bool	CopyColRow(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row);
+  // #CAT_ObjectMgmt copy one column, row from source -- is robust to differences in type and matrix sizing (returns false if not successful)
 
   virtual void	UniqueColNames();
   // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)

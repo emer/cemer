@@ -35,21 +35,10 @@ SRCS =\
 
 include $(top_srcdir)/mfstamp.am
 
-mta_parse.ccx:	mta_parse.y
+make_mta_parse:
 	bison -dtvy mta_parse.y;
 	sed -e "s/union/struct/g" y.tab.c >mta_parse.ccx;
 	sed -e "s/union/struct/g" y.tab.h >mta_parse.hx;
-
-mta_parse.hx:	mta_parse.y
-	bison -dtvy mta_parse.y;
-	sed -e "s/union/struct/g" y.tab.c >mta_parse.ccx;
-	sed -e "s/union/struct/g" y.tab.h >mta_parse.hx;
-
-mta_parse.cpp: 	mta_parse.ccx
-	cmp -s mta_parse.ccx mta_parse.cpp || (cp mta_parse.ccx mta_parse.cpp);
-
-mta_parse.h:	mta_parse.hx
-	cmp -s mta_parse.hx mta_parse.h || (cp mta_parse.hx mta_parse.h);
 
 ta_TA_type.h ta_TA_inst.h:
 	if [ ! -f ta_TA_type.h ];\
