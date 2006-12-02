@@ -4881,9 +4881,9 @@ void Network::DMem_PruneNonLocalCons() {
       RecvCons* recv_gp;
       int g;
       for (g = 0; g < u->recv.size; g++) {
-	recv_gp = (RecvCons *)u->recv.FastGp(g);
+	recv_gp = (RecvCons *)u->recv.FastEl(g);
 	if(recv_gp->spec->DMem_AlwaysLocal()) continue;
-	for (int sui = recv_gp->size-1; sui >= 0; sui--) {
+	for (int sui = recv_gp->cons.size-1; sui >= 0; sui--) {
 	  u->DisConnectFrom(recv_gp->Un(sui), NULL);
 	}
       }
@@ -4912,7 +4912,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 	values.FastEl(cidx++) = un->bias.Cn(0)->dwt;
       for(int g = 0; g < un->recv.size; g++) {
 	RecvCons* cg = un->recv.FastEl(g);
-	for(int i = 0;i<cg->size;i++)
+	for(int i = 0;i<cg->cons.size;i++)
 	  values.FastEl(cidx++) = cg->Cn(i)->dwt;
       }
     }
@@ -4932,7 +4932,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 	un->bias.Cn(0)->dwt = results.FastEl(cidx++);
       for(int g = 0; g < un->recv.size; g++) {
 	RecvCons* cg = un->recv.FastEl(g);
-	for(int i = 0;i<cg->size;i++)
+	for(int i = 0;i<cg->cons.size;i++)
 	  cg->Cn(i)->dwt = results.FastEl(cidx++);
       }
     }
@@ -4960,7 +4960,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
 	values.FastEl(cidx++) = un->bias.Cn(0)->wt;
       for(int g = 0; g < un->recv.size; g++) {
 	RecvCons* cg = un->recv.FastEl(g);
-	for(int i = 0;i<cg->size;i++)
+	for(int i = 0;i<cg->cons.size;i++)
 	  values.FastEl(cidx++) = cg->Cn(i)->wt;
       }
     }
@@ -4981,7 +4981,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
 	un->bias.Cn(0)->wt = avg_mult * results.FastEl(cidx++);
       for(int g = 0; g < un->recv.size; g++) {
 	RecvCons* cg = un->recv.FastEl(g);
-	for(int i = 0;i<cg->size;i++)
+	for(int i = 0;i<cg->cons.size;i++)
 	  cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
       }
     }
@@ -5055,11 +5055,11 @@ void Network::DMem_SymmetrizeWts() {
 	    }
 	  }
 	  // now have all the data collected, to through and get the sym values!
-	  for(int i=0;i<cg->size;i++) {
+	  for(int i=0;i<cg->cons.size;i++) {
 	    Unit* fm = cg->Un(i);
-	    int uidx = cg->prjn->from->units.FindLeaf(fm);
+	    int uidx = fm->GetMyLeafIndex();
 	    if(uidx < 0) continue;
-	    int sidx = all_unit_idxs.Find(uidx);
+	    int sidx = all_unit_idxs.FindEl(uidx);
 	    if(sidx < 0) continue;
 	    cg->Cn(i)->wt = all_wt_vals[sidx];
 	  }

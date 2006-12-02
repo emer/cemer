@@ -933,12 +933,20 @@ public:
   float		netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer
 
   float		avg_netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
-  float		avg_netin_avg_sum;// #READ_ONLY #HIDDEN #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch
+  float		avg_netin_avg_sum;// #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch
   float		avg_netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
-  float		avg_netin_rel_sum; // #READ_ONLY #HIDDEN #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
-  int		avg_netin_n; // #READ_ONLY #HIDDEN #CAT_Statistic count for computing epoch-level averages
+  float		avg_netin_rel_sum; // #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
+  int		avg_netin_n; // #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
 
   float		trg_netin_rel;	// #CAT_Learning target value for avg_netin_rel -- used for adapting scaling and actual layer activations to achieve desired relative netinput levels -- important for large multilayered networks, where bottom-up projections should be stronger than top-down ones.  this value can be set automatically based on the projection direction and other projections, as determined by the con spec
+
+#ifdef DMEM_COMPILE
+  DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
+  virtual void 	DMem_InitAggs();
+  // #IGNORE initialize aggregation stuff
+  virtual void	DMem_ComputeAggs(MPI_Comm comm);
+  // #IGNORE aggregate network variables across procs for trial-level dmem 
+#endif
 
   void 	Initialize();
   void 	Destroy();
@@ -1307,8 +1315,8 @@ SpecPtr_of(LeabraLayerSpec);
 class LEABRA_API AvgMaxVals : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
 public:
-  float		avg;		// average value
-  float		max;		// maximum value
+  float		avg;		// #DMEM_AGG_SUM average value
+  float		max;		// #DMEM_AGG_SUM maximum value
   int 		max_i;		// index of unit with maximum value
   
   void	Initialize();
@@ -1406,13 +1414,20 @@ public:
   float		dav;		// #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
   float		net_rescale;	// #READ_ONLY #EXPERT #CAT_Activation computed netinput rescaling factor (updated by net_rescale)
   AvgMaxVals	avg_netin;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
-  AvgMaxVals	avg_netin_sum;	// #READ_ONLY #EXPERT #CAT_Activation sum of net input values for the layer, for computing average over an epoch-level timescale
-  int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation number of times sum is updated for computing average
+  AvgMaxVals	avg_netin_sum;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
+  int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   int_Array	misc_iar;	// #HIDDEN #CAT_Activation misc int array of data
 
-  void	Build();
+#ifdef DMEM_COMPILE
+  DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
+  virtual void 	DMem_InitAggs();
+  // #IGNORE initialize aggregation stuff
+  virtual void	DMem_ComputeAggs(MPI_Comm comm);
+  // #IGNORE aggregate network variables across procs for trial-level dmem 
+#endif
 
+  void	Build();
   void	Init_Weights() 	{ if(spec) spec->Init_Weights(this); }
   // #CAT_Learning initialize weight values and other permanent state
   void	Init_ActAvg() 	{ spec->Init_ActAvg(this); }

@@ -246,6 +246,14 @@ public:
   // #CAT_Access flat row count, for 2-d grid operations, only 0 if empty
   int			FrameToRow(int f) const;
   // #CAT_Access convert frame number to row number
+  int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
+  // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  int			FastElIndexN(const MatrixGeom& indices) const;
+  // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
+  // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
+  int			SafeElIndexN(const MatrixGeom& indices) const; 
+  // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
   
   virtual TypeDef*	GetDataTypeDef() const = 0;
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
@@ -495,16 +503,6 @@ protected:
   MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
   
   virtual void		SetGeom_(int dims_, const int geom_[]); //
-  
-  int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
-  // NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
-  int			FastElIndexN(const MatrixGeom& indices) const; //
-  // NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
-  
-  int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
-  // check bounds and return flat index, -1 if any dim out of bounds
-  int			SafeElIndexN(const MatrixGeom& indices) const; 
-  // check bounds and return flat index, -1 if any dim out of bounds
   
   virtual void		Alloc_(int new_alloc);
   // set capacity to n -- should always be in multiples of frames 

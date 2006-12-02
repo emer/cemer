@@ -1382,6 +1382,10 @@ void LeabraPrjn::Initialize() {
   avg_netin_n = 0;
 
   trg_netin_rel = -1.0f;		// indicates not set
+#ifdef DMEM_COMPILE
+  dmem_agg_sum.agg_op = MPI_SUM;
+  DMem_InitAggs();
+#endif
 }
 
 void LeabraPrjn::Destroy() {
@@ -1400,9 +1404,18 @@ void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
   trg_netin_rel = cp.trg_netin_rel;
 }
 
+#ifdef DMEM_COMPILE
+void LeabraPrjn::DMem_InitAggs() {
+  dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
+  dmem_agg_sum.CompileVars();
+}
+void LeabraPrjn::DMem_ComputeAggs(MPI_Comm comm) {
+  dmem_agg_sum.AggVar(comm, MPI_SUM);
+}
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 //			Layer Level Code
-
 
 //////////////////////////
 //  	Layer, Spec	//
@@ -2724,7 +2737,10 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
+void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) {
+#ifdef DMEM_COMPILE
+  lay->DMem_ComputeAggs(net->dmem_trl_comm.comm);
+#endif
   if(lay->avg_netin_n > 0) {
     lay->avg_netin.avg = lay->avg_netin_sum.avg / (float)lay->avg_netin_n;
     lay->avg_netin.max = lay->avg_netin_sum.max / (float)lay->avg_netin_n;
@@ -2734,6 +2750,9 @@ void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
   lay->avg_netin_n = 0;
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+#ifdef DMEM_COMPILE
+    prjn->DMem_ComputeAggs(net->dmem_trl_comm.comm);
+#endif
     if(prjn->avg_netin_n > 0) {
       prjn->avg_netin_avg = prjn->avg_netin_avg_sum / (float)prjn->avg_netin_n;
       prjn->avg_netin_rel = prjn->avg_netin_rel_sum / (float)prjn->avg_netin_n;
@@ -2976,6 +2995,9 @@ void LeabraLayer::Initialize() {
   net_rescale = 1.0f;
 
   avg_netin_n = 0;
+#ifdef DMEM_COMPILE
+  dmem_agg_sum.agg_op = MPI_SUM;
+#endif
 }  
 
 void LeabraLayer::InitLinks() {
@@ -2993,6 +3015,10 @@ void LeabraLayer::InitLinks() {
 
   taBase::Own(misc_iar, this);
 
+#ifdef DMEM_COMPILE
+  taBase::Own(dmem_agg_sum, this);
+  DMem_InitAggs();
+#endif
   spec.SetDefaultSpec(this);
   units.gp.SetBaseType(&TA_LeabraUnit_Group);
 }
@@ -3053,6 +3079,16 @@ void LeabraLayer::Build() {
   ResetSortBuf();
   Layer::Build();
 }
+
+#ifdef DMEM_COMPILE
+void LeabraLayer::DMem_InitAggs() {
+  dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
+  dmem_agg_sum.CompileVars();
+}
+void LeabraLayer::DMem_ComputeAggs(MPI_Comm comm) {
+  dmem_agg_sum.AggVar(comm, MPI_SUM);
+}
+#endif
 
 void LeabraUnit_Group::Initialize() {
   Inhib_Initialize();
