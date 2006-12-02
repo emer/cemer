@@ -255,7 +255,7 @@ public:
   void*   	GetTA_Element_(int i, TypeDef*& eltd) const
   { eltd = GetElType(); return (void*)SafeEl_(i); } // #IGNORE 
   void*		SafeEl_(int i) const
-  { void* rval=NULL; if((i >= 0) && (i < size)) rval = el[i]; return rval; } 	// #IGNORE
+  { void* rval=NULL; if(InRange(i)) rval = el[i]; return rval; } 	// #IGNORE
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
   virtual void*	FindName_(const String& it, int& idx=Idx) const;	// #IGNORE
   virtual void*	Pop_();					// #IGNORE
@@ -310,6 +310,7 @@ public:
   virtual TypeDef* 	GetElType() const {return NULL;}		// #IGNORE Default type for objects in group
   virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
+  inline bool	InRange(int idx) const { return ((idx < size) && (idx >= 0)); }
   virtual void	Alloc(int sz);
   // #CAT_Modify allocate a list big enough for given number of elements (or current size)
   virtual void 	Reset()			{ RemoveAll(); }

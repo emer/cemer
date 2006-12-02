@@ -249,6 +249,8 @@ public:
   
   virtual TypeDef*	GetDataTypeDef() const = 0;
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
+  void*   		GetTA_Element(int i, TypeDef*& eltd)
+  { eltd = GetDataTypeDef(); if(InRange_Flat(i)) return (void*)FastEl_Flat_(i); return NULL; }
 
   ///////////////////////////////////////
   // String
@@ -464,7 +466,7 @@ public:
   // #IGNORE 
   
   virtual const void*	SafeEl_(int i) const 
-  {if ((i > 0) && (i < size)) return FastEl_Flat_(i); else return El_GetBlank_(); }
+  {if ((i >= 0) && (i < size)) return FastEl_Flat_(i); else return El_GetBlank_(); }
   // #IGNORE raw element in flat space, else NULL
 
   // every subclass should implement these:

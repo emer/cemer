@@ -365,6 +365,9 @@ public:
   DataTableRef	    src_data;	// source data for operation
   DataTableRef	    dest_data;	// #NULL_OK destination (result) data for operation (if NULL, a new one will be automatically created)
 
+  virtual void	UpdateSpecDataTable() { };
+  // #CAT_Data update the data table pointer(s) for the spec in this prog (so the user can choose columns from the appropriate data table)
+
   TA_SIMPLE_BASEFUNS(DataProg);
 protected:
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
@@ -380,7 +383,9 @@ public:
   DataSortSpec		sort_spec; // #SHOW_TREE data sorting specification
 
   virtual void	AddAllColumns();
-  // #BUTTON add all columns from src_data to the sort_spec list of ops columns 
+  // #BUTTON #CAT_Data add all columns from src_data to the sort_spec list of ops columns 
+
+  override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -401,7 +406,8 @@ public:
   DataGroupSpec		group_spec; // #SHOW_TREE data grouping specification
 
   virtual void	AddAllColumns();
-  // #BUTTON add all columns from src_data to the group_spec list of ops columns 
+  // #BUTTON #CAT_Data add all columns from src_data to the group_spec list of ops columns 
+  override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -422,7 +428,8 @@ public:
   DataSelectSpec	select_spec; // #SHOW_TREE data selection specification
 
   virtual void	AddAllColumns();
-  // #BUTTON add all columns from src_data to the select_spec list of ops columns 
+  // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
+  override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -443,7 +450,8 @@ public:
   DataOpList		select_spec; // #SHOW_TREE columns to select
 
   virtual void	AddAllColumns();
-  // #BUTTON add all columns from src_data to the select_spec list of ops columns 
+  // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
+  override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -463,6 +471,8 @@ INHERITED(DataProg)
 public:
   DataTableRef		src_b_data;	// second source data for operation
   DataJoinSpec		join_spec; // #SHOW_TREE data grouping specification
+
+  override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -487,9 +497,10 @@ public:
   ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
 
   virtual void	AddAllSrcColumns();
-  // #BUTTON add all columns from src_data to the src_cols list of columns 
+  // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 
   virtual void	AddAllDestColumns();
-  // #BUTTON add all columns from dest_data to the dest_cols list of columns 
+  // #BUTTON #CAT_Data add all columns from dest_data to the dest_cols list of columns 
+  override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
@@ -512,12 +523,18 @@ class TA_API DataCalcAddDestRow : public DataProg {
   // add a new blank row into the dest data table (used in DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object)
 INHERITED(DataProg)
 public:
+#ifdef __MAKETA__
+  DataTableRef	    src_data;	// #READ_ONLY #HIDDEN source data for operation
+  DataTableRef	    dest_data;	// #READ_ONLY #SHOW destination table to add row in -- automatically updated from DataCalcLoop
+#endif
+
   virtual void	GetDataPtrsFmLoop();
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
   void	InitLinks();
+  void	Copy(const DataCalcAddDestRow& cp);
   TA_BASEFUNS(DataCalcAddDestRow);
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -532,12 +549,18 @@ class TA_API DataCalcSetDestRow : public DataProg {
   // set all the current values into the dest data table (used in DataCalcLoop -- automatically gets dest_data from outer DataCalcLoop object)
 INHERITED(DataProg)
 public:
+#ifdef __MAKETA__
+  DataTableRef	    src_data;	// #READ_ONLY #HIDDEN source data for operation
+  DataTableRef	    dest_data;	// #READ_ONLY #SHOW destination table to set row in -- automatically updated from DataCalcLoop
+#endif
+
   virtual void	GetDataPtrsFmLoop();
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
   void 	InitLinks();
+  void	Copy(const DataCalcSetDestRow& cp);
   TA_BASEFUNS(DataCalcSetDestRow);
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -552,12 +575,18 @@ class TA_API DataCalcSetSrcRow : public DataProg {
   // set all the current values into the src data table (used in DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)
 INHERITED(DataProg)
 public:
+#ifdef __MAKETA__
+  DataTableRef	    src_data;	// #READ_ONLY #SHOW source table to set values in -- automatically updated from DataCalcLoop
+  DataTableRef	    dest_data;	// #READ_ONLY #HIDDEN destination table -- automatically updated from DataCalcLoop
+#endif
+
   virtual void	GetDataPtrsFmLoop();
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
   void 	UpdateAfterEdit();
   void 	InitLinks();
+  void	Copy(const DataCalcSetSrcRow& cp);
   TA_BASEFUNS(DataCalcSetSrcRow);
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -572,6 +601,10 @@ class TA_API DataCalcCopyCommonCols : public DataProg {
   // copy all of the columns from source to dest that have the same name and type
 INHERITED(DataProg)
 public:
+#ifdef __MAKETA__
+  DataTableRef	    src_data;	// #READ_ONLY #SHOW source data for copying -- automatically updated from DataCalcLoop
+  DataTableRef	    dest_data;	// #READ_ONLY #SHOW destination table for copying -- automatically updated from DataCalcLoop
+#endif
   bool		only_named_cols;
   // only copy columns that are named in src_cols and dest_cols (otherwise just operates on all the datatable columns)
 
@@ -582,7 +615,7 @@ public:
   void 	UpdateAfterEdit();
   void 	InitLinks();
   SIMPLE_COPY(DataCalcCopyCommonCols);
-  COPY_FUNS(DataCalcCopyCommonCols, inherited);
+  void	Copy(const DataCalcCopyCommonCols& cp);
   TA_BASEFUNS(DataCalcCopyCommonCols);
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);

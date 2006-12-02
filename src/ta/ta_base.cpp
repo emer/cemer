@@ -3191,6 +3191,14 @@ void int_Array::FillSeq(int start, int inc) {
     FastEl(i) = v;
 }
 
+const int int_FixedArray::blank = 0;
+const int int_Array::blank = 0;
+const float float_Array::blank = 0.0f;
+const double double_Array::blank = 0.0;
+const char char_Array::blank = '\0';
+const String String_Array::blank = "";
+const Variant Variant_Array::blank;
+const voidptr voidptr_Array::blank = NULL;
 
 //////////////////////////
 // 	SArg_Array	//

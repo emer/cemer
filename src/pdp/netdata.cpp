@@ -623,11 +623,11 @@ void NetMonItem::ScanObject() {
     ScanObject_Network((Network*)object.ptr(), variable);
   else {
     // could be any type of object.ptr()
-    ScanObject_InObject(object.ptr(), variable, true);			
+    ScanObject_InObject(object.ptr(), variable, object.ptr());			
   }
 }
 
-bool NetMonItem::ScanObject_InObject(TAPtr obj, String var, bool mk_col) {
+bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) {
   if (!obj) return false; 
   MemberDef* md = NULL;
   
@@ -657,13 +657,13 @@ bool NetMonItem::ScanObject_InObject(TAPtr obj, String var, bool mk_col) {
     }
     // because we found the subobj, we deref the var and invoke ourself recursively
     var = var.after('.');
-    return ScanObject_InObject(ths, var, mk_col);
-  } else {
-    // caller may not have passed owner, try to look it up
+    return ScanObject_InObject(ths, var, name_obj);
+  }
+  else {
     md = obj->FindMember(var);
     if (md) {
-      if (mk_col) {
-	String valname = GetChanName(obj, val_specs.size);
+      if(name_obj) {
+	String valname = GetChanName(name_obj, val_specs.size);
 	ValType vt = ValTypeForType(md->type);
 	if(vt == VT_FLOAT || vt == VT_DOUBLE) vt = real_val_type;
         AddScalarChan(valname, vt);
@@ -678,7 +678,7 @@ bool NetMonItem::ScanObject_InObject(TAPtr obj, String var, bool mk_col) {
 }
 
 void NetMonItem::ScanObject_Network(Network* net, String var) {
-  if (ScanObject_InObject(net, var, true)) return;
+  if (ScanObject_InObject(net, var, net)) return;
 
   taLeafItr itr;
   Layer* lay;
@@ -700,7 +700,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     }
   }
 
-  if (ScanObject_InObject(lay, var, true)) return;
+  if (ScanObject_InObject(lay, var, lay)) return;
 
   // we now know it must be a regular unit variable (or invalid); do that
   MatrixGeom geom;
@@ -719,7 +719,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
   AddMatrixChan(valname, real_val_type, &geom);
   if (geom.size == 1) {
     for (int i = 0; i < lay->units.leaves; ++i) {
-      ScanObject_InObject(lay->units.Leaf(i), var, false); // don't make a col
+      ScanObject_InObject(lay->units.Leaf(i), var, NULL); // don't make a col
     }
   } else if(geom.size == 2) {
     TwoDCoord c;
@@ -727,7 +727,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
       for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
         Unit* u = lay->FindUnitFmCoord(c); // NULL if odd size or not built
         if(u) 
-	  ScanObject_InObject(u, var, false); // don't make a col
+	  ScanObject_InObject(u, var, NULL); // don't make a col
       }
     }
   } else if(geom.size == 4) {
@@ -739,7 +739,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 	  for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
 	    Unit* u = lay->FindUnitFmGpCoord(gc, c);
 	    if(u) 
-	      ScanObject_InObject(u, var, false); // don't make a col
+	      ScanObject_InObject(u, var, NULL); // don't make a col
 	  }
 	}
       }
@@ -866,7 +866,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
 }
 
 void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
-  if (ScanObject_InObject(pg, var, true)) return;
+  if (ScanObject_InObject(pg, var, pg)) return;
   
   for(int i=0;i<pg->size;i++) {
     Projection* prjn = pg->FastEl(i);
@@ -875,7 +875,7 @@ void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
 }
 
 void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
-  if (ScanObject_InObject(prjn, var, true)) return;
+  if (ScanObject_InObject(prjn, var, prjn)) return;
   
   Layer* lay = NULL;
   if (var.before('.') == "r") lay = prjn->layer;
@@ -904,7 +904,7 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
     }
   }
 
-  if (ScanObject_InObject(ug, var, true)) return;
+  if (ScanObject_InObject(ug, var, ug)) return;
 
   // we now know it must be a regular unit variable (or invalid); do that
   MatrixGeom geom;
@@ -917,7 +917,7 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
   AddMatrixChan(valname, real_val_type, &geom);
   if(geom.size == 1) {
     for(int i = 0; i < ug->size; i++) {
-      ScanObject_InObject(ug->FastEl(i), var, false); // don't make a col
+      ScanObject_InObject(ug->FastEl(i), var, NULL); // don't make a col
     }
   }
   else {
@@ -926,14 +926,14 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
       for (c.x = 0; c.x < ug->geom.x; ++c.x) {
         Unit* u = ug->FindUnitFmCoord(c); // NULL if odd size or not built
         if(u) 
-	  ScanObject_InObject(u, var, false); // don't make a col
+	  ScanObject_InObject(u, var, NULL); // don't make a col
       }
     }
   }
 }
 
 void NetMonItem::ScanObject_Unit(Unit* u, String var) {
-  if(ScanObject_InObject(u, var, true)) return;
+  if(ScanObject_InObject(u, var, u)) return;
   
   // otherwise, we only grok the special s. and r. indicating conns
   if (!var.contains('.')) return;

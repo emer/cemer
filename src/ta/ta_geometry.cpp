@@ -169,7 +169,6 @@ FloatTDCoord& FloatTDCoord::operator=(const TDCoord& cp) {
   return *this;
 }
 
-
 #ifdef TA_USE_INVENTOR
 
 void FloatTransform::CopyTo(SoTransform* txfm) {
@@ -180,3 +179,6 @@ void FloatTransform::CopyTo(SoTransform* txfm) {
 }
 
 #endif
+
+const ValIdx ValIdx_Array::blank;
+

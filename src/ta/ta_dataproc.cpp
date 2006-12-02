@@ -87,7 +87,7 @@ void DataOpList::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   DataProg* own_prog = GET_MY_OWNER(DataProg);
   if(own_prog)
-    own_prog->UpdateAfterEdit(); // will update columns from data table
+    own_prog->UpdateSpecDataTable(); // will update columns from data table
 }
 
 void DataOpList::SetDataTable(DataTable* dt) {
@@ -982,6 +982,10 @@ void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void DataSortProg::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  UpdateSpecDataTable();
+}
+
+void DataSortProg::UpdateSpecDataTable() {
   sort_spec.SetDataTable(src_data);
 }
 
@@ -1025,6 +1029,10 @@ void DataSortProg::AddAllColumns() {
 
 void DataSelectRowsProg::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  UpdateSpecDataTable();
+}
+
+void DataSelectRowsProg::UpdateSpecDataTable() {
   select_spec.SetDataTable(src_data);
 }
 
@@ -1068,6 +1076,10 @@ void DataSelectRowsProg::AddAllColumns() {
 
 void DataSelectColsProg::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  UpdateSpecDataTable();
+}
+
+void DataSelectColsProg::UpdateSpecDataTable() {
   select_spec.SetDataTable(src_data);
 }
 
@@ -1111,6 +1123,10 @@ void DataSelectColsProg::AddAllColumns() {
 
 void DataGroupProg::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  UpdateSpecDataTable();
+}
+
+void DataGroupProg::UpdateSpecDataTable() {
   group_spec.SetDataTable(src_data);
 }
 
@@ -1154,6 +1170,10 @@ void DataGroupProg::AddAllColumns() {
 
 void DataJoinProg::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  UpdateSpecDataTable();
+}
+
+void DataJoinProg::UpdateSpecDataTable() {
   join_spec.SetDataTable(src_data, src_b_data);
 }
 
@@ -1201,13 +1221,17 @@ void DataCalcLoop::Initialize() {
 
 void DataCalcLoop::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-  src_cols.SetDataTable(src_data);
-  dest_cols.SetDataTable(src_data);
+  UpdateSpecDataTable();
   for(int i=0;i<loop_code.size;i++) {
     ProgEl* pe = loop_code[i];
     if(pe->InheritsFrom(&TA_DataCalcAddDestRow) || pe->InheritsFrom(&TA_DataCalcSetDestRow))
       pe->UpdateAfterEdit();	// get the data tables!
   }
+}
+
+void DataCalcLoop::UpdateSpecDataTable() {
+  src_cols.SetDataTable(src_data);
+  dest_cols.SetDataTable(dest_data);
 }
 
 void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1275,8 +1299,13 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
   rval += il1 + "for(int src_row=0; src_row < dcl->src_data.rows; src_row++) {\n";
   for(int i=0;i<src_cols.size; i++) {
     DataOpEl* ds = src_cols[i];
-    rval += il2 + "Variant s_" + ds->col_name + " = dcl->src_data.GetValAsVar(" +
-      String(ds->col_idx) + ", src_row);\n";
+    DataArray_impl* da = src_data->data[ds->col_idx];
+    if(da->is_matrix)
+      rval += il2 + "taMatrix* s_" + ds->col_name + " = dcl->src_data.GetValAsMatrix(" +
+	String(ds->col_idx) + ", src_row);\n";
+    else
+      rval += il2 + "Variant s_" + ds->col_name + " = dcl->src_data.GetValAsVar(" +
+	String(ds->col_idx) + ", src_row);\n";
   }
   src_cols.ClearColumns();
   // dest cols are only activated by DataAddDestRow
@@ -1321,9 +1350,9 @@ String DataCalcAddDestRow::GetDisplayName() const {
 void DataCalcAddDestRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
-  if(!dcl->src_data || !dcl->src_data->isDestroying())
+  if(dcl->src_data && !dcl->src_data->isDestroying())
     src_data = dcl->src_data;
-  if(!dcl->dest_data || !dcl->dest_data->isDestroying())
+  if(dcl->dest_data && !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
 
@@ -1334,6 +1363,11 @@ void DataCalcAddDestRow::UpdateAfterEdit() {
 
 void DataCalcAddDestRow::InitLinks() {
   inherited::InitLinks();
+  GetDataPtrsFmLoop();
+}  
+
+void DataCalcAddDestRow::Copy(const DataCalcAddDestRow& cp) {
+  inherited::Copy(cp);
   GetDataPtrsFmLoop();
 }  
 
@@ -1357,13 +1391,20 @@ const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) return "// DataCalcAddDestRow Error -- DataCalcLoop not found!!\n";
 
+  String il = cssMisc::Indent(indent_level);
+
   dcl->dest_cols.GetColumns(dcl->dest_data);
-  String rval = cssMisc::Indent(indent_level) + "dcl->dest_data->AddBlankRow();\n";
+  String rval = il + "dcl->dest_data->AddBlankRow();\n";
 
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
-    rval += cssMisc::Indent(indent_level) + "Variant d_" + ds->col_name + " = dcl->dest_data.GetValAsVar(" +
-      String(ds->col_idx) + ", -1); // -1 = last row\n";
+    DataArray_impl* da = dcl->dest_data->data[ds->col_idx];
+    if(da->is_matrix)
+      rval += il + "taMatrix* d_" + ds->col_name + " = dcl->dest_data.GetValAsMatrix(" +
+	String(ds->col_idx) + ", -1); // -1 = last row\n";
+    else
+      rval += il + "Variant d_" + ds->col_name + " = dcl->dest_data.GetValAsVar(" +
+	String(ds->col_idx) + ", -1); // -1 = last row\n";
   }
   dcl->dest_cols.ClearColumns();
   return rval;
@@ -1390,9 +1431,9 @@ String DataCalcSetDestRow::GetDisplayName() const {
 void DataCalcSetDestRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
-  if(!dcl->src_data || !dcl->src_data->isDestroying())
+  if(dcl->src_data && !dcl->src_data->isDestroying())
     src_data = dcl->src_data;
-  if(!dcl->dest_data || !dcl->dest_data->isDestroying())
+  if(dcl->dest_data && !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
 
@@ -1403,6 +1444,11 @@ void DataCalcSetDestRow::UpdateAfterEdit() {
 
 void DataCalcSetDestRow::InitLinks() {
   inherited::InitLinks();
+  GetDataPtrsFmLoop();
+}  
+
+void DataCalcSetDestRow::Copy(const DataCalcSetDestRow& cp) {
+  inherited::Copy(cp);
   GetDataPtrsFmLoop();
 }  
 
@@ -1433,8 +1479,13 @@ const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
   dcl->dest_cols.GetColumns(dcl->dest_data);
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
-    rval += il + "dcl->dest_data.SetValAsVar(" +
-      "d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
+    DataArray_impl* da = dcl->dest_data->data[ds->col_idx];
+    if(da->is_matrix)
+      rval += il + "dcl->dest_data.SetValAsMatrix(" + 
+	"d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
+    else
+      rval += il + "dcl->dest_data.SetValAsVar(" +
+	"d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
   }
   dcl->dest_cols.ClearColumns();
   return rval;
@@ -1461,9 +1512,9 @@ String DataCalcSetSrcRow::GetDisplayName() const {
 void DataCalcSetSrcRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
-  if(!dcl->src_data || !dcl->src_data->isDestroying())
+  if(dcl->src_data && !dcl->src_data->isDestroying())
     src_data = dcl->src_data;
-  if(!dcl->dest_data || !dcl->dest_data->isDestroying())
+  if(dcl->dest_data && !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
 
@@ -1474,6 +1525,11 @@ void DataCalcSetSrcRow::UpdateAfterEdit() {
 
 void DataCalcSetSrcRow::InitLinks() {
   inherited::InitLinks();
+  GetDataPtrsFmLoop();
+}  
+
+void DataCalcSetSrcRow::Copy(const DataCalcSetSrcRow& cp) {
+  inherited::Copy(cp);
   GetDataPtrsFmLoop();
 }  
 
@@ -1492,12 +1548,19 @@ const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) return "// DataCalcSetSrcRow Error -- DataCalcLoop not found!!\n";
 
+  String il = cssMisc::Indent(indent_level);
+
   String rval;
   dcl->src_cols.GetColumns(dcl->src_data);
   for(int i=0;i<dcl->src_cols.size; i++) {
     DataOpEl* ds = dcl->src_cols[i];
-    rval += cssMisc::Indent(indent_level) + "dcl->src_data.SetValAsVar(" +
-      "s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
+    DataArray_impl* da = dcl->dest_data->data[ds->col_idx];
+    if(da->is_matrix)
+      rval += il + "dcl->src_data.SetValAsMatrix(" + 
+	"s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
+    else
+      rval += il + "dcl->src_data.SetValAsVar(" +
+	"s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
   }
   dcl->dest_cols.ClearColumns();
   return rval;
@@ -1528,9 +1591,9 @@ String DataCalcCopyCommonCols::GetDisplayName() const {
 void DataCalcCopyCommonCols::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
-  if(!dcl->src_data || !dcl->src_data->isDestroying())
+  if(dcl->src_data && !dcl->src_data->isDestroying())
     src_data = dcl->src_data;
-  if(!dcl->dest_data || !dcl->dest_data->isDestroying())
+  if(dcl->dest_data && !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
 
@@ -1541,6 +1604,12 @@ void DataCalcCopyCommonCols::UpdateAfterEdit() {
 
 void DataCalcCopyCommonCols::InitLinks() {
   inherited::InitLinks();
+  GetDataPtrsFmLoop();
+}  
+
+void DataCalcCopyCommonCols::Copy(const DataCalcCopyCommonCols& cp) {
+  inherited::Copy(cp);
+  Copy_(cp);
   GetDataPtrsFmLoop();
 }  
 

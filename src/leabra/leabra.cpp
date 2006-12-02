@@ -2776,7 +2776,7 @@ void LeabraLayerSpec::Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork*) {
     if(prjn->trg_netin_rel < 0.0f) continue; // not set
     if(!cs->rel_net_adapt.on) continue;
     float dst = prjn->trg_netin_rel - prjn->avg_netin_avg;
-    if(fabsf(dst) >= cs->rel_net_adapt.tol) continue;
+    if(fabsf(dst) < cs->rel_net_adapt.tol) continue;
     cs->SetUnique("wt_scale", true);
     cs->wt_scale.rel += cs->rel_net_adapt.rel_lrate * dst;
     if(cs->wt_scale.rel <= 0.0f) cs->wt_scale.rel = 0.0f;
@@ -2786,7 +2786,7 @@ void LeabraLayerSpec::Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork*) {
 void LeabraLayerSpec::Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork*) {
   if(!abs_net_adapt.on) return;
   float dst = abs_net_adapt.trg_net - lay->avg_netin.max;
-  if(fabsf(dst) >= abs_net_adapt.tol) return;
+  if(fabsf(dst) < abs_net_adapt.tol) return;
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     if(!prjn->from || prjn->from->lesion) continue;

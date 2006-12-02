@@ -285,8 +285,8 @@ protected:
   // these are for finding the members and building the stat
   // out of the objects and the variable
   
-  // mk_col means add an entirely new column; otherwise it just adds cell to existing matrix
-  bool 	ScanObject_InObject(TAPtr obj, String var, bool mk_col = true);
+  bool 	ScanObject_InObject(taBase* obj, String var, taBase* name_obj);
+  // if name_obj == NULL, don't make a column for this guy
   void	ScanObject_Network(Network* net, String var);
   void	ScanObject_Layer(Layer* lay, String var);
   void	ScanObject_Projection(Projection* p, String var);

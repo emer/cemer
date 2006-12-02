@@ -812,7 +812,7 @@ public:
   void		El_SetFmStr_(void* it, String& val)
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE
   virtual void*		GetTA_Element(int i, TypeDef*& eltd)
-  { eltd = &TA_ValIdx; return FastEl_(i); }
+  { eltd = &TA_ValIdx; if(InRange(i)) return FastEl_(i); return NULL; }
   void Initialize()	{ };
   void Destroy()	{ };
   TA_BASEFUNS(ValIdx_Array);

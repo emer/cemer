@@ -1240,13 +1240,18 @@ bool rgb_Matrix::StrValIsValid(const String& str, String* err_msg) const {
   return rval;
 }
 
+const Variant Variant_Matrix::blank;
+const String String_Matrix::blank;
+const double double_Matrix::blank = 0.0;
+const float float_Matrix::blank = 0.0f;
+const int int_Matrix::blank = 0;
+const unsigned char byte_Matrix::blank = '\0';
+const rgb_t rgb_Matrix::blank;
 
-/** \class MatrixTableModel
-
-  The MatrixTableModel provides a 2-d table model for TA Matrix objects.
-  
-  For Gui editing, we map indexes in 2d flat table.
-*/
+//////////////////////////////////////////////////////////////////////////////
+// 		 class MatrixTableModel
+//  The MatrixTableModel provides a 2-d table model for TA Matrix objects.
+//  For Gui editing, we map indexes in 2d flat table.
 
 MatrixGeom MatrixTableModel::tgeom; 
 

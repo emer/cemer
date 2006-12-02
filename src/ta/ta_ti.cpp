@@ -42,9 +42,7 @@
 template class TA_API taPtrList<taHashEl>;
 template class TA_API taPtrList<taHashBucket>;
 template class TA_API taPlainArray<String>;
-//  const String String_PArray::blank = "";
 template class TA_API taPlainArray<int>;
-//  const int int_PArray::blank = 0;
 template class TA_API taPtrList<EnumDef>;
 template class TA_API taPtrList<void>;
 template class TA_API taPtrList<MemberDef>;
@@ -54,24 +52,16 @@ template class TA_API taPtrList<IDataLinkClient>;
 
 #ifndef NO_TA_BASE
 template class TA_API taFixedArray<int>;
-  const int int_FixedArray::blank = 0;
 template class TA_API taPtrList<taBase>;
 template class TA_API taPtrList_base<taBase>;
 template class TA_API taList<taBase>;
 template class TA_API taArray<int>;
-  const int int_Array::blank = 0;
 template class TA_API taArray<float>;
-  const float float_Array::blank = 0.0f;
 template class TA_API taArray<double>;
-  const double double_Array::blank = 0.0;
 template class TA_API taArray<char>;
-  const char char_Array::blank = '\0';
 template class TA_API taArray<String>;
-  const String String_Array::blank = "";
 template class TA_API taArray<Variant>;
-  const Variant Variant_Array::blank;
 template class TA_API taArray<void*>;
-  const voidptr voidptr_Array::blank = NULL;
 template class TA_API taPtrList<VPUnref>;
 template class TA_API taPtrList<DumpPathSub>;
 template class TA_API taPtrList<DumpPathToken>;
@@ -79,19 +69,12 @@ template class TA_API taPtrList<DumpPathToken>;
 
 // ta_matrix.h
 template class TA_API taMatrixT<Variant>;
-  const Variant Variant_Matrix::blank;
 template class TA_API taMatrixT<String>;
-  const String String_Matrix::blank;
 template class TA_API taMatrixT<double>;
-  const double double_Matrix::blank = 0.0;
 template class TA_API taMatrixT<float>;
-  const float float_Matrix::blank = 0.0f;
 template class TA_API taMatrixT<int>;
-  const int int_Matrix::blank = 0;
 template class TA_API taMatrixT<unsigned char>;
-  const unsigned char byte_Matrix::blank = '\0';
 template class TA_API taMatrixT<rgb_t>;
-  const rgb_t rgb_Matrix::blank;
 
 template class TA_API taList<taGroup_impl>;
 template class TA_API taGroup<taBase>;
@@ -101,7 +84,6 @@ template class TA_API taPtrList<ScriptBase>; // in script_base.h
 
 // tdgeometry
 template class TA_API taArray<ValIdx>;
-  const ValIdx ValIdx_Array::blank;
 
 // datatable.h:
 template class TA_API taGroup<DataArray_impl>;

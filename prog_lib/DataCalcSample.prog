@@ -1,20 +1,18 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][10] { 
+Program .projects[0].programs[0] { 
   ProgObjList @.objs = [3] {
     DataTable @[0] { 
-      DataTableCols @.data = [8] {
+      DataTableCols @.data = [6] {
 	int_Data @[0] { };
 	int_Data @[1] { };
 	int_Data @[2] { };
 	String_Data @[3] { };
 	int_Data @[4] { };
-	int_Data @[5] { };
-	double_Data @[6] { };
-	double_Data @[7] { };
+	double_Data @[5] { };
       };
     };
     DataTable @[1] { 
-      DataTableCols @.data = [8] {
+      DataTableCols @.data = [9] {
 	int_Data @[0] { };
 	int_Data @[1] { };
 	int_Data @[2] { };
@@ -23,6 +21,7 @@ Program .projects[0].programs.gp[0][10] {
 	int_Data @[5] { };
 	double_Data @[6] { };
 	double_Data @[7] { };
+	float_Data @[8] { };
       };
     };
     DataTable @[2] { 
@@ -46,9 +45,10 @@ Program .projects[0].programs.gp[0][10] {
 
   ProgEl_List @.prog_code = [2] {
     DataCalcLoop @[0] { 
-      DataOpList @.src_cols = [2] {
+      DataOpList @.src_cols = [3] {
 	DataOpEl @[0] { };
 	DataOpEl @[1] { };
+	DataOpEl @[2] { };
       };
 
       DataOpList @.dest_cols = [2] {
@@ -56,11 +56,14 @@ Program .projects[0].programs.gp[0][10] {
 	DataOpEl @[1] { };
       };
 
-      ProgEl_List @.loop_code = [4] {
-	IfContinue @[0] { };
-	DataCalcAddDestRow @[1] { };
-	UserScript @[2] { };
-	DataCalcSetDestRow @[3] { };
+      ProgEl_List @.loop_code = [7] {
+	UserScript @[0] { };
+	DataCalcSetSrcRow @[1] { };
+	IfContinue @[2] { };
+	DataCalcAddDestRow @[3] { };
+	DataCalcCopyCommonCols @[4] { };
+	UserScript @[5] { };
+	DataCalcSetDestRow @[6] { };
       };
     };
     DataGroupProg @[1] { 
@@ -76,7 +79,7 @@ Program .projects[0].programs.gp[0][10] {
     };
   };
 };
-Program .projects[0].programs.gp[0][10] {
+Program .projects[0].programs[0] {
  name="DataCalcSample";
  desc="Example of how to use DataCalLoop and associated functions";
  flags=PF_NONE;
@@ -96,59 +99,38 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     int_Data @[1] {
      name="epoch";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     int_Data @[2] {
      name="trial";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     String_Data @[3] {
      name="trial_name";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     int_Data @[4] {
-     name="phase_no";
-     pin=0;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     user_data_=NULL;
-    };
-    int_Data @[5] {
      name="cycle";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
-    double_Data @[6] {
+    double_Data @[5] {
      name="sse";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
-    };
-    double_Data @[7] {
-     name="ext_rew";
-     pin=0;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     user_data_=NULL;
     };
    };
-   user_data_=NULL;
   };
   DataTable @[1] {
    name="TrialOutputData";
@@ -162,7 +144,6 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
      ar{ [72] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
     };
     int_Data @[1] {
@@ -170,7 +151,6 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
      ar{ [72] 0;0;0;0;0;0;1;1;1;1;1;1;2;2;2;2;2;2;3;3;3;3;3;3;4;4;4;4;4;4;5;5;5;5;5;5;6;6;6;6;6;6;7;7;7;7;7;7;8;8;8;8;8;8;9;9;9;9;9;9;10;10;10;10;10;10;11;11;11;11;11;11;     };
     };
     int_Data @[2] {
@@ -178,7 +158,6 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
      ar{ [72] 0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;0;1;2;3;4;5;     };
     };
     String_Data @[3] {
@@ -186,7 +165,6 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
      ar{ [72] "rdiag";"midhoriz";"checks";"mitvert";"ldiag";"random";"mitvert";"midhoriz";"checks";"ldiag";"rdiag";"random";"mitvert";"rdiag";"checks";"midhoriz";"random";"ldiag";"rdiag";"checks";"ldiag";"mitvert";"midhoriz";"random";"rdiag";"random";"midhoriz";"ldiag";"checks";"mitvert";"checks";"random";"mitvert";"ldiag";"midhoriz";"rdiag";"ldiag";"checks";"mitvert";"random";"midhoriz";"rdiag";"ldiag";"mitvert";"checks";"midhoriz";"random";"rdiag";"random";"checks";"ldiag";"midhoriz";"mitvert";"rdiag";"mitvert";"midhoriz";"rdiag";"ldiag";"checks";"random";"mitvert";"rdiag";"midhoriz";"random";"checks";"ldiag";"random";"ldiag";"midhoriz";"mitvert";"checks";"rdiag";     };
     };
     int_Data @[4] {
@@ -194,7 +172,6 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
      ar{ [72] 2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;     };
     };
     int_Data @[5] {
@@ -202,7 +179,6 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
      ar{ [72] 15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;     };
     };
     double_Data @[6] {
@@ -210,7 +186,6 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
      ar{ [72] 3.3197;4.99125;6.44162;5.49475;5.39849;5.81023;3.82384;2.7307;3.89351;2.83653;3.05548;2.33917;3.24966;2.4207;4.91094;3.02006;1.97579;2.40108;2.03237;0.633329;1.31166;2.97604;1.94222;0;1.75684;0;0.952175;0.463218;0;1.93828;0;0;1.21208;0;0.8532149999999999;1.70816;0;0;0.381256;0;0.260192;1.11532;0;0;0;0;0;0.960935;0;0;0;0;0;0.570453;0;0;0.509126;0;0;0;0;0;0.258366;0;0;0;0;0;0;0;0;0;     };
     };
     double_Data @[7] {
@@ -218,11 +193,16 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
      ar{ [72] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
     };
+    float_Data @[8] {
+     name="testy";
+     pin=0;
+     is_matrix=1;
+     cell_geom{ 5;5;     };
+     ar{ [5 5 72] 1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;     };
+    };
    };
-   user_data_=NULL;
   };
   DataTable @[2] {
    name="GroupOutput";
@@ -236,52 +216,44 @@ Program .projects[0].programs.gp[0][10] {
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     double_Data @[1] {
      name="sse_mean";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     double_Data @[2] {
      name="sse_sem";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     int_Data @[3] {
      name="cycle_mean";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     int_Data @[4] {
      name="cycle_sem";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     double_Data @[5] {
      name="ext_rew_mean";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
     double_Data @[6] {
      name="ext_rew_sem";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
-     user_data_=NULL;
     };
    };
-   user_data_=NULL;
   };
  };
  args {
@@ -297,7 +269,7 @@ Program .projects[0].programs.gp[0][10] {
    name="TrialOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[0][10].objs[1]$0$;
+   object_val=.projects[0].programs[0].objs[1]$0$;
    objs_ptr=1;
    desc=;
   };
@@ -305,7 +277,7 @@ Program .projects[0].programs.gp[0][10] {
    name="CalcOutput";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[0][10].objs[0]$1$;
+   object_val=.projects[0].programs[0].objs[0]$1$;
    objs_ptr=1;
    desc=;
   };
@@ -313,7 +285,7 @@ Program .projects[0].programs.gp[0][10] {
    name="GroupOutput";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[0][10].objs[2]$2$;
+   object_val=.projects[0].programs[0].objs[2]$2$;
    objs_ptr=1;
    desc=;
   };
@@ -347,6 +319,9 @@ Program .projects[0].programs.gp[0][10] {
     DataOpEl @[1] {
      col_name="sse";
     };
+    DataOpEl @[2] {
+     col_name="testy";
+    };
    };
    dest_cols {
     name=;
@@ -363,18 +338,37 @@ Program .projects[0].programs.gp[0][10] {
     name=;
     el_typ=IfContinue;
     el_def=0;
-    IfContinue @[0] {
+    UserScript @[0] {
      desc=;
      off=0;
-     condition="!s_trial_name.contains(\"diag\")";
+     user_script="s_testy[src_row % s_testy.size] = 1.0;
+";
     };
-    DataCalcAddDestRow @[1] {
+    DataCalcSetSrcRow @[1] {
      desc=;
      off=0;
      src_data=$0$;
      dest_data=$1$;
     };
-    UserScript @[2] {
+    IfContinue @[2] {
+     desc=;
+     off=0;
+     condition="!s_trial_name.contains(\"diag\")";
+    };
+    DataCalcAddDestRow @[3] {
+     desc=;
+     off=0;
+     src_data=$0$;
+     dest_data=$1$;
+    };
+    DataCalcCopyCommonCols @[4] {
+     desc=;
+     off=0;
+     src_data=$0$;
+     dest_data=$1$;
+     only_named_cols=0;
+    };
+    UserScript @[5] {
      desc=;
      off=0;
      user_script="d_trial_name = s_trial_name + \"_cmp\";
@@ -382,7 +376,7 @@ d_sse = s_sse * 5.0;
 
 ";
     };
-    DataCalcSetDestRow @[3] {
+    DataCalcSetDestRow @[6] {
      desc=;
      off=0;
      src_data=$0$;

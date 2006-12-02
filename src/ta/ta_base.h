@@ -422,7 +422,7 @@ public:
   // #IGNORE a type-specific description of the specific functionality/properties of the object
   virtual void 		SetDefaultName();			    // #IGNORE
 
-  virtual void* 	GetTA_Element(int, TypeDef*& eltd) 
+  virtual void* 	GetTA_Element(int idx, TypeDef*& eltd) 
   { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
   virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
@@ -1694,7 +1694,7 @@ public:
   // fill array with sequential values starting at start, incrementing by inc
   
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_int; return FastEl_(i); }
+  { eltd = &TA_int; if(InRange(i)) return FastEl_(i); return NULL; }
   void Initialize()	{err = 0; };
   void Destroy()	{ }; //
   //note: Register() is not necessary for arrays, so we omit in these convenience constructors
@@ -1723,7 +1723,7 @@ class TA_API float_Array : public taArray<float> {
 public:
   STATIC_CONST float blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_float; return FastEl_(i); }
+  { eltd = &TA_float; if(InRange(i)) return FastEl_(i); return NULL; }
   void Initialize()	{err = 0.0f; };
   void Destroy()	{ };
   TA_BASEFUNS(float_Array);
@@ -1744,7 +1744,7 @@ class TA_API double_Array : public taArray<double> {
 public:
   STATIC_CONST double blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_double; return FastEl_(i); }
+  { eltd = &TA_double; if(InRange(i)) return FastEl_(i); return NULL; }
   void Initialize()	{err = 0.0;};
   void Destroy()	{ };
   TA_BASEFUNS(double_Array);
@@ -1765,7 +1765,7 @@ class TA_API char_Array : public taArray<char> {
 public:
   STATIC_CONST char blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_char; return FastEl_(i); }
+  { eltd = &TA_char; if(InRange(i)) return FastEl_(i); return NULL; }
   void Initialize()	{err = ' ';};
   void Destroy()	{ };
   TA_BASEFUNS(char_Array);
@@ -1787,7 +1787,7 @@ class TA_API String_Array : public taArray<String> {
 public:
   STATIC_CONST String blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_taString; return FastEl_(i); }
+  { eltd = &TA_taString; if(InRange(i)) return FastEl_(i); return NULL; }
   void Initialize()	{ };
   void Destroy()	{ };
   TA_BASEFUNS(String_Array);
@@ -1827,7 +1827,7 @@ class TA_API Variant_Array : public taArray<Variant> {
 public:
   STATIC_CONST Variant blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_Variant; return FastEl_(i); }
+  { eltd = &TA_Variant; if(InRange(i)) return FastEl_(i); return NULL; }
   void Initialize()	{err = 0.0;};
   void Destroy()	{ };
   TA_BASEFUNS(Variant_Array);
@@ -1850,7 +1850,7 @@ public:
   STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY 
 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_voidptr; return FastEl_(i); }
+  { eltd = &TA_voidptr; if(InRange(i)) return FastEl_(i); return NULL; }
   void Initialize()	{err = 0; };
   void Destroy()	{ };
   TA_BASEFUNS(voidptr_Array);
