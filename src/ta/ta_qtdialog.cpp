@@ -292,52 +292,6 @@ void taiChoiceDialog::reject() {
 }
 
 
-//////////////////////////////////
-//  iTextEditDialog		//
-//////////////////////////////////
-
-
-iTextEditDialog::iTextEditDialog(bool readOnly_, QWidget* parent)
-:inherited(parent)
-{
-  init(readOnly_);
-}
-
-void iTextEditDialog::init(bool readOnly_) {
-  m_readOnly = readOnly_;
-  this->resize(taiM->dialogSize(taiMisc::hdlg_m));
-  QVBoxLayout* layOuter = new QVBoxLayout(this);
-  txtText = new QTextEdit(this);
-  layOuter->addWidget(txtText);
-  QHBoxLayout* layButtons = new QHBoxLayout();
-  layButtons->setMargin(taiM->dlgm_c);
-  layButtons->setSpacing(taiM->hspc_c);
-  layOuter->addLayout(layButtons);
-  layButtons->addStretch();
-  if (m_readOnly) {
-    txtText->setReadOnly(true);
-    btnOk = NULL;
-    btnCancel = new QPushButton("&Close", this);
-    layButtons->addWidget(btnCancel);
-    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
-  } else {
-    btnOk = new QPushButton("&Ok", this);
-    layButtons->addWidget(btnOk);
-    btnCancel = new QPushButton("&Cancel", this);
-    layButtons->addWidget(btnCancel);
-    connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
-    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
-  }
- }
- 
-iTextEditDialog::~iTextEditDialog() {
-}
-
-void iTextEditDialog::setText(const String& value) {
-  txtText->setPlainText(value);
-}
-
-
 //////////////////////////
 //   iDialog		//
 //////////////////////////
@@ -1726,12 +1680,10 @@ void taiEditDataHost::Constr_ShowMenu() {
       this, SLOT(ShowChange(taiAction*)), 2 );
   show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
       this, SLOT(ShowChange(taiAction*)), 3 );
-  show_menu->AddItem("&Read Only", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 4 );
   show_menu->AddItem("&Detail", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 5 );
+      this, SLOT(ShowChange(taiAction*)), 4 );
   show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 6 );
+      this, SLOT(ShowChange(taiAction*)), 5 );
   setShowValues(show); // sets toggles
 }
 
@@ -1773,12 +1725,11 @@ void taiEditDataHost::setShowValues(taMisc::ShowMembs value) {
   //note: nothing to do for the command items
   (*show_menu)[3]->setChecked(!(value & taMisc::NO_NORMAL));
   (*show_menu)[4]->setChecked(!(value & taMisc::NO_HIDDEN));
-  (*show_menu)[5]->setChecked(!(value & taMisc::NO_READ_ONLY));
-  (*show_menu)[6]->setChecked(!(value & taMisc::NO_DETAIL));
-  (*show_menu)[7]->setChecked(!(value & taMisc::NO_EXPERT));
+  (*show_menu)[5]->setChecked(!(value & taMisc::NO_DETAIL));
+  (*show_menu)[6]->setChecked(!(value & taMisc::NO_EXPERT));
   // disable menus if not overriding default
   bool en = !(value & taMisc::USE_SHOW_GUI_DEF);
-  for (int i = 1; i <= 7; ++i) {
+  for (int i = 1; i <= 6; ++i) {
     (*show_menu)[i]->setEnabled(en);
   }
   
@@ -1828,9 +1779,8 @@ void taiEditDataHost::ShowChange(taiAction* sender) {
     switch (sender->usr_data.toInt()) {
       case 2: mask = taMisc::NO_NORMAL; break;
       case 3: mask = taMisc::NO_HIDDEN; break;
-      case 4: mask = taMisc::NO_READ_ONLY; break;
-      case 5: mask = taMisc::NO_DETAIL; break;
-      case 6: mask = taMisc::NO_EXPERT; break;
+      case 4: mask = taMisc::NO_DETAIL; break;
+      case 5: mask = taMisc::NO_EXPERT; break;
       default: mask = 0; break; // should never happen
     }
     new_show = sender->isChecked() ? show & ~mask : show | mask;

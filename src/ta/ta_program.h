@@ -283,7 +283,7 @@ class TA_API Loop: public ProgEl {
   // #VIRT_BASE base class for loops
 INHERITED(ProgEl)
 public:
-  ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
+  ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
   String	    	loop_test; // #EDIT_DIALOG a test expression for whether to continue looping (e.g., 'i < max')
   
   SIMPLE_LINKS(Loop);
@@ -398,8 +398,8 @@ class TA_API IfElse: public ProgEl {
 INHERITED(ProgEl)
 public:
   String	    condition; // #EDIT_DIALOG  #AKA_cond_test condition expression to test
-  ProgEl_List	    true_code; // #BROWSE items to execute if condition true
-  ProgEl_List	    false_code; // #BROWSE items to execute if condition false
+  ProgEl_List	    true_code; // #SHOW_TREE items to execute if condition true
+  ProgEl_List	    false_code; // #SHOW_TREE items to execute if condition false
   
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(IfElse);

@@ -354,9 +354,9 @@ public:
   SequenceType		sequence_3;	// third sequence of features
 
   YAxisSpec_List	y_axes; // all the y axes (can be shared by many cols)
-  XAxisSpec		x_axis_spec; // #BROWSE spec info of the x axis -- is shared by all cols
+  XAxisSpec		x_axis_spec; // #SHOW_TREE spec info of the x axis -- is shared by all cols
   ZAxisSpec		z_axis_spec;
-    //  #BROWSE spec info of the z axis (3D only) -- is shared by all cols
+    //  #SHOW_TREE spec info of the z axis (3D only) -- is shared by all cols
   GraphLineSpec_List	line_specs;
 
   AxisSharing		axis_sharing; // draw each group of lines sharing a Y axis using separate graphs

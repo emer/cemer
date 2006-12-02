@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 
-// ispinbox.h -- taqt spinbox
+// ilineedit.h -- text editing field, and modal text editor
 
 #ifndef ILINEEDIT_H
 #define ILINEEDIT_H
@@ -22,12 +22,15 @@
 #include "taiqtso_def.h"
 
 #include <QLineEdit>
+#include <QDialog>
+
+// externals
+class QTextEdit;
+class QPushButton;
 
 class TAIQTSO_API iLineEdit: public QLineEdit {
   Q_OBJECT
-#ifndef __MAKETA__
-typedef QLineEdit inherited;
-#endif
+INHERITED(QLineEdit)
 public:
   iLineEdit(QWidget* parent = 0);
   iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
@@ -35,6 +38,7 @@ public:
   short		minCharWidth() {return mmin_char_width;} 
   void		setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
 
+  
 #ifndef __MAKETA__
 signals:
   void		focusChanged(bool got_focus);
@@ -42,13 +46,36 @@ signals:
 
 public slots:
   void		setReadOnly(bool value);
+  void		editInEditor(); // edit contents in modal dialog
 
 protected:
   short		mmin_char_width; // note: we limit to 128
   
   void 		focusInEvent(QFocusEvent* ev); // override
   void 		focusOutEvent(QFocusEvent* ev); // override
+private:  
   void		init();
 };
+
+
+class TAIQTSO_API iTextEditDialog : public QDialog {
+  Q_OBJECT
+INHERITED(QDialog)
+public:
+  QTextEdit*	txtText;
+  QPushButton*	btnOk; // read/write only
+  QPushButton* 	btnCancel; // or close, if read only
+  
+  bool		isReadOnly() {return m_readOnly;}
+  virtual void	setText(const QString& value);
+  
+  iTextEditDialog(bool readOnly = false, QWidget* parent = 0);
+  ~iTextEditDialog();
+protected:
+  bool		m_readOnly;
+private:
+  void 		init(bool readOnly);
+};
+
 
 #endif // ILINEEDIT_H

@@ -24,6 +24,7 @@
 #include <QDir>
 
 #ifdef TA_GUI
+# include "ilineedit.h" // for iTextDialog
 # include "ta_qt.h"
 # include "ta_qtdialog.h"
 

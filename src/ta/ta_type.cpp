@@ -588,15 +588,9 @@ void taMisc::FlushConsole() {
 #endif
 }
 
-void taMisc::Busy() {
+void taMisc::Busy(bool busy) {
 #ifndef NO_TA_BASE
-  if (taiMC_) taiMC_->Busy_(true);
-#endif
-}
-
-void taMisc::DoneBusy() {
-#ifndef NO_TA_BASE
-  if (taiMC_) taiMC_->Busy_(false);
+  if (taiMC_) taiMC_->Busy_(busy);
 #endif
 }
 
@@ -2710,10 +2704,6 @@ void MemberDef::ShowMember_CalcCache() const {
 #endif
   ShowMember_CalcCache_impl(show_tree, "_TREE");
   //NOTE: lists/groups, we only show by default in lists/groups, embedded lists/groups
-  
-//TODO: replace memb #BROWSE directives with #SHOW_TREE, and then remove this:
-  if (HasOption("BROWSE"))
-    show_tree |= (byte)taMisc::IS_SHOW_ALWAYS;
 }
 
 void MemberDef::ShowMember_CalcCache_impl(byte& show, const String& suff) const {
@@ -2729,35 +2719,32 @@ void MemberDef::ShowMember_CalcCache_impl(byte& show, const String& suff) const 
   bool mbr_show = HasOption("SHOW" + suff);
   bool mbr_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW" + suff);
   
-  // if SHOW, set the special non-overridable SHOW_ALWAYS bit, and just exit
-  if (mbr_show || (typ_show && !mbr_no_show)) {
-    show |= (byte)taMisc::IS_SHOW_ALWAYS;
-    return;
-  }
-  
-  // if NO_SHOW, all bits zero, never shows
-  if (mbr_no_show || (typ_no_show && !mbr_show)) {
-    show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
-    return; 
-  }
-  
-  // ok, so no explicit SHOW or NO_SHOW, so we do the special checks
-  // you can't "undo" type-level specials, but you can always mark SHOW on the mbr
-
   // the following are all cumulative, not mutually exclusive
   if (HasOption("HIDDEN" + suff) || type->HasOption("MEMB_HIDDEN" + suff))
     show |= (byte)taMisc::IS_HIDDEN;
-  if (HasOption("READ_ONLY" + suff)) //note: no type-level, makes no sense
-    show |= (byte)taMisc::IS_READ_ONLY;
+  // RO are HIDDEN unless explicitly marked SHOW
+  // note: no type-level, makes no sense
+  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !HasOption("SHOW")) 
+    show |= (byte)taMisc::IS_HIDDEN;
   if (HasOption("DETAIL" + suff) || type->HasOption("MEMB_DETAIL" + suff))
     show |= (byte)taMisc::IS_DETAIL;
   if (HasOption("EXPERT" + suff) || type->HasOption("MEMB_EXPERT" + suff))
     show |= (byte)taMisc::IS_EXPERT;
 
-  // finally, if any of the special guys are set, we unset NORMAL (which may
+  // if NO_SHOW and no SHOW or explicit other, then never shows
+  if (mbr_no_show || (typ_no_show && (!mbr_show || (show & (byte)taMisc::NORM_MEMBS)))) {
+    show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
+    return; 
+  }
+  
+  // if any of the special guys are set, we unset NORMAL (which may
   //   or may not have been already set by default)
   if (show & (byte)taMisc::NORM_MEMBS) // in "any" context, default is "normal"
     show &= ~(byte)taMisc::IS_NORMAL;
+  else // no non-NORMAL set
+    // SHOW is like an explicit NORMAL if nothing else applies
+    if (mbr_show || typ_show)
+      show |= (byte)taMisc::IS_NORMAL;
 }
 
 
@@ -2972,35 +2959,33 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
   bool mbr_show = HasOption("SHOW");
   bool mbr_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW");
   
-  // if SHOW, set the special non-overridable SHOW_ALWAYS bit, and just exit
-  if (mbr_show || (typ_show && !mbr_no_show)) {
-    show |= (byte)taMisc::IS_SHOW_ALWAYS;
-    return;
-  }
-  
-  // if NO_SHOW, all bits zero, never shows
-  if (mbr_no_show || (typ_no_show && !mbr_show)) {
-    show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
-    return; 
-  }
-  
   // ok, so no explicit SHOW or NO_SHOW, so we do the special checks
   // you can't "undo" type-level specials, but you can always mark SHOW on the mbr
 
   // the following are all cumulative, not mutually exclusive
   if (HasOption("HIDDEN") || type->HasOption("METH_HIDDEN"))
     show |= (byte)taMisc::IS_HIDDEN;
-  if (HasOption("READ_ONLY")) //note: no type-level, makes no sense
-    show |= (byte)taMisc::IS_READ_ONLY;
+  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mbr_show) 
+    show |= (byte)taMisc::IS_HIDDEN;
   if (HasOption("DETAIL") || type->HasOption("METH_DETAIL"))
     show |= (byte)taMisc::IS_DETAIL;
   if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
     show |= (byte)taMisc::IS_EXPERT;
 
-  // finally, if any of the special guys are set, we unset NORMAL (which may
+  // if NO_SHOW and no SHOW or explicit other, then never shows
+  if (mbr_no_show || (typ_no_show && (!mbr_show || (show & (byte)taMisc::NORM_MEMBS)))) {
+    show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
+    return; 
+  }
+  
+  // if any of the special guys are set, we unset NORMAL (which may
   //   or may not have been already set by default)
   if (show & (byte)taMisc::NORM_MEMBS) // in "any" context, default is "normal"
     show &= ~(byte)taMisc::IS_NORMAL;
+  else // no non-NORMAL set
+    // SHOW is like an explicit NORMAL if nothing else applies
+    if (mbr_show || typ_show)
+      show |= (byte)taMisc::IS_NORMAL;
 }
 
 

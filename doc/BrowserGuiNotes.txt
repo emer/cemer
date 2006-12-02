@@ -1,3 +1,31 @@
+Tab Redesign
+
+bugs:
+* if you click AddTab on a View tab, it becomes the NetView,
+  and then later, sticks with NetView and won't change
+
+* edit panels sort on left, view panels on right
+* color code, so eps are diff color than vps
+* basic paradigm: 
+  clicking on a thing (tree, t3guy) shows that panel
+* issue with how it works when you click on something with
+  a current tab
+* DataTable panel views should really be with table tab
+prob: too many tabs will be created, and will be esp confusing
+  once user has several graphs, etc.
+  * requires adding buttons dynamically
+  * requires being able to remove buttons
+* Table panel views would enable like views for nets, layers, etc
+
+proposed change:
+
+* currently: user must click on a tab to open a new one;
+* proposed: user right clicks on an item and picks "New Tab" to open it;
+  rightclick won't focus
+
+
+
+
 Goal: develop an app window paradigm that enables convenient, productive, and flexible use of the Pdp program.
 
 Criteria

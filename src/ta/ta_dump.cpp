@@ -851,8 +851,9 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
    // 1) loading the Path portion
    // 2) loading the Value portion
    // Variants of pointer subtypes stream their type info during the Path phase
-  if(!DumpMember(par))
-    return false;
+//NOTE: BA 2006-12-01 we shouldn't check on load: if it is in dump file, then
+  // we should load it, otherwise many dynamic and regression issues arise
+//  if(!DumpMember(par)) return false;
 
   if(taMisc::verbose_load >= taMisc::TRACE) {
     cerr << "Entering MemberDef::Dump_Load, member: " << name

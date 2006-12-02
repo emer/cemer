@@ -446,14 +446,7 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
 }
 
 void taiField::btnEdit_clicked(bool) {
-  iTextEditDialog* dlg = new iTextEditDialog(); // no parent needed for modals
-  if (readOnly())
-    dlg->txtText->setReadOnly(true);
-  dlg->txtText->setPlainText(rep()->text());
-  if (!readOnly() && (dlg->exec() == QDialog::Accepted)) {
-    rep()->setText(dlg->txtText->toPlainText());
-  }
-  dlg->deleteLater();
+  rep()->editInEditor();
 }
 
 void taiField::GetImage(const String& val) {
@@ -4437,8 +4430,10 @@ void taiMethodData::CallFun() {
     // don't actually run the command when using gui in dmem mode: everything happens via the script!
     if (taMisc::dmem_nprocs == 1) {
 #endif
+      taMisc::Busy(true);
       cssEl* rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
       UpdateAfter();
+      taMisc::Busy(false);
       if (rval != &cssMisc::Void)
 	ShowReturnVal(rval);
 #ifdef DMEM_COMPILE
@@ -4460,9 +4455,11 @@ void taiMethodData::CallFun() {
     // don't actually run the command when using gui in dmem mode: everything happens via the script!
     if (taMisc::dmem_nprocs == 1) {
 #endif
+      taMisc::Busy(true);
       cssEl* rval = (*(meth->stubp))(base, arg_dlg->obj->members->size-1,
 				     arg_dlg->obj->members->els);
       UpdateAfter();
+      taMisc::Busy(false);
       if (rval != &cssMisc::Void)
 	ShowReturnVal(rval);
 #ifdef DMEM_COMPILE

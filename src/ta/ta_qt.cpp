@@ -29,6 +29,7 @@
 #include "ta_TA_type.h"
 
 #include "icolor.h"
+#include "ilineedit.h"
 
 #include <qapplication.h>
 #include <qbitmap.h>

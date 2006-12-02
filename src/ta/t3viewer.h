@@ -248,7 +248,7 @@ class TA_API T3DataViewPar: public T3DataView { // T3DataView that has child T3D
 typedef T3DataView inherited;
 #endif
 public:
-  T3DataView_List	children; // #SHOW #READ_ONLY #BROWSE
+  T3DataView_List	children; // #SHOW #READ_ONLY #SHOW_TREE
   override bool		hasChildren() const {return (children.size > 0);}
 
   override void		OnWindowBind(iT3DataViewFrame* vw);
@@ -445,7 +445,7 @@ INHERITED(DataViewer)
 friend class T3DataView;
 friend class T3DataViewer;
 public:
-  T3DataViewRoot	root_view; // #BROWSE placeholder item -- contains the actual root(s) DataView items as children
+  T3DataViewRoot	root_view; // #SHOW_TREE placeholder item -- contains the actual root(s) DataView items as children
 
   inline iT3DataViewFrame* widget() {return (iT3DataViewFrame*)inherited::widget();} // lex override
 

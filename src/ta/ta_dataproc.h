@@ -494,7 +494,7 @@ public:
   // source columns to operate on (variables are labeled as s_xxx where xxx is col_name)
   DataOpList		dest_cols;
   // destination columns to operate on (variables are labeled as d_xxx where xxx is col_name)
-  ProgEl_List		loop_code; // #BROWSE the items to execute in the loop
+  ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
 
   virtual void	AddAllSrcColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 

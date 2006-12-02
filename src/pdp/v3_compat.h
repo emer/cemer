@@ -449,13 +449,13 @@ public:
   SchedProcess*	sub_proc;		// Sub-process called by this
   StepParams	step;			// #CONTROL_PANEL Which process to step and n_steps
 
-  Stat_Group	loop_stats;  		// #IN_GPMENU #BROWSE Statistics Computed in Loop
-  Stat_Group	final_stats;  		// #IN_GPMENU #BROWSE Statistics Computed after Loop
-  Process_Group	init_procs;		// #IN_GPMENU #BROWSE Misc procs run when process is initialized
-  Process_Group loop_procs;		// #IN_GPMENU #BROWSE Misc procs run in the loop, using mod based on loop counter
-  Process_Group	final_procs;		// #IN_GPMENU #BROWSE Misc procs run after process is finished
-//obs  WinView_Group	displays;	// #LINK_GROUP #HIDDEN  #BROWSE views to update
-  taBase_Group	logs;			// #LINK_GROUP #HIDDEN  #BROWSE Logs to log to NOTE: was PDPLog_Group in v3
+  Stat_Group	loop_stats;  		// #IN_GPMENU #SHOW_TREE Statistics Computed in Loop
+  Stat_Group	final_stats;  		// #IN_GPMENU #SHOW_TREE Statistics Computed after Loop
+  Process_Group	init_procs;		// #IN_GPMENU #SHOW_TREE Misc procs run when process is initialized
+  Process_Group loop_procs;		// #IN_GPMENU #SHOW_TREE Misc procs run in the loop, using mod based on loop counter
+  Process_Group	final_procs;		// #IN_GPMENU #SHOW_TREE Misc procs run after process is finished
+//obs  WinView_Group	displays;	// #LINK_GROUP #HIDDEN  #SHOW_TREE views to update
+  taBase_Group	logs;			// #LINK_GROUP #HIDDEN  #SHOW_TREE Logs to log to NOTE: was PDPLog_Group in v3
   bool		log_loop;		// Log the loop state (instead of final state)
   bool		log_counter;		// Log the counter values for this process
 

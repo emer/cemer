@@ -39,8 +39,6 @@ class taiDataHost;
 class taiEditDataHost; //
 
 
-//class	ivTopLevelWindow;		// #IGNORE
-
 //////////////////////////////////
 // 	HiLightButton		//
 //////////////////////////////////
@@ -152,25 +150,6 @@ protected:
   override void closeEvent(QCloseEvent* ev);
 };
 
-
-class TA_API iTextEditDialog : public QDialog { // #NO_CSS
-  Q_OBJECT
-INHERITED(QDialog)
-public:
-  QTextEdit*	txtText;
-  QPushButton*	btnOk; // read/write only
-  QPushButton* 	btnCancel; // or close, if read only
-  
-  bool		isReadOnly() {return m_readOnly;}
-  virtual void	setText(const String& value);
-  
-  iTextEditDialog(bool readOnly = false, QWidget* parent = 0);
-  ~iTextEditDialog();
-protected:
-  bool		m_readOnly;
-private:
-  void 		init(bool readOnly);
-};
 
 //////////////////////////
 // 	EditDataPanel	//

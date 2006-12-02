@@ -3,6 +3,14 @@ Beta TODO list
 
 test
 
+NEW BUGS
+
+* taMisc not showing its enums in classbrowse
+* taMisc property sheet showing all show enum vals in bits,
+  instead of just the BITS ones
+
+TO BE CLARIFIED
+
 --------------------------
 Brad:
 
@@ -21,29 +29,24 @@ NOTE: will look into w/ Randy
   * UnitView objs seem to get made, even if no gui interaction w/user
     they were supposed to only get made on demand!
 
-* UserData
-  * persistence
-  * schema
-  * save/restore state of viewers
-
 * Fix tabs & auto-apply edits
   ? add "pin/unpin" capability to panels, and extend panel tab context menu 
   * when clicking an existing item, focus that tab, don't show in the new tab (maybe?)
 
-* JIT rendering of list elements in properties dialog (massively slow!)
+* Viewers
+  * save/restore state of viewers
 
 * misc usability enhancements:
   * key shortcuts, particularly to invoke a string editor for string fields (all of them)
-  * automatically bracket gui-invoked methods with Busy/Notbusy
   * hover notes to add methoddef desc info in MethodCall, etc..?
+NOTE: where??? what does this mean??? fyi, there are already hover notes
+   in the MethodDef selector dialog
 
 * Program Groups: execution control (popup always-on-top window with ctrl buttons only)
 
 * Show changes:
-  force expert idea is good & should just be the default: if there is a 
-  def and it is not set to that, then show.
-  Also, just to be clear, RO should be rmv from show menu.  srch & replace
-  RO -> RO & HIDDEN unless RO SHOW 
+  * force expert idea is good & should just be the default: if there is a 
+   def and it is not set to that, then show.
 
 * Browser stuff
  * "disabled" generic state for viewing; "disabled" gui state for treeviews
@@ -57,9 +60,8 @@ NOTE: will look into w/ Randy
   Also, can we use full name like ProgramGroup instead of ProgGp -- would make 
   it more transparent..  ProgEditor is Program? 
 
-* nuke float_RArray from datagraph, get rid of ta/datatable.* (very confusing
-  with ta_datatable.*) -- move float_RArray to pdp/v3compat
-  (+ changes in advance of T3 graphs)
+* get rid of ta/datatable.* (very confusing
+  with ta_datatable.*) 
 
 * upgrade and test plugin system:
   * tags in type info to check dependencies
@@ -70,6 +72,9 @@ NOTE: will look into w/ Randy
   * dynamic (user controlled) loading of plugins
 
 * T3 graphs  
+  * nuke float_RArray from datagraph
+   -- move float_RArray to pdp/v3compat
+  (+ changes in advance of T3 graphs)
 
 * dnd for T3
 
@@ -110,6 +115,20 @@ Brad: (done)
 
 * updated all PCs to Qt4
 * fix netview crashing on remove units
+* UserData
+  * persistence
+  * schema
+* Show changes:
+  * RO should be rmv from show menu.  srch & replace
+    RO -> RO & HIDDEN unless RO SHOW 
+* misc usability enhancements:
+  * automatically bracket gui-invoked methods with Busy/Notbusy
+
+
+Brad (for Omega/Release)
+
+* JIT rendering of list elements in properties dialog (massively slow!)
+
 
 --------------------------
 Randy: (active list in src/leabra/TODO)

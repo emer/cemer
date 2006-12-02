@@ -376,35 +376,28 @@ private:
 
 class TA_API taMisc {
   // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
-public:
 friend class InitProcRegistrar;
+public:
 
   enum ShowMembs { // #BITS
-    NO_HIDDEN 		= 0x01, // don't show items marked HIDDEN
-    NO_READ_ONLY 	= 0x02, // don't show items marked READ_ONLY
-    NO_DETAIL 		= 0x04, // don't show items marked DETAIL (usually not relevant)
-    NO_NORMAL		= 0x08, // don't show items normally shown (helps indicate, ex. EXPERT items)
-    NO_EXPERT		= 0x10, // don't show items marked EXPERT (often only for advanced sims)
+    NO_HIDDEN 		= 0x01, // don't show items marked READ_ONLY w/o SHOW or HIDDEN
+    NO_DETAIL 		= 0x02, // don't show items marked DETAIL (usually not relevant)
+    NO_NORMAL		= 0x04, // don't show items normally shown (helps indicate, ex. EXPERT items)
+    NO_EXPERT		= 0x08, // don't show items marked EXPERT (often only for advanced sims)
 
     ALL_MEMBS		= 0x00, // #NO_BIT
-    NO_HID_RO 		= 0x03, // #NO_BIT
-    NO_HID_DET 		= 0x05, // #NO_BIT
-    NO_RO_DET 		= 0x06, // #NO_BIT
-    NO_HID_RO_DET 	= 0x07, // #NO_BIT
-    NORM_MEMBS 		= 0x17, // #NO_BIT
+    NO_HID_DET 		= 0x03, // #NO_BIT
+    NORM_MEMBS 		= 0x0B, // #NO_BIT
     
-    IS_HIDDEN 		= 0x01, // #IGNORE used in MemberDef::ShowMember to flag HIDDEN guys
-    IS_READ_ONLY 	= 0x02, // #IGNORE used in MemberDef::ShowMember to flag RO guys
-    IS_DETAIL 		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys
-    IS_NORMAL		= 0x08, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
-    IS_EXPERT		= 0x10, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
-    IS_SHOW_ALWAYS	= 0x20, // #IGNORE used in MemberDef::ShowMember to flag SHOW guys
-    SHOW_CHECK_MASK	= 0x2F, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
+    IS_HIDDEN 		= 0x01, // #IGNORE used in MemberDef::ShowMember to flag RO w/o SHOW or HIDDEN guys
+    IS_DETAIL 		= 0x02, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys
+    IS_NORMAL		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
+    IS_EXPERT		= 0x08, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
+    SHOW_CHECK_MASK	= 0x0F, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
 
     USE_SHOW_GUI_DEF 	= 0x40,	// #NO_BIT use default from taMisc::show_gui
     USE_SHOW_DEF 	= 0x80 	// #NO_BIT use default from taMisc::show
   };
-
 
   enum TypeInfo {
     MEMB_OFFSETS,		// display all including member offsets
@@ -629,9 +622,9 @@ friend class InitProcRegistrar;
   static void	FlushConsole();
   // #CAT_GlobalState flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
 
-  static void 	Busy();
+  static void 	Busy(bool busy = true);
   // #CAT_GlobalState puts system in a 'busy' state
-  static void	DoneBusy();
+  static inline void	DoneBusy() {Busy(false);}
   // #CAT_GlobalState when no longer busy, call this function
 
   static void 	CheckConfigStart(bool confirm_success = true, bool quiet = false); 

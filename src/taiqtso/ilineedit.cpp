@@ -16,6 +16,11 @@
 #include "ilineedit.h"
 
 #include <QApplication>
+#include <QDesktopWidget>
+#include <QLayout>
+#include <QPushButton>
+#include <QShortcut>
+#include <QTextEdit>
 #include <QPalette>
 
 iLineEdit::iLineEdit(QWidget* parent)
@@ -30,6 +35,29 @@ iLineEdit::iLineEdit(const char* text, QWidget* parent)
   init();
 }
 
+void iLineEdit::init() {
+  mmin_char_width = 0;
+  QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
+  sc->setContext(Qt::WidgetShortcut);
+  connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
+}
+
+void iLineEdit::editInEditor() {
+  iTextEditDialog* dlg = new iTextEditDialog(); // no parent needed for modals
+  // set to be ~3/4 of screen
+  QDesktopWidget *d = QApplication::desktop();
+  int primaryScreen = d->primaryScreen();
+  QSize sz = d->availableGeometry(primaryScreen).size();
+  dlg->resize((sz.width() * 3) / 4, (sz.height() * 3) / 4);
+  if (isReadOnly())
+    dlg->txtText->setReadOnly(true);
+  dlg->txtText->setPlainText(text());
+  if (!isReadOnly() && (dlg->exec() == QDialog::Accepted)) {
+    setText(dlg->txtText->toPlainText());
+  }
+  dlg->deleteLater();
+}
+
 void iLineEdit::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
   emit focusChanged(true);
@@ -38,10 +66,6 @@ void iLineEdit::focusInEvent(QFocusEvent* ev) {
 void iLineEdit::focusOutEvent(QFocusEvent* ev) {
   inherited::focusOutEvent(ev);
   emit focusChanged(false);
-}
-
-void iLineEdit::init() {
-  mmin_char_width = 0;
 }
 
 void iLineEdit::setMinCharWidth(int num) {
@@ -78,3 +102,48 @@ void iLineEdit::setReadOnly(bool value) {
   update();
 }
 
+
+//////////////////////////////////
+//  iTextEditDialog		//
+//////////////////////////////////
+
+
+iTextEditDialog::iTextEditDialog(bool readOnly_, QWidget* parent)
+:inherited(parent)
+{
+  init(readOnly_);
+}
+
+void iTextEditDialog::init(bool readOnly_) {
+  m_readOnly = readOnly_;
+//  this->resize(taiM->dialogSize(taiMisc::hdlg_m));
+  QVBoxLayout* layOuter = new QVBoxLayout(this);
+  txtText = new QTextEdit(this);
+  layOuter->addWidget(txtText);
+  QHBoxLayout* layButtons = new QHBoxLayout();
+  layButtons->setMargin(2);
+  layButtons->setSpacing(4);
+  layOuter->addLayout(layButtons);
+  layButtons->addStretch();
+  if (m_readOnly) {
+    txtText->setReadOnly(true);
+    btnOk = NULL;
+    btnCancel = new QPushButton("&Close", this);
+    layButtons->addWidget(btnCancel);
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+  } else {
+    btnOk = new QPushButton("&Ok", this);
+    layButtons->addWidget(btnOk);
+    btnCancel = new QPushButton("&Cancel", this);
+    layButtons->addWidget(btnCancel);
+    connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+  }
+}
+ 
+iTextEditDialog::~iTextEditDialog() {
+}
+
+void iTextEditDialog::setText(const QString& value) {
+  txtText->setPlainText(value);
+}

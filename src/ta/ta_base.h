@@ -1064,6 +1064,8 @@ public:
   TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
   UserDataItem_List* 	GetUserDataList(bool fc = false) const;  
   void	CutLinks();
+  void	Copy_(const taOBase& cp);
+  COPY_FUNS(taOBase, taBase)
   TA_BASEFUNS(taOBase); //
 protected:
   taDataLink*		m_data_link; //
@@ -1862,9 +1864,10 @@ protected:
 
 
 class TA_API UserDataItemBase: public taBase {
-  // #INLINE base class for all simple user data
+  // ##INLINE ##NO_TOKENS base class for all simple user data
 INHERITED(taBase)
 public:
+  taBase*		owner; // #READ_ONLY #NO_SAVE
   String		name;
   
   virtual bool		isSimple() const {return false;}
@@ -1873,22 +1876,24 @@ public:
   virtual const Variant valueAsVariant() const {return _nilVariant;}
   virtual bool		setValueAsVariant(const Variant& value) {return false;}
   
+  TAPtr SetOwner(taBase* value)	{ owner = value; return owner; } // #IGNORE
+  TAPtr GetOwner() const	{ return owner; } // #CAT_ObjectMgmt 
   bool	SetName(const String& value) {name = value; return true;}
   String GetName() const {return name;}
   TA_BASEFUNS(UserDataItemBase)
 protected:
   UserDataItemBase(const String& type_name, const String& key); // for schema constructors
 private:
-  void Initialize() {}
+  void Initialize() {owner = NULL;}
   void Destroy() {}
 };
 
 class TA_API UserDataItem: public UserDataItemBase {
-  // #INLINE an item of simple user data
+  // an item of simple user data
 INHERITED(UserDataItemBase)
 public:
   Variant		value;
-  String		desc; // optional description (typ. used for schema, not items)
+  String		desc; // #NO_SAVE_EMPTY optional description (typ. used for schema, not items)
   
   override bool		isSimple() const {return true;}
   override const Variant valueAsVariant() const {return value;}
