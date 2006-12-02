@@ -6,9 +6,19 @@ Program .projects[0].programs.gp[1][0] {
     ProgVar @[2] { };
   };
 
-  ProgEl_List @.prog_code = [2] {
+  ProgEl_List @.prog_code = [3] {
     MethodCall @[0] { };
     DataProcCall @[1] { };
+    DataCalcLoop @[2] { 
+      DataOpList @.src_cols = [1] {
+	DataOpEl @[0] { };
+      };
+
+      ProgEl_List @.loop_code = [2] {
+	UserScript @[0] { };
+	DataCalcSetSrcRow @[1] { };
+      };
+    };
   };
 };
 Program .projects[0].programs.gp[1][0] {
@@ -42,7 +52,7 @@ Program .projects[0].programs.gp[1][0] {
    name="names_table";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][2]$0$;
+   object_val=.projects[0].data.gp[0][1]$0$;
    objs_ptr=0;
    desc=;
   };
@@ -50,6 +60,11 @@ Program .projects[0].programs.gp[1][0] {
  vars {
   name=;
   el_typ=ProgVar;
+  el_def=0;
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
   el_def=0;
  };
  init_code {
@@ -65,7 +80,7 @@ Program .projects[0].programs.gp[1][0] {
    desc=;
    off=0;
    result_var=NULL;
-   script_obj=.projects[0].programs.gp[1][0].args[2]$1$;
+   obj=.projects[0].programs.gp[1][0].args[2]$1$;
    method=DataTable::ResetData;
    args{ };
 {    };
@@ -78,6 +93,43 @@ Program .projects[0].programs.gp[1][0] {
    method=taDataProc::GetDirFiles;
    args{ names_table;directory;filter;false;"FileName";"FilePath";};
 { DataTable* dest;const taString& dir_path;const taString& filter;bool recursive;const taString& fname_col_nm;const taString& path_col_nm;   };
+  };
+  DataCalcLoop @[2] {
+   desc=;
+   off=0;
+   src_data=$0$;
+   dest_data=NULL;
+   src_cols {
+    name=;
+    el_typ=DataOpEl;
+    el_def=0;
+    DataOpEl @[0] {
+     col_name="Output";
+    };
+   };
+   dest_cols {
+    name=;
+    el_typ=DataOpEl;
+    el_def=0;
+   };
+   loop_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    UserScript @[0] {
+     desc=;
+     off=0;
+     user_script="s_Output = src_row;
+
+";
+    };
+    DataCalcSetSrcRow @[1] {
+     desc=;
+     off=0;
+     src_data=$0$;
+     dest_data=NULL;
+    };
+   };
   };
  };
 };
