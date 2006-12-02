@@ -1657,9 +1657,9 @@ public:
   // #MENU #CAT_Structure auto stretch out z positions in proportion to the maximum y axis size of the network
 
   virtual void	Compute_LayerDistances();
-  // #CAT_Structure compute distances between layers and input/output layers
+  // #MENU #CAT_Structure compute distances between layers and input/output layers
   virtual void	Compute_PrjnDirections();
-  // #CAT_Structure compute the directions of projections based on the relative distances from input/output layers (calls Compute_LayerDistances first)
+  // #MENU #CAT_Structure compute the directions of projections based on the relative distances from input/output layers (calls Compute_LayerDistances first)
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights

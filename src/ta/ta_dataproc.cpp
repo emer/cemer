@@ -1554,7 +1554,7 @@ const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
   dcl->src_cols.GetColumns(dcl->src_data);
   for(int i=0;i<dcl->src_cols.size; i++) {
     DataOpEl* ds = dcl->src_cols[i];
-    DataArray_impl* da = dcl->dest_data->data[ds->col_idx];
+    DataArray_impl* da = dcl->src_data->data[ds->col_idx];
     if(da->is_matrix)
       rval += il + "dcl->src_data.SetValAsMatrix(" + 
 	"s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
