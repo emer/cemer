@@ -943,7 +943,7 @@ void taFixedArray_impl::Copy_(const taFixedArray_impl& cp) {
   size = cp.size;
 }
 
-void taFixedArray_impl::EnforceSize(int new_size) {
+void taFixedArray_impl::SetSize(int new_size) {
   if (new_size > size) {
     Alloc_(new_size);
     const void* blank = El_GetBlank_();
@@ -1045,7 +1045,7 @@ void taArray_impl::Alloc(int sz) {
 }
 
 void taArray_impl::AddBlank(int n_els) {
-  EnforceSize(size + n_els);
+  SetSize(size + n_els);
 }
 
 void taArray_impl::Copy_(const taArray_impl& cp) {
@@ -1058,7 +1058,7 @@ void taArray_impl::Copy_(const taArray_impl& cp) {
   size = cp.size;
 }
 
-void taArray_impl::EnforceSize(int new_size) {
+void taArray_impl::SetSize(int new_size) {
   if (new_size > size) {
     Alloc(new_size);
     Clear_Tmp_();
@@ -1267,7 +1267,7 @@ void taArray_impl::CopyVals(const taArray_impl& from, int start, int end, int at
   if(end == -1)	end = from.size;  else end = MIN(from.size, end);
   int len = end - start;
   if(size < at + len)
-    EnforceSize(at + len);
+    SetSize(at + len);
   int i, trg;
   for(i=start, trg=at;i<end;i++, trg++)
     El_Copy_(FastEl_(trg), from.FastEl_(i));

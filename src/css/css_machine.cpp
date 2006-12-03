@@ -1036,7 +1036,7 @@ void cssElFun::DoneArgs(cssEl** args, int& act_argc) {
 }
 
 void cssElFun::GetArgDefs() {
-  arg_vals.EnforceSize(argc+1);
+  arg_vals.SetSize(argc+1);
   if(cssMisc::default_args.size == 0)
     return;
   if(arg_defs.size > 0) {

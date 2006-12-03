@@ -59,7 +59,7 @@ String ChannelSpec::GetColText(int col, int) {
 //////////////////////////
 
 void MatrixChannelSpec::Initialize() {
-  cell_geom.EnforceSize(1);
+  cell_geom.SetSize(1);
   uses_cell_names = false;
 }
 
@@ -98,7 +98,7 @@ void MatrixChannelSpec::SetCellGeom(bool uses_names, int dims,
     int d0, int d1, int d2, int d3, int d4)
 {
   uses_cell_names = uses_names;
-  cell_geom.EnforceSize(dims);
+  cell_geom.SetSize(dims);
   cell_geom.Set(0, d0);
   cell_geom.Set(1, d1);
   cell_geom.Set(2, d2);

@@ -2350,7 +2350,7 @@ void taList_impl::EnforceSameStru(const taList_impl& cp) {
       RemoveIdx(i);
 }
 
-void taList_impl::EnforceSize(int sz) {
+void taList_impl::SetSize(int sz) {
   if(size < sz)
     New(sz - size);
   else {
@@ -3223,7 +3223,7 @@ void SArg_Array::InitLinks() {
 }
 
 void SArg_Array::UpdateAfterEdit() {
-  labels.EnforceSize(size);
+  labels.SetSize(size);
   inherited::UpdateAfterEdit();
 }
 

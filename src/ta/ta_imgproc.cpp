@@ -1085,9 +1085,9 @@ void RetinaSpec::UpdateAfterEdit() {
 
 void RetinaSpec::DefaultFilters() {
   if(color_type == COLOR)
-    dogs.EnforceSize(7);
+    dogs.SetSize(7);
   else
-    dogs.EnforceSize(3);
+    dogs.SetSize(3);
   UpdateRetinaSize();
   DoGRetinaSpec* sp;
   int cnt = 0;

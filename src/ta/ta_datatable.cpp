@@ -34,7 +34,7 @@ void DataArray_impl::Initialize() {
   pin = false;
   is_matrix = false;
   // default initialize to scalar
-  cell_geom.EnforceSize(1);
+  cell_geom.SetSize(1);
   cell_geom.Set(0, 1);
 }
 
@@ -103,7 +103,7 @@ void DataArray_impl::Init() {
   taMatrix* ar = AR(); //cache
   if (is_matrix) {
     MatrixGeom tdim = cell_geom;
-    tdim.EnforceSize(tdim.size + 1); // leaves the new outer dim = 0, which is flex sizing
+    tdim.SetSize(tdim.size + 1); // leaves the new outer dim = 0, which is flex sizing
     ar->SetGeomN(tdim);
   } else {
     ar->SetGeom(1, 0); // sets to 1-d, with flex sizing
@@ -278,8 +278,8 @@ void DataArray_impl::DecodeHeaderName(String nm, String& base_nm, int& vt,
 				      MatrixGeom& mat_idx, MatrixGeom& mat_geom) {
   base_nm = nm;
   vt = -1; // unknown
-  mat_idx.EnforceSize(0);
-  mat_geom.EnforceSize(0);
+  mat_idx.SetSize(0);
+  mat_geom.SetSize(0);
   if (nm.empty()) return;
 
   // first check for type info:
@@ -1433,8 +1433,8 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
       break;
     case VT_STRING: {
       int n_recv = n_recv_rows * frsz;
-      char_send.EnforceSize(n_send * max_str_len);
-      char_recv.EnforceSize(n_recv * max_str_len);
+      char_send.SetSize(n_send * max_str_len);
+      char_recv.SetSize(n_recv * max_str_len);
       for(int i=0;i<n_send;i++) {
 	String& str = ((String_Matrix*)da_mat)->FastEl_Flat(send_idx + i);
 	int st_idx = i * max_str_len;

@@ -182,9 +182,9 @@ public:
     else       return FastEl((x-y) + (y * dim) - (((y-1) * y) / 2));
   }
   // get element assuming an upper-triangular symmetric matrix (e.g., distance matrix) of dimension dim for two items, x, y
-  inline void	AllocSqMatSize(int dim) { EnforceSize(dim * dim); }
+  inline void	AllocSqMatSize(int dim) { SetSize(dim * dim); }
   // allocate space (enforcesize) for a square matrix of size dim
-  inline void	AllocTriMatSize(int dim) { EnforceSize((dim * (dim + 1)) / 2); }
+  inline void	AllocTriMatSize(int dim) { SetSize((dim * (dim + 1)) / 2); }
   // allocate space (enforcesize) for an upper-triangular matrix of size dim
 
   virtual void 	CopyFmTriMat(int dim, const float_RArray& tri_mat);

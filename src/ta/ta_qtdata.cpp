@@ -840,7 +840,7 @@ void taiDimEdit::GetImage(const MatrixGeom* arr) {
 
 void taiDimEdit::GetValue(MatrixGeom* arr) const {
   iDimEdit* de = rep(); // cache
-  arr->EnforceSize(de->dims());
+  arr->SetSize(de->dims());
   for (int i = 0; i < de->dims(); ++i) {
     arr->Set(i, de->dim(i));
   }

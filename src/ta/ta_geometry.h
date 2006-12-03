@@ -145,6 +145,7 @@ public:
   }
   inline float	Dist(const TwoDCoord& td) const { return sqrt(SqDist(td)); }
   inline int	Sum() const 	{ return x + y; }
+  inline int 	Product() const	{ return x * y; }
 
   static inline int Sgn(int val) { return (val >= 0) ? 1 : -1; }
   static inline int Absv(int val) { return (val >= 0) ? val : -val; }
@@ -155,7 +156,6 @@ public:
   inline void	Min(TwoDCoord& td) { x = MIN(x,td.x); y = MIN(y,td.y); }
   inline void	Max(TwoDCoord& td) { x = MAX(x,td.x); y = MAX(y,td.y); }
 
-  inline int Product() const	{ return x * y; }
   inline int MaxVal() const	{ int mx = MAX(x, y); return mx; }
   inline int MinVal() const	{ int mn = MIN(x, y); return mn; }
 
@@ -336,6 +336,7 @@ public:
   }
   inline float	Dist(const TDCoord& td) const { return sqrt(SqDist(td)); }
   inline int	Sum() const 	{ return x + y + z; }
+  inline int 	Product() const	{ return x * y * z; }
 
   static inline int Sgn(int val) { return (val >= 0) ? 1 : -1; }
   static inline int Absv(int val) { return (val >= 0) ? val : -val; }
@@ -346,7 +347,6 @@ public:
   inline void	Min(TDCoord& td) { x = MIN(x,td.x); y = MIN(y,td.y); z = MIN(z,td.z); }
   inline void	Max(TDCoord& td) { x = MAX(x,td.x); y = MAX(y,td.y); z = MAX(z,td.z); }
 
-  inline int Product() const	{ return x * y * z; }
   inline int MaxVal() const	{ int mx = MAX(x, y); mx = MAX(mx, z); return mx; }
   inline int MinVal() const	{ int mn = MIN(x, y); mn = MIN(mn, z); return mn; }
 
@@ -487,6 +487,7 @@ public:
   }
   inline float	Dist(const FloatTwoDCoord& td) const { return sqrt(SqDist(td)); }
   inline float	Sum() const 	{ return x + y; }
+  inline float 	Product() const	{ return x * y; }
 
   inline void 	Invert()    	{ x = -x; y = -y; }
   inline void 	MagNorm() 	{ float mg = Mag(); if(mg > 0.0) *this /= mg; }
@@ -619,6 +620,7 @@ public:
     FloatTDCoord dist = *this - td; return dist.Mag();
   }
   inline float	Sum() const 	{ return x + y + z; }
+  inline float	Product() const	{ return x * y * z; }
 
   inline void 	Invert()    	{ x = -x; y = -y; z = -z; }
   inline void 	MagNorm() 	{ float mg = Mag(); if(mg > 0.0) *this /= mg; }

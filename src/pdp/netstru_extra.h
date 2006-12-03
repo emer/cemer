@@ -118,10 +118,9 @@ public:
 };
 
 class PDP_API UniformRndPrjnSpec : public ProjectionSpec {
-  // Uniform random connectivity between layers
+  // Uniform random connectivity between layers -- only 'permute' stye randomness is supported, creates same number of connections per unit
 public:
   float		p_con;		// overall probability of connection
-  bool		permute;	// use permuted order for same number of cons
   bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
@@ -230,29 +229,6 @@ public:
 //	UnitGroup-based PrjnSpecs	//
 //////////////////////////////////////////
 
-class PDP_API GpFullPrjnSpec : public FullPrjnSpec {
-  // unit_group based full connectivity with distinct con_groups for each unit group -- this is non-standard and prevents proper copying of a network
-public:
-  enum NConGroups {		// number of connection groups for this projection
-    RECV_SEND_PAIR,		// create separate con_groups for each recv_send pair
-    SEND_ONLY 			// create separate recv con_groups for ea sending gp
-  };
-
-  NConGroups	n_con_groups;	// number of con_groups to create
-
-  virtual void 	GetNGroups(Projection* prjn, int& r_n_ugp, int& s_n_ugp);
-  // get number of connection groups for the projection
-
-  void	PreConnect(Projection* prjn);
-  void	Connect_impl(Projection* prjn);
-
-  void	Initialize();
-  void 	Destroy()		{ };
-  SIMPLE_COPY(GpFullPrjnSpec);
-  COPY_FUNS(GpFullPrjnSpec, FullPrjnSpec);
-  TA_BASEFUNS(GpFullPrjnSpec);
-};
-
 class PDP_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-one connectivity (all in 1st group to all in 1st group, etc)
 public:
@@ -264,10 +240,9 @@ public:
 };
 
 class PDP_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
-  // uniform random connectivity between one-to-one groups
+  // uniform random connectivity between one-to-one groups -- only 'permute' style random connectivity is supported (same number of connections across recv units)
 public:
   float		p_con;		// overall probability of connection
-  bool		permute;	// use permuted order for same number of cons
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
@@ -329,7 +304,7 @@ public:
 };
 
 class PDP_API GpRndTesselPrjnSpec : public ProjectionSpec {
-  // specifies patterns of groups to connect with, with random connectivity within each group
+  // specifies patterns of groups to connect with, with random connectivity within each group -- only 'permute' style randomness is suported, producing same number of recv connections per unit
 public:
   TwoDCoord	recv_gp_off; 	// offset for start of recv group to begin connecting
   TwoDCoord	recv_gp_n;    	// number of receiving groups to connect in each dimension (-1 for all)
@@ -340,7 +315,6 @@ public:
   TessEl_List	send_gp_offs;	// offsets of the sending units
   bool		wrap;		// whether to wrap coordinates around (else clip)
   float		def_p_con;	// default probability of connectivity when new send_gp_offs are created
-  bool		permute;	// use permuted order for same number of cons
   bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
@@ -349,9 +323,23 @@ public:
 
   virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
   // get center of sender coords from receiving coords
-  virtual void  Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con, Projection* prjn);
+  virtual void  Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+			    Projection* prjn);
+  // #IGNORE impl connect send/recv gps
+  virtual void  Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+				Projection* prjn);
+  // #IGNORE symmetric (p_con < 0)
+  virtual void  Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+				      Projection* prjn);
+  // #IGNORE symmetric, same unit group
+  virtual void  Connect_Gps_SymSameLay(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+				      Projection* prjn);
+  // #IGNORE symmetric, same layer
+  virtual void  Connect_Gps_Std(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+				Projection* prjn);
+  // #IGNORE standard, not symmetric/same
   virtual void	Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc, Projection* prjn);
-  // connects one recv unit to all senders (doesn't check for linking..)
+  // connects one recv unit to all senders
 
   virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
   // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
@@ -412,6 +400,7 @@ public:
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
 
   void 	Connect_impl(Projection* prjn);
+  virtual void 	Connect_Reciprocal(Projection* prjn);
   int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
 
   void	Initialize();
@@ -434,6 +423,7 @@ public:
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
   void 	Connect_impl(Projection* prjn);
+  virtual void 	Connect_Reciprocal(Projection* prjn);
 //   int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
 
 //   virtual void	SelectRF(Projection* prjn);

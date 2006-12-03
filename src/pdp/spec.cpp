@@ -322,11 +322,11 @@ void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
 	   md->HasOption("NO_INHERIT")))
       {
 	if(md->type->InheritsFrom(TA_taList_impl)) {
-	  ((taList_impl*)md->GetOff((void*)this))->EnforceSize
+	  ((taList_impl*)md->GetOff((void*)this))->SetSize
 	    (((taList_impl*)md->GetOff((void*)from))->size);
 	}
 	if(md->type->InheritsFrom(TA_taArray_impl)) {
-	  ((taArray_impl*)md->GetOff((void*)this))->EnforceSize
+	  ((taArray_impl*)md->GetOff((void*)this))->SetSize
 	    (((taArray_impl*)md->GetOff((void*)from))->size);
 	}
 	MemberCopyFrom(memb_no, from);

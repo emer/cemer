@@ -259,13 +259,17 @@ void ConArray::Initialize() {
 
 void ConArray::Destroy() {
   CutLinks();
-  Free();
 }
 
 void ConArray::CutLinks() {
-  Reset();
+  Free();
 }
 
+void ConArray::Free() {
+  if(cons) { free(cons); cons = NULL; }
+  size = 0;
+  alloc_size = 0;
+}
 void ConArray::Copy_(const ConArray& cp) {
   SetType(cp.con_type);
   CopyCons(cp);
@@ -273,31 +277,32 @@ void ConArray::Copy_(const ConArray& cp) {
 
 void ConArray::SetType(TypeDef* cn_tp) {
   if(con_type == cn_tp) return;
-  Reset();
-  int old_sz = con_size;
+  if(cons) {
+#ifdef DEBUG
+    taMisc::Warning("*** ConArray SetType error: set new type after connections were allocated!");
+#endif
+    Free();
+  }
   con_type = cn_tp;
   con_size = cn_tp->size;
-  if(con_size > old_sz)
-    Alloc(alloc_size + 1);	// force realloc with new con_size
 }
 
 void ConArray::Alloc(int sz) {
-  if (alloc_size < sz)	{
-    // start w/ 4, double up to 64, then 1.5x thereafter
-    if (alloc_size == 0) alloc_size = MAX(4, sz);
-    else if (alloc_size < 64) alloc_size = MAX((alloc_size * 2), sz);
-    else alloc_size =  MAX(((alloc_size * 3) / 2) , sz);
-    if(!cons)
-      cons = (char*)malloc(alloc_size * con_size);
-    else
-      cons = (char*)realloc(cons, alloc_size * con_size);
-  }
+  if(cons)
+    Free();
+  alloc_size = sz;
+  cons = (char*)malloc(alloc_size * con_size);
 }
 
-void ConArray::Free() {
-  if(cons) { free(cons); cons = NULL; }
-  size = 0;
-  alloc_size = 0;
+void ConArray::SetSize(int sz) {
+  if(sz > alloc_size) {
+    taMisc::Warning("*** ConArray SetSize error: requesting size:", String(sz), "more than allocated:", String(alloc_size), ".  Programmer must increase size of allocation in Connect_impl function!");
+    sz = alloc_size;
+  }
+  if(sz > size) {
+    bzero((void*)FastEl(size), (sz - size) * con_size);
+  }
+  size = sz;
 }
 
 bool ConArray::RemoveIdx(int i) {
@@ -1778,8 +1783,10 @@ bool Unit::Build() {
   }
   else {
     bias.SetConType(bstd);
-    if(bias.cons.size == 0)
+    if(bias.cons.size == 0) {
+      bias.cons.Alloc(1);
       bias.NewCon(NULL);		// null unit (or should it be this!?)
+    }
   }
   return rval;
 }
@@ -2557,7 +2564,7 @@ void Projection::WeightsToTable(DataTable* dt) {
 
   EventSpec* es = env->GetAnEventSpec();
   es->UpdateAfterEdit();	// make sure its all done with internals..
-  es->patterns.EnforceSize(1);
+  es->patterns.SetSize(1);
 
   PatternSpec* ps = (PatternSpec*)es->patterns[0];
   ps->n_vals = from->units.leaves;
@@ -2941,7 +2948,7 @@ bool Unit_Group::Build() {
   bool units_changed = false;
   if(size != geom.n)
     units_changed = true;
-  EnforceSize(geom.n);
+  SetSize(geom.n);
   EnforceType();
   Unit* u;
   taLeafItr i;
@@ -3495,7 +3502,7 @@ void Layer::Build() {
 //       ((Unit*)units.FastEl(units.size-1))->pos.z = -1; // do not update
       units.RemoveIdx(units.size-1); // get rid of any in top-level
     }
-    units.gp.EnforceSize(gp_geom.n);
+    units.gp.SetSize(gp_geom.n);
     for(int k=0; k< units.gp.size; k++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
       ug->UpdateAfterEdit();
@@ -4898,7 +4905,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   int np = 0; MPI_Comm_size(comm, &np);
   if(np <= 1) return;
 
-  values.EnforceSize(n_cons + n_units);
+  values.SetSize(n_cons + n_units);
 
   int cidx = 0;
   Layer* lay;
@@ -4918,7 +4925,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     }
   }
 
-  results.EnforceSize(cidx);
+  results.SetSize(cidx);
   DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
 	       "Network::SumDWts", "Allreduce");
 
@@ -4946,7 +4953,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
   int np = 0; MPI_Comm_size(comm, &np);
   if(np <= 1) return;
 
-  values.EnforceSize(n_cons + n_units);
+  values.SetSize(n_cons + n_units);
 
   int cidx = 0;
   Layer* lay;
@@ -4966,7 +4973,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
     }
   }
 
-  results.EnforceSize(cidx);
+  results.SetSize(cidx);
   DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
 		     "Network::AvgWts", "Allreduce");
 
@@ -5043,8 +5050,8 @@ void Network::DMem_SymmetrizeWts() {
 	    DMEM_MPICALL(MPI_Recv((void*)&msgsize, 1, MPI_INT, proc, 101, comm, &status),
 			 "DMem_SymmetrizeWts", "MPI_Recv msgsize");
 	    if(msgsize > 0) {
-	      unit_idxs.EnforceSize(msgsize);
-	      wt_vals.EnforceSize(msgsize);
+	      unit_idxs.SetSize(msgsize);
+	      wt_vals.SetSize(msgsize);
 	      DMEM_MPICALL(MPI_Recv(unit_idxs.el, msgsize, MPI_INT, proc, 102, comm, &status),
 			   "DMem_SymmetrizeWts", "MPI_Recv unit_idxs");
 	      DMEM_MPICALL(MPI_Recv(wt_vals.el, msgsize, MPI_FLOAT, proc, 103, comm, &status),

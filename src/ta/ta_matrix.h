@@ -151,7 +151,7 @@ class TA_API MatrixGeom: public taBase  {
 INHERITED(taBase)
 friend class taMatrix;
 public:
-  int			size; // DO NOT SET DIRECTLY, use EnforceSize
+  int			size; // DO NOT SET DIRECTLY, use SetSize
   
   bool			Equal(const MatrixGeom& other) const;
   inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
@@ -159,7 +159,7 @@ public:
     // 'true' if this is a proper frame of other
   int 			Product() const; // returns product of all elements
   
-  bool			EnforceSize(int sz); // sets to size, zeroing orphaned or new dims (true if changed size; false if not)
+  bool			SetSize(int sz); // sets to size, zeroing orphaned or new dims (true if changed size; false if not)
   int			SafeEl(int i) const {if (InRange(i)) return el[i]; else return 0;}
     // the element at the given index
   
@@ -168,7 +168,7 @@ public:
     {if (InRange(i)) el[i] = value;}
   void			SetGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
     
-  inline void		Reset() {EnforceSize(0);} // set size to 0, and clear all dims
+  inline void		Reset() {SetSize(0);} // set size to 0, and clear all dims
 
   int 			IndexFmDims(int d0, int d1, int d2, int d3, int d4) const;
   // get index from dimension values, based on geometry

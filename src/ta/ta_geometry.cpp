@@ -39,7 +39,7 @@ TwoDCoord& TwoDCoord::operator=(const FloatTwoDCoord& cp) {
 
 void TwoDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
 // NOTE: TDCoord just replaces this whole routine, for simplicity
-  geom.EnforceSize(2);
+  geom.SetSize(2);
   geom.FastEl(0) = x;
   geom.FastEl(1) = y;
 }
@@ -113,7 +113,7 @@ TDCoord& TDCoord::operator=(const FloatTDCoord& cp) {
 
 void TDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
 // NOTE: TDCoord just replaces this whole routine, for simplicity
-  geom.EnforceSize(3);
+  geom.SetSize(3);
   geom.FastEl(0) = x;
   geom.FastEl(1) = y;
   geom.FastEl(2) = z;

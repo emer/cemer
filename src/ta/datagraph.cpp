@@ -562,7 +562,7 @@ void GraphSpec::Copy_(const GraphSpec& cp) {
   line_specs = cp.line_specs;
   graph_layout = cp.graph_layout;
   // we need to find our own copies of graphlets
-  graphlets.EnforceSize(cp.graphlets.size);
+  graphlets.SetSize(cp.graphlets.size);
   for (int i = 0; i < cp.graphlets.size; ++i) {
     GraphletSpec* cp_asl = cp.graphlets.FastEl(i);
     GraphletSpec* asl = graphlets.SafeEl(i);
@@ -740,7 +740,7 @@ void GraphSpec::AssertGraphlets() {
   case SHARED_AXES: {
     // make sure only one list -- easiest is to just rebuild list, since the
     // views are not directly tied to this list
-    graphlets.EnforceSize(1);
+    graphlets.SetSize(1);
     GraphletSpec* gls = graphlets.FastEl(0);
     graph_layout = 1;
     int lnk_cnt = 0; // count of linked axes
@@ -764,7 +764,7 @@ void GraphSpec::AssertGraphlets() {
           (gvs->col_type == GraphLineSpec::Z_AXIS) ||
           (gvs->col_type == GraphLineSpec::HIDE))
       ) {
-        graphlets.EnforceSize(g_cnt + 1);
+        graphlets.SetSize(g_cnt + 1);
         GraphletSpec* gls = graphlets.FastEl(g_cnt);
         gls->Reset();
         gls->Link(as);

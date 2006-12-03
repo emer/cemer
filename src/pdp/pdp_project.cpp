@@ -64,7 +64,7 @@ void Wizard::Initialize() {
 void Wizard::InitLinks() {
   inherited::InitLinks();
   taBase::Own(layer_cfg, this);
-  layer_cfg.EnforceSize(n_layers);
+  layer_cfg.SetSize(n_layers);
 }
 
 void Wizard::CutLinks() {
@@ -73,13 +73,13 @@ void Wizard::CutLinks() {
 }
 
 void Wizard::UpdateAfterEdit() {
-  layer_cfg.EnforceSize(n_layers);
+  layer_cfg.SetSize(n_layers);
   inherited::UpdateAfterEdit();
 }
 
 void Wizard::ThreeLayerNet() {
   n_layers = 3;
-  layer_cfg.EnforceSize(n_layers);
+  layer_cfg.SetSize(n_layers);
   ((LayerWizEl*)layer_cfg[0])->name = "Input";
   ((LayerWizEl*)layer_cfg[0])->io_type = LayerWizEl::INPUT;
   ((LayerWizEl*)layer_cfg[1])->name = "Hidden";
@@ -90,7 +90,7 @@ void Wizard::ThreeLayerNet() {
 
 void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
   n_layers = n_inputs + n_hiddens + n_outputs;
-  layer_cfg.EnforceSize(n_layers);
+  layer_cfg.SetSize(n_layers);
   int i;
   for(i=0;i<n_inputs;i++) {
     ((LayerWizEl*)layer_cfg[i])->name = "Input";
@@ -115,8 +115,8 @@ void Wizard::StdNetwork(Network* net) {
     net = pdpMisc::GetNewNetwork(proj);
   if(net == NULL) return;
   net->StructUpdate(true);
-  layer_cfg.EnforceSize(n_layers);
-  net->layers.EnforceSize(n_layers);
+  layer_cfg.SetSize(n_layers);
+  net->layers.SetSize(n_layers);
   int i;
   int n_hid_layers = 0;
   for(i=0;i<layer_cfg.size;i++) {
@@ -607,7 +607,7 @@ void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
   Network* net;
   taLeafItr i;
   FOR_ITR_EL(Network, net, networks., i) {
-    if(bld_mode == PROMPT_BUILD) {
+    if(taMisc::use_gui && (bld_mode == PROMPT_BUILD)) {
       int chs = taMisc::Choice("Build network: " + net->name, "Yes", "No");
       if(chs == 1) continue;
     }
@@ -622,7 +622,7 @@ DataTable_Group* ProjectBase::analysisDataGroup() {
 }
 
 void ProjectBase::GetDefaultColors() {
-  view_colors.EnforceSize(COLOR_COUNT);
+  view_colors.SetSize(COLOR_COUNT);
   view_colors[TEXT]->name = "black";
   view_colors[TEXT]->desc = "Text";
   view_colors[BACKGROUND]->r = .752941f;
@@ -749,7 +749,7 @@ void ProjectBase::UpdateColors() {
     view_colors.Reset();
     GetDefaultColors();
   }
-  the_colors.EnforceSize(COLOR_COUNT);
+  the_colors.SetSize(COLOR_COUNT);
   if(taMisc::gui_active) {
     int i;
     for(i=0;i<COLOR_COUNT;i++) {

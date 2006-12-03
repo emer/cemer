@@ -1719,7 +1719,7 @@ static cssEl* cssElCFun_clock_stub(int, cssEl**) {
 //   static cssTA* rv_ta = NULL;
 //   struct rusage rus;
 //   getrusage(RUSAGE_SELF,&rus);
-//   vals.EnforceSize(18);
+//   vals.SetSize(18);
 //   vals[0] = (int)rus.ru_utime.tv_sec;  // user time used, secs
 //   vals[1] = (int)rus.ru_utime.tv_usec; // user time used, microsecs
 //   vals[2] = (int)rus.ru_stime.tv_sec;  // system time used, secs

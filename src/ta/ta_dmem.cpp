@@ -141,7 +141,7 @@ void DMemComm::CommSubGpInner(int sub_gp_size) {
   // i0 i1 i0 i1  <- inner loop
   // 0  1  2  3   <- proc no
   // *  *         <- in group, e.g. if I'm an odd #'d proc
-  ranks.EnforceSize(nprocs);
+  ranks.SetSize(nprocs);
   int myouter = taMisc::dmem_proc / sub_gp_size;
   int stinner = myouter * sub_gp_size;
   for(int i = 0;i<nprocs; i++)
@@ -172,7 +172,7 @@ void DMemComm::CommSubGpOuter(int sub_gp_size) {
   // i0 i1 i0 i1  <- inner loop
   // 0  1  2  3   <- proc no
   //    *     *   <- in group, e.g. if I'm an odd #'d proc
-  ranks.EnforceSize(nprocs);
+  ranks.SetSize(nprocs);
   int myinner = taMisc::dmem_proc % sub_gp_size;
   for(int i = 0;i<nprocs; i++)
     ranks[i] = myinner + (i * sub_gp_size);
@@ -250,7 +250,7 @@ void DMemShareVar::Compile_Var(MPI_Comm cm) {
 
   if(n_procs <= 1) return;
 
-  n_local.EnforceSize(n_procs);
+  n_local.SetSize(n_procs);
 
   // initialize counts
   for(int i=0;i<n_procs;i++) {
@@ -268,8 +268,8 @@ void DMemShareVar::Compile_Var(MPI_Comm cm) {
   }
 
   static int_Array proc_ctr;
-  proc_ctr.EnforceSize(n_procs);
-  recv_idx.EnforceSize(n_procs);
+  proc_ctr.SetSize(n_procs);
+  recv_idx.SetSize(n_procs);
   for(int i=0;i<n_procs;i++) {
     proc_ctr[i] = 0;
     recv_idx[i] = max_per_proc * i;
@@ -278,7 +278,7 @@ void DMemShareVar::Compile_Var(MPI_Comm cm) {
   // allocate the addrs_recv array (max_per_proc * nprocs; 000..111..222...)
   // enforce size:
   int ar_size = max_per_proc * n_procs;
-  addrs_recv.EnforceSize(ar_size);
+  addrs_recv.SetSize(ar_size);
   for(int i=0;i<local_proc.size;i++) {
     int lproc = local_proc[i];
     addrs_recv[recv_idx[lproc] + proc_ctr[lproc]] = addrs[i];
@@ -287,18 +287,18 @@ void DMemShareVar::Compile_Var(MPI_Comm cm) {
 
   switch(mpi_type) {
   case MPI_FLOAT: {
-    float_send.EnforceSize(addrs_recv.size);
-    float_recv.EnforceSize(addrs_recv.size);
+    float_send.SetSize(addrs_recv.size);
+    float_recv.SetSize(addrs_recv.size);
     break;
   }
   case MPI_DOUBLE: {
-    double_send.EnforceSize(addrs_recv.size);
-    double_recv.EnforceSize(addrs_recv.size);
+    double_send.SetSize(addrs_recv.size);
+    double_recv.SetSize(addrs_recv.size);
     break;
   }
   case MPI_INT: {
-    int_send.EnforceSize(addrs_recv.size);
-    int_recv.EnforceSize(addrs_recv.size);
+    int_send.SetSize(addrs_recv.size);
+    int_recv.SetSize(addrs_recv.size);
     break;
   }
   }
@@ -541,7 +541,7 @@ void DMemShare::Compile_ShareTypes() {
     }
   }
 
-  vars.EnforceSize(max_share_sets);
+  vars.SetSize(max_share_sets);
   for(int i=0; i < vars.size; i++) {
     DMemShareVar* var = (DMemShareVar*)vars[i];
     var->ResetVar();

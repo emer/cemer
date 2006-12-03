@@ -1365,8 +1365,8 @@ void cssClassType::AddParent(cssClassType* par) {
   parents->Push(par);
   members->CopyUniqNameNew(*(par->members));
   // copy in member_desc and member_opts into proper slots
-  member_desc.EnforceSize(members->size);
-  member_opts.EnforceSize(members->size);
+  member_desc.SetSize(members->size);
+  member_opts.SetSize(members->size);
   int i;
   for(i=0; i < par->members->size; i++) {
     int dx = members->FindName(par->members->FastEl(i)->name).dx;
@@ -1593,8 +1593,8 @@ String cssClassType::OptionAfter_impl(const String& optns, const char* opt) cons
 }
 
 void cssClassType::GetComments(cssEl* obj, cssElPtr cmt) {
-  member_desc.EnforceSize(members->size);
-  member_opts.EnforceSize(members->size);
+  member_desc.SetSize(members->size);
+  member_opts.SetSize(members->size);
 
   if (cmt == cssMisc::VoidElPtr)
     return;

@@ -483,7 +483,7 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
 //     float itm_er = GetOutErrRew(lay, net);
 //     out_err.graded = old_graded;
 
-//     lay->misc_iar.EnforceSize(3); // 0 = addr of eg; 1 = # tot; 2 = # cor
+//     lay->misc_iar.SetSize(3); // 0 = addr of eg; 1 = # tot; 2 = # cor
 //     Event_Group* eg = net->GetMyCurEventGp();
 //     int eg_addr = (int)eg;
 //     if(lay->misc_iar[0] != eg_addr) { // new seq

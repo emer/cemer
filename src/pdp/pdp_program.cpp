@@ -52,7 +52,7 @@ const String BasicDataLoop::GenCssPre_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "{ // BasicDataLoop " + data_nm + "\n";
   rval += id1 + "BasicDataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
   rval += id1 + "data_loop->DMem_Initialize(network); // note: this assumes network variable exists!\n";
-  rval += id1 + "data_loop->item_idx_list.EnforceSize(" + data_nm + "->ItemCount());\n";
+  rval += id1 + "data_loop->item_idx_list.SetSize(" + data_nm + "->ItemCount());\n";
   rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
   rval += id1 + "if(data_loop->order == BasicDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
   rval += id1 + data_nm + "->ReadOpen();\n";

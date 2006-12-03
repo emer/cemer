@@ -1252,7 +1252,7 @@ public:
 
   virtual taBase* New(int n_objs=1, TypeDef* typ=NULL);
   // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
-  virtual void	EnforceSize(int sz);
+  virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 
   override bool	RemoveIdx(int idx);
@@ -1602,7 +1602,7 @@ public:
 
 #define TA_ARRAY_FUNS(y,T) \
 public: \
-  explicit y(int init_size) {Initialize(); EnforceSize(init_size); } \
+  explicit y(int init_size) {Initialize(); SetSize(init_size); } \
   T&		operator[](int i) { return el[i]; } \
   const T&	operator[](int i) const	{ return el[i]; } \
 protected: \
@@ -1700,12 +1700,12 @@ public:
   void Initialize()	{err = 0; };
   void Destroy()	{ }; //
   //note: Register() is not necessary for arrays, so we omit in these convenience constructors
-  int_Array(int num, int i0) {Initialize(); EnforceSize(1); el[0] = i0;}
-  int_Array(int num, int i0, int i1) {Initialize(); EnforceSize(2); el[0] = i0; el[1] = i1;}
+  int_Array(int num, int i0) {Initialize(); SetSize(1); el[0] = i0;}
+  int_Array(int num, int i0, int i1) {Initialize(); SetSize(2); el[0] = i0; el[1] = i1;}
   int_Array(int num, int i0, int i1, int i2) 
-    {Initialize(); EnforceSize(3); el[0] = i0; el[1] = i1; el[2] = i2;}
+    {Initialize(); SetSize(3); el[0] = i0; el[1] = i1; el[2] = i2;}
   int_Array(int num, int i0, int i1, int i2, int i3) 
-    {Initialize(); EnforceSize(4); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;}
+    {Initialize(); SetSize(4); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;}
   TA_BASEFUNS(int_Array);
   TA_ARRAY_FUNS(int_Array, int)
 protected:

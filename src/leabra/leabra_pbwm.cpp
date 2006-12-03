@@ -1960,7 +1960,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   if(lr_sched) {
     learn_cons->lrs_value = LeabraConSpec::EXT_REW_STAT;
-    learn_cons->lrate_sched.EnforceSize(2);
+    learn_cons->lrate_sched.SetSize(2);
     SchedItem* si = (SchedItem*)learn_cons->lrate_sched.FastEl(0);
     si->start_val = 1.0f;
     si = (SchedItem*)learn_cons->lrate_sched.FastEl(1);

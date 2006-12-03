@@ -1597,7 +1597,7 @@ void RndSeed::Initialize() {
 }
 
 void RndSeed::GetCurrent() {
-  seed.EnforceSize(MTRnd::N);
+  seed.SetSize(MTRnd::N);
   int i;
   for(i=0;i<seed.size;i++) {
     seed.FastEl(i) = (long)MTRnd::mt[i];
@@ -1611,7 +1611,7 @@ void RndSeed::NewSeed() {
 }
 
 void RndSeed::OldSeed() {
-  seed.EnforceSize(MTRnd::N);
+  seed.SetSize(MTRnd::N);
   bool all_zero = true;
   int i;
   for (i=0;i<seed.size;i++) {

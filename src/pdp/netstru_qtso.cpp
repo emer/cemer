@@ -314,7 +314,7 @@ void UnitViewData::Initialize() {
 
 void UnitViewData_PArray::SetGeom(TwoDCoord& c) {
   m_x = c.x;
-  EnforceSize(c.x * c.y); //note: may not shrink alloc
+  SetSize(c.x * c.y); //note: may not shrink alloc
 }
 
 
@@ -399,34 +399,34 @@ void UnitGroupView::UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u) {
 void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* src_u) {
   Unit_Group* ugrp = this->ugrp(); //cache
   TwoDCoord coord;
-  while ((coord.x < ugrp->geom.x) && (coord.y < ugrp->geom.y)) {
-    Unit* unit = ugrp->FindUnitFmCoord(coord);
-    UnitViewData& uvd = uvd_arr.FastEl(coord);
-    //NOTE: do loop advance here, so we can continue -- ***coord's are now next beyond current***
-    if (++(coord.x) >= ugrp->geom.x) {coord.x = 0; ++(coord.y);}
-    uvd.disp_base = NULL;
-    if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
+      Unit* unit = ugrp->FindUnitFmCoord(coord);
+      UnitViewData& uvd = uvd_arr.FastEl(coord);
+      uvd.disp_base = NULL;
+      if (!unit) continue;  // rest will be null too, but we loop to null disp_base
 
-    if (is_send) {
-      for(int g=0;g<unit->recv.size;g++) {
-	RecvCons* tcong = unit->recv.FastEl(g);
-	MemberDef* act_md = tcong->con_type->members.FindName(nm);
-	if (act_md == NULL)	continue;
-	Connection* con = tcong->FindConFrom(src_u);
-	if (con == NULL) continue;
-	uvd.disp_base = act_md->GetOff(con);
-	break; //TODO: is this right????
+      if (is_send) {
+	for(int g=0;g<unit->recv.size;g++) {
+	  RecvCons* tcong = unit->recv.FastEl(g);
+	  MemberDef* act_md = tcong->con_type->members.FindName(nm);
+	  if (act_md == NULL)	continue;
+	  Connection* con = tcong->FindConFrom(src_u);
+	  if (con == NULL) continue;
+	  uvd.disp_base = act_md->GetOff(con);
+	  break; //TODO: is this right????
+	}
       }
-    }
-    else {
-      for(int g=0;g<unit->send.size;g++) {
-	SendCons* tcong = unit->send.FastEl(g);
-	MemberDef* act_md = tcong->con_type->members.FindName(nm);
-	if (act_md == NULL)	continue;
-	Connection* con = tcong->FindConFrom(src_u);
-	if (con == NULL) continue;
-	uvd.disp_base = act_md->GetOff(con);
-	break; //TODO: is this right????
+      else {
+	for(int g=0;g<unit->send.size;g++) {
+	  SendCons* tcong = unit->send.FastEl(g);
+	  MemberDef* act_md = tcong->con_type->members.FindName(nm);
+	  if (act_md == NULL)	continue;
+	  Connection* con = tcong->FindConFrom(src_u);
+	  if (con == NULL) continue;
+	  uvd.disp_base = act_md->GetOff(con);
+	  break; //TODO: is this right????
+	}
       }
     }
   }
@@ -597,7 +597,7 @@ void UnitGroupView::Render_impl_children() {
 
 void UnitGroupView::Reset_impl() {
   inherited::Reset_impl();
-  uvd_arr.EnforceSize(0);
+  uvd_arr.SetSize(0);
 }
 
 /*
@@ -1132,17 +1132,14 @@ void NetView::GetUnitColor(float val,  iColor& col) {
 void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,  T3Color& col) {
   iColor tc;
   if ((unit_disp_md == NULL) || (unit_md_flags == MD_UNKNOWN)) {
-    goto no_val;
+    val = 0.0f;
+    col.setValue(.25f, .25f, .25f); // dk gray
+    return;
   }
 
   val = ugrv->GetUnitDisplayVal(co, unit_md_flags);
   GetUnitColor(val, tc);
   col.setValue(tc.redf(), tc.greenf(), tc.bluef());
-  return;
-
-no_val:
-  val = 0.0f;
-  col.setValue(.25f, .25f, .25f); // dk gray
 }
 
 void NetView::InitDisplay(bool init_panel) {

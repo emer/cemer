@@ -662,7 +662,7 @@ public:
 
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
   virtual void		Alloc(int n); // allocate storage for at least the given size
-  virtual void		Reset()			{ EnforceSize(0); };
+  virtual void		Reset()			{ SetSize(0); };
   // reset the list to zero size (does not free memory)
   ////////////////////////////////////////////////
   // 	internal functions that depend on type	//
@@ -709,7 +709,7 @@ public:
   // #IGNORE element at idx, as a string
   virtual String	FastElAsStr(int idx) const {return El_GetStr_(FastEl_(idx));}
   // #IGNORE element at idx, as a string
-  virtual void	EnforceSize(int sz);
+  virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
 
   virtual void	AddBlank(int n_els = 1);
@@ -851,13 +851,13 @@ public:
   virtual ~taFixedArray_impl()		{size = 0;} 
 
   inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
-  virtual void		Reset()		{EnforceSize(0);}
+  virtual void		Reset()		{SetSize(0);}
  
   ////////////////////////////////////////////////
   // functions that don't depend on the type	//
   ////////////////////////////////////////////////
 
-  virtual void	EnforceSize(int sz);
+  virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
 
 public: // accessible but generally not used implementation overrides
@@ -904,15 +904,15 @@ protected:
 #define TA_FIXED_ARRAY_FUNS(y,T) \
 public: \
   STATIC_CONST T blank; \
-  explicit y(int init_size) {EnforceSize(init_size); } \
-  y(int init_size, const T& i0) {EnforceSize(init_size); el[0] = i0;} \
+  explicit y(int init_size) {SetSize(init_size); } \
+  y(int init_size, const T& i0) {SetSize(init_size); el[0] = i0;} \
   y(int init_size, const T& i1, const T& i0) \
-    {EnforceSize(init_size); el[0] = i0; el[1] = i1;} \
+    {SetSize(init_size); el[0] = i0; el[1] = i1;} \
   y(int init_size, const T& i2, const T& i1, const T& i0) \
-    {EnforceSize(init_size); el[0] = i0; el[1] = i1; el[2] = i2;} \
+    {SetSize(init_size); el[0] = i0; el[1] = i1; el[2] = i2;} \
   y(int init_size, const T& i3, const T& i2, const T& i1, const T& i0) \
-    {EnforceSize(init_size); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;} \
-  y(int init_size, T init[]) {EnforceSize(init_size); \
+    {SetSize(init_size); el[0] = i0; el[1] = i1; el[2] = i2; el[3] = i3;} \
+  y(int init_size, T init[]) {SetSize(init_size); \
     for (int j = 0; j < init_size; ++j) el[j] = init[j];} \
   y() {} \
   y(const y& cp) {Copy(cp); } \

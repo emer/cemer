@@ -259,7 +259,7 @@ SpecPtr_of(ConSpec);
 
 
 class PDP_API  ConArray : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group -- only one alloc of connections is allowed (to preserve validity of links to existing connections)
   INHERITED(taOBase)
 public:
   int		con_size;	// #READ_ONLY #EXPERT #NO_SAVE sizeof() connection object being stored
@@ -283,9 +283,7 @@ public:
   // #CAT_Modify allocate storage for at least the given size
   void			Free();
   // #CAT_Modify deallocate all storage
-  inline void		SetSize(int sz)
-  { if(sz > size) { Alloc(sz); bzero((void*)FastEl(size), (sz - size) * con_size); }
-    size = sz; }
+  void			SetSize(int sz);
   // #CAT_Modify set size of array to given number of elements, with new items initialized to zero
   inline void		New(int n) { SetSize(size + n); }
   // #CAT_Modify add n new connections (initialized to all zeros)
@@ -695,7 +693,7 @@ public: //
   RecvCons	bias;
   // #CAT_Structure bias weight connection (type determined in unit spec) -- provides intrinsic activation in absence of other inputs
   int		n_recv_cons;
-  // #DMEM_SHARE_SET_0 #CAT_Structure total number of receiving connections
+  // #DMEM_SHARE_SET_0 #READ_ONLY #EXPERT #CAT_Structure total number of receiving connections
   TDCoord       pos;
   // #CAT_Structure position in space relative to owning group, layer
   int		idx;

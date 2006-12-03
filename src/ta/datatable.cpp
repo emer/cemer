@@ -641,7 +641,7 @@ void float_RArray::GetMatRow(int col_dim, float_RArray& row_vec, int row_no) {
 }
 
 void float_RArray::CopyFmTriMat(int dim, const float_RArray& tri_mat) {
-  EnforceSize(dim * dim);
+  SetSize(dim * dim);
   int i, j;
   for(i=0;i<dim;i++) {
     for(j=i;j<dim;j++) {
@@ -658,8 +658,8 @@ bool float_RArray::TriDiagMatRed(int n, float_RArray& d, float_RArray& e) {
 
   // this code is adapted from the NRC tred2.c function!
 
-  d.EnforceSize(n);
-  e.EnforceSize(n);
+  d.SetSize(n);
+  e.SetSize(n);
 
   int l,k,j,i;
   float scale,hh,h,g,f;
@@ -793,14 +793,14 @@ bool float_RArray::TriDiagQL(int n, float_RArray& d, float_RArray& e) {
 }
 
 bool float_RArray::Eigens(int n, float_RArray& evals) {
-  evals.EnforceSize(n);
+  evals.SetSize(n);
 
   if(size != n * n) {
     taMisc::Warning("*** Eigens: matrix is not of appropriate size for dimensionality:",String(n));
     return false;
   }
   float_RArray off_diags;
-  off_diags.EnforceSize(n);
+  off_diags.SetSize(n);
   TriDiagMatRed(n, evals, off_diags);
   if(!TriDiagQL(n, evals, off_diags))
     return false;

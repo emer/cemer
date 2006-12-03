@@ -27,7 +27,7 @@
 
 MatrixGeom::MatrixGeom(int init_size) {
   Initialize();
-  EnforceSize(init_size);
+  SetSize(init_size);
 }
   
 MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
@@ -51,7 +51,7 @@ void MatrixGeom::Destroy() {
 }
 
 void MatrixGeom::Copy_(const MatrixGeom& cp) {
-  EnforceSize(cp.size);
+  SetSize(cp.size);
   for (int i = 0; i < size; ++i) {
     el[i] = cp.el[i];
   }
@@ -172,7 +172,7 @@ void MatrixGeom::GeomFromString(String& str, const char* ldelim, const char* rde
   str = str.after(ldelim);
   String ds = str.before(':');
   str = str.after(':');
-  EnforceSize((int)ds);
+  SetSize((int)ds);
   int i;
   for(i=0;i<size-1;i++) {
     ds = str.before(',');
@@ -184,7 +184,7 @@ void MatrixGeom::GeomFromString(String& str, const char* ldelim, const char* rde
   Set(i, (int)ds);
 }
 
-bool MatrixGeom::EnforceSize(int new_sz) {
+bool MatrixGeom::SetSize(int new_sz) {
   if ((new_sz < 0) || (new_sz >= TA_MATRIX_DIMS_MAX)) return false;
   if(size == new_sz) return false;
   // zero out orphaned old elements
@@ -222,7 +222,7 @@ int MatrixGeom::Product() const {
 }
 
 void MatrixGeom::SetGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
-  EnforceSize(dims);
+  SetSize(dims);
   el[0] = d0;
   el[1] = d1;
   el[2] = d2;
@@ -887,7 +887,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   
   // NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
-  bool changed = geom.EnforceSize(dims_);
+  bool changed = geom.SetSize(dims_);
   for (int i = 0; i < (dims_ - 1) ; ++i) {
     if(geom[i] != geom_[i]) {
       changed = true;
@@ -962,7 +962,7 @@ void taMatrix::UpdateGeom() {
   // handle legacy/graceful case wherein size is non-zero, but no dims -- 
   // set dims to 1, and dim[0] to the size
   if ((size != 0) && (geom.size == 0)) {
-    geom.EnforceSize(1);
+    geom.SetSize(1);
     geom.FastEl(0) = size;
   }
   

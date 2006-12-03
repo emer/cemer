@@ -84,10 +84,10 @@ void SelectEdit::UpdateAfterEdit() {
   if((mbr_base_paths.size > 0) || (meth_base_paths.size > 0)) {
     BaseChangeReShow();		// must have been saved, so reopen it!
   }
-  config.mbr_labels.EnforceSize(mbr_bases.size);
-  config.meth_labels.EnforceSize(meth_bases.size);
-  mbr_strs.EnforceSize(mbr_bases.size);
-  meth_strs.EnforceSize(meth_bases.size);
+  config.mbr_labels.SetSize(mbr_bases.size);
+  config.meth_labels.SetSize(meth_bases.size);
+  mbr_strs.SetSize(mbr_bases.size);
+  meth_strs.SetSize(meth_bases.size);
   if(taMisc::is_loading) {
     GetMembsFmStrs();
     GetMethsFmStrs();

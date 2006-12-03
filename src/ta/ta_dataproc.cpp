@@ -462,7 +462,7 @@ bool taDataProc::Permute(DataTable* dest, DataTable* src) {
   dest->Copy_NoData(*src);		// give it same structure
   // this just uses the index technique..
   int_Array idxs;
-  idxs.EnforceSize(src->rows);
+  idxs.SetSize(src->rows);
   idxs.FillSeq();
   idxs.Permute();
   for(int row=0;row<src->rows; row++) {
@@ -538,7 +538,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   sort_spec->GetColumns(&ssrc);	// re-get columns -- they were nuked by Sort op!
 
   Variant_Array cur_vals;
-  cur_vals.EnforceSize(sort_spec->ops.size);
+  cur_vals.SetSize(sort_spec->ops.size);
 
   // initialize cur vals
   for(int i=0;i<sort_spec->ops.size; i++) {
@@ -746,7 +746,7 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
     }
   }
   int_Array idxs;
-  idxs.EnforceSize(src->rows);
+  idxs.SetSize(src->rows);
   idxs.FillSeq();
   idxs.Permute();
   int st_n = 0;

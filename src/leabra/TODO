@@ -1,5 +1,11 @@
 leabra todo list:
 
+* cons Dump_Save/Load: need to save alloc_size and alloc upon loading.  Save/Load weights??
+
+* do remainder of connection code in netstru_extra.cpp: figure out reciprocal size.
+
+* add SetSize instead of EnforceSize.. keep Enforce for bkwd compat
+
 * css: p voidfun = crash; bindargs seems to not be getting the void??
   e.g., p taMisc::include_paths.List();
 

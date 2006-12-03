@@ -317,10 +317,10 @@ void FunLookupND::LoadTable(istream& is) {
 	taMisc::Error("FunLookupND: \"DIMS\" declaration must be followed by a non-zero numeric value");
 	break;
       }
-      mesh_dim_sz.EnforceSize(n_dims);
-      range_mins.EnforceSize(n_dims);
-      deltas.EnforceSize(n_dims);
-      range_maxs.EnforceSize(n_dims);
+      mesh_dim_sz.SetSize(n_dims);
+      range_mins.SetSize(n_dims);
+      deltas.SetSize(n_dims);
+      range_maxs.SetSize(n_dims);
       for (int i = 0; i < n_dims; i++) mesh_dim_sz[i] = -1;
     }
     else if (tokens.token == "DIM_DEF") {
@@ -400,7 +400,7 @@ void FunLookupND::LoadTable(istream& is) {
       if (!good_dims) break;
 
       mesh_pts.Alloc(data_sz);
-      mesh_pts.EnforceSize(data_sz);
+      mesh_pts.SetSize(data_sz);
 
       bool success = true;
       for (int i = 0; i < data_sz; i++) {
