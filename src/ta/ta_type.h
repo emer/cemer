@@ -381,19 +381,19 @@ public:
 
   enum ShowMembs { // #BITS
     NO_HIDDEN 		= 0x01, // don't show items marked READ_ONLY w/o SHOW or HIDDEN
-    NO_DETAIL 		= 0x02, // don't show items marked DETAIL (usually not relevant)
-    NO_NORMAL		= 0x04, // don't show items normally shown (helps indicate, ex. EXPERT items)
-    NO_EXPERT		= 0x08, // don't show items marked EXPERT (often only for advanced sims)
+    NO_DETAIL 		= 0x04, // don't show items marked DETAIL (usually not relevant)
+    NO_NORMAL		= 0x08, // don't show items normally shown (helps indicate, ex. EXPERT items)
+    NO_EXPERT		= 0x10, // don't show items marked EXPERT (often only for advanced sims)
 
     ALL_MEMBS		= 0x00, // #NO_BIT
     NO_HID_DET 		= 0x03, // #NO_BIT
-    NORM_MEMBS 		= 0x0B, // #NO_BIT
+    NORM_MEMBS 		= 0x15, // #NO_BIT
     
     IS_HIDDEN 		= 0x01, // #IGNORE used in MemberDef::ShowMember to flag RO w/o SHOW or HIDDEN guys
-    IS_DETAIL 		= 0x02, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys
-    IS_NORMAL		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
-    IS_EXPERT		= 0x08, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
-    SHOW_CHECK_MASK	= 0x0F, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
+    IS_DETAIL 		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys
+    IS_NORMAL		= 0x08, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
+    IS_EXPERT		= 0x10, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
+    SHOW_CHECK_MASK	= 0x1F, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
 
     USE_SHOW_GUI_DEF 	= 0x40,	// #NO_BIT use default from taMisc::show_gui
     USE_SHOW_DEF 	= 0x80 	// #NO_BIT use default from taMisc::show
