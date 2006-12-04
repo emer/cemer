@@ -1866,7 +1866,8 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
 
       for(int rui=0;rui<ru_gp->size;rui++) {
 	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	ru_u->ConnectAlloc((int)rf_width.Product()+1, prjn);	
+	int alloc_sz = ((int)(rf_width.x) + 1) * ((int)(rf_width.y) + 1);
+	ru_u->ConnectAlloc(alloc_sz, prjn);	
 
 	TwoDCoord suc;
 	for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {

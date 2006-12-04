@@ -545,7 +545,13 @@ void RecvCons::AllocCons(int no) {
 
 Connection* RecvCons::NewCon(Unit* un) {
   units.Link(un);
-  cons.New(1);
+  if(cons.size >= cons.alloc_size) {
+    taMisc::Warning("*** RecvCons NewCon error: already at maximum allocated of:", String(cons.alloc_size), "in prjn:", prjn->GetDisplayName(), "of type:", prjn->spec.spec->GetTypeDef()->name,
+		    "Programmer must increase size of allocation in Connect_impl function!");
+  }
+  else {
+    cons.New(1);
+  }
   return cons.FastEl(cons.size-1);
 }
 
