@@ -393,7 +393,7 @@ public:
     IS_DETAIL 		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys
     IS_NORMAL		= 0x08, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
     IS_EXPERT		= 0x10, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
-    SHOW_CHECK_MASK	= 0x1F, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
+    SHOW_CHECK_MASK	= 15, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
 
     USE_SHOW_GUI_DEF 	= 0x40,	// #NO_BIT use default from taMisc::show_gui
     USE_SHOW_DEF 	= 0x80 	// #NO_BIT use default from taMisc::show
