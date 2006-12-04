@@ -1362,8 +1362,8 @@ void TypeDef_Generate_Init(TypeDef* ths, ostream& strm) {
 	TypeDef_Init_EnumData(ths, strm);
       }
       if(ths->InheritsFormal(TA_class) && !(ths->HasOption("NO_MEMBERS"))) {
-	SubTypeSpace_Generate_Init(&(ths->sub_types), ths, strm);
 	TypeDef_Init_EnumData(ths, strm);
+	SubTypeSpace_Generate_Init(&(ths->sub_types), ths, strm);
 	TypeDef_Init_MemberData(ths, strm);
 	TypeDef_Init_MethodData(ths, strm);
       }
