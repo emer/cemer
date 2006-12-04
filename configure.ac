@@ -146,8 +146,6 @@ fi
 # --enable-debug
 if test x"$debug" = x"true"; then
 
-  PDP_DETERMINE_SUFFIX                                # Infixing
-
   # Link with any debug-configurated libraries on the system
   export CONFIG=debug
 
@@ -262,7 +260,7 @@ AX_LIB_MAJOR_VERSION=`echo "$LIB_VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
 AX_LIB_MINOR_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
 AX_LIB_POINT_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.[[^.]][[^.]]*.\(.*\)/\1/'`
 
-
+PDP_DETERMINE_SUFFIX                                # Infixing
 
 AC_SUBST([AX_MAJOR_VERSION])
 AC_SUBST([AX_MINOR_VERSION])

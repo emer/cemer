@@ -238,7 +238,7 @@ fi
 if test "$debug" = "true" ; then
 	PDP_SUFFIX="${PDP_SUFFIX}_debug"
 fi
-if test "$mpi" = "true"; then
+if test x"$mpi" = x"true"; then
 	PDP_SUFFIX="${PDP_SUFFIX}_mpi"
 fi
 ]) dnl PDP_DETERMINE_SUFFIX
