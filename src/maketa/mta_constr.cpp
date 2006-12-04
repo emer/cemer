@@ -845,6 +845,7 @@ void EnumSpace_Generate_Data(EnumSpace* ths, ostream& strm) {
   int j;
   for(j=0; j<ths->size; j++) {
     EnumDef* enm = ths->FastEl(j);
+    if (enm->HasOption("IGNORE")) continue;
     String str_opts = taMisc::StrArrayToChar(enm->opts);
     strm << "  {\"" << enm->name << "\",\"" << enm->desc << "\",\""
 	 << str_opts << "\"," << enm->enum_no << "},\n";
