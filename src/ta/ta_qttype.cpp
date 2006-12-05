@@ -909,14 +909,19 @@ void taiMember::GetImage_impl(taiData* dat, const void* base) {
 }
 
 void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-  mbr->type->it->GetValue(dat, mbr->GetOff(base));
+  bool ro = isReadOnly(dat);
+  if (ro && !handlesReadOnly()) {
+    taiMember::GetMbrValue_impl(dat, base);
+  } else {
+    GetMbrValue_impl(dat, base);
+  }
   CmpOrigVal(dat, base, first_diff);
 }
 
 void taiMember::GetOrigVal(taiData* dat, const void* base) {
   dat->orig_val = mbr->type->GetValStr(mbr->GetOff(base));
   // if a default value was specified, compare and set the highlight accordingly
-  if (!(dat->HasFlag(taiData::flgReadOnly))) { 
+  if (!isReadOnly(dat)) { 
     String defval = mbr->OptionAfter("DEF_");
     if (!defval.empty()) {
       if (dat->orig_val != defval)
@@ -927,12 +932,8 @@ void taiMember::GetOrigVal(taiData* dat, const void* base) {
   }
 }
 
-void taiMember::GetValue(taiData* dat, void* base) {
-  bool ro = isReadOnly(dat);
-  if (!ro || !handlesReadOnly()) {
-    GetValue_impl(dat, base);
-  }
-  // if ro and it doesn't handle it, do nothing!
+void taiMember::GetMbrValue_impl(taiData* dat, void* base) {
+  mbr->type->it->GetValue(dat, mbr->GetOff(base));
 }
 
 void taiMember::StartScript(const void* base) {
@@ -1124,7 +1125,7 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   GetOrigVal(dat, base);
 }
 
-void taiTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiTokenPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
 //note: in 3.2 we bailed if not keeping tokens, but that is complicated to test
 // and could modally depend on dynamic type directives, so we just always set
     
@@ -1144,7 +1145,6 @@ void taiTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) 
     ref = (TAPtr)rval->GetValue();
   } break;
   }
-  CmpOrigVal(dat, base, first_diff);
 }
 
 
@@ -1177,7 +1177,7 @@ void taiDefaultToken::GetImage_impl(taiData* dat, const void* base) {
   }
 }
 
-void taiDefaultToken::GetMbrValue(taiData*, void*, bool&) {
+void taiDefaultToken::GetMbrValue_impl(taiData*, void*) {
   return;
 }
 
@@ -1216,14 +1216,13 @@ void taiSubTokenPtrMember::GetImage_impl(taiData* dat, const void* base){
   GetOrigVal(dat, base);
 }
 
-void taiSubTokenPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiSubTokenPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiSubToken* rval = (taiSubToken*)dat;
   if (!no_setpointer && mbr->type->DerivesFrom(TA_taBase))
     taBase::SetPointer((TAPtr*)new_base, (TAPtr)rval->GetValue());
   else
     *((void**)new_base) = rval->GetValue();
-  CmpOrigVal(dat, base, first_diff);
 }
 
 
@@ -1273,7 +1272,7 @@ void taiTypePtrMember::GetImage_impl(taiData* dat, const void* base){
   GetOrigVal(dat, base);
 }
 
-void taiTypePtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiTypePtrMember::GetMbrValue_impl(taiData* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiTypeDefButton* rval = (taiTypeDefButton*)dat;
   TypeDef* nw_typ = (TypeDef*)rval->GetValue();
@@ -1283,7 +1282,6 @@ void taiTypePtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
     if (nw_typ)
       *((void**)new_base) = nw_typ;
   }
-  CmpOrigVal(dat, base, first_diff);
 }
 
 
@@ -1334,11 +1332,10 @@ void taiMemberDefPtrMember::GetImage_impl(taiData* dat, const void* base){
   GetOrigVal(dat, base);
 }
 
-void taiMemberDefPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiMemberDefPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiMemberDefButton* rval = (taiMemberDefButton*)dat;
   *((MemberDef**)new_base) = rval->GetValue();
-  CmpOrigVal(dat, base, first_diff);
 }
 
 
@@ -1368,11 +1365,10 @@ void taiMethodDefPtrMember::GetImage_impl(taiData* dat, const void* base){
   GetOrigVal(dat, base);
 }
 
-void taiMethodDefPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiMethodDefPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiMethodDefButton* rval = (taiMethodDefButton*)dat;
   *((MethodDef**)new_base) = rval->GetValue();
-  CmpOrigVal(dat, base, first_diff);
 }
 
 
@@ -1415,13 +1411,12 @@ void taiFunPtrMember::GetImage_impl(taiData* dat, const void* base){
   GetOrigVal(dat, base);
 }
 
-void taiFunPtrMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiFunPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
   void* new_base = mbr->GetOff(base);
   taiButtonMenu* rval = (taiButtonMenu*)dat;
   taiAction* cur = rval->curSel();
   if (cur != NULL)
     *((void**)new_base) = cur->usr_data.toPtr();
-  CmpOrigVal(dat, base, first_diff);
 }
 
 //////////////////////////////
@@ -1518,9 +1513,6 @@ void taiCondEditMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) 
   } else {
     taiMember::GetMbrValue(rval->data_el.FastEl(0), base, first_diff);
   }
-/*  if (use_ro) {	// only if two options (i.e., !host_->waiting)
-    ro_im->GetMbrValue(rval->data_el.FastEl(1), base, first_diff);
-  }*/
 }
 
 
@@ -1571,16 +1563,16 @@ void taiTDefaultMember::GetImage_impl(taiData* dat, const void* base) {
 }
 
 void taiTDefaultMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+  //note: we don't call the inherited, or use the impls
   taiPlusToggle* rval = (taiPlusToggle*)dat;
   if (m_sub_types) {
     sub_types()->GetMbrValue(rval->data, base, first_diff);
   } else {
     taiMember::GetMbrValue(rval->data, base,first_diff);
   }
-
   if (tpdflt != NULL)		// gotten by prev GetImage
     tpdflt->SetActive(mbr->idx, rval->GetValue());
-  CmpOrigVal(dat, base, first_diff);
+//nn  CmpOrigVal(dat, base, first_diff);
 }
 
 

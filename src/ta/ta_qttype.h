@@ -257,13 +257,11 @@ public:
   // get taiData rep of type -- delegates to mbr's it
   override void		GetImage(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
-  override void		GetValue(taiData* dat, void* base);
-  // get the value from the representation -- same rules as GetDataRep
+  virtual void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
+        // this is the one to call to get a member value (GetValue is not used)
   
   virtual TypeDef*	GetTargetType(const void* base); // for XxxDef* and token ptrs, returns the target type, which can be specified in several ways, or this can be overridden
 
-  virtual void	GetMbrValue(taiData* dat, void* base, bool& first_diff);
-        // this is the one to call to get a member value
 //
   // script-generation code
   virtual void	GetOrigVal(taiData* dat, const void* base);
@@ -285,8 +283,7 @@ protected:
     QWidget* gui_parent_, int flags_);
   override void		GetImage_impl(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
-  override void		GetValue_impl(taiData* dat, void* base)
-   	{ mbr->type->it->GetValue(dat, mbr->GetOff(base)); }
+  virtual void		GetMbrValue_impl(taiData* dat, void* base);
   override bool		isReadOnly(taiData* dat, IDataHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
 };
 
@@ -322,12 +319,12 @@ public:
   
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiTokenPtrMember, taiMember);
 protected:
   Mode 		mode; // set during bidding 
+  override void	GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 };
 
 class TA_API taiDefaultToken : public taiTokenPtrMember {
@@ -338,11 +335,12 @@ public:
 
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
   void		Initialize()	{ tpdflt = NULL; }
 
   TAQT_MEMBER_INSTANCE(taiDefaultToken, taiTokenPtrMember);
+protected:
+  override void	GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 };
 
 class TA_API taiSubTokenPtrMember : public taiMember {
@@ -351,10 +349,11 @@ INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiSubTokenPtrMember, taiMember);
+protected:
+  override void	GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 };
 
 class TA_API taiTypePtrMember : public taiMember {
@@ -362,12 +361,12 @@ class TA_API taiTypePtrMember : public taiMember {
 INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiTypePtrMember, taiMember);
 protected:
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
+  override void	GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 };
 
 class TA_API taiEnumTypePtrMember : public taiTypePtrMember {
@@ -386,12 +385,12 @@ class TA_API taiMemberDefPtrMember : public taiMember {
 INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiMemberDefPtrMember, taiMember);
 protected:
    taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-   void		GetImage_impl(taiData* dat, const void* base);
+  override void	GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 };
 
 class TA_API taiMethodDefPtrMember : public taiMember {
@@ -399,12 +398,12 @@ class TA_API taiMethodDefPtrMember : public taiMember {
 INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiMethodDefPtrMember, taiMember);
 protected:
    taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-   void		GetImage_impl(taiData* dat, const void* base);
+  override void	GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 };
 
 class TA_API taiFunPtrMember : public taiMember {
@@ -413,10 +412,11 @@ INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiFunPtrMember, taiMember);
+protected:
+  override void	GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 };
 
 class TA_API taiCondEditMember : public taiMember {
@@ -437,24 +437,26 @@ public:
   void		Initialize();
 protected:
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
+  override void	GetImage_impl(taiData* dat, const void* base);
 };
 
 class TypeDefault;
 
 class TA_API taiTDefaultMember : public taiMember {
 // special for the TypeDefault member (add the "active" box)
+INHERITED(taiMember)
 public:
   TypeDefault*	tpdflt;
 
   virtual int	BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
   void		Initialize()	{ tpdflt = NULL; }
   void		Destroy()	{ m_sub_types = NULL; } // prevent from being destroyed
 
   TAQT_MEMBER_INSTANCE(taiTDefaultMember, taiMember);
+protected:
+  override void	GetImage_impl(taiData* dat, const void* base);
 };
 
 

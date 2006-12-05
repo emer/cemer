@@ -186,7 +186,7 @@ public:
   float		trg_fm_input;	// #CONDEDIT_ON_on:true (typically 0.85, w/no lateral) auto-set trg_netin_rel on fm_input projections (by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1
   float		trg_fm_output;	// #CONDEDIT_ON_on:true (typically 0.15, w/no lateral) auto-set trg_netin_rel on fm_output projections (by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1
   float		trg_lateral;	// #CONDEDIT_ON_on:true auto-set trg_netin_rel on lateral projections (by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)
-  float		trg_sum;	// #CONDEDIT_ON_on:true #READ_ONLY #SHOW sum of trg values -- should be 1!
+  float		trg_sum;	// #READ_ONLY #SHOW sum of trg values -- should be 1!
 
   float		tol;		// #CONDEDIT_ON_on:true #DEF_0.05 tolerance from target value, below which parameters are not adapted
   float		rel_lrate;	// #CONDEDIT_ON_on:true #DEF_0.05 adpatation 'learning' rate on wt_scale.rel parameter
