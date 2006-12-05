@@ -33,6 +33,7 @@
 
 class LEABRA_API PatchLayerSpec : public LVeLayerSpec {
   // simulates Patch as a LV layer: currently no doing anything different than regular LV
+  INHERITED(LVeLayerSpec)
 public:
 
   void 	Initialize();
@@ -42,6 +43,7 @@ public:
 
 class LEABRA_API SNcMiscSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc parameters for SNc layer
+  INHERITED(taBase)
 public:
   enum PatchMode {
     NO_PATCH,			// no patch at all
@@ -60,6 +62,7 @@ public:
 
 class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
   // computes PVLV 'Da' signal, uses inputs from the patch to provide stripe-specific modulation (NOTE: not currently supported); Does not do SNrThal modulation, which is computed directly in Matrix units
+  INHERITED(PVLVDaLayerSpec)
 public:
   SNcMiscSpec	snc;		// misc SNc specific parameters controlling influence of patch modulation
 
@@ -83,6 +86,7 @@ public:
 
 class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation
+  INHERITED(LeabraConSpec)
 public:
   enum LearnRule {
     OUTPUT_DELTA,		// #AKA_MOTOR_DELTA delta rule for BG_motor: (bg+ - bg-) * s-
@@ -152,6 +156,7 @@ public:
 
 class LEABRA_API MatrixBiasSpec : public LeabraBiasSpec {
   // Matrix bias spec: special learning paramters for matrix units
+  INHERITED(LeabraBiasSpec)
 public:
   enum LearnRule {
     OUTPUT_DELTA,		// delta rule for BG_motor: (bg+ - bg-) * s-
@@ -179,6 +184,7 @@ public:
 
 class LEABRA_API MatrixUnitSpec : public DaModUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
+  INHERITED(DaModUnitSpec)
 public:
   bool	freeze_net;		// #DEF_true freeze netinput (MAINT in 2+ phase, OUTPUT in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
 
@@ -202,6 +208,7 @@ public:
 
 class LEABRA_API MatrixMiscSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
+  INHERITED(taBase)
 public:
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
@@ -217,6 +224,7 @@ public:
 
 class LEABRA_API ContrastSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra contrast enhancement of the GO units
+  INHERITED(taBase)
 public:
   float		gain;		// #DEF_1 overall gain for da modulation
   float		go_p;		// #DEF_0.5 proportion of da * gate_act for DA+ on GO units: contrast enhancement
@@ -233,6 +241,7 @@ public:
 
 class LEABRA_API MatrixRndGoSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications (unconditional, nogo)
+  INHERITED(taBase)
 public:
   float		avgrew;		// #DEF_0.9 threshold on global avg reward value (0..1) below which random GO can fire (uses ExtRew_Stat if avail, else avg value from ExtRewLayer) -- once network is doing well overall, shutdown the exploration.  This is true for all cases EXCEPT err rnd go
 
@@ -252,6 +261,7 @@ public:
 
 class LEABRA_API MatrixErrRndGoSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra matrix random Go firing to encourage exploration when (a series of) errors occur: a stripe is chosen from a softmax over the snrthal netinputs (closer to firing chosen with higher probability)
+  INHERITED(taBase)
 public:
   bool		on;		// #DEF_true whether to use error-driven random go
   int		min_cor;	// #CONDEDIT_ON_on:true [Default is 5 for MAINT, 1 for OUTPUT] minimum number of sequential correct to start counting errors and doing random go: need some amount of correct before errors count!
@@ -270,6 +280,7 @@ public:
 
 class LEABRA_API MatrixAvgDaRndGoSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra matrix random Go firing to encourage exploration for non-productive stripes based on softmax of avg_go_da for that stripe (matrix_u->misc_1)
+  INHERITED(taBase)
 public:
   bool		on;		// [Default true for MAINT, false for OUTPUT] whether to use random go based on average dopamine values
   float		avgda_p;	// #CONDEDIT_ON_on:true #DEF_0.1 baseline probability of firing random Go for any stripe (first pass before doing softmax)
@@ -288,6 +299,7 @@ public:
 
 class LEABRA_API MatrixLayerSpec : public LeabraLayerSpec {
   // basal ganglia matrix layer: fire actions/WM updates, or nogo; MAINT = gate in 1+ and 2+, OUTPUT = gate in -
+  INHERITED(LeabraLayerSpec)
 public:
   enum 	BGType {       		// which type of basal ganglia circuit is this?
     OUTPUT,			// #AKA_MOTOR matrix that does output gating: controls access of frontal activations to other areas (e.g., motor output, or output of maintained PFC information)
@@ -337,13 +349,14 @@ public:
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(MatrixLayerSpec);
   COPY_FUNS(MatrixLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(MatrixLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 //////////////////////////////////////////////////////////////////
@@ -352,6 +365,7 @@ public:
 
 class SNrThalMiscSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
+  INHERITED(taBase)
 public:
   float		avg_net_dt;	// #DEF_0.005 time-averaged netinput computation integration rate
   float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
@@ -366,6 +380,7 @@ public:
 
 class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
   // computes activation = GO - NOGO from MatrixLayerSpec
+  INHERITED(LeabraLayerSpec)
 public:
   SNrThalMiscSpec	snrthal; // misc specs for snrthal layer
 
@@ -393,6 +408,7 @@ public:
 
 class LEABRA_API PFCGateSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
+  INHERITED(taBase)
 public:
   enum	GateSignal {
     GATE_GO = 0,		// gate GO unit fired 
@@ -425,6 +441,7 @@ public:
 
 class LEABRA_API PFCLayerSpec : public LeabraLayerSpec {
   // Prefrontal cortex layer: gets gating signal from SNrThal, gate updates before plus and 2nd plus (update) phase (toggle off, toggle on)
+  INHERITED(LeabraLayerSpec)
 public:
   enum MaintUpdtAct {
     NO_UPDT,			// no update action
@@ -467,6 +484,7 @@ public:
 
 class LEABRA_API PFCOutGateSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifications for pfc output gating
+  INHERITED(taBase)
 public:
   float		base_gain;	// #DEF_0.5 how much activation gets through even without a Go gating signal
   float		go_gain;	// #DEF_0.5 how much extra to add for a Go signal
@@ -481,6 +499,7 @@ public:
 
 class LEABRA_API PFCOutLayerSpec : public LeabraLayerSpec {
   // Prefrontal cortex output gated layer: gets gating signal from SNrThal and activations from PFC_mnt layer: gating modulates strength of activation
+  INHERITED(LeabraLayerSpec)
 public:
   PFCOutGateSpec out_gate;		// parameters controlling the output gating of pfc units
 

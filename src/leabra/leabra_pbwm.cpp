@@ -250,8 +250,8 @@ void MatrixLayerSpec::Initialize() {
   bg_type = MAINT;
 }
 
-void MatrixLayerSpec::UpdateAfterEdit() {
-  LeabraLayerSpec::UpdateAfterEdit();
+void MatrixLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
 }
 
 void MatrixLayerSpec::Defaults() {

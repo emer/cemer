@@ -71,8 +71,8 @@ void LearnMixSpec::Initialize() {
   err_sb = true;
 }
 
-void LearnMixSpec::UpdateAfterEdit() {
-  taBase::UpdateAfterEdit();
+void LearnMixSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   err = 1.0f - hebb;
 }
 
@@ -92,8 +92,8 @@ void AdaptRelNetinSpec::Initialize() {
   rel_lrate = .05f;
 }
 
-void AdaptRelNetinSpec::UpdateAfterEdit() {
-  taBase::UpdateAfterEdit();
+void AdaptRelNetinSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   trg_sum = trg_fm_input + trg_fm_output + trg_lateral;
   if(fabsf(trg_sum - 1.0f) > .01) {
     taMisc::Warning("*** AdaptRelNetinSpec: target values do not sum to 1");
@@ -143,8 +143,8 @@ void LeabraConSpec::InitLinks() {
   CreateWtSigFun();
 }
 
-void LeabraConSpec::UpdateAfterEdit() {
-  ConSpec::UpdateAfterEdit();
+void LeabraConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit();
   CreateWtSigFun();
   lmix.UpdateAfterEdit();
@@ -365,8 +365,8 @@ void DepressSpec::Initialize() {
   max_amp = (.95f * depl + rec) / rec;
 }
 
-void DepressSpec::UpdateAfterEdit() {
-  taBase::UpdateAfterEdit();
+void DepressSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(rec < .00001f) rec = .00001f;
   if(asymp_act < .00001f) asymp_act = .00001f;
   if(asymp_act > 1.0f) asymp_act = 1.0f;
@@ -1489,8 +1489,8 @@ void LeabraLayerSpec::Defaults() {
   Initialize();
 }
 
-void LeabraLayerSpec::UpdateAfterEdit() {
-  LayerSpec::UpdateAfterEdit();
+void LeabraLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
 }
 
 void LeabraLayerSpec::InitLinks() {
@@ -2750,6 +2750,7 @@ void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* ne
   lay->avg_netin_n = 0;
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    if(!prjn->from || prjn->from->lesion) continue;
 #ifdef DMEM_COMPILE
     prjn->DMem_ComputeAggs(net->dmem_trl_comm.comm);
 #endif
@@ -2769,7 +2770,15 @@ void LeabraLayerSpec::Compute_TrgRelNetin(LeabraLayer* lay, LeabraNetwork*) {
   int n_lat = 0;
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(!prjn->from || prjn->from->lesion) continue;
+    if(!prjn->from || prjn->from->lesion) {
+      prjn->trg_netin_rel = 0.0f;
+      continue;
+    }
+    if(prjn->con_spec->InheritsFrom(&TA_MarkerConSpec)) { // fix these guys
+      prjn->trg_netin_rel = 0.0f;
+      prjn->direction = Projection::DIR_UNKNOWN;
+      continue;
+    }
     if(prjn->direction == Projection::FM_INPUT) n_in++;
     else if(prjn->direction == Projection::FM_OUTPUT) n_out++;
     else if(prjn->direction == Projection::LATERAL) n_lat++;
@@ -2778,12 +2787,27 @@ void LeabraLayerSpec::Compute_TrgRelNetin(LeabraLayer* lay, LeabraNetwork*) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     if(!prjn->from || prjn->from->lesion) continue;
     LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
-    if(prjn->direction == Projection::FM_INPUT)
-      prjn->trg_netin_rel = cs->rel_net_adapt.trg_fm_input / (float)n_in;
-    else if(prjn->direction == Projection::FM_OUTPUT)
-      prjn->trg_netin_rel = cs->rel_net_adapt.trg_fm_output / (float)n_out;
-    else if(prjn->direction == Projection::LATERAL) 
-      prjn->trg_netin_rel = cs->rel_net_adapt.trg_lateral / (float)n_lat;
+    float in_trg = cs->rel_net_adapt.trg_fm_input;
+    float out_trg = cs->rel_net_adapt.trg_fm_output;
+    float lat_trg = cs->rel_net_adapt.trg_lateral;
+    if(prjn->direction == Projection::FM_INPUT) {
+      if(n_out == 0 && n_lat == 0) in_trg = 1.0;
+      else if(n_out == 0) in_trg = in_trg / (in_trg + lat_trg);
+      else if(n_lat == 0) in_trg = in_trg / (in_trg + out_trg);
+      prjn->trg_netin_rel = in_trg / (float)n_in;
+    }
+    else if(prjn->direction == Projection::FM_OUTPUT) {
+      if(n_in == 0 && n_lat == 0) out_trg = 1.0;
+      else if(n_in == 0) out_trg = out_trg / (out_trg + lat_trg);
+      else if(n_lat == 0) out_trg = out_trg / (out_trg + in_trg);
+      prjn->trg_netin_rel = out_trg / (float)n_out;
+    }
+    else if(prjn->direction == Projection::LATERAL) {
+      if(n_in == 0 && n_out == 0) lat_trg = 1.0;
+      else if(n_in == 0) lat_trg = lat_trg / (lat_trg + out_trg);
+      else if(n_out == 0) lat_trg = lat_trg / (lat_trg + in_trg);
+      prjn->trg_netin_rel = lat_trg / (float)n_lat;
+    }
   }
 }
 
@@ -3060,8 +3084,8 @@ void LeabraLayer::ResetSortBuf() {
   }
 }
 
-void LeabraLayer::UpdateAfterEdit() {
-  Layer::UpdateAfterEdit();
+void LeabraLayer::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   spec.CheckSpec();
   ResetSortBuf();
 }

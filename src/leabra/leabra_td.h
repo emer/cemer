@@ -24,6 +24,7 @@
 
 class LEABRA_API DaModUnit : public LeabraUnit {
   // Leabra unit with dopamine-like modulation of minus phase activation for learning
+  INHERITED(LeabraUnit)
 public:
   float		act_m2;		// second minus phase activation
   float		act_p2;		// second plus phase activation
@@ -40,6 +41,7 @@ public:
 
 class LEABRA_API DaModSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
+  INHERITED(taBase)
 public:
   enum ModType {
     PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner
@@ -62,6 +64,7 @@ public:
 
 class LEABRA_API DaModUnitSpec : public LeabraUnitSpec {
   // Leabra unit with temporal-differences error modulation of minus phase activation for learning
+  INHERITED(LeabraUnitSpec)
 public:
   DaModSpec	da_mod;		// da modulation of activations (for da-based learning, and other effects)
 
@@ -92,6 +95,7 @@ public:
 
 class LEABRA_API AvgExtRewSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing average external rewards
+  INHERITED(taBase)
 public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
   float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
@@ -105,6 +109,7 @@ public:
 
 class LEABRA_API OutErrSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards based on output performance of network
+  INHERITED(taBase)
 public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
   bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
@@ -120,6 +125,7 @@ public:
 
 class LEABRA_API ExtRewSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards
+  INHERITED(taBase)
 public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)
   float		norew_val;	// #DEF_0.5 reward value when no feedback information is present
@@ -134,7 +140,7 @@ public:
 
 class LEABRA_API ExtRewLayerSpec : public ScalarValLayerSpec {
   // computes external reward feedback: minus phase is zero, plus phase is reward value derived from network performance or other inputs (computed at start of 1+)
-INHERITED(ScalarValLayerSpec)
+  INHERITED(ScalarValLayerSpec)
 public:
   enum RewardType {		// how do we get the reward values?
     OUT_ERR_REW,		// get rewards as a function of errors on the output layer ONLY WHEN RewTarg layer act > .5 -- get from markerconspec from output layer(s)
@@ -171,13 +177,14 @@ public:
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(ExtRewLayerSpec);
   COPY_FUNS(ExtRewLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(ExtRewLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 //////////////////////////////////////////////////////////
@@ -186,6 +193,7 @@ public:
 
 class LEABRA_API TDRewPredConSpec : public LeabraConSpec {
   // Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards
+  INHERITED(LeabraConSpec)
 public:
   inline float C_Compute_Err(LeabraCon* cn, DaModUnit* ru, DaModUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->p_act_p;
@@ -229,7 +237,7 @@ public:
 
 class LEABRA_API TDRewPredLayerSpec : public ScalarValLayerSpec {
   // predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1)
-INHERITED(ScalarValLayerSpec)
+  INHERITED(ScalarValLayerSpec)
 public:
   virtual void 	Compute_SavePred(Unit_Group* ugp, LeabraNetwork* net); // save current prediction to misc_1 for later clamping
   virtual void 	Compute_ClampPred(Unit_Group* ugp, LeabraNetwork* net); // clamp misc_1 to ext 
@@ -250,13 +258,14 @@ public:
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TDRewPredLayerSpec);
   COPY_FUNS(TDRewPredLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(TDRewPredLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 //////////////////////////////////////////
@@ -265,6 +274,7 @@ public:
 
 class LEABRA_API TDRewIntegSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegLayerSpec
+  INHERITED(taBase)
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
 
@@ -277,7 +287,7 @@ public:
 
 class LEABRA_API TDRewIntegLayerSpec : public ScalarValLayerSpec {
   // integrates perceived and external rewards: delta over phases = DA td-like signal. minus phase = prev exp rew V^(t), plus phase = extrew (r) + tdrewpred computing V(t+1)
-INHERITED(ScalarValLayerSpec)
+  INHERITED(ScalarValLayerSpec)
 public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
 
@@ -288,13 +298,14 @@ public:
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TDRewIntegLayerSpec);
   COPY_FUNS(TDRewIntegLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(TDRewIntegLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 //////////////////////////
@@ -303,7 +314,7 @@ public:
 
 class LEABRA_API TdLayerSpec : public LeabraLayerSpec {
   // computes activation = temporal derivative (act_eq - act_m) of sending units in plus phases: note, act will go negative!
-INHERITED(LeabraLayerSpec)
+  INHERITED(LeabraLayerSpec)
 public:
   virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net);
   // compute a zero td value: in minus phase

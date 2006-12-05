@@ -26,6 +26,7 @@
 
 class TA_API SelectEditConfig : public taBase {
   // #EDIT_INLINE ##NO_TOKENS ##CAT_Display special parameters for controlling the select edit display
+  INHERITED(taBase)
 public:
   bool		auto_edit;	// automatically bring up edit dialog upon loading
   String_Array	mbr_labels;	// extra labels at the start of each member label for the selected fields
@@ -35,12 +36,13 @@ public:
   void	Destroy();
   void	InitLinks();
   void	Copy_(const SelectEditConfig& cp);
-  COPY_FUNS(SelectEditConfig, taBase);
+  COPY_FUNS(SelectEditConfig, inherited);
   TA_BASEFUNS(SelectEditConfig);
 };
 
 class TA_API SelectEdit : public taNBase {
   // ##EXT_edit ##CAT_Display Selectively edit members from different objects
+  INHERITED(taNBase)
 public:
   SelectEditConfig config;	// special parameters for controlling the display
 
@@ -107,11 +109,12 @@ public:
   override int	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   // get paths before saving
 
+  // note: this is intentionally not _impl:
   void	UpdateAfterEdit();
   void	Initialize();
   void 	InitLinks();
   void	Copy_(const SelectEdit& cp);
-  COPY_FUNS(SelectEdit, taNBase);
+  COPY_FUNS(SelectEdit, inherited);
   TA_BASEFUNS(SelectEdit);
 };
 

@@ -26,6 +26,7 @@
 
 class LEABRA_API MarkerConSpec : public LeabraConSpec {
   // connection spec that marks special projections: doesn't send netin or adapt weights
+  INHERITED(LeabraConSpec)
 public:
   // don't send regular net inputs or learn!
   inline float 	Compute_Netin(RecvCons*, Unit*) { return 0.0f; }
@@ -49,6 +50,7 @@ public:
 
 class LEABRA_API CtxtUpdateSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context updating specifications
+  INHERITED(taBase)
 public:
   float		fm_hid;		// from hidden (inputs to context layer)
   float		fm_prv;		// from previous context layer values (maintenance)
@@ -63,7 +65,7 @@ public:
 
 class LEABRA_API LeabraContextLayerSpec : public LeabraLayerSpec {
   // context layer that copies from its recv projection (like an input layer)
-INHERITED(LeabraLayerSpec)
+  INHERITED(LeabraLayerSpec)
 public:
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
 
@@ -91,6 +93,7 @@ public:
 
 class LEABRA_API LeabraLinUnitSpec : public LeabraUnitSpec {
   // a pure linear unit (suitable for an AC unit spec unit)
+  INHERITED(LeabraUnitSpec)
 public:
   void 	Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   
@@ -103,6 +106,7 @@ public:
 
 class LEABRA_API LeabraNegBiasSpec : public LeabraBiasSpec {
   // only learns negative bias changes, not positive ones (decay restores back to zero)
+  INHERITED(LeabraBiasSpec)
 public:
   float		decay;		// rate of weight decay towards zero 
   bool		updt_immed;	// update weights immediately when weights are changed
@@ -137,6 +141,7 @@ public:
 
 class LEABRA_API TrialSynDepCon : public LeabraCon {
   // synaptic depression connection at the trial level (as opposed to cycle level)
+  INHERITED(LeabraCon)
 public:
   float		effwt;		// #NO_SAVE effective weight value (can be depressed) -- used for sending ativation
 
@@ -145,6 +150,7 @@ public:
 
 class LEABRA_API SynDepSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
+  INHERITED(taBase)
 public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
@@ -158,6 +164,7 @@ public:
 
 class LEABRA_API TrialSynDepConSpec : public LeabraConSpec {
   // synaptic depression connection at the trial level (as opposed to cycle level)
+  INHERITED(LeabraConSpec)
 public:
   SynDepSpec	syn_dep;	// synaptic depression specifications
 
@@ -256,13 +263,15 @@ public:
     CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
   }
 
-  void 	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TrialSynDepConSpec);
   COPY_FUNS(TrialSynDepConSpec, LeabraConSpec);
   TA_BASEFUNS(TrialSynDepConSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+
 };
 
 class LEABRA_API FastWtCon : public LeabraCon {
@@ -276,6 +285,7 @@ public:
 
 class LEABRA_API FastWtSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specificiations for fast weights
+  INHERITED(taBase)
 public:
   enum DecayMode {
     ALWAYS,			// always decay all weights toward slow weight (swt)
@@ -306,6 +316,7 @@ public:
 
 class LEABRA_API FastWtConSpec : public LeabraConSpec {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
+  INHERITED(LeabraConSpec)
 public:
   FastWtSpec	fast_wt;	// fast weight specs: fast weights are added in separately to overall weight value as an increment (
 
@@ -436,20 +447,23 @@ public:
 
 class LEABRA_API ActAvgHebbMixSpec : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra mixture of average activation hebbian learning and regular hebbian learning (on current act value)
+  INHERITED(taBase)
 public:
   float		act_avg;	// what proportion of average activation to include in hebbian receiving unit activation learning term
   float		cur_act;	// #READ_ONLY #SHOW 1.0 - act_avg -- proportion of current activation for hebbian learning
 
-  void	UpdateAfterEdit();
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(ActAvgHebbMixSpec);
   COPY_FUNS(ActAvgHebbMixSpec, taBase);
   TA_BASEFUNS(ActAvgHebbMixSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class LEABRA_API ActAvgHebbConSpec : public LeabraConSpec {
   // hebbian learning that includes a proportion of average activation over time, in addition to standard current unit activation;  produces a trace-based learning effect for learning over trajectories
+  INHERITED(LeabraConSpec)
 public:
   ActAvgHebbMixSpec	act_avg_hebb; // mixture of current and average activations to use in hebbian learning
 
@@ -484,13 +498,14 @@ public:
     }
   }
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(ActAvgHebbConSpec);
   COPY_FUNS(ActAvgHebbConSpec, LeabraConSpec);
   TA_BASEFUNS(ActAvgHebbConSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 //////////////////////////////////
@@ -508,6 +523,7 @@ public:
 
 class LEABRA_API ScalarValSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
+  INHERITED(taBase)
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -544,6 +560,7 @@ public:
 
 class LEABRA_API ScalarValBias : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
+  INHERITED(taBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -578,7 +595,7 @@ public:
 
 class LEABRA_API ScalarValLayerSpec : public LeabraLayerSpec {
   // represents a scalar value using a coarse-coded distributed code over units.  first unit represents scalar value.
-INHERITED(LeabraLayerSpec)
+  INHERITED(LeabraLayerSpec)
 public:
   ScalarValSpec	 scalar;	// specifies how values are represented in terms of distributed patterns of activation across the layer
   MinMaxRange	 unit_range;	// range of values represented across the units; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
@@ -631,17 +648,19 @@ public:
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(ScalarValLayerSpec);
   COPY_FUNS(ScalarValLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(ScalarValLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class LEABRA_API ScalarValSelfPrjnSpec : public ProjectionSpec {
   // special projection for making self-connection that establishes neighbor similarity in scalar val
+  INHERITED(ProjectionSpec)
 public:
   int	width;			// width of neighborhood, in units (i.e., connect width units to the left, and width units to the right)
   float	wt_width;		// width of the sigmoid for providing initial weight values
@@ -666,6 +685,7 @@ public:
 
 class LEABRA_API TwoDValSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
+  INHERITED(taBase)
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -706,6 +726,7 @@ public:
 
 class LEABRA_API TwoDValBias : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
+  INHERITED(taBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -734,7 +755,7 @@ public:
 
 class LEABRA_API TwoDValLayerSpec : public LeabraLayerSpec {
   // represents one or more two-d value(s) using a coarse-coded distributed code over units.  first row represents scalar value(s).  one val readout is weighted-average; multiple vals = max bumps over 3x3 local grid
-INHERITED(LeabraLayerSpec)
+  INHERITED(LeabraLayerSpec)
 public:
   TwoDValSpec	 twod;		// specifies how values are represented in terms of distributed patterns of activation across the layer
   MinMaxRange	 x_range;	// range of values represented across the X (horizontal) axis; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
@@ -784,17 +805,19 @@ public:
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TwoDValLayerSpec);
   COPY_FUNS(TwoDValLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(TwoDValLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class LEABRA_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
   // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
+  INHERITED(TwoDValLayerSpec)
 public:
   void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_InhibAvg(LeabraLayer* lay, LeabraNetwork* net);
@@ -813,6 +836,7 @@ public:
 
 class LEABRA_API GaborRFSpec : public taBase {
   // #INLINE #INLINE_DUMP ##CAT_Spec Gabor receptive field spec
+  INHERITED(taBase)
 public:
   int		n_angles;	// number of different angles
   float		freq;		// frequency of the sine wave
@@ -829,6 +853,7 @@ public:
 
 class LEABRA_API BlobRFSpec : public taBase {
   // #INLINE #INLINE_DUMP ##CAT_Spec Blob receptive field specs
+  INHERITED(taBase)
 public:
   int		n_sizes;	// number of different sizes
   float		wdth_st;	// starting center width

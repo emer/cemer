@@ -45,8 +45,8 @@ void FunLookup::Copy_(const FunLookup& cp) {
   res_inv = cp.res_inv;
 }
 
-void FunLookup::UpdateAfterEdit() {
-  float_Array::UpdateAfterEdit();
+void FunLookup::UpdateAfterEdit_impl() {
+  float_Array::UpdateAfterEdit_impl();
   res_inv = 1.0f / res;
   x_range.UpdateAfterEdit();
 }

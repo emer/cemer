@@ -70,8 +70,8 @@ bool TwoDCoord::WrapClipOne(bool wrap, int& c, int max) {
 }
 
 
-void PosTwoDCoord::UpdateAfterEdit() {
-  TwoDCoord::UpdateAfterEdit();
+void PosTwoDCoord::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   SetGtEq(0);
 }
 
@@ -83,8 +83,8 @@ void XYNGeom::Initialize() {
   z = 0;
 }
 
-void XYNGeom::UpdateAfterEdit() {
-  PosTwoDCoord::UpdateAfterEdit();
+void XYNGeom::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(n_not_xy && n > 0) {
     FitN(n);
   }
@@ -130,8 +130,8 @@ bool TDCoord::FitNinXY(int n) {
   return true;
 }
 
-void PosTDCoord::UpdateAfterEdit() {
-  TDCoord::UpdateAfterEdit();
+void PosTDCoord::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   SetGtEq(0);
 }
 

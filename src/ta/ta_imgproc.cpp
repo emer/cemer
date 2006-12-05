@@ -164,8 +164,8 @@ void DoGFilterSpec::Initialize() {
 //   net_filter.SetGeom(2, filter_size, filter_size);
 }
 
-void DoGFilterSpec::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DoGFilterSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   filter_size = filter_width * 2 + 1;
   UpdateFilter();
 }
@@ -557,8 +557,8 @@ void RetinalSpacingSpec::Initialize() {
   output_units = 0;
 }
 
-void RetinalSpacingSpec::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void RetinalSpacingSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   spacing.x = MAX(spacing.x, 1);
   spacing.y = MAX(spacing.y, 1);
   UpdateSizes();
@@ -590,7 +590,7 @@ void DoGRetinaSpec::Initialize() {
   
 }
 
-void DoGRetinaSpec::UpdateAfterEdit() {
+void DoGRetinaSpec::UpdateAfterEdit_impl() {
   dog.UpdateAfterEdit();
   spacing.UpdateAfterEdit();
 }
@@ -1078,12 +1078,13 @@ void RetinaSpec::UpdateRetinaSize() {
   }
 }
 
-void RetinaSpec::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void RetinaSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UpdateRetinaSize();
 }
 
 void RetinaSpec::DefaultFilters() {
+  StructUpdate(false);
   if(color_type == COLOR)
     dogs.SetSize(7);
   else
@@ -1169,6 +1170,7 @@ void RetinaSpec::DefaultFilters() {
     sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
     sp->UpdateAfterEdit();
   }
+  StructUpdate(true);
 }
 
 void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {

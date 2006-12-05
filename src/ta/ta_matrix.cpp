@@ -57,12 +57,12 @@ void MatrixGeom::Copy_(const MatrixGeom& cp) {
   }
 } 
 
-void MatrixGeom::UpdateAfterEdit() {
+void MatrixGeom::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   // we paranoically set unused vals to 0, in case optimized code elsewhere 
   // is somewhat sleazily directly accessing el values w/o checking size
   for (int i = size; i < TA_MATRIX_DIMS_MAX; ++i) 
     el[i] = 0;
-  inherited::UpdateAfterEdit();
 }
 
 void MatrixGeom::Add(int value) {
@@ -948,8 +948,8 @@ int taMatrix::sliceCount() const {
   else        return 0; // hasn't been needed yet
 }
 
-void taMatrix::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void taMatrix::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   //NOTE: you are NOT allowed to change geom this way -- must use the SetGeom api call
   if (taMisc::is_loading) {
     UpdateGeom();

@@ -105,10 +105,11 @@ public:
 //   virtual void	GraphFilter(GraphLog* disp_log); // #BUTTON #NULL_OK plot the filter gaussian
 //   virtual void	GridFilter(GridLog* disp_log); // #BUTTON #NULL_OK plot the filter gaussian
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(DoGFilterSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class TA_API GaborFilterSpec : public taNBase {
@@ -155,7 +156,6 @@ public:
   virtual void	OutputParams(ostream& strm = cerr);
   // #CAT_GaborFilter output current parameter values to stream
 
-//   void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(GaborFilterSpec);
@@ -177,7 +177,6 @@ public:
 
 //   virtual float	TestFit();	// #BUTTON test the fitting function
  
-//   void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(GaborFitter);
@@ -205,10 +204,11 @@ public:
   virtual void	UpdateSizes();
   // update the computed sizes
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(RetinalSpacingSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class TA_API DoGRetinaSpec : public taNBase {
@@ -218,10 +218,11 @@ public:
   DoGFilterSpec		dog;		// Difference of Gaussian retinal filters
   RetinalSpacingSpec	spacing;	// how to space DoG filters in the retina
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(DoGRetinaSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class TA_API DoGRetinaSpecList : public taList<DoGRetinaSpec> {
@@ -359,10 +360,11 @@ public:
 
   void	UpdateRetinaSize();	// copy retina_size to dogs..
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(RetinaSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 /////////////////////////////////////////////////////////

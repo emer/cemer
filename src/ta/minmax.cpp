@@ -76,8 +76,8 @@ void Modulo::Initialize() {
   flag = true; m = 1; off = 0;
 }
 
-void Modulo::UpdateAfterEdit() {
-  taOBase::UpdateAfterEdit();
+void Modulo::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(owner != NULL) owner->UpdateAfterEdit();
 }
 

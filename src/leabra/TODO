@@ -1,19 +1,11 @@
 leabra todo list:
 
+* netmonitor: object not using type chooser
+
 * cons Dump_Save/Load: need to save alloc_size and alloc upon loading.  Save/Load weights??
-
-* do remainder of connection code in netstru_extra.cpp: figure out reciprocal size.
-
-* add SetSize instead of EnforceSize.. keep Enforce for bkwd compat
 
 * css: p voidfun = crash; bindargs seems to not be getting the void??
   e.g., p taMisc::include_paths.List();
-
-* relnet stat & adaptation of lay act_pct and wtscale.
-  * naming is key -- do namestyle impl
-  * not getting multiple relnets for multiple prjns:
-  * geom for recvcons is only being set for one (last) unit -- need layer geom there
-    too..
 
 * dataops: group mean/sse: int columns not being processed properly: convert to double?
   also support float
@@ -21,9 +13,6 @@ leabra todo list:
 
  * Small suggestion, there should be a "Last" and "First" operator in the Group
    operations.  Not urgent but I know I've used these a lot in the past.
-
-* scan_congroups in netdata netmonitor -- not getting sending layer geom.
-  do quick try at this
 
 * dataops: random patterns!
 
@@ -59,7 +48,8 @@ lower pri:
 
 * checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
 
-* more color highlighting in general of programs?
+* more color highlighting in general of programs?  -- need a "special" vs. "std" flag 
+  so you can see what is diff relative to the standard programs..
 
 * add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 

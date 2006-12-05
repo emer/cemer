@@ -32,6 +32,7 @@ class float_Matrix;
 
 class TA_API MinMax : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum values
+  INHERITED(taBase)
 public:
   float		min;	// minimum value
   float		max;	// maximum value
@@ -96,18 +97,16 @@ public:
   void 	Initialize() 		{ min = max = 0.0f; }
   void 	Destroy()		{ };
   void 	Copy_(const MinMax& cp)	{ min = cp.min; max = cp.max; }
-  COPY_FUNS(MinMax, taBase);
+  COPY_FUNS(MinMax, inherited);
   TA_BASEFUNS(MinMax);
 };
 
 class TA_API MinMaxRange : public MinMax {
   // min-max values plus scale and range #INLINE #INLINE_DUMP
+  INHERITED(MinMax)
 public:
   float		range;		// #HIDDEN distance between min and max
   float		scale;		// #HIDDEN scale (1.0 / range)
-
-  void	UpdateAfterEdit()
-  { range = Range(); if(range != 0.0f) scale = 1.0f / range; }
 
   float	Normalize(float val) const	{ return (val - min) * scale; }
   // normalize given value to 0-1 range given current in max
@@ -118,8 +117,12 @@ public:
   void 	Initialize() 		{ range = scale = 0.0f; }
   void 	Destroy()		{ };
   void 	Copy_(const MinMaxRange& cp)	{ range = cp.range; scale = cp.scale; }
-  COPY_FUNS(MinMaxRange, MinMax);
+  COPY_FUNS(MinMaxRange, inherited);
   TA_BASEFUNS(MinMaxRange);
+ protected:
+  void	UpdateAfterEdit_impl()
+  { inherited::UpdateAfterEdit_impl(); 
+    range = Range(); if(range != 0.0f) scale = 1.0f / range; }
 };
 
 class TA_API FixedMinMax : public taBase {
@@ -146,21 +149,24 @@ public:
 
 class TA_API Modulo : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math modulo for things that happen periodically
+  INHERITED(taOBase)
 public:
   bool	         flag;		// Modulo is active?
   int		 m;	        // Modulo N mod m, where N is counter
   int		 off;		// Modulo Offset (actually (N - off) mod m
 
-  void	UpdateAfterEdit();
   void	Initialize();
   void 	Destroy()		{ };
   void	Copy_(const Modulo& cp);
   COPY_FUNS(Modulo, taOBase);
   TA_BASEFUNS(Modulo);
+ protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class TA_API MinMaxInt : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum integer values
+  INHERITED(taBase)
 public:
   int		min;	// minimum value
   int		max;	// maximum value
@@ -227,7 +233,7 @@ public:
   void 	Initialize() 		{ min = max = 0; }
   void 	Destroy()		{ };
   void 	Copy_(const MinMaxInt& cp)	{ min = cp.min; max = cp.max; }
-  COPY_FUNS(MinMaxInt, taBase);
+  COPY_FUNS(MinMaxInt, inherited);
   TA_BASEFUNS(MinMaxInt);
 };
 

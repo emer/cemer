@@ -259,7 +259,7 @@ void taiMiscCore::CheckConfigResult_(bool ok) {
   } else {
     cerr << "/n" << "/n"; // helps group this block together
     taMisc::Warning("Configuration errors were found:\n");
-    cerr << taMisc::last_check_msg;
+    cerr << taMisc::last_check_msg << endl;
   }
 }
 

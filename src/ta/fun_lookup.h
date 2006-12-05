@@ -23,6 +23,7 @@
 
 class TA_API FunLookup : public float_Array {
   // ##CAT_Math function lookup for non-computable functions and optimization
+  INHERITED(float_Array)
 public:
   MinMaxRange	x_range;	// range of the x axis
   float		res;		// resolution of the function
@@ -52,13 +53,14 @@ public:
   virtual void	Convolve(const FunLookup& src, const FunLookup& con);
   // convolve source array with convolve array and put result here
 
-  void	UpdateAfterEdit();
   void	Initialize();
   void	Destroy()		{ };
   void	InitLinks();
   void 	Copy_(const FunLookup& cp);
   COPY_FUNS(FunLookup, float_Array);
   TA_BASEFUNS(FunLookup);
+ protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class TA_API Tokenizer {

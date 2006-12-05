@@ -36,8 +36,8 @@ void LayerDataEl::Destroy() {
   CutLinks();
 }
 
-void LayerDataEl::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void LayerDataEl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(column) {
     chan_name = column->name;
     taBase::SetPointer((taBase**)&column, NULL); // reset as soon as used -- just a temp guy!
@@ -256,8 +256,8 @@ void LayerWriter::Initialize() {
   layer_data.SetBaseType(&TA_LayerWriterEl);
 }
 
-void LayerWriter::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void LayerWriter::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   layer_data.SetDataNetwork(data, network);
 }
 
@@ -456,7 +456,9 @@ void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void NetMonItem::UpdateAfterEdit() {
+void NetMonItem::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
   if(!owner) return;
   if(!object) return;
   object_type = object->GetTypeDef();
@@ -477,8 +479,6 @@ void NetMonItem::UpdateAfterEdit() {
     }
     ScanObject();
   }
-
-  inherited::UpdateAfterEdit();
 }
 
 String NetMonItem::GetObjName(TAPtr obj) {
@@ -1162,11 +1162,11 @@ void NetMonitor::CheckChildConfig_impl(bool quiet, bool& rval) {
   items.CheckConfig(quiet, rval);
 }
 
-void NetMonitor::UpdateAfterEdit() {
+void NetMonitor::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading || taMisc::is_duplicating) return;
   UpdateNetworkPtrs();
   UpdateMonitors();
-  inherited::UpdateAfterEdit();
 }
 
 String NetMonitor::GetDisplayName() const {

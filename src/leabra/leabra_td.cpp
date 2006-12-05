@@ -249,8 +249,8 @@ void ExtRewLayerSpec::InitLinks() {
   taBase::Own(out_err, this);
 }
 
-void ExtRewLayerSpec::UpdateAfterEdit() {
-  ScalarValLayerSpec::UpdateAfterEdit();
+void ExtRewLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   rew.UpdateAfterEdit();
   avg_rew.UpdateAfterEdit();
   out_err.UpdateAfterEdit();
@@ -631,8 +631,8 @@ void TDRewPredLayerSpec::InitLinks() {
   ScalarValLayerSpec::InitLinks();
 }
 
-void TDRewPredLayerSpec::UpdateAfterEdit() {
-  ScalarValLayerSpec::UpdateAfterEdit();
+void TDRewPredLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
 }
 
 void TDRewPredLayerSpec::HelpConfig() {
@@ -819,8 +819,8 @@ void TDRewIntegLayerSpec::InitLinks() {
   taBase::Own(rew_integ, this);
 }
 
-void TDRewIntegLayerSpec::UpdateAfterEdit() {
-  ScalarValLayerSpec::UpdateAfterEdit();
+void TDRewIntegLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   rew_integ.UpdateAfterEdit();
 }
 

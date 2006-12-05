@@ -75,9 +75,9 @@ public:
 
   override String	GetDisplayName() const;
 
-  void  UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(LayerDataEl);
 protected:
+  void  UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
 
 private:
@@ -164,9 +164,9 @@ public:
 
   String	GetDisplayName() const;
 
-  void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(LayerWriter);
 protected:
+  void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void CheckChildConfig_impl(bool quiet, bool& rval);
     
@@ -227,8 +227,8 @@ public:
     MY_NAME,			// always use my (net monitor item) name; if multiple columns, then add a subscript index for later ones (_1 _2, etc.)
   };
 
-  taSmartRef 		object;		// the network object being monitored
-  TypeDef*		object_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
+  TypeDef*		object_type;	// #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
+  taSmartRef 		object;		// #TYPE_ON_object_type the network object being monitored
   MemberDef*		member_var;	// #TYPE_ON_object_type #NULL_OK member variable to monitor -- you can also just type variable for non-members (r.wt, etc)
   String        	variable;	// Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
   ValType		real_val_type;	 // type of values to create for real-valued monitored data (note: double has more support in the math library)
@@ -264,12 +264,12 @@ public:
 
   void  InitLinks();
   void	CutLinks();
-  void	UpdateAfterEdit();
   void 	Copy_(const NetMonItem& cp);
   COPY_FUNS(NetMonItem, taNBase);
   TA_BASEFUNS(NetMonItem);//
   
 protected:
+  void	UpdateAfterEdit_impl();
   int			cell_num; // current cell number, when adding mon vals
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
@@ -377,11 +377,11 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const NetMonitor& cp);
-  void	UpdateAfterEdit();
   COPY_FUNS(NetMonitor, taNBase);
   TA_BASEFUNS(NetMonitor);
   
 protected:
+  void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
 private:

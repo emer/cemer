@@ -36,6 +36,7 @@ class FloatTDCoord;
 
 class TA_API TwoDCoord : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
+  INHERITED(taBase)
 public:
   int 		x;  		// horizontal
   int 		y;  		// vertical
@@ -190,8 +191,8 @@ inline TwoDCoord operator / (int td, const TwoDCoord& v) {
 
 class TA_API PosTwoDCoord : public TwoDCoord {
   // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 2D coordinate space
+  INHERITED(TwoDCoord)
 public:
-  void	UpdateAfterEdit();
   void	Initialize()		{ }
   void	Destroy()		{ };
   TA_BASEFUNS(PosTwoDCoord);
@@ -199,10 +200,13 @@ public:
   inline PosTwoDCoord& operator=(int cp) { x = cp; y = cp; return *this;}
   inline PosTwoDCoord& operator=(float cp) { x = (int)cp; y = (int)cp; return *this;}
   inline PosTwoDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; return *this;}
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class TA_API XYNGeom : public PosTwoDCoord {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP two-dimensional X-Y geometry with possibility of total number n != x*y
+  INHERITED(PosTwoDCoord)
 public:
   bool	       	n_not_xy;	// #DEF_false total number of units is less than x * y
   int		n;		// #CONDEDIT_ON_n_not_xy:true total number of units (=x*y unless n_not_xy is true)
@@ -212,14 +216,17 @@ public:
 
   void 	Copy(const XYNGeom& cp)
   { PosTwoDCoord::Copy(cp); n_not_xy = cp.n_not_xy; n = cp.n; z = cp.z; }
-  void	UpdateAfterEdit();
   void	Initialize();
   void	Destroy()		{ };
   TA_BASEFUNS(XYNGeom);
+protected:
+  void	UpdateAfterEdit_impl();
+
 };
 
 class TA_API TDCoord : public TwoDCoord {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a value in 3D coordinate space
+  INHERITED(TwoDCoord)
 public:
   int 		z;  		// depth
 
@@ -379,8 +386,8 @@ inline TDCoord operator / (int td, const TDCoord& v) {
 
 class TA_API PosTDCoord : public TDCoord {
   // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 3D coordinate space
+  INHERITED(TDCoord)
 public:
-  void	UpdateAfterEdit();
   void	Initialize()		{ x = y = z = 0; }
   void	Destroy()		{ };
   TA_BASEFUNS(PosTDCoord);
@@ -388,10 +395,13 @@ public:
   inline PosTDCoord& operator=(int cp) 	{ x = cp; y = cp; z = cp; return *this;}
   inline PosTDCoord& operator=(float cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
   inline PosTDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class TA_API FloatTwoDCoord : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
+  INHERITED(taBase)
 public:
   float		x;  		// horizontal
   float		y;  		// vertical
@@ -515,6 +525,7 @@ inline FloatTwoDCoord operator / (float td, const FloatTwoDCoord& v) {
 
 class TA_API FloatTDCoord : public FloatTwoDCoord {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP a real value in 3D coordinate space
+  INHERITED(FloatTwoDCoord)
 public:
   float 	z;  		// depth
 
@@ -653,9 +664,7 @@ inline FloatTDCoord operator / (float td, const FloatTDCoord& v) {
 
 class TA_API FloatRotation: public FloatTDCoord {
   //  ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP 3-d rotation data, xyz specify the rotation axis
-#ifndef __MAKETA__
-typedef FloatTDCoord inherited;
-#endif
+  INHERITED(FloatTDCoord)
 public:
   float		rot; // rotation angle, in radians
 
@@ -680,9 +689,7 @@ public:
 
 class TA_API FloatTransform: public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math 3-d transformation data; applied in order: s, r, t
-#ifndef __MAKETA__
-typedef taBase inherited;
-#endif
+  INHERITED(taBase)
 public:
   FloatTDCoord		scale; // scale factors, in x, y, and z
   FloatRotation		rotate; // rotation
@@ -704,6 +711,7 @@ private:
 
 class TA_API ValIdx : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a float value and an index: very useful for sorting!
+  INHERITED(taBase)
 public:
   float		val;  		// value
   int		idx;		// index

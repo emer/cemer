@@ -37,7 +37,6 @@ INHERITED(taNBase)
 public:
   bool		auto_open;	// open this wizard upon startup
 
-//  void	UpdateAfterEdit();
   void 	InitLinks();
   void	CutLinks(); 
   SIMPLE_COPY(taWizard);

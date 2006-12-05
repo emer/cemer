@@ -27,8 +27,6 @@ Mac and Qt4.2 bugs:
 NOTE: may be fixed
 
 * netview bugs:
-  * proper display of r.wt stuff (bug fix)
-NOTE: will look into w/ Randy
   * UnitView objs seem to get made, even if no gui interaction w/user
     they were supposed to only get made on demand!
 
@@ -62,6 +60,21 @@ NOTE: where??? what does this mean??? fyi, there are already hover notes
   in the progeditor (Program context), the args should be default collapsed..
   Also, can we use full name like ProgramGroup instead of ProgGp -- would make 
   it more transparent..  ProgEditor is Program? 
+* "Primary Children" -- provide a way to let an object directly express children
+  in a subsidiary list, ex. the cols in a datatable, child specs in a spec, etc.
+
+* spec gui enhancements:
+  * make a link and tree node for making subspecs be direct children
+  * enhance BaseSpec edit/drop to accept compatible subspec objects
+* Spec Editor (similar to prog editor -- shows children) -- should be quick & easy
+
+* dnd for T3
+
+* multiple selection across views/trees, etc & actions (toolbars) that become
+  activated in response to multiple selections: build out list of possible
+  actions by walking typedefs & looking at comment directives; traverse
+  list each time selection is updated and activate actions that match.  
+  order matters.
 
 * get rid of ta/datatable.* (very confusing
   with ta_datatable.*) 
@@ -79,32 +92,16 @@ NOTE: where??? what does this mean??? fyi, there are already hover notes
    -- move float_RArray to pdp/v3compat
   (+ changes in advance of T3 graphs)
 
-* dnd for T3
-
 * new net visualization, plus related fixes/changes:
   * simpler unit views (no separators, light shows activation etc.) 
   * add transparent layer
   * network layer shortcut view: "sheet view" & iconify
-
-* spec gui enhancements:
-  * make a link and tree node for making subspecs be direct children
-  * enhance BaseSpec edit/drop to accept compatible subspec objects
-* Spec Editor (similar to prog editor -- shows children) -- should be quick & easy
 
 * parallelism:
   * multi-cpu pthread without mutex
   * alternative dmem approach(es), 
     esp. layer/unitgroup-oriented assignment to nodes, without full connectivity
     for every node
-
-* multiple selection across views/trees, etc & actions (toolbars) that become
-  activated in response to multiple selections: build out list of possible
-  actions by walking typedefs & looking at comment directives; traverse
-  list each time selection is updated and activate actions that match.  
-  order matters.
-
-* "Primary Children" -- provide a way to let an object directly express children
-  in a subsidiary list, ex. the cols in a datatable, child specs in a spec, etc.
 
 * Datatable bugs and usability
   * annoying up/down control: either fix, or (preferably) replace with field

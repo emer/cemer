@@ -183,7 +183,6 @@ public:
   override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const MatrixGeom& cp);
-  void	UpdateAfterEdit(); // paranoically set unused vals to 0
   explicit MatrixGeom(int init_size);
   MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
   COPY_FUNS(MatrixGeom, taBase);
@@ -196,6 +195,7 @@ public: // functions for internal/trusted use only
   inline int&		operator [](int i) {return el[i];}  // #IGNORE 
 
 protected:
+  void	UpdateAfterEdit_impl();
   int			el[TA_MATRIX_DIMS_MAX];
   
   inline int		operator [](int i) const {return el[i];}  
@@ -451,7 +451,6 @@ public:
     { return Output(strm, indent); }
   int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  void			UpdateAfterEdit(); 
   void			Copy_(const taMatrix& cp);
   COPY_FUNS(taMatrix, taOBase);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
@@ -492,6 +491,7 @@ public:
   // #IGNORE
  
 protected:
+  void			UpdateAfterEdit_impl(); 
   static void		SliceInitialize(taMatrix* par_slice, taMatrix* child_slice); 
    // called after slice created -- static for consistency
   static void		SliceDestroying(taMatrix* par_slice, taMatrix* child_slice); 

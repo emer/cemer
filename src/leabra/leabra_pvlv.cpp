@@ -78,8 +78,8 @@ void PViLayerSpec::InitLinks() {
   taBase::Own(pv_detect, this);
 }
 
-void PViLayerSpec::UpdateAfterEdit() {
-  ScalarValLayerSpec::UpdateAfterEdit();
+void PViLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   pv_detect.UpdateAfterEdit();
 }
 
@@ -305,8 +305,8 @@ void LVeLayerSpec::InitLinks() {
   taBase::Own(lv, this);
 }
 
-void LVeLayerSpec::UpdateAfterEdit() {
-  ScalarValLayerSpec::UpdateAfterEdit();
+void LVeLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   lv.UpdateAfterEdit();
 }
 

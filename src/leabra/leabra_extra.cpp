@@ -61,8 +61,8 @@ void LeabraContextLayerSpec::InitLinks() {
   taBase::Own(updt, this);
 }
 
-// void LeabraContextLayerSpec::UpdateAfterEdit() {
-//   LeabraLayerSpec::UpdateAfterEdit();
+// void LeabraContextLayerSpec::UpdateAfterEdit-impl() {
+//   inherited::UpdateAfterEdit_impl();
 //   hysteresis_c = 1.0f - hysteresis;
 // }
 
@@ -182,8 +182,8 @@ void TrialSynDepConSpec::InitLinks() {
   taBase::Own(syn_dep, this);
 }
 
-void TrialSynDepConSpec::UpdateAfterEdit() {
-  LeabraConSpec::UpdateAfterEdit();
+void TrialSynDepConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(syn_dep.rec <= 0.0f)	// can't go to zero!
     syn_dep.rec = 1.0f;
 }
@@ -226,17 +226,18 @@ void ActAvgHebbMixSpec::Initialize() {
   cur_act = .5f;
 }
 
-void ActAvgHebbMixSpec::UpdateAfterEdit() {
+void ActAvgHebbMixSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   cur_act = 1.0f - act_avg;
 }
 
-void ActAvgHebbConSpec::UpdateAfterEdit() {
-  LeabraConSpec::UpdateAfterEdit();
+void ActAvgHebbConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   act_avg_hebb.UpdateAfterEdit();
 }
 
 void ActAvgHebbConSpec::InitLinks() {
-  LeabraConSpec::InitLinks();
+  inherited::InitLinks();
   taBase::Own(act_avg_hebb, this);
 }
 
@@ -361,8 +362,8 @@ void ScalarValLayerSpec::InitLinks() {
   taBase::Own(bias_val, this);
 }
 
-void ScalarValLayerSpec::UpdateAfterEdit() {
-  LeabraLayerSpec::UpdateAfterEdit();
+void ScalarValLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   unit_range.UpdateAfterEdit();
   scalar.UpdateAfterEdit();
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
@@ -1080,8 +1081,8 @@ void TwoDValLayerSpec::InitLinks() {
   taBase::Own(bias_val, this);
 }
 
-void TwoDValLayerSpec::UpdateAfterEdit() {
-  LeabraLayerSpec::UpdateAfterEdit();
+void TwoDValLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   x_range.UpdateAfterEdit(); y_range.UpdateAfterEdit();
   twod.UpdateAfterEdit();
   if(twod.rep == TwoDValSpec::GAUSSIAN) {

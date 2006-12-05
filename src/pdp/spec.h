@@ -106,7 +106,6 @@ public:
   virtual bool 	    RemoveChild(const char* nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy();
   void	InitLinks();
@@ -114,6 +113,8 @@ public:
   void 	Copy_(const BaseSpec& cp);
   COPY_FUNS(BaseSpec, taNBase);
   TA_BASEFUNS(BaseSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class PDP_API BaseSubSpec : public taNBase {
@@ -136,13 +137,14 @@ public:
   virtual void	UpdateSpec();
   // update from parent sub spec, if one exists
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy();
   void	InitLinks();
   void 	Copy_(const BaseSubSpec& cp);
   COPY_FUNS(BaseSubSpec, taNBase);
   TA_BASEFUNS(BaseSubSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class PDP_API SpecPtr_impl : public taBase, public IDataLinkClient {

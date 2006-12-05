@@ -220,8 +220,8 @@ void BaseSpec::CutLinks() {
   taNBase::CutLinks();
 }
 
-void BaseSpec::UpdateAfterEdit() {
-  taNBase::UpdateAfterEdit();
+void BaseSpec::UpdateAfterEdit_impl() {
+  taNBase::UpdateAfterEdit_impl();
   Network* net = GET_MY_OWNER(Network);
   if(isDestroying() || !net || net->isDestroying()) return;
   UpdateSpec();
@@ -423,8 +423,8 @@ void BaseSubSpec::InitLinks() {
     UpdateSpec();
 }
 
-void BaseSubSpec::UpdateAfterEdit() {
-  taNBase::UpdateAfterEdit();
+void BaseSubSpec::UpdateAfterEdit_impl() {
+  taNBase::UpdateAfterEdit_impl();
   UpdateSpec();
 }
 

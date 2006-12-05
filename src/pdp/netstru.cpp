@@ -4005,15 +4005,32 @@ void Layer::Compute_PrjnDirections() {
   Projection* p;
   taLeafItr i;
   FOR_ITR_EL(Projection, p, projections., i) {
-    if(!p->from || p->from->lesion) continue;
-    if(p->from->dist.fm_input < dist.fm_input) {
-      p->direction = Projection::FM_INPUT;
+    if(!p->from || p->from->lesion) {
+      p->direction = Projection::DIR_UNKNOWN;
+      continue;
     }
-    else if(p->from->dist.fm_output < dist.fm_output) {
-      p->direction = Projection::FM_OUTPUT;
+    // use the smallest value first..
+    if(p->from->dist.fm_input <= p->from->dist.fm_output) {
+      if(p->from->dist.fm_input < dist.fm_input) {
+	p->direction = Projection::FM_INPUT;
+      }
+      else if(p->from->dist.fm_output < dist.fm_output) {
+	p->direction = Projection::FM_OUTPUT;
+      }
+      else {
+	p->direction = Projection::LATERAL;
+      }
     }
     else {
-      p->direction = Projection::LATERAL;
+      if(p->from->dist.fm_output < dist.fm_output) {
+	p->direction = Projection::FM_OUTPUT;
+      }
+      else if(p->from->dist.fm_input < dist.fm_input) {
+	p->direction = Projection::FM_INPUT;
+      }
+      else {
+	p->direction = Projection::LATERAL;
+      }
     }
   }  
 }

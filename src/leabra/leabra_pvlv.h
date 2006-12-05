@@ -51,6 +51,7 @@
 
 class LEABRA_API PVConSpec : public LeabraConSpec {
   // primary value connection spec: learns using delta rule from PVe - PVi values
+  INHERITED(LeabraConSpec)
 public:
   inline float C_Compute_Err(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->act_p;
@@ -93,6 +94,7 @@ public:
 
 class LEABRA_API PVDetectSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for detecting if a primary value is present or expected
+  INHERITED(taBase)
 public:
   float		thr_min;	// #DEF_0.2 minimum threshold on PVe (ExtRew) or PVi, below which PV is considered present (i.e., punishment) (set to 0 if PVe.rew.norew_val = 0)
   float		thr_max;	// #DEF_0.8 maximum threshold on PVe (ExtRew) or PVi, above which PV is considered present (i.e., reward) (set to .4 if PVe.rew.norew_val = 0)
@@ -106,6 +108,7 @@ public:
 
 class LEABRA_API PViLayerSpec : public ScalarValLayerSpec {
   // primary value inhibitory (PVi) layer: continously learns to expect primary reward values
+  INHERITED(ScalarValLayerSpec)
 public:
   PVDetectSpec	pv_detect;	// primary reward value detection spec: detect if a primary reward is present or expected
 
@@ -122,13 +125,14 @@ public:
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(PViLayerSpec);
   COPY_FUNS(PViLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(PViLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 //////////////////////////////////////////
@@ -137,6 +141,7 @@ public:
 
 class LEABRA_API LVConSpec : public TrialSynDepConSpec {
   // learned value connection spec: learns using delta rule from PVe - LV values; also does synaptic depression to do novelty filtering
+  INHERITED(TrialSynDepConSpec)
 public:
   inline float C_Compute_Err(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->act_p;
@@ -180,6 +185,7 @@ public:
 
 class LEABRA_API LVSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for learned value layers
+  INHERITED(taBase)
 public:
   float		discount;	// #DEF_0 multiplicative discount factor for PVe/ExtRew/US training signal: plus phase clamp = (1-discount)*PVe
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
@@ -193,6 +199,7 @@ public:
 
 class LEABRA_API LVeLayerSpec : public ScalarValLayerSpec {
   // learns value based on inputs that are associated with rewards, only learns at time of primary rewards (filtered by PV system). This is excitatory version
+  INHERITED(ScalarValLayerSpec)
 public:
   LVSpec	lv;	// learned value specs
 
@@ -209,13 +216,14 @@ public:
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(LVeLayerSpec);
   COPY_FUNS(LVeLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(LVeLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class LEABRA_API LViLayerSpec : public LVeLayerSpec {
@@ -233,6 +241,7 @@ public:
 
 class LEABRA_API PVLVDaSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
+  INHERITED(taBase)
 public:
   enum	DaMode {
     LV_PLUS_IF_PV,		// da = (LVe - LVi) + [if (PV detected (present/expected), PVe - PVi]
@@ -254,6 +263,7 @@ public:
 
 class LEABRA_API PVLVDaLayerSpec : public LeabraLayerSpec {
   // computes PVLV 'Da' signal: typically if(ER), da = ER-PV, else LVe - LVs
+  INHERITED(LeabraLayerSpec)
 public:
   PVLVDaSpec	da;		// parameters for the lvpv da computation
 
