@@ -3433,8 +3433,8 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   if (m_panel) {
     setTabText(idx, m_panel->TabText());
 //    m_panel->mtab_cnt++;
-    // make sure we show latest data -- OBS: notify should always keep panels uptodate
-//nn    m_panel->GetImage();
+    // make sure we show latest data (helps in case there are "holes" in data updating)
+    m_panel->GetImage();
   } else {
     setTabText(idx, "");
   }
