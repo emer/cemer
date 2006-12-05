@@ -63,7 +63,7 @@ void Startup() {
   SetArg("EpochMax", "max_epoch", train);
   SetArg("BatchMax", "max_batch", batch);
 
-  SetLogFile(".epc.dat", tag, .data.EpochOutputData, true); // should not be, but is for testing
+  SetLogFile(".epc.dat", tag, .data.EpochOutputData, false);  // change to true for debugging dmem
   SetLogFile(".trl.dat", tag, .data.TrialOutputData, true); // this should be dmem
 
   if(taMisc::dmem_proc == 0)
