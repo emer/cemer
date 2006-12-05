@@ -56,8 +56,8 @@ include $(top_srcdir)/mfstamp.am
 
 make_css_parse:
 	bison -dtvy css_parse.y;
-	sed -e "s/union/struct/g" y.tab.c >css_parse.ccx;
-	sed -e "s/union/struct/g" y.tab.h >css_parse.hx;
+	sed -e "s/union/struct/g" y.tab.c >css_parse.cpp;
+	sed -e "s/union/struct/g" y.tab.h >css_parse.h;
 
 noinst_LTLIBRARIES = libcss@PDP_SUFFIX@@PDP_VERSION@.la
 libcss@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
