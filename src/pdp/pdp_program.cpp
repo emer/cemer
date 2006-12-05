@@ -212,8 +212,8 @@ void NetCounterInit::Destroy() {
   CutLinks();
 }
 
-void NetCounterInit::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void NetCounterInit::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   GetLocalCtrVar();
   if(network_var && (network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
@@ -278,8 +278,8 @@ void NetCounterIncr::Destroy() {
   CutLinks();
 }
 
-void NetCounterIncr::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void NetCounterIncr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   GetLocalCtrVar();
   if(network_var && (network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
@@ -343,8 +343,8 @@ void NetUpdateView::Destroy() {
   CutLinks();
 }
 
-void NetUpdateView::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void NetUpdateView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   GetUpdateVar();
 }
 

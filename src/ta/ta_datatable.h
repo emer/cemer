@@ -555,7 +555,6 @@ public:
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
 
-  void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
   void 	Copy_(const DataTable& cp);
@@ -563,6 +562,7 @@ public:
   TA_BASEFUNS(DataTable); //
 
 protected: 
+  override void	UpdateAfterEdit_impl();
   /////////////////////////////////////////////////////////
   // IMPL
   

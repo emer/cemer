@@ -161,8 +161,8 @@ void TesselPrjnSpec::Copy_(const TesselPrjnSpec& cp) {
   send_offs = cp.send_offs;
 }
 
-void TesselPrjnSpec::UpdateAfterEdit() {
-  ProjectionSpec::UpdateAfterEdit();
+void TesselPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   recv_skip.SetGtEq(1);
   recv_group.SetGtEq(1);
 }
@@ -379,8 +379,8 @@ void UniformRndPrjnSpec::InitLinks() {
   taBase::Own(rndm_seed, this);
 }
 
-void UniformRndPrjnSpec::UpdateAfterEdit() {
-  ProjectionSpec::UpdateAfterEdit();
+void UniformRndPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(p_con > 1.0f) p_con = 1.0f;
   if(p_con < 0.0f) p_con = 0.0f;
 }
@@ -497,8 +497,8 @@ void PolarRndPrjnSpec::InitLinks() {
   taBase::Own(rndm_seed, this);
 }
 
-void PolarRndPrjnSpec::UpdateAfterEdit() {
-  ProjectionSpec::UpdateAfterEdit();
+void PolarRndPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(p_con > 1.0f) p_con = 1.0f;
   if(p_con < 0.0f) p_con = 0.0f;
 }
@@ -724,7 +724,8 @@ void ScriptPrjnSpec::Connect_impl(Projection* prj) {
   prjn = NULL;
 }
 
-void ScriptPrjnSpec::UpdateAfterEdit() {
+void ScriptPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
 //v3  UpdateReCompile();
   CompileScript_impl();
   if(!script_file->fname.empty()) {
@@ -835,8 +836,8 @@ void RndGpOneToOnePrjnSpec::InitLinks() {
   taBase::Own(rndm_seed, this);
 }
 
-void RndGpOneToOnePrjnSpec::UpdateAfterEdit() {
-  GpOneToOnePrjnSpec::UpdateAfterEdit();
+void RndGpOneToOnePrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(p_con > 1.0f) p_con = 1.0f;
   if(p_con < 0.0f) p_con = 0.0f;
 }
@@ -1097,8 +1098,8 @@ void GpRndTesselPrjnSpec::InitLinks() {
   taBase::Own(rndm_seed, this);
 }
 
-void GpRndTesselPrjnSpec::UpdateAfterEdit() {
-  ProjectionSpec::UpdateAfterEdit();
+void GpRndTesselPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   recv_gp_skip.SetGtEq(1);
   recv_gp_group.SetGtEq(1);
 }

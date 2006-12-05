@@ -29,8 +29,8 @@ void DataOpEl::Initialize() {
   col_idx = -1;
 }
 
-void DataOpEl::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataOpEl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(column) {
     col_name = column->name;
     taBase::SetPointer((taBase**)&column, NULL); // reset as soon as used -- just a temp guy!
@@ -980,8 +980,8 @@ void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
 //   data sort prog
 /////////////////////////////////////////////////////////
 
-void DataSortProg::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataSortProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UpdateSpecDataTable();
 }
 
@@ -1027,8 +1027,8 @@ void DataSortProg::AddAllColumns() {
 //   data selectRows prog
 /////////////////////////////////////////////////////////
 
-void DataSelectRowsProg::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataSelectRowsProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UpdateSpecDataTable();
 }
 
@@ -1074,8 +1074,8 @@ void DataSelectRowsProg::AddAllColumns() {
 //   data selectCols prog
 /////////////////////////////////////////////////////////
 
-void DataSelectColsProg::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataSelectColsProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UpdateSpecDataTable();
 }
 
@@ -1121,8 +1121,8 @@ void DataSelectColsProg::AddAllColumns() {
 //   data group prog
 /////////////////////////////////////////////////////////
 
-void DataGroupProg::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataGroupProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UpdateSpecDataTable();
 }
 
@@ -1168,8 +1168,8 @@ void DataGroupProg::AddAllColumns() {
 //   data join prog
 /////////////////////////////////////////////////////////
 
-void DataJoinProg::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataJoinProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UpdateSpecDataTable();
 }
 
@@ -1219,8 +1219,8 @@ const String DataJoinProg::GenCssBody_impl(int indent_level) {
 void DataCalcLoop::Initialize() {
 }
 
-void DataCalcLoop::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataCalcLoop::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UpdateSpecDataTable();
   for(int i=0;i<loop_code.size;i++) {
     ProgEl* pe = loop_code[i];
@@ -1356,8 +1356,8 @@ void DataCalcAddDestRow::GetDataPtrsFmLoop() {
     dest_data = dcl->dest_data;
 }
 
-void DataCalcAddDestRow::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataCalcAddDestRow::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   GetDataPtrsFmLoop();
 }
 
@@ -1437,8 +1437,8 @@ void DataCalcSetDestRow::GetDataPtrsFmLoop() {
     dest_data = dcl->dest_data;
 }
 
-void DataCalcSetDestRow::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataCalcSetDestRow::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   GetDataPtrsFmLoop();
 }
 
@@ -1518,8 +1518,8 @@ void DataCalcSetSrcRow::GetDataPtrsFmLoop() {
     dest_data = dcl->dest_data;
 }
 
-void DataCalcSetSrcRow::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataCalcSetSrcRow::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   GetDataPtrsFmLoop();
 }
 
@@ -1597,8 +1597,8 @@ void DataCalcCopyCommonCols::GetDataPtrsFmLoop() {
     dest_data = dcl->dest_data;
 }
 
-void DataCalcCopyCommonCols::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void DataCalcCopyCommonCols::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   GetDataPtrsFmLoop();
 }
 

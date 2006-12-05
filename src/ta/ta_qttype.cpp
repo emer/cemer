@@ -228,11 +228,10 @@ void taiType::GetImage_impl(taiData* dat, const void* base) {
 
 void taiType::GetValue(taiData* dat, void* base) {
   bool ro = isReadOnly(dat);
-  if (ro && !handlesReadOnly()) {
-    taiType::GetValue_impl(dat, base);
-  } else {
+  if (!ro || handlesReadOnly()) {
     GetValue_impl(dat, base);
   }
+  //note: we don't do anything if ro and type doesn't handle it!
 }
 
 void taiType::GetValue_impl(taiData* dat, void* base) {
@@ -881,8 +880,11 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     flags |= taiData::flgEditDialog;
     
     
-  taiData* dat = GetDataRep_impl(host_, par, gui_parent_, flags);
-  return dat;
+  if ((flags & taiData::flgReadOnly) && !handlesReadOnly()) {
+    return taiMember::GetDataRep_impl(host_, par, gui_parent_, flags);
+  } else {
+    return GetDataRep_impl(host_, par, gui_parent_, flags);
+  }
 }
 
 taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
@@ -893,7 +895,12 @@ taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui
 //NOTE: we always delegate to _impl because those do the readonly delegation by
 // calling the non-impl version of their functions
 void taiMember::GetImage(taiData* dat, const void* base) {
-  GetImage_impl(dat, base);
+  bool ro = isReadOnly(dat);
+  if (ro && !handlesReadOnly()) {
+    taiMember::GetImage_impl(dat, base);
+  } else {
+    GetImage_impl(dat, base);
+  }
 }
 
 void taiMember::GetImage_impl(taiData* dat, const void* base) {
@@ -921,7 +928,11 @@ void taiMember::GetOrigVal(taiData* dat, const void* base) {
 }
 
 void taiMember::GetValue(taiData* dat, void* base) {
-  GetValue_impl(dat, base);
+  bool ro = isReadOnly(dat);
+  if (!ro || !handlesReadOnly()) {
+    GetValue_impl(dat, base);
+  }
+  // if ro and it doesn't handle it, do nothing!
 }
 
 void taiMember::StartScript(const void* base) {

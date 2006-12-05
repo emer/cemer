@@ -45,9 +45,9 @@ public:
 
   override String GetName() const;
   override String GetDisplayName() const;
-  void	UpdateAfterEdit();	// set col_name from column
   TA_SIMPLE_BASEFUNS(DataOpEl);
 protected:
+  override void	UpdateAfterEdit_impl();	// set col_name from column
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void  Initialize();
@@ -388,9 +388,9 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSortProg);
 protected:
+  override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -410,9 +410,9 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataGroupProg);
 protected:
+  override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -432,9 +432,9 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
 protected:
+  override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -454,9 +454,9 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataSelectColsProg);
 protected:
+  override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -475,9 +475,9 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataJoinProg);
 protected:
+  override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -503,9 +503,9 @@ public:
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(DataCalcLoop);
 protected:
+  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override void	PreGenChildren_impl(int& item_id);
@@ -532,11 +532,11 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   void	InitLinks();
   void	Copy(const DataCalcAddDestRow& cp);
   TA_BASEFUNS(DataCalcAddDestRow);
 protected:
+  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -558,11 +558,11 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   void 	InitLinks();
   void	Copy(const DataCalcSetDestRow& cp);
   TA_BASEFUNS(DataCalcSetDestRow);
 protected:
+  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -584,11 +584,11 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   void 	InitLinks();
   void	Copy(const DataCalcSetSrcRow& cp);
   TA_BASEFUNS(DataCalcSetSrcRow);
 protected:
+  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 
@@ -612,12 +612,12 @@ public:
   // get my data table ptrs from parent calc loop obj
 
   override String GetDisplayName() const;
-  void 	UpdateAfterEdit();
   void 	InitLinks();
   SIMPLE_COPY(DataCalcCopyCommonCols);
   void	Copy(const DataCalcCopyCommonCols& cp);
   TA_BASEFUNS(DataCalcCopyCommonCols);
 protected:
+  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 

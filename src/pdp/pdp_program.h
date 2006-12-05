@@ -108,10 +108,10 @@ public:
   
   override String	GetDisplayName() const;
 
-  void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(NetCounterInit);
 
 protected:
+  override void	UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
@@ -133,10 +133,10 @@ public:
   
   override String	GetDisplayName() const;
 
-  void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(NetCounterIncr);
 
 protected:
+  override void	UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
@@ -156,10 +156,10 @@ public:
   
   override String	GetDisplayName() const;
 
-  void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(NetUpdateView);
 
 protected:
+  override void	UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetUpdateVar(); // get the update_var variable
 

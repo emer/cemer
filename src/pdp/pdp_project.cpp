@@ -595,9 +595,12 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
 
 void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-
   if(taMisc::is_loading)
     AutoBuildNets(build_nets);
+}
+
+void ProjectBase::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UpdateColors();
 }
 

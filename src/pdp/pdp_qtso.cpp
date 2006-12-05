@@ -58,10 +58,10 @@ int taiSpecMember::BidForMember(MemberDef* md, TypeDef* td) {
 //   {
 
 bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
+  if (!host_) return true;
   void* base = host_->Base();
   TypeDef* typ = host_->GetBaseTypeDef();
-  if((host_ == NULL) || (base == NULL) || (typ == NULL))
-    return true;
+  if (!base || !typ) return true;
 
   if(typ->InheritsFrom(TA_BaseSpec_Group))
     return false;		// always use a check box for these..
@@ -100,8 +100,7 @@ taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par,
       rdat = taiMember::GetDataRep_impl(host_, par, gui_parent, flags_);
     return rdat;
   } else {
-    int pt_flags = taiData::flgToggleReadOnly; // only for informing user, not changing
-    taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent, pt_flags);
+    taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent, flags_);
     rval->InitLayout();
     taiData* rdat;
     if (m_sub_types)

@@ -64,7 +64,8 @@ void Schedule::Copy_(const Schedule& cp) {
   interpolate = cp.interpolate;
 }
 
-void Schedule::UpdateAfterEdit() {
+void Schedule::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   last_ctr = -1;
   cur_val = 0;
   int lst_ctr = -1;
@@ -103,7 +104,6 @@ void Schedule::UpdateAfterEdit() {
     itm->duration = MAX(itm->duration, 1);
     itm->step = (nxt->start_val - itm->start_val) / (float)itm->duration;
   }
-  taList<SchedItem>::UpdateAfterEdit();
 }
 
 float Schedule::GetVal(int ctr) {
@@ -419,8 +419,8 @@ void RecvCons::Copy_(const RecvCons& cp) {
 //   send_idx = cp.send_idx;	// do not copy: updated in FixPrjnIndexes after network copy
 }
 
-void RecvCons::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void RecvCons::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   cons.SetType(con_type);	// always impose our type on it..
 }
 
@@ -1193,8 +1193,8 @@ void SendCons::Copy_(const SendCons& cp) {
 //   recv_idx = cp.recv_idx; // do not copy: updated in FixPrjnIndexes after network copy
 }
 
-void SendCons::UpdateAfterEdit() {
-  taOBase::UpdateAfterEdit();
+void SendCons::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
 }
 
 int SendCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
@@ -1717,8 +1717,8 @@ void Unit::Copy_(const Unit& cp) {
   n_recv_cons = cp.n_recv_cons;
 }
 
-void Unit::UpdateAfterEdit() {
-  taNBase::UpdateAfterEdit();
+void Unit::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   // no negative positions
   pos.x = MAX(0,pos.x); pos.y = MAX(0,pos.y);  pos.z = MAX(0,pos.z);
   // stay within layer->un_geom
@@ -2456,8 +2456,8 @@ void Projection::Copy_(const Projection& cp) {
   direction = cp.direction;
 }
 
-void Projection::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
+void Projection::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   SetFrom();
   if(from)
     name = "Fm_" + from->name;
@@ -2466,14 +2466,6 @@ void Projection::UpdateAfterEdit() {
   if(!taMisc::gui_active) return;
   Network* net = GET_MY_OWNER(Network);
   if(!net) return;
-/*TODO  NetView* view;
-  taLeafItr i;
-  FOR_ITR_EL(NetView, view, net->views., i) {
-    if(view->display_toggle) {
-      view->FixProjection(this);
-      view->UpdateButtons();
-    }
-  }*/
 }
 
 /*obs void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int un_y, int wt_x, int wt_y) {
@@ -2896,8 +2888,8 @@ void Unit_Group::Copy_(const Unit_Group& cp) {
   n_units = cp.n_units;		// todo: v3compat obs
 }
 
-void Unit_Group::UpdateAfterEdit() {
-  taGroup<Unit>::UpdateAfterEdit();
+void Unit_Group::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if((own_lay == NULL) || (own_lay->own_net == NULL)) return;
   if(n_units != 0) {		// v3compat obs: conversion; remove at some point
     unique_geom = true;
@@ -3351,6 +3343,14 @@ void Layer::Copy_(const Layer& cp) {
 }
 
 void Layer::UpdateAfterEdit() {
+  if(taMisc::is_loading) return;
+  inherited::UpdateAfterEdit();
+  if (!own_net) return;
+  own_net->UpdtAfterNetMod();	// todo: is this a good idea??
+}
+
+void Layer::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   // no negative geoms., y,z must be 1 (for display)
   SyncSendPrjns();
   if(n_units > 0) {		// todo: v3compat conversion obs remove later
@@ -3370,11 +3370,6 @@ void Layer::UpdateAfterEdit() {
     un_geom.z = 0;
   }
   RecomputeGeometry();
-
-  inherited::UpdateAfterEdit();
-  if(taMisc::is_loading) return;
-  if (own_net == NULL) return;
-  own_net->UpdtAfterNetMod();	// todo: is this a good idea??
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {
@@ -4389,8 +4384,8 @@ void Network::Copy_(const Network& cp) {
   copying = false;
 }
 
-void Network::UpdateAfterEdit(){
-  inherited::UpdateAfterEdit();
+void Network::UpdateAfterEdit_impl(){
+  inherited::UpdateAfterEdit_impl();
   if(wt_save_fmt == NET_FMT)
     wt_save_fmt = TEXT;
 

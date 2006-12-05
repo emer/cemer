@@ -59,6 +59,7 @@ const float SIGMOID_MAX_NET = 13.81551f;	// maximium net input value
 
 class PDP_API SigmoidSpec : public taBase {
 // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
+INHERITED(taBase)
 public:
   float		off;		// offset for .5 point
   float		gain;		// gain
@@ -82,6 +83,7 @@ public:
 
 class PDP_API SchedItem : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Network one element of a schedule
+INHERITED(taOBase)
 public:
   int		start_ctr;	// ctr number to start at for this item
   float		start_val;	// starting value for item
@@ -100,6 +102,7 @@ public:
 
 class PDP_API Schedule : public taList<SchedItem> {
   // ##CAT_Network A schedule for parameters that vary over time
+INHERITED(taList<SchedItem>)
 public:
   int 		last_ctr;	// the last counter index called
   float		default_val;	// the default if group is empty
@@ -109,12 +112,13 @@ public:
   float		GetVal(int ctr);
   // #MENU #MENU_ON_Edit #USE_RVAL get current schedule val, based on counter
 
-  void 	UpdateAfterEdit();
   void	Initialize();
   void	Destroy()	{ };
   void	Copy_(const Schedule& cp);
   COPY_FUNS(Schedule, taList<SchedItem>);
   TA_BASEFUNS(Schedule);
+protected:
+  override void UpdateAfterEdit_impl();
 };
 
 
@@ -446,7 +450,6 @@ public:
   int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   bool	ChangeMyType(TypeDef* new_type);
   
-  void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -455,6 +458,7 @@ public:
   COPY_FUNS(RecvCons, inherited);
   TA_BASEFUNS(RecvCons);
 protected:
+  override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
@@ -550,7 +554,6 @@ public:
   int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   bool	ChangeMyType(TypeDef* new_type);
   
-  void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -559,6 +562,7 @@ public:
   COPY_FUNS(SendCons, inherited);
   TA_BASEFUNS(SendCons);
 protected:
+  override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
@@ -812,7 +816,6 @@ public: //
   virtual TwoDCoord GetMyAbsPos();
   // get the absolute position of this unit relative to the layer, taking into account any unit groups
   
-  void  UpdateAfterEdit();
   void	Initialize();
   void 	Destroy();
   void  InitLinks();
@@ -822,6 +825,7 @@ public: //
   TA_BASEFUNS(Unit);
 
 protected:
+  override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
   override void	 CheckChildConfig_impl(bool quiet, bool& rval);
 };
@@ -984,7 +988,6 @@ public:
   virtual void	WeightsToTable(DataTable* dt);
   // #MENU #NULL_OK #CAT_Projection TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
-  void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy();
   void	InitLinks();
@@ -993,6 +996,7 @@ public:
   COPY_FUNS(Projection, taNBase);
   TA_BASEFUNS(Projection);
 protected:
+  override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
 };
@@ -1155,7 +1159,6 @@ public:
 
   void		RemoveAll();
   
-  void	UpdateAfterEdit();
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
@@ -1163,10 +1166,8 @@ public:
   void  Copy_(const Unit_Group& cp);
   COPY_FUNS(Unit_Group, taGroup<Unit>);
   TA_BASEFUNS(Unit_Group);
-#ifdef TA_GUI
 protected:
-//  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
-#endif
+  override void UpdateAfterEdit_impl();
 };
 
 class PDP_API LayerSpec : public BaseSpec {
@@ -1409,7 +1410,7 @@ public:
   virtual bool	DMem_DistributeUnits_impl(DMemShare&) { return false; } // #IGNORE to keep the ta file consistent..
 #endif
 
-  void	UpdateAfterEdit();
+  void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -1418,12 +1419,8 @@ public:
   COPY_FUNS(Layer, taNBase);
   TA_BASEFUNS(Layer); //
   
-#ifdef TA_GUI
-//protected:
-//  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
-#endif
-
 protected:
+  override void 	UpdateAfterEdit_impl();
   virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
   virtual void		ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
@@ -1766,7 +1763,6 @@ public:
   int		Dump_Load_Value(istream& strm, taBase* par=NULL);
   override int 	Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
 
-  void	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -1776,12 +1772,9 @@ public:
   TA_BASEFUNS(Network);
   
 protected:
+  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
-#ifdef TA_GUI
-protected:
-//  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
-#endif
 };
 
 SmartRef_Of(Network)

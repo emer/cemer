@@ -89,13 +89,13 @@ public:
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void 	SetDefaultName() {} // make it local to list, set by list
-  void	UpdateAfterEdit(); // we always nuke the cached cssEl -- it will get regenerated
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ProgVar& cp);
   COPY_FUNS(ProgVar, inherited);
   TA_BASEFUNS(ProgVar);
 protected:
+  override void UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval); //object, if any
   virtual const String	GenCssArg_impl();

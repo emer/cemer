@@ -60,6 +60,7 @@ public:
 
 class PDP_API TesselPrjnSpec : public ProjectionSpec {
   // arbitrary tesselations (repeating patterns) of connectivity
+INHERITED(ProjectionSpec)
 public:
   TwoDCoord	recv_off;	// offset in layer for start of recv units to begin connecting
   TwoDCoord	recv_n;		// number of receiving units to connect in each dimension (-1 for all)
@@ -92,13 +93,14 @@ public:
   virtual void	WeightsFromGausDist(float scale, float sigma);
   // #MENU assign weights as a Gaussian function of sender distance
 
-  void	UpdateAfterEdit();
   void	Initialize();
   void	Destroy()	{ };
   void	InitLinks();
   void	Copy_(const TesselPrjnSpec& cp);
   COPY_FUNS(TesselPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(TesselPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
 };
 
 class PDP_API OneToOnePrjnSpec : public ProjectionSpec {
@@ -119,6 +121,7 @@ public:
 
 class PDP_API UniformRndPrjnSpec : public ProjectionSpec {
   // Uniform random connectivity between layers -- only 'permute' stye randomness is supported, creates same number of connections per unit
+INHERITED(ProjectionSpec)
 public:
   float		p_con;		// overall probability of connection
   bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not
@@ -128,17 +131,19 @@ public:
   void 	Connect_impl(Projection* prjn);
   // Connection function for full connectivity
 
-  void	UpdateAfterEdit();	// limit p_con
   void	Initialize();
   void 	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(UniformRndPrjnSpec);
   COPY_FUNS(UniformRndPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(UniformRndPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
 };
 
 class PDP_API PolarRndPrjnSpec : public ProjectionSpec {
   // random connectivity defined as a function of distance and angle
+INHERITED(ProjectionSpec)
 public:
   enum UnitDistType {	// how to compute the distance between two units
     XY_DIST,		// X-Y axis distance between units
@@ -171,13 +176,14 @@ public:
   virtual float	GetDistProb(Projection* prjn, Unit* ru, Unit* su);
   // compute the probability for connecting two units as a fctn of distance
 
-  void	UpdateAfterEdit();	// limit p_con
   void	Initialize();
   void	Destroy()	{ };
   void	InitLinks();
   SIMPLE_COPY(PolarRndPrjnSpec);
   COPY_FUNS(PolarRndPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(PolarRndPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
 };
 
 class PDP_API SymmetricPrjnSpec : public ProjectionSpec {
@@ -192,6 +198,7 @@ public:
 
 class PDP_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
   // Script-controlled connectivity
+INHERITED(ProjectionSpec)
 public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn
   SArg_Array	s_args;		// string-valued arguments to pass to script
@@ -204,14 +211,14 @@ public:
   virtual void	Compile();
   // #BUTTON compile script from script file into internal runnable format
 
-  void	UpdateAfterEdit();
-
   void	Initialize();
   void 	Destroy();
   void	InitLinks();
   void	Copy_(const ScriptPrjnSpec& cp);
   COPY_FUNS(ScriptPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(ScriptPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
 };
 
 class PDP_API CustomPrjnSpec : public ProjectionSpec {
@@ -241,6 +248,7 @@ public:
 
 class PDP_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
   // uniform random connectivity between one-to-one groups -- only 'permute' style random connectivity is supported (same number of connections across recv units)
+INHERITED(GpOneToOnePrjnSpec)
 public:
   float		p_con;		// overall probability of connection
   bool		same_seed;	// use the same random seed each time (same connect pattern)
@@ -248,13 +256,14 @@ public:
 
   void	Connect_impl(Projection* prjn);
 
-  void	UpdateAfterEdit();	// limit p_con
   void	Initialize();
   void 	Destroy()		{ };
   void 	InitLinks();
   SIMPLE_COPY(RndGpOneToOnePrjnSpec);
   COPY_FUNS(RndGpOneToOnePrjnSpec, GpOneToOnePrjnSpec);
   TA_BASEFUNS(RndGpOneToOnePrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
 };
 
 class PDP_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
@@ -305,6 +314,7 @@ public:
 
 class PDP_API GpRndTesselPrjnSpec : public ProjectionSpec {
   // specifies patterns of groups to connect with, with random connectivity within each group -- only 'permute' style randomness is suported, producing same number of recv connections per unit
+INHERITED(ProjectionSpec)
 public:
   TwoDCoord	recv_gp_off; 	// offset for start of recv group to begin connecting
   TwoDCoord	recv_gp_n;    	// number of receiving groups to connect in each dimension (-1 for all)
@@ -348,13 +358,14 @@ public:
   virtual void	SetPCon(float p_con, int start = 0, int end = -1);
   // #MENU set p_con value for a range of send_gp_offs (default = all; end-1 = all)
 
-  void	UpdateAfterEdit();
   void	Initialize();
   void	Destroy()	{ };
   void	InitLinks();
   SIMPLE_COPY(GpRndTesselPrjnSpec);
   COPY_FUNS(GpRndTesselPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(GpRndTesselPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
 };
 
 class PDP_API TiledRFPrjnSpec : public ProjectionSpec {

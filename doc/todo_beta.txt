@@ -14,6 +14,9 @@ TO BE CLARIFIED
 --------------------------
 Brad:
 
+* in DataCalcLoop
+  src_cols folder, ProgramEditor hass an AddAllColumns button over a dropdown
+
 trac bugs of High priority or higher
 Mac and Qt4.2 bugs:
   * DND not working right anymore

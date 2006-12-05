@@ -456,9 +456,9 @@ bool DataTable::CopyColRow(int dest_col, int dest_row, const DataTable& src, int
   return true;
 }
 
-void DataTable::UpdateAfterEdit() {
+void DataTable::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   UniqueColNames();
-  inherited::UpdateAfterEdit();
 }
 
 bool DataTable::AddRow(int n) {
@@ -840,6 +840,7 @@ DataArray_impl* DataTable::NewCol_impl(DataArray_impl::ValType val_type,
     break;
   default: break; // compiler food
   }
+  rval->DataChanged(DCR_ITEM_UPDATED); // because we set name after creation
   return rval;
 }
 

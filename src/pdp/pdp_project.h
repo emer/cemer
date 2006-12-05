@@ -217,6 +217,8 @@ public:
   void	Copy_(const ProjectBase& cp);
   COPY_FUNS(ProjectBase, taProject);
   TA_BASEFUNS(ProjectBase);
+protected:
+  override void UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }

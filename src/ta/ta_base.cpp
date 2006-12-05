@@ -2863,6 +2863,7 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     else new_idx = itm_idx + 1;
     Insert(new_obj, new_idx);
     new_obj->UnSafeCopy(obj);	// always copy after inserting so there is a full path & initlinks
+    new_obj->DataChanged(DCR_ITEM_UPDATED);
     return taiClipData::ER_OK;
   }
   

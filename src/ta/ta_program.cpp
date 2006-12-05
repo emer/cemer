@@ -77,12 +77,12 @@ void ProgVar::Copy_(const ProgVar& cp) {
   desc = cp.desc;
 }
 
-void ProgVar::UpdateAfterEdit() {
+void ProgVar::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if (!cssMisc::IsNameValid(name)) {
     taMisc::Error("'", name, "' is not a valid name in css scripts; must be alphanums or underscores");
-//TODO: should revert
+//TODO: should make it valid, or do something to not leave it invalid
   }
-  inherited::UpdateAfterEdit();
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1422,6 +1422,7 @@ void ProgObjList::GetVarsForObjs() {
       else {
 	var->objs_ptr = true;	// make sure
 	var->object_type = obj->GetTypeDef();
+        var->DataChanged(DCR_ITEM_UPDATED);
       }
     }
     else {
@@ -1433,6 +1434,7 @@ void ProgObjList::GetVarsForObjs() {
 	  tv->name = nm;	// update the name
 	  tv->objs_ptr = true;	// make sure
 	  tv->object_type = obj->GetTypeDef();
+	  tv->DataChanged(DCR_ITEM_UPDATED);
 	  break;
 	}
       }
@@ -1443,6 +1445,7 @@ void ProgObjList::GetVarsForObjs() {
 	var->object_val = obj;
 	var->objs_ptr = true;
 	var->object_type = obj->GetTypeDef();
+        var->DataChanged(DCR_ITEM_UPDATED);
       }
     }
   }
