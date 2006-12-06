@@ -3001,26 +3001,27 @@ void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
 }
 
 void taDataView::DoActions(DataViewAction acts) {
-  if (acts & RESET_IMPL) {
-    Reset_impl();
-  }
   // never do any rendering during load or copying, 
-  if (taMisc::is_loading || taMisc::is_duplicating) return; 
-  // only the structural reset done if in nogui mode
+  if (!(taMisc::is_loading || taMisc::is_duplicating)) { 
   
-  if (acts & CONSTR_POST) {
-    // note: only ever called manually
-    Constr_post();
-  }
-  if (acts & UNBIND_IMPL) {
-    Unbind_impl();
+    if (acts & CONSTR_POST) {
+      // note: only ever called manually
+      Constr_post();
+    }
+    if (acts & UNBIND_IMPL) {
+      Unbind_impl();
+    }
   }
   if (acts & CLEAR_IMPL) {
     // must be mapped to do clear
     if (isMapped())
       Clear_impl();
   }
+  if (acts & RESET_IMPL) {
+    Reset_impl();
+  }
   
+  if (taMisc::is_loading || taMisc::is_duplicating) return; 
   // no rendering should ever get done if not in gui mode, incl during late shutdown
   if (taMisc::gui_active) {
     if (acts & RENDER_PRE) {
