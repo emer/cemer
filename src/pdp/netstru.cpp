@@ -288,6 +288,7 @@ void ConArray::SetType(TypeDef* cn_tp) {
 }
 
 void ConArray::Alloc(int sz) {
+  if(sz == alloc_size) return;
   if(cons)
     Free();
   alloc_size = sz;
@@ -813,7 +814,8 @@ int RecvCons::LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat f
     return taMisc::TAG_NONE;
   }
   ru->n_recv_cons += sz - cons.size;
-  cons.SetSize(sz);
+  if(cons.alloc_size == 0) cons.Alloc(sz); // loading into empty group: make room
+  cons.SetSize(sz);			   // this will give an error if sz > alloc_size
 
   for(int i=0; i < cons.size; i++) {
     int lidx;
@@ -928,7 +930,8 @@ int RecvCons::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   taMisc::indent(strm, indent,1) << "};\n";
 
   // output the units
-  taMisc::indent(strm, indent, 1) << "{ units = {";
+  taMisc::indent(strm, indent, 1) << "{ con_alloc = " << cons.alloc_size << ";\n";
+  taMisc::indent(strm, indent+1, 1) << "units = {";
   for(int i=0; i<units.size; i++) {
     if(Un(i))
       strm << Un(i)->GetMyLeafIndex() << "; ";
@@ -958,6 +961,25 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
 
   int c = taMisc::read_till_lbracket(strm);	// get past opening bracket
   if(c == EOF) return EOF;
+  c = taMisc::read_word(strm);
+  if(taMisc::LexBuf != "con_alloc") {
+    taMisc::Warning("RecvCons Expecting: 'con_alloc' in load file, got:",
+		    taMisc::LexBuf,"instead");
+    return false;
+  }
+  // skip =
+  c = taMisc::skip_white(strm);
+  if(c != '=') {
+    taMisc::Warning("Missing '=' in dump file for con_alloc in RecvCons");
+    return false;
+  }
+  c = taMisc::read_till_semi(strm);
+  int con_alloc = (int)taMisc::LexBuf;
+  if(con_alloc > cons.alloc_size) {
+    cons.Alloc(con_alloc);	// will free any existing -- ok because we lose links anyway
+    units.Alloc(con_alloc);
+  }
+
   c = taMisc::read_word(strm);
   if(taMisc::LexBuf != "units") {
     taMisc::Warning("RecvCons Expecting: 'units' in load file, got:",
@@ -998,12 +1020,17 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
     }
     if(units.size > c_count)
       units.ReplaceLinkIdx(c_count, un);
-    else {
+    else
       units.Link(un);
-      if(cons.size < units.size)
-	cons.SetSize(units.size);
-    }
     c_count++;
+  }
+
+  if(c_count <= cons.alloc_size)
+    cons.SetSize(c_count);
+  else {
+    taMisc::Warning("RecvCons Load: More connections read:", String(c_count),
+		    "than allocated:", String(cons.alloc_size),
+		    "weights will be incomplete");
   }
 
   // now read in the values

@@ -88,7 +88,8 @@ void AdaptRelNetinSpec::Initialize() {
   trg_fm_output = .15f;
   trg_lateral = 0.0f;
   trg_sum = 1.0f;
-  tol = 0.05f;
+  tol_lg = 0.05f;
+  tol_sm = 0.2f;
   rel_lrate = .05f;
 }
 
@@ -99,6 +100,17 @@ void AdaptRelNetinSpec::UpdateAfterEdit_impl() {
     taMisc::Warning("*** AdaptRelNetinSpec: target values do not sum to 1");
   }
 }
+
+bool AdaptRelNetinSpec::CheckInTolerance(float trg, float val) {
+  float tol;
+  if(trg > .25f)
+    tol = tol_lg * trg;
+  else
+    tol = tol_sm * trg;
+  if(fabsf(trg - val) <= tol) return true;
+  return false;
+}
+
 
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
@@ -2824,10 +2836,11 @@ void LeabraLayerSpec::Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork*) {
     LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
     if(prjn->trg_netin_rel < 0.0f) continue; // not set
     if(!cs->rel_net_adapt.on) continue;
-    float dst = prjn->trg_netin_rel - prjn->avg_netin_avg;
-    if(fabsf(dst) < cs->rel_net_adapt.tol) continue;
+    if(cs->rel_net_adapt.CheckInTolerance(prjn->trg_netin_rel, prjn->avg_netin_avg))
+      continue;
     cs->SetUnique("wt_scale", true);
-    cs->wt_scale.rel += cs->rel_net_adapt.rel_lrate * dst;
+    cs->wt_scale.rel += cs->rel_net_adapt.rel_lrate * 
+      (prjn->trg_netin_rel - prjn->avg_netin_avg);
     if(cs->wt_scale.rel <= 0.0f) cs->wt_scale.rel = 0.0f;
   }
 }

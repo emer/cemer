@@ -266,10 +266,10 @@ class PDP_API  ConArray : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group -- only one alloc of connections is allowed (to preserve validity of links to existing connections)
   INHERITED(taOBase)
 public:
-  int		con_size;	// #READ_ONLY #EXPERT #NO_SAVE sizeof() connection object being stored
+  int		con_size;	// #READ_ONLY #DETAIL #NO_SAVE sizeof() connection object being stored
   TypeDef*	con_type;	// type of connection object being stored
   int 		size;		// #NO_SAVE #READ_ONLY #SHOW number of elements in the array
-  int		alloc_size;	// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size, in con_size units
+  int		alloc_size;	// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size, in con_size units -- this is not incrementally allocated -- must be done in advance of making connections!
   char*		cons;		// #IGNORE the connection memory, alloc_size * con_size
 
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
@@ -284,7 +284,7 @@ public:
   void			SetType(TypeDef* cn_tp);
   // #CAT_Modify set new connection type -- resets any existing conections
   void			Alloc(int n);
-  // #CAT_Modify allocate storage for at least the given size
+  // #CAT_Modify allocate storage for exactly the given size -- frees any existing connections!
   void			Free();
   // #CAT_Modify deallocate all storage
   void			SetSize(int sz);

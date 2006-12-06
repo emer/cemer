@@ -1,6 +1,6 @@
 leabra todo list:
 
-* cons Dump_Save/Load: need to save alloc_size and alloc upon loading.  Save/Load weights??
+* add a *precise alloc* fun to ptrlist -- use for RecvCons::units
 
 * css: p voidfun = crash; bindargs seems to not be getting the void??
   e.g., p taMisc::include_paths.List();

@@ -942,6 +942,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_DataCalcSetSrcRow)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("cpy cols",
     tabMisc::root->GetTemplateInstance(&TA_DataCalcCopyCommonCols)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("script",
+    tabMisc::root->GetTemplateInstance(&TA_UserScript)));
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);

@@ -2831,7 +2831,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.001: err=0.99900001: err_sb=1: };
        savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
@@ -2841,7 +2841,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	trg_fm_output=0.15000001;
 	trg_lateral=0;
 	trg_sum=1;
-	tol=0.050000001;
+	tol_lg=0.050000001;
+	tol_sm=0.2;
 	rel_lrate=0.050000001;
        };
        dwt_thresh=0.1;
@@ -2862,7 +2863,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.001: err=0.99900001: err_sb=1: };
      savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
@@ -2872,7 +2873,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       trg_fm_output=0.15000001;
       trg_lateral=0;
       trg_sum=1;
-      tol=0.050000001;
+      tol_lg=0.050000001;
+      tol_sm=0.2;
       rel_lrate=0.050000001;
      };
     };

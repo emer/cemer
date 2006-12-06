@@ -194,8 +194,12 @@ public:
   float		trg_lateral;	// #CONDEDIT_ON_on:true (typically 0.05) target relative netinput for lateral projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1.  if other types are missing, this is increased in proportion
   float		trg_sum;	// #READ_ONLY #SHOW sum of trg values -- should be 1!
 
-  float		tol;		// #CONDEDIT_ON_on:true #DEF_0.05 tolerance from target value, below which parameters are not adapted
+  float		tol_lg;		// #CONDEDIT_ON_on:true #DEF_0.05 tolerance from target value (as a proportion of target value) on large numbers (>.25), within which parameters are not adapted
+  float		tol_sm;		// #CONDEDIT_ON_on:true #DEF_0.2 tolerance from target value (as a proportion of target value) on small numbers (<.25), within which parameters are not adapted
   float		rel_lrate;	// #CONDEDIT_ON_on:true #DEF_0.05 adpatation 'learning' rate on wt_scale.rel parameter
+
+  virtual bool	CheckInTolerance(float trg, float val);
+  // check if value is inside the tolerance from trg
 
   void	Initialize();
   void	Destroy()	{ };
