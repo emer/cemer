@@ -1,7 +1,11 @@
 Beta TODO list
 -------------
 
-test
+To Be Prioritized:
+
+* delete edits that are no longer being displayed
+  NOTE: this could irritate users!!! esp if the panel has modality, etc.
+
 
 NEW BUGS
 

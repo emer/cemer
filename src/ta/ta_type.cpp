@@ -1762,7 +1762,11 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     // at the end, also send a IU
     if (m_dbu_cnt == 0) send_iu = true;
     else suppress = true;
+  } else if (dcr == DCR_ITEM_UPDATED) {
+    // if we are already updating, then ignore IUs, since we'll send one eventually
+    if (m_dbu_cnt != 0) suppress = true;
   }
+  
   if (suppress) return;
 
   for (int i = 0; i < clients.size; ++i) {

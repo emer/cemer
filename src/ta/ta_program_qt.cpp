@@ -660,7 +660,8 @@ void iProgramEditor::GetValue() {
     typ->it->GetValue(mb_dat, base);
   mb_dat = data_el.SafeEl(1);
   if (mb_dat && md_desc) {
-    md_desc->im->GetValue(mb_dat, base);
+    bool first_diff = true;
+    md_desc->im->GetMbrValue(mb_dat, base, first_diff);
   }
   if (typ->InheritsFrom(TA_taBase)) {
     base->UpdateAfterEdit();	// hook to update the contents after an edit..
