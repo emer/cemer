@@ -131,6 +131,8 @@ void LeabraConSpec::Initialize() {
 
 void LeabraConSpec::InitLinks() {
   ConSpec::InitLinks();
+  children.SetBaseType(&TA_LeabraConSpec);
+  children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(wt_scale, this);
   taBase::Own(wt_sig, this);
   taBase::Own(lrate_sched, this);
@@ -471,6 +473,8 @@ void LeabraUnitSpec::Defaults() {
 void LeabraUnitSpec::InitLinks() {
   bias_spec.type = &TA_LeabraBiasSpec;
   inherited::InitLinks();
+  children.SetBaseType(&TA_LeabraUnitSpec);
+  children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(act, this);
   taBase::Own(spike, this);
   taBase::Own(depress, this);
@@ -1495,6 +1499,8 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
 
 void LeabraLayerSpec::InitLinks() {
   LayerSpec::InitLinks();
+  children.SetBaseType(&TA_LeabraLayerSpec);
+  children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(kwta, this);
   taBase::Own(gp_kwta, this);
   taBase::Own(tie_brk, this);

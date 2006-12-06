@@ -1,7 +1,5 @@
 leabra todo list:
 
-* netmonitor: object not using type chooser
-
 * cons Dump_Save/Load: need to save alloc_size and alloc upon loading.  Save/Load weights??
 
 * css: p voidfun = crash; bindargs seems to not be getting the void??
@@ -16,6 +14,10 @@ leabra todo list:
 
 * dataops: random patterns!
 
+* add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
+
+* add SVD/Eigenvec etc to math and then as data ops and dataprog's
+
 * create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
 docs..: add all float_RArray funs, for matricies.
 
@@ -28,8 +30,6 @@ css:
 
 -----------
 Check:
-
-* datatable - make unique col names; call for join op..
 
 -----------
 Broader issues:
@@ -50,10 +50,6 @@ lower pri:
 
 * more color highlighting in general of programs?  -- need a "special" vs. "std" flag 
   so you can see what is diff relative to the standard programs..
-
-* add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
-
-* add SVD/Eigenvec etc to math and then as data ops and dataprog's
 
 * test FILE string_stream.css: ptr = 0?
 

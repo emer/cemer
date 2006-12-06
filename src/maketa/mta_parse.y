@@ -38,8 +38,8 @@ int yylex();
 
 %}
 
-/* fifteen expected shift-reduce conflicts */
-%expect 15
+/* five expected shift-reduce conflicts */
+%expect 5
 
 %union {
   TypeDef* 	typ;
@@ -96,7 +96,6 @@ int yylex();
 %type	<typ>	templtypes
 
 /* function stuff */
-%type   <typ>   funtspec funtsmod
 %type 	<meth>	funnm regfundefn
 %type   <rval>	funargs constfun args argdefn subargdefn
 %type   <chr>	fundefn funsubdecl funsubdefn
@@ -540,10 +539,12 @@ membfunp: '(' '*' NAME ')'	{
 
 methdefn: basicmeth
         | consthsnm constfun fundefn		{ $$ = NULL; mta->thisname = false; }
-        | funtspec consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
+        | FUNTYPE consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
+        | VIRTUAL consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
         | consthsnm constfun constrlist fundefn	{ $$ = NULL; mta->thisname = false; }
         | '~' consthsnm constfun fundefn	{ $$ = NULL; mta->thisname = false; }
-        | funtspec '~' consthsnm constfun fundefn { $$ = NULL; mta->thisname = false; }
+        | FUNTYPE '~' consthsnm constfun fundefn { $$ = NULL; mta->thisname = false; }
+        | VIRTUAL '~' consthsnm constfun fundefn { $$ = NULL; mta->thisname = false; }
         | FRIEND ftype OPERATOR funargs fundefn	{ $$ = NULL; }
         | FRIEND OPERATOR funargs fundefn	{ $$ = NULL; }
         | FRIEND ftype term			{ $$ = NULL; }
@@ -572,6 +573,8 @@ basicmeth:
         | STATIC nostatmeth		{ $$ = $2; $2->is_static = true; }
         | VIRTUAL nostatmeth	{ $$ = $2;  if($2 != NULL) $2->is_virtual = true;
 	  else if(mta->cur_meth) mta->cur_meth->is_virtual = true; }
+        | FUNTYPE VIRTUAL nostatmeth	{ $$ = $3;  if($3 != NULL) $3->is_virtual = true;
+	    else if(mta->cur_meth) mta->cur_meth->is_virtual = true; }
         ;
 
 nostatmeth:
@@ -682,8 +685,8 @@ membtype:  ftype		{ mta->cur_memb_type = $1; }
         ;
 
 ftype:	  type
-        | funtspec		{ $$ = &TA_int; }
-        | funtspec type		{ $$ = $2; }
+        | FUNTYPE		{ $$ = &TA_int; }
+        | FUNTYPE type		{ $$ = $2; }
         ;
 
 tyname:	  NAME			{ $$ = new TypeDef($1); mta->type_stack.Push($$); }
@@ -774,14 +777,6 @@ templtypes:
 
 tdname:   NAME
         | TYPE			{ $$ = $1->name; }
-        ;
-
-funtspec: funtsmod
-        | funtspec funtsmod
-        ;
-
-funtsmod: FUNTYPE
-        | VIRTUAL
         ;
 
 varname:  NAME
