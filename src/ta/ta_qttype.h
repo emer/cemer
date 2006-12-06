@@ -181,16 +181,27 @@ protected:
 };
 
 
-// TODO: does anything actually use this???
 class TA_API taiTokenPtrType : public taiType {
+INHERITED(taiType)
 public:
-  bool		handlesReadOnly() { return true; } // uses a RO EditButton
+  enum Mode {
+    MD_BASE,		// taBase pointer
+    MD_SMART_PTR,	// taSmartPtr -- acts almost identical to taBase*
+    MD_SMART_REF	// taSmartRef
+  };
+  bool		handlesReadOnly() { return true; } // uses a RO tokenptr button
+  
+  taBase*	GetTokenPtr(const void* base) const; // depends on mode
+  TypeDef*	GetMinType(const void* base);
+  
+
   int		BidForType(TypeDef* td);
+  TAQT_TYPE_INSTANCE(taiTokenPtrType, taiType);
+protected:
+  Mode 		mode; // set during first GetDataRep (is garbage until then) 
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   void 		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
-
-  TAQT_TYPE_INSTANCE(taiTokenPtrType, taiType);
 };
 
 class TA_API taiTypePtr : public taiType {
@@ -313,16 +324,17 @@ public:
     MD_SMART_REF	// taSmartRef
   };
   
+  bool		handlesReadOnly() { return true; } 
   TypeDef*	GetMinType(const void* base);
   
   taBase*	GetTokenPtr(const void* base) const; // depends on mode
   
   int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 
   TAQT_MEMBER_INSTANCE(taiTokenPtrMember, taiMember);
 protected:
-  Mode 		mode; // set during bidding 
+  Mode 		mode; // set during first GetDataRep (is garbage until then) 
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void	GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
 };

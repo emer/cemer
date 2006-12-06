@@ -2909,19 +2909,21 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
     lay->setSpacing(1);
     m_but = new QPushButton(act_par);
     lay->addWidget(m_but, 1);
-    btnEdit = new QToolButton(act_par);
-    btnEdit->setText("...");
-    btnEdit->setToolTip("edit this token");
-    QMenu* mnuEdit = new QMenu(act_par); // note: ownership not transferred when set
-    btnEdit->setPopupMode(QToolButton::MenuButtonPopup);
-    mnuEdit->addAction("Edit in another panel", this, SLOT(EditPanel()) );
-    mnuEdit->addAction("Edit in a dialog", this, SLOT(EditDialog()) );
-    btnEdit->setMenu(mnuEdit);
-    btnEdit->setFixedHeight(taiM->text_height(defSize()));
-    lay->addWidget(btnEdit);
+    if (!(flags_ & flgReadOnly)) {
+      btnEdit = new QToolButton(act_par);
+      btnEdit->setText("...");
+      btnEdit->setToolTip("edit this token");
+      QMenu* mnuEdit = new QMenu(act_par); // note: ownership not transferred when set
+      btnEdit->setPopupMode(QToolButton::MenuButtonPopup);
+      mnuEdit->addAction("Edit in another panel", this, SLOT(EditPanel()) );
+      mnuEdit->addAction("Edit in a dialog", this, SLOT(EditDialog()) );
+      btnEdit->setMenu(mnuEdit);
+      btnEdit->setFixedHeight(taiM->text_height(defSize()));
+      lay->addWidget(btnEdit);
+      connect(btnEdit, SIGNAL(clicked()),
+        this, SLOT(EditPanel()) );
+    }
     SetRep(act_par);
-    connect(btnEdit, SIGNAL(clicked()),
-      this, SLOT(EditPanel()) );
   } else {
     btnEdit = NULL; // not used
     m_but = new QPushButton(gui_parent_);
@@ -2929,7 +2931,12 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   }
   taiM->FormatButton(m_but, _nilString, defSize());
   m_but->setFixedHeight(taiM->button_height(defSize()));
-  connect(m_but, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
+  // disable button if ro or no tokens available
+  if (flags_ & (flgReadOnly | flgNoTokenDlg)) {
+    m_but->setEnabled(false);
+  } else {
+    connect(m_but, SIGNAL(clicked()), this, SLOT(OpenChooser()) );
+  }
 }
 
 taiItemPtrBase::~taiItemPtrBase() {

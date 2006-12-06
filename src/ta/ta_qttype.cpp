@@ -619,26 +619,61 @@ taiData* gpiArray_Type::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
 //////////////////////////////////
 
 int taiTokenPtrType::BidForType(TypeDef* td) {
-  if((td->ptr == 1) && td->DerivesFrom(TA_taBase))
+  if(((td->ptr == 1) && td->DerivesFrom(TA_taBase)) ||
+     ((td->ptr == 0) && (td->DerivesFrom(TA_taSmartPtr) || 
+      td->DerivesFrom(TA_taSmartRef))) )
     return (taiType::BidForType(td) +1);
   return 0;
 }
 
-taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  TypeDef* npt = typ->GetNonPtrType();
-  bool ro = isReadOnly(par, host_) || (flags_ & taiData::flgReadOnly);
-  if (ro || !npt->tokens.keep) {
-    if (ro) flags_ |= taiData::flgEditOnly; // we just want the plain edit button
-    taiEditButton* ebrval = taiEditButton::New(NULL, NULL, npt, host_, par, gui_parent_, flags_);
-    return ebrval;
-  }
-  else {
-    flags_ |= (taiData::flgNullOk | taiData::flgEditOk | taiData::flgEditDialog);
-    taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, flags_);
-//nn here, do in getimage    rval->GetMenu();
-    return rval;
-  }
+taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_) 
+{
+  // setting mode now is good for rest of life
+  if (typ->DerivesFrom(TA_taBase))
+    mode = MD_BASE;
+  else if (typ->DerivesFrom(TA_taSmartPtr)) 
+    mode = MD_SMART_PTR;
+  else if (typ->DerivesFrom(TA_taSmartRef))
+    mode = MD_SMART_REF;
+  
+  TypeDef* npt = GetMinType(NULL); // only a min type
+  bool ro = isReadOnly(par, host_);
+  if (ro)
+    flags_ |= taiData::flgReadOnly;
+  else
+    flags_ |= (taiData::flgEditOk | taiData::flgEditDialog);
+  if (!npt->tokens.keep)
+    flags_ |= taiData::flgNoTokenDlg; // no dialog
+  flags_ |= (taiData::flgNullOk);
+  taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, flags_);
+  return rval;
 }
+
+TypeDef* taiTokenPtrType::GetMinType(const void* base) {
+  // the min type is at least the type of the member, but can be more derived
+  TypeDef* rval = NULL;
+  // first, we'll try to get a bare minimum type, from the member type itself
+  switch (mode) {
+  case MD_BASE: {
+    rval = typ->GetNonPtrType();
+  } break;
+  case MD_SMART_PTR: {
+    rval = taSmartPtr::GetBaseType(typ);
+  } break;
+  case MD_SMART_REF: {
+    //note: don't know anything about the type w/o an instance
+    if (base) {
+      taSmartRef& ref = *((taSmartRef*)base);
+      rval = ref.GetBaseType();
+    } else {
+      rval = &TA_taBase; 
+    }
+  } break;
+  }
+  return rval;
+}
+
 
 void taiTokenPtrType::GetImage_impl(taiData* dat, const void* base) {
   TypeDef* npt = typ->GetNonPtrType();
@@ -672,6 +707,22 @@ void taiTokenPtrType::GetValue_impl(taiData* dat, void* base) {
     else
       *((void**)base) = rval->GetValue(); */
   }
+}
+
+taBase* taiTokenPtrType::GetTokenPtr(const void* base) const {
+  taBase* tok_ptr = NULL; // this is the addr of the token, in the member
+  switch (mode) {
+  case MD_BASE: 
+  case MD_SMART_PTR:  // is binary compatible
+  {
+    tok_ptr = *((taBase**)base);
+  } break;
+  case MD_SMART_REF: {
+    taSmartRef& ref = *((taSmartRef*)base);
+    tok_ptr = ref.ptr();
+  } break;
+  }
+  return tok_ptr;
 }
 
 //////////////////////////
@@ -1018,14 +1069,14 @@ TypeDef* taiMember::GetTargetType(const void* base) {
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if (td->InheritsFrom(&TA_taBase) &&
      ((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) ||
-     ((md->type->ptr == 0) && md->type->DerivesFrom(TA_taSmartPtr)) || 
-     ((md->type->ptr == 0) && md->type->DerivesFrom(TA_taSmartRef)) )
+     ((md->type->ptr == 0) && (md->type->DerivesFrom(TA_taSmartPtr) || 
+      md->type->DerivesFrom(TA_taSmartRef))) )
      return inherited::BidForMember(md,td) + 1;
   return 0;
 }
 
-taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-  int flags_) 
+taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_) 
 {
   // setting mode now is good for rest of life
   if (mbr->type->DerivesFrom(TA_taBase))
@@ -1034,17 +1085,24 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
     mode = MD_SMART_PTR;
   else if (mbr->type->DerivesFrom(TA_taSmartRef))
     mode = MD_SMART_REF;
-  TypeDef* npt = GetMinType(NULL); // note: this will only be a min type
-  int token_flags = 0;
-  if (!mbr->HasOption("NO_NULL"))
-    token_flags |= taiData::flgNullOk;
-  if (!mbr->HasOption("NO_EDIT")) //note: #EDIT is the default
-    token_flags |= taiData::flgEditOk;
     
-  if (token_flags & taiData::flgEditOk)
-    token_flags |= taiData::flgEditDialog;
+  TypeDef* npt = GetMinType(NULL); // note: this will only be a min type
+  if (!mbr->HasOption("NO_NULL"))
+    flags_ |= taiData::flgNullOk;
+  // options that require non-readonly
+  if (!(flags_ & taiData::flgReadOnly)) {
+    if (!mbr->HasOption("NO_EDIT")) //note: #EDIT is the default
+      flags_ |= taiData::flgEditOk;
+    
+    if (flags_ & taiData::flgEditOk)
+      flags_ |= taiData::flgEditDialog;
+  }
+/*TODO: prob can't have disabling for no keep tokens, because sometimes
+  we don't know the type
+  if (!npt->tokens.keep)
+    flags_ |= taiData::flgNoTokenDlg; // no dialog */
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_,
-	token_flags);
+	flags_);
   return rval;
 }
 
@@ -1077,7 +1135,7 @@ TypeDef* taiTokenPtrMember::GetMinType(const void* base) {
   if (tmp.nonempty()) {
     if (base) {
       MemberDef* md = typ->members.FindName(tmp);
-      if (md && (md->type->ptr == 1) && md->type->InheritsFrom(&TA_TypeDef))
+      if (md && (md->type->ptr == 1) && md->type->DerivesFrom(&TA_TypeDef))
         dir_type = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
     }
   } else {

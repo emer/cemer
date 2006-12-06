@@ -3001,7 +3001,10 @@ void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
 }
 
 void taDataView::DoActions(DataViewAction acts) {
-  // never do any rendering or resetting (incl. children) during load or copying, 
+  if (acts & RESET_IMPL) {
+    Reset_impl();
+  }
+  // never do any rendering during load or copying, 
   if (taMisc::is_loading || taMisc::is_duplicating) return; 
   // only the structural reset done if in nogui mode
   
@@ -3038,9 +3041,6 @@ void taDataView::DoActions(DataViewAction acts) {
   if (acts & CLOSE_WIN_IMPL) {
     if (isMapped())
       CloseWindow_impl();
-  }
-  if (acts & RESET_IMPL) {
-    Reset_impl();
   }
 }
 
@@ -3131,7 +3131,7 @@ TAPtr DataView_List::SetOwner(TAPtr own) {
 }
 
 void DataView_List::DoAction(taDataView::DataViewAction acts) {
-  if (acts && taDataView::CONSTR_MASK) {
+  if (acts & taDataView::CONSTR_MASK) {
     for (int i = 0; i < size; ++i) {
       taDataView* dv = FastEl(i);
       dv->DoActions(acts);
