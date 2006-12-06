@@ -2943,7 +2943,7 @@ int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, ta
 //////////////////////////
 
 void taDataView::Initialize() {
-  m_data.Init(this);
+  m_data = NULL;
   data_base = &TA_taBase;
   m_dbu_cnt = 0;
   m_parent = NULL;
@@ -2952,11 +2952,19 @@ void taDataView::Initialize() {
 
 void taDataView::CutLinks() {
   m_parent = NULL;
-  m_data = NULL;
+  SetData(NULL);
   inherited::CutLinks();
 }
+ 
+void taDataView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if (taMisc::is_loading) {
+    if (m_data) 
+      m_data->AddDataClient(this);
+  }
+}
 
-void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
+void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
     ++m_dbu_cnt;
@@ -2970,7 +2978,7 @@ void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
     if (m_dbu_cnt < 0) ++m_dbu_cnt;
     else {stru = true; --m_dbu_cnt;}
     if (m_dbu_cnt == 0) {
-      int pdbu = par_dbu_cnt();
+      int pdbu = parDbuCnt();
       // we will only signal if no parent update, or if parent is data and we are structural
       if ((pdbu == 0)) {
         if (stru) {
@@ -2987,7 +2995,7 @@ void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
     }
     return;
   }
-  if ((m_dbu_cnt > 0) || (par_dbu_cnt() > 0))
+  if ((m_dbu_cnt > 0) || (parDbuCnt() > 0))
     return;
   //TODO: need to confirm that supressing UAE's is not harmful...
   if (dcr == DCR_ITEM_UPDATED)
@@ -2998,6 +3006,11 @@ void taDataView::DataDataChanged(int dcr, void* op1_, void* op2_) {
   } else {
     DataDataChanged_impl(dcr, op1_, op2_);
   }
+}
+
+void taDataView::DataLinkDestroying(taDataLink*) {
+  m_data = NULL;
+  DataDestroying();
 }
 
 void taDataView::DoActions(DataViewAction acts) {
@@ -3050,12 +3063,12 @@ String taDataView::GetLabel() const {
   return GetTypeDef()->GetLabel();
 }
 
-int taDataView::par_dbu_cnt() {
+int taDataView::parDbuCnt() {
   taDataView* par = parent();
   if (par) {
-    int pdbu = par->dbu_cnt();
+    int pdbu = par->dbuCnt();
     if (pdbu > 0) return pdbu; //optimization -- don't need to go up the chain if parent is struct
-    int ppdbu = par->par_dbu_cnt();
+    int ppdbu = par->parDbuCnt();
     int rval = abs(pdbu) + abs(ppdbu); // gives number of nestings... now is it structural or data?
     // both parent and grandparent have to not be structural, for result to be data
     if ((pdbu <= 0) && (ppdbu <= 0)) rval *= -1;
@@ -3066,14 +3079,17 @@ int taDataView::par_dbu_cnt() {
 
 void taDataView::SetData(taBase* ta) {
   if (m_data == ta) return;
-  m_data = NULL;
+  if (m_data) {
+    m_data->RemoveDataClient(this);
+    m_data = NULL;
+  }
   if (!ta) return;
   if (!ta->GetTypeDef()->InheritsFrom(data_base)) {
     taMisc::Warning("*** taDataView::m_data must inherit from ", data_base->name);
   } else {
+    ta->AddDataClient(this);
     m_data = ta;
   }
-//no!shouldn't be automatic  UpdateAfterEdit();
 }
 
 TAPtr taDataView::SetOwner(TAPtr own) {
@@ -3082,21 +3098,6 @@ TAPtr taDataView::SetOwner(TAPtr own) {
   return rval;
 }
 
-void taDataView::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
-  if (ref == &m_data) {
-    DataDestroying();
-  } else
-    inherited::SmartRef_DataDestroying(ref, obj);
-}
-
-void taDataView::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
-    int dcr, void* op1_, void* op2_)
-{
-  if (ref == &m_data) {
-    DataDataChanged(dcr, op1_, op2_);
-  } else
-    inherited::SmartRef_DataChanged(ref, obj, dcr, op1_, op2_);
-}
 
 //////////////////////////////////
 //   DataView_List	 	//

@@ -1,34 +1,41 @@
-debugging remove units crashing
+rejig of batch notifies
 
-ex. leabra_ra.proj
-set Input from 5x5 to 5x4 then Build net
+currently:
 
-* occurs when you do the network rebuild, in the layer rebuild
-happens on the EnforceLeaves(20) for the layer
+all are passed to dl which sends to all clients
 
-0x01c4731c in taSmartRef::DataLinkDestroying (this=0x202a7e20, dl=0x202c1c20) at ta_base.cpp:1853
-1853        m_own->UpdateAfterEdit();
-(gdb) ba
-#0  0x01c4731c in taSmartRef::DataLinkDestroying (this=0x202a7e20, dl=0x202c1c20) at ta_base.cpp:1853
-#1  0x01d4980a in taDataLink::DataDestroying (this=0x202c1c20) at ta_type.cpp:1742
-#2  0x01c415e8 in taBase::Destroying (this=0x202ef7f0) at ta_base.cpp:435
-#3  0x02064aec in taList_impl::El_disOwn_ (this=0xc1c0da4, it=0x202ef7f0) at ./../ta/ta_base.h:1305
-#4  0x01c76526 in taPtrList_impl::RemoveIdx (this=0xc1c0db4, i=24) at ta_list.cpp:281
-#5  0x01c40f6c in taList_impl::RemoveIdx (this=0xc1c0da4, i=24) at ta_base.cpp:2541
+DataView accepts the batch st/ends, and tracks them
 
-the m_own is a UnitView object
+Other clients either ignore the starts, and accept ends,
+or (like the DataTable bug in progeditor) ignore them
 
-problem is that the 
-m_own->SmartRef_DataDestroying
-actually causes the UnitView to be removed from the parent object, and destroyed;
-therefore, when we get to the UAE call, it is destroyed
 
-proposed fix:
+Issues/Requirements
 
-* make temp copy of m_ptr
-* NULL the m_ptr before notifying the client
-* call client, passing the temp m_ptr, in case it needs it
-* don't do anything after this call
+* for general notifies, we can't use the parent approach
+  used by dataviews, because parent updates don't necessarily
+  cause updates to children
 
-* in taBase, put a default behavior of UAE in a base handler
+* need to redo in a way that is compatible with 
+  legacy DataView (dv) stuff (ie should be transparent)
+
+
+proposal:
+
+* move the tracking stuff from Dataview to dl
+* add a parent() guy to dl that will also be legacy
+  compatible with what Dataview was doing
+* since dv didn't do anything with the starts and
+  non-0 ends, new dl approach doesn't need to do anything
+* add end-of-batch ops
+* dv looks for eob ops, makes the calls it used to do
+
+* dlc should also specify if it wants eobs turned
+  into item_updated (default) or sent 
+
+result:
+
+
+
+New:
 

@@ -1421,7 +1421,7 @@ public:
   However, if a dataobject is destroying, it will destroy all its views
 
 */
-class TA_API taDataView: public taOBase, public virtual IDataLinkProxy {
+class TA_API taDataView: public taOBase, public virtual IDataLinkClient {
   // #NO_TOKENS ##CAT_Display base class for views of an object
 INHERITED(taOBase)
 friend class DataView_List;
@@ -1448,16 +1448,16 @@ public:
 #endif
   };
   
-  taSmartRef		m_data;		// #READ_ONLY data -- referent of the item -- the data
+  taBase*		m_data;		// #READ_ONLY #NO_SET_POINTER data -- referent of the item (not ref'ed)
   TypeDef*		data_base;	// #READ_ONLY #NO_SAVE Minimum type for data object
 
-  taBase*		data() {return m_data;} // subclasses usually redefine a strongly typed version
+  taBase*		data() const {return m_data;} // subclasses usually redefine a strongly typed version
   void 			SetData(taBase* ta); // #MENU set the data to which this points -- must be subclass of data_base
-  int			dbu_cnt() {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
+  int			dbuCnt() {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
   inline int		index() const {return m_index;} // convenience accessor
   virtual bool		isMapped() const {return true;} // for DataView classes, or anything w/ separate gui classes that get created distinct from view hierarchy
   virtual MemberDef*	md() const {return NULL;} // ISelectable property member stub
-  virtual int		par_dbu_cnt(); // dbu of parent(s); note: only sign is accurate, not necessarily value (optimized)
+  virtual int		parDbuCnt(); // dbu of parent(s); note: only sign is accurate, not necessarily value (optimized)
   inline bool		hasParent() const {return (m_parent);} // encapsulated way to check for a par
   taDataView*		parent() const {return m_parent;} // typically lex override with strong type
   virtual TypeDef*	parentType() const {return &TA_taDataView;} // the controlling parent -- note that when in a list, this is the list owner, not the list; overrride for strong check in SetOwner
@@ -1479,6 +1479,7 @@ public:
   virtual void		DoActions(DataViewAction acts); // do the indicated action(s) if safe in this context (ex loading, whether gui exists, etc.); par only needed when a _impl needs it
   
   virtual void		ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
+  virtual void		DataDestroying() {} // called when data is destroying (m_data will already be NULL)
   
   int	GetIndex() const {return m_index;}
   void	SetIndex(int value) {m_index = value;}
@@ -1486,32 +1487,22 @@ public:
   void	CutLinks();
   TA_BASEFUNS(taDataView)
 
-public: // IDataLinkProxy
+public: // IDataLinkCLient
   override void*	This() {return (void*)this;}
 //in taBase  virtual TypeDef*	GetTypeDef() const;
-#ifndef TA_NO_GUI
-  override taiDataLink*	link() const {return m_data.link();}
-#else
-  override taDataLink*	link() const {return m_data.link();}
-#endif
-//  virtual TypeDef*	GetDataTypeDef() const; 
-  
-public: // pseudo-IDataLinkClient-ish interface
-  virtual TypeDef*	GetDataTypeDef() const {return m_data->GetTypeDef();} // TypeDef of the data
-  virtual void		DataDataChanged(int dcr, void* op1, void* op2);
+  override TypeDef*	GetDataTypeDef() const 
+    {return (m_data) ? m_data->GetTypeDef() : &TA_taBase;} // TypeDef of the data
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
    // called when the data item has changed, esp. ex lists and groups; dispatches to the DataXxx_impl's
-  virtual void		DataDestroying() {}
+  override void		DataLinkDestroying(taDataLink* dl); // called by DataLink when destroying; it will remove 
 
 protected:
   int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
   int			m_index; // for when in a list
-  // NOTE: all Dataxxx_impl are supressed if dbu_cnt or par_dbu_cnt <> 0 -- see ta_type.h for detailed rules
+  // NOTE: all Dataxxx_impl are supressed if dbuCnt or parDbuCnt <> 0 -- see ta_type.h for detailed rules
   mutable taDataView* 	m_parent; // autoset on SetOwner, type checked as well
   
-  override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
-  override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
-    int dcr, void* op1_, void* op2_);
-  
+  override void		UpdateAfterEdit_impl();
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.

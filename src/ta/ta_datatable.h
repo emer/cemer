@@ -892,7 +892,7 @@ friend class DataTableViewSpec;
 public:
   bool			sticky; // #DEF_false set this to retain this colspec even if its column deletes
 
-  DataArray_impl*	dataCol() const {return (DataArray_impl*)m_data.ptr();}
+  DataArray_impl*	dataCol() const {return (DataArray_impl*)data();}
   void			setDataCol(DataArray_impl* value, bool first_time = false);
   
   DATAVIEW_PARENT(DataTableViewSpec)
@@ -934,7 +934,7 @@ public:
   FontSpec		font; // font for text (can generally be customized for cols etc.)
   DataColViewSpecs	col_specs;
   
-  DataTable*		dataTable() const {return (DataTable*)m_data.ptr();}
+  DataTable*		dataTable() const {return (DataTable*)data();}
   virtual void		setDataTable(DataTable* dt);
     // #MENU #NO_NULL build the spec from the given table
   

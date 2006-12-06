@@ -137,7 +137,7 @@ public:
   override void 	Close(); // usually delegates to parent->CloseChild
   virtual void 		CloseChild(taDataView* child) {}
   virtual void		BuildAll() {} // subclass-dependent operation -- reinvoked after major update
-  override void		DataDataChanged(int dcr, void* op1, void* op2);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
   override void		DataDestroying(); // called by data when it is destroying -- usual action is to destroy ourself
 //nn  void			EditAction(int ea); // do the edit action; invokes _impl
 //nn?  virtual void		InsertItem(T3DataView* item, T3DataView* after); // used by child's constructor

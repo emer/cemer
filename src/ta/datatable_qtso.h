@@ -67,7 +67,7 @@ public: //
   override void		setDirty(bool value); // set for all changes on us or below
   inline int		rows() const {return m_rows;}
   virtual DataTableViewSpec* viewSpecBase() const 
-    {return (DataTableViewSpec*)m_data.ptr();}
+    {return (DataTableViewSpec*)data();}
   bool			isVisible() const; // gui_active, mapped and display_on
   
   virtual void		ViewRangeChanged(); // called when view_range changed (override _impl to implement)

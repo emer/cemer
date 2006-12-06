@@ -1715,6 +1715,7 @@ taDataLink::taDataLink(void* data_, taDataLink* &link_ref_)
   m_data = data_;
   m_link_ref = &link_ref_;
   link_ref_ = this;
+  m_dbu_cnt = 0;
 }
 
 taDataLink::~taDataLink() {
@@ -1741,10 +1742,33 @@ void taDataLink::DataDestroying() { //note: linklist will automatically remove u
 }
 
 void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
-  IDataLinkClient* dlc;
+  bool send_iu = false; // set true if we should send a synthetic ITEM_UPDATED
+  bool suppress = false; // set it if we should supress forwarding
+  if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
+    // only forward the first one (ex some clients do a reset step 
+    suppress = (m_dbu_cnt != 0);
+    if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
+    ++m_dbu_cnt;
+  } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
+    suppress = (m_dbu_cnt != 0);
+    if (m_dbu_cnt > 0) ++m_dbu_cnt;
+    else               --m_dbu_cnt;
+  } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
+    bool stru = false;
+    if (m_dbu_cnt < 0) ++m_dbu_cnt;
+    else {stru = true; --m_dbu_cnt;
+      dcr = DCR_STRUCT_UPDATE_END; // force to be struct end, in case we notify
+    }
+    // at the end, also send a IU
+    if (m_dbu_cnt == 0) send_iu = true;
+    else suppress = true;
+  }
+  if (suppress) return;
+
   for (int i = 0; i < clients.size; ++i) {
-    dlc = clients.FastEl(i);
+    IDataLinkClient* dlc = clients.FastEl(i);
     dlc->DataDataChanged(this, dcr, op1_, op2_);
+    if (send_iu) dlc->DataDataChanged(this, DCR_ITEM_UPDATED, NULL, NULL);
   }
 }
 
@@ -4621,14 +4645,18 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	  }
 	}
       }
-      if((memb_def != NULL) && memb_def->HasOption("OWN_POINTER")) {
+      if (memb_def  && memb_def->HasOption("OWN_POINTER")) {
 	if(par == NULL)
 	  taMisc::Warning("*** NULL parent for owned pointer:",val);
 	else
 	  taBase::OwnPointer((TAPtr*)base, bs, (TAPtr)par);
       }
-      else
-	taBase::SetPointer((TAPtr*)base, bs);
+      else {
+        if (memb_def && memb_def->HasOption("NO_SET_POINTER"))
+	  (*(TAPtr*)base) = bs;
+        else
+	  taBase::SetPointer((TAPtr*)base, bs);
+      }
     }
     else
 #endif
