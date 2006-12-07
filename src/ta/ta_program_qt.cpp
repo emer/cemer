@@ -908,7 +908,11 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_MethodCall)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("prog()",
     tabMisc::root->GetTemplateInstance(&TA_ProgramCall)));
-  tb->AddSeparator(sec);
+
+  ////////////////////////////////////////////////////////////////////////////
+  //		Prog2
+  sec = tb->AssertSection("Prog2");
+  //  tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("static()",
     tabMisc::root->GetTemplateInstance(&TA_StaticMethodCall)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("math()",
@@ -930,7 +934,11 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_PrintVar)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("comment",
     tabMisc::root->GetTemplateInstance(&TA_Comment)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("stop/step",
+    tabMisc::root->GetTemplateInstance(&TA_StopStepPoint)));
 
+  ////////////////////////////////////////////////////////////////////////////
+  //		Data
   sec = tb->AssertSection("Data"); //note: need to keep it short
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data proc()",
     tabMisc::root->GetTemplateInstance(&TA_DataProcCall)));

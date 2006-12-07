@@ -1,6 +1,6 @@
 // ta_Dump File v2.0
 Program .projects[0].programs[0] { 
-  ProgObjList @.objs = [3] {
+  ProgObjList @.objs = [4] {
     DataTable @[0] { 
       DataTableCols @.data = [6] {
 	int_Data @[0] { };
@@ -35,15 +35,30 @@ Program .projects[0].programs[0] {
 	double_Data @[6] { };
       };
     };
+    DataTable @[3] { 
+      DataTableCols @.data = [9] {
+	int_Data @[0] { };
+	int_Data @[1] { };
+	int_Data @[2] { };
+	String_Data @[3] { };
+	int_Data @[4] { };
+	int_Data @[5] { };
+	double_Data @[6] { };
+	double_Data @[7] { };
+	float_Data @[8] { };
+      };
+    };
   };
 
-  ProgVar_List @.vars = [3] {
+  ProgVar_List @.vars = [5] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
   };
 
-  ProgEl_List @.prog_code = [2] {
+  ProgEl_List @.prog_code = [3] {
     DataCalcLoop @[0] { 
       DataOpList @.src_cols = [3] {
 	DataOpEl @[0] { };
@@ -56,7 +71,7 @@ Program .projects[0].programs[0] {
 	DataOpEl @[1] { };
       };
 
-      ProgEl_List @.loop_code = [7] {
+      ProgEl_List @.loop_code = [8] {
 	UserScript @[0] { };
 	DataCalcSetSrcRow @[1] { };
 	IfContinue @[2] { };
@@ -64,6 +79,7 @@ Program .projects[0].programs[0] {
 	DataCalcCopyCommonCols @[4] { };
 	UserScript @[5] { };
 	DataCalcSetDestRow @[6] { };
+	StopStepPoint @[7] { };
       };
     };
     DataGroupProg @[1] { 
@@ -75,6 +91,11 @@ Program .projects[0].programs[0] {
 	DataGroupEl @[4] { };
 	DataGroupEl @[5] { };
 	DataGroupEl @[6] { };
+      };
+    };
+    DataSelectRowsProg @[2] { 
+      DataOpList @.ops = [1] {
+	DataSelectEl @[0] { };
       };
     };
   };
@@ -255,6 +276,78 @@ Program .projects[0].programs[0] {
     };
    };
   };
+  DataTable @[3] {
+   name="SelectRowsOutput";
+   save_data=1;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+    int_Data @[0] {
+     name="batch";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
+    };
+    int_Data @[1] {
+     name="epoch";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;0;1;1;2;2;3;3;4;4;5;5;6;6;7;7;8;8;9;9;10;10;11;11;     };
+    };
+    int_Data @[2] {
+     name="trial";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;4;3;4;1;5;0;2;0;3;3;5;0;5;0;5;2;5;2;3;1;5;1;5;     };
+    };
+    String_Data @[3] {
+     name="trial_name";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] "rdiag";"ldiag";"ldiag";"rdiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"rdiag";"ldiag";"rdiag";"ldiag";"ldiag";"rdiag";     };
+    };
+    int_Data @[4] {
+     name="phase_no";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;     };
+    };
+    int_Data @[5] {
+     name="cycle";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;     };
+    };
+    double_Data @[6] {
+     name="sse";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 3.3197;5.39849;2.83653;3.05548;2.4207;2.40108;2.03237;1.31166;1.75684;0.463218;0;1.70816;0;1.11532;0;0.960935;0;0.570453;0.509126;0;0;0;0;0;     };
+    };
+    double_Data @[7] {
+     name="ext_rew";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
+    };
+    float_Data @[8] {
+     name="testy";
+     pin=0;
+     is_matrix=1;
+     cell_geom{ 5;5;     };
+     ar{ [5 5 24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
+    };
+   };
+  };
  };
  args {
   name=;
@@ -287,6 +380,21 @@ Program .projects[0].programs[0] {
    object_type=DataTable;
    object_val=.projects[0].programs[0].objs[2]$2$;
    objs_ptr=1;
+   desc=;
+  };
+  ProgVar @[3] {
+   name="SelectRowsOutput";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[0].objs[3]$3$;
+   objs_ptr=1;
+   desc=;
+  };
+  ProgVar @[4] {
+   name="sel_var";
+   var_type=T_String;
+   string_val="diag";
+   objs_ptr=0;
    desc=;
   };
  };
@@ -382,6 +490,10 @@ d_sse = s_sse * 5.0;
      src_data=$0$;
      dest_data=$1$;
     };
+    StopStepPoint @[7] {
+     desc=;
+     off=0;
+    };
    };
   };
   DataGroupProg @[1] {
@@ -424,6 +536,28 @@ d_sse = s_sse * 5.0;
       agg {op=SEM: count={rel=LESSTHANOREQUAL: val=0: }: };
      };
     };
+   };
+  };
+  DataSelectRowsProg @[2] {
+   desc=;
+   off=0;
+   src_data=$0$;
+   dest_data=$3$;
+   select_spec {
+    name="DataSelectSpec_0";
+    ops {
+     name=;
+     el_typ=DataSelectEl;
+     el_def=0;
+     DataSelectEl @[0] {
+      col_name="trial_name";
+      rel=CONTAINS;
+      use_var=1;
+      cmp 9 0="diag";
+      var=.projects[0].programs[0].vars[4]$4$;
+     };
+    };
+    comb_op=AND;
    };
   };
  };

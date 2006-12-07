@@ -187,12 +187,17 @@ void DataGroupSpec::Initialize() {
 
 void DataSelectEl::Initialize() {
   rel = EQUAL;
+  use_var = false;
 }
 
 String DataSelectEl::GetDisplayName() const {
-  return col_name + " " + 
-    GetTypeDef()->GetEnumString("Relation", rel)+ " " +
-    cmp.toString();
+  String rval = col_name + " " + 
+    GetTypeDef()->GetEnumString("Relation", rel)+ " ";
+  if(use_var && var)
+    rval += var->name;
+  else
+    rval += cmp.toString();
+  return rval;
 }
 
 bool DataSelectEl::Eval(const Variant& val) {
@@ -830,35 +835,32 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
   }
   dest->UniqueColNames();	// make them unique!
   for(int row=0;row<src_a->rows;row++) {
-    dest->AddBlankRow();
-    for(int i=0;i<src_a->data.size; i++) {
-      //    if(i == spec->col_a.col_idx) continue; // include first guy..
-      DataArray_impl* sda = src_a->data.FastEl(i);
-      DataArray_impl* nda = dest->data.FastEl(i); // todo: change above if uncommented
-      nda->CopyFromRow(row, *sda, row); // just copy
-    }
     DataArray_impl* sda = src_a->data.FastEl(spec->col_a.col_idx);
     Variant val_a = sda->GetValAsVar(row);
     DataArray_impl* sdb = src_b->data.FastEl(spec->col_b.col_idx);
-    int b_row = -1;
-    // todo: move this to FindVariant() in matrix/datatable?
+    bool got_one = false;
     for(int j=0;j<sdb->rows();j++) {
       Variant val_b = sdb->GetValAsVar(j);
       if(val_a == val_b) {
-	b_row = j; break;
+	got_one = true;
+	dest->AddBlankRow();
+	for(int i=0;i<src_a->data.size; i++) {
+	  //    if(i == spec->col_a.col_idx) continue; // include first guy..
+	  DataArray_impl* sda = src_a->data.FastEl(i);
+	  DataArray_impl* nda = dest->data.FastEl(i); // todo: change above if uncommented
+	  nda->CopyFromRow(row, *sda, row); // just copy
+	}
+	int col_idx = a_cols;
+	for(int i=0; i < src_b->data.size; i++) {
+	  if(i == spec->col_b.col_idx) continue; // don't include common index
+	  DataArray_impl* sdb = src_b->data.FastEl(i);
+	  DataArray_impl* nda = dest->data.FastEl(col_idx);
+	  nda->CopyFromRow(row, *sdb, j); // just copy
+	  col_idx++;
+	}
       }
     }
-    if(b_row >= 0) {		// copy it over
-      int col_idx = a_cols;
-      for(int i=0; i < src_b->data.size; i++) {
-	if(i == spec->col_b.col_idx) continue; // don't include common index
-	DataArray_impl* sdb = src_b->data.FastEl(i);
-	DataArray_impl* nda = dest->data.FastEl(col_idx);
-	nda->CopyFromRow(row, *sdb, b_row); // just copy
-	col_idx++;
-      }    
-    }
-    else {
+    if(!got_one) {
       taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a, "not found in column",
 		      spec->col_b.col_name, "of src_b:", src_b->name);
     }
@@ -1059,10 +1061,17 @@ void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
-  rval += cssMisc::Indent(indent_level+1) +
-    "taDataProc::SelectRows(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
-  rval += cssMisc::Indent(indent_level) + "}\n";
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String rval = il + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  for(int i=0;i<select_spec.ops.size; i++) {
+    DataSelectEl* el = (DataSelectEl*)select_spec.ops[i];
+    if(el->use_var && el->var) {
+      rval += il1 + "dsp->select_spec.ops[" + String(i) + "].cmp = " + el->var->name + ";\n";
+    }
+  }
+  rval += il1 + "taDataProc::SelectRows(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
+  rval += il + "}\n";
   return rval; 
 }
 

@@ -557,6 +557,21 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
+class TA_API StopStepPoint: public ProgEl { 
+  // this is a point in the program where the Stop button will stop execution, and the Step button will act for single stepping (e.g., place inside of a loop) -- otherwise this only happens at the end of programs
+INHERITED(ProgEl)
+public:
+  override String	GetDisplayName() const;
+  TA_SIMPLE_BASEFUNS(StopStepPoint);
+
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
 class TA_API Function: public ProgEl { 
   // a user-defined function that can be called within the program where it is defined -- must live in the functions of a Program, not in init_code or prog_code 
 INHERITED(ProgEl)
@@ -709,11 +724,13 @@ public:
   virtual void  Init();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT set the program state back to the beginning
   virtual void  Run();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP run the programs
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP run the program
   virtual void	Step();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP step the program, at the selected step level
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP step the program, at the previously selected step level (see SetAsStep or the program group control panel)
   virtual void	Stop();
-  // #BUTTON #GHOST_OFF_run_state:RUN stop the running programs
+  // #BUTTON #GHOST_OFF_run_state:RUN stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
+  virtual void	Abort();
+  // #BUTTON #GHOST_OFF_run_state:RUN stop the current program immediately, regardless of where it is
   
   virtual void	SetAsStep();
   // #BUTTON set this program as the step level for this set of programs -- this is the grain size of stepping when the Step button is pressed (for a higher-level program)

@@ -184,7 +184,9 @@ public:
   };
 
   Relation	rel;		// relation of column to expression for selection
-  Variant	cmp;		// compare value of column to this comparison value
+  bool		use_var;	// if true, use a program variable to specify the selection value (only used if this is embedded in a DataSelectRowsProg program element)
+  Variant	cmp;		// #CONDEDIT_ON_use_var:false literal compare value of column to this comparison value
+  ProgVarRef	var;		// #CONDEDIT_ON_use_var:true variable that contains the comparison value (only used if this is embedded in a DataSelectRowsProg program element)
 
   bool	Eval(const Variant& val); // evaluate expression
 

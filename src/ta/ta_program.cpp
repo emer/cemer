@@ -1149,7 +1149,7 @@ String PrintVar::GetDisplayName() const {
 
 
 //////////////////////////
-//      Comment	//
+//      Comment 	//
 //////////////////////////
 
 void Comment::Initialize() {
@@ -1168,6 +1168,24 @@ String Comment::GetDisplayName() const {
   String rval;
   rval += "//// " + comment; 
   return rval;
+}
+
+
+//////////////////////////
+//      StopStepPoint 	//
+//////////////////////////
+
+void StopStepPoint::Initialize() {
+}
+
+const String StopStepPoint::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level) + "StopCheck(); // check for Stop or Step button\n";
+  return rval;
+}
+
+String StopStepPoint::GetDisplayName() const {
+  return "Stop/Step Point";
 }
 
 
@@ -1774,6 +1792,10 @@ void Program::SetAsStep() {
 
 void Program::Stop() {
   stop_req = true;
+}
+
+void Program::Abort() {
+  Stop_impl();
 }
 
 void Program::Stop_impl() {

@@ -471,11 +471,11 @@ void NetMonItem::UpdateAfterEdit_impl() {
   if (!taMisc::is_loading) {
     if(name_style == MY_NAME) {
       if(name.empty() || name.contains(GetTypeDef()->name)) {
-	name = GetObjName(object) + "." + variable;
+	name = GetObjName(object) + "_" + variable;
       }
     }
     else {			// AUTO_NAME = always update!
-      name = GetObjName(object) + "." + variable;
+      name = GetObjName(object) + "_" + variable;
     }
     ScanObject();
   }
@@ -508,7 +508,7 @@ String NetMonItem::GetObjName(TAPtr obj) {
       if(ug->owner == lay) return nm; // synoymous with layer
       int idx = lay->units.gp.FindEl(ug);
       if(idx >= 0)
-	return nm + ".gp[" + String(idx) + "]";
+	return nm + "_gp_" + String(idx) + "_";
     }
   }
   else if (obj->InheritsFrom(TA_RecvCons)) {
@@ -516,7 +516,7 @@ String NetMonItem::GetObjName(TAPtr obj) {
     if(cg->prjn && cg->prjn->from) {
       Unit* un = GET_OWNER(obj, Unit);
       if (un) {
-	return GetObjName(un) + ".r." + taMisc::StringMaxLen(cg->prjn->from->name, max_name_len);
+	return GetObjName(un) + "_r_" + taMisc::StringMaxLen(cg->prjn->from->name, max_name_len);
       }
     }
   }
@@ -525,7 +525,7 @@ String NetMonItem::GetObjName(TAPtr obj) {
     if(cg->prjn && cg->prjn->layer) {
       Unit* un = GET_OWNER(obj, Unit);
       if (un) {
-	return GetObjName(un) + ".s." + taMisc::StringMaxLen(cg->prjn->layer->name, max_name_len);
+	return GetObjName(un) + "_s_" + taMisc::StringMaxLen(cg->prjn->layer->name, max_name_len);
       }
     }
   }
@@ -533,7 +533,7 @@ String NetMonItem::GetObjName(TAPtr obj) {
   // go with the default name (display name takes care of lots of the logic already)
   String nm = obj->GetDisplayName();
   if(nm.contains('.')) {
-    nm = taMisc::StringMaxLen(nm.before('.'), max_name_len) + "." + 
+    nm = taMisc::StringMaxLen(nm.before('.'), max_name_len) + "_" + 
       taMisc::StringMaxLen(nm.after('.'), max_name_len);
   }
   else if(nm.contains(' ')) {
@@ -558,7 +558,9 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
       return variable;
     base_nm = GetObjName(obj);
   }
-  return base_nm + "." + variable;
+  String rval = base_nm + "_" + variable;
+  rval.gsub('.', '_');		// keep it clean for css var names
+  return rval;
 }
 
 MatrixChannelSpec* NetMonItem::AddMatrixChan(const String& valname, ValType vt,
