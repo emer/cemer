@@ -5,21 +5,11 @@ leabra todo list:
 * css: p voidfun = crash; bindargs seems to not be getting the void??
   e.g., p taMisc::include_paths.List();
 
-* dataops: group mean/sse: int columns not being processed properly: convert to double?
-  also support float
-  also check on matrix data: does it just work?
-
- * Small suggestion, there should be a "Last" and "First" operator in the Group
-   operations.  Not urgent but I know I've used these a lot in the past.
-
 * dataops: random patterns!
-
-* add MEDIAN, MODE, FIRST, LAST, to vec_ and Aggregate; mv agg to appropriate place
 
 * add SVD/Eigenvec etc to math and then as data ops and dataprog's
 
-* create MathFuns library with all kinds of math-related things in it, incl lots of #CAT
-docs..: add all float_RArray funs, for matricies.
+* mathfuns: add all float_RArray funs, for matricies.
 
 -----------
 Program issues

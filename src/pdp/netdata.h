@@ -228,10 +228,9 @@ public:
   };
 
   TypeDef*		object_type;	// #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
-  taSmartRef 		object;		// #TYPE_ON_object_type the network object being monitored
+  taSmartRef 		object;		// #TYPE_ON_object_type #NO_SCOPE the network object being monitored
   MemberDef*		member_var;	// #TYPE_ON_object_type #NULL_OK member variable to monitor -- you can also just type variable for non-members (r.wt, etc)
   String        	variable;	// Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
-  ValType		real_val_type;	 // type of values to create for real-valued monitored data (note: double has more support in the math library)
   NameStyle		name_style;	 // how to name the columns/channels generated from this data?
   int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
 

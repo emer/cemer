@@ -3063,17 +3063,11 @@ LeabraProject .projects[0] {
       };
 
       Layer_Group @.layers = [24] {
-	LeabraLayer @[0] { 
-	  Unit_Group @.units = [1] {
-	  };
-	};
+	LeabraLayer @[0] { };
 	LeabraLayer @[1] { 
 	  Projection_Group @.projections = [2] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
-	  };
-
-	  Unit_Group @.units = [4] {
 	  };
 	};
 	LeabraLayer @[2] { 
@@ -3082,18 +3076,12 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[1] { };
 	    LeabraPrjn @[2] { };
 	  };
-
-	  Unit_Group @.units = [4] {
-	  };
 	};
 	LeabraLayer @[3] { 
 	  Projection_Group @.projections = [3] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
 	    LeabraPrjn @[2] { };
-	  };
-
-	  Unit_Group @.units = [4] {
 	  };
 	};
 	LeabraLayer @[4] { 
@@ -3102,18 +3090,12 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[1] { };
 	    LeabraPrjn @[2] { };
 	  };
-
-	  Unit_Group @.units = [4] {
-	  };
 	};
 	LeabraLayer @[5] { 
 	  Projection_Group @.projections = [3] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
 	    LeabraPrjn @[2] { };
-	  };
-
-	  Unit_Group @.units = [1] {
 	  };
 	};
 	LeabraLayer @[6] { 
@@ -3123,233 +3105,17 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[2] { };
 	    LeabraPrjn @[3] { };
 	  };
-
-	  Unit_Group @.units = [225] {
-	  };
 	};
-	LeabraLayer @[7] { 
-	  Unit_Group @.units = [1872] {
-	  };
-	};
-	LeabraLayer @[8] { 
-	  Unit_Group @.units = [1872] {
-	  };
-	};
-	LeabraLayer @[9] { 
-	  Unit_Group @.units = [4212] {
-	  };
-	};
-	LeabraLayer @[10] { 
-	  Unit_Group @.units = [4212] {
-	  };
-	};
-	LeabraLayer @[11] { 
-	  Unit_Group @.units = [1053] {
-	  };
-	};
-	LeabraLayer @[12] { 
-	  Unit_Group @.units = [1053] {
-	  };
-	};
+	LeabraLayer @[7] { };
+	LeabraLayer @[8] { };
+	LeabraLayer @[9] { };
+	LeabraLayer @[10] { };
+	LeabraLayer @[11] { };
+	LeabraLayer @[12] { };
 	LeabraLayer @[13] { 
 	  Projection_Group @.projections = [2] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
-	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [16] { 
-	    };
 	  };
 	};
 	LeabraLayer @[14] { 
@@ -3357,401 +3123,11 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
 	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [16] { 
-	    };
-	  };
 	};
 	LeabraLayer @[15] { 
 	  Projection_Group @.projections = [2] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
-	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [16] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [16] { 
-	    };
 	  };
 	};
 	LeabraLayer @[16] { 
@@ -3761,18 +3137,9 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[2] { };
 	    LeabraPrjn @[3] { };
 	  };
-
-	  Unit_Group @.units = [110] {
-	  };
 	};
-	LeabraLayer @[17] { 
-	  Unit_Group @.units = [110] {
-	  };
-	};
-	LeabraLayer @[18] { 
-	  Unit_Group @.units = [110] {
-	  };
-	};
+	LeabraLayer @[17] { };
+	LeabraLayer @[18] { };
 	LeabraLayer @[19] { 
 	  Projection_Group @.projections = [6] {
 	    LeabraPrjn @[0] { };
@@ -3782,458 +3149,26 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[4] { };
 	    LeabraPrjn @[5] { };
 	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [1] { 
-	    };
-	  };
 	};
 	LeabraLayer @[20] { 
 	  Projection_Group @.projections = [2] {
 	    LeabraPrjn @[0] { };
 	    LeabraPrjn @[1] { };
 	  };
-
-	  Unit_Group @.units = [270] {
-	  };
 	};
 	LeabraLayer @[21] { 
 	  Projection_Group @.projections = [1] {
 	    LeabraPrjn @[0] { };
 	  };
-
-	  Unit_Group @.units = [0] {
-	    LeabraUnit_Group @.gp[0] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[1] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[2] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[3] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[4] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[5] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[6] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[7] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[8] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[9] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[10] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[11] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[12] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[13] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[14] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[15] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[16] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[17] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[18] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[19] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[20] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[21] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[22] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[23] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[24] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[25] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[26] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[27] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[28] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[29] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[30] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[31] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[32] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[33] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[34] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[35] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[36] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[37] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[38] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[39] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[40] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[41] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[42] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[43] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[44] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[45] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[46] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[47] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[48] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[49] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[50] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[51] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[52] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[53] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[54] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[55] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[56] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[57] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[58] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[59] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[60] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[61] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[62] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[63] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[64] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[65] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[66] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[67] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[68] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[69] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[70] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[71] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[72] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[73] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[74] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[75] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[76] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[77] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[78] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[79] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[80] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[81] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[82] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[83] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[84] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[85] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[86] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[87] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[88] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[89] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[90] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[91] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[92] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[93] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[94] = [1] { 
-	    };
-	    LeabraUnit_Group @.gp[95] = [1] { 
-	    };
-	  };
 	};
-	LeabraLayer @[22] { 
-	  Unit_Group @.units = [96] {
-	  };
-	};
-	LeabraLayer @[23] { 
-	  Unit_Group @.units = [96] {
-	  };
-	};
+	LeabraLayer @[22] { };
+	LeabraLayer @[23] { };
 	Layer_Group @.gp[0] = [3] { 
 	  LeabraLayer @[0] { 
 	    Projection_Group @.projections = [3] {
 	      LeabraPrjn @[0] { };
 	      LeabraPrjn @[1] { };
 	      LeabraPrjn @[2] { };
-	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[8] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[9] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[10] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[11] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[12] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[13] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[14] = [81] { 
-	      };
 	    };
 	  };
 	  LeabraLayer @[1] { 
@@ -4243,39 +3178,6 @@ LeabraProject .projects[0] {
 	      LeabraPrjn @[2] { };
 	      LeabraPrjn @[3] { };
 	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[8] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[9] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[10] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[11] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[12] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[13] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[14] = [81] { 
-	      };
-	    };
 	  };
 	  LeabraLayer @[2] { 
 	    Projection_Group @.projections = [4] {
@@ -4283,39 +3185,6 @@ LeabraProject .projects[0] {
 	      LeabraPrjn @[1] { };
 	      LeabraPrjn @[2] { };
 	      LeabraPrjn @[3] { };
-	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[8] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[9] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[10] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[11] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[12] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[13] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[14] = [81] { 
-	      };
 	    };
 	  };
 	};
@@ -4327,25 +3196,6 @@ LeabraProject .projects[0] {
 	      LeabraPrjn @[2] { };
 	      LeabraPrjn @[3] { };
 	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
-	    };
 	  };
 	  LeabraLayer @[1] { 
 	    Projection_Group @.projections = [6] {
@@ -4355,25 +3205,6 @@ LeabraProject .projects[0] {
 	      LeabraPrjn @[3] { };
 	      LeabraPrjn @[4] { };
 	      LeabraPrjn @[5] { };
-	    };
-
-	    Unit_Group @.units = [0] {
-	      LeabraUnit_Group @.gp[0] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[1] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[2] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[3] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[4] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[5] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[6] = [81] { 
-	      };
-	      LeabraUnit_Group @.gp[7] = [81] { 
-	      };
 	    };
 	  };
 	};
@@ -4670,7 +3501,7 @@ dt.vm = .25, d_vm_max = .02, net_rescale = .6";
       name="Name";
       pin=0;
       is_matrix=0;
-      cell_geom{       };
+      cell_geom{ 1;      };
       ar{ [0]       };
      };
      float_Data @[1] {
@@ -4691,14 +3522,14 @@ dt.vm = .25, d_vm_max = .02, net_rescale = .6";
       name="Scale";
       pin=0;
       is_matrix=0;
-      cell_geom{       };
+      cell_geom{ 1;      };
       ar{ [0]       };
      };
      float_Data @[4] {
       name="Rotate";
       pin=0;
       is_matrix=0;
-      cell_geom{       };
+      cell_geom{ 1;      };
       ar{ [0]       };
      };
      float_Data @[5] {
@@ -6685,7 +5516,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="batch";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6698,7 +5528,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="epoch";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6711,7 +5540,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="trial";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6724,7 +5552,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="trial_name";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6737,7 +5564,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="group_name";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6750,7 +5576,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="phase_no";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6763,7 +5588,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="minus_cycles";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6776,7 +5600,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="sse";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6789,7 +5612,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="ext_rew";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6944,7 +5766,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="batch";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6957,7 +5778,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="epoch";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6970,7 +5790,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=.projects[0].networks[0].specs[2].children[2]$42$;
 	member_var=NULL;
 	variable="cur_lrate";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6983,7 +5802,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="avg_sse";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -6996,7 +5814,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="cnt_err";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7009,7 +5826,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="avg_ext_rew";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7022,7 +5838,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$1$;
 	member_var=NULL;
 	variable="avg_cycles";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7035,7 +5850,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=.projects[0].networks[0].layers.gp[0][2]$43$;
 	member_var=NULL;
 	variable="avg_netin.max";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7048,7 +5862,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=.projects[0].networks[0].layers.gp[0][1]$44$;
 	member_var=NULL;
 	variable="avg_netin.max";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7061,7 +5874,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=.projects[0].networks[0].layers.gp[0][0]$45$;
 	member_var=NULL;
 	variable="avg_netin.max";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7074,7 +5886,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=.projects[0].networks[0].layers.gp[1][1]$46$;
 	member_var=NULL;
 	variable="avg_netin.max";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7087,7 +5898,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=.projects[0].networks[0].layers.gp[1][0]$47$;
 	member_var=NULL;
 	variable="avg_netin.max";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7100,7 +5910,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=.projects[0].networks[0].layers[6]$48$;
 	member_var=NULL;
 	variable="avg_netin.max";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7113,7 +5922,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$43$;
 	member_var=NULL;
 	variable="prjns.avg_netin_rel";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7126,7 +5934,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$44$;
 	member_var=NULL;
 	variable="prjns.avg_netin_rel";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7139,7 +5946,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$45$;
 	member_var=NULL;
 	variable="prjns.avg_netin_rel";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7152,7 +5958,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$46$;
 	member_var=NULL;
 	variable="prjns.avg_netin_rel";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7165,7 +5970,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$47$;
 	member_var=NULL;
 	variable="prjns.avg_netin_rel";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -7178,7 +5982,6 @@ else min_cycles = network->min_cycles_phase2;
 	object=$48$;
 	member_var=NULL;
 	variable="prjns.avg_netin_rel";
-	real_val_type=VT_DOUBLE;
 	name_style=AUTO_NAME;
 	max_name_len=6;
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -22489,7 +21292,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  scale {
-	   name=;
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -22546,7 +21348,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  display=1;
-	  ordered_uvg_list{ 10;	  };
+	  ordered_uvg_list{ 	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	 };
@@ -23255,7 +22057,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	 dwt_thresh=0.1;
@@ -23304,7 +22107,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	trg_fm_output=0.15000001;
 	trg_lateral=0;
 	trg_sum=1;
-	tol=0.050000001;
+	tol_lg=0.050000001;
+	tol_sm=0.2;
 	rel_lrate=0.050000001;
        };
        dwt_thresh=0.1;
@@ -23367,7 +22171,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	 dwt_thresh=0.1;
@@ -23416,7 +22221,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	trg_fm_output=0.15000001;
 	trg_lateral=0;
 	trg_sum=1;
-	tol=0.050000001;
+	tol_lg=0.050000001;
+	tol_sm=0.2;
 	rel_lrate=0.050000001;
        };
       };
@@ -23478,7 +22284,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -23533,7 +22340,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -23588,7 +22396,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -23650,7 +22459,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    trg_fm_output=0.15000001;
 	    trg_lateral=0;
 	    trg_sum=1;
-	    tol=0.050000001;
+	    tol_lg=0.050000001;
+	    tol_sm=0.2;
 	    rel_lrate=0.050000001;
 	   };
 	  };
@@ -23698,7 +22508,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -23753,7 +22564,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -23808,7 +22620,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -23856,7 +22669,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	trg_fm_output=0.15000001;
 	trg_lateral=0;
 	trg_sum=1;
-	tol=0.050000001;
+	tol_lg=0.050000001;
+	tol_sm=0.2;
 	rel_lrate=0.050000001;
        };
       };
@@ -23918,7 +22732,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -23973,7 +22788,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -24035,7 +22851,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    trg_fm_output=0.15000001;
 	    trg_lateral=0;
 	    trg_sum=1;
-	    tol=0.050000001;
+	    tol_lg=0.050000001;
+	    tol_sm=0.2;
 	    rel_lrate=0.050000001;
 	   };
 	  };
@@ -24090,7 +22907,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    trg_fm_output=0.15000001;
 	    trg_lateral=0;
 	    trg_sum=1;
-	    tol=0.050000001;
+	    tol_lg=0.050000001;
+	    tol_sm=0.2;
 	    rel_lrate=0.050000001;
 	   };
 	  };
@@ -24138,7 +22956,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -24200,7 +23019,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    trg_fm_output=0.15000001;
 	    trg_lateral=0;
 	    trg_sum=1;
-	    tol=0.050000001;
+	    tol_lg=0.050000001;
+	    tol_sm=0.2;
 	    rel_lrate=0.050000001;
 	   };
 	  };
@@ -24255,7 +23075,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    trg_fm_output=0.15000001;
 	    trg_lateral=0;
 	    trg_sum=1;
-	    tol=0.050000001;
+	    tol_lg=0.050000001;
+	    tol_sm=0.2;
 	    rel_lrate=0.050000001;
 	   };
 	  };
@@ -24303,7 +23124,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -24358,7 +23180,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -24413,7 +23236,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -24468,7 +23292,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -24523,7 +23348,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  trg_fm_output=0.15000001;
 	  trg_lateral=0;
 	  trg_sum=1;
-	  tol=0.050000001;
+	  tol_lg=0.050000001;
+	  tol_sm=0.2;
 	  rel_lrate=0.050000001;
 	 };
 	};
@@ -24571,7 +23397,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	trg_fm_output=0.15000001;
 	trg_lateral=0;
 	trg_sum=1;
-	tol=0.050000001;
+	tol_lg=0.050000001;
+	tol_sm=0.2;
 	rel_lrate=0.050000001;
        };
       };
@@ -24619,7 +23446,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       trg_fm_output=0.15000001;
       trg_lateral=0;
       trg_sum=1;
-      tol=0.050000001;
+      tol_lg=0.050000001;
+      tol_sm=0.2;
       rel_lrate=0.050000001;
      };
     };
@@ -25398,7 +24226,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	     trg_fm_output=0.15000001;
 	     trg_lateral=0;
 	     trg_sum=1;
-	     tol=0.050000001;
+	     tol_lg=0.050000001;
+	     tol_sm=0.2;
 	     rel_lrate=0.050000001;
 	    };
 	    syn_dep {rec=1: depl=1.1: };
@@ -25429,7 +24258,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   trg_fm_output=0.15000001;
 	   trg_lateral=0;
 	   trg_sum=1;
-	   tol=0.050000001;
+	   tol_lg=0.050000001;
+	   tol_sm=0.2;
 	   rel_lrate=0.050000001;
 	  };
 	  syn_dep {rec=1: depl=1.1: };
@@ -25460,7 +24290,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 trg_fm_output=0.15000001;
 	 trg_lateral=0;
 	 trg_sum=1;
-	 tol=0.050000001;
+	 tol_lg=0.050000001;
+	 tol_sm=0.2;
 	 rel_lrate=0.050000001;
 	};
        };
@@ -25494,7 +24325,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   last_ctr=-1;
 	   default_val=1;
 	   interpolate=0;
-	   cur_val=1;
+	   cur_val=0;
 	  };
 	  lmix {hebb=0.001: err=0.99900001: err_sb=1: };
 	  savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
@@ -25504,7 +24335,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   trg_fm_output=0.15000001;
 	   trg_lateral=0;
 	   trg_sum=1;
-	   tol=0.050000001;
+	   tol_lg=0.050000001;
+	   tol_sm=0.2;
 	   rel_lrate=0.050000001;
 	  };
 	  dwt_thresh=0.1;
@@ -25525,7 +24357,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 last_ctr=-1;
 	 default_val=1;
 	 interpolate=0;
-	 cur_val=1;
+	 cur_val=0;
 	};
 	lmix {hebb=0.001: err=0.99900001: err_sb=1: };
 	savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
@@ -25535,7 +24367,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 trg_fm_output=0.15000001;
 	 trg_lateral=0;
 	 trg_sum=1;
-	 tol=0.050000001;
+	 tol_lg=0.050000001;
+	 tol_sm=0.2;
 	 rel_lrate=0.050000001;
 	};
 	dwt_thresh=0.1;
@@ -25566,7 +24399,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        trg_fm_output=0.15000001;
        trg_lateral=0;
        trg_sum=1;
-       tol=0.050000001;
+       tol_lg=0.050000001;
+       tol_sm=0.2;
        rel_lrate=0.050000001;
       };
      };
@@ -25593,7 +24427,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        last_ctr=-1;
        default_val=1;
        interpolate=0;
-       cur_val=1;
+       cur_val=0;
       };
       lmix {hebb=0.001: err=0.99900001: err_sb=1: };
       savg_cor {cor=0.40000001: thresh=0.001: norm_con_n=0: };
@@ -25603,7 +24437,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        trg_fm_output=0.15000001;
        trg_lateral=0;
        trg_sum=1;
-       tol=0.050000001;
+       tol_lg=0.050000001;
+       tol_sm=0.2;
        rel_lrate=0.050000001;
       };
      };
@@ -40847,8 +39682,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    usr1_save_fmt=JUST_WEIGHTS;
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
-   n_units=25050;
-   n_cons=3944145;
+   n_units=0;
+   n_cons=0;
    max_size {x=266: y=80: z=122: };
    phase_order=MINUS_PLUS;
    no_plus_test=0;
@@ -40884,7 +39719,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
   el_typ=RGBA;
   el_def=0;
   RGBA @[0] {name="black": r=0: g=0: b=0: a=1: desc="Text": };
-  RGBA @[1] {name="": r=0.75294101: g=0.76862699: b=0.82745099: a=1: desc="Background": };
+  RGBA @[1] {r=0.75294101: g=0.76862699: b=0.82745099: a=1: desc="Background": };
   RGBA @[2] {name="VioletRed1": r=1: g=0.24313726: b=0.58823532: a=1: desc="Network": };
   RGBA @[3] {name="DarkOliveGreen3": r=0.63529414: g=0.80392158: b=0.35294119: a=1: desc="Env": };
   RGBA @[4] {name="yellow": r=1: g=1: b=0: a=1: desc="SchedProc": };

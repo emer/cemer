@@ -398,7 +398,6 @@ void NetMonItem::Initialize() {
   object_type = NULL;
   member_var = NULL;
   variable = "act";
-  real_val_type = VT_DOUBLE;
   name_style = AUTO_NAME;
   max_name_len = 6;
   cell_num  = 0;
@@ -432,7 +431,6 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   object_type = cp.object_type;
   member_var = cp.member_var;
   variable = cp.variable;
-  real_val_type = cp.real_val_type;
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
   pre_proc_3 = cp.pre_proc_3;
@@ -477,6 +475,7 @@ void NetMonItem::UpdateAfterEdit_impl() {
     else {			// AUTO_NAME = always update!
       name = GetObjName(object) + "_" + variable;
     }
+    name.gsub('.', '_');		// keep it clean for css var names
     ScanObject();
   }
 }
@@ -667,7 +666,6 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
       if(name_obj) {
 	String valname = GetChanName(name_obj, val_specs.size);
 	ValType vt = ValTypeForType(md->type);
-	if(vt == VT_FLOAT || vt == VT_DOUBLE) vt = real_val_type;
         AddScalarChan(valname, vt);
       }
       // if not adding a column, it is part of a pre-allocated matrix; just add vars
@@ -718,7 +716,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
       geom.SetGeom(2, lay->un_geom.x, lay->un_geom.y);
   }
   String valname = GetChanName(lay, val_specs.size);
-  AddMatrixChan(valname, real_val_type, &geom);
+  AddMatrixChan(valname, VT_FLOAT, &geom);
   if (geom.size == 1) {
     for (int i = 0; i < lay->units.leaves; ++i) {
       ScanObject_InObject(lay->units.Leaf(i), var, NULL); // don't make a col
@@ -834,7 +832,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   MatrixGeom geom;
   geom.SetGeom(4, lay_geom.x, lay_geom.y, con_geom.x, con_geom.y);
   String valname = GetChanName(prjn, val_specs.size);
-  AddMatrixChan(valname, real_val_type, &geom);
+  AddMatrixChan(valname, VT_FLOAT, &geom);
 
   // now get all the vals
   FOR_ITR_EL(Unit, u, lay->units., uitr) {
@@ -916,7 +914,7 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
     geom.SetGeom(2, ug->geom.x, ug->geom.y);
   
   String valname = GetChanName(ug, val_specs.size);
-  AddMatrixChan(valname, real_val_type, &geom);
+  AddMatrixChan(valname, VT_FLOAT, &geom);
   if(geom.size == 1) {
     for(int i = 0; i < ug->size; i++) {
       ScanObject_InObject(ug->FastEl(i), var, NULL); // don't make a col
@@ -974,7 +972,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
   String valname = GetChanName(cg, val_specs.size);
-  AddMatrixChan(valname, real_val_type, &geom);
+  AddMatrixChan(valname, VT_FLOAT, &geom);
 
   for(int j=0;j<n_cons;j++) {	// add blanks -- set them later
     ptrs.Add(NULL); members.Link(con_md);
@@ -1011,7 +1009,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
   String valname = GetChanName(cg, val_specs.size);
-  AddMatrixChan(valname, real_val_type, &geom);
+  AddMatrixChan(valname, VT_FLOAT, &geom);
 
   for(int j=0;j<n_cons;j++) {	// add blanks -- set them later
     ptrs.Add(NULL); members.Link(con_md);

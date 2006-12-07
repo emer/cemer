@@ -56,6 +56,8 @@ class TA_API Aggregate : public taOBase {
 public:
   enum Operator {		// Aggregate Operators
     GROUP,			// group by this field
+    FIRST,			// first item
+    LAST,			// last item
     MIN,			// Minimum
     MAX,			// Maximum
     ABS_MIN,			// Minimum of absolute values
@@ -67,6 +69,8 @@ public:
     STDEV,			// Standard deviation
     SEM,			// Standard error of the mean 
     COUNT, 			// Count of the number times count relation was true
+    MEDIAN,			// middle item (note: requires sorting)
+    MODE,			// most frequent item (note: requires sorting)
   };
 
   Operator      op;		// how to aggregate over the network
@@ -401,6 +405,10 @@ public:
   ///////////////////////////////////////
   // basic statistics
 
+  static double	vec_first(const double_Matrix* vec);
+  // #CAT_Statistics first item in the vector
+  static double	vec_last(const double_Matrix* vec);
+  // #CAT_Statistics last item in the vector
   static double	vec_max(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static double	vec_abs_max(const double_Matrix* vec, int& idx);
@@ -429,6 +437,13 @@ public:
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
   static double	vec_count(const double_Matrix* vec, CountParam& cnt);
   // #CAT_Statistics count number of times count relationship is true
+  static double	vec_median(const double_Matrix* vec);
+  // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
+  static double	vec_mode(const double_Matrix* vec);
+  // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
+
+  static void	vec_sort(double_Matrix* vec, bool descending = false);
+  // #CAT_Statistics sort the values from the source vector into the dest vector
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
@@ -646,6 +661,10 @@ public:
   ///////////////////////////////////////
   // basic statistics
 
+  static float	vec_first(const float_Matrix* vec);
+  // #CAT_Statistics first item in the vector
+  static float	vec_last(const float_Matrix* vec);
+  // #CAT_Statistics last item in the vector
   static float	vec_max(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static float	vec_abs_max(const float_Matrix* vec, int& idx);
@@ -674,6 +693,13 @@ public:
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
   static float	vec_count(const float_Matrix* vec, CountParam& cnt);
   // #CAT_Statistics count number of times count relationship is true
+  static float	vec_median(const float_Matrix* vec);
+  // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
+  static float	vec_mode(const float_Matrix* vec);
+  // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
+
+  static void	vec_sort(float_Matrix* vec, bool descending = false);
+  // #CAT_Statistics sort the values from the source vector into the dest vector
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
@@ -740,6 +766,11 @@ public:
   void Destroy() { };
   TA_BASEFUNS(taMath_float);
 };
+
+
+
+////////////////////////////////////////////////////////////////////////////
+//			Random Number Generation 
 
 class TA_API RndSeed : public taNBase {
   // ##CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one

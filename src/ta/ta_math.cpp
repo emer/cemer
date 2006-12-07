@@ -703,6 +703,16 @@ bool taMath_double::vec_simple_math_arg(double_Matrix* vec, const double_Matrix*
   return true;
 }
 
+double taMath_double::vec_first(const double_Matrix* vec) {
+  if(vec->size == 0) return 0.0;
+  return vec->FastEl_Flat(0);
+}
+
+double taMath_double::vec_last(const double_Matrix* vec) {
+  if(vec->size == 0) return 0.0;
+  return vec->FastEl_Flat(vec->size-1);
+}
+
 double taMath_double::vec_max(const double_Matrix* vec, int& idx) {
   idx = 0;
   if(vec->size == 0) return 0.0;
@@ -804,8 +814,9 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
   vec->Reset();
   if(oth->size == 0) return;
   double_Array tmp;
+  tmp.SetSize(oth->size);
   for(int i=0;i<oth->size;i++)
-    tmp.Add(oth->FastEl_Flat(i));
+    tmp[i] = oth->FastEl_Flat(i);
   tmp.Sort();
   double min_v = tmp.FastEl(0);
   double max_v = tmp.Peek();
@@ -829,6 +840,88 @@ double taMath_double::vec_count(const double_Matrix* vec, CountParam& cnt) {
   }
   return rval;
 }
+
+double taMath_double::vec_median(const double_Matrix* vec) {
+  if(vec->size == 0) return 0.0f;
+  double_Array tmp;
+  tmp.SetSize(vec->size);
+  for(int i=0;i<vec->size;i++)
+    tmp[i] = vec->FastEl_Flat(i);
+  tmp.Sort();
+  int idx = tmp.size / 2;
+  return tmp[idx];
+}
+
+double taMath_double::vec_mode(const double_Matrix* vec) {
+  if(vec->size == 0) return 0.0f;
+  double_Array tmp;
+  tmp.SetSize(vec->size);
+  for(int i=0;i<vec->size;i++)
+    tmp[i] = vec->FastEl_Flat(i);
+  tmp.Sort();
+  int mx_frq = 0;
+  double mode = 0.0f;
+  int idx = 0;
+  while(idx < tmp.size) {
+    double val = tmp[idx];
+    int st_idx = idx;
+    while((idx < tmp.size-1) && (val == tmp[++idx]));
+    int frq = idx - st_idx;
+    if(idx == tmp.size-1) {
+      if(tmp[tmp.size-1] == val) frq++;
+      idx++;
+    }
+    if(frq > mx_frq) {
+      mx_frq = frq;
+      mode = val;
+    }
+  }
+  return mode;
+}
+
+static int double_vec_sort_cmp(double v1, double v2) {
+  if(v1 > v2) return 1;
+  else if(v1 == v2) return 0;
+  return -1;
+}
+
+void taMath_double::vec_sort(double_Matrix* vec, bool descending) {
+  if(vec->size <= 1) return;
+  int lt_compval = -1;		// comparison return value for less-than
+  if(descending)
+    lt_compval = 1;
+  // lets do a heap sort since it requires no secondary storage
+  int n = vec->size;
+  int l,j,ir,i;
+  double tmp;
+
+  l = (n >> 1) + 1;
+  ir = n;
+  for(;;){
+    if(l>1)
+      tmp = vec->FastEl_Flat(--l -1); // tmp = ra[--l]
+    else {
+      tmp = vec->FastEl_Flat(ir-1); // tmp = ra[ir]
+      vec->FastEl_Flat(ir-1) = vec->FastEl_Flat(0); // ra[ir] = ra[1]
+      if(--ir == 1) {
+	vec->FastEl_Flat(0) = tmp; // ra[1]=tmp
+	return;
+      }
+    }
+    i=l;
+    j=l << 1;
+    while(j<= ir) {
+      if(j<ir && (double_vec_sort_cmp(vec->FastEl_Flat(j-1),vec->FastEl_Flat(j)) == lt_compval)) j++;
+      if(double_vec_sort_cmp(tmp,vec->FastEl_Flat(j-1)) == lt_compval) { // tmp < ra[j]
+	vec->FastEl_Flat(i-1) = vec->FastEl_Flat(j-1); // ra[i]=ra[j];
+	j += (i=j);
+      }
+      else j = ir+1;
+    }
+    vec->FastEl_Flat(i-1) = tmp; // ra[i] = tmp;
+  }
+}
+
 
 ///////////////////////////////////////
 // distance metrics (comparing two vectors)
@@ -1033,6 +1126,10 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
   switch(agg.op) {
   case Aggregate::GROUP:
     return vec->SafeEl_Flat(0);	// first guy..
+  case Aggregate::FIRST:
+    return taMath_double::vec_first(vec);
+  case Aggregate::LAST:
+    return taMath_double::vec_last(vec);
   case Aggregate::MIN:
     return taMath_double::vec_min(vec, idx);
   case Aggregate::MAX:
@@ -1055,6 +1152,10 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
     return taMath_double::vec_sem(vec);
   case Aggregate::COUNT: 
     return taMath_double::vec_count(vec, agg.count);
+  case Aggregate::MEDIAN:
+    return taMath_double::vec_median(vec);
+  case Aggregate::MODE:
+    return taMath_double::vec_mode(vec);
   }
   return 0.0;
 }
@@ -1187,6 +1288,16 @@ bool taMath_float::vec_simple_math_arg(float_Matrix* vec, const float_Matrix* ar
   return true;
 }
 
+float taMath_float::vec_first(const float_Matrix* vec) {
+  if(vec->size == 0) return 0.0;
+  return vec->FastEl_Flat(0);
+}
+
+float taMath_float::vec_last(const float_Matrix* vec) {
+  if(vec->size == 0) return 0.0;
+  return vec->FastEl_Flat(vec->size-1);
+}
+
 float taMath_float::vec_max(const float_Matrix* vec, int& idx) {
   idx = 0;
   if(vec->size == 0) return 0.0;
@@ -1288,8 +1399,9 @@ void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, flo
   vec->Reset();
   if(oth->size == 0) return;
   float_Array tmp;
+  tmp.SetSize(oth->size);
   for(int i=0;i<oth->size;i++)
-    tmp.Add(oth->FastEl_Flat(i));
+    tmp[i] = oth->FastEl_Flat(i);
   tmp.Sort();
   float min_v = tmp.FastEl(0);
   float max_v = tmp.Peek();
@@ -1313,6 +1425,89 @@ float taMath_float::vec_count(const float_Matrix* vec, CountParam& cnt) {
   }
   return rval;
 }
+
+float taMath_float::vec_median(const float_Matrix* vec) {
+  if(vec->size == 0) return 0.0f;
+  float_Array tmp;
+  tmp.SetSize(vec->size);
+  for(int i=0;i<vec->size;i++)
+    tmp[i] = vec->FastEl_Flat(i);
+  tmp.Sort();
+  int idx = tmp.size / 2;
+  return tmp[idx];
+}
+
+float taMath_float::vec_mode(const float_Matrix* vec) {
+  if(vec->size == 0) return 0.0f;
+  float_Array tmp;
+  tmp.SetSize(vec->size);
+  for(int i=0;i<vec->size;i++)
+    tmp[i] = vec->FastEl_Flat(i);
+  tmp.Sort();
+  int mx_frq = 0;
+  float mode = 0.0f;
+  int idx = 0;
+  while(idx < tmp.size) {
+    float val = tmp[idx];
+    int st_idx = idx;
+    while((idx < tmp.size-1) && (val == tmp[++idx]));
+    int frq = idx - st_idx;
+    if(idx == tmp.size-1) {
+      if(tmp[tmp.size-1] == val) frq++;
+      idx++;
+    }
+    if(frq > mx_frq) {
+      mx_frq = frq;
+      mode = val;
+    }
+  }
+  return mode;
+}
+
+static int float_vec_sort_cmp(float v1, float v2) {
+  if(v1 > v2) return 1;
+  else if(v1 == v2) return 0;
+  return -1;
+}
+
+void taMath_float::vec_sort(float_Matrix* vec, bool descending) {
+  if(vec->size <= 1) return;
+  int lt_compval = -1;		// comparison return value for less-than
+  if(descending)
+    lt_compval = 1;
+  // lets do a heap sort since it requires no secondary storage
+  int n = vec->size;
+  int l,j,ir,i;
+  float tmp;
+
+  l = (n >> 1) + 1;
+  ir = n;
+  for(;;){
+    if(l>1)
+      tmp = vec->FastEl_Flat(--l -1); // tmp = ra[--l]
+    else {
+      tmp = vec->FastEl_Flat(ir-1); // tmp = ra[ir]
+      vec->FastEl_Flat(ir-1) = vec->FastEl_Flat(0); // ra[ir] = ra[1]
+      if(--ir == 1) {
+	vec->FastEl_Flat(0) = tmp; // ra[1]=tmp
+	return;
+      }
+    }
+    i=l;
+    j=l << 1;
+    while(j<= ir) {
+      if(j<ir && (float_vec_sort_cmp(vec->FastEl_Flat(j-1),vec->FastEl_Flat(j)) == lt_compval)) j++;
+      if(float_vec_sort_cmp(tmp,vec->FastEl_Flat(j-1)) == lt_compval) { // tmp < ra[j]
+	vec->FastEl_Flat(i-1) = vec->FastEl_Flat(j-1); // ra[i]=ra[j];
+	j += (i=j);
+      }
+      else j = ir+1;
+    }
+    vec->FastEl_Flat(i-1) = tmp; // ra[i] = tmp;
+  }
+}
+
+
 
 ///////////////////////////////////////
 // distance metrics (comparing two vectors)
@@ -1517,6 +1712,10 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
   switch(agg.op) {
   case Aggregate::GROUP:
     return vec->SafeEl_Flat(0);	// first guy..
+  case Aggregate::FIRST:
+    return taMath_float::vec_first(vec);
+  case Aggregate::LAST:
+    return taMath_float::vec_last(vec);
   case Aggregate::MIN:
     return taMath_float::vec_min(vec, idx);
   case Aggregate::MAX:
@@ -1539,6 +1738,10 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
     return taMath_float::vec_sem(vec);
   case Aggregate::COUNT: 
     return taMath_float::vec_count(vec, agg.count);
+  case Aggregate::MEDIAN:
+    return taMath_float::vec_median(vec);
+  case Aggregate::MODE:
+    return taMath_float::vec_mode(vec);
   }
   return 0.0;
 }

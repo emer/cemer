@@ -488,9 +488,19 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
     DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    DataArray_impl* nda;
+    if(sda->valType() == VT_INT) // up-convert to float!
+      nda = new float_Data;
+    else
+      nda = (DataArray_impl*)sda->MakeToken();
     dest->data.Add(nda);
-    nda->Copy_NoData(*sda);
+    nda->name = sda->name;
+    nda->disp_opts = sda->disp_opts;
+    nda->mark = sda->mark;
+    nda->pin = sda->pin;
+    nda->Init();		// initialize
+    // don't copy is_matrix or cell_geom -- result is always scalar!
+    //    nda->Copy_NoData(*sda);
     String dst_op = ds->agg.GetAggName();
     dst_op.downcase();
     nda->name += "_" + dst_op;
@@ -522,14 +532,25 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
 }
 
 bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
+  float_Matrix float_tmp;
   dest->AddBlankRow();
+  int dest_idx = 0;
   for(int i=0;i<spec->ops.size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
     DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-    DataArray_impl* dda = dest->data.FastEl(i); // index is spec index
+    DataArray_impl* dda = dest->data.FastEl(dest_idx++); // index is spec index
     if(sda->valType() == taBase::VT_DOUBLE) {
       dda->SetValAsDouble(taMath_double::vec_aggregate((double_Matrix*)sda->AR(), ds->agg), 0);
+    }
+    else if(sda->valType() == taBase::VT_FLOAT) {
+      dda->SetValAsFloat(taMath_float::vec_aggregate((float_Matrix*)sda->AR(), ds->agg), 0);
+    }
+    else if(sda->valType() == taBase::VT_INT) {
+      int_Matrix* mat = (int_Matrix*)sda->AR();
+      float_tmp.SetGeom(1, mat->size);
+      for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
+      dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), 0);
     }
   }
   return true;
@@ -554,6 +575,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 //     cerr << i << " init val: " << cur_vals[i] << " input: " << cval << endl;
   }
 
+  float_Matrix float_tmp;
   int st_row = 0;
   int row = 1;
   while(row < ssrc.rows) {
@@ -577,11 +599,12 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 //     cerr << "adding: row: " << row << " st_row: " << st_row << endl;
     // now go through actual group ops!
     dest->AddBlankRow();
+    int dest_idx = 0;
     for(int i=0;i<spec->ops.size; i++) {
       DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
       if(ds->col_idx < 0) continue;
       DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
-      DataArray_impl* dda = dest->data.FastEl(i); // index is spec index
+      DataArray_impl* dda = dest->data.FastEl(dest_idx++); // index is spec index
       if(ds->agg.op == Aggregate::GROUP) {
 	dda->SetValAsVar(sda->GetValAsVar(st_row), -1); // -1 = last row
       }
@@ -590,6 +613,20 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 	  double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
 	  taBase::Ref(mat);
 	  dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+	  taBase::unRefDone(mat);
+	}
+	else if(sda->valType() == taBase::VT_FLOAT) {
+	  float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	  taBase::Ref(mat);
+	  dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+	  taBase::unRefDone(mat);
+	}
+	else if(sda->valType() == taBase::VT_INT) {
+	  int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	  taBase::Ref(mat);
+	  float_tmp.SetGeom(1, mat->size);
+	  for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
+	  dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
 	  taBase::unRefDone(mat);
 	}
       }
@@ -1496,6 +1533,7 @@ const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
       rval += il + "dcl->dest_data.SetValAsVar(" +
 	"d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
   }
+  rval += il + "dcl->dest_data.WriteClose();\n";
   dcl->dest_cols.ClearColumns();
   return rval;
 }
@@ -1571,6 +1609,7 @@ const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
       rval += il + "dcl->src_data.SetValAsVar(" +
 	"s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";
   }
+  rval += il + "dcl->src_data.WriteClose();\n";
   dcl->dest_cols.ClearColumns();
   return rval;
 }

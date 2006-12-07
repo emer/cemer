@@ -20,7 +20,7 @@
 #include "ta_math.h"
 #include "ta_program.h"
 
-// data processing operations: sort/select/group/join etc
+// data processing operations on datatables
 
 class TA_API DataOpEl : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
@@ -326,7 +326,7 @@ public:
   // #NULL_OK #CAT_Columns select columns of data from src into dest according to list of columnns in spec (all rows are copied)
 
   static bool	Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec);
-  // #NULL_OK #CAT_Columns joins two datatables (src_a and src_b) into dest datatable.  each row of src_a is included, and the value of col_a for a given row is used to search col_b of src_b for the row to include from it.  all columns are included (without repeating the common column)
+  // #NULL_OK #CAT_Columns joins two datatables (src_a and src_b) into dest datatable.  for each row of src_a, the value of col_a is used to search col_b of src_b for the row(s) to include from it.  all columns are included (without repeating the common column)
 
   static bool	JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b);
   // #NULL_OK #CAT_Columns joins two datatables into one datatable on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)). all columns from both tables are included.
