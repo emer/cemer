@@ -215,8 +215,8 @@ inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
 // 	Base taMatrix
 ///////////////////////////////////
 
-class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
-INHERITED(taOBase)
+class TA_API taMatrix: public taNBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
+INHERITED(taNBase)
 friend class MatrixTableModel;
 
 public:
@@ -446,13 +446,14 @@ public:
   { return true; }
   // #IGNORE validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
      
+  void 			SetDefaultName() {} // rarely named
   ostream& 		Output(ostream& strm, int indent = 0) const;
   ostream& 		OutputR(ostream& strm, int indent = 0) const
     { return Output(strm, indent); }
   int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const taMatrix& cp);
-  COPY_FUNS(taMatrix, taOBase);
+  COPY_FUNS(taMatrix, taNBase);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
 
 public:
@@ -1013,7 +1014,8 @@ public:
 #endif //note: bugs in maketa necessitated these sections
   taMatrix*		mat() const {return m_mat;}
   
-  void			emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to);
+  void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
+    int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
   void			emit_layoutChanged();
   
   MatrixTableModel(taMatrix* mat_); // note: mat is always valid, we destroy this on mat dest

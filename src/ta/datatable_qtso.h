@@ -374,6 +374,8 @@ public:
   void			setDataTable(DataTable* dt);
   DataTableModel*	dtm() const {return (m_dt.ptr()) ? m_dt->GetDataModel() : NULL;}
   
+  void			Refresh(); // for manual refresh
+  
   iDataTableEditor(QWidget* parent = NULL);
   ~iDataTableEditor();
   
@@ -409,7 +411,8 @@ protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
-/*protected slots: */
+protected:
+  override void		Refresh_impl();
 };
 
 /* TODO

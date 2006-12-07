@@ -1203,6 +1203,12 @@ void IDataViewWidget::OnClosing_impl(CancelOp& cancel_op) {
   }
 }
 
+void IDataViewWidget::Refresh() {
+  taMisc::Busy(true);
+  Refresh_impl();
+  taMisc::Busy(false);
+}
+
 iMainWindowViewer* IDataViewWidget::viewerWindow() const {
   //note: an owner might have simply set this on creation
   if (!m_window) {
@@ -2100,6 +2106,11 @@ void iBrowseViewer::lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& /*s
 //TODO:  FillContextMenu(menu);
 }
 
+void iBrowseViewer::Refresh_impl() {
+  lvwDataTree->Refresh();
+  inherited::Refresh_impl();
+}
+
 void iBrowseViewer::Reset() {
   lvwDataTree->clear();
 }
@@ -2175,6 +2186,13 @@ void iTabViewer::Constr_post() {
   for (int i = 0; i < m_tabViews->size; ++i) {
     iTabView* itv = m_tabViews->FastEl(i);
     itv->OnWindowBind(this);
+  }
+}
+
+void iTabViewer::Refresh_impl() {
+  for (int i = 0; i < m_tabViews->size; ++i) {
+    iTabView* itv = m_tabViews->FastEl(i);
+    itv->Refresh();
   }
 }
 
@@ -3158,6 +3176,16 @@ void iMainWindowViewer::SelectableHostNotifying_impl(ISelectableHost* src_host, 
   UpdateUi();
 }
 
+void iMainWindowViewer::Refresh_impl() {
+  QObject* obj;
+  foreach (obj, body->children()) {
+    IDataViewWidget* dvw = dynamic_cast<IDataViewWidget*>(obj); // null if not type
+    if (dvw) {
+      dvw->Refresh();
+    } 
+  }
+}
+
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   if (!isProjViewer()) return; // changes only applied for proj viewers
 
@@ -3189,6 +3217,7 @@ bool iMainWindowViewer::isDirty() const {
   if (proj) return proj->isDirty();
   else return false;
 }
+
 
 void iMainWindowViewer::SaveData() {
   taProject* proj = curProject(); // only if projviwer
@@ -3349,7 +3378,6 @@ void iMainWindowViewer::windowActivationChange(bool oldActive) {
   }
   inherited::windowActivationChange(oldActive);
 }
-
 
 //////////////////////////
 // 	iTabBar 	//
@@ -3651,6 +3679,14 @@ void iTabView::OnWindowBind(iTabViewer* itv) {
   }
 }
 
+void iTabView::Refresh() {
+  for (int i = panels.size - 1; i >= 0; --i) {
+    iDataPanel* panel = panels.FastEl(i);
+    panel->Refresh();
+  }
+  UpdateTabNames();
+}
+
 void iTabView::RemoveDataPanel(iDataPanel* panel) {
   // we guard for destructing case by clearing panels, so don't detect it
   if (panels.RemoveEl(panel)) { // Remove unrefs us in panel
@@ -3884,6 +3920,10 @@ MemberDef* iDataPanelFrame::par_md() const {
   else       return (m_tabView) ? m_tabView->par_md() : NULL;
 }
 
+void iDataPanelFrame::Refresh_impl() {
+  GetImage();
+}
+
 String iDataPanelFrame::TabText() const {
   if (m_dps) return m_dps->TabText();
   else       return inherited::TabText();
@@ -4060,6 +4100,14 @@ void iDataPanelSet::removeChild(QObject* obj) {
   inherited::removeChild(obj);
 }
 
+void iDataPanelSet::Refresh_impl() {
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->Refresh();
+  }
+  inherited::Refresh_impl();
+}
+
 void iDataPanelSet::ResolveChanges(CancelOp& cancel_op) {
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
@@ -4166,6 +4214,12 @@ void iListDataPanel::OnWindowBind_impl(iTabViewer* itv) {
 String iListDataPanel::panel_type() const {
   static String str("List View");
   return str;
+}
+
+void iListDataPanel::Refresh_impl() {
+  //NOTE: for refresh, we just update the items (notify should always work for add/delete)
+  list->Refresh();
+  inherited::Refresh_impl();
 }
 
 
@@ -4504,6 +4558,19 @@ void iTreeView::this_itemSelectionChanged() {
     sel_items.Reset();
     GetSelectedItems(sel_items);
   SelectionChanging(false, false);
+}
+
+void iTreeView::Refresh_impl() {
+  QTreeWidgetItemIterator it(this);
+  QTreeWidgetItem* item;
+  while ( (item = *it) ) {
+    iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(item);
+    if (tvi) {
+      // simulate update notification
+      tvi->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+    }
+    ++it;
+  }
 }
 
 

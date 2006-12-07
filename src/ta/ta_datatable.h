@@ -410,8 +410,9 @@ public:
   // #CAT_Rows normalizes row (if -ve) and tests result in range 
   void			AllocRows(int n);
   // #CAT_Rows allocate space for at least n rows
-  void			AddBlankRow() {if (AddRow(1)) wr_itr = rows - 1;}
-  // #MENU #MENU_ON_Data #CAT_Rows add a new row to the data table
+  int			AddBlankRow() 
+    {if (AddRow(1)) {wr_itr = rows - 1; return wr_itr;} else return -1;}
+  // #MENU #MENU_ON_Data #CAT_Rows add a new row to the data table, returns row #
   bool			AddRow(int n);
   // #CAT_Rows add n rows, 'true' if added
   void			RemoveRow(int row_num);
@@ -968,6 +969,8 @@ public:
 
   DataTable*		dataTable() const {return dt;}
   void			setDataTable(DataTable* value, bool notify = true);
+  
+  void			refreshViews(); // similar to matrix, issues dataChanged
   
   DataTableModel(DataTable* owner);
   ~DataTableModel(); //

@@ -720,6 +720,15 @@ void iProgramEditor::Revert() {
   InternalSetModified(false);
 }
 
+void iProgramEditor::Refresh() {
+  //NOTE: for refresh, we just update the items (notify should always work for add/delete)
+  items->Refresh();
+  if (!m_modified) {
+    GetImage();
+  }
+}
+
+
 void iProgramEditor::setEditBgColor(const iColor* value) {
   // default colors, if not supplied
   if (value) // defaults
@@ -792,6 +801,10 @@ void iProgramPanelBase::OnWindowBind_impl(iTabViewer* itv) {
   if (!ptb)
     ptb = (ProgramToolBar*)mvw->AddToolBarByType(&TA_ProgramToolBar,
     "Program");*/
+}
+
+void iProgramPanelBase::Refresh_impl() {
+  pe->Refresh();
 }
 
 void iProgramPanelBase::ResolveChanges_impl(CancelOp& cancel_op) {

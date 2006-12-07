@@ -620,6 +620,9 @@ public:
   // automatically create variables for objects in parent program
 
   TA_BASEFUNS(ProgObjList);
+protected:
+  void*		El_Own_(void* it); // give anon objs a name
+
 private:
   void Initialize() { };
   void Destroy() { };

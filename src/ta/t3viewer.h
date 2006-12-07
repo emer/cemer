@@ -426,6 +426,7 @@ public: // IDataViewWidget i/f
   override QWidget*	widget() {return this;}
 protected:
   override void		Constr_impl();
+  override void		Refresh_impl(); // note: we just do the lite Render_impl stuff
   
 protected:
   SoQtViewer* 		m_ra;
@@ -508,8 +509,8 @@ public:
   iT3DataViewer(T3DataViewer* viewer_, QWidget* parent = NULL); 
   ~iT3DataViewer(); //
 
-protected: // IViewerWidget i/f
-//nn  override void		Constr_impl();
+protected: // IDataViewWidget i/f
+  override void		Refresh_impl();
   
 private:
   void			Init();

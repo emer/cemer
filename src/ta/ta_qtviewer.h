@@ -260,6 +260,7 @@ public:
   void			Close(); // deletes us, and disconects us from viewer -- YOU MUST NOT MAKE ANY CALLS TO OBJ AFTER THIS
   
 //  inline operator QWidget()	{return &(widget());} // enables convenient implicit conversion
+  void			Refresh(); // manual refresh (brackets with Busy)
   virtual void		ResolveChanges(CancelOp& cancel_op) {ResolveChanges_impl(cancel_op);} 
   // called from viewer prior to close; should normally autosave unsaved changes
   virtual void		SaveData() {}
@@ -276,6 +277,7 @@ protected:
   virtual void		Constr_impl() {} // override for virtual construction (called after new)
   virtual void		Constr_post() {} // called virtually, in DV::Constr_post -- entire win struct is now available
   virtual void		OnClosing_impl(CancelOp& cancel_op); // invoked in dtor (uncancellable); you should also invoke in the closeEvent (maybe cancellable)
+  virtual void		Refresh_impl() {}
   virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
 };
 
@@ -597,6 +599,9 @@ protected slots:
   virtual void		lvwDataTree_FillContextMenuHookPost(
     ISelectable_PtrList& sel_items, taiMenu* menu);
 
+protected: // IDataViewWidget i/f
+  override void		Refresh_impl(); 
+
 protected:
   int			mnuBrowseNodeDrop_param;
     // param from the mnuBrowseDrop slot -- called by a node, only valid for its call
@@ -637,6 +642,9 @@ public slots:
   virtual void 		viewCloseCurrentView();
   virtual void 		viewSplitVertical();
   virtual void 		viewSplitHorizontal();
+
+protected: // IDataViewWidget i/f
+  override void		Refresh_impl(); 
 
 protected:
   iTabView_PtrList*	m_tabViews; // all created tab views
@@ -879,7 +887,7 @@ public slots:
   virtual void editCopy();
   virtual void editPaste();
   virtual void editFind(); */
-  virtual void	viewRefresh() {} // rebuild/refresh the current view
+  virtual void	viewRefresh() {Refresh();} // manually rebuild/refresh the current view
   virtual void 	viewCloseCurrentView();
   virtual void 	viewSplitVertical();
   virtual void 	viewSplitHorizontal();
@@ -924,6 +932,7 @@ public: // IDataViewWidget i/f
 protected:
   override void		Constr_impl();
   override void 	ResolveChanges_impl(CancelOp& cancel_op); // only for project browsers
+  override void		Refresh_impl(); 
 
 protected slots:
   void			ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
@@ -1035,6 +1044,7 @@ public:
   void			FillTabBarContextMenu(QMenu* contextMenu, int tab_idx = -1); 
   iDataPanel*		GetDataPanel(taiDataLink* link); // get panel for indicated link, or make new one; par_link is not necessarily data item owner (ex. link lists, references, etc.)
   void 			RemoveDataPanel(iDataPanel* panel);
+  void			Refresh(); // manually refresh; just delegates to all
   void			ResolveChanges(CancelOp& cancel_op);
   void			OnWindowBind(iTabViewer* itv); // called at constr_post time
   void			ShowPanel(iDataPanel* panel); // top level guy, checks if exists, adds or sets current
@@ -1110,6 +1120,7 @@ public:
   virtual void		OnWindowBind(iTabViewer* itv) {OnWindowBind_impl(itv);}
     // called in post, when all windows are built
   virtual void		ResolveChanges(CancelOp& cancel_op);
+  virtual void		Refresh() {Refresh_impl();} // manually refresh
   virtual String 	TabText() const; // text for the panel tab -- usually just the view_name of the curItem
 
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
@@ -1132,6 +1143,7 @@ protected:
   QScrollArea*		scr; // central scrollview
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
   virtual void		OnWindowBind_impl(iTabViewer* itv) {}
+  virtual void		Refresh_impl() {}
   virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
 };
 
@@ -1168,6 +1180,7 @@ public: // IDataLinkClient interface
 protected:
   iDataPanelSet*	m_dps; // set if we are in a datapanelset
   virtual void		GetImage_impl() {} // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
+  override void		Refresh_impl(); // same rule as GetImage
 };
 
 //////////////////////////
@@ -1241,6 +1254,7 @@ public:
   override void		GetImage();
   override const iColor* GetTabColor(bool selected) const;
   override bool		HasChanged();
+  override void		Refresh_impl();
   override void 	ResolveChanges(CancelOp& cancel_op); // do the children first, then our impl
 
 
@@ -1287,6 +1301,7 @@ protected:
   iTreeViewItem* 	mparentItem;
   void 			ConfigHeader();
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void		Refresh_impl();  
   override void		OnWindowBind_impl(iTabViewer* itv);
 };
 
@@ -1365,6 +1380,8 @@ public:
   bool			HasFilter(TypeItem* ti) const;
     // true if the typeitem has a TREEFILT_xxx filter that was added to our list
     
+  virtual void		Refresh() {Refresh_impl();} // manually refresh
+  
   iTreeView(QWidget* parent = 0, int tv_flags = 0);
   ~iTreeView();
    
@@ -1407,6 +1424,7 @@ protected:
   override QStringList 	mimeTypes () const; // for dnd to work, we just permit almost anything via "text/plain", then decide on the drop whether to accept  
 #endif
   virtual void		ItemDestroyingCb(iTreeViewItem* item); 
+  virtual void		Refresh_impl();
   
 protected slots:
   void 			this_contextMenuRequested(QTreeWidgetItem* item,
@@ -1453,6 +1471,8 @@ public:
   iTreeView*		treeView() const;
 
   override void 	CreateChildren(); 
+  void			DataChanged(int dcr, void* op1, void* op2)
+    {DataChanged_impl(dcr, op1, op2);} // primarily to support Refresh
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
 
   iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeViewItem* parent_,
@@ -1479,7 +1499,7 @@ public: // ITypedObject interface
 
 public: // IDataLinkClient interface
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2)
-    {DataChanged_impl(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
+    {DataChanged(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
   override void		DataLinkDestroying(taDataLink* dl); // called by DataLink when it is destroying --
 
 public: // ISelectable interface

@@ -1465,6 +1465,20 @@ void ProgObjList::DataChanged(int dcr, void* op1, void* op2) {
     GetVarsForObjs();
 }
 
+void* ProgObjList::El_Own_(void* it_) {
+  // note: gen the name first, so we don't need to do another notify
+  // note: setting default name is mostly for things like taMatrix
+  // that are normally anon, but that would like a name here in objs
+  taBase* it = (taBase*)it_;
+  if (it && it->GetName().empty()) {
+    // first, try the taBase version (since its version was prob stubbed out)
+    it->taBase::SetDefaultName();
+    //TODO: if still empty, we could gen a synthetic name here like "objNnn"
+  }
+  void* rval = inherited::El_Own_(it_);
+  return rval;
+}
+
 
 //////////////////////////
 //  Program		//

@@ -1297,6 +1297,11 @@ Qt::CheckStateRole*/
 }
 
 void MatrixTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
+  if (!m_mat) return;
+  // lookup actual end values when we are called with sentinels
+  if (row_to < 0) row_to = rowCount() - 1;
+  if (col_to < 0) col_to = columnCount() - 1;  
+  
   emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
 }
 

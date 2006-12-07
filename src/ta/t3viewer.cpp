@@ -804,6 +804,12 @@ void iT3DataViewFrame::Reset_impl() {
   setSceneTop(NULL);
 }
 
+void iT3DataViewFrame::Refresh_impl() {
+  T3DataViewRoot* rt = root();
+  if (rt) 
+    rt->Refresh();
+}
+
 T3DataViewRoot* iT3DataViewFrame::root() {
   return (m_viewer) ? &(((T3DataViewFrame*)m_viewer)->root_view) : NULL;
 }
@@ -969,6 +975,17 @@ void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
     tw->insertTab(idx, idvf, tab_label);
   idvf->t3vs->Connect_SelectableHostNotifySignal(this, 
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+}
+
+void iT3DataViewer::Refresh_impl() {
+  for (int i = 0; i < viewer()->frames.size; ++i) {
+    T3DataViewFrame* dvf = viewer()->frames.FastEl(i);
+    iT3DataViewFrame* idvf = dvf->widget();
+    if (!idvf) continue;
+    idvf->Refresh();
+  }
+  UpdateTabNames();
+  inherited::Refresh_impl(); // prob nothing
 }
 
 void iT3DataViewer::UpdateTabNames() {

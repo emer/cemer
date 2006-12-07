@@ -1576,6 +1576,13 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
 iDataTableEditor::~iDataTableEditor() {
 }
 
+void iDataTableEditor::Refresh() {
+  DataTableModel* mod = dynamic_cast<DataTableModel*>(tvTable->model());
+  //note: this will refresh all views, not just this one
+  if (mod)
+    mod->refreshViews();
+}
+
 void iDataTableEditor::setDataTable(DataTable* dt_) {
   if (dt_ == m_dt) return;
   if (dt_) {
@@ -1704,5 +1711,10 @@ void iDataTablePanel::list_selectionChanged() {
 String iDataTablePanel::panel_type() const {
   static String str("Data Table");
   return str;
+}
+
+void iDataTablePanel::Refresh_impl() {
+  dte->Refresh();
+  inherited::Refresh_impl();
 }
 

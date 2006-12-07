@@ -157,6 +157,7 @@ public:
 #endif  
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
   void 			setEditBgColor(const iColor* value); // set bg for edit, null for default
+  virtual void		Refresh(); // manual refresh
 
   iProgramEditor(QWidget* parent = NULL); //
   ~iProgramEditor();
@@ -234,6 +235,7 @@ public: // IDataLinkClient interface
 protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
   override void		OnWindowBind_impl(iTabViewer* itv);
+  override void		Refresh_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
 };
 

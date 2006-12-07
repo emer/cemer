@@ -1130,7 +1130,7 @@ class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of
 typedef taOBase inherited;
 #endif
 public:
-  String	name;		// name of the object
+  String	name;		// #NO_SAVE_EMPTY name of the object
 
   bool 		SetName(const String& nm)    	{ name = nm; return true; }
   String	GetName() const		{ return name; }
@@ -1438,6 +1438,7 @@ public:
 #ifndef __MAKETA__
     ,CLEAR_ACTS		= CLEAR_IMPL | CLOSE_WIN_IMPL // for Clear
     ,RENDER_ACTS	= CLEAR_IMPL | RENDER_PRE | RENDER_IMPL | RENDER_POST // for Render
+    ,REFRESH_ACTS	= RENDER_IMPL // for Refresh
     ,RESET_ACTS		= CLEAR_IMPL | CLOSE_WIN_IMPL | RESET_IMPL // for Reset
     ,UNBIND_ACTS	= UNBIND_IMPL
     
@@ -1474,6 +1475,7 @@ public:
   virtual void		Clear(taDataView* par = NULL) {DoActions(CLEAR_ACTS);} // clears the view (but doesn't delete any components) (usually override _impl)
   virtual void		Reset() {DoActions(RESET_ACTS);} 
     // clears, and deletes any components (usually override _impls)
+  virtual void		Refresh(){DoActions(REFRESH_ACTS);} // for manual refreshes -- just the impl stuff, not structural stuff
   virtual void		Unbind() {DoActions(UNBIND_ACTS);} 
     // clears, and deletes any components (usually override _impls)
   virtual void		DoActions(DataViewAction acts); // do the indicated action(s) if safe in this context (ex loading, whether gui exists, etc.); par only needed when a _impl needs it

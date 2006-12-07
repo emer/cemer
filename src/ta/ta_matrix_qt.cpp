@@ -56,14 +56,23 @@ iMatrixEditor::iMatrixEditor(QWidget* parent)
 void iMatrixEditor::init() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
-  //TODO: dim box enabling
   layDims = new QHBoxLayout(layOuter);
   tv = new QTableView(this);
   layOuter->addWidget(tv);
 }
 
+MatrixTableModel* iMatrixEditor::model() const {
+  return dynamic_cast<MatrixTableModel*>(tv->model());
+}
+
+void iMatrixEditor::Refresh() {
+  //note: this also updates all other mat editors too, due to Model linking
+  MatrixTableModel* mod = model();
+  if (mod)
+    mod->emit_dataChanged(); // default values mean entire table
+}
+
 void iMatrixEditor::setModel(MatrixTableModel* mod) {
-// todo: set dims
   tv->setModel(mod);
 }
 
@@ -170,3 +179,7 @@ String iMatrixPanel::panel_type() const {
   return str;
 }
 
+void iMatrixPanel::Refresh_impl() {
+  me->Refresh();
+  inherited::Refresh_impl();
+}

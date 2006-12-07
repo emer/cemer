@@ -38,7 +38,7 @@ protected:
 };
 
 class TA_API iMatrixEditor: public QWidget {
-  // widget that includes a table editor plus higher dimension selectors
+  // widget that includes a table editor; model flattens >2d into 2d by frames
 INHERITED(QWidget)
   Q_OBJECT
 public:
@@ -46,7 +46,11 @@ public:
   QHBoxLayout*		  layDims;
   QTableView*		  tv;
 
+  MatrixTableModel* 	model() const;
   void			setModel(MatrixTableModel* mod);
+  
+  void			Refresh(); // for manual refresh -- note, this also updates all other mat editors too
+  
   iMatrixEditor(QWidget* parent = NULL);
   
 private:
@@ -80,7 +84,9 @@ protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
-/*protected slots: */
+
+protected: // IDataViewWidget i/f
+  override void		Refresh_impl();
 };
 
 

@@ -1784,6 +1784,11 @@ QVariant DataTableModel::headerData(int section, Qt::Orientation orientation, in
   }
 }
 
+void DataTableModel::refreshViews() {
+  emit dataChanged(createIndex(0, 0), 
+    createIndex(rowCount() - 1, columnCount() - 1));
+}
+
 int DataTableModel::rowCount(const QModelIndex& parent) const {
   return dt->rows;
 }
