@@ -1,12 +1,15 @@
 leabra todo list:
 
+* ta_dataanal.h: add taDataAnal guy with SVD/ etc as applied to DataTable:
+  * distance matrix, (also on math) that gets frames and does it on those
+  * eigen on what??  correl matrix?
+  * get all from env
+  
 * dataops: random patterns!
-
-* add SVD/Eigenvec etc to math and then as data ops and dataprog's
 
 * mathfuns: add all float_RArray funs, for matricies.
 
-* add a *precise alloc* fun to ptrlist -- use for RecvCons::units
+* dataproc duplicate rows
 
 * css: p voidfun = crash; bindargs seems to not be getting the void??
   e.g., p taMisc::include_paths.List();

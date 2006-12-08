@@ -1177,6 +1177,17 @@ bool taMath_double::mat_get_gsl_fm_ta(const double_Matrix* ta_mat, gsl_matrix* g
   return true;
 }
 
+bool taMath_double::vec_get_gsl_fm_ta(const double_Matrix* ta_vec, gsl_vector* gsl_vec)
+{
+  if(ta_vec->dims() != 1) return false;
+  gsl_vec->size = ta_vec->dim(0); 
+  gsl_vec->stride = 1;
+  gsl_vec->data = (double*)ta_vec->data();
+  gsl_vec->block = NULL;
+  gsl_vec->owner = false;
+  return true;
+}
+
 bool taMath_double::mat_add(double_Matrix* a, double_Matrix* b) {
   gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
   gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
@@ -1201,7 +1212,83 @@ bool taMath_double::mat_div_els(double_Matrix* a, double_Matrix* b) {
   return gsl_matrix_div_elements(&g_a, &g_b);
 }
 
+bool taMath_double::mat_eigen_symmv_owrite(double_Matrix* a, double_Matrix* eigen_vals,
+					   double_Matrix* eigen_vecs) {
+  if(a->dims() != 2) {
+    taMisc::Warning("*** mat_eigen_symmv: matrix is not 2 dimensional!");
+    return false;
+  }
+  if(a->dim(0) != a->dim(1)) {
+    taMisc::Warning("*** mat_eigen_symmv: matrix is not square!");
+    return false;
+  }
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
+  int n = a->dim(0);
+  eigen_vals->SetGeom(1, n);
+  eigen_vecs->SetGeom(2, n, n);
+  gsl_matrix g_evec;  mat_get_gsl_fm_ta(eigen_vecs, &g_evec);
+  gsl_matrix g_eval;  vec_get_gsl_fm_ta(eigen_vals, &g_eval);
+  gsl_eigen_symmv_workspace* w = gsl_eigen_symmv_alloc(n);
+  gsl_eigen_symmv(&g_a, &g_eval, &g_evec, w);
+  gsl_eignn_symmv_free(w);
+  gsl_eigen_symmv_sort(&g_eval, &g_evec, GSL_EIGEN_SORT_ABS_ASC);
+  return true;
+}
+
+bool taMath_double::mat_eigen_symmv(double_Matrix* a, double_Matrix* eigen_vals,
+				    double_Matrix* eigen_vecs) {
+  double_Matrix a_copy = *a;
+  return mat_eigen_symmv_owrite(&a_copy, eigen_vals, eigen_vecs);
+}
+
+bool taMath_double::mat_svd_owrite(double_Matrix* a, double_Matrix* s, double_Matrix* v) {
+  if(a->dims() != 2) {
+    taMisc::Warning("*** mat_svd: matrix is not 2 dimensional!");
+    return false;
+  }
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
+  int m = a->dim(0);
+  int n = a->dim(1);
+  s->SetGeom(1, n);
+  v->SetGeom(2, n, n);
+  gsl_matrix g_v;  mat_get_gsl_fm_ta(v, &g_v);
+  gsl_matrix g_s;  vec_get_gsl_fm_ta(s, &g_s);
+  gsl_vector* w = gsl_vector_alloc(n);
+  gsl_linalg_SV_decomp(&g_a, &g_v, &g_s, w);
+  gsl_vector_free(w);
+  return true;
+}
+
+bool taMath_double::mat_svd(double_Matrix* a, double_Matrix* u, double_Matrix* s, double_Matrix* v) {
+  *u = *a;			// u is copy of a
+  return mat_svd_owrite(u, s, v);
+}
+
 #endif
+
+bool taMath_double::mat_dist(double_Matrix* dist_mat, const double_Matrix* src_mat,
+			     DistMetric metric, bool norm, double tolerance) {
+  // todo: write this
+  if(src_mat->dims() < 2) {
+    taMisc::Warning("*** mat_dist: matrix is < 2 dimensional!");
+    return false;
+  }
+  int n = src_mat->frames();
+  dist_mat->SetGeom(2, n, n);
+  for(int i=0;i<n;i++) {
+    double_Matrix* t1 = ((double_Matrix*)src_mat)->GetFrameSlice(i);
+    taBase::Ref(t1);
+    for(int j=0;j<n;j++) {
+      double_Matrix* t2 = ((double_Matrix*)src_mat)->GetFrameSlice(j);
+      taBase::Ref(t2);
+      double dist = vec_dist(t1, t2, metric, norm, tolerance);
+      dist_mat->FastEl(i,j) = dist;
+      taBase::unRefDone(t2);
+    }
+    taBase::unRefDone(t1);
+  }
+  return true;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

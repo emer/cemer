@@ -853,9 +853,9 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   int max_n = n_conns;
   if(n_conns < 0)
     max_n = ru_gp->gp.size - recv_start;
-  if(ru_gp->size > 0)
+  if(ru_gp->gp.size > 0)
     max_n = MIN(ru_gp->gp.size - recv_start, max_n);
-  if(su_gp->size > 0)
+  if(su_gp->gp.size > 0)
     max_n = MIN(su_gp->gp.size - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
   for(i=0; i<max_n; i++) {
@@ -912,12 +912,12 @@ void GpOneToManyPrjnSpec::GetNGroups(Projection* prjn, int& r_n_ugp, int& s_n_ug
 
   s_n_ugp = n_conns;
   if(n_conns < 0)
-    s_n_ugp = send_ugp->size - send_start;
-  s_n_ugp = MIN(send_ugp->size - send_start, s_n_ugp);
+    s_n_ugp = send_ugp->gp.size - send_start;
+  s_n_ugp = MIN(send_ugp->gp.size - send_start, s_n_ugp);
   s_n_ugp = MAX(1, s_n_ugp);	// lower limit of 1
 
-  if(recv_ugp->size > 0)
-    r_n_ugp = recv_ugp->size;
+  if(recv_ugp->gp.size > 0)
+    r_n_ugp = recv_ugp->gp.size;
   else
     r_n_ugp = 1;
 
@@ -970,13 +970,13 @@ void GpOneToManyPrjnSpec::PreConnect(Projection* prjn) {
   int r, s;
   for(r=0; r<r_n_ugp; r++) {
     Unit_Group* rgp;
-    if(recv_ugp->size > 0)
+    if(recv_ugp->gp.size > 0)
       rgp = (Unit_Group*)recv_ugp->gp.FastEl(r);
     else
       rgp = recv_ugp;
     for(s=0; s<s_n_ugp; s++) {
       Unit_Group* sgp;
-      if(send_ugp->size > 0)
+      if(send_ugp->gp.size > 0)
 	sgp = (Unit_Group*)send_ugp->gp.FastEl(s);
       else
 	sgp = send_ugp;
@@ -1019,13 +1019,13 @@ void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn) {
   int r, s;
   for(r=0; r<r_n_ugp; r++) {
     Unit_Group* rgp;
-    if(recv_ugp->size > 0)
+    if(recv_ugp->gp.size > 0)
       rgp = (Unit_Group*)recv_ugp->gp.FastEl(r);
     else
       rgp = recv_ugp;
     for(s=0; s<s_n_ugp; s++) {
       Unit_Group* sgp;
-      if(send_ugp->size > 0)
+      if(send_ugp->gp.size > 0)
 	sgp = (Unit_Group*)send_ugp->gp.FastEl(send_start + s);
       else
 	sgp = send_ugp;

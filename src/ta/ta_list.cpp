@@ -103,6 +103,14 @@ void taPtrList_impl::Alloc(int sz) {
     el = (void**)realloc((char *) el, alloc_size * sizeof(void*));
 }
 
+void taPtrList_impl::AllocExact(int sz) {
+  alloc_size = MAX(sz, size);
+  if(el == NULL)
+    el = (void**)malloc(alloc_size * sizeof(void*));
+  else
+    el = (void**)realloc((char *) el, alloc_size * sizeof(void*));
+}
+
 void taPtrList_impl::BuildHashTable(int sz) {
   if(hash_table == NULL)
     hash_table = new taHashTable();

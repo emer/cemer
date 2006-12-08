@@ -493,6 +493,8 @@ public:
 #ifdef HAVE_GSL
   static bool mat_get_gsl_fm_ta(double_Matrix* ta_mat, gsl_matrix* gsl_mat);
   // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
+  static bool vec_get_gsl_fm_ta(double_Matrix* ta_vec, gsl_matrix* gsl_vec);
+  // #IGNORE helper function to get a gsl-formatted vector from a one-dimensional ta matrix (vector)
 
   static bool mat_add(double_Matrix* a, double_Matrix* b);
   // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions
@@ -502,8 +504,25 @@ public:
   // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions
   static bool mat_div_els(double_Matrix* a, double_Matrix* b);
   // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
+
+  static bool mat_eigen_symmv_owrite(double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
+  // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a symmetric n x n matrix. the matrix is overwritten by the operation.  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already
+  static bool mat_eigen_symmv(double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
+  // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a symmetric (n x n) matrix. this matrix is not affeced by the operation (it is copied first).  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already
+
+  static bool mat_svd_owrite(double_Matrix* A, double_Matrix* S, double_Matrix* V);
+  // #CAT_Matrix compute the singular value decomposition (SVD) of MxN matrix A into an orthogonal MxN matrix U times a diagonal NxN matrix S (diagonals returned as n-item vector S) times the transpose of an NxN orthogonal square matrix V.  matrix A is replaced by MxN orthogonal matrix U.  S and V are automatically configured to the appropriate size if they are not already.
+  static bool mat_svd(double_Matrix* A, double_Matrix* U, double_Matrix* S, double_Matrix* V);
+  // #CAT_Matrix compute the singular value decomposition (SVD) of MxN matrix A into an orthogonal MxN matrix U times a diagonal NxN matrix S (diagonals returned as n-item vector S) times the transpose of an NxN orthogonal square matrix V. matrix A is not affeced by the operation (it is copied first).  S and V are automatically configured to the appropriate size if they are not already
 #endif
   
+  /////////////////////////////////////////////////////////////////////////////////
+  // Matrix operations
+
+  static bool	mat_dist(double_Matrix* dist_mat, const double_Matrix* src_mat,
+			 DistMetric metric, bool norm = false, double tolerance=0.0f);
+  // #CAT_Distance compute distance matrix of frames within matrix src_mat (must be dim >= 2) -- dist_mat is nframes x nframes
+
   void Initialize() { };
   void Destroy() { };
   TA_BASEFUNS(taMath_double);

@@ -312,7 +312,9 @@ public:
   // #IGNORE called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
   inline bool	InRange(int idx) const { return ((idx < size) && (idx >= 0)); }
   virtual void	Alloc(int sz);
-  // #CAT_Modify allocate a list big enough for given number of elements (or current size)
+  // #CAT_Modify allocate a list big enough for given number of elements (or current size) -- uses optimized memory allocation policies and generally allocates more than currently needed
+  virtual void	AllocExact(int sz);
+  // #CAT_Modify allocate exact number specified
   virtual void 	Reset()			{ RemoveAll(); }
   // #CAT_Modify reset the list (remove all elements)
   virtual bool	IsEmpty() const	{ return (size == 0) ? true : false; }

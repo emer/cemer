@@ -541,7 +541,7 @@ void RecvCons::LinkSendCons(Unit* ru) {
 void RecvCons::AllocCons(int no) {
   if(no <= 0) return;
   cons.Alloc(no);
-  units.Alloc(no);
+  units.AllocExact(no);
 }
 
 Connection* RecvCons::NewCon(Unit* un) {
