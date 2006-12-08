@@ -20,6 +20,7 @@
 #include "ta_project.h"
 #include "ta_qt.h"
 
+
 //////////////////////////////////
 //	SelectEditConfig	//
 //////////////////////////////////
@@ -48,6 +49,22 @@ void SelectEditConfig::Copy_(const SelectEditConfig& cp) {
 //	SelectEdit	//
 //////////////////////////////////
 
+void SelectEdit::BaseClosingAll(taBase* obj) {
+  TokenSpace& ts = TA_SelectEdit.tokens;
+  for (int i = ts.size - 1; i >= 0; --i) {
+    SelectEdit* se = (SelectEdit*)ts.FastEl(i);
+    se->BaseClosing(obj);
+  }
+}
+
+void SelectEdit::BaseDataChangedAll(taBase* obj, int dcr, void* op1, void* op2) {
+  TokenSpace& ts = TA_SelectEdit.tokens;
+  for (int i = ts.size - 1; i >= 0; --i) {
+    SelectEdit* se = (SelectEdit*)ts.FastEl(i);
+    se->BaseDataChanged(obj, dcr, op1, op2);
+  }
+}
+
 void SelectEdit::Initialize() {
 //nn  edit_on_reopen = false;
 //  mbr_bases.SetBaseType(&TA_taBase);
@@ -71,11 +88,11 @@ void SelectEdit::Copy_(const SelectEdit& cp) {
   config = cp.config;
 
   mbr_bases.Borrow(cp.mbr_bases);
-  members.Borrow(cp.members);
+  members = cp.members;
   mbr_strs.Copy(cp.mbr_strs);
 
   meth_bases.Borrow(cp.meth_bases);
-  methods.Borrow(cp.methods);
+  methods = cp.methods;
   meth_strs.Copy(cp.meth_strs);
 }
 
@@ -92,6 +109,123 @@ void SelectEdit::UpdateAfterEdit() {
     GetMembsFmStrs();
     GetMethsFmStrs();
   }
+  ReShowEdit(true); //forced
+}
+
+void SelectEdit::BaseAdded(taBase* ta) {
+//TODO???
+}
+
+void SelectEdit::BaseRemoved(taBase* ta) {
+  int i = mbr_bases.FindEl(ta);
+  if (i >= 0) return;
+  i = meth_bases.FindEl(ta);
+  if (i >= 0) return;
+  //TODO ??
+}
+ 
+bool SelectEdit::BaseClosing(TAPtr base) {
+  bool gotone = false;
+  int i;
+  for(i=mbr_bases.size-1;i>=0;i--) {
+    TAPtr bs = mbr_bases.FastEl(i);
+    char* staddr = (char*)bs;
+    char* endaddr=staddr+bs->GetSize();
+    char* vbase = (char*)base;
+    if((vbase >= staddr) && (vbase <= endaddr)) {
+      RemoveField_impl(i);
+      gotone = true;
+    }
+  }
+
+  for(i=meth_bases.size-1;i>=0;i--) {
+    TAPtr bs = meth_bases.FastEl(i);
+    if(bs == base) {
+      RemoveFun_impl(i);
+      gotone = true;
+    }
+  }
+  if (gotone) ReShowEdit(true);
+  return gotone;
+}
+
+bool SelectEdit::BaseDataChanged(taBase* base,
+    int dcr, void* op1_, void* op2_) 
+{
+  bool rval = false;
+  int i;
+  for(i=mbr_bases.size-1;i>=0;i--) {
+    TAPtr bs = mbr_bases.FastEl(i);
+    char* staddr = (char*)bs;
+    char* endaddr=staddr+bs->GetSize();
+    char* vbase = (char*)base;
+    if((vbase >= staddr) && (vbase <= endaddr)) {
+      rval = true;
+      break;
+    }
+  }
+
+  if (!rval) for(i=meth_bases.size-1;i>=0;i--) {
+    TAPtr bs = meth_bases.FastEl(i);
+    if(bs == base) {
+      rval = true;
+      break;
+    }
+  }
+  if (rval) DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+
+  return rval;
+}
+
+
+void SelectEdit::BaseChangeSave() {
+//nn  if((mbr_bases.size > 0) || (meth_bases.size > 0))
+//    edit_on_reopen = CloseEdit();
+
+  GetAllPaths();
+  if(mbr_bases.size > 0)
+    mbr_bases.Reset();
+  if(meth_bases.size > 0)
+    meth_bases.Reset();
+}
+
+void SelectEdit::BaseChangeReShow() {
+  if((mbr_base_paths.size == 0) && (meth_base_paths.size == 0)) return;
+
+  if(mbr_base_paths.size > 0) {
+    mbr_bases.Reset();		// get rid of the mbr_bases!
+    int i;
+    for(i=0;i<mbr_base_paths.size;i++) {
+      String path = mbr_base_paths.FastEl(i);
+      TAPtr bs = tabMisc::root->FindFromPath(path);
+      if(bs == NULL) {
+	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
+	members.RemoveIdx(i);  mbr_strs.RemoveIdx(i);  config.mbr_labels.RemoveIdx(i);  mbr_base_paths.RemoveIdx(i);
+	i--;
+	continue;
+      }
+      mbr_bases.Link(bs);
+    }
+    mbr_base_paths.Reset();
+  }
+
+  if(meth_base_paths.size > 0) {
+    meth_bases.Reset();		// get rid of the meth_bases!
+    int i;
+    for(i=0;i<meth_base_paths.size;i++) {
+      String path = meth_base_paths.FastEl(i);
+      TAPtr bs = tabMisc::root->FindFromPath(path);
+      if(bs == NULL) {
+	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
+	methods.RemoveIdx(i);  meth_strs.RemoveIdx(i);  config.meth_labels.RemoveIdx(i);  meth_base_paths.RemoveIdx(i);
+	i--;
+	continue;
+      }
+      meth_bases.Link(bs);
+    }
+    meth_base_paths.Reset();
+  }
+
   ReShowEdit(true); //forced
 }
 
@@ -148,7 +282,7 @@ void SelectEdit::GetMembsFmStrs() {
       i--;
       continue;
     }
-    members.Link(md);
+    members.Add(md);
   }
 }
 
@@ -170,7 +304,7 @@ void SelectEdit::GetMethsFmStrs() {
       i--;
       continue;
     }
-    methods.Link(md);
+    methods.Add(md);
   }
 }
 
@@ -190,9 +324,10 @@ bool SelectEdit::SelectMember(TAPtr base, MemberDef* md, const char* lbl) {
     config.mbr_labels[bidx] = lbl;
   } else {
     mbr_bases.Link(base);
-    members.Link(md);
+    members.Add(md);
     mbr_strs.Add(md->name);
     config.mbr_labels.Add(lbl);
+    BaseAdded(base);
     rval = true;
   }
   ReShowEdit(true); //forced
@@ -222,9 +357,10 @@ bool SelectEdit::SelectMethod(TAPtr base, MethodDef* md, const char* lbl) {
     config.meth_labels[bidx] = lbl;
   } else {
     meth_bases.Link(base);
-    methods.Link(md);
+    methods.Add(md);
     meth_strs.Add(md->name);
     config.meth_labels.Add(lbl);
+    BaseAdded(base);
     rval = true;
   }
   ReShowEdit(true); //forced
@@ -254,7 +390,12 @@ void SelectEdit::UpdateAllBases() {
 }
 
 void SelectEdit::RemoveField_impl(int idx) {
-  mbr_bases.RemoveIdx(idx);  members.RemoveIdx(idx);  mbr_strs.RemoveIdx(idx);  config.mbr_labels.RemoveIdx(idx);
+  taBase* base = mbr_bases.FastEl(idx);
+  mbr_bases.RemoveIdx(idx);
+  members.RemoveIdx(idx);
+  mbr_strs.RemoveIdx(idx);
+  config.mbr_labels.RemoveIdx(idx);
+  BaseRemoved(base);
 }
 
 void SelectEdit::RemoveField(int idx) {
@@ -268,7 +409,12 @@ void SelectEdit::MoveField(int from, int to) {
 }
 
 void SelectEdit::RemoveFun_impl(int idx) {
-  meth_bases.RemoveIdx(idx);  methods.RemoveIdx(idx);  meth_strs.RemoveIdx(idx);  config.meth_labels.RemoveIdx(idx);
+  taBase* base = mbr_bases.FastEl(idx);
+  meth_bases.RemoveIdx(idx);
+  methods.RemoveIdx(idx);
+  meth_strs.RemoveIdx(idx);
+  config.meth_labels.RemoveIdx(idx);
+  BaseRemoved(base);
 }
 
 void SelectEdit::RemoveFun(int idx) {
@@ -289,6 +435,7 @@ void SelectEdit::NewEdit() {
 
 int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = 0;
+  // NOTE: we update notify list by just doing a series of Remove/Add
   for(int j=mbr_bases.size-1; j>=0; j--) {
     taBase* itm = mbr_bases[j];
     taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
@@ -297,6 +444,8 @@ int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
     taBase* nitm = new_par->FindFromPath(old_path);
     if(nitm != NULL) {
       mbr_bases.ReplaceLinkIdx(j, nitm);
+      BaseRemoved(itm);
+      BaseAdded(nitm);
       nchg++;
     }
     else {
@@ -309,6 +458,8 @@ int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
     taBase* nitm = new_par->FindFromPath(old_path);
     if(nitm != NULL) {
       meth_bases.ReplaceLinkIdx(j, nitm);
+      BaseRemoved(itm);
+      BaseAdded(nitm);
       nchg++;
     }
     else {
@@ -316,93 +467,6 @@ int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
     }
   }
   return nchg;
-}
-
-bool SelectEdit::BaseClosing(TAPtr base) {
-  bool gotone = false;
-  int i;
-  for(i=mbr_bases.size-1;i>=0;i--) {
-    TAPtr bs = mbr_bases.FastEl(i);
-    char* staddr = (char*)bs;
-    char* endaddr=staddr+bs->GetSize();
-    char* vbase = (char*)base;
-    if((vbase >= staddr) && (vbase <= endaddr)) {
-      RemoveField_impl(i);
-      gotone = true;
-    }
-  }
-
-  for(i=meth_bases.size-1;i>=0;i--) {
-    TAPtr bs = meth_bases.FastEl(i);
-    if(bs == base) {
-      RemoveFun_impl(i);
-      gotone = true;
-    }
-  }
-
-  return gotone;
-}
-
-bool SelectEdit::BaseClosingAll(TAPtr base) {
-  bool got_one = false;
-  int i;
-  for(i=0;i<TA_SelectEdit.tokens.size;i++) {
-    SelectEdit* se = (SelectEdit*)TA_SelectEdit.tokens.FastEl(i);
-    if(se->BaseClosing(base))
-      got_one = true;
-  }
-  return got_one;
-}
-
-void SelectEdit::BaseChangeSave() {
-//nn  if((mbr_bases.size > 0) || (meth_bases.size > 0))
-//    edit_on_reopen = CloseEdit();
-
-  GetAllPaths();
-  if(mbr_bases.size > 0)
-    mbr_bases.Reset();
-  if(meth_bases.size > 0)
-    meth_bases.Reset();
-}
-
-void SelectEdit::BaseChangeReShow() {
-  if((mbr_base_paths.size == 0) && (meth_base_paths.size == 0)) return;
-
-  if(mbr_base_paths.size > 0) {
-    mbr_bases.Reset();		// get rid of the mbr_bases!
-    int i;
-    for(i=0;i<mbr_base_paths.size;i++) {
-      String path = mbr_base_paths.FastEl(i);
-      TAPtr bs = tabMisc::root->FindFromPath(path);
-      if(bs == NULL) {
-	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
-	members.RemoveIdx(i);  mbr_strs.RemoveIdx(i);  config.mbr_labels.RemoveIdx(i);  mbr_base_paths.RemoveIdx(i);
-	i--;
-	continue;
-      }
-      mbr_bases.Link(bs);
-    }
-    mbr_base_paths.Reset();
-  }
-
-  if(meth_base_paths.size > 0) {
-    meth_bases.Reset();		// get rid of the meth_bases!
-    int i;
-    for(i=0;i<meth_base_paths.size;i++) {
-      String path = meth_base_paths.FastEl(i);
-      TAPtr bs = tabMisc::root->FindFromPath(path);
-      if(bs == NULL) {
-	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
-	methods.RemoveIdx(i);  meth_strs.RemoveIdx(i);  config.meth_labels.RemoveIdx(i);  meth_base_paths.RemoveIdx(i);
-	i--;
-	continue;
-      }
-      meth_bases.Link(bs);
-    }
-    meth_base_paths.Reset();
-  }
-
-  ReShowEdit(true); //forced
 }
 
 String SelectEdit::GetMbrLabel(int i) {

@@ -199,7 +199,7 @@ private:
   
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
-  TypeDef* 	GetTypeDef() const {return &TA_iMethodButtonFrame;} // override
+  TypeDef* 	GetTypeDef() const {return &TA_QWidget;/*&TA_iMethodButtonFrame;*/} // override
 
 public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
   void		DataLinkDestroying(taDataLink* dl); 

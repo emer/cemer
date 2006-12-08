@@ -428,7 +428,7 @@ public:
 
 //TODO  int		Edit();
 
-  bool		ShowMember(MemberDef* md);
+  bool		ShowMember(MemberDef* md) const;
 
 protected:
   override void		ClearMultiBody_impl(); // clears multi-body for reshowing
@@ -448,10 +448,11 @@ protected:
 
 class TA_API gpiArrayEditDataHost : public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+INHERITED(taiEditDataHost)
 public:
   int		n_ary_membs;
 
-  bool 		ShowMember(MemberDef* md);
+  bool 		ShowMember(MemberDef* md) const;
   void 		GetValue();
   void 		GetImage();
 //TODO  int		Edit();
@@ -473,8 +474,9 @@ protected:
 
 class TA_API SArgEditDataHost : public gpiArrayEditDataHost {
   // ##NO_INSTANCE
+INHERITED(gpiArrayEditDataHost)
 public:
-  bool 		ShowMember(MemberDef* md);
+  bool 		ShowMember(MemberDef* md) const;
 
   SArgEditDataHost(void* base, TypeDef* tp, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0);
@@ -485,6 +487,7 @@ protected:
 
 class TA_API gpiSelectEditDataHost : public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
+INHERITED(taiEditDataHost)
   Q_OBJECT
 public:
   SelectEdit*	sele;
@@ -494,7 +497,7 @@ public:
   gpiSelectEditDataHost()		{ };
   ~gpiSelectEditDataHost();
 
-  override bool ShowMember(MemberDef* md);
+  override bool ShowMember(MemberDef* md) const;
   override void	GetValue();
 
 protected:
@@ -508,8 +511,8 @@ protected:
   void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
   QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
 
-  override void		GetImage_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
-  override void		GetValue_impl(const MemberSpace& ms, const taiDataList& dl, void* base);
+  override void		GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
+  override void		GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const;
 
 protected slots:
   virtual void		DoRemoveSelEdit(); // #IGNORE removes the sel_item_index item

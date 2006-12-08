@@ -893,10 +893,11 @@ class TA_API IDataLinkClient : public virtual IDataLinkProxy {//#NO_INSTANCE #NO
 friend class taDataLink;
 public:
 #ifndef TA_NO_GUI
-  taiDataLink*		link() const {return (taiDataLink*)m_link;}
+  inline taiDataLink*	link() const {return (taiDataLink*)m_link;}
 #else
-  taDataLink*		link() const {return m_link;}
+  inline taDataLink*	link() const {return m_link;}
 #endif
+  inline taDataLink*	link_() const {return m_link;}
   virtual void		DataLinkDestroying(taDataLink* dl) = 0; // called by DataLink when destroying; it will remove datalink ref in dlc upon return
   virtual void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) = 0; //
   
@@ -1105,8 +1106,15 @@ public:
 //   MemberSpace	//
 //////////////////////////
 
-class TA_API MemberSpace: public taPtrList<MemberDef> {
+class TA_API Member_List: public taPtrList<MemberDef> {
+  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS simple list of members
+public:
+  Member_List() {}
+};
+
+class TA_API MemberSpace: public Member_List {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of members
+INHERITED(Member_List)
 protected:
   String	GetListName_() const		{ return name; }
   String El_GetName_(void* it) const;
@@ -1190,8 +1198,15 @@ public:
 //   MethodSpace	//
 //////////////////////////
 
-class TA_API MethodSpace: public taPtrList<MethodDef> {
+class TA_API Method_List: public taPtrList<MethodDef> {
+  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS simple list of methods
+public:
+  Method_List() {}
+};
+
+class TA_API MethodSpace: public Method_List {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of methods
+INHERITED(Method_List)
 protected:
   String	GetListName_() const		{ return name; }
   String El_GetName_(void* it) const;

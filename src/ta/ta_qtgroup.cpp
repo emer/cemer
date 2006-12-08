@@ -1403,7 +1403,7 @@ void gpiCompactListDataHost::Constr_Strings(const char*, const char* win_title) 
 }
 
 // don't check for null im ptr here
-bool gpiCompactListDataHost::ShowMember(MemberDef* md) {
+bool gpiCompactListDataHost::ShowMember(MemberDef* md) const {
   return md->ShowMember(show);
 }
 
@@ -1532,11 +1532,11 @@ void gpiArrayEditDataHost::ClearBody_impl() {
   taiEditDataHost::ClearBody_impl();
 }
 
-bool gpiArrayEditDataHost::ShowMember(MemberDef* md) {
-  if(md->name == "size")
+bool gpiArrayEditDataHost::ShowMember(MemberDef* md) const {
+  if (md->name == "size")
     return true;
   else
-    return taiEditDataHost::ShowMember(md);
+    return inherited::ShowMember(md);
 }
 
 void gpiArrayEditDataHost::GetImage() {
@@ -1621,17 +1621,17 @@ int gpiArrayEditDataHost::Edit() {
 //////////////////////////////////
 
 SArgEditDataHost::SArgEditDataHost(void* base, TypeDef* tp,  bool read_only_,
-  	bool modal_, QObject* parent)
-: gpiArrayEditDataHost(base, tp, read_only_, modal_, parent) {
+  bool modal_, QObject* parent)
+:inherited(base, tp, read_only_, modal_, parent) {
   n_ary_membs = 0;
 //  ary_data_g = NULL;
 }
 
-bool SArgEditDataHost::ShowMember(MemberDef* md) {
-  if(md->name == "size")
+bool SArgEditDataHost::ShowMember(MemberDef* md) const {
+  if (md->name == "size")
     return true;
   else
-    return gpiArrayEditDataHost::ShowMember(md);
+    return inherited::ShowMember(md);
 }
 
 void SArgEditDataHost::Constr_AryData() {
@@ -1673,7 +1673,7 @@ gpiSelectEditDataHost::gpiSelectEditDataHost(void* base, TypeDef* td, bool read_
 gpiSelectEditDataHost::~gpiSelectEditDataHost() {
 }
 
-bool gpiSelectEditDataHost::ShowMember(MemberDef* md) {
+bool gpiSelectEditDataHost::ShowMember(MemberDef* md) const {
   if (md->im == NULL) return false;
   if((md->name == "config")) return true;
   return false;
@@ -1702,7 +1702,7 @@ void gpiSelectEditDataHost::Constr_Body() {
   if (rebuild_body) {
     meth_el.Reset();
   }
-  taiEditDataHost::Constr_Body();
+  inherited::Constr_Body();
   mnuRemoveMember = new QMenu();
 
   base_items = data_el.size;
@@ -1828,8 +1828,8 @@ void gpiSelectEditDataHost::GetValue() {
   Unchanged();
 }
 
-void gpiSelectEditDataHost::GetValue_impl(const MemberSpace& ms, const taiDataList& dl,
-	void* base)
+void gpiSelectEditDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,
+  void* base) const
 {
   int i, cnt = 0;
   bool first_diff = true;
@@ -1857,8 +1857,8 @@ void gpiSelectEditDataHost::GetValue_impl(const MemberSpace& ms, const taiDataLi
   }
 }
 
-void gpiSelectEditDataHost::GetImage_impl(const MemberSpace& ms, const taiDataList& dl,
-	void* base)
+void gpiSelectEditDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
+  void* base)
 {
   int cnt = 0;
   for (int i = 0; i < ms.size; ++i) {

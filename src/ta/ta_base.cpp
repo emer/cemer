@@ -960,6 +960,12 @@ void taBase::DataChanged(int dcr, void* op1, void* op2) {
   setDirty(true); // note, also then sets dirty for list ops, like Add etc.
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
+#ifdef TA_GUI
+  // notify SelectEdits
+  if (taMisc::gui_active && (dcr == DCR_ITEM_UPDATED)) {
+    SelectEdit::BaseDataChangedAll(this, DCR_ITEM_UPDATED, NULL, NULL);
+  }
+#endif
 }
 
 void taBase::setDirty(bool value) {
@@ -1107,7 +1113,7 @@ bool taBase::DuplicateMe() {
 
 #ifdef TA_GUI
 static void tabase_base_closing_all_gp(TAPtr obj) {
-  SelectEdit::BaseClosingAll(obj); // get it before it is moved around and stuff
+//  SelectEdit::BaseClosingAll(obj); // get it before it is moved around and stuff
   // also check for groups and objects in them that might die
   TypeDef* td = obj->GetTypeDef();
   int i;

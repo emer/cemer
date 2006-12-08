@@ -210,12 +210,6 @@ public:
 };
 
 
-class TA_API Member_List : public taPtrList<MemberDef> {
-  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS list of members -- simpler than MemberSpace, no ownership
-public:
-  ~Member_List()            { Reset(); }
-};
-
 
 #endif
 
