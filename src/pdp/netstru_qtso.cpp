@@ -51,6 +51,7 @@
 #include "ta_qtgroup.h"
 #include "css_qt.h"		// for the cssiSession
 
+#include "iflowlayout.h"
 #include "icolor.h"
 
 #include "imisc_so.h"
@@ -63,6 +64,7 @@
 #include <qapplication.h>
 #include <qcheckbox.h>
 #include <qclipboard.h>
+#include <QGroupBox>
 #include <qlayout.h>
 #include <Q3ListView>
 #include <QScrollArea>
@@ -1405,28 +1407,59 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   updating = 0;
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
-  layOuter = new QHBoxLayout(widg);
+  layOuter = new QVBoxLayout(widg);
 
-  layCtrls = new QVBoxLayout(layOuter, 1); // takes up all variable space
-  layDispCheck = new QHBoxLayout(layCtrls);
+  layDispCheck = new QHBoxLayout(layOuter);
   chkDisplay = new QCheckBox("Display", widg);
   layDispCheck->addWidget(chkDisplay);
+  layDispCheck->addSpacing(taiM->hspc_c);
+
+  lblUnitText = taiM->NewLabel("Unit Text", widg, font_spec);
+  layDispCheck->addWidget(lblUnitText);
+  cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
+    NULL, NULL, widg);
+  layDispCheck->addWidget(cmbUnitText->GetRep());
+  layDispCheck->addSpacing(taiM->hspc_c);
+
+  lblDispMode = taiM->NewLabel("Unit Style", widg, font_spec);
+  layDispCheck->addWidget(lblDispMode);
+  cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
+    NULL, NULL, widg);
+  layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
+  
+  gbDisplayValues = new QGroupBox("Display Values", widg);
+  layOuter->addWidget(gbDisplayValues, 1);
+  layDisplayValues = new QVBoxLayout(gbDisplayValues);
 
+  layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
+  
+  chkAutoScale = new QCheckBox("auto scale", gbDisplayValues);
+  layColorScaleCtrls->addWidget(chkAutoScale);
 
-  layCtrls->addSpacing(5);
-  scrCmdButtons = new QScrollArea(widg);
-  scrCmdButtons->setWidgetResizable(true);
-  widCmdButtons = new QWidget();
-  scrCmdButtons->setWidget(widCmdButtons);
+  butScaleDefault = new QPushButton("Set Defaults", gbDisplayValues);
+  butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layColorScaleCtrls->addWidget(butScaleDefault);
+  connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
+  layColorScaleCtrls->addStretch();
+  
+  cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, gbDisplayValues);
+//  cbar->setMaximumWidth(30);
+  layDisplayValues->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+  
+  
+  lvDisplayValues = new Q3ListView(gbDisplayValues);
+  lvDisplayValues->addColumn("Value", 80);
+  lvDisplayValues->addColumn("Description");
+  lvDisplayValues->setShowSortIndicator(false);
+  lvDisplayValues->setSorting(-1); // not sorted, shown in add order
+  lvDisplayValues->setSelectionMode(Q3ListView::Extended);
+  layDisplayValues->addWidget(lvDisplayValues, 1);
 
-  layCmdButtons = new QVBoxLayout(widCmdButtons);
-  layCmdButtons->setMargin(0);
-  layCmdButtons->setSpacing(0); // just all together
-  layCmdButtons->addStretch(); // btns always inserted before this
-  // def margins/spacing ok
+  layOuter->addSpacing(taiM->vspc_c);
+  widCmdButtons = new iMethodButtonFrame(nv()->net(), widg);
 
-  layCtrls->addWidget(scrCmdButtons);
+  layOuter->addWidget(widCmdButtons);
 
   // add all base pdp commands -- you can add more in a derived constructor
 
@@ -1441,46 +1474,6 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   butNewLayer = new QPushButton("&New Layer", widCmdButtons);
   AddCmdButton(butNewLayer);
   connect(butNewLayer, SIGNAL(pressed()), this, SLOT(butNewLayer_pressed()) );
-
-  layCtrls->addSpacing(5);
-  lblDisplayValues = taiM->NewLabel("Display Values", widg, font_spec);
-  layCtrls->addWidget(lblDisplayValues);
-  lvDisplayValues = new Q3ListView(widg);
-  lvDisplayValues->addColumn("Value", 80);
-  lvDisplayValues->addColumn("Description");
-  lvDisplayValues->setShowSortIndicator(false);
-  lvDisplayValues->setSorting(-1); // not sorted, shown in add order
-  lvDisplayValues->setSelectionMode(Q3ListView::Extended);
-  layCtrls->addWidget(lvDisplayValues);
-
-
-  layOuter->addSpacing(5);
-  layColorScale = new QVBoxLayout(layOuter);
-
-  lblUnitText = taiM->NewLabel("Unit Text", widg, font_spec);
-  layColorScale->addWidget(lblUnitText);
-  cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
-    NULL, NULL, widg);
-  layColorScale->addWidget(cmbUnitText->GetRep());
-
-  lblDispMode = taiM->NewLabel("Disp Mode", widg, font_spec);
-  layColorScale->addWidget(lblDispMode);
-  cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
-    NULL, NULL, widg);
-  layColorScale->addWidget(cmbDispMode->GetRep());
-
-  chkAutoScale = new QCheckBox("auto scale", widg);
-  layColorScale->addWidget(chkAutoScale);
-
-  butScaleDefault = new QPushButton("set default", widg);
-  butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layColorScale->addWidget(butScaleDefault);
-  connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
-
-
-  cbar = new VCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
-//  cbar->setMaximumWidth(30);
-  layColorScale->addWidget(cbar, 1); // stretchfact=1 so it stretches to fill the space
 
 
 //  layOuter->addStretch();
@@ -1508,8 +1501,7 @@ NetViewPanel::~NetViewPanel() {
 
 
 void NetViewPanel::AddCmdButton(QWidget* but) {
-  int idx = layCmdButtons->count() - 1; // before last stretch
-  layCmdButtons->insertWidget(idx, but, 0, (Qt::AlignTop | Qt::AlignHCenter));
+  widCmdButtons->lay->addWidget(but);
 }
 
 void NetViewPanel::butNewLayer_pressed() {

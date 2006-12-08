@@ -397,7 +397,6 @@ void ProgArg::Destroy() {
 }
 
 void ProgArg::Copy_(const ProgArg& cp) {
-  name = cp.name;
   value = cp.value;
 }
 
@@ -1489,9 +1488,12 @@ void* ProgObjList::El_Own_(void* it_) {
   // that are normally anon, but that would like a name here in objs
   taBase* it = (taBase*)it_;
   if (it && it->GetName().empty()) {
-    // first, try the taBase version (since its version was prob stubbed out)
-    it->taBase::SetDefaultName();
-    //TODO: if still empty, we could gen a synthetic name here like "objNnn"
+    // first, try the default token-based naming
+    it->SetDefaultName_();
+    // if still empty, we could gen a synthetic name
+    if (it->GetName().empty()) {
+      it->SetName("Obj_" + String(size + 1));
+    }
   }
   void* rval = inherited::El_Own_(it_);
   return rval;

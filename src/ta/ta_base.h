@@ -420,7 +420,8 @@ public:
   // #IGNORE can be overridden to provide a more elaborate or cleaned-up user-visible name for display purposes (default is just GetName())
   virtual String	GetDesc() const {return _nilString;}
   // #IGNORE a type-specific description of the specific functionality/properties of the object
-  virtual void 		SetDefaultName();			    // #IGNORE
+  virtual void 		SetDefaultName() {} // #IGNORE note: called non-virtually in every constructor
+  void 			SetDefaultName_(); // #IGNORE default behavior for >=taNBase -- you can call this manually for taOBase (or others that implement Name)
 
   virtual void* 	GetTA_Element(int idx, TypeDef*& eltd) 
   { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])
@@ -1053,16 +1054,21 @@ class TA_API taOBase : public taBase {
 INHERITED(taBase)
 public:
   TAPtr			owner;	// #READ_ONLY #NO_SAVE pointer to owner
+  String		name;	// name of the object
+
   mutable UserDataItem_List* user_data_; // #OWN_POINTER #SHOW_TREE #NO_SAVE_EMPTY storage for user data (created if needed)
 
   taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
   override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
 //  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
 
+  bool 		SetName(const String& nm)    	{ name = nm; return true; }
+  String	GetName() const		{ return name; }
   TAPtr 		GetOwner() const	{ return owner; }
   TAPtr			GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
   TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
   UserDataItem_List* 	GetUserDataList(bool fc = false) const;  
+  DumpQueryResult 	Dump_QuerySaveMember(MemberDef* md); 
   void	CutLinks();
   void	Copy_(const taOBase& cp);
   COPY_FUNS(taOBase, taBase)
@@ -1126,21 +1132,13 @@ private:
 
 
 class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase
-#ifndef __MAKETA__
-typedef taOBase inherited;
-#endif
+INHERITED(taOBase)
 public:
-  String	name;		// #NO_SAVE_EMPTY name of the object
-
-  bool 		SetName(const String& nm)    	{ name = nm; return true; }
-  String	GetName() const		{ return name; }
-
-  void 	Initialize()			{ }
-  void	Destroy()			{ CutLinks(); }
-  void	CutLinks();
-  void	Copy_(const taNBase& cp);
-  COPY_FUNS(taNBase, taOBase);
+  override void	SetDefaultName();
   TA_BASEFUNS(taNBase);
+private:
+  void 	Initialize()			{ }
+  void	Destroy()			{ }
 };
 
 typedef taNBase* TANPtr; // this comment needed for maketa parser
@@ -1197,15 +1195,9 @@ typedef taPtrList_ta_base inherited_taPtrList;
 public:
   static MemberDef* find_md;	// #HIDDEN #NO_SAVE return value for findmember of data
 
-  String	name;		// name of the object
   TypeDef*	el_base;	// #HIDDEN #NO_SAVE Base type for objects in group
   TypeDef* 	el_typ;		// #TYPE_ON_el_base Default type for objects in group
   int		el_def;		// Index of default element in group
-
-  // stuff for the taBase
-  bool 		SetName(const String& nm)    	{name = nm; return true;}
-  String	GetName() const		{ return name; }
-  void 		SetDefaultName();
 
   override TypeDef* 	GetElType() const {return el_typ;}
   // #IGNORE Default type for objects in group

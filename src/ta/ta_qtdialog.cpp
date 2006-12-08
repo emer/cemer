@@ -434,6 +434,87 @@ void EditDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
 
 
 //////////////////////////////////
+// iMethodButtonFrame		//
+//////////////////////////////////
+
+iMethodButtonFrame::iMethodButtonFrame(taBase* base_, QWidget* parent)
+:inherited(parent)
+{
+  base = NULL;
+  setBase(base_);
+  Init();
+}
+
+iMethodButtonFrame::~iMethodButtonFrame()
+{
+  setBase(NULL);
+}
+
+void iMethodButtonFrame::Init() {
+  lay = new iFlowLayout(this, 3, taiM->hspc_c, (Qt::AlignCenter));
+}
+
+void iMethodButtonFrame::DataLinkDestroying(taDataLink* dl) {
+  base = NULL;
+  //TODO: delete the buttons etc.
+}
+ 
+void iMethodButtonFrame::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  if (dcr != DCR_ITEM_UPDATED) return;
+  GetImage();
+}
+
+void iMethodButtonFrame::setBase(taBase* ta) {
+  if (base == ta) return;
+  if (base) {
+    base->RemoveDataClient(this);
+    base = NULL;
+  }
+  base = ta;
+  if (base) {
+    base->AddDataClient(this);
+  }
+}
+
+const iColor* iMethodButtonFrame::colorOfCurRow() const {
+  return NULL;
+} 
+  
+bool iMethodButtonFrame::HasChanged() {
+  return false; // not needed for methods
+}	
+
+bool iMethodButtonFrame::isConstructed() {
+  return true;
+}
+
+bool iMethodButtonFrame::isModal() {
+  return false;
+}
+
+bool iMethodButtonFrame::isReadOnly() {
+  return false;
+} 
+
+iMainWindowViewer* iMethodButtonFrame::viewerWindow() const {
+  return NULL; // prob not needed
+}
+
+void* iMethodButtonFrame::Base() {
+  return base;
+}
+
+TypeDef* iMethodButtonFrame::GetBaseTypeDef() {
+  if (base) return base->GetTypeDef();
+  else return &TA_taBase;
+}
+
+void iMethodButtonFrame::GetImage() {
+//TODO
+}
+
+
+//////////////////////////////////
 // 	taiDataHost		//
 //////////////////////////////////
 

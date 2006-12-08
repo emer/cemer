@@ -433,9 +433,12 @@ void ScaleBar::Init(bool hor_, bool adj, bool ed){
     layOuter = new QHBoxLayout(this);
   else
     layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(0);
 
   min_frep = new iLineEdit(this);
+  min_frep->setMinCharWidth(7); // make them a bit smaller
   max_frep = new iLineEdit(this);
+  max_frep->setMinCharWidth(7); // make them a bit smaller
   if (editflag) {
     connect(min_frep, SIGNAL(returnPressed()), this, SLOT(editor_accept()) );
     connect(min_frep, SIGNAL(lostFocus()), this, SLOT(editor_accept()) );
@@ -475,11 +478,16 @@ void ScaleBar::InitLayout() {
 //TODO : add remainder of controls, ex. min/max types
   if (hor) {
     layOuter->addWidget(min_frep);
-    if (bar) layOuter->addWidget(bar);
+    if (bar) { 
+      bar->setMaximumHeight(min_frep->height()); // make them the same
+      layOuter->addWidget(bar, 1);
+    }
     layOuter->addWidget(max_frep);
     if (shrinker) { //note: both or none
-      QBoxLayout* layBut = new QVBoxLayout(layOuter);
+      // put them side by side, to save vert room
+      QBoxLayout* layBut = new QHBoxLayout(layOuter);
       layBut->setMargin(0); //spacing=2
+      layBut->setSpacing(0); //abut
       layBut->addWidget(enlarger);
       layBut->addWidget(shrinker);
      }

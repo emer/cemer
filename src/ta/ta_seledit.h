@@ -111,11 +111,13 @@ public:
 
   // note: this is intentionally not _impl:
   void	UpdateAfterEdit();
-  void	Initialize();
   void 	InitLinks();
   void	Copy_(const SelectEdit& cp);
   COPY_FUNS(SelectEdit, inherited);
   TA_BASEFUNS(SelectEdit);
+private:
+  void	Initialize();
+  void	Destroy() {}
 };
 
 

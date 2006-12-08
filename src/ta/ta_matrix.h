@@ -215,8 +215,8 @@ inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
 // 	Base taMatrix
 ///////////////////////////////////
 
-class TA_API taMatrix: public taNBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
-INHERITED(taNBase)
+class TA_API taMatrix: public taOBase { // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
+INHERITED(taOBase)
 friend class MatrixTableModel;
 
 public:
@@ -446,14 +446,13 @@ public:
   { return true; }
   // #IGNORE validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
      
-  void 			SetDefaultName() {} // rarely named
   ostream& 		Output(ostream& strm, int indent = 0) const;
   ostream& 		OutputR(ostream& strm, int indent = 0) const
     { return Output(strm, indent); }
   int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const taMatrix& cp);
-  COPY_FUNS(taMatrix, taNBase);
+  COPY_FUNS(taMatrix, taOBase);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
 
 public:

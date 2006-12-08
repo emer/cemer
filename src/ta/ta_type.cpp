@@ -1755,13 +1755,20 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     else               --m_dbu_cnt;
   } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
     bool stru = false;
-    if (m_dbu_cnt < 0) ++m_dbu_cnt;
-    else {stru = true; --m_dbu_cnt;
+    if (m_dbu_cnt < 0) {
+      ++m_dbu_cnt;
+    } else {
+      stru = true; 
+      --m_dbu_cnt;
       dcr = DCR_STRUCT_UPDATE_END; // force to be struct end, in case we notify
     }
     // at the end, also send a IU
-    if (m_dbu_cnt == 0) send_iu = true;
-    else suppress = true;
+    if (m_dbu_cnt == 0) {
+      if (dcr == DCR_DATA_UPDATE_END) // just turn it into an IU
+        dcr = DCR_ITEM_UPDATED;
+      else // otherwise, we send both
+        send_iu = true;
+    } else suppress = true;
   } else if (dcr == DCR_ITEM_UPDATED) {
     // if we are already updating, then ignore IUs, since we'll send one eventually
     if (m_dbu_cnt != 0) suppress = true;

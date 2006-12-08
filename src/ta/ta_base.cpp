@@ -529,17 +529,6 @@ String taBase::GetDisplayName() const {
   return rval;
 }
 
-void taBase::SetDefaultName() {
-  if(taMisc::not_constr || taMisc::in_init)
-    return;
-  TypeDef* td = GetTypeDef();
-  int tok;
-  if(td->tokens.keep && ((tok = td->tokens.FindEl((void *)this)) >= 0)) {
-    String nm = td->name + "_" + String(tok);
-    SetName(nm);
-  }
-}
-
 TAPtr taBase::GetOwner(TypeDef* td) const {
   TAPtr own = GetOwner();
   if(own == NULL)
@@ -548,6 +537,15 @@ TAPtr taBase::GetOwner(TypeDef* td) const {
     return own;
 
   return own->GetOwner(td);
+}
+
+void taBase::SetDefaultName_() {
+  TypeDef* td = GetTypeDef();
+  int tok;
+  if(td->tokens.keep && ((tok = td->tokens.FindEl((void *)this)) >= 0)) {
+    String nm = td->name + "_" + String(tok);
+    SetName(nm);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1869,6 +1867,9 @@ void taOBase::Destroy() {
 }
 
 void taOBase::CutLinks() {
+#ifdef TA_GUI
+  SelectEdit::BaseClosingAll(this); // close any select edits affecting this guy (before cutting owner!)
+#endif
   if (m_data_link) {
     m_data_link->DataDestroying(); // link NULLs our pointer
   }
@@ -1881,6 +1882,8 @@ void taOBase::CutLinks() {
 }
 
 void taOBase::Copy_(const taOBase& cp) {
+//no: should copy w/o interpretation  if(!cp.name.empty())
+    name = cp.name;
   if (user_data_) {
     user_data_->Reset(); // note: we just leave an empty list if no cp.userdata
     if (cp.user_data_)
@@ -1889,6 +1892,18 @@ void taOBase::Copy_(const taOBase& cp) {
     GetUserDataList(true)->Copy(*cp.user_data_);
   }
 }
+
+taBase::DumpQueryResult taOBase::Dump_QuerySaveMember(MemberDef* md) {
+  if (md->name == "name") {
+    // taNBase and greater always save
+    if (InheritsFrom(TA_taNBase))
+      return DQR_SAVE;
+    // otherwise, only save if not empty
+    return (name.empty()) ? DQR_NO_SAVE : DQR_SAVE;
+  }
+  return inherited::Dump_QuerySaveMember(md);
+}
+
 
 UserDataItem_List* taOBase::GetUserDataList(bool fc) const { 
   if (!user_data_ && fc) {
@@ -1954,22 +1969,10 @@ void taOABase::SetAdapter(taBaseAdapter* adapter_) {
 //	taNBase		//
 //////////////////////////
 
-void taNBase::Copy_(const taNBase& cp) {
-  if(!cp.name.empty())
-    name = cp.name;
-}
-
-void taNBase::CutLinks() {
-#ifdef TA_GUI
-  SelectEdit::BaseClosingAll(this); // close any select edits affecting this guy (before cutting owner!)
-#endif
-  owner = NULL; //note: also done in taOBase, but we need to do it now, before the CloseEdits call
-/*obs -- implicitly done in taOBase
-#ifdef TA_GUI
-  if (taMisc::gui_active)
-    taiMisc::CloseEdits((void*)this, GetTypeDef());
-#endif */
-  taOBase::CutLinks();
+void taNBase::SetDefaultName() {
+  if(taMisc::not_constr || taMisc::in_init)
+    return;
+  SetDefaultName_();
 }
 
 
@@ -2018,10 +2021,6 @@ void taList_impl::Copy(const taList_impl& cp) {
 
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
-}
-
-void taList_impl::SetDefaultName() {
-  // nop; no default names for list/group objects
 }
 
 void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {

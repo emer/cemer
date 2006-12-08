@@ -27,6 +27,9 @@ public:
   void 	Copy_(const NameValue& cp)		{ value = cp.value; }
   COPY_FUNS(NameValue, taNBase);
   TA_BASEFUNS(NameValue);
+private:
+  void  Initialize() {}
+  void	Destroy() {}
 };
 
 #define MAX_DFT_LONGS (int)((256 / (sizeof(long) * 8)) + 1)
@@ -52,10 +55,11 @@ public:
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   void	UpdateAfterEdit();
-  void  Initialize();
   void	InitLinks();
-  void	Destroy();
   TA_BASEFUNS(TypeDefault);
+private:
+  void  Initialize();
+  void	Destroy();
 };
 
 

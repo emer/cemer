@@ -148,7 +148,6 @@ public:
   static void		GetFileProps(TypeDef* td, String& fltr, bool& cmprs);
   // #IGNORE get file properties for given type
   
-  String		name;		// name of the object
   bool			display_toggle;  // #DEF_true 'true' if display should be updated
   bool			visible; // #HIDDEN whether toolbar window is being shown to user
 
@@ -181,8 +180,7 @@ public:
    // cb from m_widget, subordinate wins may not be cancellable
   virtual void		WidgetDeleting(); // lets us do any cleanup -- override the impl
   
-  bool 	SetName(const String& nm) {name = nm; return true;}
-  String GetName() const {return name; }
+  void	SetDefaultName() {SetDefaultName_();} // use the name (for inherited classes)
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();

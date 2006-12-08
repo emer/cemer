@@ -57,6 +57,7 @@ class	QFont;			// #IGNORE
 class	QFrame;			// #IGNORE 
 class	QGrid;			// #IGNORE 
 class	QGridLayout;		// #IGNORE 
+class	QGroupBox;		// #IGNORE 
 class	QHBox;			// #IGNORE 
 class	QHBoxLayout;		// #IGNORE 
 class	Q3HButtonGroup;		// #IGNORE 
@@ -166,6 +167,7 @@ class	iFont;			//
 class	HiLightButton;		//
 class	iLabel;			// #IGNORE  -- label w/ highlighting
 class	iLineEdit;		// #IGNORE 
+class	iMethodButtonFrame;	// #IGNORE 
 class	iDataViewer;		// #IGNORE  -- in ta_qtviewer.h
 #define iPixmap		QPixmap
 class	iPoint;			//

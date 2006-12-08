@@ -388,24 +388,23 @@ INHERITED(iViewPanelFrame)
   Q_OBJECT
 public:
 
-  QHBoxLayout*		layOuter;
-  QVBoxLayout*		  layCtrls;
-  QHBoxLayout*		    layDispCheck;
-  QCheckBox*		      chkDisplay;
-  QScrollArea*		    scrCmdButtons;
-  QWidget*		    widCmdButtons;
-  QBoxLayout*		      layCmdButtons;
-  QLabel*		    lblDisplayValues;
-  Q3ListView*		    lvDisplayValues;
-  QVBoxLayout*		  layColorScale;
+  QVBoxLayout*		layOuter;
+  QHBoxLayout*		  layDispCheck;
+  QCheckBox*		    chkDisplay;
   QLabel*		    lblUnitText;
   taiComboBox*		    cmbUnitText;
   QLabel*		    lblDispMode;
   taiComboBox*		    cmbDispMode;
-  QCheckBox*		    chkAutoScale;       // autoscale ck_box
-  QPushButton*		    butScaleDefault;    // revert to default
-  ScaleBar*		    cbar;	      // colorbar
+  iMethodButtonFrame*	    widCmdButtons;
 
+  QGroupBox*		  gbDisplayValues;
+  QVBoxLayout*		  layDisplayValues;
+  QHBoxLayout*		    layColorScaleCtrls;
+  QCheckBox*		      chkAutoScale;       // autoscale ck_box
+  QPushButton*		      butScaleDefault;    // revert to default
+  ScaleBar*		    cbar;	      // colorbar
+  Q3ListView*		    lvDisplayValues;
+  
   QPushButton*		butNewLayer;
   QPushButton*		butBuildAll;
   QPushButton*		butConnectAll;

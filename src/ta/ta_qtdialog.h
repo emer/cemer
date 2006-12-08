@@ -180,6 +180,46 @@ protected:
 };
 
 
+class TA_API iMethodButtonFrame: public QWidget, virtual public IDataLinkClient,
+  virtual public IDataHost
+{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS a widget that can be conveniently used anywhere to provide the meth buttons of an edit
+INHERITED(QWidget)
+  Q_OBJECT
+public:
+  iFlowLayout*		lay;
+
+  iMethodButtonFrame(taBase* base = NULL, QWidget* parent = NULL);
+  ~iMethodButtonFrame();
+  
+protected:
+  taBase*	base; // the object that has the methods
+  
+  void		setBase(taBase* value);
+private:
+  void		Init();
+  
+public: // ITypedObject i/f (common to IDLC and IDH)
+  void*		This() {return this;} // override
+  TypeDef* 	GetTypeDef() const {return &TA_iMethodButtonFrame;} // override
+
+public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
+  void		DataLinkDestroying(taDataLink* dl); 
+  void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+
+public: // IDataHost i/f
+  const iColor* colorOfCurRow() const;
+  bool  	HasChanged();	
+  bool		isConstructed();
+  bool		isModal();
+  bool		isReadOnly();
+ iMainWindowViewer* viewerWindow() const;
+  void*		Base();
+  TypeDef*	GetBaseTypeDef();
+  void		Changed() {}
+  void		GetImage();
+  void		GetValue() { } // na
+};
+
 class TA_API taiDataHost: public QObject, virtual public IDataLinkClient, 
   virtual public IDataHost 
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
