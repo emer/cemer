@@ -789,13 +789,15 @@ public:
   // #CAT_ObjectMgmt call function of given name on this object, prompting for args using gui interface
   
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
-  // #MENU #CAT_Display select a given member for editing --\n if already on dialog, removes it & returns false (else true)
+  // #MENU #CAT_Display #NULL_OK select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
   virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor, const String& extra_label);
-  // #IGNORE hard code interface for updating editors
+  // select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
+  virtual int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
+  // #MENU #NULL_OK #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
   virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label);
-  // #MENU #CAT_Display select a given function (method) for calling in a select edit dialog --\nif already on dialog, removes it & returns false (else true)
+  // #MENU #NULL_OK #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected
   virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor, const String& extra_label);
-  // #IGNORE hard code interface for updating editors
+  // select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected
 
   ///////////////////////////////////////////////////////////////////////////
   //	Closing 
@@ -1275,6 +1277,7 @@ public:
   override String	GetColHeading(const KeyString& key) const; // #IGNORE header text for the indicated column
   override String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
     int itm_idx = -1) const;	// #IGNORE
+  override int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
 
   void 	Initialize();
   void	Destroy();

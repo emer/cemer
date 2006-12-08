@@ -180,8 +180,7 @@ protected:
 };
 
 
-class TA_API iMethodButtonFrame: public QWidget, virtual public IDataLinkClient,
-  virtual public IDataHost
+class TA_API iMethodButtonFrame: public QWidget, virtual public IDataLinkClient, virtual public IDataHost
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS a widget that can be conveniently used anywhere to provide the meth buttons of an edit
 INHERITED(QWidget)
   Q_OBJECT

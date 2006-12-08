@@ -223,7 +223,7 @@ class PDP_API NetMonItem: public taNBase {
 INHERITED(taNBase)
 public:
   enum	NameStyle {		// how to name the datatable columns
-    AUTO_NAME,			// auto-generate a name based on the object name etc
+    AUTO_NAME,			// auto-generate a name based on the object name and the variable name, etc
     MY_NAME,			// always use my (net monitor item) name; if multiple columns, then add a subscript index for later ones (_1 _2, etc.)
   };
 
@@ -231,6 +231,7 @@ public:
   taSmartRef 		object;		// #TYPE_ON_object_type #NO_SCOPE the network object being monitored
   MemberDef*		member_var;	// #TYPE_ON_object_type #NULL_OK member variable to monitor -- you can also just type variable for non-members (r.wt, etc)
   String        	variable;	// Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
+  String		var_label;	// label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // how to name the columns/channels generated from this data?
   int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
 

@@ -1797,6 +1797,7 @@ void Program::Stop() {
 }
 
 void Program::Abort() {
+  stop_req = true;
   Stop_impl();
 }
 

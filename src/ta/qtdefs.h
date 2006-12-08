@@ -167,7 +167,7 @@ class	iFont;			//
 class	HiLightButton;		//
 class	iLabel;			// #IGNORE  -- label w/ highlighting
 class	iLineEdit;		// #IGNORE 
-class	iMethodButtonFrame;	// #IGNORE 
+class	iMethodButtonFrame;
 class	iDataViewer;		// #IGNORE  -- in ta_qtviewer.h
 #define iPixmap		QPixmap
 class	iPoint;			//

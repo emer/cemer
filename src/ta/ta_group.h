@@ -111,6 +111,7 @@ public:
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   override int 	UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
+  override int	SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
 
   ////////////////////////////////////////////////
   // 	functions that return the type		//

@@ -23,9 +23,9 @@
 #include "ta_group.h"
 #include "ta_project.h" // for taRootBase
 #include "ta_TA_type.h"
+#include "ta_seledit.h"
 
 #ifdef TA_GUI
-# include "ta_seledit.h"
 # include "ta_qt.h"
 # include "ta_qtdata.h"
 # include "ta_qtdialog.h"
@@ -1469,39 +1469,65 @@ void taBase::CallFun(const String& fun_name) {
 }
 
 bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
-  if((editor == NULL) || (member == NULL)) return false;
-#ifdef TA_GUI
+  if(!member) return false;
+  if(!editor) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(!proj) return false;
+    editor = (SelectEdit*)proj->edits.New(1);
+  }
   return editor->SelectMember(this, member, extra_label);
-#else
-  return false;
-#endif
 }
 
 bool taBase::SelectForEditNm(const String& member, SelectEdit* editor, const String& extra_label) {
-  if (!editor) return false;
-#ifdef TA_GUI
+  if(!editor) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(!proj) return false;
+    editor = (SelectEdit*)proj->edits.New(1);
+  }
   return editor->SelectMemberNm(this, member, extra_label);
-#else
-  return false;
-#endif
+}
+
+int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {
+  if(!editor) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(!proj) return -1;
+    editor = (SelectEdit*)proj->edits.New(1);
+  }
+  TypeDef* td = GetTypeDef();
+  int nfound = 0;
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members[m];
+    if(md->name.contains(memb_contains)) {
+      nfound++;
+      editor->SelectMember(this, md, GetName());
+    }
+    if(md->type->ptr == 0) {
+      if(md->type->InheritsFrom(TA_taBase)) {
+	taBase* obj = (taBase*)md->GetOff(this);
+	nfound += obj->SelectForEditSearch(memb_contains, editor);
+      }
+    }
+  }
+  return nfound;
 }
 
 bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label) {
-  if (!editor) return false;
-#ifdef TA_GUI
+  if(!function) return false;
+  if(!editor) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(!proj) return false;
+    editor = (SelectEdit*)proj->edits.New(1);
+  }
   return editor->SelectMethod(this, function, extra_label);
-#else
-  return false;
-#endif
 }
 
 bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor, const String& extra_label) {
-  if (!editor) return false;
-#ifdef TA_GUI
+  if(!editor) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(!proj) return false;
+    editor = (SelectEdit*)proj->edits.New(1);
+  }
   return editor->SelectMethodNm(this, function, extra_label);
-#else
-  return false;
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -2602,6 +2628,18 @@ int taList_impl::SetDefaultElType(TypeDef* it) {
   FindType_(it, idx);
   if(idx >= 0)    el_def = idx;
   return idx;
+}
+
+int taList_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {
+  int nfound = taOBase::SelectForEditSearch(memb_contains, editor);
+  for(int i=0;i<size;i++) {
+    taBase* itm = (taBase*)el[i];
+    if(!itm) continue;
+    if(itm->GetOwner() == this) { // for guys we own (not links; prevents loops)
+      nfound += itm->SelectForEditSearch(memb_contains, editor);
+    }
+  }
+  return nfound;
 }
 
 int taList_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {

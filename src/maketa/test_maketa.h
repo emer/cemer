@@ -1,7 +1,14 @@
 class MyClass { 
 public:
-  enum teste {
-    VAL1,
-    VAL2 = 0x0F,
-  };
+  int val;
+};
+
+class nxClass { 
+public:
+  int val3;
+};
+
+class vpClass : virtual public MyClass, virtual public nxClass { 
+public:
+  int val2;
 };

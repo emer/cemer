@@ -1,15 +1,17 @@
 leabra todo list:
 
-* add a *precise alloc* fun to ptrlist -- use for RecvCons::units
-
-* css: p voidfun = crash; bindargs seems to not be getting the void??
-  e.g., p taMisc::include_paths.List();
-
 * dataops: random patterns!
 
 * add SVD/Eigenvec etc to math and then as data ops and dataprog's
 
 * mathfuns: add all float_RArray funs, for matricies.
+
+* add a *precise alloc* fun to ptrlist -- use for RecvCons::units
+
+* css: p voidfun = crash; bindargs seems to not be getting the void??
+  e.g., p taMisc::include_paths.List();
+
+* do color network!
 
 -----------
 Program issues
@@ -37,9 +39,6 @@ lower pri:
 * add #CAT to everything in leabra_*.h, and fixup comments
 
 * checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
-
-* more color highlighting in general of programs?  -- need a "special" vs. "std" flag 
-  so you can see what is diff relative to the standard programs..
 
 * test FILE string_stream.css: ptr = 0?
 

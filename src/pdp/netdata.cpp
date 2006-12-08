@@ -431,6 +431,9 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   object_type = cp.object_type;
   member_var = cp.member_var;
   variable = cp.variable;
+  var_label = cp.var_label;
+  name_style = cp.name_style;
+  max_name_len = cp.max_name_len;
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
   pre_proc_3 = cp.pre_proc_3;
@@ -469,11 +472,11 @@ void NetMonItem::UpdateAfterEdit_impl() {
   if (!taMisc::is_loading) {
     if(name_style == MY_NAME) {
       if(name.empty() || name.contains(GetTypeDef()->name)) {
-	name = GetObjName(object) + "_" + variable;
+	name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
       }
     }
     else {			// AUTO_NAME = always update!
-      name = GetObjName(object) + "_" + variable;
+      name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
     }
     name.gsub('.', '_');		// keep it clean for css var names
     ScanObject();
@@ -554,10 +557,10 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
   }
   else {
     if(obj->InheritsFrom(&TA_Network)) // special case
-      return variable;
+      return (var_label.empty() ? variable : var_label);
     base_nm = GetObjName(obj);
   }
-  String rval = base_nm + "_" + variable;
+  String rval = base_nm + "_" + (var_label.empty() ? variable : var_label);
   rval.gsub('.', '_');		// keep it clean for css var names
   return rval;
 }

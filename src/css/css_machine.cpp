@@ -3245,8 +3245,6 @@ cssEl* cssProg::Cont() {
 	else
 	  top->run_stat = rval;
       }
-      if(top->cmd_shell)
-	top->cmd_shell->ProcessEvents();
     }
   }
   else {
@@ -3289,11 +3287,10 @@ cssEl* cssProg::Cont() {
 	else
 	  stc++;
       }
-      if(top->cmd_shell)
-	top->cmd_shell->ProcessEvents();
     }
     top->step_mode = 0;		// always temporary
   }
+  cssMisc::TopShell->ProcessEvents();
   if(top->run_stat == cssEl::Running)
     top->run_stat = cssEl::Stopping;
   return Stack()->Peek();

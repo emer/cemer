@@ -4036,7 +4036,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
     else if(DerivesFrom(TA_float)) {
       switch (sc) {
-      case SC_STREAMING: return String(*((float*)base), "%.8g");
+      case SC_STREAMING: return String(*((float*)base), "%.7g");
       default:
         return String(*((float*)base));
       }

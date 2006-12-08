@@ -193,6 +193,12 @@ void taGroup_impl::Copy_Borrow(const taGroup_impl& cp) {
   gp.Copy_Borrow(cp.gp);
 }
 
+int taGroup_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {
+  int nfound = inherited::SelectForEditSearch(memb_contains, editor);
+  nfound += gp.SelectForEditSearch(memb_contains, editor);
+  return nfound;
+}
+
 int taGroup_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
   nchg += gp.UpdatePointers_NewPar(old_par, new_par);
