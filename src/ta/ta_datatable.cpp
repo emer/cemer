@@ -238,6 +238,7 @@ int DataArray_impl::IndexOfEl_Flat(int row, int cell) const {
 
 bool DataArray_impl::SetValAsMatrix(const taMatrix* val, int row) {
   if (!val) return false;
+  if (row < 0) row = rows() + row; // abs row, if request was from end
   //note: the mat function does most of the parameter checking
   return AR()->CopyFrame(*val, row);
 }
