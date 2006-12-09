@@ -2903,6 +2903,26 @@ taiDataLink* tabOViewType::GetDataLink(void* data_, TypeDef* el_typ) {
 
 
 //////////////////////////
+//   tabDefChildVIewType 	//
+//////////////////////////
+
+int tabDefChildViewType::BidForView(TypeDef* td) {
+  // check for having  DEF_CHILD *and* it must be valid!
+  String mbr = td->OptionAfter("DEF_CHILD_");
+  if (mbr.nonempty()) {
+    MemberDef* md = td->members.FindName(mbr);
+    if (md && (md->type->ptr == 0) &&
+      md->type->InheritsFrom(&TA_taList_impl) 
+    )  return (inherited::BidForView(td) +1);
+  } 
+  return 0;
+}
+
+taiDataLink* tabDefChildViewType::CreateDataLink_impl(taBase* data_) {
+  return new tabDefChildDataLink((taOBase*)data_);
+}
+
+//////////////////////////
 //   tabListViewType 	//
 //////////////////////////
 

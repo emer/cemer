@@ -1255,7 +1255,7 @@ public:
   virtual int	SetDefaultEl(TAPtr it);
   // #CAT_Access set the default element to be given item
 
-  virtual taBase* New(int n_objs=1, TypeDef* typ=NULL);
+  override taBase* New(int n_objs=1, TypeDef* typ=NULL);
   // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size

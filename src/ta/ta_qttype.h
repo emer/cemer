@@ -838,10 +838,21 @@ protected:
   override taiDataLink*	CreateDataLink_impl(taBase* data_);
 };
 
+class TA_API tabDefChildViewType: public tabOViewType { // for taList
+INHERITED(tabOViewType)
+public:
+  override int		BidForView(TypeDef*);
+  TA_VIEW_TYPE_FUNS(tabDefChildViewType, tabOViewType)
+protected:
+  override taiDataLink*	CreateDataLink_impl(taBase* data_);
+//  override void		CreateDataPanel_impl(taiDataLink* dl_);
+private:
+  void			Initialize() {}
+  void			Destroy() {}
+};
+
 class TA_API tabListViewType: public tabOViewType { // for taList
-#ifndef __MAKETA__
-typedef tabOViewType inherited;
-#endif
+INHERITED(tabOViewType)
 public:
   override int		BidForView(TypeDef*);
   void			Initialize() {}

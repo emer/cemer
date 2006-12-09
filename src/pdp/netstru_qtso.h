@@ -405,6 +405,10 @@ public:
   ScaleBar*		    cbar;	      // colorbar
   Q3ListView*		    lvDisplayValues;
   
+  QGroupBox*		  gbSpecs;
+  QVBoxLayout*		  laySpecs;
+  iTreeView*		    tvSpecs;
+  
   QPushButton*		butNewLayer;
   QPushButton*		butBuildAll;
   QPushButton*		butConnectAll;

@@ -64,7 +64,7 @@ public:
 };
 
 class PDP_API BaseSpec : public taNBase {
-  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##CAT_Spec base specification class
+  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##CAT_Spec base specification class
 INHERITED(taNBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
@@ -73,7 +73,7 @@ public:
   TypeDef*		min_obj_type;
   // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
   BaseSpec_Group 	children;
-  // #NO_INHERIT #IN_GPMENU sub-specs descending from this one and inheriting values
+  // #NO_SHOW #NO_INHERIT #IN_GPMENU sub-specs descending from this one and inheriting values
 
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
@@ -90,7 +90,7 @@ public:
   virtual void	UpdateChildren();	// update any children
   virtual void	UpdateSubSpecs() { };	// update any subspec objects (overload me)
 
-  virtual BaseSpec* NewChild(); 		// create a new childspec
+  virtual BaseSpec* NewChild();  // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify create a new childspec
 
   virtual bool  CheckType(TypeDef* td);
   // checks typedef type, issues error and returns false if not sufficient

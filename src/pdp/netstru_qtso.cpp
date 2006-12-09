@@ -44,12 +44,11 @@
 //obs #include "netstru_so.h"
 #include "ta_geometry.h"
 #include "pdp_project.h"
-//obs #include "stats.h"
-//obs #include "sched_proc.h"
+#include "css_qt.h"		// for the cssiSession
 #include "ta_qtclipdata.h"
 #include "ta_qt.h"
 #include "ta_qtgroup.h"
-#include "css_qt.h"		// for the cssiSession
+#include "ta_qtviewer.h"
 
 #include "iflowlayout.h"
 #include "icolor.h"
@@ -1408,6 +1407,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layOuter = new QVBoxLayout(widg);
+  layOuter->setSpacing(taiM->vspc_c);
 
   layDispCheck = new QHBoxLayout(layOuter);
   chkDisplay = new QCheckBox("Display", widg);
@@ -1456,7 +1456,17 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lvDisplayValues->setSelectionMode(Q3ListView::Extended);
   layDisplayValues->addWidget(lvDisplayValues, 1);
 
-  layOuter->addSpacing(taiM->vspc_c);
+  gbSpecs = new QGroupBox("Specs", widg);
+  layOuter->addWidget(gbSpecs, 1);
+  laySpecs = new QVBoxLayout(gbSpecs);
+  tvSpecs = new iTreeView(gbSpecs);
+/*  lvSpecs->addColumn("Spec", 80);
+  lvSpecs->addColumn("Description");
+  lvSpecs->setShowSortIndicator(false);
+  lvSpecs->setSorting(-1); // not sorted, shown in add order
+  lvSpecs->setSelectionMode(Q3ListView::Extended);*/
+  laySpecs->addWidget(tvSpecs, 1);
+
   widCmdButtons = new iMethodButtonFrame(nv()->net(), widg);
 
   layOuter->addWidget(widCmdButtons);

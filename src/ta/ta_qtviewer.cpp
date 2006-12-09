@@ -867,7 +867,7 @@ void tabDataLink::QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& fo
 int tabDataLink::EditAction_impl(taiMimeSource* ms, int ea) {
   return data()->EditAction(ms, ea);
 }
-
+/*
 void tabDataLink::fileClose() {
   data()->Close();
 }
@@ -882,7 +882,7 @@ void tabDataLink::fileSave() {
 
 void tabDataLink::fileSaveAs() {
   data()->CallFun("SaveAs");
-}
+}*/
 
 /* Context Menus are filled in the following order (with indicated separators)
 ------
@@ -1061,20 +1061,20 @@ tabODataLink::tabODataLink(taOBase* data_)
 
 
 //////////////////////////////////
-//   tabListDataLink		//
+//   tabParDataLink		//
 //////////////////////////////////
 
-tabListDataLink::tabListDataLink(taList_impl* data_)
-:inherited((taOBase*)data_)
+tabParDataLink::tabParDataLink(taOBase* data_)
+:inherited(data_)
 {
 }
 
-String tabListDataLink::ChildGetColText(taDataLink* child, const KeyString& key, int itm_idx) const
+String tabParDataLink::ChildGetColText(taDataLink* child, const KeyString& key, int itm_idx) const
 {
-  return data()->ChildGetColText(child->data(), child->GetDataTypeDef(), key, itm_idx);
+  return list()->ChildGetColText(child->data(), child->GetDataTypeDef(), key, itm_idx);
 }
 
-taiTreeDataNode* tabListDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+taiTreeDataNode* tabParDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
   iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
 {
   taiTreeDataNode* rval = NULL;
@@ -1085,23 +1085,23 @@ taiTreeDataNode* tabListDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTree
   return rval;
 }
 
-void tabListDataLink::fileNew() {
+/*void tabParDataLink::fileNew() {
   data()->New();
+}*/
+
+String tabParDataLink::GetColHeading(const KeyString& key) const {
+  return list()->GetColHeading(key);
 }
 
-String tabListDataLink::GetColHeading(const KeyString& key) const {
-  return data()->GetColHeading(key);
+const KeyString tabParDataLink::GetListColKey(int col) const {
+  return list()->GetListColKey(col);
 }
 
-const KeyString tabListDataLink::GetListColKey(int col) const {
-  return data()->GetListColKey(col);
-}
-
-taiDataLink* tabListDataLink::GetListChild(int itm_idx) {
-  if ((itm_idx < 0) || (itm_idx >= data()->size))
+taiDataLink* tabParDataLink::GetListChild(int itm_idx) {
+  if ((itm_idx < 0) || (itm_idx >= list()->size))
     return NULL;
   TypeDef* typ;
-  void* el = data()->GetTA_Element(itm_idx, typ); // gets the item, and its TypeDef
+  void* el = list()->GetTA_Element(itm_idx, typ); // gets the item, and its TypeDef
   if (typ == NULL) return NULL; //TODO: maybe we should return a null link???
   // if we get a taBase item, the type might only be the base type, not the derived type of the item
   // so we cast the item, and then grab the exact type right from the item
@@ -1113,9 +1113,34 @@ taiDataLink* tabListDataLink::GetListChild(int itm_idx) {
   return dl;
 }
 
-int tabListDataLink::NumListCols() const {
-  return data()->NumListCols();
+int tabParDataLink::NumListCols() const {
+  return list()->NumListCols();
 }
+
+
+//////////////////////////////////
+//   tabDefChildDataLink	//
+//////////////////////////////////
+
+tabDefChildDataLink::tabDefChildDataLink(taOBase* data_)
+:inherited(data_)
+{
+//note: validity of DEF directive was done during bidding
+  String mbr = data_->GetTypeDef()->OptionAfter("DEF_CHILD_");
+  MemberDef* md = data_->FindMember(mbr);
+  m_list = (taList_impl*)md->GetOff(data_);
+}
+
+
+//////////////////////////////////
+//   tabListDataLink		//
+//////////////////////////////////
+
+tabListDataLink::tabListDataLink(taList_impl* data_)
+:inherited((taOBase*)data_)
+{
+}
+
 
 //////////////////////////////////
 // 	tabGroupDataLink	//
@@ -5033,10 +5058,10 @@ tabTreeDataNode::~tabTreeDataNode()
 
 
 //////////////////////////////////
-//   taiListTreeDataNode 	//
+//   tabListTreeDataNode 	//
 //////////////////////////////////
 
-tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+tabListTreeDataNode::tabListTreeDataNode(tabParDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, 
   dn_flags_ | DNF_LAZY_CHILDREN)
@@ -5044,14 +5069,14 @@ tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
   init(link_, dn_flags_);
 }
 
-tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeView* parent_,
+tabListTreeDataNode::tabListTreeDataNode(tabParDataLink* link_, MemberDef* md_, iTreeView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabListTreeDataNode::init(tabListDataLink* link_, int dn_flags_) {
+void tabListTreeDataNode::init(tabParDataLink* link_, int dn_flags_) {
   last_list_items_node = NULL;
 }
 
@@ -5060,7 +5085,7 @@ tabListTreeDataNode::~tabListTreeDataNode()
 }
 
 void tabListTreeDataNode::AssertLastListItem() {
-  void* el = data()->Peek_();
+  void* el = list()->Peek_();
   if (el == NULL) {
     last_list_items_node = last_member_node;
     return;
@@ -5073,7 +5098,7 @@ void tabListTreeDataNode::AssertLastListItem() {
 void tabListTreeDataNode::CreateChildren_impl() {
   inherited::CreateChildren_impl();
   String tree_nm;
-  taList_impl* list = data(); // cache
+  taList_impl* list = this->list(); // cache
   for (int i = 0; i < list->size; ++i) {
     taBase* el = (taBase*)list->FastEl_(i);
     if (!el) continue; // generally shouldn't happen
@@ -5100,7 +5125,7 @@ void tabListTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
   taiTreeDataNode* after, taBase* el) 
 {
   if (!el) return;
-  taList_impl* list = data(); // cache
+  taList_impl* list = this->list(); // cache
   TypeDef* typ = el->GetTypeDef();
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
   if (!dl) return; // shouldn't happen unless null...
@@ -5152,7 +5177,7 @@ void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     break;
   case DCR_LIST_SORTED: {	// no ops
     int nd_idx; // index of the node
-    taList_impl* list = data(); // cache
+    taList_impl* list = this->list(); // cache
     for (int i = 0; i < list->size; ++i) {
       TAPtr tab = (TAPtr)list->FastEl_(i);
       FindChildForData(tab, nd_idx);
@@ -5172,10 +5197,11 @@ void tabListTreeDataNode::UpdateChildNames() {
 
 void tabListTreeDataNode::UpdateListNames() {
   String tree_nm;
-  for (int i = 0; i < data()->size; ++i) {
+  taList_impl* list = this->list(); //cache
+  for (int i = 0; i < list->size; ++i) {
     // the subgroups are themselves taGroup items
     TypeDef* typ;
-    void* el = data()->GetTA_Element(i, typ); // gets the item, and its TypeDef
+    void* el = list->GetTA_Element(i, typ); // gets the item, and its TypeDef
     if (!typ) continue; //TODO: maybe we should put a marker item in list???
     // if we get a taBase item, the type might only be the base type, not the derived type of the item
     // so we cast the item, and then grab the exact type right from the item
