@@ -397,6 +397,7 @@ void ProgArg::Destroy() {
 }
 
 void ProgArg::Copy_(const ProgArg& cp) {
+  name = cp.name;
   value = cp.value;
 }
 

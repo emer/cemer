@@ -1914,8 +1914,6 @@ void taOBase::CutLinks() {
 }
 
 void taOBase::Copy_(const taOBase& cp) {
-//no: should copy w/o interpretation  if(!cp.name.empty())
-    name = cp.name;
   if (user_data_) {
     user_data_->Reset(); // note: we just leave an empty list if no cp.userdata
     if (cp.user_data_)
@@ -1924,18 +1922,6 @@ void taOBase::Copy_(const taOBase& cp) {
     GetUserDataList(true)->Copy(*cp.user_data_);
   }
 }
-
-taBase::DumpQueryResult taOBase::Dump_QuerySaveMember(MemberDef* md) {
-  if (md->name == "name") {
-    // taNBase and greater always save
-    if (InheritsFrom(TA_taNBase))
-      return DQR_SAVE;
-    // otherwise, only save if not empty
-    return (name.empty()) ? DQR_NO_SAVE : DQR_SAVE;
-  }
-  return inherited::Dump_QuerySaveMember(md);
-}
-
 
 UserDataItem_List* taOBase::GetUserDataList(bool fc) const { 
   if (!user_data_ && fc) {
@@ -2007,6 +1993,10 @@ void taNBase::SetDefaultName() {
   SetDefaultName_();
 }
 
+void taNBase::Copy_(const taNBase& cp) { 
+  if(!cp.name.empty()) 
+    name = cp.name; 
+} 
 
 //////////////////////////
 //  taFBase		//
@@ -2634,6 +2624,10 @@ int taList_impl::SetDefaultElType(TypeDef* it) {
   FindType_(it, idx);
   if(idx >= 0)    el_def = idx;
   return idx;
+}
+
+void taList_impl::SetDefaultName() {
+  // nop; still 
 }
 
 int taList_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {

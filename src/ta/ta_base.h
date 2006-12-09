@@ -1055,7 +1055,6 @@ class TA_API taOBase : public taBase {
 INHERITED(taBase)
 public:
   TAPtr			owner;	// #READ_ONLY #NO_SAVE pointer to owner
-  String		name;	// name of the object
 
   mutable UserDataItem_List* user_data_; // #OWN_POINTER #SHOW_TREE #NO_SAVE_EMPTY storage for user data (created if needed)
 
@@ -1063,13 +1062,10 @@ public:
   override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
 //  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
 
-  bool 		SetName(const String& nm)    	{ name = nm; return true; }
-  String	GetName() const		{ return name; }
   TAPtr 		GetOwner() const	{ return owner; }
   TAPtr			GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
   TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
   UserDataItem_List* 	GetUserDataList(bool fc = false) const;  
-  DumpQueryResult 	Dump_QuerySaveMember(MemberDef* md); 
   void	CutLinks();
   void	Copy_(const taOBase& cp);
   COPY_FUNS(taOBase, taBase)
@@ -1077,9 +1073,9 @@ public:
 protected:
   taDataLink*		m_data_link; //
 private:
-  void 	Initialize()	{owner = NULL; user_data_ = NULL; m_data_link = NULL;}
+  void 	Initialize()	{ owner = NULL; user_data_ = NULL; m_data_link = NULL; }
   void	Destroy();
-}; //
+};
 
 
 #ifdef TA_USE_QT
@@ -1135,11 +1131,18 @@ private:
 class TA_API taNBase : public taOBase { // #NO_TOKENS Named, owned base class of taBase
 INHERITED(taOBase)
 public:
+  String		name;	// name of the object
+
+  bool 		SetName(const String& nm)    	{ name = nm; return true; }
+  String	GetName() const			{ return name; }
   override void	SetDefaultName();
+
+  void  Copy_(const taNBase& cp); 
+  COPY_FUNS(taNBase, taOBase); 
   TA_BASEFUNS(taNBase);
 private:
-  void 	Initialize()			{ }
-  void	Destroy()			{ }
+  void 	Initialize()	{ }
+  void  Destroy()       { } 
 };
 
 typedef taNBase* TANPtr; // this comment needed for maketa parser
@@ -1151,13 +1154,16 @@ class TA_API taFBase: public taNBase {
 typedef taNBase inherited;
 #endif
 public:
+  String		desc;	   // #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   String		file_name; // #READ_ONLY #NO_SAVE #SHOW the current filename for this object
+
+  override String	GetDesc() const { return desc; }
 
   override bool		SetFileName(const String& val); // #IGNORE note: we canonicalize name first
   override String	GetFileName() const { return file_name; } // #IGNORE
   void 			Initialize() {}
   void			Destroy() {}
-  void			Copy_(const taFBase& cp) {file_name = cp.file_name;}
+  void			Copy_(const taFBase& cp) { desc = cp.desc; file_name = cp.file_name; }
   COPY_FUNS(taFBase, taNBase);
   TA_BASEFUNS(taFBase)
 };
@@ -1196,9 +1202,15 @@ typedef taPtrList_ta_base inherited_taPtrList;
 public:
   static MemberDef* find_md;	// #HIDDEN #NO_SAVE return value for findmember of data
 
+  String        name;           // name of the object 
   TypeDef*	el_base;	// #HIDDEN #NO_SAVE Base type for objects in group
   TypeDef* 	el_typ;		// #TYPE_ON_el_base Default type for objects in group
   int		el_def;		// Index of default element in group
+
+  // stuff for the taBase 
+  bool          SetName(const String& nm)       { name = nm; return true; }
+  String        GetName() const         	{ return name; } 
+  void          SetDefaultName();
 
   override TypeDef* 	GetElType() const {return el_typ;}
   // #IGNORE Default type for objects in group

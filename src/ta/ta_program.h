@@ -137,11 +137,14 @@ class TA_API ProgArg: public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program a program or method argument
 INHERITED(taOBase)
 public:
+  String                name; // #SHOW #READ_ONLY the name of the argument (always same as the target) 
   String		value; // the value passed to the argument, can be a literal, or refer to other things in the program; string values must be quoted
   
   virtual void		Freshen(const ProgVar& cp); 
   // updates our value/type information and commensurable fields from compatible type (but not name)
 
+  bool  	SetName(const String& nm) 	{ name = nm; return true; } 
+  String 	GetName() const			{ return name; } 
   String 	GetDisplayName() const;
 
   void	Copy_(const ProgArg& cp);
@@ -635,7 +638,7 @@ protected:
   void*		El_Own_(void* it); // give anon objs a name
 
 private:
-  void Initialize() {SetBaseType(&TA_taOBase);} // need name for var, owner to stream!
+  void Initialize() { SetBaseType(&TA_taNBase); } // need name for var, owner to stream!
   void Destroy() { }
 };
 

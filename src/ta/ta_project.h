@@ -74,8 +74,6 @@ class TA_API taProject : public taFBase {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
-  String		desc;	// #EDIT_DIALOG description of the project
-  
   taBase_Group		templates; // templates for new objects -- copy new objects from here
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
@@ -111,7 +109,6 @@ public:
   virtual void		PostLoadAutos();
   // perform post-loading automatic functions
 
-  String GetDesc() const {return desc;}
   void	UpdateAfterEdit();
   virtual void		InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
   virtual void		CutLinks_impl(); // #IGNORE use this instead of CutLinks in subclasses -- you can call this first to nuke the viewers etc. before your own stuff

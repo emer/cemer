@@ -21,9 +21,15 @@ void ViewSpec::Initialize() {
 }
 
 void ViewSpec::Copy_(const ViewSpec& cp) {
+  name = cp.name;
   display_name = cp.display_name;
   visible = cp.visible;
 }
+
+bool ViewSpec::SetName(const String& value) { 
+  name = value;  
+  return true; 
+} 
 
 String ViewSpec::GetDisplayName() const {
   if (display_name.nonempty())
