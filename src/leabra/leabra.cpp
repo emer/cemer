@@ -2834,13 +2834,13 @@ void LeabraLayerSpec::Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork*) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     if(!prjn->from || prjn->from->lesion) continue;
     LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
-    if(prjn->trg_netin_rel < 0.0f) continue; // not set
+    if(prjn->trg_netin_rel <= 0.0f) continue; // not set
     if(!cs->rel_net_adapt.on) continue;
-    if(cs->rel_net_adapt.CheckInTolerance(prjn->trg_netin_rel, prjn->avg_netin_avg))
+    if(cs->rel_net_adapt.CheckInTolerance(prjn->trg_netin_rel, prjn->avg_netin_rel))
       continue;
     cs->SetUnique("wt_scale", true);
     cs->wt_scale.rel += cs->rel_net_adapt.rel_lrate * 
-      (prjn->trg_netin_rel - prjn->avg_netin_avg);
+      (prjn->trg_netin_rel - prjn->avg_netin_rel);
     if(cs->wt_scale.rel <= 0.0f) cs->wt_scale.rel = 0.0f;
   }
 }
