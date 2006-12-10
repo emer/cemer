@@ -17,8 +17,6 @@
 #include "css_machine.h"
 #include "ta_project.h"		// for debugging
 
-#include <QDir>
-
 /////////////////////////////////////////////////////////
 //   DataOpEl Base class
 /////////////////////////////////////////////////////////
@@ -277,7 +275,7 @@ void DataJoinSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 /////////////////////////////////////////////////////////
 
 bool taDataProc::GetDest(DataTable*& dest, DataTable* src, const String& suffix) {
-  if(dest != NULL) return false;
+  if(dest) return false;
   taProject* proj = GET_OWNER(src, taProject);
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
   dest = dgp->NewEl(1, &TA_DataTable);
@@ -942,50 +940,6 @@ bool taDataProc::JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b) 
   }
   dest->StructUpdate(false);
   return true;
-}
-
-///////////////////////////////////////////////////////////////////
-// misc data functions
-
-bool taDataProc::GetDirFiles(DataTable* dest, const String& dir_path, 
-			     const String& filter, bool recursive,
-			     const String& fname_col_nm,
-			     const String& path_col_nm) {
-  if(!dest) return false;
-  dest->StructUpdate(true);
-
-  if(recursive) {
-    taMisc::Warning("Warning: GetDirFiles does not yet support the recursive flag!");
-  }
-
-  int fname_idx = -1;
-  if(!fname_col_nm.empty())
-    dest->FindMakeColName(fname_col_nm, fname_idx, DataTable::VT_STRING, 0);
-
-  int path_idx = -1;
-  if(!path_col_nm.empty())
-    dest->FindMakeColName(path_col_nm, path_idx, DataTable::VT_STRING, 0);
-
-  bool found_some = false;
-  QDir dir(dir_path);
-  QStringList files = dir.entryList();
-  if(files.size() == 0) return false;
-  for(int i=0;i<files.size();i++) {
-    String fl = files[i];
-    if(filter.empty() || fl.contains(filter)) {
-      dest->AddBlankRow();
-      found_some = true;
-      if(fname_idx >= 0) {
-	dest->SetValAsString(fl, fname_idx, -1);
-      }
-      if(path_idx >= 0) {
-	dest->SetValAsString(dir_path + "/" + fl, path_idx, -1);
-      }
-    }
-    // todo: deal with recursive flag
-  }
-  
-  return found_some;
 }
 
 /////////////////////////////////////////////////////////

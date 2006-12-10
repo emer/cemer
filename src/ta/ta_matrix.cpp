@@ -385,7 +385,7 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
   if (!src.geom.IsFrameOf(geom)) return false;
   if ((frame < 0) || (frame >= frames())) return false;
   int n = frameSize();
-  int base = BaseIndexOfFrame(frame);
+  int base = FrameStartIdx(frame);
   // if same data types, we use an optimized copy, else must use variants
   // note that "Inherits" should imply same data type
   if (GetTypeDef()->InheritsFrom(src.GetTypeDef())) {
@@ -649,7 +649,7 @@ taMatrix* taMatrix::GetFrameSlice_(int frame) {
   MatrixGeom slice_geom(dims_m1);
   for (int i = 0; i < dims_m1; ++i)
     slice_geom.Set(i, dim(i));
-  int sl_i = BaseIndexOfFrame(frame); //note: must be valid because of prior checks
+  int sl_i = FrameStartIdx(frame); //note: must be valid because of prior checks
   rval->SetFixedData_(FastEl_Flat_(sl_i), slice_geom);
   // we do all the funky ref counting etc. in one place
   SliceInitialize(this, rval);

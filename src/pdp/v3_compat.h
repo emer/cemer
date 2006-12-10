@@ -89,6 +89,32 @@ typedef TextLog GridLog;
 typedef TextLog NetLog;
 typedef PDPLog GraphLog;
 
+class TA_API float_RArray : public float_Array {
+  // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
+public:
+  enum DistMetric {		// generalized distance metrics
+    SUM_SQUARES,		// sum of squares:  sum[(x-y)^2]
+    EUCLIDIAN,			// Euclidian distance (sqrt of sum of squares)
+    HAMMING, 			// Hamming distance: sum[abs(x-y)]
+    COVAR,			// covariance: sum[(x-<x>)(y-<y>)]
+    CORREL,			// correlation: sum[(x-<x>)(y-<y>)] / sqrt(sum[x^2 y^2])
+    INNER_PROD,			// inner product: sum[x y]
+    CROSS_ENTROPY		// cross entropy: sum[x ln(x/y) + (1-x)ln((1-x)/(1-y))]
+  };
+
+  MinMax	range;		// #NO_SAVE min-max range of the data
+
+  void		Reset(){float_Array::Reset();range.Init(0.0f);}
+
+  void	Initialize()		{ };
+  void	Destroy()		{ };
+  void	InitLinks();
+  void 	Copy_(const float_RArray& cp);
+  COPY_FUNS(float_RArray, float_Array);
+  TA_BASEFUNS(float_RArray);
+};
+
+
 class PDP_API CritParam : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat stopping criteria params
 public:

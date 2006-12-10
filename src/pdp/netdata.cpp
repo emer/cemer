@@ -833,7 +833,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   TwoDCoord con_geom = con_geom_max - con_geom_min;
   int n_cons = con_geom.Product();
   MatrixGeom geom;
-  geom.SetGeom(4, lay_geom.x, lay_geom.y, con_geom.x, con_geom.y);
+  geom.SetGeom(4, con_geom.x, con_geom.y, lay_geom.x, lay_geom.y);
   String valname = GetChanName(prjn, val_specs.size);
   AddMatrixChan(valname, VT_FLOAT, &geom);
 

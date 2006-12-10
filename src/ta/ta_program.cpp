@@ -1000,7 +1000,7 @@ void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
       ar.labels.Insert(arg_nm, ti);
       String def_val = md->arg_defs.SafeEl(ti);
       def_val.gsub(" ", "");
-      if(arg_typ->is_enum()) {
+      if(arg_typ->is_enum() && !def_val.contains("::")) {
 	TypeDef* ot = arg_typ->GetOwnerType();
 	if(ot)
 	  def_val = ot->name + "::" + def_val;
@@ -1538,7 +1538,7 @@ bool Program::step_mode = false;
 void Program::Initialize() {
   run_state = NOT_INIT;
   flags = PF_NONE;
-  objs.SetBaseType(&TA_taOBase);
+  objs.SetBaseType(&TA_taNBase);
   ret_val = 0;
   m_dirty = true; 
   prog_gp = NULL;

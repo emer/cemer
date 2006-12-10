@@ -914,8 +914,13 @@ bool DataTable::RenameCol(const String& cur_nm, const String& new_nm) {
   return true;
 }
 
-DataArray_impl* DataTable::FindColName(const String& col_nm, int& col_idx) {
-  return data.FindName(col_nm, col_idx);
+DataArray_impl* DataTable::FindColName(const String& col_nm, int& col_idx, bool err_msg) {
+  DataArray_impl* da = data.FindName(col_nm, col_idx);
+  if(!da && err_msg) {
+    taMisc::Error("Error -- could not find column named:", col_nm, "in data table named:",
+		  name, "path:", GetPath());
+  }
+  return da;
 }
 
 DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,

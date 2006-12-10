@@ -16,6 +16,11 @@
 #include "ta_math.h"
 #include "ta_platform.h"
 
+#ifdef HAVE_LIBGSL
+#include <gsl/gsl_eigen.h>
+#include <gsl/gsl_linalg.h>
+#endif
+
 #include <math.h>
 
 //////////////////////////
@@ -175,6 +180,23 @@ bool taMath::dist_larger_further(DistMetric metric) {
   }
   return false;
 }
+
+void taMath::mat_cvt_double_to_float(float_Matrix* flt_dest, const double_Matrix* dbl_src) {
+  flt_dest->geom.Reset();
+  flt_dest->SetGeomN(dbl_src->geom);
+  for (int i = 0; i < flt_dest->size; ++i) {
+    flt_dest->FastEl_Flat(i) = (float)dbl_src->FastEl_Flat(i);
+  }
+}
+
+void taMath::mat_cvt_float_to_double(double_Matrix* dbl_dest, const float_Matrix* flt_src) {
+  dbl_dest->geom.Reset();
+  dbl_dest->SetGeomN(flt_src->geom);
+  for (int i = 0; i < dbl_dest->size; ++i) {
+    dbl_dest->FastEl_Flat(i) = (double)flt_src->FastEl_Flat(i);
+  }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // 			double precision math
@@ -1163,10 +1185,33 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix operations
 
-#ifdef HAVE_GSL
+bool taMath_double::mat_col(double_Matrix* col, const double_Matrix* mat, int col_no) {
+  if(mat->dims() != 2) return false;
+  if(col_no < 0 || col_no >= mat->dim(0))
+    return false;
+  int rows = mat->dim(1);
+  col->SetGeom(1, rows);
+  for(int i=0;i<rows;i++) {
+    col->FastEl(i) = mat->FastEl(col_no, i);
+  }
+  return true;
+}
 
-bool taMath_double::mat_get_gsl_fm_ta(const double_Matrix* ta_mat, gsl_matrix* gsl_mat)
-{
+bool taMath_double::mat_row(double_Matrix* row, const double_Matrix* mat, int row_no) {
+  if(mat->dims() != 2) return false;
+  if(row_no < 0 || row_no >= mat->dim(1))
+    return false;
+  int cols = mat->dim(0);
+  row->SetGeom(1, cols);
+  for(int i=0;i<cols;i++) {
+    row->FastEl(i) = mat->FastEl(i, row_no);
+  }
+  return true;
+}
+
+#ifdef HAVE_LIBGSL
+
+bool taMath_double::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const double_Matrix* ta_mat) {
   if(ta_mat->dims() != 2) return false;
   gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
   gsl_mat->size2 = ta_mat->dim(1); // "columns"
@@ -1177,8 +1222,7 @@ bool taMath_double::mat_get_gsl_fm_ta(const double_Matrix* ta_mat, gsl_matrix* g
   return true;
 }
 
-bool taMath_double::vec_get_gsl_fm_ta(const double_Matrix* ta_vec, gsl_vector* gsl_vec)
-{
+bool taMath_double::vec_get_gsl_fm_ta(gsl_vector* gsl_vec, const double_Matrix* ta_vec) {
   if(ta_vec->dims() != 1) return false;
   gsl_vec->size = ta_vec->dim(0); 
   gsl_vec->stride = 1;
@@ -1188,57 +1232,57 @@ bool taMath_double::vec_get_gsl_fm_ta(const double_Matrix* ta_vec, gsl_vector* g
   return true;
 }
 
-bool taMath_double::mat_add(double_Matrix* a, double_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
+bool taMath_double::mat_add(double_Matrix* a, const double_Matrix* b) {
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
+  gsl_matrix g_b;  mat_get_gsl_fm_ta(&g_b, b);
   return gsl_matrix_add(&g_a, &g_b);
 }
 
-bool taMath_double::mat_sub(double_Matrix* a, double_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
+bool taMath_double::mat_sub(double_Matrix* a, const double_Matrix* b) {
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
+  gsl_matrix g_b;  mat_get_gsl_fm_ta(&g_b, b);
   return gsl_matrix_sub(&g_a, &g_b);
 }
 
-bool taMath_double::mat_mult_els(double_Matrix* a, double_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
+bool taMath_double::mat_mult_els(double_Matrix* a, const double_Matrix* b) {
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
+  gsl_matrix g_b;  mat_get_gsl_fm_ta(&g_b, b);
   return gsl_matrix_mul_elements(&g_a, &g_b);
 }
 
-bool taMath_double::mat_div_els(double_Matrix* a, double_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
+bool taMath_double::mat_div_els(double_Matrix* a, const double_Matrix* b) {
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
+  gsl_matrix g_b;  mat_get_gsl_fm_ta(&g_b, b);
   return gsl_matrix_div_elements(&g_a, &g_b);
 }
 
-bool taMath_double::mat_eigen_symmv_owrite(double_Matrix* a, double_Matrix* eigen_vals,
-					   double_Matrix* eigen_vecs) {
+bool taMath_double::mat_eigen_owrite(double_Matrix* a, double_Matrix* eigen_vals,
+				     double_Matrix* eigen_vecs) {
   if(a->dims() != 2) {
-    taMisc::Warning("*** mat_eigen_symmv: matrix is not 2 dimensional!");
+    taMisc::Warning("*** mat_eigen: matrix is not 2 dimensional!");
     return false;
   }
   if(a->dim(0) != a->dim(1)) {
-    taMisc::Warning("*** mat_eigen_symmv: matrix is not square!");
+    taMisc::Warning("*** mat_eigen: matrix is not square!");
     return false;
   }
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
   int n = a->dim(0);
   eigen_vals->SetGeom(1, n);
   eigen_vecs->SetGeom(2, n, n);
-  gsl_matrix g_evec;  mat_get_gsl_fm_ta(eigen_vecs, &g_evec);
-  gsl_matrix g_eval;  vec_get_gsl_fm_ta(eigen_vals, &g_eval);
+  gsl_matrix g_evec;  mat_get_gsl_fm_ta(&g_evec, eigen_vecs);
+  gsl_vector g_eval;  vec_get_gsl_fm_ta(&g_eval, eigen_vals);
   gsl_eigen_symmv_workspace* w = gsl_eigen_symmv_alloc(n);
   gsl_eigen_symmv(&g_a, &g_eval, &g_evec, w);
-  gsl_eignn_symmv_free(w);
-  gsl_eigen_symmv_sort(&g_eval, &g_evec, GSL_EIGEN_SORT_ABS_ASC);
+  gsl_eigen_symmv_free(w);
+  gsl_eigen_symmv_sort(&g_eval, &g_evec, GSL_EIGEN_SORT_ABS_DESC);
   return true;
 }
 
-bool taMath_double::mat_eigen_symmv(double_Matrix* a, double_Matrix* eigen_vals,
+bool taMath_double::mat_eigen(const double_Matrix* a, double_Matrix* eigen_vals,
 				    double_Matrix* eigen_vecs) {
   double_Matrix a_copy = *a;
-  return mat_eigen_symmv_owrite(&a_copy, eigen_vals, eigen_vecs);
+  return mat_eigen_owrite(&a_copy, eigen_vals, eigen_vecs);
 }
 
 bool taMath_double::mat_svd_owrite(double_Matrix* a, double_Matrix* s, double_Matrix* v) {
@@ -1246,31 +1290,100 @@ bool taMath_double::mat_svd_owrite(double_Matrix* a, double_Matrix* s, double_Ma
     taMisc::Warning("*** mat_svd: matrix is not 2 dimensional!");
     return false;
   }
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  int m = a->dim(0);
+  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
   int n = a->dim(1);
   s->SetGeom(1, n);
   v->SetGeom(2, n, n);
-  gsl_matrix g_v;  mat_get_gsl_fm_ta(v, &g_v);
-  gsl_matrix g_s;  vec_get_gsl_fm_ta(s, &g_s);
+  gsl_matrix g_v;  mat_get_gsl_fm_ta(&g_v, v);
+  gsl_vector g_s;  vec_get_gsl_fm_ta(&g_s, s);
   gsl_vector* w = gsl_vector_alloc(n);
   gsl_linalg_SV_decomp(&g_a, &g_v, &g_s, w);
   gsl_vector_free(w);
   return true;
 }
 
-bool taMath_double::mat_svd(double_Matrix* a, double_Matrix* u, double_Matrix* s, double_Matrix* v) {
+bool taMath_double::mat_svd(const double_Matrix* a, double_Matrix* u, double_Matrix* s, double_Matrix* v) {
   *u = *a;			// u is copy of a
   return mat_svd_owrite(u, s, v);
 }
 
-#endif
+
+bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  if(a->dims() != 2) {
+    taMisc::Warning("*** mat_mds: matrix is not 2 dimensional!");
+    return false;
+  }
+  if(a->dim(0) != a->dim(1)) {
+    taMisc::Warning("*** mat_mds: matrix is not square!");
+    return false;
+  }
+  int dim = a->dim(0);
+
+  if((x_axis_c < 0) || (x_axis_c >= dim)) {
+    taMisc::Warning("*** mat_mds: x_axis component must be between 0 and",String(dim-1));
+    return false;
+  }
+  if((y_axis_c < 0) || (y_axis_c >= dim)) {
+    taMisc::Warning("*** mat_mds: y_axis component must be between 0 and",String(dim-1));
+    return false;
+  }
+
+  // first square the individual elements
+  mat_mult_els(a, a);
+
+  // then double-center the matrix
+  for(int i=0; i<dim; i++) {
+    double sum = 0.0;
+    for(int j=0; j<dim; j++)
+      sum += a->FastEl(i, j);
+    sum /= (double)dim;
+    for(int j=0; j<dim; j++)
+      a->FastEl(i, j) -= sum;
+  }
+  for(int j=0; j<dim; j++) {
+    double sum = 0.0;
+    for(int i=0; i<dim; i++)
+      sum += a->FastEl(i, j);
+    sum /= (double)dim;
+    for(int i=0; i<dim; i++)
+      a->FastEl(i, j) -= sum;
+  }
+
+  for(int i=0;i<a->size;i++) a->FastEl_Flat(i) *= -.5;
+
+  double_Matrix evals;
+  double_Matrix evecs;
+  mat_eigen_owrite(a, &evals, &evecs);
+
+  xy_coords->SetGeom(2, 2, dim);
+  // multiply the eigenvectors by sqrt(eigen values)
+  double evsq = taMath_double::sqrt(taMath_double::fabs(evals.FastEl(x_axis_c)));
+  for(int i=0;i<dim;i++) {
+    float val = evecs.FastEl(i, x_axis_c) * evsq;
+    xy_coords->FastEl(0, i) = val;	// 0 = x coord
+  }
+
+  evsq = taMath_double::sqrt(taMath_double::fabs(evals.FastEl(y_axis_c)));
+  for(int i=0;i<dim;i++) {
+    float val = evecs.FastEl(i, y_axis_c) * evsq;
+    xy_coords->FastEl(1, i) = val;	// 1 = y coord
+  }
+
+  return true;
+}
+
+bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  double_Matrix a_copy = *a;
+  return mat_mds_owrite(&a_copy, xy_coords, x_axis_c, y_axis_c);
+}
+
+
+#endif	// HAVE_LIBGSL
 
 bool taMath_double::mat_dist(double_Matrix* dist_mat, const double_Matrix* src_mat,
 			     DistMetric metric, bool norm, double tolerance) {
-  // todo: write this
   if(src_mat->dims() < 2) {
-    taMisc::Warning("*** mat_dist: matrix is < 2 dimensional!");
+    taMisc::Error("*** mat_dist: matrix is < 2 dimensional!");
     return false;
   }
   int n = src_mat->frames();
@@ -1282,7 +1395,7 @@ bool taMath_double::mat_dist(double_Matrix* dist_mat, const double_Matrix* src_m
       double_Matrix* t2 = ((double_Matrix*)src_mat)->GetFrameSlice(j);
       taBase::Ref(t2);
       double dist = vec_dist(t1, t2, metric, norm, tolerance);
-      dist_mat->FastEl(i,j) = dist;
+      dist_mat->FastEl(j,i) = dist;
       taBase::unRefDone(t2);
     }
     taBase::unRefDone(t1);
@@ -1290,6 +1403,97 @@ bool taMath_double::mat_dist(double_Matrix* dist_mat, const double_Matrix* src_m
   return true;
 }
 
+bool taMath_double::mat_cross_dist(double_Matrix* dist_mat, const double_Matrix* src_mat_a,
+				   const double_Matrix* src_mat_b,
+				   DistMetric metric, bool norm, double tolerance) {
+  if(src_mat_a->dims() < 2) {
+    taMisc::Error("*** mat_cross_dist: matrix a is < 2 dimensional!");
+    return false;
+  }
+  if(src_mat_b->dims() < 2) {
+    taMisc::Error("*** mat_cross_dist: matrix b is < 2 dimensional!");
+    return false;
+  }
+  if(src_mat_a->frameSize() != src_mat_b->frameSize()) {
+    taMisc::Error("*** mat_cross_dist: matrix a and b do not have the same framesize!");
+    return false;
+  }
+  int n_rows = src_mat_a->frames();
+  int n_cols = src_mat_b->frames();
+  dist_mat->SetGeom(2, n_cols, n_rows);
+  for(int i=0;i<n_rows;i++) {
+    double_Matrix* t1 = ((double_Matrix*)src_mat_a)->GetFrameSlice(i);
+    taBase::Ref(t1);
+    for(int j=0;j<n_cols;j++) {
+      double_Matrix* t2 = ((double_Matrix*)src_mat_b)->GetFrameSlice(j);
+      taBase::Ref(t2);
+      double dist = vec_dist(t1, t2, metric, norm, tolerance);
+      dist_mat->FastEl(j,i) = dist;
+      taBase::unRefDone(t2);
+    }
+    taBase::unRefDone(t1);
+  }
+  return true;
+}
+
+bool taMath_double::mat_cell_to_vec(double_Matrix* vec, const double_Matrix* mat, int cell_no) {
+  if(cell_no >= mat->frameSize()) {
+    taMisc::Error("mat_cell_to_vec: cell no:", String(cell_no), "is larger than framesize:",
+		  String(mat->frameSize()));
+    return false;
+  }
+  int n = mat->frames();
+  vec->SetGeom(1, n);
+  for(int i=0;i<n; i++) {
+    vec->FastEl(i) = mat->FastEl_Flat(mat->FrameStartIdx(i) + cell_no);
+  }
+  return true;
+}
+
+bool taMath_double::mat_correl(double_Matrix* correl_mat, const double_Matrix* src_mat) {
+  if(src_mat->dims() < 2) {
+    taMisc::Error("*** mat_correl: src_matrix is < 2 dimensional!");
+    return false;
+  }
+
+  int n = src_mat->frameSize();
+  correl_mat->SetGeom(2, n, n);
+
+  double_Matrix p1vals;
+  double_Matrix p2vals;
+
+  for(int i=0;i<n;i++) {
+    mat_cell_to_vec(&p1vals, src_mat, i);
+    for(int j=0;j<n;j++) {
+      mat_cell_to_vec(&p2vals, src_mat, j);
+      correl_mat->FastEl(j,i) = vec_correl(&p1vals, &p2vals);
+    }
+  }
+  return true;
+}
+
+bool taMath_double::mat_prjn(double_Matrix* prjn_vec, const double_Matrix* src_mat,
+			     const double_Matrix* prjn_mat, DistMetric metric,
+			     bool norm, double tol) {
+  if(src_mat->dims() < 2) {
+    taMisc::Error("*** mat_prjn: source matrix is < 2 dimensional!");
+    return false;
+  }
+  if(src_mat->frameSize() != prjn_mat->count()) {
+    taMisc::Error("*** mat_prjn: source matrix frame and projection matrix don't have the same size");
+    return false;
+  }
+  int n_rows = src_mat->frames();
+  prjn_vec->SetGeom(1, n_rows);
+  for(int i=0;i<n_rows;i++) {
+    double_Matrix* t1 = ((double_Matrix*)src_mat)->GetFrameSlice(i);
+    taBase::Ref(t1);
+    double val = vec_dist(t1, prjn_mat, metric, norm, tol);
+    prjn_vec->FastEl(i) = val;
+    taBase::unRefDone(t1);
+  }
+  return true;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // 			single precision math
@@ -1836,9 +2040,33 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix operations
 
-#ifdef HAVE_GSL
+bool taMath_float::mat_col(float_Matrix* col, const float_Matrix* mat, int col_no) {
+  if(mat->dims() != 2) return false;
+  if(col_no < 0 || col_no >= mat->dim(0))
+    return false;
+  int rows = mat->dim(1);
+  col->SetGeom(1, rows);
+  for(int i=0;i<rows;i++) {
+    col->FastEl(i) = mat->FastEl(col_no, i);
+  }
+  return true;
+}
 
-bool taMath_float::mat_get_gsl_fm_ta(const float_Matrix* ta_mat, gsl_matrix_float* gsl_mat)
+bool taMath_float::mat_row(float_Matrix* row, const float_Matrix* mat, int row_no) {
+  if(mat->dims() != 2) return false;
+  if(row_no < 0 || row_no >= mat->dim(1))
+    return false;
+  int cols = mat->dim(0);
+  row->SetGeom(1, cols);
+  for(int i=0;i<cols;i++) {
+    row->FastEl(i) = mat->FastEl(i, row_no);
+  }
+  return true;
+}
+
+#ifdef HAVE_LIBGSL
+
+bool taMath_float::mat_get_gsl_fm_ta(gsl_matrix_float* gsl_mat, const float_Matrix* ta_mat)
 {
   if(ta_mat->dims() != 2) return false;
   gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
@@ -1850,31 +2078,211 @@ bool taMath_float::mat_get_gsl_fm_ta(const float_Matrix* ta_mat, gsl_matrix_floa
   return true;
 }
 
-bool taMath_float::mat_add(float_Matrix* a, float_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
-  return gsl_matrix_add(&g_a, &g_b);
+bool taMath_float::vec_get_gsl_fm_ta(gsl_vector_float* gsl_vec, const float_Matrix* ta_vec)
+{
+  if(ta_vec->dims() != 1) return false;
+  gsl_vec->size = ta_vec->dim(0); 
+  gsl_vec->stride = 1;
+  gsl_vec->data = (float*)ta_vec->data();
+  gsl_vec->block = NULL;
+  gsl_vec->owner = false;
+  return true;
 }
 
-bool taMath_float::mat_sub(float_Matrix* a, float_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
-  return gsl_matrix_sub(&g_a, &g_b);
+bool taMath_float::mat_add(float_Matrix* a, const float_Matrix* b) {
+  gsl_matrix_float g_a;  mat_get_gsl_fm_ta(&g_a, a);
+  gsl_matrix_float g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  return gsl_matrix_float_add(&g_a, &g_b);
 }
 
-bool taMath_float::mat_mult_els(float_Matrix* a, float_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
-  return gsl_matrix_mul_elements(&g_a, &g_b);
+bool taMath_float::mat_sub(float_Matrix* a, const float_Matrix* b) {
+  gsl_matrix_float g_a;  mat_get_gsl_fm_ta(&g_a, a);
+  gsl_matrix_float g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  return gsl_matrix_float_sub(&g_a, &g_b);
 }
 
-bool taMath_float::mat_div_els(float_Matrix* a, float_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(a, &g_a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(b, &g_b);
-  return gsl_matrix_div_elements(&g_a, &g_b);
+bool taMath_float::mat_mult_els(float_Matrix* a, const float_Matrix* b) {
+  gsl_matrix_float g_a;  mat_get_gsl_fm_ta(&g_a, a);
+  gsl_matrix_float g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  return gsl_matrix_float_mul_elements(&g_a, &g_b);
 }
 
-#endif
+bool taMath_float::mat_div_els(float_Matrix* a, const float_Matrix* b) {
+  gsl_matrix_float g_a;  mat_get_gsl_fm_ta(&g_a, a);
+  gsl_matrix_float g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  return gsl_matrix_float_div_elements(&g_a, &g_b);
+}
+
+bool taMath_float::mat_eigen_owrite(float_Matrix* a, float_Matrix* eigen_vals,
+				    float_Matrix* eigen_vecs) {
+  double_Matrix da;
+  mat_cvt_float_to_double(&da, a);
+  double_Matrix deval;
+  double_Matrix devec;
+  bool rval = taMath_double::mat_eigen_owrite(&da, &deval, &devec);
+  mat_cvt_double_to_float(eigen_vals, &deval);
+  mat_cvt_double_to_float(eigen_vecs, &devec);
+  return rval;
+}
+
+bool taMath_float::mat_eigen(const float_Matrix* a, float_Matrix* eigen_vals,
+				    float_Matrix* eigen_vecs) {
+  return mat_eigen_owrite((float_Matrix*)a, eigen_vals, eigen_vecs);
+}
+
+bool taMath_float::mat_svd_owrite(float_Matrix* a, float_Matrix* s, float_Matrix* v) {
+  double_Matrix da;
+  mat_cvt_float_to_double(&da, a);
+  double_Matrix ds;
+  double_Matrix dv;
+  bool rval = taMath_double::mat_svd_owrite(&da, &ds, &dv);
+  mat_cvt_double_to_float(s, &ds);
+  mat_cvt_double_to_float(v, &dv);
+  return rval;
+}
+
+bool taMath_float::mat_svd(const float_Matrix* a, float_Matrix* u, float_Matrix* s, float_Matrix* v) {
+  double_Matrix da;
+  mat_cvt_float_to_double(&da, a);
+  double_Matrix du;
+  double_Matrix ds;
+  double_Matrix dv;
+  bool rval = taMath_double::mat_svd(&da, &du, &ds, &dv);
+  mat_cvt_double_to_float(u, &du);
+  mat_cvt_double_to_float(s, &ds);
+  mat_cvt_double_to_float(v, &dv);
+  return rval;
+}
+
+bool taMath_float::mat_mds_owrite(float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  double_Matrix da;
+  mat_cvt_float_to_double(&da, a);
+  double_Matrix dxy;
+  bool rval = taMath_double::mat_mds_owrite(&da, &dxy, x_axis_c, y_axis_c);
+  mat_cvt_double_to_float(xy_coords, &dxy);
+  return rval;
+}
+
+bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  return mat_mds_owrite((float_Matrix*)a, xy_coords, x_axis_c, y_axis_c);
+}
+
+#endif	// HAVE_LIBGSL
+
+bool taMath_float::mat_dist(float_Matrix* dist_mat, const float_Matrix* src_mat,
+			     DistMetric metric, bool norm, float tolerance) {
+  if(src_mat->dims() < 2) {
+    taMisc::Error("*** mat_dist: matrix is < 2 dimensional!");
+    return false;
+  }
+  int n = src_mat->frames();
+  dist_mat->SetGeom(2, n, n);
+  for(int i=0;i<n;i++) {
+    float_Matrix* t1 = ((float_Matrix*)src_mat)->GetFrameSlice(i);
+    taBase::Ref(t1);
+    for(int j=0;j<n;j++) {
+      float_Matrix* t2 = ((float_Matrix*)src_mat)->GetFrameSlice(j);
+      taBase::Ref(t2);
+      float dist = vec_dist(t1, t2, metric, norm, tolerance);
+      dist_mat->FastEl(j,i) = dist;
+      taBase::unRefDone(t2);
+    }
+    taBase::unRefDone(t1);
+  }
+  return true;
+}
+
+bool taMath_float::mat_cross_dist(float_Matrix* dist_mat, const float_Matrix* src_mat_a,
+				   const float_Matrix* src_mat_b,
+				   DistMetric metric, bool norm, float tolerance) {
+  if(src_mat_a->dims() < 2) {
+    taMisc::Error("*** mat_cross_dist: matrix a is < 2 dimensional!");
+    return false;
+  }
+  if(src_mat_b->dims() < 2) {
+    taMisc::Error("*** mat_cross_dist: matrix b is < 2 dimensional!");
+    return false;
+  }
+  if(src_mat_a->frameSize() != src_mat_b->frameSize()) {
+    taMisc::Error("*** mat_cross_dist: matrix a and b do not have the same framesize!");
+    return false;
+  }
+  int n_rows = src_mat_a->frames();
+  int n_cols = src_mat_b->frames();
+  dist_mat->SetGeom(2, n_cols, n_rows);
+  for(int i=0;i<n_rows;i++) {
+    float_Matrix* t1 = ((float_Matrix*)src_mat_a)->GetFrameSlice(i);
+    taBase::Ref(t1);
+    for(int j=0;j<n_cols;j++) {
+      float_Matrix* t2 = ((float_Matrix*)src_mat_b)->GetFrameSlice(j);
+      taBase::Ref(t2);
+      float dist = vec_dist(t1, t2, metric, norm, tolerance);
+      dist_mat->FastEl(j,i) = dist;
+      taBase::unRefDone(t2);
+    }
+    taBase::unRefDone(t1);
+  }
+  return true;
+}
+
+bool taMath_float::mat_cell_to_vec(float_Matrix* vec, const float_Matrix* mat, int cell_no) {
+  if(cell_no >= mat->frameSize()) {
+    taMisc::Error("mat_cell_to_vec: cell no:", String(cell_no), "is larger than framesize:",
+		  String(mat->frameSize()));
+    return false;
+  }
+  int n = mat->frames();
+  vec->SetGeom(1, n);
+  for(int i=0;i<n; i++) {
+    vec->FastEl(i) = mat->FastEl_Flat(mat->FrameStartIdx(i) + cell_no);
+  }
+  return true;
+}
+
+bool taMath_float::mat_correl(float_Matrix* correl_mat, const float_Matrix* src_mat) {
+  if(src_mat->dims() < 2) {
+    taMisc::Error("*** mat_correl: src_matrix is < 2 dimensional!");
+    return false;
+  }
+
+  int n = src_mat->frameSize();
+  correl_mat->SetGeom(2, n, n);
+
+  float_Matrix p1vals;
+  float_Matrix p2vals;
+
+  for(int i=0;i<n;i++) {
+    mat_cell_to_vec(&p1vals, src_mat, i);
+    for(int j=0;j<n;j++) {
+      mat_cell_to_vec(&p2vals, src_mat, j);
+      correl_mat->FastEl(j,i) = vec_correl(&p1vals, &p2vals);
+    }
+  }
+  return true;
+}
+
+bool taMath_float::mat_prjn(float_Matrix* prjn_vec, const float_Matrix* src_mat,
+			     const float_Matrix* prjn_mat, DistMetric metric,
+			     bool norm, float tol) {
+  if(src_mat->dims() < 2) {
+    taMisc::Error("*** mat_prjn: source matrix is < 2 dimensional!");
+    return false;
+  }
+  if(src_mat->frameSize() != prjn_mat->count()) {
+    taMisc::Error("*** mat_prjn: source matrix frame and projection matrix don't have the same size");
+    return false;
+  }
+  int n_rows = src_mat->frames();
+  prjn_vec->SetGeom(1, n_rows);
+  for(int i=0;i<n_rows;i++) {
+    float_Matrix* t1 = ((float_Matrix*)src_mat)->GetFrameSlice(i);
+    taBase::Ref(t1);
+    float val = vec_dist(t1, prjn_mat, metric, norm, tol);
+    prjn_vec->FastEl(i) = val;
+    taBase::unRefDone(t1);
+  }
+  return true;
+}
 
 //////////////////////////////////////////////////////////////////////
 

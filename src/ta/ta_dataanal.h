@@ -1,0 +1,221 @@
+// Copyright, 1995-2005, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of TA/CSS
+//
+//   This library is free software; you can redistribute it and/or
+//   modify it under the terms of the GNU Lesser General Public
+//   License as published by the Free Software Foundation; either
+//   version 2.1 of the License, or (at your option) any later version.
+//   
+//   This library is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//   Lesser General Public License for more details.
+
+#ifndef ta_dataanal_h
+#define ta_dataanal_h
+
+#include "ta_datatable.h"
+#include "ta_math.h"
+#include "ta_program.h"
+
+class ClustNode;
+
+class TA_API ClustLink : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Math a link in the cluster tree with distance
+public:
+  float		dist;		// distance to this node from parent
+  ClustNode*	node;		// cluster node
+
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+  void	CutLinks();
+  void	Copy_(const ClustLink& cp);
+  COPY_FUNS(ClustLink, taBase);
+  TA_BASEFUNS(ClustLink);
+};
+
+
+class TA_API ClustNode : public taNBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math node in clustering algorithm use one with leaves as children as a root node for cluster
+INHERITED(taNBase)
+public:
+  taMatrix*	pat;		// pattern I point to (if leaf)
+  int		leaf_idx;	// original leaf index, used for pointing into master distance table
+  float_Matrix*	leaf_dists;	// distance matrix for all leaves
+  float		par_dist;	// distance from parent cluster
+  float		nn_dist;	// nearest neighbor (within cluster) distance
+  float		tmp_dist;	// temporary distance value (for computations)
+  float		y;		// y axis value
+  taBase_List	children;	// my sub-nodes
+  taBase_List	nns;		// nearest neighbor(s)
+
+  ClustNode*	GetChild(int i)	const { return ((ClustLink*)children[i])->node; }
+  ClustNode*	GetNN(int i)	const { return ((ClustLink*)nns[i])->node; }
+  float& 	GetNNDist(int i) const { return ((ClustLink*)nns[i])->dist; }
+
+  virtual void	SetPat(taMatrix* pt); // use setpointer to set pat
+  virtual void	AddChild(ClustNode* nd, float dst = 0.0f);
+  // add new child (via ClustLink)
+  virtual void	LinkNN(ClustNode* nd, float dst = 0.0f);
+  // add new neighbor (via ClustLink)
+  virtual bool	RemoveChild(ClustNode* nd);// remove link with this node
+  virtual int	FindChild(ClustNode* nd); // find child with this node link
+
+  virtual bool 	Cluster(taMath::DistMetric metric=taMath::EUCLIDIAN,
+			bool norm=false, float tol=0.0f);
+  // #CAT_Cluster main call to generate the cluster: call on a root node initialized with a flat list of leaf children pointing to the patterns to be clustered
+
+  virtual void	GraphData(DataTable* dt);
+  // generate graph as X, Y, label points in a datatable, suitable for graphing
+  virtual void	GraphData_impl(DataTable* dt);
+  // #IGNORE implementation
+
+  virtual void	NNeighbors(taMath::DistMetric metric, bool norm, float tol);
+  // #IGNORE find nearest neighbors for everyone
+
+  virtual bool	ClustOnClosest();
+  // #IGNORE generate a new cluster by combining closest nearest neighbors together
+
+  float	Dist(const ClustNode& oth, taMath::DistMetric metric, bool norm, float tol) const;
+  // #IGNORE compute distance between this node and other, averaging over individual patterns
+
+  virtual void	SetYs(float y_init = -1.0);
+  // #IGNORE traverse the tree computing y values (starting from initial given value)
+
+  virtual float	SetParDists(float par_d);
+  // #IGNORE traverse the tree computing par_dist values (starting from given dist)
+
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+  void  InitLinks();
+  void	CutLinks();
+  SIMPLE_COPY(ClustNode);
+  COPY_FUNS(ClustNode, taNBase);
+  TA_BASEFUNS(ClustNode);
+};
+
+
+class TA_API taDataAnal : public taNBase {
+  // ##CAT_Data collection of data analysis functions
+public:
+
+  static bool	GetDest(DataTable*& dest, DataTable* src, const String& suffix);
+  // #IGNORE get a dest analysis datatable -- if NULL, make one in proj.data.AnalysisData with name based on src and suffix
+  static DataArray_impl* GetMatrixDataCol(DataTable* src_data, const String& data_col_nm);
+  // #IGNORE get named column from data, with checks that it is a matrix of type float or double
+  static DataArray_impl* GetStringDataCol(DataTable* src_data, const String& name_col_nm);
+  // #IGNORE get named column from data, with checks that it is a non-matrix of type String
+  
+  ///////////////////////////////////////////////////////////////////
+  // distance matricies
+
+  static bool	DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
+			   const String& data_col_nm,
+			   taMath::DistMetric metric, bool norm=false, float tol=0.0f);
+  // #CAT_Distance compute distance matrix for given matrix data column in src_data datatable. dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  distance data is converted to float regardless of source type (float or double)
+  static bool	DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_data,
+				const String& data_col_nm, const String& name_col_nm,
+				taMath::DistMetric metric, bool norm=false, float tol=0.0f);
+  // #CAT_Distance #MENU #MENU_ON_Distance compute distance matrix table for given matrix data column in src_data datatable.  dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  if name_col_nm is non-empty and valid, nxn scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data name + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
+
+  static bool	CrossDistMatrix(float_Matrix* dist_mat,
+				DataTable* src_data_a, const String& data_col_nm_a,
+				DataTable* src_data_b, const String& data_col_nm_b,
+				taMath::DistMetric metric, bool norm=false, float tol=0.0f);
+  // #CAT_Distance compute cross distance matrix between two different matrix data columns in src_data_a and src_data_b datatables. dist_mat returns a symmetric matrix with cells as the distance between each row in table a versus each row of table b.  distance data is converted to float regardless of source type (float or double)
+  static bool	CrossDistMatrixTable(DataTable* dist_mat, bool view,
+				     DataTable* src_data_a, const String& data_col_nm_a,
+				     const String& name_col_nm_a,
+				     DataTable* src_data_b, const String& data_col_nm_b,
+				     const String& name_col_nm_b,
+				     taMath::DistMetric metric, bool norm=false, float tol=0.0f);
+  // #CAT_Distance #MENU #NULL_OK compute cross distance matrix table between two different matrix data columns in src_data_a and srd_data_b datatables. dist_mat returns a symmetric matrix with cells as the distance between each row in table a versus each row of table b. if name_col_nm is non-empty and valid, nxm scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data_a + "_" + src_data_b + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
+
+  ///////////////////////////////////////////////////////////////////
+  // correlation matricies
+
+  static bool	CorrelMatrix(float_Matrix* correl_mat, DataTable* src_data,
+			     const String& data_col_nm);
+  // #CAT_Correlation compute correlation matrix for given matrix data column in src_data datatable.  correl_mat returns the correlation for how each cell in the matrix data varies across rows (e.g., time) as compared to all the other cells.  result is ncells x ncells symmetric square matrix.  correlation data is converted to float regardless of source type (float or double)
+  static bool	CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* src_data,
+				  const String& data_col_nm);
+  // #CAT_Correlation #MENU #MENU_SEP_BEFORE #NULL_OK compute correlation matrix for given matrix data column in src_data datatable.  correl_mat returns the correlation for how each cell in the matrix data varies across rows (e.g., time) as compared to all the other cells. a single matrix column is made, named by the src_data name + "_CorrelMatrix". if view, then a grid view in a new frame is automatically created
+
+  // todo: do this?
+//   virtual void	GpDistArray(float_RArray& within_dist_ary, float_RArray& between_dist_ary, int pat_no,
+// 			    float_RArray::DistMetric metric=float_RArray::HAMMING,
+// 			    bool norm=false, float tol=0.0f);
+//   // get within group and between group distance matricies as arrays for events based on pattern pat_no
+
+  ///////////////////////////////////////////////////////////////////
+  // standard high-dimensional data analysis methods
+
+  static bool	Cluster(DataTable* clust_data, bool view, DataTable* src_data,
+			const String& data_col_nm, const String& name_col_nm,
+			taMath::DistMetric metric=taMath::EUCLIDIAN,
+			bool norm=false, float tol=0.0f);
+  // #CAT_HighDim #MENU #MENU_ON_HighDim #NULL_OK produce a hierarchical clustering of the distances between patterns in given data column from source data, with labels from given name_col_nm, using given distance metric.  if view, the resulting data table is graphed to produce a cluster plot.  NULL DataTable = create new one
+
+  static bool	PCAEigens(float_Matrix* eigen_vals, float_Matrix* eigen_vecs,
+			  DataTable* src_data, const String& data_col_nm);
+  //  #CAT_HighDim get principal components analysis (PCA) eigenvalues and eigenvectors of correlation matrix across rows for given matrix column name in source data
+
+  static bool	PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_data,
+			      const String& data_col_nm);
+  //  #CAT_HighDim #MENU #NULL_OK get principal components analysis (PCA) eigenvalues and eigenvectors of correlation matrix across rows for given matrix column name in source data. NULL DataTable = create new one
+
+  static bool	PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
+			  const String& data_col_nm, const String& name_col_nm,
+			  int x_axis_component=0, int y_axis_component=1);
+  // #CAT_HighDim #MENU #NULL_OK perform principal components analysis of the correlations of patterns in given columm across rows, plotting projections of patterns on the given principal components in the data table.  if name_col_nm not empty, rows are labeled with these names.  NULL DataTable = create new one
+
+  static bool	MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
+			  const String& data_col_nm, const String& name_col_nm,
+			  int x_axis_component=0, int y_axis_component=1,
+			  taMath::DistMetric metric=taMath::EUCLIDIAN,
+			  bool norm=false, float tol=0.0);
+  // #CAT_HighDim #MENU #NULL_OK perform multidimensional scaling on the distance matrix (computed according to metric, norm, tol parameters) of patterns in column name across rows, putting the resulting projections into prjn_data.  if name_col_nm not empty, rows are labeled with these names.  NULL DataTable = create new one
+  static bool	RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
+			     const String& data_col_nm, const String& name_col_nm,
+			     int x_row=0, int y_row=1,
+			     taMath::DistMetric metric=taMath::INNER_PROD,
+			     bool norm=false, float tol=0.0);
+  // #CAT_HighDim #MENU #NULL_OK project all rows according to their projection onto the two specified rows of patterns using given distance metrics
+
+//   static bool	PatFreqArray(float_RArray& freqs, int pat_no, float act_thresh = .5f, bool proportion = false);
+//   // get frequency (proportion) of pattern activations greater than act_thresh across events
+//   static bool	PatFreqText(float act_thresh = .5f, bool proportion = false, ostream& strm = cerr);
+//   // #MENU #ARGC_2 report frequency (proportion) of pattern values greater than act_thresh across events, to a text output (most useful if pattern values are named in value_names)
+//   static bool	PatFreqGrid(GridLog* disp_log, float act_thresh = .5f, bool proportion = false);
+//   // #MENU #NULL_OK report frequency (proportion) of pattern values greater than act_thresh across events, to a grid log (NULL = make new log)
+//   static bool	PatAggArray(float_RArray& agg_vals, int pat_no, Aggregate& agg);
+//   // aggregate pattern pat_no values over events to given array object
+//   static bool	PatAggText(Aggregate& agg, ostream& strm = cerr);
+//   // #MENU #ARGC_1 aggregate patterns over events and print aggregated results to a text output (most useful if pattern values are named in value_names)
+//   static bool	PatAggGrid(GridLog* disp_log, Aggregate& agg);
+//   // #MENU #NULL_OK aggregate patterns over events and plot aggregated results in a grid log (NULL = make new log)
+//   static bool 	EventFreqText(bool proportion = false, ostream& strm = cerr);
+//   // #MENU #ARGC_1 report frequency (proportion) of event names in the environment
+
+  void Initialize() { };
+  void Destroy() { };
+  TA_BASEFUNS(taDataAnal);
+};
+
+/////////////////////////////////////////////////////////
+//   programs to support data generation
+/////////////////////////////////////////////////////////
+
+class TA_API DataAnalCall : public StaticMethodCall { 
+  // call a taDataAnal (data analysis) function
+INHERITED(StaticMethodCall)
+public:
+  TA_BASEFUNS(DataAnalCall);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+}; 
+
+#endif // ta_dataanal_h

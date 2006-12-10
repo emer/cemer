@@ -25,6 +25,20 @@
 #include "ta_qtviewer.h"
 
 
+/////////////////////////
+//	float_RArray	//
+//////////////////////////
+
+void float_RArray::InitLinks() {
+  float_Array::InitLinks();
+  taBase::Own(range, this);
+}
+
+void float_RArray::Copy_(const float_RArray& cp) {
+  range = cp.range;
+}
+
+
 //////////////////////////
 //  	CritParam      	//
 //////////////////////////

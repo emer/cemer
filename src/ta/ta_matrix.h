@@ -255,9 +255,13 @@ public:
   // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
   int			SafeElIndexN(const MatrixGeom& indices) const; 
   // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
+  int			FrameStartIdx(int fm) const { return fm * frameSize(); }
+  // #CAT_Access returns the flat base index of the specified frame
   
   virtual TypeDef*	GetDataTypeDef() const = 0;
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
+  virtual ValType	GetDataValType() const = 0;
+  // #CAT_Access val_type of data
   void*   		GetTA_Element(int i, TypeDef*& eltd)
   { eltd = GetDataTypeDef(); if(InRange_Flat(i)) return (void*)FastEl_Flat_(i); return NULL; }
 
@@ -333,10 +337,6 @@ public:
   // #CAT_Modify true if using fixed (externally managed) data storage
   int			sliceCount() const;
   // #IGNORE number of extant slices
-
-  int			BaseIndexOfFrame(int fm) {return fm * frameSize();}
-  // #CAT_Access returns the flat base index of the specified frame
-  // todo: can we rename this: FrameStartIdx and shouldn't it be above?
 
   virtual int		defAlignment() const;
   // #CAT_Display default Qt alignment, left for text, right for nums
@@ -775,6 +775,7 @@ class TA_API String_Matrix: public taMatrixT<String> {
 public:
   override int		defAlignment() const;
   override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
+  override ValType	GetDataValType() const {return VT_STRING;} 
   
   void			Copy_(const String_Matrix& cp) {}
   COPY_FUNS(String_Matrix, taMatrixT<String>)
@@ -809,6 +810,7 @@ class TA_API float_Matrix: public taMatrixT<float> {
   // #INSTANCE a matrix of floats
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_float;} 
+  override ValType	GetDataValType() const {return VT_FLOAT;} 
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts valid format for float
@@ -843,6 +845,7 @@ class TA_API double_Matrix: public taMatrixT<double> {
   // #INSTANCE a matrix of doubles
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_double;} 
+  override ValType	GetDataValType() const {return VT_DOUBLE;} 
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts valid format for double
@@ -886,6 +889,7 @@ class TA_API int_Matrix: public taMatrixT<int> {
   // #INSTANCE a matrix of ints
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_int;} 
+  override ValType	GetDataValType() const {return VT_INT;} 
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in-range for 32bit int
@@ -917,6 +921,7 @@ class TA_API byte_Matrix: public taMatrixT<byte> {
   // #INSTANCE a matrix of bytes
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_unsigned_char;} 
+  override ValType	GetDataValType() const {return VT_BYTE;} 
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts 0-255 or octal or hex forms
@@ -948,6 +953,7 @@ class TA_API Variant_Matrix: public taMatrixT<Variant> {
   // #INSTANCE a matrix of variants
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_Variant;} 
+  override ValType	GetDataValType() const {return VT_VARIANT;} 
   
   void			Copy_(const Variant_Matrix& cp) {};
   COPY_FUNS(Variant_Matrix, taMatrixT<Variant>);
@@ -982,6 +988,7 @@ class TA_API rgb_Matrix: public taMatrixT<rgb_t> {
   // #INSTANCE a matrix of rgb values
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_rgb_t;} 
+  override ValType	GetDataValType() const {return VT_INT;} // note: not quite right.
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in form: "r g b" or RRGGBB in hex

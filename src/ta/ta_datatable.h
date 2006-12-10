@@ -363,8 +363,8 @@ public:
   bool			RenameCol(const String& cur_nm, const String& new_nm);
   // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
 
-  DataArray_impl*	FindColName(const String& col_nm, int& col_idx = idx_def_arg);
-  // #CAT_Columns find a column of the given name
+  DataArray_impl*	FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false);
+  // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found
 
   DataArray_impl*	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
 					ValType val_type = VT_FLOAT, int dims = 0,

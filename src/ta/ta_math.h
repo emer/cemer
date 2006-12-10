@@ -22,7 +22,7 @@
 #include "ta_mtrnd.h"
 #include "ta_dmem.h"
 
-#ifdef HAVE_GSL
+#ifdef HAVE_LIBGSL
 #include <gsl/gsl_matrix_double.h>
 #include <gsl/gsl_matrix_float.h>
 #endif
@@ -178,6 +178,11 @@ public:
 
   static bool	dist_larger_further(DistMetric metric);
   // returns true if a larger value of given distance metric means further apart
+
+  static void mat_cvt_double_to_float(float_Matrix* flt_dest, const double_Matrix* dbl_src);
+  // #CAT_Convert convert double vector/matrix data to float
+  static void mat_cvt_float_to_double(double_Matrix* dbl_dest, const float_Matrix* flt_src);
+  // #CAT_Convert convert float vector/matrix data to double
 
   void Initialize() { };
   void Destroy() { };
@@ -488,40 +493,64 @@ public:
   // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg
 
   /////////////////////////////////////////////////////////////////////////////////
-  // Matrix operations
+  // Standard Matrix operations: operate on a 2-dimensional matrix
 
-#ifdef HAVE_GSL
-  static bool mat_get_gsl_fm_ta(double_Matrix* ta_mat, gsl_matrix* gsl_mat);
+#ifdef HAVE_LIBGSL
+  static bool mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const double_Matrix* ta_mat);
   // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
-  static bool vec_get_gsl_fm_ta(double_Matrix* ta_vec, gsl_matrix* gsl_vec);
+  static bool vec_get_gsl_fm_ta(gsl_vector* gsl_vec, const double_Matrix* ta_vec);
   // #IGNORE helper function to get a gsl-formatted vector from a one-dimensional ta matrix (vector)
+#endif
 
-  static bool mat_add(double_Matrix* a, double_Matrix* b);
+  static bool mat_col(double_Matrix* col, const double_Matrix* mat, int col_no);
+  // #CAT_Matrix get indicated column number from two-d matrix
+  static bool mat_row(double_Matrix* row, const double_Matrix* mat, int row_no);
+  // #CAT_Matrix get indicated row number from two-d matrix
+
+  static bool mat_add(double_Matrix* a, const double_Matrix* b);
   // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions
-  static bool mat_sub(double_Matrix* a, double_Matrix* b);
+  static bool mat_sub(double_Matrix* a, const double_Matrix* b);
   // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions
-  static bool mat_mult_els(double_Matrix* a, double_Matrix* b);
+  static bool mat_mult_els(double_Matrix* a, const double_Matrix* b);
   // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions
-  static bool mat_div_els(double_Matrix* a, double_Matrix* b);
+  static bool mat_div_els(double_Matrix* a, const double_Matrix* b);
   // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
 
-  static bool mat_eigen_symmv_owrite(double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
-  // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a symmetric n x n matrix. the matrix is overwritten by the operation.  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already
-  static bool mat_eigen_symmv(double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
-  // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a symmetric (n x n) matrix. this matrix is not affeced by the operation (it is copied first).  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already
+  static bool mat_eigen_owrite(double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
+  // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a square symmetric n x n matrix. the matrix is overwritten by the operation.  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already. eigens are sorted from highest to lowest by magnitude (absolute value)
+  static bool mat_eigen(const double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
+  // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a square symmetric (n x n) matrix. this matrix is not affected by the operation (it is copied first).  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already.  eigens are sorted from highest to lowest by magnitude (absolute value)
 
   static bool mat_svd_owrite(double_Matrix* A, double_Matrix* S, double_Matrix* V);
   // #CAT_Matrix compute the singular value decomposition (SVD) of MxN matrix A into an orthogonal MxN matrix U times a diagonal NxN matrix S (diagonals returned as n-item vector S) times the transpose of an NxN orthogonal square matrix V.  matrix A is replaced by MxN orthogonal matrix U.  S and V are automatically configured to the appropriate size if they are not already.
-  static bool mat_svd(double_Matrix* A, double_Matrix* U, double_Matrix* S, double_Matrix* V);
+  static bool mat_svd(const double_Matrix* A, double_Matrix* U, double_Matrix* S, double_Matrix* V);
   // #CAT_Matrix compute the singular value decomposition (SVD) of MxN matrix A into an orthogonal MxN matrix U times a diagonal NxN matrix S (diagonals returned as n-item vector S) times the transpose of an NxN orthogonal square matrix V. matrix A is not affeced by the operation (it is copied first).  S and V are automatically configured to the appropriate size if they are not already
-#endif
-  
-  /////////////////////////////////////////////////////////////////////////////////
-  // Matrix operations
 
-  static bool	mat_dist(double_Matrix* dist_mat, const double_Matrix* src_mat,
-			 DistMetric metric, bool norm = false, double tolerance=0.0f);
-  // #CAT_Distance compute distance matrix of frames within matrix src_mat (must be dim >= 2) -- dist_mat is nframes x nframes
+  static bool mat_mds_owrite(double_Matrix* A, double_Matrix* x_y_coords, int x_component = 0,
+			     int y_component = 1);
+  // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components --  overwrites the matrix A
+  static bool mat_mds(const double_Matrix* A, double_Matrix* x_y_coords, int x_component = 0,
+		      int y_component = 1);
+  // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components -- first copies the matrix A so it is not overwritten
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // higher-dimensional matrix frame-based operations (matrix = collection of matricies)
+
+  static bool mat_cell_to_vec(double_Matrix* vec, const double_Matrix* mat, int cell_no);
+  // #CAT_HighDimMatrix extract given cell element across frames of matrix, and put in vector vec (usueful for analyzing behavior of a given cell across time or whatever the frames represent)
+  static bool mat_dist(double_Matrix* dist_mat, const double_Matrix* src_mat,
+		       DistMetric metric, bool norm = false, double tolerance=0.0f);
+  // #CAT_HighDimMatrix compute distance matrix of frames within matrix src_mat (must be dim >= 2) -- dist_mat is nframes x nframes
+  static bool mat_cross_dist(double_Matrix* dist_mat, const double_Matrix* src_mat_a,
+			       const double_Matrix* src_mat_b,
+			       DistMetric metric, bool norm = false, double tolerance=0.0f);
+  // #CAT_HighDimMatrix compute cross distance matrix between the frames within src_mat_a and src_mat_b (must be dim >= 2 and have same frame size) -- rows of dist_mat are a, cols are b
+  static bool mat_correl(double_Matrix* correl_mat, const double_Matrix* src_mat);
+  // #CAT_HighDimMatrix compute correlation matrix for cells across frames within src_mat (i.e., how does each cell co-vary across time/frames with each other cell). result is nxn matrix where n is number of cells in each frame of src_mat (i.e., size of sub-matrix), with each cell being correlation of that cell with other cell.
+  static bool mat_prjn(double_Matrix* prjn_vec, const double_Matrix* src_mat,
+		       const double_Matrix* prjn_mat, DistMetric metric=INNER_PROD,
+		       bool norm = false, double tolerance=0.0f);
+  // #CAT_HighDimMatrix compute projection of each frame of src_mat onto prjn_mat.  prjn_vec contains one value for each frame in src_mat, which is the inner/dot product (projection -- or other metric if selected) of that frame and the prjn_mat.
 
   void Initialize() { };
   void Destroy() { };
@@ -765,21 +794,65 @@ public:
   /////////////////////////////////////////////////////////////////////////////////
   // Matrix operations
 
-#ifdef HAVE_GSL
-  static bool mat_get_gsl_fm_ta(float_Matrix* ta_mat, gsl_matrix_float* gsl_mat);
+#ifdef HAVE_LIBGSL
+  static bool mat_get_gsl_fm_ta(gsl_matrix_float* gsl_mat, const float_Matrix* ta_mat);
   // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
-
-  static bool mat_add(float_Matrix* a, float_Matrix* b);
-  // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions
-  static bool mat_sub(float_Matrix* a, float_Matrix* b);
-  // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions
-  static bool mat_mult_els(float_Matrix* a, float_Matrix* b);
-  // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions
-  static bool mat_div_els(float_Matrix* a, float_Matrix* b);
-  // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
+  static bool vec_get_gsl_fm_ta(gsl_vector_float* gsl_vec, const float_Matrix* ta_vec);
+  // #IGNORE helper function to get a gsl-formatted vector from a one-dimensional ta matrix (vector)
 #endif
 
-  // todo: copy over from float and replace all w/ float when double is all good..
+  static bool mat_col(float_Matrix* col, const float_Matrix* mat, int col_no);
+  // #CAT_Matrix get indicated column number from two-d matrix
+  static bool mat_row(float_Matrix* row, const float_Matrix* mat, int row_no);
+  // #CAT_Matrix get indicated row number from two-d matrix
+
+  static bool mat_add(float_Matrix* a, const float_Matrix* b);
+  // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions
+  static bool mat_sub(float_Matrix* a, const float_Matrix* b);
+  // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions
+  static bool mat_mult_els(float_Matrix* a, const float_Matrix* b);
+  // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions
+  static bool mat_div_els(float_Matrix* a, const float_Matrix* b);
+  // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
+
+  // note: the following all involve copying to/from double -- underlying computation is done in the double routines, because that is what gsl supports!
+
+  static bool mat_eigen_owrite(float_Matrix* A, float_Matrix* eigen_vals, float_Matrix* eigen_vecs);
+  // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a square symmetric n x n matrix. the matrix is overwritten by the operation.  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already.    eigens are sorted from highest to lowest by magnitude (absolute value)
+  static bool mat_eigen(const float_Matrix* A, float_Matrix* eigen_vals, float_Matrix* eigen_vecs);
+  // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a square symmetric (n x n) matrix. this matrix is not affected by the operation (it is copied first).  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already.  eigens are sorted from highest to lowest by magnitude (absolute value)
+
+  static bool mat_svd_owrite(float_Matrix* A, float_Matrix* S, float_Matrix* V);
+  // #CAT_Matrix compute the singular value decomposition (SVD) of MxN matrix A into an orthogonal MxN matrix U times a diagonal NxN matrix S (diagonals returned as n-item vector S) times the transpose of an NxN orthogonal square matrix V.  matrix A is replaced by MxN orthogonal matrix U.  S and V are automatically configured to the appropriate size if they are not already.
+  static bool mat_svd(const float_Matrix* A, float_Matrix* U, float_Matrix* S, float_Matrix* V);
+  // #CAT_Matrix compute the singular value decomposition (SVD) of MxN matrix A into an orthogonal MxN matrix U times a diagonal NxN matrix S (diagonals returned as n-item vector S) times the transpose of an NxN orthogonal square matrix V. matrix A is not affeced by the operation (it is copied first).  S and V are automatically configured to the appropriate size if they are not already
+
+  static bool mat_mds_owrite(float_Matrix* A, float_Matrix* x_y_coords, int x_component = 0,
+			     int y_component = 1);
+  // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components --  overwrites the matrix A
+  static bool mat_mds(const float_Matrix* A, float_Matrix* x_y_coords, int x_component = 0,
+		      int y_component = 1);
+  // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components -- first copies the matrix A so it is not overwritten
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // higher-dimensional matrix frame-based operations (matrix = collection of matricies)
+
+  static bool mat_cell_to_vec(float_Matrix* vec, const float_Matrix* mat, int cell_no);
+  // #CAT_HighDimMatrix extract given cell element across frames of matrix, and put in vector vec (usueful for analyzing behavior of a given cell across time or whatever the frames represent)
+  static bool mat_dist(float_Matrix* dist_mat, const float_Matrix* src_mat,
+			 DistMetric metric, bool norm = false, float tolerance=0.0f);
+  // #CAT_HighDimMatrix compute distance matrix of frames within matrix src_mat (must be dim >= 2) -- dist_mat is nframes x nframes
+  static bool mat_cross_dist(float_Matrix* dist_mat, const float_Matrix* src_mat_a,
+			       const float_Matrix* src_mat_b,
+			       DistMetric metric, bool norm = false, float tolerance=0.0f);
+  // #CAT_HighDimMatrix compute cross distance matrix between the frames within src_mat_a and src_mat_b (must be dim >= 2 and have same frame size) -- rows of dist_mat are a, cols are b
+  static bool mat_correl(float_Matrix* correl_mat, const float_Matrix* src_mat);
+  // #CAT_HighDimMatrix compute correlation matrix for cells across frames within src_mat (i.e., how does each cell co-vary across time/frames with each other cell).  result is nxn matrix where n is number of cells in each frame of src_mat (i.e., size of sub-matrix), with each cell being correlation of that cell with other cell.
+
+  static bool mat_prjn(float_Matrix* prjn_vec, const float_Matrix* src_mat,
+		       const float_Matrix* prjn_mat, DistMetric metric=INNER_PROD,
+		       bool norm = false, float tolerance=0.0f);
+  // #CAT_HighDimMatrix compute projection of each frame of src_mat onto prjn_mat.  prjn_vec contains one value for each frame in src_mat, which is the inner/dot product (projection -- or other metric if selected) of that frame and the prjn_mat.
 
   void Initialize() { };
   void Destroy() { };

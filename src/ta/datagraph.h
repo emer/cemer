@@ -453,7 +453,7 @@ public:
   XAxis*		x_axis;		// (cached) x_axis
   float_Data*		x_axis_ar; 	// (cached) data array for the x axis
 
-  float_RArray		rows_x_axis; 	// x axis values for plot rows mode
+  float_Array		rows_x_axis; 	// x axis values for plot rows mode
 
   void			(*SetOwnerXAxis)(TAPtr, int);
 

@@ -1,13 +1,10 @@
 leabra todo list:
 
-* ta_dataanal.h: add taDataAnal guy with SVD/ etc as applied to DataTable:
-  * distance matrix, (also on math) that gets frames and does it on those
-  * eigen on what??  correl matrix?
-  * get all from env
-  
-* dataops: random patterns!
+* v3convert: end up with 2 bias.unit links from copy op?
 
-* mathfuns: add all float_RArray funs, for matricies.
+* ta_dataanal.h: cluster not working
+  
+* datagen: random patterns!
 
 * dataproc duplicate rows
 
@@ -15,6 +12,9 @@ leabra todo list:
   e.g., p taMisc::include_paths.List();
 
 * do color network!
+
+* replace condlist with datatables -- just do all the ops on the datatables 
+  directly; lots of datatableloops!
 
 -----------
 Program issues

@@ -938,8 +938,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_StopStepPoint)));
 
   ////////////////////////////////////////////////////////////////////////////
-  //		Data
-  sec = tb->AssertSection("Data"); //note: need to keep it short
+  //		Data processing
+  sec = tb->AssertSection("Data Proc"); //note: need to keep it short
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data proc()",
     tabMisc::root->GetTemplateInstance(&TA_DataProcCall)));
   tb->AddSeparator(sec);
@@ -966,6 +966,15 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_DataCalcCopyCommonCols)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("script",
     tabMisc::root->GetTemplateInstance(&TA_UserScript)));
+
+  ////////////////////////////////////////////////////////////////////////////
+  //		Data generation and analysis
+  sec = tb->AssertSection("Data Misc"); //note: need to keep it short
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data gen()",
+    tabMisc::root->GetTemplateInstance(&TA_DataGenCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data anal()",
+    tabMisc::root->GetTemplateInstance(&TA_DataAnalCall)));
+
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);

@@ -153,6 +153,8 @@ TAHEADS =\
 	@abs_srcdir@/ta_data.h \
 	@abs_srcdir@/ta_datatable.h \
 	@abs_srcdir@/ta_dataproc.h \
+	@abs_srcdir@/ta_dataanal.h \
+	@abs_srcdir@/ta_datagen.h \
 	@abs_srcdir@/ta_imgproc.h \
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
@@ -190,6 +192,8 @@ HEADS =\
 	ta_geometry.h \
 	ta_datatable.h \
 	ta_dataproc.h \
+	ta_dataanal.h \
+	ta_datagen.h \
 	ta_imgproc.h \
 	ta_dump.h \
 	ta_defaults.h \
@@ -228,6 +232,8 @@ SRCS =\
 	ta_data.cpp \
 	ta_datatable.cpp \
 	ta_dataproc.cpp \
+	ta_dataanal.cpp \
+	ta_datagen.cpp \
 	ta_dump.cpp \
 	ta_defaults.cpp \
 	ta_project.cpp \
