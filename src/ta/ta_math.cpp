@@ -22,6 +22,7 @@
 #endif
 
 #include <math.h>
+#include <float.h>
 
 //////////////////////////
 //  	CountParam     	//
@@ -98,7 +99,7 @@ double SimpleMathSpec::Evaluate(double val) const {
   case LOG:
     return logf(val);
   case LOG10:
-    return ((val <= 0) ? taMath::FLT_MIN_10_EXP : log10(val));
+    return ((val <= 0) ? taMath::flt_min_10_exp : log10(val));
   case EXP:
     return expf(val);
   case ADD:
@@ -138,23 +139,23 @@ double taMath::err_tolerance = 3.0e-7;
 /////////////////////////////////////////////////////////////////////////////////
 // Arithmetic: basic arithmatic
 
-double taMath::FLT_MAX = FLT_MAX;
-double taMath::FLT_MAX_10_EXP = FLT_MAX_10_EXP;
-double taMath::FLT_MAX_EXP = FLT_MAX_EXP;
+float taMath::flt_max = FLT_MAX;
+float taMath::flt_max_10_exp = FLT_MAX_10_EXP;
+float taMath::flt_max_exp = FLT_MAX_EXP;
 
-double taMath::FLT_MIN = FLT_MIN;
-double taMath::FLT_MIN_10_EXP = FLT_MIN_10_EXP;
-double taMath::FLT_MIN_EXP = FLT_MIN_EXP;
-double taMath::FLT_EPSILON = FLT_EPSILON;
+float taMath::flt_min = FLT_MIN;
+float taMath::flt_min_10_exp = FLT_MIN_10_EXP;
+float taMath::flt_min_exp = FLT_MIN_EXP;
+float taMath::flt_epsilon = FLT_EPSILON;
 
-double taMath::DBL_MAX = DBL_MAX;
-double taMath::DBL_MAX_10_EXP = DBL_MAX_10_EXP;
-double taMath::DBL_MAX_EXP = DBL_MAX_EXP;
+double taMath::dbl_max = DBL_MAX;
+double taMath::dbl_max_10_exp = DBL_MAX_10_EXP;
+double taMath::dbl_max_exp = DBL_MAX_EXP;
 
-double taMath::DBL_MIN = DBL_MIN;
-double taMath::DBL_MIN_10_EXP = DBL_MIN_10_EXP;
-double taMath::DBL_MIN_EXP = DBL_MIN_EXP;
-double taMath::DBL_EPSILON = DBL_EPSILON;
+double taMath::dbl_min = DBL_MIN;
+double taMath::dbl_min_10_exp = DBL_MIN_10_EXP;
+double taMath::dbl_min_exp = DBL_MIN_EXP;
+double taMath::dbl_epsilon = DBL_EPSILON;
 
 // double taMath::INT_MAX = INT_MAX;
 // double taMath::INT_MIN = INT_MIN;

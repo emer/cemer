@@ -2950,7 +2950,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      DataAnalCall @[1] {
       desc=;
-      off=1;
+      off=0;
       result_var=NULL;
       object_type=taDataAnal;
       method=taDataAnal::Cluster;
@@ -2986,7 +2986,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      DataAnalCall @[5] {
       desc=;
-      off=0;
+      off=1;
       result_var=NULL;
       object_type=taDataAnal;
       method=taDataAnal::RowPat2dPrjn;

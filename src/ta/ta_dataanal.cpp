@@ -149,7 +149,7 @@ void ClustNode::GraphData(DataTable* dt) {
   dt->Reset();
   dt->NewColFloat("X");
   dt->NewColFloat("Y");
-  DataArray_impl* da = dt->NewColString("label");
+  DataArray_impl* da = dt->NewColString("Label");
   da->SetUserData("DISP_STRING", true);
   da->SetUserData("AXIS", 1); // labels use same axis as y values
   da->SetUserData("STRING_COORDS", 1); // use y values
@@ -213,7 +213,7 @@ bool ClustNode::ClustOnClosest() {
   if(children.size < 2)
     return false;		// cannot have any more clustering to do!
 
-  float min_d = taMath::FLT_MAX;
+  float min_d = taMath::flt_max;
   int min_idx=-1;
   int i;
   for(i=0; i<children.size; i++) { // find node with closest neighbors
@@ -242,13 +242,13 @@ bool ClustNode::ClustOnClosest() {
   // then finally check if any other nns at min_d have other nns not already obtained
   for(i=0;i<nd->nns.size; i++) {
     ClustLink* nlk = (ClustLink*)nd->nns[i];
-    if(fabs(nlk->dist - min_d) > clust_dist_tol)
+    if(fabsf(nlk->dist - min_d) > clust_dist_tol)
       continue;
     ClustNode* nn = nlk->node;
     int j;
     for(j=0; j<nn->nns.size; j++) {
       ClustLink* nn_nlk = (ClustLink*)nn->nns[j];
-      if(fabs(nn_nlk->dist - min_d) > clust_dist_tol)
+      if(fabsf(nn_nlk->dist - min_d) > clust_dist_tol)
 	continue;
       if(new_clust->FindChild(nn_nlk->node) < 0) { // not in new clust yet
 	new_clust->AddChild(nn_nlk->node);
@@ -267,11 +267,11 @@ void ClustNode::NNeighbors(taMath::DistMetric metric, bool norm, float tol) {
   for(i=0; i<children.size; i++) {
     ClustNode* nd = GetChild(i);
     nd->nns.Reset();
-    nd->nn_dist = taMath::FLT_MAX;
+    nd->nn_dist = taMath::flt_max;
   }
   for(i=0; i<children.size; i++) {
     ClustNode* nd = GetChild(i);
-    float min_d = taMath::FLT_MAX;
+    float min_d = taMath::flt_max;
     int j;
     for(j=i+1; j<children.size; j++) {
       ClustNode* ond = GetChild(j);
@@ -280,7 +280,7 @@ void ClustNode::NNeighbors(taMath::DistMetric metric, bool norm, float tol) {
     }
     for(j=i+1; j<children.size; j++) {
       ClustNode* ond = GetChild(j);
-      if(fabs(ond->tmp_dist - min_d) < clust_dist_tol) {
+      if(fabsf(ond->tmp_dist - min_d) < clust_dist_tol) {
 	nd->LinkNN(ond, min_d);	// link together with distance
 	ond->LinkNN(nd, min_d);
       }
@@ -289,7 +289,7 @@ void ClustNode::NNeighbors(taMath::DistMetric metric, bool norm, float tol) {
   // now make a 2nd pass and get smallest distance for each node and its neighbors
   for(i=0; i<children.size; i++) {
     ClustNode* nd = GetChild(i);
-    nd->nn_dist = taMath::FLT_MAX;
+    nd->nn_dist = taMath::flt_max;
     int j;
     for(j=0; j<nd->nns.size; j++) {
       ClustLink* nlk = (ClustLink*)nd->nns[j];
@@ -372,7 +372,7 @@ void ClustNode::SetYs(float y_init) {
 
 float ClustNode::SetParDists(float par_d) {
   par_dist = par_d + nn_dist;
-  float max_d = -taMath::FLT_MAX;
+  float max_d = -taMath::flt_max;
   int i;
   for(i=0; i<children.size; i++) {
     ClustNode* nd = GetChild(i);

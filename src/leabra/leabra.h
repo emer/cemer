@@ -1940,7 +1940,7 @@ public:
   virtual void	Compute_AvgAbsRelNetin();
   // #CAT_Statistic compute time-average absolute layer-level and relative netinput from different projections into layers in network (e.g. over epoch timescale)
   virtual void	Compute_TrgRelNetin();
-  // #MENU #MENU_SEP_BEFORE #CAT_Learning compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
+  // #MENU #MENU_SEP_BEFORE #CONFIRM #CAT_Learning compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
   virtual void	Compute_AdaptRelNetin();
   // #CAT_Learning adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
   virtual void	Compute_AdaptAbsNetin();

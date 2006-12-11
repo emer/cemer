@@ -134,37 +134,37 @@ public:
   /////////////////////////////////////////////////////////////////////////////////
   // Arithmetic: basic arithmetic
 
-  static double FLT_MAX;
-  // #CAT_Arithmetic
-  static double FLT_MAX_10_EXP;
-  // #CAT_Arithmetic
-  static double FLT_MAX_EXP;
-  // #CAT_Arithmetic
+  static float flt_max;
+  // #CAT_Arithmetic maximum value representable by a floating point number (typ 1e37)
+  static float flt_max_10_exp;
+  // #CAT_Arithmetic maximum base 10 exponent representable by a floating point number (typ 37)
+  static float flt_max_exp;
+  // #CAT_Arithmetic maximum radix (base of float, always 2) exponent
   
-  static double FLT_MIN;
-  // #CAT_Arithmetic
-  static double FLT_MIN_10_EXP;
-  // #CAT_Arithmetic
-  static double FLT_MIN_EXP;
-  // #CAT_Arithmetic
-  static double FLT_EPSILON;
-  // #CAT_Arithmetic
+  static float flt_min;
+  // #CAT_Arithmetic minimum value representable by a floating point number (typ 1e-37)
+  static float flt_min_10_exp;
+  // #CAT_Arithmetic minimum base 10 exponent representable by a floating point number (typ 37)
+  static float flt_min_exp;
+  // #CAT_Arithmetic minimum radix (base of float, always 2) exponent
+  static float flt_epsilon;
+  // #CAT_Arithmetic minimum positive floating point number such that 1.0f + flt_epsilon != 1.0f
 
-  static double DBL_MAX;
-  // #CAT_Arithmetic
-  static double DBL_MAX_10_EXP;
-  // #CAT_Arithmetic
-  static double DBL_MAX_EXP;
-  // #CAT_Arithmetic
+  static double dbl_max;
+  // #CAT_Arithmetic maximum value representable by a floating point number (typ 1e308)
+  static double dbl_max_10_exp;
+  // #CAT_Arithmetic maximum base 10 exponent representable by a floating point number (typ 308)
+  static double dbl_max_exp;
+  // #CAT_Arithmetic maximum radix (base of float, always 2) exponent
 
-  static double DBL_MIN;
-  // #CAT_Arithmetic
-  static double DBL_MIN_10_EXP;
-  // #CAT_Arithmetic
-  static double DBL_MIN_EXP;
-  // #CAT_Arithmetic
-  static double DBL_EPSILON;
-  // #CAT_Arithmetic
+  static double dbl_min;
+  // #CAT_Arithmetic minimum value representable by a floating point number (typ 1e-308)
+  static double dbl_min_10_exp;
+  // #CAT_Arithmetic minimum base 10 exponent representable by a floating point number (typ 308)
+  static double dbl_min_exp;
+  // #CAT_Arithmetic minimum radix (base of float, always 2) exponent
+  static double dbl_epsilon;
+  // #CAT_Arithmetic minimum positive floating point number such that 1.0 + dbl_epsilon != 1.0
 
   enum DistMetric {		// generalized distance metrics
     SUM_SQUARES,		// sum of squares:  sum[(x-y)^2]

@@ -1720,7 +1720,7 @@ void gpiSelectEditDataHost::Constr_Body() {
 //    String new_lbl = sele->GetMbrLabel(i);
     GetName(md, nm, help_text); //note: we just call this to get the help text
     if (!new_lbl.empty())
-      nm = new_lbl;
+      nm = new_lbl + " " + nm;
     AddName(row, nm, help_text, mb_dat);
     MakeMenuItem(mnuRemoveMember, nm, i, i, SLOT(mnuRemoveMember_select(int)));
   }
