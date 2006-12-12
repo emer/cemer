@@ -646,6 +646,20 @@ exit:
 */
 
 
+
+//////////////////////////
+//   nvhDataView	//
+//////////////////////////
+
+void nvhDataView::Copy_(const nvhDataView& cp) {
+  m_hcolor = cp.m_hcolor;
+}
+
+void nvhDataView::setHighlightColor(const T3Color& color) {
+  m_hcolor = color;
+  DoHighlightColor(true);
+} 
+
 //////////////////////////
 //   LayerView	//
 //////////////////////////
@@ -713,11 +727,21 @@ taBase::DumpQueryResult LayerView::Dump_QuerySaveMember(MemberDef* md) {
   else return inherited::Dump_QuerySaveMember(md);
 }
 
+void LayerView::DoHighlightColor(bool apply) {
+  T3LayerNode* nd = node_so();
+  if (!nd) return;
+  
+  SoMaterial* mat = node_so()->material(); //cache
+  if (apply) {
+    mat->diffuseColor.setValue(m_hcolor); // gray
+  } else {
+    mat->diffuseColor.setValue(0.4f, 0.4f, 0.4f); // gray
+  }
+} 
+
 void LayerView::Render_pre() {
   m_node_so = new T3LayerNode(this);
-
-//  SoMaterial* mat = node_so()->material(); //cache
-//  mat->diffuseColor.setValue(0.4f, 0.4f, 0.4f); // gray
+  DoHighlightColor(false);
 
   inherited::Render_pre();
 }
@@ -754,9 +778,21 @@ void PrjnView::Destroy() {
   Reset();
 }
 
+void PrjnView::DoHighlightColor(bool apply) {
+  T3PrjnNode* nd = node_so();
+  if (!nd) return;
+  
+  SoMaterial* mat = node_so()->material(); //cache
+  if (apply) {
+    mat->diffuseColor.setValue(m_hcolor);
+  } else {
+    mat->diffuseColor.setValue(SbColor(1, 1, 1)); // white
+  }
+} 
 
 void PrjnView::Render_pre() {
   m_node_so = new T3PrjnNode(this);
+  DoHighlightColor(false);
   inherited::Render_pre();
 }
 
@@ -1412,6 +1448,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 :inherited(dv_)
 {
   int font_spec = taiMisc::fonMedium;
+  m_cur_spec = NULL;
   updating = 0;
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
@@ -1471,9 +1508,28 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   laySpecs = new QVBoxLayout(gbSpecs);
   tvSpecs = new iTreeView(gbSpecs);
   laySpecs->addWidget(tvSpecs, 1);
-  // blank item so user can unselect the others
-  QTreeWidgetItem* itm = new QTreeWidgetItem(tvSpecs);
-  itm->setText(0, "(none)");
+  tvSpecs->setColumnCount(2);
+  tvSpecs->setSortingEnabled(false);// only 1 order possible
+  tvSpecs->setHeaderText(0, "Spec");
+  tvSpecs->setHeaderText(1, "Description");
+  tvSpecs->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
+  //enable dnd support
+  tvSpecs->setDragEnabled(true);
+  tvSpecs->setAcceptDrops(true);
+  tvSpecs->setDropIndicatorShown(true);
+  tvSpecs->setHighlightRows(true);
+  
+  taBase* specs_ = &(dv_->net()->specs);
+  MemberDef* md = dv_->net()->GetTypeDef()->members.FindName("specs");
+  if (specs_) {
+    taiDataLink* dl = (taiDataLink*)specs_->GetDataLink();
+    if (dl) {
+      dl->CreateTreeDataNode(md, tvSpecs, NULL, dl->GetName());
+    }
+  }
+  connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
+    this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
+  
 
   // Command Buttons
   widCmdButtons = new iMethodButtonFrame(nv()->net(), widg);
@@ -1681,330 +1737,66 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   nv_->UpdateDisplay(false);
 }
 
+bool UsesSpec(taBase* obj, BaseSpec* spec) {
+  TypeDef* otyp = obj->GetTypeDef();
+  for (int i = 0; i < otyp->members.size; ++i) {
+    MemberDef* md = otyp->members.FastEl(i);
+    //note: specs stored in specptr objs, which are inline objs
+    if (md->type->DerivesFrom(&TA_SpecPtr_impl)) {
+      SpecPtr_impl* sptr = (SpecPtr_impl*)md->GetOff(obj);
+      if (sptr->GetSpec() == spec) return true;
+    }
+  }
+  return false;
+}
+
+void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
+  if ((spec == m_cur_spec) && !force) return;
+  m_cur_spec = spec;
+  // We use a completely generic mechanism, that looks for
+  // the spec being assigned to a SpecPtr_impl member of the object
+  // check layers
+  NetView* nv = this->nv(); // cache
+  for (int i = 0; i < nv->layers.size; ++i) {
+    LayerView* lv = (LayerView*)nv->layers.FastEl(i);
+    if (m_cur_spec) {
+      Layer* lay = lv->layer();
+      if (lay && UsesSpec(lay, m_cur_spec)) {
+        lv->setHighlightColor(T3Color(lay->GetEditColorInherit()));
+        continue;
+      }
+    }
+    lv->setDefaultColor();
+  }
+  // check projections
+  for (int i = 0; i < nv->prjns.size; ++i) {
+    PrjnView* pv = (PrjnView*)nv->prjns.FastEl(i);
+    if (m_cur_spec) {
+      Projection* prjn = pv->prjn();
+      if (prjn && UsesSpec(prjn, m_cur_spec)) {
+        pv->setHighlightColor(T3Color(prjn->GetEditColorInherit()));
+        continue;
+      }
+    }
+    pv->setDefaultColor();
+  }
+  
+}
+
+void NetViewPanel::tvSpecs_ItemSelected(iTreeViewItem* item) {
+  BaseSpec* spec = NULL;
+  if (item) {
+    taBase* ld_ = (taBase*)item->linkData();
+    if (ld_->InheritsFrom(TA_BaseSpec))
+      spec = (BaseSpec*)ld_;
+  }
+  setHighlightSpec(spec);
+
+}
+
 void NetViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) {
   NetView* nv_;
   if (!(nv_ = nv())) return;
   nv_->viewWin_NotifySignal(src, op);
 }
 
-
-/*obs
-//////////////////////////////////
-// 	tabNetworkLink 		//
-//////////////////////////////////
-
-tabNetworkDataView::tabNetworkDataView(Network* data_, taiDataBrowser* browser_)
-:tabDataView(data_, browser_)
-{
-}
-
-taiDataPanel* tabNetworkDataView::CreateDataPanel(taiTreeDataNode* sel_node) {
-  taiDataPanel* rval = new taiNetworkDataPanel(this, sel_node);
-  return rval;
-}
-
-//////////////////////////////////
-// 	taiNetworkDataPanel 	//
-//////////////////////////////////
-
-taiNetworkDataPanel::taiNetworkDataPanel(tabNetworkDataView* link_, taiTreeDataNode* sel_node_, QWidget* parent, const char* name)
-:taiDataPanel(link_, sel_node_, parent, name)
-{
-  net_so = new T3NetNode(net());
-  mparentItem = sel_node;
-  root = NULL;
-  layOuter = new QVBoxLayout(this);
-
-  //create the so viewer
-  t3vsw = new T3ViewspaceWidget(this);
-  SoQtRenderArea* ra_ = new SoQtExaminerViewer(t3vsw); //TEMP
-  t3vsw->setRenderArea(ra_);
-
-  layOuter->addWidget(t3vsw);
-  Render();
-}
-
-taiNetworkDataPanel::~taiNetworkDataPanel() {
-  delete net_so;
-  if (root) {
-    root->unref();
-    root = NULL;
-  }
-}
-
-SoQtRenderArea* taiNetworkDataPanel::ra() {
-  if (t3vsw) return t3vsw->renderArea();
-  else      return NULL;
-}
-
-void taiNetworkDataPanel::Render() { // ENTIRE ROUTINE IS TEMP
-
-    root = new SoSeparator;
-    root->ref();
-
-  net_so->Render(root);
-
-    // Use one of the convenient SoQt viewer classes.
-    ra()->setSceneGraph(root);
-    ra()->show();
-}
-
-*/
-
-
-
-
-
-
-
-/*
-
-//////////////////////////
-//	PrjnView	//
-//////////////////////////
-
-void PrjnView::Initialize() {
-  data_base = &TA_Projection;
-}
-
-void PrjnView::Destroy() {
-  Clear();
-}
-
-void PrjnView::Clear_impl() {
-  prjn_so = (T3PrjnNode*)NULL;
-}
-
-void PrjnView::RenderContentPre_impl(SoGroup*) {
-  prjn_so->RenderContentPre();
-}
-
-void PrjnView::RenderSetup_impl(SoGroup* par_so) {
-  prjn_so = new T3PrjnNode(this, prjn());
-  par_so->addChild(prjn_so);
-}
-
-//void NetView::UpdateAfterEdit() {
-//}
-
-
-//////////////////////////
-//	LayerView	//
-//////////////////////////
-
-void LayerView::Initialize() {
-  data_base = &TA_Layer;
-  prjns.SetBaseType(&TA_PrjnView);
-}
-
-void LayerView::Destroy() {
-  Clear();
-  CutLinks();
-}
-
-void LayerView::InitLinks() {
-  T3Node::InitLinks(); // net is now our view
-  taBase::Own(prjns, this);
-  if (lay()) {
-    prjns.SetData(lay()); // sends notifications
-  }
-}
-
-void LayerView::CutLinks() {
-  prjns.CutLinks();
-  T3Node::CutLinks();
-}
-
-void LayerView::Copy_(const LayerView& cp) {
-  Reset();
-  prjns = cp.prjns;
-}
-
-void LayerView::BuildAll() { // populates everything
-  Reset();
-  // sending projections
-  taLeafItr j;
-  Projection* prjn;
-  FOR_ITR_EL(Projection, prjn, lay()->projections., j) { // receiving projections
-    PrjnView* pv = new PrjnView();
-    prjn->AddDataView(pv);
-    prjns.Add(pv);
-  }
-}
-
-void LayerView::Clear_impl() {
-  prjns.Clear();
-  lay_so = (T3LayerNode*)NULL;
-}
-
-void LayerView::DataDestroying() {
-  Reset();
-}
-
-void LayerView::RenderChildren_impl(SoGroup* ) {
-  //TODO: render the groups; use lay_so as the parent
-  if (lay()->geom.z == 1) { // simple: render only units
-      SoSeparator* u_so = new SoSeparator;
-      lay_so->addChild(u_so);
-      RenderUnits(u_so, lay()->geom, &lay()->units);
-  } else { // render using groups
-  }
-  // render the projections last
-//TODO  prjns.Render(lay_so); //TODO: should we use our par, or the net_so???
-}
-
-void LayerView::RenderContentPre_impl(SoGroup*) {
-  lay_so->RenderContentPre();
-}
-
-void LayerView::RenderSetup(SoGroup* par_so) {
-  setOrigin(lay()->pos.x, lay()->pos.z, -(lay()->pos.y));
-  T3Node::RenderSetup(par_so);
-  lay_so = new T3LayerNode(this, lay());
-  par_so->addChild(lay_so);
-}
-
-void LayerView::RenderUnits(SoGroup* par_so, const TDCoord& geom, Unit_Group* ugrp) {
-  if ((geom.x == 0) || (geom.y == 0)) return;
-  //note: ugrp can be null if rendering place holders
-  TwoDCoord coord;
-  bool is_built = false; // if built, lets us know if we've run out of units
-  if (ugrp) is_built = ugrp->CheckBuild();
-
-  T3RenderHelper rh(par_so);
-  // T3UnitNode's are groups, not separators, so we have to do everything relative
-  // default color, if no other supplied
-  SoBaseColor * col = new SoBaseColor;
-  col->rgb = SbColor(.25f, .25f, .25f); // dark gray
-  par_so->addChild(col);
-  col = NULL;
-
-  // initial unit offset from centroid of group -- render relative to center of cells
-  rh.moveTo(-(geom.x - 1)/2.0f, 0, (geom.y - 1)/2.0f);
-
-  // transform to get us to next row -- shared
-  SoTransform* xf_nexty = new SoTransform;
-  xf_nexty->ref(); // in case not used
-  xf_nexty->translation.setValue(-(geom.x - 1), 0.0f, -1.0f); //move to next row, and back to start
-
-  // transform to get us to next unit in row -- shared
-  SoTransform* xf_nextx = new SoTransform;
-  xf_nextx->ref(); // in case not used
-  xf_nextx->translation.setValue(1.0f, 0, 0); //move to next cell
-
-  for (coord.y = 0; coord.y < geom.y; coord.y++) {
-    if (coord.y > 0) par_so->addChild(xf_nexty);
-
-    for (coord.x = 0; coord.x < geom.x; coord.x++) {
-      if (coord.x > 0) par_so->addChild(xf_nextx);
-
-      Unit* unit = NULL;
-      if (ugrp) unit = ugrp->FindUnitFmCoord(coord); // can be null if not populated
-      if (is_built && !unit) goto exit; // no more actual units, and shouldn't show placeholders
-
-      T3UnitNode* unit_so;
-      TwoDCoord pos;
-      if (unit) {
-        //TEMP: replace this scheme with a color caching scheme, that only outputs
-        // a new color if the unit is differently colored than previous unit
-        if (!col) {
-          col = new SoBaseColor;
-          col->rgb = SbColor(1, 1, 0); // yellow
-          col->ref();
-          par_so->addChild(col);
-        }
-        pos = unit->pos;
-        unit_so = new T3UnitNode(this, unit, T3UnitNode::DEFAULT);
-      } else {
-        pos = coord;
-        unit_so = new T3UnitNode(this, NULL, T3UnitNode::EMPTY);
-      }
-      par_so->addChild(unit_so);
-    }
-  }
-
-exit:
-  if (col) col->unref();
-  xf_nextx->unref();
-  xf_nexty->unref();
-
-}
-
-void LayerView::Reset_impl() {
-  prjns.Reset();
-}
-
-//void NetView::UpdateAfterEdit() {
-//}
-
-
-//////////////////////////
-//	NetView		//
-//////////////////////////
-
-void NetView::Initialize() {
-  data_base = &TA_Network;
-  layers.SetBaseType(&TA_LayerView);
-}
-
-void NetView::Destroy() {
-  CutLinks();
-}
-
-void NetView::InitLinks() {
-  T3Node::InitLinks(); // net is now our view
-  taBase::Own(layers, this);
-  if (net()) {
-    layers.SetData(net()); // sends notifications
-  }
-}
-
-void NetView::CutLinks() {
-  layers.CutLinks();
-  T3Node::CutLinks();
-}
-
-void NetView::Copy_(const NetView& cp) {
-  Reset();
-  layers = cp.layers;
-}
-
-void NetView::Clear_impl() {
-  layers.Clear();
-  net_so = (T3NetNode*)NULL;
-}
-
-void NetView::ChildList_DataDataChanged(T3DataView_List* list, int dcr, void* op1_, void* op2_) {
-  if (list == &layers) {
-    switch (dcr) {
-    case DCR_GROUP_ITEM_INSERT: { // layer inserted somewhere in the hierarchy
-      Layer* lay = (Layer*) op1_;
-      LayerView* lv = new LayerView();
-      lay->AddDataView(lv);
-      layers.Add(lv);
-      if (net_so.ptr()) lv->Render(net_so);
-    } break;
-    }
-  }
-}
-
-
-void NetView::RenderSetup_impl(SoGroup* par_so) {
-  net_so = new T3NetNode(this, net());
-  par_so->addChild(net_so);
-}
-
-void NetView::RenderContentPre_impl(SoGroup* par_so) {
-}
-
-void NetView::RenderChildren_impl(SoGroup*) {
-  layers.Render(net_so); //TODO: should we use our par, or the net_so???
-}
-
-void NetView::Reset_impl() {
-  layers.Reset();
-}
-
-//void NetView::UpdateAfterEdit() {
-//}
-*/

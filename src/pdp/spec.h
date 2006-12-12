@@ -69,6 +69,7 @@ INHERITED(taNBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
+  String		desc;	// #EDIT_DIALOG Description of what this variable is for
   String_Array unique; // #HIDDEN string list of unique members
   TypeDef*		min_obj_type;
   // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
@@ -108,6 +109,7 @@ public:
   virtual bool 	    RemoveChild(const char* nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
+  override String GetDesc() const { return desc; }
   void 	Initialize();
   void	Destroy();
   void	InitLinks();

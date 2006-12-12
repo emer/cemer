@@ -402,7 +402,6 @@ T3LayerNode::T3LayerNode(void* dataView_)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3LayerNode);
-  material()->diffuseColor.setValue(0.4f, 0.4f, 0.4f);
 
   SoSeparator* ss = shapeSeparator(); // cache
 
@@ -465,9 +464,6 @@ void T3PrjnNode::init() {
   ss->addChild(rot_prjn);
   trln_prjn = new SoTransform();
   ss->addChild(trln_prjn);
-
-  //color and material
-  material()->diffuseColor.setValue(SbColor(1, 1, 1)); // white
 
   float rad = 0.02f;
   line_prjn = new SoCylinder();

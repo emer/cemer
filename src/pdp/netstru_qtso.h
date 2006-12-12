@@ -96,11 +96,13 @@ protected:
 //////////////////////////
 
 class PDP_API nvDataView: public T3DataViewPar { // #VIRT_BASE most children of NetView
-#ifndef __MAKETA__
-  typedef T3DataViewPar inherited;
-#endif
+INHERITED(T3DataViewPar)
 public:
   NetView*		nv();
+  
+  virtual void		setDefaultColor() {} // restore to its default color
+  virtual void		setHighlightColor(const T3Color& color) {} 
+    // used for highlighting in gui, esp lay/prjn
 
   override void		CutLinks();
 
@@ -218,12 +220,35 @@ private:
 };
 
 
+class PDP_API nvhDataView: public nvDataView { // #VIRT_BASE highlightable guys
+INHERITED(nvDataView)
+public:
+  void			setDefaultColor() {DoHighlightColor(false);} 
+    // restore to its default color
+  void			setHighlightColor(const T3Color& color); 
+    // used for highlighting in gui, esp lay/prjn
+    
+  void Copy_(const nvhDataView& cp);
+  COPY_FUNS(nvhDataView, inherited);
+  TA_BASEFUNS(nvhDataView)
+protected:
+  T3Color 		m_hcolor; // hilight color (saved for rebuilds)
+  
+  virtual void		DoHighlightColor(bool apply) {} 
+
+private:
+  void			Initialize() {}
+  void			Destroy() {}
+};
+
+
+
 //////////////////////////
 //   LayerView	//
 //////////////////////////
 
-class PDP_API LayerView: public nvDataView {
-INHERITED(nvDataView)
+class PDP_API LayerView: public nvhDataView {
+INHERITED(nvhDataView)
 public:
   T3DataView_PtrList	ugrps; // #NO_SAVE
 
@@ -236,6 +261,7 @@ public:
   T3_DATAVIEWFUNS(LayerView, nvDataView)
 protected:
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
+  override void		DoHighlightColor(bool apply); 
   override void		DataUpdateAfterEdit_impl(); // also invoke for the connected prjns
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
@@ -250,10 +276,8 @@ private:
 //   PrjnView		//
 //////////////////////////
 
-class PDP_API PrjnView: public nvDataView {
-#ifndef __MAKETA__
-  typedef nvDataView inherited;
-#endif
+class PDP_API PrjnView: public nvhDataView {
+INHERITED(nvhDataView)
 friend class NetView;
 public:
   Projection*		prjn() const {return (Projection*)data();}
@@ -261,6 +285,7 @@ public:
 
   T3_DATAVIEWFUNS(PrjnView, nvDataView)
 protected:
+  override void		DoHighlightColor(bool apply); 
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
@@ -433,7 +458,9 @@ public: // IDataLinkClient interface
 protected:
   int			cmd_x; // current coords of where to place next button/ctrl
   int			cmd_y;
+  BaseSpec*		m_cur_spec; // cur spec chosen -- only compared, so ok if stale
   override void		GetImage_impl();
+  void 			setHighlightSpec(BaseSpec* spec, bool force = false);
 
 public slots:
   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
@@ -449,6 +476,7 @@ protected slots:
   virtual void 		cmbDispMode_itemChanged(int itm);
   virtual void		cbar_scaleValueChanged();
   virtual void		lvDisplayValues_selectionChanged();
+  void			tvSpecs_ItemSelected(iTreeViewItem* item); 
 
 };
 

@@ -96,9 +96,10 @@ public:
   static uint32_t makePackedRGBA(int r_, int g_, int b_, int a_ = 255); // #IGNORE
 
   void		setValue(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}
-  T3Color() {r = 0.0f; g = 0.0f; b = 0.0f;}
+  T3Color() {r = g = b = 0.0f;}
   T3Color(float r_, float g_, float b_) {r = r_; g = g_; b = b_;}
   T3Color(float x_) {r = x_; g = x_; b = x_;}
+  T3Color(const iColor* cp) {if (cp) cp->getRgb(r, g, b); else r = g = b = 0.0f;}
   T3Color(const iColor& cp) {cp.getRgb(r, g, b);}
   T3Color(const SbColor& cp) {cp.getValue(r, g, b);}
 
