@@ -1762,7 +1762,7 @@ void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
     if (m_cur_spec) {
       Layer* lay = lv->layer();
       if (lay && UsesSpec(lay, m_cur_spec)) {
-        lv->setHighlightColor(T3Color(lay->GetEditColorInherit()));
+        lv->setHighlightColor(T3Color(m_cur_spec->GetEditColorInherit()));
         continue;
       }
     }
@@ -1774,7 +1774,7 @@ void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
     if (m_cur_spec) {
       Projection* prjn = pv->prjn();
       if (prjn && UsesSpec(prjn, m_cur_spec)) {
-        pv->setHighlightColor(T3Color(prjn->GetEditColorInherit()));
+        pv->setHighlightColor(T3Color(m_cur_spec->GetEditColorInherit()));
         continue;
       }
     }
