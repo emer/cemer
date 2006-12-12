@@ -1472,7 +1472,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   tvSpecs = new iTreeView(gbSpecs);
   laySpecs->addWidget(tvSpecs, 1);
   // blank item so user can unselect the others
-  QTreeWidgetItem* itm = new QTreeWidgetItem(tvSpecs, "(none)");
+  QTreeWidgetItem* itm = new QTreeWidgetItem(tvSpecs);
+  itm->setText(0, "(none)");
 
   // Command Buttons
   widCmdButtons = new iMethodButtonFrame(nv()->net(), widg);
