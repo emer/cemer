@@ -722,6 +722,9 @@ public:
   static String	StringEnforceLen(const String& str, int len);
   // #CAT_Utility returns string enforced to given length (spaces added to make length)
 
+  static String	StringCVar(const String& str);
+  // #CAT_Utility make return string in a form that would be valid as a variable name in C (i.e., alpha + numeric (not at start) + _
+
   /////////////////////////////////////////////////
   //	File Paths etc
 
@@ -745,7 +748,7 @@ public:
   static bool	RecordScript(const char* cmd);
   // #CAT_Script record the given script command, if the script is open (just sends cmd to stream)
 #ifndef NO_TA_BASE
-  static void  ScriptRecordAssignment(taBase* tab,MemberDef* md);
+  static void   ScriptRecordAssignment(taBase* tab,MemberDef* md);
   // #CAT_Script record last script assignment of tab's md value;
   static void 	SRIAssignment(taBase* tab,MemberDef* md);
   // #CAT_Script record inline md assignment

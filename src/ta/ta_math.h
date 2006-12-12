@@ -107,9 +107,9 @@ public:
   };
 
   MathOpr 	opr;		// what math operator to use
-  double		arg;		// #CONDEDIT_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,GTEQ,LTEQ argument for ops (threshold add/sub/mul/div arg)
-  double		lw;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values below threshold
-  double		hi;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values above threshold
+  double	arg;		// #CONDEDIT_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,GTEQ,LTEQ argument for ops (threshold add/sub/mul/div arg)
+  double	lw;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values below threshold
+  double	hi;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values above threshold
 
   double	Evaluate(double val) const; // evaluate math operator on given value
   Variant&	EvaluateVar(Variant& val) const; // #IGNORE evaluate math operator on given value

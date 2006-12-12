@@ -478,7 +478,7 @@ void NetMonItem::UpdateAfterEdit_impl() {
     else {			// AUTO_NAME = always update!
       name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
     }
-    name.gsub('.', '_');		// keep it clean for css var names
+    name = taMisc::StringCVar(name);		// keep it clean for css var names
     ScanObject();
   }
 }
@@ -561,7 +561,7 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
     base_nm = GetObjName(obj);
   }
   String rval = base_nm + "_" + (var_label.empty() ? variable : var_label);
-  rval.gsub('.', '_');		// keep it clean for css var names
+  rval = taMisc::StringCVar(rval); // keep it clean for css var names
   return rval;
 }
 

@@ -122,7 +122,7 @@ int DataArray_impl::imageComponents() const {
 void DataArray_impl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Init();
-  name.gsub(" ", "_");		// no spaces in the names allowed!
+  name = taMisc::StringCVar(name); // make col names C legal names (for data proc ops)
 }
 
 void DataArray_impl::DataChanged(int dcr, void* op1, void* op2) {

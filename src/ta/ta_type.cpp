@@ -1040,6 +1040,22 @@ String taMisc::StringEnforceLen(const String& str, int len) {
   return rval;
 }
 
+String taMisc::StringCVar(const String& str) {
+  String rval;
+  for(int i=0;i<str.length();i++) {
+    char c = str[i];
+    if(isalnum(c) || c == '_') {
+      if(!(isdigit(c) && (rval.length()==0)))
+	rval += c;
+    }
+    else {
+      if((rval.length() > 0) && (rval.lastchar() != '_'))
+	rval += '_';		// use _ to replace all strange chars
+    }
+  }
+  return rval;
+}
+
 
 /////////////////////////////////////////////////
 //	File Paths etc

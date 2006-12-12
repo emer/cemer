@@ -79,10 +79,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (!cssMisc::IsNameValid(name)) {
-    taMisc::Error("'", name, "' is not a valid name in css scripts; must be alphanums or underscores");
-//TODO: should make it valid, or do something to not leave it invalid
-  }
+  name = taMisc::StringCVar(name); // make names C legal names
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1329,6 +1326,19 @@ void ProgramCall::UpdateArgs() {
 void Function::Initialize() {
   args.var_context = ProgVar_List::VC_FuncArgs;
   return_val.name = "rval";
+}
+
+void Function::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  name = taMisc::StringCVar(name); // make names C legal names
+}
+
+void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(name.empty()) {
+    if(!quiet) taMisc::CheckError("Error in Function: name is empty in program:",
+				  program()->name, ".  Functions must be named");
+  }
 }
 
 void Function::CheckChildConfig_impl(bool quiet, bool& rval) {

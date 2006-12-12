@@ -587,7 +587,9 @@ public:
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(Function);
 protected:
+  override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level);
 
