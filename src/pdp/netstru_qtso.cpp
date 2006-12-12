@@ -1465,17 +1465,16 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lvDisplayValues->setSelectionMode(Q3ListView::Extended);
   layDisplayValues->addWidget(lvDisplayValues, 1);
 
+  // Spec tree
   gbSpecs = new QGroupBox("Specs", widg);
   layOuter->addWidget(gbSpecs, 1);
   laySpecs = new QVBoxLayout(gbSpecs);
   tvSpecs = new iTreeView(gbSpecs);
-/*  lvSpecs->addColumn("Spec", 80);
-  lvSpecs->addColumn("Description");
-  lvSpecs->setShowSortIndicator(false);
-  lvSpecs->setSorting(-1); // not sorted, shown in add order
-  lvSpecs->setSelectionMode(Q3ListView::Extended);*/
   laySpecs->addWidget(tvSpecs, 1);
+  // blank item so user can unselect the others
+  QTreeWidgetItem* itm = new QTreeWidgetItem(tvSpecs, "(none)");
 
+  // Command Buttons
   widCmdButtons = new iMethodButtonFrame(nv()->net(), widg);
 
   layOuter->addWidget(widCmdButtons);
