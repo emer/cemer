@@ -3061,7 +3061,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
     return;
   //TODO: need to confirm that supressing UAE's is not harmful...
   if (dcr == DCR_ITEM_UPDATED)
-    DataUpdateAfterEdit_impl();
+    DataUpdateAfterEdit();
   else if (dcr == DCR_UPDATE_VIEWS) {
     DataUpdateView_impl();
     DataDataChanged_impl(DCR_UPDATE_VIEWS, NULL, NULL);
@@ -3073,6 +3073,13 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
 void taDataView::DataLinkDestroying(taDataLink*) {
   m_data = NULL;
   DataDestroying();
+}
+
+void taDataView::DataUpdateAfterEdit() {
+  DataUpdateAfterEdit_impl();
+  taDataView* par = parent();
+  if (par)
+    par->DataUpdateAfterEdit_Child(this);
 }
 
 void taDataView::DoActions(DataViewAction acts) {

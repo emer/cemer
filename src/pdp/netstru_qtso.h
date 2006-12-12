@@ -305,9 +305,7 @@ private:
 */
 
 class PDP_API NetView: public T3DataViewPar {
-#ifndef __MAKETA__
-  typedef T3DataViewPar inherited;
-#endif
+INHERITED(T3DataViewPar)
 friend class NetViewAdapter;
 friend class NetViewPanel;
 public:
@@ -392,6 +390,7 @@ protected:
   override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DataUpdateAfterEdit_impl(); //
+  override void		DataUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE

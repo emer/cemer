@@ -1482,6 +1482,10 @@ public:
 
   virtual MemberDef*	GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
   virtual String	GetLabel() const; // returns a label suitable for tabview tabs, etc.
+  virtual void		DataUpdateAfterEdit(); // note: normally overrride the _impl
+  virtual void		DataUpdateAfterEdit_Child(taDataView* chld) 
+    {DataUpdateAfterEdit_Child_impl(chld);}
+    // optionally called by child in its DUAE routine; must be added manually
   virtual void 		ChildAdding(taDataView* child) {} // #IGNORE called from list;
   virtual void 		ChildRemoving(taDataView* child) {} // #IGNORE called from list; 
   virtual void		ChildClearing(taDataView* child) {} // override to implement par's portion of clear
@@ -1525,6 +1529,7 @@ protected:
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
+  virtual void		DataUpdateAfterEdit_Child_impl(taDataView* chld) {}
   virtual void		DataUpdateView_impl() { if(taMisc::gui_active) Render_impl(); } // called for Update All Views, and at end of a DataUpdate batch
   virtual void		DataStructUpdateEnd_impl() {} // called ONLY at end of a struct update -- derived classes usually do some kind of rebuild or render
   virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 

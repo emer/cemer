@@ -1005,6 +1005,11 @@ void NetView::DataUpdateAfterEdit_impl() {
   // maybe rerender???
 }
 
+void NetView::DataUpdateAfterEdit_Child_impl(taDataView* chld) {
+  // called when lays/specs are updated; typically just update spec view
+  UpdatePanel();
+}
+
 UnitView* NetView::FindUnitView(Unit* unit) {
   UnitView* uv = NULL;
   taDataLink* dl = unit->data_link();
@@ -1682,6 +1687,13 @@ void NetViewPanel::GetImage_impl() {
     ++it;
     ++i;
   }
+  // spec highlighting
+  BaseSpec* cspc = m_cur_spec; // to see if it changes, if not, we force redisplay
+  iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(tvSpecs->currentItem());
+  tvSpecs_ItemSelected(tvi); // manually invoke slot
+  if (cspc == m_cur_spec)
+    setHighlightSpec(m_cur_spec, true);
+
   ColorScaleFromData();
 }
 
@@ -1793,6 +1805,7 @@ void NetViewPanel::tvSpecs_ItemSelected(iTreeViewItem* item) {
   setHighlightSpec(spec);
 
 }
+
 
 void NetViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) {
   NetView* nv_;
