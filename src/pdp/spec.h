@@ -74,6 +74,8 @@ public:
   // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
   BaseSpec_Group 	children;
   // #NO_INHERIT #IN_GPMENU sub-specs descending from this one and inheriting values
+  
+  override taList_impl*	children_() {return &children;}	
 
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one

@@ -1075,6 +1075,25 @@ public:
   TA_BASEFUNS(taOBase); //
 protected:
   taDataLink*		m_data_link; //
+  
+#ifdef TA_GUI
+protected: // all related to taList or DEF_CHILD children_
+  override void	ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+    const taiMimeSource* ms, int& allowed, int& forbidden);
+     // gives the src ops allowed on child (ex CUT)
+  virtual void	ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm,
+    const taiMimeSource* ms, int& allowed, int& forbidden);
+    // returns the operations allowed for list items (ex Paste)
+  override int	ChildEditAction_impl(const MemberDef* md, taBase* child,
+    taiMimeSource* ms, int ea);
+     // called by a child -- follows same delegation logic as the child's EditActions call */
+  virtual int	ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea);
+  virtual int	ChildEditActionLD_impl_inproc(const MemberDef* md, int item_idx,
+    taBase* lst_itm, taiMimeSource* ms, int ea);
+  virtual int	ChildEditActionLD_impl_ext(const MemberDef* md, int item_idx,
+    taBase* lst_itm, taiMimeSource* ms, int ea);
+#endif
+
 private:
   void 	Initialize()	{ owner = NULL; user_data_ = NULL; m_data_link = NULL; }
   void	Destroy();
@@ -1126,6 +1145,7 @@ public:
 #endif
   void	CutLinks();
   TA_BASEFUNS(taOABase); //
+  
 private:
   void	Destroy() {CutLinks();}
 };
@@ -1324,20 +1344,6 @@ protected:
   void*		El_MakeToken_(void* it) { return (void*)((TAPtr)it)->MakeToken(); }
   void*		El_Copy_(void* trg, void* src)
   { ((TAPtr)trg)->UnSafeCopy((TAPtr)src); return trg; }
-#ifdef TA_GUI
-protected:
-  override void	ChildQueryEditActions_impl(const MemberDef* md, const taBase* child, const taiMimeSource* ms,
-    int& allowed, int& forbidden);
-     // gives the src ops allowed on child (ex CUT)
-  virtual void	ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm, const taiMimeSource* ms,
-    int& allowed, int& forbidden);
-    // returns the operations allowed for list items (ex Paste)
-  override int	ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea);
-     // called by a child -- follows same delegation logic as the child's EditActions call */
-  virtual int	ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea);
-  virtual int	ChildEditActionLD_impl_inproc(const MemberDef* md, int item_idx, taBase* lst_itm, taiMimeSource* ms, int ea);
-  virtual int	ChildEditActionLD_impl_ext(const MemberDef* md, int item_idx, taBase* lst_itm, taiMimeSource* ms, int ea);
-#endif
 protected:
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
   override String ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const;

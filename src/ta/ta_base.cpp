@@ -2743,7 +2743,7 @@ void taList_impl::QueryEditActions(const QMimeSource* ms, int& allowed, int& for
 
 /* src_obj will be NULL for out of process
 */
-void taList_impl::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+void taOBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
   const taiMimeSource* ms, int& allowed, int& forbidden)
 {
   // in general, we allow to CUT and DELETE -- inheriting class can forbid these if it wants
@@ -2760,12 +2760,12 @@ void taList_impl::ChildQueryEditActions_impl(const MemberDef* md, const taBase* 
   }
   // if child was a list item, then we don't pass the child to the base (since it doesn't boggle list items)
   if (item_idx >=0)
-    inherited_taBase::ChildQueryEditActions_impl(md, NULL, ms, allowed, forbidden);
+    inherited::ChildQueryEditActions_impl(md, NULL, ms, allowed, forbidden);
   else
-    inherited_taBase::ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
+    inherited::ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
 }
 
-void taList_impl::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm,
+void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm,
   const taiMimeSource* ms, int& allowed, int& forbidden)
 { //note: ONLY called if children_ valid
   taList_impl* list = children_();
@@ -2806,7 +2806,7 @@ void taList_impl::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase*
 
 // called by a child -- lists etc. can then allow drops on the child, to indicate inserting into the list, etc.
 // this routine just decodes the major category of operation: src, dst inproc, dst ext proc, and then dispatches
-int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea) {
+int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea) {
   // if child exists, but is not a list item, then just delegate down to base
   int item_idx = -1;
   taList_impl* list = children_();
@@ -2814,7 +2814,7 @@ int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMim
     if (child) {
       item_idx = list->FindEl(child);
       if (item_idx < 0)
-        return inherited_taBase::ChildEditAction_impl(md, child, ms, ea);
+        return inherited::ChildEditAction_impl(md, child, ms, ea);
     }
   }
   // we will be calling our own L routines...
@@ -2850,11 +2850,11 @@ int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMim
   }
 
   if ((rval == taiClipData::ER_IGNORED) && (child == NULL))
-      rval = inherited_taBase::ChildEditAction_impl(md, NULL, ms, ea);
+      rval = inherited::ChildEditAction_impl(md, NULL, ms, ea);
   return rval;
 }
 
-int taList_impl::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea) {
+int taOBase::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea) {
   taList_impl* list = children_();
   if (!list) return taiClipData::ER_IGNORED;
   if (lst_itm == NULL) return taiClipData::ER_IGNORED;
@@ -2873,7 +2873,8 @@ int taList_impl::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, in
   return taiClipData::ER_IGNORED;
 }
 
-int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx, taBase* lst_itm, taiMimeSource* ms, int ea)
+int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
+  taBase* lst_itm, taiMimeSource* ms, int ea)
 {
   taList_impl* list = children_();
   if (!list) return taiClipData::ER_IGNORED;
@@ -2910,7 +2911,7 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     int new_idx;
     if (itm_idx < 0) 
       new_idx = 0; // if dest is list, then insert at beginning
-    else if (itm_idx == (size - 1)) 
+    else if (itm_idx == (list->size - 1)) 
       new_idx = -1; // if clicked on last, then insert at end
     else new_idx = itm_idx + 1;
     list->Insert(new_obj, new_idx);
@@ -2941,7 +2942,7 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     } else { // not in this list, need to do a transfer
       if (list->Transfer(obj)) { // should always succeed -- only fails if we already own item
       // was added at end, fix up location, if necessary
-        list->MoveIdx(size - 1, itm_idx + 1);
+        list->MoveIdx(list->size - 1, itm_idx + 1);
       } else return taiClipData::ER_ERROR;
     }
     //NOTE: we never issue a data_taken() because we have actually moved the item ourself
@@ -2959,7 +2960,8 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
   return taiClipData::ER_IGNORED;
 }
 
-int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, taBase* lst_itm, taiMimeSource* ms, int ea) 
+int taOBase::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx,
+  taBase* lst_itm, taiMimeSource* ms, int ea) 
 {
   taList_impl* list = children_();
   if (!list) return taiClipData::ER_IGNORED;
