@@ -138,7 +138,7 @@ class TA_API ProgArg: public taOBase {
 INHERITED(taOBase)
 public:
   String                name; // #SHOW #READ_ONLY the name of the argument (always same as the target) 
-  String		value; // the value passed to the argument, can be a literal, or refer to other things in the program; string values must be quoted
+  String		value; // #EDIT_DIALOG the value passed to the argument, can be a literal, or refer to other things in the program; string values must be quoted
   
   virtual void		Freshen(const ProgVar& cp); 
   // updates our value/type information and commensurable fields from compatible type (but not name)
@@ -423,7 +423,7 @@ public:
   ProgVarRef		result_var;
   // where to store the result of the epxression
   String		expr;
-  // expression to assign variable to
+  // #EDIT_DIALOG expression to assign variable to
   
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(AssignExpr);
@@ -832,9 +832,9 @@ INHERITED(taNBase)
 public:
   bool		is_group;	// this is a group of related programs
   String	desc; 		// #EDIT_DIALOG description of what this program does and when it should be used
-  String	lib_name;	// name of library that contains this program
-  String	URL;		// full URL to find this program
-  String	filename;	// file name given to this program
+  String	lib_name;	// #EDIT_DIALOG name of library that contains this program
+  String	URL;		// #EDIT_DIALOG full URL to find this program
+  String	filename;	// #EDIT_DIALOG file name given to this program
   
   virtual taBase* NewProgram(Program_Group* new_owner);
   // #MENU #MENU_ON_Object #MENU_CONTEXT create a new program of this type (return value could be a Program or a Program_Group)

@@ -2907,6 +2907,8 @@ taiDataLink* tabOViewType::GetDataLink(void* data_, TypeDef* el_typ) {
 //////////////////////////
 
 int tabDefChildViewType::BidForView(TypeDef* td) {
+  // note: lists themselves cannot have def children!
+  if (td->InheritsFrom(&TA_taList_impl)) return 0;
   // check for having  DEF_CHILD *and* it must be valid!
   String mbr = td->OptionAfter("DEF_CHILD_");
   if (mbr.nonempty()) {

@@ -1196,6 +1196,7 @@ String StopStepPoint::GetDisplayName() const {
 
 void ProgramCall::Initialize() {
   call_init = false;
+  taBase::Own(target, this);
 }
 
 void ProgramCall::UpdateAfterEdit_impl() {

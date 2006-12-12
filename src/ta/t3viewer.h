@@ -183,6 +183,8 @@ protected:
   MemberDef*		m_md; // memberdef of this item in its parent
   T3NodePtr		m_node_so; // Inventor node
 
+  void			setNode(T3Node* node); // make changes via this
+  
   virtual void		AddRemoveChildNode_impl(SoNode* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
 //override void 	ChildAdding(taDataView* child) {} // #IGNORE called from list;
   override void		ChildRemoving(taDataView* child); // #IGNORE called from list; we also forward to DataViewer; we also remove visually
@@ -196,13 +198,6 @@ protected:
   override void		Render_impl();
 //  override void		Render_post();
 //  override void		Reset_impl();
-
-  // these are provided primarily for where the parent does the action on all children
-  virtual void		Clear_impl_children() {}
-  virtual void		Render_pre_children() {} //
-//nn  virtual void		Render_impl_children() {}
-//nn  virtual void		Render_post_children() {}
-//nn  virtual void		Reset_impl_children() {}
 
   override void 	DataStructUpdateEnd_impl(); // our own customized version, similar to generic base
 protected:
@@ -260,18 +255,8 @@ public:
   T3_DATAVIEWFUNS(T3DataViewPar, T3DataView)
 
 protected:
-  override void		Render_impl();
-  override void		Render_post();
-  override void		Reset_impl();
-
-  // these are provided primarily for where the parent does the action on all children
-  // default action is to iterate all children and delegate action to the child
-  override void		Clear_impl_children();
-  override void		Render_pre_children();
-  virtual void		Render_impl_children();
-  virtual void		Render_post_children();
-  virtual void		Reset_impl_children();
-
+  override void		DoActionChildren_impl(DataViewAction acts);
+  
 private:
   void			Initialize() {}
   void			Destroy() {CutLinks();}

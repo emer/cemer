@@ -704,108 +704,6 @@ void taiDataLink::FillContextMenu(taiActions* menu) {
 }
 
 
-
-//////////////////////////////////
-// 	taiListItemsDataLink	//
-//////////////////////////////////
-/*
-taiListItemsDataLink::taiListItemsDataLink(taPtrList_impl* data_, iDataBrowser* browser_)
-: taiDataLink(data_, *(data_->GetDataLinksRef()), browser_)
-{
-}
-
-void taiListItemsDataLink::CreateChild(BrListViewItem* par_node, BrListViewItem* after_node, void* el) {
-  taPtrList_impl* list = data();
-  TypeDef* typ = list->GetElType();
-  if (typ == NULL) return; //TODO: maybe we should put a marker item in list???
-  // if we get a taBase item, the type might only be the base type, not the derived type of the item
-  // so we cast the item, and then grab the exact type right from the item
-  if (typ->InheritsFrom(&TA_taBase)) {
-      typ = ((taBase*)el)->GetTypeDef();
-  }
-  taiType* it = typ->it;
-  taiDataLink* dl = it->GetDataLink(el, typ);
-  if (dl == NULL) return; // shouldn't happen...
-
-  dl->CreateTreeDataNode(par_node, after_node, "", BrListViewItem::DNF_UPDATE_NAME); //name updated later...
-}
-
-void taiListItemsDataLink::CreateChildren(BrListViewItem* par_node) {
-  taPtrList_impl* list = data();
-  for (int i = 0; i < list->size; ++i) {
-    TypeDef* typ;
-    void* el = list->GetTA_Element_(i, typ); // gets the item, and its TypeDef
-    if (typ == NULL) continue; //TODO: maybe we should put a marker item in list???
-    // if we get a taBase item, the type might only be the base type, not the derived type of the item
-    // so we cast the item, and then grab the exact type right from the item
-    if (typ->InheritsFrom(&TA_taBase)) {
-        typ = ((taBase*)el)->GetTypeDef();
-    }
-    taiType* it = typ->it;
-    taiDataLink* dl = it->GetDataLink(el, typ);
-    if (dl == NULL) continue; // shouldn't happen...
-
-    last_child_node = dl->CreateTreeDataNode(par_node, last_child_node, dl->GetText(DLT_TREE_NAME), BrListViewItem::DNF_UPDATE_NAME);
-  }
-}
-
-void taiListItemsDataLink::DataChanged_impl(BrListViewItem* nd, int dcr, void* op1_, void* op2_) {
-  taiDataLink::DataChanged_impl(nd, dcr, op1_, op2_);
-  if (!nd->children_created) return;
-  switch (dcr) {
-  case DCR_LIST_INIT: break;
-  case DCR_LIST_ITEM_INSERT: {	// op1=item, op2=item_after, null=at beginning
-    BrListViewItem* after_node = nd->FindChildForData(op2_); //null if not found
-    CreateChild(nd, after_node, op1_);
-  }
-    break;
-  case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
-    BrListViewItem* gone_node = nd->FindChildForData(op1_); //null if not found
-    if (gone_node) delete gone_node; // goodbye!
-  }
-    break;
-  case DCR_LIST_ITEM_MOVED: {	// op1=item, op2=item_after, null=at beginning
-    BrListViewItem* moved_node = nd->FindChildForData(op1_); //null if not found
-    if (moved_node == NULL) break; // shouldn't happen
-    BrListViewItem* after_node = nd->FindChildForData(op2_); //null if not found
-    moved_node->moveItem(after_node);
-  }
-    break;
-  case DCR_LIST_ITEMS_SWAP: {	// op1=item1, op2=item2
-    BrListViewItem* node1 = nd->FindChildForData(op1_); //null if not found
-    BrListViewItem* node2 = nd->FindChildForData(op2_); //null if not found
-    if ((node1 == NULL) || (node2 == NULL)) break; // shouldn't happen
-    // need to seek to find item before
-    BrListViewItem* before1 = NULL;
-    BrListViewItem* tn = (BrListViewItem*)nd->firstChild();
-    while ((tn != NULL) && (tn != node1)) {
-      before1 = tn;
-      tn = (BrListViewItem*)tn->nextSibling();
-    }
-    node1->moveItem(node2);
-    node2->moveItem(before1);
-  }class iDataBrowser;
-class taiDataNode;
-
-    break;
-  }
-}
-
-bool taiListItemsDataLink::HasChildItems() {
-  return (data()->size > 0);
-}
-
-String taiListItemsDataLink::GetName() const {
-  return String("items");
-}
-
-iDataPanel* taiListItemsDataLink::CreateDataPanel(BrListViewItem* sel_node) {
-  //TODO: return a list panel
-  return new iDataPanel(this); // TEMP: dummy panel
-}
-*/
-
-
 //////////////////////////////////
 // 	tabDataLink		//
 //////////////////////////////////
@@ -1074,17 +972,6 @@ String tabParDataLink::ChildGetColText(taDataLink* child, const KeyString& key, 
   return list()->ChildGetColText(child->data(), child->GetDataTypeDef(), key, itm_idx);
 }
 
-taiTreeDataNode* tabParDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
-{
-  taiTreeDataNode* rval = NULL;
-  if (nodePar)
-    rval = new tabListTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
-  else
-    rval = new tabListTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
-  return rval;
-}
-
 /*void tabParDataLink::fileNew() {
   data()->New();
 }*/
@@ -1131,6 +1018,17 @@ tabDefChildDataLink::tabDefChildDataLink(taOBase* data_)
   m_list = (taList_impl*)md->GetOff(data_);
 }
 
+taiTreeDataNode* tabDefChildDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new tabDefChildTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new tabDefChildTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+  return rval;
+}
+
 
 //////////////////////////////////
 //   tabListDataLink		//
@@ -1139,6 +1037,17 @@ tabDefChildDataLink::tabDefChildDataLink(taOBase* data_)
 tabListDataLink::tabListDataLink(taList_impl* data_)
 :inherited((taOBase*)data_)
 {
+}
+
+taiTreeDataNode* tabListDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new tabListTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new tabListTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+  return rval;
 }
 
 
@@ -5056,46 +4965,44 @@ tabTreeDataNode::~tabTreeDataNode()
 }
 
 
-
 //////////////////////////////////
-//   tabListTreeDataNode 	//
+//   tabParTreeDataNode 	//
 //////////////////////////////////
 
-tabListTreeDataNode::tabListTreeDataNode(tabParDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
-  taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
+tabParTreeDataNode::tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_,
+  taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
+    const String& tree_name, int dn_flags_)
 :inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, 
   dn_flags_ | DNF_LAZY_CHILDREN)
 {
   init(link_, dn_flags_);
 }
 
-tabListTreeDataNode::tabListTreeDataNode(tabParDataLink* link_, MemberDef* md_, iTreeView* parent_,
+tabParTreeDataNode::tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_, iTreeView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabListTreeDataNode::init(tabParDataLink* link_, int dn_flags_) {
+void tabParTreeDataNode::init(tabParDataLink* link_, int dn_flags_) {
   last_list_items_node = NULL;
 }
 
-tabListTreeDataNode::~tabListTreeDataNode()
+tabParTreeDataNode::~tabParTreeDataNode()
 {
 }
 
-void tabListTreeDataNode::AssertLastListItem() {
+void tabParTreeDataNode::AssertLastListItem() {
   void* el = list()->Peek_();
   if (el == NULL) {
     last_list_items_node = last_member_node;
     return;
   }
-  
   last_list_items_node = this->FindChildForData(el);
-
 }
 
-void tabListTreeDataNode::CreateChildren_impl() {
+void tabParTreeDataNode::CreateChildren_impl() {
   inherited::CreateChildren_impl();
   String tree_nm;
   taList_impl* list = this->list(); // cache
@@ -5121,7 +5028,7 @@ void tabListTreeDataNode::CreateChildren_impl() {
   last_list_items_node = last_child_node;
 }
 
-void tabListTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
+void tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
   taiTreeDataNode* after, taBase* el) 
 {
   if (!el) return;
@@ -5140,7 +5047,7 @@ void tabListTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
     _nilString, dn_flags_tmp);
 }
 
-void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   if (!this->children_created) return;
   switch (dcr) {
@@ -5190,12 +5097,12 @@ void tabListTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   UpdateListNames();
 }
 
-void tabListTreeDataNode::UpdateChildNames() {
+void tabParTreeDataNode::UpdateChildNames() {
   inherited::UpdateChildNames();
   UpdateListNames();
 }
 
-void tabListTreeDataNode::UpdateListNames() {
+void tabParTreeDataNode::UpdateListNames() {
   String tree_nm;
   taList_impl* list = this->list(); //cache
   for (int i = 0; i < list->size; ++i) {
@@ -5221,6 +5128,77 @@ void tabListTreeDataNode::UpdateListNames() {
   }
 }
 
+//////////////////////////////////
+//   tabDefChildTreeDataNode 	//
+//////////////////////////////////
+
+void tabDefChildRef::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
+  if (m_own) m_own->DefChild_DataChanged(dcr, op1, op2);
+}
+
+void tabDefChildRef::DataLinkDestroying(taDataLink* dl) {
+//note: don't need to do anything, since everything is explicitly owned/nested
+}
+
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabDefChildDataLink* link_, MemberDef* md_,
+  taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
+  const String& tree_name, int dn_flags_)
+:inherited((tabParDataLink*)link_, md_, parent_, last_child_, tree_name, 
+  dn_flags_ | DNF_LAZY_CHILDREN)
+{
+  init(link_, dn_flags_);
+}
+
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabDefChildDataLink* link_, MemberDef* md_,
+  iTreeView* parent_, taiTreeDataNode* last_child_,
+  const String& tree_name, int dn_flags_)
+:inherited((tabParDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+void tabDefChildTreeDataNode::init(tabDefChildDataLink*, int) {
+  m_def_child.Init(this, list());
+}
+
+tabDefChildTreeDataNode::~tabDefChildTreeDataNode()
+{
+}
+
+void tabDefChildTreeDataNode::DefChild_DataChanged(int dcr, void* op1, void* op2) {
+  // we only pass on the List notifies
+  if ((!(dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_MAX))) return;
+  DataChanged(dcr, op1, op2);
+}
+
+
+//////////////////////////////////
+//   tabListTreeDataNode 	//
+//////////////////////////////////
+
+tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
+  taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
+  const String& tree_name, int dn_flags_)
+:inherited((tabParDataLink*)link_, md_, parent_, last_child_, tree_name, 
+  dn_flags_ | DNF_LAZY_CHILDREN)
+{
+  init(link_, dn_flags_);
+}
+
+tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
+  iTreeView* parent_, taiTreeDataNode* last_child_,
+  const String& tree_name, int dn_flags_)
+:inherited((tabParDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+{
+  init(link_, dn_flags_);
+}
+
+void tabListTreeDataNode::init(tabListDataLink*, int) {
+}
+
+tabListTreeDataNode::~tabListTreeDataNode()
+{
+}
 
 //////////////////////////////////
 //   taiGroupTreeDataNode 	//

@@ -61,6 +61,8 @@ class iTreeViewItem;
 class taiListDataNode;
 class taiTreeDataNode;
 class tabTreeDataNode;
+class tabParTreeDataNode;
+class tabDefChildTreeDataNode;
 class tabListTreeDataNode;
 class tabGroupTreeDataNode;
 class iListDataPanel; //
@@ -105,13 +107,6 @@ public:
 
   taiDataLink(void* data_, taDataLink* &link_ref_);
   DL_FUNS(taiDataLink) //
-
-public: // this section for all the delegated menu commands
-/*  virtual void		fileNew() {}
-  virtual void		fileOpen() {}
-  virtual void		fileSave() {}
-  virtual void		fileSaveAs() {}
-  virtual void		fileClose() {} */
 
 protected:
   DataLink_QObj*	qobj; // #IGNORE delegate object, when we need to connect or signal
@@ -162,12 +157,6 @@ public:
 
   DL_FUNS(tabDataLink); //
 
-public:// this section for all the delegated menu commands
-/*  override void		fileOpen();
-  override void		fileSave();
-  override void		fileSaveAs();
-  override void		fileClose(); //*/
-
 protected:
   tabDataLink(taBase* data_, taDataLink* &link_ref_); //TODO: implementation for non taOBase-derived types
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
@@ -199,36 +188,6 @@ public:
 };
 
 
-//////////////////////////
-//   tabDefChildDataLink//
-//////////////////////////
-/*
-class TA_API tabDefChildDataLink: public tabODataLink {
-  // DataLink for taBase objects with a default child object
-INHERITED(tabODataLink)
-public:
-  taList_impl*		data() {return (taList_impl*)m_data;}
-  taList_impl*		data() const {return (taList_impl*)m_data;}
-  
-  override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
-  override int		NumListCols() const; // number of columns in a list view for this item type
-  override const KeyString GetListColKey(int col) const; // #IGNORE
-  override String	GetColHeading(const KeyString& key) const; // #IGNORE
-  override String	ChildGetColText(taDataLink* child, const KeyString& key, 
-    int itm_idx = -1) const;	// #IGNORE
-  override bool		HasChildItems() {return true;} // at very least, has the 'items' subnode
-
-  tabDefChildDataLink(taList_impl* data_);
-  DL_FUNS(tabDefChildDataLink) //
-
-public: // this section for all the delegated menu commands
-  override void		fileNew();
-protected:
-  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
-};*/
-
-
 class TA_API tabParDataLink: public tabODataLink {
   // abstract DataLink for tab nodes that are lists, or that have a def list member
 INHERITED(tabODataLink)
@@ -246,22 +205,19 @@ public:
 
   DL_FUNS(tabParDataLink) //
 
-public: // this section for all the delegated menu commands
-//  override void		fileNew();
 protected:
   tabParDataLink(taOBase* data_);
-  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-    iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
 };
 
 
 //////////////////////////
-//   tabDefChildDataLink//
+//  tabDefChildDataLink	//
 //////////////////////////
 
 class TA_API tabDefChildDataLink: public tabParDataLink {
   // DataLink for tab objects with a DEF_CHILD_xxx directive
 INHERITED(tabParDataLink)
+friend class tabDefChildRef;
 public:
   taList_impl*		list() {return m_list;}
   taList_impl*		list() const {return m_list;}
@@ -270,7 +226,10 @@ public:
   DL_FUNS(tabDefChildDataLink) //
 
 protected:
-  taList_impl*		m_list; // addr of deflist member
+  taList_impl*		m_list; // deflist member
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
+    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+    const String& node_name, int dn_flags);
 };
 
 //////////////////////////
@@ -286,6 +245,10 @@ public:
   
   tabListDataLink(taList_impl* data_);
   DL_FUNS(tabListDataLink) //
+protected:
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
+    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+    const String& node_name, int dn_flags);
 };
 
 
@@ -1603,7 +1566,7 @@ public:
   ~taiListDataNode(); //
   
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
+//  override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taiListDataNode;}
 
 public: // ISelectable interface
@@ -1626,7 +1589,7 @@ public:
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~taiTreeDataNode();
 public: // ITypedObject interface
-  override void*	This() {return (void*)this;}
+//  override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taiTreeDataNode;}
 public: // ISelectable interface
   override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
@@ -1656,31 +1619,30 @@ public:
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabTreeDataNode();
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
+//  override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_tabTreeDataNode;}
 private:
   void			init(tabDataLink* link_, int dn_flags_); // #IGNORE
 };
 
 
-class TA_API tabListTreeDataNode: public tabTreeDataNode {
+class TA_API tabParTreeDataNode: public tabTreeDataNode {
 INHERITED(tabTreeDataNode)
 public:
-//  taList_impl* 		data() {return ((tabParDataLink*)m_link)->data();}
   taList_impl* 		list() {return ((tabParDataLink*)m_link)->list();}
   tabParDataLink* 	link() const {return (tabParDataLink*)m_link;}
 
   void			AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
   override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
 
-  tabListTreeDataNode(tabParDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabListTreeDataNode(tabParDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  ~tabListTreeDataNode();
+  ~tabParTreeDataNode();
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_tabListTreeDataNode;}
+//  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_tabParTreeDataNode;}
 protected:
   taiTreeDataNode*	last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
   override void		DataChanged_impl(int dcr, void* op1, void* op2);
@@ -1690,6 +1652,72 @@ protected:
   void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
   void			init(tabParDataLink* link_, int dn_flags_); // #IGNORE
+};
+
+
+class TA_API tabDefChildRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKENS "safe" reference for taList objects -- does not ref count, but is a dlc so it tracks changes etc.
+public:
+  inline taList_impl*	ptr() const {return m_ptr;}
+  void			set(taList_impl* src) {if (src == m_ptr) return;
+    if (m_ptr) m_ptr->RemoveDataClient(this); m_ptr = NULL;
+    if (src && src->AddDataClient(this)) m_ptr = src;} 
+  
+  void			Init(tabDefChildTreeDataNode* own_, taList_impl* ptr_)
+    {m_own = own_; set(ptr_);}
+  tabDefChildRef() {m_own = NULL; m_ptr = NULL;}
+  ~tabDefChildRef() {set(NULL);}
+  
+protected:
+  tabDefChildTreeDataNode*	m_own; 
+  mutable taList_impl*	m_ptr;
+  
+public: // ITypedObject interface
+  override void*	This() {return (void*)this;} //
+  override TypeDef*	GetTypeDef() const {return &TA_tabDefChildRef;}
+
+public: // IDataLinkClient interface
+  override TypeDef*	GetDataTypeDef() const 
+    {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taList_impl;}
+  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
+  override void		DataLinkDestroying(taDataLink* dl);
+};
+
+
+class TA_API tabDefChildTreeDataNode: public tabParTreeDataNode {
+INHERITED(tabParTreeDataNode)
+friend class tabDefChildRef;
+public:
+  tabDefChildTreeDataNode(tabDefChildDataLink* link_, MemberDef* md_,
+    taiTreeDataNode* parent_, taiTreeDataNode* after,
+    const String& tree_name, int dn_flags_ = 0);
+  tabDefChildTreeDataNode(tabDefChildDataLink* link_, MemberDef* md_,
+    iTreeView* parent_, taiTreeDataNode* after,
+    const String& tree_name, int dn_flags_ = 0);
+  ~tabDefChildTreeDataNode();
+public: // IDataLinkClient interface
+//  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_tabDefChildTreeDataNode;}
+protected:
+  tabDefChildRef	m_def_child; // for list notifies
+  virtual void		DefChild_DataChanged(int dcr, void* op1, void* op2);
+private:
+  void			init(tabDefChildDataLink* link_, int dn_flags_); // #IGNORE
+};
+
+
+class TA_API tabListTreeDataNode: public tabParTreeDataNode {
+INHERITED(tabParTreeDataNode)
+public:
+  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_, iTreeView* parent_,
+    taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
+  ~tabListTreeDataNode();
+public: // IDataLinkClient interface
+//  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_tabListTreeDataNode;}
+private:
+  void			init(tabListDataLink* link_, int dn_flags_); // #IGNORE
 };
 
 
@@ -1709,7 +1737,7 @@ public:
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabGroupTreeDataNode();
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
+//  override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_tabGroupTreeDataNode;}
 protected:
   override void 	CreateChildren_impl(); 

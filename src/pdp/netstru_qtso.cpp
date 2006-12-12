@@ -534,6 +534,15 @@ void UnitGroupView::ValToDispText(float val, String& str) {
     str.convert(val, "6.0f");
 }
 
+void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
+  if (acts & RENDER_IMPL) {
+    acts = (DataViewAction)( acts & ~RENDER_IMPL); // note: only supposed to be one, but don't assume
+    Render_impl_children();
+    if (!acts) return;
+  } 
+  inherited::DoActionChildren_impl(acts);
+}
+
 void UnitGroupView::Render_impl_children() {
   NetView* nv = this->nv(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache

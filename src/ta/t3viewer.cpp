@@ -136,6 +136,12 @@ void T3DataView::UpdateAfterEdit() {
 void T3DataView::AddRemoveChildNode(SoNode* node, bool adding) {
   if (m_node_so.ptr())
     AddRemoveChildNode_impl(node, adding);
+#ifdef DEBUG
+  else {
+    taMisc::Warning("T3DataView::AddRemoveChildNode_impl",
+      "Attempt to access NULL node_so");
+  }
+#endif
 }
 
 void T3DataView::AddRemoveChildNode_impl(SoNode* node, bool adding) {
@@ -145,18 +151,19 @@ void T3DataView::AddRemoveChildNode_impl(SoNode* node, bool adding) {
 void T3DataView::ChildClearing(taDataView* child_) { // child is always a T3DataView
   T3DataView* child = (T3DataView*)child_;
   // remove the visual rendering of child, if any
-  SoNode* ch_so;
+  T3Node* ch_so;
   if (!(ch_so = child->node_so())) return;
-  AddRemoveChildNode_impl(ch_so, false); // remove node
+  AddRemoveChildNode(ch_so, false); // remove node
+  child->setNode(NULL);
 }
 
 void T3DataView::ChildRendered(taDataView* child_) { // child is always a T3DataView
   if (!node_so()) return; // shouldn't happen
   T3DataView* child = dynamic_cast<T3DataView*>(child_);
   if (!child) return;
-  SoNode* ch_so;
+  T3Node* ch_so;
   if (!(ch_so = child->node_so())) return; // shouldn't happen
-  AddRemoveChildNode_impl(ch_so, true); // add node
+  AddRemoveChildNode(ch_so, true); // add node
 }
 
 void T3DataView::ChildRemoving(taDataView* child_) {
@@ -165,10 +172,12 @@ void T3DataView::ChildRemoving(taDataView* child_) {
   // remove the visual rendering of child, if any
   SoNode* ch_so;
   if (!(ch_so = child->node_so())) return;
-  AddRemoveChildNode_impl(ch_so, false); // remove node
+  AddRemoveChildNode(ch_so, false); // remove node
+  child->setNode(NULL);
 }
 
 void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3DataView
+  inherited::Clear_impl(); // does children
   // can't have any visual children, if we don't exist ourselves...
   // also, don't need to report to parent if we don't have any impl ourselves
   if (!m_node_so.ptr()) return;
@@ -176,12 +185,13 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
 
   // we remove top-most item first, which results in only one update to the scene graph
   if (hasParent()) {
-    parent()->ChildClearing(this);
+    parent()->ChildClearing(this); // parent clears us
   }
-  Clear_impl_children();
-  m_node_so = NULL;
 }
 
+void T3DataView::setNode(T3Node* node_) {
+  m_node_so = node_;
+}
 
 
 void T3DataView::Close() {
@@ -279,7 +289,7 @@ void T3DataView::Render_impl() {
 
 void T3DataView::Render_pre() {
   Constr_Node_impl();
-  Render_pre_children();
+  inherited::Render_pre(); // does children
   // we remove top-most item first, which results in only one update to the scene graph
   if (hasParent()) {
     parent()->ChildRendered(this);
@@ -349,13 +359,21 @@ void T3DataViewPar::CutLinks() {
   inherited::CutLinks();
 }
 
-void T3DataViewPar::Clear_impl_children() {
-  children.DoAction(taDataView::CLEAR_IMPL);
-}
-
 void T3DataViewPar::CloseChild(taDataView* child) {
+  child->Reset();
   children.RemoveEl(child);
 }
+
+void T3DataViewPar::DoActionChildren_impl(DataViewAction acts) {
+  if (acts & CONSTR_MASK) {
+    inherited::DoActionChildren_impl(acts);
+    children.DoAction(acts);
+  } else {
+    children.DoAction(acts);
+    inherited::DoActionChildren_impl(acts);
+  }
+}
+
 
 /*nn??
 void T3DataViewPar::InsertItem(T3DataView* item, T3DataView* after) {
@@ -381,38 +399,6 @@ void T3DataViewPar::ReInit() {
     item->ReInit();
   }
   ReInit_impl();
-}
-
-//TODO: just do a DoActionChild_impl routine and eliminate all these child things
-void T3DataViewPar::Render_pre_children() {
-  children.DoAction(taDataView::RENDER_PRE);
-}
-
-void T3DataViewPar::Render_impl() {
-  inherited::Render_impl();
-  Render_impl_children();
-}
-
-void T3DataViewPar::Render_impl_children() {
-  children.DoAction(taDataView::RENDER_IMPL);
-}
-
-void T3DataViewPar::Render_post() {
-  Render_post_children();
-  inherited::Render_post();
-}
-
-void T3DataViewPar::Render_post_children() {
-  children.DoAction(taDataView::RENDER_POST);
-}
-
-void T3DataViewPar::Reset_impl() {
-  Reset_impl_children();
-  inherited::Reset_impl();
-}
-
-void T3DataViewPar::Reset_impl_children() {
-  children.DoAction(taDataView::RESET_IMPL);
 }
 
 
@@ -694,9 +680,6 @@ void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
 }
 
 void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
-  // notify to our frame that we have grabbed focus
-  Emit_GotFocusSignal();
-  
   T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
   if (!t3node) return;
 
@@ -705,6 +688,8 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   } else {
     RemoveSelectedItem(t3node);
   }
+  // notify to our frame that we have grabbed focus
+  Emit_GotFocusSignal();
 }
 
 

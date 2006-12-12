@@ -76,7 +76,7 @@ void HCBar::paintEvent(QPaintEvent* ev) {
   int y = r.y(); // always exact
   QPainter paint(this);
   if (w_tot <= b ) { // less or same # strips as blocks -- subsample
-    for (int j = w_tot - 1; j >= 0; --j) { // one strip per pixel
+    for (int j = 0; j < w_tot ; ++j) { // one strip per pixel
       int i = (j * (b - 1)) / w_tot ;
       const iColor* col = scale->GetColor(i);
       if (!col) break; // shouldn't happen
@@ -85,10 +85,10 @@ void HCBar::paintEvent(QPaintEvent* ev) {
     }
   } else { // more space than blocks -- oversample
     float w = ((float)w_tot) / b; // ideal exact value per strip
-    for (int i = b - 1; i >= 0; --i) { // one strip per color value
+    for (int i = 0; i < b; ++i) { // one strip per color value
       const iColor* col = scale->GetColor(i);
       if (!col) break; // shouldn't happen
-      int wi = (int)(((b - i) * w) - (float)x);
+      int wi = (int)(((i + 1) * w) - (float)x);
 
       paint.fillRect(x, y, wi, h, (QColor)*col); // note: QColor converted to QBrush by Qt
       x += wi;

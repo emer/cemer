@@ -67,6 +67,7 @@ class taOBase;
 class taOABase;
 class taDataView;
 class taNBase;
+class taList_impl;
 class taBase_List;
 class taBase_PtrList;
 class String_Array;
@@ -425,6 +426,8 @@ public:
 
   virtual void* 	GetTA_Element(int idx, TypeDef*& eltd) 
   { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])
+  virtual taList_impl*  children_() {return NULL;} 
+    // for lists, and for taOBase w/ default children
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
   virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
   virtual TAPtr		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
@@ -1217,6 +1220,8 @@ public:
   override void* 	GetTA_Element(int i, TypeDef*& eltd)
   { return taPtrList_ta_base::GetTA_Element_(i, eltd); }
   // #IGNORE a bracket opr
+  override taList_impl* children_() {return this;}
+
 
   String 	GetPath_Long(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
   String 	GetPath(TAPtr ta=NULL, TAPtr par_stop = NULL) const;
@@ -1450,7 +1455,7 @@ public:
     
     ,CONSTR_MASK	= CONSTR_POST | RENDER_PRE | RENDER_IMPL | RENDER_POST 
       // mask for doing child delegations in forward order
-    ,DESTR_MASK		= CLEAR_IMPL | CLOSE_WIN_IMPL | RESET_IMPL 
+    ,DESTR_MASK		= CLEAR_IMPL | CLOSE_WIN_IMPL | RESET_IMPL | UNBIND_IMPL
       // mask for doing child delegations in reverse order
 #endif
   };

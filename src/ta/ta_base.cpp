@@ -2743,19 +2743,21 @@ void taList_impl::QueryEditActions(const QMimeSource* ms, int& allowed, int& for
 
 /* src_obj will be NULL for out of process
 */
-void taList_impl::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child, const taiMimeSource* ms,
-  int& allowed, int& forbidden)
+void taList_impl::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+  const taiMimeSource* ms, int& allowed, int& forbidden)
 {
   // in general, we allow to CUT and DELETE -- inheriting class can forbid these if it wants
   // for the paste-like ops, we will generally allow insertions of compatible child
   // specific classes will need to replace this method to allow things like linking
   int item_idx = -1;
-  if (child) item_idx = FindEl(child);
-
-  // if it is a list item, or is null, then we can do list operations, so we call our L version
-  if ((child == NULL) || (item_idx >= 0))
-    ChildQueryEditActionsL_impl(md, child, ms, allowed, forbidden);
-
+  taList_impl* list = children_();
+  if (list) {
+    if (child) item_idx = list->FindEl(child);
+  
+    // if it is a list item, or is null, then we can do list operations, so we call our L version
+    if ((!child) || (item_idx >= 0))
+      ChildQueryEditActionsL_impl(md, child, ms, allowed, forbidden);
+  }
   // if child was a list item, then we don't pass the child to the base (since it doesn't boggle list items)
   if (item_idx >=0)
     inherited_taBase::ChildQueryEditActions_impl(md, NULL, ms, allowed, forbidden);
@@ -2763,15 +2765,17 @@ void taList_impl::ChildQueryEditActions_impl(const MemberDef* md, const taBase* 
     inherited_taBase::ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
 }
 
-void taList_impl::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm, const taiMimeSource* ms,
-    int& allowed, int& forbidden)
-{
+void taList_impl::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm,
+  const taiMimeSource* ms, int& allowed, int& forbidden)
+{ //note: ONLY called if children_ valid
+  taList_impl* list = children_();
+  if (!list) return;
   // SRC ops
   if (lst_itm) {
     // CUT generally always allowed (will either DELETE or UNLINK src item, depending on context)
     allowed |= taiClipData::EA_CUT;
     // Delete only allowed if we are the owner
-    if (lst_itm->GetOwner() == this)
+    if (lst_itm->GetOwner() == list)
       allowed |= taiClipData::EA_DELETE;
     else // otherwise, it is unlinking, not deleting
       allowed |= taiClipData::EA_UNLINK;
@@ -2786,7 +2790,7 @@ void taList_impl::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase*
     forbidden &= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
 
   // generic list paste allows any subtype of the base type
-  bool right_type = ((el_base != NULL) && (ms->td() != NULL) && ms->td()->InheritsFrom(el_base));
+  bool right_type = ((list->el_base) && (ms->td() != NULL) && ms->td()->InheritsFrom(list->el_base));
 
   if (right_type)
     allowed |= (taiClipData::EA_PASTE | taiClipData::EA_LINK |
@@ -2805,12 +2809,14 @@ void taList_impl::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase*
 int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea) {
   // if child exists, but is not a list item, then just delegate down to base
   int item_idx = -1;
-  if (child) {
-    item_idx = FindEl(child);
-    if (item_idx < 0)
-      return inherited_taBase::ChildEditAction_impl(md, child, ms, ea);
+  taList_impl* list = children_();
+  if (list) {
+    if (child) {
+      item_idx = list->FindEl(child);
+      if (item_idx < 0)
+        return inherited_taBase::ChildEditAction_impl(md, child, ms, ea);
+    }
   }
-
   // we will be calling our own L routines...
   // however, if child is NULL, and our ops don't do anything, then we must call base ops
   // determine the list-only operations allowed/forbidden, and apply to ea
@@ -2826,34 +2832,40 @@ int taList_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMim
     if (ea & (taiClipData::EA_COPY | taiClipData::EA_CUT | taiClipData::EA_DRAG))
       return taiClipData::ER_OK;
 
-    rval = ChildEditActionLS_impl(md, child, eax);
+    if (list) {
+      rval = ChildEditActionLS_impl(md, child, eax);
+    }
   } else  if (ea & taiClipData::EA_DST_OPS) {
     if (ms == NULL) return taiClipData::ER_IGNORED;
 
     // decode src location
-    if (ms->IsThisProcess())
-      rval = ChildEditActionLD_impl_inproc(md, item_idx, child, ms, eax);
-    else {
-      // DST OP, SRC OUT OF PROCESS
-      rval = ChildEditActionLD_impl_ext(md, item_idx, child, ms, eax);
+    if (list) {
+      if (ms->IsThisProcess())
+        rval = ChildEditActionLD_impl_inproc(md, item_idx, child, ms, eax);
+      else {
+        // DST OP, SRC OUT OF PROCESS
+        rval = ChildEditActionLD_impl_ext(md, item_idx, child, ms, eax);
+      }
     }
   }
 
   if ((rval == taiClipData::ER_IGNORED) && (child == NULL))
-      rval = taBase::ChildEditAction_impl(md, NULL, ms, ea);
+      rval = inherited_taBase::ChildEditAction_impl(md, NULL, ms, ea);
   return rval;
 }
 
 int taList_impl::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea) {
+  taList_impl* list = children_();
+  if (!list) return taiClipData::ER_IGNORED;
   if (lst_itm == NULL) return taiClipData::ER_IGNORED;
   switch (ea & taiClipData::EA_OP_MASK) {
   //note: COPY is handled by the child object itself, or outer controller if multi
   case taiClipData::EA_DELETE: {
-    Close_Child(lst_itm);
+    list->Close_Child(lst_itm);
     return taiClipData::ER_OK;
   }
   case taiClipData::EA_UNLINK: {
-    RemoveEl(lst_itm);
+    list->RemoveEl(lst_itm);
     return taiClipData::ER_OK;
   }
   default: break; // compiler food
@@ -2863,6 +2875,9 @@ int taList_impl::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, in
 
 int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx, taBase* lst_itm, taiMimeSource* ms, int ea)
 {
+  taList_impl* list = children_();
+  if (!list) return taiClipData::ER_IGNORED;
+  
   if (!ms->is_tab()) return taiClipData::ER_IGNORED; //not taBase
   // itm_idx, -1 means parent itself
   int obj_idx = -1; // -1 means not in this list
@@ -2873,12 +2888,12 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     taiClipData::EA_DROP_LINK | taiClipData::EA_DROP_MOVE))
   {
     obj = ms->tab_object();
-    if (obj == NULL) {
+    if (!obj) {
       taMisc::Error("Could not retrieve object for operation.");
       return taiClipData::ER_ERROR;
     }
     // already in this list? (affects how we do drops/copies, etc.)
-    obj_idx = FindEl(obj);
+    obj_idx = list->FindEl(obj);
   }
   
   // All non-move paste ops (i.e., copy an object)
@@ -2891,15 +2906,20 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     // since this will better guarantee that in-proc and outof-proc behavior is same
     taBase* new_obj = obj->MakeToken();
     //TODO: maybe the renaming should be delayed until put in list, or maybe better, done by list???
-    new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
+//    new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
     int new_idx;
     if (itm_idx < 0) 
       new_idx = 0; // if dest is list, then insert at beginning
     else if (itm_idx == (size - 1)) 
       new_idx = -1; // if clicked on last, then insert at end
     else new_idx = itm_idx + 1;
-    Insert(new_obj, new_idx);
+    list->Insert(new_obj, new_idx);
     new_obj->UnSafeCopy(obj);	// always copy after inserting so there is a full path & initlinks
+    // retain the name if being copied from outside the list, otherwise give new name
+    if (obj_idx < 0)
+      new_obj->SetName(obj->GetName());
+    else
+      new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
     new_obj->DataChanged(DCR_ITEM_UPDATED);
     return taiClipData::ER_OK;
   }
@@ -2914,14 +2934,14 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     if (obj_idx >= 0) { // in this list: just do a list move
       // to_idx will differ depending on whether dst is before or after the src object
       if (itm_idx < obj_idx) { // for before, to will be dst + 1
-        MoveIdx(obj_idx, itm_idx + 1);
+        list->MoveIdx(obj_idx, itm_idx + 1);
       } else if (itm_idx > obj_idx) { // for after, to will just be the dst
-        MoveIdx(obj_idx, itm_idx);
+        list->MoveIdx(obj_idx, itm_idx);
       } else return taiClipData::ER_OK; // do nothing case of drop on self
     } else { // not in this list, need to do a transfer
-      if (Transfer(obj)) { // should always succeed -- only fails if we already own item
+      if (list->Transfer(obj)) { // should always succeed -- only fails if we already own item
       // was added at end, fix up location, if necessary
-        MoveIdx(size - 1, itm_idx + 1);
+        list->MoveIdx(size - 1, itm_idx + 1);
       } else return taiClipData::ER_ERROR;
     }
     //NOTE: we never issue a data_taken() because we have actually moved the item ourself
@@ -2933,13 +2953,16 @@ int taList_impl::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     (taiClipData::EA_LINK | taiClipData::EA_DROP_LINK))
   {
     if (obj_idx >= 0) return -1; // in this list: link forbidden
-    InsertLink(obj, itm_idx + 1);
+    list->InsertLink(obj, itm_idx + 1);
     return taiClipData::ER_OK;
   }
   return taiClipData::ER_IGNORED;
 }
 
-int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, taBase* lst_itm, taiMimeSource* ms, int ea) {
+int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, taBase* lst_itm, taiMimeSource* ms, int ea) 
+{
+  taList_impl* list = children_();
+  if (!list) return taiClipData::ER_IGNORED;
   // if src is not even a taBase, we just stop
   if (!ms->is_tab()) return taiClipData::ER_IGNORED;
 
@@ -2951,8 +2974,8 @@ int taList_impl::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx, ta
   {
     istringstream istr;
     if (ms->object_data(istr) > 0) {
-      TypeDef* td = GetTypeDef();
-      int dump_val = td->Dump_Load(istr, this, this);
+      TypeDef* td = list->GetTypeDef();
+      int dump_val = td->Dump_Load(istr, list, list);
       if (dump_val == 0) {
         //TODO: error output
         return taiClipData::ER_ERROR; // load failed

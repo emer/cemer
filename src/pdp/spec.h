@@ -73,7 +73,7 @@ public:
   TypeDef*		min_obj_type;
   // #READ_ONLY #HIDDEN #NO_SAVE #TYPE_taBase mimimal object type required for spec
   BaseSpec_Group 	children;
-  // #NO_SHOW #NO_INHERIT #IN_GPMENU sub-specs descending from this one and inheriting values
+  // #NO_INHERIT #IN_GPMENU sub-specs descending from this one and inheriting values
 
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one

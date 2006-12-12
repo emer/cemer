@@ -2723,6 +2723,22 @@ bool MemberDef::ShowMember(taMisc::ShowMembs show,
 }
   
 void MemberDef::ShowMember_CalcCache() const {
+#ifndef NO_TA_BASE
+  // default children are never shown
+  TypeDef* par_typ = GetOwnerType();
+  if (par_typ && par_typ->DerivesFrom(&TA_taOBase) && 
+   !par_typ->DerivesFrom(&TA_taList_impl)) 
+  {
+    String mbr = par_typ->OptionAfter("DEF_CHILD_");
+    if (mbr.nonempty() && (mbr == name)) {
+    show_tree = 0x80; // set the "done" flag
+    show_any = 0x80; 
+    show_edit = 0x80;
+    return;
+    } 
+  }
+#endif
+  
   // note that "normal" is a special case, which depends both on context and
   // on whether other bits are set, so we calc those individually
   show_any = taMisc::IS_NORMAL; // the default for any

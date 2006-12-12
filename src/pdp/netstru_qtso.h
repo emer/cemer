@@ -207,9 +207,10 @@ protected:
   void 			UpdateUnitViewBase_Sub_impl(MemberDef* disp_md); // for unit submembers
   void 			UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* src_u); // for cons
   void 			UpdateUnitViewBase_Bias_impl(MemberDef* disp_md); // for bias vals
+  override void		DoActionChildren_impl(DataViewAction acts);
+  virtual void 		Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
-  override void 	Render_impl_children(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
   void			Initialize();
@@ -450,64 +451,6 @@ protected slots:
   virtual void		lvDisplayValues_selectionChanged();
 
 };
-
-
-/*obs: following not used anymore
-class tabNetworkDataView: public tabDataView {
-  // DataView for taList objects -- note that it also manages the ListView nodes
-public:
-  Network*		data() const {return (Network*)mdata;}
-//  override int		NumListCols() const; // number of columns in a list view for this item type
-//  override String	GetColHeading(int col) const; // header text for the indicated column
-//  override String	ChildGetColText(taiDataView* child, int col, int itm_idx = -1) const;
-//  virtual bool		ShowMember(MemberDef* md); // asks this type if we should show the md member
-  tabNetworkDataView(Network* data_, taiDataBrowser* browser_);
-
-//public:
-//  override void		fileNew(); // this section for all the delegated menu commands
-
-protected:
-  override taiDataPanel* CreateDataPanel(T3Node* sel_node);
-//TODO  override void		DataChanged_impl(T3Node* nd, int dcr, void* op1, void* op2);
-};
-
-
-//TODO: following not used anymore
-class taiNetworkDataPanel: public taiDataPanel {
-//  Q_OBJECT
-public:
-  QVBoxLayout*		layOuter;
-  T3ViewspaceWidget*	t3vsw;
-//  iRenderAreaWrapper*	ra_w; // render area wrapper
-  SoQtRenderArea* 	ra();
-  Network*		net() {return ((tabNetworkDataView*)link)->data();}
-//TODO  override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-//  int 			EditAction_impl(taiMimeSource* ms, int ea, taiDataNode* single_sel_node = NULL);
-//  void			emit_SetEditActionsEnabled(int ea); // param is one of the taiClipData EditAction values
-//  taiClipData*		GetClipData(taPtrList_impl* sel_list, int src_edit_action, bool for_drag = false);
-    // gets clipboard data (called on Cut/Copy or Drag)
-//  int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-//  taPtrList_impl*	GetSelectedItems(); // list of the selected datanodes -- caller must delete list
-  taiDataNode* 		parentItem() {return mparentItem;}
-  taiNetworkDataPanel(tabNetworkDataView* link_, T3Node* sel_node_, QWidget* parent = 0, const char* name = 0);
-  ~taiNetworkDataPanel();
-#ifndef __MAKETA__
-signals:
-  void			SetEditActionsEnabled(int ea); // sent to Clipboard server; param is one of the taiClipData EditAction values
-#endif
-
-
-protected:
-  taiDataNode* 		mparentItem;
-  SoSeparator* 		root; //TEMP
-  T3NetView*		net_so;
-  void			Render();
-};
-
-*/
-
-
-
 
 #endif // net_qt_h
 
