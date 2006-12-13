@@ -15,15 +15,19 @@ void SetArg(String arg_nm, String var_nm, Program* prog) {
   if(!arg_str.empty()) {
     if(!prog->SetVar(var_nm, arg_str))
       taMisc::Error("SetArg Error: variable:",var_nm,"not found in program:", prog->name);
-    else
-      cerr << "Set " << var_nm << " in " << prog->name << " to: " << arg_str << endl;
+    else {
+      if(taMisc::dmem_proc == 0)
+	cerr << "Set " << var_nm << " in " << prog->name << " to: " << arg_str << endl;
+    }
   }
 }
 
-void SetLogFile(String ext, String tag, DataTable* dt) {	
-  String log_nm = dt->GetFileNameFmProject(ext, tag);
+void SetLogFile(String ext, String tag, DataTable* dt, bool dmem=false) {
+  if(!dmem && (taMisc::dmem_proc != 0)) return;	// if not sep log files by dmem, then only for first guy!
+  String log_nm = dt->GetFileNameFmProject(ext, tag, dmem);
   dt->SaveDataLog(log_nm);
-  cerr << "Saving data log of: " << dt->name << " to: " << log_nm << endl;
+  if(taMisc::dmem_proc == 0)
+    cerr << "Saving data log of: " << dt->name << " to: " << log_nm << endl;
 }
 
 void Startup() {
@@ -50,7 +54,8 @@ void Startup() {
     return;
   }    
 
-  cerr << "Initializing: " << batch->name << endl;
+  if(taMisc::dmem_proc == 0)
+    cerr << "Initializing: " << batch->name << endl;
   batch.Init();			// init first: required before vars are avail
 
   String tag = taMisc::FindArgByName("FileTag");
@@ -58,10 +63,16 @@ void Startup() {
   SetArg("EpochMax", "max_epoch", train);
   SetArg("BatchMax", "max_batch", batch);
 
-  SetLogFile(".epc.dat", tag, .data.EpochOutputData);
-  SetLogFile(".trl.dat", tag, .data.TrialOutputData);
+  SetLogFile(".epc.dat", tag, .data.EpochOutputData, false);  // change to true for debugging dmem
+  SetLogFile(".trl.dat", tag, .data.TrialOutputData, true); // this should be dmem
 
-  cerr << "Starting to run: " << batch->name << endl;
+  Program* saveweights = .programs.SaveWeights;
+  if(saveweights) {           // propagate the tag..
+    saveweights.SetVar("tag", tag);
+  }
+
+  if(taMisc::dmem_proc == 0)
+    cerr << "Starting to run: " << batch->name << endl;
   batch.Run();
 }
 

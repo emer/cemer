@@ -12,17 +12,19 @@ Program .projects[0].programs.gp[0][9] {
     ProgVar @[4] { };
   };
 
-  ProgEl_List @.prog_code = [5] {
+  ProgEl_List @.prog_code = [6] {
     MiscCall @[0] { };
     MiscCall @[1] { };
     AssignExpr @[2] { };
     MethodCall @[3] { };
     MethodCall @[4] { };
+    UserScript @[5] { };
   };
 };
 Program .projects[0].programs.gp[0][9] {
- name="SaveWeights";
- desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
+ name="SaveWeightsSpecs";
+ desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values
+also save specs.";
  flags=PF_NONE;
  objs {
   name=;
@@ -51,33 +53,33 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   desc="user-provided tag (startup script will set this!)";
+   desc="user defined tag (set by startup script)";
   };
   ProgVar @[1] {
    name="fname";
    var_type=T_String;
-   string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
+   string_val="/Users/oreilly/pdp4opt/trunk/test/hv.v4_adaptnetin.00_0000.wts.gz";
    objs_ptr=0;
    desc=;
   };
   ProgVar @[2] {
    name="epoch_str";
    var_type=T_String;
-   string_val="0036";
+   string_val="0000";
    objs_ptr=0;
    desc="string rep of epoch with leading zeros";
   };
   ProgVar @[3] {
    name="batch_str";
    var_type=T_String;
-   string_val="03";
+   string_val="00";
    objs_ptr=0;
    desc="string rep of batch with leading zeros";
   };
   ProgVar @[4] {
    name="final_tag";
    var_type=T_String;
-   string_val=".03_0036";
+   string_val=".00_0000";
    objs_ptr=0;
    desc="batch + epoch";
   };
@@ -137,6 +139,15 @@ Program .projects[0].programs.gp[0][9] {
    method=Network::SaveWeights;
    args{ fname;Network::NET_FMT;};
 { const taString& fname;Network::WtSaveFormat fmt;   };
+  };
+  UserScript @[5] {
+   desc=;
+   off=0;
+   user_script="String specfnm = fname.before(\".wts.gz\");
+specfnm += \".specs\";
+network->specs.SaveAs(specfnm);
+
+";
   };
  };
 };
