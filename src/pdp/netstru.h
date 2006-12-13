@@ -961,6 +961,8 @@ public:
   virtual int	LesionCons(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Projection remove connections with prob p_lesion (permute = fixed no. lesioned)
 
+  virtual bool 	SetPrjnSpec(ProjectionSpec* sp);
+  // #BUTTON #CAT_Projection set the projection spec (connectivity pattern) for this projection
   virtual bool 	SetConSpec(ConSpec* sp);
   // #BUTTON #CAT_Projection set the con spec for all connections in this prjn
   virtual bool 	ApplyConSpec();

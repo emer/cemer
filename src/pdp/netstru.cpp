@@ -2678,6 +2678,11 @@ void Projection::SetCustomFrom(Layer* fm_lay) {
   UpdateAfterEdit();
 }
 
+bool Projection::SetPrjnSpec(ProjectionSpec* sp) {
+  if(sp == NULL)	return false;
+  spec.SetSpec(sp);
+}
+
 bool Projection::SetConSpec(ConSpec* sp) {
   if(sp == NULL)	return false;
   con_spec.SetSpec(sp);
