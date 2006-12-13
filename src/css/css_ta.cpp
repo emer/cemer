@@ -712,6 +712,12 @@ cssSmartRef::operator void*() const {
   return sr->ptr();
 }
 
+cssSmartRef::operator bool() const {
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) return false;
+  return (bool)sr->ptr();
+}
+
 void* cssSmartRef::GetVoidPtrOfType(TypeDef* td) const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(!sr) return NULL;

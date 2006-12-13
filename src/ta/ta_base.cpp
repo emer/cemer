@@ -1501,12 +1501,17 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
   }
   TypeDef* td = GetTypeDef();
   int nfound = 0;
+  // look for guys on me
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->name.contains(memb_contains)) {
       nfound++;
       editor->SelectMember(this, md, GetName());
     }
+  }
+  // then look in my sub-guys
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members[m];
     if(md->type->ptr == 0) {
       if(md->type->InheritsFrom(TA_taBase)) {
 	taBase* obj = (taBase*)md->GetOff(this);

@@ -192,6 +192,7 @@ public:
   Variant GetVar() const;
   String GetStr() const;
   operator void*() const;
+  operator bool() const;
 
   void operator=(const String& s);
   void operator=(const cssEl& s);

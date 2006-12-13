@@ -393,7 +393,9 @@ bool taDataAnal::GetDest(DataTable*& dest, DataTable* src, const String& suffix)
   taProject* proj = GET_OWNER(src, taProject);
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
   dest = dgp->NewEl(1, &TA_DataTable);
-  dest->name = src->name + "_" + suffix;
+  String nm = src->name + "_" + suffix;
+  dest->name = nm;
+  taMisc::Warning("Note: taDataAnal created new data table named:", nm, "in .data.AnalysisData");
   return true;
 }
 

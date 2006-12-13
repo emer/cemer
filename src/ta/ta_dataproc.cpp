@@ -279,7 +279,9 @@ bool taDataProc::GetDest(DataTable*& dest, DataTable* src, const String& suffix)
   taProject* proj = GET_OWNER(src, taProject);
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
   dest = dgp->NewEl(1, &TA_DataTable);
-  dest->name = src->name + "_" + suffix;
+  String nm = src->name + "_" + suffix;
+  dest->name = nm;
+  taMisc::Warning("Note: taDataproc created new data table named:", nm, "in .data.AnalysisData");
   return true;
 }
 
@@ -332,6 +334,7 @@ bool taDataProc::GetColIntersection(DataOpList* trg_cols, DataOpList* ref_cols) 
 bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* dest_cols,
 				   DataOpList* src_cols, int dest_row, int src_row) {
   if(!dest || !src || !dest_cols || !src_cols) return false;
+  dest->DataUpdate(true);
   for(int j=0;j<src_cols->size;j++) {
     DataOpEl* sop = src_cols->FastEl(j);
     DataOpEl* dop = dest_cols->FastEl(j);
@@ -339,6 +342,7 @@ bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* 
     DataArray_impl* dda = dest->data[dop->col_idx];
     dda->CopyFromRow(dest_row, *sda, src_row);
   }
+  dest->DataUpdate(false);
   return true;
 }
 
@@ -347,6 +351,7 @@ bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
   DataOpList dest_cols;
   DataOpList src_cols;
   GetCommonCols(dest, src, &dest_cols, &src_cols);
+  dest->StructUpdate(true);
   for(int i=0;i<src->rows;i++) {
     dest->AddBlankRow();
     for(int j=0;j<src_cols.size;j++) {
@@ -357,6 +362,7 @@ bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
       dda->CopyFromRow(-1, *sda, i);
     }
   }
+  dest->StructUpdate(false);
   return true;
 }
 
@@ -366,6 +372,7 @@ bool taDataProc::AppendRows(DataTable* dest, DataTable* src) {
     taMisc::Error("taDataProc::AppendRows -- tables do not have same number of columns -- use CopyCommonColData instead!");
     return false;
   }
+  dest->StructUpdate(true);
   for(int i=0;i<src->rows;i++) {
     dest->AddBlankRow();
     for(int j=0;j<src->data.size;j++) {
@@ -374,6 +381,25 @@ bool taDataProc::AppendRows(DataTable* dest, DataTable* src) {
       dda->CopyFromRow(-1, *sda, i);
     }
   }
+  dest->StructUpdate(false);
+  return true;
+}
+
+bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
+  GetDest(dest, src, "ReplicateRows");
+  dest->StructUpdate(true);
+  dest->Copy_NoData(*src);		// give it same structure
+  for(int i=0;i<src->rows;i++) {
+    for(int j=0;j<n_repl;j++) {
+      dest->AddBlankRow();
+      for(int j=0;j<src->data.size;j++) {
+	DataArray_impl* sda = src->data[j];
+	DataArray_impl* dda = dest->data[j];
+	dda->CopyFromRow(-1, *sda, i);
+      }
+    }
+  }
+  dest->StructUpdate(false);
   return true;
 }
 
@@ -1005,10 +1031,12 @@ void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String DataSortProg::GenCssBody_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";\n";
-  rval += cssMisc::Indent(indent_level+1) +
-    "taDataProc::Sort(dsp->dest_data, dsp->src_data, dsp->sort_spec);\n";
-  rval += cssMisc::Indent(indent_level) + "}\n";
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String rval = il + "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  rval += il1 + "taDataProc::Sort(dsp->dest_data, dsp->src_data, dsp->sort_spec);\n";
+  rval += il1 + "if(!dsp->dest_data) dsp->dest_data = .data.gp.AnalysisData.Peek(); // get new one if NULL\n";
+  rval += il + "}\n";
   return rval; 
 }
 
@@ -1062,6 +1090,7 @@ const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
     }
   }
   rval += il1 + "taDataProc::SelectRows(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
+  rval += il1 + "if(!dsp->dest_data) dsp->dest_data = .data.gp.AnalysisData.Peek(); // get new one if NULL\n";
   rval += il + "}\n";
   return rval; 
 }
@@ -1106,10 +1135,12 @@ void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String DataSelectColsProg::GenCssBody_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
-  rval += cssMisc::Indent(indent_level+1) +
-    "taDataProc::SelectCols(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
-  rval += cssMisc::Indent(indent_level) + "}\n";
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String rval = il + "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  rval += il1 + "taDataProc::SelectCols(dsp->dest_data, dsp->src_data, dsp->select_spec);\n";
+  rval += il1 + "if(!dsp->dest_data) dsp->dest_data = .data.gp.AnalysisData.Peek(); // get new one if NULL\n";
+  rval += il + "}\n";
   return rval; 
 }
 
@@ -1153,10 +1184,12 @@ void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String DataGroupProg::GenCssBody_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";\n";
-  rval += cssMisc::Indent(indent_level+1) +
-    "taDataProc::Group(dsp->dest_data, dsp->src_data, dsp->group_spec);\n";
-  rval += cssMisc::Indent(indent_level) + "}\n";
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String rval = il + "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  rval += il1 + "taDataProc::Group(dsp->dest_data, dsp->src_data, dsp->group_spec);\n";
+  rval += il1 + "if(!dsp->dest_data) dsp->dest_data = .data.gp.AnalysisData.Peek(); // get new one if NULL\n";
+  rval += il + "}\n";
   return rval; 
 }
 
@@ -1203,10 +1236,12 @@ void DataJoinProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String DataJoinProg::GenCssBody_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";\n";
-  rval += cssMisc::Indent(indent_level+1) +
-    "taDataProc::Join(dsp->dest_data, dsp->src_data, dsp->src_b_data, dsp->join_spec);\n";
-  rval += cssMisc::Indent(indent_level) + "}\n";
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String rval = il + "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+  rval += il1 + "taDataProc::Join(dsp->dest_data, dsp->src_data, dsp->src_b_data, dsp->join_spec);\n";
+  rval += il1 + "if(!dsp->dest_data) dsp->dest_data = .data.gp.AnalysisData.Peek(); // get new one if NULL\n";
+  rval += il + "}\n";
   return rval; 
 }
 
@@ -1215,6 +1250,7 @@ const String DataJoinProg::GenCssBody_impl(int indent_level) {
 /////////////////////////////////////////////////////////
 
 // todo: do checking on valid column names as css variables!
+// note: datatable enforces this already..
 
 void DataCalcLoop::Initialize() {
 }

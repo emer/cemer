@@ -1975,7 +1975,8 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   bool result = false;
 //qt3: QFileDialog ( const QString & dirName, const QString & filter = QString::null, QWidget * parent = 0, const char * name = 0, bool modal = FALSE ) 
 //qt4 QFileDialog ( QWidget * parent = 0, const QString & caption = QString(), const QString & directory = QString(), const QString & filter = QString() )
-  if (dir.empty())
+//  cerr << dir << " last: " << last_dir << endl;
+  if((dir.empty() || dir == ".") && !last_dir.empty())
     dir = last_dir;
   // gack! only way to use semi-sep filters is in constructor...
   // note: actual caption set later
@@ -1988,6 +1989,12 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   fd->setExtension(fde);
   fd->setOrientation(Qt::Vertical);
   int rval;
+
+  QStringList hist_paths;
+  for(int i=0;i<taMisc::load_paths.size;i++) {
+    hist_paths.append((QString)(const char*)taMisc::load_paths[i]);
+  }
+  fd->setHistory(hist_paths);
 
   String caption;
   switch (filerOperation) {

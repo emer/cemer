@@ -2,8 +2,6 @@ leabra todo list:
 
 * v3convert: end up with 2 bias.unit links from copy op?
 
-* dataproc duplicate rows
-
 * css: p voidfun = crash; bindargs seems to not be getting the void??
   e.g., p taMisc::include_paths.List();
 

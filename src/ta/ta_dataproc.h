@@ -275,6 +275,8 @@ public:
   // #CAT_Copy #MENU #MENU_ON_Copy copy data from src to dest for all columns that are common between the two (adds to end of data)
   static bool	AppendRows(DataTable* dest, DataTable* src);
   // #CAT_Copy #MENU append rows of src to the end of dest (structure must be the same -- more efficient than CopyCommonColData when this is true)
+  static bool	ReplicateRows(DataTable* dest, DataTable* src, int n_repl);
+  // #NULL_OK #CAT_Copy #MENU #NULL_OK replicate each row of src n_repl times in dest -- dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   ///////////////////////////////////////////////////////////////////
   // reordering functions
