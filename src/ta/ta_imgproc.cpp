@@ -204,8 +204,8 @@ void DoGFilterSpec::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
 	ong = GaussVal(sqdist, on_sigma);
 	offg = GaussVal(sqdist, off_sigma);
       }
-      on_flt.Set(ong, y+filter_width, x+filter_width);
-      off_flt.Set(offg, y+filter_width, x+filter_width);
+      on_flt.Set(ong, x+filter_width, y+filter_width);
+      off_flt.Set(offg, x+filter_width, y+filter_width);
     }
   }
 
@@ -587,10 +587,13 @@ void RetinalSpacingSpec::UpdateSizes() {
 // 		DoG + Retinal Spacing
 
 void DoGRetinaSpec::Initialize() {
-  
+  dog.name = name;
+  spacing.name = name;
 }
 
 void DoGRetinaSpec::UpdateAfterEdit_impl() {
+  dog.name = name;
+  spacing.name = name;
   dog.UpdateAfterEdit();
   spacing.UpdateAfterEdit();
 }
@@ -1067,7 +1070,7 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
 
 void RetinaSpec::Initialize() {
   color_type = MONOCHROME;
-  retina_size.x = 341; retina_size.y = 241;
+  retina_size.x = 321; retina_size.y = 241;
 }
 
 void RetinaSpec::UpdateRetinaSize() {
@@ -1086,46 +1089,69 @@ void RetinaSpec::UpdateAfterEdit_impl() {
 void RetinaSpec::DefaultFilters() {
   StructUpdate(false);
   if(color_type == COLOR)
-    dogs.SetSize(7);
+    dogs.SetSize(5);
   else
     dogs.SetSize(3);
   UpdateRetinaSize();
   DoGRetinaSpec* sp;
   int cnt = 0;
-  sp = dogs[cnt++];
-  sp->name = "high_freq_bw";
-  sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
-  sp->dog.filter_width = 8;
-  sp->dog.on_sigma = 2;
-  sp->dog.off_sigma = 4;
-  sp->spacing.region = RetinalSpacingSpec::FOVEA;
-  sp->spacing.border.x = 109; sp->spacing.border.y = 85;
-  sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
-  sp->UpdateAfterEdit();
+  if(color_type == MONOCHROME) {
+    sp = dogs[cnt++];
+    sp->name = "high_freq_bw";
+    sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
+    sp->dog.filter_width = 8;
+    sp->dog.on_sigma = 2;
+    sp->dog.off_sigma = 4;
+    sp->spacing.region = RetinalSpacingSpec::FOVEA;
+    sp->spacing.border.x = 109; sp->spacing.border.y = 85;
+    sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
+    sp->UpdateAfterEdit();
 
-  sp = dogs[cnt++];
-  sp->name = "med_freq_bw";
-  sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
-  sp->dog.filter_width = 16;
-  sp->dog.on_sigma = 4;
-  sp->dog.off_sigma = 8;
-  sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
-  sp->spacing.border.x = 6; sp->spacing.border.y = 14;
-  sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
-  sp->UpdateAfterEdit();
+    sp = dogs[cnt++];
+    sp->name = "med_freq_bw";
+    sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
+    sp->dog.filter_width = 16;
+    sp->dog.on_sigma = 4;
+    sp->dog.off_sigma = 8;
+    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
+    sp->spacing.border.x = 6; sp->spacing.border.y = 14;
+    sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
+    sp->UpdateAfterEdit();
 
-  sp = dogs[cnt++];
-  sp->name = "low_freq_bw";
-  sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
-  sp->dog.filter_width = 32;
-  sp->dog.on_sigma = 8;
-  sp->dog.off_sigma = 16;
-  sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
-  sp->spacing.border.x = 6; sp->spacing.border.y = 16;
-  sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
-  sp->UpdateAfterEdit();
+    sp = dogs[cnt++];
+    sp->name = "low_freq_bw";
+    sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
+    sp->dog.filter_width = 32;
+    sp->dog.on_sigma = 8;
+    sp->dog.off_sigma = 16;
+    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
+    sp->spacing.border.x = 8; sp->spacing.border.y = 16;
+    sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
+    sp->UpdateAfterEdit();
+  }
+  else if(color_type == COLOR) {
+    sp = dogs[cnt++];
+    sp->name = "high_freq_rg";
+    sp->dog.color_chan = DoGFilterSpec::RED_GREEN;
+    sp->dog.filter_width = 8;
+    sp->dog.on_sigma = 2;
+    sp->dog.off_sigma = 4;
+    sp->spacing.region = RetinalSpacingSpec::FOVEA;
+    sp->spacing.border.x = 109; sp->spacing.border.y = 85;
+    sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
+    sp->UpdateAfterEdit();
 
-  if(color_type == COLOR) {
+    sp = dogs[cnt++];
+    sp->name = "high_freq_by";
+    sp->dog.color_chan = DoGFilterSpec::BLUE_YELLOW;
+    sp->dog.filter_width = 8;
+    sp->dog.on_sigma = 2;
+    sp->dog.off_sigma = 4;
+    sp->spacing.region = RetinalSpacingSpec::FOVEA;
+    sp->spacing.border.x = 109; sp->spacing.border.y = 85;
+    sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
+    sp->UpdateAfterEdit();
+
     sp = dogs[cnt++];
     sp->name = "med_freq_rg";
     sp->dog.color_chan = DoGFilterSpec::RED_GREEN;
@@ -1149,19 +1175,8 @@ void RetinaSpec::DefaultFilters() {
     sp->UpdateAfterEdit();
 
     sp = dogs[cnt++];
-    sp->name = "low_freq_rg";
-    sp->dog.color_chan = DoGFilterSpec::RED_GREEN;
-    sp->dog.filter_width = 32;
-    sp->dog.on_sigma = 8;
-    sp->dog.off_sigma = 16;
-    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
-    sp->spacing.border.x = 8; sp->spacing.border.y = 16;
-    sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
-    sp->UpdateAfterEdit();
-
-    sp = dogs[cnt++];
-    sp->name = "low_freq_by";
-    sp->dog.color_chan = DoGFilterSpec::BLUE_YELLOW;
+    sp->name = "low_freq_bw";
+    sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
     sp->dog.filter_width = 32;
     sp->dog.on_sigma = 8;
     sp->dog.off_sigma = 16;
