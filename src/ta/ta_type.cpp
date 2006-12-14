@@ -790,17 +790,19 @@ void taMisc::Init_Args(int argc, const char* argv[]) {
 
 void taMisc::Init_Types() {// called after all type info has been loaded into types
   // initialize all classes that have an initClass method (ex. Inventor subtypes)
-  for (int i = 0; i < types.size; ++i) {
-    TypeDef* typ = types.FastEl(i);
-    if ((typ->ptr > 0) || (typ->ref)) continue;
-    // look for an initClass method
-    MethodDef* md = typ->methods.FindName("initClass");
-    if (!md)
-      md = typ->methods.FindName("InitClass");
-    if (!md) continue;
-    if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
-    // call the init function
-    md->addr();
+  if(taMisc::use_gui) {
+    for (int i = 0; i < types.size; ++i) {
+      TypeDef* typ = types.FastEl(i);
+      if ((typ->ptr > 0) || (typ->ref)) continue;
+      // look for an initClass method
+      MethodDef* md = typ->methods.FindName("initClass");
+      if (!md)
+	md = typ->methods.FindName("InitClass");
+      if (!md) continue;
+      if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
+      // call the init function
+      md->addr();
+    }
   }
   // add any Schema that couldn't be added earlier
   AddDeferredUserDataSchema();
