@@ -307,7 +307,7 @@ void taProject::UpdateSimLog() {
 //////////////////////////
 
 void taRootBase::Initialize() {
-  version_no = taMisc::version_no;
+  version = taMisc::version;
   SetName("root");
   projects.SetName("projects");
 }
@@ -330,10 +330,12 @@ void taRootBase::InitLinks() {
   taBase::Own(templates, this);
   taBase::Own(projects, this);
   taBase::Own(viewers, this);
+  taBase::Own(plugins, this);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
+  plugins.CutLinks();
   viewers.CutLinks();
   projects.CutLinks();
   templates.CutLinks();
@@ -344,7 +346,7 @@ void taRootBase::Info() {
   String info;
   info += "TA/CSS Info\n";
   info += "This is the TA/CSS software package, version: ";
-  info += taMisc::version_no;
+  info += taMisc::version;
   info += "\n\n";
   info += "Mailing List:       http://psych.colorado.edu/~oreilly/PDP++/pdp-discuss.html\n";
   info += "WWW Page:           http://psych.colorado.edu/~oreilly/PDP++/PDP++.html\n";
@@ -439,12 +441,12 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   return true;
 }
   	
-bool taRootBase::Startup_LoadPlugins() {
-  taPlugins::AddPluginFolder(taMisc::pkg_home + "/plugins");
-  taPlugins::AddPluginFolder(taMisc::user_home + "/ta_plugins");
-  taPlugins::LoadPlugins();
-
+bool taRootBase::Startup_EnumeratePlugins() {
   taMisc::Init_Hooks();		// plugins register init hooks -- this calls them!
+  taPlugins::AddPluginFolder(taMisc::pkg_home + "/plugins");
+  taPlugins::AddPluginFolder(taMisc::user_home + "/ta_plugins"); //TODO: should be pdpuserhome
+  taPlugins::EnumeratePlugins();
+
   return true;
 }
 
@@ -595,8 +597,9 @@ bool taRootBase::Startup_InitGui() {
   return true;
 }
   	
-bool taRootBase::Startup_InitPlugins() {
-  taPlugins::InitPlugins();
+bool taRootBase::Startup_LoadPlugins() {
+  if (!tabMisc::root) return false; // should be made
+  tabMisc::root->plugins.LoadPlugins();
   return true;
 }
 
@@ -678,12 +681,12 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
   if(!Startup_InitArgs(argc, argv)) return false;
   if(!Startup_ProcessGuiArg()) return false;
   if(!Startup_InitApp(argc, argv)) return false;
-  if(!Startup_LoadPlugins()) return false;
   if(!Startup_InitTypes()) return false;
+  if(!Startup_EnumeratePlugins()) return false;
   if(!Startup_MakeRoot(root_typ)) return false;
+  if(!Startup_LoadPlugins()) return false; // loads those enabled, and does type integration
   if(!Startup_InitCss()) return false;
-  if(!Startup_InitGui()) return false;
-  if(!Startup_InitPlugins()) return false;
+  if(!Startup_InitGui()) return false; // note: does the taiType bidding
   if(!Startup_MakeMainWin()) return false;
   if(!Startup_Console()) return false;
   if(!Startup_ProcessArgs()) return false;

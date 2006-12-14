@@ -14,8 +14,7 @@
 //   Lesser General Public License for more details.
 
 
-// ta_plugin.h: defines architecture for plugins
-// NOTE: this is only include in TA_GUI builds
+// ta_plug.h: defines architecture for plugins, included by tacss and plugins
 
 #ifndef TA_PLUGIN_H
 #define TA_PLUGIN_H
@@ -31,50 +30,29 @@
 
 class IPlugin  { // #VIRT_BASE basic interface for a ta plugin; int ret codes use 0=success, !0=errcode
 public:
-  virtual ~IPlugin() {}
+  
+// the following interfaces are used in the plugin enumeration stage
+  virtual const char*	desc() {return "(no description provided)";}
+  virtual const char*	name() {return "NoName";}
+  virtual const char*	uniqueId() {return "pluginname.dept.organization.org";}
+  
+  virtual int		NotifyTacssVersion(const taVersion& tav, bool& is_ok) {return 0;}
+    // we pass ta/css version; set is_ok false if this version is no good for plugin
+  virtual int		GetVersion(taVersion& tav) {return -1;}
+    // major.minor.step.build -- used to put version dependency stamp into project files
 
-  virtual int		InitializeTypes() const = 0;
+// the following routines are only used if the plugin is actually loaded into tacss
+  virtual int		InitializeTypes() = 0;
     // called when loading plugin to initialize types -- implementer must call ta_init_Xxx() routine
   virtual int		InitializePlugin() = 0;
     // called to initialize plugin -- it can do things like create classes
+
+  virtual ~IPlugin() {}
 };
 
 #ifndef __MAKETA__
 Q_DECLARE_INTERFACE(IPlugin, "pdp.IPlugin/1.0")
 #endif
 
-
-class taPlugin: public QPluginLoader { // ##NO_INSTANCE
-  Q_OBJECT
-INHERITED(QPluginLoader)
-public:
-  IPlugin*		plugin(); // access to the plugin object -- note: should be valid, because we don't register failed loads
-  
-  taPlugin(const String& fileName);
-};
-
-
-class taPlugin_PList: public taPtrList<taPlugin> { // #NO_INSTANCE
-INHERITED(taPtrList<taPlugin>)
-public:
-  taPlugin_PList() {}
-  ~taPlugin_PList() {Reset();}
-protected:
-  override void		El_Done_(void* it) { delete ((taPlugin*)it);}
-};
-
-
-class taPlugins { // #NO_INSTANCE global object to manage plugins
-public:
-  static String_PArray	plugin_folders; // folders to search for plugins
-  static taPlugin_PList	plugins; // plugins that have been loaded -- they remain for the lifetime of program
-  
-  static void		AddPluginFolder(const String& folder); // adds a folder, note: ignores duplicates
-  static void		LoadPlugins(); // finds and loads all the plugins
-  static void		InitPlugins(); // Initializes all the loaded plugins
-protected:
-  static taPlugin*	LoadPlugin(const String& fileName); 
-    // try loading the plugin, returns the loader object if successful
-};
 
 #endif

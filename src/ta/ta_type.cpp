@@ -307,11 +307,13 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 // 	     taMisc		//
 //////////////////////////////////
 
-#ifdef SVN_REV
-String	taMisc::version_no = "4.0a svn revision: " + String(SVN_REV);
-#else
-String	taMisc::version_no = "4.0a";
-#endif
+/*#ifdef SVN_REV
+String	taMisc::version = "3.9.0-" + String(SVN_REV);
+const taVersion taMisc::version_bin(3, 9, 0, SVN_REV);
+#else*/
+String	taMisc::version = "3.9.0";
+const taVersion taMisc::version_bin(3, 9, 0);
+//#endif
 
 ////////////////////////////////////////////////////////
 // 	TA GUI parameters
@@ -788,17 +790,17 @@ void taMisc::Init_Args(int argc, const char* argv[]) {
 
 void taMisc::Init_Types() {// called after all type info has been loaded into types
   // initialize all classes that have an initClass method (ex. Inventor subtypes)
-  if(taMisc::use_gui) {
-    for (int i = 0; i < types.size; ++i) {
-      TypeDef* typ = types.FastEl(i);
-      if ((typ->ptr > 0) || (typ->ref)) continue;
-      // look for an initClass method
-      MethodDef* md = typ->methods.FindName("initClass");
-      if (!md) continue;
-      if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
-      // call the init function
-      md->addr();
-    }
+  for (int i = 0; i < types.size; ++i) {
+    TypeDef* typ = types.FastEl(i);
+    if ((typ->ptr > 0) || (typ->ref)) continue;
+    // look for an initClass method
+    MethodDef* md = typ->methods.FindName("initClass");
+    if (!md)
+      md = typ->methods.FindName("InitClass");
+    if (!md) continue;
+    if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
+    // call the init function
+    md->addr();
   }
   // add any Schema that couldn't be added earlier
   AddDeferredUserDataSchema();
@@ -866,7 +868,7 @@ void taMisc::Init_DMem(int argc, const char* argv[]) {
 }
 
 void taMisc::HelpMsg(ostream& strm) {
-  strm << "TA/CSS Help Info, version: " << version_no << endl;
+  strm << "TA/CSS Help Info, version: " << version << endl;
   strm << "Startup arguments: " << endl;
   for(int i=0;i<arg_names.size; i++) {
     NameVar nv = arg_names.FastEl(i);

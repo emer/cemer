@@ -1,0 +1,23 @@
+ 
+* tags in type info to check dependencies
+
+easiest might be to have each _TA file create a "group" or such in type
+system; plugins are signalled by main program setting a flag first
+
+* prefix or similar in proj files to indicate required plugins
+* naming/registry spec for class and plugin naming
+* separate enumeration from loading
+* startup enumeration of plugins;
+* dynamic (user controlled) loading of plugins
+
+
+Plugin Loading
+
+* plugins are enumerated during startup; 
+  this involves doing a plugin load, but not yet initializing it
+* there is a persistent record of which plugins the user has enbled
+* the loader will then attempt to initialize enabled plugins
+* there should be a log kept as plugins are loaded;
+  it should be flushed after each successful load;
+  it should indicate successful loading -- if not, the 
+  user should be able to shut off the offending plugin

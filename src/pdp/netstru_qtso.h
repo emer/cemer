@@ -442,6 +442,7 @@ public:
 
   void			AddCmdButton(QWidget* but); // adds button or other ctrl to cmd grid
   void 			ColorScaleFromData();
+  void 			ExpandAllSpecs();
   virtual void		GetVars();
   virtual void		InitPanel();
 

@@ -36,7 +36,6 @@ SRCS_TAMISC_GUI =\
 	datatable_so.cpp
 
 TAHEADS_GUI =\
-	@abs_srcdir@/ta_plugin.h \
 	@abs_srcdir@/ta_qt.h \
 	@abs_srcdir@/ta_qtdata_def.h \
 	@abs_srcdir@/ta_qtdata.h \
@@ -52,7 +51,6 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_program_qt.h 
 
 HEADS_GUI =\
-	ta_plugin.h \
 	ta_qt.h \
 	ta_qtdata_def.h \
 	ta_qtdata.h \
@@ -69,8 +67,6 @@ HEADS_GUI =\
 	ta_program_qt.h  
 
 SRCS_GUI =\
-	ta_plugin.cpp \
-	ta_plugin.moc.cpp \
 	ta_qt.cpp \
 	ta_qt.moc.cpp \
 	ta_type_qt.cpp \
@@ -158,6 +154,8 @@ TAHEADS =\
 	@abs_srcdir@/ta_imgproc.h \
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
+	@abs_srcdir@/ta_plugin.h \
+	@abs_srcdir@/ta_plugin_p.h \
 	@abs_srcdir@/ta_project.h \
 	$(TAHEADS_GUI) \
 	$(TAHEADS_TAMISC) \
@@ -197,6 +195,8 @@ HEADS =\
 	ta_imgproc.h \
 	ta_dump.h \
 	ta_defaults.h \
+	ta_plugin.h \
+	ta_plugin_p.h \
 	ta_project.h \
 	$(HEADS_GUI) \
 	$(HEADS_TAMISC) \
@@ -236,6 +236,8 @@ SRCS =\
 	ta_datagen.cpp \
 	ta_dump.cpp \
 	ta_defaults.cpp \
+	ta_plugin_p.cpp \
+	ta_plugin_p.moc.cpp \
 	ta_project.cpp \
 	$(SRCS_GUI) \
 	ta_qrc.cpp \

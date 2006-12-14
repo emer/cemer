@@ -815,7 +815,7 @@ void PDPRoot::Info() {
   STRING_BUF(info, 2048);
   info += "PDP Info\n";
   info += "This is the PDP++ software package, version: ";
-  info += version_no;
+  info += version;
   info += "\n\n";
   info += "Mailing List:       http://psych.colorado.edu/~oreilly/PDP++/pdp-discuss.html\n";
   info += "WWW Page:           http://psych.colorado.edu/~oreilly/PDP++/PDP++.html\n";

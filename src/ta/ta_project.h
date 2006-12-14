@@ -24,6 +24,7 @@
 #include "ta_viewspec.h"
 #include "ta_viewer.h"
 #include "ta_program.h"
+#include "ta_plugin_p.h"
 
 #ifdef TA_GUI
   #include "ta_seledit.h"
@@ -144,10 +145,11 @@ class TA_API taRootBase: public taNBase {
   // ##CAT_Project base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taNBase)
 public:
-  String		version_no; 	// #READ_ONLY #SHOW current version number
+  String		version; 	// #READ_ONLY #SHOW current version number
   taBase_List		templates;	// #NO_SAVE #SHOW objects used as templates -- do not use or mess with these!
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
+  taPlugin_List		plugins; //  available plugins
   
   virtual void  Settings() {};
   // #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
@@ -176,24 +178,24 @@ public:
   // #IGNORE init application stuff (qapp etc)
   static bool	Startup_InitTA(ta_void_fun ta_init_fun);
   // #IGNORE basic type-access system intializaton
-  static bool	Startup_LoadPlugins();
-  // #IGNORE load any extension plugins
   static bool	Startup_InitArgs(int argc, const char* argv[]);
   // #IGNORE process args into more usable form
   static bool	Startup_InitDMem(int argc, const char* argv[]);
   // #IGNORE init distributed memory (MPI) stuff
   static bool	Startup_ProcessGuiArg();
   // #IGNORE process the -gui/-nogui arg
+  static bool	Startup_EnumeratePlugins();
+  // #IGNORE enumeration of plugins 
   static bool	Startup_MakeRoot(TypeDef* root_typ);
   // #IGNORE make and install root object of given type
+  static bool	Startup_LoadPlugins();
+  // #IGNORE final initialize of plugins 
   static bool	Startup_InitTypes();
   // #IGNORE final init of typedefs
   static bool	Startup_InitCss();
   // #IGNORE initialize css script system
   static bool	Startup_InitGui();
   // #IGNORE initialize gui system
-  static bool	Startup_InitPlugins();
-  // #IGNORE final initialize of plugins 
   static bool	Startup_MakeMainWin();
   // #IGNORE open the main window (browser of root object) (returns success)
   static bool	Startup_Console();

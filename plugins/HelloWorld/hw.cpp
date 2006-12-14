@@ -1,9 +1,11 @@
 #include "hw.h"
 #include <QtPlugin>
 
+const taVersion HelloPlugin::version(1,0,0,0);
+
 HelloPlugin::HelloPlugin(QObject*){}
 
-int HelloPlugin::InitializeTypes() const {
+int HelloPlugin::InitializeTypes() {
   ta_Init_hw();  // call the maketa-generated type initialization routine
   return 0;
 }

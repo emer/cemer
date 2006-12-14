@@ -154,7 +154,7 @@ protected:
 
 class TA_API gpiListType : public taiClassType {
 public:
-  bool		allowsInline() const {return false;}
+//  bool		allowsInline() const {return false;}
   int 		BidForType(TypeDef* td);
   TAQT_TYPE_INSTANCE(gpiListType, taiClassType);
 protected:

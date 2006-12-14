@@ -1529,7 +1529,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   if (specs_) {
     taiDataLink* dl = (taiDataLink*)specs_->GetDataLink();
     if (dl) {
-      dl->CreateTreeDataNode(md, tvSpecs, NULL, dl->GetName());
+      dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
     }
   }
   connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
@@ -1713,12 +1713,28 @@ void NetViewPanel::GetVars() {
   }
 }
 
+void NetViewPanel::ExpandAllSpecs() {
+  QTreeWidgetItemIterator it(tvSpecs, QTreeWidgetItemIterator::HasChildren);
+  QTreeWidgetItem* item;
+  while ((item = *it)) { 
+    tvSpecs->setItemExpanded(item, true);
+    ++it;
+  }
+  // size first N-1 cols
+  int cols = tvSpecs->columnCount(); // cache
+  // make columns nice sizes (not last)
+  for (int i = 0; i < (cols - 1); ++i) {
+    tvSpecs->resizeColumnToContents(i);
+  }
+}
+
 void NetViewPanel::InitPanel() {
   NetView* nv_;
   if (!(nv_ = nv())) return;
   ++updating;
   // fill monitor values
   GetVars();
+  ExpandAllSpecs();
   --updating;
 }
 

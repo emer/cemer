@@ -371,6 +371,27 @@ private:
 #endif // __MAKETA__
 
 
+class TA_API taVersion { // simple value class for version info
+public:
+  ushort	major;
+  ushort	minor;
+  ushort	step;
+  ushort	build;
+  
+  void		set(ushort mj, ushort mn, ushort st = 0, ushort bld = 0)
+    {major = mj; minor = mn; step = st; build = bld;}
+  const String	toString() 
+    {return String(major).cat(".").cat(String(minor)).cat(".").
+       cat(String(step)).cat(".").cat(String(build));}
+
+  void		Clear() {major = minor = step = build = 0;} //
+  
+  taVersion() {Clear();} //
+  taVersion(ushort mj, ushort mn, ushort st = 0, ushort bld = 0) 
+    {set(mj, mn, st, bld);} //
+// implicit copy and assign
+};
+
 /////////////////////////////////////////////////////////////////////
 // 	taMisc
 
@@ -450,7 +471,8 @@ public:
     QF_FORCE_QUIT	// too late to turn back now...
   };
 
-  static String		version_no; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
+  static String		version; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
+  static const taVersion version_bin; 	// #IGNORE version number of ta/css
 
   ////////////////////////////////////////////////////////
   // 	TA GUI parameters

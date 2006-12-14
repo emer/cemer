@@ -12,13 +12,10 @@ INCLUDEPATH +=\
 	$$(PDP4DIR)/src/ta \
 	$$(PDP4DIR)/src/ta/ios-g++-3.1 \
 	$$(PDP4DIR)/src/pdp \
-	$$(PDP4DIR)/src/ta \
 	$$(PDP4DIR)/src/css \
 	$$(PDP4DIR)/src/leabra \
-	$$(PDP4DIR)/src/tamisc \
 	$$(PDP4DIR)/src/taiqtso \
-	$$(PDP4DIR)/src/bp \
-	$$(PDP4DIR)/src/tamisc
+	$$(PDP4DIR)/src/bp 
 
 # Tried to do -I w/ a var, but qmake didn't support it
 # TODO: There is probably a way to do this w/o making two lists
@@ -28,13 +25,10 @@ MAKETA_INCLUDEPATH +=\
 	-I$$(PDP4DIR)/src/ta \
 	-I$$(PDP4DIR)/src/ta/ios-g++-3.1 \
 	-I$$(PDP4DIR)/src/pdp \
-	-I$$(PDP4DIR)/src/ta \
 	-I$$(PDP4DIR)/src/css \
 	-I$$(PDP4DIR)/src/leabra \
-	-I$$(PDP4DIR)/src/tamisc \
 	-I$$(PDP4DIR)/src/taiqtso \
-	-I$$(PDP4DIR)/src/bp \
-	-I$$(PDP4DIR)/src/tamisc
+	-I$$(PDP4DIR)/src/bp 
 
 # TODO: Parallel build broken due to maketa being called
 # simultaneously, and maketa dependencies are improperly set up
@@ -44,9 +38,10 @@ HEADERS += $${TARGET}.h
 SOURCES += $${TARGET}.cpp $${TARGET}_TA.cpp
 
 #TODO: Need standardized places to put plugins
-DESTDIR = $$(PDP4DIR)/../plugins
+DESTDIR = $$(PDP4DIR)/plugins
 
-LIBS +=	-lta4 -lpdp4 -L$$(HOME)/lib
+#TODO: modalize for debug vs. non-debug
+LIBS +=	-lpdp_debug-3.5 -L$$(PDP4DIR)/lib
 
 maketa.target = $$PRECOMPILED_HEADER
 maketa.commands = $$(PDP4DIR)/src/maketa/maketa -D__MAKETA__  -css -cpp="g++ -E" $$MAKETA_INCLUDEPATH $${TARGET} $${TARGET}.h

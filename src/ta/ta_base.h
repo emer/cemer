@@ -107,7 +107,7 @@ public:
 			TAPtr MakeTokenAry(int no){ return (TAPtr)(new y[no]); } \
 			void operator=(const y& cp) { Copy(cp); } \
 			TypeDef* GetTypeDef() const { return &TA_##y; } \
-			static TypeDef* StatTypeDef(int) { return &TA_##y; }
+			static TypeDef* StatTypeDef(int) { return &TA_##y; }	
 
 #define TA_BASEFUNS_LITE(y) y () {Initialize();} \
 			y (const y& cp) {Initialize(); Copy(cp); } \
@@ -752,8 +752,8 @@ protected:
 						   const taiMimeSource* ms,
     int& allowed, int& forbidden);
   virtual int		EditAction_impl(taiMimeSource* ms, int ea);
-  virtual void		QueryEditActions_impl(const taiMimeSource* ms, int& allowed,
-					      int& forbidden);
+  virtual void		QueryEditActions_impl(const taiMimeSource* ms,
+    int& allowed, int& forbidden);
 
   ///////////////////////////////////////////////////////////////////////////
   // 	Browser gui
@@ -1228,7 +1228,7 @@ public:
   String        name;           // name of the object 
   TypeDef*	el_base;	// #HIDDEN #NO_SAVE Base type for objects in group
   TypeDef* 	el_typ;		// #TYPE_ON_el_base Default type for objects in group
-  int		el_def;		// Index of default element in group
+  int		el_def;		// #DETAIL Index of default element in group
 
   // stuff for the taBase 
   bool          SetName(const String& nm)       { name = nm; return true; }

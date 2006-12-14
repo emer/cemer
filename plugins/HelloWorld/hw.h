@@ -25,12 +25,21 @@ class HW_API HelloPlugin : public QObject,
   // Tells Qt which interfaces are implemented by this class
   Q_INTERFACES(IPlugin)
 
- public:
+public:
+  static const taVersion	version;
+  
   HelloPlugin(QObject* par = NULL);
 
- public:
-  int InitializeTypes() const;
-  int InitializePlugin();
+ public: // IPlugin interface
+  const char*	desc() {return "Sample plugin provided with PDP++";}
+  const char*	name() {return "HelloPlugin";}
+  const char*	uniqueId() {return "helloplugin.ccnlab.psych.colorado.edu";}
+  
+  int		NotifyTacssVersion(const taVersion& tav, bool& is_ok) {return 0;}
+    // we pass ta/css version; set is_ok false if this version is no good for plugin
+  int		GetVersion(taVersion& tav) {tav = version; return 0;}
+  int 		InitializeTypes();
+  int 		InitializePlugin();
 };
 
 // Associates a string with the interface HelloPlugin
@@ -38,12 +47,12 @@ Q_DECLARE_INTERFACE(HelloPlugin, "pdp.HelloPlugin/1.0")
 #endif // !__MAKETA__
 
 // The actual content of the plugin follows. Inheriting from taNBase
-// (where the N stands for Naming) interfaces you with the TypeAccess
+// (where the N stands for Named) interfaces you with the TypeAccess
 // system
 
 class HW_API HelloBase : public taNBase
 {
-  INHERITED(taNBase)
+  INHERITED(taNBase) // declares 'inherited' keyword for safer base-class references
 
 public:
 
@@ -52,7 +61,8 @@ public:
   // a menu for the function Hello() in an edit dialog
   void Hello(); // #MENU Hello, World! Function
 
-  // Allows this object to be copied
+  // Allows this object to be copied -- put local member copy into Copy_
+  void Copy_(const HelloBase& cp) {}
   COPY_FUNS(HelloBase, taNBase);
 
   // Defines a default constructor that calls Initialize(), Register()
