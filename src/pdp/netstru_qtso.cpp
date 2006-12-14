@@ -1194,7 +1194,7 @@ void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,
 }
 
 void NetView::InitDisplay(bool init_panel) {
-  if (!display) return;
+//   if (!display) return;
   GetMembs();
   // select "act" by default, if nothing selected, or saved selection not restored yet (first after load)
   if (!unit_disp_md) {
@@ -1219,7 +1219,7 @@ void NetView::InitDisplay(bool init_panel) {
 }
 
 void NetView::InitDisplay_Layer(LayerView* lv, bool check_build) {
-  if (check_build && (!display || !net()->CheckBuild(true))) return; // needs to be built
+//   if (check_build && (!display || !net()->CheckBuild(true))) return; // needs to be built
   UnitGroupView* ugrv;
   taListItr j;
   FOR_ITR_EL(UnitGroupView, ugrv, lv->children., j) {
@@ -1228,7 +1228,7 @@ void NetView::InitDisplay_Layer(LayerView* lv, bool check_build) {
 }
 
 void NetView::InitDisplay_UnitGroup(UnitGroupView* ugrv, bool check_build) {
-  if (check_build && (!display || !net()->CheckBuild(true))) return; // needs to be built
+//   if (check_build && (!display || !net()->CheckBuild(true))) return; // needs to be built
   ugrv->AllocUnitViewData(); // make sure we have correct space in uvd array
   ugrv->UpdateUnitViewBase(unit_disp_md, unit_src);
 }
@@ -1286,7 +1286,7 @@ void NetView::Render_impl() {
   font->size.setValue(0.4f); // is in same units as geometry units of network
   node_so->setCaption(data()->GetName().chars());
 
-  if (!display || !net()->CheckBuild(true)) return; // no display, or needs to be built
+//   if (!display || !net()->CheckBuild(true)) return; // no display, or needs to be built
   if (scale.auto_scale) {
     UpdateAutoScale();
     if (nvp) {
@@ -1416,7 +1416,7 @@ void NetView::UpdateAutoScale() {
 }
 
 void NetView::UpdateDisplay(bool update_panel) { // updates dynamic values, esp. Unit values
-  if (!display || !net()->CheckBuild(true)) return; // no display, or needs to be built
+  if (!display) return;
   if (update_panel) UpdatePanel();
   Render_impl();
 }
