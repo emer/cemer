@@ -316,7 +316,7 @@ SmartRef_Of(DataTableCols) // DataTableColsRef
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TA_API DataTable : public DataBlock_Idx {
-  // #NO_UPDATE_AFTER ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl table of data
+  // #NO_UPDATE_AFTER ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data table of data
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
@@ -338,6 +338,7 @@ public:
 
   int			cols() const { return data.size; }
   // #CAT_Columns number of columns
+  override taList_impl* children_() {return &data;}
 
   DataArray_impl*	NewCol(DataArray_impl::ValType val_type, 
 			       const String& col_nm);

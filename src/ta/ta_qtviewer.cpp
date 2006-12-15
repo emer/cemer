@@ -956,35 +956,38 @@ tabODataLink::tabODataLink(taOBase* data_)
 {
 }
 
-
-
-//////////////////////////////////
-//   tabParDataLink		//
-//////////////////////////////////
-
-tabParDataLink::tabParDataLink(taOBase* data_)
-:inherited(data_)
+String tabODataLink::ChildGetColText(taDataLink* child, const KeyString& key, int itm_idx) const
 {
-}
-
-String tabParDataLink::ChildGetColText(taDataLink* child, const KeyString& key, int itm_idx) const
-{
+  if (!list()) return inherited::ChildGetColText(child, key, itm_idx);
   return list()->ChildGetColText(child->data(), child->GetDataTypeDef(), key, itm_idx);
 }
 
-/*void tabParDataLink::fileNew() {
-  data()->New();
-}*/
+taiTreeDataNode* tabODataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
+  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
+{
+  if (!list()) return inherited::CreateTreeDataNode_impl(md, nodePar,
+    tvPar, after, node_name, dn_flags);
+  taiTreeDataNode* rval = NULL;
+  if (nodePar)
+    rval = new tabDefChildTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new tabDefChildTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
+  return rval;
+}
 
-String tabParDataLink::GetColHeading(const KeyString& key) const {
+
+String tabODataLink::GetColHeading(const KeyString& key) const {
+  if (!list()) return inherited::GetColHeading(key);
   return list()->GetColHeading(key);
 }
 
-const KeyString tabParDataLink::GetListColKey(int col) const {
+const KeyString tabODataLink::GetListColKey(int col) const {
+  if (!list()) return inherited::GetListColKey(col);
   return list()->GetListColKey(col);
 }
 
-taiDataLink* tabParDataLink::GetListChild(int itm_idx) {
+taiDataLink* tabODataLink::GetListChild(int itm_idx) {
+  if (!list()) return inherited::GetListChild(itm_idx);
   if ((itm_idx < 0) || (itm_idx >= list()->size))
     return NULL;
   TypeDef* typ;
@@ -1000,33 +1003,9 @@ taiDataLink* tabParDataLink::GetListChild(int itm_idx) {
   return dl;
 }
 
-int tabParDataLink::NumListCols() const {
+int tabODataLink::NumListCols() const {
+  if (!list()) return inherited::NumListCols();
   return list()->NumListCols();
-}
-
-
-//////////////////////////////////
-//   tabDefChildDataLink	//
-//////////////////////////////////
-
-tabDefChildDataLink::tabDefChildDataLink(taOBase* data_)
-:inherited(data_)
-{
-//note: validity of DEF directive was done during bidding
-  String mbr = data_->GetTypeDef()->OptionAfter("DEF_CHILD_");
-  MemberDef* md = data_->FindMember(mbr);
-  m_list = (taList_impl*)md->GetOff(data_);
-}
-
-taiTreeDataNode* tabDefChildDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
-  iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags)
-{
-  taiTreeDataNode* rval = NULL;
-  if (nodePar)
-    rval = new tabDefChildTreeDataNode(this, md, nodePar, after, node_name, dn_flags);
-  else
-    rval = new tabDefChildTreeDataNode(this, md, tvPar, after, node_name, dn_flags);
-  return rval;
 }
 
 
@@ -3491,6 +3470,7 @@ bool iTabView::ActivatePanel(taiDataLink* dl) {
 void iTabView::AddPanel(iDataPanel* panel) {
   wsPanels->addWidget(panel);
   panels.Add(panel); // refs us
+//  panel->Render(); // build the guy!
   if (panels.size == 1) wsPanels->raiseWidget(panel); // always show first
   iTabViewer* itv = tabViewerWin();
   if (itv) panel->OnWindowBind(itv);
@@ -3752,6 +3732,7 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
 {
   m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
   m_pinned = false;
+  m_rendered = false;
   setFrameStyle(NoFrame | Plain);
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);
@@ -3780,6 +3761,10 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
   }
 }
 
+void iDataPanel::Render() {
+  if (!m_rendered) Render_impl();
+}
+
 void iDataPanel::ResolveChanges(CancelOp& cancel_op) {
   ResolveChanges_impl(cancel_op);
 }
@@ -3792,6 +3777,11 @@ void iDataPanel::setCentralWidget(QWidget* widg) {
 void iDataPanel::setPinned(bool value) {
   if (m_pinned == value) return;
   m_pinned = value; // no action needed... "pinned is just a state of mind"
+}
+
+void iDataPanel::showEvent(QShowEvent* ev) {
+  if (!m_rendered) Render();
+  inherited::showEvent(ev);
 }
 
 String iDataPanel::TabText() const {
@@ -3976,6 +3966,7 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
 }
 void iDataPanelSet::AllSubPanelsAdded() {
   layButtons->addStretch();
+  m_rendered = true;
 }
 
 void iDataPanelSet::btn_pressed(int id) {
@@ -4969,7 +4960,7 @@ tabTreeDataNode::~tabTreeDataNode()
 //   tabParTreeDataNode 	//
 //////////////////////////////////
 
-tabParTreeDataNode::tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_,
+tabParTreeDataNode::tabParTreeDataNode(tabODataLink* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
     const String& tree_name, int dn_flags_)
 :inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, 
@@ -4978,14 +4969,14 @@ tabParTreeDataNode::tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_,
   init(link_, dn_flags_);
 }
 
-tabParTreeDataNode::tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_, iTreeView* parent_,
+tabParTreeDataNode::tabParTreeDataNode(tabODataLink* link_, MemberDef* md_, iTreeView* parent_,
   taiTreeDataNode* last_child_,  const String& tree_name, int dn_flags_)
 :inherited((tabDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabParTreeDataNode::init(tabParDataLink* link_, int dn_flags_) {
+void tabParTreeDataNode::init(tabODataLink* link_, int dn_flags_) {
   last_list_items_node = NULL;
 }
 
@@ -5140,24 +5131,24 @@ void tabDefChildRef::DataLinkDestroying(taDataLink* dl) {
 //note: don't need to do anything, since everything is explicitly owned/nested
 }
 
-tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabDefChildDataLink* link_, MemberDef* md_,
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
-:inherited((tabParDataLink*)link_, md_, parent_, last_child_, tree_name, 
+:inherited(link_, md_, parent_, last_child_, tree_name, 
   dn_flags_ | DNF_LAZY_CHILDREN)
 {
   init(link_, dn_flags_);
 }
 
-tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabDefChildDataLink* link_, MemberDef* md_,
+tabDefChildTreeDataNode::tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
   iTreeView* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
-:inherited((tabParDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+:inherited(link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }
 
-void tabDefChildTreeDataNode::init(tabDefChildDataLink*, int) {
+void tabDefChildTreeDataNode::init(tabODataLink*, int) {
   m_def_child.Init(this, list());
 }
 
@@ -5179,7 +5170,7 @@ void tabDefChildTreeDataNode::DefChild_DataChanged(int dcr, void* op1, void* op2
 tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
   taiTreeDataNode* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
-:inherited((tabParDataLink*)link_, md_, parent_, last_child_, tree_name, 
+:inherited((tabODataLink*)link_, md_, parent_, last_child_, tree_name, 
   dn_flags_ | DNF_LAZY_CHILDREN)
 {
   init(link_, dn_flags_);
@@ -5188,7 +5179,7 @@ tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
 tabListTreeDataNode::tabListTreeDataNode(tabListDataLink* link_, MemberDef* md_,
   iTreeView* parent_, taiTreeDataNode* last_child_,
   const String& tree_name, int dn_flags_)
-:inherited((tabParDataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
+:inherited((tabODataLink*)link_, md_, parent_, last_child_, tree_name, dn_flags_)
 {
   init(link_, dn_flags_);
 }

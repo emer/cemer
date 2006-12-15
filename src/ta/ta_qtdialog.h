@@ -156,11 +156,10 @@ protected:
 //////////////////////////
 
 class TA_API EditDataPanel: public iDataPanelFrame { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
-#ifndef __MAKETA__
-typedef iDataPanelFrame inherited;
-#endif
+INHERITED(iDataPanelFrame)
 friend class taiEditDataHost;
 public:
+  iColor*		bgcol; // temp holding spot
   taiEditDataHost*	editDataHost() {return owner;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
   override void		Closing(CancelOp& cancel_op);
@@ -176,6 +175,7 @@ public: // IDataLinkClient interface
 protected:
   taiEditDataHost* 	owner;
   override void		GetImage_impl(); // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
+  override void		Render_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
 };
 
@@ -432,6 +432,7 @@ public:
   override int 		Edit(bool modal_ = false); 
     // for dialogs -- add to list of active_edit dialogs too
   EditDataPanel* 	EditPanel(taiDataLink* link); // for panels
+  EditDataPanel* 	EditPanelDeferred(taiDataLink* link); // for panels
   void		 	ConstrEditControl(QWidget* gui_parent, const iColor* bgcol = NULL); 
     // for controls -- construct then edit 
   void			GetImage(); //override

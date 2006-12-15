@@ -383,6 +383,7 @@ EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_)
 :inherited(dl_)
 {
   owner = owner_;
+  bgcol = NULL;
 }
 
 EditDataPanel::~EditDataPanel() {
@@ -425,6 +426,18 @@ bool EditDataPanel::HasChanged() {
 String EditDataPanel::panel_type() const {
   static String str("Properties");
   return str;
+}
+
+void EditDataPanel::Render_impl() {
+  inherited::Render_impl();
+  taiEditDataHost* edh = editDataHost();
+  if (edh->state >= taiDataHost::CONSTRUCTED) return;
+  
+  edh->Constr("", "", bgcol, taiDataHost::HT_PANEL);
+  setCentralWidget(edh->widget());
+  taiMisc::active_edits.Add(edh); // add to the list of active edit dialogs
+  edh->state = taiDataHost::ACTIVE;
+  //prob need to do a refresh!!!
 }
 
 void EditDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
@@ -1313,62 +1326,6 @@ void taiEditDataHost::ClearBody_impl() {
   inherited::ClearBody_impl(); // deletes the body widgets, except structural ones
 }
 
-/* IV version:
-void taiEditDataHost::GetMembDescRep(MemberDef* md, ivMenu* dscm, String indent) {
-  String desc = md->desc;
-  String defval = md->OptionAfter("DEF_");
-  if(!defval.empty())
-    desc = String("[Default: ") + defval + "] " + desc;
-  else
-    desc = desc;
-  if(!indent.empty())
-    desc = indent + md->GetLabel() + String(": ") + desc;
-  dscm->append_item
-    (taiM->wkit->menu_item
-     (new ivLabel((char*)desc, taiM->name_font, taiM->font_foreground)));
-  if(md->type->InheritsFormal(TA_class) &&
-     (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
-    indent += "  ";
-    int i;
-    for(i=0; i<md->type->members.size; i++) {
-      MemberDef* smd = md->type->members.FastEl(i);
-      if(!smd->ShowMember(taMisc::show_iv) || smd->HasOption("HIDDEN_INLINE"))
-	continue;
-      GetMembDescRep(smd, dscm, indent);
-    }
-  }
-  else if(md->type->InheritsFormal(TA_enum)) {
-    int i;
-    for(i=0; i<md->type->enum_vals.size; i++) {
-      EnumDef* ed = md->type->enum_vals.FastEl(i);
-      if(ed->desc.empty() || (ed->desc == " ") || (ed->desc == "  ")) continue;
-      desc = indent + "  " + ed->GetLabel() + String(": ") + ed->desc;
-      dscm->append_item
-	(taiM->wkit->menu_item
-	 (new ivLabel((char*)desc, taiM->name_font, taiM->font_foreground)));
-    }
-  }
-}
-*/
-
-/*obsQWidget* taiEditDataHost::GetNameRep(MemberDef* md, QWidget* dataWidget) {
-// TODO: get compound description, and if too long, then create a hyperlink-like label
-// that pops up a little tooltip-style window
-  String nm;
-  String desc;
-  GetName(md, nm, desc);
-  QLabel* rval = new QLabel(nm, body);
-  rval->setFixedHeight(taiM->label_height(ctrl_size));
-  if (dataWidget != NULL) {
-    rval->setBuddy(dataWidget);
-    // set tool tip in buddy widget
-    if (!desc.empty()) {
-      QToolTip::add(dataWidget, desc);
-    }
-  }
-  return rval;
-} */
-
 void taiEditDataHost::Constr_Body() {
   inherited::Constr_Body();
   if (typ && typ->it->requiresInline()) {
@@ -1557,6 +1514,12 @@ EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
   panel->setCentralWidget(widget());
   taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
   state = ACTIVE;
+  return panel;
+}
+
+EditDataPanel* taiEditDataHost::EditPanelDeferred(taiDataLink* link) {
+  panel = new EditDataPanel(this, link); //TODO: make sure this conversion is always valid!!!
+  
   return panel;
 }
 

@@ -1620,10 +1620,7 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
 iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  dte = new iDataTableEditor();
-  setCentralWidget(dte);
-  
-  dte->setDataTable(dt());
+  dte = NULL;
 /*  list->setSelectionMode(QListView::Extended);
   list->setShowSortIndicator(true);
   // set up number of col_bufsz, based on link
@@ -1714,7 +1711,15 @@ String iDataTablePanel::panel_type() const {
 }
 
 void iDataTablePanel::Refresh_impl() {
-  dte->Refresh();
+  if (dte)
+    dte->Refresh();
   inherited::Refresh_impl();
+}
+
+void iDataTablePanel::Render_impl() {
+  dte = new iDataTableEditor();
+  setCentralWidget(dte);
+  
+  dte->setDataTable(dt());
 }
 

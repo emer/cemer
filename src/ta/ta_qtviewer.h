@@ -180,21 +180,19 @@ INHERITED(tabDataLink)
 public:
   taOBase*		data() {return (taOBase*)m_data;}
   taOBase*		data() const {return (taOBase*)m_data;}
-  
+    
   override MemberDef*	GetDataMemberDef() const;
 
   tabODataLink(taOBase* data_);
   DL_FUNS(tabODataLink); //
-};
-
-
-class TA_API tabParDataLink: public tabODataLink {
-  // abstract DataLink for tab nodes that are lists, or that have a def list member
-INHERITED(tabODataLink)
-public:
-  virtual taList_impl*		list() = 0;
-  virtual taList_impl*		list() const = 0;
   
+public: // for taLists, and default children (where defined) in taOBase
+  virtual taList_impl*	list() {return ((taOBase*)m_data)->children_();}
+  virtual taList_impl*	list() const {return ((taOBase*)m_data)->children_();}
+    
+  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
+    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
+    const String& node_name, int dn_flags);
   override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
   override int		NumListCols() const; // number of columns in a list view for this item type
   override const KeyString GetListColKey(int col) const; // #IGNORE
@@ -203,42 +201,15 @@ public:
     int itm_idx = -1) const;	// #IGNORE
   override bool		HasChildItems() {return true;} // at very least, has the 'items' subnode
 
-  DL_FUNS(tabParDataLink) //
-
-protected:
-  tabParDataLink(taOBase* data_);
-};
-
-
-//////////////////////////
-//  tabDefChildDataLink	//
-//////////////////////////
-
-class TA_API tabDefChildDataLink: public tabParDataLink {
-  // DataLink for tab objects with a DEF_CHILD_xxx directive
-INHERITED(tabParDataLink)
-friend class tabDefChildRef;
-public:
-  taList_impl*		list() {return m_list;}
-  taList_impl*		list() const {return m_list;}
-  
-  tabDefChildDataLink(taOBase* data_);
-  DL_FUNS(tabDefChildDataLink) //
-
-protected:
-  taList_impl*		m_list; // deflist member
-  override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
-    taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
-    const String& node_name, int dn_flags);
 };
 
 //////////////////////////
 //   tabListDataLink	//
 //////////////////////////
 
-class TA_API tabListDataLink: public tabParDataLink {
+class TA_API tabListDataLink: public tabODataLink {
   // DataLink for taList objects -- note that it also manages the ListView nodes
-INHERITED(tabParDataLink)
+INHERITED(tabODataLink)
 public:
   taList_impl*		list() {return (taList_impl*)m_data;}
   taList_impl*		list() const {return (taList_impl*)m_data;}
@@ -1112,6 +1083,7 @@ public:
 class TA_API iDataPanel: public QFrame, public IDataLinkClient {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS interface for panels (note: don't inherit directly)
   Q_OBJECT
+INHERITED(QFrame)
 friend class taDataLink;
 friend class iPanelTab;
 friend class iDataPanel_PtrList;
@@ -1127,7 +1099,8 @@ public:
    //  this string is on the subpanel button for a panel (n/a to panelsets)
   virtual taiDataLink*	par_link() const = 0; // *current* visual parent link of this data panel; this could change dynamically, if a datapanel is shared across all referring instances, ex. link lists, references, etc. -- return NULL if unknown, not set, or not applicable -- controls things like clip enabling etc.
   virtual MemberDef*	par_md() const = 0; // as for par_link
-  bool			pinned() const {return m_pinned;}
+  inline bool		pinned() const {return m_pinned;}
+  inline bool		rendered() const {return m_rendered;}
   void			setPinned(bool value);
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabView*		tabView() {return m_tabView;} // tab view in which we are shown
@@ -1143,6 +1116,7 @@ public:
   virtual void		OnWindowBind(iTabViewer* itv) {OnWindowBind_impl(itv);}
     // called in post, when all windows are built
   virtual void		ResolveChanges(CancelOp& cancel_op);
+  virtual void		Render(); // actually create content; override _impl; used to defer creation of button panels
   virtual void		Refresh() {Refresh_impl();} // manually refresh
   virtual String 	TabText() const; // text for the panel tab -- usually just the view_name of the curItem
 
@@ -1163,9 +1137,12 @@ public: // IDataLinkClient interface
 protected:
   iTabView*		m_tabView; // tab view in which we are shown
   bool			m_pinned;
+  bool			m_rendered; // set once rendered
   QScrollArea*		scr; // central scrollview
+  override void		showEvent(QShowEvent* ev);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
   virtual void		OnWindowBind_impl(iTabViewer* itv) {}
+  virtual void		Render_impl() {} // only called once, when content needs to be created
   virtual void		Refresh_impl() {}
   virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
 };
@@ -1629,15 +1606,15 @@ private:
 class TA_API tabParTreeDataNode: public tabTreeDataNode {
 INHERITED(tabTreeDataNode)
 public:
-  taList_impl* 		list() {return ((tabParDataLink*)m_link)->list();}
-  tabParDataLink* 	link() const {return (tabParDataLink*)m_link;}
+  taList_impl* 		list() {return ((tabODataLink*)m_link)->list();}
+//nuke  tabParDataLink* 	link() const {return (tabParDataLink*)m_link;}
 
   void			AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
   override void		UpdateChildNames(); // #IGNORE update child names of the indicated node
 
-  tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
+  tabParTreeDataNode(tabODataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
-  tabParTreeDataNode(tabParDataLink* link_, MemberDef* md_, iTreeView* parent_,
+  tabParTreeDataNode(tabODataLink* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   ~tabParTreeDataNode();
 public: // IDataLinkClient interface
@@ -1651,7 +1628,7 @@ protected:
     taiTreeDataNode* after, taBase* el);
   void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
-  void			init(tabParDataLink* link_, int dn_flags_); // #IGNORE
+  void			init(tabODataLink* link_, int dn_flags_); // #IGNORE
 };
 
 
@@ -1687,10 +1664,10 @@ class TA_API tabDefChildTreeDataNode: public tabParTreeDataNode {
 INHERITED(tabParTreeDataNode)
 friend class tabDefChildRef;
 public:
-  tabDefChildTreeDataNode(tabDefChildDataLink* link_, MemberDef* md_,
+  tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
     taiTreeDataNode* parent_, taiTreeDataNode* after,
     const String& tree_name, int dn_flags_ = 0);
-  tabDefChildTreeDataNode(tabDefChildDataLink* link_, MemberDef* md_,
+  tabDefChildTreeDataNode(tabODataLink* link_, MemberDef* md_,
     iTreeView* parent_, taiTreeDataNode* after,
     const String& tree_name, int dn_flags_ = 0);
   ~tabDefChildTreeDataNode();
@@ -1701,7 +1678,7 @@ protected:
   tabDefChildRef	m_def_child; // for list notifies
   virtual void		DefChild_DataChanged(int dcr, void* op1, void* op2);
 private:
-  void			init(tabDefChildDataLink* link_, int dn_flags_); // #IGNORE
+  void			init(tabODataLink* link_, int dn_flags_); // #IGNORE
 };
 
 

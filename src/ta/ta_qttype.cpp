@@ -867,6 +867,9 @@ EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
   if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
   host->Constr("", "", bgcol, taiDataHost::HT_PANEL);
   return host->EditPanel(link); 
+//nuke  EditDataPanel* rval = host->EditPanelDeferred(link);
+//nuke  rval->bgcol = const_cast<iColor*>(bgcol); // ok to cast away constness
+//nuke  return rval;
 }
 
 EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
@@ -2901,28 +2904,6 @@ taiDataLink* tabOViewType::GetDataLink(void* data_, TypeDef* el_typ) {
   else return CreateDataLink_impl(data);
 }
 
-
-//////////////////////////
-//   tabDefChildVIewType 	//
-//////////////////////////
-
-int tabDefChildViewType::BidForView(TypeDef* td) {
-  // note: lists themselves cannot have def children!
-  if (td->InheritsFrom(&TA_taList_impl)) return 0;
-  // check for having  DEF_CHILD *and* it must be valid!
-  String mbr = td->OptionAfter("DEF_CHILD_");
-  if (mbr.nonempty()) {
-    MemberDef* md = td->members.FindName(mbr);
-    if (md && (md->type->ptr == 0) &&
-      md->type->InheritsFrom(&TA_taList_impl) 
-    )  return (inherited::BidForView(td) +1);
-  } 
-  return 0;
-}
-
-taiDataLink* tabDefChildViewType::CreateDataLink_impl(taBase* data_) {
-  return new tabDefChildDataLink((taOBase*)data_);
-}
 
 //////////////////////////
 //   tabListViewType 	//

@@ -412,6 +412,7 @@ protected:
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
 protected:
+  override void		Render_impl();
   override void		Refresh_impl();
 };
 
