@@ -433,7 +433,7 @@ void EditDataPanel::Render_impl() {
   taiEditDataHost* edh = editDataHost();
   if (edh->state >= taiDataHost::CONSTRUCTED) return;
   
-  edh->Constr("", "", bgcol, taiDataHost::HT_PANEL);
+  edh->ConstrDeferred();
   setCentralWidget(edh->widget());
   taiMisc::active_edits.Add(edh); // add to the list of active edit dialogs
   edh->state = taiDataHost::ACTIVE;
@@ -606,8 +606,9 @@ void taiDataHost::InitGuiFields(bool) {
   body = NULL;
   frmMethButtons = NULL;
   layMethButtons = NULL;
-  showMethButtons = false;
-  hblButtons = NULL;
+  show_meth_buttons = false;
+  widButtons = NULL;
+  layButtons = NULL;
   okbut = NULL;
   canbut = NULL;
   apply_but = NULL;
@@ -784,14 +785,31 @@ void taiDataHost::ClearBody_impl() {
 
 /* NOTE: Constr_Xxx methods presented in execution (not lexical) order */
 void taiDataHost::Constr(const char* aprompt, const char* win_title,
-  const iColor* bgclr, HostType host_type_) 
+  const iColor* bgclr, HostType host_type_, bool deferred) 
 {
   host_type = host_type_;
   setBgColor(bgclr);
   row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if using even/odd shading
   Constr_Strings(aprompt, win_title);
+  Constr_WinName();
+  Constr_Widget();
+  Constr_Methods();
+  Constr_RegNotifies(); // taiEditHost registers notifies
+  state = DEFERRED1;
+  if (deferred) return;
+  ConstrDeferred(); // else finish it now!
+}
+
+
+
+void taiDataHost::ConstrDeferred() {
+  if (state != DEFERRED1) {
+    taMisc::Error("taiDataHost::ConstrDeferred2: expected host to be in state DEFERRED1");
+    return;
+  }
   Constr_impl();
   state = CONSTRUCTED;
+  GetImage();
 }
 
 void taiDataHost::Constr_Strings(const char* prompt, const char* win_title) {
@@ -800,19 +818,21 @@ void taiDataHost::Constr_Strings(const char* prompt, const char* win_title) {
 }
 
 void taiDataHost::Constr_impl() {
-  Constr_WinName();
-  Constr_Widget();
+//  Constr_WinName();
+//  Constr_Widget();
   widget()->setUpdatesEnabled(false);
   Constr_Prompt();
   Constr_Box();
   Constr_Body();
-  Constr_Methods();
+//  Constr_Methods();
+  Insert_Methods(); // if created, AND unowned
   // create container for ok/cancel/apply etc. buttons
-  hblButtons = new QHBoxLayout();
-  hblButtons->setMargin(0); // containing lay already has spacing
+  widButtons = new QWidget(widget());
+  layButtons = new QHBoxLayout(widButtons);
+  layButtons->setMargin(0); // containing lay already has spacing
 //  vblDialog->addStretch(100); // provides a degree of freedom for small body heights -- all other strechfactors=0
   vblDialog->addStretch();
-  vblDialog->addLayout(hblButtons);
+  vblDialog->addWidget(widButtons);
   Constr_Buttons();
   Constr_Final();
   widget()->setUpdatesEnabled(true);
@@ -886,11 +906,18 @@ void taiDataHost::Constr_Body() {
   vbl->addStretch(1);
 }
 
-void taiDataHost::Constr_Methods() { //note: conditional constructions used by SelectEditHost to rebuild methods
+void taiDataHost::Constr_Methods() {
+  Constr_Methods_impl();
+  Constr_ShowMenu();
+}
+
+
+void taiDataHost::Constr_Methods_impl() { //note: conditional constructions used by SelectEditHost to rebuild methods
   QFrame* tmp = frmMethButtons;
   if (!frmMethButtons) {
-    showMethButtons = false; // set true if any created
-    tmp = new QFrame(widget());
+    show_meth_buttons = false; // set true if any created
+    tmp = new QFrame(); // tmp = new QFrame(widget());
+    tmp->setVisible(false); // prevents it showing as global win in some situations
     tmp->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
     tmp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   }
@@ -899,13 +926,26 @@ void taiDataHost::Constr_Methods() { //note: conditional constructions used by S
   }
   if (!frmMethButtons) {
     frmMethButtons = tmp;
-    vblDialog->addWidget(frmMethButtons);
+    //TODO: if this is a SelectEdit, and this is a rebuild for first time,
+    // we will need to do the Insert_Methods call
+  }
+}
+
+void taiDataHost::Insert_Methods() {
+  //NOTE: for taiEditDataHost, menus are always put in widget() even in deferred
+  if (frmMethButtons && !frmMethButtons->parentWidget()) {
+    // if has buttons, then insert before those, otherwise meth buttons is last
+    int idx = -1;
+    if (widButtons)
+      vblDialog->indexOf(widButtons); // -1 if not created
+    vblDialog->insertWidget(idx, frmMethButtons);
+    frmMethButtons->setVisible(show_meth_buttons); // needed for deferred insert
   }
 }
 
 void taiDataHost::Constr_Buttons() {
-  QWidget* par = widget();
-  hblButtons->addStretch();
+  QWidget* par = widButtons;
+  layButtons->addStretch();
   if (isDialog()) { // add dialog-like buttons
     if(!modal && no_ok_but) {
       okbut = NULL;
@@ -916,7 +956,7 @@ void taiDataHost::Constr_Buttons() {
       } else {
         okbut = new HiLightButton("&Ok", par);
       }
-      hblButtons->addWidget(okbut, 0, (Qt::AlignVCenter));
+      layButtons->addWidget(okbut, 0, (Qt::AlignVCenter));
       connect(okbut, SIGNAL(clicked()),
           this, SLOT(Ok()) );
     }
@@ -925,7 +965,7 @@ void taiDataHost::Constr_Buttons() {
     }
     else {
       canbut = new HiLightButton("&Cancel", par);
-      hblButtons->addWidget(canbut, 0, (Qt::AlignVCenter));
+      layButtons->addWidget(canbut, 0, (Qt::AlignVCenter));
       connect(canbut, SIGNAL(clicked()),
           this, SLOT(Cancel()) );
     }
@@ -937,27 +977,25 @@ void taiDataHost::Constr_Buttons() {
   } else {
      // dont' put apply/revert buttons on a readonly dialog!
     if (!read_only) {
-      hblButtons->addSpacing(20); // TODO: parameterize, and give it some stretchiness
+      layButtons->addSpacing(20); // TODO: parameterize, and give it some stretchiness
       apply_but = new HiLightButton("&Apply", par);
-      hblButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
+      layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
       connect(apply_but, SIGNAL(clicked()),
           this, SLOT(Apply()) );
       revert_but = new HiLightButton("&Revert", par);
-      hblButtons->addWidget(revert_but, 0, (Qt::AlignVCenter));
+      layButtons->addWidget(revert_but, 0, (Qt::AlignVCenter));
       connect(revert_but, SIGNAL(clicked()),
           this, SLOT(Revert()) );
     }
     Unchanged();
   }
-  hblButtons->addSpacing(10); // don't flush hard right
+  layButtons->addSpacing(10); // don't flush hard right
 }
 
 void taiDataHost::Constr_Final() {
   // we put all the stretch factor setting here, so it is easy to make code changes if necessary
   if (splBody) vblDialog->setStretchFactor(splBody, 1);
   else         vblDialog->setStretchFactor(scrBody, 1);
-
-  frmMethButtons->setHidden(!showMethButtons);
 }
 
 void taiDataHost::DataLinkDestroying(taDataLink* dl) {
@@ -1273,7 +1311,7 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   use_show = true; // some descendant classes override, as well as construction methods
   show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
   InitGuiFields(false);
-  //note: don't register for notification until constr is done
+  //note: don't register for notification until constr starts
 }
 
 taiEditDataHost::~taiEditDataHost() {
@@ -1426,12 +1464,8 @@ void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title)
     if (typ != NULL) prompt_str +=  ": " + typ->desc;
 }
 
-void taiEditDataHost::Constr_Methods() {
-  inherited::Constr_Methods();
-  Constr_Methods_impl();
-}
-
 void taiEditDataHost::Constr_Methods_impl() {
+  inherited::Constr_Methods_impl();
   if (typ == NULL) return;
 
   for (int i = 0; i < typ->methods.size; ++i) {
@@ -1458,21 +1492,20 @@ void taiEditDataHost::Constr_Methods_impl() {
   }
 }
 
+void taiEditDataHost::Constr_RegNotifies() {
+  if ((typ && typ->InheritsFrom(&TA_taBase) && cur_base)) {
+    ((taBase*)cur_base)->AddDataClient(this);
+  }
+}
 //void taiEditDataHost::Constr_ShowMenu() {
 // moved to be by the setShow etc. calls, for clarity
 
 void taiEditDataHost::Constr_Final() {
   inherited::Constr_Final();
-  Constr_ShowMenu();
-  GetImage();
-  //now we finally register as a dlc!
-  if ((typ && typ->InheritsFrom(&TA_taBase) && cur_base)) {
-    ((taBase*)cur_base)->AddDataClient(this);
-  }
 }
 
 void taiEditDataHost::DoAddMethButton(QAbstractButton* but) {
-  showMethButtons = true;
+  show_meth_buttons = true;
   // we use "medium" size for buttons
   but->setFont(taiM->buttonFont(taiMisc::fonMedium));
   but->setFixedHeight(taiM->button_height(taiMisc::sizMedium));
@@ -1597,13 +1630,20 @@ void taiEditDataHost::GetButtonImage() {
 
 void taiEditDataHost::GetImage() {
   if ((typ == NULL) || (cur_base == NULL)) return;
+  if (state >= ACCEPTED ) return;
+  if (state > DEFERRED1) {
+    GetImage_Membs();
+  }
+  GetButtonImage();
+  Unchanged();
+}
+
+void taiEditDataHost::GetImage_Membs() {
   if (typ->it->requiresInline()) {
     GetImageInline_impl(cur_base);
   } else {
     GetImage_impl(memb_el, data_el, cur_base);
   }
-  GetButtonImage();
-  Unchanged();
 }
 
 void taiEditDataHost::GetImageInline_impl(const void* base) {
@@ -1666,6 +1706,15 @@ void taiEditDataHost::GetName(MemberDef* md, String& name, String& desc) {
 
 void taiEditDataHost::GetValue() {
   if ((typ == NULL) || (cur_base == NULL)) return;
+  if (state >= ACCEPTED ) return;
+  if (state > DEFERRED1) {
+    GetValue_Membs();
+  }
+  GetButtonImage();
+  Unchanged();
+}
+
+void taiEditDataHost::GetValue_Membs() {
   if (typ->it->requiresInline()) {
     GetValueInline_impl(cur_base);
   } else {
@@ -1676,8 +1725,6 @@ void taiEditDataHost::GetValue() {
     rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
     taiMisc::Update(rbase);
   }
-  GetButtonImage();
-  Unchanged();
 }
 
 void taiEditDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,
@@ -1837,7 +1884,7 @@ bool taiEditDataHost::ShowMember(MemberDef* md) const {
 }
 
 void taiEditDataHost::SetCurMenu(MethodDef* md) {
-  if (menu == NULL) {
+  if (!menu) {
     // we can't use QMainMenu on Mac, and QMenu doesn't work for some
     // reason (doesn't become visible, no matter what); but a toolbar works
 //TODO: it looks slightly funny, but maybe we should do it the same on

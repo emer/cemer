@@ -84,24 +84,7 @@ void iMatrixEditor::setModel(MatrixTableModel* mod) {
 iMatrixPanel::iMatrixPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  me = new iMatrixEditor();
-  setCentralWidget(me); //sets parent
-  taMatrix* mat_ = mat();
-  if (mat_) {
-    me->setModel(mat_->GetDataModel());
-  }
-/*  list->setSelectionMode(QListView::Extended);
-  list->setShowSortIndicator(true);
-  // set up number of cols, based on link
-  list->addColumn("#");
-  for (int i = 0; i < link()->NumListCols(); ++i) {
-    list->addColumn(link()->GetColHeading(i));
-  }
-  connect(list, SIGNAL(contextMenuRequested(QListViewItem*, const QPoint &, int)),
-      this, SLOT(list_contextMenuRequested(QListViewItem*, const QPoint &, int)) );
-  connect(list, SIGNAL(selectionChanged()),
-      this, SLOT(list_selectionChanged()) );
-  FillList(); */
+  me = NULL;
 }
 
 iMatrixPanel::~iMatrixPanel() {
@@ -180,6 +163,15 @@ String iMatrixPanel::panel_type() const {
 }
 
 void iMatrixPanel::Refresh_impl() {
-  me->Refresh();
+  if (me) me->Refresh();
   inherited::Refresh_impl();
+}
+
+void iMatrixPanel::Render_impl() {
+  me = new iMatrixEditor();
+  setCentralWidget(me); //sets parent
+  taMatrix* mat_ = mat();
+  if (mat_) {
+    me->setModel(mat_->GetDataModel());
+  }
 }

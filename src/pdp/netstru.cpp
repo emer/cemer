@@ -2681,6 +2681,7 @@ void Projection::SetCustomFrom(Layer* fm_lay) {
 bool Projection::SetPrjnSpec(ProjectionSpec* sp) {
   if(sp == NULL)	return false;
   spec.SetSpec(sp);
+  return true;
 }
 
 bool Projection::SetConSpec(ConSpec* sp) {

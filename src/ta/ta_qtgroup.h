@@ -373,11 +373,9 @@ public:
   gpiListDataHost() 				{ };
   ~gpiListDataHost(); //
 
-public: // IDataHost i/f
-  void		GetImage();
-  void		GetValue();
-
 protected:
+  override void		GetImage_Membs();
+  override void		GetValue_Membs();
   override void		ClearMultiBody_impl(); // clears multi-body for reshowing
 
   override void		Constr_Strings(const char* prompt="", const char* win_title="");
@@ -423,14 +421,14 @@ public:
   gpiCompactListDataHost() 				{ };
   ~gpiCompactListDataHost();
 
-  void		GetImage();
-  void		GetValue();
 
 //TODO  int		Edit();
 
   bool		ShowMember(MemberDef* md) const;
 
 protected:
+  override void		GetImage_Membs();
+  override void		GetValue_Membs();
   override void		ClearMultiBody_impl(); // clears multi-body for reshowing
 
   override void		Constr_Strings(const char* prompt="", const char* win_title="");
@@ -453,8 +451,6 @@ public:
   int		n_ary_membs;
 
   bool 		ShowMember(MemberDef* md) const;
-  void 		GetValue();
-  void 		GetImage();
 //TODO  int		Edit();
 
   gpiArrayEditDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
@@ -462,6 +458,8 @@ public:
   gpiArrayEditDataHost() 		{ };
   ~gpiArrayEditDataHost();
 protected:
+  override void 	GetValue_Membs();
+  override void 	GetImage_Membs();
   override void ClearBody_impl();
   override void		Constr_Data();
   virtual void	Constr_AryData();
@@ -498,11 +496,11 @@ public:
   ~gpiSelectEditDataHost();
 
   override bool ShowMember(MemberDef* md) const;
-  override void	GetValue();
 
 protected:
   int 			base_items;	// #IGNORE number of base items, before the user-selected items
   QMenu*		mnuRemoveMember;  // #IGNORE we build this during body phase, but then add during method phase
+  override void	GetValue_Membs();
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
   override void		Constr_Body();
   void 			Constr_Methods();

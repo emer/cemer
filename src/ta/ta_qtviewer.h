@@ -971,18 +971,32 @@ private:
 // 	iTabBar 	//
 //////////////////////////
 
-class TA_API iTabBar: public QTabBar { // #IGNORE encapsulates the TabBar for iTabView
+class TA_API iTabBar: public QTabBar { //  encapsulates the TabBar for iTabView
   Q_OBJECT
+INHERITED(QTabBar)
 public:
-  iDataPanel*		panel(int idx); // gets the current panel, if any
+  enum TabIcon {
+    TI_NONE		= -1,
+    TI_UNPINNED,
+    TI_PINNED,
+    TI_LOCKED
+  };
+  
+  static QIcon*		tab_icon[TI_LOCKED + 1]; // 0=unpinned, 1=pinned
+  
+  static void		InitClass(); // auto executed
+  
+  iDataPanel*		panel(int idx); // #IGNORE gets the current panel, if any
+  iTabView*		tabView() {return (iTabView*)parent();} // #IGNORE
 
 #ifndef __MAKETA__
   using			QTabBar::addTab; // bring also into scope
 #endif
-  int			addTab(iDataPanel* panel);
-  void			SetPanel(int idx, iDataPanel* value, bool force = false); // set or remove (NULL) a panel
+  int			addTab(iDataPanel* panel); //#IGNORE
+  int			insertTab(int idx, iDataPanel* panel); //#IGNORE
+  void 			setTabIcon(int idx, TabIcon ti);
+  void			SetPanel(int idx, iDataPanel* value, bool force = false); //#IGNORE set or remove (NULL) a panel
   
-  iTabView*	tabView() {return (iTabView*)parent();}
   iTabBar(iTabView* parent_ = NULL);
   ~iTabBar();
 protected:
@@ -1093,8 +1107,8 @@ public:
   virtual void		setCentralWidget(QWidget* widg); // sets the contents
   virtual bool		dirty() {return HasChanged();}
     // true if panel should not be replaced, but a new panel should be opened for the new item
-  virtual bool		lockInPlace() {return false;}
-    // true if panel should not be replaced or (except by user) unfocused
+  virtual bool		lockInPlace() const {return false;}
+    // true if panel should not be replaced 
   virtual String	panel_type() const {return _nilString;}
    //  this string is on the subpanel button for a panel (n/a to panelsets)
   virtual taiDataLink*	par_link() const = 0; // *current* visual parent link of this data panel; this could change dynamically, if a datapanel is shared across all referring instances, ex. link lists, references, etc. -- return NULL if unknown, not set, or not applicable -- controls things like clip enabling etc.
@@ -1103,9 +1117,11 @@ public:
   inline bool		rendered() const {return m_rendered;}
   void			setPinned(bool value);
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
+  iTabBar::TabIcon	tabIcon() const;
   iTabView*		tabView() {return m_tabView;} // tab view in which we are shown
   virtual iTabViewer* 	tabViewerWin() const = 0;
   iMainWindowViewer* 	viewerWindow() {return (m_tabView) ? m_tabView->viewerWindow() : NULL;}
+  virtual bool		isViewPanelFrame() const {return false;} // we group the vpf's to the right, all others to the left
 
 
   virtual void		Closing(CancelOp& cancel_op) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
@@ -1193,11 +1209,12 @@ class TA_API iViewPanelFrame: public iDataPanel {
 INHERITED(iDataPanel)
 public:
   taDataView*		dv() {return m_dv;} // can be statically replaced with subclass
-  override bool		lockInPlace() {return true;}
+  override bool		lockInPlace() const {return true;}
     // true if panel should not be replaced, ex. if dirty, or viewpanel
   override taiDataLink*	par_link() const {return NULL;} // n/a
   override MemberDef*	par_md() const {return NULL;}
   override iTabViewer* tabViewerWin() const;
+  override bool		isViewPanelFrame() const {return true;}
 
 
   virtual void		InitPanel(); // called on structural changes

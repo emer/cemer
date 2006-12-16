@@ -227,11 +227,12 @@ friend class iDialog;
 public:
   enum Dlg_State {
     EXISTS		= 0x01,
-    CONSTRUCTED		= 0x02,
-    ACTIVE		= 0x03,
-    ACCEPTED		= 0x04,
-    CANCELED		= 0x05,
-    ZOMBIE		= 0x06, // for when gui stuff deleted before we did
+    DEFERRED1, // only the first part of entire construction
+    CONSTRUCTED,
+    ACTIVE,
+    ACCEPTED,
+    CANCELED,
+    ZOMBIE, // for when gui stuff deleted before we did
     STATE_MASK		= 0x0F, // #NO_SHOW
     SHOW_CHANGED	= 0x80	// #NO_SHOW flag to indicate what to show was changed, reconstruct!
   };
@@ -265,18 +266,19 @@ public:
 
 
   QVBoxLayout*	vblDialog;	// layout for the entire dialog -- stacked/nested as follows:
-    QLabel*	prompt;		// informative message at top of dialog
-    QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
-      QScrollArea*	scrBody;		// scrollbars for the body items
-      QGridLayout* 	layBody;	// layout for the body -- deleted/reconstructed when show changes
-        QWidget*	body;		// parent for the body items (actually an iStripeWidget)
-    QFrame*	frmMethButtons;	// method buttons -- in body for dialogs, in outer panel for panel
-      iFlowLayout*	layMethButtons;	// method buttons
-    QHBoxLayout*	hblButtons;	// box of buttons on the bottom of the dialog
-      HiLightButton* 	okbut; // is HilightButton for the special mouse button handling
-      HiLightButton* 	canbut;// is HilightButton for the special mouse button handling
-      HiLightButton*	apply_but;	// only use for dialogs that wait around
-      HiLightButton*	revert_but;
+  QLabel*	prompt;		// informative message at top of dialog
+  QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
+  QScrollArea*	  scrBody;		// scrollbars for the body items
+  QGridLayout* 	  layBody;	// layout for the body -- deleted/reconstructed when show changes
+  QWidget*	    body;		// parent for the body items (actually an iStripeWidget)
+  QFrame*	frmMethButtons;	// method buttons -- in body for dialogs, in outer panel for panel
+  iFlowLayout*	layMethButtons;	// method buttons
+  QWidget*	widButtons; // box of buttons on the bottom of the dialog
+  QHBoxLayout*	layButtons;	
+  HiLightButton*  okbut; // is HilightButton for the special mouse button handling
+  HiLightButton*  canbut;// is HilightButton for the special mouse button handling
+  HiLightButton*  apply_but;	// only use for dialogs that wait around
+  HiLightButton*  revert_but;
 
 
   iColor* 		bg_color;	// background color of host -- only set via setBgColor
@@ -288,6 +290,7 @@ public:
     // 'true' when shown in a control
   virtual void	setBgColor(const iColor* new_bg); // #SET_bg_color
   virtual const iColor* 	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
+  inline bool		showMethButtons() const {return show_meth_buttons;} // true if any are created
   QWidget* 	widget() {return mwidget;}
 
   taiDataHost(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
@@ -296,8 +299,9 @@ public:
   void		ClearBody();	// prepare dialog for rebuilding Body to show new contents
 
   void  Constr(const char* prompt = "", const char* win_title = "",
-    const iColor* bgcol = NULL, HostType host_type = HT_DIALOG);
+    const iColor* bgcol = NULL, HostType host_type = HT_DIALOG, bool deferred = false);
     //NOTE: if built with as_panel=true, then must only be a panel, not dialog, and viceversa
+  void  ConstrDeferred(); // finish deferred construction
   virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iDialog
   virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
   virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call
@@ -343,7 +347,7 @@ public slots:
 protected:
   iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
   bool			modified;
-  bool			showMethButtons; // true if any are created
+  bool			show_meth_buttons; // true if any are created
   QWidget*		mwidget;	// outer container for all widgets
   iDialog*		dialog; // dialog, when using Edit, NULL otherwise
   HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
@@ -363,6 +367,10 @@ protected:
   void		SetMultiSize(int rows, int cols) {} // implemented in gpiMultiEditHost
   virtual void	ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
   virtual void	Constr_Strings(const char* prompt="", const char* win_title=""); // called by static Constr
+  virtual void  Constr_Methods(); // creates the box for buttons
+  virtual void	Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
+  virtual void	Constr_ShowMenu() {} // make the show/hide menu
+  virtual void 	Constr_RegNotifies() {} // register notify on taBase
   virtual void Constr_impl();
   // called in following order by Constr_impl
   virtual void	Constr_WinName();
@@ -370,7 +378,7 @@ protected:
   virtual void	Constr_Prompt();
   virtual void  Constr_Box();
   virtual void	Constr_Body();
-  virtual void  Constr_Methods(); // creates the box for buttons
+  virtual void  Insert_Methods(); // insert the menu and methods, if made, and not owned elsewise
   virtual void	Constr_Buttons(); // note: Constr_impl creates the box/layout for the buttons
   virtual void	Constr_Final();
   virtual void	FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id); // last_id enables access menu items
@@ -460,6 +468,7 @@ protected:
 
   override void		InitGuiFields(bool virt = true);
   void			setShowValues(taMisc::ShowMembs value);
+  override void		Constr_Methods_impl();
   override void		ClearBody_impl();
   override void		Constr_Strings(const char* prompt, const char* win_title);
   override void		Constr_Body();    // construct the data of the dialog
@@ -468,13 +477,14 @@ protected:
   virtual void 		Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
   virtual void		Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl = NULL); //dl non-null enables label-buddy linking
   virtual void		Constr_Data_impl(const MemberSpace& ms, taiDataList* dl);
-  override void		Constr_Methods(); // construct the methods (buttons and menus)
-  virtual void		Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
   void			Constr_MethButtons();
-  virtual void		Constr_ShowMenu(); // make the show/hide menu
+  override void		Constr_ShowMenu(); // make the show/hide menu
+  override void 	Constr_RegNotifies();
   override void		Constr_Final();
   override void		FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id);
   virtual void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
+  virtual void		GetImage_Membs(); // for overridding
+  virtual void		GetValue_Membs(); 
   virtual void		GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
   virtual void		GetImageInline_impl(const void* base);
   virtual void		GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const;

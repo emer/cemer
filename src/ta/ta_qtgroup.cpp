@@ -1279,7 +1279,7 @@ void gpiListDataHost::Constr_ListLabels() {
   }
 }
 
-void gpiListDataHost::GetValue() {
+void gpiListDataHost::GetValue_Membs() {
   bool rebuild = false;
   if (lst_data_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
@@ -1307,11 +1307,9 @@ void gpiListDataHost::GetValue() {
   }
   cur_lst->UpdateAfterEdit();	// call here too!
   taiMisc::Update((TAPtr)cur_lst);
-  GetButtonImage();
-  Unchanged();
 }
 
-void gpiListDataHost::GetImage() {
+void gpiListDataHost::GetImage_Membs() {
   bool rebuild = false;
   if (lst_data_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
@@ -1345,7 +1343,6 @@ void gpiListDataHost::GetImage() {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
     GetImage_impl(lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
   }
-  Unchanged();
 }
 /* TODO
 int gpiListDataHost::Edit() {
@@ -1440,7 +1437,7 @@ void gpiCompactListDataHost::Constr_ListData() {
   }
 }
 
-void gpiCompactListDataHost::GetValue() {
+void gpiCompactListDataHost::GetValue_Membs() {
   bool rebuild = false;
   if (lst_data_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
@@ -1468,11 +1465,9 @@ void gpiCompactListDataHost::GetValue() {
   }
   cur_lst->UpdateAfterEdit();	// call here too!
   taiMisc::Update((TAPtr)cur_lst);
-  GetButtonImage();
-  Unchanged();
 }
 
-void gpiCompactListDataHost::GetImage() {
+void gpiCompactListDataHost::GetImage_Membs() {
   bool rebuild = false;
   if (lst_data_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
@@ -1496,7 +1491,6 @@ void gpiCompactListDataHost::GetImage() {
     gpiCompactList_ElData* lf_el = lst_data_el.FastEl(lf);
     lf_el->typ->it->GetImage(lf_el->data_el, lf_el->cur_base);
   }
-  Unchanged();
 }
 /* TODO
 int gpiCompactListDataHost::Edit() {
@@ -1539,8 +1533,8 @@ bool gpiArrayEditDataHost::ShowMember(MemberDef* md) const {
     return inherited::ShowMember(md);
 }
 
-void gpiArrayEditDataHost::GetImage() {
-  taiEditDataHost::GetImage();
+void gpiArrayEditDataHost::GetImage_Membs() {
+  inherited::GetImage_Membs();
   taArray_base* cur_ary = (taArray_base*)cur_base;
   if (data_el.size != cur_ary->size + n_ary_membs) {
 return; //TEMP
@@ -1560,8 +1554,8 @@ return; //TEMP
   }
 }
 
-void gpiArrayEditDataHost::GetValue() {
-  taiEditDataHost::GetValue();
+void gpiArrayEditDataHost::GetValue_Membs() {
+  inherited::GetValue_Membs();
   taArray_base* cur_ary = (taArray_base*)cur_base;
   if (data_el.size != cur_ary->size + n_ary_membs) {
     taMisc::Error("Cannot apply changes: Array size has changed");
@@ -1597,7 +1591,7 @@ void gpiArrayEditDataHost::Constr_Data() {
 //  ary_data_g = new lrScrollBox;
 //  ary_data_g->naturalnum = 5;
 //  Constr_Data_impl(typ->members, data_el);
-  taiEditDataHost::Constr_Data();
+  inherited::Constr_Data();
   n_ary_membs = data_el.size;
   Constr_AryData();
 //  FocusOnFirst();
@@ -1686,7 +1680,7 @@ void gpiSelectEditDataHost::ClearBody_impl() {
 //  meth_el.Reset(); // must defer deletion of these, because the MethodData objects are used in menu calls, so can't be
   layMethButtons = NULL;
   DeleteChildrenLater(frmMethButtons);
-  showMethButtons = false;
+  show_meth_buttons = false;
 
   // note: no show menu in this class
   cur_menu = NULL;
@@ -1727,12 +1721,12 @@ void gpiSelectEditDataHost::Constr_Body() {
   // we deleted the normally not-deleted methods, so redo them here
   if (rebuild_body) {
     Constr_Methods();
-    frmMethButtons->setHidden(!showMethButtons);
+    frmMethButtons->setHidden(!showMethButtons());
   }
 }
 
 void gpiSelectEditDataHost::Constr_Methods() {
-  taiEditDataHost::Constr_Methods();
+  inherited::Constr_Methods();
   QMenu* mnuRemoveMethod_menu = new QMenu();
   QMenu* mnuRemoveMethod_menu_but = new QMenu();
   QMenu* mnuRemoveMethod_but = new QMenu();
@@ -1822,10 +1816,9 @@ QMenu* gpiSelectEditDataHost::FindMenuItem(QMenu* par_menu, const char* label) {
   return NULL;
 }
 
-void gpiSelectEditDataHost::GetValue() {
+void gpiSelectEditDataHost::GetValue_Membs() {
   GetValue_impl(typ->members, data_el, cur_base);
   sele->UpdateAllBases();
-  Unchanged();
 }
 
 void gpiSelectEditDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,

@@ -10,5 +10,8 @@
   <file>images/fileopen.png</file>
   <file>images/fileprint.png</file>
   <file>images/filesave.png</file>
+  <file>images/tab_unpushed.png</file>
+  <file>images/tab_pushed.png</file>
+  <file>images/tab_locked.png</file>
 </qresource>
 </RCC>

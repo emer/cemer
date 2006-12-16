@@ -3296,6 +3296,15 @@ void iMainWindowViewer::windowActivationChange(bool oldActive) {
 // 	iTabBar 	//
 //////////////////////////
 
+QIcon* iTabBar::tab_icon[iTabBar::TI_LOCKED + 1]; 
+
+void iTabBar::InitClass() {
+  // load pushpin icons
+  tab_icon[TI_UNPINNED] = new QIcon(":/images/tab_unpushed.png");
+  tab_icon[TI_PINNED] = new QIcon(":/images/tab_pushed.png");
+  tab_icon[TI_LOCKED] = new QIcon(":/images/tab_locked.png");
+}
+
 iTabBar::iTabBar(iTabView* parent_)
 :QTabBar((QWidget*)parent_)
 {
@@ -3306,6 +3315,13 @@ iTabBar::iTabBar(iTabView* parent_)
 }
 
 iTabBar::~iTabBar() {
+}
+
+int iTabBar::addTab(iDataPanel* panel) {
+  int idx = QTabBar::addTab("");
+  setTabData(idx, QVariant((ta_intptr_t)0)); // set to valid null value
+  SetPanel(idx, panel);
+  return idx;
 }
 
 void iTabBar::contextMenuEvent(QContextMenuEvent * e) {
@@ -3322,31 +3338,18 @@ void iTabBar::contextMenuEvent(QContextMenuEvent * e) {
   delete menu;
 }
 
+int iTabBar::insertTab(int idx, iDataPanel* panel) {
+  idx = inherited::insertTab(idx, ""); // idx result is normally the same
+  setTabData(idx, QVariant((ta_intptr_t)0)); // set to valid null value
+  SetPanel(idx, panel);
+  return idx;
+}
+
 void iTabBar::mousePressEvent(QMouseEvent* e) {
   QTabBar::mousePressEvent(e);
   if (tabView()->m_viewer_win)
     tabView()->m_viewer_win->TabView_Selected(tabView());
 }
-/*
- void iTabBar::paint(QPainter* p, QTab* t, bool selected ) const {
-TODO: hangs in here  iDataPanel* panel = ((iPanelTab*)t)->panel();
-  const iColor* bc = NULL;
-  if (panel != NULL) bc = panel->GetTabColor(selected);
-  if (bc != NULL) {
-    QPalette pal = QPalette(defPalette);
-    if (selected) {
-      pal.setColor(QPalette::Active, QColorGroup::Background, *bc);
-      pal.setColor(QPalette::Inactive, QColorGroup::Background, *bc); //for when window is not active
-    } else {
-      pal.setColor(QPalette::Active, QColorGroup::Button, *bc);
-      pal.setColor(QPalette::Inactive, QColorGroup::Button, *bc);
-    }
-    ((QTabBar*)this)->setPalette(pal);
-//found to hang on this line:    QTabBar::paint(p, t, selected);
-    ((QTabBar*)this)->setPalette(defPalette);
-  } else 
-    QTabBar::paint(p, t, selected);
-}*/
 
 iDataPanel* iTabBar::panel(int idx) {
   QVariant data(tabData(idx)); // returns NULL variant if out of range
@@ -3356,11 +3359,14 @@ iDataPanel* iTabBar::panel(int idx) {
   
 }
 
-int iTabBar::addTab(iDataPanel* panel) {
-  int idx = QTabBar::addTab("");
-  setTabData(idx, QVariant((ta_intptr_t)0)); // set to valid null value
-  SetPanel(idx, panel);
-  return idx;
+void iTabBar::setTabIcon(int idx, TabIcon ti) {
+  QIcon* ico = NULL;
+  if (ti != TI_NONE)
+    ico = tab_icon[ti];
+  if (ico) 
+    inherited::setTabIcon(idx, *ico);
+  else
+    inherited::setTabIcon(idx, QIcon());
 }
 
 void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
@@ -3373,11 +3379,13 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   m_panel = value;
   if (m_panel) {
     setTabText(idx, m_panel->TabText());
+    setTabIcon(idx, m_panel->tabIcon());
 //    m_panel->mtab_cnt++;
     // make sure we show latest data (helps in case there are "holes" in data updating)
     m_panel->GetImage();
   } else {
     setTabText(idx, "");
+    setTabIcon(idx, TI_NONE); // no icon
   }
   data = (ta_intptr_t)m_panel;
   setTabData(idx, data);
@@ -3478,11 +3486,24 @@ void iTabView::AddPanel(iDataPanel* panel) {
 
 void iTabView::AddPanelNewTab(iDataPanel* panel) {
   AddPanel(panel);
-  int id = tbPanels->addTab(panel);
+  int id;
+  //viewframes get added at end, others before
+  if (panel->isViewPanelFrame())
+    id = tbPanels->addTab(panel);
+  else {
+    int idx = 0;
+    while (idx < panels.size) {
+      iDataPanel* tpan = panels.FastEl(idx);
+      if (tpan->isViewPanelFrame()) break; // found 1st guy
+      ++idx;
+    }
+    id = tbPanels->insertTab(idx, panel);
+  }
   SetCurrentTab(id);
 }
 
 void iTabView::AddTab(int tab) {
+//FIXME: need to do the funky view/non-view insert business
   iDataPanel* pan = NULL;
   if (tab < 0) tab = tbPanels->currentIndex();
   if (tab >= 0)
@@ -3512,7 +3533,7 @@ void iTabView::Closing(CancelOp& cancel_op) {
     if (cancel_op == CO_CANCEL) return; // can stop now
 
     RemoveDataPanel(panel); // note: removes from tabs, and deletes tabs
-  }
+  }TODO
 }
 
 iDataPanel* iTabView::curPanel() const {
@@ -3521,7 +3542,7 @@ iDataPanel* iTabView::curPanel() const {
 }
 
 void iTabView::DataPanelDestroying(iDataPanel* panel) {
-  RemoveDataPanel(panel);
+  RemoveDataPanel(panel);TODO
 }
 
 void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
@@ -3536,6 +3557,7 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   contextMenu->addAction(act);
   act->setEnabled(tab_idx >= 0);
   // pinning/unpinning only if not lockInPlace guy
+//FIXME: the tab_idx is NOT the panel index!!! that is why we get the wrong panel!
   if (tab_idx < 0) return;
   iDataPanel* dp = panel(tab_idx);
   if (!dp || dp->lockInPlace()) return;
@@ -3544,7 +3566,7 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
     act = new taiAction("&Unpin",  dp, SLOT(Unpin()), CTRL+ALT+Key_U );
   } else {
     act = new taiAction("&Pin in place",  dp, SLOT(Pin()), CTRL+ALT+Key_P );
-  }
+  }TODO
   act->setParent(contextMenu);
   contextMenu->addAction(act);
 }
@@ -3556,7 +3578,7 @@ iDataPanel* iTabView::panel(int idx) {
 int iTabView::panel_count() {
   return panels.size;
 }
-
+TODO
 iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   iDataPanel* rval;
   for (int i = 0; i < panels.size; ++i) {
@@ -3700,6 +3722,7 @@ void iTabView::UpdateTabNames() { // called by a datalink when a tab name might 
     iDataPanel* pan = tbPanels->panel(i);
     if (pan == NULL) continue; // shouldn't happen...
     tbPanels->setTabText(i, pan->TabText());
+    tbPanels->setTabIcon(i,  pan->tabIcon());
   }
 }
 
@@ -3777,11 +3800,19 @@ void iDataPanel::setCentralWidget(QWidget* widg) {
 void iDataPanel::setPinned(bool value) {
   if (m_pinned == value) return;
   m_pinned = value; // no action needed... "pinned is just a state of mind"
+  if (tabView())
+    tabView()->UpdateTabNames(); //updates the icons
 }
 
 void iDataPanel::showEvent(QShowEvent* ev) {
   if (!m_rendered) Render();
   inherited::showEvent(ev);
+}
+
+iTabBar::TabIcon iDataPanel::tabIcon() const {
+  if (lockInPlace()) return iTabBar::TI_LOCKED;
+  else if (pinned()) return iTabBar::TI_PINNED;
+  else return iTabBar::TI_UNPINNED;
 }
 
 String iDataPanel::TabText() const {

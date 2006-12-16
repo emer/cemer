@@ -210,7 +210,7 @@ int cssiEditDialog::Edit(bool modal_) {
   return taiEditDataHost::Edit(modal_);
 }
 
-void cssiEditDialog::GetValue() {
+void cssiEditDialog::GetValue_Membs() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
     taiData* mb_dat = data_el.FastEl(i);
@@ -218,16 +218,14 @@ void cssiEditDialog::GetValue() {
     cit->orig_obj->UpdateAfterEdit();
   }
   obj->UpdateAfterEdit();
-  Unchanged();
 }
 
-void cssiEditDialog::GetImage() {
+void cssiEditDialog::GetImage_Membs() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
     taiData* mb_dat = data_el.FastEl(i);
     cit->GetImage(mb_dat);
   }
-  Unchanged();
 }
 
 cssiType* cssiEditDialog::GetTypeFromEl(cssEl* el, bool read_only) {

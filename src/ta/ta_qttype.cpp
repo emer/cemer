@@ -865,11 +865,11 @@ EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
 {
   taiEditDataHost* host = CreateDataHost(base, read_only);
   if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
-  host->Constr("", "", bgcol, taiDataHost::HT_PANEL);
-  return host->EditPanel(link); 
-//nuke  EditDataPanel* rval = host->EditPanelDeferred(link);
-//nuke  rval->bgcol = const_cast<iColor*>(bgcol); // ok to cast away constness
-//nuke  return rval;
+//  host->Constr("", "", bgcol, taiDataHost::HT_PANEL);
+//  return host->EditPanel(link); 
+  host->Constr("", "", bgcol, taiDataHost::HT_PANEL, true);
+  EditDataPanel* rval = host->EditPanelDeferred(link);
+  return rval;
 }
 
 EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
@@ -2853,6 +2853,7 @@ iDataPanel* tabViewType::CreateDataPanel(taiDataLink* dl_) {
     // move the menu -- note: QMenu on linux/win, QToolBar on mac
     m_dps->SetMenu(edh->menu->GetRep());
     m_dps->SetMethodBox(edh->frmMethButtons);
+    edh->frmMethButtons->setVisible(edh->showMethButtons());
   }
   return rval;
 }
