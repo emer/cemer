@@ -1,5 +1,10 @@
 leabra todo list:
 
+* netview: layer line width needs to scale w/ units, always be outside them.
+  add key text
+  prjns not using cap loc, need to also scale with max?  sqrt?  smaller overall?
+    nlayers?
+
 * v3convert: end up with 2 bias.unit links from copy op?
 
 * css: p voidfun = crash; bindargs seems to not be getting the void??

@@ -1025,6 +1025,20 @@ void DataTable::RemoveRow(int row) {
   DataUpdate(false);
 }
 
+bool DataTable::DuplicateRow(int row_no, int n_copies) {
+  if(row_no >= rows) return false;
+  StructUpdate(true);
+  for(int k=0;k<n_copies;k++) {
+    AddBlankRow();
+    for(int j=0;j<data.size;j++) {
+      DataArray_impl* sda = data[j];
+      sda->CopyFromRow(-1, *sda, row_no);
+    }
+  }
+  StructUpdate(false);
+  return true;
+}
+
 bool DataTable::RowInRangeNormalize(int& row) {
   if (row < 0) row = rows + row;
   return ((row >= 0) && (row < rows));

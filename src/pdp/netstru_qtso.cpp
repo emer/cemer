@@ -96,16 +96,6 @@
 #include <float.h>
 //nn #include <unistd.h>
 
-// netview stuff
-const float NET_VIEW_INITIAL_X = 330.0f;
-const float NET_VIEW_INITIAL_Y = 300.0f;
-const float NET_VIEW_X_MARG = 8.0f;
-const float NET_VIEW_Y_MARG = 16.0f;
-
-// projection_g stuff
-const float SELF_CON_DIST = .03f;
-
-#define DIST(x,y) sqrt((double) ((x * x) + (y*y)))
 /*
 //////////////////////////////////
 //	  netstru.h		//
@@ -286,17 +276,24 @@ NetView* UnitView::nv() {
 
 void UnitView::Render_pre() {
   NetView* nv = this->nv();
+  Network* net = nv->net();
+  float max_x = net->max_size.x;
+  float max_y = net->max_size.y;
+  float max_z = net->max_size.z;
+
   switch (nv->unit_disp_mode) {
-  case NetView::UDM_CIRCLE: 	m_node_so = new T3UnitNode_Circle(this); break;
-  case NetView::UDM_RECT: 	m_node_so = new T3UnitNode_Rect(this); break;
-  case NetView::UDM_BLOCK: 	m_node_so = new T3UnitNode_Block(this); break;
-  case NetView::UDM_CYLINDER: 	m_node_so = new T3UnitNode_Cylinder(this); break;
+  case NetView::UDM_CIRCLE: 	m_node_so = new T3UnitNode_Circle(this, max_x, max_y, max_z); break;
+  case NetView::UDM_RECT: 	m_node_so = new T3UnitNode_Rect(this, max_x, max_y, max_z); break;
+  case NetView::UDM_BLOCK: 	m_node_so = new T3UnitNode_Block(this, max_x, max_y, max_z); break;
+  case NetView::UDM_CYLINDER: 	m_node_so = new T3UnitNode_Cylinder(this, max_x, max_y, max_z); break;
   }
 
   Unit* unit = this->unit(); //cache
   // note: pos s/b invariant
-  node_so()->transform()->translation.setValue(
-    (float)(unit->pos.x) + 0.5f, 0.0f, -((float)(unit->pos.y) + 0.5f));
+  node_so()->transform()->translation.setValue
+    ((float)(unit->pos.x + 0.5f) / max_x,
+     0.0f,
+     -((float)(unit->pos.y + 0.5f) / max_y));
   inherited::Render_pre();
 }
 
@@ -493,6 +490,9 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
 
 void UnitGroupView::Render_pre() {
   Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = ugrp->own_lay;
+  Network* net = lay->own_net;
+
   AllocUnitViewData();
   m_node_so = new T3UnitGroupNode(this);
   //NOTE: we create/adjust the units in the Render_impl routine
@@ -503,17 +503,23 @@ void UnitGroupView::Render_pre() {
 //  mat->transparency.setValue(0.5f);
 
   // TODO: if not built, then use geom from layer
-  ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y);
+  ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, net->max_size.x,
+		   net->max_size.y, net->max_size.z);
 
   inherited::Render_pre();
 }
 
 void UnitGroupView::Render_impl() {
   Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = ugrp->own_lay;
+  Network* net = lay->own_net;
+
   //set origin: 0,0,0
   TDCoord& pos = ugrp->pos;
   FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ(pos.x, pos.z, -pos.y);
+  ft->translate.SetXYZ((float)pos.x / (float)net->max_size.x,
+		       (float)pos.z / (float)net->max_size.z,
+		       (float)-pos.y / (float)net->max_size.y);
 
   inherited::Render_impl();
 }
@@ -545,6 +551,7 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
 
 void UnitGroupView::Render_impl_children() {
   NetView* nv = this->nv(); //cache
+  Network* net = nv->net();
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
   //TODO: summary view
@@ -558,8 +565,10 @@ void UnitGroupView::Render_impl_children() {
   // if displaying unit text, set up the viewing props in the unitgroup
   if (nv->unit_text_disp != NetView::UTD_NONE) {
     SoFont* font = node_so->unitCaptionFont(true);
-    font->size.setValue(0.2f); // is in same units as geometry units of network
+    font->size.setValue(0.02f); // is in same units as geometry units of network
   }
+
+  float max_z = (float)net->max_size.z;
 
   for (int i = 0; i < children.size; ++i) {
     UnitView* uv = (UnitView*)children.FastEl(i);
@@ -568,7 +577,7 @@ void UnitGroupView::Render_impl_children() {
     if (!unit_so || !unit) continue; // shouldn't happen
     nv->GetUnitDisplayVals(this, unit->pos, val, col);
     // Value
-    unit_so->setAppearance(val, col);
+    unit_so->setAppearance(val, col, max_z);
     //TODO: we maybe shouldn't alter picked here, because that is expensive -- do only when select changes
     // except that might be complicated, ex. when Render() called,
     unit_so->setPicked(uv->picked);
@@ -733,10 +742,11 @@ void LayerView::DoHighlightColor(bool apply) {
   
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
-    mat->diffuseColor.setValue(m_hcolor); // gray
+    mat->diffuseColor.setValue(m_hcolor);
   } else {
-    mat->diffuseColor.setValue(0.4f, 0.4f, 0.4f); // gray
+    mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // cyan
   }
+  mat->transparency.setValue(0.5f);
 } 
 
 void LayerView::Render_pre() {
@@ -748,14 +758,20 @@ void LayerView::Render_pre() {
 
 void LayerView::Render_impl() {
   Layer* lay = this->layer(); //cache
+  Network* net = lay->own_net;
   // set origin: 0,.5,0 in allocated area
   TDCoord& pos = lay->pos;
   FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ(pos.x, (pos.z + 0.5f), -pos.y);
+  ft->translate.SetXYZ((float)pos.x / (float)net->max_size.x,
+		       (float)(pos.z + 0.5f) / (float)net->max_size.z,
+		       (float)-pos.y / (float)net->max_size.y);
 
   T3LayerNode* node_so = this->node_so(); // cache
-  node_so->setGeom(lay->act_geom.x, lay->act_geom.y);
+  node_so->setGeom(lay->act_geom.x, lay->act_geom.y, net->max_size.x,
+		   net->max_size.y, net->max_size.z);
   node_so->setCaption(data()->GetName().chars());
+  SoFont* font = node_so->captionFont(true);
+  font->size.setValue(0.05f); // is in same units as geometry units of network
   inherited::Render_impl();
 }
 
@@ -803,6 +819,7 @@ void PrjnView::Render_impl() {
   Projection* prjn = this->prjn(); // cache
   Layer* lay_fr = prjn->from;
   Layer* lay_to = prjn->layer;
+  Network* net = lay_to->own_net;
 
   int rcv_num = lay_to->projections.FindLeafEl(prjn);
   int tot_num = lay_to->projections.leaves;
@@ -810,30 +827,30 @@ void PrjnView::Render_impl() {
 
   // origin is front center of origin layer, in Inventor coords
   FloatTDCoord src(
-    (lay_fr->pos.x + lay_fr->act_geom.x) / 2.0f,
-    (lay_fr->pos.z + 0.5f),
-    -((float)lay_fr->pos.y)
-  );
+		   (float)((lay_fr->pos.x + lay_fr->act_geom.x) / 2.0f) / (float)net->max_size.x,
+		   (float)(lay_fr->pos.z + 0.5f) / (float)net->max_size.z,
+		   -((float)lay_fr->pos.y / (float)net->max_size.y)
+		   );
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
 
   // dest is the equally spaced target front on dest
 //  float arr_h = 0.0f;
   FloatTDCoord dst(
-    (float)(lay_to->pos.x) + (rcv_num + 1.0f) * ((lay_to->act_geom.x) / (tot_num + 1.0f)),
-    (lay_to->pos.z + 0.5f),
-    -((float)lay_to->pos.y)
-  );
+		   (float)((lay_to->pos.x) + (rcv_num + 1.0f) * ((lay_to->act_geom.x) / (tot_num + 1.0f))) / (float)net->max_size.x,
+		   (float)(lay_to->pos.z + 0.5f) / (float)net->max_size.z,
+		   -((float)lay_to->pos.y / (float)net->max_size.y)
+		   );
 
   node_so->setEndPoint(SbVec3f(dst.x - src.x, dst.y - src.y, dst.z - src.z));
 
   // caption location is half way
-  FloatTDCoord cap((dst.x - src.x) / 2.0f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
+  FloatTDCoord cap((dst.x - src.x) / 4.0f, (dst.y - src.y) / 4.0f, (dst.z - src.z) / 4.0f);
 
   SoFont* font = node_so->captionFont(true);
-  font->size.setValue(0.1f); // is in same units as geometry units of network, smaller than most others
+  font->size.setValue(0.02f); // is in same units as geometry units of network, smaller than most others
   SbVec3f translate(cap.x + 0.05f, cap.y, cap.z);
   node_so->transformCaption(translate);
-  node_so->setCaption(data()->GetName().chars());
+  node_so->setCaption(prjn->name.chars());
 
 /* was
   float dist = src.Dist(dst);
@@ -1283,7 +1300,7 @@ void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
   T3NetNode* node_so = this->node_so(); //cache
   SoFont* font = node_so->captionFont(true);
-  font->size.setValue(0.4f); // is in same units as geometry units of network
+  font->size.setValue(0.05f); // is in same units as geometry units of network
   node_so->setCaption(data()->GetName().chars());
 
 //   if (!display || !net()->CheckBuild(true)) return; // no display, or needs to be built

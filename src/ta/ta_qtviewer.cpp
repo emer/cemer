@@ -3533,7 +3533,7 @@ void iTabView::Closing(CancelOp& cancel_op) {
     if (cancel_op == CO_CANCEL) return; // can stop now
 
     RemoveDataPanel(panel); // note: removes from tabs, and deletes tabs
-  }TODO
+  }//TODO
 }
 
 iDataPanel* iTabView::curPanel() const {
@@ -3542,7 +3542,7 @@ iDataPanel* iTabView::curPanel() const {
 }
 
 void iTabView::DataPanelDestroying(iDataPanel* panel) {
-  RemoveDataPanel(panel);TODO
+  RemoveDataPanel(panel);//TODO
 }
 
 void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
@@ -3566,7 +3566,7 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
     act = new taiAction("&Unpin",  dp, SLOT(Unpin()), CTRL+ALT+Key_U );
   } else {
     act = new taiAction("&Pin in place",  dp, SLOT(Pin()), CTRL+ALT+Key_P );
-  }TODO
+  }//TODO
   act->setParent(contextMenu);
   contextMenu->addAction(act);
 }
@@ -3578,7 +3578,7 @@ iDataPanel* iTabView::panel(int idx) {
 int iTabView::panel_count() {
   return panels.size;
 }
-TODO
+//TODO
 iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   iDataPanel* rval;
   for (int i = 0; i < panels.size; ++i) {

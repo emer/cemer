@@ -390,7 +390,7 @@ bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
   for(int i=0;i<src->rows;i++) {
-    for(int j=0;j<n_repl;j++) {
+    for(int k=0;k<n_repl;k++) {
       dest->AddBlankRow();
       for(int j=0;j<src->data.size;j++) {
 	DataArray_impl* sda = src->data[j];

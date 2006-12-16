@@ -751,7 +751,8 @@ void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in IfContinue in program:", program()->name, "condition expression is empty");
     rval = false;
   }
-  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<="))) {
+  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<=")
+				     || condition.contains("!="))) {
     if(!quiet) taMisc::CheckError("Error in IfContinue in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
     condition.gsub("=", "==");
     rval = false;
@@ -783,7 +784,8 @@ void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in IfBreak in program:", program()->name, "condition expression is empty");
     rval = false;
   }
-  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<="))) {
+  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<=")
+				     || condition.contains("!="))) {
     if(!quiet) taMisc::CheckError("Error in IfBreak in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
     condition.gsub("=", "==");
     rval = false;
@@ -815,7 +817,8 @@ void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in IfElse in program:", program()->name, "condition expression is empty");
     rval = false;
   }
-  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<="))) {
+  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<=")
+				     || condition.contains("!="))) {
     if(!quiet) taMisc::CheckError("Error in IfElse in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
     condition.gsub("=", "==");
     rval = false;

@@ -420,6 +420,8 @@ public:
   // #MENU #MENU_ON_Data #CAT_Rows Remove an entire row of data
 //TODO if needed:  virtual void	ShiftUp(int num_rows);
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
+  bool			DuplicateRow(int row_no, int n_copies=1);
+  // #MENU #CAT_Rows duplicate given row number, making given number of copies of it
   void			RemoveAllRows() { ResetData(); }
   // #CAT_Rows remove all of the rows, but keep the column structure
 

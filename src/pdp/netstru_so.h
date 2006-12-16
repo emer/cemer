@@ -67,9 +67,10 @@ public:
 
   static void		initClass();
 
-  virtual void		setAppearance(float act, const T3Color& color);  // act is -1:1
+  virtual void		setAppearance(float act, const T3Color& color, float max_z);
+  // act is -1:1; max_z is net->max_size.z
   virtual void 		setPicked(bool value);
-  T3UnitNode(void* dataView_ = NULL);
+  T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
 
 protected:
   void			setDefaultCaptionTransform(); // override, sets text justif and transform for 3D
@@ -94,8 +95,8 @@ public:
   void			getPos(int& x, int& y);
   void 			setPos(int x, int y); // set relative position within unitgroup
 
-  void			setAppearance(float act, const T3Color& color);  // act is 0-1
-  T3UnitNode(void* dataView_ = NULL);
+  void			setAppearance(float act, const T3Color& color, float max_z);  // act is 0-1
+  T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
 
 protected:
   ~T3UnitNode();
@@ -117,8 +118,8 @@ public:
 
   SoCylinder*		shape() {return shape_;}
 
-  void			setAppearance(float act, const T3Color& color); // override
-  T3UnitNode_Cylinder(void* dataView_ = NULL);
+  void			setAppearance(float act, const T3Color& color, float max_z); // override
+  T3UnitNode_Cylinder(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
 
 protected:
   ~T3UnitNode_Cylinder();
@@ -137,7 +138,7 @@ public:
 
   SoCylinder*		shape() {return shape_;}
 
-  T3UnitNode_Circle(void* dataView_ = NULL);
+  T3UnitNode_Circle(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
 
 protected:
 //  void			setDefaultCaptionTransform(); // override
@@ -161,8 +162,8 @@ public:
 
   SoCube*		shape() {return shape_;}
 
-  void			setAppearance(float act, const T3Color& color); // override
-  T3UnitNode_Block(void* dataView_ = NULL);
+  void			setAppearance(float act, const T3Color& color, float max_z); // override
+  T3UnitNode_Block(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
 
 protected:
   ~T3UnitNode_Block();
@@ -181,7 +182,7 @@ public:
 
   SoCube*		shape() {return shape_;}
 
-  T3UnitNode_Rect(void* dataView_ = NULL);
+  T3UnitNode_Rect(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
 
 protected:
 //  void			setDefaultCaptionTransform(); // override
@@ -213,13 +214,15 @@ public:
 //  void			addUnit(int x, int y); // remove all units
   SoFont*		unitCaptionFont(bool auto_create = false);
 
-  void 			setGeom(int px, int py); // sets (actual) geom of group; creates/positions units;
+  void 			setGeom(int px, int py, int max_x, int max_y, int max_z);
+  // sets (actual) geom of group; creates/positions units; setes max_size
   SoCube*		shape() {return shape_;}
 
   T3UnitGroupNode(void* dataView_ = NULL);
 
 protected:
   iVec2i		geom; //note, not a field
+  iVec3i		max_size; // maximum size of network x,y,z
   SoFont*		unitCaptionFont_;
   ~T3UnitGroupNode();
 
@@ -247,13 +250,15 @@ public:
 
   static void		initClass();
 
-  void 			setGeom(int px, int py); // sets (actual) geom of layer
+  void 			setGeom(int px, int py, int max_x, int max_y, int max_z);
+  // sets (actual) geom of layer
 //  SoCube*		shape() {return shape_;}
 
   T3LayerNode(void* dataView_ = NULL);
 
 protected:
   iVec2i		geom; //note, not a field
+  iVec3i		max_size; // maximum size of network x,y,z
   void			render(); // called after pos/geom changes
   ~T3LayerNode();
 
