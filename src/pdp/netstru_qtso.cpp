@@ -433,7 +433,8 @@ void UnitGroupView::Render_impl_children() {
     font->size.setValue(nv->font_sizes.unit);
   }
 
-  float max_z = nv->max_size.z;
+  float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
+  max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
   float trans = nv->view_params.unit_trans;
   float font_z = nv->font_sizes.unit*2.0f;
   float font_y = .45f / nv->max_size.y;

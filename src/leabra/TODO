@@ -1,8 +1,6 @@
 leabra todo list:
 
 * netview: 
-  add netvar text
-  prjns scale with max?  sqrt?  smaller overall? nlayers?
   get rid of crazy zmult stuff
   parameterize unit spacing: for large nets, small spacing is better..
   unit labels not in right place

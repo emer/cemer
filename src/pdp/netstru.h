@@ -1687,11 +1687,11 @@ public:
   // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
 
   virtual void	LayerZPos_Add(int add_to_z = 1);
-  // #MENU #MENU_SEP_BEFORE #CAT_Structure Add add_to_z to layer vertical positions in proportion to current positions:\n new layer.pos.z += layer.pos.z * add_to_z -- makes display look better \n -- negative values will subtract or compact the layers
+  // #CAT_Structure Add add_to_z to layer vertical positions in proportion to current positions:\n new layer.pos.z += layer.pos.z * add_to_z -- makes display look better \n -- negative values will subtract or compact the layers
   virtual void	LayerZPos_Unitize();
   // #CAT_Structure set layer z axis positions to unitary increments (0, 1, 2.. etc)
   virtual void	LayerZPos_Auto(float y_mult_factor = .5f);
-  // #MENU #CAT_Structure auto stretch out z positions in proportion to the maximum y axis size of the network
+  // #CAT_Structure auto stretch out z positions in proportion to the maximum y axis size of the network
 
   virtual void	Compute_LayerDistances();
   // #MENU #CONFIRM #CAT_Structure compute distances between layers and input/output layers

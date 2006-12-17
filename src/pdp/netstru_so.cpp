@@ -420,7 +420,8 @@ T3LayerNode::~T3LayerNode()
 void T3LayerNode::render() {
   float fx = (float)geom.x / max_size.x;
   float fy = (float)geom.y / max_size.y;
-  shape_->setDimensions(fx, fy, 0.05f / max_size.x, -0.05f / max_size.x);
+  float max_xy = MAX(max_size.x, max_size.y);
+  shape_->setDimensions(fx, fy, 0.05f / max_xy, -0.25f / max_xy);
   // note: LayerView already translates us up into vertical center of cell
   txfm_shape()->translation.setValue(fx/2.0f, 0.0f, -fy/2.0f);
 }

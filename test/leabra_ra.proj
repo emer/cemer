@@ -2614,19 +2614,19 @@ else min_cycles = network->min_cycles_phase2;
 	   el_def=0;
 	   LayerView @[0] {
 	    m_data=.projects[0].networks[0].layers[0]$46$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.07142857: z=0: }: };
 	   };
 	   LayerView @[1] {
 	    m_data=.projects[0].networks[0].layers[1]$47$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=3.5: z=0: }: };
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
 	   };
 	   LayerView @[2] {
 	    m_data=.projects[0].networks[0].layers[2]$48$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=6.5: z=0: }: };
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.9285714: z=0: }: };
 	   };
 	   PrjnView @[3] {
 	    m_data=.projects[0].networks[0].layers[1].projections[0]$49$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=0.5: z=-0: }: };
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.5: y=0.07142857: z=-0: }: };
 	    children {
 	     name=;
 	     el_typ=T3DataView;
@@ -2635,7 +2635,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	   PrjnView @[4] {
 	    m_data=.projects[0].networks[0].layers[1].projections[1]$50$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=6.5: z=-0: }: };
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.5: y=0.9285714: z=-0: }: };
 	    children {
 	     name=;
 	     el_typ=T3DataView;
@@ -2644,7 +2644,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	   PrjnView @[5] {
 	    m_data=.projects[0].networks[0].layers[2].projections[0]$51$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.5: y=3.5: z=-0: }: };
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.5: y=0.5: z=-0: }: };
 	    children {
 	     name=;
 	     el_typ=T3DataView;
@@ -2677,6 +2677,23 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  ordered_uvg_list{ 8;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
+	  max_size {x=5: y=5: z=7: };
+	  font_sizes {
+	   net_name=0.05;
+	   net_vals=0.05;
+	   layer=0.04;
+	   layer_vals=0.03;
+	   prjn=0.01;
+	   unit=0.02;
+	  };
+	  view_params {
+	   xy_square=0;
+	   unit_spacing=0.05;
+	   prjn_width=0.001;
+	   prjn_trans=0.5;
+	   lay_trans=0.5;
+	   unit_trans=0;
+	  };
 	 };
 	};
        };
@@ -2963,7 +2980,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     LeabraLayer @[1] {
      name="Hidden";
      layer_type=HIDDEN;
-     pos {x=0: y=0: z=3: };
+     pos {x=0: y=0: z=1: };
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
@@ -3069,7 +3086,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     LeabraLayer @[2] {
      name="Output";
      layer_type=TARGET;
-     pos {x=0: y=0: z=6: };
+     pos {x=0: y=0: z=2: };
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
@@ -3174,7 +3191,23 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    lay_layout=THREE_D;
    n_units=75;
    n_cons=1875;
-   max_size {x=5: y=5: z=7: };
+   max_size {x=5: y=5: z=3: };
+   font_sizes {
+    net_name=0.05;
+    net_vals=0.05;
+    layer=0.04;
+    layer_vals=0.03;
+    prjn=0.01;
+    unit=0.02;
+   };
+   view_params {
+    xy_square=0;
+    unit_spacing=0.05;
+    prjn_width=0.001;
+    prjn_trans=0.5;
+    lay_trans=0.5;
+    unit_trans=0;
+   };
    phase_order=MINUS_PLUS;
    no_plus_test=1;
    trial_init=DECAY_STATE;
