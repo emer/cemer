@@ -4312,16 +4312,16 @@ void Layer::DMem_SyncAct() {
 void NetViewFontSizes::Initialize() {
   net_name = .05f;
   net_vals = .05f;
-  layer = .05f;
-  layer_vals = .04f;
-  prjn = .02f;
+  layer = .04f;
+  layer_vals = .03f;
+  prjn = .01f;
   unit = .02f;
 }
 
 void NetViewParams::Initialize() {
-  xy_square = true;
-  unit_spacing = .01f;
-  prjn_width = .005f;
+  xy_square = false;
+  unit_spacing = .05f;
+  prjn_width = .001f;
   prjn_trans = .5f;
   lay_trans = .5f;
   unit_trans = 0.0f;

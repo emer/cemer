@@ -352,6 +352,7 @@ SoFont* T3NodeParent::captionFont(bool auto_create) {
   if (!rval && auto_create) {
     rval = new SoFont();
     rval->setName("captionFont");
+    rval->name = "Arial";
     insertChildAfter(ts, rval, shapeSeparator());
   }
   return rval;
