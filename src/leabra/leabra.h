@@ -1854,15 +1854,15 @@ public:
   StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
   FirstPlusdWt	first_plus_dwt;	// #CONDEDIT_ON_phase_order:MINUS_PLUS_PLUS #CAT_Learning how to change weights on first plus phase if 2 plus phases (applies only to standard leabralayer specs -- others must decide on their own!)
 
-  Phase		phase;		// #GUI_READ_ONLY #SHOW #CAT_Counter type of settling phase
-  int		phase_no;	// #GUI_READ_ONLY #SHOW #CAT_Counter phase as an ordinal number (regular phase is Phase enum)
+  Phase		phase;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase
+  int		phase_no;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW phase as an ordinal number (regular phase is Phase enum)
   int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
 
   int		cycle_max;	// #DEF_60 #CAT_Counter maximum number of cycles to settle for
   int		min_cycles;	// #DEF_15 #CAT_Counter minimum number of cycles to settle for
   int		min_cycles_phase2; // #DEF_35 #CAT_Counter minimum number of cycles to settle for in second phase
 
-  float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic cycles to settle in the minus phase -- this is the typical settling time statistic to record
+  float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
   float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
   float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
   int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
@@ -1871,12 +1871,12 @@ public:
   bool		send_delta;	// #DEF_false #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
 
   float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
-  float		maxda;		// #GUI_READ_ONLY #SHOW maximum #CAT_Statistic change in activation (delta-activation) over network; used in stopping settling
+  float		maxda;		// #GUI_READ_ONLY #SHOW maximum #CAT_Statistic #VIEW change in activation (delta-activation) over network; used in stopping settling
 
   float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
   float		trg_max_act;	// #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
 
-  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic external reward value (on this trial)
+  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial)
   float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
   float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
   int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch

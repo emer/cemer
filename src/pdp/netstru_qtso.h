@@ -398,6 +398,7 @@ protected:
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
+  void			Render_net_text();
   override void		Reset_impl(); // #IGNORE
   void 			UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void			viewWin_NotifySignal(ISelectableHost* src, int op);

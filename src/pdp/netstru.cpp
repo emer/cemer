@@ -4311,7 +4311,7 @@ void Layer::DMem_SyncAct() {
 
 void NetViewFontSizes::Initialize() {
   net_name = .05f;
-  net_vals = .04f;
+  net_vals = .05f;
   layer = .05f;
   layer_vals = .04f;
   prjn = .02f;
@@ -4324,7 +4324,7 @@ void NetViewParams::Initialize() {
   prjn_width = .005f;
   prjn_trans = .5f;
   lay_trans = .5f;
-  unit_trans = .9f;
+  unit_trans = 0.0f;
 }
 
 void Network::Initialize() {

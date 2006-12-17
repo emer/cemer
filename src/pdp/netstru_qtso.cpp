@@ -86,6 +86,7 @@
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
 //temp
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
@@ -434,6 +435,9 @@ void UnitGroupView::Render_impl_children() {
 
   float max_z = nv->max_size.z;
   float trans = nv->view_params.unit_trans;
+  float font_z = nv->font_sizes.unit*2.0f;
+  float font_y = .45f / nv->max_size.y;
+  SbVec3f font_xform(0.0f, font_z, font_y);
 
   for (int i = 0; i < children.size; ++i) {
     UnitView* uv = (UnitView*)children.FastEl(i);
@@ -453,11 +457,12 @@ void UnitGroupView::Render_impl_children() {
       if (at)
         at->string.setValue( "");
     } else { // text of some kind
+      unit_so->transformCaption(font_xform);
       if (nv->unit_text_disp & NetView::UTD_VALUES) {
         ValToDispText(val, val_str);
       }
       if (!at) // force captionNode creation
-         at = unit_so->captionNode(true);
+	at = unit_so->captionNode(true);
       SoMFString* mfs = &(at->string);
       // fastest is to do each case in one operation
       switch (nv->unit_text_disp) {
@@ -1182,10 +1187,69 @@ void NetView::Render_pre() {
 
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
+  GetMaxSize();
   T3NetNode* node_so = this->node_so(); //cache
   node_so->resizeCaption(font_sizes.net_name);
   node_so->setCaption(data()->GetName().chars());
-  GetMaxSize();
+
+  Render_net_text();
+
+  inherited::Render_impl();
+  taiMisc::RunPending();
+}
+
+void NetView::Render_net_text() {
+  T3NetNode* node_so = this->node_so(); //cache
+
+  bool build_text = false;
+  SoSeparator* net_txt = node_so->netText();
+  if(!net_txt) {
+    net_txt = node_so->getNetText();
+    build_text = true;
+    node_so->addChild(net_txt);
+    SoBaseColor* bc = new SoBaseColor;
+    bc->rgb.setValue(0, 0, 0); //black is default for text
+    net_txt->addChild(bc);
+    SoFont* fnt = new SoFont();
+    fnt->size.setValue(font_sizes.net_vals);
+    fnt->name = "Arial";
+    net_txt->addChild(fnt);
+  }
+  TypeDef* td = net()->GetTypeDef();
+  int chld_idx = 0;
+  int disp_idx = 0;
+  int per_row = 2;
+  int n_rows = 8;
+  for(int i=td->members.size-1; i>=0; i--) {
+    MemberDef* md = td->members[i];
+    if(!md->HasOption("VIEW")) continue;
+    if(build_text) {
+      SoSeparator* tsep = new SoSeparator;
+      net_txt->addChild(tsep);
+      SoTranslation* tr = new SoTranslation;
+      tsep->addChild(tr);
+      int col_idx = disp_idx % per_row;
+      int disp_inc = 1;
+      if(md->type->InheritsFrom(&TA_taString)) {
+	if(col_idx != 0) disp_idx += per_row - col_idx;
+	col_idx = 0;
+	disp_inc = per_row;
+      }
+      float xv = 0.05f + (float)col_idx / (float)(per_row);
+      float yv = (float)((disp_idx / per_row)+1) / (float)(n_rows + 2.0f);
+      tr->translation.setValue(xv, -.5f, -yv);
+      SoAsciiText* txt = new SoAsciiText();
+      txt->justification = SoAsciiText::LEFT;
+      tsep->addChild(txt);
+      disp_idx += disp_inc;
+    }
+    SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + 2);
+    // 2 = base color + font, 1 per guy
+    SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+    String el = md->name + ": " + md->type->GetValStr(md->GetOff((void*)net()));
+    txt->string.setValue(el.chars());
+    chld_idx++;
+  }
 
 //   if (!display || !net()->CheckBuild(true)) return; // no display, or needs to be built
   if (scale.auto_scale) {
@@ -1195,8 +1259,6 @@ void NetView::Render_impl() {
       taiMisc::RunPending(); // so that panel is correct if 3d rendering takes a long time
     }
   }
-  inherited::Render_impl();
-  taiMisc::RunPending();
 }
 
 void NetView::Reset_impl() {

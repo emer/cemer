@@ -85,7 +85,8 @@ void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, flo
 void T3UnitNode::setDefaultCaptionTransform() {
   //note: this is the one for 3d objects -- 2d replace this
   captionNode_->justification = SoAsciiText::CENTER;
-  transformCaption(SbVec3f(0.0f, 0.1f, 0.45f));
+  //  transformCaption(SbVec3f(0.0f, 0.1f, 0.45f));
+  transformCaption(SbVec3f(0.0f, 0.0f, 0.0f));
 }
 
 void T3UnitNode::setPicked(bool value) {
@@ -508,8 +509,9 @@ T3NetNode::T3NetNode(void* dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NetNode);
 
-  shape_ = new SoCube;
-  shape_->setName("shape");
+  //  shape_ = new SoCube;
+  shape_ = new SoFrame();
+//   shape_->setName("shape");
   shapeSeparator()->addChild(shape_);
 
   float h = 0.04f; // nominal amount of height, so we don't vanish
@@ -517,10 +519,8 @@ T3NetNode::T3NetNode(void* dataView_)
   float y = 1.0f;
   // set size/pos of cube -- move down to -1 y
   txfm_shape()->translation.setValue(x/2.0f, h/2.0f - .5f, -y/2.0f);
-  shape_->width = x;
-  shape_->height = h;
-  shape_->depth = y;
-
+  shape_->setDimensions(x, y, 0.02f, -0.02f);
+  net_text_ = NULL;
 }
 
 T3NetNode::~T3NetNode()
@@ -528,6 +528,12 @@ T3NetNode::~T3NetNode()
 }
 
 void T3NetNode::setDefaultCaptionTransform() {
-  SbVec3f tran(0.0f, -.5f, 0.0f);
+  SbVec3f tran(0.05f, -.5f, 0.05f);
   transformCaption(tran);
+}
+
+SoSeparator* T3NetNode::getNetText() {
+  if(net_text_) return net_text_;
+  net_text_ = new SoSeparator;
+  return net_text_;
 }

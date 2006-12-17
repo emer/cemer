@@ -603,9 +603,10 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
 //       rend_act->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND);
       // insanely slow and not that accurate
       //      rend_act->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-      rend_act->setTransparencyType(SoGLRenderAction::SORTED_LAYERS_BLEND);
+      //      rend_act->setTransparencyType(SoGLRenderAction::SORTED_LAYERS_BLEND);
       // best, but might not work on all platforms. noticably slower
-      //      rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
+      rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
+      // seems like the best compromize
 
       rend_act->setSmoothing(true); // low-cost line smoothing
 //       rend_act->setNumPasses(2);    // 1 = no antialiasing; 2 = antialiasing

@@ -1538,15 +1538,15 @@ public:
   int		small_batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int		small_batch_n_eff; // #GUI_READ_ONLY #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 
-  int		batch;		// #GUI_READ_ONLY #SHOW #CAT_Counter batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
-  int		epoch;		// #GUI_READ_ONLY #SHOW #CAT_Counter epoch counter: number of times a complete set of training patterns has been presented (updated by program)
-  int		trial;		// #GUI_READ_ONLY #SHOW #CAT_Counter trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
-  int		cycle;		// #GUI_READ_ONLY #SHOW #CAT_Counter cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)	
-  float		time;		// #GUI_READ_ONLY #SHOW #CAT_Counter the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
-  String	group_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter name associated with the current group of trials, if such a grouping is applicable
-  String	trial_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter name associated with the current trial (e.g., name of input pattern)
+  int		batch;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
+  int		epoch;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
+  int		trial;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
+  int		cycle;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)	
+  float		time;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
+  String	group_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current group of trials, if such a grouping is applicable
+  String	trial_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern)
 
-  float		sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic sum squared error over the network, for the current external input pattern
+  float		sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float		sum_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
   float		avg_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
   float		cnt_err_tol;	// #CAT_Statistic tolerance for computing the count of number of errors over current epoch

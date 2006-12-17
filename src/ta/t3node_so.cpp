@@ -265,6 +265,7 @@ SoFont* T3NodeLeaf::captionFont(bool auto_create) {
   if (!rval && auto_create) {
     rval = new SoFont();
     rval->setName("captionFont");
+    rval->name = "Arial";
     cs->insertChild(rval, 0);
   }
   return rval;

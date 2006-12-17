@@ -318,7 +318,9 @@ typedef T3NodeParent inherited;
 public:
   static void		initClass();
 
-  SoCube*		shape() {return shape_;}
+  SoFrame*		shape() {return shape_;}
+  SoSeparator*		netText() {return net_text_;} // extra text of network vars etc
+  SoSeparator*		getNetText();		      // get a new net text separator
 
   T3NetNode(void* dataView_ = NULL);
 
@@ -327,7 +329,8 @@ protected:
   ~T3NetNode();
 
 private:
-  SoCube*		shape_; //#IGNORE
+  SoFrame*		shape_; //#IGNORE
+  SoSeparator* 		net_text_; // network text variables
 };
 
 
