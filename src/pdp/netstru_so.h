@@ -62,17 +62,19 @@ typedef T3NodeLeaf inherited;
 #endif // def __MAKETA__
 friend class T3UnitGroupNode;
 public:
-  static float		base_height; // #DEF_0.1 height when not active or empty
-  static float		max_height; // #DEF_0.8 height when fully active
+  static float	base_height; // #DEF_0.1 height when not active or empty
+  static float	max_height; // #DEF_0.8 height when fully active
 
-  static void		initClass();
+  static void	initClass();
 
-  virtual void		setAppearance(float act, const T3Color& color, float max_z);
-  // act is -1:1; max_z is net->max_size.z
-  virtual void 		setPicked(bool value);
-  T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
+  virtual void	setAppearance(float act, const T3Color& color, float max_z, float trans);
+  // act is -1:1; max_z is net->max_size.z; trans is transparency
+  virtual void 	setPicked(bool value);
+  T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+	     float max_z = 1.0f, float un_spc = .01f);
 
 protected:
+  float			spacing;		      // unit spacing
   void			setDefaultCaptionTransform(); // override, sets text justif and transform for 3D
   ~T3UnitNode();
 };
@@ -86,17 +88,18 @@ typedef T3NodeLeaf inherited;
 #endif // def __MAKETA__
 friend class T3UnitGroupNode;
 public:
-  static float		base_height; // #DEF_0.1 height when not active or empty
-  static float		max_height; // #DEF_0.8 height when fully active
+  static float	base_height; // #DEF_0.1 height when not active or empty
+  static float	max_height; // #DEF_0.8 height when fully active
 
-  static void		initClass();
+  static void	initClass();
 
-  SoCylinder*		shape() {return shape_;}
-  void			getPos(int& x, int& y);
-  void 			setPos(int x, int y); // set relative position within unitgroup
+  SoCylinder*	shape() {return shape_;}
+  void		getPos(int& x, int& y);
+  void 		setPos(int x, int y); // set relative position within unitgroup
 
-  void			setAppearance(float act, const T3Color& color, float max_z);  // act is 0-1
-  T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
+  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
+  T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+  float max_z = 1.0f, float un_spc = .01f);
 
 protected:
   ~T3UnitNode();
@@ -112,14 +115,14 @@ typedef T3UnitNode inherited;
 #endif // def __MAKETA__
 friend class T3UnitGroupNode;
 public:
-  static float		shape_radius; //  radius (also used for _Circle)
+  static void	initClass();
 
-  static void		initClass();
+  SoCylinder*	shape() {return shape_;}
 
-  SoCylinder*		shape() {return shape_;}
+  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
 
-  void			setAppearance(float act, const T3Color& color, float max_z); // override
-  T3UnitNode_Cylinder(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
+  T3UnitNode_Cylinder(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+		      float max_z = 1.0f, float un_spc = .01f);
 
 protected:
   ~T3UnitNode_Cylinder();
@@ -134,11 +137,12 @@ typedef T3UnitNode inherited;
 #endif // def __MAKETA__
 friend class T3UnitGroupNode;
 public:
-  static void		initClass();
+  static void	initClass();
 
-  SoCylinder*		shape() {return shape_;}
+  SoCylinder*	shape() {return shape_;}
 
-  T3UnitNode_Circle(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
+  T3UnitNode_Circle(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+		    float max_z = 1.0f, float un_spc = .01f);
 
 protected:
 //  void			setDefaultCaptionTransform(); // override
@@ -155,15 +159,13 @@ typedef T3UnitNode inherited;
 #endif // def __MAKETA__
 friend class T3UnitGroupNode;
 public:
-  static float		shape_width; //  (also used for _Rect)
-  static float		shape_depth; //  (also used for _Rect)
+  static void	initClass();
 
-  static void		initClass();
+  SoCube*	shape() {return shape_;}
 
-  SoCube*		shape() {return shape_;}
-
-  void			setAppearance(float act, const T3Color& color, float max_z); // override
-  T3UnitNode_Block(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
+  void		setAppearance(float act, const T3Color& color, float max_z, float trans);
+  T3UnitNode_Block(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+		   float max_z = 1.0f, float un_spc = .01f);
 
 protected:
   ~T3UnitNode_Block();
@@ -182,7 +184,8 @@ public:
 
   SoCube*		shape() {return shape_;}
 
-  T3UnitNode_Rect(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f, float max_z = 1.0f);
+  T3UnitNode_Rect(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+		  float max_z = 1.0f, float un_spc = .01f);
 
 protected:
 //  void			setDefaultCaptionTransform(); // override
@@ -214,7 +217,7 @@ public:
 //  void			addUnit(int x, int y); // remove all units
   SoFont*		unitCaptionFont(bool auto_create = false);
 
-  void 			setGeom(int px, int py, int max_x, int max_y, int max_z);
+  void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
   // sets (actual) geom of group; creates/positions units; setes max_size
   SoCube*		shape() {return shape_;}
 
@@ -222,7 +225,7 @@ public:
 
 protected:
   iVec2i		geom; //note, not a field
-  iVec3i		max_size; // maximum size of network x,y,z
+  iVec3f		max_size; // maximum size of network x,y,z
   SoFont*		unitCaptionFont_;
   ~T3UnitGroupNode();
 
@@ -250,7 +253,7 @@ public:
 
   static void		initClass();
 
-  void 			setGeom(int px, int py, int max_x, int max_y, int max_z);
+  void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
   // sets (actual) geom of layer
 //  SoCube*		shape() {return shape_;}
 
@@ -258,7 +261,7 @@ public:
 
 protected:
   iVec2i		geom; //note, not a field
-  iVec3i		max_size; // maximum size of network x,y,z
+  iVec3f		max_size; // maximum size of network x,y,z
   void			render(); // called after pos/geom changes
   ~T3LayerNode();
 
@@ -287,9 +290,10 @@ public:
 
   void			setEndPoint(const SbVec3f& value); // #IGNORE sets endpoint, relative to its origin
 
-  T3PrjnNode(void* dataView_ = NULL);
+  T3PrjnNode(void* dataView_ = NULL, float rad = .01f);
 
 protected:
+  float			radius;
   SoTransform*		trln_prjn; // #IGNORE
   SoTransform*		rot_prjn; // #IGNORE
   SoTransform*		trln_arr; // #IGNORE

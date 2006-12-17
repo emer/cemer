@@ -1456,6 +1456,43 @@ public:
 
 SmartRef_Of(Layer); // LayerRef
 
+class PDP_API NetViewFontSizes : public taBase {
+  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
+INHERITED(taBase)
+public:
+  float	 net_name;	// #DEF_0.05 network name
+  float	 net_vals;	// #DEF_0.04 network values (counters, stats)
+  float	 layer;		// #DEF_0.05 layer names
+  float	 layer_vals;	// #DEF_0.04 layer values (counters, stats)
+  float  prjn;		// #DEF_0.02 projection names and values
+  float	 unit;		// #DEF_0.02 unit names and values
+
+  void 	Initialize();
+  void	Destroy()		{ };
+  SIMPLE_COPY(NetViewFontSizes);
+  COPY_FUNS(NetViewFontSizes, inherited);
+  TA_BASEFUNS(NetViewFontSizes);
+};
+
+class PDP_API NetViewParams : public taBase {
+  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
+INHERITED(taBase)
+public:
+  bool	xy_square;	// keep the x and y dimensions of the network square (same) -- makes the units square
+  float	unit_spacing;	// #DEF_0.01 spacing between units (as a proportion of total space available to render the unit)
+  float	prjn_width;	// #DEF_0.005 width of the projection arrows
+  float	prjn_trans;	// #DEF_0.5 transparency of the projection arrows
+  float	lay_trans;	// #DEF_0.5 transparency of the layer border
+  float	unit_trans;	// #DEF_0.1 transparency of the units
+
+  void 	Initialize();
+  void	Destroy()		{ };
+  SIMPLE_COPY(NetViewParams);
+  COPY_FUNS(NetViewParams, inherited);
+  TA_BASEFUNS(NetViewParams);
+};
+
+
 class PDP_API Network : public taFBase {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network A network, containing layers, units, etc..
 INHERITED(taFBase)
@@ -1530,6 +1567,9 @@ public:
   int		n_units;	// #READ_ONLY #DETAIL #CAT_Structure total number of units in the network
   int		n_cons;		// #READ_ONLY #DETAIL #CAT_Structure total number of connections in the network
   PosTDCoord	max_size;	// #READ_ONLY #DETAIL #CAT_Structure maximum size in each dimension of the net
+
+  NetViewFontSizes font_sizes;   // #CAT_Display default size of display labels when a new view is made (can be overriden in specific views)
+  NetViewParams	view_params;   // #CAT_Display misc netview parameters
 
   bool		copying; 	// #IGNORE if object is currently being copied
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in

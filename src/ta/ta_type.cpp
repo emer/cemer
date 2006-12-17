@@ -777,6 +777,9 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   prog_lib_paths.AddUnique(NameVar("SystemLib", (Variant)(pkg_home + "/prog_lib")));
   prog_lib_paths.AddUnique(NameVar("UserLib", (Variant)(user_home + "/my_prog_lib")));
   prog_lib_paths.AddUnique(NameVar("WebLib", (Variant)(web_home + "/prog_lib")));
+
+  String curdir = QDir::currentPath();
+  taMisc::load_paths.AddUnique(curdir);
 }
 
 void taMisc::Init_Args(int argc, const char* argv[]) {

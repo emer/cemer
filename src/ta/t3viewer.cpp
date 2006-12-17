@@ -599,7 +599,19 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
       sel_so->addSelectionCallback(SoSelectionCallback, (void*)this);
       sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
       m_renderArea->setSceneGraph(sel_so);
-      m_renderArea->setGLRenderAction(new SoBoxHighlightRenderAction);
+      SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
+//       rend_act->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND);
+      // insanely slow and not that accurate
+      //      rend_act->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
+      rend_act->setTransparencyType(SoGLRenderAction::SORTED_LAYERS_BLEND);
+      // best, but might not work on all platforms. noticably slower
+      //      rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
+
+      rend_act->setSmoothing(true); // low-cost line smoothing
+//       rend_act->setNumPasses(2);    // 1 = no antialiasing; 2 = antialiasing
+      // this does not work on the mac at least
+
+      m_renderArea->setGLRenderAction(rend_act);
     }
     LayoutComponents();
   }

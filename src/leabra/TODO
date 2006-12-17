@@ -1,9 +1,12 @@
 leabra todo list:
 
 * netview: layer line width needs to scale w/ units, always be outside them.
-  add key text
+  add netvar text
   prjns not using cap loc, need to also scale with max?  sqrt?  smaller overall?
     nlayers?
+  make xy square
+  get rid of crazy zmult stuff
+  parameterize unit spacing: for large nets, small spacing is better..
 
 * v3convert: end up with 2 bias.unit links from copy op?
 

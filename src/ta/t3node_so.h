@@ -242,6 +242,7 @@ public:
   virtual void		clear() {} // optional method, for clearing out the content; called from ReInit
   void			transformCaption(const iVec3f& translate); // #IGNORE
   void			transformCaption(const SbRotation& rotate, const iVec3f& translate); // #IGNORE
+  void			resizeCaption(float sz);
   virtual bool		expanded() {return true;} // many nodes have an expanded and compact rep
   virtual void		setExpanded(bool value) {}
 

@@ -96,146 +96,6 @@
 #include <float.h>
 //nn #include <unistd.h>
 
-/*
-//////////////////////////////////
-//	  netstru.h		//
-//////////////////////////////////
-
-T3LayerNode* LayerSpec::MakeSo(Layer* layer, T3NetNode* par) {
-  T3LayerNode* rval = NULL; //new T3LayerNode(layer, par);
-  return rval;
-}
-
-T3UnitNode* UnitSpec::MakeSo(Unit* unit, T3LayerNode* par) {
-  T3UnitNode* rval = NULL;//new T3UnitNode(unit, par);
-  return rval;
-}
-*/
-
-
-//////////////////////////////////
-//	  T3PrjnNode		//
-//////////////////////////////////
-/*
-void T3PrjnNode::Render_pre() {
-  rot_prjn = new SoTransform();
-  addChild(rot_prjn);
-  trln_prjn = new SoTransform();
-  addChild(trln_prjn);
-
-  //color and material
-  SoBaseColor* col = new SoBaseColor;
-  col->rgb = SbColor(.5f, .5f, .5f); // medium gray
-  addChild(col);
-
-  float rad = 0.01f;
-  line_prjn = new SoCylinder();
-  line_prjn->radius = rad; //height is variable, depends on length
-  addChild(line_prjn);
-
-  trln_arr = new SoTransform();
-  addChild(trln_arr);
-
-  arr_prjn = new SoCone();
-  arr_prjn->height =  3.0f * rad;
-  arr_prjn->bottomRadius = 2.0f * rad;
-  addChild(arr_prjn);
-}
-
-void T3PrjnNode::Render_impl() {
-  // find the total receive num, and our ordinal
-  Projection* prjn = this->prjn(); // cache
-  Layer* lay_fr = prjn->from;
-  Layer* lay_to = prjn->layer;
-
-  rcv_num = lay_to->projections.FindLeaf(prjn);
-  tot_num = lay_to->projections.leaves;
-  if (tot_num == 0) return; // error, shouldn't happen
-
-  // origin is front center of origin layer
-  FloatTDCoord src((lay_fr->pos.x + lay_fr->act_geom.x) / 2.0f, (float)lay_fr->pos.y, (float)lay_fr->pos.z);
-  SetOrigin(src.x, src.y, src.z);
-
-  // dest is the equally spaced target front on dest
-  float arr_h = 0.0f;
-  FloatTDCoord dst((lay_to->pos.x) + (rcv_num + 1.0f) * ((lay_to->act_geom.x) / (tot_num + 1.0f)),
-      (float)lay_to->pos.y, (float)lay_to->pos.z);
-  float dist = src.Dist(dst);
-  line_prjn->height = dist - arr_h;
-  // txfm
-  rot_prjn->rotation.setValue(SbRotation(SbVec3f(0, 1.0f, 0),
-    SbVec3f(dst.x - src.x, dst.z - src.z, -(dst.y - src.y)))); // from vec/ to vec
-  trln_prjn->translation.setValue(0.0f, line_prjn->height.getValue() / 2.0f, 0.0f);
-  trln_arr->translation.setValue(0.0f, line_prjn->height.getValue() / 2.0f, 0.0f); //note: already txlted by 1/2 height
-}
-*/
-/*todo
-void T3LayerNode::RenderSetup(SoGroup* par_so) {
-  IGadget::RenderSetup(par_so);
-}
-
-void T3LayerNode::RenderContentPre(SoGroup* par_so) {
-  SoMaterial* mat_frm = new SoMaterial;
-  mat_frm->emissiveColor.setValue(0.0f, 0.0f, 0.5f); // blue glow!
-  mat_frm->transparency.setValue(0.5f);
-  par_so->addChild(mat_frm);
-
-  SoCube* frm = new SoCube;
-  //note: following not right for multi-group layers...
-  frm->width = lay->geom.x;
-  frm->depth = lay->geom.y;
-  frm->height = 0.0f;
-  par_so->addChild(frm);
-}
-
-void T3LayerNode::RenderChildren(SoGroup* par_so) {
-  Layer* lay;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, lay, net->layers., i) {
-    if (lay->own_net == NULL) continue; // indication that layer is just about to be removed!
-    T3LayerNode* lay_so = new T3LayerNode(lay, this);
-    lay_so->setOrigin(lay->pos.x , lay->pos.z, -(lay->pos.y));
-
-    render_child(lay_so, par_so);
-  }
-}
-*/
-
-/*
-
-void T3UnitGroupNode::Render_impl() {
-  float h = 0.06f; // nominal amount of height, so we don't vanish
-  Unit_Group* ugrp = this->ugrp(); //cache
-  // set origin
-  SetOrigin(ugrp->pos);
-
-  TDCoord geom = ugrp->geom;
-
-  // set size/pos of cube
-  txfm_ugrp->translation.setValue(geom.x/2.0f, h/2.0f, -geom.y/2.0f);
-  shp_ugrp->width = geom.x - 0.1f; // .05 inset
-  shp_ugrp->height = h;
-  shp_ugrp->depth = geom.y - 0.1f;
-}
-
-*/
-
-/*nn T3UnitNode_PtrList::~T3UnitNode_PtrList() {
-  Reset();
-}
-
-void* T3UnitNode_PtrList::El_Ref_(void* it_)	{
-  T3UnitNode* it = (T3UnitNode*)it_;
-  it->ref();
-  return it_;
-}
-
-void* T3UnitNode_PtrList::El_unRef_(void* it_) {
-  T3UnitNode* it = (T3UnitNode*)it_;
-  it->unref();
-  return it_;
-} */
-
 NetView* nvDataView::nv() {
   if (!m_nv)
     m_nv = GET_MY_OWNER(NetView);
@@ -276,16 +136,24 @@ NetView* UnitView::nv() {
 
 void UnitView::Render_pre() {
   NetView* nv = this->nv();
-  Network* net = nv->net();
-  float max_x = net->max_size.x;
-  float max_y = net->max_size.y;
-  float max_z = net->max_size.z;
+  float max_x = nv->max_size.x;
+  float max_y = nv->max_size.y;
+  float max_z = nv->max_size.z;
+  float un_spc= nv->view_params.unit_spacing;
 
   switch (nv->unit_disp_mode) {
-  case NetView::UDM_CIRCLE: 	m_node_so = new T3UnitNode_Circle(this, max_x, max_y, max_z); break;
-  case NetView::UDM_RECT: 	m_node_so = new T3UnitNode_Rect(this, max_x, max_y, max_z); break;
-  case NetView::UDM_BLOCK: 	m_node_so = new T3UnitNode_Block(this, max_x, max_y, max_z); break;
-  case NetView::UDM_CYLINDER: 	m_node_so = new T3UnitNode_Cylinder(this, max_x, max_y, max_z); break;
+  case NetView::UDM_CIRCLE:
+    m_node_so = new T3UnitNode_Circle(this, max_x, max_y, max_z, un_spc);
+    break;
+  case NetView::UDM_RECT:
+    m_node_so = new T3UnitNode_Rect(this, max_x, max_y, max_z, un_spc);
+    break;
+  case NetView::UDM_BLOCK:
+    m_node_so = new T3UnitNode_Block(this, max_x, max_y, max_z, un_spc);
+    break;
+  case NetView::UDM_CYLINDER:
+    m_node_so = new T3UnitNode_Cylinder(this, max_x, max_y, max_z, un_spc);
+    break;
   }
 
   Unit* unit = this->unit(); //cache
@@ -489,9 +357,8 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
 }
 
 void UnitGroupView::Render_pre() {
+  NetView* nv = this->nv();
   Unit_Group* ugrp = this->ugrp(); //cache
-  Layer* lay = ugrp->own_lay;
-  Network* net = lay->own_net;
 
   AllocUnitViewData();
   m_node_so = new T3UnitGroupNode(this);
@@ -503,23 +370,21 @@ void UnitGroupView::Render_pre() {
 //  mat->transparency.setValue(0.5f);
 
   // TODO: if not built, then use geom from layer
-  ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, net->max_size.x,
-		   net->max_size.y, net->max_size.z);
+  ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
 
   inherited::Render_pre();
 }
 
 void UnitGroupView::Render_impl() {
   Unit_Group* ugrp = this->ugrp(); //cache
-  Layer* lay = ugrp->own_lay;
-  Network* net = lay->own_net;
+  NetView* nv = this->nv();
 
   //set origin: 0,0,0
   TDCoord& pos = ugrp->pos;
   FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ((float)pos.x / (float)net->max_size.x,
-		       (float)pos.z / (float)net->max_size.z,
-		       (float)-pos.y / (float)net->max_size.y);
+  ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
+		       (float)pos.z / nv->max_size.z,
+		       (float)-pos.y / nv->max_size.y);
 
   inherited::Render_impl();
 }
@@ -551,7 +416,6 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
 
 void UnitGroupView::Render_impl_children() {
   NetView* nv = this->nv(); //cache
-  Network* net = nv->net();
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
   //TODO: summary view
@@ -565,10 +429,11 @@ void UnitGroupView::Render_impl_children() {
   // if displaying unit text, set up the viewing props in the unitgroup
   if (nv->unit_text_disp != NetView::UTD_NONE) {
     SoFont* font = node_so->unitCaptionFont(true);
-    font->size.setValue(0.02f); // is in same units as geometry units of network
+    font->size.setValue(nv->font_sizes.unit);
   }
 
-  float max_z = (float)net->max_size.z;
+  float max_z = nv->max_size.z;
+  float trans = nv->view_params.unit_trans;
 
   for (int i = 0; i < children.size; ++i) {
     UnitView* uv = (UnitView*)children.FastEl(i);
@@ -577,7 +442,7 @@ void UnitGroupView::Render_impl_children() {
     if (!unit_so || !unit) continue; // shouldn't happen
     nv->GetUnitDisplayVals(this, unit->pos, val, col);
     // Value
-    unit_so->setAppearance(val, col, max_z);
+    unit_so->setAppearance(val, col, max_z, trans);
     //TODO: we maybe shouldn't alter picked here, because that is expensive -- do only when select changes
     // except that might be complicated, ex. when Render() called,
     unit_so->setPicked(uv->picked);
@@ -739,14 +604,16 @@ taBase::DumpQueryResult LayerView::Dump_QuerySaveMember(MemberDef* md) {
 void LayerView::DoHighlightColor(bool apply) {
   T3LayerNode* nd = node_so();
   if (!nd) return;
+  NetView* nv = this->nv();
   
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
+    mat->transparency.setValue(0.0f);
   } else {
     mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // cyan
+    mat->transparency.setValue(nv->view_params.lay_trans);
   }
-  mat->transparency.setValue(0.5f);
 } 
 
 void LayerView::Render_pre() {
@@ -758,20 +625,19 @@ void LayerView::Render_pre() {
 
 void LayerView::Render_impl() {
   Layer* lay = this->layer(); //cache
-  Network* net = lay->own_net;
+  NetView* nv = this->nv();
+
   // set origin: 0,.5,0 in allocated area
   TDCoord& pos = lay->pos;
   FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ((float)pos.x / (float)net->max_size.x,
-		       (float)(pos.z + 0.5f) / (float)net->max_size.z,
-		       (float)-pos.y / (float)net->max_size.y);
+  ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
+		       (float)(pos.z + 0.5f) / nv->max_size.z,
+		       (float)-pos.y / nv->max_size.y);
 
   T3LayerNode* node_so = this->node_so(); // cache
-  node_so->setGeom(lay->act_geom.x, lay->act_geom.y, net->max_size.x,
-		   net->max_size.y, net->max_size.z);
+  node_so->setGeom(lay->act_geom.x, lay->act_geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
   node_so->setCaption(data()->GetName().chars());
-  SoFont* font = node_so->captionFont(true);
-  font->size.setValue(0.05f); // is in same units as geometry units of network
+  node_so->resizeCaption(nv->font_sizes.layer);
   inherited::Render_impl();
 }
 
@@ -798,28 +664,32 @@ void PrjnView::DoHighlightColor(bool apply) {
   T3PrjnNode* nd = node_so();
   if (!nd) return;
   
+  NetView* nv = this->nv();
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
+    mat->transparency.setValue(0.0f);
   } else {
     mat->diffuseColor.setValue(SbColor(1, 1, 1)); // white
+    mat->transparency.setValue(nv->view_params.prjn_trans);
   }
 } 
 
 void PrjnView::Render_pre() {
-  m_node_so = new T3PrjnNode(this);
+  NetView* nv = this->nv();
+  m_node_so = new T3PrjnNode(this, nv->view_params.prjn_width);
   DoHighlightColor(false);
   inherited::Render_pre();
 }
 
 void PrjnView::Render_impl() {
   T3PrjnNode* node_so = this->node_so(); // cache
+  NetView* nv = this->nv();
 
   // find the total receive num, and our ordinal
   Projection* prjn = this->prjn(); // cache
   Layer* lay_fr = prjn->from;
   Layer* lay_to = prjn->layer;
-  Network* net = lay_to->own_net;
 
   int rcv_num = lay_to->projections.FindLeafEl(prjn);
   int tot_num = lay_to->projections.leaves;
@@ -827,30 +697,27 @@ void PrjnView::Render_impl() {
 
   // origin is front center of origin layer, in Inventor coords
   FloatTDCoord src(
-		   (float)((lay_fr->pos.x + lay_fr->act_geom.x) / 2.0f) / (float)net->max_size.x,
-		   (float)(lay_fr->pos.z + 0.5f) / (float)net->max_size.z,
-		   -((float)lay_fr->pos.y / (float)net->max_size.y)
+		   (float)((lay_fr->pos.x + lay_fr->act_geom.x) / 2.0f) / nv->max_size.x,
+		   (float)(lay_fr->pos.z + 0.5f) / nv->max_size.z,
+		   -((float)lay_fr->pos.y / nv->max_size.y)
 		   );
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
 
   // dest is the equally spaced target front on dest
 //  float arr_h = 0.0f;
   FloatTDCoord dst(
-		   (float)((lay_to->pos.x) + (rcv_num + 1.0f) * ((lay_to->act_geom.x) / (tot_num + 1.0f))) / (float)net->max_size.x,
-		   (float)(lay_to->pos.z + 0.5f) / (float)net->max_size.z,
-		   -((float)lay_to->pos.y / (float)net->max_size.y)
+		   (float)((lay_to->pos.x) + (rcv_num + 1.0f) * ((lay_to->act_geom.x) / (tot_num + 1.0f))) / nv->max_size.x,
+		   (float)(lay_to->pos.z + 0.5f) / nv->max_size.z,
+		   -((float)lay_to->pos.y / nv->max_size.y)
 		   );
 
   node_so->setEndPoint(SbVec3f(dst.x - src.x, dst.y - src.y, dst.z - src.z));
 
   // caption location is half way
-  FloatTDCoord cap((dst.x - src.x) / 4.0f, (dst.y - src.y) / 4.0f, (dst.z - src.z) / 4.0f);
-
-  SoFont* font = node_so->captionFont(true);
-  font->size.setValue(0.02f); // is in same units as geometry units of network, smaller than most others
-  SbVec3f translate(cap.x + 0.05f, cap.y, cap.z);
-  node_so->transformCaption(translate);
+  FloatTDCoord cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
   node_so->setCaption(prjn->name.chars());
+  node_so->transformCaption(cap);
+  node_so->resizeCaption(nv->font_sizes.prjn);
 
 /* was
   float dist = src.Dist(dst);
@@ -905,6 +772,9 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   // create NetView
   NetView* nv = new NetView();
   nv->SetData(net);
+  nv->GetMaxSize();
+  nv->font_sizes = net->font_sizes;
+  nv->view_params = net->view_params;
   fr->AddView(nv);
   return nv;
 }
@@ -932,6 +802,9 @@ void NetView::InitLinks() {
   taBase::Own(scale, this);
   taBase::Own(scale_ranges, this);
   taBase::Own(ordered_uvg_list, this);
+  taBase::Own(max_size, this);
+  taBase::Own(font_sizes, this);
+  taBase::Own(view_params, this);
 }
 
 void NetView::CutLinks() {
@@ -975,6 +848,7 @@ void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
 void NetView::BuildAll() { // populates everything
   Reset();
   if(!net()) return;
+  GetMaxSize();
   Layer* lay;
   taLeafItr i;
   FOR_ITR_EL(Layer, lay, net()->layers., i) {
@@ -1213,6 +1087,8 @@ void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,
 void NetView::InitDisplay(bool init_panel) {
 //   if (!display) return;
   GetMembs();
+  GetMaxSize();
+  if(net()->n_units > 500) view_params.unit_trans = 0.0f; // override
   // select "act" by default, if nothing selected, or saved selection not restored yet (first after load)
   if (!unit_disp_md) {
     if (ordered_uvg_list.size > 0) {
@@ -1276,6 +1152,14 @@ void NetView::NewLayer(int x, int y) {
   //TODO:
 }
 
+void NetView::GetMaxSize() {
+  max_size = net()->max_size;
+  if(view_params.xy_square) {
+    max_size.x = MAX(max_size.x, max_size.y);
+    max_size.y = max_size.x;
+  }
+}
+
 void NetView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!nvp) {
@@ -1299,9 +1183,9 @@ void NetView::Render_pre() {
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
   T3NetNode* node_so = this->node_so(); //cache
-  SoFont* font = node_so->captionFont(true);
-  font->size.setValue(0.05f); // is in same units as geometry units of network
+  node_so->resizeCaption(font_sizes.net_name);
   node_so->setCaption(data()->GetName().chars());
+  GetMaxSize();
 
 //   if (!display || !net()->CheckBuild(true)) return; // no display, or needs to be built
   if (scale.auto_scale) {

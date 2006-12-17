@@ -4309,6 +4309,24 @@ void Layer::DMem_SyncAct() {
 //	Network	      //
 ////////////////////////
 
+void NetViewFontSizes::Initialize() {
+  net_name = .05f;
+  net_vals = .04f;
+  layer = .05f;
+  layer_vals = .04f;
+  prjn = .02f;
+  unit = .02f;
+}
+
+void NetViewParams::Initialize() {
+  xy_square = true;
+  unit_spacing = .01f;
+  prjn_width = .005f;
+  prjn_trans = .5f;
+  lay_trans = .5f;
+  unit_trans = .9f;
+}
+
 void Network::Initialize() {
 //TODO  views.SetBaseType(&TA_NetView);
   specs.SetBaseType(&TA_BaseSpec);
@@ -4362,6 +4380,8 @@ void Network::InitLinks() {
   taBase::Own(specs, this);
   taBase::Own(layers, this);
   taBase::Own(max_size, this);
+  taBase::Own(font_sizes, this);
+  taBase::Own(view_params, this);
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_net_comm, this);
   taBase::Own(dmem_trl_comm, this);
@@ -4422,6 +4442,9 @@ void Network::Copy_(const Network& cp) {
   lay_layout = cp.lay_layout;
 
   max_size = cp.max_size;
+
+  font_sizes = cp.font_sizes;
+  view_params = cp.view_params;
 
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
   FixPrjnIndexes();			     // fix the recv_idx and send_idx (not copied!)

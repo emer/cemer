@@ -338,7 +338,7 @@ public:
   T3DataView_PtrList	prjns; // #NO_SAVE
   ColorScale		scale; //contains current min,max,range,zero,auto_scale
   ScaleRange_List 	scale_ranges;  // Auto ranges for member buttons
-  bool			display;
+  bool			display;       // whether to update the display when values change (under control of programs)
   MemberSpace		membs;		// #NO_SAVE list of all the members possible in units
   int_Array	  	ordered_uvg_list; // #HIDDEN selected var buttons
   // unit display flags
@@ -346,8 +346,11 @@ public:
   MemberDef*		unit_disp_md; // #NO_SAVE memberdef (if any) of Unit (or Connection) to display
   ScaleRange*		unit_sr; // #NO_SAVE scalerange of disp_md
   MDFlags		unit_md_flags; // #NO_SAVE type to display in units
-  UnitDisplayMode	unit_disp_mode;
-  UnitTextDisplay	unit_text_disp;
+  UnitDisplayMode	unit_disp_mode; // how to display unit values
+  UnitTextDisplay	unit_text_disp; // what labels to display with units
+  FloatTDCoord		max_size;	// maximum size in each dimension of the net
+  NetViewFontSizes	font_sizes;	// font sizes for various items
+  NetViewParams		view_params;	// misc view parameters 
 
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)m_node_so.ptr();}
@@ -370,6 +373,7 @@ public:
   virtual void		InitPanel(); // hard reset of panel, esp. membr vars
   virtual void		Layer_DataUAE(LayerView* lv); // send a DataUAE for all prjns for this layer
   virtual void		NewLayer(int x = 3, int y = 3);
+  virtual void		GetMaxSize(); // get max size from network
 
   virtual void		SelectVar(const char* var_name, bool add=false, bool update = true);
   // select given variable for viewing on units (add to currently disp vars if add)
