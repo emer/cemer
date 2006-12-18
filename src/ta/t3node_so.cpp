@@ -194,7 +194,7 @@ SoTransform* T3Node::captionTransform(bool auto_create) {
 }
 
 void T3Node::setDefaultCaptionTransform() {
-  transformCaption(iVec3f(0.0f, 0.0f, 0.01f));
+  transformCaption(iVec3f(0.0f, 0.0f, 0.002f));
   resizeCaption(.05f);	// default size
 }
 
