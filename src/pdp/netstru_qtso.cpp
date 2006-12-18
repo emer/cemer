@@ -697,25 +697,28 @@ void PrjnView::Render_impl() {
   Layer* lay_fr = prjn->from;
   Layer* lay_to = prjn->layer;
 
-  int rcv_num = lay_to->projections.FindLeafEl(prjn);
-  int tot_num = lay_to->projections.leaves;
-  if (tot_num == 0) return; // error, shouldn't happen
-
-  // origin is front center of origin layer, in Inventor coords
-  FloatTDCoord src(
-		   (float)((lay_fr->pos.x + lay_fr->act_geom.x) / 2.0f) / nv->max_size.x,
-		   (float)(lay_fr->pos.z + 0.5f) / nv->max_size.z,
-		   -((float)lay_fr->pos.y / nv->max_size.y)
-		   );
+  // origin is *back* center of origin layer, in Inventor coords (add .5f to z..)
+  FloatTDCoord src( ((float)lay_fr->pos.x + .5f * (float)lay_fr->act_geom.x) / nv->max_size.x,
+		    ((float)lay_fr->pos.z+.5f) / nv->max_size.z,
+		    -((float)(lay_fr->pos.y + lay_fr->act_geom.y) / nv->max_size.y)
+		    );
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
 
   // dest is the equally spaced target front on dest
-//  float arr_h = 0.0f;
-  FloatTDCoord dst(
-		   (float)((lay_to->pos.x) + (rcv_num + 1.0f) * ((lay_to->act_geom.x) / (tot_num + 1.0f))) / nv->max_size.x,
-		   (float)(lay_to->pos.z + 0.5f) / nv->max_size.z,
-		   -((float)lay_to->pos.y / nv->max_size.y)
-		   );
+//   float rcv_num = (float)lay_to->projections.FindLeafEl(prjn) + 1.0f; // indent
+//   float tot_num = (float)lay_to->projections.leaves + 1.0f;
+//   float	x_spc = (float)lay_to->act_geom.x / tot_num;
+
+//   FloatTDCoord dst( ((float)lay_to->pos.x + rcv_num * x_spc) / nv->max_size.x,
+// 		    ((float)lay_to->pos.z+.5f) / nv->max_size.z,
+// 		    -((float)lay_to->pos.y / nv->max_size.y)
+// 		    );
+
+  // dest is *front* *center* -- keeps it clean
+  FloatTDCoord dst( ((float)lay_to->pos.x + .5f * (float)lay_to->act_geom.x) / nv->max_size.x,
+		    ((float)lay_to->pos.z+.5f) / nv->max_size.z,
+		    -((float)lay_to->pos.y / nv->max_size.y)
+		    );
 
   node_so->setEndPoint(SbVec3f(dst.x - src.x, dst.y - src.y, dst.z - src.z));
 
