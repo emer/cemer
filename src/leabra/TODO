@@ -5,6 +5,8 @@ leabra todo list:
   parameterize unit spacing: for large nets, small spacing is better..
   unit labels not in right place
 
+  network: auto un-overlap
+
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
 
 * v3convert: end up with 2 bias.unit links from copy op?

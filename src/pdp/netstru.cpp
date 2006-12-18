@@ -3403,6 +3403,8 @@ void Layer::UpdateAfterEdit_impl() {
     un_geom.z = 0;
   }
   RecomputeGeometry();
+  if(own_net)
+    own_net->LayerPos_Cleanup();
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {
@@ -5492,6 +5494,47 @@ void Network::LayerZPos_Auto(float y_mult_factor) {
   if(add_to_z <= 0) add_to_z = 1;
   LayerZPos_Add(add_to_z);
 }
+
+void Network::LayerPos_Cleanup() {
+  bool moved = false;
+  int n_itr = 0;
+  do {
+    moved = false;
+    for(int i1=0;i1<layers.leaves;i1++) {
+      Layer* l1 = layers.Leaf(i1);
+      TwoDCoord l1e = (TwoDCoord)l1->pos + (TwoDCoord)l1->act_geom;
+      for(int i2 = i1+1; i2<layers.leaves;i2++) {
+	Layer* l2 = layers.Leaf(i2);
+	TwoDCoord l2e = (TwoDCoord)l2->pos + (TwoDCoord)l2->act_geom;
+	if(l2->pos.z != l1->pos.z) continue;
+	if(l2->pos.x >= l1->pos.x && l2->pos.x < l1e.x &&
+	    l2->pos.y >= l1->pos.y && l2->pos.y < l1e.y) { // l2 starts in l1; move l2 rt/back
+	  if(l1e.x - l2->pos.x <= l1e.y - l2->pos.y) {	  // closer to x than y
+	    l2->pos.x = l1e.x + 2;
+	  }
+	  else {
+	    l2->pos.y = l1e.y + 2;
+	  }
+	  l2->DataChanged(DCR_ITEM_UPDATED);
+	  moved = true;
+	}
+	else if(l1->pos.x >= l2->pos.x && l1->pos.x < l2e.x &&
+		l1->pos.y >= l2->pos.y && l1->pos.y < l2e.y) { // l1 starts in l2; move l1 rt/back
+	  if(l2e.x - l1->pos.x <= l2e.y - l1->pos.y) {	  // closer to x than y
+	    l1->pos.x = l2e.x + 2;
+	  }
+	  else {
+	    l1->pos.y = l2e.y + 2;
+	  }
+	  l1->DataChanged(DCR_ITEM_UPDATED);
+	  moved = true;
+	}
+      }
+    }
+    n_itr++;
+  } while(moved && n_itr < 10);
+}
+
 
 void Network::Compute_LayerDistances() {
   // first reset all 

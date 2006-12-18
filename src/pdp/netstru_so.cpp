@@ -529,7 +529,7 @@ T3NetNode::~T3NetNode()
 }
 
 void T3NetNode::setDefaultCaptionTransform() {
-  SbVec3f tran(0.05f, -.5f, 0.05f);
+  SbVec3f tran(0.0f, -.5f, 0.01f);
   transformCaption(tran);
 }
 

@@ -1692,6 +1692,8 @@ public:
   // #CAT_Structure set layer z axis positions to unitary increments (0, 1, 2.. etc)
   virtual void	LayerZPos_Auto(float y_mult_factor = .5f);
   // #CAT_Structure auto stretch out z positions in proportion to the maximum y axis size of the network
+  virtual void	LayerPos_Cleanup();
+  // #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
 
   virtual void	Compute_LayerDistances();
   // #MENU #CONFIRM #CAT_Structure compute distances between layers and input/output layers

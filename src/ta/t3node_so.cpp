@@ -194,8 +194,7 @@ SoTransform* T3Node::captionTransform(bool auto_create) {
 }
 
 void T3Node::setDefaultCaptionTransform() {
-  // inset a bit on X and place slightly in front in Z
-  transformCaption(iVec3f(0.05f, 0.0f, 0.05f));
+  transformCaption(iVec3f(0.0f, 0.0f, 0.01f));
   resizeCaption(.05f);	// default size
 }
 
