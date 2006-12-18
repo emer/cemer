@@ -7511,7 +7511,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   prjn_width=0.001;
 	   prjn_trans=0.5;
 	   lay_trans=0.5;
-	   unit_trans=0.9;
+	   unit_trans=0.6;
 	  };
 	 };
 	};
@@ -32043,7 +32043,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     prjn_width=0.001;
     prjn_trans=0.5;
     lay_trans=0.5;
-    unit_trans=0.9;
+    unit_trans=0.6;
    };
    phase_order=MINUS_PLUS;
    no_plus_test=0;
