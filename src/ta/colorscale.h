@@ -187,6 +187,8 @@ public:
 class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
 public:
+  static float		sc_val_def; // #HIDDEN def arg for sc_val
+
   int			chunks;		// number of chunks to divide scale into
   float 		min;
   float 		max;
@@ -207,7 +209,7 @@ public:
   float 		GetAbsPercent(float val);
   virtual const iColor*	GetColor(int idx);
   virtual const iColor* GetColor(float val, const iColor** maincolor=NULL,
-			    const iColor** contrast=NULL);
+				 const iColor** contrast=NULL, float& sc_val = sc_val_def);
   // #IGNORE
   virtual const iColor*	GetContrastColor(int idx);
   int 			GetIdx(float val);

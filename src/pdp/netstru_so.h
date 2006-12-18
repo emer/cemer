@@ -33,6 +33,7 @@ class SoCone; // #IGNORE
 class SoCube; // #IGNORE
 class SoCylinder; // #IGNORE
 class SoFont; // #IGNORE
+class SoIndexedTriangleStripSet; // #IGNORE
 
 // forwards
 class T3UnitNode;
@@ -219,19 +220,19 @@ public:
 
   void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
   // sets (actual) geom of group; creates/positions units; setes max_size
-  SoCube*		shape() {return shape_;}
+  SoIndexedTriangleStripSet* shape() {return shape_;}
 
-  T3UnitGroupNode(void* dataView_ = NULL);
+  T3UnitGroupNode(void* dataView_ = NULL, bool no_unts = false);
 
 protected:
   iVec2i		geom; //note, not a field
   iVec3f		max_size; // maximum size of network x,y,z
   SoFont*		unitCaptionFont_;
+  bool			no_units; // summary mode: no unit objects exist
   ~T3UnitGroupNode();
 
 private:
-  SoCube*		shape_; // #IGNORE
-  SoGroup*		units_; // #IGNORE
+  SoIndexedTriangleStripSet*	shape_; // #IGNORE
 };
 
 

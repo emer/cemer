@@ -193,6 +193,7 @@ public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
   UnitViewData_PArray	uvd_arr; // #IGNORE
+  bool			no_units; // if true, then don't make actual units (i.e., summary mode)
 
   Unit_Group*		ugrp() const {return (Unit_Group*)data();}
   UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE
@@ -211,6 +212,7 @@ protected:
   void 			UpdateUnitViewBase_Bias_impl(MemberDef* disp_md); // for bias vals
   override void		DoActionChildren_impl(DataViewAction acts);
   virtual void 		Render_impl_children(); // #IGNORE we trap this in DoActionChildren
+  virtual void 		Render_impl_no_units(); // no units case
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
@@ -363,9 +365,9 @@ public:
   UnitView*		FindUnitView(Unit* unit); // find the uv for the unit
   virtual void		GetMembs(); //note: called/controlled by the NetViewPanel TODO: net updates???
 //obs  ScaleRange* 		GetCurScaleRange(); // returns current NVSR; creates if needed, and copies current values (auto_scale, scale.min/max)
-  void 			GetUnitColor(float val,  iColor& col);
-  virtual void 		GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,  T3Color& col);
-
+  void 			GetUnitColor(float val, iColor& col, float& sc_val);
+  virtual void 		GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,
+					   T3Color& col, float& sc_val);
   void			InitScaleRange(ScaleRange& sr); // initialize sr to its defaults; used when creating, and if user clicks 'default' button for the scale
   virtual void		InitDisplay(bool init_panel = true); // hard reset of display, esp. Unit values
   void			InitDisplay_Layer(LayerView* lv, bool check_build = true);

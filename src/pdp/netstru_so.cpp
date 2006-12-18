@@ -40,6 +40,7 @@
 //#include <Inventor/nodes/SoPerspectiveCamera.h>
 //#include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 
 #include <math.h>
 #include <limits.h>
@@ -285,7 +286,8 @@ void T3UnitGroupNode::initClass()
 void T3UnitGroupNode::shapeCallback(void* data, SoAction* act) {
   T3UnitGroupNode* node = (T3UnitGroupNode*)data;
   if (act->isOfType(SoGLRenderAction::getClassTypeId())) {
-    drawGrid(node);
+    if(!node->no_units)
+      drawGrid(node);
   }
 }
 
@@ -313,29 +315,28 @@ void T3UnitGroupNode::drawGrid(T3UnitGroupNode* node) {
   glPopMatrix();
 }
 
-T3UnitGroupNode::T3UnitGroupNode(void* dataView_)
+T3UnitGroupNode::T3UnitGroupNode(void* dataView_, bool no_unts)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3UnitGroupNode);
   unitCaptionFont_ = NULL;
-//  SoSeparator* ss = shapeSeparator();
+  SoSeparator* ss = shapeSeparator();
 
-  SoCallback* cb = new SoCallback();
-  cb->setCallback(shapeCallback, (void*)this);
-  insertChildAfter(topSeparator(), cb, transform());
-
-/*  shape_ = new SoCube;
-  shape_->setName("shape");
-  ss->addChild(shape_); */
-
-/*obs  units_ = new SoGroup;
-  topSeparator()->addChild(units_); */
+  no_units = no_unts;
+  if(no_units) {
+    shape_ = new SoIndexedTriangleStripSet;
+    ss->addChild(shape_);
+  }
+  else {
+    SoCallback* cb = new SoCallback();
+    cb->setCallback(shapeCallback, (void*)this);
+    insertChildAfter(topSeparator(), cb, transform());
+  }
 }
 
 T3UnitGroupNode::~T3UnitGroupNode()
 {
   shape_ = NULL;
-//obs  units_ = NULL;
   SoMaterial* mat = material();
   mat->diffuseColor.setValue(1.0f, 1.0f, 1.0f); // white (invisible)
   mat->transparency.setValue(1.0f);
@@ -345,37 +346,6 @@ void T3UnitGroupNode::setGeom(int x, int y, float max_x, float max_y, float max_
   if (geom.isEqual(x, y)) return; // nothing to do, not changed
   geom.setValue(x, y);
   max_size.setValue(max_x, max_y, max_z);
-
-/*  float h = 0.0f; // nominal amount of height, so we don't vanish
-  // set size/pos of cube -- note we are vertically centered in layer
-  txfm_shape()->translation.setValue(x/2.0f, 0.0f, -y/2.0f);
-  SoCube* shp = shape();
-  shp->width = x - (2 * inset);
-  shp->height = h;
-  shp->depth = y -  (2 * inset);
-*/
-/*obs  int numUnits = x * y;
-  // make sure correct number of units are created for the geom
-  if (units_->getNumChildren() > numUnits) { // truncate
-    for (int i = units_->getNumChildren() - 1; i >= numUnits; --i) {
-      units_->removeChild(i);
-    }
-  } else { // expand or do nothing
-    for (int i = units_->getNumChildren(); i < numUnits; ++i) {
-      T3UnitNode* un = new T3UnitNode(this);
-      units_->addChild(un);
-    }
-  }
-  // set the appropriate origin for each unit
-  int idx = 0;
-  for (int yi = 0; yi < y; ++yi) {
-    for (int xi = 0; xi < x; ++xi) {
-      T3UnitNode* un = (T3UnitNode*)units_->getChild(idx);
-      un->setPos(xi, yi);
-      ++idx;
-    }
-  } */
-
 }
 
 SoFont* T3UnitGroupNode::unitCaptionFont(bool auto_create) {

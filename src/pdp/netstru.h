@@ -1483,7 +1483,7 @@ public:
   float	prjn_width;	// #DEF_0.001 width of the projection arrows
   float	prjn_trans;	// #DEF_0.5 transparency of the projection arrows
   float	lay_trans;	// #DEF_0.5 transparency of the layer border
-  float	unit_trans;	// #DEF_0.9 transparency of the units
+  float	unit_trans;	// #DEF_0.6 transparency of the units
 
   void 	Initialize();
   void	Destroy()		{ };

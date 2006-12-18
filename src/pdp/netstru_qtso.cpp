@@ -87,6 +87,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 //temp
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
@@ -191,6 +192,7 @@ void UnitViewData_PArray::SetGeom(TwoDCoord& c) {
 
 void UnitGroupView::Initialize() {
   data_base = &TA_Unit_Group;
+  no_units = true;		// testing!
 }
 
 
@@ -206,7 +208,9 @@ void UnitGroupView::AllocUnitViewData() {
 void UnitGroupView::BuildAll() {
   Reset(); // in case where we are rebuilding
   AllocUnitViewData();
-  //TODO: summary mode
+
+  if(no_units) return;			// summary mode!
+
   Unit_Group* ugrp = this->ugrp(); //cache
   TwoDCoord coord;
   for (coord.y = 0; coord.y < ugrp->geom.y; ++(coord.y)) {
@@ -362,13 +366,15 @@ void UnitGroupView::Render_pre() {
   Unit_Group* ugrp = this->ugrp(); //cache
 
   AllocUnitViewData();
-  m_node_so = new T3UnitGroupNode(this);
+  m_node_so = new T3UnitGroupNode(this, no_units);
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
-//  SoMaterial* mat = ugrp_so->material(); //cache
-//  mat->diffuseColor.setValue(0.0f, 0.5f, 0.0f); // green
-//  mat->transparency.setValue(0.5f);
+//   SoMaterial* mat = ugrp_so->material(); //cache
+//   mat->diffuseColor.setValue(0.5f, 0.0f, 0.0f);
+  //  mat->specularColor.setValue(0.5f, 0.0f, 0.0f);
+//   mat->shininess.setValue(.9f);
+//   mat->transparency.setValue(0.5f);
 
   // TODO: if not built, then use geom from layer
   ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
@@ -416,15 +422,19 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
 }
 
 void UnitGroupView::Render_impl_children() {
+  if(no_units) {
+    Render_impl_no_units();
+    return;
+  }
+
   NetView* nv = this->nv(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache
-
-  //TODO: summary view
 
   // for efficiency we assume responsibility for the _impl of UnitViews
   T3UnitNode* unit_so;
   TwoDCoord co;
   float val;
+  float sc_val;
   T3Color col;
   String val_str;
   // if displaying unit text, set up the viewing props in the unitgroup
@@ -445,9 +455,9 @@ void UnitGroupView::Render_impl_children() {
     Unit* unit = uv->unit();
     unit_so = uv->node_so();
     if (!unit_so || !unit) continue; // shouldn't happen
-    nv->GetUnitDisplayVals(this, unit->pos, val, col);
+    nv->GetUnitDisplayVals(this, unit->pos, val, col, sc_val);
     // Value
-    unit_so->setAppearance(val, col, max_z, trans);
+    unit_so->setAppearance(sc_val, col, max_z, trans);
     //TODO: we maybe shouldn't alter picked here, because that is expensive -- do only when select changes
     // except that might be complicated, ex. when Render() called,
     unit_so->setPicked(uv->picked);
@@ -485,46 +495,212 @@ void UnitGroupView::Render_impl_children() {
   }
 }
 
+void UnitGroupView::Render_impl_no_units() {
+  NetView* nv = this->nv(); //cache
+  Unit_Group* ugrp = this->ugrp(); //cache
+  T3UnitGroupNode* node_so = this->node_so(); // cache
+  SoIndexedTriangleStripSet* sits = node_so->shape();
+
+  SoVertexProperty* vtx_prop = new SoVertexProperty;
+  sits->vertexProperty.setValue(vtx_prop); // note: vp refs/unrefs automatically
+  SoMFVec3f& vertex = vtx_prop->vertex;
+  SoMFVec3f& normal = vtx_prop->normal;
+  SoMFUInt32& color = vtx_prop->orderedRGBA;
+
+  vtx_prop->normalBinding.setValue(SoNormalBinding::PER_FACE_INDEXED);
+  vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED);
+
+  normal.setNum(5);
+  normal.startEditing();
+  int idx=0;
+  normal.set1Value(idx++, 0.0f, 0.0f, -1.0f); // back = 0
+  normal.set1Value(idx++, 1.0f, 0.0f, 0.0f); // right = 1
+  normal.set1Value(idx++, -1.0f, 0.0f, 0.0f); // left = 2
+  normal.set1Value(idx++, 0.0f, 0.0f, 1.0f); // front = 3
+  normal.set1Value(idx++, 0.0f, 1.0f, 0.0f); // top = 4
+
+  // vertex plan: 5 vals per unit: the 0 (first) and the act. each unit renders the lower left
+  // corner; add one extra point at ends for the top and right sides of the last guys
+
+  int n_geom = ugrp->geom.Product();
+  int n_geom_p1 = (ugrp->geom.x + 1) + (ugrp->geom.y + 1);
+  int n_per_vtx = 8;
+  int tot_vtx =  n_geom_p1 * n_per_vtx;
+  vertex.setNum(tot_vtx);
+  vertex.startEditing();
+
+  color.setNum(n_geom_p1);
+  color.startEditing();
+
+  float trans = nv->view_params.unit_trans;
+  float spacing = nv->view_params.unit_spacing;
+  float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
+  max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
+
+  float val;
+  float sc_val;
+  T3Color col;
+  TwoDCoord mx_pos = ugrp->geom - 1;
+  TwoDCoord pos;
+  int v_idx = 0;
+  int c_idx = 0;
+  for(pos.y=0; pos.y<=ugrp->geom.y; pos.y++) {	 // these go in normal order; indexes are backwards
+    for(pos.x=0; pos.x<=ugrp->geom.x; pos.x++) { // right to left
+      TwoDCoord valpos = pos;
+      valpos.Min(mx_pos);
+      nv->GetUnitDisplayVals(this, valpos, val, col, sc_val);
+      float xp = ((float)pos.x + spacing) / nv->max_size.x;
+      float yp = -((float)pos.y + spacing) / nv->max_size.y;
+      float xp1 = ((float)pos.x+1 - spacing) / nv->max_size.x;
+      float yp1 = -((float)pos.y+1 - spacing) / nv->max_size.y;
+      float zp = .5f * sc_val / max_z;
+      vertex.set1Value(v_idx++, xp, 0.0f, yp); // 00_0 = 0
+      vertex.set1Value(v_idx++, xp1, 0.0f, yp); // 10_0 = 0
+      vertex.set1Value(v_idx++, xp, 0.0f, yp1); // 01_0 = 0
+      vertex.set1Value(v_idx++, xp1, 0.0f, yp1); // 11_0 = 0
+
+      vertex.set1Value(v_idx++, xp, zp, yp); // 00_v = 1
+      vertex.set1Value(v_idx++, xp1, zp, yp); // 10_v = 2
+      vertex.set1Value(v_idx++, xp, zp, yp1); // 01_v = 3
+      vertex.set1Value(v_idx++, xp1, zp, yp1); // 11_v = 4
+
+      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+      color.set1Value(c_idx++, T3Color::makePackedRGBA(col.r, col.g, col.b, alpha));
+    }
+  }
+  vertex.finishEditing();
+  color.finishEditing();
+
+  SoMFInt32& coords = sits->coordIndex;
+  SoMFInt32& norms = sits->normalIndex;
+  SoMFInt32& mats = sits->materialIndex;
+  int nc_per_idx = 19;		// number of coords per index
+  int nn_per_idx = 10;		// number of norms per index
+  int nm_per_idx = 3;		// number of mats per index
+  coords.setNum(n_geom * nc_per_idx);
+  norms.setNum(n_geom * nn_per_idx);
+  mats.setNum(n_geom * nm_per_idx);
+
+  int nx = ugrp->geom.x+1;
+
+  // values of the cubes xy_[0,v]
+  //     01_v   11_v   
+  //   01_0   11_0     
+  //     00_v   10_v    
+  //   00_0   10_0     
+
+  // triangle strip order is 0 1 2, 2 1 3, 2 3 4
+
+  coords.startEditing();
+  norms.startEditing();
+  mats.startEditing();
+  int cidx = 0;
+  int nidx = 0;
+  int midx = 0;
+  for(pos.y=ugrp->geom.y-1; pos.y>=0; pos.y--) { // go back to front
+    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
+      int c00_0 = (pos.y * nx + pos.x) * n_per_vtx;
+      int c10_0 = c00_0 + 1;
+      int c01_0 = c00_0 + 2;
+      int c11_0 = c00_0 + 3;
+      int c00_v = c00_0 + 4;
+      int c10_v = c00_0 + 5;
+      int c01_v = c00_0 + 6;
+      int c11_v = c00_0 + 7;
+
+      int mat_idx = (pos.y * nx + pos.x);
+
+      float zval = vertex[c00_v][1]; // "y" coord = 1
+
+      if(zval < 0.0f) {			 // do "top" first which is actually bottom!
+	coords.set1Value(cidx++, c01_v); // 0
+	coords.set1Value(cidx++, c11_v); // 1
+	coords.set1Value(cidx++, c00_v); // 2
+	coords.set1Value(cidx++, c10_v); // 3
+	coords.set1Value(cidx++, -1); // -1 -- 5 total
+
+	norms.set1Value(nidx++, 4); // top
+	norms.set1Value(nidx++, 4); // top -- 2 total
+
+	mats.set1Value(midx++, mat_idx);
+      }
+
+      // back - right
+      //     1    3
+      //   0    2     
+      //     x    5  
+      //   x    4   
+
+      coords.set1Value(cidx++, c01_0); // 0
+      coords.set1Value(cidx++, c01_v); // 1
+      coords.set1Value(cidx++, c11_0); // 2
+      coords.set1Value(cidx++, c11_v); // 3
+      coords.set1Value(cidx++, c10_0); // 4
+      coords.set1Value(cidx++, c10_v); // 5
+      coords.set1Value(cidx++, -1); // -1  -- 7 total
+
+      norms.set1Value(nidx++, 0); // back
+      norms.set1Value(nidx++, 0); // back
+      norms.set1Value(nidx++, 1); // right
+      norms.set1Value(nidx++, 1); // right -- 4 total
+
+      mats.set1Value(midx++, mat_idx);
+
+      // left - front
+      //     1    x 
+      //   0    x   
+      //     3    5
+      //   2    4   
+
+      coords.set1Value(cidx++, c01_0); // 0
+      coords.set1Value(cidx++, c01_v); // 1
+      coords.set1Value(cidx++, c00_0); // 2
+      coords.set1Value(cidx++, c00_v); // 3
+      coords.set1Value(cidx++, c10_0); // 4
+      coords.set1Value(cidx++, c10_v); // 5
+      coords.set1Value(cidx++, -1); // -1 -- 7 total
+
+      norms.set1Value(nidx++, 2); // left
+      norms.set1Value(nidx++, 2); // left
+      norms.set1Value(nidx++, 3); // front
+      norms.set1Value(nidx++, 3); // front -- 4 total
+
+      mats.set1Value(midx++, mat_idx);
+
+      // triangle strip order is 0 1 2, 2 1 3, 2 3 4
+      // top
+      //     0    1
+      //   x    x  
+      //     2    3
+      //   x    x  
+
+      if(zval >= 0.0f) {		 // only if higher..
+	coords.set1Value(cidx++, c01_v); // 0
+	coords.set1Value(cidx++, c11_v); // 1
+	coords.set1Value(cidx++, c00_v); // 2
+	coords.set1Value(cidx++, c10_v); // 3
+	coords.set1Value(cidx++, -1); // -1 -- 5 total
+
+	norms.set1Value(nidx++, 4); // top
+	norms.set1Value(nidx++, 4); // top -- 2 total
+
+	mats.set1Value(midx++, mat_idx);
+      }
+
+      // total coords = 7 + 7 + 5 = 19
+      // total norms = 4 + 4 + 2 = 10
+      // total mats = 3
+    }
+  }
+  coords.finishEditing();
+  norms.finishEditing();
+  mats.finishEditing();
+}
+
 void UnitGroupView::Reset_impl() {
   inherited::Reset_impl();
   uvd_arr.SetSize(0);
 }
-
-/*
-void UnitGroupView::CreateChildren(T3Node* par_node) {
-  String node_nm;
-  Unit* unit;
-  Unit_Group* ugrp = data(); //cache
-  TDCoord geom = ugrp->geom; // if zero, need to get our geom from the layer (not built yet)
-  if ((geom.x == 0) && (geom.y == 0) && (geom.z == 1)) {
-    Layer* lay = ugrp->own_lay;
-    // check if single grp or multi
-    if (lay->geom.z == 1) {
-      geom = lay->geom;
-    } else {
-      //TODO:
-    }
-  }
-  bool is_built = ugrp->CheckBuild(); // if built, lets us know if we've run out of units
-  TwoDCoord coord;
-  for (coord.y = 0; coord.y < geom.y; coord.y++) {
-    for (coord.x = 0; coord.x < geom.x; coord.x++) {
-      unit = ugrp->FindUnitFmCoord(coord); // can be null if not populated
-      if (is_built && !unit) goto exit; // no more actual units, and shouldn't show placeholders
-
-      if (unit) node_nm = unit->GetName();
-      else node_nm = _nilString;
-      int flags = 0;// BrListViewItem::DNF_UPDATE_NAME | BrListViewItem::DNF_CAN_BROWSE| BrListViewItem::DNF_CAN_DRAG;
-      T3UnitNode* unit_nd = T3UnitNode::New(unit, coord, par_node, last_child_node, node_nm, flags);
-      last_child_node = unit_nd;
-    }
-  }
-
-exit:
-  return;
-}
-*/
-
 
 
 //////////////////////////
@@ -728,15 +904,6 @@ void PrjnView::Render_impl() {
   node_so->transformCaption(cap);
   node_so->resizeCaption(nv->font_sizes.prjn);
 
-/* was
-  float dist = src.Dist(dst);
-  line_prjn->height = dist - arr_h;
-  // txfm
-  rot_prjn->rotation.setValue(SbRotation(SbVec3f(0, 1.0f, 0),
-    SbVec3f(dst.x - src.x, dst.z - src.z, -(dst.y - src.y)))); // from vec/ to vec
-  trln_prjn->translation.setValue(0.0f, line_prjn->height.getValue() / 2.0f, 0.0f);
-  trln_arr->translation.setValue(0.0f, line_prjn->height.getValue() / 2.0f, 0.0f); //note: already txlted by 1/2 height
-*/
   inherited::Render_impl();
 }
 
@@ -1063,7 +1230,7 @@ void NetView::GetMembs() { // this fills a member group with the valid
   }
 }
 
-void NetView::GetUnitColor(float val,  iColor& col) {
+void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
   const iColor* fl;  const iColor* tx;
 /*TODO  if ((act_md == NULL) || (base == NULL) || (md_type < 0)) {
     fl = cbar->bar->scale->nocolor.color;
@@ -1076,20 +1243,21 @@ void NetView::GetUnitColor(float val,  iColor& col) {
     return false;
   }  */
 
-  scale.GetColor(val,&fl,&tx);
+  scale.GetColor(val,&fl,&tx,sc_val);
   col = fl;
 }
 
-void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,  T3Color& col) {
+void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val, T3Color& col,
+				 float& sc_val) {
   iColor tc;
   if ((unit_disp_md == NULL) || (unit_md_flags == MD_UNKNOWN)) {
     val = 0.0f;
-    col.setValue(.25f, .25f, .25f); // dk gray
+    col.setValue(.5f, .5f, .5f); // med gray
     return;
   }
 
   val = ugrv->GetUnitDisplayVal(co, unit_md_flags);
-  GetUnitColor(val, tc);
+  GetUnitColor(val, tc, sc_val);
   col.setValue(tc.redf(), tc.greenf(), tc.bluef());
 }
 

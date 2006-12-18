@@ -441,6 +441,8 @@ void ScaleRange::SetFromScale(ColorScale& cs) {
 //	ColorScale	//
 //////////////////////////
 
+float ColorScale::sc_val_def = 0.0f;
+
 void ColorScale::Initialize() {
   chunks = 0;
   spec = NULL;
@@ -516,12 +518,13 @@ float ColorScale::GetAbsPercent(float val){
     return ((zero - min) == 0.0f) ? 0.0f : fabs((zero - val) / (zero - min));
 }
 
-const iColor* ColorScale::GetColor(float val, const iColor** maincolor, const iColor** contrast) {
+const iColor* ColorScale::GetColor(float val, const iColor** maincolor,
+				   const iColor** contrast, float& sc_val) {
   int idx;
   const iColor* m;
   const iColor* c;
-  if (range == 0) {
-    m = GetColor((int) ((.5 * (float)(chunks-1)) + .5));
+  if (range == 0.0f) {
+    m = GetColor((int) ((.5f * (float)(chunks-1)) + .5f));
     c = GetContrastColor(chunks-1);
   } else if(val > max) {
     m = maxout.color();
@@ -536,6 +539,14 @@ const iColor* ColorScale::GetColor(float val, const iColor** maincolor, const iC
   }
   if (maincolor!= NULL) *maincolor = m;
   if (contrast != NULL) *contrast = c;
+  if(range > 0.0f) {
+    sc_val = (val - zero) / range;
+    if(sc_val > 1.0f) sc_val = 1.0f;
+    else if(sc_val < -1.0f) sc_val = -1.0f;
+  }
+  else {
+    sc_val = 0.0f;
+  }
   return m;
 }
 

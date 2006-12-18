@@ -4326,7 +4326,7 @@ void NetViewParams::Initialize() {
   prjn_width = .001f;
   prjn_trans = .5f;
   lay_trans = .5f;
-  unit_trans = 0.0f;
+  unit_trans = 0.6f;
 }
 
 void Network::Initialize() {
