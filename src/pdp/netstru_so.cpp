@@ -332,11 +332,13 @@ T3UnitGroupNode::T3UnitGroupNode(void* dataView_, bool no_unts)
     cb->setCallback(shapeCallback, (void*)this);
     insertChildAfter(topSeparator(), cb, transform());
   }
+  unit_text_ = NULL;
 }
 
 T3UnitGroupNode::~T3UnitGroupNode()
 {
   shape_ = NULL;
+  unit_text_ = NULL;
   SoMaterial* mat = material();
   mat->diffuseColor.setValue(1.0f, 1.0f, 1.0f); // white (invisible)
   mat->transparency.setValue(1.0f);
@@ -357,6 +359,17 @@ SoFont* T3UnitGroupNode::unitCaptionFont(bool auto_create) {
   return unitCaptionFont_;
 }
 
+SoSeparator* T3UnitGroupNode::getUnitText() {
+  if(unit_text_) return unit_text_;
+  unit_text_ = new SoSeparator;
+  return unit_text_;
+}
+
+SoSeparator* T3UnitGroupNode::removeUnitText() {
+  if(unit_text_)
+    removeChild(unit_text_);
+  unit_text_ = NULL;
+}
 
 //////////////////////////
 //   T3LayerNode	//

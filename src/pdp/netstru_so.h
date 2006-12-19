@@ -221,6 +221,9 @@ public:
   void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
   // sets (actual) geom of group; creates/positions units; setes max_size
   SoIndexedTriangleStripSet* shape() {return shape_;}
+  SoSeparator*		unitText() {return unit_text_;} // extra text of unit vars
+  SoSeparator*		getUnitText();		      // get a new unit text separator
+  SoSeparator*		removeUnitText();	      // remove unit text separator
 
   T3UnitGroupNode(void* dataView_ = NULL, bool no_unts = false);
 
@@ -232,7 +235,8 @@ protected:
   ~T3UnitGroupNode();
 
 private:
-  SoIndexedTriangleStripSet*	shape_; // #IGNORE
+  SoIndexedTriangleStripSet*	shape_;
+  SoSeparator* 		unit_text_; // unit text variables
 };
 
 

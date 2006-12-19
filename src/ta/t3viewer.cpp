@@ -600,9 +600,8 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
       sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
       m_renderArea->setSceneGraph(sel_so);
       SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
-      rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
-      //      rend_act->setTransparencyType(SoGLRenderAction::BLEND);
-      // seems like the best compromize
+//       rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
+      rend_act->setTransparencyType(SoGLRenderAction::BLEND);
 
       rend_act->setSmoothing(true); // low-cost line smoothing
 //       rend_act->setNumPasses(2);    // 1 = no antialiasing; 2 = antialiasing

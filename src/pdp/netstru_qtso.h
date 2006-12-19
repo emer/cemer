@@ -421,25 +421,31 @@ INHERITED(iViewPanelFrame)
 public:
 
   QVBoxLayout*		layOuter;
-  QHBoxLayout*		  layDispCheck;
-  QCheckBox*		    chkDisplay;
-  QLabel*		    lblUnitText;
-  taiComboBox*		    cmbUnitText;
-  QLabel*		    lblDispMode;
-  taiComboBox*		    cmbDispMode;
-  iMethodButtonFrame*	    widCmdButtons;
+  QHBoxLayout*		layDispCheck;
+  QCheckBox*		chkDisplay;
+  QLabel*		lblUnitText;
+  taiComboBox*		cmbUnitText;
+  QLabel*		lblDispMode;
+  taiComboBox*		cmbDispMode;
+  QLabel*		lblUnitTrans;
+  taiField*		fldUnitTrans;
+  QLabel*		lblLayFont;
+  taiField*		fldLayFont;
+  QLabel*		lblUnitFont;
+  taiField*		fldUnitFont;
+  iMethodButtonFrame*	widCmdButtons;
 
-  QGroupBox*		  gbDisplayValues;
-  QVBoxLayout*		  layDisplayValues;
-  QHBoxLayout*		    layColorScaleCtrls;
-  QCheckBox*		      chkAutoScale;       // autoscale ck_box
-  QPushButton*		      butScaleDefault;    // revert to default
-  ScaleBar*		    cbar;	      // colorbar
-  Q3ListView*		    lvDisplayValues;
+  QGroupBox*		gbDisplayValues;
+  QVBoxLayout*		layDisplayValues;
+  QHBoxLayout*		layColorScaleCtrls;
+  QCheckBox*		chkAutoScale;       // autoscale ck_box
+  QPushButton*		butScaleDefault;    // revert to default
+  ScaleBar*		cbar;	      // colorbar
+  Q3ListView*		lvDisplayValues;
   
-  QGroupBox*		  gbSpecs;
-  QVBoxLayout*		  laySpecs;
-  iTreeView*		    tvSpecs;
+  QGroupBox*		gbSpecs;
+  QVBoxLayout*		laySpecs;
+  iTreeView*		tvSpecs;
   
   QPushButton*		butNewLayer;
   QPushButton*		butBuildAll;
@@ -481,6 +487,8 @@ protected slots:
   virtual void 		chkDisplay_toggled(bool on);
   virtual void 		cmbUnitText_itemChanged(int itm);
   virtual void 		cmbDispMode_itemChanged(int itm);
+  virtual void 		fldUnitTrans_textChanged();
+  virtual void 		fldLayFont_textChanged();
   virtual void		cbar_scaleValueChanged();
   virtual void		lvDisplayValues_selectionChanged();
   void			tvSpecs_ItemSelected(iTreeViewItem* item); 

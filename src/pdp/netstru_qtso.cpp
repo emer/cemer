@@ -52,6 +52,7 @@
 
 #include "iflowlayout.h"
 #include "icolor.h"
+#include "ilineedit.h"
 
 #include "imisc_so.h"
 /*
@@ -523,13 +524,12 @@ void UnitGroupView::Render_impl_no_units() {
   // corner; add one extra point at ends for the top and right sides of the last guys
 
   int n_geom = ugrp->geom.Product();
-  int n_geom_p1 = (ugrp->geom.x + 1) + (ugrp->geom.y + 1);
   int n_per_vtx = 8;
-  int tot_vtx =  n_geom_p1 * n_per_vtx;
+  int tot_vtx =  n_geom * n_per_vtx;
   vertex.setNum(tot_vtx);
   vertex.startEditing();
 
-  color.setNum(n_geom_p1);
+  color.setNum(n_geom);
   color.startEditing();
 
   float trans = nv->view_params.unit_trans;
@@ -537,18 +537,44 @@ void UnitGroupView::Render_impl_no_units() {
   float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
   max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
 
+  bool build_text = false;
+  SoSeparator* un_txt = NULL;
+  float ufontsz = nv->font_sizes.unit;
+  if(nv->unit_text_disp == NetView::UTD_NONE) {
+    un_txt = node_so->unitText();
+    if(un_txt) {
+      node_so->removeUnitText();
+    }
+  }
+  else {
+    un_txt = node_so->unitText();
+    if(!un_txt) {
+      un_txt = node_so->getUnitText();
+      build_text = true;
+      node_so->addChild(un_txt);
+      SoBaseColor* bc = new SoBaseColor;
+      bc->rgb.setValue(0, 0, 0); //black is default for text
+      un_txt->addChild(bc);
+      SoFont* fnt = new SoFont();
+      fnt->size.setValue(ufontsz);
+      fnt->name = "Arial";
+      un_txt->addChild(fnt);
+    }
+  }
+
+  String val_str;
+  String unit_name;
   float val;
   float sc_val;
   T3Color col;
-  TwoDCoord mx_pos = ugrp->geom - 1;
   TwoDCoord pos;
   int v_idx = 0;
   int c_idx = 0;
-  for(pos.y=0; pos.y<=ugrp->geom.y; pos.y++) {	 // these go in normal order; indexes are backwards
-    for(pos.x=0; pos.x<=ugrp->geom.x; pos.x++) { // right to left
-      TwoDCoord valpos = pos;
-      valpos.Min(mx_pos);
-      nv->GetUnitDisplayVals(this, valpos, val, col, sc_val);
+  int t_idx = 2;		// base color + font
+  // these go in normal order; indexes are backwards
+  for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
+    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
+      nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
       float xp = ((float)pos.x + spacing) / nv->max_size.x;
       float yp = -((float)pos.y + spacing) / nv->max_size.y;
       float xp1 = ((float)pos.x+1 - spacing) / nv->max_size.x;
@@ -566,10 +592,55 @@ void UnitGroupView::Render_impl_no_units() {
 
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
       color.set1Value(c_idx++, T3Color::makePackedRGBA(col.r, col.g, col.b, alpha));
+
+      if(nv->unit_text_disp != NetView::UTD_NONE) {
+	if(build_text || un_txt->getNumChildren() <= t_idx) {
+	  SoSeparator* tsep = new SoSeparator;
+	  un_txt->addChild(tsep);
+	  SoTranslation* tr = new SoTranslation;
+	  tsep->addChild(tr);
+	  SoAsciiText* txt = new SoAsciiText();
+	  txt->justification = SoAsciiText::CENTER;
+	  tsep->addChild(txt);
+	}
+	SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
+	SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
+	float xfp = .5f * (xp + xp1);
+	tr->translation.setValue(xfp, MAX(zp,0.0f) + ufontsz, yp);
+	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+	if(nv->unit_text_disp & NetView::UTD_VALUES) {
+	  ValToDispText(val, val_str);
+	}
+	if(nv->unit_text_disp & NetView::UTD_NAMES) {
+	  Unit* unit = ugrp->FindUnitFmCoord(pos);
+	  if(unit)
+	    unit_name = unit->name;
+	}
+	SoMFString* mfs = &(txt->string);
+	// fastest is to do each case in one operation
+	switch (nv->unit_text_disp) {
+	case NetView::UTD_VALUES:
+	  mfs->setValue(val_str.chars());
+	  break;
+	case NetView::UTD_NAMES:
+	  mfs->setValue(unit_name.chars());
+	  break;
+	case NetView::UTD_BOTH:
+	  const char* strs[2];
+	  strs[0] = val_str.chars();
+	  strs[1] = unit_name.chars();
+	  mfs->setValues(0, 2, strs);
+	  break;
+	default: break; // compiler food, won't happen
+	}
+	t_idx++;
+      }
     }
   }
   vertex.finishEditing();
   color.finishEditing();
+
+  // todo: could cleanup un_txt child list if extras, but not clear if needed
 
   SoMFInt32& coords = sits->coordIndex;
   SoMFInt32& norms = sits->normalIndex;
@@ -581,7 +652,7 @@ void UnitGroupView::Render_impl_no_units() {
   norms.setNum(n_geom * nn_per_idx);
   mats.setNum(n_geom * nm_per_idx);
 
-  int nx = ugrp->geom.x+1;
+  int nx = ugrp->geom.x;
 
   // values of the cubes xy_[0,v]
   //     01_v   11_v   
@@ -1265,7 +1336,6 @@ void NetView::InitDisplay(bool init_panel) {
 //   if (!display) return;
   GetMembs();
   GetMaxSize();
-  if(net()->n_units > 500) view_params.unit_trans = 0.0f; // override
   // select "act" by default, if nothing selected, or saved selection not restored yet (first after load)
   if (!unit_disp_md) {
     if (ordered_uvg_list.size > 0) {
@@ -1600,20 +1670,34 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(chkDisplay);
   layDispCheck->addSpacing(taiM->hspc_c);
 
-  lblUnitText = taiM->NewLabel("Unit Text", widg, font_spec);
+  lblUnitText = taiM->NewLabel("Unit: Text", widg, font_spec);
   layDispCheck->addWidget(lblUnitText);
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
     NULL, NULL, widg);
   layDispCheck->addWidget(cmbUnitText->GetRep());
   layDispCheck->addSpacing(taiM->hspc_c);
 
-  lblDispMode = taiM->NewLabel("Unit Style", widg, font_spec);
+  lblDispMode = taiM->NewLabel("Style", widg, font_spec);
   layDispCheck->addWidget(lblDispMode);
   cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
     NULL, NULL, widg);
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
+  lblUnitTrans = taiM->NewLabel("Trans", widg, font_spec);
+  layDispCheck->addWidget(lblUnitTrans);
+  fldUnitTrans = new taiField(&TA_float, NULL, NULL, widg);
+  layDispCheck->addWidget(fldUnitTrans->GetRep());
+  layDispCheck->addSpacing(taiM->hspc_c);
+  connect(fldUnitTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitTrans_textChanged()) );
+
+  lblLayFont = taiM->NewLabel("Lay Font Sz", widg, font_spec);
+  layDispCheck->addWidget(lblLayFont);
+  fldLayFont = new taiField(&TA_float, NULL, NULL, widg);
+  layDispCheck->addWidget(fldLayFont->GetRep());
+  //  layDispCheck->addSpacing(taiM->hspc_c);
+  connect(fldLayFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldLayFont_textChanged()) );
+
   gbDisplayValues = new QGroupBox("Display Values", widg);
   layOuter->addWidget(gbDisplayValues, 1);
   layDisplayValues = new QVBoxLayout(gbDisplayValues);
@@ -1781,6 +1865,23 @@ void NetViewPanel::cmbUnitText_itemChanged(int itm) {
   nv_->UpdateDisplay(false);
 }
 
+void NetViewPanel::fldUnitTrans_textChanged() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+
+  nv_->view_params.unit_trans = (float)fldUnitTrans->GetValue();
+  nv_->UpdateDisplay(false);
+}
+
+void NetViewPanel::fldLayFont_textChanged() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+
+  nv_->font_sizes.layer = (float)fldLayFont->GetValue();
+  nv_->UpdateDisplay(false);
+}
 
 void NetViewPanel::cbar_scaleValueChanged() {
   if (updating) return;
@@ -1811,6 +1912,8 @@ void NetViewPanel::GetImage_impl() {
   cmbUnitText->GetImage(nv->unit_text_disp);
   cmbDispMode->GetImage(nv->unit_disp_mode);
   chkDisplay->setChecked(nv->display);
+  fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
+  fldLayFont->GetImage((String)nv->font_sizes.layer);
   // update var selection
   int i = 0;
   Q3ListViewItemIterator it(lvDisplayValues);
