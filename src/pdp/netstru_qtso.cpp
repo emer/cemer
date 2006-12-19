@@ -193,7 +193,6 @@ void UnitViewData_PArray::SetGeom(TwoDCoord& c) {
 
 void UnitGroupView::Initialize() {
   data_base = &TA_Unit_Group;
-  no_units = true;		// testing!
 }
 
 
@@ -209,8 +208,8 @@ void UnitGroupView::AllocUnitViewData() {
 void UnitGroupView::BuildAll() {
   Reset(); // in case where we are rebuilding
   AllocUnitViewData();
-
-  if(no_units) return;			// summary mode!
+  NetView* nv = this->nv();
+  if(nv->unit_disp_mode == NetView::UDM_BLOCK) return; // optimized
 
   Unit_Group* ugrp = this->ugrp(); //cache
   TwoDCoord coord;
@@ -227,7 +226,8 @@ void UnitGroupView::BuildAll() {
 }
 
 float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags) {
-  float val = 0.0f;
+  NetView* nv = this->nv();
+  float val = nv->scale.zero;
   void* base = uvd_arr.FastEl(co).disp_base;
 
   if (base) switch (unit_md_flags) {
@@ -366,6 +366,10 @@ void UnitGroupView::Render_pre() {
   NetView* nv = this->nv();
   Unit_Group* ugrp = this->ugrp(); //cache
 
+  bool no_units = true;
+  if(nv->unit_disp_mode != NetView::UDM_BLOCK)
+    no_units = false;
+
   AllocUnitViewData();
   m_node_so = new T3UnitGroupNode(this, no_units);
   //NOTE: we create/adjust the units in the Render_impl routine
@@ -377,7 +381,6 @@ void UnitGroupView::Render_pre() {
 //   mat->shininess.setValue(.9f);
 //   mat->transparency.setValue(0.5f);
 
-  // TODO: if not built, then use geom from layer
   ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
 
   inherited::Render_pre();
@@ -423,12 +426,12 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
 }
 
 void UnitGroupView::Render_impl_children() {
-  if(no_units) {
-    Render_impl_no_units();
+  NetView* nv = this->nv(); //cache
+  if(nv->unit_disp_mode == NetView::UDM_BLOCK) {
+    Render_impl_blocks();
     return;
   }
 
-  NetView* nv = this->nv(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
   // for efficiency we assume responsibility for the _impl of UnitViews
@@ -496,7 +499,7 @@ void UnitGroupView::Render_impl_children() {
   }
 }
 
-void UnitGroupView::Render_impl_no_units() {
+void UnitGroupView::Render_impl_blocks() {
   NetView* nv = this->nv(); //cache
   Unit_Group* ugrp = this->ugrp(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache
@@ -556,10 +559,11 @@ void UnitGroupView::Render_impl_no_units() {
       bc->rgb.setValue(0, 0, 0); //black is default for text
       un_txt->addChild(bc);
       SoFont* fnt = new SoFont();
-      fnt->size.setValue(ufontsz);
       fnt->name = "Arial";
       un_txt->addChild(fnt);
     }
+    SoFont* fnt = (SoFont*)un_txt->getChild(1);
+    fnt->size.setValue(ufontsz);
   }
 
   String val_str;
@@ -603,10 +607,12 @@ void UnitGroupView::Render_impl_no_units() {
 	  txt->justification = SoAsciiText::CENTER;
 	  tsep->addChild(txt);
 	}
+	// todo: could figure out how to do this without a separator
+	// but it just isn't clear that it is that big a deal..  very convenient
 	SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
 	SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
 	float xfp = .5f * (xp + xp1);
-	tr->translation.setValue(xfp, MAX(zp,0.0f) + ufontsz, yp);
+	tr->translation.setValue(xfp, MAX(zp,0.0f) + .01f, yp);
 	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 	if(nv->unit_text_disp & NetView::UTD_VALUES) {
 	  ValToDispText(val, val_str);
@@ -1303,31 +1309,33 @@ void NetView::GetMembs() { // this fills a member group with the valid
 
 void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
   const iColor* fl;  const iColor* tx;
-/*TODO  if ((act_md == NULL) || (base == NULL) || (md_type < 0)) {
-    fl = cbar->bar->scale->nocolor.color;
-    tx = cbar->bar->scale->nocolor.contrastcolor;
-    if(fl != fill()) {
-      fill(fl);
-      damage_me(c);
-      return true;
-    }
-    return false;
-  }  */
-
   scale.GetColor(val,&fl,&tx,sc_val);
   col = fl;
 }
 
 void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val, T3Color& col,
 				 float& sc_val) {
-  iColor tc;
-  if ((unit_disp_md == NULL) || (unit_md_flags == MD_UNKNOWN)) {
-    val = 0.0f;
-    col.setValue(.5f, .5f, .5f); // med gray
+  val = scale.zero;
+  sc_val = scale.zero;
+  void* base = ugrv->uvd_arr.FastEl(co).disp_base;
+  if(!base || !unit_disp_md || (unit_md_flags == MD_UNKNOWN)) {
+    col.setValue(.8f, .8f, .8f); // lt gray
     return;
   }
 
-  val = ugrv->GetUnitDisplayVal(co, unit_md_flags);
+  //  val = ugrv->GetUnitDisplayVal(co, unit_md_flags);
+  switch (unit_md_flags) {
+  case NetView::MD_FLOAT:
+    val = *((float*)base); break;
+  case NetView::MD_DOUBLE:
+    val = *((double*)base); break;
+  case NetView::MD_INT:
+    val = *((int*)base); break;
+  default:
+    break;
+  }
+
+  iColor tc;
   GetUnitColor(val, tc, sc_val);
   col.setValue(tc.redf(), tc.greenf(), tc.bluef());
 }
@@ -1691,6 +1699,13 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addSpacing(taiM->hspc_c);
   connect(fldUnitTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitTrans_textChanged()) );
 
+  lblUnitFont = taiM->NewLabel("Font Sz", widg, font_spec);
+  layDispCheck->addWidget(lblUnitFont);
+  fldUnitFont = new taiField(&TA_float, NULL, NULL, widg);
+  layDispCheck->addWidget(fldUnitFont->GetRep());
+  //  layDispCheck->addSpacing(taiM->hspc_c);
+  connect(fldUnitFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitFont_textChanged()) );
+
   lblLayFont = taiM->NewLabel("Lay Font Sz", widg, font_spec);
   layDispCheck->addWidget(lblLayFont);
   fldLayFont = new taiField(&TA_float, NULL, NULL, widg);
@@ -1853,7 +1868,8 @@ void NetViewPanel::cmbDispMode_itemChanged(int itm) {
 
   if (nv_->unit_disp_mode == (NetView::UnitDisplayMode)itm) return;
   nv_->unit_disp_mode = (NetView::UnitDisplayMode)itm;
-  nv_->Render();
+  nv_->InitDisplay(false); // need strong reset
+  //  nv_->Render();
 }
 
 void NetViewPanel::cmbUnitText_itemChanged(int itm) {
@@ -1871,6 +1887,15 @@ void NetViewPanel::fldUnitTrans_textChanged() {
   if (!(nv_ = nv())) return;
 
   nv_->view_params.unit_trans = (float)fldUnitTrans->GetValue();
+  nv_->UpdateDisplay(false);
+}
+
+void NetViewPanel::fldUnitFont_textChanged() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+
+  nv_->font_sizes.unit = (float)fldUnitFont->GetValue();
   nv_->UpdateDisplay(false);
 }
 
@@ -1913,6 +1938,7 @@ void NetViewPanel::GetImage_impl() {
   cmbDispMode->GetImage(nv->unit_disp_mode);
   chkDisplay->setChecked(nv->display);
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
+  fldUnitFont->GetImage((String)nv->font_sizes.unit);
   fldLayFont->GetImage((String)nv->font_sizes.layer);
   // update var selection
   int i = 0;

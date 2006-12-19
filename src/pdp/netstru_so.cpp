@@ -74,10 +74,10 @@ T3UnitNode::~T3UnitNode()
 }
 
 void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, float trans) {
-  //  material()->ambientColor = (SbColor)color;
   material()->diffuseColor = (SbColor)color;
   //  material()->specularColor = (SbColor)color;
   //  material()->emissiveColor = (SbColor)color;
+  //  material()->ambientColor = (SbColor)color;
   if (act < -1.0f) act = -1.0f;
   else if (act > 1.0f) act = 1.0f;
   material()->transparency = (1.0f - fabsf(act)) * trans;
@@ -191,6 +191,8 @@ T3UnitNode_Circle::~T3UnitNode_Circle()
 //////////////////////////
 //   T3UnitNode_Block//
 //////////////////////////
+
+// note: Block is never called now because it is done in optimized form by the unit group
 
 SO_NODE_SOURCE(T3UnitNode_Block);
 

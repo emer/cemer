@@ -193,7 +193,6 @@ public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
   UnitViewData_PArray	uvd_arr; // #IGNORE
-  bool			no_units; // if true, then don't make actual units (i.e., summary mode)
 
   Unit_Group*		ugrp() const {return (Unit_Group*)data();}
   UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE
@@ -212,7 +211,7 @@ protected:
   void 			UpdateUnitViewBase_Bias_impl(MemberDef* disp_md); // for bias vals
   override void		DoActionChildren_impl(DataViewAction acts);
   virtual void 		Render_impl_children(); // #IGNORE we trap this in DoActionChildren
-  virtual void 		Render_impl_no_units(); // no units case
+  virtual void 		Render_impl_blocks(); // optimized blocks
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
@@ -429,10 +428,10 @@ public:
   taiComboBox*		cmbDispMode;
   QLabel*		lblUnitTrans;
   taiField*		fldUnitTrans;
-  QLabel*		lblLayFont;
-  taiField*		fldLayFont;
   QLabel*		lblUnitFont;
   taiField*		fldUnitFont;
+  QLabel*		lblLayFont;
+  taiField*		fldLayFont;
   iMethodButtonFrame*	widCmdButtons;
 
   QGroupBox*		gbDisplayValues;
@@ -488,6 +487,7 @@ protected slots:
   virtual void 		cmbUnitText_itemChanged(int itm);
   virtual void 		cmbDispMode_itemChanged(int itm);
   virtual void 		fldUnitTrans_textChanged();
+  virtual void 		fldUnitFont_textChanged();
   virtual void 		fldLayFont_textChanged();
   virtual void		cbar_scaleValueChanged();
   virtual void		lvDisplayValues_selectionChanged();
