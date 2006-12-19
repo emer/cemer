@@ -450,8 +450,7 @@ void iRenderArea::processEvent(QEvent* ev_) {
   if (ev_->type() == QEvent::MouseButtonPress) {
     QMouseEvent* ev = (QMouseEvent*)ev_;
     if (ev->button() == Qt::RightButton) {
-//TEMP
-cerr << "iRenderArea::processEvent: right mouse press handled\n";
+//cerr << "iRenderArea::processEvent: right mouse press handled\n";
       //TODO: maybe should check for item under mouse???
       //TODO: pos will need to be adjusted for parent offset of renderarea ???
       ev->accept();

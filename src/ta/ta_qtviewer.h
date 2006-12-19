@@ -986,14 +986,13 @@ public:
   
   static void		InitClass(); // auto executed
   
-  iDataPanel*		panel(int idx); // #IGNORE gets the current panel, if any
+  iDataPanel*		panel(int tab_idx); // #IGNORE gets the current panel, if any
   iTabView*		tabView() {return (iTabView*)parent();} // #IGNORE
 
 #ifndef __MAKETA__
   using			QTabBar::addTab; // bring also into scope
 #endif
-  int			addTab(iDataPanel* panel); //#IGNORE
-  int			insertTab(int idx, iDataPanel* panel); //#IGNORE
+  int			addTab(iDataPanel* panel); //#IGNORE puts at end if locked else inserts at end of unlocked
   void 			setTabIcon(int idx, TabIcon ti);
   void			SetPanel(int idx, iDataPanel* value, bool force = false); //#IGNORE set or remove (NULL) a panel
   
@@ -1024,6 +1023,8 @@ protected:
 };
 
 
+// NOTE: pan_idx is of panelCount and panel()
+//       tab_idx is of tabCount and tabPanel()
 class TA_API iTabView: public QWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS  control for managing tabbed data pages
   Q_OBJECT
@@ -1034,10 +1035,13 @@ public:
   QVBoxLayout*		layDetail;
     iTabBar*		tbPanels; //note: we always maintain at least one tab
     Q3WidgetStack*	wsPanels; //
-
+  
+  bool			autoCommit() const {return true;} // if we should autocommit dirty panels when browsing (NOTE: currently always true, could be made a user option)
   iDataPanel*		curPanel() const; // currently active panel
-  iDataPanel*		panel(int idx = 0); // implementation-independent way to access panels
-  int			panel_count();
+  int			panelCount() const; // total number of panels (not just in tabs)
+  iDataPanel*		panel(int pan_idx = 0); // implementation-independent way to access panels
+  int			tabCount() const; // number of tabs
+  iDataPanel*		tabPanel(int tab_idx); // panel from indicated tab (can be NULL)
   taiDataLink*		par_link() const {return (m_viewer_win) ? m_viewer_win->sel_link() : NULL;}
   MemberDef*		par_md() const {return (m_viewer_win) ? m_viewer_win->sel_md() : NULL;}
   iTabViewer* 		tabViewerWin() {return m_viewer_win;}
@@ -1056,7 +1060,7 @@ public:
   void			ResolveChanges(CancelOp& cancel_op);
   void			OnWindowBind(iTabViewer* itv); // called at constr_post time
   void			ShowPanel(iDataPanel* panel); // top level guy, checks if exists, adds or sets current
-  void			SetCurrentTab(int idx, bool except_if_locked = true); 
+  void			SetCurrentTab(int tab_idx, bool except_if_locked = true); 
     // focus indicated tab, but usually not if current is lockInPlace 
   int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
 
