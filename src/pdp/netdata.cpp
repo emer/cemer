@@ -239,9 +239,8 @@ bool LayerWriterEl::ApplyInputData(DataBlock* db, Network* net) {
       ext_flags = Unit::COMP;
   }
 
-  // we only apply target data in TRAIN mode
-  if((net->train_mode != Network::TRAIN) && (ext_flags & Unit::TARG))
-    return true;
+  // note: always provide all data, it is up to the network to decide how to use it
+  // based on train_mode
   // get the data as a slice -- therefore, frame is always 0
   lay->ApplyInputData(mat, ext_flags, &noise, &offset);
   // mat unrefs at this point, or on exit from routine
