@@ -126,7 +126,8 @@ public:
     flgInline		= 0x080,   // used by types and members that support INLINE directive, esp. Array
     flgEditDialog	= 0x100,   // for taiField, enables dialog for EDIT_DIALOG directive; for token menu, adds ... edit
     flgNoUAE		= 0x200,  // for things like polydata, don't issue an UpdateAfterEdit
-    flgToggleReadOnly	= 0x400 // for taiPlusToggle, makes the toggle itself ro
+    flgToggleReadOnly	= 0x400, // for taiPlusToggle, makes the toggle itself ro
+    flgAutoApply	= 0x800  // when user finishes editing this control, auto apply the edits
   };
 
   TypeDef* 		typ;		// type for the gui object
@@ -178,6 +179,7 @@ protected:
   taiData*		mparent;		// if data is contained within data, this the parent container
   int			mflags;
   virtual void		SetRep(QWidget* val);
+  virtual void		CheckDoAutoApply(); // call for this control when the "auto apply" action is done
   virtual void		ChildAdd(taiData* child) {}
   virtual void		ChildRemove(taiData* child) {}
   virtual void		DataChanged_impl(taiData* chld) {} // only called if isConstructed

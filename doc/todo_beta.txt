@@ -23,25 +23,8 @@ Browser/Edit/Tab space
 
 tabs:
 
-* double-click to get edit panel (regular click is only for selecting)
-* context menu has:
-  * "edit in current tab"
-  * "edit in new tab" - makes a new tab
-  * "edit in dialog"
-* when a new guy put in a tab, existing guy is auto-applied
-* if you do a ... on a token to edit guy, it often doesn't show up. related to 
-  edit stuff hanging around forever and it looks like its already being edited?
-* separate view and edit tabs (keep sep lists)
-* fix bugs where tabs don't show what they should (multiple tabs),
-* add "pin/unpin" capability to panels, and extend panel tab context menu 
-
 edit dialogs:
 
-* for sub-panels (e.g., properties, list view, etc), don't render the other panels
-  until they are clicked on.  This would save a lot of time.  it is *very* slow
-  when clicking on a long list of guys.  should be super quick.
-* force the user to specifically select the "all items in the list" property display
-  for lists: make it a separate box with a button or other control to activate
 * #200: #EXPERT and #DETAIL (maybe others?) should be collected at bottom of
   edit dialog with a windowshade kind of control that when you click on it
  reveals them. This provides a visual cue to the user that these variables
@@ -201,6 +184,31 @@ Brad: (done)
 * selectEdit not working right
 * in DataCalcLoop (sctually, was all lists)
   src_cols folder, ProgramEditor hass an AddAllColumns button over a dropdown
+* for sub-panels (e.g., properties, list view, etc), don't render the other panels
+  until they are clicked on.  This would save a lot of time.  it is *very* slow
+  when clicking on a long list of guys.  should be super quick.
+tabs fixed:
+* when a new guy put in a tab, existing guy is auto-applied
+* fix bugs where tabs don't show what they should (multiple tabs),
+* add "pin/unpin" capability to panels, and extend panel tab context menu 
+* separate view and edit tabs (keep sep lists)
+* if you do a ... on a token to edit guy, it often doesn't show up. related to 
+  edit stuff hanging around forever and it looks like its already being edited?
+
+
+Brad: (won't do)
+
+* force the user to specifically select the "all items in the list" property display
+  for lists: make it a separate box with a button or other control to activate
+[for now, handled by user only clicking on list properties when they want them]
+tabs won't do:
+* double-click to get edit panel (regular click is only for selecting)
+  [double clicking in tree is evil]
+* context menu has:
+[no: current scheme is self-consistent]
+  * "edit in current tab"
+  * "edit in new tab" - makes a new tab
+  * "edit in dialog"
 
 
 --------------------------

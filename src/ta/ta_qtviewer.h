@@ -620,6 +620,7 @@ public:
   virtual void		AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
   void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
   virtual iTabView*	AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL); // adds a new tab view, optionally as a split
+  void 			ShowLink(taiDataLink* link, bool not_in_cur = false);
   void			ShowPanel(iDataPanel* panel); // shows the panel, according to showing rules
   
   virtual void		TabView_Destroying(iTabView* tv); // called when a tabview deletes
@@ -672,6 +673,7 @@ protected:
   
 protected:
   override void 	closeEvent(QCloseEvent* ev);
+  bool			event(QEvent* ev);
   void 			hideEvent(QHideEvent* e); // override
   void 			showEvent(QShowEvent* e); // override
   virtual void		Showing(bool showing); // #IGNORE called by the show/hide handlers
@@ -793,7 +795,7 @@ class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
 INHERITED(QMainWindow)
 friend class taDataLink;
 friend class MainWindowViewer;
-public: //
+public:  
 //nn  iToolBar_List		toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
 
@@ -855,7 +857,11 @@ public: //
   virtual void		AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea); 
 #endif
+  void			EditItem(taiDataLink* link, bool not_in_cur = false); // edit this guy in a new panel, making a tab viewer if necessary
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
+  iTabViewer* 		GetTabViewer(bool force = false); // get the tab viewer, or make one if force
+
+
   void 			setFrameGeometry(const iRect& r);
   void			setFrameGeometry(int left, int top, int width, int height); //bogus: see Qt docs on geometry under X
 
@@ -940,6 +946,7 @@ protected:
   bool			m_is_proj_viewer; // true if this is a project viewer (false for simple browsers)
   int			m_last_action_idx; // index of last static action in actionMenu
   override void 	closeEvent(QCloseEvent* ev);
+  bool			event(QEvent* ev);
   override void 	resizeEvent(QResizeEvent* ev);
   override void 	moveEvent(QMoveEvent* ev);
   virtual void 		emit_EditAction(int param); // #IGNORE param is one of the taiClipData editAction values; desc can trap this and implement virtually, if desired
@@ -1059,8 +1066,9 @@ public:
   void			Refresh(); // manually refresh; just delegates to all
   void			ResolveChanges(CancelOp& cancel_op);
   void			OnWindowBind(iTabViewer* itv); // called at constr_post time
-  void			ShowPanel(iDataPanel* panel); // top level guy, checks if exists, adds or sets current
-  void			SetCurrentTab(int tab_idx, bool except_if_locked = true); 
+  void 			ShowLink(taiDataLink* link, bool not_in_cur = false);
+  void			ShowPanel(iDataPanel* panel, bool not_in_cur = false); // top level guy, checks if exists, adds or sets current; if not_in_cur then won't replace current tab
+  void			SetCurrentTab(int tab_idx); 
     // focus indicated tab, but usually not if current is lockInPlace 
   int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
 

@@ -2151,6 +2151,10 @@ void iTabViewer::TabView_Selected(iTabView* tv) {
   }
 }
 
+void iTabViewer::ShowLink(taiDataLink* link, bool not_in_cur) {
+  tabView()->ShowLink(link, not_in_cur);
+}
+
 void iTabViewer::ShowPanel(iDataPanel* panel) {
   tabView()->ShowPanel(panel);
 }
@@ -2338,6 +2342,13 @@ void iDockViewer::closeEvent(QCloseEvent* e) {
     !isFloating() || (!m_viewer)) ? 
     CO_NOT_CANCELLABLE : CO_PROCEED; 
   closeEvent_Handler(e, cancel_op);
+}
+
+bool iDockViewer::event(QEvent* ev) {
+  bool rval = inherited::event(ev);
+  if (ev->type() == QEvent::WindowActivate)
+    taiMisc::active_wins.GotFocus_DockWindow(this);
+  return rval;
 }
 
 void iDockViewer::hideEvent(QHideEvent* e) {
@@ -2696,15 +2707,24 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
 // this guy exists because we must always be able to add a panel,
 // so if there isn't already a panel viewer, we have to add one
 void iMainWindowViewer::AddPanelNewTab(iDataPanel* panel) {
-  iTabViewer* itv = NULL;
+  iTabViewer* itv = GetTabViewer(true);
+  itv->AddPanelNewTab(panel);
+} 
+
+iTabViewer* iMainWindowViewer::GetTabViewer(bool force) {
   PanelViewer* tv = (PanelViewer*)viewer()->FindFrameByType(&TA_PanelViewer);
   if (!tv) {
+    if (!force) return NULL;
     tv = (PanelViewer*)viewer()->AddFrameByType(&TA_PanelViewer);
     tv->Constr(); // parented when added
     AddFrameViewer(tv->widget(), 1); // usually in middle
   }
-  itv = tv->widget();
-  itv->AddPanelNewTab(panel);
+  return tv->widget();
+} 
+
+void iMainWindowViewer::EditItem(taiDataLink* link, bool not_in_cur) {
+  iTabViewer* itv = GetTabViewer(true);
+  itv->ShowLink(link, not_in_cur);
 } 
 
 void iMainWindowViewer::AddToolBar(iToolBar* itb) {
@@ -3065,6 +3085,13 @@ void iMainWindowViewer::fileOptions() {
   taiEdit* ie =  TA_taMisc.ie;
   if (ie)
     ie->Edit(TA_taMisc.GetInstance());
+}
+
+bool iMainWindowViewer::event(QEvent* ev) {
+  bool rval = inherited::event(ev);
+  if (ev->type() == QEvent::WindowActivate)
+    taiMisc::active_wins.GotFocus_MainWindow(this);
+  return rval;
 }
 
 int iMainWindowViewer::GetEditActions() {
@@ -3471,8 +3498,7 @@ bool iTabView::ActivatePanel(taiDataLink* dl) {
     iDataPanel* panel = tbPanels->panel(i);
     if (!panel) continue;
     if (panel->link() == dl) {
-      tbPanels->setCurrentIndex(i);
-//???      panelSelected(id);
+      SetCurrentTab(i);
       return true;
     }
   }
@@ -3566,6 +3592,11 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   contextMenu->addAction(act);
 }
 
+void iTabView::ShowLink(taiDataLink* link, bool not_in_cur) {
+  iDataPanel* pan = GetDataPanel(link);
+  ShowPanel(pan, not_in_cur);
+}
+
 //TODO
 iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   iDataPanel* rval;
@@ -3646,17 +3677,13 @@ void iTabView::ResolveChanges(CancelOp& cancel_op) {
   }
 }
 
-void iTabView::SetCurrentTab(int idx, bool except_if_locked) {
-  if (except_if_locked) {
-    iDataPanel* pan = curPanel();
-    if (pan && pan->lockInPlace()) return;
-  }
-  iDataPanel* pan = panel(idx);
-  tbPanels->setCurrentIndex(idx);
+void iTabView::SetCurrentTab(int tab_idx) {
+  iDataPanel* pan = tabPanel(tab_idx);
+  tbPanels->setCurrentIndex(tab_idx);
   wsPanels->raiseWidget(pan);
 }
 
-void iTabView::ShowPanel(iDataPanel* panel) {
+void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
   if (!panel) return;
   iDataPanel* cur_pn = curPanel(); //note: can be null
   
@@ -3671,8 +3698,8 @@ void iTabView::ShowPanel(iDataPanel* panel) {
   
   // ok, so we'll either replace cur panel, swap one out, or make a new
   
-  // replace curr if it is not locked, pinned, or dirty+autocommit
-  if (cur_pn && (!cur_pn->lockInPlace() && !cur_pn->pinned() &&
+  // replace curr if allowed and it is not locked, pinned, or dirty+autocommit
+  if (!not_in_cur && cur_pn && (!cur_pn->lockInPlace() && !cur_pn->pinned() &&
      (!cur_pn->dirty() || autoCommit()))) 
   {
     bool proceed = true;
@@ -3695,9 +3722,6 @@ void iTabView::ShowPanel(iDataPanel* panel) {
       if (pn == cur_pn) continue;
       if (pn->lockInPlace() || (pn->dirty() && !autoCommit()) || pn->pinned()) continue;
     }
-    // ok, make that the guy!
-//nn    wsPanels->raiseWidget(panel);
-
     bool proceed = true;
     if (pn && pn->dirty()) { // must be autocommit
       CancelOp cancel_op = CO_PROCEED;

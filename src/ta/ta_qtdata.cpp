@@ -121,6 +121,12 @@ taiData::~taiData() {
   m_rep = NULL;
 }
 
+void taiData::CheckDoAutoApply() {
+  if (!(mflags & flgAutoApply)) return;
+  if (host)
+    host->GetValue();
+}
+
 void taiData::DataChanged(taiData* chld) {
   // ignore completely if not yet constructed
   if (!isConstructed()) return;
@@ -129,7 +135,7 @@ void taiData::DataChanged(taiData* chld) {
   // if we have a parent, delegate notification to it, otherwise inform the host
   if (mparent != NULL)
     mparent->DataChanged(this);
-  else if (host != NULL)
+  else if (host)
     host->Changed();
 
   DataChanged_impl(chld);
@@ -3526,14 +3532,16 @@ void taiTokenPtrButton::EditDialog() {
 }
 
 void taiTokenPtrButton::EditPanel() {
+  iMainWindowViewer* imw = taiM->active_wins.Peek_MainWindow();
+  if (!imw) return; // no viewer!
+
   taBase* cur_base = GetValue();
   if (!cur_base) return;
 
-  taiEdit* gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
-  if (!gc) return; // shouldn't happen
-
-//  taiEditDataHost* edh = 
-  gc->EditPanel((taiDataLink*)cur_base->GetDataLink(), cur_base, false); //TODO: ever read_only???
+  taiDataLink* dl = (taiDataLink*)cur_base->GetDataLink();
+  if (dl) {
+    imw->EditItem(dl, true); // edit, but not in this tab
+  }
 }
 
 void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {

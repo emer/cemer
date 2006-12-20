@@ -82,6 +82,16 @@ iDockViewer* iTopLevelWindow_List::FastElAsDockWindow(int i) {
   return dynamic_cast<iDockViewer*>(FastEl(i)->widget());
 }
 
+void iTopLevelWindow_List::GotFocus_MainWindow(iMainWindowViewer* imw) {
+  int idx = FindEl(imw);
+  if (idx > 0) MoveIdx(idx, 0);
+}
+
+void iTopLevelWindow_List::GotFocus_DockWindow(iDockViewer* idv) {
+  int idx = FindEl(idv);
+  if (idx > 0) MoveIdx(idx, 0);
+}
+
 iMainWindowViewer* iTopLevelWindow_List::Peek_MainWindow() {
   for (int i = 0; i < size; ++i) {
     iMainWindowViewer* rval = FastElAsMainWindow(i);
