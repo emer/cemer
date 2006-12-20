@@ -5426,7 +5426,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
     stat = taMisc::read_tag(strm, tag, val);
     if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
     if(tag != "Lay") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
-    Layer* lay = layers.FindName(val);
+    Layer* lay = layers.FindLeafName(val);
     if(lay) {
       stat = lay->LoadWeights_strm(strm, fmt, quiet);
     }

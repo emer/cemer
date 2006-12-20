@@ -89,6 +89,10 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
+#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
+#include <Inventor/actions/SoRayPickAction.h>
+#include <Inventor/SoPickedPoint.h>
 //temp
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
@@ -362,6 +366,40 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
   }
 }
 
+void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
+  UnitGroupView* ugv = (UnitGroupView*)userData;
+  NetView* nv = ugv->nv();
+  T3DataViewFrame* frame = GET_OWNER(nv, T3DataViewFrame);
+  if(!frame) return;
+  SoQtViewer* viewer = frame->widget()->ra();
+  SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
+  SoRayPickAction rp( viewer->getViewportRegion());
+  rp.setPoint(mouseevent->getPosition());
+  rp.apply(viewer->getSceneManager()->getSceneGraph());
+
+  SoPickedPoint* pp = rp.getPickedPoint(0);
+  if(!pp) return;
+  SoNode* pobj = pp->getPath()->getNodeFromTail(2);
+//   cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
+  if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+//     cerr << "not unitgroupnode!" << endl;
+    return;
+  }
+  UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView;
+  SbVec3f pt = pp->getObjectPoint(pobj); 
+//   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
+  int xp = (int)(pt[0] * nv->max_size.x);
+  int yp = (int)-(pt[2] * nv->max_size.y);
+  Unit_Group* ugrp = act_ugv->ugrp();
+  if(xp >= 0 && xp < ugrp->geom.x && yp >= 0 && yp < ugrp->geom.y) {
+    Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
+    if(unit) nv->setUnitSrc(NULL, unit);
+  }
+  nv->InitDisplay();
+  nv->UpdateDisplay();
+  ecb->setHandled();
+}
+
 void UnitGroupView::Render_pre() {
   NetView* nv = this->nv();
   Unit_Group* ugrp = this->ugrp(); //cache
@@ -382,6 +420,10 @@ void UnitGroupView::Render_pre() {
 //   mat->transparency.setValue(0.5f);
 
   ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
+
+  SoEventCallback* ecb = new SoEventCallback;
+  ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
+  ugrp_so->addChild(ecb);
 
   inherited::Render_pre();
 }
@@ -1563,7 +1605,8 @@ void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
   }
   unit_src = unit;
   if (unit_src) {
-    uv->picked = true;
+    if(uv)
+      uv->picked = true;
   }
 }
 
@@ -1868,7 +1911,8 @@ void NetViewPanel::cmbDispMode_itemChanged(int itm) {
 
   if (nv_->unit_disp_mode == (NetView::UnitDisplayMode)itm) return;
   nv_->unit_disp_mode = (NetView::UnitDisplayMode)itm;
-  nv_->InitDisplay(false); // need strong reset
+  nv_->BuildAll();		// very strong
+//   nv_->InitDisplay(false); // need strong reset
   //  nv_->Render();
 }
 

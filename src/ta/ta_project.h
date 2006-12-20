@@ -106,6 +106,7 @@ public:
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
   
   override int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
 
   virtual void		PostLoadAutos();
   // perform post-loading automatic functions
@@ -134,6 +135,7 @@ class TA_API Project_Group : public taGroup<taProject> {
 INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
+  override int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
 
   void	Initialize() 		{SetBaseType(&TA_taBase);} // upclassed in pdp
   void 	Destroy()		{ };

@@ -5,6 +5,7 @@ dist_pkgdata_test_DATA =\
 	SimpleLines5x5.dtbl \
 	random_assoc_5x5_25.dtbl \
 	hv.v4good_05_20_06_v4_cvt.proj \
+	hv.v4_adaptnetin.proj \
 	leabra_startup.css \
 	toaster.jpg \
 	giraffe.jpg \

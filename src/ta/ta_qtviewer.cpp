@@ -3045,11 +3045,6 @@ void iMainWindowViewer::fileOpen() {
     tabMisc::root->projects.Load(fname, &el);
     proj = (taProject*)el;
   }
-  
-  // loaded projects don't automatically open
-  // this will automatically view it if already open
-  if (proj) // this is the easiest way...
-    proj->AssertDefaultProjectBrowser(true);
 }
 
 void iMainWindowViewer::fileQuit() {

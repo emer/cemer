@@ -184,9 +184,9 @@ void taProject::Copy_(const taProject& cp) {
 
 void taProject::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-  if(taMisc::is_loading) {
-    PostLoadAutos();
-  }
+//   if(taMisc::is_loading) {
+//     PostLoadAutos();
+//   }
 }
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
@@ -204,17 +204,12 @@ MainWindowViewer* taProject::GetDefaultProjectBrowser() {
 void taProject::PostLoadAutos() {
   // todo: have option or make default to open a panel instead of dialog
   if (taMisc::gui_active) {
-    tabMisc::post_load_opr.Link(&wizards);
-    //       pdpMisc::post_load_opr.Link(&programs);
-#ifdef TA_GUI
-    tabMisc::post_load_opr.Link(&edits);
-#endif
-  } else {
+    AssertDefaultProjectBrowser(true);
     wizards.AutoEdit();
-    //       programs.AutoRun();
-#ifdef TA_GUI
     edits.AutoEdit();
-#endif
+//     tabMisc::post_load_opr.Link(&wizards);
+    //       pdpMisc::post_load_opr.Link(&programs);
+//     tabMisc::post_load_opr.Link(&edits);
   }
 }
 
@@ -263,6 +258,12 @@ int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
   return inherited::Save_strm(strm, par, indent);
 }
 
+int taProject::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
+  int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
+  PostLoadAutos();
+  return rval;
+}
+
 void taProject::setDirty(bool value) {
   // note: inherited only forwards 'dirty' up the chain, not '!dirty'
   inherited::setDirty(value);
@@ -300,6 +301,16 @@ void taProject::UpdateSimLog() {
 //////////////////////////
 //   Project_Group	//
 //////////////////////////
+
+int Project_Group::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) {
+  int prj_sz = leaves;
+  int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
+  for(int i=prj_sz;i<leaves;i++) {
+    taProject* prj = Leaf(i);
+    prj->PostLoadAutos();
+  }
+  return rval;
+}
 
 
 //////////////////////////

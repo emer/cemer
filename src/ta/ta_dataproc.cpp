@@ -602,21 +602,26 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   float_Matrix float_tmp;
   int st_row = 0;
   int row = 1;
-  while(row < ssrc.rows) {
-    for(;row < ssrc.rows; row++) {
+  while(row <= ssrc.rows) {
+    for(;row <= ssrc.rows; row++) {
 //       cerr << "row: " << row;
       bool new_val = false;
-      for(int i=0;i<sort_spec->ops.size; i++) {
-	DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
-	DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
-	Variant cval = sda->GetValAsVar(row);
-	if(cval != cur_vals[i]) {
-// 	  cerr << " new_val:  oval: " << cur_vals[i] << " nval: " << cval;
-	  new_val = true;
-	  cur_vals[i] = cval;
-	}
+      if(row == ssrc.rows) { 
+	new_val = true;
       }
-//       cerr << endl;
+      else {
+	for(int i=0;i<sort_spec->ops.size; i++) {
+	  DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
+	  DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
+	  Variant cval = sda->GetValAsVar(row);
+	  if(cval != cur_vals[i]) {
+// 	    cerr << " new_val:  oval: " << cur_vals[i] << " nval: " << cval;
+	    new_val = true;
+	    cur_vals[i] = cval;
+	  }
+	}
+// 	cerr << endl;
+      }
       if(new_val) break;
     }
     int n_rows = row - st_row;
