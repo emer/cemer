@@ -447,6 +447,17 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
 //  ProgEl		//
 //////////////////////////
 
+const String ProgEl::DisplayNameFromLongString(const String& verbose) {
+  String rval = verbose.before('\n');
+  if (rval.empty()) {
+    rval = verbose;
+    if (rval.empty())
+      rval = "(empty)";
+  }
+  if(rval.length() > 25) rval = rval.before(25) + "...";
+  return rval;
+}
+
 void ProgEl::Initialize() {
   off = false;
 }
@@ -470,8 +481,14 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
 const String ProgEl::GenCss(int indent_level) {
   if(off) return "";
   String rval;
-  if (!desc.empty())
-    rval.cat(cssMisc::Indent(indent_level)).cat("// ").cat(desc).cat("\n");
+  if (useDesc() && !desc.empty()) {
+    // we support multi-lines by using the multi-line form of comments
+    if (desc.contains('\n')) {
+      rval.cat(cssMisc::IndentLines("/* " + desc + " */\n", indent_level));
+    } else {
+      rval.cat(cssMisc::Indent(indent_level)).cat("// ").cat(desc).cat("\n");
+    }
+  }
   rval += GenCssPre_impl(indent_level);
   rval += GenCssBody_impl(indent_level);
   rval += GenCssPost_impl(indent_level);
@@ -596,22 +613,14 @@ void UserScript::Initialize() {
 const String UserScript::GenCssBody_impl(int indent_level) {
   String rval(cssMisc::IndentLines(user_script, indent_level));
   // strip trailing non-newline ws, and make sure there is a trailing newline
-//TEMP  rval = trimr(rval);
+  rval = trimr(rval);
   if (rval.lastchar() != '\n')
     rval += '\n';
   return rval;
 }
 
 String UserScript::GetDisplayName() const {
-  // use first line, if any
-  String rval = user_script.before('\n');
-  if (rval.empty()) {
-    rval = user_script;
-    if (rval.empty())
-      rval = "(empty)";
-  }
-  if(rval.length() > 25) rval = rval.before(25) + "...";
-  return rval;
+  return DisplayNameFromLongString(user_script);
 }
 
 void UserScript::ImportFromFile(istream& strm) {
@@ -1153,21 +1162,25 @@ String PrintVar::GetDisplayName() const {
 //////////////////////////
 
 void Comment::Initialize() {
+  static String _def_comment("TODO: Add your program comment here (multi-lines ok).\n");
+  desc = _def_comment;
 }
 
 const String Comment::GenCssBody_impl(int indent_level) {
-  String rval;
+  STRING_BUF(rval, desc.length() + 160);
   rval += cssMisc::Indent(indent_level);
-  rval += "////////////////////////////////////////////////////////////////////////////\n";
+  rval += "/*******************************************************************\n";
+  rval += cssMisc::IndentLines(desc, indent_level);
+  rval = trimr(rval);
+  if (rval.lastchar() != '\n')
+    rval += '\n';
   rval += cssMisc::Indent(indent_level);
-  rval += "//  " + comment + "\n";
+  rval += "*******************************************************************/\n";
   return rval;
 }
 
 String Comment::GetDisplayName() const {
-  String rval;
-  rval += "//// " + comment; 
-  return rval;
+  return DisplayNameFromLongString(desc);
 }
 
 

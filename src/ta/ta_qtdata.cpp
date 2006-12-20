@@ -4444,17 +4444,17 @@ void taiMethodData::CallFun() {
     GenerateScript();
 #ifdef DMEM_COMPILE
     // don't actually run the command when using gui in dmem mode: everything happens via the script!
-    if (taMisc::dmem_nprocs == 1) {
+    if (taMisc::dmem_nprocs == 1)
 #endif
-      taMisc::Busy(true);
+    {
+      bool use_busy = !meth->HasOption("NO_BUSY");
+      if (use_busy) taMisc::Busy(true);
       cssEl* rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
       UpdateAfter();
-      taMisc::Busy(false);
+      if (use_busy) taMisc::Busy(false);
       if (rval != &cssMisc::Void)
 	ShowReturnVal(rval);
-#ifdef DMEM_COMPILE
-    }
-#endif
+    } // NOTE: end of DMEM_COMPILE
     return;
   }
   arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, 0); //modal

@@ -116,7 +116,9 @@ iTextEditDialog::iTextEditDialog(bool readOnly_, QWidget* parent)
 
 void iTextEditDialog::init(bool readOnly_) {
   m_readOnly = readOnly_;
-//  this->resize(taiM->dialogSize(taiMisc::hdlg_m));
+  QRect rect(QApplication::desktop()->screenGeometry(0));
+  QSize sz((rect.width() * 3) / 5, (rect.height() * 2) / 5);
+  this->resize(sz);
   QVBoxLayout* layOuter = new QVBoxLayout(this);
   txtText = new QTextEdit(this);
   layOuter->addWidget(txtText);
