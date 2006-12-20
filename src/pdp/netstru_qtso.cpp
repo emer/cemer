@@ -366,9 +366,10 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
   }
 }
 
+// this callback is registered in NetView::Render_pre
+
 void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
-  UnitGroupView* ugv = (UnitGroupView*)userData;
-  NetView* nv = ugv->nv();
+  NetView* nv = (NetView*)userData;
   T3DataViewFrame* frame = GET_OWNER(nv, T3DataViewFrame);
   if(!frame) return;
   SoQtViewer* viewer = frame->widget()->ra();
@@ -420,10 +421,6 @@ void UnitGroupView::Render_pre() {
 //   mat->transparency.setValue(0.5f);
 
   ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
-
-  SoEventCallback* ecb = new SoEventCallback;
-  ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
-  ugrp_so->addChild(ecb);
 
   inherited::Render_pre();
 }
@@ -621,6 +618,10 @@ void UnitGroupView::Render_impl_blocks() {
   for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
       nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
+      Unit* unit = ugrp->FindUnitFmCoord(pos);
+      if(unit == nv->unit_src) {
+	col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
+      }
       float xp = ((float)pos.x + spacing) / nv->max_size.x;
       float yp = -((float)pos.y + spacing) / nv->max_size.y;
       float xp1 = ((float)pos.x+1 - spacing) / nv->max_size.x;
@@ -660,7 +661,6 @@ void UnitGroupView::Render_impl_blocks() {
 	  ValToDispText(val, val_str);
 	}
 	if(nv->unit_text_disp & NetView::UTD_NAMES) {
-	  Unit* unit = ugrp->FindUnitFmCoord(pos);
 	  if(unit)
 	    unit_name = unit->name;
 	}
@@ -1474,6 +1474,10 @@ void NetView::Render_pre() {
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
 //  mat->transparency.setValue(0.5f);
 
+  SoEventCallback* ecb = new SoEventCallback;
+  ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
+  node_so()->addChild(ecb);
+
   inherited::Render_pre();
 }
 
@@ -1911,8 +1915,9 @@ void NetViewPanel::cmbDispMode_itemChanged(int itm) {
 
   if (nv_->unit_disp_mode == (NetView::UnitDisplayMode)itm) return;
   nv_->unit_disp_mode = (NetView::UnitDisplayMode)itm;
-  nv_->BuildAll();		// very strong
-//   nv_->InitDisplay(false); // need strong reset
+  //  nv_->BuildAll();		// very strong
+  nv_->InitDisplay(false); // need strong reset
+  nv_->UpdateDisplay(false);
   //  nv_->Render();
 }
 
