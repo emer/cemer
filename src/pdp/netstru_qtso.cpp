@@ -1483,6 +1483,7 @@ void NetView::Render_pre() {
 
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
+  //  cerr << "nv render_impl" << endl;
   GetMaxSize();
   T3NetNode* node_so = this->node_so(); //cache
   node_so->resizeCaption(font_sizes.net_name);
@@ -1679,6 +1680,10 @@ void NetView::UpdateDisplay(bool update_panel) { // updates dynamic values, esp.
   if (!display) return;
   if (update_panel) UpdatePanel();
   Render_impl();
+}
+
+void NetView::DataUpdateView_impl() {
+  UpdateDisplay(false);
 }
 
 void NetView::UpdatePanel() {

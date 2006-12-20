@@ -384,6 +384,8 @@ public:
   virtual void		UpdateDisplay(bool update_panel = true); // updates dynamic values, esp. Unit values
   virtual void 		UpdatePanel(); // updates nvp, esp. after UAE etc.
 
+  override void		DataUpdateView_impl();
+
   override void		InitLinks();
   override void		CutLinks();
   override void  	ChildUpdateAfterEdit(TAPtr child, bool& handled);
