@@ -201,7 +201,8 @@ public:
   void			AllocUnitViewData(); // make sure we have correct space in uvd array
   override void		BuildAll(); // creates fully populated subviews
   float 		GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags); // get val for unit at co
-  void 			UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u); // set the base for the given md; src_u only used for s./r. values
+  void 			UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u, bool& con_md);
+  // set the base for the given md; src_u only used for s./r. values (sets con_md true if con)
 
   T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
@@ -344,6 +345,7 @@ public:
   int_Array	  	ordered_uvg_list; // #HIDDEN selected var buttons
   // unit display flags
   Unit*			unit_src; // #NO_SAVE unit last picked (if any) for display
+  bool			unit_con_md;  // #NO_SAVE true if memberdef is from a connection as opposed to a direct unit var
   MemberDef*		unit_disp_md; // #NO_SAVE memberdef (if any) of Unit (or Connection) to display
   ScaleRange*		unit_sr; // #NO_SAVE scalerange of disp_md
   MDFlags		unit_md_flags; // #NO_SAVE type to display in units

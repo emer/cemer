@@ -230,7 +230,7 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->clr.Add(new RGBA(0.5, 0.5, 0.5));
   cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
@@ -240,7 +240,7 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->clr.Add(new RGBA(0.5, 0.5, 0.5));
   cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
@@ -248,7 +248,7 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->clr.Add(new RGBA(0.0, 0.0, 1.0));
   cs->clr.Add(new RGBA(0.3f, 0.3f, 0.3f));
   cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
@@ -256,7 +256,7 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->clr.Add(new RGBA(0.0, 0.0, 1.0));
   cs->clr.Add(new RGBA(0.5, 0.5, 0.5));
   cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
@@ -264,7 +264,7 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->clr.Add(new RGBA(0.0, 0.0, 1.0));
   cs->clr.Add(new RGBA(0.9f, 0.9f, 0.9f));
   cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
@@ -272,7 +272,7 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->clr.Add(new RGBA(0.0, 0.0, 1.0));
   cs->clr.Add(new RGBA(0.0, 0.9f, 0.0));
   cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
@@ -282,7 +282,7 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->clr.Add(new RGBA(0.0, 1.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
@@ -293,21 +293,21 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->clr.Add(new RGBA(0.0, 1.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
   cs->name = "C_DarkLight";
   cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 1.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
   cs->name = "C_LightDark";
   cs->clr.Add(new RGBA(1.0, 1.0, 1.0));
   cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
-  cs->background.name = "grey64";
+  cs->background.name = "grey80";
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);

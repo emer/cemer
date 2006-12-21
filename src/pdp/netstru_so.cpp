@@ -41,6 +41,9 @@
 //#include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
+#include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/engines/SoCompose.h>
+#include <Inventor/engines/SoCalculator.h>
 
 #include <math.h>
 #include <limits.h>
@@ -367,7 +370,7 @@ SoSeparator* T3UnitGroupNode::getUnitText() {
   return unit_text_;
 }
 
-SoSeparator* T3UnitGroupNode::removeUnitText() {
+void T3UnitGroupNode::removeUnitText() {
   if(unit_text_)
     removeChild(unit_text_);
   unit_text_ = NULL;
@@ -377,7 +380,9 @@ SoSeparator* T3UnitGroupNode::removeUnitText() {
 //   T3LayerNode	//
 //////////////////////////
 
-float T3LayerNode::height = 0.05f; // height of the layer shape itself
+float T3LayerNode::height = 0.05f;
+float T3LayerNode::width = 0.5f;
+float T3LayerNode::drag_scale = 1.5f;
 
 SO_NODE_SOURCE(T3LayerNode);
 
@@ -386,13 +391,34 @@ void T3LayerNode::initClass()
   SO_NODE_INIT_CLASS(T3LayerNode, T3NodeParent, "T3NodeParent");
 }
 
+extern void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragger);
+// defined in qtso
+
 T3LayerNode::T3LayerNode(void* dataView_)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3LayerNode);
 
-  SoSeparator* ss = shapeSeparator(); // cache
+  // manipulation: dragging!
+  xy_drag_sep_ = new SoSeparator;
+  xy_drag_xf_ = new SoTransform;
+  xy_drag_xf_->scaleFactor.setValue(.05f, .05f, .05f);
+  xy_drag_xf_->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+  xy_drag_sep_->addChild(xy_drag_xf_);
+  xy_dragger_ = new SoTranslate2Dragger;
+  xy_drag_sep_->addChild(xy_dragger_);
+  topSeparator()->addChild(xy_drag_sep_);
 
+  xy_drag_calc_ = new SoCalculator;
+  xy_drag_calc_->ref();
+  xy_drag_calc_->A.connectFrom(&xy_dragger_->translation);
+
+  xy_drag_calc_->expression = "oA = vec3f(.5 + .05 * A[0], 0.0, -(.5 + .05 * A[1]))";
+  txfm_shape()->translation.connectFrom(&xy_drag_calc_->oA);
+
+  xy_dragger_->addFinishCallback(T3LayerNode_XYDragFinishCB, (void*)this);
+
+  SoSeparator* ss = shapeSeparator(); // cache
   shape_ = new SoFrame();
   ss->addChild(shape_);
 }
@@ -406,9 +432,23 @@ void T3LayerNode::render() {
   float fx = (float)geom.x / max_size.x;
   float fy = (float)geom.y / max_size.y;
   float max_xy = MAX(max_size.x, max_size.y);
-  shape_->setDimensions(fx, fy, 0.05f / max_xy, -0.25f / max_xy);
+  float lay_wd = width / max_xy;
+  float xfrac = .5f * fx;
+  float yfrac = .5f * fy;
+
+  shape_->setDimensions(fx, fy, height / max_xy, -lay_wd);
   // note: LayerView already translates us up into vertical center of cell
-  txfm_shape()->translation.setValue(fx/2.0f, 0.0f, -fy/2.0f);
+  txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac);
+
+  float use_sc = drag_scale;
+  if(max_xy < 10.0f) use_sc = 1.0f;
+  float drag_sc = use_sc * lay_wd;
+  xy_drag_xf_->scaleFactor.setValue(drag_sc, drag_sc, drag_sc);
+
+  String expr = "oA = vec3f(" + String(xfrac) + " + " + String(drag_sc) + " * A[0], 0.0, -("
+    + String(yfrac) + " + " + String(drag_sc) + " * A[1]))";
+  
+  xy_drag_calc_->expression = expr.chars();
 }
 
 void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z) {

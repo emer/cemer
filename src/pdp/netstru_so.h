@@ -34,6 +34,8 @@ class SoCube; // #IGNORE
 class SoCylinder; // #IGNORE
 class SoFont; // #IGNORE
 class SoIndexedTriangleStripSet; // #IGNORE
+class SoTranslate2Dragger; // #IGNORE
+class SoCalculator; // #IGNORE
 
 // forwards
 class T3UnitNode;
@@ -223,7 +225,7 @@ public:
   SoIndexedTriangleStripSet* shape() {return shape_;}
   SoSeparator*		unitText() {return unit_text_;} // extra text of unit vars
   SoSeparator*		getUnitText();		      // get a new unit text separator
-  SoSeparator*		removeUnitText();	      // remove unit text separator
+  void			removeUnitText();	      // remove unit text separator
 
   T3UnitGroupNode(void* dataView_ = NULL, bool no_unts = false);
 
@@ -254,28 +256,29 @@ typedef T3NodeParent inherited;
 #endif // def __MAKETA__
 
 public:
-  static float 		height; // height of the layer shape itself
+  static float 		height; // = .05 height of layer frame shape itself (in fractions of a unit)
+  static float 		width; // = .5 width of layer frame shape (in frac of unit)
+  static float		drag_scale; // = 1.5 = scale of drag control relative to width
 
   static void		initClass();
 
   void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
-  // sets (actual) geom of layer
-//  SoCube*		shape() {return shape_;}
 
   T3LayerNode(void* dataView_ = NULL);
 
 protected:
+  
   iVec2i		geom; //note, not a field
   iVec3f		max_size; // maximum size of network x,y,z
   void			render(); // called after pos/geom changes
   ~T3LayerNode();
 
 private:
-//  SoCube*		shape_; //#IGNORE
-
-//  SoCube* 		shapes_[4];
-//  SoTransform* 		shapeTrsfm_[4];
   SoFrame*		shape_;
+  SoSeparator*		xy_drag_sep_;
+  SoTransform*		xy_drag_xf_;
+  SoTranslate2Dragger*	xy_dragger_;
+  SoCalculator*		xy_drag_calc_;
 };
 
 

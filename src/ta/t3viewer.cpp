@@ -735,7 +735,8 @@ void iT3DataViewFrame::Init() {
 
 
   m_ra = new iRenderArea(t3vs);
-  m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
+  //  m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
+  m_ra->setBackgroundColor(SbColor(.8f, 0.8f, 0.8f));
   t3vs->setRenderArea(m_ra);
 }
 

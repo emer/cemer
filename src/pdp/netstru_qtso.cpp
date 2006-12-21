@@ -93,6 +93,7 @@
 #include <Inventor/events/SoMouseButtonEvent.h>
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
+#include <Inventor/draggers/SoTranslate2Dragger.h>
 //temp
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
@@ -247,9 +248,10 @@ float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags) {
   return val;
 }
 
-void UnitGroupView::UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u) {
+void UnitGroupView::UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u, bool& con_md) {
   Unit_Group* ugrp = this->ugrp(); //cache
   AllocUnitViewData();
+  con_md = false;
   if (disp_md == NULL) { // just clear all
     TwoDCoord coord;
     while ((coord.x < ugrp->geom.x) && (coord.y < ugrp->geom.y)) {
@@ -264,6 +266,7 @@ void UnitGroupView::UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u) {
   if (nm.empty()) { // direct unit member
     UpdateUnitViewBase_Unit_impl(disp_md);
   } else if ((nm=="s") || (nm == "r")) {
+    con_md = true;
     UpdateUnitViewBase_Con_impl((nm=="s"), disp_md->name.after('.'), src_u);
   } else if (nm=="bias") {
     UpdateUnitViewBase_Bias_impl(disp_md);
@@ -381,6 +384,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   SoPickedPoint* pp = rp.getPickedPoint(0);
   if(!pp) return;
   SoNode* pobj = pp->getPath()->getNodeFromTail(2);
+  if(!pobj) return;
 //   cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
   if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
 //     cerr << "not unitgroupnode!" << endl;
@@ -396,7 +400,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
     Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
     if(unit) nv->setUnitSrc(NULL, unit);
   }
-  nv->InitDisplay();
+//   nv->InitDisplay();
   nv->UpdateDisplay();
   ecb->setHandled();
 }
@@ -619,7 +623,7 @@ void UnitGroupView::Render_impl_blocks() {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
       nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
       Unit* unit = ugrp->FindUnitFmCoord(pos);
-      if(unit == nv->unit_src) {
+      if(nv->unit_con_md && (unit == nv->unit_src)) {
 	col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
       }
       float xp = ((float)pos.x + spacing) / nv->max_size.x;
@@ -947,6 +951,42 @@ void LayerView::Reset_impl() {
   inherited::Reset_impl();
 }
 
+// callback for layer xy dragger
+void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
+  SoTranslate2Dragger* dragger = (SoTranslate2Dragger*)dragr;
+  T3LayerNode* laynd = (T3LayerNode*)userData;
+  LayerView* lv = (LayerView*)laynd->dataView;
+  Layer* lay = lv->layer();
+  NetView* nv = lv->nv();
+
+  float fx = (float)lay->act_geom.x / nv->max_size.x;
+  float fy = (float)lay->act_geom.y / nv->max_size.y;
+  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
+  float lay_wd = T3LayerNode::width / max_xy;
+  float use_sc = T3LayerNode::drag_scale;
+  if(max_xy < 10.0f) use_sc = 1.0f;
+  float drag_sc = use_sc * lay_wd;
+  float xfrac = .5f * fx;
+  float yfrac = .5f * fy;
+
+  const SbVec3f& trans = dragger->translation.getValue();
+  float new_x = trans[0] * drag_sc * nv->max_size.x;
+  float new_y = trans[1] * drag_sc * nv->max_size.y;
+
+//   cerr << "lay: " << lay->name << " " << trans[0] << " " << trans[1] << " drg: " <<
+//     drag_sc << " fx: " << fx << " fy: " << fy << " new: " << new_x << " " << new_y << endl;
+
+  lay->pos.x += (int)new_x;
+  if(lay->pos.x < 0) lay->pos.x = 0;
+  lay->pos.y += (int)new_y;
+  if(lay->pos.y < 0) lay->pos.y = 0;
+
+  laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+
+//   nv->InitDisplay();
+  nv->UpdateDisplay();
+}
 
 
 //////////////////////////
@@ -1085,6 +1125,7 @@ void NetView::Initialize() {
   unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
   unit_src = NULL;
+  unit_con_md = false;
 }
 
 void NetView::Destroy() {
@@ -1420,7 +1461,7 @@ void NetView::InitDisplay_Layer(LayerView* lv, bool check_build) {
 void NetView::InitDisplay_UnitGroup(UnitGroupView* ugrv, bool check_build) {
 //   if (check_build && (!display || !net()->CheckBuild(true))) return; // needs to be built
   ugrv->AllocUnitViewData(); // make sure we have correct space in uvd array
-  ugrv->UpdateUnitViewBase(unit_disp_md, unit_src);
+  ugrv->UpdateUnitViewBase(unit_disp_md, unit_src, unit_con_md);
 }
 
 void NetView::InitPanel() {
@@ -1477,6 +1518,12 @@ void NetView::Render_pre() {
   SoEventCallback* ecb = new SoEventCallback;
   ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
   node_so()->addChild(ecb);
+
+  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
+  if(!frame) return;
+  SoQtViewer* viewer = frame->widget()->ra();
+  viewer->setBackgroundColor(SbColor(scale.background.redf(), scale.background.greenf(), 
+				     scale.background.bluef()));
 
   inherited::Render_pre();
 }
@@ -1560,6 +1607,7 @@ void NetView::Render_net_text() {
 
 void NetView::Reset_impl() {
   unit_src = NULL;
+  unit_con_md = false;
   prjns.Reset();
   layers.Reset();
   inherited::Reset_impl();
@@ -1730,7 +1778,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(chkDisplay);
   layDispCheck->addSpacing(taiM->hspc_c);
 
-  lblUnitText = taiM->NewLabel("Unit: Text", widg, font_spec);
+  lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
+  lblUnitText->setToolTip("What text to display for each unit (values, names)");
   layDispCheck->addWidget(lblUnitText);
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
     NULL, NULL, widg);
@@ -1738,27 +1787,32 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addSpacing(taiM->hspc_c);
 
   lblDispMode = taiM->NewLabel("Style", widg, font_spec);
+  lblDispMode->setToolTip("How to display unit values.  3d Block (default) is optimized\n\
+ for maximum speed.");
   layDispCheck->addWidget(lblDispMode);
   cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
     NULL, NULL, widg);
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
-  lblUnitTrans = taiM->NewLabel("Trans", widg, font_spec);
+  lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
+  lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
   layDispCheck->addWidget(lblUnitTrans);
   fldUnitTrans = new taiField(&TA_float, NULL, NULL, widg);
   layDispCheck->addWidget(fldUnitTrans->GetRep());
   layDispCheck->addSpacing(taiM->hspc_c);
   connect(fldUnitTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitTrans_textChanged()) );
 
-  lblUnitFont = taiM->NewLabel("Font Sz", widg, font_spec);
+  lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
+  lblUnitFont->setToolTip("Unit text font size (as a proportion of entire network display). .02 is default.");
   layDispCheck->addWidget(lblUnitFont);
   fldUnitFont = new taiField(&TA_float, NULL, NULL, widg);
   layDispCheck->addWidget(fldUnitFont->GetRep());
   //  layDispCheck->addSpacing(taiM->hspc_c);
   connect(fldUnitFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitFont_textChanged()) );
 
-  lblLayFont = taiM->NewLabel("Lay Font Sz", widg, font_spec);
+  lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
+  lblLayFont->setToolTip("Layer name font size (as a proportion of entire network display). .04 is default.");
   layDispCheck->addWidget(lblLayFont);
   fldLayFont = new taiField(&TA_float, NULL, NULL, widg);
   layDispCheck->addWidget(fldLayFont->GetRep());
@@ -1920,10 +1974,10 @@ void NetViewPanel::cmbDispMode_itemChanged(int itm) {
 
   if (nv_->unit_disp_mode == (NetView::UnitDisplayMode)itm) return;
   nv_->unit_disp_mode = (NetView::UnitDisplayMode)itm;
-  //  nv_->BuildAll();		// very strong
-  nv_->InitDisplay(false); // need strong reset
-  nv_->UpdateDisplay(false);
-  //  nv_->Render();
+  // do full reset here so it actually displays new guys
+  nv_->Reset();
+  nv_->BuildAll();
+  nv_->Render();
 }
 
 void NetViewPanel::cmbUnitText_itemChanged(int itm) {

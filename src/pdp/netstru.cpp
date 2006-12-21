@@ -4606,13 +4606,11 @@ int Network::GetDefaultZ(){
 void Network::Build() {
   taMisc::Busy();
   StructUpdate(true);
-//obs  net_will_updt = true;
   UpdateMax();
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
     l->Build();
-//obs  net_will_updt = false;
   UpdateMonitors();
   UpdtAfterNetMod();
   StructUpdate(false);
