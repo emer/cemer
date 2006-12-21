@@ -758,6 +758,10 @@ String tabDataLink::GetColText(const KeyString& key, int itm_idx) const {
   return data()->GetColText(key, itm_idx);
 }
 
+const QVariant tabDataLink::GetColData(const KeyString& key, int role) const {
+  return data()->GetColData(key, role);
+}
+
 void tabDataLink::QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden) {
   data()->QueryEditActions(ms, allowed, forbidden);
 }
@@ -1944,6 +1948,7 @@ void iBrowseViewer::Init() {
   lvwDataTree->setName("lvwDataTree");
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
   lvwDataTree->setColumnCount(1);
+  lvwDataTree->AddColDataKey(0, "", Qt::StatusTipRole); // show status tip
   lvwDataTree->header()->hide();
   //enable dnd support
   lvwDataTree->setDragEnabled(true);
@@ -2566,10 +2571,15 @@ void iBaseClipToolWidget::Init(taBase* inst_, String tooltip_) {
   setDragEnabled(true);
   m_inst = inst_;
   if (tooltip_.empty() && inst_) {
-    tooltip_ = inst_->GetColText(taBase::key_desc);
+    tooltip_ = inst_->GetToolTip(taBase::key_desc);
   }
   if (tooltip_.nonempty()) {
     setToolTip(tooltip_);
+  }
+  if (inst_) {
+    String statustip = inst_->statusTip(); // no key
+    if (statustip.nonempty())
+      setStatusTip(statustip);
   }
 }
 
@@ -4137,7 +4147,8 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
 iListDataPanel::iListDataPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  list = new iTreeView(this);
+  // note: just autoexpands the first fill, user must adjust after that
+  list = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   list->setName("list"); // nn???
   setCentralWidget(list);
   list->setSelectionMode(QTreeWidget::ExtendedSelection);
@@ -4326,6 +4337,54 @@ iTreeView::~iTreeView() {
   }
 }
 
+QMap_qstr_qvar iTreeView::colDataKeys(int col) const {
+  QMap_qstr_qvar map;
+  if ((col >= 0) || (col < columnCount())) {
+    QVariant vmap = headerItem()->data(col, ColDataRole);
+    if (vmap.canConvert(QVariant::Map)) {
+      map = vmap.toMap();
+    }
+  }
+  return map;
+}
+
+void iTreeView::AddColDataKey(int col, const KeyString& key, int role) {
+//NOTE: the role is the map key
+  if ((col < 0) || (col >= columnCount())) return;
+  QMap_qstr_qvar map;
+  // fetch existing map, if any
+  QVariant vmap = headerItem()->data(col, ColDataRole);
+  if (vmap.canConvert(QVariant::Map)) {
+    map = vmap.toMap();
+  }
+  // note: ok to call multiple times; only sets once
+  map[QString::number(role)] = key;
+  headerItem()->setData(col, ColDataRole, map);
+}
+
+bool iTreeView::RemoveColDataKey(int col, const KeyString& key, int role) {
+  if ((col < 0) || (col >= columnCount())) return false;
+  // fetch existing map, if any
+  QVariant vmap = headerItem()->data(col, ColDataRole);
+  // if no map at all, then the key itself is definitely not set
+  if (!vmap.canConvert(QVariant::Map)) return false;
+  
+  QMap_qstr_qvar map(vmap.toMap());
+  bool rval = (map.remove(QString::number(role)) > 0);
+  if (rval) // only need to re-set if it was actually removed
+    headerItem()->setData(col, ColDataRole, map);
+  return rval;
+}
+
+void iTreeView::ClearColDataKeys(int col) {
+  if ((col < 0) || (col >= columnCount())) return;
+  // fetch existing map, if any
+  QVariant vmap = headerItem()->data(col, ColDataRole);
+  if (!vmap.canConvert(QVariant::Map)) return;
+  
+  headerItem()->setData(col, ColDataRole, QVariant());
+}
+
 void iTreeView::AddFilter(const String& value) {
   if (!m_filters) {
     m_filters = new String_PArray;
@@ -4491,8 +4550,9 @@ void iTreeView::setTvFlags(int value) {
 
 void iTreeView::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  if (tv_flags && TV_AUTO_EXPAND) {
+  if ((tv_flags & TV_AUTO_EXPAND) && (!(tv_flags & TV_AUTO_EXPANDED))) {
     QTimer::singleShot(150, this, SLOT(ExpandAll()) );
+    tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
   
 }
@@ -4539,6 +4599,17 @@ void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & 
 // it presumably is ALSO emitted in addition to itemSelectionChanged
 void iTreeView::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev) {
   iTreeViewItem* it = dynamic_cast<iTreeViewItem*>(curr); //note: we want null if curr is not itvi
+//NOTE: the default QAbstractItemView guy doesn't seem to handle the statustip
+// very well == it barely gets activated, only if you click an item then drag a bit --
+// so we are doing it manually here
+  if (it) {
+    QString statustip = it->data(0, Qt::StatusTipRole).toString();
+    if (parent() && !statustip.isEmpty()) {
+      QStatusTipEvent tip(statustip);
+      QApplication::sendEvent(parent(), &tip);
+    }
+  }
+
   emit ItemSelected(it);
 }
 
@@ -4695,23 +4766,39 @@ void iTreeViewItem::DataLinkDestroying(taDataLink*) {
 }
 
 void iTreeViewItem::DecorateDataNode() {
-//TODO: fixup
   int bmf = 0;
   int dn_flags_supported = 0;
-//  if (node->dn_flags & iTreeViewItem::DNF_IS_FOLDER) bmi = node->isOpen() ? NBI_FOLDER_OPEN : NBI_FOLDER_CLOSED;
   QIcon ic;
   if (isExpanded()) bmf |= NBF_FOLDER_OPEN;
   bool has_ic = link()->GetIcon(bmf, dn_flags_supported, ic);
   //TODO (or in GetIcon somewhere) add link iconlet and any other appropriate mods
   if (has_ic)
     setIcon(0, ic);
-  // fill out remainging col text according to key
+  // fill out remaining col text and data according to key
   iTreeView* tv = treeView();
   if (!tv) return; //shouldn't happen
-  for (int i = 1; i < tv->columnCount(); ++i) {
-    KeyString key = tv->colKey(i);
-    if (key.length() > 0) { // no point if no key
-      setText(i, link()->GetColText(key));
+  for (int i = 0; i < tv->columnCount(); ++i) {
+    // first, the col text (cols >=1 only)
+    if (i > 0) {
+      KeyString key = tv->colKey(i);
+      if (key.length() > 0) { // no point if no key
+        setText(i, link()->GetColText(key));
+      }
+    }
+    // then, col data, if any (empty map, otherwise)
+    QMap_qstr_qvar map = tv->colDataKeys(i);
+    if (!map.isEmpty()) {
+      KeyString key;
+      QMap_qstr_qvar::const_iterator itr;
+      for (itr = map.constBegin(); itr != map.constEnd(); ++itr) {
+        // remember, we used roles as map keys, and put our colkey in the value
+        bool ok; // helps avoid errors, by making sure the mapkey is an int
+        int role = itr.key().toInt(&ok);
+        if (ok) {
+          key = itr.value().toString();
+          setData(i, role, link()->GetColData(key, role));
+        }
+      }
     }
   }
   // if tree is using highlighting, then highlight if invalid

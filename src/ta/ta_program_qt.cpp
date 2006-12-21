@@ -495,6 +495,10 @@ void iProgramEditor::Init() {
   items->setHeaderText(2, "Item Description");
   items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
   items->setColKey(2, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
+  // adjunct data, tooltips, etc.
+  items->AddColDataKey(1, taBase::key_disp_name, Qt::ToolTipRole); 
+  items->AddColDataKey(2, taBase::key_desc, Qt::ToolTipRole);
+  
   //enable dnd support
   items->setDragEnabled(true);
   items->setAcceptDrops(true);

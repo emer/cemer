@@ -1404,6 +1404,17 @@ const KeyString taBase::key_type_desc("type_desc");
 const KeyString taBase::key_desc("desc"); 
 const KeyString taBase::key_disp_name("disp_name"); 
 
+const String taBase::statusTip(const KeyString&) const {
+  TypeDef* typ = GetTypeDef();
+  String rval = GetName() + " (" + typ->name + "): " + typ->desc;
+  return rval;
+}
+
+const String taBase::GetToolTip(const KeyString& key) const {
+  // the default just returns the same text as for the col
+  return GetColText(key);
+}
+
 String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
        if (key == key_name) return GetName();
   else if (key == key_type) return GetTypeName();
@@ -1412,6 +1423,13 @@ String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
   else if (key == key_desc) return GetDesc(); 
   else if (key == key_disp_name) return GetDisplayName(); 
   else return _nilString;
+}
+
+const QVariant taBase::GetColData(const KeyString& key, int role) const {
+// these are just the defaults -- later guys can override to trap anything
+       if (role == Qt::StatusTipRole) return statusTip(key);
+  else if (role == Qt::ToolTipRole) return GetToolTip(key);
+  else return QVariant();
 }
 
 void taBase::BrowseMe() {

@@ -764,10 +764,15 @@ public:
   static const KeyString key_desc; // #IGNORE "desc" -- per-instance desc if available (def to type)
   static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName, never empty
   
+  virtual const String	statusTip(const KeyString& key = "") const; // the default text returned for StatusTipRole (key usually not needed)
+  virtual const String	GetToolTip(const KeyString& key) const; // the default text returned for ToolTipRole
   virtual void		BrowseMe();
   // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
   virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
   // #IGNORE default keys are: name, type, desc, disp_name
+  virtual const QVariant GetColData(const KeyString& key, int role) const;
+  // #IGNORE typ roles are ToolTipRole, StatusTipRole; key can be blank if not col-specific
+  
 protected:
   virtual String 	ChildGetColText_impl(taBase* child, const KeyString& key, 
     int itm_idx = -1) const {return _nilKeyString;}

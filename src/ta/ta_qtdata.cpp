@@ -4423,8 +4423,12 @@ taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
 void taiMethodData::AddToMenu(taiActions* mnu) {
   if (meth->HasOption("MENU_SEP_BEFORE"))
     mnu->AddSep();
-  mnu->AddItem(meth->GetLabel(), taiMenu::use_default,
+  taiAction* act = mnu->AddItem(meth->GetLabel(), taiMenu::use_default,
 	taiAction::action, this, SLOT(CallFun()) );
+  // add meth desc as a status item
+  String statustip = meth->desc;
+  if (statustip.nonempty())
+    act->setStatusTip(statustip);
   if (meth->HasOption("MENU_SEP_AFTER"))
     mnu->AddSep();
 }
@@ -4491,6 +4495,10 @@ QAbstractButton* taiMethodData::MakeButton() {
     buttonRep = new QToolButton(gui_parent);
     buttonRep->setFont(taiM->menuFont(defSize()));
     buttonRep->setText(meth->GetLabel());
+    // add meth desc as a status item
+    String statustip = meth->desc;
+    if (statustip.nonempty())
+      buttonRep->setStatusTip(statustip);
     connect(buttonRep, SIGNAL(clicked()),
       this, SLOT(CallFun()) );
     buttonRep->show();
@@ -4555,8 +4563,6 @@ void taiMethodData::UpdateAfter() {
       tap->UpdateAllViews(); // tell others to update
     }
   }
-/*obs  // almost always revert host..
-  host->Revert();		// apply stuff dealt with already*/
 }
 
 void taiMethodData::GenerateScript() {

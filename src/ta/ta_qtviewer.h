@@ -94,6 +94,8 @@ public:
   virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiMimeItem*	GetMimeItem() {return NULL;} // replace
+  virtual const QVariant GetColData(const KeyString& key, int role) const 
+    {return QVariant();} // for getting things like status text, tooltip text, etc.
   virtual bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const
     {return false;} // asks this type if we should show the md member
 
@@ -154,6 +156,7 @@ public:
   override String	GetName() const;
   override bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const; // asks this type if we should show the md member
   override String	GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE
+  override const QVariant GetColData(const KeyString& key, int role) const;
 
   DL_FUNS(tabDataLink); //
 
@@ -1366,6 +1369,10 @@ protected slots:
 
 };
 
+#ifndef __MAKETA__
+typedef QMap<QString, QVariant> QMap_qstr_qvar; // the QMap type that QVariant supports
+// maps are always refcounted in Qt, similar to QString, so you pass them by value
+#endif
 
 class TA_API iTreeView: public iTreeWidget, public ISelectableHost {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for all views of iTreeViewItems
@@ -1377,12 +1384,14 @@ public:
   enum Roles { // extra roles, for additional data, etc.
     ObjDataRole = Qt::UserRole + 1, // for additional data
     ColKeyRole,	// store a string in header to indicate the col key to use for data
-    HighlightIndexRole	// store an int >0 in item0 to highlight row with this color
+    HighlightIndexRole,	// store an int >0 in item0 to highlight row with this color
+    ColDataRole // store a QString::QVariant map of colkey/Role numbers to add addtl data to nodes; ex, "desc":Qt::ToolTipRole for tooltip text for the col "desc"
   };
 #endif
   enum TreeViewFlags { // #BITS
     TV_NONE		= 0, // #NO_BIT
-    TV_AUTO_EXPAND	= 0x0001 // expands all automatically on open
+    TV_AUTO_EXPAND	= 0x0001, // expands all automatically on open
+    TV_AUTO_EXPANDED	= 0x0002 // #IGNORE flag marks when done first time
   };
   enum ContextMenuPosition {
     CM_START,		// called before filling of menu -- use to add items to start
@@ -1394,6 +1403,9 @@ public:
 #ifndef __MAKETA__  
   static void 		FillTypedList(const QList<QTreeWidgetItem*>& items,
     ISelectable_PtrList& list); // helper, for filling our own typed list
+    
+  QMap_qstr_qvar	colDataKeys(int col) const;
+    // the map of role/key pairs, or an empty map if none
 #endif
   
   
@@ -1409,6 +1421,13 @@ public:
   bool			HasFilter(TypeItem* ti) const;
     // true if the typeitem has a TREEFILT_xxx filter that was added to our list
     
+  void			AddColDataKey(int col, const KeyString& key, int role);
+    // sets in ColDataRole, ex for a tooltip text or font for the col
+  bool			RemoveColDataKey(int col, const KeyString& key, int role);
+    // removes ColDataRole; true if it was there
+  void			ClearColDataKeys(int col);
+    // clears all the ColDataKeys in the col (provided for completeness)
+      
   virtual void		Refresh() {Refresh_impl();} // manually refresh
   
   iTreeView(QWidget* parent = 0, int tv_flags = 0);
