@@ -1,11 +1,13 @@
 leabra todo list:
 
 * netview: 
-  get rid of crazy zmult stuff
-  parameterize unit spacing: for large nets, small spacing is better..
-  unit labels not in right place
+  * save view state in top-level view guy (camera)
+  * netview xform for whole network + dragger etc
 
-  network: auto un-overlap
+* gridview: unitize + global xform, have obj per column so you can click (maybe just header?),
+  auto-size blocks, fix auto-scale, 4dim unit display
+
+  - test case: filtered layer unit history moving back in depth w/ netview
 
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
 

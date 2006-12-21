@@ -1420,6 +1420,17 @@ void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
   trg_netin_rel = cp.trg_netin_rel;
 }
 
+void LeabraPrjn::Init_Stats() {
+  netin_avg = 0.0f;
+  netin_rel = 0.0f;
+
+  avg_netin_avg = 0.0f;
+  avg_netin_avg_sum = 0.0f;
+  avg_netin_rel = 0.0f;
+  avg_netin_rel_sum = 0.0f;
+  avg_netin_n = 0;
+}
+
 #ifdef DMEM_COMPILE
 void LeabraPrjn::DMem_InitAggs() {
   dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
@@ -1571,6 +1582,21 @@ void LeabraLayerSpec::Init_Weights(LeabraLayer* lay) {
     }
   }
   Init_Inhib(lay);		// initialize inhibition at start..
+  Init_Stats(lay);
+}
+
+void LeabraLayerSpec::Init_Stats(LeabraLayer* lay) {
+  lay->avg_netin.avg = 0.0f;
+  lay->avg_netin.max = 0.0f;
+
+  lay->avg_netin_sum.avg = 0.0f;
+  lay->avg_netin_sum.max = 0.0f;
+  lay->avg_netin_n = 0;
+
+  for(int i=0;i<lay->projections.size;i++) {
+    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+    prjn->Init_Stats();
+  }
 }
 
 void LeabraLayerSpec::Init_ActAvg(LeabraLayer* lay) {
@@ -3055,6 +3081,9 @@ void LeabraLayer::InitLinks() {
   taBase::Own(kwta, this);
   taBase::Own(i_val, this);
   taBase::Own(adapt_i, this);
+
+  taBase::Own(avg_netin, this);
+  taBase::Own(avg_netin_sum, this);
 
   taBase::Own(misc_iar, this);
 

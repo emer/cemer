@@ -969,6 +969,8 @@ public:
 
   float		trg_netin_rel;	// #CAT_Learning target value for avg_netin_rel -- used for adapting scaling and actual layer activations to achieve desired relative netinput levels -- important for large multilayered networks, where bottom-up projections should be stronger than top-down ones.  this value can be set automatically based on the projection direction and other projections, as determined by the con spec
 
+  virtual void	Init_Stats();	// #CAT_Statistic intialize statistic counters
+
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
   virtual void 	DMem_InitAggs();
@@ -1164,6 +1166,8 @@ public:
   // #CAT_Learning initialize weight values and other permanent state
   virtual void	Init_ActAvg(LeabraLayer* lay);
   // #CAT_Activation initialize act_avg values
+  virtual void	Init_Stats(LeabraLayer* lay);
+  // #CAT_Statistic intialize statistic variables
 
   virtual void	SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoch);
   // #CAT_Learning set current learning rate based on epoch
