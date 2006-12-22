@@ -1377,8 +1377,10 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
     rval += il1 + "taDataProc::GetColIntersection(common_dest_cols_named, dcl->src_cols);\n";
     rval += il1 + "taDataProc::GetColIntersection(common_src_cols_named, dcl->dest_cols);\n";
     rval += il1 + "taDataProc::GetColIntersection(common_src_cols_named, dcl->src_cols);\n";
+    rval += il1 + "dcl->dest_data->StructUpdate(true);\n";
   }    
-  
+  rval += il1 + "dcl->src_data->StructUpdate(true);\n";
+
   rval += il1 + "for(int src_row=0; src_row < dcl->src_data.rows; src_row++) {\n";
   for(int i=0;i<src_cols.size; i++) {
     DataOpEl* ds = src_cols[i];
@@ -1400,7 +1402,11 @@ const String DataCalcLoop::GenCssBody_impl(int indent_level) {
 }
 
 const String DataCalcLoop::GenCssPost_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
+  String il1 = cssMisc::Indent(indent_level+1);
+  String rval = il1 + "} // for loop\n";
+  if(dest_data)
+    rval += il1 + "dcl->dest_data->StructUpdate(false);\n";
+  rval += il1 + "dcl->src_data->StructUpdate(false);\n";
   rval += cssMisc::Indent(indent_level) + "} // DataCalcLoop dcl\n";
   return rval;
 }
