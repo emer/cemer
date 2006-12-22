@@ -174,8 +174,6 @@ class TA_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element
 INHERITED(taOBase)
 public:
-  static const String	DisplayNameFromLongString(const String& verbose);
-    // get a reasonable short display name from long program text or comments
 //TODO: remove the AKA from desc, and this line, at some point    
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE #AKA_comment optional brief description of element's function; included as comment in script
   bool			off;	// #DEF_false turn off this program element: do not include in script
@@ -225,11 +223,12 @@ private:
 
 
 class TA_API CodeBlock: public ProgEl { 
-  // a block of code (list of program elements), each executed in sequence
+  // ##DEF_CHILD_prog_code a block of code (list of program elements), each executed in sequence
 INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of Program elements: the block of code
   
+  override taList_impl*	children_() {return &prog_code;}
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(CodeBlock);
 protected:
@@ -244,11 +243,12 @@ private:
 
 
 class TA_API ProgVars: public ProgEl {
-  // local program variables (not globally accessible)
+  // ##DEF_CHILD_local_vars local program variables (not globally accessible)
 INHERITED(ProgEl)
 public:
   ProgVar_List		local_vars;	// the list of variables
   
+  override taList_impl*	children_() {return &local_vars;}
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(ProgVars);
 protected:
@@ -283,12 +283,13 @@ private:
 };
 
 class TA_API Loop: public ProgEl { 
-  // #VIRT_BASE base class for loops
+  // #VIRT_BASE ##DEF_CHILD_loop_code base class for loops
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
   String	    	loop_test; // #EDIT_DIALOG a test expression for whether to continue looping (e.g., 'i < max')
   
+  override taList_impl* children_() {return &loop_code;}
   SIMPLE_LINKS(Loop);
   SIMPLE_COPY(Loop);
   COPY_FUNS(Loop, inherited);
@@ -604,7 +605,7 @@ private:
 SmartRef_Of(Function);
 
 class TA_API FunctionCall: public ProgEl { 
-  // call a function
+  // ##DEF_CHILD_fun_args call a function
 INHERITED(ProgEl)
 public:
   ProgVarRef		result_var;
@@ -617,8 +618,8 @@ public:
   virtual void		UpdateArgs(); 
   // updates the arguments (automatically called in updateafteredit)
 
+  override taList_impl*	children_() {return &fun_args;}
   override String	GetDisplayName() const;
-
   TA_SIMPLE_BASEFUNS(FunctionCall);
 protected:
   override void		UpdateAfterEdit_impl();

@@ -447,17 +447,6 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
 //  ProgEl		//
 //////////////////////////
 
-const String ProgEl::DisplayNameFromLongString(const String& verbose) {
-  String rval = verbose.before('\n');
-  if (rval.empty()) {
-    rval = verbose;
-    if (rval.empty())
-      rval = "(empty)";
-  }
-  if(rval.length() > 25) rval = rval.before(25) + "...";
-  return rval;
-}
-
 void ProgEl::Initialize() {
   off = false;
 }
@@ -620,7 +609,7 @@ const String UserScript::GenCssBody_impl(int indent_level) {
 }
 
 String UserScript::GetDisplayName() const {
-  return DisplayNameFromLongString(user_script);
+  return user_script;
 }
 
 void UserScript::ImportFromFile(istream& strm) {
@@ -1180,7 +1169,7 @@ const String Comment::GenCssBody_impl(int indent_level) {
 }
 
 String Comment::GetDisplayName() const {
-  return DisplayNameFromLongString(desc);
+  return "Comment";
 }
 
 
@@ -1430,15 +1419,15 @@ String FunctionCall::GetDisplayName() const {
   String rval = "Call ";
   if (fun) {
     rval += fun->name;
-//     if(fun_args.size > 0) {
-//     rval += "(";
-//     for(int i=0;i<fun_args.size;i++) {
-//       ProgArg* pa = fun_args.FastEl(i);
-//       rval += pa->GetDisplayName();
-//     }
-//     rval += ")";
-  }
-  else
+    if(fun_args.size > 0) {
+      rval += "(";
+      for(int i=0;i<fun_args.size;i++) {
+        ProgArg* pa = fun_args.FastEl(i);
+        rval += pa->GetDisplayName();
+      }
+      rval += ")";
+    }
+  } else
     rval += "(no function set)";
   return rval;
 }

@@ -84,7 +84,7 @@ public:
   uint			len;    // string length (not including null terminator)
   uint			sz;     // allocated space ((not including null terminator)
   uint			cnt;	// reference count (when goes to 0, instance is deleted)
-  char              	s[1];   // the string starts here, null terminator always maintained
+  char	     	s[1];   // the string starts here, null terminator always maintained
 protected:
   bool			canCat(uint xtra_len) {return ((cnt == 1) && ((sz - len) >= xtra_len));}  // true if ref==1, and enough space to add
   void			ref() {++cnt;}
@@ -95,9 +95,9 @@ protected:
   void			capitalize(); // capitalize the first letter of each word; only called if cnt<=1
   void			reverse();	// reverse order of string; only called if cnt<=1
   void			prepend(const char* str, uint slen); // note: slen must be set, and canCat must have been true
-  int               	search(int, int, const char*, int = -1) const;
-  int               	search(int, int, char) const;
-  int               	match(int, int, int, const char*, int = -1) const;
+  int	      	search(int, int, const char*, int = -1) const;
+  int	      	search(int, int, char) const;
+  int	      	match(int, int, int, const char*, int = -1) const;
 };
 
 extern TA_API StrRep  _nilStrRep; // an empty StrRep, for convenience
@@ -125,9 +125,58 @@ public:
   static const String	CharToCppLiteral(char c); // converts a character to a C++ valid literal; can be embedded in a C++ string
   static const String	StringToCppLiteral(const String& str); // converts a string to a C++ valid literal
     
+// global functions:
+
+  friend int        split(const String& x, String res[], int maxn,
+		            const String& sep);
+// split string into array res at separators; return number of elements
+  friend String     common_prefix(const String& x, const String& y,
+				      int startpos = 0);
+  friend String     common_suffix(const String& x, const String& y,
+				      int startpos = -1);
+  friend String     replicate(char c, int n);
+  friend String     replicate(const char* y, int n);
+  friend String     replicate(const String& y, int n);
+  friend String     join(const String src[], int n, const String& sep); //
+
+// simple builtin transformations
+//todo  friend String		triml(const String& x); // trims leading spaces
+  friend String		trimr(const String& x); // trims trailing spaces
+//todo  friend String		trim(const String& x); // trims leadingand trailing  spaces
+  friend inline String	reverse(const String& x);
+  friend inline String	upcase(const String& x);
+  friend inline String	downcase(const String& x);
+  friend inline String	capitalize(const String& x);
+    
+  friend inline void     cat(const String&, const String&, String&);
+  friend inline void     cat(const String&, const char*, String&);
+  friend inline void     cat(const String&, const char* str, uint slen, String&); // slen must be set
+  friend inline void     cat(const String&, char, String&);
+  friend inline void     cat(const char*, const String&, String&);
+  friend inline void     cat(const char*, const char*, String&);
+  friend inline void     cat(const char*, char, String&);
+    // concatenate first 2 args, store result in last arg
+
+// IO
+#ifdef __MAKETA__
+  friend ostream&   operator<<(ostream& s, const String& x);
+  friend istream&   operator>>(istream& s, String& x);
+
+  friend int        readline(istream& s, String& x,
+				 char terminator = '\n',
+				 int discard_terminator = 1); //
+#else
+  friend std::ostream&   operator<<(std::ostream& s, const String& x); // is inline
+  TA_API friend std::istream&   operator>>(std::istream& s, String& x);
+  TA_API friend int        readline(std::istream& s, String& x,
+				 char terminator = '\n',
+				 int discard_terminator = 1);
+#endif
+    
 // constructors & assignment
   inline String() {newRep(&_nilStrRep);} // el blanco
   inline String(const String& x) {newRep(x.mrep);} // copy constructor -- only a ref on source! (fast!)
+  String(const String* x) {if (x) newRep(x->mrep); else newRep(&_nilStrRep);} 
   inline String(const char* s) {init(s, -1);} // s can be NULL
   String(const char* s, int slen) {init(s, slen);}
   String(StrRep* x) {newRep(x);} // typically only used internally
@@ -148,7 +197,7 @@ public:
   explicit String(void* p); //converts to hex
 #ifdef TA_USE_QT
   String(const QString& val);
-  String&           operator = (const QString& y);
+  String&	  operator = (const QString& y);
   operator QString() const; //
   operator QVariant() const; //
 #endif
@@ -206,7 +255,7 @@ public:
   String&		operator=(char c) {if (c == '\0') 
     {setRep(&_nilStrRep); return *this;} else return set(&c, 1);} //
 
-  String&           set(const char* t, int len); 
+  String&	  set(const char* t, int len); 
     // parameterized set -- used in assigns
 
 // concatenation -- note: we try to do it in place, if possible (if refs==1, and enough space)
@@ -222,135 +271,97 @@ public:
   String&		operator += (const char* t) {return cat(t);}
   String&		operator += (char c) {return cat(c);}
 
-
-// procedural versions:
-
-  friend inline void     cat(const String&, const String&, String&);
-  friend inline void     cat(const String&, const char*, String&);
-  friend inline void     cat(const String&, const char* str, uint slen, String&); // slen must be set
-  friend inline void     cat(const String&, char, String&);
-  friend inline void     cat(const char*, const String&, String&);
-  friend inline void     cat(const char*, const char*, String&);
-  friend inline void     cat(const char*, char, String&);
-    // concatenate first 2 args, store result in last arg
-
 // searching & matching
-  int               index(char        c, int startpos = 0) const;
-  int               index(const String&     y, int startpos = 0) const;
-  int               index(const char* t, int startpos = 0) const;
+  int	      		index(char c, int startpos = 0) const;
+  int			index(const String& y, int startpos = 0) const;
+  int			index(const char* t, int startpos = 0) const;
     // return position of target in string or -1 for failure
 
-  bool               contains(char        c) const;
-  bool               contains(const String&     y) const; 
+  bool			contains(char c) const;
+  bool			contains(const String& y) const; 
     // return 'true' if target appears anyhere in String
 
-  bool               contains(char c, int pos) const;
-  bool               contains(const String& y, int pos) const;
-  bool               contains(const char* t, int pos) const;
-  bool               contains(const char* t) const;
+  bool			contains(char c, int pos) const;
+  bool			contains(const String& y, int pos) const;
+  bool			contains(const char* t, int pos) const;
+  bool			contains(const char* t) const;
     // return 'true' if target appears anywhere after position pos (or before, if pos is negative) in String
 
-  bool               matches(char c, int pos = 0) const;
-  bool               matches(const String& y, int pos = 0) const;
-  bool               matches(const char* t, int pos = 0) const;
+  bool			matches(char c, int pos = 0) const;
+  bool			matches(const String& y, int pos = 0) const;
+  bool			matches(const char* t, int pos = 0) const;
     // return 'true' if target appears at position pos in String
 
-  bool               endsWith(char c) const;
-  bool               endsWith(const String& y) const;
-  bool               endsWith(const char* t) const;
+  bool			endsWith(char c) const;
+  bool			endsWith(const String& y) const;
+  bool			endsWith(const char* t) const;
     // return 'true' if target is at end of String
 
-  bool               startsWith(char c) const;
-  bool               startsWith(const String& y) const;
-  bool               startsWith(const char* t) const;
+  bool			startsWith(char c) const;
+  bool			startsWith(const String& y) const;
+  bool			startsWith(const char* t) const;
     // return 'true' if target is at start of String
 
-  int               freq(char        c) const;
-  int               freq(const String&     y) const;
-  int               freq(const char* t) const;
+  int			freq(char        c) const;
+  int			freq(const String&     y) const;
+  int			freq(const char* t) const;
     //  return number of occurences of target in String
 
 // String extraction
-  String         operator () (int pos, int len) const; // synonym for at
+  String		operator () (int pos, int len) const; // synonym for at
 
-  String         at(const String&  x, int startpos = 0) const;
-  String         at(const char* t, int startpos = 0) const;
-  String         at(char c, int startpos = 0) const;
-  String         at(int pos, int len) const;
+  String		at(const String&  x, int startpos = 0) const;
+  String		at(const char* t, int startpos = 0) const;
+  String		at(char c, int startpos = 0) const;
+  String		at(int pos, int len) const;
   // substring at position for length
 
-  String         before(int pos) const;
-  String         before(const String& x, int startpos = 0) const;
-  String         before(char c, int startpos = 0) const;
-  String         before(const char* t, int startpos = 0) const; 
+  String		before(int pos) const;
+  String		before(const String& x, int startpos = 0) const;
+  String		before(char c, int startpos = 0) const;
+  String		before(const char* t, int startpos = 0) const; 
   // substring before (not including) target string
 
-  String         through(int pos) const;
-  String         through(const String& x, int startpos = 0) const;
-  String         through(char c, int startpos = 0) const;
-  String         through(const char* t, int startpos = 0) const;
+  String		through(int pos) const;
+  String		through(const String& x, int startpos = 0) const;
+  String		through(char c, int startpos = 0) const;
+  String		through(const char* t, int startpos = 0) const;
   // substring through (including) target string
 
-  String         from(int pos) const;
-  String         from(const String& x, int startpos = 0) const;
-  String         from(char c, int startpos = 0) const;
-  String         from(const char* t, int startpos = 0) const;
+  String		from(int pos) const;
+  String		from(const String& x, int startpos = 0) const;
+  String		from(char c, int startpos = 0) const;
+  String		from(const char* t, int startpos = 0) const;
   // substring from (including) target string
 
-  String         after(int pos) const;
-  String         after(const String& x, int startpos = 0) const;
-  String         after(char c, int startpos = 0) const;
-  String         after(const char* t, int startpos = 0) const;
+  String		after(int pos) const;
+  String		after(const String& x, int startpos = 0) const;
+  String		after(char c, int startpos = 0) const;
+  String		after(const char* t, int startpos = 0) const;
   // substring after (not including) target string
 
-  String 	right(int len) const; // rightmost len chars
+  inline String		left(int len) const {return before(len);} // leftmost len chars
+  String		right(int len) const; // rightmost len chars
 
-  String	elidedTo(int len) const; // return a string no more than len long, eliding chars if needed and adding ... marks
+  String		elidedTo(int len = -1) const; // return a string no more than len long, no line breaks, eliding chars if needed and adding ... marks; -1 is no eliding
   
-// deletion
-
-
 // delete the first occurrence of target after startpos
 
-  void              del(const String& y, int startpos = 0);
-  void              del(const char* t, int startpos = 0);
-  void              del(char c, int startpos = 0);
-  void              del(int pos, int len);
+  void			del(const String& y, int startpos = 0);
+  void			del(const char* t, int startpos = 0);
+  void			del(char c, int startpos = 0);
+  void			del(int pos, int len);
 // delete len chars starting at pos
-  void              remove(const char* t, int startpos = 0) { del(t, startpos); }
+  void			remove(const char* t, int startpos = 0) { del(t, startpos); }
 // remove target string from string
 
 // global substitution: substitute all occurrences of pat with repl
 
-  int               gsub(const String&     pat, const String&     repl);
-  int               gsub(const char* pat, const String&     repl);
-  int               gsub(const char* pat, const char* repl);
+  int			gsub(const String& pat, const String&     repl);
+  int			gsub(const char* pat, const String&     repl);
+  int			gsub(const char* pat, const char* repl);
 // global substitution: substitute all occurrences of pat with repl
 
-// friends & utilities
-
-// split string into array res at separators; return number of elements
-
-  friend int        split(const String& x, String res[], int maxn,
-                          const String& sep);
-
-  friend String     common_prefix(const String& x, const String& y,
-                                  int startpos = 0);
-  friend String     common_suffix(const String& x, const String& y,
-                                  int startpos = -1);
-  friend String     replicate(char c, int n);
-  friend String     replicate(const char* y, int n);
-  friend String     replicate(const String& y, int n);
-  friend String     join(const String src[], int n, const String& sep); //
-
-// simple builtin transformations
-//todo  friend String		triml(const String& x); // trims leading spaces
-  friend String		trimr(const String& x); // trims trailing spaces
-//todo  friend String		trim(const String& x); // trims leadingand trailing  spaces
-  friend inline String	reverse(const String& x);
-  friend inline String	upcase(const String& x);
-  friend inline String	downcase(const String& x);
-  friend inline String	capitalize(const String& x);
 
 // in-place versions of above -- they automatically makeUnique
   String&		reverse();	// reverse order of string
@@ -360,37 +371,18 @@ public:
 
   void			truncate(uint new_len); // shortens the string to new_len (if less than curr)
 // element extraction
-  char              operator [] (int i) const;
-  char&             operator [] (int i); //writable -- note: every use calls makeUnique
-  char              elem(int i) const; // get the character at index i
-  char              firstchar() const {return mrep->s[0];} // get the first character
-  char              lastchar() const {return mrep->s[mrep->len - 1];}  // get the last character
-
-
+  char			operator [] (int i) const;
+  char&			operator [] (int i); // writable -- NOTE: every use calls makeUnique
+  char			elem(int i) const; // get the character at index i
+  char			firstchar() const {return mrep->s[0];} // get the first character, '\0 if empty
+  char			lastchar() const {return mrep->s[mrep->len - 1];}  // get the last character; '\0 if empty
+  
 // conversion
-                    operator const char*() const {return mrep->s;}
+  operator const char*() const {return mrep->s;}
 
-
-// IO
-#ifdef __MAKETA__
-  friend ostream&   operator<<(ostream& s, const String& x);
-  friend istream&   operator>>(istream& s, String& x);
-
-  friend int        readline(istream& s, String& x,
-                             char terminator = '\n',
-                             int discard_terminator = 1); //
-#else
-  friend std::ostream&   operator<<(std::ostream& s, const String& x); // is inline
-  TA_API friend std::istream&   operator>>(std::istream& s, String& x);
-
-  TA_API friend int        readline(std::istream& s, String& x,
-                             char terminator = '\n',
-                             int discard_terminator = 1);
-#endif
 // status
-  void     error(const char* msg) const;
+  void			error(const char* msg) const;
 
-//obs  int               OK() const;	// check if the string is allocated properly, etc.
 protected:
   static void 		AppendCharToCppStringLiteral(String& str, char c, bool char_mode); // #IGNORE
   
@@ -399,18 +391,18 @@ protected:
   void			newRep(StrRep* rep_); // for setting rep in a constructor
 
 // some helper functions
-  int               	search(int start, int sl, const char* t, int tl = -1) const
+  int		 	search(int start, int sl, const char* t, int tl = -1) const
   	{return mrep->search(start, sl, t, tl);}
-  int               	search(int start, int sl, char c) const {return mrep->search(start, sl, c);}
-  int               	match(int start, int sl, int exact, const char* t, int tl = -1) const
+  int		 	search(int start, int sl, char c) const {return mrep->search(start, sl, c);}
+  int		 	match(int start, int sl, int exact, const char* t, int tl = -1) const
   	{return mrep->match(start, sl, exact, t, tl);}
-  int               	_gsub(const char*, int, const char* ,int);
+  int		 	_gsub(const char*, int, const char* ,int);
   String         	_substr(int pos, int slen) const; // return a substring
 private:
-  int               	_gsub_lt(const char*, int, const char* ,int);
-  int               	_gsub_eq(const char*, int, const char*);
-  int               	_gsub_gt(const char*, int, const char* ,int);
-};
+  int		 	_gsub_lt(const char*, int, const char* ,int);
+  int		 	_gsub_eq(const char*, int, const char*);
+  int		 	_gsub_gt(const char*, int, const char* ,int);
+}; //
 
 //extern String _nilString; // an empty string, for convenience
 //note: can't use global static, because ctor not guarenteed to run before use

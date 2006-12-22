@@ -87,6 +87,18 @@ int String_PArray::FindContains(const String& op, int start) const {
   return -1;
 }
 
+void String_PArray::SetFromString(String str, const String& sep) {
+  Reset();
+  int pos = str.index(sep);
+  while (pos >= 0) {
+    Add(str.left(pos)); // could be empty
+    str = str.after(pos + sep.length() - 1);
+    pos = str.index(sep);
+  }
+  if (str.nonempty())
+    Add(str);
+}
+
 ///////////////////////////////////////
 // NameVar_PArray
 
@@ -2541,6 +2553,20 @@ bool TypeItem::HasOptionAfter(const String& prefix, const String& op) const {
       if (opts.FastEl(idx).after(prefix) == op) return true;
     }
   } while (idx >= 0);
+  return false;
+}
+
+bool TypeItem::NextOptionAfter(const String& pre, int& itr, String& res) const
+{
+  if (itr < 0) itr = 0; // sanity
+  while (itr < opts.size) {
+    String opt = opts.FastEl(itr);
+    ++itr;
+    if (opt.matches(pre)) {
+      res = opt.after(pre);
+      return true;
+    }
+  }
   return false;
 }
 

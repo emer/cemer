@@ -71,9 +71,9 @@ public:
   static String	last_dir;	// #HIDDEN #NO_SAVE last directory name processed
   static String	last_fname;	// #HIDDEN #NO_SAVE last filename processed
 
-  static taFiler* 	New(const String& filetype_ = "All",
-			    const String& ext = "", FilerFlags flags = DEF_FLAGS);
-  // creates instance
+  static taFiler* 	New(const String& filetypes = "All",
+			    const String& exts = "", FilerFlags flags = DEF_FLAGS);
+  // creates instance; filetype/ext are ,separated lists; ext items in a file are space-separated
   
   String	filter; 	// the QFileDialog-compatible filter expression
   String	filetype; 	// the filetype, ex Project

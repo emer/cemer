@@ -748,26 +748,34 @@ String taBase::GetFileNameFmProject(const String& ext, const String& tag, bool d
   return rval;
 }
 
-taFiler* taBase::StatGetFiler(TypeItem* td, const String& ext, int compress) {
-  bool cmprs = (td->HasOption("COMPRESS"));
-  if(compress >= 0) cmprs = compress;
-  String filetype = td->OptionAfter("FILETYPE_");
-  if (filetype.empty()) filetype = td->name;
-  String aext = ext;
-  if(aext.empty()) {
-    aext = td->OptionAfter("EXT_");
-    if(aext.nonempty() && (aext[0] != '.')) {
-      aext = "." + aext;
+taFiler* taBase::StatGetFiler(TypeItem* td, String exts,
+  int compress, String filetypes)
+{
+  bool cmprs = (compress <= 0); // either default or none
+  if (td) {
+    if (compress >= 0) cmprs = compress;
+    else cmprs = (td->HasOption("COMPRESS"));
+    if (filetypes.empty()) {
+      filetypes = td->OptionAfter("FILETYPE_");
+      if (filetypes.empty()) filetypes = td->name;
+    }
+    if (exts.empty()) {
+      exts = td->OptionAfter("EXT_");
+      if (exts.nonempty() && (exts[0] != '.')) {
+        exts = "." + exts;
+      }
     }
   }
   taFiler::FilerFlags ff = (cmprs) ? taFiler::DEF_FLAGS_COMPRESS : taFiler::DEF_FLAGS;
-  taFiler* result = taFiler::New(filetype, aext, ff);
+  taFiler* result = taFiler::New(filetypes, exts, ff);
   return result;
 }
 
-taFiler* taBase::GetFiler(TypeItem* td, const String& ext, int compress) {
+taFiler* taBase::GetFiler(TypeItem* td, const String& exts,
+  int compress, const String& filetypes)
+{
   if (!td) td = GetTypeDef();
-  return StatGetFiler(td,ext,compress);
+  return StatGetFiler(td, exts, compress, filetypes);
 }
 
 int taBase::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
@@ -778,8 +786,44 @@ int taBase::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) {
   return rval;
 }
 
-taFiler* taBase::GetLoadFiler(const String& fname, const String& ext, int compress) {
-  taFiler* flr = GetFiler(NULL, ext, compress); 
+void AppendFilerInfo(TypeDef* typ, String& exts, int& compress, String& filetypes) {
+  if (typ->HasOption("COMPRESS"))
+    compress = 1;
+  String str = typ->OptionAfter("EXT_");
+  if (str.nonempty()) {
+    if (exts.nonempty()) exts.cat(",");
+    if (str[0] != '.')  exts.cat(".");
+    exts.cat(str);
+  }
+  str = typ->OptionAfter("FILETYPE_");
+  if (str.nonempty()) {
+    if (filetypes.nonempty()) filetypes.cat(",");
+    filetypes.cat(str);
+  }
+}    
+
+
+taFiler* taBase::GetLoadFiler(const String& fname, String exts,
+  int compress, String filetypes) 
+{
+  // get names/types here, because save/load are different
+  if (exts.empty()) {
+    // if we are a list, get for the default typ
+    TypeDef* typ = NULL;
+    if (InheritsFrom(&TA_taList_impl)) {
+      taList_impl* ths = (taList_impl*) this;
+      typ = ths->el_base;
+      if (typ)
+        AppendFilerInfo(typ, exts, compress, filetypes);
+      // and additionally, if a group, we can also load subgroups
+      if (InheritsFrom(&TA_taGroup_impl)) {
+        typ = GetTypeDef(); // we are the group
+        AppendFilerInfo(typ, exts, compress, filetypes);
+      }
+    }
+  }
+  
+  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes); 
   taRefN::Ref(flr);
    
   if(fname.nonempty()) {
@@ -873,8 +917,16 @@ int taBase::Save_strm(ostream& strm, TAPtr par, int indent) {
   return rval;
 }
 
-taFiler* taBase::GetSaveFiler(const String& fname, const String& ext, int compress) {
-  taFiler* flr = GetFiler(NULL, ext, compress); 
+taFiler* taBase::GetSaveFiler(const String& fname, String exts,
+  int compress, String filetypes)
+{
+  // get names/types here, because save/load are different
+  if (exts.empty()) {
+    // if we are a list, get for the default typ
+    TypeDef* typ = GetTypeDef(); // we are the group
+    AppendFilerInfo(typ, exts, compress, filetypes);
+  }
+  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes); 
   taRefN::Ref(flr);
    
   if (fname.nonempty()) {

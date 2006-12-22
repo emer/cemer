@@ -673,24 +673,37 @@ String& String::downcase() {
 }
 
 String String::elidedTo(int width) const {
-  if (length() <= width)
+  //NOTE: by definition, -1 means no eliding, but if not, we still
+  // need to remove line breaks, so can't just return clear text
+  if (width < 0)
     return *this;
+  // we always remove line breaks!
+  String src(this); // cheap, and usual result
+  if (contains('\n')) {
+    src.makeUnique();
+    src.gsub('\n', " "); //note: len stays the same
+  }
+
+  int len = length(); // cache, we use a lot
+  if (len <= width)
+    return src;
   // if too small to use ellipses, return chars
   if (width <= 3)
-    return before(width);
+    return src.before(width);
     
   STRING_BUF(rval, width);
-  if (length() <= 8) {
+  if (width <= 8) {
     // really short, just use first chars, and put ... at end
-    rval.cat(before(width - 3)).cat("...");
+    rval.cat(src.before(width - 3)).cat("...");
   } else {
-    // try finding a space in mid third of string to elide on
-    int pos = index(' ', length() / 3);
-    if ((pos < 0) || (pos > ((length() * 2) / 3))) {
+    // try finding a space after 1st half of string to elide on
+    int pos = src.index(' ', width / 2);
+    // if not, or too far after center, just elide in center
+    if ((pos < 0) || (pos > ((width * 2) / 3))) {
       // just elide in center
-      pos = length() / 2;
+      pos = width / 2;
     }
-    rval.cat(before(pos)).cat("...").cat(right(width - pos - 3));
+    rval.cat(src.before(pos)).cat(" ~ ").cat(src.right(width - pos - 3));
   }
   return rval;
 }

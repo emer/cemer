@@ -4541,6 +4541,18 @@ void iTreeView::setHeaderText(int col, const String& value) {
   headerItem()->setText(col, value);
 }
 
+int iTreeView::maxColChars(int col) { 
+  if ((col < 0) || (col >= columnCount())) return -1;
+  QVariant v = headerItem()->data(col, MaxColCharsRole);
+  if (v.isNull()) return -1;
+  else return v.toInt();
+}
+
+void iTreeView::setMaxColChars(int col, int value) { 
+  if ((col < 0) || (col >= columnCount())) return;
+  headerItem()->setData(col, MaxColCharsRole, value);
+}
+
 void iTreeView::setTvFlags(int value) {
   if (tv_flags == value) return;
   tv_flags = value;
@@ -4778,11 +4790,12 @@ void iTreeViewItem::DecorateDataNode() {
   iTreeView* tv = treeView();
   if (!tv) return; //shouldn't happen
   for (int i = 0; i < tv->columnCount(); ++i) {
+    int max_chars = tv->maxColChars(i); // -1 if no limit
     // first, the col text (cols >=1 only)
     if (i > 0) {
       KeyString key = tv->colKey(i);
       if (key.length() > 0) { // no point if no key
-        setText(i, link()->GetColText(key));
+        setText(i, (link()->GetColText(key)).elidedTo(max_chars));
       }
     }
     // then, col data, if any (empty map, otherwise)

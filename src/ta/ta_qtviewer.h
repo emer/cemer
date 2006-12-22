@@ -1385,7 +1385,8 @@ public:
     ObjDataRole = Qt::UserRole + 1, // for additional data
     ColKeyRole,	// store a string in header to indicate the col key to use for data
     HighlightIndexRole,	// store an int >0 in item0 to highlight row with this color
-    ColDataRole // store a QString::QVariant map of colkey/Role numbers to add addtl data to nodes; ex, "desc":Qt::ToolTipRole for tooltip text for the col "desc"
+    ColDataRole, // store a QString::QVariant map of colkey/Role numbers to add addtl data to nodes; ex, "desc":Qt::ToolTipRole for tooltip text for the col "desc"
+    MaxColCharsRole // store an int of max col width (in chars), we elide text to that length
   };
 #endif
   enum TreeViewFlags { // #BITS
@@ -1413,6 +1414,8 @@ public:
   void			setColKey(int col, const KeyString& key); 
     // sets in ColKeyRole -- you can do it yourself if you want	
   void			setHeaderText(int col, const String& value); // convenience
+  int 			maxColChars(int col); // value if set, -1 otherwise
+  void			setMaxColChars(int col, int value); // sets max number of chars for that text (when retrieved from the link); elided if greater
   inline TreeViewFlags	tvFlags() const {return (TreeViewFlags)tv_flags;}
   void			setTvFlags(int value);
   

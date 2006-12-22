@@ -473,14 +473,17 @@ public:
   virtual String	GetFileNameFmProject(const String& ext, const String& tag = "", bool dmem_proc_no = false);
   // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; fname = proj->base_name + tag + ext; if dmem_proc_no, add dmem proc no to file name.  empty if project not found
 
-  static taFiler*	StatGetFiler(TypeItem* td, const String& ext="", int compress=-1);
+  static taFiler*	StatGetFiler(TypeItem* td, String exts="",
+    int compress=-1, String filetypes="");
   // #IGNORE gets file dialog for the TypeItem -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes
-  taFiler*		GetFiler(TypeItem* td = NULL, const String& ext="", int compress=-1);
-  // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes
+  taFiler*		GetFiler(TypeItem* td = NULL, const String& exts="",
+    int compress=-1, const String& filetypes="");
+  // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes; exts/ft's must match, and are ,-separated lists
 
   virtual int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
   // #CAT_File Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
-  virtual taFiler* 	GetLoadFiler(const String& fname, const String& ext="", int compress=-1);
+  virtual taFiler* 	GetLoadFiler(const String& fname, String exts="",
+    int compress=-1, String filetypes="");
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
   // #MENU #MENU_ON_Object #ARGC_0 #CAT_File Load object data from given file name (if empty, prompt user for a name) -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
@@ -489,7 +492,8 @@ public:
 
   virtual int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
   // #CAT_File Save object data to a file stream
-  virtual taFiler* 	GetSaveFiler(const String& fname, const String& ext="", int compress=-1);
+  virtual taFiler* 	GetSaveFiler(const String& fname, String ext="",
+    int compress=-1, String filetypes="");
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual taFiler* 	GetAppendFiler(const String& fname, const String& ext="", int compress=-1);
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!

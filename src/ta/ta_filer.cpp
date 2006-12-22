@@ -356,12 +356,21 @@ void taFiler::Close() {
 
 const String taFiler::filterText(bool incl_allfiles) const {
   STRING_BUF(rval, 80);
-  if (!filetype.empty()) {
-    rval.cat(filetype).cat(" files (");
+  String_PArray sa_ft;
+  String_PArray sa_ex;
+  sa_ft.SetFromString(filetype, ",");
+  sa_ex.SetFromString(ext, ",");
+  // key on the exts, and just put a ? for type if we run out
+  for (int i = 0; i < sa_ex.size; ++i) {
+    String tft = sa_ft.SafeEl(i);
+    if (tft.empty()) tft = "?";
+    String tex = sa_ex.FastEl(i);
+    if (rval.nonempty()) rval.cat(";;");
+    rval.cat(tft).cat(" files (");
     //note: ok if ext empty
-    rval.cat("*").cat(ext);
+    rval.cat("*").cat(tex);
     if (compressEnabled()) {
-      rval.cat(" *").cat(ext).cat(taMisc::compress_sfx);
+      rval.cat(" *").cat(tex).cat(taMisc::compress_sfx);
     }
     rval.cat(")");
   }

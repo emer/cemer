@@ -201,6 +201,7 @@ public:
   // find item that contains string -- start < 0 = start from end
 
   const String 	AsString(const String& sep = def_sep) const;
+  void		SetFromString(String str, const String& sep = def_sep);
   void	operator=(const String_PArray& cp)	{ Copy_Duplicate(cp); }
   String_PArray()				{ };
   String_PArray(const String_PArray& cp)	{ Copy_Duplicate(cp); }
@@ -1363,8 +1364,9 @@ public:
     // check if option is set
   bool		HasOptionAfter(const String& prefix, const String& op) const;
     // returns true if any prefix (Xxx_) has the value after of op; enables multi options of same prefix
-  virtual String	OptionAfter(const String& op) const;
+  virtual String	OptionAfter(const String& prefix) const;
   // return portion of option after given option header
+  virtual bool		NextOptionAfter(const String& prefix, int& itr, String& result) const; // enables enumeration of multi-valued prefixes; start w/ itr=0; true if a new value was returned in result
   virtual String	GetLabel() const;
   // checks for option of LABEL_xxx and returns it or name
   
