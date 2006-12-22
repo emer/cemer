@@ -85,6 +85,7 @@ bool AbstractScriptBase::PreCompileScript_impl() {
 
 bool AbstractScriptBase::CompileScript_impl() {
   bool rval = false;
+  script->name = ((taBase*)GetThisPtr())->GetName();
   switch (scriptSource()) {
   case NoScript: return false; //nothing to do
   case ScriptString:
@@ -98,7 +99,6 @@ bool AbstractScriptBase::CompileScript_impl() {
   if (rval) {
     script_compiled = true;
     ScriptCompiled();
-    script->name = ((taBase*)GetThisPtr())->GetName();
   }
   return rval;
 }
