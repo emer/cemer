@@ -49,12 +49,25 @@ public:
   MatrixTableModel* 	model() const;
   void			setModel(MatrixTableModel* mod);
   
+  int			QueryEditActions(taiMimeSource* ms);
+    // get edit items allowed for this one item
+  int			EditAction(int ea);
   void			Refresh(); // for manual refresh -- note, this also updates all other mat editors too
   
   iMatrixEditor(QWidget* parent = NULL);
   
+protected:
+  virtual void		QueryEditActions_impl(taiMimeSource* ms,
+    int& allowed, int& forbidden);
+  virtual int		EditAction_impl(taiMimeSource* ms, int ea);
+  
+protected slots:
+  void 			tv_customContextMenuRequested(const QPoint& pos);
+  void 			this_editAction(int ea);
+
 private:
   void		init();
+  
 };
 
 

@@ -1518,9 +1518,10 @@ int tabDataTableViewType::BidForView(TypeDef* td) {
 
 void tabDataTableViewType::CreateDataPanel_impl(taiDataLink* dl_)
 {
-  inherited::CreateDataPanel_impl(dl_);
+  // we create ours first, because it should be the default
   iDataTablePanel* dp = new iDataTablePanel(dl_);
   DataPanelCreated(dp);
+  inherited::CreateDataPanel_impl(dl_);
 }
 
 

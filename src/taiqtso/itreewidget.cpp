@@ -58,6 +58,8 @@ void  iTreeWidget::init() {
   m_highlightColors = NULL; // created if highlighting enabled
   connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)),
     this,  SLOT(this_itemExpanded(QTreeWidgetItem*)) );
+  connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)),
+    this,  SLOT(this_itemCollapsed(QTreeWidgetItem*)) );
 }
 
 bool iTreeWidget::allColumnsShowFocus() const {

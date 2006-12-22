@@ -18,6 +18,9 @@
 
 #include "ta_qtclipdata.h"
 
+#include "ta_qt.h"
+#include <QApplication>
+#include <QClipboard>
 #include <QTableView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -38,9 +41,10 @@ int tabMatrixViewType::BidForView(TypeDef* td) {
 
 void tabMatrixViewType::CreateDataPanel_impl(taiDataLink* dl_)
 {
-  inherited::CreateDataPanel_impl(dl_);
+  // we create ours first, because it should be the default
   iMatrixPanel* dp = new iMatrixPanel(dl_);
   DataPanelCreated(dp);
+  inherited::CreateDataPanel_impl(dl_);
 }
 
 //////////////////////////
@@ -59,6 +63,9 @@ void iMatrixEditor::init() {
   layDims = new QHBoxLayout(layOuter);
   tv = new QTableView(this);
   layOuter->addWidget(tv);
+  tv->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(tv, SIGNAL(customContextMenuRequested(const QPoint&)),
+    this, SLOT(tv_customContextMenuRequested(const QPoint&)) );
 }
 
 MatrixTableModel* iMatrixEditor::model() const {
@@ -75,6 +82,67 @@ void iMatrixEditor::Refresh() {
 void iMatrixEditor::setModel(MatrixTableModel* mod) {
   tv->setModel(mod);
 }
+
+int iMatrixEditor::QueryEditActions(taiMimeSource* ms) {
+  int allowed = 0;
+  int forbidden = 0;
+  QueryEditActions_impl(ms, allowed, forbidden);
+  return allowed & !forbidden;
+}
+void iMatrixEditor::QueryEditActions_impl(taiMimeSource* ms,
+  int& allowed, int& forbidden)
+{
+  allowed = taiClipData::EA_COPY;
+}
+
+int iMatrixEditor::EditAction(int ea) {
+  taiMimeSource* ms = NULL;
+//TEMP
+  return EditAction_impl(ms, ea);
+}
+
+
+int iMatrixEditor::EditAction_impl(taiMimeSource* ms, int ea) {
+  if (ea & taiClipData::EA_COPY) {
+    QMimeData* md = tv->model()->mimeData(tv->selectionModel()->selectedIndexes());
+    QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
+  }
+  return 0;
+}
+
+void iMatrixEditor::this_editAction(int ea) {
+  EditAction(ea);
+}
+
+void iMatrixEditor::tv_customContextMenuRequested(const QPoint& pos) {
+  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  //TODO: any for us first (ex. delete)
+  
+    
+// TEMP for test
+  menu->AddItem("Copy", taiMenu::normal, taiAction::int_act,
+    this, SLOT(this_editAction(int)), taiClipData::EA_COPY );
+
+/*
+  menu->AddSep();
+  taiMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
+  men_exp->AddItem("Expand All", taiMenu::normal, taiAction::action,
+    this, SLOT(ExpandAll()) );
+  men_exp->AddItem("Collapse All", taiMenu::normal, taiAction::action,
+    this, SLOT(CollapseAll()) );
+  if (nd && lst.size == 1) {
+    men_exp->AddItem("Expand All From Here", taiMenu::normal, taiAction::ptr_act,
+      this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
+    men_exp->AddItem("Collapse All From Here", taiMenu::normal, taiAction::ptr_act,
+      this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
+  }
+*/
+  if (menu->count() > 0) { //only show if any items!
+    menu->exec(tv->mapToGlobal(pos));
+  }
+  delete menu;
+}
+
 
 
 //////////////////////////

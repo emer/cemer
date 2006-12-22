@@ -287,6 +287,11 @@ public:
   { if (InRange_Flat(idx))  El_SetFmStr_(FastEl_Flat_(idx), str); } 
   // #CAT_Access treats the matrix like a flat array, sets the element as a string
   
+  // Clipboard Support (note: works well unless you have tabs/newlines in your data)
+  
+  const String		FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to);
+    // returns a tab-sep cols, newline-sep rows, well suited to clipboard; the coords are in flat 2-d form, as in the table editors
+  
   ///////////////////////////////////////
   // Variant
 
@@ -1019,6 +1024,8 @@ INHERITED(QAbstractTableModel)
 public:
 #ifndef __MAKETA__
   int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
+  override QMimeData* 	mimeData (const QModelIndexList& indexes) const;
+  override QStringList	mimeTypes () const;
 #endif //note: bugs in maketa necessitated these sections
   taMatrix*		mat() const {return m_mat;}
   

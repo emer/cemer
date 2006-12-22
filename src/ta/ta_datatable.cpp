@@ -1742,7 +1742,7 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
     if (col->is_matrix) 
       return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
     else
-      return dt->GetValAsVar(index.column(), index.row());
+      return dt->GetValAsString(index.column(), index.row());
 // Qt::FontRole: //  QFont: font for the text
 //Qt::DecorationRole
 //Qt::ToolTipRole

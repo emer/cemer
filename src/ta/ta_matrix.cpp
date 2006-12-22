@@ -19,6 +19,7 @@
 
 #ifdef TA_GUI
 # include "ta_matrix_qt.h"
+# include <QMimeData>
 #endif
 
 //////////////////////////
@@ -603,6 +604,23 @@ int taMatrix::FastElIndexN(const MatrixGeom& indices) const {
   return rval;
 }
  
+const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to) {
+  if ((row_fr < 0) || (col_fr < 0) || (row_to < row_fr) || (col_to < col_fr))
+    return _nilString;
+  // allocate a reasonable best-guess buffer
+  STRING_BUF(rval, (col_fr - col_to + 1) * (row_fr - row_to + 1) * 10);
+  // to access in 2d, you just ignore the higher dimension
+  for (int row = row_fr; row <= row_to; ++row) {
+    int idx = (row * dim(0)) + col_fr; 
+    for (int col = col_fr; col <= col_to; ++col, ++idx) {
+      if (col > col_fr) rval.cat('\t');
+      rval.cat(SafeElAsStr_Flat(idx));
+    }
+    rval.cat('\n');
+  }
+  return rval;
+}
+
 int taMatrix::frames() const {
   if (geom.size == 0) return 0;
   return geom[geom.size-1];
@@ -1278,7 +1296,7 @@ QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
   switch (role) {
   case Qt::DisplayRole: 
   case Qt::EditRole:
-    return m_mat->SafeElAsVar_Flat(matIndex(index));
+    return m_mat->SafeElAsStr_Flat(matIndex(index));
 //Qt::DecorationRole
 //Qt::ToolTipRole
 //Qt::StatusTipRole
@@ -1385,6 +1403,33 @@ void MatrixTableModel::MatrixDestroying() {
   m_mat = NULL;
   //maybe update things? really is only called instants before we get deleted anyway
 }
+
+QMimeData* MatrixTableModel::mimeData (const QModelIndexList& indexes) const {
+  if (!m_mat) return NULL;
+//TENT: guessing this has all the guys -- assume first and last are corners
+  int row_fr = 0; int row_to = 0; int col_fr = 0; int col_to = 0;
+  if (indexes.count() > 0) {
+    const QModelIndex& mi = indexes.first();
+    row_fr = mi.row();
+    col_fr = mi.column();
+  }
+  if (indexes.count() > 1) {
+    const QModelIndex& mi = indexes.last();
+    row_to = mi.row();
+    col_to = mi.column();
+  }
+  String str = mat()->FlatRangeToTSV(row_fr, col_fr, row_to, col_to);
+  QMimeData* rval = new QMimeData;
+  rval->setText(str);
+  return rval;
+}
+
+QStringList MatrixTableModel::mimeTypes () const {
+  QStringList types;
+  types << "text/plain";
+  return types;
+}
+
 
 int MatrixTableModel::rowCount(const QModelIndex& parent) const {
   return m_mat->rowCount();
