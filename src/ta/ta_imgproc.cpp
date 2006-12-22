@@ -1295,8 +1295,15 @@ bool RetinaSpec::FilterImage(taImage& img, DataTable* dt,
   }
   bool rval = FilterImageData(img_data, dt, move_x, move_y, scale, rotate, superimpose);
   int idx;
-  if(rval)
-    dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(img.name, -1);
+  if(rval) {
+    String imgnm = img.name;
+    int n_slash = imgnm.freq('/');
+    if(n_slash > 2) {
+      for(int i=0;i<n_slash-2;i++)
+	imgnm = imgnm.after('/'); // get rid of all but last 2
+    }
+    dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(imgnm, -1);
+  }
   return rval;
 }
 
@@ -1424,7 +1431,13 @@ bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
 			  move_x, move_y, scale, rotate, superimpose, attend);
   if(rval) {
     int idx;
-    dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(img.name, -1);
+    String imgnm = img.name;
+    int n_slash = imgnm.freq('/');
+    if(n_slash > 2) {
+      for(int i=0;i<n_slash-2;i++)
+	imgnm = imgnm.after('/'); // get rid of all but last 2
+    }
+    dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(imgnm, -1);
   }
   return rval;
 }
