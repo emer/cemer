@@ -846,6 +846,8 @@ public:
   // #MENU #MENU_ON_Object #MENU_CONTEXT create a new program of this type (return value could be a Program or a Program_Group)
   virtual bool 	LoadProgram(Program* prog);
   // load into given program; true if loaded, false if not
+  virtual bool 	LoadProgramGroup(Program_Group* prog_gp);
+  // load into given program; true if loaded, false if not
 
   virtual bool ParseProgFile(const String& fnm, const String& path);
   // get program information from program or program group file. is_group is set based on extension of file name (.prog or .progp)
@@ -910,6 +912,8 @@ public:
 
   void		SaveToProgLib(Program::ProgLibs library = Program::USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT save the program group to given program library -- file name = object name -- be sure to add good desc comments!!
+  virtual void	LoadFromProgLib(ProgLibEl* prog_type);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib (re)load the program from the program library element of given type
 
   void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
   

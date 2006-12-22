@@ -769,13 +769,36 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
 			    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
+  int n_split = 0;
+  int rest_idx = -1;
+  int n_tot = 0;
   for(int i=0;i<6;i++) {
-    if(nary[i] != 0) {
-      GetDest(dary[i], src, "SplitByN_" + String(i));
-      dary[i]->StructUpdate(true);
-      dary[i]->Copy_NoData(*src);
+    if(nary[i] == 0) break;
+    GetDest(dary[i], src, "SplitByN_" + String(i));
+    dary[i]->StructUpdate(true);
+    dary[i]->Copy_NoData(*src);
+    if(nary[i] < 0) {
+      if(rest_idx >= 0) {
+	taMisc::Error("SplitRowsN: cannot have multiple n = -1 = remainder cases");
+	break;
+      }
+      rest_idx = i;
     }
+    n_tot += nary[i];
+    n_split++;
   }
+
+  if(n_tot > src->rows) {
+    taMisc::Warning("SplitRowsN: total N:", String(n_tot), "is > number of source rows:",
+		    String(src->rows), "last one will be underfilled");
+  }
+
+  if(rest_idx >=0) {
+    int n_rest = src->rows - n_tot;
+    n_rest = MAX(n_rest, 0);
+    nary[rest_idx] = n_rest;
+  }
+
   int st_n = 0;
   int end_n = n1;
   int ni = 0;
@@ -787,7 +810,6 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
     else {
       ni++;
       if((nary[ni] == 0) || !dary[ni]) break;
-      if(nary[ni] < 0) nary[ni] = src->rows - row;
       st_n = row;
       end_n = st_n + nary[ni];
 
@@ -796,9 +818,8 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
     }
   }
   for(int i=0;i<6;i++) {
-    if(nary[i] != 0) {
-      dary[i]->StructUpdate(false);
-    }
+    if(nary[i] == 0) break;
+    dary[i]->StructUpdate(false);
   }
   return true;
 }
@@ -809,13 +830,36 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
 
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
+  int n_split = 0;
+  int rest_idx = -1;
+  int n_tot = 0;
   for(int i=0;i<6;i++) {
-    if(nary[i] != 0) {
-      GetDest(dary[i], src, "SplitByN_" + String(i));
-      dary[i]->StructUpdate(true);
-      dary[i]->Copy_NoData(*src);
+    if(nary[i] == 0) break;
+    GetDest(dary[i], src, "SplitByN_" + String(i));
+    dary[i]->StructUpdate(true);
+    dary[i]->Copy_NoData(*src);
+    if(nary[i] < 0) {
+      if(rest_idx >= 0) {
+	taMisc::Error("SplitRowsN: cannot have multiple n = -1 = remainder cases");
+	break;
+      }
+      rest_idx = i;
     }
+    n_tot += nary[i];
+    n_split++;
   }
+
+  if(n_tot > src->rows) {
+    taMisc::Warning("SplitRowsN: total N:", String(n_tot), "is > number of source rows:",
+		    String(src->rows), "last one will be underfilled");
+  }
+
+  if(rest_idx >=0) {
+    int n_rest = src->rows - n_tot;
+    n_rest = MAX(n_rest, 0);
+    nary[rest_idx] = n_rest;
+  }
+
   int_Array idxs;
   idxs.SetSize(src->rows);
   idxs.FillSeq();
@@ -831,7 +875,6 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
     else {
       ni++;
       if((nary[ni] == 0) || !dary[ni]) break;
-      if(nary[ni] < 0) nary[ni] = src->rows - row;
       st_n = row;
       end_n = st_n + nary[ni];
 
@@ -840,9 +883,8 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
     }
   }
   for(int i=0;i<6;i++) {
-    if(nary[i] != 0) {
-      dary[i]->StructUpdate(false);
-    }
+    if(nary[i] == 0) break;
+    dary[i]->StructUpdate(false);
   }
   return true;
 }

@@ -477,7 +477,7 @@ String::String(double f,const char* format) {
 
 String::String(void* p) {
   char buf[32];
-  sprintf(buf,"p",p);
+  sprintf(buf,"%p",p);
   newRep(Salloc(buf, -1));
 }
 

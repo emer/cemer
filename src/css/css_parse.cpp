@@ -3320,19 +3320,18 @@ void yyerror(char* s) { 	/* called for yacc syntax error */
   if(cssMisc::cur_top->cmd_shell != NULL)
     fh = cssMisc::cur_top->cmd_shell->ferr;
 
+  String src = cssMisc::cur_top->Prog()->GetSrcLC(cssMisc::cur_top->Prog()->tok_line);
   if(strcmp(s, "parse error") == 0) {
-    String src = cssMisc::cur_top->Prog()->GetSrcLC(cssMisc::cur_top->Prog()->tok_line);
     src.gsub('\t',' ');		// replace tabs
-    *(fh) << "Syntax Error, line " << cssMisc::cur_top->src_ln << ":\n"
+    *fh << cssMisc::cur_top->name << ": Syntax Error, line " << cssMisc::cur_top->src_ln << ":\n"
       << src;
-/*     *(fh) << "\t\t\t"; */
     for(i=0; i < cssMisc::cur_top->Prog()->tok_col; i++)
-      *(fh) << " ";
-    *(fh) << "^\n";
+      *fh << " ";
+    *fh << "^\n";
   }
   else {
-    *(fh) << s << " line " << cssMisc::cur_top->src_ln << ":\t"
-      << cssMisc::cur_top->Prog()->GetSrcLC(cssMisc::cur_top->Prog()->tok_line);
+    *fh << cssMisc::cur_top->name << ": " << s << " line " << cssMisc::cur_top->src_ln << ":\n"
+      << src;
   }
   taMisc::FlushConsole();
 }

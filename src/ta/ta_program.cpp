@@ -2132,6 +2132,16 @@ taBase* Program_Group::NewFromLibByName(const String& prog_nm) {
   return prog_lib.NewProgramFmName(prog_nm, this);
 }
 
+void Program_Group::LoadFromProgLib(ProgLibEl* prog_type) {
+  if(!prog_type) return;
+  taLeafItr itr;
+  Program* prog;
+  FOR_ITR_EL(Program, prog, this->, itr) {
+    prog->Reset();
+  }
+  prog_type->LoadProgramGroup(this);
+}
+
 //////////////////////////
 //  Program_List	//
 //////////////////////////
@@ -2180,6 +2190,21 @@ bool ProgLibEl::LoadProgram(Program* prog) {
   }
   String tmp_last_dir = taFiler::last_dir;
   prog->Load(path);
+  taFiler::last_dir = tmp_last_dir;
+  return true;
+}
+
+bool ProgLibEl::LoadProgramGroup(Program_Group* prog_gp) {
+  // todo: need to support full URL types -- assumed to be file right now
+  String path = URL;
+  if(path.contains("file:"))
+    path = path.after("file:");
+  if(!is_group) {
+    taMisc::Error("ProgLibEl::LoadProgram -- cannot load a single program file into a program group!");
+    return false;
+  }
+  String tmp_last_dir = taFiler::last_dir;
+  prog_gp->Load(path);
   taFiler::last_dir = tmp_last_dir;
   return true;
 }

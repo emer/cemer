@@ -315,11 +315,11 @@ public:
   static bool	SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
 			 DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
 			 DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
-  // #NULL_OK #CAT_Select #MENU #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder) (new dest datatables are created if NULL)
+  // #NULL_OK #CAT_Select #MENU #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL)
   static bool	SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
 				   DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
 				   DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
-  // #NULL_OK #CAT_Select #MENU #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets
+  // #NULL_OK #CAT_Select #MENU #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets
 
   ///////////////////////////////////////////////////////////////////
   // column-wise functions: selecting, joining
