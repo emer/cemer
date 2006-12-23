@@ -23,21 +23,6 @@ Browser/Edit/Tab space
 
 tabs:
 
-edit dialogs:
-
-* #200: #EXPERT and #DETAIL (maybe others?) should be collected at bottom of
-  edit dialog with a windowshade kind of control that when you click on it
- reveals them. This provides a visual cue to the user that these variables
- exist, and allows one to quickly take a peek -- the shade button is not
- present if they don't exist. Otherwise, you just have to do the view toggle
- thing on everything to find out what you might be missing.  The show control
- then just controls whether this windowshade defaults to up or down.
-* force expert: if there is a default val for a guy and it is not set to that
-  then it is auto show.
-* #43: #AUTO_APPLY for specific members (e.g., progvar var_type): these guys
-  are applied immediately after a control is used.  they set the context for
-  other choices (CONDEDIT etc) and you need too many applies otherwise.
-  
 browser tree stuff:
 
 * better overall system for show/expand/collapse of views:
@@ -92,6 +77,22 @@ browser tree stuff:
 
 * autoscroll to show new guy (#207, #140): when a new item is added (and expanded)
   automatically scroll so it is entirely visible.  often it goes off end of bottom.
+
+edit dialogs:
+
+* #200: #EXPERT and #DETAIL (maybe others?) should be collected at bottom of
+  edit dialog with a windowshade kind of control that when you click on it
+ reveals them. This provides a visual cue to the user that these variables
+ exist, and allows one to quickly take a peek -- the shade button is not
+ present if they don't exist. Otherwise, you just have to do the view toggle
+ thing on everything to find out what you might be missing.  The show control
+ then just controls whether this windowshade defaults to up or down.
+* force expert: if there is a default val for a guy and it is not set to that
+  then it is auto show.
+* #43: #AUTO_APPLY for specific members (e.g., progvar var_type): these guys
+  are applied immediately after a control is used.  they set the context for
+  other choices (CONDEDIT etc) and you need too many applies otherwise.
+  
 
 * spec gui enhancements:
   * enhance BaseSpec edit/drop to accept compatible subspec objects

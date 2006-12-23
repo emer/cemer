@@ -672,6 +672,12 @@ String& String::downcase() {
   return *this;
 }
 
+String String::elidedToFirstLine() const {
+  int pos_nl = index('\n');
+  if (pos_nl < 0) return *this;
+  return before(pos_nl).cat("...");
+}
+
 String String::elidedTo(int width) const {
   //NOTE: by definition, -1 means no eliding, but if not, we still
   // need to remove line breaks, so can't just return clear text

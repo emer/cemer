@@ -178,12 +178,15 @@ public:
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE #AKA_comment optional brief description of element's function; included as comment in script
   bool			off;	// #DEF_false turn off this program element: do not include in script
 
-  virtual ProgEl*   	parent() {return GET_MY_OWNER(ProgEl);}
+  virtual ProgEl*   	parent() const
+    {return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl);}
   Program*		program() {return GET_MY_OWNER(Program);} 
   
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
   
+  override int	GetEnabled() const;
+    // note: it is our own, plus disabled if parent is
   override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, inherited);
@@ -281,15 +284,15 @@ private:
   void	Initialize();
   void	Destroy()	{}
 };
-
+//FIXME: Loop s/b DEF_CHILD but we need to fix clip ops first
 class TA_API Loop: public ProgEl { 
-  // #VIRT_BASE ##DEF_CHILD_loop_code base class for loops
+  // #VIRT_BASE base class for loops
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
   String	    	loop_test; // #EDIT_DIALOG a test expression for whether to continue looping (e.g., 'i < max')
   
-  override taList_impl* children_() {return &loop_code;}
+//  override taList_impl* children_() {return &loop_code;}
   SIMPLE_LINKS(Loop);
   SIMPLE_COPY(Loop);
   COPY_FUNS(Loop, inherited);

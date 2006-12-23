@@ -762,6 +762,10 @@ const QVariant tabDataLink::GetColData(const KeyString& key, int role) const {
   return data()->GetColData(key, role);
 }
 
+bool tabDataLink::isEnabled() const {
+  return data()->GetEnabled();
+}
+
 void tabDataLink::QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden) {
   data()->QueryEditActions(ms, allowed, forbidden);
 }
@@ -4313,6 +4317,8 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 {
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
+  m_def_exp_levels = 2; // works well for most contexts
+  italic_font = NULL; 
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1, 
     QColor(0xFF, 0x99, 0x99),  // pale dull red
@@ -4334,6 +4340,10 @@ iTreeView::~iTreeView() {
   if (m_filters) {
     delete m_filters;
     m_filters = NULL;
+  }
+  if (italic_font) {
+    delete italic_font;
+    italic_font = NULL;
   }
 }
 
@@ -4424,43 +4434,77 @@ const KeyString iTreeView::colKey(int col) const {
 }
 
 void iTreeView::ExpandAll(int max_levels) {
+  ExpandAll_impl(max_levels, false);
+}
+
+void iTreeView::ExpandAll_impl(int max_levels, bool use_custom_filt) {
   //NOTE: we can't user iterators for expanding, because we add/remove items which 
   // crashes the iterator
   for (int i = 0; i < topLevelItemCount(); ++i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
-    if (node) 
-      ExpandAllUnder_impl(node, max_levels - 1);
+    if (!node) continue;
+    ExpandItem_impl(node, 0, max_levels, use_custom_filt);
   }
+//TODO: need to rejig resizing
   resizeColumnsToContents();
 }
 
-void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
+void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
+  int max_levels, int exp_flags) 
+{
   if (!item) return;
-  ExpandAllUnder_impl(item, max_levels);
-  resizeColumnsToContents();
-} 
-
-void iTreeView::ExpandAllUnder_impl(iTreeViewItem* item, int max_levels) {
-  // first expand the guy...
-  if (!isItemExpanded(item)) { // ok, eligible...
-    if (item->lazyChildren() || (item->childCount() > 0)) {
-      setItemExpanded(item, true); // should trigger CreateChildren for lazy
+  bool expand = true; 
+  if (!(exp_flags & EF_EXPAND_DISABLED)) {
+    if (!item->link()->isEnabled())
+      expand = false;
+  }
+  if (expand && (exp_flags & EF_CUSTOM_FILTER)) {
+    emit CustomExpandFilter(item, level, expand);
+  }
+  if (expand) {
+    // first expand the guy...
+    if (!isItemExpanded(item)) { // ok, eligible...
+      if (item->lazyChildren() || (item->childCount() > 0)) {
+        setItemExpanded(item, true); // should trigger CreateChildren for lazy
+      }
+    }
+    // check if we've expanded deeply enough 
+    // (works for finite (>=1) and infinite (<0) cases)
+    if (max_levels == 0) return;
+  
+    if (level >= 0) ++level;
+    // and expand item's children -- lazy children should be created by now
+    for (int i = 0; i < item->childCount(); ++i) {
+      iTreeViewItem* child = dynamic_cast<iTreeViewItem*>(item->child(i));
+      if (child)
+        ExpandItem_impl(child, level, max_levels - 1, exp_flags);
+    }
+  } else {
+    // note: following test not needed for 1st time, but is
+    // needed for subsequent ExpandDefault
+    if (isItemExpanded(item)) {
+      setItemExpanded(item, false);
     }
   }
-  
-  // check if we've expanded deeply enough (works for finite (>=1) and infinite (<0) cases)
-  if (max_levels == 0) return;
-  
-  // and expand item's children -- lazy children should be created by now
-  for (int i = 0; i < item->childCount(); ++i) {
-    iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(item->child(i));
-    if (node)
-      ExpandAllUnder_impl(node, max_levels - 1);
-  }
+}
+
+
+void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) 
+{
+  if (!item) return;
+  ExpandItem_impl(item, -1, max_levels, EF_EXPAND_DISABLED);
+  resizeColumnsToContents();
 } 
 
 void iTreeView::ExpandAllUnderInt(void* item) {
   ExpandAllUnder((iTreeViewItem*)item);
+}
+
+void iTreeView::ExpandDefault() {
+  int exp_flags = EF_DEFAULT;
+  if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
+  if (tv_flags & TV_EXPAND_DISABLED) exp_flags |= EF_EXPAND_DISABLED;
+  ExpandAll_impl(m_def_exp_levels, exp_flags);
 }
 
 void iTreeView::focusInEvent(QFocusEvent* ev) {
@@ -4492,6 +4536,14 @@ bool iTreeView::hasMultiSelect() const {
   return ((sm == ContiguousSelection) ||
     (sm == ExtendedSelection) ||
     (sm == MultiSelection));
+}
+
+QFont& iTreeView::italicFont() const {
+  if (!italic_font) {
+    italic_font = new QFont(font());
+    italic_font->setItalic(true);
+  }
+  return *italic_font;
 }
 
 void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
@@ -4532,6 +4584,10 @@ void iTreeView::mnuNewBrowser(taiAction* mel) {
   brows->ViewWindow();
 }
 
+bool iTreeView::useCustomExpand() const {
+  return (receivers(SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&))) > 0);
+}
+
 void iTreeView::setColKey(int col, const KeyString& key) { 
   if ((col < 0) || (col >= columnCount())) return;
   headerItem()->setData(col, ColKeyRole, key);
@@ -4553,6 +4609,18 @@ void iTreeView::setMaxColChars(int col, int value) {
   headerItem()->setData(col, MaxColCharsRole, value);
 }
 
+int iTreeView::colFormat(int col) { 
+  if ((col < 0) || (col >= columnCount())) return 0;
+  QVariant v = headerItem()->data(col, ColFormatRole);
+  if (v.isNull()) return 0;
+  else return v.toInt();
+}
+
+void iTreeView::setColFormat(int col, int value) { 
+  if ((col < 0) || (col >= columnCount())) return;
+  headerItem()->setData(col, ColFormatRole, value);
+}
+
 void iTreeView::setTvFlags(int value) {
   if (tv_flags == value) return;
   tv_flags = value;
@@ -4563,7 +4631,7 @@ void iTreeView::setTvFlags(int value) {
 void iTreeView::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   if ((tv_flags & TV_AUTO_EXPAND) && (!(tv_flags & TV_AUTO_EXPANDED))) {
-    QTimer::singleShot(150, this, SLOT(ExpandAll()) );
+    QTimer::singleShot(150, this, SLOT(ExpandDefault()) );
     tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
   
@@ -4588,6 +4656,8 @@ void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & 
     
   menu->AddSep();
   taiMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
+  men_exp->AddItem("Expand Default", taiMenu::normal, taiAction::action,
+    this, SLOT(ExpandDefault()) );
   men_exp->AddItem("Expand All", taiMenu::normal, taiAction::action,
     this, SLOT(ExpandAll()) );
   men_exp->AddItem("Collapse All", taiMenu::normal, taiAction::action,
@@ -4707,6 +4777,7 @@ void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
   m_md = md_;
   dn_flags = dn_flags_;
   link_->AddDataClient(this); // sets link
+/*OBS: we really aren't using links
   // links get name italicized
   //TODO: to avoid creating a brand new font for each item, we could
   // get an italicized version from Tree (and everyone would share)
@@ -4715,6 +4786,7 @@ void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
     fnt.setItalic(true);
     setData(0, Qt::FontRole, fnt);
   }
+*/
   setText(0, tree_name);
   setDragEnabled(dn_flags & DNF_CAN_DRAG);
   setDropEnabled(!(dn_flags & DNF_NO_CAN_DROP));
@@ -4789,13 +4861,34 @@ void iTreeViewItem::DecorateDataNode() {
   // fill out remaining col text and data according to key
   iTreeView* tv = treeView();
   if (!tv) return; //shouldn't happen
+  bool item_enabled = link()->isEnabled(); // usually is
+  // we only fiddle the font if item disabled or previously disabled
+  // (otherwise, we'd be superfluously setting a Font into each item!)
+  bool set_font = (!item_enabled);
   for (int i = 0; i < tv->columnCount(); ++i) {
+    if (i == 0) {
+      if (!set_font)
+        set_font = data(0, Qt::FontRole).isValid();
+    }
+    // font
+    if (set_font) {
+      if (item_enabled) {
+        // setting the font to nil causes the itemdelegate guy to use default
+        setData(i, Qt::FontRole, QVariant());
+      } else {
+        setData(i, Qt::FontRole, QVariant(tv->italicFont()));
+      }
+    }
     int max_chars = tv->maxColChars(i); // -1 if no limit
+    int col_format = tv->colFormat(i); // 0 if none
     // first, the col text (cols >=1 only)
     if (i > 0) {
       KeyString key = tv->colKey(i);
       if (key.length() > 0) { // no point if no key
-        setText(i, (link()->GetColText(key)).elidedTo(max_chars));
+        if (col_format & iTreeView::CF_ELIDE_TO_FIRST_LINE)
+          setText(i, (link()->GetColText(key)).elidedToFirstLine());
+        else
+          setText(i, (link()->GetColText(key)).elidedTo(max_chars));
       }
     }
     // then, col data, if any (empty map, otherwise)

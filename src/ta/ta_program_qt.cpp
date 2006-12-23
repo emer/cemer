@@ -494,9 +494,9 @@ void iProgramEditor::Init() {
   items->setHeaderText(1, "Item Detail");
   items->setHeaderText(2, "Item Description");
   items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
-  items->setMaxColChars(1, 25);
+  items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);
   items->setColKey(2, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
-  items->setMaxColChars(2, 50);
+  items->setColFormat(2, iTreeView::CF_ELIDE_TO_FIRST_LINE);
   // adjunct data, tooltips, etc.
   items->AddColDataKey(1, taBase::key_disp_name, Qt::ToolTipRole); 
   items->AddColDataKey(2, taBase::key_desc, Qt::ToolTipRole);
@@ -835,6 +835,21 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
+  connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
+    this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
+}
+
+void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
+  int level, bool& expand) 
+{
+  if (level < 1) return; // always expand root level
+  // by default, we only expand code guys, not the args, objs, etc.
+  taiDataLink* dl = item->link();
+  TypeDef* typ = dl->GetDataTypeDef();
+  if (typ->DerivesFrom(&TA_ProgEl_List))
+    return;
+  // otherwise, nada
+  expand = false;
 }
 
 void iProgramPanel::OnWindowBind_impl(iTabViewer* itv) {

@@ -484,6 +484,15 @@ const String ProgEl::GenCss(int indent_level) {
   return rval;
 }
 
+int ProgEl::GetEnabled() const {
+  if (off) return 0;
+  ProgEl* par = parent();
+  if (!par) return 1;
+  if (par->GetEnabled())
+    return 1;
+  else return 0;
+}
+
 void ProgEl::PreGen(int& item_id) {
   if(off) return;
   PreGenMe_impl(item_id);
@@ -679,7 +688,7 @@ const String WhileLoop::GenCssPost_impl(int indent_level) {
 }
 
 String WhileLoop::GetDisplayName() const {
-  return "while (" + loop_test + ") ...";
+  return "while (" + loop_test + ")";
 }
 
 //////////////////////////
@@ -965,14 +974,11 @@ String MethodCall::GetDisplayName() const {
   rval += "->";
   rval += method->name;
   rval += "(";
-  int mx_args = MIN(args.size, 2); // for display purposes: don't put in more than 2
-  for(int i=0;i<mx_args;i++) {
-    rval += args.labels[i] + "=" + args[i];
-    if(i < args.size-1)
+  for(int i=0;i<args.size;i++) {
+    if (i > 0)
       rval += ", ";
+    rval += args.labels[i] + "=" + args[i];
   }
-  if(args.size > 2)
-    rval += "...";
   rval += ")";
   return rval;
 }
@@ -1079,14 +1085,11 @@ String StaticMethodCall::GetDisplayName() const {
   rval += "::";
   rval += method->name;
   rval += "(";
-  int mx_args = MIN(args.size, 2); // for display purposes: don't put in more than 2
-  for(int i=0;i<mx_args;i++) {
-    rval += args.labels[i] + "=" + args[i];
-    if(i < args.size-1)
+  for(int i=0;i<args.size;i++) {
+    if (i > 0)
       rval += ", ";
+    rval += args.labels[i] + "=" + args[i];
   }
-  if(args.size > 2)
-    rval += "...";
   rval += ")";
   return rval;
 }

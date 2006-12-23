@@ -414,7 +414,8 @@ public:
   // #CAT_ObjectMgmt object's index within an owner list.  cached by some objs.
   virtual void		SetIndex(int value) {};
   // #IGNORE set the objects index value.  note: typically don't do a notify, because list itself will take care of notifying gui clients
-  
+  virtual int		GetEnabled() const {return -1;} // for items that support an enabled/disabled state; -1=n/a, 0=disabled, 1=enabled (note: (bool)-1 = true)
+  virtual void		SetEnabled(bool value) {}
   virtual bool		SetName(const String& nm) {return false;} // #IGNORE 
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const;

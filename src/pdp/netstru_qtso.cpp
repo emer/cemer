@@ -1851,12 +1851,14 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   gbSpecs = new QGroupBox("Specs", widg);
   layOuter->addWidget(gbSpecs, 1);
   laySpecs = new QVBoxLayout(gbSpecs);
-  tvSpecs = new iTreeView(gbSpecs);
+  tvSpecs = new iTreeView(gbSpecs, iTreeView::TV_AUTO_EXPAND);
+  tvSpecs->SetDefaultExpandLevels(6); // shouldn't generally be more than this
   laySpecs->addWidget(tvSpecs, 1);
   tvSpecs->setColumnCount(2);
   tvSpecs->setSortingEnabled(false);// only 1 order possible
   tvSpecs->setHeaderText(0, "Spec");
   tvSpecs->setHeaderText(1, "Description");
+  tvSpecs->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE); // in case of multi-line specs
   tvSpecs->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
   //enable dnd support
   tvSpecs->setDragEnabled(true);
@@ -1874,6 +1876,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   }
   connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
     this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
+  connect(tvSpecs, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
+    this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) ); 
   
 
   // Command Buttons
@@ -2085,28 +2089,12 @@ void NetViewPanel::GetVars() {
   }
 }
 
-void NetViewPanel::ExpandAllSpecs() {
-  QTreeWidgetItemIterator it(tvSpecs, QTreeWidgetItemIterator::HasChildren);
-  QTreeWidgetItem* item;
-  while ((item = *it)) { 
-    tvSpecs->setItemExpanded(item, true);
-    ++it;
-  }
-  // size first N-1 cols
-  int cols = tvSpecs->columnCount(); // cache
-  // make columns nice sizes (not last)
-  for (int i = 0; i < (cols - 1); ++i) {
-    tvSpecs->resizeColumnToContents(i);
-  }
-}
-
 void NetViewPanel::InitPanel() {
   NetView* nv_;
   if (!(nv_ = nv())) return;
   ++updating;
   // fill monitor values
   GetVars();
-  ExpandAllSpecs();
   --updating;
 }
 
@@ -2181,6 +2169,24 @@ void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
     pv->setDefaultColor();
   }
   
+}
+
+void NetViewPanel::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
+  int level, bool& expand) 
+{
+  if (level < 1) return; // always expand root level
+  // by default, we only expand specs themselves, not the args, objs, etc.
+  // and then ONLY if that spec itself has child specs
+  taiDataLink* dl = item->link();
+  TypeDef* typ = dl->GetDataTypeDef();
+  // check for spec itself (DEF_CHILD) and children list
+  if (typ->InheritsFrom(&TA_BaseSpec)) {
+    BaseSpec* spec = (BaseSpec*)dl->data();
+    if (spec->children.size > 0) return;
+  }
+  else if (typ->DerivesFrom(&TA_BaseSpec_Group))
+    return;
+  expand = false;
 }
 
 void NetViewPanel::tvSpecs_ItemSelected(iTreeViewItem* item) {

@@ -147,6 +147,8 @@ public:
   taBase*		data() const {return (taBase*)m_data;}
   override bool		isBase() const {return true;} 
   override int		checkConfigFlags() const; // we call CheckConfig
+  override bool		isEnabled() const;
+
   
   override bool		GetIcon(int bmf, int& flags_supported, QIcon& ic);
     // delegates to taBase::GetDataNodeBitmap
@@ -1386,13 +1388,20 @@ public:
     ColKeyRole,	// store a string in header to indicate the col key to use for data
     HighlightIndexRole,	// store an int >0 in item0 to highlight row with this color
     ColDataRole, // store a QString::QVariant map of colkey/Role numbers to add addtl data to nodes; ex, "desc":Qt::ToolTipRole for tooltip text for the col "desc"
+    ColFormatRole, // stores values from the ColFormatFlags enum
     MaxColCharsRole // store an int of max col width (in chars), we elide text to that length
   };
 #endif
+  enum ColFormatFlags { // used to tweak formatting/display of cols
+    CF_ELIDE_TO_FIRST_LINE	= 0x0001 // elide to first line, so row doesn't multi
+  };
+  
   enum TreeViewFlags { // #BITS
-    TV_NONE		= 0, // #NO_BIT
-    TV_AUTO_EXPAND	= 0x0001, // expands all automatically on open
-    TV_AUTO_EXPANDED	= 0x0002 // #IGNORE flag marks when done first time
+    TV_NONE			= 0, // #NO_BIT
+    TV_AUTO_EXPAND		= 0x0001, // invokes DefaultExpand automatically on open
+    TV_AUTO_EXPANDED		= 0x0002, // #IGNORE flag marks when done first time
+    TV_EXPAND_DISABLED 	= 0x0004, // expands nested disabled items (usually they are not expanded unless you expand from the item itself)
+    TV_NO_AUTO_RESIZE	= 0x0008 // when we autoexpand etc. doesn't resize cols
   };
   enum ContextMenuPosition {
     CM_START,		// called before filling of menu -- use to add items to start
@@ -1409,10 +1418,16 @@ public:
     // the map of role/key pairs, or an empty map if none
 #endif
   
-  
+  bool			useCustomExpand() const;
   const KeyString	colKey(int col) const; // the key we set for data lookup
   void			setColKey(int col, const KeyString& key); 
     // sets in ColKeyRole -- you can do it yourself if you want	
+  int 			colFormat(int col);
+  void			setColFormat(int col, int format_flags); 
+  int			defaultExpandLevels() const {return m_def_exp_levels;}
+    // how many levels the DefaultExpand expands
+  void			SetDefaultExpandLevels(int value) 
+    {m_def_exp_levels = (int)value;}
   void			setHeaderText(int col, const String& value); // convenience
   int 			maxColChars(int col); // value if set, -1 otherwise
   void			setMaxColChars(int col, int value); // sets max number of chars for that text (when retrieved from the link); elided if greater
@@ -1438,6 +1453,8 @@ public:
    
 #ifndef __MAKETA__
 signals:
+  void			CustomExpandFilter(iTreeViewItem* item, int level, bool& expand);
+    // invoked when we want our mummy to do custom filtering, expand=true by default
   void			FillContextMenuHookPre(ISelectable_PtrList& sel_items, taiMenu* menu);
     // hook to allow client to add items to start of context menu before it shows
   void			FillContextMenuHookPost(ISelectable_PtrList& sel_items, taiMenu* menu);
@@ -1448,6 +1465,8 @@ signals:
   
 public slots:
   virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiTreeDataNode*
+  void			ExpandDefault(); 
+    // expand to the default level specified for this tree, or invokes CustomExpand if set 
   void			ExpandAll(int max_levels = 6); 
     // expand all nodes, ml=-1 for "infinite" levels (there better not be any loops!!!)
   void			CollapseAll(); // collapse all nodes
@@ -1462,12 +1481,22 @@ protected:
   override void		UpdateSelectedItems_impl(); 
   
 protected:
+  enum ExpandFlags {
+    EF_CUSTOM_FILTER		= 0x01,
+    EF_DEFAULT			= 0x02, // we are in the DefaultExpand context
+    EF_EXPAND_DISABLED		= 0x04 // either Expand on that guy, or set in flags
+  };
   int			tv_flags;
   String_PArray* 	m_filters; // only created if any added
+  short			m_def_exp_levels; // level of default expand, typically 2
   
   void 			focusInEvent(QFocusEvent* ev); // override
+  QFont&		italicFont() const; // so we don't create a new guy each node
   void			showEvent(QShowEvent* ev); // override, for expand all
-  void 			ExpandAllUnder_impl(iTreeViewItem* item, int max_levels); // inner code
+  void 			ExpandAll_impl(int max_levels,
+    bool use_custom_filt = false); // inner code
+  void 			ExpandItem_impl(iTreeViewItem* item,
+     int level, int max_levels, int exp_flags = 0); // inner code; level=-1 when not known
   void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
 #ifndef __MAKETA__
   override QMimeData* 	mimeData(const QList<QTreeWidgetItem*> items) const; 
@@ -1484,6 +1513,8 @@ protected slots:
   void 			this_itemSelectionChanged();
   void			ExpandAllUnderInt(void* item); 
   void			CollapseAllUnderInt(void* item); 
+private:
+  mutable QFont*	italic_font;
 };
 
 

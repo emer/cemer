@@ -257,6 +257,10 @@ public: // IDataLinkClient interface
   
 protected:
   override void		OnWindowBind_impl(iTabViewer* itv);
+  
+protected slots:
+  void			items_CustomExpandFilter(iTreeViewItem* item,
+    int level, bool& expand);
 };
 
 class TA_API iProgramGroupPanel: public iProgramPanelBase {

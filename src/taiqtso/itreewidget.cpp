@@ -167,9 +167,21 @@ void* iTreeWidget::highlightColors() const {
 }
 
 void iTreeWidget::resizeColumnsToContents() {
-  for (int i = 0; i < (columnCount() - 1); ++i) {
+//FIXME: BA 2006-12-22
+// need to develop better approach, perhaps we can
+// at least shrink a col
+// the key properties:
+/* key code from Qt treewidget:
+    int contents = sizeHintForColumn(column);
+    int header = d->header->isHidden() ? 0 : d->header->sectionSizeHint(column);
+    d->header->resizeSection(column, qMax(contents, header));
+*/
+  if (columnCount() > 0)
+    resizeColumnToContents(0);
+/*was:  for (int i = 0; i < (columnCount() - 1); ++i) {
     resizeColumnToContents(i);
   }
+*/
 }
 
 void iTreeWidget::setHighlightColor(int idx, const QColor& base)

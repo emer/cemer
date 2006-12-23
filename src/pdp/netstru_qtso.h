@@ -458,7 +458,6 @@ public:
 
   void			AddCmdButton(QWidget* but); // adds button or other ctrl to cmd grid
   void 			ColorScaleFromData();
-  void 			ExpandAllSpecs();
   virtual void		GetVars();
   virtual void		InitPanel();
 
@@ -495,6 +494,8 @@ protected slots:
   virtual void 		fldLayFont_textChanged();
   virtual void		cbar_scaleValueChanged();
   virtual void		lvDisplayValues_selectionChanged();
+  void			tvSpecs_CustomExpandFilter(iTreeViewItem* item,
+    int level, bool& expand);
   void			tvSpecs_ItemSelected(iTreeViewItem* item); 
 
 };

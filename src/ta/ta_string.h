@@ -344,6 +344,7 @@ public:
   String		right(int len) const; // rightmost len chars
 
   String		elidedTo(int len = -1) const; // return a string no more than len long, no line breaks, eliding chars if needed and adding ... marks; -1 is no eliding
+  String		elidedToFirstLine() const; // if has newlines, elide to first line
   
 // delete the first occurrence of target after startpos
 
