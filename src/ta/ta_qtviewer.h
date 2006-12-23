@@ -1426,7 +1426,7 @@ public:
   void			setColFormat(int col, int format_flags); 
   int			defaultExpandLevels() const {return m_def_exp_levels;}
     // how many levels the DefaultExpand expands
-  void			SetDefaultExpandLevels(int value) 
+  void			setDefaultExpandLevels(int value) 
     {m_def_exp_levels = (int)value;}
   void			setHeaderText(int col, const String& value); // convenience
   int 			maxColChars(int col); // value if set, -1 otherwise
