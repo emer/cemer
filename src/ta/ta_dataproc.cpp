@@ -942,34 +942,89 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
     nda->Copy_NoData(*sdb);
   }
   dest->UniqueColNames();	// make them unique!
-  for(int row=0;row<src_a->rows;row++) {
-    DataArray_impl* sda = src_a->data.FastEl(spec->col_a.col_idx);
+
+  DataSortSpec sort_spec_a;
+  taBase::Own(sort_spec_a, NULL);
+  {
+    DataSortEl* ss = (DataSortEl*)sort_spec_a.ops.New(1, &TA_DataSortEl);
+    ss->col_name = spec->col_a.col_name;
+    ss->col_idx = spec->col_a.col_idx;
+    taBase::SetPointer((taBase**)&ss->column, spec->col_a.column);
+    ss->order = DataSortEl::ASCENDING;
+  }
+  
+  DataSortSpec sort_spec_b;
+  taBase::Own(sort_spec_b, NULL);
+  {
+    DataSortEl* ss = (DataSortEl*)sort_spec_b.ops.New(1, &TA_DataSortEl);
+    ss->col_name = spec->col_b.col_name;
+    ss->col_idx = spec->col_b.col_idx;
+    taBase::SetPointer((taBase**)&ss->column, spec->col_b.column);
+    ss->order = DataSortEl::ASCENDING;
+  }
+
+  DataTable ssrc_a;
+  taBase::Own(ssrc_a, NULL);	// activates initlinks, refs
+  taDataProc::Sort(&ssrc_a, src_a, &sort_spec_a);
+
+  DataTable ssrc_b;
+  taBase::Own(ssrc_b, NULL);	// activates initlinks, refs
+  taDataProc::Sort(&ssrc_b, src_b, &sort_spec_b);
+
+  int b_row = 0;
+  for(int row=0;row<ssrc_a.rows;row++) {
+    DataArray_impl* sda = ssrc_a.data.FastEl(spec->col_a.col_idx);
     Variant val_a = sda->GetValAsVar(row);
-    DataArray_impl* sdb = src_b->data.FastEl(spec->col_b.col_idx);
+    DataArray_impl* sdb = ssrc_b.data.FastEl(spec->col_b.col_idx);
+    Variant val_b = sdb->GetValAsVar(b_row);
     bool got_one = false;
-    for(int j=0;j<sdb->rows();j++) {
-      Variant val_b = sdb->GetValAsVar(j);
-      if(val_a == val_b) {
+    if(val_a == val_b) {
+      got_one = true;
+    }
+    else {
+      while(b_row < ssrc_b.rows-1 && val_b < val_a) {
+	val_b = sdb->GetValAsVar(++b_row);
+      }
+      if(val_a == val_b) 
 	got_one = true;
+    }
+    if(got_one) {
+      Variant orig_b = val_b;
+      int bi = b_row;
+      while(val_a == val_b) {
 	dest->AddBlankRow();
-	for(int i=0;i<src_a->data.size; i++) {
+	for(int i=0;i<ssrc_a.data.size; i++) {
 	  //    if(i == spec->col_a.col_idx) continue; // include first guy..
-	  DataArray_impl* sda = src_a->data.FastEl(i);
+	  DataArray_impl* sda = ssrc_a.data.FastEl(i);
 	  DataArray_impl* nda = dest->data.FastEl(i); // todo: change above if uncommented
 	  nda->CopyFromRow(row, *sda, row); // just copy
 	}
 	int col_idx = a_cols;
-	for(int i=0; i < src_b->data.size; i++) {
+	for(int i=0; i < ssrc_b.data.size; i++) {
 	  if(i == spec->col_b.col_idx) continue; // don't include common index
-	  DataArray_impl* sdb = src_b->data.FastEl(i);
+	  DataArray_impl* sdb = ssrc_b.data.FastEl(i);
 	  DataArray_impl* nda = dest->data.FastEl(col_idx);
-	  nda->CopyFromRow(row, *sdb, j); // just copy
+	  nda->CopyFromRow(row, *sdb, bi); // just copy
 	  col_idx++;
+	}
+	if(bi >= ssrc_b.rows-1) break; // done!
+	val_b = sdb->GetValAsVar(++bi);
+      }
+      if(row < ssrc_a.rows-1) {
+	Variant nxt_a = sda->GetValAsVar(row+1);
+	if(nxt_a != orig_b)
+	  b_row = bi;		// otherwise just go through same b's again
+	if(b_row > ssrc_b.rows-1) {
+	  taMisc::Warning("taDataProc::Join -- at end of src_b table:", src_b->name,
+			  "with:",String(ssrc_a.rows-row-1),
+			  "rows left in src_a!", src_a->name);
+	  break;
 	}
       }
     }
-    if(!got_one) {
-      taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a, "not found in column",
+    else {
+      taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
+		      "from table:", src_a->name, "not found in column",
 		      spec->col_b.col_name, "of src_b:", src_b->name);
     }
   }

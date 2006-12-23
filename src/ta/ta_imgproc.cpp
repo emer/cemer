@@ -1337,6 +1337,7 @@ bool RetinaSpec::AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region) 
   int idx;
   for(int i=0;i<dogs.size;i++) {
     DoGRetinaSpec* sp = dogs[i];
+    if(sp->spacing.region <= region) continue; // don't filter this region -- only ones above it!
     DataArray_impl* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
 						sp->spacing.output_size.x, sp->spacing.output_size.y);
     DataArray_impl* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,

@@ -1,6 +1,6 @@
 // ta_Dump File v2.0
 Program .projects[0].programs[0] { 
-  ProgObjList @.objs = [4] {
+  ProgObjList @.objs = [8] {
     DataTable @[0] { 
       DataTableCols @.data = [6] {
 	int_Data @[0] { };
@@ -29,8 +29,8 @@ Program .projects[0].programs[0] {
 	String_Data @[0] { };
 	double_Data @[1] { };
 	double_Data @[2] { };
-	int_Data @[3] { };
-	int_Data @[4] { };
+	float_Data @[3] { };
+	float_Data @[4] { };
 	double_Data @[5] { };
 	double_Data @[6] { };
       };
@@ -48,17 +48,55 @@ Program .projects[0].programs[0] {
 	float_Data @[8] { };
       };
     };
+    DataTable @[4] { 
+      DataTableCols @.data = [9] {
+	int_Data @[0] { };
+	int_Data @[1] { };
+	int_Data @[2] { };
+	String_Data @[3] { };
+	int_Data @[4] { };
+	int_Data @[5] { };
+	double_Data @[6] { };
+	double_Data @[7] { };
+	float_Data @[8] { };
+      };
+    };
+    DataTable @[5] { 
+      DataTableCols @.data = [2] {
+	int_Data @[0] { };
+	String_Data @[1] { };
+      };
+    };
+    DataTable @[6] { 
+      DataTableCols @.data = [10] {
+	int_Data @[0] { };
+	int_Data @[1] { };
+	int_Data @[2] { };
+	String_Data @[3] { };
+	int_Data @[4] { };
+	int_Data @[5] { };
+	double_Data @[6] { };
+	double_Data @[7] { };
+	float_Data @[8] { };
+	String_Data @[9] { };
+      };
+    };
+    taDataProc @[7] { };
   };
 
-  ProgVar_List @.vars = [5] {
+  ProgVar_List @.vars = [9] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
+    ProgVar @[8] { };
   };
 
-  ProgEl_List @.prog_code = [3] {
+  ProgEl_List @.prog_code = [4] {
     DataCalcLoop @[0] { 
       DataOpList @.src_cols = [3] {
 	DataOpEl @[0] { };
@@ -98,6 +136,7 @@ Program .projects[0].programs[0] {
 	DataSelectEl @[0] { };
       };
     };
+    DataJoinProg @[3] { };
   };
 };
 Program .projects[0].programs[0] {
@@ -110,6 +149,7 @@ Program .projects[0].programs[0] {
   el_def=0;
   DataTable @[0] {
    name="CalcOutput";
+   desc=;
    save_data=0;
    data {
     name="data";
@@ -155,6 +195,7 @@ Program .projects[0].programs[0] {
   };
   DataTable @[1] {
    name="TrialOutputData";
+   desc=;
    save_data=1;
    data {
     name="data";
@@ -227,6 +268,7 @@ Program .projects[0].programs[0] {
   };
   DataTable @[2] {
    name="GroupOutput";
+   desc=;
    save_data=0;
    data {
     name="data";
@@ -250,13 +292,13 @@ Program .projects[0].programs[0] {
      is_matrix=0;
      cell_geom{ 1;     };
     };
-    int_Data @[3] {
+    float_Data @[3] {
      name="cycle_mean";
      pin=0;
      is_matrix=0;
      cell_geom{ 1;     };
     };
-    int_Data @[4] {
+    float_Data @[4] {
      name="cycle_sem";
      pin=0;
      is_matrix=0;
@@ -278,6 +320,7 @@ Program .projects[0].programs[0] {
   };
   DataTable @[3] {
    name="SelectRowsOutput";
+   desc=;
    save_data=1;
    data {
     name="data";
@@ -344,9 +387,189 @@ Program .projects[0].programs[0] {
      pin=0;
      is_matrix=1;
      cell_geom{ 5;5;     };
+     ar{ [5 5 24] 1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;     };
+    };
+   };
+  };
+  DataTable @[4] {
+   name="join_a";
+   desc=;
+   save_data=1;
+   data {
+    name="data";
+    el_typ=DataArray;
+    el_def=0;
+    int_Data @[0] {
+     name="batch";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
+    };
+    int_Data @[1] {
+     name="epoch";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;2;11;9;4;4;1;5;3;7;7;2;3;9;6;11;8;10;10;1;6;0;8;5;     };
+    };
+    int_Data @[2] {
+     name="trial";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 4;1;5;2;3;0;3;3;2;0;5;5;0;3;5;1;2;1;5;4;0;0;5;5;     };
+    };
+    String_Data @[3] {
+     name="trial_name";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] "ldiag";"rdiag";"rdiag";"rdiag";"ldiag";"rdiag";"ldiag";"ldiag";"ldiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"rdiag";"rdiag";     };
+    };
+    int_Data @[4] {
+     name="phase_no";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;     };
+    };
+    int_Data @[5] {
+     name="cycle";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;     };
+    };
+    double_Data @[6] {
+     name="sse";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 5.39849;2.4207;0;0.509126;0.463218;1.75684;2.83653;0;1.31166;0;0.960935;2.40108;2.03237;0;1.11532;0;0;0;0;3.05548;0;3.3197;0.570453;1.70816;     };
+    };
+    double_Data @[7] {
+     name="ext_rew";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
+    };
+    float_Data @[8] {
+     name="testy";
+     pin=0;
+     is_matrix=1;
+     cell_geom{ 5;5;     };
      ar{ [5 5 24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
     };
    };
+  };
+  DataTable @[5] {
+   name="join_b";
+   desc=;
+   save_data=1;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+    int_Data @[0] {
+     name="epoch";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [12] 0;1;2;3;4;5;6;7;8;9;10;11;     };
+    };
+    String_Data @[1] {
+     name="epoch_name";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [12] "epoch0";"epoch1";"epoch2";"epoch3";"epoch4";"epoch5";"epoch6";"epoch7";"epoch8";"epoch9";"epoch10";"epoch11";     };
+    };
+   };
+  };
+  DataTable @[6] {
+   name="join_output";
+   desc=;
+   save_data=1;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+    int_Data @[0] {
+     name="batch";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
+    };
+    int_Data @[1] {
+     name="epoch";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;0;1;1;2;2;3;3;4;4;5;5;6;6;7;7;8;8;9;9;10;10;11;11;     };
+    };
+    int_Data @[2] {
+     name="trial";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 4;0;3;4;1;5;0;2;0;3;5;3;5;0;5;0;5;2;3;2;5;1;5;1;     };
+    };
+    String_Data @[3] {
+     name="trial_name";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] "ldiag";"rdiag";"ldiag";"rdiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"rdiag";"ldiag";"ldiag";"rdiag";"ldiag";"rdiag";"rdiag";"ldiag";     };
+    };
+    int_Data @[4] {
+     name="phase_no";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;     };
+    };
+    int_Data @[5] {
+     name="cycle";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;15;     };
+    };
+    double_Data @[6] {
+     name="sse";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 5.39849;3.3197;2.83653;3.05548;2.4207;2.40108;2.03237;1.31166;1.75684;0.463218;1.70816;0;1.11532;0;0.960935;0;0.570453;0;0;0.509126;0;0;0;0;     };
+    };
+    double_Data @[7] {
+     name="ext_rew";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
+    };
+    float_Data @[8] {
+     name="testy";
+     pin=0;
+     is_matrix=1;
+     cell_geom{ 5;5;     };
+     ar{ [5 5 24] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;     };
+    };
+    String_Data @[9] {
+     name="epoch_name";
+     pin=0;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     ar{ [24] "epoch0";"epoch0";"epoch1";"epoch1";"epoch2";"epoch2";"epoch3";"epoch3";"epoch4";"epoch4";"epoch5";"epoch5";"epoch6";"epoch6";"epoch7";"epoch7";"epoch8";"epoch8";"epoch9";"epoch9";"epoch10";"epoch10";"epoch11";"epoch11";     };
+    };
+   };
+  };
+  taDataProc @[7] {
+   name="taDataProc_0";
   };
  };
  args {
@@ -395,6 +618,38 @@ Program .projects[0].programs[0] {
    var_type=T_String;
    string_val="diag";
    objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[5] {
+   name="join_b";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[0].objs[5]$4$;
+   objs_ptr=1;
+   desc=;
+  };
+  ProgVar @[6] {
+   name="join_output";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[0].objs[6]$5$;
+   objs_ptr=1;
+   desc=;
+  };
+  ProgVar @[7] {
+   name="taDataProc_0";
+   var_type=T_Object;
+   object_type=taDataProc;
+   object_val=.projects[0].programs[0].objs[7]$6$;
+   objs_ptr=1;
+   desc=;
+  };
+  ProgVar @[8] {
+   name="join_a";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[0].objs[4]$7$;
+   objs_ptr=1;
    desc=;
   };
  };
@@ -554,10 +809,25 @@ d_sse = s_sse * 5.0;
       rel=CONTAINS;
       use_var=1;
       cmp 9 0="diag";
-      var=.projects[0].programs[0].vars[4]$4$;
+      var=.projects[0].programs[0].vars[4]$8$;
      };
     };
     comb_op=AND;
+   };
+  };
+  DataJoinProg @[3] {
+   desc=;
+   off=0;
+   src_data=$7$;
+   dest_data=$5$;
+   src_b_data=$4$;
+   join_spec {
+    col_a {
+     col_name="epoch";
+    };
+    col_b {
+     col_name="epoch";
+    };
    };
   };
  };
