@@ -1570,6 +1570,7 @@ public:
   
   bool		ContinueLoop();	// process continue command for loops
   bool		BreakLoop();	// process break command for loops
+  bool		ReturnFun();	// process function return
 
   // display, status
   int		ListDebug()

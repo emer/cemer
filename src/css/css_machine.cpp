@@ -4130,6 +4130,16 @@ bool cssProgSpace::BreakLoop() {
   return false;
 }
 
+bool cssProgSpace::ReturnFun() {
+  while(size > 1) {
+    cssProg* prg = Prog();
+    if(prg->owner_fun)
+      return true;
+    Pull();
+  }
+  return false;
+}
+
 cssEl* cssProgSpace::Cont() {
   cssProgSpace* old_top = cssMisc::SetCurTop(this);
 
@@ -4147,6 +4157,11 @@ cssEl* cssProgSpace::Cont() {
     run_stat = cssEl::Running;
     rval = Prog()->Cont();
     if(((run_stat == cssEl::Stopping) || (run_stat == cssEl::Returning)) && (size > 1)) {
+      if(run_stat == cssEl::Returning) {
+	if(!ReturnFun()) {
+	  cssMisc::Error(NULL, "Error: return not within a function!");
+	}
+      }
       cssProg* prv_prg = Prog(size-2);
       // should be fun or code block that shoved current prog
       cssEl* fun_el = prv_prg->insts[prv_prg->PC()-1]->inst.El();

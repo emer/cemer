@@ -4328,6 +4328,14 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
     QColor(0xFF, 0xFF, 0x99),  // pale dull yellow
     QColor(0x99, 0x99, 0x33) // dark dull yellow
   );
+  setHighlightColor(2, 
+    QColor(0xFF, 0xFF, 0x99),  // pale dull yellow
+    QColor(0x99, 0x99, 0x33) // dark dull yellow
+  );
+  setHighlightColor(3, 		// disabled
+    QColor(0xa0, 0xa0, 0xa0),  // light grey
+    QColor(0x80, 0x80, 0x80) // medium grey
+  );
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
   connect(this, SIGNAL(itemSelectionChanged()),
@@ -4864,7 +4872,8 @@ void iTreeViewItem::DecorateDataNode() {
   bool item_enabled = link()->isEnabled(); // usually is
   // we only fiddle the font if item disabled or previously disabled
   // (otherwise, we'd be superfluously setting a Font into each item!)
-  bool set_font = (!item_enabled);
+  //  bool set_font = (!item_enabled);
+  bool set_font = false;
   for (int i = 0; i < tv->columnCount(); ++i) {
     if (i == 0) {
       if (!set_font)
@@ -4909,13 +4918,18 @@ void iTreeViewItem::DecorateDataNode() {
   }
   // if tree is using highlighting, then highlight if invalid
   if (tv->highlightRows()) {
-    int cfc = link()->checkConfigFlags();
-    if (cfc & taBase::THIS_INVALID)
-      setHighlightIndex(1); //red
-    else if (cfc & taBase::CHILD_INVALID)
-      setHighlightIndex(2); //yellow
-    else
-      setHighlightIndex(0);
+    if(!item_enabled) {
+      setHighlightIndex(3);
+    }
+    else {
+      int cfc = link()->checkConfigFlags();
+      if (cfc & taBase::THIS_INVALID)
+	setHighlightIndex(1); //red
+      else if (cfc & taBase::CHILD_INVALID)
+	setHighlightIndex(2); //yellow
+      else 
+	setHighlightIndex(0);
+    }
   }
 }
 
