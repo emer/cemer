@@ -800,7 +800,7 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
   }
 
   int st_n = 0;
-  int end_n = n1;
+  int end_n = nary[0];
   int ni = 0;
   for(int row=0;row<src->rows; row++) {
     if(row < end_n) {
@@ -865,7 +865,7 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
   idxs.FillSeq();
   idxs.Permute();
   int st_n = 0;
-  int end_n = n1;
+  int end_n = nary[0];
   int ni = 0;
   for(int row=0;row<src->rows; row++) {
     if(row < end_n) {
