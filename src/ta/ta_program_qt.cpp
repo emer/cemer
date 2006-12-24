@@ -488,6 +488,7 @@ void iProgramEditor::Init() {
   
   items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
+  items->setDefaultExpandLevels(6); // shouldn't generally be more than this
   items->setColumnCount(3);
   items->setSortingEnabled(false);// only 1 order possible
   items->setHeaderText(0, "Program Item");

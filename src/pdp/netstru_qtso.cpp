@@ -1852,7 +1852,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layOuter->addWidget(gbSpecs, 1);
   laySpecs = new QVBoxLayout(gbSpecs);
   tvSpecs = new iTreeView(gbSpecs, iTreeView::TV_AUTO_EXPAND);
-  tvSpecs->SetDefaultExpandLevels(6); // shouldn't generally be more than this
+  tvSpecs->setDefaultExpandLevels(6); // shouldn't generally be more than this
   laySpecs->addWidget(tvSpecs, 1);
   tvSpecs->setColumnCount(2);
   tvSpecs->setSortingEnabled(false);// only 1 order possible
