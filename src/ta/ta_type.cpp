@@ -190,6 +190,15 @@ Variant NameVar_PArray::GetVal(const String& nm) {
   return FastEl(idx).value;
 }
 
+bool NameVar_PArray::GetAllVals(const String& nm, String_PArray& vals) {
+  for(int i=0;i<size; i++) {
+    NameVar& nv = FastEl(i);
+    if(nv.name != nm) continue;
+    vals.Add(nv.value.toString());
+  }
+  return (vals.size == 0);
+}
+
 bool NameVar_PArray::SetVal(const String& nm, const Variant& vl) {
   int idx = FindName(nm);
   if(idx < 0) {
@@ -420,6 +429,7 @@ String_PArray	taMisc::args_raw;
 NameVar_PArray	taMisc::arg_names;
 NameVar_PArray	taMisc::arg_name_descs;
 NameVar_PArray	taMisc::args;
+String_PArray	taMisc::args_tmp;
 
 ////////////////////////////////////////////////////////
 // 	DMEM: Distributed Memory
@@ -763,6 +773,7 @@ void taMisc::AddInitHook(init_proc_t init_proc) {
 #ifndef NO_TA_BASE
 
 void taMisc::Init_Hooks() {
+  if(!init_hook_list) return;
   for (int i = 0; i < init_hook_list->size; ++i) {
     init_proc_t ip = (init_proc_t)init_hook_list->FastEl_(i);
     ip();
@@ -949,6 +960,10 @@ String taMisc::FindArgByName(const String& nm) {
   Variant vl = args.GetVal(nm);
   if(vl.isNull()) return _nilString;
   return vl.toString();
+}
+
+bool taMisc::GetAllArgsNamed(const String& nm, String_PArray& vals) {
+  return taMisc::args.GetAllVals(nm, vals);
 }
 
 bool taMisc::CheckArgValContains(const String& vl) {

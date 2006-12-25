@@ -1,5 +1,34 @@
 leabra todo list:
 
+------------------
+hv model
+
+bugs:
+netmon: names for net vars getting network name
+network: train_mode comment = t -- fix
+
+* add retinal scaling + args
+* add attention bubble for plain filter
+* rename foveate -> foveate_box etc (always box)
+* do repeat testing
+* show retina stuff in netview (record params in trial log to)
+  
+* make 2x retina with same filts (really big net)
+
+* train model to identify location of key target:
+  CHL:
+  minus phase is where looking now; plus is where next
+  if correct recognition on plus, then it serves to train, else not!
+  MINUS_MINUS_PLUS or prev MINUS vs this PLUS with repetition of
+  same item
+
+  RL:
+  spatial system on t-1 decides where to look at t
+  if model recognizes object at t, pvlv gets reward
+  cs association with good look decisions drives reward at t-1
+
+
+------------------
 * netview: 
   * save view state in top-level view guy (camera)
   * netview xform for whole network + dragger etc
@@ -10,6 +39,9 @@ leabra todo list:
   - test case: filtered layer unit history moving back in depth w/ netview
 
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
+  * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
+  * concat columns
+  * datatable time average
 
 * v3convert: end up with 2 bias.unit links from copy op?
 

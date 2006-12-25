@@ -250,6 +250,8 @@ public:
 
   Variant	GetVal(const String& nm);
   // get value from name; isNull if not found
+  bool		GetAllVals(const String& nm, String_PArray& vals);
+  // get all values having given name (converts to strings)
   bool		SetVal(const String& nm, const Variant& vl);
   // set value by name; if name already on list, it is updated (rval = true); else new item added
 
@@ -556,7 +558,8 @@ public:
   // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args descriptions of arg names for help -- name is canonical functional name (e.g., CssScript) and value is string describing what this arg does
   static NameVar_PArray	args;
   // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args startup arguments processed by arg_names into name/value pairs -- this is the list that should be used!
-
+  static String_PArray	args_tmp;
+  // #NO_SAVE #HIDDEN #CAT_Args temporary list of args; can be passed to GetAllArgsNamed in scripts..
 
   ////////////////////////////////////////////////////////
   // 	DMEM: Distributed Memory
@@ -709,6 +712,8 @@ public:
   // #CAT_Args was the given arg name set?
   static String	FindArgByName(const String& nm);
   // #CAT_Args get the value for given named argument (argv[x] for unnamed args)
+  static bool	GetAllArgsNamed(const String& nm, String_PArray& vals);
+  // #CAT_Args get the values for all args with given name tag
   static bool	CheckArgValContains(const String& vl);
   // #CAT_Args check if there is an arg that contains string fragment in its value
   static String	FindArgValContains(const String& vl);

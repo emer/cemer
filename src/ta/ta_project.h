@@ -221,7 +221,7 @@ public:
   	
   void	InitLinks();
   void	CutLinks();
-  TA_ABSTRACT_BASEFUNS(taRootBase)
+  TA_BASEFUNS(taRootBase)
 protected:
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
   virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
