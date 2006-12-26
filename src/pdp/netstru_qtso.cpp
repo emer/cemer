@@ -289,9 +289,9 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
 	for(int g=0;g<unit->recv.size;g++) {
 	  RecvCons* tcong = unit->recv.FastEl(g);
 	  MemberDef* act_md = tcong->con_type->members.FindName(nm);
-	  if (act_md == NULL)	continue;
+	  if (!act_md)	continue;
 	  Connection* con = tcong->FindConFrom(src_u);
-	  if (con == NULL) continue;
+	  if (!con) continue;
 	  uvd.disp_base = act_md->GetOff(con);
 	  break; //TODO: is this right????
 	}
@@ -300,9 +300,9 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* s
 	for(int g=0;g<unit->send.size;g++) {
 	  SendCons* tcong = unit->send.FastEl(g);
 	  MemberDef* act_md = tcong->con_type->members.FindName(nm);
-	  if (act_md == NULL)	continue;
+	  if (!act_md)	continue;
 	  Connection* con = tcong->FindConFrom(src_u);
-	  if (con == NULL) continue;
+	  if (!con) continue;
 	  uvd.disp_base = act_md->GetOff(con);
 	  break; //TODO: is this right????
 	}
@@ -395,12 +395,14 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 //   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
   int xp = (int)(pt[0] * nv->max_size.x);
   int yp = (int)-(pt[2] * nv->max_size.y);
+//   cerr << xp << ", " << yp << endl;
   Unit_Group* ugrp = act_ugv->ugrp();
+  xp -= ugrp->pos.x; yp -= ugrp->pos.y;
   if(xp >= 0 && xp < ugrp->geom.x && yp >= 0 && yp < ugrp->geom.y) {
     Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
     if(unit) nv->setUnitSrc(NULL, unit);
   }
-//   nv->InitDisplay();
+  nv->InitDisplay();
   nv->UpdateDisplay();
   ecb->setHandled();
 }

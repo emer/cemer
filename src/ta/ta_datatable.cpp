@@ -1246,6 +1246,9 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
     strm.get();
     depth++;
   }
+  while(strm.peek() == delim) {	// consume any immediate delims
+    strm.get();
+  }
   while(((c = strm.get()) != EOF) && (c != '\n') && !((c == delim) && (depth <= 0))) {
     if(quote_str && (depth > 0) && (c == '\"'))
       depth--;
@@ -1267,6 +1270,10 @@ int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
     String str;
     c = ReadTillDelim(strm, str, cdlm, false);
     if(c == EOF) break;
+    if(str.empty()) {
+      if(c == '\n') break;
+      continue;			// for some reason it is empty
+    }
     String base_nm;
     int val_typ;
     MatrixGeom mat_idx;
