@@ -7,9 +7,6 @@ bugs:
 netmon: names for net vars getting network name
 network: train_mode comment = t -- fix
 
-* add retinal scaling + args
-* add attention bubble for plain filter
-* rename foveate -> foveate_box etc (always box)
 * do repeat testing
 * show retina stuff in netview (record params in trial log to)
   
@@ -38,6 +35,10 @@ network: train_mode comment = t -- fix
 
   - test case: filtered layer unit history moving back in depth w/ netview
 
+  - why doesn't gridview update with WriteClose()?
+
+* viewer shows project file name
+
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
@@ -47,6 +48,7 @@ network: train_mode comment = t -- fix
 
 * css: p voidfun = crash; bindargs seems to not be getting the void??
   e.g., p taMisc::include_paths.List();
+  css include path & files from old css..
 
 * replace condlist with datatables -- just do all the ops on the datatables 
   directly; lots of datatableloops!

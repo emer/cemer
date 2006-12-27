@@ -1217,6 +1217,8 @@ void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str
 
 void DataTable::SaveDataLog(const String& fname, bool append) {
   if(!log_file) return;
+  if(log_file->isOpen())
+    log_file->Close();
   log_file->fname = fname;
   if(append) 
     log_file->Append();

@@ -2694,9 +2694,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	  };
+	  network_pos {x=0: y=0: z=0: };
+	  network_orient {x=0: y=0: z=1: rot=0: };
 	 };
 	};
        };
+       camera_pos {x=0.4602215: y=1.484398: z=1.425835: };
+       camera_orient {x=-0.9998372: y=-0.0146211: z=-0.01057597: rot=0.6003761: };
+       camera_focdist=2.303619;
       };
      };
     };

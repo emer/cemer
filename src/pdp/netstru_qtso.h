@@ -355,6 +355,9 @@ public:
   NetViewFontSizes	font_sizes;	// font sizes for various items
   NetViewParams		view_params;	// misc view parameters 
 
+  FloatTDCoord		network_pos;	// position of network in view
+  FloatRotation		network_orient;	// orientation of network in view
+
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)m_node_so.ptr();}
   void 			setUnitSrc(UnitView* uv, Unit* unit); // updates picked unit

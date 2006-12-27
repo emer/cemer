@@ -20,7 +20,6 @@
 #include "t3viewer.h"
 
 #include "ta_qt.h"
-#include "ta_geometry.h"
 #include "ta_qtclipdata.h"
 
 #include "css_machine.h" // for trace flag
@@ -54,6 +53,7 @@
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/Qt/SoQtRenderArea.h>
 #include <Inventor/Qt/viewers/SoQtViewer.h>
@@ -837,6 +837,7 @@ void iT3DataViewFrame::viewRefresh() {
 
 void T3DataViewFrame::Initialize() {
 //  link_type = &TA_T3DataLink;
+  camera_focdist = 1.0f;
 }
 
 void T3DataViewFrame::Destroy() {
@@ -847,6 +848,8 @@ void T3DataViewFrame::Destroy() {
 void T3DataViewFrame::InitLinks() {
   inherited::InitLinks();
   taBase::Own(root_view, this);
+  taBase::Own(camera_pos, this);
+  taBase::Own(camera_orient, this);
 }
 
 void T3DataViewFrame::CutLinks() {
@@ -880,6 +883,7 @@ void T3DataViewFrame::Constr_impl(QWidget* gui_parent) {
 void T3DataViewFrame::Constr_post() {
   inherited::Constr_post();
   root_view.OnWindowBind(widget());
+  SetCameraPosOrient();
 }
 
 IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
@@ -936,6 +940,37 @@ void T3DataViewFrame::WindowClosing(CancelOp& cancel_op) {
     root_view.DoActions(CLEAR_IMPL);
     root_view.host = NULL;
   }
+}
+
+void T3DataViewFrame::GetCameraPosOrient() {
+  if(!widget()) return;
+  SoQtViewer* viewer = widget()->ra();
+  SoCamera* cam = viewer->getCamera();
+  SbVec3f pos = cam->position.getValue();
+  camera_pos.x = pos[0]; camera_pos.y = pos[1]; camera_pos.z = pos[2];
+  SbVec3f axis;
+  float angle;
+  cam->orientation.getValue(axis, angle);
+  camera_orient.x = axis[0]; camera_orient.y = axis[1]; camera_orient.z = axis[2];
+  camera_orient.rot = angle;
+  camera_focdist = cam->focalDistance.getValue();
+}
+
+void T3DataViewFrame::SetCameraPosOrient() {
+  if(!widget()) return;
+  SoQtViewer* viewer = widget()->ra();
+  SoCamera* cam = viewer->getCamera();
+  cam->position.setValue(camera_pos.x, camera_pos.y, camera_pos.z);
+  SbVec3f axis;
+  axis[0]=camera_orient.x; axis[1]=camera_orient.y; axis[2]=camera_orient.z;
+  float angle = camera_orient.rot;
+  cam->orientation.setValue(axis, angle);
+  cam->focalDistance.setValue(camera_focdist);
+}
+
+void T3DataViewFrame::Dump_Save_pre() {
+  inherited::Dump_Save_pre();
+  GetCameraPosOrient();
 }
 
 

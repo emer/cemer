@@ -28,6 +28,7 @@
 #include "ta_TA_type.h"
 
 #include "igeometry.h"
+#include "ta_geometry.h"
 #include "safeptr_so.h"
 
 #ifndef __MAKETA__
@@ -432,11 +433,19 @@ friend class T3DataView;
 friend class T3DataViewer;
 public:
   T3DataViewRoot	root_view; // #SHOW_TREE placeholder item -- contains the actual root(s) DataView items as children
+  FloatTDCoord		camera_pos;	// position of camera in view
+  FloatRotation		camera_orient;	// orientation of camera in view
+  float			camera_focdist; // focalDistance of camera in view
 
   inline iT3DataViewFrame* widget() {return (iT3DataViewFrame*)inherited::widget();} // lex override
 
   virtual void		AddView(T3DataView* view); // add a view
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
+
+  virtual void		GetCameraPosOrient();
+  // get camera's current position and orientation from viewer into my fields (for saving)
+  virtual void		SetCameraPosOrient();
+  // set camera's current position and orientation from viewer from my fields (during loading)
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void	InitLinks();
@@ -459,6 +468,7 @@ protected:
   override void		Render_impl();  // #IGNORE
   override void		Render_post(); // #IGNORE
   override void		Reset_impl(); //  #IGNORE
+  override void 	Dump_Save_pre();
 private:
   void			Initialize();
   void			Destroy();

@@ -769,8 +769,10 @@ public:
   static const KeyString key_desc; // #IGNORE "desc" -- per-instance desc if available (def to type)
   static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName, never empty
   
-  virtual const String	statusTip(const KeyString& key = "") const; // the default text returned for StatusTipRole (key usually not needed)
-  virtual const String	GetToolTip(const KeyString& key) const; // the default text returned for ToolTipRole
+  virtual const String	statusTip(const KeyString& key = "") const;
+  // #IGNORE the default text returned for StatusTipRole (key usually not needed)
+  virtual const String	GetToolTip(const KeyString& key) const;
+  // #IGNORE the default text returned for ToolTipRole
   virtual void		BrowseMe();
   // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
   virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;

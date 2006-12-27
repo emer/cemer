@@ -398,7 +398,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 //   cerr << xp << ", " << yp << endl;
   Unit_Group* ugrp = act_ugv->ugrp();
   xp -= ugrp->pos.x; yp -= ugrp->pos.y;
-  if(xp >= 0 && xp < ugrp->geom.x && yp >= 0 && yp < ugrp->geom.y) {
+  if((xp >= 0) && (xp < ugrp->geom.x) && (yp >= 0) && (yp < ugrp->geom.y)) {
     Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
     if(unit) nv->setUnitSrc(NULL, unit);
   }
@@ -1143,6 +1143,8 @@ void NetView::InitLinks() {
   taBase::Own(max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
+  taBase::Own(network_pos, this);
+  taBase::Own(network_orient, this);
 }
 
 void NetView::CutLinks() {
@@ -1753,7 +1755,6 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
   InitDisplay();
   UpdateDisplay();
 }
-
 
 // all the slots:
 
