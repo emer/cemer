@@ -80,6 +80,7 @@ public:
   // #NO_SHOW #NO_SAVE #OBSOLETE viewer default display options DELETE THIS
   bool			mark;
   // #NO_SHOW #NO_SAVE clear on new and when col confirmed, used to delete orphans
+  String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
   bool			pin;
   // set true to prevent this column from being deleted on orphan deleting
   bool			is_matrix;
@@ -232,6 +233,7 @@ public:
   // #CAT_ObjectMgmt copy one row from source to given row in this object, robust to differences in type and format of the cells
   
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
+  override String GetDesc() const {return desc;}
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
   void	CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
