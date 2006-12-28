@@ -1006,6 +1006,11 @@ void taiDataHost::DataLinkDestroying(taDataLink* dl) {
 }
  
 void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  // note: because of deferred construction, we may still need to update buttons/menus
+  if (state == DEFERRED1) {
+    GetImage();
+    return;
+  }
   // note: we should have unlinked if cancelled, but if not, ignore if cancelled
   if (!isConstructed()) return;
   dch.UpdateFromDataChanged(dcr);

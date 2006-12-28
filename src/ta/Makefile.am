@@ -13,16 +13,16 @@ TAHEADS_TAMISC_GUI =\
 	@abs_srcdir@/t3node_so.h \
 	@abs_srcdir@/t3viewer.h \
 	@abs_srcdir@/colorbar_so.h \
-	@abs_srcdir@/datatable_qtso.h \
-	@abs_srcdir@/datatable_so.h 
+	@abs_srcdir@/ta_datatable_qtso.h \
+	@abs_srcdir@/ta_datatable_so.h 
 
 HEADS_TAMISC_GUI =\
 	t3node_so.h \
 	t3viewer.h \
 	colorbar_qt.h \
 	colorbar_so.h \
-	datatable_qtso.h \
-	datatable_so.h
+	ta_datatable_qtso.h \
+	ta_datatable_so.h
 
 SRCS_TAMISC_GUI =\
 	t3node_so.cpp \
@@ -31,9 +31,9 @@ SRCS_TAMISC_GUI =\
 	colorbar_qt.cpp \
 	colorbar_qt.moc.cpp \
 	colorbar_so.cpp \
-	datatable_qtso.cpp \
-	datatable_qtso.moc.cpp \
-	datatable_so.cpp
+	ta_datatable_qtso.cpp \
+	ta_datatable_qtso.moc.cpp \
+	ta_datatable_so.cpp
 
 TAHEADS_GUI =\
 	@abs_srcdir@/ta_qt.h \
@@ -94,25 +94,19 @@ endif
 
 TAHEADS_TAMISC =\
 	@abs_srcdir@/tatime.h \
-	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/colorscale.h \
-	@abs_srcdir@/datatable.h \
 	@abs_srcdir@/fun_lookup.h \
 	@abs_srcdir@/ta_data_extras.h 
 
 HEADS_TAMISC =\
 	tatime.h \
-	minmax.h \
 	colorscale.h \
-	datatable.h \
 	fun_lookup.h \
 	ta_data_extras.h
 
 SRCS_TAMISC =\
 	tatime.cpp \
-	minmax.cpp \
 	colorscale.cpp \
-	datatable.cpp \
 	fun_lookup.cpp \
 	ta_data_extras.cpp 
 
@@ -136,6 +130,7 @@ TAHEADS =\
 	@abs_srcdir@/ta_type.h \
 	@abs_srcdir@/ta_base.h \
 	@abs_srcdir@/ta_fontspec.h \
+	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/ta_group.h \
 	@abs_srcdir@/ta_dmem.h \
 	@abs_srcdir@/ta_script.h \
@@ -177,6 +172,7 @@ HEADS =\
 	ta_type_constr.h \
 	ta_base.h \
 	ta_fontspec.h \
+	minmax.h \
 	ta_group.h \
 	ta_dmem.h \
 	ta_script.h \
@@ -219,6 +215,7 @@ SRCS =\
 	ta_type_constr.cpp \
 	ta_base.cpp \
 	ta_fontspec.cpp \
+	minmax.cpp \
 	ta_group.cpp \
 	ta_dmem.cpp \
 	ta_script.cpp \

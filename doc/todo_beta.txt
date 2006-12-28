@@ -39,6 +39,9 @@ browser tree stuff:
     5 context-specificity (3) is achieved by setting default vals of these
       show categories.
   proposal:
+
+  * add a new context level to the view directives,
+     ex #
   * consistent naming scheme: all cd's start with #TREE_
   * #SHOW_TREE -> TREE_SHOW, TREE_HIDDEN etc. (these are absolute)
   * context ones are #TREE_HIDDEN_xxx  xxx = context name = Program_Group (*note

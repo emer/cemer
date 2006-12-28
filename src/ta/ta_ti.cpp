@@ -26,7 +26,7 @@
 # include "ta_dump.h"
 # include "ta_script.h"
 # include "ta_geometry.h"
-# include "datatable.h"
+# include "ta_datatable.h"
 //#include "datagraph.h"
 # include "colorscale.h"
 # include "t3viewer.h"
@@ -35,7 +35,7 @@
 #   include "ta_qtgroup.h"
 #   include "ta_qtviewer.h"
 #   include "ta_qtclipdata.h"
-#   include "datatable_qtso.h"
+#   include "ta_datatable_qtso.h"
 # endif
 #endif
 

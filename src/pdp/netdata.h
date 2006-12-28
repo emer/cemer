@@ -21,7 +21,7 @@
 #define NETDATA_H
 
 #include "pdp_def.h"
-#include "datatable.h"
+#include "ta_datatable.h"
 #include "netstru.h"
 
 #include "pdp_TA_type.h"

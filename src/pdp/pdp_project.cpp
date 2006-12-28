@@ -28,13 +28,13 @@
 # include "ta_qtdata.h" // for taiObjChooser
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
+# include "ta_datatable_qtso.h"
 # include "netstru_qtso.h"
 
 # include <qapplication.h>
 # include <QWidgetList>
 #endif
 
-#include "datatable_qtso.h"
 
 #ifdef DMEM_COMPILE
 #include <mpi.h>

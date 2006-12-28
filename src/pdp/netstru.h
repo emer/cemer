@@ -21,7 +21,8 @@
 #define netstru_h
 
 #include "ta_script.h"
-#include "datatable.h"
+#include "ta_datatable.h"
+#include "ta_math.h"
 
 #include "spec.h"
 

@@ -15,10 +15,11 @@
 
 
 
-#ifndef fun_lookup_h
-#define fun_lookup_h
+#ifndef FUN_LOOKUP_H
+#define FUN_LOOKUP_H
 
-#include "datatable.h"
+#include "ta_base.h"
+#include "minmax.h"
 #include "ta_TA_type.h"
 
 class TA_API FunLookup : public float_Array {

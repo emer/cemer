@@ -329,7 +329,7 @@ public: // IDataHost i/f
   const iColor* colorOfCurRow() const {return colorOfRow(cur_row);} 
   bool  	HasChanged() {return modified;}	
   bool		isConstructed() {int s = state & STATE_MASK;
-    return ((s > EXISTS) && (s < ZOMBIE));}
+    return ((s >= CONSTRUCTED) && (s < ZOMBIE));}
   bool		isModal() {return modal;}
   bool		isReadOnly() {return read_only;} //
 // iMainWindowViewer* viewerWindow() const; n/a here -- defined in taiEDH
