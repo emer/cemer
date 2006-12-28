@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 
-#include "datatable_so.h"
+#include "ta_datatable_so.h"
 
 //incl the coin header to get gl.h #include <GL/gl.h>
 #include <Inventor/system/gl.h>

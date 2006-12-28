@@ -15,7 +15,7 @@
 
 
 
-#include "datatable_qtso.h"
+#include "ta_datatable_qtso.h"
 
 // stuff to implement graphical view of datatable
 #include "igeometry.h"
@@ -23,7 +23,7 @@
 #include "ta_qtgroup.h"
 #include "ta_qtclipdata.h"
 
-#include "datatable_so.h"
+#include "ta_datatable_so.h"
 
 #include <QButtonGroup>
 #include <QCheckBox>

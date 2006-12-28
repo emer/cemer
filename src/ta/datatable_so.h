@@ -15,8 +15,8 @@
 
 
 
-#ifndef DATATABLE_SO_H
-#define DATATABLE_SO_H
+#ifndef TA_DATATABLE_SO_H
+#define TA_DATATABLE_SO_H
 
 #include "ta_def.h"
 #include "t3node_so.h"

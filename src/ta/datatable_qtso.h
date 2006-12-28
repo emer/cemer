@@ -15,16 +15,16 @@
 
 
 
-#ifndef datatable_qtso_h
-#define datatable_qtso_h
+#ifndef TA_DATATABLE_QTSO_H
+#define TA_DATATABLE_QTSO_H
 
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
 #include "ta_fontspec.h"
 
+#include "ta_datatable.h"
 #include "colorscale.h"
 #include "colorbar_qt.h"
-#include "datatable.h"
 #include "t3viewer.h"
 
 #ifndef __MAKETA__
