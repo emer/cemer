@@ -42,6 +42,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
 #include <Inventor/engines/SoCompose.h>
 #include <Inventor/engines/SoCalculator.h>
 
@@ -522,6 +523,10 @@ void T3PrjnNode::setEndPoint(const SbVec3f& ep) {
 //   T3NetNode		//
 //////////////////////////
 
+extern void T3NetNode_DragFinishCB(void* userData, SoDragger* dragger);
+// defined in qtso
+
+float T3NetNode::drag_size = .08f;
 
 SO_NODE_SOURCE(T3NetNode);
 
@@ -535,6 +540,32 @@ T3NetNode::T3NetNode(void* dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NetNode);
 
+  drag_sep_ = new SoSeparator;
+  drag_xf_ = new SoTransform;
+  drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
+  drag_xf_->translation.setValue(0.0f, -.5f, 0.0f);
+  //  drag_xf_->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+  drag_sep_->addChild(drag_xf_);
+  dragger_ = new SoTransformBoxDragger;
+  drag_sep_->addChild(dragger_);
+  topSeparator()->addChild(drag_sep_);
+
+  drag_trans_calc_ = new SoCalculator;
+  drag_trans_calc_->ref();
+  drag_trans_calc_->A.connectFrom(&dragger_->translation);
+
+  String expr = "oA = vec3f(.5 + " + String(drag_size) + " * A[0], -.5 + " +
+    String(drag_size) + " * A[1], -.5 + " + String(drag_size) + " * A[2])";
+
+  drag_trans_calc_->expression = expr.chars();
+
+  txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
+  //  txfm_shape()->translation.connectFrom(&dragger_->translation);
+  txfm_shape()->rotation.connectFrom(&dragger_->rotation);
+  txfm_shape()->scaleFactor.connectFrom(&dragger_->scaleFactor);
+
+  dragger_->addFinishCallback(T3NetNode_DragFinishCB, (void*)this);
+
   //  shape_ = new SoCube;
   shape_ = new SoFrame();
 //   shape_->setName("shape");
@@ -544,7 +575,7 @@ T3NetNode::T3NetNode(void* dataView_)
   float x = 1.0f;
   float y = 1.0f;
   // set size/pos of cube -- move down to -1 y
-  txfm_shape()->translation.setValue(x/2.0f, h/2.0f - .5f, -y/2.0f);
+  txfm_shape()->translation.setValue(.5f, .5f * h - .5f, -.5f);
   shape_->setDimensions(x, y, 0.02f, -0.02f);
   net_text_ = NULL;
 }

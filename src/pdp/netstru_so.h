@@ -35,6 +35,7 @@ class SoCylinder; // #IGNORE
 class SoFont; // #IGNORE
 class SoIndexedTriangleStripSet; // #IGNORE
 class SoTranslate2Dragger; // #IGNORE
+class SoTransformBoxDragger; // #IGNORE
 class SoCalculator; // #IGNORE
 
 // forwards
@@ -281,8 +282,6 @@ private:
   SoCalculator*		xy_drag_calc_;
 };
 
-
-
 //////////////////////////
 //   T3PrjnNode		//
 //////////////////////////
@@ -313,8 +312,6 @@ private:
   void			init();
 };
 
-
-
 class PDP_API T3NetNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
@@ -324,6 +321,7 @@ typedef T3NodeParent inherited;
 #endif // def __MAKETA__
 
 public:
+  static float 		drag_size; // = .08 size of dragger control object
   static void		initClass();
 
   SoFrame*		shape() {return shape_;}
@@ -339,6 +337,11 @@ protected:
 private:
   SoFrame*		shape_; //#IGNORE
   SoSeparator* 		net_text_; // network text variables
+
+  SoSeparator*		drag_sep_;
+  SoTransform*		drag_xf_;
+  SoTransformBoxDragger* dragger_;
+  SoCalculator*		drag_trans_calc_;
 };
 
 

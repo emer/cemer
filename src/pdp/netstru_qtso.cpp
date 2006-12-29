@@ -94,6 +94,7 @@
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
 //temp
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
@@ -1128,6 +1129,8 @@ void NetView::Initialize() {
   unit_text_disp = UTD_NONE;
   unit_src = NULL;
   unit_con_md = false;
+
+  network_scale = 1.0f;
 }
 
 void NetView::Destroy() {
@@ -1144,6 +1147,7 @@ void NetView::InitLinks() {
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
   taBase::Own(network_pos, this);
+  taBase::Own(network_scale, this);
   taBase::Own(network_orient, this);
 }
 
@@ -1532,9 +1536,59 @@ void NetView::Render_pre() {
   inherited::Render_pre();
 }
 
+// callback for netview transformer dragger
+void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
+  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
+  T3NetNode* netnd = (T3NetNode*)userData;
+  NetView* nv = (NetView*)netnd->dataView;
+
+  const SbVec3f& trans = dragger->translation.getValue();
+//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
+  FloatTDCoord tr(T3NetNode::drag_size * trans[0],
+		  T3NetNode::drag_size * trans[1],
+		  T3NetNode::drag_size * trans[2]);
+  nv->network_pos += tr;
+
+  const SbVec3f& scale = dragger->scaleFactor.getValue();
+//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
+  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  nv->network_scale *= sc;
+
+  SbVec3f axis;
+  float angle;
+  dragger->rotation.getValue(axis, angle);
+//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
+  if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
+    SbRotation rot;
+    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
+    SbRotation cur_rot;
+    cur_rot.setValue(SbVec3f(nv->network_orient.x, nv->network_orient.y, 
+			     nv->network_orient.z), nv->network_orient.rot);
+    SbRotation nw_rot = rot * cur_rot;
+    nw_rot.getValue(axis, angle);
+    nv->network_orient.SetXYZR(axis[0], axis[1], axis[2], angle);
+  }
+
+  float h = 0.04f; // nominal amount of height, so we don't vanish
+  netnd->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+  netnd->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  netnd->txfm_shape()->translation.setValue(.5f, .5f * h - .5f, -.5f);
+  dragger->translation.setValue(0.0f, -.5f, 0.0f);
+  dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+  nv->UpdateDisplay();
+}
+
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
   //  cerr << "nv render_impl" << endl;
+
+  FloatTransform* ft = transform(true);
+  ft->translate = network_pos;
+  ft->rotate = network_orient;
+  ft->scale = network_scale;
+
   GetMaxSize();
   T3NetNode* node_so = this->node_so(); //cache
   node_so->resizeCaption(font_sizes.net_name);

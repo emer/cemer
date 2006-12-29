@@ -356,6 +356,7 @@ public:
   NetViewParams		view_params;	// misc view parameters 
 
   FloatTDCoord		network_pos;	// position of network in view
+  FloatTDCoord		network_scale;	// scaling factors of network in view
   FloatRotation		network_orient;	// orientation of network in view
 
   Network*		net() const {return (Network*)data();}
