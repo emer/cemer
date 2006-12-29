@@ -221,6 +221,9 @@ void taProject::AssertDefaultProjectBrowser(bool auto_open) {
     vwr = MakeProjectBrowser_impl();
     vwr->SetName("DefaultProjectBrowser");
   }
+  else {
+    vwr->SetData(this);
+  }
   if (auto_open) {
     vwr->ViewWindow();
   }
@@ -247,6 +250,15 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
     vwr->SetName(viewer_name);
   vwr->ViewWindow();
   
+}
+
+bool taProject::SetFileName(const String& val) {
+  inherited::SetFileName(val);
+  MainWindowViewer* vwr = GetDefaultProjectBrowser();
+  if(vwr) {
+    vwr->SetWinName();
+  }
+  return true;
 }
 
 int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {

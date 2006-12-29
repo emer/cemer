@@ -448,7 +448,7 @@ public:
   // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
 
   static void	vec_sort(double_Matrix* vec, bool descending = false);
-  // #CAT_Statistics sort the values from the source vector into the dest vector
+  // #CAT_Statistics sort the given vector values in numerical order (in place)
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
@@ -551,6 +551,9 @@ public:
 		       const double_Matrix* prjn_mat, DistMetric metric=INNER_PROD,
 		       bool norm = false, double tolerance=0.0f);
   // #CAT_HighDimMatrix compute projection of each frame of src_mat onto prjn_mat.  prjn_vec contains one value for each frame in src_mat, which is the inner/dot product (projection -- or other metric if selected) of that frame and the prjn_mat.
+  static bool mat_time_avg(double_Matrix* a, double avg_dt);
+  // #CAT_HighDimMatrix replace matrix values with their running (exponentially-weighted) time-averaged values (new_val = avg_dt * running_avg + (1-avg_dt) * old_val
+
 
   void Initialize() { };
   void Destroy() { };
@@ -747,7 +750,7 @@ public:
   // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
 
   static void	vec_sort(float_Matrix* vec, bool descending = false);
-  // #CAT_Statistics sort the values from the source vector into the dest vector
+  // #CAT_Statistics sort the given vector values in numerical order (in place)
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
@@ -848,11 +851,12 @@ public:
   // #CAT_HighDimMatrix compute cross distance matrix between the frames within src_mat_a and src_mat_b (must be dim >= 2 and have same frame size) -- rows of dist_mat are a, cols are b
   static bool mat_correl(float_Matrix* correl_mat, const float_Matrix* src_mat);
   // #CAT_HighDimMatrix compute correlation matrix for cells across frames within src_mat (i.e., how does each cell co-vary across time/frames with each other cell).  result is nxn matrix where n is number of cells in each frame of src_mat (i.e., size of sub-matrix), with each cell being correlation of that cell with other cell.
-
   static bool mat_prjn(float_Matrix* prjn_vec, const float_Matrix* src_mat,
 		       const float_Matrix* prjn_mat, DistMetric metric=INNER_PROD,
 		       bool norm = false, float tolerance=0.0f);
   // #CAT_HighDimMatrix compute projection of each frame of src_mat onto prjn_mat.  prjn_vec contains one value for each frame in src_mat, which is the inner/dot product (projection -- or other metric if selected) of that frame and the prjn_mat.
+  static bool mat_time_avg(float_Matrix* a, float avg_dt);
+  // #CAT_HighDimMatrix replace matrix values with their running (exponentially-weighted) time-averaged values (new_val = avg_dt * running_avg + (1-avg_dt) * old_val
 
   void Initialize() { };
   void Destroy() { };

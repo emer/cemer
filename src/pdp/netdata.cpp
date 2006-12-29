@@ -475,7 +475,10 @@ void NetMonItem::UpdateAfterEdit_impl() {
       }
     }
     else {			// AUTO_NAME = always update!
-      name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
+      if(object->InheritsFrom(&TA_Network)) // special case
+	name = (var_label.empty() ? variable : var_label);
+      else
+	name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
     }
     name = taMisc::StringCVar(name);		// keep it clean for css var names
     ScanObject();

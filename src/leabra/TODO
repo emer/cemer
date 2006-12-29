@@ -1,16 +1,15 @@
 leabra todo list:
 
+commit:
+
 ------------------
 hv model
 
-bugs:
-netmon: names for net vars getting network name
-network: train_mode comment = t -- fix
-
+* no low!
 * do repeat testing
 * show retina stuff in netview (record params in trial log to)
   
-* make 2x retina with same filts (really big net)
+* make 2x retina with same filts (really big net) (no/small low in vent path?)
 
 * train model to identify location of key target:
   CHL:
@@ -27,7 +26,6 @@ network: train_mode comment = t -- fix
 
 ------------------
 * netview: 
-  * save view state in top-level view guy (camera)
   * netview xform for whole network + dragger etc
 
 * gridview: unitize + global xform, have obj per column so you can click (maybe just header?),
@@ -37,12 +35,14 @@ network: train_mode comment = t -- fix
 
   - why doesn't gridview update with WriteClose()?
 
-* viewer shows project file name
+--------------
 
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
   * datatable time average
+
+* ta_math: convolve; gaussian/uniform gen; time averaging with diff kernels
 
 * v3convert: end up with 2 bias.unit links from copy op?
 

@@ -1496,6 +1496,22 @@ bool taMath_double::mat_prjn(double_Matrix* prjn_vec, const double_Matrix* src_m
   return true;
 }
 
+bool taMath_double::mat_time_avg(double_Matrix* a, double avg_dt) {
+  if(avg_dt < 0.0f || avg_dt > 1.0f) {
+    taMisc::Error("*** mat_time_avg: avg_dt is not in 0..1 range:", String(avg_dt));
+    return false;
+  }
+  double avg_dt_c = 1.0 - avg_dt;
+  for(int i=1;i<a->frames();i++) {
+    int fr_idx = a->FrameStartIdx(i);
+    int frm1_idx = a->FrameStartIdx(i-1);
+    for(int j=0;j<a->frameSize();j++) {
+      a->FastEl_Flat(fr_idx + j) = avg_dt * a->FastEl_Flat(frm1_idx + j) + avg_dt_c * a->FastEl_Flat(fr_idx + j);
+    }
+  }
+  return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // 			single precision math
 ////////////////////////////////////////////////////////////////////////////////
@@ -2281,6 +2297,22 @@ bool taMath_float::mat_prjn(float_Matrix* prjn_vec, const float_Matrix* src_mat,
     float val = vec_dist(t1, prjn_mat, metric, norm, tol);
     prjn_vec->FastEl(i) = val;
     taBase::unRefDone(t1);
+  }
+  return true;
+}
+
+bool taMath_float::mat_time_avg(float_Matrix* a, float avg_dt) {
+  if(avg_dt < 0.0f || avg_dt > 1.0f) {
+    taMisc::Error("*** mat_time_avg: avg_dt is not in 0..1 range:", String(avg_dt));
+    return false;
+  }
+  float avg_dt_c = 1.0 - avg_dt;
+  for(int i=1;i<a->frames();i++) {
+    int fr_idx = a->FrameStartIdx(i);
+    int frm1_idx = a->FrameStartIdx(i-1);
+    for(int j=0;j<a->frameSize();j++) {
+      a->FastEl_Flat(fr_idx + j) = avg_dt * a->FastEl_Flat(frm1_idx + j) + avg_dt_c * a->FastEl_Flat(fr_idx + j);
+    }
   }
   return true;
 }

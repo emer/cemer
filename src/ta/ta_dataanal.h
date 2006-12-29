@@ -184,6 +184,10 @@ public:
 			     bool norm=false, float tol=0.0);
   // #CAT_HighDim #MENU #NULL_OK project all rows according to their projection onto the two specified rows of patterns using given distance metrics
 
+  static bool	TimeAvg(DataTable* time_avg_data, bool view, DataTable* src_data,
+			float avg_dt, bool float_only=false);
+  // #CAT_HighDim #MENU #NULL_OK compute the time average of all the numeric fields of source data, according to the given avg_dt (new_val = avg_dt * avg + (1-avg_dt) * old_val).  if(float_only) then int or byte data is not time averaged
+
 //   static bool	PatFreqArray(float_RArray& freqs, int pat_no, float act_thresh = .5f, bool proportion = false);
 //   // get frequency (proportion) of pattern activations greater than act_thresh across events
 //   static bool	PatFreqText(float act_thresh = .5f, bool proportion = false, ostream& strm = cerr);

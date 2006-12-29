@@ -837,6 +837,40 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
   return true;
 }
 
+bool taDataAnal::TimeAvg(DataTable* time_avg_data, bool view, DataTable* src_data,
+			 float avg_dt, bool float_only)
+{
+  if(!src_data) return false;
+
+  float_Matrix float_tmp;
+  GetDest(time_avg_data, src_data, "TimeAvg");
+
+  time_avg_data->Reset();
+  *time_avg_data = *src_data;	// do complete copy, then operate in place
+  for(int i=0;i<time_avg_data->data.size;i++) {
+    DataArray_impl* da = time_avg_data->data[i];
+    if(!da->isNumeric()) continue;
+    if(da->valType() == VT_BYTE) continue;
+    if(float_only && (da->valType() == VT_INT)) continue;
+    if(da->valType() == VT_FLOAT) {
+      taMath_float::mat_time_avg((float_Matrix*)da->AR(), avg_dt);
+    }
+    else if(da->valType() == VT_DOUBLE) {
+      taMath_double::mat_time_avg((double_Matrix*)da->AR(), avg_dt);
+    }
+    else if(da->valType() == VT_INT) { // expensive double-convert..
+      int_Matrix* mat = (int_Matrix*)da->AR();
+      float_tmp.SetGeomN(mat->geom);
+      for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
+      taMath_float::mat_time_avg(&float_tmp, avg_dt);
+      for(int i=0;i<mat->size;i++) mat->FastEl_Flat(i) = (int)float_tmp.FastEl_Flat(i);
+    }
+  }
+
+  if(view) time_avg_data->ShowInViewer(); // todo: should be a graph
+  return true;
+}
+
 /*
 void Environment::PatFreqGrid(GridLog* disp_log, float act_thresh, bool prop) {
   if(events.leaves == 0)

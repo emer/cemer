@@ -837,7 +837,7 @@ void iT3DataViewFrame::viewRefresh() {
 
 void T3DataViewFrame::Initialize() {
 //  link_type = &TA_T3DataLink;
-  camera_focdist = 1.0f;
+  camera_focdist = 0.0f;
 }
 
 void T3DataViewFrame::Destroy() {
@@ -926,7 +926,10 @@ void T3DataViewFrame::Render_post() {
   widget()->setSceneTop(root_view.node_so());
   widget()->Render_post();
   // on first opening, do a viewall to center all geometry in viewer
-  widget()->ra()->viewAll();
+  if(camera_pos == 0.0f && camera_focdist == 0.0f) {
+    widget()->ra()->viewAll();
+    GetCameraPosOrient();
+  }
 }
 
 void T3DataViewFrame::Reset_impl() {
@@ -959,6 +962,10 @@ void T3DataViewFrame::GetCameraPosOrient() {
 void T3DataViewFrame::SetCameraPosOrient() {
   if(!widget()) return;
   SoQtViewer* viewer = widget()->ra();
+  if(camera_pos == 0.0f && camera_focdist == 0.0f) {
+    viewer->viewAll();
+    return;
+  }
   SoCamera* cam = viewer->getCamera();
   cam->position.setValue(camera_pos.x, camera_pos.y, camera_pos.z);
   SbVec3f axis;

@@ -556,9 +556,11 @@ void TopLevelViewer::GetWinState_impl() {
 }
 
 void TopLevelViewer::SetWinName() {
-  if (!isMapped()) return;
+//   if (!isMapped()) return;
   MakeWinName_impl();
-  widget()->setCaption(win_name);
+  if(widget())
+    widget()->setWindowTitle(win_name);
+//     widget()->setCaption(win_name);
 }
 
 void TopLevelViewer::ViewWindow() {
@@ -793,6 +795,7 @@ MainWindowViewer* MainWindowViewer::NewBrowser(TAPtr root,
     def_browser_type = &TA_MainWindowViewer; // just in case
   
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_browser_type);
+  rval->SetData(root);
   rval->m_is_root = is_root;
   tabBrowseViewer* cb = tabBrowseViewer::New(root, root_md);
   rval->frames.Add(cb);
@@ -826,6 +829,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
     def_viewer_type = &TA_MainWindowViewer; // just in case
   
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
+  rval->SetData(proj);
   rval->m_is_proj_viewer = true;
   tabBrowseViewer* cb = tabBrowseViewer::New(proj);
   cb->SetName("Tree"); // generally only one (open BrowseFromHere for more wins)
@@ -884,6 +888,7 @@ void MainWindowViewer::CutLinks() {
 
 void MainWindowViewer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+  SetWinName();
 }
 
 void MainWindowViewer::AddDock(DockViewer* dv) {
@@ -1069,10 +1074,16 @@ void MainWindowViewer::Hide_impl() {
 }
 
 void MainWindowViewer::MakeWinName_impl() {
-  String prog_nm = taiM->classname();
+  String prog_nm = taiM->classname(); // note: this is not working
   String name;
-  if (data()) name = data()->GetName();
-  String nw_name = GetPath() + "(" + name + ") - " + prog_nm ;
+  String fname;
+  if (data()) {
+    name = data()->GetName();
+    fname = data()->GetFileName();
+    if(fname.contains('/'))
+      fname = fname.after('/', -1);
+  }
+  String nw_name = GetPath() + "(" + name + ") - " + fname; // prog_nm ;
   win_name = nw_name;
 }
 
@@ -1126,6 +1137,7 @@ void MainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
 } */
 
 void MainWindowViewer::Show_impl() {
+  SetWinName();
   QWidget* wid = widget();
   wid->raise();
   qApp->setActiveWindow(wid);

@@ -1534,8 +1534,8 @@ public:
  
   BaseSpec_Group specs; 	// #CAT_Structure Specifications for network parameters
   Layer_Group	layers;		// #CAT_Structure Layers or Groups of Layers
-  TrainMode	train_mode;	// #CAT_Learning t
-  WtUpdate	wt_update;	// #CAT_Learning weight update mode: when are weights updated
+  TrainMode	train_mode;	// #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
+  WtUpdate	wt_update;	// #CAT_Learning #CONDEDIT_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
   int		small_batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int		small_batch_n_eff; // #GUI_READ_ONLY #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 
