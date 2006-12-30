@@ -987,6 +987,8 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
+  nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
+
 //   nv->InitDisplay();
   nv->UpdateDisplay();
 }

@@ -1355,6 +1355,11 @@ public:
   virtual int	LesionUnits(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
+  virtual void	SetLayerUnitGeom(int x, int y, bool n_not_xy = false, int n = 0);
+  // set layer unit geometry (convenience function for programs)
+  virtual void	SetLayerUnitGpGeom(int x, int y, bool n_not_xy = false, int n = 0);
+  // set layer unit group geometry (convenience function for programs)
+
   virtual bool	SetLayerSpec(LayerSpec* layspec);
   // #BUTTON #CAT_Structure set the layer specification
   virtual LayerSpec* GetLayerSpec()		{ return (LayerSpec*)NULL; }

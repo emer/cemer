@@ -3456,6 +3456,16 @@ ProjectBase* Layer::project() {
   return rval;
 }
 
+void Layer::SetLayerUnitGeom(int x, int y, bool n_not_xy, int n) {
+  un_geom.x = x; un_geom.y = y; un_geom.n_not_xy = n_not_xy; un_geom.n = n;
+  UpdateAfterEdit();
+}
+void Layer::SetLayerUnitGpGeom(int x, int y, bool n_not_xy, int n) {
+  unit_groups = true;
+  gp_geom.x = x; gp_geom.y = y; gp_geom.n_not_xy = n_not_xy; gp_geom.n = n;
+  UpdateAfterEdit();
+}
+
 bool Layer::SetLayerSpec(LayerSpec*) {
   return false;			// no layer spec for layers!
 }

@@ -25,15 +25,19 @@ hv model
 
 
 ------------------
-* netview: 
-  * netview xform for whole network + dragger etc
-
 * gridview: unitize + global xform, have obj per column so you can click (maybe just header?),
   auto-size blocks, fix auto-scale, 4dim unit display
 
   - test case: filtered layer unit history moving back in depth w/ netview
 
   - why doesn't gridview update with WriteClose()?
+
+* netview: 
+
+ * make xydrag handles thicker: create new default image by replacing existing
+   with thicker bars; also for transform box
+
+* set disabled flag from layer.lesion (highlighting)
 
 --------------
 
@@ -55,6 +59,10 @@ hv model
 
 -----------
 Program issues
+
+* ProgEl: change off into bit flag enum, add "nonstd" and "new" flags..
+
+* edit user script: non-modal dialog w/ better (narrower) default sizing
 
 css:
 

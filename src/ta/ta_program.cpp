@@ -1172,7 +1172,7 @@ const String Comment::GenCssBody_impl(int indent_level) {
 }
 
 String Comment::GetDisplayName() const {
-  return "Comment";
+  return desc;
 }
 
 
