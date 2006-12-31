@@ -4434,6 +4434,7 @@ void Network::Copy_(const Network& cp) {
   time = cp.time;
   group_name = cp.group_name;
   trial_name = cp.trial_name;
+  output_name = cp.output_name;
 
   sse = cp.sse;
   sum_sse = cp.sum_sse;
