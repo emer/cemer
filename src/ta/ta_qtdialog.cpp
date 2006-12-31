@@ -1998,6 +1998,7 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   QFileDialog* fd = new QFileDialog(NULL, "", dir, filterText());
 
   QStringList hist_paths;
+  taiFileDialogExtension* fde = new taiFileDialogExtension();
 
   String caption;
   switch (filerOperation) {
@@ -2038,7 +2039,6 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   // todo: for some reason it is not using this arg if the file already exists!
   fd->selectFile(fname);
   // we always make and set the extension, but don't always show it
-  taiFileDialogExtension* fde = new taiFileDialogExtension();
   fde->cbCompress->setEnabled(compressEnabled());
   fde->cbCompress->setChecked(compressEnabled() && compressReq());
   fd->setExtension(fde);
