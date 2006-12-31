@@ -734,12 +734,22 @@ int taBase::NTokensInScope(TypeDef* td, TAPtr ref_obj, TypeDef* scp_tp) {
 ////////////////////////////////////////////////////////////////////// 
 // 	Saving and Loading to/from files
 
-String taBase::GetFileNameFmProject(const String& ext, const String& tag, bool dmem_proc_no) {
+String taBase::GetFileNameFmProject(const String& ext, const String& tag, const String& subdir, bool dmem_proc_no) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return _nilString;
   String proj_base_nm = proj->file_name;
   if(proj_base_nm.contains(".proj"))
     proj_base_nm = proj_base_nm.before(".proj");
+  if(!subdir.empty()) {
+    if(proj_base_nm.contains('/')) {
+      String base_dir = proj_base_nm.through('/',-1);
+      String fnm = proj_base_nm.after('/',-1);
+      proj_base_nm = base_dir + subdir;
+      if(proj_base_nm.lastchar() != '/')
+	proj_base_nm += '/';
+      proj_base_nm += fnm;
+    }
+  }
   String dms;
   if(dmem_proc_no && (taMisc::dmem_nprocs > 1)) {
     dms = ".p" + taMisc::LeadingZeros(taMisc::dmem_proc, 2);
@@ -933,7 +943,9 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     flr->fname = fname;
     flr->Save();
   } else { 
-    flr->fname = GetName(); // filer etc. does auto extension
+    flr->fname = GetFileName(); // filer etc. does auto extension
+    if(flr->fname.empty())
+      flr->fname = GetName();
     flr->SaveAs();
   }
   

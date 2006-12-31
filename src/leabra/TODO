@@ -2,6 +2,10 @@ leabra todo list:
 
 commit:
 
+* wrapper for qdir etc -- put in taMisc? or taFiler!
+
+* add return & if_return to progs
+
 ------------------
 hv model
 
@@ -64,6 +68,7 @@ hv model
 Program issues
 
 * ProgEl: change off into bit flag enum, add "nonstd" and "new" flags..
+* proglib: add dates!
 
 * edit user script: non-modal dialog w/ better (narrower) default sizing
 

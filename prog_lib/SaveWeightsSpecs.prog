@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][9] { 
+Program .projects[0].programs.gp[0][8] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
@@ -12,16 +12,21 @@ Program .projects[0].programs.gp[0][9] {
     ProgVar @[4] { };
   };
 
-  ProgEl_List @.prog_code = [6] {
-    MiscCall @[0] { };
+  ProgEl_List @.prog_code = [7] {
+    IfElse @[0] { 
+      ProgEl_List @.true_code = [1] {
+	UserScript @[0] { };
+      };
+    };
     MiscCall @[1] { };
-    AssignExpr @[2] { };
-    MethodCall @[3] { };
+    MiscCall @[2] { };
+    AssignExpr @[3] { };
     MethodCall @[4] { };
-    UserScript @[5] { };
+    MethodCall @[5] { };
+    UserScript @[6] { };
   };
 };
-Program .projects[0].programs.gp[0][9] {
+Program .projects[0].programs.gp[0][8] {
  name="SaveWeightsSpecs";
  desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values
 also save specs.";
@@ -98,40 +103,60 @@ also save specs.";
   name=;
   el_typ=MethodCall;
   el_def=0;
-  MiscCall @[0] {
+  IfElse @[0] {
+   desc="do not save if not first dmem guy";
+   off=0;
+   condition="taMisc::dmem_proc > 0";
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    UserScript @[0] {
+     desc=;
+     off=0;
+     user_script="return;";
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  MiscCall @[1] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][9].vars[3]$1$;
+   result_var=.projects[0].programs.gp[0][8].vars[3]$1$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    args{ network->batch;2;};
 { int num;int len;   };
   };
-  MiscCall @[1] {
+  MiscCall @[2] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][9].vars[2]$2$;
+   result_var=.projects[0].programs.gp[0][8].vars[2]$2$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    args{ network->epoch;4;};
 { int num;int len;   };
   };
-  AssignExpr @[2] {
+  AssignExpr @[3] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][9].vars[4]$3$;
+   result_var=.projects[0].programs.gp[0][8].vars[4]$3$;
    expr="tag + \".\" + batch_str + \"_\" + epoch_str";
   };
-  MethodCall @[3] {
+  MethodCall @[4] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][9].vars[1]$4$;
-   obj=.projects[0].programs.gp[0][9].args[0]$5$;
+   result_var=.projects[0].programs.gp[0][8].vars[1]$4$;
+   obj=.projects[0].programs.gp[0][8].args[0]$5$;
    method=taBase::GetFileNameFmProject;
    args{ ".wts.gz";final_tag;false;};
 { const taString& ext;const taString& tag;bool dmem_proc_no;   };
   };
-  MethodCall @[4] {
+  MethodCall @[5] {
    desc=;
    off=0;
    result_var=NULL;
@@ -140,7 +165,7 @@ also save specs.";
    args{ fname;Network::NET_FMT;};
 { const taString& fname;Network::WtSaveFormat fmt;   };
   };
-  UserScript @[5] {
+  UserScript @[6] {
    desc=;
    off=0;
    user_script="String specfnm = fname.before(\".wts.gz\");
