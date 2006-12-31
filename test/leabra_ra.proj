@@ -417,20 +417,26 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
-	ProgVar_List @.vars = [5] {
+	ProgVar_List @.vars = [6] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
 	  ProgVar @[3] { };
 	  ProgVar @[4] { };
+	  ProgVar @[5] { };
 	};
 
-	ProgEl_List @.prog_code = [5] {
-	  MiscCall @[0] { };
+	ProgEl_List @.prog_code = [6] {
+	  IfElse @[0] { 
+	    ProgEl_List @.true_code = [1] {
+	      UserScript @[0] { };
+	    };
+	  };
 	  MiscCall @[1] { };
-	  AssignExpr @[2] { };
-	  MethodCall @[3] { };
+	  MiscCall @[2] { };
+	  AssignExpr @[3] { };
 	  MethodCall @[4] { };
+	  MethodCall @[5] { };
 	};
       };
     };
@@ -2452,27 +2458,34 @@ else min_cycles = network->min_cycles_phase2;
       desc="user-provided tag (startup script will set this!)";
      };
      ProgVar @[1] {
+      name="wts_subdir";
+      var_type=T_String;
+      string_val=;
+      objs_ptr=0;
+      desc="user-provided subdirectory to save weights in";
+     };
+     ProgVar @[2] {
       name="fname";
       var_type=T_String;
       string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
       objs_ptr=0;
       desc=;
      };
-     ProgVar @[2] {
+     ProgVar @[3] {
       name="epoch_str";
       var_type=T_String;
       string_val="0036";
       objs_ptr=0;
       desc="string rep of epoch with leading zeros";
      };
-     ProgVar @[3] {
+     ProgVar @[4] {
       name="batch_str";
       var_type=T_String;
       string_val="03";
       objs_ptr=0;
       desc="string rep of batch with leading zeros";
      };
-     ProgVar @[4] {
+     ProgVar @[5] {
       name="final_tag";
       var_type=T_String;
       string_val=".03_0036";
@@ -2494,40 +2507,60 @@ else min_cycles = network->min_cycles_phase2;
      name=;
      el_typ=MethodCall;
      el_def=0;
-     MiscCall @[0] {
+     IfElse @[0] {
+      desc="don't save if not first dmem process";
+      off=0;
+      condition="taMisc::dmem_proc > 0";
+      true_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+       UserScript @[0] {
+	desc=;
+	off=0;
+	user_script="return;";
+       };
+      };
+      false_code {
+       name=;
+       el_typ=ProgEl;
+       el_def=0;
+      };
+     };
+     MiscCall @[1] {
       desc=;
       off=0;
-      result_var=.projects[0].programs.gp[0][9].vars[3]$40$;
+      result_var=.projects[0].programs.gp[0][9].vars[4]$40$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       args{ network->batch;2;};
 { int num;int len;      };
      };
-     MiscCall @[1] {
+     MiscCall @[2] {
       desc=;
       off=0;
-      result_var=.projects[0].programs.gp[0][9].vars[2]$41$;
+      result_var=.projects[0].programs.gp[0][9].vars[3]$41$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       args{ network->epoch;4;};
 { int num;int len;      };
      };
-     AssignExpr @[2] {
+     AssignExpr @[3] {
       desc=;
       off=0;
-      result_var=.projects[0].programs.gp[0][9].vars[4]$42$;
+      result_var=.projects[0].programs.gp[0][9].vars[5]$42$;
       expr="tag + \".\" + batch_str + \"_\" + epoch_str";
      };
-     MethodCall @[3] {
+     MethodCall @[4] {
       desc=;
       off=0;
-      result_var=.projects[0].programs.gp[0][9].vars[1]$43$;
+      result_var=.projects[0].programs.gp[0][9].vars[2]$43$;
       obj=.projects[0].programs.gp[0][9].args[0]$44$;
       method=taBase::GetFileNameFmProject;
-      args{ ".wts.gz";final_tag;false;};
-{ const taString& ext;const taString& tag;bool dmem_proc_no;      };
+      args{ ".wts.gz";final_tag;wts_subdir;false;};
+{ const taString& ext;const taString& tag;const taString& subdir;bool dmem_proc_no;      };
      };
-     MethodCall @[4] {
+     MethodCall @[5] {
       desc=;
       off=0;
       result_var=NULL;
@@ -2545,7 +2578,7 @@ else min_cycles = network->min_cycles_phase2;
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=NULL;
+   m_data=.projects[0]$45$;
    name="DefaultProjectBrowser";
    display_toggle=1;
    visible=1;
@@ -2576,7 +2609,7 @@ else min_cycles = network->min_cycles_phase2;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=.projects[0]$45$;
+     m_root=$45$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -2607,7 +2640,7 @@ else min_cycles = network->min_cycles_phase2;
 	 el_def=0;
 	 NetView @[0] {
 	  m_data=$1$;
-	  m_transform=NULL;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=T3DataView;
@@ -2695,12 +2728,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   unit_trans=0.6;
 	  };
 	  network_pos {x=0: y=0: z=0: };
+	  network_scale {x=1: y=1: z=1: };
 	  network_orient {x=0: y=0: z=1: rot=0: };
 	 };
 	};
        };
        camera_pos {x=0.4782158: y=1.275645: z=1.553323: };
-       camera_orient {x=-0.9996129: y=-0.02727094: z=-0.005770482: rot=0.494312: };
+       camera_orient {x=-0.9996115: y=-0.0272709: z=-0.005770474: rot=0.494312: };
        camera_focdist=2.30362;
       };
      };
@@ -3181,6 +3215,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    time=0;
    group_name=;
    trial_name="random";
+   output_name=;
    sse=5.810234;
    sum_sse=31.45604;
    avg_sse=5.242673;

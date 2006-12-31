@@ -4,12 +4,13 @@ Program .projects[0].programs.gp[0][8] {
     ProgVar @[0] { };
   };
 
-  ProgVar_List @.vars = [5] {
+  ProgVar_List @.vars = [6] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
+    ProgVar @[5] { };
   };
 
   ProgEl_List @.prog_code = [7] {
@@ -61,27 +62,34 @@ also save specs.";
    desc="user defined tag (set by startup script)";
   };
   ProgVar @[1] {
+   name="wts_subdir";
+   var_type=T_String;
+   string_val="wts/";
+   objs_ptr=0;
+   desc="subdirectory to save weights in";
+  };
+  ProgVar @[2] {
    name="fname";
    var_type=T_String;
    string_val="/Users/oreilly/pdp4opt/trunk/test/hv.v4_adaptnetin.00_0000.wts.gz";
    objs_ptr=0;
    desc=;
   };
-  ProgVar @[2] {
+  ProgVar @[3] {
    name="epoch_str";
    var_type=T_String;
    string_val="0000";
    objs_ptr=0;
    desc="string rep of epoch with leading zeros";
   };
-  ProgVar @[3] {
+  ProgVar @[4] {
    name="batch_str";
    var_type=T_String;
    string_val="00";
    objs_ptr=0;
    desc="string rep of batch with leading zeros";
   };
-  ProgVar @[4] {
+  ProgVar @[5] {
    name="final_tag";
    var_type=T_String;
    string_val=".00_0000";
@@ -126,7 +134,7 @@ also save specs.";
   MiscCall @[1] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][8].vars[3]$1$;
+   result_var=.projects[0].programs.gp[0][8].vars[4]$1$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    args{ network->batch;2;};
@@ -135,7 +143,7 @@ also save specs.";
   MiscCall @[2] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][8].vars[2]$2$;
+   result_var=.projects[0].programs.gp[0][8].vars[3]$2$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    args{ network->epoch;4;};
@@ -144,17 +152,17 @@ also save specs.";
   AssignExpr @[3] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][8].vars[4]$3$;
+   result_var=.projects[0].programs.gp[0][8].vars[5]$3$;
    expr="tag + \".\" + batch_str + \"_\" + epoch_str";
   };
   MethodCall @[4] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][8].vars[1]$4$;
+   result_var=.projects[0].programs.gp[0][8].vars[2]$4$;
    obj=.projects[0].programs.gp[0][8].args[0]$5$;
    method=taBase::GetFileNameFmProject;
-   args{ ".wts.gz";final_tag;false;};
-{ const taString& ext;const taString& tag;bool dmem_proc_no;   };
+   args{ ".wts.gz";final_tag;wts_subdir;false;};
+{ const taString& ext;const taString& tag;const taString& subdir;bool dmem_proc_no;   };
   };
   MethodCall @[5] {
    desc=;

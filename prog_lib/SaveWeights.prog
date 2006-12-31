@@ -4,20 +4,26 @@ Program .projects[0].programs.gp[0][9] {
     ProgVar @[0] { };
   };
 
-  ProgVar_List @.vars = [5] {
+  ProgVar_List @.vars = [6] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
+    ProgVar @[5] { };
   };
 
-  ProgEl_List @.prog_code = [5] {
-    MiscCall @[0] { };
+  ProgEl_List @.prog_code = [6] {
+    IfElse @[0] { 
+      ProgEl_List @.true_code = [1] {
+	UserScript @[0] { };
+      };
+    };
     MiscCall @[1] { };
-    AssignExpr @[2] { };
-    MethodCall @[3] { };
+    MiscCall @[2] { };
+    AssignExpr @[3] { };
     MethodCall @[4] { };
+    MethodCall @[5] { };
   };
 };
 Program .projects[0].programs.gp[0][9] {
@@ -54,27 +60,34 @@ Program .projects[0].programs.gp[0][9] {
    desc="user-provided tag (startup script will set this!)";
   };
   ProgVar @[1] {
+   name="wts_subdir";
+   var_type=T_String;
+   string_val=;
+   objs_ptr=0;
+   desc="user-provided subdirectory to save weights in";
+  };
+  ProgVar @[2] {
    name="fname";
    var_type=T_String;
    string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
    objs_ptr=0;
    desc=;
   };
-  ProgVar @[2] {
+  ProgVar @[3] {
    name="epoch_str";
    var_type=T_String;
    string_val="0036";
    objs_ptr=0;
    desc="string rep of epoch with leading zeros";
   };
-  ProgVar @[3] {
+  ProgVar @[4] {
    name="batch_str";
    var_type=T_String;
    string_val="03";
    objs_ptr=0;
    desc="string rep of batch with leading zeros";
   };
-  ProgVar @[4] {
+  ProgVar @[5] {
    name="final_tag";
    var_type=T_String;
    string_val=".03_0036";
@@ -96,40 +109,60 @@ Program .projects[0].programs.gp[0][9] {
   name=;
   el_typ=MethodCall;
   el_def=0;
-  MiscCall @[0] {
+  IfElse @[0] {
+   desc="don't save if not first dmem process";
+   off=0;
+   condition="taMisc::dmem_proc > 0";
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    UserScript @[0] {
+     desc=;
+     off=0;
+     user_script="return;";
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  MiscCall @[1] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][9].vars[3]$1$;
+   result_var=.projects[0].programs.gp[0][9].vars[4]$1$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    args{ network->batch;2;};
 { int num;int len;   };
   };
-  MiscCall @[1] {
+  MiscCall @[2] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][9].vars[2]$2$;
+   result_var=.projects[0].programs.gp[0][9].vars[3]$2$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    args{ network->epoch;4;};
 { int num;int len;   };
   };
-  AssignExpr @[2] {
+  AssignExpr @[3] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][9].vars[4]$3$;
+   result_var=.projects[0].programs.gp[0][9].vars[5]$3$;
    expr="tag + \".\" + batch_str + \"_\" + epoch_str";
   };
-  MethodCall @[3] {
+  MethodCall @[4] {
    desc=;
    off=0;
-   result_var=.projects[0].programs.gp[0][9].vars[1]$4$;
+   result_var=.projects[0].programs.gp[0][9].vars[2]$4$;
    obj=.projects[0].programs.gp[0][9].args[0]$5$;
    method=taBase::GetFileNameFmProject;
-   args{ ".wts.gz";final_tag;false;};
-{ const taString& ext;const taString& tag;bool dmem_proc_no;   };
+   args{ ".wts.gz";final_tag;wts_subdir;false;};
+{ const taString& ext;const taString& tag;const taString& subdir;bool dmem_proc_no;   };
   };
-  MethodCall @[4] {
+  MethodCall @[5] {
    desc=;
    off=0;
    result_var=NULL;

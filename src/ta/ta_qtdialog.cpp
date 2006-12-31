@@ -1996,20 +1996,8 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   // gack! only way to use semi-sep filters is in constructor...
   // note: actual caption set later
   QFileDialog* fd = new QFileDialog(NULL, "", dir, filterText());
-  fd->selectFile(fname);
-  // we always make and set the extension, but don't always show it
-  taiFileDialogExtension* fde = new taiFileDialogExtension();
-  fde->cbCompress->setEnabled(compressEnabled());
-  fde->cbCompress->setChecked(compressEnabled() && compressReq());
-  fd->setExtension(fde);
-  fd->setOrientation(Qt::Vertical);
-  int rval;
 
   QStringList hist_paths;
-  for(int i=0;i<taMisc::load_paths.size;i++) {
-    hist_paths.append((QString)(const char*)taMisc::load_paths[i]);
-  }
-  fd->setHistory(hist_paths);
 
   String caption;
   switch (filerOperation) {
@@ -2045,6 +2033,22 @@ bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   }
 
   fd->setCaption(caption);
+
+  //  cerr << fname << endl;
+  // todo: for some reason it is not using this arg if the file already exists!
+  fd->selectFile(fname);
+  // we always make and set the extension, but don't always show it
+  taiFileDialogExtension* fde = new taiFileDialogExtension();
+  fde->cbCompress->setEnabled(compressEnabled());
+  fde->cbCompress->setChecked(compressEnabled() && compressReq());
+  fd->setExtension(fde);
+  fd->setOrientation(Qt::Vertical);
+  int rval;
+
+  for(int i=0;i<taMisc::load_paths.size;i++) {
+    hist_paths.append((QString)(const char*)taMisc::load_paths[i]);
+  }
+  fd->setHistory(hist_paths);
 
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   rval = fd->exec();

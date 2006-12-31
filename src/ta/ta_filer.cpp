@@ -583,7 +583,7 @@ ostream* taFiler::Append() {
 //   taFiler		//
 //////////////////////////
 
-// this is not called in the NO_GUI version..
+// this is not called in the NO_GUI version, see ta_qtdialog.cpp
 
 bool taFiler::GetFileName(String& fname, FileOperation filerOperation) {
   return false;

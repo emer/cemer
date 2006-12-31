@@ -740,14 +740,17 @@ String taBase::GetFileNameFmProject(const String& ext, const String& tag, const 
   String proj_base_nm = proj->file_name;
   if(proj_base_nm.contains(".proj"))
     proj_base_nm = proj_base_nm.before(".proj");
-  if(!subdir.empty()) {
+  String sd = subdir;
+  if(!sd.empty()) {
+    if(sd.lastchar() != '/')
+      sd += '/';
     if(proj_base_nm.contains('/')) {
-      String base_dir = proj_base_nm.through('/',-1);
+      String base_dir = proj_base_nm.before('/',-1);
       String fnm = proj_base_nm.after('/',-1);
-      proj_base_nm = base_dir + subdir;
-      if(proj_base_nm.lastchar() != '/')
-	proj_base_nm += '/';
-      proj_base_nm += fnm;
+      proj_base_nm = base_dir + "/" + sd + fnm;
+    }
+    else {
+      proj_base_nm = sd + proj_base_nm;
     }
   }
   String dms;
@@ -840,7 +843,11 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
     flr->fname = fname;
     flr->open_read();
   } else { 
-    flr->fname = GetName(); // filer etc. does auto extension
+    flr->fname = GetFileName(); // filer etc. does auto extension
+    if(flr->fname.contains('/'))
+      flr->fname = flr->fname.after('/',-1);
+    if(flr->fname.empty())
+      flr->fname = GetName();
     flr->Open();
   }
   if(flr->istrm) {
@@ -944,6 +951,8 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     flr->Save();
   } else { 
     flr->fname = GetFileName(); // filer etc. does auto extension
+    if(flr->fname.contains('/'))
+      flr->fname = flr->fname.after('/',-1);
     if(flr->fname.empty())
       flr->fname = GetName();
     flr->SaveAs();
@@ -963,7 +972,11 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
     flr->fname = fname;
     flr->Append();
   } else { 
-    flr->fname = GetName(); // filer etc. does auto extension
+    flr->fname = GetFileName(); // filer etc. does auto extension
+    if(flr->fname.contains('/'))
+      flr->fname = flr->fname.after('/',-1);
+    if(flr->fname.empty())
+      flr->fname = GetName();
     flr->Append();
   }
   
