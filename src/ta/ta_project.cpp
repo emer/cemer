@@ -710,7 +710,9 @@ bool taRootBase::Startup_ProcessArgs() {
 
 bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun, 
 			      TypeDef* root_typ) {
+#ifdef GPROF
   moncontrol(0);		// turn off at start
+#endif
   if(!Startup_InitDMem(argc, argv)) return false;
   if(!Startup_InitTA(ta_init_fun)) return false;
   if(!Startup_InitArgs(argc, argv)) return false;
