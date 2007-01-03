@@ -104,7 +104,7 @@ public:
     // create a new, empty viewer -- note: window not opened yet
   virtual void	UpdateSimLog();
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
-  
+
   override bool		SetFileName(const String& val);
   override int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
@@ -164,6 +164,11 @@ public:
   // #MENU get information/copyright notice
   virtual void	SaveAll() { };
   // saves all the contents of the app object
+
+#ifdef GPROF			// turn on for profiling
+  virtual void  MonControl(bool on);
+  // #MENU set profile monitoring: on=true = on, else off.  starts out off..
+#endif
   
   taBase*	GetTemplateInstance(TypeDef* typ);
   // get an instance of the indicated tab type, or NULL if not found

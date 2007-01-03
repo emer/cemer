@@ -561,13 +561,14 @@ void UnitGroupView::Render_impl_blocks() {
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED);
 
   normal.setNum(5);
-  normal.startEditing();
+  SbVec3f* normal_dat = normal.startEditing();
   int idx=0;
-  normal.set1Value(idx++, 0.0f, 0.0f, -1.0f); // back = 0
-  normal.set1Value(idx++, 1.0f, 0.0f, 0.0f); // right = 1
-  normal.set1Value(idx++, -1.0f, 0.0f, 0.0f); // left = 2
-  normal.set1Value(idx++, 0.0f, 0.0f, 1.0f); // front = 3
-  normal.set1Value(idx++, 0.0f, 1.0f, 0.0f); // top = 4
+  normal_dat[idx++].setValue(0.0f, 0.0f, -1.0f); // back = 0
+  normal_dat[idx++].setValue(1.0f, 0.0f, 0.0f); // right = 1
+  normal_dat[idx++].setValue(-1.0f, 0.0f, 0.0f); // left = 2
+  normal_dat[idx++].setValue(0.0f, 0.0f, 1.0f); // front = 3
+  normal_dat[idx++].setValue(0.0f, 1.0f, 0.0f); // top = 4
+  normal.finishEditing();
 
   // vertex plan: 5 vals per unit: the 0 (first) and the act. each unit renders the lower left
   // corner; add one extra point at ends for the top and right sides of the last guys
@@ -576,10 +577,10 @@ void UnitGroupView::Render_impl_blocks() {
   int n_per_vtx = 8;
   int tot_vtx =  n_geom * n_per_vtx;
   vertex.setNum(tot_vtx);
-  vertex.startEditing();
+  SbVec3f* vertex_dat = vertex.startEditing();
 
   color.setNum(n_geom);
-  color.startEditing();
+  uint32_t* color_dat = color.startEditing();
 
   float trans = nv->view_params.unit_trans;
   float spacing = nv->view_params.unit_spacing;
@@ -634,18 +635,18 @@ void UnitGroupView::Render_impl_blocks() {
       float xp1 = ((float)pos.x+1 - spacing) / nv->max_size.x;
       float yp1 = -((float)pos.y+1 - spacing) / nv->max_size.y;
       float zp = .5f * sc_val / max_z;
-      vertex.set1Value(v_idx++, xp, 0.0f, yp); // 00_0 = 0
-      vertex.set1Value(v_idx++, xp1, 0.0f, yp); // 10_0 = 0
-      vertex.set1Value(v_idx++, xp, 0.0f, yp1); // 01_0 = 0
-      vertex.set1Value(v_idx++, xp1, 0.0f, yp1); // 11_0 = 0
+      vertex_dat[v_idx++].setValue(xp, 0.0f, yp); // 00_0 = 0
+      vertex_dat[v_idx++].setValue(xp1, 0.0f, yp); // 10_0 = 0
+      vertex_dat[v_idx++].setValue(xp, 0.0f, yp1); // 01_0 = 0
+      vertex_dat[v_idx++].setValue(xp1, 0.0f, yp1); // 11_0 = 0
 
-      vertex.set1Value(v_idx++, xp, zp, yp); // 00_v = 1
-      vertex.set1Value(v_idx++, xp1, zp, yp); // 10_v = 2
-      vertex.set1Value(v_idx++, xp, zp, yp1); // 01_v = 3
-      vertex.set1Value(v_idx++, xp1, zp, yp1); // 11_v = 4
+      vertex_dat[v_idx++].setValue(xp, zp, yp); // 00_v = 1
+      vertex_dat[v_idx++].setValue(xp1, zp, yp); // 10_v = 2
+      vertex_dat[v_idx++].setValue(xp, zp, yp1); // 01_v = 3
+      vertex_dat[v_idx++].setValue(xp1, zp, yp1); // 11_v = 4
 
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color.set1Value(c_idx++, T3Color::makePackedRGBA(col.r, col.g, col.b, alpha));
+      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
 
       if(nv->unit_text_disp != NetView::UTD_NONE) {
 	if(build_text || un_txt->getNumChildren() <= t_idx) {
@@ -717,9 +718,9 @@ void UnitGroupView::Render_impl_blocks() {
 
   // triangle strip order is 0 1 2, 2 1 3, 2 3 4
 
-  coords.startEditing();
-  norms.startEditing();
-  mats.startEditing();
+  int32_t* coords_dat = coords.startEditing();
+  int32_t* norms_dat = norms.startEditing();
+  int32_t* mats_dat = mats.startEditing();
   int cidx = 0;
   int nidx = 0;
   int midx = 0;
@@ -739,16 +740,16 @@ void UnitGroupView::Render_impl_blocks() {
       float zval = vertex[c00_v][1]; // "y" coord = 1
 
       if(zval < 0.0f) {			 // do "top" first which is actually bottom!
-	coords.set1Value(cidx++, c01_v); // 0
-	coords.set1Value(cidx++, c11_v); // 1
-	coords.set1Value(cidx++, c00_v); // 2
-	coords.set1Value(cidx++, c10_v); // 3
-	coords.set1Value(cidx++, -1); // -1 -- 5 total
+	coords_dat[cidx++] = (c01_v); // 0
+	coords_dat[cidx++] = (c11_v); // 1
+	coords_dat[cidx++] = (c00_v); // 2
+	coords_dat[cidx++] = (c10_v); // 3
+	coords_dat[cidx++] = (-1); // -1 -- 5 total
 
-	norms.set1Value(nidx++, 4); // top
-	norms.set1Value(nidx++, 4); // top -- 2 total
+	norms_dat[nidx++] = (4); // top
+	norms_dat[nidx++] = (4); // top -- 2 total
 
-	mats.set1Value(midx++, mat_idx);
+	mats_dat[midx++] = (mat_idx);
       }
 
       // back - right
@@ -757,20 +758,20 @@ void UnitGroupView::Render_impl_blocks() {
       //     x    5  
       //   x    4   
 
-      coords.set1Value(cidx++, c01_0); // 0
-      coords.set1Value(cidx++, c01_v); // 1
-      coords.set1Value(cidx++, c11_0); // 2
-      coords.set1Value(cidx++, c11_v); // 3
-      coords.set1Value(cidx++, c10_0); // 4
-      coords.set1Value(cidx++, c10_v); // 5
-      coords.set1Value(cidx++, -1); // -1  -- 7 total
+      coords_dat[cidx++] = (c01_0); // 0
+      coords_dat[cidx++] = (c01_v); // 1
+      coords_dat[cidx++] = (c11_0); // 2
+      coords_dat[cidx++] = (c11_v); // 3
+      coords_dat[cidx++] = (c10_0); // 4
+      coords_dat[cidx++] = (c10_v); // 5
+      coords_dat[cidx++] = (-1); // -1  -- 7 total
 
-      norms.set1Value(nidx++, 0); // back
-      norms.set1Value(nidx++, 0); // back
-      norms.set1Value(nidx++, 1); // right
-      norms.set1Value(nidx++, 1); // right -- 4 total
+      norms_dat[nidx++] = (0); // back
+      norms_dat[nidx++] = (0); // back
+      norms_dat[nidx++] = (1); // right
+      norms_dat[nidx++] = (1); // right -- 4 total
 
-      mats.set1Value(midx++, mat_idx);
+      mats_dat[midx++] = (mat_idx);
 
       // left - front
       //     1    x 
@@ -778,20 +779,20 @@ void UnitGroupView::Render_impl_blocks() {
       //     3    5
       //   2    4   
 
-      coords.set1Value(cidx++, c01_0); // 0
-      coords.set1Value(cidx++, c01_v); // 1
-      coords.set1Value(cidx++, c00_0); // 2
-      coords.set1Value(cidx++, c00_v); // 3
-      coords.set1Value(cidx++, c10_0); // 4
-      coords.set1Value(cidx++, c10_v); // 5
-      coords.set1Value(cidx++, -1); // -1 -- 7 total
+      coords_dat[cidx++] = (c01_0); // 0
+      coords_dat[cidx++] = (c01_v); // 1
+      coords_dat[cidx++] = (c00_0); // 2
+      coords_dat[cidx++] = (c00_v); // 3
+      coords_dat[cidx++] = (c10_0); // 4
+      coords_dat[cidx++] = (c10_v); // 5
+      coords_dat[cidx++] = (-1); // -1 -- 7 total
 
-      norms.set1Value(nidx++, 2); // left
-      norms.set1Value(nidx++, 2); // left
-      norms.set1Value(nidx++, 3); // front
-      norms.set1Value(nidx++, 3); // front -- 4 total
+      norms_dat[nidx++] = (2); // left
+      norms_dat[nidx++] = (2); // left
+      norms_dat[nidx++] = (3); // front
+      norms_dat[nidx++] = (3); // front -- 4 total
 
-      mats.set1Value(midx++, mat_idx);
+      mats_dat[midx++] = (mat_idx);
 
       // triangle strip order is 0 1 2, 2 1 3, 2 3 4
       // top
@@ -801,16 +802,16 @@ void UnitGroupView::Render_impl_blocks() {
       //   x    x  
 
       if(zval >= 0.0f) {		 // only if higher..
-	coords.set1Value(cidx++, c01_v); // 0
-	coords.set1Value(cidx++, c11_v); // 1
-	coords.set1Value(cidx++, c00_v); // 2
-	coords.set1Value(cidx++, c10_v); // 3
-	coords.set1Value(cidx++, -1); // -1 -- 5 total
+	coords_dat[cidx++] = (c01_v); // 0
+	coords_dat[cidx++] = (c11_v); // 1
+	coords_dat[cidx++] = (c00_v); // 2
+	coords_dat[cidx++] = (c10_v); // 3
+	coords_dat[cidx++] = (-1); // -1 -- 5 total
 
-	norms.set1Value(nidx++, 4); // top
-	norms.set1Value(nidx++, 4); // top -- 2 total
+	norms_dat[nidx++] = (4); // top
+	norms_dat[nidx++] = (4); // top -- 2 total
 
-	mats.set1Value(midx++, mat_idx);
+	mats_dat[midx++] = (mat_idx);
       }
 
       // total coords = 7 + 7 + 5 = 19
@@ -1287,6 +1288,7 @@ void NetView::GetMembs() { // this fills a member group with the valid
   membs.Reset();
   if(!net()) return;
   // first do the connections
+  TypeDef* prv_td = NULL;
   Layer* lay;
   taLeafItr l_itr;
   FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
@@ -1294,6 +1296,8 @@ void NetView::GetMembs() { // this fills a member group with the valid
     taLeafItr p_itr;
     FOR_ITR_EL(Projection, prjn, lay->projections., p_itr) {
       TypeDef* td = prjn->con_type;
+      if(td == prv_td) continue; // don't re-scan!
+      prv_td = td;
       int k;
       for (k=0; k<td->members.size; k++) {
 	MemberDef* smd = td->members.FastEl(k);
@@ -1322,7 +1326,6 @@ void NetView::GetMembs() { // this fills a member group with the valid
 
   // then do the unit variables
   FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
-    TypeDef* prv_td = NULL;
     Unit* u;
     taLeafItr u_itr;
     FOR_ITR_EL(Unit, u, lay->units., u_itr) {

@@ -48,6 +48,10 @@
   #include <Inventor/Qt/SoQt.h>
 #endif
 
+#ifdef GPROF			// turn on for profiling
+extern "C" void moncontrol(int mode);
+#endif
+
 //////////////////////////////////
 //	SelectEdit_Group	//
 //////////////////////////////////
@@ -365,6 +369,13 @@ void taRootBase::CutLinks() {
   inherited::CutLinks();
 }
 
+#ifdef GPROF			// turn on for profiling
+void taRootBase::MonControl(bool on) {
+  moncontrol(on);
+}
+#endif
+
+  
 void taRootBase::Info() {
   String info;
   info += "TA/CSS Info\n";
@@ -699,6 +710,7 @@ bool taRootBase::Startup_ProcessArgs() {
 
 bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun, 
 			      TypeDef* root_typ) {
+  moncontrol(0);		// turn off at start
   if(!Startup_InitDMem(argc, argv)) return false;
   if(!Startup_InitTA(ta_init_fun)) return false;
   if(!Startup_InitArgs(argc, argv)) return false;

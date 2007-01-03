@@ -95,6 +95,11 @@ AC_ARG_ENABLE([debug],
 			     [Enable debugging.  @<:@default=disabled@:>@]),
 			     [debug=true],
 			     [debug=false])
+AC_ARG_ENABLE([profile],
+	      AC_HELP_STRING([--enable-profile],
+			     [Enable profiling.  @<:@default=disabled@:>@]),
+			     [profile=true],
+			     [profile=false])
 AC_ARG_ENABLE([plugins],
 	      AC_HELP_STRING([--enable-plugins],
 			     [Enable plugin development support. Source code will be installed to `/usr/local/pdp++/src' and `/usr/local/pdp++/plugins' will be created.  @<:@default=disabled@:>@]),
@@ -112,6 +117,7 @@ AM_CONDITIONAL([RPM],[test $rpm = true])
 AM_CONDITIONAL([TA_GUI],[test $gui = true])
 AM_CONDITIONAL([NO_TA_GUI],[test $gui = false])
 AM_CONDITIONAL([MPI],[test $mpi = true])
+AM_CONDITIONAL([PROFILE],[test $profile = true])
 AM_CONDITIONAL([DEBUG],[test $debug = true])
 AM_CONDITIONAL([LIBTA],[test $libta = true])
 AM_CONDITIONAL([CSS_BIN],[test $css_bin = true])
@@ -240,6 +246,9 @@ if test "$debug" = "true" ; then
 fi
 if test x"$mpi" = x"true"; then
 	PDP_SUFFIX="${PDP_SUFFIX}_mpi"
+fi
+if test x"$profile" = x"true"; then
+	PDP_SUFFIX="${PDP_SUFFIX}_prof"
 fi
 ]) dnl PDP_DETERMINE_SUFFIX
 

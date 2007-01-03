@@ -249,6 +249,14 @@ if test x"$debug" = x"true"; then
 #  SIM_AC_CONFIGURATION_SETTING([CXXFLAGS],[$CXXFLAGS])
 fi
 
+# --enable-profile
+if test x"$profile" = x"true"; then
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-pg -O2, except TA files which are -g -O0])  
+  LDFLAGS="$LDFLAGS -pg"
+  AC_SUBST([OPT_LEVEL],["-pg -O2"])
+  AC_DEFINE([GPROF],[],[enables profiling control functions])
+fi
+
 
 SIM_AC_CONFIGURATION_SETTING([Installation prefix],[$prefix])
 
