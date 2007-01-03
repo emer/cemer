@@ -847,8 +847,10 @@ void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
   // by default, we only expand code guys, not the args, objs, etc.
   taiDataLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
-  if (typ->DerivesFrom(&TA_ProgEl_List))
-    return;
+  if (!(typ->InheritsFrom(&TA_ProgVars)) &&
+    (typ->DerivesFrom(&TA_ProgEl_List) ||
+    typ->InheritsFrom(&TA_ProgEl))
+  )  return;
   // otherwise, nada
   expand = false;
 }
