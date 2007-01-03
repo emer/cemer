@@ -21,8 +21,6 @@ Brad:
 ----------------------
 Browser/Edit/Tab space
 
-tabs:
-
 browser tree stuff:
 
 * better overall system for show/expand/collapse of views:
@@ -31,7 +29,6 @@ browser tree stuff:
       (currently #SHOW_TREE, #HIDDEN_TREE)
     2 and different contexts require different default show/hides
       (currently #TREEFILT_xxx)
-    3 different contexts have different initial default expands
     4 need to be able to dynamically control what is expanded or collapsed,
       primarily for programs but possibly other contexts.  The ideal interface
       would be a list of check-box toggles across bottom with list 
@@ -40,8 +37,6 @@ browser tree stuff:
       show categories.
   proposal:
 
-  * add a new context level to the view directives,
-     ex #
   * consistent naming scheme: all cd's start with #TREE_
   * #SHOW_TREE -> TREE_SHOW, TREE_HIDDEN etc. (these are absolute)
   * context ones are #TREE_HIDDEN_xxx  xxx = context name = Program_Group (*note
@@ -74,12 +69,6 @@ browser tree stuff:
  ProgEl?  Loop -- good to flag loops w/ special color If.. Method etc.. we can
  play with this, but in general syntax highlighting in an editor makes things
  *much* more readable. I almost can't read code anymore without it..
-
-* autoexpand new items (#140): when a new item is added to tree (copy, new) it should
-  be fully expanded by default.
-
-* autoscroll to show new guy (#207, #140): when a new item is added (and expanded)
-  automatically scroll so it is entirely visible.  often it goes off end of bottom.
 
 edit dialogs:
 
@@ -198,6 +187,15 @@ tabs fixed:
 * separate view and edit tabs (keep sep lists)
 * if you do a ... on a token to edit guy, it often doesn't show up. related to 
   edit stuff hanging around forever and it looks like its already being edited?
+browsing:
+* autoexpand new items (#140): when a new item is added to tree (copy, new) it should
+  be fully expanded by default.
+NOTE: cannot necessarily fully expand, so please don't ask for it if it is not
+  expanded to the fifty-gadzillionth level automatically!!!!
+SHIPPING IS A FEATURE
+* autoscroll to show new guy (#207, #140): when a new item is added (and expanded)
+  automatically scroll so it is entirely visible.  often it goes off end of bottom.
+
 
 
 Brad: (won't do)

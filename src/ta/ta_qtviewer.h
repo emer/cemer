@@ -1431,6 +1431,13 @@ public:
   void			setHeaderText(int col, const String& value); // convenience
   int 			maxColChars(int col); // value if set, -1 otherwise
   void			setMaxColChars(int col, int value); // sets max number of chars for that text (when retrieved from the link); elided if greater
+  taMisc::ShowMembs	show() const {return m_show;} 
+  virtual void		setShow(taMisc::ShowMembs value); 
+  const String		showContext() const {return m_show_context;} 
+  virtual void		setShowContext(const String& value)
+    {m_show_context = value;}
+   // ONLY SET DURING CREATE -- THIS IS NOT DYNAMIC
+
   inline TreeViewFlags	tvFlags() const {return (TreeViewFlags)tv_flags;}
   void			setTvFlags(int value);
   
@@ -1447,6 +1454,12 @@ public:
     // clears all the ColDataKeys in the col (provided for completeness)
       
   virtual void		Refresh() {Refresh_impl();} // manually refresh
+  virtual bool		ShowNode(iTreeViewItem* item) const;
+    // whether the node is visible in this show context
+#ifndef __MAKETA__
+  void			scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
+    // convenience static override, to work directly with items
+#endif  
   
   iTreeView(QWidget* parent = 0, int tv_flags = 0);
   ~iTreeView();
@@ -1489,6 +1502,8 @@ protected:
   int			tv_flags;
   String_PArray* 	m_filters; // only created if any added
   short			m_def_exp_levels; // level of default expand, typically 2
+  taMisc::ShowMembs 	m_show;
+  String		m_show_context;
   
   void 			focusInEvent(QFocusEvent* ev); // override
   QFont&		italicFont() const; // so we don't create a new guy each node
@@ -1556,6 +1571,9 @@ public:
   void			DataChanged(int dcr, void* op1, void* op2)
     {DataChanged_impl(dcr, op1, op2);} // primarily to support Refresh
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
+  virtual bool		ShowNode(taMisc::ShowMembs show,
+    const String& context = _nilString) const {return true;}
+    // whether to show the node, given the context
 
   iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeViewItem* parent_,
     iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);
@@ -1671,6 +1689,8 @@ public:
   taBase* 		data() {return ((tabDataLink*)m_link)->data();}
   tabDataLink* 		link() const {return (tabDataLink*)m_link;}
 
+  override bool		ShowNode(taMisc::ShowMembs show,
+    const String& context = _nilString) const;
 
   tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
@@ -1706,7 +1726,7 @@ protected:
   taiTreeDataNode*	last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
   override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void 	CreateChildren_impl(); 
-  void			CreateListItem(taiTreeDataNode* par_node,
+  taiTreeDataNode*	CreateListItem(taiTreeDataNode* par_node,
     taiTreeDataNode* after, taBase* el);
   void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
@@ -1786,7 +1806,7 @@ public:
   taGroup_impl* 	data() {return ((tabGroupDataLink*)m_link)->data();}
   tabGroupDataLink* 	link() const {return (tabGroupDataLink*)m_link;}
 
-  void 			CreateSubGroup(taiTreeDataNode* after, void* el); 
+  taiTreeDataNode*	CreateSubGroup(taiTreeDataNode* after, void* el); 
     // for dynamic changes to tree
   override void		UpdateChildNames(); // #IGNORE
 

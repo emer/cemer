@@ -4318,6 +4318,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
+  m_show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
   italic_font = NULL; 
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1, 
@@ -4624,10 +4625,32 @@ int iTreeView::colFormat(int col) {
   else return v.toInt();
 }
 
+void iTreeView::scrollTo(QTreeWidgetItem* item, ScrollHint hint) {
+  if (!item) return;
+  inherited::scrollTo(indexFromItem(item), hint);
+}
+
 void iTreeView::setColFormat(int col, int value) { 
   if ((col < 0) || (col >= columnCount())) return;
   headerItem()->setData(col, ColFormatRole, value);
 }
+
+void iTreeView::setShow(taMisc::ShowMembs value) {
+  if (m_show == value) return;
+  //TODO:
+  QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::All);
+  QTreeWidgetItem* item_;
+  while ( (item_ = *it) ) {
+    //note: always show QTreeWidgetItem, since we don't know what to do with them
+    iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
+    bool show_it = true;
+    if (item) {
+      show_it = ShowNode(item);
+    }
+    setItemHidden(item_, !show_it);
+    ++it;
+  }
+} 
 
 void iTreeView::setTvFlags(int value) {
   if (tv_flags == value) return;
@@ -4643,6 +4666,11 @@ void iTreeView::showEvent(QShowEvent* ev) {
     tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
   
+}
+
+bool iTreeView::ShowNode(iTreeViewItem* item) const {
+  if (!item) return false; // bad caller!
+  return item->ShowNode(show(), m_show_context);
 }
 
 void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
@@ -5227,6 +5255,16 @@ tabTreeDataNode::~tabTreeDataNode()
 {
 }
 
+bool tabTreeDataNode::ShowNode(taMisc::ShowMembs show,
+    const String& context) const 
+{ 
+  // if not a member, then we just always show, since it must be a list element,
+  // or standalone item whose visibility will be controlled by a parent member somewhere
+  if (!m_md) return true;
+  //TODO: note, context is ignored for now
+  return m_md->ShowMember(show, TypeItem::SC_TREE);
+}
+
 
 //////////////////////////////////
 //   tabParTreeDataNode 	//
@@ -5291,23 +5329,23 @@ void tabParTreeDataNode::CreateChildren_impl() {
   last_list_items_node = last_child_node;
 }
 
-void tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
+taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
   taiTreeDataNode* after, taBase* el) 
 {
-  if (!el) return;
+  if (!el) return NULL;
   taList_impl* list = this->list(); // cache
   TypeDef* typ = el->GetTypeDef();
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-  if (!dl) return; // shouldn't happen unless null...
+  if (!dl) return NULL; // shouldn't happen unless null...
   //note: we don't make name because it is updated anyway
   int dn_flags_tmp = DNF_UPDATE_NAME | DNF_CAN_BROWSE | DNF_CAN_DRAG;
   // check if this is a link
   taBase* own = el->GetOwner(); //note: own=NULL generally means <taOBase items
   if (own && (own != list))
     dn_flags_tmp |= DNF_IS_LINK;
-  //taiTreeDataNode* dn =
-  dl->CreateTreeDataNode((MemberDef*)NULL, par_node, after,
-    _nilString, dn_flags_tmp);
+  taiTreeDataNode* dn = dl->CreateTreeDataNode((MemberDef*)NULL, 
+    par_node, after, _nilString, dn_flags_tmp);
+  return dn;
 }
 
 void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -5318,7 +5356,10 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   case DCR_LIST_ITEM_INSERT: {	// op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_); //null if not found
     if (!after_node) after_node = last_member_node; // insert, after
-    CreateListItem(this, after_node, (taBase*)op1_);
+    taiTreeDataNode* new_node = CreateListItem(this, after_node, (taBase*)op1_);
+    iTreeView* tv = treeView();
+    tv->expandItem(new_node);
+    tv->scrollTo(new_node);
   }
     break;
   case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
@@ -5335,6 +5376,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     if (!after_node) to_idx = indexOfChild(last_member_node); // insert, after
     ++to_idx; // after
     moveChild(fm_idx, to_idx);
+    treeView()->scrollTo(moved_node);
   }
     break;
   case DCR_LIST_ITEMS_SWAP: {	// op1=item1, op2=item2
@@ -5517,22 +5559,25 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
   }
 }
 
-void tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_node, void* el) {
+taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_node,
+  void* el) 
+{
   taSubGroup* gp = &data()->gp;
   TypeDef* typ = gp->GetElType();
   // the subgroups are themselves taGroup items
-  if (!typ) return; //TODO: maybe we should put a marker item in list???
+  if (!typ) return NULL; //TODO: maybe we should put a marker item in list???
   // if we get a taBase item, the type might only be the base type, not the derived type of the item
   // so we cast the item, and then grab the exact type right from the item
   if (typ->InheritsFrom(&TA_taBase)) {
       typ = ((taBase*)el)->GetTypeDef();
   }
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
-  if (!dl) return; // shouldn't happen unless null...
+  if (!dl) return NULL; // shouldn't happen unless null...
 
-//  taiTreeDataNode* dn =
-  dl->CreateTreeDataNode(NULL, this, after_node, "",
-    (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG)); //gets its name in rename
+  taiTreeDataNode* dn = dl->CreateTreeDataNode(NULL, this, after_node, "",
+    (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG));
+     //gets its name in rename
+  return dn;
 }
 
 void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -5543,7 +5588,8 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   case DCR_GROUP_INSERT: {	// op1=item, op2=item_after, null=at beginning
     taiTreeDataNode* after_node = this->FindChildForData(op2_); //null if not found
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
-    CreateSubGroup(after_node, op1_);
+    taiTreeDataNode* new_node = CreateSubGroup(after_node, op1_);
+    treeView()->scrollTo(new_node);
   }
     break;
   case DCR_GROUP_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
@@ -5560,6 +5606,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     if (!after_node) to_idx = indexOfChild(last_list_items_node); // insert, after
     ++to_idx; // after
     moveChild(fm_idx, to_idx);
+    treeView()->scrollTo(moved_node);
   }
     break;
   case DCR_GROUPS_SWAP: {	// op1=item1, op2=item2
