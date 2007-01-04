@@ -411,95 +411,95 @@ void SoFrame::renderH() {
   SoMFVec3f& n = normal();
   int i = 0; // vertex index
   int j = 0; // normal index
-  p.startEditing();
-  n.startEditing();
-    // bottom
-    n.set1Value(j++, 0, -1, 0);
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++,-(w2-inset),-d2, (h2-inset));
-    p.set1Value(i++, w2,-d2, h2);
-    p.set1Value(i++, (w2-inset),-d2, (h2-inset));
-    p.set1Value(i++, w2,-d2,-h2);
-    p.set1Value(i++, (w2-inset),-d2,-(h2-inset));
-    p.set1Value(i++,-w2,-d2,-h2);
-    p.set1Value(i++,-(w2-inset),-d2,-(h2-inset));
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++,-(w2-inset),-d2, (h2-inset));
+  SbVec3f* p_dat = p.startEditing();
+  SbVec3f* n_dat = n.startEditing();
 
-    //outside: l
-    n.set1Value(j++, -1, 0, 0);
-    p.set1Value(i++,-w2, d2,-h2);
-    p.set1Value(i++,-w2,-d2,-h2);
-    p.set1Value(i++,-w2, d2, h2);
-    p.set1Value(i++,-w2,-d2, h2);
+  // bottom
+  n_dat[j++].setValue( 0, -1, 0);
+  p_dat[i++].setValue(-w2,-d2, h2);
+  p_dat[i++].setValue(-(w2-inset),-d2, (h2-inset));
+  p_dat[i++].setValue( w2,-d2, h2);
+  p_dat[i++].setValue( (w2-inset),-d2, (h2-inset));
+  p_dat[i++].setValue( w2,-d2,-h2);
+  p_dat[i++].setValue( (w2-inset),-d2,-(h2-inset));
+  p_dat[i++].setValue(-w2,-d2,-h2);
+  p_dat[i++].setValue(-(w2-inset),-d2,-(h2-inset));
+  p_dat[i++].setValue(-w2,-d2, h2);
+  p_dat[i++].setValue(-(w2-inset),-d2, (h2-inset));
 
-    //outside: bk
-    n.set1Value(j++, 0, 0, -1);
-    p.set1Value(i++, w2,-d2,-h2);
-    p.set1Value(i++,-w2,-d2,-h2);
-    p.set1Value(i++, w2, d2,-h2);
-    p.set1Value(i++,-w2, d2,-h2);
+  //outside: l
+  n_dat[j++].setValue( -1, 0, 0);
+  p_dat[i++].setValue(-w2, d2,-h2);
+  p_dat[i++].setValue(-w2,-d2,-h2);
+  p_dat[i++].setValue(-w2, d2, h2);
+  p_dat[i++].setValue(-w2,-d2, h2);
 
-    //outside: r
-    n.set1Value(j++, 1, 0, 0);
-    p.set1Value(i++, w2,-d2,-h2);
-    p.set1Value(i++, w2, d2,-h2);
-    p.set1Value(i++, w2,-d2, h2);
-    p.set1Value(i++, w2, d2, h2);
+  //outside: bk
+  n_dat[j++].setValue( 0, 0, -1);
+  p_dat[i++].setValue( w2,-d2,-h2);
+  p_dat[i++].setValue(-w2,-d2,-h2);
+  p_dat[i++].setValue( w2, d2,-h2);
+  p_dat[i++].setValue(-w2, d2,-h2);
 
-    //outside: fr
-    n.set1Value(j++, 0, 0, 1);
-    p.set1Value(i++, w2,-d2, h2);
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++, w2, d2, h2);
-    p.set1Value(i++,-w2, d2, h2);
+  //outside: r
+  n_dat[j++].setValue( 1, 0, 0);
+  p_dat[i++].setValue( w2,-d2,-h2);
+  p_dat[i++].setValue( w2, d2,-h2);
+  p_dat[i++].setValue( w2,-d2, h2);
+  p_dat[i++].setValue( w2, d2, h2);
 
-    // top
-    n.set1Value(j++, 0, 1, 0);
-    p.set1Value(i++,-w2, d2, h2);
-    p.set1Value(i++,-(w2-inset), d2, h2-inset);
-    p.set1Value(i++,-w2, d2,-h2);
-    p.set1Value(i++,-(w2-inset), d2,-(h2-inset));
-    p.set1Value(i++, w2, d2,-h2);
-    p.set1Value(i++, (w2-inset), d2,-(h2-inset));
-    p.set1Value(i++, w2, d2, h2);
-    p.set1Value(i++, (w2-inset), d2, (h2-inset));
-    p.set1Value(i++,-w2, d2, h2);
-    p.set1Value(i++,-(w2-inset), d2, h2-inset);
-    // inside
-    w2 -= inset;
-    h2 -= inset;
-    //inside: l
-    n.set1Value(j++, 1, 0, 0);
-    p.set1Value(i++,-w2, d2,-h2);
-    p.set1Value(i++,-w2,-d2,-h2);
-    p.set1Value(i++,-w2, d2, h2);
-    p.set1Value(i++,-w2,-d2, h2);
+  //outside: fr
+  n_dat[j++].setValue( 0, 0, 1);
+  p_dat[i++].setValue( w2,-d2, h2);
+  p_dat[i++].setValue(-w2,-d2, h2);
+  p_dat[i++].setValue( w2, d2, h2);
+  p_dat[i++].setValue(-w2, d2, h2);
 
-    //inside: bk
-    n.set1Value(j++, 0, 0, 1);
-    p.set1Value(i++, w2,-d2,-h2);
-    p.set1Value(i++,-w2,-d2,-h2);
-    p.set1Value(i++, w2, d2,-h2);
-    p.set1Value(i++,-w2, d2,-h2);
+  // top
+  n_dat[j++].setValue( 0, 1, 0);
+  p_dat[i++].setValue(-w2, d2, h2);
+  p_dat[i++].setValue(-(w2-inset), d2, h2-inset);
+  p_dat[i++].setValue(-w2, d2,-h2);
+  p_dat[i++].setValue(-(w2-inset), d2,-(h2-inset));
+  p_dat[i++].setValue( w2, d2,-h2);
+  p_dat[i++].setValue( (w2-inset), d2,-(h2-inset));
+  p_dat[i++].setValue( w2, d2, h2);
+  p_dat[i++].setValue( (w2-inset), d2, (h2-inset));
+  p_dat[i++].setValue(-w2, d2, h2);
+  p_dat[i++].setValue(-(w2-inset), d2, h2-inset);
+  // inside
+  w2 -= inset;
+  h2 -= inset;
+  //inside: l
+  n_dat[j++].setValue( 1, 0, 0);
+  p_dat[i++].setValue(-w2, d2,-h2);
+  p_dat[i++].setValue(-w2,-d2,-h2);
+  p_dat[i++].setValue(-w2, d2, h2);
+  p_dat[i++].setValue(-w2,-d2, h2);
 
-    //inside: r
-    n.set1Value(j++, -1, 0, 0);
-    p.set1Value(i++, w2,-d2,-h2);
-    p.set1Value(i++, w2, d2,-h2);
-    p.set1Value(i++, w2,-d2, h2);
-    p.set1Value(i++, w2, d2, h2);
+  //inside: bk
+  n_dat[j++].setValue( 0, 0, 1);
+  p_dat[i++].setValue( w2,-d2,-h2);
+  p_dat[i++].setValue(-w2,-d2,-h2);
+  p_dat[i++].setValue( w2, d2,-h2);
+  p_dat[i++].setValue(-w2, d2,-h2);
 
-    //inside: fr
-    n.set1Value(j++, 0, 0, -1);
-    p.set1Value(i++, w2,-d2, h2);
-    p.set1Value(i++,-w2,-d2, h2);
-    p.set1Value(i++, w2, d2, h2);
-    p.set1Value(i++,-w2, d2, h2);
+  //inside: r
+  n_dat[j++].setValue( -1, 0, 0);
+  p_dat[i++].setValue( w2,-d2,-h2);
+  p_dat[i++].setValue( w2, d2,-h2);
+  p_dat[i++].setValue( w2,-d2, h2);
+  p_dat[i++].setValue( w2, d2, h2);
+
+  //inside: fr
+  n_dat[j++].setValue( 0, 0, -1);
+  p_dat[i++].setValue( w2,-d2, h2);
+  p_dat[i++].setValue(-w2,-d2, h2);
+  p_dat[i++].setValue( w2, d2, h2);
+  p_dat[i++].setValue(-w2, d2, h2);
 
   n.finishEditing();
   p.finishEditing();
-
 }
 
 void SoFrame::renderV() {
@@ -511,92 +511,91 @@ void SoFrame::renderV() {
   SoMFVec3f& n = normal();
   int i = 0; // vertex index
   int j = 0; // normal index
-  p.startEditing();
-  n.startEditing();
-    // back
-    n.set1Value(j++, 0, 0, -1);
-    p.set1Value(i++,-w2, h2, -d2);
-    p.set1Value(i++,-(w2-inset), (h2-inset), -d2);
-    p.set1Value(i++, w2, h2, -d2);
-    p.set1Value(i++, (w2-inset), (h2-inset), -d2);
-    p.set1Value(i++, w2,-h2, -d2);
-    p.set1Value(i++, (w2-inset),-(h2-inset), -d2);
-    p.set1Value(i++,-w2,-h2, -d2);
-    p.set1Value(i++,-(w2-inset),-(h2-inset), -d2);
-    p.set1Value(i++,-w2, h2, -d2);
-    p.set1Value(i++,-(w2-inset),(h2-inset), -d2);
+  SbVec3f* p_dat = p.startEditing();
+  SbVec3f* n_dat = n.startEditing();
+  // back
+  n_dat[j++].setValue( 0, 0, -1);
+  p_dat[i++].setValue(-w2, h2, -d2);
+  p_dat[i++].setValue(-(w2-inset), (h2-inset), -d2);
+  p_dat[i++].setValue( w2, h2, -d2);
+  p_dat[i++].setValue( (w2-inset), (h2-inset), -d2);
+  p_dat[i++].setValue( w2,-h2, -d2);
+  p_dat[i++].setValue( (w2-inset),-(h2-inset), -d2);
+  p_dat[i++].setValue(-w2,-h2, -d2);
+  p_dat[i++].setValue(-(w2-inset),-(h2-inset), -d2);
+  p_dat[i++].setValue(-w2, h2, -d2);
+  p_dat[i++].setValue(-(w2-inset),(h2-inset), -d2);
 
-    //outside: l
-    n.set1Value(j++, -1, 0, 0);
-    p.set1Value(i++,-w2,-h2,-d2);
-    p.set1Value(i++,-w2, h2,-d2);
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++,-w2, h2, d2);
+  //outside: l
+  n_dat[j++].setValue( -1, 0, 0);
+  p_dat[i++].setValue(-w2,-h2,-d2);
+  p_dat[i++].setValue(-w2, h2,-d2);
+  p_dat[i++].setValue(-w2,-h2, d2);
+  p_dat[i++].setValue(-w2, h2, d2);
 
-    //outside: tp
-    n.set1Value(j++, 0, 1, 0);
-    p.set1Value(i++,-w2, h2,-d2);
-    p.set1Value(i++, w2, h2,-d2);
-    p.set1Value(i++,-w2, h2, d2);
-    p.set1Value(i++, w2, h2, d2);
+  //outside: tp
+  n_dat[j++].setValue( 0, 1, 0);
+  p_dat[i++].setValue(-w2, h2,-d2);
+  p_dat[i++].setValue( w2, h2,-d2);
+  p_dat[i++].setValue(-w2, h2, d2);
+  p_dat[i++].setValue( w2, h2, d2);
 
-    //outside: r
-    n.set1Value(j++, 1, 0, 0);
-    p.set1Value(i++, w2, h2,-d2);
-    p.set1Value(i++, w2,-h2,-d2);
-    p.set1Value(i++, w2, h2, d2);
-    p.set1Value(i++, w2,-h2, d2);
+  //outside: r
+  n_dat[j++].setValue( 1, 0, 0);
+  p_dat[i++].setValue( w2, h2,-d2);
+  p_dat[i++].setValue( w2,-h2,-d2);
+  p_dat[i++].setValue( w2, h2, d2);
+  p_dat[i++].setValue( w2,-h2, d2);
 
-    //outside: bt
-    n.set1Value(j++, 0, -1, 0);
-    p.set1Value(i++, w2,-h2,-d2);
-    p.set1Value(i++,-w2,-h2,-d2);
-    p.set1Value(i++, w2,-h2, d2);
-    p.set1Value(i++,-w2,-h2, d2);
+  //outside: bt
+  n_dat[j++].setValue( 0, -1, 0);
+  p_dat[i++].setValue( w2,-h2,-d2);
+  p_dat[i++].setValue(-w2,-h2,-d2);
+  p_dat[i++].setValue( w2,-h2, d2);
+  p_dat[i++].setValue(-w2,-h2, d2);
 
-    // front
-    n.set1Value(j++, 0, 0, 1);
-    p.set1Value(i++,-w2, h2, d2);
-    p.set1Value(i++,-(w2-inset), (h2-inset), d2);
-    p.set1Value(i++, w2, h2, d2);
-    p.set1Value(i++, (w2-inset), (h2-inset), d2);
-    p.set1Value(i++, w2,-h2, d2);
-    p.set1Value(i++, (w2-inset),-(h2-inset), d2);
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++,-(w2-inset),-(h2-inset), d2);
-    p.set1Value(i++,-w2, h2, d2);
-    p.set1Value(i++,-(w2-inset),(h2-inset), d2);
+  // front
+  n_dat[j++].setValue( 0, 0, 1);
+  p_dat[i++].setValue(-w2, h2, d2);
+  p_dat[i++].setValue(-(w2-inset), (h2-inset), d2);
+  p_dat[i++].setValue( w2, h2, d2);
+  p_dat[i++].setValue( (w2-inset), (h2-inset), d2);
+  p_dat[i++].setValue( w2,-h2, d2);
+  p_dat[i++].setValue( (w2-inset),-(h2-inset), d2);
+  p_dat[i++].setValue(-w2,-h2, d2);
+  p_dat[i++].setValue(-(w2-inset),-(h2-inset), d2);
+  p_dat[i++].setValue(-w2, h2, d2);
+  p_dat[i++].setValue(-(w2-inset),(h2-inset), d2);
 
-    w2 -= inset;
-    h2 -= inset;
-    //inside: l
-    n.set1Value(j++, 1, 0, 0);
-    p.set1Value(i++,-w2,-h2,-d2);
-    p.set1Value(i++,-w2, h2,-d2);
-    p.set1Value(i++,-w2,-h2, d2);
-    p.set1Value(i++,-w2, h2, d2);
+  w2 -= inset;
+  h2 -= inset;
+  //inside: l
+  n_dat[j++].setValue( 1, 0, 0);
+  p_dat[i++].setValue(-w2,-h2,-d2);
+  p_dat[i++].setValue(-w2, h2,-d2);
+  p_dat[i++].setValue(-w2,-h2, d2);
+  p_dat[i++].setValue(-w2, h2, d2);
 
-    //inside: tp
-    n.set1Value(j++, 0, -1, 0);
-    p.set1Value(i++,-w2, h2,-d2);
-    p.set1Value(i++, w2, h2,-d2);
-    p.set1Value(i++,-w2, h2, d2);
-    p.set1Value(i++, w2, h2, d2);
+  //inside: tp
+  n_dat[j++].setValue( 0, -1, 0);
+  p_dat[i++].setValue(-w2, h2,-d2);
+  p_dat[i++].setValue( w2, h2,-d2);
+  p_dat[i++].setValue(-w2, h2, d2);
+  p_dat[i++].setValue( w2, h2, d2);
 
-    //inside: r
-    n.set1Value(j++, -1, 0, 0);
-    p.set1Value(i++, w2, h2,-d2);
-    p.set1Value(i++, w2,-h2,-d2);
-    p.set1Value(i++, w2, h2, d2);
-    p.set1Value(i++, w2,-h2, d2);
+  //inside: r
+  n_dat[j++].setValue( -1, 0, 0);
+  p_dat[i++].setValue( w2, h2,-d2);
+  p_dat[i++].setValue( w2,-h2,-d2);
+  p_dat[i++].setValue( w2, h2, d2);
+  p_dat[i++].setValue( w2,-h2, d2);
 
-    //inside: bt
-    n.set1Value(j++, 0, 1, 0);
-    p.set1Value(i++, w2,-h2,-d2);
-    p.set1Value(i++,-w2,-h2,-d2);
-    p.set1Value(i++, w2,-h2, d2);
-    p.set1Value(i++,-w2,-h2, d2);
-
+  //inside: bt
+  n_dat[j++].setValue( 0, 1, 0);
+  p_dat[i++].setValue( w2,-h2,-d2);
+  p_dat[i++].setValue(-w2,-h2,-d2);
+  p_dat[i++].setValue( w2,-h2, d2);
+  p_dat[i++].setValue(-w2,-h2, d2);
 
   n.finishEditing();
   p.finishEditing();
@@ -672,16 +671,18 @@ void SoRect::render() {
   SoMFVec3f& n = normal();
   int i = 0; // vertex index
   int j = 0; // normal index
-  p.startEditing();
-  n.startEditing();
-    // front
-    n.set1Value(j++, 0, 0, 1);
-    p.set1Value(i++,-w2,  h2, 0);
-    p.set1Value(i++, w2,  h2, 0);
-    p.set1Value(i++, w2, -h2, 0);
-    p.set1Value(i++,-w2,  h2, 0);
-    p.set1Value(i++,-w2, -h2, 0);
-    p.set1Value(i++, w2, -h2, 0);
+  SbVec3f* p_dat = p.startEditing();
+  SbVec3f* n_dat = n.startEditing();
+
+  // front
+  n_dat[j++].setValue( 0, 0, 1);
+  p_dat[i++].setValue(-w2,  h2, 0);
+  p_dat[i++].setValue( w2,  h2, 0);
+  p_dat[i++].setValue( w2, -h2, 0);
+  p_dat[i++].setValue(-w2,  h2, 0);
+  p_dat[i++].setValue(-w2, -h2, 0);
+  p_dat[i++].setValue( w2, -h2, 0);
+
   n.finishEditing();
   p.finishEditing();
 

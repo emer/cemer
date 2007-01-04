@@ -203,6 +203,10 @@ public:
   float 		GetUnitDisplayVal(const TwoDCoord& co, int unit_md_flags); // get val for unit at co
   void 			UpdateUnitViewBase(MemberDef* disp_md, Unit* src_u, bool& con_md);
   // set the base for the given md; src_u only used for s./r. values (sets con_md true if con)
+  virtual void		UpdateUnitValues();
+  // *only* updates unit values 
+  virtual void		UpdateUnitValues_blocks();
+  // *only* updates unit values: optimized blocks mode
 
   T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
@@ -258,6 +262,8 @@ public:
   T3LayerNode*		node_so() const {return (T3LayerNode*)m_node_so.ptr();}
 
   override void		BuildAll(); // creates fully populated subviews
+  virtual void		UpdateUnitValues();
+  // *only* updates unit values 
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerView, nvDataView)
@@ -387,7 +393,10 @@ public:
   void			SetScaleData(bool auto_scale, float scale_min, float scale_max,
     bool update_panel = true); // updates the values in us and the stored ones in the colorscale list
   void 			SetScaleDefault(); //revert scale to its default
-  virtual void		UpdateDisplay(bool update_panel = true); // updates dynamic values, esp. Unit values
+  virtual void		UpdateDisplay(bool update_panel = true);
+  // re-renders entire display
+  virtual void		UpdateUnitValues();
+  // *only* updates unit values 
   virtual void 		UpdatePanel(); // updates nvp, esp. after UAE etc.
 
   override void		DataUpdateView_impl();
@@ -428,7 +437,9 @@ INHERITED(iViewPanelFrame)
 public:
 
   QVBoxLayout*		layOuter;
+  QVBoxLayout*		layViewParams;
   QHBoxLayout*		layDispCheck;
+  QHBoxLayout*		layFontsEtc;
   QCheckBox*		chkDisplay;
   QLabel*		lblUnitText;
   taiComboBox*		cmbUnitText;

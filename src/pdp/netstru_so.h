@@ -34,6 +34,7 @@ class SoCube; // #IGNORE
 class SoCylinder; // #IGNORE
 class SoFont; // #IGNORE
 class SoIndexedTriangleStripSet; // #IGNORE
+class SoVertexProperty;		 // #IGNORE
 class SoTranslate2Dragger; // #IGNORE
 class SoTransformBoxDragger; // #IGNORE
 class SoCalculator; // #IGNORE
@@ -224,6 +225,7 @@ public:
   void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
   // sets (actual) geom of group; creates/positions units; setes max_size
   SoIndexedTriangleStripSet* shape() {return shape_;}
+  SoVertexProperty* 	vtxProp() {return vtx_prop_;}
   SoSeparator*		unitText() {return unit_text_;} // extra text of unit vars
   SoSeparator*		getUnitText();		      // get a new unit text separator
   void			removeUnitText();	      // remove unit text separator
@@ -239,6 +241,7 @@ protected:
 
 private:
   SoIndexedTriangleStripSet*	shape_;
+  SoVertexProperty*	vtx_prop_;
   SoSeparator* 		unit_text_; // unit text variables
 };
 

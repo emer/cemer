@@ -546,13 +546,17 @@ void UnitGroupView::Render_impl_children() {
 }
 
 void UnitGroupView::Render_impl_blocks() {
+  // this function just does all the memory allocation and static configuration
+  // that doesn't depend on unit values, then it calls UpdateUnitValues
+  // which sets all the values!
+
   NetView* nv = this->nv(); //cache
   Unit_Group* ugrp = this->ugrp(); //cache
   T3UnitGroupNode* node_so = this->node_so(); // cache
   SoIndexedTriangleStripSet* sits = node_so->shape();
+  SoVertexProperty* vtx_prop = node_so->vtxProp();
+  if(!sits || !vtx_prop) return; // something wrong..
 
-  SoVertexProperty* vtx_prop = new SoVertexProperty;
-  sits->vertexProperty.setValue(vtx_prop); // note: vp refs/unrefs automatically
   SoMFVec3f& vertex = vtx_prop->vertex;
   SoMFVec3f& normal = vtx_prop->normal;
   SoMFUInt32& color = vtx_prop->orderedRGBA;
@@ -570,19 +574,12 @@ void UnitGroupView::Render_impl_blocks() {
   normal_dat[idx++].setValue(0.0f, 1.0f, 0.0f); // top = 4
   normal.finishEditing();
 
-  // vertex plan: 5 vals per unit: the 0 (first) and the act. each unit renders the lower left
-  // corner; add one extra point at ends for the top and right sides of the last guys
-
   int n_geom = ugrp->geom.Product();
   int n_per_vtx = 8;
   int tot_vtx =  n_geom * n_per_vtx;
   vertex.setNum(tot_vtx);
-  SbVec3f* vertex_dat = vertex.startEditing();
-
   color.setNum(n_geom);
-  uint32_t* color_dat = color.startEditing();
 
-  float trans = nv->view_params.unit_trans;
   float spacing = nv->view_params.unit_spacing;
   float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
   max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
@@ -613,6 +610,8 @@ void UnitGroupView::Render_impl_blocks() {
     fnt->size.setValue(ufontsz);
   }
 
+  SbVec3f* vertex_dat = vertex.startEditing();
+
   String val_str;
   String unit_name;
   float val;
@@ -625,28 +624,22 @@ void UnitGroupView::Render_impl_blocks() {
   // these go in normal order; indexes are backwards
   for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
-      nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
       Unit* unit = ugrp->FindUnitFmCoord(pos);
-      if(nv->unit_con_md && (unit == nv->unit_src)) {
-	col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
-      }
       float xp = ((float)pos.x + spacing) / nv->max_size.x;
       float yp = -((float)pos.y + spacing) / nv->max_size.y;
       float xp1 = ((float)pos.x+1 - spacing) / nv->max_size.x;
       float yp1 = -((float)pos.y+1 - spacing) / nv->max_size.y;
-      float zp = .5f * sc_val / max_z;
+      float zp = .5f / max_z;
       vertex_dat[v_idx++].setValue(xp, 0.0f, yp); // 00_0 = 0
       vertex_dat[v_idx++].setValue(xp1, 0.0f, yp); // 10_0 = 0
       vertex_dat[v_idx++].setValue(xp, 0.0f, yp1); // 01_0 = 0
       vertex_dat[v_idx++].setValue(xp1, 0.0f, yp1); // 11_0 = 0
 
+      // zp will be updated later!
       vertex_dat[v_idx++].setValue(xp, zp, yp); // 00_v = 1
       vertex_dat[v_idx++].setValue(xp1, zp, yp); // 10_v = 2
       vertex_dat[v_idx++].setValue(xp, zp, yp1); // 01_v = 3
       vertex_dat[v_idx++].setValue(xp1, zp, yp1); // 11_v = 4
-
-      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
 
       if(nv->unit_text_disp != NetView::UTD_NONE) {
 	if(build_text || un_txt->getNumChildren() <= t_idx) {
@@ -666,7 +659,7 @@ void UnitGroupView::Render_impl_blocks() {
 	tr->translation.setValue(xfp, MAX(zp,0.0f) + .01f, yp);
 	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 	if(nv->unit_text_disp & NetView::UTD_VALUES) {
-	  ValToDispText(val, val_str);
+	  ValToDispText(0.0f, val_str);
 	}
 	if(nv->unit_text_disp & NetView::UTD_NAMES) {
 	  if(unit)
@@ -694,7 +687,6 @@ void UnitGroupView::Render_impl_blocks() {
     }
   }
   vertex.finishEditing();
-  color.finishEditing();
 
   // todo: could cleanup un_txt child list if extras, but not clear if needed
 
@@ -822,6 +814,96 @@ void UnitGroupView::Render_impl_blocks() {
   coords.finishEditing();
   norms.finishEditing();
   mats.finishEditing();
+
+  UpdateUnitValues_blocks();		// hand off to next guy..
+}
+
+void UnitGroupView::UpdateUnitValues_blocks() {
+  NetView* nv = this->nv(); //cache
+  Unit_Group* ugrp = this->ugrp(); //cache
+  T3UnitGroupNode* node_so = this->node_so(); // cache
+  SoIndexedTriangleStripSet* sits = node_so->shape();
+  SoVertexProperty* vtx_prop = node_so->vtxProp();
+  if(!sits || !vtx_prop) return; // something wrong..
+
+  SoMFVec3f& vertex = vtx_prop->vertex;
+  SoMFVec3f& normal = vtx_prop->normal;
+  SoMFUInt32& color = vtx_prop->orderedRGBA;
+
+  int n_geom = ugrp->geom.Product();
+  int n_per_vtx = 8;
+  int tot_vtx =  n_geom * n_per_vtx;
+
+  SbVec3f* vertex_dat = vertex.startEditing();
+  uint32_t* color_dat = color.startEditing();
+
+  float trans = nv->view_params.unit_trans;
+  float spacing = nv->view_params.unit_spacing;
+  float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
+  max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
+
+  bool build_text = false;
+  SoSeparator* un_txt = node_so->unitText();
+
+  String val_str;
+  String unit_name;
+  float val;
+  float sc_val;
+  T3Color col;
+  TwoDCoord pos;
+  int v_idx = 0;
+  int c_idx = 0;
+  int t_idx = 2;		// base color + font
+  // these go in normal order; indexes are backwards
+  for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
+    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
+      nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
+      Unit* unit = ugrp->FindUnitFmCoord(pos);
+      if(nv->unit_con_md && (unit == nv->unit_src)) {
+	col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
+      }
+      float zp = .5f * sc_val / max_z;
+      v_idx+=4;			// skip the _0 cases
+
+      vertex_dat[v_idx++][1] = zp; // 00_v = 1
+      vertex_dat[v_idx++][1] = zp; // 10_v = 2
+      vertex_dat[v_idx++][1] = zp; // 01_v = 3
+      vertex_dat[v_idx++][1] = zp; // 11_v = 4
+
+      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+
+      if(nv->unit_text_disp & NetView::UTD_VALUES) {
+	SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
+	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+	SoMFString* mfs = &(txt->string);
+	ValToDispText(val, val_str);
+	switch (nv->unit_text_disp) {
+	case NetView::UTD_VALUES:
+	  mfs->setValue(val_str.chars());
+	  break;
+	case NetView::UTD_NAMES:
+	  break;
+	case NetView::UTD_BOTH:
+	  mfs->set1Value(0, val_str.chars());
+	  break;
+	default: break; // compiler food, won't happen
+	}
+	t_idx++;
+      }
+    }
+  }
+  vertex.finishEditing();
+  color.finishEditing();
+}
+
+void UnitGroupView::UpdateUnitValues() {
+  NetView* nv = this->nv(); //cache
+  if(nv->unit_disp_mode == NetView::UDM_BLOCK) {
+    UpdateUnitValues_blocks();
+    return;
+  }
+  Render_impl_children();
 }
 
 void UnitGroupView::Reset_impl() {
@@ -883,6 +965,25 @@ void LayerView::BuildAll() {
 
 //      int flags = 0;// BrListViewItem::DNF_UPDATE_NAME | BrListViewItem::DNF_CAN_BROWSE| BrListViewItem::DNF_CAN_DRAG;
 //      last_child_node = dl->CreateT3Node(par_node, last_child_node, node_nm, flags);
+    }
+  }
+}
+
+void LayerView::UpdateUnitValues() { // *actually* only does unit value updating
+  int ch_idx = 0;
+  Layer* lay = layer(); //cache
+  Unit_Group* ugrp;
+  UnitGroupView* ugv;
+  if(!lay->unit_groups) { // single ugrp
+    UnitGroupView* ugv = (UnitGroupView*)children.FastEl(ch_idx++);
+    ugv->UpdateUnitValues();
+  }
+  else { // multi-ugrps
+    for (int j = 0; j < lay->gp_geom.n; ++j) {
+      ugrp = (Unit_Group*)lay->units.SafeGp(j);
+      if (!ugrp) break; // maybe not built yet???
+      UnitGroupView* ugv = (UnitGroupView*)children.FastEl(ch_idx++);
+      ugv->UpdateUnitValues();
     }
   }
 }
@@ -1787,14 +1888,28 @@ void NetView::UpdateAutoScale() {
   }
 }
 
-void NetView::UpdateDisplay(bool update_panel) { // updates dynamic values, esp. Unit values
-  if (!display) return;
+void NetView::UpdateDisplay(bool update_panel) { // redoes everything
+//   if (!display) return;
   if (update_panel) UpdatePanel();
   Render_impl();
 }
 
+void NetView::UpdateUnitValues() { // *actually* only does unit value updating
+  if (!display) return;
+
+  int ch_idx = 0;
+  Layer* lay;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, lay, net()->layers., i) {
+    LayerView* lv = (LayerView*)children.FastEl(ch_idx++);
+    lv->UpdateUnitValues();
+  }
+  taiMisc::RunPending();
+}
+
 void NetView::DataUpdateView_impl() {
-  UpdateDisplay(false);
+//   UpdateDisplay(false);
+  UpdateUnitValues();
 }
 
 void NetView::UpdatePanel() {
@@ -1833,12 +1948,16 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layOuter = new QVBoxLayout(widg);
-  layOuter->setSpacing(taiM->vspc_c);
+  layOuter->setSpacing(taiM->vsep_c);
 
-  layDispCheck = new QHBoxLayout(layOuter);
+  layViewParams = new QVBoxLayout(layOuter);
+  layViewParams->setSpacing(taiM->vsep_c);
+
+  layDispCheck = new QHBoxLayout(layViewParams);
   chkDisplay = new QCheckBox("Display", widg);
+
   layDispCheck->addWidget(chkDisplay);
-  layDispCheck->addSpacing(taiM->hspc_c);
+  layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
@@ -1846,7 +1965,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
     NULL, NULL, widg);
   layDispCheck->addWidget(cmbUnitText->GetRep());
-  layDispCheck->addSpacing(taiM->hspc_c);
+  layDispCheck->addSpacing(taiM->hsep_c);
 
   lblDispMode = taiM->NewLabel("Style", widg, font_spec);
   lblDispMode->setToolTip("How to display unit values.  3d Block (default) is optimized\n\
@@ -1857,28 +1976,30 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
+  layFontsEtc = new QHBoxLayout(layViewParams);
+
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
   lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
-  layDispCheck->addWidget(lblUnitTrans);
+  layFontsEtc->addWidget(lblUnitTrans);
   fldUnitTrans = new taiField(&TA_float, NULL, NULL, widg);
-  layDispCheck->addWidget(fldUnitTrans->GetRep());
-  layDispCheck->addSpacing(taiM->hspc_c);
+  layFontsEtc->addWidget(fldUnitTrans->GetRep());
+  layFontsEtc->addSpacing(taiM->hsep_c);
   connect(fldUnitTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitTrans_textChanged()) );
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
   lblUnitFont->setToolTip("Unit text font size (as a proportion of entire network display). .02 is default.");
-  layDispCheck->addWidget(lblUnitFont);
+  layFontsEtc->addWidget(lblUnitFont);
   fldUnitFont = new taiField(&TA_float, NULL, NULL, widg);
-  layDispCheck->addWidget(fldUnitFont->GetRep());
-  //  layDispCheck->addSpacing(taiM->hspc_c);
+  layFontsEtc->addWidget(fldUnitFont->GetRep());
+  layFontsEtc->addSpacing(taiM->hsep_c);
   connect(fldUnitFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitFont_textChanged()) );
 
   lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
   lblLayFont->setToolTip("Layer name font size (as a proportion of entire network display). .04 is default.");
-  layDispCheck->addWidget(lblLayFont);
+  layFontsEtc->addWidget(lblLayFont);
   fldLayFont = new taiField(&TA_float, NULL, NULL, widg);
-  layDispCheck->addWidget(fldLayFont->GetRep());
-  //  layDispCheck->addSpacing(taiM->hspc_c);
+  layFontsEtc->addWidget(fldLayFont->GetRep());
+  layFontsEtc->addSpacing(taiM->hsep_c);
   connect(fldLayFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldLayFont_textChanged()) );
 
   gbDisplayValues = new QGroupBox("Display Values", widg);

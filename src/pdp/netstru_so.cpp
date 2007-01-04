@@ -331,9 +331,13 @@ T3UnitGroupNode::T3UnitGroupNode(void* dataView_, bool no_unts)
   no_units = no_unts;
   if(no_units) {
     shape_ = new SoIndexedTriangleStripSet;
+    vtx_prop_ = new SoVertexProperty;
+    shape_->vertexProperty.setValue(vtx_prop_); // note: vp refs/unrefs automatically
     ss->addChild(shape_);
   }
   else {
+    shape_ = NULL;
+    vtx_prop_ = NULL;
     SoCallback* cb = new SoCallback();
     cb->setCallback(shapeCallback, (void*)this);
     insertChildAfter(topSeparator(), cb, transform());
