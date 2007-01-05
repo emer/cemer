@@ -20,7 +20,6 @@
 #include "ta_platform.h"
 #include "ta_variant.h"
 
-
 #ifndef NO_TA_BASE
 # include "ta_group.h"
 # include "ta_dump.h"
@@ -782,16 +781,11 @@ void taMisc::Init_Hooks() {
 
 void taMisc::Init_Defaults_PreLoadConfig() {
   // set any default settings prior to loading config file (will be overwritten)
-  user_home = QDir::homeDirPath();
+  user_home = GetHomePath();
   pkg_home = inst_prefix + "/" + pkg_dir;
 }
 
 void taMisc::Init_Defaults_PostLoadConfig() {
-// #ifdef DEBUG
-//   // note: this is just for temporary use until config.h is updated to include path
-//   pkg_home = QDir::homeDirPath() + "/pdp4.0/trunk";
-// #endif
-
   // set any default settings after loading config file (ensures certain key settings in place)
   css_include_paths.AddUnique(pkg_home + "/css_stdlib");
   css_include_paths.AddUnique(user_home + "/css_mylib");
@@ -801,7 +795,7 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   prog_lib_paths.AddUnique(NameVar("UserLib", (Variant)(user_home + "/my_prog_lib")));
   prog_lib_paths.AddUnique(NameVar("WebLib", (Variant)(web_home + "/prog_lib")));
 
-  String curdir = QDir::currentPath();
+  String curdir = GetCurrentPath();
   taMisc::load_paths.AddUnique(curdir);
 }
 
@@ -1094,12 +1088,43 @@ String taMisc::StringCVar(const String& str) {
 /////////////////////////////////////////////////
 //	File Paths etc
 
-// todo: could be more accurately named
-String taMisc::remove_name(String& path) {
-  if(path.contains("("))
-    return path.before("(") + path.after(")");
-
+String taMisc::GetFileFmPath(const String& path) {
+  if(path.contains('/')) return path.after('/',-1);
   return path;
+}
+
+String taMisc::GetDirFmPath(const String& path, int n_up) {
+  if(!path.contains('/')) return _nilString;
+  String dir = path.before('/',-1);
+  for(int i=0;i<n_up;i++) {
+    if(!dir.contains('/')) return _nilString;
+    dir = dir.before('/',-1);
+  }
+  return dir;
+}
+
+String taMisc::GetHomePath() {
+#ifndef NO_TA_BASE
+  return QDir::homeDirPath();
+#else
+  return "";			// todo support?
+#endif
+}
+
+String taMisc::GetCurrentPath() {
+#ifndef NO_TA_BASE
+  return QDir::currentPath();
+#else
+  return "";			// todo support?
+#endif
+}
+
+bool taMisc::SetCurrentPath(const String& path) {
+#ifndef NO_TA_BASE
+  return QDir::setCurrent(path);
+#else
+  return false;			// todo support?
+#endif
 }
 
 // try to find file fnm in one of the include paths -- returns complete path to file

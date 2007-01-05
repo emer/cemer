@@ -413,21 +413,21 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
 
 void taBase::Destroy() {
 #ifdef DEBUG
-  SetFlag(DESTROYED);
+  SetBaseFlag(DESTROYED);
 #endif
 }
 
 #ifdef DEBUG
 void taBase::CheckDestroyed() {
-  if(HasFlag(DESTROYED)) {
+  if(HasBaseFlag(DESTROYED)) {
     taMisc::Error("taBase object being multiply destroyed");
   }
 }
 #endif
 
 void taBase::Destroying() {
-  if (HasFlag(DESTROYING)) return; // already done by parent
-  SetFlag(DESTROYING);
+  if (HasBaseFlag(DESTROYING)) return; // already done by parent
+  SetBaseFlag(DESTROYING);
   //note: following gets called in destructor of higher class, so 
   // its vtable accessor for datalinks will be valid in that context
   taDataLink* dl = data_link();
@@ -499,15 +499,15 @@ TypeDef* taBase::StatTypeDef(int) {
 ///////////////////////////////////////////////////////////////////////////
 //	Object managment flags (taBase supports up to 8 flags for basic object mgmt purposes)
 
-bool taBase::HasFlag(int flag) const {
+bool taBase::HasBaseFlag(int flag) const {
   return (m_flags & flag);
 }
 
-void taBase::SetFlag(int flag) {
+void taBase::SetBaseFlag(int flag) {
   m_flags |= flag;
 }
 
-void taBase::ClearFlag(int flag) {
+void taBase::ClearBaseFlag(int flag) {
   m_flags &= ~flag;
 }
 
@@ -843,9 +843,7 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
     flr->fname = fname;
     flr->open_read();
   } else { 
-    flr->fname = GetFileName(); // filer etc. does auto extension
-    if(flr->fname.contains('/'))
-      flr->fname = flr->fname.after('/',-1);
+    flr->fname = taMisc::GetFileFmPath(GetFileName());
     if(flr->fname.empty())
       flr->fname = GetName();
     flr->Open();
@@ -951,8 +949,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     flr->Save();
   } else { 
     flr->fname = GetFileName(); // filer etc. does auto extension
-    if(flr->fname.contains('/'))
-      flr->fname = flr->fname.after('/',-1);
+    flr->fname = taMisc::GetFileFmPath(GetFileName());
     if(flr->fname.empty())
       flr->fname = GetName();
     flr->SaveAs();
@@ -973,8 +970,7 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
     flr->Append();
   } else { 
     flr->fname = GetFileName(); // filer etc. does auto extension
-    if(flr->fname.contains('/'))
-      flr->fname = flr->fname.after('/',-1);
+    flr->fname = taMisc::GetFileFmPath(GetFileName());
     if(flr->fname.empty())
       flr->fname = GetName();
     flr->Append();
@@ -1126,16 +1122,16 @@ bool taBase::CheckConfig_impl(bool quiet) {
   bool this_rval = true;
   CheckThisConfig_impl(quiet, this_rval);
   if (this_rval) {
-    ClearFlag(THIS_INVALID);
+    ClearBaseFlag(THIS_INVALID);
   } else {
-    SetFlag(THIS_INVALID);
+    SetBaseFlag(THIS_INVALID);
   }
   bool child_rval = true;
   CheckChildConfig_impl(quiet, child_rval);
   if (child_rval) {
-    ClearFlag(CHILD_INVALID);
+    ClearBaseFlag(CHILD_INVALID);
   } else {
-    SetFlag(CHILD_INVALID);
+    SetBaseFlag(CHILD_INVALID);
   }
   if (cp_flags != m_flags)
     DataChanged(DCR_ITEM_UPDATED);
@@ -1144,7 +1140,7 @@ bool taBase::CheckConfig_impl(bool quiet) {
 
 void taBase::ClearCheckConfig() {
   if (m_flags & INVALID_MASK) {
-    ClearFlag(INVALID_MASK);
+    ClearBaseFlag(INVALID_MASK);
     DataChanged(DCR_ITEM_UPDATED);
   }
 }

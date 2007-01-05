@@ -71,7 +71,7 @@ also save specs.";
   ProgVar @[2] {
    name="fname";
    var_type=T_String;
-   string_val="/Users/oreilly/pdp4opt/trunk/test/hv.v4_adaptnetin.00_0000.wts.gz";
+   string_val="/Users/oreilly/sims/vis_search/djilk/model/wts/hv.v4clrblob6_hi2xrf8_64ug_filtsc5_8_io15.00_0000.wts.gz";
    objs_ptr=0;
    desc=;
   };
@@ -177,7 +177,7 @@ also save specs.";
    desc=;
    off=0;
    user_script="String specfnm = fname.before(\".wts.gz\");
-specfnm += \".specs\";
+specfnm += \".spec\";
 network->specs.SaveAs(specfnm);
 
 ";

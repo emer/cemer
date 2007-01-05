@@ -1418,6 +1418,8 @@ public:
   virtual bool	DMem_DistributeUnits_impl(DMemShare&) { return false; } // #IGNORE to keep the ta file consistent..
 #endif
 
+  override int	GetEnabled() const { return !lesion; }
+
   void 	UpdateAfterEdit();
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }

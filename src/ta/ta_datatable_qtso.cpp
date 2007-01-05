@@ -908,6 +908,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     float blk_area_wd = 0.0f;
     float blk_area_ht = 0.0f; 
 
+    // todo: this should all be done with a single unitary trianglestrip guy
+    // as in the netview blocks mode
     if (cvs->display_style & GridColViewSpec::BLOCK_MASK) {
       blk_area_wd = (bsz * cg.x) + (bbsz * (cg.x - 1));
       blk_area_ht = (bsz * cg.y) + (bbsz * (cg.y - 1)); 

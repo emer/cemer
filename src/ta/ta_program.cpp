@@ -448,7 +448,8 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
 //////////////////////////
 
 void ProgEl::Initialize() {
-  off = false;
+  flags = PEF_NONE;
+  off = false;			// todo remove
 }
 
 void ProgEl::Destroy() {
@@ -456,11 +457,17 @@ void ProgEl::Destroy() {
 
 void ProgEl::Copy_(const ProgEl& cp) {
   desc = cp.desc;
-  off = cp.off;
+  flags = cp.flags;
+  off = cp.off; // todo remove
+}
+
+void ProgEl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(off) { SetProgFlag(OFF); off = false; } // copy from obs and reset; todo remove
 }
 
 bool ProgEl::CheckConfig_impl(bool quiet) {
-  if (off) {
+  if(CheckProgFlag(OFF)) {
     ClearCheckConfig();
     return true;
   }
@@ -468,7 +475,7 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
 }
 
 const String ProgEl::GenCss(int indent_level) {
-  if(off) return "";
+  if(CheckProgFlag(OFF)) return "";
   String rval;
   if (useDesc() && !desc.empty()) {
     // we support multi-lines by using the multi-line form of comments
@@ -485,7 +492,7 @@ const String ProgEl::GenCss(int indent_level) {
 }
 
 int ProgEl::GetEnabled() const {
-  if (off) return 0;
+  if(CheckProgFlag(OFF)) return 0;
   ProgEl* par = parent();
   if (!par) return 1;
   if (par->GetEnabled())
@@ -494,13 +501,11 @@ int ProgEl::GetEnabled() const {
 }
 
 void ProgEl::PreGen(int& item_id) {
-  if(off) return;
+  if(CheckProgFlag(OFF)) return;
   PreGenMe_impl(item_id);
   ++item_id;
   PreGenChildren_impl(item_id);
 }
-
-
 
 //////////////////////////
 //  ProgEl_List	//
@@ -808,6 +813,38 @@ const String IfBreak::GenCssBody_impl(int indent_level) {
 
 String IfBreak::GetDisplayName() const {
   return "if(" + condition + ") break;";
+}
+
+//////////////////////////
+//  IfReturn		//
+//////////////////////////
+
+void IfReturn::Initialize() {
+}
+
+void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if (condition.empty()) {
+    if(!quiet) taMisc::CheckError("Error in IfReturn in program:", program()->name, "condition expression is empty");
+    rval = false;
+  }
+  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<=")
+				     || condition.contains("!="))) {
+    if(!quiet) taMisc::CheckError("Error in IfReturn in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
+    condition.gsub("=", "==");
+    rval = false;
+  }
+}
+
+const String IfReturn::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval = cssMisc::Indent(indent_level) + 
+    "if(" + condition + ") return;\n";
+  return rval; 
+}
+
+String IfReturn::GetDisplayName() const {
+  return "if(" + condition + ") return;";
 }
 
 //////////////////////////
@@ -1438,6 +1475,26 @@ String FunctionCall::GetDisplayName() const {
 void FunctionCall::UpdateArgs() {
   if(!fun) return; // just leave existing stuff for now
   fun_args.ConformToTarget(fun->args);
+}
+
+//////////////////////////
+//    ReturnExpr	//
+//////////////////////////
+
+void ReturnExpr::Initialize() {
+}
+
+const String ReturnExpr::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level);
+  rval += "return " + expr + ";\n";
+  return rval;
+}
+
+String ReturnExpr::GetDisplayName() const {
+  String rval;
+  rval += "return " + expr;
+  return rval;
 }
 
 ///////////////////////////////////////////////////////////////

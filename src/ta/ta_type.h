@@ -756,9 +756,16 @@ public:
   /////////////////////////////////////////////////
   //	File Paths etc
 
-  // path manips
-  static String	remove_name(String& path);
-  // #IGNORE 
+  static String GetFileFmPath(const String& path);
+  // #CAT_File get file name component from full path
+  static String GetDirFmPath(const String& path, int n_up = 0);
+  // #CAT_File get directory component from full path, n_up is number of directories to go up from the final directory
+  static String GetHomePath();
+  // #CAT_File get user's home directory path
+  static String GetCurrentPath();
+  // #CAT_File get current working directory path
+  static bool 	SetCurrentPath(const String& path);
+  // #CAT_File set current working directory to given path; returns success
 
   static String	FindFileOnPath(String_PArray& paths, const char* fname);
   // #CAT_File helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)

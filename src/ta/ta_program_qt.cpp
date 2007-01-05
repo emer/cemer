@@ -924,6 +924,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_IfContinue)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("if.brk",
     tabMisc::root->GetTemplateInstance(&TA_IfBreak)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("if.ret",
+    tabMisc::root->GetTemplateInstance(&TA_IfReturn)));
   
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("var=",
@@ -954,6 +956,10 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_Function)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("fun()",
     tabMisc::root->GetTemplateInstance(&TA_FunctionCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("return",
+    tabMisc::root->GetTemplateInstance(&TA_ReturnExpr)));
+
+  tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("print",
     tabMisc::root->GetTemplateInstance(&TA_PrintVar)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("comment",

@@ -267,7 +267,7 @@ public:
     VT_VARIANT		// a Variant, which can hold scalars, matrices, and objects
   };
   
-  enum Flags { // #BITS control flags 
+  enum BaseFlags { // #BITS control flags 
     THIS_INVALID	= 0x01, // CheckThisConfig_impl has detected a problem
     CHILD_INVALID	= 0x02, // CheckChildConfig_impl returns issue with a child
     DESTROYING		= 0X40, // Set in Destroying at the very beginning of destroy
@@ -340,7 +340,7 @@ public:
   // #IGNORE constructor implementation to initialize memberes of class.  every class should define this initializer.  cannot refer to anything outside of the object itself (use InitLinks for when it gets added into the object hierarchy)
   void			Destroy();
   // #IGNORE destructor implementation -- free any allocated memory and reset pointers to null, etc.  MIGHT BE CALLED MULTIPLE TIMES -- set to null and check for null!
-  bool			isDestroying() const {return HasFlag(DESTROYING);}
+  bool			isDestroying() const {return HasBaseFlag(DESTROYING);}
   // #IGNORE true if the object is already destroying
 
   virtual void		SetTypeDefaults();
@@ -397,14 +397,14 @@ public:
   //	Object managment flags (taBase supports up to 8 flags for basic object mgmt purposes)
 public:
 
-  bool			HasFlag(int flag) const;
+  bool			HasBaseFlag(int flag) const;
   // #CAT_ObjectMgmt true if flag set, or if multiple, any set
-  void			SetFlag(int flag);
+  void			SetBaseFlag(int flag);
   // #CAT_ObjectMgmt sets the flag(s)
-  void			ClearFlag(int flag);
+  void			ClearBaseFlag(int flag);
   // #CAT_ObjectMgmt clears the flag(s)
   int			baseFlags() const {return m_flags;}
-  // #IGNORE flag values; see also HasFlag
+  // #IGNORE flag values; see also HasBaseFlag
 
   ///////////////////////////////////////////////////////////////////////////
   //	Basic object properties: index in list, owner, name, description, etc

@@ -174,9 +174,16 @@ class TA_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element
 INHERITED(taOBase)
 public:
-//TODO: remove the AKA from desc, and this line, at some point    
-  String		desc; // #EDIT_DIALOG #HIDDEN_INLINE #AKA_comment optional brief description of element's function; included as comment in script
-  bool			off;	// #DEF_false turn off this program element: do not include in script
+  enum ProgFlags { // #BITS flags for modifying program element function or other information
+    PEF_NONE		= 0, // #NO_BIT
+    OFF 		= 0x0001, // inactivated: does not generate code
+    NON_STD 		= 0x0002, // #NO_BIT non-standard: not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
+    NEW_EL 		= 0x0004, // #NO_BIT new element: this element was recently added to the program (just for user information/highlighting)
+  };
+
+  String		desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
+  ProgFlags		flags;	// flags for modifying program element function or providing information about the status of this program element
+  bool			off;	// #HIDDEN #READ_ONLY #NO_SAVE #DEF_false obsoleted by flags -- will be removed at some point soon.  turn off this program element: do not include in script
 
   virtual ProgEl*   	parent() const
     {return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl);}
@@ -184,15 +191,31 @@ public:
   
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
-  
+
+  inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
+  // set flag state on
+  inline void		ClearProgFlag(ProgFlags flg) { flags = (ProgFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool		CheckProgFlag(ProgFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void		SetProgFlagState(ProgFlags flg, bool on)
+  { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+
+  inline void		SetNonStdFlag(bool non_std)   { SetProgFlagState(NON_STD, non_std); }
+  // #MENU #MENU_ON_Object #MENU_CONTEXT set non standard flag to given state: indicates that this is not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
+  inline void		SetNewElFlag(bool new_el)   { SetProgFlagState(NEW_EL, new_el); }
+  // #MENU #MENU_ON_Object #MENU_CONTEXT set new element flag to given state: this element was recently added to the program (just for user information/highlighting)
+
   override int	GetEnabled() const;
-    // note: it is our own, plus disabled if parent is
+  // note: it is our own, plus disabled if parent is
   override String GetDesc() const {return desc;}
   void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, inherited);
   TA_BASEFUNS(ProgEl);
 
 protected:
+  override void		UpdateAfterEdit_impl();
   virtual bool		useDesc() const {return true;} // hack for CommentEl
   override bool 	CheckConfig_impl(bool quiet);
   virtual void		PreGenMe_impl(int item_id) {}
@@ -368,7 +391,7 @@ class TA_API IfContinue: public ProgEl {
   // if condition is true, continue looping (skip any following code and loop back to top of loop)
 INHERITED(ProgEl)
 public:
-  String	    	condition; // #EDIT_DIALOG #AKA_cond_expr conditionalizing expression for continuing loop
+  String	    	condition; // #EDIT_DIALOG conditionalizing expression for continuing loop
   
   override String	GetDisplayName() const;
 
@@ -386,7 +409,7 @@ class TA_API IfBreak: public ProgEl {
   // if condition is true, break out of current loop
 INHERITED(ProgEl)
 public:
-  String	    	condition; // #EDIT_DIALOG #AKA_cond_expr conditionalizing expression for breaking out of loop
+  String	    	condition; // #EDIT_DIALOG conditionalizing expression for breaking out of loop
   
   override String	GetDisplayName() const;
 
@@ -400,11 +423,29 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
+class TA_API IfReturn: public ProgEl { 
+  // if condition is true, return (from void function or stop further execution of code or init segments of Program)
+INHERITED(ProgEl)
+public:
+  String	    	condition; // #EDIT_DIALOG conditionalizing expression for returning
+  
+  override String	GetDisplayName() const;
+
+  TA_SIMPLE_BASEFUNS(IfReturn);
+protected:
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
 class TA_API IfElse: public ProgEl { 
   // a conditional test element: if(condition) then true_code; else false_code
 INHERITED(ProgEl)
 public:
-  String	    condition; // #EDIT_DIALOG  #AKA_cond_test condition expression to test
+  String	    condition; // #EDIT_DIALOG  condition expression to test
   ProgEl_List	    true_code; // #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE items to execute if condition false
   
@@ -452,7 +493,7 @@ public:
   ProgVarRef		result_var;
   // where to store the result of the method call (optional -- can be NULL)
   ProgVarRef		obj;
-  // #AKA_script_obj program variable that points to the object with the method to call
+  // program variable that points to the object with the method to call
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   MethodDef*		method;
@@ -583,7 +624,7 @@ class TA_API Function: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVar		return_val;
-  // The return value of the function
+  // The return value of the function -- used only for determining the type
   String		name;
   // The function name
   ProgVar_List		args;
@@ -632,6 +673,24 @@ private:
   void	Initialize();
   void	Destroy()	{}
 };
+
+class TA_API ReturnExpr: public ProgEl { 
+  // return from a function with a given expression (can be empty to return from a void function) -- you can return from the code or init segments of a program to end execution at that point
+INHERITED(ProgEl)
+public:
+  String		expr;
+  // #EDIT_DIALOG expression to return from function with (can be empty to return from a void function)
+  
+  override String	GetDisplayName() const;
+  TA_SIMPLE_BASEFUNS(ReturnExpr);
+
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
 
 class ProgObjList: public taBase_List {
   // ##CAT_Program A list of program objects (just a taBase list with proper update actions to update variables associated with objects)

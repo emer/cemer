@@ -614,12 +614,9 @@ void UnitGroupView::Render_impl_blocks() {
 
   String val_str;
   String unit_name;
-  float val;
-  float sc_val;
   T3Color col;
   TwoDCoord pos;
   int v_idx = 0;
-  int c_idx = 0;
   int t_idx = 2;		// base color + font
   // these go in normal order; indexes are backwards
   for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
@@ -827,22 +824,15 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   if(!sits || !vtx_prop) return; // something wrong..
 
   SoMFVec3f& vertex = vtx_prop->vertex;
-  SoMFVec3f& normal = vtx_prop->normal;
   SoMFUInt32& color = vtx_prop->orderedRGBA;
-
-  int n_geom = ugrp->geom.Product();
-  int n_per_vtx = 8;
-  int tot_vtx =  n_geom * n_per_vtx;
 
   SbVec3f* vertex_dat = vertex.startEditing();
   uint32_t* color_dat = color.startEditing();
 
   float trans = nv->view_params.unit_trans;
-  float spacing = nv->view_params.unit_spacing;
   float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
   max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
 
-  bool build_text = false;
   SoSeparator* un_txt = node_so->unitText();
 
   String val_str;
@@ -972,15 +962,13 @@ void LayerView::BuildAll() {
 void LayerView::UpdateUnitValues() { // *actually* only does unit value updating
   int ch_idx = 0;
   Layer* lay = layer(); //cache
-  Unit_Group* ugrp;
-  UnitGroupView* ugv;
   if(!lay->unit_groups) { // single ugrp
     UnitGroupView* ugv = (UnitGroupView*)children.FastEl(ch_idx++);
     ugv->UpdateUnitValues();
   }
   else { // multi-ugrps
     for (int j = 0; j < lay->gp_geom.n; ++j) {
-      ugrp = (Unit_Group*)lay->units.SafeGp(j);
+      Unit_Group* ugrp = (Unit_Group*)lay->units.SafeGp(j);
       if (!ugrp) break; // maybe not built yet???
       UnitGroupView* ugv = (UnitGroupView*)children.FastEl(ch_idx++);
       ugv->UpdateUnitValues();

@@ -1079,9 +1079,7 @@ void MainWindowViewer::MakeWinName_impl() {
   String fname;
   if (data()) {
     name = data()->GetName();
-    fname = data()->GetFileName();
-    if(fname.contains('/'))
-      fname = fname.after('/', -1);
+    fname = taMisc::GetFileFmPath(data()->GetFileName());
   }
   String nw_name = GetPath() + "(" + name + ") - " + fname; // prog_nm ;
   win_name = nw_name;
