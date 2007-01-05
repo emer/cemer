@@ -884,6 +884,23 @@ iProgramGroupPanel::iProgramGroupPanel(taiDataLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
+  connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
+    this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
+}
+
+void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,
+  int level, bool& expand) 
+{
+  if (level < 1) return; // always expand root level
+  // by default, we don't expand code and objs,  but do expand
+  // the args, and vars.
+  taiDataLink* dl = item->link();
+  TypeDef* typ = dl->GetDataTypeDef();
+  if (typ->DerivesFrom(&TA_ProgEl_List) ||
+    typ->DerivesFrom(&TA_ProgObjList)
+  )  {
+    expand = false;
+  }
 }
 
 

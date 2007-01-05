@@ -1508,6 +1508,7 @@ protected:
   void 			focusInEvent(QFocusEvent* ev); // override
   QFont&		italicFont() const; // so we don't create a new guy each node
   void			showEvent(QShowEvent* ev); // override, for expand all
+  void			Show_impl(); // called from show and refresh
   void 			ExpandAll_impl(int max_levels,
     bool use_custom_filt = false); // inner code
   void 			ExpandItem_impl(iTreeViewItem* item,

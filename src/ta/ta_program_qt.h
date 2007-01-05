@@ -278,6 +278,10 @@ public:
 public: // IDataLinkClient interface
 //  override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iProgramGroupPanel;}
+  
+protected slots:
+  void			items_CustomExpandFilter(iTreeViewItem* item,
+    int level, bool& expand);
 };
 
 

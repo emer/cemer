@@ -1993,8 +1993,8 @@ void iBrowseViewer::ApplyRoot() {
   int dn_flags_ = iTreeViewItem::DNF_CAN_BROWSE;
   
   // we treat root slightly different if it is true root, or is just a subsidiary named item
+  // also, we assume this guy is visible, so we don't apply the filter
   taiTreeDataNode* node;
-  //TODO: should add memberdef to constructor
   if (m_root == tabMisc::root)
     node = dl->CreateTreeDataNode(root_md(), lvwDataTree, NULL, "root",
       dn_flags_ | iTreeViewItem::DNF_IS_MEMBER);
@@ -4637,19 +4637,7 @@ void iTreeView::setColFormat(int col, int value) {
 
 void iTreeView::setShow(taMisc::ShowMembs value) {
   if (m_show == value) return;
-  //TODO:
-  QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::All);
-  QTreeWidgetItem* item_;
-  while ( (item_ = *it) ) {
-    //note: always show QTreeWidgetItem, since we don't know what to do with them
-    iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
-    bool show_it = true;
-    if (item) {
-      show_it = ShowNode(item);
-    }
-    setItemHidden(item_, !show_it);
-    ++it;
-  }
+  Show_impl();
 } 
 
 void iTreeView::setTvFlags(int value) {
@@ -4658,6 +4646,52 @@ void iTreeView::setTvFlags(int value) {
   //nothing to do yet
 }
 
+void iTreeView::Refresh_impl() {
+  //note: very similar to Show_impl
+  QTreeWidgetItemIterator it(this);
+  QTreeWidgetItem* item_;
+  while ( (item_ = *it) ) {
+    iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
+    if (item) {
+      bool hide_it = !ShowNode(item);
+      bool is_hid = isItemHidden(item);
+      if (hide_it != is_hid) {
+        setItemHidden(item, hide_it);
+      }
+      // always refresh visible guys
+      if (!hide_it) {
+        // simulate update notification
+        item->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+      }
+    }
+    ++it;
+  }
+}
+
+void iTreeView::Show_impl() {
+  //note: very similar to Refresh_impl
+  QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::All);
+  QTreeWidgetItem* item_;
+  while ( (item_ = *it) ) {
+    //note: always show QTreeWidgetItem, since we don't know what to do with them
+    iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
+    if (item) {
+      bool hide_it = !ShowNode(item);
+      bool is_hid = isItemHidden(item);
+      if (hide_it != is_hid) {
+        setItemHidden(item, hide_it);
+        // if we are making shown a hidden item, we also refresh it for safety
+        if (!hide_it) {
+          // simulate update notification
+          item->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+        }
+      }
+    } else {
+      setItemHidden(item_, false);
+    }
+    ++it;
+  }
+}
 
 void iTreeView::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
@@ -4738,20 +4772,6 @@ void iTreeView::this_itemSelectionChanged() {
     GetSelectedItems(sel_items);
   SelectionChanging(false, false);
 }
-
-void iTreeView::Refresh_impl() {
-  QTreeWidgetItemIterator it(this);
-  QTreeWidgetItem* item;
-  while ( (item = *it) ) {
-    iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(item);
-    if (tvi) {
-      // simulate update notification
-      tvi->DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
-    }
-    ++it;
-  }
-}
-
 
 void iTreeView::UpdateSelectedItems_impl() {
   //note: we are already guarded against spurious gui updates
@@ -5180,9 +5200,11 @@ void taiTreeDataNode::CreateChildren_impl() {
   iTreeView* tree = treeView(); //cache
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
-    // check for member/type-based filter
+/*TODO: replace filters, or nuke    // check for member/type-based filter
     if (tree->HasFilter(md->type)) continue;
-    if (tree->HasFilter(md)) continue;
+    if (tree->HasFilter(md)) continue; */
+    // we make everything that isn't NO_SHOW, then hide if not visible now
+    if (!md->ShowMember(taMisc::ALL_MEMBS, TypeItem::SC_TREE)) continue;
     // check for show filter
     if (!link()->ShowMember(md, TypeItem::SC_TREE)) continue;
     TypeDef* typ = md->type;
@@ -5193,6 +5215,8 @@ void taiTreeDataNode::CreateChildren_impl() {
       String tree_nm = md->GetLabel();
       last_child_node = dl->CreateTreeDataNode(md, this, last_child_node, tree_nm,
         (iTreeViewItem::DNF_IS_MEMBER));
+      if (!tree->ShowNode(last_child_node))
+        tree->setItemHidden(last_child_node, true);
     }
   }
   last_member_node = last_child_node; //note: will be NULL if no members issued
