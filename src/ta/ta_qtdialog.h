@@ -261,7 +261,6 @@ public:
   bool		modal;	// true if dialog is of the modal variety, always false for edit panels
   bool		no_ok_but;	// no ok button
   int		mouse_button;	// (Qt::ButtonState) the mouse button that pressed ok
-  bool		no_revert_hilight; // flag to indicate we are the instance that caused the update
   bool		warn_clobber; // was changed elsewhere while edited here; warn user before saving
 
 
@@ -345,6 +344,7 @@ public slots:
   virtual void	Revert(); //override
 
 protected:
+  ContextFlag		updating; // flag to indicate we are the instance that caused the update
   iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
   bool			modified;
   bool			show_meth_buttons; // true if any are created
@@ -428,8 +428,9 @@ public:
   taiDataList 		meth_el;	// method elements
 
   EditDataPanel*	dataPanel() {return panel;} // #IGNORE
-  virtual void		setShow(taMisc::ShowMembs value); // #SET_Show
   override void 	guiParentDestroying() {panel = NULL;}
+  
+  bool			SetShow(int value); // change show value; returns true if we rebuilt/reshowed dialog
 
   taiEditDataHost(void* base, TypeDef* typ_ = NULL, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0);
@@ -458,6 +459,7 @@ public: // ITypedObject i/f (common to IDLC and IDH)
   override TypeDef* 	GetTypeDef() const {return &TA_taiEditDataHost;}
 public slots:
   virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
+  virtual void		showMenu_aboutToShow(); 
   void Cancel(); // override
 
 // IDataHost i/f
@@ -467,7 +469,6 @@ protected:
   EditDataPanel* panel; //NOTE: not used when invoked by Edit()
 
   override void		InitGuiFields(bool virt = true);
-  void			setShowValues(taMisc::ShowMembs value);
   override void		Constr_Methods_impl();
   override void		ClearBody_impl();
   override void		Constr_Strings(const char* prompt, const char* win_title);

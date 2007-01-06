@@ -1,11 +1,5 @@
 Tree Browsing Show/Hide
 
-start with NORMAL
-* if you expand the list, el_base is not shown
-* if you select HIDDEN, el_base is not shown
-* if you now expand one that was not expanded yet,
-  el_base IS shown
-* if you Refresh
 
 
 debug T3 selection

@@ -88,6 +88,22 @@ taClassDataLink::taClassDataLink(taMisc::TypeInfoKind tik_, void* data_, taDataL
   }
 }
 
+TypeDef* taClassDataLink::GetDataTypeDef() const {
+  switch(tik) {
+  case taMisc::TIK_ENUM: return &TA_EnumDef;
+  case taMisc::TIK_MEMBER: return &TA_MemberDef;
+  case taMisc::TIK_METHOD: return &TA_MethodDef;
+  case taMisc::TIK_TYPE: return &TA_TypeDef;
+  case taMisc::TIK_ENUMSPACE: return &TA_EnumSpace;
+  case taMisc::TIK_TOKENSPACE: return &TA_TokenSpace;
+  case taMisc::TIK_MEMBERSPACE: return &TA_MemberSpace;
+  case taMisc::TIK_METHODSPACE: return &TA_MethodSpace;
+  case taMisc::TIK_TYPESPACE: return &TA_TypeSpace;
+  default: return &TA_void; // compiler food; anything but NULL!!!
+  }
+}
+
+
 //////////////////////////
 //  taTypeInfoDataLink	//
 //////////////////////////
@@ -124,10 +140,6 @@ bool taTypeInfoDataLink::HasChildItems() {
   default:break; // compiler food
   }
   return rval;
-}
-
-TypeDef* taTypeInfoDataLink::GetDataTypeDef() const {
-  return NULL;
 }
 
 taiMimeItem* taTypeInfoDataLink::GetMimeItem() {

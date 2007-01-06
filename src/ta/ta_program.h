@@ -746,10 +746,10 @@ public:
     SEARCH_LIBS,		// search through the libraries (for loading)
   };
 
-  static ProgLib* 	prog_lib; // #HIDDEN_TREE library of available programs
+  static ProgLib* 	prog_lib; // #NO_SHOW_TREE library of available programs
 
   Program_Group*	prog_gp;
-  // #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
+  // #NO_SHOW #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
 
   RunState		run_state;
   // #READ_ONLY #NO_SAVE this program's run state

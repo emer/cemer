@@ -488,7 +488,6 @@ void iProgramEditor::Init() {
   
   items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
-  items->setDefaultExpandLevels(6); // shouldn't generally be more than this
   items->setColumnCount(3);
   items->setSortingEnabled(false);// only 1 order possible
   items->setHeaderText(0, "Program Item");
@@ -614,11 +613,9 @@ void iProgramEditor::Apply() {
     if(chs == 2)
       return;
   }
-//  no_revert_hilight = true;
   GetValue();
   GetImage();
   InternalSetModified(false); // superfulous??
-//  no_revert_hilight = false;
 }
 
 const iColor* iProgramEditor::colorOfCurRow() const {
@@ -836,6 +833,7 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
+  pe->items->setDefaultExpandLevels(6); // shouldn't generally be more than this
   connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
 }
@@ -849,7 +847,9 @@ void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
   TypeDef* typ = dl->GetDataTypeDef();
   if (!(typ->InheritsFrom(&TA_ProgVars)) &&
     (typ->DerivesFrom(&TA_ProgEl_List) ||
-    typ->InheritsFrom(&TA_ProgEl))
+    typ->InheritsFrom(&TA_ProgEl) ||
+    typ->DerivesFrom(&TA_ProgObjList)
+    )
   )  return;
   // otherwise, nada
   expand = false;
@@ -884,6 +884,7 @@ iProgramGroupPanel::iProgramGroupPanel(taiDataLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
+  pe->items->setDefaultExpandLevels(2); 
   connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
 }

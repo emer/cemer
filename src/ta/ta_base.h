@@ -1069,9 +1069,9 @@ class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
 INHERITED(taBase)
 public:
-  TAPtr			owner;	// #READ_ONLY #NO_SAVE pointer to owner
+  TAPtr			owner;	// #NO_SHOW #READ_ONLY #NO_SAVE pointer to owner
 
-  mutable UserDataItem_List* user_data_; // #OWN_POINTER #SHOW_TREE #NO_SAVE_EMPTY storage for user data (created if needed)
+  mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #SHOW_TREE #NO_SAVE_EMPTY storage for user data (created if needed)
 
   taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
   override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
@@ -1235,11 +1235,11 @@ typedef taBase inherited_taBase;
 typedef taPtrList_ta_base inherited_taPtrList;
 #endif
 public:
-  static MemberDef* find_md;	// #HIDDEN #NO_SAVE return value for findmember of data
+  static MemberDef* find_md;	// #HIDDEN #NO_SHOW_TREE #NO_SAVE return value for findmember of data
 
   String        name;           // name of the object 
-  TypeDef*	el_base;	// #HIDDEN #NO_SAVE Base type for objects in group
-  TypeDef* 	el_typ;		// #TYPE_ON_el_base Default type for objects in group
+  TypeDef*	el_base;	// #DETAIL #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE Base type for objects in group
+  TypeDef* 	el_typ;		// #TYPE_ON_el_base #NO_SHOW_TREE Default type for objects in group
   int		el_def;		// #DETAIL Index of default element in group
 
   // stuff for the taBase 
@@ -1377,9 +1377,9 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(FindEl((TAPtr)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
 
-  virtual T*	FindName(const String& item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
+  virtual T*	FindName(const String& item_nm, int& idx=no_idx) const { return (T*)FindName_(item_nm, idx); }
   // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element with given name (item_nm)
-  virtual T* 	FindType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindType_(item_tp, idx); }
+  virtual T* 	FindType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindType_(item_tp, idx); }
   // #CAT_Access find given type element (NULL = not here), sets idx
 
   T*		First() const			{ return (T*)First_(); }
@@ -1643,8 +1643,8 @@ template<class T>
 class taArray : public taArray_base {
   // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER
 public:
-  T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
-  T		err;		// #HIDDEN what is returned when out of range; MUST INIT IN CONSTRUCTOR
+  T*		el;		// #NO_SHOW #NO_SAVE Pointer to actual array memory
+  T		err;		// #NO_SHOW what is returned when out of range; MUST INIT IN CONSTRUCTOR
   
   ////////////////////////////////////////////////
   // 	functions that return the type		//

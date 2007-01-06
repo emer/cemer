@@ -43,8 +43,7 @@
 // needed just for the taMisc::display_width variable..
 #include "ta_type.h"
 
-int taPtrList_impl::Idx = 0;
-//String taPtrList_impl::no_el_name;
+int taPtrList_impl::no_index;
 taPtrList_impl taPtrList_impl::scratch_list;
 
 taHashVal taPtrList_impl::HashCode_String(const String& string_) {

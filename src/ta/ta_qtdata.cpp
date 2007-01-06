@@ -765,7 +765,7 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
   if (is_enum && typ) {
     for (int i = 0; i < typ->enum_vals.size; ++i) {
       if (i > 0)
-        lay->addSpacing(taiM->hspc_c);
+        lay->addSpacing(taiM->hsep_c);
       EnumDef* ed = typ->enum_vals.FastEl(i);
       if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE"))
         continue;

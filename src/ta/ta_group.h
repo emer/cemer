@@ -87,9 +87,9 @@ public:
 
 public:
   int 		leaves;		// #READ_ONLY #NO_SAVE total number of leaves
-  taSubGroup	gp; 		// #HIDDEN #HIDDEN_TREE #NO_FIND #NO_SAVE sub-groups within this one
-  TAGPtr	super_gp;	// #READ_ONLY #NO_SAVE #HIDDEN_TREE super-group above this
-  TAGPtr	root_gp; 	// #READ_ONLY #NO_SAVE #HIDDEN_TREE the root group, 'this' for root group itself; never NULL
+  taSubGroup	gp; 		// #NO_SHOW #NO_FIND #NO_SAVE sub-groups within this one
+  TAGPtr	super_gp;	// #READ_ONLY #NO_SHOW #NO_SAVE super-group above this
+  TAGPtr	root_gp; 	// #READ_ONLY #NO_SHOW #NO_SAVE the root group, 'this' for root group itself; never NULL
 
   bool		IsEmpty() const	{ return (leaves == 0) ? true : false; }
   bool		IsRoot() const	{ return (root_gp == this); } // 'true' if this is the root
@@ -155,8 +155,8 @@ public:
   virtual TAGPtr NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
   virtual TAPtr	 NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
 
-  virtual TAPtr FindLeafName_(const char* it, int& idx=Idx) const; 	// #IGNORE
-  virtual TAPtr	FindLeafType_(TypeDef* it, int& idx=Idx) const;	// #IGNORE
+  virtual TAPtr FindLeafName_(const char* it, int& idx=no_idx) const; 	// #IGNORE
+  virtual TAPtr	FindLeafType_(TypeDef* it, int& idx=no_idx) const;	// #IGNORE
 
   virtual TAGPtr FindMakeGpName(const String& gp_nm, TypeDef* typ=NULL);
   // #IGNORE find subgroup of given name; if it doesn't exist, then make it (using type if specified, else default type for subgroup)
@@ -281,9 +281,9 @@ public:
   virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
   // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Edit #TYPE_this Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
-  virtual T*	FindName(const char* item_nm, int& idx=Idx)  const { return (T*)FindName_(item_nm, idx); }
+  virtual T*	FindName(const char* item_nm, int& idx=no_idx)  const { return (T*)FindName_(item_nm, idx); }
   // #CAT_Access Find element with given name (nm) (NULL = not here), sets idx
-  virtual T* 	FindType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindType_(item_tp, idx); }
+  virtual T* 	FindType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindType_(item_tp, idx); }
   // #CAT_Access find given type element (NULL = not here), sets idx
 
   virtual T*	Pop()				{ return (T*)Pop_(); }
@@ -301,9 +301,9 @@ public:
   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
   // #CAT_Modify move item so that it appears just after the target item trg in the list
 
-  virtual T* 	FindLeafName(const char* item_nm, int& idx=Idx) const { return (T*)FindLeafName_(item_nm, idx); }
+  virtual T* 	FindLeafName(const char* item_nm, int& idx=no_idx) const { return (T*)FindLeafName_(item_nm, idx); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find element with given name (el_nm)
-  virtual T* 	FindLeafType(TypeDef* item_tp, int& idx=Idx) const { return (T*)FindLeafType_(item_tp, idx);}
+  virtual T* 	FindLeafType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindLeafType_(item_tp, idx);}
   // #CAT_Access find given type leaf element (NULL = not here), sets idx
 
   void Initialize() 			{ SetBaseType(T::StatTypeDef(1));}

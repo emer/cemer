@@ -1951,6 +1951,7 @@ void iBrowseViewer::Init() {
   lay->addWidget(lvwDataTree);
   lvwDataTree->setName("lvwDataTree");
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
+  lvwDataTree->setDefaultExpandLevels(8); // set fairly deep for ExpandAll
   lvwDataTree->setColumnCount(1);
   lvwDataTree->AddColDataKey(0, "", Qt::StatusTipRole); // show status tip
   lvwDataTree->header()->hide();
@@ -2843,6 +2844,8 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   fileMenu = menu->AddSubMenu("&File");
   editMenu = menu->AddSubMenu("&Edit");
   viewMenu = menu->AddSubMenu("&View");
+  show_menu = menu->AddSubMenu("&Show");
+  connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()) );
   actionsMenu = menu->AddSubMenu("&Actions");
   toolsMenu = menu->AddSubMenu("&Tools");
   helpMenu = menu->AddSubMenu("&Help");;
@@ -2883,7 +2886,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
     fileCloseAction->setEnabled(false);
   }
   // other actions
-  fileOptionsAction = AddAction(new taiAction("&Options", QKeySequence(), "fileOptionsAction" ));
+  fileOptionsAction = AddAction(new taiAction("&Options...", QKeySequence(), "fileOptionsAction" ));
   
   filePrintAction = AddAction(new taiAction("&Print...", QKeySequence("Ctrl+P"), _filePrintAction ));
   filePrintAction->setIconSet( QIconSet( image3 ) );
@@ -2940,6 +2943,24 @@ void iMainWindowViewer::Constr_Menu_impl() {
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");
   dockMenu = viewMenu->AddSubMenu("Dock Windows");
   viewMenu->insertSeparator();
+  
+  // next two items are commands that set the other toggle flags
+  show_menu->AddItem("Normal &only", taiMenu::normal, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 0 );
+  show_menu->AddItem("&All", taiMenu::normal, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 1 );
+  show_menu->AddSep();
+  //  toggle flags
+  show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 2 );
+  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 3 );
+  show_menu->AddItem("&Detail", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 4 );
+  show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 5 );
+  //note: correct toggles set dynamically when user drops down menu
+ 
 
   toolsClassBrowseAction->AddTo(toolsMenu );
   helpHelpAction->AddTo(helpMenu );
@@ -3242,6 +3263,40 @@ void iMainWindowViewer::setFrameGeometry(const iRect& r) {
 
 void  iMainWindowViewer::setFrameGeometry(int left, int top, int width, int height) {
   setFrameGeometry(iRect(left, top, width, height));
+}
+
+void iMainWindowViewer::ShowChange(taiAction* sender) {
+  int show = taMisc::show_gui;
+  int new_show;
+  if (sender->usr_data == 0)
+    new_show = taMisc::NORM_MEMBS;
+  else if (sender->usr_data == 1)
+    new_show = taMisc::ALL_MEMBS;
+  else {
+    int mask;
+    switch (sender->usr_data.toInt()) {
+      case 2: mask = taMisc::NO_NORMAL; break;
+      case 3: mask = taMisc::NO_HIDDEN; break;
+      case 4: mask = taMisc::NO_DETAIL; break;
+      case 5: mask = taMisc::NO_EXPERT; break;
+      default: mask = 0; break; // should never happen
+    }
+    new_show = sender->isChecked() ? show & ~mask : show | mask;
+  }
+  if (new_show != taMisc::show_gui) {
+    taMisc::show_gui = (taMisc::ShowMembs)new_show;
+    viewRefresh();
+  }
+}
+
+void iMainWindowViewer::showMenu_aboutToShow() {
+  int value = taMisc::show_gui;
+  if (!show_menu) return;
+  //note: nothing to do for the command items
+  (*show_menu)[2]->setChecked(!(value & taMisc::NO_NORMAL));
+  (*show_menu)[3]->setChecked(!(value & taMisc::NO_HIDDEN));
+  (*show_menu)[4]->setChecked(!(value & taMisc::NO_DETAIL));
+  (*show_menu)[5]->setChecked(!(value & taMisc::NO_EXPERT));
 }
 
 void iMainWindowViewer::this_DockSelect(taiAction* me) {
@@ -4422,6 +4477,7 @@ void iTreeView::CollapseAll() {
 void iTreeView::CollapseAllUnder(iTreeViewItem* item) {
   //note: iterator didn't work, because it collapsed the siblings too!
   if (!item) return;
+  taMisc::Busy(true); //note: should have ample count capacity for levels
   // first, the children (if any)...
   for (int i = item->childCount() - 1; i >=0 ; --i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(item->child(i));
@@ -4430,6 +4486,7 @@ void iTreeView::CollapseAllUnder(iTreeViewItem* item) {
   }
   // then ourself
   setItemExpanded(item, false); 
+  taMisc::Busy(false);
 } 
 
 void iTreeView::CollapseAllUnderInt(void* item) {
@@ -4449,19 +4506,24 @@ void iTreeView::ExpandAll(int max_levels) {
 void iTreeView::ExpandAll_impl(int max_levels, bool use_custom_filt) {
   //NOTE: we can't user iterators for expanding, because we add/remove items which 
   // crashes the iterator
+  taMisc::Busy(true);
   for (int i = 0; i < topLevelItemCount(); ++i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
     if (!node) continue;
     ExpandItem_impl(node, 0, max_levels, use_custom_filt);
   }
 //TODO: need to rejig resizing
-  resizeColumnsToContents();
+  if (header()->isVisible() && (header()->count() > 1)) {
+    resizeColumnsToContents();
+  }
+  taMisc::Busy(false);
 }
 
 void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   int max_levels, int exp_flags) 
 {
   if (!item) return;
+  if (isItemHidden(item)) return;
   bool expand = true; 
   if (!(exp_flags & EF_EXPAND_DISABLED)) {
     if (!item->link()->isEnabled())
@@ -4501,8 +4563,12 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
 void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) 
 {
   if (!item) return;
+  taMisc::Busy(true);
   ExpandItem_impl(item, -1, max_levels, EF_EXPAND_DISABLED);
-  resizeColumnsToContents();
+  if (header()->isVisible() && (header()->count() > 1)) {
+    resizeColumnsToContents();
+  }
+  taMisc::Busy(false);
 } 
 
 void iTreeView::ExpandAllUnderInt(void* item) {
@@ -5102,6 +5168,15 @@ void iTreeViewItem::setHighlightIndex(int value) {
   setData(0, iTreeView::HighlightIndexRole, value);
 }
 
+bool iTreeViewItem::ShowNode_impl(int show, const String&) const 
+{ 
+  // if not a member, then we just always show, since it must be a list element,
+  // or standalone item whose visibility will be controlled by a parent member somewhere
+  if (!m_md) return true;
+  //TODO: note, context is ignored for now
+  return m_md->ShowMember((taMisc::ShowMembs)show, TypeItem::SC_TREE);
+}
+
 void iTreeViewItem::swapChildren(int n1_idx, int n2_idx) {
   // we move higher to lower, then lower is next after, and moved to higher
   if (n1_idx > n2_idx) {int t = n1_idx; n1_idx = n2_idx; n2_idx = t;}
@@ -5205,8 +5280,6 @@ void taiTreeDataNode::CreateChildren_impl() {
     if (tree->HasFilter(md)) continue; */
     // we make everything that isn't NO_SHOW, then hide if not visible now
     if (!md->ShowMember(taMisc::ALL_MEMBS, TypeItem::SC_TREE)) continue;
-    // check for show filter
-    if (!link()->ShowMember(md, TypeItem::SC_TREE)) continue;
     TypeDef* typ = md->type;
     void* el = md->GetOff(linkData()); //note: GetDataLink automatically derefs typ and el if pointers
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
@@ -5277,16 +5350,6 @@ void tabTreeDataNode::init(tabDataLink* link_, int dn_flags_) {
 
 tabTreeDataNode::~tabTreeDataNode()
 {
-}
-
-bool tabTreeDataNode::ShowNode(taMisc::ShowMembs show,
-    const String& context) const 
-{ 
-  // if not a member, then we just always show, since it must be a list element,
-  // or standalone item whose visibility will be controlled by a parent member somewhere
-  if (!m_md) return true;
-  //TODO: note, context is ignored for now
-  return m_md->ShowMember(show, TypeItem::SC_TREE);
 }
 
 

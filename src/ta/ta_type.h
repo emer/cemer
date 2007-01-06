@@ -399,7 +399,7 @@ public:
 // 	taMisc
 
 class TA_API taMisc {
-  // #NO_TOKENS #INSTANCE miscellanous global parameters and functions for type access system
+  // #NO_TOKENS #INSTANCE global parameters and functions for the application
 friend class InitProcRegistrar;
 public:
 
@@ -1193,7 +1193,7 @@ public:
   virtual MemberDef*	FindNameAddrR(const char* nm, void* base, void*& ptr) const;
   // recursive find of name returning address of found member
 
-  virtual MemberDef*	FindType(TypeDef* it, int& idx=Idx) const;
+  virtual MemberDef*	FindType(TypeDef* it, int& idx=no_index) const;
   // find by type, inherits from
   virtual MemberDef*	FindTypeR(TypeDef* it) const;
   // recursive find of type
@@ -1203,13 +1203,13 @@ public:
   // recursive find of type returning address of found member
 
   virtual int		FindDerives(TypeDef* it) const;
-  virtual MemberDef*	FindTypeDerives(TypeDef* it,  int& idx=Idx) const;
+  virtual MemberDef*	FindTypeDerives(TypeDef* it,  int& idx=no_index) const;
   // find by type, derives from
 
-  virtual MemberDef*	FindAddr(void* base, void* mbr, int& idx=Idx) const;
+  virtual MemberDef*	FindAddr(void* base, void* mbr, int& idx=no_index) const;
   // find by address given base of class and address of member
   virtual int		FindPtr(void* base, void* mbr) const;
-  virtual MemberDef*	FindAddrPtr(void* base, void* mbr, int& idx=Idx) const;
+  virtual MemberDef*	FindAddrPtr(void* base, void* mbr, int& idx=no_index) const;
   // find by address of a member that is a pointer given base and pointer addr
 
   virtual void		CopyFromSameType(void* trg_base, void* src_base);
@@ -1336,7 +1336,7 @@ public:
 //////////////////////////
 
 class TA_API TypeItem: public taRefN {
-  // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef
+  // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE base class for TypeDef, MemberDef, MethodDef, EnumDef, and TypedefDef
 INHERITED(taRefN)
 public:
   enum ShowContext {

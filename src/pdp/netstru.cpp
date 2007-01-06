@@ -385,7 +385,7 @@ int UnitPtrList::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
 /////////////////////////////////////////////////////////////////////
 //	RecvCons
 
-int RecvCons::Idx = 0;
+int RecvCons::no_idx;
 
 void RecvCons::Initialize() {
   // derived classes need to set new basic con types
@@ -1188,7 +1188,7 @@ bool RecvCons_List::RemoveFrom(Layer* from) {
 /////////////////////////////////////////////////////////////////////
 //	SendCons
 
-int SendCons::Idx = 0;
+int SendCons::no_idx = 0;
 
 void SendCons::Initialize() {
   // derived classes need to set new basic con types

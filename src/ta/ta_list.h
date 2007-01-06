@@ -234,7 +234,7 @@ protected:
   // update the index of the item at given index (i.e., which was just moved)
 
 public:
-  void**	el;		// #READ_ONLY #NO_SAVE #HIDDEN the elements themselves
+  void**	el;		// #READ_ONLY #NO_SAVE #NO_SHOW the elements themselves
   int 		alloc_size;	// #READ_ONLY #NO_SAVE allocation size
   taHashTable*	hash_table;	// #READ_ONLY #NO_SAVE #HIDDEN a hash table (NULL if not used)
   int		size;		// #READ_ONLY #NO_SAVE #SHOW number of elements in the list
@@ -245,7 +245,7 @@ public:
 
   static ostream& Indenter(ostream& strm, const String& itm, int no, int prln, int tabs);
   // #IGNORE
-  static int	Idx;			// #HIDDEN pass to find if you don't want one
+  static int	no_index;			// #IGNORE passed to Find if you don't want one
 
 
   ////////////////////////////////////////////////
@@ -257,7 +257,7 @@ public:
   void*		SafeEl_(int i) const
   { void* rval=NULL; if(InRange(i)) rval = el[i]; return rval; } 	// #IGNORE
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
-  virtual void*	FindName_(const String& it, int& idx=Idx) const;	// #IGNORE
+  virtual void*	FindName_(const String& it, int& idx=no_index) const;	// #IGNORE
   virtual void*	Pop_();					// #IGNORE
   void*		First_() const
   { if (size > 0) return el[0]; else return NULL; }  // #IGNORE
@@ -426,7 +426,7 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(FindEl(item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
 
-  virtual T*	FindName(const String& item_nm, int& idx=Idx) const { return (T*)FindName_(item_nm, idx); }
+  virtual T*	FindName(const String& item_nm, int& idx=no_index) const { return (T*)FindName_(item_nm, idx); }
   // find given named element (NULL = not here), sets idx
 
   virtual T*	Pop()				{ return (T*)Pop_(); }

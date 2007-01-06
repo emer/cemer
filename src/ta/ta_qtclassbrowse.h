@@ -63,6 +63,8 @@ public:
   const taMisc::TypeInfoKind 	tik;
   TypeDef*		type() const {return m_type;}
   
+  override TypeDef*	GetDataTypeDef() const;
+  
   DL_FUNS(taClassDataLink); //
 
 protected:
@@ -80,7 +82,6 @@ public:
 //  override const QPixmap* GetIcon(int bmf, int& flags_supported);
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
-  override TypeDef*	GetDataTypeDef() const;
   override taiMimeItem* GetMimeItem();
   override String	GetName() const;
   override String	GetDisplayName() const;

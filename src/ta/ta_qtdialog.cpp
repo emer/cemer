@@ -572,7 +572,6 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   row_height = 1; // actual value set in Constr
   mouse_button = 0;
   cur_row = 0;
-  no_revert_hilight = false;
   modal = modal_;
   no_ok_but = false;
   dialog = NULL;
@@ -734,11 +733,11 @@ void taiDataHost::Apply() {
     if(chs == 2)
       return;
   }
-  no_revert_hilight = true;
+  ++updating;
   GetValue();
   GetImage();
   Unchanged();
-  no_revert_hilight = false;
+  --updating;
 }
 
 void taiDataHost::BodyCleared() { // called when last widget cleared from body
@@ -760,7 +759,7 @@ void taiDataHost::Cancel() { //note: taiEditDataHost takes care of cancelling pa
 void taiDataHost::Changed() {
   if (modified) return; // handled already
   modified = true;
-  if (no_revert_hilight) return;
+  if (updating) return;
   if (apply_but != NULL) {
       apply_but->setEnabled(true);
       apply_but->setHiLight(true);
@@ -1109,7 +1108,7 @@ void taiDataHost::Ok() { //note: only used for Dialogs
 }
 
 void taiDataHost::NotifyChanged() {
-  if (no_revert_hilight) return; // it is us that caused this
+  if (updating) return; // it is us that caused this
   // if no changes have been made in this instance, then just refresh,
   // otherwise, user will have to decide what to do, i.e., revert
   if (HasChanged()) {
@@ -1125,38 +1124,29 @@ void taiDataHost::ReConstr_Body() {
   GetImage();
 }
 
-/*obs void taiDataHost::ReShow() {
-  if (no_revert_hilight) return; // it is us that caused this
-  if (HasChanged()) {
-    warn_clobber = true; //TODO: prob should have a state variable, so we will rebuild
-  } else {
-    state |= SHOW_CHANGED; // will get changed in event handler for body items deleted
-    // clear body -- much of the deleting is deferred, so event loop must pick up when it changes
-    ClearBody();
-  }
-} */
-
 bool taiDataHost::ReShow(bool force) {
 //note: only called with force from ReShowEdits, typ only from a SelEdit dialog
-  if (no_revert_hilight) return false; // it is us that caused this
-  if (force) {
-      // get confirmation if changed, and possibly exit
-    if (HasChanged()) {
-      int chs = taMisc::Choice("Changes must be applied before rebuilding", "&Apply", "&Cancel");
-      switch (chs) {
-      case  1: // just ignore and exit
-        return false;
-        break;
-      case  0:
-      default:
-        Apply();
-        break;
+  if (!updating) {
+    // was not use that caused this...
+    if (force) {
+        // get confirmation if changed, and possibly exit
+      if (HasChanged()) {
+        int chs = taMisc::Choice("Changes must be applied before rebuilding", "&Apply", "&Cancel");
+        switch (chs) {
+        case  1: // just ignore and exit
+          return false;
+          break;
+        case  0:
+        default:
+          Apply();
+          break;
+        }
       }
-    }
-  } else { // not forced, normal situation for datachanged notifies
-    if (HasChanged()) {
-      warn_clobber = true; //TODO: prob should have a state variable, so we will rebuild
-      return false;
+    } else { // not forced, normal situation for datachanged notifies
+      if (HasChanged()) {
+        warn_clobber = true; //TODO: prob should have a state variable, so we will rebuild
+        return false;
+      }
     }
   }
   state |= SHOW_CHANGED; 
@@ -1289,14 +1279,14 @@ void taiDialog::AddData(int index, QWidget* data) {
 
 
 void taiDataHost::SetRevert(){
-  if((no_revert_hilight == true) || (taMisc::is_loading)) return;
-  if(revert_but == NULL) return;
+  if (updating || (taMisc::is_loading)) return;
+  if (!revert_but) return;
   revert_but->setHiLight(true);
   revert_but->setEnabled(true);
 }
 
 void taiDataHost::UnSetRevert(){
-  if(revert_but == NULL) return;
+  if (!revert_but) return;
   revert_but->setHiLight(false);
   revert_but->setEnabled(false);
 }
@@ -1637,6 +1627,10 @@ void taiEditDataHost::GetImage() {
   if ((typ == NULL) || (cur_base == NULL)) return;
   if (state >= ACCEPTED ) return;
   if (state > DEFERRED1) {
+    // check for global show change, if we are in "app default"
+    if (show & taMisc::USE_SHOW_GUI_DEF) {
+      SetShow(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
+    }
     GetImage_Membs();
   }
   GetButtonImage();
@@ -1757,9 +1751,10 @@ void taiEditDataHost::GetValueInline_impl(void* base) const {
 void taiEditDataHost::Constr_ShowMenu() {
   if (!use_show) return;
   if (menu == NULL) return;	// if don't even have a menu, bail
-//note: ok in Qt version, TODO: delete this line  if (modal) return; // can't change what to show on modal dialog
 
   show_menu = menu->AddSubMenu("&Show");
+  connect(show_menu->menu(), SIGNAL(aboutToShow()), 
+    this, SLOT(showMenu_aboutToShow()) );
 
   // first item controls whether to slave to app's global value, or override
   show_menu->AddItem("App de&fault", taiMenu::toggle, taiAction::men_act,
@@ -1780,7 +1775,6 @@ void taiEditDataHost::Constr_ShowMenu() {
       this, SLOT(ShowChange(taiAction*)), 4 );
   show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
       this, SLOT(ShowChange(taiAction*)), 5 );
-  setShowValues(show); // sets toggles
 }
 
 void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
@@ -1815,8 +1809,9 @@ void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   } */
 }
 
-void taiEditDataHost::setShowValues(taMisc::ShowMembs value) {
-  if (show_menu == NULL) return;
+void taiEditDataHost::showMenu_aboutToShow() {
+  int value = show;
+  if (!show_menu) return;
   (*show_menu)[0]->setChecked((value & taMisc::USE_SHOW_GUI_DEF));
   //note: nothing to do for the command items
   (*show_menu)[3]->setChecked(!(value & taMisc::NO_NORMAL));
@@ -1828,36 +1823,16 @@ void taiEditDataHost::setShowValues(taMisc::ShowMembs value) {
   for (int i = 1; i <= 6; ++i) {
     (*show_menu)[i]->setEnabled(en);
   }
-  
-  show = value;
 }
 
-void taiEditDataHost::setShow(taMisc::ShowMembs value) {
-  if (show_menu == NULL) return;
-  taMisc::ShowMembs old_show = show;
-  // note: we only do actual change processing for show changes,
-  // not change to/from app default if our last shows were the same except for that
-  if ((~taMisc::USE_SHOW_GUI_DEF & show) != (~taMisc::USE_SHOW_GUI_DEF & value)) {
-      // get confirmation if changed, and possibly exit
-    if (HasChanged()) {
-      int chs = taMisc::Choice("Changes must be applied before changing view", "&Apply", "&Cancel");
-      switch (chs) {
-      case  1: // just ignore and exit
-  	setShowValues(old_show); // need to correct menu before cancelling
-        return;
-      case  0:
-      default:
-        Apply();
-        break;
-      }
-    }
-  }
-  setShowValues(value);
-
-  // only reconfigure if view actually changed
+bool taiEditDataHost::SetShow(int value) {
+  int old_show = show;
+  show = (taMisc::ShowMembs)value;
+  // note: we only do change processing for effective show changes,
+  // not change to/from app default if our effective shows were the same
   if ((~taMisc::USE_SHOW_GUI_DEF & old_show) == (~taMisc::USE_SHOW_GUI_DEF & value))
-     return;
-  ReShow();
+     return false;
+  return ReShow();
 }
 
 void taiEditDataHost::ShowChange(taiAction* sender) {
@@ -1881,7 +1856,8 @@ void taiEditDataHost::ShowChange(taiAction* sender) {
     }
     new_show = sender->isChecked() ? show & ~mask : show | mask;
   }
-  setShow((taMisc::ShowMembs)new_show);
+  SetShow((taMisc::ShowMembs)new_show);
+  GetImage();
 }
 
 bool taiEditDataHost::ShowMember(MemberDef* md) const {

@@ -811,6 +811,7 @@ public:
   taiMenu* 		fileExportMenu; // submenu -- empty and disabled in base
   taiMenu* 		editMenu;
   taiMenu* 		viewMenu;
+  taiMenu* 		show_menu;
   taiMenu* 		frameMenu; // enumeration of all Frame guys
   taiMenu* 		toolBarMenu; // enumeration of all ToolBar guys
   taiMenu* 		dockMenu; // enumeration of all Dock guys
@@ -896,6 +897,9 @@ public slots:
   virtual void 	viewCloseCurrentView();
   virtual void 	viewSplitVertical();
   virtual void 	viewSplitHorizontal();
+  
+  virtual void	showMenu_aboutToShow();
+  virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
   
   virtual void	toolsClassBrowser();
 /*  virtual void helpIndex();
@@ -1508,7 +1512,6 @@ protected:
   void 			focusInEvent(QFocusEvent* ev); // override
   QFont&		italicFont() const; // so we don't create a new guy each node
   void			showEvent(QShowEvent* ev); // override, for expand all
-  void			Show_impl(); // called from show and refresh
   void 			ExpandAll_impl(int max_levels,
     bool use_custom_filt = false); // inner code
   void 			ExpandItem_impl(iTreeViewItem* item,
@@ -1521,6 +1524,7 @@ protected:
 #endif
   virtual void		ItemDestroyingCb(iTreeViewItem* item); 
   virtual void		Refresh_impl();
+  virtual void		Show_impl();
   
 protected slots:
   void 			this_contextMenuRequested(QTreeWidgetItem* item,
@@ -1572,9 +1576,11 @@ public:
   void			DataChanged(int dcr, void* op1, void* op2)
     {DataChanged_impl(dcr, op1, op2);} // primarily to support Refresh
   virtual void		DecorateDataNode(); // sets icon and other visual attributes, based on state of node
-  virtual bool		ShowNode(taMisc::ShowMembs show,
-    const String& context = _nilString) const {return true;}
+  bool			ShowNode(int show) const 
+    {return ShowNode_impl(show, _nilString);}
     // whether to show the node, given the context
+  bool			ShowNode(int show, const String& context) const
+    {return ShowNode_impl(show, context);}
 
   iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeViewItem* parent_,
     iTreeViewItem* after, const String& tree_name, int dn_flags_ = 0);
@@ -1622,6 +1628,7 @@ protected:
   override void		dropped(const QMimeData* mime, const QPoint& pos);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void 	itemExpanded(bool value);
+  virtual bool		ShowNode_impl(int show, const String& context) const;
 private:
   void			init(const String& tree_name, taiDataLink* link_, 
     MemberDef* md_, int dn_flags_); // #IGNORE
@@ -1690,9 +1697,6 @@ public:
   taBase* 		data() {return ((tabDataLink*)m_link)->data();}
   tabDataLink* 		link() const {return (tabDataLink*)m_link;}
 
-  override bool		ShowNode(taMisc::ShowMembs show,
-    const String& context = _nilString) const;
-
   tabTreeDataNode(tabDataLink* link_, MemberDef* md_, taiTreeDataNode* parent_,
     taiTreeDataNode* after, const String& tree_name, int dn_flags_ = 0);
   tabTreeDataNode(tabDataLink* link_, MemberDef* md_, iTreeView* parent_,
@@ -1701,6 +1705,7 @@ public:
 public: // IDataLinkClient interface
 //  override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_tabTreeDataNode;}
+  
 private:
   void			init(tabDataLink* link_, int dn_flags_); // #IGNORE
 };
