@@ -94,6 +94,7 @@ public:
   virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiMimeItem*	GetMimeItem() {return NULL;} // replace
+  virtual String	GetDecorateKey() const {return _nilString;}
   virtual const QVariant GetColData(const KeyString& key, int role) const 
     {return QVariant();} // for getting things like status text, tooltip text, etc.
   virtual bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const
@@ -154,6 +155,7 @@ public:
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
   override TypeDef*	GetDataTypeDef() const;
+  override String	GetDecorateKey() const;
   override taiMimeItem* GetMimeItem();
   override String	GetName() const;
   override bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const; // asks this type if we should show the md member
@@ -1567,6 +1569,8 @@ public:
   int			dn_flags; // any of DataNodeFlags
 
   override bool 	acceptDrop(const QMimeData* mime) const;
+  bool			decorateEnabled() const {return m_decorate_enabled;}
+  void			setDecorateEnabled(bool value); //note: must be done at create time
   override int		highlightIndex() const; // highlight color to use, 0=none
   void*			linkData() const;
   void			setHighlightIndex(int value); // highlight color to use, 0=none
@@ -1625,6 +1629,7 @@ protected:
 
 protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)
+  bool			m_decorate_enabled;
   override void		dropped(const QMimeData* mime, const QPoint& pos);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void 	itemExpanded(bool value);

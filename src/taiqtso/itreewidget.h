@@ -42,7 +42,6 @@ public:
   bool			highlightRows() const {return m_highlightRows;}
     // whether we use the highlight information from items
   void			setHighlightRows(bool value);
-  
   void 			resizeColumnsToContents(); // convenience: resizes all but last col
   
   iTreeWidget(QWidget* parent = 0);
@@ -84,6 +83,10 @@ public:
   void			enableLazyChildren(); // call on create or anytime when empty
   virtual int		highlightIndex() const {return 0;}
     // subclass must override to return >0 for highlighting
+  void			SetTextColor(int col, const QColor& color);
+    // set text color for indicated column, or all if col=-1
+  void			ResetTextColor(int col);
+    // return text color for indicated column to default, or for all cols if col=-1
   
   virtual bool		acceptDrop(const QMimeData* mime) const {return false;}
     // returns whether we can accept the given data in a drop upon us

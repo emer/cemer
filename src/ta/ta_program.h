@@ -592,7 +592,11 @@ class TA_API Comment: public ProgEl {
   // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
 INHERITED(ProgEl)
 public:
+  static const String	decoration_key; // "comment"
+  
   override String	GetDisplayName() const;
+  override String	GetDecorationKey() const {return decoration_key;}
+
   TA_SIMPLE_BASEFUNS(Comment);
 
 protected:

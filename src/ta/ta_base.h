@@ -424,6 +424,8 @@ public:
   // #IGNORE a type-specific description of the specific functionality/properties of the object
   virtual void 		SetDefaultName() {} // #IGNORE note: called non-virtually in every constructor
   void 			SetDefaultName_(); // #IGNORE default behavior for >=taNBase -- you can call this manually for taOBase (or others that implement Name)
+  virtual String	GetDecorationKey() const {return _nilString;}
+    // #IGNORE lookup key for decorating tree items, ex. "comment"
 
   virtual void* 	GetTA_Element(int idx, TypeDef*& eltd) 
   { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])

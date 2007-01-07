@@ -834,6 +834,7 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
     }
   }
   pe->items->setDefaultExpandLevels(6); // shouldn't generally be more than this
+  pe->items->setDecorateEnabled(true); //TODO: maybe make this an app option
   connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
 }

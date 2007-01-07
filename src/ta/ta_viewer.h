@@ -680,6 +680,33 @@ private:
 };
 
 
+class TA_API TreeDecorationSpec: public taNBase {
+  // provides the color and other details for the named type of entry, ex "comment"
+INHERITED(taNBase)
+public:
 
+  RGBA			text_color;
+  
+//  void	UpdateAfterEdit();
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const TreeDecorationSpec& cp);
+  COPY_FUNS(TreeDecorationSpec, inherited)
+  TA_BASEFUNS(TreeDecorationSpec) //
+private:
+  void Initialize();
+  void Destroy();
+};
+
+
+class TA_API TreeDecorationSpec_List: public taList<TreeDecorationSpec> {
+INHERITED(taList<TreeDecorationSpec>)
+public:
+  
+  TA_BASEFUNS(TreeDecorationSpec_List) //
+private:
+  void Initialize() {SetBaseType(&TA_TreeDecorationSpec);}
+  void Destroy() {}
+};
 
 #endif

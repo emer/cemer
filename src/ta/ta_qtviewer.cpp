@@ -762,6 +762,10 @@ const QVariant tabDataLink::GetColData(const KeyString& key, int role) const {
   return data()->GetColData(key, role);
 }
 
+String tabDataLink::GetDecorateKey() const {
+  return data()->GetDecorateKey();
+}
+
 bool tabDataLink::isEnabled() const {
   return data()->GetEnabled();
 }
@@ -4374,6 +4378,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
   m_show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
+  m_decorate_enabled = false;
   italic_font = NULL; 
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1, 
@@ -4701,6 +4706,11 @@ void iTreeView::setColFormat(int col, int value) {
   headerItem()->setData(col, ColFormatRole, value);
 }
 
+void iTreeView::setDecorateEnabled(bool value) {
+  if (m_decorate_enabled == value) return;
+  m_decorate_enabled = value;
+} 
+
 void iTreeView::setShow(taMisc::ShowMembs value) {
   if (m_show == value) return;
   Show_impl();
@@ -4974,16 +4984,17 @@ void iTreeViewItem::DataLinkDestroying(taDataLink*) {
 void iTreeViewItem::DecorateDataNode() {
   int bmf = 0;
   int dn_flags_supported = 0;
+  taiDataLink* link = link(); // local cache
   QIcon ic;
   if (isExpanded()) bmf |= NBF_FOLDER_OPEN;
-  bool has_ic = link()->GetIcon(bmf, dn_flags_supported, ic);
+  bool has_ic = link->GetIcon(bmf, dn_flags_supported, ic);
   //TODO (or in GetIcon somewhere) add link iconlet and any other appropriate mods
   if (has_ic)
     setIcon(0, ic);
   // fill out remaining col text and data according to key
   iTreeView* tv = treeView();
   if (!tv) return; //shouldn't happen
-  bool item_enabled = link()->isEnabled(); // usually is
+  bool item_enabled = link->isEnabled(); // usually is
   // we only fiddle the font if item disabled or previously disabled
   // (otherwise, we'd be superfluously setting a Font into each item!)
   //  bool set_font = (!item_enabled);
@@ -5009,9 +5020,9 @@ void iTreeViewItem::DecorateDataNode() {
       KeyString key = tv->colKey(i);
       if (key.length() > 0) { // no point if no key
         if (col_format & iTreeView::CF_ELIDE_TO_FIRST_LINE)
-          setText(i, (link()->GetColText(key)).elidedToFirstLine());
+          setText(i, (link->GetColText(key)).elidedToFirstLine());
         else
-          setText(i, (link()->GetColText(key)).elidedTo(max_chars));
+          setText(i, (link->GetColText(key)).elidedTo(max_chars));
       }
     }
     // then, col data, if any (empty map, otherwise)
@@ -5025,7 +5036,7 @@ void iTreeViewItem::DecorateDataNode() {
         int role = itr.key().toInt(&ok);
         if (ok) {
           key = itr.value().toString();
-          setData(i, role, link()->GetColData(key, role));
+          setData(i, role, link->GetColData(key, role));
         }
       }
     }
@@ -5036,13 +5047,23 @@ void iTreeViewItem::DecorateDataNode() {
       setHighlightIndex(3);
     }
     else {
-      int cfc = link()->checkConfigFlags();
+      int cfc = link->checkConfigFlags();
       if (cfc & taBase::THIS_INVALID)
 	setHighlightIndex(1); //red
       else if (cfc & taBase::CHILD_INVALID)
 	setHighlightIndex(2); //yellow
       else 
 	setHighlightIndex(0);
+    }
+  }
+  // if decoration enabled, then decorate away
+  if (tv->decorateEnabled()) {
+    String dec_key = link->GetDecorateKey(); // nil if none
+    if (dec_key.nonempty()) {
+    //TEMP
+      if (dec_key == "comment") {
+        setTextColor(-1, Qt::green);
+      }
     }
   }
 }
