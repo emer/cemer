@@ -277,7 +277,7 @@ void iTreeWidgetItem::itemExpanded(bool expanded) {
   CreateChildren();
 }
 
-void iTreeWidgetItem::SetTextColor(int col, const QColor& color) {
+void iTreeWidgetItem::setTextColor(int col, const QColor& color) {
   if (col < 0) {
     for (int i = 0; i < columnCount(); ++i) {
       setData(i, Qt::TextColorRole, color);
@@ -287,17 +287,17 @@ void iTreeWidgetItem::SetTextColor(int col, const QColor& color) {
   }
 }
 
-void iTreeWidgetItem::ResetTextColor(int col); {
+void iTreeWidgetItem::resetTextColor(int col) {
   QVariant var; // check for existing color, don't set if not necessary
   if (col < 0) {
     for (int i = 0; i < columnCount(); ++i) {
       var = data(i, Qt::TextColorRole);
-      if (var.isValid()
+      if (var.isValid())
         setData(i, Qt::TextColorRole, QVariant());
     }
   } else if (col < columnCount()) {
     var = data(col, Qt::TextColorRole);
-    if (var.isValid()
+    if (var.isValid())
       setData(col, Qt::TextColorRole, QVariant());
   }
 }

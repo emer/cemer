@@ -19,6 +19,7 @@
 #define TA_VIEWER_H
 
 #include "ta_base.h"
+#include "colorscale.h"
 
 #include "ta_TA_type.h"
 

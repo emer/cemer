@@ -139,7 +139,7 @@ protected:
 
 class TA_API iProgramEditor: public QWidget, public virtual IDataHost, 
   public virtual IDataLinkClient {
-  // widget for editing entire programs
+  // #NO_CSS widget for editing entire programs
 INHERITED(QWidget)
   Q_OBJECT
 public:
@@ -217,7 +217,7 @@ private:
 
 
 class TA_API iProgramPanelBase: public iDataPanelFrame {
-//note: ProgramPanel and ProgramGroupPanel are almost identical
+// ##NO_CSS note: ProgramPanel and ProgramGroupPanel are almost identical
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:

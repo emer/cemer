@@ -4984,7 +4984,7 @@ void iTreeViewItem::DataLinkDestroying(taDataLink*) {
 void iTreeViewItem::DecorateDataNode() {
   int bmf = 0;
   int dn_flags_supported = 0;
-  taiDataLink* link = link(); // local cache
+  taiDataLink* link = this->link(); // local cache
   QIcon ic;
   if (isExpanded()) bmf |= NBF_FOLDER_OPEN;
   bool has_ic = link->GetIcon(bmf, dn_flags_supported, ic);
@@ -5062,7 +5062,7 @@ void iTreeViewItem::DecorateDataNode() {
     if (dec_key.nonempty()) {
     //TEMP
       if (dec_key == "comment") {
-        setTextColor(-1, Qt::green);
+        setTextColor(-1, Qt::darkGreen);
       }
     }
   }

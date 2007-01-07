@@ -83,9 +83,9 @@ public:
   void			enableLazyChildren(); // call on create or anytime when empty
   virtual int		highlightIndex() const {return 0;}
     // subclass must override to return >0 for highlighting
-  void			SetTextColor(int col, const QColor& color);
-    // set text color for indicated column, or all if col=-1
-  void			ResetTextColor(int col);
+  void			setTextColor(int col, const QColor& color);
+    // set text color for indicated column, or all if col=-1; note: statically hides Qt member
+  void			resetTextColor(int col);
     // return text color for indicated column to default, or for all cols if col=-1
   
   virtual bool		acceptDrop(const QMimeData* mime) const {return false;}

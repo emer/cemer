@@ -1430,6 +1430,8 @@ public:
     // sets in ColKeyRole -- you can do it yourself if you want	
   int 			colFormat(int col);
   void			setColFormat(int col, int format_flags); 
+  bool			decorateEnabled() const {return m_decorate_enabled;}
+  void			setDecorateEnabled(bool value); //note: must be done at create time
   int			defaultExpandLevels() const {return m_def_exp_levels;}
     // how many levels the DefaultExpand expands
   void			setDefaultExpandLevels(int value) 
@@ -1509,6 +1511,7 @@ protected:
   String_PArray* 	m_filters; // only created if any added
   short			m_def_exp_levels; // level of default expand, typically 2
   taMisc::ShowMembs 	m_show;
+  bool			m_decorate_enabled;
   String		m_show_context;
   
   void 			focusInEvent(QFocusEvent* ev); // override
@@ -1569,8 +1572,6 @@ public:
   int			dn_flags; // any of DataNodeFlags
 
   override bool 	acceptDrop(const QMimeData* mime) const;
-  bool			decorateEnabled() const {return m_decorate_enabled;}
-  void			setDecorateEnabled(bool value); //note: must be done at create time
   override int		highlightIndex() const; // highlight color to use, 0=none
   void*			linkData() const;
   void			setHighlightIndex(int value); // highlight color to use, 0=none
@@ -1629,7 +1630,6 @@ protected:
 
 protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)
-  bool			m_decorate_enabled;
   override void		dropped(const QMimeData* mime, const QPoint& pos);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void 	itemExpanded(bool value);

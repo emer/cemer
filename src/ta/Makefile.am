@@ -94,19 +94,16 @@ endif
 
 TAHEADS_TAMISC =\
 	@abs_srcdir@/ta_time.h \
-	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/fun_lookup.h \
 	@abs_srcdir@/ta_data_extras.h 
 
 HEADS_TAMISC =\
 	ta_time.h \
-	colorscale.h \
 	fun_lookup.h \
 	ta_data_extras.h
 
 SRCS_TAMISC =\
 	ta_time.cpp \
-	colorscale.cpp \
 	fun_lookup.cpp \
 	ta_data_extras.cpp 
 
@@ -132,6 +129,7 @@ TAHEADS =\
 	@abs_srcdir@/ta_fontspec.h \
 	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/ta_group.h \
+	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/ta_dmem.h \
 	@abs_srcdir@/ta_script.h \
 	@abs_srcdir@/ta_dynenum.h \
@@ -174,6 +172,7 @@ HEADS =\
 	ta_fontspec.h \
 	minmax.h \
 	ta_group.h \
+	colorscale.h \
 	ta_dmem.h \
 	ta_script.h \
 	ta_dynenum.h \
@@ -217,6 +216,7 @@ SRCS =\
 	ta_fontspec.cpp \
 	minmax.cpp \
 	ta_group.cpp \
+	colorscale.cpp \
 	ta_dmem.cpp \
 	ta_script.cpp \
 	ta_dynenum.cpp \
