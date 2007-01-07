@@ -49,7 +49,7 @@ This file is part of TA/PDP++
 
 AC_DISABLE_STATIC                                      # Disable static libraries
 AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /cfg
-AC_CONFIG_SRCDIR([src/ta/taglobal.h])                  # Make sure we're in the right place
+AC_CONFIG_SRCDIR([src/ta/ta_global.h])                 # Make sure we're in the right place
 AC_CONFIG_HEADERS([config.h])                          # Create config.h
 # NOTE: If using OSX, use DarwinPorts to get most recent automake verison
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.5])

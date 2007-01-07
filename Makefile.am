@@ -1,7 +1,7 @@
 CLEAN_FILES =
 
 EXTRA_DIST =\
-	src/ta/taglobal.h \
+	src/ta/ta_global.h \
 	src/ta/ta_maketa_defs.h \
 	src/ta/qtdefs.h \
 	src/css/css_def.h \
