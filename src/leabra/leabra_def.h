@@ -17,7 +17,7 @@
 #ifndef LEABRA_DEF_H
 #define LEABRA_DEF_H
 
-#include "taglobal.h"
+#include "ta_global.h"
 
  
 // The following ifdef block is the standard way of creating macros which make exporting 

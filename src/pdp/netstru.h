@@ -23,6 +23,7 @@
 #include "ta_script.h"
 #include "ta_datatable.h"
 #include "ta_math.h"
+#include "ta_time.h"
 
 #include "spec.h"
 
@@ -1564,6 +1565,8 @@ public:
   float	       	cur_sum_sse;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current sum_sse -- used during computation of sum_sse
   int	       	avg_sse_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic number of times cur_sum_sse updated: for computing avg_sse
   float	       	cur_cnt_err;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
+
+  TimeUsed	wt_sync_time;	// #GUI_READ_ONLY #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem) 
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)

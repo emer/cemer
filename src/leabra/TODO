@@ -2,12 +2,17 @@ leabra todo list:
 
 commit:
 
-added some directory and path manip funs in taMisc;
-added ReturnExpr & IfReturn to progs
-added progel flags for state highlighting (off, non_std, new_el)
-
 ------------------
 hv model
+
+* debug DMEM timing: add start/end timer with some flags on the control guy and use
+for setting network stats vars on dmem_timing.
+
+* IT fm output: adapt goes up to .12, no adapt is down at .018 -- change it fm output target.
+  itfmo05
+
+* output should get more from IT than V4??  check wiki for prior experiments..
+
 
 * do repeat testing
 * show retina stuff in netview (record params in trial log to)

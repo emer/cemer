@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef tatime_h
-#define tatime_h
+#ifndef ta_time_h
+#define ta_time_h
 
 #include "ta_base.h"
 #include "ta_TA_type.h"
@@ -68,4 +68,4 @@ public:
   TA_SIMPLE_BASEFUNS(TimeUsed);
 };
 
-#endif // tatime_h
+#endif // ta_time_h

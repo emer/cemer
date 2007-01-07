@@ -93,19 +93,19 @@ SRCS_GUI =\
 endif
 
 TAHEADS_TAMISC =\
-	@abs_srcdir@/tatime.h \
+	@abs_srcdir@/ta_time.h \
 	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/fun_lookup.h \
 	@abs_srcdir@/ta_data_extras.h 
 
 HEADS_TAMISC =\
-	tatime.h \
+	ta_time.h \
 	colorscale.h \
 	fun_lookup.h \
 	ta_data_extras.h
 
 SRCS_TAMISC =\
-	tatime.cpp \
+	ta_time.cpp \
 	colorscale.cpp \
 	fun_lookup.cpp \
 	ta_data_extras.cpp 

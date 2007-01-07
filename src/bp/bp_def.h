@@ -17,8 +17,7 @@
 #ifndef BP_DEF_H
 #define BP_DEF_H
 
-#include "taglobal.h"
-
+#include "ta_global.h"
  
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS

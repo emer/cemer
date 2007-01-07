@@ -25,7 +25,7 @@
 #include "pdp_def.h"
 
 #include "ta_script.h"
-#include "tatime.h"
+#include "ta_time.h"
 #include "minmax.h"
 #include "ta_datatable.h"
 #include "pdpdeclare.h"

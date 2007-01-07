@@ -4394,6 +4394,7 @@ void Network::InitLinks() {
   taBase::Own(max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
+  taBase::Own(wt_sync_time, this);
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_net_comm, this);
   taBase::Own(dmem_trl_comm, this);
@@ -4984,6 +4985,7 @@ void Network::DMem_PruneNonLocalCons() {
 }
 
 void Network::DMem_SumDWts(MPI_Comm comm) {
+  wt_sync_time.StartTimer(false); // don't reset
   static float_Array values;
   static float_Array results;
 
@@ -5029,6 +5031,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
       }
     }
   }
+  wt_sync_time.EndTimer();
 }
 
 void Network::DMem_AvgWts(MPI_Comm comm) {

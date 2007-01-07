@@ -19,7 +19,7 @@
 
 // standard definitions, etc
 
-#include "taglobal.h"
+#include "ta_global.h"
 
 //#include <stdlib.h>
 #include <string.h>

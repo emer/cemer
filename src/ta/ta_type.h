@@ -92,7 +92,7 @@ class TA_API TypeDef; //
   actually a basic type, but will be a synonym for either int or int64_t.
   
   'long long' is 64-bits, but we prefer to use the ansi designation 'int64_t' -- we
-  provide a guarded typedef for this (for Windows) in the taglobal.h header file.
+  provide a guarded typedef for this (for Windows) in the ta_global.h header file.
   
   Note that our code is not well tested against any use of unsigned types, and apart from
   'byte' we suggest not using them, particularly in gui contexts.
