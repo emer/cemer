@@ -68,9 +68,9 @@ T3TableViewNode::~T3TableViewNode()
 
 void T3TableViewNode::render(float inset) {
   if (frame_) {
-    frame_->setDimensions(geom_.x, geom_.y, 0.1f, inset);
+    frame_->setDimensions(geom_.x+2.0f*inset, geom_.y+2.0f*inset, 0.1f, inset);
   }
-  txfm_shape()->translation.setValue(geom_.x/2.0f, geom_.y/2.0f, 0.0f);
+  txfm_shape()->translation.setValue(.5f * (geom_.x+2.0f*inset), .5f*(geom_.y+2.0f*inset), 0.0f);
 }
 
 void T3TableViewNode::setGeom(int px, int py, int pz) {
@@ -154,30 +154,14 @@ T3GridViewNode::~T3GridViewNode()
   grid_ = NULL;
 }
 
-void T3GridViewNode::render(float inset) {
-  txlt_stage_->translation.setValue(inset, geom_.y - inset, 0.0f);
-  frame_->setDimensions(geom_.x, geom_.y, 0.1f, inset);
-  txfm_shape()->translation.setValue(geom_.x/2.0f, geom_.y/2.0f, 0.0f);
-  txlt_grid_->translation.setValue(-(geom_.x/2.0f - inset), geom_.y/2.0f - inset, 0.0f);
+void T3GridViewNode::render() {
+  txlt_stage_->translation.setValue(0.0f, 0.0f, 0.0f);
+  frame_->setDimensions(1.1f, 1.1f, 0.02f, .02f);
+  txfm_shape()->translation.setValue(.5f * 1.05f, -.5f * 1.05f, 0.0f);
+//   txlt_grid_->translation.setValue(-(geom_.x/2.0f - inset), geom_.y/2.0f - inset, 0.0f);
+  SoFont* font = captionFont(true);
+  transformCaption(iVec3f(0.0f, -((float)font->size.getValue()) -1.1f, 0.0f)); // move caption below the frame
 }
-
-void T3GridViewNode::setGeom(int px, int py) {
-  setGeom(px, py, frame_->inset); 
-}
-
-void T3GridViewNode::setGeom(int px, int py, float inset) {
-  if (px < 1) px = 1;  if (py < 1) py = 1;
-  if (inset < 0.0f) inset = 0.0f; // TODO: make sure 0-inset is legal!
-  if (geom_.isEqual(px, py) && (frame_->inset == inset) ) return;
-  geom_.setValue(px, py);
-  render(inset);
-}
-
-void T3GridViewNode::setInset(float value) {
-  if (frame_->inset == value) return;
-  render(value);
-}
-
 
 //////////////////////////
 //   T3GraphViewNode	//

@@ -15,6 +15,8 @@
 
 #include "ta_datatable.h"
 
+#include "ta_math.h"
+
 #ifdef TA_GUI
 #  include "ta_datatable_qtso.h"
 #endif
@@ -184,16 +186,11 @@ taBase::DumpQueryResult DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
   } else return inherited::Dump_QuerySaveMember(md);
 }
 
-void DataArray_impl::Get2DCellGeom(iVec2i& r) {
-  r.x = 1;
-  r.y = 1;
-  if (isMatrix() && (cell_geom.size > 0)) {
-    r.x = cell_geom[0]; // always, regardless of dimensions
-    if (cell_geom.size >= 2) { // 1d, return # flat rows
-      r.y = cell_geom[1]; // this is it if 2d
-      for (int i = cell_geom.size - 1; i > 1; --i)
-        r.y *= cell_geom[i];
-    }
+void DataArray_impl::Get2DCellGeom(int& x, int& y) {
+  x = 1;
+  y = 1;
+  if(isMatrix()) {
+    cell_geom.Get2DGeom(x, y);
   }
 }
 
@@ -1912,54 +1909,34 @@ void GridColViewSpec::DataColUnlinked() {
 
 void GridColViewSpec::Render_impl() {
   inherited::Render_impl(); // prob nothing
-  //NOTE: we just calc everything in points, then adjust at the end
-  // cache some params
+
+  // main point here is to compute size of column based on disp params
+  // this is then normalized by the gridview display, so units are arbitrary
+  // and are set to be characters (why not?)
+
   GridTableViewSpec* par = parent();
   DataArray_impl* dc = dataCol(); // cache
   col_width = 0.0f;
   row_height = 0.0f;
   if (!dc) return;
-  
-  float blk_pts = par->mat_block_pts; 
-  float brd_pts = par->mat_border_pts; 
-  float fnt_pts = par->font.pointSize;
-  // first stab at col width is the normal size text, for scalar width
-  float min_col_wd = fnt_pts * text_width;
-  if (dc->isMatrix()) // shrink font for mats
-    fnt_pts *=  par->mat_font_scale; 
-  
-  // get 2d equivalent cell geom values
-  iVec2i cg;
-  dc->Get2DCellGeom(cg); //note: 1x1 for scalar
-  float row_ht = 0.0f;
-  float col_wd = 0.0f;
-  float tmp; // to avoid multi-calcs in min/max 
-  if (display_style & BLOCK_MASK) {
-    col_wd += (blk_pts * cg.x) + (brd_pts * (cg.x - 1));
-    tmp =  (blk_pts * cg.y) + (brd_pts * (cg.y - 1));
-    row_ht = MAX(row_ht, tmp);
+
+  if(dc->isMatrix()) {
+    int raw_width = 1;
+    int raw_height = 1;
+    dc->Get2DCellGeom(raw_width, raw_height);
+    // just linear in block size between range
+    col_width = par->mat_size_range.Clip(raw_width);
+    row_height = par->mat_size_range.Clip(raw_height);
   }
-  if (display_style == TEXT_AND_BLOCK) {
-    col_wd += par->mat_sep_pts;
+  else {
+    row_height = 1.0f;		// always just one char high
+    if(display_style & TEXT_MASK) {
+      col_width = text_width;
+    }
+    else {
+      col_width = 2.0f;		// block is 2 chars wide, just for kicks.
+    }
   }
-  if (display_style & TEXT_MASK) {
-    col_wd += (fnt_pts * text_width * cg.x) + (brd_pts * (cg.x - 1));
-    // row height, and number of rows -- ht ~ 12/8 x wd
-    tmp = (fnt_pts * cg.y * t3Misc::char_ht_to_wd_pts) +
-      (brd_pts * (cg.y - 1));
-    row_ht = MAX(row_ht, tmp);
-  }
-  if (display_style == IMAGE) {
-    //note: cg.y will be #comps*image.y (ex image.y for b&w, 3*image.y for rgb)
-    float px_pts = par->pixel_pts; 
-    tmp = px_pts * cg.x;
-    col_wd = MAX(col_wd, tmp);
-    row_ht += (px_pts * cg.y) / dc->imageComponents(); // need to comp
-  }
-  col_wd = MAX(col_wd, min_col_wd);
-  // change to geoms
-  col_width = col_wd * t3Misc::geoms_per_pt;
-  row_height = row_ht * t3Misc::geoms_per_pt;
 }
 
 
@@ -1969,37 +1946,31 @@ void GridColViewSpec::Render_impl() {
 
 void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
-  grid_margin_pts = 4.0f;
-  grid_line_pts = 3.0f;
-  SetMatSizeModel_impl(SMALL_BLOCKS);
+
+  mat_size_range.min = 4;
+  mat_size_range.max = 16;
+  grid_margin = 0.1f;
+  grid_line_size = 0.05f;
+}
+
+void GridTableViewSpec::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(mat_size_range, this);
 }
 
 void GridTableViewSpec::Destroy() {
 }
 
 void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
-  grid_margin_pts = cp.grid_margin_pts;
-  grid_line_pts = cp.grid_line_pts;
-  mat_size_model = cp.mat_size_model;
-  mat_block_pts = cp.mat_block_pts;
-  mat_border_pts = cp.mat_border_pts;
-  mat_sep_pts = cp.mat_sep_pts;
-  mat_font_scale = cp.mat_font_scale;
-  pixel_pts = cp.pixel_pts;
+  mat_size_range = cp.mat_size_range;
+  grid_margin = cp.grid_margin;
+  grid_line_size = cp.grid_line_size;
 }
 
 void GridTableViewSpec::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
-  // just blindly enforce all minimums
-  if (grid_margin_pts < 0.0f) grid_margin_pts = 0.0f;
-  if (grid_line_pts <  0.1f) grid_line_pts =  0.1f;
-  if (mat_block_pts < 0.1f) mat_block_pts = 0.1f;
-  if (mat_border_pts < 0.0f) mat_border_pts = 0.0f;
-  if (mat_sep_pts < 0.0f) mat_sep_pts = 0.0f;
-  if (mat_font_scale < 0.1f) mat_font_scale = 0.1f;
-  if (pixel_pts < 0.1f) pixel_pts = 0.1f;
-  // now, unconditionally apply any model
-  SetMatSizeModel_impl(mat_size_model);
+  if (grid_margin < 0.0f) grid_margin = 0.0f;
+  if (grid_line_size <  0.0f) grid_line_size =  0.0f;
 }
 
 void GridTableViewSpec::DataDataChanged_impl(int dcr, void* op1, void* op2) {
@@ -2042,32 +2013,4 @@ void GridTableViewSpec::GetMinMaxScale(MinMax& mm, bool first) {
 //TEMP
   mm.min = -1.0f;
   mm.max = 1.0f;
-}
-
-void GridTableViewSpec::SetMatSizeModel_impl(MatSizeModel mm){
-  mat_size_model = mm;
-  switch (mm) {
-  case CUSTOM_METRICS: break;
-  case SMALL_BLOCKS:
-    mat_block_pts = 2.0f;
-    mat_border_pts = 0.5f;
-    mat_sep_pts = 2.0f;
-    mat_font_scale = 0.5f;
-    pixel_pts = 0.5f;
-    break;
-  case MEDIUM_BLOCKS:
-    mat_block_pts = 8.0f;
-    mat_border_pts = 2.0f;
-    mat_sep_pts = 4.0f;
-    mat_font_scale = 0.75f;
-    pixel_pts = 2.0f;
-    break;
-  case LARGE_BLOCKS:
-    mat_block_pts = 16.0f;
-    mat_border_pts = 4.0f;
-    mat_sep_pts = 6.0f;
-    mat_font_scale = 0.8f;
-    pixel_pts = 4.0f;
-    break;
-  }
 }

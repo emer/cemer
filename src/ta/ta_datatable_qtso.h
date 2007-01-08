@@ -49,15 +49,13 @@ class T3GridViewNode;
 class TA_API TableView : public T3DataViewPar {
   // #VIRT_BASE #NO_TOKENS base class of grid and graph views; the data is its own embedded DataTableViewSpec
 INHERITED(T3DataViewPar)
-public: //
-  int		view_bufsz; // #READ_ONLY #SAVE #DETAIL Maximum number of lines in visible buffer
-  MinMaxInt	view_range; // #READ_ONLY #SAVE #DETAIL range of visible lines
+public:
+  int		view_rows; 	// #READ_ONLY #SAVE #DETAIL Maximum number of rows visible
+  MinMaxInt	view_range; 	// #READ_ONLY #SAVE #DETAIL range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
 
-  TDCoord	pos; // origin of the view in 3d space (not used for panel view)
-  TDCoord	geom; // space taken
-  float		frame_inset; // #DEF_0.05 inset of frame (used to calc actual inner space avail)
-  iBox3f	stage; // #NO_SAVE #DETAIL this is coords of the actual rendering area (ie, less frame)
-  bool		display_on;  // #DEF_true 'true' if display should be updated
+  TDCoord	pos; 		// origin of the view in 3d space (not used for panel view)
+  float		frame_inset; 	// #DEF_0.05 inset of frame (used to calc actual inner space avail)
+  bool		display_on;  	// #DEF_true 'true' if display should be updated
   
   virtual const String	caption() const; // what to show in viewer
   virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
@@ -120,59 +118,50 @@ protected:
 };
 
 class TA_API GridTableView: public TableView {
-  // #VIRT_BASE #NO_TOKENS 
+  // the master view guy for entire grid view
 INHERITED(TableView)
 public:
   static GridTableView* New(DataTable* dt, T3DataViewFrame*& fr);
 
-  bool		grid_on; // whether to show grid lines
+  bool		grid_on; 	// whether to show grid lines
   bool		header_on;	// is the table header visible?
-  bool		row_num_on; // row number col visible?
+  bool		row_num_on; 	// row number col visible?
   bool		auto_scale;	// whether to auto-scale on color block values or not
   ColorScale	scale; 		// The color scale for this display
-  int		col_bufsz; // #READ_ONLY #SAVE #DETAIL visible columns
-  MinMaxInt	col_range; // #READ_ONLY #SAVE #DETAIL column range that is visible
-  float		tot_col_widths; // #READ_ONLY #SAVE #DETAIL total of all (visible) col_widths
+  int		col_n; 		// #SAVE number of columns to display: determines sizes of everything automatically from this
+  MinMaxInt	col_range; 	// #SAVE column range that is visible (max is the last col visible, not the last+1; range = col_n-1, except if columns are not visible range can be larger)
 
   MinMax        scale_range;	// #HIDDEN range of scalebar
   MinMaxInt	actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
 
   GridTableViewSpec view_spec; // #SHOW_TREE baked in spec 
 
-  void			setAutoScale(bool value);
-  
-  float			colWidth(int idx) const; // looked up from the specs
-  
-  override DataTable*	dataTable() const {return view_spec.dataTable();}
-  
-  void			setGrid(bool value);
-  void			setHeader(bool value);
-  
-  iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
-  
-  T3GridViewNode* node_so() const {return (T3GridViewNode*)m_node_so.ptr();}
-
-  override DataTableViewSpec* viewSpecBase() const 
-    {return const_cast<GridTableViewSpec*>(&view_spec);}
-    
-  inline GridTableViewSpec* viewSpec() const 
-    {return const_cast<GridTableViewSpec*>(&view_spec);}
-    
-  
-  virtual void	SetBlockSizes(float block_sz = 4.0f, float border_sz = 1.0f);
-  // #MENU set the MAXIMUM sizes of all blocks (could be smaller), and the border space between blocks
-
-  virtual void		SetViewFontSize(int point_size = 10);
+  void		setAutoScale(bool value);
+  void		setGrid(bool value);
+  void		setHeader(bool value);
+  void		SetViewFontSize(int point_size = 10);
   // #MENU #MENU_SEP_BEFORE set the point size of the font used for labels in the display
-  void			AllBlockTextOn() {AllBlockText_impl(true);}
+  void		AllBlockTextOn() {AllBlockText_impl(true);}
   // #MENU turn text on for all block displayed items
-  void			AllBlockTextOff() {AllBlockText_impl(false);}
+  void		AllBlockTextOff() {AllBlockText_impl(false);}
   // #MENU turn text off for all block displayed items
 
-// view control
-  void			VScroll(bool left); // scroll left or right
-  virtual void 		ViewC_At(int start);	// start viewing at indicated column value
-  virtual void 		ViewC_VisibleAt(int ord_idx);	// start viewing at the indicated ordinal visible column (used by vertical scroll bars)
+  // view control
+  void		VScroll(bool left); // scroll left or right
+  virtual void 	ViewC_At(int start);	// start viewing at indicated column value
+  virtual void 	ViewC_VisibleAt(int ord_idx);	// start viewing at the indicated ordinal visible column (used by vertical scroll bars)
+  
+  override DataTable*	dataTable() const {return view_spec.dataTable();}
+
+  override DataTableViewSpec* viewSpecBase() const 
+  { return const_cast<GridTableViewSpec*>(&view_spec);}
+    
+  inline GridTableViewSpec* viewSpec() const 
+  { return const_cast<GridTableViewSpec*>(&view_spec);}
+
+  iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
+
+  T3GridViewNode* node_so() const {return (T3GridViewNode*)m_node_so.ptr();}
   
   void	InitLinks();
   void 	CutLinks();
@@ -186,14 +175,14 @@ public:
   void ColorBar_execute();
 
 protected:
-// grid-specific metrics and rendering primitives:
-  float			head_ht; // renderable portion of header (no margins etc.)	
-  float			head_ht_ex; // entire header height, incl margins etc.	
-  float			row_height; // #IGNORE determined from max of all cols
-  float			row_num_wd; // width of rownum col; 0 if off
-  float			row_num_wd_ex; // with margins and 1 sep spaced added
+  float_Array		col_widths_raw; // raw widths of columns (original request)
+  float_Array		col_widths; 	// scaled widths of columns (to unitary size)
+  float			row_height_raw; // raw row height
+  float			row_height; 	// unitary scaled row height
+  float			head_height; 	// renderable portion of header (no margins etc.)
+  float			font_scale;	// scale to set global font to
+
   virtual void		CalcViewMetrics(); // for entire view
-  virtual void		CalcColMetrics(); // when col start changes
   virtual void		RemoveGrid();
   virtual void		RemoveHeader(); // remove the header
   virtual void  	RemoveLines(); // remove all lines

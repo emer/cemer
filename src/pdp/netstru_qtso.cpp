@@ -447,7 +447,7 @@ void UnitGroupView::Render_impl() {
 }
 
 void UnitGroupView::ValToDispText(float val, String& str) {
-  float val_abs = fabs(val);
+  float val_abs = fabsf(val);
   if ((val_abs < .0001) || (val_abs >= 10000))
     str.convert(val, "%7.1e"); //note: 7 chars
   if (val_abs < 1)
@@ -612,7 +612,7 @@ void UnitGroupView::Render_impl_blocks() {
 
   SbVec3f* vertex_dat = vertex.startEditing();
 
-  String val_str;
+  String val_str = "0.0";	// initial default
   String unit_name;
   T3Color col;
   TwoDCoord pos;
@@ -655,9 +655,9 @@ void UnitGroupView::Render_impl_blocks() {
 	float xfp = .5f * (xp + xp1);
 	tr->translation.setValue(xfp, MAX(zp,0.0f) + .01f, yp);
 	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	if(nv->unit_text_disp & NetView::UTD_VALUES) {
-	  ValToDispText(0.0f, val_str);
-	}
+// 	if(nv->unit_text_disp & NetView::UTD_VALUES) {
+	  //	  ValToDispText(0.0f, val_str); // just use default
+// 	}
 	if(nv->unit_text_disp & NetView::UTD_NAMES) {
 	  if(unit)
 	    unit_name = unit->name;
@@ -726,20 +726,21 @@ void UnitGroupView::Render_impl_blocks() {
 
       int mat_idx = (pos.y * nx + pos.x);
 
-      float zval = vertex[c00_v][1]; // "y" coord = 1
+      // note: this optimization is incompatible with the current split of
+      // basic structure render vs. values
+//       float zval = vertex[c00_v][1]; // "y" coord = 1
+//       if(zval < 0.0f) {			 // do "top" first which is actually bottom!
+// 	coords_dat[cidx++] = (c01_v); // 0
+// 	coords_dat[cidx++] = (c11_v); // 1
+// 	coords_dat[cidx++] = (c00_v); // 2
+// 	coords_dat[cidx++] = (c10_v); // 3
+// 	coords_dat[cidx++] = (-1); // -1 -- 5 total
 
-      if(zval < 0.0f) {			 // do "top" first which is actually bottom!
-	coords_dat[cidx++] = (c01_v); // 0
-	coords_dat[cidx++] = (c11_v); // 1
-	coords_dat[cidx++] = (c00_v); // 2
-	coords_dat[cidx++] = (c10_v); // 3
-	coords_dat[cidx++] = (-1); // -1 -- 5 total
+// 	norms_dat[nidx++] = (4); // top
+// 	norms_dat[nidx++] = (4); // top -- 2 total
 
-	norms_dat[nidx++] = (4); // top
-	norms_dat[nidx++] = (4); // top -- 2 total
-
-	mats_dat[midx++] = (mat_idx);
-      }
+// 	mats_dat[midx++] = (mat_idx);
+//       }
 
       // back - right
       //     1    3
@@ -790,7 +791,7 @@ void UnitGroupView::Render_impl_blocks() {
       //     2    3
       //   x    x  
 
-      if(zval >= 0.0f) {		 // only if higher..
+//       if(zval >= 0.0f) {		 // only if higher..
 	coords_dat[cidx++] = (c01_v); // 0
 	coords_dat[cidx++] = (c11_v); // 1
 	coords_dat[cidx++] = (c00_v); // 2
@@ -801,7 +802,7 @@ void UnitGroupView::Render_impl_blocks() {
 	norms_dat[nidx++] = (4); // top -- 2 total
 
 	mats_dat[midx++] = (mat_idx);
-      }
+//       }
 
       // total coords = 7 + 7 + 5 = 19
       // total norms = 4 + 4 + 2 = 10

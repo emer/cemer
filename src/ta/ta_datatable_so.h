@@ -111,14 +111,10 @@ public:
   SoSeparator*		header() const {return header_;}
   SoSeparator*		body() const {return body_;}
 
-  void			setInset(float inset = 0.05f);
-  void 			setGeom(int px, int py); // sets (actual) geom of view
-  void 			setGeom(int px, int py, float inset); 
-   // sets (actual) geom of view, including inset (if applicable)
-  T3GridViewNode(void* dataView_ = NULL); // dataview is a GridTableView object
+  virtual void		render();
 
+  T3GridViewNode(void* dataView_ = NULL); // dataview is a GridTableView object
 protected:
-  iVec2i		geom_; //note, not a field
   SoSeparator*		stage_;
   SoMaterial*		mat_stage_;
   SoTranslation*	  txlt_stage_;
@@ -127,7 +123,6 @@ protected:
   SoFrame*		frame_; 
   SoTranslation*	txlt_grid_;
   SoGroup*		grid_;
-  virtual void		render(float inset); // called after geom and other changes
   ~T3GridViewNode();
 };
 

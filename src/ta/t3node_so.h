@@ -19,6 +19,7 @@
 #include "icolor.h"
 #include "igeometry.h"
 #include "ta_matrix.h"
+#include "colorscale.h"
 
 #include "ta_def.h"
 
@@ -37,6 +38,7 @@
 #include <Inventor/nodes/SoImage.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTriangleStripSet.h>
+#include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 #endif
 
 // forwards
@@ -67,7 +69,9 @@ class SoTexture2Transform; // #IGNORE
 class SoTranslation; // #IGNORE
 class SoTransform; // #IGNORE
 class SoTriangleStripSet; // #IGNORE
+class SoIndexedTriangleStripSet; // #IGNORE
 class SoUnits; // #IGNORE
+class SoVertexProperty; // #IGNORE
 
 //////////////////////////
 //   T3Color		//
@@ -208,7 +212,7 @@ NOTE: T3Node may be changed to look like this -- this change will be transparent
 
 */
 class TA_API T3Node: public SoSeparator {
-// ##NO_INSTANCE ##NO_TOKENS ##NO_CSS  an base class for PDP project items, like networks, etc.
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
@@ -268,7 +272,7 @@ private:
 };
 
 class TA_API T3NodeLeaf: public T3Node {
-// ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
+  // ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef T3Node inherited;
 
@@ -291,7 +295,7 @@ protected:
 
 
 class TA_API T3NodeParent: public T3Node {
-// ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
+  // ##NO_INSTANCE ##NO_TOKENS  an base class for PDP project items, like networks, etc.
 #ifndef __MAKETA__
 typedef T3Node inherited;
 
@@ -317,7 +321,8 @@ private:
   SoSeparator*		childNodes_; // #IGNORE
 };
 
-class TA_API SoFrame: public SoTriangleStripSet { // ##NO_INSTANCE ##NO_TOKENS  quadraloidal frame
+class TA_API SoFrame: public SoTriangleStripSet {
+  // ##NO_INSTANCE ##NO_TOKENS quadraloidal frame
 #ifndef __MAKETA__
 typedef SoTriangleStripSet inherited;
 
@@ -353,7 +358,8 @@ protected:
   void 		renderV(); // #IGNORE
 };
 
-class TA_API SoRect: public SoTriangleStripSet { // ##NO_INSTANCE ##NO_TOKENS  2d rectangle, primarily for images, table images, etc.
+class TA_API SoRect: public SoTriangleStripSet {
+  // ##NO_INSTANCE ##NO_TOKENS  2d rectangle, primarily for images, table images, etc.
 #ifndef __MAKETA__
 typedef SoTriangleStripSet inherited;
 
@@ -372,14 +378,15 @@ public:
   SoRect();
 
 protected:
-  const char*  	getFileFormatName() const {return SoTriangleStripSet::getFileFormatName();} // override
+  const char*  	getFileFormatName() const
+  { return SoTriangleStripSet::getFileFormatName(); } // override
   void 		render(); // #IGNORE
   void 		renderH(); // #IGNORE
   void 		renderV(); // #IGNORE
 };
 
 class TA_API SoImageEx: public SoSeparator { 
-// ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer -- width will always be 1; height will then be h/w ratio
+  // ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer -- width will always be 1; height will then be h/w ratio
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
@@ -406,6 +413,67 @@ protected:
   void		setImage2(const taMatrix& src, bool top_zero);
   void		setImage3(const taMatrix& src, bool top_zero);
   ~SoImageEx();
+};
+
+class TA_API SoMatrixGrid: public SoSeparator {
+  // ##NO_INSTANCE ##NO_TOKENS renders a matrix as a grid of 3d blocks, in X-Y plane, with block height = Z axis.  size = 1x1 unit
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+
+  SO_NODE_HEADER(SoMatrixGrid);
+#endif // def __MAKETA__
+public:
+  enum MatrixLayout { 	// order of display for matrix cols
+    BOT_ZERO, 		// row zero is displayed at bottom of cell (default)
+    TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
+  };
+
+  static void		initClass();
+
+  MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
+  taMatrix*	matrix;	    	// the matrix to render (required!)
+  ColorScale*	scale; 		// The color scale for this display (required!)
+  bool		val_text;	// display text representation of values?
+
+  int		max_txt_len;	// #DEF_6 maximum text length (determines font size)
+  float		spacing;	// #DEF_0.05 space between units, as a proportion of max of X, Y unit size
+  float		block_height;	// #DEF_0.5 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
+  float		trans_max;	// #DEF_0.6 maximum transparency value (for zero scaled values)
+
+  void		setMatrix(taMatrix* mat);
+  void		setColorScale(ColorScale* cs);
+  void		setLayout(MatrixLayout layout);
+  void		setValText(bool val_txt);
+  void		setBlockHeight(float blk_ht);
+
+  void		renderValues();
+  // optimized render update for when only the matrix values have changed (matrix geom MUST not have changed)
+
+  void 		ValToDispText(float val, String& str);
+  // get text representation of value
+
+  SoTransform*	transform() const { return transform_; }
+  // the master transform, for the whole entity
+  taMatrix*	getMatrix() const { return matrix; }
+
+  SoMatrixGrid(taMatrix* mat = NULL, ColorScale* cs = NULL, MatrixLayout layout = BOT_ZERO, bool val_txt = false);
+  ~SoMatrixGrid();
+
+protected:
+  SoIndexedTriangleStripSet* shape_;
+  SoTransform*		transform_; // for entire object: goes first in this
+  SoVertexProperty*	vtx_prop_;
+  SoSeparator* 		unit_text_; // unit text variables
+  
+  void		render_block_idx(int c00_0, int mat_idx, 
+				 int32_t* coords_dat, int32_t* norms_dat,
+				 int32_t* mats_dat, int& cidx, int& nidx, int& midx);
+  // render one set of block indicies
+  void		render_text(bool build_text, int& t_idx, float xp, float xp1, float yp,
+			    float yp1, float zp);
+  // setup all the unit_text_ stuff
+  
+  void 		render(); // basic render (calls renderValues)
 };
 
 #endif

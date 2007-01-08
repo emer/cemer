@@ -239,7 +239,7 @@ protected:
   bool			no_units; // summary mode: no unit objects exist
   ~T3UnitGroupNode();
 
-private:
+protected:
   SoIndexedTriangleStripSet*	shape_;
   SoVertexProperty*	vtx_prop_;
   SoSeparator* 		unit_text_; // unit text variables
