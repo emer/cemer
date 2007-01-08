@@ -91,11 +91,6 @@
     The data is the rep (ext dump save text) of the object.
 
 
-  MIME TYPE "text/plain"
-
-    The same string as the objectdesc string (primarily for diagnostic purposes).
-    NOTE: this may be altered
-
   MIME TYPE "tacss/remdatataken{i}" [hidden] -- i (optional, def=0) is: 0 <= i < N
 
     This is a pseudo-mime type, used to enable receiver to communicate deletion
@@ -108,6 +103,13 @@
     back to sender when Cut data has been successfully pasted (if the receiver
     didn't just move the object).
 
+
+  MIME TYPE "text/plain"
+    
+    taccs/objectdesc
+      The same string as the objectdesc string (primarily for diagnostic purposes).
+      
+    
 
 taiClipData -- sender
 

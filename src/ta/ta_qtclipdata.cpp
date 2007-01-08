@@ -30,6 +30,32 @@
 using namespace std;
 
 
+/* Tabular clip operations
+
+take as example:
+col1: scalar alpha
+col2: 2x3 mat
+col3: 4x5 mat
+
+
+so for the above, assume you copied all three cols and 2 rows, you would end up with a spreadsheet of
+
+1 + 3 + 5 = 9 cols
+
+2 x (4) = 8 rows
+
+because 4 is the max row dimension
+
+like this:
+
+str1 c2:0,0 c2:0,1 c2:0,2 c3:0,0 ... c3:0,4
+     c2:1,0 ...
+                          c3:2,0 ...
+                          c3:3,0 ...
+str2 ...
+
+
+*/
 
 //////////////////////////////////
 // 	taiClipData		//
