@@ -962,7 +962,7 @@ void SoMatrixGrid::initClass()
   SO_NODE_INIT_CLASS(SoMatrixGrid, SoSeparator, "SoSeparator");
 }
 
-SoMatrixGrid::SoMatrixGrid(taMatrix* mat, ColorScale* sc, MatrixLayout layout, bool val_txt) {
+SoMatrixGrid::SoMatrixGrid(taMatrix* mat, bool oddy, ColorScale* sc, MatrixLayout layout, bool val_txt) {
   SO_NODE_CONSTRUCTOR(SoMatrixGrid);
 
   transform_ = new SoTransform;
@@ -971,10 +971,11 @@ SoMatrixGrid::SoMatrixGrid(taMatrix* mat, ColorScale* sc, MatrixLayout layout, b
   addChild(shape_);
   vtx_prop_ = new SoVertexProperty;
   shape_->vertexProperty.setValue(vtx_prop_);
-  unit_text_ = NULL;
+  cell_text_ = NULL;
 
   matrix = mat;
   taBase::Ref(matrix);
+  odd_y = oddy;
   scale = sc;
   mat_layout = layout;
   val_text = val_txt;
@@ -983,18 +984,18 @@ SoMatrixGrid::SoMatrixGrid(taMatrix* mat, ColorScale* sc, MatrixLayout layout, b
   spacing = .1f;
   block_height = .2f;
   trans_max = 0.6f;
-
-  render();
+  //  render(); // don't do this by default; often want to spec further guys
 }
 
 SoMatrixGrid::~SoMatrixGrid() {
   taBase::UnRef(matrix);
 }
 
-void SoMatrixGrid::setMatrix(taMatrix* mat) { 
+void SoMatrixGrid::setMatrix(taMatrix* mat, bool oddy) { 
   taBase::UnRef(matrix);
   matrix = mat; 
   taBase::Ref(matrix);
+  odd_y = oddy;
   render();
 }
 
@@ -1056,15 +1057,12 @@ void SoMatrixGrid::render() {
   normal.finishEditing();
 
   int geom_x, geom_y;
-  matrix->geom.Get2DGeom(geom_x, geom_y);
-  float geom_xf = (float)geom_x;
-  float geom_yf = (float)geom_y;
-
-  float un_x = 1.0f / geom_xf;	// how big each unit / cell is
-  float un_y = 1.0f / geom_yf;
-  float max_xy = MAX(un_x, un_y);
-  float un_spc = spacing * max_xy;
-  float un_ht = block_height * max_xy;
+  matrix->geom.Get2DGeom(geom_x, geom_y, odd_y);
+  float cl_x = 1.0f / (float)geom_x;	// how big each cell is
+  float cl_y = 1.0f / (float)geom_y;
+  max_xy = MAX(cl_x, cl_y);
+  cl_spc = spacing * max_xy;
+  blk_ht = block_height * max_xy;
   
   int n_geom = matrix->count();	// not always x * y due to spaces in display geom
   int n_per_vtx = 8;
@@ -1073,62 +1071,137 @@ void SoMatrixGrid::render() {
   color.setNum(n_geom);
 
   bool build_text = false;
-  float ufontsz = MIN(un_x / (float)max_txt_len, un_y);
+  float ufontsz = MIN(cl_x / (float)max_txt_len, cl_y);
   if(!val_text) {
-    removeChild(unit_text_);
-    unit_text_ = NULL;
+    removeChild(cell_text_);
+    cell_text_ = NULL;
   }
   else {
-    if(!unit_text_) {
-      unit_text_ = new SoSeparator;
+    if(!cell_text_) {
+      cell_text_ = new SoSeparator;
       build_text = true;
-      addChild(unit_text_);
+      addChild(cell_text_);
       SoBaseColor* bc = new SoBaseColor;
       bc->rgb.setValue(0, 0, 0); //black is default for text
-      unit_text_->addChild(bc);
+      cell_text_->addChild(bc);
       SoFont* fnt = new SoFont();
       fnt->name = "Arial";
-      unit_text_->addChild(fnt);
+      cell_text_->addChild(fnt);
     }
-    SoFont* fnt = (SoFont*)unit_text_->getChild(1);
+    SoFont* fnt = (SoFont*)cell_text_->getChild(1);
     fnt->size.setValue(ufontsz);
   }
 
   SbVec3f* vertex_dat = vertex.startEditing();
 
-  // todo: just handling the 2d case right now..
   String val_str;
   T3Color col;
   TwoDCoord pos;
   int v_idx = 0;
   int t_idx = 2;		// base color + font
   // these go in normal order; indexes are backwards
-  for(pos.y=0; pos.y<geom_y; pos.y++) {
-    for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
-      float xp = ((float)pos.x + un_spc) / geom_xf;
-      float yp = -((float)pos.y + un_spc) / geom_yf;
-      float xp1 = ((float)pos.x+1 - un_spc) / geom_xf;
-      float yp1 = -((float)pos.y+1 - un_spc) / geom_yf;
-      float zp = un_ht;
-      vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
-      vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
-      vertex_dat[v_idx++].setValue(xp,  yp1, 0.0f); // 01_0 = 0
-      vertex_dat[v_idx++].setValue(xp1, yp1, 0.0f); // 11_0 = 0
 
-      // zp will be updated later!
-      vertex_dat[v_idx++].setValue(xp,  yp , zp); // 00_v = 1
-      vertex_dat[v_idx++].setValue(xp1, yp , zp); // 10_v = 2
-      vertex_dat[v_idx++].setValue(xp,  yp1, zp); // 01_v = 3
-      vertex_dat[v_idx++].setValue(xp1, yp1, zp); // 11_v = 4
+  if(matrix->dims() <= 2) {
+    for(pos.y=0; pos.y<geom_y; pos.y++) {
+      for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
+	float xp = ((float)pos.x + cl_spc) * cl_x;
+	float yp = -((float)pos.y + cl_spc) * cl_y;
+	float xp1 = ((float)pos.x+1 - cl_spc) * cl_x;
+	float yp1 = -((float)pos.y+1 - cl_spc) * cl_y;
+	float zp = blk_ht;
+	vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
+	vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
+	vertex_dat[v_idx++].setValue(xp,  yp1, 0.0f); // 01_0 = 0
+	vertex_dat[v_idx++].setValue(xp1, yp1, 0.0f); // 11_0 = 0
 
-      if(val_text) {
-	render_text(build_text, t_idx, xp, xp1, yp, yp1, zp);
+	// zp will be updated later!
+	vertex_dat[v_idx++].setValue(xp,  yp , zp); // 00_v = 1
+	vertex_dat[v_idx++].setValue(xp1, yp , zp); // 10_v = 2
+	vertex_dat[v_idx++].setValue(xp,  yp1, zp); // 01_v = 3
+	vertex_dat[v_idx++].setValue(xp1, yp1, zp); // 11_v = 4
+
+	if(val_text) {
+	  render_text(build_text, t_idx, xp, xp1, yp, yp1, zp);
+	}
       }
     }
   }
+  else if(matrix->dims() == 3) {
+    int xmax = matrix->dim(0);
+    int ymax = matrix->dim(1);
+    int zmax = matrix->dim(2);
+    for(int z=0; z<zmax; z++) {
+      for(pos.y=0; pos.y<ymax; pos.y++) {
+	for(pos.x=0; pos.x<xmax; pos.x++) {
+	  TwoDCoord apos = pos;
+	  if(odd_y)
+	    apos.y += z * (ymax+1);
+	  else
+	    apos.x += z * (xmax+1);
+	  float xp = ((float)apos.x + cl_spc) * cl_x;
+	  float yp = -((float)apos.y + cl_spc) * cl_y;
+	  float xp1 = ((float)apos.x+1 - cl_spc) * cl_x;
+	  float yp1 = -((float)apos.y+1 - cl_spc) * cl_y;
+	  float zp = blk_ht;
+	  vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
+	  vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
+	  vertex_dat[v_idx++].setValue(xp,  yp1, 0.0f); // 01_0 = 0
+	  vertex_dat[v_idx++].setValue(xp1, yp1, 0.0f); // 11_0 = 0
+
+	  // zp will be updated later!
+	  vertex_dat[v_idx++].setValue(xp,  yp , zp); // 00_v = 1
+	  vertex_dat[v_idx++].setValue(xp1, yp , zp); // 10_v = 2
+	  vertex_dat[v_idx++].setValue(xp,  yp1, zp); // 01_v = 3
+	  vertex_dat[v_idx++].setValue(xp1, yp1, zp); // 11_v = 4
+
+	  if(val_text) {
+	    render_text(build_text, t_idx, xp, xp1, yp, yp1, zp);
+	  }
+	}
+      }
+    }
+  }
+  else if(matrix->dims() == 4) {
+    int xmax = matrix->dim(0);
+    int ymax = matrix->dim(1);
+    int xxmax = matrix->dim(2);
+    int yymax = matrix->dim(3);
+    TwoDCoord opos;
+    for(opos.y=0; opos.y<yymax; opos.y++) {
+      for(opos.x=0; opos.x<xxmax; opos.x++) {
+	for(pos.y=0; pos.y<ymax; pos.y++) {
+	  for(pos.x=0; pos.x<xmax; pos.x++) {
+	    TwoDCoord apos = pos;
+	    apos.x += opos.x * (xmax+1);
+	    apos.y += opos.y * (ymax+1);
+	    float xp = ((float)apos.x + cl_spc) * cl_x;
+	    float yp = -((float)apos.y + cl_spc) * cl_y;
+	    float xp1 = ((float)apos.x+1 - cl_spc) * cl_x;
+	    float yp1 = -((float)apos.y+1 - cl_spc) * cl_y;
+	    float zp = blk_ht;
+	    vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
+	    vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
+	    vertex_dat[v_idx++].setValue(xp,  yp1, 0.0f); // 01_0 = 0
+	    vertex_dat[v_idx++].setValue(xp1, yp1, 0.0f); // 11_0 = 0
+
+	    // zp will be updated later!
+	    vertex_dat[v_idx++].setValue(xp,  yp , zp); // 00_v = 1
+	    vertex_dat[v_idx++].setValue(xp1, yp , zp); // 10_v = 2
+	    vertex_dat[v_idx++].setValue(xp,  yp1, zp); // 01_v = 3
+	    vertex_dat[v_idx++].setValue(xp1, yp1, zp); // 11_v = 4
+
+	    if(val_text) {
+	      render_text(build_text, t_idx, xp, xp1, yp, yp1, zp);
+	    }
+          }
+	}
+      }
+    }
+  }
+  
   vertex.finishEditing();
 
-  // todo: could cleanup unit_text_ child list if extras, but not clear if needed
+  // todo: could cleanup cell_text_ child list if extras, but not clear if needed
 
   SoMFInt32& coords = shape_->coordIndex;
   SoMFInt32& norms = shape_->normalIndex;
@@ -1139,8 +1212,6 @@ void SoMatrixGrid::render() {
   coords.setNum(n_geom * nc_per_idx);
   norms.setNum(n_geom * nn_per_idx);
   mats.setNum(n_geom * nm_per_idx);
-
-  int nx = geom_x;
 
   // values of the cubes xy_[0,v]
   //     01_v   11_v   
@@ -1156,11 +1227,46 @@ void SoMatrixGrid::render() {
   int cidx = 0;
   int nidx = 0;
   int midx = 0;
-  for(pos.y=geom_y-1; pos.y>=0; pos.y--) { // go back to front
-    for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
-      int c00_0 = (pos.y * nx + pos.x) * n_per_vtx;
-      int mat_idx = (pos.y * nx + pos.x);
-      render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx, midx);
+  if(matrix->dims() <= 2) {
+    int nx = geom_x;
+    for(pos.y=geom_y-1; pos.y>=0; pos.y--) { // go back to front
+      for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
+	int mat_idx = (pos.y * nx + pos.x);
+	int c00_0 = mat_idx * n_per_vtx;
+	render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx, midx);
+      }
+    }
+  }
+  else if(matrix->dims() == 3) {
+    int xmax = matrix->dim(0);
+    int ymax = matrix->dim(1);
+    int zmax = matrix->dim(2);
+    for(int z=zmax-1; z>=0; z--) {
+      for(pos.y=ymax-1; pos.y>=0; pos.y--) {
+	for(pos.x=0; pos.x<xmax; pos.x++) {
+	  int mat_idx = matrix->FastElIndex(pos.x, pos.y, z);
+	  int c00_0 = mat_idx * n_per_vtx;
+	  render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx, midx);
+        }
+      }
+    }
+  }
+  else if(matrix->dims() == 4) {
+    int xmax = matrix->dim(0);
+    int ymax = matrix->dim(1);
+    int xxmax = matrix->dim(2);
+    int yymax = matrix->dim(3);
+    TwoDCoord opos;
+    for(opos.y=yymax-1; opos.y>=0; opos.y--) {
+      for(opos.x=0; opos.x<xxmax; opos.x++) {
+	for(pos.y=ymax-1; pos.y>=0; pos.y--) {
+	  for(pos.x=0; pos.x<xmax; pos.x++) {
+	    int mat_idx = matrix->FastElIndex(pos.x, pos.y, opos.x, opos.y);
+	    int c00_0 = mat_idx * n_per_vtx;
+	    render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx, midx);
+          }
+        }
+      }
     }
   }
   coords.finishEditing();
@@ -1173,9 +1279,9 @@ void SoMatrixGrid::render() {
 void SoMatrixGrid::render_text(bool build_text, int& t_idx, float xp, float xp1,
 			       float yp, float yp1, float zp)
 {
-  if(build_text || unit_text_->getNumChildren() <= t_idx) {
+  if(build_text || cell_text_->getNumChildren() <= t_idx) {
     SoSeparator* tsep = new SoSeparator;
-    unit_text_->addChild(tsep);
+    cell_text_->addChild(tsep);
     SoTranslation* tr = new SoTranslation;
     tsep->addChild(tr);
     SoAsciiText* txt = new SoAsciiText();
@@ -1184,7 +1290,7 @@ void SoMatrixGrid::render_text(bool build_text, int& t_idx, float xp, float xp1,
   }
   // todo: could figure out how to do this without a separator
   // but it just isn't clear that it is that big a deal..  very convenient
-  SoSeparator* tsep = (SoSeparator*)unit_text_->getChild(t_idx);
+  SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
   SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
   float xfp = .5f * (xp + xp1);
   float yfp = .5f * (yp + yp1);
@@ -1271,13 +1377,7 @@ void SoMatrixGrid::renderValues() {
   if(!shape_ || !vtx_prop_) return; // something wrong..
 
   int geom_x, geom_y;
-  matrix->geom.Get2DGeom(geom_x, geom_y);
-  float geom_xf = (float)geom_x;
-  float geom_yf = (float)geom_y;
-  float un_x = 1.0f / geom_xf;	// how big each unit / cell is
-  float un_y = 1.0f / geom_yf;
-  float max_xy = MAX(un_x, un_y);
-  float un_ht = block_height * max_xy;
+  matrix->geom.Get2DGeom(geom_x, geom_y, odd_y);
 
   SoMFVec3f& vertex = vtx_prop_->vertex;
   SoMFUInt32& color = vtx_prop_->orderedRGBA;
@@ -1296,33 +1396,90 @@ void SoMatrixGrid::renderValues() {
 
   // these go in normal order; indexes are backwards
   // note: only 2d case right yet..
-  for(pos.y=0; pos.y<geom_y; pos.y++) {
-    for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
-      val = matrix->FastElAsFloat(pos.x, pos.y);
-      const iColor* fl;  const iColor* tx;
-      scale->GetColor(val,&fl,&tx,sc_val);
-
-      float zp = sc_val * un_ht;
-      v_idx+=4;			// skip the _0 cases
-
-      vertex_dat[v_idx++][2] = zp; // 00_v = 1
-      vertex_dat[v_idx++][2] = zp; // 10_v = 2
-      vertex_dat[v_idx++][2] = zp; // 01_v = 3
-      vertex_dat[v_idx++][2] = zp; // 11_v = 4
-
-      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
-      color_dat[c_idx++] = T3Color::makePackedRGBA(fl->redf(), fl->greenf(), fl->bluef(), alpha);
-
-      if(val_text) {
-	SoSeparator* tsep = (SoSeparator*)unit_text_->getChild(t_idx);
-	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	SoMFString* mfs = &(txt->string);
-	ValToDispText(val, val_str);
-	mfs->setValue(val_str.chars());
-	t_idx++;
+  if(matrix->dims() <= 2) {
+    for(pos.y=0; pos.y<geom_y; pos.y++) {
+      for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
+	val = matrix->FastElAsFloat(pos.x, pos.y);
+	const iColor* fl;  const iColor* tx;
+	scale->GetColor(val,&fl,&tx,sc_val);
+	float zp = sc_val * blk_ht;
+	v_idx+=4;			// skip the _0 cases
+	for(int i=0;i<4;i++)
+	  vertex_dat[v_idx++][2] = zp; // 00_v = 1, 10_v = 2, 01_v = 3, 11_v = 4
+	float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
+	color_dat[c_idx++] = T3Color::makePackedRGBA(fl->redf(), fl->greenf(), fl->bluef(), alpha);
+	if(val_text) {
+	  SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
+	  SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+	  SoMFString* mfs = &(txt->string);
+	  ValToDispText(val, val_str);
+	  mfs->setValue(val_str.chars());
+	  t_idx++;
+	}
       }
     }
   }
+  else if(matrix->dims() == 3) {
+    int xmax = matrix->dim(0);
+    int ymax = matrix->dim(1);
+    int zmax = matrix->dim(2);
+    for(int z=0; z<zmax; z++) {
+      for(pos.y=0; pos.y<ymax; pos.y++) {
+	for(pos.x=0; pos.x<xmax; pos.x++) {
+	  val = matrix->FastElAsFloat(pos.x, pos.y, z);
+	  const iColor* fl;  const iColor* tx;
+	  scale->GetColor(val,&fl,&tx,sc_val);
+	  float zp = sc_val * blk_ht;
+	  v_idx+=4;			// skip the _0 cases
+	  for(int i=0;i<4;i++)
+	    vertex_dat[v_idx++][2] = zp; // 00_v = 1, 10_v = 2, 01_v = 3, 11_v = 4
+	  float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
+	  color_dat[c_idx++] = T3Color::makePackedRGBA(fl->redf(), fl->greenf(), fl->bluef(), alpha);
+	  if(val_text) {
+	    SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
+	    SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+	    SoMFString* mfs = &(txt->string);
+	    ValToDispText(val, val_str);
+	    mfs->setValue(val_str.chars());
+	    t_idx++;
+	  }
+	}
+      }
+    }
+  }
+  else if(matrix->dims() == 4) {
+    int xmax = matrix->dim(0);
+    int ymax = matrix->dim(1);
+    int xxmax = matrix->dim(2);
+    int yymax = matrix->dim(3);
+    TwoDCoord opos;
+    for(opos.y=0; opos.y<yymax; opos.y++) {
+      for(opos.x=0; opos.x<xxmax; opos.x++) {
+	for(pos.y=0; pos.y<ymax; pos.y++) {
+	  for(pos.x=0; pos.x<xmax; pos.x++) {
+	    val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
+	    const iColor* fl;  const iColor* tx;
+	    scale->GetColor(val,&fl,&tx,sc_val);
+	    float zp = sc_val * blk_ht;
+	    v_idx+=4;			// skip the _0 cases
+	    for(int i=0;i<4;i++)
+	      vertex_dat[v_idx++][2] = zp; // 00_v = 1, 10_v = 2, 01_v = 3, 11_v = 4
+	    float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
+	    color_dat[c_idx++] = T3Color::makePackedRGBA(fl->redf(), fl->greenf(), fl->bluef(), alpha);
+	    if(val_text) {
+	      SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
+	      SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+	      SoMFString* mfs = &(txt->string);
+	      ValToDispText(val, val_str);
+	      mfs->setValue(val_str.chars());
+	      t_idx++;
+	    }
+	  }
+	}
+      }
+    }
+  }
+
   vertex.finishEditing();
   color.finishEditing();
 }

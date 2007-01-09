@@ -27,51 +27,12 @@ class SoAction; // #IGNORE
 class SoBaseColor; // #IGNORE
 class SoCube; // #IGNORE
 class SoFont; // #IGNORE
+class SoCalculator; // #IGNORE
+class SoTransformBoxDragger; // #IGNORE
 
 // forwards
-class T3TableViewNode;
 class T3GridViewNode;
 class T3GraphViewNode; //
-
-/* Base class for 3d table views
-  legend: *-existing; +-new this class
-
-      *transform: SoTransform
-      *captionSeparator: SoSeparator  
-            shapeSeparator: SoSeparator
-        *txfm_shape: SoTransform
-        *material: SoMaterial
-        +frame: SoFrame
-        +grid: SoGroup -- for grid lines (thus, inherits frame material)
-*/
-
-class TA_API T3TableViewNode: public T3NodeParent {
-// ********** OBSOLETE ******************
-#ifndef __MAKETA__
-typedef T3NodeParent inherited;
-
-  SO_NODE_HEADER(T3TableViewNode);
-#endif // def __MAKETA__
-public:
-  static void		initClass();
-
-  SoFrame*		frame() {return frame_;} // note: may be null
-  bool			showFrame();
-  virtual void		setShowFrame(bool value, float inset = 0.05f);
-    // note: inset ignored when value=false
-  void 			setGeom(int px, int py, int pz); // sets (actual) geom of view
-  void 			setGeom(int px, int py, int pz, float inset); 
-   // sets (actual) geom of view, including inset (if applicable)
-  T3TableViewNode(void* dataView_ = NULL); // dataview is a TableView object
-
-protected:
-  iVec3i		geom_; //note, not a field
-  virtual void		render(float inset); // called after geom and other changes
-  ~T3TableViewNode();
-
-private:
-  SoFrame*		frame_; // NULL if not shown
-};
 
 //////////////////////////
 //   T3GridViewNode	//
@@ -103,6 +64,7 @@ typedef T3NodeLeaf inherited;
   SO_NODE_HEADER(T3GridViewNode);
 #endif // def __MAKETA__
 public:
+  static float 		drag_size; // = .08 size of dragger control object
   static void		initClass();
 
   SoFrame*		frame() const {return frame_;} 
@@ -123,6 +85,12 @@ protected:
   SoFrame*		frame_; 
   SoTranslation*	txlt_grid_;
   SoGroup*		grid_;
+
+  SoSeparator*		drag_sep_;
+  SoTransform*		drag_xf_;
+  SoTransformBoxDragger* dragger_;
+  SoCalculator*		drag_trans_calc_;
+
   ~T3GridViewNode();
 };
 

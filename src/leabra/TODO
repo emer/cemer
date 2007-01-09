@@ -3,15 +3,18 @@ leabra todo list:
 commit:
 
 ------------------
-* gridview: unitize + global xform, have obj per column so you can click (maybe just header?),
-  auto-size blocks, fix auto-scale, 4dim unit display
+* gridview: 
 
-  * count image as 1x1 for display purposes -- is rescaled anyway?
   * font computation not working for # of chars to display (too conservative)
 
   - test case: filtered layer unit history moving back in depth w/ netview
+  test2.proj!!
 
-  - why doesn't gridview update with WriteClose()?
+  - why doesn't gridview update with WriteClose()?  not working!
+
+  * add a "vertical stacked" gridview option which stacks the grids at a Z angle
+  (and computes their vert space as less?) -- produces a depth map of grids
+  moving back in time when rotated in the plane.
 
 ------------------
 hv model
@@ -20,7 +23,9 @@ hv model
 for setting network stats vars on dmem_timing.
 
 * IT fm output: adapt goes up to .12, no adapt is down at .018 -- change it fm output target.
-  itfmo05
+  itfmo05  -- still bust
+
+* main thing is high: v2 from v4 seems to be bad..  try run with just norel adapt + output
 
 * output should get more from IT than V4??  check wiki for prior experiments..
 
@@ -45,9 +50,7 @@ for setting network stats vars on dmem_timing.
 * netview: 
 
  * make xydrag handles thicker: create new default image by replacing existing
-   with thicker bars; also for transform box
-
-* set disabled flag from layer.lesion (highlighting)
+   with thicker bars; also for transform box --- yes!! top priority!!
 
 --------------
 

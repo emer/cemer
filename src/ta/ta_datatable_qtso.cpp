@@ -56,6 +56,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
 
 #include <limits.h>
 #include <float.h>
@@ -83,7 +84,6 @@ void TableView::setDataTable(DataTable* dt) {
 void TableView::Initialize() {
   updating = 0;
   data_base = &TA_DataTableViewSpec;  //superceded
-//obs  view_rows = 100;
   view_rows = 3; //note: set by actual class based on screen
 //obs  view_shift = .2f;
   view_range.min = 0;
@@ -91,19 +91,20 @@ void TableView::Initialize() {
   display_on = true;
   m_lvp = NULL;
   //TODO: new ones should offset pos in viewers so they don't overlap
-  pos.SetXYZ(1.0f, 0.0f, 0.0f);
-  frame_inset = 0.005f;
+  table_pos.SetXYZ(1.0f, 0.0f, 0.0f);
+  table_scale = 1.0f;
   m_rows = 0;
 }
 
 void TableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(view_range, this);
-  taBase::Own(pos,this);
+  taBase::Own(table_pos, this);
+  taBase::Own(table_scale, this);
+  taBase::Own(table_orient, this);
 }
 
 void TableView::CutLinks() {
-  pos.CutLinks();
   view_range.CutLinks();
   if (m_lvp) {
     m_lvp = NULL;
@@ -114,9 +115,9 @@ void TableView::CutLinks() {
 void TableView::Copy_(const TableView& cp) {
   view_rows = cp.view_rows;
   view_range = cp.view_range;
-  pos = cp.pos;
-  pos.x++; 
-  frame_inset = cp.frame_inset;
+  table_pos = cp.table_pos;
+  table_scale = cp.table_scale;
+  table_orient = cp.table_orient;
 }
 
 void TableView::UpdateAfterEdit_impl() {
@@ -198,6 +199,15 @@ void TableView::InitDisplay(){
   if (data_table)
     m_rows = data_table->rows;
   else m_rows = 0;
+  
+  FloatTransform* ft = transform(true);
+  ft->translate = table_pos;
+  ft->rotate = table_orient;
+  ft->scale = table_scale;
+  T3Node* node = node_so();
+  if (m_transform && node) {
+    m_transform->CopyTo(node->transform());
+  }
   InitDisplay_impl();
 }
 
@@ -249,7 +259,10 @@ void TableView::Render_pre() {
 void TableView::Render_impl() {
   // set origin: in allocated area
   FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ(pos.x, (pos.y + 0.5f), -pos.z);
+  ft->translate = table_pos;
+  ft->rotate = table_orient;
+  ft->scale = table_scale;
+
   inherited::Render_impl();
 
   T3Node* node_so = this->node_so(); // cache
@@ -297,7 +310,6 @@ void TableView::UpdateView() {
   ++updating;
   InitViewSpec();
   InitDisplay();
-  MakeViewRangeValid();
   ViewRangeChanged();
   --updating;
 }
@@ -320,7 +332,6 @@ void TableView::View_At(int start) {
   MakeViewRangeValid();
   ViewRangeChanged();
 }
-
 
 /*obs
 void TableView::View_F() {
@@ -758,13 +769,13 @@ void GridTableView::RenderHeader() {
   hdr->addChild(fnt);
 
   float gr_mg_sz = view_spec.grid_margin * font_scale;
-  float gr_mg_sz2 = 2.0f * gr_mg_sz;
+  //  float gr_mg_sz2 = 2.0f * gr_mg_sz;
   float gr_ln_sz = (grid_on) ? view_spec.grid_line_size * font_scale : 0.0f;
   // margin and baseline adj
   SoTranslation* tr = new SoTranslation();
   hdr->addChild(tr);
-  //  float base_adj = (head_height * t3Misc::char_base_fract);
-  float base_adj = 0.0f;
+  float base_adj = (head_height * t3Misc::char_base_fract);
+  //  float base_adj = 0.0f;
   tr->translation.setValue(gr_mg_sz, - (gr_mg_sz + head_height - base_adj), 0.0f);
 
   int col_idx = 0;
@@ -793,6 +804,8 @@ void GridTableView::RenderHeader() {
   }
 }
 
+// todo: support renderValues() for grid??
+
 void GridTableView::RenderLine(int view_idx, int data_row) {
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
@@ -817,11 +830,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   int col_idx = 0;
   float col_wd_lst = 0.0f; // width of last col
   // following metrics will be adjusted for mat font scale, when necessary
-//   float txt_base_adj = tvs->font.pointSize * t3Misc::geoms_per_pt *
-//       t3Misc::char_base_fract;
-//   float text_ht = tvs->font.pointSize * t3Misc::char_ht_to_wd_pts *
-//         t3Misc::geoms_per_pt;
-  float txt_base_adj = 0.0f;
+  float txt_base_adj = text_ht * t3Misc::char_base_fract;
+//   float txt_base_adj = 0.0f;
 
   // render row_num cell, if on
   if (row_num_on) {
@@ -880,8 +890,12 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
       taBase::Ref(cell_mat);
       SoMatrixGrid* sogr = new SoMatrixGrid
-	(cell_mat, &scale, (SoMatrixGrid::MatrixLayout)cvs->mat_layout, 
-	 cvs->display_style & GridColViewSpec::TEXT_MASK);
+	(cell_mat, cvs->mat_odd_vert, &scale, (SoMatrixGrid::MatrixLayout)cvs->mat_layout, 
+	 tvs->mat_val_text);
+      sogr->spacing = tvs->mat_block_spc;
+      sogr->block_height = tvs->mat_block_height;
+      sogr->trans_max = tvs->mat_trans;
+      sogr->render();
       taBase::UnRef(cell_mat);
       ln->addChild(sogr);
       sogr->transform()->scaleFactor.setValue(col_wd, row_ht, 1.0f);
@@ -901,8 +915,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       if (dc->isNumeric()) {
 	just = SoAsciiText::RIGHT;
 	x_offs = col_wd;
-	el = Variant::formatNumber(dc->GetValAsVar(act_idx),
-				   cvs->num_prec);
+	el = Variant::formatNumber(dc->GetValAsVar(act_idx),6); // 6 = precision
       } else {
 	int max_chars = (int)(t3Misc::char_ht_to_wd_pts * col_wd / font_scale) + 1;
 	el = dc->GetValAsString(act_idx).elidedTo(max_chars);
@@ -1009,11 +1022,6 @@ void GridTableView::setHeader(bool value) {
   ViewRangeChanged();
 }
 
-void GridTableView::SetViewFontSize(int point_size) {
-  view_spec.font.SetFontSize(point_size);
-  UpdateAfterEdit();
-}
-
 void GridTableView::ViewRangeChanged_impl() {
   RemoveLines();
   RenderLines();
@@ -1021,16 +1029,16 @@ void GridTableView::ViewRangeChanged_impl() {
 
 void GridTableView::VScroll(bool left) {
   if (left) {
-    ViewC_At(col_range.min - 1);
+    ViewCol_At(col_range.min - 1);
   } else {
-    ViewC_At(col_range.min + 1);
+    ViewCol_At(col_range.min + 1);
   }
 }
 
-void GridTableView::ViewC_At(int start) {
+void GridTableView::ViewCol_At(int start) {
   if (start < 0) start = 0;
   if (start >= view_spec.col_specs.size) start = view_spec.col_specs.size - 1;
-  if (col_range.min == start) return;//TODO: may be prob if cols go vis/invis
+  //  if (col_range.min == start) return;//TODO: may be prob if cols go vis/invis
   RemoveLines();
   RemoveHeader(); // noop if off
   RemoveGrid();
@@ -1042,13 +1050,53 @@ void GridTableView::ViewC_At(int start) {
   RenderLines();
 }
 
-// todo: could probably nuke this -- done by MakeViewRangeValid now
-void  GridTableView::ViewC_VisibleAt(int ord_idx) {
-  DataTable* dt = dataTable();
-  if (ord_idx < 0) ord_idx = 0;
-  if (ord_idx >= dt->cols()-col_n) ord_idx = dt->cols()-col_n;
-  ViewC_At(ord_idx);
+// callback for view transformer dragger
+void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
+  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
+  T3GridViewNode* vnd = (T3GridViewNode*)userData;
+  GridTableView* nv = (GridTableView*)vnd->dataView;
+
+  SbRotation cur_rot;
+  cur_rot.setValue(SbVec3f(nv->table_orient.x, nv->table_orient.y, 
+			   nv->table_orient.z), nv->table_orient.rot);
+
+  SbVec3f trans = dragger->translation.getValue();
+//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
+  cur_rot.multVec(trans, trans); // rotate translation by current rotation
+  FloatTDCoord tr(T3GridViewNode::drag_size * trans[0],
+		  T3GridViewNode::drag_size * trans[1],
+		  T3GridViewNode::drag_size * trans[2]);
+  nv->table_pos += tr;
+
+  const SbVec3f& scale = dragger->scaleFactor.getValue();
+//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
+  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  nv->table_scale *= sc;
+
+  SbVec3f axis;
+  float angle;
+  dragger->rotation.getValue(axis, angle);
+//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
+  if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
+    SbRotation rot;
+    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
+    SbRotation nw_rot = rot * cur_rot;
+    nw_rot.getValue(axis, angle);
+    nv->table_orient.SetXYZR(axis[0], axis[1], axis[2], angle);
+  }
+
+  vnd->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+  vnd->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  //  vnd->txfm_shape()->translation.setValue(.5f, .5f * h - .5f, -.5f);
+  vnd->txfm_shape()->translation.setValue(.5f * 1.05f, -.5f * 1.05f, 0.0f);
+
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+  dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+  nv->UpdateView();
 }
+
 
 //////////////////////////
 //    iTableView_Panel //
@@ -1100,14 +1148,15 @@ void iTableView_Panel::init(bool is_grid_log)
   bgpTopButtons = new QButtonGroup(widg); // NOTE: not a widget
   bgpTopButtons->setExclusive(false); // not applicable
   int but_ht = taiM->button_height(taiMisc::sizSmall);
-  for (int i = BUT_BEG_ID; i <= BUT_END_ID; ++i) {
-    QPushButton* pb = new QPushButton(widg);
-    pb->setText(but_strs[i]);
-    pb->setMaximumHeight(but_ht);
-    pb->setMaximumWidth(20);
-    layVcrButtons->addWidget(pb);
-    bgpTopButtons->addButton(pb, i);
-  }
+  // don't do the vcr buttons -- not used!
+//   for (int i = BUT_BEG_ID; i <= BUT_END_ID; ++i) {
+//     QPushButton* pb = new QPushButton(widg);
+//     pb->setText(but_strs[i]);
+//     pb->setMaximumHeight(but_ht);
+//     pb->setMaximumWidth(20);
+//     layVcrButtons->addWidget(pb);
+//     bgpTopButtons->addButton(pb, i);
+//   }
   layTopCtrls->addStretch();
 
   layInitButtons = new QHBoxLayout(layTopCtrls);
@@ -1186,8 +1235,7 @@ void iTableView_Panel::Constr_T3ViewspaceWidget() {
   root->addChild(m_lm);
 
   m_camera->viewAll(root, m_ra->getViewportRegion());
-  m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
-
+  m_ra->setBackgroundColor(SbColor(0.8f, 0.8f, 0.8f));
 
   layContents->addWidget(t3vs);
 }
@@ -1213,7 +1261,7 @@ void iTableView_Panel::UpdatePanel_impl() {
 }
 
 void iTableView_Panel::viewAll() {
-  m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion());
+  m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion(), .8); // reduce slack!
 }
 
 
@@ -1249,7 +1297,7 @@ void iGridTableView_Panel::InitPanel_impl() {
       sb->setTracking(true);
     }
     sb->setMinValue(0);
-    sb->setMaxValue(dt->cols()-lv->col_n);
+    sb->setMaxValue(dt->cols()-lv->col_n+1);
     int pg_step = 1;
     sb->setSteps(1, pg_step);
   }
@@ -1290,7 +1338,7 @@ void iGridTableView_Panel::UpdatePanel_impl() {
 void iGridTableView_Panel::horScrBar_valueChanged(int value) {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-  glv->ViewC_VisibleAt(value);
+  glv->ViewCol_At(value);
 }
 
 void iGridTableView_Panel::verScrBar_valueChanged(int value) {

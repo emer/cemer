@@ -36,78 +36,20 @@
 //#include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/engines/SoCalculator.h>
 
 #include <math.h>
 #include <limits.h>
 
-
-//////////////////////////
-//   T3TableViewNode	//
-//////////////////////////
-
-SO_NODE_SOURCE(T3TableViewNode);
-
-void T3TableViewNode::initClass()
-{
-  SO_NODE_INIT_CLASS(T3TableViewNode, T3NodeParent, "T3NodeParent");
-}
-
-T3TableViewNode::T3TableViewNode(void* dataView_)
-:inherited(dataView_)
-{
-  SO_NODE_CONSTRUCTOR(T3TableViewNode);
-
-  frame_ = NULL;
-  geom_.setValue(1, 1, 1); // puts in valid state
-}
-
-T3TableViewNode::~T3TableViewNode()
-{
-  frame_ = NULL;
-}
-
-void T3TableViewNode::render(float inset) {
-  if (frame_) {
-    frame_->setDimensions(geom_.x+2.0f*inset, geom_.y+2.0f*inset, 0.1f, inset);
-  }
-  txfm_shape()->translation.setValue(.5f * (geom_.x+2.0f*inset), .5f*(geom_.y+2.0f*inset), 0.0f);
-}
-
-void T3TableViewNode::setGeom(int px, int py, int pz) {
-  setGeom(px, py, pz, (frame_) ? frame_->inset : 0.0f); 
-}
-
-void T3TableViewNode::setGeom(int px, int py, int pz, float inset) {
-  if (px < 1) px = 1;  if (py < 1) py = 1;  if (pz < 1) pz = 1;
-  if (geom_.isEqual(px, py, pz) && 
-    (!frame_ ||  (frame_->inset == inset)) ) return;
-  geom_.setValue(px, py, pz);
-  render(inset);
-}
-
-void T3TableViewNode::setShowFrame(bool value, float inset) {
-  if (showFrame() != value) {
-    SoSeparator* ss = shapeSeparator(); // cache
-    if (value) {
-      frame_ = new SoFrame(SoFrame::Ver, inset);
-      //frame_ = new SoFrame(SoFrame::Hor);
-      insertChildAfter(ss, frame_, material());
-    } else {
-      ss->removeChild(frame_);
-      frame_ = NULL;
-    }
-  }
-  render(inset);
-}
-
-bool T3TableViewNode::showFrame() {
-  return frame_;
-}
-
-
 //////////////////////////
 //   T3GridViewNode	//
 //////////////////////////
+
+float T3GridViewNode::drag_size = .08f;
+
+extern void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragger);
+// defined in qtso
 
 SO_NODE_SOURCE(T3GridViewNode);
 
@@ -121,7 +63,34 @@ T3GridViewNode::T3GridViewNode(void* dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GridViewNode);
   
+  drag_sep_ = new SoSeparator;
+  drag_xf_ = new SoTransform;
+  drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
+  drag_xf_->translation.setValue(0.0f, -1.1f, 0.0f);
+  //  drag_xf_->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+  drag_sep_->addChild(drag_xf_);
+  dragger_ = new SoTransformBoxDragger;
+  drag_sep_->addChild(dragger_);
+  //  topSeparator()->addChild(drag_sep_);
+
+  drag_trans_calc_ = new SoCalculator;
+  drag_trans_calc_->ref();
+  drag_trans_calc_->A.connectFrom(&dragger_->translation);
+
+  String expr = "oA = vec3f(.5 + " + String(drag_size) + " * A[0], -.5 + " +
+    String(drag_size) + " * A[1], 0.0 + " + String(drag_size) + " * A[2])";
+
+  drag_trans_calc_->expression = expr.chars();
+
+  txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
+  //  txfm_shape()->translation.connectFrom(&dragger_->translation);
+  txfm_shape()->rotation.connectFrom(&dragger_->rotation);
+  txfm_shape()->scaleFactor.connectFrom(&dragger_->scaleFactor);
+
+  dragger_->addFinishCallback(T3GridViewNode_DragFinishCB, (void*)this);
+
   stage_ = new SoSeparator;
+  // stage_->addChild(drag_sep_);
   mat_stage_ = new SoMaterial;
   mat_stage_->diffuseColor.setValue(0, 0, 0); // black
   stage_->addChild(mat_stage_);
@@ -132,6 +101,8 @@ T3GridViewNode::T3GridViewNode(void* dataView_)
   body_ = new SoSeparator;
   stage_->addChild(body_);
   insertChildAfter(topSeparator(), stage_, transform());
+
+  insertChildAfter(topSeparator(), drag_sep_, transform());
   
   SoSeparator* ss = shapeSeparator(); // cache
   frame_ = new SoFrame(SoFrame::Ver);

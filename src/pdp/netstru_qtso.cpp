@@ -1637,8 +1637,13 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   T3NetNode* netnd = (T3NetNode*)userData;
   NetView* nv = (NetView*)netnd->dataView;
 
-  const SbVec3f& trans = dragger->translation.getValue();
+  SbRotation cur_rot;
+  cur_rot.setValue(SbVec3f(nv->network_orient.x, nv->network_orient.y, 
+			   nv->network_orient.z), nv->network_orient.rot);
+
+  SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
+  cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   FloatTDCoord tr(T3NetNode::drag_size * trans[0],
 		  T3NetNode::drag_size * trans[1],
 		  T3NetNode::drag_size * trans[2]);
@@ -1656,9 +1661,6 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
     SbRotation rot;
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
-    SbRotation cur_rot;
-    cur_rot.setValue(SbVec3f(nv->network_orient.x, nv->network_orient.y, 
-			     nv->network_orient.z), nv->network_orient.rot);
     SbRotation nw_rot = rot * cur_rot;
     nw_rot.getValue(axis, angle);
     nv->network_orient.SetXYZR(axis[0], axis[1], axis[2], angle);

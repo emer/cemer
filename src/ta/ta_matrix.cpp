@@ -124,27 +124,42 @@ void MatrixGeom::DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d
   }
 }
 
-void MatrixGeom::Get2DGeom(int& x, int& y) {
+void MatrixGeom::Get2DGeom(int& x, int& y, bool odd_y) {
   x = 1;
   y = 1;
-  if(size == 1) {	// horizontal strip
-    x = FastEl(0);
+  if(size == 1) {
+    if(odd_y)
+      y = FastEl(0);
+    else
+      x = FastEl(0);
   }
   else if(size == 2) {
     x = FastEl(0);
     y = FastEl(1);
   }
   else if(size == 3) { // series of 2d guys: layout vert or horiz?? vert!?
-    x = FastEl(0);
-    y = (FastEl(1) + 1) * FastEl(2); // assume space with 1
+    if(odd_y) {
+      x = FastEl(0);
+      y = (FastEl(1) + 1) * FastEl(2); // assume space with 1
+    }
+    else {
+      x = (FastEl(0) + 1) * FastEl(2);
+      y = FastEl(1);
+    }
   }
   else if(size == 4) { // matrix of 2d guys
     x = (FastEl(0) + 1) * FastEl(2);
     y = (FastEl(1) + 1) * FastEl(3);
   }
   else if(size == 5) { // matrix of 2d guys + time series: vertical
-    x = (FastEl(0) + 1) * FastEl(2);
-    y = (FastEl(1) + 1) * FastEl(3) * FastEl(4);
+    if(odd_y) {
+      x = (FastEl(0) + 1) * FastEl(2);
+      y = (FastEl(1) + 1) * FastEl(3) * FastEl(4);
+    }
+    else {
+      x = (FastEl(0) + 1) * FastEl(2) * FastEl(4);
+      y = (FastEl(1) + 1) * FastEl(3);
+    }
   }
 }
 

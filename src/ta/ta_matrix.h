@@ -175,8 +175,8 @@ public:
   void 			DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d4) const;
   // get dimension values from index, based on geometry
 
-  void			Get2DGeom(int& x, int& y);
-  // for rendering routines, provides standardized 2d geom (1x1 for scalar cells): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
+  void			Get2DGeom(int& x, int& y, bool odd_y = true);
+  // for rendering routines, provides standardized 2d geom regardless of dimensionality (includes space for extra dimensions), odd_y = for odd dimension sizes, put extra dimension in y (else x): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
   
   String		GeomToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // returns human-friendly text in form: "[dims:{dim}{,dim}]"

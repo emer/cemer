@@ -337,7 +337,7 @@ protected:
   void		setDefaultCaptionTransform(); // override
   ~T3NetNode();
 
-private:
+protected:
   SoFrame*		shape_; //#IGNORE
   SoSeparator* 		net_text_; // network text variables
 

@@ -114,8 +114,8 @@ public:
   virtual int		cell_dims() const { return cell_geom.size; }
   // #CAT_Access for matrix type, number of dimensions in each cell
   virtual int		GetCellGeom(int dim) const { return cell_geom.SafeEl(dim); } // #CAT_Access for matrix type, size of given dim
-  void			Get2DCellGeom(int& x, int& y);
-  // #CAT_Access for rendering routines, provides standardized 2d geom (1x1 for scalar cells): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
+  void			Get2DCellGeom(int& x, int& y, bool odd_y = true);
+  // #CAT_Access provides standardized 2d geom regardless of dimensionality (includes space for extra dimensions), odd_y = for odd dimension sizes, put extra dimension in y (else x): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
   
   int			rows() const { return AR()->frames(); }
   // #CAT_Access total number of rows of data within this column
@@ -1012,6 +1012,10 @@ class TA_API GridColViewSpec : public DataColViewSpec {
   // information for display of a data array in a grid display
 INHERITED(DataColViewSpec)
 public:
+
+  // todo: this display thing doesn't quite make sense anymore: probably should just
+  // have all scalars be text and all matrix be blocks, with mat_val_text flag dealing
+  // with the text.  this is the way it is currently working now..
   enum DisplayStyle {
     TEXT	= 0x01,	    	// Draw using text only (default for scalar cells)
     BLOCK	= 0x02,	    	// Draw using blocks only (default for matrix cells)
@@ -1028,12 +1032,11 @@ public:
     TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
   };
 
-  DisplayStyle  display_style;	// can display as text and/or block, or image
   int		text_width; 	// width of the column (or each matrix col) in chars; also the min width in chars
-  String	text_format; 	// #CONDEDIT_ON_display_style:TEXT,TEXT_AND_BLOCK c-style format string (typically for numbers)
-  int		num_prec; 	// #DEF_5 numeric precision (decimals) for floating numbers
-  MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
+  DisplayStyle  display_style;	// can display as text and/or block, or image
   bool		scale_on; 	// #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
+  MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
+  bool		mat_odd_vert;	// how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
   
   float 	col_width; // #READ_ONLY #HIDDEN #NO_SAVE calculated col_width in chars
   float		row_height; // #READ_ONLY #HIDDEN #NO_SAVE calculated row height in chars
@@ -1052,14 +1055,21 @@ private:
   void	Destroy() {}
 };
 
+// todo: what really is the point of having these two diff objects: the GridTableView
+// and the GridTableViewSpec -- what goes in what??
+
 class TA_API GridTableViewSpec : public DataTableViewSpec {
   // information for display of a datatable in a grid display
 INHERITED(DataTableViewSpec)
 public:
-  MinMaxInt	mat_size_range;	// range of display sizes for matrix items relative to other text items.  each cell in a matrix counts as one character in size, within these ranges (smaller matricies are made larger to min size, and large ones are made smaller to max size)
-
   float		grid_margin; 	// #DEF_0.1 #MIN_0 size of margin between grid cells, as a proportion of the size of one text character
   float		grid_line_size; // #DEF_0.05 #MIN_0 size of grid lines, as a proportion of the size of one text character
+  int		row_num_width;	// #DEF_4 width of row number column
+  MinMaxInt	mat_size_range;	// range of display sizes for matrix items relative to other text items.  each cell in a matrix counts as one character in size, within these ranges (smaller matricies are made larger to min size, and large ones are made smaller to max size)
+  bool		mat_val_text;	// also display text values for matrix blocks (supercedes per column display style information)
+  float		mat_block_spc;	// #DEF_0.1 space between matrix cell blocks, as a proportion of max of X, Y cell size
+  float		mat_block_height; // #DEF_0.2 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
+  float		mat_trans;	  // #DEF_0.6 maximum transparency of zero values in matrix blocks -- set to 0 to make all blocks opaque
 
   inline int		colSpecCount() const {return col_specs.size;}
   GridColViewSpec*	colSpec(int idx) const 

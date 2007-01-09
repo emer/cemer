@@ -159,9 +159,9 @@ int DataArray_impl::displayWidth() const {
   int rval = GetUserData(udkey_width).toInt();
   if (rval == 0) {
     switch (valType()) {
-    case VT_STRING: rval = 10; break;
+    case VT_STRING: rval = 16; break; // maximum width for strings
     case VT_DOUBLE: rval = 16; break;
-    case VT_FLOAT: rval = 12; break;
+    case VT_FLOAT: rval = 8; break;
     case VT_INT: rval = 8; break;
     case VT_BYTE: rval = 3; break;
     case VT_VARIANT: rval = 10; break;
@@ -186,11 +186,11 @@ taBase::DumpQueryResult DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
   } else return inherited::Dump_QuerySaveMember(md);
 }
 
-void DataArray_impl::Get2DCellGeom(int& x, int& y) {
+void DataArray_impl::Get2DCellGeom(int& x, int& y, bool odd_y) {
   x = 1;
   y = 1;
   if(isMatrix()) {
-    cell_geom.Get2DGeom(x, y);
+    cell_geom.Get2DGeom(x, y, odd_y);
   }
 }
 
@@ -1854,28 +1854,27 @@ bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
 //////////////////////////////////
 
 void GridColViewSpec::Initialize(){
-  display_style = TEXT; // updated later in build
   text_width = 16;
-  num_prec = 5;
-  mat_layout = BOT_ZERO; // typical default for data patterns
+  display_style = TEXT; // updated later in build
   scale_on = true;
+  mat_layout = BOT_ZERO; // typical default for data patterns
+  mat_odd_vert = true;
   col_width = 0.0f;
   row_height = 0.0f;
 }
 
 void GridColViewSpec::Copy_(const GridColViewSpec& cp){
-  display_style = cp.display_style;
   text_width = cp.text_width;
-  num_prec = cp.num_prec;
-  mat_layout = cp.mat_layout;
+  display_style = cp.display_style;
   scale_on = cp.scale_on;
+  mat_layout = cp.mat_layout;
+  mat_odd_vert = cp.mat_odd_vert;
   // others recalced
 }
 
 void GridColViewSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (text_width < 2) text_width = 2; // smallest practical
-  if (num_prec < 2) num_prec = 2;
 }
 
 void GridColViewSpec::UpdateFromDataCol_impl(bool first){
@@ -1893,10 +1892,7 @@ void GridColViewSpec::UpdateFromDataCol_impl(bool first){
         display_style = BLOCK;
         mat_layout = BOT_ZERO;
       }
-    } else /*obs  if (dc->GetUserData("TEXT").toBool() ||
-      dc->GetUserData(DataArray_impl::udkey_narrow).toBool() ||
-      dc->InheritsFrom(TA_String_Data)
-    )*/ {
+    } else {
       display_style = TEXT;
     }
   }
@@ -1923,7 +1919,7 @@ void GridColViewSpec::Render_impl() {
   if(dc->isMatrix()) {
     int raw_width = 1;
     int raw_height = 1;
-    dc->Get2DCellGeom(raw_width, raw_height);
+    dc->Get2DCellGeom(raw_width, raw_height, mat_odd_vert);
     // just linear in block size between range
     col_width = par->mat_size_range.Clip(raw_width);
     row_height = par->mat_size_range.Clip(raw_height);
@@ -1947,10 +1943,16 @@ void GridColViewSpec::Render_impl() {
 void GridTableViewSpec::Initialize() {
   col_specs.SetBaseType(&TA_GridColViewSpec);
 
-  mat_size_range.min = 4;
-  mat_size_range.max = 16;
   grid_margin = 0.1f;
   grid_line_size = 0.05f;
+  row_num_width = 4;
+
+  mat_size_range.min = 4;
+  mat_size_range.max = 16;
+  mat_val_text = false;
+  mat_block_spc = 0.1f;
+  mat_block_height = 0.2f;
+  mat_trans = 0.6f;
 }
 
 void GridTableViewSpec::InitLinks() {
@@ -1962,9 +1964,14 @@ void GridTableViewSpec::Destroy() {
 }
 
 void GridTableViewSpec::Copy_(const GridTableViewSpec& cp) {
-  mat_size_range = cp.mat_size_range;
   grid_margin = cp.grid_margin;
   grid_line_size = cp.grid_line_size;
+
+  mat_size_range = cp.mat_size_range;
+  mat_val_text = cp.mat_val_text;
+  mat_block_spc = cp.mat_block_spc;
+  mat_block_height = cp.mat_block_height;
+  mat_trans = cp.mat_trans;
 }
 
 void GridTableViewSpec::UpdateAfterEdit_impl(){

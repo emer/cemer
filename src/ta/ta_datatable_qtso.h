@@ -23,6 +23,7 @@
 #include "ta_fontspec.h"
 
 #include "ta_datatable.h"
+#include "ta_geometry.h"
 #include "colorscale.h"
 #include "colorbar_qt.h"
 #include "t3viewer.h"
@@ -50,12 +51,14 @@ class TA_API TableView : public T3DataViewPar {
   // #VIRT_BASE #NO_TOKENS base class of grid and graph views; the data is its own embedded DataTableViewSpec
 INHERITED(T3DataViewPar)
 public:
-  int		view_rows; 	// #READ_ONLY #SAVE #DETAIL Maximum number of rows visible
-  MinMaxInt	view_range; 	// #READ_ONLY #SAVE #DETAIL range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
+  int		view_rows; 	// maximum number of rows visible
+  MinMaxInt	view_range; 	// range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
 
-  TDCoord	pos; 		// origin of the view in 3d space (not used for panel view)
-  float		frame_inset; 	// #DEF_0.05 inset of frame (used to calc actual inner space avail)
   bool		display_on;  	// #DEF_true 'true' if display should be updated
+
+  FloatTDCoord	table_pos;	// position of table in view
+  FloatTDCoord	table_scale;	// scaling factors of table in view
+  FloatRotation	table_orient;	// orientation of table in view
   
   virtual const String	caption() const; // what to show in viewer
   virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
@@ -71,7 +74,7 @@ public:
   virtual void		ViewRangeChanged(); // called when view_range changed (override _impl to implement)
   virtual void 		ClearData();	// Clear the display and the data
   // view control -- row
-  virtual void 	View_At(int start);	// start viewing at indicated viewrange value
+  virtual void 		View_At(int start);	// start viewing at indicated viewrange value
   
   virtual void		InitPanel();// lets panel init itself after struct changes
   virtual void		UpdatePanel();// after changes to props
@@ -89,18 +92,17 @@ public:
   T3_DATAVIEWFUNS(TableView, T3DataViewPar) //
 
 protected:
-// view control:
-  virtual void		ClearViewRange(); // sets view range back to beginning (grid adds cols, graph adds TBA)
-
-
   iTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
   int			m_rows; // cached rows, we use to calc deltas etc.
   int			updating; // to prevent recursion
+
   override void 	UpdateAfterEdit_impl();
   void			UpdateStage(); // updates stage after change or copy
   virtual void 		InitViewSpec();	// called to (re)init the viewspecs
   void			InitDisplay(); // called to (re)do all the viewing params
   virtual void		InitDisplay_impl() {} // type-specific impl
+
+  virtual void		ClearViewRange(); // sets view range back to beginning (grid adds cols, graph adds TBA)
   virtual void 		MakeViewRangeValid(); // adjust row/col etc. to be valid
   
 // routines for handling data changes -- only one should be called in any change context
@@ -123,33 +125,27 @@ INHERITED(TableView)
 public:
   static GridTableView* New(DataTable* dt, T3DataViewFrame*& fr);
 
+  int		col_n; 		// number of columns to display: determines sizes of everything automatically from this
+  MinMaxInt	col_range; 	// column range that is visible (max is the last col visible, not the last+1; range = col_n-1, except if columns are not visible range can be larger)
+
   bool		grid_on; 	// whether to show grid lines
   bool		header_on;	// is the table header visible?
   bool		row_num_on; 	// row number col visible?
   bool		auto_scale;	// whether to auto-scale on color block values or not
   ColorScale	scale; 		// The color scale for this display
-  int		col_n; 		// #SAVE number of columns to display: determines sizes of everything automatically from this
-  MinMaxInt	col_range; 	// #SAVE column range that is visible (max is the last col visible, not the last+1; range = col_n-1, except if columns are not visible range can be larger)
 
   MinMax        scale_range;	// #HIDDEN range of scalebar
   MinMaxInt	actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
 
-  GridTableViewSpec view_spec; // #SHOW_TREE baked in spec 
+  GridTableViewSpec view_spec;  // #SHOW_TREE baked in spec 
 
   void		setAutoScale(bool value);
   void		setGrid(bool value);
   void		setHeader(bool value);
-  void		SetViewFontSize(int point_size = 10);
-  // #MENU #MENU_SEP_BEFORE set the point size of the font used for labels in the display
-  void		AllBlockTextOn() {AllBlockText_impl(true);}
-  // #MENU turn text on for all block displayed items
-  void		AllBlockTextOff() {AllBlockText_impl(false);}
-  // #MENU turn text off for all block displayed items
 
   // view control
   void		VScroll(bool left); // scroll left or right
-  virtual void 	ViewC_At(int start);	// start viewing at indicated column value
-  virtual void 	ViewC_VisibleAt(int ord_idx);	// start viewing at the indicated ordinal visible column (used by vertical scroll bars)
+  virtual void 	ViewCol_At(int start);	// start viewing at indicated column value
   
   override DataTable*	dataTable() const {return view_spec.dataTable();}
 
