@@ -1141,7 +1141,8 @@ public:
   void			setPinned(bool value);
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabBar::TabIcon	tabIcon() const;
-  iTabView*		tabView() {return m_tabView;} // tab view in which we are shown
+  inline iTabView*	tabView() const {return m_tabView;} // tab view in which we are shown
+  virtual void		setTabView(iTabView* value) {m_tabView = value;} // just set the value, no side effects
   virtual iTabViewer* 	tabViewerWin() const = 0;
   iMainWindowViewer* 	viewerWindow() {return (m_tabView) ? m_tabView->viewerWindow() : NULL;}
   virtual bool		isViewPanelFrame() const {return false;} // we group the vpf's to the right, all others to the left
@@ -1174,7 +1175,6 @@ public: // IDataLinkClient interface
   override TypeDef*	GetTypeDef() const {return &TA_iDataPanel;}
 
 protected:
-  iTabView*		m_tabView; // tab view in which we are shown
   bool			m_pinned;
   bool			m_rendered; // set once rendered
   QScrollArea*		scr; // central scrollview
@@ -1184,6 +1184,8 @@ protected:
   virtual void		Render_impl() {} // only called once, when content needs to be created
   virtual void		Refresh_impl() {}
   virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
+private:
+  iTabView*		m_tabView; // force access through accessors only
 };
 
 
@@ -1283,6 +1285,7 @@ public:
 
   iDataPanel*		curPanel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
   void			set_cur_panel_id(int cpi);
+  override void		setTabView(iTabView* tv); // set for kids too
 
   void			SetMenu(QWidget* menu); // sets the menu (s/b a menubar; or toolbar on mac)
   void			AddSubPanel(iDataPanelFrame* pn);

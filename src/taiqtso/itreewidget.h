@@ -21,6 +21,7 @@
 
 #include <QEvent>
 #include <QPoint>
+#include <QTableView>
 #include <QTreeWidget>
 
 class iTreeWidgetItem; //
@@ -111,5 +112,20 @@ private:
   void			init();
 };
 
+class TAIQTSO_API iTableView: public QTableView { 
+INHERITED(QTableView)
+  Q_OBJECT
+public:
+  iTableView(QWidget* parent = 0);
+  ~iTableView();
+  
+#ifndef __MAKETA__
+signals:
+  void			hasFocus(); // we emit anytime something happens which implies we are focused
+#endif
+
+protected:
+  override bool		event(QEvent* ev);
+};
 
 #endif

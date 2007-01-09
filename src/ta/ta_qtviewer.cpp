@@ -400,7 +400,7 @@ static const unsigned char image8_data[] = {
     void GetEditActions(int&); // called to get current valid edit actions
     *void SetActionsEnabled(TBD); // enables/disables any actions
   Signals:
-    void UpdateUi(); // control can call if something changed, to update the ui -- calls back its
+    *void UpdateUi(); // control can call if something changed, to update the ui -- calls back its
        GetEditAction and SetActionsEnabled slot functions
 
 
@@ -3254,6 +3254,12 @@ void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
       connect(this, SIGNAL(SetActionsEnabled()), handler_obj, actions_enabled_slot );
     if (update_ui_signal)
       connect(handler_obj, update_ui_signal, this, SLOT(UpdateUi()) );
+//TEMP
+    taMisc::Warning("SetClipHandler to: type, name", handler_obj->metaObject()->className(),
+      handler_obj->objectName());
+} else {
+    taMisc::Warning("SetClipHandler cleared");
+// /TEMP
   }
   last_clip_handler = handler_obj; // whether NULL or not
   UpdateUi();
@@ -3501,15 +3507,15 @@ set_cur:
 
 void* iDataPanel_PtrList::El_Own_(void* it) {
   if (m_tabView) 
-    ((iDataPanel*)it)->m_tabView = m_tabView; 
+    ((iDataPanel*)it)->setTabView(m_tabView); 
   return it;
 }
 
 void iDataPanel_PtrList::El_disOwn_(void* it_) {
   if (m_tabView) {
     iDataPanel* it = (iDataPanel*)it_;
-    if (it->m_tabView == m_tabView)
-      it->m_tabView = NULL; 
+    if (it->tabView() == m_tabView)
+      it->setTabView(NULL); 
   }
 }
 
@@ -3974,12 +3980,12 @@ void iDataPanelFrame::GetImage() {
 
 taiDataLink* iDataPanelFrame::par_link() const {
   if (m_dps) return m_dps->par_link();
-  else       return (m_tabView) ? m_tabView->par_link() : NULL;
+  else       return (tabView()) ? tabView()->par_link() : NULL;
 }
 
 MemberDef* iDataPanelFrame::par_md() const {
   if (m_dps) return m_dps->par_md();
-  else       return (m_tabView) ? m_tabView->par_md() : NULL;
+  else       return (tabView()) ? tabView()->par_md() : NULL;
 }
 
 void iDataPanelFrame::Refresh_impl() {
@@ -3993,7 +3999,7 @@ String iDataPanelFrame::TabText() const {
 
 iTabViewer* iDataPanelFrame::tabViewerWin() const {
   if (m_dps) return m_dps->tabViewerWin();
-  else       return (m_tabView) ? m_tabView->tabViewerWin() : NULL;
+  else       return (tabView()) ? tabView()->tabViewerWin() : NULL;
 }
 
 
@@ -4016,8 +4022,8 @@ iViewPanelFrame::~iViewPanelFrame() {
 void iViewPanelFrame::ClosePanel() {
   CancelOp cancel_op = CO_NOT_CANCELLABLE;
   Closing(cancel_op); // forced, ignore cancel
-  if (m_tabView) // effectively unlink from system
-    m_tabView->DataPanelDestroying(this);
+  if (tabView()) // effectively unlink from system
+    tabView()->DataPanelDestroying(this);
   deleteLater(); // per Qt specs, defer deletions to avoid issues
 }
 
@@ -4046,7 +4052,7 @@ String iViewPanelFrame::TabText() const {
 }
 
 iTabViewer* iViewPanelFrame::tabViewerWin() const {
-  return (m_tabView) ? m_tabView->tabViewerWin() : NULL;
+  return (tabView()) ? tabView()->tabViewerWin() : NULL;
 }
 
 
@@ -4080,7 +4086,7 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 iDataPanelSet::~iDataPanelSet() {
   for (int i = panels.size - 1; i >= 0 ; --i) {
     iDataPanel* pn = panels.FastEl(i);
-    pn->m_tabView = NULL;
+    pn->setTabView(NULL);
   }
 }
 
@@ -4124,8 +4130,8 @@ void iDataPanelSet::ClosePanel() {
     iDataPanel* pn = panels.FastEl(i);
     pn->ClosePanel();
   }
-  if (m_tabView) // effectively unlink from system
-    m_tabView->DataPanelDestroying(this);
+  if (tabView()) // effectively unlink from system
+    tabView()->DataPanelDestroying(this);
   deleteLater();
 }
 
@@ -4202,6 +4208,15 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
     but->setDown(true);
   //TODO: maybe something to change tab color
 }
+
+void iDataPanelSet::setTabView(iTabView* value) {
+  inherited::setTabView(value);
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->setTabView(value);
+  }
+}
+
 
 //////////////////////////
 //    iListDataPanel 	//

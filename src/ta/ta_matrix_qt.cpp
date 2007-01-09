@@ -19,6 +19,9 @@
 #include "ta_qtclipdata.h"
 
 #include "ta_qt.h"
+
+#include "itreewidget.h"
+
 #include <QApplication>
 #include <QClipboard>
 #include <QTableView>
@@ -61,7 +64,7 @@ void iMatrixEditor::init() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   layDims = new QHBoxLayout(layOuter);
-  tv = new QTableView(this);
+  tv = new iTableView(this);
   layOuter->addWidget(tv);
   tv->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(tv, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -83,24 +86,11 @@ void iMatrixEditor::setModel(MatrixTableModel* mod) {
   tv->setModel(mod);
 }
 
-int iMatrixEditor::QueryEditActions(taiMimeSource* ms) {
-  int allowed = 0;
-  int forbidden = 0;
-  QueryEditActions_impl(ms, allowed, forbidden);
-  return allowed & !forbidden;
+void iMatrixEditor::EditAction(int ea) {
+  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+  EditAction_impl(ms, ea);
+  delete ms;
 }
-void iMatrixEditor::QueryEditActions_impl(taiMimeSource* ms,
-  int& allowed, int& forbidden)
-{
-  allowed = taiClipData::EA_COPY;
-}
-
-int iMatrixEditor::EditAction(int ea) {
-  taiMimeSource* ms = NULL;
-//TEMP
-  return EditAction_impl(ms, ea);
-}
-
 
 int iMatrixEditor::EditAction_impl(taiMimeSource* ms, int ea) {
   if (ea & taiClipData::EA_COPY) {
@@ -110,18 +100,39 @@ int iMatrixEditor::EditAction_impl(taiMimeSource* ms, int ea) {
   return 0;
 }
 
-void iMatrixEditor::this_editAction(int ea) {
-  EditAction(ea);
+void iMatrixEditor::GetEditActionsEnabled(int& ea) {
+  // we can copy if anything selected
+  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+  ea = QueryEditActions(ms);
+  delete ms;
+}
+
+int iMatrixEditor::QueryEditActions(taiMimeSource* ms) {
+  int allowed = 0;
+  int forbidden = 0;
+  QueryEditActions_impl(ms, allowed, forbidden);
+  return allowed & ~forbidden;
+}
+void iMatrixEditor::QueryEditActions_impl(taiMimeSource* ms,
+  int& allowed, int& forbidden)
+{
+  const QModelIndexList& mil = tv->selectionModel()->selectedIndexes();
+  if (mil.count() > 0)
+    allowed |= taiClipData::EA_COPY;
+  //TODO: if we allow Cut or Delete, we must have entire rows selected
 }
 
 void iMatrixEditor::tv_customContextMenuRequested(const QPoint& pos) {
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
   //TODO: any for us first (ex. delete)
-  
+  int ea = 0;
+  GetEditActionsEnabled(ea);
     
 // TEMP for test
-  menu->AddItem("Copy", taiMenu::normal, taiAction::int_act,
-    this, SLOT(this_editAction(int)), taiClipData::EA_COPY );
+  taiAction* act = menu->AddItem("Copy", taiMenu::normal, taiAction::int_act,
+    this, SLOT(EditAction(int)), taiClipData::EA_COPY );
+  if (!(ea & taiClipData::EA_COPY))
+    act->setEnabled(false);
 
 /*
   menu->AddSep();
@@ -224,6 +235,15 @@ void iMatrixPanel::list_selectionChanged() {
   viewer_win()->UpdateUi();
 }*/
 
+void iMatrixPanel::me_hasFocus() {
+  iMainWindowViewer* vw = viewerWindow();
+  if (vw)
+    vw->SetClipboardHandler(me,
+    SLOT(GetEditActionsEnabled(int&)),
+    SLOT(EditAction(int)),
+    NULL,
+    SIGNAL(UpdateUi()) );
+}
 
 String iMatrixPanel::panel_type() const {
   static String str("Edit Matrix");
@@ -236,10 +256,16 @@ void iMatrixPanel::Refresh_impl() {
 }
 
 void iMatrixPanel::Render_impl() {
+  if (me) return; // shouldn't happen
   me = new iMatrixEditor();
+  me->setName("MatrixEditor"); // diagnostic
   setCentralWidget(me); //sets parent
   taMatrix* mat_ = mat();
   if (mat_) {
     me->setModel(mat_->GetDataModel());
   }
+  connect(me->tv, SIGNAL(hasFocus()), this, SLOT(me_hasFocus()) );
+  // wire the selection signals to the UpdateUi, to update enabling
+//  connect(me->tv, SIGNAL(activated(const QModelIndex&)), me, SIGNAL(UpdateUi()) );
+  connect(me->tv, SIGNAL(clicked(const QModelIndex&)), me, SIGNAL(UpdateUi()) );
 }

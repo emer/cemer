@@ -384,6 +384,7 @@ INHERITED(QMimeData)
 public:
   static taiMimeSource*	New(const QMimeData* ms); // we use a static method for extensibility -- creates correct subtype
   static taiMimeSource*	New2(taiClipData* cd); // we use a static method for extensibility -- creates correct subtype
+  static taiMimeSource*	NewFromClipboard(); // whatever is on clipboard
 
   virtual int		src_action() const = 0; // any (or none) of the EA_SRC_xxx flags
   virtual bool		is_multi() const = 0; // true if the source is multiple individual objects (multi-select)

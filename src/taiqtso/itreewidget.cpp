@@ -301,3 +301,31 @@ void iTreeWidgetItem::resetTextColor(int col) {
       setData(col, Qt::TextColorRole, QVariant());
   }
 }
+
+
+//////////////////////////
+//  iTableView	//
+//////////////////////////
+
+iTableView::iTableView(QWidget* parent)
+:inherited(parent)
+{
+}
+
+iTableView::~iTableView() {
+}
+
+bool iTableView::event(QEvent* ev) {
+//NOTE: this probably doesn't even get triggered
+  bool rval = inherited::event(ev);
+  // look for anything that indicates we are focused
+  QEvent::Type t = ev->type();
+  if ((t == QEvent::FocusIn) ||
+    (t == QEvent::KeyPress) ||
+    (t == QEvent::MouseButtonPress) ||
+    (t == QEvent::WindowActivate) //||
+  ) 
+    emit hasFocus();
+  return rval;
+}
+

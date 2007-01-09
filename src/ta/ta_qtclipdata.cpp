@@ -394,6 +394,16 @@ taiMimeSource* taiMimeSource::New2(taiClipData* cd) {
   return rval;
 }
 
+taiMimeSource* taiMimeSource::NewFromClipboard() {
+  taiExtMimeSource* rval =  new taiExtMimeSource(QApplication::clipboard()->mimeData());
+  //TODO: this predecoding is confusing -- client should do it, or sb done automatically
+  String str;
+  if (rval->data(taiClipData::tacss_objectdesc, str) > 0) {
+    rval->DecodeDesc(str);
+  }
+  return rval;
+}
+
 taiMimeSource::taiMimeSource(const QMimeData* ms_)
 :inherited()
 {

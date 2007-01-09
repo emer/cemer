@@ -51,11 +51,18 @@ public:
   
   int			QueryEditActions(taiMimeSource* ms);
     // get edit items allowed for this one item
-  int			EditAction(int ea);
   void			Refresh(); // for manual refresh -- note, this also updates all other mat editors too
   
-  iMatrixEditor(QWidget* parent = NULL);
+  iMatrixEditor(QWidget* parent = NULL); //
   
+public slots: // cliphandler i/f; note: no UpdateUI signal
+  void 			EditAction(int ea); 
+  void			GetEditActionsEnabled(int& ea); 
+#ifndef __MAKETA__
+signals:
+  void			UpdateUi();
+#endif
+
 protected:
   virtual void		QueryEditActions_impl(taiMimeSource* ms,
     int& allowed, int& forbidden);
@@ -63,7 +70,6 @@ protected:
   
 protected slots:
   void 			tv_customContextMenuRequested(const QPoint& pos);
-  void 			this_editAction(int ea);
 
 private:
   void		init();
@@ -89,6 +95,9 @@ public:
 
   iMatrixPanel(taiDataLink* dl_);
   ~iMatrixPanel();
+
+protected slots:
+  void			me_hasFocus();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
