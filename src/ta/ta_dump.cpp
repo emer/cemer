@@ -1474,7 +1474,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     }
     tmp->UpdateAfterEdit();
 #ifdef TA_GUI
-    taiMisc::RunPending();	// process events as they happen in updates..
+//TEMP:cause crash in clip paste    taiMisc::RunPending();	// process events as they happen in updates..
 #endif
   }
 

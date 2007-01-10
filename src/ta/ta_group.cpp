@@ -669,7 +669,7 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md, int subgrp_i
   if (ms == NULL) return; // src op query
   // DST ops
   // if not a taBase type of object, no more applicable
-  if (!ms->is_tab()) return;
+  if (!ms->isBase()) return;
   if (!ms->IsThisProcess())
     forbidden &= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
 
@@ -741,7 +741,7 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
   taiMimeSource* ms, int ea)
 {
   // if src is not even a taBase, we just stop
-  if (!ms->is_tab()) return taiClipData::ER_IGNORED;
+  if (!ms->isBase()) return taiClipData::ER_IGNORED;
   int srcgrp_idx = -1; // -1 means not in this group
   taBase* srcobj = NULL;
 
@@ -762,7 +762,7 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
   if (
     (ea & (taiClipData::EA_DROP_COPY)) ||
     //  Cut/Paste is a move
-    ((ea & taiClipData::EA_PASTE) && (ms->src_action() & taiClipData::EA_SRC_COPY))
+    ((ea & taiClipData::EA_PASTE) && (ms->srcAction() & taiClipData::EA_SRC_COPY))
   ) {
     // TODO: instead of cloning, we might be better off just streaming a new copy
     // since this will better guarantee that in-proc and outof-proc behavior is same
@@ -783,7 +783,7 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
   if (
     (ea & (taiClipData::EA_DROP_MOVE)) ||
     //  Cut/Paste is a move
-    ((ea & taiClipData::EA_PASTE) && (ms->src_action() & taiClipData::EA_SRC_CUT))
+    ((ea & taiClipData::EA_PASTE) && (ms->srcAction() & taiClipData::EA_SRC_CUT))
   ) {
     if (srcobj == subgrp) return taiClipData::ER_OK; // nop
     if (srcgrp_idx >= 0) { // in this group: just do a group move
@@ -816,7 +816,7 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
 int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, int subgrp_idx, taGroup_impl* subgrp, taiMimeSource* ms, int ea)
 {
   // if src is not even a taBase, we just stop
-  if (!ms->is_tab()) return taiClipData::ER_IGNORED;
+  if (!ms->isBase()) return taiClipData::ER_IGNORED;
 
   // DST OPS WHEN SRC OBJECT IS OUT OF PROCESS
   switch (ea & taiClipData::EA_OP_MASK) {
@@ -825,17 +825,12 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, int subgrp_idx
   case taiClipData::EA_PASTE:
   {
     istringstream istr;
-    if (ms->object_data(istr) > 0) {
+    if (ms->objectData(istr) > 0) {
       TypeDef* td = GetTypeDef();
       int dump_val = td->Dump_Load(istr, this, this);
       if (dump_val == 0) {
         //TODO: error output
         return taiClipData::ER_ERROR; // load failed
-      }
-      // delete from source if it was a CUT or similar
-      if ((ms->src_action() & (taiClipData::EA_SRC_CUT)) || (ea & (taiClipData::EA_DROP_MOVE)))
-      {
-        ms->rem_data_taken();
       }
       return taiClipData::ER_OK;
     } else { // no data

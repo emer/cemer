@@ -121,6 +121,7 @@ extern TA_API TypeDef TA_unsigned_short;
 extern TA_API TypeDef TA_int;
   extern TA_API TypeDef TA_signed;
   extern TA_API TypeDef TA_signed_int;
+  extern TA_API TypeDef TA_int32_t;
 //extern TA_API TypeDef TA_intptr_t; // on 32-bit systems
 //extern TA_API TypeDef TA_long; // where long is 32-bit
 extern TA_API TypeDef TA_unsigned_int;

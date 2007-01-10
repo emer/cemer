@@ -923,7 +923,7 @@ MemberDef* tabODataLink::GetDataMemberDef() const {
 taiMimeItem* tabDataLink::GetMimeItem() {
   taiMimeItem* rval = taiMimeItem::New(data());
   Assert_QObj();
-  QObject::connect(qobj, SIGNAL(destroyed()), rval, SLOT(obj_destroyed()) );
+  QObject::connect(qobj, SIGNAL(destroyed()), rval, SLOT(objDestroyed()) );
   return rval;
 }
 
@@ -1346,7 +1346,7 @@ int ISelectable::GetEditActions_(taiMimeSource* ms) const {
   int allowed = 0;
   int forbidden = 0;
   // if src is readonly, then forbid certain dst ops
-  if (ms->src_action() & taiClipData::EA_SRC_READONLY)
+  if (ms->srcAction() & taiClipData::EA_SRC_READONLY)
     forbidden |= taiClipData::EA_FORB_ON_SRC_READONLY;
   GetEditActionsD_impl_(ms, allowed, forbidden);
   return (allowed & (~forbidden));
@@ -1728,7 +1728,7 @@ void ISelectableHost::DoDynAction(int idx) {
         typ = it1->GetDataTypeDef();
         for (int j = 0; j < drop_ms->count(); ++j) {
           drop_ms->setIndex(j);
-          taBase* obj = drop_ms->tab_object();
+          taBase* obj = drop_ms->tabObject();
           if (!obj) continue;
           *param[1] = (void*)obj;
           for (i = 0; i < sel_items_cp.size; ++i) {
@@ -3254,12 +3254,12 @@ void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
       connect(this, SIGNAL(SetActionsEnabled()), handler_obj, actions_enabled_slot );
     if (update_ui_signal)
       connect(handler_obj, update_ui_signal, this, SLOT(UpdateUi()) );
-//TEMP
+/*//TEMP
     taMisc::Warning("SetClipHandler to: type, name", handler_obj->metaObject()->className(),
       handler_obj->objectName());
 } else {
     taMisc::Warning("SetClipHandler cleared");
-// /TEMP
+// /TEMP */
   }
   last_clip_handler = handler_obj; // whether NULL or not
   UpdateUi();
@@ -5481,7 +5481,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     if (!after_node) after_node = last_member_node; // insert, after
     taiTreeDataNode* new_node = CreateListItem(this, after_node, (taBase*)op1_);
     iTreeView* tv = treeView();
-    tv->expandItem(new_node);
+//EVIL    tv->expandItem(new_node);
     tv->scrollTo(new_node);
   }
     break;

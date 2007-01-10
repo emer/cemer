@@ -191,17 +191,17 @@ bool taPtrList_impl::MoveIdx(int fm, int to) {
 }
 
 bool taPtrList_impl::MoveBefore_(void* trg, void* item) {
-  int trgi = FindEl_(trg);
+  int trgi = (trg) ? FindEl_(trg) - 1 : size - 1; // last if none
   int iti = FindEl_(item);
-  if((trgi < 0) || (iti < 0) || (iti = trgi - 1)) return false;
+  if((trgi < 0) || (iti < 0) || (iti == trgi)) return false;
   return MoveIdx(iti, trgi);
 }
 
 bool taPtrList_impl::MoveAfter_(void* trg, void* item) {
-  int trgi = FindEl_(trg);
+  int trgi = (trg) ? FindEl_(trg) + 1 : 0; // first if none
   int iti = FindEl_(item);
-  if((trgi < 0) || (iti < 0) || (iti = trgi + 1)) return false;
-  return MoveIdx(iti, trgi+1);
+  if((trgi < 0) || (iti < 0) || (iti == trgi)) return false;
+  return MoveIdx(iti, trgi);
 }
 
 bool taPtrList_impl::SwapIdx(int pos1, int pos2) {

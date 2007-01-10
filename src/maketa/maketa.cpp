@@ -46,6 +46,7 @@ TypeDef TA_unsigned_short_int("unsigned_short_int", 1, 0, 0, 0, 1, 1, "unsigned 
 TypeDef TA_int			("int", 	1, 0, 0, 0, 1, 1, "int");
 TypeDef TA_signed_int		("signed_int", 	1, 0, 0, 0, 1, 1, "signed int");
 TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_int32_t		("int32_t", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_unsigned_int	       ("unsigned_int", 1, 0, 0, 0, 1, 1, "unsigned int");
 TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, 1);
@@ -233,6 +234,7 @@ void MTA::AddBuiltIn(TypeSpace& ts) { // common code
   ts.Add(&TA_int);
   ts.Add(&TA_signed_int);
   ts.Add(&TA_signed);
+  ts.Add(&TA_int32_t);
   ts.Add(&TA_unsigned_int);
   ts.Add(&TA_unsigned);
   ts.Add(&TA_int64_t);
@@ -287,6 +289,7 @@ void MTA::InitBuiltIn() {
   TA_signed_int.AddParents(&TA_int); 
   TA_signed.AddParents(&TA_int); 
   TA_unsigned.AddParents(&TA_unsigned_int);
+  TA_int32_t.AddParents(&TA_int); 
   TA_signed_long.AddParents(&TA_long);
   TA_long_int.AddParents(&TA_long);
   TA_signed_long_int.AddParents(&TA_long);
