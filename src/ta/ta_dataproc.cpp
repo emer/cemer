@@ -23,15 +23,15 @@
 
 void DataOpEl::Initialize() {
   data_cols = NULL;
-  column = NULL;
+  col_lookup = NULL;
   col_idx = -1;
 }
 
 void DataOpEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(column) {
-    col_name = column->name;
-    taBase::SetPointer((taBase**)&column, NULL); // reset as soon as used -- just a temp guy!
+  if(col_lookup) {
+    col_name = col_lookup->name;
+    taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
   }
   if(!data_table) {
     taBase::SetPointer((taBase**)&data_cols, NULL);
@@ -72,11 +72,11 @@ void DataOpEl::GetColumns(DataTable* dt) {
   if(!dt) return;
   DataArray_impl* da = dt->FindColName(col_name, col_idx);
   if(col_idx < 0) da = NULL;	// just to be sure..
-  taBase::SetPointer((taBase**)&column, da);
+  taBase::SetPointer((taBase**)&col_lookup, da);
 }
 
 void DataOpEl::ClearColumns() {
-  taBase::SetPointer((taBase**)&column, NULL);
+  taBase::SetPointer((taBase**)&col_lookup, NULL);
 }
 
 ///////////////////////////
@@ -85,7 +85,7 @@ void DataOpList::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   DataProg* own_prog = GET_MY_OWNER(DataProg);
   if(own_prog)
-    own_prog->UpdateSpecDataTable(); // will update columns from data table
+    own_prog->UpdateSpecDataTable(); // will update col_lookups from data table
 }
 
 void DataOpList::SetDataTable(DataTable* dt) {
@@ -144,8 +144,8 @@ String DataSortEl::GetDisplayName() const {
 
 void DataSortEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(column) {
-    if(column->is_matrix) {
+  if(col_lookup) {
+    if(col_lookup->is_matrix) {
       if(!quiet) taMisc::CheckError("Error in DataSortEl:",GetPath(),
 				  "cannot use matrix column to sort");
       rval = false;
@@ -168,8 +168,8 @@ String DataGroupEl::GetDisplayName() const {
 
 void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(column) {
-    if((agg.op == Aggregate::GROUP) && (column->is_matrix)) {
+  if(col_lookup) {
+    if((agg.op == Aggregate::GROUP) && (col_lookup->is_matrix)) {
       if(!quiet) taMisc::CheckError("Error in DataGroupEl:",GetPath(),
 				  "cannot use matrix column to GROUP");
       rval = false;
@@ -222,8 +222,8 @@ bool DataSelectEl::Eval(const Variant& val) {
 
 void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(column) {
-    if(column->is_matrix) {
+  if(col_lookup) {
+    if(col_lookup->is_matrix) {
       if(!quiet) taMisc::CheckError("Error in DataSelectEl:",GetPath(),
 				    "cannot use matrix column to select");
       rval = false;
@@ -541,7 +541,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     DataSortEl* ss = (DataSortEl*)sort_spec.ops.New(1, &TA_DataSortEl);
     ss->col_name = ds->col_name;
     ss->col_idx = ds->col_idx;
-    taBase::SetPointer((taBase**)&ss->column, ds->column);
+    taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
     ss->order = DataSortEl::ASCENDING;
   }
   if(sort_spec.ops.size == 0) {
@@ -949,7 +949,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
     DataSortEl* ss = (DataSortEl*)sort_spec_a.ops.New(1, &TA_DataSortEl);
     ss->col_name = spec->col_a.col_name;
     ss->col_idx = spec->col_a.col_idx;
-    taBase::SetPointer((taBase**)&ss->column, spec->col_a.column);
+    taBase::SetPointer((taBase**)&ss->col_lookup, spec->col_a.col_lookup);
     ss->order = DataSortEl::ASCENDING;
   }
   
@@ -959,7 +959,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
     DataSortEl* ss = (DataSortEl*)sort_spec_b.ops.New(1, &TA_DataSortEl);
     ss->col_name = spec->col_b.col_name;
     ss->col_idx = spec->col_b.col_idx;
-    taBase::SetPointer((taBase**)&ss->column, spec->col_b.column);
+    taBase::SetPointer((taBase**)&ss->col_lookup, spec->col_b.col_lookup);
     ss->order = DataSortEl::ASCENDING;
   }
 

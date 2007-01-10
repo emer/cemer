@@ -56,6 +56,8 @@
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoUnits.h>
 #include <Inventor/nodes/SoVertexProperty.h>
+#include <Inventor/nodes/SoShapeHints.h>
+#include <Inventor/nodes/SoCylinder.h>
 
 #define PI 3.14159265
 
@@ -846,111 +848,6 @@ void SoImageEx::setImage3(const taMatrix& src, bool top_zero) {
   texture->image.setValue(SbVec2s(d.x, d.y), 3, (const unsigned char*)img.data());
 }
 
-
-
-/* obs
-//////////////////////////
-//   SoImageEx		//
-//////////////////////////
-
-SO_NODE_SOURCE(SoImageEx);
-
-void SoImageEx::initClass()
-{
-  SO_NODE_INIT_CLASS(SoImageEx, SoImage, "SoImage");
-}
-
-SoImageEx::SoImageEx() {
-  SO_NODE_CONSTRUCTOR(SoImageEx);
-}
-
-void SoImageEx::setImage(const QImage& src) {
-  if (src.isGrayscale())
-    setImage2(src);
-  else 
-    setImage3(src);
-}
-
-void SoImageEx::setImage2(const QImage& src) {
-  int dx = src.width();
-  int dy = src.height();
-  img.SetGeom(2, dx, dy);
-  int idx = 0;
-  //NOTE: we have to invert the data for Coin's bottom=0 addressing
-  for (int y = dy - 1; y >= 0; --y) {
-    for (int x = 0; x < dx; ++x) {
-      img.FastEl_Flat(idx) = (byte)(qGray(src.pixel(x, y)));
-      ++idx;
-    }
-  }
-  image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
-}
-
-void SoImageEx::setImage3(const QImage& src) {
-  int dx = src.width();
-  int dy = src.height();
-  //NOTE: img geom is not same as input: rgb is in innermost for us
-  img.SetGeom(3, 3, dx, dy);
-  int idx = 0;
-  QRgb rgb;
-  //NOTE: we have to invert the data for Coin's bottom=0 addressing
-  for (int y = dy - 1; y >= 0; --y) {
-    for (int x = 0; x < dx; ++x) {
-    rgb = src.pixel(x, y);
-      img.FastEl_Flat(idx++) = (byte)(qRed(rgb));
-      img.FastEl_Flat(idx++) = (byte)(qGreen(rgb));
-      img.FastEl_Flat(idx++) = (byte)(qBlue(rgb));
-    }
-  }
-  image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
-}
-
-void SoImageEx::setImage(const taMatrix& src) {
-  int dims = src.dims(); //cache
-  if (dims == 2) {
-    setImage2(src);
-  } else if (((dims == 3) && (src.dim(2) == 3))) { 
-    setImage3(src);
-  } else { 
-    taMisc::Error("SoImageEx::setImage: must be grey or rgb matrix");
-    return;
-  }
-}
-
-void SoImageEx::setImage2(const taMatrix& src) {
-  int dx = src.dim(0);
-  int dy = src.dim(1);
-  img.SetGeom(2, dx, dy);
-  int idx = 0;
-  //NOTE: we have to invert the data for Coin's bottom=0 addressing
-  for (int y = dy - 1; y >= 0; --y) {
-    for (int x = 0; x < dx; ++x) {
-      img.FastEl_Flat(idx) = (byte)(src.FastElAsFloat(x, y) * 255);
-      ++idx;
-    }
-  }
-  image.setValue(SbVec2s(dx, dy), 1, (const unsigned char*)img.data());
-}
-
-void SoImageEx::setImage3(const taMatrix& src) {
-  int dx = src.dim(0);
-  int dy = src.dim(1);
-  //NOTE: img geom is not same as input: rgb is in innermost for us
-  img.SetGeom(3, 3, dx, dy);
-  int idx = 0;
-  //NOTE: we have to invert the data for Coin's bottom=0 addressing
-  for (int y = dy - 1; y >= 0; --y) {
-    for (int x = 0; x < dx; ++x) {
-      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
-      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
-      img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
-    }
-  }
-  image.setValue(SbVec2s(dx, dy), 3, (const unsigned char*)img.data());
-} */
-
-
-
 //////////////////////////
 //   SoMatrixGrid		//
 //////////////////////////
@@ -1399,7 +1296,10 @@ void SoMatrixGrid::renderValues() {
   if(matrix->dims() <= 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
-	val = matrix->FastElAsFloat(pos.x, pos.y);
+	if(mat_layout == TOP_ZERO)
+	  val = matrix->FastElAsFloat(pos.x, pos.y);
+	else
+	  val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
 	const iColor* fl;  const iColor* tx;
 	scale->GetColor(val,&fl,&tx,sc_val);
 	float zp = sc_val * blk_ht;
@@ -1426,7 +1326,10 @@ void SoMatrixGrid::renderValues() {
     for(int z=0; z<zmax; z++) {
       for(pos.y=0; pos.y<ymax; pos.y++) {
 	for(pos.x=0; pos.x<xmax; pos.x++) {
-	  val = matrix->FastElAsFloat(pos.x, pos.y, z);
+	  if(mat_layout == TOP_ZERO)
+	    val = matrix->FastElAsFloat(pos.x, pos.y, z);
+	  else
+	    val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
 	  const iColor* fl;  const iColor* tx;
 	  scale->GetColor(val,&fl,&tx,sc_val);
 	  float zp = sc_val * blk_ht;
@@ -1457,7 +1360,10 @@ void SoMatrixGrid::renderValues() {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
 	for(pos.y=0; pos.y<ymax; pos.y++) {
 	  for(pos.x=0; pos.x<xmax; pos.x++) {
-	    val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
+	    if(mat_layout == TOP_ZERO)
+	      val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
+	    else
+	      val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
 	    const iColor* fl;  const iColor* tx;
 	    scale->GetColor(val,&fl,&tx,sc_val);
 	    float zp = sc_val * blk_ht;
@@ -1485,3 +1391,88 @@ void SoMatrixGrid::renderValues() {
 }
 
 
+//////////////////////////
+//   SoBigScaleUniformScaler
+//////////////////////////
+
+SO_NODE_SOURCE(SoBigScaleUniformScaler);
+
+void SoBigScaleUniformScaler::initClass()
+{
+  SO_NODE_INIT_CLASS(SoBigScaleUniformScaler, SoSeparator, "SoSeparator");
+}
+
+SoBigScaleUniformScaler::SoBigScaleUniformScaler(float cube_size) {
+  SO_NODE_CONSTRUCTOR(SoBigScaleUniformScaler);
+
+  SoMaterial* mat = new SoMaterial;
+  mat->diffuseColor.setValue(0.5f, 0.5f, 0.5f);
+  mat->emissiveColor.setValue(0.5f, 0.5f, 0.5f);
+  addChild(mat);
+
+  float sz = 1.1f;
+  float sz2 = 2.0f * 1.1f;
+
+  SoCube* cb = new SoCube;
+  cb->width = cube_size;
+  cb->height = cube_size;
+  cb->depth = cube_size;
+
+  SoGroup* pts = new SoGroup;
+  addChild(pts);
+  float x,y,z;
+  for(z=-sz;z<=sz;z+=sz2) {
+    for(y=-sz;y<=sz;y+=sz2) {
+      for(x=-sz;x<=sz;x+=sz2) {
+	SoSeparator* sep = new SoSeparator;
+	pts->addChild(sep);
+	SoTranslation* trn = new SoTranslation;
+	trn->translation.setValue(x,y,z);
+	sep->addChild(trn);
+	sep->addChild(cb);
+      }
+    }
+  }
+}
+
+//////////////////////////
+//   SoBigTransformBoxRotatorRotator
+//////////////////////////
+
+SO_NODE_SOURCE(SoBigTransformBoxRotatorRotator);
+
+void SoBigTransformBoxRotatorRotator::initClass()
+{
+  SO_NODE_INIT_CLASS(SoBigTransformBoxRotatorRotator, SoSeparator, "SoSeparator");
+}
+
+SoBigTransformBoxRotatorRotator::SoBigTransformBoxRotatorRotator(float line_width) {
+  SO_NODE_CONSTRUCTOR(SoBigTransformBoxRotatorRotator);
+
+  SoMaterial* mat = new SoMaterial;
+  mat->diffuseColor.setValue(0.5f, 0.5f, 0.5f);
+  mat->emissiveColor.setValue(0.5f, 0.5f, 0.5f);
+  addChild(mat);
+
+  float sz = 1.1f;
+  float sz2 = 2.0f * 1.1f;
+
+  SoCube* cb = new SoCube;
+  cb->width = line_width;
+  cb->height = sz2;
+  cb->depth = line_width;
+
+  SoGroup* pts = new SoGroup;
+  addChild(pts);
+  float x,z;
+  for(z=-sz;z<=sz;z+=sz2) {
+    for(x=-sz;x<=sz;x+=sz2) {
+      SoSeparator* sep = new SoSeparator;
+      pts->addChild(sep);
+      SoTranslation* trn = new SoTranslation;
+      trn->translation.setValue(x,0.0f,z);
+      sep->addChild(trn);
+      sep->addChild(cb);
+    }
+  }
+}

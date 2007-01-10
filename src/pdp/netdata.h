@@ -227,13 +227,18 @@ public:
     MY_NAME,			// always use my (net monitor item) name; if multiple columns, then add a subscript index for later ones (_1 _2, etc.)
   };
 
-  TypeDef*		object_type;	// #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
-  taSmartRef 		object;		// #TYPE_ON_object_type #NO_SCOPE the network object being monitored
-  MemberDef*		member_var;	// #TYPE_ON_object_type #NULL_OK member variable to monitor -- you can also just type variable for non-members (r.wt, etc)
-  String        	variable;	// Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
+  bool			computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
+  TypeDef*		object_type;	// #CONDEDIT_OFF_computed:true LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
+  taSmartRef 		object;		// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NO_SCOPE the network object being monitored
+  MemberDef*		lookup_var;	// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NULL_OK #NO_SAVE lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
+  String        	variable;	// #CONDEDIT_OFF_computed:true Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
   String		var_label;	// label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
-  NameStyle		name_style;	 // how to name the columns/channels generated from this data?
+  NameStyle		name_style;	 // #CONDEDIT_OFF_computed:true how to name the columns/channels generated from this data?
   int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
+
+  ValType		val_type;       // #CONDEDIT_ON_computed:true type of data column to create (only for computed variables)
+  bool			matrix;		// #CONDEDIT_ON_computed:true if true, create a matrix data column (otherwise scalar)
+  MatrixGeom		matrix_geom;	// #CONDEDIT_ON_matrix:true geometry of matrix to create if a matrix type
 
   ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
   MemberSpace   	members;	// #IGNORE memberdefs

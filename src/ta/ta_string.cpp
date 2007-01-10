@@ -700,7 +700,7 @@ String String::elidedTo(int width) const {
   STRING_BUF(rval, width);
   if (width <= 8) {
     // really short, just use first chars, and put ... at end
-    rval.cat(src.before(width - 3)).cat("...");
+    rval.cat(src.before(width - 1)).cat("..."); // note: elipses don't take a full 3 chars on most displays..
   } else {
     // try finding a space after 1st half of string to elide on
     int pos = src.index(' ', width / 2);
@@ -709,7 +709,7 @@ String String::elidedTo(int width) const {
       // just elide in center
       pos = width / 2;
     }
-    rval.cat(src.before(pos)).cat(" ~ ").cat(src.right(width - pos - 3));
+    rval.cat(src.before(pos)).cat(" ~ ").cat(src.right(width - pos - 1));
   }
   return rval;
 }

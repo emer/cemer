@@ -481,4 +481,28 @@ protected:
   // setup all the cell_text_ stuff
 };
 
+// redefine various dragger controls!
+
+class TA_API SoBigScaleUniformScaler: public SoSeparator { 
+  // ##NO_INSTANCE ##NO_TOKENS big version of the scaleUniformScaler
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+  SO_NODE_HEADER(SoBigScaleUniformScaler);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+  SoBigScaleUniformScaler(float cube_size=0.6f);
+};
+
+class TA_API SoBigTransformBoxRotatorRotator: public SoSeparator { 
+  // ##NO_INSTANCE ##NO_TOKENS big version of the transformBoxRotatorRotator
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+  SO_NODE_HEADER(SoBigTransformBoxRotatorRotator);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+  SoBigTransformBoxRotatorRotator(float line_width=.4f);
+};
+
 #endif

@@ -133,7 +133,7 @@ String TimeUsed::GetString() {
     taTime avgdiv;
     avgdiv.usr = n_used;  avgdiv.sys = n_used; avgdiv.tot = n_used;
     taTime avg = used / avgdiv;
-    rval += "\navg: " + avg.GetString();
+    rval += " avg: " + avg.GetString();
   }
   return rval;
 }

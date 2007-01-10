@@ -1005,6 +1005,8 @@ void GridTableView::Reset_impl() {
 
 void GridTableView::setAutoScale(bool value) {
   if (auto_scale == value) return;
+  auto_scale = value;
+  UpdateView();
   //TODO:
 }
   
@@ -1234,7 +1236,7 @@ void iTableView_Panel::Constr_T3ViewspaceWidget() {
   m_lm->model = SoLightModel::BASE_COLOR;
   root->addChild(m_lm);
 
-  m_camera->viewAll(root, m_ra->getViewportRegion());
+  m_camera->viewAll(root, m_ra->getViewportRegion(), .8);
   m_ra->setBackgroundColor(SbColor(0.8f, 0.8f, 0.8f));
 
   layContents->addWidget(t3vs);
@@ -1258,6 +1260,7 @@ void iTableView_Panel::UpdatePanel() {
 void iTableView_Panel::UpdatePanel_impl() {
   TableView* lv = this->lv(); // cache
   chkDisplay->setChecked(lv->display_on);
+  viewAll();
 }
 
 void iTableView_Panel::viewAll() {

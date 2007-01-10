@@ -27,6 +27,7 @@
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoCallback.h>
+#include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoCylinder.h>
 //#include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoDrawStyle.h>
@@ -46,7 +47,7 @@
 //   T3GridViewNode	//
 //////////////////////////
 
-float T3GridViewNode::drag_size = .08f;
+float T3GridViewNode::drag_size = .04f;
 
 extern void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
@@ -66,12 +67,16 @@ T3GridViewNode::T3GridViewNode(void* dataView_)
   drag_sep_ = new SoSeparator;
   drag_xf_ = new SoTransform;
   drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
-  drag_xf_->translation.setValue(0.0f, -1.1f, 0.0f);
-  //  drag_xf_->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
+  drag_xf_->translation.setValue(-0.04f, -1.05f, 0.0f);
   drag_sep_->addChild(drag_xf_);
   dragger_ = new SoTransformBoxDragger;
   drag_sep_->addChild(dragger_);
-  //  topSeparator()->addChild(drag_sep_);
+
+  // super-size me so stuff is actually grabable!
+  dragger_->setPart("scaler.scaler", new SoBigScaleUniformScaler(.6f));
+  dragger_->setPart("rotator1.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+  dragger_->setPart("rotator2.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+  dragger_->setPart("rotator3.rotator", new SoBigTransformBoxRotatorRotator(.4f));
 
   drag_trans_calc_ = new SoCalculator;
   drag_trans_calc_->ref();
@@ -83,7 +88,6 @@ T3GridViewNode::T3GridViewNode(void* dataView_)
   drag_trans_calc_->expression = expr.chars();
 
   txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
-  //  txfm_shape()->translation.connectFrom(&dragger_->translation);
   txfm_shape()->rotation.connectFrom(&dragger_->rotation);
   txfm_shape()->scaleFactor.connectFrom(&dragger_->scaleFactor);
 
@@ -104,6 +108,10 @@ T3GridViewNode::T3GridViewNode(void* dataView_)
 
   insertChildAfter(topSeparator(), drag_sep_, transform());
   
+  SoMaterial* mat = material(); //cache
+  mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
+  mat->transparency.setValue(0.5f);
+
   SoSeparator* ss = shapeSeparator(); // cache
   frame_ = new SoFrame(SoFrame::Ver);
   insertChildAfter(ss, frame_, material());
@@ -131,7 +139,7 @@ void T3GridViewNode::render() {
   txfm_shape()->translation.setValue(.5f * 1.05f, -.5f * 1.05f, 0.0f);
 //   txlt_grid_->translation.setValue(-(geom_.x/2.0f - inset), geom_.y/2.0f - inset, 0.0f);
   SoFont* font = captionFont(true);
-  transformCaption(iVec3f(0.0f, -((float)font->size.getValue()) -1.1f, 0.0f)); // move caption below the frame
+  transformCaption(iVec3f(0.1f, -((float)font->size.getValue()) -1.05f, 0.0f)); // move caption below the frame
 }
 
 //////////////////////////

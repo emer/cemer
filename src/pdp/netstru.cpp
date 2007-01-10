@@ -4395,6 +4395,7 @@ void Network::InitLinks() {
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
   taBase::Own(wt_sync_time, this);
+  wt_sync_time.name = "wt_sync_time";
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_net_comm, this);
   taBase::Own(dmem_trl_comm, this);

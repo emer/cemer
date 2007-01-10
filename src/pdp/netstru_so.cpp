@@ -530,7 +530,7 @@ void T3PrjnNode::setEndPoint(const SbVec3f& ep) {
 extern void T3NetNode_DragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
 
-float T3NetNode::drag_size = .08f;
+float T3NetNode::drag_size = .04f;
 
 SO_NODE_SOURCE(T3NetNode);
 
@@ -554,6 +554,12 @@ T3NetNode::T3NetNode(void* dataView_)
   drag_sep_->addChild(dragger_);
   topSeparator()->addChild(drag_sep_);
 
+  // super-size me so stuff is actually grabable!
+  dragger_->setPart("scaler.scaler", new SoBigScaleUniformScaler(.6f));
+  dragger_->setPart("rotator1.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+  dragger_->setPart("rotator2.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+  dragger_->setPart("rotator3.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+
   drag_trans_calc_ = new SoCalculator;
   drag_trans_calc_->ref();
   drag_trans_calc_->A.connectFrom(&dragger_->translation);
@@ -564,7 +570,6 @@ T3NetNode::T3NetNode(void* dataView_)
   drag_trans_calc_->expression = expr.chars();
 
   txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
-  //  txfm_shape()->translation.connectFrom(&dragger_->translation);
   txfm_shape()->rotation.connectFrom(&dragger_->rotation);
   txfm_shape()->scaleFactor.connectFrom(&dragger_->scaleFactor);
 

@@ -30,9 +30,9 @@ public:
   // #READ_ONLY #HIDDEN #NO_SAVE data table -- gets set dynamically
   DataTableCols*	data_cols;
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically -- just to lookup column
-  DataArray_impl*	column;
-  // #NO_SAVE #FROM_GROUP_data_cols column in data table to sort on -- just to lookup the name (sets col_name field), which is what is actually used -- this is automatically set to NULL after selection is applied
-  String		col_name;	// name of column in data table to sort on (either enter directly or lookup from column)
+  DataArray_impl*	col_lookup;
+  // #NO_SAVE #FROM_GROUP_data_cols lookup column in data table to sort on -- sets col_name field (which is what is actually used) and returns to NULL after selection is applied
+  String		col_name;	// name of column in data table to sort on (either enter directly or lookup from col_lookup)
   int			col_idx;	// #READ_ONLY #NO_SAVE column idx (from GetColumns)
 
   virtual void 	SetDataTable(DataTable* dt);
@@ -47,7 +47,7 @@ public:
   override String GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DataOpEl);
 protected:
-  override void	UpdateAfterEdit_impl();	// set col_name from column
+  override void	UpdateAfterEdit_impl();	// set col_name from col_lookup
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void  Initialize();

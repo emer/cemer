@@ -225,7 +225,7 @@ void MatrixGeom::GeomFromString(String& str, const char* ldelim, const char* rde
 }
 
 bool MatrixGeom::SetSize(int new_sz) {
-  if ((new_sz < 0) || (new_sz >= TA_MATRIX_DIMS_MAX)) return false;
+  if ((new_sz < 0) || (new_sz > TA_MATRIX_DIMS_MAX)) return false;
   if(size == new_sz) return false;
   // zero out orphaned old elements
   for (int i = size - 1; i >= new_sz; --i)

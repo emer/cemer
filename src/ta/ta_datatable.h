@@ -419,7 +419,7 @@ public:
   // #CAT_Rows allocate space for at least n rows
   int			AddBlankRow() 
     {if (AddRow(1)) {wr_itr = rows - 1; return wr_itr;} else return -1;}
-  // #MENU #MENU_ON_Data #CAT_Rows add a new row to the data table, returns row #
+  // #MENU #MENU_ON_Data #CAT_Rows add a new row to the data table, sets write (sink) index to this last row (as in WriteItem), so that subsequent datablock routines refer to this new row, and returns row #
   bool			AddRow(int n);
   // #CAT_Rows add n rows, 'true' if added
   void			RemoveRow(int row_num);

@@ -394,11 +394,14 @@ void LayerReader_List::AutoConfig_impl(DataBlock* db, Network* net,
 //////////////////////////////////////////////////////////////////////////////
 
 void NetMonItem::Initialize() {
+  computed = false;
   object_type = NULL;
-  member_var = NULL;
+  lookup_var = NULL;
   variable = "act";
   name_style = AUTO_NAME;
   max_name_len = 6;
+  val_type = VT_FLOAT;
+  matrix = false;
   cell_num  = 0;
 }
 
@@ -410,6 +413,7 @@ void NetMonItem::InitLinks() {
   taBase::Own(pre_proc_2,this);
   taBase::Own(pre_proc_3,this);
   taBase::Own(object, this);
+  taBase::Own(matrix_geom, this);
 }
 
 void NetMonItem::CutLinks() {
@@ -420,19 +424,23 @@ void NetMonItem::CutLinks() {
   val_specs.CutLinks();
   object.CutLinks();
   object_type = NULL;
-  member_var = NULL;
+  lookup_var = NULL;
   inherited::CutLinks();
 }
 
 void NetMonItem::Copy_(const NetMonItem& cp) {
   ResetMonVals(); // won't be valid anymore
-  object = cp.object; // ptr only
+  computed = cp.computed;
   object_type = cp.object_type;
-  member_var = cp.member_var;
+  object = cp.object; // ptr only
+  lookup_var = cp.lookup_var;
   variable = cp.variable;
   var_label = cp.var_label;
   name_style = cp.name_style;
   max_name_len = cp.max_name_len;
+  val_type = cp.val_type;
+  matrix = cp.matrix;
+  matrix_geom = cp.matrix_geom;
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
   pre_proc_3 = cp.pre_proc_3;
@@ -440,38 +448,46 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
 
 void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!owner) {
-    if(!quiet) taMisc::CheckError("NetMonItem named:", name, "has no owner");
-    rval =  false;
-  }
-  if(!object) {
-    if(!quiet) taMisc::CheckError("NetMonItem named:", name, "path:", GetPath(),
-			     "object is NULL");
-    rval =  false;
-  }
-  if(variable.empty()) {
-    if(!quiet) taMisc::CheckError("NetMonItem named:", name, "path:", GetPath(),
-			     "variable is empty");
-    rval =  false;
+  if(!computed) {
+    if(!owner) {
+      if(!quiet) taMisc::CheckError("NetMonItem named:", name, "has no owner");
+      rval =  false;
+    }
+    if(!object) {
+      if(!quiet) taMisc::CheckError("NetMonItem named:", name, "path:", GetPath(),
+				    "object is NULL");
+      rval =  false;
+    }
+    if(variable.empty()) {
+      if(!quiet) taMisc::CheckError("NetMonItem named:", name, "path:", GetPath(),
+				    "variable is empty");
+      rval =  false;
+    }
   }
 }
 
 void NetMonItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  
+  if(computed) {
+    name_style = MY_NAME;
+  }
 
   if(!owner) return;
   if(!object) return;
   object_type = object->GetTypeDef();
-  if(member_var) {
-    variable = member_var->name;
-    member_var = NULL;
+  if(lookup_var) {
+    variable = lookup_var->name;
+    lookup_var = NULL;
   }
   if(variable.empty()) return;
   
   if (!taMisc::is_loading) {
     if(name_style == MY_NAME) {
-      if(name.empty() || name.contains(GetTypeDef()->name)) {
-	name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
+      if(!computed) {
+	if(name.empty() || name.contains(GetTypeDef()->name)) {
+	  name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
+	}
       }
     }
     else {			// AUTO_NAME = always update!
@@ -613,6 +629,14 @@ void NetMonItem::ResetMonVals() {
 void NetMonItem::ScanObject() {
   // TODO: what about orphaned columns in the sink?????
   ResetMonVals();
+  if(computed) {
+    if(matrix)
+      AddMatrixChan(name, val_type, &matrix_geom);
+    else
+      AddScalarChan(name, val_type);
+    return;
+  }
+
   if (!object) return;
   
   if (object->InheritsFrom(&TA_Unit)) 

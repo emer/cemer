@@ -894,7 +894,7 @@ LeabraProject .projects[0] {
      el_def=0;
      NetCounterInit @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=.projects[0].programs.gp[0][0].args[0]$3$;
       local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$4$;
       counter=Network::batch;
@@ -906,21 +906,21 @@ LeabraProject .projects[0] {
      el_def=0;
      NetCounterInit @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=$3$;
       local_ctr_var=$4$;
       counter=Network::batch;
      };
      WhileLoop @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       loop_code {
        name=;
        el_typ=ProgEl;
        el_def=0;
        ProgramCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	target=.projects[0].programs.gp[0][1]$5$;
 	call_init=0;
 	prog_args {
@@ -939,7 +939,7 @@ LeabraProject .projects[0] {
        };
        NetCounterIncr @[1] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	network_var=$3$;
 	local_ctr_var=$4$;
 	counter=Network::batch;
@@ -1046,7 +1046,7 @@ LeabraProject .projects[0] {
      el_def=0;
      MethodCall @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][1].args[0]$8$;
       method=taBase::CheckConfig;
@@ -1055,14 +1055,14 @@ LeabraProject .projects[0] {
      };
      NetCounterInit @[1] {
       desc="initialize epoch counter ";
-      off=0;
+      flags=PEF_NONE;
       network_var=$8$;
       local_ctr_var=.projects[0].programs.gp[0][1].vars[2]$9$;
       counter=Network::epoch;
      };
      MethodCall @[2] {
       desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][1].vars[4]$10$;
       method=RndSeed::OldSeed;
@@ -1071,7 +1071,7 @@ LeabraProject .projects[0] {
      };
      MethodCall @[3] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$8$;
       method=Network::Init_Weights;
@@ -1085,7 +1085,7 @@ LeabraProject .projects[0] {
      el_def=0;
      MethodCall @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][1].vars[5]$11$;
       method=TimeUsed::StartTimer;
@@ -1094,19 +1094,19 @@ LeabraProject .projects[0] {
      };
      NetCounterInit @[1] {
       desc="initialize epoch counter ";
-      off=0;
+      flags=PEF_NONE;
       network_var=$8$;
       local_ctr_var=$9$;
       counter=Network::epoch;
      };
      UserScript @[2] {
       desc="update network's train mode to be same as ours";
-      off=0;
+      flags=PEF_NONE;
       user_script="network->train_mode = train_mode;";
      };
      MethodCall @[3] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$8$;
       method=Network::Init_Weights;
@@ -1115,14 +1115,14 @@ LeabraProject .projects[0] {
      };
      WhileLoop @[4] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       loop_code {
        name=;
        el_typ=ProgramCall;
        el_def=0;
        ProgramCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	target=$0$;
 	call_init=0;
 	prog_args {
@@ -1141,14 +1141,14 @@ LeabraProject .projects[0] {
        };
        NetCounterIncr @[1] {
 	desc="increment the epoch counter";
-	off=0;
+	flags=PEF_NONE;
 	network_var=$8$;
 	local_ctr_var=$9$;
 	counter=Network::epoch;
        };
        IfBreak @[2] {
 	desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
-	off=0;
+	flags=PEF_NONE;
 	condition="network->cnt_err <= err_stopcrit";
        };
       };
@@ -1156,7 +1156,7 @@ LeabraProject .projects[0] {
      };
      MethodCall @[5] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$11$;
       method=TimeUsed::EndTimer;
@@ -1218,7 +1218,7 @@ LeabraProject .projects[0] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize trial counter: note also needs to do this in regular running program";
-      off=0;
+      flags=PEF_NONE;
       network_var=.projects[0].programs.gp[0][2].args[0]$12$;
       local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$13$;
       counter=Network::trial;
@@ -1230,14 +1230,14 @@ LeabraProject .projects[0] {
      el_def=0;
      NetCounterInit @[0] {
       desc="initialize trial counter";
-      off=0;
+      flags=PEF_NONE;
       network_var=$12$;
       local_ctr_var=$13$;
       counter=Network::trial;
      };
      ProgramCall @[1] {
       desc="initialize the trial monitor data so trial log only has most recent epoch's worth of data (can turn off to keep all data)";
-      off=0;
+      flags=PEF_NONE;
       target=.projects[0].programs.gp[0][7]$14$;
       call_init=1;
       prog_args {
@@ -1252,19 +1252,19 @@ LeabraProject .projects[0] {
      };
      BasicDataLoop @[2] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       loop_code {
        name=;
        el_typ=ProgramCall;
        el_def=0;
        UserScript @[0] {
 	desc="set trial to list_idx of data loop -- for dmem code this is the correct trial number";
-	off=0;
+	flags=PEF_NONE;
 	user_script="trial = list_idx; network->trial = list_idx;";
        };
        ProgramCall @[1] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	target=.projects[0].programs.gp[0][3]$15$;
 	call_init=0;
 	prog_args {
@@ -1283,7 +1283,7 @@ LeabraProject .projects[0] {
        };
        IfElse @[2] {
 	desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
-	off=0;
+	flags=PEF_NONE;
 	condition="network->Compute_Weights_Test(trial+1)";
 	true_code {
 	 name=;
@@ -1291,7 +1291,7 @@ LeabraProject .projects[0] {
 	 el_def=0;
 	 MethodCall @[0] {
 	  desc=;
-	  off=0;
+	  flags=PEF_NONE;
 	  result_var=NULL;
 	  obj=.projects[0].programs.gp[0][3].args[0]$16$;
 	  method=Network::Compute_Weights;
@@ -1315,7 +1315,7 @@ LeabraProject .projects[0] {
      };
      IfElse @[3] {
       desc="if full batch mode, update only at end of epoch";
-      off=0;
+      flags=PEF_NONE;
       condition="network->wt_update == Network::BATCH";
       true_code {
        name=;
@@ -1323,7 +1323,7 @@ LeabraProject .projects[0] {
        el_def=0;
        MethodCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=NULL;
 	obj=$16$;
 	method=Network::Compute_Weights;
@@ -1339,7 +1339,7 @@ LeabraProject .projects[0] {
      };
      MethodCall @[4] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$12$;
       method=LeabraNetwork::Compute_EpochStats;
@@ -1348,7 +1348,7 @@ LeabraProject .projects[0] {
      };
      ProgramCall @[5] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       target=.projects[0].programs.gp[0][8]$18$;
       call_init=0;
       prog_args {
@@ -1423,7 +1423,7 @@ LeabraProject .projects[0] {
      el_def=0;
      NetCounterInit @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=$16$;
       local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$19$;
       counter=LeabraNetwork::phase_no;
@@ -1435,14 +1435,14 @@ LeabraProject .projects[0] {
      el_def=0;
      NetCounterInit @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=$16$;
       local_ctr_var=$19$;
       counter=LeabraNetwork::phase_no;
      };
      MethodCall @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$16$;
       method=LeabraNetwork::Trial_Init;
@@ -1451,14 +1451,14 @@ LeabraProject .projects[0] {
      };
      WhileLoop @[2] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       loop_code {
        name=;
        el_typ=ProgramCall;
        el_def=0;
        ProgramCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	target=.projects[0].programs.gp[0][4]$20$;
 	call_init=0;
 	prog_args {
@@ -1477,14 +1477,14 @@ LeabraProject .projects[0] {
        };
        NetCounterIncr @[1] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	network_var=$16$;
 	local_ctr_var=$19$;
 	counter=LeabraNetwork::phase_no;
        };
        MethodCall @[2] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=NULL;
 	obj=$16$;
 	method=LeabraNetwork::Trial_UpdatePhase;
@@ -1496,7 +1496,7 @@ LeabraProject .projects[0] {
      };
      MethodCall @[3] {
       desc="does Compute_dWt etc";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$16$;
       method=LeabraNetwork::Trial_Final;
@@ -1505,7 +1505,7 @@ LeabraProject .projects[0] {
      };
      ProgramCall @[4] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       target=$14$;
       call_init=0;
       prog_args {
@@ -1520,7 +1520,7 @@ LeabraProject .projects[0] {
      };
      NetUpdateView @[5] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=$16$;
       update_var=.projects[0].programs.gp[0][3].vars[1]$21$;
      };
@@ -1593,7 +1593,7 @@ LeabraProject .projects[0] {
      el_def=0;
      NetCounterInit @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=.projects[0].programs.gp[0][4].args[0]$22$;
       local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$23$;
       counter=Network::cycle;
@@ -1605,14 +1605,14 @@ LeabraProject .projects[0] {
      el_def=0;
      NetCounterInit @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=$22$;
       local_ctr_var=$23$;
       counter=Network::cycle;
      };
      MethodCall @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$22$;
       method=Network::Init_InputData;
@@ -1621,7 +1621,7 @@ LeabraProject .projects[0] {
      };
      ProgramCall @[2] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       target=.projects[0].programs.gp[0][6]$24$;
       call_init=0;
       prog_args {
@@ -1640,7 +1640,7 @@ LeabraProject .projects[0] {
      };
      MethodCall @[3] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$22$;
       method=LeabraNetwork::Settle_Init;
@@ -1649,7 +1649,7 @@ LeabraProject .projects[0] {
      };
      UserScript @[4] {
       desc="get min cycles";
-      off=0;
+      flags=PEF_NONE;
       user_script="if(network->phase_no <= 1) min_cycles = network->min_cycles;
 else min_cycles = network->min_cycles_phase2;
 
@@ -1657,14 +1657,14 @@ else min_cycles = network->min_cycles_phase2;
      };
      WhileLoop @[5] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       loop_code {
        name=;
        el_typ=ProgramCall;
        el_def=0;
        ProgramCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	target=.projects[0].programs.gp[0][5]$25$;
 	call_init=0;
 	prog_args {
@@ -1679,19 +1679,19 @@ else min_cycles = network->min_cycles_phase2;
        };
        NetCounterIncr @[1] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	network_var=$22$;
 	local_ctr_var=$23$;
 	counter=Network::cycle;
        };
        IfContinue @[2] {
 	desc="avoid subsequent stopping criteria";
-	off=0;
+	flags=PEF_NONE;
 	condition="cycle < min_cycles";
        };
        IfBreak @[3] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	condition="(network->maxda < network->maxda_stopcrit) ||
  (network->trg_max_act > network->trg_max_act_stopcrit)";
        };
@@ -1700,7 +1700,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[6] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$22$;
       method=LeabraNetwork::Settle_Final;
@@ -1709,7 +1709,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      IfElse @[7] {
       desc="only run sse in minus phase";
-      off=0;
+      flags=PEF_NONE;
       condition="network->phase == LeabraNetwork::MINUS_PHASE";
       true_code {
        name=;
@@ -1717,7 +1717,7 @@ else min_cycles = network->min_cycles_phase2;
        el_def=0;
        MethodCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=NULL;
 	obj=$22$;
 	method=LeabraNetwork::Compute_TrialStats;
@@ -1733,7 +1733,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      IfElse @[8] {
       desc="this stat must be called in plus phase when reward information is avail";
-      off=0;
+      flags=PEF_NONE;
       condition="network->phase_no == 1";
       true_code {
        name=;
@@ -1741,7 +1741,7 @@ else min_cycles = network->min_cycles_phase2;
        el_def=0;
        MethodCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=NULL;
 	obj=$22$;
 	method=LeabraNetwork::Compute_ExtRew;
@@ -1757,7 +1757,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      NetUpdateView @[9] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=$22$;
       update_var=.projects[0].programs.gp[0][4].vars[2]$26$;
      };
@@ -1813,7 +1813,7 @@ else min_cycles = network->min_cycles_phase2;
      el_def=0;
      MethodCall @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][5].args[0]$27$;
       method=LeabraNetwork::Cycle_Run;
@@ -1822,7 +1822,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      NetUpdateView @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       network_var=$27$;
       update_var=.projects[0].programs.gp[0][5].vars[0]$28$;
      };
@@ -1922,7 +1922,7 @@ else min_cycles = network->min_cycles_phase2;
      el_def=0;
      MethodCall @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][6].vars[0]$30$;
       method=LayerWriter::SetDataNetwork;
@@ -1931,7 +1931,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$30$;
       method=taList_impl::CheckConfig;
@@ -1945,7 +1945,7 @@ else min_cycles = network->min_cycles_phase2;
      el_def=0;
      MethodCall @[0] {
       desc="apply inputs to the network!";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$30$;
       method=LayerWriter::ApplyInputData;
@@ -1970,117 +1970,144 @@ else min_cycles = network->min_cycles_phase2;
        el_def=0;
        NetMonItem @[0] {
 	name="batch";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[1] {
 	name="epoch";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[2] {
 	name="trial";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[3] {
 	name="trial_name";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[4] {
 	name="group_name";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[5] {
 	name="phase_no";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="phase_no";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[6] {
 	name="cycle";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="minus_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[7] {
 	name="sse";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[8] {
 	name="ext_rew";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2136,7 +2163,7 @@ else min_cycles = network->min_cycles_phase2;
      el_def=0;
      MethodCall @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][7].vars[1]$33$;
       method=NetMonitor::SetDataNetwork;
@@ -2145,7 +2172,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$33$;
       method=taBase::CheckConfig;
@@ -2154,7 +2181,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[2] {
       desc="Initialize monitoring data (get rid of any existing)";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][7].vars[0]$34$;
       method=DataTable::ResetData;
@@ -2163,7 +2190,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[3] {
       desc="update the monitor items and data schema";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$33$;
       method=NetMonitor::UpdateMonitors;
@@ -2177,7 +2204,7 @@ else min_cycles = network->min_cycles_phase2;
      el_def=0;
      MethodCall @[0] {
       desc="add a new blank row to the data";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$34$;
       method=DataTable::AddBlankRow;
@@ -2186,7 +2213,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[1] {
       desc="get the new monitor data.";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$33$;
       method=NetMonitor::GetMonVals;
@@ -2195,7 +2222,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[2] {
       desc="update after writing new data to monitor data table";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$34$;
       method=DataBlock::WriteClose;
@@ -2204,7 +2231,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[3] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][7].args[0]$35$;
       method=Network::DMem_ShareTrialData;
@@ -2229,78 +2256,96 @@ else min_cycles = network->min_cycles_phase2;
        el_def=0;
        NetMonItem @[0] {
 	name="batch";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[1] {
 	name="epoch";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[2] {
 	name="avg_sse";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[3] {
 	name="cnt_err";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[4] {
 	name="avg_ext_rew";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="avg_ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[5] {
 	name="avg_cycles";
+	computed=0;
 	object_type=LeabraNetwork;
 	object=$1$;
-	member_var=NULL;
 	variable="avg_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
 	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2356,7 +2401,7 @@ else min_cycles = network->min_cycles_phase2;
      el_def=0;
      MethodCall @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][8].vars[1]$38$;
       method=NetMonitor::SetDataNetwork;
@@ -2365,7 +2410,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$38$;
       method=taBase::CheckConfig;
@@ -2374,7 +2419,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[2] {
       desc="Initialize monitoring data (get rid of any existing)";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][8].vars[0]$39$;
       method=DataTable::ResetData;
@@ -2383,7 +2428,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[3] {
       desc="update the monitor items and data schema";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$38$;
       method=NetMonitor::UpdateMonitors;
@@ -2397,7 +2442,7 @@ else min_cycles = network->min_cycles_phase2;
      el_def=0;
      MethodCall @[0] {
       desc="add a new blank row to the data";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$39$;
       method=DataTable::AddBlankRow;
@@ -2406,7 +2451,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[1] {
       desc="get the new monitor data.";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$38$;
       method=NetMonitor::GetMonVals;
@@ -2415,7 +2460,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[2] {
       desc="update after writing new data to monitor data table";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$39$;
       method=DataBlock::WriteClose;
@@ -2509,7 +2554,7 @@ else min_cycles = network->min_cycles_phase2;
      el_def=0;
      IfElse @[0] {
       desc="don't save if not first dmem process";
-      off=0;
+      flags=PEF_NONE;
       condition="taMisc::dmem_proc > 0";
       true_code {
        name=;
@@ -2517,7 +2562,7 @@ else min_cycles = network->min_cycles_phase2;
        el_def=0;
        UserScript @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	user_script="return;";
        };
       };
@@ -2529,7 +2574,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MiscCall @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=.projects[0].programs.gp[0][9].vars[4]$40$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -2538,7 +2583,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MiscCall @[2] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=.projects[0].programs.gp[0][9].vars[3]$41$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
@@ -2547,13 +2592,13 @@ else min_cycles = network->min_cycles_phase2;
      };
      AssignExpr @[3] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=.projects[0].programs.gp[0][9].vars[5]$42$;
       expr="tag + \".\" + batch_str + \"_\" + epoch_str";
      };
      MethodCall @[4] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=.projects[0].programs.gp[0][9].vars[2]$43$;
       obj=.projects[0].programs.gp[0][9].args[0]$44$;
       method=taBase::GetFileNameFmProject;
@@ -2562,7 +2607,7 @@ else min_cycles = network->min_cycles_phase2;
      };
      MethodCall @[5] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$44$;
       method=Network::SaveWeights;
@@ -3224,6 +3269,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
+   wt_sync_time {name="wt_sync_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    dmem_sync_level=DMEM_SYNC_NETWORK;
    dmem_nprocs=1;
    usr1_save_fmt=FULL_NET;
