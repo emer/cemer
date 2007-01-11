@@ -63,10 +63,7 @@ str2 ...
 // 	taiClipData		//
 //////////////////////////////////
 
-const QString taiClipData::text_plain("text/plain");
-const QString taiClipData::tacss_common("tacss/common");
-const String taiClipData::tacss_matrixdesc("tacss/matrixdesc");
-const String taiClipData::tacss_tabledesc("tacss/tabledesc"); 
+const String taiClipData::tacss_common("tacss/common");
 
 taiClipData::EditAction taiClipData::ClipOpToSrcCode(int ea) {
   switch (ea & EA_OP_MASK) {
@@ -93,8 +90,10 @@ const QString taiClipData::GetCommonDescHeader() const {
 
 
 //////////////////////////////////
-//  taiMimeFactory	//
+//  taiMimeFactory		//
 //////////////////////////////////
+
+const String taiMimeFactory::text_plain("text/plain");
 
 QByteArray taiMimeFactory::StrToByteArray(const String& str) {
   return QByteArray(str.chars());
@@ -102,58 +101,6 @@ QByteArray taiMimeFactory::StrToByteArray(const String& str) {
 
 QByteArray taiMimeFactory::StrToByteArray(const QString& str) {
   return str.toLatin1();
-}
-
-//////////////////////////////////
-//  taiObjectMimeFactory	//
-//////////////////////////////////
-
-const QString taiObjectMimeFactory::tacss_objectdesc("tacss/objectdesc");
-const QString taiObjectMimeFactory::tacss_objectdata("tacss/objectdata");
-
-void taiObjectMimeFactory::AddSingleMimeData(QMimeData* md, taBase* obj) {
-  if (!obj) return;
-  QString str;
-  InitHeader(1, str);
-  AddHeaderDesc(obj, str);
-  md->setData(tacss_objectdesc, StrToByteArray(str));
-  AddObjectData(md, obj, 0);
-}
-
-void taiObjectMimeFactory::AddMultiMimeData(QMimeData* md,
-   taPtrList_impl* obj_list)
-{
-  if (!obj_list) return;
-  QString str;
-  InitHeader(obj_list->size, str);
-  // note: prob not necessary, but we iterate twice so header precedes data
-  for (int i = 0; i < obj_list->size; ++i) {
-    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
-    AddHeaderDesc(obj, str);
-  }
-  md->setData(tacss_objectdesc, StrToByteArray(str));
-  for (int i = 0; i < obj_list->size; ++i) {
-    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
-    AddObjectData(md, obj, i);
-  }
-}
-
-void taiObjectMimeFactory::AddObjectData(QMimeData* md, taBase* obj, int idx) {
-    ostringstream ost;
-    obj->Save_strm(ost);
-    QString str = tacss_objectdata + ";index=" + QString::number(idx);
-    md->setData(str, QByteArray(ost.str().c_str()));
-}
-
-
-void taiObjectMimeFactory::AddHeaderDesc(taBase* obj, QString& str) {
-  //note: can't use Path_Long because path parsing routines don't handle names in paths
-  str = str + obj->GetTypeDef()->name.toQString() + ";" +
-        obj->GetPath().toQString() + ";\n"; // we put ; at end to facilitate parsing, and for }
-}
-
-void taiObjectMimeFactory::InitHeader(int cnt, QString& str) {
-  str = QString::number(cnt) + ";\n";
 }
 
 //////////////////////////////////
@@ -190,6 +137,59 @@ taiMimeFactory* taiMimeFactory_List::GetInstanceByType(TypeDef* td) {
   // not here yet, so make one
   rval = (taiMimeFactory*)New(1, td);
   return rval;
+}
+
+
+//////////////////////////////////
+//  taiObjectMimeFactory	//
+//////////////////////////////////
+
+const String taiObjectMimeFactory::tacss_objectdesc("tacss/objectdesc");
+const String taiObjectMimeFactory::tacss_objectdata("tacss/objectdata");
+
+void taiObjectMimeFactory::AddSingleObject(QMimeData* md, taBase* obj) {
+  if (!obj) return;
+  QString str;
+  InitHeader(1, str);
+  AddHeaderDesc(obj, str);
+  md->setData(tacss_objectdesc, StrToByteArray(str));
+  AddObjectData(md, obj, 0);
+}
+
+void taiObjectMimeFactory::AddMultiObjects(QMimeData* md,
+   taPtrList_impl* obj_list)
+{
+  if (!obj_list) return;
+  QString str;
+  InitHeader(obj_list->size, str);
+  // note: prob not necessary, but we iterate twice so header precedes data
+  for (int i = 0; i < obj_list->size; ++i) {
+    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
+    AddHeaderDesc(obj, str);
+  }
+  md->setData(tacss_objectdesc, StrToByteArray(str));
+  for (int i = 0; i < obj_list->size; ++i) {
+    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
+    AddObjectData(md, obj, i);
+  }
+}
+
+void taiObjectMimeFactory::AddObjectData(QMimeData* md, taBase* obj, int idx) {
+    ostringstream ost;
+    obj->Save_strm(ost);
+    String str = tacss_objectdata + ";index=" + String(idx);
+    md->setData(str, QByteArray(ost.str().c_str()));
+}
+
+
+void taiObjectMimeFactory::AddHeaderDesc(taBase* obj, QString& str) {
+  //note: can't use Path_Long because path parsing routines don't handle names in paths
+  str = str + obj->GetTypeDef()->name.toQString() + ";" +
+        obj->GetPath().toQString() + ";\n"; // we put ; at end to facilitate parsing, and for }
+}
+
+void taiObjectMimeFactory::InitHeader(int cnt, QString& str) {
+  str = QString::number(cnt) + ";\n";
 }
 
 
@@ -335,13 +335,13 @@ void* taiRcvMimeItem::obj() const {  // note: only called when we are InProcess
 
 taiMimeSource* taiMimeSource::New(const QMimeData* ms_) {
   //TODO: for multi, check for multi source, and create a taiMultiMimeSource obj instead
-  taiExtMimeSource* rval =  new taiExtMimeSource(ms_);
+  taiMimeSource* rval =  new taiMimeSource(ms_);
   rval->Decode();
   return rval;
 }
 
 taiMimeSource* taiMimeSource::NewFromClipboard() {
-  taiExtMimeSource* rval =  new taiExtMimeSource(QApplication::clipboard()->mimeData());
+  taiMimeSource* rval =  new taiMimeSource(QApplication::clipboard()->mimeData());
   rval->Decode();
   return rval;
 }
@@ -352,6 +352,9 @@ taiMimeSource::taiMimeSource(const QMimeData* ms_)
   ms = ms_;
   iter_idx = -1;
   m_src_type = ST_UNDECODED;
+  m_itm_cnt = 0;
+  m_src_action = 0; 
+  m_this_proc = false;
   if (ms)
     connect(ms, SIGNAL(destroyed()), this, SLOT(ms_destroyed()) );
 }
@@ -371,6 +374,11 @@ TypeDef* taiMimeSource::CommonSubtype() const {
   return rval;
 }
 
+QByteArray taiMimeSource::data(const QString& mimeType) const {
+  if (ms) return ms->data(mimeType);
+  else return QByteArray();
+}
+
 int taiMimeSource::data(const QString& mimeType, taString& result) const {
   QByteArray ba = data(mimeType);
   result.set(ba.data(), ba.size());
@@ -385,7 +393,7 @@ int taiMimeSource::data(const QString& mimeType, istringstream& result) const {
 
 QStringList taiMimeSource::formats() const {
   if (ms) return ms->formats();
-  else return inherited::formats(); //TODO: maybe should just return an empty list!
+  else return QStringList();
 }
 
 bool taiMimeSource::hasFormat(const QString &mimeType) const {
@@ -414,7 +422,7 @@ void* taiMimeSource::object() const {  // gets the object, if possible. if local
 
 int taiMimeSource::objectData(istringstream& result) const {
   if (isObject() && inRange()) {
-    QString fmt = taiObjectMimeFactory::tacss_objectdata + ";index=" + QString::number(index());
+    QString fmt = taiObjectMimeFactory::tacss_objectdata + ";index=" + String(index());
     return data(fmt, result);
   } else {
     return 0;
@@ -429,51 +437,7 @@ taBase* taiMimeSource::tabObject() const {
   return rval;
 }
 
-QVariant taiMimeSource::retrieveData(const QString & mimetype, QVariant::Type type) const {
-  //note: we can't access the ms method directly, but getting the data does the same thing
-  if (ms) return ms->data(mimetype);
-  else return QVariant();
-}
-
-/*obs
-//////////////////////////////////
-// 	taiIntMimeSource	//
-//////////////////////////////////
-
-taiMimeSource* taiMimeSource::New2(taiClipData* cd) {
-  taiIntMimeSource* rval = new taiIntMimeSource(cd);
-  return rval;
-}
-
-taiIntMimeSource::taiIntMimeSource(taiClipData* cd_)
-:inherited(cd_)
-{
-  cd = cd_;
-  iter_idx = 0;
-}
-
-taiIntMimeSource::~taiIntMimeSource() {
-  // nothing
-}
-*/
-
-//////////////////////////////////
-// 	taiExtMimeSource	//
-//////////////////////////////////
-
-taiExtMimeSource::taiExtMimeSource(const QMimeData* ms_)
-:inherited(ms_)
-{
-  m_itm_cnt = 0;
-  m_src_action = 0; 
-  m_this_proc = false;
-}
-
-taiExtMimeSource::~taiExtMimeSource() {
-  // nothing
-}
-
-void taiExtMimeSource::Decode() {
+void taiMimeSource::Decode() {
   if (m_src_type != ST_UNDECODED) return;
   Decode_impl();
   // if nobody groked it, then it is something alien
@@ -481,7 +445,7 @@ void taiExtMimeSource::Decode() {
     m_src_type = ST_UNKNOWN;
 }
 
-void taiExtMimeSource::Decode_impl() {
+void taiMimeSource::Decode_impl() {
   // inherited guys could call us first, and if still undecoded, try their own
   String str;
   if (data(taiClipData::tacss_common, str) > 0) {
@@ -489,19 +453,19 @@ void taiExtMimeSource::Decode_impl() {
   }
   if (data(taiObjectMimeFactory::tacss_objectdesc, str) > 0) {
     DecodeDesc_object(str);
-  } else if (data(taiClipData::tacss_matrixdesc, str) > 0) {
+/*TODO  } else if (data(taiClipData::tacss_matrixdesc, str) > 0) {
     DecodeDesc_matrix(str);
   } else if (data(taiClipData::tacss_tabledesc, str) > 0) {
     DecodeDesc_table(str);
   } else {
     if (TryDecode_matrix()) goto decoded;
-    //NOTE: other guys could go here, just like the above
+    //NOTE: other guys could go here, just like the above */
   }
 decoded:
   ;
 }
 
-bool taiExtMimeSource::Decode_common(String arg) {
+bool taiMimeSource::Decode_common(String arg) {
   // decode the common header info, leaving the remaining text after nl in arg
   // s/b in form: <obj_cnt>;<src edit action>;<procid>;\n
   bool ok;
@@ -518,7 +482,7 @@ bool taiExtMimeSource::Decode_common(String arg) {
   return true;
 }
 
-bool taiExtMimeSource::DecodeDesc_object(String arg) {
+bool taiMimeSource::DecodeDesc_object(String arg) {
   bool ok;
   String str = arg.before(';');
   m_itm_cnt = str.toInt(&ok);
@@ -549,7 +513,7 @@ fail:
   return false;
 }
 
-bool taiExtMimeSource::DecodeDesc_matrix(String arg) {
+bool taiMimeSource::DecodeDesc_matrix(String arg) {
   return false;
 /*  
   taiRcvMatDataMimeItem* msd = new taiRcvMatDataMimeItem(ST_MATRIX_DATA);
@@ -564,7 +528,7 @@ fail:
   return false; */
 }
 
-bool taiExtMimeSource::DecodeDesc_table(String arg) {
+bool taiMimeSource::DecodeDesc_table(String arg) {
   return false;
 /*  
   taiRcvMatDataMimeItem* msd = new taiRcvMatDataMimeItem(ST_TABLE_DATA);
@@ -579,7 +543,7 @@ fail:
   return false; */
 }
 
-bool taiExtMimeSource::TryDecode_matrix() {
+bool taiMimeSource::TryDecode_matrix() {
   // TODO: see if we can recognize data as a tabular format
   return false;
 }

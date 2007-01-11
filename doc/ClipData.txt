@@ -1,6 +1,75 @@
 Clip Data Interface
 
+TEST SCENARIOS
+
+These scenarios test some of the exceptions and specials.
+
+* Copy from Table cell that contains an image should also
+  put the image onto the clipboard.
+  * this just needs to be in the Table copy logic
+
+* Query from cb into Table cell where cb has an image,
+  should enable pasting the image
+  * create the image type, and query for it in cb enabling;
+    on action, check the type, and use the image
+
+* Copy from a Table (or Mat) object should also put the 
+  data onto the clipboard, as well as the object itself,
+  IF there is only one object (SingleClip)
+  * we prob need to slightly refactor the ISelectableItem
+    code and delegate down to taBase, which can then be
+    overloaded in Matrix and Table
+  * taBase will need to know whether single/multi, so
+    it should prob have a similar reflexive i/f, ie
+    the first guy in the list gets the list (which includes
+    itself as item0)
+
+
+
+DESIGN
+
+Contexts
+
+"Context" is a fuzzy concept that refers to a certain set
+of objects or data types. 
+Current contexts:
+  Object -- relating to taBase objects
+  TabularData -- relating to Matrix and Table data
+
+taiClipData: QMimeData
+
+This is a non-extensible light subclass of QMimeData. It is
+used when the program needs to supply mimedata for the
+clipboard. It contains all the enums used in clip ops.
+
+taiMimeFactory: taNBase; handles generic types
+  taiObjectMimeFactory -- for taBase objects
+  taiTabularDataMimeFactory -- for Matrix and Table data
+
+These are used for making clipdata and putting it in a
+QMimeData (usually taiClipData) object. These are singleton
+classes, conveniently accessed via class::instance()
+method.
+
+Each context has one of these. They can be subclassed,
+such that a later context can have one that subclasses
+that of an earlier context.
+
+
 QUESTIONS:
+
+Q: Could it be possible for one mimetype to possibly be 
+decoded in more than one way?
+
+A(1): For our own generated formats, it makes sense that we
+be transitive: we decode the same formats as we encoded.
+Note that there is a difference between one format item,
+vs. possibly using it in more than one way.
+
+A(2): For external formats, it is possible we could interpret
+the data more than one way. For example, text/plain could
+be just text, or it could be a table of numbers.
+
 
 NOTES:
 
@@ -105,66 +174,21 @@ Issues:
 
 QMimeData
   taiMimeSource
-    taiIntMimeSource
-    taiExtMimeSource
 
 This is used for all the clip enabling and action items.
 For enabling, it allows the context to determine what
 is on the clipboard, and whether it can be accepted.
 For actions, it allows the context to extract the data
-and perform the action.
-
-taiIntMimeSource
-
-**this is not even used anywhere!!!***
-
-taiExtMimeSource
-
-This is used to wrap the current clipboard data, so contexts
-can determine what is there, and to extract for actions.
+and perform the action. It wraps the current clipboard
+data.
 
 Issues:
-* derived from QMimeData, but not clear it needs to be
 * the iteration interface is probably too complicated
 * the assumption is that this object provides direct
   access to all properties of the various data types --
   this really violates encapsulation and extensibility
 
-QMimeData
-  taiClipData
-    taiSingleClipData
-    taiMultiClipData
-
-This is used for the internal sources of clipboard data
-and dnd.
-
-It needs to inherit from QMimeData, because that is
-what needs to be provided.
-
-Issues:
-
-* do we *really* need a Single and Multi? efficiency
-  is not that much of a concern, and a few bytes is
-  not a big deal
-
-
 NEW DESIGN
-
-Sourcing -- providing data to the clip system
-
-In any given clip source context, there is only one
-tacss controlling object(s), which will determine what
-are the data formats that apply in that case.
-
-Since the context needs to control both header and item
-information, it makes more sense to make taiClipData
-the extensible class -- the context can have its own:
-* header encoding
-* item(s)
-
-Note that this also means it shouldn't be necessary for
-the context to have any items, if it wants to supply
-everything in the context of the taiClipData.
 
 Sinking -- getting data from the clip system
 
@@ -199,13 +223,17 @@ encapsulated, for two reasons:
 * each context need not concern itself with data 
   types it can't interpret or use
 
-Maybe we can have an extensible set of singletons:
+For each datatype, there are two clear stages:
+1) establishing its existence
+2) decoding the corresponding data
+
+It would be best if the "existence" stage was able
+to extract the information needed for clip enabling
+operations -- this would enable those ops to be done
+efficiently, without decoding.
+
 
 MimeSourceManager
-
-Each context has one of these. They can be subclassed,
-such that a later context can have one that subclasses
-that of an earlier context.
 
 It would make sense for these to be taBase classes,
 since then we could request an instance by classtype,
@@ -307,59 +335,117 @@ FLAWS:
 
 EXAMPLE
 
+MimeType vs. MimeExtract
 
-taiXxxMimeItem classes
+A MimeType refers to one single named data set on the clipboard.
+When generating, one and only one source can create the dataset.
 
-Source and Sink are quite different; Source is concerned with
-generating the data, and will typically not need additional
-interpretation fields. Also, the encoder can probably
-just encode the data directly, without a set of properties.
-Sink is concerned with decoding, and this may be progressive,
-ex. partial info from header.
+A MimeExtract is a way to interpret the data -- it is an entity
+with clear identity (ie properties) so that it can be extracted
+once, and then examined by various clients when making clip
+decisions. One MimeType dataset can give rise to more than one
+MimeExtract; for example, a tabular dataset on text/plain could
+give rise to a TextExtract and a TabularDataExtract. Thus, a
+client interested in text could consume the TextExtract, and a
+client that supported TabularData could consume that.
 
-taiSndMimeItem
+Issues:
 
-There is only one, which we will always generate at the time.
-It is added to taiClipData by a factory or other source. One
-guy can be added several times under different mimetypes (they
-will share).
+* don't necessarily want to do all possible Extracts
+* let the clients drive the extraction process, by asking
+  for the extract
+* decoding extracts should be done JIT
+* need to have a clear distinction between extract
+  Descriptor properties vs. extract Content properties --
+  Descriptor can be made from either the mimetypes 
+  themselves, and/or desc mimetypes, and/or cursory examination
+  of the data; Content requires fetching and possibly decoding
+  the data.
 
-taiRcvMimeItem
+Ex.
+		Descriptor		Content
+Object		Classname		Obj data
+		Path
+Matrix		cols/rows		data itself
+
+Extract Names
+
+Each extract type has a keyname that is used to refer to it.
+These keynames are distinct from the mimetype names, to avoid
+confusion.
+
+taiMimeExtract
+  taiGenericMimeExtract
+  taiObjectMimeExtract
+
+This class is used to encapsulate a logical entity that can be
+extracted from the clipboard. It may comprise some kind of
+single element of information, or may have several. There
+will typically be a 1:1 mapping between tacss-specific 
+mimetypes and extracts.
+
+taiMimeItem 
+
+This is used to encapsulate individual items when the Extract
+comprises multiple items, such as objects.
+
+taiGenericMimeExtract
+
+This simply wraps the data of a given mimeType, without
+providing any additional interpretation. The keyname of this
+type is generally the corresponding mimeType.
+
+taiObjectMimeExtract
+  * taiObjectMimeItem
+
+Encapsulates one or more taBase objects.
+Used with: tacss/objectdesc and tacss/objectdata.
+Each object itself is represented by a taiObjectMimeItem
+object.
 
 
-The sink is concerned with interpretation and decoding, 
-and may often want more detailed rep information.
+Implementation:
 
+taiMimeItem
+  taiGenericMimeItem -- maps mimetype to raw data
+  taiObjectMimeItem -- only used in a taiObjectsMimeItem
+  taiMultiMimeItem (abstract base)
+    * taiMimeItem[]
+    taiObjectsMimeItem
+    * taiObjectItem[]
+  taiMatrixMimeItem -- for simple tabular data
+  taiTableMimeItem -- for DataTable data
 
+Implementation:
 
-taiTextMimeItem
+We use the taBase instancing system to have instances already,
+who implement some virtual methods for extraction.
+It is always assumed that if we are asking for the type, that
+we therefore want an instance, so there is one method:
 
-Simple type that can be used for/with a simple String.
-Src: set the text property, data() just grabs the text
-Snk: fetching the text property 
+virtual taiMimeItem* Extract(QMimeData* md)
 
-taBase
-  taMimeContextFactory
-    taObjectMimeContextFactory -- for taBase objects
-    taMatrixMimeContextFactory -- for Matrix data
-    taTableMimeContextFactory -- for Table data
+If that instance (specific Extract guy) can be made based
+on current mimedata, then it returns one, else NULL.
+Description props are automatically decoded during construction.
+Content props are decoded JIT.
 
-taiClipData
+virtual void DecodeDesc_impl -- decodes the description props
+virtual void DecodeCont_impl -- decodes the content
 
-This is a generic container for all the mimes generated
-in the current context.
+void AssertContent -- makes sure content is decoded
 
-ByteArray StringToByteArray(String) // used to convert 
-void AddMimeData(String mimetype, ByteArray)
-
-  taiObjectClipData
-  taiMatrixClipData
-  taiTableClipData
 
 taiMimeSource
-  taiObjectMimeSource
-  taiMatrixMimeSource
-  taiTableMimeSource
 
-taObjectMimeContextFactory
+This is the container class that wraps the clipdata, and provides
+the various taiMimeItem guys. It is never subclassed.
+
+bool hasMimeItem(TypeDef* td, String mimetype = nil)
+  // true if has the specified keyname type; implies it can
+  // be fetched 
+
+taiMimeItem* GetMimeItem(TypeDef* td, String mimetype = nil);
+  // if has the type, gets it (decoded); mimetype only needed
+  // for things like the Generic guy
   

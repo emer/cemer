@@ -26,6 +26,7 @@
 #include "ta_filer.h"
 #include "ta_viewspec.h"
 #include "ta_dmem.h"
+#include "ta_qtclipdata.h"
 #include "ta_TA_type.h"
 
 #ifndef __MAKETA__
@@ -1078,5 +1079,32 @@ protected:
   override void		DataUpdateView_impl();
   override void		DataUpdateAfterEdit_impl();
 };
+
+class TA_API taiTabularDataMimeFactory: public taiMimeFactory {
+// this factory handles both Matrix and Table clipboard formats
+INHERITED(taiMimeFactory)
+public:
+  static const String 	tacss_matrixdesc; // "tacss/matrixdesc"
+  static const String 	tacss_tabledesc; // "tacss/tabledesc" 
+//static taiTabularDataMimeFactory* instance(); // provided by macro
+
+/*  virtual void		AddSingleMimeData(QMimeData* md, taBase* obj);
+    // used for putting one object on the clipboard
+  virtual void		AddMultiMimeData(QMimeData* md, taPtrList_impl* obj_list);
+    // used for putting multiple objects on the clipboard */
+    
+  TA_MFBASEFUNS(taiTabularDataMimeFactory);
+protected:
+/*  void			InitHeader(int cnt, QString& str); // common for single/multi
+  void			AddHeaderDesc(taBase* obj, QString& str);
+    // add entry for one object
+  void			AddObjectData(QMimeData* md, taBase* obj, int idx); 
+    // add mime entry for one obj */
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
+
 
 #endif // datatable_h

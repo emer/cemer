@@ -1333,7 +1333,7 @@ taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int 
     if (do_it) {
       taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
       rval = new taiClipData(src_edit_action);
-      mf->AddMultiMimeData(rval, bl);
+      mf->AddMultiObjects(rval, bl);
     }
     delete bl;
   }
@@ -1347,7 +1347,7 @@ taiClipData* ISelectable::GetClipDataSingle(int src_edit_action, bool for_drag) 
   
   taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
   taiClipData* rval = new taiClipData(src_edit_action);
-  mf->AddSingleMimeData(rval, obj);
+  mf->AddSingleObject(rval, obj);
   return rval;
 }
 
@@ -2608,7 +2608,7 @@ QMimeData* iBaseClipToolWidget::mimeData() const {
         taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
         rval = new taiClipData( 
           (taiClipData::EA_SRC_COPY | taiClipData::EA_SRC_DRAG | taiClipData::EA_SRC_READONLY));
-        mf->AddSingleMimeData(rval, obj);
+        mf->AddSingleObject(rval, obj);
       }
     }
   }

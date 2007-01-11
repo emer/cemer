@@ -153,13 +153,6 @@ To Extend taiMimeSource:
 
 */
 
-// format indexes
-#define IDX_MD_TEXT_PLAIN		0
-#define IDX_MD_OBJECTDESC		1
-#define IDX_MD_MATRIXDESC		2
-#define IDX_MD_TABLEDESC		3
-#define IDX_MD_OBJECTDATA		4
-
 
 // forwards
 class taiMimeItem;
@@ -217,11 +210,7 @@ public:
   }; //
 
   // mime-type strings
-  static const QString	text_plain; // all formats support this
-  static const QString	tacss_common;
-//TODO
-  static const String 	tacss_matrixdesc; // "tacss/matrixdesc"
-  static const String 	tacss_tabledesc; // "tacss/tabledesc" 
+  static const String	tacss_common;
   
   static EditAction	ClipOpToSrcCode(int ea); // converts an op like EA_CUT into a source field like EA_SRC_CUT
 
@@ -235,6 +224,8 @@ protected:
 class TA_API taiMimeFactory: public taNBase { // ##NO_CSS ##NO_MEMBERS
 INHERITED(taNBase)
 public:
+  static const String 	text_plain;
+  
   static QByteArray	StrToByteArray(const String& str);
   static QByteArray	StrToByteArray(const QString& str);
     // convenience, for converting strings to bytearrays
@@ -277,13 +268,14 @@ private:
 class TA_API taiObjectMimeFactory: public taiMimeFactory {
 INHERITED(taiMimeFactory)
 public:
-  static const QString	tacss_objectdesc;
-  static const QString	tacss_objectdata;
+  static const String	text_plain; // all formats support this
+  static const String	tacss_objectdesc;
+  static const String	tacss_objectdata;
 //static taiObjectMimeFactory* instance(); // provided by macro
 
-  virtual void		AddSingleMimeData(QMimeData* md, taBase* obj);
+  virtual void		AddSingleObject(QMimeData* md, taBase* obj);
     // used for putting one object on the clipboard
-  virtual void		AddMultiMimeData(QMimeData* md, taPtrList_impl* obj_list);
+  virtual void		AddMultiObjects(QMimeData* md, taPtrList_impl* obj_list);
     // used for putting multiple objects on the clipboard
     
   TA_MFBASEFUNS(taiObjectMimeFactory);
@@ -307,9 +299,6 @@ class TA_API taiMimeItem: public QObject { // object that encapsulates the info 
 INHERITED(QObject)
   Q_OBJECT
 friend class taiMimeSource;
-friend class taiClipData;
-friend class taiSingleClipData;
-friend class taiMultiClipData;
 public:
   enum ItemFlags { // #BITS
     IF_THIS_PROCESS	= 0x0001, // when sent/received in process
@@ -411,7 +400,7 @@ protected:
 class TA_API taiRcvMimeItem: public taiObjDataMimeItem { // specialized for tacss receiving
 INHERITED(taiObjDataMimeItem)
   Q_OBJECT
-friend class taiExtMimeSource;
+friend class taiMimeSource;
 public:
   virtual void*		obj() const;
   TypeDef*		td() const {return mtd;}
@@ -435,8 +424,8 @@ protected:
     xxxx ITER: property of the current index; if index out of range, then values are 0 (ex. "", 0, false)
 
 */
-class TA_API taiMimeSource: public QMimeData { // a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
-INHERITED(QMimeData)
+class TA_API taiMimeSource: public QObject { // a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
+INHERITED(QObject)
   Q_OBJECT
 public:
   enum SourceType {
@@ -451,15 +440,20 @@ public:
 //  static taiMimeSource*	New2(taiClipData* cd); // we use a static method for extensibility -- creates correct subtype
   static taiMimeSource*	NewFromClipboard(); // whatever is on clipboard
 
+  int			srcAction() const {return m_src_action;} // override
+  bool			isMulti() const  {return (count() > 1);} // override
+  bool			isObject() const {return (m_src_type == ST_OBJECT);}
+  bool			isTabularData() const 
+    {return ((m_src_type == ST_MATRIX_DATA) || (m_src_type == ST_TABLE_DATA));}
+  bool			isMatrixData() const {return (m_src_type == ST_MATRIX_DATA);}
+  bool			isTableData() const {return (m_src_type == ST_TABLE_DATA);}
+
+  int			count() const {return list.size;} // number of items
+  bool			IsThisProcess() const {return m_this_proc;} // override
+  
+  void			Decode(); // decodes the guy, noop if decoded
+
   inline SourceType	type() const {return m_src_type;}
-  virtual int		srcAction() const = 0; // any (or none) of the EA_SRC_xxx flags
-  virtual bool		isMulti() const = 0; // true if the source is multiple individual objects (multi-select)
-  virtual bool		isObject() const = 0; // true if the mime source is a taiClipData source, otherwise false (generic QMimeData)
-  virtual bool		isTabularData() const {return false;}
-  virtual bool		isMatrixData() const {return false;}
-    // true if data is true matrix data, either from matrix or external table; will also be true if TableData is of all scalar (or 1x1) cols
-  virtual bool		isTableData() const {return false;}
-    // true if data is table data; never true for matrix or external data
 
   void*			object() const;
     // gets the object, if possible -- only valid for IsThisProcess true
@@ -467,15 +461,11 @@ public:
   int			objectData(istringstream& result) const;
     // #IGNORE gets the object data for the current item; returns number of bytes
   QStringList 		formats() const; // override
-  bool			hasFormat(const QString& mimeType) const; // override
+  bool			hasFormat(const QString& mimeType) const;
+  QByteArray 		data(const QString& mimeType) const;
   int			data(const QString& mimeType, taString& result) const; // provides data to a String; returns # bytes
   int			data(const QString& mimeType, istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
 
-#ifndef __MAKETA__
-  using QMimeData::data; // lets us access the inherited version
-#endif
-
-  virtual bool		IsThisProcess() const = 0; // true if object originates in this process (ie, we can do low-level object-based ops)
   virtual TypeDef*	CommonSubtype() const; // type of item (if 1) or common subtype if multiple
 
   ~taiMimeSource();
@@ -484,7 +474,6 @@ public slots:
   void			ms_destroyed(); // mostly for debug
 
 public: // iteration guys
-  virtual int		count() const = 0; // number of items
   int			index() const; // current index value; -1 if none
   void			setIndex(int val) 
     {iter_idx = ((val >= 0) && (val < count())) ? val : -1;}
@@ -527,56 +516,11 @@ protected:
   SourceType		m_src_type;
   bool			inRange() const {return ((iter_idx >= 0) && (iter_idx < count()));}// true if index in range
   taiMimeItem*		item() const {return item(iter_idx);} // current item -- must always be checked with inRange before access
-  virtual taiMimeItem*	item(int idx) const = 0; // item by index
 
   void			AssertList(); // makes sure list is constructed
-#ifndef __MAKETA__
-  QVariant 		retrieveData(const QString& mimetype, QVariant::Type type) const; //overrride
-#endif
+
   taiMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
-};
-
-/*obs
-class TA_API taiIntMimeSource: public taiMimeSource { // a taiMimeSource that wraps our own in-process taiClipData
-INHERITED(taiMimeSource)
-  Q_OBJECT
-friend class taiMimeSource;
-public:
-  int			srcAction() const {return cd->src_edit_action;} // override
-  bool			isMulti() const  {return cd->isMulti();} // override
-  bool			isObject() const  {return cd->isObject();} // override
-
-  int			count() const {return cd->count();} // number of items
-  bool			IsThisProcess() const {return true;} // override
-
-  ~taiIntMimeSource();
-protected:
-  taiClipData*		cd; // must be set -- is also set as ms
-  taiMimeItem*		item(int idx) const {return cd->items(idx);} // override
-
-  taiIntMimeSource(taiClipData* cd); // creates an instance from a cd
-}; */
-
-class TA_API taiExtMimeSource: public taiMimeSource { // a taiMime that wraps data from the clipboard etc.
-INHERITED(taiMimeSource)
-  Q_OBJECT
-friend class taiMimeSource;
-public:
-  int			srcAction() const {return m_src_action;} // override
-  bool			isMulti() const  {return (count() > 1);} // override
-  bool			isObject() const {return (m_src_type == ST_OBJECT);}
-  bool			isTabularData() const 
-    {return ((m_src_type == ST_MATRIX_DATA) || (m_src_type == ST_TABLE_DATA));}
-  bool			isMatrixData() const {return (m_src_type == ST_MATRIX_DATA);}
-  bool			isTableData() const {return (m_src_type == ST_TABLE_DATA);}
-
-  int			count() const {return list.size;} // number of items
-  bool			IsThisProcess() const {return m_this_proc;} // override
-  
-  void			Decode(); // decodes the guy, noop if decoded
-
-  ~taiExtMimeSource();
-protected:
+protected: // was in ExtMimeSource
   taiMimeItem_List	list;
   // the following are extracted from the common tacss header info:
   int			m_itm_cnt;
@@ -591,11 +535,7 @@ protected:
   bool			DecodeDesc_table(String arg); // decode the full description, return 'true' if valid, build list from desc
   bool			TryDecode_matrix(); // true if we can interpret as matrix data 
   
-  taiExtMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
 };
-
-typedef taiMimeSource* taiMimeSourcePtr;
-
 
 
 #endif
