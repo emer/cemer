@@ -1,0 +1,365 @@
+Clip Data Interface
+
+QUESTIONS:
+
+NOTES:
+
+Qt4 only seems to invoke the data routine on the MimeData
+on the clipboard when that data is fetched. In other words,
+if the data for that mimetype is not fetched, the data
+is not needed. This implies that we can either provide
+the data, or an object that will generate the data -- the
+latter is probably preferable for potentially large things,
+like huge datasets, etc.
+
+ONE mimetype can only have ONE data generator.
+but several mimetypes could share one generator
+
+So in any single clip source operation, there can be
+one and only one definitive controller/source for each
+mimetype enumerated.
+
+Qt4 seems to send an event that causes deletion of clipboard
+data once that data is fetched. Any eventloop calls after
+fetching will cause this data to be destroyed.
+
+If the user Copies something to the cb, then it is VERY
+likely they will subsequently paste it -- therefore, it is
+only of marginal importance to delay generation of data
+that will almost certainly be fetched anyway. This can
+DRAMATICALLY simplify things, since we can get the data
+right at the beginning, and don't need to worry about
+delayed generation, objects deleted, etc.
+
+BIG PICTURE
+
+a MimeData item is only:
+  1) a list of mimetype formats (strings)
+  2) the data for each type (ByteArray)
+Note that formats could possibly share data.
+
+For sourcing, our only basic goal is:
+  1) enumerate all the formats
+  2) provide the corresponding data
+     or a generator for the data
+
+For sinking, our only basic goal is:
+  1) look at the formats, and decide how
+     they apply in our context
+  2) decode the data, either to use it,
+     (ex Paste) or as necessary for (1)
+
+There is some fuzziness both ways, so that
+we can't assume this can be absolutely partitioned
+hierarchically and without overlap.
+
+Goals:
+
+Probably should separate the objects that
+*generate* the data and mimetypes, from the object
+that provides them -- this enables several different
+formats to cleanly co-exist, without fighting. It
+also makes it very simple: the provider is just a
+barely subclasses QMimeData, and the generators
+don't necessarily have to have any structure at all,
+and can just be routines on a convenient object.
+
+Likewise, since the clipboard can be providing
+several different types, we should not try to 
+wrap it in a specialized class; instead, we should
+provide classes that can interpret the data, and
+decode it to the degree necessary.
+
+Issues
+
+CURRENT ISSUES
+
+* too complicated
+
+* not cleanly extensible -- everything is bundled together
+* there is no way to cleanly extract the common header
+  stuff vs. the object data fore items
+  ex. the current scheme has creating the headerdesc 
+  text in the taiXxxClipData guy, but the data streaming
+  in the taiMimeItem guys
+* attempt to put the interfaces needed for encoding and
+  extraction of specific types in the central interfaces;
+  instead, the interfaces needed for everything should
+  be separated from those needed for specific contexts
+
+
+CLASS REQUIREMENTS
+
+QObject
+  taiMimeItem
+
+This is used for creating clipdata in a taiClipData, and
+for decoding clipdata in a taiExtMimeSource.
+
+Issues:
+
+* way too non-extensible; too tied up in the other
+  classes, such as how taiMimeSource needs to cast
+  to access taiObjMimeItem data
+* NOTE: this is currently what taiDataLink returns
+
+QMimeData
+  taiMimeSource
+    taiIntMimeSource
+    taiExtMimeSource
+
+This is used for all the clip enabling and action items.
+For enabling, it allows the context to determine what
+is on the clipboard, and whether it can be accepted.
+For actions, it allows the context to extract the data
+and perform the action.
+
+taiIntMimeSource
+
+**this is not even used anywhere!!!***
+
+taiExtMimeSource
+
+This is used to wrap the current clipboard data, so contexts
+can determine what is there, and to extract for actions.
+
+Issues:
+* derived from QMimeData, but not clear it needs to be
+* the iteration interface is probably too complicated
+* the assumption is that this object provides direct
+  access to all properties of the various data types --
+  this really violates encapsulation and extensibility
+
+QMimeData
+  taiClipData
+    taiSingleClipData
+    taiMultiClipData
+
+This is used for the internal sources of clipboard data
+and dnd.
+
+It needs to inherit from QMimeData, because that is
+what needs to be provided.
+
+Issues:
+
+* do we *really* need a Single and Multi? efficiency
+  is not that much of a concern, and a few bytes is
+  not a big deal
+
+
+NEW DESIGN
+
+Sourcing -- providing data to the clip system
+
+In any given clip source context, there is only one
+tacss controlling object(s), which will determine what
+are the data formats that apply in that case.
+
+Since the context needs to control both header and item
+information, it makes more sense to make taiClipData
+the extensible class -- the context can have its own:
+* header encoding
+* item(s)
+
+Note that this also means it shouldn't be necessary for
+the context to have any items, if it wants to supply
+everything in the context of the taiClipData.
+
+Sinking -- getting data from the clip system
+
+We have no way to know a priori what is on the clipboard.
+We have no way to predict how different subsystems could
+interpret standard clipboard data.
+There are two issues:
+1) what are all the different data types on the cb?
+2) how many ways can tacss interpret these?
+
+We have 2 clear consuming use-cases:
+
+1) clip op enabling -- given the context, and what is
+  on the clipboard, what can the user do with the cb?
+  NOTE: it is almost always the case that source operations
+  are completely independent of what is on the cb, since
+  a new source op simply overwrites the cb
+2) clip op action -- if the user chooses an enabled
+  option, we now must implement that, by getting the
+  data and doing something with it.
+Note that it could be the case that a base aspect of
+the system can only deal with some aspect of the cb,
+but a more derived portion can deal with more.
+
+Therefore, it seems we need some kind of scheme whereby
+the current cb data (in some rep) can be passed to a 
+series of "factories" or "subsystems" that might
+know how to interpret it. These should be relatively
+encapsulated, for two reasons:
+* basic goodness of encapsulation
+* extensibility
+* each context need not concern itself with data 
+  types it can't interpret or use
+
+Maybe we can have an extensible set of singletons:
+
+MimeSourceManager
+
+Each context has one of these. They can be subclassed,
+such that a later context can have one that subclasses
+that of an earlier context.
+
+It would make sense for these to be taBase classes,
+since then we could request an instance by classtype,
+and autoinstantiate them when needed at runtime.
+
+* looks at a QMimeData (ex from clipboard) and determines
+  whether this context can interpret the data
+* provides an interpreted (ie decoded) strongly 
+  classed object instance if this context can understand
+* note that we don't always want the fully interpreted
+  output -- it could be sufficient (ex clip enabling) to
+  simply know that data of a certain kind existed
+
+Interface:
+
+* query interface, to ask if the mimedata can be
+  interpreted by this MSM, ex. "tacss object"
+  or "tacss table data" etc.
+* decoder object factory: provides the client with an
+  instance object that can grok the details of the cb
+
+
+  
+taiClipData
+
+This is used to *supply* clipdata by the tacss system.
+
+* supplies the required QMimeData interface, for Qt
+
+
+Constraints:
+
+* there can only be *one* provision of a specific
+  mimetype in one cb instance, ex. only one text/plain
+  etc. -- therefore, there needs to be some kind
+  of clear-cut identity to the instances -- they need
+  to completely know what they will provide, probably
+  because of classing/subclassing
+
+Interfaces:
+
+* must implement the MimeData interface, to interface with
+  the Qt clipboard and dnd systems
+
+Subclasses:
+
+* must enumerate the formats it supports (supply the format list)
+* must provide the data for the supported formats
+
+Contexts:
+
+* there should probably be separate 
+  CreateClipData
+  InitClipData
+interfaces -- this will enable subclasses of ClipData
+to be made by extended parts of the system, while still
+enabling the earlier parts to do their thing (initialize it)
+
+
+NEW
+
+* no point in having a "taiMimeSource ms" passed all around,
+  because this already implies interpretation, and a *single*
+  object, but in fact, we want to know the details
+* it would be ok for a context to require some concrete
+  interpreted mimesource class, but this means some outer
+  or top controller needs to have done this:
+  MyContextFactory::isMySpecialFormat(QMimeData* md)
+  if so, then 
+  MyContextFactory::GetMySpecialMimeSource(QMimeData* md)
+
+* we should probably have a unified way of doing multi data,
+  such that there is no interaction/dependency of the header
+  with the type of data
+  * header has a generic common part, with count
+  * header then has N entries, with type-specific pattern
+  * all our sources must conform to this interface
+  * singleton-only formats simply only ever use 1 slot
+
+* source data is combination of two things:
+  * taiClipData-subclass, which controls any common aspects
+    * generates any standard or 1-only mime types,
+      ex. text/plain, image/xxx etc.
+  * (optional) taiMimeItem-subclasses, which generate any
+    multi items
+* sink data is likewise a combination:
+  * ContextFactory, which can reconstitute an equivalent
+    to the source ClipData
+  * item classes, if the context supports them
+
+FLAWS:
+
+* still doesn't handle the case where we might have more than
+  one set of stuff;
+  ex: DataTable is an object
+    * need to have its basic taBase stuff on clipboard
+    * but maybe it ALSO supports a "structure" thing
+  OR  maybe it also wants to put the data on the clipboard
+
+EXAMPLE
+
+
+taiXxxMimeItem classes
+
+Source and Sink are quite different; Source is concerned with
+generating the data, and will typically not need additional
+interpretation fields. Also, the encoder can probably
+just encode the data directly, without a set of properties.
+Sink is concerned with decoding, and this may be progressive,
+ex. partial info from header.
+
+taiSndMimeItem
+
+There is only one, which we will always generate at the time.
+It is added to taiClipData by a factory or other source. One
+guy can be added several times under different mimetypes (they
+will share).
+
+taiRcvMimeItem
+
+
+The sink is concerned with interpretation and decoding, 
+and may often want more detailed rep information.
+
+
+
+taiTextMimeItem
+
+Simple type that can be used for/with a simple String.
+Src: set the text property, data() just grabs the text
+Snk: fetching the text property 
+
+taBase
+  taMimeContextFactory
+    taObjectMimeContextFactory -- for taBase objects
+    taMatrixMimeContextFactory -- for Matrix data
+    taTableMimeContextFactory -- for Table data
+
+taiClipData
+
+This is a generic container for all the mimes generated
+in the current context.
+
+ByteArray StringToByteArray(String) // used to convert 
+void AddMimeData(String mimetype, ByteArray)
+
+  taiObjectClipData
+  taiMatrixClipData
+  taiTableClipData
+
+taiMimeSource
+  taiObjectMimeSource
+  taiMatrixMimeSource
+  taiTableMimeSource
+
+taObjectMimeContextFactory
+  
