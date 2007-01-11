@@ -172,20 +172,16 @@ void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
   m_rows = dt->rows;
   
   if (!isVisible()) return;
-  if ((dcr == DCR_UPDATE_VIEWS) || (dcr == DCR_DATA_UPDATE_END)) {
-    if (delta_rows > 0) {
-      DataChange_NewRows(delta_rows);
-      return;
-    } else { // if not appending rows, treat as misc update
-      DataChange_Other();
-      return;
-    }
+
+  if(delta_rows > 0) {
+    DataChange_NewRows(delta_rows);
   }
   else if (dcr == DCR_STRUCT_UPDATE_END) {
     DataChange_StructUpdate();
-    return;
   }
-  // we don't respond to any other kinds of updates
+  else {
+    DataChange_Other();		// always update..
+  }
 }
 
 void TableView::DataChange_StructUpdate() {
@@ -649,7 +645,7 @@ void GridTableView::MakeViewRangeValid() {
   int col;
   for(col = col_range.min; col<cols; ++col) {
     GridColViewSpec* cvs = tvs->colSpec(col);
-    if(!cvs->isVisible())
+    if(!cvs || !cvs->isVisible())
       continue;
     act_n++;
     if(act_n >= col_n)

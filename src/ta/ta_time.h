@@ -23,9 +23,9 @@ class TA_API taTime : public taBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Program raw time information
 INHERITED(taBase)
 public:
-  double	usr;		// user clock ticks
-  double	sys;		// system clock ticks
-  double	tot;		// total time ticks (all clock ticks on the CPU)
+  double	usr;		// user clock ticks -- time spent on this process
+  double	sys;		// system clock ticks -- time spent in the kernel on behalf of this process
+  double	tot;		// total time ticks (all clock ticks on the CPU for all processes -- wall-clock time)
 
   virtual void 	operator += (const taTime& td)	{ usr += td.usr; sys += td.sys; tot += td.tot; }
   virtual void 	operator -= (const taTime& td)	{ usr -= td.usr; sys -= td.sys; tot -= td.tot; }
@@ -36,9 +36,19 @@ public:
   virtual taTime operator * (const taTime& td) const;
   virtual taTime operator / (const taTime& td) const;
 
+  virtual double TicksToSecs(double ticks); // convert ticks to seconds
+
+  double GetUsrSecs()		{ return TicksToSecs(usr); }
+  // get usr time as seconds and fractions thereof
+  double GetSysSecs()		{ return TicksToSecs(sys); }
+  // get sys time as seconds and fractions thereof
+  double GetTotSecs()		{ return TicksToSecs(tot); }
+  // get tot time as seconds and fractions thereof
+
   virtual void	ZeroTime();	// zero out the times
   virtual void	GetTime();	// get current clock timing information, for computing difference at later point in time
-  virtual String GetString();	// get string output as seconds and fractions of seconds
+  virtual String GetString(int len=15, int prec=7);
+  // get string output as seconds and fractions of seconds, using given length and precision values for the time values
 
   void 	Initialize();
   void	Destroy()		{ }

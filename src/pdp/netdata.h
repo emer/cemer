@@ -232,7 +232,7 @@ public:
   taSmartRef 		object;		// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NO_SCOPE the network object being monitored
   MemberDef*		lookup_var;	// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NULL_OK #NO_SAVE lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
   String        	variable;	// #CONDEDIT_OFF_computed:true Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
-  String		var_label;	// label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
+  String		var_label;	// #CONDEDIT_OFF_computed:true label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // #CONDEDIT_OFF_computed:true how to name the columns/channels generated from this data?
   int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
 
@@ -368,7 +368,7 @@ public:
   void		AddObject(TAPtr obj, const String& variable);
   // #CAT_Monitor monitor a value in the object or its subobjects
   void 		UpdateMonitors(bool reset_first = false);
-  // #MENU #MENU_SEP_BEFORE #CAT_Monitor create or update the channels -- call this during Init.\n if reset_first, then existing data columns are removed first
+  // #MENU #MENU_SEP_BEFORE #CAT_Monitor create or update the channels -- call this during Init. if reset_first, then existing data rows are removed first
 
   void 		GetMonVals();
   // #CAT_Monitor get all the values and store in current row of data table -- call in program to get new data

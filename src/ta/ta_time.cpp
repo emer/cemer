@@ -61,15 +61,9 @@ taTime taTime::operator/(const taTime& td) const {
 
 #if defined(TA_OS_WIN)
 
-String taTime::GetString() {
+double taTime::TicksToSecs(double ticks) {
   double ticks_per = (double)CLOCKS_PER_SEC;
-  double ustr = ((double)usr / ticks_per);
-  double sstr = ((double)sys / ticks_per);
-  double tstr = ((double)tot / ticks_per);
-  String rval = "usr: " + taMisc::FormatValue(ustr, 15, 7)
-    + " sys: " + taMisc::FormatValue(sstr, 15, 7)
-    + " tot: " + taMisc::FormatValue(tstr, 15, 7);
-  return rval;
+  return ticks / ticks_per;
 }
 
 void taTime::GetTime() {
@@ -77,19 +71,14 @@ void taTime::GetTime() {
   tot = tottime;
   //NOTE: just allocate all to usr
   usr = tot;
-  sys = 0;
+  sys = 0.0;
 }
 
 #else
-String taTime::GetString() {
+
+double taTime::TicksToSecs(double ticks) {
   double ticks_per = (double)sysconf(_SC_CLK_TCK);
-  double ustr = ((double)usr / ticks_per);
-  double sstr = ((double)sys / ticks_per);
-  double tstr = ((double)tot / ticks_per);
-  String rval = "usr: " + taMisc::FormatValue(ustr, 15, 7)
-    + " sys: " + taMisc::FormatValue(sstr, 15, 7)
-    + " tot: " + taMisc::FormatValue(tstr, 15, 7);
-  return rval;
+  return ticks / ticks_per;
 }
 
 void taTime::GetTime() {
@@ -101,6 +90,13 @@ void taTime::GetTime() {
 }
 
 #endif
+
+String taTime::GetString(int len, int prec) {
+  String rval = "usr: " + taMisc::FormatValue(GetUsrSecs(), len, prec)
+    + " sys: " + taMisc::FormatValue(GetSysSecs(), len, prec)
+    + " tot: " + taMisc::FormatValue(GetTotSecs(), len, prec);
+  return rval;
+}
 
 //////////////////////////
 // 	TimeUsed 	//

@@ -1245,13 +1245,12 @@ void NetMonitor::SetDataNetwork(DataTable* dt, Network* net) {
 
 void NetMonitor::UpdateMonitors(bool reset_first) {
   if (!data) return;
+  // somehow this struct update is not working -- counters are getting out of whack
+  //  data->StructUpdate(true);
   if(reset_first)
-    data->Reset();
+    data->ResetData();
   if (rmv_orphan_cols) 
     data->MarkCols();
-  // this will probably be big, so wrap the whole thing
-  data->StructUpdate(true);
-  // (re)scan all the objects
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
     nmi->ScanObject();
@@ -1259,7 +1258,7 @@ void NetMonitor::UpdateMonitors(bool reset_first) {
   }
   if (rmv_orphan_cols)
     data->RemoveOrphanCols();
-  data->StructUpdate(false);
+  //  data->StructUpdate(false);
 }
 
 void NetMonitor::GetMonVals() {

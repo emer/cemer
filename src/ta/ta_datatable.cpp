@@ -552,16 +552,16 @@ DataArray_impl* DataTable::GetColData(int col) const {
 }
 
 DataArray_impl* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
-  cs->chan_num = -1; // we incr at beginning of loop
-  for(int i=0;i<data.size;i++) {
+  for(int i=data.size-1;i>=0;i--) {
     DataArray_impl* da = data.FastEl(i);
-    ++(cs->chan_num);
     if (da->name != cs->name) continue;
     // if name matches, but not contents, we need to remake it...
     if (ColMatchesChannelSpec(da, cs)) {
       da->mark = false; // reset mark for orphan tracking
+      cs->chan_num = i;
       return da;
-    } else {
+    }
+    else {
       da->Close();
     }
   }
@@ -1017,11 +1017,12 @@ void DataTable::RemoveCol(int col) {
 
 void DataTable::RemoveOrphanCols() {
   int cls_cnt = 0; // used to prevent spurious struct updates
-  for(int i=0;i<data.size;i++) {
+  for(int i=data.size-1;i>=0;i--) {
     DataArray_impl* da = data.FastEl(i);
     if (da->mark && !da->pin) {
-      if (cls_cnt++ == 0) StructUpdate(true);
+      if(cls_cnt == 0) StructUpdate(true);
       da->Close();
+      cls_cnt++;
     }
   }
   if (cls_cnt)  {
