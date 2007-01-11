@@ -358,10 +358,13 @@ void taRootBase::InitLinks() {
   taBase::Own(projects, this);
   taBase::Own(viewers, this);
   taBase::Own(plugins, this);
+  taBase::Own(mime_factories, this);
+  taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
+  mime_factories.CutLinks();
   plugins.CutLinks();
   viewers.CutLinks();
   projects.CutLinks();

@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 
-// ta_qtclipdata.h -- clipboard and drag/drop data type definitions
+// ta_qtclipdata.h -- clipboard and drag/drop data type definitions -- these are all Qt CoreLib items
 
 #ifndef TA_QTCLIPDATA_H
 #define TA_QTCLIPDATA_H
@@ -68,47 +68,53 @@
   PDP supplies clipboard data as follows:
   Higher level objects may also supply a graphical image (ex. image of the network.)
 
+  MIME TYPE "tacss/common" -- common header info for any tacss items
+
+    There is only one of these, regardless of whatever other formats are included
+      <src edit action>;<process id>;
+      
+    <src edit action> -- enables us to differentiate between a Cut and a
+      Copied object (these flags are NOT used for drag and drop, 
+      since the dest determines whether it is a DragMove or a DragCopy
+      operation)
+    <process id> -- the process id of source; lets us differentiate between
+      data that comes from our own internal instance, vs. an external instance
+      (note: Mac only allows one instance, so there are never out-of-process
+       operations on the Mac.)
+
   MIME TYPE "tacss/objectdesc" -- compact description of data (no content)
 
-    The data is an extended path string as follows:
-      <item count N>;<src edit action>;<process id>;<taiClipData addr>;   //note: N always >= 1
-      [\n<typename>;<pdp path of object>[;<optional extended data>]*]xN
+    The data is a list of object descriptors, as follows:
+      <item count N>;\n
+      [<typename>;<pdp path of object>[;<optional extended data>]*\n]xN
 
-    The <src edit action> enables us to differentiate between a Cut and a Copied object
-    (these flags are NOT used for drag and drop, since the dest determines whether it is a DragMove
-    or a DragCopy operation).
-    The <taiClipData addr> enables us to efficiently access the source directly (in-process only)
-    rather than go indirectly through the clipboard.
-    
-    Qt4: because Qt4 started enumerating all the data formats, the actual data and command
-    formats are "hidden", i.e., they don't show up when enumerating, but will exist if
-    you query directly for them -- if you get the "tacss/objectdesc[Xxx]" format, you can be 
-    sure you can also access the hidden formats.
+    There is one type/path line per object. 
 
-
-  MIME TYPE "tacss/objectdata[;index=<i>]" [hidden] -- i (optional, def=0) is: 0 <= i < N
+  MIME TYPE "tacss/objectdata;index=<i>" 0 <= i < N
 
     The data is the rep (ext dump save text) of the object.
 
-  MIME TYPE "tacss/matrixdesc" -- compact description of matrix data (no content)
+  MIME TYPE "tacss/matrixdesc" -- description of matrix data (no content)
 
     <cols>;<rows>;
-      cols >=1; rows >= 1
+      cols >= 1; rows >= 1
 
-    The data itself is in a text/plain entry in TSV format.
+    The data itself (text/plain) is in TSV format.
     
     Note that this format is primarily to make decoding of the data faster
-    and more definite, compared with just reading the text/plain data, 
-    where tacss is the source of the data.
+    and more definite where tacss is the source of the data, compared with
+    just parsing the text/plain data (which the decoder can do, to import
+    spreadsheet data.)
+    .
     
-  MIME TYPE "tacss/tabledesc" -- compact description of table data (no content)
+  MIME TYPE "tacss/tabledesc" -- description of table data (no content)
 
     The data describes the 2-d-flattened geometry of each of the cols in the clip
       <cols>;<rows>;<col0-cols>;<col0-rows>[<col1-cols>;<col1-rows> ...];
       cols >=1; rows >= 1
       for scalar cols: colx-cols=colx-rows=1
       
-    The data itself is in a (possibly) sparse TSV tabular form, of total
+    The data itself (text/plain) is in a TSV tabular form, of total
     Sigma(colx-cols)x=0:N by <rows> * Max(colx-rows) -- non-existent values
     will just have blank entries.
       
@@ -163,7 +169,6 @@ class taiMimeItem_List;
 class TA_API taiClipData: public QMimeData { // ##NO_CSS
 INHERITED(QMimeData)
   Q_OBJECT
-friend class taiMimeSource;
 public:
   enum EditAction { // extended definitions of clipboard operations for ta/pdp, divided into two field banks: OP and SRC
     EA_SRC_CUT		= 0x00001, // flag indicating the source was a Clip/Cut operation
@@ -212,82 +217,93 @@ public:
   }; //
 
   // mime-type strings
-  static const String	text_plain; // all formats support this
-  static const String	tacss_objectdesc;
-  static const String	tacss_objectdata;
+  static const QString	text_plain; // all formats support this
+  static const QString	tacss_common;
+//TODO
   static const String 	tacss_matrixdesc; // "tacss/matrixdesc"
-  static const String 	tacss_tabledesc; // "tacss/tabledesc"
+  static const String 	tacss_tabledesc; // "tacss/tabledesc" 
   
-  virtual int		count() const = 0; // number of items
-  virtual bool		isMulti() const = 0;
-  virtual bool		isObject() const; // if the one or 1st item is one
-  virtual taiMimeItem*	items(int i) const = 0;
-//  static bool decode ( const QMimeSource * e, QPixmap & pm )
-
   static EditAction	ClipOpToSrcCode(int ea); // converts an op like EA_CUT into a source field like EA_SRC_CUT
 
-  int			src_edit_action;
-
   taiClipData(int src_edit_action_);
-
-  QStringList 		formats() const; // overrride
+  
 protected:
-  static const String 	text_plain_iso8859_1;
-  static const String 	text_plain_utf8; // fetch synonym for text_plain
+  int			src_edit_action;
+  const QString		GetCommonDescHeader() const; // the common part, \n terminated
+};
 
-
-  bool			DecodeFormat(const String& mimeType, String& fmt, int& index) const; // returns true if valid,
-  virtual QByteArray 	encodedData_impl(const String& fmt, int index) = 0; // gets the data of the type -- can be replaced or extended -- note we cheat a bit by being non-const, but Qt requires retrieveData to be const
-  virtual void 		GetFormats_impl(QStringList& list) const; 
-#ifndef __MAKETA__
-  QVariant 		retrieveData(const QString& mimeType, QVariant::Type type) const; // #IGNORE override - queries for proper index and calls the _impl function
-#endif
+class TA_API taiMimeFactory: public taNBase { // ##NO_CSS ##NO_MEMBERS
+INHERITED(taNBase)
+public:
+  static QByteArray	StrToByteArray(const String& str);
+  static QByteArray	StrToByteArray(const QString& str);
+    // convenience, for converting strings to bytearrays
+    
+  TA_BASEFUNS(taiMimeFactory);
 private:
+  void	Initialize() {}
+  void	Destroy() {}
 };
 
+#define TA_MFBASEFUNS(T) \
+  static T* instance() {static T* in = NULL; if (!in) \
+    in = (T*)(taiMimeFactory_List::StatGetInstanceByType(&TA_##T)); \
+    return in;} \
+  TA_BASEFUNS(T)
+    
 
-class TA_API taiSingleClipData: public taiClipData { // ClipData for a single object -- simplest, most common case
-INHERITED(taiClipData)
-  Q_OBJECT
+class TA_API taiMimeFactory_List: public taList<taiMimeFactory> {
 public:
-  int			count() const {return 1;} // override
-  bool			isMulti() const {return false;} // override
-  taiMimeItem*		items(int i) const {return (i == 0) ? item : NULL;}
-
-  taiSingleClipData(taiMimeItem* item_, int src_edit_action_);
-    // NOTE: we take over ownership of the item
-  ~taiSingleClipData();
-
+  static taiMimeFactory_List* instance() {return g_instance;}
+  static void		setInstance(taiMimeFactory_List* value);
+   // we set this during InitLinks for the app-wide global instance
+    
+  static taiMimeFactory* StatGetInstanceByType(TypeDef* td);
+    // get an instance of the exact factory from the global list, making if needed
+  
+  taiMimeFactory*	GetInstanceByType(TypeDef* td);
+    // get an instance of the exact factory, making if needed
+    
+  TA_BASEFUNS(taiMimeFactory_List);
 protected:
-  taiMimeItem*		item;
-  QByteArray 		encodedData_impl(const String& fmt, int index); // override - gets the data of the type -- can be replaced or extended
+  static taiMimeFactory_List*	g_instance; // we set this during InitLinks for the global guy
+private:
+  void	Initialize() {SetBaseType(&TA_taiMimeFactory);}
+  void	Destroy();
 };
 
 
-class TA_API taiMultiClipData: public taiClipData { // ClipData for multi selection of objects
-INHERITED(taiClipData)
-  Q_OBJECT
+
+class TA_API taiObjectMimeFactory: public taiMimeFactory {
+INHERITED(taiMimeFactory)
 public:
-  int			count() const; // override
-  bool			isMulti() const {return true;} // override
-  taiMimeItem*		items(int i) const;
+  static const QString	tacss_objectdesc;
+  static const QString	tacss_objectdata;
+//static taiObjectMimeFactory* instance(); // provided by macro
 
-  taiMultiClipData(taiMimeItem_List* list_, int src_edit_action_);
-    // NOTE: we take over ownership of the list
-  ~taiMultiClipData();
-
+  virtual void		AddSingleMimeData(QMimeData* md, taBase* obj);
+    // used for putting one object on the clipboard
+  virtual void		AddMultiMimeData(QMimeData* md, taPtrList_impl* obj_list);
+    // used for putting multiple objects on the clipboard
+    
+  TA_MFBASEFUNS(taiObjectMimeFactory);
 protected:
-  taiMimeItem_List*	list;
-  QByteArray 		encodedData_impl(const String& fmt, int index); // override - gets the data of the type -- can be replaced or extended
+  void			InitHeader(int cnt, QString& str); // common for single/multi
+  void			AddHeaderDesc(taBase* obj, QString& str);
+    // add entry for one object
+  void			AddObjectData(QMimeData* md, taBase* obj, int idx); 
+    // add mime entry for one obj
+private:
+  void	Initialize() {}
+  void	Destroy() {}
 };
-
 
 
 //////////////////////////////////
 // 	taiMimeItem		//
 //////////////////////////////////
 
-class TA_API taiMimeItem: public QObject { // we inherit from QObject so the instance can be notified if source bails -- we create an interface and multiple subclasses to keep dependencies clear (also minimizes member data, but that is usually not important)
+class TA_API taiMimeItem: public QObject { // object that encapsulates the info for one object or other single item of clipboard data, either sending or receiving, in-process or external
 INHERITED(QObject)
   Q_OBJECT
 friend class taiMimeSource;
@@ -295,23 +311,23 @@ friend class taiClipData;
 friend class taiSingleClipData;
 friend class taiMultiClipData;
 public:
-  static taiMimeItem*	New(taBase* obj); // used for creating descs of taBase objects
-//  static taiMimeItem*	New(void* obj, TypeDef* td); // used for creating descs of non-taBase objects
-
+  enum ItemFlags { // #BITS
+    IF_THIS_PROCESS	= 0x0001, // when sent/received in process
+    IF_SEND		= 0x0002 // on for Send, off for Receive
+  };
+  
+  inline bool		isThisProcess() const {return m_this_proc;}
+  void			setThisProcess(bool value) {m_this_proc = value;}
   virtual bool		isObject() const {return false;}
   virtual bool		isMatrix() const {return false;}
   virtual bool		isTable() const {return false;}
   
-  void 			GetFormats(QStringList& list, int idx) const
-    {GetFormats_impl(list, idx);} 
   taiMimeItem();
   
 protected:
+  bool			m_this_proc; 
   virtual void		objDestroyed_impl() {} // datalinks will connect to this so our obj doesn't become invalid
   virtual void		SetData(ostream& ost, const String& fmt = _nilString) {} // (s) get the data from the object
-  virtual void 		GetFormats_impl(QStringList& list, int idx) const = 0; 
-    // first item should return common, then others should only add item-specific
-
 };
 
 
@@ -320,7 +336,7 @@ public:
   void			El_Done_(void*);	// override, when "done" (delete)
 };
 
-
+/*
 class TA_API taiMatDataMimeItem: public taiMimeItem { // for matrix and table data
 INHERITED(taiMimeItem)
   Q_OBJECT
@@ -340,7 +356,7 @@ protected:
   int			m_data_type; // one of ST_MATRIX_DATA or TABLE_DATA
   override void 	GetFormats_impl(QStringList& list, int idx) const; 
   taiMatDataMimeItem(int data_type);
-};
+}; 
 
 
 class TA_API taiRcvMatDataMimeItem: public taiMatDataMimeItem { 
@@ -366,7 +382,7 @@ protected:
   void			DecodeTableDesc(String& arg); // the extra stuff
   
   taiRcvMatDataMimeItem(int data_type);
-};
+};*/
 
 
 class TA_API taiObjDataMimeItem: public taiMimeItem { // for tacss objects
@@ -389,24 +405,6 @@ public slots:
 protected:
   taBase*		m_obj; 
   taiObjDataMimeItem();
-  override void 	GetFormats_impl(QStringList& list, int idx) const; 
-};
-
-class TA_API tabSndMimeItem: public taiObjDataMimeItem { // specialized for taBase sending
-INHERITED(taiObjDataMimeItem)
-  Q_OBJECT
-friend class taiMimeItem;
-
-public: // object i/f
-  TypeDef*		td() const;
-  String		typeName() const;
-  bool			isBase() const {return (m_obj);} // only if obj actually exists
-  String		path() const;
-
-protected:
-  void			objDestroyed_impl() {m_obj = NULL;} // override
-  void			SetData(ostream& ost, const String& fmt = _nilString); // override
-  tabSndMimeItem(taBase* obj_);
 };
 
 
@@ -450,13 +448,13 @@ public:
   };
   
   static taiMimeSource*	New(const QMimeData* ms); // we use a static method for extensibility -- creates correct subtype
-  static taiMimeSource*	New2(taiClipData* cd); // we use a static method for extensibility -- creates correct subtype
+//  static taiMimeSource*	New2(taiClipData* cd); // we use a static method for extensibility -- creates correct subtype
   static taiMimeSource*	NewFromClipboard(); // whatever is on clipboard
 
   inline SourceType	type() const {return m_src_type;}
   virtual int		srcAction() const = 0; // any (or none) of the EA_SRC_xxx flags
   virtual bool		isMulti() const = 0; // true if the source is multiple individual objects (multi-select)
-  virtual bool		isTacss() const = 0; // true if the mime source is a taiClipData source, otherwise false (generic QMimeData)
+  virtual bool		isObject() const = 0; // true if the mime source is a taiClipData source, otherwise false (generic QMimeData)
   virtual bool		isTabularData() const {return false;}
   virtual bool		isMatrixData() const {return false;}
     // true if data is true matrix data, either from matrix or external table; will also be true if TableData is of all scalar (or 1x1) cols
@@ -493,24 +491,24 @@ public: // iteration guys
     // sets index; must be -1 or in range, else sets to -1
 public: // object i/f
   String		typeName() const 
-    {return (isTacss() && inRange()) ? 
+    {return (isObject() && inRange()) ? 
       ((taiObjDataMimeItem*)item())->typeName() : _nilString;}
     // ITER empty if not a tacss object mime type
   TypeDef*		td() const 
-    {return (isTacss() && inRange()) ?
+    {return (isObject() && inRange()) ?
       ((taiObjDataMimeItem*)item())->td() : NULL;}
     // ITER the TypeDef associated with typeName, or NULL if not in our type list or not tacss
   bool			isBase() const 
-   {return (isTacss() && inRange()) ?
+   {return (isObject() && inRange()) ?
      ((taiObjDataMimeItem*)item())->isBase() : false;};
     // ITER true if the object is derived from taBase
   String		path() const 
-    {return (isTacss() && inRange()) ? 
+    {return (isObject() && inRange()) ? 
       ((taiObjDataMimeItem*)item())->path() : _nilString;};
     // ITER if a taBase object, its full path
     
 public: // tabular data i/f
-  void		GetDataGeom(int& cols, int& rows) const
+/*  void		GetDataGeom(int& cols, int& rows) const
    {if (isTabularData() && inRange())
      ((taiMatDataMimeItem*)item())->GetDataGeom(cols, rows);}
     // ITER  number of cols/rows in the overall data
@@ -520,7 +518,7 @@ public: // tabular data i/f
    // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
   void		GetMaxRowGeom(int& max_row) const
    {if (isTabularData() && inRange())
-     ((taiMatDataMimeItem*)item())->GetMaxRowGeom(max_row);}
+     ((taiMatDataMimeItem*)item())->GetMaxRowGeom(max_row);} */
 
 
 protected:
@@ -538,6 +536,7 @@ protected:
   taiMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
 };
 
+/*obs
 class TA_API taiIntMimeSource: public taiMimeSource { // a taiMimeSource that wraps our own in-process taiClipData
 INHERITED(taiMimeSource)
   Q_OBJECT
@@ -545,7 +544,7 @@ friend class taiMimeSource;
 public:
   int			srcAction() const {return cd->src_edit_action;} // override
   bool			isMulti() const  {return cd->isMulti();} // override
-  bool			isTacss() const  {return cd->isObject();} // override
+  bool			isObject() const  {return cd->isObject();} // override
 
   int			count() const {return cd->count();} // number of items
   bool			IsThisProcess() const {return true;} // override
@@ -556,33 +555,37 @@ protected:
   taiMimeItem*		item(int idx) const {return cd->items(idx);} // override
 
   taiIntMimeSource(taiClipData* cd); // creates an instance from a cd
-};
+}; */
 
 class TA_API taiExtMimeSource: public taiMimeSource { // a taiMime that wraps data from the clipboard etc.
 INHERITED(taiMimeSource)
   Q_OBJECT
 friend class taiMimeSource;
 public:
-  int			srcAction() const {return msrc_action;} // override
+  int			srcAction() const {return m_src_action;} // override
   bool			isMulti() const  {return (count() > 1);} // override
-  bool			isTacss() const {return (m_src_type == ST_OBJECT);}
+  bool			isObject() const {return (m_src_type == ST_OBJECT);}
   bool			isTabularData() const 
     {return ((m_src_type == ST_MATRIX_DATA) || (m_src_type == ST_TABLE_DATA));}
   bool			isMatrixData() const {return (m_src_type == ST_MATRIX_DATA);}
   bool			isTableData() const {return (m_src_type == ST_TABLE_DATA);}
 
   int			count() const {return list.size;} // number of items
-  bool			IsThisProcess() const; // override
+  bool			IsThisProcess() const {return m_this_proc;} // override
   
   void			Decode(); // decodes the guy, noop if decoded
 
   ~taiExtMimeSource();
 protected:
   taiMimeItem_List	list;
-  int			msrc_action;
-  int			process_id;
+  // the following are extracted from the common tacss header info:
+  int			m_itm_cnt;
+  int			m_src_action;
+  bool			m_this_proc;
+  
   taiMimeItem*		item(int idx) const {return list.SafeEl(idx);} // override
   virtual void		Decode_impl(); 
+  bool			Decode_common(String arg);
   bool			DecodeDesc_object(String arg); // decode the full description, return 'true' if valid, build list from desc
   bool			DecodeDesc_matrix(String arg); // decode the full description, return 'true' if valid, build list from desc
   bool			DecodeDesc_table(String arg); // decode the full description, return 'true' if valid, build list from desc

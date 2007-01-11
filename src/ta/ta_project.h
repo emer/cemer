@@ -25,6 +25,7 @@
 #include "ta_viewer.h"
 #include "ta_program.h"
 #include "ta_plugin_p.h"
+#include "ta_qtclipdata.h"
 
 #ifdef TA_GUI
   #include "ta_seledit.h"
@@ -153,6 +154,7 @@ public:
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
+  taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
   
   virtual void  Settings() {};
   // #MENU #MENU_ON_Object edit global settings/parameters (taMisc)

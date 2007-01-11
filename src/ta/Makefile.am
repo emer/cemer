@@ -42,7 +42,6 @@ TAHEADS_GUI =\
 	@abs_srcdir@/ta_qtdialog.h \
 	@abs_srcdir@/ta_qttype_def.h \
 	@abs_srcdir@/ta_qttype.h \
-	@abs_srcdir@/ta_qtclipdata.h \
 	@abs_srcdir@/ta_qtviewer.h \
 	@abs_srcdir@/ta_matrix_qt.h \
 	@abs_srcdir@/ta_qtclassbrowse.h \
@@ -62,7 +61,6 @@ HEADS_GUI =\
 	ta_matrix_qt.h \
 	ta_qtclassbrowse.h \
 	ta_qtcursors.h \
-	ta_qtclipdata.h \
 	ta_seledit.h \
 	ta_program_qt.h  
 
@@ -84,8 +82,6 @@ SRCS_GUI =\
 	ta_qtclassbrowse.cpp \
 	ta_qtclassbrowse.moc.cpp \
 	ta_qttype.cpp \
-	ta_qtclipdata.cpp \
-	ta_qtclipdata.moc.cpp \
 	ta_seledit.cpp \
 	ta_program_qt.cpp  \
 	ta_program_qt.moc.cpp 
@@ -129,6 +125,7 @@ TAHEADS =\
 	@abs_srcdir@/ta_fontspec.h \
 	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/ta_group.h \
+	@abs_srcdir@/ta_qtclipdata.h \
 	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/ta_dmem.h \
 	@abs_srcdir@/ta_script.h \
@@ -172,6 +169,7 @@ HEADS =\
 	ta_fontspec.h \
 	minmax.h \
 	ta_group.h \
+	ta_qtclipdata.h \
 	colorscale.h \
 	ta_dmem.h \
 	ta_script.h \
@@ -216,6 +214,8 @@ SRCS =\
 	ta_fontspec.cpp \
 	minmax.cpp \
 	ta_group.cpp \
+	ta_qtclipdata.cpp \
+	ta_qtclipdata.moc.cpp \
 	colorscale.cpp \
 	ta_dmem.cpp \
 	ta_script.cpp \

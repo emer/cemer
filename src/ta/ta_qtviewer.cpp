@@ -920,13 +920,6 @@ MemberDef* tabODataLink::GetDataMemberDef() const {
   else return NULL;
 }
 
-taiMimeItem* tabDataLink::GetMimeItem() {
-  taiMimeItem* rval = taiMimeItem::New(data());
-  Assert_QObj();
-  QObject::connect(qobj, SIGNAL(destroyed()), rval, SLOT(objDestroyed()) );
-  return rval;
-}
-
 String tabDataLink::GetName() const {
   return data()->GetName();
 }
@@ -1324,21 +1317,37 @@ taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int 
   if (sel_items.size <= 1) { // single
     rval = GetClipDataSingle(src_edit_action, for_drag);
   } else { // multi select
-    taiMimeItem_List* mil = new taiMimeItem_List(); // note: mimeitem takes ownership of list
+    //note: although a bit sleazy, we just do this by optimistically
+    // assuming all are taBase (which realistically, they are) 
+    taBase_PtrList* bl = new taBase_PtrList;
+    bool do_it = true;
     for (int i = 0; i < sel_items.size; ++i) {
       ISelectable* dn = sel_items.FastEl(i);
-      mil->Add(dn->GetMimeItem());
+      taBase* obj = dn->taData();
+      if (!obj) {
+        do_it = false;
+        break;
+      }
+      bl->Add(obj);
     }
-//obs    rval = new taiMultiClipData(mil, src_edit_action, par);
-    rval = new taiMultiClipData(mil, src_edit_action);
+    if (do_it) {
+      taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
+      rval = new taiClipData(src_edit_action);
+      mf->AddMultiMimeData(rval, bl);
+    }
+    delete bl;
   }
   return rval;
 }
 
 taiClipData* ISelectable::GetClipDataSingle(int src_edit_action, bool for_drag) const {
-  taiMimeItem* mi = this->GetMimeItem();
-//obs  rval = new taiSingleClipData(mi, src_edit_action, par);
-  taiClipData* rval = new taiSingleClipData(mi, src_edit_action);
+  // if it is taBase, we can make an object
+  taBase* obj = this->taData();
+  if (!obj) return NULL;
+  
+  taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
+  taiClipData* rval = new taiClipData(src_edit_action);
+  mf->AddSingleMimeData(rval, obj);
   return rval;
 }
 
@@ -1385,10 +1394,6 @@ void ISelectable::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
   taiDataLink* pdl = par_link();
   if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link(), NULL, allowed, forbidden); // ex. CUT of child
   link()->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
-}
-
-taiMimeItem* ISelectable::GetMimeItem() const {
-  return link()->GetMimeItem();
 }
 
 taBase* ISelectable::taData() const {
@@ -2593,22 +2598,27 @@ void iBaseClipToolWidget::Init(taBase* inst_, String tooltip_) {
 }
 
 QMimeData* iBaseClipToolWidget::mimeData() const {
+  taiClipData* rval = NULL;
   if (m_inst) {
     taiDataLink* link = (taiDataLink*)m_inst->GetDataLink();
     if (link) {
       // get readonly clip data -- we don't know if dragging or not, so we always say we are
-      taiClipData* rval = new taiSingleClipData(link->GetMimeItem(), 
-        (taiClipData::EA_SRC_COPY | taiClipData::EA_SRC_DRAG | taiClipData::EA_SRC_READONLY));
-      return rval;
+      taBase* obj = link->taData();
+      if (obj) {
+        taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
+        rval = new taiClipData( 
+          (taiClipData::EA_SRC_COPY | taiClipData::EA_SRC_DRAG | taiClipData::EA_SRC_READONLY));
+        mf->AddSingleMimeData(rval, obj);
+      }
     }
   }
-  return NULL;
+  return rval;
 }
 
 QStringList iBaseClipToolWidget::mimeTypes() const {
  //NOTE: for dnd to work, we just permit our own special mime type!!!
   QStringList rval;
-  rval.append(taiClipData::tacss_objectdesc);
+  rval.append(taiObjectMimeFactory::tacss_objectdesc);
   return rval;
 }
 
@@ -4663,7 +4673,7 @@ QMimeData* iTreeView::mimeData(const QList<QTreeWidgetItem*> items) const {
 QStringList iTreeView::mimeTypes () const {
  //NOTE: for dnd to work, we just permit our own special mime type!!!
   QStringList rval;
-  rval.append(taiClipData::tacss_objectdesc);
+  rval.append(taiObjectMimeFactory::tacss_objectdesc);
   return rval;
 }
 

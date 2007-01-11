@@ -198,6 +198,7 @@ public:
 #ifdef TA_USE_QT
   String(const QString& val);
   String&	  operator = (const QString& y);
+  const QString		toQString() const; // evil C++ necessitates this!!!
   operator QString() const; //
   operator QVariant() const; //
 #endif
@@ -446,6 +447,10 @@ inline String::operator QVariant() const {
 
 inline String& String::operator = (const QString& y) {
   return set(y.toLatin1(), y.length());
+}
+
+inline const QString String::toQString() const {
+  return QString(chars());
 }
 
   // converter routines, for use when linked with Qt 

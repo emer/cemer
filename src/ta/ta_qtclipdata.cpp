@@ -63,13 +63,10 @@ str2 ...
 // 	taiClipData		//
 //////////////////////////////////
 
-const String taiClipData::text_plain_iso8859_1("text/plain;charset=ISO-8859-1"); 
-const String taiClipData::text_plain_utf8("text/plain;charset=UTF-8");
-const String taiClipData::text_plain("text/plain");
-const String taiClipData::tacss_objectdesc("tacss/objectdesc");
+const QString taiClipData::text_plain("text/plain");
+const QString taiClipData::tacss_common("tacss/common");
 const String taiClipData::tacss_matrixdesc("tacss/matrixdesc");
 const String taiClipData::tacss_tabledesc("tacss/tabledesc"); 
-const String taiClipData::tacss_objectdata("tacss/objectdata"); 
 
 taiClipData::EditAction taiClipData::ClipOpToSrcCode(int ea) {
   switch (ea & EA_OP_MASK) {
@@ -84,165 +81,115 @@ taiClipData::taiClipData(int src_edit_action_)
 :inherited()
 {
   src_edit_action = src_edit_action_;
+  setData(tacss_common, taiMimeFactory::StrToByteArray(GetCommonDescHeader()));
 }
 
-QByteArray taiClipData::encodedData_impl(const String& , int ) {
-  return QByteArray();
-}
 
-QStringList taiClipData::formats() const {
-  // NOTE: we only enumerate the non-hidden types, even though we accept them
-  QStringList rval;
-  GetFormats_impl(rval);
+const QString taiClipData::GetCommonDescHeader() const {
+  QString rval =  QString::number(src_edit_action) + ';' +
+        QString::number(taPlatform::processId()) + ";";
   return rval;
 }
 
-bool taiClipData::isObject() const {
-  taiMimeItem* item = items(0);
-  return (item) ? item->isObject() : false;
-}
-
-void taiClipData::GetFormats_impl(QStringList& list) const {
-  list.append(text_plain);
-  for (int i = 0; i < count(); ++i) {
-    taiMimeItem* item = items(i);
-    item->GetFormats(list, i);
-  }
-}
-
-bool taiClipData::DecodeFormat(const String& mimeType, String& fmt, int& index) const {
-  // variants on text/plain -- we accept these, because Qt (or Kde) supplies these externally, regardless
-  index = 0; // default, unless we encounter a specific index
-  if ((mimeType == text_plain_utf8) ||
-    (mimeType == text_plain_iso8859_1))
-  {
-    fmt = text_plain;
-    return true;
-  }
-
-  // for safety, we don't pretend to boggle other text/plain types, since the charset may be inappropriate
-  if (mimeType.matches("text/plain;"))
-      return false;
-
-  // strip indexed guys
-  fmt = mimeType.before(";index=");
-  if (fmt.nonempty()) {
-    index = mimeType.after(";index=").toInt();
-    return true;
-  }
-  
-  fmt = mimeType;
-  return true;
-}
-
-QVariant taiClipData::retrieveData(const QString & mimeType, QVariant::Type type) const {
-  // we only grok ByteArray (in this version)
-  if (type != QVariant::ByteArray)
-    return inherited::retrieveData(mimeType, type);
-
-  String fmt;
-  int index = 0;
-//bool ok =
-  DecodeFormat(mimeType, fmt, index);
-  // hack: we want text/plain for objects to actually be objectdesc
-  if (isObject() && (fmt == text_plain))
-    fmt = tacss_objectdesc;
-  return (const_cast<taiClipData*>(this))->encodedData_impl(fmt, index); 
-}
-
 
 //////////////////////////////////
-// 	taiSingleClipData	//
+//  taiMimeFactory	//
 //////////////////////////////////
 
-taiSingleClipData::taiSingleClipData(taiMimeItem* item_, int src_edit_action_)
-:taiClipData(src_edit_action_)
+QByteArray taiMimeFactory::StrToByteArray(const String& str) {
+  return QByteArray(str.chars());
+}
+
+QByteArray taiMimeFactory::StrToByteArray(const QString& str) {
+  return str.toLatin1();
+}
+
+//////////////////////////////////
+//  taiObjectMimeFactory	//
+//////////////////////////////////
+
+const QString taiObjectMimeFactory::tacss_objectdesc("tacss/objectdesc");
+const QString taiObjectMimeFactory::tacss_objectdata("tacss/objectdata");
+
+void taiObjectMimeFactory::AddSingleMimeData(QMimeData* md, taBase* obj) {
+  if (!obj) return;
+  QString str;
+  InitHeader(1, str);
+  AddHeaderDesc(obj, str);
+  md->setData(tacss_objectdesc, StrToByteArray(str));
+  AddObjectData(md, obj, 0);
+}
+
+void taiObjectMimeFactory::AddMultiMimeData(QMimeData* md,
+   taPtrList_impl* obj_list)
 {
-  item = item_;
-}
-
-taiSingleClipData::~taiSingleClipData() {
-  if (item) {
-    delete item;
-    item = NULL;
+  if (!obj_list) return;
+  QString str;
+  InitHeader(obj_list->size, str);
+  // note: prob not necessary, but we iterate twice so header precedes data
+  for (int i = 0; i < obj_list->size; ++i) {
+    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
+    AddHeaderDesc(obj, str);
+  }
+  md->setData(tacss_objectdesc, StrToByteArray(str));
+  for (int i = 0; i < obj_list->size; ++i) {
+    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
+    AddObjectData(md, obj, i);
   }
 }
 
-QByteArray taiSingleClipData::encodedData_impl(const String& fmt, int index) {
-  //note: index should be 0 for singles
-  if (item && (index == 0)) {
-    // the objectdesc guys are special case
-    if (fmt == tacss_objectdesc) {
-      taiObjDataMimeItem* item = (taiObjDataMimeItem*)this->item; // ugh
-      String rval = "1;" +
-        String(src_edit_action) + ';' +
-        String(taPlatform::processId()) + ";\n" +
-        item->typeName() + ';' +
-        item->path() + ';'; // we put ; at end to facilitate parsing, and for extensibility
-      return QByteArray(rval.chars());
-    }
-    // all others we delegate to the item
-    {
-      ostringstream ost;
-      item->SetData(ost, fmt);
-      return QByteArray(ost.str().c_str());
-    }
-  }
-  return inherited::encodedData_impl(fmt, index);
+void taiObjectMimeFactory::AddObjectData(QMimeData* md, taBase* obj, int idx) {
+    ostringstream ost;
+    obj->Save_strm(ost);
+    QString str = tacss_objectdata + ";index=" + QString::number(idx);
+    md->setData(str, QByteArray(ost.str().c_str()));
 }
 
 
+void taiObjectMimeFactory::AddHeaderDesc(taBase* obj, QString& str) {
+  //note: can't use Path_Long because path parsing routines don't handle names in paths
+  str = str + obj->GetTypeDef()->name.toQString() + ";" +
+        obj->GetPath().toQString() + ";\n"; // we put ; at end to facilitate parsing, and for }
+}
+
+void taiObjectMimeFactory::InitHeader(int cnt, QString& str) {
+  str = QString::number(cnt) + ";\n";
+}
+
 //////////////////////////////////
-//  tabMultiClipData		//
+//  taiMimeFactory_List		//
 //////////////////////////////////
 
-taiMultiClipData::taiMultiClipData(taiMimeItem_List* list_, int src_edit_action_)
-:inherited(src_edit_action_)
+taiMimeFactory_List* taiMimeFactory_List::g_instance; 
+
+void taiMimeFactory_List::setInstance(taiMimeFactory_List* value)
 {
-  list = list_;
+  g_instance = value;
 }
 
-taiMultiClipData::~taiMultiClipData() {
-  if (list) {
-    delete list;
-    list = NULL;
+taiMimeFactory* taiMimeFactory_List::StatGetInstanceByType(TypeDef* td) {
+  taiMimeFactory_List* inst = instance();
+  if (inst) return inst->GetInstanceByType(td);
+  else return NULL;
+}
+
+void taiMimeFactory_List::Destroy() {
+  if (g_instance == this) g_instance = NULL;
+}
+
+taiMimeFactory* taiMimeFactory_List::GetInstanceByType(TypeDef* td) {
+  if (!td) return NULL;
+  if (!td->DerivesFrom(&TA_taiMimeFactory)) return NULL;
+  taiMimeFactory* rval = NULL;
+  for (int i = 0; i < size; ++i) {
+    rval = FastEl(i);
+    //NOTE: if comparing of objects fails for some reason, compare names
+    if (rval->GetTypeDef()->GetNonPtrType() == td)
+      return rval;
   }
-}
-
-int taiMultiClipData::count() const {
-  return list->size;
-}
-
-taiMimeItem* taiMultiClipData::items(int i) const {
-  return list->SafeEl(i);
-}
-
-QByteArray taiMultiClipData::encodedData_impl(const String& fmt, int index) {
-  if (list) {
-  //  case IDX_MD_TEXT_PLAIN: use base
-    // objdesc is a special case
-    if (fmt == tacss_objectdesc) {
-      String rval =
-        String(list->size) + ";" +
-        String(src_edit_action) + ';' +
-        String(taPlatform::processId()) + ";";
-      for (int i = 0; i < list->size; ++i) {
-        taiObjDataMimeItem* mi = (taiObjDataMimeItem*)list->FastEl(i);
-        rval = rval + '\n' + mi->typeName() + ';' +
-          mi->path() + ';'; // we put ; at end to facilitate parsing, and for extensibility
-      }
-      return QByteArray(rval.chars());
-    }
-    // all others, we delegate to item of index
-    {
-      taiMimeItem* mi  = list->SafeEl(index);
-      if (mi == NULL) return QByteArray();
-      ostringstream ost;
-      mi->SetData(ost, fmt);
-      return QByteArray(ost.str().c_str());
-    }
-  }
-  return inherited::encodedData_impl(fmt, index);
+  // not here yet, so make one
+  rval = (taiMimeFactory*)New(1, td);
+  return rval;
 }
 
 
@@ -250,12 +197,10 @@ QByteArray taiMultiClipData::encodedData_impl(const String& fmt, int index) {
 // 	taiMimeItem 		//
 //////////////////////////////////
 
-taiMimeItem* taiMimeItem::New(taBase* obj) {
-  tabSndMimeItem* rval = new tabSndMimeItem(obj);
-  return rval;
-}
-
-taiMimeItem::taiMimeItem(): QObject()   {
+taiMimeItem::taiMimeItem()
+:inherited()   
+{
+  m_this_proc = true;
 }
 
 
@@ -271,7 +216,7 @@ void taiMimeItem_List::El_Done_(void* it) {
 //////////////////////////////////
 //  taiMatDataMimeItem 		//
 //////////////////////////////////
-
+/*
 taiMatDataMimeItem::taiMatDataMimeItem(int data_type_)
 {
   m_data_type = data_type_;
@@ -347,7 +292,7 @@ void taiRcvMatDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
   }
 }
 
-
+*/
 //////////////////////////////////
 //  taiObjDataMimeItem 		//
 //////////////////////////////////
@@ -356,48 +301,6 @@ taiObjDataMimeItem::taiObjDataMimeItem()
 :inherited()
 {
   m_obj = NULL;
-}
-
-void taiObjDataMimeItem::GetFormats_impl(QStringList& list, int idx) const {
-  if (idx == 0) {
-    list.append(taiClipData::tacss_objectdesc);
-//    list.append(taiClipData::tacss_objectdata);
-  }
-  list.append(taiClipData::tacss_objectdata + ";index=" + String(idx));
-}
-
-
-//////////////////////////////////
-// 	tabSndMimeItem 		//
-//////////////////////////////////
-
-tabSndMimeItem::tabSndMimeItem(taBase* obj_)
-:inherited()
-{
-  m_obj = obj_;
-}
-
-String tabSndMimeItem::typeName() const {
-  if (m_obj) {
-    TypeDef* td_ = m_obj->GetTypeDef();
-    if (td_) return td_->name;
-  }
-  return "";
-}
-
-String tabSndMimeItem::path() const {
-  //note: can't use Path_Long because path parsing routines don't handle names in paths
-  return (m_obj) ? m_obj->GetPath() : "";
-}
-
-void tabSndMimeItem::SetData(ostream& ost, const String& fmt) {
-  if (m_obj) {
-    m_obj->Save_strm(ost);
-  }
-}
-
-TypeDef* tabSndMimeItem::td() const {
-  return (m_obj) ? m_obj->GetTypeDef() : NULL;
 }
 
 
@@ -437,11 +340,6 @@ taiMimeSource* taiMimeSource::New(const QMimeData* ms_) {
   return rval;
 }
 
-taiMimeSource* taiMimeSource::New2(taiClipData* cd) {
-  taiIntMimeSource* rval = new taiIntMimeSource(cd);
-  return rval;
-}
-
 taiMimeSource* taiMimeSource::NewFromClipboard() {
   taiExtMimeSource* rval =  new taiExtMimeSource(QApplication::clipboard()->mimeData());
   rval->Decode();
@@ -464,7 +362,7 @@ taiMimeSource::~taiMimeSource() {
 
 TypeDef* taiMimeSource::CommonSubtype() const {
   int size = count();
-  if (!isTacss() || (size == 0)) return NULL;
+  if (!isObject() || (size == 0)) return NULL;
   TypeDef* rval = ((taiObjDataMimeItem*)item(0))->td();
   for (int i = 1; (rval && (i < size)); ++i) {
     rval = TypeDef::GetCommonSubtype(rval, 
@@ -502,21 +400,21 @@ int taiMimeSource::index() const {
 void taiMimeSource::ms_destroyed() {
   ms = NULL;
 #ifdef DEBUG
-  taMisc::Warning("taiMimeSource::ms destroyed");
+  taMisc::Warning("taiMimeSource::ms destroyed before clip operations completed!");
 #endif
 }
 
 
 void* taiMimeSource::object() const {  // gets the object, if possible. if local, tries to get from path, otherwise tries to make
   //note: we only use m_obj for caching, so we aren't really violating const be assigning to it (via unconstifying the m_obj)
-  if (!(isTacss() && IsThisProcess() && inRange())) return NULL;
+  if (!(isObject() && IsThisProcess() && inRange())) return NULL;
 
   return ((taiObjDataMimeItem*)item())->obj(); // looks up from path
 }
 
 int taiMimeSource::objectData(istringstream& result) const {
-  if (isTacss() && inRange()) {
-    QString fmt = taiClipData::tacss_objectdata + ";index=" + String(index());
+  if (isObject() && inRange()) {
+    QString fmt = taiObjectMimeFactory::tacss_objectdata + ";index=" + QString::number(index());
     return data(fmt, result);
   } else {
     return 0;
@@ -537,10 +435,15 @@ QVariant taiMimeSource::retrieveData(const QString & mimetype, QVariant::Type ty
   else return QVariant();
 }
 
-
+/*obs
 //////////////////////////////////
 // 	taiIntMimeSource	//
 //////////////////////////////////
+
+taiMimeSource* taiMimeSource::New2(taiClipData* cd) {
+  taiIntMimeSource* rval = new taiIntMimeSource(cd);
+  return rval;
+}
 
 taiIntMimeSource::taiIntMimeSource(taiClipData* cd_)
 :inherited(cd_)
@@ -552,7 +455,7 @@ taiIntMimeSource::taiIntMimeSource(taiClipData* cd_)
 taiIntMimeSource::~taiIntMimeSource() {
   // nothing
 }
-
+*/
 
 //////////////////////////////////
 // 	taiExtMimeSource	//
@@ -561,8 +464,9 @@ taiIntMimeSource::~taiIntMimeSource() {
 taiExtMimeSource::taiExtMimeSource(const QMimeData* ms_)
 :inherited(ms_)
 {
-  msrc_action = 0; 
-  process_id = 0;
+  m_itm_cnt = 0;
+  m_src_action = 0; 
+  m_this_proc = false;
 }
 
 taiExtMimeSource::~taiExtMimeSource() {
@@ -580,7 +484,10 @@ void taiExtMimeSource::Decode() {
 void taiExtMimeSource::Decode_impl() {
   // inherited guys could call us first, and if still undecoded, try their own
   String str;
-  if (data(taiClipData::tacss_objectdesc, str) > 0) {
+  if (data(taiClipData::tacss_common, str) > 0) {
+    Decode_common(str);
+  }
+  if (data(taiObjectMimeFactory::tacss_objectdesc, str) > 0) {
     DecodeDesc_object(str);
   } else if (data(taiClipData::tacss_matrixdesc, str) > 0) {
     DecodeDesc_matrix(str);
@@ -594,25 +501,31 @@ decoded:
   ;
 }
 
-bool taiExtMimeSource::DecodeDesc_object(String arg) {
-  // s/b in form: obj_cnt=N;src edit action;procid
-  // [\n objtype;ta_path]xN
+bool taiExtMimeSource::Decode_common(String arg) {
+  // decode the common header info, leaving the remaining text after nl in arg
+  // s/b in form: <obj_cnt>;<src edit action>;<procid>;\n
+  bool ok;
   String str = arg.before(';');
-  if (str.length() == 0) return false;
-  int itm_cnt = (int)str;
+  m_src_action = str.toInt(&ok);
+  if (!ok) return false;
   arg = arg.after(';');
 
   str = arg.before(';');
-  if (str.length() == 0) return false;
-  msrc_action = (int)str;
-  arg = arg.after(';');
+  int process_id = str.toInt(&ok);
+  if (!ok) return false;
+  m_this_proc = (process_id == taPlatform::processId());
+  //note: we could add more fields, and still be compatible
+  return true;
+}
 
-  str = arg.before(';');
-  if (str.length() == 0) return false;
-  process_id = (int)str;
+bool taiExtMimeSource::DecodeDesc_object(String arg) {
+  bool ok;
+  String str = arg.before(';');
+  m_itm_cnt = str.toInt(&ok);
+  if (!ok) return false;
+  arg = arg.after(";\n");
 
-  for (int i = 0; i < itm_cnt; ++i) {
-    arg = arg.after('\n');
+  for (int i = 0; i < m_itm_cnt; ++i) {
     // decode type and get the typedef obj
     String typeName = arg.before(';');
     if (typeName.length() == 0) goto fail;
@@ -623,7 +536,9 @@ bool taiExtMimeSource::DecodeDesc_object(String arg) {
     arg = arg.after(';');
     //TODO: skip extension data
     taiObjDataMimeItem* msd = new taiRcvMimeItem(typeName, path);
+    msd->setThisProcess(m_this_proc);
     list.Add(msd);
+    arg = arg.after('\n');
   }
   setIndex(0);
   m_src_type = ST_OBJECT;
@@ -635,33 +550,33 @@ fail:
 }
 
 bool taiExtMimeSource::DecodeDesc_matrix(String arg) {
+  return false;
+/*  
   taiRcvMatDataMimeItem* msd = new taiRcvMatDataMimeItem(ST_MATRIX_DATA);
   msd->DecodeMatrixDesc(arg);
   list.Add(msd);
   setIndex(0);
   m_src_type = ST_MATRIX_DATA;
   return true;
-/*
+
 fail:
   list.Reset();
   return false; */
 }
 
 bool taiExtMimeSource::DecodeDesc_table(String arg) {
+  return false;
+/*  
   taiRcvMatDataMimeItem* msd = new taiRcvMatDataMimeItem(ST_TABLE_DATA);
   msd->DecodeTableDesc(arg);
   list.Add(msd);
   setIndex(0);
   m_src_type = ST_TABLE_DATA;
   return true;
-/*
+
 fail:
   list.Reset();
   return false; */
-}
-
-bool taiExtMimeSource::IsThisProcess() const {
-  return (process_id == taPlatform::processId());
 }
 
 bool taiExtMimeSource::TryDecode_matrix() {

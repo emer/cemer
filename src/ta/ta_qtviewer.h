@@ -85,7 +85,9 @@ class TA_API taiDataLink: public taDataLink { // interface for viewing system
 INHERITED(taDataLink)
 public:
   static String		AnonymousItemName(const String& type_name, int index); // [index]:Typename
-
+  
+  taBase*		taData() const 
+    {if (isBase()) return (taBase*)m_data; else return NULL;}
   virtual int		checkConfigFlags() const { return 0;}
     // taBase::THIS_INVALID|CHILD_INVALID
 
@@ -93,7 +95,6 @@ public:
   virtual void		FillContextMenu_EditItems(taiActions* menu, int allowed) {}
   virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
-  virtual taiMimeItem*	GetMimeItem() {return NULL;} // replace
   virtual String	GetDecorateKey() const {return _nilString;}
   virtual const QVariant GetColData(const KeyString& key, int role) const 
     {return QVariant();} // for getting things like status text, tooltip text, etc.
@@ -156,7 +157,6 @@ public:
   override bool		HasChildItems();
   override TypeDef*	GetDataTypeDef() const;
   override String	GetDecorateKey() const;
-  override taiMimeItem* GetMimeItem();
   override String	GetName() const;
   override bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const; // asks this type if we should show the md member
   override String	GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE
@@ -325,7 +325,6 @@ public: // Interface Properties and Methods
   virtual int		GetEditActions_(taiMimeSource* ms) const; // typically called on single item for acceptDrop
   int			GetEditActions_(const ISelectable_PtrList& sel_items) const;
     // called to get edit items available on clipboard for the sel_items
-  virtual taiMimeItem*	GetMimeItem() const; // delegates to the link
   virtual int		RefUnref(bool ref) {return 1;} // ref'ed/unrefed in select lists etc.; optional, and can be used for lifetime mgt; returns count after operation
 
 
@@ -1624,7 +1623,6 @@ public: // ISelectable interface
   override ISelectableHost* host() const;
 //  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
 //  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
-//  override taiMimeItem*	GetMimeItem();
 protected:
 //  override int		EditAction_impl(taiMimeSource* ms, int ea);
 //  override void		FillContextMenu_EditItems_impl(taiMenu* menu, int allowed);
