@@ -255,6 +255,26 @@ bool DataArray_impl::SetValAsVar_impl(const Variant& val, int row, int cell) {
   return true;
 } 
 
+bool DataArray_impl::GetMinMaxScale(MinMax& mm) {
+  if(!isNumeric()) return false;
+  int idx;
+  if(valType() == VT_FLOAT) {
+    float_Matrix* fm = (float_Matrix*)AR();
+    mm.min = taMath_float::vec_min(fm, idx);
+    mm.max = taMath_float::vec_max(fm, idx);
+  }
+  else if(valType() == VT_DOUBLE) {
+    double_Matrix* fm = (double_Matrix*)AR();
+    mm.min = taMath_double::vec_min(fm, idx);
+    mm.max = taMath_double::vec_max(fm, idx);
+  }
+  else {
+    return false;		// not worth it!
+  }
+  return true;
+}
+
+
 String DataArray_impl::EncodeHeaderName(int d0, int d1, int d2, int d3, int d4) {
   String typ_info;
   switch (valType()) {
@@ -1011,7 +1031,7 @@ void DataTable::RemoveOrphanCols() {
   
 void DataTable::RemoveRow(int row) {
   if (!RowInRangeNormalize(row)) return;
-  DataUpdate(true);
+  DataUpdate(true);		// only data because for views, no change in column structure
   if (m_dm) m_dm->beginRemoveRows(QModelIndex(), row, row);
   
   for(int i=0;i<data.size;i++) {
@@ -1028,7 +1048,7 @@ void DataTable::RemoveRow(int row) {
 
 bool DataTable::DuplicateRow(int row_no, int n_copies) {
   if(row_no >= rows) return false;
-  StructUpdate(true);
+  DataUpdate(true);// only data because for views, no change in column structure
   for(int k=0;k<n_copies;k++) {
     AddBlankRow();
     for(int j=0;j<data.size;j++) {
@@ -1036,7 +1056,7 @@ bool DataTable::DuplicateRow(int row_no, int n_copies) {
       sda->CopyFromRow(-1, *sda, row_no);
     }
   }
-  StructUpdate(false);
+  DataUpdate(false);
   return true;
 }
 
@@ -1052,7 +1072,7 @@ bool DataTable::RowInRangeNormalize(int& row) {
     ResetData();
     return;
   }
-  DataUpdate(true);
+  StructUpdate(true);
   for(int i=0;i<data.size;i++) {
     DataArray_impl* ar = data.FastEl(i);
     int act_num_rows = num_rows - (rows - ar->AR()->frames());
@@ -1060,7 +1080,7 @@ bool DataTable::RowInRangeNormalize(int& row) {
       ar->AR()->ShiftLeft(act_num_rows);
   }
   rows -= num_rows;
-  DataUpdate(false); 
+  StructUpdate(false); 
 }*/
 
 
@@ -1073,7 +1093,7 @@ void DataTable::Reset() {
 
 void DataTable::ResetData() {
   if (rows == 0) return; // prevent erroneous m_dm calls
-  DataUpdate(true);
+  DataUpdate(true);// only data because for views, no change in column structure
   if (m_dm) m_dm->beginRemoveRows(QModelIndex(), 0, rows - 1);
   
   for(int i=0;i<data.size;i++) {
@@ -1091,7 +1111,7 @@ void DataTable::ResetData() {
 
 void DataTable::RowsAdding(int n, bool begin) {
   if (begin) {
-    DataUpdate(true);
+    DataUpdate(true);// only data because for views, no change in column structure
     if (m_dm) {
       m_dm->beginInsertRows(QModelIndex(), rows, rows + n);
     }
@@ -1421,7 +1441,7 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
   int this_proc = 0; MPI_Comm_rank(comm, &this_proc);
   if(np <= 1) return;
 
-  StructUpdate(true);
+  DataUpdate(true);
 
   int st_send_row = rows - n_rows;
   int st_recv_row = rows;
@@ -1494,7 +1514,7 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
   for(int i=0;i<n_rows;i++) {
     RemoveRow(st_send_row);
   }
-  StructUpdate(false);
+  DataUpdate(false);
 #endif  // DMEM_COMPILE
 }
 
@@ -1855,9 +1875,9 @@ bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
 
 void GridColViewSpec::Initialize(){
   text_width = 16;
-  display_style = TEXT; // updated later in build
   scale_on = true;
   mat_layout = BOT_ZERO; // typical default for data patterns
+  mat_image = false;
   mat_odd_vert = true;
   col_width = 0.0f;
   row_height = 0.0f;
@@ -1865,9 +1885,9 @@ void GridColViewSpec::Initialize(){
 
 void GridColViewSpec::Copy_(const GridColViewSpec& cp){
   text_width = cp.text_width;
-  display_style = cp.display_style;
   scale_on = cp.scale_on;
   mat_layout = cp.mat_layout;
+  mat_image = cp.mat_image;
   mat_odd_vert = cp.mat_odd_vert;
   // others recalced
 }
@@ -1885,15 +1905,7 @@ void GridColViewSpec::UpdateFromDataCol_impl(bool first){
     text_width = dc->displayWidth();
   
     if (dc->isMatrix() && dc->isNumeric()) {
-      if (dc->GetUserData("IMAGE").toBool()) {
-        display_style = IMAGE;
-        mat_layout = BOT_ZERO;
-      } else {
-        display_style = BLOCK;
-        mat_layout = BOT_ZERO;
-      }
-    } else {
-      display_style = TEXT;
+      mat_image = dc->GetUserData("IMAGE").toBool();
     }
   }
 }
@@ -1926,12 +1938,7 @@ void GridColViewSpec::Render_impl() {
   }
   else {
     row_height = 1.0f;		// always just one char high
-    if(display_style & TEXT_MASK) {
-      col_width = text_width;
-    }
-    else {
-      col_width = 2.0f;		// block is 2 chars wide, just for kicks.
-    }
+    col_width = text_width;
   }
 }
 
@@ -1987,6 +1994,20 @@ void GridTableViewSpec::DataDataChanged_impl(int dcr, void* op1, void* op2) {
   tv->DataChanged_DataTable(dcr, op1, op2);
 }
 
+void GridTableViewSpec::DataUpdateView_impl() {
+  inherited::DataUpdateView_impl();
+  TableView* tv = GET_MY_OWNER(TableView);
+  if (!tv) return;
+  tv->DataChanged_DataTable(DCR_UPDATE_VIEWS, NULL, NULL);
+}
+
+void GridTableViewSpec::DataUpdateAfterEdit_impl() {
+  inherited::DataUpdateAfterEdit_impl();
+  TableView* tv = GET_MY_OWNER(TableView);
+  if (!tv) return;
+  tv->DataChanged_DataTable(DCR_UPDATE_VIEWS, NULL, NULL);
+}
+
 void GridTableViewSpec::DataDestroying() {
   TableView* tv = GET_MY_OWNER(TableView);
   if (tv) {
@@ -1996,28 +2017,13 @@ void GridTableViewSpec::DataDestroying() {
 }
 
 void GridTableViewSpec::GetMinMaxScale(MinMax& mm, bool first) {
-/*TODO NOTE: this "frst" business is BROKEN -- can't use global static this way!!!
-  static bool frst;
-  if(first)
-    frst = true; */
   int i;
   for (i=0;i< col_specs.size; i++){
     GridColViewSpec* vs = (GridColViewSpec *) col_specs.FastEl(i);
-    if (!(vs->visible && vs->scale_on &&
-      (vs->display_style & GridColViewSpec::BLOCK_MASK)))
+    if(!vs->visible || !vs->scale_on)
       continue;
-    if (!vs->dataCol()->isNumeric()) continue; // shouldn't happen!
-/*BROKEN    if(frst) {
-      frst = false;
-      mm.max = ar->range.max;
-      mm.min = ar->range.min;
-    }
-    else {
-      mm.UpdateRange(ar->range);
-    } */
+    DataArray_impl* da = vs->dataCol();
+    if(!da->isNumeric() || !da->is_matrix) continue;
+    da->GetMinMaxScale(mm);
   }
-//TODO: need to add ranging to datatable
-//TEMP
-  mm.min = -1.0f;
-  mm.max = 1.0f;
 }

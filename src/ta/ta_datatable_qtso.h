@@ -63,6 +63,7 @@ public:
   virtual const String	caption() const; // what to show in viewer
   virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
     //note: can override for more efficient direct reference
+
   void			setDataTable(DataTable* dt); // convenience, for building
   void			setDisplay(bool value); // use this to change display_on
   override void		setDirty(bool value); // set for all changes on us or below
@@ -70,18 +71,27 @@ public:
   virtual DataTableViewSpec* viewSpecBase() const 
     {return (DataTableViewSpec*)data();}
   bool			isVisible() const; // gui_active, mapped and display_on
-  
-  virtual void		ViewRangeChanged(); // called when view_range changed (override _impl to implement)
-  virtual void 		ClearData();	// Clear the display and the data
-  // view control -- row
-  virtual void 		View_At(int start);	// start viewing at indicated viewrange value
-  
-  virtual void		InitPanel();// lets panel init itself after struct changes
-  virtual void		UpdatePanel();// after changes to props
-  virtual void		InitView(); // same as UpdateView, but also resets row/col starts
-  virtual void		UpdateView(); // called for major changes
+
+  /////////////////////////////////////////////
+  //	Main interface: init/update (impl in subclasses)
+
+  virtual void		InitDisplay(bool init_panel = true) { }; 
+  // does a hard reset on the display, reinitializing variables etc.  Note does NOT do Updatedisplay -- that is a separate step
+  virtual void		UpdateDisplay(bool update_panel = true) { };
+  // full re-render of the display (generally calls Render_impl)
+
+  virtual void		InitPanel();
+  // lets panel init itself after struct changes
+  virtual void		UpdatePanel();
+  // after changes to props
+
   virtual void		DataChanged_DataTable(int dcr, void* op1, void* op2);
-    // forwarded when DataTable notifies; forwards to correct handler
+  // forwarded when DataTable notifies; forwards to correct handler
+
+  virtual void 		ClearData();
+  // Clear the display and the data
+  virtual void 		ViewRow_At(int start);
+  // start viewing at indicated viewrange value
   
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -97,25 +107,31 @@ protected:
   int			updating; // to prevent recursion
 
   override void 	UpdateAfterEdit_impl();
-  void			UpdateStage(); // updates stage after change or copy
-  virtual void 		InitViewSpec();	// called to (re)init the viewspecs
-  void			InitDisplay(); // called to (re)do all the viewing params
-  virtual void		InitDisplay_impl() {} // type-specific impl
+  virtual void 		InitViewSpec();
+  // called to (re)init the viewspecs
 
-  virtual void		ClearViewRange(); // sets view range back to beginning (grid adds cols, graph adds TBA)
-  virtual void 		MakeViewRangeValid(); // adjust row/col etc. to be valid
+  virtual void		ClearViewRange();
+  // sets view range back to beginning (grid adds cols, graph adds TBA)
+  virtual void 		MakeViewRangeValid();
+  // adjust row/col etc. to be valid
   
-// routines for handling data changes -- only one should be called in any change context
+  // routines for handling data changes -- only one should be called in any change context
   virtual void  	DataChange_StructUpdate(); 
-   // when structure or src of data changes
-  virtual void  	DataChange_NewRows(int rows_added); // we received new data (update) -- this predominant use-case can be optimized (rather than nuking/rebuilding each row)
-  virtual void  	DataChange_Other(); // all other changes
+  // when structure or src of data changes
+  virtual void  	DataChange_NewRows(int rows_added);
+  // we received new data (update) -- this predominant use-case can be optimized (rather than nuking/rebuilding each row)
+  virtual void  	DataChange_Other();
+  // all other changes
+
+  virtual int		CheckRowsChanged();
+  // check if datatable rows is same as last render (updates m_rows and returns any delta, 0 if no change)
   
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void 	Render_post();
   override void		Reset_impl();
-  virtual void		ViewRangeChanged_impl(){} // update view from buffer
+
+  override void		DataUpdateAfterEdit_impl();
 
 };
 
@@ -138,6 +154,9 @@ public:
   MinMaxInt	actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
 
   GridTableViewSpec view_spec;  // #SHOW_TREE baked in spec 
+
+  override void	InitDisplay(bool init_panel = true);
+  override void	UpdateDisplay(bool update_panel = true);
 
   void		setAutoScale(bool value);
   void		setGrid(bool value);
@@ -182,6 +201,7 @@ protected:
   virtual void		RemoveGrid();
   virtual void		RemoveHeader(); // remove the header
   virtual void  	RemoveLines(); // remove all lines
+
   virtual void		RenderGrid();
   virtual void		RenderHeader();
   virtual void		RenderLines(); // render all the view_range lines
@@ -189,19 +209,14 @@ protected:
 
 // view control:
   override void		ClearViewRange();
-  override void  	DataChange_NewRows(int rows_added);
-    
-  override void  	InitDisplay_impl();
   override void 	MakeViewRangeValid();
-  override void		ViewRangeChanged_impl(); // note: only called if mapped
+  override void  	DataChange_NewRows(int rows_added);
   
-  void 			AllBlockText_impl(bool on);
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		Clear_impl();
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Render_post(); // #IGNORE
-  override void		Reset_impl();
 };
 
 

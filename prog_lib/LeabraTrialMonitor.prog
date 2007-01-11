@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][7] { 
+Program .projects[1].programs.gp[0][7] { 
   ProgObjList @.objs = [1] {
     NetMonitor @[0] { 
       NetMonItem_List @.items = [9] {
@@ -39,7 +39,7 @@ Program .projects[0].programs.gp[0][7] {
     MethodCall @[3] { };
   };
 };
-Program .projects[0].programs.gp[0][7] {
+Program .projects[1].programs.gp[0][7] {
  name="LeabraTrialMonitor";
  desc="monitor trial-level data from the network";
  flags=PF_NONE;
@@ -55,124 +55,151 @@ Program .projects[0].programs.gp[0][7] {
     el_def=0;
     NetMonItem @[0] {
      name="batch";
+     computed=0;
      object_type=LeabraNetwork;
-     object=.projects[0].networks[0]$0$;
-     member_var=NULL;
+     object=.projects[1].networks[0]$0$;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[1] {
      name="epoch";
+     computed=0;
      object_type=LeabraNetwork;
      object=$0$;
-     member_var=NULL;
      variable="epoch";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[2] {
      name="trial";
+     computed=0;
      object_type=LeabraNetwork;
      object=$0$;
-     member_var=NULL;
      variable="trial";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[3] {
      name="trial_name";
+     computed=0;
      object_type=LeabraNetwork;
      object=$0$;
-     member_var=NULL;
      variable="trial_name";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[4] {
      name="group_name";
+     computed=0;
      object_type=LeabraNetwork;
      object=$0$;
-     member_var=NULL;
      variable="group_name";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[5] {
      name="phase_no";
+     computed=0;
      object_type=LeabraNetwork;
      object=$0$;
-     member_var=NULL;
      variable="phase_no";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[6] {
      name="cycle";
+     computed=0;
      object_type=LeabraNetwork;
      object=$0$;
-     member_var=NULL;
      variable="minus_cycles";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[7] {
      name="sse";
+     computed=0;
      object_type=LeabraNetwork;
      object=$0$;
-     member_var=NULL;
      variable="sse";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[8] {
      name="ext_rew";
+     computed=0;
      object_type=LeabraNetwork;
      object=$0$;
-     member_var=NULL;
      variable="ext_rew";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
    network=$0$;
-   data=.projects[0].data.gp[1][0]$1$;
+   data=.projects[1].data.gp[1][0]$1$;
    rmv_orphan_cols=1;
   };
  };
@@ -205,7 +232,7 @@ Program .projects[0].programs.gp[0][7] {
    name="trial_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[0].programs.gp[0][7].objs[0]$2$;
+   object_val=.projects[1].programs.gp[0][7].objs[0]$2$;
    objs_ptr=1;
    desc=;
   };
@@ -221,16 +248,16 @@ Program .projects[0].programs.gp[0][7] {
   el_def=0;
   MethodCall @[0] {
    desc=;
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][7].vars[1]$3$;
+   obj=.projects[1].programs.gp[0][7].vars[1]$3$;
    method=NetMonitor::SetDataNetwork;
    args{ trial_mon_data;network;};
 { DataTable* dt;Network* net;   };
   };
   MethodCall @[1] {
    desc=;
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=$3$;
    method=taBase::CheckConfig;
@@ -239,20 +266,20 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[2] {
    desc="Initialize monitoring data (get rid of any existing)";
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][7].vars[0]$4$;
+   obj=.projects[1].programs.gp[0][7].vars[0]$4$;
    method=DataTable::ResetData;
    args{ };
 {    };
   };
   MethodCall @[3] {
    desc="update the monitor items and data schema";
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=$3$;
    method=NetMonitor::UpdateMonitors;
-   args{ true;};
+   args{ false;};
 { bool reset_first;   };
   };
  };
@@ -262,7 +289,7 @@ Program .projects[0].programs.gp[0][7] {
   el_def=0;
   MethodCall @[0] {
    desc="add a new blank row to the data";
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=$4$;
    method=DataTable::AddBlankRow;
@@ -271,7 +298,7 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[1] {
    desc="get the new monitor data.";
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=$3$;
    method=NetMonitor::GetMonVals;
@@ -280,7 +307,7 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[2] {
    desc="update after writing new data to monitor data table";
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=$4$;
    method=DataBlock::WriteClose;
@@ -289,9 +316,9 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[3] {
    desc=;
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][7].args[0]$5$;
+   obj=.projects[1].programs.gp[0][7].args[0]$5$;
    method=Network::DMem_ShareTrialData;
    args{ trial_mon_data;1;};
 { DataTable* dt;int n_rows;   };

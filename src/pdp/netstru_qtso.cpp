@@ -1080,7 +1080,6 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
 
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
-//   nv->InitDisplay();
   nv->UpdateDisplay();
 }
 
@@ -1372,8 +1371,8 @@ UnitView* NetView::FindUnitView(Unit* unit) {
   return sr;
 } */
 
-void NetView::GetMembs() { // this fills a member group with the valid
-			     // memberdefs from the units and connections
+// this fills a member group with the valid memberdefs from the units and connections
+void NetView::GetMembs() { 
   setUnitDispMd(NULL);
   membs.Reset();
   if(!net()) return;
@@ -1527,9 +1526,11 @@ void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,
 }
 
 void NetView::InitDisplay(bool init_panel) {
-//   if (!display) return;
+  // this build all doesn't work -- nukes too many things that are not 
+  // rebuilt later (requires full re-Render, not just Render_impl. not sure
+  // why not just do that..  much more invasive I guess
+//   BuildAll();	// rebuild views
   GetMembs();
-  GetMaxSize();
   // select "act" by default, if nothing selected, or saved selection not restored yet (first after load)
   if (!unit_disp_md) {
     if (ordered_uvg_list.size > 0) {
@@ -1880,7 +1881,6 @@ void NetView::UpdateAutoScale() {
 }
 
 void NetView::UpdateDisplay(bool update_panel) { // redoes everything
-//   if (!display) return;
   if (update_panel) UpdatePanel();
   Render_impl();
 }

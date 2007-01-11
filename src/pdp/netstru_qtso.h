@@ -371,35 +371,44 @@ public:
   void			setUnitDisp(int value); // sets a new md to display, index in membs
   void			setUnitDispMd(MemberDef* md); // sets a new md to display, lookup/set scale values
 
-  override void		BuildAll(); // creates fully populated subviews
+  ////////////////////////////////////////////////////////////////
+  // display updating & rendering
 
-  UnitView*		FindUnitView(Unit* unit); // find the uv for the unit
-  virtual void		GetMembs(); //note: called/controlled by the NetViewPanel TODO: net updates???
-//obs  ScaleRange* 		GetCurScaleRange(); // returns current NVSR; creates if needed, and copies current values (auto_scale, scale.min/max)
+  override void		BuildAll();
+  // creates fully populated subviews (but not So -- that is done in Render)
+  virtual void		InitDisplay(bool init_panel = true);
+  // hard reset of display, esp. Unit values -- also calls BuildAll.  Note this does not call Render -- that is done by UpdateDisplay, so a full reset is InitDisplay followed by UpdateDisplay
+  virtual void		InitDisplay_Layer(LayerView* lv, bool check_build = true);
+  virtual void		InitDisplay_UnitGroup(UnitGroupView* ugrv, bool check_build = true);
+  virtual void		InitPanel();
+  // hard reset of panel, esp. membr vars
+
+  virtual void		UpdateDisplay(bool update_panel = true);
+  // re-renders entire display (calls Render_impl) -- assumes structure is still same but various display elements may have changed.  if structure is different, then an InitDisplay is required first
+  virtual void		UpdateUnitValues();
+  // *only* updates unit values -- display and structure must be the same as last time
+  virtual void 		UpdatePanel(); // updates nvp, esp. after UAE etc.
+
+  ////////////////////////////////////////////////////////////////
+  // misc util functions etc
+  virtual void		GetMembs();
+  virtual void		GetMaxSize(); // get max size from network
+
   void 			GetUnitColor(float val, iColor& col, float& sc_val);
   virtual void 		GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val,
 					   T3Color& col, float& sc_val);
-  void			InitScaleRange(ScaleRange& sr); // initialize sr to its defaults; used when creating, and if user clicks 'default' button for the scale
-  virtual void		InitDisplay(bool init_panel = true); // hard reset of display, esp. Unit values
-  void			InitDisplay_Layer(LayerView* lv, bool check_build = true);
-  void			InitDisplay_UnitGroup(UnitGroupView* ugrv, bool check_build = true);
-  virtual void		InitPanel(); // hard reset of panel, esp. membr vars
-  virtual void		Layer_DataUAE(LayerView* lv); // send a DataUAE for all prjns for this layer
-  virtual void		NewLayer(int x = 3, int y = 3);
-  virtual void		GetMaxSize(); // get max size from network
+  void			InitScaleRange(ScaleRange& sr);
+  // initialize sr to its defaults; used when creating, and if user clicks 'default' button for the scale
 
+  UnitView*		FindUnitView(Unit* unit); // find the uv for the unit
   virtual void		SelectVar(const char* var_name, bool add=false, bool update = true);
   // select given variable for viewing on units (add to currently disp vars if add)
   void			SetScaleData(bool auto_scale, float scale_min, float scale_max,
     bool update_panel = true); // updates the values in us and the stored ones in the colorscale list
   void 			SetScaleDefault(); //revert scale to its default
-  virtual void		UpdateDisplay(bool update_panel = true);
-  // re-renders entire display
-  virtual void		UpdateUnitValues();
-  // *only* updates unit values 
-  virtual void 		UpdatePanel(); // updates nvp, esp. after UAE etc.
 
-  override void		DataUpdateView_impl();
+  virtual void		NewLayer(int x = 3, int y = 3);
+  virtual void		Layer_DataUAE(LayerView* lv); // send a DataUAE for all prjns for this layer
 
   override void		InitLinks();
   override void		CutLinks();
@@ -409,8 +418,10 @@ public:
 protected:
   Unit*			m_unit_src; // #IGNORE unit last picked (if any) for display
   NetViewPanel*		nvp; // created during first Render
+
   override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
+  override void		DataUpdateView_impl();
   override void		DataUpdateAfterEdit_impl(); //
   override void		DataUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);

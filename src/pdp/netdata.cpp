@@ -475,7 +475,7 @@ void NetMonItem::UpdateAfterEdit_impl() {
 
   if(!owner) return;
   if(!object) return;
-  object_type = object->GetTypeDef();
+  //  object_type = object->GetTypeDef(); // not a good idea -- prevents changing !!
   if(lookup_var) {
     variable = lookup_var->name;
     lookup_var = NULL;

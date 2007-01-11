@@ -93,6 +93,11 @@ private:
   Usually inherit directly from T3DataView, or if it is a viewer-rooted
   object, T3DataViewV
 
+  rendering goes in two steps:
+  BuildAll
+  Render
+
+  subclasses may add additional steps or other ways of ordering these
 */
 
 class TA_API T3DataView: public taDataView, public virtual ISelectable {
@@ -137,7 +142,8 @@ public:
     // can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
   override void 	Close(); // usually delegates to parent->CloseChild
   virtual void 		CloseChild(taDataView* child) {}
-  virtual void		BuildAll() {} // subclass-dependent operation -- reinvoked after major update
+  virtual void		BuildAll() {}
+  // subclass-dependent operation -- reinvoked after major update -- builds any sub-dataview objects, but not the corresponding So guys (which is done in render)
   override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
   override void		DataDestroying(); // called by data when it is destroying -- usual action is to destroy ourself
 //nn  void			EditAction(int ea); // do the edit action; invokes _impl

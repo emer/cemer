@@ -1311,9 +1311,16 @@ void SoMatrixGrid::renderValues() {
 	if(val_text) {
 	  SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	  SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	  SoMFString* mfs = &(txt->string);
-	  ValToDispText(val, val_str);
-	  mfs->setValue(val_str.chars());
+	  if(matrix->GetDataValType() == taBase::VT_STRING) {
+	    if(mat_layout == TOP_ZERO)
+	      val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y).elidedTo(max_txt_len);
+	    else
+	      val_str = ((String_Matrix*)matrix)->FastEl(pos.x, geom_y-1-pos.y).elidedTo(max_txt_len);
+	  }
+	  else {
+	    ValToDispText(val, val_str);
+	  }
+	  txt->string.setValue(val_str.chars());
 	  t_idx++;
 	}
       }
@@ -1341,9 +1348,16 @@ void SoMatrixGrid::renderValues() {
 	  if(val_text) {
 	    SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	    SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	    SoMFString* mfs = &(txt->string);
-	    ValToDispText(val, val_str);
-	    mfs->setValue(val_str.chars());
+	    if(matrix->GetDataValType() == taBase::VT_STRING) { // todo: replicate if compiles
+	      if(mat_layout == TOP_ZERO)
+		val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, z).elidedTo(max_txt_len);
+	      else
+		val_str = ((String_Matrix*)matrix)->FastEl(pos.x, ymax-1-pos.y, zmax-1-z).elidedTo(max_txt_len);
+	    }
+	    else {
+	      ValToDispText(val, val_str);
+	    }
+	    txt->string.setValue(val_str.chars());
 	    t_idx++;
 	  }
 	}
@@ -1375,9 +1389,16 @@ void SoMatrixGrid::renderValues() {
 	    if(val_text) {
 	      SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	      SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	      SoMFString* mfs = &(txt->string);
-	      ValToDispText(val, val_str);
-	      mfs->setValue(val_str.chars());
+	      if(matrix->GetDataValType() == taBase::VT_STRING) {
+		if(mat_layout == TOP_ZERO)
+		  val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, opos.x, opos.y).elidedTo(max_txt_len);
+		else
+		  val_str = ((String_Matrix*)matrix)->FastEl(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y).elidedTo(max_txt_len);
+	      }
+	      else {
+		ValToDispText(val, val_str);
+	      }
+	      txt->string.setValue(val_str.chars());
 	      t_idx++;
 	    }
 	  }

@@ -846,7 +846,7 @@ void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
   // by default, expand code guys throughout, plus top-level args, vars and objs
   taiDataLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
-  if((level <= 1) && typ->InheritsFrom(&TA_ProgVars)) return; // only top guys: args, vars
+  if((level <= 1) && typ->InheritsFrom(&TA_ProgVar_List)) return; // only top guys: args, vars
   if (!(typ->InheritsFrom(&TA_ProgVars)) &&
     (typ->DerivesFrom(&TA_ProgEl_List) ||
     typ->InheritsFrom(&TA_ProgEl) ||

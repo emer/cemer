@@ -5,7 +5,13 @@ commit:
 ------------------
 * gridview: 
 
-  * font computation not working for # of chars to display (too conservative)
+  - view controls: scrollbar for n to display; auto display of more/less n to keep
+    things square?
+  - all views: add bool for draggers
+  - and geom (as float); default to 1x1 but sometimes you might want 1x.5 or whatever
+  - grid
+  - auto-scale
+  - all views: set color spec button in panel
 
   - test case: filtered layer unit history moving back in depth w/ netview
   test2.proj!!

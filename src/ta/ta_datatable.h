@@ -196,6 +196,8 @@ public:
   // #CAT_Modify set the matrix cell from a same-sized matrix 
   taMatrix*	GetRangeAsMatrix(int st_row, int n_rows);
   // #CAT_Access gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it)
+  bool		GetMinMaxScale(MinMax& mm);
+  // #CAT_Display get min-max range of values contained within this column 
   
   void		EnforceRows(int rows);
   // force data to have this many rows
@@ -1009,33 +1011,18 @@ protected:
 */
 
 class TA_API GridColViewSpec : public DataColViewSpec {
-  // information for display of a data array in a grid display
+  // information for display of a data column in a grid display.  scalar columns are always displayed as text, and matrix as blocks (with optional value text, controlled by overall table spec)
 INHERITED(DataColViewSpec)
 public:
-
-  // todo: this display thing doesn't quite make sense anymore: probably should just
-  // have all scalars be text and all matrix be blocks, with mat_val_text flag dealing
-  // with the text.  this is the way it is currently working now..
-  enum DisplayStyle {
-    TEXT	= 0x01,	    	// Draw using text only (default for scalar cells)
-    BLOCK	= 0x02,	    	// Draw using blocks only (default for matrix cells)
-    TEXT_AND_BLOCK = 0x03, 	// Draw using both blocks and text
-    IMAGE = 0x04		// Draw an image (assumes col type has BW or Color image data)
-#ifndef __MAKETA__
-    ,TEXT_MASK = 0x01 		// mask to see if TEXT is in use
-    ,BLOCK_MASK = 0x02 		// mask to see if BLOCK is in use
-#endif
-  };
-
   enum MatrixLayout { 	// order of display for matrix cols
     BOT_ZERO, 		// row zero is displayed at bottom of cell (default)
     TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
   };
 
   int		text_width; 	// width of the column (or each matrix col) in chars; also the min width in chars
-  DisplayStyle  display_style;	// can display as text and/or block, or image
-  bool		scale_on; 	// #CONDEDIT_ON_display_style:BLOCK,TEXT_AND_BLOCK adjust overall colorscale to include this data
+  bool		scale_on; 	// adjust overall colorscale to include this data (if it is a matrix type)
   MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
+  bool		mat_image;	// display matrix as an image instead of grid blocks
   bool		mat_odd_vert;	// how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
   
   float 	col_width; // #READ_ONLY #HIDDEN #NO_SAVE calculated col_width in chars
@@ -1086,7 +1073,10 @@ public:
   TA_BASEFUNS(GridTableViewSpec);
 protected:
   override void 	UpdateAfterEdit_impl();
+
   override void		DataDataChanged_impl(int dcr, void* op1, void* op2);
+  override void		DataUpdateView_impl();
+  override void		DataUpdateAfterEdit_impl();
 };
 
 #endif // datatable_h
