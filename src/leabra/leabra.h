@@ -955,7 +955,7 @@ public:
 //			Projection Level Code
 
 class PDP_API LeabraPrjn: public Projection {
-  // ##CAT_Network leabra specific projection -- has special variables at the projection-level
+  // ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
   INHERITED(Projection)
 public:
   float		netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer

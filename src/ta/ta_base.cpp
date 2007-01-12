@@ -3131,16 +3131,22 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
     ++m_dbu_cnt;
+//     cerr << GetName() << " stru start: " << m_dbu_cnt << endl;
     return;
   } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
     if (m_dbu_cnt > 0) ++m_dbu_cnt;
     else               --m_dbu_cnt;
+//     cerr << GetName() << " data start: " << m_dbu_cnt << endl;
     return;
   } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END))
   {
     bool stru = false;
     if (m_dbu_cnt < 0) ++m_dbu_cnt;
     else {stru = true; --m_dbu_cnt;}
+//     if(dcr == DCR_DATA_UPDATE_END)
+//       cerr << GetName() << " data end: " << m_dbu_cnt << endl;
+//     else
+//       cerr << GetName() << " stru end: " << m_dbu_cnt << endl;
     if (m_dbu_cnt == 0) {
       int pdbu = parDbuCnt();
       // we will only signal if no parent update, or if parent is data and we are structural

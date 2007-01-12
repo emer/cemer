@@ -64,7 +64,9 @@ typedef T3NodeLeaf inherited;
   SO_NODE_HEADER(T3GridViewNode);
 #endif // def __MAKETA__
 public:
-  static float 		drag_size; // = .08 size of dragger control object
+  static float 		drag_size; // = .04 size of dragger control object
+  static float 		frame_margin; // = .05 size of margin around stage for frame
+  static float 		frame_width; // = .02 width of frame itself
   static void		initClass();
 
   SoFrame*		frame() const {return frame_;} 
@@ -74,9 +76,12 @@ public:
   SoSeparator*		body() const {return body_;}
 
   virtual void		render();
+  virtual void		setWidth(float wdth);
+  virtual float		getWidth() { return width_; }
 
-  T3GridViewNode(void* dataView_ = NULL); // dataview is a GridTableView object
+  T3GridViewNode(void* dataView_ = NULL, float wdth=1.0f); // dataview is a GridTableView object
 protected:
+  float			width_;
   SoSeparator*		stage_;
   SoMaterial*		mat_stage_;
   SoTranslation*	  txlt_stage_;

@@ -1946,7 +1946,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 
   layDispCheck = new QHBoxLayout(layViewParams);
   chkDisplay = new QCheckBox("Display", widg);
-
+  connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
   layDispCheck->addWidget(chkDisplay);
   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -1955,6 +1955,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(lblUnitText);
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
     NULL, NULL, widg);
+  connect(cmbUnitText, SIGNAL(itemChanged(int)), this, SLOT(cmbUnitText_itemChanged(int)) );
   layDispCheck->addWidget(cmbUnitText->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -1964,6 +1965,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(lblDispMode);
   cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
     NULL, NULL, widg);
+  connect(cmbDispMode, SIGNAL(itemChanged(int)), this, SLOT(cmbDispMode_itemChanged(int)) );
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
@@ -2000,6 +2002,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
   
   chkAutoScale = new QCheckBox("auto scale", gbDisplayValues);
+  connect(chkAutoScale, SIGNAL(toggled(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
   layColorScaleCtrls->addWidget(chkAutoScale);
 
   butScaleDefault = new QPushButton("Set Defaults", gbDisplayValues);
@@ -2009,6 +2012,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layColorScaleCtrls->addStretch();
   
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, gbDisplayValues);
+  connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
 //  cbar->setMaximumWidth(30);
   layDisplayValues->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   
@@ -2020,6 +2024,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lvDisplayValues->setSorting(-1); // not sorted, shown in add order
   lvDisplayValues->setSelectionMode(Q3ListView::Extended);
   layDisplayValues->addWidget(lvDisplayValues, 1);
+  connect(lvDisplayValues, SIGNAL(selectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
 
   // Spec tree
   gbSpecs = new QGroupBox("Specs", widg);
@@ -2077,15 +2082,6 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 //  layOuter->addStretch();
 
   setCentralWidget(widg);
-  
-  connect(cbar, SIGNAL(scaleValueChanged()),
-    this, SLOT(cbar_scaleValueChanged()) );
-  connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
-  connect(lvDisplayValues, SIGNAL(selectionChanged()),
-    this, SLOT(lvDisplayValues_selectionChanged()) );
-  connect(cmbUnitText, SIGNAL(itemChanged(int)), this, SLOT(cmbUnitText_itemChanged(int)) );
-  connect(cmbDispMode, SIGNAL(itemChanged(int)), this, SLOT(cmbDispMode_itemChanged(int)) );
-  connect(chkAutoScale, SIGNAL(toggled(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
 }
 
 NetViewPanel::~NetViewPanel() {

@@ -25,6 +25,9 @@
 
 #include "ta_datatable_so.h"
 
+#include "ilineedit.h"
+#include "ispinbox.h"
+
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <qclipboard.h>
@@ -57,6 +60,8 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
+
+#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #include <limits.h>
 #include <float.h>
@@ -152,10 +157,11 @@ void TableView::ClearViewRange() {
   view_range.max = -1; // gets adjusted later
 }
 
-void TableView::DataUpdateAfterEdit_impl() {
-  // override default which will render -- but this is often called during
-  // rebuild from datatable so we just don't do anything and let the
-  // datachanged_datatable routine handle updates..
+void TableView::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  // tableview is registered as a datalink client of the datatablespec that it
+  // actually owns.  this creates bad situations, when the datatable updates the
+  // specs and they update us, and then we depend on them...  so, just don't do
+  // anything with our data updates!
 }
 
 void TableView::DataChanged_DataTable(int dcr, void* op1, void* op2) {
@@ -291,7 +297,8 @@ void TableView::setDirty(bool value) {
 void TableView::setDisplay(bool value) {
   if (display_on == value) return;
   display_on = value;
-  UpdateAfterEdit(); // does the whole kahuna
+  //  UpdateAfterEdit(); // does the whole kahuna
+  UpdateDisplay(false);		// 
 }
 
 void TableView::ViewRow_At(int start) {
@@ -438,13 +445,11 @@ void GridTableView::Initialize() {
   row_height = 0.1f; // non-zero dummy value
   head_height = .1f;
   font_scale = .1f;
-  
+
+  width	= 1.0f;
   grid_on = true;
   header_on = true;
   row_num_on = true;
-  auto_scale = false;
-  scale_range.min = -1.0f;
-  scale_range.max = 1.0f;
   view_rows = 3;
 //obs  view_shift = .2f;
 }
@@ -453,8 +458,6 @@ void GridTableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(col_range, this);
   taBase::Own(scale, this);
-  taBase::Own(scale_range,this);
-  taBase::Own(actual_range,this);
   taBase::Own(view_spec, this);
   SetData(&view_spec);
 }
@@ -462,8 +465,6 @@ void GridTableView::InitLinks() {
 void GridTableView::CutLinks() {
   SetData(NULL);
   view_spec.CutLinks();
-  actual_range.CutLinks();
-  scale_range.CutLinks();
   scale.CutLinks();
   col_range.CutLinks();
   inherited::CutLinks();
@@ -475,29 +476,32 @@ void GridTableView::Copy_(const GridTableView& cp) {
   grid_on = cp.grid_on;
   header_on = cp.header_on;
   row_num_on = cp.row_num_on;
-  auto_scale = cp.auto_scale;
-  scale_range = cp.scale_range;
   scale = cp.scale;
-  actual_range = cp.actual_range;
   view_spec = cp.view_spec;
   //metrics calced
 }
 
 void GridTableView::Render_pre() {
-  m_node_so = new T3GridViewNode(this);
+  m_node_so = new T3GridViewNode(this, width);
   InitViewSpec();
+
+  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
+  if(!frame) return;
+  SoQtViewer* viewer = frame->widget()->ra();
+  viewer->setBackgroundColor(SbColor(scale.background.redf(), scale.background.greenf(), 
+				     scale.background.bluef()));
   inherited::Render_pre();
 }
 
 void GridTableView::Render_impl() {
   inherited::Render_impl();
-  scale.SetMinMax(scale_range.min, scale_range.max);
   T3GridViewNode* node_so = this->node_so(); // cache
   if(!node_so) return;
-  node_so->render();
+  node_so->setWidth(width);	// does a render too -- ensure always up to date on width
   CheckRowsChanged();		// not sure what to do with this but get m_rows anyway
   MakeViewRangeValid();
   CalcViewMetrics();
+  GetScaleRange();
   RenderGrid();
   RenderHeader();
   RenderLines();
@@ -553,7 +557,7 @@ void GridTableView::CalcViewMetrics() {
   // now normalize
   col_widths.SetSize(col_widths_raw.size);
   for(int i=0;i<col_widths_raw.size;i++) {
-    col_widths[i] = col_widths_raw[i] / tot_wd_raw;
+    col_widths[i] = width * (col_widths_raw[i] / tot_wd_raw);
   }
 
   // compute row height: if no header, it is simply 1.0 / view_rows
@@ -577,9 +581,17 @@ void GridTableView::CalcViewMetrics() {
   // note that scale is in units of height, so col width needs to be converted to height
 
   float col_font_scale = t3Misc::char_ht_to_wd_pts / tot_wd_raw;
-  float row_font_scale = row_height; // todo: account for margins..
+  float row_font_scale = row_height; // todo: account for margins?  nah..
   
   font_scale = MIN(col_font_scale, row_font_scale);
+}
+
+void GridTableView::GetScaleRange() {
+  if(!scale.auto_scale) return;
+  GridTableViewSpec* tvs = viewSpec();
+  MinMax sc_rg;
+  tvs->GetMinMaxScale(sc_rg, true);
+  scale.SetMinMax(sc_rg.min, sc_rg.max);
 }
 
 void GridTableView::ClearViewRange() {
@@ -592,18 +604,6 @@ void GridTableView::Clear_impl() {
   RemoveGrid();
   RemoveLines();
   inherited::Clear_impl();
-}
-
-void GridTableView::ColorBar_execute() {
-  auto_scale = false;
-/*TODO  scale_range.min = editor->cbar->min;
-  scale_range.max = editor->cbar->max;
-  editor->auto_scale = auto_scale;
-  editor->scale_range = scale_range;
-  if(auto_sc_but != NULL) {
-    auto_sc_but->setDown(auto_scale);
-  }
-  InitDisplay(); */
 }
 
 void GridTableView::DataChange_NewRows(int rows_added) {
@@ -961,22 +961,53 @@ void GridTableView::RenderLines(){
   }
 }
 
-void GridTableView::setAutoScale(bool value) {
-  if (auto_scale == value) return;
-  auto_scale = value;
-  UpdateDisplay();
-}
-  
+/////////////////
+// note on following: basically callbacks from view, so don't update panel
+
 void GridTableView::setGrid(bool value) {
   if (grid_on == value) return;
   grid_on = value;
-  UpdateDisplay();
+  UpdateDisplay(false);
 }
 
 void GridTableView::setHeader(bool value) {
   if (header_on == value) return;
   header_on = value;
-  UpdateDisplay();
+  UpdateDisplay(false);
+}
+
+void GridTableView::setWidth(float wdth) {
+  width = wdth;
+  T3GridViewNode* node_so = this->node_so();
+  if (!node_so) return;
+  node_so->setWidth(wdth);
+  UpdateDisplay(false);
+}
+
+void GridTableView::setRows(int value) {
+  if(view_rows == value) return;
+  view_rows = value;
+  UpdateDisplay(false);
+}
+
+void GridTableView::setCols(int value) {
+  if(col_n == value) return;
+  col_n = value;
+  UpdateDisplay(false);
+}
+
+void GridTableView::setAutoScale(bool value) {
+  if(scale.auto_scale == value) return;
+  scale.auto_scale = value;
+  UpdateDisplay(false);
+}
+  
+void GridTableView::setScaleData(bool auto_scale_, float min_, float max_) {
+  if ((scale.auto_scale == auto_scale_) && (scale.min == min_) && (scale.max == max_)) return;
+  scale.auto_scale = auto_scale_;
+  if(!scale.auto_scale)
+    scale.SetMinMax(min_, max_);
+  UpdateDisplay(false);
 }
 
 void GridTableView::VScroll(bool left) {
@@ -1031,8 +1062,12 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
 
   vnd->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
   vnd->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-  //  vnd->txfm_shape()->translation.setValue(.5f, .5f * h - .5f, -.5f);
-  vnd->txfm_shape()->translation.setValue(.5f * 1.05f, -.5f * 1.05f, 0.0f);
+
+  float frmg = T3GridViewNode::frame_margin;
+  float frmg2 = 2.0f * frmg;
+  float wdth = vnd->getWidth();
+
+  vnd->txfm_shape()->translation.setValue(.5f * (wdth + frmg), .5f * (1.0f + frmg2), 0.0f);
 
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
@@ -1049,122 +1084,15 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
 iTableView_Panel::iTableView_Panel(TableView* lv)
 :inherited(lv)
 {
-  init(false);
-}
-
-iTableView_Panel::iTableView_Panel(bool is_grid_log, TableView* lv)
-:inherited(lv)
-{
-  init(is_grid_log);
-}
-
-//TEMP -- will be pixmaps
-const char* but_strs[] = {"|<","<<","<",">",">>",">|","Update","Init","Clear"};
-
-void iTableView_Panel::init(bool is_grid_log)
-{
   t3vs = NULL; //these are created in  Constr_T3ViewspaceWidget
   m_ra = NULL;
   m_camera = NULL;
-  
-  widg = new QWidget();
-  layOuter = new QVBoxLayout(widg);
-
-  layTopCtrls = new QHBoxLayout(layOuter);
-
-// //   layDispCheck = new QHBoxLayout(layTopCtrls);
-  chkDisplay = new QCheckBox("Display", widg, "chkDisplay");
-  layTopCtrls->addWidget(chkDisplay);
-
-  if (is_grid_log) {
-    chkAuto =  new QCheckBox("Auto", widg, "chkAuto");
-    layTopCtrls->addWidget(chkAuto);
-    chkHeaders =  new QCheckBox("Hdrs", widg, "chkHeaders");
-    layTopCtrls->addWidget(chkHeaders);
-  } else {
-    chkAuto = NULL;
-    chkHeaders = NULL;
-  }
-  layTopCtrls->addStretch();
-
-
-  layVcrButtons = new QHBoxLayout(layTopCtrls);
-  bgpTopButtons = new QButtonGroup(widg); // NOTE: not a widget
-  bgpTopButtons->setExclusive(false); // not applicable
-  int but_ht = taiM->button_height(taiMisc::sizSmall);
-  // don't do the vcr buttons -- not used!
-//   for (int i = BUT_BEG_ID; i <= BUT_END_ID; ++i) {
-//     QPushButton* pb = new QPushButton(widg);
-//     pb->setText(but_strs[i]);
-//     pb->setMaximumHeight(but_ht);
-//     pb->setMaximumWidth(20);
-//     layVcrButtons->addWidget(pb);
-//     bgpTopButtons->addButton(pb, i);
-//   }
-  layTopCtrls->addStretch();
-
-  layInitButtons = new QHBoxLayout(layTopCtrls);
-  for (int i = BUT_UPDATE; i <= BUT_CLEAR; ++i) {
-    QPushButton* pb = new QPushButton(widg);
-    pb->setText(but_strs[i]);
-    pb->setMaximumHeight(but_ht);
-    layInitButtons->addWidget(pb);
-    bgpTopButtons->addButton(pb, i);
-  }
-
-  layContents = new QHBoxLayout(layOuter);
-
-  setCentralWidget(widg);
-  connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
-  connect(bgpTopButtons, SIGNAL(buttonClicked(int)), this, SLOT(buttonClicked(int)) );
 }
 
 iTableView_Panel::~iTableView_Panel() {
-  delete bgpTopButtons; bgpTopButtons = NULL;
-
 }
 
-void iTableView_Panel::buttonClicked(int id) {
-  if (updating) return;
-  TableView* lv;
-  if (!(lv = this->lv())) return;
-
-  switch (id) {
-  case BUT_BEG_ID:
-    break;
-  case BUT_FREV_ID:
-    break;
-  case BUT_REV_ID:
-    break;
-  case BUT_FWD_ID:
-    break;
-  case BUT_FFWD_ID:
-    break;
-  case BUT_END_ID:
-    break;
-
-  case BUT_UPDATE:
-    lv->UpdateDisplay();
-    break;
-  case BUT_INIT:
-    lv->InitDisplay();
-    lv->UpdateDisplay();
-    break;
-  case BUT_CLEAR:
-    lv->ClearData();
-    break;
-  }
-}
-
-void iTableView_Panel::chkDisplay_toggled(bool on) {
-  if (updating) return;
-  TableView* lv;
-  if (!(lv = this->lv())) return;
-
-  lv->setDisplay(on);
-}
-
-void iTableView_Panel::Constr_T3ViewspaceWidget() {
+void iTableView_Panel::Constr_T3ViewspaceWidget(QWidget* widg) {
   t3vs = new iT3ViewspaceWidget(widg);
   t3vs->setSelMode(iT3ViewspaceWidget::SM_MULTI); // default
 
@@ -1179,10 +1107,8 @@ void iTableView_Panel::Constr_T3ViewspaceWidget() {
   m_lm->model = SoLightModel::BASE_COLOR;
   root->addChild(m_lm);
 
-  m_camera->viewAll(root, m_ra->getViewportRegion(), .5);
+  m_camera->viewAll(root, m_ra->getViewportRegion(), 2.0);
   m_ra->setBackgroundColor(SbColor(0.8f, 0.8f, 0.8f));
-
-  layContents->addWidget(t3vs);
 }
 
 void iTableView_Panel::InitPanel() {
@@ -1200,14 +1126,8 @@ void iTableView_Panel::UpdatePanel() {
   --updating;
 }
 
-void iTableView_Panel::UpdatePanel_impl() {
-  TableView* lv = this->lv(); // cache
-  chkDisplay->setChecked(lv->display_on);
-  viewAll();
-}
-
 void iTableView_Panel::viewAll() {
-  m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion(), .5); // reduce slack!
+  m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion(), 2.0); // reduce slack!
 }
 
 
@@ -1215,25 +1135,121 @@ void iTableView_Panel::viewAll() {
 // iGridTableView_Panel //
 //////////////////////////
 
-iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
-:inherited(true, tlv)
-{
-  Constr_T3ViewspaceWidget();
+String iGridTableView_Panel::panel_type() const {
+  static String str("Grid Log");
+  return str;
+}
 
-  connect(chkAuto, SIGNAL(toggled(bool)), this, SLOT(chkAuto_toggled(bool)) );
+iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
+:inherited(tlv)
+{
+  int font_spec = taiMisc::fonMedium;
+
+  widg = new QWidget();
+  layOuter = new QVBoxLayout(widg);
+
+  layTopCtrls = new QHBoxLayout(layOuter);
+
+  chkDisplay = new QCheckBox("Display", widg, "chkDisplay");
+  connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
+  layTopCtrls->addWidget(chkDisplay);
+
+  chkHeaders =  new QCheckBox("Hdrs", widg, "chkHeaders");
   connect(chkHeaders, SIGNAL(toggled(bool)), this, SLOT(chkHeaders_toggled(bool)) );
+  layTopCtrls->addWidget(chkHeaders);
+  layTopCtrls->addStretch();
+
+  butRefresh = new QPushButton("Refresh", widg);
+  butRefresh->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layTopCtrls->addWidget(butRefresh);
+  connect(butRefresh, SIGNAL(pressed()), this, SLOT(butRefresh_pressed()) );
+
+  butClear = new QPushButton("Clear", widg);
+  butClear->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layTopCtrls->addWidget(butClear);
+  connect(butClear, SIGNAL(pressed()), this, SLOT(butClear_pressed()) );
+
+  layVals = new QHBoxLayout(layOuter);
+
+  lblWidth = taiM->NewLabel("Width", widg, font_spec);
+  lblWidth->setToolTip("Width of grid log display, in normalized units (default is 1.0 = same as height).");
+  layVals->addWidget(lblWidth);
+
+  fldWidth = new taiField(&TA_float, NULL, NULL, widg);
+  layVals->addWidget(fldWidth->GetRep());
+  layVals->addSpacing(taiM->hsep_c);
+  connect(fldWidth->rep(), SIGNAL(editingFinished()), this, SLOT(fldWidth_textChanged()) );
+
+  lblRows = taiM->NewLabel("Rows", widg, font_spec);
+  lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
+  layVals->addWidget(lblRows);
+
+  fldRows = new taiIncrField(&TA_int, NULL, NULL, widg);
+  layVals->addWidget(fldRows->GetRep());
+  layVals->addSpacing(taiM->hsep_c);
+  connect(fldRows->rep(), SIGNAL(selectionChanged()), this, SLOT(fldRows_textChanged()) );
+
+  lblCols = taiM->NewLabel("Cols", widg, font_spec);
+  lblCols->setToolTip("Maximum number of columns to display (column widths are scaled to fit).");
+  layVals->addWidget(lblCols);
+
+  fldCols = new taiIncrField(&TA_int, NULL, NULL, widg);
+  layVals->addWidget(fldCols->GetRep());
+  layVals->addSpacing(taiM->hsep_c);
+  connect(fldCols->rep(), SIGNAL(selectionChanged()), this, SLOT(fldCols_textChanged()) );
+  layVals->addStretch();
+
+  ////////////////////////////////////////////////////////////////////////////
+  // 	Colorscale etc
+  layColorScale = new QHBoxLayout(layOuter);
+  
+  chkAutoScale = new QCheckBox("auto scale", widg);
+  connect(chkAutoScale, SIGNAL(toggled(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
+  layColorScale->addWidget(chkAutoScale);
+  layVals->addSpacing(taiM->hsep_c);
+
+  cbar = new HCScaleBar(&tlv->scale, ScaleBar::RANGE, true, true, widg);
+//  cbar->setMaximumWidth(30);
+  connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
+  layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+
+  ////////////////////////////////////////////////////////////////////////////
+  // 	viewspace guy
+
+  layViewspace = new QHBoxLayout(layOuter);
+  Constr_T3ViewspaceWidget(widg);
+  layViewspace->addWidget(t3vs);
+
+  setCentralWidget(widg);
 }
 
 iGridTableView_Panel::~iGridTableView_Panel() {
 }
 
-
 void iGridTableView_Panel::InitPanel_impl() {
-  inherited::InitPanel_impl();
-  GridTableView* lv = this->glv(); //cache
-  DataTable* dt = lv->dataTable();
+  // nothing structural here (could split out cols, but not worth it)
+}
+
+void iGridTableView_Panel::UpdatePanel_impl() {
+  inherited::UpdatePanel_impl();
+
+  GridTableView* glv = this->glv(); //cache
+  DataTable* dt = glv->dataTable();
+
+  viewAll();
+
+  chkDisplay->setChecked(glv->display_on);
+  chkHeaders->setChecked(glv->header_on);
+
+  fldWidth->GetImage((String)glv->width);
+  fldRows->GetImage((String)glv->view_rows);
+  fldCols->GetImage((String)glv->col_n);
+
+  cbar->UpdateScaleValues();
+  chkAutoScale->setChecked(glv->scale.auto_scale);
+
   // only show col slider if necessary
-  if(lv->col_n >= dt->cols()) {
+  if(glv->col_n >= dt->cols()) {
     t3vs->setHasHorScrollBar(false);
   } else {
     QScrollBar* sb = t3vs->horScrollBar(); // no autocreate
@@ -1243,19 +1259,14 @@ void iGridTableView_Panel::InitPanel_impl() {
       sb->setTracking(true);
     }
     sb->setMinValue(0);
-    sb->setMaxValue(dt->cols()-lv->col_n+1);
+    sb->setMaxValue(dt->cols()-glv->col_n+1);
     int pg_step = 1;
     sb->setSteps(1, pg_step);
+    sb->setValue(glv->col_range.min);
   }
-}
 
-void iGridTableView_Panel::UpdatePanel_impl() {
-  inherited::UpdatePanel_impl();
-  GridTableView* lv = this->glv(); //cache
-  chkHeaders->setChecked(lv->header_on);
-  chkAuto->setChecked(lv->auto_scale);
   // only show row slider if necessary
-  if (lv->view_rows >= lv->rows()) {
+  if (glv->view_rows >= glv->rows()) {
     t3vs->setHasVerScrollBar(false);
   } else {
     QScrollBar* sb = t3vs->verScrollBar(); // no autocreate
@@ -1266,19 +1277,13 @@ void iGridTableView_Panel::UpdatePanel_impl() {
       sb->setMinValue(0);
     }
     //note: the max val is set so that the last page is a full page (i.e., can't scroll past end)
-    int mx = MAX((lv->rows() - lv->view_rows), 0);
+    int mx = MAX((glv->rows() - glv->view_rows), 0);
     sb->setMaxValue(mx);
     //page step size based on viewable to total lines
-    int pg_step = MAX(lv->view_rows, 1);
+    int pg_step = MAX(glv->view_rows, 1);
     sb->setSteps(1, pg_step);
-    sb->setValue(MIN(lv->view_range.min, mx));
+    sb->setValue(MIN(glv->view_range.min, mx));
   }
-  // col pos
-  QScrollBar* sb = t3vs->horScrollBar(); // no autocreate
-  if (sb) {
-    sb->setValue(lv->col_range.min);
-  }
-
 }
 
 void iGridTableView_Panel::horScrBar_valueChanged(int value) {
@@ -1293,10 +1298,10 @@ void iGridTableView_Panel::verScrBar_valueChanged(int value) {
   glv->ViewRow_At(value);
 }
 
-void iGridTableView_Panel::chkAuto_toggled(bool on) {
+void iGridTableView_Panel::chkDisplay_toggled(bool on) {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-  glv->setAutoScale(on);
+  glv->setDisplay(on);
 }
 
 void iGridTableView_Panel::chkHeaders_toggled(bool on) {
@@ -1305,13 +1310,60 @@ void iGridTableView_Panel::chkHeaders_toggled(bool on) {
   glv->setHeader(on);
 }
 
+void iGridTableView_Panel::butRefresh_pressed() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
 
-
-String iGridTableView_Panel::panel_type() const {
-  static String str("Grid Log");
-  return str;
+  glv->InitDisplay();
+  glv->UpdateDisplay();
 }
 
+void iGridTableView_Panel::butClear_pressed() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->ClearData();
+}
+
+void iGridTableView_Panel::fldWidth_textChanged() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setWidth((float)fldWidth->GetValue());
+  glv->UpdateDisplay(false);
+}
+
+void iGridTableView_Panel::fldRows_textChanged() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setRows((int)fldRows->GetValue());
+}
+
+void iGridTableView_Panel::fldCols_textChanged() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setCols((int)fldCols->GetValue());
+}
+
+void iGridTableView_Panel::cbar_scaleValueChanged() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  //note: user changed value, so must no longer be autoscale
+  ++updating;
+  chkAutoScale->setChecked(false); //note: raises signal on widget! (grr...)
+  --updating;
+
+  glv->setScaleData(false, cbar->min(), cbar->max());
+}
+
+void iGridTableView_Panel::chkAutoScale_toggled(bool on) {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->setScaleData(on, cbar->min(), cbar->max());
+}
 
 
 //////////////////////////

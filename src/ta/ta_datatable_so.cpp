@@ -48,6 +48,8 @@
 //////////////////////////
 
 float T3GridViewNode::drag_size = .04f;
+float T3GridViewNode::frame_margin = .05f;
+float T3GridViewNode::frame_width = .02f;
 
 extern void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
@@ -59,15 +61,17 @@ void T3GridViewNode::initClass()
   SO_NODE_INIT_CLASS(T3GridViewNode, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3GridViewNode::T3GridViewNode(void* dataView_)
+T3GridViewNode::T3GridViewNode(void* dataView_, float wdth)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GridViewNode);
+
+  width_ = wdth;
   
   drag_sep_ = new SoSeparator;
   drag_xf_ = new SoTransform;
   drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
-  drag_xf_->translation.setValue(-0.04f, -1.05f, 0.0f);
+//   drag_xf_->translation.setValue(-drag_size, -drag_size, 0.0f);
   drag_sep_->addChild(drag_xf_);
   dragger_ = new SoTransformBoxDragger;
   drag_sep_->addChild(dragger_);
@@ -82,10 +86,12 @@ T3GridViewNode::T3GridViewNode(void* dataView_)
   drag_trans_calc_->ref();
   drag_trans_calc_->A.connectFrom(&dragger_->translation);
 
-  String expr = "oA = vec3f(.5 + " + String(drag_size) + " * A[0], -.5 + " +
-    String(drag_size) + " * A[1], 0.0 + " + String(drag_size) + " * A[2])";
+  // expr set in render below
+//   String expr = "oA = vec3f(" + String(.5f * (width_ + 2.0f * frame_margin)) + " + " + String(drag_size)
+//     + " * A[0], .5 + " +  String(drag_size)
+//     + " * A[1], " + String(drag_size) + " * A[2])";
 
-  drag_trans_calc_->expression = expr.chars();
+//   drag_trans_calc_->expression = expr.chars();
 
   txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
   txfm_shape()->rotation.connectFrom(&dragger_->rotation);
@@ -133,13 +139,26 @@ T3GridViewNode::~T3GridViewNode()
   grid_ = NULL;
 }
 
+void T3GridViewNode::setWidth(float wdth) {
+  width_ = wdth;
+  render();
+}
+
 void T3GridViewNode::render() {
-  txlt_stage_->translation.setValue(0.0f, 0.0f, 0.0f);
-  frame_->setDimensions(1.1f, 1.1f, 0.02f, .02f);
-  txfm_shape()->translation.setValue(.5f * 1.05f, -.5f * 1.05f, 0.0f);
+  float frmg2 = 2.0f * frame_margin;
+
+  String expr = "oA = vec3f(" + String(.5f * (width_ + frame_margin)) + " + " + String(drag_size)
+    + " * A[0], " + String(.5f * (1.0f + frmg2)) + " + " +  String(drag_size)
+    + " * A[1], " + String(drag_size) + " * A[2])";
+
+  drag_trans_calc_->expression = expr.chars();
+
+  txlt_stage_->translation.setValue(0.0f, 1.0f + frame_margin, 0.0f);
+  frame_->setDimensions(width_ + frmg2, 1.0f + frmg2, frame_width, frame_width);
+  txfm_shape()->translation.setValue(.5f * (width_ + frame_margin), .5f * (1.0f + frmg2), 0.0f);
 //   txlt_grid_->translation.setValue(-(geom_.x/2.0f - inset), geom_.y/2.0f - inset, 0.0f);
   SoFont* font = captionFont(true);
-  transformCaption(iVec3f(0.1f, -((float)font->size.getValue()) -1.05f, 0.0f)); // move caption below the frame
+  transformCaption(iVec3f(0.1f, -((float)font->size.getValue()), 0.0f)); // move caption below the frame
 }
 
 //////////////////////////

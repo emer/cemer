@@ -131,8 +131,7 @@ protected:
   override void 	Render_post();
   override void		Reset_impl();
 
-  override void		DataUpdateAfterEdit_impl();
-
+  override void 	DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 };
 
 class TA_API GridTableView: public TableView {
@@ -144,23 +143,26 @@ public:
   int		col_n; 		// number of columns to display: determines sizes of everything automatically from this
   MinMaxInt	col_range; 	// column range that is visible (max is the last col visible, not the last+1; range = col_n-1, except if columns are not visible range can be larger)
 
+  float		width;		// how wide to make the display (height is always 1.0)
   bool		grid_on; 	// whether to show grid lines
   bool		header_on;	// is the table header visible?
   bool		row_num_on; 	// row number col visible?
-  bool		auto_scale;	// whether to auto-scale on color block values or not
-  ColorScale	scale; 		// The color scale for this display
-
-  MinMax        scale_range;	// #HIDDEN range of scalebar
-  MinMaxInt	actual_range;	// #HIDDEN #NO_SAVE range in actual lines of data
+  ColorScale	scale; 		// contains current min,max,range,zero,auto_scale
 
   GridTableViewSpec view_spec;  // #SHOW_TREE baked in spec 
 
   override void	InitDisplay(bool init_panel = true);
   override void	UpdateDisplay(bool update_panel = true);
 
-  void		setAutoScale(bool value);
+  // view button/field callbacks
   void		setGrid(bool value);
   void		setHeader(bool value);
+  void		setWidth(float wdth);
+  void		setRows(int rows);
+  void		setCols(int cols);
+  void		setAutoScale(bool value);
+  void		setScaleData(bool auto_scale, float scale_min, float scale_max);
+  // updates the values in us and the stored ones in the colorscale list
 
   // view control
   void		VScroll(bool left); // scroll left or right
@@ -186,9 +188,6 @@ public:
   COPY_FUNS(GridTableView, inherited);
   T3_DATAVIEWFUNS(GridTableView, TableView)
 
-public:
-  void ColorBar_execute();
-
 protected:
   float_Array		col_widths_raw; // raw widths of columns (original request)
   float_Array		col_widths; 	// scaled widths of columns (to unitary size)
@@ -198,6 +197,8 @@ protected:
   float			font_scale;	// scale to set global font to
 
   virtual void		CalcViewMetrics(); // for entire view
+  virtual void		GetScaleRange();   // get the current scale range based on auto scaled columns (only if auto_scale is on)
+
   virtual void		RemoveGrid();
   virtual void		RemoveHeader(); // remove the header
   virtual void  	RemoveLines(); // remove all lines
@@ -207,9 +208,10 @@ protected:
   virtual void		RenderLines(); // render all the view_range lines
   virtual void		RenderLine(int view_idx, int data_row); // add indicated line
 
-// view control:
+  // view control:
   override void		ClearViewRange();
   override void 	MakeViewRangeValid();
+
   override void  	DataChange_NewRows(int rows_added);
   
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
@@ -225,46 +227,23 @@ protected:
 //////////////////////////
 
 class TA_API iTableView_Panel: public iViewPanelFrame {
-  // abstract base for logview panels
-INHERITED(iViewPanelFrame)
+  // abstract base for logview panels -- just has the viewspace widget; everything else is up to the subclass
+  INHERITED(iViewPanelFrame)
   Q_OBJECT
 public:
-  enum ButtonIds {
-    BUT_BEG_ID,
-    BUT_FREV_ID,
-    BUT_REV_ID,
-    BUT_FWD_ID,
-    BUT_FFWD_ID,
-    BUT_END_ID,
-
-    BUT_UPDATE,
-    BUT_INIT,
-    BUT_CLEAR
-  };
-
-  QWidget*		widg;
-  QVBoxLayout*		layOuter;
-  QHBoxLayout*		  layTopCtrls;
-  QCheckBox*		    chkDisplay;
-  QCheckBox*		    chkAuto; // NOTE: only created in GridTableView
-  QCheckBox*		    chkHeaders; // NOTE: only created in GridTableView
-  QButtonGroup*		    bgpTopButtons; // NOTE: not a widget
-  QHBoxLayout*		    layVcrButtons;
-  QHBoxLayout*		    layInitButtons;
-  QHBoxLayout*		  layContents; // subclasses put their actual content here
   iT3ViewspaceWidget*	    t3vs; //note: created with call to Constr_T3Viewspace
 
 //  override String	panel_type() const; // this string is on the subpanel button for this panel
 
   TableView*		lv() {return (TableView*)m_dv;}
   SoQtRenderArea* 	ra() {return m_ra;}
-//  override int 		EditAction(int ea);
-//  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
+
+  virtual void 		InitPanel();
+  // called on structural changes 
+  virtual void 		UpdatePanel();
+  // call when data added/removed, or view is scrolled, or other non-structural changes
 
   void 			viewAll(); // zooms to fit entire scenegraph in window
-
-  virtual void 		InitPanel(); //called on structural changes (also does Update)
-  virtual void 		UpdatePanel(); //called when data added/removed, or view is scrolled, or other changes
 
   iTableView_Panel(TableView* lv);
   ~iTableView_Panel();
@@ -278,25 +257,40 @@ protected:
   SoPerspectiveCamera*	m_camera;
   SoLightModel*		m_lm;
 
-  iTableView_Panel(bool is_grid_log, TableView* lv); // only used by GridTableView
-  void 			Constr_T3ViewspaceWidget();
-//  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
-  virtual void 		InitPanel_impl() {}
-  virtual void 		UpdatePanel_impl();
-protected slots:
-  virtual void		buttonClicked(int id);
-  virtual void 		chkDisplay_toggled(bool on);
-//  void			list_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col);
-//  void			list_selectionChanged(); //note: must use this parameterless version in Multi mode
-private:
-  void			init(bool is_grid_log);
-};
+  void 			Constr_T3ViewspaceWidget(QWidget* widg);
 
+  virtual void 		InitPanel_impl() {}
+  // subclasses define these to do the actual work
+  virtual void 		UpdatePanel_impl() {}
+  // subclasses define these to do the actual work
+};
 
 class TA_API iGridTableView_Panel: public iTableView_Panel {
   Q_OBJECT
 INHERITED(iTableView_Panel)
 public:
+  QWidget*		widg;
+  QVBoxLayout*		layOuter;
+  QHBoxLayout*		  layTopCtrls;
+  QCheckBox*		    chkDisplay;
+  QCheckBox*		    chkHeaders;
+  QPushButton*		    butRefresh;
+  QPushButton*		    butClear;
+
+  QHBoxLayout*		  layVals;
+  QLabel*		    lblWidth;
+  taiField*		    fldWidth; // width of the display (height is always 1.0)
+  QLabel*		    lblRows;
+  taiIncrField*		    fldRows; // number of rows to display
+  QLabel*		    lblCols;
+  taiIncrField*		    fldCols; // number of cols to display
+
+  QHBoxLayout*		  layColorScale;
+  QCheckBox*		    chkAutoScale;
+  ScaleBar*		    cbar;	      // colorbar
+
+  QHBoxLayout*		  layViewspace;
+
   override String	panel_type() const; // this string is on the subpanel button for this panel
   GridTableView*	glv() {return (GridTableView*)m_dv;}
 
@@ -316,8 +310,17 @@ public: // IDataLinkClient interface
   override TypeDef*	GetTypeDef() const {return &TA_iGridTableView_Panel;}
 
 protected slots:
-  void 			chkAuto_toggled(bool on);
-  void 			chkHeaders_toggled(bool on);
+
+  void 		chkDisplay_toggled(bool on);
+  void 		chkHeaders_toggled(bool on);
+  void 		butRefresh_pressed();
+  void 		butClear_pressed();
+  void 		fldWidth_textChanged();
+  void 		fldRows_textChanged();
+  void 		fldCols_textChanged();
+
+  void 		chkAutoScale_toggled(bool on);
+  void		cbar_scaleValueChanged();
 };
 
 

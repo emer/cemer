@@ -399,7 +399,7 @@ public:
   void			RemoveCol(int col);
   // #CAT_Columns removes indicated column; 'true' if removed
   virtual void		Reset();
-  // #CAT_Modify remove all columns and data
+  // #CAT_Modify #MENU #MENU_ON_Table remove all columns (and data)
 
   void			MarkCols();
   // #CAT_Columns mark all cols before updating, for orphan deleting

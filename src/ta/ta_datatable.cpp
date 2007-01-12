@@ -1733,6 +1733,7 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
     }
     dcs->setDataCol(dc, first);
   }  
+//   cerr << "data spec cols updated: " << cols->size << " " << col_specs.size << endl;
 }
 
 

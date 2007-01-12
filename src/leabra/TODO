@@ -5,12 +5,12 @@ commit:
 ------------------
 * gridview: 
 
-  - view controls: scrollbar for n to display; auto display of more/less n to keep
-    things square?
+  - auto display of more/less n to keep things square? yes -- have a flag for that.
+  - have some way to control visibility of columns, easily
+  - not properly saving/loading 4d data!
   - all views: add bool for draggers
-  - and geom (as float); default to 1x1 but sometimes you might want 1x.5 or whatever
+  - colorscale not working
   - grid
-  - auto-scale
   - all views: set color spec button in panel
 
   - test case: filtered layer unit history moving back in depth w/ netview
@@ -56,7 +56,7 @@ for setting network stats vars on dmem_timing.
 * netview: 
 
  * make xydrag handles thicker: create new default image by replacing existing
-   with thicker bars; also for transform box --- yes!! top priority!!
+   with thicker bars;
 
 --------------
 
