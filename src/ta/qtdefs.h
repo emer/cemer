@@ -181,7 +181,6 @@ class	iTreeWidget;		// #IGNORE
 
 // clipboard types
 class	taiClipData;		// #IGNORE
-class	taiMimeItem;		// #IGNORE
 
 #define COLOR_BLACK Qt::black
 

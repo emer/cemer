@@ -19,7 +19,7 @@
 #ifndef TA_QTCLIPDATA_H
 #define TA_QTCLIPDATA_H
 
-#include "ta_base.h" // for list template
+#include "ta_base.h" 
 
 #ifndef __MAKETA__
 # include <QMimeData>
@@ -157,6 +157,10 @@ To Extend taiMimeSource:
 // forwards
 class taiMimeItem;
 class taiMimeItem_List;
+class taiMultiMimeItem;
+class taiObjectMimeItem;
+class taiObjectsMimeItem;
+class taiMimeSource;
 
 
 class TA_API taiClipData: public QMimeData { // ##NO_CSS
@@ -230,7 +234,7 @@ public:
   static QByteArray	StrToByteArray(const QString& str);
     // convenience, for converting strings to bytearrays
     
-  TA_BASEFUNS(taiMimeFactory);
+  TA_BASEFUNS(taiMimeFactory);//
 private:
   void	Initialize() {}
   void	Destroy() {}
@@ -291,130 +295,97 @@ private:
 };
 
 
-//////////////////////////////////
-// 	taiMimeItem		//
-//////////////////////////////////
 
-class TA_API taiMimeItem: public QObject { // object that encapsulates the info for one object or other single item of clipboard data, either sending or receiving, in-process or external
-INHERITED(QObject)
-  Q_OBJECT
-friend class taiMimeSource;
+class TA_API taiMimeItem: public taOBase { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS object that encapsulates the info for one object or other item of clipboard data
+INHERITED(taOBase)
 public:
-  enum ItemFlags { // #BITS
-    IF_THIS_PROCESS	= 0x0001, // when sent/received in process
-    IF_SEND		= 0x0002 // on for Send, off for Receive
+  enum MimeItemFlags { // #BITS
+    MIF_DECODED		= 0x0001 // true once we decode
   };
   
-  inline bool		isThisProcess() const {return m_this_proc;}
-  void			setThisProcess(bool value) {m_this_proc = value;}
-  virtual bool		isObject() const {return false;}
-  virtual bool		isMatrix() const {return false;}
-  virtual bool		isTable() const {return false;}
+  inline int		flags() const {return m_flags;}
+  bool			isThisProcess() const; // from ms
+  QMimeData*		mimeData() const;
+  inline taiMimeSource*	ms() const {return m_ms;} 
   
-  taiMimeItem();
-  
-protected:
-  bool			m_this_proc; 
-  virtual void		objDestroyed_impl() {} // datalinks will connect to this so our obj doesn't become invalid
-  virtual void		SetData(ostream& ost, const String& fmt = _nilString) {} // (s) get the data from the object
-};
-
-
-class TA_API taiMimeItem_List: public taPtrList<taiMimeItem> {
-public:
-  void			El_Done_(void*);	// override, when "done" (delete)
-};
-
-/*
-class TA_API taiMatDataMimeItem: public taiMimeItem { // for matrix and table data
-INHERITED(taiMimeItem)
-  Q_OBJECT
-public:
-  
-public: // i/f for tabular data guy
-  override bool		isMatrix() const;
-  override bool		isTable() const;
-  virtual void		GetDataGeom(int& cols, int& rows) const = 0;
-    // number of cols/rows in the overall data
-  virtual void		GetColGeom(int col, int& cols, int& rows) const = 0;
-    // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
-  virtual void		GetMaxRowGeom(int& max_row) const = 0;
-    // longest cell geom determines overall row geom
+  void			Constr(taiMimeSource* ms, const String& mimetype = _nilString);
     
+  void	SetIndex(int idx) {m_index = idx;} // iml index as convenience
+  int	GetIndex() const {return m_index;}
+  TA_BASEFUNS(taiMimeItem);
+  
 protected:
-  int			m_data_type; // one of ST_MATRIX_DATA or TABLE_DATA
-  override void 	GetFormats_impl(QStringList& list, int idx) const; 
-  taiMatDataMimeItem(int data_type);
-}; 
+  int			m_index;
+  int			m_flags;
+  taiMimeSource*	m_ms;
+  
+  inline bool		isDecoded() const {return (m_flags & MIF_DECODED);}
+  
+  void			AssertData(); // insures data is fetched/decoded
+  virtual void		Constr_impl(const String& mimetype) {}
+  virtual void		DecodeData_impl() {}
+private:
+  void	Initialize();
+  void	Destroy() {}
+};
 
 
-class TA_API taiRcvMatDataMimeItem: public taiMatDataMimeItem { 
-  // for received mat or table data, or compatible foreign mat data
-INHERITED(taiMatDataMimeItem)
-  Q_OBJECT
-friend class taiExtMimeSource;
+class TA_API taiMimeItem_List: public taList<taiMimeItem> {
 public:
-  
-public: // i/f for tabular data guy
-  void			GetDataGeom(int& cols, int& rows) const
-    {cols = m_cols;  rows = m_rows;}
-  void			GetColGeom(int col, int& cols, int& rows) const;
-  void			GetMaxRowGeom(int& max_row) const {max_row = m_max_row;} 
+  TA_BASEFUNS(taiMimeItem_List);
+private:
+  void	Initialize() {SetBaseType(&TA_taiMimeItem);}
+  void	Destroy() {}
+};
 
-protected:
-  int			m_cols;
-  int			m_rows;
-  int			m_max_row;
-  taBase_List		m_geoms; // list of GeomData
-  
-  void			DecodeMatrixDesc(String& arg); // same for both
-  void			DecodeTableDesc(String& arg); // the extra stuff
-  
-  taiRcvMatDataMimeItem(int data_type);
-};*/
-
-
-class TA_API taiObjDataMimeItem: public taiMimeItem { // for tacss objects
+class TA_API taiMultiMimeItem: public taiMimeItem { // #VIRT_BASE
 INHERITED(taiMimeItem)
-  Q_OBJECT
-  
 public:
-  override bool		isObject() const {return true;}
+  taiMimeItem_List	items; // the subitems
   
-public: // i/f for object guys -- not used for others
-  virtual void*		obj() const {return m_obj;}
-  virtual TypeDef*	td() const {return NULL;}
-  virtual String	typeName() const {return _nilString;}
-  virtual bool		isBase() const {return false;}
-  virtual String	path() const {return _nilString;}
-public slots:
-  void			objDestroyed() {objDestroyed_impl();} // datalinks will connect to this so our obj doesn't become invalid
-
-
-protected:
-  taBase*		m_obj; 
-  taiObjDataMimeItem();
+  void	InitLinks();
+  void	CutLinks();
+  TA_ABSTRACT_BASEFUNS(taiMultiMimeItem);
+private:
+  void	Initialize();
+  void	Destroy() {CutLinks();}
 };
 
-
-class TA_API taiRcvMimeItem: public taiObjDataMimeItem { // specialized for tacss receiving
-INHERITED(taiObjDataMimeItem)
-  Q_OBJECT
-friend class taiMimeSource;
+class TA_API taiObjectMimeItem: public taiMimeItem { // for tacss object
+INHERITED(taiMimeItem)
+friend class taiObjectsMimeItem;
+friend class taiMimeSource; //TEMP
 public:
-  virtual void*		obj() const;
-  TypeDef*		td() const {return mtd;}
-  String		typeName() const {return mtype_name;}; // override
-  bool			isBase() const {return m_is_base;} // override
-  String		path() const {return mpath;} // override
+  inline String		typeName() {return m_type_name;};
+  inline String		path() {return m_path;}
+  TypeDef*		td() {return m_td;}
+  taBase*		obj(); // note: only valid when in-process
+  
+  int			GetObjectData(istringstream& result);
+    // #IGNORE gets the object data for the current item; returns number of bytes
 
+  TA_BASEFUNS(taiObjectMimeItem);
 protected:
-  TypeDef*		mtd;
-  String		mtype_name;
-  bool			m_is_base;
-  String		mpath;
-  taiRcvMimeItem(const String type_name_, const String path_); // sets td and isBase
+  String		m_type_name;
+  TypeDef*		m_td;
+  String		m_path;
+  taBase*		m_obj;
+  override void		Constr_impl(const String& mimetype);
+  override void		DecodeData_impl();
+private:
+  void	Initialize();
+  void	Destroy() {}
 };
+
+class TA_API taiObjectsMimeItem: public taiMultiMimeItem { // for tacss objects
+INHERITED(taiMultiMimeItem)
+public:
+  TA_BASEFUNS(taiObjectsMimeItem);
+private:
+  void	Initialize() {items.SetBaseType(&TA_taiObjectMimeItem);}
+  void	Destroy() {}
+};
+
 
 
 /*
@@ -428,43 +399,55 @@ class TA_API taiMimeSource: public QObject { // a delegate/wrapper that is used 
 INHERITED(QObject)
   Q_OBJECT
 public:
+  static taiMimeSource*	New(const QMimeData* ms);
+  static taiMimeSource*	NewFromClipboard(); // whatever is on clipboard
+public: //TEMP compatability
   enum SourceType {
-    ST_UNDECODED,	// still need to decode
-    ST_UNKNOWN,		// not a tacss type
-    ST_OBJECT,		// tacss object
-    ST_MATRIX_DATA,	// matrix, or matrix-compatible data (ex Excel)
-    ST_TABLE_DATA	// tacss Table data
+    ST_UNDECODED,
+    ST_OBJECT,
+    ST_UNKNOWN
   };
   
-  static taiMimeSource*	New(const QMimeData* ms); // we use a static method for extensibility -- creates correct subtype
-//  static taiMimeSource*	New2(taiClipData* cd); // we use a static method for extensibility -- creates correct subtype
-  static taiMimeSource*	NewFromClipboard(); // whatever is on clipboard
-
-  int			srcAction() const {return m_src_action;} // override
-  bool			isMulti() const  {return (count() > 1);} // override
+  int			count() const {return (mi) ? mi->items.size : 0;}
+  bool			isMulti() const  {return (mi) ? (mi->items.size > 1) : false;} // override
   bool			isObject() const {return (m_src_type == ST_OBJECT);}
-  bool			isTabularData() const 
-    {return ((m_src_type == ST_MATRIX_DATA) || (m_src_type == ST_TABLE_DATA));}
-  bool			isMatrixData() const {return (m_src_type == ST_MATRIX_DATA);}
-  bool			isTableData() const {return (m_src_type == ST_TABLE_DATA);}
-
-  int			count() const {return list.size;} // number of items
-  bool			IsThisProcess() const {return m_this_proc;} // override
-  
-  void			Decode(); // decodes the guy, noop if decoded
-
-  inline SourceType	type() const {return m_src_type;}
 
   void*			object() const;
-    // gets the object, if possible -- only valid for IsThisProcess true
-  taBase*		tabObject() const; // gets a taBase object, if possible, otherwise NULL -- only valid for IsThisProcess true
-  int			objectData(istringstream& result) const;
-    // #IGNORE gets the object data for the current item; returns number of bytes
+    // gets the object, if possible -- only valid for isThisProcess true
+  int			objectData(istringstream& istr);
+  taBase*		tabObject() const; // gets a taBase object, if possible, otherwise NULL -- only valid for isThisProcess true
+public: //TEMP object iteration guys
+  int			index() const; // current index value; -1 if none
+  void			setIndex(int val) 
+    {iter_idx = ((val >= 0) && (val < count())) ? val : -1;}
+    // sets index; must be -1 or in range, else sets to -1
+  String		typeName() const 
+    {return (isObject() && inRange()) ? 
+      ((taiObjectMimeItem*)item())->typeName() : _nilString;}
+    // ITER empty if not a tacss object mime type
+  TypeDef*		td() const 
+    {return (isObject() && inRange()) ?
+      ((taiObjectMimeItem*)item())->td() : NULL;}
+    // ITER the TypeDef associated with typeName, or NULL if not in our type list or not tacss
+  bool			isBase() const 
+   {return (isObject() && inRange()) ? true : false;};
+    // ITER true if the object is derived from taBase NOTE: all objects are base
+  String		path() const 
+    {return (isObject() && inRange()) ? 
+      ((taiObjectMimeItem*)item())->path() : _nilString;};
+    // ITER if a taBase object, its full path
+
+public:
+  bool			isThisProcess() const {return m_this_proc;} // override
   QStringList 		formats() const; // override
   bool			hasFormat(const QString& mimeType) const;
   QByteArray 		data(const QString& mimeType) const;
   int			data(const QString& mimeType, taString& result) const; // provides data to a String; returns # bytes
   int			data(const QString& mimeType, istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
+  int			srcAction() const {return m_src_action;}
+  
+  void			Decode(); // decodes the guy, noop if decoded
+
 
   virtual TypeDef*	CommonSubtype() const; // type of item (if 1) or common subtype if multiple
 
@@ -473,28 +456,6 @@ public:
 public slots:
   void			ms_destroyed(); // mostly for debug
 
-public: // iteration guys
-  int			index() const; // current index value; -1 if none
-  void			setIndex(int val) 
-    {iter_idx = ((val >= 0) && (val < count())) ? val : -1;}
-    // sets index; must be -1 or in range, else sets to -1
-public: // object i/f
-  String		typeName() const 
-    {return (isObject() && inRange()) ? 
-      ((taiObjDataMimeItem*)item())->typeName() : _nilString;}
-    // ITER empty if not a tacss object mime type
-  TypeDef*		td() const 
-    {return (isObject() && inRange()) ?
-      ((taiObjDataMimeItem*)item())->td() : NULL;}
-    // ITER the TypeDef associated with typeName, or NULL if not in our type list or not tacss
-  bool			isBase() const 
-   {return (isObject() && inRange()) ?
-     ((taiObjDataMimeItem*)item())->isBase() : false;};
-    // ITER true if the object is derived from taBase
-  String		path() const 
-    {return (isObject() && inRange()) ? 
-      ((taiObjDataMimeItem*)item())->path() : _nilString;};
-    // ITER if a taBase object, its full path
     
 public: // tabular data i/f
 /*  void		GetDataGeom(int& cols, int& rows) const
@@ -512,22 +473,26 @@ public: // tabular data i/f
 
 protected:
   const QMimeData* 	ms;
-  int			iter_idx; // iteration index: =-1, not started yet; >=0 < items.size, in range; =size, past end
-  SourceType		m_src_type;
-  bool			inRange() const {return ((iter_idx >= 0) && (iter_idx < count()));}// true if index in range
-  taiMimeItem*		item() const {return item(iter_idx);} // current item -- must always be checked with inRange before access
-
-  void			AssertList(); // makes sure list is constructed
 
   taiMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
 protected: // was in ExtMimeSource
   taiMimeItem_List	list;
   // the following are extracted from the common tacss header info:
-  int			m_itm_cnt;
   int			m_src_action;
   bool			m_this_proc;
   
-  taiMimeItem*		item(int idx) const {return list.SafeEl(idx);} // override
+protected://TEMP -- just for intermediate compatability
+  int			m_itm_cnt;
+  SourceType		m_src_type;
+  taiObjectsMimeItem*	mi; // cache
+  int			iter_idx; // iteration index: =-1, not started yet; >=0 < items.size, in range; =size, past end
+  bool			inRange() const {return ((iter_idx >= 0) && (iter_idx < count()));}// true if index in range
+  taiMimeItem*		item() const {return item(iter_idx);} // current item -- must always be checked with inRange before access
+  taiObjectsMimeItem*	objects() const {return mi;}
+
+  taiMimeItem*		item(int idx) const {
+    if (mi) return mi->items.SafeEl(idx); else return NULL;} // TEMP
+  
   virtual void		Decode_impl(); 
   bool			Decode_common(String arg);
   bool			DecodeDesc_object(String arg); // decode the full description, return 'true' if valid, build list from desc

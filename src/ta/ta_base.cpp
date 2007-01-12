@@ -1435,7 +1435,7 @@ void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child
    forbidden |= taiClipData::EA_FORB_ON_SRC_CUT;
 
   // can't link etc. if not in this process
-  if (!ms->IsThisProcess())
+  if (!ms->isThisProcess())
     forbidden |= taiClipData::EA_IN_PROC_OPS;
 }
 
@@ -2882,7 +2882,7 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   if (ms == NULL) return; // shouldn't happen -- might mean nothing on clipboard
   // if not a taBase type of object, no more applicable
   if (!ms->isBase()) return;
-  if (!ms->IsThisProcess())
+  if (!ms->isThisProcess())
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
 
   // generic list paste allows any subtype of the base type
@@ -2937,7 +2937,7 @@ int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSou
 
     // decode src location
     if (list) {
-      if (ms->IsThisProcess())
+      if (ms->isThisProcess())
         rval = ChildEditActionLD_impl_inproc(md, item_idx, child, ms, eax);
       else {
         // DST OP, SRC OUT OF PROCESS

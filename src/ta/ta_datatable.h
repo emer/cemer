@@ -1105,6 +1105,55 @@ private:
   void	Destroy() {}
 };
 
+/*
+class TA_API taiMatDataMimeItem: public taiMimeItem { // for matrix and table data
+INHERITED(taiMimeItem)
+  Q_OBJECT
+public:
+  
+public: // i/f for tabular data guy
+  override bool		isMatrix() const;
+  override bool		isTable() const;
+  virtual void		GetDataGeom(int& cols, int& rows) const = 0;
+    // number of cols/rows in the overall data
+  virtual void		GetColGeom(int col, int& cols, int& rows) const = 0;
+    // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
+  virtual void		GetMaxRowGeom(int& max_row) const = 0;
+    // longest cell geom determines overall row geom
+    
+protected:
+  int			m_data_type; // one of ST_MATRIX_DATA or TABLE_DATA
+  override void 	GetFormats_impl(QStringList& list, int idx) const; 
+  taiMatDataMimeItem(int data_type);
+}; 
+
+
+class TA_API taiRcvMatDataMimeItem: public taiMatDataMimeItem { 
+  // for received mat or table data, or compatible foreign mat data
+INHERITED(taiMatDataMimeItem)
+  Q_OBJECT
+friend class taiExtMimeSource;
+public:
+  
+public: // i/f for tabular data guy
+  void			GetDataGeom(int& cols, int& rows) const
+    {cols = m_cols;  rows = m_rows;}
+  void			GetColGeom(int col, int& cols, int& rows) const;
+  void			GetMaxRowGeom(int& max_row) const {max_row = m_max_row;} 
+
+protected:
+  int			m_cols;
+  int			m_rows;
+  int			m_max_row;
+  taBase_List		m_geoms; // list of GeomData
+  
+  void			DecodeMatrixDesc(String& arg); // same for both
+  void			DecodeTableDesc(String& arg); // the extra stuff
+  
+  taiRcvMatDataMimeItem(int data_type);
+};*/
+
+
 
 
 #endif // datatable_h

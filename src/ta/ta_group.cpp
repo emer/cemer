@@ -670,7 +670,7 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md, int subgrp_i
   // DST ops
   // if not a taBase type of object, no more applicable
   if (!ms->isBase()) return;
-  if (!ms->IsThisProcess())
+  if (!ms->isThisProcess())
     forbidden &= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
 
   // generic group paste only allows exact type, so we check for each inheriting from the other, which means same
@@ -707,7 +707,7 @@ int taGroup_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMi
     if (ms == NULL) return taiClipData::ER_IGNORED;
 
     // decode src location
-    if (ms->IsThisProcess())
+    if (ms->isThisProcess())
       rval = ChildEditActionGD_impl_inproc(md, subgrp_idx, (taGroup_impl*)child, ms, eax);
     else
       // DST OP, SRC OUT OF PROCESS

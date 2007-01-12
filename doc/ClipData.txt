@@ -313,26 +313,6 @@ NEW
   * all our sources must conform to this interface
   * singleton-only formats simply only ever use 1 slot
 
-* source data is combination of two things:
-  * taiClipData-subclass, which controls any common aspects
-    * generates any standard or 1-only mime types,
-      ex. text/plain, image/xxx etc.
-  * (optional) taiMimeItem-subclasses, which generate any
-    multi items
-* sink data is likewise a combination:
-  * ContextFactory, which can reconstitute an equivalent
-    to the source ClipData
-  * item classes, if the context supports them
-
-FLAWS:
-
-* still doesn't handle the case where we might have more than
-  one set of stuff;
-  ex: DataTable is an object
-    * need to have its basic taBase stuff on clipboard
-    * but maybe it ALSO supports a "structure" thing
-  OR  maybe it also wants to put the data on the clipboard
-
 EXAMPLE
 
 MimeType vs. MimeExtract
@@ -431,9 +411,9 @@ Description props are automatically decoded during construction.
 Content props are decoded JIT.
 
 virtual void DecodeDesc_impl -- decodes the description props
-virtual void DecodeCont_impl -- decodes the content
+virtual void DecodeData_impl -- decodes the content
 
-void AssertContent -- makes sure content is decoded
+void AssertData -- makes sure content is decoded
 
 
 taiMimeSource

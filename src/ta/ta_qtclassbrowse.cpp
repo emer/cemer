@@ -142,11 +142,6 @@ bool taTypeInfoDataLink::HasChildItems() {
   return rval;
 }
 
-taiMimeItem* taTypeInfoDataLink::GetMimeItem() {
-//TODO:
-  return NULL;
-}
-
 String taTypeInfoDataLink::GetName() const {
   return data()->name;
 }

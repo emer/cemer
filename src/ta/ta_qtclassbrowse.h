@@ -82,7 +82,6 @@ public:
 //  override const QPixmap* GetIcon(int bmf, int& flags_supported);
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
-  override taiMimeItem* GetMimeItem();
   override String	GetName() const;
   override String	GetDisplayName() const;
   override bool		ShowMember(MemberDef* md); // asks this type if we should show the md member

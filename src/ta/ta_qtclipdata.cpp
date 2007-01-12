@@ -194,24 +194,64 @@ void taiObjectMimeFactory::InitHeader(int cnt, QString& str) {
 
 
 //////////////////////////////////
-// 	taiMimeItem 		//
+//  taiMimeItem 		//
 //////////////////////////////////
 
-taiMimeItem::taiMimeItem()
-:inherited()   
-{
-  m_this_proc = true;
+void taiMimeItem::Initialize() {
+  m_index = -1;
+  m_flags = 0;
+  m_ms = NULL;
 }
 
+void taiMimeItem::AssertData() {
+  if (!isDecoded()) {
+    DecodeData_impl();
+    m_flags |= MIF_DECODED;
+  }
+}
+
+void taiMimeItem::Constr(taiMimeSource* ms_, const String& mimetype) {
+  m_ms = ms_;
+  Constr_impl(mimetype); // NOTE: mt is often nil (default)
+}
+/*
+QByteArray taiMimeItem::data(const QString& mimeType) const {
+  if (m_ms) return m_ms->data(mimeType);
+  else return QByteArray();
+}
+
+int taiMimeItem::data(const QString& mimeType, taString& result) const {
+  QByteArray ba = data(mimeType);
+  result.set(ba.data(), ba.size());
+  return ba.size();
+}
+
+int taiMimeItem::data(const QString& mimeType, istringstream& result) const {
+  QByteArray ba = data(mimeType);
+  result.str(string(ba.data(), ba.size()));
+  return ba.size();
+}
+*/
+bool taiMimeItem::isThisProcess() const {
+  if (m_ms) return m_ms->isThisProcess();
+  else return false;
+}
+
+QMimeData* taiMimeItem::mimeData() const {
+/*TODO  if (m_ms) return m_ms->mimeData();
+  else */return NULL;
+}
 
 //////////////////////////////////
 // 	taiMimeItem_List	//
 //////////////////////////////////
 
-void taiMimeItem_List::El_Done_(void* it) {
-  if (it) delete ((taiMimeItem*)it);
-}
+//////////////////////////////////
+//  taiMultiMimeItem	//
+//////////////////////////////////
 
+void taiMultiMimeItem::Initialize() {
+}
 
 //////////////////////////////////
 //  taiMatDataMimeItem 		//
@@ -294,36 +334,51 @@ void taiRcvMatDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
 
 */
 //////////////////////////////////
-//  taiObjDataMimeItem 		//
+//  taiMultiMimeItem 		//
 //////////////////////////////////
 
-taiObjDataMimeItem::taiObjDataMimeItem()
-:inherited()
-{
-  m_obj = NULL;
+void taiMultiMimeItem::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(&items, this);
+}
+
+void taiMultiMimeItem::CutLinks() {
+  items.CutLinks();
+  inherited::CutLinks();
 }
 
 
 //////////////////////////////////
-// 	taiRcvExtMimeItem 	//
+// 	taiObjectMimeItem 	//
 //////////////////////////////////
 
-taiRcvMimeItem::taiRcvMimeItem(const String type_name_, const String path_)
-:inherited()
-{
-  mtype_name = type_name_;
-  mpath = path_;
-  mtd = taMisc::types.FindName(type_name_.chars()); // note: could be NULL if, ex. decoding leabra object in instance of bp
-  m_is_base = (mtd && (mtd->InheritsFrom(&TA_taBase)));
+void taiObjectMimeItem::Initialize() {
+  m_td = NULL;
 }
 
-void* taiRcvMimeItem::obj() const {  // note: only called when we are InProcess
-  if (m_obj == NULL) {
-    if (tabMisc::root) {
-      String str = String(path()); //unconstifying copy
-      ((taiRcvMimeItem*)this)->m_obj = tabMisc::root->FindFromPath(str); // only a decaching op, so we cast away constness
-    }
+void taiObjectMimeItem::Constr_impl(const String& mimetype) {
+  m_td = taMisc::types.FindName(m_type_name.chars()); // note: could be NULL if, ex. decoding leabra object in instance of bp
+}
+
+void taiObjectMimeItem::DecodeData_impl() {
+  if (isThisProcess() && (!m_obj) && tabMisc::root) {
+    m_obj = tabMisc::root->FindFromPath(path());
   }
+}
+
+int taiObjectMimeItem::GetObjectData(istringstream& result) {
+  AssertData();
+  if (m_ms) {
+    QString fmt = taiObjectMimeFactory::tacss_objectdata + ";index=" + String(GetIndex());
+    return m_ms->data(fmt, result);
+  } else {
+    return 0;
+  }
+}
+
+
+taBase* taiObjectMimeItem::obj() {  // note: only called when we are InProcess
+  AssertData();
   return m_obj;
 }
 
@@ -350,13 +405,14 @@ taiMimeSource::taiMimeSource(const QMimeData* ms_)
 :inherited()
 {
   ms = ms_;
-  iter_idx = -1;
-  m_src_type = ST_UNDECODED;
-  m_itm_cnt = 0;
   m_src_action = 0; 
   m_this_proc = false;
   if (ms)
     connect(ms, SIGNAL(destroyed()), this, SLOT(ms_destroyed()) );
+//TEMP
+  mi = NULL;
+  m_src_type = ST_UNDECODED;
+  iter_idx = 0;
 }
 
 taiMimeSource::~taiMimeSource() {
@@ -366,10 +422,10 @@ taiMimeSource::~taiMimeSource() {
 TypeDef* taiMimeSource::CommonSubtype() const {
   int size = count();
   if (!isObject() || (size == 0)) return NULL;
-  TypeDef* rval = ((taiObjDataMimeItem*)item(0))->td();
+  TypeDef* rval = ((taiObjectMimeItem*)item(0))->td();
   for (int i = 1; (rval && (i < size)); ++i) {
     rval = TypeDef::GetCommonSubtype(rval, 
-      ((taiObjDataMimeItem*)item(i))->td());
+      ((taiObjectMimeItem*)item(i))->td());
   }
   return rval;
 }
@@ -415,18 +471,9 @@ void taiMimeSource::ms_destroyed() {
 
 void* taiMimeSource::object() const {  // gets the object, if possible. if local, tries to get from path, otherwise tries to make
   //note: we only use m_obj for caching, so we aren't really violating const be assigning to it (via unconstifying the m_obj)
-  if (!(isObject() && IsThisProcess() && inRange())) return NULL;
+  if (!(isObject() && isThisProcess() && inRange())) return NULL;
 
-  return ((taiObjDataMimeItem*)item())->obj(); // looks up from path
-}
-
-int taiMimeSource::objectData(istringstream& result) const {
-  if (isObject() && inRange()) {
-    QString fmt = taiObjectMimeFactory::tacss_objectdata + ";index=" + String(index());
-    return data(fmt, result);
-  } else {
-    return 0;
-  }
+  return ((taiObjectMimeItem*)item())->obj(); // looks up from path
 }
 
 taBase* taiMimeSource::tabObject() const {
@@ -451,6 +498,7 @@ void taiMimeSource::Decode_impl() {
   if (data(taiClipData::tacss_common, str) > 0) {
     Decode_common(str);
   }
+//TEMP
   if (data(taiObjectMimeFactory::tacss_objectdesc, str) > 0) {
     DecodeDesc_object(str);
 /*TODO  } else if (data(taiClipData::tacss_matrixdesc, str) > 0) {
@@ -488,6 +536,8 @@ bool taiMimeSource::DecodeDesc_object(String arg) {
   m_itm_cnt = str.toInt(&ok);
   if (!ok) return false;
   arg = arg.after(";\n");
+  
+  mi = (taiObjectsMimeItem*)list.New(1, &TA_taiObjectsMimeItem);
 
   for (int i = 0; i < m_itm_cnt; ++i) {
     // decode type and get the typedef obj
@@ -499,9 +549,10 @@ bool taiMimeSource::DecodeDesc_object(String arg) {
     String path = arg.before(';');
     arg = arg.after(';');
     //TODO: skip extension data
-    taiObjDataMimeItem* msd = new taiRcvMimeItem(typeName, path);
-    msd->setThisProcess(m_this_proc);
-    list.Add(msd);
+    taiObjectMimeItem* msd = (taiObjectMimeItem*) mi->items.New(1, &TA_taiObjectMimeItem);
+    msd->m_type_name = typeName;
+    msd->m_path = path;
+    msd->Constr(this);
     arg = arg.after('\n');
   }
   setIndex(0);
@@ -542,6 +593,16 @@ fail:
   list.Reset();
   return false; */
 }
+
+int taiMimeSource::objectData(istringstream& result) {
+  if (isObject() && inRange()) {
+    QString fmt = taiObjectMimeFactory::tacss_objectdata + ";index=" + String(index());
+    return data(fmt, result);
+  } else {
+    return 0;
+  }
+}
+
 
 bool taiMimeSource::TryDecode_matrix() {
   // TODO: see if we can recognize data as a tabular format
