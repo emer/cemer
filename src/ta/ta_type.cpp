@@ -1816,30 +1816,69 @@ void taDataLink::DataDestroying() { //note: linklist will automatically remove u
   //NOTE: do NOT put any code after this point -- we are deleted!
 }
 
+void taDataLink::DoNotify(int dcr, void* op1_, void* op2_) {
+  for (int i = 0; i < clients.size; ++i) {
+    IDataLinkClient* dlc = clients.FastEl(i);
+    dlc->DataDataChanged(this, dcr, op1_, op2_);
+  }
+}
+
 void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
+/*
+  m_dbu_cnt = 0: idle state
+  m_dbu_cnt < 0: in a DATA_UPDATE context
+  m_dbu_cnt > 0: in a STRUCT_UPDATE context
+
+  If we only ever issue DATA BEGIN/ENDs, we remain in DATA state;
+  If we ever issue a STRUCT BEGIN, we get forced into STRUCT state,
+    and any subsequent DATA commands get interpreted as STRUCT.
+    
+  We try to suppress unnecessary guys.
+  If we start with STRUCT or DATA and do all the same (no different)
+  then we only issue the first and last; but if DATA->STRUCT,
+  then we also need to issue the STRUCT, however to maintain
+  balance, we issue a semi-spurious DATA END, so we have equal
+  numbers of + and -; NOTE: This situation is very unlikely to
+  actually occur, since Struct and Data ops are typically mutually
+  exclusive, and even then, the most likely is DATA ops nested inside
+  a STRUCT update (not the other way around.)
+  
+    we need to send out all further STRUCT ops, and the final DATA one
+*/
   bool send_iu = false; // set true if we should send a synthetic ITEM_UPDATED
   bool suppress = false; // set it if we should supress forwarding
+  bool dummy_end = false;
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
-    // only forward the first one (ex some clients do a reset step 
-    suppress = (m_dbu_cnt != 0);
-    if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
+    // only forward the first one (ex some clients do a reset step)
+    // OR the first one where DATA->STRUCT
+    suppress = (m_dbu_cnt > 0); // send if first, or we were in DATA state 
+    if (m_dbu_cnt < 0) { // switch state if in DATA state
+      m_dbu_cnt = -m_dbu_cnt; 
+      dummy_end = true;
+    }
     ++m_dbu_cnt;
-  } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
+    return;
+  } else if (dcr == DCR_DATA_UPDATE_BEGIN) { 
     suppress = (m_dbu_cnt != 0);
-    if (m_dbu_cnt > 0) ++m_dbu_cnt;
+    if (m_dbu_cnt > 0) ++m_dbu_cnt; // stay in STRUCT state if STRUCT state
+    else               --m_dbu_cnt;
+  } else if (dcr == DCR_DATA_UPDATE_END) {
+    suppress = (m_dbu_cnt != 0); // issue at end
+    if (m_dbu_cnt > 0) ++m_dbu_cnt; // stay in STRUCT state if STRUCT state
     else               --m_dbu_cnt;
   } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
-    bool stru = false;
     if (m_dbu_cnt < 0) {
       ++m_dbu_cnt;
     } else {
-      stru = true; 
       --m_dbu_cnt;
       dcr = DCR_STRUCT_UPDATE_END; // force to be struct end, in case we notify
     }
     // at the end, also send a IU
     if (m_dbu_cnt == 0) {
       if (dcr == DCR_DATA_UPDATE_END) // just turn it into an IU
+        //NOTE: clients who count (ex taDataView) must detect this implicit
+        // DATA_UPDATE_END as occurring when:
+        // State=DATA, Count=1
         dcr = DCR_ITEM_UPDATED;
       else // otherwise, we send both
         send_iu = true;
@@ -1849,13 +1888,12 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     if (m_dbu_cnt != 0) suppress = true;
   }
   
-  if (suppress) return;
-
-  for (int i = 0; i < clients.size; ++i) {
-    IDataLinkClient* dlc = clients.FastEl(i);
-    dlc->DataDataChanged(this, dcr, op1_, op2_);
-    if (send_iu) dlc->DataDataChanged(this, DCR_ITEM_UPDATED, NULL, NULL);
-  }
+  if (!suppress) 
+    DoNotify(dcr, op1_, op2_);
+  if (dummy_end)
+    DoNotify(DCR_DATA_UPDATE_END, NULL, NULL);
+  if (send_iu) 
+    DoNotify(DCR_ITEM_UPDATED, NULL, NULL);
 }
 
 String taDataLink::GetDisplayName() const {

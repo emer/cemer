@@ -1034,6 +1034,9 @@ protected:
   IDataLinkClient_PtrList clients; // clients of this item (ex. either primary, or where it is aliased or linked)
   int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
   virtual ~taDataLink(); // we only ever implicitly destroy, when 0 clients
+private:
+  void 			DoNotify(int dcr, void* op1_, void* op2_);
+    // don't even DREAM of making this non-private!!!!
 };
 
 // macros for iterating over the dataclients or views of a data item

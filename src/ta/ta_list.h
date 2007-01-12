@@ -148,7 +148,7 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_STRUCT_UPDATE_END,  // update operation at the end of everything
   DCR_DATA_UPDATE_BEGIN, // for some data changes, like various log updates, better for gui to just do one
   DCR_DATA_UPDATE_END,  // update operation at the end of everything
-  
+    
   DCR_ITEM_DELETING  // NOTE: not used in standard DataChanged calls, but may be used by forwarders, ex. taDataMonitor
 
 #ifndef __MAKETA__
