@@ -412,8 +412,6 @@ public: //TEMP compatability
   bool			isMulti() const  {return (mi) ? (mi->items.size > 1) : false;} // override
   bool			isObject() const {return (m_src_type == ST_OBJECT);}
 
-  void*			object() const;
-    // gets the object, if possible -- only valid for isThisProcess true
   int			objectData(istringstream& istr);
   taBase*		tabObject() const; // gets a taBase object, if possible, otherwise NULL -- only valid for isThisProcess true
 public: //TEMP object iteration guys

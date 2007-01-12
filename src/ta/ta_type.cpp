@@ -1857,7 +1857,6 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
       dummy_end = true;
     }
     ++m_dbu_cnt;
-    return;
   } else if (dcr == DCR_DATA_UPDATE_BEGIN) { 
     suppress = (m_dbu_cnt != 0);
     if (m_dbu_cnt > 0) ++m_dbu_cnt; // stay in STRUCT state if STRUCT state

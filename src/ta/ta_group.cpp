@@ -749,7 +749,7 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
   if (ea & (taiClipData::EA_PASTE | taiClipData::EA_LINK  | taiClipData::EA_DROP_COPY |
     taiClipData::EA_DROP_LINK | taiClipData::EA_DROP_MOVE))
   {
-    srcobj = (taBase*)ms->object();
+    srcobj = ms->tabObject();
     if (srcobj == NULL) {
       taMisc::Error("Could not retrieve object for operation.");
       return taiClipData::ER_ERROR;

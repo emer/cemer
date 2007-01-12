@@ -354,6 +354,7 @@ void taiMultiMimeItem::CutLinks() {
 
 void taiObjectMimeItem::Initialize() {
   m_td = NULL;
+  m_obj = NULL;
 }
 
 void taiObjectMimeItem::Constr_impl(const String& mimetype) {
@@ -468,20 +469,10 @@ void taiMimeSource::ms_destroyed() {
 #endif
 }
 
-
-void* taiMimeSource::object() const {  // gets the object, if possible. if local, tries to get from path, otherwise tries to make
-  //note: we only use m_obj for caching, so we aren't really violating const be assigning to it (via unconstifying the m_obj)
-  if (!(isObject() && isThisProcess() && inRange())) return NULL;
-
-  return ((taiObjectMimeItem*)item())->obj(); // looks up from path
-}
-
 taBase* taiMimeSource::tabObject() const {
-  taBase* rval = NULL;
-  TypeDef* td_ = td();
-  if (td_ && td_->InheritsFrom(&TA_taBase))
-    rval = (taBase*)object();
-  return rval;
+  if (!(isObject() && isThisProcess() && inRange())) return NULL;
+  
+  return ((taiObjectMimeItem*)item())->obj(); // looks up from path
 }
 
 void taiMimeSource::Decode() {
