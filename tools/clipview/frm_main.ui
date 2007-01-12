@@ -1,0 +1,114 @@
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>frmMain</class>
+ <widget class="QFrame" name="frmMain" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>567</width>
+    <height>260</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Clipboard Viewer</string>
+  </property>
+  <widget class="QPushButton" name="btnFormats" >
+   <property name="geometry" >
+    <rect>
+     <x>11</x>
+     <y>11</y>
+     <width>90</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Formats</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cmbFormats" >
+   <property name="geometry" >
+    <rect>
+     <x>108</x>
+     <y>15</y>
+     <width>240</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnShow" >
+   <property name="geometry" >
+    <rect>
+     <x>360</x>
+     <y>10</y>
+     <width>110</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Show</string>
+   </property>
+  </widget>
+  <widget class="Q3TextEdit" name="txtResults" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>551</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <property name="textFormat" >
+    <enum>Qt::LogText</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblDropZone" >
+   <property name="geometry" >
+    <rect>
+     <x>480</x>
+     <y>10</y>
+     <width>80</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="sizePolicy" >
+    <sizepolicy>
+     <hsizetype>5</hsizetype>
+     <vsizetype>0</vsizetype>
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="acceptDrops" >
+    <bool>true</bool>
+   </property>
+   <property name="frameShape" >
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="frameShadow" >
+    <enum>QFrame::Sunken</enum>
+   </property>
+   <property name="text" >
+    <string>Drop Zone</string>
+   </property>
+   <property name="textFormat" >
+    <enum>Qt::PlainText</enum>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>Q3TextEdit</class>
+   <extends></extends>
+   <header>q3textedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
