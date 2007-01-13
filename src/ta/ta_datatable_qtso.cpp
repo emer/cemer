@@ -1477,6 +1477,9 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
 
 }
 
+void iDataTableEditor::UpdateSelectedItems_impl() {
+//TODO
+}
 
 //////////////////////////
 //    iDataTablePanel 	//
@@ -1529,7 +1532,7 @@ int iDataTablePanel::GetEditActions() {
   GetSelectedItems(sel_list);
   ISelectable* ci = sel_list.SafeEl(0);
   if (ci)  {
-    rval = ci->GetEditActions_(sel_list);
+    rval = ci->QueryEditActions_(sel_list);
     // certain things disallowed if more than one item selected
     if (sel_list.size > 1) {
       rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);

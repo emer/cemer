@@ -237,11 +237,11 @@ void T3DataView::FillContextMenu_impl(taiMenu* menu) {
   //TODO
 }
 
-void T3DataView::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
+void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
   if (flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   }
-  ISelectable::GetEditActionsS_impl_(allowed, forbidden);
+  ISelectable::QueryEditActionsS_impl_(allowed, forbidden);
 }
 
 ISelectableHost* T3DataView::host() const {

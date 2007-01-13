@@ -100,7 +100,7 @@ private:
   subclasses may add additional steps or other ways of ordering these
 */
 
-class TA_API T3DataView: public taDataView, public virtual ISelectable {
+class TA_API T3DataView: public taDataView, public virtual IObjectSelectable {
   // ##NO_TOKENS base class for 3d-based DataView objects
 #ifndef __MAKETA__
   typedef taDataView	inherited;
@@ -169,7 +169,7 @@ public: // ISelectable interface (only not in IDataLinkClient)
   override String	view_name() const;
   override ISelectableHost* host() const;
 //  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
-//  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
+//  override int		QueryEditActions(taiMimeSource* ms) const; // simpler version uses Query
 //  override taiMimeItem*	GetMimeItem();
   override void		ChildClearing(taDataView* child); // NOTE: child is always a T3DataView
   virtual void		ChildRendered(taDataView* child); //  NOTE: child is always a T3DataView
@@ -177,7 +177,7 @@ protected:
 //  override int		EditAction_impl(taiMimeSource* ms, int ea);
   override void		FillContextMenu_EditItems_impl(taiMenu* menu, int allowed);
   override void		FillContextMenu_impl(taiMenu* menu);
-  override void		GetEditActionsS_impl_(int& allowed, int& forbidden) const;
+  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;
 
 public:
   virtual void		fileNew() {} // this section for all the delegated menu commands

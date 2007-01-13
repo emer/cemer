@@ -218,6 +218,10 @@ public:
   
   static EditAction	ClipOpToSrcCode(int ea); // converts an op like EA_CUT into a source field like EA_SRC_CUT
 
+  void			setTextData(const QString& mime_type,
+    const QString& data); // sets a mimetype as data
+  void			setTextFromStr(const String& str); // avoids double conversion
+    
   taiClipData(int src_edit_action_);
   
 protected:

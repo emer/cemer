@@ -364,7 +364,7 @@ protected:
 };
 #endif // MAKETA
 
-class TA_API iDataTableEditor: public QWidget {
+class TA_API iDataTableEditor: public QWidget, public ISelectableHost {
   Q_OBJECT
 INHERITED(QWidget)
 public:
@@ -385,6 +385,12 @@ public:
 public slots:
   void			tvTable_currentChanged(const QModelIndex& index); // #IGNORE
   
+public: // ISelectableHost i/f
+  override bool 	hasMultiSelect() const {return false;} // always
+  override QWidget*	widget() {return this;} 
+protected:
+  override void		UpdateSelectedItems_impl(); 
+
 protected:
   DataTableRef		m_dt;
   taMatrixPtr		m_cell; // current cell TODO: this ref will prevent col from growing for new row

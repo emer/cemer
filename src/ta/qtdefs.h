@@ -25,7 +25,7 @@
 class	QBitArray;		// #IGNORE 
 class	QDir;			// #IGNORE
 class	QEvent;			// #IGNORE 
-template<class T> class	QList;	// #IGNORE 
+template<class T> class	QList;	// #IGNORE
 class	QObject;		// #IGNORE 
 template<class T> class	QPointer; // #IGNORE 
 class	QString;		// #IGNORE 
@@ -79,6 +79,11 @@ class	QMessageBox;		// #IGNORE
 //class	QMimeSource;		// #IGNORE 
 class	QMimeData;		// #IGNORE 
 class	QModelIndex;		// #IGNORE
+#ifdef __MAKETA__
+class	QModelIndexList;	// #IGNORE
+#else
+typedef QList<QModelIndex> QModelIndexList;	// #IGNORE
+#endif
 class	QPainter;		// #IGNORE 
 class	QPixmap;		// #IGNORE 
 class	QPoint;			// #IGNORE 

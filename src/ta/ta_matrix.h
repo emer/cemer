@@ -142,6 +142,33 @@ class MatrixTableModel;
 #define TA_MATRIX_DIMS_MAX 5
 #define IMatrix taMatrix
 
+class TA_API CellRange { // specifies a range of cells
+public:
+  int row_fr;
+  int col_fr;
+  int row_to;
+  int col_to;
+
+  bool		empty() const {return ((row_to < row_fr) || (col_to < col_fr));}
+  inline bool	nonempty() const {return !empty();}
+  int 		width() const {return row_to - row_fr + 1;}
+  int 		height() const {return col_to - col_fr + 1;}
+  bool		single() const {return ((row_to == row_fr) && (col_to == col_fr));}
+
+  void 		Set(int row_fr_, int col_fr_, int row_to_, int col_to_)
+    {row_fr = row_fr_; col_fr = col_fr_; row_to = row_to_; col_to = col_to_;}
+  void 		SetFromModel(const QModelIndexList& indexes); //#IGNORE
+  
+  CellRange() {Set(0, 0, -1, -1);} // note that default is a null selection
+  CellRange(int row_fr_, int col_fr_) // single cell
+    {Set(row_fr_, col_fr_, row_fr_, col_fr_);}
+  CellRange(int row_fr_, int col_fr_, int row_to_, int col_to_)
+    {Set(row_fr_, col_fr_, row_to_, col_to_);}
+   explicit CellRange(const QModelIndexList& indexes) 
+     {SetFromModel(indexes);}
+};
+
+
 ///////////////////////////////////
 // 	Matrix Geometry
 ///////////////////////////////////
@@ -294,6 +321,8 @@ public:
   
   const String		FlatRangeToTSV(int row_fr, int col_fr, int row_to, int col_to);
     // returns a tab-sep cols, newline-sep rows, well suited to clipboard; the coords are in flat 2-d form, as in the table editors
+  const String		FlatRangeToTSV(const CellRange& cr) // #IGNORE
+    {return FlatRangeToTSV(cr.row_fr, cr.col_fr, cr.row_to, cr.col_to);}
   
   ///////////////////////////////////////
   // Variant
@@ -1024,6 +1053,7 @@ class TA_API MatrixTableModel: public QAbstractTableModel {
   // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display
 friend class taMatrix;
 INHERITED(QAbstractTableModel)
+  Q_OBJECT
 public:
 #ifndef __MAKETA__
   int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index

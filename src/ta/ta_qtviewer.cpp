@@ -1158,7 +1158,7 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos) {
   host_->drop_ms = ms;
   host_->drop_item = this;
   
-  int ea = GetEditActions_(ms);
+  int ea = QueryEditActions_(ms);
   // always show menu, for consistency
   
   taiMenu* menu = new taiMenu(widget(), taiMenu::normal, 0);
@@ -1200,7 +1200,6 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos) {
   host_->drop_item = NULL;
 }
 
-
 // called from Ui for cut/paste etc. -- not called for drag/drop ops
 int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   taiMimeSource* ms = NULL;
@@ -1238,39 +1237,20 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   return rval;
 }
 
-int ISelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: follows same logic as the Query
-  taiDataLink* pdl = par_link();
-  //note: called routines must requery for allowed
-
-  int rval = taiClipData::ER_IGNORED;
-  if (pdl) {
-    rval = pdl->ChildEditAction_impl(par_md(), link(), ms, ea);
-  }
-  if (rval == taiClipData::ER_IGNORED)
-    rval = link()->ChildEditAction_impl(this->md(), NULL, ms, ea);
-  if (rval == taiClipData::ER_IGNORED)
-    rval = link()->EditAction_impl(ms, ea);
-  return rval;
-}
-
-int ISelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Query
-  taiDataLink* pdl = par_link();
-  //note: called routines must requery for allowed
-
-  int rval = taiClipData::ER_IGNORED;
-  if (pdl) {
-    rval = pdl->ChildEditAction_impl(par_md(), link(), NULL, ea);
-  }
-  if (rval == taiClipData::ER_IGNORED)
-    rval = link()->EditAction_impl(NULL, ea);
-  return rval;
-}
-
 void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu) {
   FillContextMenu_impl(menu);
-  int allowed = GetEditActions_(sel_items);
+  int allowed = QueryEditActions_(sel_items);
   FillContextMenu_EditItems_impl(menu, allowed);
   link()->FillContextMenu(menu);
+}
+
+void ISelectable::FillContextMenu(taiActions* menu) {
+  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+  FillContextMenu_impl(menu);
+  int allowed = QueryEditActions_(ms);
+  FillContextMenu_EditItems_impl(menu, allowed);
+  taiDataLink* link = this->link();
+  if (link) link->FillContextMenu(menu);
 }
 
 void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) {
@@ -1311,89 +1291,39 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) 
 taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
   bool for_drag) const
 {
-  taiClipData* rval = NULL;
-//obs  QWidget* par = (for_drag) ?  widget() : NULL; // must have parent for drag, and must not for clipboard
-
-  if (sel_items.size <= 1) { // single
-    rval = GetClipDataSingle(src_edit_action, for_drag);
-  } else { // multi select
-    //note: although a bit sleazy, we just do this by optimistically
-    // assuming all are taBase (which realistically, they are) 
-    taBase_PtrList* bl = new taBase_PtrList;
-    bool do_it = true;
-    for (int i = 0; i < sel_items.size; ++i) {
-      ISelectable* dn = sel_items.FastEl(i);
-      taBase* obj = dn->taData();
-      if (!obj) {
-        do_it = false;
-        break;
-      }
-      bl->Add(obj);
-    }
-    if (do_it) {
-      taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
-      rval = new taiClipData(src_edit_action);
-      mf->AddMultiObjects(rval, bl);
-    }
-    delete bl;
+  if (sel_items.size <= 1) { 
+    return GetClipDataSingle(src_edit_action, for_drag);
+  } else { 
+    return GetClipDataMulti(sel_items,src_edit_action, for_drag);
   }
-  return rval;
 }
 
-taiClipData* ISelectable::GetClipDataSingle(int src_edit_action, bool for_drag) const {
-  // if it is taBase, we can make an object
-  taBase* obj = this->taData();
-  if (!obj) return NULL;
-  
-  taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
-  taiClipData* rval = new taiClipData(src_edit_action);
-  mf->AddSingleObject(rval, obj);
-  return rval;
-}
-
-int ISelectable::GetEditActions_(taiMimeSource* ms) const {
+int ISelectable::QueryEditActions_(taiMimeSource* ms) const {
   int allowed = 0;
   int forbidden = 0;
   // if src is readonly, then forbid certain dst ops
   if (ms->srcAction() & taiClipData::EA_SRC_READONLY)
     forbidden |= taiClipData::EA_FORB_ON_SRC_READONLY;
-  GetEditActionsD_impl_(ms, allowed, forbidden);
+  QueryEditActionsD_impl_(ms, allowed, forbidden);
   return (allowed & (~forbidden));
 }
 
-int ISelectable::GetEditActions_(const ISelectable_PtrList& sel_items) const {
+int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items) const {
   int allowed = 0;
   int forbidden = 0;
   if (sel_items.size <= 1) { // single select
-    GetEditActionsS_impl_(allowed, forbidden);
+    QueryEditActionsS_impl_(allowed, forbidden);
     taiMimeSource* ms = taiMimeSource::New(
       QApplication::clipboard()->mimeData(QClipboard::Clipboard));
-    GetEditActionsD_impl_(ms, allowed, forbidden);
+    QueryEditActionsD_impl_(ms, allowed, forbidden);
     delete ms;
   } else { // multi select
     for (int i = 0; i < sel_items.size; ++i) {
       ISelectable* is = sel_items.FastEl(i);
-      is->GetEditActionsS_impl_(allowed, forbidden);
+      is->QueryEditActionsS_impl_(allowed, forbidden);
     }
   }
   return (allowed & (~forbidden));
-}
-
-void ISelectable::GetEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const {
-  // parent object will generally manage CUT, and DELETE
-  // parent object normally passes on to child object
-  taiDataLink* pdl = par_link();
-  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link(), ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
-  link()->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
-  link()->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
-}
-
-void ISelectable::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
-  // parent object will generally manage CUT, and DELETE
-  // parent object normally passes on to child object
-  taiDataLink* pdl = par_link();
-  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link(), NULL, allowed, forbidden); // ex. CUT of child
-  link()->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
 }
 
 taBase* ISelectable::taData() const {
@@ -1405,6 +1335,93 @@ taBase* ISelectable::taData() const {
 QWidget* ISelectable::widget() const {
   ISelectableHost* host_ = host();
   return (host_) ? host_->widget() : NULL;
+}
+
+
+//////////////////////////////////
+//   IObjectSelectable		//
+//////////////////////////////////
+
+int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: follows same logic as the Query
+  taiDataLink* pdl = par_link();
+  //note: called routines must requery for allowed
+
+  int rval = taiClipData::ER_IGNORED;
+  if (pdl) {
+    rval = pdl->ChildEditAction_impl(par_md(), link(), ms, ea);
+  }
+  if (rval == taiClipData::ER_IGNORED)
+    rval = link()->ChildEditAction_impl(this->md(), NULL, ms, ea);
+  if (rval == taiClipData::ER_IGNORED)
+    rval = link()->EditAction_impl(ms, ea);
+  return rval;
+}
+
+int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Query
+  taiDataLink* pdl = par_link();
+  //note: called routines must requery for allowed
+
+  int rval = taiClipData::ER_IGNORED;
+  if (pdl) {
+    rval = pdl->ChildEditAction_impl(par_md(), link(), NULL, ea);
+  }
+  if (rval == taiClipData::ER_IGNORED)
+    rval = link()->EditAction_impl(NULL, ea);
+  return rval;
+}
+
+taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action, bool for_drag) const {
+  // if it is taBase, we can make an object
+  taBase* obj = this->taData();
+  if (!obj) return NULL;
+  
+  taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
+  taiClipData* rval = new taiClipData(src_edit_action);
+  mf->AddSingleObject(rval, obj);
+  return rval;
+}
+
+taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_items, 
+    int src_edit_action, bool for_drag) const
+{
+  taiClipData* rval = NULL;
+  //note: although a bit sleazy, we just do this by optimistically
+  // assuming all are taBase (which realistically, they are) 
+  taBase_PtrList* bl = new taBase_PtrList;
+  bool do_it = true;
+  for (int i = 0; i < sel_items.size; ++i) {
+    ISelectable* dn = sel_items.FastEl(i);
+    taBase* obj = dn->taData();
+    if (!obj) {
+      do_it = false;
+      break;
+    }
+    bl->Add(obj);
+  }
+  if (do_it) {
+    taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
+    rval = new taiClipData(src_edit_action);
+    mf->AddMultiObjects(rval, bl);
+  }
+  delete bl;
+  return rval;
+}
+
+void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const {
+  // parent object will generally manage CUT, and DELETE
+  // parent object normally passes on to child object
+  taiDataLink* pdl = par_link();
+  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link(), ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
+  link()->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
+  link()->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
+}
+
+void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
+  // parent object will generally manage CUT, and DELETE
+  // parent object normally passes on to child object
+  taiDataLink* pdl = par_link();
+  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link(), NULL, allowed, forbidden); // ex. CUT of child
+  link()->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
 }
 
 
@@ -1622,7 +1639,7 @@ void ISelectableHost::EditAction(int ea) {
 void ISelectableHost::EditActionsEnabled(int& ea) {
   ISelectable* ci = curItem();
   if (!ci) return;
-  int rval = ci->GetEditActions_(selItems());
+  int rval = ci->QueryEditActions_(selItems());
   // certain things disallowed if more than one item selected
   if (sel_items.size > 1) {
     rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
@@ -4961,7 +4978,7 @@ iTreeViewItem::~iTreeViewItem() {
 
 bool iTreeViewItem::acceptDrop(const QMimeData* mime) const {
   taiMimeSource* ms = taiMimeSource::New(mime);
-  int ea = GetEditActions_(ms);
+  int ea = QueryEditActions_(ms);
 //  bool rval = (ea & taiClipData::EA_DROP_OPS);
   bool rval = (ea & taiClipData::EA_DROP_MOVE); //NOTE: we only use MOVE for drag/drop
   delete ms;
@@ -5171,11 +5188,11 @@ void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos) {
   delete ms;*/
 }
 
-void iTreeViewItem::GetEditActionsS_impl_(int& allowed, int& forbidden) const {
+void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
   if (dn_flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   }
-  ISelectable::GetEditActionsS_impl_(allowed, forbidden);
+  ISelectable::QueryEditActionsS_impl_(allowed, forbidden);
 }
 
 int iTreeViewItem::highlightIndex() const {
@@ -5233,10 +5250,6 @@ void iTreeViewItem::swapChildren(int n1_idx, int n2_idx) {
 iTreeView* iTreeViewItem::treeView() const {
   iTreeView* rval = dynamic_cast<iTreeView*>(treeWidget());
   return rval;
-}
-
-String iTreeViewItem::view_name() const {
-  return text(0);
 }
 
 

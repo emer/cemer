@@ -19,6 +19,8 @@
 
 #ifdef TA_GUI
 #  include "ta_datatable_qtso.h"
+# include <QApplication>
+# include <QClipboard>
 #endif
 
 #include <limits.h>
@@ -2037,6 +2039,58 @@ void GridTableViewSpec::GetMinMaxScale(MinMax& mm, bool first) {
 
 const String taiTabularDataMimeFactory::tacss_matrixdesc("tacss/matrixdesc");
 const String taiTabularDataMimeFactory::tacss_tabledesc("tacss/tabledesc");
+
+void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat, 
+  const CellRange& sel, taiMimeSource* ms,
+  int& allowed, int& forbidden) const
+{
+  // ops that are never allowed on mats
+  forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+  // src ops
+  if (sel.nonempty())
+    allowed |= taiClipData::EA_COPY;
+    
+  if (!ms) return;
+  // TODO: dst ops
+}
+
+void taiTabularDataMimeFactory::Mat_EditAction(taMatrix* mat, 
+  const CellRange& sel, taiMimeSource* ms, int ea) const
+{
+  int allowed = 0;
+  int forbidden = 0;
+  Mat_QueryEditActions(mat, sel, ms, allowed, forbidden);
+  ea = ea & (allowed & ~forbidden);
+  
+  if (ea & taiClipData::EA_COPY) {
+    taiClipData* cd = Mat_GetClipData(mat,
+      sel, taiClipData::EA_SRC_COPY, false);
+    QApplication::clipboard()->setMimeData(cd); //cb takes ownership
+  }
+}
+
+taiClipData* taiTabularDataMimeFactory::Mat_GetClipData(taMatrix* mat,
+    const CellRange& sel, int src_edit_action, bool for_drag) const
+{
+  taiClipData* cd = new taiClipData(src_edit_action);
+  AddMatDesc(cd, mat, sel);
+  String str = mat->FlatRangeToTSV(sel);
+  cd->setTextFromStr(str);
+  return cd;
+}
+
+void taiTabularDataMimeFactory::AddMatDesc(QMimeData* md,
+  taMatrix* mat, const CellRange& sel) const
+{
+  String str;
+  AddDims(sel, str);
+  md->setData(tacss_matrixdesc, StrToByteArray(str));
+}
+
+void taiTabularDataMimeFactory::AddDims(const CellRange& sel, String& str) const
+{
+  str = str + String(sel.width()) + ";" + String(sel.height()) + ";";
+}
 
 /*
 void taiTabularDataMimeFactory::AddSingleObject(QMimeData* md, taBase* obj) {

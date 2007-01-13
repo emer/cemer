@@ -224,6 +224,7 @@ SRCS =\
 	ta_viewer.cpp \
 	ta_program.cpp \
 	ta_matrix.cpp \
+	ta_matrix.moc.cpp \
 	ta_math.cpp \
 	ta_geometry.cpp \
 	ta_data.cpp \

@@ -306,24 +306,28 @@ class TA_API ISelectable: public virtual IDataLinkProxy { //
 INHERITED(IDataLinkProxy)
 friend class ISelectableHost;
 public: // Interface Properties and Methods
-  virtual MemberDef*	md() const = 0; // memberdef in parent, if any, of the selected item
-  virtual taiDataLink*	par_link() const = 0; // parent item's (if any) link
-  virtual MemberDef* 	par_md() const = 0;// parent item's (if any) md
+  virtual MemberDef*	md() const {return NULL;} // memberdef in parent, if any, of the selected item
+  virtual taiDataLink*	par_link() const {return NULL;} // parent item's (if any) link
+  virtual MemberDef* 	par_md() const {return NULL;}// parent item's (if any) md
   virtual ISelectableHost* host() const = 0; //
   taBase*		taData() const; // if the data is taBase, this returns it
-  virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
+//obs  virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
   QWidget*		widget() const; // gets from host
   QObject*		clipHandlerObj() const; // shortcut for host()->clipHanderObj(); 
 
   virtual int		EditAction_(ISelectable_PtrList& sel_items, int ea);
    // do the indicated edit action (called from browser or list view); normally implement the _impl
   virtual void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
-   // normally implement the _impl
+   // for multi or single (normally implement the _impl)
+  virtual void 		FillContextMenu(taiActions* menu);
+   // for single (normally implement the _impl)
   virtual taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
     bool for_drag) const; // works for single or multi; normally not overridden
-  virtual taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const; // normally not overridden
-  virtual int		GetEditActions_(taiMimeSource* ms) const; // typically called on single item for acceptDrop
-  int			GetEditActions_(const ISelectable_PtrList& sel_items) const;
+  virtual taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const = 0;
+  virtual taiClipData*	GetClipDataMulti(const ISelectable_PtrList& sel_items, 
+    int src_edit_action, bool for_drag) const {return NULL;}// only needed if multi is handled
+  virtual int		QueryEditActions_(taiMimeSource* ms) const; // typically called on single item for acceptDrop
+  int			QueryEditActions_(const ISelectable_PtrList& sel_items) const;
     // called to get edit items available on clipboard for the sel_items
   virtual int		RefUnref(bool ref) {return 1;} // ref'ed/unrefed in select lists etc.; optional, and can be used for lifetime mgt; returns count after operation
 
@@ -331,16 +335,29 @@ public: // Interface Properties and Methods
 protected:
   void 			DropHandler(const QMimeData* mime, const QPoint& pos);
     //  handles all aspects of a drag drop operation
-  virtual int		EditActionD_impl_(taiMimeSource* ms, int ea);
+  virtual int		EditActionD_impl_(taiMimeSource* ms, int ea) = 0;
     // do Dst op for single selected item; generally doesn't need extending
-  virtual int		EditActionS_impl_(int ea);
+  virtual int		EditActionS_impl_(int ea) = 0;
     // do Src op for single or one of multi selected items; CUT and COPY usually just a 1 return code; we actually implement the actual clipboard transfer
   virtual void		FillContextMenu_EditItems_impl(taiActions* menu, int allowed); // might be extended
   virtual void		FillContextMenu_impl(taiActions* menu) {} // link handles most, called in FCM
-  virtual void		GetEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const;
+  virtual void		QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const = 0;
     // get Dst ops allowed for a single item,
-  virtual void		GetEditActionsS_impl_(int& allowed, int& forbidden) const;
+  virtual void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const = 0;
     // get Src ops allowed for a single item, possibly of many selected items
+};
+
+class TA_API IObjectSelectable: public ISelectable { // specialized for taBase object items
+INHERITED(ISelectable)
+public: // Interface Properties and Methods
+  override taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const;
+  override taiClipData*	GetClipDataMulti(const ISelectable_PtrList& sel_items, 
+    int src_edit_action, bool for_drag) const;
+protected:
+  override int		EditActionD_impl_(taiMimeSource* ms, int ea);
+  override int		EditActionS_impl_(int ea);
+  override void		QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const;
+  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;
 };
 
 
@@ -1546,7 +1563,7 @@ private:
 
 
 class TA_API iTreeViewItem: public iTreeWidgetItem, 
-  public virtual IDataLinkClient, public virtual ISelectable {
+  public virtual IDataLinkClient, public virtual IObjectSelectable {
   //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 INHERITED(iTreeWidgetItem)
 friend class iTreeView;
@@ -1619,7 +1636,7 @@ public: // IDataLinkClient interface
 public: // ISelectable interface
   override taiDataLink*	link() const {return IDataLinkClient::link();}
   override MemberDef*	md() const {return m_md;}
-  override String	view_name() const; // for members, the member name; for list items, the name if
+//obs  override String	view_name() const; // for members, the member name; for list items, the name if
   override ISelectableHost* host() const;
 //  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
 //  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
@@ -1627,7 +1644,7 @@ protected:
 //  override int		EditAction_impl(taiMimeSource* ms, int ea);
 //  override void		FillContextMenu_EditItems_impl(taiMenu* menu, int allowed);
 //  override void		FillContextMenu_impl(taiMenu* menu); // this is the one to extend in inherited classes
-  override void		GetEditActionsS_impl_(int& allowed, int& forbidden) const;  // OR's in allowed; OR's in forbidden
+  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;  // OR's in allowed; OR's in forbidden
 
 protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)

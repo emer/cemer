@@ -88,6 +88,15 @@ const QString taiClipData::GetCommonDescHeader() const {
   return rval;
 }
 
+void taiClipData::setTextData(const QString& mime_type, const QString& data_) {
+  setData(mime_type, taiMimeFactory::StrToByteArray(data_));
+}
+
+void taiClipData::setTextFromStr(const String& str) {
+  // sets text without doubly converting from String->QString->ByteArray
+  setData(taiMimeFactory::text_plain, taiMimeFactory::StrToByteArray(str));
+}
+
 
 //////////////////////////////////
 //  taiMimeFactory		//

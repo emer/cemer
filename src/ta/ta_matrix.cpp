@@ -22,6 +22,29 @@
 # include <QMimeData>
 #endif
 
+
+//////////////////////////
+//  CellRange		//
+//////////////////////////
+
+void CellRange::SetFromModel(const QModelIndexList& indexes) {
+  if (indexes.count() > 0) {
+    const QModelIndex& mi = indexes.first();
+    row_fr = mi.row();
+    col_fr = mi.column();
+    if (indexes.count() > 1) {
+      const QModelIndex& mi = indexes.last();
+      row_to = mi.row();
+      col_to = mi.column();
+    } else { // note: this prob doesn't happen
+      row_to = row_fr;
+      col_to = col_fr;
+    }
+  } else {
+    Set(0, 0, -1, -1);
+  }
+}
+
 //////////////////////////
 //  MatrixGeom		//
 //////////////////////////
@@ -1442,22 +1465,10 @@ void MatrixTableModel::MatrixDestroying() {
   m_mat = NULL;
   //maybe update things? really is only called instants before we get deleted anyway
 }
-
 QMimeData* MatrixTableModel::mimeData (const QModelIndexList& indexes) const {
   if (!m_mat) return NULL;
-//TENT: guessing this has all the guys -- assume first and last are corners
-  int row_fr = 0; int row_to = 0; int col_fr = 0; int col_to = 0;
-  if (indexes.count() > 0) {
-    const QModelIndex& mi = indexes.first();
-    row_fr = mi.row();
-    col_fr = mi.column();
-  }
-  if (indexes.count() > 1) {
-    const QModelIndex& mi = indexes.last();
-    row_to = mi.row();
-    col_to = mi.column();
-  }
-  String str = mat()->FlatRangeToTSV(row_fr, col_fr, row_to, col_to);
+  CellRange cr(indexes);
+  String str = mat()->FlatRangeToTSV(cr);
   QMimeData* rval = new QMimeData;
   rval->setText(str);
   return rval;
