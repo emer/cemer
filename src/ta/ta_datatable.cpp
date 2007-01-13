@@ -2085,3 +2085,84 @@ void taiTabularDataMimeFactory::InitHeader(int cnt, QString& str) {
 }
 
 */
+
+//////////////////////////////////
+//  taiMatDataMimeItem 		//
+//////////////////////////////////
+/*
+taiMatDataMimeItem::taiMatDataMimeItem(int data_type_)
+{
+  m_data_type = data_type_;
+}
+
+bool taiMatDataMimeItem::isMatrix() const {
+  return (m_data_type == taiMimeSource::ST_MATRIX_DATA);
+}
+  
+bool taiMatDataMimeItem::isTable() const {
+  return (m_data_type == taiMimeSource::ST_TABLE_DATA);
+}
+  
+void taiMatDataMimeItem::GetFormats_impl(QStringList& list, int) const {
+  if (isMatrix())
+    list.append(taiClipData::tacss_matrixdesc);
+  else if (isTable())
+    list.append(taiClipData::tacss_tabledesc);
+}
+
+
+
+//////////////////////////////////
+//  taiRcvMatDataMimeItem 	//
+//////////////////////////////////
+
+taiRcvMatDataMimeItem::taiRcvMatDataMimeItem(int data_type_)
+:inherited(data_type_)
+{
+  m_cols = 0;
+  m_rows = 0;
+  m_max_row = 1;
+  m_geoms.SetBaseType(&TA_MatrixGeom);
+}
+
+void taiRcvMatDataMimeItem::DecodeMatrixDesc(String& arg) {
+  // just do it all blind, because supposed to be in correct format
+  String tmp = arg.before(';');
+  m_cols = tmp.toInt();
+  arg = arg.after(';');
+  tmp = arg.before(';');
+  m_rows = tmp.toInt();
+  arg = arg.after(';'); 
+}
+
+void taiRcvMatDataMimeItem::DecodeTableDesc(String& arg) {
+  DecodeMatrixDesc(arg);
+  String tmp;
+  for (int i = 0; i < m_cols; ++i) {
+    tmp = arg.before(';');
+    int col_cols = tmp.toInt();
+    arg = arg.after(';');
+    tmp = arg.before(';');
+    int col_rows = tmp.toInt();
+    m_max_row = MAX(m_max_row, col_rows);
+    arg = arg.after(';'); 
+    MatrixGeom* geom = new MatrixGeom(2, col_cols, col_rows);
+    m_geoms.Add(geom);
+  }
+}
+
+void taiRcvMatDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
+  if (m_data_type == taiMimeSource::ST_MATRIX_DATA) {
+    cols = 1;  rows = 1;
+  } else {
+    MatrixGeom* geom = (MatrixGeom*)m_geoms.SafeEl(col);
+    if (geom) {
+      cols = geom->SafeEl(0);
+      rows = geom->SafeEl(1);
+    } else { // bad call!
+      cols = 0;  rows = 0;
+    }
+  }
+}
+
+*/

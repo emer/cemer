@@ -1513,9 +1513,9 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
     ISelectable_PtrList& sel_items)
 {
   Reset();
-  if ((ms.count() == 0) || (sel_items.size == 0)) return;
-
-  TypeDef* tms = ms.CommonSubtype(); // greatest common subtype of source object(s)
+  taiObjectsMimeItem* mi = ms.objects();
+  if (!mi || (mi->count() == 0) || (sel_items.size == 0)) return;
+  TypeDef* tms = mi->CommonSubtype(); // greatest common subtype of source object(s)
   TypeDef* t1n = sel_items.CommonSubtype1N(); // greatest common subtype of items 1-N
   if (!tms || !t1n) return; // typically for non-taBase types, ex Class browsing
   

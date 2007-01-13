@@ -1407,8 +1407,8 @@ int taBase::EditAction_impl(taiMimeSource* ms, int ea) {
 }
 
 // gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
-void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child, taiMimeSource* ms,
-    int& allowed, int& forbidden)
+void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child,
+  taiMimeSource* ms, int& allowed, int& forbidden)
 {
   if (ms && ms->isMulti()) {
     int item_allowed = 0;
@@ -1425,8 +1425,8 @@ void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child, tai
   }
 }
 
-void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child, const taiMimeSource* ms,
-  int& allowed, int& forbidden)
+void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+  const taiMimeSource* ms, int& allowed, int& forbidden)
 {
   if (ms == NULL) return; // querying for src ops only
 

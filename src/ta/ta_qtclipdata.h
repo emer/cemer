@@ -300,20 +300,37 @@ class TA_API taiMimeItem: public taOBase { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS 
 INHERITED(taOBase)
 public:
   enum MimeItemFlags { // #BITS
-    MIF_DECODED		= 0x0001 // true once we decode
+    MIF_ZOMBIE		= 0x0001, // constr process failed -- we are a zombie
+    MIF_DECODED		= 0x0002 // true once we decode
   };
+  
+  static int 		data(const QMimeData* md, const QString& mimeType,
+    taString& result); // convenience data accessor 
+  
+  static taiMimeItem* 	ExtractByType(TypeDef* td, taiMimeSource* ms, 
+    const String& mimetype = _nilString);
+    // return an instance of td, a taiMimeItem class, if possible
+
   
   inline int		flags() const {return m_flags;}
   bool			isThisProcess() const; // from ms
-  QMimeData*		mimeData() const;
+  const QMimeData*	mimeData() const;
   inline taiMimeSource*	ms() const {return m_ms;} 
+  virtual const String  subkey() const {return _nilString;} 
+    // subkeys are a type-dependent way to have more than one guy of the type
   
-  void			Constr(taiMimeSource* ms, const String& mimetype = _nilString);
+  bool			Constr(taiMimeSource* ms, const String& subkey = _nilString);
+    // returns true if ok, otherwise false, and zombie set
     
   void	SetIndex(int idx) {m_index = idx;} // iml index as convenience
   int	GetIndex() const {return m_index;}
   TA_BASEFUNS(taiMimeItem);
-  
+
+public: // TAI_xxx instance interface -- used for dynamic creation
+  virtual taiMimeItem* 	Extract(taiMimeSource* ms, 
+    const String& mimetype = _nilString) {return NULL;}
+    // if this type can be made from the given md and using the optionally specified specific mimetype (otherwise its default mimetype, or set of possible types is used); NULL result means no, otherwise the newly created and constructed instance is supplied
+
 protected:
   int			m_index;
   int			m_flags;
@@ -322,7 +339,8 @@ protected:
   inline bool		isDecoded() const {return (m_flags & MIF_DECODED);}
   
   void			AssertData(); // insures data is fetched/decoded
-  virtual void		Constr_impl(const String& mimetype) {}
+  virtual bool		Constr_impl(const String& subkey) {return true;}
+    // returns true if constr went ok
   virtual void		DecodeData_impl() {}
 private:
   void	Initialize();
@@ -341,11 +359,17 @@ private:
 class TA_API taiMultiMimeItem: public taiMimeItem { // #VIRT_BASE
 INHERITED(taiMimeItem)
 public:
-  taiMimeItem_List	items; // the subitems
+  
+  inline int		count() const {return items.size;}
+  taiMimeItem*		item(int idx) const {return items.FastEl(idx);} //note: can be replaced with strongly typed version
   
   void	InitLinks();
   void	CutLinks();
   TA_ABSTRACT_BASEFUNS(taiMultiMimeItem);
+  
+protected:
+  taiMimeItem_List	items; // the subitems
+  
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}
@@ -370,7 +394,7 @@ protected:
   TypeDef*		m_td;
   String		m_path;
   taBase*		m_obj;
-  override void		Constr_impl(const String& mimetype);
+  override bool		Constr_impl(const String&);
   override void		DecodeData_impl();
 private:
   void	Initialize();
@@ -380,7 +404,20 @@ private:
 class TA_API taiObjectsMimeItem: public taiMultiMimeItem { // for tacss objects
 INHERITED(taiMultiMimeItem)
 public:
+  bool			isMulti() const  {return (items.size > 1);}
+  taiObjectMimeItem*	item(int idx) const 
+    {return (taiObjectMimeItem*)items.FastEl(idx);} 
+
+  TypeDef*		CommonSubtype() const; // type of item (if 1) or common subtype if multiple
+
   TA_BASEFUNS(taiObjectsMimeItem);
+  
+public: // TAI_xxx instance interface -- used for dynamic creation
+  override taiMimeItem* Extract(taiMimeSource* ms, 
+    const String& mimetype = _nilString);
+
+protected:
+  override bool		Constr_impl(const String&);
 private:
   void	Initialize() {items.SetBaseType(&TA_taiObjectMimeItem);}
   void	Destroy() {}
@@ -395,26 +432,61 @@ private:
     xxxx ITER: property of the current index; if index out of range, then values are 0 (ex. "", 0, false)
 
 */
-class TA_API taiMimeSource: public QObject { // a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
+class TA_API taiMimeSource: public QObject { // #NO_CSS #NO_MEMBERS a delegate/wrapper that is used for dealing with generic Mime data, as well as decoding the tacss mime types -- acts like an iterator (for all properties marked ITER)
 INHERITED(QObject)
   Q_OBJECT
 public:
   static taiMimeSource*	New(const QMimeData* ms);
   static taiMimeSource*	NewFromClipboard(); // whatever is on clipboard
-public: //TEMP compatability
-  enum SourceType {
-    ST_UNDECODED,
-    ST_OBJECT,
-    ST_UNKNOWN
-  };
+public:
+  QByteArray 		data(const QString& mimeType) const;
+  int			data(const QString& mimeType, taString& result) const; // provides data to a String; returns # bytes
+  int			data(const QString& mimeType, istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
+  QStringList 		formats() const; // override
+  bool			hasFormat(const QString& mimeType) const;
+  const QMimeData*	mimeData() const {return ms;}
+  int			srcAction() const {return m_src_action;}
+  bool			isThisProcess() const {return m_this_proc;} // override
   
-  int			count() const {return (mi) ? mi->items.size : 0;}
-  bool			isMulti() const  {return (mi) ? (mi->items.size > 1) : false;} // override
-  bool			isObject() const {return (m_src_type == ST_OBJECT);}
+  taiMimeItem*		GetMimeItem(TypeDef* td, const String& subkey = _nilString);
+    // get a guy of specified taiMimeItem type, using optional subkey; NULL if that type not supported; note: we check our list first, before trying to make a new guy
+    
+  taiObjectsMimeItem*	objects() const; // convenience accessor
+
+  ~taiMimeSource();
+
+public slots:
+  void			ms_destroyed(); // mostly for debug
+
+protected:
+  const QMimeData* 	ms;
+  taiMimeItem_List	items;
+  // the following are extracted from the common tacss header info:
+  int			m_src_action;
+  bool			m_this_proc;
+  
+  void			Decode(); // decodes the guy, noop if decoded
+  bool			Decode_common(String arg);
+  
+  taiMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
+
+
+public: // compatability interface
+/*TODO: this interface is only for taiObjectsMimeItem accessing using an
+  iteration index -- this is too complicated, but is left this way 
+  for the time being, since all the taBase Query/Action classes are based
+  on this -- to standardize this, we'd have to change the semantics of those
+  calls such that terminal guys can grok looking at all objects, not just
+  one at a time.
+*/
+  int			count() const {return (mi) ? mi->count() : 0;}
+  bool			isMulti() const  {return (mi) ? (mi->count() > 1) : false;}
+  bool			isObject() const;
 
   int			objectData(istringstream& istr);
-  taBase*		tabObject() const; // gets a taBase object, if possible, otherwise NULL -- only valid for isThisProcess true
-public: //TEMP object iteration guys
+  taBase*		tabObject() const; 
+  
+ //TEMP object iteration guys
   int			index() const; // current index value; -1 if none
   void			setIndex(int val) 
     {iter_idx = ((val >= 0) && (val < count())) ? val : -1;}
@@ -434,27 +506,6 @@ public: //TEMP object iteration guys
     {return (isObject() && inRange()) ? 
       ((taiObjectMimeItem*)item())->path() : _nilString;};
     // ITER if a taBase object, its full path
-
-public:
-  bool			isThisProcess() const {return m_this_proc;} // override
-  QStringList 		formats() const; // override
-  bool			hasFormat(const QString& mimeType) const;
-  QByteArray 		data(const QString& mimeType) const;
-  int			data(const QString& mimeType, taString& result) const; // provides data to a String; returns # bytes
-  int			data(const QString& mimeType, istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
-  int			srcAction() const {return m_src_action;}
-  
-  void			Decode(); // decodes the guy, noop if decoded
-
-
-  virtual TypeDef*	CommonSubtype() const; // type of item (if 1) or common subtype if multiple
-
-  ~taiMimeSource();
-
-public slots:
-  void			ms_destroyed(); // mostly for debug
-
-    
 public: // tabular data i/f
 /*  void		GetDataGeom(int& cols, int& rows) const
    {if (isTabularData() && inRange())
@@ -467,36 +518,17 @@ public: // tabular data i/f
   void		GetMaxRowGeom(int& max_row) const
    {if (isTabularData() && inRange())
      ((taiMatDataMimeItem*)item())->GetMaxRowGeom(max_row);} */
-
-
-protected:
-  const QMimeData* 	ms;
-
-  taiMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
-protected: // was in ExtMimeSource
-  taiMimeItem_List	list;
-  // the following are extracted from the common tacss header info:
-  int			m_src_action;
-  bool			m_this_proc;
-  
 protected://TEMP -- just for intermediate compatability
   int			m_itm_cnt;
-  SourceType		m_src_type;
-  taiObjectsMimeItem*	mi; // cache
+  mutable taiObjectsMimeItem*	mi; // cache
   int			iter_idx; // iteration index: =-1, not started yet; >=0 < items.size, in range; =size, past end
   bool			inRange() const {return ((iter_idx >= 0) && (iter_idx < count()));}// true if index in range
   taiMimeItem*		item() const {return item(iter_idx);} // current item -- must always be checked with inRange before access
-  taiObjectsMimeItem*	objects() const {return mi;}
 
   taiMimeItem*		item(int idx) const {
-    if (mi) return mi->items.SafeEl(idx); else return NULL;} // TEMP
+    if (mi) return mi->item(idx); else return NULL;} // TEMP
+    
   
-  virtual void		Decode_impl(); 
-  bool			Decode_common(String arg);
-  bool			DecodeDesc_object(String arg); // decode the full description, return 'true' if valid, build list from desc
-  bool			DecodeDesc_matrix(String arg); // decode the full description, return 'true' if valid, build list from desc
-  bool			DecodeDesc_table(String arg); // decode the full description, return 'true' if valid, build list from desc
-  bool			TryDecode_matrix(); // true if we can interpret as matrix data 
   
 };
 
