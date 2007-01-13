@@ -446,4 +446,118 @@ private:
   void 	Destroy()	{ CutLinks(); }
 };
 */
+
+class TA_API taiTabularDataMimeFactory: public taiMimeFactory {
+// this factory handles both Matrix and Table clipboard formats
+INHERITED(taiMimeFactory)
+public:
+  static const String 	tacss_matrixdesc; // "tacss/matrixdesc"
+  static const String 	tacss_tabledesc; // "tacss/tabledesc" 
+//static taiTabularDataMimeFactory* instance(); // provided by macro
+
+  void			Mat_QueryEditActions(taMatrix* mat, 
+    const CellRange& selected, taiMimeSource* ms,
+    int& allowed, int& forbidden) const; // determine ops based on clipboard and selected; ms=NULL for source only
+  void			Mat_EditAction(taMatrix* mat, 
+    const CellRange& selected, taiMimeSource* ms, int ea) const;
+    // note: this does the requery to insure it is still legal
+  taiClipData* 		Mat_GetClipData(taMatrix* mat,
+    const CellRange& sel, int src_edit_action, bool for_drag = false) const;
+  
+  void			AddMatDesc(QMimeData* md,
+    taMatrix* mat, const CellRange& selected) const;
+
+/*  virtual void		AddSingleMimeData(QMimeData* md, taBase* obj);
+    // used for putting one object on the clipboard
+  virtual void		AddMultiMimeData(QMimeData* md, taPtrList_impl* obj_list);
+    // used for putting multiple objects on the clipboard */
+    
+  TA_MFBASEFUNS(taiTabularDataMimeFactory);
+protected:
+  void			AddDims(const CellRange& sel, String& str) const;
+
+/*  void			InitHeader(int cnt, QString& str); // common for single/multi
+  void			AddHeaderDesc(taBase* obj, QString& str);
+    // add entry for one object
+  void			AddObjectData(QMimeData* md, taBase* obj, int idx); 
+    // add mime entry for one obj */
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
+class TA_API taiTabularDataMimeItem: public taiMimeItem { // base for matrix and table data
+INHERITED(taiMimeItem)
+public: // i/f for tabular data guy
+/*TODO  override bool		isMatrix() const;
+  override bool		isTable() const;
+  
+  const CellRange	cellRange() const; // the range of the data
+  virtual void		GetDataGeom(int& cols, int& rows) const = 0;
+    // number of cols/rows in the overall data
+  virtual void		GetColGeom(int col, int& cols, int& rows) const = 0;
+    // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
+  virtual void		GetMaxRowGeom(int& max_row) const = 0;
+    // longest cell geom determines overall row geom
+    */
+  TA_BASEFUNS(taiTabularDataMimeItem);
+    
+protected:
+//  int			m_data_type; // one of ST_MATRIX_DATA or TABLE_DATA
+//  override void 	GetFormats_impl(QStringList& list, int idx) const; 
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
+
+/*
+class TA_API taiMatDataMimeItem: public taiMimeItem { // for matrix and table data
+INHERITED(taiMimeItem)
+  Q_OBJECT
+public:
+  
+public: // i/f for tabular data guy
+  override bool		isMatrix() const;
+  override bool		isTable() const;
+  virtual void		GetDataGeom(int& cols, int& rows) const = 0;
+    // number of cols/rows in the overall data
+  virtual void		GetColGeom(int col, int& cols, int& rows) const = 0;
+    // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
+  virtual void		GetMaxRowGeom(int& max_row) const = 0;
+    // longest cell geom determines overall row geom
+    
+protected:
+  int			m_data_type; // one of ST_MATRIX_DATA or TABLE_DATA
+  override void 	GetFormats_impl(QStringList& list, int idx) const; 
+  taiMatDataMimeItem(int data_type);
+}; 
+
+
+class TA_API taiRcvMatDataMimeItem: public taiMatDataMimeItem { 
+  // for received mat or table data, or compatible foreign mat data
+INHERITED(taiMatDataMimeItem)
+  Q_OBJECT
+friend class taiExtMimeSource;
+public:
+  
+public: // i/f for tabular data guy
+  void			GetDataGeom(int& cols, int& rows) const
+    {cols = m_cols;  rows = m_rows;}
+  void			GetColGeom(int col, int& cols, int& rows) const;
+  void			GetMaxRowGeom(int& max_row) const {max_row = m_max_row;} 
+
+protected:
+  int			m_cols;
+  int			m_rows;
+  int			m_max_row;
+  taBase_List		m_geoms; // list of GeomData
+  
+  void			DecodeMatrixDesc(String& arg); // same for both
+  void			DecodeTableDesc(String& arg); // the extra stuff
+  
+  taiRcvMatDataMimeItem(int data_type);
+};*/
+
+
 #endif

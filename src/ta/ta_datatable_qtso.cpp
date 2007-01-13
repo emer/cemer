@@ -28,9 +28,10 @@
 #include "ilineedit.h"
 #include "ispinbox.h"
 
+#include <QApplication>
 #include <QButtonGroup>
 #include <QCheckBox>
-#include <qclipboard.h>
+#include <QClipboard>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -1591,3 +1592,190 @@ void iDataTablePanel::Render_impl() {
   dte->setDataTable(dt());
 }
 
+//////////////////////////////////
+//  taiTabularDataMimeFactory	//
+//////////////////////////////////
+
+const String taiTabularDataMimeFactory::tacss_matrixdesc("tacss/matrixdesc");
+const String taiTabularDataMimeFactory::tacss_tabledesc("tacss/tabledesc");
+
+void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat, 
+  const CellRange& sel, taiMimeSource* ms,
+  int& allowed, int& forbidden) const
+{
+  // ops that are never allowed on mats
+  forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+  // src ops
+  if (sel.nonempty())
+    allowed |= taiClipData::EA_COPY;
+    
+  if (!ms) return;
+  // TODO: dst ops
+}
+
+void taiTabularDataMimeFactory::Mat_EditAction(taMatrix* mat, 
+  const CellRange& sel, taiMimeSource* ms, int ea) const
+{
+  int allowed = 0;
+  int forbidden = 0;
+  Mat_QueryEditActions(mat, sel, ms, allowed, forbidden);
+  ea = ea & (allowed & ~forbidden);
+  
+  if (ea & taiClipData::EA_COPY) {
+    taiClipData* cd = Mat_GetClipData(mat,
+      sel, taiClipData::EA_SRC_COPY, false);
+    QApplication::clipboard()->setMimeData(cd); //cb takes ownership
+  }
+}
+
+taiClipData* taiTabularDataMimeFactory::Mat_GetClipData(taMatrix* mat,
+    const CellRange& sel, int src_edit_action, bool for_drag) const
+{
+  taiClipData* cd = new taiClipData(src_edit_action);
+  AddMatDesc(cd, mat, sel);
+  String str = mat->FlatRangeToTSV(sel);
+  cd->setTextFromStr(str);
+  return cd;
+}
+
+void taiTabularDataMimeFactory::AddMatDesc(QMimeData* md,
+  taMatrix* mat, const CellRange& sel) const
+{
+  String str;
+  AddDims(sel, str);
+  md->setData(tacss_matrixdesc, StrToByteArray(str));
+}
+
+void taiTabularDataMimeFactory::AddDims(const CellRange& sel, String& str) const
+{
+  str = str + String(sel.width()) + ";" + String(sel.height()) + ";";
+}
+
+/*
+void taiTabularDataMimeFactory::AddSingleObject(QMimeData* md, taBase* obj) {
+  if (!obj) return;
+  QString str;
+  InitHeader(1, str);
+  AddHeaderDesc(obj, str);
+  md->setData(tacss_objectdesc, StrToByteArray(str));
+  AddObjectData(md, obj, 0);
+}
+
+void taiTabularDataMimeFactory::AddMultiObjects(QMimeData* md,
+   taPtrList_impl* obj_list)
+{
+  if (!obj_list) return;
+  QString str;
+  InitHeader(obj_list->size, str);
+  // note: prob not necessary, but we iterate twice so header precedes data
+  for (int i = 0; i < obj_list->size; ++i) {
+    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
+    AddHeaderDesc(obj, str);
+  }
+  md->setData(tacss_objectdesc, StrToByteArray(str));
+  for (int i = 0; i < obj_list->size; ++i) {
+    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
+    AddObjectData(md, obj, i);
+  }
+}
+
+void taiTabularDataMimeFactory::AddObjectData(QMimeData* md, taBase* obj, int idx) {
+    ostringstream ost;
+    obj->Save_strm(ost);
+    QString str = tacss_objectdata + ";index=" + QString::number(idx);
+    md->setData(str, QByteArray(ost.str().c_str()));
+}
+
+
+void taiTabularDataMimeFactory::AddHeaderDesc(taBase* obj, QString& str) {
+  //note: can't use Path_Long because path parsing routines don't handle names in paths
+  str = str + obj->GetTypeDef()->name.toQString() + ";" +
+        obj->GetPath().toQString() + ";\n"; // we put ; at end to facilitate parsing, and for }
+}
+
+void taiTabularDataMimeFactory::InitHeader(int cnt, QString& str) {
+  str = QString::number(cnt) + ";\n";
+}
+
+*/
+
+//////////////////////////////////
+//  taiMatDataMimeItem 		//
+//////////////////////////////////
+/*
+taiMatDataMimeItem::taiMatDataMimeItem(int data_type_)
+{
+  m_data_type = data_type_;
+}
+
+bool taiMatDataMimeItem::isMatrix() const {
+  return (m_data_type == taiMimeSource::ST_MATRIX_DATA);
+}
+  
+bool taiMatDataMimeItem::isTable() const {
+  return (m_data_type == taiMimeSource::ST_TABLE_DATA);
+}
+  
+void taiMatDataMimeItem::GetFormats_impl(QStringList& list, int) const {
+  if (isMatrix())
+    list.append(taiClipData::tacss_matrixdesc);
+  else if (isTable())
+    list.append(taiClipData::tacss_tabledesc);
+}
+
+
+
+//////////////////////////////////
+//  taiRcvMatDataMimeItem 	//
+//////////////////////////////////
+
+taiRcvMatDataMimeItem::taiRcvMatDataMimeItem(int data_type_)
+:inherited(data_type_)
+{
+  m_cols = 0;
+  m_rows = 0;
+  m_max_row = 1;
+  m_geoms.SetBaseType(&TA_MatrixGeom);
+}
+
+void taiRcvMatDataMimeItem::DecodeMatrixDesc(String& arg) {
+  // just do it all blind, because supposed to be in correct format
+  String tmp = arg.before(';');
+  m_cols = tmp.toInt();
+  arg = arg.after(';');
+  tmp = arg.before(';');
+  m_rows = tmp.toInt();
+  arg = arg.after(';'); 
+}
+
+void taiRcvMatDataMimeItem::DecodeTableDesc(String& arg) {
+  DecodeMatrixDesc(arg);
+  String tmp;
+  for (int i = 0; i < m_cols; ++i) {
+    tmp = arg.before(';');
+    int col_cols = tmp.toInt();
+    arg = arg.after(';');
+    tmp = arg.before(';');
+    int col_rows = tmp.toInt();
+    m_max_row = MAX(m_max_row, col_rows);
+    arg = arg.after(';'); 
+    MatrixGeom* geom = new MatrixGeom(2, col_cols, col_rows);
+    m_geoms.Add(geom);
+  }
+}
+
+void taiRcvMatDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
+  if (m_data_type == taiMimeSource::ST_MATRIX_DATA) {
+    cols = 1;  rows = 1;
+  } else {
+    MatrixGeom* geom = (MatrixGeom*)m_geoms.SafeEl(col);
+    if (geom) {
+      cols = geom->SafeEl(0);
+      rows = geom->SafeEl(1);
+    } else { // bad call!
+      cols = 0;  rows = 0;
+    }
+  }
+}
+
+*/

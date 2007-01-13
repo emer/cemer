@@ -17,10 +17,9 @@
 #include "ta_matrix_qt.h"
 
 #include "ta_qtclipdata.h"
-#include "ta_datatable.h" // for factories
+#include "ta_datatable_qtso.h" // for factories
 #include "ta_qt.h"
-
-#include "itreewidget.h"
+#include "ta_datatable_qtso.h" // for factories
 
 #include <QApplication>
 #include <QClipboard>
@@ -54,10 +53,9 @@ void tabMatrixViewType::CreateDataPanel_impl(taiDataLink* dl_)
 //    iMatTableView 	//
 //////////////////////////
 
-iMatTableView::iMatTableView(ISelectableHost* host_, QWidget* parent)
+iMatTableView::iMatTableView(QWidget* parent)
 :inherited(parent)
 {
-  m_host = host_;
 }
 
 bool iMatTableView::event(QEvent* ev) {
@@ -74,47 +72,10 @@ bool iMatTableView::event(QEvent* ev) {
   return rval;
 }
 
-taiClipData* iMatTableView::GetClipDataSingle(int src_edit_action, bool for_drag) const {
-  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
-  CellRange sel(selectionModel()->selectedIndexes());
-  taiClipData* rval = fact->Mat_GetClipData(mat(), sel, src_edit_action, for_drag); ;
-  return rval;
-}
-
-taiDataLink* iMatTableView::link() const {
-  return NULL; //TODO
-}
-
 taMatrix* iMatTableView::mat() const {
   MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(model());
   if (mod) return mod->mat();
   else return NULL; 
-}
-
-int iMatTableView::EditActionD_impl_(taiMimeSource* ms, int ea) {
-  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
-  CellRange sel(selectionModel()->selectedIndexes());
-  //TODO
-  return 0;
-}
-
-int iMatTableView::EditActionS_impl_(int ea) {
-  int src_edit_action = taiClipData::ClipOpToSrcCode(ea);
-  taiClipData* cd = GetClipDataSingle(src_edit_action, ea);
-  QApplication::clipboard()->setMimeData(cd);
-  return 0;
-}
-
-void iMatTableView::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const {
-  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
-  CellRange sel(selectionModel()->selectedIndexes());
-  fact->Mat_QueryEditActions(mat(), sel, ms, allowed, forbidden);
-}
-
-void iMatTableView::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
-  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
-  CellRange sel(selectionModel()->selectedIndexes());
-  fact->Mat_QueryEditActions(mat(), sel, NULL, allowed, forbidden);
 }
 
 
@@ -132,15 +93,21 @@ void iMatrixEditor::init() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   layDims = new QHBoxLayout(layOuter);
-  tv = new iMatTableView(NULL, this);//TODO: host
+  tv = new iMatTableView(this);
   layOuter->addWidget(tv);
   tv->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(tv, SIGNAL(customContextMenuRequested(const QPoint&)),
     this, SLOT(tv_customContextMenuRequested(const QPoint&)) );
 }
 
+taMatrix* iMatrixEditor::mat() const {
+  MatrixTableModel* mod = model();
+  if (mod) return mod->mat();
+  else return NULL; 
+}
+
 MatrixTableModel* iMatrixEditor::model() const {
-  return dynamic_cast<MatrixTableModel*>(tv->model());
+  return qobject_cast<MatrixTableModel*>(tv->model());
 }
 
 void iMatrixEditor::Refresh() {
@@ -155,47 +122,43 @@ void iMatrixEditor::setModel(MatrixTableModel* mod) {
 }
 
 void iMatrixEditor::EditAction(int ea) {
- //TODO
+  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
+  CellRange sel(tv->selectionModel()->selectedIndexes());
+  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+  fact->Mat_EditAction(mat(), sel, ms, ea);
+  delete ms;
 }
 
 void iMatrixEditor::GetEditActionsEnabled(int& ea) {
-  ea= 0; //TODO
+  int allowed = 0;
+  int forbidden = 0;
+  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
+  CellRange sel(tv->selectionModel()->selectedIndexes());
+  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+  fact->Mat_QueryEditActions(mat(), sel, ms, allowed, forbidden);
+  ea = allowed & ~forbidden;
+  delete ms;
 }
 
 void iMatrixEditor::tv_customContextMenuRequested(const QPoint& pos) {
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
-  tv->FillContextMenu(menu);
+  int ea = 0;
+  GetEditActionsEnabled(ea);
+    
+  taiAction* 
+  act = menu->AddItem("Copy", taiMenu::normal, taiAction::int_act,
+    this, SLOT(EditAction(int)), taiClipData::EA_COPY );
+  if (!(ea & taiClipData::EA_COPY))
+    act->setEnabled(false);
+  act = menu->AddItem("&Paste", taiMenu::normal,
+      taiAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_PASTE);
+  if (!(ea & taiClipData::EA_PASTE)) 
+    act->setEnabled(false);
+    
   if (menu->count() > 0) { //only show if any items!
     menu->exec(tv->mapToGlobal(pos));
   }
   delete menu;
-
-
-/*
-  //TODO: any for us first (ex. delete)
-  int ea = 0;
-  GetEditActionsEnabled(ea);
-    
-// TEMP for test
-  taiAction* act = menu->AddItem("Copy", taiMenu::normal, taiAction::int_act,
-    this, SLOT(EditAction(int)), taiClipData::EA_COPY );
-  if (!(ea & taiClipData::EA_COPY))
-    act->setEnabled(false);
-
-
-  menu->AddSep();
-  taiMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
-  men_exp->AddItem("Expand All", taiMenu::normal, taiAction::action,
-    this, SLOT(ExpandAll()) );
-  men_exp->AddItem("Collapse All", taiMenu::normal, taiAction::action,
-    this, SLOT(CollapseAll()) );
-  if (nd && lst.size == 1) {
-    men_exp->AddItem("Expand All From Here", taiMenu::normal, taiAction::ptr_act,
-      this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
-    men_exp->AddItem("Collapse All From Here", taiMenu::normal, taiAction::ptr_act,
-      this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
-  }
-*/
 }
 
 

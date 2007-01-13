@@ -37,42 +37,21 @@ protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
-class TA_API iMatTableView: public QTableView, public virtual ISelectable {
+class TA_API iMatTableView: public QTableView {
   // table editor; model flattens >2d into 2d by frames
 INHERITED(QTableView)
   Q_OBJECT
 public:
   taMatrix*		mat() const;
 
-  iMatTableView(ISelectableHost* host_, QWidget* parent = NULL);
+  iMatTableView(QWidget* parent = NULL);
 #ifndef __MAKETA__
 signals:
   void			hasFocus(); // we emit anytime something happens which implies we are focused
 #endif
 
  
-public: // ITypedObject interface
-  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iMatTableView;}
-
-public: // ISelectable interface
-  override taiDataLink*	link() const;
-//  override MemberDef*	md() const {return m_md;}
-//obs  override String	view_name() const; // for members, the member name; for list items, the name if
-  override ISelectableHost* host() const {return m_host;}
-  override taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const;
-//  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 protected:
-  override int		EditActionD_impl_(taiMimeSource* ms, int ea);
-  override int		EditActionS_impl_(int ea);
-//  override void		FillContextMenu_EditItems_impl(taiMenu* menu, int allowed);
-//  override void		FillContextMenu_impl(taiMenu* menu); // this is the one to extend in inherited classes
-  override void		QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const;
-  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;
-
-protected:
-  ISelectableHost* 	m_host;
-  
   override bool		event(QEvent* ev);
 };
 
@@ -85,6 +64,7 @@ public:
   QHBoxLayout*		  layDims;
   iMatTableView*		  tv;
 
+  taMatrix*		mat() const;
   MatrixTableModel* 	model() const;
   void			setModel(MatrixTableModel* mod);
   

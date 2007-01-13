@@ -425,12 +425,12 @@ protected:
 private:
   void	Initialize() {items.SetBaseType(&TA_taiObjectMimeItem);}
   void	Destroy() {}
-};
+}; //
 
 
 
 /*
-  taiMimeSource works like an iterator:
+  For taBase objects, taiMimeSource works like an iterator:
     count: the number of items (0 if not tacss items), 1 if 'isMulti' is false
     index: the current index; initialized to 0, except if count=0, then -1; -1=no value -- if set out of range, is saved in range
     xxxx ITER: property of the current index; if index out of range, then values are 0 (ex. "", 0, false)
@@ -440,7 +440,7 @@ class TA_API taiMimeSource: public QObject { // #NO_CSS #NO_MEMBERS a delegate/w
 INHERITED(QObject)
   Q_OBJECT
 public:
-  static taiMimeSource*	New(const QMimeData* ms);
+  static taiMimeSource*	New(const QMimeData* md);
   static taiMimeSource*	NewFromClipboard(); // whatever is on clipboard
 public:
   QByteArray 		data(const QString& mimeType) const;
@@ -448,22 +448,22 @@ public:
   int			data(const QString& mimeType, istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
   QStringList 		formats() const; // override
   bool			hasFormat(const QString& mimeType) const;
-  const QMimeData*	mimeData() const {return ms;}
+  const QMimeData*	mimeData() const {return m_md;}
   int			srcAction() const {return m_src_action;}
   bool			isThisProcess() const {return m_this_proc;} // override
   
+  taiObjectsMimeItem*	objects() const; // convenience GetMimeItem accessor for this type
+
   taiMimeItem*		GetMimeItem(TypeDef* td, const String& subkey = _nilString);
     // get a guy of specified taiMimeItem type, using optional subkey; NULL if that type not supported; note: we check our list first, before trying to make a new guy
     
-  taiObjectsMimeItem*	objects() const; // convenience accessor
-
   ~taiMimeSource();
 
 public slots:
   void			ms_destroyed(); // mostly for debug
 
 protected:
-  const QMimeData* 	ms;
+  const QMimeData* 	m_md;
   taiMimeItem_List	items;
   // the following are extracted from the common tacss header info:
   int			m_src_action;
@@ -472,7 +472,7 @@ protected:
   void			Decode(); // decodes the guy, noop if decoded
   bool			Decode_common(String arg);
   
-  taiMimeSource(const QMimeData* ms); // creates an instance from a non-null ms; if ms is tacss, fields are decoded
+  taiMimeSource(const QMimeData* m_md); // creates an instance from a non-null m_md; if m_md is tacss, fields are decoded
 
 
 public: // compatability interface
@@ -490,7 +490,6 @@ public: // compatability interface
   int			objectData(istringstream& istr);
   taBase*		tabObject() const; 
   
- //TEMP object iteration guys
   int			index() const; // current index value; -1 if none
   void			setIndex(int val) 
     {iter_idx = ((val >= 0) && (val < count())) ? val : -1;}
@@ -510,19 +509,7 @@ public: // compatability interface
     {return (isObject() && inRange()) ? 
       ((taiObjectMimeItem*)item())->path() : _nilString;};
     // ITER if a taBase object, its full path
-public: // tabular data i/f
-/*  void		GetDataGeom(int& cols, int& rows) const
-   {if (isTabularData() && inRange())
-     ((taiMatDataMimeItem*)item())->GetDataGeom(cols, rows);}
-    // ITER  number of cols/rows in the overall data
-  void		GetColGeom(int col, int& cols, int& rows) const
-   {if (isTabularData() && inRange())
-     ((taiMatDataMimeItem*)item())->GetColGeom(col, cols, rows);}
-   // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
-  void		GetMaxRowGeom(int& max_row) const
-   {if (isTabularData() && inRange())
-     ((taiMatDataMimeItem*)item())->GetMaxRowGeom(max_row);} */
-protected://TEMP -- just for intermediate compatability
+protected: // compatability interface
   int			m_itm_cnt;
   mutable taiObjectsMimeItem*	mi; // cache
   int			iter_idx; // iteration index: =-1, not started yet; >=0 < items.size, in range; =size, past end
@@ -531,9 +518,6 @@ protected://TEMP -- just for intermediate compatability
 
   taiMimeItem*		item(int idx) const {
     if (mi) return mi->item(idx); else return NULL;} // TEMP
-    
-  
-  
 };
 
 

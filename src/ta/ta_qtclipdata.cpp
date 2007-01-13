@@ -416,22 +416,25 @@ taiMimeSource* taiMimeSource::NewFromClipboard() {
 taiMimeSource::taiMimeSource(const QMimeData* ms_)
 :inherited()
 {
-  ms = ms_;
+  m_md = ms_;
   m_src_action = 0; 
   m_this_proc = false;
-  if (ms)
-    connect(ms, SIGNAL(destroyed()), this, SLOT(ms_destroyed()) );
-//TEMP
+  if (m_md)
+    connect(m_md, SIGNAL(destroyed()), this, SLOT(ms_destroyed()) );
+//compatibility 
   mi = NULL;
   iter_idx = 0;
 }
 
 taiMimeSource::~taiMimeSource() {
-  ms = NULL;
+  if (m_md) {
+    disconnect(m_md, 0, this, 0);
+    m_md = NULL;
+  }
 }
 
 QByteArray taiMimeSource::data(const QString& mimeType) const {
-  if (ms) return ms->data(mimeType);
+  if (m_md) return m_md->data(mimeType);
   else return QByteArray();
 }
 
@@ -448,17 +451,17 @@ int taiMimeSource::data(const QString& mimeType, istringstream& result) const {
 }
 
 QStringList taiMimeSource::formats() const {
-  if (ms) return ms->formats();
+  if (m_md) return m_md->formats();
   else return QStringList();
 }
 
 bool taiMimeSource::hasFormat(const QString &mimeType) const {
-  if (ms) return ms->hasFormat(mimeType);
+  if (m_md) return m_md->hasFormat(mimeType);
   else return false;
 }
 
 taiMimeItem* taiMimeSource::GetMimeItem(TypeDef* td, const String& subkey) {
-  if (!ms) return NULL;
+  if (!m_md) return NULL;
   taiMimeItem* rval = NULL;
   // check first if already fetched
   for (int i = 0; i < items.size; ++i) {
@@ -473,9 +476,9 @@ taiMimeItem* taiMimeSource::GetMimeItem(TypeDef* td, const String& subkey) {
 }
 
 void taiMimeSource::ms_destroyed() {
-  ms = NULL;
+  m_md = NULL;
 #ifdef DEBUG
-  taMisc::Warning("taiMimeSource::ms destroyed before clip operations completed!");
+  taMisc::Warning("taiMimeSource::m_md destroyed before clip operations completed!");
 #endif
 }
 
