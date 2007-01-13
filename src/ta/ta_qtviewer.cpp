@@ -1285,7 +1285,8 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) 
         taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_DELETE;
   }
-  link()->FillContextMenu_EditItems(menu, allowed);
+  taiDataLink* link = this->link();
+  if (link) link->FillContextMenu_EditItems(menu, allowed);
 }
 
 taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
@@ -1327,8 +1328,9 @@ int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items) const {
 }
 
 taBase* ISelectable::taData() const {
-  if (link()->isBase())
-    return (taBase*)(link()->data());
+  taiDataLink* link = this->link();
+  if (link)
+    return link->taData();
   else return NULL;
 }
 
@@ -5192,7 +5194,7 @@ void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden) const 
   if (dn_flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   }
-  ISelectable::QueryEditActionsS_impl_(allowed, forbidden);
+  IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden);
 }
 
 int iTreeViewItem::highlightIndex() const {

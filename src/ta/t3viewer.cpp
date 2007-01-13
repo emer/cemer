@@ -241,7 +241,7 @@ void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
   if (flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   }
-  ISelectable::QueryEditActionsS_impl_(allowed, forbidden);
+  IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden);
 }
 
 ISelectableHost* T3DataView::host() const {
