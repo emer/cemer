@@ -226,6 +226,7 @@ public:
   static GridTableView* New(DataTable* dt, T3DataViewFrame*& fr);
 
   int		col_n; 		// number of columns to display: determines sizes of everything automatically from this
+  int		col_visible_n;	// number of visible columns (main for scrollbar display)
   MinMaxInt	col_range; 	// column range that is visible (max is the last col visible, not the last+1; range = col_n-1, except if columns are not visible range can be larger)
 
   float		width;		// how wide to make the display (height is always 1.0)
@@ -272,8 +273,9 @@ public:
   virtual void 	ViewCol_At(int start);	// start viewing at indicated column value
   
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
-
   T3GridViewNode* node_so() const {return (T3GridViewNode*)m_node_so.ptr();}
+
+  override bool		selectEditMe() const { return true; }
   
   void	InitLinks();
   void 	CutLinks();

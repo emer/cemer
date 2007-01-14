@@ -638,6 +638,7 @@ void GridColView::ComputeColSizes() {
 void GridTableView::Initialize() {
   view_rows = 10;
   col_n = 5;
+  col_visible_n = 0;
 
   width	= 1.0f;
   grid_on = true;
@@ -685,6 +686,8 @@ void GridTableView::CutLinks() {
 
 void GridTableView::Copy_(const GridTableView& cp) {
   col_n = cp.col_n;
+  col_visible_n = cp.col_visible_n;
+
   col_range = cp.col_range;
   grid_on = cp.grid_on;
   header_on = cp.header_on;
@@ -755,9 +758,10 @@ void GridTableView::Render_pre() {
 }
 
 void GridTableView::Render_impl() {
-  inherited::Render_impl();		     // this gets the column specs
+  inherited::Render_impl();
   T3GridViewNode* node_so = this->node_so(); // cache
-  if(!node_so) return;
+  if(!node_so)
+    return;
   node_so->setWidth(width);	// does a render too -- ensure always up to date on width
   int orig_rows;
   CheckRowsChanged(orig_rows);	// don't do anything with this here, but just make sure m_rows is up to date
@@ -794,7 +798,7 @@ void GridTableView::UpdateDisplay(bool update_panel) {
     // if we were not at the very end, then don't scroll, but do update the panel
     if ((view_range.max < old_rows-1) && (view_range.max > 0)) {
       UpdatePanel();
-      //      return;
+      return;
     }
     // scroll down to end of new data
     view_range.max = m_rows - 1; 
@@ -802,10 +806,8 @@ void GridTableView::UpdateDisplay(bool update_panel) {
     view_range.min = MAX(0, view_range.min);
   }
 
-  if(!node_so()) return;
   if (update_panel) UpdatePanel();
   Render_impl();
-  node_so()->touch();
 }
 
 void GridTableView::CalcViewMetrics() {
@@ -814,9 +816,11 @@ void GridTableView::CalcViewMetrics() {
   if(children.size != dt->data.size) {
     UpdateFromDataTable();
   }
+  col_visible_n = 0;
   for(int i=0;i<children.size;i++) {
     GridColView* cvs = (GridColView*)colView(i);
     cvs->ComputeColSizes();
+    if(cvs->isVisible()) col_visible_n++;
   }
 
   float tot_wd_raw = 0.0f;
@@ -962,7 +966,7 @@ void GridTableView::MakeViewRangeValid() {
     if(!cvs || !cvs->isVisible())
       continue;
     act_n++;
-    if(act_n >= col_n)
+    if(act_n > col_n)
       break;
   }
   col_range.max = col-1;
@@ -1741,21 +1745,22 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   chkAutoScale->setChecked(glv->scale.auto_scale);
 
   // only show col slider if necessary
-  if(glv->col_n >= dt->cols()) {
-    t3vs->setHasHorScrollBar(false);
-  } else {
-    QScrollBar* sb = t3vs->horScrollBar(); // no autocreate
-    if (!sb) {
-      sb = t3vs->horScrollBar(true);
-      connect(sb, SIGNAL(valueChanged(int)), this, SLOT(horScrBar_valueChanged(int)) );
-      sb->setTracking(true);
-    }
-    sb->setMinValue(0);
-    sb->setMaxValue(dt->cols()-glv->col_n+1);
-    int pg_step = 1;
-    sb->setSteps(1, pg_step);
-    sb->setValue(glv->col_range.min);
+//   if(glv->col_n >= dt->cols()) {
+//     t3vs->setHasHorScrollBar(false);
+//   } else {
+  // always show the column scrollbar!
+  QScrollBar* sb = t3vs->horScrollBar(); // no autocreate
+  if (!sb) {
+    sb = t3vs->horScrollBar(true);
+    connect(sb, SIGNAL(valueChanged(int)), this, SLOT(horScrBar_valueChanged(int)) );
+    sb->setTracking(true);
   }
+  sb->setMinValue(0);
+  sb->setMaxValue(dt->cols()-glv->col_n+1);
+  sb->setPageStep(glv->col_n);
+  sb->setSingleStep(1);
+  sb->setValue(glv->col_range.min);
+//   }
 
   // only show row slider if necessary
   if (glv->view_rows >= glv->rows()) {
@@ -1773,7 +1778,8 @@ void iGridTableView_Panel::UpdatePanel_impl() {
     sb->setMaxValue(mx);
     //page step size based on viewable to total lines
     int pg_step = MAX(glv->view_rows, 1);
-    sb->setSteps(1, pg_step);
+    sb->setPageStep(pg_step);
+    sb->setSingleStep(1);
     sb->setValue(MIN(glv->view_range.min, mx));
   }
 }

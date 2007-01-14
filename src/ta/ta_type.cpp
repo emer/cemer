@@ -1823,6 +1823,9 @@ void taDataLink::DoNotify(int dcr, void* op1_, void* op2_) {
   }
 }
 
+// set this to emit debug messages for the following code..
+// #define DATA_DATA_DEBUG 1
+
 void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
 /*
   m_dbu_cnt = 0: idle state
@@ -1857,38 +1860,63 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
       dummy_end = true;
     }
     ++m_dbu_cnt;
-  } else if (dcr == DCR_DATA_UPDATE_BEGIN) { 
+#ifdef DATA_DATA_DEBUG    
+    cerr << (String)(int)this << " stru beg: " << m_dbu_cnt << endl;
+#endif
+  } 
+  else if (dcr == DCR_DATA_UPDATE_BEGIN) { 
     suppress = (m_dbu_cnt != 0);
     if (m_dbu_cnt > 0) ++m_dbu_cnt; // stay in STRUCT state if STRUCT state
     else               --m_dbu_cnt;
-  } else if (dcr == DCR_DATA_UPDATE_END) {
-    suppress = (m_dbu_cnt != 0); // issue at end
-    if (m_dbu_cnt > 0) ++m_dbu_cnt; // stay in STRUCT state if STRUCT state
-    else               --m_dbu_cnt;
-  } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
+#ifdef DATA_DATA_DEBUG    
+    cerr << (String)(int)this << " data beg: " << m_dbu_cnt << endl;
+#endif
+  } 
+  else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
+#ifdef DATA_DATA_DEBUG    
+    bool was_stru = false;	// debug only
+    if(dcr == DCR_STRUCT_UPDATE_END)
+      was_stru = true;
+#endif
     if (m_dbu_cnt < 0) {
       ++m_dbu_cnt;
     } else {
       --m_dbu_cnt;
       dcr = DCR_STRUCT_UPDATE_END; // force to be struct end, in case we notify
     }
+#ifdef DATA_DATA_DEBUG    
+    if(was_stru)
+      cerr << (String)(int)this << " stru end: " << m_dbu_cnt << endl;
+    else
+      cerr << (String)(int)this << " data end: " << m_dbu_cnt << endl;
+#endif
     // at the end, also send a IU
     if (m_dbu_cnt == 0) {
-      if (dcr == DCR_DATA_UPDATE_END) // just turn it into an IU
+      if (dcr == DCR_DATA_UPDATE_END) { // just turn it into an IU
         //NOTE: clients who count (ex taDataView) must detect this implicit
         // DATA_UPDATE_END as occurring when:
         // State=DATA, Count=1
         dcr = DCR_ITEM_UPDATED;
-      else // otherwise, we send both
+#ifdef DATA_DATA_DEBUG    
+	cerr << (String)(int)this << " cvt to iu: " << m_dbu_cnt << endl;
+#endif
+      }
+      else {// otherwise, we send both
         send_iu = true;
+      }
     } else suppress = true;
-  } else if (dcr == DCR_ITEM_UPDATED) {
+  }
+  else if (dcr == DCR_ITEM_UPDATED) {
     // if we are already updating, then ignore IUs, since we'll send one eventually
     if (m_dbu_cnt != 0) suppress = true;
   }
   
-  if (!suppress) 
+  if (!suppress) {
+#ifdef DATA_DATA_DEBUG    
+    cerr << (String)(int)this << " sending: " << dcr << endl;
+#endif
     DoNotify(dcr, op1_, op2_);
+  }
   if (dummy_end)
     DoNotify(DCR_DATA_UPDATE_END, NULL, NULL);
   if (send_iu) 

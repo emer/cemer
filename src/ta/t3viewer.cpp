@@ -691,14 +691,14 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
   if (!t3node) return;
 
-  if(t3node->selectEditMe()) {
-    t3node->Edit();
-    //    return; // what happens if you do everything??
-  }
-
   if (ev->is_selected) {
+    if(t3node->selectEditMe()) {
+      t3node->Edit();
+      //    return; // just do both actions!
+    }
     AddSelectedItem(t3node);
-  } else {
+  }
+  else {
     RemoveSelectedItem(t3node);
   }
   // notify to our frame that we have grabbed focus

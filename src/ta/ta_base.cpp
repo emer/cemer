@@ -3122,31 +3122,44 @@ void taDataView::UpdateAfterEdit_impl() {
   }
 }
 
+// set this to emit debug messages for the following code..
+// #define DATA_DATA_DEBUG 1
+
 void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   // detect the implicit DATA_UPDATE_END
-//   if ((m_dbu_cnt == -1) && (dcr == DCR_ITEM_UPDATED))
-//     dcr = DCR_DATA_UPDATE_END;
+#ifdef DATA_DATA_DEBUG    
+  if(dcr == DCR_ITEM_UPDATED)
+    cerr << GetName() << " iu: " << m_dbu_cnt << endl;
+#endif
+  if ((m_dbu_cnt == -1) && (dcr == DCR_ITEM_UPDATED))
+    dcr = DCR_DATA_UPDATE_END;
   // we need to reinterpret a ITEM_UPDATED if we are in datamode with count=1
   // that is sent instead of the terminal DATA_UPDATE_END
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
     ++m_dbu_cnt;
-//     cerr << GetName() << " stru start: " << m_dbu_cnt << endl;
+#ifdef DATA_DATA_DEBUG    
+    cerr << GetName() << " stru start: " << m_dbu_cnt << endl;
+#endif
     return;
   } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
     if (m_dbu_cnt > 0) ++m_dbu_cnt;
     else               --m_dbu_cnt;
-//     cerr << GetName() << " data start: " << m_dbu_cnt << endl;
+#ifdef DATA_DATA_DEBUG    
+    cerr << GetName() << " data start: " << m_dbu_cnt << endl;
+#endif
     return;
   } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END))
   {
     bool stru = false;
     if (m_dbu_cnt < 0) ++m_dbu_cnt;
     else {stru = true; --m_dbu_cnt;}
-//     if(dcr == DCR_DATA_UPDATE_END)
-//       cerr << GetName() << " data end: " << m_dbu_cnt << endl;
-//     else
-//       cerr << GetName() << " stru end: " << m_dbu_cnt << endl;
+#ifdef DATA_DATA_DEBUG    
+    if(dcr == DCR_DATA_UPDATE_END)
+      cerr << GetName() << " data end: " << m_dbu_cnt << endl;
+    else
+      cerr << GetName() << " stru end: " << m_dbu_cnt << endl;
+#endif
     if (m_dbu_cnt == 0) {
       int pdbu = parDbuCnt();
       // we will only signal if no parent update, or if parent is data and we are structural

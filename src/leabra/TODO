@@ -5,10 +5,8 @@ commit:
 ------------------
 * gridview: 
 
-  - redefine Clear to not nuke the colspecs
-  - deselect also edits: detect toggle
-  - col_n is off by 1 (with no row_num)
-  - can get stuck w/out scrollbar for col.min at end..
+  - struct update is resetting column data
+
   - view at is too far zoomed out
   - colorscale changes not sending signal
   - not properly saving/loading 4d data!
@@ -17,8 +15,6 @@ commit:
 
   - test case: filtered layer unit history moving back in depth w/ netview
   test2.proj!!
-
-  - why doesn't gridview update with WriteClose()?  not working!
 
 ------------------
 hv model
