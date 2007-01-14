@@ -77,7 +77,8 @@ public:
   virtual void		setWidth(float wdth);
   virtual float		getWidth() { return width_; }
 
-  T3GridViewNode(void* dataView_ = NULL, float wdth=1.0f); // dataview is a GridTableView object
+  T3GridViewNode(void* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
+  // dataview is a GridTableView object
 protected:
   float			width_;
   SoSeparator*		stage_;
@@ -88,6 +89,7 @@ protected:
   SoSeparator*		  grid_;
   SoFrame*		frame_; 
 
+  bool			show_drag_;
   SoSeparator*		drag_sep_;
   SoTransform*		drag_xf_;
   SoTransformBoxDragger* dragger_;

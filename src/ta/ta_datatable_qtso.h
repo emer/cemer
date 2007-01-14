@@ -90,6 +90,7 @@ public:
   MinMaxInt	view_range; 	// range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
 
   bool		display_on;  	// #DEF_true 'true' if display should be updated
+  bool		manip_ctrl_on;	// #DEF_true display the manipulation controls on objects for positioning etc
 
   FloatTDCoord	table_pos;	// position of table in view
   FloatTDCoord	table_scale;	// scaling factors of table in view
@@ -159,6 +160,7 @@ protected:
   override void 	DataStructUpdateEnd_impl();
   override void		DataUpdateView_impl();
   override void		DataUpdateAfterEdit_impl();
+  override void		DoActionChildren_impl(DataViewAction acts);
 
   void			UpdateFromDataTable(bool first_time = false);
   // called if data set to table, or needs to be updated; calls _this then _child
@@ -226,8 +228,8 @@ public:
   static GridTableView* New(DataTable* dt, T3DataViewFrame*& fr);
 
   int		col_n; 		// number of columns to display: determines sizes of everything automatically from this
-  int		col_visible_n;	// number of visible columns (main for scrollbar display)
-  MinMaxInt	col_range; 	// column range that is visible (max is the last col visible, not the last+1; range = col_n-1, except if columns are not visible range can be larger)
+  int_Array	vis_cols;	// #READ_ONLY #NO_SAVE indicies of visible columns
+  MinMaxInt	col_range; 	// column range to display, in terms of the visible columns (contained in vis_cols index list)
 
   float		width;		// how wide to make the display (height is always 1.0)
   bool		grid_on; 	// #DEF_true whether to show grid lines
@@ -250,8 +252,15 @@ public:
   MinMaxInt	mat_size_range;	// range of display sizes for matrix items relative to other text items.  each cell in a matrix counts as one character in size, within these ranges (smaller matricies are made larger to min size, and large ones are made smaller to max size)
   float		max_text_sz;	// #DEF_0.5 maximum text size, enforced in cases where there are 
 
+  GridColView*		colVis(int i) const
+  { return (GridColView*)colView(vis_cols.SafeEl(i)); }
+  // get visible column based on vis_cols index
+
   override void	InitDisplay(bool init_panel = true);
   override void	UpdateDisplay(bool update_panel = true);
+
+  void		SetColorSpec(ColorScaleSpec* color_spec);
+  // #BUTTON set the color scale spec to determine the palette of colors representing values
 
   // view button/field callbacks
   void		setGrid(bool value);
@@ -376,6 +385,7 @@ public:
   QCheckBox*		    chkValText;
   QPushButton*		    butRefresh;
   QPushButton*		    butClear;
+  QPushButton*		    butSetColor;
 
   QHBoxLayout*		  layVals;
   QLabel*		    lblWidth;
@@ -423,6 +433,7 @@ protected slots:
 
   void 		butRefresh_pressed();
   void 		butClear_pressed();
+  void 		butSetColor_pressed();
   void 		fldWidth_textChanged();
   void 		fldRows_textChanged();
   void 		fldCols_textChanged();

@@ -849,7 +849,7 @@ void SoImageEx::setImage3(const taMatrix& src, bool top_zero) {
 }
 
 //////////////////////////
-//   SoMatrixGrid		//
+//   SoMatrixGrid	//
 //////////////////////////
 
 SO_NODE_SOURCE(SoMatrixGrid);
@@ -1299,7 +1299,10 @@ void SoMatrixGrid::renderValues() {
   if(matrix->dims() <= 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
-	val = matrix->FastElAsFloat(pos.x, pos.y);
+	if(mat_layout == BOT_ZERO)
+	  val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
+	else
+	  val = matrix->FastElAsFloat(pos.x, pos.y);
 	const iColor* fl;  const iColor* tx;
 	scale->GetColor(val,&fl,&tx,sc_val);
 	float zp = sc_val * blk_ht;
@@ -1312,7 +1315,10 @@ void SoMatrixGrid::renderValues() {
 	  SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	  SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 	  if(matrix->GetDataValType() == taBase::VT_STRING) {
-	    val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y).elidedTo(max_txt_len);
+	    if(mat_layout == BOT_ZERO)
+	      val_str = ((String_Matrix*)matrix)->FastEl(pos.x, geom_y-1-pos.y).elidedTo(max_txt_len);
+	    else
+	      val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y).elidedTo(max_txt_len);
 	  }
 	  else {
 	    ValToDispText(val, val_str);
@@ -1330,7 +1336,10 @@ void SoMatrixGrid::renderValues() {
     for(int z=0; z<zmax; z++) {
       for(pos.y=0; pos.y<ymax; pos.y++) {
 	for(pos.x=0; pos.x<xmax; pos.x++) {
-	  val = matrix->FastElAsFloat(pos.x, pos.y, z);
+	  if(mat_layout == BOT_ZERO)
+	    val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
+	  else
+	    val = matrix->FastElAsFloat(pos.x, pos.y, z);
 	  const iColor* fl;  const iColor* tx;
 	  scale->GetColor(val,&fl,&tx,sc_val);
 	  float zp = sc_val * blk_ht;
@@ -1343,7 +1352,10 @@ void SoMatrixGrid::renderValues() {
 	    SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	    SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 	    if(matrix->GetDataValType() == taBase::VT_STRING) { // todo: replicate if compiles
-	      val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, z).elidedTo(max_txt_len);
+	      if(mat_layout == BOT_ZERO)
+		val_str = ((String_Matrix*)matrix)->FastEl(pos.x, ymax-1-pos.y, zmax-1-z).elidedTo(max_txt_len);
+	      else
+		val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, z).elidedTo(max_txt_len);
 	    }
 	    else {
 	      ValToDispText(val, val_str);
@@ -1365,7 +1377,10 @@ void SoMatrixGrid::renderValues() {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
 	for(pos.y=0; pos.y<ymax; pos.y++) {
 	  for(pos.x=0; pos.x<xmax; pos.x++) {
-	    val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
+	    if(mat_layout == BOT_ZERO)
+	      val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
+	    else
+	      val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
 	    const iColor* fl;  const iColor* tx;
 	    scale->GetColor(val,&fl,&tx,sc_val);
 	    float zp = sc_val * blk_ht;
@@ -1378,7 +1393,10 @@ void SoMatrixGrid::renderValues() {
 	      SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	      SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 	      if(matrix->GetDataValType() == taBase::VT_STRING) {
-		val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, opos.x, opos.y).elidedTo(max_txt_len);
+		if(mat_layout == BOT_ZERO)
+		  val_str = ((String_Matrix*)matrix)->FastEl(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y).elidedTo(max_txt_len);
+		else
+		  val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, opos.x, opos.y).elidedTo(max_txt_len);
 	      }
 	      else {
 		ValToDispText(val, val_str);

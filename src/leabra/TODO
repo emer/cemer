@@ -5,13 +5,13 @@ commit:
 ------------------
 * gridview: 
 
-  - struct update is resetting column data
-
-  - view at is too far zoomed out
+  - widths not being computed correctly & saved in the view col -- allow manual override
+  - view at is too far zoomed out -- can't seem to fix this at all, any way I try..
   - colorscale changes not sending signal
   - not properly saving/loading 4d data!
-  - all views: add bool for draggers
-  - all views: set color spec button in panel
+
+  - all views: add bool for draggers (in gridview; only active for structural re-init)
+  - all views: set color spec button in panel (in gridview)
 
   - test case: filtered layer unit history moving back in depth w/ netview
   test2.proj!!

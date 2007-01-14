@@ -61,43 +61,46 @@ void T3GridViewNode::initClass()
   SO_NODE_INIT_CLASS(T3GridViewNode, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3GridViewNode::T3GridViewNode(void* dataView_, float wdth)
+T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GridViewNode);
 
   width_ = wdth;
-  
-  drag_sep_ = new SoSeparator;
-  drag_xf_ = new SoTransform;
-  drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
-  drag_xf_->translation.setValue(-frame_margin, 0.0f, 0.0f);
-  drag_sep_->addChild(drag_xf_);
-  dragger_ = new SoTransformBoxDragger;
-  drag_sep_->addChild(dragger_);
+  show_drag_ = show_draggers;
 
-  // super-size me so stuff is actually grabable!
-  dragger_->setPart("scaler.scaler", new SoBigScaleUniformScaler(.6f));
-  dragger_->setPart("rotator1.rotator", new SoBigTransformBoxRotatorRotator(.4f));
-  dragger_->setPart("rotator2.rotator", new SoBigTransformBoxRotatorRotator(.4f));
-  dragger_->setPart("rotator3.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+  if(show_drag_) {
+    drag_sep_ = new SoSeparator;
+    drag_xf_ = new SoTransform;
+    drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
+    drag_xf_->translation.setValue(-frame_margin, 0.0f, 0.0f);
+    drag_sep_->addChild(drag_xf_);
+    dragger_ = new SoTransformBoxDragger;
+    drag_sep_->addChild(dragger_);
 
-  drag_trans_calc_ = new SoCalculator;
-  drag_trans_calc_->ref();
-  drag_trans_calc_->A.connectFrom(&dragger_->translation);
+    // super-size me so stuff is actually grabable!
+    dragger_->setPart("scaler.scaler", new SoBigScaleUniformScaler(.6f));
+    dragger_->setPart("rotator1.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+    dragger_->setPart("rotator2.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+    dragger_->setPart("rotator3.rotator", new SoBigTransformBoxRotatorRotator(.4f));
 
-  // expr set in render below
-//   String expr = "oA = vec3f(" + String(.5f * (width_ + 2.0f * frame_margin)) + " + " + String(drag_size)
-//     + " * A[0], .5 + " +  String(drag_size)
-//     + " * A[1], " + String(drag_size) + " * A[2])";
+    drag_trans_calc_ = new SoCalculator;
+    drag_trans_calc_->ref();
+    drag_trans_calc_->A.connectFrom(&dragger_->translation);
 
-//   drag_trans_calc_->expression = expr.chars();
+    // expr set in render below
+    //   String expr = "oA = vec3f(" + String(.5f * (width_ + 2.0f * frame_margin)) + " + " + String(drag_size)
+    //     + " * A[0], .5 + " +  String(drag_size)
+    //     + " * A[1], " + String(drag_size) + " * A[2])";
 
-  txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
-  txfm_shape()->rotation.connectFrom(&dragger_->rotation);
-  txfm_shape()->scaleFactor.connectFrom(&dragger_->scaleFactor);
+    //   drag_trans_calc_->expression = expr.chars();
 
-  dragger_->addFinishCallback(T3GridViewNode_DragFinishCB, (void*)this);
+    txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
+    txfm_shape()->rotation.connectFrom(&dragger_->rotation);
+    txfm_shape()->scaleFactor.connectFrom(&dragger_->scaleFactor);
+
+    dragger_->addFinishCallback(T3GridViewNode_DragFinishCB, (void*)this);
+  }
 
   stage_ = new SoSeparator;
   // stage_->addChild(drag_sep_);
@@ -114,7 +117,9 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth)
   stage_->addChild(grid_);
   insertChildAfter(topSeparator(), stage_, transform());
 
-  insertChildAfter(topSeparator(), drag_sep_, transform());
+  if(show_drag_) {
+    insertChildAfter(topSeparator(), drag_sep_, transform());
+  }
   
   SoMaterial* mat = material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
@@ -144,11 +149,13 @@ void T3GridViewNode::setWidth(float wdth) {
 void T3GridViewNode::render() {
   float frmg2 = 2.0f * frame_margin;
 
-  String expr = "oA = vec3f(" + String(.5f * width_) + " + " + String(drag_size)
-    + " * A[0], " + String(.5f * (1.0f + frmg2)) + " + " +  String(drag_size)
-    + " * A[1], " + String(drag_size) + " * A[2])";
+  if(show_drag_) {
+    String expr = "oA = vec3f(" + String(.5f * width_) + " + " + String(drag_size)
+      + " * A[0], " + String(.5f * (1.0f + frmg2)) + " + " +  String(drag_size)
+      + " * A[1], " + String(drag_size) + " * A[2])";
 
-  drag_trans_calc_->expression = expr.chars();
+    drag_trans_calc_->expression = expr.chars();
+  }
 
   txlt_stage_->translation.setValue(0.0f, 1.0f + frame_margin, 0.0f);
   frame_->setDimensions(width_ + frmg2, 1.0f + frmg2, frame_width, frame_width);

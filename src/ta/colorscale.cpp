@@ -485,6 +485,12 @@ void ColorScale::UpdateAfterEdit() {
     owner->UpdateAfterEdit();
 }
 
+void ColorScale::SetColorSpec(ColorScaleSpec* color_spec) {
+  taBase::SetPointer((TAPtr*)&spec, color_spec);
+  DefaultChunks();
+  MapColors();
+}
+
 void ColorScale::MapColors() {
   if(spec == NULL)
     return;
@@ -591,9 +597,7 @@ void ColorScale::NewDefaults() {
     return;
   }
   gp->NewDefaults();
-  taBase::SetPointer((TAPtr*)&spec, (ColorScaleSpec*)gp->DefaultEl());
-  DefaultChunks();
-  MapColors();
+  SetColorSpec((ColorScaleSpec*)gp->DefaultEl());
 }
 
 void ColorScale::ModRange(float val){

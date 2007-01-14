@@ -123,8 +123,8 @@ void DataColView::Unbind_impl() {
 }
 
 void DataColView::DataDestroying() {
-  inherited::DataDestroying();
   DataColUnlinked();
+  inherited::DataDestroying();
 }
 
 void DataColView::setDataCol(DataArray_impl* value, bool first_time) {
@@ -169,6 +169,7 @@ void DataTableView::Initialize() {
   view_range.min = 0;
   view_range.max = -1;
   display_on = true;
+  manip_ctrl_on = true;
 
   //TODO: new ones should offset pos in viewers so they don't overlap
   table_pos.SetXYZ(1.0f, 0.0f, 0.0f);
@@ -198,6 +199,7 @@ void DataTableView::Copy_(const DataTableView& cp) {
   view_rows = cp.view_rows;
   view_range = cp.view_range;
   display_on = cp.display_on;
+  manip_ctrl_on = cp.manip_ctrl_on;
   table_pos = cp.table_pos;
   table_scale = cp.table_scale;
   table_orient = cp.table_orient;
@@ -292,12 +294,8 @@ int DataTableView::CheckRowsChanged(int& orig_rows) {
 }
 
 void DataTableView::DataStructUpdateEnd_impl() {
-  // this is key because start does a full nuke:
-  Reset();
-  BuildAll();
-  Render();
-//   InitDisplay(true);
-//   UpdateDisplay(true);
+  inherited::DataStructUpdateEnd_impl();
+  // default case is good enough: does full reconstruct
 }
 
 void DataTableView::DataUpdateView_impl() {
@@ -307,6 +305,13 @@ void DataTableView::DataUpdateView_impl() {
 void DataTableView::DataUpdateAfterEdit_impl() {
   UpdateDisplay(true);
 }
+
+void DataTableView::DoActionChildren_impl(DataViewAction acts) {
+  if(acts & RESET_IMPL) return;
+  // don't do the reset action on children -- updatefromdatatable does that
+  inherited::DoActionChildren_impl(acts);
+}
+
 
 void DataTableView::DataDestroying() {
   Unbind(); //unlinks everyone
@@ -635,10 +640,36 @@ void GridColView::ComputeColSizes() {
 //  GridTableView		//
 //////////////////////////////////
 
+GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
+  if (!dt) return NULL;
+  if (fr) {
+    //note: even if fr specified, need to insure it is right proj for object
+    if (!dt->SameScope(fr, &TA_taProject)) {
+      taMisc::Error("The viewer you specified is not in the same Project as the table.");
+      return NULL;
+    }
+    // check if already viewing this obj there, warn user
+    T3DataView* dv = fr->FindRootViewOfData(dt);
+    if (dv) {
+      if (taMisc::Choice("This table is already shown in that frame -- would you like"
+          " to show it in a new frame?", "&Ok", "&Cancel") != 0) return NULL;
+      fr = NULL; // make a new one
+    }
+  } 
+  if (!fr) {
+    fr = T3DataViewer::GetBlankOrNewT3DataViewFrame(dt);
+  }
+  if (!fr) return NULL; // unexpected...
+  
+  GridTableView* vw = new GridTableView;
+  fr->AddView(vw);
+  vw->setDataTable(dt);
+  return vw;
+}
+
 void GridTableView::Initialize() {
   view_rows = 10;
   col_n = 5;
-  col_visible_n = 0;
 
   width	= 1.0f;
   grid_on = true;
@@ -676,6 +707,9 @@ void GridTableView::InitLinks() {
   taBase::Own(mat_size_range, this);
   taBase::Own(col_range, this);
   taBase::Own(scale, this);
+  taBase::Own(vis_cols, this);
+  taBase::Own(col_widths_raw, this);
+  taBase::Own(col_widths, this);
 }
 
 void GridTableView::CutLinks() {
@@ -686,7 +720,6 @@ void GridTableView::CutLinks() {
 
 void GridTableView::Copy_(const GridTableView& cp) {
   col_n = cp.col_n;
-  col_visible_n = cp.col_visible_n;
 
   col_range = cp.col_range;
   grid_on = cp.grid_on;
@@ -713,40 +746,8 @@ void GridTableView::UpdateAfterEdit_impl(){
   if (grid_line_size <  0.0f) grid_line_size =  0.0f;
 }
 
-//////////////////////////
-// GridTableView	//
-//////////////////////////
-
-GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr)
-{
-  if (!dt) return NULL;
-  if (fr) {
-    //note: even if fr specified, need to insure it is right proj for object
-    if (!dt->SameScope(fr, &TA_taProject)) {
-      taMisc::Error("The viewer you specified is not in the same Project as the table.");
-      return NULL;
-    }
-    // check if already viewing this obj there, warn user
-    T3DataView* dv = fr->FindRootViewOfData(dt);
-    if (dv) {
-      if (taMisc::Choice("This table is already shown in that frame -- would you like"
-          " to show it in a new frame?", "&Ok", "&Cancel") != 0) return NULL;
-      fr = NULL; // make a new one
-    }
-  } 
-  if (!fr) {
-    fr = T3DataViewer::GetBlankOrNewT3DataViewFrame(dt);
-  }
-  if (!fr) return NULL; // unexpected...
-  
-  GridTableView* vw = new GridTableView;
-  fr->AddView(vw);
-  vw->setDataTable(dt);
-  return vw;
-}
-
 void GridTableView::Render_pre() {
-  m_node_so = new T3GridViewNode(this, width);
+  m_node_so = new T3GridViewNode(this, width, manip_ctrl_on);
 
   T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
   if(!frame) return;
@@ -810,17 +811,40 @@ void GridTableView::UpdateDisplay(bool update_panel) {
   Render_impl();
 }
 
+void GridTableView::MakeViewRangeValid() {
+  DataTable* dt = dataTable();
+  if(!dt) return;
+  if(children.size != dt->data.size) { // just to make sure..
+    UpdateFromDataTable();
+  }
+  inherited::MakeViewRangeValid();
+
+  // get the list of visible columns
+  vis_cols.Reset();
+  for(int i=0;i<children.size;i++) {
+    GridColView* cvs = (GridColView*)colView(i);
+    if(cvs->isVisible()) vis_cols.Add(i);
+  }
+
+  int cols = vis_cols.size;
+  if (col_range.min >= cols) {
+    col_range.min = MAX(0, (cols - col_n - 1));
+  }
+  if(cols == 0) {
+    col_range.max = -1;
+    return;
+  }
+  col_range.max = col_range.min + col_n-1;
+  col_range.MaxLT(cols - 1); // keep it less than max
+}
+
 void GridTableView::CalcViewMetrics() {
   DataTable* dt = dataTable();
   if(!dt) return;
-  if(children.size != dt->data.size) {
-    UpdateFromDataTable();
-  }
-  col_visible_n = 0;
+
   for(int i=0;i<children.size;i++) {
     GridColView* cvs = (GridColView*)colView(i);
     cvs->ComputeColSizes();
-    if(cvs->isVisible()) col_visible_n++;
   }
 
   float tot_wd_raw = 0.0f;
@@ -833,8 +857,7 @@ void GridTableView::CalcViewMetrics() {
   bool has_mat = false;		// has a matrix?
   row_height_raw = 1.0f;
   for(int col = col_range.min; col<=col_range.max; ++col) {
-    GridColView* cvs = (GridColView*)colView(col);
-    if(!cvs->isVisible()) continue;
+    GridColView* cvs = (GridColView*)colVis(col);
     if(cvs->dataCol()->is_matrix)
       has_mat = true;
     col_widths_raw.Add(cvs->col_width);
@@ -892,8 +915,8 @@ void GridTableView::CalcViewMetrics() {
 	cidx++;
       }
       for(int col = col_range.min; col<=col_range.max; ++col) {
-	GridColView* cvs = (GridColView*)colView(col);
-	if(!cvs->isVisible()) continue;
+	GridColView* cvs = (GridColView*)colVis(col);
+	if(!cvs) continue;
 	if(!cvs->dataCol()->is_matrix)
 	  col_widths_raw[cidx] *= red_rat;
 	tot_wd_raw += col_widths_raw[cidx];
@@ -916,16 +939,21 @@ void GridTableView::GetScaleRange() {
     scale.FixRangeZero();
     return;
   }
+  bool got_one = false;
   MinMax sc_rg;
-  for (int i=0;i< colViewCount(); i++){
-    GridColView* vs = (GridColView*)colView(i);
-    if(!vs->visible || !vs->scale_on)
+  for(int col = col_range.min; col<=col_range.max; ++col) {
+    GridColView* cvs = (GridColView*)colVis(col);
+    if(!cvs || !cvs->scale_on)
       continue;
-    DataArray_impl* da = vs->dataCol();
+    DataArray_impl* da = cvs->dataCol();
     if(!da->isNumeric() || !da->is_matrix) continue;
     da->GetMinMaxScale(sc_rg);
+    if(!got_one)
+      scale.SetMinMax(sc_rg.min, sc_rg.max);
+    else
+      scale.UpdateMinMax(sc_rg.min, sc_rg.max);
+    got_one = true;
   }
-  scale.SetMinMax(sc_rg.min, sc_rg.max);
 }
 
 void GridTableView::ClearViewRange() {
@@ -938,38 +966,6 @@ void GridTableView::Clear_impl() {
   RemoveGrid();
   RemoveLines();
   inherited::Clear_impl();
-}
-
-void GridTableView::MakeViewRangeValid() {
-  inherited::MakeViewRangeValid();
-  DataTable* data_table = dataTable();
-  int cols = data_table->cols();
-  if (col_range.min >= cols) {
-    col_range.min = MAX(0, (cols - col_n - 1));
-  }
-  if(cols == 0) {
-    col_range.max = -1;
-    return;
-  }
-  // ensure thate col_range.min is a visible column!
-  GridColView* min_cvs = (GridColView*)colView(col_range.min);
-  while((!min_cvs || !min_cvs->isVisible()) && col_range.min > 0) {
-    col_range.min--; min_cvs = (GridColView*)colView(col_range.min);
-  }
-  while((!min_cvs || !min_cvs->isVisible()) && col_range.min <= cols-2) {
-    col_range.min++; min_cvs = (GridColView*)colView(col_range.min);
-  }
-  int act_n = 0;
-  int col;
-  for(col = col_range.min; col<cols; ++col) {
-    GridColView* cvs = (GridColView*)colView(col);
-    if(!cvs || !cvs->isVisible())
-      continue;
-    act_n++;
-    if(act_n > col_n)
-      break;
-  }
-  col_range.max = col-1;
 }
 
 void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
@@ -1041,8 +1037,8 @@ void GridTableView::RenderGrid() {
   }
 
   for (int col = col_range.min; col < col_range.max; ++col) {
-    GridColView* cvs = (GridColView*)colView(col);
-    if (!cvs || !cvs->isVisible()) continue;
+    GridColView* cvs = (GridColView*)colVis(col);
+    if (!cvs) continue;
     col_wd_lst = col_widths[col_idx++];
     SoTranslation* tr = new SoTranslation();
     vert->addChild(tr);
@@ -1134,8 +1130,8 @@ void GridTableView::RenderHeader() {
   }
 
   for (int col = col_range.min; col <= col_range.max; ++col) {
-    GridColView* cvs = (GridColView*)colView(col);
-    if (!cvs || !cvs->isVisible()) continue;
+    GridColView* cvs = (GridColView*)colVis(col);
+    if (!cvs) continue;
     if (col_wd_lst > 0.0f) { 
       tr = new SoTranslation();
       hdr->addChild(tr);
@@ -1233,8 +1229,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     ln->addChild(row_sep);
   }
   for (int col = col_range.min; col <= col_range.max; col++) {
-    GridColView* cvs = (GridColView*)colView(col);
-    if (!cvs || !cvs->isVisible()) continue;
+    GridColView* cvs = (GridColView*)colVis(col);
+    if (!cvs) continue;
     DataArray_impl* dc = cvs->dataCol();
 
     //calculate the actual col row index, for the case of a jagged data table
@@ -1391,8 +1387,13 @@ void GridTableView::RenderLines(){
   }
 }
 
-/////////////////
+////////////////////////////////////////////////////////////////////////
 // note on following: basically callbacks from view, so don't update panel
+
+void GridTableView::SetColorSpec(ColorScaleSpec* color_spec) {
+  scale.SetColorSpec(color_spec);
+  UpdateDisplay(false);
+}
 
 void GridTableView::setGrid(bool value) {
   if (grid_on == value) return;
@@ -1480,9 +1481,8 @@ void GridTableView::VScroll(bool left) {
 
 void GridTableView::ViewCol_At(int start) {
   if (start < 0) start = 0;
-  if (start >= colViewCount()) start = colViewCount() - 1;
   col_range.min = start;
-  UpdateDisplay();
+  UpdateDisplay();		// takes care of keeping col in range 
 }
 
 // callback for view transformer dragger
@@ -1567,7 +1567,7 @@ void iDataTableView_Panel::Constr_T3ViewspaceWidget(QWidget* widg) {
   m_lm->model = SoLightModel::BASE_COLOR;
   root->addChild(m_lm);
 
-  m_camera->viewAll(root, m_ra->getViewportRegion(), 2.0);
+  viewAll();
   m_ra->setBackgroundColor(SbColor(0.8f, 0.8f, 0.8f));
 }
 
@@ -1587,7 +1587,8 @@ void iDataTableView_Panel::UpdatePanel() {
 }
 
 void iDataTableView_Panel::viewAll() {
-  m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion(), 2.0); // reduce slack!
+  m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion());
+  m_camera->focalDistance.setValue(.1); // zoom in!
 }
 
 
@@ -1636,15 +1637,23 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layTopCtrls->addWidget(chkValText);
 
   layTopCtrls->addStretch();
+
+  butSetColor = new QPushButton("Colors", widg);
+  butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layTopCtrls->addWidget(butSetColor);
+  connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
+
   butRefresh = new QPushButton("Refresh", widg);
   butRefresh->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layTopCtrls->addWidget(butRefresh);
   connect(butRefresh, SIGNAL(pressed()), this, SLOT(butRefresh_pressed()) );
 
-  butClear = new QPushButton("Clear", widg);
-  butClear->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layTopCtrls->addWidget(butClear);
-  connect(butClear, SIGNAL(pressed()), this, SLOT(butClear_pressed()) );
+  // not clear we want the user to be able to clear the table like this -- may just
+  // think it is the display, not the actual underlying data..
+//   butClear = new QPushButton("Clear", widg);
+//   butClear->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+//   layTopCtrls->addWidget(butClear);
+//   connect(butClear, SIGNAL(pressed()), this, SLOT(butClear_pressed()) );
 
   layVals = new QHBoxLayout(layOuter);
 
@@ -1725,7 +1734,7 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
 
   GridTableView* glv = this->glv(); //cache
-  DataTable* dt = glv->dataTable();
+//   DataTable* dt = glv->dataTable();
 
   viewAll();
 
@@ -1756,7 +1765,7 @@ void iGridTableView_Panel::UpdatePanel_impl() {
     sb->setTracking(true);
   }
   sb->setMinValue(0);
-  sb->setMaxValue(dt->cols()-glv->col_n+1);
+  sb->setMaxValue(glv->vis_cols.size - glv->col_n);
   sb->setPageStep(glv->col_n);
   sb->setSingleStep(1);
   sb->setValue(glv->col_range.min);
@@ -1839,6 +1848,13 @@ void iGridTableView_Panel::butClear_pressed() {
   if (updating || !glv) return;
 
   glv->ClearData();
+}
+
+void iGridTableView_Panel::butSetColor_pressed() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->CallFun("SetColorSpec");
 }
 
 void iGridTableView_Panel::fldWidth_textChanged() {
