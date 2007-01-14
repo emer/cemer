@@ -3124,8 +3124,8 @@ void taDataView::UpdateAfterEdit_impl() {
 
 void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   // detect the implicit DATA_UPDATE_END
-  if ((m_dbu_cnt == -1) && (dcr == DCR_ITEM_UPDATED))
-    dcr = DCR_DATA_UPDATE_END;
+//   if ((m_dbu_cnt == -1) && (dcr == DCR_ITEM_UPDATED))
+//     dcr = DCR_DATA_UPDATE_END;
   // we need to reinterpret a ITEM_UPDATED if we are in datamode with count=1
   // that is sent instead of the terminal DATA_UPDATE_END
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state

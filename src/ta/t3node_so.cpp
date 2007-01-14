@@ -1002,9 +1002,10 @@ void SoMatrixGrid::render() {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
 	float xp = ((float)pos.x + cl_spc) * cl_x;
-	float yp = -((float)pos.y + cl_spc) * cl_y;
+	float yp = ((float)pos.y + cl_spc) * cl_y;
 	float xp1 = ((float)pos.x+1 - cl_spc) * cl_x;
-	float yp1 = -((float)pos.y+1 - cl_spc) * cl_y;
+	float yp1 = ((float)pos.y+1 - cl_spc) * cl_y;
+	if(mat_layout == BOT_ZERO) { yp = 1.0f - yp; yp1 = 1.0f - yp1; }
 	float zp = blk_ht;
 	vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
 	vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
@@ -1036,10 +1037,11 @@ void SoMatrixGrid::render() {
 	  else
 	    apos.x += z * (xmax+1);
 	  float xp = ((float)apos.x + cl_spc) * cl_x;
-	  float yp = -((float)apos.y + cl_spc) * cl_y;
+	  float yp = ((float)apos.y + cl_spc) * cl_y;
 	  float xp1 = ((float)apos.x+1 - cl_spc) * cl_x;
-	  float yp1 = -((float)apos.y+1 - cl_spc) * cl_y;
+	  float yp1 = ((float)apos.y+1 - cl_spc) * cl_y;
 	  float zp = blk_ht;
+	  if(mat_layout == BOT_ZERO) { yp = 1.0f - yp; yp1 = 1.0f - yp1; }
 	  vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
 	  vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
 	  vertex_dat[v_idx++].setValue(xp,  yp1, 0.0f); // 01_0 = 0
@@ -1072,10 +1074,11 @@ void SoMatrixGrid::render() {
 	    apos.x += opos.x * (xmax+1);
 	    apos.y += opos.y * (ymax+1);
 	    float xp = ((float)apos.x + cl_spc) * cl_x;
-	    float yp = -((float)apos.y + cl_spc) * cl_y;
+	    float yp = ((float)apos.y + cl_spc) * cl_y;
 	    float xp1 = ((float)apos.x+1 - cl_spc) * cl_x;
-	    float yp1 = -((float)apos.y+1 - cl_spc) * cl_y;
+	    float yp1 = ((float)apos.y+1 - cl_spc) * cl_y;
 	    float zp = blk_ht;
+	    if(mat_layout == BOT_ZERO) { yp = 1.0f - yp; yp1 = 1.0f - yp1; }
 	    vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
 	    vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
 	    vertex_dat[v_idx++].setValue(xp,  yp1, 0.0f); // 01_0 = 0
@@ -1296,10 +1299,7 @@ void SoMatrixGrid::renderValues() {
   if(matrix->dims() <= 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
-	if(mat_layout == TOP_ZERO)
-	  val = matrix->FastElAsFloat(pos.x, pos.y);
-	else
-	  val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
+	val = matrix->FastElAsFloat(pos.x, pos.y);
 	const iColor* fl;  const iColor* tx;
 	scale->GetColor(val,&fl,&tx,sc_val);
 	float zp = sc_val * blk_ht;
@@ -1312,10 +1312,7 @@ void SoMatrixGrid::renderValues() {
 	  SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	  SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 	  if(matrix->GetDataValType() == taBase::VT_STRING) {
-	    if(mat_layout == TOP_ZERO)
-	      val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y).elidedTo(max_txt_len);
-	    else
-	      val_str = ((String_Matrix*)matrix)->FastEl(pos.x, geom_y-1-pos.y).elidedTo(max_txt_len);
+	    val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y).elidedTo(max_txt_len);
 	  }
 	  else {
 	    ValToDispText(val, val_str);
@@ -1333,10 +1330,7 @@ void SoMatrixGrid::renderValues() {
     for(int z=0; z<zmax; z++) {
       for(pos.y=0; pos.y<ymax; pos.y++) {
 	for(pos.x=0; pos.x<xmax; pos.x++) {
-	  if(mat_layout == TOP_ZERO)
-	    val = matrix->FastElAsFloat(pos.x, pos.y, z);
-	  else
-	    val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
+	  val = matrix->FastElAsFloat(pos.x, pos.y, z);
 	  const iColor* fl;  const iColor* tx;
 	  scale->GetColor(val,&fl,&tx,sc_val);
 	  float zp = sc_val * blk_ht;
@@ -1349,10 +1343,7 @@ void SoMatrixGrid::renderValues() {
 	    SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	    SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 	    if(matrix->GetDataValType() == taBase::VT_STRING) { // todo: replicate if compiles
-	      if(mat_layout == TOP_ZERO)
-		val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, z).elidedTo(max_txt_len);
-	      else
-		val_str = ((String_Matrix*)matrix)->FastEl(pos.x, ymax-1-pos.y, zmax-1-z).elidedTo(max_txt_len);
+	      val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, z).elidedTo(max_txt_len);
 	    }
 	    else {
 	      ValToDispText(val, val_str);
@@ -1374,10 +1365,7 @@ void SoMatrixGrid::renderValues() {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
 	for(pos.y=0; pos.y<ymax; pos.y++) {
 	  for(pos.x=0; pos.x<xmax; pos.x++) {
-	    if(mat_layout == TOP_ZERO)
-	      val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
-	    else
-	      val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
+	    val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
 	    const iColor* fl;  const iColor* tx;
 	    scale->GetColor(val,&fl,&tx,sc_val);
 	    float zp = sc_val * blk_ht;
@@ -1390,10 +1378,7 @@ void SoMatrixGrid::renderValues() {
 	      SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	      SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
 	      if(matrix->GetDataValType() == taBase::VT_STRING) {
-		if(mat_layout == TOP_ZERO)
-		  val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, opos.x, opos.y).elidedTo(max_txt_len);
-		else
-		  val_str = ((String_Matrix*)matrix)->FastEl(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y).elidedTo(max_txt_len);
+		val_str = ((String_Matrix*)matrix)->FastEl(pos.x, pos.y, opos.x, opos.y).elidedTo(max_txt_len);
 	      }
 	      else {
 		ValToDispText(val, val_str);
@@ -1427,8 +1412,8 @@ SoBigScaleUniformScaler::SoBigScaleUniformScaler(float cube_size) {
   SO_NODE_CONSTRUCTOR(SoBigScaleUniformScaler);
 
   SoMaterial* mat = new SoMaterial;
-  mat->diffuseColor.setValue(0.5f, 0.5f, 0.5f);
-  mat->emissiveColor.setValue(0.5f, 0.5f, 0.5f);
+  mat->diffuseColor.setValue(0.9f, 0.7f, 0.9f);
+  mat->emissiveColor.setValue(0.9f, 0.7f, 0.9f);
   addChild(mat);
 
   float sz = 1.1f;
@@ -1471,8 +1456,8 @@ SoBigTransformBoxRotatorRotator::SoBigTransformBoxRotatorRotator(float line_widt
   SO_NODE_CONSTRUCTOR(SoBigTransformBoxRotatorRotator);
 
   SoMaterial* mat = new SoMaterial;
-  mat->diffuseColor.setValue(0.5f, 0.5f, 0.5f);
-  mat->emissiveColor.setValue(0.5f, 0.5f, 0.5f);
+  mat->diffuseColor.setValue(.9f, 0.7f, 0.9f);
+  mat->emissiveColor.setValue(0.9f, 0.7f, 0.9f);
   addChild(mat);
 
   float sz = 1.1f;

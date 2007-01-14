@@ -126,6 +126,8 @@ public:
   FloatTransform*	m_transform;  // #READ_ONLY transform, created only if not unity
 
   virtual bool		hasChildren() const {return false;}
+  virtual bool		selectEditMe() const { return false; }
+  // for selection events -- if true, then edit this view object instead of the data() object
 
   virtual bool		expandable() const {return false;}
   virtual void		setExpandable(bool) {}

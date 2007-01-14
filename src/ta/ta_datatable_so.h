@@ -47,14 +47,12 @@ class T3GraphViewNode; //
         +txlt_stage: SoTranslation -- sets origin to upper-left of stage
         +head: SoSeparator -- for header objects
         +body: SoSeparator -- for body objects
+	+grid: SoSeparator -- for grid lines
       *captionSeparator: SoSeparator  
             shapeSeparator: SoSeparator
       *txfm_shape: SoTransform
       *material: SoMaterial
       +frame: SoFrame
-      +txlt_grid: SoTranslation -- sets origin to upper-left of stage
-      +grid: SoGroup -- for grid lines (thus, inherits frame material)
-       
 */
 
 class TA_API T3GridViewNode: public T3NodeLeaf {
@@ -87,9 +85,8 @@ protected:
   SoTranslation*	  txlt_stage_;
   SoSeparator*		  header_;
   SoSeparator*		  body_;//
+  SoSeparator*		  grid_;
   SoFrame*		frame_; 
-  SoTranslation*	txlt_grid_;
-  SoGroup*		grid_;
 
   SoSeparator*		drag_sep_;
   SoTransform*		drag_xf_;
@@ -99,6 +96,21 @@ protected:
   ~T3GridViewNode();
 };
 
+
+class TA_API T3GridColViewNode: public T3NodeLeaf {
+  // grid view column -- mainly just for editing column spec ifno
+#ifndef __MAKETA__
+typedef T3NodeLeaf inherited;
+  SO_NODE_HEADER(T3GridColViewNode);
+#endif // def __MAKETA__
+public:
+  static void	initClass();
+
+  T3GridColViewNode(void* colspec = NULL);
+
+protected:
+  ~T3GridColViewNode();
+};
 
 //////////////////////////
 //   T3GraphViewNode	//

@@ -13,8 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
-
 #ifndef TA_DATATABLE_QTSO_H
 #define TA_DATATABLE_QTSO_H
 
@@ -34,10 +32,12 @@
 #endif
 
 // forwards
-class TableView;
+class DataColView;
+class DataTableView;
+class GridColView;
 class GridTableView;
 
-class iTableView_Panel;
+class iDataTableView_Panel;
 class iGridTableView_Panel;
 
 class tabDataTableViewType;
@@ -47,8 +47,43 @@ class iDataTablePanel; //
 // externals
 class T3GridViewNode;
 
-class TA_API TableView : public T3DataViewPar {
-  // #VIRT_BASE #NO_TOKENS base class of grid and graph views; the data is its own embedded DataTableViewSpec
+class TA_API DataColView: public T3DataView {
+  // ##SCOPE_DataTableView base specification for the display of data columns
+INHERITED(T3DataView)
+friend class DataTableView;
+public:
+  String	name;		// name of column this guy is associated with
+  bool		visible;	// is this column visible in display?
+  bool		sticky; 	// #DEF_false set this to retain this colspec even if its column deletes
+
+  DataArray_impl*	dataCol() const {return (DataArray_impl*)data();}
+  void			setDataCol(DataArray_impl* value, bool first_time = false);
+  
+  DATAVIEW_PARENT(DataTableView)
+
+  bool			isVisible() const; // bakes in check for datacol
+
+  override bool		SetName(const String& nm);
+  override String	GetName() const 	{ return name; } 
+
+  override void		DataDestroying();
+  
+  void 	SetDefaultName() {} // leave it blank
+  void	Copy_(const DataColView& cp);
+  COPY_FUNS(DataColView, inherited);
+  TA_BASEFUNS(DataColView);
+protected:
+  override void		Unbind_impl(); // unbinds col
+  virtual void		DataColUnlinked() {} // called if data set to NULL or destroys
+  void			UpdateFromDataCol(bool first_time = false);
+  // called if data set to column, or we otherwise need to update
+  virtual void		UpdateFromDataCol_impl(bool first_time); 
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API DataTableView : public T3DataViewPar {
+  // #VIRT_BASE #NO_TOKENS base class of grid and graph views
 INHERITED(T3DataViewPar)
 public:
   int		view_rows; 	// maximum number of rows visible
@@ -61,16 +96,19 @@ public:
   FloatRotation	table_orient;	// orientation of table in view
   
   virtual const String	caption() const; // what to show in viewer
-  virtual DataTable*	dataTable() const {return viewSpecBase()->dataTable();}
-    //note: can override for more efficient direct reference
 
-  void			setDataTable(DataTable* dt); // convenience, for building
+  DataTable*		dataTable() const {return (DataTable*)data();}
+  virtual void		setDataTable(DataTable* dt);
+  // #MENU #NO_NULL build the view from the given table
+
   void			setDisplay(bool value); // use this to change display_on
   override void		setDirty(bool value); // set for all changes on us or below
   inline int		rows() const {return m_rows;}
-  virtual DataTableViewSpec* viewSpecBase() const 
-    {return (DataTableViewSpec*)data();}
   bool			isVisible() const; // gui_active, mapped and display_on
+
+  DataColView*		colView(int i) const
+  { return (DataColView*)children.SafeEl(i); } 
+  inline int		colViewCount() const { return children.size;}
 
   /////////////////////////////////////////////
   //	Main interface: init/update (impl in subclasses)
@@ -85,58 +123,105 @@ public:
   virtual void		UpdatePanel();
   // after changes to props
 
-  virtual void		DataChanged_DataTable(int dcr, void* op1, void* op2);
-  // forwarded when DataTable notifies; forwards to correct handler
-
   virtual void 		ClearData();
   // Clear the display and the data
   virtual void 		ViewRow_At(int start);
   // start viewing at indicated viewrange value
+
+  override void		DataDestroying();
+  override void		BuildAll();
   
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
-  void	Copy_(const TableView& cp);
-  COPY_FUNS(TableView, T3DataViewPar);
-  T3_DATAVIEWFUNS(TableView, T3DataViewPar) //
+  void	Copy_(const DataTableView& cp);
+  COPY_FUNS(DataTableView, T3DataViewPar);
+  T3_DATAVIEWFUNS(DataTableView, T3DataViewPar) //
 
 protected:
-  iTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
+  iDataTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
   int			m_rows; // cached rows, we use to calc deltas etc.
   int			updating; // to prevent recursion
 
   override void 	UpdateAfterEdit_impl();
-  virtual void 		InitViewSpec();
-  // called to (re)init the viewspecs
 
   virtual void		ClearViewRange();
   // sets view range back to beginning (grid adds cols, graph adds TBA)
   virtual void 		MakeViewRangeValid();
   // adjust row/col etc. to be valid
   
-  // routines for handling data changes -- only one should be called in any change context
-  virtual void  	DataChange_StructUpdate(); 
-  // when structure or src of data changes
-  virtual void  	DataChange_NewRows(int rows_added);
-  // we received new data (update) -- this predominant use-case can be optimized (rather than nuking/rebuilding each row)
-  virtual void  	DataChange_Other();
-  // all other changes
-
-  virtual int		CheckRowsChanged();
+  virtual int		CheckRowsChanged(int& orig_rows);
   // check if datatable rows is same as last render (updates m_rows and returns any delta, 0 if no change)
   
-  override void		Render_pre(); // #IGNORE
-  override void		Render_impl(); // #IGNORE
+  override void		Unbind_impl(); // unbinds table
+
+  override void 	DataStructUpdateEnd_impl();
+  override void		DataUpdateView_impl();
+  override void		DataUpdateAfterEdit_impl();
+
+  void			UpdateFromDataTable(bool first_time = false);
+  // called if data set to table, or needs to be updated; calls _this then _child
+  virtual void		UpdateFromDataTable_this(bool first); // does me (before kids)
+  virtual void		UpdateFromDataTable_child(bool first);//does kids, usually not overridden
+  virtual void		DataTableUnlinked(); // called if data is NULL or destroys
+
+  override void		Render_pre();
+  override void		Render_impl();
   override void 	Render_post();
   override void		Reset_impl();
-
-  override void 	DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 };
 
-class TA_API GridTableView: public TableView {
+////////////////////////////////////////////////////////////////////////////////
+// 		Grid View
+
+/*
+  Additional Display Options
+    WIDTH=i (i: int) -- sets default column width to i chars
+    NARROW -- in addition to base spec, also sets column with to 8 chars
+*/
+
+class TA_API GridColView : public DataColView {
+  // information for display of a data column in a grid display.  scalar columns are always displayed as text, and matrix as blocks (with optional value text, controlled by overall table spec)
+INHERITED(DataColView)
+public:
+  enum MatrixLayout { 	// order of display for matrix cols
+    BOT_ZERO, 		// row zero is displayed at bottom of cell (default)
+    TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
+  };
+
+  int		text_width; 	// width of the column (or each matrix col) in chars; also the min width in chars
+  bool		scale_on; 	// adjust overall colorscale to include this data (if it is a matrix type)
+  MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
+  bool		mat_image;	// display matrix as an image instead of grid blocks
+  bool		mat_odd_vert;	// how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
+  
+  float 	col_width; // #READ_ONLY #HIDDEN #NO_SAVE calculated col_width in chars
+  float		row_height; // #READ_ONLY #HIDDEN #NO_SAVE calculated row height in chars
+
+  virtual void		ComputeColSizes();
+  // compute the column sizes
+
+  override bool		selectEditMe() const { return true; }
+  override String	GetDisplayName() const;
+
+  DATAVIEW_PARENT(GridTableView)
+  void	Copy_(const GridColView& cp);
+  COPY_FUNS(GridColView, DataColView);
+  TA_BASEFUNS(GridColView);
+protected:
+  void			UpdateAfterEdit_impl();
+  override void		UpdateFromDataCol_impl(bool first_time);
+  override void		DataColUnlinked(); // called if data is NULL or destroys
+
+private:
+  void 	Initialize();
+  void	Destroy();
+};
+
+class TA_API GridTableView: public DataTableView {
   // the master view guy for entire grid view
-INHERITED(TableView)
+INHERITED(DataTableView)
 public:
   static GridTableView* New(DataTable* dt, T3DataViewFrame*& fr);
 
@@ -144,12 +229,25 @@ public:
   MinMaxInt	col_range; 	// column range that is visible (max is the last col visible, not the last+1; range = col_n-1, except if columns are not visible range can be larger)
 
   float		width;		// how wide to make the display (height is always 1.0)
-  bool		grid_on; 	// whether to show grid lines
-  bool		header_on;	// is the table header visible?
-  bool		row_num_on; 	// row number col visible?
+  bool		grid_on; 	// #DEF_true whether to show grid lines
+  bool		header_on;	// #DEF_true is the table header visible?
+  bool		row_num_on; 	// #DEF_true row number col visible?
+  bool		two_d_font;	// #DEF_true use 2d font (easier to read, but doesn't scale) instead of 3d font
+  float		two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
+  bool		mat_val_text;	// also display text values for matrix blocks
+
   ColorScale	scale; 		// contains current min,max,range,zero,auto_scale
 
-  GridTableViewSpec view_spec;  // #SHOW_TREE baked in spec 
+  float		grid_margin; 	// #DEF_0.01 #MIN_0 size of margin between grid cells (in normalized units)
+  float		grid_line_size; // #DEF_0.005 #MIN_0 size of grid lines (in normalized units)
+  int		row_num_width;	// #DEF_4 width of row number column
+  float		mat_block_spc;	// #DEF_0.1 space between matrix cell blocks, as a proportion of max of X, Y cell size
+  float		mat_block_height; // #DEF_0.2 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
+  float		mat_rot;	  // #DEF_0 rotation of the matrix in the Z plane (in degrees) - allows for vertical stacks of grids to be displayed in depth
+  float		mat_trans;	  // #DEF_0.6 maximum transparency of zero values in matrix blocks -- set to 0 to make all blocks opaque
+
+  MinMaxInt	mat_size_range;	// range of display sizes for matrix items relative to other text items.  each cell in a matrix counts as one character in size, within these ranges (smaller matricies are made larger to min size, and large ones are made smaller to max size)
+  float		max_text_sz;	// #DEF_0.5 maximum text size, enforced in cases where there are 
 
   override void	InitDisplay(bool init_panel = true);
   override void	UpdateDisplay(bool update_panel = true);
@@ -157,9 +255,14 @@ public:
   // view button/field callbacks
   void		setGrid(bool value);
   void		setHeader(bool value);
+  void		setRowNum(bool value);
+  void		set2dFont(bool value);
+  void		setValText(bool value);
   void		setWidth(float wdth);
   void		setRows(int rows);
   void		setCols(int cols);
+  void		setMatTrans(float value);
+  void		setMatRot(float value);
   void		setAutoScale(bool value);
   void		setScaleData(bool auto_scale, float scale_min, float scale_max);
   // updates the values in us and the stored ones in the colorscale list
@@ -168,14 +271,6 @@ public:
   void		VScroll(bool left); // scroll left or right
   virtual void 	ViewCol_At(int start);	// start viewing at indicated column value
   
-  override DataTable*	dataTable() const {return view_spec.dataTable();}
-
-  override DataTableViewSpec* viewSpecBase() const 
-  { return const_cast<GridTableViewSpec*>(&view_spec);}
-    
-  inline GridTableViewSpec* viewSpec() const 
-  { return const_cast<GridTableViewSpec*>(&view_spec);}
-
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
 
   T3GridViewNode* node_so() const {return (T3GridViewNode*)m_node_so.ptr();}
@@ -186,7 +281,7 @@ public:
   void	Destroy() {CutLinks();}
   void	Copy_(const GridTableView& cp);
   COPY_FUNS(GridTableView, inherited);
-  T3_DATAVIEWFUNS(GridTableView, TableView)
+  T3_DATAVIEWFUNS(GridTableView, DataTableView)
 
 protected:
   float_Array		col_widths_raw; // raw widths of columns (original request)
@@ -212,21 +307,21 @@ protected:
   override void		ClearViewRange();
   override void 	MakeViewRangeValid();
 
-  override void  	DataChange_NewRows(int rows_added);
-  
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
   override void		Clear_impl();
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Render_post(); // #IGNORE
+
+  override void 	UpdateAfterEdit_impl();
 };
 
 
 //////////////////////////
-//  iTableView_Panel 	//
+//  iDataTableView_Panel 	//
 //////////////////////////
 
-class TA_API iTableView_Panel: public iViewPanelFrame {
+class TA_API iDataTableView_Panel: public iViewPanelFrame {
   // abstract base for logview panels -- just has the viewspace widget; everything else is up to the subclass
   INHERITED(iViewPanelFrame)
   Q_OBJECT
@@ -235,7 +330,7 @@ public:
 
 //  override String	panel_type() const; // this string is on the subpanel button for this panel
 
-  TableView*		lv() {return (TableView*)m_dv;}
+  DataTableView*		lv() {return (DataTableView*)m_dv;}
   SoQtRenderArea* 	ra() {return m_ra;}
 
   virtual void 		InitPanel();
@@ -245,12 +340,12 @@ public:
 
   void 			viewAll(); // zooms to fit entire scenegraph in window
 
-  iTableView_Panel(TableView* lv);
-  ~iTableView_Panel();
+  iDataTableView_Panel(DataTableView* lv);
+  ~iDataTableView_Panel();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iTableView_Panel;}
+  override TypeDef*	GetTypeDef() const {return &TA_iDataTableView_Panel;}
 
 protected:
   SoQtRenderArea* 	m_ra;
@@ -265,15 +360,18 @@ protected:
   // subclasses define these to do the actual work
 };
 
-class TA_API iGridTableView_Panel: public iTableView_Panel {
+class TA_API iGridTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT
-INHERITED(iTableView_Panel)
+INHERITED(iDataTableView_Panel)
 public:
   QWidget*		widg;
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
   QCheckBox*		    chkHeaders;
+  QCheckBox*		    chkRowNum;
+  QCheckBox*		    chk2dFont;
+  QCheckBox*		    chkValText;
   QPushButton*		    butRefresh;
   QPushButton*		    butClear;
 
@@ -284,6 +382,10 @@ public:
   taiIncrField*		    fldRows; // number of rows to display
   QLabel*		    lblCols;
   taiIncrField*		    fldCols; // number of cols to display
+  QLabel*		    lblTrans;
+  taiField*		    fldTrans; // mat_trans parency
+  QLabel*		    lblRot;
+  taiField*		    fldRot; // mat_rot ation
 
   QHBoxLayout*		  layColorScale;
   QCheckBox*		    chkAutoScale;
@@ -313,11 +415,17 @@ protected slots:
 
   void 		chkDisplay_toggled(bool on);
   void 		chkHeaders_toggled(bool on);
+  void 		chkRowNum_toggled(bool on);
+  void 		chk2dFont_toggled(bool on);
+  void 		chkValText_toggled(bool on);
+
   void 		butRefresh_pressed();
   void 		butClear_pressed();
   void 		fldWidth_textChanged();
   void 		fldRows_textChanged();
   void 		fldCols_textChanged();
+  void 		fldTrans_textChanged();
+  void 		fldRot_textChanged();
 
   void 		chkAutoScale_toggled(bool on);
   void		cbar_scaleValueChanged();

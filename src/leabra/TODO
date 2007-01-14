@@ -5,22 +5,20 @@ commit:
 ------------------
 * gridview: 
 
-  - auto display of more/less n to keep things square? yes -- have a flag for that.
-  - have some way to control visibility of columns, easily
+  - redefine Clear to not nuke the colspecs
+  - deselect also edits: detect toggle
+  - col_n is off by 1 (with no row_num)
+  - can get stuck w/out scrollbar for col.min at end..
+  - view at is too far zoomed out
+  - colorscale changes not sending signal
   - not properly saving/loading 4d data!
   - all views: add bool for draggers
-  - colorscale not working
-  - grid
   - all views: set color spec button in panel
 
   - test case: filtered layer unit history moving back in depth w/ netview
   test2.proj!!
 
   - why doesn't gridview update with WriteClose()?  not working!
-
-  * add a "vertical stacked" gridview option which stacks the grids at a Z angle
-  (and computes their vert space as less?) -- produces a depth map of grids
-  moving back in time when rotated in the plane.
 
 ------------------
 hv model

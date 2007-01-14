@@ -71,7 +71,7 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth)
   drag_sep_ = new SoSeparator;
   drag_xf_ = new SoTransform;
   drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
-//   drag_xf_->translation.setValue(-drag_size, -drag_size, 0.0f);
+  drag_xf_->translation.setValue(-frame_margin, 0.0f, 0.0f);
   drag_sep_->addChild(drag_xf_);
   dragger_ = new SoTransformBoxDragger;
   drag_sep_->addChild(dragger_);
@@ -110,6 +110,8 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth)
   stage_->addChild(header_);
   body_ = new SoSeparator;
   stage_->addChild(body_);
+  grid_ = new SoSeparator;
+  stage_->addChild(grid_);
   insertChildAfter(topSeparator(), stage_, transform());
 
   insertChildAfter(topSeparator(), drag_sep_, transform());
@@ -121,10 +123,6 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth)
   SoSeparator* ss = shapeSeparator(); // cache
   frame_ = new SoFrame(SoFrame::Ver);
   insertChildAfter(ss, frame_, material());
-  txlt_grid_ = new SoTranslation;
-  insertChildAfter(ss, txlt_grid_, frame_);
-  grid_ = new SoGroup;
-  insertChildAfter(ss, grid_, txlt_grid_);
 }
 
 T3GridViewNode::~T3GridViewNode()
@@ -135,7 +133,6 @@ T3GridViewNode::~T3GridViewNode()
   header_ = NULL;
   body_ = NULL;
   frame_ = NULL;
-  txlt_grid_ = NULL;
   grid_ = NULL;
 }
 
@@ -147,7 +144,7 @@ void T3GridViewNode::setWidth(float wdth) {
 void T3GridViewNode::render() {
   float frmg2 = 2.0f * frame_margin;
 
-  String expr = "oA = vec3f(" + String(.5f * (width_ + frame_margin)) + " + " + String(drag_size)
+  String expr = "oA = vec3f(" + String(.5f * width_) + " + " + String(drag_size)
     + " * A[0], " + String(.5f * (1.0f + frmg2)) + " + " +  String(drag_size)
     + " * A[1], " + String(drag_size) + " * A[2])";
 
@@ -155,11 +152,37 @@ void T3GridViewNode::render() {
 
   txlt_stage_->translation.setValue(0.0f, 1.0f + frame_margin, 0.0f);
   frame_->setDimensions(width_ + frmg2, 1.0f + frmg2, frame_width, frame_width);
-  txfm_shape()->translation.setValue(.5f * (width_ + frame_margin), .5f * (1.0f + frmg2), 0.0f);
-//   txlt_grid_->translation.setValue(-(geom_.x/2.0f - inset), geom_.y/2.0f - inset, 0.0f);
+  txfm_shape()->translation.setValue(.5f * width_, .5f * (1.0f + frmg2), 0.0f);
+  // note: also change in DragFinishCB in qtso
   SoFont* font = captionFont(true);
   transformCaption(iVec3f(0.1f, -((float)font->size.getValue()), 0.0f)); // move caption below the frame
 }
+
+//////////////////////////
+//   T3GridColViewNode	//
+//////////////////////////
+
+// this guy is managed by the _qtso and is only for selecting the column spec!
+
+SO_NODE_SOURCE(T3GridColViewNode);
+
+void T3GridColViewNode::initClass()
+{
+  SO_NODE_INIT_CLASS(T3GridColViewNode, T3NodeLeaf, "T3NodeLeaf");
+}
+
+T3GridColViewNode::T3GridColViewNode(void* colspec)
+:inherited(colspec)
+{
+  SO_NODE_CONSTRUCTOR(T3GridColViewNode);
+}
+
+T3GridColViewNode::~T3GridColViewNode()
+{
+  
+}
+
+
 
 //////////////////////////
 //   T3GraphViewNode	//

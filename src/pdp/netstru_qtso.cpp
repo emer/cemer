@@ -1034,6 +1034,7 @@ void LayerView::Render_impl() {
 		       (float)-pos.y / nv->max_size.y);
 
   T3LayerNode* node_so = this->node_so(); // cache
+  if(!node_so) return;
   node_so->setGeom(lay->act_geom.x, lay->act_geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
   node_so->setCaption(data()->GetName().chars());
   node_so->resizeCaption(nv->font_sizes.layer);
@@ -1121,6 +1122,7 @@ void PrjnView::Render_pre() {
 void PrjnView::Render_impl() {
   T3PrjnNode* node_so = this->node_so(); // cache
   NetView* nv = this->nv();
+  if(!node_so) return;
 
   // find the total receive num, and our ordinal
   Projection* prjn = this->prjn(); // cache
@@ -1617,7 +1619,7 @@ void NetView::Render_pre() {
   m_node_so = new T3NetNode(this);
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
-//  mat->transparency.setValue(0.5f);
+  mat->transparency.setValue(0.5f);
 
   SoEventCallback* ecb = new SoEventCallback;
   ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
@@ -1689,6 +1691,7 @@ void NetView::Render_impl() {
 
   GetMaxSize();
   T3NetNode* node_so = this->node_so(); //cache
+  if(!node_so) return;
   node_so->resizeCaption(font_sizes.net_name);
   node_so->setCaption(data()->GetName().chars());
 

@@ -46,12 +46,7 @@ class float_Data;
 class double_Data;
 class int_Data;
 class byte_Data;
-class DataColViewSpec;
-class DataColViewSpecs;
-class DataTableViewSpec;
 class DataTableModel;
-class GridColViewSpec;
-class GridTableViewSpec; //
 
 // specific ones are in the template classes: String_Data, float_Data
 
@@ -892,86 +887,6 @@ private:
   void	Destroy() {}
 };
 
-/*
-  DataTable ViewSpecs
-    "Rendering" for these specs is initializing all the viewable display
-      parameters -- override the various Render_xxx routines to implement
-*/
-
-class TA_API DataColViewSpec: public ViewSpec {
-  // ##SCOPE_DataColViewSpecs base specification for the display of data
-INHERITED(ViewSpec)
-friend class DataTableViewSpec;
-public:
-  bool			sticky; // #DEF_false set this to retain this colspec even if its column deletes
-
-  DataArray_impl*	dataCol() const {return (DataArray_impl*)data();}
-  void			setDataCol(DataArray_impl* value, bool first_time = false);
-  
-  DATAVIEW_PARENT(DataTableViewSpec)
-//DataTableViewSpec*	parent() const;
-
-  virtual void		setFont(const FontSpec& value) {} // for subclasses that implement
-  bool			isVisible() const; // bakes in check for datacol
-  
-  override void		DataDestroying();
-  
-  void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const DataColViewSpec& cp);
-  COPY_FUNS(DataColViewSpec, inherited);
-  TA_BASEFUNS(DataColViewSpec);
-protected:
-  override void		Unbind_impl(); // unbinds col
-  virtual void		DataColUnlinked() {} // called if data set to NULL or destroys
-  void			UpdateFromDataCol(bool first_time = false); // called if data set to column, or we otherwise need to update
-  virtual void		UpdateFromDataCol_impl(bool first_time); 
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class TA_API DataColViewSpecs: public DataView_List {
-INHERITED(DataView_List)
-friend class DataTableViewSpec;
-public:
-  TA_DATAVIEWLISTFUNS(DataColViewSpecs, inherited, DataColViewSpec)
-private:
-  void	Initialize() {}
-  void	Destroy() {}
-};
-
-
-class TA_API DataTableViewSpec: public ViewSpec {
-  // base class for a viewspec of a datatable
-INHERITED(ViewSpec)
-public:
-  FontSpec		font; // font for text (can generally be customized for cols etc.)
-  DataColViewSpecs	col_specs;
-  
-  DataTable*		dataTable() const {return (DataTable*)data();}
-  virtual void		setDataTable(DataTable* dt);
-    // #MENU #NO_NULL build the spec from the given table
-  
-  override void		DataDestroying(); //
-  
-  void	InitLinks();
-  void	CutLinks();
-  void Copy_(const DataTableViewSpec& cp);
-  COPY_FUNS(DataTableViewSpec, ViewSpec)
-  TA_DATAVIEWFUNS(DataTableViewSpec, inherited) //
-protected:
-  override void 	DoActionChildren_impl(DataViewAction act);
-  override void		Unbind_impl(); // unbinds table
-  override void		DataStructUpdateEnd_impl();
-  void			UpdateFromDataTable(bool first_time = false); // called if data set to table, or needs to be updated; calls _this then _child
-  virtual void		UpdateFromDataTable_this(bool first); // does me (before kids)
-  virtual void		UpdateFromDataTable_child(bool first);//does kids, usually not overridden
-  virtual void		DataTableUnlinked(); // called if data is NULL or destroys
-private:
-  void Initialize();
-  void Destroy();
-};
-
-
 class TA_API DataTableModel: public QAbstractTableModel {
   // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
@@ -1003,81 +918,6 @@ protected:
   void			emit_layoutChanged(); // we call this for most schema changes
 protected:
   DataTable*		dt;
-};
-
-/*
-  Additional Display Options
-    WIDTH=i (i: int) -- sets default column width to i chars
-    NARROW -- in addition to base spec, also sets column with to 8 chars
-*/
-
-class TA_API GridColViewSpec : public DataColViewSpec {
-  // information for display of a data column in a grid display.  scalar columns are always displayed as text, and matrix as blocks (with optional value text, controlled by overall table spec)
-INHERITED(DataColViewSpec)
-public:
-  enum MatrixLayout { 	// order of display for matrix cols
-    BOT_ZERO, 		// row zero is displayed at bottom of cell (default)
-    TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
-  };
-
-  int		text_width; 	// width of the column (or each matrix col) in chars; also the min width in chars
-  bool		scale_on; 	// adjust overall colorscale to include this data (if it is a matrix type)
-  MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
-  bool		mat_image;	// display matrix as an image instead of grid blocks
-  bool		mat_odd_vert;	// how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
-  
-  float 	col_width; // #READ_ONLY #HIDDEN #NO_SAVE calculated col_width in chars
-  float		row_height; // #READ_ONLY #HIDDEN #NO_SAVE calculated row height in chars
-
-  DATAVIEW_PARENT(GridTableViewSpec)
-  void	Copy_(const GridColViewSpec& cp);
-  COPY_FUNS(GridColViewSpec, DataColViewSpec);
-  TA_BASEFUNS(GridColViewSpec);
-protected:
-  void			UpdateAfterEdit_impl();
-  override void		UpdateFromDataCol_impl(bool first_time);
-  override void		DataColUnlinked(); // called if data is NULL or destroys
-  override void 	Render_impl();
-private:
-  void 	Initialize();
-  void	Destroy() {}
-};
-
-// todo: what really is the point of having these two diff objects: the GridTableView
-// and the GridTableViewSpec -- what goes in what??
-
-class TA_API GridTableViewSpec : public DataTableViewSpec {
-  // information for display of a datatable in a grid display
-INHERITED(DataTableViewSpec)
-public:
-  float		grid_margin; 	// #DEF_0.1 #MIN_0 size of margin between grid cells, as a proportion of the size of one text character
-  float		grid_line_size; // #DEF_0.05 #MIN_0 size of grid lines, as a proportion of the size of one text character
-  int		row_num_width;	// #DEF_4 width of row number column
-  MinMaxInt	mat_size_range;	// range of display sizes for matrix items relative to other text items.  each cell in a matrix counts as one character in size, within these ranges (smaller matricies are made larger to min size, and large ones are made smaller to max size)
-  bool		mat_val_text;	// also display text values for matrix blocks (supercedes per column display style information)
-  float		mat_block_spc;	// #DEF_0.1 space between matrix cell blocks, as a proportion of max of X, Y cell size
-  float		mat_block_height; // #DEF_0.2 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
-  float		mat_trans;	  // #DEF_0.6 maximum transparency of zero values in matrix blocks -- set to 0 to make all blocks opaque
-
-  inline int		colSpecCount() const {return col_specs.size;}
-  GridColViewSpec*	colSpec(int idx) const 
-    {return (GridColViewSpec*)col_specs.SafeEl(idx);} //
-  
-  virtual void	GetMinMaxScale(MinMax& mm, bool first=true); // get min and max data range for scaling
-  override void		DataDestroying();
-
-  void	InitLinks();
-  void 	Initialize();
-  void	Destroy();
-  void	Copy_(const GridTableViewSpec& cp);
-  COPY_FUNS(GridTableViewSpec, DataTableViewSpec);
-  TA_BASEFUNS(GridTableViewSpec);
-protected:
-  override void 	UpdateAfterEdit_impl();
-
-  override void		DataDataChanged_impl(int dcr, void* op1, void* op2);
-  override void		DataUpdateView_impl();
-  override void		DataUpdateAfterEdit_impl();
 };
 
 #endif // datatable_h

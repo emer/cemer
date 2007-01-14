@@ -225,6 +225,7 @@ void T3DataView::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) 
 void T3DataView::DataUpdateAfterEdit_impl() {
   inherited::DataUpdateAfterEdit_impl();
   DoActions(RENDER_IMPL);
+  // todo: this should be superfluous:
   if (m_node_so)
     m_node_so->touch();
 }
@@ -689,6 +690,11 @@ void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
 void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
   if (!t3node) return;
+
+  if(t3node->selectEditMe()) {
+    t3node->Edit();
+    //    return; // what happens if you do everything??
+  }
 
   if (ev->is_selected) {
     AddSelectedItem(t3node);
