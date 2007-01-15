@@ -5,6 +5,7 @@ commit:
 ------------------
 * gridview: 
 
+  - struct update debug on hv model
   - when editing a datatable_impl, need to send refresh update to display
   - initial panel is not updated..  just stick in render_impl and be done with it??
   - view at is too far zoomed out -- can't seem to fix this at all, any way I try..

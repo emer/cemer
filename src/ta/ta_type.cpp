@@ -1862,6 +1862,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     ++m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG    
     cerr << (String)(int)this << " stru beg: " << m_dbu_cnt << endl;
+    taMisc::FlushConsole();
 #endif
   } 
   else if (dcr == DCR_DATA_UPDATE_BEGIN) { 
@@ -1870,6 +1871,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     else               --m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG    
     cerr << (String)(int)this << " data beg: " << m_dbu_cnt << endl;
+    taMisc::FlushConsole();
 #endif
   } 
   else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
@@ -1889,6 +1891,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
       cerr << (String)(int)this << " stru end: " << m_dbu_cnt << endl;
     else
       cerr << (String)(int)this << " data end: " << m_dbu_cnt << endl;
+    taMisc::FlushConsole();
 #endif
     // at the end, also send a IU
     if (m_dbu_cnt == 0) {
@@ -1899,6 +1902,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
         dcr = DCR_ITEM_UPDATED;
 #ifdef DATA_DATA_DEBUG    
 	cerr << (String)(int)this << " cvt to iu: " << m_dbu_cnt << endl;
+	taMisc::FlushConsole();
 #endif
       }
       else {// otherwise, we send both
@@ -1914,6 +1918,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
   if (!suppress) {
 #ifdef DATA_DATA_DEBUG    
     cerr << (String)(int)this << " sending: " << dcr << endl;
+    taMisc::FlushConsole();
 #endif
     DoNotify(dcr, op1_, op2_);
   }

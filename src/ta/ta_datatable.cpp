@@ -982,12 +982,12 @@ DataArray_impl* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       da->EnforceRows(rows);	// keep row-constant
       StructUpdate(false);
     } else {
-      StructUpdate(true);
       MatrixGeom mg(dims, d0, d1, d2, d3, d4);
       if(mg != da->cell_geom) {
+	StructUpdate(true);
 	da->cell_geom = mg;
 	da->Init();
-      StructUpdate(false);
+	StructUpdate(false);
       }
     }
     return da;

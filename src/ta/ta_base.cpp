@@ -3128,8 +3128,10 @@ void taDataView::UpdateAfterEdit_impl() {
 void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   // detect the implicit DATA_UPDATE_END
 #ifdef DATA_DATA_DEBUG    
-  if(dcr == DCR_ITEM_UPDATED)
+  if(dcr == DCR_ITEM_UPDATED) {
     cerr << GetName() << " iu: " << m_dbu_cnt << endl;
+    taMisc::FlushConsole();
+  }
 #endif
   if ((m_dbu_cnt == -1) && (dcr == DCR_ITEM_UPDATED))
     dcr = DCR_DATA_UPDATE_END;
@@ -3140,6 +3142,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
     ++m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG    
     cerr << GetName() << " stru start: " << m_dbu_cnt << endl;
+    taMisc::FlushConsole();
 #endif
     return;
   } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
@@ -3147,6 +3150,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
     else               --m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG    
     cerr << GetName() << " data start: " << m_dbu_cnt << endl;
+    taMisc::FlushConsole();
 #endif
     return;
   } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END))
@@ -3159,6 +3163,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
       cerr << GetName() << " data end: " << m_dbu_cnt << endl;
     else
       cerr << GetName() << " stru end: " << m_dbu_cnt << endl;
+    taMisc::FlushConsole();
 #endif
     if (m_dbu_cnt == 0) {
       int pdbu = parDbuCnt();
