@@ -5,7 +5,7 @@ commit:
 ------------------
 * gridview: 
 
-  - widths not being computed correctly & saved in the view col -- allow manual override
+  - when editing a datatable_impl, need to send refresh update to display
   - view at is too far zoomed out -- can't seem to fix this at all, any way I try..
   - colorscale changes not sending signal
   - not properly saving/loading 4d data!

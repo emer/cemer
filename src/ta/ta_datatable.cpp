@@ -158,20 +158,30 @@ int DataArray_impl::displayWidth() const {
   // explicit width has highest priority
   int rval = GetUserData(udkey_width).toInt();
   if (rval == 0) {
-    switch (valType()) {
-    case VT_STRING: rval = 16; break; // maximum width for strings
-    case VT_DOUBLE: rval = 16; break;
-    case VT_FLOAT: rval = 8; break;
-    case VT_INT: rval = 8; break;
-    case VT_BYTE: rval = 3; break;
-    case VT_VARIANT: rval = 10; break;
-    default: break;
+    if(isMatrix()) {
+      int raw_width = 1;
+      int raw_height = 1;
+      bool mat_odd_vert = true;
+      Get2DCellGeom(raw_width, raw_height, mat_odd_vert);
+      rval = raw_width;
+    }
+    else {
+      switch (valType()) {
+      case VT_STRING: rval = 16; break; // maximum width for strings
+      case VT_DOUBLE: rval = 16; break;
+      case VT_FLOAT: rval = 8; break;
+      case VT_INT: rval = 8; break;
+      case VT_BYTE: rval = 3; break;
+      case VT_VARIANT: rval = 10; break;
+      default: break;
+      }
     }
   }
   if (rval == 0)
     rval = 8; // default
-  // include name
-  rval = MAX(rval, name.length());
+  // include name: not
+  //  rval = MAX(rval, name.length());
+  
   return rval;
 }
 
@@ -186,7 +196,7 @@ taBase::DumpQueryResult DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
   } else return inherited::Dump_QuerySaveMember(md);
 }
 
-void DataArray_impl::Get2DCellGeom(int& x, int& y, bool odd_y) {
+void DataArray_impl::Get2DCellGeom(int& x, int& y, bool odd_y) const {
   x = 1;
   y = 1;
   if(isMatrix()) {

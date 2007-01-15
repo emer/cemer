@@ -147,7 +147,7 @@ void MatrixGeom::DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d
   }
 }
 
-void MatrixGeom::Get2DGeom(int& x, int& y, bool odd_y) {
+void MatrixGeom::Get2DGeom(int& x, int& y, bool odd_y) const {
   x = 1;
   y = 1;
   if(size == 1) {

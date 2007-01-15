@@ -1647,6 +1647,9 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
+  trans[0] *= nv->network_scale.x;
+  trans[1] *= nv->network_scale.y;
+  trans[2] *= nv->network_scale.z;
   FloatTDCoord tr(T3NetNode::drag_size * trans[0],
 		  T3NetNode::drag_size * trans[1],
 		  T3NetNode::drag_size * trans[2]);

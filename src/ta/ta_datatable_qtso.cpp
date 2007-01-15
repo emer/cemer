@@ -559,7 +559,7 @@ void DataTableView::View_FR() {
 //////////////////////////////////
 
 void GridColView::Initialize(){
-  text_width = 16;
+  text_width = 8;
   scale_on = true;
   mat_layout = BOT_ZERO; // typical default for data patterns
   mat_image = false;
@@ -675,7 +675,7 @@ void GridTableView::Initialize() {
   grid_on = true;
   header_on = true;
   row_num_on = true;
-  two_d_font = true;
+  two_d_font = false;		// true -- this is causing mysterious so crash, disabled for now
   two_d_font_scale = 350.0f;
   mat_val_text = false;
 
@@ -1170,7 +1170,7 @@ void GridTableView::RenderHeader() {
     colnd->topSeparator()->addChild(rectmat);
     SoCube* rect = new SoCube;
     rect->width = col_wd_lst - gr_mg_sz2;
-    rect->height = head_height - gr_mg_sz2;
+    rect->height = head_height;
     rect->depth = gr_mg_sz;
     colnd->topSeparator()->addChild(rect);
   }
@@ -1498,6 +1498,9 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate translation by current rotation
+  trans[0] *= nv->table_scale.x;
+  trans[1] *= nv->table_scale.y;
+  trans[2] *= nv->table_scale.z;
   FloatTDCoord tr(T3GridViewNode::drag_size * trans[0],
 		  T3GridViewNode::drag_size * trans[1],
 		  T3GridViewNode::drag_size * trans[2]);
