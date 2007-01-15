@@ -2143,6 +2143,27 @@ void iDataTablePanel::Render_impl() {
 //  taiTabularDataMimeFactory	//
 //////////////////////////////////
 
+/* Tabular Data semantics
+
+  In general, we do not try to interpret the tabular data, since there
+  are so many combinations, including from external sources -- we will
+  make a "best effort" to paste data, by using the built-in string 
+  converters.
+  
+  We can always (try) pasting data into a Matrix, since we can always
+  interpret the data in a flattened way.
+  
+  
+  
+  Paste semantics
+ 
+  Matrix: 
+    * if 1 cell is selected, it is assumed that we want to paste
+      "as much as possible"; 
+    * if there is a selection, then we limit the pasting to that
+      region
+*/
+
 const String taiTabularDataMimeFactory::tacss_matrixdesc("tacss/matrixdesc");
 const String taiTabularDataMimeFactory::tacss_tabledesc("tacss/tabledesc");
 
@@ -2157,7 +2178,19 @@ void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
     allowed |= taiClipData::EA_COPY;
     
   if (!ms) return;
-  // TODO: dst ops
+  // dst ops -- none allowed if no selection
+  if (sel.empty()) {
+    forbidden = taiClipData::EA_DST_OPS;
+    return;
+  }
+  
+  // Priority is: Mat, Table, Generic
+  taiMatrixDataMimeItem* mmi = (taiMatrixDataMimeItem*)ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
+  if (mmi) {
+    allowed |= taiClipData::EA_PASTE;
+  }
+  // Table
+  // Generic
 }
 
 void taiTabularDataMimeFactory::Mat_EditAction(taMatrix* mat, 
@@ -2247,8 +2280,64 @@ void taiTabularDataMimeFactory::InitHeader(int cnt, QString& str) {
 */
 
 //////////////////////////////////
-//  taiMatDataMimeItem 		//
+//  taiTabularDataMimeItem 	//
 //////////////////////////////////
+
+taiMimeItem* taiTabularDataMimeItem::Extract(taiMimeSource* ms, 
+    const String& mimetype)
+{
+//TODO:
+  return NULL;
+}
+
+bool taiTabularDataMimeItem::ExtractGeom(String& arg) {
+  String str;
+  bool ok;
+  str = arg.before(';'); // cols
+  m_size.w = str.toInt(&ok);
+  if (!ok) goto end;
+  arg = arg.after(";");
+  
+  str = arg.before(';'); //rows
+  m_size.h = str.toInt(&ok); 
+  if (!ok) goto end;
+  arg = arg.after(";\n");
+  
+end:
+  return ok;
+}
+
+void taiTabularDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
+//TODO:
+}
+
+//////////////////////////////////
+//  taiMatrixDataMimeItem 	//
+//////////////////////////////////
+
+taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms, 
+    const String& subkey)
+{
+  if (!ms->hasFormat(taiTabularDataMimeFactory::tacss_matrixdesc)) 
+    return NULL;
+  taiTabularDataMimeItem* rval = new taiTabularDataMimeItem;
+  rval->Constr(ms, subkey);
+}
+
+
+bool taiMatrixDataMimeItem::Constr_impl(const String&) {
+  String arg;
+  data(mimeData(), taiTabularDataMimeFactory::tacss_matrixdesc, arg);
+  
+  return ExtractGeom(arg);
+}
+
+void  taiMatrixDataMimeItem::DecodeData_impl() {
+//TODO: note: maybe nothing!
+}
+
+
+
 /*
 taiMatDataMimeItem::taiMatDataMimeItem(int data_type_)
 {

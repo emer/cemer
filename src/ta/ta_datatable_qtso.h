@@ -607,9 +607,16 @@ private:
   void	Destroy() {}
 };
 
-class TA_API taiTabularDataMimeItem: public taiMimeItem { // base for matrix and table data
+class TA_API taiTabularDataMimeItem: public taiMimeItem { // base for matrix and table data; this class itself handles: generic TSV and CSV text/plain
 INHERITED(taiMimeItem)
 public: // i/f for tabular data guy
+  iSize			size() const {return m_size;} // the (flat) size of the data in rows/cols
+  int			rows() const {return m_size.h;}
+  int			cols() const {return m_size.w;}
+  
+  
+  virtual void		WriteMatrix(taMatrix* mat, const CellRange& sel);
+    // write the data from the mime item to the indicate range in the matrix; 
 /*TODO  override bool		isMatrix() const;
   override bool		isTable() const;
   
@@ -623,9 +630,33 @@ public: // i/f for tabular data guy
     */
   TA_BASEFUNS(taiTabularDataMimeItem);
     
+public: // TAI_xxx instance interface -- used for dynamic creation
+  override taiMimeItem* Extract(taiMimeSource* ms, 
+    const String& subkey = _nilString);
+
 protected:
-//  int			m_data_type; // one of ST_MATRIX_DATA or TABLE_DATA
+  iSize			m_size; // one of ST_MATRIX_DATA or TABLE_DATA
+  bool 			ExtractGeom(String& arg); // get the cols/rows
 //  override void 	GetFormats_impl(QStringList& list, int idx) const; 
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
+
+class TA_API taiMatrixDataMimeItem: public taiTabularDataMimeItem { // this class handles Matrix -- optimized since we know the dims, and know the data is accurate
+INHERITED(taiTabularDataMimeItem)
+public: // i/f for tabular data guy  
+  
+  virtual void		WriteMatrix(taMatrix* mat, const CellRange& sel);
+  TA_BASEFUNS(taiMatrixDataMimeItem);
+    
+public: // TAI_xxx instance interface -- used for dynamic creation
+  override taiMimeItem* Extract(taiMimeSource* ms, 
+    const String& subkey = _nilString);
+protected:
+  override bool 	Constr_impl(const String&);
+  override void		DecodeData_impl();
 private:
   void	Initialize() {}
   void	Destroy() {}
