@@ -761,7 +761,7 @@ void GridTableView::Render_pre() {
 void GridTableView::Render_impl() {
   inherited::Render_impl();
   T3GridViewNode* node_so = this->node_so(); // cache
-  if(!node_so)
+  if(!node_so || !dataTable())
     return;
   node_so->setWidth(width);	// does a render too -- ensure always up to date on width
   int orig_rows;
