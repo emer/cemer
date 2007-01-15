@@ -2337,6 +2337,8 @@ void  taiMatrixDataMimeItem::DecodeData_impl() {
 }
 
 
+void  taiMatrixDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
+}
 
 /*
 taiMatDataMimeItem::taiMatDataMimeItem(int data_type_)
