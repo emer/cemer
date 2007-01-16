@@ -579,35 +579,31 @@ public:
   void			Mat_QueryEditActions(taMatrix* mat, 
     const CellRange& selected, taiMimeSource* ms,
     int& allowed, int& forbidden) const; // determine ops based on clipboard and selected; ms=NULL for source only
-  void			Mat_EditAction(taMatrix* mat, 
+    
+  void			Mat_EditActionD(taMatrix* mat, 
     const CellRange& selected, taiMimeSource* ms, int ea) const;
-    // note: this does the requery to insure it is still legal
+    // dest edit actions; note: this does the requery to insure it is still legal
+  void			Mat_EditActionS(taMatrix* mat, 
+    const CellRange& selected, int ea) const;
+    // src edit actions; note: this does the requery to insure it is still legal
+    
   taiClipData* 		Mat_GetClipData(taMatrix* mat,
     const CellRange& sel, int src_edit_action, bool for_drag = false) const;
   
   void			AddMatDesc(QMimeData* md,
     taMatrix* mat, const CellRange& selected) const;
 
-/*  virtual void		AddSingleMimeData(QMimeData* md, taBase* obj);
-    // used for putting one object on the clipboard
-  virtual void		AddMultiMimeData(QMimeData* md, taPtrList_impl* obj_list);
-    // used for putting multiple objects on the clipboard */
-    
   TA_MFBASEFUNS(taiTabularDataMimeFactory);
 protected:
   void			AddDims(const CellRange& sel, String& str) const;
 
-/*  void			InitHeader(int cnt, QString& str); // common for single/multi
-  void			AddHeaderDesc(taBase* obj, QString& str);
-    // add entry for one object
-  void			AddObjectData(QMimeData* md, taBase* obj, int idx); 
-    // add mime entry for one obj */
 private:
-  void	Initialize() {}
+  void	Initialize();
   void	Destroy() {}
 };
 
-class TA_API taiTabularDataMimeItem: public taiMimeItem { // base for matrix and table data; this class itself handles: generic TSV and CSV text/plain
+class TA_API taiTabularDataMimeItem: public taiMimeItem { 
+  // #NO_INSTANCE #VIRT_BASE base for matrix, tsv, and table data; this class is not itself instantiated
 INHERITED(taiMimeItem)
 public: // i/f for tabular data guy
   iSize			size() const {return m_size;} // the (flat) size of the data in rows/cols
@@ -628,16 +624,19 @@ public: // i/f for tabular data guy
   virtual void		GetMaxRowGeom(int& max_row) const = 0;
     // longest cell geom determines overall row geom
     */
-  TA_BASEFUNS(taiTabularDataMimeItem);
-    
-public: // TAI_xxx instance interface -- used for dynamic creation
-  override taiMimeItem* Extract(taiMimeSource* ms, 
-    const String& subkey = _nilString);
+  TA_ABSTRACT_BASEFUNS(taiTabularDataMimeItem);
 
 protected:
-  iSize			m_size; // one of ST_MATRIX_DATA or TABLE_DATA
+  enum TsvSep { // for reading tsv text streams
+    TSV_TAB,  // tab -- item separator
+    TSV_EOL,  // eol -- row separator
+    TSV_EOF   // eof -- end of file
+  };
+
+  iSize			m_size; 
   bool 			ExtractGeom(String& arg); // get the cols/rows
-//  override void 	GetFormats_impl(QStringList& list, int idx) const; 
+  bool			ReadTsvValue(istringstream& strm, String& val, TsvSep& sep); // reads value if possible, into val, returning true if a value read, and the separator encountered after the value in sep.
+  
 private:
   void	Initialize() {}
   void	Destroy() {}
@@ -659,6 +658,23 @@ protected:
   override void		DecodeData_impl();
 private:
   void	Initialize() {}
+  void	Destroy() {}
+};
+
+class TA_API taiTsvMimeItem: public taiTabularDataMimeItem { // this class handles generic TSV data, ex. from Excel and other spreadsheets
+INHERITED(taiTabularDataMimeItem)
+public: // i/f for tabular data guy  
+  
+  TA_BASEFUNS(taiTsvMimeItem);
+    
+public: // TAI_xxx instance interface -- used for dynamic creation
+  override taiMimeItem* Extract(taiMimeSource* ms, 
+    const String& subkey = _nilString); //NOTE: we typically only ask for this type if we *don't* get a Matrix or Table, so we don't waste time decoding manually
+protected:
+//nn  override bool 	Constr_impl(const String&);
+//nn  override void		DecodeData_impl();
+private:
+  void	Initialize();
   void	Destroy() {}
 };
 

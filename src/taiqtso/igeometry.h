@@ -91,6 +91,8 @@ public:
   int w;
   int h;
 
+  void		set(int w_, int h_) {w = w_; h = h_;}
+  
   iSize();
   iSize(int w_, int h_);
 

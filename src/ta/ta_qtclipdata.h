@@ -316,6 +316,7 @@ public:
     // return an instance of td, a taiMimeItem class, if possible
 
   
+  QByteArray 		data(const QString& mimeType) const;
   inline int		flags() const {return m_flags;}
   bool			isThisProcess() const; // from ms
   const QMimeData*	mimeData() const;

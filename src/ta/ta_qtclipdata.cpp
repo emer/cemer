@@ -244,12 +244,12 @@ bool taiMimeItem::Constr(taiMimeSource* ms_, const String& mimetype) {
     m_flags |= MIF_ZOMBIE;
   return rval;
 }
-/*
+
 QByteArray taiMimeItem::data(const QString& mimeType) const {
   if (m_ms) return m_ms->data(mimeType);
   else return QByteArray();
 }
-
+/*
 int taiMimeItem::data(const QString& mimeType, taString& result) const {
   QByteArray ba = data(mimeType);
   result.set(ba.data(), ba.size());

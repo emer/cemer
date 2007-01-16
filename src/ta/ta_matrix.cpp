@@ -372,8 +372,8 @@ void taMatrix::Destroy() {
     slices = NULL;
   }
   if (m_dm) {
-    m_dm->MatrixDestroying();
-    delete m_dm;
+    RemoveDataClient(m_dm);
+//TODO: needed still?    delete m_dm;
     m_dm = NULL;
   }
 }
@@ -647,6 +647,10 @@ int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4) const {
   return rval;
 }
  
+int taMatrix::FastElIndex2D(int d0, int d1) const {
+  return (d1 * geom[0]) + d0;
+}
+
 int taMatrix::FastElIndexN(const MatrixGeom& indices) const {
 /*  Assert((geom.size >= 1), "matrix geometry has not been initialized");
   Assert((indices.size >= 1), "at least 1 index must be specified");
@@ -710,6 +714,7 @@ MatrixTableModel* taMatrix::GetDataModel() {
   if (!m_dm) {
     //shared by all views; persists now till we die; no affect on refcnt
     m_dm = new MatrixTableModel(this);
+    AddDataClient(m_dm);
   }
   return m_dm;
 }
@@ -1376,6 +1381,20 @@ Qt::CheckStateRole*/
   }
 }
 
+void MatrixTableModel::DataLinkDestroying(taDataLink* dl) {
+  delete this;
+}
+
+void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
+  void* op1, void* op2)
+{
+  //this is primarily for code-driven changes
+  if (dcr == DCR_ITEM_UPDATED) {
+    emit_dataChanged();
+  }
+}
+
+
 void MatrixTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
   if (!m_mat) return;
   // lookup actual end values when we are called with sentinels
@@ -1439,7 +1458,6 @@ QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, 
     return hasIndex(row, column, parent) ? createIndex(row, column, 0) : QModelIndex();
   }
 }*/
-
 int MatrixTableModel::matIndex(const QModelIndex& idx) const {
   //TENT
   //note: we dimensionally reduce all dims >1 to 1
@@ -1460,11 +1478,6 @@ bool QAbstractTableModel::hasChildren(const QModelIndex &parent) const
 }*/
 
 
-void MatrixTableModel::MatrixDestroying() {
-  if (!m_mat) return;
-  m_mat = NULL;
-  //maybe update things? really is only called instants before we get deleted anyway
-}
 QMimeData* MatrixTableModel::mimeData (const QModelIndexList& indexes) const {
   if (!m_mat) return NULL;
   CellRange cr(indexes);

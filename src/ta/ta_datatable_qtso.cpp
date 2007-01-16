@@ -42,6 +42,7 @@
 #include <Q3ScrollView>
 #include <QSplitter>
 #include <QTableView>
+#include <QTextStream>
 
 //#include <Q3VBox>
 
@@ -2167,6 +2168,9 @@ void iDataTablePanel::Render_impl() {
 const String taiTabularDataMimeFactory::tacss_matrixdesc("tacss/matrixdesc");
 const String taiTabularDataMimeFactory::tacss_tabledesc("tacss/tabledesc");
 
+void taiTabularDataMimeFactory::Initialize() { 
+}
+
 void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat, 
   const CellRange& sel, taiMimeSource* ms,
   int& allowed, int& forbidden) const
@@ -2185,20 +2189,59 @@ void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
   }
   
   // Priority is: Mat, Table, Generic
-  taiMatrixDataMimeItem* mmi = (taiMatrixDataMimeItem*)ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
-  if (mmi) {
+  {taiMatrixDataMimeItem* mi = (taiMatrixDataMimeItem*)
+     ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
+  if (mi) {
     allowed |= taiClipData::EA_PASTE;
-  }
-  // Table
-  // Generic
+    return;
+  }}
+  // Table TODO
+  // TSV
+  {taiTsvMimeItem* mi = (taiTsvMimeItem*)
+    ms->GetMimeItem(&TA_taiTsvMimeItem);
+  if (mi) {
+    allowed |= taiClipData::EA_PASTE;
+  }}
 }
 
-void taiTabularDataMimeFactory::Mat_EditAction(taMatrix* mat, 
+void taiTabularDataMimeFactory::Mat_EditActionD(taMatrix* mat, 
   const CellRange& sel, taiMimeSource* ms, int ea) const
 {
   int allowed = 0;
   int forbidden = 0;
   Mat_QueryEditActions(mat, sel, ms, allowed, forbidden);
+  ea = ea & (allowed & ~forbidden);
+  
+  if (ea & taiClipData::EA_PASTE) {
+    CellRange sel2(sel);
+    // if sel is a single cell, adjust to max
+    if (sel2.single()) {
+      sel2.col_to = mat->geom.SafeEl(0) - 1;
+      sel2.row_to = mat->rowCount() - 1;
+    }
+    // Priority is: Mat, Table, Generic
+    {taiMatrixDataMimeItem* mi = (taiMatrixDataMimeItem*)
+      ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
+    if (mi) {
+      mi->WriteMatrix(mat, sel2);
+      return;
+    }}
+    // Table TODO
+    // TSV
+    {taiTsvMimeItem* mi = (taiTsvMimeItem*)
+      ms->GetMimeItem(&TA_taiTsvMimeItem);
+    if (mi) {
+      mi->WriteMatrix(mat, sel2);
+    }}
+  }
+}
+
+void taiTabularDataMimeFactory::Mat_EditActionS(taMatrix* mat, 
+  const CellRange& sel, int ea) const
+{
+  int allowed = 0;
+  int forbidden = 0;
+  Mat_QueryEditActions(mat, sel, NULL, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
   
   if (ea & taiClipData::EA_COPY) {
@@ -2231,64 +2274,31 @@ void taiTabularDataMimeFactory::AddDims(const CellRange& sel, String& str) const
   str = str + String(sel.width()) + ";" + String(sel.height()) + ";";
 }
 
-/*
-void taiTabularDataMimeFactory::AddSingleObject(QMimeData* md, taBase* obj) {
-  if (!obj) return;
-  QString str;
-  InitHeader(1, str);
-  AddHeaderDesc(obj, str);
-  md->setData(tacss_objectdesc, StrToByteArray(str));
-  AddObjectData(md, obj, 0);
-}
-
-void taiTabularDataMimeFactory::AddMultiObjects(QMimeData* md,
-   taPtrList_impl* obj_list)
-{
-  if (!obj_list) return;
-  QString str;
-  InitHeader(obj_list->size, str);
-  // note: prob not necessary, but we iterate twice so header precedes data
-  for (int i = 0; i < obj_list->size; ++i) {
-    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
-    AddHeaderDesc(obj, str);
-  }
-  md->setData(tacss_objectdesc, StrToByteArray(str));
-  for (int i = 0; i < obj_list->size; ++i) {
-    taBase* obj = (taBase*)obj_list->FastEl_(i); // better damn well be a taBase list!!!
-    AddObjectData(md, obj, i);
-  }
-}
-
-void taiTabularDataMimeFactory::AddObjectData(QMimeData* md, taBase* obj, int idx) {
-    ostringstream ost;
-    obj->Save_strm(ost);
-    QString str = tacss_objectdata + ";index=" + QString::number(idx);
-    md->setData(str, QByteArray(ost.str().c_str()));
-}
-
-
-void taiTabularDataMimeFactory::AddHeaderDesc(taBase* obj, QString& str) {
-  //note: can't use Path_Long because path parsing routines don't handle names in paths
-  str = str + obj->GetTypeDef()->name.toQString() + ";" +
-        obj->GetPath().toQString() + ";\n"; // we put ; at end to facilitate parsing, and for }
-}
-
-void taiTabularDataMimeFactory::InitHeader(int cnt, QString& str) {
-  str = QString::number(cnt) + ";\n";
-}
-
-*/
 
 //////////////////////////////////
 //  taiTabularDataMimeItem 	//
 //////////////////////////////////
 
-taiMimeItem* taiTabularDataMimeItem::Extract(taiMimeSource* ms, 
-    const String& mimetype)
-{
-//TODO:
-  return NULL;
-}
+/* TSV reading engine
+
+the most common spreadsheet format is TSV -- note that
+tabs and eols are separators, not terminators
+
+value[<tab>value] 
+[<eol>] value[<tab>value]
+
+We need to be able to read, being able to skip cols,
+knowing when we reach eols.
+
+Parsing geoms:
+
+  #rows = #eols - 1
+  #cols = row0(#tabs - 1)
+  
+
+
+*/
+
 
 bool taiTabularDataMimeItem::ExtractGeom(String& arg) {
   String str;
@@ -2308,7 +2318,82 @@ end:
 }
 
 void taiTabularDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
-//TODO:
+  // get the text/plain data and set it into a stream
+  istringstream istr;
+  QByteArray ba = data(taiMimeFactory::text_plain);
+  istr.str(string(ba.data(), ba.size()));
+  
+  String val; // each cell val
+  TsvSep sep; // sep after reading the cell val
+
+  // client needs to have adjust paste region if necessary; we take it literally
+  
+  int row = sel.row_fr;
+  mat->DataUpdate(true);
+  while (row <= sel.row_to) {
+    int col = sel.col_fr;
+    while (col <= sel.col_to) {
+      if (!ReadTsvValue(istr, val, sep)) goto done;
+      int idx = mat->FastElIndex2D(col, row);
+      mat->SetFmStr_Flat(val, idx);
+      if (sep == TSV_EOF) goto done;
+      // if we've run out of col data, skip to next row
+      if (sep == TSV_EOL) goto next_row;
+      ++col;
+      
+    }
+    // if we haven't run out of col data yet, skip input data
+    while (sep != TSV_EOL) {
+      if (!ReadTsvValue(istr, val, sep)) goto done;
+      if (sep == TSV_EOF) goto done;
+    }
+next_row:
+    ++row;
+  }
+done:
+  mat->DataUpdate(false);
+}
+
+bool taiTabularDataMimeItem::ReadTsvValue(istringstream& strm, String& val,
+  TsvSep& sep)
+{
+  // unless 1st read is EOF, we will succeed in reading something
+  val = _nilString;
+  int c = strm.peek();
+  if (c == EOF) {
+    sep = TSV_EOF;
+    return false;
+  }
+  while (c != EOF) {
+    if (c == '\t') {
+      strm.get();
+      sep = TSV_TAB;
+      break;
+    }
+    if ((c == '\n') || (c == '\r')) {
+      strm.get();
+      sep = TSV_EOL;
+      // Windows/DOS cr+lf
+      if ((c == '\r') && (strm.peek() == '\n')) {
+        strm.get();
+      }
+      // we ignore terminating eol
+      if (strm.peek() == EOF) {
+        strm.get();
+        sep = TSV_EOF;
+      }
+      break;
+    }
+    
+    val += (char)c; 
+    strm.get();
+    c = strm.peek();
+    if (c == EOF) {
+      strm.get();
+      sep = TSV_EOF;
+    }
+  }
+  return true;
 }
 
 //////////////////////////////////
@@ -2322,8 +2407,8 @@ taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms,
     return NULL;
   taiTabularDataMimeItem* rval = new taiTabularDataMimeItem;
   rval->Constr(ms, subkey);
+  return rval;
 }
-
 
 bool taiMatrixDataMimeItem::Constr_impl(const String&) {
   String arg;
@@ -2339,6 +2424,47 @@ void  taiMatrixDataMimeItem::DecodeData_impl() {
 
 void  taiMatrixDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
 }
+
+//////////////////////////////////
+//  taiTsvMimeItem	 	//
+//////////////////////////////////
+
+taiMimeItem* taiTsvMimeItem::Extract(taiMimeSource* ms, 
+    const String& subkey)
+{
+  // note: virtually everything has text/plain, so we just grab and examine
+  // note: tabs are separators, not terminators
+  // note: some formats (ex Excel) use eol as a sep, others (ex OO.org) as a terminator
+  QByteArray ba = ms->data(taiTabularDataMimeFactory::text_plain);
+  if (ba.size() == 0) return NULL;
+  // first, look at the first line -- we will pull tent cols from this, then 
+  // double check against the remainder
+  QTextStream ts(ba, QIODevice::ReadOnly); // ro stream
+  QString str = ts.readLine();
+  int cols = str.count('\t', Qt::CaseInsensitive) + 1;
+  // now, if it is really a table, it should have total metrics consistent
+  
+  // see if it ends in an eol, adjust if necessary
+  int tot_rows = 1; 
+  if (ba.endsWith('\n')) // note: works for Unix or Windows
+    tot_rows = 0;
+  
+  tot_rows = ba.count('\n') + tot_rows; // note: works for Unix or Windows
+  int tot_tabs = ba.count('\t');
+  if (((cols - 1) * tot_rows) != tot_tabs)
+    return NULL;
+  
+  taiTsvMimeItem* rval = new taiTsvMimeItem;
+  rval->Constr(ms, subkey); //note: doesn't do anything
+  rval->m_size.set(cols, tot_rows);
+  return rval;
+}
+
+
+void taiTsvMimeItem::Initialize() {
+}
+
+
 
 /*
 taiMatDataMimeItem::taiMatDataMimeItem(int data_type_)

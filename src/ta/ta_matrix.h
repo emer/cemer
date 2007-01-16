@@ -278,7 +278,8 @@ public:
   int			FrameToRow(int f) const;
   // #CAT_Access convert frame number to row number
   int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
-  // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  int			FastElIndex2D(int d0, int d1=0) const; 
+  // #CAT_Access NO bounds check and return index as if the mat was only 2d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   int			FastElIndexN(const MatrixGeom& indices) const;
   // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
@@ -1049,7 +1050,9 @@ private:
 
 //nn? SmartPtr_Of(byte_Matrix)
 
-class TA_API MatrixTableModel: public QAbstractTableModel {
+class TA_API MatrixTableModel: public QAbstractTableModel,
+  public IDataLinkClient
+{
   // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display
 friend class taMatrix;
 INHERITED(QAbstractTableModel)
@@ -1080,10 +1083,15 @@ public: // required implementations
   bool 			setData(const QModelIndex& index, const QVariant& value, 
     int role = Qt::EditRole); // override, for editing
 
+public: // IDataLinkClient i/f
+  override void*	This() {return this;}
+  override TypeDef*	GetTypeDef() const {return &TA_MatrixTableModel;}
+  override void		DataLinkDestroying(taDataLink* dl);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
+  
 protected:
   static MatrixGeom	tgeom; // #IGNORE to avoid cost of allocation in index ops, we use this for non-reentrant
  
-  void			MatrixDestroying(); // clears our instance
   bool			ValidateIndex(const QModelIndex& index) const;
   bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
     // translates index into matrix coords; true if the index is valid

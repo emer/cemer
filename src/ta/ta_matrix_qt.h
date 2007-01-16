@@ -50,9 +50,20 @@ signals:
   void			hasFocus(); // we emit anytime something happens which implies we are focused
 #endif
 
- 
+public slots: // cliphandler i/f
+  void 			EditAction(int ea); 
+  void			GetEditActionsEnabled(int& ea); 
+#ifndef __MAKETA__
+signals:
+  void			UpdateUi();
+#endif
+
+
 protected:
   override bool		event(QEvent* ev);
+  
+protected slots:
+  void 			tv_customContextMenuRequested(const QPoint& pos);
 };
 
 class TA_API iMatrixEditor: public QWidget {
@@ -72,19 +83,8 @@ public:
   
   iMatrixEditor(QWidget* parent = NULL); //
   
-public slots: // cliphandler i/f; note: no UpdateUI signal
-  void 			EditAction(int ea); 
-  void			GetEditActionsEnabled(int& ea); 
-#ifndef __MAKETA__
-signals:
-  void			UpdateUi();
-#endif
-
 protected:
   
-protected slots:
-  void 			tv_customContextMenuRequested(const QPoint& pos);
-
 private:
   void		init();
   
@@ -101,11 +101,6 @@ public:
   
   taMatrix*		mat() {return (m_link) ? (taMatrix*)(link()->data()) : NULL;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
-
-  override int 		EditAction(int ea);
-  void			FillList();
-  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
-  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected cells
 
   iMatrixPanel(taiDataLink* dl_);
   ~iMatrixPanel();
