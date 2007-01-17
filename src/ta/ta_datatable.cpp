@@ -740,12 +740,13 @@ float DataTable::GetValAsFloatM(int col, int row, int cell) {
   else return 0.0f;
 }
 
-const String DataTable::GetValAsStringM(int col, int row, int cell) const {
+const String DataTable::GetValAsStringM(int col, int row, int cell, bool na) const {
   DataArray_impl* da = GetColData(col);
   int i;
   if (da &&  idx(row, da->rows(), i))
     return da->GetValAsStringM(i, cell);
-  else return "n/a";
+  else 
+    return (na) ? String("n/a") : _nilString;
 }
 
 const Variant DataTable::GetValAsVarM(int col, int row, int cell) const {
@@ -1013,6 +1014,53 @@ void DataTable::UniqueColNames() {
       }
     }
   }
+}
+
+void DataTable::GetFlatGeom(const CellRange& cr, int& tot_col, int& max_cell_row) {
+  // metrics
+  tot_col = 0; // total flat cols
+  max_cell_row = 0; // max flat rows per cell
+  for (int col = cr.col_fr; col <= cr.col_to; ++col) {
+    DataArray_impl* da = GetColData(col);
+    int x; int y;
+    da->Get2DCellGeom(x, y); 
+    tot_col += x;
+    max_cell_row = MAX(max_cell_row, y);
+  }
+}
+
+String DataTable::RangeToTSV(const CellRange& cr) {
+  // metrics
+  int tot_col = 0; // total flat cols
+  int max_cell_rows = 0; // max flat rows per cell
+  GetFlatGeom(cr, tot_col, max_cell_rows);
+  
+  // allocate a reasonable best-guess buffer
+  STRING_BUF(rval, (tot_col * max_cell_rows * (cr.row_to - cr.row_fr + 1)) * 10);
+  
+  int flat_row = 0; // for newlines
+  for (int row = cr.row_fr; row <= cr.row_to; ++row) {
+    for (int cell_row = 0; cell_row < max_cell_rows; ++cell_row) {
+      if (flat_row > 0) rval.cat('\n');
+      int flat_col = 0; // for tabs
+      for (int col = cr.col_fr; col <= cr.col_to; ++col) {
+        DataArray_impl* da = GetColData(col);
+        int cell_cols; int cell_rows;
+        da->Get2DCellGeom(cell_cols, cell_rows); 
+        for (int cell_col = 0; cell_col < cell_cols; ++cell_col) {
+          if (flat_col > 0) rval.cat('\t');
+          // if a real inner cell grab the value, otherwise it will be empty
+          if (cell_row < cell_rows) {
+            int cell = (cell_row * cell_cols) + cell_col;
+            rval.cat(GetValAsStringM(col, row, cell, false));
+          } 
+          ++flat_col;
+        }
+      }
+      ++flat_row;
+    }
+  }
+  return rval;
 }
 
 void DataTable::RemoveCol(int col) {
@@ -1537,6 +1585,8 @@ DataTableModel::DataTableModel(DataTable* owner)
 :inherited(NULL)
 {
   dt = owner;
+  if (dt)
+    dt->AddDataClient(this);
 }
 
 DataTableModel::~DataTableModel() {
@@ -1549,6 +1599,21 @@ DataTableModel::~DataTableModel() {
 int DataTableModel::columnCount(const QModelIndex& parent) const {
   return dt->cols();
 }
+
+void DataTableModel::DataLinkDestroying(taDataLink* dl) {
+  delete this;
+}
+
+void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
+  void* op1, void* op2)
+{
+  //this is primarily for code-driven changes
+  if (dcr == DCR_ITEM_UPDATED) {
+    emit_dataChanged();
+  }
+}
+
+
 
 QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   if (!dt || !index.isValid()) return QVariant();
@@ -1593,6 +1658,17 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   }
   return QVariant();
 }
+
+void DataTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
+  if (!dt) return;
+  // lookup actual end values when we are called with sentinels
+  if (row_to < 0) row_to = rowCount() - 1;
+  if (col_to < 0) col_to = columnCount() - 1;  
+  
+  emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
+}
+
+
 
 void DataTableModel::emit_layoutChanged() {
   emit layoutChanged();

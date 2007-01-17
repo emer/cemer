@@ -37,22 +37,21 @@ protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
-class TA_API iMatTableView: public QTableView {
+class TA_API iTableView: public QTableView {
   // table editor; model flattens >2d into 2d by frames
 INHERITED(QTableView)
   Q_OBJECT
 public:
-  taMatrix*		mat() const;
 
-  iMatTableView(QWidget* parent = NULL);
+  iTableView(QWidget* parent = NULL);
 #ifndef __MAKETA__
 signals:
-  void			hasFocus(); // we emit anytime something happens which implies we are focused
+  void			hasFocus(iTableView* sender); // we emit anytime something happens which implies we are focused
 #endif
 
 public slots: // cliphandler i/f
-  void 			EditAction(int ea); 
-  void			GetEditActionsEnabled(int& ea); 
+  virtual void 		EditAction(int ea) {}
+  virtual void		GetEditActionsEnabled(int& ea) {}
 #ifndef __MAKETA__
 signals:
   void			UpdateUi();
@@ -61,9 +60,24 @@ signals:
 
 protected:
   override bool		event(QEvent* ev);
+  virtual void		FillContextMenu_impl(taiMenu* menu);
   
 protected slots:
-  void 			tv_customContextMenuRequested(const QPoint& pos);
+  void 			this_customContextMenuRequested(const QPoint& pos);
+};
+
+class TA_API iMatrixTableView: public iTableView {
+  // table editor; model flattens >2d into 2d by frames
+INHERITED(iTableView)
+  Q_OBJECT
+public:
+  taMatrix*		mat() const;
+
+  iMatrixTableView(QWidget* parent = NULL);
+  
+public: // cliphandler i/f
+  override void 	EditAction(int ea);
+  override void		GetEditActionsEnabled(int& ea);
 };
 
 class TA_API iMatrixEditor: public QWidget {
@@ -73,7 +87,7 @@ INHERITED(QWidget)
 public:
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layDims;
-  iMatTableView*		  tv;
+  iMatrixTableView*		  tv;
 
   taMatrix*		mat() const;
   MatrixTableModel* 	model() const;
@@ -106,7 +120,7 @@ public:
   ~iMatrixPanel();
 
 protected slots:
-  void			me_hasFocus();
+  void			tv_hasFocus(iTableView* sender);
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}

@@ -677,12 +677,12 @@ const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int co
   STRING_BUF(rval, (col_fr - col_to + 1) * (row_fr - row_to + 1) * 10);
   // to access in 2d, you just ignore the higher dimension
   for (int row = row_fr; row <= row_to; ++row) {
+    if (row > 0) rval.cat('\n');
     int idx = (row * dim(0)) + col_fr; 
     for (int col = col_fr; col <= col_to; ++col, ++idx) {
       if (col > col_fr) rval.cat('\t');
       rval.cat(SafeElAsStr_Flat(idx));
     }
-    rval.cat('\n');
   }
   return rval;
 }
@@ -714,7 +714,6 @@ MatrixTableModel* taMatrix::GetDataModel() {
   if (!m_dm) {
     //shared by all views; persists now till we die; no affect on refcnt
     m_dm = new MatrixTableModel(this);
-    AddDataClient(m_dm);
   }
   return m_dm;
 }
@@ -1344,6 +1343,9 @@ MatrixTableModel::MatrixTableModel(taMatrix* mat_)
 :inherited(NULL)
 {
   m_mat = mat_;
+  if (m_mat)
+    m_mat->AddDataClient(this);
+
 }
 
 MatrixTableModel::~MatrixTableModel() {

@@ -49,75 +49,51 @@ void tabMatrixViewType::CreateDataPanel_impl(taiDataLink* dl_)
   inherited::CreateDataPanel_impl(dl_);
 }
 
+
 //////////////////////////
-//    iMatTableView 	//
+//    iTableView 	//
 //////////////////////////
 
-iMatTableView::iMatTableView(QWidget* parent)
+iTableView::iTableView(QWidget* parent)
 :inherited(parent)
 {
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-    this, SLOT(tv_customContextMenuRequested(const QPoint&)) );
+    this, SLOT(this_customContextMenuRequested(const QPoint&)) );
   // wire the selection signals to the UpdateUi, to update enabling
 //  connect(me->tv, SIGNAL(activated(const QModelIndex&)), me, SIGNAL(UpdateUi()) );
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );
 }
 
-bool iMatTableView::event(QEvent* ev) {
+
+
+bool iTableView::event(QEvent* ev) {
 //NOTE: this probably doesn't even get triggered
   bool rval = inherited::event(ev);
   // look for anything that indicates we are focused
   QEvent::Type t = ev->type();
   if ((t == QEvent::FocusIn) ||
     (t == QEvent::KeyPress) ||
-    (t == QEvent::MouseButtonPress) ||
-    (t == QEvent::WindowActivate) //||
+    (t == QEvent::MouseButtonPress) //||
   ) 
-    emit hasFocus();
+    emit hasFocus(this);
   return rval;
 }
 
-taMatrix* iMatTableView::mat() const {
-  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(model());
-  if (mod) return mod->mat();
-  else return NULL; 
-}
-void iMatTableView::EditAction(int ea) {
-  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
-  CellRange sel(selectionModel()->selectedIndexes());
-  if (ea & taiClipData::EA_SRC_OPS) {
-    fact->Mat_EditActionS(mat(), sel, ea);
-  } else {// dest op
-    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
-    fact->Mat_EditActionD(mat(), sel, ms, ea);
-    delete ms;
-  }
-}
 
-void iMatTableView::GetEditActionsEnabled(int& ea) {
-  int allowed = 0;
-  int forbidden = 0;
-  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
-  CellRange sel(selectionModel()->selectedIndexes());
-  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
-  fact->Mat_QueryEditActions(mat(), sel, ms, allowed, forbidden);
-  ea = allowed & ~forbidden;
-  delete ms;
-}
-
-void iMatTableView::tv_customContextMenuRequested(const QPoint& pos) {
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+void iTableView::FillContextMenu_impl(taiMenu* menu) {
   int ea = 0;
   GetEditActionsEnabled(ea);
     
   taiAction* 
-  act = menu->AddItem("Copy", taiMenu::normal, taiAction::int_act,
+  act = menu->AddItem("&Copy", taiMenu::normal, taiAction::int_act,
     this, SLOT(EditAction(int)), taiClipData::EA_COPY );
+  act->setShortcut(QKeySequence("Ctrl+C"));
   if (!(ea & taiClipData::EA_COPY))
     act->setEnabled(false);
   act = menu->AddItem("&Paste", taiMenu::normal,
       taiAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_PASTE);
+  act->setShortcut(QKeySequence("Ctrl+P"));
   if (!(ea & taiClipData::EA_PASTE)) 
     act->setEnabled(false);
     
@@ -125,13 +101,62 @@ void iMatTableView::tv_customContextMenuRequested(const QPoint& pos) {
   act = menu->AddItem("Select &All", taiAction::action,
     this, SLOT(selectAll()),_nilVariant,
       QKeySequence("Ctrl+A"));
-  
+}
+
+
+void iTableView::this_customContextMenuRequested(const QPoint& pos) {
+  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  FillContextMenu_impl(menu);
   if (menu->count() > 0) { //only show if any items!
     menu->exec(mapToGlobal(pos));
   }
   delete menu;
 }
 
+
+
+//////////////////////////
+//    iMatrixTableView 	//
+//////////////////////////
+
+iMatrixTableView::iMatrixTableView(QWidget* parent)
+:inherited(parent)
+{
+}
+
+taMatrix* iMatrixTableView::mat() const {
+  MatrixTableModel* mod = qobject_cast<MatrixTableModel*>(model());
+  if (mod) return mod->mat();
+  else return NULL; 
+}
+
+void iMatrixTableView::EditAction(int ea) {
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (!mat) return;
+  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
+  CellRange sel(selectionModel()->selectedIndexes());
+  if (ea & taiClipData::EA_SRC_OPS) {
+    fact->Mat_EditActionS(mat, sel, ea);
+  } else {// dest op
+    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+    fact->Mat_EditActionD(mat, sel, ms, ea);
+    delete ms;
+  }
+}
+
+void iMatrixTableView::GetEditActionsEnabled(int& ea) {
+  int allowed = 0;
+  int forbidden = 0;
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (mat) {
+    taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
+    CellRange sel(selectionModel()->selectedIndexes());
+    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+    fact->Mat_QueryEditActions(mat, sel, ms, allowed, forbidden);
+    delete ms;
+  }
+  ea = allowed & ~forbidden;
+}
 
 
 //////////////////////////
@@ -148,7 +173,7 @@ void iMatrixEditor::init() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   layDims = new QHBoxLayout(layOuter);
-  tv = new iMatTableView(this);
+  tv = new iMatrixTableView(this);
   layOuter->addWidget(tv);
 }
 
@@ -194,10 +219,10 @@ void iMatrixPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
 //  idt->updateConfig();
 }
 
-void iMatrixPanel::me_hasFocus() {
+void iMatrixPanel::tv_hasFocus(iTableView* sender) {
   iMainWindowViewer* vw = viewerWindow();
   if (vw)
-    vw->SetClipboardHandler(me->tv,
+    vw->SetClipboardHandler(sender,
     SLOT(GetEditActionsEnabled(int&)),
     SLOT(EditAction(int)),
     NULL,
@@ -223,5 +248,5 @@ void iMatrixPanel::Render_impl() {
   if (mat_) {
     me->setModel(mat_->GetDataModel());
   }
-  connect(me->tv, SIGNAL(hasFocus()), this, SLOT(me_hasFocus()) );
+  connect(me->tv, SIGNAL(hasFocus(iTableView*)), this, SLOT(tv_hasFocus(iTableView*)) );
 }

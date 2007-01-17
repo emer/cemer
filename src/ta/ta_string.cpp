@@ -158,6 +158,7 @@ Cstring_prof string_prof;
 // create an empty buffer -- called by routines that then fill the chars (ex. reverse, upcase, etc.)
 TA_API StrRep* Snew(int slen, uint cap) {
   if (cap == 0) cap = slen;
+  if (cap == 0) return &_nilStrRep;
   uint allocsize = (uint)tweak_alloc(SIZE_OF_STRREP + cap); // we tweak the alloc size to optimize -- may be larger
   cap = allocsize - SIZE_OF_STRREP; // in case we asked for more memory
 #ifdef TA_PROFILE

@@ -25,6 +25,7 @@
 #include "colorscale.h"
 #include "colorbar_qt.h"
 #include "t3viewer.h"
+#include "ta_matrix_qt.h"
 
 #ifndef __MAKETA__
 # include <QItemDelegate>
@@ -469,12 +470,18 @@ public:
 };
 
 #ifndef __MAKETA__ // too much crud to parse
-class TA_API iDataTableView: public QTableView {
+class TA_API iDataTableView: public iTableView {
   // widget with some customizations to display submatrix views
-INHERITED(QTableView)
+INHERITED(iTableView)
   Q_OBJECT
 public:
+  DataTable*		dataTable() const;
+  
   iDataTableView(QWidget* parent = NULL);
+
+public: // cliphandler i/f
+  override void 	EditAction(int ea);
+  override void		GetEditActionsEnabled(int& ea);
 
 signals:
   void 			currentChanged(const QModelIndex& current);
@@ -492,7 +499,7 @@ public:
   QVBoxLayout*		layOuter;
   QSplitter*		splMain;
   iDataTableView*	  tvTable; // the main table
-  QTableView*		  tvCell; // a matrix cell in the table
+  iMatrixTableView*	  tvCell; // a matrix cell in the table
 
   DataTable*		dt() const {return m_dt;}
   void			setDataTable(DataTable* dt);
@@ -544,6 +551,9 @@ protected:
 protected:
   override void		Render_impl();
   override void		Refresh_impl();
+  
+protected slots:
+  void			tv_hasFocus(iTableView* sender); // for both tableviews
 };
 
 /* TODO
@@ -566,6 +576,39 @@ private:
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
 };
+*/
+
+/*
+  MIME TYPE "tacss/matrixdesc" -- description of matrix data (no content)
+
+    <flat_cols>;<flat_rows>;\n
+      
+      
+    The data itself (text/plain) is in TSV format.
+    
+    flat_cols/rows (>=1) indicate the flattend 2D rep of the data
+    
+    Note that this format is primarily to make decoding of the data faster
+    and more definite where tacss is the source of the data, compared with
+    just parsing the text/plain data (which the decoder can do, to import
+    spreadsheet data.)
+    .
+    
+  MIME TYPE "tacss/tabledesc" -- description of table data (no content)
+
+    <flat_cols>;<flat_rows>;\n
+    <mat_cols>;<mat_rows>;\n
+    <col0_flat_cols>;<col0_flat_rows>;<is_image>;\n
+    ...
+    <colN-1-flat_cols>;<colN-1_flat_rows>;<is_image>;\n
+    
+    for scalar cols: colx-cols=colx-rows=1
+      
+    The data itself (text/plain) is in a TSV tabular form, of total
+    Sigma(colx-cols)x=0:N-1 by <rows> * Max(colx-rows) -- non-existent values
+    will just have blank entries.
+      
+
 */
 
 class TA_API taiTabularDataMimeFactory: public taiMimeFactory {
@@ -593,6 +636,25 @@ public:
   void			AddMatDesc(QMimeData* md,
     taMatrix* mat, const CellRange& selected) const;
 
+
+  void			Table_QueryEditActions(DataTable* tab, 
+    const CellRange& selected, taiMimeSource* ms,
+    int& allowed, int& forbidden) const; // determine ops based on clipboard and selected; ms=NULL for source only
+    
+  void			Table_EditActionD(DataTable* tab, 
+    const CellRange& selected, taiMimeSource* ms, int ea) const;
+    // dest edit actions; note: this does the requery to insure it is still legal
+  void			Table_EditActionS(DataTable* tab, 
+    const CellRange& selected, int ea) const;
+    // src edit actions; note: this does the requery to insure it is still legal
+    
+  taiClipData* 		Table_GetClipData(DataTable* tab,
+    const CellRange& sel, int src_edit_action, bool for_drag = false) const;
+  
+  void			AddTableDesc(QMimeData* md,
+    DataTable* tab, const CellRange& selected) const;
+
+
   TA_MFBASEFUNS(taiTabularDataMimeFactory);
 protected:
   void			AddDims(const CellRange& sel, String& str) const;
@@ -606,24 +668,13 @@ class TA_API taiTabularDataMimeItem: public taiMimeItem {
   // #NO_INSTANCE #VIRT_BASE base for matrix, tsv, and table data; this class is not itself instantiated
 INHERITED(taiMimeItem)
 public: // i/f for tabular data guy
-  iSize			size() const {return m_size;} // the (flat) size of the data in rows/cols
-  int			rows() const {return m_size.h;}
-  int			cols() const {return m_size.w;}
-  
+  iSize			flatGeom() const {return m_flat_geom;} // the (flat) size of the data in rows/cols
+  inline int		flatRows() const {return m_flat_geom.h;}
+  inline int		flatCols() const {return m_flat_geom.w;}
   
   virtual void		WriteMatrix(taMatrix* mat, const CellRange& sel);
-    // write the data from the mime item to the indicate range in the matrix; 
-/*TODO  override bool		isMatrix() const;
-  override bool		isTable() const;
+  virtual void		WriteTable(DataTable* tab, const CellRange& sel);
   
-  const CellRange	cellRange() const; // the range of the data
-  virtual void		GetDataGeom(int& cols, int& rows) const = 0;
-    // number of cols/rows in the overall data
-  virtual void		GetColGeom(int col, int& cols, int& rows) const = 0;
-    // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
-  virtual void		GetMaxRowGeom(int& max_row) const = 0;
-    // longest cell geom determines overall row geom
-    */
   TA_ABSTRACT_BASEFUNS(taiTabularDataMimeItem);
 
 protected:
@@ -633,9 +684,11 @@ protected:
     TSV_EOF   // eof -- end of file
   };
 
-  iSize			m_size; 
-  bool 			ExtractGeom(String& arg); // get the cols/rows
+  iSize			m_flat_geom; 
+  bool 			ReadInt(String& arg, int& val); // read a ; terminated int
+  bool 			ExtractGeom(String& arg, iSize& val); // get the cols/rows
   bool			ReadTsvValue(istringstream& strm, String& val, TsvSep& sep); // reads value if possible, into val, returning true if a value read, and the separator encountered after the value in sep.
+  virtual void		WriteTable_Generic(DataTable* tab, const CellRange& sel);
   
 private:
   void	Initialize() {}
@@ -647,7 +700,6 @@ class TA_API taiMatrixDataMimeItem: public taiTabularDataMimeItem { // this clas
 INHERITED(taiTabularDataMimeItem)
 public: // i/f for tabular data guy  
   
-  virtual void		WriteMatrix(taMatrix* mat, const CellRange& sel);
   TA_BASEFUNS(taiMatrixDataMimeItem);
     
 public: // TAI_xxx instance interface -- used for dynamic creation
@@ -679,53 +731,56 @@ private:
 };
 
 
-/*
-class TA_API taiMatDataMimeItem: public taiMimeItem { // for matrix and table data
-INHERITED(taiMimeItem)
-  Q_OBJECT
+class TA_API taiTableColDesc { // #NO_CSS #NO_MEMBERS value class to hold col data
 public:
+  iSize		flat_geom;
+  bool		is_image;
+  taiTableColDesc() {is_image = false;} //
   
-public: // i/f for tabular data guy
-  override bool		isMatrix() const;
-  override bool		isTable() const;
-  virtual void		GetDataGeom(int& cols, int& rows) const = 0;
-    // number of cols/rows in the overall data
-  virtual void		GetColGeom(int col, int& cols, int& rows) const = 0;
+public: // ops to keep the Array templ happy
+  friend bool	operator>(const taiTableColDesc& a, const taiTableColDesc& b)
+    {return false;}
+  friend bool	operator==(const taiTableColDesc& a, const taiTableColDesc& b)
+    {return false;}
+};
+
+class TA_API taiTableColDesc_PArray: public taPlainArray<taiTableColDesc> {
+ // #NO_CSS #NO_MEMBERS
+public:
+  taiTableColDesc_PArray() {} // keeps maketa happy
+};
+
+
+class TA_API taiTableDataMimeItem: public taiTabularDataMimeItem { // for DataTable data
+INHERITED(taiTabularDataMimeItem)
+public:
+  iSize			tabGeom() const {return m_tab_geom;} // the table size of the data in table rows/cols (same as flat, if all cols are scalar)
+  inline int		tabRows() const {return m_tab_geom.h;}
+  inline int		tabCols() const {return m_tab_geom.w;}
+
+  virtual void		GetColGeom(int col, int& cols, int& rows) const;
     // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
-  virtual void		GetMaxRowGeom(int& max_row) const = 0;
-    // longest cell geom determines overall row geom
+  inline int		maxRowGeom() const {return m_max_row_geom;}
+  
+  override void		WriteTable(DataTable* tab, const CellRange& sel);
+  
+  TA_BASEFUNS(taiTableDataMimeItem);
     
+public: // TAI_xxx instance interface -- used for dynamic creation
+  override taiMimeItem* Extract(taiMimeSource* ms, 
+    const String& subkey = _nilString); 
 protected:
-  int			m_data_type; // one of ST_MATRIX_DATA or TABLE_DATA
-  override void 	GetFormats_impl(QStringList& list, int idx) const; 
-  taiMatDataMimeItem(int data_type);
+  iSize			m_tab_geom;
+  int			m_max_row_geom;
+  taiTableColDesc_PArray col_descs;
+  override bool 	Constr_impl(const String&);
+  override void		DecodeData_impl();
+private:
+  void	Initialize();
+  void	Destroy() {}
 }; 
 
 
-class TA_API taiRcvMatDataMimeItem: public taiMatDataMimeItem { 
-  // for received mat or table data, or compatible foreign mat data
-INHERITED(taiMatDataMimeItem)
-  Q_OBJECT
-friend class taiExtMimeSource;
-public:
-  
-public: // i/f for tabular data guy
-  void			GetDataGeom(int& cols, int& rows) const
-    {cols = m_cols;  rows = m_rows;}
-  void			GetColGeom(int col, int& cols, int& rows) const;
-  void			GetMaxRowGeom(int& max_row) const {max_row = m_max_row;} 
-
-protected:
-  int			m_cols;
-  int			m_rows;
-  int			m_max_row;
-  taBase_List		m_geoms; // list of GeomData
-  
-  void			DecodeMatrixDesc(String& arg); // same for both
-  void			DecodeTableDesc(String& arg); // the extra stuff
-  
-  taiRcvMatDataMimeItem(int data_type);
-};*/
 
 
 #endif

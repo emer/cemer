@@ -94,30 +94,6 @@
 
     The data is the rep (ext dump save text) of the object.
 
-  MIME TYPE "tacss/matrixdesc" -- description of matrix data (no content)
-
-    <cols>;<rows>;
-      cols >= 1; rows >= 1
-
-    The data itself (text/plain) is in TSV format.
-    
-    Note that this format is primarily to make decoding of the data faster
-    and more definite where tacss is the source of the data, compared with
-    just parsing the text/plain data (which the decoder can do, to import
-    spreadsheet data.)
-    .
-    
-  MIME TYPE "tacss/tabledesc" -- description of table data (no content)
-
-    The data describes the 2-d-flattened geometry of each of the cols in the clip
-      <cols>;<rows>;<col0-cols>;<col0-rows>[<col1-cols>;<col1-rows> ...];
-      cols >=1; rows >= 1
-      for scalar cols: colx-cols=colx-rows=1
-      
-    The data itself (text/plain) is in a TSV tabular form, of total
-    Sigma(colx-cols)x=0:N by <rows> * Max(colx-rows) -- non-existent values
-    will just have blank entries.
-      
   
   MIME TYPE "text/plain"
     

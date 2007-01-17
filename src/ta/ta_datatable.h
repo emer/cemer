@@ -459,8 +459,9 @@ public:
   // #CAT_Access get data of scalar type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsFloatM(float val, int col, int row, int cell);
   // #CAT_Access set data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  const String 		GetValAsStringM(int col, int row, int cell) const;
-  // #CAT_Access get data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then "n/a" is returned
+  const String 		GetValAsStringM(int col, int row, int cell,
+     bool na = true) const;
+  // #CAT_Access get data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
   bool 			SetValAsStringM(const String& val, int col, int row, int cell);
   // #CAT_Access set data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
   const Variant 	GetValAsVarM(int col, int row, int cell) const;
@@ -474,6 +475,11 @@ public:
   //#CAT_Access  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
   // #CAT_Access get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+
+  void 			GetFlatGeom(const CellRange& cr,
+     int& tot_cols, int& max_cell_rows); // #IGNORE get the total cells in a TSV extract of the selection
+
+  String		RangeToTSV(const CellRange& cr); // for clip operations
 
   /////////////////////////////////////////////////////////
   // saving/loading (file)
@@ -887,7 +893,9 @@ private:
   void	Destroy() {}
 };
 
-class TA_API DataTableModel: public QAbstractTableModel {
+class TA_API DataTableModel: public QAbstractTableModel,
+  public IDataLinkClient
+{
   // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
 friend class DataTableCols;
@@ -899,6 +907,9 @@ public:
   
   void			refreshViews(); // similar to matrix, issues dataChanged
   
+  void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
+    int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
+
   DataTableModel(DataTable* owner);
   ~DataTableModel(); //
   
@@ -912,6 +923,13 @@ public: // required implementations
   int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
   bool 			setData(const QModelIndex& index, const QVariant& value, 
     int role = Qt::EditRole); // override, for editing
+    
+public: // IDataLinkClient i/f
+  override void*	This() {return this;}
+  override TypeDef*	GetTypeDef() const {return &TA_DataTableModel;}
+  override void		DataLinkDestroying(taDataLink* dl);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
+    
 protected:
   bool			ValidateIndex(const QModelIndex& index) const;
 #endif

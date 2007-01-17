@@ -1953,6 +1953,43 @@ void iDataTableView::currentChanged(const QModelIndex& current, const QModelInde
   emit currentChanged(current);
 }
 
+
+DataTable* iDataTableView::dataTable() const {
+  DataTableModel* mod = qobject_cast<DataTableModel*>(model());
+  if (mod) return mod->dataTable();
+  else return NULL; 
+}
+
+void iDataTableView::EditAction(int ea) {
+  DataTable* tab = this->dataTable(); // may not exist
+  if (!tab) return;
+  taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
+  CellRange sel(selectionModel()->selectedIndexes());
+  if (ea & taiClipData::EA_SRC_OPS) {
+    fact->Table_EditActionS(tab, sel, ea);
+  } else {// dest op
+    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+    fact->Table_EditActionD(tab, sel, ms, ea);
+    delete ms;
+  }
+}
+
+void iDataTableView::GetEditActionsEnabled(int& ea) {
+  int allowed = 0;
+  int forbidden = 0;
+  DataTable* tab = this->dataTable(); // may not exist
+  if (tab) {
+    taiTabularDataMimeFactory* fact = taiTabularDataMimeFactory::instance();
+    CellRange sel(selectionModel()->selectedIndexes());
+    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+    fact->Table_QueryEditActions(tab, sel, ms, allowed, forbidden);
+    delete ms;
+  }
+  ea = allowed & ~forbidden;
+}
+
+
+
 //////////////////////////
 //    DataTableDelegate	//
 //////////////////////////
@@ -1979,7 +2016,7 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
   splMain->setOrientation(Qt::Vertical);
   layOuter->addWidget(splMain);
   tvTable = new iDataTableView();
-  tvCell = new QTableView();
+  tvCell = new iMatrixTableView();
   splMain->addWidget(tvTable);
   splMain->addWidget(tvCell);
   
@@ -2138,7 +2175,22 @@ void iDataTablePanel::Render_impl() {
   setCentralWidget(dte);
   
   dte->setDataTable(dt());
+  connect(dte->tvTable, SIGNAL(hasFocus(iTableView*)),
+    this, SLOT(tv_hasFocus(iTableView*)) );
+  connect(dte->tvCell, SIGNAL(hasFocus(iTableView*)),
+    this, SLOT(tv_hasFocus(iTableView*)) );
 }
+
+void iDataTablePanel::tv_hasFocus(iTableView* sender) {
+  iMainWindowViewer* vw = viewerWindow();
+  if (vw)
+    vw->SetClipboardHandler(sender,
+    SLOT(GetEditActionsEnabled(int&)),
+    SLOT(EditAction(int)),
+    NULL,
+    SIGNAL(UpdateUi()) );
+}
+
 
 //////////////////////////////////
 //  taiTabularDataMimeFactory	//
@@ -2195,7 +2247,13 @@ void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
     allowed |= taiClipData::EA_PASTE;
     return;
   }}
-  // Table TODO
+  // Table
+  {taiTableDataMimeItem* mi = (taiTableDataMimeItem*)
+     ms->GetMimeItem(&TA_taiTableDataMimeItem);
+  if (mi) {
+    allowed |= taiClipData::EA_PASTE;
+    return;
+  }}
   // TSV
   {taiTsvMimeItem* mi = (taiTsvMimeItem*)
     ms->GetMimeItem(&TA_taiTsvMimeItem);
@@ -2226,7 +2284,13 @@ void taiTabularDataMimeFactory::Mat_EditActionD(taMatrix* mat,
       mi->WriteMatrix(mat, sel2);
       return;
     }}
-    // Table TODO
+    // Table
+    {taiTableDataMimeItem* mi = (taiTableDataMimeItem*)
+      ms->GetMimeItem(&TA_taiTableDataMimeItem);
+    if (mi) {
+      mi->WriteMatrix(mat, sel2);
+      return;
+    }}
     // TSV
     {taiTsvMimeItem* mi = (taiTsvMimeItem*)
       ms->GetMimeItem(&TA_taiTsvMimeItem);
@@ -2275,6 +2339,135 @@ void taiTabularDataMimeFactory::AddDims(const CellRange& sel, String& str) const
 }
 
 
+void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab, 
+  const CellRange& sel, taiMimeSource* ms,
+  int& allowed, int& forbidden) const
+{
+  // ops that are never allowed on mats
+  forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+  // src ops
+  if (sel.nonempty())
+    allowed |= taiClipData::EA_COPY;
+    
+  if (!ms) return;
+  // dst ops -- none allowed if no selection
+  if (sel.empty()) {
+    forbidden = taiClipData::EA_DST_OPS;
+    return;
+  }
+  
+  // Priority is: Table, Matrix, Generic
+  // Table
+  {taiTableDataMimeItem* mi = (taiTableDataMimeItem*)
+     ms->GetMimeItem(&TA_taiTableDataMimeItem);
+  if (mi) {
+    allowed |= taiClipData::EA_PASTE;
+    return;
+  }}
+  // Matrx
+  {taiMatrixDataMimeItem* mi = (taiMatrixDataMimeItem*)
+     ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
+  if (mi) {
+    allowed |= taiClipData::EA_PASTE;
+    return;
+  }}
+  // TSV
+  {taiTsvMimeItem* mi = (taiTsvMimeItem*)
+    ms->GetMimeItem(&TA_taiTsvMimeItem);
+  if (mi) {
+    allowed |= taiClipData::EA_PASTE;
+  }}
+}
+
+void taiTabularDataMimeFactory::Table_EditActionD(DataTable* tab, 
+  const CellRange& sel, taiMimeSource* ms, int ea) const
+{
+  int allowed = 0;
+  int forbidden = 0;
+  Table_QueryEditActions(tab, sel, ms, allowed, forbidden);
+  ea = ea & (allowed & ~forbidden);
+  
+  if (ea & taiClipData::EA_PASTE) {
+    CellRange sel2(sel);
+    //NOTE: unlike matrix pastes, we do NOT adjust selection
+    // (the Table item may adjust the selection to fit)
+    
+    // Priority is: Table, Matrix, Generic
+    // Table
+    {taiTableDataMimeItem* mi = (taiTableDataMimeItem*)
+      ms->GetMimeItem(&TA_taiTableDataMimeItem);
+    if (mi) {
+      mi->WriteTable(tab, sel2);
+      return;
+    }}
+    // Matrix
+    {taiMatrixDataMimeItem* mi = (taiMatrixDataMimeItem*)
+      ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
+    if (mi) {
+      mi->WriteTable(tab, sel2);
+      return;
+    }}
+    // TSV
+    {taiTsvMimeItem* mi = (taiTsvMimeItem*)
+      ms->GetMimeItem(&TA_taiTsvMimeItem);
+    if (mi) {
+      mi->WriteTable(tab, sel2);
+    }}
+  }
+}
+
+void taiTabularDataMimeFactory::Table_EditActionS(DataTable* tab, 
+  const CellRange& sel, int ea) const
+{
+  int allowed = 0;
+  int forbidden = 0;
+  Table_QueryEditActions(tab, sel, NULL, allowed, forbidden);
+  ea = ea & (allowed & ~forbidden);
+  
+  if (ea & taiClipData::EA_COPY) {
+    taiClipData* cd = Table_GetClipData(tab,
+      sel, taiClipData::EA_SRC_COPY, false);
+    QApplication::clipboard()->setMimeData(cd); //cb takes ownership
+  }
+}
+
+taiClipData* taiTabularDataMimeFactory::Table_GetClipData(DataTable* tab,
+    const CellRange& sel, int src_edit_action, bool for_drag) const
+{
+  taiClipData* cd = new taiClipData(src_edit_action);
+  AddTableDesc(cd, tab, sel);
+  String str = tab->RangeToTSV(sel);
+  cd->setTextFromStr(str);
+  return cd;
+}
+
+void taiTabularDataMimeFactory::AddTableDesc(QMimeData* md,
+  DataTable* tab, const CellRange& sel) const
+{
+  STRING_BUF(str, 250);
+  // add the flat dims
+  int tot_col = 0; // total flat cols
+  int max_cell_row = 0; // max flat rows per cell
+  tab->GetFlatGeom(sel, tot_col, max_cell_row);
+  str.cat(String(tot_col)).cat(';').cat(String(max_cell_row)).cat(";\n");
+ 
+  // add the table dims
+  AddDims(sel, str);
+  str.cat('\n');
+  
+  // add the col descs
+  for (int col = sel.col_fr; col <= sel.col_to; ++col) {
+    DataArray_impl* da = tab->GetColData(col);
+    int x; int y;
+    da->Get2DCellGeom(x, y); 
+    str.cat(String(tot_col)).cat(';').cat(String(max_cell_row)).cat('\t');
+    str.cat(String(da->isImage())).cat(";\n");
+  }
+  md->setData(tacss_tabledesc, StrToByteArray(str));
+}
+
+
+
 //////////////////////////////////
 //  taiTabularDataMimeItem 	//
 //////////////////////////////////
@@ -2300,18 +2493,21 @@ Parsing geoms:
 */
 
 
-bool taiTabularDataMimeItem::ExtractGeom(String& arg) {
+bool taiTabularDataMimeItem::ReadInt(String& arg, int& val) {
   String str;
   bool ok;
   str = arg.before(';'); // cols
-  m_size.w = str.toInt(&ok);
-  if (!ok) goto end;
+  val = str.toInt(&ok);
   arg = arg.after(";");
-  
-  str = arg.before(';'); //rows
-  m_size.h = str.toInt(&ok); 
+  return ok;
+}
+
+bool taiTabularDataMimeItem::ExtractGeom(String& arg, iSize& val) {
+  String str;
+  bool ok = ReadInt(arg, val.w);
   if (!ok) goto end;
-  arg = arg.after(";\n");
+  ok = ReadInt(arg, val.h); 
+  if (!ok) goto end;
   
 end:
   return ok;
@@ -2352,6 +2548,17 @@ next_row:
   }
 done:
   mat->DataUpdate(false);
+}
+
+void taiTabularDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel) {
+  // default does the generic -- Table source is more flexible
+  WriteTable_Generic(tab, sel);
+}
+
+void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange& sel) {
+  // TODO
+//TEMP
+taMisc::Error("This is not implemented yet.");
 }
 
 bool taiTabularDataMimeItem::ReadTsvValue(istringstream& strm, String& val,
@@ -2405,7 +2612,7 @@ taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms,
 {
   if (!ms->hasFormat(taiTabularDataMimeFactory::tacss_matrixdesc)) 
     return NULL;
-  taiTabularDataMimeItem* rval = new taiTabularDataMimeItem;
+  taiMatrixDataMimeItem* rval = new taiMatrixDataMimeItem;
   rval->Constr(ms, subkey);
   return rval;
 }
@@ -2414,16 +2621,13 @@ bool taiMatrixDataMimeItem::Constr_impl(const String&) {
   String arg;
   data(mimeData(), taiTabularDataMimeFactory::tacss_matrixdesc, arg);
   
-  return ExtractGeom(arg);
+  return ExtractGeom(arg, m_flat_geom);
 }
 
 void  taiMatrixDataMimeItem::DecodeData_impl() {
 //TODO: note: maybe nothing!
 }
 
-
-void  taiMatrixDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
-}
 
 //////////////////////////////////
 //  taiTsvMimeItem	 	//
@@ -2456,7 +2660,7 @@ taiMimeItem* taiTsvMimeItem::Extract(taiMimeSource* ms,
   
   taiTsvMimeItem* rval = new taiTsvMimeItem;
   rval->Constr(ms, subkey); //note: doesn't do anything
-  rval->m_size.set(cols, tot_rows);
+  rval->m_flat_geom.set(cols, tot_rows);
   return rval;
 }
 
@@ -2465,81 +2669,139 @@ void taiTsvMimeItem::Initialize() {
 }
 
 
-
-/*
-taiMatDataMimeItem::taiMatDataMimeItem(int data_type_)
-{
-  m_data_type = data_type_;
-}
-
-bool taiMatDataMimeItem::isMatrix() const {
-  return (m_data_type == taiMimeSource::ST_MATRIX_DATA);
-}
-  
-bool taiMatDataMimeItem::isTable() const {
-  return (m_data_type == taiMimeSource::ST_TABLE_DATA);
-}
-  
-void taiMatDataMimeItem::GetFormats_impl(QStringList& list, int) const {
-  if (isMatrix())
-    list.append(taiClipData::tacss_matrixdesc);
-  else if (isTable())
-    list.append(taiClipData::tacss_tabledesc);
-}
-
-
-
 //////////////////////////////////
-//  taiRcvMatDataMimeItem 	//
+//  taiTableDataMimeItem	 	//
 //////////////////////////////////
 
-taiRcvMatDataMimeItem::taiRcvMatDataMimeItem(int data_type_)
-:inherited(data_type_)
+taiMimeItem* taiTableDataMimeItem::Extract(taiMimeSource* ms, 
+    const String& subkey)
 {
-  m_cols = 0;
-  m_rows = 0;
-  m_max_row = 1;
-  m_geoms.SetBaseType(&TA_MatrixGeom);
+  if (!ms->hasFormat(taiTabularDataMimeFactory::tacss_tabledesc)) 
+    return NULL;
+  taiTableDataMimeItem* rval = new taiTableDataMimeItem;
+  rval->Constr(ms, subkey);
+  return rval;
 }
 
-void taiRcvMatDataMimeItem::DecodeMatrixDesc(String& arg) {
-  // just do it all blind, because supposed to be in correct format
-  String tmp = arg.before(';');
-  m_cols = tmp.toInt();
-  arg = arg.after(';');
-  tmp = arg.before(';');
-  m_rows = tmp.toInt();
-  arg = arg.after(';'); 
+void taiTableDataMimeItem::Initialize() {
+  m_max_row_geom = 0;
 }
 
-void taiRcvMatDataMimeItem::DecodeTableDesc(String& arg) {
-  DecodeMatrixDesc(arg);
-  String tmp;
-  for (int i = 0; i < m_cols; ++i) {
-    tmp = arg.before(';');
-    int col_cols = tmp.toInt();
-    arg = arg.after(';');
-    tmp = arg.before(';');
-    int col_rows = tmp.toInt();
-    m_max_row = MAX(m_max_row, col_rows);
-    arg = arg.after(';'); 
-    MatrixGeom* geom = new MatrixGeom(2, col_cols, col_rows);
-    m_geoms.Add(geom);
+bool taiTableDataMimeItem::Constr_impl(const String&) {
+  String arg;
+  data(mimeData(), taiTabularDataMimeFactory::tacss_tabledesc, arg);
+ 
+  String str; // temp
+  bool ok = ExtractGeom(arg, m_flat_geom);
+  if (!ok) goto done;
+  arg = arg.after('\n');
+  ok = ExtractGeom(arg, m_tab_geom);
+  if (!ok) goto done;
+  arg = arg.after('\n');
+   
+  col_descs.Alloc(m_tab_geom.w);
+  m_max_row_geom = 0;
+  for (int col = 0; col < m_tab_geom.w; ++col) {
+    taiTableColDesc& desc = col_descs[col];
+    ok = ExtractGeom(arg, desc.flat_geom);
+    if (!ok) goto done;
+    str = arg.before(';');
+    desc.is_image = str.toBool(); 
+    arg = arg.after('\n');
+    m_max_row_geom = MAX(m_max_row_geom, desc.flat_geom.h);
+  }
+   
+done:
+  return ok;
+}
+
+void taiTableDataMimeItem::DecodeData_impl() {
+//TODO: note: maybe nothing!
+}
+
+void taiTableDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
+  if ((col >= 0) && (col < col_descs.size)) {
+    taiTableColDesc& desc = col_descs[col];
+    cols = desc.flat_geom.w;
+    rows = desc.flat_geom.h;
+  } else {
+    cols = 0;
+    rows = 0;
   }
 }
 
-void taiRcvMatDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
-  if (m_data_type == taiMimeSource::ST_MATRIX_DATA) {
-    cols = 1;  rows = 1;
-  } else {
-    MatrixGeom* geom = (MatrixGeom*)m_geoms.SafeEl(col);
-    if (geom) {
-      cols = geom->SafeEl(0);
-      rows = geom->SafeEl(1);
-    } else { // bad call!
-      cols = 0;  rows = 0;
+void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
+/*  // for table-to-table copy, we apply data on a table-cell basis
+  // (not a fully flattened basis)
+  istringstream istr;
+  QByteArray ba = data(taiMimeFactory::text_plain);
+  istr.str(string(ba.data(), ba.size()));
+  
+  String val; // each cell val
+  TsvSep sep; // sep after reading the cell val
+  
+  // if dest is a single cell, we will extend to size of src
+  CellRange sel(sel_);
+  if (sel_.single()) {
+    sel.col_to = MIN((tab->cols() - 1), (sel.col_fr + tabCols() - 1));
+    sel.row_to = MIN((tab->rows - 1), (sel.row_fr + tabRows() - 1));
     }
   }
+  
+  int dst_tot_cols;
+  int dst_max_cell_rows;
+  tab->GetFlatGeom(sel, dst_tot_cols, dst_max_cell_rows);
+  
+  // main loop params below are generally controlled by geom of dst data
+  
+  
+  bool underflow = false;
+  tab->DataUpdate(true);  
+  int dst_row = sel.row_fr;
+  int src_row = 0;
+  while (dst_row <= sel.row_to) {
+    int dst_cell_row = 0;
+    int src_cell_row = 0;
+    while (dst_cell_row < dst_max_cell_rows) {
+      int dst_col = sel.col_fr;
+      int src_col = 0;
+      while (dst_col <= sel.col_to) {
+        DataArray_impl* da = tab->GetColData(dst_col);
+        int dst_cell_cols; int dst_cell_rows;
+        da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
+        int dst_cell_col = 0;
+        int src_cell_col = 0;
+        while (dst_cell_col < dst_cell_cols) {
+          // read a value if we are in source range
+          if ((src_row < tabRows()) && (src_cell_row < src_cell_rows) &&
+            (src_col < tabCols()) && (src_cell_col < src_cell_cols))
+          {
+            underflow = underflow || (!ReadTsvValue(istr, val, sep));
+          } else val = _nilString;
+          
+          // set the value (geom always valid, because we drive by dst geom)
+          int dst_cell = (dst_cell_row * dst_cell_cols) + dst_cell_col;
+          tab->SetValAsStringM(val, dst_col, dst_row, dst_cell);
+          
+          ++dst_cell_col;
+          ++src_cell_col;
+        }
+        // skip data we don't have cells for
+        while (src_cell_col < src_cell_cols) {
+          underflow = underflow || (!ReadTsvValue(istr, val, sep));
+          ++src_cell_col;
+        }
+        ++dst_col;
+        ++src_col;
+      }
+      ++dst_cell_row;
+      ++src_cell_row;
+    }
+    ++dst_row;
+    ++src_row;
+  }
+done:
+  tab->DataUpdate(false);
+  */
 }
 
-*/
