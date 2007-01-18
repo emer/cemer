@@ -156,7 +156,7 @@ public:
     EA_PASTE		= 0x00040,
     EA_PASTE_APPEND	= 0x01000, // ex. for pasting new data rows into tables
     EA_DELETE		= 0x00080,
-    EA_CLEAR		= 0x00080, // synonym for "delete", ex. in grid cells
+    EA_CLEAR		= 0x02000, // ex. for grid cells
     EA_UNLINK		= 0x00100,
     EA_LINK		= 0x00200,
     EA_SET_AS_SUBGROUP	= 0x00400, //NOTE: not needed, will be nuked
@@ -169,15 +169,16 @@ public:
     EA_DROP_MOVE	= 0x80000,
     EA_DRAG_OP_MASK	= 0xF0000, // masks the drag/drop op codes
 #ifndef __MAKETA__
-    EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DELETE | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
+    EA_PASTE_XXX	= EA_PASTE | EA_PASTE_APPEND, // all the pastes
+    EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DELETE | EA_CLEAR | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
     EA_DROP_OPS		= (EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
-    EA_DST_OPS		= (EA_PASTE | EA_PASTE_APPEND | EA_LINK | EA_SET_AS_SUBGROUP |
+    EA_DST_OPS		= (EA_PASTE_XXX | EA_LINK | EA_SET_AS_SUBGROUP |
       EA_SET_AS_SUBITEM | EA_DROP_OPS), //
     EA_FORB_ON_SRC_CUT	= (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM), // dst ops forbidden when the source operation was Cut
     EA_FORB_ON_SRC_READONLY = (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM |
       EA_DROP_LINK | EA_DROP_MOVE), 
       // dst ops forbidden when the source operation forbade Cut/Move
-    EA_FORB_ON_MUL_SEL	= (EA_PASTE | EA_PASTE_APPEND | EA_LINK | EA_SET_AS_SUBGROUP |
+    EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK | EA_SET_AS_SUBGROUP |
       EA_SET_AS_SUBITEM | EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
         // dst ops forbidden when multi source operands selected
     EA_IN_PROC_OPS	= (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM |

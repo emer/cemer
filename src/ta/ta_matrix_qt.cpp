@@ -96,6 +96,10 @@ void iTableView::FillContextMenu_impl(taiMenu* menu) {
   act->setShortcut(QKeySequence("Ctrl+P"));
   if (!(ea & taiClipData::EA_PASTE)) 
     act->setEnabled(false);
+  act = menu->AddItem("Clear", taiMenu::normal,
+      taiAction::int_act, this, SLOT(EditAction(int)), taiClipData::EA_CLEAR);
+  if (!(ea & taiClipData::EA_CLEAR)) 
+    act->setEnabled(false);
     
   menu->AddSep();
   act = menu->AddItem("Select &All", taiAction::action,

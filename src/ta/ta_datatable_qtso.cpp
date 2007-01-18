@@ -2246,6 +2246,19 @@ const String taiTabularDataMimeFactory::tacss_tabledesc("tacss/tabledesc");
 void taiTabularDataMimeFactory::Initialize() { 
 }
 
+void taiTabularDataMimeFactory::Mat_Clear(taMatrix* mat,
+    const CellRange& sel) const
+{
+  mat->DataUpdate(true);
+  for (int row = sel.row_fr; row <= sel.row_to; ++row) {
+    for (int col = sel.col_fr; col <= sel.col_to; ++col) {
+      int idx = mat->FastElIndex2D(col, row);
+      mat->SetFmVar_Flat(_nilVariant, idx);
+    }
+  }
+  mat->DataUpdate(false);
+}
+
 void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat, 
   const CellRange& sel, taiMimeSource* ms,
   int& allowed, int& forbidden) const
@@ -2254,7 +2267,7 @@ void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
   forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   // src ops
   if (sel.nonempty())
-    allowed |= taiClipData::EA_COPY;
+    allowed |= (taiClipData::EA_COPY | taiClipData::EA_CLEAR);
     
   if (!ms) return;
   // dst ops -- none allowed if no selection
@@ -2335,6 +2348,9 @@ void taiTabularDataMimeFactory::Mat_EditActionS(taMatrix* mat,
     taiClipData* cd = Mat_GetClipData(mat,
       sel, taiClipData::EA_SRC_COPY, false);
     QApplication::clipboard()->setMimeData(cd); //cb takes ownership
+  } else
+  if (ea & taiClipData::EA_CLEAR) {
+    Mat_Clear(mat, sel);
   }
 }
 
@@ -2361,6 +2377,24 @@ void taiTabularDataMimeFactory::AddDims(const CellRange& sel, String& str) const
   str = str + String(sel.width()) + ";" + String(sel.height()) + ";";
 }
 
+void taiTabularDataMimeFactory::Table_Clear(DataTable* tab,
+    const CellRange& sel) const
+{
+  tab->DataUpdate(true);
+  //note: it is easier and more efficient to clear in col-major order
+  for (int col = sel.col_fr; col <= sel.col_to; ++col) {
+    DataArray_impl* da = tab->GetColData(col);
+    if (!da) continue;
+    int cell_size = da->cell_size();
+    for (int row = sel.row_fr; row <= sel.row_to; ++row) {
+      for (int cell = 0; cell < cell_size; ++cell) {
+        tab->SetValAsVarM(_nilVariant, col, row, cell);
+      }
+    }
+  }
+  tab->DataUpdate(false);
+}
+
 
 void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab, 
   const CellRange& sel, taiMimeSource* ms,
@@ -2370,7 +2404,7 @@ void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab,
   forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   // src ops
   if (sel.nonempty())
-    allowed |= taiClipData::EA_COPY;
+    allowed |= (taiClipData::EA_COPY | taiClipData::EA_CLEAR);
     
   if (!ms) return;
   // dst ops -- none allowed if no selection
@@ -2451,6 +2485,11 @@ void taiTabularDataMimeFactory::Table_EditActionS(DataTable* tab,
     taiClipData* cd = Table_GetClipData(tab,
       sel, taiClipData::EA_SRC_COPY, false);
     QApplication::clipboard()->setMimeData(cd); //cb takes ownership
+    return;
+  } else
+  if (ea & taiClipData::EA_CLEAR) {
+    Table_Clear(tab, sel);
+    return;
   }
 }
 
@@ -2579,10 +2618,70 @@ void taiTabularDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel) {
   WriteTable_Generic(tab, sel);
 }
 
-void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange& sel) {
-  // TODO
-//TEMP
-taMisc::Error("This is not implemented yet.");
+void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange& sel_) {
+  // for generic-to-table copy, we apply data on a fully flattened basis
+  // we paste in each direction (rows/cols) until we run out of data, or table
+  istringstream istr;
+  QByteArray ba = data(taiMimeFactory::text_plain);
+  istr.str(string(ba.data(), ba.size()));
+  
+  String val; // each cell val
+  TsvSep sep; // sep after reading the cell val
+  
+  // note, for generic source, we don't adjust the paste region
+  CellRange sel(sel_);
+  // an adjustment to paste region could be done here
+  
+  // we will use the first row pass to find the max cell rows
+  int max_cell_rows = 1; // has to be at least 1 (for all scalars)
+  tab->DataUpdate(true); 
+  // we only iterate over the dst rows; we'll just stop reading data when done 
+  for (int dst_row = sel.row_fr; dst_row <= sel.row_to; ++dst_row) {
+    for (int cell_row = 0; cell_row < max_cell_rows; ++cell_row) {
+      // we keep iterating while we have data and cols
+      for (int dst_col = sel.col_fr; dst_col <= sel.col_to; ++dst_col) 
+      {
+        // here, we get the detailed cell geom for src and dst
+        // just assume either could be empty, for robustness
+        int dst_cell_cols = 0; //dummy
+        int dst_cell_rows = 0;
+        DataArray_impl* da = tab->GetColData(dst_col);
+        if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
+        //note: only need to do the following in the very first cell_row
+        max_cell_rows = MAX(max_cell_rows, dst_cell_rows);
+        // we break if we run out of data
+        for (int cell_col = 0; cell_col < dst_cell_cols; ++cell_col) 
+        {
+          // we are always in source range here... 
+          if (!ReadTsvValue(istr, val, sep)) goto done;
+          
+          // if we are in dst range then write the value
+          if (/*row always valid*/ (cell_row < dst_cell_rows) &&
+             (cell_col < dst_cell_cols))
+          {
+            int dst_cell = (cell_row * dst_cell_cols) + cell_col;
+            tab->SetValAsStringM(val, dst_col, dst_row, dst_cell);
+          }
+          
+          if (sep == TSV_EOF) goto done;
+          // if we've run out of col data, skip to next row
+          if (sep == TSV_EOL) {
+            // if we've run out of data, set this as last col and break
+            sel.col_to = dst_col;
+            goto next_row;
+          }
+        }
+        // if we're on the last col, we may have ran out of table -- read the rest of the row here
+        if (dst_col == sel.col_to) while (sep != TSV_EOL) {
+          if (!ReadTsvValue(istr, val, sep)) goto done;
+          if (sep == TSV_EOF) goto done;
+        }
+      } // dst tab cols
+next_row: ;
+    } // dst tab cell rows
+  } // dst tab rows
+done:
+  tab->DataUpdate(false);
 }
 
 bool taiTabularDataMimeItem::ReadTsvValue(istringstream& strm, String& val,

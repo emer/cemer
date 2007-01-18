@@ -640,6 +640,8 @@ public:
   taiClipData* 		Mat_GetClipData(taMatrix* mat,
     const CellRange& sel, int src_edit_action, bool for_drag = false) const;
   
+  void			Mat_Clear(taMatrix* mat,
+    const CellRange& sel) const;
   void			AddMatDesc(QMimeData* md,
     taMatrix* mat, const CellRange& selected) const;
 
@@ -657,6 +659,9 @@ public:
     
   taiClipData* 		Table_GetClipData(DataTable* tab,
     const CellRange& sel, int src_edit_action, bool for_drag = false) const;
+   
+  void			Table_Clear(DataTable* tab,
+    const CellRange& sel) const;
   
   void			AddTableDesc(QMimeData* md,
     DataTable* tab, const CellRange& selected) const;
