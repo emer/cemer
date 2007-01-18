@@ -32,9 +32,10 @@
 #include "safeptr_so.h"
 
 #ifndef __MAKETA__
-  #include <qevent.h>
-  #include <qwidget.h>
-  #include <Inventor/nodes/SoSeparator.h>
+# include <qevent.h>
+# include <QTabBar>
+# include <qwidget.h>
+# include <Inventor/nodes/SoSeparator.h>
 #endif
 
 // externals
@@ -496,13 +497,48 @@ private:
 //   iT3DataViewer	//
 //////////////////////////
 
+class iTabWidget; // IGNORE
+#ifndef __MAKETA__
+class TA_API iTabBarEx : public QTabBar {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS decodes tab for context menu
+  Q_OBJECT
+INHERITED(QTabBar)
+public:
+  iTabBarEx(iTabWidget* parent = NULL);
+  
+protected:
+  iTabWidget*		m_tab_widget;
+  override void		contextMenuEvent(QContextMenuEvent* ev);
+};
+
+class TA_API iTabWidget : public QTabWidget {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS decodes tab for context menu
+  Q_OBJECT
+INHERITED(QTabWidget)
+friend class iTabBarEx;
+public:
+  iTabWidget(QWidget* parent = NULL);
+  
+#ifndef __MAKETA__
+signals:
+  void 		customContextMenuRequested2(const QPoint& pos, int tab_idx);
+#endif
+
+protected:
+  void 			emit_customContextMenuRequested2(const QPoint& pos,
+     int tab_idx);
+  override void		contextMenuEvent(QContextMenuEvent* ev);
+};
+
+#endif
+
 class TA_API iT3DataViewer : public iFrameViewer {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS panel widget that contains 3D data views
   Q_OBJECT
 INHERITED(iFrameViewer)
 friend class T3DataViewer;
 public:
-  QTabWidget*		tw;
+  iTabWidget*		tw;
 
   inline T3DataViewer*	viewer() {return (T3DataViewer*)m_viewer;}
 
@@ -512,9 +548,18 @@ public:
   iT3DataViewer(T3DataViewer* viewer_, QWidget* parent = NULL); 
   ~iT3DataViewer(); //
 
+public slots:
+  void			AddTab();
+  void			CloseTab(int tab_idx);
+  
 protected: // IDataViewWidget i/f
   override void		Refresh_impl();
   
+  virtual void		FillContextMenu_impl(taiMenu* menu, int tab_idx);
+  
+protected slots:
+  void 			tw_customContextMenuRequested2(const QPoint& pos, int tab_idx);
+
 private:
   void			Init();
 };

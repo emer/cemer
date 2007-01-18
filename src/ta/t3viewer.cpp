@@ -65,6 +65,8 @@ const float t3Misc::geoms_per_pt(1/pts_per_geom);
 const float t3Misc::char_ht_to_wd_pts(12.0f/8.0f);
 const float t3Misc::char_base_fract(0.20f); //TODO: find correct val from coin src
 
+using namespace Qt;
+
 //////////////////////////
 //	T3DataView	//
 //////////////////////////
@@ -988,6 +990,44 @@ void T3DataViewFrame::Dump_Save_pre() {
 
 
 //////////////////////////
+//   iTabBarEx		//
+//////////////////////////
+
+iTabBarEx::iTabBarEx(iTabWidget* parent)
+:inherited(parent)
+{
+  m_tab_widget = parent;
+}
+
+void iTabBarEx::contextMenuEvent(QContextMenuEvent * e) {
+  // find the tab being clicked, or -1 if none
+  int idx = count() - 1;
+  while (idx >= 0) {
+    if (tabRect(idx).contains(e->pos())) break;
+    --idx;
+  }
+  QPoint gpos = mapToGlobal(e->pos());
+  if (m_tab_widget) m_tab_widget->emit_customContextMenuRequested2(gpos, idx);
+}
+
+
+iTabWidget::iTabWidget(QWidget* parent)
+:inherited(parent)
+{
+  setTabBar(new iTabBarEx(this));
+}
+void iTabWidget::emit_customContextMenuRequested2(const QPoint& pos,
+     int tab_idx)
+{
+  emit customContextMenuRequested2(pos, tab_idx);
+}
+
+void iTabWidget::contextMenuEvent(QContextMenuEvent* e) {
+  QPoint gpos = mapToGlobal(e->pos());
+  emit_customContextMenuRequested2(gpos, -1);
+}
+
+//////////////////////////
 //   iT3DataViewer	//
 //////////////////////////
 
@@ -1003,8 +1043,10 @@ iT3DataViewer::~iT3DataViewer() {
 void iT3DataViewer::Init() {
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setSpacing(0);  lay->setMargin(0);
-  tw = new QTabWidget(this); //top, standard tabs
+  tw = new iTabWidget(this); //top, standard tabs
   lay->addWidget(tw);
+  connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
+    this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
 }
 
 void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
@@ -1017,6 +1059,38 @@ void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
   idvf->t3vs->Connect_SelectableHostNotifySignal(this, 
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
+
+void iT3DataViewer::AddTab() {
+//TODO
+}
+
+void iT3DataViewer::CloseTab(int tab_idx) {
+//TODO
+}
+
+void iT3DataViewer::FillContextMenu_impl(taiMenu* menu, int tab_idx) {
+  taiAction*
+  act = menu->AddItem("&Add Tab", taiAction::action,
+    this, SLOT(AddTab()),_nilVariant,
+      QKeySequence(CTRL+ALT+Key_N));
+  
+  if (tab_idx >= 0) {
+    act = menu->AddItem("&Close Tab", taiAction::int_act,
+      this, SLOT(CloseTab(int)), tab_idx,
+        QKeySequence(CTRL+ALT+Key_Q));
+  }
+}
+
+
+void iT3DataViewer::tw_customContextMenuRequested2(const QPoint& pos, int tab_idx) {
+  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  FillContextMenu_impl(menu, tab_idx);
+  if (menu->count() > 0) { //only show if any items!
+    menu->exec(pos);
+  }
+  delete menu;
+}
+
 
 void iT3DataViewer::Refresh_impl() {
   for (int i = 0; i < viewer()->frames.size; ++i) {
