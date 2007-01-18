@@ -1950,9 +1950,15 @@ iDataTableView::iDataTableView(QWidget* parent)
   
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
   inherited::currentChanged(current, previous);
-  emit currentChanged(current);
+  emit sig_currentChanged(current);
 }
 
+void iDataTableView::dataChanged(const QModelIndex& topLeft,
+    const QModelIndex & bottomRight)
+{
+  inherited::dataChanged(topLeft, bottomRight);
+  emit sig_dataChanged(topLeft, bottomRight);
+}
 
 DataTable* iDataTableView::dataTable() const {
   DataTableModel* mod = qobject_cast<DataTableModel*>(model());
@@ -2020,8 +2026,11 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
   splMain->addWidget(tvTable);
   splMain->addWidget(tvCell);
   
-  connect(tvTable, SIGNAL(currentChanged(const QModelIndex&)),
+  connect(tvTable, SIGNAL(sig_currentChanged(const QModelIndex&)),
     this, SLOT(tvTable_currentChanged(const QModelIndex&)));
+  connect(tvTable, SIGNAL(sig_dataChanged(const QModelIndex&, const QModelIndex&)),
+    this, SLOT(tvTable_dataChanged(const QModelIndex&, const QModelIndex&)) );
+
 }
 
 iDataTableEditor::~iDataTableEditor() {
@@ -2046,10 +2055,10 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   DataTable* dt_ = dt(); // cache
   DataArray_impl* col = dt_->GetColData(index.column());
-  if (!col) return;
   // note: we return from following if, otherwise fall through to do the contra
-  if (col->is_matrix) {
+  if (col && col->is_matrix) {
     m_cell = dt_->GetValAsMatrix(index.column(), index.row());
+    m_cell_index = index;
     //TODO: the ref above will prevent the col from growing, and also
     // screw up things like deleting the col -- we need to be able to "unlock"
     // this defacto lock on the col!!!!
@@ -2057,10 +2066,24 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
       tvCell->setModel(m_cell->GetDataModel());
       return;
     } 
-  }   
-  tvCell->setModel(NULL);
-  m_cell = NULL; // good to at least release this asap!!!
+  } else {  
+    tvCell->setModel(NULL);
+    m_cell = NULL; // good to at least release this asap!!!
+    m_cell_index = QModelIndex(); // empty is invalid
+  }
 
+}
+
+void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,
+    const QModelIndex& bottomRight)
+{
+  if (m_cell && (m_cell_index.column() >= topLeft.column()) &&
+    (m_cell_index.column() <= bottomRight.column()) &&
+    (m_cell_index.row() >= topLeft.row()) &&
+     (m_cell_index.row() <= bottomRight.row()) )
+  {
+    m_cell->DataChanged(DCR_ITEM_UPDATED, NULL, NULL); // easiest way
+  }
 }
 
 void iDataTableEditor::UpdateSelectedItems_impl() {
@@ -2460,7 +2483,7 @@ void taiTabularDataMimeFactory::AddTableDesc(QMimeData* md,
     DataArray_impl* da = tab->GetColData(col);
     int x; int y;
     da->Get2DCellGeom(x, y); 
-    str.cat(String(tot_col)).cat(';').cat(String(max_cell_row)).cat('\t');
+    str.cat(String(x)).cat(';').cat(String(y)).cat(';');
     str.cat(String(da->isImage())).cat(";\n");
   }
   md->setData(tacss_tabledesc, StrToByteArray(str));
@@ -2492,6 +2515,7 @@ Parsing geoms:
 
 */
 
+taiTabularDataMimeItem::TsvSep taiTabularDataMimeItem::no_sep;
 
 bool taiTabularDataMimeItem::ReadInt(String& arg, int& val) {
   String str;
@@ -2730,78 +2754,118 @@ void taiTableDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
   }
 }
 
+/* 
+  A table supports two kinds of paste:
+    * Paste -- starting at upper-left of select region, no new rows made
+    * Paste Append -- appends all data to new rows; the first dst col is
+      marked by the left selected col -- other than that, the sel region
+      has no significance
+  (Paste Append is especially convenient when selected from the Table
+    object itself, rather than in the data grid.)
+    
+  For table-to-table copy, we assume the user wants the source col mappings
+  to be preserved at the destination. This leads to three possibilities for
+  each dimension in each cell:
+    * the src and dst have the same dim
+    * the src is bigger -- we will ignore the excess
+    * the src is smaller -- we will nil out the underflow
+  We should iterate, using a parallel set of indexes, one for src, one for
+  dst; we will always need to do something for the max of these two, either
+  skipping src data, or clearing out dst data; the only exception is row:
+  we only need iterate the dst_rows, since we can just stop reading src
+  data when we are finished.
+  
+  Since we placed the exact dims for each col on the clipboard, and we
+  have a deterministic mapping of the flat data, we can therefore "dumbly"
+  just read in the data, without checking for tabs/eols etc.
+  
+  
+*/
 void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
-/*  // for table-to-table copy, we apply data on a table-cell basis
+  // for table-to-table copy, we apply data on a table-cell basis
   // (not a fully flattened basis)
   istringstream istr;
   QByteArray ba = data(taiMimeFactory::text_plain);
   istr.str(string(ba.data(), ba.size()));
   
   String val; // each cell val
-  TsvSep sep; // sep after reading the cell val
+//nn  TsvSep sep; // sep after reading the cell val
   
   // if dest is a single cell, we will extend to size of src
   CellRange sel(sel_);
   if (sel_.single()) {
-    sel.col_to = MIN((tab->cols() - 1), (sel.col_fr + tabCols() - 1));
-    sel.row_to = MIN((tab->rows - 1), (sel.row_fr + tabRows() - 1));
-    }
+    sel.SetExtent(tabCols(), tabRows());
+  } 
+  // if dest is larger than src, we shrink to src
+  else {
+    sel.Limit(tabCols(), tabRows());
   }
   
-  int dst_tot_cols;
-  int dst_max_cell_rows;
-  tab->GetFlatGeom(sel, dst_tot_cols, dst_max_cell_rows);
-  
-  // main loop params below are generally controlled by geom of dst data
-  
+  // calculate the controlling params, for efficiency and clarity
+  int src_rows = tabRows();
+  int dst_max_cell_rows = tab->GetMaxCellRows(sel.col_fr, sel.col_to);
+  int src_max_cell_rows = maxCellRows();
+  int max_cell_rows = MAX(src_max_cell_rows, dst_max_cell_rows);
+  // for cols, we only iterate over src, since we don't clear excess dst cols
+  int src_cols = tabCols();
+  int dst_cols = sel.width();
   
   bool underflow = false;
-  tab->DataUpdate(true);  
-  int dst_row = sel.row_fr;
-  int src_row = 0;
-  while (dst_row <= sel.row_to) {
-    int dst_cell_row = 0;
-    int src_cell_row = 0;
-    while (dst_cell_row < dst_max_cell_rows) {
-      int dst_col = sel.col_fr;
-      int src_col = 0;
-      while (dst_col <= sel.col_to) {
+  tab->DataUpdate(true); 
+  // we only iterate over the dst rows; we'll just stop reading data when done 
+  int dst_row; int src_row;
+  for (dst_row = sel.row_fr, src_row = 0;
+       dst_row <= sel.row_to;
+       ++dst_row, ++src_row) 
+  {
+    // cell_row is same for src/dst (0-based), but we need to iterate the largest
+    for (int cell_row = 0; cell_row < max_cell_rows; ++cell_row) {
+      // for cols, we need to iterate over largest of src/dst
+      int dst_col; int src_col;
+      for (dst_col = sel.col_fr, src_col = 0;
+          src_col < src_cols;
+          ++dst_col, ++src_col) 
+      {
+        // here, we get the detailed cell geom for src and dst
+        // just assume either could be empty, for robustness
+        int dst_cell_cols = 0; 
+        int dst_cell_rows = 0;
         DataArray_impl* da = tab->GetColData(dst_col);
-        int dst_cell_cols; int dst_cell_rows;
-        da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
-        int dst_cell_col = 0;
-        int src_cell_col = 0;
-        while (dst_cell_col < dst_cell_cols) {
-          // read a value if we are in source range
-          if ((src_row < tabRows()) && (src_cell_row < src_cell_rows) &&
-            (src_col < tabCols()) && (src_cell_col < src_cell_cols))
+        if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
+        int src_cell_cols = 0;
+        int src_cell_rows = 0;
+        if (src_col < src_cols) {
+          taiTableColDesc& tcd = col_descs[src_col];
+          src_cell_cols = tcd.flat_geom.w;
+          src_cell_rows = tcd.flat_geom.h;
+        }
+        int cell_cols = MAX(src_cell_cols, dst_cell_cols);
+        for (int cell_col = 0; cell_col < cell_cols; ++cell_col) {
+          // if we are in **flat** source range then read a value 
+          // note that src values are always zero-based
+          if ((src_row < src_rows) && (cell_row < src_max_cell_rows) &&
+            (src_col < src_cols) && (cell_col < src_cell_cols))
           {
-            underflow = underflow || (!ReadTsvValue(istr, val, sep));
-          } else val = _nilString;
+            underflow = underflow || (!ReadTsvValue(istr, val/*, sep*/));
+          } else 
+            val = _nilString;
           
-          // set the value (geom always valid, because we drive by dst geom)
-          int dst_cell = (dst_cell_row * dst_cell_cols) + dst_cell_col;
-          tab->SetValAsStringM(val, dst_col, dst_row, dst_cell);
-          
-          ++dst_cell_col;
-          ++src_cell_col;
+          // if we are in dst range then write (the maybe nil) value
+          // we only need to check upper bound, since we always started at lower
+          if (/*row always valid*/ (cell_row < dst_cell_rows) &&
+            (dst_col <= sel.col_to) && (cell_col < dst_cell_cols))
+          {
+            int dst_cell = (cell_row * dst_cell_cols) + cell_col;
+            tab->SetValAsStringM(val, dst_col, dst_row, dst_cell);
+          }
         }
-        // skip data we don't have cells for
-        while (src_cell_col < src_cell_cols) {
-          underflow = underflow || (!ReadTsvValue(istr, val, sep));
-          ++src_cell_col;
-        }
-        ++dst_col;
-        ++src_col;
       }
-      ++dst_cell_row;
-      ++src_cell_row;
     }
-    ++dst_row;
-    ++src_row;
   }
-done:
   tab->DataUpdate(false);
-  */
+#ifdef DEBUG
+  if (underflow)
+    taMisc::Warning("Unexpected underflow of table data pasting table-to-table");
+#endif
 }
 

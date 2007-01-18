@@ -762,7 +762,7 @@ const Variant DataTable::GetValAsVarM(int col, int row, int cell) const {
 bool DataTable::SetValAsDoubleM(double val, int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   if (!da) return false;
-  if (!da->is_matrix) return false;
+  if ((cell > 0) && !da->is_matrix) return false;
   int i;
   if (idx(row, da->rows(), i)) {
     da->SetValAsDoubleM(val, i, cell);
@@ -773,7 +773,7 @@ bool DataTable::SetValAsDoubleM(double val, int col, int row, int cell) {
 bool DataTable::SetValAsFloatM(float val, int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   if (!da) return false;
-  if (!da->is_matrix) return false;
+  if ((cell > 0) && !da->is_matrix) return false;
   int i;
   if (idx(row, da->rows(), i)) {
     da->SetValAsFloatM(val, i, cell);
@@ -784,7 +784,7 @@ bool DataTable::SetValAsFloatM(float val, int col, int row, int cell) {
 bool DataTable::SetValAsStringM(const String& val, int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   if (!da) return false;
-  if (!da->is_matrix) return false;
+  if ((cell > 0) && !da->is_matrix) return false;
   int i;
   if (idx(row, da->rows(), i)) {
     da->SetValAsStringM(val, i, cell);
@@ -795,7 +795,7 @@ bool DataTable::SetValAsStringM(const String& val, int col, int row, int cell) {
 bool DataTable::SetValAsVarM(const Variant& val, int col, int row, int cell) {
   DataArray_impl* da = GetColData(col);
   if (!da) return false;
-  if (!da->is_matrix) return false;
+  if ((cell > 0) && !da->is_matrix) return false;
   int i;
   if (idx(row, da->rows(), i)) {
     da->SetValAsVarM(val, i, cell);
@@ -1016,16 +1016,30 @@ void DataTable::UniqueColNames() {
   }
 }
 
-void DataTable::GetFlatGeom(const CellRange& cr, int& tot_col, int& max_cell_row) {
+int DataTable::GetMaxCellRows(int col_fr, int col_to) {
   // metrics
-  tot_col = 0; // total flat cols
-  max_cell_row = 0; // max flat rows per cell
-  for (int col = cr.col_fr; col <= cr.col_to; ++col) {
+  int max_cell_rows = 0; // max flat rows per cell
+  for (int col = col_fr; col <= col_to; ++col) {
     DataArray_impl* da = GetColData(col);
+    if (!da) continue;
     int x; int y;
     da->Get2DCellGeom(x, y); 
-    tot_col += x;
-    max_cell_row = MAX(max_cell_row, y);
+    max_cell_rows = MAX(max_cell_rows, y);
+  }
+  return max_cell_rows;
+}
+
+void DataTable::GetFlatGeom(const CellRange& cr, int& tot_cols, int& max_cell_rows) {
+  // metrics
+  tot_cols = 0; // total flat cols
+  max_cell_rows = 0; // max flat rows per cell
+  for (int col = cr.col_fr; col <= cr.col_to; ++col) {
+    DataArray_impl* da = GetColData(col);
+    if (!da) continue;
+    int x; int y;
+    da->Get2DCellGeom(x, y); 
+    tot_cols += x;
+    max_cell_rows = MAX(max_cell_rows, y);
   }
 }
 
@@ -1033,7 +1047,7 @@ String DataTable::RangeToTSV(const CellRange& cr) {
   // metrics
   int tot_col = 0; // total flat cols
   int max_cell_rows = 0; // max flat rows per cell
-  GetFlatGeom(cr, tot_col, max_cell_rows);
+  GetFlatGeom(cr, max_cell_rows, tot_col);
   
   // allocate a reasonable best-guess buffer
   STRING_BUF(rval, (tot_col * max_cell_rows * (cr.row_to - cr.row_fr + 1)) * 10);

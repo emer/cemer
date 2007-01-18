@@ -27,6 +27,16 @@
 //  CellRange		//
 //////////////////////////
 
+void CellRange::SetExtent(int wd, int ht) {
+  col_to = col_fr + wd - 1;
+  row_to = row_fr + ht - 1;
+}
+
+void CellRange::Limit(int wd, int ht) {
+  if (width() > wd) col_to = col_fr + wd - 1;
+  if (height() > ht) row_to = row_fr + ht - 1;
+}
+
 void CellRange::SetFromModel(const QModelIndexList& indexes) {
   if (indexes.count() > 0) {
     const QModelIndex& mi = indexes.first();

@@ -151,10 +151,12 @@ public:
 
   bool		empty() const {return ((row_to < row_fr) || (col_to < col_fr));}
   inline bool	nonempty() const {return !empty();}
-  int 		width() const {return row_to - row_fr + 1;}
-  int 		height() const {return col_to - col_fr + 1;}
+  int 		height() const {return row_to - row_fr + 1;}
+  int 		width() const {return col_to - col_fr + 1;}
   bool		single() const {return ((row_to == row_fr) && (col_to == col_fr));}
 
+  void		SetExtent(int wd, int ht); // set w/h based on current fr values
+  void		Limit(int wd, int ht); // limit width and height to these values
   void 		Set(int row_fr_, int col_fr_, int row_to_, int col_to_)
     {row_fr = row_fr_; col_fr = col_fr_; row_to = row_to_; col_to = col_to_;}
   void 		SetFromModel(const QModelIndexList& indexes); //#IGNORE

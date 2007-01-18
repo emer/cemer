@@ -476,8 +476,9 @@ public:
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
   // #CAT_Access get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
 
-  void 			GetFlatGeom(const CellRange& cr,
-     int& tot_cols, int& max_cell_rows); // #IGNORE get the total cells in a TSV extract of the selection
+  int 			GetMaxCellRows(int col_fr, int col_to); // #IGNORE get the max muber of cell rows in this col range (used for clip operations)
+  void			GetFlatGeom(const CellRange& cr, int& tot_cols, 
+   int& max_cell_rows); // IGNORE get the total flat cols and max rows per cell; used for TSV output
 
   String		RangeToTSV(const CellRange& cr); // for clip operations
 

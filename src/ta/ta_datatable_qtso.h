@@ -484,11 +484,15 @@ public: // cliphandler i/f
   override void		GetEditActionsEnabled(int& ea);
 
 signals:
-  void 			currentChanged(const QModelIndex& current);
+  void 			sig_currentChanged(const QModelIndex& current);
+  void			sig_dataChanged(const QModelIndex& topLeft,
+    const QModelIndex & bottomRight); // #IGNORE
   
 protected:
-  void 			currentChanged(const QModelIndex& current,
+  override void 	currentChanged(const QModelIndex& current,
     const QModelIndex& previous); // override
+  override void 	dataChanged(const QModelIndex& topLeft,
+    const QModelIndex & bottomRight); // refresh mat cell if in here
 };
 #endif // MAKETA
 
@@ -512,6 +516,8 @@ public:
   
 public slots:
   void			tvTable_currentChanged(const QModelIndex& index); // #IGNORE
+  void			tvTable_dataChanged(const QModelIndex& topLeft,
+    const QModelIndex & bottomRight); // #IGNORE
   
 public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const {return false;} // always
@@ -522,6 +528,7 @@ protected:
 protected:
   DataTableRef		m_dt;
   taMatrixPtr		m_cell; // current cell TODO: this ref will prevent col from growing for new row
+  QModelIndex		m_cell_index; // we keep this to refresh cell if data changes
 };
 
 
@@ -683,11 +690,14 @@ protected:
     TSV_EOL,  // eol -- row separator
     TSV_EOF   // eof -- end of file
   };
+  
+  static TsvSep		no_sep; // when ignored
 
   iSize			m_flat_geom; 
   bool 			ReadInt(String& arg, int& val); // read a ; terminated int
   bool 			ExtractGeom(String& arg, iSize& val); // get the cols/rows
-  bool			ReadTsvValue(istringstream& strm, String& val, TsvSep& sep); // reads value if possible, into val, returning true if a value read, and the separator encountered after the value in sep.
+  bool			ReadTsvValue(istringstream& strm, String& val,
+     TsvSep& sep = no_sep); // reads value if possible, into val, returning true if a value read, and the separator encountered after the value in sep.
   virtual void		WriteTable_Generic(DataTable* tab, const CellRange& sel);
   
 private:
@@ -760,7 +770,7 @@ public:
 
   virtual void		GetColGeom(int col, int& cols, int& rows) const;
     // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
-  inline int		maxRowGeom() const {return m_max_row_geom;}
+  inline int		maxCellRows() const {return m_max_row_geom;}
   
   override void		WriteTable(DataTable* tab, const CellRange& sel);
   
