@@ -847,17 +847,22 @@ int taiEdit::Edit(void* base, bool readonly, const iColor* bgcol) {
   return 2;
 }
 
-int taiEdit::EditDialog(void* base, bool read_only, const iColor* bgcol) {
-  taiEditDataHost* host = taiMisc::FindEditDialog(base, read_only);
-  if (host) {
-    host->Raise();
-    return 2;
-  } else {
-    host = CreateDataHost(base, read_only);
-    if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
-    host->Constr("", "", bgcol, taiDataHost::HT_DIALOG);
-    return host->Edit(); // non-modal
+int taiEdit::EditDialog(void* base, bool read_only,
+  const iColor* bgcol, bool modal) 
+{
+  taiEditDataHost* host = NULL;
+  if (!modal) {
+    host = taiMisc::FindEditDialog(base, read_only);
+    if (host) {
+      host->Raise();
+      return 2;
+    }
   }
+  host = CreateDataHost(base, read_only);
+  if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+  host->Constr("", "", bgcol, taiDataHost::HT_DIALOG);
+  return host->Edit(modal);
+  
 }
 
 EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,

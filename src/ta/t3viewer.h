@@ -403,7 +403,7 @@ public:
   T3DataViewRoot*	root();
   virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_pre
   override int		stretchFactor() const {return 4;} // 4/2 default
-  inline T3DataViewFrame* viewer() {return (T3DataViewFrame*)m_viewer;}
+  inline T3DataViewFrame* viewer() const {return (T3DataViewFrame*)m_viewer;}
   iT3DataViewer* 	viewerWidget() const;
 
   virtual void		T3DataViewClosing(T3DataView* node); // used mostly to remove from selection list
@@ -541,6 +541,8 @@ public:
   iTabWidget*		tw;
 
   inline T3DataViewer*	viewer() {return (T3DataViewer*)m_viewer;}
+  iT3DataViewFrame*	iViewFrame(int idx) const; // the frame in indicated tab
+  T3DataViewFrame*	viewFrame(int idx) const; // view of frame in indicate tab -- NOT necessarily same as view idx if all frames not viewed in frames
 
   void			AddT3DataViewFrame(iT3DataViewFrame* dvf, int idx = -1);
   void			UpdateTabNames();
@@ -549,8 +551,9 @@ public:
   ~iT3DataViewer(); //
 
 public slots:
-  void			AddTab();
-  void			CloseTab(int tab_idx);
+  void			AddFrame();
+  void			DeleteFrame(int tab_idx);
+  void			FrameProperties(int tab_idx);
   
 protected: // IDataViewWidget i/f
   override void		Refresh_impl();

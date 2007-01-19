@@ -1530,6 +1530,18 @@ int taBase::Edit() {
   return false;
 }
 
+int taBase::EditDialog(bool modal) {
+#ifdef TA_GUI
+  taiEdit* ie;
+  if((ie = GetTypeDef()->ie) != NULL) {
+    const iColor* bgclr = GetEditColorInherit();
+    return ie->Edit((void*)this, false, bgclr);
+  }
+#endif
+  return false;
+}
+
+
 bool taBase::ReShowEdit(bool force) {
 #ifdef TA_GUI
   return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);

@@ -184,7 +184,7 @@ public:
   virtual const iColor* GetBackgroundColor(void* base); // gets for taBase
   virtual int 		Edit(void* base=NULL, bool read_only=false, const iColor* bgcol = NULL); //edit wherever found (note: rarely overridden)
   virtual int 		EditDialog(void* base, bool read_only = false,
-    const iColor* bgcol = NULL); //edit in a Dialog (note: rarely overridden) -- use default editor
+    const iColor* bgcol = NULL, bool modal = false); //edit in a Dialog (note: rarely overridden) -- finds existing if non-modal else makes new
   virtual EditDataPanel* EditNewPanel(taiDataLink* link, void* base=NULL,
     bool read_only = false, const iColor* bgcol = NULL); 
     //edit in a new panel (note: rarely overridden)

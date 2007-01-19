@@ -775,8 +775,6 @@ public:
   // #IGNORE the default text returned for StatusTipRole (key usually not needed)
   virtual const String	GetToolTip(const KeyString& key) const;
   // #IGNORE the default text returned for ToolTipRole
-  virtual void		BrowseMe();
-  // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
   virtual String	GetColText(const KeyString& key, int itm_idx = -1) const;
   // #IGNORE default keys are: name, type, desc, disp_name
   virtual const QVariant GetColData(const KeyString& key, int role) const;
@@ -791,6 +789,10 @@ protected:
 public:  
   virtual int		Edit();
   // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object using the gui
+  virtual int		EditDialog(bool modal = false);
+  // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a popup dialog using the gui
+  virtual void		BrowseMe();
+  // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
   virtual bool		ReShowEdit(bool force = false);
   // #CAT_Display reshows any open edit dialogs for this object
   virtual const iColor* GetEditColor(); // #IGNORE background color for edit dialog

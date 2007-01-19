@@ -1060,24 +1060,38 @@ void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
 
-void iT3DataViewer::AddTab() {
-//TODO
+void iT3DataViewer::AddFrame() {
+// T3DataViewFrame* fr  = 
+ viewer()->NewT3DataViewFrame();
 }
 
-void iT3DataViewer::CloseTab(int tab_idx) {
-//TODO
+void iT3DataViewer::DeleteFrame(int tab_idx) {
+  T3DataViewFrame* fr = viewFrame(tab_idx);
+  if (!fr) return;
+  fr->Close();
+  //NOTE: do not place any code here -- we are deleted!
+}
+
+void iT3DataViewer::FrameProperties(int tab_idx) {
+  T3DataViewFrame* fr = viewFrame(tab_idx);
+  if (!fr) return;
+  fr->EditDialog(true);
 }
 
 void iT3DataViewer::FillContextMenu_impl(taiMenu* menu, int tab_idx) {
   taiAction*
-  act = menu->AddItem("&Add Tab", taiAction::action,
-    this, SLOT(AddTab()),_nilVariant,
-      QKeySequence(CTRL+ALT+Key_N));
+  act = menu->AddItem("&Add Frame", taiAction::action,
+    this, SLOT(AddFrame()),_nilVariant);
   
   if (tab_idx >= 0) {
-    act = menu->AddItem("&Close Tab", taiAction::int_act,
-      this, SLOT(CloseTab(int)), tab_idx,
-        QKeySequence(CTRL+ALT+Key_Q));
+    act = menu->AddItem("&Delete Frame", taiAction::int_act,
+      this, SLOT(DeleteFrame(int)), tab_idx);
+    
+    menu->AddSep();
+    // should always be at bottom:
+    act = menu->AddItem("Frame &Properties...", taiAction::int_act,
+      this, SLOT(FrameProperties(int)), tab_idx);
+
   }
 }
 
@@ -1089,6 +1103,20 @@ void iT3DataViewer::tw_customContextMenuRequested2(const QPoint& pos, int tab_id
     menu->exec(pos);
   }
   delete menu;
+}
+
+iT3DataViewFrame* iT3DataViewer::iViewFrame(int idx) const {
+  iT3DataViewFrame* rval = NULL;
+  if ((idx >= 0) && (idx < tw->count())) {
+    rval = qobject_cast<iT3DataViewFrame*>(tw->widget(idx));
+  }
+  return rval;
+}
+
+T3DataViewFrame* iT3DataViewer::viewFrame(int idx) const {
+  iT3DataViewFrame* idvf = iViewFrame(idx);
+  if (idvf) return idvf->viewer();
+  else return NULL;
 }
 
 
