@@ -80,18 +80,20 @@ public:
   bool			enabled; // set if this plugin should be loaded when the app starts
   bool			loaded; // / #READ_ONLY #SHOW #NO_SAVE set if the plugin is loaded and initialized
   bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
-  String		name; // #READ_ONLY #SHOW #NO_SAVE the plugin name, provided by the plugin 
+  String		name; // #READ_ONLY #SHOW  the plugin name, provided by the plugin 
   String		desc; // #READ_ONLY #SHOW #NO_SAVE the plugin description, provided by the plugin
   String		unique_id; // #READ_ONLY #SHOW a unique string to identify the plugin
-  String		version; // #READ_ONLY #SHOW #NO_SAVE the plugin's version
+  String		version; // #READ_ONLY #SHOW  the plugin's version (as of when plugin was loaded)
   String		filename; // #READ_ONLY #SHOW #NO_SAVE the plugin's filename
+  String		url; // a url that provides information on the plugin; used mostly for when missing in a proj file
   
-  taPluginInst*		plugin;
+  taPluginInst*		plugin; // #IGNORE the plugin, if loaded (not used for descs)
   
   String        GetName() const { return unique_id; } // NOTE: unique_id is the canonical name for this guy
   void          SetDefaultName() {} 
   String	GetDesc() const {return desc;}
-  //note: copying doesn't make sense, so we forbid
+  void		Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins
+  COPY_FUNS(taPlugin, taOBase);
   TA_BASEFUNS(taPlugin);
 private:
   void	Initialize();
@@ -100,7 +102,7 @@ private:
 
 
 class taPlugin_List: public taList<taPlugin> {
-  // #CHILDREN_INLINE plugins available to the program
+  // #CHILDREN_INLINE plugins available to the program (also used for descs)
 INHERITED(taList<taPlugin>)
 public:
   void		LoadPlugins(); // Load and initialize all the enabled plugins, unload remainder

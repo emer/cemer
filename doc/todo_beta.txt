@@ -78,19 +78,10 @@ edit dialogs:
   order matters.
 
 ---------------------------
-Misc bugs small things:
-
-* get rid of ta/datatable.* (very confusing
-  with ta_datatable.*) 
-
 
 trac bugs of High priority or higher
 * program dirty not getting set -- init not recompiling: brad
 NOTE: may be fixed
-
-* netview bugs:
-  * UnitView objs seem to get made, even if no gui interaction w/user
-    they were supposed to only get made on demand!
 
 * Viewers
   * save/restore state of viewers
@@ -177,6 +168,9 @@ SHIPPING IS A FEATURE
 * unified Show control for trees and prop edits
 * "disabled" generic state for viewing; "disabled" gui state for treeviews
    (program "off" button is this, also layer "lesioned")
+* get rid of ta/datatable.* (very confusing
+  with ta_datatable.*) 
+
 
 
 Brad: (won't do)

@@ -126,6 +126,18 @@ void taPlugin::Initialize() {
   plugin = NULL;
 }
 
+void taPlugin::Copy_(const taPlugin& cp) {
+  enabled = cp.enabled;
+  loaded = false; // never for a copy
+  reconciled = false;
+  name = cp.name;
+  desc = cp.desc;
+  unique_id = cp.unique_id;
+  version = cp.version;
+  filename = cp.filename;
+  url = cp.url;
+  //intore plugin -- only used for insts, not descs
+}
 
 //////////////////////////
 //  taPlugin_List	//

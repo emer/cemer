@@ -154,6 +154,7 @@ public:
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
+  taPlugin_List		plugin_deps; // #NO_SAVE #READ_ONLY #SHOW_TREE EXPERT_TREE  dynamic list, reset before each streaming op
   taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
   
   virtual void  Settings() {};

@@ -21,3 +21,54 @@ Plugin Loading
   it should be flushed after each successful load;
   it should indicate successful loading -- if not, the 
   user should be able to shut off the offending plugin
+
+
+Type Info
+
+For every type, we should set its plugin, if applicable.
+(Maybe we can establish plugins as root type classes.)
+
+Before saving a project, we should save some kind of header that
+will enumerate the plugins used by the project.
+
+Determining Plugin Dependency
+
+How do we tell if a project uses a plugin?
+We can walk the entire project
+
+Stream File Extension
+
+It will be good to have a general extension to streaming,
+such that *any* stream will start w/ plugin dependency.
+
+It should not be mandatory. 
+One way it could work is to load the plugin deps to a
+global area, which will get cleared before every load.
+This area could be used for loads and stores; for stores,
+it is used to build the dep info for that store.
+
+Load
+
+clear plugin deps
+load
+if (plugin deps) {
+  // the load was the plugin deps
+  check for plugins
+  if fail, then warn and exit
+  else load
+}
+
+
+
+Store
+
+clear plugin deps
+gen plugin deps
+if (plugin deps) {
+  write plugin deps
+}
+write object
+
+
+
+
