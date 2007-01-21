@@ -773,6 +773,21 @@ void taiTypeItemDataHost::Constr_Labels() {
     AddName(row, "size", "size, in bytes, of the type", NULL);
     AddData(row++, repi);
     
+    chk = new iCheckBox(td->in_plugin, body);
+    chk->setReadOnly(true);
+    AddName(row, "in_plugin", "class is defined in a plugin (plugin will be required if this type is used in a project)", NULL);
+    AddData(row++, chk, true);
+    
+    //
+    String plg;
+    if (td->in_plugin) {
+      plg = td->GetPluginType()->name;
+    }
+    rep = new iLineEdit(plg, body);
+    rep->setReadOnly(true);
+    AddName(row, "plugin class", "the classname of the IPlugin for the plugin in which this type was defined", NULL);
+    AddData(row++, rep, true);
+    
     // parents
     String pars;
     for (int i = 0; i < td->parents.size; ++i) {

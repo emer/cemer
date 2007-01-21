@@ -14,6 +14,10 @@ int HelloPlugin::InitializePlugin() {
   return 0;
 }
 
+const char* HelloPlugin::url() {
+  return "http://grey.colorado.edu/cgi-bin/trac.cgi";
+}
+
 Q_EXPORT_PLUGIN2(hw, HelloPlugin)
 
 void HelloBase::Hello() {

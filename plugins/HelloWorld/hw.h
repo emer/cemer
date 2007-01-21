@@ -9,31 +9,32 @@
                                              // type scanning tool on this header file.
 #define HW_API                               // Needed for windows compatability.
 
+class HelloPlugin; //
+
+#ifndef __MAKETA__
 // The HelloPlugin class allows this to be a plugin. It usually won't
 // need to be majorly modified. It is not seen by `maketa' as it
 // cannot grok many Qt c++ constructs.
 
-#ifndef __MAKETA__
 class HW_API HelloPlugin : public QObject, 
                            public IPlugin
-{
-  // QObject enables the signals/slots functionality of Qt and
-  // requires that this file be scanned by moc, the meta-object
-  // compiler.
+{ // #NO_CSS #NO_MEMBERS
   Q_OBJECT
 
   // Tells Qt which interfaces are implemented by this class
   Q_INTERFACES(IPlugin)
-
 public:
   static const taVersion	version;
   
   HelloPlugin(QObject* par = NULL);
 
  public: // IPlugin interface
+  void*		This() {return this;}
+  TypeDef*	GetTypeDef() {return &TA_HelloPlugin;} 
   const char*	desc() {return "Sample plugin provided with PDP++";}
   const char*	name() {return "HelloPlugin";}
   const char*	uniqueId() {return "helloplugin.ccnlab.psych.colorado.edu";}
+  const char*	url();
   
   int		NotifyTacssVersion(const taVersion& tav, bool& is_ok) {return 0;}
     // we pass ta/css version; set is_ok false if this version is no good for plugin

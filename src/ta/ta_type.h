@@ -592,6 +592,8 @@ public:
   static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object
   static ContextFlag	is_duplicating;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently duplicating an object
   static ContextFlag	is_checking;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently doing batch CheckConfig on objects
+  static ContextFlag	in_plugin_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading typeinfo for a plugin
+  static TypeDef*	plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 
   static String		last_check_msg; // #READ_ONLY #NO_SAVE #SHOW #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
   static bool		check_quiet; 	// #IGNORE mode we are in; set by CheckConfigStart
@@ -1572,10 +1574,19 @@ public:
   TypeSpace*	owner;		// the owner of this one
 
   uint          size;		// size (in bytes) of item
-  int		ptr;		// number of pointers
+  short		ptr;		// number of pointers
   bool 		ref;		// true if a reference variable
   bool		internal;	// true if an internal type (auto generated)
   bool		formal;		// true if a formal type (e.g. class, const, enum..)
+#ifdef NO_TA_BASE
+  bool		pre_parsed;	// true if previously parsed by maketa
+#else
+  bool		is_subclass;	// true if is a class, and inherits from another
+  bool		in_plugin;	// true if defined in a plugin; par_formal will contain TA of the plugin object 
+  void**	instance;	// pointer to the instance ptr of this type
+  taBase_List*	defaults;	// default values registered for this type
+  UserDataItem_List* schema;	// default schema (only created if used)
+#endif
   String_PArray	inh_opts;	// inherited options (##xxx)
 
   TypeSpace	parents;	// type(s) this inherits from
@@ -1589,14 +1600,6 @@ public:
   taiType*	it;		// single glyph representation of type (was 'iv')
   taiEdit*	ie;		// editing window rep. of type (was 'ive')
   taiViewType*	iv;		// browser representation of type
-#endif
-#ifdef NO_TA_BASE
-  bool		pre_parsed;	// true if previously parsed by maketa
-#else
-  bool		is_subclass;	// true if is a class, and inherits from another
-  void**	instance;	// pointer to the instance ptr of this type
-  taBase_List*	defaults;	// default values registered for this type
-  UserDataItem_List* schema;	// default schema (only created if used)
 #endif
 
   // the following only apply to enums or classes
@@ -1660,6 +1663,8 @@ public:
   // gets base template parent of this type
   TypeDef* 		GetTemplInstType() const;
   // gets base template instantiation parent of this type
+  TypeDef*		GetPluginType() const;
+    // if in_plugin, this is the IPlugin-derivitive plugin type
   String 		GetPtrString() const;
   // gets a string of pointer symbols (*) corresponding to the number ptrs
   String		Get_C_Name() const;

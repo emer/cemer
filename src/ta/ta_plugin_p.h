@@ -40,6 +40,7 @@ public:
     LS_PLUG_INIT	      // true once initialized
   };
   
+  taPlugin* 		plugin_rep; // nelled if pr deletes
   LoadState		load_state; // true once lo-loaded, for enumeration
     
   IPlugin*		plugin(); // access to the plugin object -- note: should be valid, because we don't register failed loads

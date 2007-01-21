@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 
-// ta_plug.h: defines architecture for plugins, included by tacss and plugins
+// ta_plugin.h: defines architecture for plugins, included by tacss and plugins
 
 #ifndef TA_PLUGIN_H
 #define TA_PLUGIN_H
@@ -30,11 +30,14 @@
 
 class IPlugin  { // #VIRT_BASE basic interface for a ta plugin; int ret codes use 0=success, !0=errcode
 public:
+  virtual void*		This() = 0; // reference to our instance
+  virtual TypeDef*	GetTypeDef() = 0; // the TypeDef of the plugin -- used to save streaming dependencies
   
 // the following interfaces are used in the plugin enumeration stage
   virtual const char*	desc() {return "(no description provided)";}
-  virtual const char*	name() {return "NoName";}
+  virtual const char*	name() {return "pluginname";}
   virtual const char*	uniqueId() {return "pluginname.dept.organization.org";}
+  virtual const char*	url() {return "put a full url here, but put this in the .cpp file because of the maketa double slash bug";}
   
   virtual int		NotifyTacssVersion(const taVersion& tav, bool& is_ok) {return 0;}
     // we pass ta/css version; set is_ok false if this version is no good for plugin

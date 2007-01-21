@@ -30,6 +30,7 @@
 taPluginInst::taPluginInst(const String& fileName)
 :inherited(fileName)
 {
+  plugin_rep = NULL;
   load_state = LS_NOT_LOADED;
 }
 
@@ -55,17 +56,24 @@ bool taPluginInst::InitPlugin() {
 
 bool taPluginInst::InitTypes() {
   IPlugin* ipl = plugin();
-  if (ipl) {
+  if (!plugin_rep) {
+    taMisc::Warning("Unexpected missing plugin_rep for: ", fileName());
+  } else if (ipl) {
+    taMisc::in_plugin_init++;
+    TypeDef* td_last = taMisc::plugin_loading;
+    taMisc::plugin_loading = plugin_rep->GetTypeDef();
     int err = ipl->InitializeTypes();
+    taMisc::plugin_loading = td_last;
+    taMisc::in_plugin_init--;
     if (err == 0) {
       load_state = LS_TYPE_INIT;
       return true;
     } else {
-      taMisc::Warning("**Plugin::InitializeTypes() failed with error code ", String(err),
+      taMisc::Warning("Plugin::InitializeTypes() failed with error code ", String(err),
         " for plugin: ", fileName());
     }
   } else {
-    taMisc::Warning("**Could not get IPlugin interface for plugin: ", fileName());
+    taMisc::Warning("Could not get IPlugin interface for plugin: ", fileName());
   }
   load_state = LS_TYPE_FAIL;
   return false;
@@ -196,6 +204,7 @@ void taPlugin_List::ReconcilePlugins() {
       // create new 
       pl = (taPlugin*)New(1);
       pl->unique_id = uid;
+      pli->plugin_rep = pl;
       //TEMP: enable by default, until save/load of prefs is done
       pl->enabled = true;
     }

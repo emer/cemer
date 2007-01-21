@@ -456,6 +456,8 @@ ContextFlag	taMisc::is_loading;
 ContextFlag	taMisc::is_saving;
 ContextFlag	taMisc::is_duplicating;
 ContextFlag	taMisc::is_checking;
+ContextFlag	taMisc::in_plugin_init;
+TypeDef*	taMisc::plugin_loading;
 
 String	taMisc::last_check_msg;
 bool taMisc::check_quiet;
@@ -3231,6 +3233,12 @@ void TypeDef::Initialize() {
   pre_parsed = false;	// true if previously parsed by maketa
 #else
   is_subclass = false;
+  if (taMisc::in_plugin_init) {
+    in_plugin = true;
+    par_formal.Add(taMisc::plugin_loading);
+  } else {
+    in_plugin = false;
+  }
   instance = NULL;
   defaults = NULL;
   schema = NULL;
@@ -3330,6 +3338,7 @@ void TypeDef::Copy(const TypeDef& cp) {
   pre_parsed	= cp.pre_parsed;
 #else
   is_subclass	= cp.is_subclass;
+  in_plugin = cp.in_plugin;
   instance	= cp.instance ;
   //TODO: copy the schema
 // don't copy the tokens..
@@ -3570,6 +3579,19 @@ TypeDef* TypeDef::GetNonConstType() const {
     if(!rval->DerivesFrom(TA_const))
       return rval;
   }
+  return NULL;
+}
+
+TypeDef* TypeDef::GetPluginType() const {
+#ifndef NO_TA_BASE
+  if (!in_plugin) return NULL;
+  TypeDef* rval = NULL;
+  for (int i=0; i < par_formal.size; ++i) {
+    rval = par_formal.FastEl(i);
+    if (rval->InheritsFrom(&TA_IPlugin))
+      return rval;
+  }
+#endif
   return NULL;
 }
 
