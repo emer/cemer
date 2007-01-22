@@ -45,6 +45,7 @@ public:
 
   override String GetName() const;
   override String GetDisplayName() const;
+  override String GetDecorateKey() const { return "ProgArg"; }
   TA_SIMPLE_BASEFUNS(DataOpEl);
 protected:
   override void	UpdateAfterEdit_impl();	// set col_name from col_lookup
@@ -71,6 +72,9 @@ public:
   // #CAT_DataOp #BUTTON add all columns from given data table
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+
+  override String 	GetDecorateKey() const { return "ProgArg"; }
+
   TA_BASEFUNS(DataOpList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DataOpEl); }
@@ -94,6 +98,7 @@ public:
   virtual void	AddAllColumns(DataTable* dt) { ops.AddAllColumns(dt); }
   // #CAT_DataOp #BUTTON add all columns from given data table
 
+  override String 	GetDecorateKey() const { return "DataTable"; }
   TA_SIMPLE_BASEFUNS(DataOpBaseSpec);
 private:
   void	Initialize();
@@ -333,6 +338,7 @@ public:
   static bool	JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b);
   // #NULL_OK #CAT_Columns #MENU #NULL_OK joins two datatables into one datatable on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)). all columns from both tables are included.
 
+  override String 	GetDecorateKey() const { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
   TA_BASEFUNS(taDataProc);
@@ -362,6 +368,7 @@ public:
   virtual void	UpdateSpecDataTable() { };
   // #CAT_Data update the data table pointer(s) for the spec in this prog (so the user can choose columns from the appropriate data table)
 
+  override String 	GetDecorateKey() const { return "DataTable"; }
   TA_SIMPLE_BASEFUNS(DataProg);
 protected:
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
