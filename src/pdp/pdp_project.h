@@ -50,6 +50,8 @@ public:
   int		n_units;	// number of units in the layer
   InputOutput 	io_type;	// is it an input, hidden, or output layer -- determines environment patterns
 
+  override String 	GetDecorateKey() const { return "Wizard"; }
+
   void	Initialize();
   void	Destroy() 	{ };
   SIMPLE_COPY(LayerWizEl);
@@ -157,30 +159,6 @@ class PDP_API ProjectBase : public taProject {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE Base class for a pdp project (do not create one of these -- create an algorithm-specific version)
 INHERITED(taProject)
 public:
-  enum ViewColors {		// indicies for view_colors
-    TEXT,
-    BACKGROUND,
-    NETWORK,
-    ENVIRONMENT, //note: also used for Events
-    SCHED_PROC,
-    STAT_GROUP,
-    SUBPROC_GROUP,
-    STAT_PROC,
-    OTHER_PROC,
-    PDPLOG, //note: now for TableView
-    STAT_AGG,
-    GEN_GROUP,
-    INACTIVE,
-    STOP_CRIT,
-    AGG_STAT,
-    CON_SPEC,
-    UNIT_SPEC,
-    PRJN_SPEC,
-    LAYER_SPEC,
-    WIZARD,
-    COLOR_COUNT
-  };
-
   enum BuildNetsMode {
     AUTO_BUILD,			// build the networks after loading
     PROMPT_BUILD,		// prompt about building after loading
@@ -194,19 +172,10 @@ public:
   BuildNetsMode		build_nets;
   // what to do with networks after loading them -- if units are removed, then they can be rebuilt after loading
   
-  TAColor_List		the_colors; 	// #IGNORE actual colors
-  RGBA_List		view_colors; 	// colors to use in the project view
-  
-  DataTable_Group*	analysisDataGroup(); // returns default group used for auto-created analysis data
-  
-  virtual void	UpdateColors();	// #BUTTON update the actual colors based on settings (
-  virtual void	GetDefaultColors(); // #BUTTON get default colors for various project objects (in view and edit dialogs)
-
-  override const iColor* GetObjColor(TypeDef* td); // #IGNORE get default color for object (for edit, project view)
-  override const iColor* GetObjColor(int vc); // #IGNORE get default color for object (for edit, project view)
-  override void 	AssertDefaultWiz(bool auto_opn); // make the default wizard(s)
-
-  //TEMP methods until we add dynamic methods for DataTable
+  DataTable_Group*	analysisDataGroup();
+  // returns default group used for auto-created analysis data
+  override void 	AssertDefaultWiz(bool auto_opn);
+  // make the default wizard(s)
 
   virtual void	AutoBuildNets(BuildNetsMode bld_mode);
   // build networks according to bulid mode
@@ -240,8 +209,6 @@ public:
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
 #endif
   override void	SaveAll(); // saves all the projects
-
-  override const iColor* GetObjColor(taBase* inst);
 
   void	InitLinks();
   void	CutLinks();

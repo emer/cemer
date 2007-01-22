@@ -83,6 +83,7 @@ public:
  
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
+  override String GetDecorateKey() const { return "ProgVar"; }
 
   TypeDef*		act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
   
@@ -118,6 +119,8 @@ public:
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
 
+  override String GetDecorateKey() const { return "ProgVar"; }
+
   void	setDirty(bool value);
   void	Copy_(const ProgVar_List& cp);
   COPY_FUNS(ProgVar_List, inherited);
@@ -145,7 +148,9 @@ public:
 
   bool  	SetName(const String& nm) 	{ name = nm; return true; } 
   String 	GetName() const			{ return name; } 
-  String 	GetDisplayName() const;
+
+  override String GetDisplayName() const;
+  override String GetDecorateKey() const { return "ProgArg"; }
 
   void	Copy_(const ProgArg& cp);
   COPY_FUNS(ProgArg, inherited);
@@ -162,8 +167,9 @@ INHERITED(taList<ProgArg>)
 public:
   virtual void		ConformToTarget(ProgVar_List& targ); // make us conform to the target
   
+  override String GetDecorateKey() const { return "ProgArg"; }
+
   TA_BASEFUNS(ProgArg_List);
-  
 private:
   void	Initialize();
   void	Destroy() {Reset();}
@@ -276,6 +282,7 @@ public:
   
   override taList_impl*	children_() {return &local_vars;}
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgVar"; }
   TA_SIMPLE_BASEFUNS(ProgVars);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -307,6 +314,8 @@ private:
   void	Initialize();
   void	Destroy()	{}
 };
+
+
 //FIXME: Loop s/b DEF_CHILD but we need to fix clip ops first
 class TA_API Loop: public ProgEl { 
   // #VIRT_BASE base class for loops
@@ -315,6 +324,8 @@ public:
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
   String	    	loop_test; // #EDIT_DIALOG a test expression for whether to continue looping (e.g., 'i < max')
   
+  override String 	GetDecorateKey() const { return "ProgCtrl"; }
+
 //  override taList_impl* children_() {return &loop_code;}
   SIMPLE_LINKS(Loop);
   SIMPLE_COPY(Loop);
@@ -394,6 +405,7 @@ public:
   String	    	condition; // #EDIT_DIALOG conditionalizing expression for continuing loop
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgCtrl"; }
 
   TA_SIMPLE_BASEFUNS(IfContinue);
 protected:
@@ -412,6 +424,7 @@ public:
   String	    	condition; // #EDIT_DIALOG conditionalizing expression for breaking out of loop
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgCtrl"; }
 
   TA_SIMPLE_BASEFUNS(IfBreak);
 protected:
@@ -430,6 +443,7 @@ public:
   String	    	condition; // #EDIT_DIALOG conditionalizing expression for returning
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgCtrl"; }
 
   TA_SIMPLE_BASEFUNS(IfReturn);
 protected:
@@ -450,6 +464,7 @@ public:
   ProgEl_List	    false_code; // #SHOW_TREE items to execute if condition false
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgCtrl"; }
   TA_SIMPLE_BASEFUNS(IfElse);
 
 protected:
@@ -475,6 +490,7 @@ public:
   // #EDIT_DIALOG expression to assign variable to
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgVar"; }
   TA_SIMPLE_BASEFUNS(AssignExpr);
 
 protected:
@@ -504,6 +520,7 @@ public:
   static void		UpdateArgs(SArg_Array& ar, MethodDef* md);
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "Function"; }
   TA_SIMPLE_BASEFUNS(MethodCall);
 
 protected:
@@ -527,6 +544,7 @@ public:
   SArg_Array		args; // arguments to the method
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "Function"; }
   TA_SIMPLE_BASEFUNS(StaticMethodCall);
 
 protected:
@@ -576,6 +594,7 @@ public:
   ProgVarRef		print_var; 	// print out the value of this variable
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgVar"; }
   TA_SIMPLE_BASEFUNS(PrintVar);
 
 protected:
@@ -587,15 +606,12 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-// todo: highlight this in diff color:
 class TA_API Comment: public ProgEl { 
   // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
 INHERITED(ProgEl)
 public:
-  static const String	decorate_key; // "comment"
-  
   override String	GetDisplayName() const;
-  override String	GetDecorateKey() const {return decorate_key;}
+  override String	GetDecorateKey() const { return "Comment"; }
 
   TA_SIMPLE_BASEFUNS(Comment);
 
@@ -613,6 +629,7 @@ class TA_API StopStepPoint: public ProgEl {
 INHERITED(ProgEl)
 public:
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgCtrl"; }
   TA_SIMPLE_BASEFUNS(StopStepPoint);
 
 protected:
@@ -637,6 +654,7 @@ public:
   // the function code (list of program elements)
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "Function"; }
   TA_SIMPLE_BASEFUNS(Function);
 protected:
   override void		UpdateAfterEdit_impl();
@@ -668,6 +686,7 @@ public:
 
   override taList_impl*	children_() {return &fun_args;}
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "Function"; }
   TA_SIMPLE_BASEFUNS(FunctionCall);
 protected:
   override void		UpdateAfterEdit_impl();
@@ -686,6 +705,7 @@ public:
   // #EDIT_DIALOG expression to return from function with (can be empty to return from a void function)
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgCtrl"; }
   TA_SIMPLE_BASEFUNS(ReturnExpr);
 
 protected:
@@ -704,6 +724,8 @@ public:
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   virtual void	GetVarsForObjs();
   // automatically create variables for objects in parent program
+
+  override String 	GetDecorateKey() const { return "ProgVar"; }
 
   TA_BASEFUNS(ProgObjList);
 protected:
@@ -845,6 +867,8 @@ public: // XxxGui versions provide feedback to the usbool no_gui = falseer
   static Program*	MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
   static void		MakeTemplate_fmtype(Program* prog, TypeDef* td); // #IGNORE make from typedef
   
+  override String 	GetDecorateKey() const { return "Program"; }
+
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const Program& cp);
@@ -887,6 +911,7 @@ class TA_API Program_List : public taList<Program> {
   INHERITED(taList<Program>)
 public:
   
+  override String 	GetDecorateKey() const { return "Program"; }
   TA_BASEFUNS(Program_List);
 private:
   void	Initialize();
@@ -982,6 +1007,8 @@ public:
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib (re)load the program from the program library element of given type
 
   void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
+
+  override String 	GetDecorateKey() const { return "Program"; }
   
   void	InitLinks();
   void	CutLinks();
@@ -1009,6 +1036,7 @@ public:
   // safe call to get target: emits error if target is null (used by program)
 
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ProgramCall);
 protected:

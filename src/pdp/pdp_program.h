@@ -107,6 +107,7 @@ public:
   MemberDef*	counter;	// #TYPE_ON_network_type #CATDEF_Counter counter variable on network to operate on
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgVar"; }
 
   TA_SIMPLE_BASEFUNS(NetCounterInit);
 
@@ -132,6 +133,7 @@ public:
   MemberDef*	counter;	// #TYPE_ON_network_type  #CATDEF_Counter counter variable on network to operate on
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "ProgVar"; }
 
   TA_SIMPLE_BASEFUNS(NetCounterIncr);
 
@@ -155,6 +157,7 @@ public:
   ProgVarRef	update_var;	// #SCOPE_Program_Group variable that controls whether we update the display or not
   
   override String	GetDisplayName() const;
+  override String 	GetDecorateKey() const { return "Function"; }
 
   TA_SIMPLE_BASEFUNS(NetUpdateView);
 

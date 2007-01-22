@@ -5,6 +5,7 @@ commit:
 ------------------
 * gridview: 
 
+  - min font size -- at end just enforce font_size > val
   - struct update debug on hv model
   - when editing a datatable_impl, need to send refresh update to display
   - initial panel is not updated..  just stick in render_impl and be done with it??

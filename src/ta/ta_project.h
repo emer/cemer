@@ -39,6 +39,8 @@ INHERITED(taNBase)
 public:
   bool		auto_open;	// open this wizard upon startup
 
+  override String 	GetDecorateKey() const { return "Wizard"; }
+
   void 	InitLinks();
   void	CutLinks(); 
   SIMPLE_COPY(taWizard);
@@ -55,6 +57,8 @@ INHERITED(taGroup<taWizard>)
 public:
   virtual void	AutoEdit();
 
+  override String 	GetDecorateKey() const { return "Wizard"; }
+
   void	Initialize() 		{ SetBaseType(&TA_taWizard); }
   void 	Destroy()		{ };
   TA_BASEFUNS(Wizard_Group);
@@ -66,11 +70,12 @@ INHERITED(taGroup<SelectEdit>)
 public:
   virtual void	AutoEdit();
 
+  override String 	GetDecorateKey() const { return "SelectEdit"; }
+
   void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
   void 	Destroy()		{ };
   TA_BASEFUNS(SelectEdit_Group);
 };
-
 
 class TA_API taProject : public taFBase {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
@@ -150,7 +155,7 @@ class TA_API taRootBase: public taNBase {
 INHERITED(taNBase)
 public:
   String		version; 	// #READ_ONLY #SHOW current version number
-  taBase_List		templates;	// #NO_SAVE #SHOW objects used as templates -- do not use or mess with these!
+  taBase_List		templates;	// #NO_SAVE #READ_ONLY objects used as templates -- do not use or mess with these!
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
@@ -207,6 +212,8 @@ public:
   // #IGNORE initialize css script system
   static bool	Startup_InitGui();
   // #IGNORE initialize gui system
+  static bool	Startup_InitViewColors();
+  // #IGNORE initialize default view colors
   static bool	Startup_MakeMainWin();
   // #IGNORE open the main window (browser of root object) (returns success)
   static bool	Startup_Console();

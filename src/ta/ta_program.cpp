@@ -1190,8 +1190,6 @@ String PrintVar::GetDisplayName() const {
 //      Comment 	//
 //////////////////////////
 
-const String Comment::decorate_key("comment");
-
 void Comment::Initialize() {
   static String _def_comment("TODO: Add your program comment here (multi-lines ok).\n");
   desc = _def_comment;

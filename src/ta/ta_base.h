@@ -1955,7 +1955,6 @@ private:
 
 SmartPtr_Of(UserDataItem_List) // UserDataItem_ListPtr
 
-
 // define selectedit if no gui
 #ifdef TA_NO_GUI
 class TA_API SelectEdit {

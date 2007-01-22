@@ -32,6 +32,7 @@
 # include "ta_qtdata.h" // for taiObjChooser
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
+# include "colorscale.h"
 
 # include <QApplication>
 # include <QWidgetList>
@@ -627,12 +628,51 @@ bool taRootBase::Startup_InitGui() {
 //     	pdp_bitmap_height, pdp_bitmap_bits);
 //    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
     taMisc::gui_active = true;	// officially active!
+    Startup_InitViewColors();
   }
   else
 #endif // TA_GUI
   { 
     taiMC_ = taiMiscCore::New();
   }
+  return true;
+}
+
+/* emacs colors:
+ comment	Firebrick
+ string		RosyBrown
+ keyword	Purple
+ builtin	Orchid (also preprocessor)
+ function-name	Blue1
+ variable-name	DarkGoldenrod
+ type		ForestGreen
+ constant	CadetBlue
+ warning	Red1
+*/
+
+bool taRootBase::Startup_InitViewColors() {
+  if(!taMisc::view_colors) {
+    taMisc::view_colors = new ViewColor_List;
+    taMisc::view_colors->BuildHashTable(100); // speed this one up
+  }
+  taMisc::view_colors->FindMakeViewColor("Comment", "Program comment",
+					 true, "firebrick", true, "firebrick1");
+  taMisc::view_colors->FindMakeViewColor("ProgCtrl", "Program keyword",
+					 true, "purple2", true, "MediumPurple1");
+  taMisc::view_colors->FindMakeViewColor("Function", "Program function",
+					 true, "blue1", true, "LightBlue2");
+  taMisc::view_colors->FindMakeViewColor("ProgVar", "Program variable",
+					 true, "dark goldenrod");
+  taMisc::view_colors->FindMakeViewColor("ProgArg", "Program argument",
+					 true, "goldenrod");
+  taMisc::view_colors->FindMakeViewColor("Program", "Program itself",
+					 true, "red2", true, "red1");
+  taMisc::view_colors->FindMakeViewColor("DataTable", "DataTable and associated objects",
+					 true, "forest green", true, "pale green");
+  taMisc::view_colors->FindMakeViewColor("Wizard", "Wizard and associated objects",
+					 true, "azure4", true, "azure1");
+  taMisc::view_colors->FindMakeViewColor("SelectEdit", "SelectEdit -- editor for selected variables across different objects",
+					 true, "azure4", true, "azure1");
   return true;
 }
   	

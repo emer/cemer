@@ -293,6 +293,7 @@ public:
 
 class UserDataItem_List;
 class UserDataItemBase;
+class ViewColor_List;
 
 enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing 
   CO_PROCEED,		// tells caller to proceed with operation (typical default)
@@ -493,6 +494,9 @@ public:
   static int		color_scale_size; // #SAVE #CAT_GUI number of colors to put in a color scale
   static int		mono_scale_size;  // #SAVE #CAT_GUI number of monochrome bit-patterns to put in a color scale
   static int		jpeg_quality; 	// #SAVE #CAT_GUI jpeg quality for dumping jpeg files (1-100; 95 default)
+#ifndef NO_TA_BASE
+  static ViewColor_List* view_colors; 	// #NO_SAVE colors to use in the view displays -- looked up by name emitted by GetDecorateKey on objects
+#endif
 
   static ShowMembs	show;		// #SAVE #CAT_GUI what to show in general (eg. css)
   static ShowMembs	show_gui;	// #SAVE #CAT_GUI what to show in the gui

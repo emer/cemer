@@ -24,6 +24,7 @@
 # include "ta_group.h"
 # include "ta_dump.h"
 # include "ta_project.h" // for taRootBase
+# include "colorscale.h"
 # include "ta_TA_type.h"
 # include <QDir>
 # include <QCoreApplication>
@@ -361,6 +362,9 @@ int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
 int	taMisc::mono_scale_size = 16;
 int	taMisc::jpeg_quality = 95;
+#ifndef NO_TA_BASE
+ViewColor_List* taMisc::view_colors = NULL;
+#endif
 
 taMisc::ShowMembs  	taMisc::show = taMisc::NO_HIDDEN;
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;

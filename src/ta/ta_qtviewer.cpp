@@ -4422,7 +4422,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
   m_show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
-  m_decorate_enabled = false;
+  m_decorate_enabled = true;
   italic_font = NULL; 
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1, 
@@ -5104,9 +5104,12 @@ void iTreeViewItem::DecorateDataNode() {
   if (tv->decorateEnabled()) {
     String dec_key = link->GetDecorateKey(); // nil if none
     if (dec_key.nonempty()) {
-    //TEMP
-      if (dec_key == "comment") {
-        setTextColor(-1, Qt::darkGreen);
+      ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+      if(vc) {
+	if(vc->use_fg)
+	  setTextColor(-1, *(vc->fg_color.color()));
+// 	if(vc->use_bg)
+// 	  setHighlightColor(-1, vc->bg_color.color());
       }
     }
   }

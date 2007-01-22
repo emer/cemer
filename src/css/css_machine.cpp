@@ -2980,7 +2980,8 @@ int cssProg::Getc() {
   // if possible, we return an unconsumed char already in input lines
   if ((line < src_size) && (col < (int)source[line]->src.length()))
     return (int) (source[line]->src[col++]);
-    
+
+  if(!top->src_fin) return EOF;
   if(ReadLn(*(top->src_fin)) == EOF)
     return EOF;
     

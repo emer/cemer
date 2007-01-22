@@ -182,8 +182,6 @@ public:
   TA_BASEFUNS(ScaleRange_List);
 };
 
-
-
 class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
 public:
@@ -238,6 +236,42 @@ public:
   TA_BASEFUNS(ColorScale);
   ColorScale(int chunk);
 };
+
+class TA_API ViewColor : public taNBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Display view color specification -- name lookup of color highlighting for view display
+INHERITED(taNBase)
+public:
+  bool		use_fg;			// use a special foreground color
+  RGBA		fg_color;		// #CONDEDIT_ON_use_fg:true foreground color
+  bool		use_bg;			// use a special background color
+  RGBA		bg_color;		// #CONDEDIT_ON_use_fg:true background color
+  String 	desc;			// description of this view color item
+
+  override String	GetDesc() const { return desc; }
+
+  void	InitLinks();
+  SIMPLE_COPY(ViewColor);
+  COPY_FUNS(ViewColor, inherited);
+  TA_BASEFUNS(ViewColor);
+private:
+  void  Initialize();
+  void 	Destroy();
+};
+
+class TA_API ViewColor_List : public taList<ViewColor> {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ViewColor items
+public:
+
+  virtual bool	FindMakeViewColor(const String& nm, const String& dsc,
+				  bool fg, const String& fg_color_name,
+				  bool bg=false, const String& bg_color_name="");
+  // find view color of given name -- if not there, make it, with given params (returns false if didn't already exist)
+
+  void	Initialize() 		{ SetBaseType(&TA_ViewColor); }
+  void 	Destroy()		{ };
+  TA_BASEFUNS(ViewColor_List);
+};
+
 
 #endif // colorscale_h
 

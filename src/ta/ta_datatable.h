@@ -231,6 +231,8 @@ public:
   virtual void	CopyFromRow_Robust(int dest_row, const DataArray_impl& cp, int src_row);
   // #CAT_ObjectMgmt copy one row from source to given row in this object, robust to differences in type and format of the cells
   
+  override String 	GetDecorateKey() const { return "DataTable"; }
+
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
   override String GetDesc() const {return desc;}
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
@@ -291,6 +293,8 @@ public:
   // #CAT_ObjectMgmt copy only the column structure, but no data, from other data table
   virtual void	CopyFromRow(int dest_row, const DataTableCols& cp, int src_row);
   // #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
+
+  override String 	GetDecorateKey() const { return "DataTable"; }
 
   TA_BASEFUNS(DataTableCols);
 private:
@@ -569,6 +573,7 @@ public:
   // #CAT_DMem Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
+  override String 	GetDecorateKey() const { return "DataTable"; }
 
   void	InitLinks();
   void	CutLinks();
@@ -665,8 +670,9 @@ class TA_API DataTable_Group : public taGroup<DataTable> {
   // ##CAT_Data group of data objects
 INHERITED(taGroup<DataTable>)
 public:
+  override String 	GetDecorateKey() const { return "DataTable"; }
+
   TA_BASEFUNS(DataTable_Group);
-  
 private:
   void	Initialize() 		{ SetBaseType(&TA_DataTable); }
   void 	Destroy()		{ };

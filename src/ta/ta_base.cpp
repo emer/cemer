@@ -1550,8 +1550,17 @@ bool taBase::ReShowEdit(bool force) {
 }
 
 const iColor* taBase::GetEditColor() {
-  if (tabMisc::root) return tabMisc::root->GetObjColor(this);
-  else return NULL;
+  String dec_key = GetDecorateKey(); // nil if none
+  if (dec_key.nonempty()) {
+    ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+    if(vc) {
+      if(vc->use_bg)
+	return vc->bg_color.color(); // prefer bg color if specified; else use fg
+      else if(vc->use_fg)
+	return vc->fg_color.color();
+    }
+  }
+  return NULL;
 }
 
 const iColor* taBase::GetEditColorInherit() {

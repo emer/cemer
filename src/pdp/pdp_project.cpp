@@ -29,6 +29,7 @@
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 # include "ta_datatable_qtso.h"
+# include "colorscale.h"
 # include "netstru_qtso.h"
 
 # include <qapplication.h>
@@ -39,6 +40,49 @@
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 #endif
+
+/* colors from v3.2
+"VioletRed1";"Network";
+"DarkOliveGreen3";"Env";
+"yellow";"SchedProc";
+"LightSteelBlue2";"StatGroup";
+"wheat";"SubProcGroup";
+"SlateBlue1";"Stat";
+"gold";"Process";
+"burlywood2";"Log";
+"aquamarine";"Agg Highlite";
+"grey64";"Group";
+"grey75";"Inactive";
+"red";"Stopping Stat";
+"SlateBlue3";"Agging Stat";
+"SpringGreen";"ConSpec";
+"violet";"UnitSpec";
+"orange";"PrjnSpec";
+"MediumPurple1";"LayerSpec";
+"azure";"Wizard";
+*/
+
+static void pdp_viewcolor_init() {
+  if(!taMisc::view_colors) {
+    taRootBase::Startup_InitViewColors();
+  }
+  taMisc::view_colors->FindMakeViewColor("Network", "PDP++ Neural network", true, "VioletRed1");
+  taMisc::view_colors->FindMakeViewColor("ConSpec", "PDP++ Connection Spec", true, "SpringGreen");
+  taMisc::view_colors->FindMakeViewColor("Connection", "PDP++ Connection", true, "SpringGreen");
+  taMisc::view_colors->FindMakeViewColor("UnitSpec", "PDP++ Unit Spec", true, "violet");
+  taMisc::view_colors->FindMakeViewColor("Unit", "PDP++ Unit", true, "violet");
+  taMisc::view_colors->FindMakeViewColor("ProjectionSpec", "PDP++ Projection Spec", true, "orange");
+  taMisc::view_colors->FindMakeViewColor("Projection", "PDP++ Projection", true, "orange");
+  taMisc::view_colors->FindMakeViewColor("LayerSpec", "PDP++ Layer Spec", true, "MediumPurple1");
+  taMisc::view_colors->FindMakeViewColor("Layer", "PDP++ Layer", true, "MediumPurple1");
+}
+
+void pdp_project_init() {
+  pdp_viewcolor_init();
+}
+
+// module initialization
+InitProcRegistrar mod_init_pdp_project(pdp_project_init);
 
 
 //////////////////////////
@@ -563,13 +607,6 @@ void ProjectBase::Initialize() {
 void ProjectBase::InitLinks_impl() {
   inherited::InitLinks_impl();
   taBase::Own(networks, this);
-  taBase::Own(the_colors, this);
-  taBase::Own(view_colors, this);
-
-  if (taMisc::is_loading)
-    view_colors.Reset();		// kill existing colors
-  else
-    GetDefaultColors();
 
   // make default groups for different types of data
   data.FindMakeGpName("InputData");
@@ -580,16 +617,12 @@ void ProjectBase::InitLinks_impl() {
 void ProjectBase::CutLinks_impl() {
   // do base first, esp. to nuke viewers before the networks
   inherited::CutLinks_impl();
-  view_colors.CutLinks();
-  the_colors.CutLinks();
   networks.CutLinks();
 }
 
 void ProjectBase::Copy_(const ProjectBase& cp) {
   networks = cp.networks;
 
-  view_colors = cp.view_colors;
-  the_colors = cp.the_colors;
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers!
 }
 
@@ -601,7 +634,6 @@ void ProjectBase::UpdateAfterEdit() {
 
 void ProjectBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateColors();
 }
 
 void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
@@ -624,116 +656,6 @@ DataTable_Group* ProjectBase::analysisDataGroup() {
   return rval;
 }
 
-void ProjectBase::GetDefaultColors() {
-  view_colors.SetSize(COLOR_COUNT);
-  view_colors[TEXT]->name = "black";
-  view_colors[TEXT]->desc = "Text";
-  view_colors[BACKGROUND]->r = .752941f;
-  view_colors[BACKGROUND]->g = .768627f;
-  view_colors[BACKGROUND]->b = .827451f;
-  view_colors[BACKGROUND]->desc = "Background";
-  view_colors[NETWORK]->name = "VioletRed1";
-  view_colors[NETWORK]->desc = "Network";
-  view_colors[ENVIRONMENT]->name = "DarkOliveGreen3";
-  view_colors[ENVIRONMENT]->desc = "Env";
-  view_colors[SCHED_PROC]->name = "yellow";
-  view_colors[SCHED_PROC]->desc = "SchedProc";
-  view_colors[STAT_GROUP]->name = "LightSteelBlue2";
-  view_colors[STAT_GROUP]->desc = "StatGroup";
-  view_colors[SUBPROC_GROUP]->name = "wheat";
-  view_colors[SUBPROC_GROUP]->desc = "SubProcGroup";
-  view_colors[STAT_PROC]->name = "SlateBlue1";
-  view_colors[STAT_PROC]->desc = "Stat";
-  view_colors[OTHER_PROC]->name = "gold";
-  view_colors[OTHER_PROC]->desc = "Process";
-  view_colors[PDPLOG]->name = "burlywood2";
-  view_colors[PDPLOG]->desc = "Log";
-  view_colors[STAT_AGG]->name = "aquamarine";
-  view_colors[STAT_AGG]->desc = "Agg Highlite";
-  view_colors[GEN_GROUP]->name = "grey64";
-  view_colors[GEN_GROUP]->desc = "Group";
-  view_colors[INACTIVE]->name = "grey75";
-  view_colors[INACTIVE]->desc = "Inactive";
-  view_colors[STOP_CRIT]->name = "red";
-  view_colors[STOP_CRIT]->desc = "Stopping Stat";
-  view_colors[AGG_STAT]->name = "SlateBlue3";
-  view_colors[AGG_STAT]->desc = "Agging Stat";
-
-  view_colors[CON_SPEC]->name = "SpringGreen";
-  view_colors[CON_SPEC]->desc = "ConSpec";
-  view_colors[UNIT_SPEC]->name = "violet";
-  view_colors[UNIT_SPEC]->desc = "UnitSpec";
-  view_colors[PRJN_SPEC]->name = "orange";
-  view_colors[PRJN_SPEC]->desc = "PrjnSpec";
-  view_colors[LAYER_SPEC]->name = "MediumPurple1";
-  view_colors[LAYER_SPEC]->desc = "LayerSpec";
-  view_colors[WIZARD]->name = "azure";
-  view_colors[WIZARD]->desc = "Wizard";
-
-  UpdateColors();
-}
-
-const iColor* ProjectBase::GetObjColor(TypeDef* td) {
-#ifdef TA_GUI
-  if(view_colors.size != COLOR_COUNT) {
-    view_colors.Reset();
-    GetDefaultColors();
-  }
-  if(the_colors.size != COLOR_COUNT)
-    UpdateColors();
-  if(td->InheritsFrom(TA_ConSpec))
-    return the_colors.FastEl(ProjectBase::CON_SPEC)->color();
-  else if(td->InheritsFrom(TA_UnitSpec))
-    return the_colors.FastEl(ProjectBase::UNIT_SPEC)->color();
-  else if(td->InheritsFrom(TA_ProjectionSpec))
-    return the_colors.FastEl(ProjectBase::PRJN_SPEC)->color();
-  else if(td->InheritsFrom(TA_LayerSpec))
-    return the_colors.FastEl(ProjectBase::LAYER_SPEC)->color();
-  else if (td->InheritsFrom(TA_Network) ||
-    td->InheritsFrom(TA_Layer) ||
-    td->InheritsFrom(TA_Unit_Group) ||
-    td->InheritsFrom(TA_Projection) ||
-    td->InheritsFrom(TA_Connection) ||
-    td->InheritsFrom(TA_RecvCons) ||
-    td->InheritsFrom(TA_SendCons) ||
-    td->InheritsFrom(TA_RecvCons_List) ||
-    td->InheritsFrom(TA_SendCons_List) ||
-    td->InheritsFrom(TA_Unit) ||
-    td->InheritsFrom(TA_Network_Group)
-    ) return the_colors.FastEl(ProjectBase::NETWORK)->color();
-  else if(td->InheritsFrom(TA_Environment))
-    return the_colors.FastEl(ProjectBase::ENVIRONMENT)->color();
-//  else if (td->InheritsFrom(TA_TableView)) //note: formerly logs
-//    return the_colors.FastEl(ProjectBase::PDPLOG)->color();
-  else if(td->InheritsFrom(TA_SchedProcess))
-    return the_colors.FastEl(ProjectBase::SCHED_PROC)->color();
-  else if(td->InheritsFrom(TA_Stat))
-    return the_colors.FastEl(ProjectBase::STAT_PROC)->color();
-  else if(td->InheritsFrom(TA_Process))
-    return the_colors.FastEl(ProjectBase::OTHER_PROC)->color();
-  else if(td->InheritsFrom(TA_taGroup_impl))
-    return the_colors.FastEl(ProjectBase::GEN_GROUP)->color();
-  else if(td->InheritsFrom(TA_taWizard)) //note: all Wizards, even ta ones
-    return the_colors.FastEl(ProjectBase::WIZARD)->color();
-#endif
-  return NULL;
-}
-
-const iColor* ProjectBase::GetObjColor(int/*ViewColors*/ vc) {
-#ifdef TA_GUI
-  if (view_colors.size != COLOR_COUNT) {
-    view_colors.Reset();
-    GetDefaultColors();
-  }
-  if (the_colors.size != COLOR_COUNT)
-    UpdateColors();
-  TAColor* tac = the_colors.SafeEl(vc);
-  if (tac)
-    return tac->color();
-#endif
-  return NULL;
-}
-
 void ProjectBase::AssertDefaultWiz(bool auto_opn) {
   taWizard* wiz = wizards.SafeEl(0);
 //TODO: need a better wizard making api -- factor out the make routine
@@ -744,21 +666,6 @@ void ProjectBase::AssertDefaultWiz(bool auto_opn) {
     wiz->auto_open = true;
     ((Wizard*)wiz)->ThreeLayerNet();
     wiz->Edit();
-  }
-}
-
-void ProjectBase::UpdateColors() {
-  if(view_colors.size != COLOR_COUNT) {
-    view_colors.Reset();
-    GetDefaultColors();
-  }
-  the_colors.SetSize(COLOR_COUNT);
-  if(taMisc::gui_active) {
-    int i;
-    for(i=0;i<COLOR_COUNT;i++) {
-      view_colors[i]->UpdateAfterEdit();
-      the_colors[i]->SetColor(view_colors[i]);
-    }
   }
 }
 
@@ -803,13 +710,6 @@ TAPtr PDPRoot::Browse(const char* init_path) {
   return retv;
 }
 #endif
-
-const iColor* PDPRoot::GetObjColor(taBase* inst) {
-  if (!inst) return NULL;
-  ProjectBase* proj = (ProjectBase*)inst->GetOwner(&TA_ProjectBase);
-  if (proj) return proj->GetObjColor(inst->GetTypeDef());
-  else return NULL;
-} 
 
 void PDPRoot::Info() {
   STRING_BUF(info, 2048);

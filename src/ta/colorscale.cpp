@@ -50,15 +50,14 @@ void RGBA::Destroy() {
 
 void RGBA::UpdateAfterEdit(){
   inherited::UpdateAfterEdit();
-  color_.setRgb(r, g, b, a);
-  if(!taMisc::gui_active)    return;
+  //  if(!taMisc::gui_active)    return;
   if (!name.empty()){
     if(!(iColor::find
 	 (/*ivSession::instance()->default_display(),*/(char *)name,r,g,b))){
       taMisc::Error("Color: " , name , " not found for this display");
     }
-
   }
+  color_.setRgb(r, g, b, a);
 }
 
 void RGBA::Copy_(const RGBA& cp) {
@@ -663,6 +662,48 @@ void ColorScale::UpdateMinMax(float mn, float mx) {
 }
 
 
+//////////////////////////
+//	ViewColors	//
+//////////////////////////
 
+void ViewColor::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(fg_color, this);
+  taBase::Own(bg_color, this);
+}
+
+void ViewColor::Initialize() {
+  use_fg = false;
+  use_bg = false;
+}
+
+void ViewColor::Destroy() {
+}
+
+
+bool ViewColor_List::FindMakeViewColor(const String& nm, const String& dsc,
+				       bool fg, const String& fg_name,
+				       bool bg, const String& bg_name) {
+  ViewColor* vc = FindName(nm);
+  bool rval = true;
+  if(!vc) {
+    vc = new ViewColor;
+    vc->name = nm;		// note: this list has a hash table typicaly, so make sure name is set first before adding!
+    Add(vc);
+    rval = false;
+  }
+  vc->desc = dsc;
+  vc->use_fg = fg;
+  vc->use_bg = bg;
+  if(fg) {
+    vc->fg_color.name = fg_name;
+    vc->fg_color.UpdateAfterEdit();
+  }
+  if(bg) {
+    vc->bg_color.name = bg_name;
+    vc->bg_color.UpdateAfterEdit();
+  }
+  return rval;
+}
 
 

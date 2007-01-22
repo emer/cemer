@@ -110,6 +110,8 @@ public:
   override int	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   // get paths before saving
 
+  override String 	GetDecorateKey() const { return "SelectEdit"; }
+
   // note: this is intentionally not _impl:
   void	UpdateAfterEdit();
   void 	InitLinks();
