@@ -251,7 +251,7 @@ public:
   float		mat_trans;	  // #DEF_0.6 maximum transparency of zero values in matrix blocks -- set to 0 to make all blocks opaque
 
   MinMaxInt	mat_size_range;	// range of display sizes for matrix items relative to other text items.  each cell in a matrix counts as one character in size, within these ranges (smaller matricies are made larger to min size, and large ones are made smaller to max size)
-  float		max_text_sz;	// #DEF_0.05 maximum text size, enforced in cases where there are 
+  MinMax	text_size_range; // (default .02 - .05) minimum and maximum text size -- keeps things readable and not too big
 
   GridColView*		colVis(int i) const
   { return (GridColView*)colView(vis_cols.SafeEl(i)); }

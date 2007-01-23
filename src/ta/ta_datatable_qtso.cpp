@@ -691,7 +691,8 @@ void GridTableView::Initialize() {
 
   mat_size_range.min = 4;
   mat_size_range.max = 16;
-  max_text_sz = .05f;
+  text_size_range.min = .02f;
+  text_size_range.max = .05f;
 
   scale.auto_scale = false;
   scale.min = -1.0f; scale.max = 1.0f;
@@ -706,6 +707,7 @@ void GridTableView::Initialize() {
 void GridTableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(mat_size_range, this);
+  taBase::Own(text_size_range, this);
   taBase::Own(col_range, this);
   taBase::Own(scale, this);
   taBase::Own(vis_cols, this);
@@ -723,22 +725,25 @@ void GridTableView::Copy_(const GridTableView& cp) {
   col_n = cp.col_n;
 
   col_range = cp.col_range;
+  width = cp.width;
   grid_on = cp.grid_on;
   header_on = cp.header_on;
   row_num_on = cp.row_num_on;
   two_d_font = cp.two_d_font;
   two_d_font_scale = cp.two_d_font_scale;
+  mat_val_text = cp.mat_val_text;
   scale = cp.scale;
 
   grid_margin = cp.grid_margin;
   grid_line_size = cp.grid_line_size;
-
-  mat_size_range = cp.mat_size_range;
-  mat_val_text = cp.mat_val_text;
+  row_num_width = cp.row_num_width;
   mat_block_spc = cp.mat_block_spc;
   mat_block_height = cp.mat_block_height;
-  mat_trans = cp.mat_trans;
   mat_rot = cp.mat_rot;
+  mat_trans = cp.mat_trans;
+
+  mat_size_range = cp.mat_size_range;
+  text_size_range = cp.text_size_range;
 }
 
 void GridTableView::UpdateAfterEdit_impl(){
@@ -903,11 +908,11 @@ void GridTableView::CalcViewMetrics() {
 
   if(!redo) {
     font_scale = MIN(col_font_scale, row_font_scale);
-    if(font_scale > max_text_sz && has_mat) {
+    if(font_scale > text_size_range.max && has_mat) {
       redo = true;		// don't do more than once
-      float red_rat = max_text_sz / font_scale;
+      float red_rat = text_size_range.max / font_scale;
       // we have a matrix and font size is too big: rescale it and then recompute
-      font_scale = max_text_sz;
+      font_scale = text_size_range.max;
       tot_wd_raw = 0.0f;
       int cidx = 0;
       if(row_num_on) {
@@ -925,6 +930,10 @@ void GridTableView::CalcViewMetrics() {
       }
       goto normalize;		// redo
     }
+  }
+
+  if(font_scale < text_size_range.min) {
+    font_scale = text_size_range.min; // that's just it!
   }
 
   // need another iteration now that we know the true font scale!

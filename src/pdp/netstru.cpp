@@ -4624,7 +4624,7 @@ void Network::Build() {
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
     l->Build();
-  UpdateMonitors();
+//   UpdateMonitors();
   UpdtAfterNetMod();
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -4664,7 +4664,7 @@ void Network::Connect() {
     l->Connect();
   }
   UpdtAfterNetMod();
-  UpdateMonitors();
+//   UpdateMonitors();
   StructUpdate(false);
   taMisc::DoneBusy();
 }
