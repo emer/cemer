@@ -61,7 +61,7 @@ bool taPluginInst::InitTypes() {
   } else if (ipl) {
     taMisc::in_plugin_init++;
     TypeDef* td_last = taMisc::plugin_loading;
-    taMisc::plugin_loading = plugin_rep->GetTypeDef();
+    taMisc::plugin_loading = plugin()->GetTypeDef();
     int err = ipl->InitializeTypes();
     taMisc::plugin_loading = td_last;
     taMisc::in_plugin_init--;
@@ -131,6 +131,7 @@ void taPlugin::Initialize() {
   enabled = false; // be conservative, and require user to enable
   loaded = false;
   reconciled = false;
+  dep_check = DC_OK;
   plugin = NULL;
 }
 
@@ -138,6 +139,7 @@ void taPlugin::Copy_(const taPlugin& cp) {
   enabled = cp.enabled;
   loaded = false; // never for a copy
   reconciled = false;
+  dep_check = cp.dep_check; // not really used for copies
   name = cp.name;
   desc = cp.desc;
   unique_id = cp.unique_id;
@@ -145,6 +147,23 @@ void taPlugin::Copy_(const taPlugin& cp) {
   filename = cp.filename;
   url = cp.url;
   //intore plugin -- only used for insts, not descs
+}
+
+void taPlugin::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if (dep_check != DC_OK) {
+    if (!quiet) {
+      String msg; 
+      switch (dep_check) {
+      case DC_MISSING: msg = " is missing"; break;
+      case DC_NOT_LOADED: msg = " is not loaded"; break;
+      default: break; // compiler food
+      }
+      taMisc::CheckError("Required plugin: ", 
+        GetDisplayName(), msg);
+    }
+    rval = false;
+  }
 }
 
 //////////////////////////

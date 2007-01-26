@@ -1411,7 +1411,6 @@ public:
   enum Roles { // extra roles, for additional data, etc.
     ObjDataRole = Qt::UserRole + 1, // for additional data
     ColKeyRole,	// store a string in header to indicate the col key to use for data
-    HighlightIndexRole,	// store an int >0 in item0 to highlight row with this color
     ColDataRole, // store a QString::QVariant map of colkey/Role numbers to add addtl data to nodes; ex, "desc":Qt::ToolTipRole for tooltip text for the col "desc"
     ColFormatRole, // stores values from the ColFormatFlags enum
     MaxColCharsRole // store an int of max col width (in chars), we elide text to that length
@@ -1591,9 +1590,7 @@ public:
   int			dn_flags; // any of DataNodeFlags
 
   override bool 	acceptDrop(const QMimeData* mime) const;
-  override int		highlightIndex() const; // highlight color to use, 0=none
   void*			linkData() const;
-  void			setHighlightIndex(int value); // highlight color to use, 0=none
   iTreeView*		treeView() const;
 
   override void 	CreateChildren(); 

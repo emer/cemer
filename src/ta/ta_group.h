@@ -103,6 +103,7 @@ public:
   // IO routines
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
+  override void Dump_Save_GetPluginDeps(); // note: in ta_dump.cpp
   override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);

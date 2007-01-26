@@ -386,7 +386,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   TypeDef* eff_type = type;
   
   // embedded classes can never be Variant, and are completely handled in this block
-  if (type->InheritsNonAtomicClass()) { 
+  if (type->InheritsNonAtomicClass()) {
     taMisc::indent(strm, indent, 1) << name;
     if (type->InheritsFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)new_base;
@@ -678,18 +678,33 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
 
   ++taMisc::is_saving;
   dumpMisc::path_tokens.Reset();
+  tabMisc::root->plugin_deps.Reset();
 
   strm << "// ta_Dump File v2.0\n";   // be sure to check version with Load
   taMisc::strm_ver = 2;
   if (InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)base;
+    rbase->Dump_Save_pre();
+    rbase->Dump_Save_GetPluginDeps();
+    // if any plugins were used, write out the list of deps
+    taPlugin_List* plst = &(tabMisc::root->plugin_deps);
+    if (plst->size > 0) {
+      taBase* pl_par = NULL;//tabMisc::root
+      plst->Dump_Save_Path(strm, pl_par, indent);
+      strm << " { ";
+      if (plst->Dump_Save_PathR(strm, tabMisc::root, indent+1))
+        taMisc::indent(strm, indent, 1);
+      strm << "};\n";
+      plst->Dump_Save_impl(strm, (TAPtr)par, indent);
+    }
+    
+    // now, write out the object itself
     rbase->Dump_Save_Path(strm, (TAPtr)par, indent);
     strm << " { ";
     if(rbase->Dump_Save_PathR(strm, (TAPtr)par, indent+1))
       taMisc::indent(strm, indent, 1);
     strm << "};\n";
     rbase->Dump_Save_impl(strm, (TAPtr)par, indent);
-//nn,already in _impl    rbase->Dump_SaveR(strm, (TAPtr)par, indent);
   } else {
     Dump_Save_Path(strm, base, par, indent);
     if (InheritsNonAtomicClass()) {
@@ -1405,6 +1420,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   dumpMisc::path_tokens.Reset();
   dumpMisc::vpus.Reset();
   dumpMisc::update_after.Reset();
+  tabMisc::root->plugin_deps.Reset();
 
   int c;
   c = taMisc::read_till_eol(strm);
@@ -1425,7 +1441,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     taMisc::Warning("*** Dump load aborted due to errors");
     return false;
   }
-
+  
   if(!td->InheritsFrom(TA_taBase)) {
     taMisc::Warning("*** Only taBase objects may be loaded, not:", td->name);
     return false;
@@ -1435,9 +1451,29 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     cout << "Loading: " << td->name << " " << path << " rval: " << rval << "\n";
   }
 
+  // locals needed below, so we can use a jump
+  String new_path;
+  taBase* el = NULL; // the loaded element
+  
   ++taMisc::is_loading;
 
-  TAPtr el;				// the loaded element
+  // check for plugin deps, if so, load those in and resume
+  if (td->InheritsFrom(TA_taPlugin_List) && 
+    (path == ".plugin_deps")) 
+  {
+    rval = tabMisc::root->Dump_Load_Value(strm, NULL); // read it
+    rval = Dump_Load_impl(strm, NULL, tabMisc::root); 	// base is given by the path..
+    // resolve plugin dependencies, and warn/abort if not all are present
+    if (!tabMisc::root->VerifyHasPlugins()) {
+      rval = false;
+      goto endload;
+    }
+
+    //read again -- get the actual path
+    rval = Dump_Load_Path(strm, base, par, td, path); // non-null base just gets type
+  }
+
+
   if(InheritsFrom(td)) {		// we are the same as load token
     el = (TAPtr)base;			// so use the given base
   }
@@ -1447,12 +1483,13 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     if(el == NULL) {
       taMisc::Warning("*** Could not make a:",td->name,"in:",par->GetPath());
       --taMisc::is_loading;
-      return false;
+      rval = false;
+      goto endload;
     }
   }
 
 
-  String new_path = el->GetPath();
+  new_path = el->GetPath();
   if(new_path != path)
     dumpMisc::path_subs.Add(td, tabMisc::root, path, new_path);
 
@@ -1464,8 +1501,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
 
   dumpMisc::vpus.Resolve(); 			// try to cache out references.
 
-  int i;
-  for(i=0; i<dumpMisc::update_after.size; i++) {
+  for (int i=0; i<dumpMisc::update_after.size; i++) {
     TAPtr tmp = dumpMisc::update_after.FastEl(i);
     if(taBase::GetRefn(tmp) <= 1) {
       taMisc::Warning("*** Object: of type:",
@@ -1477,7 +1513,9 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
 //TEMP:cause crash in clip paste    taiMisc::RunPending();	// process events as they happen in updates..
 #endif
   }
-
+  rval = true;
+  
+endload:
   --taMisc::is_loading;
 
   dumpMisc::update_after.Reset();
@@ -1485,6 +1523,57 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   dumpMisc::path_tokens.Reset();
   dumpMisc::vpus.Reset();
   if (el_) *el_ = (void*)el;
-  return true;
+  return rval;
+}
+
+
+void taBase::Dump_Save_GetPluginDeps() {
+  if (!tabMisc::root) return;
+  // check me!
+  tabMisc::root->CheckAddPluginDep(this->GetTypeDef());
+  
+  // then check my members
+  MemberSpace& ms = GetTypeDef()->members;
+  for (int i = 0; i < ms.size; ++i) {
+    MemberDef* md = ms.FastEl(i);
+    if (!md) continue; // shouldn't happen
+    if (!md->DumpMember(this)) continue;
+    // ok, check if embedded taBase, or owned pointer
+    TypeDef* td = md->type; 
+    //TODO: very obscure, but could possibly be a taBase in a Variant
+    if (!td->DerivesFrom(&TA_taBase)) continue;
+    taBase* ta = NULL;
+    if (td->ptr == 0) { // embedded
+      ta = (taBase*)md->GetOff(this);
+    } else if (td->ptr == 1) { // ptr to... but needs to be owned!
+      ta = *(taBase**)md->GetOff(this);
+      if (!ta || (ta->GetOwner() != this)) continue;
+    } else continue;// ptr > 1, not supposed to be saveable!
+    ta->Dump_Save_GetPluginDeps();
+  }
+}
+
+void taList_impl::Dump_Save_GetPluginDeps() {
+  inherited_taBase::Dump_Save_GetPluginDeps();
+  if (!Dump_QuerySaveChildren()) return;
+  
+  for (int i = 0; i < size; ++i) {
+    taBase* itm = (taBase*)FastEl_(i);
+    if (!itm) continue;
+    
+    // we check item for plugin if we'll save it,
+    // i.e. if we own it, or it is a LINK_SAVE link
+    taBase* own = itm->GetOwner();
+    if ((own == this) ||
+      (!own && itm->HasOption("LINK_SAVE"))
+    ){
+      itm->Dump_Save_GetPluginDeps();
+    }
+  }
+}
+
+void taGroup_impl::Dump_Save_GetPluginDeps() {
+  inherited::Dump_Save_GetPluginDeps();
+  gp.Dump_Save_GetPluginDeps();
 }
 

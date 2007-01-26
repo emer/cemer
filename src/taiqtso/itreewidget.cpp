@@ -107,7 +107,7 @@ void iTreeWidget::doItemExpanded(QTreeWidgetItem* item_, bool expanded) {
 void iTreeWidget::drawRow(QPainter* painter,
     const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-  if (highlightRows()) {
+/*  if (highlightRows()) {
     iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
     if (!item) goto no_hi;
     int idx = item->highlightIndex();
@@ -121,7 +121,7 @@ void iTreeWidget::drawRow(QPainter* painter,
     inherited::drawRow(painter, opt, index);
     return;
   }
-no_hi:
+no_hi: */
   inherited::drawRow(painter, option, index);
 }
 
@@ -277,13 +277,39 @@ void iTreeWidgetItem::itemExpanded(bool expanded) {
   CreateChildren();
 }
 
-void iTreeWidgetItem::setTextColor(int col, const QColor& color) {
+void iTreeWidgetItem::setBackgroundColor(const QColor& color, int col) 
+{
+  if (col < 0) {
+    for (int i = 0; i < columnCount(); ++i) {
+      setData(i, Qt::BackgroundColorRole, color);
+    }
+  } else if (col < columnCount()) {
+    setData(col, Qt::BackgroundColorRole, color);
+  }
+}
+
+void iTreeWidgetItem::setTextColor(const QColor& color, int col) {
   if (col < 0) {
     for (int i = 0; i < columnCount(); ++i) {
       setData(i, Qt::TextColorRole, color);
     }
   } else if (col < columnCount()) {
     setData(col, Qt::TextColorRole, color);
+  }
+}
+
+void iTreeWidgetItem::resetBackgroundColor(int col) {
+  QVariant var; // check for existing color, don't set if not necessary
+  if (col < 0) {
+    for (int i = 0; i < columnCount(); ++i) {
+      var = data(i, Qt::BackgroundColorRole);
+      if (var.isValid())
+        setData(i, Qt::BackgroundColorRole, QVariant());
+    }
+  } else if (col < columnCount()) {
+    var = data(col, Qt::BackgroundColorRole);
+    if (var.isValid())
+      setData(col, Qt::BackgroundColorRole, QVariant());
   }
 }
 

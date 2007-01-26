@@ -514,9 +514,13 @@ public:
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
 
+  virtual void 		Dump_Save_GetPluginDeps();
+  // #IGNORE called prior to saving, to build the plugin deps in .plugin_deps
+  // note: this routine (and overrides) is in ta_dump.cpp
+  virtual void 		Dump_Save_pre() {}
+  // #IGNORE called before _Path, enables jit updating before save
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
-  { Dump_Save_pre(); 
-    return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
+  { return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_inline(ostream& strm, TAPtr par=NULL, int indent=0)
   { Dump_Save_pre(); 
     return GetTypeDef()->Dump_Save_inline(strm, (void*)this, par, indent); } // #IGNORE
@@ -533,10 +537,6 @@ public:
   // #IGNORE default checks NO_SAVE directive; override to make save decision at runtime
   virtual bool		Dump_QuerySaveChildren() 
   {return true;} // #IGNORE override to make save decision at runtime
-
-protected: // Impl
-  virtual void 		Dump_Save_pre() {}
-  // #IGNORE called before _impl, enables jit updating before save
 
 
   ///////////////////////////////////////////////////////////////////////////
@@ -1277,6 +1277,7 @@ public:
 
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
+  override void Dump_Save_GetPluginDeps();
   override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
   virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); // #IGNORE

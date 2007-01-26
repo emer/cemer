@@ -2032,9 +2032,29 @@ void DataChangeHelper::Reset() {
 // 	     TypeSpace		//
 //////////////////////////////////
 
+TypeSpace::~TypeSpace() { 
+  Reset();
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
 String	TypeSpace::El_GetName_(void* it) const { return ((TypeDef*)it)->name; }
 TALPtr 	TypeSpace::El_GetOwner_(void* it) const { return ((TypeDef*)it)->owner; }
-void*	TypeSpace::El_SetOwner_(void* it) { return ((TypeDef*)it)->owner = this; }
+void*	TypeSpace::El_SetOwner_(void* it_) { 
+  if (!it_) return it_;
+  TypeDef* it = (TypeDef*)it_;
+  it->owner = this; 
+  //if this type is being added to anything during a plugin init, then
+  // it is a plugin class, and we stamp it as such
+#ifndef NO_TA_BASE
+  if (taMisc::in_plugin_init) {
+    it->plugin = taMisc::plugin_loading;
+  }
+#endif
+  return it_;
+  
+}
 void	TypeSpace::El_SetIndex_(void* it, int i){ ((TypeDef*)it)->idx = i; }
 
 void*	TypeSpace::El_Ref_(void* it)   	  { taRefN::Ref((TypeDef*)it); return it; }
@@ -2588,17 +2608,6 @@ MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
   return NULL;
 }
 
-
-//////////////////////////
-//   TypeSpace		//
-//////////////////////////
-
-TypeSpace::~TypeSpace() { 
-  Reset();
-  if (data_link) {
-    data_link->DataDestroying(); // link NULLs our pointer
-  }
-}
 
 //////////////////////////
 //   TypeItem		//
@@ -3237,12 +3246,7 @@ void TypeDef::Initialize() {
   pre_parsed = false;	// true if previously parsed by maketa
 #else
   is_subclass = false;
-  if (taMisc::in_plugin_init) {
-    in_plugin = true;
-    par_formal.Add(taMisc::plugin_loading);
-  } else {
-    in_plugin = false;
-  }
+  plugin = NULL; // set true by TypeSpace::SetOwner if initing a plugin
   instance = NULL;
   defaults = NULL;
   schema = NULL;
@@ -3342,7 +3346,7 @@ void TypeDef::Copy(const TypeDef& cp) {
   pre_parsed	= cp.pre_parsed;
 #else
   is_subclass	= cp.is_subclass;
-  in_plugin = cp.in_plugin;
+  plugin = cp.plugin;
   instance	= cp.instance ;
   //TODO: copy the schema
 // don't copy the tokens..
@@ -3587,16 +3591,11 @@ TypeDef* TypeDef::GetNonConstType() const {
 }
 
 TypeDef* TypeDef::GetPluginType() const {
-#ifndef NO_TA_BASE
-  if (!in_plugin) return NULL;
-  TypeDef* rval = NULL;
-  for (int i=0; i < par_formal.size; ++i) {
-    rval = par_formal.FastEl(i);
-    if (rval->InheritsFrom(&TA_IPlugin))
-      return rval;
-  }
-#endif
+#ifdef NO_TA_BASE
   return NULL;
+#else
+  return plugin;
+#endif
 }
 
 String TypeDef::GetPtrString() const {

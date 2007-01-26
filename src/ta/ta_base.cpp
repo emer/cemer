@@ -2365,12 +2365,12 @@ int taList_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
   String mypath = GetPath(NULL, par);
   int i;
   for(i=0; i<size; i++) {
-    if(el[i] == NULL) continue;
-    TAPtr itm = (TAPtr)el[i];
-    if(El_GetOwner_((TAPtr)el[i]) == this) {
+    taBase* itm = (taBase*)FastEl_(i);
+    if (!itm) continue;
+    if (El_GetOwner_(itm) == this) {
       itm->Dump_Save_impl(strm, par, indent);
     }
-    else if(El_GetOwner_(itm) != NULL) {	// a link
+    else if (El_GetOwner_(itm) != NULL) {	// a link
       taMisc::indent(strm, indent) << GetTypeDef()->name << " ";
       if(par != NULL) strm << "@";
       strm << mypath << " = ";

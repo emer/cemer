@@ -194,6 +194,7 @@ void taProject::UpdateAfterEdit() {
 //   }
 }
 
+
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
   // try official default first
   MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.DefaultEl()); 
@@ -381,7 +382,56 @@ void taRootBase::MonControl(bool on) {
 }
 #endif
 
+bool taRootBase::CheckAddPluginDep(TypeDef* td) {
+  if (!td) return false;
+  TypeDef* pl_td = td->plugin;
+  if (!pl_td) return false;
+  bool rval = false;
+  for (int i = 0; i < plugins.size; ++i) {
+    taPlugin* pl = plugins.FastEl(i);
+    if (!pl->plugin ) continue; // not loaded
+    IPlugin* ipl = pl->plugin->plugin();
+    if (!ipl) continue; // not loaded
+    if (ipl->GetTypeDef() == pl_td) {
+      // this is the guy!
+      rval = true;
+      // see if already listedbool		VerifyHasPlugins()
+      if (plugin_deps.FindName(pl->GetName())) break;
+      // otherwise, clone a desc, and add
+      taPlugin* pl_desc = new taPlugin;
+      pl_desc->Copy(*pl);
+      plugin_deps.Add(pl_desc);
+      break;
+    }
+  }
   
+  return rval;
+}
+
+bool taRootBase::VerifyHasPlugins() {
+  int miss_cnt = 0;
+  for (int i = 0; i < plugin_deps.size; ++i) {
+    taPlugin* pl_dep = plugin_deps.FastEl(i);
+    taPlugin* pl = plugins.FindName(pl_dep->GetName());
+    if (pl) {
+      if (!pl->loaded)
+        pl_dep->dep_check = taPlugin::DC_NOT_LOADED;
+      //else if...
+      else continue; // ok
+    } else {
+      pl_dep->dep_check = taPlugin::DC_MISSING;
+    }
+    ++miss_cnt;
+  }
+  if (miss_cnt == 0) return true;
+  // highlight load issues
+  plugin_deps.CheckConfig();
+  String msg = "Would you like to Abort or Continue loading?";
+  int chs = taMisc::Choice(msg, "Abort", "Continue");
+  return (chs == 1);
+
+}
+
 void taRootBase::Info() {
   String info;
   info += "TA/CSS Info\n";

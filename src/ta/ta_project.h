@@ -159,7 +159,7 @@ public:
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
-  taPlugin_List		plugin_deps; // #NO_SAVE #READ_ONLY #SHOW_TREE EXPERT_TREE  dynamic list, reset before each streaming op
+  taPlugin_List		plugin_deps; // #SHOW_TREE EXPERT_TREE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
   
   virtual void  Settings() {};
@@ -235,6 +235,9 @@ public:
   // #IGNORE waiting process for dmem_proc = 0, if send_stop_to_subs, sends a stop command to sub procs so they bail out of sub loop
 #endif
   	
+  bool		CheckAddPluginDep(TypeDef* td); // add a plugin dependency, if this type is a  type defined in a plugin; true if it was
+  bool		VerifyHasPlugins(); // check the current plugin_deps w/ loaded plugins, return true if all needed plugins loaded OR user says to continue loading anyway
+  
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(taRootBase)

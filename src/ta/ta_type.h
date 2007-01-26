@@ -1586,7 +1586,7 @@ public:
   bool		pre_parsed;	// true if previously parsed by maketa
 #else
   bool		is_subclass;	// true if is a class, and inherits from another
-  bool		in_plugin;	// true if defined in a plugin; par_formal will contain TA of the plugin object 
+  TypeDef*	plugin;		// TypeDef of plugin object, if in a plugin (else NULL) 
   void**	instance;	// pointer to the instance ptr of this type
   taBase_List*	defaults;	// default values registered for this type
   UserDataItem_List* schema;	// default schema (only created if used)

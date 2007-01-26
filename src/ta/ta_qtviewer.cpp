@@ -4433,10 +4433,6 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
     QColor(0xFF, 0xFF, 0x99),  // pale dull yellow
     QColor(0x99, 0x99, 0x33) // dark dull yellow
   );
-  setHighlightColor(2, 
-    QColor(0xFF, 0xFF, 0x99),  // pale dull yellow
-    QColor(0x99, 0x99, 0x33) // dark dull yellow
-  );
   setHighlightColor(3, 		// disabled
     QColor(0xa0, 0xa0, 0xa0),  // light grey
     QColor(0x80, 0x80, 0x80) // medium grey
@@ -5088,16 +5084,16 @@ void iTreeViewItem::DecorateDataNode() {
   // if tree is using highlighting, then highlight if invalid
   if (tv->highlightRows()) {
     if(!item_enabled) {
-      setHighlightIndex(3);
+      setBackgroundColor(QColor(0xa0, 0xa0, 0xa0));//setHighlightIndex(3);
     }
     else {
       int cfc = link->checkConfigFlags();
       if (cfc & taBase::THIS_INVALID)
-	setHighlightIndex(1); //red
+	setBackgroundColor(QColor(0xFF, 0x99, 0x99));//setHighlightIndex(1); //red
       else if (cfc & taBase::CHILD_INVALID)
-	setHighlightIndex(2); //yellow
+	setBackgroundColor(QColor(0xFF, 0xFF, 0x99));//setHighlightIndex(2); //yellow
       else 
-	setHighlightIndex(0);
+	resetBackgroundColor();//setHighlightIndex(0);
     }
   }
   // if decoration enabled, then decorate away
@@ -5107,7 +5103,7 @@ void iTreeViewItem::DecorateDataNode() {
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
       if(vc) {
 	if(vc->use_fg)
-	  setTextColor(-1, *(vc->fg_color.color()));
+	  setTextColor(*(vc->fg_color.color()));
 // 	if(vc->use_bg)
 // 	  setHighlightColor(-1, vc->bg_color.color());
       }
@@ -5200,11 +5196,6 @@ void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden) const 
   IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden);
 }
 
-int iTreeViewItem::highlightIndex() const {
-  //note: if none has been set, then the NULL variant will return 0, ie none
-  return data(0, iTreeView::HighlightIndexRole).toInt();
-}
-
 ISelectableHost* iTreeViewItem::host() const {
   iTreeView* tv = treeView();
   return (tv) ? (ISelectableHost*)tv : NULL;
@@ -5225,15 +5216,6 @@ void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   if (fm_idx < to_idx) --to_idx;
   QTreeWidgetItem* tak = takeChild(fm_idx);
   insertChild(to_idx, tak); 
-}
-
-void iTreeViewItem::setHighlightIndex(int value) {
-  // 0 is slightly special case, because we don't want to unnecessarily create
-  // a data item, so we just bail if there is no data already (which returns 0)
-  if (value == 0) {
-    if (!data(0, iTreeView::HighlightIndexRole).isValid()) return;
-  }
-  setData(0, iTreeView::HighlightIndexRole, value);
 }
 
 bool iTreeViewItem::ShowNode_impl(int show, const String&) const 

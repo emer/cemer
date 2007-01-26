@@ -1431,7 +1431,7 @@ void gpiCompactListDataHost::Constr_ListData() {
     String nm = String("[") + String(i) + "]: (" + lf_el->typ->name + ")";
     AddMultiRowName(i, nm, String(""));
     // note: the type better grok INLINE!!!!
-    taiData* mb_dat = lf_el->typ->it->GetDataRep(this, NULL, multi_body->dataGridWidget());
+    taiData* mb_dat = lf_el->typ->it->GetDataRep(this, NULL, multi_body->dataGridWidget(), NULL, taiData::flgInline);
     lf_el->data_el = mb_dat;
     AddMultiData(i, 1, mb_dat->GetRep());
   }
