@@ -17,6 +17,7 @@
 // #define QANDD_CONSOLE 1
 
 #include "ta_project.h"
+#include "ta_platform.h"
 #include "ta_dump.h"
 #include "ta_plugin.h"
 
@@ -259,11 +260,13 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
 }
 
 bool taProject::SetFileName(const String& val) {
+  if (GetFileName() == val) return true;
   inherited::SetFileName(val);
   MainWindowViewer* vwr = GetDefaultProjectBrowser();
   if(vwr) {
     vwr->SetWinName();
   }
+  tabMisc::root->AddRecentFile(val);
   return true;
 }
 
@@ -339,6 +342,7 @@ void taRootBase::Initialize() {
   version = taMisc::version;
   SetName("root");
   projects.SetName("projects");
+  plugin_deps.SetBaseType(&TA_taPluginDep);
 }
 
 void taRootBase::Destroy() {
@@ -362,6 +366,7 @@ void taRootBase::InitLinks() {
   taBase::Own(plugins, this);
   taBase::Own(plugin_deps, this);
   taBase::Own(mime_factories, this);
+  taBase::Own(recent_files, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
 }
@@ -373,6 +378,7 @@ void taRootBase::CutLinks() {
   viewers.CutLinks();
   projects.CutLinks();
   templates.CutLinks();
+  recent_files.CutLinks();
   inherited::CutLinks();
 }
 
@@ -381,6 +387,20 @@ void taRootBase::MonControl(bool on) {
   moncontrol(on);
 }
 #endif
+
+void taRootBase::AddRecentFile(const String& value) {
+  // first, see if already there, if so, then just move it to the top
+  int idx = recent_files.FindEl(value);
+  if (idx >= 0) {
+    recent_files.SwapIdx(0, idx);
+    return;
+  }
+  // not there; if full, then nuke a guy
+  if (recent_files.size >= taMisc::num_recent_files)
+    recent_files.SetSize(taMisc::num_recent_files - 1);
+  // insert it
+  recent_files.Insert(value, 0);
+}
 
 bool taRootBase::CheckAddPluginDep(TypeDef* td) {
   if (!td) return false;
@@ -397,10 +417,10 @@ bool taRootBase::CheckAddPluginDep(TypeDef* td) {
       rval = true;
       // see if already listedbool		VerifyHasPlugins()
       if (plugin_deps.FindName(pl->GetName())) break;
-      // otherwise, clone a desc, and add
-      taPlugin* pl_desc = new taPlugin;
-      pl_desc->Copy(*pl);
-      plugin_deps.Add(pl_desc);
+      // otherwise, clone a dep, and add
+      taPluginDep* pl_dep = new taPluginDep;
+      pl_dep->Copy(*(taPluginBase*)pl);
+      plugin_deps.Add(pl_dep);
       break;
     }
   }
@@ -411,15 +431,15 @@ bool taRootBase::CheckAddPluginDep(TypeDef* td) {
 bool taRootBase::VerifyHasPlugins() {
   int miss_cnt = 0;
   for (int i = 0; i < plugin_deps.size; ++i) {
-    taPlugin* pl_dep = plugin_deps.FastEl(i);
-    taPlugin* pl = plugins.FindName(pl_dep->GetName());
+    taPluginDep* pl_dep = (taPluginDep*)plugin_deps.FastEl(i);
+    taPlugin* pl = (taPlugin*)plugins.FindName(pl_dep->GetName());
     if (pl) {
       if (!pl->loaded)
-        pl_dep->dep_check = taPlugin::DC_NOT_LOADED;
+        pl_dep->dep_check = taPluginDep::DC_NOT_LOADED;
       //else if...
       else continue; // ok
     } else {
-      pl_dep->dep_check = taPlugin::DC_MISSING;
+      pl_dep->dep_check = taPluginDep::DC_MISSING;
     }
     ++miss_cnt;
   }
@@ -521,6 +541,12 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   if(ta_init_fun)
     (*ta_init_fun)();
 
+  // initialize the key folders
+  taMisc::home_dir = taPlatform::getHomePath();
+  taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
+  // make sure it exists
+  taPlatform::mkdir(taMisc::prefs_dir);
+  
   // then load configuration info: sets lots of user-defined config info
   taMisc::Init_Defaults_PreLoadConfig();
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
@@ -534,7 +560,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
 bool taRootBase::Startup_EnumeratePlugins() {
   taMisc::Init_Hooks();		// plugins register init hooks -- this calls them!
   taPlugins::AddPluginFolder(taMisc::pkg_home + "/plugins");
-  taPlugins::AddPluginFolder(taMisc::user_home + "/ta_plugins"); //TODO: should be pdpuserhome
+  taPlugins::AddPluginFolder(taMisc::home_dir + "/ta_plugins"); //TODO: should be pdpuserhome
   taPlugins::EnumeratePlugins();
 
   return true;
@@ -804,10 +830,12 @@ bool taRootBase::Startup_ProcessArgs() {
 }
 
 bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun, 
-			      TypeDef* root_typ) {
+			      TypeDef* root_typ) 
+{
 #ifdef GPROF
   moncontrol(0);		// turn off at start
 #endif
+  cssMisc::prompt = taMisc::app_name; // the same
   if(!Startup_InitDMem(argc, argv)) return false;
   if(!Startup_InitTA(ta_init_fun)) return false;
   if(!Startup_InitArgs(argc, argv)) return false;

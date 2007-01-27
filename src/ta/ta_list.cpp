@@ -205,8 +205,8 @@ bool taPtrList_impl::MoveAfter_(void* trg, void* item) {
 }
 
 bool taPtrList_impl::SwapIdx(int pos1, int pos2) {
-  if((size == 0) || (pos1 >= size) || (pos2 >= size)) return false;
-
+  if ((pos1 < 0) || (pos2 < 0) || (pos1 >= size) || (pos2 >= size)) return false;
+  if (pos1 == pos2) return true;
   void* tmp = el[pos1];
   el[pos1] = el[pos2];
   UpdateIndex_(pos1);
@@ -1134,6 +1134,16 @@ bool taArray_impl::MoveIdx(int fm, int to) {
     El_Copy_(FastEl_(j), FastEl_(j-1));
   }
   El_Copy_(FastEl_(to), tmp);
+  return true;
+}
+
+bool taArray_impl::SwapIdx(int pos1, int pos2) {
+  if ((pos1 < 0) || (pos2 < 0) || (pos1 >= size) || (pos2 >= size)) return false;
+  if (pos1 == pos2) return true;
+  void* tmp = El_GetTmp_();
+  El_Copy_(tmp, FastEl_(pos1));
+  El_Copy_(FastEl_(pos1), FastEl_(pos2));
+  El_Copy_(FastEl_(pos2), tmp);
   return true;
 }
 

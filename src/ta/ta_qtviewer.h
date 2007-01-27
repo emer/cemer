@@ -826,6 +826,7 @@ public:
   QSplitter*		body;		// #IGNORE body of the window
 
   taiMenu* 		fileMenu;
+  taiMenu* 		fileOpenRecentMenu;
   taiMenu* 		fileExportMenu; // submenu -- empty and disabled in base
   taiMenu* 		editMenu;
   taiMenu* 		viewMenu;
@@ -897,6 +898,8 @@ public:
 public slots:
   virtual void 	fileNew(); // New Project (in new viewer)
   virtual void 	fileOpen(); // Open Project (in new viewer)
+  virtual void 	fileOpenRecent_aboutToShow();
+  virtual void	fileOpenFile(const Variant& file); // for recent menu
   virtual void 	fileSave();  // Save Project (only enabled if viewer)
   virtual void 	fileSaveAs();  // SaveAs Project (only enabled if viewer)
   virtual void 	fileSaveAll();  // Save All Projects (always enabled)

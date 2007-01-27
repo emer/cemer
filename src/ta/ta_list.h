@@ -720,6 +720,8 @@ public:
   // #MENU #MENU_ON_Edit Remove (n_els) item(s) at idx, returns success
   virtual bool	MoveIdx(int from, int to);
   // #MENU move item from index to index
+  virtual bool	SwapIdx(int pos1, int pos2);
+  // #CAT_Modify Swap the elements in the two given positions on the list
   virtual void	Permute();
   // #MENU permute the items in the list into a random order
   virtual void	Sort(bool descending=false);

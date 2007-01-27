@@ -33,10 +33,13 @@ public:
   static const char    pathSep; // normal file path separator character, ex / -- use this for construction only
   static String finalSep(const String& in); // return string that has a valid final separator
   static String getTempPath(); // get a valid temporary path (that user can write to)
+  static String getHomePath(); // the user's home folder
+  static String getAppDataPath(const String& appname); // root for preference data
   static String getFileName(const String& in); // retrieves only the filename&ext, w/o leading path info
   static String getFilePath(const String& in); // retrieves only the file path, if any (no final separator)
   static int	posFinalSep(const String& in); // position of final path separator, -1 if not found
-
+  static bool	mkdir(const String& dir); // make or assert the directory, true if ok
+  
 // Process execution
   static int	exec(const String& cmd); //
   

@@ -16,6 +16,9 @@
 
 #include "ta_platform.h"
 
+#ifndef NO_TA_BASE
+# include <QDir>
+#endif
 
 String taPlatform::finalSep(const String& in) {
   if (in.length() == 0)
@@ -37,6 +40,21 @@ String taPlatform::getFilePath(const String& in) {
   int pfs = posFinalSep(in);
   if (pfs < 0) return _nilString;
   else return in.before(pfs + 1); // we include the finalpos
+}
+
+#ifndef NO_TA_BASE
+String taPlatform::getHomePath() {
+  return String(QDir::homePath());
+}
+#endif
+
+bool taPlatform::mkdir(const String& dir) {
+#ifdef NO_TA_BASE
+  return false;
+#else
+  QDir d;
+  return d.mkpath(dir);
+#endif
 }
 
 int taPlatform::posFinalSep(const String& in) {
@@ -82,6 +100,17 @@ int taPlatform::exec(const String& cmd) {
   }
   return rval;
 }
+
+
+String taPlatform::getAppDataPath(const String& appname) {
+  return getHomePath() + "\Application Data\" + appname;
+}
+
+#ifdef NO_TA_BASE
+String taPlatform::getHomePath() {
+  return getenv("HOMEDIR") + getenv("HOMEPATH");
+}
+#endif
 
 String taPlatform::getTempPath() {
   String rval;
@@ -136,6 +165,16 @@ int taPlatform::cpuCount() {
 int taPlatform::exec(const String& cmd) {
   return system(cmd.chars());
 }
+
+String taPlatform::getAppDataPath(const String& appname) {
+  return getHomePath() + "/." + appname;
+}
+
+#ifdef NO_TA_BASE
+String taPlatform::getHomePath() {
+  return getenv("HOME");
+}
+#endif
 
 String taPlatform::getTempPath() {
   String rval = "/tmp";

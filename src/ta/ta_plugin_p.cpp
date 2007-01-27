@@ -124,6 +124,22 @@ void taPlugins::EnumeratePlugins() {
 
 
 //////////////////////////
+//  taPluginBase	//
+//////////////////////////
+
+void taPluginBase::Initialize() {
+}
+
+void taPluginBase::Copy_(const taPluginBase& cp) {
+  name = cp.name;
+  desc = cp.desc;
+  unique_id = cp.unique_id;
+  version = cp.version;
+  filename = cp.filename;
+  url = cp.url;
+}
+
+//////////////////////////
 //  taPlugin		//
 //////////////////////////
 
@@ -131,25 +147,30 @@ void taPlugin::Initialize() {
   enabled = false; // be conservative, and require user to enable
   loaded = false;
   reconciled = false;
-  dep_check = DC_OK;
   plugin = NULL;
 }
 
-void taPlugin::Copy_(const taPlugin& cp) {
+void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
   enabled = cp.enabled;
   loaded = false; // never for a copy
   reconciled = false;
-  dep_check = cp.dep_check; // not really used for copies
-  name = cp.name;
-  desc = cp.desc;
-  unique_id = cp.unique_id;
-  version = cp.version;
-  filename = cp.filename;
-  url = cp.url;
-  //intore plugin -- only used for insts, not descs
+  plugin = NULL;
 }
 
-void taPlugin::CheckThisConfig_impl(bool quiet, bool& rval) {
+
+//////////////////////////
+//  taPluginDep		//
+//////////////////////////
+
+void taPluginDep::Initialize() {
+  dep_check = DC_OK;
+}
+
+void taPluginDep::Copy_(const taPluginDep& cp) {
+  dep_check = cp.dep_check; // not really used for copies
+}
+
+void taPluginDep::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if (dep_check != DC_OK) {
     if (!quiet) {
@@ -164,6 +185,25 @@ void taPlugin::CheckThisConfig_impl(bool quiet, bool& rval) {
     }
     rval = false;
   }
+}
+
+
+//////////////////////////
+//  taPluginBase_List	//
+//////////////////////////
+
+void taPluginBase_List::QueryEditActions_impl(const taiMimeSource* ms,
+  int& allowed, int& forbidden)
+{
+  allowed = taiClipData::EA_COPY;
+  forbidden = ~taiClipData::EA_COPY;
+}
+
+void taPluginBase_List::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+    const taiMimeSource* ms, int& allowed, int& forbidden)
+{
+  allowed = taiClipData::EA_COPY;
+  forbidden = ~taiClipData::EA_COPY;
 }
 
 //////////////////////////
@@ -216,7 +256,7 @@ void taPlugin_List::ReconcilePlugins() {
     taPluginInst* pli = taPlugins::plugins.FastEl(i);
     IPlugin* ip = pli->plugin();
     String uid = ip->uniqueId();
-    taPlugin* pl = FindName(uid);
+    taPlugin* pl = (taPlugin*)FindName(uid);
     if (pl) {
       // update
     } else {
@@ -248,16 +288,3 @@ void taPlugin_List::ReconcilePlugins() {
    }
 }
 
-void taPlugin_List::QueryEditActions_impl(const taiMimeSource* ms,
-  int& allowed, int& forbidden)
-{
-  allowed = taiClipData::EA_COPY;
-  forbidden = ~taiClipData::EA_COPY;
-}
-
-void taPlugin_List::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
-    const taiMimeSource* ms, int& allowed, int& forbidden)
-{
-  allowed = taiClipData::EA_COPY;
-  forbidden = ~taiClipData::EA_COPY;
-}

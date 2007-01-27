@@ -2900,6 +2900,9 @@ void iMainWindowViewer::Constr_Menu_impl() {
   
   fileNewAction->AddTo(fileMenu);
   fileOpenAction->AddTo(fileMenu );
+  fileOpenRecentMenu = fileMenu->AddSubMenu("Open &Recent");
+  connect(fileOpenRecentMenu->menu(), SIGNAL(aboutToShow() ), 
+    this, SLOT( fileOpenRecent_aboutToShow() ) );
   fileSaveAction->AddTo(fileMenu );
   fileSaveAsAction->AddTo(fileMenu);
   fileSaveAllAction->AddTo(fileMenu);
@@ -3088,7 +3091,24 @@ void iMainWindowViewer::fileOpen() {
   if (!flr->GetFileName(fname, taFiler::foOpen)) 
     return; // user cancelled
   taRefN::unRefDone(flr); // not needed anymore
+  fileOpenFile(fname);
   
+}
+
+void iMainWindowViewer::fileOpenRecent_aboutToShow() {
+  // delete previous
+  fileOpenRecentMenu->Reset();
+  // populate with current recent
+  for (int i = 0; i < tabMisc::root->recent_files.size; ++i) {
+    String file = tabMisc::root->recent_files[i];
+    //taiAction* item =
+    fileOpenRecentMenu->AddItem(file, taiAction::var_act, this, SLOT(fileOpenFile(const Variant&)),
+      file);
+  }
+}
+
+void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
+  String fname = fname_.toString();
   // check if already open
   taProject* proj = NULL;
   // canonicalize name, for comparison to open projects
@@ -3113,6 +3133,7 @@ void iMainWindowViewer::fileOpen() {
     tabMisc::root->projects.Load(fname, &el);
     proj = (taProject*)el;
   }
+  tabMisc::root->AddRecentFile(fname);
 }
 
 void iMainWindowViewer::fileQuit() {

@@ -687,7 +687,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     rbase->Dump_Save_pre();
     rbase->Dump_Save_GetPluginDeps();
     // if any plugins were used, write out the list of deps
-    taPlugin_List* plst = &(tabMisc::root->plugin_deps);
+    taPluginBase_List* plst = &(tabMisc::root->plugin_deps);
     if (plst->size > 0) {
       taBase* pl_par = NULL;//tabMisc::root
       plst->Dump_Save_Path(strm, pl_par, indent);

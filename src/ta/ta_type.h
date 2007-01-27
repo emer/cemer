@@ -476,6 +476,7 @@ public:
     QF_FORCE_QUIT	// too late to turn back now...
   };
 
+  static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		version; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
   static const taVersion version_bin; 	// #IGNORE version number of ta/css
 
@@ -506,6 +507,7 @@ public:
   static bool		auto_edit; 	// #SAVE #CAT_GUI automatic edit dialog after creation?
   static AutoRevert	auto_revert;    // #SAVE #CAT_GUI when dialogs are automatically updated (reverted), what to do about changes?
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
+  static short		num_recent_files; // #SAVE #DEF_6 #POS_ONLY number of recent files to save
 
   ////////////////////////////////////////////////////////
   // 	File/Paths Info
@@ -522,12 +524,14 @@ public:
   // #SAVE #CAT_File directory name for current software package (e.g., ta_css or pdp++)
   static String		pkg_home;
   // #SAVE #CAT_File path to location of installed system files for current software package (e.g, /usr/local/ta_css) (should be inst_prefix + pkg_dir)
-  static String		user_home;
-  // #SAVE #CAT_File location of user's home directory
+  static String		home_dir;
+  // #CAT_File location of user's home directory
   static String		web_home;
   // #SAVE #CAT_File url for location of web repository of package information
   static String		tmp_dir;
   // #SAVE #CAT_File location of temporary files (e.g., inst_prefix/tmp)
+  static String		prefs_dir;
+  // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..

@@ -159,8 +159,9 @@ public:
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
-  taPlugin_List		plugin_deps; // #SHOW_TREE EXPERT_TREE  dynamic list, populated in presave
+  taPluginBase_List	plugin_deps; // #SHOW_TREE EXPERT_TREE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
+  String_Array		recent_files; // #NO_SHOW recently loaded files
   
   virtual void  Settings() {};
   // #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
@@ -172,6 +173,8 @@ public:
   // #MENU get information/copyright notice
   virtual void	SaveAll() { };
   // saves all the contents of the app object
+  
+  void		AddRecentFile(const String& value); // add this file to the recent list
 
 #ifdef GPROF			// turn on for profiling
   virtual void  MonControl(bool on);

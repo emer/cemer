@@ -955,8 +955,9 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     flr->SaveAs();
   }
   
-  if(flr->ostrm) {
+  if (flr->ostrm) {
     SetFileName(flr->fname);
+    DataChanged(DCR_ITEM_UPDATED);
   }
   return flr;
 }

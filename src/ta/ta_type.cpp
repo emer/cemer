@@ -332,6 +332,7 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 String	taMisc::version = "3.9.0-" + String(SVN_REV);
 const taVersion taMisc::version_bin(3, 9, 0, SVN_REV);
 #else*/
+String	taMisc::app_name = "ta_css"; // replaced with actual name at startup
 String	taMisc::version = "3.9.0";
 const taVersion taMisc::version_bin(3, 9, 0);
 //#endif
@@ -373,7 +374,8 @@ taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 bool			taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
 bool taMisc::beep_on_error = false;
-
+short	taMisc::num_recent_files = 6;
+ 
 ////////////////////////////////////////////////////////
 // 	File/Path/Arg Info
 
@@ -393,9 +395,10 @@ taMisc::LoadVerbosity	taMisc::gui_verbose_load = taMisc::QUIET;
 String	taMisc::inst_prefix = WHEREAMI; // e.g., /usr/local/share
 String	taMisc::pkg_dir = "pdp++"; // "ta_css"; // todo: get from config.h
 String	taMisc::pkg_home; // is concat in Init_Defaults_PostLoadConfig
-String  taMisc::user_home;			// this will be set in init call
+String  taMisc::home_dir;			// this will be set in init call
 String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
 String	taMisc::tmp_dir = "/tmp"; // todo: should be inst_prefix/tmp??
+String	taMisc::prefs_dir; // this must be set at startup!
 
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
@@ -490,8 +493,7 @@ String 	taMisc::LexBuf;
 
 void taMisc::SaveConfig() {
 #ifndef NO_TA_BASE
-  String home_dir = getenv("HOME"); // home directory if curent dir
-  String cfgfn = home_dir + "/.taconfig";
+  String cfgfn = prefs_dir + "/.taconfig";
   fstream strm;
   strm.open(cfgfn, ios::out);
   TA_taMisc.Dump_Save_Value(strm, (void*)this);
@@ -501,13 +503,27 @@ void taMisc::SaveConfig() {
 
 void taMisc::LoadConfig() {
 #ifndef NO_TA_BASE
-  String home_dir = getenv("HOME"); // home directory if curent dir
-  String cfgfn = home_dir + "/.taconfig";
+  String cfgfn = prefs_dir + "/.taconfig";
+//TODO: temp to move user's old file -- remove this 
+  bool resave = false;
+  if (!QFile::exists(cfgfn)) {
+    cfgfn = home_dir + "/.taconfig"; 
+    resave = true;
+  }
+// end TEMP
   fstream strm;
   strm.open(cfgfn, ios::in);
   if(!strm.bad() && !strm.eof())
     TA_taMisc.Dump_Load_Value(strm, (void*)this);
   strm.close(); strm.clear();
+  
+// TEMP
+// ok, delete the old guy, to avoid confusion
+  if (resave) SaveConfig();
+  if (QFile::exists(prefs_dir + "/.taconfig")) {
+    QFile::rename(home_dir + "/.taconfig", home_dir + "/.taconfig.obsolete");
+  }
+// end TEMP
 #endif
 }
 
@@ -787,18 +803,17 @@ void taMisc::Init_Hooks() {
 
 void taMisc::Init_Defaults_PreLoadConfig() {
   // set any default settings prior to loading config file (will be overwritten)
-  user_home = GetHomePath();
   pkg_home = inst_prefix + "/" + pkg_dir;
 }
 
 void taMisc::Init_Defaults_PostLoadConfig() {
   // set any default settings after loading config file (ensures certain key settings in place)
   css_include_paths.AddUnique(pkg_home + "/css_stdlib");
-  css_include_paths.AddUnique(user_home + "/css_mylib");
-  css_include_paths.AddUnique(user_home); // needed for .init files
+  css_include_paths.AddUnique(home_dir + "/css_mylib");
+  css_include_paths.AddUnique(home_dir); // needed for .init files
 
   prog_lib_paths.AddUnique(NameVar("SystemLib", (Variant)(pkg_home + "/prog_lib")));
-  prog_lib_paths.AddUnique(NameVar("UserLib", (Variant)(user_home + "/my_prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("UserLib", (Variant)(home_dir + "/my_prog_lib")));
   prog_lib_paths.AddUnique(NameVar("WebLib", (Variant)(web_home + "/prog_lib")));
 
   String curdir = GetCurrentPath();
@@ -1110,11 +1125,7 @@ String taMisc::GetDirFmPath(const String& path, int n_up) {
 }
 
 String taMisc::GetHomePath() {
-#ifndef NO_TA_BASE
-  return QDir::homeDirPath();
-#else
-  return "";			// todo support?
-#endif
+  return taPlatform::getHomePath();
 }
 
 String taMisc::GetCurrentPath() {

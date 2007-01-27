@@ -502,7 +502,7 @@ public:
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int		Save(); 
   // #MENU #MENU_ON_Object #CAT_File saves the object to a file using current file name (from GetFileName() function)
-  virtual int		SaveAs(const String& fname = ""); 
+  virtual int		SaveAs(const String& fname = _nilString); 
   // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user
 
 
