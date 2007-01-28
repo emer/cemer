@@ -550,8 +550,10 @@ public:
   /////////////////////////////////////////////////////////
   // misc funs
 
-  void			ShowInViewer(T3DataViewFrame* fr = NULL);
-  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #CAT_Display open a view on this table (NULL=use blank if any, else make new frame)
+  void			NewGridView(T3DataViewFrame* fr = NULL);
+  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use blank if any, else make new frame)
+  void			NewGraphView(T3DataViewFrame* fr = NULL);
+  // #NULL_OK #MENU #MENU_CONTEXT #CAT_Display open a graph view of this table (NULL=use blank if any, else make new frame)
 
   int  			MinLength();		// #IGNORE
   int  			MaxLength();		// #IGNORE

@@ -483,7 +483,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 	  dist_mat->SetValAsFloat(dmat.FastEl(j,i), j+1, -1);
 	}
       }
-      if(view) dist_mat->ShowInViewer();
+      if(view) dist_mat->NewGridView();
       return true;
     }
   }
@@ -494,7 +494,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 						   dmat.dim(1));
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
-  if(view) dist_mat->ShowInViewer();
+  if(view) dist_mat->NewGridView();
   return true;
 }
 
@@ -556,7 +556,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 	  dist_mat->SetValAsFloat(dmat.FastEl(j,i), j+1, -1);
 	}
       }
-      if(view) dist_mat->ShowInViewer();
+      if(view) dist_mat->NewGridView();
       return true;
     }
   }
@@ -567,7 +567,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 						   dmat.dim(1));
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
-  if(view) dist_mat->ShowInViewer();
+  if(view) dist_mat->NewGridView();
   return true;
 }
 
@@ -605,7 +605,7 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
 						     dmat.dim(1));
   correl_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
-  if(view) correl_mat->ShowInViewer();
+  if(view) correl_mat->NewGridView();
   return true;
 }
 
@@ -637,7 +637,7 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
 
   root.Cluster(metric, norm, tol);
   root.GraphData(clust_data);
-  if(view) clust_data->ShowInViewer(); // todo: how to indicate a graph vs a grid??
+  if(view) clust_data->NewGraphView();
   return true;
 }
 
@@ -676,7 +676,7 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
     }
   }
 
-  if(view) pca_data->ShowInViewer();
+  if(view) pca_data->NewGridView();
   return true;
 }
 
@@ -736,7 +736,7 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     yda->SetValAsFloat(yprjn.FastEl(i), -1);
   }
 
-  if(view) prjn_data->ShowInViewer();
+  if(view) prjn_data->NewGraphView();
   return true;
 }  
 
@@ -781,7 +781,7 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     yda->SetValAsFloat(xy_coords.FastEl(1, i), -1);
   }
 
-  if(view) prjn_data->ShowInViewer();
+  if(view) prjn_data->NewGraphView();
   return true;
 }
 
@@ -833,7 +833,7 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
     yda->SetValAsFloat(yprjn.FastEl(i), -1);
   }
 
-  if(view) prjn_data->ShowInViewer();
+  if(view) prjn_data->NewGraphView();
   return true;
 }
 
@@ -867,7 +867,7 @@ bool taDataAnal::TimeAvg(DataTable* time_avg_data, bool view, DataTable* src_dat
     }
   }
 
-  if(view) time_avg_data->ShowInViewer(); // todo: should be a graph
+  if(view) time_avg_data->NewGraphView();
   return true;
 }
 

@@ -278,6 +278,18 @@ bool DataArray_impl::GetMinMaxScale(MinMax& mm) {
     mm.min = taMath_double::vec_min(fm, idx);
     mm.max = taMath_double::vec_max(fm, idx);
   }
+  else if(valType() == VT_INT) {
+    int_Matrix* fm = (int_Matrix*)AR();
+    if(fm->size > 0) {
+      mm.min = fm->FastEl_Flat(0);
+      mm.max = fm->FastEl_Flat(0);
+      for(int i=1;i<fm->size;i++) {
+	int val = fm->FastEl_Flat(i);
+	if(val > mm.max) mm.max = val;
+	if(val < mm.min) mm.min = val;
+      }
+    }
+  }
   else {
     return false;		// not worth it!
   }

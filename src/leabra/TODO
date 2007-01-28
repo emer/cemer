@@ -46,6 +46,8 @@ for setting network stats vars on dmem_timing.
 --------------------
 * view colors: enum with different built-in styles
 
+  * support the Flags for program guys: bg-only mode -- seems to require an index??
+
 --------------------
 * netview: 
 

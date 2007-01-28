@@ -1005,7 +1005,7 @@ void SoMatrixGrid::render() {
 	float yp = ((float)pos.y + cl_spc) * cl_y;
 	float xp1 = ((float)pos.x+1 - cl_spc) * cl_x;
 	float yp1 = ((float)pos.y+1 - cl_spc) * cl_y;
-	if(mat_layout == BOT_ZERO) { yp = 1.0f - yp; yp1 = 1.0f - yp1; }
+	yp = 1.0f - yp; yp1 = 1.0f - yp1; // always flip y
 	float zp = blk_ht;
 	vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
 	vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
@@ -1041,7 +1041,7 @@ void SoMatrixGrid::render() {
 	  float xp1 = ((float)apos.x+1 - cl_spc) * cl_x;
 	  float yp1 = ((float)apos.y+1 - cl_spc) * cl_y;
 	  float zp = blk_ht;
-	  if(mat_layout == BOT_ZERO) { yp = 1.0f - yp; yp1 = 1.0f - yp1; }
+	  yp = 1.0f - yp; yp1 = 1.0f - yp1;		// always flip y
 	  vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
 	  vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
 	  vertex_dat[v_idx++].setValue(xp,  yp1, 0.0f); // 01_0 = 0
@@ -1078,7 +1078,7 @@ void SoMatrixGrid::render() {
 	    float xp1 = ((float)apos.x+1 - cl_spc) * cl_x;
 	    float yp1 = ((float)apos.y+1 - cl_spc) * cl_y;
 	    float zp = blk_ht;
-	    if(mat_layout == BOT_ZERO) { yp = 1.0f - yp; yp1 = 1.0f - yp1; }
+	    yp = 1.0f - yp; yp1 = 1.0f - yp1;		  // always flip 
 	    vertex_dat[v_idx++].setValue(xp,  yp , 0.0f); // 00_0 = 0
 	    vertex_dat[v_idx++].setValue(xp1, yp , 0.0f); // 10_0 = 0
 	    vertex_dat[v_idx++].setValue(xp,  yp1, 0.0f); // 01_0 = 0
