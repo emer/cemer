@@ -39,6 +39,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTriangleStripSet.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
 #endif
 
 // forwards
@@ -383,6 +384,21 @@ protected:
   void 		render(); // #IGNORE
   void 		renderH(); // #IGNORE
   void 		renderV(); // #IGNORE
+};
+
+class TA_API SoLineBox3d : public SoIndexedLineSet {
+  // ##NO_INSTANCE ##NO_TOKENS a 3d box draw with lines, starting at 0,0,0 and going to 1,-1,1 (note: uses TA Y coords, not GL's)
+#ifndef __MAKETA__
+typedef SoIndexedLineSet inherited;
+
+  SO_NODE_HEADER(SoLineBox3d);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+
+  SoLineBox3d();
+protected:
+  void 		render(); // #IGNORE
 };
 
 class TA_API SoImageEx: public SoSeparator { 

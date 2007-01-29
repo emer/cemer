@@ -848,7 +848,6 @@ protected slots:
   void 		butSetColor_pressed();
   void 		fldWidth_textChanged();
 
-  void 		chkAutoScale_toggled(bool on);
   void		cbar_scaleValueChanged();
 };
 

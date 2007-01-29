@@ -702,6 +702,72 @@ SoMFVec3f& SoRect::vertex() {
 }
 
 //////////////////////////
+//   SoLineBox3d	//
+//////////////////////////
+
+SO_NODE_SOURCE(SoLineBox3d);
+
+void SoLineBox3d::initClass()
+{
+  SO_NODE_INIT_CLASS(SoLineBox3d, SoIndexedLineSet, "SoIndexedLineSet");
+}
+
+SoLineBox3d::SoLineBox3d() {
+  SO_NODE_CONSTRUCTOR(SoLineBox3d);
+
+  vertexProperty.setValue(new SoVertexProperty); // note: vp refs/unrefs automatically
+  render();
+}
+
+void SoLineBox3d::render() {
+  SoMFVec3f& vtx = ((SoVertexProperty*)vertexProperty.getValue())->vertex;
+  vtx.setNum(8);
+  SbVec3f* v_dat = vtx.startEditing();
+  int idx = 0;
+  v_dat[idx++].setValue(0.0f,0.0f,-1.0f);	// around the back
+  v_dat[idx++].setValue(1.0f,0.0f,-1.0f);
+  v_dat[idx++].setValue(1.0f,1.0f,-1.0f);
+  v_dat[idx++].setValue(0.0f,1.0f,-1.0f);
+  v_dat[idx++].setValue(0.0f,0.0f,0.0f);	// around the front
+  v_dat[idx++].setValue(1.0f,0.0f,0.0f);
+  v_dat[idx++].setValue(1.0f,1.0f,0.0f);
+  v_dat[idx++].setValue(0.0f,1.0f,0.0f);
+  vtx.finishEditing();
+
+  coordIndex.setNum(24);
+  int32_t* c_dat = coordIndex.startEditing();
+  idx = 0;
+  c_dat[idx++] = 0;		// around the back
+  c_dat[idx++] = 1;
+  c_dat[idx++] = 2;
+  c_dat[idx++] = 3;
+  c_dat[idx++] = 0;
+  c_dat[idx++] = -1;		// 6
+
+  c_dat[idx++] = 4;		// around the front
+  c_dat[idx++] = 5;
+  c_dat[idx++] = 6;
+  c_dat[idx++] = 7;
+  c_dat[idx++] = 4;
+  c_dat[idx++] = -1;		// 6
+
+  c_dat[idx++] = 0;		// fb poles
+  c_dat[idx++] = 4;
+  c_dat[idx++] = -1;		// 3
+  c_dat[idx++] = 1;
+  c_dat[idx++] = 5;
+  c_dat[idx++] = -1;		// 3
+  c_dat[idx++] = 2;
+  c_dat[idx++] = 6;
+  c_dat[idx++] = -1;		// 3
+  c_dat[idx++] = 3;
+  c_dat[idx++] = 7;
+  c_dat[idx++] = -1;		// 3
+  // total = 2*6 + 4*3 = 24
+  coordIndex.finishEditing();
+}
+
+//////////////////////////
 //   SoImageEx		//
 //////////////////////////
 

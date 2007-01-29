@@ -313,7 +313,7 @@ public:
   virtual SoSeparator*	x_axis() { return x_axis_sep_; }
   virtual SoSeparator*	z_axis() { return z_axis_sep_; }
   virtual SoSeparator*	y_axes() { return y_axes_sep_; }
-  virtual SoSeparator*	lines() { return lines_sep_; }
+  virtual SoSeparator*	graphs() { return graphs_sep_; }
 
 protected:
   float			width_;
@@ -325,7 +325,7 @@ protected:
   SoSeparator*		z_axis_sep_;
   SoSeparator*		y_axes_sep_; // can be multiple
 
-  SoSeparator*		lines_sep_;  // where the lines go (at 0,0)
+  SoSeparator*		graphs_sep_; // graph boxes
 
   bool			show_drag_;
   SoSeparator*		drag_sep_;

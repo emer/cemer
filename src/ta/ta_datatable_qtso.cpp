@@ -1938,7 +1938,7 @@ void iGridTableView_Panel::chkAutoScale_toggled(bool on) {
 ///////////////////////////////////////////////////////////////////////////////
 //  	Graph View
 
-// todo: redo these as vals on table view
+// todo: redo these as static vals on table view
 
 #define ORIGIN_OFFSET 0.08f // space between actual origin, and axes
 #define UNIT_LEGEND_OFFSET 0.04f // space between end of axis and unit legend text
@@ -1946,8 +1946,8 @@ void iGridTableView_Panel::chkAutoScale_toggled(bool on) {
 #define ELEM_SPACE 0.05f // misc element spacing, ex. between color bar and graphs
 #define TICK_SIZE 0.05f // size of ticks
 #define TICK_OFFSET 0.04f // gap between tick and label
-#define AXIS_LABEL_SIZE 0.08f // size of labels for axes
-#define LINE_LABEL_SIZE 0.08f // size of labels for axes
+#define AXIS_LABEL_SIZE 0.05f // size of labels for axes
+#define LINE_LABEL_SIZE 0.05f // size of labels for axes
 #define AXIS_WIDTH 0.2f // how much space we use, not including the offset
 #define T3BAR_HEIGHT 0.2f // height of color bar when it appears
 
@@ -2672,7 +2672,7 @@ void GraphTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
 void GraphTableView::RemoveGraph(){
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
-  node_so->lines()->removeAllChildren();
+  node_so->graphs()->removeAllChildren();
   node_so->y_axes()->removeAllChildren();
 }
 
@@ -2757,10 +2757,18 @@ void GraphTableView::RenderGraph_XY() {
   DataArray_impl* da_1 = plot_1.GetDAPtr();
   if(!da_1) return;
 
-  SoSeparator* lines = node_so->lines();
-  lines->removeAllChildren();
+  SoSeparator* graphs = node_so->graphs();
+  graphs->removeAllChildren();
+
+  SoSeparator* gr1 = new SoSeparator;
+  graphs->addChild(gr1);
+  // todo: add translation/scaling; scaling should always be uniform in all axes..
+
+  // each graph has a box and lines..
+  SoLineBox3d* lbox = new SoLineBox3d;
+  gr1->addChild(lbox);
   T3GraphLine* ln = new T3GraphLine(&plot_1);
-  lines->addChild(ln);
+  gr1->addChild(ln);
 
   if(da_1->isString()) {
     PlotData_String(plot_1, plot_2, ln);
