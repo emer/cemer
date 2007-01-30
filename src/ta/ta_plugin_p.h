@@ -32,8 +32,9 @@ class taPluginInst: public QPluginLoader { // ##NO_INSTANCE an instance of a plu
 INHERITED(QPluginLoader)
 public:
   enum LoadState {
-    LS_INIT_FAIL	= -2, // failure trying to init plugin
-    LS_TYPE_FAIL	= -1, // failure trying to init types
+    LS_INIT_FAIL	= -3, // failure trying to init plugin
+    LS_TYPE_FAIL	= -2, // failure trying to init types
+    LS_LOAD_FAIL	= -1, // could not be loaded (prob needs to be recompiled)
     LS_NOT_LOADED	=  0, // true if not yet loaded, or unloaded
     LS_LOADED		    , // true once lo-level loaded, for enumeration
     LS_TYPE_INIT	    , // true once the type initialization done (can no longer unload)
@@ -68,8 +69,12 @@ public:
   static taPluginInst_PList	plugins; // plugins that have been loaded -- they remain for the lifetime of program
   
   static void		AddPluginFolder(const String& folder); // adds a folder, note: ignores duplicates
+  static void		InitLog(const String& logfile); // clear the log file
+  static void		AppendLogEntry(const String& entry); // append entry, with nl
   static void		EnumeratePlugins(); // enumerates, and lo-level loads
 protected:
+  static String		logfile;
+  
   static taPluginInst*	LoadPlugin(const String& fileName); 
     // try loading the plugin, returns the loader object if successful
 };
@@ -79,13 +84,12 @@ class taPluginBase: public taOBase {
 INHERITED(taOBase)
 public:
   String		name; // #READ_ONLY #SHOW  the plugin name, provided by the plugin 
-  String		desc; // #READ_ONLY #SHOW #NO_SAVE the plugin description, provided by the plugin
+  String		desc; // #READ_ONLY #SHOW the plugin description, provided by the plugin
   String		unique_id; // #READ_ONLY #SHOW a unique string to identify the plugin
   String		version; // #READ_ONLY #SHOW  the plugin's version (as of when plugin was loaded)
-  String		filename; // #READ_ONLY #SHOW #NO_SAVE the plugin's filename
   String		url; // #READ_ONLY #SHOW a url that provides information on the plugin; used mostly for when missing in a proj file
   
-  String        GetName() const { return unique_id; } // NOTE: unique_id is the canonical name for this guy
+  String        GetName() const { return name; } // note: user can't set name
   void          SetDefaultName() {} 
   String	GetDesc() const {return desc;}
   void		Copy_(const taPluginBase& cp); //note: we only use this for descs, not actual plugins
@@ -101,12 +105,15 @@ class taPlugin: public taPluginBase {
   // taBase rep of a plugin -- these can be out of date w/ respect to actual plugins
 INHERITED(taPluginBase)
 public:
+  String		filename; // #READ_ONLY #SHOW the plugin's filename
   bool			enabled; // set if this plugin should be loaded when the app starts
   bool			loaded; // / #READ_ONLY #SHOW #NO_SAVE set if the plugin is loaded and initialized
   bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
   taPluginInst*		plugin; // #IGNORE the plugin, if loaded (not used for descs)
   
-  void		Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins
+  int	GetEnabled() const {return enabled;}
+  void	SetEnabled(bool value) {enabled = value;}
+  void	Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins
   COPY_FUNS(taPlugin, taPluginBase);
   TA_BASEFUNS(taPlugin);
 private:
@@ -145,6 +152,8 @@ class taPluginBase_List: public taList<taPluginBase> {
   // ##CHILDREN_INLINE ##NO_UPDATE_AFTER plugins available to the program (also used for deps)
 INHERITED(taList<taPluginBase>)
 public:
+  taPluginBase*		FindUniqueId(const String& value); // find by unique_id
+  
   TA_BASEFUNS(taPluginBase_List);
   
 protected:
@@ -164,6 +173,10 @@ class taPlugin_List: public taPluginBase_List {
 INHERITED(taPluginBase_List)
 public:
   inline taPlugin*	FastEl(int i) {return (taPlugin*)inherited::FastEl(i);}
+  taPlugin*		FindFilename(const String& value);
+  inline taPlugin*	FindUniqueId(const String& value)
+    {return (taPlugin*)inherited::FindUniqueId(value);}
+  
   void		LoadPlugins(); // Load and initialize all the enabled plugins, unload remainder
   TA_BASEFUNS(taPlugin_List);
   

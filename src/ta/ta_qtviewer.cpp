@@ -3085,14 +3085,14 @@ void iMainWindowViewer::fileOpen() {
   if (!tabMisc::root) return;
   TypeDef* td = &TA_taProject;
 // get filename ourself, so we can check if it is already open!
-  String fname;
   taFiler* flr = tabMisc::root->projects.GetFiler(td); 
   taRefN::Ref(flr);
-  if (!flr->GetFileName(fname, taFiler::foOpen)) 
-    return; // user cancelled
-  taRefN::unRefDone(flr); // not needed anymore
-  fileOpenFile(fname);
-  
+//TODO: context path  flr->setFileName(fname);
+  if (flr->GetFileName(taFiler::foOpen)) {
+    String fname = flr->fileName();
+    fileOpenFile(fname);
+  }  
+  taRefN::unRefDone(flr); 
 }
 
 void iMainWindowViewer::fileOpenRecent_aboutToShow() {
@@ -3137,6 +3137,7 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
 }
 
 void iMainWindowViewer::fileQuit() {
+  // note: following does a save of prefs
   taiMiscCore::Quit(CO_PROCEED); // not forced, until main closes
 }
 
@@ -3165,10 +3166,8 @@ void iMainWindowViewer::fileClose() {
 }
 
 void iMainWindowViewer::fileOptions() {
-  if (!taMisc::gui_active) return;
-  taiEdit* ie =  TA_taMisc.ie;
-  if (ie)
-    ie->Edit(TA_taMisc.GetInstance());
+  if (!tabMisc::root) return;
+  tabMisc::root->Options();
 }
 
 bool iMainWindowViewer::event(QEvent* ev) {
@@ -3185,7 +3184,7 @@ int iMainWindowViewer::GetEditActions() {
 }
 
 void iMainWindowViewer::helpAbout() {
-  if (tabMisc::root) tabMisc::root->Info();
+  if (tabMisc::root) tabMisc::root->About();
 }
 
 void iMainWindowViewer::mnuEditAction(taiAction* mel) {

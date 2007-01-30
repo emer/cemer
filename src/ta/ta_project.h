@@ -78,7 +78,7 @@ public:
 };
 
 class TA_API taProject : public taFBase {
-  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
+  // ##FILETYPE_Project ##FILER_CONTEXT_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
   taBase_Group		templates; // templates for new objects -- copy new objects from here
@@ -138,7 +138,7 @@ private:
 
 
 class TA_API Project_Group : public taGroup<taProject> {
-  //  ##CAT_Project group of projects
+  //  ##CAT_Project ##FILER_CONTEXT_Project group of projects
 INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
@@ -150,29 +150,29 @@ public:
 };
 
 
-class TA_API taRootBase: public taNBase {
-  // ##CAT_Project base class for the root of the structural hierarchy (root. or . in css / paths)
-INHERITED(taNBase)
+class TA_API taRootBase: public taFBase {
+  // ##CAT_Project ##FILER_CONTEXT_root base class for the root of the structural hierarchy (root. or . in css / paths)
+INHERITED(taFBase)
 public:
+  static TypeDef*	root_type; // set in Startup_Main
+  static taRootBase*	instance();
+  
   String		version; 	// #READ_ONLY #SHOW current version number
   taBase_List		templates;	// #NO_SAVE #READ_ONLY objects used as templates -- do not use or mess with these!
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
-  taPluginBase_List	plugin_deps; // #SHOW_TREE EXPERT_TREE  dynamic list, populated in presave
+  taPluginBase_List	plugin_deps; // #SHOW_TREE EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
   String_Array		recent_files; // #NO_SHOW recently loaded files
+  SArg_Array		last_dirs; // NO_SHOW most recent dirs (value) chosen by user in given context (key)
   
-  virtual void  Settings() {};
-  // #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
-  virtual void	SaveConfig() { };
-  // #MENU #CONFIRM save current configuration to file ~/.xxxconfig that is automatically loaded at startup
-  virtual void	LoadConfig() { };
-  // #MENU #CONFIRM load current configuration from file ~/.xxxconfig that is automatically loaded at startup
-  virtual void	Info();
+  virtual void  Options();
+  // edit global settings/parameters (taMisc)
+  virtual void	About();
   // #MENU get information/copyright notice
-  virtual void	SaveAll() { };
-  // saves all the contents of the app object
+  virtual void	SaveAll();
+  // saves all the projects
   
   void		AddRecentFile(const String& value); // add this file to the recent list
 
@@ -205,8 +205,6 @@ public:
   // #IGNORE process the -gui/-nogui arg
   static bool	Startup_EnumeratePlugins();
   // #IGNORE enumeration of plugins 
-  static bool	Startup_MakeRoot(TypeDef* root_typ);
-  // #IGNORE make and install root object of given type
   static bool	Startup_LoadPlugins();
   // #IGNORE final initialize of plugins 
   static bool	Startup_InitTypes();

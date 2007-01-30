@@ -740,7 +740,7 @@ cssCPtr_String::operator ostream*() const {
     ths->gf = taFiler::New();
     taRefN::Ref(ths->gf);
   }
-  ths->gf->fname = nm;
+  ths->gf->setFileName(nm);
   ostream* strm = ths->gf->open_write();
   if((strm == NULL) || !(ths->gf->open_file)) {
     cssMisc::Error(prog, "String -> ostream*: could not open file", nm);
@@ -756,7 +756,7 @@ cssCPtr_String::operator istream*() const {
     ths->gf = taFiler::New();
     taRefN::Ref(ths->gf);
   }
-  ths->gf->fname = nm;
+  ths->gf->setFileName(nm);
   istream* strm = ths->gf->open_read();
   if((strm == NULL) || !(ths->gf->open_file)) {
     cssMisc::Error(prog, "String -> istream*: could not open file", nm);

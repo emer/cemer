@@ -30,9 +30,9 @@ void taImage::Copy_(const taImage& cp) {
 }
 
 bool taImage::LoadImage(const String& fname) {
-  if(fname.empty()) {
+  if (fname.empty()) {
     taFiler* flr = GetLoadFiler(fname);
-    name = flr->fname;
+    name = flr->fileName();
     flr->Close();
     taRefN::unRefDone(flr);
   }

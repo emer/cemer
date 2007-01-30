@@ -3681,10 +3681,10 @@ void taiFileButton::GetImage() {
 	taiAction::action, this, SLOT(Edit()) );
   }
 
-  if ((gf == NULL) || (!gf->select_only && !gf->open_file) || gf->fname.empty() )
+  if ((gf == NULL) || (!gf->select_only && !gf->open_file) || gf->fileName().empty() )
     setLabel("------No File-----");
   else
-    setLabel(gf->fname);
+    setLabel(gf->fileName());
 }
 
 void taiFileButton::GetGetFile() {
@@ -3725,7 +3725,7 @@ void taiFileButton::Close() {
   GetGetFile();
   gf->Close();
   if(gf->select_only)
-    gf->fname = "";		// reset file name on close
+    gf->setFname("");		// reset file name on close
   GetImage();
 }
 
@@ -3733,7 +3733,7 @@ void taiFileButton::Edit() {
   GetGetFile();
 //  char* edtr_c = getenv("EDITOR");
   String edtr = taMisc::edit_cmd; //don't run gsub on the original string!
-  edtr.gsub("%s", gf->fname);
+  edtr.gsub("%s", gf->fileName());
   system(edtr);
 }
 

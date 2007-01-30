@@ -94,8 +94,7 @@ int pdpMisc::Main(int argc, const char *argv[]) {
 #if ((!defined(DMEM_COMPILE)) && (!defined(TA_OS_WIN))) 
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFile);
 #endif
-  root->colorspecs.SetDefaultColor();	// create colorspecs even if nogui, since they are referred to in projects
-  root->LoadConfig();
+//obs  root->LoadConfig();
   cssMisc::TopShell->cmd_prog->CompileRunClear(".pdpinitrc");
   if(taRootBase::Startup_Run())
     return 0;

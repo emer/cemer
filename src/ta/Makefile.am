@@ -84,7 +84,8 @@ SRCS_GUI =\
 	ta_qttype.cpp \
 	ta_seledit.cpp \
 	ta_program_qt.cpp  \
-	ta_program_qt.moc.cpp 
+	ta_program_qt.moc.cpp \
+	ta_filer_qt.cpp
 
 endif
 

@@ -225,6 +225,10 @@ taiMiscCore* taiMiscCore::New(QObject* parent) {
 }
 
 void taiMiscCore::Quit(CancelOp cancel_op) {
+  // good place to save config, regardless what happens
+  if (tabMisc::root)
+    tabMisc::root->Save();
+
   taMisc::quitting = (cancel_op == CO_NOT_CANCELLABLE) ? 
     taMisc::QF_FORCE_QUIT : taMisc::QF_USER_QUIT;
   OnQuitting(cancel_op); // saves changes
@@ -397,7 +401,6 @@ String	taMisc::pkg_dir = "pdp++"; // "ta_css"; // todo: get from config.h
 String	taMisc::pkg_home; // is concat in Init_Defaults_PostLoadConfig
 String  taMisc::home_dir;			// this will be set in init call
 String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
-String	taMisc::tmp_dir = "/tmp"; // todo: should be inst_prefix/tmp??
 String	taMisc::prefs_dir; // this must be set at startup!
 
 String_PArray	taMisc::css_include_paths;
@@ -493,7 +496,7 @@ String 	taMisc::LexBuf;
 
 void taMisc::SaveConfig() {
 #ifndef NO_TA_BASE
-  String cfgfn = prefs_dir + "/.taconfig";
+  String cfgfn = prefs_dir + "/options";
   fstream strm;
   strm.open(cfgfn, ios::out);
   TA_taMisc.Dump_Save_Value(strm, (void*)this);
@@ -503,7 +506,7 @@ void taMisc::SaveConfig() {
 
 void taMisc::LoadConfig() {
 #ifndef NO_TA_BASE
-  String cfgfn = prefs_dir + "/.taconfig";
+  String cfgfn = prefs_dir + "/options";
 //TODO: temp to move user's old file -- remove this 
   bool resave = false;
   if (!QFile::exists(cfgfn)) {

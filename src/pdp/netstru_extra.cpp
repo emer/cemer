@@ -708,7 +708,7 @@ void ScriptPrjnSpec::Destroy() {
 void ScriptPrjnSpec::InitLinks() {
   ProjectionSpec::InitLinks();
   taBase::Own(s_args, this);
-  if(script_file->fname.empty())	// initialize only on startup up, not transfer
+  if(script_file->fname().empty())	// initialize only on startup up, not transfer
     SetScript("");
 }
 
@@ -728,10 +728,9 @@ void ScriptPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 //v3  UpdateReCompile();
   CompileScript_impl();
-  if(!script_file->fname.empty()) {
-    name = script_file->fname.before(".css");
-    if(name.contains('/'))
-      name = name.after('/', -1);
+  if(!script_file->fname().empty()) {
+    //note: fname() is name only
+    name = script_file->fname().before(".css");
     int i;
     for(i=0;i<s_args.size;i++)
       name += String("_") + s_args[i];

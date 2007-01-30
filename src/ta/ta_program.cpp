@@ -2089,9 +2089,7 @@ void Program::SaveToProgLib(ProgLibs library) {
 			     "Ok", "Cancel");
     if(chs == 1) return;
   }
-  String tmp_last_dir = taFiler::last_dir;
-  SaveAs(fname);
-  taFiler::last_dir = tmp_last_dir;
+  SaveAs(fname, "ProgLib");
   Program_Group::prog_lib.FindPrograms();
 }
 
@@ -2167,9 +2165,7 @@ void Program_Group::SaveToProgLib(Program::ProgLibs library) {
 			     "Ok", "Cancel");
     if(chs == 1) return;
   }
-  String tmp_last_dir = taFiler::last_dir;
-  SaveAs(fname);
-  taFiler::last_dir = tmp_last_dir;
+  SaveAs(fname, "ProgLib");
   Program_Group::prog_lib.FindPrograms();
 }
 
@@ -2226,16 +2222,12 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
     path = path.after("file:");
   if(is_group) {
     Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
-    String tmp_last_dir = taFiler::last_dir;
     pg->Load(path);
-    taFiler::last_dir = tmp_last_dir;
     return pg;
   }
 
   Program* pg = new_owner->NewEl(1, &TA_Program);
-  String tmp_last_dir = taFiler::last_dir;
   pg->Load(path);
-  taFiler::last_dir = tmp_last_dir;
   return pg;
 }
 
@@ -2248,9 +2240,7 @@ bool ProgLibEl::LoadProgram(Program* prog) {
     taMisc::Error("ProgLibEl::LoadProgram -- cannot load a program group file into a single program!");
     return false;
   }
-  String tmp_last_dir = taFiler::last_dir;
   prog->Load(path);
-  taFiler::last_dir = tmp_last_dir;
   return true;
 }
 
@@ -2263,9 +2253,7 @@ bool ProgLibEl::LoadProgramGroup(Program_Group* prog_gp) {
     taMisc::Error("ProgLibEl::LoadProgram -- cannot load a single program file into a program group!");
     return false;
   }
-  String tmp_last_dir = taFiler::last_dir;
   prog_gp->Load(path);
-  taFiler::last_dir = tmp_last_dir;
   return true;
 }
 

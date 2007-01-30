@@ -685,6 +685,8 @@ void PDPRoot::Destroy() {
 void PDPRoot::InitLinks() {
   inherited::InitLinks();
   taBase::Own(colorspecs, this);
+  // create colorspecs even if nogui, since they are referenced in projects
+  colorspecs.SetDefaultColor();	
 }
 
 void PDPRoot::CutLinks() {
@@ -711,7 +713,7 @@ TAPtr PDPRoot::Browse(const char* init_path) {
 }
 #endif
 
-void PDPRoot::Info() {
+void PDPRoot::About() {
   STRING_BUF(info, 2048);
   info += "PDP Info\n";
   info += "This is the PDP++ software package, version: ";
@@ -742,139 +744,4 @@ is covered by the GNU General Public License, see ta_string.h\n";
   taMisc::Choice(info, "Ok");
 }
 
-void PDPRoot::LoadConfig() {
-  String home_dir = getenv("HOME");
-  String cfgfn = home_dir + "/.pdpconfig";
-  fstream strm;
-  strm.open(cfgfn, ios::in);
-  if(!strm.bad() && !strm.eof())
-    Load_strm(strm);
-  strm.close(); strm.clear();
-  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
-}
-
-void PDPRoot::SaveConfig() {
-  if (projects.size > 0) {
-    taMisc::Error("Error: You cannot save the ~/.pdpconfig file with a project file loaded -- remove the project(s) then try again!");
-    return;
-  }
-  String home_dir = getenv("HOME");
-  String cfgfn = home_dir + "/.pdpconfig";
-  fstream strm;
-  strm.open(cfgfn, ios::out);
-  Save_strm(strm);
-  strm.close(); strm.clear();
-  ((taMisc*)TA_taMisc.GetInstance())->SaveConfig();
-}
-
-void PDPRoot::Settings() {
-#ifdef TA_GUI
-  if(taMisc::gui_active)
-//    TA_taMisc.ie->Edit(TA_taMisc.GetInstance(),window);
-    TA_taMisc.ie->Edit(TA_taMisc.GetInstance());
-#endif
-}
-
-/*obs void PDPRoot::SetWinName() {
-  if(!taMisc::gui_active) return;
-  if(window == NULL)    return;
-  //  String nw_name = String(ivSession::instance()->classname()) + ": Root";
-  // if we give it a common name, windows will be grouped together under KDE!
-  String nw_name = String(taiM->classname());
-  if(nw_name == win_name) return;
-  win_name = nw_name;
-  window->setCaption(win_name);
-} */
-
-/* void PDPRoot::WindowClosing(bool& cancel) {
-  int chs = 0;
-  QWidgetList* tlw = NULL;
-  taiM->MainWindowClosing(cancel);
-  if (cancel) goto exit;
-
-
-//note: following was commented out
- no -- use the projects mechanism below
-  //Need to close all the other windows first -- user can cancel
-  tlw = QApplication::topLevelWidgets(); //note: must be deleted
-  for (int i = tlw->count() - 1;  i >= 0; --i) {
-    QWidget* w = tlw->at(i);
-    if (w == this->window) continue; // don't close ourself!
-    if (!w->close()) {
-      cancel = true;
-      break;
-    }
-    taiMisc::RunPending();
-  }
-  delete tlw;
-
-  if (cancel) goto exit;
-
-// end commenting out
-
-exit:
-  if (cancel) quitting = false;
-}*/
-
-void PDPRoot::SaveAll() {
-  taLeafItr i;
-  ProjectBase* pr;
-  FOR_ITR_EL(ProjectBase, pr, projects., i) {
-    pr->Save(); // does SaveAs if no filename
-  }
-}
-
-/*obs??
-void PDPRoot::GetWindow() {
-  IconGlyph* ig =
-    new IconGlyph(new ivBackground(win_box, wkit->background()),NULL,this);
-  ig->SetIconify = winbMisc::SetIconify;
-  ig->ScriptIconify= winbMisc::ScriptIconify;
-  window = new ivApplicationWindow(ig);
-  ivHandler* delh = new PDPRootWMDeleteHandler(this);
-  window->wm_delete(delh);
-  ig->SetWindow(window);
-} */
-
-/*obsbool PDPRoot::ThisMenuFilter(MethodDef* md) {
-  if((md->name == "Load") || (md->name == "Save") || (md->name == "SaveAs") ||
-     (md->name == "Close") || (md->name == "Print") || (md->name == "Print_Data") ||
-     (md->name == "GetAllWinPos") || (md->name == "ScriptAllWinPos") ||
-     (md->name == "SetWinPos") || (md->name == "CopyFrom") || (md->name == "CopyTo") ||
-     (md->name == "DuplicateMe") || (md->name == "ChangeMyType") ||
-     (md->name == "SelectForEdit") || (md->name == "SelectFunForEdit"))
-    return false;
-  return true;
-} */
-/*
-void PDPRoot::SetWinPos(float left, float top, float width, float height) {
-  WinGeometry* wn_pos = &win_pos;
-  if(projects.leaves > 0)
-    wn_pos = &(((ProjectBase*)projects.Leaf(0))->root_win_pos);
-
-  bool was_set = false;
-  if((left != -1.0f) && (top != -1.0f)) {
-    wn_pos->lft = left;
-    wn_pos->top = top;
-    was_set = true;
-  }
-  if((width != -1.0f) && (height != -1.0f)) {
-    wn_pos->wd = width;
-    wn_pos->ht = height;
-    was_set = true;
-  }
-  if(was_set) {
-    wn_pos->UpdateAfterEdit();	// puts it on the update_winpos list
-  }
-  else {
-    wn_pos->SetWinPos();	// does it now
-  }
-}
-
-void PDPRoot::GetWinPos() {
-  WinGeometry* wn_pos = &win_pos;
-  if(projects.leaves > 0)
-    wn_pos = &(((ProjectBase*)projects.Leaf(0))->root_win_pos);
-  wn_pos->GetWinPos();
-} */
 

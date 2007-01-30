@@ -1458,7 +1458,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   ++taMisc::is_loading;
 
   // check for plugin deps, if so, load those in and resume
-  if (td->InheritsFrom(TA_taPlugin_List) && 
+  if (td->InheritsFrom(TA_taPluginBase_List) && 
     (path == ".plugin_deps")) 
   {
     rval = tabMisc::root->Dump_Load_Value(strm, NULL); // read it

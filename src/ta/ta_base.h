@@ -476,34 +476,37 @@ public:
   virtual String	GetFileNameFmProject(const String& ext, const String& tag = "", const String& subdir = "", bool dmem_proc_no = false);
   // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name.  empty if project not found
 
-  static taFiler*	StatGetFiler(TypeItem* td, String exts="",
-    int compress=-1, String filetypes="");
+  static taFiler*	StatGetFiler(TypeItem* td, String exts= _nilString,
+    int compress=-1, String filetypes =_nilString, String context = _nilString);
   // #IGNORE gets file dialog for the TypeItem -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes
-  taFiler*		GetFiler(TypeItem* td = NULL, const String& exts="",
-    int compress=-1, const String& filetypes="");
+  taFiler*		GetFiler(TypeItem* td = NULL, const String& exts = _nilString,
+    int compress=-1, const String& filetypes = _nilString, String context = _nilString);
   // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes; exts/ft's must match, and are ,-separated lists
 
   virtual int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
   // #CAT_File Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
-  virtual taFiler* 	GetLoadFiler(const String& fname, String exts="",
-    int compress=-1, String filetypes="");
+  virtual taFiler* 	GetLoadFiler(const String& fname, String exts = _nilString,
+    int compress=-1, String filetypes = _nilString, String context = _nilString);
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
-  virtual int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
+  virtual int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL,
+    String context = _nilString);
   // #MENU #MENU_ON_Object #ARGC_0 #CAT_File Load object data from given file name (if empty, prompt user for a name) -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
   virtual int 		Load_cvt(taFiler*& flr);
   // #IGNORE convert stream from old to new format (if needed)
 
   virtual int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
   // #CAT_File Save object data to a file stream
-  virtual taFiler* 	GetSaveFiler(const String& fname, String ext="",
-    int compress=-1, String filetypes="");
+  virtual taFiler* 	GetSaveFiler(const String& fname, String ext = _nilString,
+    int compress=-1, String filetypes=_nilString, String context = _nilString);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
-  virtual taFiler* 	GetAppendFiler(const String& fname, const String& ext="", int compress=-1);
+  virtual taFiler* 	GetAppendFiler(const String& fname, const String& ext="",
+    int compress=-1, String filetypes=_nilString, String context = _nilString);
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
-  virtual int		Save(); 
-  // #MENU #MENU_ON_Object #CAT_File saves the object to a file using current file name (from GetFileName() function)
-  virtual int		SaveAs(const String& fname = _nilString); 
-  // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user
+  virtual int		Save(String context = _nilString); 
+  // #MENU #MENU_ON_Object #ARGC_0 #CAT_File saves the object to a file using current file name (from GetFileName() function); if context="" then default is used
+  virtual int		SaveAs(const String& fname = _nilString,
+    String context = _nilString); 
+  // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user; if context="" then default is used
 
 
   ////////////////////////////////////////////////////////////////////// 
@@ -1844,9 +1847,16 @@ INHERITED(String_Array)
 public:
   String_Array	labels;		// #HIDDEN labels for each argument
 
+  // note: all following key-based api routines are case sensitive
+  bool		HasValue(const String& key) const;
+    // returns true if there is an entry for the key
+  String	GetValue(const String& key) const;
+    // return the value for the key, or nil if none
+  void		SetValue(const String& key, const String& value);
+    // set or update the value for the key
+    
   int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
-
   void	UpdateAfterEdit();
   void	Initialize();
   void	Destroy()	{ };

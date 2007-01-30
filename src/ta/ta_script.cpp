@@ -168,18 +168,18 @@ void ScriptBase::LoadScript(const String& file_nm) {
 
 void ScriptBase::LoadScriptString(const String& string) {
   script_string = string;
-  script_file->fname = "";
+  script_file->setFname("");
   script_compiled = false;
   
   CompileScript();
 }
 
 const String ScriptBase::scriptFilename() {
-  return script_file->fname;
+  return script_file->fileName();
 }
 
 AbstractScriptBase::ScriptSource ScriptBase::scriptSource() {
-  if (!script_file->fname.empty())
+  if (!script_file->fileName().empty())
     return ScriptFile;
   else if (!script_string.empty()) 
     return ScriptString;
@@ -188,10 +188,9 @@ AbstractScriptBase::ScriptSource ScriptBase::scriptSource() {
 
 void ScriptBase::SetScript(const String& file_nm) {
   script_file->select_only = true;	// just selecting a file name here
-  script_file->fname = file_nm;
+  script_file->setFileName(file_nm);
   script_string = _nilString; // either/or
   script_compiled = false;
-//  script_file->UpdateGF();
 }
 
 

@@ -762,7 +762,7 @@ String taBase::GetFileNameFmProject(const String& ext, const String& tag, const 
 }
 
 taFiler* taBase::StatGetFiler(TypeItem* td, String exts,
-  int compress, String filetypes)
+  int compress, String filetypes, String context)
 {
   bool cmprs = (compress <= 0); // either default or none
   if (td) {
@@ -778,17 +778,21 @@ taFiler* taBase::StatGetFiler(TypeItem* td, String exts,
         exts = "." + exts;
       }
     }
+    if (context.empty()) {
+      context = td->OptionAfter("FILER_CONTEXT_");
+      //note: if still empty, no context will be used
+    }
   }
   taFiler::FilerFlags ff = (cmprs) ? taFiler::DEF_FLAGS_COMPRESS : taFiler::DEF_FLAGS;
-  taFiler* result = taFiler::New(filetypes, exts, ff);
+  taFiler* result = taFiler::New(filetypes, exts, ff, context);
   return result;
 }
 
 taFiler* taBase::GetFiler(TypeItem* td, const String& exts,
-  int compress, const String& filetypes)
+  int compress, const String& filetypes, String context)
 {
   if (!td) td = GetTypeDef();
-  return StatGetFiler(td, exts, compress, filetypes);
+  return StatGetFiler(td, exts, compress, filetypes, context);
 }
 
 int taBase::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
@@ -817,12 +821,12 @@ void AppendFilerInfo(TypeDef* typ, String& exts, int& compress, String& filetype
 
 
 taFiler* taBase::GetLoadFiler(const String& fname, String exts,
-  int compress, String filetypes) 
+  int compress, String filetypes, String context) 
 {
   // get names/types here, because save/load are different
+  TypeDef* typ = GetTypeDef(); // will be replaced with item type if we are a list
   if (exts.empty()) {
     // if we are a list, get for the default typ
-    TypeDef* typ = NULL;
     if (InheritsFrom(&TA_taList_impl)) {
       taList_impl* ths = (taList_impl*) this;
       typ = ths->el_base;
@@ -830,26 +834,31 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
         AppendFilerInfo(typ, exts, compress, filetypes);
       // and additionally, if a group, we can also load subgroups
       if (InheritsFrom(&TA_taGroup_impl)) {
-        typ = GetTypeDef(); // we are the group
-        AppendFilerInfo(typ, exts, compress, filetypes);
+        // keep prev typ for use in calcing context
+        TypeDef* typ2 = GetTypeDef(); // we are the group
+        AppendFilerInfo(typ2, exts, compress, filetypes);
       }
     }
   }
-  
-  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes); 
+  if (context.empty()) {
+    context = typ->OptionAfter("FILER_CONTEXT_");
+    //note: if still empty, will default to "(none)"
+  }
+  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes, context); 
   taRefN::Ref(flr);
    
   if(fname.nonempty()) {
-    flr->fname = fname;
+    flr->setFileName(fname);
     flr->open_read();
   } else { 
-    flr->fname = taMisc::GetFileFmPath(GetFileName());
-    if(flr->fname.empty())
-      flr->fname = GetName();
+    String tfname = GetFileName();
+    if (tfname.empty())
+      tfname = GetName();
+    flr->setFileName(tfname); // filer etc. does auto extension
     flr->Open();
   }
   if(flr->istrm) {
-    SetFileName(flr->fname);
+    SetFileName(flr->fileName());
   }
   return flr;
 }
@@ -878,7 +887,7 @@ int taBase::Load_cvt(taFiler*& flr) {
   DumpFileCvt* cvt = taMisc::file_converters[typ_id];
   taFiler* cvt_flr = taFiler::New(flr->filetype, flr->ext);
   taRefN::Ref(cvt_flr);
-  String cvt_fname = flr->fname;
+  String cvt_fname = flr->fileName();
   String cvt_tag = "_v4precvt";
   if(!flr->ext.empty()) {
     if(cvt_fname.contains(flr->ext)) cvt_fname = cvt_fname.before(flr->ext);
@@ -892,7 +901,7 @@ int taBase::Load_cvt(taFiler*& flr) {
     }
     cvt_fname += cvt_tag + "." + ex;
   }
-  cvt_flr->fname = cvt_fname;
+  cvt_flr->setFileName(cvt_fname);
   cvt_flr->open_write();
   taMisc::replace_strings(*flr->istrm, *cvt_flr->ostrm, cvt->repl_strs);
   flr->Close();
@@ -908,9 +917,9 @@ int taBase::Load_cvt(taFiler*& flr) {
   return true;	
 }
 
-int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
+int taBase::Load(const String& fname, taBase** loaded_obj_ptr, String context) {
   int rval = false;
-  taFiler* flr = GetLoadFiler(fname);
+  taFiler* flr = GetLoadFiler(fname, _nilString, -1, _nilString, context);
   if(flr->istrm) {
     Load_cvt(flr);		// do conversion if needed
     taBase* lobj = NULL;
@@ -918,7 +927,7 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
     if (loaded_obj_ptr)
       *loaded_obj_ptr = lobj;
     if(rval && lobj) {
-      lobj->SetFileName(flr->fname);
+      lobj->SetFileName(flr->fileName());
     }
   }
   flr->Close();
@@ -933,64 +942,67 @@ int taBase::Save_strm(ostream& strm, TAPtr par, int indent) {
 }
 
 taFiler* taBase::GetSaveFiler(const String& fname, String exts,
-  int compress, String filetypes)
+  int compress, String filetypes, String context)
 {
   // get names/types here, because save/load are different
+  TypeDef* typ = NULL; // we are the group
   if (exts.empty()) {
     // if we are a list, get for the default typ
-    TypeDef* typ = GetTypeDef(); // we are the group
+    typ = GetTypeDef(); // we are the group
     AppendFilerInfo(typ, exts, compress, filetypes);
   }
-  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes); 
+  taFiler* flr = StatGetFiler(typ, exts, compress, filetypes, context); 
   taRefN::Ref(flr);
    
   if (fname.nonempty()) {
-    flr->fname = fname;
+    flr->setFileName(fname);
     flr->Save();
   } else { 
-    flr->fname = GetFileName(); // filer etc. does auto extension
-    flr->fname = taMisc::GetFileFmPath(GetFileName());
-    if(flr->fname.empty())
-      flr->fname = GetName();
+    String tfname = GetFileName();
+    if (tfname.empty())
+      tfname = GetName();
+    flr->setFileName(tfname); // filer etc. does auto extension
     flr->SaveAs();
   }
   
   if (flr->ostrm) {
-    SetFileName(flr->fname);
+    SetFileName(flr->fileName());
     DataChanged(DCR_ITEM_UPDATED);
   }
   return flr;
 }
 
-taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int compress) {
-  taFiler* flr = GetFiler(NULL, ext, compress); 
+taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int compress,
+  String filetypes, String context) 
+{
+  taFiler* flr = GetFiler(NULL, ext, compress, filetypes, context); 
   taRefN::Ref(flr);
    
   if (fname.nonempty()) {
-    flr->fname = fname;
+    flr->setFileName(fname);
     flr->Append();
   } else { 
-    flr->fname = GetFileName(); // filer etc. does auto extension
-    flr->fname = taMisc::GetFileFmPath(GetFileName());
-    if(flr->fname.empty())
-      flr->fname = GetName();
+    String tfname = GetFileName();
+    if (tfname.empty())
+      tfname = GetName();
+    flr->setFileName(tfname); // filer etc. does auto extension
     flr->Append();
   }
   
   if(flr->ostrm) {
-    SetFileName(flr->fname);
+    SetFileName(flr->fileName());
   }
   return flr;
 }
 
-int taBase::Save() { 
+int taBase::Save(String context) { 
   String fname = GetFileName(); // empty if 1st or not supported
-  return SaveAs(fname);
+  return SaveAs(fname, context);
 }
 
-int taBase::SaveAs(const String& fname) {
+int taBase::SaveAs(const String& fname, String context) {
   int rval = false;
-  taFiler* flr = GetSaveFiler(fname);
+  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString, context);
   if(flr->ostrm)
     rval = Save_strm(*flr->ostrm);
   flr->Close();
@@ -2121,9 +2133,13 @@ void taNBase::Copy_(const taNBase& cp) {
 //////////////////////////
 
 bool taFBase::SetFileName(const String& val) {
-  // we get the canonical path, so we insure we can do exact filename compares later
   QFileInfo fi(val);
-  file_name = fi.canonicalFilePath(); 
+  //note: canonical paths only available if file actually exists...
+  if (fi.exists()) {
+    // we get the canonical path, so we insure we can do exact filename compares later
+    file_name = fi.canonicalFilePath(); 
+  } else
+    file_name = val; 
   return true;
 }
 
@@ -3466,6 +3482,34 @@ int SArg_Array::Dump_Load_Value(istream& strm, TAPtr par) {
   }
   return rval;
 }
+
+bool SArg_Array::HasValue(const String& key) const {
+  return (labels.FindEl(key) >= 0);
+}
+
+String SArg_Array::GetValue(const String& key) const {
+  int idx = labels.FindEl(key);
+  if (idx >= 0) return SafeEl(idx);
+  else return _nilString;
+}
+
+void SArg_Array::SetValue(const String& key, const String& value) {
+  int idx = labels.FindEl(key);
+  if (idx >= 0) {
+    if (idx >= size) { // consistency error -- no item
+      taMisc::Warning("Consistency error: SArg_Array used as key/values has missing entry for key:", key);
+    } else {
+      FastEl(idx) = value;
+    }
+  } else {
+    labels.Add(key);
+    Add(value);
+  }
+#ifdef DEBUG // helpful when viewing stuff in gui 
+  DataChanged(DCR_ITEM_UPDATED);
+#endif
+}
+
 
 
 //////////////////////////

@@ -338,6 +338,22 @@ int Project_Group::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) 
 //   taRoot		//
 //////////////////////////
 
+TypeDef* taRootBase::root_type;
+
+taRootBase* taRootBase::instance() {
+  if (!tabMisc::root) {
+    taRootBase* rb = (taRootBase*)root_type->GetInstance();
+    if (!rb) {
+      taMisc::Error("Startup_MakeRoot: Error -- no instance of root type!");
+      return NULL;
+    }
+    tabMisc::root = (taRootBase*)rb->MakeToken();
+    taBase::Ref(tabMisc::root);
+    tabMisc::root->InitLinks();
+  }
+  return tabMisc::root;
+}
+
 void taRootBase::Initialize() {
   version = taMisc::version;
   SetName("root");
@@ -367,18 +383,20 @@ void taRootBase::InitLinks() {
   taBase::Own(plugin_deps, this);
   taBase::Own(mime_factories, this);
   taBase::Own(recent_files, this);
+  taBase::Own(last_dirs, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
+  last_dirs.CutLinks();
+  recent_files.CutLinks();
   mime_factories.CutLinks();
   plugin_deps.CutLinks();
   plugins.CutLinks();
   viewers.CutLinks();
   projects.CutLinks();
   templates.CutLinks();
-  recent_files.CutLinks();
   inherited::CutLinks();
 }
 
@@ -452,7 +470,7 @@ bool taRootBase::VerifyHasPlugins() {
 
 }
 
-void taRootBase::Info() {
+void taRootBase::About() {
   String info;
   info += "TA/CSS Info\n";
   info += "This is the TA/CSS software package, version: ";
@@ -466,12 +484,12 @@ void taRootBase::Info() {
   info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\
  Carnegie Mellon University, Princeton University.\n\
  \n\
- TA/PDP++ is free software; you can redistribute it and/or modify\n\
+ TA/CSS is free software; you can redistribute it and/or modify\n\
  it under the terms of the GNU General Public License as published by\n\
  the Free Software Foundation; either version 2 of the License, or\n\
  (at your option) any later version.\n\
  \n\
- TA/PDP++ is distributed in the hope that it will be useful,\n\
+ TA/CSS is distributed in the hope that it will be useful,\n\
  but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
  GNU General Public License for more details.\n\
@@ -525,6 +543,29 @@ taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
     
 } 
 
+void taRootBase::SaveAll() {
+  taLeafItr i;
+  taProject* pr;
+  FOR_ITR_EL(taProject, pr, projects., i) {
+    pr->Save(); // does SaveAs if no filename
+  }
+}
+
+void taRootBase::Options() {
+#ifdef TA_GUI
+  if (!taMisc::gui_active) return;
+  taiEdit* ie =  TA_taMisc.ie;
+  if (!ie) return;
+  taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
+  int accepted = ie->EditDialog(inst, false, NULL, true); // r/w, defcolor, modal
+  if (accepted) {
+    inst->SaveConfig();
+  }
+#endif
+}
+
+
+
 /////////////////////////////////////////
 // 	startup code
 
@@ -554,6 +595,12 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
 
   taMisc::default_scope = &TA_taProject; // this is general default
   
+  // load prefs values for us
+  taRootBase* inst = instance();
+  inst->SetFileName(taMisc::prefs_dir + "/root");
+  if (QFile::exists(inst->GetFileName())) {
+    inst->Load();
+  }
   return true;
 }
   	
@@ -561,6 +608,7 @@ bool taRootBase::Startup_EnumeratePlugins() {
   taMisc::Init_Hooks();		// plugins register init hooks -- this calls them!
   taPlugins::AddPluginFolder(taMisc::pkg_home + "/plugins");
   taPlugins::AddPluginFolder(taMisc::home_dir + "/ta_plugins"); //TODO: should be pdpuserhome
+  taPlugins::InitLog(taMisc::prefs_dir + "/plugins.log");
   taPlugins::EnumeratePlugins();
 
   return true;
@@ -671,18 +719,6 @@ bool taRootBase::Startup_InitApp(int argc, const char* argv[]) {
     QFileInfo fi(argv[0]);
     QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
   }
-  return true;
-}
-
-bool taRootBase::Startup_MakeRoot(TypeDef* root_typ) {
-  taRootBase* rb = (taRootBase*)root_typ->GetInstance();
-  if(!rb) {
-    taMisc::Error("Startup_MakeRoot: Error -- no instance of root type!");
-    return false;
-  }
-  tabMisc::root = (taRootBase*)rb->MakeToken();
-  taBase::Ref(tabMisc::root);
-  tabMisc::root->InitLinks();
   return true;
 }
 
@@ -810,7 +846,7 @@ bool taRootBase::Startup_Console() {
 
 bool taRootBase::Startup_ProcessArgs() {
   if(taMisc::CheckArgByName("Version")) {
-    tabMisc::root->Info();
+    tabMisc::root->About();
   }
   if(taMisc::CheckArgByName("Help")) {
     taMisc::HelpMsg();
@@ -832,6 +868,7 @@ bool taRootBase::Startup_ProcessArgs() {
 bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun, 
 			      TypeDef* root_typ) 
 {
+  root_type = root_typ;
 #ifdef GPROF
   moncontrol(0);		// turn off at start
 #endif
@@ -843,7 +880,6 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
   if(!Startup_InitApp(argc, argv)) return false;
   if(!Startup_InitTypes()) return false;
   if(!Startup_EnumeratePlugins()) return false;
-  if(!Startup_MakeRoot(root_typ)) return false;
   if(!Startup_LoadPlugins()) return false; // loads those enabled, and does type integration
   if(!Startup_InitCss()) return false;
   if(!Startup_InitGui()) return false; // note: does the taiType bidding
@@ -852,6 +888,7 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
   if(!Startup_ProcessArgs()) return false;
 //TODO: shouldn't call event loop yet, because we haven't initialized main event loop!
 //  QCoreApplication::processEvents();
+  instance()->Save(); 
   return true;
 }
 

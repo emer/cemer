@@ -528,8 +528,6 @@ public:
   // #CAT_File location of user's home directory
   static String		web_home;
   // #SAVE #CAT_File url for location of web repository of package information
-  static String		tmp_dir;
-  // #SAVE #CAT_File location of temporary files (e.g., inst_prefix/tmp)
   static String		prefs_dir;
   // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
 
@@ -620,9 +618,9 @@ public:
   //	Configuration -- object as settings
 
   void	SaveConfig();
-  // #BUTTON #CONFIRM #CAT_Config save configuration defaults to ~/.taconfig file that is loaded automatically at startup
+  // #CAT_Config save configuration defaults to <appdata>/taconfig file that is loaded automatically at startup
   void	LoadConfig();
-  // #BUTTON #CONFIRM #CAT_Config load configuration defaults from ~/.taconfig file (which is loaded automatically at startup)
+  // #CAT_Config load configuration defaults from <appdata>/.taconfig file (which is loaded automatically at startup)
 
   /////////////////////////////////////////////////
   //	Errors, Warnings, Simple Dialogs

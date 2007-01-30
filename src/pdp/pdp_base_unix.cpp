@@ -72,17 +72,17 @@ void pdpMisc::SaveRecoverFile(int err) {
 	if(net->usr1_save_fmt == Network::JUST_WEIGHTS)
 	  use_sfx = wts_sfx;
 	cnt = get_unique_file_number(cnt, "PDP++NetSave.", use_sfx);
-	gf->fname = "PDP++NetSave." + String(cnt) + use_sfx;
+	gf->setFileName("PDP++NetSave." + String(cnt) + use_sfx);
 	ostream* strm = gf->open_write();
 	if(((strm == NULL) || strm->bad()) && !home_dir.empty()) {
 	  // try it with the home diretory
 	  cerr << "Error saving in current directory, trying home directory";
 	  gf->Close();
-	  gf->fname = home_dir + "/" + gf->fname;
+	  gf->setFileName(home_dir + "/" + gf->fname());
 	  strm = gf->open_write();
 	}
 	if((strm == NULL) || strm->bad())
-	  cerr << "SaveNetwork: could not open file: " << gf->fname << "\n";
+	  cerr << "SaveNetwork: could not open file: " << gf->fileName() << "\n";
 	else {
 	  if(net->usr1_save_fmt == Network::JUST_WEIGHTS)
 	    net->SaveWeights_strm(*strm, net->wt_save_fmt);
@@ -99,17 +99,17 @@ void pdpMisc::SaveRecoverFile(int err) {
       else
 	prfx = "PDP++Recover.";
       cnt = get_unique_file_number(cnt, prfx, proj_sfx);
-      gf->fname = prfx + String(cnt) + proj_sfx;
+      gf->setFileName(prfx + String(cnt) + proj_sfx);
       ostream* strm = gf->open_write();
       if(((strm == NULL) || strm->bad()) && !home_dir.empty()) {
 	// try it with the home diretory
 	cerr << "Error saving in current directory, trying home directory";
 	gf->Close();
-	gf->fname = home_dir + "/" + gf->fname;
+	gf->setFileName(home_dir + "/" + gf->fname());
 	strm = gf->open_write();
       }
       if((strm == NULL) || strm->bad())
-	cerr << "SaveRecoverFile: could not open file: " << gf->fname << "\n";
+	cerr << "SaveRecoverFile: could not open file: " << gf->fileName() << "\n";
       else
 	p->Save_strm(*strm);
       gf->Close();

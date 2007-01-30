@@ -200,15 +200,11 @@ INHERITED(taRootBase)
 public:
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
 
-  override void  Settings();		// #MENU #MENU_ON_Object edit global settings/parameters (taMisc)
-  override void	SaveConfig();		// #MENU #CONFIRM save current configuration to file ~/.pdpconfig that is automatically loaded at startup: IMPORTANT: DO NOT HAVE A PROJECT LOADED!
-  override void	LoadConfig();		// #MENU #CONFIRM load current configuration from file ~/.pdpconfig that is automatically loaded at startup
-  override void	Info();			// #MENU get information/copyright notice
+  override void	About();
 #ifdef TA_GUI
   TAPtr	Browse(const char* init_path=NULL);
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
 #endif
-  override void	SaveAll(); // saves all the projects
 
   void	InitLinks();
   void	CutLinks();

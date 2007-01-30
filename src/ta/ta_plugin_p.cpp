@@ -85,20 +85,46 @@ bool taPluginInst::InitTypes() {
 
 String_PArray taPlugins::plugin_folders; 
 taPluginInst_PList taPlugins::plugins; 
+String taPlugins::logfile;
 
 void taPlugins::AddPluginFolder(const String& folder) {
   plugin_folders.AddUnique(folder);
+}
+
+void taPlugins::InitLog(const String& logfile_) {
+  logfile = logfile_;
+  //dummy open/create
+  ofstream ofs(logfile_, ios::out);
+  if (!ofs.good()) {
+    taMisc::Warning("Could not open plugin log file:", logfile);
+  } else
+    ofs.close();
+}
+
+void taPlugins::AppendLogEntry(const String& entry) {
+  ofstream ofs(logfile, ios::app);
+  if (!ofs.good()) {
+    taMisc::Warning("Could not open plugin log file:", logfile);
+  } else {
+    ofs << entry << "\n";
+    ofs.close();
+  }
 }
 
 taPluginInst* taPlugins::LoadPlugin(const String& fileName) {
   taPluginInst* rval = new taPluginInst(fileName);
 //TODO: log to a file  taMisc::Warning("Attempting to load plugin: ", fileName);
   // get the plugin object, and initialize types
-  if (!rval->load()) {
+  String log_entry;
+  if (rval->load())  {
+    rval->load_state = taPluginInst::LS_LOADED;
+    log_entry = "Loaded: " + fileName;
+  } else {
+    rval->load_state = taPluginInst::LS_LOAD_FAIL;
+    log_entry = "**Could not load: " + fileName;
     taMisc::Warning("**Could not load plugin: ", fileName, " (check versions, try recompiling plugin)");
-    delete rval;
-    rval = NULL;
   }
+  AppendLogEntry(log_entry);
   if (rval) {
     // TODO: log success
 //TODO: commit log    taMisc::Warning("Loaded plugin: ", fileName);
@@ -115,7 +141,6 @@ void taPlugins::EnumeratePlugins() {
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
       taPluginInst* pl = LoadPlugin(pluginsDir.absoluteFilePath(fileName));
       if (pl) {
-        pl->load_state = taPluginInst::LS_LOADED;
         plugins.Add(pl);
       }
     }
@@ -135,7 +160,6 @@ void taPluginBase::Copy_(const taPluginBase& cp) {
   desc = cp.desc;
   unique_id = cp.unique_id;
   version = cp.version;
-  filename = cp.filename;
   url = cp.url;
 }
 
@@ -151,6 +175,7 @@ void taPlugin::Initialize() {
 }
 
 void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
+  filename = cp.filename;
   enabled = cp.enabled;
   loaded = false; // never for a copy
   reconciled = false;
@@ -192,6 +217,15 @@ void taPluginDep::CheckThisConfig_impl(bool quiet, bool& rval) {
 //  taPluginBase_List	//
 //////////////////////////
 
+taPluginBase* taPluginBase_List::FindUniqueId(const String& value) {
+  for (int i = 0; i < size; ++i) {
+    taPluginBase* rval = FastEl(i);
+    if (!rval) continue;
+    if (rval->unique_id == value) return rval;
+  }
+  return NULL;
+}
+
 void taPluginBase_List::QueryEditActions_impl(const taiMimeSource* ms,
   int& allowed, int& forbidden)
 {
@@ -210,6 +244,15 @@ void taPluginBase_List::ChildQueryEditActions_impl(const MemberDef* md, const ta
 //  taPlugin_List	//
 //////////////////////////
 
+taPlugin* taPlugin_List::FindFilename(const String& value) {
+  for (int i = 0; i < size; ++i) {
+    taPlugin* rval = FastEl(i);
+    if (!rval) continue;
+    if (rval->filename == value) return rval;
+  }
+  return NULL;
+}
+
 void taPlugin_List::LoadPlugins() {
   // first, get us uptodate with actual plugin list
   ReconcilePlugins();
@@ -220,6 +263,8 @@ void taPlugin_List::LoadPlugins() {
     if (pl->enabled) continue;
     
     taPluginInst* pli = pl->plugin;
+    if (!pli) continue;
+    
     pli->unload();
     pl->plugin = NULL;
     taPlugins::plugins.RemoveEl(pli);
@@ -252,32 +297,49 @@ void taPlugin_List::LoadPlugins() {
 
 void taPlugin_List::ReconcilePlugins() {
   taVersion ver;
+  // go through all the successfully or unsucessfully loaded plugins
   for (int i = 0; i < taPlugins::plugins.size; ++i) {
     taPluginInst* pli = taPlugins::plugins.FastEl(i);
-    IPlugin* ip = pli->plugin();
-    String uid = ip->uniqueId();
-    taPlugin* pl = (taPlugin*)FindName(uid);
-    if (pl) {
-      // update
-    } else {
-      // create new 
-      pl = (taPlugin*)New(1);
-      pl->unique_id = uid;
-      pli->plugin_rep = pl;
-      //TEMP: enable by default, until save/load of prefs is done
-      pl->enabled = true;
+    taPlugin* pl = NULL;
+    // if loaded, match by id, else match by filename (so we still track failed loads)
+    if (pli->load_state == taPluginInst::LS_LOADED) {
+      IPlugin* ip = pli->plugin();
+      String uid = ip->uniqueId();
+      pl = FindUniqueId(uid);
+      // if it was recorded before, update, otherwise make new
+      if (pl) {
+        // update
+      } else {
+        // create new 
+        pl = (taPlugin*)New(1);
+        pl->unique_id = uid;
+      }
+      pl->name = ip->name();
+      pl->desc = ip->desc();
+      ver.Clear();
+      ip->GetVersion(ver);
+      pl->version = ver.toString();
+    } else { // not loaded -- but match up the filename to a persistent guy if found
+      pl = FindFilename(pli->fileName());
+      // we don't update anything, and we don't make a new guy if not found before,
+      // since we only persistently track successful plugins, not failed ones
+      // init/update
+      if (pl) {
+      } else {
+        // create new 
+        pl = (taPlugin*)New(1);
+        // since we can't know anything about the guy, just name him by the file
+        pl->name = QFileInfo(pli->fileName()).fileName();
+      }
     }
-    // update or init fields
-    pl->plugin = pli;
-    pl->reconciled = true;
-    pl->name = ip->name();
-    pl->desc = ip->desc();
-    ver.Clear();
-    ip->GetVersion(ver);
-    pl->version = ver.toString();
-    pl->filename = pli->fileName();
-    
-    pl->DataChanged(DCR_ITEM_UPDATED);
+    pli->plugin_rep = pl; // can be null
+    if (pl) {
+      // update or init fields
+      pl->plugin = pli;
+      pl->reconciled = true;
+      pl->filename = pli->fileName();
+      pl->DataChanged(DCR_ITEM_UPDATED);
+    }
   }
    
    // now, nuke any that are missing
