@@ -164,14 +164,16 @@ public:
   // SoAsciiText::Justification just
   void			addLine(const iVec3f& from, const iVec3f to);
 
-  T3Axis(Axis axis = X, void* dataView_ = NULL);
+  T3Axis(Axis axis = X, void* dataView_ = NULL, float fnt_sz=.05f, int n_axis = 0);
 protected:
-  Axis		axis_; //note: lifetime invariant
+  Axis			axis_; // note: lifetime invariant
+  int			n_ax_;	// number of axis (can be multiple Y axes..)
   SoSeparator* 		line_sep;
   SoDrawStyle* 		line_style;
   SoLineSet*		lines; // we use the vertexProperty for points etc.
   iVec3f 		last_label_at; // used so we just need to issue delta translates
   SoFont*		labelFont_;
+  float			font_size_;
   SoSeparator*		labels;
 
   void			setDefaultCaptionTransform(); // override, sets text justif and transform for 3D
@@ -237,7 +239,6 @@ public:
   static void		initClass();
 
   SoFont*		labelFont() const {return labelFont_;} // setup after creating
-  //nn  LineStyle		lineStyle() {return lineStyle_;}
   void 			setLineStyle(LineStyle value, float line_width = 0.0f);
   bool			valueColorMode(){return valueColorMode_;}
   void			setValueColorMode(bool value);
@@ -247,6 +248,11 @@ public:
   // text api
   void			textAt(const iVec3f& pt, const char* str);
   // render indicated text at the pt
+
+  void			startBatch();
+  // start a batch edit of the lines -- must be followed by a finishBatch call!  just turns off notification of updates
+  void			finishBatch();
+  // done with batch update -- turn notification back on and do a touch
 
   // non valueColor drawing api
   void			setDefaultColor(const T3Color& color); // call after reset to set default color (black if not called)
@@ -258,7 +264,7 @@ public:
   void			moveTo(const iVec3f& pt, const T3Color& color);
   // use to start a new line segment in valueColor mode
   void			lineTo(const iVec3f& to, const T3Color& color);
-  //  add arc to current line, in valueColor mode (optimizes if color same as last arc)
+  //  add arc to current line, in valueColor mode
   void			markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& color);
   // render a marker at indicated location in valueColor mode
 

@@ -228,8 +228,8 @@ void T3DataView::DataUpdateAfterEdit_impl() {
   inherited::DataUpdateAfterEdit_impl();
   DoActions(RENDER_IMPL);
   // todo: this should be superfluous:
-  if (m_node_so)
-    m_node_so->touch();
+//   if (m_node_so)
+//     m_node_so->touch();
 }
 
 void T3DataView::FillContextMenu_EditItems_impl(taiMenu* menu, int allowed) {

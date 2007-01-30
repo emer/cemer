@@ -712,8 +712,12 @@ void SoLineBox3d::initClass()
   SO_NODE_INIT_CLASS(SoLineBox3d, SoIndexedLineSet, "SoIndexedLineSet");
 }
 
-SoLineBox3d::SoLineBox3d() {
+SoLineBox3d::SoLineBox3d(float wd, float ht, float dp) {
   SO_NODE_CONSTRUCTOR(SoLineBox3d);
+
+  width = wd;
+  height = ht;
+  depth = dp;
 
   vertexProperty.setValue(new SoVertexProperty); // note: vp refs/unrefs automatically
   render();
@@ -724,14 +728,14 @@ void SoLineBox3d::render() {
   vtx.setNum(8);
   SbVec3f* v_dat = vtx.startEditing();
   int idx = 0;
-  v_dat[idx++].setValue(0.0f,0.0f,-1.0f);	// around the back
-  v_dat[idx++].setValue(1.0f,0.0f,-1.0f);
-  v_dat[idx++].setValue(1.0f,1.0f,-1.0f);
-  v_dat[idx++].setValue(0.0f,1.0f,-1.0f);
+  v_dat[idx++].setValue(0.0f,0.0f,-depth);	// around the back
+  v_dat[idx++].setValue(width,0.0f,-depth);
+  v_dat[idx++].setValue(width,height,-depth);
+  v_dat[idx++].setValue(0.0f,height,-depth);
   v_dat[idx++].setValue(0.0f,0.0f,0.0f);	// around the front
-  v_dat[idx++].setValue(1.0f,0.0f,0.0f);
-  v_dat[idx++].setValue(1.0f,1.0f,0.0f);
-  v_dat[idx++].setValue(0.0f,1.0f,0.0f);
+  v_dat[idx++].setValue(width,0.0f,0.0f);
+  v_dat[idx++].setValue(width,height,0.0f);
+  v_dat[idx++].setValue(0.0f,height,0.0f);
   vtx.finishEditing();
 
   coordIndex.setNum(24);

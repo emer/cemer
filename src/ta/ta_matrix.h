@@ -199,7 +199,7 @@ public:
     
   inline void		Reset() {SetSize(0);} // set size to 0, and clear all dims
 
-  int 			IndexFmDims(int d0, int d1, int d2, int d3, int d4) const;
+  int 			IndexFmDims(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const;
   // get index from dimension values, based on geometry
   void 			DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d4) const;
   // get dimension values from index, based on geometry

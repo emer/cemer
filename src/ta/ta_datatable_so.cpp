@@ -206,12 +206,14 @@ void T3Axis::initClass()
   SO_NODE_INIT_CLASS(T3Axis, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3Axis::T3Axis(Axis ax, void* dataView_)
+T3Axis::T3Axis(Axis ax, void* dataView_, float fnt_sz, int n_axis)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3Axis);
 //  axis_length = 1.0f; // dummy/default
   axis_ = ax;
+  n_ax_ = n_axis;
+  font_size_ = fnt_sz;
 
   SoSeparator* ss = this->shapeSeparator(); //cache
 
@@ -224,6 +226,7 @@ T3Axis::T3Axis(Axis ax, void* dataView_)
 
   labelFont_ = new SoFont();
   labelFont_->ref(); // we re-add to the labels group every clear
+  labelFont_->size.setValue(font_size_);
 
   clear(); // initializes everything correctly
 }
@@ -240,8 +243,14 @@ void T3Axis::addLabel(const char* text, const iVec3f& at) {
   SoAsciiText::Justification just;
   switch (axis_) {
   case X: just = SoAsciiText::CENTER;  break;
-  case Y: just = SoAsciiText::RIGHT;  break;
-  case Z: just = SoAsciiText::RIGHT;  break; //TODO: verify
+  case Y: {
+    if(n_ax_ == 0)
+      just = SoAsciiText::RIGHT;
+    else
+      just = SoAsciiText::LEFT;
+    break;
+  }
+  case Z: just = SoAsciiText::RIGHT;  break;
   }
   addLabel(text, at, just);
 }
@@ -348,8 +357,8 @@ T3GraphLine::T3GraphLine(void* dataView_)
   line_sep->addChild(lines);
 
   markerSet_ = NULL;
-  initValueColorMode();
-
+  assertMarkerSet();		// just be done with it..
+//   initValueColorMode();
 }
 
 T3GraphLine::~T3GraphLine()
@@ -410,7 +419,7 @@ void T3GraphLine::initValueColorMode() {
     SoSFEnum& mb = vp->materialBinding;
     SoMFUInt32& orderedRGBA = vp->orderedRGBA;
     if (valueColorMode()) {
-      mb.setValue(SoVertexProperty::PER_PART); // i.e., per line segment
+      mb.setValue(SoVertexProperty::PER_VERTEX);
       orderedRGBA.setNum(0); // must supply colors explicitly
     } else {
       mb.setValue(SoVertexProperty::OVERALL);
@@ -424,7 +433,7 @@ void T3GraphLine::initValueColorMode() {
     SoSFEnum& mb = vp->materialBinding;
     SoMFUInt32& orderedRGBA = vp->orderedRGBA;
     if (valueColorMode()) {
-      mb.setValue(SoVertexProperty::PER_VERTEX); // i.e., per point
+      mb.setValue(SoVertexProperty::PER_PART); // i.e., per point
       orderedRGBA.setNum(0); // must supply colors explicitly
     } else {
       mb.setValue(SoVertexProperty::OVERALL);
@@ -436,8 +445,41 @@ void T3GraphLine::initValueColorMode() {
   }
 }
 
-// todo: this is all terrible for a full redraw -- startEditing is done in the wrong way etc.
-// need a batch mode and an incremental mode interface
+void T3GraphLine::startBatch() {
+  SoMFInt32& nv = lines->numVertices;
+  SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
+  nv.enableNotify(false);
+  point.enableNotify(false);
+  assertMarkerSet();			       // have to assume and pay overhead
+  SoMFInt32& marker = markerSet_->markerIndex; // cache
+  SoMFVec3f& mpoint = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
+  marker.enableNotify(false);
+  mpoint.enableNotify(false);
+}
+
+void T3GraphLine::finishBatch() {
+  SoMFInt32& nv = lines->numVertices;
+  SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
+  nv.enableNotify(true);
+  point.enableNotify(true);
+  SoMFInt32& marker = markerSet_->markerIndex; // cache
+  SoMFVec3f& mpoint = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
+  marker.enableNotify(true);
+  mpoint.enableNotify(true);
+
+  point.touch();
+  mpoint.touch();
+}
+
+void T3GraphLine::moveTo(const iVec3f& pt) {
+  SoMFInt32& nv = lines->numVertices; // cache
+  SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
+
+  // add the new line vertex
+  point.set1Value(point.getNum(), pt.x, pt.y, -pt.z);
+  // now, add a new slot update # pts in list
+  nv.set1Value(nv.getNum(), 1);
+}
 
 void T3GraphLine::lineTo(const iVec3f& to) {
   SoMFInt32& nv = lines->numVertices; // cache
@@ -447,55 +489,26 @@ void T3GraphLine::lineTo(const iVec3f& to) {
     //TODO: output error msg
     return;
   }
-  nv.startEditing();
   SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-  point.startEditing();
-
   // add the new line vertex
   point.set1Value(point.getNum(), to.x, to.y, -to.z);
-
   // now, update # pts in list
   nv.set1Value(idx, nv[idx] + 1);
+}
 
-  point.finishEditing();
-  nv.finishEditing();
-
+void T3GraphLine::moveTo(const iVec3f& pt, const T3Color& c) {
+  uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
+  // always add the new color, then add the point
+  SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
+  orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
+  moveTo(pt);
 }
 
 void T3GraphLine::lineTo(const iVec3f& to, const T3Color& c) {
-  // if color not the same as last time, need to do a moveto to start new line
-  // and add new color to binding list
   uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
   SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
-  if (orderedRGBA.getNum() == 0) {
-    //TODO: this is an error condition because drawing must start w/ a moveto
-    return;
-  } else {
-    uint32_t prv_col = orderedRGBA[orderedRGBA.getNum() - 1];
-    if (new_col != prv_col)
-      moveTo(to, c);
-  }
-
-  SoMFInt32& nv = lines->numVertices; // cache
-  int idx = nv.getNum() - 1; // cache
-  //must have a line going...
-  if (idx < 0) {
-    //TODO: output error msg
-    return;
-  }
-  nv.startEditing();
-  SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-  point.startEditing();
-
-  // add the new line vertex
-  point.set1Value(point.getNum(), to.x, to.y, -to.z);
-
-  // now, update # pts in list
-  nv.set1Value(idx, nv[idx] + 1);
-
-  point.finishEditing();
-  nv.finishEditing();
-
+  orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
+  lineTo(to);
 }
 
 void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
@@ -532,36 +545,10 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& c
   assertMarkerSet();
   // add the new color -- no way to optimize this, must always have one col per point
   uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
-  SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
+  SoMFUInt32& orderedRGBA = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->orderedRGBA;
   orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
 
   markerAt(pt, style);
-}
-
-void T3GraphLine::moveTo(const iVec3f& pt) {
-  SoMFInt32& nv = lines->numVertices; // cache
-  SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-
-  nv.startEditing();
-  point.startEditing();
-
-  // add the new line vertex
-  point.set1Value(point.getNum(), pt.x, pt.y, -pt.z);
-
-  // now, add a new slot update # pts in list
-  nv.set1Value(nv.getNum(), 1);
-
-  point.finishEditing();
-  nv.finishEditing();
-}
-
-void T3GraphLine::moveTo(const iVec3f& pt, const T3Color& c) {
-  uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
-  // always add the new color, then add the point
-  SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
-  orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
-
-  moveTo(pt);
 }
 
 void T3GraphLine::setDefaultCaptionTransform() {

@@ -3,7 +3,19 @@ leabra todo list:
 commit:
 
 ------------------
+* graphview: 
+
+  - panel!
+  - 0 axis range causing problems somewhere (source of non-visibility on startup?)
+  - mat z index not working (axis probably -- need a dummy axis)
+  - shared axis: update ranges
+  - error bars: build into graph line
+  - raster plots
+
+------------------
 * gridview: 
+
+  - dataanal defaults: distmatrixgrid: n_rows = 1, TOP_ZERO
 
   - struct update debug on hv model
   - when editing a datatable_impl, need to send refresh update to display

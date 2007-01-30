@@ -396,9 +396,14 @@ typedef SoIndexedLineSet inherited;
 public:
   static void		initClass();
 
-  SoLineBox3d();
+  float		width;		// x
+  float		height;		// y
+  float		depth;		// z
+
+  void 		render();
+
+  SoLineBox3d(float wd = 1.0f, float ht = 1.0f, float dp = 1.0f);
 protected:
-  void 		render(); // #IGNORE
 };
 
 class TA_API SoImageEx: public SoSeparator { 

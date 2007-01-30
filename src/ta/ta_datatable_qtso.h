@@ -520,7 +520,7 @@ public:
   MinMax		range;		// #READ_ONLY actual display range of the axis data
 
   int          		n_ticks;	// #EXPERT #DEF_10 number of ticks desired
-  float			axis_length; 	// #READ_ONLY #NO_SAVE in view units
+  float			axis_length; 	// #READ_ONLY in view units (width or depth)
   float			start_tick;	// #READ_ONLY #NO_SAVE first tick mark here
   float       		tick_incr;	// #READ_ONLY #NO_SAVE increment for tick marks
   int			act_n_ticks;	// #READ_ONLY #NO_SAVE actual number of ticks
@@ -552,8 +552,8 @@ public:
 
   inline float		DataToPlot(float data) // convert data value to plotting value
   { return axis_length * range.Normalize(data); }
-  virtual void 		RenderAxis(T3Axis* t3ax);
-  // draw the actual axis in a given direction
+  virtual void 		RenderAxis(T3Axis* t3ax, int n_ax = 0);
+  // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
 
   override bool		selectEditMe() const { return true; }
 
@@ -564,8 +564,8 @@ public:
   T3_DATAVIEWFUNS(GraphAxisBase, T3DataView)
 protected:
   void 			RenderAxis_X(T3Axis* t3ax);
-  void 			RenderAxis_Y(T3Axis* t3ax);
   void 			RenderAxis_Z(T3Axis* t3ax);
+  void 			RenderAxis_Y(T3Axis* t3ax, int n_ax = 0);
 
   override void 	UpdateAfterEdit_impl();
 private:
@@ -701,6 +701,7 @@ public:
 
   GraphType		graph_type; 	// type of graph to draw
   PlotStyle		plot_style;	// how to plot the data
+  float			line_width;	// width of line -- 0 means use default
   int 			point_spacing;	// #CONDEDIT_OFF_plot_style:LINE how frequently to display point markers 
   ColorMode		color_mode;	// how to determine the colors to draw
   bool			negative_draw;	// continue same line when X value resets in negative axis direction?
@@ -721,6 +722,7 @@ public:
   GraphAxisView		raster_axis;	// #CONDEDIT_ON_graph_type:RASTER_COLOR,RASTER_THRESH raster axis, if doing a raster plot
   float			raster_thresh;	// #CONDEDIT_ON_graph_type:RASTER_THRESH color axis, for 
   float			width;		// how wide to make the display (height is always 1.0)
+  float			depth;		// how deep to make the display (height is always 1.0)
 
   bool			two_d_font;	// #DEF_true use 2d font (easier to read, but doesn't scale) instead of 3d font
   float			two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
@@ -757,9 +759,7 @@ public:
   T3_DATAVIEWFUNS(GraphTableView, DataTableView)
 
 protected:
-  int			last_col_cnt; 	// no. of columns we had last time we updated
-  int			last_row_cnt; 	// no. of rows we had (in x axis) last time we updated
-  int			last_pt_offset;	// where to get the last point of data from for AddLastPt function (0 = actual last point, higher #'s go further back..)
+  int			n_plots; // updated during rendergraph -- number of plots
   T3Axis* 		t3_x_axis;
   T3Axis* 		t3_z_axis;
 
@@ -767,8 +767,9 @@ protected:
   // 	Rendering
 
   virtual void		RenderGraph();
-  virtual void		RenderGraph_XY();
-  virtual void		RenderGraph_Raster();
+  virtual void		RenderGraph_Scalar();
+  virtual void		RenderGraph_Matrix_Sep();
+  virtual void		RenderGraph_Matrix_Zi();
 
   virtual void 		ComputeAxisRanges();
   // compute range information based on data column, call UpdateRange_impl
