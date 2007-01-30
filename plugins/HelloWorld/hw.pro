@@ -4,7 +4,15 @@
 # Replace hw w/ your plugin name
 TARGET = hw
 TEMPLATE = lib
-CONFIG += plugin warn_off
+
+CONFIG += plugin warn_off debug_and_release
+
+CONFIG += debug_and_release
+
+CONFIG(debug, debug|release) {
+} else {
+    TARGET = $${TARGET}_debug
+}
 
 INCLUDEPATH +=\
 	. \
