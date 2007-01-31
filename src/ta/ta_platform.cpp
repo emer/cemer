@@ -194,9 +194,9 @@ void taPlatform::msleep(int msec) {
   usleep(msec * 1000);
 }
 
-void taPlatform::usleep(int usec) {
+/*void taPlatform::usleep(int usec) {
   ::usleep(usec);
-}
+}*/
 
 
 int taPlatform::tickCount() {
