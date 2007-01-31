@@ -1,25 +1,24 @@
 # Make a plugin for pdp++
 # Assumes you have ${HOME}, ${PDP4DIR} AND ${QTDIR} set
 
-# Replace hw w/ your plugin name
-TARGET = hw
+# root target name of the plugin
+TARGET = so
 
-# Declare all the headers in your project -- the following assumes just one
-# that is based on the TARGET name
+# Declare all the headers in your project 
 
-HEADERS += $${TARGET}.h
+HEADERS +=  so.h # cl.h som.h zsh.h
 
 # Declare all the maketa headers (usually the same as HEADERS) --
 # you can just refer to the HEADERS if they are the same
 
-MAKETA_HEADERS = $${HEADERS}
+MAKETA_HEADERS = $${HEADERS} 
 
 
 # Declare all the source files, *except* the following:
 #  * moc files -- qmake handles those
 #  * xx_TA.cpp file -- the shared.pri handles those
 
-SOURCES += $${TARGET}.cpp
+SOURCES += so.cpp # cl.cpp som.cpp zsh.cpp
 
 
 include( ../pdp_shared.pri )

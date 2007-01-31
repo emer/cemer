@@ -606,7 +606,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   	
 bool taRootBase::Startup_EnumeratePlugins() {
   taMisc::Init_Hooks();		// plugins register init hooks -- this calls them!
-  taPlugins::AddPluginFolder(taMisc::pkg_home + "/plugins");
+  taPlugins::AddPluginFolder(taMisc::pkg_home + "/lib/plugins");
   taPlugins::AddPluginFolder(taMisc::home_dir + "/ta_plugins"); //TODO: should be pdpuserhome
   taPlugins::InitLog(taMisc::prefs_dir + "/plugins.log");
   taPlugins::EnumeratePlugins();

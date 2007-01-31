@@ -121,8 +121,13 @@ taPluginInst* taPlugins::LoadPlugin(const String& fileName) {
     log_entry = "Loaded: " + fileName;
   } else {
     rval->load_state = taPluginInst::LS_LOAD_FAIL;
-    log_entry = "**Could not load: " + fileName;
-    taMisc::Warning("**Could not load plugin: ", fileName, " (check versions, try recompiling plugin)");
+#if QT_VERSION >= 0x040200
+    log_entry = "**Could not load: " + fileName + String("; Qt error msg: ").cat(
+      rval->errorString().toLatin1().data());
+#else
+    log_entry = "**Could not load: " + fileName);
+#endif
+    taMisc::Warning(log_entry);
   }
   AppendLogEntry(log_entry);
   if (rval) {

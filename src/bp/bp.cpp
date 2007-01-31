@@ -593,7 +593,7 @@ void BpNetwork::Compute_Act() {
 void BpNetwork::Compute_dEdA_dEdNet() {
   // send the error back
   Layer* lay;
-  int i;
+  int i;//
   for (i = layers.leaves-1; i>= 0; i--) {
     lay = ((Layer*) layers.Leaf(i));
     if(lay->lesion || (!bp_to_inputs && (lay->ext_flag & Unit::EXT))) // don't compute err on inputs
