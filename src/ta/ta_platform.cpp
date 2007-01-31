@@ -103,12 +103,12 @@ int taPlatform::exec(const String& cmd) {
 
 
 String taPlatform::getAppDataPath(const String& appname) {
-  return getHomePath() + "\Application Data\" + appname;
+  return getHomePath() + "\\Application Data\\" + appname;
 }
 
 #ifdef NO_TA_BASE
 String taPlatform::getHomePath() {
-  return getenv("HOMEDIR") + getenv("HOMEPATH");
+  return getenv("USERPROFILE");
 }
 #endif
 
@@ -128,9 +128,9 @@ void taPlatform::msleep(int msec) {
   Sleep(msec);
 }
 
-void taPlatform::usleep(int usec) {
+/*evil void taPlatform::usleep(int usec) {
 #error "must implement usleep on Windows"
-}
+} */
 
 int taPlatform::tickCount() {
   return (int)GetTickCount(); // is in ms

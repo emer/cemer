@@ -6,11 +6,11 @@ INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
   "-I$(QTDIR)/include/QtCore" "-I$(QTDIR)/include/QtGui" \
   "-I$(QTDIR)/include/QtNetwork" "-I$(QTDIR)/include/QtOpenGL" \
   "-I$(QTDIR)/include/QtXml" "-I$(COINDIR)/include/Inventor" \
-  "-I$(PDP4DIR)\build\msvc7" "-I$(VCINSTALLDIR)\Vc7\include" 
+  "-I$(PDP4DIR)\build\msvc7" "-I$(VCDIR)\Vc7\include" 
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
-#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe
-MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe
+MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe
+#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe
 
 
 all: maketa_files moc_files
@@ -19,6 +19,7 @@ TAIQTSO_MOCS: \
   ilabel.moc.cpp \
   idimedit.moc.cpp \
   icheckbox.moc.cpp \
+  icliptoolwidget.moc.cpp \
   icombobox.moc.cpp \
   ieditgrid.moc.cpp \
   interceptor.moc.cpp \
@@ -31,37 +32,34 @@ TAIQTSO_MOCS: \
   ispinbox.moc.cpp \
   itreewidget.moc.cpp 
 
-ilabel.moc.cpp: $(PDP4DIR)\src\taiqtso\ilabel.h
-	$(MOC) %s -o $@
-
 icheckbox.moc.cpp: $(PDP4DIR)\src\taiqtso\icheckbox.h
-	$(MOC) %s -o $@
-
-idimedit.moc.cpp: $(PDP4DIR)\src\taiqtso\idimedit.h
-	$(MOC) %s -o $@
-
-interceptor.moc.cpp: $(PDP4DIR)\src\taiqtso\interceptor.h
-	$(MOC) %s -o $@
-
-qconsole.moc.cpp: $(PDP4DIR)\src\taiqtso\qconsole.h
-	$(MOC) %s -o $@
-
-icliptoolwidget.moc.cpp: $(PDP4DIR)\src\taiqtso\icliptoolwidget.h
 	$(MOC) %s -o $@
 
 icombobox.moc.cpp: $(PDP4DIR)\src\taiqtso\icombobox.h
 	$(MOC) %s -o $@
 
+icliptoolwidget.moc.cpp: $(PDP4DIR)\src\taiqtso\icliptoolwidget.h
+	$(MOC) %s -o $@
+
 ieditgrid.moc.cpp: $(PDP4DIR)\src\taiqtso\ieditgrid.h
+	$(MOC) %s -o $@
+
+idimedit.moc.cpp: $(PDP4DIR)\src\taiqtso\idimedit.h
 	$(MOC) %s -o $@
 
 iflowlayout.moc.cpp: $(PDP4DIR)\src\taiqtso\iflowlayout.h
 	$(MOC) %s -o $@
 
+igeometry.moc.cpp: $(PDP4DIR)\src\taiqtso\igeometry.h
+	$(MOC) %s -o $@
+
+ilabel.moc.cpp: $(PDP4DIR)\src\taiqtso\ilabel.h
+	$(MOC) %s -o $@
+
 ilineedit.moc.cpp: $(PDP4DIR)\src\taiqtso\ilineedit.h
 	$(MOC) %s -o $@
 
-igeometry.moc.cpp: $(PDP4DIR)\src\taiqtso\igeometry.h
+interceptor.moc.cpp: $(PDP4DIR)\src\taiqtso\interceptor.h
 	$(MOC) %s -o $@
 
 irenderarea.moc.cpp: $(PDP4DIR)\src\taiqtso\irenderarea.h
@@ -72,6 +70,18 @@ ispinbox.moc.cpp: $(PDP4DIR)\src\taiqtso\ispinbox.h
 
 itreewidget.moc.cpp: $(PDP4DIR)\src\taiqtso\itreewidget.h
 	$(MOC) %s -o $@
+
+qconsole.moc.cpp: $(PDP4DIR)\src\taiqtso\qconsole.h
+	$(MOC) %s -o $@
+
+TAHEADS_TAMISC_GUI =\
+	colorbar_qt.h \
+	$(PDP4DIR)/src/taiqtso/safeptr_so.h \
+	t3node_so.h \
+	t3viewer.h \
+	colorbar_so.h \
+	ta_datatable_qtso.h \
+	ta_datatable_so.h 
 
 TAHEADS_GUI =\
 	ta_qt.h \
@@ -87,43 +97,37 @@ TAHEADS_GUI =\
 	ta_qtgroup.h \
 	ta_seledit.h \
 	ta_program_qt.h \
-	$(PDP4DIR)/src/taiqtso/igeometry.h
 
 TAHEADS_TAMISC =\
-	tatime.h \
-	minmax.h \
-	colorscale.h \
-	datatable.h \
+	ta_time.h \
 	fun_lookup.h \
 	ta_data_extras.h 
 
-TAHEADS_TAMISC_GUI =\
-	colorbar_qt.h \
-	$(PDP4DIR)/src/taiqtso/safeptr_so.h \
-	t3node_so.h \
-	t3viewer.h \
-	colorbar_so.h \
-	datatable_qtso.h \
-	datatable_so.h 
-
-TA_MAKETA =\
+TAHEADS =\
+	$(PDP4DIR)/src/taiqtso/igeometry.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/streambuf.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/iostream.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/fstream.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/sstream.h \
-	taglobal.h \
+	$(PDP4DIR)/src/ta/ta_global.h \
 	ta_def.h \
+	ta_platform.h \
+	ta_thread.h \
 	ta_string.h \
 	ta_stdef.h \
 	ta_variant.h \
 	ifont.h \
+	ta_mtrnd.h \
 	ta_list.h \
 	ta_filer.h \
 	icolor.h \
 	ta_type.h \
 	ta_base.h \
 	ta_fontspec.h \
+	minmax.h \
 	ta_group.h \
+	ta_qtclipdata.h \
+	colorscale.h \
 	ta_dmem.h \
 	ta_script.h \
 	ta_dynenum.h \
@@ -136,9 +140,13 @@ TA_MAKETA =\
 	ta_data.h \
 	ta_datatable.h \
 	ta_dataproc.h \
+	ta_dataanal.h \
+	ta_datagen.h \
 	ta_imgproc.h \
 	ta_dump.h \
 	ta_defaults.h \
+	ta_plugin.h \
+	ta_plugin_p.h \
 	ta_project.h \
 	$(TAHEADS_GUI) \
 	$(TAHEADS_TAMISC) \
@@ -187,9 +195,6 @@ ta_qttype.moc.cpp: $(PDP4DIR)\src\ta\ta_qttype.h
 ta_qtclipdata.moc.cpp: $(PDP4DIR)\src\ta\ta_qtclipdata.h
 	$(MOC) %s -o $@
 
-ta_qtmodel.moc.cpp: $(PDP4DIR)\src\ta\ta_qtmodel.h
-	$(MOC) %s -o $@
-
 ta_qtviewer.moc.cpp: $(PDP4DIR)\src\ta\ta_qtviewer.h
 	$(MOC) %s -o $@
 
@@ -211,11 +216,11 @@ t3viewer.moc.cpp: $(PDP4DIR)\src\ta\t3viewer.h
 colorbar_qt.moc.cpp: $(PDP4DIR)\src\ta\colorbar_qt.h
 	$(MOC) %s -o $@
 
-datatable_qtso.moc.cpp: $(PDP4DIR)\src\ta\datatable_qtso.h
+ta_datatable_qtso.moc.cpp: $(PDP4DIR)\src\ta\ta_datatable_qtso.h
 	$(MOC) %s -o $@
 
-datagraph_qtso.moc.cpp: $(PDP4DIR)\src\ta\datagraph_qtso.h
-	$(MOC) %s -o $@
+#datagraph_qtso.moc.cpp: $(PDP4DIR)\src\ta\datagraph_qtso.h
+#	$(MOC) %s -o $@
 
 
 
@@ -302,9 +307,9 @@ BP_MAKETA =\
 MAKETA_FLAGS = -css -autohx $(INCLUDE) /D DEBUG -win_dll
 
 #note: also makes _TA_inst.h and .cpp
-ta_TA_type.h: $(TA_MAKETA)
+ta_TA_type.h: $(TAHEADS)
   $(CD) $(PDP4DIR)/src/ta
-  $(MAKETA) -v1 $(MAKETA_FLAGS) ta $(TA_MAKETA) 
+  $(MAKETA) -v1 $(MAKETA_FLAGS) ta $(TAHEADS) 
   
 tamisc_TA_type.h: $(TAMISC_MAKETA)
   $(CD) $(PDP4DIR)/src/tamisc
@@ -327,7 +332,7 @@ clean:
  
 taiqtso_files: TAIQTSO_MOCS
  
-ta_files: ta_TA_type.h $(TA_MAKETA) TA_MOCS
+ta_files: ta_TA_type.h $(TAHEADS) TA_MOCS
   
 css_files: CSS_MOCS
  

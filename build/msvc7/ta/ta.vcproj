@@ -171,7 +171,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				RelativePath=".\stdafx.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\taglobal.h">
+				RelativePath="..\..\..\src\ta\ta_global.h">
 			</File>
 		</Filter>
 		<Filter
@@ -241,6 +241,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\taiqtso\icheckbox.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\taiqtso\icliptoolwidget.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\taiqtso\icombobox.h">
 				</File>
 				<File
@@ -294,6 +297,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				Filter="">
 				<File
 					RelativePath="..\..\..\src\taiqtso\icheckbox.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\taiqtso\icliptoolwidget.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\icombobox.moc.cpp">
@@ -536,6 +542,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_filer.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\ta_filer_qt.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\ta_fontspec.cpp">
 				</File>
 				<File
@@ -566,7 +575,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_platform_win.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_plugin.cpp">
+					RelativePath="..\..\..\src\ta\ta_plugin_p.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_program.cpp">
@@ -611,7 +620,13 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_string.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\ta_thread.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\ta_ti.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_time.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_type.cpp">
@@ -630,9 +645,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_viewspec.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\tatime.cpp">
 				</File>
 			</Filter>
 			<Filter
@@ -696,6 +708,12 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_data_extras.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\ta_dataanal.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_datagen.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\ta_dataproc.h">
 				</File>
 				<File
@@ -718,6 +736,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_filer.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_filer_qt.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_fontspec.h">
@@ -751,6 +772,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_plugin.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_plugin_p.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_program.h">
@@ -807,6 +831,12 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_string.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\ta_thread.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_time.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\ta_type.h">
 				</File>
 				<File
@@ -816,10 +846,10 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_variant.h">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_viewspec.h">
+					RelativePath="..\..\..\src\ta\ta_viewer.h">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\tatime.h">
+					RelativePath="..\..\..\src\ta\ta_viewspec.h">
 				</File>
 			</Filter>
 			<Filter

@@ -46,7 +46,7 @@ public:
 // Sleeping
   static void	sleep(int sec); // sleep the specified number of seconds
   static void	msleep(int msec); // sleep the specified number of milliseconds
-  static void	usleep(int usec); // #IGNORE sleep the specified number of microseconds MAX 1s
+//  static void	usleep(int usec); // #IGNORE sleep the specified number of microseconds MAX 1s
 
 };
 
