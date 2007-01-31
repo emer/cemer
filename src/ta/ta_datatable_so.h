@@ -268,7 +268,7 @@ public:
   void			markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& color);
   // render a marker at indicated location in valueColor mode
 
-  T3GraphLine(void* dataView_ = NULL);
+  T3GraphLine(void* dataView_ = NULL, float fnt_sz = .05f);
 
 protected:
   uint32_t		defColor_; // def is black
@@ -280,6 +280,7 @@ protected:
   SoMarkerSet*		markerSet_; // created if needed; we use the vertexProperty for points etc.
   SoSeparator*		textSep_; // optional text separator
   SoFont*		labelFont_;
+  float			font_size_;
   SoPackedColor*	textColor_;
   iVec3f		lastText_; // where last text was rendered, for our next translate
 

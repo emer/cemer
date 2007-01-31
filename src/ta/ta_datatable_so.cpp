@@ -334,15 +334,17 @@ void T3GraphLine::initClass()
   SO_NODE_INIT_CLASS(T3GraphLine, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3GraphLine::T3GraphLine(void* dataView_)
+T3GraphLine::T3GraphLine(void* dataView_, float fnt_sz)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GraphLine);
 
+  font_size_ = fnt_sz;
   textSep_ = NULL;
   textColor_ = NULL;
   labelFont_ = new SoFont();
   labelFont_->ref(); // we re-add to the text group after clear
+  labelFont_->size.setValue(font_size_);
   defColor_ = 0xff; // black, opaque
   valueColorMode_ = false;
   SoSeparator* ss = this->shapeSeparator(); //cache

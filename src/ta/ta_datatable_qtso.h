@@ -55,6 +55,7 @@ class T3GridViewNode;
 class T3Axis;
 class T3GraphLine;
 class T3GraphViewNode;
+class taiListElsButton;
 
 class TA_API DataColView: public T3DataView {
   // ##SCOPE_DataTableView base specification for the display of data columns
@@ -551,7 +552,7 @@ public:
   // 	Rendering
 
   inline float		DataToPlot(float data) // convert data value to plotting value
-  { return axis_length * range.Normalize(data); }
+  { if(range.Range() == 0.0f) return 0.0f; return axis_length * range.Normalize(data); }
   virtual void 		RenderAxis(T3Axis* t3ax, int n_ax = 0);
   // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
 
@@ -689,15 +690,11 @@ public:
     TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
   };
 
-  enum AxisMode {		// how to display the Y axes if multiple data columns plotted, 
-    SHARED_AXIS,		// all share same axis
-    SEP_AXIS,			// if multiple data columns plotted, each has a separate axis
-  };
-
   GraphAxisView		x_axis; 	// the x axis (horizontal, left-to-right)
   GraphAxisView		z_axis;		// the z axis (in depth, front-to-back)
   GraphPlotView		plot_1;		// first column of data to plot
   GraphPlotView		plot_2;		// second column of data to plot (optional)
+  bool			share_y_axis;	// plot both values on same Y axis (else separate)
 
   GraphType		graph_type; 	// type of graph to draw
   PlotStyle		plot_style;	// how to plot the data
@@ -709,8 +706,6 @@ public:
   MatrixMode		matrix_mode;	// how to display matrix data (note that if a matrix column is selected, it is the only thing displayed)
   MatrixLayout		mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
   bool			mat_odd_vert;	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
-
-  AxisMode		axis_mode; 	// how to display the axes with multiple data columns plotted
 
   GraphAxisView		err_1;		// #CONDEDIT_ON_graph_type:XY_ERR data for error bars for plot_1 values
   GraphAxisView		err_2;		// #CONDEDIT_ON_graph_type:XY_ERR data for error bars for plot_2 values
@@ -742,6 +737,12 @@ public:
   ///////////////////////////////////////////////////
   // view button/field callbacks
 
+  void		setGraphType(GraphType value);
+  void		setShareAxis(bool value);
+  void		setPlotStyle(PlotStyle value);
+  void		setColorMode(ColorMode value);
+  void		setLineWidth(float value);
+  void		setLabelSpacing(int value);
   void		set2dFont(bool value);
   void		setWidth(float wdth);
   void		setScaleData(bool auto_scale, float scale_min, float scale_max);
@@ -808,17 +809,33 @@ public:
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
-  QCheckBox*		    chk2dFont;
+  QLabel*		    lblGraphType;
+  taiComboBox*		    cmbGraphType;
+  QCheckBox*		    chkShareAxis;
+
   QPushButton*		    butRefresh;
   QPushButton*		    butClear;
   QPushButton*		    butSetColor;
 
   QHBoxLayout*		  layVals;
+  QLabel*		    lblPlotStyle;
+  taiComboBox*		    cmbPlotStyle;
+  QLabel*		    lblColorMode;
+  taiComboBox*		    cmbColorMode;
+  QLabel*		    lblLineWidth;
+  taiField*		    fldLineWidth;
+  QLabel*		    lblLabelSpacing;
+  taiField*		    fldLabelSpacing;
+
   QLabel*		    lblWidth;
   taiField*		    fldWidth; // width of the display (height is always 1.0)
 
   QHBoxLayout*		  layColorScale;
   ScaleBar*		    cbar;	      // colorbar
+
+  QHBoxLayout*		  layAxes;
+  QLabel*		    lblXAxis;
+  taiListElsButton*	    lelXAxis;
 
   QHBoxLayout*		  layViewspace;
 
@@ -842,11 +859,18 @@ public: // IDataLinkClient interface
 protected slots:
 
   void 		chkDisplay_toggled(bool on);
-  void 		chk2dFont_toggled(bool on);
+  void 		cmbGraphType_itemChanged(int itm);
+  void 		chkShareAxis_toggled(bool on);
 
   void 		butRefresh_pressed();
   void 		butClear_pressed();
   void 		butSetColor_pressed();
+
+  void 		cmbPlotStyle_itemChanged(int itm);
+  void 		cmbColorMode_itemChanged(int itm);
+  void 		fldLineWidth_textChanged();
+  void 		fldLabelSpacing_textChanged();
+
   void 		fldWidth_textChanged();
 
   void		cbar_scaleValueChanged();

@@ -125,7 +125,7 @@ taPluginInst* taPlugins::LoadPlugin(const String& fileName) {
     log_entry = "**Could not load: " + fileName + String("; Qt error msg: ").cat(
       rval->errorString().toLatin1().data());
 #else
-    log_entry = "**Could not load: " + fileName);
+    log_entry = "**Could not load: " + fileName;
 #endif
     taMisc::Warning(log_entry);
   }

@@ -1661,11 +1661,6 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   layTopCtrls->addStretch();
 
-  butSetColor = new QPushButton("Colors", widg);
-  butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layTopCtrls->addWidget(butSetColor);
-  connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
-
   butRefresh = new QPushButton("Refresh", widg);
   butRefresh->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layTopCtrls->addWidget(butRefresh);
@@ -1685,7 +1680,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layVals->addWidget(lblRows);
   fldRows = new taiIncrField(&TA_int, NULL, NULL, widg);
   layVals->addWidget(fldRows->GetRep());
-  layVals->addSpacing(taiM->hsep_c);
+//   layVals->addSpacing(taiM->hsep_c);
   connect(fldRows->rep(), SIGNAL(selectionChanged()), this, SLOT(fldRows_textChanged()) );
 
   lblCols = taiM->NewLabel("Cols", widg, font_spec);
@@ -1693,7 +1688,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layVals->addWidget(lblCols);
   fldCols = new taiIncrField(&TA_int, NULL, NULL, widg);
   layVals->addWidget(fldCols->GetRep());
-  layVals->addSpacing(taiM->hsep_c);
+//   layVals->addSpacing(taiM->hsep_c);
   connect(fldCols->rep(), SIGNAL(selectionChanged()), this, SLOT(fldCols_textChanged()) );
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
@@ -1701,7 +1696,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layVals->addWidget(lblWidth);
   fldWidth = new taiField(&TA_float, NULL, NULL, widg);
   layVals->addWidget(fldWidth->GetRep());
-  layVals->addSpacing(taiM->hsep_c);
+//   layVals->addSpacing(taiM->hsep_c);
   connect(fldWidth->rep(), SIGNAL(editingFinished()), this, SLOT(fldWidth_textChanged()) );
 
   lblTrans = taiM->NewLabel("Trans-\nparency", widg, font_spec);
@@ -1709,7 +1704,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layVals->addWidget(lblTrans);
   fldTrans = new taiField(&TA_float, NULL, NULL, widg);
   layVals->addWidget(fldTrans->GetRep());
-  layVals->addSpacing(taiM->hsep_c);
+//   layVals->addSpacing(taiM->hsep_c);
   connect(fldTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldTrans_textChanged()) );
 
   lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
@@ -1717,7 +1712,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layVals->addWidget(lblRot);
   fldRot = new taiField(&TA_float, NULL, NULL, widg);
   layVals->addWidget(fldRot->GetRep());
-  layVals->addSpacing(taiM->hsep_c);
+//   layVals->addSpacing(taiM->hsep_c);
   connect(fldRot->rep(), SIGNAL(editingFinished()), this, SLOT(fldRot_textChanged()) );
 
   layVals->addStretch();
@@ -1726,15 +1721,20 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   // 	Colorscale etc
   layColorScale = new QHBoxLayout(layOuter);
   
-  chkAutoScale = new QCheckBox("auto scale", widg);
+  chkAutoScale = new QCheckBox("auto\nscale", widg);
   connect(chkAutoScale, SIGNAL(toggled(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
   layColorScale->addWidget(chkAutoScale);
-  layVals->addSpacing(taiM->hsep_c);
+//   layVals->addSpacing(taiM->hsep_c);
 
   cbar = new HCScaleBar(&tlv->scale, ScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+
+  butSetColor = new QPushButton("Colors", widg);
+  butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layColorScale->addWidget(butSetColor);
+  connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 
   ////////////////////////////////////////////////////////////////////////////
   // 	viewspace guy
@@ -2183,8 +2183,9 @@ void GraphAxisBase::ComputeTicks() {
 //	rendering
 
 void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax) {
-  ComputeTicks();		// do this always..
   t3ax->clear();
+  if(!GetColPtr()) return;	// don't render
+  ComputeTicks();		// do this always..
   SoMaterial* mat = t3ax->material();
   color.color()->copyTo(mat->diffuseColor);
   switch (axis) {
@@ -2435,6 +2436,7 @@ void GraphTableView::Initialize() {
   plot_1.point_style = GraphPlotView::CIRCLE;
   plot_2.color.name = "red";
   plot_2.point_style = GraphPlotView::SQUARE;
+  share_y_axis = false;
 
   graph_type = XY;
   plot_style = LINE;
@@ -2446,7 +2448,6 @@ void GraphTableView::Initialize() {
   matrix_mode = SEP_GRAPHS;
   mat_layout = BOT_ZERO;
   mat_odd_vert = true;
-  axis_mode = SHARED_AXIS;
 
   err_1.axis = GraphAxisBase::Y;
   err_2.axis = GraphAxisBase::Y;
@@ -3133,6 +3134,42 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
 ////////////////////////////////////////////////////////////////////////
 // note on following: basically callbacks from view, so don't update panel
 
+void GraphTableView::setGraphType(GraphType value) {
+  if (graph_type == value) return;
+  graph_type = value;
+  UpdateDisplay(false);
+}
+
+void GraphTableView::setShareAxis(bool value) {
+  if (share_y_axis == value) return;
+  share_y_axis = value;
+  UpdateDisplay(false);
+}
+
+void GraphTableView::setPlotStyle(PlotStyle value) {
+  if (plot_style == value) return;
+  plot_style = value;
+  UpdateDisplay(false);
+}
+
+void GraphTableView::setColorMode(ColorMode value) {
+  if (color_mode == value) return;
+  color_mode = value;
+  UpdateDisplay(false);
+}
+
+void GraphTableView::setLineWidth(float value) {
+  if (line_width == value) return;
+  line_width = value;
+  UpdateDisplay(false);
+}
+
+void GraphTableView::setLabelSpacing(int value) {
+  if (label_spacing == value) return;
+  label_spacing = value;
+  UpdateDisplay(false);
+}
+
 void GraphTableView::SetColorSpec(ColorScaleSpec* color_spec) {
   colorscale.SetColorSpec(color_spec);
   UpdateDisplay(false);
@@ -3238,18 +3275,27 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
   layTopCtrls->addWidget(chkDisplay);
 
-  chk2dFont =  new QCheckBox("2d\nFont", widg, "chk2dFont");
-  chkDisplay->setToolTip("Whether to use a two-dimensional font that is easier to read but does not obey 3d transformations of the display");
-  connect(chk2dFont, SIGNAL(toggled(bool)), this, SLOT(chk2dFont_toggled(bool)) );
-  layTopCtrls->addWidget(chk2dFont);
+  // todo: fix tool tips on all of these..
+
+  lblGraphType = taiM->NewLabel("Graph\nType", widg, font_spec);
+  lblGraphType->setToolTip("How to display the graph");
+  layTopCtrls->addWidget(lblGraphType);
+  cmbGraphType = new taiComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
+    NULL, NULL, widg);
+  connect(cmbGraphType, SIGNAL(itemChanged(int)), this, SLOT(cmbGraphType_itemChanged(int)) );
+  layTopCtrls->addWidget(cmbGraphType->GetRep());
+  //  layTopCtrls->addSpacing(taiM->hsep_c);
+
+  lblPlotStyle = taiM->NewLabel("Plot\nStyle", widg, font_spec);
+  lblPlotStyle->setToolTip("How to plot the lines");
+  layTopCtrls->addWidget(lblPlotStyle);
+  cmbPlotStyle = new taiComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
+    NULL, NULL, widg);
+  connect(cmbPlotStyle, SIGNAL(itemChanged(int)), this, SLOT(cmbPlotStyle_itemChanged(int)) );
+  layTopCtrls->addWidget(cmbPlotStyle->GetRep());
+  //  layTopCtrls->addSpacing(taiM->hsep_c);
 
   layTopCtrls->addStretch();
-
-  butSetColor = new QPushButton("Colors", widg);
-  butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layTopCtrls->addWidget(butSetColor);
-  connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
-
   butRefresh = new QPushButton("Refresh", widg);
   butRefresh->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layTopCtrls->addWidget(butRefresh);
@@ -3264,12 +3310,33 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   layVals = new QHBoxLayout(layOuter);
 
+  lblLineWidth = taiM->NewLabel("Line\nWidth", widg, font_spec);
+  lblLineWidth->setToolTip("Width to draw lines with.");
+  layVals->addWidget(lblLineWidth);
+  fldLineWidth = new taiField(&TA_float, NULL, NULL, widg);
+  layVals->addWidget(fldLineWidth->GetRep());
+  //  layVals->addSpacing(taiM->hsep_c);
+  connect(fldLineWidth->rep(), SIGNAL(editingFinished()), this, SLOT(fldLineWidth_textChanged()) );
+
+  chkShareAxis =  new QCheckBox("Share\nAxis", widg, "chkShareAxis");
+  chkDisplay->setToolTip("Whether to share the Y axis when there is more than one data column plotted");
+  connect(chkShareAxis, SIGNAL(toggled(bool)), this, SLOT(chkShareAxis_toggled(bool)) );
+  layVals->addWidget(chkShareAxis);
+
+  lblLabelSpacing = taiM->NewLabel("Label\nSpacing", widg, font_spec);
+  lblLabelSpacing->setToolTip("Spacing of text labels of data point values. -1 means no text labels.");
+  layVals->addWidget(lblLabelSpacing);
+  fldLabelSpacing = new taiField(&TA_float, NULL, NULL, widg);
+  layVals->addWidget(fldLabelSpacing->GetRep());
+  //  layVals->addSpacing(taiM->hsep_c);
+  connect(fldLabelSpacing->rep(), SIGNAL(editingFinished()), this, SLOT(fldLabelSpacing_textChanged()) );
+
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of grid log display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblWidth);
   fldWidth = new taiField(&TA_float, NULL, NULL, widg);
   layVals->addWidget(fldWidth->GetRep());
-  layVals->addSpacing(taiM->hsep_c);
+  //  layVals->addSpacing(taiM->hsep_c);
   connect(fldWidth->rep(), SIGNAL(editingFinished()), this, SLOT(fldWidth_textChanged()) );
 
   layVals->addStretch();
@@ -3278,10 +3345,37 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   // 	Colorscale etc
   layColorScale = new QHBoxLayout(layOuter);
   
+  lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
+  lblColorMode->setToolTip("How to determine line color");
+  layColorScale->addWidget(lblColorMode);
+  cmbColorMode = new taiComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
+    NULL, NULL, widg);
+  connect(cmbColorMode, SIGNAL(itemChanged(int)), this, SLOT(cmbColorMode_itemChanged(int)) );
+  layColorScale->addWidget(cmbColorMode->GetRep());
+  //  layColorScale->addSpacing(taiM->hsep_c);
+
   cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+
+  butSetColor = new QPushButton("Colors", widg);
+  butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layColorScale->addWidget(butSetColor);
+  connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
+
+  ////////////////////////////////////////////////////////////////////////////
+  // 	Axes
+  layAxes = new QHBoxLayout(layOuter);
+  lblXAxis = taiM->NewLabel("X", widg, font_spec);
+  lblXAxis->setToolTip("Column of data to plot for the X Axis");
+  layAxes->addWidget(lblXAxis);
+  lelXAxis = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
+  //  connect(lelXAxis, SIGNAL(itemChanged(int)), this, SLOT(lelXAxis_itemChanged()) );
+  layAxes->addWidget(lelXAxis->GetRep());
+  //  layVals->addSpacing(taiM->hsep_c);
+
+  layAxes->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   // 	viewspace guy
@@ -3294,6 +3388,10 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 }
 
 iGraphTableView_Panel::~iGraphTableView_Panel() {
+  if (cmbGraphType) {delete cmbGraphType; cmbGraphType = NULL;}
+  if (cmbPlotStyle) {delete cmbPlotStyle; cmbPlotStyle = NULL;}
+  if (cmbColorMode) {delete cmbColorMode; cmbColorMode = NULL;}
+  if (lelXAxis) {delete lelXAxis; lelXAxis = NULL;}
 }
 
 void iGraphTableView_Panel::InitPanel_impl() {
@@ -3309,11 +3407,18 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   viewAll();
 
   chkDisplay->setChecked(glv->display_on);
-  chk2dFont->setChecked(glv->two_d_font);
+  cmbGraphType->GetImage(glv->graph_type);
+  chkShareAxis->setChecked(glv->share_y_axis);
 
+  cmbPlotStyle->GetImage(glv->plot_style);
+  cmbColorMode->GetImage(glv->color_mode);
+  fldLineWidth->GetImage((String)glv->line_width);
+  fldLabelSpacing->GetImage((String)glv->label_spacing);
   fldWidth->GetImage((String)glv->width);
 
   cbar->UpdateScaleValues();
+
+  lelXAxis->GetImage(&(glv->children), glv->x_axis.GetColPtr());
 
   // only show row slider if necessary
   if (glv->view_rows >= glv->rows()) {
@@ -3349,10 +3454,16 @@ void iGraphTableView_Panel::chkDisplay_toggled(bool on) {
   glv->setDisplay(on);
 }
 
-void iGraphTableView_Panel::chk2dFont_toggled(bool on) {
+void iGraphTableView_Panel::cmbGraphType_itemChanged(int itm) {
   GraphTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-  glv->set2dFont(on);
+  glv->setGraphType((GraphTableView::GraphType)itm);
+}
+
+void iGraphTableView_Panel::chkShareAxis_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->setShareAxis(on);
 }
 
 void iGraphTableView_Panel::butRefresh_pressed() {
@@ -3375,6 +3486,32 @@ void iGraphTableView_Panel::butSetColor_pressed() {
   if (updating || !glv) return;
 
   glv->CallFun("SetColorSpec");
+}
+
+void iGraphTableView_Panel::cmbPlotStyle_itemChanged(int itm) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->setPlotStyle((GraphTableView::PlotStyle)itm);
+}
+
+void iGraphTableView_Panel::cmbColorMode_itemChanged(int itm) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->setColorMode((GraphTableView::ColorMode)itm);
+}
+
+void iGraphTableView_Panel::fldLineWidth_textChanged() {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setLineWidth((float)fldLineWidth->GetValue());
+}
+
+void iGraphTableView_Panel::fldLabelSpacing_textChanged() {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setLabelSpacing((int)fldLabelSpacing->GetValue());
 }
 
 void iGraphTableView_Panel::fldWidth_textChanged() {

@@ -16,6 +16,7 @@ commit:
 * gridview: 
 
   - dataanal defaults: distmatrixgrid: n_rows = 1, TOP_ZERO
+  - more room on top line of panel for ctrls.
 
   - struct update debug on hv model
   - when editing a datatable_impl, need to send refresh update to display
@@ -25,6 +26,12 @@ commit:
 
   - all views: add bool for draggers (in gridview; only active for structural re-init)
   - all views: set color spec button in panel (in gridview)
+
+------------------
+* netview: move everything to one line in colorscale as in other views; add colors button
+  
+  - also add monitor buttons to various netview objects/context menus -- can do context menu
+  in T3 mode and monitor it!  prompt for variable.
 
 ------------------
 hv model

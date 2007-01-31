@@ -436,9 +436,9 @@ void ScaleBar::Init(bool hor_, bool adj, bool ed){
   layOuter->setMargin(0);
 
   min_frep = new iLineEdit(this);
-  min_frep->setMinCharWidth(7); // make them a bit smaller
+  min_frep->setMinCharWidth(2); // make them a bit smaller
   max_frep = new iLineEdit(this);
-  max_frep->setMinCharWidth(7); // make them a bit smaller
+  max_frep->setMinCharWidth(2); // make them a bit smaller
   if (editflag) {
     connect(min_frep, SIGNAL(returnPressed()), this, SLOT(editor_accept()) );
     connect(min_frep, SIGNAL(lostFocus()), this, SLOT(editor_accept()) );
