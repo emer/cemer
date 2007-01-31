@@ -73,7 +73,7 @@ void iLineEdit::setMinCharWidth(int num) {
   else if (num < 0) num = 0;
   if (mmin_char_width == num) return;
   mmin_char_width = num;
-  if (mmin_char_width == 0) {
+  if (num == 0) {
     setMinimumWidth(0);
   } else {
     QFontMetrics fm(font());
