@@ -199,7 +199,6 @@ HEADS =\
 SRCS =\
 	ta_imgproc.cpp \
 	ta_platform.cpp \
-	ta_platform_unix.cpp \
 	ta_thread.cpp \
 	ta_string.cpp \
 	ta_variant.cpp \

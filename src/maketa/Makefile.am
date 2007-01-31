@@ -22,7 +22,6 @@ HEADS =\
 SRCS =\
 	../ta/ta_ti.cpp \
 	../ta/ta_platform.cpp \
-	../ta/ta_platform_unix.cpp \
 	../ta/ta_string.cpp \
 	../ta/ta_variant.cpp \
 	../ta/ta_mtrnd.cpp \

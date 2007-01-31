@@ -171,6 +171,7 @@ public:
 signals:
   bool 			settingHighlight(bool setting); // invoked when highlight state changes
   void			UpdateUi(); // cliphandler callback, to get it to requery the ui items
+  void			DataChangedNotify(taiData* sender); // raised when data changed for us (but not when invoked by a child)
 #endif
 
 protected:

@@ -139,6 +139,8 @@ void taiData::DataChanged(taiData* chld) {
     host->Changed();
 
   DataChanged_impl(chld);
+  if (!chld)
+    emit DataChangedNotify(this);
 }
 
 int taiData::defSize() const {
