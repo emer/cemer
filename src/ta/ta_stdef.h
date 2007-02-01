@@ -21,9 +21,6 @@
 
 #include "ta_global.h"
 
-//#include <stdlib.h>
-#include <string.h>
-
 #ifdef __MAKETA__
 //NOTE: must use "" for msvc
 #  include "iostream.h"
@@ -45,7 +42,7 @@ using namespace std;
 #undef List
 #endif
 
-#ifdef SOLARIS
+#if (defined(TA_OS_SOLARIS) && !(defined(__MAKETA__)))
 #include <sys/types.h>
 #endif
 

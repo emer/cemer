@@ -337,7 +337,7 @@ bool  Variant::eqInt(int val) const {
     return ((!d.ptr) && (val == 0));
   if (isNull()) return false;
   switch (m_type) {
-  case T_Bool: return (d.b == val);
+  case T_Bool: return ((int)d.b == val);
   case T_Int: return (d.i == val);
   case T_UInt: 
     return ((val > 0) && (d.u <= (unsigned)INT_MAX) && (d.u == (unsigned)val));
@@ -351,7 +351,7 @@ bool  Variant::eqInt(int val) const {
 bool  Variant::eqUInt(uint val) const {
   if (isNull()) return false;
   switch (m_type) {
-  case T_Bool: return (d.b == val);
+  case T_Bool: return ((uint)d.b == val);
   case T_Int: return ((d.i > 0) && (d.i == (int)val));
   case T_UInt:  return (d.u == val);
   case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int64_t)val));
@@ -363,7 +363,7 @@ bool  Variant::eqUInt(uint val) const {
 bool  Variant::eqInt64(int64_t val) const {
   if (isNull()) return false;
   switch (m_type) {
-  case T_Bool: return (d.b == val);
+  case T_Bool: return ((int64_t)d.b == val);
   case T_Int: return (d.i == val);
   case T_UInt: 
     return ((val > 0) && (d.u == val));
@@ -377,7 +377,7 @@ bool  Variant::eqInt64(int64_t val) const {
 bool  Variant::eqUInt64(uint64_t val) const {
   if (isNull()) return false;
   switch (m_type) {
-  case T_Bool: return (d.b == val);
+  case T_Bool: return ((uint64_t)d.b == val);
   case T_Int: return ((d.i > 0) && (d.i == (int)val));
   case T_UInt:  return (d.u == val);
   case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int)val));

@@ -5,8 +5,10 @@
 // License: Public domain
 //
 
-#if ! defined(INCLUDED_INTERCEPTOR_H)
-#define INCLUDED_INTERCEPTOR_H
+#ifndef INTERCEPTOR_H
+#define INTERCEPTOR_H
+
+#include "taiqtso_def.h"
 
 #include <qobject.h>
 

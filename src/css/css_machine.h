@@ -214,7 +214,7 @@ public:
 				const char* e="", const char* f="", const char* g="", const char* h="",
 				const char* i="", const char* j="", const char* k="", const char* l="");
 public:
-#if (!defined(TA_OS_WIN32))
+#if (!defined(TA_OS_WIN))
   static void 		intrcatch(int);	// interrupt exception handling
 #endif
 };
@@ -1625,9 +1625,11 @@ class CSS_API cssCmdShell : public QObject {
   Q_OBJECT
 public:
   enum ConsoleType { // type of console to use
-    CT_Qt_Console,		// Qt-based console
     CT_NoGui_Rl,		// -nogui readline based console
-    CT_QandD_Console,		// quick-and-dirty console (compatible with qt, but uses stdin/out
+    CT_QandD_Console		// quick-and-dirty console (compatible with qt, but uses stdin/out
+#ifdef HAVE_QT_CONSOLE
+    ,CT_Qt_Console,		// Qt-based console NOTE: only usable if HAVE_QT_CONSOLE defined
+#endif
   };
 
   String 	name;
@@ -1659,14 +1661,9 @@ public:
   cssProgSpace* PopSrcProg(cssProgSpace* ps = NULL); // pop current src prog, if ps is non-NULL, then only if src_prog == ps
   void		PopAllSrcProg(); // pop off all of the src progs
 
-  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout, ConsoleType cons_typ = CT_NoGui_Rl);
+  void		StartupShellInit(istream& fhi = cin, ostream& fho = cout,
+    ConsoleType cons_typ = CT_NoGui_Rl);
   // do all the initialization stuff for a shell, but don't actually start a specific shell
-  void		Shell_QandD_Console(const char* prmpt);
-  // deprecated: configure a quick-and-dirty shell 
-  void		Shell_Qt_Console(const char* prmpt);
-  // configure qt gui-based shell that links with QcssConsole
-  void		Shell_NoGui_Rl(const char* prmpt);
-  // configure a nogui readline-based shell
   void		Shell_NoGui_Rl_Run();
   // run a nogui readline-based shell
 
@@ -1689,6 +1686,15 @@ public slots:
   // called when a new line of text becomes available -- all outer shells/consoles call this interface (qt version)
 protected:
   int		stack_alloc_size;	// allocated size of src_prog stack
+
+  void		Shell_NoGui_Rl(const char* prmpt);
+  // configure a nogui readline-based shell
+  void		Shell_QandD_Console(const char* prmpt);
+  // configure a quick-and-dirty shell 
+#ifdef HAVE_QT_CONSOLE
+  void		Shell_Qt_Console(const char* prmpt);
+  // configure qt gui-based shell that links with QcssConsole
+#endif
 };
 
 #endif // machine_h

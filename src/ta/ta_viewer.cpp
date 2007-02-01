@@ -654,11 +654,13 @@ IDataViewWidget* ConsoleDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
   QScrollArea* sa = new QScrollArea(dv);
   sa->setWidgetResizable(true);
   dv->setWidget(sa);
-  
+/*TODO: enable  this for the generic Q&D console, and modalize for QcssConsole
+
   QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
   //note: don't set size, let it resize in the scroll area
 //  sa->setFocusProxy((QWidget*)con);
   sa->setWidget((QWidget*)con);
+*/
   return dv;
 }
 

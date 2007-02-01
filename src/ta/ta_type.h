@@ -110,14 +110,19 @@ class TA_API TypeDef; //
 extern TA_API TypeDef TA_void;
 extern TA_API TypeDef TA_void_ptr;
 extern TA_API TypeDef TA_char;
+//extern TA_API TypeDef TA_int8_t; // on Windows
 extern TA_API TypeDef TA_signed_char;
+  extern TA_API TypeDef TA_int8_t;
 extern TA_API TypeDef TA_unsigned_char;
+  extern TA_API TypeDef TA_uint8_t;  // note: seemingly absent in MSVC
 extern TA_API TypeDef TA_short;
   extern TA_API TypeDef TA_signed_short;
   extern TA_API TypeDef TA_short_int;
   extern TA_API TypeDef TA_signed_short_int;
+  extern TA_API TypeDef TA_int16_t;
 extern TA_API TypeDef TA_unsigned_short;
   extern TA_API TypeDef TA_unsigned_short_int;
+  extern TA_API TypeDef TA_uint16_t; // note: seemingly absent in MSVC
 extern TA_API TypeDef TA_int;
   extern TA_API TypeDef TA_signed;
   extern TA_API TypeDef TA_signed_int;
@@ -126,7 +131,9 @@ extern TA_API TypeDef TA_int;
 //extern TA_API TypeDef TA_long; // where long is 32-bit
 extern TA_API TypeDef TA_unsigned_int;
   extern TA_API TypeDef TA_unsigned;
+  extern TA_API TypeDef TA_uint;
 //extern TA_API TypeDef TA_unsigned_long; // where long is 32-bit
+  extern TA_API TypeDef TA_uint32_t; // note: seemingly absent in MSVC
 extern TA_API TypeDef TA_long;
   extern TA_API TypeDef TA_signed_long;
   extern TA_API TypeDef TA_long_int;
@@ -138,7 +145,7 @@ extern TA_API TypeDef TA_int64_t;
   extern TA_API TypeDef TA_signed_long_long;
 //extern TA_API TypeDef TA_intptr_t; // on 64-bit systems
 //extern TA_API TypeDef TA_long; // where long is 64-bit
-extern TA_API TypeDef TA_uint64_t;
+extern TA_API TypeDef TA_uint64_t; // note: seemingly absent in MSVC
   extern TA_API TypeDef TA_unsigned_long_long;
 //extern TA_API TypeDef TA_unsigned_long; // where long is 64-bit
 extern TA_API TypeDef TA_intptr_t; //NOTE: synonym, will either be 'int' or 'int64_t'

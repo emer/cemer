@@ -22,6 +22,11 @@
 #endif
 
 #include <math.h>
+#ifdef TA_OS_WIN
+# define M_PI 3.14159265358979323846
+# define M_E  2.71828182845904523536
+#endif
+
 #include <float.h>
 
 //////////////////////////
@@ -1520,13 +1525,13 @@ bool taMath_double::mat_time_avg(double_Matrix* a, double avg_dt) {
 /////////////////////////////////////////////////////////////////////////////////
 // ExpLog: exponential and logarithmic functions
 
-float taMath_float::e = M_E;
+float taMath_float::e = (float)M_E;
 
 /////////////////////////////////////////////////////////////////////////////////
 // Trigonometry
 
-float taMath_float::pi = M_PI;
-float taMath_float::deg_per_rad = 180.0 / M_PI;
+float taMath_float::pi = (float)M_PI;
+float taMath_float::deg_per_rad = (float)(180.0 / M_PI);
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -1915,12 +1920,12 @@ float taMath_float::vec_inner_prod(const float_Matrix* vec, const float_Matrix* 
 }
 
 float taMath_float::vec_cross_entropy(const float_Matrix* vec, const float_Matrix* oth) {
-  if(!vec_check_same_size(vec, oth)) return -1.0;
-  float rval = 0.0;
+  if(!vec_check_same_size(vec, oth)) return -1.0f;
+  float rval = 0.0f;
   for(int i=0;i<vec->size;i++) {
     float p = vec->FastEl_Flat(i);
     float q = oth->FastEl_Flat(i);
-    q = max(q,0.000001); q = max(q,0.999999);
+    q = max(q,0.000001f); q = max(q,0.999999f);
     if(p >= 1.0)
       rval += -log(q);
     else if(p <= 0.0)

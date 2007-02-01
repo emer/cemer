@@ -4803,7 +4803,9 @@ bool cssProgSpace::DelWatchIdx(int idx) {
 ///////////////////////////////////
 
 static cssQandDConsole* qand_console = NULL;
+#ifdef HAVE_QT_CONSOLE
 static QcssConsole* qcss_console = NULL;
+#endif
 
 void cssCmdShell::Constr() {
   fin = &cin;  fout = &cout;  ferr = &cerr;
@@ -4906,7 +4908,9 @@ void cssCmdShell::AcceptNewLine(const String& ln, bool eof) {
   UpdatePrompt();
 }
 
-void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, ConsoleType cons_typ) {
+void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho,
+  ConsoleType cons_typ)
+{
   console_type = cons_typ;
 
   fin = &fhi;
@@ -4921,7 +4925,7 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, ConsoleType cons_
     src_prog->SetDebug(cssMisc::init_debug);
   }
 
-  // startup file
+  // startup file: TODO: put into app data folder
   cmd_prog->CompileRunClear(".cssinitrc");
 
 //   SetName(cssMisc::prompt);
@@ -4931,6 +4935,19 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, ConsoleType cons_
 //   signal(SIGTRAP, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
 #endif
+  switch (console_type) {
+  case CT_NoGui_Rl:
+    cssMisc::TopShell->Shell_NoGui_Rl(cssMisc::prompt);
+    break;
+  case CT_QandD_Console:		// quick-and-dirty console (compatible with qt, but uses stdin/out
+    cssMisc::TopShell->Shell_QandD_Console(cssMisc::prompt);
+    break;
+#ifdef HAVE_QT_CONSOLE
+  case CT_Qt_Console:
+    cssMisc::TopShell->Shell_Qt_Console(cssMisc::prompt);
+    break;
+#endif
+  }
 }
 
 bool cssCmdShell::RunStartupScript() {
@@ -4995,10 +5012,17 @@ void cssCmdShell::UpdatePrompt(bool disp_prompt) {
     act_prompt = String(cmd_prog->parse_depth) + " " + prompt + pt + " ";
   else
     act_prompt = prompt + pt + " ";
-  if(console_type == CT_QandD_Console)
+  switch (console_type) {
+  case CT_NoGui_Rl: break; // TODO: nothing???
+  case CT_QandD_Console:
     qand_console->setPrompt(act_prompt);
-  else if(console_type == CT_Qt_Console)
+    break;
+#ifdef HAVE_QT_CONSOLE
+  case CT_Qt_Console:
     qcss_console->setPrompt(act_prompt, disp_prompt);	// do not display new prompt
+    break;
+#endif
+  }
 }
 
 void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
@@ -5017,7 +5041,7 @@ void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
 	  this, SLOT(AcceptNewLine_Qt(QString, bool)), Qt::QueuedConnection);
   qand_console->Start();
 }
-
+#ifdef HAS_QT_CONSOLE
 void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
   qcss_console = QcssConsole::getInstance();
 
@@ -5034,7 +5058,7 @@ void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
   cssMisc::TopShell->PushSrcProg(cssMisc::Top);
   qcss_console->flushOutput();	// get it flushed to start up
 }
-
+#endif
 void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
   rl_done = false;
   console_type = CT_NoGui_Rl;
@@ -5063,23 +5087,29 @@ void cssCmdShell::Shell_NoGui_Rl_Run() {
 }
 
 void cssCmdShell::FlushConsole() {
+#ifdef HAVE_QT_CONSOLE
   if(console_type == CT_Qt_Console) {
     if(qcss_console)
       qcss_console->flushOutput(true); // wait for pager!
   }
+#endif
   ProcessEvents();
 }
 
 void cssCmdShell::Exit() {
   external_exit = true;
+#ifdef HAVE_QT_CONSOLE
   if(console_type == CT_Qt_Console) {
     if(qcss_console)
       qcss_console->exit();
   }
+#endif
 }
 
 void cssCmdShell::ProcessEvents() {
-  if(console_type == CT_Qt_Console) {
+  QCoreApplication::processEvents();
+/*why was this only based on console type?????
+if(console_type == CT_Qt_Console) {
     QCoreApplication::processEvents();
-  }
+  }*/
 }

@@ -148,7 +148,9 @@ cssUnixConsole::~cssUnixConsole() {
     thread = NULL;
   }
 }
+#endif // TA_OS_UNIX
 
+#ifdef HAS_QT_CONSOLE
 //////////////////////////////////////////////////////////////////////////
 //
 
@@ -402,5 +404,5 @@ void QcssConsole::ctrlCPressed() {
   cssMisc::cur_top->Stop();
 }
 
+#endif // HAS_QT_CONSOLE
 
-#endif // TA_OS_UNIX

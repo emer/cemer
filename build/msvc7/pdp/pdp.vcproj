@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(PDP4DIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="PDP_DLL;PDP_EXPORTS;TA_DLL;DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -78,7 +78,7 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(PDP4DIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="PDP_DLL;PDP_EXPORTS;TA_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"

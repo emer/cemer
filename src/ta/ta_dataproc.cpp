@@ -191,7 +191,7 @@ void DataSelectEl::Initialize() {
 String DataSelectEl::GetDisplayName() const {
   String rval = col_name + " " + 
     GetTypeDef()->GetEnumString("Relation", rel)+ " ";
-  if(use_var && var)
+  if(use_var && (bool)var)
     rval += var->name;
   else
     rval += cmp.toString();
@@ -1187,7 +1187,7 @@ const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
   String rval = il + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   for(int i=0;i<select_spec.ops.size; i++) {
     DataSelectEl* el = (DataSelectEl*)select_spec.ops[i];
-    if(el->use_var && el->var) {
+    if(el->use_var && (bool)el->var) {
       rval += il1 + "dsp->select_spec.ops[" + String(i) + "].cmp = " + el->var->name + ";\n";
     }
   }
@@ -1494,9 +1494,9 @@ String DataCalcAddDestRow::GetDisplayName() const {
 void DataCalcAddDestRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
-  if(dcl->src_data && !dcl->src_data->isDestroying())
+  if((bool)dcl->src_data && !dcl->src_data->isDestroying())
     src_data = dcl->src_data;
-  if(dcl->dest_data && !dcl->dest_data->isDestroying())
+  if((bool)dcl->dest_data && !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
 
@@ -1575,9 +1575,9 @@ String DataCalcSetDestRow::GetDisplayName() const {
 void DataCalcSetDestRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
-  if(dcl->src_data && !dcl->src_data->isDestroying())
+  if((bool)dcl->src_data && !dcl->src_data->isDestroying())
     src_data = dcl->src_data;
-  if(dcl->dest_data && !dcl->dest_data->isDestroying())
+  if((bool)dcl->dest_data && !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
 
@@ -1657,9 +1657,9 @@ String DataCalcSetSrcRow::GetDisplayName() const {
 void DataCalcSetSrcRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
-  if(dcl->src_data && !dcl->src_data->isDestroying())
+  if((bool)dcl->src_data && !dcl->src_data->isDestroying())
     src_data = dcl->src_data;
-  if(dcl->dest_data && !dcl->dest_data->isDestroying())
+  if((bool)dcl->dest_data && !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
 
@@ -1737,9 +1737,9 @@ String DataCalcCopyCommonCols::GetDisplayName() const {
 void DataCalcCopyCommonCols::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;
-  if(dcl->src_data && !dcl->src_data->isDestroying())
+  if((bool)dcl->src_data && !dcl->src_data->isDestroying())
     src_data = dcl->src_data;
-  if(dcl->dest_data && !dcl->dest_data->isDestroying())
+  if((bool)dcl->dest_data && !dcl->dest_data->isDestroying())
     dest_data = dcl->dest_data;
 }
 

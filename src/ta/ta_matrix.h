@@ -39,7 +39,7 @@ class TypeDef;
 class taMatrix_PList;
 class byte_Matrix; //
 class float_Matrix; //
-class MatrixTableModel;
+class MatrixTableModel; //
 
 /* Matrix -- a specialized, richer implementation of Array
 

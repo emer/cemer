@@ -3580,7 +3580,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
   
   for (int i = 0; i < td->tokens.size; ++i) {
     TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
-    if ((scope_ref) && !btmp->SameScope(scope_ref))
+    if ((bool)scope_ref && !btmp->SameScope(scope_ref))
       continue;
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
       top_item, (void*)btmp); 

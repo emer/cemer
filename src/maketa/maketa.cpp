@@ -36,19 +36,25 @@
 TypeDef TA_void			("void", 	1, 0, 0, 0, 1);
 TypeDef TA_char			("char", 	1, 0, 0, 0, 1, 1, "char");
 TypeDef TA_signed_char		("signed_char", 1, 0, 0, 0, 1, 1, "signed char");
+TypeDef TA_int8_t		("int8_t",      1, 0, 0, 0, 1, 1);//note, derives char on MSVC
 TypeDef TA_unsigned_char      ("unsigned_char", 1, 0, 0, 0, 1, 1, "unsigned char");
+TypeDef TA_uint8_t		("uint8_t",     1, 0, 0, 0, 1, 1);//note, derives char on MSVC
 TypeDef TA_short		("short", 	1, 0, 0, 0, 1, 1, "short");
 TypeDef TA_signed_short	       ("signed_short", 1, 0, 0, 0, 1, 1, "signed short");
 TypeDef TA_short_int	       ("short_int"   , 1, 0, 0, 0, 1, 1, "short int");
 TypeDef TA_signed_short_int("signed_short_int", 1, 0, 0, 0, 1, 1, "signed short int");
+TypeDef TA_int16_t		("int16_t",     1, 0, 0, 0, 1, 1);
 TypeDef TA_unsigned_short    ("unsigned_short", 1, 0, 0, 0, 1, 1, "unsigned short");
 TypeDef TA_unsigned_short_int("unsigned_short_int", 1, 0, 0, 0, 1, 1, "unsigned short int");
+TypeDef TA_uint16_t		("uint16_t",    1, 0, 0, 0, 1, 1);
 TypeDef TA_int			("int", 	1, 0, 0, 0, 1, 1, "int");
 TypeDef TA_signed_int		("signed_int", 	1, 0, 0, 0, 1, 1, "signed int");
 TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_int32_t		("int32_t", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_unsigned_int	       ("unsigned_int", 1, 0, 0, 0, 1, 1, "unsigned int");
 TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_uint		("uint", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_uint32_t		("uint32_t",    1, 0, 0, 0, 1, 1);
 TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_long_long		("long_long", 	1, 0, 0, 0, 1, 1, "long long");
 TypeDef TA_signed_long_long("signed_long_long", 1, 0, 0, 0, 1, 1, "signed long long");
@@ -224,19 +230,25 @@ void MTA::AddBuiltIn(TypeSpace& ts) { // common code
   ts.Add(&TA_void);
   ts.Add(&TA_char);
   ts.Add(&TA_signed_char);
+  ts.Add(&TA_int8_t);
   ts.Add(&TA_unsigned_char);
+  ts.Add(&TA_uint8_t);
   ts.Add(&TA_short);
   ts.Add(&TA_signed_short);
   ts.Add(&TA_short_int);
   ts.Add(&TA_signed_short_int);
+  ts.Add(&TA_int16_t);
   ts.Add(&TA_unsigned_short);
   ts.Add(&TA_unsigned_short_int);
+  ts.Add(&TA_uint16_t);
   ts.Add(&TA_int);
   ts.Add(&TA_signed_int);
   ts.Add(&TA_signed);
   ts.Add(&TA_int32_t);
   ts.Add(&TA_unsigned_int);
   ts.Add(&TA_unsigned);
+  ts.Add(&TA_uint);
+  ts.Add(&TA_uint32_t);
   ts.Add(&TA_int64_t);
   ts.Add(&TA_long_long);
   ts.Add(&TA_signed_long_long);
@@ -282,14 +294,24 @@ void MTA::InitKeyWords() {
 
 void MTA::InitBuiltIn() {
   TA_void_ptr.AddParents(&TA_void);
+#ifdef TA_OS_WIN
+  TA_int8_t.AddParents(&TA_char);
+#else
+  TA_int8_t.AddParents(&TA_signed_char);
+#endif
+  TA_uint8_t.AddParents(&TA_unsigned_char); // note: doesn't exist per se on MSVC
   TA_signed_short.AddParents(&TA_short);
   TA_short_int.AddParents(&TA_short);
   TA_signed_short_int.AddParents(&TA_short);
+  TA_int16_t.AddParents(&TA_short);
   TA_unsigned_short_int.AddParents(&TA_unsigned_short);
+  TA_uint16_t.AddParents(&TA_unsigned_short);
   TA_signed_int.AddParents(&TA_int); 
   TA_signed.AddParents(&TA_int); 
-  TA_unsigned.AddParents(&TA_unsigned_int);
   TA_int32_t.AddParents(&TA_int); 
+  TA_unsigned.AddParents(&TA_unsigned_int);
+  TA_uint.AddParents(&TA_unsigned_int); 
+  TA_uint32_t.AddParents(&TA_unsigned_int); 
   TA_signed_long.AddParents(&TA_long);
   TA_long_int.AddParents(&TA_long);
   TA_signed_long_int.AddParents(&TA_long);

@@ -22,12 +22,17 @@
 
 // #IGNORE Qt Core defines -- always included
 #ifdef TA_USE_QT
+#ifdef __MAKETA__
+  class	QList;	// #IGNORE
+  class	QPointer; // #IGNORE 
+#else // not maketa
+  template<class T> class	QList;	// #IGNORE
+  template<class T> class	QPointer; // #IGNORE 
+#endif
 class	QBitArray;		// #IGNORE 
 class	QDir;			// #IGNORE
 class	QEvent;			// #IGNORE 
-template<class T> class	QList;	// #IGNORE
 class	QObject;		// #IGNORE 
-template<class T> class	QPointer; // #IGNORE 
 class	QString;		// #IGNORE 
 class	QStringList;		// #IGNORE 
 class	QTimer;			// #IGNORE 

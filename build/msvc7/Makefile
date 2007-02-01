@@ -22,8 +22,6 @@ TAIQTSO_MOCS: \
   icliptoolwidget.moc.cpp \
   icombobox.moc.cpp \
   ieditgrid.moc.cpp \
-  interceptor.moc.cpp \
-  qconsole.moc.cpp \
   ilabel.moc.cpp \
   iflowlayout.moc.cpp \
   ilineedit.moc.cpp \
@@ -104,12 +102,12 @@ TAHEADS_TAMISC =\
 	ta_data_extras.h 
 
 TAHEADS =\
-	$(PDP4DIR)/src/taiqtso/igeometry.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/streambuf.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/iostream.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/fstream.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/sstream.h \
-	$(PDP4DIR)/src/ta/ta_global.h \
+	ta_global.h \
+	$(PDP4DIR)/src/taiqtso/igeometry.h \
 	ta_def.h \
 	ta_platform.h \
 	ta_thread.h \
@@ -153,37 +151,70 @@ TAHEADS =\
 	$(TAHEADS_TAMISC_GUI)
 
 TA_MOCS: \
-  ta_qt.moc.cpp \
+  colorbar_qt.moc.cpp \
+  t3viewer.moc.cpp \
+  ta_datatable.moc.cpp \
+  ta_datatable_qtso.moc.cpp \
+  ta_matrix.moc.cpp \
   ta_matrix_qt.moc.cpp \
+  ta_plugin_p.moc.cpp \
+  ta_program_qt.moc.cpp \
+  ta_qt.moc.cpp \
+  ta_qtclassbrowse.moc.cpp \
+  ta_qtclipdata.moc.cpp \
   ta_qtdata_def.moc.cpp \
   ta_qtdata.moc.cpp \
   ta_qtdialog.moc.cpp \
+  ta_qtgroup.moc.cpp \
   ta_qttype_def.moc.cpp \
   ta_qttype.moc.cpp \
-  ta_qtclipdata.moc.cpp \
   ta_qtviewer.moc.cpp \
-  ta_qtmodel.moc.cpp \
-  ta_qtclassbrowse.moc.cpp \
   ta_qtgroup.moc.cpp \
-  ta_seledit.moc.cpp \
-  ta_program_qt.moc.cpp \
-  t3viewer.moc.cpp \
-  colorbar_qt.moc.cpp \
-  datatable_qtso.moc.cpp
+  ta_type.moc.cpp
 
-ta_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_qt.h
+colorbar_qt.moc.cpp: $(PDP4DIR)\src\ta\colorbar_qt.h
+	$(MOC) %s -o $@
+
+t3viewer.moc.cpp: $(PDP4DIR)\src\ta\t3viewer.h
+	$(MOC) %s -o $@
+	
+ta_datatable.moc.cpp: $(PDP4DIR)\src\ta\ta_datatable.h
+	$(MOC) %s -o $@
+
+ta_datatable_qtso.moc.cpp: $(PDP4DIR)\src\ta\ta_datatable_qtso.h
+	$(MOC) %s -o $@
+
+ta_matrix.moc.cpp: $(PDP4DIR)\src\ta\ta_matrix.h
 	$(MOC) %s -o $@
 
 ta_matrix_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_matrix_qt.h
 	$(MOC) %s -o $@
 
-ta_qtdata_def.moc.cpp: $(PDP4DIR)\src\ta\ta_qtdata_def.h
+ta_plugin_p.moc.cpp: $(PDP4DIR)\src\ta\ta_plugin_p.h
+	$(MOC) %s -o $@
+
+ta_program_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_program_qt.h
+	$(MOC) %s -o $@
+
+ta_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_qt.h
+	$(MOC) %s -o $@
+
+ta_qtclassbrowse.moc.cpp: $(PDP4DIR)\src\ta\ta_qtclassbrowse.h
+	$(MOC) %s -o $@
+
+ta_qtclipdata.moc.cpp: $(PDP4DIR)\src\ta\ta_qtclipdata.h
 	$(MOC) %s -o $@
 
 ta_qtdata.moc.cpp: $(PDP4DIR)\src\ta\ta_qtdata.h
 	$(MOC) %s -o $@
 
+ta_qtdata_def.moc.cpp: $(PDP4DIR)\src\ta\ta_qtdata_def.h
+	$(MOC) %s -o $@
+
 ta_qtdialog.moc.cpp: $(PDP4DIR)\src\ta\ta_qtdialog.h
+	$(MOC) %s -o $@
+
+ta_qtgroup.moc.cpp: $(PDP4DIR)\src\ta\ta_qtgroup.h
 	$(MOC) %s -o $@
 
 ta_qttype_def.moc.cpp: $(PDP4DIR)\src\ta\ta_qttype_def.h
@@ -192,43 +223,29 @@ ta_qttype_def.moc.cpp: $(PDP4DIR)\src\ta\ta_qttype_def.h
 ta_qttype.moc.cpp: $(PDP4DIR)\src\ta\ta_qttype.h
 	$(MOC) %s -o $@
 
-ta_qtclipdata.moc.cpp: $(PDP4DIR)\src\ta\ta_qtclipdata.h
-	$(MOC) %s -o $@
-
 ta_qtviewer.moc.cpp: $(PDP4DIR)\src\ta\ta_qtviewer.h
 	$(MOC) %s -o $@
 
-ta_qtclassbrowse.moc.cpp: $(PDP4DIR)\src\ta\ta_qtclassbrowse.h
+ta_type.moc.cpp: $(PDP4DIR)\src\ta\ta_type.h
 	$(MOC) %s -o $@
 
-ta_qtgroup.moc.cpp: $(PDP4DIR)\src\ta\ta_qtgroup.h
-	$(MOC) %s -o $@
 
-ta_seledit.moc.cpp: $(PDP4DIR)\src\ta\ta_seledit.h
-	$(MOC) %s -o $@
-
-ta_program_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_program_qt.h
-	$(MOC) %s -o $@
-
-t3viewer.moc.cpp: $(PDP4DIR)\src\ta\t3viewer.h
-	$(MOC) %s -o $@
-
-colorbar_qt.moc.cpp: $(PDP4DIR)\src\ta\colorbar_qt.h
-	$(MOC) %s -o $@
-
-ta_datatable_qtso.moc.cpp: $(PDP4DIR)\src\ta\ta_datatable_qtso.h
-	$(MOC) %s -o $@
-
-#datagraph_qtso.moc.cpp: $(PDP4DIR)\src\ta\datagraph_qtso.h
-#	$(MOC) %s -o $@
 
 
 
 CSS_MOCS: \
+	css_console.moc.cpp \
+	css_machine.moc.cpp \
 	css_qttype.moc.cpp \
 	css_qt.moc.cpp \
 	css_qtdata.moc.cpp \
 	css_qtdialog.moc.cpp
+
+css_console.moc.cpp: $(PDP4DIR)\src\css\css_console.h
+	$(MOC) %s -o $@
+
+css_machine.moc.cpp: $(PDP4DIR)\src\css\css_machine.h
+	$(MOC) %s -o $@
 
 css_qttype.moc.cpp: $(PDP4DIR)\src\css\css_qttype.h
 	$(MOC) %s -o $@
@@ -304,16 +321,13 @@ BP_MAKETA =\
 
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
 #TODO: need to enable DEBUG to be parameterized somehow
-MAKETA_FLAGS = -css -autohx $(INCLUDE) /D DEBUG -win_dll
+#MAKETA_FLAGS = -css -autohx $(INCLUDE) /D DEBUG -win_dll
+MAKETA_FLAGS = -css $(INCLUDE) /D DEBUG -win_dll
 
 #note: also makes _TA_inst.h and .cpp
 ta_TA_type.h: $(TAHEADS)
   $(CD) $(PDP4DIR)/src/ta
   $(MAKETA) -v1 $(MAKETA_FLAGS) ta $(TAHEADS) 
-  
-tamisc_TA_type.h: $(TAMISC_MAKETA)
-  $(CD) $(PDP4DIR)/src/tamisc
-  $(MAKETA) -v1 $(MAKETA_FLAGS) tamisc $(TAMISC_MAKETA) 
   
 pdp_TA_type.h: $(PDP_MAKETA)
   $(CD) $(PDP4DIR)/src/pdp
@@ -339,6 +353,8 @@ css_files: CSS_MOCS
 pdp_files: pdp_TA_type.h $(PDP_MAKETA) PDP_MOCS
 
 bp_files: bp_TA_type.h $(BP_MAKETA)
+
+leabra_files: leabra_TA_type.h $(LEABRA_MAKETA)
 
 maketa_files: \
   ta_TA_type.h 

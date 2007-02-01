@@ -50,6 +50,7 @@ protected:
   static cssQandDConsole*	New_SysConsole(QObject* parent = NULL);
 };
 
+#ifdef HAS_QT_CONSOLE
 #include "qconsole.h"
 
 class CSS_API QcssConsole : public QConsole {
@@ -77,7 +78,7 @@ class CSS_API QcssConsole : public QConsole {
   cssCmdShell* 	cmd_shell; // the command shell
   static QcssConsole *theInstance;
 };
-
+#endif
 
 
 #endif

@@ -800,20 +800,6 @@ bool taRootBase::Startup_MakeMainWin() {
   // TODO: need to better orchestrate the "OpenWindows" call below with
   // create the default application window
   MainWindowViewer* db = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
-#ifndef QANDD_CONSOLE
-  // note: not doing this anymore!!
-//   ConsoleDockViewer* cdv = new ConsoleDockViewer;
-//   db->docks.Add(cdv);
-  // instead: create a separate new window..
-  QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
-  QMainWindow* cwin = new QMainWindow();
-  cwin->setCentralWidget((QWidget*)con);
-  cwin->resize((int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
-  cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));
-  cwin->show();
-  taMisc::console_win = cwin;
-#endif    
-  // create the console docked in the main project window
   db->ViewWindow();
   iMainWindowViewer* bw = db->viewerWindow();
   if (bw) {
@@ -829,17 +815,26 @@ bool taRootBase::Startup_MakeMainWin() {
 bool taRootBase::Startup_Console() {
   if (taMisc::use_gui) {
 //TODO: we need event loop in gui AND non-gui, so check about Shell_NoGui_Rl
-#ifndef QANDD_CONSOLE
+#if (!defined(QANDD_CONSOLE) && defined(HAS_QT_CONSOLE))
+    // note: not doing this anymore!!
+  //   ConsoleDockViewer* cdv = new ConsoleDockViewer;
+  //   db->docks.Add(cdv);
+    // instead: create a separate new window..
+    QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+    QMainWindow* cwin = new QMainWindow();
+    cwin->setCentralWidget((QWidget*)con);
+    cwin->resize((int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
+    cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));
+    cwin->show();
+    taMisc::console_win = cwin;
+
     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-    cssMisc::TopShell->Shell_Qt_Console(cssMisc::prompt);
-#else
-    // todo: only for debugging: remove later!
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
-    cssMisc::TopShell->Shell_QandD_Console(cssMisc::prompt);
+    return true;
 #endif
+    // otherwise, (esp Windows) we'll use the older type shell
+    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
   } else {
     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
-    cssMisc::TopShell->Shell_NoGui_Rl(cssMisc::prompt);
   }
   return true;
 }

@@ -1611,7 +1611,7 @@ void iDataTableView_Panel::UpdatePanel() {
 
 void iDataTableView_Panel::viewAll() {
   m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion());
-  m_camera->focalDistance.setValue(.1); // zoom in!
+  m_camera->focalDistance.setValue(.1f); // zoom in!
 }
 
 
@@ -3661,7 +3661,7 @@ void iDataTableEditor::Refresh() {
 }
 
 void iDataTableEditor::setDataTable(DataTable* dt_) {
-  if (dt_ == m_dt) return;
+  if (dt_ == m_dt.ptr()) return;
   if (dt_) {
 //nn    tv->setItemDelegate(new DataTableDelegate(dt_));
     tvTable->setModel(dt_->GetDataModel());
@@ -3694,7 +3694,7 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
 void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,
     const QModelIndex& bottomRight)
 {
-  if (m_cell && (m_cell_index.column() >= topLeft.column()) &&
+  if ((bool)m_cell && (m_cell_index.column() >= topLeft.column()) &&
     (m_cell_index.column() <= bottomRight.column()) &&
     (m_cell_index.row() >= topLeft.row()) &&
      (m_cell_index.row() <= bottomRight.row()) )

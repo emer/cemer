@@ -5,6 +5,8 @@
 // License:  Public domain
 //
 
+#include "interceptor.h"
+
 #ifndef TA_OS_WIN
 # include <unistd.h>
 #endif
@@ -16,7 +18,6 @@
 
 #include <qtextstream.h>
 #include <qsocketnotifier.h>
-#include "interceptor.h"
 
 using namespace std;
 

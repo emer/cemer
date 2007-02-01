@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="TA_DLL;TA_EXPORTS;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
@@ -36,10 +36,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
+				AdditionalDependencies="Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib libjpeg.lib libgsl.dll.a libgslcblas.dll.a"
+				ShowProgress="2"
 				OutputFile="$(OutDir)/ta_debug.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(PDP4DIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="TRUE"
 				AssemblyDebug="1"
 				ProgramDatabaseFile="$(OutDir)/ta.pdb"
@@ -83,7 +85,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="TA_DLL;TA_EXPORTS;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -95,10 +97,10 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
+				AdditionalDependencies="Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib libjpeg.lib"
 				OutputFile="$(OutDir)/ta.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(PDP4DIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -189,6 +191,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\taiqtso\icheckbox.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\taiqtso\icliptoolwidget.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\taiqtso\icombobox.cpp">
 				</File>
 				<File
@@ -213,9 +218,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\taiqtso\imisc_so.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\taiqtso\interceptor.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\taiqtso\irenderarea.cpp">
 				</File>
 				<File
@@ -223,9 +225,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\itreewidget.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\taiqtso\qconsole.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\safeptr_so.cpp">
@@ -268,9 +267,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\taiqtso\imisc_so.h">
 				</File>
 				<File
-					RelativePath="..\..\..\src\taiqtso\interceptor.h">
-				</File>
-				<File
 					RelativePath="..\..\..\src\taiqtso\irenderarea.h">
 				</File>
 				<File
@@ -278,9 +274,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\itreewidget.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\taiqtso\qconsole.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\safeptr_so.h">
@@ -299,7 +292,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\taiqtso\icheckbox.moc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\taiqtso\icliptoolwidget.cpp">
+					RelativePath="..\..\..\src\taiqtso\icliptoolwidget.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\icombobox.moc.cpp">
@@ -323,9 +316,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\taiqtso\ilineedit.moc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\taiqtso\interceptor.moc.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\taiqtso\irenderarea.moc.cpp">
 				</File>
 				<File
@@ -333,9 +323,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\itreewidget.moc.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\taiqtso\qconsole.moc.cpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -456,6 +443,12 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				Name="Built Files"
 				Filter="">
 				<File
+					RelativePath="..\..\..\src\css\css_console.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\css\css_machine.moc.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\css\css_qt.moc.cpp">
 				</File>
 				<File
@@ -485,15 +478,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\colorscale.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\datatable.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\datatable_qtso.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\datatable_so.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\ta\fun_lookup.cpp">
 				</File>
 				<File
@@ -521,10 +505,22 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_data_extras.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\ta_dataanal.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_datagen.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\ta_dataproc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_datatable.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_datatable_qtso.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_datatable_so.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_defaults.cpp">
@@ -566,13 +562,13 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_matrix.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\ta_matrix_qt.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\ta_mtrnd.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_platform.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\ta_platform_win.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_plugin_p.cpp">
@@ -590,7 +586,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_qt.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_qtbrowse.cpp">
+					RelativePath="..\..\..\src\ta\ta_qtclassbrowse.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_qtclipdata.cpp">
@@ -660,24 +656,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\colorscale.h">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\datagraph.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\datagraph_qtso.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\datagraph_so.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\datatable.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\datatable_qtso.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\ta\datatable_so.h">
-				</File>
-				<File
 					RelativePath="..\..\..\src\ta\fun_lookup.h">
 				</File>
 				<File
@@ -718,6 +696,12 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_datatable.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_datatable_qtso.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_datatable_so.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_def.h">
@@ -763,6 +747,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_matrix.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_matrix_qt.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_mtrnd.h">
@@ -859,13 +846,22 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\colorbar_qt.moc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\datatable_qtso.moc.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\ta\t3viewer.moc.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\ta_datatable.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_datatable_qtso.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_matrix.moc.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\ta_matrix_qt.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_plugin_p.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_program_qt.moc.cpp">
@@ -901,9 +897,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_qtviewer.moc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\ta_seledit.moc.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\ta\ta_TA.cpp">
 				</File>
 				<File
@@ -911,6 +904,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_TA_type.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_type.moc.cpp">
 				</File>
 			</Filter>
 		</Filter>

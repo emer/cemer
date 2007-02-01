@@ -2276,7 +2276,7 @@ MemberDef* MemberSpace::FindCheck(const char* nm, void* base, void*& ptr) const 
 //////////////////////////////////
 
 int MemberSpace::FindNameOrType(const char *nm) const {	// lookup by name
-  int rval;
+  int rval = 0; //init just to keep msvc happy
   // first check names
   if(FindName(nm),rval)
     return rval;
@@ -2286,8 +2286,7 @@ int MemberSpace::FindNameOrType(const char *nm) const {	// lookup by name
 }
 
 int MemberSpace::FindTypeName(const char* nm) const {
-  int i;
-  for(i=0; i<size; i++) {
+  for(int i=0; i<size; i++) {
     if(FastEl(i)->type->InheritsFrom(nm))
       return i;
   }

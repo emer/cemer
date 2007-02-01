@@ -21,9 +21,11 @@
 #ifndef TAGLOBAL_H
 #define TAGLOBAL_H
 
+#ifndef __MAKETA__
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#endif
 
 // Qt includes -- we typically only don't include Qt when building maketa, otherwise,
 // there are two options:
@@ -237,13 +239,14 @@ typedef unsigned short  ushort;
 typedef unsigned	uint;
 typedef unsigned long   ulong;
 typedef char*		pchar;
-typedef uchar*		puchar;
+typedef uchar*		puchar; //
 //typedef const char*	pcchar;  //NOTE: too obscure, don't use this in ta/pdp code
 
 #endif // TA_GUI
 
 typedef unsigned char   byte;
 
+#ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
 // god bless Microsoft c++...
 #ifdef TA_OS_WIN
   typedef unsigned int		uint;
@@ -274,7 +277,9 @@ typedef unsigned char   byte;
 # endif
 #endif // intptr_t hacks
 
-// defaults for our Trolltech hack:
+#endif // skip over for maketa
+
+// defaults (and maketa values) for our Trolltech/MacOS hack:
 #ifndef ta_intptr_t
 # define ta_intptr_t intptr_t
 # define ta_uintptr_t uintptr_t
@@ -330,7 +335,9 @@ typedef unsigned char   byte;
 
 // Some OS-specific includes or types
 #if (defined(TA_OS_WIN))
-#include <io.h>
+#ifndef __MAKETA__
+# include <io.h>
+#endif
 #define F_OK 00 // Existence only 
 #define W_OK 02 // Write permission 
 #define R_OK 04 // Read permission 

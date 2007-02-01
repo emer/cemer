@@ -22,9 +22,9 @@
 #include "ta_mtrnd.h"
 #include "ta_dmem.h"
 
-#ifdef HAVE_LIBGSL
-#include <gsl/gsl_matrix_double.h>
-#include <gsl/gsl_matrix_float.h>
+#if (defined(HAVE_LIBGSL) && !defined(__MAKETA__))
+# include "gsl/gsl_matrix_double.h"
+# include "gsl/gsl_matrix_float.h"
 #endif
 
 class TA_API CountParam : public taBase {
@@ -366,10 +366,10 @@ public:
   // #CAT_Probability inverse of the cumulative for p: z value for given p 
   static double gauss_dev();
   // #CAT_Probability gaussian deviate: normally distributed 
-  static double erf(double x) { return erf(x); }
+  /*TODO: INFINITELY RECURSIVE!!!! static double erf(double x) { return erf(x); }
   // #CAT_Probability the error function: used for computing the normal distribution
   static double erfc(double x) { return erfc(x); }
-  // #CAT_Probability complement of the error function (1.0 - erf(x))
+  // #CAT_Probability complement of the error function (1.0 - erf(x)) */
 
   static double chisq_p(double X, double v);
   // #CAT_Probability P(X^2 | v) 
@@ -495,7 +495,7 @@ public:
   /////////////////////////////////////////////////////////////////////////////////
   // Standard Matrix operations: operate on a 2-dimensional matrix
 
-#ifdef HAVE_LIBGSL
+#if (defined(HAVE_LIBGSL) && !defined(__MAKETA__))
   static bool mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const double_Matrix* ta_mat);
   // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
   static bool vec_get_gsl_fm_ta(gsl_vector* gsl_vec, const double_Matrix* ta_vec);
@@ -797,7 +797,7 @@ public:
   /////////////////////////////////////////////////////////////////////////////////
   // Matrix operations
 
-#ifdef HAVE_LIBGSL
+#if (defined(HAVE_LIBGSL) && !defined(__MAKETA__))
   static bool mat_get_gsl_fm_ta(gsl_matrix_float* gsl_mat, const float_Matrix* ta_mat);
   // #IGNORE helper function to get a gsl-formatted matrix from a ta matrix
   static bool vec_get_gsl_fm_ta(gsl_vector_float* gsl_vec, const float_Matrix* ta_vec);

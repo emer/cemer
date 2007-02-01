@@ -980,7 +980,7 @@ void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
 const String MethodCall::GenCssBody_impl(int indent_level) {
   String rval;
   rval += cssMisc::Indent(indent_level);
-  if (!(obj && method)) {
+  if (!((bool)obj && method)) {
     rval += "//WARNING: MethodCall not generated here -- obj or method not specified\n";
    return rval;
   }

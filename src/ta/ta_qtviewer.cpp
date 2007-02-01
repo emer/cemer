@@ -4371,7 +4371,7 @@ iTextDataPanel::~iTextDataPanel() {
 
 void iTextDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (dcr == DCR_ITEM_UPDATED) ;
+//TODO:  if (dcr == DCR_ITEM_UPDATED) ;
   //get updated text
 }
 
