@@ -205,7 +205,7 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = false;
   if(e->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
-#ifdef __APPLE__
+#ifdef TA_OS_MAC
   // ctrl = meta on apple; except it doesnt' work!
   if(e->modifiers() & Qt::MetaModifier)
     ctrl_pressed = true;

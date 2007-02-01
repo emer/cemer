@@ -21,11 +21,10 @@
 #include <gsl/gsl_linalg.h>
 #endif
 
-#include <math.h>
-#ifdef TA_OS_WIN
-# define M_PI 3.14159265358979323846
-# define M_E  2.71828182845904523536
+#ifdef TA_OS_WIN // grr... they require this to enable the standard M_ defs
+# define _USE_MATH_DEFINES
 #endif
+#include <math.h>
 
 #include <float.h>
 
@@ -556,6 +555,15 @@ double taMath_double::gamma_dev(int ia) {
 /**********************************
   the normal distribution (& error fun)
 ***********************************/
+
+//note: put into .cpp to deal with win
+double taMath_double::erf(double x) {
+  return ::erf(x);
+}
+
+double taMath_double::erfc(double x) {
+  return ::erfc(x);
+}
 
 double taMath_double::gauss_den(double z) {
   return 0.398942280 * exp(-0.5 * z * z);

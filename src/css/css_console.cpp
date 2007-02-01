@@ -162,7 +162,7 @@ return NULL;
 
 #endif // TA_OS_WIN
 
-#ifdef HAS_QT_CONSOLE
+#ifdef HAVE_QT_CONSOLE
 //////////////////////////////////////////////////////////////////////////
 //
 
@@ -416,5 +416,5 @@ void QcssConsole::ctrlCPressed() {
   cssMisc::cur_top->Stop();
 }
 
-#endif // HAS_QT_CONSOLE
+#endif // HAVE_QT_CONSOLE
 

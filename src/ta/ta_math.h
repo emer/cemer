@@ -366,9 +366,9 @@ public:
   // #CAT_Probability inverse of the cumulative for p: z value for given p 
   static double gauss_dev();
   // #CAT_Probability gaussian deviate: normally distributed 
-  /*TODO: INFINITELY RECURSIVE!!!! static double erf(double x) { return erf(x); }
+  static double erf(double x);
   // #CAT_Probability the error function: used for computing the normal distribution
-  static double erfc(double x) { return erfc(x); }
+  static double erfc(double x);
   // #CAT_Probability complement of the error function (1.0 - erf(x)) */
 
   static double chisq_p(double X, double v);

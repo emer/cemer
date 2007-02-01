@@ -5041,7 +5041,7 @@ void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
 	  this, SLOT(AcceptNewLine_Qt(QString, bool)), Qt::QueuedConnection);
   qand_console->Start();
 }
-#ifdef HAS_QT_CONSOLE
+#ifdef HAVE_QT_CONSOLE
 void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
   qcss_console = QcssConsole::getInstance();
 

@@ -50,12 +50,12 @@ protected:
   static cssQandDConsole*	New_SysConsole(QObject* parent = NULL);
 };
 
-#ifdef HAS_QT_CONSOLE
+//evil moc won't respect this!!! #ifdef HAVE_QT_CONSOLE
 #include "qconsole.h"
 
 class CSS_API QcssConsole : public QConsole {
-  INHERITED(QConsole);
-  Q_OBJECT;
+  INHERITED(QConsole)
+  Q_OBJECT
  public:
 
   static QcssConsole* getInstance(QObject *parent = NULL, cssCmdShell* cs = NULL);
@@ -78,7 +78,7 @@ class CSS_API QcssConsole : public QConsole {
   cssCmdShell* 	cmd_shell; // the command shell
   static QcssConsole *theInstance;
 };
-#endif
+//#endif
 
 
 #endif

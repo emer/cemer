@@ -167,7 +167,7 @@ distclean: clean
 	-$(DEL_FILE) Makefile
 
 
-hw_TA_inst.h\ hw_TA_type.h\ hw_TA.cpp: hw.h
+hw_TA_inst.h hw_TA_type.h hw_TA.cpp: hw.h
 	/home/baisa/pdp4.0/trunk/src/maketa/maketa -D__MAKETA__ -css -cpp="g++ -E" -I. -I/home/baisa/pdp4.0/trunk -I/home/baisa/pdp4.0/trunk/src/ta -I/home/baisa/pdp4.0/trunk/src/ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/css -I/home/baisa/pdp4.0/trunk/src/leabra -I/home/baisa/pdp4.0/trunk/src/taiqtso -I/home/baisa/pdp4.0/trunk/src/bp hw hw.h
 
 /usr/local/Trolltech/Qt-4.2.2/bin/moc:

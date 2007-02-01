@@ -815,7 +815,7 @@ bool taRootBase::Startup_MakeMainWin() {
 bool taRootBase::Startup_Console() {
   if (taMisc::use_gui) {
 //TODO: we need event loop in gui AND non-gui, so check about Shell_NoGui_Rl
-#if (!defined(QANDD_CONSOLE) && defined(HAS_QT_CONSOLE))
+#if (!defined(QANDD_CONSOLE) && defined(HAVE_QT_CONSOLE))
     // note: not doing this anymore!!
   //   ConsoleDockViewer* cdv = new ConsoleDockViewer;
   //   db->docks.Add(cdv);
