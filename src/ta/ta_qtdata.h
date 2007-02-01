@@ -71,6 +71,12 @@ public:
     // s_a=-1 for default taiM->hspc_c
   virtual void 		AddChildMember(MemberDef* md); // adds label and control for the member
   virtual void		EndLayout(); // default adds a stretch
+
+#ifndef __MAKETA__
+signals:
+  void			ChildDataChangedNotify(taiData* sender);
+  // emitted whenever a child does DataChangedNotify
+#endif
 protected:
   QHBoxLayout*		lay;	// may be ignored/unused by subclasses
   int			last_spc;	// space after last widget, -1 = none
@@ -78,6 +84,11 @@ protected:
   override void		ChildRemove(taiData* child);
   virtual void		AddChildWidget_impl(QWidget* child_widget, int spacing,
     int stretch);// default does an add to layout
+
+protected slots:
+  void 			ChildDataChanged(taiData* sender);
+  // connected to DataChanged of all our children
+
 private:
   QObjectList*		mwidgets; // list of child widgets
 };

@@ -362,7 +362,7 @@ int  	taMisc::console_font_size = 10;
 #endif
 int	taMisc::display_width = 80;
 int	taMisc::sep_tabs = 2;
-int	taMisc::max_menu = 50;
+int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
 int	taMisc::mono_scale_size = 16;

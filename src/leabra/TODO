@@ -6,6 +6,7 @@ commit:
 * graphview: 
 
   - panel!
+  - CNT axis in panel; test..
   - 0 axis range causing problems somewhere (source of non-visibility on startup?)
   - mat z index not working (axis probably -- need a dummy axis)
   - shared axis: update ranges

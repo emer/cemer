@@ -510,6 +510,7 @@ INHERITED(T3DataView)
 public:
   enum AxisType { X, Y, Z };
 
+  bool			on;		// is this axis active for displaying info
   AxisType		axis;		// #READ_ONLY type of axis this is, for rendering purposes
   GraphColView*		col_lookup; 	// #NULL_OK #FROM_GROUP_col_list lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
   String		col_name;	// name of column of data for this axis
@@ -529,6 +530,7 @@ public:
 
   T3DataView_List*	col_list; 	// #READ_ONLY #NO_SAVE list of columns for the col_lookup
 
+  virtual void		SetColPtr(GraphColView* cgv);
   GraphColView* 	GetColPtr(); // get column pointer from col_name
   DataArray_impl*	GetDAPtr();  // get dataarray ptr
   GraphTableView*	GetGTV() 	{ return (GraphTableView*)owner; }
@@ -634,12 +636,7 @@ class TA_API GraphAxisView : public GraphAxisBase {
 INHERITED(GraphAxisBase)
 public:
 
-  enum AxisValue {	// what value to represent on this axis
-    COL_VALUE,		// column value
-    ROW_NUM,		// row number
-  };
-
-  AxisValue		axis_value;	// what value to represent on this axis
+  bool		row_num; 	// display row number instead of column value for this axis
 
   override void 	ComputeRange();
   override bool 	UpdateRange();
@@ -648,6 +645,7 @@ public:
   COPY_FUNS(GraphAxisView, GraphAxisBase);
   T3_DATAVIEWFUNS(GraphAxisView, GraphAxisBase)
 protected:
+  override void 	UpdateAfterEdit_impl();
 
 private:
   void			Initialize();
@@ -662,8 +660,7 @@ public:
   static GraphTableView* New(DataTable* dt, T3DataViewFrame*& fr);
 
   enum GraphType {
-    XY,				// standard XY(Z) plot -- plot value determines Y axis coordinate to plot
-    XY_ERR,			// XY(Z) plot with error bars (+/- values around each data point)
+    XY,				// standard XY(Z) plot -- plot value determines Y axis coordinate to plot (optional error bars as well)
     RASTER_COLOR,		// raster plot (flat lines stacked up using raster_axis), with color representing plot data value (automatically turns on VALUE_COLOR)
     RASTER_THRESH,		// raster plot (flat lines stacked up using raster_axis), with thresholded plot data values -- line drawn when above theshold, otherwise not (e.g., for spike rasters)
   };
@@ -707,8 +704,8 @@ public:
   MatrixLayout		mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
   bool			mat_odd_vert;	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
 
-  GraphAxisView		err_1;		// #CONDEDIT_ON_graph_type:XY_ERR data for error bars for plot_1 values
-  GraphAxisView		err_2;		// #CONDEDIT_ON_graph_type:XY_ERR data for error bars for plot_2 values
+  GraphAxisView		err_1;		// data for error bars for plot_1 values
+  GraphAxisView		err_2;		// data for error bars for plot_2 values
   int			err_spacing;	// #CONDEDIT_ON_graph_type:XY_ERR spacing between
 
   GraphAxisView		color_axis;	// #CONDEDIT_ON_color_mode:COLOR_AXIS color axis, for determining color of lines when color_mode = COLOR_AXIS
@@ -738,15 +735,27 @@ public:
   // view button/field callbacks
 
   void		setGraphType(GraphType value);
-  void		setShareAxis(bool value);
   void		setPlotStyle(PlotStyle value);
   void		setColorMode(ColorMode value);
   void		setLineWidth(float value);
+  void		setPointSpacing(int value);
   void		setLabelSpacing(int value);
+  void		setErrSpacing(int value);
+  void		setNegDraw(bool value);
   void		set2dFont(bool value);
   void		setWidth(float wdth);
   void		setScaleData(bool auto_scale, float scale_min, float scale_max);
   // updates the values in us and the stored ones in the colorscale list
+
+  void		setXAxis(GraphColView* value);
+  void		setZAxis(GraphColView* value);
+  void		setPlot1(GraphColView* value);
+  void		setPlot2(GraphColView* value);
+  void		setShareAxis(bool value);
+  void		setErr1(GraphColView* value);
+  void		setErr2(GraphColView* value);
+  void		setColorAxis(GraphColView* value);
+  void		setRasterAxis(GraphColView* value);
 
   iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)m_lvp;}
   T3GraphViewNode* node_so() const {return (T3GraphViewNode*)m_node_so.ptr();}
@@ -811,7 +820,7 @@ public:
   QCheckBox*		    chkDisplay;
   QLabel*		    lblGraphType;
   taiComboBox*		    cmbGraphType;
-  QCheckBox*		    chkShareAxis;
+  QCheckBox*		    chkNegDraw;
 
   QPushButton*		    butRefresh;
   QPushButton*		    butClear;
@@ -824,6 +833,8 @@ public:
   taiComboBox*		    cmbColorMode;
   QLabel*		    lblLineWidth;
   taiField*		    fldLineWidth;
+  QLabel*		    lblPointSpacing;
+  taiField*		    fldPointSpacing;
   QLabel*		    lblLabelSpacing;
   taiField*		    fldLabelSpacing;
 
@@ -833,9 +844,50 @@ public:
   QHBoxLayout*		  layColorScale;
   ScaleBar*		    cbar;	      // colorbar
 
-  QHBoxLayout*		  layAxes;
+  QHBoxLayout*		  layXAxis;
   QLabel*		    lblXAxis;
-  taiListElsButton*	    lelXAxis;
+  taiListElsButton*	    lelXAxis; // list element chooser
+  QCheckBox*		    rncXAxis; // row number checkbox
+  taiPolyData*	    	    pdtXAxis; // fixed_range polydata (inline)
+
+  QHBoxLayout*		  layZAxis;
+  QCheckBox*		    oncZAxis; // on checkbox
+  QLabel*		    lblZAxis;
+  taiListElsButton*	    lelZAxis; // list element chooser
+  QCheckBox*		    rncZAxis; // row number checkbox
+  taiPolyData*	    	    pdtZAxis; // fixed_range polydata (inline)
+
+  QHBoxLayout*		  lay1Axis;
+  QLabel*		    lbl1Axis;
+  taiListElsButton*	    lel1Axis; // list element chooser
+  taiPolyData*	    	    pdt1Axis; // fixed_range polydata (inline)
+
+  QHBoxLayout*		  lay2Axis;
+  QCheckBox*		    onc2Axis; // on checkbox
+  QLabel*		    lbl2Axis;
+  taiListElsButton*	    lel2Axis; // list element chooser
+  taiPolyData*	    	    pdt2Axis; // fixed_range polydata (inline)
+
+  QHBoxLayout*		  layPlots;
+  QCheckBox*		    chkShareAxis;
+  QLabel*		    lbl1Err;
+  taiListElsButton*	    lel1Err;
+  QCheckBox*		    onc1Err; // on checkbox
+  QLabel*		    lbl2Err;
+  taiListElsButton*	    lel2Err;
+  QCheckBox*		    onc2Err; // on checkbox
+  QLabel*		    lblErrSpacing;
+  taiField*		    fldErrSpacing;
+
+  QHBoxLayout*		  layCAxis;
+  QLabel*		    lblCAxis;
+  taiListElsButton*	    lelCAxis; // list element chooser
+  taiPolyData*	    	    pdtCAxis; // fixed_range polydata (inline)
+
+  QHBoxLayout*		  layRAxis;
+  QLabel*		    lblRAxis;
+  taiListElsButton*	    lelRAxis; // list element chooser
+  taiPolyData*	    	    pdtRAxis; // fixed_range polydata (inline)
 
   QHBoxLayout*		  layViewspace;
 
@@ -861,6 +913,7 @@ protected slots:
   void 		chkDisplay_toggled(bool on);
   void 		cmbGraphType_itemChanged(int itm);
   void 		chkShareAxis_toggled(bool on);
+  void 		chkNegDraw_toggled(bool on);
 
   void 		butRefresh_pressed();
   void 		butClear_pressed();
@@ -869,11 +922,40 @@ protected slots:
   void 		cmbPlotStyle_itemChanged(int itm);
   void 		cmbColorMode_itemChanged(int itm);
   void 		fldLineWidth_textChanged();
+  void 		fldPointSpacing_textChanged();
   void 		fldLabelSpacing_textChanged();
 
   void 		fldWidth_textChanged();
 
   void		cbar_scaleValueChanged();
+
+  void 		lelXAxis_dataChanged(taiData*);
+  void 		rncXAxis_toggled(bool);
+  void 		pdtXAxis_dataChanged(taiData*);
+
+  void 		lelZAxis_dataChanged(taiData*);
+  void 		oncZAxis_toggled(bool);
+  void 		rncZAxis_toggled(bool);
+  void 		pdtZAxis_dataChanged(taiData*);
+
+  void 		lel1Axis_dataChanged(taiData*);
+  void 		pdt1Axis_dataChanged(taiData*);
+
+  void 		lel2Axis_dataChanged(taiData*);
+  void 		onc2Axis_toggled(bool);
+  void 		pdt2Axis_dataChanged(taiData*);
+
+  void 		lel1Err_dataChanged(taiData*);
+  void 		onc1Err_toggled(bool);
+  void 		lel2Err_dataChanged(taiData*);
+  void 		onc2Err_toggled(bool);
+  void 		fldErrSpacing_textChanged();
+
+  void 		lelCAxis_dataChanged(taiData*);
+  void 		pdtCAxis_dataChanged(taiData*);
+
+  void 		lelRAxis_dataChanged(taiData*);
+  void 		pdtRAxis_dataChanged(taiData*);
 };
 
 

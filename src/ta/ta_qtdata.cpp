@@ -300,15 +300,17 @@ void taiCompData::AddChildMember(MemberDef* md) {
 //QLabel* lbl = taiM->NewLabel(nm, GetRep());
   iLabel* lbl = MakeLabel(nm, GetRep());
 
-  AddChildWidget(lbl, taiM->hsep_c);
+  AddChildWidget(lbl, 1); // taiM->hsep_c);
 
   // add gui representation of data
   taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
   connect(mb_dat, SIGNAL(settingHighlight(bool)),
-    lbl, SLOT(setHighlight(bool)) );
-  AddChildWidget(ctrl, taiM->hspc_c);
+	  lbl, SLOT(setHighlight(bool)) );
+  connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),
+	  this, SLOT(ChildDataChanged(taiData*)) );
+  AddChildWidget(ctrl, taiM->hsep_c);
 
   // add description text tooltips
   if (!desc.empty()) {
@@ -325,7 +327,7 @@ void taiCompData::EndLayout() { //virtual/overridable
 void taiCompData::AddChildWidget(QWidget* child_widget, int space_after,
   int stretch) 
 { 
-  if (space_after == -1) space_after = taiM->hspc_c;
+  if (space_after == -1) space_after = taiM->hsep_c;
   mwidgets->append(child_widget);
   AddChildWidget_impl(child_widget, last_spc, stretch);
   last_spc = space_after;
@@ -348,6 +350,9 @@ int taiCompData::widgetCount() {
   return mwidgets->count();
 }
 
+void taiCompData::ChildDataChanged(taiData* sender) {
+  emit ChildDataChangedNotify(sender);
+}
 
 /* NN:
 class ScrollFieldEditor : public ivFieldEditor {
