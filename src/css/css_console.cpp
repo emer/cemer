@@ -148,7 +148,19 @@ cssUnixConsole::~cssUnixConsole() {
     thread = NULL;
   }
 }
-#endif // TA_OS_UNIX
+//end  TA_OS_UNIX
+#elif defined(TA_OS_WIN)
+cssQandDConsole* cssQandDConsole::New_SysConsole(QObject* parent) {
+//TEMP
+return NULL;
+//TODO:
+
+// cssUnixConsole* rval = new cssUnixConsole(parent);
+ //return rval;
+}
+
+
+#endif // TA_OS_WIN
 
 #ifdef HAS_QT_CONSOLE
 //////////////////////////////////////////////////////////////////////////
