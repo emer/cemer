@@ -1887,7 +1887,7 @@ void Program::Stop_impl() {
 bool Program::StopCheck() {
   //NOTE: we call event loop even in non-gui compile, since we can presumably
   // have other ways of stopping, such as something from a socket etc.
-  QCoreApplication::processEvents();
+  taiMiscCore::ProcessEvents();
   // NOTE: the return value of this function is not actually what determines stopping
   // the above processEvents will process any Stop events and this will directly cause
   // css to stop in its tracks.

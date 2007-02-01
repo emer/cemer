@@ -250,10 +250,10 @@ void taiMiscCore::OnQuitting(CancelOp& cancel_op) {
   }
 }
 
-int taiMiscCore::RunPending() {
+int taiMiscCore::ProcessEvents() {
 //TODO: do more???  static void		WorkProc(); // the core idle loop process
-
-  QCoreApplication::processEvents();
+  if (taMisc::in_event_loop)
+    QCoreApplication::processEvents();
   return 0;
 }
 
@@ -290,6 +290,21 @@ void taiMiscCore::CheckConfigResult_(bool ok) {
 
 const String taiMiscCore::classname() {
   return String(QCoreApplication::instance()->applicationName());
+}
+
+int taiMiscCore::Exec() {
+  if (taMisc::in_event_loop) {
+    taMisc::Error("Attempt to enter event loop a second time!");
+    return 0;
+  }
+  taMisc::in_event_loop = true;
+  int rval = Exec_impl();
+  taMisc::in_event_loop = false;
+  return rval;
+}
+
+int taiMiscCore::Exec_impl() {
+  return QCoreApplication::instance()->exec();
 }
 
 void taiMiscCore::Init(bool gui) {
@@ -458,6 +473,7 @@ TypeDef*	taMisc::default_scope = NULL;
 taPtrList_impl*	taMisc::init_hook_list = NULL;
 
 bool	taMisc::in_init = false;
+bool	taMisc::in_event_loop = false;
 signed char	taMisc::quitting = QF_RUNNING;
 bool	taMisc::not_constr = true;
 bool	taMisc::use_gui = true;

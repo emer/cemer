@@ -165,6 +165,11 @@ void taiMisc::Init(bool gui) {
   icon_bitmap = NULL;
 }
 
+int taiMisc::Exec_impl() {
+  return qApp->exec();
+}
+
+
 taiMisc::~taiMisc() {
   delete wait_cursor;
   wait_cursor = NULL;

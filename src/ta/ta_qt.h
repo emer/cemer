@@ -273,6 +273,7 @@ protected:
   short int	max_button_width;
 
   override void		Init(bool gui); // NOTE: called from static New
+  override int		Exec_impl();
   override void 	OnQuitting_impl(CancelOp& cancel_op); // pre-quit resolves changes
   override void		Quit_impl(CancelOp cancel_op);
 };

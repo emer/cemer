@@ -882,7 +882,7 @@ bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_
   if(!Startup_Console()) return false;
   if(!Startup_ProcessArgs()) return false;
 //TODO: shouldn't call event loop yet, because we haven't initialized main event loop!
-//  QCoreApplication::processEvents();
+//  taiMiscCore::ProcessEvents();;
   instance()->Save(); 
   return true;
 }
@@ -897,8 +897,10 @@ bool taRootBase::Startup_Run() {
   }
   else {
 #endif
+//TODO: THIS IS WRONG!!!!!!!!!!!!!!!!!!!!!!
+// We ABSOLUTELY must enter the event loop in EVERY configuration
   if(taMisc::gui_active) {
-    qApp->exec();		// gui version is always interactive
+    taiM->Exec();		// gui version is always interactive
   }
   else {
     if(cssMisc::init_interactive)

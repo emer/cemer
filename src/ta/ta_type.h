@@ -320,13 +320,15 @@ public:
   
   static void		WaitProc(); // the core idle loop process
   
-  static int		RunPending();	// run any pending qt events that might need processed
+  static int		ProcessEvents(); // run any pending qt events that might need processed
+  static int		RunPending() {return ProcessEvents();} // old terminology; us PE in new code
   static void		Quit(CancelOp cancel_op = CO_NOT_CANCELLABLE); 
    // call to quit, invokes Quit_impl on instance first
   static void		OnQuitting(CancelOp& cancel_op); // call this when a quit situation is detected -- does all the save logic
   
   const String		classname(); // 3.x compatability, basically the app name
   
+  int			Exec(); // enter the event loop, either QCoreApplication or QApplication
   virtual void		Busy_(bool busy) {} // impl for gui in taiMisc
   virtual void		CheckConfigResult_(bool ok);
     // this is the nogui version; taiMisc does the gui version
@@ -340,6 +342,7 @@ protected slots:
 protected:
   QTimer*		timer; // for idle processing
   virtual void		Init(bool gui = false); // NOTE: called from static New
+  virtual int		Exec_impl();
   virtual void		OnQuitting_impl(CancelOp& cancel_op); // allow to cancel
   virtual void		Quit_impl(CancelOp cancel_op); // non-gui guy does nothing
 };
@@ -596,6 +599,7 @@ public:
   static taPtrList_impl* init_hook_list; // #IGNORE list of init hook's to call during initialization
 
   static bool		in_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if in ta initialization function
+  static bool		in_event_loop;	// #READ_ONLY #NO_SAVE #NO_SHOW true when in the main event loop (ex. now ok to do ProcessEvents)
   static signed char	quitting;	// #READ_ONLY #NO_SAVE #NO_SHOW true, via one of QuitFlag values, once we are quitting
   static bool		not_constr;	// #READ_ONLY #NO_SAVE #NO_SHOW true if ta types are not yet constructed (or are destructed)
 

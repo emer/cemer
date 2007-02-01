@@ -5107,7 +5107,7 @@ void cssCmdShell::Exit() {
 }
 
 void cssCmdShell::ProcessEvents() {
-  QCoreApplication::processEvents();
+  taiM->ProcessEvents();
 /*why was this only based on console type?????
 if(console_type == CT_Qt_Console) {
     QCoreApplication::processEvents();
