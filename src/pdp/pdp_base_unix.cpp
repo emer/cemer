@@ -18,9 +18,13 @@
 
 #include "ta_filer.h"
 
-#ifdef TA_GUI
-#include "ta_qt.h"
 #include "css_console.h"
+
+#ifdef TA_GUI
+# include "ta_qt.h"
+# ifdef HAVE_QT_CONSOLE
+#   include "css_qtconsole.h"
+# endif
 #include <QTextDocument>
 #endif
 
@@ -119,6 +123,7 @@ void pdpMisc::SaveRecoverFile(int err) {
 
 #ifdef TA_GUI
   if(err != SIGUSR1) {	// usr1 is to save network at that point
+#ifdef HAVE_QT_CONSOLE
     if(cssMisc::TopShell->console_type == cssCmdShell::CT_Qt_Console) {
       String prfx = "PDP++Console.";
       // use previous cnt
@@ -128,6 +133,7 @@ void pdpMisc::SaveRecoverFile(int err) {
       QcssConsole* qcons = QcssConsole::getInstance();
       qcons->saveContents(fname);
     }
+#endif // HAVE_QT_CONSOLE
   }
 #endif
 

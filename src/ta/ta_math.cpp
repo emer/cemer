@@ -567,7 +567,7 @@ double taMath_double::erf(double x) {
   taMisc::Error("Randy O'Reilly still needs to implement the erf() function for Windows."
     " This program will now crash horrifically to help provide incentive...");
   int i = 1; int j = 0; int k = i / j; return k;
-#elif
+#else
   return ::erf(x);
 #endif
 }
@@ -578,7 +578,7 @@ double taMath_double::erfc(double x) {
   taMisc::Error("Randy O'Reilly still needs to implement the erfc() function for Windows."
     " This program will now crash horrifically to help provide incentive...");
   int i = 1; int j = 0; int k = i / j; return k;
-#elif
+#else
   return ::erfc(x);
 #endif
 }
