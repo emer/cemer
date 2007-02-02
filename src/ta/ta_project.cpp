@@ -28,13 +28,15 @@
 #include <QFileInfo>
 
 #ifdef TA_GUI
-# include "css_qt.h"
 # include "ta_qt.h"
 # include "ta_qtdata.h" // for taiObjChooser
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 # include "colorscale.h"
-
+# include "css_qt.h"
+# ifdef HAVE_QT_CONSOLE
+#   include "css_qtconsole.h"
+# endif
 # include <QApplication>
 # include <QWidgetList>
 #endif

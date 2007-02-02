@@ -13,6 +13,13 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#ifdef _WINDOWS //note: have to use the raw ms switch, since our own file isn't loaded
+// note: MSVC requires the following on first read of math.h to enable defines
+// we have to put this absolutely first to insure it is defined for the first read
+// of math.h, which could occur anywhere in any included file
+# define _USE_MATH_DEFINES
+#endif
+
 #include "ta_math.h"
 #include "ta_platform.h"
 
@@ -21,9 +28,6 @@
 #include <gsl/gsl_linalg.h>
 #endif
 
-#ifdef TA_OS_WIN // grr... they require this to enable the standard M_ defs
-# define _USE_MATH_DEFINES
-#endif
 #include <math.h>
 
 #include <float.h>
@@ -558,11 +562,25 @@ double taMath_double::gamma_dev(int ia) {
 
 //note: put into .cpp to deal with win
 double taMath_double::erf(double x) {
+#ifdef TA_OS_WIN
+//TEMP
+  taMisc::Error("Randy O'Reilly still needs to implement the erf() function for Windows."
+    " This program will now crash horrifically to help provide incentive...");
+  int i = 1; int j = 0; int k = i / j; return k;
+#elif
   return ::erf(x);
+#endif
 }
 
 double taMath_double::erfc(double x) {
+#ifdef TA_OS_WIN
+//TEMP
+  taMisc::Error("Randy O'Reilly still needs to implement the erfc() function for Windows."
+    " This program will now crash horrifically to help provide incentive...");
+  int i = 1; int j = 0; int k = i / j; return k;
+#elif
   return ::erfc(x);
+#endif
 }
 
 double taMath_double::gauss_den(double z) {

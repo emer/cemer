@@ -20,6 +20,9 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 #include "css_console.h"
+#ifdef HAVE_QT_CONSOLE
+# include "css_qtconsole.h"
+#endif
 #ifndef CSS_NUMBER
 # include "css_parse.h"
 #endif

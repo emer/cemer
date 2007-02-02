@@ -9,8 +9,8 @@ INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
   "-I$(PDP4DIR)\build\msvc7" "-I$(VCDIR)\Vc7\include" 
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
-MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe
-#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe
+#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
+MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe -v1
 
 
 all: maketa_files moc_files
@@ -73,79 +73,79 @@ qconsole.moc.cpp: $(PDP4DIR)\src\taiqtso\qconsole.h
 	$(MOC) %s -o $@
 
 TAHEADS_TAMISC_GUI =\
-	colorbar_qt.h \
+	$(PDP4DIR)/src/ta/colorbar_qt.h \
 	$(PDP4DIR)/src/taiqtso/safeptr_so.h \
-	t3node_so.h \
-	t3viewer.h \
-	colorbar_so.h \
-	ta_datatable_qtso.h \
-	ta_datatable_so.h 
+	$(PDP4DIR)/src/ta/t3node_so.h \
+	$(PDP4DIR)/src/ta/t3viewer.h \
+	$(PDP4DIR)/src/ta/colorbar_so.h \
+	$(PDP4DIR)/src/ta/ta_datatable_qtso.h \
+	$(PDP4DIR)/src/ta/ta_datatable_so.h 
 
 TAHEADS_GUI =\
-	ta_qt.h \
-	ta_qtdata_def.h \
-	ta_qtdata.h \
-	ta_qtdialog.h \
-	ta_qttype_def.h \
-	ta_qttype.h \
-	ta_qtclipdata.h \
-	ta_qtviewer.h \
-	ta_matrix_qt.h \
-	ta_qtclassbrowse.h \
-	ta_qtgroup.h \
-	ta_seledit.h \
-	ta_program_qt.h \
+	$(PDP4DIR)/src/ta/ta_qt.h \
+	$(PDP4DIR)/src/ta/ta_qtdata_def.h \
+	$(PDP4DIR)/src/ta/ta_qtdata.h \
+	$(PDP4DIR)/src/ta/ta_qtdialog.h \
+	$(PDP4DIR)/src/ta/ta_qttype_def.h \
+	$(PDP4DIR)/src/ta/ta_qttype.h \
+	$(PDP4DIR)/src/ta/ta_qtclipdata.h \
+	$(PDP4DIR)/src/ta/ta_qtviewer.h \
+	$(PDP4DIR)/src/ta/ta_matrix_qt.h \
+	$(PDP4DIR)/src/ta/ta_qtclassbrowse.h \
+	$(PDP4DIR)/src/ta/ta_qtgroup.h \
+	$(PDP4DIR)/src/ta/ta_seledit.h \
+	$(PDP4DIR)/src/ta/ta_program_qt.h
 
 TAHEADS_TAMISC =\
-	ta_time.h \
-	fun_lookup.h \
-	ta_data_extras.h 
+	$(PDP4DIR)/src/ta/ta_time.h \
+	$(PDP4DIR)/src/ta/fun_lookup.h \
+	$(PDP4DIR)/src/ta/ta_data_extras.h 
 
 TAHEADS =\
 	$(PDP4DIR)/src/ta/ios-g++-3.1/streambuf.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/iostream.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/fstream.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/sstream.h \
-	ta_global.h \
+	$(PDP4DIR)/src/ta/ta_global.h \
 	$(PDP4DIR)/src/taiqtso/igeometry.h \
-	ta_def.h \
-	ta_platform.h \
-	ta_thread.h \
-	ta_string.h \
-	ta_stdef.h \
-	ta_variant.h \
-	ifont.h \
-	ta_mtrnd.h \
-	ta_list.h \
-	ta_filer.h \
-	icolor.h \
-	ta_type.h \
-	ta_base.h \
-	ta_fontspec.h \
-	minmax.h \
-	ta_group.h \
-	ta_qtclipdata.h \
-	colorscale.h \
-	ta_dmem.h \
-	ta_script.h \
-	ta_dynenum.h \
-	ta_viewspec.h \
-	ta_viewer.h \
-	ta_program.h \
-	ta_matrix.h \
-	ta_math.h \
-	ta_geometry.h \
-	ta_data.h \
-	ta_datatable.h \
-	ta_dataproc.h \
-	ta_dataanal.h \
-	ta_datagen.h \
-	ta_imgproc.h \
-	ta_dump.h \
-	ta_defaults.h \
-	ta_plugin.h \
-	ta_plugin_p.h \
-	ta_project.h \
+	$(PDP4DIR)/src/ta/ta_def.h \
+	$(PDP4DIR)/src/ta/ta_platform.h \
+	$(PDP4DIR)/src/ta/ta_thread.h \
+	$(PDP4DIR)/src/ta/ta_string.h \
+	$(PDP4DIR)/src/ta/ta_stdef.h \
+	$(PDP4DIR)/src/ta/ta_variant.h \
+	$(PDP4DIR)/src/ta/ifont.h \
+	$(PDP4DIR)/src/ta/ta_mtrnd.h \
+	$(PDP4DIR)/src/ta/ta_list.h \
+	$(PDP4DIR)/src/ta/ta_filer.h \
+	$(PDP4DIR)/src/ta/icolor.h \
+	$(PDP4DIR)/src/ta/ta_type.h \
+	$(PDP4DIR)/src/ta/ta_base.h \
+	$(PDP4DIR)/src/ta/ta_fontspec.h \
+	$(PDP4DIR)/src/ta/minmax.h \
+	$(PDP4DIR)/src/ta/ta_group.h \
+	$(PDP4DIR)/src/ta/ta_qtclipdata.h \
+	$(PDP4DIR)/src/ta/colorscale.h \
+	$(PDP4DIR)/src/ta/ta_dmem.h \
+	$(PDP4DIR)/src/ta/ta_script.h \
+	$(PDP4DIR)/src/ta/ta_dynenum.h \
+	$(PDP4DIR)/src/ta/ta_viewspec.h \
+	$(PDP4DIR)/src/ta/ta_viewer.h \
+	$(PDP4DIR)/src/ta/ta_program.h \
+	$(PDP4DIR)/src/ta/ta_matrix.h \
+	$(PDP4DIR)/src/ta/ta_math.h \
+	$(PDP4DIR)/src/ta/ta_geometry.h \
+	$(PDP4DIR)/src/ta/ta_data.h \
+	$(PDP4DIR)/src/ta/ta_datatable.h \
+	$(PDP4DIR)/src/ta/ta_dataproc.h \
+	$(PDP4DIR)/src/ta/ta_dataanal.h \
+	$(PDP4DIR)/src/ta/ta_datagen.h \
+	$(PDP4DIR)/src/ta/ta_imgproc.h \
+	$(PDP4DIR)/src/ta/ta_dump.h \
+	$(PDP4DIR)/src/ta/ta_defaults.h \
+	$(PDP4DIR)/src/ta/ta_plugin.h \
+	$(PDP4DIR)/src/ta/ta_plugin_p.h \
+	$(PDP4DIR)/src/ta/ta_project.h \
 	$(TAHEADS_GUI) \
 	$(TAHEADS_TAMISC) \
 	$(TAHEADS_TAMISC_GUI)
@@ -260,38 +260,39 @@ css_qtdialog.moc.cpp: $(PDP4DIR)\src\css\css_qtdialog.h
 	$(MOC) %s -o $@
 
 
-PDP_MAKETA_GUI =\
-	pdpview_qt.h \
-	pdpserver_qt.h \
-	netstru_so.h \
-	netstru_qtso.h \
-	pdp_qtso.h \
-	pdp_program_qtso.h 
+PDP_HEADS_GUI =\
+	$(PDP4DIR)/src/pdp/pdpview_qt.h \
+	$(PDP4DIR)/src/pdp/pdpserver_qt.h \
+	$(PDP4DIR)/src/pdp/netstru_so.h \
+	$(PDP4DIR)/src/pdp/netstru_qtso.h \
+	$(PDP4DIR)/src/pdp/pdp_qtso.h \
+	$(PDP4DIR)/src/pdp/pdp_program_qtso.h 
 
+PDP_HEADS =\
+	$(PDP4DIR)/src/pdp/pdpdeclare.h \
+	$(PDP4DIR)/src/pdp/pdp_base.h \
+	$(PDP4DIR)/src/pdp/spec.h \
+	$(PDP4DIR)/src/pdp/netstru.h \
+	$(PDP4DIR)/src/pdp/netstru_extra.h \
+	$(PDP4DIR)/src/pdp/netdata.h \
+	$(PDP4DIR)/src/pdp/pdp_program.h \
+	$(PDP4DIR)/src/pdp/pdp_project.h \
+	$(PDP4DIR)/src/pdp/pdpserver.h \
+	$(PDP_HEADS_GUI) \
+	$(PDP4DIR)/src/pdp/v3_compat.h
 
 PDP_MAKETA =\
-	$(PDP4DIR)\src\ta\ta_TA_type.h \
-	pdpdeclare.h \
-	pdp_base.h \
-	spec.h \
-	netstru.h \
-	netstru_extra.h \
-	netdata.h \
-	pdp_program.h \
-	pdp_project.h \
-	pdpserver.h \
-	$(PDP_MAKETA_GUI) \
-	v3_compat.h
+	$(PDP4DIR)/src/ta/ta_TA_type.h \
+	$(PDP_HEADS)
 
 
 PDP_MOCS: \
-	pdp_program_qt.moc.cpp \
-	pdp_qtso.moc.cpp \
-	pdp_server_qt.moc.cpp \
 	netstru_qtso.moc.cpp \
-	pdplog_qtso.moc.cpp \
-	v3_compat_qtso.moc.cpp 
+	pdp_program_qt.moc.cpp
 
+netstru_qtso.moc.cpp: $(PDP4DIR)\src\pdp\netstru_qtso.h
+	$(MOC) %s -o $@
+	
 pdp_program_qt.moc.cpp: $(PDP4DIR)\src\pdp\pdp_program_qt.h
 	$(MOC) %s -o $@
 
@@ -301,23 +302,30 @@ pdp_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdp_qtso.h
 pdp_server_qt.moc.cpp: $(PDP4DIR)\src\pdp\pdp_server_qt.h
 	$(MOC) %s -o $@
 
-netstru_qtso.moc.cpp: $(PDP4DIR)\src\pdp\netstru_qtso.h
-	$(MOC) %s -o $@
 
-pdplog_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdplog_qtso.h
-	$(MOC) %s -o $@
 
-v3_compat_qtso.moc.cpp: $(PDP4DIR)\src\pdp\v3_compat_qtso.h
-	$(MOC) %s -o $@
+BP_HEADS =\
+	$(PDP4DIR)/src/bp/bp.h \
+	$(PDP4DIR)/src/bp/rbp.h \
+	$(PDP4DIR)/src/bp/bp_v3_compat.h
 
 BP_MAKETA =\
 	$(PDP4DIR)/src/ta/ta_TA_type.h \
-	$(PDP4DIR)/src/tamisc/tamisc_TA_type.h \
 	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
-	bp_def.h \
-	bp.h \
-	rbp.h \
-	bp_v3_compat.h \
+	$(BP_HEADS)
+
+LEABRA_HEADS =\
+	$(PDP4DIR)/src/leabra/leabra.h \
+	$(PDP4DIR)/src/leabra/leabra_extra.h \
+	$(PDP4DIR)/src/leabra/leabra_td.h \
+	$(PDP4DIR)/src/leabra/leabra_pvlv.h \
+	$(PDP4DIR)/src/leabra/leabra_pbwm.h \
+	$(PDP4DIR)/src/leabra/leabra_v3_compat.h
+
+LEABRA_MAKETA =\
+	$(PDP4DIR)/src/ta/ta_TA_type.h \
+	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
+	$(LEABRA_HEADS)
 
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
 #TODO: need to enable DEBUG to be parameterized somehow
@@ -325,32 +333,35 @@ BP_MAKETA =\
 MAKETA_FLAGS = -css $(INCLUDE) /D DEBUG -win_dll
 
 #note: also makes _TA_inst.h and .cpp
-ta_TA_type.h: $(TAHEADS)
+ta_TA_type.h: $(TAHEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
   $(CD) $(PDP4DIR)/src/ta
-  $(MAKETA) -v1 $(MAKETA_FLAGS) ta $(TAHEADS) 
+  $(MAKETA) $(MAKETA_FLAGS) ta $(TAHEADS) 
   
-pdp_TA_type.h: $(PDP_MAKETA)
+pdp_TA_type.h: $(PDP_HEADS)
   $(CD) $(PDP4DIR)/src/pdp
-  $(MAKETA) -v1 $(MAKETA_FLAGS) pdp $(PDP_MAKETA) 
+  $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA) 
   
-bp_TA_type.h: $(BP_MAKETA)
+bp_TA_type.h: $(BP_HEADS)
   $(CD) $(PDP4DIR)/src/bp
-  $(MAKETA) -v1 $(MAKETA_FLAGS) bp $(BP_MAKETA) 
+  $(MAKETA) $(MAKETA_FLAGS) bp $(BP_MAKETA) 
   
-leabra_TA_type.h: $(LEABRA_MAKETA)
+leabra_TA_type.h: $(LEABRA_HEADS)
   $(CD) $(PDP4DIR)/src/leabra
-  $(MAKETA) -v1 $(MAKETA_FLAGS) leabra $(LEABRA_MAKETA) 
+  $(MAKETA) $(MAKETA_FLAGS) leabra $(LEABRA_MAKETA) 
   
 clean: 
   del *.moc.cpp
  
+# NOTE: 'ta' and 'pdp' are the two libraries
+
 taiqtso_files: TAIQTSO_MOCS
  
-ta_files: ta_TA_type.h $(TAHEADS) TA_MOCS
-  
 css_files: CSS_MOCS
+
+ta_files: ta_TA_type.h $(TAHEADS) $(TA_MOCS)
+  
  
-pdp_files: pdp_TA_type.h $(PDP_MAKETA) PDP_MOCS
+pdp_files: pdp_TA_type.h $(PDP_MAKETA) $(PDP_MOCS)
 
 bp_files: bp_TA_type.h $(BP_MAKETA)
 
@@ -360,5 +371,5 @@ maketa_files: \
   ta_TA_type.h 
  
 moc_files: \
-  TAIQTSO_MOCS \
-  TA_MOCS
+  $(TAIQTSO_MOCS) \
+  $(TA_MOCS)

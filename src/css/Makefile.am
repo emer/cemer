@@ -8,6 +8,8 @@ VPATH = @srcdir@
 if TA_GUI
 
 SRCS_GUI =\
+	css_qtconsole.cpp \
+	css_qtconsole.moc.cpp \
 	css_qttype.cpp \
 	css_qttype.moc.cpp \
 	css_qt.cpp \
@@ -16,6 +18,7 @@ SRCS_GUI =\
 	css_qtdialog.cpp
 
 HEADS_GUI =\
+	css_qtconsole.h \
 	css_qttype.h \
 	css_qt.h \
 	css_qtdata.h \

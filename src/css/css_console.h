@@ -50,36 +50,5 @@ protected:
   static cssQandDConsole*	New_SysConsole(QObject* parent = NULL);
 };
 
-//evil moc won't respect this!!! #ifdef HAVE_QT_CONSOLE
-#include "qconsole.h"
-
-class CSS_API QcssConsole : public QConsole {
-  INHERITED(QConsole)
-  Q_OBJECT
- public:
-
-  static QcssConsole* getInstance(QObject *parent = NULL, cssCmdShell* cs = NULL);
-
-  ~QcssConsole();
-  QcssConsole(QObject* parent = NULL, cssCmdShell* cs = NULL);
-
- protected:
-  static int autocompletePath(String cmd_b4, String cmd, QStringList& lst);
-  static int autocompleteScoped(String cmd_b4, String cmd, QStringList& lst);
-  static int autocompleteKeyword(String cmd_b4, String cmd, QStringList& lst);
-
-  override QString interpretCommand(QString command, int* res);
-  override QStringList autocompleteCommand(QString cmd);
-  override void ctrlCPressed();
-
-  override void keyPressEvent(QKeyEvent * e);
-  override void resizeEvent(QResizeEvent* e);
-
-  cssCmdShell* 	cmd_shell; // the command shell
-  static QcssConsole *theInstance;
-};
-//#endif
-
-
 #endif
 
