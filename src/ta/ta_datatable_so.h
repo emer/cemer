@@ -258,6 +258,7 @@ public:
   void			setDefaultColor(const T3Color& color); // call after reset to set default color (black if not called)
   void			moveTo(const iVec3f& pt); // use to start a new line segment
   void			lineTo(const iVec3f& to); // add arc to current line, in default color
+  void			errBar(const iVec3f& pt, float err, float bar_width); // render error bar at given point
   void			markerAt(const iVec3f& pt, MarkerStyle style); // render a marker at indicated location in default color
 
   // valueColor drawing api
@@ -265,6 +266,8 @@ public:
   // use to start a new line segment in valueColor mode
   void			lineTo(const iVec3f& to, const T3Color& color);
   //  add arc to current line, in valueColor mode
+  void			errBar(const iVec3f& pt, float err, float bar_width, const T3Color& color);
+  // render error bar at given point
   void			markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& color);
   // render a marker at indicated location in valueColor mode
 
@@ -276,7 +279,8 @@ protected:
   LineStyle		lineStyle_;
   SoSeparator*		line_sep;
   SoDrawStyle*		lineDrawStyle_;
-  SoLineSet*		lines; // we use the vertexProperty for points etc.
+  SoLineSet*		lines;		// we use the vertexProperty for points etc.
+  SoLineSet*		errbars;
   SoMarkerSet*		markerSet_; // created if needed; we use the vertexProperty for points etc.
   SoSeparator*		textSep_; // optional text separator
   SoFont*		labelFont_;

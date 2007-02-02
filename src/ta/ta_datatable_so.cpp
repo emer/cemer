@@ -358,6 +358,10 @@ T3GraphLine::T3GraphLine(void* dataView_, float fnt_sz)
   lines->vertexProperty.setValue(new SoVertexProperty());
   line_sep->addChild(lines);
 
+  errbars = new SoLineSet();
+  errbars->vertexProperty.setValue(new SoVertexProperty());
+  line_sep->addChild(errbars);
+
   markerSet_ = NULL;
   assertMarkerSet();		// just be done with it..
 //   initValueColorMode();
@@ -366,6 +370,7 @@ T3GraphLine::T3GraphLine(void* dataView_, float fnt_sz)
 T3GraphLine::~T3GraphLine()
 {
   lines = NULL;
+  errbars = NULL;
   markerSet_ = NULL;
   textSep_ = NULL;
   textColor_ = NULL;
@@ -397,6 +402,11 @@ void T3GraphLine::clear() {
   lines->numVertices.setNum(0);
   SoMFVec3f& lines_point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
   lines_point.setNum(0);
+
+  errbars->numVertices.setNum(0);
+  SoMFVec3f& errbars_point = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
+  errbars_point.setNum(0);
+
   if (markerSet_) {
     SoMFVec3f& marker_point = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
     marker_point.setNum(0);
@@ -420,14 +430,26 @@ void T3GraphLine::initValueColorMode() {
     SoVertexProperty* vp = (SoVertexProperty*)lines->vertexProperty.getValue();
     SoSFEnum& mb = vp->materialBinding;
     SoMFUInt32& orderedRGBA = vp->orderedRGBA;
+
+    SoVertexProperty* evp = (SoVertexProperty*)errbars->vertexProperty.getValue();
+    SoSFEnum& emb = evp->materialBinding;
+    SoMFUInt32& eorderedRGBA = evp->orderedRGBA;
+
     if (valueColorMode()) {
       mb.setValue(SoVertexProperty::PER_VERTEX);
       orderedRGBA.setNum(0); // must supply colors explicitly
+      emb.setValue(SoVertexProperty::PER_VERTEX);
+      eorderedRGBA.setNum(0); // must supply colors explicitly
     } else {
       mb.setValue(SoVertexProperty::OVERALL);
       // set one and only color
       orderedRGBA.setNum(1);
       orderedRGBA.set1Value(0, defColor_);
+
+      emb.setValue(SoVertexProperty::OVERALL);
+      // set one and only color
+      eorderedRGBA.setNum(1);
+      eorderedRGBA.set1Value(0, defColor_);
     }
   }
   if (markerSet_) {
@@ -443,7 +465,6 @@ void T3GraphLine::initValueColorMode() {
       orderedRGBA.setNum(1);
       orderedRGBA.set1Value(0, defColor_);
     }
-
   }
 }
 
@@ -452,6 +473,12 @@ void T3GraphLine::startBatch() {
   SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
   nv.enableNotify(false);
   point.enableNotify(false);
+
+  SoMFInt32& env = errbars->numVertices;
+  SoMFVec3f& epoint = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
+  env.enableNotify(false);
+  epoint.enableNotify(false);
+
   assertMarkerSet();			       // have to assume and pay overhead
   SoMFInt32& marker = markerSet_->markerIndex; // cache
   SoMFVec3f& mpoint = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
@@ -464,6 +491,12 @@ void T3GraphLine::finishBatch() {
   SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
   nv.enableNotify(true);
   point.enableNotify(true);
+
+  SoMFInt32& env = errbars->numVertices;
+  SoMFVec3f& epoint = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
+  env.enableNotify(true);
+  epoint.enableNotify(true);
+
   SoMFInt32& marker = markerSet_->markerIndex; // cache
   SoMFVec3f& mpoint = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
   marker.enableNotify(true);
@@ -511,6 +544,42 @@ void T3GraphLine::lineTo(const iVec3f& to, const T3Color& c) {
   SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
   orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
   lineTo(to);
+}
+
+void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd) {
+  SoMFInt32& env = errbars->numVertices; // cache
+  SoMFVec3f& epoint = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
+
+  int lidx = env.getNum();
+
+  // lower bar
+  env.set1Value(lidx, 2);
+  epoint.set1Value(epoint.getNum(), pt.x-bwd, pt.y-err, -pt.z);
+  epoint.set1Value(epoint.getNum(), pt.x+bwd, pt.y-err, -pt.z);
+
+  // upper bar
+  env.set1Value(lidx+1, 2);
+  epoint.set1Value(epoint.getNum(), pt.x-bwd, pt.y+err, -pt.z);
+  epoint.set1Value(epoint.getNum(), pt.x+bwd, pt.y+err, -pt.z);
+
+  // vertical bar
+  env.set1Value(lidx+2, 2);
+  epoint.set1Value(epoint.getNum(), pt.x, pt.y-err, -pt.z);
+  epoint.set1Value(epoint.getNum(), pt.x, pt.y+err, -pt.z);
+}
+
+void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd, const T3Color& c) {
+  uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
+
+  uint32_t vals[6];
+  for(int i=0;i<6;i++) vals[i] = new_col;
+
+  // always add the new color, then add the point
+  SoMFUInt32& eorderedRGBA = ((SoVertexProperty*)errbars->vertexProperty.getValue())->orderedRGBA;
+
+  int lidx = eorderedRGBA.getNum();
+  eorderedRGBA.setValues(lidx, 6, vals);
+  errBar(pt, err, bwd);
 }
 
 void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {

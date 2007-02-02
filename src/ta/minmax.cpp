@@ -61,6 +61,10 @@ void MinMax::SetRange(float_Matrix& mat) {
   }
 } 
 
+void MinMax::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(max < min) max = min + 1.0f; // fix so max is *always* > min
+}
 
 void FixedMinMax::Initialize() {
   min = max = 0.0f;

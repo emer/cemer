@@ -410,6 +410,9 @@ public:
   virtual void		NewLayer(int x = 3, int y = 3);
   virtual void		Layer_DataUAE(LayerView* lv); // send a DataUAE for all prjns for this layer
 
+  override String	GetLabel() const;
+  override String	GetName() const;
+
   override void		InitLinks();
   override void		CutLinks();
   override void  	ChildUpdateAfterEdit(TAPtr child, bool& handled);

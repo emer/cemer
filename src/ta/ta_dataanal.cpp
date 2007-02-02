@@ -147,21 +147,22 @@ void ClustNode::GraphData(DataTable* dt) {
   SetYs(0.5f);
   nn_dist = 0.0f;
   dt->Reset();
-  dt->NewColFloat("X");
-  dt->NewColFloat("Y");
-  DataArray_impl* da = dt->NewColString("Label");
-  da->SetUserData("DISP_STRING", true);
-  da->SetUserData("AXIS", 1); // labels use same axis as y values
-  da->SetUserData("STRING_COORDS", 1); // use y values
+  DataArray_impl* da_x = dt->NewColFloat("X");
+  da_x->SetUserData("X_AXIS", true);
+  DataArray_impl* da_y = dt->NewColFloat("Y");
+  da_y->SetUserData("PLOT_1", true);
+  DataArray_impl* da_l = dt->NewColString("Label");
+  da_l->SetUserData("PLOT_2", true);
   GraphData_impl(dt);
-  
-  // todo: fix this later!
-//   float_Matrix* xar = (float_Matrix*)dt->GetColMatrix(0);
-//   dt->AddColDispOpt(String("MAX=") + String(taMath_float::vec_max(xar) * 1.15f), 0); // adds extra room for labels
 
-//   float_Matrix* yar = (float_Matrix*)dt->GetColMatrix(1);
-//   dt->AddColDispOpt(String("MAX=") + String(taMath_float::vec_max(yar) + .3f), 1); // adds extra room for labels
-//   dt->AddColDispOpt("MIN=0.2", 1);
+  MinMax xmm;
+  da_x->GetMinMaxScale(xmm);
+  da_x->SetUserData("MAX", xmm.max * 1.15f);
+
+  MinMax ymm;
+  da_y->GetMinMaxScale(ymm);
+  da_y->SetUserData("MAX", ymm.max + .3f);
+  da_y->SetUserData("MIN", 0.2f);
 }
 
 void ClustNode::GraphData_impl(DataTable* dt) {
@@ -492,6 +493,9 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   int idx;
   DataArray_impl* dmda = dist_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
 						   dmat.dim(1));
+  dmda->SetUserData("TOP_ZERO", true);
+  dist_mat->SetUserData("N_ROWS", 1);
+  dist_mat->SetUserData("AUTO_SCALE", true);
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
   if(view) dist_mat->NewGridView();
@@ -565,6 +569,9 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
   int idx;
   DataArray_impl* dmda = dist_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
 						   dmat.dim(1));
+  dmda->SetUserData("TOP_ZERO", true);
+  dist_mat->SetUserData("N_ROWS", 1);
+  dist_mat->SetUserData("AUTO_SCALE", true);
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
   if(view) dist_mat->NewGridView();
@@ -603,6 +610,9 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
   int idx;
   DataArray_impl* dmda = correl_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
 						     dmat.dim(1));
+  dmda->SetUserData("TOP_ZERO", true);
+  correl_mat->SetUserData("N_ROWS", 1);
+  correl_mat->SetUserData("AUTO_SCALE", true);
   correl_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
   if(view) correl_mat->NewGridView();
@@ -727,6 +737,8 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     nm = prjn_data->FindMakeColName(name_col_nm, idx, VT_STRING);
   DataArray_impl* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
   DataArray_impl* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
+
+  // todo: user data..
 
   for(int i=0;i<src_data->rows;i++) {
     prjn_data->AddBlankRow();

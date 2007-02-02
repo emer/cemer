@@ -1282,6 +1282,17 @@ void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
     inherited::ChildUpdateAfterEdit(child, handled);
 }
 
+String NetView::GetLabel() const {
+  Network* nt = net();
+  if(nt) return nt->GetDisplayName();
+  return "(no net)";
+}
+
+String NetView::GetName() const {
+  Network* nt = net();
+  if(nt) return nt->GetDisplayName();
+  return "(no net)";
+}
 
 void NetView::BuildAll() { // populates everything
   Reset();

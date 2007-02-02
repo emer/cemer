@@ -142,6 +142,9 @@ public:
   override void		DataDestroying();
   override void		BuildAll();
   
+  override String	GetLabel() const;
+  override String	GetName() const;
+
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
@@ -192,7 +195,8 @@ protected:
 /*
   Additional Display Options
     WIDTH=i (i: int) -- sets default column width to i chars
-    NARROW -- in addition to base spec, also sets column with to 8 chars
+    TOP_ZERO  -- override BOT_ZERO default
+    IMAGE     -- display as IMAGE (only for matrix columns)
 */
 
 class TA_API GridColView : public DataColView {
@@ -215,6 +219,8 @@ public:
 
   virtual void		ComputeColSizes();
   // compute the column sizes
+
+  virtual void		InitFromUserData();
 
   override bool		selectEditMe() const { return true; }
   override String	GetDisplayName() const;
@@ -251,7 +257,7 @@ public:
   float		two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
   bool		mat_val_text;	// also display text values for matrix blocks
 
-  ColorScale	scale; 		// contains current min,max,range,zero,auto_scale
+  ColorScale	colorscale; 	// contains current min,max,range,zero,auto_scale
 
   float		grid_margin; 	// #DEF_0.01 #MIN_0 size of margin between grid cells (in normalized units)
   float		grid_line_size; // #DEF_0.005 #MIN_0 size of grid lines (in normalized units)
@@ -296,6 +302,11 @@ public:
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
   T3GridViewNode* node_so() const {return (T3GridViewNode*)m_node_so.ptr();}
 
+  virtual void		InitFromUserData();
+
+  override String	GetLabel() const;
+  override String	GetName() const;
+
   override bool		selectEditMe() const { return true; }
   
   void	InitLinks();
@@ -335,6 +346,8 @@ protected:
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Render_post(); // #IGNORE
+
+  override void		UpdateFromDataTable_this(bool first);
 
   override void 	UpdateAfterEdit_impl();
 };
@@ -461,23 +474,20 @@ protected slots:
 // 		Graph View
 
 /*
-  Additional Display Options:
+  User Data for Columns:
 
-  MIN=x (x: float) -- for a col that is an axis, forces min range to be x
-  MAX=x (x: float) -- for a col that is an axis, forces max range to be x
-  DISP_STRING -- for string cols, sets !visible (HUH????) (ex. added by ClustNode for 'labels' col)
-  STRING_COORDS=i (i: int) -- plot coords for strings is in col i of this group
+  MIN=x (x: float) -- forces min range to be x
+  MAX=x (x: float) -- forces max range to be x
 
   Axis options:
-  X_AXIS -- explicitly marks this col as the X Axis
-  Y_AXIS -- explicitly marks this col as a Y Axis
-  Y_DATA -- explicitly marks this col as Y data, and typically indicates a slave to another Y axis
-  Z_AXIS -- explicitly marks this col as a Z Axis (where appropriate)
-  AXIS=i (i: int) -- links the col to a specific YAxis (i is the colspec index in same group
-    of that axis); also, for Strings with no STRING_COORDS, specifies the string_coords col
-    ex. ClustNode sets 'labels' col to use the Y axis col
-  STRING_COORDS=i (i: int) -- plot coords for strings is in col i of this group
-
+  X_AXIS -- set as X Axis
+  Z_AXIS -- set as Z Axis
+  PLOT_1 -- set as plot_1 data (first data to be plotted)
+  PLOT_2 -- set as plot_2 data
+  ERR_1 -- set as err_1 data
+  ERR_2 -- set as err_2 data
+  COLOR_AXIS -- set as color_axis
+  RASTER_AXIS -- set as raster_axis
 */
 
 class TA_API GraphColView : public DataColView {
@@ -558,6 +568,11 @@ public:
   virtual void 		RenderAxis(T3Axis* t3ax, int n_ax = 0);
   // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
 
+  ///////////////////////////////////////////////////
+  // 	Misc
+
+  virtual void		InitFromUserData();
+  // initialize various settings from the user data of the data column
   override bool		selectEditMe() const { return true; }
 
   void InitLinks();
@@ -660,15 +675,16 @@ public:
   static GraphTableView* New(DataTable* dt, T3DataViewFrame*& fr);
 
   enum GraphType {
-    XY,				// standard XY(Z) plot -- plot value determines Y axis coordinate to plot (optional error bars as well)
-    RASTER_COLOR,		// raster plot (flat lines stacked up using raster_axis), with color representing plot data value (automatically turns on VALUE_COLOR)
-    RASTER_THRESH,		// raster plot (flat lines stacked up using raster_axis), with thresholded plot data values -- line drawn when above theshold, otherwise not (e.g., for spike rasters)
+    XY,				// standard XY(Z) plot -- plot value determines Y axis coordinate to plot (optional error bars as well, if turned on)
+    RASTER,			// raster plot (flat lines stacked up using raster_axis), typically with color representing plot data value or thresholded lines (spike raster)
   };
 
   enum PlotStyle {
     LINE,			// just a line, no points
     POINTS,			// just points, no line
     LINE_AND_POINTS, 		// both line and points
+    THRESH_LINE,		// draw a line when value is over threshold
+    THRESH_POINT,		// draw a point when value is over threshold
   };
 
   enum ColorMode {
@@ -704,15 +720,17 @@ public:
   MatrixLayout		mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
   bool			mat_odd_vert;	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
 
-  GraphAxisView		err_1;		// data for error bars for plot_1 values
-  GraphAxisView		err_2;		// data for error bars for plot_2 values
+  GraphPlotView		err_1;		// data for error bars for plot_1 values
+  GraphPlotView		err_2;		// data for error bars for plot_2 values
   int			err_spacing;	// #CONDEDIT_ON_graph_type:XY_ERR spacing between
+  float			err_bar_width;	// half-width of error bars, in view plot units
 
   GraphAxisView		color_axis;	// #CONDEDIT_ON_color_mode:COLOR_AXIS color axis, for determining color of lines when color_mode = COLOR_AXIS
   ColorScale		colorscale; 	// contains current min,max,range,zero,auto_scale
 
-  GraphAxisView		raster_axis;	// #CONDEDIT_ON_graph_type:RASTER_COLOR,RASTER_THRESH raster axis, if doing a raster plot
-  float			raster_thresh;	// #CONDEDIT_ON_graph_type:RASTER_THRESH color axis, for 
+  GraphAxisView		raster_axis;	// #CONDEDIT_ON_graph_type:RASTER raster axis, if doing a raster plot
+  float			thresh;		// #CONDEDIT_ON_plot_style:THRESH_LINE,THRESH_POINT threshold on raw data value for THRESH_LINE or THRESH_POINT plotting sytles 
+  float			thr_line_len;	// length of line to draw when above threshold: value is subtracted and added to current X value to render line
   float			width;		// how wide to make the display (height is always 1.0)
   float			depth;		// how deep to make the display (height is always 1.0)
 
@@ -729,18 +747,24 @@ public:
   // misc housekeeping
 
   void		FindDefaultXZAxes();
-  // set X and Z axis columns to the last INT columns -- if that doesn't work, then choose the first numeric columns
+  // set X and Z axis columns to user data spec or the last INT columns -- if that doesn't work, then choose the first numeric columns
+  void		FindDefaultPlot1();
+  // set plot_1 as first float/double column (or user data spec)
+  void		InitFromUserData();
+  // set initial settings based on user data in columns and overall table
 
   ///////////////////////////////////////////////////
   // view button/field callbacks
 
   void		setGraphType(GraphType value);
   void		setPlotStyle(PlotStyle value);
+  void		setRows(int rows);
   void		setColorMode(ColorMode value);
   void		setLineWidth(float value);
   void		setPointSpacing(int value);
   void		setLabelSpacing(int value);
   void		setErrSpacing(int value);
+  void		setThresh(float value);
   void		setNegDraw(bool value);
   void		set2dFont(bool value);
   void		setWidth(float wdth);
@@ -759,6 +783,9 @@ public:
 
   iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)m_lvp;}
   T3GraphViewNode* node_so() const {return (T3GraphViewNode*)m_node_so.ptr();}
+
+  override String	GetLabel() const;
+  override String	GetName() const;
 
   override bool		selectEditMe() const { return true; }
   
@@ -791,8 +818,9 @@ protected:
 
   virtual void  	RemoveGraph(); // remove all lines
 
-  virtual void 		PlotData_XY(GraphPlotView& plv, T3GraphLine* t3gl, int mat_cell = -1);
-  // plot XY data from given plot view column into given line, if from matrix then mat_cell >= 0)
+  virtual void 		PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
+				    T3GraphLine* t3gl, int mat_cell = -1);
+  // plot XY data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0)
   virtual void 		PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y, T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column
 
@@ -820,29 +848,23 @@ public:
   QCheckBox*		    chkDisplay;
   QLabel*		    lblGraphType;
   taiComboBox*		    cmbGraphType;
-  QCheckBox*		    chkNegDraw;
+  QLabel*		    lblPlotStyle;
+  taiComboBox*		    cmbPlotStyle;
 
   QPushButton*		    butRefresh;
   QPushButton*		    butClear;
-  QPushButton*		    butSetColor;
 
   QHBoxLayout*		  layVals;
-  QLabel*		    lblPlotStyle;
-  taiComboBox*		    cmbPlotStyle;
-  QLabel*		    lblColorMode;
-  taiComboBox*		    cmbColorMode;
   QLabel*		    lblLineWidth;
   taiField*		    fldLineWidth;
   QLabel*		    lblPointSpacing;
   taiField*		    fldPointSpacing;
   QLabel*		    lblLabelSpacing;
   taiField*		    fldLabelSpacing;
+  QCheckBox*		    chkNegDraw;
 
   QLabel*		    lblWidth;
   taiField*		    fldWidth; // width of the display (height is always 1.0)
-
-  QHBoxLayout*		  layColorScale;
-  ScaleBar*		    cbar;	      // colorbar
 
   QHBoxLayout*		  layXAxis;
   QLabel*		    lblXAxis;
@@ -880,16 +902,27 @@ public:
   taiField*		    fldErrSpacing;
 
   QHBoxLayout*		  layCAxis;
+  QLabel*		    lblColorMode;
+  taiComboBox*		    cmbColorMode;
   QLabel*		    lblCAxis;
   taiListElsButton*	    lelCAxis; // list element chooser
-  taiPolyData*	    	    pdtCAxis; // fixed_range polydata (inline)
+  QLabel*		    lblThresh;
+  taiField*		    fldThresh;
+
+  QHBoxLayout*		  layColorScale;
+  ScaleBar*		    cbar;	      // colorbar
+  QPushButton*		    butSetColor;
 
   QHBoxLayout*		  layRAxis;
   QLabel*		    lblRAxis;
   taiListElsButton*	    lelRAxis; // list element chooser
   taiPolyData*	    	    pdtRAxis; // fixed_range polydata (inline)
 
-  QHBoxLayout*		  layViewspace;
+  QHBoxLayout*		  layScroll;
+  QLabel*		    lblRows;
+  taiIncrField*		    fldRows; // number of rows to display
+  QLabel*		    lblView;
+  QScrollBar*	            scrView; // scrollbar for view range (instead of using viewspace)
 
   override String	panel_type() const; // this string is on the subpanel button for this panel
   GraphTableView*	glv() {return (GraphTableView*)m_dv;}
@@ -898,7 +931,7 @@ public:
   ~iGraphTableView_Panel();
 
 public slots:
-  void 			verScrBar_valueChanged(int value);
+  void 			scrView_valueChanged(int value);
 
 protected:
   override void		InitPanel_impl(); // called on structural changes
@@ -914,6 +947,7 @@ protected slots:
   void 		cmbGraphType_itemChanged(int itm);
   void 		chkShareAxis_toggled(bool on);
   void 		chkNegDraw_toggled(bool on);
+  void 		fldRows_textChanged();
 
   void 		butRefresh_pressed();
   void 		butClear_pressed();
@@ -950,9 +984,9 @@ protected slots:
   void 		lel2Err_dataChanged(taiData*);
   void 		onc2Err_toggled(bool);
   void 		fldErrSpacing_textChanged();
+  void 		fldThresh_textChanged();
 
   void 		lelCAxis_dataChanged(taiData*);
-  void 		pdtCAxis_dataChanged(taiData*);
 
   void 		lelRAxis_dataChanged(taiData*);
   void 		pdtRAxis_dataChanged(taiData*);

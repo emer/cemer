@@ -1157,8 +1157,10 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   if (!t3vw) return NULL; // shouldn't happen
   // make in default, if default is empty
   fr = t3vw->FirstEmptyT3DataViewFrame();
-  if (!fr)
+  if (!fr) {
     fr = t3vw->NewT3DataViewFrame();
+    fr->SetName(obj->GetDisplayName());
+  }
   return fr;
 }
 

@@ -99,6 +99,8 @@ public:
   void 	Copy_(const MinMax& cp)	{ min = cp.min; max = cp.max; }
   COPY_FUNS(MinMax, inherited);
   TA_BASEFUNS(MinMax);
+ protected:
+  void	UpdateAfterEdit_impl();
 };
 
 class TA_API MinMaxRange : public MinMax {
