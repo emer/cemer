@@ -6,7 +6,6 @@ commit:
 * graphview: 
 
   - add data_spacing?
-  - 0 axis range causing problems somewhere (source of non-visibility on startup?)
   - scrollbar stretch
 
 ------------------

@@ -3003,8 +3003,12 @@ void GraphTableView::RenderGraph_Scalar() {
   SoSeparator* gr1 = new SoSeparator;
   graphs->addChild(gr1);
 
+  float boxd = .01f;
+  if(z_axis.on)
+    boxd = depth;
+
   // each graph has a box and lines..
-  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, depth);
+  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd);
   gr1->addChild(lbox);
   T3GraphLine* ln = new T3GraphLine(&plot_1);
   gr1->addChild(ln);
@@ -3071,6 +3075,10 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   DataArray_impl* da_1 = plot_1.GetDAPtr();
   if(!da_1) return;
 
+  float boxd = .01f;
+  if(z_axis.on)
+    boxd = depth;
+
   SoSeparator* graphs = node_so->graphs();
   graphs->removeAllChildren();
 
@@ -3098,7 +3106,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	tr->translation.setValue(xp, yp, 0.0f);
 
 	// each graph has a box and lines..
-	SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, depth * max_xy);
+	SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy);
 	gr->addChild(lbox);
 	SoTransform* tx = new SoTransform();
 	gr->addChild(tx);
@@ -3136,7 +3144,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	  tr->translation.setValue(xp, yp, 0.0f);
 
 	  // each graph has a box and lines..
-	  SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, depth * max_xy);
+	  SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy);
 	  gr->addChild(lbox);
 	  SoTransform* tx = new SoTransform();
 	  gr->addChild(tx);
@@ -3176,7 +3184,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	    tr->translation.setValue(xp, yp, 0.0f);
 
 	    // each graph has a box and lines..
-	    SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, depth * max_xy);
+	    SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy);
 	    gr->addChild(lbox);
 	    SoTransform* tx = new SoTransform();
 	    gr->addChild(tx);
