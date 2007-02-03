@@ -3973,12 +3973,12 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(scrView, SIGNAL(valueChanged(int)), this, SLOT(scrView_valueChanged(int)) );
   scrView->setTracking(true);
   scrView->setMinValue(0);
-  layScroll->addWidget(scrView);
+  layScroll->addWidget(scrView, 1);
 
   // todo: want the scrollbar to stretch to fill available room!
   //  scrView->addStretch();
 
-  layOuter->addStretch();
+//  layOuter->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   // 	viewspace guy
