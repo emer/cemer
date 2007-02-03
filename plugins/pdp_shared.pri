@@ -40,7 +40,7 @@ SOURCES += $${TARGET}_TA.cpp
 DESTDIR = $$(PDP4DIR)/lib/plugins
 
 #TODO: modalize for debug vs. non-debug
-LIBS +=	-lpdp_debug-3.5 -L$$(PDP4DIR)/lib
+LIBS +=	-lpdp_debug-4.0 -L$$(PDP4DIR)/lib
 
 # in the following, we create a new target 'maketa' which has the indicated properties
 maketa.target = $$PRECOMPILED_HEADER $${TARGET}_TA.cpp
