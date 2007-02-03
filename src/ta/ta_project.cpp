@@ -720,8 +720,6 @@ bool taRootBase::Startup_InitApp(int argc, const char* argv[]) {
 #ifdef TA_GUI
   if(taMisc::use_gui) {
 # ifdef TA_USE_INVENTOR
-//TEMP
-new QApplication(argc, (char**)argv); // accessed as qApp
     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
 # else
     new QApplication(argc, (char**)argv); // accessed as qApp
