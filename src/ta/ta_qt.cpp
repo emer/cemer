@@ -1017,9 +1017,10 @@ void taiMisc::DumpTiffIv(iWindow* win, const char* fnm, int xstart, int ystart, 
 /* from Qt docs:
 The default implementation requests interaction and sends a close event to all visible top-level widgets. If any event was rejected, the shutdown is canceled.
 */
+/*DOH! never being used, because we use SoQt!
 void iApplication::commitData(QSessionManager& manager) {
   taMisc::quitting = taMisc::QF_FORCE_QUIT;
   CancelOp cancel_op = CO_NOT_CANCELLABLE;
   taiMiscCore::OnQuitting(cancel_op); // save changes, etc.
   inherited::commitData(manager);
-}
+} */

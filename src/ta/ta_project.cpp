@@ -717,16 +717,18 @@ bool taRootBase::Startup_ProcessGuiArg() {
 bool taRootBase::Startup_InitApp(int argc, const char* argv[]) {
   setlocale(LC_ALL, "");
 
-  if(taMisc::use_gui) {
 #ifdef TA_GUI
+  if(taMisc::use_gui) {
 # ifdef TA_USE_INVENTOR
+//TEMP
+new QApplication(argc, (char**)argv); // accessed as qApp
     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
 # else
-    new iApplication(argc, (char**)argv); // accessed as qApp
+    new QApplication(argc, (char**)argv); // accessed as qApp
 # endif
+  } else 
 #endif
-  }
-  else {
+  {
     new QCoreApplication(argc, (char**)argv); // accessed as qApp
     QFileInfo fi(argv[0]);
     QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix

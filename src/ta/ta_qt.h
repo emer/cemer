@@ -25,7 +25,6 @@
 #include "ifont.h"
 #include "igeometry.h"
 #ifndef __MAKETA__
-# include <QApplication>
 # include <QRect>
 #endif
 
@@ -276,17 +275,6 @@ protected:
   override int		Exec_impl();
   override void 	OnQuitting_impl(CancelOp& cancel_op); // pre-quit resolves changes
   override void		Quit_impl(CancelOp cancel_op);
-};
-
-//note: maketa doesn't need to see this
-class TA_API iApplication: public QApplication {
-// class needed to trap the shutdown call
-INHERITED(QApplication)
-  Q_OBJECT
-public:
-  void 			commitData(QSessionManager& manager); // override
-  
-  iApplication(int& argc, char** argv): QApplication(argc, argv) {}
 };
 
 #endif
