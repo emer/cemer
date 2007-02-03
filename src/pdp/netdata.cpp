@@ -1227,10 +1227,12 @@ void NetMonitor::RemoveMonitors() {
 }
 
 void NetMonitor::SetDataTable(DataTable* dt) {
+  if(data == dt) return;
   data = dt; // note: auto does UAE
 }
 
 void NetMonitor::SetNetwork(Network* net) {
+  if(network == net) return;
   network = net;
   UpdateNetworkPtrs();
 }
