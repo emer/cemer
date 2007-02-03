@@ -39,6 +39,8 @@
 
 #include "ta_dmem.h"
 
+class NetMonitor;
+
 // forwards this file
 class Unit_Group; //
 
@@ -379,6 +381,9 @@ public:
   virtual void		Reset() { RemoveAll(); }
   // #CAT_Structure remove all conections
 
+  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of receiving connections
+
   virtual Connection*	FindConFrom(Unit* un, int& idx=no_idx) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
   static Connection* 	FindRecipRecvCon(Unit* su, Unit* ru);
@@ -562,6 +567,9 @@ public:
 
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // #CAT_ObjectMgmt switch any connections using old_sp to using new_sp
+
+  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of connections
 
   int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   bool	ChangeMyType(TypeDef* new_type);
@@ -824,6 +832,9 @@ public: //
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // #CAT_Structure switch any connections/projections using old_sp to using new_sp
 
+  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this unit
+
   virtual void 	LinkSendCons();
   // #CAT_Structure link sending connections based on recv cons (after load, copy)
 
@@ -1006,9 +1017,9 @@ public:
   virtual bool 	SetSendConsType(TypeDef* td);
   // #BUTTON #CAT_Projection #TYPE_SendCons set the connection group type for all connections in this prjn
 
-//obs  virtual void	GridViewWeights(GridLog* grid_log, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
-  /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of projection weights (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
-     (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
+  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this projection
+
   virtual void	WeightsToTable(DataTable* dt);
   // #MENU #NULL_OK #CAT_Projection TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
@@ -1151,9 +1162,12 @@ public:
   // #CAT_Structure re compute geometry based on parent layer
 
   virtual bool	SetUnitSpec(UnitSpec* unitspec);
-  // #MENU #MENU_SEP_BEFORE #CAT_Structure set for all units in group
+  // #BUTTON #CAT_Structure set for all units in group
   virtual bool	SetConSpec(ConSpec* conspec);
-  // #MENU #CAT_Structure set for all unit's connections in group
+  // #BUTTON #CAT_Structure set for all unit's connections in group
+
+  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this unit group
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
@@ -1404,6 +1418,9 @@ public:
   virtual void	FixPrjnIndexes();
   // #MENU #CAT_Structure fix the projection indicies of the connection groups (other_idx)
 
+  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this layer
+
   virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // #CAT_Structure switch any units/layers using old_sp to using new_sp
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
@@ -1413,9 +1430,6 @@ public:
   virtual int	ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp);
   // #CAT_Structure switch any layers using old_sp to using new_sp
 
-//obs  virtual void	GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
-  /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of weights from sending layer (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
-     (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
   virtual void	WeightsToTable(DataTable* dt, Layer* send_lay);
   // #MENU #NULL_OK #CAT_Structure TODO:define send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
@@ -1681,6 +1695,8 @@ public:
   virtual void	FixPrjnIndexes();
   // #CAT_Structure fix the projection indicies of the connection groups (recv_idx, send_idx)
 
+  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this network
   virtual void	RemoveMonitors();
   // #CAT_ObjectMgmt Remove monitoring of all objects in all processes associated with parent project
   virtual void	UpdateMonitors();
@@ -1766,9 +1782,6 @@ public:
   virtual void	TwoD_Or_ThreeD(LayerLayout layout_type);
   // #MENU #MENU_SEP_BEFORE #CAT_Display Set 2d or 3d and reposition and redraw layers
 
-//obs  virtual void	GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_lay, bool use_swt=false, int un_x=-1, int un_y=-1, int wt_x=-1, int wt_y=-1);
-  /* #MENU #MENU_SEP_BEFORE #NULL_OK display entire set of weights from sending layer to recv_lay (use sending weights if use_swt) in grid log, -1 for x,y = use layer geometry
-     (otherwise limits range, un= unit range, wt = weight (sending lay) range) */
   virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
   // #MENU #NULL_OK #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 

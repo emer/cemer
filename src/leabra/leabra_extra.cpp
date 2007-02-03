@@ -1740,15 +1740,17 @@ void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   }
 }
 
-// void V1RFPrjnSpec::GraphFilter(Projection* prjn, int recv_unit_no, GraphLog* graph_log) {
-//   if(!InitGaborDoGSpec(prjn, recv_unit_no)) return;
-//   gabor_spec.GraphFilter(graph_log);
-// }
+void V1RFPrjnSpec::GraphFilter(Projection* prjn, int recv_unit_no, DataTable* graph_data) {
+  if(!prjn) return;
+  if(!InitGaborDoGSpec(prjn, recv_unit_no)) return;
+  gabor_spec.GraphFilter(graph_data);
+}
 
-// void V1RFPrjnSpec::GridFilter(Projection* prjn, int recv_unit_no, GridLog* disp_log) {
-//   if(!InitGaborDoGSpec(prjn, recv_unit_no)) return;
-//   gabor_spec.GridFilter(disp_log);
-// }
+void V1RFPrjnSpec::GridFilter(Projection* prjn, int recv_unit_no, DataTable* disp_log) {
+  if(!prjn) return;
+  if(!InitGaborDoGSpec(prjn, recv_unit_no)) return;
+  gabor_spec.GridFilter(disp_log);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

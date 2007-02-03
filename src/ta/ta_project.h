@@ -95,9 +95,6 @@ public:
   override bool		isDirty() const {return m_dirty;}
   override void 	setDirty(bool value); 
 
-  virtual const iColor* GetObjColor(TypeDef* td) {return NULL;} // #IGNORE get default color for object (for edit, project view)
-  virtual const iColor* GetObjColor(int view_color) {return NULL;} // #IGNORE get default color for object (for edit, project view)
-
   MainWindowViewer*	GetDefaultProjectBrowser(); // gets one if there is, else NULL
   virtual void 		AssertDefaultProjectBrowser(bool auto_opn); 
     // make the default project browser is made, and optionally open it
@@ -105,6 +102,9 @@ public:
     // make sure the default wizard(s) are made, and optionally open them
   virtual void		OpenNewProjectBrowser(String proj_browser_name = "NewProjectBrowserName");
     // #MENU #MENU_ON_View #MENU_CONTEXT
+
+  virtual DataTable*	GetNewAnalysisDataTable(const String& nw_nm="", bool msg=false);
+  // createa a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
 
   virtual MainWindowViewer* NewProjectBrowser(); 
     // create a new, empty viewer -- note: window not opened yet
@@ -184,8 +184,6 @@ public:
   taBase*	GetTemplateInstance(TypeDef* typ);
   // get an instance of the indicated tab type, or NULL if not found
   
-  virtual const iColor*	GetObjColor(taBase* inst) {return NULL;}  //#IGNORE
-
   ///////////////////////////////////////////////////////////////////////////////
   //		Startup Code	(in order of calling by Startup_Main)
 

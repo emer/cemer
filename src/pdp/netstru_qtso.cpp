@@ -1820,6 +1820,11 @@ void NetView::SetScaleDefault() {
   }
 }
 
+void NetView::SetColorSpec(ColorScaleSpec* color_spec) {
+  scale.SetColorSpec(color_spec);
+  UpdateDisplay(true);		// true causes button to remain pressed..
+}
+
 void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
   if (unit_src == unit) return; // no change
   // if there was existing unit, unpick it
@@ -1961,6 +1966,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layViewParams = new QVBoxLayout(layOuter);
   layViewParams->setSpacing(taiM->vsep_c);
 
+  ////////////////////////////////////////////////////////////////////////////
   layDispCheck = new QHBoxLayout(layViewParams);
   chkDisplay = new QCheckBox("Display", widg);
   connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
@@ -1986,6 +1992,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
+  ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout(layViewParams);
 
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
@@ -2012,10 +2019,16 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layFontsEtc->addSpacing(taiM->hsep_c);
   connect(fldLayFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldLayFont_textChanged()) );
 
+  chkXYSquare = new QCheckBox("XY\nSquare", widg);
+  chkXYSquare->setToolTip("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space).");
+  connect(chkXYSquare, SIGNAL(toggled(bool)), this, SLOT(chkXYSquare_toggled(bool)) );
+  layFontsEtc->addWidget(chkXYSquare);
+
   gbDisplayValues = new QGroupBox("Display Values", widg);
   layOuter->addWidget(gbDisplayValues, 1);
   layDisplayValues = new QVBoxLayout(gbDisplayValues);
 
+  ////////////////////////////////////////////////////////////////////////////
   layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
   
   chkAutoScale = new QCheckBox("auto scale", gbDisplayValues);
@@ -2026,14 +2039,21 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorScaleCtrls->addWidget(butScaleDefault);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
-  layColorScaleCtrls->addStretch();
   
+  ////////////////////////////////////////////////////////////////////////////
+  layColorBar = new QHBoxLayout(layDisplayValues);
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, gbDisplayValues);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
 //  cbar->setMaximumWidth(30);
-  layDisplayValues->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+//   layColorSCaleCtrls->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
+  layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   
-  
+  butSetColor = new QPushButton("Colors", gbDisplayValues);
+  butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layColorBar->addWidget(butSetColor);
+  connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
+
+  ////////////////////////////////////////////////////////////////////////////
   lvDisplayValues = new Q3ListView(gbDisplayValues);
   lvDisplayValues->addColumn("Value", 80);
   lvDisplayValues->addColumn("Description");
@@ -2043,6 +2063,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDisplayValues->addWidget(lvDisplayValues, 1);
   connect(lvDisplayValues, SIGNAL(selectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
 
+  ////////////////////////////////////////////////////////////////////////////
   // Spec tree
   gbSpecs = new QGroupBox("Specs", widg);
   layOuter->addWidget(gbSpecs, 1);
@@ -2075,7 +2096,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   connect(tvSpecs, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) ); 
   
-
+  ////////////////////////////////////////////////////////////////////////////
   // Command Buttons
   widCmdButtons = new iMethodButtonFrame(nv()->net(), widg);
 
@@ -2094,7 +2115,6 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   butNewLayer = new QPushButton("&New Layer", widCmdButtons);
   AddCmdButton(butNewLayer);
   connect(butNewLayer, SIGNAL(pressed()), this, SLOT(butNewLayer_pressed()) );
-
 
 //  layOuter->addStretch();
 
@@ -2137,6 +2157,14 @@ void NetViewPanel::butScaleDefault_pressed() {
 
   nv_->SetScaleDefault();
   nv_->UpdateDisplay(true);
+}
+
+void NetViewPanel::butSetColor_pressed() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+
+  nv_->CallFun("SetColorSpec");
 }
 
 void NetViewPanel::chkAutoScale_toggled(bool on) {
@@ -2204,6 +2232,15 @@ void NetViewPanel::fldLayFont_textChanged() {
   if (!(nv_ = nv())) return;
 
   nv_->font_sizes.layer = (float)fldLayFont->GetValue();
+  nv_->UpdateDisplay(false);
+}
+
+void NetViewPanel::chkXYSquare_toggled(bool on) {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+
+  nv_->view_params.xy_square = on;
   nv_->UpdateDisplay(false);
 }
 

@@ -241,32 +241,34 @@ void LeabraConSpec::CreateWtSigFun() {
   wt_sig_fun_res = wt_sig_fun.res;
 }
 
-/*TEMP void LeabraConSpec::GraphWtSigFun(GraphLog* graph_log) {
-  // todo:
-  taMisc::Error("Graphing not yet supported");
-  return;
-//   if(graph_log == NULL) {
-//     graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
-//     if(graph_log == NULL) return;
-//   }
-//   graph_log->name = name + ": Wt Sig Fun";
-//   DataTable* dt = &(graph_log->data);
-//   dt->Reset();
-//   dt->NewColFloat("lin wt");
-//   dt->NewColFloat("eff wt");
-//   dt->AddColDispOpt("MIN=0", 1);
-//   dt->AddColDispOpt("MAX=1", 1);
+void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_WtSigFun", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataArray_impl* lnwt = graph_data->FindMakeColName("LinWt", idx, VT_FLOAT);
+  DataArray_impl* efwt = graph_data->FindMakeColName("EffWt", idx, VT_FLOAT);
+  lnwt->SetUserData("MIN", 0.0f);
+  lnwt->SetUserData("MAX", 1.0f);
+  efwt->SetUserData("MIN", 0.0f);
+  efwt->SetUserData("MAX", 1.0f);
 
-//   float x;
-//   for(x = 0.0; x <= 1.0; x += .01) {
-//     float y = WtSigSpec::SigFun(x, wt_sig.gain, wt_sig.off);
-//     dt->AddBlankRow();
-//     dt->SetLastFloatVal(x, 0);
-//     dt->SetLastFloatVal(y, 1);
-//   }
-//   dt->UpdateAllRanges();
-//   graph_log->ViewAllData();
-}*/
+  float x;
+  for(x = 0.0f; x <= 1.0f; x += .01f) {
+    float y = WtSigSpec::SigFun(x, wt_sig.gain, wt_sig.off);
+    graph_data->AddBlankRow();
+    lnwt->SetValAsFloat(x, -1);
+    efwt->SetValAsFloat(y, -1);
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
+}
 
 void LeabraRecvCons::Initialize() {
   spec.SetBaseType(&TA_LeabraConSpec);
@@ -1237,90 +1239,90 @@ float LeabraUnitSpec::Compute_SSE(Unit* u) {
 //	 Misc Functions 		//
 //////////////////////////////////////////
 
-/*TEMP void LeabraUnitSpec::GraphVmFun(GraphLog* graph_log, float g_i, float min, float max, float incr) {
-  // todo:
-  taMisc::Error("Graphing not yet supported");
-  return;
-//   if(graph_log == NULL) {
-//     graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
-//     if(graph_log == NULL) return;
-//   }
-//   graph_log->name = name + ": Vm Fun";
-//   DataTable* dt = &(graph_log->data);
-//   dt->Reset();
-//   dt->NewColFloat("net");
-//   dt->NewColFloat("v_m");
+void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, float max, float incr) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_VmFun", true);
+    newguy = true;
+  }
+  int idx;
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataArray_impl* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
+  DataArray_impl* vm = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
 
-//   float x;
-//   for(x = min; x <= max; x += incr) {
-//     float y = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
-//       ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
-//     dt->AddBlankRow();
-//     dt->SetLastFloatVal(x, 0);
-//     dt->SetLastFloatVal(y, 1);
-//   }
-//   dt->UpdateAllRanges();
-//   graph_log->ViewAllData();
+  float x;
+  for(x = min; x <= max; x += incr) {
+    float y = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
+      ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
+    graph_data->AddBlankRow();
+    nt->SetValAsFloat(x, -1);
+    vm->SetValAsFloat(y, -1);
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
 }
 
-void LeabraUnitSpec::GraphActFmVmFun(GraphLog* graph_log, float min, float max, float incr) {
-  // todo:
-  taMisc::Error("GraphActFmVmFun not yet supported");
-  return;
-//   if(graph_log == NULL) {
-//     graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
-//     if(graph_log == NULL) return;
-//   }
-//   graph_log->name = name + ": Act Fm Vm Fun";
-//   DataTable* dt = &(graph_log->data);
-//   dt->Reset();
-//   dt->NewColFloat("v_m");
-//   dt->NewColFloat("act");
+void LeabraUnitSpec::GraphActFmVmFun(DataTable* graph_data, float min, float max, float incr) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmVmFun", true);
+    newguy = true;
+  }
+  int idx;
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataArray_impl* nt = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
+  DataArray_impl* vm = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
-//   LeabraUnit un;
-//   LeabraNetwork net;
+  LeabraUnit un;
+  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
 
-//   float x;
-//   for(x = min; x <= max; x += incr) {
-//     un.v_m = x;
-//     Compute_ActFmVm(&un, NULL, NULL, &trl);
-//     dt->AddBlankRow();
-//     dt->SetLastFloatVal(x, 0);
-//     dt->SetLastFloatVal(un.act, 1);
-//   }
-//   dt->UpdateAllRanges();
-//   graph_log->ViewAllData();
+  float x;
+  for(x = min; x <= max; x += incr) {
+    un.v_m = x;
+    Compute_ActFmVm(&un, NULL, NULL, net);
+    graph_data->AddBlankRow();
+    nt->SetValAsFloat(x, -1);
+    vm->SetValAsFloat(un.act, -1);
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
 }
 
-void LeabraUnitSpec::GraphActFmNetFun(GraphLog* graph_log, float g_i, float min, float max, float incr) {
-  // todo:
-  taMisc::Error("GraphActFmNetFun not yet supported");
-  return;
-//   if(graph_log == NULL) {
-//     graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
-//     if(graph_log == NULL) return;
-//   }
-//   graph_log->name = name + ": Act Fm Net Fun";
-//   DataTable* dt = &(graph_log->data);
-//   dt->Reset();
-//   dt->NewColFloat("v_m");
-//   dt->NewColFloat("act");
+void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float min, float max, float incr) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmNetFun", true);
+    newguy = true;
+  }
+  int idx;
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataArray_impl* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
+  DataArray_impl* vm = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
-//   LeabraUnit un;
-//   LeabraNetwork net;
+  LeabraUnit un;
+  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
 
-//   float x;
-//   for(x = min; x <= max; x += incr) {
-//     un.v_m = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
-//       ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
-//     Compute_ActFmVm(&un, NULL, NULL, &trl);
-//     dt->AddBlankRow();
-//     dt->SetLastFloatVal(x, 0);
-//     dt->SetLastFloatVal(un.act, 1);
-//   }
-//   dt->UpdateAllRanges();
-//   graph_log->ViewAllData();
-}*/
+  float x;
+  for(x = min; x <= max; x += incr) {
+    un.v_m = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
+      ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
+    Compute_ActFmVm(&un, NULL, NULL, net);
+    graph_data->AddBlankRow();
+    nt->SetValAsFloat(x, -1);
+    vm->SetValAsFloat(un.act, -1);
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
+}
 
 //////////////////////////
 //  	Unit 		//

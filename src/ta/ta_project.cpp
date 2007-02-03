@@ -261,6 +261,16 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
   
 }
 
+DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
+  DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("AnalysisData");
+  DataTable* rval = dgp->NewEl(1, &TA_DataTable);
+  if(!nw_nm.empty())
+    rval->name = nw_nm;
+  if(msg)
+    taMisc::Warning("Note: created new data table named:", rval->name, "in .data.AnalysisData");
+  return rval;
+}
+
 bool taProject::SetFileName(const String& val) {
   if (GetFileName() == val) return true;
   inherited::SetFileName(val);

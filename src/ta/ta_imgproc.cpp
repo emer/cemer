@@ -222,9 +222,81 @@ void DoGFilterSpec::UpdateFilter() {
   RenderFilter(on_filter, off_filter, net_filter);
 }
 
-// todo: should just be a wizard call on filter..
-//   virtual void	GraphFilter(GraphLog* disp_log); // #BUTTON #NULL_OK plot the filter gaussian
-//   virtual void	GridFilter(GridLog* disp_log); // #BUTTON #NULL_OK plot the filter gaussian
+void DoGFilterSpec::GraphFilter(DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataArray_impl* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
+  DataArray_impl* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
+  DataArray_impl* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
+
+  xda->SetUserData("X_AXIS", true);
+  zda->SetUserData("Z_AXIS", true);
+  valda->SetUserData("PLOT_1", true);
+
+  float_Matrix* mat = &net_filter;
+  int x,z;
+  for(z=-filter_width; z<=filter_width; z++) {
+    for(x=-filter_width; x<=filter_width; x++) {
+      float val = mat->FastEl(x+filter_width, z+filter_width);
+      graph_data->AddBlankRow();
+      xda->SetValAsFloat(x, -1);
+      zda->SetValAsFloat(z, -1);
+      valda->SetValAsFloat(val, -1);
+    }
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
+}
+
+void DoGFilterSpec::GridFilter(DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataArray_impl* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
+  DataArray_impl* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
+
+  float maxv = taMath_float::vec_max(&on_filter, idx);
+
+  graph_data->SetUserData("N_ROWS", 3);
+  graph_data->SetUserData("SCALE_MIN", -maxv);
+  graph_data->SetUserData("SCALE_MAX", maxv);
+  graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
+
+  for(int i=0;i<3;i++) {
+    float_Matrix* mat;
+    graph_data->AddBlankRow();
+    if(i==0) {
+      nmda->SetValAsString("On", -1);
+      mat = &on_filter;
+    }
+    else if(i==1) {
+      nmda->SetValAsString("Off", -1);
+      mat = &off_filter;
+    }
+    else {
+      nmda->SetValAsString("Net", -1);
+      mat = &net_filter;
+    }
+    matda->SetValAsMatrix(mat, -1);
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGridView();
+}
 
 
 //////////////////////////////////////////////////////////
@@ -288,11 +360,67 @@ float GaborFilterSpec::GetParam(GaborParam param) {
   return 0.0f;
 }
 
-// todo: should be wizard fun call
-// void GaborFilterSpec::GraphFilter(GraphLog* graph_log) {
-// }
-// void GaborFilterSpec::GridFilter(GridLog* disp_log) {
-// }
+
+void GaborFilterSpec::GraphFilter(DataTable* graph_data) {
+  UpdateFilter();
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataArray_impl* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
+  DataArray_impl* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
+  DataArray_impl* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
+
+  xda->SetUserData("X_AXIS", true);
+  zda->SetUserData("Z_AXIS", true);
+  valda->SetUserData("PLOT_1", true);
+
+  int x,z;
+  for(z=0; z<y_size; z++) {
+    for(x=0; x<x_size; x++) {
+      float val = filter.FastEl(x,z);
+      graph_data->AddBlankRow();
+      xda->SetValAsFloat(x, -1);
+      zda->SetValAsFloat(z, -1);
+      valda->SetValAsFloat(val, -1);
+    }
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
+}
+
+void GaborFilterSpec::GridFilter(DataTable* graph_data) {
+  UpdateFilter();
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataArray_impl* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, x_size, y_size);
+
+  float maxv = taMath_float::vec_abs_max(&filter, idx);
+
+  graph_data->SetUserData("N_ROWS", 1);
+  graph_data->SetUserData("SCALE_MIN", -maxv);
+  graph_data->SetUserData("SCALE_MAX", maxv);
+  graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
+
+  matda->SetValAsMatrix(&filter, -1);
+
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGridView();
+}
 
 void GaborFilterSpec::OutputParams(ostream& strm) {
   strm << "ctr: " << ctr_x << ", " << ctr_y << ", angle: " << angle
@@ -583,6 +711,42 @@ void RetinalSpacingSpec::UpdateSizes() {
   }
 }
 
+void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_PlotSpacing", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  int idx;
+  DataArray_impl* matda = graph_data->FindMakeColName("Spacing", idx, VT_FLOAT, 2,
+						      retina_size.x,
+						      retina_size.y);
+  graph_data->SetUserData("N_ROWS", 1);
+  graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
+  graph_data->SetUserData("WIDTH", retina_size.x / retina_size.y);
+
+  if(graph_data->rows < 1)
+    graph_data->AddBlankRow();
+
+  float_Matrix* mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+  taBase::Ref(mat);
+
+  int x,y;
+  for(y=border.y; y<= retina_size.y-border.y; y+= spacing.y) {
+    for(x=border.x; x<= retina_size.x-border.x; x+=spacing.x) {
+      mat->FastEl(x,y) += val;
+    }
+  }
+
+  taBase::unRefDone(mat);
+
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGridView();
+}
+
 ///////////////////////////////////////////////////////////
 // 		DoG + Retinal Spacing
 
@@ -596,6 +760,18 @@ void DoGRetinaSpec::UpdateAfterEdit_impl() {
   spacing.name = name;
   dog.UpdateAfterEdit();
   spacing.UpdateAfterEdit();
+}
+
+void DoGRetinaSpec::GraphFilter(DataTable* graph_data) {
+  dog.GraphFilter(graph_data);
+}
+
+void DoGRetinaSpec::GridFilter(DataTable* graph_data) {
+  dog.GridFilter(graph_data);
+}
+
+void DoGRetinaSpec::PlotSpacing(DataTable* graph_data, float val) {
+  spacing.PlotSpacing(graph_data, val);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1232,6 +1408,25 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
 				sp->spacing.output_size.x, sp->spacing.output_size.y);
   }
   dt->StructUpdate(false);
+}
+
+void RetinaSpec::PlotSpacing(DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_PlotSpacing", true);
+    newguy = true;
+  }
+
+  graph_data->StructUpdate(true);
+  for(int i=0;i<dogs.size; i++) {
+    DoGRetinaSpec* sp = dogs[i];
+    float val = (float)i / (float)(dogs.size * 2);
+    sp->PlotSpacing(graph_data, val);
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGridView();
 }
 
 bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,

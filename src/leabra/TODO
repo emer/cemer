@@ -3,32 +3,6 @@ leabra todo list:
 commit:
 
 ------------------
-* graphview: 
-
-  - add data_spacing?
-  - scrollbar stretch
-
-------------------
-* gridview: 
-
-  - more room on top line of panel for ctrls: z height
-
-  - struct update debug on hv model
-  - when editing a datatable_impl, need to send refresh update to display
-  - initial panel is not updated..  just stick in render_impl and be done with it??
-  - view at is too far zoomed out -- can't seem to fix this at all, any way I try..
-  - colorscale changes not sending signal
-
-  - all views: add bool for draggers (in gridview; only active for structural re-init)
-  - all views: set color spec button in panel (in gridview)
-
-------------------
-* netview: move everything to one line in colorscale as in other views; add colors button
-  
-  - also add monitor buttons to various netview objects/context menus -- can do context menu
-  in T3 mode and monitor it!  prompt for variable.
-
-------------------
 hv model
 
 * debug DMEM timing: add start/end timer with some flags on the control guy and use
@@ -58,15 +32,13 @@ for setting network stats vars on dmem_timing.
   cs association with good look decisions drives reward at t-1
 
 --------------------
+Other Algorithms:
+  * fixup BP, so plugin
+
+--------------------
 * view colors: enum with different built-in styles
 
   * support the Flags for program guys: bg-only mode -- seems to require an index??
-
---------------------
-* netview: 
-
- * make xydrag handles thicker: create new default image by replacing existing
-   with thicker bars;
 
 --------------
 
@@ -97,6 +69,24 @@ Program issues
 css:
 
 * css_console.cpp: complete obj.mbr expressions..
+
+------------------
+* datatable views:
+
+  - struct update debug on hv model
+  - when editing a datatable_impl, need to send refresh update to display
+  - initial panel is not updated..  just stick in render_impl and be done with it??
+  - view at is too far zoomed out -- can't seem to fix this at all, any way I try..
+  - colorscale changes not sending signal
+  - add data_spacing to graph view
+
+  - all views: add bool for draggers (in gridview; only active for structural re-init)
+
+--------------------
+* netview: 
+
+ * make xydrag handles thicker: create new default image by replacing existing
+   with thicker bars;
 
 -----------
 Check:

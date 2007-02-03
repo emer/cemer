@@ -277,11 +277,7 @@ void DataJoinSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 bool taDataProc::GetDest(DataTable*& dest, DataTable* src, const String& suffix) {
   if(dest) return false;
   taProject* proj = GET_OWNER(src, taProject);
-  DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
-  dest = dgp->NewEl(1, &TA_DataTable);
-  String nm = src->name + "_" + suffix;
-  dest->name = nm;
-  taMisc::Warning("Note: taDataproc created new data table named:", nm, "in .data.AnalysisData");
+  dest = proj->GetNewAnalysisDataTable(src->name + "_" + suffix, true);
   return true;
 }
 

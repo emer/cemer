@@ -38,11 +38,9 @@ void BaseSpec_Group::Initialize() {
   SetBaseType(&TA_BaseSpec);
 }
 
-const iColor* BaseSpec_Group::GetEditColor() {
-  // we use color of type of the specs, not our own type
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if (proj) return proj->GetObjColor(el_base);
-  else return inherited::GetEditColor();
+String BaseSpec_Group::GetDecorateKey() const {
+  if(size > 0) return FastEl(0)->GetDecorateKey();
+  if(GetOwner()) return GetOwner()->GetDecorateKey();
 }
 
 BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {

@@ -603,6 +603,11 @@ Connection* RecvCons::FindRecipSendCon(Unit* ru, Unit* su) {
   return NULL;
 }
 
+void RecvCons::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  if(!net_mon) return;
+  net_mon->AddObject(this, variable);
+}
+
 /////////////////////////////////////////////////////////////
 // 	Weight ops
 
@@ -1295,6 +1300,11 @@ void SendCons::SetConType(TypeDef* cn_tp) {
   con_type = cn_tp;
 }
 
+void SendCons::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  if(!net_mon) return;
+  net_mon->AddObject(this, variable);
+}
+
 /////////////////////////////////////////////////////////////
 // 	Connection Creation/Deletion
 
@@ -1903,6 +1913,11 @@ int Unit::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
     nchg += send_gp->ReplaceConSpec(old_sp, new_sp);
   }
   return nchg;
+}
+
+void Unit::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  if(!net_mon) return;
+  net_mon->AddObject(this, variable);
 }
 
 void Unit::LinkSendCons() {
@@ -2711,6 +2726,11 @@ bool Projection::SetSendConsType(TypeDef* td) {
   return true;
 }
 
+void Projection::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  if(!net_mon) return;
+  net_mon->AddObject(this, variable);
+}
+
 bool Projection::ApplyConSpec() {
   if((layer == NULL) || (from == NULL)) return false;
   if(!con_spec.spec) return false;
@@ -3022,6 +3042,11 @@ bool Unit_Group::SetConSpec(ConSpec* sp) {
       return false;
   }
   return true;
+}
+
+void Unit_Group::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  if(!net_mon) return;
+  net_mon->AddObject(this, variable);
 }
 
 void Unit_Group::Copy_Weights(const Unit_Group* src) {
@@ -4147,6 +4172,11 @@ bool Layer::SetConSpec(ConSpec* sp) {
   return true;
 }
 
+void Layer::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  if(!net_mon) return;
+  net_mon->AddObject(this, variable);
+}
+
 int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
   int nchg = 0;
   if(unit_spec.spec == old_sp) {
@@ -4483,6 +4513,11 @@ void Network::UpdateAfterEdit_impl(){
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
   // noop for base case: algorithms must override!
   prjn->spec.type = &TA_FullPrjnSpec; 
+}
+
+void Network::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  if(!net_mon) return;
+  net_mon->AddObject(this, variable);
 }
 
 void Network::RemoveMonitors() {

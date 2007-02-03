@@ -101,9 +101,10 @@ public:
   virtual void	UpdateFilter();
   // #CAT_DoGFilter make our personal filter (RenderFilter(filter)) according to current params
 
-// todo: should just be a wizard call on filter..
-//   virtual void	GraphFilter(GraphLog* disp_log); // #BUTTON #NULL_OK plot the filter gaussian
-//   virtual void	GridFilter(GridLog* disp_log); // #BUTTON #NULL_OK plot the filter gaussian
+  virtual void	GraphFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph
+  virtual void	GridFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view
 
   void 	Initialize();
   void	Destroy() { };
@@ -149,9 +150,10 @@ public:
   virtual float	GetParam(GaborParam param);
   // #CAT_GaborFilter get particular parameter value
 
-// todo: should just be a wizard call on filter..
-//   virtual void	GraphFilter(GraphLog* disp_log); // #BUTTON #NULL_OK plot the filter gaussian
-//   virtual void	GridFilter(GridLog* disp_log); // #BUTTON #NULL_OK plot the filter gaussian
+  virtual void	GraphFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter into data table and generate a graph from it
+  virtual void	GridFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter into data table and generate a grid view of it
 
   virtual void	OutputParams(ostream& strm = cerr);
   // #CAT_GaborFilter output current parameter values to stream
@@ -204,6 +206,9 @@ public:
   virtual void	UpdateSizes();
   // update the computed sizes
 
+  virtual void	PlotSpacing(DataTable* disp_data, float val = 1.0f);
+  // #BUTTON #NULL_OK plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
+
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(RetinalSpacingSpec);
@@ -217,6 +222,14 @@ INHERITED(taNBase)
 public:
   DoGFilterSpec		dog;		// Difference of Gaussian retinal filters
   RetinalSpacingSpec	spacing;	// how to space DoG filters in the retina
+
+  virtual void	GraphFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph
+  virtual void	GridFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view
+
+  virtual void	PlotSpacing(DataTable* disp_data, float val = 1.0f);
+  // #BUTTON #NULL_OK plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
 
   void 	Initialize();
   void	Destroy() { };
@@ -303,6 +316,9 @@ public:
 
   virtual void	ConfigDataTable(DataTable* dt, bool reset_cols = false);
   // #BUTTON #CAT_Config #NULL_OK configure a data table to hold all of the image data (if reset_cols, reset any existing cols in data table before adding new ones) (if dt == NULL, a new one is created in data.InputData)
+
+  virtual void	PlotSpacing(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the arrangement of the filters (centers) in the data table and generate a grid view
 
   ///////////////////////////////////////////////////////////////////////
   // Basic filtering function: transforms image and then applies dog filters

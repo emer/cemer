@@ -56,7 +56,7 @@ public:
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
 
-  const iColor* GetEditColor();
+  override String 	GetDecorateKey() const;
 
   void	Initialize();
   void 	Destroy()		{ }

@@ -1055,6 +1055,8 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
 void NetMonItem::SetMonVals(TAPtr obj, const String& var) {
   if ((object == obj) && (variable == var)) return; 
   object = obj;
+  if(object)
+    object_type = object->GetTypeDef();
   variable = var;
   UpdateAfterEdit();
 }

@@ -197,6 +197,14 @@ protected:
     WIDTH=i (i: int) -- sets default column width to i chars
     TOP_ZERO  -- override BOT_ZERO default
     IMAGE     -- display as IMAGE (only for matrix columns)
+
+  For the overall Table:
+    N_ROWS = number of view rows
+    AUTO_SCALE = set colorscale.auto_scale on
+    WIDTH = width of display
+    SCALE_MIN = set colorscale.min (float)
+    SCALE_MAX = set colorscale.max (float)
+    BLOCK_HEIGHT = mat_block_height
 */
 
 class TA_API GridColView : public DataColView {
@@ -291,6 +299,7 @@ public:
   void		setCols(int cols);
   void		setMatTrans(float value);
   void		setMatRot(float value);
+  void		setMatBlockHeight(float value);
   void		setAutoScale(bool value);
   void		setScaleData(bool auto_scale, float scale_min, float scale_max);
   // updates the values in us and the stored ones in the colorscale list
@@ -408,6 +417,8 @@ public:
   QCheckBox*		    chkRowNum;
   QCheckBox*		    chk2dFont;
   QCheckBox*		    chkValText;
+  QLabel*		    lblBlockHeight;
+  taiField*		    fldBlockHeight; // mat_block_height
   QPushButton*		    butRefresh;
   QPushButton*		    butClear;
   QPushButton*		    butSetColor;
@@ -455,6 +466,7 @@ protected slots:
   void 		chkRowNum_toggled(bool on);
   void 		chk2dFont_toggled(bool on);
   void 		chkValText_toggled(bool on);
+  void 		fldBlockHeight_textChanged();
 
   void 		butRefresh_pressed();
   void 		butClear_pressed();

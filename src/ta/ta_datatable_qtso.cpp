@@ -295,6 +295,8 @@ void DataTableView::MakeViewRangeValid() {
   if (view_range.min >= rows) {
     view_range.min = MAX(0, (rows - view_rows - 1));
   }
+  if(view_rows >= rows) // start at start if we can view whole thing
+    view_range.min = 0;
   view_range.max = view_range.min + view_rows - 1; // always keep min and max valid
   view_range.MaxLT(rows - 1); // keep it less than max
 }
@@ -705,7 +707,7 @@ void GridTableView::Initialize() {
   width	= 1.0f;
   grid_on = true;
   header_on = true;
-  row_num_on = true;
+  row_num_on = false;
   two_d_font = false;		// true -- this is causing mysterious so crash, disabled for now
   two_d_font_scale = 350.0f;
   mat_val_text = false;
@@ -798,6 +800,18 @@ void GridTableView::InitFromUserData() {
   }
   if(dt->HasUserData("AUTO_SCALE")) {
     colorscale.auto_scale = true;
+  }
+  if(dt->HasUserData("WIDTH")) {
+    width = dt->GetUserDataAsFloat("WIDTH");
+  }
+  if(dt->HasUserData("SCALE_MIN")) {
+    colorscale.min = dt->GetUserDataAsFloat("SCALE_MIN");
+  }
+  if(dt->HasUserData("SCALE_MAX")) {
+    colorscale.max = dt->GetUserDataAsFloat("SCALE_MAX");
+  }
+  if(dt->HasUserData("BLOCK_HEIGHT")) {
+    mat_block_height = dt->GetUserDataAsFloat("BLOCK_HEIGHT");
   }
 }
 
@@ -1517,6 +1531,12 @@ void GridTableView::setMatTrans(float value) {
   UpdateDisplay(true);
 }
 
+void GridTableView::setMatBlockHeight(float value) {
+  if(mat_block_height == value) return;
+  mat_block_height = value;
+  UpdateDisplay(true);
+}
+
 void GridTableView::setMatRot(float value) {
   if(mat_rot == value) return;
   mat_rot = value;
@@ -1705,6 +1725,13 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   connect(chkValText, SIGNAL(toggled(bool)), this, SLOT(chkValText_toggled(bool)) );
   layTopCtrls->addWidget(chkValText);
 
+  lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
+  lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
+  layTopCtrls->addWidget(lblBlockHeight);
+  fldBlockHeight = new taiField(&TA_float, NULL, NULL, widg);
+  layTopCtrls->addWidget(fldBlockHeight->GetRep());
+//   layVals->addSpacing(taiM->hsep_c);
+  connect(fldBlockHeight->rep(), SIGNAL(editingFinished()), this, SLOT(fldBlockHeight_textChanged()) );
   layTopCtrls->addStretch();
 
   butRefresh = new QPushButton("Refresh", widg);
@@ -1812,6 +1839,7 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   chkRowNum->setChecked(glv->row_num_on);
   chk2dFont->setChecked(glv->two_d_font);
   chkValText->setChecked(glv->mat_val_text);
+  fldBlockHeight->GetImage((String)glv->mat_block_height);
 
   fldWidth->GetImage((String)glv->width);
   fldRows->GetImage((String)glv->view_rows);
@@ -1902,6 +1930,13 @@ void iGridTableView_Panel::chkValText_toggled(bool on) {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
   glv->setValText(on);
+}
+
+void iGridTableView_Panel::fldBlockHeight_textChanged() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setMatBlockHeight((float)fldBlockHeight->GetValue());
 }
 
 void iGridTableView_Panel::butRefresh_pressed() {
@@ -2509,7 +2544,7 @@ GraphTableView* GraphTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
 }
 
 void GraphTableView::Initialize() {
-  view_rows = 1000;
+  view_rows = 10000;
 
   x_axis.axis = GraphAxisBase::X;
   z_axis.axis = GraphAxisBase::Z;
@@ -2523,7 +2558,7 @@ void GraphTableView::Initialize() {
   plot_style = LINE;
   line_width = 2.0f;
   point_spacing = 1;
-  color_mode = FIXED_COLOR;
+  color_mode = VALUE_COLOR;
   negative_draw = false;
   label_spacing = -1;
   matrix_mode = SEP_GRAPHS;
@@ -2879,6 +2914,7 @@ void GraphTableView::FindDefaultPlot1() {
     GraphColView* cvs = (GraphColView*)colView(i);
     DataArray_impl* da = cvs->dataCol();
     if((da->valType() != VT_FLOAT) && (da->valType() != VT_DOUBLE)) continue;
+    if(x_axis.col_name == cvs->name) continue; // don't make it same as X!
     plot_1.col_name = cvs->name;
     plot_1.InitFromUserData();
     plot_1.UpdateAfterEdit();
@@ -3973,7 +4009,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(scrView, SIGNAL(valueChanged(int)), this, SLOT(scrView_valueChanged(int)) );
   scrView->setTracking(true);
   scrView->setMinValue(0);
-  layScroll->addWidget(scrView, 1);
+  layScroll->addWidget(scrView, 1); // this 1 here gives it higher priority and allows it to stretch all the way!
 
   ////////////////////////////////////////////////////////////////////////////
   // 	viewspace guy

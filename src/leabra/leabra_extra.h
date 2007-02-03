@@ -881,8 +881,10 @@ public:
   virtual bool 	InitGaborDoGSpec(Projection* prjn, int recv_idx);
   // initialize gabor_spec or dog_spec data for given recv unit index
 
-//   virtual void	GraphFilter(Projection* prjn, int recv_unit_no, GraphLog* disp_log); // #BUTTON #NULL_OK plot the filter  for given receiving unit number
-//   virtual void	GridFilter(Projection* prjn, int recv_unit_no, GridLog* disp_log); // #BUTTON #NULL_OK plot the filter for given receiving unit number
+  virtual void	GraphFilter(Projection* prjn, int recv_unit_no, DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter  for given receiving unit number
+  virtual void	GridFilter(Projection* prjn, int recv_unit_no, DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter for given receiving unit number
 
   void	Initialize();
   void 	Destroy()		{ };

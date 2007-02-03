@@ -407,11 +407,16 @@ public:
     bool update_panel = true); // updates the values in us and the stored ones in the colorscale list
   void 			SetScaleDefault(); //revert scale to its default
 
+  void			SetColorSpec(ColorScaleSpec* color_spec);
+  // #BUTTON set the color scale spec to determine the palette of colors representing values
+
   virtual void		NewLayer(int x = 3, int y = 3);
   virtual void		Layer_DataUAE(LayerView* lv); // send a DataUAE for all prjns for this layer
 
   override String	GetLabel() const;
   override String	GetName() const;
+
+  override bool		selectEditMe() const { return true; }
 
   override void		InitLinks();
   override void		CutLinks();
@@ -452,33 +457,36 @@ public:
 
   QVBoxLayout*		layOuter;
   QVBoxLayout*		layViewParams;
-  QHBoxLayout*		layDispCheck;
-  QHBoxLayout*		layFontsEtc;
-  QCheckBox*		chkDisplay;
-  QLabel*		lblUnitText;
-  taiComboBox*		cmbUnitText;
-  QLabel*		lblDispMode;
-  taiComboBox*		cmbDispMode;
-  QLabel*		lblUnitTrans;
-  taiField*		fldUnitTrans;
-  QLabel*		lblUnitFont;
-  taiField*		fldUnitFont;
-  QLabel*		lblLayFont;
-  taiField*		fldLayFont;
-  iMethodButtonFrame*	widCmdButtons;
+  QHBoxLayout*		 layDispCheck;
+  QCheckBox*		  chkDisplay;
+  QLabel*		  lblUnitText;
+  taiComboBox*		  cmbUnitText;
+  QLabel*		  lblDispMode;
+  taiComboBox*		  cmbDispMode;
+  QHBoxLayout*		 layFontsEtc;
+  QLabel*		  lblUnitTrans;
+  taiField*		  fldUnitTrans;
+  QLabel*		  lblUnitFont;
+  taiField*		  fldUnitFont;
+  QLabel*		  lblLayFont;
+  taiField*		  fldLayFont;
+  QCheckBox*		  chkXYSquare;
 
   QGroupBox*		gbDisplayValues;
   QVBoxLayout*		layDisplayValues;
-  QHBoxLayout*		layColorScaleCtrls;
-  QCheckBox*		chkAutoScale;       // autoscale ck_box
-  QPushButton*		butScaleDefault;    // revert to default
-  ScaleBar*		cbar;	      // colorbar
-  Q3ListView*		lvDisplayValues;
+  QHBoxLayout*		 layColorScaleCtrls;
+  QCheckBox*		  chkAutoScale;       // autoscale ck_box
+  QPushButton*		  butScaleDefault;    // revert to default  
+  QHBoxLayout*		 layColorBar;
+  ScaleBar*		  cbar;	      // colorbar
+  QPushButton*		  butSetColor;
+  Q3ListView*		 lvDisplayValues;
   
   QGroupBox*		gbSpecs;
   QVBoxLayout*		laySpecs;
   iTreeView*		tvSpecs;
   
+  iMethodButtonFrame*	widCmdButtons;
   QPushButton*		butNewLayer;
   QPushButton*		butBuildAll;
   QPushButton*		butConnectAll;
@@ -514,6 +522,7 @@ protected slots:
   void			butConnectAll_pressed();
   void			butNewLayer_pressed();
   void			butScaleDefault_pressed();
+  void 			butSetColor_pressed();
   virtual void 		chkAutoScale_toggled(bool on);
   virtual void 		chkDisplay_toggled(bool on);
   virtual void 		cmbUnitText_itemChanged(int itm);
@@ -521,6 +530,7 @@ protected slots:
   virtual void 		fldUnitTrans_textChanged();
   virtual void 		fldUnitFont_textChanged();
   virtual void 		fldLayFont_textChanged();
+  virtual void 		chkXYSquare_toggled(bool on);
   virtual void		cbar_scaleValueChanged();
   virtual void		lvDisplayValues_selectionChanged();
   void			tvSpecs_CustomExpandFilter(iTreeViewItem* item,
