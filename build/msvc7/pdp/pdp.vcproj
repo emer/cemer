@@ -40,6 +40,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/pdp.pdb"
 				SubSystem="2"
+				OptimizeForWindows98="1"
 				ImportLibrary="$(OutDir)/pdp_debug.lib"
 				TargetMachine="1"/>
 			<Tool
@@ -97,6 +98,7 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="1"
 				ImportLibrary="$(OutDir)/pdp.lib"
 				TargetMachine="1"/>
 			<Tool
@@ -333,13 +335,7 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				Name="Built Files"
 				Filter="">
 				<File
-					RelativePath="..\..\..\src\bp\bp_TA.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\bp\bp_TA_inst.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\bp\bp_TA_type.h">
+					RelativePath="..\include\bp_TA_type.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -399,6 +395,9 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 			<Filter
 				Name="Built Files"
 				Filter="">
+				<File
+					RelativePath="..\include\leabra_TA_type.h">
+				</File>
 			</Filter>
 		</Filter>
 		<File

@@ -17,8 +17,6 @@ goto end
 nmake /f %PDP4DIR%\build\msvc7\Makefile pdp_files
 @if errorlevel 1 goto end
 
-rem TEMP
-goto end
 @cd %PDP4DIR%\src\bp
 nmake /f %PDP4DIR%\build\msvc7\Makefile bp_files
 @if errorlevel 1 goto end

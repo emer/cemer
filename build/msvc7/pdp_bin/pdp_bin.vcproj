@@ -41,6 +41,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/pdp_bin.pdb"
 				SubSystem="1"
+				OptimizeForWindows98="1"
 				EntryPointSymbol=""
 				TargetMachine="1"/>
 			<Tool
@@ -95,6 +96,7 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="1"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>

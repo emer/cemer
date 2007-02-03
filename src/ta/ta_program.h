@@ -716,7 +716,7 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class ProgObjList: public taBase_List {
+class TA_API ProgObjList: public taBase_List {
   // ##CAT_Program A list of program objects (just a taBase list with proper update actions to update variables associated with objects)
 INHERITED(taBase_List)
 public:

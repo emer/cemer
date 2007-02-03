@@ -27,7 +27,7 @@
 class taPlugin;
 class taPlugin_List;
 
-class taPluginInst: public QPluginLoader { // ##NO_INSTANCE an instance of a plugin
+class TA_API taPluginInst: public QPluginLoader { // ##NO_INSTANCE an instance of a plugin
   Q_OBJECT
 INHERITED(QPluginLoader)
 public:
@@ -53,7 +53,7 @@ public:
 };
 
 
-class taPluginInst_PList: public taPtrList<taPluginInst> { // #NO_INSTANCE
+class TA_API taPluginInst_PList: public taPtrList<taPluginInst> { // #NO_INSTANCE
 INHERITED(taPtrList<taPluginInst>)
 public:
   taPluginInst_PList() {}
@@ -63,7 +63,7 @@ protected:
 };
 
 
-class taPlugins { // #NO_INSTANCE global object to manage plugins
+class TA_API taPlugins { // #NO_INSTANCE global object to manage plugins
 public:
   static String_PArray	plugin_folders; // folders to search for plugins
   static taPluginInst_PList	plugins; // plugins that have been loaded -- they remain for the lifetime of program
@@ -79,7 +79,7 @@ protected:
     // try loading the plugin, returns the loader object if successful
 };
 
-class taPluginBase: public taOBase {
+class TA_API taPluginBase: public taOBase {
   // #VIRT_BASE ##NO_TOKENS ##NO_UPDATE_AFTER taBase rep of a plugin -- these can be out of date w/ respect to actual plugins
 INHERITED(taOBase)
 public:
@@ -101,7 +101,7 @@ private:
 };
 
 
-class taPlugin: public taPluginBase {
+class TA_API taPlugin: public taPluginBase {
   // taBase rep of a plugin -- these can be out of date w/ respect to actual plugins
 INHERITED(taPluginBase)
 public:
@@ -122,7 +122,7 @@ private:
 };
 
 
-class taPluginDep: public taPluginBase {
+class TA_API taPluginDep: public taPluginBase {
   // describes a plugin dependency -- appears in root, and streamed to files
 INHERITED(taPluginBase)
 public:
@@ -148,7 +148,7 @@ private:
 };
 
 
-class taPluginBase_List: public taList<taPluginBase> {
+class TA_API taPluginBase_List: public taList<taPluginBase> {
   // ##CHILDREN_INLINE ##NO_UPDATE_AFTER plugins available to the program (also used for deps)
 INHERITED(taList<taPluginBase>)
 public:
@@ -168,7 +168,7 @@ private:
   void	Destroy() {}
 };
 
-class taPlugin_List: public taPluginBase_List {
+class TA_API taPlugin_List: public taPluginBase_List {
   // plugins available to the program (also used for descs)
 INHERITED(taPluginBase_List)
 public:

@@ -22,6 +22,8 @@
 #ifdef TA_GUI
 #endif // TA_GUI
 
+#ifdef TA_OS_UNIX
+
 void css_cleanup(int err) {
   signal(err, SIG_DFL);
   if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2)) {
@@ -39,14 +41,16 @@ void css_cleanup(int err) {
 #endif // GUI_IV
   kill(getpid(), err);		// activate signal
 }
+#endif // TA_OS_UNIX
 
 int main(int argc, const char *argv[]) {
   cssMisc::prompt = "css";
   taMisc::use_gui = true;	// set opposite default from normal
 
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_ta, &TA_taRootBase)) return 1;
-
+#ifdef TA_OS_UNIX
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) css_cleanup);
+#endif
   if(taRootBase::Startup_Run())
     return 0;
   else

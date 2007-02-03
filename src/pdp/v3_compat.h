@@ -89,7 +89,7 @@ typedef TextLog GridLog;
 typedef TextLog NetLog;
 typedef PDPLog GraphLog;
 
-class TA_API float_RArray : public float_Array {
+class PDP_API float_RArray : public float_Array {
   // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
 public:
   enum DistMetric {		// generalized distance metrics
@@ -171,7 +171,7 @@ public:
   TA_SIMPLE_BASEFUNS(V3ScriptFile);
 };
 
-class TA_API Script : public taNBase {
+class PDP_API Script : public taNBase {
   // ##EXT_scr ##CAT_v3Compat an object for maintaining and running arbitrary scripts
 INHERITED(taNBase)
 public:
@@ -214,7 +214,7 @@ private:
   void	Destroy() { CutLinks(); }
 };
 
-class TA_API Script_Group : public taGroup<Script> {
+class PDP_API Script_Group : public taGroup<Script> {
   // ##CAT_v3Compat 
 public:
 //   virtual void	StopRecording();
@@ -1777,7 +1777,7 @@ public:
 
 /// end: procs_extra.h
 
-class TA_API TypeDefault_Group : public taGroup<TypeDefault> {
+class PDP_API TypeDefault_Group : public taGroup<TypeDefault> {
   // #DEF_PATH_$PDPDIR$/defaults ##CAT_v3Compat group of type default objects
 INHERITED(taGroup<TypeDefault>)
 public:

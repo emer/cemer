@@ -23,6 +23,7 @@
 #endif
 
 #include "pdp_project.h"
+#include "ta_filer.h"
 
 #include <memory.h>
 #include <malloc.h>
@@ -40,27 +41,27 @@ void pdpMisc::SaveRecoverFile(int err) {
     String proj_sfx = ".proj";	proj_sfx += taMisc::compress_sfx;
 
     String home_dir = getenv("HOME"); // home directory if curent dir does not work.
-    taFiler* gf = taFiler_CreateInstance();		// use a getfile for compressed writes..
+    taFiler* gf = taFiler::New();		// use a getfile for compressed writes..
     taRefN::Ref(gf);
-    ProjectBase* p;
+    taProject* p;
     int cnt = 0;
     for (int i = 0; i < pdpMisc::root->projects.size; ++i) {
       p = root->projects.FastEl(i);
       String prfx = "PDP++Recover.";
       cnt = get_unique_file_number(cnt, prfx, proj_sfx);
-      gf->fname = prfx + String(cnt) + proj_sfx;
+      gf->setFileName(prfx + String(cnt) + proj_sfx);
       ostream* strm = gf->open_write();
       if (((strm == NULL) || strm->bad()) && !home_dir.empty()) {
 	      // try it with the home diretory
 	      cerr << "Error saving in current directory, trying home directory";
 	      gf->Close();
-	      gf->fname = home_dir + "/" + gf->fname;
+	      gf->setFileName(home_dir + "/" + gf->fname());
 	      strm = gf->open_write();
       }
       if((strm == NULL) || strm->bad())
-	      cerr << "SaveRecoverFile: could not open file: " << gf->fname << "\n";
+	      cerr << "SaveRecoverFile: could not open file: " << gf->fileName() << "\n";
       else
-	      p->Save(*strm);
+	      p->Save_strm(*strm);
       gf->Close();
       cnt++;
     }

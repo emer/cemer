@@ -44,7 +44,9 @@ static void leabra_converter_init() {
 }
 
 void leabra_module_init() {
-  ta_Init_leabra();		// initialize types
+#ifndef TA_OS_WIN
+  ta_Init_leabra();		// initialize types (not needed in Win because all TA in pdp)
+#endif
   leabra_converter_init();	// configure converter
 }
 
@@ -358,7 +360,7 @@ void VChanBasis::Copy_(const VChanBasis& cp) {
 void ActFunSpec::Initialize() {
   thr = .25f;
   gain = 600.0f;
-  nvar = .005;
+  nvar = .005f;
   avg_dt = .005f;
   send_delta = false;
   i_thr = STD;
@@ -1456,7 +1458,7 @@ void KWTASpec::Initialize() {
   pct = .25f;
   pat_q = .5f;
   diff_act_pct = false;
-  act_pct = .1;
+  act_pct = .1f;
   gp_i = false;
   gp_g = .5f;
 }

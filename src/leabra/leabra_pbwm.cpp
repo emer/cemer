@@ -2052,11 +2052,11 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   snrthal_units->act.gain = 20.0f;
 
   // set projection parameters
-  topfc->p_con = .4;
+  topfc->p_con = .4f;
   pfc_selfps->self_con = true;
 
   // todo: out of date!
-  intra_pfcps->def_p_con = .4;
+  intra_pfcps->def_p_con = .4f;
   intra_pfcps->recv_gp_n.y = 1;
   intra_pfcps->recv_gp_group.x = half_stripes;
   intra_pfcps->MakeRectangle(half_stripes, 1, 0, 1);

@@ -301,7 +301,7 @@ void ConArray::SetSize(int sz) {
     sz = alloc_size;
   }
   if(sz > size) {
-    bzero((void*)FastEl(size), (sz - size) * con_size);
+    memset((void*)FastEl(size), 0, (sz - size) * con_size);
   }
   size = sz;
 }

@@ -27,8 +27,10 @@
 #include <mpi.h>
 #endif
 
-// module initialization
-InitProcRegistrar mod_init(ta_Init_bp);
+// module initialization (not needed in Win because all TA in pdp
+#ifndef TA_OS_WIN
+  InitProcRegistrar mod_init(ta_Init_bp);
+#endif
 
 
 //////////////////////////

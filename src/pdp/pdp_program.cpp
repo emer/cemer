@@ -215,7 +215,7 @@ void NetCounterInit::Destroy() {
 void NetCounterInit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   GetLocalCtrVar();
-  if(network_var && (network_var->object_val)) {
+  if((bool)network_var && ((bool)network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
   }
 }
@@ -230,7 +230,7 @@ void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "network_var = NULL");
     rval = false;
   }
-  if(network_var && !network_var->object_val) {
+  if((bool)network_var && !network_var->object_val) {
     if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "network_var object = NULL");
     rval = false;
   }
@@ -281,7 +281,7 @@ void NetCounterIncr::Destroy() {
 void NetCounterIncr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   GetLocalCtrVar();
-  if(network_var && (network_var->object_val)) {
+  if((bool)network_var && ((bool)network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
   }
 }
@@ -296,7 +296,7 @@ void NetCounterIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "network_var = NULL");
     rval = false;
   }
-  if(network_var && !network_var->object_val) {
+  if((bool)network_var && !network_var->object_val) {
     if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "network_var object = NULL");
     rval = false;
   }

@@ -6,7 +6,8 @@ INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
   "-I$(QTDIR)/include/QtCore" "-I$(QTDIR)/include/QtGui" \
   "-I$(QTDIR)/include/QtNetwork" "-I$(QTDIR)/include/QtOpenGL" \
   "-I$(QTDIR)/include/QtXml" "-I$(COINDIR)/include/Inventor" \
-  "-I$(PDP4DIR)\build\msvc7" "-I$(VCDIR)\Vc7\include" 
+  "-I$(PDP4DIR)\build\msvc7" "-I$(PDP4DIR)\build\msvc7\include" \
+  "-I$(VCDIR)\Vc7\include" 
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
 #MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
@@ -288,12 +289,12 @@ PDP_MAKETA =\
 
 PDP_MOCS: \
 	netstru_qtso.moc.cpp \
-	pdp_program_qt.moc.cpp
+	pdp_program_qtso.moc.cpp
 
 netstru_qtso.moc.cpp: $(PDP4DIR)\src\pdp\netstru_qtso.h
 	$(MOC) %s -o $@
 	
-pdp_program_qt.moc.cpp: $(PDP4DIR)\src\pdp\pdp_program_qt.h
+pdp_program_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdp_program_qtso.h
 	$(MOC) %s -o $@
 
 pdp_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdp_qtso.h
@@ -337,14 +338,16 @@ ta_TA_type.h: $(TAHEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
   $(CD) $(PDP4DIR)/src/ta
   $(MAKETA) $(MAKETA_FLAGS) ta $(TAHEADS) 
   
-pdp_TA_type.h: $(PDP_HEADS)
+pdp_TA_type.h: $(PDP_HEADS) $(BP_HEADS) $(LEABRA_HEADS)
   $(CD) $(PDP4DIR)/src/pdp
-  $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA) 
+  $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA) $(BP_HEADS)  $(LEABRA_HEADS)
   
+#NOTE: following is defunct -- we put everything in pdp_TA
 bp_TA_type.h: $(BP_HEADS)
   $(CD) $(PDP4DIR)/src/bp
   $(MAKETA) $(MAKETA_FLAGS) bp $(BP_MAKETA) 
   
+#NOTE: following is defunct -- we put everything in pdp_TA
 leabra_TA_type.h: $(LEABRA_HEADS)
   $(CD) $(PDP4DIR)/src/leabra
   $(MAKETA) $(MAKETA_FLAGS) leabra $(LEABRA_MAKETA) 
@@ -358,14 +361,21 @@ taiqtso_files: TAIQTSO_MOCS
  
 css_files: CSS_MOCS
 
-ta_files: ta_TA_type.h $(TAHEADS) $(TA_MOCS)
+ta_mocs: $(TA_MOCS)
+
+ta_files: ta_TA_type.h ta_mocs
   
- 
-pdp_files: pdp_TA_type.h $(PDP_MAKETA) $(PDP_MOCS)
 
-bp_files: bp_TA_type.h $(BP_MAKETA)
+pdp_mocs: $(PDP_MOCS)
 
-leabra_files: leabra_TA_type.h $(LEABRA_MAKETA)
+pdp_files: pdp_TA_type.h pdp_mocs
+
+#bp_files: bp_TA_type.h
+bp_files: 
+
+#leabra_files: leabra_TA_type.h
+leabra_files: 
+
 
 maketa_files: \
   ta_TA_type.h 

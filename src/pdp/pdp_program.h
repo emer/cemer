@@ -29,7 +29,7 @@ class Network;
 // note: the motivation for supporting dmem within the basic data loops is so that the
 // same project can be run transparently in dmem or non-dmem mode without modification
 
-class TA_API BasicDataLoop: public Loop { 
+class PDP_API BasicDataLoop: public Loop { 
   // loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data; Note: assumes that there is a network variable defined in program!!
 INHERITED(Loop)
 public:
@@ -62,7 +62,7 @@ private:
   void	Destroy() { CutLinks(); }
 };
 
-class TA_API GroupedDataLoop: public Loop { 
+class PDP_API GroupedDataLoop: public Loop { 
   // loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data
 INHERITED(Loop)
 public:
