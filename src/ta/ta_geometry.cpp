@@ -93,6 +93,9 @@ void XYNGeom::UpdateAfterEdit_impl() {
   }
 }
 
+void XYNGeom::operator=(const TwoDCoord& cp) {
+  x = cp.x; y = cp.y; UpdateAfterEdit();
+}
 
 TypeDef* TDCoord::StatTypeDef(int) 	{ return &TA_TDCoord; }
 

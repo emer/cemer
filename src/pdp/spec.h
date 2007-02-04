@@ -56,7 +56,7 @@ public:
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
 
-  override String 	GetDecorateKey() const;
+  override String 	GetTypeDecoKey() const;
 
   void	Initialize();
   void 	Destroy()		{ }

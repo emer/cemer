@@ -424,8 +424,10 @@ public:
   // #IGNORE a type-specific description of the specific functionality/properties of the object
   virtual void 		SetDefaultName() {} // #IGNORE note: called non-virtually in every constructor
   void 			SetDefaultName_(); // #IGNORE default behavior for >=taNBase -- you can call this manually for taOBase (or others that implement Name)
-  virtual String	GetDecorateKey() const {return _nilString;}
-    // #IGNORE lookup key for decorating tree items, ex. "comment"
+  virtual String	GetTypeDecoKey() const { return _nilString; }
+  // #IGNORE lookup key for visual decoration of an item reflecting its overall type information, used for font colors in the gui browser, for example
+  virtual String	GetStateDecoKey() const;
+  // #IGNORE lookup key for visual decoration of an item reflecting current state information, used for backgroundt colors in the gui browser, for example
 
   virtual void* 	GetTA_Element(int idx, TypeDef*& eltd) 
   { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])
@@ -523,7 +525,8 @@ public:
   virtual void 		Dump_Save_pre() {}
   // #IGNORE called before _Path, enables jit updating before save
   virtual int 		Dump_Save_impl(ostream& strm, TAPtr par=NULL, int indent=0)
-  { return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
+  { Dump_Save_pre(); 
+    return GetTypeDef()->Dump_Save_impl(strm, (void*)this, par, indent); } // #IGNORE
   virtual int 		Dump_Save_inline(ostream& strm, TAPtr par=NULL, int indent=0)
   { Dump_Save_pre(); 
     return GetTypeDef()->Dump_Save_inline(strm, (void*)this, par, indent); } // #IGNORE

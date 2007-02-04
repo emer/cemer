@@ -500,6 +500,27 @@ int ProgEl::GetEnabled() const {
   else return 0;
 }
 
+String ProgEl::GetStateDecoKey() const {
+  String rval = inherited::GetStateDecoKey();
+  if(rval.empty()) {
+    if(CheckProgFlag(NON_STD))
+      return "ProgElNonStd";
+    if(CheckProgFlag(NEW_EL))
+      return "ProgElNewEl";
+  }
+  return rval;
+}
+
+void ProgEl::SetNonStdFlag(bool non_std) {
+  SetProgFlagState(NON_STD, non_std);
+  UpdateAfterEdit();		// trigger update
+}
+
+void ProgEl::SetNewElFlag(bool new_el) {
+  SetProgFlagState(NEW_EL, new_el);
+  UpdateAfterEdit();
+}
+
 void ProgEl::PreGen(int& item_id) {
   if(CheckProgFlag(OFF)) return;
   PreGenMe_impl(item_id);

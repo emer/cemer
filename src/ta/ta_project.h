@@ -39,7 +39,7 @@ INHERITED(taNBase)
 public:
   bool		auto_open;	// open this wizard upon startup
 
-  override String 	GetDecorateKey() const { return "Wizard"; }
+  override String 	GetTypeDecoKey() const { return "Wizard"; }
 
   void 	InitLinks();
   void	CutLinks(); 
@@ -57,7 +57,7 @@ INHERITED(taGroup<taWizard>)
 public:
   virtual void	AutoEdit();
 
-  override String 	GetDecorateKey() const { return "Wizard"; }
+  override String 	GetTypeDecoKey() const { return "Wizard"; }
 
   void	Initialize() 		{ SetBaseType(&TA_taWizard); }
   void 	Destroy()		{ };
@@ -70,7 +70,7 @@ INHERITED(taGroup<SelectEdit>)
 public:
   virtual void	AutoEdit();
 
-  override String 	GetDecorateKey() const { return "SelectEdit"; }
+  override String 	GetTypeDecoKey() const { return "SelectEdit"; }
 
   void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
   void 	Destroy()		{ };

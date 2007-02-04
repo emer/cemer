@@ -762,8 +762,12 @@ const QVariant tabDataLink::GetColData(const KeyString& key, int role) const {
   return data()->GetColData(key, role);
 }
 
-String tabDataLink::GetDecorateKey() const {
-  return data()->GetDecorateKey();
+String tabDataLink::GetTypeDecoKey() const {
+  return data()->GetTypeDecoKey();
+}
+
+String tabDataLink::GetStateDecoKey() const {
+  return data()->GetStateDecoKey();
 }
 
 bool tabDataLink::isEnabled() const {
@@ -5054,7 +5058,6 @@ void iTreeViewItem::DecorateDataNode() {
   // fill out remaining col text and data according to key
   iTreeView* tv = treeView();
   if (!tv) return; //shouldn't happen
-  bool item_enabled = link->isEnabled(); // usually is
   // we only fiddle the font if item disabled or previously disabled
   // (otherwise, we'd be superfluously setting a Font into each item!)
   //  bool set_font = (!item_enabled);
@@ -5064,15 +5067,15 @@ void iTreeViewItem::DecorateDataNode() {
       if (!set_font)
         set_font = data(0, Qt::FontRole).isValid();
     }
-    // font
-    if (set_font) {
-      if (item_enabled) {
-        // setting the font to nil causes the itemdelegate guy to use default
-        setData(i, Qt::FontRole, QVariant());
-      } else {
-        setData(i, Qt::FontRole, QVariant(tv->italicFont()));
-      }
-    }
+    // font -- just for reference -- not used
+//     if (set_font) {
+//       if (item_enabled) {
+//         // setting the font to nil causes the itemdelegate guy to use default
+//         setData(i, Qt::FontRole, QVariant());
+//       } else {
+//         setData(i, Qt::FontRole, QVariant(tv->italicFont()));
+//       }
+//     }
     int max_chars = tv->maxColChars(i); // -1 if no limit
     int col_format = tv->colFormat(i); // 0 if none
     // first, the col text (cols >=1 only)
@@ -5101,31 +5104,35 @@ void iTreeViewItem::DecorateDataNode() {
       }
     }
   }
-  // if tree is using highlighting, then highlight if invalid
+  // if tree is using highlighting, then highlight according to state information
   if (tv->highlightRows()) {
-    if(!item_enabled) {
-      setBackgroundColor(QColor(0xa0, 0xa0, 0xa0));//setHighlightIndex(3);
+    String dec_key = link->GetStateDecoKey();
+    if(dec_key.nonempty()) {
+      ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+      if(vc) {
+	if(vc->use_bg)		// prefer bg color; always set bg so no conflict with type info
+	  setBackgroundColor(*(vc->bg_color.color()));
+ 	else if(vc->use_fg)
+ 	  setBackgroundColor(*(vc->fg_color.color()));
+      }
+      else {
+	resetBackgroundColor();//setHighlightIndex(0);
+      }
     }
     else {
-      int cfc = link->checkConfigFlags();
-      if (cfc & taBase::THIS_INVALID)
-	setBackgroundColor(QColor(0xFF, 0x99, 0x99));//setHighlightIndex(1); //red
-      else if (cfc & taBase::CHILD_INVALID)
-	setBackgroundColor(QColor(0xFF, 0xFF, 0x99));//setHighlightIndex(2); //yellow
-      else 
-	resetBackgroundColor();//setHighlightIndex(0);
+      resetBackgroundColor();//setHighlightIndex(0);
     }
   }
   // if decoration enabled, then decorate away
   if (tv->decorateEnabled()) {
-    String dec_key = link->GetDecorateKey(); // nil if none
+    String dec_key = link->GetTypeDecoKey(); // nil if none
     if (dec_key.nonempty()) {
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
       if(vc) {
 	if(vc->use_fg)
 	  setTextColor(*(vc->fg_color.color()));
-// 	if(vc->use_bg)
-// 	  setHighlightColor(-1, vc->bg_color.color());
+ 	else if(vc->use_bg)
+ 	  setTextColor(*(vc->bg_color.color())); // always set text, even if bg, so no conflict with state info
       }
     }
   }

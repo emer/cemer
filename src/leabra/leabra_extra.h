@@ -834,61 +834,27 @@ public:
 // 	V1RF Prjn Spec
 //////////////////////////////////////
 
-class LEABRA_API GaborRFSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##CAT_Spec Gabor receptive field spec
-  INHERITED(taBase)
-public:
-  int		n_angles;	// number of different angles
-  float		freq;		// frequency of the sine wave
-  float		length;		// length of the gaussian perpendicular to the wave direction
-  float		width;		// width of the gaussian in the wave direction
-  float		amp;		// amplitude (maximum value)
-
-  void 	Initialize();
-  void	Destroy() { };
-  SIMPLE_COPY(GaborRFSpec);
-  COPY_FUNS(GaborRFSpec, taBase);
-  TA_BASEFUNS(GaborRFSpec);
-};
-
-class LEABRA_API BlobRFSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##CAT_Spec Blob receptive field specs
-  INHERITED(taBase)
-public:
-  int		n_sizes;	// number of different sizes
-  float		wdth_st;	// starting center width
-  float		wdth_inc;	// increment of width per unit
-
-  void 	Initialize();
-  void	Destroy() { };
-  SIMPLE_COPY(BlobRFSpec);
-  COPY_FUNS(BlobRFSpec, taBase);
-  TA_BASEFUNS(BlobRFSpec);
-};
-
 class LEABRA_API V1RFPrjnSpec : public TiledRFPrjnSpec {
   // V1 receptive field projection spec: does a TiledRFPrjnSpec connectivity with Gabor and Blob filter weights
   INHERITED(TiledRFPrjnSpec)
 public:
-  GaborRFSpec	gabor_rf;	// parameters for gabor filter specs
-  BlobRFSpec	blob_rf;	// parameters for blob filter specs
-  GaborFilterSpec gabor_spec; // #READ_ONLY underlying gabor generator
-  DoGFilterSpec dog_spec; // #READ_ONLY underlying DoG generator 
+  GaborV1Spec	rf_spec;	// #SHOW_TREE receptive field specs
   
+  void 		Connect_impl(Projection* prjn);
+
   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // set gabor weights
 
-  virtual bool 	InitGaborDoGSpec(Projection* prjn, int recv_idx);
-  // initialize gabor_spec or dog_spec data for given recv unit index
-
-  virtual void	GraphFilter(Projection* prjn, int recv_unit_no, DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter  for given receiving unit number
-  virtual void	GridFilter(Projection* prjn, int recv_unit_no, DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter for given receiving unit number
+  virtual void	GraphFilter(DataTable* disp_data, int recv_unit_no);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
+  virtual void	GridFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view of all the gabor or blob filters
 
   void	Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(V1RFPrjnSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 };
 
 #endif // leabra_extra_h

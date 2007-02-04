@@ -1409,6 +1409,58 @@ bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, in
   return mat_mds_owrite(&a_copy, xy_coords, x_axis_c, y_axis_c);
 }
 
+#else // HAVE_LIBGSL
+
+bool taMath_double::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const double_Matrix* ta_mat) {
+  return false;
+}
+
+bool taMath_double::vec_get_gsl_fm_ta(gsl_vector* gsl_vec, const double_Matrix* ta_vec) {
+  return false;
+}
+
+bool taMath_double::mat_add(double_Matrix* a, const double_Matrix* b) {
+  return false;
+}
+
+bool taMath_double::mat_sub(double_Matrix* a, const double_Matrix* b) {
+  return false;
+}
+
+bool taMath_double::mat_mult_els(double_Matrix* a, const double_Matrix* b) {
+  return false;
+}
+
+bool taMath_double::mat_div_els(double_Matrix* a, const double_Matrix* b) {
+  return false;
+}
+
+bool taMath_double::mat_eigen_owrite(double_Matrix* a, double_Matrix* eigen_vals,
+				     double_Matrix* eigen_vecs) {
+  return false;
+}
+
+bool taMath_double::mat_eigen(const double_Matrix* a, double_Matrix* eigen_vals,
+				    double_Matrix* eigen_vecs) {
+  return false;
+}
+
+bool taMath_double::mat_svd_owrite(double_Matrix* a, double_Matrix* s, double_Matrix* v) {
+  return false;
+}
+
+bool taMath_double::mat_svd(const double_Matrix* a, double_Matrix* u, double_Matrix* s, double_Matrix* v) {
+  return false;
+}
+
+
+bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  return false;
+}
+
+bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  return false;
+}
 
 #endif	// HAVE_LIBGSL
 
@@ -2213,6 +2265,59 @@ bool taMath_float::mat_mds_owrite(float_Matrix* a, float_Matrix* xy_coords, int 
 
 bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
   return mat_mds_owrite((float_Matrix*)a, xy_coords, x_axis_c, y_axis_c);
+}
+
+#else // HAVE_LIBGSL
+
+bool taMath_float::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const float_Matrix* ta_mat) {
+  return false;
+}
+
+bool taMath_float::vec_get_gsl_fm_ta(gsl_vector* gsl_vec, const float_Matrix* ta_vec) {
+  return false;
+}
+
+bool taMath_float::mat_add(float_Matrix* a, const float_Matrix* b) {
+  return false;
+}
+
+bool taMath_float::mat_sub(float_Matrix* a, const float_Matrix* b) {
+  return false;
+}
+
+bool taMath_float::mat_mult_els(float_Matrix* a, const float_Matrix* b) {
+  return false;
+}
+
+bool taMath_float::mat_div_els(float_Matrix* a, const float_Matrix* b) {
+  return false;
+}
+
+bool taMath_float::mat_eigen_owrite(float_Matrix* a, float_Matrix* eigen_vals,
+				     float_Matrix* eigen_vecs) {
+  return false;
+}
+
+bool taMath_float::mat_eigen(const float_Matrix* a, float_Matrix* eigen_vals,
+				    float_Matrix* eigen_vecs) {
+  return false;
+}
+
+bool taMath_float::mat_svd_owrite(float_Matrix* a, float_Matrix* s, float_Matrix* v) {
+  return false;
+}
+
+bool taMath_float::mat_svd(const float_Matrix* a, float_Matrix* u, float_Matrix* s, float_Matrix* v) {
+  return false;
+}
+
+
+bool taMath_float::mat_mds_owrite(float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  return false;
+}
+
+bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  return false;
 }
 
 #endif	// HAVE_LIBGSL

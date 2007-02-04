@@ -103,8 +103,8 @@ public:
 
   virtual void	GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph
-  virtual void	GridFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view
+  virtual void	GridFilter(DataTable* disp_data, bool reset = true);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view (reset any existing data first)
 
   void 	Initialize();
   void	Destroy() { };
@@ -152,8 +152,8 @@ public:
 
   virtual void	GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK plot the filter into data table and generate a graph from it
-  virtual void	GridFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter into data table and generate a grid view of it
+  virtual void	GridFilter(DataTable* disp_data, bool reset = true);
+  // #BUTTON #NULL_OK plot the filter into data table and generate a grid view of it (reset an existing data first)
 
   virtual void	OutputParams(ostream& strm = cerr);
   // #CAT_GaborFilter output current parameter values to stream
@@ -184,18 +184,27 @@ public:
   TA_SIMPLE_BASEFUNS(GaborFitter);
 };
 
+////////////////////////////////////////////////////////////////////
+//		Retinal Processing (DoG model)
 
 class TA_API RetinalSpacingSpec : public taNBase {
   // #INLINE ##CAT_Image defines the spacing of a filter relative to a specified retinal image size
 INHERITED(taNBase)
 public:
-  enum Region {
+  enum Region {			// retinal region
     FOVEA,
     PARAFOVEA,
     PERIPHERY,
   };
+  enum Resolution {		// level of resolution
+    HI_RES,
+    MED_RES,
+    LOW_RES,
+    VLOW_RES,
+  };
 
   Region	region;		// retinal region represented by this filter 
+  Resolution	res;		// level of resolution represented by this filter (can use enum or any other arbitrary rating scale -- just for informational/matcing purposes)
   TwoDCoord	retina_size;	// overall size of the retina
   TwoDCoord	border;		// border around retina that we don't process
   TwoDCoord	spacing;	// spacing between centers of filters in input
@@ -223,6 +232,10 @@ public:
   DoGFilterSpec		dog;		// Difference of Gaussian retinal filters
   RetinalSpacingSpec	spacing;	// how to space DoG filters in the retina
 
+  virtual bool	FilterRetina(float_Matrix& on_output, float_Matrix& off_output,
+			     float_Matrix& retina_img, bool superimpose = false);
+  // apply DoG filter to input image, result in output (on = + vals, off = - vals). superimpose = add values into the outputs instead of overwriting
+
   virtual void	GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph
   virtual void	GridFilter(DataTable* disp_data);
@@ -243,11 +256,131 @@ class TA_API DoGRetinaSpecList : public taList<DoGRetinaSpec> {
 INHERITED(taList<DoGRetinaSpec>)
 public:
 
+  virtual DoGRetinaSpec* FindRetinalRegion(RetinalSpacingSpec::Region reg);
+  // find first spec with given retinal region
+  virtual DoGRetinaSpec* FindRetinalRes(RetinalSpacingSpec::Resolution res);
+  // find first spec with given resolution
+  virtual DoGRetinaSpec* FindRetinalRegionRes(RetinalSpacingSpec::Region reg,
+					      RetinalSpacingSpec::Resolution res);
+  // find first spec with given retinal region and resolution (falls back to res then reg if no perfect match)
+
   TA_BASEFUNS(DoGRetinaSpecList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DoGRetinaSpec); }
   void 	Destroy()		{ };
 };
+
+
+////////////////////////////////////////////////////////////////////
+//		V1 Processing (Gabor model)
+
+class TA_API GaborRFSpec : public taBase {
+  // #INLINE #INLINE_DUMP ##CAT_Spec Gabor receptive field spec (for V1)
+  INHERITED(taBase)
+public:
+  int		n_angles;	// number of different angles
+  float		freq;		// frequency of the sine wave
+  float		length;		// length of the gaussian perpendicular to the wave direction
+  float		width;		// width of the gaussian in the wave direction
+  float		amp;		// amplitude (maximum value)
+
+  void 	Initialize();
+  void	Destroy() { };
+  SIMPLE_COPY(GaborRFSpec);
+  COPY_FUNS(GaborRFSpec, taBase);
+  TA_BASEFUNS(GaborRFSpec);
+};
+
+class TA_API BlobRFSpec : public taBase {
+  // #INLINE #INLINE_DUMP ##CAT_Spec Blob receptive field specs (for V1)
+  INHERITED(taBase)
+public:
+  int		n_sizes;	// number of different sizes
+  float		width_st;	// starting center width
+  float		width_inc;	// increment of width per unit
+
+  void 	Initialize();
+  void	Destroy() { };
+  SIMPLE_COPY(BlobRFSpec);
+  COPY_FUNS(BlobRFSpec, taBase);
+  TA_BASEFUNS(BlobRFSpec);
+};
+
+class TA_API GaborV1Spec : public taNBase {
+  // ##CAT_Image specifies a Gabor-based filtering of an input image, as a model of V1
+INHERITED(taNBase)
+public:
+  enum V1FilterType {
+    GABOR,			// filter using gabors (orientation tuned)
+    BLOB,			// filter using blobs (color contrast tuned)
+  };
+
+  V1FilterType	filter_type; 	// what type of filter to use?
+  RetinalSpacingSpec::Region region; // retinal region represented by this filter -- for matching up with associated retinal outputs
+  RetinalSpacingSpec::Resolution res; // resolution represented by this filter -- for matching up with associated retinal outputs
+
+  XYNGeom	un_geom;  	// size of one 'hypercolumn' unit of orientation detectors
+  XYNGeom	gp_geom;  	// size of full set of groups of hypercolumns to process entire set of inputs
+  TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs
+
+  GaborRFSpec	gabor_rf;	// #CONDEDIT_ON_filter_type:GABOR parameters for gabor filter specs
+  BlobRFSpec	blob_rf;	// #CONDEDIT_ON_filter_type:BLOB parameters for blob filter specs
+
+  taBase_List 	gabor_specs; 	// #READ_ONLY #NO_SAVE underlying gabor generators (type GaborFilterSpec)
+  taBase_List 	blob_specs; 	// #READ_ONLY #NO_SAVE underlying DoG generators (type DoGFilterSpec)
+
+  virtual bool	SetRfWidthFmGpGeom(TwoDCoord& input_size);
+  // set the rf_width based on the current gp_geom and the given input_size (size of input to filter)
+  virtual bool	SetGpGeomFmRfWidth(TwoDCoord& input_size);
+  // set the gp_geom based on the current rf_width the given input_size (size of input to filter)
+  virtual bool 	SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs);
+  // set the gp_geom based on the current rf_width, looking up the input size on the given list of retinal dog filters by region and resolution
+
+  virtual bool 	InitFilters();
+  // initialize the filters based on the RF specs
+
+  virtual bool	FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
+			    float_Matrix& on_input, float_Matrix& off_input,
+			    bool superimpose = false);
+  // actually perform the filtering operation on input patterns
+  virtual bool	FilterInput_Gabor(float_Matrix& v1_output,
+				  float_Matrix& on_input, float_Matrix& off_input,
+				  bool superimpose);
+  // actually perform the filtering operation on input patterns: Gabors
+  virtual bool	FilterInput_Blob(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
+				 float_Matrix& on_input, float_Matrix& off_input,
+				 bool superimpose);
+  // actually perform the filtering operation on input patterns: Blobs
+
+  virtual void	GraphFilter(DataTable* disp_data, int unit_no);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
+  virtual void	GridFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view of all the gabor or blob filters
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(GaborV1Spec);
+protected:
+  virtual bool 	InitFilters_Gabor();
+  virtual bool 	InitFilters_Blob();
+
+  void	UpdateAfterEdit_impl();
+};
+
+class TA_API GaborV1SpecList : public taList<GaborV1Spec> {
+  // ##CAT_Image a list of Gabor V1 filters
+INHERITED(taList<GaborV1Spec>)
+public:
+
+  virtual bool UpdateSizesFmRetina(DoGRetinaSpecList& dogs);
+  // calls SetGpGeomFmRetSpec on all the items in the list
+
+  TA_BASEFUNS(GaborV1SpecList);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_GaborV1Spec); }
+  void 	Destroy()		{ };
+};
+
 
 ///////////////////////////////////////////////////////////////
 // 	taImageProc
@@ -284,7 +417,7 @@ public:
   static bool	DoGFilterRetina(float_Matrix& on_output, float_Matrix& off_output,
 				float_Matrix& retina_img, DoGRetinaSpec& spec,
 				bool superimpose = false);
-  // #CAT_Filter apply DoG filter to input image, result in output (on = + vals, off = - vals). superimpose = add values into the outputs instead of overwriting
+  // #CAT_Filter apply DoG filter to input image, result in output (on = + vals, off = - vals). superimpose = add values into the outputs instead of overwriting (just a call to equiv function on spec)
 
   static bool	AttentionFilter(float_Matrix& mat, float radius_pct);
   // #CAT_Filter apply an "attentional" filter to the matrix data: outside of radius, values are attenuated in proportion of squared distance outside of radius (r_sq / dist_sq) -- radius_pct is normalized proportion of maximum half-size of image (e.g., 1 = attention bubble extends to furthest edge of image; only corners are attenuated)
@@ -353,9 +486,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   // Automatic foveation of an image based on a bounding box
 
-  virtual DoGRetinaSpec* FindRetinalRegion(RetinalSpacingSpec::Region reg);
-  // utility function to find spec that corresponds to fovea (i.e., smallest input_size)
-
   virtual bool	AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region = RetinalSpacingSpec::FOVEA);
   // #CAT_Filter apply attentional weighting filter to filtered values, with radius = given region
 
@@ -408,6 +538,41 @@ public:
 protected:
   void	UpdateAfterEdit_impl();
 };
+
+SmartRef_Of(RetinaSpec); // RetinaSpecRef
+
+class TA_API V1GaborSpec : public taNBase {
+  // ##CAT_Image full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
+INHERITED(taNBase)
+public:
+  GaborV1SpecList	gabors;		// the gabor (and blob) V1 filters
+  RetinaSpecRef		retina;		// the specs for the retinal filter that we follow
+  float			norm_max;	// #DEF_0.95 max value to normalize output activations to -- set to -1 to turn off normalization
+
+  virtual void	DefaultFilters();
+  // #BUTTON #CAT_Filter create a set of default filters
+
+  virtual bool	UpdateSizesFmRetina();
+  // update the sizes of our filters based on the retina spec values
+
+  virtual void	ConfigDataTable(DataTable* dt, bool reset_cols = false);
+  // #BUTTON #CAT_Config #NULL_OK configure a data table to hold all of the image data (if reset_cols, reset any existing cols in data table before adding new ones) (if dt == NULL, a new one is created in data.InputData)
+
+//   virtual void	PlotSpacing(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the arrangement of the filters (centers) in the data table and generate a grid view
+
+  virtual bool	FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt);
+  // Perform the filtering function: operates on output of RetinaSpec processing
+
+//   void	UpdateRetinaSize();	// copy retina_size to dogs..
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1GaborSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+};
+
 
 /////////////////////////////////////////////////////////
 //   programs to support image processing operations

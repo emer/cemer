@@ -102,7 +102,6 @@ void Wizard::Initialize() {
   n_layers = 3;
   layer_cfg.SetBaseType(&TA_LayerWizEl);
   connectivity = FEEDFORWARD;
-  event_type = &TA_Event;
 }
 
 void Wizard::InitLinks() {

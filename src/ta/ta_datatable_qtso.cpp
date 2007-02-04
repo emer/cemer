@@ -1720,18 +1720,6 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   connect(chk2dFont, SIGNAL(toggled(bool)), this, SLOT(chk2dFont_toggled(bool)) );
   layTopCtrls->addWidget(chk2dFont);
 
-  chkValText =  new QCheckBox("Val\nTxt", widg, "chkValText");
-  chkDisplay->setToolTip("Whether to display text of the matrix block values.");
-  connect(chkValText, SIGNAL(toggled(bool)), this, SLOT(chkValText_toggled(bool)) );
-  layTopCtrls->addWidget(chkValText);
-
-  lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
-  lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
-  layTopCtrls->addWidget(lblBlockHeight);
-  fldBlockHeight = new taiField(&TA_float, NULL, NULL, widg);
-  layTopCtrls->addWidget(fldBlockHeight->GetRep());
-//   layVals->addSpacing(taiM->hsep_c);
-  connect(fldBlockHeight->rep(), SIGNAL(editingFinished()), this, SLOT(fldBlockHeight_textChanged()) );
   layTopCtrls->addStretch();
 
   butRefresh = new QPushButton("Refresh", widg);
@@ -1772,23 +1760,60 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 //   layVals->addSpacing(taiM->hsep_c);
   connect(fldWidth->rep(), SIGNAL(editingFinished()), this, SLOT(fldWidth_textChanged()) );
 
+  lblTxtMin = taiM->NewLabel("Min\nText", widg, font_spec);
+  lblTxtMin->setToolTip("Minimum text size in 'view units' (size of entire display is 1.0) -- .02 is default -- increase to make small text more readable");
+  layVals->addWidget(lblTxtMin);
+  fldTxtMin = new taiField(&TA_float, NULL, NULL, widg);
+  layVals->addWidget(fldTxtMin->GetRep());
+//   layMatrix->addSpacing(taiM->hsep_c);
+  connect(fldTxtMin->rep(), SIGNAL(editingFinished()), this, SLOT(fldTxtMin_textChanged()) );
+
+  lblTxtMax = taiM->NewLabel("Max\nText", widg, font_spec);
+  lblTxtMax->setToolTip("Maximum text size in 'view units' (size of entire display is 1.0) -- .05 is default");
+  layVals->addWidget(lblTxtMax);
+  fldTxtMax = new taiField(&TA_float, NULL, NULL, widg);
+  layVals->addWidget(fldTxtMax->GetRep());
+//   layMatrix->addSpacing(taiM->hsep_c);
+  connect(fldTxtMax->rep(), SIGNAL(editingFinished()), this, SLOT(fldTxtMax_textChanged()) );
+
+  layVals->addStretch();
+
+  ////////////////////////////////////////////////////////////////////////////
+  layMatrix = new QHBoxLayout(layOuter);
+
+  lblMatrix = taiM->NewLabel("Matrix\nDisplay", widg, font_spec);
+  lblMatrix->setToolTip("This row contains parameters that control the display of matrix values (shown in a grid of colored blocks)");
+  layMatrix->addWidget(lblMatrix);
+
+  chkValText =  new QCheckBox("Val\nTxt", widg, "chkValText");
+  chkDisplay->setToolTip("Whether to display text of the matrix block values.");
+  connect(chkValText, SIGNAL(toggled(bool)), this, SLOT(chkValText_toggled(bool)) );
+  layMatrix->addWidget(chkValText);
+
   lblTrans = taiM->NewLabel("Trans-\nparency", widg, font_spec);
   lblTrans->setToolTip("Maximum transparency of the grid blocks (0 = fully opaque, 1 = fully transparent)\nBlocks with smaller magnitude values are more transparent.");
-  layVals->addWidget(lblTrans);
+  layMatrix->addWidget(lblTrans);
   fldTrans = new taiField(&TA_float, NULL, NULL, widg);
-  layVals->addWidget(fldTrans->GetRep());
-//   layVals->addSpacing(taiM->hsep_c);
+  layMatrix->addWidget(fldTrans->GetRep());
+//   layMatrix->addSpacing(taiM->hsep_c);
   connect(fldTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldTrans_textChanged()) );
 
   lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
   lblRot->setToolTip("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns.");
-  layVals->addWidget(lblRot);
+  layMatrix->addWidget(lblRot);
   fldRot = new taiField(&TA_float, NULL, NULL, widg);
-  layVals->addWidget(fldRot->GetRep());
-//   layVals->addSpacing(taiM->hsep_c);
+  layMatrix->addWidget(fldRot->GetRep());
+//   layMatrix->addSpacing(taiM->hsep_c);
   connect(fldRot->rep(), SIGNAL(editingFinished()), this, SLOT(fldRot_textChanged()) );
 
-  layVals->addStretch();
+  lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
+  lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
+  layMatrix->addWidget(lblBlockHeight);
+  fldBlockHeight = new taiField(&TA_float, NULL, NULL, widg);
+  layMatrix->addWidget(fldBlockHeight->GetRep());
+//   layMatrix->addSpacing(taiM->hsep_c);
+  connect(fldBlockHeight->rep(), SIGNAL(editingFinished()), this, SLOT(fldBlockHeight_textChanged()) );
+
 
   ////////////////////////////////////////////////////////////////////////////
   // 	Colorscale etc
@@ -1797,7 +1822,6 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   chkAutoScale = new QCheckBox("auto\nscale", widg);
   connect(chkAutoScale, SIGNAL(toggled(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
   layColorScale->addWidget(chkAutoScale);
-//   layVals->addSpacing(taiM->hsep_c);
 
   cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
@@ -1838,14 +1862,17 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   chkHeaders->setChecked(glv->header_on);
   chkRowNum->setChecked(glv->row_num_on);
   chk2dFont->setChecked(glv->two_d_font);
-  chkValText->setChecked(glv->mat_val_text);
-  fldBlockHeight->GetImage((String)glv->mat_block_height);
 
-  fldWidth->GetImage((String)glv->width);
   fldRows->GetImage((String)glv->view_rows);
   fldCols->GetImage((String)glv->col_n);
+  fldWidth->GetImage((String)glv->width);
+  fldTxtMin->GetImage((String)glv->text_size_range.min);
+  fldTxtMax->GetImage((String)glv->text_size_range.max);
+
+  chkValText->setChecked(glv->mat_val_text);
   fldTrans->GetImage((String)glv->mat_trans);
   fldRot->GetImage((String)glv->mat_rot);
+  fldBlockHeight->GetImage((String)glv->mat_block_height);
 
   cbar->UpdateScaleValues();
   chkAutoScale->setChecked(glv->colorscale.auto_scale);
@@ -1980,6 +2007,22 @@ void iGridTableView_Panel::fldCols_textChanged() {
   if (updating || !glv) return;
 
   glv->setCols((int)fldCols->GetValue());
+}
+
+void iGridTableView_Panel::fldTxtMin_textChanged() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->text_size_range.min = (float)fldTxtMin->GetValue();
+  glv->UpdateDisplay(true);
+}
+
+void iGridTableView_Panel::fldTxtMax_textChanged() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->text_size_range.max = (float)fldTxtMax->GetValue();
+  glv->UpdateDisplay(true);
 }
 
 void iGridTableView_Panel::fldTrans_textChanged() {
@@ -3418,7 +3461,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
       }
     }
 
-    if(erv.on && da_er) {
+    if(erv.on && da_er && (row % err_spacing == 0)) {
       float err_dat;
       if(da_er->is_matrix && mat_cell >= 0) {
 	err_dat = da_er->GetValAsFloatM(row, mat_cell);

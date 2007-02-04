@@ -548,6 +548,17 @@ void taBase::SetDefaultName_() {
   }
 }
 
+String taBase::GetStateDecoKey() const {
+  if(GetEnabled() == 0)
+    return "NotEnabled";
+  if(HasBaseFlag(taBase::THIS_INVALID))
+    return "ThisInvalid";
+  if(HasBaseFlag(taBase::CHILD_INVALID))
+    return "ChildInvalid";
+  return _nilString;
+}
+
+
 ///////////////////////////////////////////////////////////////////////////
 //	Paths in the structural hierarchy
 
@@ -1563,7 +1574,7 @@ bool taBase::ReShowEdit(bool force) {
 }
 
 const iColor* taBase::GetEditColor() {
-  String dec_key = GetDecorateKey(); // nil if none
+  String dec_key = GetTypeDecoKey(); // nil if none
   if (dec_key.nonempty()) {
     ViewColor* vc = taMisc::view_colors->FindName(dec_key);
     if(vc) {

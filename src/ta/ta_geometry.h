@@ -214,6 +214,8 @@ public:
   int 		z;
   // #HIDDEN #READ_ONLY #NO_SAVE legacy v3 third dimension -- used for conversion only -- do not use!!  to be removed at some later date
 
+  void operator=(const TwoDCoord& cp);
+
   void 	Copy(const XYNGeom& cp)
   { PosTwoDCoord::Copy(cp); n_not_xy = cp.n_not_xy; n = cp.n; z = cp.z; }
   void	Initialize();

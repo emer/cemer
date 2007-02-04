@@ -457,29 +457,32 @@ public:
 
   QVBoxLayout*		layOuter;
   QVBoxLayout*		layViewParams;
-  QHBoxLayout*		 layDispCheck;
-  QCheckBox*		  chkDisplay;
-  QLabel*		  lblUnitText;
-  taiComboBox*		  cmbUnitText;
-  QLabel*		  lblDispMode;
-  taiComboBox*		  cmbDispMode;
-  QHBoxLayout*		 layFontsEtc;
-  QLabel*		  lblUnitTrans;
-  taiField*		  fldUnitTrans;
-  QLabel*		  lblUnitFont;
-  taiField*		  fldUnitFont;
-  QLabel*		  lblLayFont;
-  taiField*		  fldLayFont;
-  QCheckBox*		  chkXYSquare;
+  QHBoxLayout*		  layDispCheck;
+  QCheckBox*		    chkDisplay;
+  QLabel*		    lblUnitText;
+  taiComboBox*		    cmbUnitText;
+  QLabel*		    lblDispMode;
+  taiComboBox*		    cmbDispMode;
+  QLabel*		    lblPrjnWdth;
+  taiField*		    fldPrjnWdth;
+
+  QHBoxLayout*		  layFontsEtc;
+  QLabel*		    lblUnitTrans;
+  taiField*		    fldUnitTrans;
+  QLabel*		    lblUnitFont;
+  taiField*		    fldUnitFont;
+  QLabel*		    lblLayFont;
+  taiField*		    fldLayFont;
+  QCheckBox*		    chkXYSquare;
 
   QGroupBox*		gbDisplayValues;
   QVBoxLayout*		layDisplayValues;
-  QHBoxLayout*		 layColorScaleCtrls;
-  QCheckBox*		  chkAutoScale;       // autoscale ck_box
-  QPushButton*		  butScaleDefault;    // revert to default  
+  QHBoxLayout*		  layColorScaleCtrls;
+  QCheckBox*		    chkAutoScale;       // autoscale ck_box
+  QPushButton*		    butScaleDefault;    // revert to default  
   QHBoxLayout*		 layColorBar;
-  ScaleBar*		  cbar;	      // colorbar
-  QPushButton*		  butSetColor;
+  ScaleBar*		   cbar;	      // colorbar
+  QPushButton*		   butSetColor;
   Q3ListView*		 lvDisplayValues;
   
   QGroupBox*		gbSpecs;
@@ -527,6 +530,8 @@ protected slots:
   virtual void 		chkDisplay_toggled(bool on);
   virtual void 		cmbUnitText_itemChanged(int itm);
   virtual void 		cmbDispMode_itemChanged(int itm);
+  virtual void 		fldPrjnWdth_textChanged();
+
   virtual void 		fldUnitTrans_textChanged();
   virtual void 		fldUnitFont_textChanged();
   virtual void 		fldLayFont_textChanged();
@@ -534,7 +539,7 @@ protected slots:
   virtual void		cbar_scaleValueChanged();
   virtual void		lvDisplayValues_selectionChanged();
   void			tvSpecs_CustomExpandFilter(iTreeViewItem* item,
-    int level, bool& expand);
+						   int level, bool& expand);
   void			tvSpecs_ItemSelected(iTreeViewItem* item); 
 
 };

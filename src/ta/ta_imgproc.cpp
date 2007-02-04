@@ -256,7 +256,7 @@ void DoGFilterSpec::GraphFilter(DataTable* graph_data) {
     graph_data->NewGraphView();
 }
 
-void DoGFilterSpec::GridFilter(DataTable* graph_data) {
+void DoGFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   taProject* proj = GET_MY_OWNER(taProject);
   bool newguy = false;
   if(!graph_data) {
@@ -264,7 +264,8 @@ void DoGFilterSpec::GridFilter(DataTable* graph_data) {
     newguy = true;
   }
   graph_data->StructUpdate(true);
-  graph_data->ResetData();
+  if(reset)
+    graph_data->ResetData();
   int idx;
   DataArray_impl* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
   DataArray_impl* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
@@ -395,7 +396,7 @@ void GaborFilterSpec::GraphFilter(DataTable* graph_data) {
     graph_data->NewGraphView();
 }
 
-void GaborFilterSpec::GridFilter(DataTable* graph_data) {
+void GaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   bool newguy = false;
@@ -404,7 +405,8 @@ void GaborFilterSpec::GridFilter(DataTable* graph_data) {
     newguy = true;
   }
   graph_data->StructUpdate(true);
-  graph_data->ResetData();
+  if(reset)
+    graph_data->ResetData();
   int idx;
   DataArray_impl* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, x_size, y_size);
 
@@ -415,6 +417,7 @@ void GaborFilterSpec::GridFilter(DataTable* graph_data) {
   graph_data->SetUserData("SCALE_MAX", maxv);
   graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
 
+  graph_data->AddBlankRow();
   matda->SetValAsMatrix(&filter, -1);
 
   graph_data->StructUpdate(false);
@@ -675,11 +678,16 @@ float GaborFitter::ParamDist(const GaborFilterSpec& oth) {
 //   return min_d;
 // }
 
+////////////////////////////////////////////////////////////////////
+//		Retinal Processing (DoG model)
+
+
 ///////////////////////////////////////////////////////////
 // 		Retinal Spacing
 
 void RetinalSpacingSpec::Initialize() {
   region = PARAFOVEA;
+  res = MED_RES;
   retina_size.x = 321;
   retina_size.y = 241;
   output_units = 0;
@@ -772,6 +780,401 @@ void DoGRetinaSpec::GridFilter(DataTable* graph_data) {
 
 void DoGRetinaSpec::PlotSpacing(DataTable* graph_data, float val) {
   spacing.PlotSpacing(graph_data, val);
+}
+
+bool DoGRetinaSpec::FilterRetina(float_Matrix& on_output, float_Matrix& off_output,
+			       float_Matrix& retina_img, bool superimpose) {
+  dog.UpdateFilter();		// just to be sure
+
+  TwoDCoord img_size = spacing.retina_size;
+
+  if((retina_img.dim(0) != img_size.x) || 
+     (retina_img.dim(1) != img_size.y)) {
+    taMisc::Error("DoGFilterImage: retina_img is not appropriate size!");
+    return false;
+  }
+
+  on_output.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
+  off_output.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
+
+  float_Matrix* on_out = &on_output;
+  float_Matrix* off_out = &off_output;
+  static float_Matrix tmp_on_out;
+  static float_Matrix tmp_off_out;
+
+  if(superimpose) {
+    tmp_on_out.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
+    tmp_off_out.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
+    tmp_on_out.InitVals(0.0f);
+    tmp_off_out.InitVals(0.0f);
+    on_out = &tmp_on_out;
+    off_out = &tmp_off_out;
+  }
+  else {
+    on_output.InitVals(0.0f);
+    off_output.InitVals(0.0f);
+  }
+
+  bool rgb_img = false;
+  if(retina_img.dims() == 3) rgb_img = true;
+
+  TwoDCoord st = spacing.border;
+  
+  for(int yo = 0; yo < spacing.output_size.y; yo++) {
+    int yc = st.y + yo * spacing.spacing.y; 
+    for(int xo = 0; xo < spacing.output_size.x; xo++) {
+      int xc = st.x + xo * spacing.spacing.x; 
+      // now convolve with dog filter
+      float cnvl = 0.0f;
+      for(int yf = -dog.filter_width; yf <= dog.filter_width; yf++) {
+	int iy = yc + yf;
+	if(iy < 0) iy = 0;  if(iy >= img_size.y) iy = img_size.y-1;
+	for(int xf = -dog.filter_width; xf <= dog.filter_width; xf++) {
+	  int ix = xc + xf;
+	  if(ix < 0) ix = 0;  if(ix >= img_size.x) ix = img_size.x-1;
+	  if(rgb_img) {
+	    cnvl += dog.FilterPoint(xf, yf, retina_img.FastEl(ix, iy,0),
+					 retina_img.FastEl(ix, iy, 1),
+					 retina_img.FastEl(ix, iy, 2));
+	  }
+	  else {
+	    float gval = retina_img.FastEl(ix, iy);
+	    cnvl += dog.FilterPoint(xf, yf, gval, gval, gval);
+	  }
+	}
+      }
+      if(cnvl > 0.0f)
+	on_out->FastEl(xo, yo) = cnvl;
+      else 
+	off_out->FastEl(xo, yo) = -cnvl;
+    }
+  }
+  
+  int idx;
+  float on_max = taMath_float::vec_max(on_out, idx);
+  if(on_max > .01f)
+     taMath_float::vec_norm_max(on_out);
+
+  float off_max = taMath_float::vec_max(off_out, idx);
+  if(off_max > .01f)
+    taMath_float::vec_norm_max(off_out);
+
+  if(superimpose) {			// add them back in!
+    taMath_float::vec_add(&on_output, on_out);
+    taMath_float::vec_add(&off_output, off_out);
+  }
+  return true;
+}
+
+DoGRetinaSpec* DoGRetinaSpecList::FindRetinalRegion(RetinalSpacingSpec::Region reg) {
+  for(int i=0;i<size;i++) {
+    DoGRetinaSpec* fs = (DoGRetinaSpec*)FastEl(i);
+    if(fs->spacing.region == reg)
+      return fs;
+  }
+  return NULL;
+}
+
+DoGRetinaSpec* DoGRetinaSpecList::FindRetinalRes(RetinalSpacingSpec::Resolution res) {
+  for(int i=0;i<size;i++) {
+    DoGRetinaSpec* fs = (DoGRetinaSpec*)FastEl(i);
+    if(fs->spacing.res == res)
+      return fs;
+  }
+  return NULL;
+}
+
+DoGRetinaSpec* DoGRetinaSpecList::FindRetinalRegionRes(RetinalSpacingSpec::Region reg,
+						       RetinalSpacingSpec::Resolution res) {
+  for(int i=0;i<size;i++) {
+    DoGRetinaSpec* fs = (DoGRetinaSpec*)FastEl(i);
+    if((fs->spacing.region == reg) && (fs->spacing.res == res))
+      return fs;
+  }
+  DoGRetinaSpec* rval = FindRetinalRes(res);
+  if(rval) return rval;
+  rval = FindRetinalRegion(reg);
+  if(rval) return rval;
+  return NULL;
+}
+
+
+///////////////////////////////////////////////////////////
+// 		GaborV1Spec
+
+void GaborRFSpec::Initialize() {
+  n_angles = 8;
+  freq = 1.0f;
+  width = 2.0f;
+  length = 4.0f;
+  amp = .9f;
+}
+
+void BlobRFSpec::Initialize() {
+  n_sizes = 1;
+  width_st = 1.0;
+  width_inc = 2.0;
+}
+
+
+void GaborV1Spec::Initialize() {
+  gabor_specs.SetBaseType(&TA_GaborFilterSpec);
+  blob_specs.SetBaseType(&TA_DoGFilterSpec);
+
+  filter_type = GABOR;
+  region = RetinalSpacingSpec::PARAFOVEA;
+  res = RetinalSpacingSpec::MED_RES;
+}
+
+void GaborV1Spec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  un_geom.UpdateAfterEdit();
+  gp_geom.UpdateAfterEdit();
+  InitFilters();
+}
+
+bool GaborV1Spec::SetRfWidthFmGpGeom(TwoDCoord& input_size) {
+  TwoDCoord rf_ovlp = input_size / (gp_geom + 1);
+  rf_width = rf_ovlp * 2;
+  TwoDCoord even_size = (gp_geom + 1) * rf_ovlp;
+  return input_size == even_size;
+}
+
+bool GaborV1Spec::SetGpGeomFmRfWidth(TwoDCoord& input_size) {
+  TwoDCoord rf_ovlp = rf_width / 2;
+  gp_geom = (input_size / rf_ovlp) - 1;
+
+  TwoDCoord even_size = (gp_geom + 1) * rf_ovlp;
+  return input_size == even_size;
+}
+
+bool GaborV1Spec::SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs) {
+  DoGRetinaSpec* rs = dogs.FindRetinalRegionRes(region, res);
+  if(!rs) return false;
+  return SetGpGeomFmRfWidth(rs->spacing.output_size);
+}
+
+bool GaborV1Spec::InitFilters() {
+  if(filter_type == GABOR)
+    return InitFilters_Gabor();
+  else
+    return InitFilters_Blob();
+}
+
+bool GaborV1Spec::InitFilters_Gabor() {
+  int nfilt = gabor_rf.n_angles * 2;
+  un_geom.FitN(nfilt);
+  gabor_specs.SetSize(nfilt);
+
+  for(int i=0;i<nfilt;i++) {
+    float angle_dx = (float)(i % gabor_rf.n_angles); // angle is inner dim
+    float phase_dx = (float)((i / gabor_rf.n_angles) % 2); // then phase
+
+    GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs[i];
+
+    gf->x_size = rf_width.x;
+    gf->y_size = rf_width.y;
+    gf->ctr_x = (float)(gf->x_size - 1.0f) / 2.0f;
+    gf->ctr_y = (float)(gf->y_size - 1.0f) / 2.0f;
+    gf->angle = taMath_float::pi * angle_dx / (float)gabor_rf.n_angles;
+    gf->phase = taMath_float::pi * phase_dx;
+    gf->freq = gabor_rf.freq;
+    gf->length = gabor_rf.length;
+    gf->width = gabor_rf.width;
+    gf->amp = gabor_rf.amp;
+    gf->UpdateFilter();
+  }
+  return true;
+}
+
+bool GaborV1Spec::InitFilters_Blob() {
+  // 2 for phase and 2 for color channel -- blobs are only relevant for color channels!
+  int nfilt = blob_rf.n_sizes * 4;
+  un_geom.FitN(nfilt);
+  blob_specs.SetSize(nfilt);
+
+  for(int i=0;i<nfilt;i++) {
+    float sz_dx = (float)(i % blob_rf.n_sizes); // size is inner dim
+    int phase_dx = ((i / blob_rf.n_sizes) % 2); // then phase
+    int clr_dx = (i / (blob_rf.n_sizes * 2) % 2); // then color
+
+    DoGFilterSpec* df = (DoGFilterSpec*)blob_specs[i];
+
+    df->filter_width = (rf_width.x-1) / 2; // assume x-y symmetric!
+    df->filter_size = df->filter_width * 2 + 1;
+    df->circle_edge = true;
+    df->color_chan = (DoGFilterSpec::ColorChannel)(DoGFilterSpec::RED_GREEN + clr_dx);
+    if(phase_dx == 0) {
+      df->on_sigma = blob_rf.width_st + blob_rf.width_inc * sz_dx;
+      df->off_sigma = 2.0f * df->on_sigma;
+      df->UpdateFilter();
+      float sc_fact = taMath_float::vec_norm_max(&df->on_filter); // on is most active
+      for(int i=0;i<df->off_filter.size;i++)
+	df->off_filter.FastEl_Flat(i) *= sc_fact;
+    }
+    else {
+      df->off_sigma = blob_rf.width_st + blob_rf.width_inc * sz_dx;
+      df->on_sigma = 2.0f * df->off_sigma;
+      df->UpdateFilter();
+      float sc_fact = taMath_float::vec_norm_max(&df->off_filter); // off is most active
+      for(int i=0;i<df->on_filter.size;i++)
+	df->on_filter.FastEl_Flat(i) *= sc_fact;
+    }
+  }
+  return true;
+}
+
+void GaborV1Spec::GraphFilter(DataTable* graph_data, int unit_no) {
+  if(filter_type == GABOR) {
+    GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(unit_no);
+    if(gf)
+      gf->GraphFilter(graph_data);
+  }
+  else {
+    DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(unit_no);
+    if(df)
+      df->GraphFilter(graph_data);
+  }
+}
+
+void GaborV1Spec::GridFilter(DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+
+  if(filter_type == GABOR) {
+    for(int i=0;i<gabor_specs.size;i++) {
+      GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(i);
+      gf->GridFilter(graph_data, false); // don't reset!
+    }
+  }
+  else {
+    for(int i=0;i<blob_specs.size;i++) {
+      DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(i);
+      df->GridFilter(graph_data, false); // don't reset!
+    }
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGridView();
+}
+
+bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
+			      float_Matrix& on_input, float_Matrix& off_input,
+			      bool superimpose) {
+  InitFilters();
+
+  TwoDCoord input_size;
+  input_size.x = on_input.dim(0);
+  input_size.y = on_input.dim(1);
+
+  TwoDCoord rf_ovlp = rf_width / 2;
+  TwoDCoord even_size = (gp_geom + 1) * rf_ovlp;
+  if(input_size != even_size) {
+    taMisc::Error("GaborV1Spec: input size",input_size.GetStr(),
+		  "is not correct size, should be:", even_size.GetStr());
+    return false;
+  }
+
+  v1_output.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
+  if(!superimpose)
+    v1_output.InitVals();		// reset all vals to 0
+
+  if(filter_type == GABOR) {
+    return FilterInput_Gabor(v1_output, on_input, off_input, superimpose);
+  }
+  else {
+    return FilterInput_Blob(v1_output, c_chan, on_input, off_input, superimpose);
+  }
+}
+
+bool GaborV1Spec::FilterInput_Gabor(float_Matrix& v1_output,
+				    float_Matrix& on_input, float_Matrix& off_input,
+				    bool superimpose) {
+  TwoDCoord rf_ovlp = rf_width / 2;
+  int unx, uny;
+  int fidx = 0;
+  for(uny=0;uny<un_geom.y;uny++) {
+    for(unx=0;unx<un_geom.x;unx++,fidx++) {
+      GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(fidx);
+      if(!gf) break;			     // shouldn't happen
+      int gpx, gpy;
+      for(gpy=0;gpy<gp_geom.y;gpy++) {
+	int ofy = gpy * rf_ovlp.y;
+	for(gpx=0;gpx<gp_geom.x;gpx++) {
+	  int ofx = gpx * rf_ovlp.x;
+	  int inx, iny;
+	  float sum = 0.0f;
+	  for(iny=0;iny<rf_width.y;iny++) {
+	    for(inx=0;inx<rf_width.x;inx++) {
+	      float fval = gf->filter.FastEl(inx, iny);
+	      float oval;
+	      if(fval > 0.0f) oval = fval * on_input.FastEl(ofx + inx, ofy + iny);
+	      else	      oval = -fval * off_input.FastEl(ofx + inx, ofy + iny);
+	      sum += oval;
+	    }
+	  }
+	  if(superimpose)
+	    v1_output.FastEl(unx, uny, gpx, gpy) += sum;
+	  else
+	    v1_output.FastEl(unx, uny, gpx, gpy) = sum;
+	}
+      }
+    }
+  }
+  return true;
+}
+
+bool GaborV1Spec::FilterInput_Blob(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
+				   float_Matrix& on_input, float_Matrix& off_input,
+				   bool superimpose) {
+  TwoDCoord rf_ovlp = rf_width / 2;
+  int unx, uny;
+  int fidx = 0;
+  for(uny=0;uny<un_geom.y;uny++) {
+    for(unx=0;unx<un_geom.x;unx++,fidx++) {
+      DoGFilterSpec* gf = (DoGFilterSpec*)blob_specs.SafeEl(fidx);
+      if(!gf) break;			     // shouldn't happen
+      if(gf->color_chan != c_chan) continue; // doesn't match
+      int gpx, gpy;
+      for(gpy=0;gpy<gp_geom.y;gpy++) {
+	int ofy = gpy * rf_ovlp.y;
+	for(gpx=0;gpx<gp_geom.x;gpx++) {
+	  int ofx = gpx * rf_ovlp.x;
+	  int inx, iny;
+	  float sum = 0.0f;
+	  for(iny=0;iny<rf_width.y;iny++) {
+	    for(inx=0;inx<rf_width.x;inx++) {
+	      float oval = (gf->on_filter.FastEl(inx, iny) * on_input.FastEl(ofx + inx, ofy + iny) - 
+			    gf->off_filter.FastEl(inx, iny) * off_input.FastEl(ofx + inx, ofy + iny));
+	      sum += oval;
+	    }
+	  }
+	  if(superimpose)
+	    v1_output.FastEl(unx, uny, gpx, gpy) += sum;
+	  else
+	    v1_output.FastEl(unx, uny, gpx, gpy) = sum;
+	}
+      }
+    }
+  }
+  return true;
+}
+
+bool GaborV1SpecList::UpdateSizesFmRetina(DoGRetinaSpecList& dogs) {
+  bool rval = true;
+  for(int i=0;i<size;i++) {
+    GaborV1Spec* sp = FastEl(i);
+    bool rv = sp->SetGpGeomFmRetSpec(dogs);
+    if(!rv)
+      rval = false;
+  }
+  return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1138,88 +1541,8 @@ bool taImageProc::TransformImage_float(float_Matrix& xformed_img, float_Matrix& 
 bool taImageProc::DoGFilterRetina(float_Matrix& on_output, float_Matrix& off_output,
 				  float_Matrix& retina_img, DoGRetinaSpec& spec,
 				  bool superimpose) {
-  spec.dog.UpdateFilter();		// just to be sure
-
-  TwoDCoord img_size = spec.spacing.retina_size;
-
-  if((retina_img.dim(0) != img_size.x) || 
-     (retina_img.dim(1) != img_size.y)) {
-    taMisc::Error("DoGFilterImage: retina_img is not appropriate size!");
-    return false;
-  }
-
-  on_output.SetGeom(2, spec.spacing.output_size.x, spec.spacing.output_size.y);
-  off_output.SetGeom(2, spec.spacing.output_size.x, spec.spacing.output_size.y);
-
-  float_Matrix* on_out = &on_output;
-  float_Matrix* off_out = &off_output;
-  static float_Matrix tmp_on_out;
-  static float_Matrix tmp_off_out;
-
-  if(superimpose) {
-    tmp_on_out.SetGeom(2, spec.spacing.output_size.x, spec.spacing.output_size.y);
-    tmp_off_out.SetGeom(2, spec.spacing.output_size.x, spec.spacing.output_size.y);
-    tmp_on_out.InitVals(0.0f);
-    tmp_off_out.InitVals(0.0f);
-    on_out = &tmp_on_out;
-    off_out = &tmp_off_out;
-  }
-  else {
-    on_output.InitVals(0.0f);
-    off_output.InitVals(0.0f);
-  }
-
-  bool rgb_img = false;
-  if(retina_img.dims() == 3) rgb_img = true;
-
-  TwoDCoord st = spec.spacing.border;
-  
-  for(int yo = 0; yo < spec.spacing.output_size.y; yo++) {
-    int yc = st.y + yo * spec.spacing.spacing.y; 
-    for(int xo = 0; xo < spec.spacing.output_size.x; xo++) {
-      int xc = st.x + xo * spec.spacing.spacing.x; 
-      // now convolve with dog filter
-      float cnvl = 0.0f;
-      for(int yf = -spec.dog.filter_width; yf <= spec.dog.filter_width; yf++) {
-	int iy = yc + yf;
-	if(iy < 0) iy = 0;  if(iy >= img_size.y) iy = img_size.y-1;
-	for(int xf = -spec.dog.filter_width; xf <= spec.dog.filter_width; xf++) {
-	  int ix = xc + xf;
-	  if(ix < 0) ix = 0;  if(ix >= img_size.x) ix = img_size.x-1;
-	  if(rgb_img) {
-	    cnvl += spec.dog.FilterPoint(xf, yf, retina_img.FastEl(ix, iy,0),
-					 retina_img.FastEl(ix, iy, 1),
-					 retina_img.FastEl(ix, iy, 2));
-	  }
-	  else {
-	    float gval = retina_img.FastEl(ix, iy);
-	    cnvl += spec.dog.FilterPoint(xf, yf, gval, gval, gval);
-	  }
-	}
-      }
-      if(cnvl > 0.0f)
-	on_out->FastEl(xo, yo) = cnvl;
-      else 
-	off_out->FastEl(xo, yo) = -cnvl;
-    }
-  }
-  
-  int idx;
-  float on_max = taMath_float::vec_max(on_out, idx);
-  if(on_max > .01f)
-     taMath_float::vec_norm_max(on_out);
-
-  float off_max = taMath_float::vec_max(off_out, idx);
-  if(off_max > .01f)
-    taMath_float::vec_norm_max(off_out);
-
-  if(superimpose) {			// add them back in!
-    taMath_float::vec_add(&on_output, on_out);
-    taMath_float::vec_add(&off_output, off_out);
-  }
-  return true;
+  return spec.FilterRetina(on_output, off_output, retina_img, superimpose);
 }
-
 
 bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
   TwoDCoord img_size(mat.dim(0), mat.dim(1));
@@ -1289,6 +1612,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.on_sigma = 2;
     sp->dog.off_sigma = 4;
     sp->spacing.region = RetinalSpacingSpec::FOVEA;
+    sp->spacing.res = RetinalSpacingSpec::HI_RES;
     sp->spacing.border.x = 109; sp->spacing.border.y = 85;
     sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
     sp->UpdateAfterEdit();
@@ -1300,6 +1624,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.on_sigma = 4;
     sp->dog.off_sigma = 8;
     sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
+    sp->spacing.res = RetinalSpacingSpec::MED_RES;
     sp->spacing.border.x = 6; sp->spacing.border.y = 14;
     sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
     sp->UpdateAfterEdit();
@@ -1311,6 +1636,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.on_sigma = 8;
     sp->dog.off_sigma = 16;
     sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
+    sp->spacing.res = RetinalSpacingSpec::LOW_RES;
     sp->spacing.border.x = 8; sp->spacing.border.y = 16;
     sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
     sp->UpdateAfterEdit();
@@ -1323,6 +1649,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.on_sigma = 2;
     sp->dog.off_sigma = 4;
     sp->spacing.region = RetinalSpacingSpec::FOVEA;
+    sp->spacing.res = RetinalSpacingSpec::HI_RES;
     sp->spacing.border.x = 109; sp->spacing.border.y = 85;
     sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
     sp->UpdateAfterEdit();
@@ -1334,6 +1661,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.on_sigma = 2;
     sp->dog.off_sigma = 4;
     sp->spacing.region = RetinalSpacingSpec::FOVEA;
+    sp->spacing.res = RetinalSpacingSpec::HI_RES;
     sp->spacing.border.x = 109; sp->spacing.border.y = 85;
     sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
     sp->UpdateAfterEdit();
@@ -1345,6 +1673,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.on_sigma = 4;
     sp->dog.off_sigma = 8;
     sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
+    sp->spacing.res = RetinalSpacingSpec::MED_RES;
     sp->spacing.border.x = 6; sp->spacing.border.y = 14;
     sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
     sp->UpdateAfterEdit();
@@ -1356,6 +1685,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.on_sigma = 4;
     sp->dog.off_sigma = 8;
     sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
+    sp->spacing.res = RetinalSpacingSpec::MED_RES;
     sp->spacing.border.x = 6; sp->spacing.border.y = 14;
     sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
     sp->UpdateAfterEdit();
@@ -1367,6 +1697,7 @@ void RetinaSpec::DefaultFilters() {
     sp->dog.on_sigma = 8;
     sp->dog.off_sigma = 16;
     sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
+    sp->spacing.res = RetinalSpacingSpec::LOW_RES;
     sp->spacing.border.x = 8; sp->spacing.border.y = 16;
     sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
     sp->UpdateAfterEdit();
@@ -1559,17 +1890,8 @@ bool RetinaSpec::FilterImageName(const String& img_fname, DataTable* dt,
 		     ret_move_x, ret_move_y, superimpose);
 }
 
-DoGRetinaSpec* RetinaSpec::FindRetinalRegion(RetinalSpacingSpec::Region reg) {
-  for(int i=0;i<dogs.size;i++) {
-    DoGRetinaSpec* fs = (DoGRetinaSpec*)dogs[i];
-    if(fs->spacing.region == reg)
-      return fs;
-  }
-  return NULL;
-}
-
 bool RetinaSpec::AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region) {
-  DoGRetinaSpec* fov_spec = FindRetinalRegion(region);
+  DoGRetinaSpec* fov_spec = dogs.FindRetinalRegion(region);
   if(!fov_spec) return false;
 
   float fov_x_pct = (float)fov_spec->spacing.input_size.x / (float)retina_size.x;
@@ -1612,7 +1934,7 @@ bool RetinaSpec::LookAtImageData_impl(float_Matrix& img_data, DataTable* dt,
   if(dogs.size == 0) return false;
 
   // find the fovea filter: one with smallest input_size
-  DoGRetinaSpec* fov_spec = FindRetinalRegion(region);
+  DoGRetinaSpec* fov_spec = dogs.FindRetinalRegion(region);
   if(!fov_spec) return false;
 
   // translation: find the middle of the box
@@ -1721,6 +2043,176 @@ bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
 		     move_x, move_y, scale, rotate,
 		     ret_move_x, ret_move_y, superimpose, attend);
 }
+
+//////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// 		Full V1 Spec
+
+void V1GaborSpec::Initialize() {
+  norm_max = .95f;
+}
+
+void V1GaborSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // todo: anything here??
+}
+
+void V1GaborSpec::DefaultFilters() {
+  if(!retina) {
+    taMisc::Error("V1GaborSpec::DefaultFilters -- requires the retina spec pointer to be set to get needed information!");
+    return;
+  }
+  StructUpdate(false);
+  if(retina->color_type == RetinaSpec::COLOR)
+    gabors.SetSize(5);
+  else
+    gabors.SetSize(3);
+  GaborV1Spec* sp;
+  int cnt = 0;
+  sp = gabors[cnt++];
+  sp->name = "V1_high";
+  sp->filter_type = GaborV1Spec::GABOR;
+  sp->region = RetinalSpacingSpec::FOVEA;
+  sp->res = RetinalSpacingSpec::HI_RES;
+  sp->rf_width = 8;
+  sp->gabor_rf.n_angles = 8;
+  sp->gabor_rf.freq = 1.4f;
+  sp->gabor_rf.length = 3.0f;
+  sp->gabor_rf.width = 3.0f;
+  sp->gabor_rf.amp = .9f;
+  sp->UpdateAfterEdit();
+
+  sp = gabors[cnt++];
+  sp->name = "V1_med";
+  sp->filter_type = GaborV1Spec::GABOR;
+  sp->region = RetinalSpacingSpec::PARAFOVEA;
+  sp->res = RetinalSpacingSpec::MED_RES;
+  sp->rf_width = 12;
+  sp->gabor_rf.n_angles = 8;
+  sp->gabor_rf.freq = 1.0f;
+  sp->gabor_rf.length = 4.0f;
+  sp->gabor_rf.width = 3.0f;
+  sp->gabor_rf.amp = .9f;
+  sp->UpdateAfterEdit();
+
+  sp = gabors[cnt++];
+  sp->name = "V1_low";
+  sp->filter_type = GaborV1Spec::GABOR;
+  sp->region = RetinalSpacingSpec::PARAFOVEA;
+  sp->res = RetinalSpacingSpec::LOW_RES;
+  sp->rf_width = 6;
+  sp->gabor_rf.n_angles = 8;
+  sp->gabor_rf.freq = 1.8f;
+  sp->gabor_rf.length = 2.0f;
+  sp->gabor_rf.width = 3.0f;
+  sp->gabor_rf.amp = .9f;
+  sp->UpdateAfterEdit();
+
+  if(retina->color_type == RetinaSpec::COLOR) {
+    sp = gabors[cnt++];
+    sp->name = "V1_hblob";
+    sp->filter_type = GaborV1Spec::BLOB;
+    sp->region = RetinalSpacingSpec::FOVEA;
+  sp->res = RetinalSpacingSpec::HI_RES;
+    sp->rf_width = 8;
+    sp->blob_rf.n_sizes = 1;
+    sp->blob_rf.width_st = 1.0f;
+    sp->blob_rf.width_inc = 2.0f;
+    sp->UpdateAfterEdit();
+
+    sp = gabors[cnt++];
+    sp->name = "V1_mblob";
+    sp->filter_type = GaborV1Spec::BLOB;
+    sp->region = RetinalSpacingSpec::PARAFOVEA;
+    sp->res = RetinalSpacingSpec::MED_RES;
+    sp->rf_width = 12;
+    sp->blob_rf.n_sizes = 1;
+    sp->blob_rf.width_st = 1.0f;
+    sp->blob_rf.width_inc = 2.0f;
+    sp->UpdateAfterEdit();
+  }
+  StructUpdate(true);
+}
+
+bool V1GaborSpec::UpdateSizesFmRetina() {
+  if(!retina) {
+    taMisc::Error("V1GaborSpec::UpdateSizesFmRetina -- requires the retina spec pointer to be set to get needed information!");
+    return false;
+  }
+  bool rval = gabors.UpdateSizesFmRetina(retina->dogs);
+  if(!rval) {
+    taMisc::Error("V1GaborSpec::UpdateSizesFmRetina -- did not get all clean sizes!");
+    return false;
+  }
+  return true;
+}
+
+void V1GaborSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
+  if(!UpdateSizesFmRetina()) return;
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!dt) {
+    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
+    dt = dgp->NewEl(1, &TA_DataTable); // todo: should be in InputData
+    if(!name.empty())
+      dt->name = name + "_InputData";
+    else
+      dt->name = "V1GaborSpec_InputData";
+  }
+  if(reset_cols) dt->Reset();
+  dt->StructUpdate(true);
+  int idx =0;
+  dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);
+  for(int i=0;i<gabors.size; i++) {
+    GaborV1Spec* sp = gabors[i];
+    dt->FindMakeColName(sp->name, idx, DataTable::VT_FLOAT, 4,
+			sp->un_geom.x, sp->un_geom.y, sp->gp_geom.x, sp->gp_geom.y);
+  }
+  dt->StructUpdate(false);
+}
+
+bool V1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt) {
+  if(!retina) {
+    taMisc::Error("V1GaborSpec::FilterRetinaData -- requires the retina spec pointer to be set to get needed information!");
+    return false;
+  }
+  if(!v1_out_dt || !ret_in_dt) {
+    taMisc::Error("V1GaborSpec::FilterRetinaData -- requires non-null input and output data tables");
+    return false;
+  }
+  v1_out_dt->StructUpdate(true);
+  v1_out_dt->AddBlankRow();
+  for(int i=0;i<gabors.size; i++) {
+    GaborV1Spec* sp = gabors[i];
+    float_Matrix* out_mat = (float_Matrix*)v1_out_dt->GetSinkMatrixByName(sp->name);
+
+    bool first = true;
+    for(int j=0;j<retina->dogs.size; j++) {
+      DoGRetinaSpec* dog = retina->dogs[j];
+      if(dog->spacing.region != sp->region || dog->spacing.res != sp->res) continue;
+      float_Matrix* on_mat = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + "_on");
+      if(!on_mat) continue;
+      taBase::Ref(on_mat);
+      float_Matrix* off_mat = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + "_off");
+      if(!off_mat) continue;
+      taBase::Ref(off_mat);
+
+      sp->FilterInput(*out_mat, dog->dog.color_chan, *on_mat, *off_mat, !first);
+
+      taBase::unRefDone(on_mat);
+      taBase::unRefDone(off_mat);
+      first = false;
+    }
+
+    if(norm_max > 0.0f)
+      taMath_float::vec_norm_max(out_mat, norm_max);
+    taBase::unRefDone(out_mat);
+  }
+  v1_out_dt->SetDataByName(ret_in_dt->GetDataByName("Name"), "Name"); // transfer over the name
+  v1_out_dt->StructUpdate(false);
+  return true;
+}
+
 
 ///////////////////////////////////////////////////////////
 // 		program stuff

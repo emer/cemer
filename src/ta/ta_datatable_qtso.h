@@ -416,28 +416,35 @@ public:
   QCheckBox*		    chkHeaders;
   QCheckBox*		    chkRowNum;
   QCheckBox*		    chk2dFont;
-  QCheckBox*		    chkValText;
-  QLabel*		    lblBlockHeight;
-  taiField*		    fldBlockHeight; // mat_block_height
   QPushButton*		    butRefresh;
-  QPushButton*		    butClear;
-  QPushButton*		    butSetColor;
+  QPushButton*		    butClear; // not used
 
   QHBoxLayout*		  layVals;
-  QLabel*		    lblWidth;
-  taiField*		    fldWidth; // width of the display (height is always 1.0)
   QLabel*		    lblRows;
   taiIncrField*		    fldRows; // number of rows to display
   QLabel*		    lblCols;
   taiIncrField*		    fldCols; // number of cols to display
+  QLabel*		    lblWidth;
+  taiField*		    fldWidth; // width of the display (height is always 1.0)
+  QLabel*		    lblTxtMin;
+  taiField*		    fldTxtMin;
+  QLabel*		    lblTxtMax;
+  taiField*		    fldTxtMax;
+
+  QHBoxLayout*		  layMatrix;
+  QLabel*		    lblMatrix;
+  QCheckBox*		    chkValText;
   QLabel*		    lblTrans;
   taiField*		    fldTrans; // mat_trans parency
   QLabel*		    lblRot;
   taiField*		    fldRot; // mat_rot ation
+  QLabel*		    lblBlockHeight;
+  taiField*		    fldBlockHeight; // mat_block_height
 
   QHBoxLayout*		  layColorScale;
   QCheckBox*		    chkAutoScale;
   ScaleBar*		    cbar;	      // colorbar
+  QPushButton*		    butSetColor;
 
   QHBoxLayout*		  layViewspace;
 
@@ -465,17 +472,21 @@ protected slots:
   void 		chkHeaders_toggled(bool on);
   void 		chkRowNum_toggled(bool on);
   void 		chk2dFont_toggled(bool on);
-  void 		chkValText_toggled(bool on);
-  void 		fldBlockHeight_textChanged();
 
   void 		butRefresh_pressed();
   void 		butClear_pressed();
   void 		butSetColor_pressed();
-  void 		fldWidth_textChanged();
+
   void 		fldRows_textChanged();
   void 		fldCols_textChanged();
+  void 		fldWidth_textChanged();
+  void 		fldTxtMin_textChanged();
+  void 		fldTxtMax_textChanged();
+
+  void 		chkValText_toggled(bool on);
   void 		fldTrans_textChanged();
   void 		fldRot_textChanged();
+  void 		fldBlockHeight_textChanged();
 
   void 		chkAutoScale_toggled(bool on);
   void		cbar_scaleValueChanged();

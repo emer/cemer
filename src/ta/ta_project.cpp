@@ -779,6 +779,16 @@ bool taRootBase::Startup_InitViewColors() {
     taMisc::view_colors = new ViewColor_List;
     taMisc::view_colors->BuildHashTable(100); // speed this one up
   }
+  taMisc::view_colors->FindMakeViewColor("NotEnabled", "State: !isEnabled",
+					 false, _nilString, true, "grey80");
+  taMisc::view_colors->FindMakeViewColor("ThisInvalid", "State: item not valid according to CheckConfig",
+					 false, _nilString, true, "red1");
+  taMisc::view_colors->FindMakeViewColor("ChildInvalid", "State: child not valid according to CheckConfig",
+					 false, _nilString, true, "orange1");
+  taMisc::view_colors->FindMakeViewColor("ProgElNonStd", "State: program element is not standard",
+					 false, _nilString, true, "yellow1");
+  taMisc::view_colors->FindMakeViewColor("ProgElNewEl", "State: program element is newly added",
+					 false, _nilString, true, "SpringGreen1");
   taMisc::view_colors->FindMakeViewColor("Comment", "Program comment",
 					 true, "firebrick", true, "firebrick1");
   taMisc::view_colors->FindMakeViewColor("ProgCtrl", "Program keyword",

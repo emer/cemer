@@ -298,6 +298,12 @@ public:
         return rval;} 
     else return NULL;}
   // #CAT_SinkChannel gets a REF'ed matrix (you MUST UnRefDone when finished) that you can use to write to the channel; this is ONLY guaranteed to be valid until the next write operation
+  taMatrix*		GetSinkMatrixByName(const String& ch_nm)
+  { int chan; if (WriteAvailable() && ((chan = GetSinkChannelByName(ch_nm)) >= 0)) 
+      {taMatrix* rval = GetSinkMatrix_impl(chan); if (rval) taBase::Ref(rval);
+        return rval;} 
+    else return NULL;}
+  // #CAT_SinkChannel gets a REF'ed matrix (you MUST UnRefDone when finished) that you can use to write to the channel; this is ONLY guaranteed to be valid until the next write operation
 
 protected:
   /////////////////////////////////////////////////////////

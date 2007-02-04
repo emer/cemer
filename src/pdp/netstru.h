@@ -185,7 +185,7 @@ public:
     else if(type == LT_MAX)	ApplyMaxLimit(wt);
     else if(type == MIN_MAX)	{ ApplyMinLimit(wt); ApplyMaxLimit(wt); } }
 
-  override String 	GetDecorateKey() const { return "ConSpec"; }
+  override String 	GetTypeDecoKey() const { return "ConSpec"; }
 
   void 	Initialize()		{ type = NONE; min = -1.0f; max = 1.0f; sym = false; }
   void	Destroy()		{ };
@@ -252,7 +252,7 @@ public:
   virtual bool	 DMem_AlwaysLocal() { return false; }
   // #CAT_DMem overload this function to prevent this projection from being pruned for non-local units under dmem processing (for "special" connection types)
 
-  override String 	GetDecorateKey() const { return "ConSpec"; }
+  override String 	GetTypeDecoKey() const { return "ConSpec"; }
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
@@ -315,7 +315,7 @@ public:
   { if(con_type != cp.con_type) return false; CopyCons_impl(cp); return true; }
   // #CAt_Modify copy connections from other con array, checking to make sure they are the same type (false if not)
 
-  override String 	GetDecorateKey() const { return "Connection"; }
+  override String 	GetTypeDecoKey() const { return "Connection"; }
 
   void 	Initialize();
   void 	Destroy();
@@ -463,7 +463,7 @@ public:
   int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   bool	ChangeMyType(TypeDef* new_type);
   
-  override String 	GetDecorateKey() const { return "Connection"; }
+  override String 	GetTypeDecoKey() const { return "Connection"; }
 
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -497,7 +497,7 @@ public:
   virtual bool		RemoveFrom(Layer* from);
   // #MENU #CAT_Structure remove sub group that receives from given layer
 
-  override String 	GetDecorateKey() const { return "Connection"; }
+  override String 	GetTypeDecoKey() const { return "Connection"; }
 
   void	Initialize() 		{ SetBaseType(&TA_RecvCons); }
   void 	Destroy()		{ };
@@ -574,7 +574,7 @@ public:
   int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   bool	ChangeMyType(TypeDef* new_type);
   
-  override String 	GetDecorateKey() const { return "Connection"; }
+  override String 	GetTypeDecoKey() const { return "Connection"; }
 
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -609,7 +609,7 @@ public:
   virtual bool		RemoveFrom(Layer* from);
   // #MENU #CAT_Structure remove sending connections from given layer
 
-  override String 	GetDecorateKey() const { return "Connection"; }
+  override String 	GetTypeDecoKey() const { return "Connection"; }
 
   void	Initialize() 		{ SetBaseType(&TA_SendCons); }
   void 	Destroy()		{ };
@@ -670,7 +670,7 @@ public:
   virtual int	UseCount();
   // #CAT_ObjectMgmt return number of times this spec is used
 
-  override String 	GetDecorateKey() const { return "UnitSpec"; }
+  override String 	GetTypeDecoKey() const { return "UnitSpec"; }
 
   void 	Initialize();
   void 	Destroy()		{ };
@@ -845,7 +845,7 @@ public: //
   virtual TwoDCoord GetMyAbsPos();
   // get the absolute position of this unit relative to the layer, taking into account any unit groups
   
-  override String 	GetDecorateKey() const { return "Unit"; }
+  override String 	GetTypeDecoKey() const { return "Unit"; }
 
   void	Initialize();
   void 	Destroy();
@@ -896,7 +896,7 @@ public:
   virtual int	UseCount();
   // #CAT_ObjectMgmt return number of times this spec is used
   
-  override String 	GetDecorateKey() const { return "ProjectionSpec"; }
+  override String 	GetTypeDecoKey() const { return "ProjectionSpec"; }
 
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
@@ -1023,7 +1023,7 @@ public:
   virtual void	WeightsToTable(DataTable* dt);
   // #MENU #NULL_OK #CAT_Projection TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
-  override String 	GetDecorateKey() const { return "Projection"; }
+  override String 	GetTypeDecoKey() const { return "Projection"; }
 
   void 	Initialize();
   void 	Destroy();
@@ -1041,7 +1041,7 @@ protected:
 class PDP_API Projection_Group: public taGroup<Projection> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network 
 public:
-  override String 	GetDecorateKey() const { return "Projection"; }
+  override String 	GetTypeDecoKey() const { return "Projection"; }
 
   void	Initialize() 		{ SetBaseType(&TA_Projection); }
   void 	Destroy()		{ };
@@ -1201,7 +1201,7 @@ public:
 
   void		RemoveAll();
   
-  override String 	GetDecorateKey() const { return "Unit"; }
+  override String 	GetTypeDecoKey() const { return "Unit"; }
 
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }
@@ -1223,7 +1223,7 @@ public:
   virtual bool		CheckConfig_Layer(Layer* lay, bool quiet = false)
     {return true;} // #CAT_ObjectMgmt This is ONLY for spec-specific stuff; the layer still does all its default checking (incl child checking)
 
-  override String 	GetDecorateKey() const { return "LayerSpec"; }
+  override String 	GetTypeDecoKey() const { return "LayerSpec"; }
 
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
@@ -1238,7 +1238,7 @@ public:
   int	fm_input;		// how many layers between closest input layer and me (-1 if unknown)
   int	fm_output;		// how many layers between closest output layer and me (-1 if unknown)
 
-  override String 	GetDecorateKey() const { return "Layer"; }
+  override String 	GetTypeDecoKey() const { return "Layer"; }
 
   void 	Initialize()		{ fm_input = -1; fm_output = -1; }
   void	Destroy()		{ };
@@ -1464,7 +1464,7 @@ public:
 #endif
 
   override int	GetEnabled() const { return !lesion; }
-  override String GetDecorateKey() const { return "Layer"; }
+  override String GetTypeDecoKey() const { return "Layer"; }
 
   void 	UpdateAfterEdit();
   void 	Initialize();
@@ -1500,7 +1500,7 @@ class PDP_API Layer_Group : public taGroup<Layer> {
 public:
   TDCoord	pos;		// Position of Group of layers relative to network
 
-  override String GetDecorateKey() const { return "Layer"; }
+  override String GetTypeDecoKey() const { return "Layer"; }
 
   void	Initialize() 		{ };
   void 	Destroy()		{ };
@@ -1523,7 +1523,7 @@ public:
   float  prjn;		// #DEF_0.01 projection names and values
   float	 unit;		// #DEF_0.02 unit names and values
 
-  override String 	GetDecorateKey() const { return "Network"; }
+  override String 	GetTypeDecoKey() const { return "Network"; }
 
   void 	Initialize();
   void	Destroy()		{ };
@@ -1543,7 +1543,7 @@ public:
   float	lay_trans;	// #DEF_0.5 transparency of the layer border
   float	unit_trans;	// #DEF_0.6 transparency of the units
 
-  override String 	GetDecorateKey() const { return "Network"; }
+  override String 	GetTypeDecoKey() const { return "Network"; }
 
   void 	Initialize();
   void	Destroy()		{ };
@@ -1869,7 +1869,7 @@ public:
   int		Dump_Load_Value(istream& strm, taBase* par=NULL);
   override int 	Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
 
-  override String 	GetDecorateKey() const { return "Network"; }
+  override String 	GetTypeDecoKey() const { return "Network"; }
 
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -1892,7 +1892,7 @@ class PDP_API Network_Group : public taGroup<Network> {
 INHERITED(taGroup<Network>)
 public:
   
-  override String 	GetDecorateKey() const { return "Network"; }
+  override String 	GetTypeDecoKey() const { return "Network"; }
 
   void	Initialize() 		{SetBaseType(&TA_Network);}
   void 	Destroy()		{ };

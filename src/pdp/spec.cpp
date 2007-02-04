@@ -38,9 +38,10 @@ void BaseSpec_Group::Initialize() {
   SetBaseType(&TA_BaseSpec);
 }
 
-String BaseSpec_Group::GetDecorateKey() const {
-  if(size > 0) return FastEl(0)->GetDecorateKey();
-  if(GetOwner()) return GetOwner()->GetDecorateKey();
+String BaseSpec_Group::GetTypeDecoKey() const {
+  if(size > 0) return FastEl(0)->GetTypeDecoKey();
+  if(GetOwner()) return GetOwner()->GetTypeDecoKey();
+  return inherited::GetTypeDecoKey();
 }
 
 BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {

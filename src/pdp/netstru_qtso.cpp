@@ -1971,7 +1971,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   chkDisplay = new QCheckBox("Display", widg);
   connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
   layDispCheck->addWidget(chkDisplay);
-  layDispCheck->addSpacing(taiM->hsep_c);
+//   layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
@@ -1980,7 +1980,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
     NULL, NULL, widg);
   connect(cmbUnitText, SIGNAL(itemChanged(int)), this, SLOT(cmbUnitText_itemChanged(int)) );
   layDispCheck->addWidget(cmbUnitText->GetRep());
-  layDispCheck->addSpacing(taiM->hsep_c);
+//   layDispCheck->addSpacing(taiM->hsep_c);
 
   lblDispMode = taiM->NewLabel("Style", widg, font_spec);
   lblDispMode->setToolTip("How to display unit values.  3d Block (default) is optimized\n\
@@ -1992,6 +1992,14 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
+  lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
+  lblPrjnWdth->setToolTip("Width of projection lines -- .001 is default (very thin!) -- increase if editing projections so they are easier to select.");
+  layDispCheck->addWidget(lblPrjnWdth);
+  fldPrjnWdth = new taiField(&TA_float, NULL, NULL, widg);
+  layDispCheck->addWidget(fldPrjnWdth->GetRep());
+//   layDispCheck->addSpacing(taiM->hsep_c);
+  connect(fldPrjnWdth->rep(), SIGNAL(editingFinished()), this, SLOT(fldPrjnWdth_textChanged()) );
+
   ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout(layViewParams);
 
@@ -2000,7 +2008,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layFontsEtc->addWidget(lblUnitTrans);
   fldUnitTrans = new taiField(&TA_float, NULL, NULL, widg);
   layFontsEtc->addWidget(fldUnitTrans->GetRep());
-  layFontsEtc->addSpacing(taiM->hsep_c);
+//   layFontsEtc->addSpacing(taiM->hsep_c);
   connect(fldUnitTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitTrans_textChanged()) );
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
@@ -2008,7 +2016,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layFontsEtc->addWidget(lblUnitFont);
   fldUnitFont = new taiField(&TA_float, NULL, NULL, widg);
   layFontsEtc->addWidget(fldUnitFont->GetRep());
-  layFontsEtc->addSpacing(taiM->hsep_c);
+//   layFontsEtc->addSpacing(taiM->hsep_c);
   connect(fldUnitFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitFont_textChanged()) );
 
   lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
@@ -2016,7 +2024,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layFontsEtc->addWidget(lblLayFont);
   fldLayFont = new taiField(&TA_float, NULL, NULL, widg);
   layFontsEtc->addWidget(fldLayFont->GetRep());
-  layFontsEtc->addSpacing(taiM->hsep_c);
+//   layFontsEtc->addSpacing(taiM->hsep_c);
   connect(fldLayFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldLayFont_textChanged()) );
 
   chkXYSquare = new QCheckBox("XY\nSquare", widg);
@@ -2130,6 +2138,37 @@ NetViewPanel::~NetViewPanel() {
   if (cmbUnitText) {delete cmbUnitText; cmbUnitText = NULL;}
 }
 
+void NetViewPanel::GetImage_impl() {
+  inherited::GetImage_impl();
+  NetView* nv = this->nv(); // cache
+  cmbUnitText->GetImage(nv->unit_text_disp);
+  cmbDispMode->GetImage(nv->unit_disp_mode);
+  chkDisplay->setChecked(nv->display);
+  fldPrjnWdth->GetImage((String)nv->view_params.prjn_width);
+
+  fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
+  fldUnitFont->GetImage((String)nv->font_sizes.unit);
+  fldLayFont->GetImage((String)nv->font_sizes.layer);
+  // update var selection
+  int i = 0;
+  Q3ListViewItemIterator it(lvDisplayValues);
+  Q3ListViewItem* item;
+  while ((item = it.current())) {
+    bool is_selected = (nv->ordered_uvg_list.FindEl(i) >= 0);
+    lvDisplayValues->setSelected(item, is_selected);
+    // if list is size 1 make sure that there is a scale_range entry for this one
+    ++it;
+    ++i;
+  }
+  // spec highlighting
+  BaseSpec* cspc = m_cur_spec; // to see if it changes, if not, we force redisplay
+  iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(tvSpecs->currentItem());
+  tvSpecs_ItemSelected(tvi); // manually invoke slot
+  if (cspc == m_cur_spec)
+    setHighlightSpec(m_cur_spec, true);
+
+  ColorScaleFromData();
+}
 
 void NetViewPanel::AddCmdButton(QWidget* but) {
   widCmdButtons->lay->addWidget(but);
@@ -2235,6 +2274,15 @@ void NetViewPanel::fldLayFont_textChanged() {
   nv_->UpdateDisplay(false);
 }
 
+void NetViewPanel::fldPrjnWdth_textChanged() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+
+  nv_->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
+  nv_->UpdateDisplay(false);
+}
+
 void NetViewPanel::chkXYSquare_toggled(bool on) {
   if (updating) return;
   NetView* nv_;
@@ -2266,37 +2314,6 @@ void NetViewPanel::ColorScaleFromData() {
   chkAutoScale->setChecked(nv_->scale.auto_scale); //note: raises signal on widget! (grr...)
   --updating;
 }
-
-void NetViewPanel::GetImage_impl() {
-  inherited::GetImage_impl();
-  NetView* nv = this->nv(); // cache
-  cmbUnitText->GetImage(nv->unit_text_disp);
-  cmbDispMode->GetImage(nv->unit_disp_mode);
-  chkDisplay->setChecked(nv->display);
-  fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
-  fldUnitFont->GetImage((String)nv->font_sizes.unit);
-  fldLayFont->GetImage((String)nv->font_sizes.layer);
-  // update var selection
-  int i = 0;
-  Q3ListViewItemIterator it(lvDisplayValues);
-  Q3ListViewItem* item;
-  while ((item = it.current())) {
-    bool is_selected = (nv->ordered_uvg_list.FindEl(i) >= 0);
-    lvDisplayValues->setSelected(item, is_selected);
-    // if list is size 1 make sure that there is a scale_range entry for this one
-    ++it;
-    ++i;
-  }
-  // spec highlighting
-  BaseSpec* cspc = m_cur_spec; // to see if it changes, if not, we force redisplay
-  iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(tvSpecs->currentItem());
-  tvSpecs_ItemSelected(tvi); // manually invoke slot
-  if (cspc == m_cur_spec)
-    setHighlightSpec(m_cur_spec, true);
-
-  ColorScaleFromData();
-}
-
 
 void NetViewPanel::GetVars() {
   NetView* nv_;

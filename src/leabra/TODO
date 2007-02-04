@@ -2,6 +2,37 @@ leabra todo list:
 
 commit:
 
+* opt check on editing a datatable and then not for sub-rasa updates..  maybe net too?
+* copying a network gives tons of connect alloc errors
+* v3convert: end up with 2 bias.unit links from copy op?
+* user script import still works or not??
+
+
+------------------
+Program issues
+
+* proglib: add dates!
+* dirty!!
+
+* edit user script: non-modal dialog w/ better (narrower) default sizing
+
+--------------------
+Other Algorithms:
+  * fixup BP, so plugin
+
+--------------
+
+* datatable: row manip functions like rowcopy, moverow, insert row, etc
+  * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
+  * concat columns
+  * datatable time average
+
+* ta_math: convolve; gaussian/uniform gen; time averaging with diff kernels
+
+* css: p voidfun = crash; bindargs seems to not be getting the void??
+  e.g., p taMisc::include_paths.List();
+  css include path & files from old css..
+
 ------------------
 hv model
 
@@ -9,12 +40,11 @@ hv model
 for setting network stats vars on dmem_timing.
 
 * IT fm output: adapt goes up to .12, no adapt is down at .018 -- change it fm output target.
-  itfmo05  -- still bust
+  itfmo05  -- still bust; 
 
 * main thing is high: v2 from v4 seems to be bad..  try run with just norel adapt + output
 
 * output should get more from IT than V4??  check wiki for prior experiments..
-
 
 * do repeat testing
 * show retina stuff in netview (record params in trial log to)
@@ -31,41 +61,13 @@ for setting network stats vars on dmem_timing.
   if model recognizes object at t, pvlv gets reward
   cs association with good look decisions drives reward at t-1
 
---------------------
-Other Algorithms:
-  * fixup BP, so plugin
-
---------------------
-* view colors: enum with different built-in styles
-
-  * support the Flags for program guys: bg-only mode -- seems to require an index??
-
---------------
-
-* datatable: row manip functions like rowcopy, moverow, insert row, etc
-  * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
-  * concat columns
-  * datatable time average
-
-* ta_math: convolve; gaussian/uniform gen; time averaging with diff kernels
-
-* v3convert: end up with 2 bias.unit links from copy op?
-
-* css: p voidfun = crash; bindargs seems to not be getting the void??
-  e.g., p taMisc::include_paths.List();
-  css include path & files from old css..
+---------------
+Tom's project:
 
 * replace condlist with datatables -- just do all the ops on the datatables 
   directly; lots of datatableloops!
 
 -----------
-Program issues
-
-* proglib: add dates!
-* dirty!!
-
-* edit user script: non-modal dialog w/ better (narrower) default sizing
-
 css:
 
 * css_console.cpp: complete obj.mbr expressions..
@@ -75,18 +77,15 @@ css:
 
   - struct update debug on hv model
   - when editing a datatable_impl, need to send refresh update to display
-  - initial panel is not updated..  just stick in render_impl and be done with it??
+  - initial panel is not updated..  just stick in render_impl and be done with it??  no..
   - view at is too far zoomed out -- can't seem to fix this at all, any way I try..
   - colorscale changes not sending signal
-  - add data_spacing to graph view
+  - add data_spacing to graph view?
 
   - all views: add bool for draggers (in gridview; only active for structural re-init)
 
 --------------------
 * netview: 
-
- * make xydrag handles thicker: create new default image by replacing existing
-   with thicker bars;
 
 -----------
 Check:
@@ -95,6 +94,7 @@ Check:
 Broader issues:
 
 * configuring network properties: currently various button menus but need more efficient?
+* specifically connecting layers!
 
 -----------
 current bugs:
@@ -109,6 +109,11 @@ lower pri:
 * checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
 
 * test FILE string_stream.css: ptr = 0?
+
+* view colors: enum with different built-in styles
+
+* make netview xydrag handles thicker: create new default image by replacing existing
+   with thicker bars;
 
 ----------
 arg directives

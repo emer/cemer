@@ -95,7 +95,8 @@ public:
   virtual void		FillContextMenu_EditItems(taiActions* menu, int allowed) {}
   virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
-  virtual String	GetDecorateKey() const {return _nilString;}
+  virtual String	GetTypeDecoKey() const {return _nilString;}
+  virtual String	GetStateDecoKey() const {return _nilString;}
   virtual const QVariant GetColData(const KeyString& key, int role) const 
     {return QVariant();} // for getting things like status text, tooltip text, etc.
   virtual bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const
@@ -156,7 +157,8 @@ public:
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
   override TypeDef*	GetDataTypeDef() const;
-  override String	GetDecorateKey() const;
+  override String	GetTypeDecoKey() const;
+  override String	GetStateDecoKey() const;
   override String	GetName() const;
   override bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const; // asks this type if we should show the md member
   override String	GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE

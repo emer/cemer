@@ -71,7 +71,6 @@ public:
   int		n_layers;	// number of layers
   taBase_List	layer_cfg;	// provides configuration information for each layer
   Connectivity	connectivity;	// how to connect the layers
-  TypeDef*	event_type;	// #TYPE_Event type of event to create by default
 
   virtual void	ThreeLayerNet();
   // #MENU_BUTTON #MENU_ON_Defaults set configuration to a standard three-layer network (input, hidden, output) -- DOESN'T MAKE NETWORK (use StdEnv!)
