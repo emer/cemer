@@ -1767,6 +1767,7 @@ void NetView::Render_net_text() {
     txt->string.setValue(el.chars());
     chld_idx++;
   }
+  net_txt->touch();		// needed for updating
 
 //   if (!display || !net()->CheckBuild(true)) return; // no display, or needs to be built
   if (scale.auto_scale) {

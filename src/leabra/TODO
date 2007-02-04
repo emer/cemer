@@ -5,8 +5,11 @@ commit:
 * opt check on editing a datatable and then not for sub-rasa updates..  maybe net too?
 * copying a network gives tons of connect alloc errors
 * v3convert: end up with 2 bias.unit links from copy op?
-* user script import still works or not??
-
+  * tmp name is bizzare?
+* user script import still works or not??  nope..
+* quit has changes thing, close project does not..
+* enforce naming rules on layer names, to match data table columns.
+* netview text not updating
 
 ------------------
 Program issues

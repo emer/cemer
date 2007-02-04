@@ -81,7 +81,7 @@ class TA_API taProject : public taFBase {
   // ##FILETYPE_Project ##FILER_CONTEXT_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
-  taBase_Group		templates; // templates for new objects -- copy new objects from here
+  taBase_Group		templates; // #HIDDEN templates for new objects -- copy new objects from here
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
   DataTable_Group	data;	// data, such as patterns for network input

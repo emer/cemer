@@ -310,7 +310,7 @@ Program_Group .projects[0].programs.gp[0] {
     Program @[8] { 
       ProgObjList @.objs = [1] {
 	NetMonitor @[0] { 
-	  NetMonItem_List @.items = [9] {
+	  NetMonItem_List @.items = [8] {
 	    NetMonItem @[0] { };
 	    NetMonItem @[1] { };
 	    NetMonItem @[2] { };
@@ -319,7 +319,6 @@ Program_Group .projects[0].programs.gp[0] {
 	    NetMonItem @[5] { };
 	    NetMonItem @[6] { };
 	    NetMonItem @[7] { };
-	    NetMonItem @[8] { };
 	  };
 	};
       };
@@ -555,7 +554,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[2] {
     name="epoch";
     var_type=T_Int;
-    int_val=10;
+    int_val=0;
     objs_ptr=0;
     desc=;
    };
@@ -751,7 +750,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="trial";
     var_type=T_Int;
-    int_val=5;
+    int_val=0;
     objs_ptr=0;
     desc=;
    };
@@ -977,7 +976,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="phase_no";
     var_type=T_Int;
-    int_val=2;
+    int_val=0;
     objs_ptr=0;
     desc=;
    };
@@ -1140,7 +1139,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="cycle";
     var_type=T_Int;
-    int_val=15;
+    int_val=0;
     objs_ptr=0;
     desc=;
    };
@@ -1966,25 +1965,9 @@ else min_cycles = network->min_cycles_phase2;
       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[8] {
-      name="Hidden_Fm_Input_r_wt";
-      computed=0;
-      object_type=LeabraPrjn;
-      object=.projects[0].networks[0].layers[1].projections[0]$40$;
-      variable="r.wt";
-      var_label=;
-      name_style=AUTO_NAME;
-      max_name_len=6;
-      val_type=VT_FLOAT;
-      matrix=0;
-      matrix_geom{       };
-      pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
-     };
     };
     network=$1$;
-    data=.projects[0].data.gp[1][1]$41$;
+    data=.projects[0].data.gp[1][1]$40$;
     rmv_orphan_cols=1;
    };
   };
@@ -2009,7 +1992,7 @@ else min_cycles = network->min_cycles_phase2;
     name="epoch_mon_data";
     var_type=T_Object;
     object_type=DataTable;
-    object_val=$41$;
+    object_val=$40$;
     objs_ptr=0;
     desc=;
    };
@@ -2017,7 +2000,7 @@ else min_cycles = network->min_cycles_phase2;
     name="epoch_netmon";
     var_type=T_Object;
     object_type=NetMonitor;
-    object_val=.projects[0].programs.gp[0][8].objs[0]$42$;
+    object_val=.projects[0].programs.gp[0][8].objs[0]$41$;
     objs_ptr=1;
     desc=;
    };
@@ -2025,7 +2008,7 @@ else min_cycles = network->min_cycles_phase2;
     name="epoch_timer";
     var_type=T_Object;
     object_type=TimeUsed;
-    object_val=NULL;
+    object_val=$12$;
     objs_ptr=0;
     desc=;
    };
@@ -2043,7 +2026,7 @@ else min_cycles = network->min_cycles_phase2;
     desc=;
     flags=PEF_NONE;
     result_var=NULL;
-    obj=.projects[0].programs.gp[0][8].vars[1]$43$;
+    obj=.projects[0].programs.gp[0][8].vars[1]$42$;
     method=NetMonitor::SetDataNetwork;
     args{ epoch_mon_data;network;};
 { DataTable* dt;Network* net;    };
@@ -2052,7 +2035,7 @@ else min_cycles = network->min_cycles_phase2;
     desc=;
     flags=PEF_NONE;
     result_var=NULL;
-    obj=$43$;
+    obj=$42$;
     method=taBase::CheckConfig;
     args{ false;};
 { bool quiet;    };
@@ -2061,7 +2044,7 @@ else min_cycles = network->min_cycles_phase2;
     desc="update the monitor items and data schema";
     flags=PEF_NONE;
     result_var=NULL;
-    obj=$43$;
+    obj=$42$;
     method=NetMonitor::UpdateMonitors;
     args{ true;};
 { bool reset_first;    };
@@ -2075,7 +2058,7 @@ else min_cycles = network->min_cycles_phase2;
     desc="add a new blank row to the data";
     flags=PEF_NONE;
     result_var=NULL;
-    obj=.projects[0].programs.gp[0][8].vars[0]$44$;
+    obj=.projects[0].programs.gp[0][8].vars[0]$43$;
     method=DataTable::AddBlankRow;
     args{ };
 {     };
@@ -2084,7 +2067,7 @@ else min_cycles = network->min_cycles_phase2;
     desc="get the new monitor data.";
     flags=PEF_NONE;
     result_var=NULL;
-    obj=$43$;
+    obj=$42$;
     method=NetMonitor::GetMonVals;
     args{ };
 {     };
@@ -2101,7 +2084,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     desc="update after writing new data to monitor data table";
     flags=PEF_NONE;
     result_var=NULL;
-    obj=$44$;
+    obj=$43$;
     method=DataBlock::WriteClose;
     args{ };
 {     };
@@ -2214,7 +2197,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    MiscCall @[1] {
     desc=;
     flags=PEF_NONE;
-    result_var=.projects[0].programs.gp[0][9].vars[4]$45$;
+    result_var=.projects[0].programs.gp[0][9].vars[4]$44$;
     object_type=taMisc;
     method=taMisc::LeadingZeros;
     args{ network->batch;2;};
@@ -2223,7 +2206,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    MiscCall @[2] {
     desc=;
     flags=PEF_NONE;
-    result_var=.projects[0].programs.gp[0][9].vars[3]$46$;
+    result_var=.projects[0].programs.gp[0][9].vars[3]$45$;
     object_type=taMisc;
     method=taMisc::LeadingZeros;
     args{ network->epoch;4;};
@@ -2232,14 +2215,14 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    AssignExpr @[3] {
     desc=;
     flags=PEF_NONE;
-    result_var=.projects[0].programs.gp[0][9].vars[5]$47$;
+    result_var=.projects[0].programs.gp[0][9].vars[5]$46$;
     expr="tag + \".\" + batch_str + \"_\" + epoch_str";
    };
    MethodCall @[4] {
     desc=;
     flags=PEF_NONE;
-    result_var=.projects[0].programs.gp[0][9].vars[2]$48$;
-    obj=.projects[0].programs.gp[0][9].args[0]$49$;
+    result_var=.projects[0].programs.gp[0][9].vars[2]$47$;
+    obj=.projects[0].programs.gp[0][9].args[0]$48$;
     method=taBase::GetFileNameFmProject;
     args{ ".wts.gz";final_tag;wts_subdir;false;};
 { const taString& ext;const taString& tag;const taString& subdir;bool dmem_proc_no;    };
@@ -2248,7 +2231,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     desc=;
     flags=PEF_NONE;
     result_var=NULL;
-    obj=$49$;
+    obj=$48$;
     method=Network::SaveWeights;
     args{ fname;Network::NET_FMT;};
 { const taString& fname;Network::WtSaveFormat fmt;    };
