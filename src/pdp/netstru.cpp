@@ -3852,7 +3852,7 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
 {
   // note: when use LayerWriters, we typically always just get a single frame of 
   // the exact dimensions, and so ignore 'frame'
-  if (!data) return;
+  if (!data || lesion) return;
   // check correct geom of data
   if ((data->dims() != 2) && (data->dims() != 4)) {
     taMisc::Error("Layer::ApplyInputData: data->dims must be 2 (2-d) or 4 (4-d); is: ",
