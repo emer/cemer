@@ -227,7 +227,7 @@ void T3DataView::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) 
 void T3DataView::DataUpdateAfterEdit_impl() {
   inherited::DataUpdateAfterEdit_impl();
   DoActions(RENDER_IMPL);
-  // todo: this should be superfluous:
+  // this should be superfluous:
 //   if (m_node_so)
 //     m_node_so->touch();
 }

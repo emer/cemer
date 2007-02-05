@@ -912,6 +912,7 @@ bool V3ProjectBase::ConvertToV4_Nets(ProjectBase* nwproj) {
     taLeafItr li;
     Layer* lay;
     FOR_ITR_EL(Layer, lay, net->layers., li) {
+      lay->UpdateAfterEdit();
       String lnm = lay->name;  lnm.downcase();
       if(lnm.contains("in") || lnm.contains("stim"))
 	lay->layer_type = Layer::INPUT;
@@ -926,9 +927,10 @@ bool V3ProjectBase::ConvertToV4_Nets(ProjectBase* nwproj) {
   nwproj->networks = networks;	// this should the do spec updating automatically!
 
   FOR_ITR_EL(Network, net, nwproj->networks., ni) {
-    net->ShowInViewer();
+    net->RemoveUnits();
     net->Build();
     net->Connect();
+    net->ShowInViewer();
   }
   return true;
 }

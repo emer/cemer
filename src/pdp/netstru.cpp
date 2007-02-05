@@ -272,6 +272,7 @@ void ConArray::Free() {
 }
 void ConArray::Copy_(const ConArray& cp) {
   SetType(cp.con_type);
+  Alloc(cp.alloc_size);
   CopyCons(cp);
 }
 
@@ -472,13 +473,27 @@ void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) {
       rval = false;
     }
     else {
-      SendCons* sucg = su->send.FastEl(send_idx);
-      if(sucg->prjn != prjn) {
-	if(!quiet)
+      if((send_idx < 0) || (send_idx != prjn->send_idx)) {
 	  taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
-			   "doesn't have correct prjn on sending unit.  Do Actions/Remove Cons, then Build, Connect on Network");
-	prjn->projected = false;
-	rval = false;
+			   "is not set correctly.  Do FixPrjnIndexes or Connect");
+	  rval = false;
+      }
+      else {
+	SendCons* sucg = su->send.SafeEl(send_idx);
+	if(!sucg) {
+	  taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
+			     "is not set correctly (send guy is NULL).  Do Actions/Remove Cons, then Build, Connect on Network");
+	  rval = false;
+	}
+	else {
+	  if(sucg->prjn != prjn) {
+	    if(!quiet)
+	      taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
+				 "doesn't have correct prjn on sending unit.  Do Actions/Remove Cons, then Build, Connect on Network");
+	    prjn->projected = false;
+	    rval = false;
+	  }
+	}
       }
     }
   }
@@ -1275,10 +1290,17 @@ void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) {
     }
     else {
       RecvCons* rucg = ru->recv.FastEl(recv_idx);
-      if(rucg->prjn != prjn) {
+      if(!rucg) {
 	taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
-			   "doesn't have correct prjn on recv unit.  Do Actions/Remove Cons, then Build, Connect on Network");
+			   "is not set correctly (recv guy is NULL).  Do Actions/Remove Cons, then Build, Connect on Network");
 	rval = false;
+      }
+      else {
+	if(rucg->prjn != prjn) {
+	  taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
+			     "doesn't have correct prjn on recv unit.  Do Actions/Remove Cons, then Build, Connect on Network");
+	  rval = false;
+	}
       }
     }
   }

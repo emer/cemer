@@ -649,11 +649,11 @@ String UserScript::GetDisplayName() const {
 
 void UserScript::ImportFromFile(istream& strm) {
   user_script = "";
-  while(!strm.eof()) {
-    char c = strm.get();
-    if(c == EOF) break;
+  char c;
+  while((c = strm.get()) != EOF) {
     user_script += c;
   }
+  UpdateAfterEdit();
 }
 
 void UserScript::ImportFromFileName(const String& fnm) {

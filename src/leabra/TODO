@@ -2,14 +2,24 @@ leabra todo list:
 
 commit:
 
-* opt check on editing a datatable and then not for sub-rasa updates..  maybe net too?
-* copying a network gives tons of connect alloc errors
-* v3convert: end up with 2 bias.unit links from copy op?
-  * tmp name is bizzare?
-* user script import still works or not??  nope..
+* profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
+  -- seems slower after clicking around.  maybe net too?
+
+* copying a network: links are not fixed (send_idx, etc)
+
+* saving 12ax model *with* units, then close project: get a crash.  not without.
+
+* v3convert: 
+  * tmp name is bizzare -- fname filer issues
+  * epoch timer not being set on 12ax convert in epoch mon
+
 * quit has changes thing, close project does not..
+
 * enforce naming rules on layer names, to match data table columns.
-* netview text not updating
+
+* filer needs to use basic context (ticket filed)
+
+check:
 
 ------------------
 Program issues
