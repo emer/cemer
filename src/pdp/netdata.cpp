@@ -1249,7 +1249,6 @@ void NetMonitor::SetDataNetwork(DataTable* dt, Network* net) {
 
 void NetMonitor::UpdateMonitors(bool reset_first) {
   if (!data) return;
-  // somehow this struct update is not working -- counters are getting out of whack
   data->StructUpdate(true);
   if(reset_first)
     data->ResetData();

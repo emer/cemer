@@ -36,8 +36,7 @@ const String DataArray_impl::udkey_narrow("NARROW");
 const String DataArray_impl::udkey_hidden("HIDDEN");
 
 void DataArray_impl::Initialize() {
-  mark = false;
-  pin = false;
+  col_flags = DC_NONE;
   is_matrix = false;
   // default initialize to scalar
   cell_geom.SetSize(1);
@@ -58,9 +57,7 @@ void DataArray_impl::CutLinks() {
 }
 
 void DataArray_impl::Copy_(const DataArray_impl& cp) {
-  disp_opts = cp.disp_opts;
-  mark = cp.mark;
-  pin = cp.pin;
+  col_flags = cp.col_flags;
   is_matrix = cp.is_matrix;
   cell_geom = cp.cell_geom;
 }
@@ -188,7 +185,7 @@ int DataArray_impl::displayWidth() const {
 taBase::DumpQueryResult DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
   if (md->name == "ar") {
     // if no save, don't need to check DataTable global
-    if (saveToFile()) {
+    if (saveToDumpFile()) {
       DataTable* dt = dataTable();
       if (dt && dt->save_data) return DQR_SAVE;
     }
@@ -205,12 +202,10 @@ void DataArray_impl::Get2DCellGeom(int& x, int& y, bool odd_y) const {
 }
 
 const KeyString DataArray_impl::key_val_type("val_type");
-const KeyString DataArray_impl::key_disp_opts("disp_opts");
 
 String DataArray_impl::GetColText(const KeyString& key, int itm_idx) const {
   if (key == key_name) return GetDisplayName(); // override
   if (key == key_val_type) return ValTypeToStr(valType());
-  if (key == key_disp_opts) return disp_opts;
   else return inherited::GetColText(key, itm_idx);
 }
 
@@ -420,7 +415,6 @@ void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
 String DataTableCols::GetColHeading(const KeyString& key) const {
   if (key == key_name) return "Col Name"; // override
   else if (key == DataArray_impl::key_val_type) return "Data Type";
-  else if (key == DataArray_impl::key_disp_opts) return "Disp Opts";
   else return inherited::GetColHeading(key);
 }
 
@@ -428,7 +422,6 @@ const KeyString DataTableCols::GetListColKey(int col) const {
   switch (col) {
   case 0: return key_name;
   case 1: return DataArray_impl::key_val_type;
-  case 2: return DataArray_impl::key_disp_opts;
   default: return _nilKeyString;
   }
 }
@@ -559,7 +552,7 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
     DataArray_impl* col;
     for (i = 0; i < cols(); ++i) {
       col = GetColData(i);
-      if (!col->saveToFile()) continue;
+      if (!col->saveToDumpFile()) continue;
       int frms = col->AR()->frames();
       // number of rows is going to be = biggest number in individual cols
       rows = max(rows, frms);
@@ -579,7 +572,7 @@ DataArray_impl* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
     if (da->name != cs->name) continue;
     // if name matches, but not contents, we need to remake it...
     if (ColMatchesChannelSpec(da, cs)) {
-      da->mark = false; // reset mark for orphan tracking
+      da->ClearColFlag(DataArray_impl::MARK); // reset mark for orphan tracking
       cs->chan_num = i;
       return da;
     }
@@ -827,7 +820,7 @@ bool DataTable::hasData(int col, int row) {
 void DataTable::MarkCols() {
   for(int i=0;i<data.size;i++) {
     DataArray_impl* da = data.FastEl(i);
-    da->mark = true;
+    da->SetColFlag(DataArray_impl::MARK);
   }
 }
 
@@ -1103,7 +1096,7 @@ void DataTable::RemoveOrphanCols() {
   int cls_cnt = 0; // used to prevent spurious struct updates
   for(int i=data.size-1;i>=0;i--) {
     DataArray_impl* da = data.FastEl(i);
-    if (da->mark && !da->pin) {
+    if(da->HasColFlag(DataArray_impl::MARK) && !da->HasColFlag(DataArray_impl::PIN)) {
       if(cls_cnt == 0) StructUpdate(true);
       da->Close();
       cls_cnt++;
@@ -1231,7 +1224,7 @@ void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim) {
   strm << "_H:";		// indicates header
   for(int i=0;i<data.size;i++) {
     DataArray_impl* da = data.FastEl(i);
-    if(!da->saveToFile()) continue;
+    if(!da->saveToDataFile()) continue;
     if (da->cell_size() == 0) continue;
 
     if(da->isMatrix()) {
@@ -1255,7 +1248,7 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim, bool 
   strm << "_D:";		// indicates data row
   for(int i=0;i<data.size;i++) {
     DataArray_impl* da = data.FastEl(i);
-    if(!da->saveToFile()) continue;
+    if(!da->saveToDataFile()) continue;
     if (da->cell_size() == 0) continue;
 
     if(da->isMatrix()) {

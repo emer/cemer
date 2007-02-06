@@ -202,7 +202,7 @@ public:
   // set flag state on
   inline void		ClearProgFlag(ProgFlags flg) { flags = (ProgFlags)(flags & ~flg); }
   // clear flag state (set off)
-  inline bool		CheckProgFlag(ProgFlags flg) const { return (flags & flg); }
+  inline bool		HasProgFlag(ProgFlags flg) const { return (flags & flg); }
   // check if flag is set
   inline void		SetProgFlagState(ProgFlags flg, bool on)
   { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }

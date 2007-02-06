@@ -2,9 +2,6 @@ leabra todo list:
 
 commit:
 
-* epoch timing not working in hv.v1compute model -- dmem problem?  test in gui mode?
-  (running test on dream)
-
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
   -- seems slower after clicking around.  maybe net too?
 
@@ -15,12 +12,12 @@ commit:
 * v3convert: 
   * epoch timer not being set on 12ax convert in epoch mon
 
-* quit has changes thing, close project does not..
-
 * enforce naming rules on layer names, to match data table columns.
 
 
 check:
+
+* quit has changes thing, close project does not.. (ticket)
 
 * filer needs to use basic context (ticket filed)
   * tmp name is bizzare -- fname filer issues (ticket)

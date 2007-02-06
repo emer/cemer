@@ -467,7 +467,7 @@ void ProgEl::UpdateAfterEdit_impl() {
 }
 
 bool ProgEl::CheckConfig_impl(bool quiet) {
-  if(CheckProgFlag(OFF)) {
+  if(HasProgFlag(OFF)) {
     ClearCheckConfig();
     return true;
   }
@@ -475,7 +475,7 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
 }
 
 const String ProgEl::GenCss(int indent_level) {
-  if(CheckProgFlag(OFF)) return "";
+  if(HasProgFlag(OFF)) return "";
   String rval;
   if (useDesc() && !desc.empty()) {
     // we support multi-lines by using the multi-line form of comments
@@ -492,7 +492,7 @@ const String ProgEl::GenCss(int indent_level) {
 }
 
 int ProgEl::GetEnabled() const {
-  if(CheckProgFlag(OFF)) return 0;
+  if(HasProgFlag(OFF)) return 0;
   ProgEl* par = parent();
   if (!par) return 1;
   if (par->GetEnabled())
@@ -503,9 +503,9 @@ int ProgEl::GetEnabled() const {
 String ProgEl::GetStateDecoKey() const {
   String rval = inherited::GetStateDecoKey();
   if(rval.empty()) {
-    if(CheckProgFlag(NON_STD))
+    if(HasProgFlag(NON_STD))
       return "ProgElNonStd";
-    if(CheckProgFlag(NEW_EL))
+    if(HasProgFlag(NEW_EL))
       return "ProgElNewEl";
   }
   return rval;
@@ -522,7 +522,7 @@ void ProgEl::SetNewElFlag(bool new_el) {
 }
 
 void ProgEl::PreGen(int& item_id) {
-  if(CheckProgFlag(OFF)) return;
+  if(HasProgFlag(OFF)) return;
   PreGenMe_impl(item_id);
   ++item_id;
   PreGenChildren_impl(item_id);

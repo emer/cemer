@@ -514,10 +514,10 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     else
       nda = (DataArray_impl*)sda->MakeToken();
     dest->data.Add(nda);
+    // todo: lame minimal copy here: replace with encapsulated fun?
     nda->name = sda->name;
-    nda->disp_opts = sda->disp_opts;
-    nda->mark = sda->mark;
-    nda->pin = sda->pin;
+    nda->col_flags = sda->col_flags;
+    // end todo:
     nda->Init();		// initialize
     // don't copy is_matrix or cell_geom -- result is always scalar!
     //    nda->Copy_NoData(*sda);

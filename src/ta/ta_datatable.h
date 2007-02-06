@@ -72,13 +72,16 @@ public:
   static const String	udkey_narrow; // NARROW=b if narrow (default for ints)
   static const String	udkey_hidden; // HIDDEN=b defaults to not visible
   
-  String		disp_opts;
-  // #NO_SHOW #NO_SAVE #OBSOLETE viewer default display options DELETE THIS
-  bool			mark;
-  // #NO_SHOW #NO_SAVE clear on new and when col confirmed, used to delete orphans
+  enum ColFlags { // #BITS flags for data table columns
+    DC_NONE		= 0, // #NO_BIT
+    MARK 		= 0x0001, // #NO_BIT used internally to mark columns prior to an operation -- columns that remain marked after all operations are unused, and may be removed -- users should not generally mess with this flag
+    PIN 		= 0x0002, // #NO_BIT protect this column from being automatically deleted according to the MARK scheme (see comment).  this is often not very easy for uers to find and use (columns to be saved should be listed explicitly in the context in which others are being used), so we are not exposing it to users, but it can be used internally for some reason
+    NO_SAVE 		= 0x0004, // do not save this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data.
+    NO_SAVE_DATA 	= 0x0008, // do not save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
+  };
+
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
-  bool			pin;
-  // set true to prevent this column from being deleted on orphan deleting
+  ColFlags		col_flags; // flags for this column to indicate specific properties 
   bool			is_matrix;
   // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   MatrixGeom		cell_geom;
@@ -115,6 +118,19 @@ public:
   
   int			rows() const { return AR()->frames(); }
   // #CAT_Access total number of rows of data within this column
+
+  /////////////////////////////////////////////
+  // Flags
+
+  inline void		SetColFlag(ColFlags flg)   { col_flags = (ColFlags)(col_flags | flg); }
+  // set data column flag state on
+  inline void		ClearColFlag(ColFlags flg) { col_flags = (ColFlags)(col_flags & ~flg); }
+  // clear data column flag state (set off)
+  inline bool		HasColFlag(ColFlags flg) const { return (col_flags & flg); }
+  // check if data column flag is set
+  inline void		SetColFlagState(ColFlags flg, bool on)
+  { if(on) SetColFlag(flg); else ClearColFlag(flg); }
+  // set data column flag state according to on bool (if true, set flag, if false, clear it)
 
   /////////////////////////////////////////////
   // Get and Set access
@@ -205,11 +221,12 @@ public:
   // #CAT_Display low level display width, in chars, taken from options
   virtual int		maxColWidth() const {return -1;}
   // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
-  virtual bool		saveToFile() const {return true;}
-  // #IGNORE whether to save col -- currently always true
+  virtual bool		saveToDumpFile() const { return !HasColFlag(NO_SAVE); }
+  // #IGNORE whether to save col to internal dump format
+  virtual bool		saveToDataFile() const { return !HasColFlag(NO_SAVE_DATA); }
+  // #IGNORE whether to save col to external 'data' format
 
   static const KeyString key_val_type; // "val_type"
-  static const KeyString key_disp_opts; // "disp_opts"
   override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   override String	GetDisplayName() const; // #IGNORE we strip out the format characters
   
