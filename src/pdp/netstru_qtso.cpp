@@ -1908,8 +1908,6 @@ void NetView::UpdateDisplay(bool update_panel) { // redoes everything
 }
 
 void NetView::UpdateUnitValues() { // *actually* only does unit value updating
-  if (!display) return;
-
   int ch_idx = 0;
   Layer* lay;
   taLeafItr i;
@@ -1921,7 +1919,7 @@ void NetView::UpdateUnitValues() { // *actually* only does unit value updating
 }
 
 void NetView::DataUpdateView_impl() {
-//   UpdateDisplay(false);
+  if (!display) return;
   UpdateUnitValues();
   Render_net_text();
 }
