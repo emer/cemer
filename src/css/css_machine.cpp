@@ -3294,7 +3294,8 @@ cssEl* cssProg::Cont() {
     }
     top->step_mode = 0;		// always temporary
   }
-  cssMisc::TopShell->ProcessEvents();
+  // todo: investigate if this makes any difference or not -- could just remove entirely
+//   taiM->RunPending();
   if(top->run_stat == cssEl::Running)
     top->run_stat = cssEl::Stopping;
   return Stack()->Peek();
@@ -5096,7 +5097,7 @@ void cssCmdShell::FlushConsole() {
       qcss_console->flushOutput(true); // wait for pager!
   }
 #endif
-  ProcessEvents();
+  taiM->ProcessEvents();
 }
 
 void cssCmdShell::Exit() {
@@ -5107,12 +5108,4 @@ void cssCmdShell::Exit() {
       qcss_console->exit();
   }
 #endif
-}
-
-void cssCmdShell::ProcessEvents() {
-  taiM->ProcessEvents();
-/*why was this only based on console type?????
-if(console_type == CT_Qt_Console) {
-    QCoreApplication::processEvents();
-  }*/
 }

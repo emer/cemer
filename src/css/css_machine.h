@@ -1677,8 +1677,6 @@ public:
 
   void		Exit();		// exit from the shell
 
-  void		ProcessEvents(); // process any pending events while running
-
 public slots:
   void		AcceptNewLine(const String& ln, bool eof); 
   // called when a new line of text becomes available -- all outer shells/consoles call this interface

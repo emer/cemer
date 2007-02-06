@@ -3,11 +3,19 @@ leabra todo list:
 commit:
 
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
-  -- seems slower after clicking around (confirmed).  maybe net too?
+  -- seems slower after clicking around (confirmed).  maybe net too?  
+  STILL NEED THIS -- THIS IS HAPPENING!
 
-    -- not showing up in profile.. need to maybe setup profile versions of everything?
+* cleanup other uses of RunPending -> process events or remove??  test for
+  need for css Cont RunPending -- test in hv model.
 
-* datatable update: change to network style so that display flag is used earlier from dataupdate and not later in basic udpatedisplay
+* add a net_text_display flag, and play with complexity vis-a-vis rendering
+  (probably not worth it for flag -- costs a lot in render but is not a big deal..)
+
+* lookup mac double-pass antialiasing problem?
+
+* did I ever fix clicking on an axis, etc?  also, deleting an item from a view and
+  then selecting something else in the view to delete caused a crash..
 
 * copying a network: links are not fixed (send_idx, etc)
 

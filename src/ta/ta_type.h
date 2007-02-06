@@ -320,8 +320,11 @@ public:
   
   static void		WaitProc(); // the core idle loop process
   
-  static int		ProcessEvents(); // run any pending qt events that might need processed
-  static int		RunPending() {return ProcessEvents();} // old terminology; us PE in new code
+  static int		ProcessEvents();
+  // run any pending qt events that might need processed
+  static int		RunPending();
+  // check to see if any events are pending, and run if true -- MUCH faster than processevents, but also likely to miss some events along the way.
+  
   static void		Quit(CancelOp cancel_op = CO_NOT_CANCELLABLE); 
    // call to quit, invokes Quit_impl on instance first
   static void		OnQuitting(CancelOp& cancel_op); // call this when a quit situation is detected -- does all the save logic
