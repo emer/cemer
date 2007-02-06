@@ -3295,7 +3295,7 @@ cssEl* cssProg::Cont() {
     top->step_mode = 0;		// always temporary
   }
   // todo: investigate if this makes any difference or not -- could just remove entirely
-//   taiM->RunPending();
+  taiM->RunPending();
   if(top->run_stat == cssEl::Running)
     top->run_stat = cssEl::Stopping;
   return Stack()->Peek();
