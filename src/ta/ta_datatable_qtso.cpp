@@ -287,7 +287,7 @@ void DataTableView::UpdatePanel() {
 }
 
 bool DataTableView::isVisible() const {
-  return (taMisc::gui_active && display_on && isMapped());
+  return (taMisc::gui_active && isMapped());
 }
 
 void DataTableView::MakeViewRangeValid() {
@@ -321,6 +321,7 @@ void DataTableView::DataStructUpdateEnd_impl() {
 }
 
 void DataTableView::DataUpdateView_impl() {
+  if(!display_on) return;
   UpdateDisplay(true);
 }
 

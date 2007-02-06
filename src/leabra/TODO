@@ -3,7 +3,11 @@ leabra todo list:
 commit:
 
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
-  -- seems slower after clicking around.  maybe net too?
+  -- seems slower after clicking around (confirmed).  maybe net too?
+
+    -- not showing up in profile.. need to maybe setup profile versions of everything?
+
+* datatable update: change to network style so that display flag is used earlier from dataupdate and not later in basic udpatedisplay
 
 * copying a network: links are not fixed (send_idx, etc)
 

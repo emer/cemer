@@ -252,8 +252,10 @@ void taiMiscCore::OnQuitting(CancelOp& cancel_op) {
 
 int taiMiscCore::ProcessEvents() {
 //TODO: do more???  static void		WorkProc(); // the core idle loop process
-  if (taMisc::in_event_loop)
-    QCoreApplication::processEvents();
+  if (taMisc::in_event_loop) {
+    if(QCoreApplication::hasPendingEvents())
+      QCoreApplication::processEvents();
+  }
   return 0;
 }
 
