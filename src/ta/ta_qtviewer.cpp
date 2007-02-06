@@ -4288,7 +4288,8 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_)
   list->setDragEnabled(true);
 //  list->setAcceptDrops(true);
 //  list->setDropIndicatorShown(true);
-  
+  connect(list, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), 
+    this, SLOT(list_itemDoubleClicked(QTreeWidgetItem*, int)) );
   ConfigHeader();
   FillList();
 }
@@ -4334,6 +4335,13 @@ void iListDataPanel::FillList() {
     dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
   }
+}
+
+void iListDataPanel::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/) {
+  taiListDataNode* item = dynamic_cast<taiListDataNode*>(item_);
+  if (!item) return;
+  taBase* ta = item->taData(); // null if n/a
+  if (ta) ta->EditDialog(true); // edit modal
 }
 
 void iListDataPanel::OnWindowBind_impl(iTabViewer* itv) {

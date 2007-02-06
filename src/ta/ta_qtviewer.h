@@ -1361,6 +1361,11 @@ public:
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iListDataPanel;}
+  
+public slots:
+  void			list_itemDoubleClicked(QTreeWidgetItem* item, int col);
+    // for editing
+    
 protected:
   iTreeViewItem* 	mparentItem;
   void 			ConfigHeader();
