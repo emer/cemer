@@ -22,9 +22,9 @@ void SetArg(String arg_nm, String var_nm, Program* prog) {
   }
 }
 
-void SetLogFile(String ext, String tag, DataTable* dt, bool dmem=false) {
+void SetLogFile(String ext, String tag, String subdir, DataTable* dt, bool dmem=false) {
   if(!dmem && (taMisc::dmem_proc != 0)) return;	// if not sep log files by dmem, then only for first guy!
-  String log_nm = dt->GetFileNameFmProject(ext, tag, dmem);
+  String log_nm = dt->GetFileNameFmProject(ext, tag, subdir, dmem);
   dt->SaveDataLog(log_nm);
   if(taMisc::dmem_proc == 0)
     cerr << "Saving data log of: " << dt->name << " to: " << log_nm << endl;
@@ -37,6 +37,7 @@ void Startup() {
   }
 
   taMisc::AddArgName("tag=", "FileTag");
+  taMisc::AddArgName("logdir=", "LogDir");
   taMisc::AddArgName("epochs=", "EpochMax");
   taMisc::AddArgName("batches=", "BatchMax");
   taMisc::UpdateArgs();
@@ -59,12 +60,18 @@ void Startup() {
   batch.Init();			// init first: required before vars are avail
 
   String tag = taMisc::FindArgByName("FileTag");
+  String logdir = taMisc::FindArgByName("LogDir");
 
   SetArg("EpochMax", "max_epoch", train);
   SetArg("BatchMax", "max_batch", batch);
 
-  SetLogFile(".epc.dat", tag, .data.EpochOutputData, false);  // change to true for debugging dmem
-  SetLogFile(".trl.dat", tag, .data.TrialOutputData, true); // this should be dmem
+  SetLogFile(".epc.dat", tag, logdir, .data.EpochOutputData, false);  // change to true for debugging dmem
+  SetLogFile(".trl.dat", tag, logdir, .data.TrialOutputData, true); // this should be dmem
+
+  Program* saveweights = .programs.SaveWeights;
+  if(saveweights) {           // propagate the tag..
+    saveweights.SetVar("tag", tag);
+  }
 
   if(taMisc::dmem_proc == 0)
     cerr << "Starting to run: " << batch->name << endl;

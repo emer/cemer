@@ -2,24 +2,28 @@ leabra todo list:
 
 commit:
 
+* epoch timing not working in hv.v1compute model -- dmem problem?  test in gui mode?
+  (running test on dream)
+
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
   -- seems slower after clicking around.  maybe net too?
 
 * copying a network: links are not fixed (send_idx, etc)
 
-* saving 12ax model *with* units, then close project: get a crash.  not without.
+* saving 12ax model *with* units, then close project: get a crash.  not without. spec.CutLinks
 
 * v3convert: 
-  * tmp name is bizzare -- fname filer issues
   * epoch timer not being set on 12ax convert in epoch mon
 
 * quit has changes thing, close project does not..
 
 * enforce naming rules on layer names, to match data table columns.
 
-* filer needs to use basic context (ticket filed)
 
 check:
+
+* filer needs to use basic context (ticket filed)
+  * tmp name is bizzare -- fname filer issues (ticket)
 
 ------------------
 Program issues
