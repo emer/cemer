@@ -588,6 +588,16 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
   m_renderArea = value;
 
   if (m_renderArea) {
+    // need to set in both render area and in render_action..?
+    m_renderArea->setAccumulationBuffer(true);
+    bool accum_buf = m_renderArea->getAccumulationBuffer();
+    if(accum_buf)
+      m_renderArea->setAntialiasing(true, 2);
+    else {
+      m_renderArea->setAntialiasing(true, 1);
+      taMisc::Warning("Note: was not able to establish an accumulation buffer so rendering will not be anti-aliased.  Sorry.");
+    }
+
     if (m_selMode == SM_NONE)
       m_renderArea->setSceneGraph(m_root_so);
     else {
@@ -604,10 +614,9 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
       SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
 //       rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
       rend_act->setTransparencyType(SoGLRenderAction::BLEND);
-
       rend_act->setSmoothing(true); // low-cost line smoothing
-//       rend_act->setNumPasses(2);    // 1 = no antialiasing; 2 = antialiasing
-      // this does not work on the mac at least
+      if(accum_buf)
+	rend_act->setNumPasses(2);    // 1 = no antialiasing; 2 = antialiasing
 
       m_renderArea->setGLRenderAction(rend_act);
     }
