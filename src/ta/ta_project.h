@@ -187,17 +187,17 @@ public:
   ///////////////////////////////////////////////////////////////////////////////
   //		Startup Code	(in order of calling by Startup_Main)
 
-  static bool	Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun = NULL,
+  static bool	Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init_fun = NULL,
 			     TypeDef* root_typ = &TA_taRootBase);
   // #IGNORE this is the main function call to startup the software -- creates a root object of given type, processes args, sets global state vars, starts up css, and opens a browser window on the root object if in gui mode
 
-  static bool	Startup_InitApp(int argc, const char* argv[]);
+  static bool	Startup_InitApp(int& argc, const char* argv[]);
   // #IGNORE init application stuff (qapp etc)
   static bool	Startup_InitTA(ta_void_fun ta_init_fun);
   // #IGNORE basic type-access system intializaton
-  static bool	Startup_InitArgs(int argc, const char* argv[]);
+  static bool	Startup_InitArgs(int& argc, const char* argv[]);
   // #IGNORE process args into more usable form
-  static bool	Startup_InitDMem(int argc, const char* argv[]);
+  static bool	Startup_InitDMem(int& argc, const char* argv[]);
   // #IGNORE init distributed memory (MPI) stuff
   static bool	Startup_ProcessGuiArg();
   // #IGNORE process the -gui/-nogui arg

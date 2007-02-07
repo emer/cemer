@@ -41,7 +41,7 @@ public:
   static String		user_spec_def;	// provided by user using -d option
   static float		pdpZScale; // amount by which to scale y dimension (inventor z) def is 4.0
   
-  static int	Main(int argc, const char* argv[]);
+  static int	Main(int& argc, const char* argv[]);
   // #IGNORE the pdp main startup function: call this from user's main
 //NOTE: v4 waitprocs (aka event loop handling)
   static void	WaitProc();  		// waiting process

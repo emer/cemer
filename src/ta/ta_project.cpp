@@ -582,7 +582,7 @@ void taRootBase::Options() {
 // 	startup code
 
 
-bool taRootBase::Startup_InitDMem(int argc, const char* argv[]) {
+bool taRootBase::Startup_InitDMem(int& argc, const char* argv[]) {
 #ifdef DMEM_COMPILE
   taMisc::Init_DMem(argc, argv);
 #endif
@@ -626,7 +626,7 @@ bool taRootBase::Startup_EnumeratePlugins() {
   return true;
 }
 
-bool taRootBase::Startup_InitArgs(int argc, const char* argv[]) {
+bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("-nogui", "NoGui");
   taMisc::AddArgName("--nogui", "NoGui");
   taMisc::AddArgNameDesc("NoGui", "\
@@ -714,12 +714,13 @@ bool taRootBase::Startup_ProcessGuiArg() {
   return true;
 }
   	
-bool taRootBase::Startup_InitApp(int argc, const char* argv[]) {
+bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
   setlocale(LC_ALL, "");
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
 # ifdef TA_USE_INVENTOR
+new QApplication(argc, (char**)argv); // accessed as qApp
     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
 # else
     new QApplication(argc, (char**)argv); // accessed as qApp
@@ -882,7 +883,7 @@ bool taRootBase::Startup_ProcessArgs() {
   return true;
 }
 
-bool taRootBase::Startup_Main(int argc, const char* argv[], ta_void_fun ta_init_fun, 
+bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init_fun, 
 			      TypeDef* root_typ) 
 {
   root_type = root_typ;

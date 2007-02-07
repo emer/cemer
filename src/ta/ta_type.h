@@ -717,7 +717,7 @@ public:
   // #IGNORE initialize taMisc startup argument information (note: arg_names must be initialized prior to this!)
   static void	Init_Types();
   // #IGNORE called after all type info has been loaded into types -- calls initClass methods on classes that have them (and possibly other type post-init info)
-  static void	Init_DMem(int argc, const char* argv[]);
+  static void	Init_DMem(int& argc, const char* argv[]);
   // #IGNORE initialize distributed memory stuff
 
   static void	HelpMsg(ostream& strm = cerr);

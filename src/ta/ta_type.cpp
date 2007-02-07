@@ -929,7 +929,7 @@ void taMisc::AddDeferredUserDataSchema() {
 #include <mpi.h>
 #endif
 
-void taMisc::Init_DMem(int argc, const char* argv[]) {
+void taMisc::Init_DMem(int& argc, const char* argv[]) {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   MPI_Init(&argc, (char***)&argv); // note mpi's extra level of indirection
   MPI_Comm_size(MPI_COMM_WORLD, &dmem_nprocs);
