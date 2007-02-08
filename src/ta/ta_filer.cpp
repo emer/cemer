@@ -451,7 +451,8 @@ istream* taFiler::open_read() {
     fstrm = new fstream(fileName(), ios::in);
     istrm = (istream*)fstrm;
   }
-  if (istrm->bad()) {
+  // note: check "good" rather than "bad" because good is proactive, bad is only reactive
+  if (!istrm->good()) {
       taMisc::Error("File:",fileName(),"could not be opened for reading");
       Close();
   }
@@ -469,9 +470,10 @@ bool taFiler::open_write_exist_check() {
 ostream* taFiler::open_write() {
   Close();
   int acc = access(fileName(), W_OK);
-  if ((acc != 0) && (errno != ENOENT)) {
+  //note: result s/b 0, otherwise no access; don't check errno!
+  if (acc != 0) {
     perror("open_write: ");
-    taMisc::Error("File:", fileName(), "could not be opened for writing");
+    taMisc::Error("File:", fileName(), "could not be opened for writing -- check that you have permission to write to that location");
     return NULL;
   }
   open_file = true;
@@ -485,8 +487,9 @@ ostream* taFiler::open_write() {
     fstrm = new fstream(fileName(), ios::out);
     ostrm = (ostream*)fstrm;
   }
-  if (ostrm->bad()) {
-    taMisc::Error("File",fileName(),"could not be opened for writing");
+  // note: check "good" rather than "bad" because good is proactive, bad is only reactive
+  if (!ostrm->good()) {
+    taMisc::Error("File",fileName(),"could not be opened for writing -- check that you have permission to write to that location");
     Close();
   }
   return ostrm;
@@ -495,9 +498,9 @@ ostream* taFiler::open_write() {
 ostream* taFiler::open_append() {
   Close();
   int acc = access(fileName(), W_OK);
-  if((acc != 0) && (errno != ENOENT)) {
+  if (acc != 0) {
     perror("open_append: ");
-    taMisc::Error("File:", fileName(), "could not be opened for appending");
+    taMisc::Error("File:", fileName(), "could not be opened for appending -- check that you have permission to write to that location");
     return NULL;
   }
   open_file = true;
@@ -511,8 +514,9 @@ ostream* taFiler::open_append() {
     fstrm = new fstream(fileName(), ios::out | ios::app);
     ostrm = (ostream*)fstrm;
   }
-  if (ostrm->bad()) {
-    taMisc::Error("File",fileName(),"could not be opened for appending");
+  // note: check "good" rather than "bad" because good is proactive, bad is only reactive
+  if (!ostrm->good()) {
+    taMisc::Error("File",fileName(),"could not be opened for appending -- check that you have permission to write to that location");
     Close();
   }
   return ostrm;
@@ -547,11 +551,14 @@ ostream* taFiler::Save() {
 }
 
 ostream* taFiler::SaveAs() {
+  // do a first preliminary fix, which will, ex., add the default extension
+  FixFileName();
   bool wasFileChosen = GetFileName(foSaveAs);
 
   ostream* rstrm = NULL;
   if (wasFileChosen) {
     file_selected = true;
+    // we fix again, because of compression
     FixFileName();
     if (open_write()) {
       if (select_only)

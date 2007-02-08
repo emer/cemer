@@ -232,13 +232,13 @@ void T3DataView::DataUpdateAfterEdit_impl() {
 //     m_node_so->touch();
 }
 
-void T3DataView::FillContextMenu_EditItems_impl(taiMenu* menu, int allowed) {
+/*nn? void T3DataView::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) {
   //TODO
 }
 
-void T3DataView::FillContextMenu_impl(taiMenu* menu) {
+void T3DataView::FillContextMenu_impl(taiActions* menu) {
   //TODO
-}
+} */
 
 void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
   if (flags & DNF_IS_MEMBER) {
@@ -257,15 +257,15 @@ bool T3DataView::isMapped() const {
 }
 
 
-taiDataLink* T3DataView::par_link() const {
+/* taiDataLink* T3DataView::par_link() const {
   if (hasParent()) return parent()->link();
   else     return NULL;
-}
+}*/
 
-MemberDef* T3DataView::par_md() const {
+/* MemberDef* T3DataView::par_md() const {
   if (hasParent()) return parent()->md();
   else     return NULL;
-}
+} */
 
 void T3DataView::OnWindowBind(iT3DataViewFrame* vw) {
   OnWindowBind_impl(vw);
@@ -327,7 +327,7 @@ void T3DataView::UpdateChildNames(T3DataView*) {
   //nothing
 }
 
-String T3DataView::view_name() const {
+/*obs String T3DataView::view_name() const {
   // if we have a name, use that
   // otherwise, if a member, use the member name,
   // otherwise, get from the data
@@ -344,7 +344,7 @@ String T3DataView::view_name() const {
 
   //TODO: should use centralized, base class default name
   return String("(no name)");
-}
+} */
 
 
 //////////////////////////
@@ -679,16 +679,9 @@ QScrollBar* iT3ViewspaceWidget::verScrollBar(bool auto_create) {
 }
 
 void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
-  ISelectable* ci = curItem();
-  //TODO: what to do if nothing selected, but user right clicks???
-  //TODO: how to handle multi-select
-  if (ci == NULL) return;
-  T3DataView* dv = (T3DataView*)ci->This();
+  //old TODO: what to do if nothing selected, but user right clicks???
 
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-
-  dv->FillContextMenu(selItems(), menu); // also calls link menu filler
 
   FillContextMenu(menu);
 

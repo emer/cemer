@@ -149,10 +149,8 @@ public:
   // subclass-dependent operation -- reinvoked after major update -- builds any sub-dataview objects, but not the corresponding So guys (which is done in render)
   override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
   override void		DataDestroying(); // called by data when it is destroying -- usual action is to destroy ourself
-//nn  void			EditAction(int ea); // do the edit action; invokes _impl
-//nn?  virtual void		InsertItem(T3DataView* item, T3DataView* after); // used by child's constructor
-//  void			SetPos(const TDCoord& pos); // sets origin, also doing ta->so coordinate flip
-//  virtual void		SetPos(int x, int y, int z); // sets origin, also doing ta->so coordinate flip
+  override void		ChildClearing(taDataView* child); // NOTE: child is always a T3DataView
+  override void		ChildRendered(taDataView* child); //  NOTE: child is always a T3DataView
 
   virtual void		OnWindowBind(iT3DataViewFrame* vw); // called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
 //TODO  virtual BrDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
@@ -166,28 +164,22 @@ public:
   TA_DATAVIEWFUNS(T3DataView, taDataView);
 
 public: // ISelectable interface (only not in IDataLinkClient)
-  override MemberDef*	md() const {return m_md;} // memberdef of this item in its parent
-  override taiDataLink* par_link() const; // from parent data
-  override MemberDef* 	par_md() const; // as for par_link
-  override String	view_name() const;
-  override ISelectableHost* host() const;
-//  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
-//  override int		QueryEditActions(taiMimeSource* ms) const; // simpler version uses Query
-//  override taiMimeItem*	GetMimeItem();
-  override void		ChildClearing(taDataView* child); // NOTE: child is always a T3DataView
-  virtual void		ChildRendered(taDataView* child); //  NOTE: child is always a T3DataView
+  override MemberDef*	md() const {return m_md;}
+//  override taiDataLink* par_link() const; // from parent data
+//  override MemberDef* 	par_md() const; // as for par_link
+  override ISelectableHost* host() const; //
+  
+/*override int		EditAction_(ISelectable_PtrList& sel_items, int ea);
+  override void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
+  override void 		FillContextMenu(taiActions* menu);
+  override taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
+    bool for_drag) const;
+  override taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const;
+  override taiClipData*	GetClipDataMulti(const ISelectable_PtrList& sel_items, 
+    int src_edit_action, bool for_drag) const;
+  override int		QueryEditActions_(taiMimeSource* ms) const; */
 protected:
-//  override int		EditAction_impl(taiMimeSource* ms, int ea);
-  override void		FillContextMenu_EditItems_impl(taiMenu* menu, int allowed);
-  override void		FillContextMenu_impl(taiMenu* menu);
-  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;
-
-public:
-  virtual void		fileNew() {} // this section for all the delegated menu commands
-  virtual void		fileOpen() {} // this section for all the delegated menu commands
-  virtual void		fileSave() {} // this section for all the delegated menu commands
-  virtual void		fileSaveAs() {} // this section for all the delegated menu commands
-  virtual void		fileClose() {}
+  override void 	QueryEditActionsS_impl_(int& allowed, int& forbidden) const;
 
 protected:
   MemberDef*		m_md; // memberdef of this item in its parent

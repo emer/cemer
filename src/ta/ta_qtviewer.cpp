@@ -1148,6 +1148,10 @@ iMainWindowViewer* IDataViewWidget::viewerWindow() const {
 //   ISelectable	//
 //////////////////////////
 
+ISelectable::~ISelectable() {
+  ISelectableHost::ItemDeleting(this);
+}
+
 QObject* ISelectable::clipHandlerObj() const {
   ISelectableHost* host_ = host();
   return (host_) ? host_->clipHandlerObj() : NULL;
@@ -1303,6 +1307,36 @@ taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int 
   }
 }
 
+taiDataLink* ISelectable::par_link() const {
+  taiDataLink* link = this->link();
+  if (link) {
+    taBase* tab = link->taData();
+    if (tab) tab = tab->GetOwner();
+    if (tab) {
+      return (taiDataLink*)tab->GetDataLink();
+    }
+  }
+  return NULL;
+}
+
+MemberDef* ISelectable::par_md() const {
+  // to get the par_md, we have to go up the grandparent, and ask for member addr
+  MemberDef* rval = NULL;
+  taBase* par_tab = NULL; //note: still only got the guy, not par
+  taBase* gpar_tab = NULL;
+  taiDataLink* link = this->link();
+  par_tab = link->taData(); //note: still only got the guy, not par
+  if (!par_tab) goto exit;
+  par_tab = par_tab->GetOwner(); // now we have par
+  if (!par_tab) goto exit;
+  gpar_tab = par_tab->GetOwner();
+  if (!gpar_tab) goto exit;
+  rval = gpar_tab->FindMemberPtr(par_tab);
+exit:
+   return rval;
+}
+
+
 int ISelectable::QueryEditActions_(taiMimeSource* ms) const {
   int allowed = 0;
   int forbidden = 0;
@@ -1435,6 +1469,11 @@ void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) co
 //   ISelectable_PtrList	//
 //////////////////////////////////
 
+ISelectable_PtrList::ISelectable_PtrList(const ISelectable_PtrList& cp)
+:taPtrList<ISelectable>(cp) 
+{
+}
+
 TypeDef* ISelectable_PtrList::CommonSubtype1N() { // greatest common subtype of items 1-N
   if (size == 0) return NULL;
   TypeDef* rval = FastEl(0)->link()->GetDataTypeDef();
@@ -1564,6 +1603,16 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
 //   ISelectableHost		//
 //////////////////////////////////
 
+taPtrList_impl* ISelectableHost::insts;
+
+void ISelectableHost::ItemDeleting(ISelectable* item) {
+  if (!insts) return; // note: prob shouldn't happen, if item exists!
+  for (int i = insts->size - 1; i > 0; --i) {
+    ISelectableHost* host = (ISelectableHost*)insts->FastEl_(i);
+    host->sel_items.RemoveEl(item);
+  }
+}
+
 const char* ISelectableHost::edit_enabled_slot = SLOT(EditActionsEnabled(int&));
 const char* ISelectableHost::edit_action_slot = SLOT(EditAction(int)); 
 const char* ISelectableHost::actions_enabled_slot; // currently NULL
@@ -1573,6 +1622,11 @@ ISelectableHost::ISelectableHost() {
   m_sel_chg_cnt = 0;
   helper = new SelectableHostHelper(this);
   drop_ms = NULL;
+  // add to managed list
+  if (!insts) {
+    insts = new taPtrList_impl;
+  }
+  insts->Add_(this);
 }
 
 ISelectableHost::~ISelectableHost() {
@@ -1580,6 +1634,14 @@ ISelectableHost::~ISelectableHost() {
   //note: we delete it right now, to force disconnect of all signals/slots
   delete helper;
   helper = NULL;
+  // remove from managed list
+  if (insts) {
+    insts->RemoveEl_(this);
+    if (insts->size == 0) {
+      delete insts;
+      insts = NULL;
+    }
+  }
 }
 
 void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
@@ -1639,15 +1701,17 @@ void ISelectableHost::DropEditAction(int ea) {
 void ISelectableHost::EditAction(int ea) {
   ISelectable* ci = curItem();
   if (!ci) return;
-  ci->EditAction_(selItems(), ea);
+  ISelectable_PtrList items(selItems());
+  ci->EditAction_(items, ea);
 }
 
 void ISelectableHost::EditActionsEnabled(int& ea) {
   ISelectable* ci = curItem();
   if (!ci) return;
-  int rval = ci->QueryEditActions_(selItems());
+  ISelectable_PtrList items(selItems());
+  int rval = ci->QueryEditActions_(items);
   // certain things disallowed if more than one item selected
-  if (sel_items.size > 1) {
+  if (items.size > 1) {
     rval &= ~(taiClipData::EA_FORB_ON_MUL_SEL);
   }
   ea = rval;
@@ -1661,7 +1725,8 @@ void ISelectableHost::FillContextMenu(taiActions* menu) {
   // do the item-mediated portion
   ISelectable* ci = curItem();
   if (!ci) return;
-  ci->FillContextMenu(selItems(), menu);
+  ISelectable_PtrList items(selItems());
+  ci->FillContextMenu(items, menu);
   // then add the dynamic actions
   if (dyn_actions.count() == 0) return; // prevents spurious separator
   AddDynActions(menu);
@@ -5306,13 +5371,13 @@ bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
 }
 
 
-taiDataLink* taiListDataNode::par_link() const {
+/*taiDataLink* taiListDataNode::par_link() const {
   return (panel) ? panel->par_link() : NULL;
 }
 
 MemberDef* taiListDataNode::par_md() const {
   return (panel) ? panel->par_md() : NULL;
-}
+}*/
 
 QString taiListDataNode::text(int col) const {
   if (col > 0)
@@ -5397,15 +5462,18 @@ taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
   return NULL;
 }
 
-taiDataLink* taiTreeDataNode::par_link() const {
+/*nn taiDataLink* taiTreeDataNode::par_link() const {
   taiTreeDataNode* par = parent();
   return (par) ? par->link() : NULL;
-}
+} */
 
-MemberDef* taiTreeDataNode::par_md() const {
+/*MemberDef* taiTreeDataNode::par_md() const {
+//TODO: this is a fairly broken concept -- i don't even think the clip system
+// needs to know about par mds
+//TODO: following is the gui one, we should be returning the data one
   taiTreeDataNode* par = parent();
   return (par) ? par->md() : NULL;
-}
+} */
 
 
 //////////////////////////////////

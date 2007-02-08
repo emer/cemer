@@ -308,9 +308,9 @@ class TA_API ISelectable: public virtual IDataLinkProxy { //
 INHERITED(IDataLinkProxy)
 friend class ISelectableHost;
 public: // Interface Properties and Methods
-  virtual MemberDef*	md() const {return NULL;} // memberdef in parent, if any, of the selected item
-  virtual taiDataLink*	par_link() const {return NULL;} // parent item's (if any) link
-  virtual MemberDef* 	par_md() const {return NULL;}// parent item's (if any) md
+  virtual MemberDef*	md() const {return NULL;} // memberdef in data parent, if any, of the selected item
+  virtual taiDataLink*	par_link() const; // parent item's link -- this is the *data* parent (not the gui parent) -- for taBase links, gets from the link
+  virtual MemberDef* 	par_md() const;// data parent item's (if any) md
   virtual ISelectableHost* host() const = 0; //
   taBase*		taData() const; // if the data is taBase, this returns it
 //obs  virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
@@ -333,7 +333,7 @@ public: // Interface Properties and Methods
     // called to get edit items available on clipboard for the sel_items
   virtual int		RefUnref(bool ref) {return 1;} // ref'ed/unrefed in select lists etc.; optional, and can be used for lifetime mgt; returns count after operation
 
-
+  ~ISelectable();
 protected:
   void 			DropHandler(const QMimeData* mime, const QPoint& pos);
     //  handles all aspects of a drag drop operation
@@ -378,6 +378,9 @@ public:
   TypeDef*		Type1(); // data type of item
   TypeDef*		CommonSubtype1N(); // greatest common data subtype of items 1-N
   TypeDef*		CommonSubtype2N(); // greatest common data subtype of items 2-N
+  
+  ISelectable_PtrList() {}
+  ISelectable_PtrList(const ISelectable_PtrList& cp);
 protected:
 //TEMP nn??  override void*	El_Ref_(void* it) {((ISelectable*)it)->RefUnref(true); return it;}
 //TEMP nn??  override void* 	El_unRef_(void* it) {((ISelectable*)it)->RefUnref(false);  return it;}
@@ -488,6 +491,8 @@ public:
   virtual ~ISelectableHost();
   
 protected:
+  static void 		ItemDeleting(ISelectable* item); // make sure it is off all sel lists
+  
   int			m_sel_chg_cnt; 
    // counter to track batch selection changes; -ve means we are in Update (prog calls ignored) 
   ISelectable_PtrList	sel_items;
@@ -506,6 +511,8 @@ protected:
     // updates the dyn methods/actions
 
 private:
+  static taPtrList_impl* insts; // global lists of all insts, to enable removing deleting items
+  
   SelectableHostHelper* helper;
 };
 
@@ -1685,8 +1692,8 @@ public: // IDataLinkClient interface
   override TypeDef*	GetTypeDef() const {return &TA_taiListDataNode;}
 
 public: // ISelectable interface
-  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
-  override MemberDef* 	par_md() const; // as for par_link
+//obs, get data par link  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
+//obs  override MemberDef* 	par_md() const; // as for par_link
 };
 
 
@@ -1707,8 +1714,8 @@ public: // ITypedObject interface
 //  override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taiTreeDataNode;}
 public: // ISelectable interface
-  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
-  override MemberDef* 	par_md() const; // as for par_link
+//obs  override taiDataLink* par_link() const; 
+//obs  override MemberDef* 	par_md() const; //provided at create time
 //  override ISelectableHost* host() const;
 protected:
   taiTreeDataNode*	last_member_node; // #IGNORE last member node created, so we know where to start list/group items
