@@ -1350,7 +1350,7 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
   while(strm.peek() == delim) {	// consume any immediate delims
     strm.get();
   }
-  while(((c = strm.get()) != EOF) && (c != '\n') && !((c == delim) && (depth <= 0))) {
+  while(((c = strm.get()) != EOF) && (c != '\n') && (c != '\r') && !((c == delim) && (depth <= 0))) {
     if(quote_str && (depth > 0) && (c == '\"'))
       depth--;
     else
@@ -1373,6 +1373,7 @@ int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
     if(c == EOF) break;
     if(str.empty()) {
       if(c == '\n') break;
+      if(c == '\r') { if(strm.peek() == '\n') strm.get(); break; }
       continue;			// for some reason it is empty
     }
     String base_nm;
@@ -1398,6 +1399,7 @@ int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
       load_mat_idx.Add(-1);	// no matrix info
     }
     if(c == '\n') break;
+    if(c == '\r') { if(strm.peek() == '\n') strm.get(); break; }
   }
   return c;
 }
@@ -1453,6 +1455,7 @@ int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str)
     }
     col++;
     if(c == '\n') break;
+    if(c == '\r') { if(strm.peek() == '\n') strm.get(); break; }
   }
   StructUpdate(false);
   return c;
