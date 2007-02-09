@@ -1725,6 +1725,7 @@ bool Program::CheckConfig_impl(bool quiet) {
 
 void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
+  objs.CheckConfig(quiet, rval);
   args.CheckConfig(quiet, rval);
   vars.CheckConfig(quiet, rval);
   functions.CheckConfig(quiet, rval);

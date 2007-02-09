@@ -301,8 +301,9 @@ iDialog::iDialog(taiDataHost* owner_, QWidget* parent, int wflags)
   mcentralWidget = NULL;
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);
-  QVBoxLayout* lay = new QVBoxLayout(this);
-  lay->addWidget(scr);
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(0);
+  layOuter->addWidget(scr, 1);
   
   iSize ss = taiM->scrn_s;
   setMaximumSize(ss.width(), ss.height());
@@ -365,6 +366,11 @@ void iDialog::deiconify() {
    // Iv compatibility routine
   if (isModal() || !isMinimized()) return;
   showNormal();
+}
+
+void iDialog::setButtonsWidget(QWidget* widg) {
+  widg->setParent(this);
+  layOuter->addWidget(widg);
 }
 
 void iDialog::setCentralWidget(QWidget* widg) {
@@ -433,6 +439,7 @@ void EditDataPanel::Render_impl() {
   
   edh->ConstrDeferred();
   setCentralWidget(edh->widget());
+  setButtonsWidget(edh->widButtons);
   taiMisc::active_edits.Add(edh); // add to the list of active edit dialogs
   edh->state = taiDataHost::ACTIVE;
   //prob need to do a refresh!!!
@@ -824,7 +831,7 @@ void taiDataHost::Constr_impl() {
 //  Constr_Methods();
   Insert_Methods(); // if created, AND unowned
   // create container for ok/cancel/apply etc. buttons
-  widButtons = new QWidget(widget());
+  widButtons = new QWidget(); // parented when we do setButtonsWidget
   layButtons = new QHBoxLayout(widButtons);
   layButtons->setMargin(0); // containing lay already has spacing
 //  vblDialog->addStretch(100); // provides a degree of freedom for small body heights -- all other strechfactors=0
@@ -1068,6 +1075,7 @@ int taiDataHost::Edit(bool modal_) { // only called if isDialog() true
   if (dialog == NULL) DoConstr_Dialog(dialog);
 //dialog->resize(dialog->minimumWidth(), 1);
   dialog->setCentralWidget(widget());
+  dialog->setButtonsWidget(widButtons);
   if (!modal) {
     taiMisc::active_dialogs.AddUnique(this); // add to the list of active dialogs
   }
@@ -1538,6 +1546,7 @@ EditDataPanel* taiEditDataHost::EditPanel(taiDataLink* link) {
   if (panel == NULL)
     panel = new EditDataPanel(this, link); //TODO: make sure this conversion is always valid!!!
   panel->setCentralWidget(widget());
+  panel->setButtonsWidget(widButtons);
   taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
   state = ACTIVE;
   return panel;

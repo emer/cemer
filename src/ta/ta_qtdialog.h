@@ -143,8 +143,10 @@ public:
   void		iconify();   // Iv compatibility routine
   void		deiconify(); // Iv compatibility routine
   void		setCentralWidget(QWidget* widg); // is put in a scroll area; dialog is limited to screen size
+  void		setButtonsWidget(QWidget* widg); // is put at the bottom, not in a scroll
 protected:
   taiDataHost* 	owner;
+  QVBoxLayout*  layOuter;
   QWidget* 	mcentralWidget;
   QScrollArea*	scr;
   override void closeEvent(QCloseEvent* ev);
@@ -272,7 +274,7 @@ public:
   QWidget*	    body;		// parent for the body items (actually an iStripeWidget)
   QFrame*	frmMethButtons;	// method buttons -- in body for dialogs, in outer panel for panel
   iFlowLayout*	layMethButtons;	// method buttons
-  QWidget*	widButtons; // box of buttons on the bottom of the dialog
+  QWidget*	widButtons; // box of buttons on the bottom of the dialog (unparented -- added to parent later
   QHBoxLayout*	layButtons;	
   HiLightButton*  okbut; // is HilightButton for the special mouse button handling
   HiLightButton*  canbut;// is HilightButton for the special mouse button handling

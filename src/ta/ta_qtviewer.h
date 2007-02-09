@@ -1156,6 +1156,7 @@ friend class iDataPanelSet;
 public:
   virtual QWidget*	centralWidget() const; // contents
   virtual void		setCentralWidget(QWidget* widg); // sets the contents
+  void			setButtonsWidget(QWidget* widg); // is put at the bottom, not in a scroll
   virtual bool		dirty() {return HasChanged();}
     // true if panel should not be replaced, but a new panel should be opened for the new item
   virtual bool		lockInPlace() const {return false;}
@@ -1205,6 +1206,7 @@ public: // IDataLinkClient interface
 protected:
   bool			m_pinned;
   bool			m_rendered; // set once rendered
+  QVBoxLayout* 		layOuter; 
   QScrollArea*		scr; // central scrollview
   override void		showEvent(QShowEvent* ev);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed

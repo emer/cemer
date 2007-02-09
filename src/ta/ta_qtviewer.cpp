@@ -4028,10 +4028,10 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
   setFrameStyle(NoFrame | Plain);
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);
-  QVBoxLayout* lay = new QVBoxLayout(this);
-  lay->setMargin(0);
-  lay->setSpacing(0);
-  lay->addWidget(scr);
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(0);
+  layOuter->setSpacing(2);
+  layOuter->addWidget(scr, 1);
 
   dl_->AddDataClient(this); // sets our m_link variable
 }
@@ -4059,6 +4059,11 @@ void iDataPanel::Render() {
 
 void iDataPanel::ResolveChanges(CancelOp& cancel_op) {
   ResolveChanges_impl(cancel_op);
+}
+
+void iDataPanel::setButtonsWidget(QWidget* widg) {
+  widg->setParent(this);
+  layOuter->addWidget(widg);
 }
 
 void iDataPanel::setCentralWidget(QWidget* widg) {
