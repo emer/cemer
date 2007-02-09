@@ -303,6 +303,7 @@ iDialog::iDialog(taiDataHost* owner_, QWidget* parent, int wflags)
   scr->setWidgetResizable(true);
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(0);
+  layOuter->setSpacing(0); // none needed
   layOuter->addWidget(scr, 1);
   
   iSize ss = taiM->scrn_s;
@@ -832,11 +833,12 @@ void taiDataHost::Constr_impl() {
   Insert_Methods(); // if created, AND unowned
   // create container for ok/cancel/apply etc. buttons
   widButtons = new QWidget(); // parented when we do setButtonsWidget
+  widButtons->setAutoFillBackground(true);
+  if (bg_color) {
+    widButtons->setPaletteBackgroundColor(*bg_color);
+  }
   layButtons = new QHBoxLayout(widButtons);
-  layButtons->setMargin(0); // containing lay already has spacing
-//  vblDialog->addStretch(100); // provides a degree of freedom for small body heights -- all other strechfactors=0
-  vblDialog->addStretch();
-  vblDialog->addWidget(widButtons);
+//def  layButtons->setMargin(2); // facilitates container
   Constr_Buttons();
   Constr_Final();
   widget()->setUpdatesEnabled(true);
@@ -851,7 +853,8 @@ void taiDataHost::Constr_Widget() {
     widget()->setPaletteBackgroundColor(*bg_color);
   }
   widget()->setFont(taiM->dialogFont(ctrl_size));
-  vblDialog = new QVBoxLayout(widget()); //marg/space=2
+  vblDialog = new QVBoxLayout(widget()); //marg=2
+  vblDialog->setSpacing(0); // need to manage ourself to get nicest look
 }
 
 void taiDataHost::Constr_WinName() {
@@ -861,20 +864,29 @@ void taiDataHost::Constr_WinName() {
 void taiDataHost::Constr_Prompt() {
   if (prompt != NULL) return; // already constructed
   // convert to html-ish format, for display
-  QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
-  prompt = new QLabel(s, widget()); // note, don't use creation func because needs to expand
+  prompt = new QLabel(widget()); 
+prompt->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   prompt->setTextFormat(Qt::RichText);
   prompt->setWordWrap(true); // so it doesn't dominate hor sizing
   QFont f = taiM->nameFont(ctrl_size);
   f.setBold(true); 
   prompt->setFont(f);
   prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-  vblDialog->addWidget(prompt);
+  QHBoxLayout* hbl = new QHBoxLayout();
+  hbl->setMargin(0);
+  hbl->setSpacing(0);
+  hbl->addWidget(prompt);
+//  vblDialog->addWidget(prompt);
+  vblDialog->addLayout(hbl);
+  vblDialog->addSpacing(2);
+  QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
+  prompt->setText(s);
   // add a separator line
   QFrame* line = new QFrame(widget());
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
   vblDialog->add(line);
+  vblDialog->addSpacing(2); // add now, so next guy doesn't have to
 }
 
 void taiDataHost::Constr_Box() {
@@ -895,7 +907,9 @@ void taiDataHost::Constr_Box() {
     //TODO: if adding spacing, need to include LAYBODY_SPACING;
 
   }
-  if (splBody == NULL) vblDialog->addWidget(scrBody);
+  if (splBody == NULL) {
+    vblDialog->addWidget(scrBody, 1); // gets all the space
+  }
   //note: the layout is added in Constr_Body, because it gets deleted when we change the 'show'
 }
 
@@ -922,6 +936,10 @@ void taiDataHost::Constr_Methods_impl() { //note: conditional constructions used
     show_meth_buttons = false; // set true if any created
     tmp = new QFrame(); // tmp = new QFrame(widget());
     tmp->setVisible(false); // prevents it showing as global win in some situations
+    tmp->setAutoFillBackground(true); // for when disconnected from us
+    if (bg_color) {
+      tmp->setPaletteBackgroundColor(*bg_color);
+    }
     tmp->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
     tmp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   }
@@ -938,11 +956,9 @@ void taiDataHost::Constr_Methods_impl() { //note: conditional constructions used
 void taiDataHost::Insert_Methods() {
   //NOTE: for taiEditDataHost, menus are always put in widget() even in deferred
   if (frmMethButtons && !frmMethButtons->parentWidget()) {
-    // if has buttons, then insert before those, otherwise meth buttons is last
-    int idx = -1;
-    if (widButtons)
-      vblDialog->indexOf(widButtons); // -1 if not created
-    vblDialog->insertWidget(idx, frmMethButtons);
+    // meth buttons always at bottom of inner layout
+    vblDialog->addSpacing(2);
+    vblDialog->addWidget(frmMethButtons);
     frmMethButtons->setVisible(show_meth_buttons); // needed for deferred insert
   }
 }
@@ -1879,7 +1895,7 @@ void taiEditDataHost::SetCurMenu(MethodDef* md) {
 // all platforms, to give the same look (ex. for screenshots)???
 #ifdef TA_OS_MAC
     menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL); 
-    vblDialog->insertWidget(0, menu->GetRep());
+    vblDialog->insertWidget(0, menu->GetRep()); //note: no spacing needed after
 #else
     menu = new taiMenuBar(taiMisc::fonSmall,
       NULL, this, NULL, widget());

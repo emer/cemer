@@ -3706,6 +3706,9 @@ iTabView::~iTabView()
 void iTabView::Init() {
   panels.m_tabView = this;
   layDetail = new QVBoxLayout(this);
+  // no margins/spacing needed
+  layDetail->setMargin(0);
+  layDetail->setSpacing(0);
   tbPanels = new iTabBar(this);
   layDetail->addWidget(tbPanels);
   wsPanels = new Q3WidgetStack(this);
@@ -4030,7 +4033,7 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
   scr->setWidgetResizable(true);
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(0);
-  layOuter->setSpacing(2);
+  layOuter->setSpacing(2); //def
   layOuter->addWidget(scr, 1);
 
   dl_->AddDataClient(this); // sets our m_link variable
@@ -4226,7 +4229,10 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 {
   cur_panel_id = -1;
   QWidget* widg = new QWidget();
-  layDetail = new QVBoxLayout(widg); // default margins/spacing ok
+  layDetail = new QVBoxLayout(widg); 
+  // don't introduce any new margin
+  layDetail->setMargin(0);
+  layDetail->setSpacing(0);
   buttons = new QButtonGroup(widg); // note: not a widget, not visible
   buttons->setExclusive(true); // this is the default anywh
   frmButtons = new QFrame(widg);
