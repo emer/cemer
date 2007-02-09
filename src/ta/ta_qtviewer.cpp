@@ -1728,7 +1728,7 @@ void ISelectableHost::EditAction_Delete() {
   // first, compile a ref list of all taBase guys
   taBase_RefList ta_items;
   for (int i = 0; i < items.size; ++i) {
-    ci = items.SafeEl(i); 
+    ISelectable* ci = items.SafeEl(i); 
     if (!ci) continue;
     taBase* tab = ci->link()->taData();
     if (!tab) continue;
