@@ -1723,7 +1723,7 @@ void ISelectableHost::EditAction(int ea) {
   }
 }
 
-void ISelectableHost::EditAction_Delete(int ea) {
+void ISelectableHost::EditAction_Delete() {
   const ISelectable_PtrList& items = selItems();
   // first, compile a ref list of all taBase guys
   taBase_RefList ta_items;

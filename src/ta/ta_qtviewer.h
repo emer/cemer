@@ -502,7 +502,7 @@ protected:
   taiMimeSource*	drop_ms; // during a drop, holds the ms used for dyn and edit actions
   ISelectable*		drop_item; // during drop, holds the items dropped on
   
-  virtual void 		EditAction_Delete(int); // actually does the Edit/Delete
+  virtual void 		EditAction_Delete(); // actually does the Edit/Delete
   virtual void		UpdateSelectedItems_impl() = 0; 
     // called when force=true for changes, force gui to be selItems
   void			Emit_NotifySignal(NotifyOp op);
