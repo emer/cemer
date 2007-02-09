@@ -1231,6 +1231,32 @@ protected:
 
 typedef taPtrList_base<taBase>  taPtrList_ta_base; // this comment needed for maketa parser
 
+class TA_API taBase_RefList: public taPtrList<taBase>,
+   public IDataLinkClient { // a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
+public:
+
+  taBase_RefList() {Initialize();}
+  ~taBase_RefList();
+  
+public: // IDataLinkClient i/f 
+  void*			This() {return this;}  // #IGNORE
+  override TypeDef*	GetTypeDef() const {return &TA_taBase_RefList;} // #IGNORE
+protected: // we actually protect these
+  override void		DataLinkDestroying(taDataLink* dl); // #IGNORE
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+     // #IGNORE
+
+protected:
+  taPtrList<taDataLink> dls; // we actually manage all the data_links here, not in our m_data_link variable
+  
+  String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
+
+  void*		El_Ref_(void* it);
+  void*		El_unRef_(void* it);
+private:
+  void Initialize();
+};
+
 class taList_impl;
 typedef taList_impl* TABLPtr; // this comment needed for maketa parser
 

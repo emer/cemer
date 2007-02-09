@@ -2159,6 +2159,48 @@ bool taFBase::SetFileName(const String& val) {
 // 	taList_impl	//
 //////////////////////////
 
+void taBase_RefList::Initialize() {
+}
+
+taBase_RefList::~taBase_RefList() {
+  Reset();
+}
+
+void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
+  taBase* tab = dl->taData();
+  // pre-remove dl's from list, because dl prob not in the guy anymore
+  while (dls.RemoveEl(dl)) {;}
+  if (tab) { // should exist!
+    // note: we need to remove all instances, in case mutliply-added
+    while (RemoveEl(tab)) {;} // the unRef will thus remove the dl
+  }
+}
+
+void taBase_RefList::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+}
+
+void* taBase_RefList::El_Ref_(void* it_) {
+  taBase* it = (taBase*)it_;
+  it->AddDataClient(this); // it will set the m_link member
+  dls.Add(m_link);
+  m_link = NULL; // to avoid any issues, always keep this cleaned out
+  return it_;
+}
+
+void* taBase_RefList::El_unRef_(void* it_) {
+  taBase* it = (taBase*)it_;
+  taDataLink* dl = it->data_link(); // no auto create, but it better exist!!!
+  dls.RemoveEl(dl);
+  return it_;
+}
+
+
+
+
+//////////////////////////
+// 	taList_impl	//
+//////////////////////////
+
 MemberDef* taList_impl::find_md = NULL;
 
 void taList_impl::Initialize() {

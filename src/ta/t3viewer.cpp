@@ -42,7 +42,6 @@
 #include <Inventor/SoPath.h>
 #include <Inventor/SoOutput.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
-#include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/events/SoButtonEvent.h>
 #include <Inventor/events/SoMouseButtonEvent.h>
@@ -592,9 +591,8 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
     // need to set in both render area and in render_action..?
     m_renderArea->setAccumulationBuffer(true);
     bool accum_buf = m_renderArea->getAccumulationBuffer();
-    if(accum_buf) {
+    if(accum_buf)
       m_renderArea->setAntialiasing(true, 2);
-    }
     else {
       m_renderArea->setAntialiasing(true, 1);
       taMisc::Warning("Note: was not able to establish an accumulation buffer so rendering will not be anti-aliased.  Sorry.");
@@ -613,16 +611,12 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
       sel_so->addSelectionCallback(SoSelectionCallback, (void*)this);
       sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
       m_renderArea->setSceneGraph(sel_so);
-      SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction(m_renderArea->getViewportRegion());
-//       SoGLRenderAction* rend_act = new SoGLRenderAction(m_renderArea->getViewportRegion());
+      SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
 //       rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
       rend_act->setTransparencyType(SoGLRenderAction::BLEND);
       rend_act->setSmoothing(true); // low-cost line smoothing
-      // todo: temp bug workaround
-#ifndef TA_OS_MAC
       if(accum_buf)
 	rend_act->setNumPasses(2);    // 1 = no antialiasing; 2 = antialiasing
-#endif
 
       m_renderArea->setGLRenderAction(rend_act);
     }
@@ -697,15 +691,23 @@ void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
   delete menu;
 }
 
+void iT3ViewspaceWidget::EditAction_Delete() {
+  ISelectableHost::EditAction_Delete();
+  // now make sure nothing is selected
+  //TODO: need to figure out how to do this!!!
+}
+
 void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
   if (!t3node) return;
 
   if (ev->is_selected) {
+// ************ EVIL ALERT **************************
     if(t3node->selectEditMe()) {
       t3node->Edit();
       //    return; // just do both actions!
     }
+// end evil
     AddSelectedItem(t3node);
   }
   else {

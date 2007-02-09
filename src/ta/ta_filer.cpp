@@ -433,16 +433,13 @@ bool taFiler::isCompressed() const {
 
 istream* taFiler::open_read() {
   Close();
-  int acc = access(fileName(), R_OK);
+/*  int acc = access(fileName(), R_OK);
   if((acc != 0) && !select_only) {
     taMisc::Error("File:", fileName(), "could not be opened for reading");
     return NULL;
   }
   if ((acc != 0) && select_only)	// fix the file name for new files..
-    FixFileName();
-  open_file = true;
-  SaveLastDir();
-  last_fname = m_fname;
+    FixFileName(); */
   // note: it is the filename that determines compress, not the flag
   if (m_fname.endsWith(taMisc::compress_sfx)) {
     compressed = true;
@@ -456,6 +453,9 @@ istream* taFiler::open_read() {
       taMisc::Error("File:",fileName(),"could not be opened for reading");
       Close();
   }
+  open_file = true;
+  SaveLastDir();
+  last_fname = m_fname;
   return istrm;
 }
 
@@ -469,16 +469,13 @@ bool taFiler::open_write_exist_check() {
 
 ostream* taFiler::open_write() {
   Close();
-  int acc = access(fileName(), W_OK);
+/*nuke:flaky,not really needed  int acc = access(fileName(), W_OK);
   //note: result s/b 0, otherwise no access; don't check errno!
   if (acc != 0) {
     perror("open_write: ");
     taMisc::Error("File:", fileName(), "could not be opened for writing -- check that you have permission to write to that location");
     return NULL;
-  }
-  open_file = true;
-  SaveLastDir();
-  last_fname = m_fname;
+  } */
   bool hasfx = m_fname.endsWith(taMisc::compress_sfx);
   if (hasfx) {
     compressed = true;
@@ -491,21 +488,23 @@ ostream* taFiler::open_write() {
   if (!ostrm->good()) {
     taMisc::Error("File",fileName(),"could not be opened for writing -- check that you have permission to write to that location");
     Close();
+    return NULL;
   }
+  // success, so save/cache stuff
+  open_file = true;
+  SaveLastDir();
+  last_fname = m_fname;
   return ostrm;
 }
 
 ostream* taFiler::open_append() {
   Close();
-  int acc = access(fileName(), W_OK);
+/*nuke  int acc = access(fileName(), W_OK);
   if (acc != 0) {
     perror("open_append: ");
     taMisc::Error("File:", fileName(), "could not be opened for appending -- check that you have permission to write to that location");
     return NULL;
-  }
-  open_file = true;
-  SaveLastDir();
-  last_fname = m_fname;
+  }*/
   bool hasfx = (m_fname.endsWith(taMisc::compress_sfx));
   if (hasfx) {
     compressed = true;
@@ -518,7 +517,11 @@ ostream* taFiler::open_append() {
   if (!ostrm->good()) {
     taMisc::Error("File",fileName(),"could not be opened for appending -- check that you have permission to write to that location");
     Close();
+    return NULL;
   }
+  open_file = true;
+  SaveLastDir();
+  last_fname = m_fname;
   return ostrm;
 }
 

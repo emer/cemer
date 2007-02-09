@@ -353,6 +353,7 @@ public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const {return true;} // always
   override QWidget*	widget() {return this;} 
 protected:
+  override void 	EditAction_Delete();
   override void		UpdateSelectedItems_impl(); 
 
 protected:

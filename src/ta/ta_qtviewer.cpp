@@ -1215,25 +1215,29 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   int rval = taiClipData::ER_IGNORED; //not really used, but 0 is ignored, 1 is done, -1 is forbidden, -2 is error
   // get the appropriate data, either clipboard data, or item data, depending on op
   if  (ea & (taiClipData::EA_SRC_OPS)) { // no clipboard data
-    if (sel_items.size <= 1) { // single select
-      rval = EditActionS_impl_(ea);
-    } else { // multi src
-      // iterate items while they are done and not forbidden or error
-      // must iterate from end, since action could be delete
-      for (int i = sel_items.size - 1; i >= 0 ; --i) {
-        ISelectable* is = sel_items.FastEl(i);
-        int trval = is->EditActionS_impl_(ea);
-        if (trval == 0) continue;
-        rval = trval;
-        if (rval < 0) break; // forbidden or error
-      }
-    }
-    // clipboard ops: if successful, must now put data on cb
-    if ((ea & (taiClipData::EA_CUT | taiClipData::EA_COPY)) && (rval == 1)) { // copy-like op, get item data
+    // we handle cut and copy
+    if ((ea & (taiClipData::EA_CUT | taiClipData::EA_COPY))) { // copy-like op, get item data
       cd = GetClipData(sel_items, taiClipData::ClipOpToSrcCode(ea), false);
       // note that a Cut is a Copy, possibly followed later by a xxx_data_taken command, if client pastes it
       QApplication::clipboard()->setMimeData(cd, QClipboard::Clipboard);
       cd = NULL; // clipboard now owns it
+      rval = taiClipData::ER_OK;
+      //TODO: if CUT, now need to undoably delete!
+    } else { // other ops, like Clear or Unlink
+      if (sel_items.size <= 1) { // single select
+        rval = EditActionS_impl_(ea);
+      } else { // multi src
+        // iterate items while they are done and not forbidden or error
+        // note that delete is handled by host, not here
+        for (int i = 0; i < sel_items.size; ++i) {
+          ISelectable* is = sel_items.SafeEl(i);
+          if (!is) continue;
+          int trval = is->EditActionS_impl_(ea);
+          if (trval == 0) continue;
+          rval = trval;
+          if (rval < 0) break; // forbidden or error
+        }
+      }
     }
   } else { // paste-like op, get item data
     //TODO: maybe we should confirm only 1 item selected???
@@ -1358,8 +1362,9 @@ int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items) const {
     delete ms;
   } else { // multi select
     for (int i = 0; i < sel_items.size; ++i) {
-      ISelectable* is = sel_items.FastEl(i);
-      is->QueryEditActionsS_impl_(allowed, forbidden);
+      ISelectable* is = sel_items.SafeEl(i);
+      if (is)
+        is->QueryEditActionsS_impl_(allowed, forbidden);
     }
   }
   return (allowed & (~forbidden));
@@ -1469,9 +1474,31 @@ void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) co
 //   ISelectable_PtrList	//
 //////////////////////////////////
 
+taPtrList_impl* ISelectable_PtrList::insts;
+
 ISelectable_PtrList::ISelectable_PtrList(const ISelectable_PtrList& cp)
 :taPtrList<ISelectable>(cp) 
 {
+  Initialize();
+}
+
+void ISelectable_PtrList::Initialize() {
+  // add to managed list
+  if (!insts) {
+    insts = new taPtrList_impl;
+  }
+  insts->Add_(this);
+}
+
+ISelectable_PtrList::~ISelectable_PtrList() {
+  // remove from managed list
+  if (insts) {
+    insts->RemoveEl_(this);
+    if (insts->size == 0) {
+      delete insts;
+      insts = NULL;
+    }
+  }
 }
 
 TypeDef* ISelectable_PtrList::CommonSubtype1N() { // greatest common subtype of items 1-N
@@ -1603,13 +1630,12 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
 //   ISelectableHost		//
 //////////////////////////////////
 
-taPtrList_impl* ISelectableHost::insts;
-
 void ISelectableHost::ItemDeleting(ISelectable* item) {
+  taPtrList_impl* insts = ISelectable_PtrList::insts; // cache for convenience
   if (!insts) return; // note: prob shouldn't happen, if item exists!
   for (int i = insts->size - 1; i > 0; --i) {
-    ISelectableHost* host = (ISelectableHost*)insts->FastEl_(i);
-    host->sel_items.RemoveEl(item);
+    ISelectable_PtrList* list = (ISelectable_PtrList*)insts->FastEl_(i);
+    list->RemoveEl_(item);
   }
 }
 
@@ -1622,11 +1648,6 @@ ISelectableHost::ISelectableHost() {
   m_sel_chg_cnt = 0;
   helper = new SelectableHostHelper(this);
   drop_ms = NULL;
-  // add to managed list
-  if (!insts) {
-    insts = new taPtrList_impl;
-  }
-  insts->Add_(this);
 }
 
 ISelectableHost::~ISelectableHost() {
@@ -1634,14 +1655,6 @@ ISelectableHost::~ISelectableHost() {
   //note: we delete it right now, to force disconnect of all signals/slots
   delete helper;
   helper = NULL;
-  // remove from managed list
-  if (insts) {
-    insts->RemoveEl_(this);
-    if (insts->size == 0) {
-      delete insts;
-      insts = NULL;
-    }
-  }
 }
 
 void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
@@ -1701,8 +1714,33 @@ void ISelectableHost::DropEditAction(int ea) {
 void ISelectableHost::EditAction(int ea) {
   ISelectable* ci = curItem();
   if (!ci) return;
-  ISelectable_PtrList items(selItems());
-  ci->EditAction_(items, ea);
+  // delete is a special case
+  if (ea & taiClipData::EA_DELETE) {
+    EditAction_Delete();
+  } else {
+    ISelectable_PtrList items(selItems());
+    ci->EditAction_(items, ea);
+  }
+}
+
+void ISelectableHost::EditAction_Delete(int ea) {
+  const ISelectable_PtrList& items = selItems();
+  // first, compile a ref list of all taBase guys
+  taBase_RefList ta_items;
+  for (int i = 0; i < items.size; ++i) {
+    ci = items.SafeEl(i); 
+    if (!ci) continue;
+    taBase* tab = ci->link()->taData();
+    if (!tab) continue;
+    ta_items.Add(tab);
+  }
+  // now, just request deletion -- items could go missing
+  // if we've selected items that will get deleted by other items 
+  for (int i = ta_items.size - 1; i >= 0; --i) {
+    taBase* tab = ta_items.SafeEl(i);
+    if (!tab) continue;
+    tab->Close(); // if happens immediately, will get removed from list
+  }
 }
 
 void ISelectableHost::EditActionsEnabled(int& ea) {

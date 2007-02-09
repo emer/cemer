@@ -86,8 +86,6 @@ INHERITED(taDataLink)
 public:
   static String		AnonymousItemName(const String& type_name, int index); // [index]:Typename
   
-  taBase*		taData() const 
-    {if (isBase()) return (taBase*)m_data; else return NULL;}
   virtual int		checkConfigFlags() const { return 0;}
     // taBase::THIS_INVALID|CHILD_INVALID
 
@@ -371,20 +369,23 @@ protected:
 // always the primary class in cases where there is multiple inheritance
 
 class TA_API ISelectable_PtrList: public taPtrList<ISelectable> { // for selection lists
-#ifndef __MAKETA__
-typedef taPtrList<ISelectable> inherited;
-#endif
+INHERITED(taPtrList<ISelectable>)
+friend class ISelectableHost;
 public:
   TypeDef*		Type1(); // data type of item
   TypeDef*		CommonSubtype1N(); // greatest common data subtype of items 1-N
   TypeDef*		CommonSubtype2N(); // greatest common data subtype of items 2-N
   
-  ISelectable_PtrList() {}
+  ISelectable_PtrList() {Initialize();}
   ISelectable_PtrList(const ISelectable_PtrList& cp);
+  ~ISelectable_PtrList();
 protected:
+  static taPtrList_impl* insts; // global lists of all insts, to enable removing deleting items
 //TEMP nn??  override void*	El_Ref_(void* it) {((ISelectable*)it)->RefUnref(true); return it;}
 //TEMP nn??  override void* 	El_unRef_(void* it) {((ISelectable*)it)->RefUnref(false);  return it;}
-
+private:
+  
+  void	Initialize();
 };
 
 
@@ -501,6 +502,7 @@ protected:
   taiMimeSource*	drop_ms; // during a drop, holds the ms used for dyn and edit actions
   ISelectable*		drop_item; // during drop, holds the items dropped on
   
+  virtual void 		EditAction_Delete(int); // actually does the Edit/Delete
   virtual void		UpdateSelectedItems_impl() = 0; 
     // called when force=true for changes, force gui to be selItems
   void			Emit_NotifySignal(NotifyOp op);
@@ -511,8 +513,6 @@ protected:
     // updates the dyn methods/actions
 
 private:
-  static taPtrList_impl* insts; // global lists of all insts, to enable removing deleting items
-  
   SelectableHostHelper* helper;
 };
 

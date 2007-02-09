@@ -1019,6 +1019,10 @@ class TA_API taDataLink {
 friend class taDataLinkItr;
 public:
   void*			data() const {return m_data;} // subclasses usually replace with strongly typed version
+#ifndef NO_TA_BASE
+  taBase*		taData() const 
+    {if (isBase()) return (taBase*)m_data; else return NULL;}
+#endif
   virtual bool		isBase() const {return false;} // true if data is of type taBase (note: could still be null)
   inline int		dbuCnt() const {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
   virtual bool		isEnabled() const {return true;} // status of item
