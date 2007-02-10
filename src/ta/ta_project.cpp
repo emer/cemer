@@ -424,12 +424,14 @@ void taRootBase::AddRecentFile(const String& value) {
   if (idx >= 0) {
     recent_files.SwapIdx(0, idx);
     return;
+  } else {
+    // not there; if full, then nuke a guy
+    if (recent_files.size >= taMisc::num_recent_files)
+      recent_files.SetSize(taMisc::num_recent_files - 1);
+    // insert it
+    recent_files.Insert(value, 0);
   }
-  // not there; if full, then nuke a guy
-  if (recent_files.size >= taMisc::num_recent_files)
-    recent_files.SetSize(taMisc::num_recent_files - 1);
-  // insert it
-  recent_files.Insert(value, 0);
+  Save();
 }
 
 bool taRootBase::CheckAddPluginDep(TypeDef* td) {

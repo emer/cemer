@@ -875,12 +875,12 @@ void taiDataHost::Constr_Prompt() {
   vblDialog->addSpacing(2);
   QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
   prompt->setText(s);
-  // add a separator line
+/*no  // add a separator line
   QFrame* line = new QFrame(widget());
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
   vblDialog->add(line);
-  vblDialog->addSpacing(2); // add now, so next guy doesn't have to
+  vblDialog->addSpacing(2); // add now, so next guy doesn't have to */
 }
 
 void taiDataHost::Constr_Box() {
@@ -1887,14 +1887,15 @@ void taiEditDataHost::SetCurMenu(MethodDef* md) {
     // reason (doesn't become visible, no matter what); but a toolbar works
 //TODO: it looks slightly funny, but maybe we should do it the same on
 // all platforms, to give the same look (ex. for screenshots)???
-#ifdef TA_OS_MAC
+//#ifdef TA_OS_MAC
     menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL); 
     vblDialog->insertWidget(0, menu->GetRep()); //note: no spacing needed after
-#else
+    vblDialog->insertSpacing(1, 2);
+/*#else
     menu = new taiMenuBar(taiMisc::fonSmall,
       NULL, this, NULL, widget());
     vblDialog->setMenuBar(menu->GetRep());
-#endif
+#endif*/
   }
   String men_nm = md->OptionAfter("MENU_ON_");
   if (men_nm != "") {

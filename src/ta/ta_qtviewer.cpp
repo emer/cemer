@@ -2133,7 +2133,7 @@ void iBrowseViewer::ApplyRoot() {
   taiTreeDataNode* node;
   if (m_root == tabMisc::root)
     node = dl->CreateTreeDataNode(root_md(), lvwDataTree, NULL, "root",
-      dn_flags_ | iTreeViewItem::DNF_IS_MEMBER);
+      dn_flags_ | iTreeViewItem::DNF_IS_MEMBER | iTreeViewItem::DNF_NO_UPDATE_NAME);
   else {
     // if root is a member, we use that name, else the obj name
     MemberDef* md = root_md();
@@ -2142,9 +2142,10 @@ void iBrowseViewer::ApplyRoot() {
       root_nm = md->name;
     else {
       root_nm = dl->GetName();
+      dn_flags_ |= iTreeViewItem::DNF_UPDATE_NAME; // change it on data changes
     }
     node = dl->CreateTreeDataNode(md, lvwDataTree, NULL, root_nm, 
-      dn_flags_ | iTreeViewItem::DNF_UPDATE_NAME);
+      dn_flags_);
   }
   // always show the first items under the root
   node->CreateChildren();
@@ -5086,6 +5087,9 @@ iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* pare
   iTreeViewItem* after, const String& tree_name, int dn_flags_)
 :inherited(parent, after)
 {
+  // assume by default we want to update name if no md, and not told not to
+  if (!md_ && !(dn_flags & DNF_NO_UPDATE_NAME))
+    dn_flags_ |= DNF_UPDATE_NAME;
   init(tree_name, link_, md_, dn_flags_);
 }
 
@@ -5149,16 +5153,14 @@ void iTreeViewItem::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   if (dcr != DCR_ITEM_UPDATED) return;
   if (this->dn_flags & iTreeViewItem::DNF_UPDATE_NAME) {
     taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
-    if (par_nd == NULL) {// null if already a root node -- just force our name to something sensible...
+    if (par_nd) {
+      par_nd->UpdateChildNames();
+    } else { // a root node -- just force our name to something sensible...
       String nm = link()->GetName();
       if (nm.empty())
         nm = "(" + link()->GetDataTypeDef()->name + ")";
       this->setText(0, nm);
-      return;
     }
-    taiDataLink* dl = par_nd->link();
-    if (dl == NULL) return; // shouldn't happen...
-    par_nd->UpdateChildNames();
   }
   DecorateDataNode();
 }

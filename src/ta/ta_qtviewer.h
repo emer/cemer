@@ -1595,7 +1595,8 @@ public:
     DNF_NO_CAN_DROP	= 0x020, // 32 cannot accept drops
     DNF_IS_MEMBER 	= 0x040, // 64 true for members (and root), not for list/group items -- helps node configure edit ops
     DNF_IS_LIST_NODE 	= 0x080, // true for nodes in a list view (in panel, not on tree)
-    DNF_IS_LINK 	= 0x100 // true for nodes that are links, not owned by parent
+    DNF_IS_LINK 	= 0x100, // true for nodes that are links, not owned by parent
+    DNF_NO_UPDATE_NAME	= 0x200 // for root items that don't have a md, we autoset UPDATE_NAME unless this flag is set
   };
 
 /*nn  enum BrowseDropAction {
