@@ -488,6 +488,7 @@ protected:
   SoTransform*		transform_; // for entire object: goes first in this
   SoVertexProperty*	vtx_prop_;
   SoSeparator* 		cell_text_; // cell text variables
+  SoFont* 		cell_fnt_; //fnt we add to the text (not refed)
 
   float		max_xy;		// max of unit x,y cell size
   float		cl_spc;		// computed cell spacing

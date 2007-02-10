@@ -939,6 +939,7 @@ SoMatrixGrid::SoMatrixGrid(taMatrix* mat, bool oddy, ColorScale* sc, MatrixLayou
   vtx_prop_ = new SoVertexProperty;
   shape_->vertexProperty.setValue(vtx_prop_);
   cell_text_ = NULL;
+  cell_fnt_ = NULL;
 
   matrix = mat;
   taBase::Ref(matrix);
@@ -1040,8 +1041,11 @@ void SoMatrixGrid::render() {
   bool build_text = false;
   float ufontsz = MIN(cl_x / (float)max_txt_len, cl_y);
   if(!val_text) {
-    removeChild(cell_text_);
-    cell_text_ = NULL;
+    if (cell_text_) {
+      removeChild(cell_text_);
+      cell_fnt_ = NULL;
+      cell_text_ = NULL;
+    }
   }
   else {
     if(!cell_text_) {
@@ -1051,12 +1055,11 @@ void SoMatrixGrid::render() {
       SoBaseColor* bc = new SoBaseColor;
       bc->rgb.setValue(0, 0, 0); //black is default for text
       cell_text_->addChild(bc);
-      SoFont* fnt = new SoFont();
-      fnt->name = "Arial";
-      cell_text_->addChild(fnt);
+      cell_fnt_ = new SoFont();
+      cell_fnt_->name = "Arial";
+      cell_text_->addChild(cell_fnt_);
     }
-    SoFont* fnt = (SoFont*)cell_text_->getChild(1);
-    fnt->size.setValue(ufontsz);
+    cell_fnt_->size.setValue(ufontsz);
   }
 
   SbVec3f* vertex_dat = vertex.startEditing();
