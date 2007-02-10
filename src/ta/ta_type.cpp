@@ -378,7 +378,6 @@ int  	taMisc::console_font_size = 10;
 #elif defined(TA_OS_WIN)
 String  taMisc::font_name = "Verdana"; // looks nice on Win
 int  	taMisc::font_size = 10;
-ConsoleStyle taMisc::console_style = CS_GUI_TRACKING;
 String  taMisc::console_font_name = "Fixed";
 int  	taMisc::console_font_size = 10;
 #else // Linux or some Unix variant
@@ -387,6 +386,7 @@ int  	taMisc::font_size = 10;
 String  taMisc::console_font_name = "LucidaTypewriter";
 int  	taMisc::console_font_size = 10;
 #endif
+taMisc::ConsoleStyle taMisc::console_style = CS_GUI_TRACKING;
 int	taMisc::display_width = 80;
 int	taMisc::sep_tabs = 2;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
@@ -394,6 +394,7 @@ int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
 int	taMisc::mono_scale_size = 16;
 int	taMisc::jpeg_quality = 95;
+taMisc::ColorHints taMisc::color_hints = taMisc::CH_EDITS;
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif

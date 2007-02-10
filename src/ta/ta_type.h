@@ -489,10 +489,15 @@ public:
     QF_FORCE_QUIT	// too late to turn back now...
   };
   
-  enum ConsoleStyle { // #BITS the type of console window and how to show it; ignored in non-gui mode (always uses OS console)
+  enum ConsoleStyle { // the type of console window and how to show it; ignored in non-gui mode (always uses OS console)
     CS_OS, // use the operating system's console (with readline library on Unix)
     CS_GUI_DOCKABLE, // uses a dock window, initially docked in the main app window
     CS_GUI_TRACKING // uses a separate window that "sticks" to the bottom of your project window
+  };
+  
+  enum ColorHints { // #BITS what types of color hinting to use in the application
+    CH_EDITS		= 0x0001, // color the background of property editors according to the type of the item
+    CH_BROWSER		= 0x0002 // color browser tree text according to the type of the item
   };
 
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
@@ -504,7 +509,7 @@ public:
 
   static String		font_name;	// #SAVE #CAT_GUI default font name to use
   static int		font_size;	// #SAVE #CAT_GUI default font size to use
-  static ConsoleStyle	console_style; // #SAVE #CAT_GUI style of the console to display
+  static ConsoleStyle	console_style; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
   static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
   static int		display_width;	// #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console
@@ -514,6 +519,7 @@ public:
   static int		color_scale_size; // #SAVE #CAT_GUI number of colors to put in a color scale
   static int		mono_scale_size;  // #SAVE #CAT_GUI number of monochrome bit-patterns to put in a color scale
   static int		jpeg_quality; 	// #SAVE #CAT_GUI jpeg quality for dumping jpeg files (1-100; 95 default)
+  static ColorHints 	color_hints; // #SAVE #CAT_GUI what types of color hinting to use in the application
 #ifndef NO_TA_BASE
   static ViewColor_List* view_colors; 	// #NO_SAVE colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif

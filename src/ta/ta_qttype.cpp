@@ -838,6 +838,9 @@ int taiEdit::Edit(void* base, bool readonly, const iColor* bgcol) {
       host_->no_ok_but = true;
     if (typ->HasOption("NO_CANCEL"))
       host_->read_only = true;
+    if (taMisc::color_hints & taMisc::CH_EDITS) {
+      if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+    }
     host_->Constr("", "", bgcol);
 //TODO: no longer supported:    host_->cancel_only = readonly;
     return host_->Edit(false);
@@ -859,7 +862,12 @@ int taiEdit::EditDialog(void* base, bool read_only,
     }
   }
   host = CreateDataHost(base, read_only);
-  if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+  if (taMisc::color_hints & taMisc::CH_EDITS) {
+    if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+  } else {
+  //TODO: maybe we always null out, or should we allow caller to specify?
+    //bgcol = NULL; 
+  }
   host->Constr("", "", bgcol, taiDataHost::HT_DIALOG);
   return host->Edit(modal);
   
@@ -869,9 +877,13 @@ EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
    bool read_only, const iColor* bgcol) 
 {
   taiEditDataHost* host = CreateDataHost(base, read_only);
-  if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
-//  host->Constr("", "", bgcol, taiDataHost::HT_PANEL);
-//  return host->EditPanel(link); 
+  if (taMisc::color_hints & taMisc::CH_EDITS) {
+    if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+  } else {
+  //TODO: maybe we always null out, or should we allow caller to specify?
+    //bgcol = NULL; 
+  }
+
   host->Constr("", "", bgcol, taiDataHost::HT_PANEL, true);
   EditDataPanel* rval = host->EditPanelDeferred(link);
   return rval;

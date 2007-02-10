@@ -823,17 +823,18 @@ bool taRootBase::Startup_MakeMainWin() {
   // TODO: need to better orchestrate the "OpenWindows" call below with
   // create the default application window
   MainWindowViewer* db = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
-  db->ViewWindow();
-  iMainWindowViewer* bw = db->viewerWindow();
-  if (bw) {
-    // try to size fairly large to avoid scrollbars
-    iSize s((int)(.6 * taiM->scrn_s.w), (int)(.4 * taiM->scrn_s.h));
-    bw->resize(s.w, s.h);
-    bw->show(); // when we start event loop
-  }
+  // try to size fairly large to avoid scrollbars -- values obtained empirically
+  iSize s(1024, 480); // no console
   if (taMisc::console_style == taMisc::CS_GUI_DOCKABLE) {
+    s.h = 720; // console
     ConsoleDockViewer* cdv = new ConsoleDockViewer;
     db->docks.Add(cdv);
+  }
+  db->ViewWindow();
+  iMainWindowViewer* bw = db->viewerWindow();
+  if (bw) { //note: already constrained to max screen size, so we don't have to check
+    bw->resize(s.w, s.h);
+    bw->show(); // when we start event loop
   }
   //TODO: following prob not necessary
   if (taMisc::gui_active) taiMisc::OpenWindows();

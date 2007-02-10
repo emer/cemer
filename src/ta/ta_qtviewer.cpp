@@ -5246,7 +5246,7 @@ void iTreeViewItem::DecorateDataNode() {
     }
   }
   // if decoration enabled, then decorate away
-  if (tv->decorateEnabled()) {
+  if (tv->decorateEnabled() && (taMisc::color_hints & taMisc::CH_BROWSER)) {
     String dec_key = link->GetTypeDecoKey(); // nil if none
     if (dec_key.nonempty()) {
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);

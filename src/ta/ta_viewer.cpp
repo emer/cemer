@@ -17,11 +17,15 @@
 
 #include "ta_project.h"
 
+#include "css_console.h"
+
 #ifdef TA_GUI
 # include "ta_qt.h"
 # include "ta_qtviewer.h"
 # include "ta_qtclassbrowse.h"
-# include "css_console.h"
+# ifdef HAVE_QT_CONSOLE
+#   include "css_qtconsole.h"
+# endif
 # include <QApplication>
 # include <QScrollArea>
 #endif
@@ -651,16 +655,15 @@ void ConsoleDockViewer::Initialize() {
 IDataViewWidget* ConsoleDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
   iDockViewer* dv = new iDockViewer(this, gui_parent); // par usually NULL
 
-  QScrollArea* sa = new QScrollArea(dv);
+  QScrollArea* sa = new QScrollArea;
   sa->setWidgetResizable(true);
   dv->setWidget(sa);
-/*TODO: enable  this for the generic Q&D console, and modalize for QcssConsole
+//TODO: enable  this for the generic Q&D console, and modalize for QcssConsole
 
+#if (defined(HAVE_QT_CONSOLE))
   QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
-  //note: don't set size, let it resize in the scroll area
-//  sa->setFocusProxy((QWidget*)con);
   sa->setWidget((QWidget*)con);
-*/
+#endif
   return dv;
 }
 

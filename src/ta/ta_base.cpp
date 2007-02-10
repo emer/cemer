@@ -1547,8 +1547,8 @@ int taBase::Edit() {
 #ifdef TA_GUI
   taiEdit* ie;
   if((ie = GetTypeDef()->ie) != NULL) {
-    const iColor* bgclr = GetEditColorInherit();
-    return ie->Edit((void*)this, false, bgclr);
+    //note: taiEdit looks up color, if hinting enabled
+    return ie->Edit((void*)this, false, NULL);
   }
 #endif
   return false;
@@ -1558,8 +1558,8 @@ int taBase::EditDialog(bool modal) {
 #ifdef TA_GUI
   taiEdit* ie;
   if((ie = GetTypeDef()->ie) != NULL) {
-    const iColor* bgclr = GetEditColorInherit();
-    return ie->Edit((void*)this, false, bgclr);
+    //note: taiEdit looks up color, if hinting enabled
+    return ie->Edit((void*)this, false, NULL);
   }
 #endif
   return false;
