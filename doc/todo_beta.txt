@@ -1,6 +1,46 @@
 Beta TODO list
 -------------
 
+items to prioritize (from 2/6/07 ccnlab demo)
+
+General:
+* Programs: need a much less scary, "user friendly" view
+
+* comment directive or similiar to control what "null" means
+  in drop downs:
+  "New", "None", etc.
+
+* DataTable: button to add a row
+  also: maybe a standard "navigator" bar (including New)
+
+
+T3 (in rough order of importance/difficulty-factored)
+
+* view panels: put in the full T3 viewer (with the view buttons, etc.)
+
+* in t3 viewer, add button to return to a "nice" view
+
+* Projections: better visualization, esp direction of connection
+  (maybe have transition of color, intermediate arrows, etc.)
+
+* Connections: simplify connection semantics so user doesn't need
+  to grok the from/to -- maybe a popup that offers all 3 combos:
+  "A --> B", "A <-- B", "A <--> B"
+
+* layer translator control: provide mode to move up and down
+
+* have ability to show major grid lines, to know where things 
+  will move to
+
+* have view-rooted display widgets, ala "heads up display"
+  note: one issue is that these would be strictly viewer-dependent,
+  so you couldn't have more than one view of the object tree
+  (or, you can only have one view in which the viewer widgets
+   are correctly "heads up")
+
+------------------------------------------------------------------
+
+
 Updated mini-list as of 1/26/07:
 
 * Program dirty is still not working for sure.  I can take a look at this
@@ -37,7 +77,7 @@ To Be Prioritized:
 NEW BUGS
 
 * taMisc not showing its enums in classbrowse
-* taMisc property sheet showing all show enum vals in bits,
+* taMisc property sheet showing all show enum vals in bits,new
   instead of just the BITS ones
 
 TO BE CLARIFIED
