@@ -2,6 +2,10 @@ leabra todo list:
 
 commit:
 
+* datatable: Writeclose_impl -- need flag for dmem auto write file or not.
+  all procs are saving epoch log file and that is not good..  maybe just make that a separate
+  step that is controlled by the program.  yes.
+
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
   -- seems slower after clicking around (confirmed).  maybe net too?  
   STILL NEED THIS -- THIS IS HAPPENING!
@@ -12,8 +16,6 @@ commit:
 * add 2d text flag for netview. play with complexity vis-a-vis rendering
   (probably not worth it for flag -- costs a lot in render but is not a big
   deal..)
-
-* lookup mac double-pass antialiasing problem?
 
 * did I ever fix clicking on an axis, etc?  also, deleting an item from a view and
   then selecting something else in the view to delete caused a crash..

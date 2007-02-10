@@ -615,9 +615,10 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
 //       rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
       rend_act->setTransparencyType(SoGLRenderAction::BLEND);
       rend_act->setSmoothing(true); // low-cost line smoothing
+#ifndef TA_OS_MAC		    // temp until bug is fixed!
       if(accum_buf)
 	rend_act->setNumPasses(2);    // 1 = no antialiasing; 2 = antialiasing
-
+#endif
       m_renderArea->setGLRenderAction(rend_act);
     }
     LayoutComponents();
