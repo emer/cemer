@@ -826,8 +826,14 @@ bool taRootBase::Startup_MakeMainWin() {
   db->ViewWindow();
   iMainWindowViewer* bw = db->viewerWindow();
   if (bw) {
-    bw->resize((int)(.4 * taiM->scrn_s.w), (int)(.3 * taiM->scrn_s.h));
+    // try to size fairly large to avoid scrollbars
+    iSize s((int)(.6 * taiM->scrn_s.w), (int)(.4 * taiM->scrn_s.h));
+    bw->resize(s.w, s.h);
     bw->show(); // when we start event loop
+  }
+  if (taMisc::console_style == taMisc::CS_GUI_DOCKABLE) {
+    ConsoleDockViewer* cdv = new ConsoleDockViewer;
+    db->docks.Add(cdv);
   }
   //TODO: following prob not necessary
   if (taMisc::gui_active) taiMisc::OpenWindows();
@@ -838,21 +844,23 @@ bool taRootBase::Startup_MakeMainWin() {
 bool taRootBase::Startup_Console() {
   if (taMisc::use_gui) {
 //TODO: we need event loop in gui AND non-gui, so check about Shell_NoGui_Rl
+   
 #if (!defined(QANDD_CONSOLE) && defined(HAVE_QT_CONSOLE))
-    // note: not doing this anymore!!
-  //   ConsoleDockViewer* cdv = new ConsoleDockViewer;
-  //   db->docks.Add(cdv);
-    // instead: create a separate new window..
-    QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
-    QMainWindow* cwin = new QMainWindow();
-    cwin->setCentralWidget((QWidget*)con);
-    cwin->resize((int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
-    cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));
-    cwin->show();
-    taMisc::console_win = cwin;
-
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-    return true;
+    if ((taMisc::console_style == taMisc::CS_GUI_DOCKABLE) ||
+     (taMisc::console_style == taMisc::CS_GUI_TRACKING))
+    {  //note: nothing else to do here for gui_dockable
+      if (taMisc::console_style == taMisc::CS_GUI_TRACKING) {
+        QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+        QMainWindow* cwin = new QMainWindow();
+        cwin->setCentralWidget((QWidget*)con);
+        cwin->resize((int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
+        cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));
+        cwin->show();
+        taMisc::console_win = cwin;
+      }
+      cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
+      return true;
+    } else
 #endif
     // otherwise, (esp Windows) we'll use the older type shell
     cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);

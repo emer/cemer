@@ -378,6 +378,7 @@ int  	taMisc::console_font_size = 10;
 #elif defined(TA_OS_WIN)
 String  taMisc::font_name = "Verdana"; // looks nice on Win
 int  	taMisc::font_size = 10;
+ConsoleStyle taMisc::console_style = CS_GUI_TRACKING;
 String  taMisc::console_font_name = "Fixed";
 int  	taMisc::console_font_size = 10;
 #else // Linux or some Unix variant

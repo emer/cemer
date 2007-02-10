@@ -488,6 +488,12 @@ public:
     QF_USER_QUIT,	// we can still cancel while in this state of quitting
     QF_FORCE_QUIT	// too late to turn back now...
   };
+  
+  enum ConsoleStyle { // #BITS the type of console window and how to show it; ignored in non-gui mode (always uses OS console)
+    CS_OS, // use the operating system's console (with readline library on Unix)
+    CS_GUI_DOCKABLE, // uses a dock window, initially docked in the main app window
+    CS_GUI_TRACKING // uses a separate window that "sticks" to the bottom of your project window
+  };
 
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		version; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
@@ -498,9 +504,9 @@ public:
 
   static String		font_name;	// #SAVE #CAT_GUI default font name to use
   static int		font_size;	// #SAVE #CAT_GUI default font size to use
+  static ConsoleStyle	console_style; // #SAVE #CAT_GUI style of the console to display
   static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
-
   static int		display_width;	// #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console
   static int		sep_tabs;	// #SAVE #CAT_GUI number of tabs to separate items by
   static int		max_menu;	// #SAVE #CAT_GUI maximum number of items in a menu

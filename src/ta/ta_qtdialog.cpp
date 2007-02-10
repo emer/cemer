@@ -865,19 +865,13 @@ void taiDataHost::Constr_Prompt() {
   if (prompt != NULL) return; // already constructed
   // convert to html-ish format, for display
   prompt = new QLabel(widget()); 
-prompt->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   prompt->setTextFormat(Qt::RichText);
   prompt->setWordWrap(true); // so it doesn't dominate hor sizing
   QFont f = taiM->nameFont(ctrl_size);
   f.setBold(true); 
   prompt->setFont(f);
   prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-  QHBoxLayout* hbl = new QHBoxLayout();
-  hbl->setMargin(0);
-  hbl->setSpacing(0);
-  hbl->addWidget(prompt);
-//  vblDialog->addWidget(prompt);
-  vblDialog->addLayout(hbl);
+  vblDialog->addWidget(prompt);
   vblDialog->addSpacing(2);
   QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
   prompt->setText(s);
