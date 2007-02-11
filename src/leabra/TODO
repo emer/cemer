@@ -2,6 +2,8 @@ leabra todo list:
 
 commit:
 
+* smartref is not a taBase -- change _list to PtrList (like Brad's)..
+
 * datatable: Writeclose_impl -- need flag for dmem auto write file or not.
   all procs are saving epoch log file and that is not good..  maybe just make that a separate
   step that is controlled by the program.  yes.

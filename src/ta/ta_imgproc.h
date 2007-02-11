@@ -432,7 +432,7 @@ public:
 /////////////////////////////////////////////////////////
 
 class TA_API RetinaSpec : public taNBase {
-  // ##CAT_Image full specification of retinal filtering based on difference-of-gaussian filters
+  // ##CAT_Image ##DEF_CHILD_dogs full specification of retinal filtering based on difference-of-gaussian filters
 INHERITED(taNBase)
 public:
   enum ColorType {		// type of color processing to do (determines file loading)
@@ -532,6 +532,7 @@ public:
 
   void	UpdateRetinaSize();	// copy retina_size to dogs..
 
+  override taList_impl*	children_() {return &dogs;}	
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(RetinaSpec);
@@ -542,7 +543,7 @@ protected:
 SmartRef_Of(RetinaSpec); // RetinaSpecRef
 
 class TA_API V1GaborSpec : public taNBase {
-  // ##CAT_Image full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
+  // ##CAT_Image ##DEF_CHILD_gabors full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
 INHERITED(taNBase)
 public:
   GaborV1SpecList	gabors;		// the gabor (and blob) V1 filters
@@ -565,6 +566,8 @@ public:
   // Perform the filtering function: operates on output of RetinaSpec processing
 
 //   void	UpdateRetinaSize();	// copy retina_size to dogs..
+
+  override taList_impl*	children_() {return &gabors;}
 
   void 	Initialize();
   void	Destroy() { };

@@ -82,7 +82,7 @@ private:
 };
 
 class TA_API DataOpBaseSpec : public taNBase {
-  // ##CAT_Data a datatable operation specification -- contains a list of operation elements associated with different data columns
+  // ##CAT_Data ##DEF_CHILD_ops a datatable operation specification -- contains a list of operation elements associated with different data columns
 INHERITED(taNBase)
 public:
   DataOpList	ops;		// #SHOW_TREE the list of operation elements, associated with different data columns
@@ -98,6 +98,7 @@ public:
   virtual void	AddAllColumns(DataTable* dt) { ops.AddAllColumns(dt); }
   // #CAT_DataOp #BUTTON add all columns from given data table
 
+  override taList_impl*	children_() {return &ops;}	
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_SIMPLE_BASEFUNS(DataOpBaseSpec);
 private:
@@ -445,7 +446,7 @@ private:
 };
 
 class TA_API DataSelectColsProg : public DataProg { 
-  // selects rows from src_data into dest_data according to select_spec
+  // ##DEF_CHILD_select_spec selects rows from src_data into dest_data according to select_spec
 INHERITED(DataProg)
 public:
   DataOpList		select_spec; // #SHOW_TREE columns to select
@@ -454,6 +455,7 @@ public:
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
   override void	UpdateSpecDataTable();
 
+  override taList_impl*	children_() {return &select_spec; }	
   override String GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DataSelectColsProg);
 protected:

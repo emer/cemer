@@ -56,13 +56,13 @@ static int follow3(int expect1, int if1, int expect2, int if2,
 
 static int skip_white_nocr() {
   int c;
-  while (((c=cssMisc::cur_top->Prog()->Getc()) == ' ') || (c == '\t') || (c == '\r'));
+  while (isspace(c=cssMisc::cur_top->Prog()->Getc()) && (c != '\n'));
   return c;
 }
 
 static int skip_white() {
   int c;
-  while (((c=cssMisc::cur_top->Prog()->Getc()) == ' ') || (c == '\t') || (c == '\r') || (c == '\n'));
+  while (isspace(c=cssMisc::cur_top->Prog()->Getc()));
   return c;
 }
 
@@ -183,10 +183,7 @@ int yylex()
         cssLex::Buf += (char)c;
 	prev = c;
       } while(((c=cssMisc::cur_top->Prog()->Getc()) != EOF) &&
-	      ((c == '.') || isdigit(c) || (c == 'x') || (c == 'e') ||
-	       (c == 'X') || (c == 'E') || (c == 'a') || (c == 'A') ||
-	       (c == 'b') || (c == 'B') || (c == 'c') || (c == 'C') ||
-	       (c == 'd') || (c == 'D') || (c == 'f') || (c == 'F') ||
+	      ((c == '.') || isxdigit(c) ||
 	       (((prev == 'e') || (prev == 'E')) && (c == '-'))));
 
       cssMisc::cur_top->Prog()->unGetc();

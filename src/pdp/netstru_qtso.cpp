@@ -2280,6 +2280,7 @@ void NetViewPanel::fldPrjnWdth_textChanged() {
 
   nv_->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
   nv_->UpdateDisplay(false);
+  // todo: seems to require a more signficant rebuild
 }
 
 void NetViewPanel::chkXYSquare_toggled(bool on) {

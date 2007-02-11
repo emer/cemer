@@ -143,7 +143,7 @@ private:
 };
 
 class PDP_API LayerWriter : public taNBase {
-  // ##CAT_Network controls the writing of input data from a data source to network layers
+  // ##CAT_Network ##DEF_CHILD_layer_data controls the writing of input data from a data source to network layers
 INHERITED(taNBase)
 public:
   DataBlockRef	data;
@@ -162,7 +162,8 @@ public:
   virtual bool	ApplyInputData();
   // #CAT_LayerWriter apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success
 
-  String	GetDisplayName() const;
+  override taList_impl*	children_() {return &layer_data;}
+  override String	GetDisplayName() const;
 
   TA_SIMPLE_BASEFUNS(LayerWriter);
 protected:
@@ -330,7 +331,7 @@ private:
 };
 
 class PDP_API NetMonitor: public taNBase {
-  // ##TOKENS #NO_UPDATE_AFTER ##CAT_Network monitors values from network (or other) objects and sends them to a data table/sink
+  // ##TOKENS #NO_UPDATE_AFTER ##CAT_Network  ##DEF_CHILD_items monitors values from network (or other) objects and sends them to a data table/sink
 INHERITED(taNBase)
 public:
   NetMonItem_List	items;
@@ -377,7 +378,8 @@ public:
   void		UpdateNetworkPtrs();
   // #IGNORE update pointers to objects within current network
 
-  String	GetDisplayName() const;
+  override taList_impl*	children_() {return &items;}
+  override String	GetDisplayName() const;
   
   void	InitLinks();
   void	CutLinks();

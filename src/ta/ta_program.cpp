@@ -153,6 +153,14 @@ void ProgVar::SetDynEnumName(const String& val) {
   dyn_enum_val.SetNameVal(val);
 }
 
+taBase* ProgVar::FindTypeName(const String& nm) const {
+  if(var_type != T_DynEnum) return NULL; // currently only dynenum has new types
+  if(dyn_enum_val.name == nm) return (taBase*)&dyn_enum_val;
+  int idx;
+  if((idx = dyn_enum_val.FindNameIdx(nm)) >= 0) 
+    return dyn_enum_val.FastEl(idx);
+  return NULL;
+}
 
 void ProgVar::Cleanup() {
   if (!((var_type == T_Int) || (var_type == T_HardEnum)))
@@ -351,12 +359,20 @@ void ProgVar_List::El_SetIndex_(void* it_, int idx) {
   }
 }
 
+taBase* ProgVar_List::FindTypeName(const String& nm)  const {
+  for (int i = 0; i < size; ++i) {
+    ProgVar* it = FastEl(i);
+    taBase* ptr = it->FindTypeName(nm);
+    if(ptr) return ptr;
+  }
+  return NULL;
+}
+
 const String ProgVar_List::GenCss(int indent_level) const {
   String rval(0, 40 * size, '\0'); // buffer with typical-ish room
-  ProgVar* el;
   int cnt = 0;
   for (int i = 0; i < size; ++i) {
-    el = FastEl(i);
+    ProgVar* it = FastEl(i);
     bool is_arg = (var_context == VC_FuncArgs);
     if (is_arg) {
       if (cnt > 0)
@@ -364,7 +380,7 @@ const String ProgVar_List::GenCss(int indent_level) const {
     } else {
       rval += cssMisc::Indent(indent_level); 
     }
-    rval += el->GenCss(is_arg); 
+    rval += it->GenCss(is_arg); 
     ++cnt;
   }
   return rval;
@@ -384,26 +400,291 @@ void ProgVar_List::setDirty(bool value) {
 
 
 //////////////////////////
+//   ProgVarRef_List	//
+//////////////////////////
+
+void ProgVarRef_List::Initialize() {
+}
+
+ProgVarRef_List::~ProgVarRef_List() {
+  Reset();
+}
+
+ProgVarRef* ProgVarRef_List::FindVar(ProgVar* var, int& idx) const {
+  for(int i=0;i<size;i++) {
+    ProgVarRef* vrf = FastEl(i);
+    if(vrf->ptr() == var) {
+      idx = i;
+      return vrf;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+ProgVarRef* ProgVarRef_List::FindVarName(const String& var_nm, int& idx) const {
+  for(int i=0;i<size;i++) {
+    ProgVarRef* vrf = FastEl(i);
+    if(vrf->ptr() && ((ProgVar*)vrf->ptr())->name == var_nm) {
+      idx = i;
+      return vrf;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
+//////////////////////////
+//   ProgExpr		//
+//////////////////////////
+
+void ProgExpr::Initialize() {
+  var_lookup = NULL;
+}
+
+void ProgExpr::Destroy() {	
+  CutLinks();
+}
+
+void ProgExpr::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(var_names, this);
+  taBase::Own(bad_vars, this);
+}
+
+void ProgExpr::CutLinks() {
+  if(var_lookup) {
+    taBase::SetPointer((taBase**)&var_lookup, NULL);
+  }
+  vars.Reset();
+  var_names.CutLinks();
+  bad_vars.CutLinks();
+  inherited::CutLinks();
+}
+
+void ProgExpr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  String prognm;
+  Program* prg = GET_MY_OWNER(Program);
+  if(prg) prognm = prg->name;
+  if(var_lookup) {
+    if(expr.empty())
+      expr += var_lookup->name;
+    else
+      expr += " " + var_lookup->name;
+    taBase::SetPointer((taBase**)&var_lookup, NULL);
+  }
+  ParseExpr(expr);
+  if(!taMisc::is_loading && bad_vars.size > 0) {
+    taMisc::Error("ProgExpr:",GetName(),"in program:", prognm,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
+		  (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+		  (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+		  (bad_vars.size > 3 ? bad_vars[3] : _nilString)
+		  // 		    (bad_vars.size > 4 ? bad_vars[4] : _nilString),
+		  // 		    (bad_vars.size > 5 ? bad_vars[5] : _nilString),
+		  // 		    (bad_vars.size > 6 ? bad_vars[6] : _nilString)
+		  );
+  }
+}
+
+void ProgExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  String prognm;
+  Program* prg = GET_MY_OWNER(Program);
+  if(prg) prognm = prg->name;
+  if(bad_vars.size > 0) {
+    rval = false;
+    if(!quiet)
+      taMisc::CheckError("ProgExpr:",GetName(),"in program:", prognm,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
+			 (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+			 (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+			 (bad_vars.size > 3 ? bad_vars[3] : _nilString)
+// 			 (bad_vars.size > 4 ? bad_vars[4] : _nilString),
+// 			 (bad_vars.size > 5 ? bad_vars[5] : _nilString),
+// 			 (bad_vars.size > 6 ? bad_vars[6] : _nilString)
+			 );
+  }
+}
+
+void ProgExpr::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
+  inherited::SmartRef_DataDestroying(ref, obj); // does UAE
+}
+
+void ProgExpr::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+				    int dcr, void* op1_, void* op2_) {
+  expr = GetFullExpr();		// update our expr to reflect any changes in variables.
+}
+
+bool ProgExpr::SetExpr(const String& ex) {
+  taBase::SetPointer((taBase**)&var_lookup, NULL);
+  expr = ex;
+  bool rval = ParseExpr(ex);
+  UpdateAfterEdit_impl();	// updates from getfullexpr
+  return rval;
+}
+
+String ProgExpr::GetName() const {
+  if(owner) return owner->GetName();
+  return _nilString;
+}
+
+bool ProgExpr::ParseExpr(const String& ex) {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return true;
+  int pos = 0;
+  int len = ex.length();
+  vars.Reset();
+  var_names.Reset();
+  bad_vars.Reset();
+  if(ex.empty()) return true;
+  var_expr = _nilString;
+  do {
+    int c;
+    while((pos < len) && isspace(c=ex[pos])) { var_expr.cat((char)c); pos++; } // skip_white
+    if((c == '.') && ((pos+1 < len) && !isdigit(ex[pos+1]))) { // a path expr
+      if((pos > 0) && isspace(ex[pos-1])) {
+        taMisc::Warning("ProgExpr: note that supplying full paths to objects is not typically very robust and is discouraged", ex);
+      }
+      var_expr.cat((char)c); pos++; 
+      // skip path
+      while((pos < len) && (isalnum(c=ex[pos]) || 
+			    (c=='_') || (c=='.') || (c=='[') || (c==']')))
+	{ var_expr.cat((char)c); pos++;}
+      continue;
+    }
+    if((c == '.') || (c == '-') || isdigit(c)) { // number
+      var_expr.cat((char)c); pos++;
+      while((pos < len) && (isxdigit(c=ex[pos]) || ispunct(c)))
+	{ var_expr.cat((char)c); pos++; } // skip numbers and expressions
+      continue;
+    }
+    if(c=='\"') {		// string literal
+      var_expr.cat((char)c); pos++;
+      while((pos < len) && !(((c=ex[pos]) == '\"') && (ex[pos-1] != '\\')))
+	{ var_expr.cat((char)c); pos++; }
+      continue;
+    }
+    if(isalpha(c) || (c == '_')) {
+      int stpos = pos;
+      pos++;
+      while((pos < len) && (isalnum(c=ex[pos]) || (c=='_'))) 
+	{ pos++; }
+      String vnm = ex.at(stpos, pos-stpos); // this should be a variable name!
+      int idx;
+      ProgVar* var = NULL;
+      Function* fun = GET_MY_OWNER(Function); // first look inside any function we might live within
+      if(fun)
+	var = fun->FindVarName(vnm);
+      if(!var)
+	var = prog->FindVarName(vnm);
+      if(var) {
+	if(vars.FindVar(var)) {
+	  var_expr += "$#" + (String)idx;
+	  continue;	// already on the list
+	}
+	ProgVarRef* prf = new ProgVarRef;
+	prf->Init(this);	// we own it
+	prf->set(var);
+	vars.Add(prf);
+	var_expr += "$#" + (String)(vars.size-1);
+	var_names.Add(vnm);
+	continue;
+      }
+      // not found -- check to see if it is some other thing:
+      taBase* ptyp = prog->FindTypeName(vnm);
+      if(!ptyp) {
+	cssElPtr cssptr = cssMisc::ParseName(vnm);
+	if(!cssptr)
+	  bad_vars.AddUnique(vnm);	// this will trigger err msg later..
+      }
+      var_expr += vnm;		// add it back (no special indications..)
+      continue;
+    }
+    var_expr.cat((char)c); pos++;		// just suck it in and continue..
+  } while(pos < len);
+  return (bad_vars.size == 0);	// do we have any bad variables??
+}
+
+String ProgExpr::GetFullExpr() const {
+  if(vars.size == 0) return var_expr;
+  String rval = var_expr;
+  for(int i=0;i<vars.size;i++) {
+    ProgVarRef* vrf = vars.FastEl(i);
+    if(vrf->ptr()) {
+      rval.gsub("$#" + (String)i, ((ProgVar*)vrf->ptr())->name);
+    }
+    else {
+      rval.gsub("$#" + (String)i, var_names[i]); // put in original name, as a cue..
+    }
+  }
+  return rval;
+}
+
+//////////////////////////
 //   ProgArg		//
 //////////////////////////
 
 void ProgArg::Initialize() {
+  arg_type = NULL;
 }
 
-void ProgArg::Destroy() {
+void ProgArg::Destroy() {	
+  CutLinks();
+}
+
+void ProgArg::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(expr, this);
+}
+
+void ProgArg::CutLinks() {
+  arg_type = NULL;
+  expr.CutLinks();
+  inherited::CutLinks();
 }
 
 void ProgArg::Copy_(const ProgArg& cp) {
+  type = cp.type;
   name = cp.name;
-  value = cp.value;
+  expr = cp.expr;
+  arg_type = cp.arg_type;
 }
 
-void ProgArg::Freshen(const ProgVar& cp) {
-  // currently a no-op because we don't have any type info ourselves.
+void ProgArg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(value.nonempty()) {
+    expr.SetExpr(value);
+    value = _nilString;		// reset
+  }
+}
+
+void ProgArg::UpdateFromVar(const ProgVar& cp) {
+  type = cp.GenCssType();
+  if(cp.var_type == ProgVar::T_Int)
+    arg_type = &TA_int;
+  else if(cp.var_type == ProgVar::T_Real)
+    arg_type = &TA_double;
+  else if(cp.var_type == ProgVar::T_String)
+    arg_type = &TA_taString;
+  else if(cp.var_type == ProgVar::T_Bool)
+    arg_type = &TA_bool;
+  else if(cp.var_type == ProgVar::T_Object)
+    arg_type = cp.object_type;
+  else if(cp.var_type == ProgVar::T_HardEnum)
+    arg_type = cp.hard_enum_type;
+  else if(cp.var_type == ProgVar::T_DynEnum)
+    arg_type = &TA_DynEnum;
+} 
+
+void ProgArg::UpdateFromType(TypeDef* td) {
+  arg_type = td;
+  if(arg_type)
+    type = arg_type->Get_C_Name();
 } 
 
 String ProgArg::GetDisplayName() const {
-  return name + "=" + value;
+//  return type + " " + name + "=" + expr.GetFullExpr();
+  return expr.GetFullExpr();
 }
 
 //////////////////////////
@@ -414,7 +695,7 @@ void ProgArg_List::Initialize() {
   SetBaseType(&TA_ProgArg);
 }
 
-void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
+void ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
   int i;  int ti;
   ProgArg* pa;
   ProgVar* pv;
@@ -423,7 +704,7 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
     pa = FastEl(i);
     pv = targ.FindName(pa->name, ti);
     if (ti >= 0) {
-      pa->Freshen(*pv);
+      pa->UpdateFromVar(*pv);
     } else {
       RemoveIdx(i);
     }
@@ -435,7 +716,52 @@ void ProgArg_List::ConformToTarget(ProgVar_List& targ) {
     if (i < 0) {
       pa = new ProgArg();
       pa->name = pv->name;
+      pa->UpdateFromVar(*pv);
       Insert(pa, ti);
+    } else if (i != ti) {
+      MoveIdx(i, ti);
+    }
+  }
+}
+
+void ProgArg_List::UpdateFromMethod(MethodDef* md) {
+  int i;  int ti;
+  ProgArg* pa;
+  // delete args not in md list
+  for (i = size - 1; i >= 0; --i) {
+    pa = FastEl(i);
+    int ti = md->arg_names.FindEl(pa->name);
+    if (ti >= 0) {
+      pa->UpdateFromType(md->arg_types[ti]);
+    } else {
+      RemoveIdx(i);
+    }
+  }
+  // add args in target not in us, and put in the right order
+  for (ti = 0; ti < md->arg_names.size; ++ti) {
+    TypeDef* arg_typ = md->arg_types.FastEl(ti);
+    String arg_nm = md->arg_names[ti];
+    FindName(arg_nm, i);
+    if (i < 0) {
+      pa = new ProgArg();
+      pa->name = arg_nm;
+      pa->UpdateFromType(arg_typ);
+      Insert(pa, ti);
+      // get default value if available
+      String def_val = md->arg_defs.SafeEl(ti);
+      def_val.gsub(" ", "");
+      if(arg_typ->is_enum() && !def_val.contains("::")) {
+	TypeDef* ot = arg_typ->GetOwnerType();
+	if(ot)
+	  def_val = ot->name + "::" + def_val;
+      }
+      else if(arg_typ->InheritsFrom(TA_taString)) {
+	if(def_val.empty()) def_val = "\"\""; // empty string
+      }
+      else if(def_val == "__null") {
+	def_val = "NULL";
+      }
+      pa->expr.SetExpr(def_val); // set to this expr
     } else if (i != ti) {
       MoveIdx(i, ti);
     }
@@ -528,6 +854,14 @@ void ProgEl::PreGen(int& item_id) {
   PreGenChildren_impl(item_id);
 }
 
+ProgVar* ProgEl::FindVarName(const String& var_nm) const {
+  return NULL;
+}
+
+taBase* ProgEl::FindTypeName(const String& nm) const {
+  return NULL;
+}
+
 //////////////////////////
 //  ProgEl_List	//
 //////////////////////////
@@ -573,6 +907,24 @@ void ProgEl_List::PreGen(int& item_id) {
   }
 }
 
+ProgVar* ProgEl_List::FindVarName(const String& var_nm) const {
+  for (int i = 0; i < size; ++i) {
+    ProgEl* el = FastEl(i);
+    ProgVar* pv = el->FindVarName(var_nm);
+    if(pv) return pv;
+  }
+  return NULL;
+}
+
+taBase* ProgEl_List::FindTypeName(const String& nm) const {
+  for (int i = 0; i < size; ++i) {
+    ProgEl* el = FastEl(i);
+    taBase* pv = el->FindTypeName(nm);
+    if(pv) return pv;
+  }
+  return NULL;
+}
+
 //////////////////////////
 //  CodeBlock		//
 //////////////////////////
@@ -595,6 +947,12 @@ String CodeBlock::GetDisplayName() const {
 
 void CodeBlock::PreGenChildren_impl(int& item_id) {
   prog_code.PreGen(item_id);
+}
+ProgVar* CodeBlock::FindVarName(const String& var_nm) const {
+  return prog_code.FindVarName(var_nm);
+}
+taBase* CodeBlock::FindTypeName(const String& nm) const {
+  return prog_code.FindTypeName(nm);
 }
 
 //////////////////////////
@@ -623,6 +981,13 @@ String ProgVars::GetDisplayName() const {
   rval += String(local_vars.size);
   rval += " vars)";
   return rval;
+}
+
+ProgVar* ProgVars::FindVarName(const String& var_nm) const {
+  return local_vars.FindName(var_nm);
+}
+taBase* ProgVars::FindTypeName(const String& nm) const {
+  return local_vars.FindTypeName(nm);
 }
 
 //////////////////////////
@@ -698,6 +1063,12 @@ const String Loop::GenCssBody_impl(int indent_level) {
 
 void Loop::PreGenChildren_impl(int& item_id) {
   loop_code.PreGen(item_id);
+}
+ProgVar* Loop::FindVarName(const String& var_nm) const {
+  return loop_code.FindVarName(var_nm);
+}
+taBase* Loop::FindTypeName(const String& nm) const {
+  return loop_code.FindTypeName(nm);
 }
 
 
@@ -924,12 +1295,30 @@ void IfElse::PreGenChildren_impl(int& item_id) {
   true_code.PreGen(item_id);
   false_code.PreGen(item_id);
 }
+ProgVar* IfElse::FindVarName(const String& var_nm) const {
+  ProgVar* pv = true_code.FindVarName(var_nm);
+  if(pv) return pv;
+  return false_code.FindVarName(var_nm);
+}
+taBase* IfElse::FindTypeName(const String& nm) const {
+  taBase* pv = true_code.FindTypeName(nm);
+  if(pv) return pv;
+  return false_code.FindTypeName(nm);
+}
 
 //////////////////////////
 //    AssignExpr	//
 //////////////////////////
 
 void AssignExpr::Initialize() {
+}
+
+void AssignExpr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(expr.nonempty()) {
+    expr_val.SetExpr(expr);
+    expr = _nilString;
+  }
 }
 
 void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -951,7 +1340,7 @@ const String AssignExpr::GenCssBody_impl(int indent_level) {
     return rval;
   }
   
-  rval += result_var->name + " = " + expr + ";\n";
+  rval += result_var->name + " = " + expr_val.GetFullExpr() + ";\n";
   return rval;
 }
 
@@ -960,7 +1349,7 @@ String AssignExpr::GetDisplayName() const {
     return "(result_var not selected)";
   
   String rval;
-  rval += result_var->name + "=" + expr;
+  rval += result_var->name + "=" + expr_val.GetFullExpr();
   return rval;
 }
 
@@ -979,8 +1368,19 @@ void MethodCall::UpdateAfterEdit_impl() {
     obj_type = obj->act_object_type();
   else obj_type = &TA_taBase; // placeholder
 
+  if(args.size > 0) {		// convert -- todo: remove!
+    meth_args.SetSize(args.size);
+    for(int i=0;i<args.size;i++) {
+      ProgArg* pa = meth_args[i];
+      pa->type = args.labels[i].before(' ');
+      pa->name = args.labels[i].after(' ');
+      pa->expr.SetExpr(args[i]);
+    }
+    args.Reset();
+  }
+
   if(!taMisc::is_loading && method)
-    UpdateArgs(args, method);
+    meth_args.UpdateFromMethod(method);
 }
 
 void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1012,9 +1412,10 @@ const String MethodCall::GenCssBody_impl(int indent_level) {
   rval += "->";
   rval += method->name;
   rval += "(";
-    for (int i = 0; i < args.size; ++ i) {
+    for (int i = 0; i < meth_args.size; ++ i) {
+      ProgArg* pa = meth_args[i];
       if (i > 0) rval += ", ";
-      rval += args[i];
+      rval += pa->expr.GetFullExpr();
     }
   rval += ");\n";
   
@@ -1032,55 +1433,15 @@ String MethodCall::GetDisplayName() const {
   rval += "->";
   rval += method->name;
   rval += "(";
-  for(int i=0;i<args.size;i++) {
+  for(int i=0;i<meth_args.size;i++) {
+    ProgArg* pa = meth_args[i];
     if (i > 0)
       rval += ", ";
-    rval += args.labels[i] + "=" + args[i];
+    rval += pa->GetDisplayName();
   }
   rval += ")";
   return rval;
 }
-
-void MethodCall::UpdateArgs(SArg_Array& ar, MethodDef* md) {
-  int i;  int ti;
-  // delete args not in md list
-  for (i = ar.size - 1; i >= 0; --i) {
-    String an = ar.labels[i];
-    String mnm = an.after(" ",-1);// past type
-    int ti = md->arg_names.FindEl(mnm);
-    if (ti < 0) {
-      ar.RemoveIdx(i);
-      ar.labels.RemoveIdx(i);
-    }
-  }
-  // add args in target not in us, and put in the right order
-  for (ti = 0; ti < md->arg_names.size; ++ti) {
-    TypeDef* arg_typ = md->arg_types.FastEl(ti);
-    String arg_nm = arg_typ->Get_C_Name() + " " + md->arg_names[ti];
-    int i = ar.labels.FindEl(arg_nm);
-    if (i < 0) {
-      ar.labels.Insert(arg_nm, ti);
-      String def_val = md->arg_defs.SafeEl(ti);
-      def_val.gsub(" ", "");
-      if(arg_typ->is_enum() && !def_val.contains("::")) {
-	TypeDef* ot = arg_typ->GetOwnerType();
-	if(ot)
-	  def_val = ot->name + "::" + def_val;
-      }
-      else if(arg_typ->InheritsFrom(TA_taString)) {
-	if(def_val.empty()) def_val = "\"\""; // empty string
-      }
-      else if(def_val == "__null") {
-	def_val = "NULL";
-      }
-      ar.Insert(def_val, ti);
-    } else if (i != ti) {
-      ar.labels.MoveIdx(i, ti);
-      ar.MoveIdx(i, ti);
-    }
-  }
-}
-
 
 //////////////////////////
 //    StaticMethodCall	//
@@ -1094,8 +1455,20 @@ void StaticMethodCall::Initialize() {
 
 void StaticMethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  if(args.size > 0) {		// convert -- todo: remove!
+    meth_args.SetSize(args.size);
+    for(int i=0;i<args.size;i++) {
+      ProgArg* pa = meth_args[i];
+      pa->type = args.labels[i].before(' ');
+      pa->name = args.labels[i].after(' ');
+      pa->expr.SetExpr(args[i]);
+    }
+    args.Reset();
+  }
+
   if(!taMisc::is_loading && method)
-    MethodCall::UpdateArgs(args, method);
+    meth_args.UpdateFromMethod(method);
 }
 
 void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1123,9 +1496,10 @@ const String StaticMethodCall::GenCssBody_impl(int indent_level) {
   rval += "::";
   rval += method->name;
   rval += "(";
-    for (int i = 0; i < args.size; ++ i) {
+    for (int i = 0; i < meth_args.size; ++ i) {
+      ProgArg* pa = meth_args[i];
       if (i > 0) rval += ", ";
-      rval += args[i];
+      rval += pa->expr.GetFullExpr();
     }
   rval += ");\n";
   
@@ -1143,10 +1517,11 @@ String StaticMethodCall::GetDisplayName() const {
   rval += "::";
   rval += method->name;
   rval += "(";
-  for(int i=0;i<args.size;i++) {
+  for(int i=0;i<meth_args.size;i++) {
+    ProgArg* pa = meth_args[i];
     if (i > 0)
       rval += ", ";
-    rval += args.labels[i] + "=" + args[i];
+    rval += pa->GetDisplayName();
   }
   rval += ")";
   return rval;
@@ -1370,7 +1745,7 @@ void ProgramCall::PreGenMe_impl(int item_id) {
 
 void ProgramCall::UpdateArgs() {
   if (!target) return; // just leave existing stuff for now
-  prog_args.ConformToTarget(target->args);
+  prog_args.UpdateFromVarList(target->args);
   // now go through and set default value for variables of same name in this program
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return;
@@ -1438,6 +1813,12 @@ String Function::GetDisplayName() const {
 void Function::PreGenChildren_impl(int& item_id) {
   fun_code.PreGen(item_id);
 }
+ProgVar* Function::FindVarName(const String& var_nm) const {
+  return fun_code.FindVarName(var_nm);
+}
+taBase* Function::FindTypeName(const String& nm) const {
+  return fun_code.FindTypeName(nm);
+}
 
 
 //////////////////////////
@@ -1470,7 +1851,7 @@ const String FunctionCall::GenCssBody_impl(int indent_level) {
   for (int i = 0; i < fun_args.size; ++i) {
     ProgArg* ths_arg = fun_args.FastEl(i);
     if(i > 0) rval += ", ";
-    rval += ths_arg->value;
+    rval += ths_arg->expr.GetFullExpr();
   }
   rval += ");\n";
   return rval;
@@ -1495,7 +1876,7 @@ String FunctionCall::GetDisplayName() const {
 
 void FunctionCall::UpdateArgs() {
   if(!fun) return; // just leave existing stuff for now
-  fun_args.ConformToTarget(fun->args);
+  fun_args.UpdateFromVarList(fun->args);
 }
 
 //////////////////////////
@@ -1505,16 +1886,24 @@ void FunctionCall::UpdateArgs() {
 void ReturnExpr::Initialize() {
 }
 
+void ReturnExpr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(expr.nonempty()) {
+    expr_val.SetExpr(expr);
+    expr = _nilString;
+  }
+}
+
 const String ReturnExpr::GenCssBody_impl(int indent_level) {
   String rval;
   rval += cssMisc::Indent(indent_level);
-  rval += "return " + expr + ";\n";
+  rval += "return " + expr_val.GetFullExpr() + ";\n";
   return rval;
 }
 
 String ReturnExpr::GetDisplayName() const {
   String rval;
-  rval += "return " + expr;
+  rval += "return " + expr_val.GetFullExpr();
   return rval;
 }
 
@@ -1970,6 +2359,22 @@ bool Program::SetVar(const String& nm, const Variant& value) {
   cssEl* el = el_ptr.El();
   *el = value;
   return true;
+}
+
+ProgVar* Program::FindVarName(const String& var_nm) const {
+  ProgVar* sv = args.FindName(var_nm);
+  if(sv) return sv;
+  sv = vars.FindName(var_nm);
+  if(sv) return sv;
+  return prog_code.FindVarName(var_nm);
+}
+
+taBase* Program::FindTypeName(const String& nm) const {
+  taBase* sv = args.FindTypeName(nm);
+  if(sv) return sv;
+  sv = vars.FindTypeName(nm);
+  if(sv) return sv;
+  return prog_code.FindTypeName(nm);
 }
 
 const String Program::scriptString() {

@@ -262,7 +262,7 @@ String cssMisc::IndentLines(const String& lines, int indent_level) {
 inline bool btwn(char c, char l, char u) 
   {return ((c >= l) && (c <= u));}
 inline bool is_alphalike(char c) 
-  {return (btwn(c, 'a', 'z') || btwn(c, 'A', 'Z') || (c == '_'));}
+  {return isalpha(btwn(c, 'a', 'z') || btwn(c, 'A', 'Z') || (c == '_'));}
 inline bool is_num(char c) 
   {return btwn(c, '0', '9');}
   
@@ -276,6 +276,29 @@ bool cssMisc::IsNameValid(const String& nm) {
     if (!(is_alphalike(c) || is_num(c))) return false;
   }
   return true;
+}
+
+cssElPtr& cssMisc::ParseName(const String& nm) {
+  cssElPtr s;
+  if((s = cssMisc::TypesSpace.FindName(nm)))
+    return s;
+  if((s = cssMisc::Externs.FindName(nm)))
+    return s;
+  if((s = cssMisc::HardFuns.FindName(nm)))
+    return s;
+  if((s = cssMisc::HardVars.FindName(nm)))
+    return s;
+  if((s = cssMisc::Commands.FindName(nm)))
+    return s;
+  if((s = cssMisc::Functions.FindName(nm)))
+    return s;
+  if((s = cssMisc::Constants.FindName(nm)))
+    return s;
+  if((s = cssMisc::Enums.FindName(nm)))
+    return s;
+  if((s = cssMisc::Settings.FindName(nm)))
+    return s;
+  return cssMisc::VoidElPtr;
 }
 
 void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
