@@ -1331,11 +1331,6 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
   int rval = Dump_Load_Path(strm, base, par, td, path, typnm);
   if((taMisc::verbose_load >= taMisc::TRACE) && (td != NULL))
     cerr << "Loading: " << td->name << " " << path << " rval: " << rval << "\n";
-#ifdef TA_GUI
-/*TODO: nuke  if ((taMisc::gui_verbose_load >= taMisc::TRACE) && (td != NULL) &&
-     !td->HasOption("NO_UPDATE_AFTER"))
-    taiM->SetLoadDialog(td->name); //TODO: must be created first... has called created it??? */
-#endif
   if((rval > 0) && (base != NULL)) {
     if(td->InheritsFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)base;

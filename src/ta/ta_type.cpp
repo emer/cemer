@@ -388,11 +388,9 @@ int  	taMisc::console_font_size = 10;
 #endif
 taMisc::ConsoleStyle taMisc::console_style = CS_GUI_TRACKING;
 int	taMisc::display_width = 80;
-int	taMisc::sep_tabs = 2;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
-int	taMisc::mono_scale_size = 16;
 int	taMisc::jpeg_quality = 95;
 taMisc::ColorHints taMisc::color_hints = taMisc::CH_EDITS;
 #ifndef NO_TA_BASE
@@ -422,7 +420,6 @@ taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
 // note: PRETTY is barely more expensive, since we compress files
 // todo: but it just said that compression is not the default!  only for debug mode!
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
-taMisc::LoadVerbosity	taMisc::gui_verbose_load = taMisc::QUIET;
 
 //String	taMisc::inst_prefix;//TODO: do this dynamically = WHEREAMI; // e.g., /usr/local/share
 String	taMisc::inst_prefix = WHEREAMI; // e.g., /usr/local/share
@@ -439,8 +436,6 @@ NameVar_PArray	taMisc::named_paths;
 
 DumpFileCvtList taMisc::file_converters; 
 
-String	taMisc::compress_cmd = "gzip -c";
-String	taMisc::uncompress_cmd = "gzip -dc";
 String	taMisc::compress_sfx = ".gz";
 String	taMisc::help_file_tmplt = "manual/html/Help_%t.html";
 ostream*	taMisc::record_script = NULL;
@@ -1797,7 +1792,7 @@ ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, i
   strm << itm << " ";
 
   int len = itm.length() + 1 + ispcs;
-  for(i=taMisc::sep_tabs; i>=0; i--) {
+  for(i=2; i>=0; i--) {		// sep_tabs = 2
     if(len < i * 8)
       strm << "\t";
   }

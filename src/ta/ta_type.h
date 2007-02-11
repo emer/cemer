@@ -513,11 +513,9 @@ public:
   static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
   static int		display_width;	// #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console
-  static int		sep_tabs;	// #SAVE #CAT_GUI number of tabs to separate items by
-  static int		max_menu;	// #SAVE #CAT_GUI maximum number of items in a menu
-  static int		search_depth;   // #SAVE #CAT_GUI depth recursive find will search for a path object
-  static int		color_scale_size; // #SAVE #CAT_GUI number of colors to put in a color scale
-  static int		mono_scale_size;  // #SAVE #CAT_GUI number of monochrome bit-patterns to put in a color scale
+  static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu
+  static int		search_depth;   // #SAVE #CAT_GUI #EXPERT depth recursive find will search for a path object
+  static int		color_scale_size; // #SAVE #CAT_GUI #EXPERT number of colors to put in a color scale
   static int		jpeg_quality; 	// #SAVE #CAT_GUI jpeg quality for dumping jpeg files (1-100; 95 default)
   static ColorHints 	color_hints; // #SAVE #CAT_GUI what types of color hinting to use in the application
 #ifndef NO_TA_BASE
@@ -526,11 +524,11 @@ public:
 
   static ShowMembs	show;		// #SAVE #CAT_GUI what to show in general (eg. css)
   static ShowMembs	show_gui;	// #SAVE #CAT_GUI what to show in the gui
-  static TypeInfo	type_info;	// #SAVE #CAT_GUI what to show when displaying type information
-  static KeepTokens	keep_tokens;	// #SAVE #CAT_GUI default for keeping tokens
-  static SaveFormat	save_format;	// #SAVE #CAT_GUI format to use when saving things (dump files)
-  static bool		auto_edit; 	// #SAVE #CAT_GUI automatic edit dialog after creation?
-  static AutoRevert	auto_revert;    // #SAVE #CAT_GUI when dialogs are automatically updated (reverted), what to do about changes?
+  static TypeInfo	type_info;	// #SAVE #CAT_GUI #EXPERT what to show when displaying type information
+  static KeepTokens	keep_tokens;	// #SAVE #CAT_GUI #EXPERT default for keeping tokens
+  static SaveFormat	save_format;	// #SAVE #CAT_GUI #EXPERT format to use when saving things (dump files)
+  static bool		auto_edit; 	// #SAVE #CAT_GUI #EXPERT automatic edit dialog after creation?
+  static AutoRevert	auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
   static short		num_recent_files; // #SAVE #DEF_6 #POS_ONLY number of recent files to save
 
@@ -540,8 +538,7 @@ public:
   static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool		save_compress;	// #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
   static TypeDef*	default_proj_type; // #SAVE #CAT_File #TYPE_taProject default type of project to create
-  static LoadVerbosity	verbose_load;	// #SAVE #CAT_File report the names of things during loading
-  static LoadVerbosity  gui_verbose_load; // #SAVE #CAT_File what to report in the load dialog
+  static LoadVerbosity	verbose_load;	// #SAVE #CAT_File #EXPERT report the names of things during loading
 
   static String		inst_prefix;
   // #SAVE #CAT_File prefix for software installation (e.g., /usr/local)
@@ -567,11 +564,9 @@ public:
   static NameVar_PArray	named_paths;
   // #NO_SAVE #HIDDEN #CAT_File paths/url's for misc purposes -- search by name, value = path
 
-  static DumpFileCvtList file_converters;   // #CAT_File conversion parameters (from v.3 to v.4)
+  static DumpFileCvtList file_converters;   // #CAT_File #HIDDEN conversion parameters (from v.3 to v.4)
 
-  static String		compress_cmd;	// #SAVE #CAT_File command to use for compressing files
-  static String		uncompress_cmd;	// #SAVE #CAT_File for uncompressing files
-  static String		compress_sfx;	// #SAVE #CAT_File suffix to use for compressing files
+  static String		compress_sfx;	// #SAVE #CAT_File #EXPERT suffix to use for compressing files
 
   static ostream*	record_script;  // #IGNORE #CAT_File stream to use for recording a script of interface activity (NULL if no record)
 
@@ -627,7 +622,7 @@ public:
   static ContextFlag	in_plugin_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading typeinfo for a plugin
   static TypeDef*	plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 
-  static String		last_check_msg; // #READ_ONLY #NO_SAVE #SHOW #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
+  static String		last_check_msg; // #READ_ONLY #NO_SAVE #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
   static bool		check_quiet; 	// #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_ok; 	// #IGNORE cumulative AND of all nested oks

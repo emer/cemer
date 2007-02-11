@@ -310,34 +310,6 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->background.UpdateAfterEdit();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
-  cs->name = "M_DarkLight";
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0, 1.0));
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0, 0.0));
-  cs->background.r = 1.0f;
-  cs->background.g = 1.0f;
-  cs->background.b = 1.0f;
-  cs->background.a = 1.0f;
-
-  cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
-  cs->name = "M_LightDark";
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0, 0.0));
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0, 1.0));
-  cs->background.r = 1.0f;
-  cs->background.g = 1.0f;
-  cs->background.b = 1.0f;
-  cs->background.a = 1.0f;
-
-  cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
-  cs->name = "M_LightDarkLight";
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0, 0.0));
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0, 1.0));
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0, 0.0));
-  cs->background.r = 1.0f;
-  cs->background.g = 1.0f;
-  cs->background.b = 1.0f;
-  cs->background.a = 1.0f;
-
-  cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
   cs->name = "P_DarkLight";
   cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 1.0));
@@ -508,12 +480,7 @@ void ColorScale::MapColors() {
 }
 
 void ColorScale::DefaultChunks(){
-/*this is 2004... what is "monochrome"???  ivWidgetKit* wkit = ivWidgetKit::instance();
-  String guiname = wkit->gui();
-  if(guiname == "monochrome")
-    chunks = taMisc::mono_scale_size;
-  else */
-    chunks = taMisc::color_scale_size;
+  chunks = taMisc::color_scale_size;
 }
 
 float ColorScale::GetAbsPercent(float val){
