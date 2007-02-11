@@ -82,7 +82,7 @@ AC_ARG_ENABLE([svn],
 if test x"$svn" = x"true" -o x"$debug" = x"true"; then
   AC_CHECK_PROG([HAVE_SVN],[svn],[true],[false])
   if test x"$HAVE_SVN" = x"true"; then
-    SVN_REV=`svn info . | grep Revision | sed 's/Revision: (.*)/\1/'`
+    SVN_REV=`svn info . | grep Revision | sed 's/Revision: //'`
   else
     SIM_AC_CONFIGURATION_WARNING([Unable to locate svn. Revision not set.])
   fi
