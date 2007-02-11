@@ -1,35 +1,42 @@
-					     -*- Autoconf -*-
-#*************************************************************
-# Process this file with autoconf to produce a configure script.
-#*************************************************************
-#
+dnl 					         -*- Autoconf -*-
+dnl *************************************************************
+dnl  Process this file with autoconf to produce a configure script.
+dnl *************************************************************
+dnl 
+dnl  Notes on library and package versioning:
+dnl  * Package: 
+dnl    * The binary version consists of major, minor, point and special
+dnl      versions, set via the command-line. Autoconf will append the
+dnl      version to the package name. The full version is available in
+dnl      makefiles and the c++ source via BIN_VERSION
+dnl 
+dnl  * Library : 
+dnl    * The libraries are versioned according to Libtool's
+dnl      recommendations. See [1] for full details. Briefly, it is broken into 
+dnl      three components, which are current.revision.age, and this information 
+dnl      should only be updated immediately before a public release.
+dnl      * Increment current, set revision to 0 if interfaces have been added, 
+dnl        removed, or changed
+dnl      * Increment revision if the library source code has changed at all
+dnl      * Increment age if interfaces have been added
+dnl      * Set age to 0 if interfaces have been removed
+dnl 
+dnl  [1] http://www.gnu.org/software/libtool/manual.html Versioning
 
-# Notes on library and package versioning:
-#
-# Package:
-# * The package consists of a major and a minor version, set
-#   arbitrarily in AC_INIT. It is broken up into two components,
-#   which are AX_MAJOR_VERSION and AX_MINOR_VERSION for use elsewhere.
-#   Set the package version here. autoconf will append it to the package name
-AC_INIT([PDP],[3.5],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++])
+# Set binary version here. The format allows for 99.99.99abc
+AC_INIT([PDP],[4.0.0a],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
+LIB_VERSION=0:0:0   #Set library version here
 
-# Library:
-# * The libta and libpdp libraries are versioned according to Libtool's
-#   recommendations. See [1] for full details. Briefly, it is broken into 
-#   three components, which are current.revision.age, and this information 
-#   should only be updated immediately before a public release.
-#   * Increment current, set revision to 0 if interfaces have been added, 
-#     removed, or changed
-#   * Increment revision if the library source code has changed at all
-#   * Increment age if interfaces have been added
-#   * Set age to 0 if interfaces have been removed
-#
-# [1] http://www.gnu.org/software/libtool/manual.html#Versioning
-# Set library version here. Libtool will append it to library names.
-LIB_VERSION="0.0.0"
+AC_SUBST([PACKAGE_VERSION])
+AC_SUBST([LIB_VERSION])
 
-AC_PREREQ([2.59]) # Autoconf 2.59 required
+AH_TEMPLATE([LIB_VERSION],[Library Version])
+AC_DEFINE_DIR([LIB_VERSION],[LIB_VERSION]) # Co-opting this macro
 
+SIM_AC_CONFIGURATION_SETTING([PDP++ binary version],[${PACKAGE_VERSION}])
+SIM_AC_CONFIGURATION_SETTING([TA/CSS library version],[${LIB_VERSION}])
+
+AC_PREREQ([2.60])                                      dnl Autoconf 2.59 required
 AC_COPYRIGHT([
 Copyright, 1995-2005, Regents of the University of Colorado,
 Carnegie Mellon University, Princeton University.
@@ -47,18 +54,18 @@ This file is part of TA/PDP++
   GNU General Public License for more details.
 ])
 
-AC_DISABLE_STATIC                                      # Disable static libraries
-AC_CONFIG_AUX_DIR([cfg])                               # Stick extra stuff in /cfg
-AC_CONFIG_SRCDIR([src/ta/ta_global.h])                 # Make sure we're in the right place
-AC_CONFIG_HEADERS([config.h])                          # Create config.h
-# NOTE: If using OSX, use DarwinPorts to get most recent automake verison
-AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.5])
-PDP_CANONICAL_HOST                                     # Do a few host checks, mostly for MSVC stuff
-PDP_PROG_CXX                                           # Modify compiler optimization
-PDP_SET_BUILD_MODE                                     # Set up our build modes
-m4_undefine([AC_PROG_F77])                             # Get rid of those stupid fortran checks
+AC_DISABLE_STATIC                                      dnl Disable static libraries
+AC_CONFIG_AUX_DIR([cfg])                               dnl Stick extra stuff in /cfg
+AC_CONFIG_SRCDIR([src/ta/ta_global.h])                 dnl Make sure we're in the right place
+AC_CONFIG_HEADERS([config.h])                          dnl Create config.h
+                                                       dnl NOTE: If using OSX, use DarwinPorts to get most recent automake verison
+AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.6])
+PDP_CANONICAL_HOST                                     dnl Do a few host checks, mostly for MSVC stuff
+PDP_PROG_CXX                                           dnl Modify compiler optimization
+PDP_SET_BUILD_MODE                                     dnl Set up our build modes
+m4_undefine([AC_PROG_F77])                             dnl Get rid of those stupid fortran checks
 m4_defun([AC_PROG_F77],[])
-AC_PROG_CXXCPP                                         # Detect our C++ preprocessor
+AC_PROG_CXXCPP                                         dnl Detect our C++ preprocessor
 SIM_AC_CONFIGURATION_SETTING([Preprocessor],[$CXXCPP])
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
@@ -71,10 +78,10 @@ AC_PROG_LEX
 AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
 
-# non-modal, for now
+dnl  non-modal, for now
 AC_DEFINE([V3_COMPAT],[],[turn on version 3.x compatability code])
 
-# Check to see if a conflicting version of pdp++ or css++ is installed
+dnl  Check to see if a conflicting version of pdp++ or css++ is installed
 if test x"$prefix" = x"NONE"; then
   prefix=/usr/local
 fi
@@ -82,14 +89,14 @@ if test x"$debug" = x"false"; then
   PDP_PROG_PDP
 fi
 
-# A generic set of systemwide includes. Not all sub libraries
-# require all of these includes, but this is less error-prone
-# than manually specifying them for each library
+dnl  A generic set of systemwide includes. Not all sub libraries
+dnl  require all of these includes, but this is less error-prone
+dnl  than manually specifying them for each library
 
 AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../pdp -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
 
-# Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
-LDFLAGS="$LDFLAGS -L/opt/local/lib" #Harmless insertion for DarwinPorts
+dnl  Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
+LDFLAGS="$LDFLAGS -L/opt/local/lib" dnl Harmless insertion for DarwinPorts
 AC_CHECK_LIB([m],[main])
 AC_CHECK_LIB([gslcblas],[main])
 AC_CHECK_LIB([gsl],[main],
@@ -98,44 +105,45 @@ AC_CHECK_LIB([gsl],[main],
               [SIM_AC_CONFIGURATION_SETTING([gsl],[Enabled])],
                [SIM_AC_CONFIGURATION_WARNING([Failed to detect the GNU Scientific Library])])
 
-# svn revision number support
+dnl  svn revision number support
 PDP_SVN_REVISION
 
-# Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
+dnl  Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
-# Let the codebase know where to find auxiliary files (in config.h)
+dnl  Let the codebase know where to find auxiliary files (in config.h)
+dnl  TODO: Brad says this doesn't work right
 AH_TEMPLATE([WHEREAMI],[blah])
 AC_DEFINE_DIR([WHEREAMI],[datadir])
 
-# --with-readline
+dnl  --with-readline
 if test "$readline" = "true"; then
   VL_LIB_READLINE
 else
  SIM_AC_CONFIGURATION_SETTING([Readline],[Disabled])
 fi
 
-# --with-rpm
+dnl  --with-rpm
 if test x"$rpm" = x"true"; then
   AX_DIST_RPM([spec.tmpl])
   AC_SUBST([INCLUDE_AMINCLUDE_AM],["include aminclude.am"])
   SIM_AC_CONFIGURATION_SETTING([rpm],[enabled...PLATFORMSUFFIX=${PLATFORM_SUFFIX}])
 fi
 
-# --disable-libta
-# note that this substitution occurs by default
+dnl  --disable-libta
+dnl  note that this substitution occurs by default
 if test x"$libta" = x"true"; then
    AC_SUBST([WANT_LIBTA],[src/ta_lib])
 fi
 
-# --disable-css-bin
-# note that this substitution occurs by default
+dnl  --disable-css-bin
+dnl  note that this substitution occurs by default
 if test x"$css_bin" = x"true"; then
    AC_SUBST([WANT_CSS_BIN],[src/css_bin])
 fi
 
-# --disable-maketa-opt
-# controls optimization of maketa executeable
+dnl  --disable-maketa-opt
+dnl  controls optimization of maketa executeable
 if test x"$maketa_opt" = x"false"; then
   AC_SUBST([MAKETA_OPT],["-g -O0"])
 else
@@ -143,23 +151,23 @@ else
   AC_SUBST([NOOP_MAKETA],["-UDEBUG"])
 fi
 
-# --enable-debug
+dnl  --enable-debug
 if test x"$debug" = x"true"; then
 
-  # Link with any debug-configurated libraries on the system
+  dnl Link with any debug-configurated libraries on the system
   export CONFIG=debug
 
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -Wall])
   AC_DEFINE([DEBUG],,[Used when debugging])
-  AC_SUBST([OPT_LEVEL],["-g -Wall"])                       # No optimization in debug mode
-  # Checks for headers
+  AC_SUBST([OPT_LEVEL],["-g -Wall"])                       dnl No optimization in debug mode
+  dnl Checks for headers
   AC_FUNC_ALLOCA
   AC_HEADER_DIRENT
   AC_HEADER_STDC
   AC_HEADER_SYS_WAIT
   AC_CACHE_SAVE
-  # Checks for typedefs, structures, compiler characteristics
+  dnl Checks for typedefs, structures, compiler characteristics
   AC_HEADER_STDBOOL
   AC_HEADER_TIME
   AC_C_CONST
@@ -170,7 +178,7 @@ if test x"$debug" = x"true"; then
   AC_TYPE_SIZE_T
   AC_TYPE_PID_T
   AC_CACHE_SAVE
-  # Checks for library functions
+  dnl Checks for library functions
   AC_FUNC_CHOWN
   AC_FUNC_ERROR_AT_LINE
   AC_FUNC_GETPGRP
@@ -186,7 +194,7 @@ else
   AC_SUBST([OPT_LEVEL],["-g -O2"])
 fi
 
-#  BNV_HAVE_QT
+dnl  Qt
   SIM_AC_CHECK_QT([AC_DEFINE([QT3_SUPPORT],,[Set when building with Qt4 support for Qt3])]
                    LIBS="$LIBS $sim_ac_qt_libs"
                    CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"
@@ -201,23 +209,23 @@ fi
     SIM_AC_CONFIGURATION_WARNING([Failed to find moc])
   fi
 
-# --enable-gui
+dnl  --enable-gui
 if test x"$gui" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
   
-  # Functioning SoQt implies functioning Coin!
+  dnl Functioning SoQt implies functioning Coin!
   SIM_AC_HAVE_SOQT_IFELSE([SIM_AC_CONFIGURATION_SETTING([SoQt],[v.$sim_ac_soqt_version -lSoQt -lCoin])
                            CPPFLAGS="$CPPFLAGS $sim_ac_soqt_cppflags"
                            LDFLAGS="$LDFLAGS $sim_ac_soqt_ldflags"
                            LIBS="$LIBS $sim_ac_soqt_libs"],
                           [SIM_AC_CONFIGURATION_WARNING([Failed to detect the SoQt development system])])
  
-#  SIM_AC_HAVE_LIBJPEG_IFELSE([CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
-#                              LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
-#                              LIBS="$LIBS $sim_ac_libjpeg_libs"],
-#                             [SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
+dnl   SIM_AC_HAVE_LIBJPEG_IFELSE([CPPFLAGS="$CPPFLAGS $sim_ac_libjpeg_cppflags"
+dnl                               LDFLAGS="$LDFLAGS $sim_ac_libjpeg_ldflags"
+dnl                               LIBS="$LIBS $sim_ac_libjpeg_libs"],
+dnl                              [SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
 
-AC_CHECK_LIB([jpeg],[jpeg_read_header],[LIBS="$LIBS -ljpeg"],[SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
+  AC_CHECK_LIB([jpeg],[jpeg_read_header],[LIBS="$LIBS -ljpeg"],[SIM_AC_CONFIGURATION_WARNING([Failed to detect libjpeg])])
 
   AC_DEFINE([TA_GUI],,[Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
   AC_DEFINE([TA_USE_QT],,[This switch is set when linking with Qt.])
@@ -225,14 +233,14 @@ AC_CHECK_LIB([jpeg],[jpeg_read_header],[LIBS="$LIBS -ljpeg"],[SIM_AC_CONFIGURATI
   AC_DEFINE([QT_SHARED],,[Used in qglobal.h.])
   AC_DEFINE([HAVE_QT_CONSOLE],,[Used in Unix/Mac, but not Win])
 
-  # Tells top-level makefile.am to recurse through src/taiqtso in gui mode
+  dnl Tells top-level makefile.am to recurse through src/taiqtso in gui mode
   AC_SUBST([WANT_TAIQTSO],[src/taiqtso])
 else
   SIM_AC_CONFIGURATION_SETTING([GUI],[Disabled])	
   AC_DEFINE([TA_NO_GUI],,[Set when building nogui])
 fi
 
-# --enable-mpi is set
+dnl  --enable-mpi is set
 if test x"$mpi" = x"true"; then
   ACX_MPI(,SIM_AC_CONFIGURATION_WARNING([Failed to detect the Message Passing Interface. Try CXX=mpiCC]))
   AC_DEFINE([DMEM_COMPILE],,[Causes mpi.h to be included])
@@ -247,10 +255,10 @@ fi
 
 if test x"$debug" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([LIBS],[$LIBS])
-#  SIM_AC_CONFIGURATION_SETTING([CXXFLAGS],[$CXXFLAGS])
+dnl   SIM_AC_CONFIGURATION_SETTING([CXXFLAGS],[$CXXFLAGS])
 fi
 
-# --enable-profile
+dnl  --enable-profile
 if test x"$profile" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-pg -O2, except TA files which are -g -O0])  
   LDFLAGS="$LDFLAGS -pg"
@@ -258,26 +266,10 @@ if test x"$profile" = x"true"; then
   AC_DEFINE([GPROF],[],[enables profiling control functions])
 fi
 
+PDP_DETERMINE_SUFFIX                                dnl Infixing
 
-SIM_AC_CONFIGURATION_SETTING([Installation prefix],[$prefix])
-
-# Adds package information verison to libs
-AX_MAJOR_VERSION=`echo "$VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
-AX_MINOR_VERSION=`echo "$VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
-PDP_VERSION=-$AX_MAJOR_VERSION.$AX_MINOR_VERSION
-AX_LIB_MAJOR_VERSION=`echo "$LIB_VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
-AX_LIB_MINOR_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
-AX_LIB_POINT_VERSION=`echo "$LIB_VERSION" | sed 's/[[^.]][[^.]]*.[[^.]][[^.]]*.\(.*\)/\1/'`
-
-PDP_DETERMINE_SUFFIX                                # Infixing
-
-AC_SUBST([AX_MAJOR_VERSION])
-AC_SUBST([AX_MINOR_VERSION])
-AC_SUBST([AX_LIB_MAJOR_VERSION])
-AC_SUBST([AX_LIB_MINOR_VERSION])
-AC_SUBST([AX_LIB_POINT_VERSION])
+SIM_AC_CONFIGURATION_SETTING([Installation prefix],[${prefix}])
 AC_SUBST([PDP_SUFFIX])
-AC_SUBST([PDP_VERSION])
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
 AC_SUBST([srcdir])
@@ -300,5 +292,6 @@ AC_CONFIG_FILES([Makefile
 		prog_lib/Makefile
 		test/Makefile
 		css_stdlib/Makefile])
+
 AC_OUTPUT
 SIM_AC_CONFIGURATION_SUMMARY

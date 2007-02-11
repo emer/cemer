@@ -113,7 +113,7 @@ void taPlugins::AppendLogEntry(const String& entry) {
 
 taPluginInst* taPlugins::LoadPlugin(const String& fileName) {
   taPluginInst* rval = new taPluginInst(fileName);
-//TODO: log to a file  taMisc::Warning("Attempting to load plugin: ", fileName);
+  taMisc::Warning("Attempting to load plugin: ", fileName);
   // get the plugin object, and initialize types
   String log_entry;
   if (rval->load())  {

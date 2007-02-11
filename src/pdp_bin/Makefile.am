@@ -14,11 +14,11 @@ pdp@PDP_SUFFIX@___SOURCES = main.cpp
 # toggle creation of ta library. see configure.ac/acsite.m4
 if LIBTA
 pdp@PDP_SUFFIX@___LDADD =\
-	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@@PDP_VERSION@.la \
-	@abs_top_builddir@/src/ta_lib/libtacss@PDP_SUFFIX@@PDP_VERSION@.la
+	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/ta_lib/libtacss@PDP_SUFFIX@-@PACKAGE_VERSION@.la
 else
 pdp@PDP_SUFFIX@___LDADD =\
-	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@@PDP_VERSION@.la
+	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la
 endif
 
 pdp@PDP_SUFFIX@___CPPFLAGS = @PDP_INCLUDES@

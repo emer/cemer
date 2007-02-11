@@ -1,3 +1,58 @@
+dnl						 PDP_SET_VERSION
+dnl *************************************************************
+dnl 
+dnl *************************************************************
+dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Carnegie Mellon University, Princeton University.
+dnl
+dnl This file is part of TA/PDP++
+dnl
+dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation; either version 2 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details. 
+AC_DEFUN([PDP_SET_VERSION],[
+
+SIM_AC_CONFIGURATION_SETTING([VERSION],[$VERSION])
+BIN_MAJOR=`echo "$VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})([a-z]{0,3})/\1/'`
+SIM_AC_CONFIGURATION_SETTING([BIN_MAJOR],[$BIN_MAJOR])
+BIN_MINOR=`echo "$VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})([a-z]{0,3})/\2/'`
+BIN_POINT=`echo "$VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})([a-z]{0,3})/\3/'`
+BIN_SPECIAL=`echo "$VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})([a-z]{0,3})/\4/'`
+
+LIB_CURRENT=`echo "$LIB_VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})/\1/'`
+LIB_REVISION=`echo "$LIB_VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})/\2/'`
+LIB_AGE=`echo "$LIB_VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})/\3/'`
+
+
+# AC_DEFINE([BIN_MAJOR],[${BIN_MAJOR}],[Binary major version])
+# AC_DEFINE([BIN_MINOR],[${BIN_MINOR}],[Binary minor version])
+# AC_DEFINE([BIN_POINT],[${BIN_POINT}],[Binary point version])
+# AC_DEFINE([BIN_SPECIAL],[${BIN_SPECIAL}],[Library special version])
+# AC_DEFINE([LIB_CURRENT],[${LIB_CURRENT}],[Library current])
+# AC_DEFINE([LIB_REVISION],[${LIB_REVISION}],[Library revision])
+# AC_DEFINE([LIB_AGE],[${LIB_AGE}],[Library age])
+# AC_DEFINE([BIN_VERSION],[${BIN_VERSION}],[Concatenated binary version])
+# AC_DEFINE([LIB_VERSION],[${LIB_VERSION}],[Concatenated library version])
+
+
+AC_SUBST([BIN_MAJOR])
+AC_SUBST([BIN_MINOR])
+AC_SUBST([BIN_POINT])
+AC_SUBST([BIN_SPECIAL])
+AC_SUBST([LIB_CURRENT])
+AC_SUBST([LIB_REVISION])
+AC_SUBST([LIB_AGE])
+AC_SUBST([BIN_VERSION])
+AC_SUBST([LIB_VERSION])
+
+])
+
 dnl 					         PDP_SVN_REVISION
 dnl *************************************************************
 dnl Set SVN_REV to the revision of the local repository
@@ -27,7 +82,7 @@ AC_ARG_ENABLE([svn],
 if test x"$svn" = x"true" -o x"$debug" = x"true"; then
   AC_CHECK_PROG([HAVE_SVN],[svn],[true],[false])
   if test x"$HAVE_SVN" = x"true"; then
-    SVN_REV=`svn info . | grep Revision | sed -r 's/Revision: (@<:@0-9@:>@*)/\1/'`
+    SVN_REV=`svn info . | grep Revision | sed -r 's/Revision: (.*)/\1/'`
   else
     SIM_AC_CONFIGURATION_WARNING([Unable to locate svn. Revision not set.])
   fi
@@ -170,7 +225,7 @@ test x"$exec_prefix" != xNONE && check_path=$exec_prefix/bin
 
 AC_CHECK_PROG([pdpexists],[pdp++],[true],[false],[${check_path}])
 if test x"${pdpexists}" = x"true"; then
-   SIM_AC_CONFIGURATION_WARNING([pdp++ is already installed in ${check_path}. Consider renaming with --program-suffix=SUFFIX])
+   SIM_AC_CONFIGURATION_WARNING([pdp++ is already installed in ${check_path}.])
 fi
 ])
 

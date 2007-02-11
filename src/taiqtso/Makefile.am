@@ -69,7 +69,7 @@ include $(top_srcdir)/mfstamp.am
 irenderarea.moc.cpp:
 	$(QT_MOC) -DTA_USE_INVENTOR -o irenderarea.moc.cpp irenderarea.h
 
-noinst_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@@PDP_VERSION@.la
-libtaiqtso@PDP_SUFFIX@@PDP_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
-libtaiqtso@PDP_SUFFIX@@PDP_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
-libtaiqtso@PDP_SUFFIX@@PDP_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+noinst_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+libtaiqtso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
+libtaiqtso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
+libtaiqtso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@

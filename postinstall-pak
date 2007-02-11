@@ -5,5 +5,5 @@
 ln -s /usr/local/lib/libpdp-4.0.so.0.0.0 /usr/local/lib/libpdp-4.0.so.0
 ln -s /usr/local/lib/libtacss-4.0.so.0.0.0 /usr/local/lib/libtacss-4.0.so.0
 ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
-ln -s /usr/local/libCoin.so.40.4.5 /usr/local/libCoin.so.40
+ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
 
