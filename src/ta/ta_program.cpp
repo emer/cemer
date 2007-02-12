@@ -462,6 +462,14 @@ void ProgExpr::CutLinks() {
   inherited::CutLinks();
 }
 
+void ProgExpr::Copy_(const ProgExpr& cp) {
+  if(var_lookup) {
+    taBase::SetPointer((taBase**)&var_lookup, NULL);
+  }
+  expr = cp.expr;
+  UpdateAfterEdit_impl();	// gets everything
+}
+
 void ProgExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Program* prg = GET_MY_OWNER(Program);
