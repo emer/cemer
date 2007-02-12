@@ -3236,12 +3236,21 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
     proj = NULL; // in case we fall out of loop
   }
   // if proj has a value, then we should view the existing, else open it
-  if (!proj) {
+  bool clear_dirty = true; // only for new loads, or old views when not dirty already
+  if (proj) {
+    if (proj->isDirty()) clear_dirty = false; // don't clear if still dirty
+    // this will automatically view it if already open
+    proj->AssertDefaultProjectBrowser(true);
+  } else {
     taBase* el = NULL;
     tabMisc::root->projects.Load(fname, &el);
     proj = (taProject*)el;
+    //note: gets autoviewed in its postload routine
   }
   tabMisc::root->AddRecentFile(fname);
+  //note: the viewing will have set us dirty again, after load cleared it
+  if (proj && clear_dirty)
+    proj->setDirty(false);
 }
 
 void iMainWindowViewer::fileQuit() {
@@ -3269,7 +3278,21 @@ void iMainWindowViewer::fileSaveAll() {
 void iMainWindowViewer::fileClose() {
   taProject* proj = curProject();
   if (!proj) return;
-//TODO: check to make sure it asks to save before closing!!!
+  // Check for dirty/save
+  if (proj->isDirty()) {
+    int chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing it?",
+        "&Save", "&Don't Save", "&Cancel");
+  
+    switch (chs) {
+    case 0:
+      SaveData(); 
+      break;
+    case 1:
+      break;
+    case 2: 
+      return;
+    }
+  }
   proj->Close();
 }
 
@@ -3320,21 +3343,24 @@ void iMainWindowViewer::Refresh_impl() {
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   if (!isProjViewer()) return; // changes only applied for proj viewers
 
-  if (isDirty()) {
+  taProject* proj = curProject();
+  if (isDirty() && !(proj && proj->m_no_save)) {
     bool forced = (cancel_op == CO_NOT_CANCELLABLE);
     int chs;
     if (forced)
-      chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing?",
-        "&Save", "&Discard Changes");
+      chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing this window?",
+        "&Save", "&Don't Save");
     else 
-      chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing?",
-        "&Save", "&Discard Changes", "&Cancel");
+      chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing this window?",
+        "&Save", "&Don't Save", "&Cancel");
 
     switch (chs) {
     case 0:
       SaveData(); 
       break;
     case 1:
+      if (proj)
+        proj->m_no_save = true; // save so we don't prompt again
       break;
     case 2: //only possible if not forced
       cancel_op = CO_CANCEL;

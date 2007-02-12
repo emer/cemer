@@ -2426,6 +2426,10 @@ void Program::ScriptCompiled() {
 
 void Program::setDirty(bool value) {
   if(run_state == RUN) return;	     // change is likely self-generated during running, don't do it!
+//TEMP
+#ifdef DEBUG
+//  if (value) taMisc::Warning("Program::setDirty(true) called for:", GetName());
+#endif
   if (m_dirty == value) return; // prevent recursion and spurious inherited calls!!!!
   inherited::setDirty(value); // needed to dirty the Project
   if(value) script_compiled = false; // make sure this always reflects dirty status -- is used as check for compiling..

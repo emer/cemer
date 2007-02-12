@@ -68,7 +68,8 @@ LeabraProject .projects[0] {
     DataTable_Group @.gp[2] { };
   };
 
-  Program_Group @.programs = [0] {
+  Program_Group @.programs = [1] {
+    Program @[0] { };
     Program_Group @.gp[0] = [10] { 
       Program @[0] { 
 	ProgVar_List @.args = [3] {
@@ -121,14 +122,22 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.init_code = [4] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
 	  NetCounterInit @[1] { };
 	  MethodCall @[2] { };
 	  MethodCall @[3] { };
 	};
 
 	ProgEl_List @.prog_code = [6] {
-	  MethodCall @[0] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
 	  NetCounterInit @[1] { };
 	  UserScript @[2] { };
 	  MethodCall @[3] { };
@@ -169,7 +178,11 @@ LeabraProject .projects[0] {
 
 	ProgEl_List @.prog_code = [8] {
 	  NetCounterInit @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
 	  MethodCall @[2] { };
 	  BasicDataLoop @[3] { 
 	    ProgEl_List @.loop_code = [3] {
@@ -328,8 +341,17 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.init_code = [2] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
 	};
 
 	ProgEl_List @.prog_code = [1] {
@@ -364,16 +386,34 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.init_code = [3] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
-	  MethodCall @[2] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
 	};
 
 	ProgEl_List @.prog_code = [4] {
 	  MethodCall @[0] { };
 	  MethodCall @[1] { };
 	  MethodCall @[2] { };
-	  MethodCall @[3] { };
+	  MethodCall @[3] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
 	};
       };
       Program @[8] { 
@@ -404,9 +444,22 @@ LeabraProject .projects[0] {
 	};
 
 	ProgEl_List @.init_code = [3] {
-	  MethodCall @[0] { };
-	  MethodCall @[1] { };
-	  MethodCall @[2] { };
+	  MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[2] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
 	};
 
 	ProgEl_List @.prog_code = [4] {
@@ -436,11 +489,33 @@ LeabraProject .projects[0] {
 	      UserScript @[0] { };
 	    };
 	  };
-	  MiscCall @[1] { };
-	  MiscCall @[2] { };
+	  MiscCall @[1] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
+	  MiscCall @[2] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
 	  AssignExpr @[3] { };
-	  MethodCall @[4] { };
-	  MethodCall @[5] { };
+	  MethodCall @[4] { 
+	    ProgArg_List @.meth_args = [4] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	      ProgArg @[2] { };
+	      ProgArg @[3] { };
+	    };
+	  };
+	  MethodCall @[5] { 
+	    ProgArg_List @.meth_args = [2] {
+	      ProgArg @[0] { };
+	      ProgArg @[1] { };
+	    };
+	  };
 	};
       };
     };
@@ -858,6 +933,41 @@ LeabraProject .projects[0] {
   el_def=0;
   step_prog=NULL;
   desc=;
+  Program @[0] {
+   name="Program_11";
+   desc=;
+   flags=PF_NONE;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   functions {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
   Program_Group @.gp[0] {
    name="LeabraAll_Std";
    el_typ=Program;
@@ -958,12 +1068,30 @@ LeabraProject .projects[0] {
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
+	  arg_type=LeabraNetwork;
+	  type="LeabraNetwork*";
 	  name="network";
-	  value="network";
+	  expr {
+	   expr="network";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ network;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	 ProgArg @[1] {
+	  arg_type=DataTable;
+	  type="DataTable*";
 	  name="input_data";
-	  value="input_data";
+	  expr {
+	   expr="input_data";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ input_data;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	};
        };
@@ -1080,8 +1208,24 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=.projects[0].programs.gp[0][1].args[0]$8$;
       method=taBase::CheckConfig;
-      args{ false;};
-{ bool quiet;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="bool";
+	name="quiet";
+	expr {
+	 expr="false";
+	 var_expr="false";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      NetCounterInit @[1] {
       desc="initialize epoch counter ";
@@ -1096,8 +1240,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=.projects[0].programs.gp[0][1].vars[4]$10$;
       method=RndSeed::OldSeed;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      MethodCall @[3] {
       desc=;
@@ -1105,8 +1252,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$8$;
       method=Network::Init_Weights;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
     };
     prog_code {
@@ -1119,8 +1269,24 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=.projects[0].programs.gp[0][1].vars[5]$11$;
       method=TimeUsed::StartTimer;
-      args{ true;};
-{ bool reset_used;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="bool";
+	name="reset_used";
+	expr {
+	 expr="true";
+	 var_expr="true";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      NetCounterInit @[1] {
       desc="initialize epoch counter ";
@@ -1140,8 +1306,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$8$;
       method=Network::Init_Weights;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      WhileLoop @[4] {
       desc=;
@@ -1160,12 +1329,30 @@ LeabraProject .projects[0] {
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
+	  arg_type=LeabraNetwork;
+	  type="LeabraNetwork*";
 	  name="network";
-	  value="network";
+	  expr {
+	   expr="network";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ network;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	 ProgArg @[1] {
+	  arg_type=DataTable;
+	  type="DataTable*";
 	  name="input_data";
-	  value="input_data";
+	  expr {
+	   expr="input_data";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ input_data;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	};
        };
@@ -1190,8 +1377,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$11$;
       method=TimeUsed::EndTimer;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
     };
    };
@@ -1288,8 +1478,24 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=.projects[0].programs.gp[0][2].vars[1]$16$;
       method=TimeUsed::StartTimer;
-      args{ true;};
-{ bool reset_used;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="bool";
+	name="reset_used";
+	expr {
+	 expr="true";
+	 var_expr="true";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[2] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn OFF if not wanted)";
@@ -1297,8 +1503,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=.projects[0].programs.gp[0][2].vars[2]$17$;
       method=DataTable::ResetData;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      BasicDataLoop @[3] {
       desc=;
@@ -1322,12 +1531,30 @@ LeabraProject .projects[0] {
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
+	  arg_type=LeabraNetwork;
+	  type="LeabraNetwork*";
 	  name="network";
-	  value="network";
+	  expr {
+	   expr="network";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ network;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	 ProgArg @[1] {
+	  arg_type=DataTable;
+	  type="DataTable*";
 	  name="input_data";
-	  value="input_data";
+	  expr {
+	   expr="input_data";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ input_data;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	};
        };
@@ -1345,8 +1572,11 @@ LeabraProject .projects[0] {
 	  result_var=NULL;
 	  obj=.projects[0].programs.gp[0][3].args[0]$19$;
 	  method=Network::Compute_Weights;
-	  args{ };
-{ 	  };
+	  meth_args {
+	   name=;
+	   el_typ=ProgArg;
+	   el_def=0;
+	  };
 	 };
 	};
 	false_code {
@@ -1377,8 +1607,11 @@ LeabraProject .projects[0] {
 	result_var=NULL;
 	obj=$19$;
 	method=Network::Compute_Weights;
-	args{ };
-{ 	};
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
        };
       };
       false_code {
@@ -1393,8 +1626,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$14$;
       method=LeabraNetwork::Compute_EpochStats;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      MethodCall @[6] {
       desc=;
@@ -1402,8 +1638,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$16$;
       method=TimeUsed::EndTimer;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      ProgramCall @[7] {
       desc=;
@@ -1415,8 +1654,17 @@ LeabraProject .projects[0] {
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
+	arg_type=Network;
+	type="LeabraNetwork*";
 	name="network";
-	value="network";
+	expr {
+	 expr="network";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ network;	 };
+	 bad_vars{ 	 };
+	};
        };
       };
      };
@@ -1505,8 +1753,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$19$;
       method=LeabraNetwork::Trial_Init;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      WhileLoop @[2] {
       desc=;
@@ -1525,12 +1776,30 @@ LeabraProject .projects[0] {
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
+	  arg_type=LeabraNetwork;
+	  type="LeabraNetwork*";
 	  name="network";
-	  value="network";
+	  expr {
+	   expr="network";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ network;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	 ProgArg @[1] {
+	  arg_type=DataTable;
+	  type="DataTable*";
 	  name="input_data";
-	  value="input_data";
+	  expr {
+	   expr="input_data";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ input_data;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	};
        };
@@ -1547,8 +1816,11 @@ LeabraProject .projects[0] {
 	result_var=NULL;
 	obj=$19$;
 	method=LeabraNetwork::Trial_UpdatePhase;
-	args{ };
-{ 	};
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
        };
       };
       loop_test="phase_no < network->phase_max";
@@ -1559,8 +1831,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$19$;
       method=LeabraNetwork::Trial_Final;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      ProgramCall @[4] {
       desc=;
@@ -1572,8 +1847,17 @@ LeabraProject .projects[0] {
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
+	arg_type=Network;
+	type="LeabraNetwork*";
 	name="network";
-	value="network";
+	expr {
+	 expr="network";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ network;	 };
+	 bad_vars{ 	 };
+	};
        };
       };
      };
@@ -1675,8 +1959,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$26$;
       method=Network::Init_InputData;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      ProgramCall @[2] {
       desc=;
@@ -1688,12 +1975,30 @@ LeabraProject .projects[0] {
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
+	arg_type=LeabraNetwork;
+	type="LeabraNetwork*";
 	name="network";
-	value="network";
+	expr {
+	 expr="network";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ network;	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[1] {
+	arg_type=DataTable;
+	type="DataTable*";
 	name="input_data";
-	value="input_data";
+	expr {
+	 expr="input_data";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ input_data;	 };
+	 bad_vars{ 	 };
+	};
        };
       };
      };
@@ -1703,8 +2008,11 @@ LeabraProject .projects[0] {
       result_var=NULL;
       obj=$26$;
       method=LeabraNetwork::Settle_Init;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      UserScript @[4] {
       desc="get min cycles";
@@ -1731,8 +2039,17 @@ else min_cycles = network->min_cycles_phase2;
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
+	  arg_type=LeabraNetwork;
+	  type="LeabraNetwork*";
 	  name="network";
-	  value="network";
+	  expr {
+	   expr="network";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ network;	   };
+	   bad_vars{ 	   };
+	  };
 	 };
 	};
        };
@@ -1763,8 +2080,11 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$26$;
       method=LeabraNetwork::Settle_Final;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      IfElse @[7] {
       desc="only run sse in minus phase";
@@ -1780,8 +2100,11 @@ else min_cycles = network->min_cycles_phase2;
 	result_var=NULL;
 	obj=$26$;
 	method=LeabraNetwork::Compute_TrialStats;
-	args{ };
-{ 	};
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
        };
       };
       false_code {
@@ -1804,8 +2127,11 @@ else min_cycles = network->min_cycles_phase2;
 	result_var=NULL;
 	obj=$26$;
 	method=LeabraNetwork::Compute_ExtRew;
-	args{ };
-{ 	};
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
        };
       };
       false_code {
@@ -1876,8 +2202,11 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][5].args[0]$31$;
       method=LeabraNetwork::Cycle_Run;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      NetUpdateView @[1] {
       desc=;
@@ -1985,8 +2314,37 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][6].vars[0]$34$;
       method=LayerWriter::SetDataNetwork;
-      args{ input_data;network;};
-{ DataBlock* db;Network* net;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="DataBlock*";
+	name="db";
+	expr {
+	 expr="input_data";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ input_data;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="Network*";
+	name="net";
+	expr {
+	 expr="network";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ network;	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[1] {
       desc=;
@@ -1994,8 +2352,24 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$34$;
       method=taList_impl::CheckConfig;
-      args{ false;};
-{ bool quiet;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="bool";
+	name="quiet";
+	expr {
+	 expr="false";
+	 var_expr="false";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
     };
     prog_code {
@@ -2008,8 +2382,11 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$34$;
       method=LayerWriter::ApplyInputData;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
     };
    };
@@ -2242,8 +2619,37 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][7].vars[1]$37$;
       method=NetMonitor::SetDataNetwork;
-      args{ trial_mon_data;network;};
-{ DataTable* dt;Network* net;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="DataTable*";
+	name="dt";
+	expr {
+	 expr="trial_mon_data";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ trial_mon_data;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="Network*";
+	name="net";
+	expr {
+	 expr="network";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ network;	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[1] {
       desc=;
@@ -2251,8 +2657,24 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$37$;
       method=taBase::CheckConfig;
-      args{ false;};
-{ bool quiet;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="bool";
+	name="quiet";
+	expr {
+	 expr="false";
+	 var_expr="false";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[2] {
       desc="update the monitor items and data schema";
@@ -2260,8 +2682,24 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$37$;
       method=NetMonitor::UpdateMonitors;
-      args{ true;};
-{ bool reset_first;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="bool";
+	name="reset_first";
+	expr {
+	 expr="true";
+	 var_expr="true";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
     };
     prog_code {
@@ -2274,8 +2712,11 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][7].vars[0]$38$;
       method=DataTable::AddBlankRow;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      MethodCall @[1] {
       desc="get the new monitor data.";
@@ -2283,8 +2724,11 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$37$;
       method=NetMonitor::GetMonVals;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      MethodCall @[2] {
       desc="update after writing new data to monitor data table";
@@ -2292,8 +2736,11 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$38$;
       method=DataBlock::WriteClose;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      MethodCall @[3] {
       desc=;
@@ -2301,8 +2748,37 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][7].args[0]$39$;
       method=Network::DMem_ShareTrialData;
-      args{ trial_mon_data;1;};
-{ DataTable* dt;int n_rows;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="DataTable*";
+	name="dt";
+	expr {
+	 expr="trial_mon_data";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ trial_mon_data;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="int";
+	name="n_rows";
+	expr {
+	 expr="1";
+	 var_expr="1";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
     };
    };
@@ -2527,8 +3003,37 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][8].vars[1]$43$;
       method=NetMonitor::SetDataNetwork;
-      args{ epoch_mon_data;network;};
-{ DataTable* dt;Network* net;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="DataTable*";
+	name="dt";
+	expr {
+	 expr="epoch_mon_data";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ epoch_mon_data;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="Network*";
+	name="net";
+	expr {
+	 expr="network";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ network;	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[1] {
       desc=;
@@ -2536,8 +3041,24 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$43$;
       method=taBase::CheckConfig;
-      args{ false;};
-{ bool quiet;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="bool";
+	name="quiet";
+	expr {
+	 expr="false";
+	 var_expr="false";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[2] {
       desc="update the monitor items and data schema";
@@ -2545,8 +3066,24 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$43$;
       method=NetMonitor::UpdateMonitors;
-      args{ true;};
-{ bool reset_first;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="bool";
+	name="reset_first";
+	expr {
+	 expr="true";
+	 var_expr="true";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
     };
     prog_code {
@@ -2559,8 +3096,11 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][8].vars[0]$44$;
       method=DataTable::AddBlankRow;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      MethodCall @[1] {
       desc="get the new monitor data.";
@@ -2568,8 +3108,11 @@ else min_cycles = network->min_cycles_phase2;
       result_var=NULL;
       obj=$43$;
       method=NetMonitor::GetMonVals;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      UserScript @[2] {
       desc="set the timing information from the epoch timer";
@@ -2585,8 +3128,11 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       result_var=NULL;
       obj=$44$;
       method=DataBlock::WriteClose;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
     };
    };
@@ -2699,8 +3245,37 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       result_var=.projects[0].programs.gp[0][9].vars[4]$45$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
-      args{ network->batch;2;};
-{ int num;int len;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="int";
+	name="num";
+	expr {
+	 expr="network.batch";
+	 var_expr="$#0.batch";
+	 vars {
+	 };
+	 var_names{ network;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="int";
+	name="len";
+	expr {
+	 expr="2";
+	 var_expr="2";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MiscCall @[2] {
       desc=;
@@ -2708,14 +3283,50 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       result_var=.projects[0].programs.gp[0][9].vars[3]$46$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
-      args{ network->epoch;4;};
-{ int num;int len;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="int";
+	name="num";
+	expr {
+	 expr="network.epoch";
+	 var_expr="$#0.epoch";
+	 vars {
+	 };
+	 var_names{ network;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="int";
+	name="len";
+	expr {
+	 expr="4";
+	 var_expr="4";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      AssignExpr @[3] {
       desc=;
       flags=PEF_NONE;
       result_var=.projects[0].programs.gp[0][9].vars[5]$47$;
-      expr="tag + \".\" + batch_str + \"_\" + epoch_str";
+      expr_val {
+       expr="tag + \".\" + batch_str + \"_\" + epoch_str";
+       var_expr="$#0 + \".\" + batch_str + \"_\" + epoch_str";
+       vars {
+       };
+       var_names{ tag;       };
+       bad_vars{        };
+      };
      };
      MethodCall @[4] {
       desc=;
@@ -2723,8 +3334,63 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       result_var=.projects[0].programs.gp[0][9].vars[2]$48$;
       obj=.projects[0].programs.gp[0][9].args[0]$49$;
       method=taBase::GetFileNameFmProject;
-      args{ ".wts.gz";final_tag;wts_subdir;false;};
-{ const taString& ext;const taString& tag;const taString& subdir;bool dmem_proc_no;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="const taString&";
+	name="ext";
+	expr {
+	 expr="\".wts.gz\"";
+	 var_expr="\".wts.gz\"";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="const taString&";
+	name="tag";
+	expr {
+	 expr="final_tag";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ final_tag;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[2] {
+	arg_type=NULL;
+	type="const taString&";
+	name="subdir";
+	expr {
+	 expr="wts_subdir";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ wts_subdir;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[3] {
+	arg_type=NULL;
+	type="bool";
+	name="dmem_proc_no";
+	expr {
+	 expr="false";
+	 var_expr="false";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[5] {
       desc=;
@@ -2732,8 +3398,37 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       result_var=NULL;
       obj=$49$;
       method=Network::SaveWeights;
-      args{ fname;Network::NET_FMT;};
-{ const taString& fname;Network::WtSaveFormat fmt;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="const taString&";
+	name="fname";
+	expr {
+	 expr="fname";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ fname;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="Network::WtSaveFormat";
+	name="fmt";
+	expr {
+	 expr="Network::NET_FMT";
+	 var_expr="Network::NET_FMT";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
     };
    };
@@ -2760,7 +3455,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
      display_toggle=1;
      visible=0;
      lft=0;
-     top=0;
+     top=0.02735043;
      o=Horizontal;
     };
    };

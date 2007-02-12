@@ -1054,7 +1054,8 @@ void taBase::UpdateAllViews() {
 }
 
 void taBase::DataChanged(int dcr, void* op1, void* op2) {
-  setDirty(true); // note, also then sets dirty for list ops, like Add etc.
+  if (!taMisc::is_loading)
+    setDirty(true); // note, also then sets dirty for list ops, like Add etc.
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
 #ifdef TA_GUI

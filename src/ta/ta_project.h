@@ -90,6 +90,7 @@ public:
   DataViewer_List	viewers; // any top-level viewers that have been saved
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
+  bool			m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying
   bool			use_sim_log; 	// record project changes in the SimLog file
 
   override bool		isDirty() const {return m_dirty;}

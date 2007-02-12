@@ -124,6 +124,7 @@ public:
 
 void taProject::Initialize() {
   m_dirty = false;
+  m_no_save = false;
   use_sim_log = true;
   viewers.SetBaseType(&TA_TopLevelViewer);
 }
@@ -301,6 +302,7 @@ void taProject::setDirty(bool value) {
   // note: inherited only forwards 'dirty' up the chain, not '!dirty'
   inherited::setDirty(value);
   m_dirty = value;
+  if (!value) m_no_save = false;
 }
 
 
