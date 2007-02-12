@@ -2,8 +2,6 @@ leabra todo list:
 
 commit:
 
-* all guys that have a progvarref should also have a smartptr data changed call!!
-
 * datatable: Writeclose_impl -- need flag for dmem auto write file or not.
   all procs are saving epoch log file and that is not good..  maybe just make that a separate
   step that is controlled by the program.  yes.
@@ -19,9 +17,6 @@ commit:
   (probably not worth it for flag -- costs a lot in render but is not a big
   deal..)
 
-* did I ever fix clicking on an axis, etc?  also, deleting an item from a view and
-  then selecting something else in the view to delete caused a crash..
-
 * copying a network: links are not fixed (send_idx, etc)
 
 * saving 12ax model *with* units, then close project: get a crash.  not without. spec.CutLinks
@@ -33,6 +28,9 @@ commit:
 
 
 check:
+
+* did I ever fix clicking on an axis, etc?  also, deleting an item from a view and
+  then selecting something else in the view to delete caused a crash..  CRASHING!
 
 * quit has changes thing, close project does not.. (ticket)
 

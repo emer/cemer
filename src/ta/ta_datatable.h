@@ -535,10 +535,13 @@ public:
 					 bool quote_str = true); 
   // #CAT_File #MENU #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
 
-  void			SaveDataLog(const String& fname="", bool append=false);
-  // #CAT_File #MENU #MENU_SEP_BEFORE #ARGC_0 #EXT_dat incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file
+  void			SaveDataLog(const String& fname="", bool append=false,
+				    bool dmem_proc_0 = true);
+  // #CAT_File #MENU #MENU_SEP_BEFORE #ARGC_0 #EXT_dat incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file.  if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write
   void			CloseDataLog();
-  // #CAT_File #MENU #EXT_dat close the data log file if it was previously open
+  // #CAT_File #MENU close the data log file if it was previously open
+  bool			WriteDataLogRow();
+  // #CAT_File write the current row to the data log, if it is open (returns true if successfully wrote) -- this is automatically called by WriteClose 
 
   static char		GetDelim(Delimiters delim);
   // #IGNORE get delimiter from enum

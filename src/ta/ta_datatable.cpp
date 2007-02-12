@@ -1314,10 +1314,13 @@ void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str
   taRefN::unRefDone(flr);
 }
 
-void DataTable::SaveDataLog(const String& fname, bool append) {
-  if(!log_file) return;
+void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) {
+  if(!log_file) return;		// shouldn't happen
   if(log_file->isOpen())
     log_file->Close();
+#ifdef DMEM_COMPILE
+  if((taMisc::dmem_proc > 0) && dmem_proc_0) return; // don't open!
+#endif
   log_file->setFileName(fname);
   if(append) 
     log_file->Append();
@@ -1331,6 +1334,14 @@ void DataTable::SaveDataLog(const String& fname, bool append) {
 void DataTable::CloseDataLog() {
   if(!log_file) return;
   log_file->Close();
+}
+
+bool DataTable::WriteDataLogRow() {
+  if(log_file && log_file->isOpen()) {
+    SaveDataRow_strm(*log_file->ostrm);
+    return true;
+  }
+  return false;
 }
 
 char DataTable::GetDelim(Delimiters delim) {
@@ -1505,9 +1516,7 @@ void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, 
 
 void DataTable::WriteClose_impl() {
   UpdateAllViews();
-  if(log_file && log_file->isOpen()) {
-    SaveDataRow_strm(*log_file->ostrm);
-  }
+  WriteDataLogRow();
 }
 
 ////////////////////////////////////////////////////////////////////////////
