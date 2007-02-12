@@ -2,7 +2,7 @@ leabra todo list:
 
 commit:
 
-* ignore all path exprs and all :: expr rhs.
+* all guys that have a progvarref should also have a smartptr data changed call!!
 
 * datatable: Writeclose_impl -- need flag for dmem auto write file or not.
   all procs are saving epoch log file and that is not good..  maybe just make that a separate

@@ -1347,8 +1347,7 @@ const String DataJoinProg::GenCssBody_impl(int indent_level) {
 //   data calc loop
 /////////////////////////////////////////////////////////
 
-// todo: do checking on valid column names as css variables!
-// note: datatable enforces this already..
+ProgVar DataCalcLoop::find_var_rval;
 
 void DataCalcLoop::Initialize() {
 }
@@ -1405,6 +1404,26 @@ void DataCalcLoop::CheckChildConfig_impl(bool quiet, bool& rval) {
     dest_cols.ClearColumns();
   }
   loop_code.CheckConfig(quiet, rval);
+}
+
+ProgVar* DataCalcLoop::FindVarName(const String& var_nm) const {
+  String srcp = "s_";
+  for (int i = 0; i < src_cols.size; ++i) {
+    DataOpEl* ds = src_cols[i];
+    if(var_nm == srcp + ds->col_name) {
+      find_var_rval.name = srcp + ds->col_name;
+      return &find_var_rval;
+    }
+  }
+  srcp = "d_";
+  for (int i = 0; i < dest_cols.size; ++i) {
+    DataOpEl* ds = dest_cols[i];
+    if(var_nm == srcp + ds->col_name) {
+      find_var_rval.name = srcp + ds->col_name;
+      return &find_var_rval;
+    }
+  }
+  return NULL;
 }
 
 void DataCalcLoop::PreGenChildren_impl(int& item_id) {

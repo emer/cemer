@@ -489,10 +489,16 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
+// todo: DataCalcLoop should also maintain a list of ProgVar's for src_cols and 
+// dest_cols, which are then returned with FindVarName etc, so that other code
+// can be updated when the variable names change!
+
 class TA_API DataCalcLoop : public DataProg { 
   // enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
 INHERITED(DataProg)
 public:
+  static ProgVar	find_var_rval; // #IGNORE return value for FindVarName
+
   DataOpList		src_cols;
   // source columns to operate on (variables are labeled as s_xxx where xxx is col_name)
   DataOpList		dest_cols;
@@ -504,6 +510,8 @@ public:
   virtual void	AddAllDestColumns();
   // #BUTTON #CAT_Data add all columns from dest_data to the dest_cols list of columns 
   override void	UpdateSpecDataTable();
+
+  override ProgVar*	FindVarName(const String& var_nm) const;
 
   override String GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DataCalcLoop);

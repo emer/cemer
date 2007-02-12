@@ -359,13 +359,13 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 //////////////////////////////////
 
 String	taMisc::app_name = "ta_css"; // replaced with actual name at startup
-// #ifdef SVN_REV
-// String	taMisc::version = "3.9.0-" + String(SVN_REV);
-// const taVersion taMisc::version_bin(3, 9, 0, SVN_REV);
-// #else
+#ifdef SVN_REV
+String	taMisc::version = "3.9.0-" + String(SVN_REV);
+const taVersion taMisc::version_bin(3, 9, 0, SVN_REV);
+#else
 String	taMisc::version = "3.9.0";
 const taVersion taMisc::version_bin(3, 9, 0);
-// #endif
+#endif
 
 ////////////////////////////////////////////////////////
 // 	TA GUI parameters

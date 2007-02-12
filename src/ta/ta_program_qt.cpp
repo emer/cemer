@@ -492,6 +492,7 @@ void iProgramEditor::Init() {
   items->setSortingEnabled(false);// only 1 order possible
   items->setHeaderText(0, "Program Item");
   items->setHeaderText(1, "Item Detail");
+  items->setColumnWidth(1, 160);
   items->setHeaderText(2, "Item Description");
   items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
   items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);
@@ -847,12 +848,21 @@ void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
   taiDataLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
   if((level <= 1) && typ->InheritsFrom(&TA_ProgVar_List)) return; // only top guys: args, vars
-  if (!(typ->InheritsFrom(&TA_ProgVars)) &&
-    (typ->DerivesFrom(&TA_ProgEl_List) ||
-    typ->InheritsFrom(&TA_ProgEl) ||
-    typ->DerivesFrom(&TA_ProgObjList)
-    )
-  )  return;
+  if(typ->DerivesFrom(&TA_ProgEl_List) || typ->DerivesFrom(&TA_ProgObjList))
+    return;			// expand
+  if(typ->InheritsFrom(&TA_ProgEl)) {
+    String mbr = typ->OptionAfter("DEF_CHILD_");
+    if(!mbr.empty()) {
+      MemberDef* md = typ->members.FindName(mbr);
+      if(md) {
+	if(md->type->InheritsFrom(&TA_ProgEl_List)) return; // expand
+      }
+      expand = false;		// don't expand any non-progel def childs
+    }
+    else {
+      return;			// ok to expand
+    }
+  }
   // otherwise, nada
   expand = false;
 }

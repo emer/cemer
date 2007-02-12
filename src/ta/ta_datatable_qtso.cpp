@@ -4636,6 +4636,7 @@ iDataTablePanel::~iDataTablePanel() {
 }
 
 void iDataTablePanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  if(!isVisible() || !dte || !dte->isVisible()) return; // no update when hidden!
   inherited::DataChanged_impl(dcr, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
 //TODO: maybe we should do something less crude???

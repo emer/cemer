@@ -87,6 +87,7 @@ public:
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
   override String GetTypeDecoKey() const { return "ProgVar"; }
+  override bool	  FindCheck(const String& nm) const { return (name == nm); }
 
   TypeDef*		act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
   
@@ -178,8 +179,8 @@ public:
   virtual bool	SetExpr(const String& ex);
   // set to use given expression -- calls ParseExpr followed by UpdateAfterEdit_impl
 
-  virtual bool	ParseExpr(const String& ex);
-  // parse given expr for variables and update vars and var_expr accordingly (returns false if there are some bad_vars)
+  virtual bool	ParseExpr();
+  // parse the current expr for variables and update vars and var_expr accordingly (returns false if there are some bad_vars)
   virtual String GetFullExpr() const;
   // get full expression with variable names substituted appropriately
 
@@ -192,6 +193,9 @@ public:
   COPY_FUNS(ProgExpr, inherited);
   TA_BASEFUNS(ProgExpr);
 protected:
+
+  virtual void	ParseExpr_SkipPath(int& pos);
+  // skip over a path expression
 
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -312,8 +316,12 @@ public:
 
 protected:
   override void		UpdateAfterEdit_impl();
-  virtual bool		useDesc() const {return true;} // hack for CommentEl
   override bool 	CheckConfig_impl(bool quiet);
+  override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+					     int dcr, void* op1_, void* op2_);
+
+  virtual bool		useDesc() const {return true;} // hack for CommentEl
+
   virtual void		PreGenMe_impl(int item_id) {}
   virtual void		PreGenChildren_impl(int& item_id) {}
   virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
@@ -634,6 +642,7 @@ public:
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -663,6 +672,7 @@ public:
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
 
 private:
@@ -701,14 +711,34 @@ private:
 }; 
 
 class TA_API PrintVar: public ProgEl { 
-  // print out the value of a variable
+  // print out (to the console) the value of a variable -- useful for debugging
 INHERITED(ProgEl)
 public:
-  ProgVarRef		print_var; 	// print out the value of this variable
+  ProgVarRef		print_var; 	// print out (to console) the value of this variable
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   TA_SIMPLE_BASEFUNS(PrintVar);
+
+protected:
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API PrintExpr: public ProgEl { 
+  // print out (to the console) an expression -- e.g., an informational message for the user
+INHERITED(ProgEl)
+public:
+  ProgExpr		print_expr;
+  // print out (to console) this expression -- it just does 'cerr << print_expr << endl;' so you can put multiple << segments in the expression to print out multiple things
+  
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  TA_SIMPLE_BASEFUNS(PrintExpr);
 
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -806,6 +836,7 @@ public:
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level); 
 private:
   void	Initialize();
@@ -828,6 +859,7 @@ public:
 
 protected:
   override void		UpdateAfterEdit_impl();
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -1169,6 +1201,7 @@ protected:
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 

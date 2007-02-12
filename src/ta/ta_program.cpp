@@ -464,9 +464,8 @@ void ProgExpr::CutLinks() {
 
 void ProgExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  String prognm;
   Program* prg = GET_MY_OWNER(Program);
-  if(prg) prognm = prg->name;
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   if(var_lookup) {
     if(expr.empty())
       expr += var_lookup->name;
@@ -474,9 +473,9 @@ void ProgExpr::UpdateAfterEdit_impl() {
       expr += " " + var_lookup->name;
     taBase::SetPointer((taBase**)&var_lookup, NULL);
   }
-  ParseExpr(expr);
+  ParseExpr();
   if(!taMisc::is_loading && bad_vars.size > 0) {
-    taMisc::Error("ProgExpr:",GetName(),"in program:", prognm,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
+    taMisc::Error("ProgExpr:",GetName(),"in program:", prg->name,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
 		  (bad_vars.size > 1 ? bad_vars[1] : _nilString),
 		  (bad_vars.size > 2 ? bad_vars[2] : _nilString),
 		  (bad_vars.size > 3 ? bad_vars[3] : _nilString)
@@ -513,14 +512,17 @@ void ProgExpr::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
 void ProgExpr::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 				    int dcr, void* op1_, void* op2_) {
   expr = GetFullExpr();		// update our expr to reflect any changes in variables.
+  if(owner)			// usu we are inside something else
+    owner->UpdateAfterEdit();
+  else
+    UpdateAfterEdit();
 }
 
 bool ProgExpr::SetExpr(const String& ex) {
-  taBase::SetPointer((taBase**)&var_lookup, NULL);
+  taBase::SetPointer((taBase**)&var_lookup, NULL); // justin case
   expr = ex;
-  bool rval = ParseExpr(ex);
-  UpdateAfterEdit_impl();	// updates from getfullexpr
-  return rval;
+  UpdateAfterEdit();		// does parse
+  return (bad_vars.size == 0);	// do we have any bad variables??
 }
 
 String ProgExpr::GetName() const {
@@ -528,48 +530,53 @@ String ProgExpr::GetName() const {
   return _nilString;
 }
 
-bool ProgExpr::ParseExpr(const String& ex) {
+void ProgExpr::ParseExpr_SkipPath(int& pos) {
+  int len = expr.length();
+  int c;
+  while((pos < len) && (isalnum(c=expr[pos]) || (c=='_') || (c=='.') || (c==':')))
+    { var_expr.cat((char)c); pos++; }
+}
+
+bool ProgExpr::ParseExpr() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return true;
+  expr.gsub("->", ".");		// -> is too hard to parse.. ;)
   int pos = 0;
-  int len = ex.length();
+  int len = expr.length();
   vars.Reset();
   var_names.Reset();
   bad_vars.Reset();
-  if(ex.empty()) return true;
+  if(expr.empty()) return true;
   var_expr = _nilString;
   do {
     int c;
-    while((pos < len) && isspace(c=ex[pos])) { var_expr.cat((char)c); pos++; } // skip_white
-    if((c == '.') && ((pos+1 < len) && !isdigit(ex[pos+1]))) { // a path expr
-      if((pos > 0) && isspace(ex[pos-1])) {
-        taMisc::Warning("ProgExpr: note that supplying full paths to objects is not typically very robust and is discouraged", ex);
+    while((pos < len) && isspace(c=expr[pos])) { var_expr.cat((char)c); pos++; } // skip_white
+    if((c == '.') && ((pos+1 < len) && !isdigit(expr[pos+1]))) { // a path expr
+      if((pos > 0) && isspace(expr[pos-1])) {
+        taMisc::Warning("ProgExpr: note that supplying full paths to objects is not typically very robust and is discouraged", expr);
       }
       var_expr.cat((char)c); pos++; 
-      // skip path
-      while((pos < len) && (isalnum(c=ex[pos]) || 
-			    (c=='_') || (c=='.') || (c=='[') || (c==']')))
-	{ var_expr.cat((char)c); pos++;}
+      ParseExpr_SkipPath(pos);
       continue;
     }
     if((c == '.') || (c == '-') || isdigit(c)) { // number
       var_expr.cat((char)c); pos++;
-      while((pos < len) && (isxdigit(c=ex[pos]) || ispunct(c)))
+      while((pos < len) && (isxdigit(c=expr[pos]) || ispunct(c)))
 	{ var_expr.cat((char)c); pos++; } // skip numbers and expressions
       continue;
     }
     if(c=='\"') {		// string literal
       var_expr.cat((char)c); pos++;
-      while((pos < len) && !(((c=ex[pos]) == '\"') && (ex[pos-1] != '\\')))
+      while((pos < len) && !(((c=expr[pos]) == '\"') && (expr[pos-1] != '\\')))
 	{ var_expr.cat((char)c); pos++; }
       continue;
     }
     if(isalpha(c) || (c == '_')) {
       int stpos = pos;
       pos++;
-      while((pos < len) && (isalnum(c=ex[pos]) || (c=='_'))) 
+      while((pos < len) && (isalnum(c=expr[pos]) || (c=='_'))) 
 	{ pos++; }
-      String vnm = ex.at(stpos, pos-stpos); // this should be a variable name!
+      String vnm = expr.at(stpos, pos-stpos); // this should be a variable name!
       int idx;
       ProgVar* var = NULL;
       Function* fun = GET_MY_OWNER(Function); // first look inside any function we might live within
@@ -580,24 +587,31 @@ bool ProgExpr::ParseExpr(const String& ex) {
       if(var) {
 	if(vars.FindVar(var)) {
 	  var_expr += "$#" + (String)idx;
-	  continue;	// already on the list
 	}
-	ProgVarRef* prf = new ProgVarRef;
-	prf->Init(this);	// we own it
-	prf->set(var);
-	vars.Add(prf);
-	var_expr += "$#" + (String)(vars.size-1);
-	var_names.Add(vnm);
-	continue;
+	else {
+	  ProgVarRef* prf = new ProgVarRef;
+	  prf->Init(this);	// we own it
+	  prf->set(var);
+	  vars.Add(prf);
+	  var_expr += "$#" + (String)(vars.size-1);
+	  var_names.Add(vnm);
+	}
       }
-      // not found -- check to see if it is some other thing:
-      taBase* ptyp = prog->FindTypeName(vnm);
-      if(!ptyp) {
-	cssElPtr cssptr = cssMisc::ParseName(vnm);
-	if(!cssptr)
-	  bad_vars.AddUnique(vnm);	// this will trigger err msg later..
+      else {
+	// not found -- check to see if it is some other thing:
+	taBase* ptyp = prog->FindTypeName(vnm);
+	if(!ptyp) {
+	  cssElPtr cssptr = cssMisc::ParseName(vnm);
+	  if(!cssptr)
+	    bad_vars.AddUnique(vnm);	// this will trigger err msg later..
+	}
+	var_expr += vnm;		// add it back (no special indications..)
       }
-      var_expr += vnm;		// add it back (no special indications..)
+      // now check if there is a path-like expr after this one: if so, then skip it
+      // we don't want to get hung up on member names etc
+      if((pos < len) && (((c=expr[pos])=='.') || (c==':'))) {
+	ParseExpr_SkipPath(pos);
+      }
       continue;
     }
     var_expr.cat((char)c); pos++;		// just suck it in and continue..
@@ -798,6 +812,11 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
     return true;
   }
   return inherited::CheckConfig_impl(quiet);
+}
+
+void ProgEl::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+				    int dcr, void* op1_, void* op2_) {
+  UpdateAfterEdit();		// just do this for all guys -- keeps display updated
 }
 
 const String ProgEl::GenCss(int indent_level) {
@@ -1315,7 +1334,7 @@ void AssignExpr::Initialize() {
 
 void AssignExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(expr.nonempty()) {
+  if(expr.nonempty()) {		// convert from old: todo: remove me!
     expr_val.SetExpr(expr);
     expr = _nilString;
   }
@@ -1330,6 +1349,7 @@ void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in AssignExpr in program:", prognm, "result_var is NULL");
     rval = false;
   }
+  expr_val.CheckConfig(quiet, rval);
 }
 
 const String AssignExpr::GenCssBody_impl(int indent_level) {
@@ -1372,8 +1392,8 @@ void MethodCall::UpdateAfterEdit_impl() {
     meth_args.SetSize(args.size);
     for(int i=0;i<args.size;i++) {
       ProgArg* pa = meth_args[i];
-      pa->type = args.labels[i].before(' ');
-      pa->name = args.labels[i].after(' ');
+      pa->type = args.labels[i].before(' ',-1); // get the last one..
+      pa->name = args.labels[i].after(' ',-1);
       pa->expr.SetExpr(args[i]);
     }
     args.Reset();
@@ -1396,6 +1416,11 @@ void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in MethodCall in program:", prognm, "method is NULL");
     rval = false;
   }
+}
+
+void MethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  meth_args.CheckConfig(quiet, rval);
 }
 
 const String MethodCall::GenCssBody_impl(int indent_level) {
@@ -1460,8 +1485,8 @@ void StaticMethodCall::UpdateAfterEdit_impl() {
     meth_args.SetSize(args.size);
     for(int i=0;i<args.size;i++) {
       ProgArg* pa = meth_args[i];
-      pa->type = args.labels[i].before(' ');
-      pa->name = args.labels[i].after(' ');
+      pa->type = args.labels[i].before(' ',-1);
+      pa->name = args.labels[i].after(' ',-1);
       pa->expr.SetExpr(args[i]);
     }
     args.Reset();
@@ -1480,6 +1505,11 @@ void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in StaticMethodCall in program:", prognm, "method is NULL");
     rval = false;
   }
+}
+
+void StaticMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  meth_args.CheckConfig(quiet, rval);
 }
 
 const String StaticMethodCall::GenCssBody_impl(int indent_level) {
@@ -1583,6 +1613,32 @@ String PrintVar::GetDisplayName() const {
 
 
 //////////////////////////
+//      PrintExpr	//
+//////////////////////////
+
+void PrintExpr::Initialize() {
+}
+
+void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  print_expr.CheckConfig(quiet, rval);
+}
+
+const String PrintExpr::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level);
+  rval += "cerr << " + print_expr.GetFullExpr() + " << endl;\n";
+  return rval;
+}
+
+String PrintExpr::GetDisplayName() const {
+  String rval;
+  rval += "Print: " + print_expr.GetFullExpr();
+  return rval;
+}
+
+
+//////////////////////////
 //      Comment 	//
 //////////////////////////
 
@@ -1648,6 +1704,11 @@ void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in ProgramCall in program:", program()->name, "target is NULL");
     rval = false;
   }
+}
+
+void ProgramCall::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  prog_args.CheckConfig(quiet, rval);
 }
 
 Program* ProgramCall::GetTarget() {
@@ -1814,9 +1875,13 @@ void Function::PreGenChildren_impl(int& item_id) {
   fun_code.PreGen(item_id);
 }
 ProgVar* Function::FindVarName(const String& var_nm) const {
+  ProgVar* pv = args.FindName(var_nm);
+  if(pv) return pv;
   return fun_code.FindVarName(var_nm);
 }
 taBase* Function::FindTypeName(const String& nm) const {
+  taBase* pv = args.FindTypeName(nm);
+  if(pv) return pv;
   return fun_code.FindTypeName(nm);
 }
 
@@ -1839,6 +1904,11 @@ void FunctionCall::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(!quiet) taMisc::CheckError("Error in FunctionCall in program:", program()->name, "fun is NULL");
     rval = false;
   }
+}
+
+void FunctionCall::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  fun_args.CheckConfig(quiet, rval);
 }
 
 const String FunctionCall::GenCssBody_impl(int indent_level) {
@@ -1865,6 +1935,7 @@ String FunctionCall::GetDisplayName() const {
       rval += "(";
       for(int i=0;i<fun_args.size;i++) {
         ProgArg* pa = fun_args.FastEl(i);
+	if(i > 0) rval += ", ";
         rval += pa->GetDisplayName();
       }
       rval += ")";
@@ -1888,10 +1959,15 @@ void ReturnExpr::Initialize() {
 
 void ReturnExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(expr.nonempty()) {
+  if(expr.nonempty()) {		// convert -- todo: remove me
     expr_val.SetExpr(expr);
     expr = _nilString;
   }
+}
+
+void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  expr_val.CheckConfig(quiet, rval);
 }
 
 const String ReturnExpr::GenCssBody_impl(int indent_level) {
