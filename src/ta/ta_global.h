@@ -298,7 +298,7 @@ typedef unsigned char   byte;
 
 #ifdef __MAKETA__
 #define explicit
-#define struct class
+//#define struct class
 #define INHERITED(c)
 #define STATIC_CONST static
 #define USING(b)

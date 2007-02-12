@@ -183,8 +183,8 @@ void DMemComm::CommSubGpOuter(int sub_gp_size) {
 // 		ShareVar
 
 void DMemShareVar::Initialize() {
-  comm = -1;
-  mpi_type = -1;
+  comm = MPI_COMM_NULL;
+  mpi_type = MPI_DATATYPE_NULL;
   max_per_proc = -1;
   n_procs = -1;
   this_proc = -1;
@@ -226,8 +226,8 @@ void DMemShareVar::Copy_(const DMemShareVar& cp) {
 }
 
 void DMemShareVar::ResetVar() {
-  comm = -1;
-  mpi_type = -1;
+  comm = MPI_COMM_NULL;
+  mpi_type = MPI_DATATYPE_NULL;
   n_procs = -1;
   this_proc = -1;
   addrs.Reset();
@@ -285,23 +285,19 @@ void DMemShareVar::Compile_Var(MPI_Comm cm) {
     proc_ctr[lproc]++;
   }
 
-  switch(mpi_type) {
-  case MPI_FLOAT: {
+  if (mpi_type ==  MPI_FLOAT) {
     float_send.SetSize(addrs_recv.size);
     float_recv.SetSize(addrs_recv.size);
-    break;
   }
-  case MPI_DOUBLE: {
+  else if (mpi_type == MPI_DOUBLE) {
     double_send.SetSize(addrs_recv.size);
     double_recv.SetSize(addrs_recv.size);
-    break;
   }
-  case MPI_INT: {
+  else if (mpi_type == MPI_INT) {
     int_send.SetSize(addrs_recv.size);
     int_recv.SetSize(addrs_recv.size);
-    break;
   }
-  }
+  //note: we don't allow creation of other types
 }
 
 void DMemShareVar::SyncVar() {
@@ -314,15 +310,14 @@ void DMemShareVar::SyncVar() {
 
   if(n_procs <= 1) return;
 
-  if((comm == -1) || (addrs_recv.size != n_procs * max_per_proc)) {
+  if((comm == MPI_COMM_NULL) || (addrs_recv.size != n_procs * max_per_proc)) {
     taMisc::Error("ERROR: SyncVar called before Complie_Var initialized!");
     return;
   }
 
   int my_idx = recv_idx[this_proc];
   int my_n = n_local[this_proc];
-  switch(mpi_type) {
-  case MPI_FLOAT: {
+  if (mpi_type == MPI_FLOAT) {
     for(int i=0; i< my_n; i++, my_idx++)  float_send[i] = *((float*)addrs_recv[my_idx]);
 
 //     DMEM_MPICALL(MPI_Allgather(float_send.el, max_per_proc, mpi_type, float_recv.el, max_per_proc,
@@ -349,9 +344,8 @@ void DMemShareVar::SyncVar() {
       int p_idx = recv_idx[proc];
       for(int i=0; i<n_local[proc]; i++, p_idx++) *((float*)addrs_recv[p_idx]) = float_recv[p_idx];
     }
-    break;
   }
-  case MPI_DOUBLE: {
+  else if (mpi_type == MPI_DOUBLE) {
     for(int i=0;i<my_n;i++, my_idx++)  double_send[i] = *((double*)addrs_recv[my_idx]);
     DMEM_MPICALL(MPI_Allgather(double_send.el, max_per_proc, mpi_type, double_recv.el, max_per_proc,
 			       mpi_type, comm), "SyncVar", "Allgather");
@@ -360,9 +354,8 @@ void DMemShareVar::SyncVar() {
       int p_idx = recv_idx[proc];
       for(int i=0; i<n_local[proc]; i++, p_idx++) *((double*)addrs_recv[p_idx]) = double_recv[p_idx];
     }
-    break;
   }
-  case MPI_INT: {
+  else if (mpi_type == MPI_INT) {
     for(int i=0;i<my_n;i++, my_idx++)  int_send[i] = *((int*)addrs_recv[my_idx]);
     DMEM_MPICALL(MPI_Allgather(int_send.el, max_per_proc, mpi_type, int_recv.el, max_per_proc,
 			       mpi_type, comm), "SyncVar", "Allgather");
@@ -371,9 +364,8 @@ void DMemShareVar::SyncVar() {
       int p_idx = recv_idx[proc];
       for(int i=0; i<n_local[proc]; i++, p_idx++) *((int*)addrs_recv[p_idx]) = int_recv[p_idx];
     }
-    break;
   }
-  }
+  // note: we don't allow creation of any other tyeps
 }
 
 void DMemShareVar::AggVar(MPI_Op op) {
@@ -386,33 +378,28 @@ void DMemShareVar::AggVar(MPI_Op op) {
 
   if(n_procs <= 1) return;
 
-  if((comm == -1) || (addrs_recv.size != n_procs * max_per_proc)) {
+  if((comm == MPI_COMM_NULL) || (addrs_recv.size != n_procs * max_per_proc)) {
     taMisc::Error("ERROR: AggVar called before Complie_Var initialized!");
     return;
   }
 
-  switch(mpi_type) {
-  case MPI_FLOAT: {
+  if (mpi_type == MPI_FLOAT) {
     for(int i=0; i< addrs.size; i++)  float_send[i] = *((float*)addrs[i]);
     DMEM_MPICALL(MPI_Allreduce(float_send.el, float_recv.el, addrs.size, mpi_type, op, comm),
 		 "AggVar", "Allreduce");
     for(int i=0; i< addrs.size; i++) *((float*)addrs[i]) = float_recv[i];
-    break;
   }
-  case MPI_DOUBLE: {
+  else if (mpi_type == MPI_DOUBLE) {
     for(int i=0; i< addrs.size; i++)  double_send[i] = *((double*)addrs[i]);
     DMEM_MPICALL(MPI_Allreduce(double_send.el, double_recv.el, addrs.size, mpi_type, op, comm),
 		 "AggVar", "Allreduce");
     for(int i=0; i< addrs.size; i++) *((double*)addrs[i]) = double_recv[i];
-    break;
   }
-  case MPI_INT: {
+  else if (mpi_type == MPI_INT) {
     for(int i=0; i< addrs.size; i++)  int_send[i] = *((int*)addrs[i]);
     DMEM_MPICALL(MPI_Allreduce(int_send.el, int_recv.el, addrs.size, mpi_type, op, comm),
 		 "AggVar", "Allreduce");
     for(int i=0; i< addrs.size; i++) *((int*)addrs[i]) = int_recv[i];
-    break;
-  }
   }
 }
 
@@ -463,7 +450,7 @@ void DMemShare::Compile_ShareVar(TypeDef* td, taBase* shr_item, MemberDef* par_m
 
     DMemShareVar* var = (DMemShareVar*)vars[shrset];
 
-    int new_type = -1;
+    MPI_Datatype new_type = MPI_DATATYPE_NULL;
     if(md->type->ptr > 0) {
       taMisc::Error("WARNING: DMEM_SHARE_SET Specified for a pointer in type:",
 		    td->name, ", member:", md->name,
@@ -480,16 +467,16 @@ void DMemShare::Compile_ShareVar(TypeDef* td, taBase* shr_item, MemberDef* par_m
       continue;
     }
     else if (md->type->InheritsFrom(TA_double)) {
-      new_type = (int)MPI_DOUBLE;
+      new_type = MPI_DOUBLE;
     }
     else if (md->type->InheritsFrom(TA_float)) {
-      new_type = (int)MPI_FLOAT;
+      new_type = MPI_FLOAT;
     }
     else if (md->type->InheritsFrom(TA_int)) {
-      new_type = (int)MPI_INT;
+      new_type = MPI_INT;
     }
     else if (md->type->InheritsFrom(TA_enum)) {
-      new_type = (int)MPI_INT;
+      new_type = MPI_INT;
     }
     else {
       taMisc::Error("WARNING: DMEM_SHARE_SET Specified for an unrecognized type.",
@@ -497,7 +484,7 @@ void DMemShare::Compile_ShareVar(TypeDef* td, taBase* shr_item, MemberDef* par_m
 		    "unrecoginized types can not be shared.");
       continue;
     }
-    if(var->mpi_type == -1)
+    if(var->mpi_type == MPI_DATATYPE_NULL)
       var->mpi_type = new_type;
     if(var->mpi_type != new_type) {
       taMisc::Error("WARNING: Two different types specified for the same DMEM_SHARE_SET.",
@@ -611,14 +598,14 @@ void DMemShare::CloseCmdStream() {
 // 		AggVars
 
 void DMemAggVars::Initialize() {
-  comm = -1;
-  agg_op = -1;
+  comm = MPI_COMM_NULL;
+  agg_op = MPI_OP_NULL;
 }
 
 void DMemAggVars::InitLinks() {
   taBase::InitLinks();
   taBase::Own(addrs, this);
-  taBase::Own(types, this);
+//not tab  taBase::Own(types, this);
   taBase::Own(data_idx, this);
   taBase::Own(float_send, this);
   taBase::Own(float_recv, this);
@@ -643,8 +630,8 @@ void DMemAggVars::Copy_(const DMemAggVars& cp) {
 }
 
 void DMemAggVars::ResetVar() {
-  comm = -1;
-  agg_op = -1;
+  comm = MPI_COMM_NULL;
+  agg_op = MPI_OP_NULL;
   addrs.Reset();
   types.Reset();
   data_idx.Reset();
@@ -658,22 +645,15 @@ void DMemAggVars::ResetVar() {
 
 String DMemAggVars::OpToStr(MPI_Op op) {
   String op_str;
-  switch(op) {
-  case MPI_SUM:
+  if (op == MPI_SUM)
     op_str = "SUM";
-    break;
-  case MPI_PROD:
+  else if (op == MPI_PROD)
     op_str = "PROD";
-    break;
-  case MPI_MAX:
+  else if (op == MPI_MAX)
     op_str = "MAX";
-    break;
-  case MPI_MIN:
+  else if (op == MPI_MIN)
     op_str = "MIN";
-    break;
-  default:
-    break;
-  }
+  //otherwise, nothing
   return op_str;
 }
 
@@ -688,22 +668,22 @@ void DMemAggVars::ScanMembers(TypeDef* td, void* base) {
     if(opstr.empty()) continue;
     if(!((trg_op_str.empty() && (opstr == "DYN")) || (opstr == trg_op_str))) continue;
 
-    int new_type = -1;
+    MPI_Datatype new_type = MPI_DATATYPE_NULL;
     if(md->type->InheritsFormal(TA_class)) {
       ScanMembers(md->type, md->GetOff(base));
       continue;
     }
     else if(md->type->InheritsFrom(TA_double)) {
-      new_type = (int)MPI_DOUBLE;
+      new_type = MPI_DOUBLE;
     }
     else if(md->type->InheritsFrom(TA_float)) {
-      new_type = (int)MPI_FLOAT;
+      new_type = MPI_FLOAT;
     }
     else if(md->type->InheritsFrom(TA_int)) {
-      new_type = (int)MPI_INT;
+      new_type = MPI_INT;
     }
     else if(md->type->InheritsFrom(TA_enum)) {
-      new_type = (int)MPI_INT;
+      new_type = MPI_INT;
     }
     else {
       taMisc::Error("WARNING: DMEM_AGG Specified for an unrecognized type.",
@@ -727,26 +707,21 @@ void DMemAggVars::CompileVars() {
   int_recv.Reset();
 
   for(int i=0;i<types.size;i++) {
-    int mpi_type = types[i];
-    switch(mpi_type) {
-    case MPI_FLOAT: {
+    MPI_Datatype mpi_type = types[i];
+    if (mpi_type == MPI_FLOAT) {
       float_send.Add(0.0f);
       float_recv.Add(0.0f);
       data_idx.Add(float_send.size-1);
-      break;
     }
-    case MPI_DOUBLE: {
+    else if (mpi_type == MPI_DOUBLE) {
       double_send.Add(0.0f);
       double_recv.Add(0.0f);
       data_idx.Add(double_send.size-1);
-      break;
     }
-    case MPI_INT: {
+    else if (mpi_type == MPI_INT) {
       int_send.Add(0);
       int_recv.Add(0);
       data_idx.Add(int_send.size-1);
-      break;
-    }
     }
   }
 }
@@ -760,20 +735,15 @@ void DMemAggVars::AggVar(MPI_Comm cm, MPI_Op op) {
   }
 
   for(int i=0; i< types.size; i++)  {
-    int mpi_type = types[i];
-    switch(mpi_type) {
-    case MPI_FLOAT: {
+    MPI_Datatype mpi_type = types[i];
+    if (mpi_type == MPI_FLOAT) {
       float_send[data_idx[i]] = *((float*)addrs[i]);
-      break;
     }
-    case MPI_DOUBLE: {
+    else if (mpi_type == MPI_DOUBLE) {
       double_send[data_idx[i]] = *((double*)addrs[i]);
-      break;
     }
-    case MPI_INT: {
+    else if (mpi_type == MPI_INT) {
       int_send[data_idx[i]] = *((int*)addrs[i]);
-      break;
-    }
     }
   }
   if(float_send.size > 0) {
@@ -790,20 +760,15 @@ void DMemAggVars::AggVar(MPI_Comm cm, MPI_Op op) {
 
   }
   for(int i=0; i< types.size; i++)  {
-    int mpi_type = types[i];
-    switch(mpi_type) {
-    case MPI_FLOAT: {
+    MPI_Datatype mpi_type = types[i];
+    if (mpi_type == MPI_FLOAT) {
       *((float*)addrs[i]) = float_recv[data_idx[i]];
-      break;
     }
-    case MPI_DOUBLE: {
+    else if (mpi_type == MPI_DOUBLE) {
       *((double*)addrs[i]) = double_recv[data_idx[i]];
-      break;
     }
-    case MPI_INT: {
+    if (mpi_type == MPI_INT) {
       *((int*)addrs[i]) = int_recv[data_idx[i]];
-      break;
-    }
     }
   }
 }

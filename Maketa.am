@@ -48,7 +48,8 @@ MAKETA_FLAGS =\
 	-I@abs_srcdir@/../taiqtso \
 	-I@abs_srcdir@/../bp \
 	-I/usr/include/qt4/Qt \
-	-I${QTDIR}/include/QtCore
+	-I${QTDIR}/include/QtCore \
+	${MAKETA_XXFLAGS}
 
 # TODO: Fix above hacky includes
 

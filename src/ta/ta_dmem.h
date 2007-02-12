@@ -21,7 +21,28 @@
 
 #ifdef DMEM_COMPILE
 
-#include <mpi.h>
+# include <mpi.h>
+
+#ifndef __MAKETA__
+class TA_API MPI_Datatype_PArray: public taPlainArray<MPI_Datatype> {
+  // #NO_TOKENS only used in TypeDef dmem_type
+public:
+  void	operator=(const MPI_Datatype_PArray& cp) { Copy_Duplicate(cp); }
+  MPI_Datatype_PArray()				{ };
+  MPI_Datatype_PArray(const MPI_Datatype_PArray& cp) { Copy_Duplicate(cp); }
+
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((MPI_Datatype*)a) == *((MPI_Datatype*)b)) rval=0; return rval; } // only groks ==
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((MPI_Datatype*)a) == *((MPI_Datatype*)b)); }
+  String	El_GetStr_(const void* it) const { return _nilString; }
+  void		El_SetFmStr_(void* it, const String& val)
+  {  }
+};
+#endif
+
+
 
 // add the following code into any object that is going to be shared across processors
 // #ifdef DMEM_COMPILE
@@ -83,7 +104,7 @@ class TA_API DMemShareVar : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
 public:
   MPI_Comm	comm;		// #IGNORE communicator associated with these shared objs
-  int		mpi_type;	// #IGNORE mpi's type for this variable
+  MPI_Datatype	mpi_type;	// #IGNORE mpi's type for this variable
   int		max_per_proc;	// #IGNORE maximum number of vars per any one proc
   int		n_procs;	// #IGNORE number of processors in this communicator (set during Compile_Var)
   int		this_proc;	// #IGNORE proc id (rank) of this processor in communicator (set during Compile_Var)
@@ -169,11 +190,13 @@ class TA_API DMemAggVars : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##CAT_DMem collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)
 public:
   MPI_Comm	comm;		// #IGNORE communicator to use in aggregating these variables
-  MPI_Op	agg_op;		// #IGNORE operator to use in aggregation, if this is fixed and determined by the member comment directive (if dynamic, leave as -1)
+  MPI_Op	agg_op;		// #IGNORE operator to use in aggregation, if this is fixed and determined by the member comment directive (if dynamic, leave as MPI_OP_NULL)
 
   // the following two must be initialized for all the data to be shared prior to calling Compile_Var
   voidptr_Array	addrs;		// #IGNORE local processor addresses for each item to be shared (one for each individual data item)
-  int_Array	types; 		// #IGNORE mpi_type of each item (INT, FLOAT, DOUBLE)
+#ifndef __MAKETA__
+  MPI_Datatype_PArray	types; 	// #IGNORE mpi_type of each item (INT, FLOAT, DOUBLE)
+#endif  
   int_Array	data_idx;	// #IGNORE index into send/recv array of given type
 
   // the following are contiguous data arrays for sending and gathering from all other procs
@@ -192,8 +215,8 @@ public:
   virtual void	CompileVars();
   // #IGNORE allocate recv/send data and data_idx values based on types info for vars
 
-  virtual void 	AggVar(MPI_Comm cm, MPI_Op op = -1);
-  // #IGNORE aggregate variable across procs (allreduce: each sends and recvs all data using op to merge w/ existing vals) (-1 = use pre-set agg_op
+  virtual void 	AggVar(MPI_Comm cm, MPI_Op op = MPI_OP_NULL);
+  // #IGNORE aggregate variable across procs (allreduce: each sends and recvs all data using op to merge w/ existing vals) (MPI_OP_NULL = use pre-set agg_op
 
   virtual void 	ResetVar();	// #IGNORE reset variable info
 

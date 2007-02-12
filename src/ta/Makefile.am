@@ -123,12 +123,12 @@ TAHEADS =\
 	@abs_srcdir@/icolor.h \
 	@abs_srcdir@/ta_type.h \
 	@abs_srcdir@/ta_base.h \
+	@abs_srcdir@/ta_dmem.h \
 	@abs_srcdir@/ta_fontspec.h \
 	@abs_srcdir@/minmax.h \
 	@abs_srcdir@/ta_group.h \
 	@abs_srcdir@/ta_qtclipdata.h \
 	@abs_srcdir@/colorscale.h \
-	@abs_srcdir@/ta_dmem.h \
 	@abs_srcdir@/ta_script.h \
 	@abs_srcdir@/ta_dynenum.h \
 	@abs_srcdir@/ta_viewspec.h \
@@ -211,13 +211,13 @@ SRCS =\
 	ta_type.moc.cpp \
 	ta_type_constr.cpp \
 	ta_base.cpp \
+	ta_dmem.cpp \
 	ta_fontspec.cpp \
 	minmax.cpp \
 	ta_group.cpp \
 	ta_qtclipdata.cpp \
 	ta_qtclipdata.moc.cpp \
 	colorscale.cpp \
-	ta_dmem.cpp \
 	ta_script.cpp \
 	ta_dynenum.cpp \
 	ta_viewspec.cpp \

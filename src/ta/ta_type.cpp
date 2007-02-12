@@ -25,6 +25,9 @@
 # include "ta_dump.h"
 # include "ta_project.h" // for taRootBase
 # include "colorscale.h"
+# ifdef DMEM_COMPILE
+#   include "ta_dmem.h"
+# endif
 # include "ta_TA_type.h"
 # include <QDir>
 # include <QCoreApplication>
@@ -3312,6 +3315,9 @@ void TypeDef::Initialize() {
   templ_pars.name = "templ_pars";
   templ_pars.owner = this;
   m_cacheInheritsNonAtomicClass = 0;
+#if (!defined(NO_TA_BASE) && defined(DMEM_COMPILE))
+  dmem_type = NULL;
+#endif
 }
 
 TypeDef::TypeDef()
@@ -3423,6 +3429,12 @@ void TypeDef::Copy(const TypeDef& cp) {
 
 TypeDef::~TypeDef() {
 #ifndef NO_TA_BASE
+# ifdef DMEM_COMPILE
+  if (dmem_type) {
+    delete (MPI_Datatype_PArray*)dmem_type;
+    dmem_type = NULL;
+  }
+# endif
   if (defaults) {
     taBase::UnRef(defaults);
     defaults = NULL;
@@ -4944,11 +4956,18 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 
 
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
-int TypeDef::GetDMemType(int share_set) {
-  if(dmem_type.size > share_set) return dmem_type[share_set];
-  if(dmem_type.size < share_set) GetDMemType(share_set-1);
+#define DMEM_TYPE (*(MPI_Datatype_PArray*)(dmem_type))
+void TypeDef::AssertDMem_Type() {
+  if (dmem_type) return;
+  dmem_type = new MPI_Datatype_PArray;
+}
 
-  int primitives[members.size];
+MPI_Datatype TypeDef::GetDMemType(int share_set) {
+  AssertDMem_Type();
+  if(DMEM_TYPE.size > share_set) return DMEM_TYPE[share_set];
+  if(DMEM_TYPE.size < share_set) GetDMemType(share_set-1);
+
+  MPI_Datatype primitives[members.size];
   MPI_Aint byte_offsets[members.size];
   int block_lengths[members.size];
 
@@ -4968,19 +4987,19 @@ int TypeDef::GetDMemType(int share_set) {
       primitives[curr_prim] = md->type->GetDMemType(share_set);
     }
     else if (md->type->InheritsFrom(TA_double)) {
-      primitives[curr_prim] = (int)MPI_DOUBLE;
+      primitives[curr_prim] = MPI_DOUBLE;
     }
     else if (md->type->InheritsFrom(TA_float)) {
-      primitives[curr_prim] = (int)MPI_FLOAT;
+      primitives[curr_prim] = MPI_FLOAT;
     }
     else if (md->type->InheritsFrom(TA_int)) {
-      primitives[curr_prim] = (int)MPI_INT;
+      primitives[curr_prim] = MPI_INT;
     }
     else if (md->type->InheritsFrom(TA_enum)) {
-      primitives[curr_prim] = (int)MPI_INT;
+      primitives[curr_prim] = MPI_INT;
     }
     else if (md->type->InheritsFrom(TA_long)) {
-      primitives[curr_prim] = (int)MPI_LONG;
+      primitives[curr_prim] = MPI_LONG;
     }
     else {
       taMisc::Error("WARNING: DMEM_SHARE_SET Specified for an unrecognized type.",
@@ -5001,7 +5020,7 @@ int TypeDef::GetDMemType(int share_set) {
     MPI_Type_struct(curr_prim, block_lengths, byte_offsets, primitives, &new_type);
     MPI_Type_commit(&new_type);
   }
-  dmem_type.Add(new_type);
+  DMEM_TYPE.Add(new_type);
   return new_type;
 }
 

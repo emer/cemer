@@ -43,6 +43,9 @@
 #include "ta_def.h"
 #include "ta_list.h"
 #include "ta_variant.h"
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE) && !defined(__MAKETA__)
+# include "mpi.h"
+#endif
 
 #ifdef TA_USE_QT
 # ifndef __MAKETA__
@@ -224,7 +227,7 @@ protected:
   {*((String*)it) = val; }
 };
 
-class int_PArray: public taPlainArray<int> {
+class TA_API int_PArray: public taPlainArray<int> {
   // #NO_TOKENS a plain-array of ints
 public:
   void	operator=(const int_PArray& cp)	{ Copy_Duplicate(cp); }
@@ -1598,9 +1601,10 @@ public:
   
   static TypeDef* 	GetCommonSubtype(TypeDef* typ1, TypeDef* typ2); // get the common primary (1st parent class) subtype between the two
 
-#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
-  int_PArray	dmem_type;
-  virtual int 	GetDMemType(int share_set);
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE) && !defined(__MAKETA__)
+  void*		dmem_type; // actually ptr to: MPI_Datatype_PArray
+  void 		AssertDMem_Type(); // creates the dmem_type array if not already
+  virtual MPI_Datatype 	GetDMemType(int share_set);
 #endif
   TypeSpace*	owner;		// the owner of this one
 
