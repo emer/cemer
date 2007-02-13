@@ -4609,17 +4609,8 @@ void Network::UpdtAfterNetMod() {
   CountRecvCons();
   small_batch_n_eff = small_batch_n;
 #ifdef DMEM_COMPILE
-  dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
   DMem_SyncNRecvCons();
-  if(dmem_trl_comm.nprocs > 1) {
-    if(wt_update != SMALL_BATCH) {
-      taMisc::Warning("Network: changing wt_update to SMALL_BATCH because dmem trial nprocs =",
-		      (String)dmem_trl_comm.nprocs);
-    }
-    wt_update = SMALL_BATCH;			  // must be small batch
-    small_batch_n_eff = small_batch_n / dmem_trl_comm.nprocs; // effective small_batch_n
-    if(small_batch_n_eff < 1) small_batch_n_eff = 1;
-  }
+  DMem_UpdtWtUpdt();
 #endif
 }
 
@@ -4631,6 +4622,7 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
   DMem_PruneNonLocalCons();
+  DMem_UpdtWtUpdt();
 #endif
 
   return rval;
@@ -5013,6 +5005,18 @@ void Network::DMem_DistributeUnits() {
     }
     else
       dmem_share_units.Compile_ShareTypes(); // use custom distribution: just compile it
+  }
+}
+
+void Network::DMem_UpdtWtUpdt() {
+  if(dmem_trl_comm.nprocs > 1) {
+    if(wt_update != SMALL_BATCH) {
+      taMisc::Warning("Network: changing wt_update to SMALL_BATCH because dmem trial nprocs =",
+		      (String)dmem_trl_comm.nprocs);
+    }
+    wt_update = SMALL_BATCH;			  // must be small batch
+    small_batch_n_eff = small_batch_n / dmem_trl_comm.nprocs; // effective small_batch_n
+    if(small_batch_n_eff < 1) small_batch_n_eff = 1;
   }
 }
 

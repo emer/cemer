@@ -1846,6 +1846,8 @@ public:
   // #IGNORE synchronize just the activations (share set 2)
   virtual void 	DMem_DistributeUnits();
   // #CAT_DMem distribute units to different nodes
+  virtual void 	DMem_UpdtWtUpdt();
+  // #CAT_DMem update wt_update and small_batch parameters for dmem, depending on trl_comm.nprocs
   virtual void 	DMem_InitAggs();
   // #IGNORE initialize aggregation stuff
   virtual void 	DMem_PruneNonLocalCons();
