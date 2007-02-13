@@ -40,10 +40,11 @@ public:
   };
 
   ProgVarRef	data_var;	// program variable pointing to the data table to use
-  Order		order;		// order to process data items in
+  ProgVarRef	order_var;	// variable that contains the order to process data items (trials) in -- is automatically created if not set
+  Order		order;		// #READ_ONLY #SHOW order to process data items (trials) in -- set from order_var
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies 
-  int		dmem_nprocs;	// number of processors to use for distributed memory processing (input data distributed over nodes) -- computed automatically if dmem is active; else set to 1
-  int		dmem_this_proc;	// processor rank for this processor relative to communicator group
+  int		dmem_nprocs;	// #READ_ONLY number of processors to use for distributed memory processing (input data distributed over nodes) -- computed automatically if dmem is active; else set to 1
+  int		dmem_this_proc;	// #READ_ONLY processor rank for this processor relative to communicator group
 
   virtual void	DMem_Initialize(Network* net);
   // configure the dmem communicator stuff: depends on dmem setup of network
@@ -52,7 +53,9 @@ public:
 
   TA_SIMPLE_BASEFUNS(BasicDataLoop);
 protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  virtual void	GetOrderVar(); // make an order variable in program
+  override void	UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -73,8 +76,10 @@ public:
   };
 
   ProgVarRef	data_var;	// program variable pointing to the data table to use
-  Order		group_order;	// order to process data groups in
-  Order		item_order;	// order to process data items in
+  ProgVarRef	group_order_var; // variable that contains the order to process data groups in -- is automatically created if not set
+  ProgVarRef	item_order_var; // variable that contains the order to process data items in -- is automatically created if not set
+  Order		group_order;	// #READ_ONLY #SHOW order to process data groups in -- set from group_order_var
+  Order		item_order;	// #READ_ONLY #SHOW order to process data items in -- set from item_order_var
   int		group_col;	// column in the data table that contains the group names
   int_Array	group_idx_list;	// #READ_ONLY list of group starting indicies
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies within group
@@ -87,7 +92,9 @@ public:
 
   TA_SIMPLE_BASEFUNS(GroupedDataLoop);
 protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  virtual void	GetOrderVars(); // make order variables in program
+  override void	UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -101,9 +108,9 @@ class PDP_API NetCounterInit: public ProgEl {
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
-  ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
+  ProgVarRef	network_var;	// variable that points to the network 
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
-  ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
+  ProgVarRef 	local_ctr_var;	// local version of the counter variable, maintained by the program -- must have same name as the counter!  automatically created if not set
   MemberDef*	counter;	// #TYPE_ON_network_type #CATDEF_Counter counter variable on network to operate on
   
   override String	GetDisplayName() const;
@@ -113,7 +120,7 @@ public:
 
 protected:
   override void	UpdateAfterEdit_impl();
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
@@ -127,9 +134,9 @@ class PDP_API NetCounterIncr: public ProgEl {
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
-  ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
+  ProgVarRef	network_var;	// variable that points to the network (typically a global_var)
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
-  ProgVarRef 	local_ctr_var;	// #SCOPE_Program_Group local version of the counter variable, maintained by the program -- must have same name as the counter!
+  ProgVarRef 	local_ctr_var;	// local version of the counter variable, maintained by the program -- must have same name as the counter! -- automatically created if not set
   MemberDef*	counter;	// #TYPE_ON_network_type  #CATDEF_Counter counter variable on network to operate on
   
   override String	GetDisplayName() const;
@@ -139,7 +146,7 @@ public:
 
 protected:
   override void	UpdateAfterEdit_impl();
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
   override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object

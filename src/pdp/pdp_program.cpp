@@ -31,6 +31,25 @@ void BasicDataLoop::Initialize() {
   loop_test = "This is not used here!";
 }
 
+void BasicDataLoop::GetOrderVar() {
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(!order_var) {
+    if(!(order_var = my_prog->vars.FindName("data_loop_order"))) {
+      order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      order_var->name = "data_loop_order";
+    }
+  }
+  order_var->var_type = ProgVar::T_HardEnum;
+  order_var->hard_enum_type = TA_BasicDataLoop.sub_types.FindName("Order");
+  order = (Order)order_var->int_val;
+}
+
+void BasicDataLoop::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  GetOrderVar();
+}
+
 void BasicDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if (!data_var) {
@@ -111,6 +130,35 @@ void GroupedDataLoop::Initialize() {
   item_order = SEQUENTIAL;
   group_col = 0;
   loop_test = "This is not used here!";
+}
+
+void GroupedDataLoop::GetOrderVars() {
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(!group_order_var) {
+    if(!(group_order_var = my_prog->vars.FindName("group_order"))) {
+      group_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      group_order_var->name = "group_order";
+    }
+  }
+  group_order_var->var_type = ProgVar::T_HardEnum;
+  group_order_var->hard_enum_type = TA_GroupedDataLoop.sub_types.FindName("Order");
+  group_order = (Order)group_order_var->int_val;
+
+  if(!item_order_var) {
+    if(!(item_order_var = my_prog->vars.FindName("item_order"))) {
+      item_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      item_order_var->name = "item_order";
+    }
+  }
+  item_order_var->var_type = ProgVar::T_HardEnum;
+  item_order_var->hard_enum_type = TA_GroupedDataLoop.sub_types.FindName("Order");
+  item_order = (Order)item_order_var->int_val;
+}
+
+void GroupedDataLoop::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  GetOrderVars();
 }
 
 void GroupedDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {

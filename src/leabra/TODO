@@ -2,9 +2,7 @@ leabra todo list:
 
 commit:
 
-* datatable: Writeclose_impl -- need flag for dmem auto write file or not.
-  all procs are saving epoch log file and that is not good..  maybe just make that a separate
-  step that is controlled by the program.  yes.
+* init..
 
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
   -- seems slower after clicking around (confirmed).  maybe net too?  

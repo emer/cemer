@@ -9,10 +9,11 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [3] {
+  ProgVar_List @.vars = [4] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
+    ProgVar @[3] { };
   };
 
   ProgEl_List @.init_code = [1] {
@@ -21,7 +22,11 @@ Program .projects[0].programs.gp[0][2] {
 
   ProgEl_List @.prog_code = [8] {
     NetCounterInit @[0] { };
-    MethodCall @[1] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
     MethodCall @[2] { };
     BasicDataLoop @[3] { 
       ProgEl_List @.loop_code = [3] {
@@ -89,13 +94,21 @@ Program .projects[0].programs.gp[0][2] {
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
+   name="data_loop_order";
+   var_type=T_HardEnum;
+   int_val=1;
+   hard_enum_type=BasicDataLoop::Order;
+   objs_ptr=0;
+   desc=;
+  };
+  ProgVar @[1] {
    name="trial";
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
    desc=;
   };
-  ProgVar @[1] {
+  ProgVar @[2] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
@@ -103,7 +116,7 @@ Program .projects[0].programs.gp[0][2] {
    objs_ptr=1;
    desc=;
   };
-  ProgVar @[2] {
+  ProgVar @[3] {
    name="trial_mon_data";
    var_type=T_Object;
    object_type=DataTable;
@@ -125,7 +138,7 @@ Program .projects[0].programs.gp[0][2] {
    desc="initialize trial counter: note also needs to do this in regular running program";
    flags=PEF_NONE;
    network_var=.projects[0].programs.gp[0][2].args[0]$4$;
-   local_ctr_var=.projects[0].programs.gp[0][2].vars[0]$5$;
+   local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$5$;
    counter=Network::trial;
   };
  };
@@ -144,19 +157,38 @@ Program .projects[0].programs.gp[0][2] {
    desc=;
    flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][2].vars[1]$6$;
+   obj=.projects[0].programs.gp[0][2].vars[2]$6$;
    method=TimeUsed::StartTimer;
-   args{ true;};
-{ bool reset_used;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=NULL;
+     type="bool";
+     name="reset_used";
+     expr {
+      expr="true";
+      var_expr="true";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
   };
   MethodCall @[2] {
    desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn OFF if not wanted)";
    flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][2].vars[2]$7$;
+   obj=.projects[0].programs.gp[0][2].vars[3]$7$;
    method=DataTable::ResetData;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
   BasicDataLoop @[3] {
    desc=;
@@ -180,12 +212,30 @@ Program .projects[0].programs.gp[0][2] {
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
+       arg_type=LeabraNetwork;
+       type="LeabraNetwork*";
        name="network";
-       value="network";
+       expr {
+	expr="network";
+	var_expr="$#0";
+	vars {
+	};
+	var_names{ network;	};
+	bad_vars{ 	};
+       };
       };
       ProgArg @[1] {
+       arg_type=DataTable;
+       type="DataTable*";
        name="input_data";
-       value="input_data";
+       expr {
+	expr="input_data";
+	var_expr="$#0";
+	vars {
+	};
+	var_names{ input_data;	};
+	bad_vars{ 	};
+       };
       };
      };
     };
@@ -203,8 +253,11 @@ Program .projects[0].programs.gp[0][2] {
        result_var=NULL;
        obj=.projects[0].programs.gp[0][3].args[0]$9$;
        method=Network::Compute_Weights;
-       args{ };
-{        };
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
       };
      };
      false_code {
@@ -216,6 +269,7 @@ Program .projects[0].programs.gp[0][2] {
    };
    loop_test="This is not used here";
    data_var=.projects[0].programs.gp[0][2].args[1]$10$;
+   order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
    order=PERMUTED;
    item_idx_list{ 3;5;0;4;2;1;   };
    dmem_nprocs=1;
@@ -235,8 +289,11 @@ Program .projects[0].programs.gp[0][2] {
      result_var=NULL;
      obj=$9$;
      method=Network::Compute_Weights;
-     args{ };
-{      };
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
     };
    };
    false_code {
@@ -251,8 +308,11 @@ Program .projects[0].programs.gp[0][2] {
    result_var=NULL;
    obj=$4$;
    method=LeabraNetwork::Compute_EpochStats;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
   MethodCall @[6] {
    desc=;
@@ -260,21 +320,33 @@ Program .projects[0].programs.gp[0][2] {
    result_var=NULL;
    obj=$6$;
    method=TimeUsed::EndTimer;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
   ProgramCall @[7] {
    desc=;
    flags=PEF_NONE;
-   target=.projects[0].programs.gp[0][8]$11$;
+   target=.projects[0].programs.gp[0][8]$12$;
    call_init=0;
    prog_args {
     name=;
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
+     arg_type=Network;
+     type="LeabraNetwork*";
      name="network";
-     value="network";
+     expr {
+      expr="network";
+      var_expr="$#0";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
     };
    };
   };
