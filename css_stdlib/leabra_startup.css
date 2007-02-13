@@ -25,7 +25,7 @@ void SetArg(String arg_nm, String var_nm, Program* prog) {
 void SetLogFile(String ext, String tag, String subdir, DataTable* dt, bool dmem=false) {
   if(!dmem && (taMisc::dmem_proc != 0)) return;	// if not sep log files by dmem, then only for first guy!
   String log_nm = dt->GetFileNameFmProject(ext, tag, subdir, dmem);
-  dt->SaveDataLog(log_nm);
+  dt->SaveDataLog(log_nm, false, !dmem); // last arg is whether to restrict to dmem proc 0..
   if(taMisc::dmem_proc == 0)
     cerr << "Saving data log of: " << dt->name << " to: " << log_nm << endl;
 }

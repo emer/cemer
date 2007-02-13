@@ -3429,7 +3429,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
      display_toggle=1;
      visible=0;
      lft=0;
-     top=0;
+     top=0.03658536;
      o=Horizontal;
     };
    };
@@ -4310,7 +4310,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.1: err=0.9: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4342,7 +4342,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.1: err=0.9: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4611,8 +4611,8 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
     };
    };
    train_mode=TRAIN;
-   wt_update=ON_LINE;
-   small_batch_n=10;
+   wt_update=SMALL_BATCH;
+   small_batch_n=2;
    batch=0;
    epoch=0;
    trial=0;
