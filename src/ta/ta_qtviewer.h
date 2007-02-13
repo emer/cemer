@@ -1095,7 +1095,7 @@ public:
 
   void			Activated(bool val); // called by parent to indicate if we are active tabview or not
   bool 			ActivatePanel(taiDataLink* dl); // if a panel exists for the link, make it active and return true
-  void			AddPanel(iDataPanel* panel); // adds a panel
+  bool			AddPanel(iDataPanel* panel); // adds a panel if not already, true if newly added
   void			AddPanelNewTab(iDataPanel* panel); // adds a panel in a new tab
   void 			Closing(CancelOp& cancel_op);
   void 			DataPanelDestroying(iDataPanel* panel);

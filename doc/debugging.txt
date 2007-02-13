@@ -2,11 +2,32 @@ Tree Browsing Show/Hide
 
 
 
+
 debug T3 selection
 
 leabra_ra.proj
 
+
+if you delete top layer, then next layer
+then select bottom layer,
+you get a segfault on bottom layer in the 
+iTabView::GetDataPanel() routine, for i = 5
+
+caused because the i=5 panel is the one created for the item
+previously selected then deleted -- that panel should
+no longer be on the list, because the item i
+
+
+after deleting the layer, when you click on the next layer,
+the iTabView::AddPanel gets called twice with the same panel
+
+an issue if we try to ActivatePanel based on link,
+but we aren't matching panel exactly
+
+why wasn't GetDataPanel returning the panel, based on link?
 context:
+
+
 
 * select Input layer
 

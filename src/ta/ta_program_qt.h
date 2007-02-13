@@ -144,11 +144,11 @@ INHERITED(QWidget)
   Q_OBJECT
 public:
   QVBoxLayout*		layOuter;
-  QHBoxLayout*		  layEdit;
+  QVBoxLayout*		  layEdit;
   iEditGrid*	    	  body; // container for the actual taiData items
-//QVBoxLayout*		    layButtons;
-  HiLightButton*	      btnApply;
-  HiLightButton*	      btnRevert;
+//QHBoxLayout*		  layButtons;
+  HiLightButton*	    btnApply;
+  HiLightButton*	    btnRevert;
   iTreeView*		  items;
   
   bool			read_only; // set true if we are

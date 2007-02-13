@@ -463,27 +463,27 @@ void iProgramEditor::Init() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   
-  layEdit = new QHBoxLayout(layOuter);
+  layEdit = new QVBoxLayout(layOuter);
   layEdit->setMargin(0);
-  layEdit->addSpacing(taiM->hsep_c);
+  layEdit->addSpacing(taiM->vsep_c);
   
   body = new iEditGrid(false, false, 2, 1, 2, 1, this); //note: intrinsically sizes to 2 rows minimum
   body->setRowHeight(taiM->max_control_height(taiM->ctrl_size));
   setEditBgColor(NULL); // set defaults
   layEdit->addWidget(body, 1); // give all the space to this guy
-  layEdit->addSpacing(taiM->hspc_c);
+  layEdit->addSpacing(taiM->vsep_c);
   
-  QVBoxLayout* layButtons = new QVBoxLayout();
+  QHBoxLayout* layButtons = new QHBoxLayout();
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
   layButtons->addStretch();
   btnApply = new HiLightButton("&Apply", this);
   layButtons->addWidget(btnApply);
-  layButtons->addStretch();
+  layButtons->addSpacing(4);
   
   btnRevert = new HiLightButton("&Revert", this);
   layButtons->addWidget(btnRevert);
-  layButtons->addStretch();
+  layButtons->addSpacing(4);
   layEdit->addLayout(layButtons);
   
   items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);

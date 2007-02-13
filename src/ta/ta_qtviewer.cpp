@@ -3765,16 +3765,17 @@ bool iTabView::ActivatePanel(taiDataLink* dl) {
   return false;
 }
 
-void iTabView::AddPanel(iDataPanel* panel) {
+bool iTabView::AddPanel(iDataPanel* panel) {
+  if (!panels.AddUnique(panel)) return false; // refs us on add
   wsPanels->addWidget(panel);
-  panels.Add(panel); // refs us
   if (panels.size == 1) wsPanels->raiseWidget(panel); // always show first
   iTabViewer* itv = tabViewerWin();
   if (itv) panel->OnWindowBind(itv);
+  return true;
 }
 
 void iTabView::AddPanelNewTab(iDataPanel* panel) {
-  AddPanel(panel);
+  AddPanel(panel); //noop if already added
   int tab_idx = tbPanels->addTab(panel);
   SetCurrentTab(tab_idx);
 }
@@ -3914,13 +3915,19 @@ void iTabView::RemoveDataPanel(iDataPanel* panel) {
   // we guard for destructing case by clearing panels, so don't detect it
   if (panels.RemoveEl(panel)) { // Remove unrefs us in panel
     wsPanels->removeWidget(panel); // superfluous, but safe, if panel is destroying
-    // remove any associated tabs, except leave last tab (will get deleted anyway if we are
+    // remove any associated tabs, except leave last non-locked tab (will get deleted anyway if we are
     // destructing)
     for (int i = tbPanels->count() - 1; i >= 0; --i) {
       iDataPanel* dp = tbPanels->panel(i);
       if (dp == panel) {
         if ((i > 0) || (tbPanels->count() > 1)) {
           tbPanels->removeTab(i);
+          // next tab focuses, but doesn't send us an event, so...
+          // activate next, unless we removed last
+          int fi = i;
+          if (fi >= tbPanels->count())
+            --fi; 
+          SetCurrentTab(fi);
         } else {
           tbPanels->SetPanel(0, NULL); // no panel
         }
@@ -3945,6 +3952,8 @@ void iTabView::SetCurrentTab(int tab_idx) {
 
 void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
   if (!panel) return;
+  //note: panel has typically been added already, but we double check
+  
   iDataPanel* cur_pn = curPanel(); //note: can be null
   
   // first, see if we have a tab for guy already -- don't create more than 1 per guy
