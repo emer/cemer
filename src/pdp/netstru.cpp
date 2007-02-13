@@ -4612,6 +4612,10 @@ void Network::UpdtAfterNetMod() {
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
   DMem_SyncNRecvCons();
   if(dmem_trl_comm.nprocs > 1) {
+    if(wt_update != SMALL_BATCH) {
+      taMisc::Warning("Network: changing wt_update to SMALL_BATCH because dmem trial nprocs ="
+		      (String)dmem_trl_comm.nprocs);
+    }
     wt_update = SMALL_BATCH;			  // must be small batch
     small_batch_n_eff = small_batch_n / dmem_trl_comm.nprocs; // effective small_batch_n
     if(small_batch_n_eff < 1) small_batch_n_eff = 1;
@@ -4682,12 +4686,12 @@ void Network::Build() {
   FOR_ITR_EL(Layer, l, layers., i)
     l->Build();
 //   UpdateMonitors();
-  UpdtAfterNetMod();
   StructUpdate(false);
   taMisc::DoneBusy();
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
 #endif
+  UpdtAfterNetMod();
   if(!taMisc::gui_active)    return;
 /*TODO   NetView* nv;
   FOR_ITR_EL(NetView, nv, views., i) {

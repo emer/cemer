@@ -3429,7 +3429,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
      display_toggle=1;
      visible=0;
      lft=0;
-     top=0.03658536;
+     top=0;
      o=Horizontal;
     };
    };
@@ -4611,7 +4611,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
     };
    };
    train_mode=TRAIN;
-   wt_update=SMALL_BATCH;
+   wt_update=ON_LINE;
    small_batch_n=2;
    batch=0;
    epoch=0;
