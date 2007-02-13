@@ -4613,7 +4613,7 @@ void Network::UpdtAfterNetMod() {
   DMem_SyncNRecvCons();
   if(dmem_trl_comm.nprocs > 1) {
     if(wt_update != SMALL_BATCH) {
-      taMisc::Warning("Network: changing wt_update to SMALL_BATCH because dmem trial nprocs ="
+      taMisc::Warning("Network: changing wt_update to SMALL_BATCH because dmem trial nprocs =",
 		      (String)dmem_trl_comm.nprocs);
     }
     wt_update = SMALL_BATCH;			  // must be small batch
