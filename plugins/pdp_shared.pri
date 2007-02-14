@@ -1,9 +1,74 @@
 # Shared declarations for any pdp++ plugin
-# Assumes you have ${HOME}, ${PDP4DIR} AND ${QTDIR} set
+# Assumes you have ${PDP4DIR} AND ${QTDIR} set
 
-# Replace hw w/ your plugin name
+# CONFIG info (created by configure)
+# note: have to use ../ because context is a subfolder when read
+#!include(../config.pri)
+#  message( "config.pri file is missing or could not be included" )
+
 TEMPLATE = lib
 CONFIG += plugin warn_off
+
+# we have up to 8 variants of binary, based on: debug, mpi, and nogui
+# we set parameters for these below
+
+# DESTDIR - standard location for system (shared by all users) plugins
+# we will install in system area if compiling there, or user area, if there
+
+LIB_ROOT = pdp
+LIB_VER = 3.5
+
+BUILD_EXT_US = _
+BUILD_EXT_SF = /
+
+debug {
+  mpi {
+    nogui {
+      BUILD_EXT = debug_mpi_nogui
+#      DEFINES += DEBUG DMEM_COMPILE NO_TA_GUI
+    } else {
+      BUILD_EXT = debug_mpi
+#      DEFINES += DEBUG DMEM_COMPILE TA_GUI
+    }
+  } else {
+    nogui {
+      BUILD_EXT = debug_nogui
+#      DEFINES += DEBUG NO_TA_GUI
+    } else {
+      BUILD_EXT = debug
+#      DEFINES += DEBUG TA_GUI
+    }
+  }
+} else {
+  mpi {
+    nogui {
+      BUILD_EXT = mpi_nogui
+#      DEFINES += DMEM_COMPILE NO_TA_GUI
+    } else {
+      BUILD_EXT = mpi
+#      DEFINES += DMEM_COMPILE TA_GUI
+    }
+  } else {
+    nogui {
+      BUILD_EXT = nogui
+#      DEFINES += NO_TA_GUI
+    } else {
+      BUILD_EXT = 
+      BUILD_EXT_US =
+      BUILD_EXT_SF =
+#      DEFINES += TA_GUI
+    }
+  }
+}
+
+
+# value with leading underscore
+BUILD_EXT_US = $${BUILD_EXT_US}$${BUILD_EXT}
+# value as a subfolder path
+BUILD_EXT_SF = $${BUILD_EXT_SF}$${BUILD_EXT}
+
+DESTDIR = join(../../lib/plugins$${BUILD_EXT_SF}
+LIBS += -l$${LIB_ROOT}$${BUILD_EXT_US}-$${LIB_VER}
 
 INCLUDEPATH +=\
 	. \
@@ -36,12 +101,7 @@ MAKETA_INCLUDEPATH +=\
 HEADERS += $${TARGET}_TA_type.h $${TARGET}_TA_inst.h
 SOURCES += $${TARGET}_TA.cpp
 
-# standard location for system (shared by all users) plugins
-# we will install in system area if compiling there, or user area, if there
-DESTDIR = ../../lib/plugins
-
-#TODO: modalize for debug vs. non-debug
-LIBS +=	-lpdp_debug-3.5 -L$$(PDP4DIR)/lib -L$$../../lib
+LIBS +=	-L$$(PDP4DIR)/lib -L$$../../lib
 
 # in the following, we create a new target 'maketa' which has the indicated properties
 maketa.target = $${TARGET}_TA_type.h
