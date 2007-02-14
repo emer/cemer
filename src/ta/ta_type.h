@@ -502,11 +502,21 @@ public:
     CH_EDITS		= 0x0001, // color the background of property editors according to the type of the item
     CH_BROWSER		= 0x0002 // color browser tree text according to the type of the item
   };
+  
+  enum BuildType { // #BITS what type of build this is
+    BT_0		= 0x00, // #NO_BIT constant for when no other flags set
+    BT_DEBUG		= 0x01, // a debug build
+    BT_DMEM		= 0x02, // compiled for MPI (clustered use)
+    BT_NO_GUI		= 0x04  // compiled without gui support
+  };
 
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
+  static String		app_lib_name; // #READ_ONLY #NO_SAVE #DETAIL the root name of the app's library, if any, ex. "pdp" (none for css)
   static String		version; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
   static const taVersion version_bin; 	// #IGNORE version number of ta/css
-
+  static const BuildType build_type; // #READ_ONLY #NO_SAVE #SHOW build type, mostly for determining plugin subfolders to search
+  static const String	build_str; // #READ_ONLY #NO_SAVE #DETAIL an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem) 
+  
   ////////////////////////////////////////////////////////
   // 	TA GUI parameters
 
@@ -555,6 +565,8 @@ public:
   // #SAVE #CAT_File url for location of web repository of package information
   static String		prefs_dir;
   // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
+  static String		user_app_dir;
+  // #READ_ONLY #SHOW #CAT_File user's location of application, for user plugins, etc. 
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..
@@ -668,6 +680,11 @@ public:
 		      const char* d=0, const char* e=0, const char* f=0,
 		      const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Dialog displays warning to stderr and/or other logging mechanism
+
+  static void 	Info(const char* a, const char* b=0, const char* c=0,
+		      const char* d=0, const char* e=0, const char* f=0,
+		      const char* g=0, const char* h=0, const char* i=0);
+  // #CAT_Dialog displays informative msg to stdout and/or other logging mechanism
 
   static int 	Choice(const char* text="Choice", const char* a="Ok", const char* b=0,
 		       const char* c=0, const char* d=0, const char* e=0,

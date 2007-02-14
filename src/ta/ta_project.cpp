@@ -600,6 +600,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
 
   // initialize the key folders
   taMisc::home_dir = taPlatform::getHomePath();
+  taMisc::user_app_dir = taMisc::home_dir + "/my" + taMisc::app_name;
   taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
   // make sure it exists
   taPlatform::mkdir(taMisc::prefs_dir);
@@ -622,9 +623,30 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   	
 bool taRootBase::Startup_EnumeratePlugins() {
   taMisc::Init_Hooks();		// plugins register init hooks -- this calls them!
-  taPlugins::AddPluginFolder(taMisc::pkg_home + "/lib/plugins");
-  taPlugins::AddPluginFolder(taMisc::home_dir + "/ta_plugins"); //TODO: should be pdpuserhome
-  taPlugins::InitLog(taMisc::prefs_dir + "/plugins.log");
+#ifdef TA_OS_WIN
+  String plug_dir = "/bin"; 
+#else
+  String plug_dir = "/lib"; 
+#endif
+  String plug_log;
+  String plug_sub; // subdirectory, if any, for debug, mpi, etc.
+  if (taMisc::build_ext.empty()) {
+    plug_log = "plugins.log";
+  } else {
+    plug_log = "plugins_" + taMisc::build_ext + ".log";
+    plug_sub = "/" + taMisc::build_str;
+  }
+  // add basic tacss plugin folders, for 
+  taPlugins::AddPluginFolder(taMisc::pkg_home + plug_dir + "/plugins_tacss" + plug_sub);
+  taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir + "/plugins_tacss" + plug_sub);
+  // add for the application lib, ex. pdp
+  if (taMisc::app_lib_name.nonempty()) {
+    taPlugins::AddPluginFolder(taMisc::pkg_home + plug_dir + 
+      "/plugins_" + taMisc::app_lib_name + plug_sub);
+    taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir +
+      "/plugins_" + taMisc::app_lib_name + plug_sub);
+  }
+  taPlugins::InitLog(taMisc::prefs_dir + "/" + plug_log);
   taPlugins::EnumeratePlugins();
 
   return true;
@@ -917,8 +939,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_MakeMainWin()) return false;
   if(!Startup_Console()) return false;
   if(!Startup_ProcessArgs()) return false;
-//TODO: shouldn't call event loop yet, because we haven't initialized main event loop!
-//  taiMiscCore::ProcessEvents();;
+//note: don't call event loop yet, because we haven't initialized main event loop!
   instance()->Save(); 
   return true;
 }

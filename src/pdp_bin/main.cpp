@@ -20,5 +20,6 @@
 #include "pdp_base.h"
 
 int main(int argc, const char* argv[]) {
+  taMisc::app_lib_name = "pdp";
   return pdpMisc::Main(argc, argv);
 }

@@ -41,10 +41,10 @@ public:
     LS_PLUG_INIT	      // true once initialized
   };
   
-  taPlugin* 		plugin_rep; // nelled if pr deletes
-  LoadState		load_state; // true once lo-loaded, for enumeration
+  taPlugin* 		plugin_rep; // nulled if pl deletes
+  LoadState		load_state; // true once probed, for enumeration
     
-  IPlugin*		plugin(); // access to the plugin object -- note: should be valid, because we don't register failed loads
+  IPlugin*		plugin(); // access to the plugin object -- note: should be valid, because we don't register failed probes
   
   bool			InitTypes(); // done first, and only if enabled; true if succeed
   bool			InitPlugin();  // done last, and only if enabled
@@ -70,7 +70,7 @@ public:
   
   static void		AddPluginFolder(const String& folder); // adds a folder, note: ignores duplicates
   static void		InitLog(const String& logfile); // clear the log file
-  static void		AppendLogEntry(const String& entry); // append entry, with nl
+  static void		AppendLogEntry(const String& entry, bool warn = false); // append entry, with nl, highlighting if a warning
   static void		EnumeratePlugins(); // enumerates, and lo-level loads
 protected:
   static String		logfile;

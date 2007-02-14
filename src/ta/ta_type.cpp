@@ -362,12 +362,52 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 //////////////////////////////////
 
 String	taMisc::app_name = "ta_css"; // replaced with actual name at startup
+String	taMisc::app_lib_name; // set in the main.cpp file
 #ifdef SVN_REV
 String	taMisc::version = "3.9.0-" + String(SVN_REV);
 const taVersion taMisc::version_bin(3, 9, 0, SVN_REV);
 #else
 String	taMisc::version = "3.9.0";
 const taVersion taMisc::version_bin(3, 9, 0);
+#endif
+
+// ugh! but easiest way to just statically set the build_type and official extender string
+#ifdef DEBUG
+# ifdef DMEM_COMPILE
+#   ifdef NO_TA_GUI
+const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG + taMisc::BT_DMEM + taMisc::BT_NO_GUI;
+const String             taMisc::build_str("nogui_mpi_debug"); 
+#   else
+const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG + taMisc::BT_DMEM;
+const String             taMisc::build_str("mpi_debug"); 
+#   endif
+# else
+#   ifdef NO_TA_GUI
+const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG + taMisc::BT_NO_GUI;
+const String             taMisc::build_str("nogui_debug"); 
+#   else
+const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG ;
+const String             taMisc::build_str("debug"); 
+#   endif
+# endif
+#else
+# ifdef DMEM_COMPILE
+#   ifdef NO_TA_GUI
+const taMisc::BuildType taMisc::build_type = taMisc::BT_DMEM + taMisc::BT_NO_GUI;
+const String             taMisc::build_str("nogui_mpi"); 
+#   else
+const taMisc::BuildType taMisc::build_type = taMisc::BT_DMEM;
+const String             taMisc::build_str("mpi"); 
+#   endif
+# else
+#   ifdef NO_TA_GUI
+const taMisc::BuildType taMisc::build_type = taMisc::BT_NO_GUI;
+const String             taMisc::build_str("nogui"); 
+#   else
+const taMisc::BuildType taMisc::build_type = taMisc::BT_0; // default release version
+const String             taMisc::build_str; 
+#   endif
+# endif
 #endif
 
 ////////////////////////////////////////////////////////
@@ -431,6 +471,7 @@ String	taMisc::pkg_home; // is concat in Init_Defaults_PostLoadConfig
 String  taMisc::home_dir;			// this will be set in init call
 String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
 String	taMisc::prefs_dir; // this must be set at startup!
+String	taMisc::user_app_dir; 
 
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
@@ -569,6 +610,17 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
   if(taMisc::dmem_proc > 0) return;
 #endif
   cerr << "***WARNING: " << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
+  FlushConsole();
+}
+
+void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
+  const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+#if defined(DMEM_COMPILE)
+//TODO: should provide a way to log these somehow
+  if(taMisc::dmem_proc > 0) return;
+#endif
+  cout << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
   FlushConsole();
 }
 

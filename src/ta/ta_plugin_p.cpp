@@ -101,38 +101,39 @@ void taPlugins::InitLog(const String& logfile_) {
     ofs.close();
 }
 
-void taPlugins::AppendLogEntry(const String& entry) {
+void taPlugins::AppendLogEntry(const String& entry, bool warn) {
   ofstream ofs(logfile, ios::app);
   if (!ofs.good()) {
     taMisc::Warning("Could not open plugin log file:", logfile);
   } else {
+    if (warn) taMisc::Warning(entry);
+    else      taMisc::Info(entry;
+    if (warn)
+      ofs << "**WARNING: ";
     ofs << entry << "\n";
     ofs.close();
   }
 }
 
-taPluginInst* taPlugins::LoadPlugin(const String& fileName) {
+taPluginInst* taPlugins::ProbePlugin(const String& fileName) {
   taPluginInst* rval = new taPluginInst(fileName);
-  taMisc::Warning("Attempting to load plugin: ", fileName);
+  String log_entry = "Attempting to probe plugin: " + fileName;
+  taMisc::Info(log_entry);
+  AppendLogEntry(log_entry);
   // get the plugin object, and initialize types
-  String log_entry;
   if (rval->load())  {
     rval->load_state = taPluginInst::LS_LOADED;
-    log_entry = "Loaded: " + fileName;
+    log_entry = "Successfully probed plugin: " + fileName;
+    AppendLogEntry(log_entry);
   } else {
     rval->load_state = taPluginInst::LS_LOAD_FAIL;
 #if QT_VERSION >= 0x040200
-    log_entry = "**Could not load: " + fileName + String("; Qt error msg: ").cat(
+    log_entry = "Could not probe: " + fileName + String("; Qt error msg: ").cat(
       rval->errorString().toLatin1().data());
 #else
-    log_entry = "**Could not load: " + fileName;
+    log_entry = "Could not probe: " + fileName;
 #endif
-    taMisc::Warning(log_entry);
-  }
-  AppendLogEntry(log_entry);
-  if (rval) {
-    // TODO: log success
-//TODO: commit log    taMisc::Warning("Loaded plugin: ", fileName);
+    AppendLogEntry(log_entry, true);
   }
   return rval;
 }
@@ -274,7 +275,11 @@ void taPlugin_List::LoadPlugins() {
     pl->plugin = NULL;
     taPlugins::plugins.RemoveEl(pli);
   }
+  
+  // make a blank line in log
+  taPlugins::AppendLogEntry("");
     
+  String log_entry;
   // register types for everyone, before trying to init any plugin
   for (int i = 0; i < size; ++i) {
     taPlugin* pl = FastEl(i);
@@ -283,7 +288,17 @@ void taPlugin_List::LoadPlugins() {
     taPluginInst* pli = pl->plugin;
     
     if (pli->load_state != taPluginInst::LS_LOADED) continue;
-    if (!pli->InitTypes()) continue;
+    
+    log_entry = "Attempting to InitTypes for plugin: " + pl->filename;
+    taMisc::AppendLogEntry(log_entry);
+    if (pli->InitTypes()) {
+      log_entry = "Successfully ran InitTypes for plugin: " + pl->filename;
+      taMisc::AppendLogEntry(log_entry);
+    } else {
+      log_entry = "Could not run InitTypes for plugin: " + pl->filename;
+      taMisc::AppendLogEntry(log_entry, true);
+      continue; // in case more is added after this if
+    }
   } 
   
   // finally, we can formally initialize each plugin
@@ -293,7 +308,16 @@ void taPlugin_List::LoadPlugins() {
     
     taPluginInst* pli = pl->plugin;
     if (pli->load_state != taPluginInst::LS_TYPE_INIT) continue;
-    if (!pli->InitPlugin()) continue;
+    log_entry = "Attempting to InitPlugin for plugin: " + pl->filename;
+    taMisc::AppendLogEntry(log_entry);
+    if pli->InitPlugin()) {
+      log_entry = "Successfully ran InitPlugin for plugin: " + pl->filename;
+      taMisc::AppendLogEntry(log_entry);
+    } else {
+      log_entry = "Could not run InitPlugin for plugin: " + pl->filename;
+      taMisc::AppendLogEntry(log_entry, true);
+      continue;
+    }
     pl->loaded = true;
     pl->DataChanged(DCR_ITEM_UPDATED);
   } 
