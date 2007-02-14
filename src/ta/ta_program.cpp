@@ -674,7 +674,7 @@ void ProgArg::Copy_(const ProgArg& cp) {
 
 void ProgArg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(value.nonempty()) {
+  if(value.nonempty()) {	// todo: remove -- obsolete
     expr.SetExpr(value);
     value = _nilString;		// reset
   }
@@ -1762,11 +1762,11 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
     ProgArg* ths_arg = prog_args.FastEl(i);
     nm = ths_arg->name;
     ProgVar* prg_var = target->args.FindName(nm);
-    if (!prg_var || ths_arg->value.empty()) continue;
+    String argval = ths_arg->expr.GetFullExpr();
+    if (!prg_var || argval.empty()) continue; 
     set_one = true;
     rval += cssMisc::Indent(indent_level+1);
-    rval += "target->SetVar(\"" + prg_var->name + "\", "
-      + ths_arg->value + ");\n";
+    rval += "target->SetVar(\"" + prg_var->name + "\", " + argval + ");\n";
   }
 //   if (set_one) {
 //     rval += cssMisc::Indent(indent_level+1);
@@ -1820,11 +1820,11 @@ void ProgramCall::UpdateArgs() {
   if(!prg) return;
   for(int i=0;i<prog_args.size; i++) {
     ProgArg* pa = prog_args.FastEl(i);
-    if(!pa->value.empty()) continue; // skip if already set
+    if(!pa->expr.expr.empty()) continue; // skip if already set
     ProgVar* arg_chk = prg->args.FindName(pa->name);
     ProgVar* var_chk = prg->vars.FindName(pa->name);
     if(!arg_chk && !var_chk) continue; 
-    pa->value = pa->name;	// we found var of same name; set as arg value
+    pa->expr.SetExpr(pa->name);	// we found var of same name; set as arg value
   }
 }
 
@@ -2507,13 +2507,14 @@ const String Program::scriptString() {
 	for (int j = 0; j < sp->prog_args.size; ++j) {
 	  ProgArg* ths_arg = sp->prog_args.FastEl(j);
 	  ProgVar* prg_var = sp->target->args.FindName(ths_arg->name);
-	  if (!prg_var || ths_arg->value.empty()) continue;
+	  String argval = ths_arg->expr.GetFullExpr();
+	  if (!prg_var || argval.empty()) continue;
 	  // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
-	  ProgVar* arg_chk = args.FindName(ths_arg->value);
-	  ProgVar* var_chk = vars.FindName(ths_arg->value);
+	  ProgVar* arg_chk = args.FindName(argval);
+	  ProgVar* var_chk = vars.FindName(argval);
 	  if(!arg_chk && !var_chk) continue; 
 	  m_scriptCache += "    target->SetVar(\"" + prg_var->name + "\", "
-	    + ths_arg->value + ");\n";
+	    + argval + ");\n";
 	}
         m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
       }

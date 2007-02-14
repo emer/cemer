@@ -1347,14 +1347,13 @@ const String DataJoinProg::GenCssBody_impl(int indent_level) {
 //   data calc loop
 /////////////////////////////////////////////////////////
 
-ProgVar DataCalcLoop::find_var_rval;
-
 void DataCalcLoop::Initialize() {
 }
 
 void DataCalcLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateSpecDataTable();
+  UpdateColVars();
   for(int i=0;i<loop_code.size;i++) {
     ProgEl* pe = loop_code[i];
     if(pe->InheritsFrom(&TA_DataCalcAddDestRow) || pe->InheritsFrom(&TA_DataCalcSetDestRow))
@@ -1376,6 +1375,56 @@ void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 //     rval = false;
 //   }
 }
+
+void DataCalcLoop::UpdateColVars() {
+  String srcp = "s_";
+  int ti, i;
+  for(i = src_col_vars.size - 1; i >= 0; --i) { // delete not used ones
+    ProgVar* pv = src_col_vars.FastEl(i);
+    src_cols.FindName(pv->name.after(srcp), ti);
+    if (ti >= 0) {
+      //      pa->UpdateFromVar(*pv);
+    } else {
+      src_col_vars.RemoveIdx(i);
+    }
+  }
+  // add args in target not in us, and put in the right order
+  for (ti = 0; ti < src_cols.size; ++ti) {
+    DataOpEl* ds = src_cols.FastEl(ti);
+    src_col_vars.FindName(srcp + ds->col_name, i);
+    if(i < 0) {
+      ProgVar* pv = new ProgVar();
+      pv->name = srcp + ds->col_name;
+      src_col_vars.Insert(pv, ti);
+    } else if (i != ti) {
+      src_col_vars.MoveIdx(i, ti);
+    }
+  }
+
+  srcp = "d_";
+  for(i = dest_col_vars.size - 1; i >= 0; --i) { // delete not used ones
+    ProgVar* pv = dest_col_vars.FastEl(i);
+    dest_cols.FindName(pv->name.after(srcp), ti);
+    if (ti >= 0) {
+      //      pa->UpdateFromVar(*pv);
+    } else {
+      dest_col_vars.RemoveIdx(i);
+    }
+  }
+  // add args in target not in us, and put in the right order
+  for (ti = 0; ti < dest_cols.size; ++ti) {
+    DataOpEl* ds = dest_cols.FastEl(ti);
+    dest_col_vars.FindName(srcp + ds->col_name, i);
+    if(i < 0) {
+      ProgVar* pv = new ProgVar();
+      pv->name = srcp + ds->col_name;
+      dest_col_vars.Insert(pv, ti);
+    } else if (i != ti) {
+      dest_col_vars.MoveIdx(i, ti);
+    }
+  }
+}
+
 
 String DataCalcLoop::GetDisplayName() const {
   String rval = "Calc Loop ";
@@ -1407,23 +1456,10 @@ void DataCalcLoop::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 ProgVar* DataCalcLoop::FindVarName(const String& var_nm) const {
-  String srcp = "s_";
-  for (int i = 0; i < src_cols.size; ++i) {
-    DataOpEl* ds = src_cols[i];
-    if(var_nm == srcp + ds->col_name) {
-      find_var_rval.name = srcp + ds->col_name;
-      return &find_var_rval;
-    }
-  }
-  srcp = "d_";
-  for (int i = 0; i < dest_cols.size; ++i) {
-    DataOpEl* ds = dest_cols[i];
-    if(var_nm == srcp + ds->col_name) {
-      find_var_rval.name = srcp + ds->col_name;
-      return &find_var_rval;
-    }
-  }
-  return NULL;
+  ProgVar* pv = src_col_vars.FindName(var_nm);
+  if(pv) return pv;
+
+  return dest_col_vars.FindName(var_nm);
 }
 
 void DataCalcLoop::PreGenChildren_impl(int& item_id) {

@@ -2,7 +2,12 @@ leabra todo list:
 
 commit:
 
-* init..
+* init stuff for var objs and Program targets -- make a static special progspace for 
+  just this.
+
+* need to do dataproc s_ d_ shadow progvars!  breaks highvis..
+
+* program view
 
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
   -- seems slower after clicking around (confirmed).  maybe net too?  

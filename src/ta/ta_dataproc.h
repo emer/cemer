@@ -489,21 +489,17 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-// todo: DataCalcLoop should also maintain a list of ProgVar's for src_cols and 
-// dest_cols, which are then returned with FindVarName etc, so that other code
-// can be updated when the variable names change!
-
 class TA_API DataCalcLoop : public DataProg { 
   // enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
 INHERITED(DataProg)
 public:
-  static ProgVar	find_var_rval; // #IGNORE return value for FindVarName
-
   DataOpList		src_cols;
   // source columns to operate on (variables are labeled as s_xxx where xxx is col_name)
   DataOpList		dest_cols;
   // destination columns to operate on (variables are labeled as d_xxx where xxx is col_name)
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
+  ProgVar_List		src_col_vars;  // #READ_ONLY source column variables
+  ProgVar_List		dest_col_vars;  // #READ_ONLY dest column variables
 
   virtual void	AddAllSrcColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 
@@ -520,6 +516,9 @@ protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override void	PreGenChildren_impl(int& item_id);
+
+  virtual void	UpdateColVars();
+  // sync col vars from cols
 
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
