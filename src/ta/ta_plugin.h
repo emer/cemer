@@ -28,11 +28,8 @@
 #endif
 
 
-class IPlugin  { // #VIRT_BASE basic interface for a ta plugin; int ret codes use 0=success, !0=errcode
+class IPlugin: public virtual ITypedObject  { // #VIRT_BASE basic interface for a ta plugin; int ret codes use 0=success, !0=errcode
 public:
-  virtual void*		This() = 0; // reference to our instance
-  virtual TypeDef*	GetTypeDef() = 0; // the TypeDef of the plugin -- used to save streaming dependencies
-  
 // the following interfaces are used in the plugin enumeration stage
   virtual const char*	desc() {return "(no description provided)";}
   virtual const char*	name() {return "pluginname";}

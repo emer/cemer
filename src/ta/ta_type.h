@@ -566,7 +566,7 @@ public:
   static String		prefs_dir;
   // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
   static String		user_app_dir;
-  // #READ_ONLY #SHOW #CAT_File user's location of application, for user plugins, etc. 
+  // #SAVE #SHOW #CAT_File user's location of application, for user plugins, etc. 
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..
@@ -955,7 +955,10 @@ public:
   virtual ~ITypedObject() {}
 };
 
-
+#define TYPED_OBJECT(T) \
+  void* This() {return this;} \
+  TypeDef* GetTypeDef() const {return &TA_##T;}
+  
 //////////////////////////
 //   IDataLinkProxy	//
 //////////////////////////

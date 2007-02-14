@@ -30,8 +30,7 @@ public:
   PSGPlugin(QObject* par = NULL);
 
  public: // IPlugin interface
-  void*		This() {return this;}
-  TypeDef*	GetTypeDef() {return &TA_PSGPlugin;} 
+  TYPED_OBJECT(PSGPlugin) 
   const char*	desc() {return "Sample plugin provided with PDP++";}
   const char*	name() {return "PSGPlugin";}
   const char*	uniqueId() {return "helloplugin.ccnlab.psych.colorado.edu";}

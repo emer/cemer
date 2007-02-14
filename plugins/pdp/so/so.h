@@ -79,8 +79,7 @@ public:
   SoPlugin(QObject* par = NULL);
 
  public: // IPlugin interface
-  void*		This() {return this;}
-  TypeDef*	GetTypeDef() {return &TA_SoPlugin;} 
+  TYPED_OBJECT(SoPlugin) 
   const char*	desc() {return "So algorithm for PDP++";}
   const char*	name() {return "So";}
   const char*	uniqueId() {return "so.ccnlab.psych.colorado.edu";}
