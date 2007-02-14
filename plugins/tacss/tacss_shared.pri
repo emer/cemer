@@ -15,7 +15,6 @@ CONFIG += plugin warn_off
 # DESTDIR - standard location for system (shared by all users) plugins
 # we will install in system area if compiling there, or user area, if there
 
-LIB_ROOT = pdp
 LIB_VER = 3.5
 
 BUILD_EXT_US = _
@@ -67,8 +66,8 @@ BUILD_EXT_US = $${BUILD_EXT_US}$${BUILD_EXT}
 # value as a subfolder path
 BUILD_EXT_SF = $${BUILD_EXT_SF}$${BUILD_EXT}
 
-DESTDIR = join(../../lib/plugins$${BUILD_EXT_SF}
-LIBS += -l$${LIB_ROOT}$${BUILD_EXT_US}-$${LIB_VER}
+DESTDIR = ../../../lib/tacss/plugins$${BUILD_EXT_SF}
+LIBS += -ltacss$${BUILD_EXT_US}-$${LIB_VER}
 
 INCLUDEPATH +=\
 	. \

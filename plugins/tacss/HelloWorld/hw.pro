@@ -24,5 +24,5 @@ SOURCES += $${TARGET}.cpp
 
 !include(../../config.pri)
   message( "config.pri file is missing or could not be included" )
-include( ../pdp_shared.pri )
+include( ../tacss_shared.pri )
 
