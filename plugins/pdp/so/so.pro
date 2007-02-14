@@ -21,7 +21,7 @@ MAKETA_HEADERS = $${HEADERS}
 SOURCES += so.cpp # cl.cpp som.cpp zsh.cpp
 
 
-!include(../../config.pri)
-  message( "config.pri file is missing or could not be included" )
-include( ../pdp_shared.pri )
+!include( ../pdp_shared.pri ) {
+  message( "../pdp_shared.pri file is missing or could not be included" )
+}
 
