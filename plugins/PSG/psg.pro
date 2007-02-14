@@ -1,6 +1,8 @@
 # Make a plugin for pdp++
 # Assumes you have ${HOME}, ${PDP4DIR} AND ${QTDIR} set
 
+include( ../pdp_shared_pre.pri )
+
 # Replace hw w/ your plugin name
 TARGET = psg
 
