@@ -365,7 +365,7 @@ String	taMisc::app_name = "ta_css"; // replaced with actual name at startup
 String	taMisc::app_lib_name; // set in the main.cpp file
 #ifdef SVN_REV
 String	taMisc::version = "3.9.0-" + String(SVN_REV);
-const taVersion taMisc::version_bin(3, 9, 0, SVN_REV);
+const taVersion taMisc::version_bin(3, 9, 0, 0/*SVN_REV*/); //BROKEN ON MAC!!!!!!!s
 #else
 String	taMisc::version = "3.9.0";
 const taVersion taMisc::version_bin(3, 9, 0);

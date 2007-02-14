@@ -11,7 +11,7 @@ all: qmake
 	    echo $$i; \
 	    $(CD) $$i;\
 	    if ( $(MAKE) ) then echo "* Successfully ran make in $$i";\
-	    else exit 1; fi;\
+	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../;\
 	  fi; \
 	done
@@ -22,7 +22,7 @@ all: qmake
 	    echo $$i; \
 	    $(CD) $$i;\
 	    if ( $(MAKE) ) then echo "* Successfully ran make in $$i";\
-	    else exit 1; fi;\
+	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../;\
 	  fi; \
 	done
@@ -41,7 +41,7 @@ clean:
 	    echo $$i; \
 	    $(CD) $$i;\
 	    if ( $(MAKE) $@; ) then echo "* Successfully made $@ in $$i";\
-	    else exit 1; fi;\
+	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../;\
 	  fi; \
 	done
@@ -52,7 +52,7 @@ clean:
 	    echo $$i; \
 	    $(CD) $$i;\
 	    if ( $(MAKE) $@; ) then echo "* Successfully made $@ in $$i";\
-	    else exit 1; fi;\
+	    else  echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../;\
 	  fi; \
 	done
@@ -71,7 +71,7 @@ qmake:
 	    echo $$i; \
 	    $(CD) $$i;\
 	    if ( qmake; ) then echo "* Successfully ran $@ in $$i";\
-	    else exit 1; fi;\
+	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../;\
 	  fi; \
 	done
@@ -82,7 +82,7 @@ qmake:
 	    echo $$i; \
 	    $(CD) $$i;\
 	    if ( qmake; ) then echo "* Successfully ran $@ in $$i";\
-	    else exit 1; fi;\
+	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../;\
 	  fi; \
 	done
