@@ -107,7 +107,7 @@ void taPlugins::AppendLogEntry(const String& entry, bool warn) {
     taMisc::Warning("Could not open plugin log file:", logfile);
   } else {
     if (warn) taMisc::Warning(entry);
-    else      taMisc::Info(entry;
+    else      taMisc::Info(entry);
     if (warn)
       ofs << "**WARNING: ";
     ofs << entry << "\n";
@@ -145,7 +145,7 @@ void taPlugins::EnumeratePlugins() {
     QDir pluginsDir(folder);
     // enumerate all files in the folder, and try loading
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-      taPluginInst* pl = LoadPlugin(pluginsDir.absoluteFilePath(fileName));
+      taPluginInst* pl = ProbePlugin(pluginsDir.absoluteFilePath(fileName));
       if (pl) {
         plugins.Add(pl);
       }
@@ -290,13 +290,13 @@ void taPlugin_List::LoadPlugins() {
     if (pli->load_state != taPluginInst::LS_LOADED) continue;
     
     log_entry = "Attempting to InitTypes for plugin: " + pl->filename;
-    taMisc::AppendLogEntry(log_entry);
+    taPlugins::AppendLogEntry(log_entry);
     if (pli->InitTypes()) {
       log_entry = "Successfully ran InitTypes for plugin: " + pl->filename;
-      taMisc::AppendLogEntry(log_entry);
+      taPlugins::AppendLogEntry(log_entry);
     } else {
       log_entry = "Could not run InitTypes for plugin: " + pl->filename;
-      taMisc::AppendLogEntry(log_entry, true);
+      taPlugins::AppendLogEntry(log_entry, true);
       continue; // in case more is added after this if
     }
   } 
@@ -309,13 +309,13 @@ void taPlugin_List::LoadPlugins() {
     taPluginInst* pli = pl->plugin;
     if (pli->load_state != taPluginInst::LS_TYPE_INIT) continue;
     log_entry = "Attempting to InitPlugin for plugin: " + pl->filename;
-    taMisc::AppendLogEntry(log_entry);
-    if pli->InitPlugin()) {
+    taPlugins::AppendLogEntry(log_entry);
+    if (pli->InitPlugin()) {
       log_entry = "Successfully ran InitPlugin for plugin: " + pl->filename;
-      taMisc::AppendLogEntry(log_entry);
+      taPlugins::AppendLogEntry(log_entry);
     } else {
       log_entry = "Could not run InitPlugin for plugin: " + pl->filename;
-      taMisc::AppendLogEntry(log_entry, true);
+      taPlugins::AppendLogEntry(log_entry, true);
       continue;
     }
     pl->loaded = true;

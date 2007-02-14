@@ -630,10 +630,10 @@ bool taRootBase::Startup_EnumeratePlugins() {
 #endif
   String plug_log;
   String plug_sub; // subdirectory, if any, for debug, mpi, etc.
-  if (taMisc::build_ext.empty()) {
+  if (taMisc::build_str.empty()) {
     plug_log = "plugins.log";
   } else {
-    plug_log = "plugins_" + taMisc::build_ext + ".log";
+    plug_log = "plugins_" + taMisc::build_str + ".log";
     plug_sub = "/" + taMisc::build_str;
   }
   // add basic tacss plugin folders, for 

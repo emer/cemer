@@ -75,7 +75,7 @@ public:
 protected:
   static String		logfile;
   
-  static taPluginInst*	LoadPlugin(const String& fileName); 
+  static taPluginInst*	ProbePlugin(const String& fileName); 
     // try loading the plugin, returns the loader object if successful
 };
 
