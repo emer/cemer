@@ -1,6 +1,10 @@
 # Make a plugin for pdp++
 # Assumes you have ${HOME}, ${PDP4DIR} AND ${QTDIR} set
 
+!include( ../pdp_shared_pre.pri ) {
+  message( "../pdp_shared_pre.pri file is missing or could not be included" )
+}
+
 # root target name of the plugin
 TARGET = so
 

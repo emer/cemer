@@ -1,6 +1,10 @@
 # Make a plugin for pdp++
 # Assumes you have ${HOME}, ${PDP4DIR} AND ${QTDIR} set
 
+!include( ../tacss_shared_pre.pri ) {
+  message( "../tacss_shared_pri.pri file is missing or could not be included" )
+}
+
 # Replace hw w/ your plugin name
 TARGET = hw
 
