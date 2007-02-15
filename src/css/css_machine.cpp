@@ -279,7 +279,7 @@ bool cssMisc::IsNameValid(const String& nm) {
 }
 
 cssElPtr& cssMisc::ParseName(const String& nm) {
-  cssElPtr s;
+  static cssElPtr s;
   if((s = cssMisc::TypesSpace.FindName(nm)))
     return s;
   if((s = cssMisc::Externs.FindName(nm)))
