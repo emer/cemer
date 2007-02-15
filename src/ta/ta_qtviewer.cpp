@@ -1253,7 +1253,8 @@ void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiActions* me
   FillContextMenu_impl(menu);
   int allowed = QueryEditActions_(sel_items);
   FillContextMenu_EditItems_impl(menu, allowed);
-  link()->FillContextMenu(menu);
+  taiDataLink* link = this->link();
+  if (link) link->FillContextMenu(menu);
 }
 
 void ISelectable::FillContextMenu(taiActions* menu) {
@@ -1329,6 +1330,7 @@ MemberDef* ISelectable::par_md() const {
   taBase* par_tab = NULL; //note: still only got the guy, not par
   taBase* gpar_tab = NULL;
   taiDataLink* link = this->link();
+  if (!link) goto exit;
   par_tab = link->taData(); //note: still only got the guy, not par
   if (!par_tab) goto exit;
   par_tab = par_tab->GetOwner(); // now we have par
@@ -1390,28 +1392,32 @@ QWidget* ISelectable::widget() const {
 int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: follows same logic as the Query
   taiDataLink* pdl = par_link();
   //note: called routines must requery for allowed
-
+  taiDataLink* link = this->link();
   int rval = taiClipData::ER_IGNORED;
   if (pdl) {
-    rval = pdl->ChildEditAction_impl(par_md(), link(), ms, ea);
+    rval = pdl->ChildEditAction_impl(par_md(), link, ms, ea);
   }
-  if (rval == taiClipData::ER_IGNORED)
-    rval = link()->ChildEditAction_impl(this->md(), NULL, ms, ea);
-  if (rval == taiClipData::ER_IGNORED)
-    rval = link()->EditAction_impl(ms, ea);
+  if (link) {
+    if (rval == taiClipData::ER_IGNORED)
+      rval = link->ChildEditAction_impl(this->md(), NULL, ms, ea);
+    if (rval == taiClipData::ER_IGNORED)
+      rval = link->EditAction_impl(ms, ea);
+  }
   return rval;
 }
 
 int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Query
   taiDataLink* pdl = par_link();
   //note: called routines must requery for allowed
-
+  taiDataLink* link = this->link();
   int rval = taiClipData::ER_IGNORED;
   if (pdl) {
-    rval = pdl->ChildEditAction_impl(par_md(), link(), NULL, ea);
+    rval = pdl->ChildEditAction_impl(par_md(), link, NULL, ea);
   }
-  if (rval == taiClipData::ER_IGNORED)
-    rval = link()->EditAction_impl(NULL, ea);
+  if (link) {
+    if (rval == taiClipData::ER_IGNORED)
+      rval = link->EditAction_impl(NULL, ea);
+  }
   return rval;
 }
 
@@ -1456,17 +1462,23 @@ void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed,
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
   taiDataLink* pdl = par_link();
-  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link(), ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
-  link()->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
-  link()->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
+  taiDataLink* link = this->link();
+  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
+  if (link) {
+    link->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
+    link->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
+  }
 }
 
 void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
   taiDataLink* pdl = par_link();
-  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link(), NULL, allowed, forbidden); // ex. CUT of child
-  link()->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
+  taiDataLink* link = this->link();
+  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, NULL, allowed, forbidden); // ex. CUT of child
+  if (link) {
+    link->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
+  }
 }
 
 
@@ -1503,25 +1515,37 @@ ISelectable_PtrList::~ISelectable_PtrList() {
 
 TypeDef* ISelectable_PtrList::CommonSubtype1N() { // greatest common subtype of items 1-N
   if (size == 0) return NULL;
-  TypeDef* rval = FastEl(0)->link()->GetDataTypeDef();
+  taiDataLink* link = FastEl(0)->link();
+  if (!link) return NULL; // gui-only object, no ref
+  TypeDef* rval = link->GetDataTypeDef();
   for (int i = 1; (rval && (i < size)); ++i) {
-    rval = TypeDef::GetCommonSubtype(rval, FastEl(i)->link()->GetDataTypeDef());
+    link = FastEl(i)->link();
+    if (!link) return NULL; // gui-only, not commensurable
+    rval = TypeDef::GetCommonSubtype(rval, link->GetDataTypeDef());
   }
   return rval;
 }
 
 TypeDef* ISelectable_PtrList::CommonSubtype2N() { // greatest common subtype of items 2-N
   if (size <= 1) return NULL;
-  TypeDef* rval = FastEl(1)->link()->GetDataTypeDef();
+  taiDataLink* link = FastEl(1)->link();
+  if (!link) return NULL; // gui-only object, no ref
+  TypeDef* rval = link->GetDataTypeDef();
   for (int i = 2; (rval && (i < size)); ++i) {
-    rval = TypeDef::GetCommonSubtype(rval, FastEl(i)->link()->GetDataTypeDef());
+    link = FastEl(i)->link();
+    if (!link) return NULL; // gui-only, not commensurable
+    rval = TypeDef::GetCommonSubtype(rval, link->GetDataTypeDef());
   }
   return rval;
 }
 
 TypeDef* ISelectable_PtrList::Type1() {
   if (size == 0) return NULL;
-  else           return FastEl(0)->link()->GetDataTypeDef();
+  else {
+    taiDataLink* link = FastEl(0)->link();
+    if (link) return link->GetDataTypeDef();
+    else      return NULL; // gui-only object, no ref
+  }
 }
 
 //////////////////////////
@@ -1555,7 +1579,9 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
   }
 
   if (sel_items.size == 1) return;
-  TypeDef* t1 = sel_items.FastEl(0)->link()->GetDataTypeDef(); // type of 1st item
+  taiDataLink* link = sel_items.FastEl(0)->link();
+  if (!link) return; // gui only obj
+  TypeDef* t1 = link->GetDataTypeDef(); // type of 1st item
   TypeDef* t2n = sel_items.CommonSubtype2N(); // greatest common subtype of items 2-N
   if (!t2n) return;
 
@@ -1730,7 +1756,9 @@ void ISelectableHost::EditAction_Delete() {
   for (int i = 0; i < items.size; ++i) {
     ISelectable* ci = items.SafeEl(i); 
     if (!ci) continue;
-    taBase* tab = ci->link()->taData();
+    taiDataLink* link = ci->link();
+    if (!link) continue;
+    taBase* tab = link->taData();
     if (!tab) continue;
     ta_items.Add(tab);
   }
@@ -1771,6 +1799,8 @@ void ISelectableHost::FillContextMenu(taiActions* menu) {
 }
 
 void ISelectableHost::DoDynAction(int idx) {
+  //note: we really won't have been called if any items don't have links,
+  // but we have code in here to bail anyway if we do (maybe should put warning text?)
   if ((idx < 0) || (idx >= dyn_methods.size)) return; // shouldn't happen
   DynMethodDesc* dmd = dyn_methods.FastEl(idx);
   // NOTE: this function is based on the ta_qtdata:taiMethod::CallFun function
@@ -1808,16 +1838,18 @@ void ISelectableHost::DoDynAction(int idx) {
     // don't actually run the command when using gui in dmem mode: everything happens via the script!
     if (taMisc::dmem_nprocs == 1) {
 #endif
-      cssEl* rval; // ignored
+      cssEl* rval = NULL; // ignored
       int i;
       ISelectable* itN;
-
+      taiDataLink* link = NULL;
       switch(dmd->dmd_type) {
       case DynMethod_PtrList::Type_1N: { // same for all
         for (i = 0; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
           typ = itN->GetDataTypeDef();
-          base = itN->link()->data();
+          link = itN->link();
+          if (!link) return;
+          base = link->data();
           rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
         }
       }
@@ -1827,10 +1859,14 @@ void ISelectableHost::DoDynAction(int idx) {
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetDataTypeDef();
-        base = it1->link()->data();
+        link = it1->link();
+        if (!link) return;
+        base = link->data();
         for (i = 1; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
-          *param[1] = (void*)itN->link()->data();
+          link = itN->link(); //note: prob can't be null, because we wouldn't get called
+          if (!link) continue;
+          *param[1] = (void*)link->data();
           rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
         }
         delete param[1];
@@ -1841,10 +1877,14 @@ void ISelectableHost::DoDynAction(int idx) {
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetDataTypeDef();
-        *param[1] = (void*)it1->link()->data();
+        link = it1->link();
+        if (!link) return; //note: we prob wouldn't get called if any were null
+        *param[1] = (void*)link->data();
         for (i = 1; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
-          base = itN->link()->data();
+          link = itN->link();
+          if (!link) continue; // prob won't happen
+          base = link->data();
           rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
         }
         delete param[1];
@@ -1864,7 +1904,9 @@ void ISelectableHost::DoDynAction(int idx) {
           *param[1] = (void*)obj;
           for (i = 0; i < sel_items_cp.size; ++i) {
             itN = sel_items_cp.FastEl(i);
-            base = itN->link()->data();
+            link = itN->link();
+            if (!link) continue; // prob won't happen, because we wouldn't have been called
+            base = link->data();
             rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
           }
         }
@@ -2270,8 +2312,11 @@ void iTabViewer::SelectionChanged_impl(ISelectableHost* src_host) {
   cur_item = src_host->curItem(); // note: could be NULL
   if (!cur_item) goto end; // no selected item, so no change
   if (m_curTabView) {
-    new_pn = m_curTabView->GetDataPanel(cur_item->link());
-    m_curTabView->ShowPanel(new_pn);
+    taiDataLink* link = cur_item->link();
+    if (link) {
+      new_pn = m_curTabView->GetDataPanel(link);
+      m_curTabView->ShowPanel(new_pn);
+    }
   }
 end:
   inherited::SelectionChanged_impl(src_host); // prob does nothing
@@ -3737,6 +3782,10 @@ void iTabView::Init() {
   layDetail->setMargin(0);
   layDetail->setSpacing(0);
   tbPanels = new iTabBar(this);
+#if (QT_VERSION >= 0x040200)
+  tbPanels->setUsesScrollButtons(true);
+  tbPanels->setElideMode(Qt::ElideMiddle); // middle generally better
+#endif
   layDetail->addWidget(tbPanels);
   wsPanels = new Q3WidgetStack(this);
   layDetail->addWidget(wsPanels);
@@ -4123,9 +4172,13 @@ void iDataPanel::showEvent(QShowEvent* ev) {
 }
 
 iTabBar::TabIcon iDataPanel::tabIcon() const {
-  if (lockInPlace()) return iTabBar::TI_LOCKED;
-  else if (pinned()) return iTabBar::TI_PINNED;
-  else return iTabBar::TI_UNPINNED;
+//note: locked will be conveyed by no icon, since the lock icon takes up so much room
+  if (lockInPlace()) 
+    return iTabBar::TI_NONE; //iTabBar::TI_LOCKED;
+  else {
+    if (pinned()) return iTabBar::TI_PINNED;
+    else return iTabBar::TI_UNPINNED;
+  }
 }
 
 String iDataPanel::TabText() const {
@@ -4269,8 +4322,6 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   // don't introduce any new margin
   layDetail->setMargin(0);
   layDetail->setSpacing(0);
-  buttons = new QButtonGroup(widg); // note: not a widget, not visible
-  buttons->setExclusive(true); // this is the default anywh
   frmButtons = new QFrame(widg);
   frmButtons->setFrameShape(QFrame::Box);
   frmButtons->setFrameShadow(QFrame::Sunken);
@@ -4278,6 +4329,8 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   layButtons->setMargin(2);
   layButtons->setSpacing(taiM->hspc_c);
   layDetail->addWidget(frmButtons);
+  buttons = new QButtonGroup(frmButtons); // note: not a widget, not visible
+  buttons->setExclusive(true); // this is the default anyway
 
   wsSubPanels = new Q3WidgetStack(widg);
   layDetail->addWidget(wsSubPanels, 1);
@@ -4298,7 +4351,7 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   panels.Add(pn);
   int id = panels.size - 1;
   wsSubPanels->addWidget(pn, id);
-  QPushButton* but = new QPushButton(frmButtons);
+  QToolButton* but = new QToolButton(frmButtons);
   but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
   but->setFont(taiM->buttonFont(taiMisc::sizSmall));
   if (id == 0) but->setDown(true); // first button should be down
@@ -4409,6 +4462,11 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
   // for when called programmatically:
   if (but) // should always have a value
     but->setDown(true);
+  //note: very annoying, but autoexclusive was not working, so we had to do it manually
+  QAbstractButton* but2;
+  foreach(but2, buttons->buttons()) {
+    if (but2 != but) but2->setDown(false);
+  }
   //TODO: maybe something to change tab color
 }
 

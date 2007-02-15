@@ -229,7 +229,6 @@ void taProject::AssertDefaultProjectBrowser(bool auto_open) {
   vwr = GetDefaultProjectBrowser();
   if (!vwr) {
     vwr = MakeProjectBrowser_impl();
-    vwr->SetName("DefaultProjectBrowser");
   }
   else {
     vwr->SetData(this);
@@ -256,7 +255,7 @@ MainWindowViewer* taProject::NewProjectBrowser() {
 
 void taProject::OpenNewProjectBrowser(String viewer_name) {
   MainWindowViewer* vwr =  MakeProjectBrowser_impl();
-  if (viewer_name.nonempty())
+  if (viewer_name != "(default name)")
     vwr->SetName(viewer_name);
   vwr->ViewWindow();
   
@@ -362,6 +361,7 @@ taRootBase* taRootBase::instance() {
       return NULL;
     }
     tabMisc::root = (taRootBase*)rb->MakeToken();
+    tabMisc::root->SetName("root");
     taBase::Ref(tabMisc::root);
     tabMisc::root->InitLinks();
   }
@@ -370,7 +370,6 @@ taRootBase* taRootBase::instance() {
 
 void taRootBase::Initialize() {
   version = taMisc::version;
-  SetName("root");
   projects.SetName("projects");
   plugin_deps.SetBaseType(&TA_taPluginDep);
 }

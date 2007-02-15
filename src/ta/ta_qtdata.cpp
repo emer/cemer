@@ -1556,13 +1556,15 @@ taiAction* taiActions::AddItem(const String& val, SelType st,
     st = sel_type;
 
   taiAction* rval;
-  // do not add items of same name -- return it instead of adding it
+//TODO: this "no duplicates" was causing token items to not appear
+//  determine if allowing duplicates causes regression issues
+/*  // do not add items of same name -- return it instead of adding it
   for (int i = 0; i < items.size; ++i) {
     rval = items.FastEl(i);
     if (rval->text() == val) {
       return rval;
     }
-  }
+  } */
   rval = new taiAction(st, val);
   rval->usr_data = usr;
   AddAction(rval);
@@ -1981,7 +1983,7 @@ taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, ta
 
 void taiButtonMenu::init()
 {
-  QPushButton* button = new QPushButton(gui_parent);
+  QToolButton* button = new QToolButton(gui_parent);
   //note: for taiEditButton, we don't add the menu to ourself if it is in EditOnly mode
   //  because that seems to interfere with normal pushbutton ability
   if (!HasFlag(flgEditOnly)) {
@@ -2920,7 +2922,9 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
     QHBoxLayout* lay = new QHBoxLayout(act_par);
     lay->setMargin(0);
     lay->setSpacing(1);
-    m_but = new QPushButton(act_par);
+    m_but = new QToolButton(act_par);
+    taiM->FormatButton(m_but, _nilString, defSize());
+    m_but->setFixedHeight(taiM->button_height(defSize()));
     lay->addWidget(m_but, 1);
     if (!(flags_ & flgReadOnly)) {
       btnEdit = new QToolButton(act_par);
@@ -2939,7 +2943,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
     SetRep(act_par);
   } else {
     btnEdit = NULL; // not used
-    m_but = new QPushButton(gui_parent_);
+    m_but = new QToolButton(gui_parent_);
     SetRep(m_but);
   }
   taiM->FormatButton(m_but, _nilString, defSize());
@@ -3587,6 +3591,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
     if ((bool)scope_ref && !btmp->SameScope(scope_ref))
       continue;
+    //todo: need to get a more globally unique name, maybe key_unique_name
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
       top_item, (void*)btmp); 
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
@@ -3882,9 +3887,10 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
         TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
         if ((scope_ref != NULL) && !btmp->SameScope(scope_ref))
           continue;
-        if (!btmp->GetName().empty())
-          nm = btmp->GetName();
-        taiAction* mel = menu->AddItem((char*)nm, taiMenu::radio, actn, Variant(btmp)); //connect caller's callback
+        //TODO: need to get some kind of less ambiguous name
+        nm = btmp->GetDisplayName();
+        //nm = btmp->GetUniqueName();
+        taiAction* mel = menu->AddItem(nm, taiMenu::radio, actn, Variant(btmp)); //connect caller's callback
         mel->connect(&ma); // connect our own callback
       }
     } // too_many

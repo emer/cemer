@@ -429,7 +429,7 @@ private:
 
 
 class TA_API T3DataViewFrame : public DataViewer {
-  // top-level taDataViewer object that contains one 3D data view of multiple objects
+  // ##DEF_NAME_ROOT_Frame top-level taDataViewer object that contains one 3D data view of multiple objects
 INHERITED(DataViewer)
 friend class T3DataView;
 friend class T3DataViewer;
@@ -562,7 +562,7 @@ private:
 
 
 class TA_API T3DataViewer : public FrameViewer {
-  // top-level taDataViewer object that contains one 3D data view of multiple objects
+  // ##DEF_NAME_ROOT_Frame top-level taDataViewer object that contains one 3D data view of multiple objects
 INHERITED(FrameViewer)
 friend class T3DataView;
 public:

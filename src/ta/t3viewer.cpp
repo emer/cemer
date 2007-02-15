@@ -1055,6 +1055,10 @@ void iT3DataViewer::Init() {
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setSpacing(0);  lay->setMargin(0);
   tw = new iTabWidget(this); //top, standard tabs
+#if (QT_VERSION >= 0x040200)
+  tw->setUsesScrollButtons(true);
+  tw->setElideMode(Qt::ElideMiddle); // middle generally better
+#endif
   lay->addWidget(tw);
   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
     this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
@@ -1170,7 +1174,7 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   fr = t3vw->FirstEmptyT3DataViewFrame();
   if (!fr) {
     fr = t3vw->NewT3DataViewFrame();
-    fr->SetName(obj->GetDisplayName());
+    //note: don't rename! frames can have many objects
   }
   return fr;
 }
@@ -1190,7 +1194,7 @@ void T3DataViewer::InitLinks() {
   // add a default frame, if none yet
   if (frames.size == 0) {
     T3DataViewFrame* fv = (T3DataViewFrame*)frames.New(1);
-    fv->SetName("DefaultFrame");
+    //nuke fv->SetName("DefaultFrame");
   }
 }
 

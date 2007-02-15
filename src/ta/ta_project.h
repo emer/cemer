@@ -101,7 +101,7 @@ public:
     // make the default project browser is made, and optionally open it
   virtual void 		AssertDefaultWiz(bool auto_opn) {} 
     // make sure the default wizard(s) are made, and optionally open them
-  virtual void		OpenNewProjectBrowser(String proj_browser_name = "NewProjectBrowserName");
+  virtual void		OpenNewProjectBrowser(String proj_browser_name = "(default name)");
     // #MENU #MENU_ON_View #MENU_CONTEXT
 
   virtual DataTable*	GetNewAnalysisDataTable(const String& nw_nm="", bool msg=false);

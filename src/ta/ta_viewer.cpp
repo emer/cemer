@@ -817,10 +817,8 @@ MainWindowViewer* MainWindowViewer::NewClassBrowser(void* root, TypeDef* root_ty
 {
   MainWindowViewer* rval = new MainWindowViewer;
   ClassBrowseViewer* cb = ClassBrowseViewer::New(root, root_typ, root_md);
-  cb->SetName("Tree");
   rval->frames.Add(cb);
   PanelViewer* pv = new PanelViewer;
-  pv->SetName("Panels");
   rval->frames.Add(pv);
   // browsers are added to the global viewers, and not persistent
   if (tabMisc::root)
@@ -837,13 +835,10 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   rval->SetData(proj);
   rval->m_is_proj_viewer = true;
   tabBrowseViewer* cb = tabBrowseViewer::New(proj);
-  cb->SetName("Tree"); // generally only one (open BrowseFromHere for more wins)
   rval->frames.Add(cb);
   FrameViewer* fv = rval->AddFrameByType(&TA_PanelViewer);
-  fv->SetName("Panels"); // generally only one (can be split for mult-panels)
   fv = rval->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
   // always added to the viewer collection
-  fv->SetName("DefaultViewer");
   proj->viewers.Add(rval);
   // global toolbar
   ToolBoxDockViewer* tb = ToolBoxDockViewer::New(); // initializes

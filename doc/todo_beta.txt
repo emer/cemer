@@ -1,3 +1,17 @@
+to move to trac:
+
+Object Directive
+
+#DEF_NAME_ROOT_Xxx -- makes new names based on Xxx rather than class name
+//#NAME_UNIQUE -- require name to be globally unique
+#DEF_NAME_LIST -- default name idx number scopes to its list (not named until added to list),
+  otherwise, legacy, idx scopes globally to token list
+#DEF_NAME_STYLE_x -- name style, where x is:
+ 0 -- legacy: <root>_<inst_idx>; ex Obj_0, Obj_1, etc
+ 1 -- doc style: <root><1_based_ord>; ex. Doc1, Doc2, etc.
+note: NAME_STYLE_0 is same as not specifying it
+
+
 Beta TODO list
 -------------
 

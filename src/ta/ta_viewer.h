@@ -132,7 +132,7 @@ class ToolBoxRegistrar;
 
 
 class TA_API DataViewer : public taDataView {
-  // #NO_TOKENS #VIRT_BASE the base type for objects with a gui window rep of some kind
+  // #NO_TOKENS #VIRT_BASE ##DEF_NAME_STYLE_1 the base type for objects with a gui window rep of some kind
 INHERITED(taDataView)
 friend class taDataLink;
 friend class DataViewer_List;
@@ -259,7 +259,7 @@ private:
 
 
 class TA_API BrowseViewer : public FrameViewer {
-  // #NO_TOKENS the base type for browser frames (tree of objects or classes)
+  // #NO_TOKENS ##DEF_NAME_ROOT_TreeFrame the base type for browser frames (tree of objects or classes)
 INHERITED(FrameViewer)
 friend class iDataBrowser;
 public:
@@ -340,7 +340,7 @@ private:
 
 
 class TA_API PanelViewer : public FrameViewer {
-  // #NO_TOKENS the base type for browser frames (tree of objects or classes)
+  // #NO_TOKENS ##DEF_NAME_ROOT_PanelFrame the base type for browser frames (tree of objects or classes)
 INHERITED(FrameViewer)
 friend class iDataPanel;
 public:
@@ -472,7 +472,7 @@ private:
 
 
 class TA_API ConsoleDockViewer: public DockViewer {
-  // #NO_TOKENS encapsulates the console into a dock viewer window
+  // #NO_TOKENS ##DEF_NAME_ROOT_Console encapsulates the console into a dock viewer window
 INHERITED(DockViewer)
 public:
 
@@ -486,7 +486,7 @@ private:
 };
 
 class TA_API ToolBoxDockViewer : public DockViewer {
-  // floatable dockable toolbox window
+  // ##DEF_NAME_ROOT_ToolBox floatable dockable toolbox window
 INHERITED(DockViewer)
 public:
   static ToolBoxDockViewer*	New(); // create an initialized instance
@@ -567,7 +567,7 @@ private:
 
 
 class TA_API MainWindowViewer : public TopLevelViewer {
-  // #NO_TOKENS #VIRT_BASE the uber controller for main windows
+  // #NO_TOKENS #VIRT_BASE ##DEF_NAME_ROOT_Browser the uber controller for main windows
 INHERITED(TopLevelViewer)
 friend class taDataLink;
 friend class ToolBar_List;

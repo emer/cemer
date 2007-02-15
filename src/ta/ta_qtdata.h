@@ -930,7 +930,7 @@ public:
   virtual int		columnCount(int view) const = 0; 
     // number of header columns in the view
   virtual const String	headerText(int index, int view) const = 0;
-  inline QPushButton*	rep() {return m_but;}
+  inline QAbstractButton* rep() {return m_but;}
   inline void*		sel() const {return m_sel;}
   virtual bool		isValid() const {return (targ_typ);} // if all required params have been set
   virtual int		catCount() const; 
@@ -957,7 +957,7 @@ public slots:
 
 protected:
   void*			m_sel; // current value
-  QPushButton*		m_but;
+  QAbstractButton*	m_but;
   QToolButton*		btnEdit; // only for tokens
   TypeDef*		targ_typ; 
   String_Array*		cats; // categories -- only created if needed

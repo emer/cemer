@@ -420,10 +420,12 @@ public:
   virtual String	GetName() const 	{ return _nilString; } // #IGNORE
   virtual String	GetDisplayName() const;
   // #IGNORE can be overridden to provide a more elaborate or cleaned-up user-visible name for display purposes (default is just GetName())
+  virtual String	GetUniqueName() const; // #IGNORE the name, possibly with dotted parent, to help globally identify an item, mostly for token lists
   virtual String	GetDesc() const {return _nilString;}
   // #IGNORE a type-specific description of the specific functionality/properties of the object
   virtual void 		SetDefaultName() {} // #IGNORE note: called non-virtually in every constructor
   void 			SetDefaultName_(); // #IGNORE default behavior for >=taNBase -- you can call this manually for taOBase (or others that implement Name)
+  virtual void 		SetDefaultName_impl(int idx); // #IGNORE called from within, or by list -- NAME_TYPE will determine what we do with idx
   virtual String	GetTypeDecoKey() const { return _nilString; }
   // #IGNORE lookup key for visual decoration of an item reflecting its overall type information, used for font colors in the gui browser, for example
   virtual String	GetStateDecoKey() const;
@@ -776,6 +778,7 @@ public:
   static const KeyString key_type_desc; // #IGNORE "type_desc" -- static type description
   static const KeyString key_desc; // #IGNORE "desc" -- per-instance desc if available (def to type)
   static const KeyString key_disp_name; // #IGNORE "disp_name" -- DisplayName, never empty
+  static const KeyString key_unique_name; // #IGNORE "unique_name" -- DottedName, for token lists, DisplayName if empty
   
   virtual const String	statusTip(const KeyString& key = "") const;
   // #IGNORE the default text returned for StatusTipRole (key usually not needed)
@@ -1374,6 +1377,7 @@ public:
 protected:
   String	GetListName_() const	{ return name; }
   void		El_SetIndex_(void* it, int idx) {((TAPtr)it)->SetIndex(idx);}
+  void		El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST 
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
   TALPtr	El_GetOwner_(void* it) const { return (TABLPtr)((TAPtr)it)->GetOwner(); }
   void*		El_SetOwner_(void* it)	{ ((TAPtr)it)->SetOwner(this); return it; }

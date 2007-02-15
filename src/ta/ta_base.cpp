@@ -529,6 +529,11 @@ String taBase::GetDisplayName() const {
   return rval;
 }
 
+String taBase::GetUniqueName() const { 
+//TODO: need a better way to concisely express this:
+  return GetPath_Long();
+}
+
 TAPtr taBase::GetOwner(TypeDef* td) const {
   TAPtr own = GetOwner();
   if(own == NULL)
@@ -539,13 +544,31 @@ TAPtr taBase::GetOwner(TypeDef* td) const {
   return own->GetOwner(td);
 }
 
+void taBase::SetDefaultName_impl(int idx) {
+  // name root -- use an explicit name root if any, else just the class name
+  TypeDef* td = GetTypeDef();
+  String nm = td->OptionAfter("DEF_NAME_ROOT_");
+  if (nm.empty()) nm = td->name;
+  // name style -- 0 is the legacy one
+  int nm_style = td->OptionAfter("DEF_NAME_STYLE_").toInt(); // 0 if not present
+  if (nm_style == 1) {
+    nm += String(++idx); // use 1-based, no _
+  } else { // 0, or unknown style -- use legacy
+    nm += ("_" + String(idx)); 
+  }
+  SetName(nm);
+}
+
 void taBase::SetDefaultName_() {
   TypeDef* td = GetTypeDef();
-  int tok;
-  if(td->tokens.keep && ((tok = td->tokens.FindEl((void *)this)) >= 0)) {
-    String nm = td->name + "_" + String(tok);
-    SetName(nm);
+  if (td->HasOption("DEF_NAME_LIST")) {
+    SetName(_nilString); // must clear, since desc class may already have set
+    return; // not actually done until added to list
   }
+  if (!td->tokens.keep) return;
+  int idx = td->tokens.FindEl((void *)this);
+  if (idx < 0) return;
+  SetDefaultName_impl(idx);
 }
 
 String taBase::GetStateDecoKey() const {
@@ -1501,6 +1524,7 @@ const KeyString taBase::key_type("type");
 const KeyString taBase::key_type_desc("type_desc");
 const KeyString taBase::key_desc("desc"); 
 const KeyString taBase::key_disp_name("disp_name"); 
+const KeyString taBase::key_unique_name("unique_name"); 
 
 const String taBase::statusTip(const KeyString&) const {
   TypeDef* typ = GetTypeDef();
@@ -2533,6 +2557,13 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
   taMisc::Warning("*** Missing '{', '=', or '[' in dump file for group:",
 		GetPath(),"of type:",GetTypeDef()->name);
   return false;
+}
+
+void taList_impl::El_SetDefaultName_(void* item_, int idx) {
+  taBase* item = (taBase*)item_;
+  if (item->HasOption("DEF_NAME_LIST")) {
+    item->SetDefaultName_impl(idx);
+  }
 }
 
 void taList_impl::EnforceSameStru(const taList_impl& cp) {
