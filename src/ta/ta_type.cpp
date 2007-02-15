@@ -306,6 +306,12 @@ const String taiMiscCore::classname() {
   return String(QCoreApplication::instance()->applicationName());
 }
 
+void taiMiscCore::customEvent(QEvent* ev) {
+  if ((int)ev->type() == (int)CE_QUIT)
+    Quit(CO_NOT_CANCELLABLE);
+  else inherited::customEvent(ev);
+}
+
 int taiMiscCore::Exec() {
   if (taMisc::in_event_loop) {
     taMisc::Error("Attempt to enter event loop a second time!");
@@ -1919,6 +1925,7 @@ void taDataLink::DataDestroying() { //note: linklist will automatically remove u
 void taDataLink::DoNotify(int dcr, void* op1_, void* op2_) {
   for (int i = 0; i < clients.size; ++i) {
     IDataLinkClient* dlc = clients.FastEl(i);
+    if ((dcr == DCR_REBUILD_VIEWS) && !dlc->isDataView()) continue;
     dlc->DataDataChanged(this, dcr, op1_, op2_);
   }
 }

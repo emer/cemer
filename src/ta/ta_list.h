@@ -143,6 +143,7 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_GROUP_LIST_SORTED,	// after sorting; ops not used
 
   DCR_UPDATE_VIEWS, // no ops; sent for UpdateAllViews
+  DCR_REBUILD_VIEWS, // no ops; sent to DataViews for RebuildAllViews
   
   DCR_STRUCT_UPDATE_BEGIN, // for some updating, like doing Layer->Build, better for gui to just do one
   DCR_STRUCT_UPDATE_END,  // update operation at the end of everything

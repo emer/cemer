@@ -202,6 +202,8 @@ protected:
 //  override void		Reset_impl();
 
   override void 	DataStructUpdateEnd_impl(); // our own customized version, similar to generic base
+  override void  	DataRebuildView_impl() {DataStructUpdateEnd_impl();} // same as StructEnd
+
 protected:
   T3DataView*		last_child_node; // #IGNORE last child node created, so we can pass to createnode
 //nn  DataLink_QObj*	qobj; // #IGNORE delegate object, when we need to connect or signal

@@ -78,7 +78,7 @@ public:
 };
 
 class TA_API taProject : public taFBase {
-  // ##FILETYPE_Project ##FILER_CONTEXT_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
+  // ##FILETYPE_Project ##FILER_CONTEXT_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DEF_NAME_ROOT_Project ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
   taBase_Group		templates; // #HIDDEN templates for new objects -- copy new objects from here

@@ -601,9 +601,13 @@ void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
         if (cancel_op == CO_CANCEL) return;
         if (tabMisc::root) tabMisc::root->SaveAll();
         //fall through
-      case 0:
-        taiMiscCore::Quit(CO_NOT_CANCELLABLE); // no going back now
-        return;
+      case 0: {
+        // to avoid bug we send a msg to main obj, then cancel here
+        QEvent* ev = new QEvent((QEvent::Type)taiMiscCore::CE_QUIT);
+        QCoreApplication::postEvent(taiM, ev);
+       // taiMiscCore::Quit(CO_NOT_CANCELLABLE); // no going back now
+        cancel_op = CO_CANCEL;
+        } return;
         //WARNING: undefined after this point -- do not add any more code after calling Quit
       case 2:
         cancel_op = CO_CANCEL;

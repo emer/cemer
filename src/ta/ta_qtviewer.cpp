@@ -3784,7 +3784,7 @@ void iTabView::Init() {
   tbPanels = new iTabBar(this);
 #if (QT_VERSION >= 0x040200)
   tbPanels->setUsesScrollButtons(true);
-  tbPanels->setElideMode(Qt::ElideMiddle); // middle generally better
+  tbPanels->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
 #endif
   layDetail->addWidget(tbPanels);
   wsPanels = new Q3WidgetStack(this);

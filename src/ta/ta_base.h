@@ -557,6 +557,8 @@ public:
   // #IGNORE called by a child in its UAE routine; provides child notifications  NOTE: only member objects are detected; subclasses that want to notify on owned TAPtr members must override and check for those instances manually
   virtual void		UpdateAllViews();
   // #CAT_Display called after data changes, to update views
+  virtual void		RebuildAllViews();
+  // #CAT_Display call after data changes, to rebuild views, typically when a child is added
   virtual void 		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   // #IGNORE sends the indicated notification to all datalink clients, if any; virtual so we can override to trap/monitor
   void			StructUpdate(bool begin) { BatchUpdate(begin, true); }
@@ -1568,6 +1570,7 @@ public: // IDataLinkCLient
 //in taBase  virtual TypeDef*	GetTypeDef() const;
   override TypeDef*	GetDataTypeDef() const 
     {return (m_data) ? m_data->GetTypeDef() : &TA_taBase;} // TypeDef of the data
+  override bool		isDataView() const {return true;}
   override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
    // called when the data item has changed, esp. ex lists and groups; dispatches to the DataXxx_impl's
   override void		DataLinkDestroying(taDataLink* dl); // called by DataLink when destroying; it will remove 
@@ -1584,6 +1587,7 @@ protected:
   virtual void		DataUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.
   virtual void		DataUpdateAfterEdit_Child_impl(taDataView* chld) {}
   virtual void		DataUpdateView_impl() { if(taMisc::gui_active) Render_impl(); } // called for Update All Views, and at end of a DataUpdate batch
+  virtual void		DataRebuildView_impl() {} // called for Rebuild All Views, clients usually do beg/end both
   virtual void		DataStructUpdateEnd_impl() {} // called ONLY at end of a struct update -- derived classes usually do some kind of rebuild or render
   virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 
    // typically from an owned list

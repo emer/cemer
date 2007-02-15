@@ -1816,7 +1816,7 @@ void taiActions::setLabel(const String& val) {
     if (menu_ != NULL) {
       menu_->menuAction()->setText(val);
     } else {
-      QPushButton* pb_ = qobject_cast<QPushButton*>(GetRep());
+      QAbstractButton* pb_ = qobject_cast<QAbstractButton*>(GetRep());
       if (pb_ != NULL) {
         pb_->setText(val);
       }
@@ -1984,6 +1984,10 @@ taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, ta
 void taiButtonMenu::init()
 {
   QToolButton* button = new QToolButton(gui_parent);
+  // note: for a normal button menu, similar to QPushButton, need to do this...
+  // note that "InstantPopu" is not great, because the button doesn't indicate
+  //   visually that it is a menu
+  button->setPopupMode(QToolButton::MenuButtonPopup);
   //note: for taiEditButton, we don't add the menu to ourself if it is in EditOnly mode
   //  because that seems to interfere with normal pushbutton ability
   if (!HasFlag(flgEditOnly)) {

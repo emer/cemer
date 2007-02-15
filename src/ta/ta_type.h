@@ -317,6 +317,11 @@ class TA_API taiMiscCore: public QObject {
 INHERITED(QObject)
 Q_OBJECT
 public:
+#ifndef __MAKETA__
+  enum CustomEvents {
+    CE_QUIT		= QEvent::User + 1 // sent from RootWin::CloseEvent to avoid issues
+  };
+#endif
   
   static taiMiscCore*	New(QObject* parent = NULL);
     // either call this or call taiMisc::New 
@@ -341,12 +346,14 @@ public:
     
   taiMiscCore(QObject* parent = NULL);
   ~taiMiscCore();
+  
 protected slots:
   void			app_aboutToQuit();
   virtual void		timer_timeout(); // called when timer times out, for waitproc processing
   
 protected:
   QTimer*		timer; // for idle processing
+  override void		customEvent(QEvent* ev);
   virtual void		Init(bool gui = false); // NOTE: called from static New
   virtual int		Exec_impl();
   virtual void		OnQuitting_impl(CancelOp& cancel_op); // allow to cancel
@@ -989,6 +996,7 @@ public:
   inline taDataLink*	link() const {return m_link;}
 #endif
   inline taDataLink*	link_() const {return m_link;}
+  virtual bool		isDataView() const {return false;} // true for dataviews
   virtual void		DataLinkDestroying(taDataLink* dl) = 0; // called by DataLink when destroying; it will remove datalink ref in dlc upon return
   virtual void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) = 0; //
   

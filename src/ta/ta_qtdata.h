@@ -665,7 +665,7 @@ class TA_API taiButtonMenu: public taiActions { // a button, in which the action
 typedef taiActions inherited;
 #endif
 public:
-  QPushButton*		rep() {return (QPushButton*)m_rep;}
+  QAbstractButton*	rep() {return (QAbstractButton*)m_rep;}
   
   override void		Delete(); // should delete the menu if we didn't use it
   taiButtonMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
@@ -1388,7 +1388,7 @@ public:
 };
 
 class TA_API taiMethButton : public taiMethodData {
-  // button representation of a method -- uses the QPushButton, and sets it as the Rep as well
+  // button representation of a method -- uses the QAbstractButton, and sets it as the Rep as well
 public:
   taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);

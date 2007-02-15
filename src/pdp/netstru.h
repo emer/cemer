@@ -1504,6 +1504,7 @@ public:
 
   void	Initialize() 		{ };
   void 	Destroy()		{ };
+  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	InitLinks()		{ inherited::InitLinks(); taBase::Own(pos,this); }
   void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; }
   COPY_FUNS(Layer_Group, inherited);
@@ -1554,7 +1555,7 @@ public:
 
 
 class PDP_API Network : public taFBase {
-  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network A network, containing layers, units, etc..
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network A network, containing layers, units, etc..
 INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..

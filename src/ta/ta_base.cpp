@@ -1076,6 +1076,11 @@ void taBase::UpdateAllViews() {
     DataChanged(DCR_UPDATE_VIEWS);
 }
 
+void taBase::RebuildAllViews() {
+  if(taMisc::gui_active)
+    DataChanged(DCR_REBUILD_VIEWS);
+}
+
 void taBase::DataChanged(int dcr, void* op1, void* op2) {
   if (!taMisc::is_loading)
     setDirty(true); // note, also then sets dirty for list ops, like Add etc.
@@ -3314,6 +3319,9 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   else if (dcr == DCR_UPDATE_VIEWS) {
     DataUpdateView_impl();
     DataDataChanged_impl(DCR_UPDATE_VIEWS, NULL, NULL);
+  } else if (dcr == DCR_REBUILD_VIEWS) {
+    DataRebuildView_impl();
+    DataDataChanged_impl(DCR_REBUILD_VIEWS, NULL, NULL);
   } else {
     DataDataChanged_impl(dcr, op1_, op2_);
   }

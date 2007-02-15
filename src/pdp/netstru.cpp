@@ -4369,6 +4369,21 @@ void Layer::DMem_SyncAct() {
 }
 #endif
 
+
+////////////////////////
+//  Layer_Group	      //
+////////////////////////
+
+void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if (dcr == DCR_LIST_ITEM_INSERT) {
+    Network* net = GET_MY_OWNER(Network);
+    if (net) 
+      net->RebuildAllViews();
+  }
+}
+
+
 ////////////////////////
 //	Network	      //
 ////////////////////////

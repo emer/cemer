@@ -1926,7 +1926,7 @@ void taiEditDataHost::SetCurMenuButton(MethodDef* md) {
   cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
 	    NULL, this, NULL, widget());
   cur_menu_but->setLabel(men_nm);
-  DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
+  DoAddMethButton((QAbstractButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
   ta_menu_buttons.Add(cur_menu_but);
 }
 
