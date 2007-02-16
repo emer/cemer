@@ -1110,6 +1110,7 @@ public:
   void			SetCurrentTab(int tab_idx); 
     // focus indicated tab, but usually not if current is lockInPlace 
   int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
+  void 			UpdateTabName(iDataPanel* pan); // called only by individual panel when its name may have changed
 
   iTabView(QWidget* parent = NULL);
   iTabView(iTabViewer* data_viewer_, QWidget* parent = NULL);
@@ -1212,7 +1213,7 @@ protected:
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
   virtual void		OnWindowBind_impl(iTabViewer* itv) {}
   virtual void		Render_impl() {} // only called once, when content needs to be created
-  virtual void		Refresh_impl() {}
+  virtual void		Refresh_impl();
   virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
 private:
   iTabView*		m_tabView; // force access through accessors only

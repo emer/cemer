@@ -4083,6 +4083,15 @@ void iTabView::UpdateTabNames() { // called by a datalink when a tab name might 
   }
 }
 
+void iTabView::UpdateTabName(iDataPanel* pan) { // called by a panel when its tab name may have changed
+  for (int i = 0; i < tbPanels->count(); ++i ) {
+    iDataPanel* pani = tbPanels->panel(i);
+    if (pan != pani) continue; // shouldn't happen...
+    tbPanels->setTabText(i, pan->TabText());
+    tbPanels->setTabIcon(i,  pan->tabIcon());
+  }
+}
+
 //////////////////////////
 //   iTabView_PtrList	//
 //////////////////////////
@@ -4137,8 +4146,13 @@ QWidget* iDataPanel::centralWidget() const {
 void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
   if (dcr == DCR_ITEM_UPDATED) {
     if (tabView())
-      tabView()->UpdateTabNames(); //in case any changed */
+      tabView()->UpdateTabName(this); //in case changed */
   }
+}
+
+void iDataPanel::Refresh_impl() {
+  if (tabView())
+    tabView()->UpdateTabName(this); //in case changed */
 }
 
 void iDataPanel::Render() {

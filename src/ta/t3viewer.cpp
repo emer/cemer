@@ -1077,11 +1077,12 @@ void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
   T3DataViewFrame* dvf = idvf->viewer();
   String tab_label = dvf->GetName();
   if (idx < 0)
-    tw->addTab(idvf, tab_label);
+    idx = tw->addTab(idvf, tab_label);
   else
     tw->insertTab(idx, idvf, tab_label);
   idvf->t3vs->Connect_SelectableHostNotifySignal(this, 
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+  tw->setCurrentIndex(idx); // not selected automatically
 }
 
 void iT3DataViewer::AddFrame() {

@@ -271,6 +271,8 @@ void DataTableView::setDataTable(DataTable* dt) {
     SetData(dt);
     bool first = (colViewCount() == 0);
     UpdateFromDataTable(first);
+//TEST
+if (m_lvp) m_lvp->Refresh(); // to update name
   } else {
     Unbind(); // also does kids
   }
@@ -696,9 +698,8 @@ GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   if (!fr) return NULL; // unexpected...
   
   GridTableView* vw = new GridTableView;
-//TEMP: try setting table first, before viewing, so all data in place
-  vw->setDataTable(dt);
   fr->AddView(vw);
+  vw->setDataTable(dt);
   return vw;
 }
 

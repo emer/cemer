@@ -234,7 +234,7 @@ void taPtrList_impl::Add_(void* it, bool no_notify) {
   AddOnly_(it);
   if (it != NULL) {
     El_SetIndex_(El_Own_(it), idx);
-    if (El_GetName_(it).empty()) {
+    if (!taMisc::is_loading && !taMisc::is_duplicating && El_GetName_(it).empty()) {
       El_SetDefaultName_(it, idx);
     }
     if(hash_table != NULL)
