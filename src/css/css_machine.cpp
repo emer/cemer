@@ -278,8 +278,8 @@ bool cssMisc::IsNameValid(const String& nm) {
   return true;
 }
 
-cssElPtr& cssMisc::ParseName(const String& nm) {
-  static cssElPtr s;
+cssElPtr cssMisc::ParseName(const String& nm) {
+  cssElPtr s;
   if((s = cssMisc::TypesSpace.FindName(nm)))
     return s;
   if((s = cssMisc::Externs.FindName(nm)))
@@ -2116,7 +2116,7 @@ cssElPtr& cssSpace::Push(cssEl* it) {
 }
 cssElPtr& cssSpace::PushUniqNameNew(cssEl* it) {
   cssElPtr p = FindName((char*)it->name);
-  if(p == cssMisc::VoidElPtr) {
+  if(!p) {
     return Push(it);
   }
   cssEl::unRefDone(p.El());
@@ -2128,7 +2128,7 @@ cssElPtr& cssSpace::PushUniqNameNew(cssEl* it) {
 
 cssElPtr& cssSpace::PushUniqNameOld(cssEl* it) {
   cssElPtr p = FindName((char*)it->name);
-  if(p == cssMisc::VoidElPtr) {
+  if(!p) {
     return Push(it);
   }
   cssEl::Done(it);

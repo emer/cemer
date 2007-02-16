@@ -1596,7 +1596,7 @@ void cssClassType::GetComments(cssEl* obj, cssElPtr cmt) {
   member_desc.SetSize(members->size);
   member_opts.SetSize(members->size);
 
-  if (cmt == cssMisc::VoidElPtr)
+  if (!cmt)
     return;
 
   int mbridx;

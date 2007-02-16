@@ -11,10 +11,6 @@ Program todo:
 
 - switchcase progel
 
-- when are program arg css generated?  is this necessary??  always just a comment?
-
-- cmdshell should print out the prompt! displayPrompt(true);  sometimes works..
-
 - figure out PtrAssignPtr in Cptr type operator= funs (c_int = .path_to_int...)..
 - add quit confirm prompt taChoice
 
@@ -29,6 +25,9 @@ Immediate:
 
 -----------------------
 Longer-term:
+
+- cleanup cssElPtr& return types and copy constr, etc -- it is lightweight and should
+just be used as a value class..  could also optimize as a union
 
 - has a problem with: var-num types of exprs -- gobbles the - into the
 num, sees var num (need to fix parser somehow)
@@ -54,8 +53,6 @@ to extern objects, etc.
 	and has trouble with comments, etc.
 
 - multi_space has some bugs on exit (dtor).
-
-- also register the taLeafItr too.
 
 - initializers for css arrays do not convert variable names into corresponding
 	 values, its a pain in the ass..
