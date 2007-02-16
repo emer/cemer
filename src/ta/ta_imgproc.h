@@ -385,8 +385,9 @@ private:
 ///////////////////////////////////////////////////////////////
 // 	taImageProc
 
-class TA_API taImageProc : public taOBase {
+class TA_API taImageProc : public taNBase {
   // ##CAT_Image basic image processing operations; images are either rgb = 3 dimensional matrix with 3rd dim = 3 or greyscale (2 dim matrix)
+  INHERITED(taNBase)
 public:
 
   static bool	RenderBorder_float(float_Matrix& img_data);
@@ -422,6 +423,12 @@ public:
   static bool	AttentionFilter(float_Matrix& mat, float radius_pct);
   // #CAT_Filter apply an "attentional" filter to the matrix data: outside of radius, values are attenuated in proportion of squared distance outside of radius (r_sq / dist_sq) -- radius_pct is normalized proportion of maximum half-size of image (e.g., 1 = attention bubble extends to furthest edge of image; only corners are attenuated)
 
+  virtual bool	GaborFilterV1(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
+			      float_Matrix& on_input, float_Matrix& off_input,
+			      GaborV1Spec& spec, bool superimpose = false);
+  // #CAT_Filter apply Gabor filter to on/off input channels to produce a V1-like processing of the input image.  superimpose = add values instead of overwriting (this is just a call to equiv function on spec)
+
+  override String 	GetTypeDecoKey() const { return "DataTable"; }
   void 	Initialize();
   void	Destroy();
   TA_BASEFUNS(taImageProc);

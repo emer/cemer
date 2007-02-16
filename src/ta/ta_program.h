@@ -89,7 +89,9 @@ public:
   override String GetTypeDecoKey() const { return "ProgVar"; }
   override bool	  FindCheck(const String& nm) const { return (name == nm); }
 
-  TypeDef*		act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
+  virtual TypeDef*	act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
+  virtual MemberDef* 	GetValMemberDef();
+  // #IGNORE get member def that represents the value for this type of variable
   
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);

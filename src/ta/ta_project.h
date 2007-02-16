@@ -85,9 +85,9 @@ public:
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
   DataTable_Group	data;	// data, such as patterns for network input
+  taBase_Group		data_proc; // objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_Group		programs; // Gui-based programs to run simulations and other processing
-  ViewSpec_Group	viewspecs; // #NO_SAVE #NO_SHOW #OBS specs for views of objects, esp. tables, ex. graphs
-  DataViewer_List	viewers; // any top-level viewers that have been saved
+  DataViewer_List	viewers; // #EXPERT viewer objects: contains configuration information (though this is typically more easily accessed through the view control panel)
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying
@@ -106,6 +106,8 @@ public:
 
   virtual DataTable*	GetNewAnalysisDataTable(const String& nw_nm="", bool msg=false);
   // createa a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
+  virtual taBase*	FindMakeNewDataProc(TypeDef* typ, const String& nm);
+  // find existing data processing object of given type, or else make one and give it nm
 
   virtual MainWindowViewer* NewProjectBrowser(); 
     // create a new, empty viewer -- note: window not opened yet

@@ -119,7 +119,7 @@ public:
   TA_SIMPLE_BASEFUNS(SimpleMathSpec);
 };
 
-class TA_API taMath : public taBase {
+class TA_API taMath : public taNBase {
   // ##CAT_Math collection of commonly-used math functions
 public:
 

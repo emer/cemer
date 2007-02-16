@@ -363,6 +363,7 @@ T3GraphLine::T3GraphLine(void* dataView_, float fnt_sz)
   line_sep->addChild(errbars);
 
   markerSet_ = NULL;
+  marker_size_ = MEDIUM;
   assertMarkerSet();		// just be done with it..
 //   initValueColorMode();
 }
@@ -588,18 +589,55 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
   SoMFVec3f& point = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
 
   int mk_idx;
-  switch (style){
-  case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_5_5;  break;
-  case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_5_5;  break;
-  case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_5_5;  break;
-  case TRIANGLE: mk_idx = SoMarkerSet::TRIANGLE_LINE_5_5;  break;
-  case MINUS: mk_idx = SoMarkerSet::MINUS_5_5;  break;
-  case BACKSLASH: mk_idx = SoMarkerSet::BACKSLASH_5_5;  break;
-  case BAR: mk_idx = SoMarkerSet::BAR_5_5;  break;
-  case SLASH: mk_idx = SoMarkerSet::SLASH_5_5;  break;
-  case PLUS: mk_idx = SoMarkerSet::PLUS_5_5;  break;
-  case CROSS: mk_idx = SoMarkerSet::CROSS_5_5;  break;
-  case STAR: mk_idx = SoMarkerSet::STAR_5_5;  break;
+  switch(marker_size_) {
+  case SMALL: {
+    switch (style){
+    case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_5_5;  break;
+    case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_5_5;  break;
+    case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_5_5;  break;
+    case TRIANGLE: mk_idx = SoMarkerSet::TRIANGLE_LINE_5_5;  break;
+    case MINUS: mk_idx = SoMarkerSet::MINUS_5_5;  break;
+    case BACKSLASH: mk_idx = SoMarkerSet::BACKSLASH_5_5;  break;
+    case BAR: mk_idx = SoMarkerSet::BAR_5_5;  break;
+    case SLASH: mk_idx = SoMarkerSet::SLASH_5_5;  break;
+    case PLUS: mk_idx = SoMarkerSet::PLUS_5_5;  break;
+    case CROSS: mk_idx = SoMarkerSet::CROSS_5_5;  break;
+    case STAR: mk_idx = SoMarkerSet::STAR_5_5;  break;
+    }
+    break;
+  }
+  case MEDIUM: {
+    switch (style){
+    case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_7_7;  break;
+    case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_7_7;  break;
+    case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_7_7;  break;
+    case TRIANGLE: mk_idx = SoMarkerSet::TRIANGLE_LINE_7_7;  break;
+    case MINUS: mk_idx = SoMarkerSet::MINUS_7_7;  break;
+    case BACKSLASH: mk_idx = SoMarkerSet::BACKSLASH_7_7;  break;
+    case BAR: mk_idx = SoMarkerSet::BAR_7_7;  break;
+    case SLASH: mk_idx = SoMarkerSet::SLASH_7_7;  break;
+    case PLUS: mk_idx = SoMarkerSet::PLUS_7_7;  break;
+    case CROSS: mk_idx = SoMarkerSet::CROSS_7_7;  break;
+    case STAR: mk_idx = SoMarkerSet::STAR_7_7;  break;
+    }
+    break;
+  }
+  case LARGE: {
+    switch (style){
+    case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_9_9;  break;
+    case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_9_9;  break;
+    case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_9_9;  break;
+    case TRIANGLE: mk_idx = SoMarkerSet::TRIANGLE_LINE_9_9;  break;
+    case MINUS: mk_idx = SoMarkerSet::MINUS_9_9;  break;
+    case BACKSLASH: mk_idx = SoMarkerSet::BACKSLASH_9_9;  break;
+    case BAR: mk_idx = SoMarkerSet::BAR_9_9;  break;
+    case SLASH: mk_idx = SoMarkerSet::SLASH_9_9;  break;
+    case PLUS: mk_idx = SoMarkerSet::PLUS_9_9;  break;
+    case CROSS: mk_idx = SoMarkerSet::CROSS_9_9;  break;
+    case STAR: mk_idx = SoMarkerSet::STAR_9_9;  break;
+    }
+    break;
+  }
   }
 
   //note: render count is taken from point count, so add marker first
@@ -609,7 +647,6 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
   else
     marker.set1Value(marker.getNum(), mk_idx);
   point.set1Value(point.getNum(), pt.x, pt.y, -pt.z);
-
 }
 
 void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& c) {
@@ -672,6 +709,10 @@ void T3GraphLine::setLineStyle(LineStyle value, float line_width) {
   }
   lineDrawStyle_->linePattern.setValue(pattern);
   lineDrawStyle_->lineWidth.setValue(line_width);
+}
+
+void T3GraphLine::setMarkerSize(MarkerSize sz) {
+  marker_size_ = sz;
 }
 
 void T3GraphLine::setValueColorMode(bool value) {

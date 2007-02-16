@@ -122,6 +122,7 @@ public:
 			    const String& path_col_nm = "FilePath");
   // #CAT_Files #MENU #MENU_ON_Files #NULL_OK read file names from given directory into rows of the data table (must be passed non-null), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist)
 
+  override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
   TA_BASEFUNS(taDataGen);

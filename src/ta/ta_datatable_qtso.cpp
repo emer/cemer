@@ -2601,6 +2601,7 @@ void GraphTableView::Initialize() {
   graph_type = XY;
   plot_style = LINE;
   line_width = 2.0f;
+  point_size = MEDIUM;
   point_spacing = 1;
   color_mode = VALUE_COLOR;
   negative_draw = false;
@@ -3308,6 +3309,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   t3gl->clear();
   t3gl->startBatch();
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
+  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataArray_impl* da_y = plv.GetDAPtr();
   if(!da_y) return;

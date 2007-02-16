@@ -406,7 +406,11 @@ int tabProgramViewType::BidForView(TypeDef* td) {
 
 void tabProgramViewType::CreateDataPanel_impl(taiDataLink* dl_)
 {
-  // we create ours first, because it should be the default
+  // control panel is default
+  iProgramCtrlPanel* cp = new iProgramCtrlPanel(dl_);
+  DataPanelCreated(cp);
+
+  // then editor
   iProgramPanel* dp = new iProgramPanel(dl_);
   DataPanelCreated(dp);
   inherited::CreateDataPanel_impl(dl_);
@@ -1056,3 +1060,145 @@ void iProgramToolBar::Constr_post() {
 }
 
 
+//////////////////////////////////
+//	iProgramCtrl		//
+//////////////////////////////////
+
+iProgramCtrlDataHost::iProgramCtrlDataHost(void* base, TypeDef* td, bool read_only_,
+					   bool modal_, QObject* parent)
+: taiEditDataHost(base, td, read_only_, modal_, parent)
+{
+  //  use_show = false;
+  prog = (Program*)base;
+}
+
+iProgramCtrlDataHost::~iProgramCtrlDataHost() {
+}
+
+bool iProgramCtrlDataHost::ShowMember(MemberDef* md) const {
+  return false;
+}
+
+void iProgramCtrlDataHost::Constr_Body() {
+  inherited::Constr_Body();
+  String nm;
+  String help_text;
+  for (int i = 0; i < prog->args.size; ++i) {
+    ProgVar* pv = prog->args.FastEl(i);
+    MemberDef* md = pv->GetValMemberDef();
+    // todo: need to deal with hard_enum and dyn_enum here..
+    taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
+    data_el.Add(mb_dat);
+    QWidget* data = mb_dat->GetRep();
+    int row = AddData(-1, data);
+    nm = pv->name;
+    help_text = pv->desc;
+    AddName(row, nm, help_text, mb_dat);
+  }
+  for (int i = 0; i < prog->vars.size; ++i) {
+    ProgVar* pv = prog->vars.FastEl(i);
+    MemberDef* md = pv->GetValMemberDef();
+    // todo: need to deal with hard_enum and dyn_enum here..
+    taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
+    data_el.Add(mb_dat);
+    QWidget* data = mb_dat->GetRep();
+    int row = AddData(-1, data);
+    nm = pv->name;
+    help_text = pv->desc;
+    AddName(row, nm, help_text, mb_dat);
+  }
+}
+
+void iProgramCtrlDataHost::GetValue_Membs() {
+  GetValue_impl(typ->members, data_el, cur_base);
+  //  prog->UpdateAllBases();
+}
+
+void iProgramCtrlDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,
+  void* base) const
+{
+  int cnt = 0;
+  bool first_diff = true;
+  for (int i = 0; i < prog->args.size; ++i) {
+    ProgVar* pv = prog->args.FastEl(i);
+    MemberDef* md = pv->GetValMemberDef();
+    taiData* mb_dat = dl.FastEl(cnt++);
+    md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
+    if(!first_diff) {		// always reset!
+      taiMember::EndScript((void*)pv);
+      first_diff = true;
+    }
+  }
+  for (int i = 0; i < prog->vars.size; ++i) {
+    ProgVar* pv = prog->vars.FastEl(i);
+    MemberDef* md = pv->GetValMemberDef();
+    taiData* mb_dat = dl.FastEl(cnt++);
+    md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
+    if(!first_diff) {		// always reset!
+      taiMember::EndScript((void*)pv);
+      first_diff = true;
+    }
+  }
+}
+
+void iProgramCtrlDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
+  void* base)
+{
+  int cnt = 0;
+  for (int i = 0; i < prog->args.size; ++i) {
+    ProgVar* pv = prog->args.FastEl(i);
+    MemberDef* md = pv->GetValMemberDef();
+    taiData* mb_dat = dl.FastEl(cnt++);
+    md->im->GetImage(mb_dat, (void*)pv);
+  }
+  for (int i = 0; i < prog->vars.size; ++i) {
+    ProgVar* pv = prog->vars.FastEl(i);
+    MemberDef* md = pv->GetValMemberDef();
+    taiData* mb_dat = dl.FastEl(cnt++);
+    md->im->GetImage(mb_dat, (void*)pv);
+  }
+}
+
+//////////////////////////
+//   iProgramCtrlPanel 	//
+//////////////////////////
+
+iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  Program* prog_ = prog();
+  if (prog_) {
+    pc = new iProgramCtrlDataHost(prog_, &TA_Program);
+    const iColor* bgcol = NULL;
+    if (taMisc::color_hints & taMisc::CH_EDITS) {
+      bgcol = prog_->GetEditColorInherit();
+    }
+    pc->Constr("", "", bgcol, taiDataHost::HT_PANEL, true);
+    setCentralWidget(pc->widget()); //sets parent
+  }
+}
+
+void iProgramCtrlPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  //NOTE: don't need to do anything because DataModel will handle it
+  // not in this case!
+}
+
+bool iProgramCtrlPanel::HasChanged() {
+  return pc->HasChanged();
+}
+
+void iProgramCtrlPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+}
+
+void iProgramCtrlPanel::Refresh_impl() {
+  pc->ReShow();
+}
+
+void iProgramCtrlPanel::ResolveChanges_impl(CancelOp& cancel_op) {
+ // per semantics elsewhere, we just blindly apply changes
+  if (pc->HasChanged()) {
+    pc->Apply();
+  }
+}

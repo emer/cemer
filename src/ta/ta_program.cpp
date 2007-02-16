@@ -111,6 +111,24 @@ TypeDef* ProgVar::act_object_type() const {
   return rval;
 }
 
+MemberDef* ProgVar::GetValMemberDef() {
+  if(var_type == T_Int)
+    return TA_ProgVar.members.FindName("int_val");
+  else if(var_type == T_Real)
+    return TA_ProgVar.members.FindName("real_val");
+  else if(var_type == T_String)
+    return TA_ProgVar.members.FindName("string_val");
+  else if(var_type == T_Bool)
+    return TA_ProgVar.members.FindName("bool_val");
+  else if(var_type == T_Object)
+    return TA_ProgVar.members.FindName("object_val");
+  else if(var_type == T_HardEnum)
+    return TA_ProgVar.members.FindName("hard_enum_type");
+  else if(var_type == T_DynEnum)
+    return TA_ProgVar.members.FindName("dyn_enum_val");
+  return NULL;
+}
+
 void ProgVar::SetInt(int val) {
   var_type = T_Int;
   int_val = val;

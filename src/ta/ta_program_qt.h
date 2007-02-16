@@ -26,6 +26,7 @@
 #include "ta_qtdata.h"
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
+#include "ta_qtdialog.h"
 
 #ifndef __MAKETA__
 # include <QPointer>
@@ -138,7 +139,7 @@ protected:
 };
 
 class TA_API iProgramEditor: public QWidget, public virtual IDataHost, 
-  public virtual IDataLinkClient {
+			     public virtual IDataLinkClient {
   // #NO_CSS widget for editing entire programs
 INHERITED(QWidget)
   Q_OBJECT
@@ -295,6 +296,54 @@ public:
   :iToolBar(viewer, parent){}
 protected:
   override void		Constr_post(); 
+};
+
+class TA_API iProgramCtrlDataHost : public taiEditDataHost {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
+INHERITED(taiEditDataHost)
+  Q_OBJECT
+public:
+  Program*	prog;
+
+  iProgramCtrlDataHost(void* base, TypeDef* td, bool read_only_ = false,
+		       bool modal_ = false, QObject* parent = 0);
+  iProgramCtrlDataHost()		{ };
+  ~iProgramCtrlDataHost();
+
+  override bool ShowMember(MemberDef* md) const;
+
+protected:
+  override void	GetValue_Membs();
+  override void	Constr_Body();
+
+  override void	GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
+  override void	GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const;
+};
+
+class TA_API iProgramCtrlPanel: public iDataPanelFrame {
+// ##NO_CSS panel for program control panel
+INHERITED(iDataPanelFrame)
+  Q_OBJECT
+public:
+  iProgramCtrlDataHost*	pc;
+  
+  Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
+  override String	panel_type() const {return "Program Ctrl";}
+
+  override bool		HasChanged(); // 'true' if user has unsaved changes
+  void			FillList();
+
+  iProgramCtrlPanel(taiDataLink* dl_);
+  
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iProgramCtrlPanel;}
+  
+protected:
+  override void		DataChanged_impl(int dcr, void* op1, void* op2);
+  override void		OnWindowBind_impl(iTabViewer* itv);
+  override void		Refresh_impl();
+  override void		ResolveChanges_impl(CancelOp& cancel_op);
 };
 
 

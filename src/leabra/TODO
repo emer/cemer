@@ -2,12 +2,26 @@ leabra todo list:
 
 commit:
 
+
+------------
+current:
+
+* graph symbol size
+
+* add "compute" string field to datatable column + corresponding flag -- have
+  a static progspace for datatable and a compute row and compute column and
+  table function -- loads in all columns for current row as css hardvars as in
+  datacalc and allows you to write exprs in terms of these guys.  every
+  writeclose will update computes, in addition to supporting general computation.
+
+* provide direct access somehow to datatable tools.  one idea is to
+  auto-populate a new group in project called .data_proc that has all the static
+  guys just sitting there..  this is easy enough that I'll just do it.
+
+* program control panel
+
 * init stuff for var objs and Program targets -- make a static special progspace for 
   just this.
-
-* need to do dataproc s_ d_ shadow progvars!  breaks highvis..
-
-* program view
 
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
   -- seems slower after clicking around (confirmed).  maybe net too?  

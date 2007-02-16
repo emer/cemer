@@ -544,7 +544,7 @@ public:
   enum AxisType { X, Y, Z };
 
   bool			on;		// is this axis active for displaying info
-  AxisType		axis;		// #READ_ONLY type of axis this is, for rendering purposes
+  AxisType		axis;		// #READ_ONLY #SHOW type of axis this is, for rendering purposes
   GraphColView*		col_lookup; 	// #NULL_OK #FROM_GROUP_col_list lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
   String		col_name;	// name of column of data for this axis
   FixedMinMax		fixed_range;	// fixed min/max range values for display (if not fixed, automatically set to min/max of data)
@@ -710,6 +710,12 @@ public:
     THRESH_POINT,		// draw a point when value is over threshold
   };
 
+  enum PointSize {
+    SMALL,
+    MEDIUM,
+    LARGE,
+  };
+
   enum ColorMode {
     FIXED_COLOR,		// use the color specified in the plot view (shown in EXPERT mode)
     VALUE_COLOR,		// the data value determines the data drawing color, looked up on the color scale
@@ -735,6 +741,7 @@ public:
   GraphType		graph_type; 	// type of graph to draw
   PlotStyle		plot_style;	// how to plot the data
   float			line_width;	// width of line -- 0 means use default
+  PointSize		point_size;	// size of point symbols
   int 			point_spacing;	// #CONDEDIT_OFF_plot_style:LINE how frequently to display point markers 
   ColorMode		color_mode;	// how to determine the colors to draw
   bool			negative_draw;	// continue same line when X value resets in negative axis direction?

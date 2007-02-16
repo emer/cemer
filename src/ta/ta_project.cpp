@@ -141,9 +141,17 @@ void taProject::InitLinks_impl() {
   taBase::Own(wizards, this);
   taBase::Own(edits, this);
   taBase::Own(data, this);
+  taBase::Own(data_proc, this);
   taBase::Own(programs, this);
-  taBase::Own(viewspecs, this);
   taBase::Own(viewers, this);
+
+  // note: any derived programs should install additional guys..
+  FindMakeNewDataProc(&TA_taDataProc, "data_base");
+  FindMakeNewDataProc(&TA_taDataAnal, "data_anal");
+  FindMakeNewDataProc(&TA_taDataGen, "data_gen");
+  FindMakeNewDataProc(&TA_taImageProc, "image_proc");
+  FindMakeNewDataProc(&TA_taMath_float, "math_float");
+  FindMakeNewDataProc(&TA_taMath_double, "math_double");
 }
 
 void taProject::InitLinks_post() {
@@ -163,8 +171,8 @@ void taProject::CutLinks() {
 
 void taProject::CutLinks_impl() {
   viewers.CutLinks(); 
-  viewspecs.CutLinks();
   programs.CutLinks();
+  data_proc.CutLinks();
   data.CutLinks();
   edits.CutLinks();
   wizards.CutLinks();
@@ -175,15 +183,15 @@ void taProject::Copy_(const taProject& cp) {
   // delete things first, to avoid dangling references
   programs.Reset();
   viewers.Reset();
-  viewspecs.Reset();
   data.Reset();
+
   edits.Reset();
   
   templates = cp.templates;
   wizards = cp.wizards;
   edits = cp.edits;
   data = cp.data;
-  viewspecs = cp.viewspecs;
+  data_proc = cp.data_proc;
   viewers = cp.viewers;
   programs = cp.programs;
   // NOTE: once a derived project has all the relevant stuff copied, it needs to call this:
@@ -198,6 +206,13 @@ void taProject::UpdateAfterEdit() {
 //   }
 }
 
+taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
+  taBase* obj = data_proc.FindType(typ);
+  if(obj) return obj;
+  obj = data_proc.NewEl(1, typ);
+  obj->SetName(nm);
+  return obj;
+}
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
   // try official default first

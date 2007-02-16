@@ -1544,6 +1544,12 @@ bool taImageProc::DoGFilterRetina(float_Matrix& on_output, float_Matrix& off_out
   return spec.FilterRetina(on_output, off_output, retina_img, superimpose);
 }
 
+bool taImageProc::GaborFilterV1(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
+				float_Matrix& on_input, float_Matrix& off_input,
+				GaborV1Spec& spec, bool superimpose) {
+  return spec.FilterInput(v1_output, c_chan, on_input, off_input, superimpose);
+}
+
 bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
   TwoDCoord img_size(mat.dim(0), mat.dim(1));
   TwoDCoord img_ctr = img_size / 2;

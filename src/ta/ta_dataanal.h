@@ -203,6 +203,7 @@ public:
 //   static bool 	EventFreqText(bool proportion = false, ostream& strm = cerr);
 //   // #MENU #ARGC_1 report frequency (proportion) of event names in the environment
 
+  override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
   TA_BASEFUNS(taDataAnal);

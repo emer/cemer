@@ -236,10 +236,17 @@ public:
 #endif
   };
 
+  enum MarkerSize {
+    SMALL,
+    MEDIUM,
+    LARGE,
+  };
+
   static void		initClass();
 
   SoFont*		labelFont() const {return labelFont_;} // setup after creating
   void 			setLineStyle(LineStyle value, float line_width = 0.0f);
+  void			setMarkerSize(MarkerSize sz);
   bool			valueColorMode(){return valueColorMode_;}
   void			setValueColorMode(bool value);
 
@@ -277,6 +284,7 @@ protected:
   uint32_t		defColor_; // def is black
   bool			valueColorMode_;
   LineStyle		lineStyle_;
+  MarkerSize		marker_size_;
   SoSeparator*		line_sep;
   SoDrawStyle*		lineDrawStyle_;
   SoLineSet*		lines;		// we use the vertexProperty for points etc.
