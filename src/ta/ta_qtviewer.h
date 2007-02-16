@@ -1611,6 +1611,7 @@ public:
 
   override bool 	acceptDrop(const QMimeData* mime) const;
   void*			linkData() const;
+  virtual void		setName(const String& value); // is the first col, except for lists, which is 2nd -- note: only applicable for updates, not in constructor
   iTreeView*		treeView() const;
 
   override void 	CreateChildren(); 
@@ -1682,6 +1683,7 @@ public:
   iListDataPanel*	panel; // logical parent node of the list items
 
   QString		text(int col) const; // override
+  override void		setName(const String& value); // 2nd col for us
 
   bool 			operator<(const QTreeWidgetItem& item) const; // override
 

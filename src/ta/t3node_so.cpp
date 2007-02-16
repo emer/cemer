@@ -124,11 +124,12 @@ void T3Node::initClass()
   SO_NODE_INIT_ABSTRACT_CLASS(T3Node, SoSeparator, "Separator");
 }
 
-T3Node::T3Node(void* dataView_)
+T3Node::T3Node(void* dataView__)
+:dataView_(dataView__)
 {
   SO_NODE_CONSTRUCTOR(T3Node);
 
-  dataView = dataView_;
+  
 
 //  this->setName("topSeparator");
 

@@ -20,6 +20,8 @@
 #include "t3viewer.h"
 
 #include "ta_qt.h"
+#include "ta_qttype.h"
+#include "ta_qtdata.h"
 #include "ta_qtclipdata.h"
 
 #include "css_machine.h" // for trace flag
@@ -84,7 +86,7 @@ T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
     // T3Nodes
     if (node->getTypeId().isDerivedFrom(T3Node::getClassTypeId())) {
       T3Node* t3node = (T3Node*)node;
-      rval = (T3DataView*)t3node->dataView;
+      rval = (T3DataView*)t3node->dataView();
       break;
     }
     path->truncate(path->getLength() - 1);
@@ -183,15 +185,21 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
   // can't have any visual children, if we don't exist ourselves...
   // also, don't need to report to parent if we don't have any impl ourselves
   if (!m_node_so.ptr()) return;
-  node_so()->dataView = NULL;
 
   // we remove top-most item first, which results in only one update to the scene graph
   if (hasParent()) {
     parent()->ChildClearing(this); // parent clears us
+  } else {
+    setNode(NULL);
   }
 }
 
 void T3DataView::setNode(T3Node* node_) {
+  if (m_node_so.ptr() == node_) return; // generally shouldn't happen
+  if (m_node_so.ptr()) {
+    //TODO: detach the guy, and also force a gui deselect
+ //   node_so()->dataView = NULL;
+  }
   m_node_so = node_;
 }
 
@@ -235,10 +243,25 @@ void T3DataView::DataUpdateAfterEdit_impl() {
 /*nn? void T3DataView::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) {
   //TODO
 }
+*/
 
 void T3DataView::FillContextMenu_impl(taiActions* menu) {
-  //TODO
-} */
+//TODO: maybe we could make a comment directive for view items
+// that are supposed to go on the menu, if there is more than this one...
+  TypeDef* typ = GetTypeDef();
+  // put view props first, if any
+  if (selectEditMe()) {
+    MethodDef* md = typ->methods.FindName("ViewProperties");
+    if (md && md->im) {
+      taiMethodData* mth_rep = md->im->GetMethodRep(this, NULL, NULL, NULL);
+      if (mth_rep) {;
+        mth_rep->AddToMenu(menu);
+        menu->AddSep();
+      }
+    }
+  }
+  IObjectSelectable::FillContextMenu_impl(menu);
+} 
 
 void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
   if (flags & DNF_IS_MEMBER) {
@@ -326,6 +349,11 @@ FloatTransform* T3DataView::transform(bool auto_create) {
 void T3DataView::UpdateChildNames(T3DataView*) {
   //nothing
 }
+
+void T3DataView::ViewProperties() {
+  EditDialog();
+}
+
 
 /*obs String T3DataView::view_name() const {
   // if we have a name, use that
@@ -465,26 +493,6 @@ void iRenderArea::processEvent(QEvent* ev_) {
 do_inherited:
   inherited::processEvent(ev_);
 }
-
-/*nn SbBool iRenderArea::processSoEvent(const SoEvent* const ev)
-{
-  if (!t3vw) goto do_inherited;
-
-  if (ev->getTypeId().isDerivedFrom(SoMouseButtonEvent::getClassTypeId())) {
-    SoMouseButtonEvent* const e = (SoMouseButtonEvent *) ev;
-    if ((e->getButton() == SoMouseButtonEvent::BUTTON2)) {
-      if (e->getState() == SoButtonEvent::DOWN) {
-        iPoint pos(e->getPosition());
-        t3vw->emit_contextMenuRequested(QPoint(pos));
-        // Steal all RMB-events if the viewer uses the popup-menu.
-        return TRUE;
-      }
-    }
-  }
-
-do_inherited:
-  return inherited::processSoEvent(ev);
-} */
 
 
 //////////////////////////
@@ -703,12 +711,13 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   if (!t3node) return;
 
   if (ev->is_selected) {
-// ************ EVIL ALERT **************************
-    if(t3node->selectEditMe()) {
-      t3node->Edit();
-      //    return; // just do both actions!
+    if (t3node->selectEditMe()) {
+      if (taMisc::click_style == taMisc::CS_SINGLE) {
+        t3node->ViewProperties();
+        // don't also select or grab focus in this mode
+        return;
+      }
     }
-// end evil
     AddSelectedItem(t3node);
   }
   else {
@@ -1193,7 +1202,8 @@ void T3DataViewer::InitLinks() {
   taBase::Own(frames, this);
   // add a default frame, if none yet
   if (frames.size == 0) {
-    T3DataViewFrame* fv = (T3DataViewFrame*)frames.New(1);
+    //T3DataViewFrame* fv = 
+    (T3DataViewFrame*)frames.New(1);
     //nuke fv->SetName("DefaultFrame");
   }
 }

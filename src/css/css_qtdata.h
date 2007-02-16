@@ -40,7 +40,6 @@ public:
   cssClassInst*	obj;
   taiDataList 	data_el;
   taiType_List type_el;	// type elements (not stored on classes, so kept here)
-  int		show;
 
 
   cssiPolyData(cssClassInst* ob, TypeDef* typ_, IDataHost* host_, taiData* par,

@@ -1576,7 +1576,7 @@ void GridTableView::ViewCol_At(int start) {
 void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3GridViewNode* vnd = (T3GridViewNode*)userData;
-  GridTableView* nv = (GridTableView*)vnd->dataView;
+  GridTableView* nv = (GridTableView*)vnd->dataView();
 
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->table_orient.x, nv->table_orient.y, 
@@ -3681,7 +3681,7 @@ void GraphTableView::setRasterAxis(GraphColView* value) {
 void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3GraphViewNode* vnd = (T3GraphViewNode*)userData;
-  GraphTableView* nv = (GraphTableView*)vnd->dataView;
+  GraphTableView* nv = (GraphTableView*)vnd->dataView();
 
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->table_orient.x, nv->table_orient.y, 
@@ -5430,7 +5430,7 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
   int max_cell_rows = MAX(src_max_cell_rows, dst_max_cell_rows);
   // for cols, we only iterate over src, since we don't clear excess dst cols
   int src_cols = tabCols();
-  int dst_cols = sel.width();
+//nn  int dst_cols = sel.width();
   
   bool underflow = false;
   tab->DataUpdate(true); 

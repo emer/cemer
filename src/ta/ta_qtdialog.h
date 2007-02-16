@@ -432,7 +432,7 @@ public:
   EditDataPanel*	dataPanel() {return panel;} // #IGNORE
   override void 	guiParentDestroying() {panel = NULL;}
   
-  bool			SetShow(int value); // change show value; returns true if we rebuilt/reshowed dialog
+  bool			SetShow(int value, bool no_refresh = false); // change show value; returns true if we rebuilt/reshowed dialog
 
   taiEditDataHost(void* base, TypeDef* typ_ = NULL, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0);

@@ -103,9 +103,7 @@ private:
 
 class TA_API T3DataView: public taDataView, public virtual IObjectSelectable {
   // ##NO_TOKENS base class for 3d-based DataView objects
-#ifndef __MAKETA__
-  typedef taDataView	inherited;
-#endif
+INHERITED(taDataView)
 friend class T3DataViewer;
 friend class T3DataView_List;
 friend class T3DataViewPar;
@@ -127,8 +125,9 @@ public:
   FloatTransform*	m_transform;  // #READ_ONLY transform, created only if not unity
 
   virtual bool		hasChildren() const {return false;}
+  virtual bool		hasViewProperties() const {return false;}
+    // true if this item has editable view properties, and should be shown
   virtual bool		selectEditMe() const { return false; }
-  // for selection events -- if true, then edit this view object instead of the data() object
 
   virtual bool		expandable() const {return false;}
   virtual void		setExpandable(bool) {}
@@ -159,6 +158,8 @@ public:
   virtual void		ReInit(); // perform a reinitialization, particularly of visual state -- overload _impl
   virtual void		UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
   
+  virtual void		ViewProperties(); // #MENU show the view properties for this object
+  
   override void		UpdateAfterEdit(); //note: not _impl
   override void		CutLinks();
   TA_DATAVIEWFUNS(T3DataView, taDataView);
@@ -179,6 +180,7 @@ public: // ISelectable interface (only not in IDataLinkClient)
     int src_edit_action, bool for_drag) const;
   override int		QueryEditActions_(taiMimeSource* ms) const; */
 protected:
+  override void		FillContextMenu_impl(taiActions* menu);
   override void 	QueryEditActionsS_impl_(int& allowed, int& forbidden) const;
 
 protected:

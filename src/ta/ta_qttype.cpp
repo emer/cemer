@@ -1534,7 +1534,6 @@ taiData* taiCondEditMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   use_ro = (!host_->isModal()); // only get read-only for modal dialogs (otherwise, no chance to update!)
 
   rval->InitLayout();
-  rval->cur_deck = 0;
   taiData* child;
   if (m_sub_types)
     child = sub_types()->GetDataRep(host_, rval, gui_parent_);
@@ -1542,7 +1541,6 @@ taiData* taiCondEditMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
     child = taiMember::GetDataRep_impl(host_, rval, gui_parent_, flags_);
   rval->AddChildWidget(child->GetRep());
   if (use_ro) {		// only get read-only for waiting dialogs (otherwise, no chance to update!)
-    rval->cur_deck = 1;
 //    child = ro_im->GetDataRepEx(host_, rval, gui_parent_, (flags_ | taiData::flgReadOnly));
     child = taiMember::GetDataRep_impl(host_, rval, gui_parent_, (flags_ | taiData::flgReadOnly));
     rval->AddChildWidget(child->GetRep());

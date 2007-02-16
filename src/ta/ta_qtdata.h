@@ -346,10 +346,7 @@ protected:
 
 class TA_API taiDataDeck : public taiCompData {
 public:
-  Q3WidgetStack*	rep() {return (Q3WidgetStack*)m_rep;}
-  int		cur_deck; // current deck for operations
-
-  void		setNumDecks(int n); // sets # decks
+  QStackedWidget*	rep() {return (QStackedWidget*)m_rep;}
 
   override void	InitLayout() {} // nothing in this class
   override void	EndLayout() {} // nothing in this class
@@ -1390,6 +1387,8 @@ public:
 class TA_API taiMethButton : public taiMethodData {
   // button representation of a method -- uses the QAbstractButton, and sets it as the Rep as well
 public:
+  override QAbstractButton* GetButtonRep();
+  
   taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 //  ~taiMethButton();

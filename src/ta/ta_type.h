@@ -442,10 +442,9 @@ public:
     IS_DETAIL 		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys
     IS_NORMAL		= 0x08, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
     IS_EXPERT		= 0x10, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
-    SHOW_CHECK_MASK	= 15, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
+    SHOW_CHECK_MASK	= 0x1D, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
 
-    USE_SHOW_GUI_DEF 	= 0x40,	// #NO_BIT use default from taMisc::show_gui
-    USE_SHOW_DEF 	= 0x80 	// #NO_BIT use default from taMisc::show
+    USE_SHOW_GUI_DEF 	= 0x40	// #NO_BIT use default from taMisc::show_gui
   };
 
   enum TypeInfo {
@@ -516,6 +515,11 @@ public:
     BT_DMEM		= 0x02, // compiled for MPI (clustered use)
     BT_NO_GUI		= 0x04  // compiled without gui support
   };
+  
+  enum ClickStyle { // how to select editable items, such as in T3
+    CS_SINGLE,	// #LABEL_Single single click opens properties
+    CS_CONTEXT  // #LABEL_Context choose from context menu 
+  };
 
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		app_lib_name; // #READ_ONLY #NO_SAVE #DETAIL the root name of the app's library, if any, ex. "pdp" (none for css)
@@ -538,11 +542,11 @@ public:
   static int		color_scale_size; // #SAVE #CAT_GUI #EXPERT number of colors to put in a color scale
   static int		jpeg_quality; 	// #SAVE #CAT_GUI jpeg quality for dumping jpeg files (1-100; 95 default)
   static ColorHints 	color_hints; // #SAVE #CAT_GUI what types of color hinting to use in the application
+  static ClickStyle	click_style; // #SAVE #CAT_GUI how to select editable items in the gui, particularly in the 3d gui
 #ifndef NO_TA_BASE
   static ViewColor_List* view_colors; 	// #NO_SAVE colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif
 
-  static ShowMembs	show;		// #SAVE #CAT_GUI what to show in general (eg. css)
   static ShowMembs	show_gui;	// #SAVE #CAT_GUI what to show in the gui
   static TypeInfo	type_info;	// #SAVE #CAT_GUI #EXPERT what to show when displaying type information
   static KeepTokens	keep_tokens;	// #SAVE #CAT_GUI #EXPERT default for keeping tokens
@@ -1524,7 +1528,7 @@ public:
   bool		CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
 
-  bool		ShowMember(taMisc::ShowMembs show = taMisc::USE_SHOW_DEF,
+  bool		ShowMember(taMisc::ShowMembs show = taMisc::USE_SHOW_GUI_DEF,
     TypeItem::ShowContext show_context = TypeItem::SC_ANY) const;
   // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc)
 
@@ -1604,7 +1608,7 @@ public:
   void			CallFun(void* base) const;
   // call the function, using gui dialog if need to get args
   const String		ParamsAsString() const; // returns what would be in () for a definition
-  bool			ShowMethod(taMisc::ShowMembs show = taMisc::USE_SHOW_DEF) const;
+  bool			ShowMethod(taMisc::ShowMembs show = taMisc::USE_SHOW_GUI_DEF) const;
 protected:
   mutable byte	show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
   void		ShowMethod_CalcCache() const; // called when show_any=0, ie, not configured yet

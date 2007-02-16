@@ -63,7 +63,6 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QTreeWidgetItemIterator>
-#include <Q3WidgetStack>
 
 #include <errno.h>
 #include <stdio.h>
@@ -962,8 +961,7 @@ void taiPolyData::GetValue_impl(void* base) const {
 
 taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
 : taiCompData(typ_, host_, par, gui_parent_, flags) {
-  cur_deck = 0;
-  SetRep(new Q3WidgetStack(gui_parent_));
+  SetRep(new QStackedWidget(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
     SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
@@ -971,20 +969,21 @@ taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget*
 }
 
 void taiDataDeck::GetImage(int i) {
-  // note: Q3WidgetStack doesn't seem to completely hide underneath widgets...
+  rep()->setCurrentIndex(i);
+/*nuke  // note: Q3WidgetStack doesn't seem to completely hide underneath widgets...
   cur_deck = i;
   rep()->raiseWidget(i);
   for (int j = 0; j < widgetCount(); ++j) {
     QWidget* w = widgets(j);
     if (i == j) w->show();
     else        w->hide();
-  }
+  } */
 }
 
 void taiDataDeck::AddChildWidget_impl(QWidget* child_widget, int spacing,
   int /*stretch*/)
 {//note: stretch not needed/used
-  (rep()->addWidget(child_widget, cur_deck));
+  (rep()->addWidget(child_widget));
 }
 
 
@@ -4688,10 +4687,15 @@ taiMethButton::taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
 : taiMethodData(bs, md, typ_, host_, par, gui_parent_, flags_)
 {
   is_menu_item = false;
-  if (gui_parent) SetRep(MakeButton()); //note: later code in win_base.cc etc. has convoluted menu
+//no  if (gui_parent) SetRep(MakeButton()); //note: later code in win_base.cc etc. has convoluted menu
   // code that will end up spuriously invoking this, unless we prevent it.
 }
 
+QAbstractButton* taiMethButton::GetButtonRep() {
+  if (!m_rep)
+    SetRep(MakeButton());
+  return buttonRep;
+}
 
 //////////////////////////////
 // 	taiMethToggle     //

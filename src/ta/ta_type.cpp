@@ -442,11 +442,11 @@ int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
 int	taMisc::jpeg_quality = 95;
 taMisc::ColorHints taMisc::color_hints = taMisc::CH_EDITS;
+taMisc::ClickStyle taMisc::click_style = taMisc::CS_CONTEXT;
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif
 
-taMisc::ShowMembs  	taMisc::show = taMisc::NO_HIDDEN;
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
 taMisc::TypeInfo  	taMisc::type_info = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
@@ -2972,8 +2972,6 @@ bool MemberDef::ShowMember(taMisc::ShowMembs show,
 {
   if (show & taMisc::USE_SHOW_GUI_DEF)
     show = taMisc::show_gui;
-  else if (show == taMisc::USE_SHOW_DEF)
-    show = taMisc::show;
   
   // check if cache has been done yet
   if (show_any == 0) ShowMember_CalcCache();
@@ -3248,8 +3246,6 @@ bool MethodDef::ShowMethod(taMisc::ShowMembs show) const
 {
   if (show & taMisc::USE_SHOW_GUI_DEF)
     show = taMisc::show_gui;
-  else if (show == taMisc::USE_SHOW_DEF)
-    show = taMisc::show;
   
   // check if cache has been done yet
   if (show_any == 0) ShowMethod_CalcCache();

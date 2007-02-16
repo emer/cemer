@@ -1623,7 +1623,7 @@ void taiEditDataHost::GetButtonImage() {
   if (typ == NULL)  return;
   
   for (int i = 0; i < meth_el.size; ++i) {
-    taiMethMenu* mth_rep = (taiMethMenu*)meth_el.SafeEl(i);
+    taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
     if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
       continue;
       
@@ -1643,11 +1643,14 @@ void taiEditDataHost::GetButtonImage() {
 void taiEditDataHost::GetImage() {
   if ((typ == NULL) || (cur_base == NULL)) return;
   if (state >= ACCEPTED ) return;
-  if (state > DEFERRED1) {
+  if (state >= DEFERRED1) {
     // check for global show change, if we are in "app default"
     if (show & taMisc::USE_SHOW_GUI_DEF) {
-      SetShow(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
+      // don't refresh, because we are either not constr or will refresh below anyway
+      SetShow((taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui), true);
     }
+  } 
+  if (state > DEFERRED1) {
     GetImage_Membs();
   }
   GetButtonImage();
@@ -1842,12 +1845,12 @@ void taiEditDataHost::showMenu_aboutToShow() {
   }
 }
 
-bool taiEditDataHost::SetShow(int value) {
+bool taiEditDataHost::SetShow(int value, bool no_refresh) {
   int old_show = show;
   show = (taMisc::ShowMembs)value;
   // note: we only do change processing for effective show changes,
   // not change to/from app default if our effective shows were the same
-  if ((~taMisc::USE_SHOW_GUI_DEF & old_show) == (~taMisc::USE_SHOW_GUI_DEF & value))
+  if (no_refresh || ((~taMisc::USE_SHOW_GUI_DEF & old_show) == (~taMisc::USE_SHOW_GUI_DEF & value)))
      return false;
   return ReShow();
 }

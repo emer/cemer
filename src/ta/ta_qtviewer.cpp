@@ -4499,6 +4499,8 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_)
   connect(list, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), 
     this, SLOT(list_itemDoubleClicked(QTreeWidgetItem*, int)) );
   ConfigHeader();
+  // set default sort order to ASC -- don't know why def is DESC!
+  list->sortItems(0, Qt::AscendingOrder);
   FillList();
 }
 
@@ -5248,11 +5250,11 @@ void iTreeViewItem::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     taiTreeDataNode* par_nd = (taiTreeDataNode*)this->parent();
     if (par_nd) {
       par_nd->UpdateChildNames();
-    } else { // a root node -- just force our name to something sensible...
+    } else { // a root node or list node -- just force our name to something sensible...
       String nm = link()->GetName();
       if (nm.empty())
         nm = "(" + link()->GetDataTypeDef()->name + ")";
-      this->setText(0, nm);
+      setName(nm); // col0, except list nodes
     }
   }
   DecorateDataNode();
@@ -5462,6 +5464,10 @@ void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   insertChild(to_idx, tak); 
 }
 
+void iTreeViewItem::setName(const String& value) {
+  this->setText(0, value);
+}
+
 bool iTreeViewItem::ShowNode_impl(int show, const String&) const 
 { 
   // if not a member, then we just always show, since it must be a list element,
@@ -5514,14 +5520,10 @@ bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
   } 
 }
 
-
-/*taiDataLink* taiListDataNode::par_link() const {
-  return (panel) ? panel->par_link() : NULL;
+void taiListDataNode::setName(const String& value) {
+  if (columnCount() >= 2) // s/always be true!
+    this->setText(1, value);
 }
-
-MemberDef* taiListDataNode::par_md() const {
-  return (panel) ? panel->par_md() : NULL;
-}*/
 
 QString taiListDataNode::text(int col) const {
   if (col > 0)

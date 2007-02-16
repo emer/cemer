@@ -391,7 +391,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 //     cerr << "not unitgroupnode!" << endl;
     return;
   }
-  UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView;
+  UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView();
   SbVec3f pt = pp->getObjectPoint(pobj); 
 //   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
   int xp = (int)(pt[0] * nv->max_size.x);
@@ -1050,7 +1050,7 @@ void LayerView::Reset_impl() {
 void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   SoTranslate2Dragger* dragger = (SoTranslate2Dragger*)dragr;
   T3LayerNode* laynd = (T3LayerNode*)userData;
-  LayerView* lv = (LayerView*)laynd->dataView;
+  LayerView* lv = (LayerView*)laynd->dataView();
   Layer* lay = lv->layer();
   NetView* nv = lv->nv();
 
@@ -1649,7 +1649,7 @@ void NetView::Render_pre() {
 void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3NetNode* netnd = (T3NetNode*)userData;
-  NetView* nv = (NetView*)netnd->dataView;
+  NetView* nv = (NetView*)netnd->dataView();
 
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->network_orient.x, nv->network_orient.y, 

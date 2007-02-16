@@ -229,7 +229,7 @@ public:
    // insert before node; after=NULL for start
   static SoNode*	getNodeByName(SoGroup* group, const char* name); // find node by name, if any
 
-  void*			dataView; // #IGNORE the T3DataView that owns/created this node
+  inline void* 		dataView() {return dataView_;} // #IGNORE the T3DataView that owns/created this node
 
   virtual SoFont*	captionFont(bool auto_create = false) = 0;
   SoAsciiText*		captionNode(bool auto_create = false);
@@ -256,6 +256,7 @@ public:
   T3Node(void* dataView_ = NULL);
 
 protected:
+  void* 		dataView_;
   SoAsciiText*		captionNode_;
   const char*  		getFileFormatName() const {return SoSeparator::getFileFormatName();} // override
   virtual SoSeparator*	captionSeparator(bool auto_create = false) = 0;

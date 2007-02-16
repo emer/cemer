@@ -42,7 +42,6 @@ cssiPolyData::cssiPolyData(cssClassInst* ob, TypeDef* typ_, IDataHost* host_, ta
     QWidget* gui_parent, int flags_)
 : taiData(typ_, host_, par, gui_parent, flags_) {
   obj = ob;
-  show = taMisc::show_gui;
 }
 
 cssiPolyData::~cssiPolyData() {
