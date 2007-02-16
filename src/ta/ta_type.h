@@ -702,6 +702,9 @@ public:
 		       const char* f=0, const char* g=0, const char* h=0,
 		       const char* i=0);
   // #CAT_Dialog allows user to choose among different options in window if iv_active or stdin/out
+  
+  static void	EditFile(const String& filename); 
+  // CATT_Dialog edit the file in the external editor
 
   /////////////////////////////////////////////////
   //	Global state management

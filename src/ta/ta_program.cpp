@@ -2652,9 +2652,7 @@ void Program::EditScript() {
   SaveScript(strm);
   strm.close();
 
-  String edtr = taMisc::edit_cmd; //don't run gsub on the original string!
-  edtr.gsub("%s", fnm);
-  system(edtr);
+  taMisc::EditFile(fnm);
 }
 
 void Program::ViewScript_impl() {

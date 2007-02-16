@@ -379,3 +379,9 @@ void taPlugin_List::ReconcilePlugins() {
    }
 }
 
+
+void taPlugin_List::ViewPluginLog() {
+  if (taPlugins::logfile.empty()) return; // shouldn't happen...
+  taMisc::EditFile(taPlugins::logfile);
+  
+}

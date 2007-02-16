@@ -67,13 +67,13 @@ class TA_API taPlugins { // #NO_INSTANCE global object to manage plugins
 public:
   static String_PArray	plugin_folders; // folders to search for plugins
   static taPluginInst_PList	plugins; // plugins that have been loaded -- they remain for the lifetime of program
+  static String		logfile;
   
   static void		AddPluginFolder(const String& folder); // adds a folder, note: ignores duplicates
   static void		InitLog(const String& logfile); // clear the log file
   static void		AppendLogEntry(const String& entry, bool warn = false); // append entry, with nl, highlighting if a warning
   static void		EnumeratePlugins(); // enumerates, and lo-level loads
 protected:
-  static String		logfile;
   
   static taPluginInst*	ProbePlugin(const String& fileName); 
     // try loading the plugin, returns the loader object if successful
@@ -178,6 +178,8 @@ public:
     {return (taPlugin*)inherited::FindUniqueId(value);}
   
   void		LoadPlugins(); // Load and initialize all the enabled plugins, unload remainder
+  
+  void			ViewPluginLog(); // #MENU_CONTEXT #BUTTON view the most recent plugin log
   TA_BASEFUNS(taPlugin_List);
   
 protected:

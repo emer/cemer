@@ -712,6 +712,12 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
 
 #endif // def TA_NO_GUI
 
+void taMisc::EditFile(const String& filename) {
+  String edtr = taMisc::edit_cmd; //don't run gsub on the original string!
+  edtr.gsub("%s", filename);
+  taPlatform::exec(edtr);
+}
+
 /////////////////////////////////////////////////
 //	Global state management
 

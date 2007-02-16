@@ -3746,10 +3746,7 @@ void taiFileButton::Close() {
 
 void taiFileButton::Edit() {
   GetGetFile();
-//  char* edtr_c = getenv("EDITOR");
-  String edtr = taMisc::edit_cmd; //don't run gsub on the original string!
-  edtr.gsub("%s", gf->fileName());
-  system(edtr);
+  taMisc::EditFile(gf->fileName());
 }
 
 
