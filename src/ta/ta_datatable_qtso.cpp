@@ -696,8 +696,9 @@ GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   if (!fr) return NULL; // unexpected...
   
   GridTableView* vw = new GridTableView;
-  fr->AddView(vw);
+//TEMP: try setting table first, before viewing, so all data in place
   vw->setDataTable(dt);
+  fr->AddView(vw);
   return vw;
 }
 
