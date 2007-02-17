@@ -798,7 +798,8 @@ void taiDataHost::Constr(const char* aprompt, const char* win_title,
   Constr_Strings(aprompt, win_title);
   Constr_WinName();
   Constr_Widget();
-  Constr_Methods();
+  if (host_type != HT_CONTROL) 
+    Constr_Methods();
   Constr_RegNotifies(); // taiEditHost registers notifies
   state = DEFERRED1;
   if (deferred) return;
@@ -823,14 +824,12 @@ void taiDataHost::Constr_Strings(const char* prompt, const char* win_title) {
 }
 
 void taiDataHost::Constr_impl() {
-//  Constr_WinName();
-//  Constr_Widget();
   widget()->setUpdatesEnabled(false);
   Constr_Prompt();
   Constr_Box();
   Constr_Body();
-//  Constr_Methods();
-  Insert_Methods(); // if created, AND unowned
+  if (host_type != HT_CONTROL) 
+    Insert_Methods(); // if created, AND unowned
   // create container for ok/cancel/apply etc. buttons
   widButtons = new QWidget(); // parented when we do setButtonsWidget
   widButtons->setAutoFillBackground(true);
@@ -839,7 +838,8 @@ void taiDataHost::Constr_impl() {
   }
   layButtons = new QHBoxLayout(widButtons);
 //def  layButtons->setMargin(2); // facilitates container
-  Constr_Buttons();
+  if (host_type != HT_CONTROL) 
+    Constr_Buttons();
   Constr_Final();
   widget()->setUpdatesEnabled(true);
 //NOTE: do NOT do a processevents -- it causes improperly nested event calls
@@ -1650,10 +1650,11 @@ void taiEditDataHost::GetImage() {
       SetShow((taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui), true);
     }
   } 
-  if (state > DEFERRED1) {
+  if ((state > DEFERRED1) && (host_type != HT_CONTROL)) {
     GetImage_Membs();
   }
-  GetButtonImage();
+  if (host_type != HT_CONTROL) 
+    GetButtonImage();
   Unchanged();
 }
 
