@@ -444,7 +444,7 @@ public:
     // for dialogs -- add to list of active_edit dialogs too
   EditDataPanel* 	EditPanel(taiDataLink* link); // for panels
   EditDataPanel* 	EditPanelDeferred(taiDataLink* link); // for panels
-  void		 	ConstrEditControl(QWidget* gui_parent, const iColor* bgcol = NULL); 
+  void		 	ConstrEditControl(const iColor* bgcol = NULL); 
     // for controls -- construct then edit 
   void			GetImage(); //override
   void			GetValue(); //override
@@ -502,64 +502,5 @@ protected slots:
   virtual void	DoSelectForEdit(int param); // param will be index of the SelectEdit; sel_data_index will hold the index of the data item
 };
 
-
-/* TODO: where are these actually used???
-//////////////////////////////
-//       taiDialogs        //
-//////////////////////////////
-
-class taiTokenDialog : public taiDialog {
-  // automatic widget to select a token of a given type
-public:
-  TAPtr		itm;
-  TAPtr		scope_ref;
-  taiToken* 	itm_rep;
-
-  taiTokenDialog(TypeDef* td, TAPtr scp_ref=NULL, TAPtr in_itm=NULL);
-  ~taiTokenDialog();
-
-  void		Constr_Box();
-  void		GetValue();
-
-  // this is the function you actually call..
-  static TAPtr GetToken(TypeDef* td, const char* prompt="",
-			TAPtr scp_ref=NULL, TAPtr init_itm = NULL, QDialog* win=NULL);
-};
-
-class taiTypeDialog : public taiDialog {
-  // select a type
-public:
-  TypeDef*	base_typ;
-  TypeDef*	sel_typ;
-  taiTypeHier* typ_rep;
-
-  taiTypeDialog(TypeDef* td, TypeDef* init_tp=NULL);
-  ~taiTypeDialog();
-
-  void		Constr_Box();
-  void		GetValue();
-
-  // this is the function you actually call..
-  static TypeDef* GetType(TypeDef* td, const char* prompt="", TypeDef* init_tp=NULL,
-			  QDialog* win=NULL);
-};
-
-class taiEnumDialog : public taiDialog {
-  // select an enum
-public:
-  TypeDef*	enum_typ;
-  int		sel_val;
-  taiMenu* 	enm_rep;
-
-  taiEnumDialog(TypeDef* td, int init_vl=0);
-  ~taiEnumDialog();
-
-  void		Constr_Box();
-  void		GetValue();
-
-  // this is the function you actually call..
-  static int 	GetEnum(TypeDef* td, const char* prompt="", int init_vl=0,
-			QDialog* win=NULL);
-}; */
 
 #endif // tai_dialog_h

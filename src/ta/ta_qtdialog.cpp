@@ -1567,8 +1567,7 @@ EditDataPanel* taiEditDataHost::EditPanelDeferred(taiDataLink* link) {
   return panel;
 }
 
-void taiEditDataHost::ConstrEditControl(QWidget* gui_parent, const iColor* bgcol) {
-  mwidget = gui_parent; // thus, we won't create our own outer widget
+void taiEditDataHost::ConstrEditControl(const iColor* bgcol) {
   Constr("", "", bgcol, HT_CONTROL);
   taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
   state = ACTIVE;
@@ -1649,7 +1648,7 @@ void taiEditDataHost::GetImage() {
       SetShow((taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui), true);
     }
   } 
-  if ((state > DEFERRED1) && (host_type != HT_CONTROL)) {
+  if (state > DEFERRED1) {
     GetImage_Membs();
   }
   if (host_type != HT_CONTROL) 

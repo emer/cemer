@@ -1169,13 +1169,13 @@ iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
   Program* prog_ = prog();
   if (prog_) {
     pc = new iProgramCtrlDataHost(prog_, &TA_Program);
-/*nn    const iColor* bgcol = NULL;
+    const iColor* bgcol = NULL;
     if (taMisc::color_hints & taMisc::CH_EDITS) {
       bgcol = prog_->GetEditColorInherit();
-    }*/
-//    QWidget* widg = new QWidget; // need to supply one...
-    pc->ConstrEditControl(NULL);
+    }
+    pc->ConstrEditControl(bgcol);
     setCentralWidget(pc->widget()); //sets parent
+    setButtonsWidget(pc->widButtons);
   }
 }
 
