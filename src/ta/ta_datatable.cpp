@@ -16,6 +16,9 @@
 #include "ta_datatable.h"
 
 #include "ta_math.h"
+#include "css_ta.h"
+#include "css_basic_types.h"
+
 
 #ifdef TA_GUI
 #  include "ta_datatable_qtso.h"
@@ -26,6 +29,70 @@
 #include <ctype.h>
 
 #include <QColor>
+
+//////////////////////////
+//   ColCalcExpr		//
+//////////////////////////
+
+void ColCalcExpr::Initialize() {
+  col_lookup = NULL;
+  data_cols = NULL;
+}
+
+void ColCalcExpr::Destroy() {	
+  CutLinks();
+}
+
+void ColCalcExpr::InitLinks() {
+  inherited::InitLinks();
+  data_cols = GET_MY_OWNER(DataTableCols);
+}
+
+void ColCalcExpr::CutLinks() {
+  if(col_lookup) {
+    taBase::SetPointer((taBase**)&col_lookup, NULL);
+  }
+  data_cols = NULL;
+  inherited::CutLinks();
+}
+
+void ColCalcExpr::Copy_(const ColCalcExpr& cp) {
+  if(col_lookup) {
+    taBase::SetPointer((taBase**)&col_lookup, NULL);
+  }
+  expr = cp.expr;
+  UpdateAfterEdit_impl();	// gets everything
+}
+
+void ColCalcExpr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+//   Program* prg = GET_MY_OWNER(Program);
+//   if(!prg || isDestroying() || prg->isDestroying()) return;
+  if(col_lookup) {
+    if(expr.empty())
+      expr += col_lookup->name;
+    else
+      expr += " " + col_lookup->name;
+    taBase::SetPointer((taBase**)&col_lookup, NULL);
+  }
+}
+
+bool ColCalcExpr::SetExpr(const String& ex) {
+  taBase::SetPointer((taBase**)&col_lookup, NULL); // justin case
+  expr = ex;
+  UpdateAfterEdit();		// does parse
+  return true;
+}
+
+String ColCalcExpr::GetName() const {
+  if(owner) return owner->GetName();
+  return _nilString;
+}
+
+String ColCalcExpr::GetFullExpr() const {
+  return expr;
+}
+
 
 //////////////////////////
 //   DataArray_impl	//
@@ -46,6 +113,7 @@ void DataArray_impl::Initialize() {
 void DataArray_impl::InitLinks() {
   inherited::InitLinks();
   taBase::Own(cell_geom, this);
+  taBase::Own(calc_expr, this);
   taMatrix* ar = AR();
   if (ar != NULL)
     taBase::Own(ar, this);
@@ -53,6 +121,7 @@ void DataArray_impl::InitLinks() {
 
 void DataArray_impl::CutLinks() {
   cell_geom.CutLinks();
+  calc_expr.CutLinks();
   inherited::CutLinks();
 }
 
@@ -130,12 +199,14 @@ void DataArray_impl::UpdateAfterEdit_impl() {
 
 void DataArray_impl::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
+  //  cerr << name << " dcr: " << dcr << endl;
   // treat item changes here as struct changes to the table
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     DataTable* dt = dataTable();
     if (dt) {
       dt->StructUpdate(true);
       dt->StructUpdate(false);
+      dt->UpdateColCalcs();
     }
   }
 }
@@ -187,7 +258,7 @@ taBase::DumpQueryResult DataArray_impl::Dump_QuerySaveMember(MemberDef* md) {
     // if no save, don't need to check DataTable global
     if (saveToDumpFile()) {
       DataTable* dt = dataTable();
-      if (dt && dt->save_data) return DQR_SAVE;
+      if (dt && !dt->HasDataFlag(DataTable::NO_SAVE_DATA)) return DQR_SAVE;
     }
     return DQR_NO_SAVE;
   } else return inherited::Dump_QuerySaveMember(md);
@@ -435,8 +506,10 @@ int DataTable::idx_def_arg = 0;
 
 void DataTable::Initialize() {
   rows = 0;
-  save_data = true;
+  data_flags = DF_NONE;
+  save_data = true;		// todo: remove
   m_dm = NULL; // returns new if none exists, or existing -- enables views to be shared
+  calc_script = NULL;
   log_file = NULL;
 }
 
@@ -462,18 +535,22 @@ void DataTable::CutLinks() {
     taRefN::unRefDone(log_file);
     log_file = NULL;
   }
+  if(calc_script) {
+    delete calc_script;
+    calc_script = NULL;
+  }
   inherited::CutLinks();
 }
 
 void DataTable::Copy_(const DataTable& cp) {
   data = cp.data;
   rows = cp.rows;
-  save_data = cp.save_data;
+  data_flags = cp.data_flags;
 }
 
 void DataTable::Copy_NoData(const DataTable& cp) {
   rows = 0;
-  save_data = cp.save_data;
+  data_flags = cp.data_flags;
   data.Copy_NoData(cp.data);
 }
 
@@ -495,7 +572,14 @@ bool DataTable::CopyColRow(int dest_col, int dest_row, const DataTable& src, int
 
 void DataTable::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(!save_data) {
+    SetDataFlag(NO_SAVE_DATA);	// todo: remove this -- backward compat -- only used if false (non default)
+    save_data = true;
+  }
   UniqueColNames();
+  // the following is likely redundant:
+  //  UpdateColCalcs();
+  CheckForCalcs();
 }
 
 bool DataTable::AddRow(int n) {
@@ -547,7 +631,7 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
   if (c == EOF) return EOF;
   if (c == 2) return 2; // signal that it was just a path
   // otherwise, if data was loaded, we need to set the rows
-  if (save_data) {
+  if(!HasDataFlag(NO_SAVE_DATA) && save_data) { // todo: remove save_data part -- obs
     int i;
     DataArray_impl* col;
     for (i = 0; i < cols(); ++i) {
@@ -1517,6 +1601,95 @@ void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, 
 void DataTable::WriteClose_impl() {
   UpdateAllViews();
   WriteDataLogRow();
+  CalcLastRow();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+///		Calculating columns
+
+bool DataTable::UpdateColCalcs() {
+  if(!CheckForCalcs()) return false;
+  return CalcAllRows_impl();
+}
+
+bool DataTable::CalcLastRow() {
+  if(!HasDataFlag(HAS_CALCS)) return false;
+  return CalcRow(-1);
+}
+
+bool DataTable::CheckForCalcs() {
+  ClearDataFlag(HAS_CALCS);
+  for(int i=0;i<data.size; i++) {
+    DataArray_impl* da = data.FastEl(i);
+    if(da->HasColFlag(DataArray_impl::CALC) && !da->calc_expr.expr.empty()) {
+      SetDataFlag(HAS_CALCS);
+      break;
+    }
+  }
+  return HasDataFlag(HAS_CALCS);
+}
+
+void DataTable::InitCalcScript() {
+  if(calc_script) return;
+  calc_script = new cssProgSpace;
+  cssTA_Base* ths = new cssTA_Base(this, 1, GetTypeDef(), "this");
+  ths->InstallThis(calc_script);
+}
+
+bool DataTable::CalcRow(int row) {
+  InitCalcScript();
+  calc_script->ClearAll();
+
+  // first get all the column variables -- this could be optimized for only 
+  // the vars that appear in the exprs, but probably not worth it..
+  //  static String rval;
+  STRING_BUF(rval, 2048);
+  for(int i=0;i<data.size; i++) {
+    DataArray_impl* da = data.FastEl(i);
+    if(da->is_matrix)
+      rval += "taMatrix* " + da->name + " = this.GetValAsMatrix(" +
+	String(i) + ", " + String(row) + ");\n";
+    else
+      rval += "Variant " + da->name + " = this.GetValAsVar(" +
+	String(i) + ", " + String(row) + ");\n";
+  }
+
+  for(int i=0;i<data.size; i++) {
+    DataArray_impl* da = data.FastEl(i);
+    if(da->HasColFlag(DataArray_impl::CALC) && !da->calc_expr.expr.empty()) {
+      if(da->is_matrix)
+	rval += "this.SetValAsMatrix(" + da->calc_expr.GetFullExpr()
+	  + ", " + String(i) + ", " + String(row) + ");\n";
+      else
+	rval += "this.SetValAsVar("  + da->calc_expr.GetFullExpr()
+	  + ", " + String(i) + ", " + String(row) + ");\n";
+    }
+  }
+  bool ok = calc_script->CompileCode(rval);
+  if(!ok) {
+    taMisc::Error("DataTable:", name, "error in column calculation, see console for errors");
+    return false;
+  }
+  calc_script->Run();
+  return true;
+}
+
+bool DataTable::CalcAllRows_impl() {
+  bool rval = true;
+  InitCalcScript();
+  for(int row=0;row <rows; row++) {
+    if(!CalcRow(row)) {
+      rval = false;
+      break;
+    }
+  }
+  return rval;
+}
+
+bool DataTable::CalcAllRows() {
+  bool rval = CalcAllRows_impl();
+  UpdateAfterEdit();
+  return rval;
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -150,8 +150,10 @@ void taProject::InitLinks_impl() {
   FindMakeNewDataProc(&TA_taDataAnal, "data_anal");
   FindMakeNewDataProc(&TA_taDataGen, "data_gen");
   FindMakeNewDataProc(&TA_taImageProc, "image_proc");
-  FindMakeNewDataProc(&TA_taMath_float, "math_float");
-  FindMakeNewDataProc(&TA_taMath_double, "math_double");
+  // not actually useful to have these guys visible..  no user-accessible matrix objs
+  // if in datatable, it should be accessible in above
+//   FindMakeNewDataProc(&TA_taMath_float, "math_float");
+//   FindMakeNewDataProc(&TA_taMath_double, "math_double");
 }
 
 void taProject::InitLinks_post() {

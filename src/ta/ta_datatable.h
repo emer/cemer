@@ -35,9 +35,12 @@
 
 // externals
 class T3DataViewFrame;
+class cssProgSpace;		// #IGNORE
 
 // forwards this file
 
+class DataArray_impl;
+class DataTableCols;
 class DataTable;
 class DataTable_Group;
 class String_Data; 
@@ -47,6 +50,50 @@ class double_Data;
 class int_Data;
 class byte_Data;
 class DataTableModel;
+
+// note: the ColCalcExpr could be augmented to update with column name changes
+// as in ProgExpr
+// but it has a catch-22 with requiring a reference to data columns which have
+// yet to be defined because they contain this object..
+
+class TA_API ColCalcExpr: public taOBase {
+  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Data a column calculation expression
+INHERITED(taOBase)
+public:
+
+  String	expr;		// #EDIT_DIALOG enter the expression here -- column value will be set to this.  you can just type in names of other columns (value is corresponding row's value) or literal values, or math expressions, etc.  enclose strings in double quotes.  column names will be checked and automatically updated
+  DataArray_impl* col_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #FROM_GROUP_data_cols lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+
+  DataTableCols*	data_cols;
+  // #READ_ONLY #HIDDEN #NO_SAVE data table columns (set from owner field)
+
+  virtual bool	SetExpr(const String& ex);
+  // set to use given expression -- use this interface for future compatibility
+
+//   virtual bool	ParseExpr();
+//   // parse the current expr for variables and update vars and var_expr accordingly (returns false if there are some bad_vars)
+  virtual String GetFullExpr() const;
+  // get full expression with variable names substituted appropriately -- use this interface instead of referring to raw expr, for future compatibility
+
+  String 	GetName() const;
+
+  void 	InitLinks();
+  void 	CutLinks();
+  void	Copy_(const ColCalcExpr& cp);
+  COPY_FUNS(ColCalcExpr, inherited);
+  TA_BASEFUNS(ColCalcExpr);
+protected:
+
+  override void		UpdateAfterEdit_impl();
+//   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+//   override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
+//   override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+// 					     int dcr, void* op1_, void* op2_);
+
+private:
+  void	Initialize();
+  void	Destroy();
+};
 
 // specific ones are in the template classes: String_Data, float_Data
 
@@ -78,6 +125,7 @@ public:
     PIN 		= 0x0002, // #NO_BIT protect this column from being automatically deleted according to the MARK scheme (see comment).  this is often not very easy for uers to find and use (columns to be saved should be listed explicitly in the context in which others are being used), so we are not exposing it to users, but it can be used internally for some reason
     NO_SAVE 		= 0x0004, // do not save this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data.
     NO_SAVE_DATA 	= 0x0008, // do not save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
+    CALC 		= 0x0010, // calculate value of this column based on calc_expr expression
   };
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
@@ -86,6 +134,7 @@ public:
   // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   MatrixGeom		cell_geom;
   // #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
+  ColCalcExpr		calc_expr; // #CONDEDIT_ON_col_flags:CALC expression for computing value of this column (only used if CALC flag is set)
   
   virtual taMatrix* 	AR() = 0;
   // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
@@ -341,22 +390,48 @@ SmartRef_Of(DataTableCols) // DataTableColsRef
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TA_API DataTable : public DataBlock_Idx {
-  // #NO_UPDATE_AFTER ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data table of data
+  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data table of data
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
 public:
+
+  enum DataFlags { // #BITS flags for data table
+    DF_NONE		= 0, // #NO_BIT
+    NO_SAVE_DATA 	= 0x0001, // do not save the row data associated with this table when saved with the project (column and other configuration information is always saved)
+    HAS_CALCS 		= 0x0002, // #NO_BIT at least one of the columns has CALC flag set
+  };
+
   /////////////////////////////////////////////////////////
   // 	Main datatable interface:
 
   int 			rows;
   // #READ_ONLY #NO_SAVE #SHOW the number of rows
-  bool			save_data;
-  // 'true' if data should be saved in project; typically false for logs, true for data patterns
   DataTableCols		data;
   // all the columns and actual data
+  DataFlags		data_flags;
+  // flags for various features and state of the data table
+
+  cssProgSpace* 	calc_script;
+  // #HIDDEN #NO_SAVE script object for performing column calculations
   taFiler*		log_file;
   // #NO_SAVE #HIDDEN file for logging data incrementally as it is written -- only for output.  a new line is written when WriteClose() (DataSink interface) is called.
+
+  bool			save_data;
+  // #READ_ONLY #NO_SAVE #OBS obsolete (replaced by flag) 'true' if data should be saved in project; typically false for logs, true for data patterns -- todo: delete me!
+
+  /////////////////////////////////////////////
+  // Flags
+
+  inline void		SetDataFlag(DataFlags flg)   { data_flags = (DataFlags)(data_flags | flg); }
+  // set data column flag state on
+  inline void		ClearDataFlag(DataFlags flg) { data_flags = (DataFlags)(data_flags & ~flg); }
+  // clear data column flag state (set off)
+  inline bool		HasDataFlag(DataFlags flg) const { return (data_flags & flg); }
+  // check if data column flag is set
+  inline void		SetDataFlagState(DataFlags flg, bool on)
+  { if(on) SetDataFlag(flg); else ClearDataFlag(flg); }
+  // set data column flag state according to on bool (if true, set flag, if false, clear it)
 
   /////////////////////////////////////////////////////////
   // columns
@@ -365,89 +440,89 @@ public:
   // #CAT_Columns number of columns
   override taList_impl* children_() {return &data;}
 
-  DataArray_impl*	NewCol(DataArray_impl::ValType val_type, 
+  virtual DataArray_impl* NewCol(DataArray_impl::ValType val_type, 
 			       const String& col_nm);
-  // #MENU #MENU_ON_Table #ARG_C_2 #CAT_Columns create new scalar column of data of specified type
-  DataArray_impl*	NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
+  // #MENU #MENU_ON_Columns #ARG_C_2 #CAT_Columns create new scalar column of data of specified type
+  virtual DataArray_impl* NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
-  // #MENU #MENU_ON_Table #CAT_Columns create new matrix column of data of specified type, with specified cell geom
-  DataArray_impl*	NewColMatrixN(DataArray_impl::ValType val_type, 
+  // #MENU #MENU_ON_Columns #CAT_Columns create new matrix column of data of specified type, with specified cell geom
+  virtual DataArray_impl* NewColMatrixN(DataArray_impl::ValType val_type, 
 				      const String& col_nm,  const MatrixGeom& cell_geom);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   
-  double_Data*		NewColDouble(const String& col_nm); 
+  virtual double_Data*	NewColDouble(const String& col_nm); 
   // #CAT_Columns create new column of double data
-  float_Data*		NewColFloat(const String& col_nm); 
+  virtual float_Data*	NewColFloat(const String& col_nm); 
   // #CAT_Columns create new column of floating point data
-  int_Data*		NewColInt(const String& col_nm); 	 
+  virtual int_Data*	NewColInt(const String& col_nm); 	 
   // #CAT_Columns create new column of integer-level data (= narrow display, actually stored as float)
-  String_Data*		NewColString(const String& col_nm); 
+  virtual String_Data*	NewColString(const String& col_nm); 
   // #CAT_Columns create new column of string data
 
-  void			SetColName(const String& col_nm, int col);
+  virtual void		SetColName(const String& col_nm, int col);
   // #CAT_Columns set column name for given column
-  bool			RenameCol(const String& cur_nm, const String& new_nm);
+  virtual bool		RenameCol(const String& cur_nm, const String& new_nm);
   // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
 
-  DataArray_impl*	FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false);
+  virtual DataArray_impl* FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false);
   // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found
 
-  DataArray_impl*	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
+  virtual DataArray_impl* FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
 					ValType val_type = VT_FLOAT, int dims = 0,
 					int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
   // #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
-  DataArray_impl* 	GetColData(int col) const;
+  virtual DataArray_impl* GetColData(int col) const;
   // #CAT_Columns get col data for given column 
-  taMatrix*		GetColMatrix(int col) const;
+  virtual taMatrix*	GetColMatrix(int col) const;
   // #CAT_Columns get matrix for given column -- WARNING: this is NOT row-number safe 
 
-  bool 			ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
+  virtual bool 		ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
   // #CAT_Columns returns 'true' if the col has the same name and a compatible data type
-  DataArray_impl*	NewColFromChannelSpec(ChannelSpec* cs)
+  virtual DataArray_impl* NewColFromChannelSpec(ChannelSpec* cs)
   // #MENU_1N #CAT_Columns create new matrix column of data based on name/type in the data item (default is Variant)
   { if (cs) return NewColFromChannelSpec_impl(cs); else return NULL; }
     
-  DataArray_impl*	GetColForChannelSpec(ChannelSpec* cs)
+  virtual DataArray_impl* GetColForChannelSpec(ChannelSpec* cs)
   // #MENU_1N #CAT_Columns find existing or create new matrix column of data based on name/type in the data item
     {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
     
-  void			RemoveCol(int col);
+  virtual void		RemoveCol(int col);
   // #CAT_Columns removes indicated column; 'true' if removed
   virtual void		Reset();
-  // #CAT_Modify #MENU #MENU_ON_Table remove all columns (and data)
+  // #CAT_Modify #MENU #MENU_ON_Columns remove all columns (and data)
 
-  void			MarkCols();
+  virtual void		MarkCols();
   // #CAT_Columns mark all cols before updating, for orphan deleting
-  void			RemoveOrphanCols();
+  virtual void		RemoveOrphanCols();
   // #CAT_Columns removes all non-pinned marked cols
   
 
   /////////////////////////////////////////////////////////
   // rows (access)
 
-  bool			hasData(int col, int row);
+  virtual bool		hasData(int col, int row);
   // #CAT_Rows true if data at that cell
   bool			idx(int row_num, int col_size, int& act_idx) const
   { if (row_num < 0) row_num = rows + row_num;
     act_idx = col_size - (rows - row_num); return act_idx >= 0;} 
   // #CAT_Rows calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
-  bool			RowInRangeNormalize(int& row);
+  virtual bool		RowInRangeNormalize(int& row);
   // #CAT_Rows normalizes row (if -ve) and tests result in range 
-  void			AllocRows(int n);
+  virtual void		AllocRows(int n);
   // #CAT_Rows allocate space for at least n rows
-  int			AddBlankRow() 
+  virtual int		AddBlankRow() 
     {if (AddRow(1)) {wr_itr = rows - 1; return wr_itr;} else return -1;}
-  // #MENU #MENU_ON_Data #CAT_Rows add a new row to the data table, sets write (sink) index to this last row (as in WriteItem), so that subsequent datablock routines refer to this new row, and returns row #
-  bool			AddRow(int n);
+  // #MENU #MENU_ON_Rows #CAT_Rows add a new row to the data table, sets write (sink) index to this last row (as in WriteItem), so that subsequent datablock routines refer to this new row, and returns row #
+  virtual bool		AddRow(int n);
   // #CAT_Rows add n rows, 'true' if added
-  void			RemoveRow(int row_num);
-  // #MENU #MENU_ON_Data #CAT_Rows Remove an entire row of data
+  virtual void		RemoveRow(int row_num);
+  // #MENU #MENU_ON_Rows #CAT_Rows Remove an entire row of data
 //TODO if needed:  virtual void	ShiftUp(int num_rows);
   // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
-  bool			DuplicateRow(int row_no, int n_copies=1);
+  virtual bool		DuplicateRow(int row_no, int n_copies=1);
   // #MENU #CAT_Rows duplicate given row number, making given number of copies of it
-  void			RemoveAllRows() { ResetData(); }
+  virtual void		RemoveAllRows() { ResetData(); }
   // #CAT_Rows remove all of the rows, but keep the column structure
 
   const Variant		GetColUserData(const String& name, int col) const;
@@ -513,34 +588,34 @@ public:
   };
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  void 			SaveData_strm(ostream& strm, Delimiters delim = TAB, bool quote_str = true);
+  virtual void 		SaveData_strm(ostream& strm, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings
-  void 			SaveHeader_strm(ostream& strm, Delimiters delim = TAB);
+  virtual void 		SaveHeader_strm(ostream& strm, Delimiters delim = TAB);
   // #CAT_File #EXT_dat saves header information, with delimiter between columns, and optionally quoting strings
-  void 			SaveDataRow_strm(ostream& strm, int row=-1, Delimiters delim = TAB,
+  virtual void 		SaveDataRow_strm(ostream& strm, int row=-1, Delimiters delim = TAB,
 					 bool quote_str = true); 
   // #CAT_File #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
-  void 			SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
+  virtual void 		SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
 					 bool quote_str = true); 
   // #CAT_File #EXT_dat saves all rows of data (no header) with delimiter between columns, and optionally quoting strings
 
-  void 			SaveData(const String& fname="", Delimiters delim = TAB, bool quote_str = true);
+  virtual void 		SaveData(const String& fname="", Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
-  void 			AppendData(const String& fname="", Delimiters delim = TAB,
+  virtual void 		AppendData(const String& fname="", Delimiters delim = TAB,
 				   bool quote_str = true); 
   // #CAT_File #MENU #EXT_dat appends all of current datatable data to given file (does not output header; file assumed to be of same data structure
-  void 			SaveHeader(const String& fname="", Delimiters delim = TAB);
+  virtual void 		SaveHeader(const String& fname="", Delimiters delim = TAB);
   // #CAT_File #MENU #EXT_dat saves header information, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
-  void 			SaveDataRow(const String& fname="", int row=-1, Delimiters delim = TAB,
+  virtual void 		SaveDataRow(const String& fname="", int row=-1, Delimiters delim = TAB,
 					 bool quote_str = true); 
   // #CAT_File #MENU #EXT_dat saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
 
-  void			SaveDataLog(const String& fname="", bool append=false,
+  virtual void		SaveDataLog(const String& fname="", bool append=false,
 				    bool dmem_proc_0 = true);
   // #CAT_File #MENU #MENU_SEP_BEFORE #ARGC_0 #EXT_dat incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file.  if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write
-  void			CloseDataLog();
+  virtual void		CloseDataLog();
   // #CAT_File #MENU close the data log file if it was previously open
-  bool			WriteDataLogRow();
+  virtual bool		WriteDataLogRow();
   // #CAT_File write the current row to the data log, if it is open (returns true if successfully wrote) -- this is automatically called by WriteClose 
 
   static char		GetDelim(Delimiters delim);
@@ -550,35 +625,54 @@ public:
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
 
-  void 			LoadData_strm(istream& strm, Delimiters delim = TAB,
+  virtual void 		LoadData_strm(istream& strm, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1);
   // #CAT_File #EXT_dat loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
-  int 			LoadHeader_strm(istream& strm, Delimiters delim = TAB);
+  virtual int 		LoadHeader_strm(istream& strm, Delimiters delim = TAB);
   // #CAT_File #EXT_dat loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  int 			LoadDataRow_strm(istream& strm, Delimiters delim = TAB, bool quote_str = true);
+  virtual int 		LoadDataRow_strm(istream& strm, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
 
-  void 			LoadData(const String& fname, Delimiters delim = TAB,
+  virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1);
   // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
-  int 			LoadHeader(const String& fname, Delimiters delim = TAB);
+  virtual int 		LoadHeader(const String& fname, Delimiters delim = TAB);
   // #CAT_File #EXT_dat loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
-  int 			LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
+  virtual int 		LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #EXT_dat load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
  
   /////////////////////////////////////////////////////////
+  // calculated column values
+
+  virtual bool		UpdateColCalcs();
+  // update column calculations
+  virtual bool		CalcLastRow();
+  // if HAS_CALCS, does calculations for last row of data -- called by WriteClose
+
+  virtual bool		CheckForCalcs();
+  // see if any columns have CALC flag -- sets HAS_CALCS flag -- returns state of flag
+  virtual void		InitCalcScript();
+  // initialize the calc_script for computing column calculations
+  virtual bool		CalcAllRows_impl();
+  // perform calculations for all rows of data (calls InitCalcScript to make sure)
+  virtual bool		CalcAllRows();
+  // #BUTTON perform calculations for all rows of data (updates after)
+  virtual bool		CalcRow(int row);
+  // perform calculations for given row of data (calls InitCalcScript to make sure)
+
+  /////////////////////////////////////////////////////////
   // misc funs
 
-  void			NewGridView(T3DataViewFrame* fr = NULL);
+  virtual void		NewGridView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use blank if any, else make new frame)
-  void			NewGraphView(T3DataViewFrame* fr = NULL);
+  virtual void		NewGraphView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #MENU #MENU_CONTEXT #CAT_Display open a graph view of this table (NULL=use blank if any, else make new frame)
 
-  int  			MinLength();		// #IGNORE
-  int  			MaxLength();		// #IGNORE
+  virtual int  		MinLength();		// #IGNORE
+  virtual int  		MaxLength();		// #IGNORE
 
-  DataTableModel*	GetDataModel();
+  virtual DataTableModel* GetDataModel();
   // #IGNORE returns new if none exists, or existing -- enables views to be shared
 
   virtual void	Copy_NoData(const DataTable& cp);
@@ -637,7 +731,7 @@ public:
   override int		SourceChannelCount() const { return ChannelCount(); }
   override const String	SourceChannelName(int chan) const { return ChannelName(chan); }
   override void		ResetData();
-  // #MENU #MENU_ON_Data #CAT_Rows deletes all the data (rows), but keeps the column structure
+  // #MENU #MENU_ON_Rows #CAT_Rows deletes all the data (rows), but keeps the column structure
 
 protected:
   /////////////////////////////////////////////////////////

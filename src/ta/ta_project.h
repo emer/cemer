@@ -168,7 +168,7 @@ public:
   taPluginBase_List	plugin_deps; // #SHOW_TREE EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
   String_Array		recent_files; // #NO_SHOW recently loaded files
-  SArg_Array		last_dirs; // NO_SHOW most recent dirs (value) chosen by user in given context (key)
+  SArg_Array		last_dirs; // #NO_SHOW most recent dirs (value) chosen by user in given context (key)
   
   virtual void  Options();
   // edit global settings/parameters (taMisc)

@@ -63,6 +63,7 @@ AbstractScriptBase::~AbstractScriptBase() {
   ths = NULL;
   if (script) {
     ExitShellScript();
+    delete script;		// todo: just added 2/16/07: might cause crashing!
     script = NULL;
   }
 }

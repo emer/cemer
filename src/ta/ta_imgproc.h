@@ -398,35 +398,35 @@ public:
 
   static bool   TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix& orig_img, 
 					int move_x, int move_y);
-  // #CAT_Transform move (translate) image by pixel move_x, move_y factors
+  // #CAT_Transform #MENU #MENU_ON_Transform move (translate) image by pixel move_x, move_y factors
   static bool   TranslateImage_float(float_Matrix& xlated_img, float_Matrix& orig_img, 
 				   float move_x, float move_y);
-  // #CAT_Transform move (translate) image by normalized move_x, move_y factors: 1 = center of image moves to right/top edge, -1 center moves to bottom/left
+  // #CAT_Transform #MENU #MENU_ON_Transform move (translate) image by normalized move_x, move_y factors: 1 = center of image moves to right/top edge, -1 center moves to bottom/left
   static bool	RotateImage_float(float_Matrix& rotated_img, float_Matrix& orig_img, float rotation);
-  // #CAT_Transform rotate the image: rotation = normalized 0-1 = 0-360 degrees 
+  // #CAT_Transform #MENU #MENU_ON_Transform rotate the image: rotation = normalized 0-1 = 0-360 degrees 
   static bool	ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_img, float scale);
-  // #CAT_Transform change the size of the image by normalized scaling factor (either rgb=3 dim or grey=2 dim)
+  // #CAT_Transform #MENU #MENU_ON_Transform change the size of the image by normalized scaling factor (either rgb=3 dim or grey=2 dim)
   static bool   CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img, 
 				int crop_width, int crop_height);
-  // #CAT_Transform crop image to given size (-1 = use original image size), centered on the center of the image; border color of original image is used to fill in missing values
+  // #CAT_Transform #MENU #MENU_ON_Transform crop image to given size (-1 = use original image size), centered on the center of the image; border color of original image is used to fill in missing values
 
   static bool	TransformImage_float(float_Matrix& xformed_img, float_Matrix& orig_img,
 				     float move_x=0.0, float move_y=0.0, float rotate=0.0,
 				     float scale=1, int crop_width=-1, int crop_height=-1);
-  // #CAT_Transform Transform an image by translation, rotation, scaling, and cropping, as determined by parameters (calls above functions; only if needed; if crop < 0 then no cropping); does RenderBorder for each step to preserve uniform background color
+  // #CAT_Transform #MENU #MENU_ON_Transform Transform an image by translation, rotation, scaling, and cropping, as determined by parameters (calls above functions; only if needed; if crop < 0 then no cropping); does RenderBorder for each step to preserve uniform background color
   
   static bool	DoGFilterRetina(float_Matrix& on_output, float_Matrix& off_output,
 				float_Matrix& retina_img, DoGRetinaSpec& spec,
 				bool superimpose = false);
-  // #CAT_Filter apply DoG filter to input image, result in output (on = + vals, off = - vals). superimpose = add values into the outputs instead of overwriting (just a call to equiv function on spec)
+  // #CAT_Filter #MENU #MENU_ON_Filter apply DoG filter to input image, result in output (on = + vals, off = - vals). superimpose = add values into the outputs instead of overwriting (just a call to equiv function on spec)
 
   static bool	AttentionFilter(float_Matrix& mat, float radius_pct);
-  // #CAT_Filter apply an "attentional" filter to the matrix data: outside of radius, values are attenuated in proportion of squared distance outside of radius (r_sq / dist_sq) -- radius_pct is normalized proportion of maximum half-size of image (e.g., 1 = attention bubble extends to furthest edge of image; only corners are attenuated)
+  // #CAT_Filter #MENU #MENU_ON_Filter apply an "attentional" filter to the matrix data: outside of radius, values are attenuated in proportion of squared distance outside of radius (r_sq / dist_sq) -- radius_pct is normalized proportion of maximum half-size of image (e.g., 1 = attention bubble extends to furthest edge of image; only corners are attenuated)
 
   virtual bool	GaborFilterV1(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
 			      float_Matrix& on_input, float_Matrix& off_input,
 			      GaborV1Spec& spec, bool superimpose = false);
-  // #CAT_Filter apply Gabor filter to on/off input channels to produce a V1-like processing of the input image.  superimpose = add values instead of overwriting (this is just a call to equiv function on spec)
+  // #CAT_Filter #MENU #MENU_ON_Filter apply Gabor filter to on/off input channels to produce a V1-like processing of the input image.  superimpose = add values instead of overwriting (this is just a call to equiv function on spec)
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void 	Initialize();

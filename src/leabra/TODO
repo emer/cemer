@@ -2,26 +2,25 @@ leabra todo list:
 
 commit:
 
+added "compute" string field to datatable column + corresponding flag -- have a
+static progspace for datatable and a compute row and compute column and table
+function -- loads in all columns for current row as css hardvars as in
+datacalc and allows you to write exprs in terms of these guys.  every
+writeclose will update computes
 
 ------------
 current:
 
-* graph symbol size
-
-* add "compute" string field to datatable column + corresponding flag -- have
-  a static progspace for datatable and a compute row and compute column and
-  table function -- loads in all columns for current row as css hardvars as in
-  datacalc and allows you to write exprs in terms of these guys.  every
-  writeclose will update computes, in addition to supporting general computation.
-
-* provide direct access somehow to datatable tools.  one idea is to
-  auto-populate a new group in project called .data_proc that has all the static
-  guys just sitting there..  this is easy enough that I'll just do it.
-
-* program control panel
+* program control panel: enum support + flag for NO_CTRL_PANEL in vars (general flags?)
 
 * init stuff for var objs and Program targets -- make a static special progspace for 
-  just this.
+  just this. Issue: how to separate test vs. assign?  need both..
+
+* datatable: row manip functions like rowcopy, moverow, insert row, etc
+  * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
+  * concat columns
+  * datatable time average
+* ta_math: convolve; gaussian/uniform gen; time averaging with diff kernels
 
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
   -- seems slower after clicking around (confirmed).  maybe net too?  
@@ -46,13 +45,8 @@ current:
 
 check:
 
-* did I ever fix clicking on an axis, etc?  also, deleting an item from a view and
-  then selecting something else in the view to delete caused a crash..  CRASHING!
-
-* quit has changes thing, close project does not.. (ticket)
-
 * filer needs to use basic context (ticket filed)
-  * tmp name is bizzare -- fname filer issues (ticket)
+  * convert tmp name is bizzare -- fname filer issues (ticket)
 
 ------------------
 Program issues
@@ -68,13 +62,6 @@ Other Algorithms:
 
 --------------
 
-* datatable: row manip functions like rowcopy, moverow, insert row, etc
-  * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
-  * concat columns
-  * datatable time average
-
-* ta_math: convolve; gaussian/uniform gen; time averaging with diff kernels
-
 * css: p voidfun = crash; bindargs seems to not be getting the void??
   e.g., p taMisc::include_paths.List();
   css include path & files from old css..
@@ -82,15 +69,12 @@ Other Algorithms:
 ------------------
 hv model
 
-* debug DMEM timing: add start/end timer with some flags on the control guy and use
-for setting network stats vars on dmem_timing.
-
+* document fixes:
 * IT fm output: adapt goes up to .12, no adapt is down at .018 -- change it fm output target.
   itfmo05  -- still bust; 
-
 * main thing is high: v2 from v4 seems to be bad..  try run with just norel adapt + output
-
 * output should get more from IT than V4??  check wiki for prior experiments..
+
 
 * do repeat testing
 * show retina stuff in netview (record params in trial log to)
