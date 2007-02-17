@@ -920,7 +920,7 @@ IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
 
 void T3DataViewFrame::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
-  if (dcr == DCR_ITEM_UPDATED) {
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
     T3DataViewer* par = GET_MY_OWNER(T3DataViewer);
     if (par) par->FrameChanged(this);
   }

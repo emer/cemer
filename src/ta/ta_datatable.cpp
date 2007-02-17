@@ -131,7 +131,7 @@ void DataArray_impl::UpdateAfterEdit_impl() {
 void DataArray_impl::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   // treat item changes here as struct changes to the table
-  if (dcr == DCR_ITEM_UPDATED) {
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
     DataTable* dt = dataTable();
     if (dt) {
       dt->StructUpdate(true);
@@ -1639,7 +1639,7 @@ void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
   void* op1, void* op2)
 {
   //this is primarily for code-driven changes
-  if (dcr == DCR_ITEM_UPDATED) {
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
   }
 }

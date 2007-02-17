@@ -2254,7 +2254,7 @@ int Program::CallInit(Program* caller) {
 void Program::Init() {
   taMisc::Busy();
   setRunState(INIT);
-  DataChanged(DCR_ITEM_UPDATED); // update button state
+  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   taMisc::CheckConfigStart(false);
   CheckConfig(false); //sets ret_val on fail
   Run_impl();
@@ -2263,7 +2263,7 @@ void Program::Init() {
   script->Restart();		// restart script at beginning if run again
   taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   setRunState(DONE);
-  DataChanged(DCR_ITEM_UPDATED); // update after macroscopic button-press action..
+  DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 } 
 
 bool Program::PreCompileScript_impl() {
@@ -2285,7 +2285,7 @@ void Program::setRunState(RunState value) {
   run_state = value;
   // DO NOT DO THIS!! Definitely generates too much overhead
   // datachanged called only after macroscopic action
-  //  DataChanged(DCR_ITEM_UPDATED);
+  //  DataChanged(DCR_ITEM_UPDATED_ND);
 }
 
 int Program::Run_impl() {
@@ -2297,7 +2297,7 @@ int Program::Run_impl() {
   if (ret_val == RV_OK) {
     script->Run();
     // DO NOT DO!
-    // DataChanged(DCR_ITEM_UPDATED);
+    // DataChanged(DCR_ITEM_UPDATED_ND);
   }
   return ret_val;
 }
@@ -2311,7 +2311,7 @@ int Program::Cont_impl() {
   // note: shared var state likely changed, so update gui
   script_compiled = true; // override any run-generated changes!!
   // do not update this -- too tight -- only at end!
-  // DataChanged(DCR_ITEM_UPDATED);
+  // DataChanged(DCR_ITEM_UPDATED_ND);
   return ret_val;
 }
 
@@ -2320,7 +2320,7 @@ void Program::Run() {
   step_mode = false;
   taMisc::Busy();
   setRunState(RUN);
-  DataChanged(DCR_ITEM_UPDATED); // update button state
+  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != RV_OK) ShowRunError();
@@ -2333,7 +2333,7 @@ void Program::Run() {
     setRunState(DONE);
   }
   stop_req = false;
-  DataChanged(DCR_ITEM_UPDATED); // update after macroscopic button-press action..
+  DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 } 
 
 void Program::ShowRunError() {
@@ -2356,7 +2356,7 @@ void Program::Step() {
   step_mode = true;
   taMisc::Busy();
   setRunState(RUN);
-  DataChanged(DCR_ITEM_UPDATED); // update button state
+  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != 0) {//TODO: use enums and sensible output string
@@ -2374,7 +2374,7 @@ void Program::Step() {
     setRunState(DONE);
   }
   stop_req = false;
-  DataChanged(DCR_ITEM_UPDATED); // update after macroscopic button-press action..
+  DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
 void Program::SetAsStep() {
@@ -2394,7 +2394,7 @@ void Program::Abort() {
 void Program::Stop_impl() {
   script->Stop();
   setRunState(STOP);
-  DataChanged(DCR_ITEM_UPDATED); // update button state
+  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
 }
 
 bool Program::StopCheck() {
@@ -2436,26 +2436,33 @@ void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
   script_compiled = true;
   ret_val = 0;
-//TODO: need to globally solve the never-clean recursive dirty issue
-  m_dirty = true; //TEMP: prevents recursion
-  DataChanged(DCR_ITEM_UPDATED); // this will call setDirty
   m_dirty = false;
+  DataChanged(DCR_ITEM_UPDATED_ND); // this will *not* call setDirty
 }
 
 void Program::setDirty(bool value) {
+  //note: 2nd recursive call of this during itself doesn't do anything
   if(run_state == RUN) return;	     // change is likely self-generated during running, don't do it!
-//TEMP
-#ifdef DEBUG
-//  if (value) taMisc::Warning("Program::setDirty(true) called for:", GetName());
-#endif
-  if (m_dirty == value) return; // prevent recursion and spurious inherited calls!!!!
-  inherited::setDirty(value); // needed to dirty the Project
-  if(value) script_compiled = false; // make sure this always reflects dirty status -- is used as check for compiling..
-  m_dirty = value;
-  script_compiled = false; // have to assume user changed something
-  sub_progs.RemoveAll(); // will need to re-enumerate
-  DirtyChanged_impl();
-  DataChanged(DCR_ITEM_UPDATED); //note: recurses us, but 
+  bool changed = false;
+  if (value && script_compiled) {
+    // make sure this always reflects dirty status -- is used as check for compiling..
+    script_compiled = false; 
+    changed = true;
+  }
+  if (m_dirty != value) {  // prevent recursion and spurious inherited calls!!!!
+    inherited::setDirty(value); // needed to dirty the Project
+    changed = true;
+    m_dirty = value;
+    if (m_dirty) {
+      //note: actions in here will not recurse us, because m_dirty is now set
+      sub_progs.RemoveAll(); // will need to re-enumerate
+    }
+    DirtyChanged_impl();
+  }
+  if (changed) { // user will need to recompile/INIT
+    run_state = NOT_INIT;
+    DataChanged(DCR_ITEM_UPDATED_ND); //note: doesn't recurse ud
+  }
 }
 
 bool Program::SetVar(const String& nm, const Variant& value) {

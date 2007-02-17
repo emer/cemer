@@ -1964,6 +1964,10 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
   bool send_iu = false; // set true if we should send a synthetic ITEM_UPDATED
   bool suppress = false; // set it if we should supress forwarding
   bool dummy_end = false;
+  //we translate the NoDirty guy, since it is only for the sender's use
+  if (dcr == DCR_ITEM_UPDATED_ND) {
+    dcr = DCR_ITEM_UPDATED;
+  }
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     // only forward the first one (ex some clients do a reset step)
     // OR the first one where DATA->STRUCT

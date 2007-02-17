@@ -111,12 +111,14 @@ class  taHashTable; //
   DCR_ITEM_UPDATED
     taiEditDataHost: does a GetImage
     
+  NOTE: you can use the test (dcr <= DCR_ITEM_UPDATED_ND) to test for both versions
   
 */
 
 enum DataChangedReason { /* reason why DataChanged being called, as well as defining ops (also used by taBase and other classes) --
  some data change operations will emit multiple DataChanged calls */
   DCR_ITEM_UPDATED = 0, // after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
+  DCR_ITEM_UPDATED_ND, // same as IU, but doesn't invoke Dirty (to avoid circular dirtying)
   DCR_ITEM_REBUILT, // for complex items that support the STRUCT updates
 
   DCR_CHILD_ITEM_UPDATED, // op1=item; can optionally be invoked by an owned object (usually a member, usually not list/group items) -- owner can ignore this, or do something with it

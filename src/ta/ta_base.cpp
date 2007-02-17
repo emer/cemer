@@ -1082,13 +1082,13 @@ void taBase::RebuildAllViews() {
 }
 
 void taBase::DataChanged(int dcr, void* op1, void* op2) {
-  if (!taMisc::is_loading)
+  if (!taMisc::is_loading && (dcr != DCR_ITEM_UPDATED_ND))
     setDirty(true); // note, also then sets dirty for list ops, like Add etc.
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
 #ifdef TA_GUI
   // notify SelectEdits
-  if (taMisc::gui_active && (dcr == DCR_ITEM_UPDATED)) {
+  if (taMisc::gui_active && (dcr <= DCR_ITEM_UPDATED_ND)) {
     SelectEdit::BaseDataChangedAll(this, DCR_ITEM_UPDATED, NULL, NULL);
   }
 #endif
@@ -3256,12 +3256,12 @@ void taDataView::UpdateAfterEdit_impl() {
 void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   // detect the implicit DATA_UPDATE_END
 #ifdef DATA_DATA_DEBUG    
-  if(dcr == DCR_ITEM_UPDATED) {
+  if(dcr <= DCR_ITEM_UPDATED_ND) {
     cerr << GetName() << " iu: " << m_dbu_cnt << endl;
     taMisc::FlushConsole();
   }
 #endif
-  if ((m_dbu_cnt == -1) && (dcr == DCR_ITEM_UPDATED))
+  if ((m_dbu_cnt == -1) && (dcr <= DCR_ITEM_UPDATED_ND))
     dcr = DCR_DATA_UPDATE_END;
   // we need to reinterpret a ITEM_UPDATED if we are in datamode with count=1
   // that is sent instead of the terminal DATA_UPDATE_END
@@ -3314,7 +3314,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   if ((m_dbu_cnt > 0) || (parDbuCnt() > 0))
     return;
   //TODO: need to confirm that supressing UAE's is not harmful...
-  if (dcr == DCR_ITEM_UPDATED)
+  if (dcr <= DCR_ITEM_UPDATED_ND)
     DataUpdateAfterEdit();
   else if (dcr == DCR_UPDATE_VIEWS) {
     DataUpdateView_impl();

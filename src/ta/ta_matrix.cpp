@@ -1401,7 +1401,7 @@ void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
   void* op1, void* op2)
 {
   //this is primarily for code-driven changes
-  if (dcr == DCR_ITEM_UPDATED) {
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
   }
 }

@@ -4144,7 +4144,7 @@ QWidget* iDataPanel::centralWidget() const {
 }
 
 void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
-  if (dcr == DCR_ITEM_UPDATED) {
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
     if (tabView())
       tabView()->UpdateTabName(this); //in case changed */
   }
@@ -4607,7 +4607,7 @@ iTextDataPanel::~iTextDataPanel() {
 
 void iTextDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-//TODO:  if (dcr == DCR_ITEM_UPDATED) ;
+//TODO:  if (dcr <= DCR_ITEM_UPDATED_ND) ;
   //get updated text
 }
 

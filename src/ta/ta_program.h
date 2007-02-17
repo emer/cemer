@@ -982,7 +982,7 @@ public:
   virtual void	SetAsStep();
   // #BUTTON set this program as the step level for this set of programs -- this is the grain size of stepping when the Step button is pressed (for a higher-level program)
   virtual void  Compile();
-  // #BUTTON #GHOST_OFF_m_dirty:true generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
+  // #BUTTON #GHOST_ON_script_compiled:true generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
   virtual void	CmdShell();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP set css command shell to operate on this program, so you can run, debug, etc this script from the command line
   virtual void	ExitShell();
