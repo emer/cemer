@@ -838,8 +838,7 @@ void taiDataHost::Constr_impl() {
   }
   layButtons = new QHBoxLayout(widButtons);
 //def  layButtons->setMargin(2); // facilitates container
-  if (host_type != HT_CONTROL) 
-    Constr_Buttons();
+  Constr_Buttons();
   Constr_Final();
   widget()->setUpdatesEnabled(true);
 //NOTE: do NOT do a processevents -- it causes improperly nested event calls
