@@ -28,7 +28,7 @@
 void LayerDataEl::Initialize() {
   net_target = LAYER;
   data_cols = NULL;
-  column = NULL;
+  col_lookup = NULL;
   layer_group = NULL;
 }
 
@@ -38,9 +38,9 @@ void LayerDataEl::Destroy() {
 
 void LayerDataEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(column) {
-    chan_name = column->name;
-    taBase::SetPointer((taBase**)&column, NULL); // reset as soon as used -- just a temp guy!
+  if(col_lookup) {
+    chan_name = col_lookup->name;
+    taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
   }
   if(!data) {
     taBase::SetPointer((taBase**)&data_cols, NULL);

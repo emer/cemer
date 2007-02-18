@@ -66,8 +66,8 @@ public:
   bool		visible;	// is this column visible in display?
   bool		sticky; 	// #DEF_false set this to retain this colspec even if its column deletes
 
-  DataArray_impl*	dataCol() const {return (DataArray_impl*)data();}
-  void			setDataCol(DataArray_impl* value, bool first_time = false);
+  DataCol*		dataCol() const {return (DataCol*)data();}
+  void			setDataCol(DataCol* value, bool first_time = false);
   
   DATAVIEW_PARENT(DataTableView)
 
@@ -565,7 +565,7 @@ public:
 
   virtual void		SetColPtr(GraphColView* cgv);
   GraphColView* 	GetColPtr(); // get column pointer from col_name
-  DataArray_impl*	GetDAPtr();  // get dataarray ptr
+  DataCol*		GetDAPtr();  // get dataarray ptr
   GraphTableView*	GetGTV() 	{ return (GraphTableView*)owner; }
 
   ///////////////////////////////////////////////////

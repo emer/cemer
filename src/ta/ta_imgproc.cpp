@@ -232,9 +232,9 @@ void DoGFilterSpec::GraphFilter(DataTable* graph_data) {
   graph_data->StructUpdate(true);
   graph_data->ResetData();
   int idx;
-  DataArray_impl* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
-  DataArray_impl* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
-  DataArray_impl* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
+  DataCol* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
+  DataCol* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
+  DataCol* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
 
   xda->SetUserData("X_AXIS", true);
   zda->SetUserData("Z_AXIS", true);
@@ -267,8 +267,8 @@ void DoGFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   if(reset)
     graph_data->ResetData();
   int idx;
-  DataArray_impl* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
-  DataArray_impl* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
+  DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
 
   float maxv = taMath_float::vec_max(&on_filter, idx);
 
@@ -373,9 +373,9 @@ void GaborFilterSpec::GraphFilter(DataTable* graph_data) {
   graph_data->StructUpdate(true);
   graph_data->ResetData();
   int idx;
-  DataArray_impl* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
-  DataArray_impl* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
-  DataArray_impl* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
+  DataCol* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
+  DataCol* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
+  DataCol* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
 
   xda->SetUserData("X_AXIS", true);
   zda->SetUserData("Z_AXIS", true);
@@ -408,7 +408,7 @@ void GaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   if(reset)
     graph_data->ResetData();
   int idx;
-  DataArray_impl* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, x_size, y_size);
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, x_size, y_size);
 
   float maxv = taMath_float::vec_abs_max(&filter, idx);
 
@@ -728,7 +728,7 @@ void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
   }
   graph_data->StructUpdate(true);
   int idx;
-  DataArray_impl* matda = graph_data->FindMakeColName("Spacing", idx, VT_FLOAT, 2,
+  DataCol* matda = graph_data->FindMakeColName("Spacing", idx, VT_FLOAT, 2,
 						      retina_size.x,
 						      retina_size.y);
   graph_data->SetUserData("N_ROWS", 1);
@@ -1729,7 +1729,7 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
   dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2);
   dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0);
   dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0);
-  DataArray_impl* col;
+  DataCol* col;
   if(color_type == COLOR)
     col = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 3,
 			retina_size.x, retina_size.y, 3);
@@ -1782,7 +1782,7 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
   }
 
   int idx;
-  DataArray_impl* da_ret;
+  DataCol* da_ret;
   if(color_type == COLOR)
     da_ret = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 3,
 				 retina_size.x, retina_size.y, 3);
@@ -1814,9 +1814,9 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
 
   for(int i=0;i<dogs.size;i++) {
     DoGRetinaSpec* sp = dogs[i];
-    DataArray_impl* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+    DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
 						sp->spacing.output_size.x, sp->spacing.output_size.y);
-    DataArray_impl* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
+    DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
 						 2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
     float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
@@ -1908,9 +1908,9 @@ bool RetinaSpec::AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region) 
   for(int i=0;i<dogs.size;i++) {
     DoGRetinaSpec* sp = dogs[i];
     if(sp->spacing.region <= region) continue; // don't filter this region -- only ones above it!
-    DataArray_impl* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+    DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
 						sp->spacing.output_size.x, sp->spacing.output_size.y);
-    DataArray_impl* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
+    DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
 						 2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
     float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);

@@ -147,11 +147,11 @@ void ClustNode::GraphData(DataTable* dt) {
   SetYs(0.5f);
   nn_dist = 0.0f;
   dt->Reset();
-  DataArray_impl* da_x = dt->NewColFloat("X");
+  DataCol* da_x = dt->NewColFloat("X");
   da_x->SetUserData("X_AXIS", true);
-  DataArray_impl* da_y = dt->NewColFloat("Y");
+  DataCol* da_y = dt->NewColFloat("Y");
   da_y->SetUserData("PLOT_1", true);
-  DataArray_impl* da_l = dt->NewColString("Label");
+  DataCol* da_l = dt->NewColString("Label");
   da_l->SetUserData("PLOT_2", true);
   GraphData_impl(dt);
 
@@ -396,9 +396,9 @@ bool taDataAnal::GetDest(DataTable*& dest, DataTable* src, const String& suffix)
   return true;
 }
 
-DataArray_impl* taDataAnal::GetMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
+DataCol* taDataAnal::GetMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
   int idx;
-  DataArray_impl* da = src_data->FindColName(data_col_nm, idx, true); // err msg
+  DataCol* da = src_data->FindColName(data_col_nm, idx, true); // err msg
   if(!da)
     return NULL;
   if(!da->is_matrix) {
@@ -414,10 +414,10 @@ DataArray_impl* taDataAnal::GetMatrixDataCol(DataTable* src_data, const String& 
   return da;
 }
 
-DataArray_impl* taDataAnal::GetStringDataCol(DataTable* src_data, const String& name_col_nm) {
+DataCol* taDataAnal::GetStringDataCol(DataTable* src_data, const String& name_col_nm) {
   if(name_col_nm.empty()) return NULL;
   int idx;
-  DataArray_impl* nmda = src_data->FindColName(name_col_nm, idx, true); // err msg
+  DataCol* nmda = src_data->FindColName(name_col_nm, idx, true); // err msg
   if(!nmda)
     return NULL;
   if(nmda->is_matrix) {
@@ -439,7 +439,7 @@ DataArray_impl* taDataAnal::GetStringDataCol(DataTable* src_data, const String& 
 bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
 			    const String& data_col_nm,
 			    taMath::DistMetric metric, bool norm, float tol) {
-  DataArray_impl* da = GetMatrixDataCol(src_data, data_col_nm);
+  DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
   if(!da)
     return false;
   bool rval = true;
@@ -463,7 +463,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   if(!rval) return false;
   GetDest(dist_mat, src_data, "DistMatrix");
   if(!name_col_nm.empty()) {
-    DataArray_impl* nmda = GetStringDataCol(src_data, name_col_nm);
+    DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
     if(nmda) {
       dist_mat->Reset();	// nuke everything
       dist_mat->NewColString("Name");
@@ -487,7 +487,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   // no labels -- just make a col
   String cl_nm = src_data->name + "_DistMatrix";
   int idx;
-  DataArray_impl* dmda = dist_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
+  DataCol* dmda = dist_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
 						   dmat.dim(1));
   dmda->SetUserData("TOP_ZERO", true);
   dist_mat->SetUserData("N_ROWS", 1);
@@ -502,10 +502,10 @@ bool taDataAnal::CrossDistMatrix(float_Matrix* dist_mat,
 				 DataTable* src_data_a, const String& data_col_nm_a,
 				 DataTable* src_data_b, const String& data_col_nm_b,
 				 taMath::DistMetric metric, bool norm, float tol) {
-  DataArray_impl* da_a = GetMatrixDataCol(src_data_a, data_col_nm_a);
+  DataCol* da_a = GetMatrixDataCol(src_data_a, data_col_nm_a);
   if(!da_a)
     return false;
-  DataArray_impl* da_b = GetMatrixDataCol(src_data_b, data_col_nm_b);
+  DataCol* da_b = GetMatrixDataCol(src_data_b, data_col_nm_b);
   if(!da_b)
     return false;
   if(da_a->valType() != da_b->valType()) {
@@ -537,8 +537,8 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
   if(!rval) return false;
   GetDest(dist_mat, src_data_a, src_data_b->name + "_DistMatrix");
   if(!name_col_nm_a.empty() && !name_col_nm_b.empty()) {
-    DataArray_impl* nmda_a = GetStringDataCol(src_data_a, name_col_nm_a);
-    DataArray_impl* nmda_b = GetStringDataCol(src_data_b, name_col_nm_b);
+    DataCol* nmda_a = GetStringDataCol(src_data_a, name_col_nm_a);
+    DataCol* nmda_b = GetStringDataCol(src_data_b, name_col_nm_b);
     if(nmda_a && nmda_b) {
       dist_mat->Reset();	// nuke everything
       dist_mat->NewColString("Name");
@@ -563,7 +563,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
   // no labels -- just make a col
   String cl_nm = src_data_a->name + "_" + src_data_b->name + "_DistMatrix";
   int idx;
-  DataArray_impl* dmda = dist_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
+  DataCol* dmda = dist_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
 						   dmat.dim(1));
   dmda->SetUserData("TOP_ZERO", true);
   dist_mat->SetUserData("N_ROWS", 1);
@@ -579,7 +579,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 
 bool taDataAnal::CorrelMatrix(float_Matrix* correl_mat, DataTable* src_data,
 			      const String& data_col_nm) {
-  DataArray_impl* da = GetMatrixDataCol(src_data, data_col_nm);
+  DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
   if(!da)
     return false;
   bool rval = true;
@@ -604,7 +604,7 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
   // no labels -- just make a col
   String cl_nm = src_data->name + "_CorrelMatrix";
   int idx;
-  DataArray_impl* dmda = correl_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
+  DataCol* dmda = correl_mat->FindMakeColName(cl_nm, idx, VT_FLOAT, 2, dmat.dim(0),
 						     dmat.dim(1));
   dmda->SetUserData("TOP_ZERO", true);
   correl_mat->SetUserData("N_ROWS", 1);
@@ -622,10 +622,10 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
 			 const String& data_col_nm, const String& name_col_nm,
 			 taMath::DistMetric metric, bool norm, float tol) {
   if(!src_data) return false;
-  DataArray_impl* da = GetMatrixDataCol(src_data, data_col_nm);
+  DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
   if(!da)
     return false;
-  DataArray_impl* nmda = GetStringDataCol(src_data, name_col_nm);
+  DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
   if(!nmda)
     return false;
   
@@ -665,13 +665,13 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
 
   GetDest(pca_data, src_data, "col_" + data_col_nm + "_PCAEigens");
 
-  DataArray_impl* da = GetMatrixDataCol(src_data, data_col_nm);
+  DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
   if(!da)
     return false;
 
   String cl_nm = data_col_nm + "_PCAEigens";
   int idx;
-  DataArray_impl* dmda = pca_data->FindMakeColName(cl_nm, idx, VT_FLOAT,
+  DataCol* dmda = pca_data->FindMakeColName(cl_nm, idx, VT_FLOAT,
 						   da->cell_dims(), da->GetCellGeom(0),
 						   da->GetCellGeom(1), da->GetCellGeom(2),
 						   da->GetCellGeom(3));
@@ -690,7 +690,7 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
 			   const String& data_col_nm, const String& name_col_nm, 
 			   int x_axis_c, int y_axis_c) {
   if(!src_data) return false;
-  DataArray_impl* da = GetMatrixDataCol(src_data, data_col_nm);
+  DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
   if(!da)
     return false;
   int dim = da->cell_size();
@@ -723,16 +723,16 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
   float_Matrix yprjn;
   taMath_float::mat_prjn(&yprjn, (float_Matrix*)da->AR(), &yevec);
 
-  DataArray_impl* nmda = GetStringDataCol(src_data, name_col_nm);
+  DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
 
   GetDest(prjn_data, src_data, "col_" + data_col_nm + "_PCA2dPrjn");
 
   int idx;
-  DataArray_impl* nm = NULL;
+  DataCol* nm = NULL;
   if(nmda)
     nm = prjn_data->FindMakeColName(name_col_nm, idx, VT_STRING);
-  DataArray_impl* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
-  DataArray_impl* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
+  DataCol* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
+  DataCol* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
 
   // todo: user data..
 
@@ -770,16 +770,16 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
   float_Matrix xy_coords;
   taMath_float::mat_mds_owrite(&dist_mat, &xy_coords, x_axis_c, y_axis_c);
 
-  DataArray_impl* nmda = GetStringDataCol(src_data, name_col_nm);
+  DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
 
   GetDest(prjn_data, src_data, "col_" + data_col_nm + "_MDS2dPrjn");
 
   int idx;
-  DataArray_impl* nm = NULL;
+  DataCol* nm = NULL;
   if(nmda)
     nm = prjn_data->FindMakeColName(name_col_nm, idx, VT_STRING);
-  DataArray_impl* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
-  DataArray_impl* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
+  DataCol* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
+  DataCol* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
 
   for(int i=0;i<src_data->rows;i++) {
     prjn_data->AddBlankRow();
@@ -799,7 +799,7 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
 			     taMath::DistMetric metric, bool norm, float tol)
 {
   if(!src_data) return false;
-  DataArray_impl* da = GetMatrixDataCol(src_data, data_col_nm);
+  DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
   if(!da)
     return false;
   int n_rows = src_data->rows;
@@ -822,16 +822,16 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
   float_Matrix yprjn;
   taMath_float::mat_prjn(&yprjn, (float_Matrix*)da->AR(), yrow, metric, norm, tol);
 
-  DataArray_impl* nmda = GetStringDataCol(src_data, name_col_nm);
+  DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
 
   GetDest(prjn_data, src_data, "col_" + data_col_nm + "_RowPat2dPrjn");
 
   int idx;
-  DataArray_impl* nm = NULL;
+  DataCol* nm = NULL;
   if(nmda)
     nm = prjn_data->FindMakeColName(name_col_nm, idx, VT_STRING);
-  DataArray_impl* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
-  DataArray_impl* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
+  DataCol* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
+  DataCol* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
 
   for(int i=0;i<src_data->rows;i++) {
     prjn_data->AddBlankRow();
@@ -856,7 +856,7 @@ bool taDataAnal::TimeAvg(DataTable* time_avg_data, bool view, DataTable* src_dat
   time_avg_data->Reset();
   *time_avg_data = *src_data;	// do complete copy, then operate in place
   for(int i=0;i<time_avg_data->data.size;i++) {
-    DataArray_impl* da = time_avg_data->data[i];
+    DataCol* da = time_avg_data->data[i];
     if(!da->isNumeric()) continue;
     if(da->valType() == VT_BYTE) continue;
     if(float_only && (da->valType() == VT_INT)) continue;

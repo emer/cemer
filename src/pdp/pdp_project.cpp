@@ -310,7 +310,7 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
   FOR_ITR_EL(Layer, lay, net->layers., li) {
     if(lay->layer_type == Layer::HIDDEN) continue;
     int lay_idx = 0;
-    //DataArray_impl* ld = 
+    //DataCol* ld = 
     data_table->FindMakeColName
       (lay->name, lay_idx, DataTable::VT_FLOAT, 2,
        MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1));

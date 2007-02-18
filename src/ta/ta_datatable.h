@@ -39,7 +39,7 @@ class cssProgSpace;		// #IGNORE
 
 // forwards this file
 
-class DataArray_impl;
+class DataCol;
 class DataTableCols;
 class DataTable;
 class DataTable_Group;
@@ -62,7 +62,7 @@ INHERITED(taOBase)
 public:
 
   String	expr;		// #EDIT_DIALOG enter the expression here -- column value will be set to this.  you can just type in names of other columns (value is corresponding row's value) or literal values, or math expressions, etc.  enclose strings in double quotes.  column names will be checked and automatically updated
-  DataArray_impl* col_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #FROM_GROUP_data_cols lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  DataCol* col_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #FROM_GROUP_data_cols lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
   DataTableCols*	data_cols;
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns (set from owner field)
@@ -107,10 +107,10 @@ private:
 */
 
 /////////////////////////////////////////////////////////
-//   DataArray_impl -- One colum of a datatable
+//   DataCol -- One colum of a datatable
 /////////////////////////////////////////////////////////
 
-class TA_API DataArray_impl : public taNBase {
+class TA_API DataCol : public taNBase {
   // #VIRT_BASE ##NO_TOKENS #NO_INSTANCE ##CAT_Data holds a column of data;\n (a scalar cell can generally be treated as a degenerate matrix cell of dim[1])
 INHERITED(taNBase)
 friend class DataTable;
@@ -290,11 +290,11 @@ public:
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
 
-  virtual void	Copy_NoData(const DataArray_impl& cp);
+  virtual void	Copy_NoData(const DataCol& cp);
   // #CAT_ObjectMgmt copy the structure of the datatable without getting all the data
-  virtual void	CopyFromRow(int dest_row, const DataArray_impl& cp, int src_row);
+  virtual void	CopyFromRow(int dest_row, const DataCol& cp, int src_row);
   // #CAT_ObjectMgmt copy one row from source to given row in this object, assumes that the two have the same type and, if matrix, cell_size
-  virtual void	CopyFromRow_Robust(int dest_row, const DataArray_impl& cp, int src_row);
+  virtual void	CopyFromRow_Robust(int dest_row, const DataCol& cp, int src_row);
   // #CAT_ObjectMgmt copy one row from source to given row in this object, robust to differences in type and format of the cells
   
   override String 	GetTypeDecoKey() const { return "DataTable"; }
@@ -304,9 +304,9 @@ public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
   void	CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
-  void 	Copy_(const DataArray_impl& cp);
-  COPY_FUNS(DataArray_impl, taNBase);
-  TA_ABSTRACT_BASEFUNS(DataArray_impl);
+  void 	Copy_(const DataCol& cp);
+  COPY_FUNS(DataCol, taNBase);
+  TA_ABSTRACT_BASEFUNS(DataCol);
   
 protected:
   override void  UpdateAfterEdit_impl();
@@ -336,12 +336,12 @@ private:
 };
 
 /////////////////////////////////////////////////////////
-//   DataTableCols -- group of DataArray
+//   DataTableCols -- group of DataCol
 /////////////////////////////////////////////////////////
 
-class TA_API DataTableCols: public taList<DataArray_impl> {
+class TA_API DataTableCols: public taList<DataCol> {
   // ##CAT_Data columns of a datatable 
-INHERITED(taList<DataArray_impl>)
+INHERITED(taList<DataCol>)
 public:
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   
@@ -440,13 +440,13 @@ public:
   // #CAT_Columns number of columns
   override taList_impl* children_() {return &data;}
 
-  virtual DataArray_impl* NewCol(DataArray_impl::ValType val_type, 
+  virtual DataCol* 	NewCol(DataCol::ValType val_type, 
 			       const String& col_nm);
   // #MENU #MENU_ON_Columns #ARG_C_2 #CAT_Columns create new scalar column of data of specified type
-  virtual DataArray_impl* NewColMatrix(DataArray_impl::ValType val_type, const String& col_nm,
+  virtual DataCol* 	NewColMatrix(DataCol::ValType val_type, const String& col_nm,
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
   // #MENU #MENU_ON_Columns #CAT_Columns create new matrix column of data of specified type, with specified cell geom
-  virtual DataArray_impl* NewColMatrixN(DataArray_impl::ValType val_type, 
+  virtual DataCol* 	NewColMatrixN(DataCol::ValType val_type, 
 				      const String& col_nm,  const MatrixGeom& cell_geom);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   
@@ -464,26 +464,26 @@ public:
   virtual bool		RenameCol(const String& cur_nm, const String& new_nm);
   // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
 
-  virtual DataArray_impl* FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false);
+  virtual DataCol* 	FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false);
   // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found
 
-  virtual DataArray_impl* FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
+  virtual DataCol* 	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
 					ValType val_type = VT_FLOAT, int dims = 0,
 					int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
   // #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
-  virtual DataArray_impl* GetColData(int col) const;
+  virtual DataCol* 	GetColData(int col) const;
   // #CAT_Columns get col data for given column 
   virtual taMatrix*	GetColMatrix(int col) const;
   // #CAT_Columns get matrix for given column -- WARNING: this is NOT row-number safe 
 
-  virtual bool 		ColMatchesChannelSpec(const DataArray_impl* da, const ChannelSpec* cs);
+  virtual bool 		ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs);
   // #CAT_Columns returns 'true' if the col has the same name and a compatible data type
-  virtual DataArray_impl* NewColFromChannelSpec(ChannelSpec* cs)
+  virtual DataCol* 	NewColFromChannelSpec(ChannelSpec* cs)
   // #MENU_1N #CAT_Columns create new matrix column of data based on name/type in the data item (default is Variant)
   { if (cs) return NewColFromChannelSpec_impl(cs); else return NULL; }
     
-  virtual DataArray_impl* GetColForChannelSpec(ChannelSpec* cs)
+  virtual DataCol*	GetColForChannelSpec(ChannelSpec* cs)
   // #MENU_1N #CAT_Columns find existing or create new matrix column of data based on name/type in the data item
     {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
     
@@ -658,6 +658,8 @@ public:
   // perform calculations for all rows of data (calls InitCalcScript to make sure)
   virtual bool		CalcAllRows();
   // #BUTTON perform calculations for all rows of data (updates after)
+  virtual void		CalcRowCodeGen(String& code_str);
+  // generate code for computing one row worth of data, with assumed 'int row' variable specifying row
   virtual bool		CalcRow(int row);
   // perform calculations for given row of data (calls InitCalcScript to make sure)
 
@@ -721,7 +723,7 @@ protected:
   // DataBlock implementation
   inline int		ChannelCount() const {return data.size; }
   inline const String	ChannelName(int chan) const
-  { DataArray_impl* da = data.SafeEl(chan);
+  { DataCol* da = data.SafeEl(chan);
     if (da) return da->name; else return _nilString; }
 
 public:
@@ -764,11 +766,11 @@ protected:
 protected:
   DataTableModel*	m_dm; // #IGNORE note: once we create, always exists
   
-  DataArray_impl*	NewCol_impl(DataArray_impl::ValType val_type, 
+  DataCol*	NewCol_impl(DataCol::ValType val_type, 
 				    const String& col_nm);
   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
-  DataArray_impl*	GetColForChannelSpec_impl(ChannelSpec* cs);
-  DataArray_impl*	NewColFromChannelSpec_impl(ChannelSpec* cs);
+  DataCol*	GetColForChannelSpec_impl(ChannelSpec* cs);
+  DataCol*	NewColFromChannelSpec_impl(ChannelSpec* cs);
   
 private:
   void	Initialize();
@@ -796,21 +798,21 @@ private:
 
 
 /////////////////////////////////////////////////////////
-//   DataArray templates
+//   DataCol templates
 /////////////////////////////////////////////////////////
 
 template<class T> 
-class DataArray : public DataArray_impl {
+class DataColTp : public DataCol {
   // #VIRT_BASE #NO_INSTANCE template for common elements
 public:
   override taMatrix* 	AR()	{ return &ar; } // the array pointer
   override const taMatrix* AR() const { return &ar; } // the array pointer
 
   void	CutLinks()
-    {ar.CutLinks(); DataArray_impl::CutLinks();}
-  void	Copy_(const DataArray<T>& cp)  { ar = cp.ar; }
-  COPY_FUNS(DataArray<T>, DataArray_impl);
-  TA_ABSTRACT_TMPLT_BASEFUNS(DataArray, T); //
+    {ar.CutLinks(); DataCol::CutLinks();}
+  void	Copy_(const DataColTp<T>& cp)  { ar = cp.ar; }
+  COPY_FUNS(DataColTp<T>, DataCol);
+  TA_ABSTRACT_TMPLT_BASEFUNS(DataColTp, T); //
 public: //DO NOT ACCESS DIRECTLY
   T		ar;		// #NO_SHOW  the array itself
 private:
@@ -818,9 +820,9 @@ private:
   void	Destroy()		{ CutLinks(); }
 };
 
-class TA_API String_Data : public DataArray<String_Matrix> {
+class TA_API String_Data : public DataColTp<String_Matrix> {
   // string data
-INHERITED(DataArray<String_Matrix>)
+INHERITED(DataColTp<String_Matrix>)
 friend class DataTable;
 public:
   override bool		isString() const {return true;} 
@@ -853,9 +855,9 @@ private:
 };
 
 
-class TA_API Variant_Data : public DataArray<Variant_Matrix> {
+class TA_API Variant_Data : public DataColTp<Variant_Matrix> {
   // Variant data
-INHERITED(DataArray<Variant_Matrix>)
+INHERITED(DataColTp<Variant_Matrix>)
 friend class DataTable;
 public:
   override ValType 	valType() const  {return VT_VARIANT;}
@@ -888,9 +890,9 @@ private:
 };
 
 
-class TA_API double_Data : public DataArray<double_Matrix> {
+class TA_API double_Data : public DataColTp<double_Matrix> {
   // doubleing point data
-INHERITED(DataArray<double_Matrix>)
+INHERITED(DataColTp<double_Matrix>)
 friend class DataTable;
 public:
   override bool		isNumeric() const {return true;} 
@@ -919,9 +921,9 @@ private:
   void	Destroy() {}
 };
 
-class TA_API float_Data : public DataArray<float_Matrix> {
+class TA_API float_Data : public DataColTp<float_Matrix> {
   // floating point data
-INHERITED(DataArray<float_Matrix>)
+INHERITED(DataColTp<float_Matrix>)
 friend class DataTable;
 public:
   override bool		isNumeric() const {return true;} 
@@ -950,9 +952,9 @@ private:
   void	Destroy() {}
 };
 
-class TA_API int_Data : public DataArray<int_Matrix> {
+class TA_API int_Data : public DataColTp<int_Matrix> {
   // int data
-INHERITED(DataArray<int_Matrix>)
+INHERITED(DataColTp<int_Matrix>)
 friend class DataTable;
 public:
   override bool		isNumeric() const {return true;} // 
@@ -981,9 +983,9 @@ private:
   void	Destroy() {}
 };
 
-class TA_API byte_Data : public DataArray<byte_Matrix> {
+class TA_API byte_Data : public DataColTp<byte_Matrix> {
   // byte data
-INHERITED(DataArray<byte_Matrix>)
+INHERITED(DataColTp<byte_Matrix>)
 friend class DataTable;
 public:
   override bool		isNumeric() const {return true;} // 

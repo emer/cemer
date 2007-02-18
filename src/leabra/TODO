@@ -2,11 +2,6 @@ leabra todo list:
 
 commit:
 
-added "compute" string field to datatable column + corresponding flag -- have a
-static progspace for datatable and a compute row and compute column and table
-function -- loads in all columns for current row as css hardvars as in
-datacalc and allows you to write exprs in terms of these guys.  every
-writeclose will update computes
 
 ------------
 current:

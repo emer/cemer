@@ -70,7 +70,7 @@ void DataOpEl::SetDataTable(DataTable* dt) {
 
 void DataOpEl::GetColumns(DataTable* dt) {
   if(!dt) return;
-  DataArray_impl* da = dt->FindColName(col_name, col_idx);
+  DataCol* da = dt->FindColName(col_name, col_idx);
   if(col_idx < 0) da = NULL;	// just to be sure..
   taBase::SetPointer((taBase**)&col_lookup, da);
 }
@@ -112,7 +112,7 @@ void DataOpList::ClearColumns() {
 void DataOpList::AddAllColumns(DataTable* dt) {
   if(!dt) return;
   for(int i=0;i<dt->data.size; i++) {
-    DataArray_impl* da = dt->data[i];
+    DataCol* da = dt->data[i];
     DataOpEl* dop = FindName(da->name);
     if(dop) continue;
     dop = (DataOpEl*)New(1);
@@ -293,12 +293,12 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
   for(int i=0; i<src_cols->size;i++) {
     DataOpEl* sop = src_cols->FastEl(i);
     int d_idx;
-    DataArray_impl* dda = dest->FindColName(sop->col_name, d_idx);
+    DataCol* dda = dest->FindColName(sop->col_name, d_idx);
     if(!dda) {
       src_cols->RemoveIdx(i); i--;
       continue;
     }
-    DataArray_impl* sda = src->data[sop->col_idx];
+    DataCol* sda = src->data[sop->col_idx];
     if(dda->cell_size() != sda->cell_size()) continue; // incompatible
     if(sda->cell_size() > 1) {
       if(sda->valType() != dda->valType()) continue; // must be compatible var types
@@ -334,8 +334,8 @@ bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* 
   for(int j=0;j<src_cols->size;j++) {
     DataOpEl* sop = src_cols->FastEl(j);
     DataOpEl* dop = dest_cols->FastEl(j);
-    DataArray_impl* sda = src->data[sop->col_idx];
-    DataArray_impl* dda = dest->data[dop->col_idx];
+    DataCol* sda = src->data[sop->col_idx];
+    DataCol* dda = dest->data[dop->col_idx];
     dda->CopyFromRow(dest_row, *sda, src_row);
   }
   dest->DataUpdate(false);
@@ -353,8 +353,8 @@ bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
     for(int j=0;j<src_cols.size;j++) {
       DataOpEl* sop = src_cols.FastEl(j);
       DataOpEl* dop = dest_cols.FastEl(j);
-      DataArray_impl* sda = src->data[sop->col_idx];
-      DataArray_impl* dda = dest->data[dop->col_idx];
+      DataCol* sda = src->data[sop->col_idx];
+      DataCol* dda = dest->data[dop->col_idx];
       dda->CopyFromRow(-1, *sda, i);
     }
   }
@@ -372,8 +372,8 @@ bool taDataProc::AppendRows(DataTable* dest, DataTable* src) {
   for(int i=0;i<src->rows;i++) {
     dest->AddBlankRow();
     for(int j=0;j<src->data.size;j++) {
-      DataArray_impl* sda = src->data[j];
-      DataArray_impl* dda = dest->data[j];
+      DataCol* sda = src->data[j];
+      DataCol* dda = dest->data[j];
       dda->CopyFromRow(-1, *sda, i);
     }
   }
@@ -389,8 +389,8 @@ bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
     for(int k=0;k<n_repl;k++) {
       dest->AddBlankRow();
       for(int j=0;j<src->data.size;j++) {
-	DataArray_impl* sda = src->data[j];
-	DataArray_impl* dda = dest->data[j];
+	DataCol* sda = src->data[j];
+	DataCol* dda = dest->data[j];
 	dda->CopyFromRow(-1, *sda, i);
       }
     }
@@ -417,8 +417,8 @@ int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int ro
   for(int i=0;i<spec->ops.size; i++) {
     DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
-    DataArray_impl* da_a = dt_a->data.FastEl(ds->col_idx);
-    DataArray_impl* da_b = dt_b->data.FastEl(ds->col_idx);
+    DataCol* da_a = dt_a->data.FastEl(ds->col_idx);
+    DataCol* da_b = dt_b->data.FastEl(ds->col_idx);
     Variant va = da_a->GetValAsVar(row_a);
     Variant vb = da_b->GetValAsVar(row_b);
     if(va < vb) {
@@ -507,12 +507,12 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   for(int i=0;i<spec->ops.size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
-    DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-    DataArray_impl* nda;
+    DataCol* sda = src->data.FastEl(ds->col_idx);
+    DataCol* nda;
     if(sda->valType() == VT_INT) // up-convert to float!
       nda = new float_Data;
     else
-      nda = (DataArray_impl*)sda->MakeToken();
+      nda = (DataCol*)sda->MakeToken();
     dest->data.Add(nda);
     // todo: lame minimal copy here: replace with encapsulated fun?
     nda->name = sda->name;
@@ -558,8 +558,8 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
   for(int i=0;i<spec->ops.size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
-    DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-    DataArray_impl* dda = dest->data.FastEl(dest_idx++); // index is spec index
+    DataCol* sda = src->data.FastEl(ds->col_idx);
+    DataCol* dda = dest->data.FastEl(dest_idx++); // index is spec index
     if(sda->valType() == taBase::VT_DOUBLE) {
       dda->SetValAsDouble(taMath_double::vec_aggregate((double_Matrix*)sda->AR(), ds->agg), 0);
     }
@@ -589,7 +589,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   // initialize cur vals
   for(int i=0;i<sort_spec->ops.size; i++) {
     DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
-    DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
+    DataCol* sda = ssrc.data.FastEl(ds->col_idx);
     Variant cval = sda->GetValAsVar(0); // start at row 0
     cur_vals[i] = cval;
 //     cerr << i << " init val: " << cur_vals[i] << " input: " << cval << endl;
@@ -608,7 +608,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
       else {
 	for(int i=0;i<sort_spec->ops.size; i++) {
 	  DataSortEl* ds = (DataSortEl*)sort_spec->ops.FastEl(i);
-	  DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
+	  DataCol* sda = ssrc.data.FastEl(ds->col_idx);
 	  Variant cval = sda->GetValAsVar(row);
 	  if(cval != cur_vals[i]) {
 // 	    cerr << " new_val:  oval: " << cur_vals[i] << " nval: " << cval;
@@ -628,8 +628,8 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     for(int i=0;i<spec->ops.size; i++) {
       DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
       if(ds->col_idx < 0) continue;
-      DataArray_impl* sda = ssrc.data.FastEl(ds->col_idx);
-      DataArray_impl* dda = dest->data.FastEl(dest_idx++); // index is spec index
+      DataCol* sda = ssrc.data.FastEl(ds->col_idx);
+      DataCol* dda = dest->data.FastEl(dest_idx++); // index is spec index
       if(ds->agg.op == Aggregate::GROUP) {
 	dda->SetValAsVar(sda->GetValAsVar(st_row), -1); // -1 = last row
       }
@@ -676,7 +676,7 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
     for(int i=0; i<spec->ops.size; i++) {
       DataSelectEl* ds = (DataSelectEl*)spec->ops.FastEl(i);
       if(ds->col_idx < 0) continue;
-      DataArray_impl* da = src->data.FastEl(ds->col_idx);
+      DataCol* da = src->data.FastEl(ds->col_idx);
       Variant val = da->GetValAsVar(row);
       bool ev = ds->Eval(val);
 //       cerr << "cmp: " << ds->col_name << " idx: " << ds->col_idx
@@ -724,7 +724,7 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
     for(int i=0; i<spec->ops.size; i++) {
       DataSelectEl* ds = (DataSelectEl*)spec->ops.FastEl(i);
       if(ds->col_idx < 0) continue;
-      DataArray_impl* da = src->data.FastEl(ds->col_idx);
+      DataCol* da = src->data.FastEl(ds->col_idx);
       Variant val = da->GetValAsVar(row);
       bool ev = ds->Eval(val);
       if(spec->comb_op == DataSelectSpec::AND) {
@@ -896,8 +896,8 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   for(int i=0;i<spec->size; i++) {
     DataOpEl* ds = spec->FastEl(i);
     if(ds->col_idx < 0) continue;
-    DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    DataCol* sda = src->data.FastEl(ds->col_idx);
+    DataCol* nda = (DataCol*)sda->MakeToken();
     dest->data.Add(nda);
     nda->Copy_NoData(*sda);
   }    
@@ -906,8 +906,8 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
     for(int i=0;i<spec->size; i++) {
       DataOpEl* ds = spec->FastEl(i);
       if(ds->col_idx < 0) continue;
-      DataArray_impl* sda = src->data.FastEl(ds->col_idx);
-      DataArray_impl* nda = dest->data.FastEl(i);
+      DataCol* sda = src->data.FastEl(ds->col_idx);
+      DataCol* nda = dest->data.FastEl(i);
       nda->CopyFromRow(row, *sda, row);
     }
   }
@@ -924,16 +924,16 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
   dest->Reset();
   for(int i=0; i < src_a->data.size; i++) {
     //    if(i == spec->col_a.col_idx) continue; // include first guy..
-    DataArray_impl* sda = src_a->data.FastEl(i);
-    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    DataCol* sda = src_a->data.FastEl(i);
+    DataCol* nda = (DataCol*)sda->MakeToken();
     dest->data.Add(nda);	// todo: AddUniqueName?? + no reset + orphan?
     nda->Copy_NoData(*sda);
   }
   int a_cols = src_a->data.size; // -1 if skipping index value
   for(int i=0; i < src_b->data.size; i++) {
     if(i == spec->col_b.col_idx) continue; // don't include common index
-    DataArray_impl* sdb = src_b->data.FastEl(i);
-    DataArray_impl* nda = (DataArray_impl*)sdb->MakeToken();
+    DataCol* sdb = src_b->data.FastEl(i);
+    DataCol* nda = (DataCol*)sdb->MakeToken();
     dest->data.Add(nda);
     nda->Copy_NoData(*sdb);
   }
@@ -969,9 +969,9 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
 
   int b_row = 0;
   for(int row=0;row<ssrc_a.rows;row++) {
-    DataArray_impl* sda = ssrc_a.data.FastEl(spec->col_a.col_idx);
+    DataCol* sda = ssrc_a.data.FastEl(spec->col_a.col_idx);
     Variant val_a = sda->GetValAsVar(row);
-    DataArray_impl* sdb = ssrc_b.data.FastEl(spec->col_b.col_idx);
+    DataCol* sdb = ssrc_b.data.FastEl(spec->col_b.col_idx);
     Variant val_b = sdb->GetValAsVar(b_row);
     bool got_one = false;
     if(val_a == val_b) {
@@ -991,15 +991,15 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
 	dest->AddBlankRow();
 	for(int i=0;i<ssrc_a.data.size; i++) {
 	  //    if(i == spec->col_a.col_idx) continue; // include first guy..
-	  DataArray_impl* sda = ssrc_a.data.FastEl(i);
-	  DataArray_impl* nda = dest->data.FastEl(i); // todo: change above if uncommented
+	  DataCol* sda = ssrc_a.data.FastEl(i);
+	  DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
 	  nda->CopyFromRow(row, *sda, row); // just copy
 	}
 	int col_idx = a_cols;
 	for(int i=0; i < ssrc_b.data.size; i++) {
 	  if(i == spec->col_b.col_idx) continue; // don't include common index
-	  DataArray_impl* sdb = ssrc_b.data.FastEl(i);
-	  DataArray_impl* nda = dest->data.FastEl(col_idx);
+	  DataCol* sdb = ssrc_b.data.FastEl(i);
+	  DataCol* nda = dest->data.FastEl(col_idx);
 	  nda->CopyFromRow(row, *sdb, bi); // just copy
 	  col_idx++;
 	}
@@ -1034,15 +1034,15 @@ bool taDataProc::JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b) 
   dest->StructUpdate(true);
   dest->Reset();
   for(int i=0; i < src_a->data.size; i++) {
-    DataArray_impl* sda = src_a->data.FastEl(i);
-    DataArray_impl* nda = (DataArray_impl*)sda->MakeToken();
+    DataCol* sda = src_a->data.FastEl(i);
+    DataCol* nda = (DataCol*)sda->MakeToken();
     dest->data.Add(nda);	// todo: AddUniqueName?? + no reset + orphan?
     nda->Copy_NoData(*sda);
   }
   int a_cols = src_a->data.size; // -1 if skipping index value
   for(int i=0; i < src_b->data.size; i++) {
-    DataArray_impl* sdb = src_b->data.FastEl(i);
-    DataArray_impl* nda = (DataArray_impl*)sdb->MakeToken();
+    DataCol* sdb = src_b->data.FastEl(i);
+    DataCol* nda = (DataCol*)sdb->MakeToken();
     dest->data.Add(nda);
     nda->Copy_NoData(*sdb);
   }    
@@ -1050,14 +1050,14 @@ bool taDataProc::JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b) 
   for(int row=0;row<src_a->rows;row++) {
     dest->AddBlankRow();
     for(int i=0;i<src_a->data.size; i++) {
-      DataArray_impl* sda = src_a->data.FastEl(i);
-      DataArray_impl* nda = dest->data.FastEl(i); // todo: change above if uncommented
+      DataCol* sda = src_a->data.FastEl(i);
+      DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
       nda->CopyFromRow(row, *sda, row); // just copy
     }
     int col_idx = a_cols;
     for(int i=0; i < src_b->data.size; i++) {
-      DataArray_impl* sdb = src_b->data.FastEl(i);
-      DataArray_impl* nda = dest->data.FastEl(col_idx);
+      DataCol* sdb = src_b->data.FastEl(i);
+      DataCol* nda = dest->data.FastEl(col_idx);
       nda->CopyFromRow(row, *sdb, row); // just copy
       col_idx++;
     }    
@@ -1490,7 +1490,7 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
   rval += il1 + "for(int src_row=0; src_row < dcl->src_data.rows; src_row++) {\n";
   for(int i=0;i<src_cols.size; i++) {
     DataOpEl* ds = src_cols[i];
-    DataArray_impl* da = src_data->data[ds->col_idx];
+    DataCol* da = src_data->data[ds->col_idx];
     if(da->is_matrix)
       rval += il2 + "taMatrix* s_" + ds->col_name + " = dcl->src_data.GetValAsMatrix(" +
 	String(ds->col_idx) + ", src_row);\n";
@@ -1593,7 +1593,7 @@ const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
 
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
-    DataArray_impl* da = dcl->dest_data->data[ds->col_idx];
+    DataCol* da = dcl->dest_data->data[ds->col_idx];
     if(da->is_matrix)
       rval += il + "taMatrix* d_" + ds->col_name + " = dcl->dest_data.GetValAsMatrix(" +
 	String(ds->col_idx) + ", -1); // -1 = last row\n";
@@ -1674,7 +1674,7 @@ const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
   dcl->dest_cols.GetColumns(dcl->dest_data);
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
-    DataArray_impl* da = dcl->dest_data->data[ds->col_idx];
+    DataCol* da = dcl->dest_data->data[ds->col_idx];
     if(da->is_matrix)
       rval += il + "dcl->dest_data.SetValAsMatrix(" + 
 	"d_" + ds->col_name + ", " + String(ds->col_idx) + ", -1); // -1 = last row\n";
@@ -1750,7 +1750,7 @@ const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
   dcl->src_cols.GetColumns(dcl->src_data);
   for(int i=0;i<dcl->src_cols.size; i++) {
     DataOpEl* ds = dcl->src_cols[i];
-    DataArray_impl* da = dcl->src_data->data[ds->col_idx];
+    DataCol* da = dcl->src_data->data[ds->col_idx];
     if(da->is_matrix)
       rval += il + "dcl->src_data.SetValAsMatrix(" + 
 	"s_" + ds->col_name + ", " + String(ds->col_idx) + ", src_row);\n";

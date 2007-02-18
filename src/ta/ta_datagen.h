@@ -27,7 +27,7 @@ public:
   static bool	CheckDims(float_Matrix* mat, int dims);
   // #IGNORE check dimensionality of matrix, issue warning if not correct
 
-  static DataArray_impl* GetFloatMatrixDataCol(DataTable* src_data, const String& data_col_nm);
+  static DataCol* GetFloatMatrixDataCol(DataTable* src_data, const String& data_col_nm);
   // #IGNORE get named column from data, with checks that it is a matrix of type float
 
   ///////////////////////////////////////////////////////////////////
@@ -91,11 +91,11 @@ public:
 //   // #MENU flip bits, ensuring within-group min and max distances, and between-group min dist (pat_no: -1 = all pats)
 
   // helper pattern-wise functions for above generation routines
-  static float LastMinDist(DataArray_impl* da, int row,
+  static float LastMinDist(DataCol* da, int row,
 			   taMath::DistMetric metric=taMath::HAMMING,
 			   bool norm=false, float tol=0.0f);
   // #CAT_Distance returns minimum distance (or max correl) between last (n th) pattern and all previous
-  static float LastMinMaxDist(DataArray_impl* da, int row, float& max_dist,
+  static float LastMinMaxDist(DataCol* da, int row, float& max_dist,
 			      taMath::DistMetric metric=taMath::HAMMING,
 			      bool norm=false, float tol=0.0f);
   // #CAT_Distance returns min and max distance between last (n th) pattern and all previous

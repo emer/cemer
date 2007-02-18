@@ -86,12 +86,12 @@ template class TA_API taPtrList<ScriptBase>; // in script_base.h
 template class TA_API taArray<ValIdx>;
 
 // datatable.h:
-template class TA_API taGroup<DataArray_impl>;
-template class TA_API DataArray<String_Matrix>;
-template class TA_API DataArray<Variant_Matrix>;
-template class TA_API DataArray<float_Matrix>;
-template class TA_API DataArray<int_Matrix>;
-template class TA_API DataArray<byte_Matrix>;
+template class TA_API taGroup<DataCol>;
+template class TA_API DataColTp<String_Matrix>;
+template class TA_API DataColTp<Variant_Matrix>;
+template class TA_API DataColTp<float_Matrix>;
+template class TA_API DataColTp<int_Matrix>;
+template class TA_API DataColTp<byte_Matrix>;
 
 // datagraph.h:
 //template class TA_API taList<YAxisSpec>; //

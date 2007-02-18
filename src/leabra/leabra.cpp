@@ -253,8 +253,8 @@ void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
   graph_data->StructUpdate(true);
   graph_data->ResetData();
   int idx;
-  DataArray_impl* lnwt = graph_data->FindMakeColName("LinWt", idx, VT_FLOAT);
-  DataArray_impl* efwt = graph_data->FindMakeColName("EffWt", idx, VT_FLOAT);
+  DataCol* lnwt = graph_data->FindMakeColName("LinWt", idx, VT_FLOAT);
+  DataCol* efwt = graph_data->FindMakeColName("EffWt", idx, VT_FLOAT);
   lnwt->SetUserData("MIN", 0.0f);
   lnwt->SetUserData("MAX", 1.0f);
   efwt->SetUserData("MIN", 0.0f);
@@ -1251,8 +1251,8 @@ void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, flo
   int idx;
   graph_data->StructUpdate(true);
   graph_data->ResetData();
-  DataArray_impl* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
-  DataArray_impl* vm = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
+  DataCol* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
+  DataCol* vm = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
 
   float x;
   for(x = min; x <= max; x += incr) {
@@ -1277,8 +1277,8 @@ void LeabraUnitSpec::GraphActFmVmFun(DataTable* graph_data, float min, float max
   int idx;
   graph_data->StructUpdate(true);
   graph_data->ResetData();
-  DataArray_impl* nt = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
-  DataArray_impl* vm = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
+  DataCol* nt = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
+  DataCol* vm = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
   LeabraUnit un;
   LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
@@ -1306,8 +1306,8 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   int idx;
   graph_data->StructUpdate(true);
   graph_data->ResetData();
-  DataArray_impl* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
-  DataArray_impl* vm = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
+  DataCol* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
+  DataCol* vm = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
   LeabraUnit un;
   LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);

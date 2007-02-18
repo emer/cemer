@@ -107,7 +107,7 @@ void DataTable::NewGraphView(T3DataViewFrame* fr) {
 void DataColView::Initialize(){
   visible = true;
   sticky = false;
-  data_base = &TA_DataArray_impl;
+  data_base = &TA_DataCol;
 }
 
 void DataColView::Copy_(const DataColView& cp) {
@@ -135,7 +135,7 @@ void DataColView::DataDestroying() {
   inherited::DataDestroying();
 }
 
-void DataColView::setDataCol(DataArray_impl* value, bool first_time) {
+void DataColView::setDataCol(DataCol* value, bool first_time) {
   if (dataCol() == value) return;
   SetData(value);
   if (value) {
@@ -151,13 +151,13 @@ void DataColView::UpdateFromDataCol(bool first) {
 }
 
 void DataColView::UpdateFromDataCol_impl(bool first) {
-  DataArray_impl* col = dataCol();
+  DataCol* col = dataCol();
   if (name != col->name) {
     name = col->name;
   }
   // only copy display options first time, since user may override in view
   if (first) {
-    if (col->GetUserData(DataArray_impl::udkey_hidden).toBool())
+    if (col->GetUserData(DataCol::udkey_hidden).toBool())
       visible = false;
   }
 }
@@ -362,7 +362,7 @@ void DataTableView::UpdateFromDataTable_this(bool first) {
 void DataTableView::UpdateFromDataTable_child(bool first) {
   DataTableCols* cols = &(dataTable()->data);
   DataColView* dcs = NULL;
-  DataArray_impl* dc = NULL;
+  DataCol* dc = NULL;
   int i;
 /*TODO: revise algorithm as follows:
 (may require intermediate link list, to track guys)
@@ -615,7 +615,7 @@ void GridColView::UpdateAfterEdit_impl() {
 }
 
 void GridColView::InitFromUserData() {
-  DataArray_impl* dc = dataCol(); //note: exists, because we were called
+  DataCol* dc = dataCol(); //note: exists, because we were called
   if(dc->isMatrix()) {
     if(dc->isNumeric()) {
       mat_image = dc->GetUserData("IMAGE").toBool();
@@ -627,7 +627,7 @@ void GridColView::InitFromUserData() {
 
 void GridColView::UpdateFromDataCol_impl(bool first){
   inherited::UpdateFromDataCol_impl(first);
-  DataArray_impl* dc = dataCol(); //note: exists, because we were called
+  DataCol* dc = dataCol(); //note: exists, because we were called
   if (first) {
     text_width = dc->displayWidth(); // this uses user data WIDTH key if present
     InitFromUserData();
@@ -635,7 +635,7 @@ void GridColView::UpdateFromDataCol_impl(bool first){
 }
 
 String GridColView::GetDisplayName() const {
-  DataArray_impl* dc = dataCol(); //note: exists, because we were called
+  DataCol* dc = dataCol(); //note: exists, because we were called
   if(dc) return dc->GetDisplayName();
   return inherited::GetDisplayName();
 }
@@ -651,7 +651,7 @@ void GridColView::ComputeColSizes() {
   // and are set to be characters (why not?)
 
   GridTableView* par = parent();
-  DataArray_impl* dc = dataCol(); // cache
+  DataCol* dc = dataCol(); // cache
   col_width = 0.0f;
   row_height = 0.0f;
   if (!dc) return;
@@ -1028,7 +1028,7 @@ void GridTableView::GetScaleRange() {
     GridColView* cvs = (GridColView*)colVis(col);
     if(!cvs || !cvs->scale_on)
       continue;
-    DataArray_impl* da = cvs->dataCol();
+    DataCol* da = cvs->dataCol();
     if(!da->isNumeric() || !da->is_matrix) continue;
     da->GetMinMaxScale(sc_rg);
     if(!got_one)
@@ -1314,7 +1314,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   for (int col = col_range.min; col <= col_range.max; col++) {
     GridColView* cvs = (GridColView*)colVis(col);
     if (!cvs) continue;
-    DataArray_impl* dc = cvs->dataCol();
+    DataCol* dc = cvs->dataCol();
 
     //calculate the actual col row index, for the case of a jagged data table
     int act_idx; // <0 for null
@@ -2094,7 +2094,7 @@ void GraphColView::InitLinks() {
 }
 
 String GraphColView::GetDisplayName() const {
-  DataArray_impl* dc = dataCol(); //note: exists, because we were called
+  DataCol* dc = dataCol(); //note: exists, because we were called
   if(dc) return dc->GetDisplayName();
   return inherited::GetDisplayName();
 }
@@ -2174,7 +2174,7 @@ GraphColView* GraphAxisBase::GetColPtr() {
   return (GraphColView*)gv->children.FindName(col_name);
 }
 
-DataArray_impl* GraphAxisBase::GetDAPtr() {
+DataCol* GraphAxisBase::GetDAPtr() {
   GraphColView* cv = GetColPtr();
   if(!cv) return NULL;
   return cv->dataCol();
@@ -2183,7 +2183,7 @@ DataArray_impl* GraphAxisBase::GetDAPtr() {
 void GraphAxisBase::InitFromUserData() {
   GraphColView* cv = GetColPtr();
   if(!cv) return;
-  DataArray_impl* da = cv->dataCol();
+  DataCol* da = cv->dataCol();
   if(da->HasUserData("MIN")) {
     fixed_range.fix_min = true;
     fixed_range.min = da->GetUserDataAsFloat("MIN");
@@ -2270,7 +2270,7 @@ bool GraphAxisBase::UpdateRange() {
   bool rval = false;
   GraphColView* gcv = GetColPtr();
   if(gcv) {
-    DataArray_impl* da = gcv->dataCol();
+    DataCol* da = gcv->dataCol();
     if(da->rows() > 0) {
       if(da->is_matrix) {
 	float first = da->GetValAsFloatM(-1,0);
@@ -2845,7 +2845,7 @@ void GraphTableView::UpdateDisplay(bool update_panel) {
 void GraphTableView::ComputeAxisRanges() {
   x_axis.ComputeRange();
   if(matrix_mode == Z_INDEX) {
-    DataArray_impl* da_y = plot_1.GetDAPtr();
+    DataCol* da_y = plot_1.GetDAPtr();
     if(da_y && da_y->is_matrix) {
       z_axis.SetRange_impl(0.0f, da_y->cell_size());
     }
@@ -2893,7 +2893,7 @@ void GraphTableView::FindDefaultXZAxes() {
   z_axis.on = false;		// assume we're not going to find it
   for(int i=children.size-1;i>=0;i--) {
     GraphColView* cvs = (GraphColView*)colView(i);
-    DataArray_impl* da = cvs->dataCol();
+    DataCol* da = cvs->dataCol();
     if(da->HasUserData("X_AXIS")) {
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
@@ -2912,7 +2912,7 @@ void GraphTableView::FindDefaultXZAxes() {
   // then, find X axis by getting *last* int col (first searching backwards), then Z is next
   for(int i=children.size-1;i>=0;i--) {
     GraphColView* cvs = (GraphColView*)colView(i);
-    DataArray_impl* da = cvs->dataCol();
+    DataCol* da = cvs->dataCol();
     if(da->is_matrix || da->valType() != VT_INT) continue;
     if(set_x) {			// must be Z
       z_axis.col_name = cvs->name;
@@ -2931,7 +2931,7 @@ void GraphTableView::FindDefaultXZAxes() {
   if(!set_x) {			// didn't find it -- look for first numeric column, just for x
     for(int i=0;i<children.size;i++) {
       GraphColView* cvs = (GraphColView*)colView(i);
-      DataArray_impl* da = cvs->dataCol();
+      DataCol* da = cvs->dataCol();
       if(da->is_matrix || !da->isNumeric()) continue;
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
@@ -2946,7 +2946,7 @@ void GraphTableView::FindDefaultPlot1() {
   bool got_1 = false;
   for(int i=children.size-1;i>=0;i--) {
     GraphColView* cvs = (GraphColView*)colView(i);
-    DataArray_impl* da = cvs->dataCol();
+    DataCol* da = cvs->dataCol();
     if(da->HasUserData("PLOT_1")) {
       plot_1.col_name = cvs->name;
       plot_1.InitFromUserData();
@@ -2959,7 +2959,7 @@ void GraphTableView::FindDefaultPlot1() {
   // next, find first float/double and that is the plot_1
   for(int i=0;i<children.size;i++) {
     GraphColView* cvs = (GraphColView*)colView(i);
-    DataArray_impl* da = cvs->dataCol();
+    DataCol* da = cvs->dataCol();
     if((da->valType() != VT_FLOAT) && (da->valType() != VT_DOUBLE)) continue;
     if(x_axis.col_name == cvs->name) continue; // don't make it same as X!
     plot_1.col_name = cvs->name;
@@ -2977,7 +2977,7 @@ void GraphTableView::InitFromUserData() {
   // next, find first float/double and that is the plot_1
   for(int i=0;i<children.size;i++) {
     GraphColView* cvs = (GraphColView*)colView(i);
-    DataArray_impl* da = cvs->dataCol();
+    DataCol* da = cvs->dataCol();
     if(da->HasUserData("PLOT_2")) {
       plot_2.col_name = cvs->name;
       plot_2.on = true;
@@ -3077,7 +3077,7 @@ void GraphTableView::RenderGraph_Scalar() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
-  DataArray_impl* da_1 = plot_1.GetDAPtr();
+  DataCol* da_1 = plot_1.GetDAPtr();
   if(!da_1) return;
 
   SoSeparator* graphs = node_so->graphs();
@@ -3110,7 +3110,7 @@ void GraphTableView::RenderGraph_Scalar() {
   else {
     PlotData_XY(plot_1, err_1, plot_1, ln);
     if(n_plots >= 2) {
-      DataArray_impl* da_2 = plot_2.GetDAPtr();
+      DataCol* da_2 = plot_2.GetDAPtr();
       if(!da_2) return;
       T3GraphLine* ln = new T3GraphLine(&plot_1);
       gr1->addChild(ln);
@@ -3131,7 +3131,7 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
-  DataArray_impl* da_1 = plot_1.GetDAPtr();
+  DataCol* da_1 = plot_1.GetDAPtr();
   if(!da_1) return;
 
   SoSeparator* graphs = node_so->graphs();
@@ -3155,7 +3155,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
-  DataArray_impl* da_1 = plot_1.GetDAPtr();
+  DataCol* da_1 = plot_1.GetDAPtr();
   if(!da_1) return;
 
   float boxd = .01f;
@@ -3313,15 +3313,15 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
-  DataArray_impl* da_y = plv.GetDAPtr();
+  DataCol* da_y = plv.GetDAPtr();
   if(!da_y) return;
-  DataArray_impl* da_x = x_axis.GetDAPtr();
-  DataArray_impl* da_z = z_axis.GetDAPtr();
+  DataCol* da_x = x_axis.GetDAPtr();
+  DataCol* da_z = z_axis.GetDAPtr();
 
-  DataArray_impl* da_er = erv.GetDAPtr();
+  DataCol* da_er = erv.GetDAPtr();
 
   GraphAxisBase* ax_clr = NULL;
-  DataArray_impl* da_clr = NULL;
+  DataCol* da_clr = NULL;
   if(color_mode == FIXED_COLOR) {
     t3gl->setValueColorMode(false);
     t3gl->setDefaultColor((T3Color)(*plv.color.color()));
@@ -3343,7 +3343,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   }
 
   GraphAxisBase* ax_rst = NULL;
-  DataArray_impl* da_rst = NULL;
+  DataCol* da_rst = NULL;
   if(graph_type == RASTER) {
     ax_rst = &raster_axis;
     da_rst = raster_axis.GetDAPtr();
@@ -3498,12 +3498,12 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
 void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y, T3GraphLine* t3gl) {
   t3gl->clear();
 
-  DataArray_impl* da_y = plv_y.GetDAPtr();
+  DataCol* da_y = plv_y.GetDAPtr();
   if(!da_y) return;
-  DataArray_impl* da_str = plv_str.GetDAPtr();
+  DataCol* da_str = plv_str.GetDAPtr();
   if(!da_str) return;
-  DataArray_impl* da_x = x_axis.GetDAPtr();
-  DataArray_impl* da_z = z_axis.GetDAPtr();
+  DataCol* da_x = x_axis.GetDAPtr();
+  DataCol* da_z = z_axis.GetDAPtr();
 
   iVec3f dat;			// data point
   iVec3f plt;			// plot coords
@@ -4578,7 +4578,7 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
 
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   DataTable* dt_ = dt(); // cache
-  DataArray_impl* col = dt_->GetColData(index.column());
+  DataCol* col = dt_->GetColData(index.column());
   // note: we return from following if, otherwise fall through to do the contra
   if (col && col->is_matrix) {
     m_cell = dt_->GetValAsMatrix(index.column(), index.row());
@@ -4908,7 +4908,7 @@ void taiTabularDataMimeFactory::Table_Clear(DataTable* tab,
   tab->DataUpdate(true);
   //note: it is easier and more efficient to clear in col-major order
   for (int col = sel.col_fr; col <= sel.col_to; ++col) {
-    DataArray_impl* da = tab->GetColData(col);
+    DataCol* da = tab->GetColData(col);
     if (!da) continue;
     int cell_size = da->cell_size();
     for (int row = sel.row_fr; row <= sel.row_to; ++row) {
@@ -5044,7 +5044,7 @@ void taiTabularDataMimeFactory::AddTableDesc(QMimeData* md,
   
   // add the col descs
   for (int col = sel.col_fr; col <= sel.col_to; ++col) {
-    DataArray_impl* da = tab->GetColData(col);
+    DataCol* da = tab->GetColData(col);
     int x; int y;
     da->Get2DCellGeom(x, y); 
     str.cat(String(x)).cat(';').cat(String(y)).cat(';');
@@ -5170,7 +5170,7 @@ void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange&
         // just assume either could be empty, for robustness
         int dst_cell_cols = 0; //dummy
         int dst_cell_rows = 0;
-        DataArray_impl* da = tab->GetColData(dst_col);
+        DataCol* da = tab->GetColData(dst_col);
         if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
         //note: only need to do the following in the very first cell_row
         max_cell_rows = MAX(max_cell_rows, dst_cell_rows);
@@ -5454,7 +5454,7 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
         // just assume either could be empty, for robustness
         int dst_cell_cols = 0; 
         int dst_cell_rows = 0;
-        DataArray_impl* da = tab->GetColData(dst_col);
+        DataCol* da = tab->GetColData(dst_col);
         if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
         int src_cell_cols = 0;
         int src_cell_rows = 0;

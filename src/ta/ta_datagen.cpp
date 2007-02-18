@@ -30,10 +30,10 @@ bool taDataGen::CheckDims(float_Matrix* mat, int dims) {
   return true;
 }
 
-DataArray_impl* taDataGen::GetFloatMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
+DataCol* taDataGen::GetFloatMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
   if(!src_data) return NULL;
   int idx;
-  DataArray_impl* da = src_data->FindColName(data_col_nm, idx, true); // err msg
+  DataCol* da = src_data->FindColName(data_col_nm, idx, true); // err msg
   if(!da)
     return NULL;
   if(!da->is_matrix) {
@@ -56,7 +56,7 @@ bool taDataGen::Clear(DataTable* data, const String& col_nm, float val) {
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
-      DataArray_impl* da = data->data.FastEl(pn);
+      DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
 	if(!Clear(data, da->name, val))
 	  rval = false;
@@ -64,7 +64,7 @@ bool taDataGen::Clear(DataTable* data, const String& col_nm, float val) {
     }
     return rval;
   }
-  DataArray_impl* da = GetFloatMatrixDataCol(data, col_nm);
+  DataCol* da = GetFloatMatrixDataCol(data, col_nm);
   if(!da) return false;
   data->DataUpdate(true);
   for(int i=0;i<da->rows();i++) {
@@ -81,7 +81,7 @@ bool taDataGen::SimpleMath(DataTable* data, const String& col_nm, const SimpleMa
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
-      DataArray_impl* da = data->data.FastEl(pn);
+      DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
 	if(!SimpleMath(data, da->name, math))
 	  rval = false;
@@ -89,7 +89,7 @@ bool taDataGen::SimpleMath(DataTable* data, const String& col_nm, const SimpleMa
     }
     return rval;
   }
-  DataArray_impl* da = GetFloatMatrixDataCol(data, col_nm);
+  DataCol* da = GetFloatMatrixDataCol(data, col_nm);
   if(!da) return false;
   data->DataUpdate(true);
   for(int i=0;i<da->rows();i++) {
@@ -266,7 +266,7 @@ bool taDataGen::AddNoise(DataTable* data, const String& col_nm, const Random& rn
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
-      DataArray_impl* da = data->data.FastEl(pn);
+      DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
 	if(!AddNoise(data, da->name, rnd_spec))
 	  rval = false;
@@ -274,7 +274,7 @@ bool taDataGen::AddNoise(DataTable* data, const String& col_nm, const Random& rn
     }
     return rval;
   }
-  DataArray_impl* da = GetFloatMatrixDataCol(data, col_nm);
+  DataCol* da = GetFloatMatrixDataCol(data, col_nm);
   if(!da) return false;
   data->DataUpdate(true);
   for(int i=0;i<da->rows();i++) {
@@ -309,7 +309,7 @@ bool taDataGen::PermutedBinary(DataTable* data, const String& col_nm, int n_on,
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
-      DataArray_impl* da = data->data.FastEl(pn);
+      DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
 	if(!PermutedBinary(data, da->name, n_on, on_val, off_val))
 	  rval = false;
@@ -317,7 +317,7 @@ bool taDataGen::PermutedBinary(DataTable* data, const String& col_nm, int n_on,
     }
     return rval;
   }
-  DataArray_impl* da = GetFloatMatrixDataCol(data, col_nm);
+  DataCol* da = GetFloatMatrixDataCol(data, col_nm);
   if(!da) return false;
   data->DataUpdate(true);
   for(int i=0;i<da->rows();i++) {
@@ -338,7 +338,7 @@ bool taDataGen::PermutedBinary_MinDist(DataTable* data, const String& col_nm, in
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
-      DataArray_impl* da = data->data.FastEl(pn);
+      DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
 	if(!PermutedBinary_MinDist(data, da->name, n_on, dist, metric, norm, tol))
 	  rval = false;
@@ -346,7 +346,7 @@ bool taDataGen::PermutedBinary_MinDist(DataTable* data, const String& col_nm, in
     }
     return rval;
   }
-  DataArray_impl* da = GetFloatMatrixDataCol(data, col_nm);
+  DataCol* da = GetFloatMatrixDataCol(data, col_nm);
   if(!da) return false;
   bool larger_further = taMath::dist_larger_further(metric);
   int bogus_count = 0;
@@ -408,7 +408,7 @@ bool taDataGen::FlipBits(DataTable* data, const String& col_nm, int n_off, int n
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
-      DataArray_impl* da = data->data.FastEl(pn);
+      DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
 	if(!FlipBits(data, da->name, n_off, n_on))
 	  rval = false;
@@ -416,7 +416,7 @@ bool taDataGen::FlipBits(DataTable* data, const String& col_nm, int n_off, int n
     }
     return rval;
   }
-  DataArray_impl* da = GetFloatMatrixDataCol(data, col_nm);
+  DataCol* da = GetFloatMatrixDataCol(data, col_nm);
   if(!da) return false;
   data->DataUpdate(true);
   for(int i=0;i<da->rows();i++) {
@@ -437,7 +437,7 @@ bool taDataGen::FlipBits_MinMax(DataTable* data, const String& col_nm, int n_off
   if(col_nm.empty()) {
     bool rval = true;
     for(int pn = 0;pn<data->data.size;pn++) {
-      DataArray_impl* da = data->data.FastEl(pn);
+      DataCol* da = data->data.FastEl(pn);
       if(da->is_matrix && da->valType() == VT_FLOAT) {
 	if(!FlipBits_MinMax(data, da->name, n_off, n_on, min_dist, max_dist,
 			    metric, norm, tol))
@@ -446,7 +446,7 @@ bool taDataGen::FlipBits_MinMax(DataTable* data, const String& col_nm, int n_off
     }
     return rval;
   }
-  DataArray_impl* da = GetFloatMatrixDataCol(data, col_nm);
+  DataCol* da = GetFloatMatrixDataCol(data, col_nm);
   if(!da) return false;
   data->DataUpdate(true);
   float_Matrix orig_pat;
@@ -485,7 +485,7 @@ bool taDataGen::FlipBits_MinMax(DataTable* data, const String& col_nm, int n_off
   return true;
 }
 
-float taDataGen::LastMinDist(DataArray_impl* da, int row, taMath::DistMetric metric,
+float taDataGen::LastMinDist(DataCol* da, int row, taMath::DistMetric metric,
 			     bool norm, float tol)
 {
   bool larger_further = taMath::dist_larger_further(metric);
@@ -513,7 +513,7 @@ float taDataGen::LastMinDist(DataArray_impl* da, int row, taMath::DistMetric met
   return rval;
 }
 
-float taDataGen::LastMinMaxDist(DataArray_impl* da, int row, float& max_dist,
+float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 				taMath::DistMetric metric, bool norm, float tol)
 {
   float rval = taMath::flt_max;
