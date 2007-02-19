@@ -1070,6 +1070,7 @@ iProgramCtrlDataHost::iProgramCtrlDataHost(void* base, TypeDef* td, bool read_on
 {
   //  use_show = false;
   prog = (Program*)base;
+  refs.setOwner(this);
 }
 
 iProgramCtrlDataHost::~iProgramCtrlDataHost() {
@@ -1081,6 +1082,7 @@ bool iProgramCtrlDataHost::ShowMember(MemberDef* md) const {
 
 void iProgramCtrlDataHost::Constr_Body() {
   inherited::Constr_Body();
+  refs.Reset();
   String nm;
   String help_text;
   for (int i = 0; i < prog->args.size; ++i) {
@@ -1094,6 +1096,7 @@ void iProgramCtrlDataHost::Constr_Body() {
     nm = pv->name;
     help_text = pv->desc;
     AddName(row, nm, help_text, mb_dat);
+    refs.Add(pv);
   }
   for (int i = 0; i < prog->vars.size; ++i) {
     ProgVar* pv = prog->vars.FastEl(i);
@@ -1106,8 +1109,29 @@ void iProgramCtrlDataHost::Constr_Body() {
     nm = pv->name;
     help_text = pv->desc;
     AddName(row, nm, help_text, mb_dat);
+    refs.Add(pv);
   }
+  // note: we deftly solve the problem of reacting to new vars/args
+  // by simply putting those lists on our ref list, which notifies us
+  refs.Add(&(prog->args));
+  refs.Add(&(prog->vars));
 }
+
+void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList*, taBase* base) {
+  // we need to rebuild...
+  ReShow();
+//NOTE: this would be quite horrific if other guys destroy before us, because
+// we would do a ReShow for every one -- however CtrlPanel is built after
+//  the underlying edit and tree, so hopefully this gets deleted first...
+}
+
+void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList*, taBase* base,
+    int dcr, void* op1, void* op2) 
+{
+  // we need to do a fullblown reshow, to handle things like name changes of vars, etc.
+  ReShow();
+}
+
 
 void iProgramCtrlDataHost::GetValue_Membs() {
   GetValue_impl(typ->members, data_el, cur_base);
@@ -1167,6 +1191,7 @@ iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
   Program* prog_ = prog();
+  pc = NULL;
   if (prog_) {
     pc = new iProgramCtrlDataHost(prog_, &TA_Program);
     const iColor* bgcol = NULL;
@@ -1179,6 +1204,13 @@ iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
   }
 }
 
+iProgramCtrlPanel::~iProgramCtrlPanel() {
+  if (pc) {
+    delete pc;
+    pc = NULL;
+  }
+}
+
 void iProgramCtrlPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
@@ -1186,7 +1218,8 @@ void iProgramCtrlPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
 }
 
 bool iProgramCtrlPanel::HasChanged() {
-  return pc->HasChanged();
+  if (pc) return pc->HasChanged();
+  else return false;
 }
 
 void iProgramCtrlPanel::OnWindowBind_impl(iTabViewer* itv) {
@@ -1194,12 +1227,12 @@ void iProgramCtrlPanel::OnWindowBind_impl(iTabViewer* itv) {
 }
 
 void iProgramCtrlPanel::Refresh_impl() {
-  pc->ReShow();
+  if (pc) pc->ReShow();
 }
 
 void iProgramCtrlPanel::ResolveChanges_impl(CancelOp& cancel_op) {
  // per semantics elsewhere, we just blindly apply changes
-  if (pc->HasChanged()) {
+  if (pc && pc->HasChanged()) {
     pc->Apply();
   }
 }

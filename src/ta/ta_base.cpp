@@ -2190,9 +2190,11 @@ bool taFBase::SetFileName(const String& val) {
 //////////////////////////
 
 void taBase_RefList::Initialize() {
+  m_own = NULL;
 }
 
 taBase_RefList::~taBase_RefList() {
+  m_own = NULL; // conservative, even though removing items shouldn't trigger anything
   Reset();
 }
 
@@ -2203,10 +2205,21 @@ void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
   if (tab) { // should exist!
     // note: we need to remove all instances, in case mutliply-added
     while (RemoveEl(tab)) {;} // the unRef will thus remove the dl
+    if (m_own) {
+      m_own->DataDestroying_Ref(this, tab);
+    }
   }
+#ifdef DEBUG
+  else {
+    taMisc::Warning("Unexpected taData() NULL in taBase_RefList::DataLinkDestroying()");
+  }
+#endif
 }
 
 void taBase_RefList::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+  if (!m_own) return;
+  taBase* tab = dl->taData();
+  m_own->DataChanged_Ref(this, tab, dcr, op1, op2);
 }
 
 void* taBase_RefList::El_Ref_(void* it_) {
@@ -2221,9 +2234,13 @@ void* taBase_RefList::El_unRef_(void* it_) {
   taBase* it = (taBase*)it_;
   taDataLink* dl = it->data_link(); // no auto create, but it better exist!!!
   dls.RemoveEl(dl);
+  it->RemoveDataClient(this);
   return it_;
 }
 
+void taBase_RefList::setOwner(IRefListClient* own_) {
+  m_own = own_;
+}
 
 
 

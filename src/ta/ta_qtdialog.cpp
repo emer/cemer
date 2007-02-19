@@ -479,7 +479,7 @@ void iMethodButtonFrame::DataLinkDestroying(taDataLink* dl) {
 }
  
 void iMethodButtonFrame::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
-  if (dcr != DCR_ITEM_UPDATED) return;
+  if (dcr > DCR_ITEM_UPDATED_ND) return;
   GetImage();
 }
 

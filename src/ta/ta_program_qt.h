@@ -298,7 +298,7 @@ protected:
   override void		Constr_post(); 
 };
 
-class TA_API iProgramCtrlDataHost : public taiEditDataHost {
+class TA_API iProgramCtrlDataHost : public taiEditDataHost, public virtual IRefListClient {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
 INHERITED(taiEditDataHost)
   Q_OBJECT
@@ -313,11 +313,18 @@ public:
   override bool ShowMember(MemberDef* md) const;
 
 protected:
+  taBase_RefList	refs; // we put our guys on here, to get notifies when they change
   override void	GetValue_Membs();
   override void	Constr_Body();
 
   override void	GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
-  override void	GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const;
+  override void	GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const; //
+  
+public: // IRefListClient i/f
+  TYPED_OBJECT(iProgramCtrlDataHost);
+  override void		DataDestroying_Ref(taBase_RefList* src, taBase* ta);
+  override void		DataChanged_Ref(taBase_RefList* src, taBase* ta,
+    int dcr, void* op1, void* op2);
 };
 
 class TA_API iProgramCtrlPanel: public iDataPanelFrame {
@@ -334,6 +341,7 @@ public:
   void			FillList();
 
   iProgramCtrlPanel(taiDataLink* dl_);
+  ~iProgramCtrlPanel();
   
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}

@@ -308,8 +308,7 @@ bool taPtrList_impl::RemoveLast() {
 }
 
 void taPtrList_impl::RemoveAll() {
-  int i;
-  for(i=size-1; i>=0; i--)
+  while (size > 0)
     RemoveLast();
 }
 

@@ -1236,11 +1236,24 @@ protected:
 
 typedef taPtrList_base<taBase>  taPtrList_ta_base; // this comment needed for maketa parser
 
+class taBase_RefList;
+
+class TA_API IRefListClient: virtual public ITypedObject { // #NO_CSS
+// optional interface so disparate classes can use RefList to get notifies
+public:
+  virtual void		DataDestroying_Ref(taBase_RefList* src, taBase* ta) = 0;
+    // note: item will already have been removed from list
+  virtual void		DataChanged_Ref(taBase_RefList* src, taBase* ta,
+    int dcr, void* op1, void* op2) = 0;
+
+};
+
 class TA_API taBase_RefList: public taPtrList<taBase>,
    public IDataLinkClient { // a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
 public:
+  void			setOwner(IRefListClient* own_);
 
-  taBase_RefList() {Initialize();}
+  taBase_RefList(IRefListClient* own_ = NULL) {Initialize(); setOwner(own_);}
   ~taBase_RefList();
   
 public: // IDataLinkClient i/f 
@@ -1252,6 +1265,7 @@ protected: // we actually protect these
      // #IGNORE
 
 protected:
+  IRefListClient*	m_own; // optional owner
   taPtrList<taDataLink> dls; // we actually manage all the data_links here, not in our m_data_link variable
   
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
