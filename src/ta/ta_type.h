@@ -534,6 +534,8 @@ public:
   static String		font_name;	// #SAVE #CAT_GUI default font name to use
   static int		font_size;	// #SAVE #CAT_GUI default font size to use
   static ConsoleStyle	console_style; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
+  static bool		console_pager_gui;	// #SAVE #CAT_GUI use a pager mechanism in the gui console to present only a page of new text output at a time, as in the unix 'more' command
+  static bool		console_pager_nogui;	// #SAVE #CAT_GUI use a pager mechanism in the nogui console to present only a page of new text output at a time, as in the unix 'more' command
   static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
   static int		display_width;	// #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console

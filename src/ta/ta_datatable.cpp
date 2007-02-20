@@ -126,9 +126,11 @@ void DataCol::CutLinks() {
 }
 
 void DataCol::Copy_(const DataCol& cp) {
+  desc = cp.desc;
   col_flags = cp.col_flags;
   is_matrix = cp.is_matrix;
   cell_geom = cp.cell_geom;
+  calc_expr = cp.calc_expr;
 }
 
 void DataCol::Copy_NoData(const DataCol& cp) {
@@ -1609,6 +1611,8 @@ void DataTable::WriteClose_impl() {
 
 bool DataTable::UpdateColCalcs() {
   if(!CheckForCalcs()) return false;
+  if(HasDataFlag(NO_AUTO_CALC)) return false;
+  if(taMisc::is_loading) return false;
   return CalcAllRows_impl();
 }
 
@@ -1651,7 +1655,7 @@ void DataTable::CalcRowCodeGen(String& code_str) {
     bool is_used = false;
     for(int j=0;j<calc_rows.size; j++) {
       DataCol* cda = (DataCol*)calc_rows.FastEl(j);
-      if(cda->calc_expr.expr.contains(da->name)) {
+      if(cda == da || cda->calc_expr.expr.contains(da->name)) {
 	is_used = true;
 	break;
       }
@@ -1668,11 +1672,12 @@ void DataTable::CalcRowCodeGen(String& code_str) {
   for(int i=0;i<data.size; i++) { // need i to be in data for code gen: not calc_rows!
     DataCol* da = data.FastEl(i);
     if(da->HasColFlag(DataCol::CALC) && !da->calc_expr.expr.empty()) {
+      code_str += da->name + " = " + da->calc_expr.GetFullExpr() + ";\n";
       if(da->is_matrix)
-	code_str += "this.SetValAsMatrix(" + da->calc_expr.GetFullExpr()
+	code_str += "this.SetValAsMatrix(" + da->name
 	  + ", " + String(i) + ", row);\n";
       else
-	code_str += "this.SetValAsVar("  + da->calc_expr.GetFullExpr()
+	code_str += "this.SetValAsVar("  + da->name
 	  + ", " + String(i) + ", row);\n";
     }
   }

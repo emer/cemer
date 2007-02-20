@@ -1215,6 +1215,142 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// Convolution
+
+bool taMath_double::vec_kern_uniform(double_Matrix* kernel, int half_sz,
+				     bool neg_tail, bool pos_tail) {
+  int sz = half_sz * 2 + 1;
+  kernel->SetGeom(1, sz);
+  double ctr = (double)half_sz;
+  double val = 1.0 / (double)sz;
+  for(int i=0;i<kernel->size;i++) {
+    double x = (double)i - ctr;
+    double y = 0.0;
+    if(x < 0.0) {
+      if(neg_tail)
+	y = val;
+    }
+    else if(x > 0.0) {
+      if(pos_tail)
+	y = val;
+    }
+    else {
+      y = val;
+    }
+    kernel->FastEl(i) = y;
+  }
+  return true;
+}
+
+bool taMath_double::vec_kern_gauss(double_Matrix* kernel, int half_sz, double sigma,
+				   bool neg_tail, bool pos_tail) {
+  kernel->SetGeom(1, half_sz * 2 + 1);
+  double off = (double)half_sz;
+  double ssq = -1.0 / (2.0 * sigma * sigma);
+  for(int i=0;i<kernel->size;i++) {
+    double x = (double)i - off;
+    double y = exp(ssq * x * x);
+    if(x < 0.0) {
+      if(!neg_tail)
+	y = 0.0;
+    }
+    else if(x > 0.0) {
+      if(!pos_tail)
+	y = 0.0;
+    }
+    kernel->FastEl(i) = y;
+  }
+  vec_norm_sum(kernel);
+  return true;
+}
+
+bool taMath_double::vec_kern_exp(double_Matrix* kernel, int half_sz, double exp_mult,
+				 bool neg_tail, bool pos_tail) {
+  kernel->SetGeom(1, half_sz * 2 + 1);
+  double ctr = (double)half_sz;
+  for(int i=0;i<kernel->size;i++) {
+    double x = (double)i - ctr;
+    double y = 0.0;
+    if(x < 0.0) {
+      if(neg_tail)
+	y = exp(exp_mult * x);
+    }
+    else if(x > 0.0) {
+      if(pos_tail)
+	y = exp(-exp_mult * x);
+    }
+    else {
+      y = exp(-exp_mult * x);	// always count point
+    }
+    kernel->FastEl(i) = y;
+  }
+  vec_norm_sum(kernel);
+  return true;
+}
+
+bool taMath_double::vec_kern_pow(double_Matrix* kernel, int half_sz, double pow_exp,
+				 bool neg_tail, bool pos_tail) {
+  kernel->SetGeom(1, half_sz * 2 + 1);
+  double ctr = (double)half_sz;
+  for(int i=0;i<kernel->size;i++) {
+    double x = (double)i - ctr;
+    double y = 0.0;
+    if(x < 0.0) {
+      if(neg_tail)
+	y = pow(-x, pow_exp);
+    }
+    else if(x > 0.0) {
+      if(pos_tail)
+	y = pow(x, pow_exp);
+    }
+    else {
+      y = 1.0;			// count self as 1
+    }
+    kernel->FastEl(i) = y;
+  }
+  vec_norm_sum(kernel);
+  return true;
+}
+
+bool taMath_double::vec_convolve(double_Matrix* out_vec, const double_Matrix* in_vec,
+				   const double_Matrix* kernel, bool keep_edges) {
+  if(kernel->size == 0) return false;
+  int off = (kernel->size-1) / 2;
+  if(keep_edges) {
+    out_vec->SetGeom(1, in_vec->size);
+    for(int i=0;i<out_vec->size;i++) {
+      double sum = 0.0;
+      double dnorm = 0.0;
+      for(int j=0;j<kernel->size;j++) {
+	int idx = i + j - off;
+	if(idx < 0 || idx >= in_vec->size) {
+	  dnorm += kernel->FastEl(j);
+	}
+	else {
+	  sum += in_vec->FastEl(idx) * kernel->FastEl(j);
+	}
+      }
+      if(dnorm > 0.0 && dnorm < 1.0) { // renorm
+	sum /= (1.0 - dnorm);
+      }
+      out_vec->FastEl(i) = sum;
+    }
+  }
+  else {
+    if(in_vec->size < kernel->size) return false;
+    out_vec->SetGeom(1, in_vec->size - kernel->size);
+    for(int i=0;i<out_vec->size;i++) {
+      double sum = 0.0;
+      for(int j=0;j<kernel->size;j++) {
+	sum += in_vec->FastEl(i+j) * kernel->FastEl(j);
+      }
+      out_vec->FastEl(i) = sum;
+    }
+  }
+  return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // Matrix operations
 
 bool taMath_double::mat_col(double_Matrix* col, const double_Matrix* mat, int col_no) {
@@ -2135,6 +2271,143 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
     return taMath_float::vec_mode(vec);
   }
   return 0.0;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// Convolution
+
+bool taMath_float::vec_kern_uniform(float_Matrix* kernel, int half_sz,
+				     bool neg_tail, bool pos_tail) {
+  int sz = half_sz * 2 + 1;
+  kernel->SetGeom(1, sz);
+  float ctr = (float)half_sz;
+  float val = 1.0 / (float)sz;
+  for(int i=0;i<kernel->size;i++) {
+    float x = (float)i - ctr;
+    float y = 0.0;
+    if(x < 0.0) {
+      if(neg_tail)
+	y = val;
+    }
+    else if(x > 0.0) {
+      if(pos_tail)
+	y = val;
+    }
+    else {
+      y = val;
+    }
+    kernel->FastEl(i) = y;
+  }
+  return true;
+}
+
+bool taMath_float::vec_kern_gauss(float_Matrix* kernel, int half_sz, float sigma,
+				   bool neg_tail, bool pos_tail) {
+  kernel->SetGeom(1, half_sz * 2 + 1);
+  float off = (float)half_sz;
+  float ssq = -1.0 / (2.0 * sigma * sigma);
+  for(int i=0;i<kernel->size;i++) {
+    float x = (float)i - off;
+    float y = exp(ssq * x * x);
+    if(x < 0.0) {
+      if(!neg_tail)
+	y = 0.0;
+    }
+    else if(x > 0.0) {
+      if(!pos_tail)
+	y = 0.0;
+    }
+    kernel->FastEl(i) = y;
+  }
+  vec_norm_sum(kernel);
+  return true;
+}
+
+bool taMath_float::vec_kern_exp(float_Matrix* kernel, int half_sz, float exp_mult,
+				 bool neg_tail, bool pos_tail) {
+  kernel->SetGeom(1, half_sz * 2 + 1);
+  float ctr = (float)half_sz;
+  for(int i=0;i<kernel->size;i++) {
+    float x = (float)i - ctr;
+    float y = 0.0;
+    if(x < 0.0) {
+      if(neg_tail)
+	y = exp(exp_mult * x);
+    }
+    else if(x > 0.0) {
+      if(pos_tail)
+	y = exp(-exp_mult * x);
+    }
+    else {
+      y = exp(-exp_mult * x);	// always count point
+    }
+    kernel->FastEl(i) = y;
+  }
+  vec_norm_sum(kernel);
+  return true;
+}
+
+bool taMath_float::vec_kern_pow(float_Matrix* kernel, int half_sz, float pow_exp,
+				 bool neg_tail, bool pos_tail) {
+  kernel->SetGeom(1, half_sz * 2 + 1);
+  float ctr = (float)half_sz;
+  for(int i=0;i<kernel->size;i++) {
+    float x = (float)i - ctr;
+    float y = 0.0;
+    if(x < 0.0) {
+      if(neg_tail)
+	y = pow(-x, pow_exp);
+    }
+    else if(x > 0.0) {
+      if(pos_tail)
+	y = pow(x, pow_exp);
+    }
+    else {
+      y = 1.0;			// count self as 1
+    }
+    kernel->FastEl(i) = y;
+  }
+  vec_norm_sum(kernel);
+  return true;
+}
+
+bool taMath_float::vec_convolve(float_Matrix* out_vec, const float_Matrix* in_vec,
+				   const float_Matrix* kernel, bool keep_edges) {
+  if(kernel->size == 0) return false;
+  int off = (kernel->size-1) / 2;
+  if(keep_edges) {
+    out_vec->SetGeom(1, in_vec->size);
+    for(int i=0;i<out_vec->size;i++) {
+      float sum = 0.0;
+      float dnorm = 0.0;
+      for(int j=0;j<kernel->size;j++) {
+	int idx = i + j - off;
+	if(idx < 0 || idx >= in_vec->size) {
+	  dnorm += kernel->FastEl(j);
+	}
+	else {
+	  sum += in_vec->FastEl(idx) * kernel->FastEl(j);
+	}
+      }
+      if(dnorm > 0.0 && dnorm < 1.0) { // renorm
+	sum /= (1.0 - dnorm);
+      }
+      out_vec->FastEl(i) = sum;
+    }
+  }
+  else {
+    if(in_vec->size < kernel->size) return false;
+    out_vec->SetGeom(1, in_vec->size - kernel->size);
+    for(int i=0;i<out_vec->size;i++) {
+      float sum = 0.0;
+      for(int j=0;j<kernel->size;j++) {
+	sum += in_vec->FastEl(i+j) * kernel->FastEl(j);
+      }
+      out_vec->FastEl(i) = sum;
+    }
+  }
+  return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -118,7 +118,7 @@ public:
   static bool	DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_data,
 				const String& data_col_nm, const String& name_col_nm,
 				taMath::DistMetric metric, bool norm=false, float tol=0.0f);
-  // #CAT_Distance #MENU #MENU_ON_Distance compute distance matrix table for given matrix data column in src_data datatable.  dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  if name_col_nm is non-empty and valid, nxn scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data name + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance compute distance matrix table for given matrix data column in src_data datatable.  dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  if name_col_nm is non-empty and valid, nxn scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data name + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
 
   static bool	CrossDistMatrix(float_Matrix* dist_mat,
 				DataTable* src_data_a, const String& data_col_nm_a,
@@ -131,7 +131,7 @@ public:
 				     DataTable* src_data_b, const String& data_col_nm_b,
 				     const String& name_col_nm_b,
 				     taMath::DistMetric metric, bool norm=false, float tol=0.0f);
-  // #CAT_Distance #MENU #NULL_OK compute cross distance matrix table between two different matrix data columns in src_data_a and srd_data_b datatables. dist_mat returns a symmetric matrix with cells as the distance between each row in table a versus each row of table b. if name_col_nm is non-empty and valid, nxm scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data_a + "_" + src_data_b + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
+  // #CAT_Distance #MENU_BUTTON #NULL_OK compute cross distance matrix table between two different matrix data columns in src_data_a and srd_data_b datatables. dist_mat returns a symmetric matrix with cells as the distance between each row in table a versus each row of table b. if name_col_nm is non-empty and valid, nxm scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data_a + "_" + src_data_b + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
 
   ///////////////////////////////////////////////////////////////////
   // correlation matricies
@@ -141,7 +141,7 @@ public:
   // #CAT_Correlation compute correlation matrix for given matrix data column in src_data datatable.  correl_mat returns the correlation for how each cell in the matrix data varies across rows (e.g., time) as compared to all the other cells.  result is ncells x ncells symmetric square matrix.  correlation data is converted to float regardless of source type (float or double)
   static bool	CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* src_data,
 				  const String& data_col_nm);
-  // #CAT_Correlation #MENU #MENU_SEP_BEFORE #NULL_OK compute correlation matrix for given matrix data column in src_data datatable.  correl_mat returns the correlation for how each cell in the matrix data varies across rows (e.g., time) as compared to all the other cells. a single matrix column is made, named by the src_data name + "_CorrelMatrix". if view, then a grid view in a new frame is automatically created
+  // #CAT_Correlation #MENU_BUTTON #MENU_SEP_BEFORE #NULL_OK compute correlation matrix for given matrix data column in src_data datatable.  correl_mat returns the correlation for how each cell in the matrix data varies across rows (e.g., time) as compared to all the other cells. a single matrix column is made, named by the src_data name + "_CorrelMatrix". if view, then a grid view in a new frame is automatically created
 
   // todo: do this?
 //   virtual void	GpDistArray(float_RArray& within_dist_ary, float_RArray& between_dist_ary, int pat_no,
@@ -156,7 +156,7 @@ public:
 			const String& data_col_nm, const String& name_col_nm,
 			taMath::DistMetric metric=taMath::EUCLIDIAN,
 			bool norm=false, float tol=0.0f);
-  // #CAT_HighDim #MENU #MENU_ON_HighDim #NULL_OK produce a hierarchical clustering of the distances between patterns in given data column from source data, with labels from given name_col_nm, using given distance metric.  if view, the resulting data table is graphed to produce a cluster plot.  NULL DataTable = create new one
+  // #CAT_HighDim #MENU_BUTTON #MENU_ON_HighDim #NULL_OK produce a hierarchical clustering of the distances between patterns in given data column from source data, with labels from given name_col_nm, using given distance metric.  if view, the resulting data table is graphed to produce a cluster plot.  NULL DataTable = create new one
 
   static bool	PCAEigens(float_Matrix* eigen_vals, float_Matrix* eigen_vecs,
 			  DataTable* src_data, const String& data_col_nm);
@@ -164,44 +164,76 @@ public:
 
   static bool	PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_data,
 			      const String& data_col_nm);
-  //  #CAT_HighDim #MENU #NULL_OK get principal components analysis (PCA) eigenvalues and eigenvectors of correlation matrix across rows for given matrix column name in source data. NULL DataTable = create new one
+  //  #CAT_HighDim #MENU_BUTTON #NULL_OK get principal components analysis (PCA) eigenvalues and eigenvectors of correlation matrix across rows for given matrix column name in source data. NULL DataTable = create new one
 
   static bool	PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
 			  const String& data_col_nm, const String& name_col_nm,
 			  int x_axis_component=0, int y_axis_component=1);
-  // #CAT_HighDim #MENU #NULL_OK perform principal components analysis of the correlations of patterns in given columm across rows, plotting projections of patterns on the given principal components in the data table.  if name_col_nm not empty, rows are labeled with these names.  NULL DataTable = create new one
+  // #CAT_HighDim #MENU_BUTTON #NULL_OK perform principal components analysis of the correlations of patterns in given columm across rows, plotting projections of patterns on the given principal components in the data table.  if name_col_nm not empty, rows are labeled with these names.  NULL DataTable = create new one
 
   static bool	MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
 			  const String& data_col_nm, const String& name_col_nm,
 			  int x_axis_component=0, int y_axis_component=1,
 			  taMath::DistMetric metric=taMath::EUCLIDIAN,
 			  bool norm=false, float tol=0.0);
-  // #CAT_HighDim #MENU #NULL_OK perform multidimensional scaling on the distance matrix (computed according to metric, norm, tol parameters) of patterns in column name across rows, putting the resulting projections into prjn_data.  if name_col_nm not empty, rows are labeled with these names.  NULL DataTable = create new one
+  // #CAT_HighDim #MENU_BUTTON #NULL_OK perform multidimensional scaling on the distance matrix (computed according to metric, norm, tol parameters) of patterns in column name across rows, putting the resulting projections into prjn_data.  if name_col_nm not empty, rows are labeled with these names.  NULL DataTable = create new one
   static bool	RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
 			     const String& data_col_nm, const String& name_col_nm,
 			     int x_row=0, int y_row=1,
 			     taMath::DistMetric metric=taMath::INNER_PROD,
 			     bool norm=false, float tol=0.0);
-  // #CAT_HighDim #MENU #NULL_OK project all rows according to their projection onto the two specified rows of patterns using given distance metrics
+  // #CAT_HighDim #MENU_BUTTON #NULL_OK project all rows according to their projection onto the two specified rows of patterns using given distance metrics
+
+  ///////////////////////////////////////////////////////////////////
+  // data cleaning operations
 
   static bool	TimeAvg(DataTable* time_avg_data, bool view, DataTable* src_data,
 			float avg_dt, bool float_only=false);
-  // #CAT_HighDim #MENU #NULL_OK compute the time average of all the numeric fields of source data, according to the given avg_dt (new_val = avg_dt * avg + (1-avg_dt) * old_val).  if(float_only) then int or byte data is not time averaged
+  // #CAT_Clean #MENU_BUTTON #MENU_ON_Clean #NULL_OK compute the time average for all the numeric fields of source data, according to the given avg_dt (new_val = avg_dt * avg + (1-avg_dt) * old_val).  if(float_only) then int or byte data is not time averaged
+
+  static bool	SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_data,
+			   float_Matrix* flt_kern, double_Matrix* dbl_kern,
+			   int kern_half_wd, bool keep_edges, bool float_only);
+  // #IGNORE impl function for smoothing -- takes the kernel and does the job!
+
+  static bool	SmoothUniform(DataTable* smooth_data, bool view, DataTable* src_data,
+			      int kern_half_wd, bool neg_tail = true,
+			      bool pos_tail = true, bool keep_edges = true,
+			      bool float_only=false);
+  // #CAT_Clean #MENU_BUTTON #NULL_OK uniform smoothing: compute the uniform average of all the numeric fields of source data, using a uniform kernel of given half-width.  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side.  if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
+
+  static bool	SmoothGauss(DataTable* smooth_data, bool view, DataTable* src_data,
+			    int kern_half_wd, float kern_sigma, bool neg_tail = true,
+			    bool pos_tail = true, bool keep_edges = true,
+			    bool float_only=false);
+  // #CAT_Clean #MENU_BUTTON #NULL_OK gaussian smoothing: compute the gaussian-convolved average for all the numeric fields of source data, using a gaussian kernel of given half-width and sigma (std deviation).  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side.  if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
+
+  static bool	SmoothExp(DataTable* smooth_data, bool view, DataTable* src_data,
+			  int kern_half_wd, float kern_exp, bool neg_tail = true,
+			  bool pos_tail = false, bool keep_edges = true,
+			  bool float_only=false);
+  // #CAT_Clean #MENU_BUTTON #NULL_OK exponential smoothing: compute the exponentially-convolved average for all the numeric fields of source data, using an exponential kernel of given half-width and exponent.  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side. if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
+
+  static bool	SmoothPow(DataTable* smooth_data, bool view, DataTable* src_data,
+			  int kern_half_wd, float kern_exp, bool neg_tail = true,
+			  bool pos_tail = false, bool keep_edges = true,
+			  bool float_only=false);
+  // #CAT_Clean #MENU_BUTTON #NULL_OK power-function smoothing: compute the power-function-convolved average for all the numeric fields of source data, using an power-function kernel of given half-width and exponent (typically negative).  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side. if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
 
 //   static bool	PatFreqArray(float_RArray& freqs, int pat_no, float act_thresh = .5f, bool proportion = false);
 //   // get frequency (proportion) of pattern activations greater than act_thresh across events
 //   static bool	PatFreqText(float act_thresh = .5f, bool proportion = false, ostream& strm = cerr);
-//   // #MENU #ARGC_2 report frequency (proportion) of pattern values greater than act_thresh across events, to a text output (most useful if pattern values are named in value_names)
+//   // #MENU_BUTTON #ARGC_2 report frequency (proportion) of pattern values greater than act_thresh across events, to a text output (most useful if pattern values are named in value_names)
 //   static bool	PatFreqGrid(GridLog* disp_log, float act_thresh = .5f, bool proportion = false);
-//   // #MENU #NULL_OK report frequency (proportion) of pattern values greater than act_thresh across events, to a grid log (NULL = make new log)
+//   // #MENU_BUTTON #NULL_OK report frequency (proportion) of pattern values greater than act_thresh across events, to a grid log (NULL = make new log)
 //   static bool	PatAggArray(float_RArray& agg_vals, int pat_no, Aggregate& agg);
 //   // aggregate pattern pat_no values over events to given array object
 //   static bool	PatAggText(Aggregate& agg, ostream& strm = cerr);
-//   // #MENU #ARGC_1 aggregate patterns over events and print aggregated results to a text output (most useful if pattern values are named in value_names)
+//   // #MENU_BUTTON #ARGC_1 aggregate patterns over events and print aggregated results to a text output (most useful if pattern values are named in value_names)
 //   static bool	PatAggGrid(GridLog* disp_log, Aggregate& agg);
-//   // #MENU #NULL_OK aggregate patterns over events and plot aggregated results in a grid log (NULL = make new log)
+//   // #MENU_BUTTON #NULL_OK aggregate patterns over events and plot aggregated results in a grid log (NULL = make new log)
 //   static bool 	EventFreqText(bool proportion = false, ostream& strm = cerr);
-//   // #MENU #ARGC_1 report frequency (proportion) of event names in the environment
+//   // #MENU_BUTTON #ARGC_1 report frequency (proportion) of event names in the environment
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };

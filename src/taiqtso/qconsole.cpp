@@ -43,6 +43,10 @@ void QConsole::setFont(QFont font) {
   getDisplayGeom();
 }
 
+void QConsole::setPager(bool pager) {
+  noPager = !pager;
+}
+
 void QConsole::getDisplayGeom() {
   QFontMetrics fm(currentFont());
   fontHeight = fm.height();

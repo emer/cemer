@@ -436,6 +436,8 @@ String  taMisc::console_font_name = "LucidaTypewriter";
 int  	taMisc::console_font_size = 10;
 #endif
 taMisc::ConsoleStyle taMisc::console_style = CS_GUI_TRACKING;
+bool	taMisc::console_pager_gui = false;
+bool	taMisc::console_pager_nogui = true;
 int	taMisc::display_width = 80;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;

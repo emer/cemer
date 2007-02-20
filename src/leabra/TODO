@@ -6,6 +6,13 @@ commit:
 ------------
 current:
 
+* leabra: max norm inhib: take max guy, compute amount of inhib that gets his
+  activation to given amount above threshold (parameter) -- that's it!  *very* flexible
+  as to the distribution of everyone else..
+
+* append for TimeAvg etc funs  bugs in GaussAvg
+* ExpAvg  // todo: this guy needs pos_tail neg_tail flags!
+
 * program control panel: enum support + flag for NO_CTRL_PANEL in vars (general flags?)
 
 * init stuff for var objs and Program targets -- make a static special progspace for 

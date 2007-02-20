@@ -57,6 +57,9 @@ public:
   virtual void setCompletionColor(QColor c) {completionColor = c;};
   virtual void setFont(QFont f);
   virtual void setFontNameSize(QString fnm, int sz);
+  virtual void setPager(bool pager);
+  // determines whether to use a pager mechanism to control the flow of text through the console (as in the unix more command)
+
 
 using inherited::setMinimumSize;
 using inherited::minimumSize;

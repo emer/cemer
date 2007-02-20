@@ -844,7 +844,7 @@ bool taRootBase::Startup_InitViewColors() {
   taMisc::view_colors->FindMakeViewColor("ProgArg", "Program argument",
 					 true, "goldenrod");
   taMisc::view_colors->FindMakeViewColor("Program", "Program itself",
-					 true, "red2", true, "red1");
+					 true, "coral2", true, "coral1");
   taMisc::view_colors->FindMakeViewColor("DataTable", "DataTable and associated objects",
 					 true, "forest green", true, "pale green");
   taMisc::view_colors->FindMakeViewColor("Wizard", "Wizard and associated objects",

@@ -5088,6 +5088,7 @@ void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
 #endif
 void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
   rl_done = false;
+  pgout.no_page = !taMisc::console_pager_nogui;
   console_type = CT_NoGui_Rl;
   SetPrompt(prmpt);
   external_exit = false;

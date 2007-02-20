@@ -845,19 +845,20 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
   return true;
 }
 
-bool taDataAnal::TimeAvg(DataTable* time_avg_data, bool view, DataTable* src_data,
+bool taDataAnal::TimeAvg(DataTable* avg_data, bool view, DataTable* src_data,
 			 float avg_dt, bool float_only)
 {
   if(!src_data) return false;
 
   float_Matrix float_tmp;
-  GetDest(time_avg_data, src_data, "TimeAvg");
+  GetDest(avg_data, src_data, "TimeAvg");
 
-  time_avg_data->Reset();
-  *time_avg_data = *src_data;	// do complete copy, then operate in place
-  for(int i=0;i<time_avg_data->data.size;i++) {
-    DataCol* da = time_avg_data->data[i];
+  avg_data->Reset();
+  *avg_data = *src_data;	// do complete copy, then operate in place
+  for(int i=0;i<avg_data->data.size;i++) {
+    DataCol* da = avg_data->data[i];
     if(!da->isNumeric()) continue;
+    da->ClearColFlag(DataCol::CALC); // don't recompute!
     if(da->valType() == VT_BYTE) continue;
     if(float_only && (da->valType() == VT_INT)) continue;
     if(da->valType() == VT_FLOAT) {
@@ -875,8 +876,127 @@ bool taDataAnal::TimeAvg(DataTable* time_avg_data, bool view, DataTable* src_dat
     }
   }
 
-  if(view) time_avg_data->NewGraphView();
+  if(view) avg_data->NewGraphView();
   return true;
+}
+
+bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_data,
+			    float_Matrix* flt_kern, double_Matrix* dbl_kern,
+			    int kern_half_wd, bool keep_edges, bool float_only)
+{
+  float_Matrix float_tmp;
+  float_Matrix float_tmp2;
+  smooth_data->StructUpdate(true);
+  smooth_data->Reset();
+  String ad_nm = smooth_data->name;
+  *smooth_data = *src_data;	// todo: deal with !keep_edges
+  smooth_data->name = ad_nm;
+
+  if(!keep_edges) {
+    for(int i=0;i<kern_half_wd;i++) {
+      smooth_data->RemoveRow(0); // get rid of first n rows
+    }
+    for(int i=0;i<kern_half_wd;i++) {
+      smooth_data->RemoveRow(-1); // get rid of last n rows
+    }
+  }
+
+  for(int i=0;i<smooth_data->data.size;i++) {
+    DataCol* da = smooth_data->data[i];
+    DataCol* sda = src_data->data[i];
+    if(!da->isNumeric()) continue;
+    da->ClearColFlag(DataCol::CALC); // don't recompute!
+    if(da->valType() == VT_BYTE) continue;
+    if(float_only && (da->valType() == VT_INT)) continue;
+    
+    if(da->valType() == VT_FLOAT) {
+      taMath_float::vec_convolve((float_Matrix*)da->AR(), (float_Matrix*)sda->AR(), 
+				 flt_kern, keep_edges);
+    }
+    else if(da->valType() == VT_DOUBLE) {
+      taMath_double::vec_convolve((double_Matrix*)da->AR(), (double_Matrix*)sda->AR(), 
+				 dbl_kern, keep_edges);
+    }
+    else if(da->valType() == VT_INT) { // expensive double-convert..
+      int_Matrix* mat = (int_Matrix*)da->AR();
+      float_tmp.SetGeomN(mat->geom);
+      for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
+      taMath_float::vec_convolve(&float_tmp2, &float_tmp, flt_kern, keep_edges);
+      for(int i=0;i<float_tmp2.size;i++) mat->FastEl_Flat(i) = (int)float_tmp2.FastEl_Flat(i);
+    }
+  }
+  smooth_data->StructUpdate(false);
+
+  if(view) smooth_data->NewGraphView();
+  return true;
+}
+
+bool taDataAnal::SmoothUniform(DataTable* smooth_data, bool view, DataTable* src_data,
+			       int kern_half_wd, bool neg_tail, bool pos_tail,
+			       bool keep_edges, bool float_only)
+{
+  if(!src_data) return false;
+  GetDest(smooth_data, src_data, "SmoothUniform");
+
+  float_Matrix flt_kern;
+  taMath_float::vec_kern_uniform(&flt_kern, kern_half_wd, neg_tail, pos_tail);
+  double_Matrix dbl_kern;
+  taMath_double::vec_kern_uniform(&dbl_kern, kern_half_wd, neg_tail, pos_tail);
+
+  return SmoothImpl(smooth_data, view, src_data, &flt_kern, &dbl_kern,
+		    kern_half_wd, keep_edges, float_only);
+}
+
+bool taDataAnal::SmoothGauss(DataTable* smooth_data, bool view, DataTable* src_data,
+			     int kern_half_wd, float kern_sigma, bool neg_tail, bool pos_tail,
+			     bool keep_edges, bool float_only)
+{
+  if(!src_data) return false;
+  GetDest(smooth_data, src_data, "SmoothGauss");
+
+  float_Matrix flt_kern;
+  taMath_float::vec_kern_gauss(&flt_kern, kern_half_wd, kern_sigma, neg_tail, pos_tail);
+  double_Matrix dbl_kern;
+  taMath_double::vec_kern_gauss(&dbl_kern, kern_half_wd, kern_sigma, neg_tail, pos_tail);
+
+  return SmoothImpl(smooth_data, view, src_data, &flt_kern, &dbl_kern,
+		    kern_half_wd, keep_edges, float_only);
+}
+
+bool taDataAnal::SmoothExp(DataTable* smooth_data, bool view, DataTable* src_data,
+			   int kern_half_wd, float kern_exp, bool neg_tail,
+			   bool pos_tail, bool keep_edges, bool float_only)
+{
+  if(!src_data) return false;
+  GetDest(smooth_data, src_data, "SmoothExp");
+
+  float_Matrix flt_kern;
+  taMath_float::vec_kern_exp(&flt_kern, kern_half_wd, kern_exp, neg_tail, pos_tail);
+  double_Matrix dbl_kern;
+  taMath_double::vec_kern_exp(&dbl_kern, kern_half_wd, kern_exp, neg_tail, pos_tail);
+
+  return SmoothImpl(smooth_data, view, src_data, &flt_kern, &dbl_kern,
+		    kern_half_wd, keep_edges, float_only);
+}
+
+bool taDataAnal::SmoothPow(DataTable* smooth_data, bool view, DataTable* src_data,
+			   int kern_half_wd, float kern_exp, bool neg_tail,
+			   bool pos_tail, bool keep_edges, bool float_only)
+{
+  if(!src_data) return false;
+  GetDest(smooth_data, src_data, "SmoothPow");
+
+  if(kern_exp > 0.0f) {
+    taMisc::Warning("Note: typically the power exponent is negative to produce an inverse relationship such that points further away are weighted lower");
+  }
+
+  float_Matrix flt_kern;
+  taMath_float::vec_kern_pow(&flt_kern, kern_half_wd, kern_exp, neg_tail, pos_tail);
+  double_Matrix dbl_kern;
+  taMath_double::vec_kern_pow(&dbl_kern, kern_half_wd, kern_exp, neg_tail, pos_tail);
+
+  return SmoothImpl(smooth_data, view, src_data, &flt_kern, &dbl_kern,
+		    kern_half_wd, keep_edges, float_only);
 }
 
 /*

@@ -400,6 +400,7 @@ public:
     DF_NONE		= 0, // #NO_BIT
     NO_SAVE_DATA 	= 0x0001, // do not save the row data associated with this table when saved with the project (column and other configuration information is always saved)
     HAS_CALCS 		= 0x0002, // #NO_BIT at least one of the columns has CALC flag set
+    NO_AUTO_CALC	= 0x0004, // do not automatically calculate columns
   };
 
   /////////////////////////////////////////////////////////
@@ -490,7 +491,7 @@ public:
   virtual void		RemoveCol(int col);
   // #CAT_Columns removes indicated column; 'true' if removed
   virtual void		Reset();
-  // #CAT_Modify #MENU #MENU_ON_Columns remove all columns (and data)
+  // #CAT_Modify #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data) -- this cannot be undone!
 
   virtual void		MarkCols();
   // #CAT_Columns mark all cols before updating, for orphan deleting
@@ -733,7 +734,7 @@ public:
   override int		SourceChannelCount() const { return ChannelCount(); }
   override const String	SourceChannelName(int chan) const { return ChannelName(chan); }
   override void		ResetData();
-  // #MENU #MENU_ON_Rows #CAT_Rows deletes all the data (rows), but keeps the column structure
+  // #MENU #MENU_ON_Rows #CAT_Rows #CONFIRM deletes all the data (rows), but keeps the column structure -- this cannot be undone!
 
 protected:
   /////////////////////////////////////////////////////////

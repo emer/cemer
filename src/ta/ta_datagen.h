@@ -34,9 +34,9 @@ public:
   // basic operations
 
   static bool Clear(DataTable* data, const String& col_nm, float val = 0.0);
-  // #MENU #MENU_ON_Basic #CONFIRM #CAT_Basic clear existing patterns: set all values to given value in float matrix column col_nm (empty col_nm = all float matrix columns)
+  // #MENU_BUTTON #MENU_ON_Basic #CONFIRM #CAT_Basic clear existing patterns: set all values to given value in float matrix column col_nm (empty col_nm = all float matrix columns)
   static bool SimpleMath(DataTable* data, const String& col_nm, const SimpleMathSpec& math);
-  // #MENU #CAT_Basic Apply simple math operation to all values in float matrix column col_nm (empty col_nm = all float matrix columns)
+  // #MENU_BUTTON #CAT_Basic Apply simple math operation to all values in float matrix column col_nm (empty col_nm = all float matrix columns)
 
   ///////////////////////////////////////////////////////////////////
   // drawing routines
@@ -45,7 +45,7 @@ public:
   // #CAT_Draw write a single point
   static bool 	RenderLine(float_Matrix* mat, int xs, int ys, int xe, int ye,
 			   float color=1.0, bool wrap=true);
-  // #CAT_Draw #MENU #MENU_ON_Draw render a line from given x,y starting, ending coords in 2d space
+  // #CAT_Draw #MENU_BUTTON #MENU_ON_Draw render a line from given x,y starting, ending coords in 2d space
 
   static bool 	WriteXPoints(float_Matrix* mat, int x, int y, const float_Matrix& color,
 			     int wdth=1, bool wrap=true);
@@ -55,7 +55,7 @@ public:
   // #CAT_Draw write a series of points of given width in y dimension using colors in order
   static bool 	RenderWideLine(float_Matrix* mat, int xs, int ys, int xe, int ye,
 			       const float_Matrix& color, int wdth=1, bool wrap=true);
-  // #CAT_Draw #MENU render a wide line from given x,y starting, ending coords in 2d space
+  // #CAT_Draw #MENU_BUTTON render a wide line from given x,y starting, ending coords in 2d space
 
   ///////////////////////////////////////////////////////////////////
   // random pattern generation
@@ -64,31 +64,31 @@ public:
   // #CAT_Random add random noise to given pattern
 
   static bool AddNoise(DataTable* data, const String& col_nm, const Random& rnd_spec);
-  // #MENU #MENU_ON_Random #CAT_Random add random noise of specified type to the patterns (pat_no: -1 = all pats)
+  // #MENU_BUTTON #MENU_ON_Random #CAT_Random add random noise of specified type to the patterns (pat_no: -1 = all pats)
 
   static bool	PermutedBinaryMat(float_Matrix* mat, int n_on, float on_val=1.0f, float off_val=0.0f);
   // #CAT_Random set matrix values to permuted binary pattern of n_on on_vals and rest off_vals
   static bool	PermutedBinary(DataTable* data, const String& col_nm, int n_on, float on_val=1.0f, float off_val=0.0f);
-  // #MENU #CAT_Random create permuted binary patterns of n_on on_vals (1's) and rest off_vals (0's) in given col (must be float matrix) (col_nm = empty = all float matrix columns)
+  // #MENU_BUTTON #CAT_Random create permuted binary patterns of n_on on_vals (1's) and rest off_vals (0's) in given col (must be float matrix) (col_nm = empty = all float matrix columns)
   static bool PermutedBinary_MinDist(DataTable* data, const String& col_nm, int n_on,
 				       float dist, taMath::DistMetric metric=taMath::HAMMING,
 				       bool norm=false, float tol=0.0f);
-  // #MENU #CAT_Random create permuted binary patterns with dist minimum hamming distance (or dist max_correl) (col nm = empty = all float matrix columns)
+  // #MENU_BUTTON #CAT_Random create permuted binary patterns with dist minimum hamming distance (or dist max_correl) (col nm = empty = all float matrix columns)
 
   static bool FlipBitsMat(float_Matrix* mat, int n_off, int n_on);
   // #CAT_Random flip n_off of the 1 bits into the 0 state, and n_on of the 0 bits to the 1 state
   static bool FlipBits(DataTable* data, const String& col_nm, int n_off, int n_on);
-  // #MENU #CAT_Random flip n_off bits from 1's to 0's, and n_on bits from 0's to 1's in float matrix column col_nm (col_nm empty = all float matrix columns)
+  // #MENU_BUTTON #CAT_Random flip n_off bits from 1's to 0's, and n_on bits from 0's to 1's in float matrix column col_nm (col_nm empty = all float matrix columns)
   static bool FlipBits_MinMax(DataTable* data, const String& col_nm, int n_off, int n_on,
 			       float min_dist, float max_dist,
 			       taMath::DistMetric metric=taMath::HAMMING,
 			       bool norm=false, float tol=0.0f);
-  // #MENU flip bits, ensuring range within min and max distances (pat_no: -1 = all pats)
+  // #MENU_BUTTON flip bits, ensuring range within min and max distances (pat_no: -1 = all pats)
 //   static bool  FlipBits_GpMinMax(int pat_no, int n_off, int n_on, float within_min_dist,
 // 				  float within_max_dist, float between_dist,
 // 				  taMath::DistMetric metric=taMath::HAMMING,
 // 				  bool norm=false, float tol=0.0f, int st_gp=0, int ed_gp=-1);
-//   // #MENU flip bits, ensuring within-group min and max distances, and between-group min dist (pat_no: -1 = all pats)
+//   // #MENU_BUTTON flip bits, ensuring within-group min and max distances, and between-group min dist (pat_no: -1 = all pats)
 
   // helper pattern-wise functions for above generation routines
   static float LastMinDist(DataCol* da, int row,
@@ -120,7 +120,7 @@ public:
 			    const String& filter = "", bool recursive = false,
 			    const String& fname_col_nm = "FileName",
 			    const String& path_col_nm = "FilePath");
-  // #CAT_Files #MENU #MENU_ON_Files #NULL_OK read file names from given directory into rows of the data table (must be passed non-null), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist)
+  // #CAT_Files #MENU_BUTTON #MENU_ON_Files #NULL_OK read file names from given directory into rows of the data table (must be passed non-null), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist)
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };

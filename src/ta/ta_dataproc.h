@@ -278,17 +278,17 @@ public:
   static bool	CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* dest_cols, DataOpList* src_cols, int dest_row, int src_row);
   // #CAT_Copy copy one row of data from src to dest for the common cols
   static bool	CopyCommonColData(DataTable* dest, DataTable* src);
-  // #CAT_Copy #MENU #MENU_ON_Copy copy data from src to dest for all columns that are common between the two (adds to end of data)
+  // #CAT_Copy #MENU_BUTTON #MENU_ON_Copy copy data from src to dest for all columns that are common between the two (adds to end of data)
   static bool	AppendRows(DataTable* dest, DataTable* src);
-  // #CAT_Copy #MENU append rows of src to the end of dest (structure must be the same -- more efficient than CopyCommonColData when this is true)
+  // #CAT_Copy #MENU_BUTTON append rows of src to the end of dest (structure must be the same -- more efficient than CopyCommonColData when this is true)
   static bool	ReplicateRows(DataTable* dest, DataTable* src, int n_repl);
-  // #NULL_OK #CAT_Copy #MENU #NULL_OK replicate each row of src n_repl times in dest -- dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Copy #MENU_BUTTON #NULL_OK replicate each row of src n_repl times in dest -- dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   ///////////////////////////////////////////////////////////////////
   // reordering functions
 
   static bool	Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
-  // #NULL_OK #CAT_Order #MENU #MENU_ON_Order #NULL_OK sort data from src into dest according to sorting specifications in spec; dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Order #MENU_BUTTON #MENU_ON_Order #NULL_OK sort data from src into dest according to sorting specifications in spec; dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   static int 	Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
 			     DataSortSpec* spec);
@@ -297,10 +297,10 @@ public:
   // #IGNORE actually perform sort on data table using specs
 
   static bool	Permute(DataTable* dest, DataTable* src);
-  // #NULL_OK #CAT_Order #MENU #NULL_OK permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items
+  // #NULL_OK #CAT_Order #MENU_BUTTON #NULL_OK permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items
 
   static bool	Group(DataTable* dest, DataTable* src, DataGroupSpec* spec);
-  // #NULL_OK #CAT_Order #MENU #NULL_OK group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Order #MENU_BUTTON #NULL_OK group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   static bool	Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // #IGNORE helper function to do grouping when there are no GROUP items
@@ -312,32 +312,32 @@ public:
   // row-wise functions: selecting/splitting
 
   static bool	SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec);
-  // #NULL_OK #CAT_Select #MENU #MENU_ON_Select #NULL_OK select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Select #MENU_BUTTON #MENU_ON_Select #NULL_OK select rows of data from src into dest according to selection specifications in spec (all columns are copied) (if dest is NULL, a new one is created in proj.data.AnalysisData)
 
   static bool	SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
 			  DataSelectSpec* spec);
-  // #NULL_OK #CAT_Select #MENU #NULL_OK splits the source datatable rows into two sets, those that match the selection specifications go into dest_a, else dest_b (if dest are NULL, new ones are created in proj.data.AnalysisData)
+  // #NULL_OK #CAT_Select #MENU_BUTTON #NULL_OK splits the source datatable rows into two sets, those that match the selection specifications go into dest_a, else dest_b (if dest are NULL, new ones are created in proj.data.AnalysisData)
 
   static bool	SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
 			 DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
 			 DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
-  // #NULL_OK #CAT_Select #MENU #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL)
+  // #NULL_OK #CAT_Select #MENU_BUTTON #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (sequentially) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL)
   static bool	SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2=-1,
 				   DataTable* dest_3=NULL, int n3=0, DataTable* dest_4=NULL, int n4=0,
 				   DataTable* dest_5=NULL, int n5=0, DataTable* dest_6=NULL, int n6=0);
-  // #NULL_OK #CAT_Select #MENU #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets
+  // #NULL_OK #CAT_Select #MENU_BUTTON #NULL_OK splits the source datatable rows into distinct non-overlapping sets, with specific number of elements (order permuted efficiently via an index list) in each (-1 = the remainder, can appear *only once* anywhere) (new dest datatables are created if NULL).  this is good for creating random training/testing subsets
 
   ///////////////////////////////////////////////////////////////////
   // column-wise functions: selecting, joining
 
   static bool	SelectCols(DataTable* dest, DataTable* src, DataOpList* spec);
-  // #NULL_OK #CAT_Columns #MENU #MENU_ON_Columns #NULL_OK select columns of data from src into dest according to list of columnns in spec (all rows are copied)
+  // #NULL_OK #CAT_Columns #MENU_BUTTON #MENU_ON_Columns #NULL_OK select columns of data from src into dest according to list of columnns in spec (all rows are copied)
 
   static bool	Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec);
-  // #NULL_OK #CAT_Columns #MENU #NULL_OK joins two datatables (src_a and src_b) into dest datatable.  for each row of src_a, the value of col_a is used to search col_b of src_b for the row(s) to include from it.  all columns are included (without repeating the common column)
+  // #NULL_OK #CAT_Columns #MENU_BUTTON #NULL_OK joins two datatables (src_a and src_b) into dest datatable.  for each row of src_a, the value of col_a is used to search col_b of src_b for the row(s) to include from it.  all columns are included (without repeating the common column)
 
   static bool	JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b);
-  // #NULL_OK #CAT_Columns #MENU #NULL_OK joins two datatables into one datatable on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)). all columns from both tables are included.
+  // #NULL_OK #CAT_Columns #MENU_BUTTON #NULL_OK joins two datatables into one datatable on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)). all columns from both tables are included.
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
