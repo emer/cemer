@@ -72,6 +72,8 @@ protected:
   taiIncrField*		incVal; // for: ints
   taiField*		fldVal; // for: char, string, most numbers
   taiToggle*		tglVal; // for: bool
+
+  taiToggle*		tglNCP; // for: no control panel
   
   // for standard enums:
   taiEnumTypeDefButton*	thEnumType;
@@ -316,6 +318,8 @@ protected:
   taBase_RefList	refs; // we put our guys on here, to get notifies when they change
   override void	GetValue_Membs();
   override void	Constr_Body();
+
+  void	UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var); 
 
   override void	GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
   override void	GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const; //

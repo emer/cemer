@@ -81,6 +81,7 @@
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
@@ -602,6 +603,10 @@ void UnitGroupView::Render_impl_blocks() {
       SoBaseColor* bc = new SoBaseColor;
       bc->rgb.setValue(0, 0, 0); //black is default for text
       un_txt->addChild(bc);
+      // doesn't seem to make much diff:
+      SoComplexity* cplx = new SoComplexity;
+      cplx->value.setValue(.1f);
+      un_txt->addChild(cplx);
       SoFont* fnt = new SoFont();
       fnt->name = "Arial";
       un_txt->addChild(fnt);
@@ -617,7 +622,7 @@ void UnitGroupView::Render_impl_blocks() {
   T3Color col;
   TwoDCoord pos;
   int v_idx = 0;
-  int t_idx = 2;		// base color + font
+  int t_idx = 2;		// base color + complexity + font
   // these go in normal order; indexes are backwards
   for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
@@ -1727,6 +1732,10 @@ void NetView::Render_net_text() {
     SoBaseColor* bc = new SoBaseColor;
     bc->rgb.setValue(0, 0, 0); //black is default for text
     net_txt->addChild(bc);
+    // doesn't seem to make much diff:
+    SoComplexity* cplx = new SoComplexity;
+    cplx->value.setValue(.1f);
+    net_txt->addChild(cplx);
     SoFont* fnt = new SoFont();
     fnt->size.setValue(font_sizes.net_vals);
     fnt->name = "Arial";
@@ -1760,8 +1769,8 @@ void NetView::Render_net_text() {
       tsep->addChild(txt);
       disp_idx += disp_inc;
     }
-    SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + 2);
-    // 2 = base color + font, 1 per guy
+    SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + 3);
+    // 3 = base color + cplx + font, 1 per guy
     SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
     String el = md->name + ": " + md->type->GetValStr(md->GetOff((void*)net()));
     txt->string.setValue(el.chars());

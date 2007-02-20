@@ -1169,7 +1169,7 @@ void GridTableView::RenderHeader() {
 
   // doesn't seem to make much diff:
   SoComplexity* cplx = new SoComplexity;
-  cplx->value.setValue(.2f);
+  cplx->value.setValue(.1f);
   hdr->addChild(cplx);
 
   SoFont* fnt = new SoFont();
@@ -1446,6 +1446,11 @@ void GridTableView::RenderLines(){
   body->removeAllChildren(); //should already have been done
 
   // master font -- we only add a child font if different
+  // doesn't seem to make much diff:
+  SoComplexity* cplx = new SoComplexity;
+  cplx->value.setValue(.1f);
+  body->addChild(cplx);
+
   SoFont* fnt = new SoFont();
   fnt->name = "Arial";
   if(two_d_font)

@@ -31,6 +31,7 @@
 #include <Inventor/nodes/SoCylinder.h>
 //#include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoMaterial.h>
@@ -296,6 +297,10 @@ void T3Axis::clear() {
 
   last_label_at = 0.0f;
   labels->removeAllChildren();
+  // doesn't seem to make much diff:
+  SoComplexity* cplx = new SoComplexity;
+  cplx->value.setValue(.1f);
+  labels->addChild(cplx);
   labels->addChild(labelFont_);
   inherited::clear();
 }
@@ -391,6 +396,10 @@ void T3GraphLine::assertMarkerSet() {
 void T3GraphLine::assertText() {
   if (textSep_) return;
   textSep_ = new SoSeparator();
+  // doesn't seem to make much diff:
+  SoComplexity* cplx = new SoComplexity;
+  cplx->value.setValue(.1f);
+  textSep_->addChild(cplx);
   textSep_->addChild(labelFont_);
 
   textColor_ = new SoPackedColor();

@@ -49,6 +49,11 @@ public:
     T_DynEnum,			// enumerated list of options (from my dynamically created list)
   };
 
+  enum VarFlags { // #BITS flags for modifying program variables
+    PV_NONE		= 0, // #NO_BIT
+    NO_CTRL_PANEL	= 0x0001, // do not show this variable in the control panel
+  };
+
   VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
   int		int_val;	// #CONDEDIT_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
   double	real_val;	// #CONDEDIT_ON_var_type:T_Real real value
@@ -59,6 +64,7 @@ public:
   TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
   DynEnum	dyn_enum_val;	// #CONDEDIT_ON_var_type:T_DynEnum #HIDDEN_TREE value and type information for dynamic enum
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
+  VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
   
   void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
@@ -93,6 +99,16 @@ public:
   virtual MemberDef* 	GetValMemberDef();
   // #IGNORE get member def that represents the value for this type of variable
   
+  inline void		SetVarFlag(VarFlags flg)   { flags = (VarFlags)(flags | flg); }
+  // set flag state on
+  inline void		ClearVarFlag(VarFlags flg) { flags = (VarFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool		HasVarFlag(VarFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void		SetVarFlagState(VarFlags flg, bool on)
+  { if(on) SetVarFlag(flg); else ClearVarFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void 	SetDefaultName() {} // make it local to list, set by list

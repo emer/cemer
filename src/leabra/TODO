@@ -10,9 +10,6 @@ current:
   activation to given amount above threshold (parameter) -- that's it!  *very* flexible
   as to the distribution of everyone else..
 
-* append for TimeAvg etc funs  bugs in GaussAvg
-* ExpAvg  // todo: this guy needs pos_tail neg_tail flags!
-
 * program control panel: enum support + flag for NO_CTRL_PANEL in vars (general flags?)
 
 * init stuff for var objs and Program targets -- make a static special progspace for 
@@ -21,15 +18,10 @@ current:
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
-  * datatable time average
-* ta_math: convolve; gaussian/uniform gen; time averaging with diff kernels
 
 * profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
   -- seems slower after clicking around (confirmed).  maybe net too?  
   STILL NEED THIS -- THIS IS HAPPENING!
-
-* cleanup other uses of RunPending -> process events or remove??  test for
-  need for css Cont RunPending -- test in hv model.
 
 * add 2d text flag for netview. play with complexity vis-a-vis rendering
   (probably not worth it for flag -- costs a lot in render but is not a big
@@ -93,12 +85,6 @@ hv model
   if model recognizes object at t, pvlv gets reward
   cs association with good look decisions drives reward at t-1
 
----------------
-Tom's project:
-
-* replace condlist with datatables -- just do all the ops on the datatables 
-  directly; lots of datatableloops!
-
 -----------
 css:
 
@@ -132,9 +118,18 @@ Broader issues:
 current bugs:
 
 
+---------------
+Tom's project:
+
+* replace condlist with datatables -- just do all the ops on the datatables 
+  directly; lots of datatableloops!
+
 
 -------
 lower pri:
+
+* cleanup other uses of RunPending -> process events or remove??  test for
+  need for css Cont RunPending -- test in hv model.
 
 * add #CAT to everything in leabra_*.h, and fixup comments
 

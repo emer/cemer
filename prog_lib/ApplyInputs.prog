@@ -20,8 +20,17 @@ Program .projects[0].programs.gp[0][6] {
   };
 
   ProgEl_List @.init_code = [2] {
-    MethodCall @[0] { };
-    MethodCall @[1] { };
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
   };
 
   ProgEl_List @.prog_code = [1] {
@@ -52,7 +61,7 @@ Program .projects[0].programs.gp[0][6] {
      use_layer_type=1;
      ext_flags=EXT;
      noise {type=NONE: mean=0: var=0.5: par=1: };
-     value_names{      };
+     value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;     };
     };
     LayerWriterEl @[1] {
      chan_name="Output";
@@ -62,7 +71,7 @@ Program .projects[0].programs.gp[0][6] {
      use_layer_type=1;
      ext_flags=TARG;
      noise {type=NONE: mean=0: var=0.5: par=1: };
-     value_names{      };
+     value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;     };
     };
     LayerWriterEl @[2] {
      chan_name="Name";
@@ -87,6 +96,7 @@ Program .projects[0].programs.gp[0][6] {
    object_type=LeabraNetwork;
    object_val=$1$;
    objs_ptr=0;
+   flags=NO_CTRL_PANEL;
    desc=;
   };
   ProgVar @[1] {
@@ -95,6 +105,7 @@ Program .projects[0].programs.gp[0][6] {
    object_type=DataTable;
    object_val=$0$;
    objs_ptr=0;
+   flags=NO_CTRL_PANEL;
    desc=;
   };
  };
@@ -108,6 +119,7 @@ Program .projects[0].programs.gp[0][6] {
    object_type=LayerWriter;
    object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
    objs_ptr=1;
+   flags=PV_NONE;
    desc=;
   };
  };
@@ -122,21 +134,66 @@ Program .projects[0].programs.gp[0][6] {
   el_def=0;
   MethodCall @[0] {
    desc=;
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][6].vars[0]$3$;
    method=LayerWriter::SetDataNetwork;
-   args{ input_data;network;};
-{ DataBlock* db;Network* net;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataBlock_ptr;
+     type="DataBlock*";
+     name="db";
+     expr {
+      expr="input_data";
+      var_expr="$#0";
+      vars {
+      };
+      var_names{ input_data;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     expr {
+      expr="network";
+      var_expr="$#0";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
   };
   MethodCall @[1] {
    desc=;
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=$3$;
    method=taList_impl::CheckConfig;
-   args{ false;};
-{ bool quiet;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     expr {
+      expr="false";
+      var_expr="false";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
   };
  };
  prog_code {
@@ -145,12 +202,15 @@ Program .projects[0].programs.gp[0][6] {
   el_def=0;
   MethodCall @[0] {
    desc="apply inputs to the network!";
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=$3$;
    method=LayerWriter::ApplyInputData;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
  };
 };

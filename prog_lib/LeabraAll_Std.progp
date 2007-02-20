@@ -475,6 +475,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=LeabraNetwork;
     object_val=.projects[0].networks[0]$1$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -483,6 +484,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=DataTable;
     object_val=.projects[0].data.gp[0][0]$2$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[2] {
@@ -490,6 +492,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=10;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -502,6 +505,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=10;
     objs_ptr=0;
+    flags=PV_NONE;
     desc="batch counter";
    };
   };
@@ -614,6 +618,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=LeabraNetwork;
     object_val=$1$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -622,6 +627,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=DataTable;
     object_val=$2$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -634,6 +640,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=500;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -642,6 +649,7 @@ Program_Group .projects[0].programs.gp[0] {
     int_val=1;
     hard_enum_type=Network::TrainMode;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[2] {
@@ -649,6 +657,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[3] {
@@ -656,6 +665,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Real;
     real_val=0;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[4] {
@@ -664,6 +674,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=RndSeed;
     object_val=.projects[0].programs.gp[0][1].objs[0]$6$;
     objs_ptr=1;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[5] {
@@ -672,6 +683,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=TimeUsed;
     object_val=.projects[0].programs.gp[0][1].objs[1]$7$;
     objs_ptr=1;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
   };
@@ -756,7 +768,7 @@ Program_Group .projects[0].programs.gp[0] {
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=bool;
       type="bool";
       name="reset_used";
       expr {
@@ -887,6 +899,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=LeabraNetwork;
     object_val=$1$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -895,6 +908,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=DataTable;
     object_val=$2$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -908,6 +922,7 @@ Program_Group .projects[0].programs.gp[0] {
     int_val=1;
     hard_enum_type=BasicDataLoop::Order;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -915,6 +930,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[2] {
@@ -923,6 +939,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=TimeUsed;
     object_val=.projects[0].programs.gp[0][2].objs[0]$12$;
     objs_ptr=1;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[3] {
@@ -931,6 +948,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=DataTable;
     object_val=.projects[0].data.gp[1][0]$13$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc="trial-level output data -- if we want to reset it every epoch";
    };
   };
@@ -973,7 +991,7 @@ Program_Group .projects[0].programs.gp[0] {
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=bool;
       type="bool";
       name="reset_used";
       expr {
@@ -1180,6 +1198,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=LeabraNetwork;
     object_val=$1$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[1] {
@@ -1188,6 +1207,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=DataTable;
     object_val=$2$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
   };
@@ -1200,6 +1220,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -1207,6 +1228,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Bool;
     bool_val=1;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -1379,6 +1401,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=LeabraNetwork;
     object_val=$1$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[1] {
@@ -1387,6 +1410,7 @@ Program_Group .projects[0].programs.gp[0] {
     object_type=DataTable;
     object_val=$2$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
   };
@@ -1399,6 +1423,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -1406,6 +1431,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=15;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[2] {
@@ -1413,6 +1439,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Bool;
     bool_val=1;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -1658,6 +1685,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=LeabraNetwork;
     object_val=$1$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
   };
@@ -1670,6 +1698,7 @@ else min_cycles = network->min_cycles_phase2;
     var_type=T_Bool;
     bool_val=0;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -1766,6 +1795,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=LeabraNetwork;
     object_val=$1$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[1] {
@@ -1774,6 +1804,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=DataTable;
     object_val=$2$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
   };
@@ -1787,6 +1818,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=LayerWriter;
     object_val=.projects[0].programs.gp[0][6].objs[0]$34$;
     objs_ptr=1;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -1810,7 +1842,7 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=DataBlock_ptr;
       type="DataBlock*";
       name="db";
       expr {
@@ -1823,7 +1855,7 @@ else min_cycles = network->min_cycles_phase2;
       };
      };
      ProgArg @[1] {
-      arg_type=NULL;
+      arg_type=Network_ptr;
       type="Network*";
       name="net";
       expr {
@@ -1848,7 +1880,7 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=bool;
       type="bool";
       name="quiet";
       expr {
@@ -2071,6 +2103,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=Network;
     object_val=$1$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -2084,6 +2117,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=DataTable;
     object_val=$13$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -2092,6 +2126,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=NetMonitor;
     object_val=.projects[0].programs.gp[0][7].objs[0]$37$;
     objs_ptr=1;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -2115,7 +2150,7 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=DataTable_ptr;
       type="DataTable*";
       name="dt";
       expr {
@@ -2128,7 +2163,7 @@ else min_cycles = network->min_cycles_phase2;
       };
      };
      ProgArg @[1] {
-      arg_type=NULL;
+      arg_type=Network_ptr;
       type="Network*";
       name="net";
       expr {
@@ -2153,7 +2188,7 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=bool;
       type="bool";
       name="quiet";
       expr {
@@ -2178,7 +2213,7 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=bool;
       type="bool";
       name="reset_first";
       expr {
@@ -2431,6 +2466,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=Network;
     object_val=$1$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -2444,6 +2480,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=DataTable;
     object_val=$41$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -2452,6 +2489,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=NetMonitor;
     object_val=.projects[0].programs.gp[0][8].objs[0]$42$;
     objs_ptr=1;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[2] {
@@ -2460,6 +2498,7 @@ else min_cycles = network->min_cycles_phase2;
     object_type=TimeUsed;
     object_val=$12$;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
   };
@@ -2483,7 +2522,7 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=DataTable_ptr;
       type="DataTable*";
       name="dt";
       expr {
@@ -2496,7 +2535,7 @@ else min_cycles = network->min_cycles_phase2;
       };
      };
      ProgArg @[1] {
-      arg_type=NULL;
+      arg_type=Network_ptr;
       type="Network*";
       name="net";
       expr {
@@ -2521,7 +2560,7 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=bool;
       type="bool";
       name="quiet";
       expr {
@@ -2546,7 +2585,7 @@ else min_cycles = network->min_cycles_phase2;
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=bool;
       type="bool";
       name="reset_first";
       expr {
@@ -2630,6 +2669,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     object_type=LeabraNetwork;
     object_val=$1$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -2642,6 +2682,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     var_type=T_String;
     string_val=;
     objs_ptr=0;
+    flags=PV_NONE;
     desc="user-provided tag (startup script will set this!)";
    };
    ProgVar @[1] {
@@ -2649,6 +2690,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     var_type=T_String;
     string_val=;
     objs_ptr=0;
+    flags=PV_NONE;
     desc="user-provided subdirectory to save weights in";
    };
    ProgVar @[2] {
@@ -2656,6 +2698,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     var_type=T_String;
     string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[3] {
@@ -2663,6 +2706,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     var_type=T_String;
     string_val="0036";
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc="string rep of epoch with leading zeros";
    };
    ProgVar @[4] {
@@ -2670,6 +2714,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     var_type=T_String;
     string_val="03";
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc="string rep of batch with leading zeros";
    };
    ProgVar @[5] {
@@ -2677,6 +2722,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     var_type=T_String;
     string_val=".03_0036";
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc="batch + epoch";
    };
   };
@@ -2725,7 +2771,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=int;
       type="int";
       name="num";
       expr {
@@ -2738,7 +2784,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
      };
      ProgArg @[1] {
-      arg_type=NULL;
+      arg_type=int;
       type="int";
       name="len";
       expr {
@@ -2763,7 +2809,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=int;
       type="int";
       name="num";
       expr {
@@ -2776,7 +2822,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
      };
      ProgArg @[1] {
-      arg_type=NULL;
+      arg_type=int;
       type="int";
       name="len";
       expr {

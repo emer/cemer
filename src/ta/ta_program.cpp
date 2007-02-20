@@ -44,6 +44,7 @@ void ProgVar::Initialize() {
   object_type = &TA_taOBase;
   hard_enum_type = NULL;
   objs_ptr = false;
+  flags = PV_NONE;
 }
 
 void ProgVar::Destroy() {
@@ -74,6 +75,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   hard_enum_type = cp.hard_enum_type;
   dyn_enum_val = cp.dyn_enum_val;
   objs_ptr = cp.objs_ptr;
+  flags = cp.flags;
   desc = cp.desc;
 }
 

@@ -1,8 +1,8 @@
 // ta_Dump File v2.0
-Program .projects[1].programs.gp[0][7] { 
+Program .projects[0].programs.gp[0][7] { 
   ProgObjList @.objs = [1] {
     NetMonitor @[0] { 
-      NetMonItem_List @.items = [9] {
+      NetMonItem_List @.items = [10] {
 	NetMonItem @[0] { };
 	NetMonItem @[1] { };
 	NetMonItem @[2] { };
@@ -12,6 +12,7 @@ Program .projects[1].programs.gp[0][7] {
 	NetMonItem @[6] { };
 	NetMonItem @[7] { };
 	NetMonItem @[8] { };
+	NetMonItem @[9] { };
       };
     };
   };
@@ -25,21 +26,38 @@ Program .projects[1].programs.gp[0][7] {
     ProgVar @[1] { };
   };
 
-  ProgEl_List @.init_code = [4] {
-    MethodCall @[0] { };
-    MethodCall @[1] { };
-    MethodCall @[2] { };
-    MethodCall @[3] { };
+  ProgEl_List @.init_code = [3] {
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
   };
 
   ProgEl_List @.prog_code = [4] {
     MethodCall @[0] { };
     MethodCall @[1] { };
     MethodCall @[2] { };
-    MethodCall @[3] { };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
   };
 };
-Program .projects[1].programs.gp[0][7] {
+Program .projects[0].programs.gp[0][7] {
  name="LeabraTrialMonitor";
  desc="monitor trial-level data from the network";
  flags=PF_NONE;
@@ -57,7 +75,7 @@ Program .projects[1].programs.gp[0][7] {
      name="batch";
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[1].networks[0]$0$;
+     object=.projects[0].networks[0]$0$;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -197,9 +215,25 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
     };
+    NetMonItem @[9] {
+     name="Output_act_m";
+     computed=0;
+     object_type=LeabraLayer;
+     object=.projects[0].networks[0].layers[2]$1$;
+     variable="act_m";
+     var_label=;
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+    };
    };
    network=$0$;
-   data=.projects[1].data.gp[1][0]$1$;
+   data=.projects[0].data.gp[1][0]$2$;
    rmv_orphan_cols=1;
   };
  };
@@ -213,6 +247,7 @@ Program .projects[1].programs.gp[0][7] {
    object_type=Network;
    object_val=$0$;
    objs_ptr=0;
+   flags=PV_NONE;
    desc=;
   };
  };
@@ -224,16 +259,18 @@ Program .projects[1].programs.gp[0][7] {
    name="trial_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$1$;
+   object_val=$2$;
    objs_ptr=0;
+   flags=PV_NONE;
    desc=;
   };
   ProgVar @[1] {
    name="trial_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[1].programs.gp[0][7].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][7].objs[0]$3$;
    objs_ptr=1;
+   flags=PV_NONE;
    desc=;
   };
  };
@@ -250,37 +287,89 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[1].programs.gp[0][7].vars[1]$3$;
+   obj=.projects[0].programs.gp[0][7].vars[1]$4$;
    method=NetMonitor::SetDataNetwork;
-   args{ trial_mon_data;network;};
-{ DataTable* dt;Network* net;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="dt";
+     expr {
+      expr="trial_mon_data";
+      var_expr="$#0";
+      vars {
+      };
+      var_names{ trial_mon_data;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     expr {
+      expr="network";
+      var_expr="$#0";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
   };
   MethodCall @[1] {
    desc=;
    flags=PEF_NONE;
    result_var=NULL;
-   obj=$3$;
+   obj=$4$;
    method=taBase::CheckConfig;
-   args{ false;};
-{ bool quiet;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     expr {
+      expr="false";
+      var_expr="false";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
   };
   MethodCall @[2] {
-   desc="Initialize monitoring data (get rid of any existing)";
-   flags=PEF_NONE;
-   result_var=NULL;
-   obj=.projects[1].programs.gp[0][7].vars[0]$4$;
-   method=DataTable::ResetData;
-   args{ };
-{    };
-  };
-  MethodCall @[3] {
    desc="update the monitor items and data schema";
    flags=PEF_NONE;
    result_var=NULL;
-   obj=$3$;
+   obj=$4$;
    method=NetMonitor::UpdateMonitors;
-   args{ false;};
-{ bool reset_first;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="reset_first";
+     expr {
+      expr="true";
+      var_expr="true";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
   };
  };
  prog_code {
@@ -291,37 +380,75 @@ Program .projects[1].programs.gp[0][7] {
    desc="add a new blank row to the data";
    flags=PEF_NONE;
    result_var=NULL;
-   obj=$4$;
+   obj=.projects[0].programs.gp[0][7].vars[0]$5$;
    method=DataTable::AddBlankRow;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
   MethodCall @[1] {
    desc="get the new monitor data.";
    flags=PEF_NONE;
    result_var=NULL;
-   obj=$3$;
+   obj=$4$;
    method=NetMonitor::GetMonVals;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
   MethodCall @[2] {
    desc="update after writing new data to monitor data table";
    flags=PEF_NONE;
    result_var=NULL;
-   obj=$4$;
+   obj=$5$;
    method=DataBlock::WriteClose;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
   MethodCall @[3] {
    desc=;
    flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[1].programs.gp[0][7].args[0]$5$;
+   obj=.projects[0].programs.gp[0][7].args[0]$6$;
    method=Network::DMem_ShareTrialData;
-   args{ trial_mon_data;1;};
-{ DataTable* dt;int n_rows;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=NULL;
+     type="DataTable*";
+     name="dt";
+     expr {
+      expr="trial_mon_data";
+      var_expr="$#0";
+      vars {
+      };
+      var_names{ trial_mon_data;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=NULL;
+     type="int";
+     name="n_rows";
+     expr {
+      expr="1";
+      var_expr="1";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
   };
  };
 };

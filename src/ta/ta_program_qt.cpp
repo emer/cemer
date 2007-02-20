@@ -63,6 +63,7 @@ void taiProgVar::init() {
   incVal = NULL; // for: ints
   fldVal = NULL; // for: char, string, most numbers
   tglVal = NULL; // for: bool
+  tglNCP = NULL;
   thEnumType = NULL;
   cboEnumValue = NULL;
   thValType = NULL;
@@ -104,7 +105,11 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   } else {
     connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
   }
-  
+
+  lbl = MakeLabel("no ctrl panel", rep_);
+  AddChildWidget(lbl, taiM->hsep_c);
+  tglNCP = new taiToggle(typ, host, this, NULL, mflags & flgReadOnly);
+  AddChildWidget(tglNCP->rep());
 }
 
 void taiProgVar::AssertControls(int value) {
@@ -252,6 +257,8 @@ void taiProgVar::GetImage(const ProgVar* var) {
   ++m_updating;
   fldName->GetImage(var->name);
   SetVarType(var->var_type); //asserts correct control type
+  tglNCP->GetImage(var->HasVarFlag(ProgVar::NO_CTRL_PANEL)); 
+
   // we only transfer the value in use
   switch (varType()) {
   case ProgVar::T_Int:
@@ -296,6 +303,7 @@ void taiProgVar::GetImage(const ProgVar* var) {
 void taiProgVar::GetValue(ProgVar* var) const {
   var->name = fldName->GetValue();
   var->var_type = (ProgVar::VarType)varType();
+  var->SetVarFlagState(ProgVar::NO_CTRL_PANEL, tglNCP->GetValue()); 
   // we only set the value for the type the user chose, and cleanup the rest
   switch (varType()) {
   case ProgVar::T_Int:
@@ -1085,24 +1093,25 @@ void iProgramCtrlDataHost::Constr_Body() {
   refs.Reset();
   String nm;
   String help_text;
-  for (int i = 0; i < prog->args.size; ++i) {
-    ProgVar* pv = prog->args.FastEl(i);
+  int sz = prog->args.size + prog->vars.size;
+  for (int i = 0; i < sz; ++i) {
+    ProgVar* pv;
+    if(i < prog->args.size)
+      pv = prog->args.FastEl(i);
+    else
+      pv = prog->vars.FastEl(i-prog->args.size);
+    if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
     MemberDef* md = pv->GetValMemberDef();
-    // todo: need to deal with hard_enum and dyn_enum here..
-    taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
-    data_el.Add(mb_dat);
-    QWidget* data = mb_dat->GetRep();
-    int row = AddData(-1, data);
-    nm = pv->name;
-    help_text = pv->desc;
-    AddName(row, nm, help_text, mb_dat);
-    refs.Add(pv);
-  }
-  for (int i = 0; i < prog->vars.size; ++i) {
-    ProgVar* pv = prog->vars.FastEl(i);
-    MemberDef* md = pv->GetValMemberDef();
-    // todo: need to deal with hard_enum and dyn_enum here..
-    taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
+    taiData* mb_dat;
+    if(pv->var_type == ProgVar::T_HardEnum) {
+      mb_dat = new taiComboBox(true, NULL, this, NULL, body);
+    }
+    else if(pv->var_type == ProgVar::T_DynEnum) {
+      mb_dat = new taiComboBox(true, NULL, this, NULL, body);
+    }
+    else {
+      mb_dat = md->im->GetDataRep(this, NULL, body);
+    }
     data_el.Add(mb_dat);
     QWidget* data = mb_dat->GetRep();
     int row = AddData(-1, data);
@@ -1143,21 +1152,25 @@ void iProgramCtrlDataHost::GetValue_impl(const Member_List& ms, const taiDataLis
 {
   int cnt = 0;
   bool first_diff = true;
-  for (int i = 0; i < prog->args.size; ++i) {
-    ProgVar* pv = prog->args.FastEl(i);
+  int sz = prog->args.size + prog->vars.size;
+  for (int i = 0; i < sz; ++i) {
+    ProgVar* pv;
+    if(i < prog->args.size)
+      pv = prog->args.FastEl(i);
+    else
+      pv = prog->vars.FastEl(i-prog->args.size);
+    if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
     MemberDef* md = pv->GetValMemberDef();
     taiData* mb_dat = dl.FastEl(cnt++);
-    md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
-    if(!first_diff) {		// always reset!
-      taiMember::EndScript((void*)pv);
-      first_diff = true;
+    if(pv->var_type == ProgVar::T_HardEnum) {
+      ((taiComboBox*)mb_dat)->GetEnumValue(pv->int_val); // todo: not supporting first_diff
     }
-  }
-  for (int i = 0; i < prog->vars.size; ++i) {
-    ProgVar* pv = prog->vars.FastEl(i);
-    MemberDef* md = pv->GetValMemberDef();
-    taiData* mb_dat = dl.FastEl(cnt++);
-    md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
+    else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
+      ((taiComboBox*)mb_dat)->GetEnumValue(pv->dyn_enum_val.value_idx);
+    }
+    else {
+      md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
+    }
     if(!first_diff) {		// always reset!
       taiMember::EndScript((void*)pv);
       first_diff = true;
@@ -1165,21 +1178,43 @@ void iProgramCtrlDataHost::GetValue_impl(const Member_List& ms, const taiDataLis
   }
 }
 
+void iProgramCtrlDataHost::UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var) {
+  cb->Clear();
+  const DynEnum& de = var->dyn_enum_val; // convenience
+  for (int i = 0; i < de.size; ++i) {
+    const DynEnumItem* dei = de.FastEl(i);
+    //note: dynenums store the index of the value, not the value
+    cb->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
+  }
+}
+
 void iProgramCtrlDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
   void* base)
 {
   int cnt = 0;
-  for (int i = 0; i < prog->args.size; ++i) {
-    ProgVar* pv = prog->args.FastEl(i);
+  int sz = prog->args.size + prog->vars.size;
+  for (int i = 0; i < sz; ++i) {
+    ProgVar* pv;
+    if(i < prog->args.size)
+      pv = prog->args.FastEl(i);
+    else
+      pv = prog->vars.FastEl(i-prog->args.size);
+    if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
     MemberDef* md = pv->GetValMemberDef();
     taiData* mb_dat = dl.FastEl(cnt++);
-    md->im->GetImage(mb_dat, (void*)pv);
-  }
-  for (int i = 0; i < prog->vars.size; ++i) {
-    ProgVar* pv = prog->vars.FastEl(i);
-    MemberDef* md = pv->GetValMemberDef();
-    taiData* mb_dat = dl.FastEl(cnt++);
-    md->im->GetImage(mb_dat, (void*)pv);
+    if(pv->var_type == ProgVar::T_HardEnum) {
+      ((taiComboBox*)mb_dat)->SetEnumType(pv->hard_enum_type);
+      ((taiComboBox*)mb_dat)->GetEnumImage(pv->int_val);
+    }
+    else if(pv->var_type == ProgVar::T_DynEnum) {
+      UpdateDynEnumCombo(((taiComboBox*)mb_dat), pv);
+      int dei = pv->dyn_enum_val.value_idx;
+      if (dei < 0) dei = 0;
+      ((taiComboBox*)mb_dat)->GetEnumImage(dei);
+    }
+    else {
+      md->im->GetImage(mb_dat, (void*)pv);
+    }
   }
 }
 
