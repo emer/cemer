@@ -437,6 +437,7 @@ void taRootBase::MonControl(bool on) {
 #endif
 
 void taRootBase::AddRecentFile(const String& value) {
+  if (taMisc::num_recent_files <= 0) return;
   // first, see if already there, if so, then just move it to the top
   int idx = recent_files.FindEl(value);
   if (idx >= 0) {

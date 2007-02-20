@@ -277,24 +277,24 @@ taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
 //TODO: the taiIncrField control can only handle int values, so can't handle uint range
 // should either replace with a DoubleSpin, or longlongspin
   taiIncrField* rval = new taiIncrField(typ, host_, par, gui_parent_, flags_);
-  // put limits on values
-  int min = 0; 
-  int max = 0;
+  // put limits on values -- start w/ explicit ones, them limit them by datatype
+  int min = typ->OptionAfter("MIN_").toInt(); // 0 if not present
+  if (typ->HasOption("POS_ONLY"))
+    min = 0;
+  int max = typ->OptionAfter("MAX_").toInt(); // 0 if not present
   if (typ->DerivesFrom(&TA_int)) {
-    min = INT_MIN;  max = INT_MAX;
+    min = MAX(min, INT_MIN);  max = MIN(max, INT_MAX);
 //  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
 //    min = 0;  max = INT_MAX;//NOTE: does not cover entire uint range
   } else if (typ->DerivesFrom(&TA_short)) {
-    min = SHRT_MIN;  max = SHRT_MAX;
+    min = MAX(min, SHRT_MIN);  max = MIN(max, SHRT_MAX);
   } else if (typ->DerivesFrom(&TA_unsigned_short)) {
-    min = 0;  max = USHRT_MAX;
+    min = MAX(min, 0);  max = MIN(max, USHRT_MAX);
   } else if (typ->DerivesFrom(&TA_signed_char)) {
-    min = SCHAR_MIN;  max = SCHAR_MAX;
+    min = MAX(min, SCHAR_MIN);  max = MIN(max, SCHAR_MAX);
   } else { //if typ->DerivesFrom(&TA_unsigned_char)
-    min = 0;  max = UCHAR_MAX;
+    min = MAX(min, 0);  max = MIN(max, UCHAR_MAX);
   }
-  if (typ->HasOption("POS_ONLY"))
-    min = 0;
   rval->setMinimum(min);
   rval->setMaximum(max);
   return rval;
