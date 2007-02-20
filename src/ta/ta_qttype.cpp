@@ -278,10 +278,22 @@ taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
 // should either replace with a DoubleSpin, or longlongspin
   taiIncrField* rval = new taiIncrField(typ, host_, par, gui_parent_, flags_);
   // put limits on values -- start w/ explicit ones, them limit them by datatype
-  int min = typ->OptionAfter("MIN_").toInt(); // 0 if not present
-  if (typ->HasOption("POS_ONLY"))
+  int min = INT_MIN;
+  if (typ->HasOption("POS_ONLY")) // do this one first, then max of min
     min = 0;
-  int max = typ->OptionAfter("MAX_").toInt(); // 0 if not present
+  String val = typ->OptionAfter("MIN_");
+  int it;
+  // we are very conservative, and make sure the value can be converted
+  if (val.nonempty() && val.isInt()) {
+    it = val.toInt();
+    min = MAX(min, it);
+  }
+  int max = INT_MAX;
+  val = typ->OptionAfter("MAX_");
+  if (val.nonempty() && val.isInt()) {
+    it = val.toInt();
+    max = MIN(max, it);
+  }
   if (typ->DerivesFrom(&TA_int)) {
     min = MAX(min, INT_MIN);  max = MIN(max, INT_MAX);
 //  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
