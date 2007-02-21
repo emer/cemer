@@ -950,6 +950,7 @@ void taFixedArray_impl::Copy_(const taFixedArray_impl& cp) {
 }
 
 void taFixedArray_impl::SetSize(int new_size) {
+  if (new_size < 0) new_size = 0;
   if (new_size > size) {
     Alloc_(new_size);
     const void* blank = El_GetBlank_();
@@ -1051,6 +1052,7 @@ void taArray_impl::Alloc(int sz) {
 }
 
 void taArray_impl::AddBlank(int n_els) {
+  if (n_els < 0) n_els = 0;
   SetSize(size + n_els);
 }
 
@@ -1065,6 +1067,7 @@ void taArray_impl::Copy_(const taArray_impl& cp) {
 }
 
 void taArray_impl::SetSize(int new_size) {
+  if (new_size < 0) new_size = 0;
   if (new_size > size) {
     Alloc(new_size);
     Clear_Tmp_();

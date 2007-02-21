@@ -14,20 +14,22 @@
 //   Lesser General Public License for more details.
 
 
-// ta_qt_dialog.h: Qt-based data hosts and dialogs
+// ta_qtdialog.h: Qt-based data hosts and dialogs
 
-#ifndef ta_qtdialog_h
-#define ta_qtdialog_h 1
+#ifndef TA_QTDIALOG_H
+#define TA_QTDIALOG_H//
 
 #include "ta_type.h"
+#include "ta_qt.h"
 #include "ta_qtdata.h" //for taiMenu_List
 #include "ta_qtviewer.h"
 
 #ifndef __MAKETA__
-  #include <ilabel.h>
-  #include <QDialog>
-  #include <QObject>
-  #include <QPushButton>
+# include <ilabel.h>
+# include <QEvent>
+# include <QDialog>
+# include <QObject>
+# include <QPushButton>
 #endif
 
 // externals
@@ -224,6 +226,7 @@ public: // IDataHost i/f
 class TA_API taiDataHost: public QObject, virtual public IDataLinkClient, 
   virtual public IDataHost 
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+INHERITED(QObject)
   Q_OBJECT
 friend class iDialog;
 public:
@@ -245,6 +248,12 @@ public:
     HT_CONTROL		// host/owner is a control -- we won't show menus or obj buttons
   };
   
+#ifndef __MAKETA__
+  enum CustomEventType {
+    CET_RESHOW		= QEvent::User + 1,  // uses ReShowEvent
+    CET_GET_IMAGE
+  };
+#endif
 
   static void	DeleteChildrenLater(QObject* obj); // convenience function -- deleteLater all children
   static void   MakeDarkBgColor(const iColor& bg, iColor& dk_bg); // for use by other users of stripe grids, to make the right dk bg color
@@ -311,8 +320,9 @@ public:
   virtual void  SetRevert();	// set the revert button on
   virtual void  UnSetRevert();	// set the revert button off
   virtual void  NotifyChanged(); // called by our object when it has changed (by us, or other)
-//obs  virtual void		ReShow(); // rebuild; called on major obj change, or when new Show option
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
+  virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)
+  virtual void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor
   virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
@@ -390,6 +400,10 @@ public slots:
   virtual void 	Cancel(); // mostly for dialogs, but also used internally to close a Panel (ex. when obj deleted)
 
 protected:
+  bool		reshow_req; // set on async req, cleared when serviced
+  bool		get_image_req;
+  
+  override void		customEvent(QEvent* ev);
 
   void 			DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
   void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
@@ -417,6 +431,10 @@ class TA_API taiEditDataHost : public taiDataHost {
 INHERITED(taiDataHost)
 friend class EditDataPanel;
 public:
+  static taiEditDataHost_List base_updates; // list for guys who need raw taBase updates
+  static void		BaseDestroyingAll(taBase* obj);
+  static void		BaseDataChangedAll(taBase* obj, int dcr, void* op1, void* op2);
+  
   taMisc::ShowMembs	show;		// current setting for what to show
   taiMenu_List		ta_menus;	// menu representations (from methods, non-menubuttons only)
   taiMenu_List		ta_menu_buttons;	// menu representations (from methods -- menubuttons only)
@@ -497,6 +515,10 @@ protected:
     // uses mth's label, if no label passed
   void			DoAddMethButton(QAbstractButton* but);
   void			DoRaise_Panel(); // what Raise() calls for panels
+  virtual void		BaseDestroying(taBase* obj) {}
+  // #IGNORE this base object is about to be closed (removed), if i edit it, then I need to save and reopen (returns true if edited)
+  virtual void		BaseDataChanged(taBase* obj,
+    int dcr, void* op1_, void* op2_) {}
 
 protected slots:
   virtual void	DoSelectForEdit(int param); // param will be index of the SelectEdit; sel_data_index will hold the index of the data item

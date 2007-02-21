@@ -556,7 +556,7 @@ public:
   static bool		auto_edit; 	// #SAVE #CAT_GUI #EXPERT automatic edit dialog after creation?
   static AutoRevert	auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
-  static short		num_recent_files; // #SAVE #DEF_6 #POS_ONLY number of recent files to save
+  static short		num_recent_files; // #SAVE #DEF_6 #MIN_0 #MAX_12 number of recent files to save
 
   ////////////////////////////////////////////////////////
   // 	File/Paths Info

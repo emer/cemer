@@ -1088,6 +1088,46 @@ bool iProgramCtrlDataHost::ShowMember(MemberDef* md) const {
   return false;
 }
 
+void iProgramCtrlDataHost::BaseDestroying(taBase* base) {
+/*  bool gotone = false;
+  int i;
+  for(i=refs.size-1;i>=0;i--) {
+    taBase* bs = refs.FastEl(i);
+    char* staddr = (char*)bs;
+    char* endaddr=staddr+bs->GetSize();
+    char* vbase = (char*)base;
+    if((vbase >= staddr) && (vbase <= endaddr)) {
+      RemoveField_impl(i);
+      gotone = true;
+    }
+  }
+
+
+  if (gotone) ReShowEdit(true);*/
+}
+
+void iProgramCtrlDataHost::BaseDataChanged(taBase* base,
+    int dcr, void* op1_, void* op2_) 
+{
+/*  bool rval = false;
+  int i;
+  for(i=mbr_bases.size-1;i>=0;i--) {
+    TAPtr bs = mbr_bases.FastEl(i);
+    char* staddr = (char*)bs;
+    char* endaddr=staddr+bs->GetSize();
+    char* vbase = (char*)base;
+    if((vbase >= staddr) && (vbase <= endaddr)) {
+      rval = true;
+      break;
+    }
+  }
+
+  if (rval) DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
+*/
+}
+
+
+
 void iProgramCtrlDataHost::Constr_Body() {
   inherited::Constr_Body();
   refs.Reset();
@@ -1123,15 +1163,12 @@ void iProgramCtrlDataHost::Constr_Body() {
   // note: we deftly solve the problem of reacting to new vars/args
   // by simply putting those lists on our ref list, which notifies us
 //TEMP  refs.Add(&(prog->args));
-//TEMP  refs.Add(&(prog->vars));
+//TEMP   refs.Add(&(prog->vars));
 }
 
 void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList*, taBase* base) {
   // we need to rebuild...
-  ReShow();
-//NOTE: this would be quite horrific if other guys destroy before us, because
-// we would do a ReShow for every one -- however CtrlPanel is built after
-//  the underlying edit and tree, so hopefully this gets deleted first...
+  ReShow_Async();
 }
 
 void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList*, taBase* base,
@@ -1139,7 +1176,7 @@ void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList*, taBase* base,
 {
   if (taMisc::is_loading) return;
   // we need to do a fullblown reshow, to handle things like name changes of vars, etc.
-  ReShow();
+  ReShow_Async();
 }
 
 
@@ -1162,7 +1199,13 @@ void iProgramCtrlDataHost::GetValue_impl(const Member_List& ms, const taiDataLis
       pv = prog->vars.FastEl(i-prog->args.size);
     if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
     MemberDef* md = pv->GetValMemberDef();
-    taiData* mb_dat = dl.FastEl(cnt++);
+    taiData* mb_dat = dl.SafeEl(cnt++);
+    if (!mb_dat) {
+#ifdef DEBUG
+      taMisc::Warning("iProgramCtrlDataHost:GetValue_impl: ran out of controls!");
+#endif
+      break;
+    }
     if(pv->var_type == ProgVar::T_HardEnum) {
       ((taiComboBox*)mb_dat)->GetEnumValue(pv->int_val); // todo: not supporting first_diff
     }
@@ -1202,7 +1245,13 @@ void iProgramCtrlDataHost::GetImage_impl(const Member_List& ms, const taiDataLis
       pv = prog->vars.FastEl(i-prog->args.size);
     if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
     MemberDef* md = pv->GetValMemberDef();
-    taiData* mb_dat = dl.FastEl(cnt++);
+    taiData* mb_dat = dl.SafeEl(cnt++);
+    if (!mb_dat) {
+#ifdef DEBUG
+      taMisc::Warning("iProgramCtrlDataHost:GetImage_impl: ran out of controls!");
+#endif
+      break;
+    }
     if(pv->var_type == ProgVar::T_HardEnum) {
       ((taiComboBox*)mb_dat)->SetEnumType(pv->hard_enum_type);
       ((taiComboBox*)mb_dat)->GetEnumImage(pv->int_val);
@@ -1235,6 +1284,7 @@ iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
       bgcol = prog_->GetEditColorInherit();
     }
     pc->ConstrEditControl(bgcol);
+//    taiEditDataHost::base_updates.Add(pc);
     setCentralWidget(pc->widget()); //sets parent
     setButtonsWidget(pc->widButtons);
   }
@@ -1263,7 +1313,7 @@ void iProgramCtrlPanel::OnWindowBind_impl(iTabViewer* itv) {
 }
 
 void iProgramCtrlPanel::Refresh_impl() {
-  if (pc) pc->ReShow();
+  if (pc) pc->ReShow_Async();
 }
 
 void iProgramCtrlPanel::ResolveChanges_impl(CancelOp& cancel_op) {

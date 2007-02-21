@@ -537,6 +537,15 @@ void iMethodButtonFrame::GetImage() {
 // 	taiDataHost		//
 //////////////////////////////////
 
+class ReShowEvent: public QEvent {
+INHERITED(QEvent)
+public:
+  bool forced;
+  ReShowEvent(bool forced_):inherited((QEvent::Type)taiDataHost::CET_RESHOW) {
+    forced = forced;
+  }
+};
+
 #define LAYBODY_MARGIN	1
 #define LAYBODY_SPACING	0
 
@@ -586,6 +595,8 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   rebuild_body = false;
   warn_clobber = false;
   host_type = HT_DIALOG; // default, set later
+  reshow_req = false;
+  get_image_req = false;
 }
 
 taiDataHost::~taiDataHost() {
@@ -1011,6 +1022,45 @@ void taiDataHost::Constr_Final() {
   else         vblDialog->setStretchFactor(scrBody, 1);
 }
 
+void taiDataHost::customEvent(QEvent* ev_) {
+  // we return early if we don't accept, otherwise fall through to accept
+  switch ((int)ev_->type()) {
+  case CET_RESHOW: {
+    ReShowEvent* ev = static_cast<ReShowEvent*>(ev_);
+    if (reshow_req) {
+      ReShow(ev->forced);
+      GetImage();
+      reshow_req = false;
+    }
+  } break;
+  case CET_GET_IMAGE: {
+    if (get_image_req) {
+      GetImage();
+      get_image_req = false;
+    }
+  } break;
+  default: inherited(ev_); 
+    return; // don't accept
+  }
+  ev_->accept();
+}
+
+void taiDataHost::ReShow_Async(bool forced) {
+  if (reshow_req) return; // already waiting
+  ReShowEvent* ev = new ReShowEvent(forced);
+  reshow_req = true;
+  QCoreApplication::postEvent(this, ev);
+}
+
+void taiDataHost::GetImage_Async() {
+  // reshow does a getimage, so ignore if a reshow pending
+  if (get_image_req || reshow_req) return; // already waiting
+  QEvent* ev = new QEvent((QEvent::Type)CET_GET_IMAGE);
+  get_image_req = true;
+  QCoreApplication::postEvent(this, ev);
+}
+
+
 void taiDataHost::DataLinkDestroying(taDataLink* dl) {
 // TENT, TODO: confirm this is right...
   cur_base = NULL;
@@ -1129,7 +1179,7 @@ void taiDataHost::NotifyChanged() {
   if (HasChanged()) {
     warn_clobber = true;
   } else {
-    GetImage();
+    GetImage_Async();
   }
 }
 
@@ -1313,6 +1363,22 @@ void taiDataHost::UnSetRevert(){
 // 	taiEditDataHost		//
 //////////////////////////////////
 
+taiEditDataHost_List taiEditDataHost::base_updates;
+
+void taiEditDataHost::BaseDestroyingAll(taBase* obj) {
+  for (int i = 0; i < base_updates.size; ++i) {
+    taiEditDataHost* edh = base_updates.FastEl(i);
+    edh->BaseDestroying(obj);
+  }
+}
+
+void taiEditDataHost::BaseDataChangedAll(taBase* obj, int dcr, void* op1, void* op2) {
+  for (int i = 0; i < base_updates.size; ++i) {
+    taiEditDataHost* edh = base_updates.FastEl(i);
+    edh->BaseDataChanged(obj, dcr, op1, op2);
+  }
+}
+
 
 taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   	bool modal_, QObject* parent)
@@ -1330,6 +1396,7 @@ taiEditDataHost::~taiEditDataHost() {
   meth_el.Reset();
   taiMisc::active_edits.RemoveEl(this);
   taiMisc::css_active_edits.RemoveEl(this);
+  taiEditDataHost::base_updates.RemoveEl(this);
   // remove data client -- harmless if already done in Cancel
   if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
     ((taBase*)cur_base)->RemoveDataClient(this);

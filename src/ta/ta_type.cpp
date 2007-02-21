@@ -1911,7 +1911,7 @@ void IMultiDataLinkClient::AddDataLink(taDataLink* dl) {
 
 void IMultiDataLinkClient::RemoveDataLink(taDataLink* dl) {
   if (!dls.RemoveEl(dl)) {
-    taMisc::Warning("IMultiDataLinkClient:RemoveDataLink: DataLink not found");
+    taMisc::Info("IMultiDataLinkClient:RemoveDataLink: DataLink not found (not critical)");
   }
 }
 

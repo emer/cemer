@@ -43,6 +43,7 @@ class taiDialog_List;		// #IGNORE
 typedef taPtrList<taiEditDataHost> taiEditDataHost_List; // #IGNORE
 
 
+
 //////////////////////////////
 //       taiMisc          //
 //////////////////////////////
