@@ -1,5 +1,24 @@
 Tree Browsing Show/Hide
 
+Load Prog Lib bug
+
+crash occurs as follows, in load of lib:
+
+Program::Reset
+ vars.Reset
+   removal of item
+     notify on the list re that item
+       the clients list for that item seems to have an
+       invalid entry (FastEl(i) on that item crashes)
+      
+it is actually the DataLink itself that must be invalid, since it has
+several illegal values (prob random memory)
+
+therefore, the taBase guy has his dl in his dl slot, when it has actually
+been destroyed
+
+this violates the invariant of validity of IDataLinkClient entries
+
 
 
 

@@ -2199,12 +2199,11 @@ taBase_RefList::~taBase_RefList() {
 }
 
 void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
+  // note: dl has already done a RemoveDataLink on us
   taBase* tab = dl->taData();
-  // pre-remove dl's from list, because dl prob not in the guy anymore
-  while (dls.RemoveEl(dl)) {;}
   if (tab) { // should exist!
     // note: we need to remove all instances, in case mutliply-added
-    while (RemoveEl(tab)) {;} // the unRef will thus remove the dl
+    while (RemoveEl(tab)) {;} 
     if (m_own) {
       m_own->DataDestroying_Ref(this, tab);
     }
@@ -2224,16 +2223,12 @@ void taBase_RefList::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* o
 
 void* taBase_RefList::El_Ref_(void* it_) {
   taBase* it = (taBase*)it_;
-  it->AddDataClient(this); // it will set the m_link member
-  dls.Add(m_link);
-  m_link = NULL; // to avoid any issues, always keep this cleaned out
+  it->AddDataClient(this); 
   return it_;
 }
 
 void* taBase_RefList::El_unRef_(void* it_) {
   taBase* it = (taBase*)it_;
-  taDataLink* dl = it->data_link(); // no auto create, but it better exist!!!
-  dls.RemoveEl(dl);
   it->RemoveDataClient(this);
   return it_;
 }

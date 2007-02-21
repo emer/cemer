@@ -1892,6 +1892,29 @@ IDataLinkClient::~IDataLinkClient() {
   }
 }
 
+//////////////////////////////////
+//   IMultiDataLinkClient 	//
+//////////////////////////////////
+
+IMultiDataLinkClient::~IMultiDataLinkClient() {
+  while (dls.size > 0) {
+    taDataLink* dl = dls.Pop();
+    dl->RemoveDataClient(this);
+  }
+}
+
+void IMultiDataLinkClient::AddDataLink(taDataLink* dl) {
+  if (!dls.AddUnique(dl)) {
+    taMisc::Warning("IMultiDataLinkClient:AddDataLink: attempt to add duplicate DataLink");
+  }
+} 
+
+void IMultiDataLinkClient::RemoveDataLink(taDataLink* dl) {
+  if (!dls.RemoveEl(dl)) {
+    taMisc::Warning("IMultiDataLinkClient:RemoveDataLink: DataLink not found");
+  }
+}
+
 //////////////////////////
 //   taDataLink 	//
 //////////////////////////
@@ -1913,7 +1936,7 @@ taDataLink::~taDataLink() {
 
 void taDataLink::AddDataClient(IDataLinkClient* dlc) {
   if (!clients.AddUnique(dlc)) return; // already added
-  dlc->m_link = this;
+  dlc->AddDataLink(this);
 }
 
 void taDataLink::DataDestroying() { //note: linklist will automatically remove us
@@ -1921,7 +1944,7 @@ void taDataLink::DataDestroying() { //note: linklist will automatically remove u
   while (clients.size > 0) {
     //NOTE: client could destroy, so we have to remove it now
     dlc = clients.Pop();
-    dlc->m_link = NULL;
+    dlc->RemoveDataLink(this);
     //NOTE: client can still refer to us, but must do so through the ref we pass it
     dlc->DataLinkDestroying(this);
   }
@@ -2064,7 +2087,9 @@ TypeDef* taDataLink::GetTypeDef() const {
 bool taDataLink::RemoveDataClient(IDataLinkClient* dlc) {
   //WARNING: dlc calls this in its destructor, therefore 'dlc' is IDataLinkClient virtual
   // version, therefore, RemoveDataClient may NOT use any IDataLinkClient virtual methods
-  dlc->m_link = NULL;
+  // that are intended to be overloaded
+  // exception: IMultiDataLinkClient calls from its own destructor, so its virtuals are ok
+  dlc->RemoveDataLink(this);
   // NOTE: in case where client calls us back during call to their DataLinkDestroying,
   // we will not find the client on our list, and so must return and not attempt to
   // destroy ourselves, otherwise we may destroy twice!

@@ -1012,8 +1012,24 @@ public:
   IDataLinkClient() {m_link = NULL;}
   ~IDataLinkClient();
 protected:
+  virtual void		AddDataLink(taDataLink* dl) {m_link = dl;} // #IGNORE overridden in Multi
+  virtual void		RemoveDataLink(taDataLink* dl) {m_link = NULL;} // #IGNORE overridden in Multi
+  
   taDataLink*		m_link; // NOTE: will always be a taiDataLink or subclass
 };
+
+
+class TA_API IMultiDataLinkClient : public virtual IDataLinkClient {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
+public:
+  
+  IMultiDataLinkClient() {}
+  ~IMultiDataLinkClient();
+protected:
+  taPtrList<taDataLink> dls; 
+  override void		AddDataLink(taDataLink* dl);
+  override void		RemoveDataLink(taDataLink* dl);
+};
+
 
 
 //////////////////////////

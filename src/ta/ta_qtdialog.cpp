@@ -1165,7 +1165,8 @@ bool taiDataHost::ReShow(bool force) {
     }
   }
   state |= SHOW_CHANGED; 
-  ClearBody(); // rebuilds body after clearing
+  ClearBody(); // rebuilds body after clearing -- but SHOW_CHANGED prevents GetImage...
+  GetImage(); // ... so we do it here
   return true;
 }
 

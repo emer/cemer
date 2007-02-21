@@ -1122,8 +1122,8 @@ void iProgramCtrlDataHost::Constr_Body() {
   }
   // note: we deftly solve the problem of reacting to new vars/args
   // by simply putting those lists on our ref list, which notifies us
-  refs.Add(&(prog->args));
-  refs.Add(&(prog->vars));
+//TEMP  refs.Add(&(prog->args));
+//TEMP  refs.Add(&(prog->vars));
 }
 
 void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList*, taBase* base) {
@@ -1137,6 +1137,7 @@ void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList*, taBase* base) {
 void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList*, taBase* base,
     int dcr, void* op1, void* op2) 
 {
+  if (taMisc::is_loading) return;
   // we need to do a fullblown reshow, to handle things like name changes of vars, etc.
   ReShow();
 }

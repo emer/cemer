@@ -1249,7 +1249,7 @@ public:
 };
 
 class TA_API taBase_RefList: public taPtrList<taBase>,
-   public IDataLinkClient { // a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
+   public IMultiDataLinkClient { // a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
 public:
   void			setOwner(IRefListClient* own_);
 
@@ -1266,7 +1266,6 @@ protected: // we actually protect these
 
 protected:
   IRefListClient*	m_own; // optional owner
-  taPtrList<taDataLink> dls; // we actually manage all the data_links here, not in our m_data_link variable
   
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
 
