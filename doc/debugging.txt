@@ -1,26 +1,94 @@
 Tree Browsing Show/Hide
 
-Load Prog Lib bug
+Program Reset bug
 
 crash occurs as follows, in load of lib:
 
 Program::Reset
- vars.Reset
-   removal of item
-     notify on the list re that item
-       the clients list for that item seems to have an
-       invalid entry (FastEl(i) on that item crashes)
+  vars.Reset
+  removal of item ProgVar
+  ProgVar issues its DataDestroying
+  a RefList gets the DLDestroying
+  RL removes the el
+  RL disown/unref of item calls item.RemoveDataClient
+  item.RDC gets its link reference (the one that is invalid)
+  dl.RDB crashes when accessing the list of clients, because dl is invalid
+  NOTE: occurs on last ProgVar removal from vars, "trial"
+
       
 it is actually the DataLink itself that must be invalid, since it has
 several illegal values (prob random memory)
 
-therefore, the taBase guy has his dl in his dl slot, when it has actually
-been destroyed
+therefore, the taBase guy has his dl in his dl slot, when the dl is
+invalid
 
-this violates the invariant of validity of IDataLinkClient entries
+How To Invoke the bug:
+
+ * open leabra_ra.proj
+ * select LeabraEpoch and Browse Me
+ * on first LE, do Reset
+ * you get the crash
+
+Mystery To Solve
+
+the "guy" in question is a ProgVar
+
+How can a ProgVar get into a state whereby the dl field is non-null
+(indicates an object) yet that address does not point to a valid DataLink?
+
+1. ProgVar itself is not a valid object (ie, bad pointer)
+  2. ProgVar has deleted, and we are still accessing it
+  3. dl field is not properly initialized to NULL
+4. dl field does not get set to NULL when its referent deletes
+5. dl field somehow gets set to a bad pointer, or already deleted DataLink
+6. (maybe a variant on something above) dl was valid at a point on call chain,
+   but a destroy action of some kind during the chain has invalidated the dl
+  7. memory corruption, perhaps caused by a bug in Load code
+  8. some other obscure issue of corruption or invalidness due to load code
+
+1. 
+  this is quite unlikely -- all the stuff from the obj is showing
+  in the gui, meaning all the accesses, fields, typeinfo, taiv's etc.
+  all had to be valid
+  * if object somehow deleted early, then the Destroy would have run,
+  and the dl should have been delete, 
+
+2.
+  for this to happen, the mlink field would still need to be unNULLed
+  since i put in a check for non-null, and object::delete calls the
+  link code on delete, this cannot be the one
+
+3. very unlikely, since taOBase.Initialize sets dl to NULL
+
+4.
+  this would require a bad reference address in the first place,
+  note that the original creation code was responsible for setting
+  the link
+
+7, 8: Load not needed 
+
+Description of Delete of CutLinks process for taOBase
+
+* Destroy always invokes CutLinks...
+* CutLinks: if there is a dl, call dl->DataDestroying
+* dl->DataDestroying pops all clients, calling their notify routine
+  when the list is empty, the link itself deletes
+  the link uses its address of its ref to null that ref
+Invariant: the link ref in host is valid, right up to point
+  where DataLink destroys; in ~DL, it nulls the ref
+
+DataLink invariants:
+
+* only one constructor, which requires a ref address 
+  2 params means can never be called implicitly
+* NOTE: creation doesn't set the ref instance!
 
 
+TRY
 
+* disable the CtrlPanel refreshing altogether, but still
+  put all the ProgVar guys on the RefList
+  * does not crash
 
 debug T3 selection
 

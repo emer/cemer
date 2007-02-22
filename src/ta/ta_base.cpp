@@ -433,6 +433,7 @@ void taBase::Destroying() {
   taDataLink* dl = data_link();
   if (dl) {
     dl->DataDestroying();
+    delete dl; // NULLs our ref
   }
 }
 
@@ -1108,6 +1109,12 @@ void taBase::setDirty(bool value) {
 
 taDataLink* taBase::GetDataLink() {
   if (!data_link()) {
+    if (isDestroying()) {
+#ifdef DEBUG
+      taMisc::Warning("Attempt to GetDataLink on a destructing object");
+#endif
+      return NULL;
+    }
     taiViewType* iv;
     if ((iv = GetTypeDef()->iv) != NULL) {
       iv->GetDataLink(this, GetTypeDef()); // sets data_link
@@ -1120,7 +1127,7 @@ bool taBase::AddDataClient(IDataLinkClient* dlc) {
   // refuse new links while destroying!
   if (isDestroying()) {
 #ifdef DEBUG
-    taMisc::Warning("Attempt to add a client DataLink to a destructing object");
+    taMisc::Warning("Attempt to add a DataLinkClient to a destructing object");
 #endif
     return false;
   }
@@ -1129,6 +1136,11 @@ bool taBase::AddDataClient(IDataLinkClient* dlc) {
     dl->AddDataClient(dlc);
     return true;
   }
+#ifdef DEBUG
+  else {
+    taMisc::Error("Attempt to add a DataLinkClient to an obj with no DataLink!");
+  }
+#endif
   return false;
 }
 
@@ -2075,6 +2087,7 @@ void taOBase::CutLinks() {
 #endif
   if (m_data_link) {
     m_data_link->DataDestroying(); // link NULLs our pointer
+    delete m_data_link; // NULLS the ref
   }
   owner = NULL;
   if (user_data_) {
@@ -2102,19 +2115,7 @@ UserDataItem_List* taOBase::GetUserDataList(bool fc) const {
   return user_data_;
 }
 
-/* all in taBase void taOBase::UpdateAfterEdit(){
-  inherited::UpdateAfterEdit();
-  tabMisc::NotifyEdits(this);
-  if (owner && GetTypeDef()->HasOption("UAE_OWNER")) {
-    bool handled = false;
-    owner->ChildUpdateAfterEdit(this, handled);
-  }
-}
 
-void taOBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
-  if (!handled && owner)
-    owner->ChildUpdateAfterEdit(child, handled);
-} */
 
 //////////////////////////
 //  taOABase		//
@@ -2208,7 +2209,7 @@ void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
       m_own->DataDestroying_Ref(this, tab);
     }
   }
-#ifdef DEBUG
+#ifdef DEBUG //**CAUTION: warnings can cause gui eventloop events!
   else {
     taMisc::Warning("Unexpected taData() NULL in taBase_RefList::DataLinkDestroying()");
   }

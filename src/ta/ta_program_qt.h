@@ -323,9 +323,6 @@ protected:
 
   override void	GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
   override void	GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const; //
-  override void		BaseDestroying(taBase* obj);
-  override void		BaseDataChanged(taBase* obj,
-    int dcr, void* op1_, void* op2_);
   
 public: // IRefListClient i/f
   TYPED_OBJECT(iProgramCtrlDataHost);

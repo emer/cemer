@@ -1088,46 +1088,6 @@ bool iProgramCtrlDataHost::ShowMember(MemberDef* md) const {
   return false;
 }
 
-void iProgramCtrlDataHost::BaseDestroying(taBase* base) {
-/*  bool gotone = false;
-  int i;
-  for(i=refs.size-1;i>=0;i--) {
-    taBase* bs = refs.FastEl(i);
-    char* staddr = (char*)bs;
-    char* endaddr=staddr+bs->GetSize();
-    char* vbase = (char*)base;
-    if((vbase >= staddr) && (vbase <= endaddr)) {
-      RemoveField_impl(i);
-      gotone = true;
-    }
-  }
-
-
-  if (gotone) ReShowEdit(true);*/
-}
-
-void iProgramCtrlDataHost::BaseDataChanged(taBase* base,
-    int dcr, void* op1_, void* op2_) 
-{
-/*  bool rval = false;
-  int i;
-  for(i=mbr_bases.size-1;i>=0;i--) {
-    TAPtr bs = mbr_bases.FastEl(i);
-    char* staddr = (char*)bs;
-    char* endaddr=staddr+bs->GetSize();
-    char* vbase = (char*)base;
-    if((vbase >= staddr) && (vbase <= endaddr)) {
-      rval = true;
-      break;
-    }
-  }
-
-  if (rval) DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
-*/
-}
-
-
-
 void iProgramCtrlDataHost::Constr_Body() {
   inherited::Constr_Body();
   refs.Reset();
@@ -1157,13 +1117,13 @@ void iProgramCtrlDataHost::Constr_Body() {
     int row = AddData(-1, data);
     nm = pv->name;
     help_text = pv->desc;
-    AddName(row, nm, help_text, mb_dat);
+    AddName(row, nm, help_text, mb_dat); 
     refs.Add(pv);
   }
   // note: we deftly solve the problem of reacting to new vars/args
   // by simply putting those lists on our ref list, which notifies us
-//TEMP  refs.Add(&(prog->args));
-//TEMP   refs.Add(&(prog->vars));
+  refs.Add(&(prog->args));
+  refs.Add(&(prog->vars));
 }
 
 void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList*, taBase* base) {
@@ -1174,7 +1134,14 @@ void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList*, taBase* base) {
 void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList*, taBase* base,
     int dcr, void* op1, void* op2) 
 {
-  if (taMisc::is_loading) return;
+  // ignore list delete msgs, since the obj itself should notify
+  if (prog && ((base == &(prog->args)) ||(base == &(prog->vars)))) {
+    if ((dcr <= DCR_LIST_INIT) ||  (dcr == DCR_LIST_ITEM_REMOVE) ||
+        (dcr > DCR_LIST_SORTED))
+      return;
+  }
+  
+  //note: don't need to check for is_loading because we defer until after
   // we need to do a fullblown reshow, to handle things like name changes of vars, etc.
   ReShow_Async();
 }
@@ -1284,7 +1251,6 @@ iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
       bgcol = prog_->GetEditColorInherit();
     }
     pc->ConstrEditControl(bgcol);
-//    taiEditDataHost::base_updates.Add(pc);
     setCentralWidget(pc->widget()); //sets parent
     setButtonsWidget(pc->widButtons);
   }

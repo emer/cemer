@@ -993,6 +993,12 @@ public:
 //   IDataLinkClient	//
 //////////////////////////
 
+/* ****WARNING****
+  Do NOT put logging (ie calls to taMisc::Warning, etc.) in any data link mgt
+  code because it can get routed through the pager or other buffering mechanism
+  which may trigger event loop calls, which can cause deletions, mid-routine
+*/
+
 // Mixin interface for Node that uses datalinks, ex. tree node or Inventor node
 
 class TA_API IDataLinkClient : public virtual IDataLinkProxy {//#NO_INSTANCE #NO_TOKENS #NO_CSS #NO_MEMBERS #VIRT_BASE
@@ -1012,8 +1018,12 @@ public:
   IDataLinkClient() {m_link = NULL;}
   ~IDataLinkClient();
 protected:
-  virtual void		AddDataLink(taDataLink* dl) {m_link = dl;} // #IGNORE overridden in Multi
-  virtual void		RemoveDataLink(taDataLink* dl) {m_link = NULL;} // #IGNORE overridden in Multi
+  virtual bool		AddDataLink(taDataLink* dl) 
+    {bool r = (!m_link); m_link = dl; return r;} 
+    // #IGNORE true if added, false if already set (usually a bug); overridden in Multi
+  virtual bool		RemoveDataLink(taDataLink* dl) 
+    {bool r = (m_link); m_link = NULL; return r;} 
+    // #IGNORE true if removed, false if not (likely not a bug, just redunancy) overridden in Multi
   
   taDataLink*		m_link; // NOTE: will always be a taiDataLink or subclass
 };
@@ -1026,8 +1036,8 @@ public:
   ~IMultiDataLinkClient();
 protected:
   taPtrList<taDataLink> dls; 
-  override void		AddDataLink(taDataLink* dl);
-  override void		RemoveDataLink(taDataLink* dl);
+  override bool		AddDataLink(taDataLink* dl);
+  override bool		RemoveDataLink(taDataLink* dl);
 };
 
 
@@ -1090,15 +1100,14 @@ public:
   inline int		dbuCnt() const {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
   virtual bool		isEnabled() const {return true;} // status of item
   
-  void			AddDataClient(IDataLinkClient* dlc);
-  bool			RemoveDataClient(IDataLinkClient* dlc); // WARNING: link is undefined after this call; CAUSES US TO DESTROY IF CLIENTS=0
+  bool			AddDataClient(IDataLinkClient* dlc); // true if added, and it had not previously been added (false is probably a bug)
+  bool			RemoveDataClient(IDataLinkClient* dlc); // returns true if removed; false is likely not a bug, just redundancy
 
-//  void			DestroyPanels(); // note: don't make virtual, called from destructor
   virtual TypeDef*	GetDataTypeDef() const {return NULL;} // TypeDef of the data
   virtual MemberDef*	GetDataMemberDef() const {return NULL;} // if a member in a class, then the MemberDef
   virtual String	GetName() const {return _nilString;}
   virtual String	GetDisplayName() const; // default return Member name if has MemberDef, else GetName
-  void			DataDestroying(); //CAUSES US TO DESTROY
+  void			DataDestroying(); // called by host when destroying, but it is still responsible for deleting us
   virtual void		DataDataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 //na  virtual void		FillContextMenu(BrListViewItem* sender, taiMenu* menu);
 //na  virtual void		FillContextMenu_EditItems(BrListViewItem* sender, taiMenu* menu, int allowed) {}
@@ -1117,12 +1126,12 @@ public:
 
   virtual TypeDef* 	GetTypeDef() const;
   taDataLink(void* data_, taDataLink* &link_ref_);
+  virtual ~taDataLink(); 
 protected:
   void*			m_data; // subclasses usually replace with strongly typed version
   taDataLink**		m_link_ref; // #IGNORE address of our reference in the data item
   IDataLinkClient_PtrList clients; // clients of this item (ex. either primary, or where it is aliased or linked)
   int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
-  virtual ~taDataLink(); // we only ever implicitly destroy, when 0 clients
 private:
   void 			DoNotify(int dcr, void* op1_, void* op2_);
     // don't even DREAM of making this non-private!!!!

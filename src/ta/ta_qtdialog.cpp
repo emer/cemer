@@ -1363,22 +1363,6 @@ void taiDataHost::UnSetRevert(){
 // 	taiEditDataHost		//
 //////////////////////////////////
 
-taiEditDataHost_List taiEditDataHost::base_updates;
-
-void taiEditDataHost::BaseDestroyingAll(taBase* obj) {
-  for (int i = 0; i < base_updates.size; ++i) {
-    taiEditDataHost* edh = base_updates.FastEl(i);
-    edh->BaseDestroying(obj);
-  }
-}
-
-void taiEditDataHost::BaseDataChangedAll(taBase* obj, int dcr, void* op1, void* op2) {
-  for (int i = 0; i < base_updates.size; ++i) {
-    taiEditDataHost* edh = base_updates.FastEl(i);
-    edh->BaseDataChanged(obj, dcr, op1, op2);
-  }
-}
-
 
 taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   	bool modal_, QObject* parent)
@@ -1396,7 +1380,6 @@ taiEditDataHost::~taiEditDataHost() {
   meth_el.Reset();
   taiMisc::active_edits.RemoveEl(this);
   taiMisc::css_active_edits.RemoveEl(this);
-  taiEditDataHost::base_updates.RemoveEl(this);
   // remove data client -- harmless if already done in Cancel
   if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
     ((taBase*)cur_base)->RemoveDataClient(this);

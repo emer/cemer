@@ -1903,16 +1903,12 @@ IMultiDataLinkClient::~IMultiDataLinkClient() {
   }
 }
 
-void IMultiDataLinkClient::AddDataLink(taDataLink* dl) {
-  if (!dls.AddUnique(dl)) {
-    taMisc::Warning("IMultiDataLinkClient:AddDataLink: attempt to add duplicate DataLink");
-  }
+bool IMultiDataLinkClient::AddDataLink(taDataLink* dl) {
+  return dls.AddUnique(dl);
 } 
 
-void IMultiDataLinkClient::RemoveDataLink(taDataLink* dl) {
-  if (!dls.RemoveEl(dl)) {
-    taMisc::Info("IMultiDataLinkClient:RemoveDataLink: DataLink not found (not critical)");
-  }
+bool IMultiDataLinkClient::RemoveDataLink(taDataLink* dl) {
+  return dls.RemoveEl(dl);
 }
 
 //////////////////////////
@@ -1934,9 +1930,9 @@ taDataLink::~taDataLink() {
   *m_link_ref = NULL; //note: m_link_ref is always valid, because the constructor passed it by reference
 }
 
-void taDataLink::AddDataClient(IDataLinkClient* dlc) {
-  if (!clients.AddUnique(dlc)) return; // already added
-  dlc->AddDataLink(this);
+bool taDataLink::AddDataClient(IDataLinkClient* dlc) {
+  if (!clients.AddUnique(dlc)) return false; // already added
+  return dlc->AddDataLink(this);
 }
 
 void taDataLink::DataDestroying() { //note: linklist will automatically remove us
@@ -1948,9 +1944,6 @@ void taDataLink::DataDestroying() { //note: linklist will automatically remove u
     //NOTE: client can still refer to us, but must do so through the ref we pass it
     dlc->DataLinkDestroying(this);
   }
-
-  delete this;
-  //NOTE: do NOT put any code after this point -- we are deleted!
 }
 
 void taDataLink::DoNotify(int dcr, void* op1_, void* op2_) {
@@ -2090,15 +2083,7 @@ bool taDataLink::RemoveDataClient(IDataLinkClient* dlc) {
   // that are intended to be overloaded
   // exception: IMultiDataLinkClient calls from its own destructor, so its virtuals are ok
   dlc->RemoveDataLink(this);
-  // NOTE: in case where client calls us back during call to their DataLinkDestroying,
-  // we will not find the client on our list, and so must return and not attempt to
-  // destroy ourselves, otherwise we may destroy twice!
-  if (!clients.RemoveEl(dlc)) return false;
-  if (clients.size > 0) return true;
-
-  delete this;
-  //NOTE: do NOT put any code after this point -- we are deleted!
-  return true;
+  return clients.RemoveEl(dlc);
 }
 
 void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {

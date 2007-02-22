@@ -431,10 +431,6 @@ class TA_API taiEditDataHost : public taiDataHost {
 INHERITED(taiDataHost)
 friend class EditDataPanel;
 public:
-  static taiEditDataHost_List base_updates; // list for guys who need raw taBase updates
-  static void		BaseDestroyingAll(taBase* obj);
-  static void		BaseDataChangedAll(taBase* obj, int dcr, void* op1, void* op2);
-  
   taMisc::ShowMembs	show;		// current setting for what to show
   taiMenu_List		ta_menus;	// menu representations (from methods, non-menubuttons only)
   taiMenu_List		ta_menu_buttons;	// menu representations (from methods -- menubuttons only)
@@ -515,10 +511,6 @@ protected:
     // uses mth's label, if no label passed
   void			DoAddMethButton(QAbstractButton* but);
   void			DoRaise_Panel(); // what Raise() calls for panels
-  virtual void		BaseDestroying(taBase* obj) {}
-  // #IGNORE this base object is about to be closed (removed), if i edit it, then I need to save and reopen (returns true if edited)
-  virtual void		BaseDataChanged(taBase* obj,
-    int dcr, void* op1_, void* op2_) {}
 
 protected slots:
   virtual void	DoSelectForEdit(int param); // param will be index of the SelectEdit; sel_data_index will hold the index of the data item
