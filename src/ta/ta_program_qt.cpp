@@ -1072,12 +1072,11 @@ void iProgramToolBar::Constr_post() {
 //	iProgramCtrl		//
 //////////////////////////////////
 
-iProgramCtrlDataHost::iProgramCtrlDataHost(void* base, TypeDef* td, bool read_only_,
+iProgramCtrlDataHost::iProgramCtrlDataHost(Program* base, bool read_only_,
 					   bool modal_, QObject* parent)
-: taiEditDataHost(base, td, read_only_, modal_, parent)
+: taiEditDataHost(base, base->GetTypeDef(), read_only_, modal_, parent)
 {
   //  use_show = false;
-  prog = (Program*)base;
   refs.setOwner(this);
 }
 
@@ -1088,8 +1087,15 @@ bool iProgramCtrlDataHost::ShowMember(MemberDef* md) const {
   return false;
 }
 
+void iProgramCtrlDataHost::Cancel_impl() {
+  refs.setOwner(NULL);
+  refs.Reset(); // release all the guys we are linked to
+  inherited::Cancel_impl();
+}
+
 void iProgramCtrlDataHost::Constr_Body() {
   inherited::Constr_Body();
+  Program* prog = this->prog();
   refs.Reset();
   String nm;
   String help_text;
@@ -1134,6 +1140,7 @@ void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList*, taBase* base) {
 void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList*, taBase* base,
     int dcr, void* op1, void* op2) 
 {
+  Program* prog = this->prog(); //cache
   // ignore list delete msgs, since the obj itself should notify
   if (prog && ((base == &(prog->args)) ||(base == &(prog->vars)))) {
     if ((dcr <= DCR_LIST_INIT) ||  (dcr == DCR_LIST_ITEM_REMOVE) ||
@@ -1155,6 +1162,8 @@ void iProgramCtrlDataHost::GetValue_Membs() {
 void iProgramCtrlDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,
   void* base) const
 {
+  Program* prog = this->prog(); //cache
+  if (!prog) return;
   int cnt = 0;
   bool first_diff = true;
   int sz = prog->args.size + prog->vars.size;
@@ -1202,6 +1211,8 @@ void iProgramCtrlDataHost::UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* va
 void iProgramCtrlDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
   void* base)
 {
+  Program* prog = this->prog(); //cache
+  if (!prog) return;
   int cnt = 0;
   int sz = prog->args.size + prog->vars.size;
   for (int i = 0; i < sz; ++i) {
@@ -1245,7 +1256,7 @@ iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
   Program* prog_ = prog();
   pc = NULL;
   if (prog_) {
-    pc = new iProgramCtrlDataHost(prog_, &TA_Program);
+    pc = new iProgramCtrlDataHost(prog_);
     const iColor* bgcol = NULL;
     if (taMisc::color_hints & taMisc::CH_EDITS) {
       bgcol = prog_->GetEditColorInherit();

@@ -305,9 +305,10 @@ class TA_API iProgramCtrlDataHost : public taiEditDataHost, public virtual IRefL
 INHERITED(taiEditDataHost)
   Q_OBJECT
 public:
-  Program*	prog;
+  inline Program*	prog() const {return (Program*)cur_base;}
 
-  iProgramCtrlDataHost(void* base, TypeDef* td, bool read_only_ = false,
+  
+  iProgramCtrlDataHost(Program* base, bool read_only_ = false,
 		       bool modal_ = false, QObject* parent = 0);
   iProgramCtrlDataHost()		{ };
   ~iProgramCtrlDataHost();
@@ -318,6 +319,7 @@ protected:
   taBase_RefList	refs; // we put our guys on here, to get notifies when they change
   override void	GetValue_Membs();
   override void	Constr_Body();
+  override void 	Cancel_impl(); 
 
   void	UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var); 
 

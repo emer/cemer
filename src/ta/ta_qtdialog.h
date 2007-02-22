@@ -394,10 +394,11 @@ protected:
   virtual void	Constr_Buttons(); // note: Constr_impl creates the box/layout for the buttons
   virtual void	Constr_Final();
   virtual void	FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id); // last_id enables access menu items
+  virtual void	Cancel_impl();
 
 public slots:
   virtual void 	Ok(); // for dialogs
-  virtual void 	Cancel(); // mostly for dialogs, but also used internally to close a Panel (ex. when obj deleted)
+  void 		Cancel(); // mostly for dialogs, but also used internally to close a Panel (ex. when obj deleted)
 
 protected:
   bool		reshow_req; // set on async req, cleared when serviced
@@ -471,12 +472,12 @@ public:
   override void		Raise() {if (isPanel()) DoRaise_Panel(); else taiDataHost::Raise();}
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
     // check for unsaved changes and prompt to save/discard; called by several places prior to closing tab window, closing dialog, shutting down app, etc.
+  override void 	Cancel_impl();
 public: // ITypedObject i/f (common to IDLC and IDH)
   override TypeDef* 	GetTypeDef() const {return &TA_taiEditDataHost;}
 public slots:
   virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
   virtual void		showMenu_aboutToShow(); 
-  void Cancel(); // override
 
 // IDataHost i/f
   override iMainWindowViewer* viewerWindow() const;

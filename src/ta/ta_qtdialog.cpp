@@ -765,8 +765,12 @@ void taiDataHost::BodyCleared() { // called when last widget cleared from body
 }
 
 void taiDataHost::Cancel() { //note: taiEditDataHost takes care of cancelling panels
-  if (!isConstructed()) return;
   state = CANCELED;
+  Cancel_impl();
+}
+
+void taiDataHost::Cancel_impl() { //note: taiEditDataHost takes care of cancelling panels
+  if (!isConstructed()) return;
   if (dialog) {
     dialog->dismiss(false);
   }
@@ -1028,14 +1032,18 @@ void taiDataHost::customEvent(QEvent* ev_) {
   case CET_RESHOW: {
     ReShowEvent* ev = static_cast<ReShowEvent*>(ev_);
     if (reshow_req) {
-      ReShow(ev->forced);
-      GetImage();
+      if (state == ACTIVE) {
+        ReShow(ev->forced);
+        GetImage();
+      }
       reshow_req = false;
     }
   } break;
   case CET_GET_IMAGE: {
     if (get_image_req) {
-      GetImage();
+      if (state == ACTIVE) {
+        GetImage();
+      }
       get_image_req = false;
     }
   } break;
@@ -1047,6 +1055,7 @@ void taiDataHost::customEvent(QEvent* ev_) {
 
 void taiDataHost::ReShow_Async(bool forced) {
   if (reshow_req) return; // already waiting
+  if (state != ACTIVE) return;
   ReShowEvent* ev = new ReShowEvent(forced);
   reshow_req = true;
   QCoreApplication::postEvent(this, ev);
@@ -1055,6 +1064,7 @@ void taiDataHost::ReShow_Async(bool forced) {
 void taiDataHost::GetImage_Async() {
   // reshow does a getimage, so ignore if a reshow pending
   if (get_image_req || reshow_req) return; // already waiting
+  if (state != ACTIVE) return;
   QEvent* ev = new QEvent((QEvent::Type)CET_GET_IMAGE);
   get_image_req = true;
   QCoreApplication::postEvent(this, ev);
@@ -1064,7 +1074,7 @@ void taiDataHost::GetImage_Async() {
 void taiDataHost::DataLinkDestroying(taDataLink* dl) {
 // TENT, TODO: confirm this is right...
   cur_base = NULL;
-  if (!isConstructed()) return;
+//NO!  if (!isConstructed()) return;
   Cancel();
 }
  
@@ -1407,15 +1417,19 @@ void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const char* label) {
   }
 }
 
-void taiEditDataHost::Cancel() {
-  state = CANCELED;
+void taiEditDataHost::Cancel_impl() {
+//NOTE: must be ok to call this if was still deferred
   if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
     ((taBase*)cur_base)->RemoveDataClient(this);
   }
   if (isPanel()) {
     if (panel != NULL)
       panel->ClosePanel();
-  } else inherited::Cancel();
+  } else if (isControl()) {
+    //TODO: need to verify what to do!
+    ClearBody();
+  } 
+  inherited::Cancel_impl();
 }
 
 void taiEditDataHost::ClearBody_impl() {
