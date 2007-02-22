@@ -588,7 +588,7 @@ public:
   virtual bool 		GetImageByData(const Variant& usr); // for radio menus, set to item with this data; recursive
   void 			GetImageByIndex(int item);
   taiAction*		FindActionByData(const Variant& usr); // find 1st action with this data, NULL if not found
-  taiMenu*		FindSubMenu(const char* nm); // find specified submenu, or NULL if not found
+  taiMenu*		FindSubMenu(const String& nm); // find specified submenu, or NULL if not found
 
   void			DeleteItem(uint index); // deletes the indicated item -- deletes the gui representation as well
   virtual void		NewRadioGroup();	// start a new radio group (must also preceed first group)

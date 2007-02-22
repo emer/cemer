@@ -30,9 +30,8 @@ iMenuButton::iMenuButton(const QString& text_, QWidget* parent)
 
 
 void iMenuButton::init() {
-  setLayoutDirection(Qt:RightToLeft); // puts arrow icon on right
   setPopupMode(InstantPopup); //note: Menu mode looks/behaves awful
   setArrowType(Qt::DownArrow);
-  setToolButtonStyle(Qt:ToolButtonTextBesideIcon);
+  setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 }
 

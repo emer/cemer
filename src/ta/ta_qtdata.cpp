@@ -31,6 +31,7 @@
 #include "css_ta.h"
 #include "ta_TA_type.h"
 
+#include "ibutton.h" // iMenuButton
 #include "icolor.h"
 #include "icheckbox.h"
 #include "icombobox.h"
@@ -1690,7 +1691,7 @@ taiAction* taiActions::FindActionByData(const Variant& usr) {
   return NULL;
 }
 
-taiMenu* taiActions::FindSubMenu(const char* nm) {
+taiMenu* taiActions::FindSubMenu(const String& nm) {
   for (int i = 0; i < items.size; ++i) {
     taiAction* itm = items.FastEl(i);
     if (!itm->isSubMenu()) continue;
@@ -1982,11 +1983,7 @@ taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, ta
 
 void taiButtonMenu::init()
 {
-  QToolButton* button = new QToolButton(gui_parent);
-  // note: for a normal button menu, similar to QPushButton, need to do this...
-  // note that "InstantPopu" is not great, because the button doesn't indicate
-  //   visually that it is a menu
-  button->setPopupMode(QToolButton::MenuButtonPopup);
+  iMenuButton* button = new iMenuButton(gui_parent);
   //note: for taiEditButton, we don't add the menu to ourself if it is in EditOnly mode
   //  because that seems to interfere with normal pushbutton ability
   if (!HasFlag(flgEditOnly)) {
@@ -2930,16 +2927,16 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
     m_but->setFixedHeight(taiM->button_height(defSize()));
     lay->addWidget(m_but, 1);
     if (!(flags_ & flgReadOnly)) {
-      btnEdit = new QToolButton(act_par);
+      btnEdit = new iMenuButton(act_par);
       btnEdit->setText("...");
       btnEdit->setToolTip("edit this token");
       QMenu* mnuEdit = new QMenu(act_par); // note: ownership not transferred when set
-      btnEdit->setPopupMode(QToolButton::MenuButtonPopup);
       mnuEdit->addAction("Edit in another panel", this, SLOT(EditPanel()) );
       mnuEdit->addAction("Edit in a dialog", this, SLOT(EditDialog()) );
       btnEdit->setMenu(mnuEdit);
       btnEdit->setFixedHeight(taiM->text_height(defSize()));
       lay->addWidget(btnEdit);
+      lay->addStretch();
       connect(btnEdit, SIGNAL(clicked()),
         this, SLOT(EditPanel()) );
     }

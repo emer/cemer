@@ -29,7 +29,7 @@ public:
   explicit iMenuButton(QWidget* parent = 0);
   iMenuButton(const QString& text, QWidget* parent);
 
-protected:
+private:
   void		init();
 };
 

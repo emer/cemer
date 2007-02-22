@@ -1072,12 +1072,23 @@ void iProgramToolBar::Constr_post() {
 //	iProgramCtrl		//
 //////////////////////////////////
 
-iProgramCtrlDataHost::iProgramCtrlDataHost(Program* base, bool read_only_,
+iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,
 					   bool modal_, QObject* parent)
-: taiEditDataHost(base, base->GetTypeDef(), read_only_, modal_, parent)
+: taiEditDataHost(prog, prog->GetTypeDef(), read_only_, modal_, parent)
 {
   //  use_show = false;
-  refs.setOwner(this);
+  refs.setOwner(this); // these update frequently
+  refs_struct.setOwner(this); // these are same for prog lifetime
+  if (prog) { // better have a value!
+    // note: we deftly solve the problem of reacting to new vars/args
+    // by simply putting those lists on our ref list, which notifies us
+    refs_struct.Add(&(prog->args));
+    refs_struct.Add(&(prog->vars));
+  }
+  Program_Group* pg = GET_OWNER(prog, Program_Group);
+  if (pg) { // better exist!
+    refs_struct.Add(pg);
+  }
 }
 
 iProgramCtrlDataHost::~iProgramCtrlDataHost() {
@@ -1090,6 +1101,8 @@ bool iProgramCtrlDataHost::ShowMember(MemberDef* md) const {
 void iProgramCtrlDataHost::Cancel_impl() {
   refs.setOwner(NULL);
   refs.Reset(); // release all the guys we are linked to
+  refs_struct.setOwner(NULL);
+  refs_struct.Reset(); // release all the guys we are linked to
   inherited::Cancel_impl();
 }
 
@@ -1138,31 +1151,37 @@ void iProgramCtrlDataHost::Constr_Body() {
       nm = "step_prog";
       help_text = md->desc;
       AddName(row, nm, help_text, mb_dat); 
-      refs.Add(pg);
     }
   }
 
-  // note: we deftly solve the problem of reacting to new vars/args
-  // by simply putting those lists on our ref list, which notifies us
-  refs.Add(&(prog->args));
-  refs.Add(&(prog->vars));
 }
 
-void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList*, taBase* base) {
+void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList* ref, taBase* base) {
   // we need to rebuild...
-  ReShow_Async();
+  if (ref == &refs)
+    ReShow_Async();
+  // otherwise, pgp or prog are destroying, so don't bother
 }
 
-void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList*, taBase* base,
+void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
     int dcr, void* op1, void* op2) 
 {
   Program* prog = this->prog(); //cache
+  if (!prog) return;
   // ignore list delete msgs, since the obj itself should notify
-  if (prog && ((base == &(prog->args)) ||(base == &(prog->vars)))) {
-    if ((dcr <= DCR_LIST_INIT) ||  (dcr == DCR_LIST_ITEM_REMOVE) ||
-        (dcr > DCR_LIST_SORTED))
-      return;
-  }
+  if (ref == &refs_struct) {
+    if ((base == &(prog->args)) ||(base == &(prog->vars))) {
+      if ((dcr <= DCR_LIST_INIT) ||  (dcr == DCR_LIST_ITEM_REMOVE) ||
+        (dcr > DCR_LIST_SORTED)
+      ) return;
+    }
+    Program_Group* pg = GET_OWNER(prog, Program_Group);
+    // for step, only interested in group-as-object item update
+    if (base == pg) {
+      if ((dcr > DCR_ITEM_UPDATED_ND))
+        return;
+    }
+  } 
   
   //note: don't need to check for is_loading because we defer until after
   // we need to do a fullblown reshow, to handle things like name changes of vars, etc.

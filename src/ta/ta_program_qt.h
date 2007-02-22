@@ -313,10 +313,12 @@ public:
   iProgramCtrlDataHost()		{ };
   ~iProgramCtrlDataHost();
 
-  override bool ShowMember(MemberDef* md) const;
+  override bool ShowMember(MemberDef* md) const; //
 
-protected:
-  taBase_RefList	refs; // we put our guys on here, to get notifies when they change
+protected: //
+  // we maintain several lists to simply mgt and notify handling
+  taBase_RefList	refs; // the data members from the Program
+  taBase_RefList	refs_struct; // structural guys: arg and var lists themselves, gp
   override void	GetValue_Membs();
   override void	Constr_Body();
   override void 	Cancel_impl(); 

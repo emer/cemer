@@ -27,6 +27,7 @@
 #include "ta_seledit.h"
 #include "ta_TA_type.h"
 
+#include "ibutton.h"
 #include "icolor.h"
 #include "ieditgrid.h"
 #include "iflowlayout.h"
@@ -770,10 +771,19 @@ void taiDataHost::Cancel() { //note: taiEditDataHost takes care of cancelling pa
 }
 
 void taiDataHost::Cancel_impl() { //note: taiEditDataHost takes care of cancelling panels
-  if (!isConstructed()) return;
   if (dialog) {
     dialog->dismiss(false);
   }
+  if (prompt) {
+    prompt->setText("");
+  }
+  // delete any methods
+  if (frmMethButtons) {
+    QWidget* t = frmMethButtons; // avoid any possible callback issues
+    frmMethButtons = NULL;
+    delete t;
+  }
+
   warn_clobber = false; // just in case
 }
 
@@ -1419,6 +1429,12 @@ void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const char* label) {
 
 void taiEditDataHost::Cancel_impl() {
 //NOTE: must be ok to call this if was still deferred
+  // delete all methods and menu
+  if (menu) {
+    delete menu;
+    menu = NULL;
+  }
+  show_menu = NULL; // would have been deleted in menu
   if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
     ((taBase*)cur_base)->RemoveDataClient(this);
   }

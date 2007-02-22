@@ -177,6 +177,7 @@ class	iFont;			//
 class	HiLightButton;		//
 class	iLabel;			// #IGNORE  -- label w/ highlighting
 class	iLineEdit;		// #IGNORE 
+class	iMenuButton;		// #IGNORE -- some AbstractButton derivitive used for menus
 class	iMethodButtonFrame;
 class	iDataViewer;		// #IGNORE  -- in ta_qtviewer.h
 #define iPixmap		QPixmap
