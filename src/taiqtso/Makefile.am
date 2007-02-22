@@ -25,6 +25,7 @@ HEADS =\
 	idimedit.h \
 	interceptor.h \
 	qconsole.h \
+	ibutton.h \
 	test_iflowbox.h \
 	test_iflowlayout.h \
 	test_simplewidgets.h \
@@ -61,6 +62,8 @@ SRCS =\
 	imisc_so.cpp \
 	irenderarea.cpp \
 	irenderarea.moc.cpp \
+	ibutton.cpp \
+	ibutton.moc.cpp \
 	taiqtso_ti.cpp
 
 include $(top_srcdir)/Moc.am
