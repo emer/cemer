@@ -136,6 +136,11 @@ Program .projects[0].programs.gp[0][2] {
   el_typ=ProgEl;
   el_def=0;
  };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=NetCounterInit;
@@ -212,6 +217,7 @@ Program .projects[0].programs.gp[0][2] {
      desc=;
      flags=PEF_NONE;
      target=.projects[0].programs.gp[0][3]$8$;
+     targ_ld_init="*LeabraTrial*";
      call_init=0;
      prog_args {
       name=;
@@ -336,6 +342,7 @@ Program .projects[0].programs.gp[0][2] {
    desc=;
    flags=PEF_NONE;
    target=.projects[0].programs.gp[0][8]$12$;
+   targ_ld_init="*LeabraEpochMonitor*";
    call_init=0;
    prog_args {
     name=;

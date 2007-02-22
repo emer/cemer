@@ -1367,6 +1367,8 @@ public:
   // #MENU #USE_RVAL #CAT_Modify #TYPE_ON_el_base replace all items of old type with new type (returns number changed)
 
   virtual taBase* FindType_(TypeDef* item_tp, int& idx) const; 	// #IGNORE
+  virtual taBase* FindNameContains_(const String& item_nm, int& idx) const;
+  // #IGNORE
 
   void	SetBaseType(TypeDef* it); // #CAT_Modify set base (and default) type to given td
 
@@ -1433,8 +1435,12 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(FindEl((TAPtr)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
 
-  virtual T*	FindName(const String& item_nm, int& idx=no_idx) const { return (T*)FindName_(item_nm, idx); }
+  virtual T*	FindName(const String& item_nm, int& idx=no_idx) const
+  { return (T*)FindName_(item_nm, idx); }
   // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element with given name (item_nm)
+  virtual T*	FindNameContains(const String& item_nm, int& idx=no_idx) const
+  { return (T*)FindNameContains_(item_nm, idx); }
+  // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element whose name contains given name sub-string
   virtual T* 	FindType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindType_(item_tp, idx); }
   // #CAT_Access find given type element (NULL = not here), sets idx
 

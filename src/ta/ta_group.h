@@ -104,9 +104,9 @@ public:
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
   override void Dump_Save_GetPluginDeps(); // note: in ta_dump.cpp
-  override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
-  override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
-  override int	Dump_Save_PathR_impl(ostream& strm, TAPtr par=NULL, int indent=0);
+  override int	Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);
+  override int	Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
+  override int	Dump_Save_PathR_impl(ostream& strm, taBase* par=NULL, int indent=0);
 
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
@@ -120,7 +120,7 @@ public:
 
   TAGPtr	Gp_(int i) const	{ return gp.SafeEl(i); } // #IGNORE
   TAGPtr 	FastGp_(int i) const	{ return gp.FastEl(i); } // #IGNORE
-  virtual TAPtr	Leaf_(int idx) const;	// #IGNORE DFS through all subroups for leaf i
+  virtual taBase* Leaf_(int idx) const;	// #IGNORE DFS through all subroups for leaf i
   TAGPtr 	FastLeafGp_(int gp_idx) const // #IGNORE the flat leaf group, note: 0 is "this"
     { if (gp_idx == 0) return const_cast<TAGPtr>(this); if (!leaf_gp) InitLeafGp();
       return (TAGPtr)leaf_gp->el[gp_idx];}
@@ -136,28 +136,29 @@ public:
   int	 	LeafGpCount()	const	// #IGNORE count of leaf groups **including self**; optimized for no subgroups
     { if (gp.size == 0) return 1; if (leaf_gp == NULL) InitLeafGp(); return leaf_gp->size; }
 
-  TAPtr	 	FirstEl_(taLeafItr& lf) const	// #IGNORE first leaf iter init
-  { TAPtr rval=NULL; lf.i = 0; lf.cgp = FirstGp_(lf.g);
-    if(lf.cgp != NULL) rval=(TAPtr)lf.cgp->el[0]; return rval; }
-  TAPtr	 	NextEl_(taLeafItr& lf)	const	// #IGNORE next leaf
+  taBase*	 	FirstEl_(taLeafItr& lf) const	// #IGNORE first leaf iter init
+  { taBase* rval=NULL; lf.i = 0; lf.cgp = FirstGp_(lf.g);
+    if(lf.cgp != NULL) rval=(taBase*)lf.cgp->el[0]; return rval; }
+  taBase*	 	NextEl_(taLeafItr& lf)	const	// #IGNORE next leaf
   { if (++lf.i >= lf.cgp->size) {
     lf.i = 0; if (!(lf.cgp = leaf_gp->SafeEl(++lf.g))) return NULL; }
-    return (TAPtr)lf.cgp->el[lf.i];}
+    return (taBase*)lf.cgp->el[lf.i];}
 
-  TAPtr	 	LastEl_(taLeafItr& lf) const	// #IGNORE last leaf iter init
+  taBase*	 	LastEl_(taLeafItr& lf) const	// #IGNORE last leaf iter init
   { if (!(lf.cgp = LastGp_(lf.g))) return NULL;
-    lf.i = lf.cgp->size - 1; return (TAPtr)lf.cgp->el[lf.i];  }
-  TAPtr	 	PrevEl_(taLeafItr& lf)	const	// #IGNORE prev leaf
+    lf.i = lf.cgp->size - 1; return (taBase*)lf.cgp->el[lf.i];  }
+  taBase*	 	PrevEl_(taLeafItr& lf)	const	// #IGNORE prev leaf
   { if (--lf.i < 0) {
       if (!(lf.cgp = leaf_gp->SafeEl(--lf.g))) return NULL; 
       lf.i = lf.cgp->size - 1;}
-    return (TAPtr)lf.cgp->el[lf.i];}
+    return (taBase*)lf.cgp->el[lf.i];}
 
-  virtual TAGPtr NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
-  virtual TAPtr	 NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
+  virtual TAGPtr  NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
+  virtual taBase* NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
 
-  virtual TAPtr FindLeafName_(const char* it, int& idx=no_idx) const; 	// #IGNORE
-  virtual TAPtr	FindLeafType_(TypeDef* it, int& idx=no_idx) const;	// #IGNORE
+  virtual taBase* FindLeafName_(const char* it, int& idx=no_idx) const; 	// #IGNORE
+  virtual taBase* FindLeafNameContains_(const String& it, int& idx=no_idx) const;	// #IGNORE
+  virtual taBase* FindLeafType_(TypeDef* it, int& idx=no_idx) const;	// #IGNORE
 
   virtual TAGPtr FindMakeGpName(const String& gp_nm, TypeDef* typ=NULL);
   // #IGNORE find subgroup of given name; if it doesn't exist, then make it (using type if specified, else default type for subgroup)
@@ -171,9 +172,9 @@ public:
   virtual void	InitLeafGp_impl(TALOG* lg) const; // #IGNORE impl of init leaf gp
   virtual void	AddOnly_(void* it); 		// #IGNORE update leaf count
 //  virtual bool	Remove(const char* item_nm)	{ return taList_impl::Remove(item_nm); }
-//  virtual bool	Remove(TAPtr item)		{ return taList_impl::Remove(item); }
+//  virtual bool	Remove(taBase* item)		{ return taList_impl::Remove(item); }
 
-  virtual bool 	RemoveLeafEl(TAPtr item);
+  virtual bool 	RemoveLeafEl(taBase* item);
   // #CAT_Modify remove given leaf element
   virtual bool	RemoveLeafName(const char* item_nm);
   // #CAT_Modify remove given named leaf element
@@ -196,7 +197,7 @@ public:
 
   int	ReplaceType(TypeDef* old_type, TypeDef* new_type);
 
-  virtual int	FindLeafEl(TAPtr item) const;  // find given leaf element (-1 = not here)
+  virtual int	FindLeafEl(taBase* item) const;  // find given leaf element (-1 = not here)
   // #CAT_Access find given leaf element -1 = not here.
 
   void	Duplicate(const taGroup_impl& cp);
@@ -244,7 +245,7 @@ public:
   // #CAT_Access returns the element specified as the default for this group
 
   // note that the following is just to get this on the menu (it doesn't actually edit)
-  T*		Edit_El(T* item) const		{ return SafeEl(FindEl((TAPtr)item)); }
+  T*		Edit_El(T* item) const		{ return SafeEl(FindEl((taBase*)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given group item
 
   taGroup<T>*	SafeGp(int idx) const		{ return (taGroup<T>*)gp.SafeEl(idx); }
@@ -282,10 +283,14 @@ public:
   virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
   // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Edit #TYPE_this Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
-  virtual T*	FindName(const char* item_nm, int& idx=no_idx)  const { return (T*)FindName_(item_nm, idx); }
-  // #CAT_Access Find element with given name (nm) (NULL = not here), sets idx
+  virtual T*	FindName(const char* item_nm, int& idx=no_idx)  const
+  { return (T*)FindName_(item_nm, idx); }
+  // #CAT_Access Find element with given name (nm) (NULL = not here), sets idx to leaf idx or -1
+  virtual T*	FindNameContains(const String& item_nm, int& idx=no_idx) const
+  { return (T*)FindNameContains_(item_nm, idx); }
+  // #CAT_Access Find (first) element whose name contains given string (NULL = not here), sets idx to leaf idx or -1 
   virtual T* 	FindType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindType_(item_tp, idx); }
-  // #CAT_Access find given type element (NULL = not here), sets idx
+  // #CAT_Access find given type element (NULL = not here), sets idx to leaf idx or -1
 
   virtual T*	Pop()				{ return (T*)Pop_(); }
   // #CAT_Modify pop the last element off the stack
@@ -302,22 +307,26 @@ public:
   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
   // #CAT_Modify move item so that it appears just after the target item trg in the list
 
-  virtual T* 	FindLeafName(const char* item_nm, int& idx=no_idx) const { return (T*)FindLeafName_(item_nm, idx); }
-  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find element with given name (el_nm)
+  virtual T* 	FindLeafName(const char* item_nm, int& idx=no_idx) const
+  { return (T*)FindLeafName_(item_nm, idx); }
+  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find element with given name (item_nm), sets idx to leaf idx or -1
+  virtual T* 	FindLeafNameContains(const char* item_nm, int& idx=no_idx) const
+  { return (T*)FindLeafNameContains_(item_nm, idx); }
+  // #MENU #MENU_ON_Edit #USE_RVAL #ARGC_1 #LABEL_Find #CAT_Access Find first element whose name contains given name (item_nm), sets idx to leaf idx or -1
   virtual T* 	FindLeafType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindLeafType_(item_tp, idx);}
-  // #CAT_Access find given type leaf element (NULL = not here), sets idx
+  // #CAT_Access find given type leaf element (NULL = not here), sets idx to leaf_idx or -1
 
   void Initialize() 			{ SetBaseType(T::StatTypeDef(1));}
 
   taGroup() 				{ Register(); Initialize(); }
   taGroup(const taGroup<T>& cp)		{ Register(); Initialize(); Copy(cp); }
   ~taGroup() 				{ unRegister(); Destroy(); }
-  TAPtr Clone() 			{ return new taGroup<T>(*this); }
-  void  UnSafeCopy(TAPtr cp) 		{ if(cp->InheritsFrom(GetTypeDef())) Copy(*((taGroup<T>*)cp));
+  taBase* Clone() 			{ return new taGroup<T>(*this); }
+  void  UnSafeCopy(taBase* cp) 		{ if(cp->InheritsFrom(GetTypeDef())) Copy(*((taGroup<T>*)cp));
                                           else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
-  void  CastCopyTo(TAPtr cp)            { taGroup<T>& rf = *((taGroup<T>*)cp); rf.Copy(*this); }
-  TAPtr MakeToken()			{ return (TAPtr)(new taGroup<T>); }
-  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new taGroup<T>[no]); }
+  void  CastCopyTo(taBase* cp)            { taGroup<T>& rf = *((taGroup<T>*)cp); rf.Copy(*this); }
+  taBase* MakeToken()			{ return (taBase*)(new taGroup<T>); }
+  taBase* MakeTokenAry(int no)		{ return (taBase*)(new taGroup<T>[no]); }
   void operator=(const taGroup<T>& cp)	{ Copy(cp); }
   TA_TMPLT_TYPEFUNS(taGroup,T);
 protected:

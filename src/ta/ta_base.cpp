@@ -2700,6 +2700,17 @@ taBase* taList_impl::FindType_(TypeDef* it, int& idx) const {
   return NULL;
 }
 
+taBase* taList_impl::FindNameContains_(const String& item_nm, int& idx) const {
+  for(int i=0; i < size; i++) {
+    if(((taBase*)el[i])->GetName().contains(item_nm)) {
+      idx = i;
+      return (taBase*)el[i];
+    }
+  }
+  idx = -1;
+  return NULL;
+}
+
 String taList_impl::GetPath(TAPtr ta, TAPtr par_stop) const {
   if((((TAPtr) this) == par_stop) && (ta == NULL))
     return ".";

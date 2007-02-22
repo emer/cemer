@@ -1140,6 +1140,7 @@ public:
     KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
     KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer!
+    MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
     UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
@@ -1231,6 +1232,8 @@ public:
   // #CAT_Activation implementation of kwta avg-based inhibition computation
   virtual void	Compute_Inhib_AvgMaxPt(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation implementation of avg-max-pt inhibition computation
+  virtual void	Compute_Inhib_Max(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation implementation of max inhibition computation
   virtual void	Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation implementation of GPS_THEN_UNITS kwta on groups
   virtual void 	Compute_Inhib_BreakTie(LeabraInhib* thr);

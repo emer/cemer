@@ -153,6 +153,11 @@ Program .projects[0].programs.gp[0][1] {
   el_typ=ProgEl;
   el_def=0;
  };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=MethodCall;
@@ -202,7 +207,7 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   MethodCall @[3] {
-   desc=;
+   desc="this initializes the weights every time user presses Init -- could turn this off for large nets (init is also in prog_code)";
    flags=PEF_NONE;
    result_var=NULL;
    obj=$4$;
@@ -219,7 +224,7 @@ Program .projects[0].programs.gp[0][1] {
   el_typ=MethodCall;
   el_def=0;
   MethodCall @[0] {
-   desc=;
+   desc="keeps track of how long it takes to run entire training run";
    flags=PEF_NONE;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][1].vars[5]$7$;
@@ -256,7 +261,7 @@ Program .projects[0].programs.gp[0][1] {
    user_script="network->train_mode = train_mode;";
   };
   MethodCall @[3] {
-   desc=;
+   desc="initialize network weights: could also load pre-set weights or something else here";
    flags=PEF_NONE;
    result_var=NULL;
    obj=$4$;
@@ -278,6 +283,7 @@ Program .projects[0].programs.gp[0][1] {
      desc=;
      flags=PEF_NONE;
      target=.projects[0].programs.gp[0][2]$8$;
+     targ_ld_init="*LeabraEpoch*";
      call_init=0;
      prog_args {
       name=;

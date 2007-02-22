@@ -230,11 +230,11 @@ int taGroup_impl::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr
   return nchg;
 }
 
-int taGroup_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
+int taGroup_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
   return inherited::Dump_Save_PathR(strm, par, indent);
 }
 
-int taGroup_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
+int taGroup_impl::Dump_Save_PathR_impl(ostream& strm, taBase* par, int indent) {
   int rval = inherited::Dump_Save_PathR_impl(strm, par, indent); // save first-level
   if(rval == false)
     rval = gp.Dump_Save_PathR_impl(strm, par, indent);
@@ -244,7 +244,7 @@ int taGroup_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
   return rval;
 }
 
-int taGroup_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
+int taGroup_impl::Dump_SaveR(ostream& strm, taBase* par, int indent) {
   int rval = inherited::Dump_SaveR(strm, par, indent);
   gp.Dump_SaveR(strm, par, indent); // subgroups get saved -- relative to parent, not this
   return rval;
@@ -279,7 +279,7 @@ void taGroup_impl::EnforceSameStru(const taGroup_impl& cp) {
   }
 }
 
-int taGroup_impl::FindLeafEl(TAPtr it) const {
+int taGroup_impl::FindLeafEl(taBase* it) const {
   int idx;
   if((idx = FindEl(it)) >= 0)
     return idx;
@@ -296,7 +296,7 @@ int taGroup_impl::FindLeafEl(TAPtr it) const {
   return -1;
 }
 
-TAPtr taGroup_impl::FindLeafName_(const char* nm, int& idx) const {
+taBase* taGroup_impl::FindLeafName_(const char* nm, int& idx) const {
   taBase* rval;
   if((rval = (taBase*)FindName_(nm,idx)))
     return rval;
@@ -316,7 +316,27 @@ TAPtr taGroup_impl::FindLeafName_(const char* nm, int& idx) const {
   return NULL;
 }
 
-TAPtr taGroup_impl::FindLeafType_(TypeDef* it, int& idx) const {
+taBase* taGroup_impl::FindLeafNameContains_(const String& nm, int& idx) const {
+  taBase* rval;
+  if((rval = (taBase*)FindNameContains_(nm,idx)))
+    return rval;
+
+  int new_idx = size;
+  int i;
+  TAGPtr sbg;
+  for(i=0; i<gp.size; i++) {
+    sbg = FastGp_(i);
+    if((rval =(taBase*) sbg->FindNameContains_(nm, idx))) {
+      idx += new_idx;
+      return rval;
+    }
+    new_idx += (int)sbg->leaves;
+  }
+  idx = -1;
+  return NULL;
+}
+
+taBase* taGroup_impl::FindLeafType_(TypeDef* it, int& idx) const {
   taBase* rval;
   if((rval = FindType_(it,idx)))
     return rval;
@@ -368,7 +388,7 @@ MemberDef* taGroup_impl::FindMembeR(const String& nm, void*& ptr) const {
     return rval;
   int max_srch = MIN(taMisc::search_depth, size);
   for(i=0; i<max_srch; i++) {
-    TAPtr first_el = (TAPtr)FastEl_(i);
+    taBase* first_el = (taBase*)FastEl_(i);
     if((first_el != NULL) && // only search owned objects
        ((first_el->GetOwner()==NULL) || (first_el->GetOwner() == (taBase *) this))) {
       return first_el->FindMembeR(nm, ptr);
@@ -389,7 +409,7 @@ MemberDef* taGroup_impl::FindMembeR(TypeDef* it, void*& ptr) const {
     return rval;
   int max_srch = MIN(taMisc::search_depth, size);
   for(i=0; i<max_srch; i++) {
-    TAPtr first_el = (TAPtr)FastEl_(i);
+    taBase* first_el = (taBase*)FastEl_(i);
     if((first_el != NULL) && // only search owned objects
        ((first_el->GetOwner()==NULL) || (first_el->GetOwner() == (taBase *) this))) {
       return first_el->FindMembeR(it, ptr);
@@ -403,7 +423,7 @@ TAGPtr taGroup_impl::GetSuperGp_() {
   if(owner == NULL)
     return NULL;
   if(owner->InheritsFrom(TA_taList)) {
-    TAPtr ownr = owner->GetOwner();
+    taBase* ownr = owner->GetOwner();
     if((ownr != NULL) && (ownr->InheritsFrom(TA_taGroup_impl)))
       return (TAGPtr)ownr;
   }
@@ -423,11 +443,11 @@ String taGroup_impl::GetValStr(const TypeDef* td, void* par,
   return nm;
  }
 
-TAPtr taGroup_impl::Leaf_(int idx) const {
+taBase* taGroup_impl::Leaf_(int idx) const {
   if(idx >= leaves)
     return NULL;
   if(size && (idx < size))
-    return (TAPtr)el[idx];
+    return (taBase*)el[idx];
 
   int nw_idx = (int)idx - size;
   int i;
@@ -507,7 +527,7 @@ err:
   return NULL;
 }
 
-TAPtr taGroup_impl::NewEl_(int no, TypeDef* typ) {
+taBase* taGroup_impl::NewEl_(int no, TypeDef* typ) {
   // obsolete
 //   if(no == 0) {
 // #ifdef TA_GUI
@@ -518,7 +538,7 @@ TAPtr taGroup_impl::NewEl_(int no, TypeDef* typ) {
 //   }
   if(typ == NULL)
     typ = el_typ;
-  TAPtr rval = taList_impl::New(no, typ);
+  taBase* rval = taList_impl::New(no, typ);
   return rval;
 }
 
@@ -552,7 +572,7 @@ ostream& taGroup_impl::OutputR(ostream& strm, int indent) const {
 
   for(i=0; i<size; i++) {
     if(el[i] == NULL)	continue;
-    ((TAPtr)el[i])->OutputR(strm, indent+1);
+    ((taBase*)el[i])->OutputR(strm, indent+1);
   }
 
   gp.OutputR(strm, indent+1);
@@ -597,7 +617,7 @@ bool taGroup_impl::RemoveLeafName(const char* it) {
   return false;
 }
 
-bool taGroup_impl::RemoveLeafEl(TAPtr it) {
+bool taGroup_impl::RemoveLeafEl(taBase* it) {
   int i;
   if((i = FindLeafEl(it)) < 0)
     return false;

@@ -40,7 +40,7 @@ Program .projects[0].programs.gp[0][6] {
 Program .projects[0].programs.gp[0][6] {
  name="ApplyInputs";
  desc="apply the current input data to the network as external input and target values";
- flags=PF_NONE;
+ flags=NO_USER_RUN;
  objs {
   name=;
   el_typ=LayerWriter;
@@ -128,6 +128,11 @@ Program .projects[0].programs.gp[0][6] {
   el_typ=ProgEl;
   el_def=0;
  };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=MethodCall;
@@ -201,7 +206,7 @@ Program .projects[0].programs.gp[0][6] {
   el_typ=MethodCall;
   el_def=0;
   MethodCall @[0] {
-   desc="apply inputs to the network!";
+   desc="apply inputs to the network!  layer writer has all the key specs";
    flags=PEF_NONE;
    result_var=NULL;
    obj=$3$;

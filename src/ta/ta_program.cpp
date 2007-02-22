@@ -19,6 +19,7 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 #include "css_ta.h"
+#include "ta_project.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -88,10 +89,17 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
-  if((var_type == T_Object) && (!object_val)) {
-    if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
-			     "object pointer is NULL");
-    rval = false;
+  if(var_type == T_Object) {
+    if(!object_val) {
+      if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
+				    "object pointer is NULL");
+      rval = false;
+    }
+    if(owner != &(prg->args) && owner != &(prg->vars)) {
+      // not quite an error..
+      if(!quiet) taMisc::Warning("for ProgVar in program:", prognm, "var name:",name,
+				 "object pointers should be in program args or vars, not embedded within the program, where they are hard to find and correct if they don't point to the right thing.");
+    }
   }
 }
 
@@ -630,8 +638,10 @@ bool ProgExpr::ParseExpr() {
 	taBase* ptyp = prog->FindTypeName(vnm);
 	if(!ptyp) {
 	  cssElPtr cssptr = cssMisc::ParseName(vnm);
-	  if(!cssptr)
-	    bad_vars.AddUnique(vnm);	// this will trigger err msg later..
+	  if(!cssptr) {
+	    if(vnm != "this")		// special
+	      bad_vars.AddUnique(vnm);	// this will trigger err msg later..
+	  }
 	}
 	var_expr += vnm;		// add it back (no special indications..)
       }
@@ -1724,6 +1734,9 @@ void ProgramCall::Initialize() {
 void ProgramCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
+  if(targ_ld_init.empty() && target) {
+    targ_ld_init = String("*") + target.ptr()->GetName() + "*"; // make it wild!
+  }
 }
 
 void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1846,6 +1859,56 @@ void ProgramCall::UpdateArgs() {
     if(!arg_chk && !var_chk) continue; 
     pa->expr.SetExpr(pa->name);	// we found var of same name; set as arg value
   }
+}
+
+bool ProgramCall::LoadInitTarget() {
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return false;
+
+  target.set(NULL);		// default is always to start off empty
+  bool got = false;
+  if(targ_ld_init.contains(',')) {
+    String nm = targ_ld_init;
+    while(nm.contains(',')) {
+      String snm = nm.before(',');
+      nm = nm.after(',');
+      while(nm.firstchar() == ' ') nm = nm.after(' ');
+      got = LoadInitTarget_impl(snm);
+      if(got) break;
+      if(!nm.contains(','))	// get last guy
+	got = LoadInitTarget_impl(nm);
+    }
+  }
+  else {
+    got = LoadInitTarget_impl(targ_ld_init);
+  }
+  if(!got) {
+    taMisc::Warning("ProgramCall in program:", prg->name,
+		    "could not find load init target program to call named:",
+		    targ_ld_init, "target is set to NULL and must be fixed manually!");
+  }
+  return got;
+}
+
+bool ProgramCall::LoadInitTarget_impl(const String& nm) {
+  if(nm.empty()) return false;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return false;
+
+  Program* tv = NULL;
+  if(nm.contains("*")) {
+    String nnm = nm;
+    nnm.gsub("*","");
+    tv = prg->FindProgramNameContains(nnm, false);
+  }
+  else {
+    tv = prg->FindProgramName(nm, false);
+  }
+  if(tv) {
+    target.set(tv);
+    return true;
+  }
+  return false;
 }
 
 
@@ -2147,6 +2210,7 @@ void Program::InitLinks() {
   taBase::Own(args, this);
   taBase::Own(vars, this);
   taBase::Own(functions, this);
+  taBase::Own(load_code, this);
   taBase::Own(init_code, this);
   taBase::Own(prog_code, this);
   taBase::Own(sub_progs, this);
@@ -2156,6 +2220,7 @@ void Program::InitLinks() {
 void Program::CutLinks() {
   sub_progs.CutLinks();
   prog_code.CutLinks();
+  load_code.CutLinks();
   init_code.CutLinks();
   functions.CutLinks();
   vars.CutLinks();
@@ -2168,6 +2233,7 @@ void Program::CutLinks() {
 void Program::Reset() {
   sub_progs.Reset();
   prog_code.Reset();
+  load_code.Reset();
   init_code.Reset();
   functions.Reset();
   vars.Reset();
@@ -2185,6 +2251,7 @@ void Program::Copy_(const Program& cp) {
   args = cp.args;
   vars = cp.vars;
   functions = cp.functions;
+  load_code = cp.load_code;
   init_code = cp.init_code;
   prog_code = cp.prog_code;
   ret_val = 0; // redo
@@ -2222,6 +2289,7 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   args.CheckConfig(quiet, rval);
   vars.CheckConfig(quiet, rval);
   functions.CheckConfig(quiet, rval);
+  load_code.CheckConfig(quiet, rval);
   init_code.CheckConfig(quiet, rval);
   prog_code.CheckConfig(quiet, rval);
   // todo: go through and check that the functions contains valid function els!?
@@ -2492,6 +2560,44 @@ taBase* Program::FindTypeName(const String& nm) const {
   return prog_code.FindTypeName(nm);
 }
 
+Program* Program::FindProgramName(const String& prog_nm, bool warn_not_found) const {
+  Program* rval = NULL;
+  if(owner && owner->InheritsFrom(&TA_Program_Group)) {
+    Program_Group* pg = (Program_Group*)owner;
+    rval = pg->FindName(prog_nm);
+    if(!rval) {
+      taProject* proj = GET_MY_OWNER(taProject);
+      if(proj) {
+	rval = proj->programs.FindLeafName(prog_nm);
+      }
+    }
+  }
+  if(warn_not_found && !rval) {
+    taMisc::Warning("program", name, "is looking for a program named:",
+		    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
+  }
+  return rval;
+}
+
+Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_found) const {
+  Program* rval = NULL;
+  if(owner && owner->InheritsFrom(&TA_Program_Group)) {
+    Program_Group* pg = (Program_Group*)owner;
+    rval = pg->FindNameContains(prog_nm);
+    if(!rval) {
+      taProject* proj = GET_MY_OWNER(taProject);
+      if(proj) {
+	rval = proj->programs.FindLeafNameContains(prog_nm);
+      }
+    }
+  }
+  if(warn_not_found && !rval) {
+    taMisc::Warning("program", name, "is looking for a program containing:",
+		    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
+  }
+  return rval;
+}
+
 const String Program::scriptString() {
   if (m_dirty) {
     // enumerate all the progels, esp. to get subprocs registered
@@ -2645,6 +2751,58 @@ void Program::LoadFromProgLib(ProgLibEl* prog_type) {
   prog_type->LoadProgram(this);
 }
 
+void Program::RunLoadInitCode() {
+  // automatically do the program call guys!
+  int item_id = 0;
+  prog_code.PreGen(item_id);
+  for (int i = 0; i < sub_progs.size; ++i) {
+    ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
+    sp->LoadInitTarget();	// just call this directly!
+  }
+
+  // then run the load_code
+  static cssProgSpace init_scr;
+  init_scr.ClearAll();
+
+  init_scr.prog_vars.Reset(); // removes/unref-deletes
+  init_scr.prog_types.Reset(); // removes/unref-deletes
+  
+  // add the ones in the object -- note, we use *pointers* to these
+  // just the most relevant guys: not all the other stuff!
+  cssEl* el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
+  init_scr.prog_vars.Push(el);
+
+  // add new in the program
+  for (int i = 0; i < args.size; ++i) {
+    ProgVar* sv = args.FastEl(i);
+    el = sv->NewCssEl();
+    init_scr.prog_vars.Push(el);
+    el = sv->NewCssType();	// for dynenums
+    if(el != NULL)
+      init_scr.prog_types.Push(el);
+  } 
+  for (int i = 0; i < vars.size; ++i) {
+    ProgVar* sv = vars.FastEl(i);
+    el = sv->NewCssEl();
+    init_scr.prog_vars.Push(el); //refs
+    el = sv->NewCssType();	// for dynenums
+    if(el != NULL)
+      init_scr.prog_types.Push(el);
+  } 
+
+  STRING_BUF(code_str, 2048);
+  code_str += "Program* this = " + GetPath() + ";\n";
+  code_str += load_code.GenCss(1); // ok if empty, returns nothing
+
+  // todo: debugging -- remove!
+//   cerr << code_str << endl;
+//   taMisc::FlushConsole();
+
+  init_scr.CompileCode(code_str);
+  init_scr.Run();
+  init_scr.ClearAll();
+}
+
 void Program::SaveScript(ostream& strm) {
   strm << scriptString();
 }
@@ -2654,8 +2812,8 @@ void Program::ViewScript() {
   ViewScript_impl();
 }
 
-void Program::EditScript() {
-  String fnm = name + "_edit.css";
+void Program::ViewScript_Editor() {
+  String fnm = name + "_view.css";
   fstream strm;
   strm.open(fnm, ios::out);
   SaveScript(strm);
@@ -2785,6 +2943,8 @@ bool ProgLibEl::LoadProgram(Program* prog) {
     return false;
   }
   prog->Load(path);
+  prog->UpdateAfterEdit();	// make sure
+  prog->RunLoadInitCode();
   return true;
 }
 
@@ -2798,6 +2958,12 @@ bool ProgLibEl::LoadProgramGroup(Program_Group* prog_gp) {
     return false;
   }
   prog_gp->Load(path);
+  prog_gp->UpdateAfterEdit();
+  for(int i=0;i<prog_gp->leaves;i++) {
+    Program* prog = prog_gp->Leaf(i);
+    prog->UpdateAfterEdit();	// make sure
+    prog->RunLoadInitCode();
+  }
   return true;
 }
 

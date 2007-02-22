@@ -1972,7 +1972,8 @@ void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay) {
     for(g=0; g<lay->units.gp.size; g++) {
       LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
       rugp->adapt_i.avg_avg = rugp->kwta.pct;
-      if((compute_i == AVG_MAX_PT_INHIB) && (inhib_group != ENTIRE_LAYER))
+      if(((compute_i == AVG_MAX_PT_INHIB) || (compute_i == MAX_INHIB))
+	 && (inhib_group != ENTIRE_LAYER))
 	rugp->adapt_i.i_kwta_pt = gp_i_pt;
       else
 	rugp->adapt_i.i_kwta_pt = i_kwta_pt;
@@ -2049,6 +2050,8 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, Leabr
       Compute_Inhib_kWTA_Avg(lay, ug, thr, net);
     else if(compute_i == AVG_MAX_PT_INHIB)
       Compute_Inhib_AvgMaxPt(lay, ug, thr, net);
+    else if(compute_i == MAX_INHIB)
+      Compute_Inhib_Max(lay, ug, thr, net);
     thr->i_val.g_i = thr->i_val.kwta;
   }
 
@@ -2351,6 +2354,22 @@ void LeabraLayerSpec::Compute_Inhib_AvgMaxPt(LeabraLayer* lay, Unit_Group*, Leab
   thr->i_val.kwta = nw_gi;
   thr->kwta.k_ithr = k_avg;
   thr->kwta.k1_ithr = oth_avg;
+  thr->kwta.Compute_IThrR();
+}
+
+void LeabraLayerSpec::Compute_Inhib_Max(LeabraLayer* lay, Unit_Group*, LeabraInhib* thr, LeabraNetwork*) {
+  float pt = i_kwta_pt;
+  if(adapt_i.type == AdaptISpec::KWTA_PT)
+    pt = thr->adapt_i.i_kwta_pt;
+  else if((inhib_group != ENTIRE_LAYER) && ((LeabraInhib*)lay != thr))
+    pt = gp_i_pt;		// use sub-group version for sub-groups..
+  
+  float k_avg = thr->i_thrs.max; // and the max..
+  float nw_gi = k_avg - pt;
+  nw_gi = MAX(nw_gi, 0.0f);
+  thr->i_val.kwta = nw_gi;
+  thr->kwta.k_ithr = k_avg;
+  thr->kwta.k1_ithr = nw_gi;
   thr->kwta.Compute_IThrR();
 }
 

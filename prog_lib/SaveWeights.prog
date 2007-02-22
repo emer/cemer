@@ -129,6 +129,11 @@ Program .projects[0].programs.gp[0][9] {
   el_typ=ProgEl;
   el_def=0;
  };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=ProgEl;

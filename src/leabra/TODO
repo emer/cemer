@@ -6,15 +6,6 @@ commit:
 ------------
 current:
 
-* leabra: max norm inhib: take max guy, compute amount of inhib that gets his
-  activation to given amount above threshold (parameter) -- that's it!  *very* flexible
-  as to the distribution of everyone else..
-
-* program control panel: enum support + flag for NO_CTRL_PANEL in vars (general flags?)
-
-* init stuff for var objs and Program targets -- make a static special progspace for 
-  just this. Issue: how to separate test vs. assign?  need both..
-
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
@@ -42,6 +33,16 @@ check:
 * filer needs to use basic context (ticket filed)
   * convert tmp name is bizzare -- fname filer issues (ticket)
 
+* program control panel: no_ctrl_panel not in right place (add ticket for brad)
+
+* leabra: max norm inhib: take max guy, compute amount of inhib that gets his
+  activation to given amount above threshold (parameter) -- that's it!  *very* flexible
+  as to the distribution of everyone else..
+
+* leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
+  and add extra inhib in proportion.  set point in for inhib value itself.  makes the
+  weakly activated units more weak, and the strongly activated more weak too!  pop out??
+
 ------------------
 Program issues
 
@@ -62,6 +63,9 @@ Other Algorithms:
 
 ------------------
 hv model
+
+* move all key db's to programs: makes it more robust
+* put code under svn
 
 * document fixes:
 * IT fm output: adapt goes up to .12, no adapt is down at .018 -- change it fm output target.

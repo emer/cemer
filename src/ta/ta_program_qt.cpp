@@ -1126,6 +1126,22 @@ void iProgramCtrlDataHost::Constr_Body() {
     AddName(row, nm, help_text, mb_dat); 
     refs.Add(pv);
   }
+  // step program
+  {
+    Program_Group* pg = GET_OWNER(prog, Program_Group);
+    MemberDef* md = TA_Program_Group.members.FindName("step_prog");
+    if(pg && md) {
+      taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
+      data_el.Add(mb_dat);
+      QWidget* data = mb_dat->GetRep();
+      int row = AddData(-1, data);
+      nm = "step_prog";
+      help_text = md->desc;
+      AddName(row, nm, help_text, mb_dat); 
+      refs.Add(pg);
+    }
+  }
+
   // note: we deftly solve the problem of reacting to new vars/args
   // by simply putting those lists on our ref list, which notifies us
   refs.Add(&(prog->args));
@@ -1196,6 +1212,22 @@ void iProgramCtrlDataHost::GetValue_impl(const Member_List& ms, const taiDataLis
       first_diff = true;
     }
   }
+  // step program
+  {
+    Program_Group* pg = GET_OWNER(prog, Program_Group);
+    MemberDef* md = TA_Program_Group.members.FindName("step_prog");
+    if(pg && md) {
+      taiData* mb_dat = dl.SafeEl(cnt++);
+      if(mb_dat) {
+	md->im->GetMbrValue(mb_dat, (void*)pg, first_diff);
+	pg->UpdateAfterEdit();		// update any displays!
+	if(!first_diff) {		// always reset! todo -- this is probably wrong.
+	  taiMember::EndScript((void*)pg);
+	  first_diff = true;
+	}
+      }
+    }
+  }
 }
 
 void iProgramCtrlDataHost::UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var) {
@@ -1242,6 +1274,17 @@ void iProgramCtrlDataHost::GetImage_impl(const Member_List& ms, const taiDataLis
     }
     else {
       md->im->GetImage(mb_dat, (void*)pv);
+    }
+  }
+  // step program
+  {
+    Program_Group* pg = GET_OWNER(prog, Program_Group);
+    MemberDef* md = TA_Program_Group.members.FindName("step_prog");
+    if(pg && md) {
+      taiData* mb_dat = dl.SafeEl(cnt++);
+      if(mb_dat) {
+	md->im->GetImage(mb_dat, (void*)pg);
+      }
     }
   }
 }

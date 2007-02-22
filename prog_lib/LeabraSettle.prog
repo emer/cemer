@@ -118,6 +118,11 @@ Program .projects[0].programs.gp[0][4] {
   el_typ=ProgEl;
   el_def=0;
  };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=NetCounterInit;
@@ -142,7 +147,7 @@ Program .projects[0].programs.gp[0][4] {
    counter=Network::cycle;
   };
   MethodCall @[1] {
-   desc=;
+   desc="resets input data, before getting new external inputs data from apply inputs call";
    flags=PEF_NONE;
    result_var=NULL;
    obj=$2$;
@@ -154,9 +159,10 @@ Program .projects[0].programs.gp[0][4] {
    };
   };
   ProgramCall @[2] {
-   desc=;
+   desc="this program can be extended to do arbitrary things to generate data and apply it to network layers";
    flags=PEF_NONE;
    target=.projects[0].programs.gp[0][6]$4$;
+   targ_ld_init="*ApplyInputs*";
    call_init=0;
    prog_args {
     name=;
@@ -191,7 +197,7 @@ Program .projects[0].programs.gp[0][4] {
    };
   };
   MethodCall @[3] {
-   desc=;
+   desc="initializes various counters at start of settling";
    flags=PEF_NONE;
    result_var=NULL;
    obj=$2$;
@@ -221,6 +227,7 @@ else min_cycles = network->min_cycles_phase2;
      desc=;
      flags=PEF_NONE;
      target=.projects[0].programs.gp[0][5]$5$;
+     targ_ld_init="*LeabraCycle*";
      call_init=0;
      prog_args {
       name=;
@@ -254,7 +261,7 @@ else min_cycles = network->min_cycles_phase2;
      condition="cycle < min_cycles";
     };
     IfBreak @[3] {
-     desc=;
+     desc="stopping criterion for settling";
      flags=PEF_NONE;
      condition="(network->maxda < network->maxda_stopcrit) ||
  (network->trg_max_act > network->trg_max_act_stopcrit)";

@@ -279,6 +279,11 @@ Program .projects[0].programs.gp[0][7] {
   el_typ=ProgEl;
   el_def=0;
  };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
  init_code {
   name=;
   el_typ=MethodCall;
@@ -413,7 +418,7 @@ Program .projects[0].programs.gp[0][7] {
    };
   };
   MethodCall @[3] {
-   desc=;
+   desc="only functional for dmem projects: synchronizes trial data across processes";
    flags=PEF_NONE;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][7].args[0]$6$;
@@ -423,7 +428,7 @@ Program .projects[0].programs.gp[0][7] {
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=NULL;
+     arg_type=DataTable_ptr;
      type="DataTable*";
      name="dt";
      expr {
@@ -436,7 +441,7 @@ Program .projects[0].programs.gp[0][7] {
      };
     };
     ProgArg @[1] {
-     arg_type=NULL;
+     arg_type=int;
      type="int";
      name="n_rows";
      expr {
