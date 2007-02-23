@@ -35,7 +35,9 @@ public:
   iLineEdit(QWidget* parent = 0);
   iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
 
-  short		minCharWidth() {return mmin_char_width;} 
+  inline short	charWidth() {return mchar_width;} 
+  void		setCharWidth(int num); // sets width to accommodate num chars of
+  inline short	minCharWidth() {return mmin_char_width;} 
   void		setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
 
   
@@ -50,6 +52,7 @@ public slots:
 
 protected:
   short		mmin_char_width; // note: we limit to 128
+  short		mchar_width; // note: we limit to 128
   
   void 		focusInEvent(QFocusEvent* ev); // override
   void 		focusOutEvent(QFocusEvent* ev); // override

@@ -20,6 +20,7 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QShortcut>
+#include <QSizePolicy>
 #include <QTextEdit>
 #include <QPalette>
 
@@ -37,6 +38,7 @@ iLineEdit::iLineEdit(const char* text, QWidget* parent)
 
 void iLineEdit::init() {
   mmin_char_width = 0;
+  mchar_width = 0;
   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
   sc->setContext(Qt::WidgetShortcut);
   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
@@ -66,6 +68,27 @@ void iLineEdit::focusInEvent(QFocusEvent* ev) {
 void iLineEdit::focusOutEvent(QFocusEvent* ev) {
   inherited::focusOutEvent(ev);
   emit focusChanged(false);
+}
+
+void iLineEdit::setCharWidth(int num) {
+  if (num > 128) num = 128;
+  else if (num <= 0) num = 0;
+  if (mchar_width == num) return;
+  mchar_width = num;
+  if (num == 0) {
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+  } else {
+    QFontMetrics fm(font());
+    QString s; s.reserve(num);
+    // just use numbers, which are probably of about average width
+    for (int i = 0; i < num; ++i) {
+      s.append(QChar('0' + (i % 10)));
+    }
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    int w = fm.size(Qt::TextSingleLine, s).width();
+    setMinimumWidth(w);
+    setMaximumWidth(w);
+  }
 }
 
 void iLineEdit::setMinCharWidth(int num) {
