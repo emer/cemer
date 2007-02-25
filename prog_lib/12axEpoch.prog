@@ -37,6 +37,7 @@ Program .projects[0].programs.gp[1][0] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$0$;
    objs_ptr=0;
+   flags=PV_NONE;
    desc=;
   };
   ProgVar @[1] {
@@ -44,6 +45,7 @@ Program .projects[0].programs.gp[1][0] {
    var_type=T_Int;
    int_val=25;
    objs_ptr=0;
+   flags=PV_NONE;
    desc="number of trials (cue-probe pairs) per epoch";
   };
  };
@@ -53,6 +55,11 @@ Program .projects[0].programs.gp[1][0] {
   el_def=0;
  };
  functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
   name=;
   el_typ=ProgEl;
   el_def=0;
@@ -68,32 +75,45 @@ Program .projects[0].programs.gp[1][0] {
   el_def=0;
   MethodCall @[0] {
    desc=;
-   off=0;
+   flags=PEF_NONE;
    result_var=NULL;
    obj=.projects[0].programs.gp[1][0].args[0]$1$;
    method=DataTable::ResetData;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
   ForLoop @[1] {
    desc=;
-   off=0;
+   flags=PEF_NONE;
    loop_code {
     name=;
     el_typ=ProgEl;
     el_def=0;
     ProgramCall @[0] {
      desc=;
-     off=0;
+     flags=PEF_NONE;
      target=.projects[0].programs.gp[1][1]$2$;
+     targ_ld_init="*12axTrial*";
      call_init=0;
      prog_args {
       name=;
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
+       arg_type=DataTable;
+       type="DataTable*";
        name="input_data";
-       value="input_data";
+       expr {
+	expr="input_data";
+	var_expr="$#0";
+	vars {
+	};
+	var_names{ input_data;	};
+	bad_vars{ 	};
+       };
       };
      };
     };

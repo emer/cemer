@@ -1140,7 +1140,7 @@ void iProgramCtrlDataHost::Constr_Body() {
     refs.Add(pv);
   }
   // step program
-  {
+  if(!(prog->HasProgFlag(Program::NO_STOP) || prog->HasProgFlag(Program::NO_USER_RUN))) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     MemberDef* md = TA_Program_Group.members.FindName("step_prog");
     if(pg && md) {
@@ -1152,6 +1152,7 @@ void iProgramCtrlDataHost::Constr_Body() {
       help_text = md->desc;
       AddName(row, nm, help_text, mb_dat); 
     }
+
   }
 
 }
@@ -1232,7 +1233,7 @@ void iProgramCtrlDataHost::GetValue_impl(const Member_List& ms, const taiDataLis
     }
   }
   // step program
-  {
+  if(!(prog->HasProgFlag(Program::NO_STOP) || prog->HasProgFlag(Program::NO_USER_RUN))) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     MemberDef* md = TA_Program_Group.members.FindName("step_prog");
     if(pg && md) {
@@ -1296,7 +1297,7 @@ void iProgramCtrlDataHost::GetImage_impl(const Member_List& ms, const taiDataLis
     }
   }
   // step program
-  {
+  if(!(prog->HasProgFlag(Program::NO_STOP) || prog->HasProgFlag(Program::NO_USER_RUN))) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     MemberDef* md = TA_Program_Group.members.FindName("step_prog");
     if(pg && md) {

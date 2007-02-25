@@ -6,13 +6,12 @@ commit:
 ------------
 current:
 
+* edit user script: non-modal dialog w/ better (narrower) default sizing
+  (add c++ syntax hightight?)
+
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
-
-* profile  check on editing a datatable and then clicking away, for sub-rasa updates do dialog
-  -- seems slower after clicking around (confirmed).  maybe net too?  
-  STILL NEED THIS -- THIS IS HAPPENING!
 
 * add 2d text flag for netview. play with complexity vis-a-vis rendering
   (probably not worth it for flag -- costs a lot in render but is not a big
@@ -33,8 +32,6 @@ check:
 * filer needs to use basic context (ticket filed)
   * convert tmp name is bizzare -- fname filer issues (ticket)
 
-* program control panel: no_ctrl_panel not in right place (add ticket for brad)
-
 * leabra: max norm inhib: take max guy, compute amount of inhib that gets his
   activation to given amount above threshold (parameter) -- that's it!  *very* flexible
   as to the distribution of everyone else..
@@ -43,13 +40,15 @@ check:
   and add extra inhib in proportion.  set point in for inhib value itself.  makes the
   weakly activated units more weak, and the strongly activated more weak too!  pop out??
 
+* #288: profile check on editing a datatable and then clicking away, for
+  sub-rasa updates do dialog -- seems slower after clicking around
+  (confirmed).  maybe net too?  STILL NEED THIS -- THIS IS HAPPENING!
+
 ------------------
 Program issues
 
-* proglib: add dates!
+* proglib: add dates (fill in!) also fix bug after repeated calls..
 * dirty!!
-
-* edit user script: non-modal dialog w/ better (narrower) default sizing
 
 --------------------
 Other Algorithms:

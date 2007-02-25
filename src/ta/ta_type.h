@@ -522,11 +522,11 @@ public:
   };
 
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
-  static String		app_lib_name; // #READ_ONLY #NO_SAVE #DETAIL the root name of the app's library, if any, ex. "pdp" (none for css)
+  static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
   static String		version; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
   static const taVersion version_bin; 	// #IGNORE version number of ta/css
   static const BuildType build_type; // #READ_ONLY #NO_SAVE #SHOW build type, mostly for determining plugin subfolders to search
-  static const String	build_str; // #READ_ONLY #NO_SAVE #DETAIL an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem) 
+  static const String	build_str; // #READ_ONLY #NO_SAVE #EXPERT an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem) 
   
   ////////////////////////////////////////////////////////
   // 	TA GUI parameters

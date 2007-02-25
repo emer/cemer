@@ -660,7 +660,7 @@ class TA_API  taArray_impl {
   // #NO_TOKENS Base Type for Arrays: physically contiguous allocation of an array of objects
 public:
   int 		size;			// #NO_SAVE #READ_ONLY number of elements in the array
-  int		alloc_size;		// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size
+  int		alloc_size;		// #READ_ONLY #NO_SAVE #EXPERT allocated (physical) size
 
   taArray_impl()			{ alloc_size = 0; size = 0; }
   virtual ~taArray_impl()		{ alloc_size = 0; size = 0; }

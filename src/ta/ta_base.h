@@ -1292,9 +1292,9 @@ public:
   static MemberDef* find_md;	// #HIDDEN #NO_SHOW_TREE #NO_SAVE return value for findmember of data
 
   String        name;           // name of the object 
-  TypeDef*	el_base;	// #DETAIL #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE Base type for objects in group
+  TypeDef*	el_base;	// #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE Base type for objects in group
   TypeDef* 	el_typ;		// #TYPE_ON_el_base #NO_SHOW_TREE Default type for objects in group
-  int		el_def;		// #DETAIL Index of default element in group
+  int		el_def;		// #EXPERT Index of default element in group
 
   // stuff for the taBase 
   bool          SetName(const String& nm)       { name = nm; return true; }

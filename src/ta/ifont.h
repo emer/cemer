@@ -53,7 +53,7 @@ public:
   String 	fontName; // family name of the font, such as 'Helvetica' or 'Arial'
   Attributes	attribs; // #BITS font modifiers
   float		pointSize; // point size of the font -- will be aproximated in 3D
-  int		stretch; // #DETAIL #DEF_100 the degree of stretch, less is narrower
+  int		stretch; // #EXPERT #DEF_100 the degree of stretch, less is narrower
 
   bool 		bold() const {return  (attribs && Bold);}
   void 		setBold(bool value);

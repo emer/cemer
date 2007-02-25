@@ -828,18 +828,18 @@ public:
   float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
 
   bool		in_subgp;	// #READ_ONLY #NO_SAVE #CAT_Structure determine if unit is in a subgroup
-  float		clmp_net;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_4 #CAT_Activation hard-clamp net input (no need to recompute)
-  float		net_scale;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation total netinput scaling basis
-  float		bias_scale;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation bias weight scaling factor
-  float		prv_net;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation previous net input (for time averaging)
-  float		prv_g_i;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation previous inhibitory conductance value (for time averaging)
+  float		clmp_net;	// #NO_VIEW #NO_SAVE #EXPERT #DMEM_SHARE_SET_4 #CAT_Activation hard-clamp net input (no need to recompute)
+  float		net_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation total netinput scaling basis
+  float		bias_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
+  float		prv_net;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation previous net input (for time averaging)
+  float		prv_g_i;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation previous inhibitory conductance value (for time averaging)
 
-  float		act_sent;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation last activation value sent (only send when diff is over threshold)
-  float		act_delta;	// #NO_VIEW #NO_SAVE #DETAIL change in activation to send to other units
-  float		net_raw;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation raw net input received from sending units (increments the deltas in send_delta)
-  float		net_delta;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_3 #CAT_Activation change in netinput received from other units  (send_delta mode only)
-  float		g_i_raw;	// #NO_VIEW #NO_SAVE #DETAIL #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
-  float		g_i_delta;	// #NO_VIEW #NO_SAVE #DETAIL #DMEM_SHARE_SET_3 #CAT_Activation change in inhibitory netinput received from other units (send_delta mode only)
+  float		act_sent;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
+  float		act_delta;	// #NO_VIEW #NO_SAVE #EXPERT change in activation to send to other units
+  float		net_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (increments the deltas in send_delta)
+  float		net_delta;	// #NO_VIEW #NO_SAVE #EXPERT #DMEM_SHARE_SET_3 #CAT_Activation change in netinput received from other units  (send_delta mode only)
+  float		g_i_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
+  float		g_i_delta;	// #NO_VIEW #NO_SAVE #EXPERT #DMEM_SHARE_SET_3 #CAT_Activation change in inhibitory netinput received from other units (send_delta mode only)
 
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
   float		spk_amp;	// #CAT_Activation amplitude of spiking output (for depressing synapse activation function)

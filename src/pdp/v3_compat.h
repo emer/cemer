@@ -1799,8 +1799,8 @@ INHERITED(taNBase)
 public:
   taFiler*	log_file;	// optional file for saving
   DataTable	data;		// data for the log
-  int		data_bufsz;	// #DETAIL how big a data buffer size to keep
-  float		data_shift;	// #DETAIL percentage to shift buffer upon overflow
+  int		data_bufsz;	// #EXPERT how big a data buffer size to keep
+  float		data_shift;	// #EXPERT percentage to shift buffer upon overflow
   bool		record_proc_name; // whether to record process name in log file or not
   String_Array	display_labels;	// ordered list of labels to use for views and log files
   TDCoord	pos;  // position of view

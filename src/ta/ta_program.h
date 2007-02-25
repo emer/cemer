@@ -984,6 +984,16 @@ public:
   bool		    	m_dirty;
   // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   
+  inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
+  // set flag state on
+  inline void		ClearProgFlag(ProgFlags flg) { flags = (ProgFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool		HasProgFlag(ProgFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void		SetProgFlagState(ProgFlags flg, bool on)
+  { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+
   bool			isDirty() {return m_dirty;}
   override void		setDirty(bool value); // indicates a component has changed
   void			setRunState(RunState value); // sets and updates gui
@@ -1220,7 +1230,7 @@ public:
   ProgArg_List		prog_args; // #SHOW_TREE arguments to the program--copied to prog before call
 
   virtual void		UpdateArgs(); 
-  // updates the arguments (automatically called in updateafteredit)
+  // #BUTTON updates the arguments based on the target args (also automatically called in updateafteredit)
 
   virtual Program*	GetTarget();
   // safe call to get target: emits error if target is null (used by program)

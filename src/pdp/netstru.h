@@ -274,10 +274,10 @@ class PDP_API  ConArray : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group -- only one alloc of connections is allowed (to preserve validity of links to existing connections)
   INHERITED(taOBase)
 public:
-  int		con_size;	// #READ_ONLY #DETAIL #NO_SAVE sizeof() connection object being stored
+  int		con_size;	// #READ_ONLY #EXPERT #NO_SAVE sizeof() connection object being stored
   TypeDef*	con_type;	// type of connection object being stored
   int 		size;		// #NO_SAVE #READ_ONLY #SHOW number of elements in the array
-  int		alloc_size;	// #READ_ONLY #NO_SAVE #DETAIL allocated (physical) size, in con_size units -- this is not incrementally allocated -- must be done in advance of making connections!
+  int		alloc_size;	// #READ_ONLY #NO_SAVE #EXPERT allocated (physical) size, in con_size units -- this is not incrementally allocated -- must be done in advance of making connections!
   char*		cons;		// #IGNORE the connection memory, alloc_size * con_size
 
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
@@ -1628,9 +1628,9 @@ public:
   WtSaveFormat	wt_save_fmt;	// #CAT_File format to save weights in if saving weights
   LayerLayout	lay_layout;	// #CAT_Display Visual mode of layer position/view
 
-  int		n_units;	// #READ_ONLY #DETAIL #CAT_Structure total number of units in the network
-  int		n_cons;		// #READ_ONLY #DETAIL #CAT_Structure total number of connections in the network
-  PosTDCoord	max_size;	// #READ_ONLY #DETAIL #CAT_Structure maximum size in each dimension of the net
+  int		n_units;	// #READ_ONLY #EXPERT #CAT_Structure total number of units in the network
+  int		n_cons;		// #READ_ONLY #EXPERT #CAT_Structure total number of connections in the network
+  PosTDCoord	max_size;	// #READ_ONLY #EXPERT #CAT_Structure maximum size in each dimension of the net
 
   NetViewFontSizes font_sizes;   // #CAT_Display default size of display labels when a new view is made (can be overriden in specific views)
   NetViewParams	view_params;   // #CAT_Display misc netview parameters

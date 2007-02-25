@@ -79,13 +79,46 @@ Program_Group .projects[0].programs.gp[1] {
 
 	  ProgEl_List @.fun_code = [6] {
 	    MethodCall @[0] { };
-	    MethodCall @[1] { };
-	    MethodCall @[2] { };
-	    MethodCall @[3] { };
-	    MethodCall @[4] { };
+	    MethodCall @[1] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    MethodCall @[2] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    MethodCall @[3] { 
+	      ProgArg_List @.meth_args = [4] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+	      };
+	    };
+	    MethodCall @[4] { 
+	      ProgArg_List @.meth_args = [4] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+	      };
+	    };
 	    IfElse @[5] { 
 	      ProgEl_List @.true_code = [1] {
-		MethodCall @[0] { };
+		MethodCall @[0] { 
+		  ProgArg_List @.meth_args = [4] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		    ProgArg @[2] { };
+		    ProgArg @[3] { };
+		  };
+		};
 	      };
 	    };
 	  };
@@ -93,16 +126,85 @@ Program_Group .projects[0].programs.gp[1] {
       };
 
       ProgEl_List @.init_code = [5] {
-	MethodCall @[0] { };
-	MethodCall @[1] { };
-	MethodCall @[2] { };
-	MethodCall @[3] { };
-	MethodCall @[4] { };
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	  };
+	};
+	MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	  };
+	};
+	MethodCall @[4] { 
+	  ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	  };
+	};
       };
 
       ProgEl_List @.prog_code = [4] {
-	RandomCall @[0] { };
-	RandomCall @[1] { };
+	RandomCall @[0] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	RandomCall @[1] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
 	FunctionCall @[2] { 
 	  ProgArg_List @.fun_args = [5] {
 	    ProgArg @[0] { };
@@ -124,14 +226,26 @@ Program_Group .projects[0].programs.gp[1] {
 	    RandomCall @[1] { };
 	    IfElse @[2] { 
 	      ProgEl_List @.true_code = [3] {
-		RandomCall @[0] { };
+		RandomCall @[0] { 
+		  ProgArg_List @.meth_args = [1] {
+		    ProgArg @[0] { };
+		  };
+		};
 		AssignExpr @[1] { };
 		AssignExpr @[2] { };
 	      };
 
 	      ProgEl_List @.false_code = [2] {
-		RandomCall @[0] { };
-		RandomCall @[1] { };
+		RandomCall @[0] { 
+		  ProgArg_List @.meth_args = [1] {
+		    ProgArg @[0] { };
+		  };
+		};
+		RandomCall @[1] { 
+		  ProgArg_List @.meth_args = [1] {
+		    ProgArg @[0] { };
+		  };
+		};
 	      };
 	    };
 	    IfElse @[3] { 
@@ -192,6 +306,7 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=DataTable;
     object_val=.projects[0].data.gp[0][0]$1$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[1] {
@@ -199,6 +314,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=25;
     objs_ptr=0;
+    flags=PV_NONE;
     desc="number of trials (cue-probe pairs) per epoch";
    };
   };
@@ -208,6 +324,11 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
   };
   functions {
+   name=;
+   el_typ=ProgEl;
+   el_def=0;
+  };
+  load_code {
    name=;
    el_typ=ProgEl;
    el_def=0;
@@ -223,32 +344,45 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    MethodCall @[0] {
     desc=;
-    off=0;
+    flags=PEF_NONE;
     result_var=NULL;
     obj=.projects[0].programs.gp[1][0].args[0]$2$;
     method=DataTable::ResetData;
-    args{ };
-{     };
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+    };
    };
    ForLoop @[1] {
     desc=;
-    off=0;
+    flags=PEF_NONE;
     loop_code {
      name=;
      el_typ=ProgEl;
      el_def=0;
      ProgramCall @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       target=$0$;
+      targ_ld_init="*12axTrial*";
       call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
+	arg_type=DataTable;
+	type="DataTable*";
 	name="input_data";
-	value="input_data";
+	expr {
+	 expr="input_data";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ input_data;	 };
+	 bad_vars{ 	 };
+	};
        };
       };
      };
@@ -262,7 +396,7 @@ Program_Group .projects[0].programs.gp[1] {
  Program @[1] {
   name="12axTrial";
   desc="Generate one trial (outer loop with multiple inner loops) of the 12-AX CPT Task";
-  flags=PF_NONE;
+  flags=NO_STOP;
   objs {
    name=;
    el_typ=taOBase;
@@ -278,6 +412,7 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=DataTable;
     object_val=$1$;
     objs_ptr=0;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -290,6 +425,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=4;
     objs_ptr=0;
+    flags=PV_NONE;
     desc="maximum maintenance duration for outer loop";
    };
    ProgVar @[1] {
@@ -297,6 +433,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Real;
     real_val=0.5;
     objs_ptr=0;
+    flags=PV_NONE;
     desc="percent (proportion) of trials that are targets";
    };
    ProgVar @[2] {
@@ -304,6 +441,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=1;
     objs_ptr=0;
+    flags=PV_NONE;
     desc="number of inner-loop trials";
    };
    ProgVar @[3] {
@@ -336,6 +474,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc="outer-loop task stimulus";
    };
    ProgVar @[4] {
@@ -368,6 +507,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc="first stimulus in cue-probe pair";
    };
    ProgVar @[5] {
@@ -400,6 +540,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc="second stimulus in cue-probe pair";
    };
    ProgVar @[6] {
@@ -409,7 +550,7 @@ Program_Group .projects[0].programs.gp[1] {
      name="Output";
      el_typ=DynEnumItem;
      el_def=0;
-     value_idx=-1;
+     value_idx=0;
      DynEnumItem @[0] {
       name="L";
       value=0;
@@ -427,6 +568,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc="output responses";
    };
    ProgVar @[7] {
@@ -434,6 +576,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[8] {
@@ -441,6 +584,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=1;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[9] {
@@ -448,6 +592,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=2;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[10] {
@@ -455,6 +600,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=3;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
    ProgVar @[11] {
@@ -462,6 +608,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=4;
     objs_ptr=0;
+    flags=NO_CTRL_PANEL;
     desc=;
    };
   };
@@ -471,12 +618,13 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    Function @[0] {
     desc=;
-    off=0;
+    flags=PEF_NONE;
     return_val {
      name="rval";
      var_type=T_Int;
      int_val=0;
      objs_ptr=0;
+     flags=PV_NONE;
      desc=;
     };
     name="MakeEvent";
@@ -489,6 +637,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_String;
       string_val=;
       objs_ptr=0;
+      flags=PV_NONE;
       desc="name for the group column";
      };
      ProgVar @[1] {
@@ -496,6 +645,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_String;
       string_val=;
       objs_ptr=0;
+      flags=PV_NONE;
       desc="Name for the Name Column";
      };
      ProgVar @[2] {
@@ -503,6 +653,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
+      flags=PV_NONE;
       desc="Index of input unit to turn on";
      };
      ProgVar @[3] {
@@ -510,6 +661,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
+      flags=PV_NONE;
       desc="Index of output unit to turn on";
      };
      ProgVar @[4] {
@@ -517,6 +669,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
+      flags=PV_NONE;
       desc="is this a reward target trial?";
      };
     };
@@ -526,52 +679,249 @@ Program_Group .projects[0].programs.gp[1] {
      el_def=0;
      MethodCall @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=.projects[0].programs.gp[1][1].args[0]$3$;
       method=DataTable::AddBlankRow;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      MethodCall @[1] {
       desc="set the task name";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsString;
-      args{ group;group_col;-1;};
-{ const taString& val;int col;int row;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="const taString&";
+	name="val";
+	expr {
+	 expr="group";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ group;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="int";
+	name="col";
+	expr {
+	 expr="group_col";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ group_col;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[2] {
+	arg_type=NULL;
+	type="int";
+	name="row";
+	expr {
+	 expr="-1";
+	 var_expr="-1";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[2] {
       desc="set the name";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsString;
-      args{ name;name_col;-1;};
-{ const taString& val;int col;int row;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="const taString&";
+	name="val";
+	expr {
+	 expr="name";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ name;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="int";
+	name="col";
+	expr {
+	 expr="name_col";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ name_col;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[2] {
+	arg_type=NULL;
+	type="int";
+	name="row";
+	expr {
+	 expr="-1";
+	 var_expr="-1";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[3] {
       desc="set the input";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsFloatM;
-      args{ 1.0;input_col;-1;in_idx;};
-{ float val;int col;int row;int cell;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="float";
+	name="val";
+	expr {
+	 expr="1.0";
+	 var_expr="1.0";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="int";
+	name="col";
+	expr {
+	 expr="input_col";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ input_col;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[2] {
+	arg_type=NULL;
+	type="int";
+	name="row";
+	expr {
+	 expr="-1";
+	 var_expr="-1";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[3] {
+	arg_type=NULL;
+	type="int";
+	name="cell";
+	expr {
+	 expr="in_idx";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ in_idx;	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      MethodCall @[4] {
       desc="set the output";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsFloatM;
-      args{ 1.0;output_col;-1;out_idx;};
-{ float val;int col;int row;int cell;      };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=NULL;
+	type="float";
+	name="val";
+	expr {
+	 expr="1.0";
+	 var_expr="1.0";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[1] {
+	arg_type=NULL;
+	type="int";
+	name="col";
+	expr {
+	 expr="output_col";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ output_col;	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[2] {
+	arg_type=NULL;
+	type="int";
+	name="row";
+	expr {
+	 expr="-1";
+	 var_expr="-1";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+       ProgArg @[3] {
+	arg_type=NULL;
+	type="int";
+	name="cell";
+	expr {
+	 expr="out_idx";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ out_idx;	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
      };
      IfElse @[5] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       condition="rew_targ";
       true_code {
        name=;
@@ -579,12 +929,67 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        MethodCall @[0] {
 	desc="set as reward target trial: generates dopamine!";
-	off=0;
+	flags=PEF_NONE;
 	result_var=NULL;
 	obj=$3$;
 	method=DataTable::SetValAsFloatM;
-	args{ 1.0;rewtarg_col;-1;0;};
-{ float val;int col;int row;int cell;	};
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=NULL;
+	  type="float";
+	  name="val";
+	  expr {
+	   expr="1.0";
+	   var_expr="1.0";
+	   vars {
+	   };
+	   var_names{ 	   };
+	   bad_vars{ 	   };
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=NULL;
+	  type="int";
+	  name="col";
+	  expr {
+	   expr="rewtarg_col";
+	   var_expr="$#0";
+	   vars {
+	   };
+	   var_names{ rewtarg_col;	   };
+	   bad_vars{ 	   };
+	  };
+	 };
+	 ProgArg @[2] {
+	  arg_type=NULL;
+	  type="int";
+	  name="row";
+	  expr {
+	   expr="-1";
+	   var_expr="-1";
+	   vars {
+	   };
+	   var_names{ 	   };
+	   bad_vars{ 	   };
+	  };
+	 };
+	 ProgArg @[3] {
+	  arg_type=NULL;
+	  type="int";
+	  name="cell";
+	  expr {
+	   expr="0";
+	   var_expr="0";
+	   vars {
+	   };
+	   var_names{ 	   };
+	   bad_vars{ 	   };
+	  };
+	 };
+	};
        };
       };
       false_code {
@@ -596,54 +1001,659 @@ Program_Group .projects[0].programs.gp[1] {
     };
    };
   };
+  load_code {
+   name=;
+   el_typ=ProgEl;
+   el_def=0;
+  };
   init_code {
    name=;
    el_typ=ProgEl;
    el_def=0;
    MethodCall @[0] {
     desc="make Group column";
-    off=0;
+    flags=PEF_NONE;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
-    args{ "Group";group_col;taBase::VT_STRING;0;0;0;0;0;0;};
-{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=NULL;
+      type="const taString&";
+      name="col_nm";
+      expr {
+       expr="\"Group\"";
+       var_expr="\"Group\"";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[1] {
+      arg_type=NULL;
+      type="int&";
+      name="col_idx";
+      expr {
+       expr="group_col";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ group_col;       };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[2] {
+      arg_type=NULL;
+      type="taBase::ValType";
+      name="val_type";
+      expr {
+       expr="taBase::VT_STRING";
+       var_expr="taBase::VT_STRING";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[3] {
+      arg_type=NULL;
+      type="int";
+      name="dims";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[4] {
+      arg_type=NULL;
+      type="int";
+      name="d0";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[5] {
+      arg_type=NULL;
+      type="int";
+      name="d1";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[6] {
+      arg_type=NULL;
+      type="int";
+      name="d2";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[7] {
+      arg_type=NULL;
+      type="int";
+      name="d3";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[8] {
+      arg_type=NULL;
+      type="int";
+      name="d4";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+    };
    };
    MethodCall @[1] {
     desc="make Name column";
-    off=0;
+    flags=PEF_NONE;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
-    args{ "Name";name_col;taBase::VT_STRING;0;0;0;0;0;0;};
-{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=NULL;
+      type="const taString&";
+      name="col_nm";
+      expr {
+       expr="\"Name\"";
+       var_expr="\"Name\"";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[1] {
+      arg_type=NULL;
+      type="int&";
+      name="col_idx";
+      expr {
+       expr="name_col";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ name_col;       };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[2] {
+      arg_type=NULL;
+      type="taBase::ValType";
+      name="val_type";
+      expr {
+       expr="taBase::VT_STRING";
+       var_expr="taBase::VT_STRING";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[3] {
+      arg_type=NULL;
+      type="int";
+      name="dims";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[4] {
+      arg_type=NULL;
+      type="int";
+      name="d0";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[5] {
+      arg_type=NULL;
+      type="int";
+      name="d1";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[6] {
+      arg_type=NULL;
+      type="int";
+      name="d2";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[7] {
+      arg_type=NULL;
+      type="int";
+      name="d3";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[8] {
+      arg_type=NULL;
+      type="int";
+      name="d4";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+    };
    };
    MethodCall @[2] {
     desc="make Input column";
-    off=0;
+    flags=PEF_NONE;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
-    args{ "Input";input_col;taBase::VT_FLOAT;2;3;3;0;0;0;};
-{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=NULL;
+      type="const taString&";
+      name="col_nm";
+      expr {
+       expr="\"Input\"";
+       var_expr="\"Input\"";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[1] {
+      arg_type=NULL;
+      type="int&";
+      name="col_idx";
+      expr {
+       expr="input_col";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ input_col;       };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[2] {
+      arg_type=NULL;
+      type="taBase::ValType";
+      name="val_type";
+      expr {
+       expr="taBase::VT_FLOAT";
+       var_expr="taBase::VT_FLOAT";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[3] {
+      arg_type=NULL;
+      type="int";
+      name="dims";
+      expr {
+       expr="2";
+       var_expr="2";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[4] {
+      arg_type=NULL;
+      type="int";
+      name="d0";
+      expr {
+       expr="3";
+       var_expr="3";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[5] {
+      arg_type=NULL;
+      type="int";
+      name="d1";
+      expr {
+       expr="3";
+       var_expr="3";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[6] {
+      arg_type=NULL;
+      type="int";
+      name="d2";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[7] {
+      arg_type=NULL;
+      type="int";
+      name="d3";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[8] {
+      arg_type=NULL;
+      type="int";
+      name="d4";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+    };
    };
    MethodCall @[3] {
     desc="make Output column";
-    off=0;
+    flags=PEF_NONE;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
-    args{ "Output";output_col;taBase::VT_FLOAT;2;2;1;0;0;0;};
-{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=NULL;
+      type="const taString&";
+      name="col_nm";
+      expr {
+       expr="\"Output\"";
+       var_expr="\"Output\"";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[1] {
+      arg_type=NULL;
+      type="int&";
+      name="col_idx";
+      expr {
+       expr="output_col";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ output_col;       };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[2] {
+      arg_type=NULL;
+      type="taBase::ValType";
+      name="val_type";
+      expr {
+       expr="taBase::VT_FLOAT";
+       var_expr="taBase::VT_FLOAT";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[3] {
+      arg_type=NULL;
+      type="int";
+      name="dims";
+      expr {
+       expr="2";
+       var_expr="2";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[4] {
+      arg_type=NULL;
+      type="int";
+      name="d0";
+      expr {
+       expr="2";
+       var_expr="2";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[5] {
+      arg_type=NULL;
+      type="int";
+      name="d1";
+      expr {
+       expr="1";
+       var_expr="1";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[6] {
+      arg_type=NULL;
+      type="int";
+      name="d2";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[7] {
+      arg_type=NULL;
+      type="int";
+      name="d3";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[8] {
+      arg_type=NULL;
+      type="int";
+      name="d4";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+    };
    };
    MethodCall @[4] {
     desc="make RewTarg column";
-    off=0;
+    flags=PEF_NONE;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
-    args{ "RewTarg";rewtarg_col;taBase::VT_FLOAT;2;1;1;0;0;0;};
-{ const taString& col_nm;int& col_idx;taBase::ValType val_type;int dims;int d0;int d1;int d2;int d3;int d4;    };
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=NULL;
+      type="const taString&";
+      name="col_nm";
+      expr {
+       expr="\"RewTarg\"";
+       var_expr="\"RewTarg\"";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[1] {
+      arg_type=NULL;
+      type="int&";
+      name="col_idx";
+      expr {
+       expr="rewtarg_col";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ rewtarg_col;       };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[2] {
+      arg_type=NULL;
+      type="taBase::ValType";
+      name="val_type";
+      expr {
+       expr="taBase::VT_FLOAT";
+       var_expr="taBase::VT_FLOAT";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[3] {
+      arg_type=NULL;
+      type="int";
+      name="dims";
+      expr {
+       expr="2";
+       var_expr="2";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[4] {
+      arg_type=NULL;
+      type="int";
+      name="d0";
+      expr {
+       expr="1";
+       var_expr="1";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[5] {
+      arg_type=NULL;
+      type="int";
+      name="d1";
+      expr {
+       expr="1";
+       var_expr="1";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[6] {
+      arg_type=NULL;
+      type="int";
+      name="d2";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[7] {
+      arg_type=NULL;
+      type="int";
+      name="d3";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[8] {
+      arg_type=NULL;
+      type="int";
+      name="d4";
+      expr {
+       expr="0";
+       var_expr="0";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+    };
    };
   };
   prog_code {
@@ -652,25 +1662,70 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    RandomCall @[0] {
     desc=;
-    off=0;
+    flags=PEF_NONE;
     result_var=.projects[0].programs.gp[1][1].vars[3]$4$;
     object_type=Random;
     method=Random::IntZeroN;
-    args{ 2;};
-{ int n;    };
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=int;
+      type="int";
+      name="n";
+      expr {
+       expr="2";
+       var_expr="2";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+    };
    };
    RandomCall @[1] {
     desc=;
-    off=0;
+    flags=PEF_NONE;
     result_var=.projects[0].programs.gp[1][1].vars[2]$5$;
     object_type=Random;
     method=Random::IntMinMax;
-    args{ 1;max_maint;};
-{ int min;int max;    };
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=NULL;
+      type="int";
+      name="min";
+      expr {
+       expr="1";
+       var_expr="1";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
+     };
+     ProgArg @[1] {
+      arg_type=NULL;
+      type="int";
+      name="max";
+      expr {
+       expr="max_maint";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ max_maint;       };
+       bad_vars{        };
+      };
+     };
+    };
    };
    FunctionCall @[2] {
     desc="Create the Task Event";
-    off=0;
+    flags=PEF_NONE;
     result_var=NULL;
     fun=.projects[0].programs.gp[1][1].functions[0]$6$;
     fun_args {
@@ -678,37 +1733,82 @@ Program_Group .projects[0].programs.gp[1] {
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
+      arg_type=taString;
+      type="String";
       name="group";
-      value="task";
+      expr {
+       expr="task";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ task;       };
+       bad_vars{        };
+      };
      };
      ProgArg @[1] {
+      arg_type=taString;
+      type="String";
       name="name";
-      value="task";
+      expr {
+       expr="task";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ task;       };
+       bad_vars{        };
+      };
      };
      ProgArg @[2] {
+      arg_type=int;
+      type="int";
       name="in_idx";
-      value="task";
+      expr {
+       expr="task";
+       var_expr="$#0";
+       vars {
+       };
+       var_names{ task;       };
+       bad_vars{        };
+      };
      };
      ProgArg @[3] {
+      arg_type=int;
+      type="int";
       name="out_idx";
-      value="Output::L";
+      expr {
+       expr="Output::L";
+       var_expr="Output::L";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
      };
      ProgArg @[4] {
+      arg_type=bool;
+      type="bool";
       name="rew_targ";
-      value="false";
+      expr {
+       expr="false";
+       var_expr="false";
+       vars {
+       };
+       var_names{        };
+       bad_vars{        };
+      };
      };
     };
    };
    ForLoop @[3] {
     desc="generate the cue-probe trials";
-    off=0;
+    flags=PEF_NONE;
     loop_code {
      name=;
      el_typ=ProgEl;
      el_def=0;
      ProgVars @[0] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       local_vars {
        name=;
        el_typ=ProgVar;
@@ -718,6 +1818,7 @@ Program_Group .projects[0].programs.gp[1] {
 	var_type=T_Real;
 	real_val=0;
 	objs_ptr=0;
+	flags=PV_NONE;
 	desc="random probability value for generating a target";
        };
        ProgVar @[1] {
@@ -725,6 +1826,7 @@ Program_Group .projects[0].programs.gp[1] {
 	var_type=T_Int;
 	int_val=0;
 	objs_ptr=0;
+	flags=PV_NONE;
 	desc="random A or B cue/probe value";
        };
        ProgVar @[2] {
@@ -732,22 +1834,26 @@ Program_Group .projects[0].programs.gp[1] {
 	var_type=T_Int;
 	int_val=0;
 	objs_ptr=0;
+	flags=PV_NONE;
 	desc="output value for the probe trial: depends on whether this is a target cue-probe sequence for given task";
        };
       };
      };
      RandomCall @[1] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[0]$7$;
       object_type=Random;
       method=Random::ZeroOne;
-      args{ };
-{       };
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
      };
      IfElse @[2] {
       desc=;
-      off=0;
+      flags=PEF_NONE;
       condition="trg_rnd_prob < targ_pct";
       true_code {
        name=;
@@ -755,24 +1861,54 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        RandomCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[1]$8$;
 	object_type=Random;
 	method=Random::IntZeroN;
-	args{ 2;};
-{ int n;	};
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=NULL;
+	  type="int";
+	  name="n";
+	  expr {
+	   expr="2";
+	   var_expr="2";
+	   vars {
+	   };
+	   var_names{ 	   };
+	   bad_vars{ 	   };
+	  };
+	 };
+	};
        };
        AssignExpr @[1] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=.projects[0].programs.gp[1][1].vars[4]$9$;
-	expr="Cue::A + a_or_b";
+	expr_val {
+	 expr="Cue::A + a_or_b";
+	 var_expr="Cue::A + $#0";
+	 vars {
+	 };
+	 var_names{ a_or_b;	 };
+	 bad_vars{ 	 };
+	};
        };
        AssignExpr @[2] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=.projects[0].programs.gp[1][1].vars[5]$10$;
-	expr="Probe::X + a_or_b";
+	expr_val {
+	 expr="Probe::X + a_or_b";
+	 var_expr="Probe::X + $#0";
+	 vars {
+	 };
+	 var_names{ a_or_b;	 };
+	 bad_vars{ 	 };
+	};
        };
       };
       false_code {
@@ -781,27 +1917,59 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        RandomCall @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=$9$;
 	object_type=Random;
 	method=Random::IntZeroN;
-	args{ Cue::N_CUES;};
-{ int n;	};
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=int;
+	  type="int";
+	  name="n";
+	  expr {
+	   expr="Cue::N_CUES";
+	   var_expr="Cue::N_CUES";
+	   vars {
+	   };
+	   var_names{ 	   };
+	   bad_vars{ 	   };
+	  };
+	 };
+	};
        };
        RandomCall @[1] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=$10$;
 	object_type=Random;
 	method=Random::IntZeroN;
-	args{ Probe::N_PROBES;};
-{ int n;	};
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=int;
+	  type="int";
+	  name="n";
+	  expr {
+	   expr="Probe::N_PROBES";
+	   var_expr="Probe::N_PROBES";
+	   vars {
+	   };
+	   var_names{ 	   };
+	   bad_vars{ 	   };
+	  };
+	 };
+	};
        };
       };
      };
      IfElse @[3] {
       desc="check for targets";
-      off=0;
+      flags=PEF_NONE;
       condition="((task == Task::ONE) && (cue == Cue::A) && (probe == Probe::X)) 
   || ((task == Task::TWO) && (cue == Cue::B) && (probe == Probe::Y))";
       true_code {
@@ -810,9 +1978,16 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        AssignExpr @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[2]$11$;
-	expr="Output::R";
+	expr_val {
+	 expr="Output::R";
+	 var_expr="Output::R";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
        };
       };
       false_code {
@@ -821,15 +1996,22 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        AssignExpr @[0] {
 	desc=;
-	off=0;
+	flags=PEF_NONE;
 	result_var=$11$;
-	expr="Output::L";
+	expr_val {
+	 expr="Output::L";
+	 var_expr="Output::L";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
        };
       };
      };
      FunctionCall @[4] {
       desc="Create the Cue Event";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       fun=$6$;
       fun_args {
@@ -837,30 +2019,75 @@ Program_Group .projects[0].programs.gp[1] {
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
+	arg_type=taString;
+	type="String";
 	name="group";
-	value="task";
+	expr {
+	 expr="task";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ task;	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[1] {
+	arg_type=taString;
+	type="String";
 	name="name";
-	value="cue";
+	expr {
+	 expr="cue";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ cue;	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[2] {
+	arg_type=int;
+	type="int";
 	name="in_idx";
-	value="Task::N_TASKS + cue";
+	expr {
+	 expr="Task::N_TASKS + cue";
+	 var_expr="Task::N_TASKS + $#0";
+	 vars {
+	 };
+	 var_names{ cue;	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[3] {
+	arg_type=int;
+	type="int";
 	name="out_idx";
-	value="Output::L";
+	expr {
+	 expr="Output::L";
+	 var_expr="Output::L";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[4] {
+	arg_type=bool;
+	type="bool";
 	name="rew_targ";
-	value="false";
+	expr {
+	 expr="false";
+	 var_expr="false";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
        };
       };
      };
      FunctionCall @[5] {
       desc="Create the Probe Event";
-      off=0;
+      flags=PEF_NONE;
       result_var=NULL;
       fun=$6$;
       fun_args {
@@ -868,24 +2095,69 @@ Program_Group .projects[0].programs.gp[1] {
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
+	arg_type=taString;
+	type="String";
 	name="group";
-	value="task";
+	expr {
+	 expr="task";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ task;	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[1] {
+	arg_type=taString;
+	type="String";
 	name="name";
-	value="probe";
+	expr {
+	 expr="probe";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ probe;	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[2] {
+	arg_type=int;
+	type="int";
 	name="in_idx";
-	value="Task::N_TASKS + Cue::N_CUES + probe";
+	expr {
+	 expr="Task::N_TASKS + Cue::N_CUES + probe";
+	 var_expr="Task::N_TASKS + Cue::N_CUES + $#0";
+	 vars {
+	 };
+	 var_names{ probe;	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[3] {
+	arg_type=int;
+	type="int";
 	name="out_idx";
-	value="probe_output";
+	expr {
+	 expr="probe_output";
+	 var_expr="$#0";
+	 vars {
+	 };
+	 var_names{ probe_output;	 };
+	 bad_vars{ 	 };
+	};
        };
        ProgArg @[4] {
+	arg_type=bool;
+	type="bool";
 	name="rew_targ";
-	value="true";
+	expr {
+	 expr="true";
+	 var_expr="true";
+	 vars {
+	 };
+	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
        };
       };
      };
