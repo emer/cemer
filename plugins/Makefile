@@ -12,7 +12,7 @@ all: qmake
 	    $(CD) $$i;\
 	    if ( $(MAKE) $@; ) then echo "* Successfully ran make $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../;\
+	    $(CD) ../../;\
 	  fi; \
 	done
 	@for i in pdp/* ;\
@@ -23,7 +23,7 @@ all: qmake
 	    $(CD) $$i;\
 	    if ( $(MAKE) $@; ) then echo "* Successfully ran make $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../;\
+	    $(CD) ../../;\
 	  fi; \
 	done
 	@echo " "
@@ -42,7 +42,7 @@ clean:
 	    $(CD) $$i;\
 	    if ( $(MAKE) $@; ) then echo "* Successfully made $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../;\
+	    $(CD) ../../;\
 	  fi; \
 	done
 	@for i in pdp/* ;\
@@ -53,7 +53,7 @@ clean:
 	    $(CD) $$i;\
 	    if ( $(MAKE) $@; ) then echo "* Successfully made $@ in $$i";\
 	    else  echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../;\
+	    $(CD) ../../;\
 	  fi; \
 	done
 	@echo " "
@@ -72,7 +72,7 @@ qmake:
 	    $(CD) $$i;\
 	    if ( qmake; ) then echo "* Successfully ran $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../;\
+	    $(CD) ../../;\
 	  fi; \
 	done
 	@for i in pdp/* ;\
@@ -83,7 +83,7 @@ qmake:
 	    $(CD) $$i;\
 	    if ( qmake; ) then echo "* Successfully ran $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../;\
+	    $(CD) ../../;\
 	  fi; \
 	done
 	@echo " "
