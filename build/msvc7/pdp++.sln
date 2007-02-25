@@ -61,6 +61,7 @@ Global
 		{B0D5C9AA-E78B-4E10-B2DC-C95C164BFCA7}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
+		config.h = config.h
 		Makefile = Makefile
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

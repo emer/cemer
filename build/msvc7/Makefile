@@ -10,8 +10,8 @@ INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
   "-I$(VCDIR)\Vc7\include" 
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
-#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
-MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe -v1
+MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
+#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe -v1
 
 
 all: maketa_files moc_files
@@ -19,6 +19,7 @@ all: maketa_files moc_files
 TAIQTSO_MOCS: \
   ilabel.moc.cpp \
   idimedit.moc.cpp \
+  ibutton.moc.cpp \
   icheckbox.moc.cpp \
   icliptoolwidget.moc.cpp \
   icombobox.moc.cpp \
@@ -30,6 +31,9 @@ TAIQTSO_MOCS: \
   irenderarea.moc.cpp \
   ispinbox.moc.cpp \
   itreewidget.moc.cpp 
+
+ibutton.moc.cpp: $(PDP4DIR)\src\taiqtso\ibutton.h
+	$(MOC) %s -o $@
 
 icheckbox.moc.cpp: $(PDP4DIR)\src\taiqtso\icheckbox.h
 	$(MOC) %s -o $@
@@ -331,7 +335,7 @@ LEABRA_MAKETA =\
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
 #TODO: need to enable DEBUG to be parameterized somehow
 #MAKETA_FLAGS = -css -autohx $(INCLUDE) /D DEBUG -win_dll
-MAKETA_FLAGS = -css $(INCLUDE) /D DEBUG -win_dll
+MAKETA_FLAGS = -css $(INCLUDE) /D DEBUG -win_dll -w
 
 #note: also makes _TA_inst.h and .cpp
 ta_TA_type.h: $(TAHEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)

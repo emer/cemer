@@ -613,7 +613,7 @@ bool ProgExpr::ParseExpr() {
       while((pos < len) && (isalnum(c=expr[pos]) || (c=='_'))) 
 	{ pos++; }
       String vnm = expr.at(stpos, pos-stpos); // this should be a variable name!
-      int idx;
+      int idx = 0;
       ProgVar* var = NULL;
       Function* fun = GET_MY_OWNER(Function); // first look inside any function we might live within
       if(fun)
@@ -1734,7 +1734,7 @@ void ProgramCall::Initialize() {
 void ProgramCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
-  if(targ_ld_init.empty() && target) {
+  if(targ_ld_init.empty() && (bool)target) {
     targ_ld_init = String("*") + target.ptr()->GetName() + "*"; // make it wild!
   }
 }

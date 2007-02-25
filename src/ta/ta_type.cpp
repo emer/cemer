@@ -844,12 +844,6 @@ void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
   signal(SIGPIPE, fun); // 13
   signal(SIGALRM, fun); // 14
   signal(SIGTERM, fun); // 15
-/*obs
-#if !defined(TA_NO_GUI) && !defined(NO_TA_BASE) && !defined(CYGWIN) && !defined(DARWIN)
-//TODO: needed under Qt???  
-  XSetErrorHandler(taHandleXError);
-  XSetIOErrorHandler(taHandleXIOError);
-#endif */
 }
 
 void taMisc::Decode_Signal(int err) {

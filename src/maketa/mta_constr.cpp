@@ -603,6 +603,10 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
       strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << j+1 << "]";
   }
   else if(argt->InheritsFormal(TA_class)) {
+//TEMP
+if (argt->Get_C_Name() == "taList::T") {
+  int i = 2;
+}
     strm << "*(" << argt->Get_C_Name() << "*)arg[" << j+1 << "]"
 	 << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
   }

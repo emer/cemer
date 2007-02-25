@@ -6,6 +6,9 @@ template bug
 * treats the class name ok for the css stub function convert, but not in the 
   argument
 
+* in Win, relates to call to C_Name in typedef, which due to parentage issues,
+  ends up in an endpoint that returns the wrong name
+
 what hasn't changed:
 
 * the parser has not changed, therefore, assume it cannot be parser-related

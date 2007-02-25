@@ -189,6 +189,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				Name="Source Files"
 				Filter="">
 				<File
+					RelativePath="..\..\..\src\taiqtso\ibutton.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\taiqtso\icheckbox.cpp">
 				</File>
 				<File
@@ -237,6 +240,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 			<Filter
 				Name="Header Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\taiqtso\ibutton.h">
+				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\icheckbox.h">
 				</File>
@@ -845,6 +851,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				Filter="">
 				<File
 					RelativePath="..\..\..\src\ta\colorbar_qt.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\taiqtso\ibutton.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\t3viewer.moc.cpp">
