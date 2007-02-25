@@ -10,7 +10,7 @@ all: qmake
 	  then \
 	    echo $$i; \
 	    $(CD) $$i;\
-	    if ( $(MAKE) ) then echo "* Successfully ran make in $$i";\
+	    if ( $(MAKE) $@; ) then echo "* Successfully ran make $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../;\
 	  fi; \
@@ -21,7 +21,7 @@ all: qmake
 	  then \
 	    echo $$i; \
 	    $(CD) $$i;\
-	    if ( $(MAKE) ) then echo "* Successfully ran make in $$i";\
+	    if ( $(MAKE) $@; ) then echo "* Successfully ran make $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../;\
 	  fi; \

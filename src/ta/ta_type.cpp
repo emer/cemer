@@ -3462,7 +3462,7 @@ void TypeDef::Copy(const TypeDef& cp) {
 #else
   is_subclass	= cp.is_subclass;
   plugin = cp.plugin;
-  instance	= cp.instance ;
+  instance = cp.instance ;
   //TODO: copy the schema
 // don't copy the tokens..
 #endif
