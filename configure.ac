@@ -36,7 +36,7 @@ AC_DEFINE_DIR([LIB_VERSION],[LIB_VERSION]) # Co-opting this macro
 SIM_AC_CONFIGURATION_SETTING([PDP++ binary version],[${PACKAGE_VERSION}])
 SIM_AC_CONFIGURATION_SETTING([TA/CSS library version],[${LIB_VERSION}])
 
-AC_PREREQ([2.60])                                      dnl Autoconf 2.59 required
+AC_PREREQ([2.59])                                      dnl Autoconf 2.59 required
 AC_COPYRIGHT([
 Copyright, 1995-2005, Regents of the University of Colorado,
 Carnegie Mellon University, Princeton University.
