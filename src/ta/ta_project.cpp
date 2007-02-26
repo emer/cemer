@@ -446,8 +446,9 @@ void taRootBase::AddRecentFile(const String& value) {
   }
   // first, see if already there, if so, then just move it to the top
   idx = recent_files.FindEl(value);
-  if (idx >= 0) {
-    recent_files.SwapIdx(0, idx);
+  if (idx == 0) return; // already at top, no need to save either!
+  else if (idx > 0) {
+    recent_files.MoveIdx(idx, 0);
   } else {
     // not there; if full, then nuke a guy
     if (recent_files.size >= taMisc::num_recent_files)
@@ -467,8 +468,9 @@ void taRootBase::AddRecentPath(String value) {
   }
   // first, see if already there, if so, then just move it to the top
   idx = recent_paths.FindEl(value);
-  if (idx >= 0) {
-    recent_paths.SwapIdx(0, idx);
+  if (idx == 0) return; // already at top, no need to save either!
+  else if (idx > 0) {
+    recent_paths.MoveIdx(idx, 0);
   } else {
     // not there; if full, then nuke a guy(s)
     if (recent_paths.size >= taMisc::num_recent_paths)
