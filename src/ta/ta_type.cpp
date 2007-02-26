@@ -456,6 +456,7 @@ bool			taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
 bool taMisc::beep_on_error = false;
 short	taMisc::num_recent_files = 6;
+short	taMisc::num_recent_paths = 10;
  
 ////////////////////////////////////////////////////////
 // 	File/Path/Arg Info

@@ -69,16 +69,15 @@ public:
 
   static int	buf_size;	// #HIDDEN #NO_SAVE size of the buffer for input operations
   static String	last_fname;	// #HIDDEN #NO_SAVE last filename processed
-
+  static ContextFlag no_save_last_fname; // #IGNORE hack to prevent recursive saves from saving fname
+  
   static taFiler* 	New(const String& filetypes = "All",
-    const String& exts = _nilString, FilerFlags flags = DEF_FLAGS,
-    const String& context = _nilString);
+    const String& exts = _nilString, FilerFlags flags = DEF_FLAGS);
   // creates instance; filetype/ext are ,separated lists; ext items in a file are space-separated; context is for saving/restoring last_dir ('' = "(none"))
   
   String	filter; 	// the QFileDialog-compatible filter expression
   String	filetype; 	// the filetype, ex Project
   String	ext; 		// the default extension (if any), including '.'
-  String	context; 	// context for this instance
   bool		select_only;	// file is to be selected only (not opened)
 
   istream*	istrm;		// #READ_ONLY #NO_SAVE
@@ -139,8 +138,6 @@ protected:
   bool		compressed; // set when file has .gz suffix
   bool		file_exists; // set by GetFileName if the file actually exists
   
-  void			SaveLastDir(); // saves dir in context
-  String		GetLastDir(); // retrieves from context
   taFiler(FilerFlags flags);
   virtual ~taFiler();
 private:

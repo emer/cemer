@@ -437,12 +437,15 @@ void taRootBase::MonControl(bool on) {
 #endif
 
 void taRootBase::AddRecentFile(const String& value) {
-  if (taMisc::num_recent_files <= 0) return;
+  int idx = 0;
+  if (taMisc::num_recent_files <= 0) {
+    recent_files.Reset();
+    goto exit;
+  }
   // first, see if already there, if so, then just move it to the top
-  int idx = recent_files.FindEl(value);
+  idx = recent_files.FindEl(value);
   if (idx >= 0) {
     recent_files.SwapIdx(0, idx);
-    return;
   } else {
     // not there; if full, then nuke a guy
     if (recent_files.size >= taMisc::num_recent_files)
@@ -450,7 +453,36 @@ void taRootBase::AddRecentFile(const String& value) {
     // insert it
     recent_files.Insert(value, 0);
   }
+exit:
   Save();
+}
+
+void taRootBase::AddRecentPath(String value) {
+  int idx = 0;
+  if (taMisc::num_recent_paths <= 0) {
+    recent_paths.Reset();
+    goto exit;
+  }
+  // first, see if already there, if so, then just move it to the top
+  idx = recent_paths.FindEl(value);
+  if (idx >= 0) {
+    recent_paths.SwapIdx(0, idx);
+  } else {
+    // not there; if full, then nuke a guy(s)
+    if (recent_paths.size >= taMisc::num_recent_paths)
+      recent_paths.SetSize(taMisc::num_recent_paths - 1);
+    // insert it
+    recent_paths.Insert(value, 0);
+  }
+exit:
+  Save();
+}
+
+int taRootBase::Save() {
+  ++taFiler::no_save_last_fname;
+  int rval = inherited::Save();
+  --taFiler::no_save_last_fname;
+  return rval;
 }
 
 bool taRootBase::CheckAddPluginDep(TypeDef* td) {
@@ -624,7 +656,9 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   
   // then load configuration info: sets lots of user-defined config info
   taMisc::Init_Defaults_PreLoadConfig();
+  ++taFiler::no_save_last_fname;
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
+  --taFiler::no_save_last_fname;
   taMisc::Init_Defaults_PostLoadConfig();
 
   taMisc::default_scope = &TA_taProject; // this is general default
@@ -633,7 +667,9 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   taRootBase* inst = instance();
   inst->SetFileName(taMisc::prefs_dir + "/root");
   if (QFile::exists(inst->GetFileName())) {
+    ++taFiler::no_save_last_fname;
     inst->Load();
+    --taFiler::no_save_last_fname;
   }
   return true;
 }

@@ -78,7 +78,7 @@ public:
 };
 
 class TA_API taProject : public taFBase {
-  // ##FILETYPE_Project ##FILER_CONTEXT_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DEF_NAME_ROOT_Project ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
+  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DEF_NAME_ROOT_Project ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
   taBase_Group		templates; // #HIDDEN templates for new objects -- copy new objects from here
@@ -141,7 +141,7 @@ private:
 
 
 class TA_API Project_Group : public taGroup<taProject> {
-  //  ##CAT_Project ##FILER_CONTEXT_Project group of projects
+  //  ##CAT_Project group of projects
 INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
@@ -154,7 +154,7 @@ public:
 
 
 class TA_API taRootBase: public taFBase {
-  // ##CAT_Project ##FILER_CONTEXT_root base class for the root of the structural hierarchy (root. or . in css / paths)
+  // ##CAT_Project base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taFBase)
 public:
   static TypeDef*	root_type; // set in Startup_Main
@@ -168,7 +168,10 @@ public:
   taPluginBase_List	plugin_deps; // #SHOW_TREE EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
   String_Array		recent_files; // #NO_SHOW recently loaded files
-  SArg_Array		last_dirs; // #NO_SHOW most recent dirs (value) chosen by user in given context (key)
+  String_Array		recent_paths; // #NO_SHOW recently used paths
+  
+  
+  SArg_Array		last_dirs; // #NO_SHOW #NO_SAVE #OBS obsolete, nuke
   
   virtual void  Options();
   // edit global settings/parameters (taMisc)
@@ -177,7 +180,8 @@ public:
   virtual void	SaveAll();
   // saves all the projects
   
-  void		AddRecentFile(const String& value); // add this file to the recent list
+  void		AddRecentFile(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
+  void		AddRecentPath(String value); // #IGNORE add this path to the recent list; you can pass a file if is_file=1 and it will be stripped
 
 #ifdef GPROF			// turn on for profiling
   virtual void  MonControl(bool on);
@@ -240,6 +244,7 @@ public:
   bool		CheckAddPluginDep(TypeDef* td); // add a plugin dependency, if this type is a  type defined in a plugin; true if it was
   bool		VerifyHasPlugins(); // check the current plugin_deps w/ loaded plugins, return true if all needed plugins loaded OR user says to continue loading anyway
   
+  int	Save();
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(taRootBase)

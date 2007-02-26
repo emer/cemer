@@ -282,15 +282,15 @@ void gzstreambase::close() {
 
 int taFiler::buf_size = 1016;
 String taFiler::last_fname;
+ContextFlag taFiler::no_save_last_fname; 
 
 taFiler* taFiler::New(const String& filetype_, 
-  const String& ext_, FilerFlags flags_, const String& context) 
+  const String& ext_, FilerFlags flags_) 
 {
   taFiler* rval = new taFiler(flags_);
   rval->m_dir = ".";
   rval->filetype = filetype_;
   rval->ext = ext_;
-  rval->context = context;
     
   return rval;
 }
@@ -454,8 +454,8 @@ istream* taFiler::open_read() {
       Close();
   }
   open_file = true;
-  SaveLastDir();
-  last_fname = m_fname;
+  if (!no_save_last_fname)
+    last_fname = fileName();
   return istrm;
 }
 
@@ -492,8 +492,8 @@ ostream* taFiler::open_write() {
   }
   // success, so save/cache stuff
   open_file = true;
-  SaveLastDir();
-  last_fname = m_fname;
+  if (!no_save_last_fname)
+    last_fname = fileName();
   return ostrm;
 }
 
@@ -520,8 +520,8 @@ ostream* taFiler::open_append() {
     return NULL;
   }
   open_file = true;
-  SaveLastDir();
-  last_fname = m_fname;
+  if (!no_save_last_fname)
+    last_fname = fileName();
   return ostrm;
 }
 
@@ -588,17 +588,6 @@ ostream* taFiler::Append() {
     }
   }
   return rstrm;
-}
-
-String taFiler::GetLastDir() {
-  if (context.nonempty() && tabMisc::root)
-    return tabMisc::root->last_dirs.GetValue(context);
-  else return _nilString;
-}
-
-void taFiler::SaveLastDir() {
-  if (context.nonempty() && tabMisc::root)
-    tabMisc::root->last_dirs.SetValue(context, m_dir);
 }
 
 void taFiler::setFileName(const String& value) {

@@ -1377,7 +1377,7 @@ void DataTable::SaveHeader(const String& fname, Delimiters delim) {
 }
 
 void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool quote_str) {
-  taFiler* flr = GetSaveFiler(fname, ".dat", false, "Data", "Data");
+  taFiler* flr = GetSaveFiler(fname, ".dat", false, "Data");
   if(flr->ostrm)
     SaveDataRow_strm(*flr->ostrm, row, delim, quote_str);
   flr->Close();
@@ -1385,7 +1385,7 @@ void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool
 }
 
 void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) {
-  taFiler* flr = GetSaveFiler(fname, ".dat", false, "Data", "Data");
+  taFiler* flr = GetSaveFiler(fname, ".dat", false, "Data");
   if(flr->ostrm)
     SaveData_strm(*flr->ostrm, delim, quote_str);
   flr->Close();
@@ -1393,7 +1393,7 @@ void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) 
 }
 
 void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str) {
-  taFiler* flr = GetAppendFiler(fname, ".dat", false, "Data", "Data");
+  taFiler* flr = GetAppendFiler(fname, ".dat", false, "Data");
   if(flr->ostrm)
     SaveDataRows_strm(*flr->ostrm, delim, quote_str);
   flr->Close();
@@ -1583,7 +1583,7 @@ int DataTable::LoadHeader(const String& fname, Delimiters delim) {
 }
 
 int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str) {
-  taFiler* flr = GetLoadFiler(fname, ".dat", false, "Data", "Data");
+  taFiler* flr = GetLoadFiler(fname, ".dat", false, "Data");
   int rval = 0;
   if(flr->istrm)
     rval = LoadDataRow_strm(*flr->istrm, delim, quote_str);
@@ -1593,7 +1593,7 @@ int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str
 }
 
 void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, int max_recs) {
-  taFiler* flr = GetLoadFiler(fname, ".dat", false, "Data", "Data");
+  taFiler* flr = GetLoadFiler(fname, ".dat", false, "Data");
   if(flr->istrm)
     LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
   flr->Close();

@@ -557,6 +557,7 @@ public:
   static AutoRevert	auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
   static short		num_recent_files; // #SAVE #DEF_6 #MIN_0 #MAX_12 number of recent files to save
+  static short		num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_20 number of recent paths to save
 
   ////////////////////////////////////////////////////////
   // 	File/Paths Info

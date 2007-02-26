@@ -25,6 +25,9 @@
 #include "ta_TA_type.h"
 #include "ta_seledit.h"
 
+#ifdef TA_USE_QT
+# include <QStringList>
+#endif
 #ifdef TA_GUI
 # include "ta_qt.h"
 # include "ta_qtdata.h"
@@ -797,7 +800,7 @@ String taBase::GetFileNameFmProject(const String& ext, const String& tag, const 
 }
 
 taFiler* taBase::StatGetFiler(TypeItem* td, String exts,
-  int compress, String filetypes, String context)
+  int compress, String filetypes)
 {
   bool cmprs = (compress <= 0); // either default or none
   if (td) {
@@ -813,21 +816,17 @@ taFiler* taBase::StatGetFiler(TypeItem* td, String exts,
         exts = "." + exts;
       }
     }
-    if (context.empty()) {
-      context = td->OptionAfter("FILER_CONTEXT_");
-      //note: if still empty, no context will be used
-    }
   }
   taFiler::FilerFlags ff = (cmprs) ? taFiler::DEF_FLAGS_COMPRESS : taFiler::DEF_FLAGS;
-  taFiler* result = taFiler::New(filetypes, exts, ff, context);
+  taFiler* result = taFiler::New(filetypes, exts, ff);
   return result;
 }
 
 taFiler* taBase::GetFiler(TypeItem* td, const String& exts,
-  int compress, const String& filetypes, String context)
+  int compress, const String& filetypes)
 {
   if (!td) td = GetTypeDef();
-  return StatGetFiler(td, exts, compress, filetypes, context);
+  return StatGetFiler(td, exts, compress, filetypes);
 }
 
 int taBase::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
@@ -856,7 +855,7 @@ void AppendFilerInfo(TypeDef* typ, String& exts, int& compress, String& filetype
 
 
 taFiler* taBase::GetLoadFiler(const String& fname, String exts,
-  int compress, String filetypes, String context) 
+  int compress, String filetypes) 
 {
   // get names/types here, because save/load are different
   TypeDef* typ = GetTypeDef(); // will be replaced with item type if we are a list
@@ -875,11 +874,7 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
       }
     }
   }
-  if (context.empty()) {
-    context = typ->OptionAfter("FILER_CONTEXT_");
-    //note: if still empty, will default to "(none)"
-  }
-  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes, context); 
+  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes); 
   taRefN::Ref(flr);
    
   if(fname.nonempty()) {
@@ -952,9 +947,9 @@ int taBase::Load_cvt(taFiler*& flr) {
   return true;	
 }
 
-int taBase::Load(const String& fname, taBase** loaded_obj_ptr, String context) {
+int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
   int rval = false;
-  taFiler* flr = GetLoadFiler(fname, _nilString, -1, _nilString, context);
+  taFiler* flr = GetLoadFiler(fname, _nilString, -1, _nilString);
   if(flr->istrm) {
     Load_cvt(flr);		// do conversion if needed
     taBase* lobj = NULL;
@@ -977,7 +972,7 @@ int taBase::Save_strm(ostream& strm, TAPtr par, int indent) {
 }
 
 taFiler* taBase::GetSaveFiler(const String& fname, String exts,
-  int compress, String filetypes, String context)
+  int compress, String filetypes)
 {
   // get names/types here, because save/load are different
   TypeDef* typ = NULL; // we are the group
@@ -986,7 +981,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     typ = GetTypeDef(); // we are the group
     AppendFilerInfo(typ, exts, compress, filetypes);
   }
-  taFiler* flr = StatGetFiler(typ, exts, compress, filetypes, context); 
+  taFiler* flr = StatGetFiler(typ, exts, compress, filetypes); 
   taRefN::Ref(flr);
    
   if (fname.nonempty()) {
@@ -1008,9 +1003,9 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
 }
 
 taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int compress,
-  String filetypes, String context) 
+  String filetypes) 
 {
-  taFiler* flr = GetFiler(NULL, ext, compress, filetypes, context); 
+  taFiler* flr = GetFiler(NULL, ext, compress, filetypes); 
   taRefN::Ref(flr);
    
   if (fname.nonempty()) {
@@ -1030,14 +1025,14 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
   return flr;
 }
 
-int taBase::Save(String context) { 
+int taBase::Save() { 
   String fname = GetFileName(); // empty if 1st or not supported
-  return SaveAs(fname, context);
+  return SaveAs(fname);
 }
 
-int taBase::SaveAs(const String& fname, String context) {
+int taBase::SaveAs(const String& fname) {
   int rval = false;
-  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString, context);
+  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
   if(flr->ostrm)
     rval = Save_strm(*flr->ostrm);
   flr->Close();
@@ -3559,9 +3554,24 @@ const int int_Array::blank = 0;
 const float float_Array::blank = 0.0f;
 const double double_Array::blank = 0.0;
 const char char_Array::blank = '\0';
-const String String_Array::blank = "";
 const Variant Variant_Array::blank;
 const voidptr voidptr_Array::blank = NULL;
+
+//////////////////////////
+//  String_Array	//
+//////////////////////////
+
+const String String_Array::blank = "";
+
+#ifdef TA_USE_QT
+void String_Array::ToQStringList(QStringList& sl) {
+  sl.clear();
+  for (int i = 0; i < size; ++i) {
+    sl.append(FastEl(i).toQString());
+  }
+}
+#endif // TA_USE_QT
+
 
 //////////////////////////
 // 	SArg_Array	//

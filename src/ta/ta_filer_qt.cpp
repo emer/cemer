@@ -18,6 +18,9 @@
 
 #include "ta_filer.h"
 
+#include "ta_base.h"
+#include "ta_project.h"
+
 #include <QApplication>
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -79,14 +82,19 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     return true;
   }
   bool result = false;
-  String last_dir = GetLastDir();
-  if((m_dir.empty() || m_dir == ".") && !last_dir.empty())
-    m_dir = last_dir;
+  QStringList hist_paths;
+  String last_dir;
+  if (tabMisc::root) {
+    tabMisc::root->recent_paths.ToQStringList(hist_paths);
+    last_dir = tabMisc::root->recent_paths.SafeEl(0);
+  }
+  // if doing a SaveAs, or otherwise no dir, then use most recent
+  if((m_dir.empty() || m_dir == "."))
+    m_dir = last_dir; // if still empty, we'll just use whatever, prob working dir
   // gack! only way to use semi-sep filters is in constructor...
   // note: actual caption set later
   QFileDialog* fd = new QFileDialog(NULL, "", m_dir, filterText());
 
-  QStringList hist_paths;
   taiFileDialogExtension* fde = new taiFileDialogExtension();
 
   String caption;
@@ -123,7 +131,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   }
 
   fd->setCaption(caption);
-
+  
   //  cerr << m_fname << endl;
   // todo: for some reason it is not using this arg if the file already exists!
   fd->selectFile(m_fname);
@@ -134,21 +142,25 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->setOrientation(Qt::Vertical);
   int rval;
 
-  for(int i=0;i<taMisc::load_paths.size;i++) {
-    hist_paths.append((QString)(const char*)taMisc::load_paths[i]);
-  }
   fd->setHistory(hist_paths);
 
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   rval = fd->exec();
   QApplication::restoreOverrideCursor();
   if (rval == QDialog::Accepted) {
-    tfname = fd->selectedFile();
+    //note: Qt4 requires us to get the file indirectly, from the list
+    QStringList sfs(fd->selectedFiles());
+    if (sfs.isEmpty()) goto exit; // shouldn't happen!
+    { // block necessitated by exit
+    tfname = sfs[0];
+    QFileInfo fi(tfname);
+    // we always add the path here, to the sys paths -- if added again, it is a noop
+    if (tabMisc::root)
+      tabMisc::root->AddRecentPath(fi.path());
     // note: if we further fixup partial filenames, then compress could be true
     if (fd->fileMode() & QFileDialog::ExistingFile)
       file_exists = true;
     else {
-      QFileInfo fi(tfname);
       file_exists = fi.exists();
     }
     // compressed 'true' is absolutely based  on filename
@@ -160,6 +172,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     setFileName(tfname);
     //obs m_dir = fd->directory().absolutePath();
     result = true;
+    }
   }
 
 exit:

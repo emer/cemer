@@ -2741,7 +2741,7 @@ void Program::SaveToProgLib(ProgLibs library) {
 			     "Ok", "Cancel");
     if(chs == 1) return;
   }
-  SaveAs(fname, "ProgLib");
+  SaveAs(fname);
   Program_Group::prog_lib.FindPrograms();
 }
 
@@ -2867,7 +2867,7 @@ void Program_Group::SaveToProgLib(Program::ProgLibs library) {
 			     "Ok", "Cancel");
     if(chs == 1) return;
   }
-  SaveAs(fname, "ProgLib");
+  SaveAs(fname);
   Program_Group::prog_lib.FindPrograms();
 }
 

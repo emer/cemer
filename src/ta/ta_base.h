@@ -481,19 +481,18 @@ public:
   // #CAT_File get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name.  empty if project not found
 
   static taFiler*	StatGetFiler(TypeItem* td, String exts= _nilString,
-    int compress=-1, String filetypes =_nilString, String context = _nilString);
+    int compress=-1, String filetypes =_nilString);
   // #IGNORE gets file dialog for the TypeItem -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes
   taFiler*		GetFiler(TypeItem* td = NULL, const String& exts = _nilString,
-    int compress=-1, const String& filetypes = _nilString, String context = _nilString);
+    int compress=-1, const String& filetypes = _nilString);
   // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes; exts/ft's must match, and are ,-separated lists
 
   virtual int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
   // #CAT_File Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
   virtual taFiler* 	GetLoadFiler(const String& fname, String exts = _nilString,
-    int compress=-1, String filetypes = _nilString, String context = _nilString);
+    int compress=-1, String filetypes = _nilString);
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
-  virtual int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL,
-    String context = _nilString);
+  virtual int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
   // #MENU #MENU_ON_Object #ARGC_0 #CAT_File Load object data from given file name (if empty, prompt user for a name) -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
   virtual int 		Load_cvt(taFiler*& flr);
   // #IGNORE convert stream from old to new format (if needed)
@@ -501,15 +500,14 @@ public:
   virtual int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
   // #CAT_File Save object data to a file stream
   virtual taFiler* 	GetSaveFiler(const String& fname, String ext = _nilString,
-    int compress=-1, String filetypes=_nilString, String context = _nilString);
+    int compress=-1, String filetypes=_nilString);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual taFiler* 	GetAppendFiler(const String& fname, const String& ext="",
-    int compress=-1, String filetypes=_nilString, String context = _nilString);
+    int compress=-1, String filetypes=_nilString);
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
-  virtual int		Save(String context = _nilString); 
+  virtual int		Save(); 
   // #MENU #MENU_ON_Object #ARGC_0 #CAT_File saves the object to a file using current file name (from GetFileName() function); if context="" then default is used
-  virtual int		SaveAs(const String& fname = _nilString,
-    String context = _nilString); 
+  virtual int		SaveAs(const String& fname = _nilString); 
   // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user; if context="" then default is used
 
 
@@ -1881,8 +1879,9 @@ public:
   STATIC_CONST String blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = &TA_taString; if(InRange(i)) return FastEl_(i); return NULL; }
-  void Initialize()	{ };
-  void Destroy()	{ };
+#ifdef TA_USE_QT
+  void			ToQStringList(QStringList& sl); // #IGNORE fills a QStringList
+#endif
   TA_BASEFUNS(String_Array);
   TA_ARRAY_FUNS(String_Array, String)
 protected:
@@ -1893,6 +1892,9 @@ protected:
   String	El_GetStr_(const void* it) const { return (*((String*)it)); }
   void		El_SetFmStr_(void* it, const String& val)
   {*((String*)it) = val; }
+private:
+  void Initialize()	{ };
+  void Destroy()	{ };
 };
 TA_ARRAY_OPS(String_Array)
 
