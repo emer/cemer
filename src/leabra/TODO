@@ -6,6 +6,10 @@ commit:
 ------------
 current:
 
+* general issue: epoch_timer -- not well encapsulated and thus bad.  you *can* do it this
+ way but it just isn't the right way.
+ -- add epoch timer (and trial) to network, do it that way..
+
 * edit user script: non-modal dialog w/ better (narrower) default sizing
   (add c++ syntax hightight?)
 
@@ -13,21 +17,20 @@ current:
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
 
-* add 2d text flag for netview. play with complexity vis-a-vis rendering
-  (probably not worth it for flag -- costs a lot in render but is not a big
-  deal..)
-
-* copying a network: links are not fixed (send_idx, etc)
-
-* saving 12ax model *with* units, then close project: get a crash.  not without. spec.CutLinks
-
 * v3convert: 
   * epoch timer not being set on 12ax convert in epoch mon
 
 * enforce naming rules on layer names, to match data table columns.
 
+* leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
+  and add extra inhib in proportion.  set point in for inhib value itself.  makes the
+  weakly activated units more weak, and the strongly activated more weak too!  pop out??
+
 
 check:
+
+* new UnitSpec bias_spec pointer datalink bug (emailed to brad)
+ -> maybe causes this: saving 12ax model *with* units, then close project: get a crash.  not without. spec.CutLinks
 
 * filer needs to use basic context (ticket filed)
   * convert tmp name is bizzare -- fname filer issues (ticket)
@@ -35,10 +38,6 @@ check:
 * leabra: max norm inhib: take max guy, compute amount of inhib that gets his
   activation to given amount above threshold (parameter) -- that's it!  *very* flexible
   as to the distribution of everyone else..
-
-* leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
-  and add extra inhib in proportion.  set point in for inhib value itself.  makes the
-  weakly activated units more weak, and the strongly activated more weak too!  pop out??
 
 * #288: profile check on editing a datatable and then clicking away, for
   sub-rasa updates do dialog -- seems slower after clicking around
@@ -107,6 +106,10 @@ css:
 
 --------------------
 * netview: 
+
+* add 2d text flag for netview. play with complexity vis-a-vis rendering
+  (probably not worth it for flag -- costs a lot in render but is not a big
+  deal..)
 
 -----------
 Check:

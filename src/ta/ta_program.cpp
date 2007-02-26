@@ -621,7 +621,7 @@ bool ProgExpr::ParseExpr() {
       if(!var)
 	var = prog->FindVarName(vnm);
       if(var) {
-	if(vars.FindVar(var)) {
+	if(vars.FindVar(var, idx)) {
 	  var_expr += "$#" + (String)idx;
 	}
 	else {

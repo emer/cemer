@@ -270,7 +270,7 @@ public:
   enum BaseFlags { // #BITS control flags 
     THIS_INVALID	= 0x01, // CheckThisConfig_impl has detected a problem
     CHILD_INVALID	= 0x02, // CheckChildConfig_impl returns issue with a child
-    DESTROYING		= 0X40, // Set in Destroying at the very beginning of destroy
+    DESTROYING		= 0x40, // Set in Destroying at the very beginning of destroy
     DESTROYED		= 0x80  // set in base destroy (DEBUG only); lets us detect multi destroys
 #ifndef __MAKETA__
     ,INVALID_MASK	= THIS_INVALID | CHILD_INVALID

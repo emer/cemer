@@ -1532,23 +1532,28 @@ bool SendCons_List::RemoveFrom(Layer* from) {
 void UnitSpec::Initialize() {
   min_obj_type = &TA_Unit;
   act_range.max = 1.0f; act_range.min = 0.0f;
-  act_range.UpdateAfterEdit();
+  act_range.range = 1.0f; act_range.scale = 1.0f;
   bias_con_type = NULL;
   sse_tol = 0.0f;
 }
 
 void UnitSpec::InitLinks() {
-  BaseSpec::InitLinks();
+  inherited::InitLinks();
   children.SetBaseType(&TA_UnitSpec); // allow all of this general spec type to be created under here
   children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(act_range, this);
   taBase::Own(bias_spec, this);
-  bias_spec.owner = this;	// set the owner cuz setdefaultspec won't necc. do so.
+//   bias_spec.owner = this;	// set the owner cuz setdefaultspec won't necc. do so.
   // don't do this if loading -- creates specs in all the wrong places..
   // specs that own specs have this problem
   Network* net = (Network *) GET_MY_OWNER(Network);
   if(net && !net->copying && !taMisc::is_loading)
     bias_spec.SetDefaultSpec(this);
+}
+
+void UnitSpec::CutLinks() {
+  bias_spec.CutLinks();
+  inherited::CutLinks();
 }
 
 void UnitSpec::Copy_(const UnitSpec& cp) {
@@ -1591,11 +1596,6 @@ void UnitSpec::BuildBiasCons() {
   Network* net = (Network *) GET_MY_OWNER(Network);
   if (!net) return;
   net->Build();
-}
-
-void UnitSpec::CutLinks() {
-  bias_spec.CutLinks();
-  BaseSpec::CutLinks();
 }
 
 void UnitSpec::Init_Acts(Unit* u) {
@@ -2793,7 +2793,7 @@ void Projection::FixPrjnIndexes() {
   Unit* ru = layer->units.Leaf(0);
   Unit* su = from->units.Leaf(0);
   ru->recv.FindPrjn(this, recv_idx);
-  su->recv.FindPrjn(this, send_idx);
+  su->send.FindPrjn(this, send_idx);
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {

@@ -206,7 +206,7 @@ void BaseSpec::Destroy() {
 }
 
 void BaseSpec::InitLinks() {
-  taNBase::InitLinks();
+  inherited::InitLinks();
   taBase::Own(unique, this);
   taBase::Own(children, this);
   children.SetBaseType(GetTypeDef());
