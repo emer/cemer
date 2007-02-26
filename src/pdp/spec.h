@@ -151,11 +151,10 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
-class PDP_API SpecPtr_impl : public taBase, public IDataLinkClient {
+class PDP_API SpecPtr_impl : public taOBase, public IDataLinkClient {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec magic pointer to a spec
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
-  TAPtr		owner;		// #NO_SAVE #READ_ONLY to get to proj..
   TypeDef*	base_type;	// #TYPE_BaseSpec #HIDDEN #NO_SAVE base type for type field
   TypeDef*	type;		// #TYPE_ON_base_type The type of the spec to use
 
@@ -171,14 +170,10 @@ public:
 
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
 
-  taBase* GetOwner() const {return owner;}
-  USING(inherited::GetOwner)
-  TAPtr SetOwner(TAPtr ta) { owner = ta; return ta; }
-  void	UpdateAfterEdit();	// check, update the spec type
   void	Initialize();
   void 	Destroy()		{ };
   void	Copy_(const SpecPtr_impl& cp);
-  COPY_FUNS(SpecPtr_impl, taBase);
+  COPY_FUNS(SpecPtr_impl, inherited);
   TA_BASEFUNS(SpecPtr_impl);
 
 public: // ITypedObject interface
@@ -191,6 +186,7 @@ public: // IDataLinkClient interface
   override void		DataLinkDestroying(taDataLink* dl);
 protected:
   BaseSpec*	prv_spec;	// for removing data client when changing
+  void	UpdateAfterEdit_impl();	// check, update the spec type
 };
 
 

@@ -549,13 +549,13 @@ int SpecPtr_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   return 1;
 }
 
-void SpecPtr_impl::UpdateAfterEdit() {
-  taBase::UpdateAfterEdit();
+void SpecPtr_impl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
 
-  if(!owner || !type || owner->isDestroying())
+  if (!owner || !type || owner->isDestroying())
     return;
 
-  Network* net = GET_OWNER(owner,Network);
+  Network* net = GET_MY_OWNER(Network);
   if(!net || net->isDestroying()) return;
 
   BaseSpec* sp = GetSpec();

@@ -82,22 +82,29 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     return true;
   }
   bool result = false;
+  int rval = 0;
+  QFileDialog* fd = NULL; //declare early... had some troubles in debugger if not
+  taiFileDialogExtension* fde = NULL;
+  String caption;
+  // get the path history in qt form
+  // if there is a filename path, use that
+  String eff_dir = m_dir;
   QStringList hist_paths;
-  String last_dir;
   if (tabMisc::root) {
     tabMisc::root->recent_paths.ToQStringList(hist_paths);
-    last_dir = tabMisc::root->recent_paths.SafeEl(0);
+    // if no path specified, start at most recent, and if none, we'll just use none
+    if ((eff_dir.empty() || eff_dir == "."))
+      eff_dir = tabMisc::root->recent_paths.SafeEl(0);
   }
-  // if doing a SaveAs, or otherwise no dir, then use most recent
-  if((m_dir.empty() || m_dir == "."))
-    m_dir = last_dir; // if still empty, we'll just use whatever, prob working dir
-  // gack! only way to use semi-sep filters is in constructor...
+  // if still none, use user's home
+  if ((eff_dir.empty() || eff_dir == "."))
+    eff_dir = taMisc::home_dir;
+   // gack! only way to use semi-sep filters is in constructor...
   // note: actual caption set later
-  QFileDialog* fd = new QFileDialog(NULL, "", m_dir, filterText());
+  fd = new QFileDialog(NULL, "", eff_dir, filterText());
 
-  taiFileDialogExtension* fde = new taiFileDialogExtension();
+  fde = new taiFileDialogExtension();
 
-  String caption;
   switch (filerOperation) {
   case foOpen:
     fd->setAcceptMode(QFileDialog::AcceptOpen);
@@ -140,8 +147,6 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fde->cbCompress->setChecked(compressEnabled() && compressReq());
   fd->setExtension(fde);
   fd->setOrientation(Qt::Vertical);
-  int rval;
-
   fd->setHistory(hist_paths);
 
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc

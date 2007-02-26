@@ -413,6 +413,7 @@ void taRootBase::InitLinks() {
   taBase::Own(plugin_deps, this);
   taBase::Own(mime_factories, this);
   taBase::Own(recent_files, this);
+  taBase::Own(recent_paths, this);
   taBase::Own(last_dirs, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
@@ -420,6 +421,7 @@ void taRootBase::InitLinks() {
 
 void taRootBase::CutLinks() {
   last_dirs.CutLinks();
+  recent_paths.CutLinks();
   recent_files.CutLinks();
   mime_factories.CutLinks();
   plugin_deps.CutLinks();
