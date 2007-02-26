@@ -77,4 +77,12 @@ private:
   void	Destroy() {}
 };
 
+// follow macro assumes there is an exit: label 
+#define PLAYER_EXCEPT(c) \
+  try {c;} \
+  catch (PlayerError& ex) { \
+    taMisc::Error("PSG PlayerError exception:", ex.GetErrorStr()); goto exit; \
+  } catch (exception& ex) { \
+    taMisc::Error("PSG generic exception:", ex.what()); goto exit;}
+    
 #endif
