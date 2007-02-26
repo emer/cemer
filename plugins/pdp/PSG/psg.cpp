@@ -1,9 +1,9 @@
 #include "psg.h"
 #include <QtPlugin>
 #include <iostream>
-#include <except>
+#include <exception>
 #include <libplayerc++/playerc++.h>
-#include <libplayerc++/playerror.h>
+#include <libplayerc++/playererror.h>
 
 const taVersion PSGPlugin::version(1,0,0,0);
 
@@ -45,12 +45,12 @@ void PSGBase::PSG() {
       std::cout << *sp << std::endl;
 
       // do simple collision avoidance
-      if((*sp[0] + *sp[1]) < (*sp[6] + *sp[7]))
+      if(((*sp)[0] + (*sp)[1]) < ((*sp)[6] + (*sp)[7]))
 	turnrate = dtor(-20); // turn 20 degrees per second
       else
 	turnrate = dtor(20);
 
-      if(*sp[3] < 0.500)
+      if((*sp)[3] < 0.500)
 	speed = 0;
       else
 	speed = 0.100;
