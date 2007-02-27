@@ -437,6 +437,8 @@ public:
     ALL_MEMBS		= 0x00, // #NO_BIT
     NO_HID_DET 		= 0x03, // #NO_BIT
     NORM_MEMBS 		= 0x15, // #NO_BIT
+    EXPT_MEMBS		= 0x0F, // #NO_BIT
+    HIDD_MEMBS		= 0x1E, // #NO_BIT
     
     IS_HIDDEN 		= 0x01, // #IGNORE used in MemberDef::ShowMember to flag RO w/o SHOW or HIDDEN guys
     IS_DETAIL 		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys

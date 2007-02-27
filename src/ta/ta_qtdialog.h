@@ -432,6 +432,17 @@ class TA_API taiEditDataHost : public taiDataHost {
 INHERITED(taiDataHost)
 friend class EditDataPanel;
 public:
+  enum MembSet { // keys for member sets
+    MS_NORM,	// normal members, always shown
+    MS_EXPT,	// Expert members
+    MS_HIDD	// Hidden members
+#ifndef __MAKETA__    
+    ,MS_MIN	= MS_NORM,	// first item in range
+    MS_MAX	= MS_HIDD,	// last item in range
+    MS_CNT	= MS_MAX + 1	// num items in range
+#endif
+  };
+  
   taMisc::ShowMembs	show;		// current setting for what to show
   taiMenu_List		ta_menus;	// menu representations (from methods, non-menubuttons only)
   taiMenu_List		ta_menu_buttons;	// menu representations (from methods -- menubuttons only)
@@ -440,8 +451,17 @@ public:
 //temp  taiMenuBar*		menu;		// menu bar
   taiActions*		menu;		// menu bar
   taiActions*		show_menu;	// Show menu bar
-  Member_List		memb_el;	// member elements (1:1 with data_el), empty in inline mode
-  taiDataList 		data_el;	// data elements (1:1 with memb_el), except in inline mode
+#ifndef __MAKETA__ // too hairy for maketa -- we let ourselves access as member or array value
+  union {
+    bool		show_set[MS_CNT]; // whether the set is shown (normal typ. always shown)
+  struct {
+    bool		show_set_norm; // whether the normal set is shown
+    bool		show_set_expt; // whether the normal set is shown
+    bool		show_set_hidd; // whether the normal set is shown
+  };};
+#endif
+  Member_List		memb_el[MS_CNT]; // member elements (1:1 with data_el), empty in inline mode
+  taiDataList 		data_el[MS_CNT]; // data elements (1:1 with memb_el WHEN section is shown), except in inline mode
   taiDataList 		meth_el;	// method elements
 
   EditDataPanel*	dataPanel() {return panel;} // #IGNORE
@@ -484,8 +504,11 @@ public slots:
 
 protected:
   EditDataPanel* panel; //NOTE: not used when invoked by Edit()
+  bool			inline_mode; // true when doing inline, set early in constr
 
   override void		InitGuiFields(bool virt = true);
+  override void 	Constr_impl();
+  virtual void		Enum_Members(); // called by Constr_impl to fill memb_el[]
   override void		Constr_Methods_impl();
   override void		ClearBody_impl();
   override void		Constr_Strings(const char* prompt, const char* win_title);
@@ -493,8 +516,8 @@ protected:
   virtual void		Constr_Data(); // members, or equivalent in inherited classes, and labels
   virtual void		Constr_Labels(); // labels
   virtual void 		Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
-  virtual void		Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl = NULL); //dl non-null enables label-buddy linking
-  virtual void		Constr_Data_impl(const MemberSpace& ms, taiDataList* dl);
+  virtual void		Constr_Labels_impl(int& idx, const Member_List& ms, taiDataList* dl = NULL); //dl non-null enables label-buddy linking
+  virtual void		Constr_Data_impl(int& idx, const Member_List& ms, taiDataList* dl);
   void			Constr_MethButtons();
   override void		Constr_ShowMenu(); // make the show/hide menu
   override void 	Constr_RegNotifies();

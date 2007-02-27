@@ -1391,12 +1391,15 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   cur_base = base;
   use_show = true; // some descendant classes override, as well as construction methods
   show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
+  show_set_norm = true; show_set_expt = false; show_set_hidd = false; 
+  inline_mode = false;
   InitGuiFields(false);
   //note: don't register for notification until constr starts
 }
 
 taiEditDataHost::~taiEditDataHost() {
-  data_el.Reset();
+  for (int i = MS_MIN; i <= MS_MAX; ++i)
+    data_el[i].Reset();
   meth_el.Reset();
   taiMisc::active_edits.RemoveEl(this);
   taiMisc::css_active_edits.RemoveEl(this);
@@ -1450,14 +1453,38 @@ void taiEditDataHost::Cancel_impl() {
 
 void taiEditDataHost::ClearBody_impl() {
   // delete the data items -- Qt will automatically disconnect the signals/slots
-  memb_el.Reset();
-  data_el.Reset();
+  for (int i = MS_MIN; i <= MS_MAX; ++i)
+    data_el[i].Reset();
   inherited::ClearBody_impl(); // deletes the body widgets, except structural ones
 }
 
+void taiEditDataHost::Constr_impl() {
+  inline_mode = (typ && typ->it->requiresInline());
+  if (!inline_mode) {
+    Enum_Members();
+  }
+  inherited::Constr_impl();
+}
+
+void taiEditDataHost::Enum_Members() {
+  MemberSpace& ms = typ->members;
+  for (int i = 0; i < ms.size; ++i) {
+    MemberDef* md = ms.FastEl(i);
+    if (md->im == NULL) continue; // this puppy won't show nohow!
+    if (md->ShowMember(taMisc::NORM_MEMBS, TypeItem::SC_EDIT)) {
+      memb_el[MS_NORM].Add(md);
+    } else if (md->ShowMember(taMisc::EXPT_MEMBS, TypeItem::SC_EDIT)) {
+      memb_el[MS_EXPT].Add(md);
+    } else if (md->ShowMember(taMisc::HIDD_MEMBS, TypeItem::SC_EDIT)) {
+      memb_el[MS_HIDD].Add(md);
+    }
+  }
+}
+
+
 void taiEditDataHost::Constr_Body() {
   inherited::Constr_Body();
-  if (typ && typ->it->requiresInline()) {
+  if (inline_mode) {
     Constr_Inline();
   } else {
     Constr_Data();
@@ -1466,36 +1493,41 @@ void taiEditDataHost::Constr_Body() {
 }
 
 void taiEditDataHost::Constr_Data() {
-  Constr_Data_impl(typ->members, &data_el);
+  int idx = 0;
+  if (show_set_norm && (memb_el[MS_NORM].size > 0)) {
+    Constr_Data_impl(idx, memb_el[MS_NORM], &data_el[MS_NORM]);
+  }
+//TODO: additional guys
 }
 
 void taiEditDataHost::Constr_Labels() {
-  Constr_Labels_impl(typ->members, &data_el);
+  int idx = 0;
+  if (show_set_norm && (memb_el[MS_NORM].size > 0)) {
+    Constr_Labels_impl(idx, memb_el[MS_NORM], &data_el[MS_NORM]);
+  }
+//TODO: additional guys
 }
 
 void taiEditDataHost::Constr_Inline() {
-  data_el.Reset(); // should already be clear
+  data_el[0].Reset(); // should already be clear
   // specify inline flag, just to be sure
   taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiData::flgInline);
-  data_el.Add(mb_dat);
+  data_el[0].Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
   bool fill_hor = mb_dat->fillHor();
   AddData(0, rep, fill_hor);
 }
 
-void taiEditDataHost::Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl) {
+void taiEditDataHost::Constr_Labels_impl(int& idx, const Member_List& ms, taiDataList* dl) {
   String name;
   String desc;
-  int cnt = 0;
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.SafeEl(i);
-    if (!ShowMember(md))
-      continue;
 
     taiData* mb_dat = NULL;
     // Get data widget, if dl provided
     if (dl != NULL) {
-      mb_dat = dl->SafeEl(cnt);
+      mb_dat = dl->SafeEl(i);
     }
 
     // create label
@@ -1504,29 +1536,22 @@ void taiEditDataHost::Constr_Labels_impl(const MemberSpace& ms, taiDataList* dl)
     GetName(md, name, desc);
 
     // add to layout
-    AddName(cnt, name, desc, mb_dat);
-    ++cnt;
+    AddName(idx, name, desc, mb_dat);
+    ++idx;
   }
 }
 
-void taiEditDataHost::Constr_Data_impl(const MemberSpace& ms, taiDataList* dl) {
+void taiEditDataHost::Constr_Data_impl(int& idx, const Member_List& ms, taiDataList* dl) {
   QWidget* rep;
-  int cnt = 0;
-  cur_row = 0;
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
-    if (!ShowMember(md))
-      continue;
-
     // Create data widget
-    memb_el.Add(md);
     taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
     dl->Add(mb_dat);
     rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
-    AddData(cnt, rep, fill_hor);
-    ++cnt;
-    ++cur_row;
+    AddData(idx, rep, fill_hor);
+    ++idx;
   }
 }
 
@@ -1738,10 +1763,13 @@ void taiEditDataHost::GetImage() {
 }
 
 void taiEditDataHost::GetImage_Membs() {
-  if (typ->it->requiresInline()) {
+  if (inline_mode) {
     GetImageInline_impl(cur_base);
   } else {
-    GetImage_impl(memb_el, data_el, cur_base);
+    for (MembSet i = MS_MIN; i <= MS_MAX; ++i) {
+      if (show_set[i] && (data_el[i].size > 0))
+        GetImage_impl(memb_el[i], data_el[i], cur_base);
+    }
   }
 }
 
@@ -1754,11 +1782,11 @@ void taiEditDataHost::GetImageInline_impl(const void* base) {
 void taiEditDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
 	void* base)
 {
-  for (int i = 0; i < ms.size; ++i) {
-    MemberDef* md = ms.FastEl(i);
+  for (int i = 0; i < dl.size; ++i) {
+    MemberDef* md = ms.SafeEl(i);
     taiData* mb_dat = dl.SafeEl(i);
-    if (mb_dat == NULL)
-      taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected dl=NULL at i ", String(i), "\n");
+    if ((md == NULL) || (mb_dat == NULL))
+      taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
     else
       md->im->GetImage(mb_dat, base);
   }
@@ -1814,10 +1842,13 @@ void taiEditDataHost::GetValue() {
 }
 
 void taiEditDataHost::GetValue_Membs() {
-  if (typ->it->requiresInline()) {
+  if (inline_mode) {
     GetValueInline_impl(cur_base);
   } else {
-    GetValue_impl(memb_el, data_el, cur_base);
+    for (MembSet i = MS_MIN; i <= MS_MAX; ++i) {
+      if (show_set[i] && (data_el[i].size > 0))
+        GetValue_impl(memb_el[i], data_el[i], cur_base);
+    }
   }
   if (typ->InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)cur_base;
