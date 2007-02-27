@@ -1045,7 +1045,11 @@ inline bool operator ==(const taSmartRef& a, taBase* b)
   {return a.ptr() == b;}
 #endif
 
+#ifdef __MAKETA__
 template<class T>
+#else
+template<class T, TypeDef& td = TA_taBase>
+#endif
 class taSmartRefT: public taSmartRef { 
 public:
   inline T*	ptr() const {return (T*)m_ptr;} // typed alias for the base version
@@ -1056,14 +1060,24 @@ public:
   inline T* 	operator->() const {return (T*)m_ptr;} //
   
 protected: // must use macro below to make instance classes
-  taSmartRefT() {} 
+//  taSmartRefT() {} 
   
+public:
+  T* operator=(const T& src) {set((T*)src.m_ptr); return (T*)m_ptr;}
+  T* operator=(T* src) {set(src); return (T*)m_ptr;}
+  TypeDef* GetDataTypeDef() const {return (m_ptr) ? m_ptr->GetTypeDef() : &td;}
+  taSmartRefT() {} 
+#ifndef __MAKETA__
+  friend bool	operator==(const taSmartRefT<T,td>& a, const taSmartRefT& b) 
+    {return (a.m_ptr == b.m_ptr);}  
 private:
-  taSmartRefT(const taSmartRefT<T>& src); // not defined 
+  taSmartRefT(const taSmartRefT<T,td>& src); // not defined 
+#endif
+
 };
 
 // macro for creating smart refs of taBase classes
-
+/*
 #define SmartRef_Of(T)  class T ## Ref: public taSmartRefT<T> { \
 public: \
   T* operator=(const T ## Ref& src) {set((T*)src.m_ptr); return (T*)m_ptr;} \
@@ -1074,9 +1088,15 @@ public: \
   T ## Ref() {} \
 private:\
   T ## Ref(const T ## Ref& src); \
-};
+}; */
 
-SmartRef_Of(taBase);		// basic ref if you don't know the type
+#ifdef __MAKETA__
+# define SmartRef_Of(T,td)  typedef taSmartRefT<T> T ## Ref
+#else
+# define SmartRef_Of(T,td)  typedef taSmartRefT<T,td> T ## Ref
+#endif
+
+SmartRef_Of(taBase,TA_taBase);		// basic ref if you don't know the type
 
 class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase

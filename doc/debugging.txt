@@ -31,6 +31,13 @@ Invariants:
   decoupling from the other
 
 
+Summary:
+
+* a UnitSpec-derivitive is crashing during Network::specs.CutLinks
+  seemingly because a DataLinkClient it is trying to remove from
+  its spec's reference has already destroyed
+
+
 "no datalink" err msg
 
 * create Network, UnitSpec, then click it to view props

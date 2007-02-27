@@ -29,7 +29,7 @@
 // forwards
 
 class Program;
-class ProgramRef;
+SmartRef_Of(Program,TA_Program); // ProgramRef
 class Program_Group;
 class Program_List;
 class ProgLibEl;
@@ -159,7 +159,7 @@ private:
   void	Destroy() {Reset();}
 };
 
-SmartRef_Of(ProgVar); // ProgVarRef
+SmartRef_Of(ProgVar,TA_ProgVar); // ProgVarRef
 
 class TA_API ProgVarRef_List: public taPtrList<ProgVarRef> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program variable references
@@ -831,7 +831,7 @@ private:
   void	Destroy()	{CutLinks();}
 };
 
-SmartRef_Of(Function);
+SmartRef_Of(Function,TA_Function);
 
 class TA_API FunctionCall: public ProgEl { 
   // ##DEF_CHILD_fun_args call a function
@@ -1102,7 +1102,6 @@ private:
   void	Destroy();
 };
 
-SmartRef_Of(Program); // ProgramRef
 
 class TA_API Program_List : public taList<Program> {
   // ##CAT_Program a list of programs

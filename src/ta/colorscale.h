@@ -126,7 +126,7 @@ public:
   TA_BASEFUNS(ColorScaleSpec);
 };
 
-SmartRef_Of(ColorScaleSpec) // ColorScaleSpecRef
+SmartRef_Of(ColorScaleSpec,TA_ColorScaleSpec); // ColorScaleSpecRef
 
 // todo: should be a list?
 class TA_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {

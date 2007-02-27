@@ -1887,6 +1887,23 @@ IDataLinkClient::~IDataLinkClient() {
   }
 }
 
+bool IDataLinkClient::AddDataLink(taDataLink* dl) {
+#ifdef DEBUG
+  if (m_link) {
+    taMisc::Error("IDataLinkClient::AddDataLink: a link has already been set!");
+  }
+#endif
+  bool r = (!m_link);
+  m_link = dl;
+  return r;
+} 
+
+bool IDataLinkClient::RemoveDataLink(taDataLink* dl) {
+  bool r = (m_link);
+  m_link = NULL;
+  return r;
+} 
+
 //////////////////////////////////
 //   IMultiDataLinkClient 	//
 //////////////////////////////////
@@ -1923,6 +1940,11 @@ taDataLink::taDataLink(void* data_, taDataLink* &link_ref_)
 
 taDataLink::~taDataLink() {
   *m_link_ref = NULL; //note: m_link_ref is always valid, because the constructor passed it by reference
+#ifdef DEBUG
+  if (clients.size > 0) {
+    taMisc::Error("taDataLink::~taDataLink: clients.size not zero!");
+  }
+#endif
 }
 
 bool taDataLink::AddDataClient(IDataLinkClient* dlc) {

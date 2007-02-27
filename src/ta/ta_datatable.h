@@ -368,7 +368,7 @@ private:
   void	Destroy()		{}
 };
 
-SmartRef_Of(DataTableCols) // DataTableColsRef
+SmartRef_Of(DataTableCols,TA_DataTableCols); // DataTableColsRef
 
 /////////////////////////////////////////////////////////
 //   DataTable
@@ -778,7 +778,7 @@ private:
   void	Destroy();
 };
 
-SmartRef_Of(DataTable) // DataTableRef
+SmartRef_Of(DataTable,TA_DataTable); // DataTableRef
 
 
 /////////////////////////////////////////////////////////

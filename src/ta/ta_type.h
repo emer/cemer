@@ -1019,11 +1019,9 @@ public:
   IDataLinkClient() {m_link = NULL;}
   ~IDataLinkClient();
 protected:
-  virtual bool		AddDataLink(taDataLink* dl) 
-    {bool r = (!m_link); m_link = dl; return r;} 
+  virtual bool		AddDataLink(taDataLink* dl);
     // #IGNORE true if added, false if already set (usually a bug); overridden in Multi
-  virtual bool		RemoveDataLink(taDataLink* dl) 
-    {bool r = (m_link); m_link = NULL; return r;} 
+  virtual bool		RemoveDataLink(taDataLink* dl);
     // #IGNORE true if removed, false if not (likely not a bug, just redunancy) overridden in Multi
   
   taDataLink*		m_link; // NOTE: will always be a taiDataLink or subclass

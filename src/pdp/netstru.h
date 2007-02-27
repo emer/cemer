@@ -1511,7 +1511,7 @@ public:
   TA_BASEFUNS(Layer_Group);
 };
 
-SmartRef_Of(Layer); // LayerRef
+SmartRef_Of(Layer,TA_Layer); // LayerRef
 
 class PDP_API NetViewFontSizes : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
@@ -1888,7 +1888,7 @@ protected:
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
 };
 
-SmartRef_Of(Network)
+SmartRef_Of(Network,TA_Network);
 
 class PDP_API Network_Group : public taGroup<Network> {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network a group of networks

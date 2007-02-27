@@ -326,7 +326,7 @@ private:
   void			Destroy() {}
 };
 
-SmartRef_Of(DataBlock); // DataBlockRef
+SmartRef_Of(DataBlock,TA_DataBlock); // DataBlockRef
 
 class TA_API DataBlock_Idx : public DataBlock { 
  // #VIRT_BASE #NO_INSTANCE base class for a data source and/or sink that supports random access to data via an index

@@ -547,7 +547,7 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
-SmartRef_Of(RetinaSpec); // RetinaSpecRef
+SmartRef_Of(RetinaSpec,TA_RetinaSpec); // RetinaSpecRef
 
 class TA_API V1GaborSpec : public taNBase {
   // ##CAT_Image ##DEF_CHILD_gabors full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
