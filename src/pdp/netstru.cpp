@@ -3618,8 +3618,7 @@ void Layer::Build() {
   taLeafItr i;
   Unit* u;
   FOR_ITR_EL(Unit, u, units.,i){
-    //    u->spec = unit_spec;  // this should work but isn't
-    u->spec.SetSpec(unit_spec.SPtr());
+    u->spec = unit_spec;
   }
   if(units_changed) {
     // tell all projections that they need to be connected

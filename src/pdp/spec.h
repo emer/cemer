@@ -186,7 +186,7 @@ public:
 
   inline T*		SPtr() const		{ return spec.ptr(); }
   // use this call to access the spec pointer value in all client calls -- fast!
-  override BaseSpec*	GetSpec() const		{ return spec.ptr(); }
+  override BaseSpec*	GetSpec() const		{ return SPtr(); }
   void		SetSpec(BaseSpec* es)   {
     if (spec == es) return; // low level setting, ex. streaming, handled in UAE
     if(!owner) return;
@@ -224,20 +224,20 @@ public:
   virtual T* 	NewChild()
   {  T* rval = (T*)spec->children.NewEl(1); rval->UpdateSpec(); return rval; }
 
-  T* 		operator->() const	{ return spec.ptr(); }
+  T* 		operator->() const	{ return SPtr(); }
   T* 		operator=(T* cp)	{ SetSpec(cp); return cp; }
   bool 		operator!=(T* cp) const	{ return (spec != cp); }
   bool 		operator==(T* cp) const	{ return (spec == cp); }
   
-  operator T*()	const		{ return spec.ptr(); }
-  operator BaseSpec*() const	{ return spec.ptr(); }
+  operator T*()	const		{ return SPtr(); }
+  operator BaseSpec*() const	{ return SPtr(); }
   operator bool() const 	{ return (bool)spec; }
 
   void 	Initialize()		{ }
   void	Destroy()		{ CutLinks(); }
   void  InitLinks()		{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
   void  CutLinks()		{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
-  void	Copy_(const SpecPtr<T,typ>& cp) { SetSpec(cp.spec); }
+  void	Copy_(const SpecPtr<T,typ>& cp) { SetSpec(cp.SPtr()); }
   void  Copy(const SpecPtr<T,typ>& cp)  { StructUpdate(true); SpecPtr_impl::Copy(cp); Copy_(cp); StructUpdate(false); }
 
   SpecPtr () { Initialize(); }
