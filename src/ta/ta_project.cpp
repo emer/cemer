@@ -439,14 +439,25 @@ void taRootBase::MonControl(bool on) {
 #endif
 
 void taRootBase::AddRecentFile(const String& value) {
-  int idx = 0;
-  if (taMisc::num_recent_files <= 0) {
-    recent_files.Reset();
-    goto exit;
-  }
+  bool save = AddRecentFile_impl(value);
+  QFileInfo fi(value);
+  String path = fi.path();
+  if (AddRecentPath_impl(path));
+    save = true;
+  if (save)
+    Save();
+}
+
+bool taRootBase::AddRecentFile_impl(const String& value) {
   // first, see if already there, if so, then just move it to the top
-  idx = recent_files.FindEl(value);
-  if (idx == 0) return; // already at top, no need to save either!
+  if (taMisc::num_recent_files <= 0) {
+    if (recent_files.size > 0) {
+      recent_files.Reset();
+      return true;
+    } else return false;
+  }
+  int idx = recent_files.FindEl(value);
+  if (idx == 0) return false; // already at top, no need to save either!
   else if (idx > 0) {
     recent_files.MoveIdx(idx, 0);
   } else {
@@ -456,19 +467,23 @@ void taRootBase::AddRecentFile(const String& value) {
     // insert it
     recent_files.Insert(value, 0);
   }
-exit:
-  Save();
 }
 
-void taRootBase::AddRecentPath(String value) {
-  int idx = 0;
-  if (taMisc::num_recent_paths <= 0) {
-    recent_paths.Reset();
-    goto exit;
-  }
+void taRootBase::AddRecentPath(const String& value) {
+  if (AddRecentPath_impl(value))
+    Save();
+}
+
+bool taRootBase::AddRecentPath_impl(const String& value) {
   // first, see if already there, if so, then just move it to the top
-  idx = recent_paths.FindEl(value);
-  if (idx == 0) return; // already at top, no need to save either!
+  if (taMisc::num_recent_paths <= 0) {
+    if (recent_paths.size > 0) {
+      recent_paths.Reset();
+      return true;
+    } else return false;
+  }
+  int idx = recent_paths.FindEl(value);
+  if (idx == 0) return false; // already at top, no need to save either!
   else if (idx > 0) {
     recent_paths.MoveIdx(idx, 0);
   } else {
@@ -478,8 +493,7 @@ void taRootBase::AddRecentPath(String value) {
     // insert it
     recent_paths.Insert(value, 0);
   }
-exit:
-  Save();
+  return true;
 }
 
 int taRootBase::Save() {

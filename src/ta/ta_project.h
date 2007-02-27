@@ -181,7 +181,7 @@ public:
   // saves all the projects
   
   void		AddRecentFile(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
-  void		AddRecentPath(String value); // #IGNORE add this path to the recent list; you can pass a file if is_file=1 and it will be stripped
+  void		AddRecentPath(const String& value); // #IGNORE add this path to the recent list
 
 #ifdef GPROF			// turn on for profiling
   virtual void  MonControl(bool on);
@@ -249,6 +249,8 @@ public:
   void	CutLinks();
   TA_BASEFUNS(taRootBase)
 protected:
+  bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
+  bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
   virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
 private:
