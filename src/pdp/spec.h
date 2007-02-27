@@ -237,7 +237,7 @@ public:
   void	Destroy()		{ CutLinks(); }
   void  InitLinks()		{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
   void  CutLinks()		{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
-  void	Copy_(const SpecPtr<T,typ>& cp) { SetSpec(cp.spec); UpdateAfterEdit(); }
+  void	Copy_(const SpecPtr<T,typ>& cp) { SetSpec(cp.spec); }
   void  Copy(const SpecPtr<T,typ>& cp)  { StructUpdate(true); SpecPtr_impl::Copy(cp); Copy_(cp); StructUpdate(false); }
 
   SpecPtr () { Initialize(); }

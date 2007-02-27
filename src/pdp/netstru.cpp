@@ -527,8 +527,7 @@ bool RecvCons::ChangeMyType(TypeDef*) {
 
 int RecvCons::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   if(spec.spec != old_sp) return 0;
-  taBase::SetPointer((taBase**)&spec.spec, new_sp);
-//   spec.SetSpec(new_sp);
+  spec.SetSpec(new_sp);
   return 1;
 }
 
@@ -1313,8 +1312,7 @@ bool SendCons::ChangeMyType(TypeDef*) {
 
 int SendCons::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   if(spec.spec != old_sp) return 0;
-  taBase::SetPointer((taBase**)&spec.spec, new_sp);
-//   spec.SetSpec(new_sp);
+  spec.SetSpec(new_sp);
   return 1;
 }
 
@@ -1918,8 +1916,7 @@ bool Unit::SetConSpec(ConSpec* sp) {
 
 int Unit::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
   if(spec.spec != old_sp) return 0;
-  taBase::SetPointer((taBase**)&spec.spec, new_sp);
-  //  spec.SetSpec(new_sp);
+  spec.SetSpec(new_sp);
   return 1;
 }
 
@@ -3621,7 +3618,8 @@ void Layer::Build() {
   taLeafItr i;
   Unit* u;
   FOR_ITR_EL(Unit, u, units.,i){
-    u->spec = unit_spec;
+    //    u->spec = unit_spec;  // this should work but isn't
+    u->spec.SetSpec(unit_spec.SPtr());
   }
   if(units_changed) {
     // tell all projections that they need to be connected
