@@ -1839,7 +1839,7 @@ void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran) {
 
 bool Unit::Build() {
   bool rval = false;
-  if(spec.spec == NULL)
+  if(!spec.spec)
     return false;
   TypeDef* bstd = spec->bias_con_type;
   if(bstd == NULL) {

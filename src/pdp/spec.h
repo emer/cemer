@@ -151,7 +151,7 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
-class PDP_API SpecPtr_impl : public taOBase, public IDataLinkClient {
+class PDP_API SpecPtr_impl : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec magic pointer to a spec
 INHERITED(taOBase)
 public:
@@ -175,46 +175,34 @@ public:
   void	Copy_(const SpecPtr_impl& cp);
   COPY_FUNS(SpecPtr_impl, inherited);
   TA_BASEFUNS(SpecPtr_impl);
-
-public: // ITypedObject interface
-  override void*	This() {return (void*)this;} 
-
-public: // IDataLinkClient interface
-  override TypeDef*	GetDataTypeDef() const 
-  { return (GetSpec()) ? GetSpec()->GetTypeDef() : type; } // TypeDef of the data
-  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2);
-  override void		DataLinkDestroying(taDataLink* dl);
 protected:
-  BaseSpec*	prv_spec;	// for removing data client when changing
-  void	UpdateAfterEdit_impl();	// check, update the spec type
-  virtual void		SetSpecVar(BaseSpec* es) {} // for when link destroys
+  override void	UpdateAfterEdit_impl();	// check, update the spec type
 };
 
-
-template<class T> 
+template<class T, TypeDef& typ> 
 class SpecPtr : public SpecPtr_impl {
 public:
-  T*		spec;		// #TYPE_ON_type the actual spec itself
+  taSmartRefT<T,typ>	spec;		// #TYPE_ON_type the actual spec itself
 
-  BaseSpec*	GetSpec() const		{ return spec; }
+  inline T*		SPtr() const		{ return spec.ptr(); }
+  // use this call to access the spec pointer value in all client calls -- fast!
+  override BaseSpec*	GetSpec() const		{ return spec.ptr(); }
   void		SetSpec(BaseSpec* es)   {
     if (spec == es) return; // low level setting, ex. streaming, handled in UAE
     if(!owner) return;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
-      if(spec) spec->RemoveDataClient(this);
-      taBase::SetPointer((TAPtr*)&spec,es);
-      if(es) { type = es->GetTypeDef(); es->AddDataClient(this); }
-      prv_spec = spec;
+      spec.set(es);
+      if(es) { type = es->GetTypeDef(); }
     }
     else {
-	taMisc::Error("SetSpec: incorrect type of Spec:",
-		      es->GetPath(), "of type:", es->GetTypeDef()->name,
-		      "should be at least:", base_type->name,"in object:",owner->GetPath());
+      taMisc::Error("SetSpec: incorrect type of Spec:",
+		    es->GetPath(), "of type:", es->GetTypeDef()->name,
+		    "should be at least:", base_type->name,"in object:",owner->GetPath());
     }
   }
   bool		CheckSpec(TAPtr own_obj)   {
     if(own_obj == NULL) return false;
-    if(spec == NULL) {
+    if(!spec) {
       taMisc::CheckError("CheckSpec: spec is NULL in", own_obj->GetPath());
       return false;
     }
@@ -236,35 +224,42 @@ public:
   virtual T* 	NewChild()
   {  T* rval = (T*)spec->children.NewEl(1); rval->UpdateSpec(); return rval; }
 
-  T* 		operator->() const	{ return spec; }
+  T* 		operator->() const	{ return spec.ptr(); }
   T* 		operator=(T* cp)	{ SetSpec(cp); return cp; }
   bool 		operator!=(T* cp) const	{ return (spec != cp); }
   bool 		operator==(T* cp) const	{ return (spec == cp); }
   
-  operator T*()	const		{ return spec; }
-  operator BaseSpec*() const	{ return spec; }
-  operator bool() const 	{ return (spec); }
+  operator T*()	const		{ return spec.ptr(); }
+  operator BaseSpec*() const	{ return spec.ptr(); }
+  operator bool() const 	{ return (bool)spec; }
 
-  void 	Initialize()		{ spec = NULL; }
+  void 	Initialize()		{ }
   void	Destroy()		{ CutLinks(); }
-  void  CutLinks()
-  { SpecPtr_impl::CutLinks(); taBase::DelPointer((TAPtr*)&spec); }
-  void	Copy_(const SpecPtr<T>& cp)
-  { SetSpec(cp.spec); UpdateAfterEdit(); }
-  //  { taBase::SetPointer((TAPtr*)&spec, cp.spec); UpdateAfterEdit(); }
-  COPY_FUNS(SpecPtr<T>, SpecPtr_impl);
-  TA_TMPLT_BASEFUNS(SpecPtr, T);
-protected:
-  override void		SetSpecVar(BaseSpec* es) 
-    {spec = (T*) es; prv_spec = (T*)es;} 
+  void  InitLinks()		{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
+  void  CutLinks()		{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
+  void	Copy_(const SpecPtr<T,typ>& cp) { SetSpec(cp.spec); UpdateAfterEdit(); }
+  void  Copy(const SpecPtr<T,typ>& cp)  { StructUpdate(true); SpecPtr_impl::Copy(cp); Copy_(cp); StructUpdate(false); }
+
+  SpecPtr () { Initialize(); }
+  SpecPtr (const SpecPtr<T,typ>& cp) { Initialize(); Copy(cp); }
+  ~SpecPtr () { Destroy(); }
+  taBase* Clone() { return new SpecPtr<T,typ>(*this); }
+  void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_SpecPtr)) Copy(*((SpecPtr<T,typ>*)cp));
+    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
+  void  CastCopyTo(TAPtr cp) { SpecPtr<T,typ>& rf = *((SpecPtr<T,typ>*)cp); rf.Copy(*this); }
+  TAPtr MakeToken(){ return (TAPtr)(new SpecPtr<T,typ>); }
+  TAPtr MakeTokenAry(int no){ return (TAPtr)(new SpecPtr<T,typ>[no]); }
+  void operator=(const SpecPtr<T,typ>& cp) { Copy(cp); }
+  TypeDef* GetTypeDef() const { return &TA_SpecPtr; }
+  static TypeDef* StatTypeDef(int) { return &TA_SpecPtr; }
 };
 
-#define SpecPtr_of(T)							      \
-class PDP_API T ## _SPtr : public SpecPtr<T> {					      \
-public:									      \
-  void 	Initialize() 		{ };					      \
-  void	Destroy()		{ };					      \
-  TA_BASEFUNS(T ## _SPtr);						      \
+#define SpecPtr_of(T) \
+  class PDP_API T ## _SPtr : public SpecPtr<T, TA_ ## T> { \
+public: \
+  void 	Initialize() 		{ }; \
+  void	Destroy()		{ }; \
+  TA_BASEFUNS(T ## _SPtr); \
 }
 
 #endif // spec_h

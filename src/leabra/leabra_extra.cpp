@@ -433,7 +433,7 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   }
 
   if(bias_val.un == ScalarValBias::GC) {
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
     if(us->hyst.init) {
       rval = false;
       us->SetUnique("hyst", true);
@@ -459,9 +459,9 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-    if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
+    if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+    if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
       if(cs->wt_scale.rel > 0.5f) {
         rval = false;
 	cs->SetUnique("wt_scale", true);
@@ -497,14 +497,14 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
   LeabraLayer* lay;
   taLeafItr li;
   FOR_ITR_EL(LeabraLayer, lay, net->layers., li) {
-    if(lay->spec.spec != this) continue;
+    if(lay->spec.SPtr() != this) continue;
     
     if(n_units > 0) {
       lay->un_geom.n = n_units;
       lay->un_geom.x = n_units;
     }
 
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
     LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
     
     if(scalar.rep == ScalarValSpec::SUM_BAR) {
@@ -517,9 +517,9 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
 
       for(int g=0; g<u->recv.size; g++) {
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
-	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
+	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
+	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+	if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	   cs->InheritsFrom(TA_MarkerConSpec)) {
 	  continue;
 	}
@@ -544,9 +544,9 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
 
       for(int g=0; g<u->recv.size; g++) {
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
-	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
+	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
+	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+	if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	   cs->InheritsFrom(TA_MarkerConSpec)) {
 	  continue;
 	}
@@ -571,9 +571,9 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
 
       for(int g=0; g<u->recv.size; g++) {
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
-	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
+	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
+	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+	if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	   cs->InheritsFrom(TA_MarkerConSpec)) {
 	  continue;
 	}
@@ -599,8 +599,8 @@ void ScalarValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float val) {
     float act = .03f * bias_val.wt_gain * scalar.GetUnitAct(i);
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-      if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+      if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
       for(int ci=0;ci<recv_gp->cons.size;ci++) {
 	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
@@ -683,7 +683,7 @@ void ScalarValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    LeabraConSpec* bspec = (LeabraConSpec*)u->spec.spec->bias_spec.spec;
+    LeabraConSpec* bspec = (LeabraConSpec*)u->spec.SPtr()->bias_spec.SPtr();
     u->clmp_net -= u->bias_scale * u->bias.Cn(0)->wt;
 
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
@@ -749,7 +749,7 @@ void ScalarValLayerSpec::Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, Leabr
 void ScalarValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale) {
   if(ugp->size < 3) return;	// must be at least a few units..
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
-  LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
+  LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
   u->SetExtFlag(Unit::EXT);
   float val = val_range.Clip(u->ext);		// first unit has the value to clamp
   scalar.InitVal(val, ugp->size, unit_range.min, unit_range.range);
@@ -787,7 +787,7 @@ float ScalarValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
   int i;
   for(i=1;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
     float cur = scalar.GetUnitVal(i);
     float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
     avg += cur * act_val;
@@ -826,7 +826,7 @@ void ScalarValLayerSpec::LabelUnitsNet(Network* net) {
   LeabraLayer* l;
   taLeafItr li;
   FOR_ITR_EL(LeabraLayer, l, net->layers., li) {
-    if(l->spec.spec == this)
+    if(l->spec.SPtr() == this)
       LabelUnits(l);
   }
 }
@@ -877,7 +877,7 @@ void ScalarValLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ugp, L
   int i;
   for(i=1;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    //    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
+    //    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
     float old_net = u->net;
     u->net = MIN(scalar.min_net, u->net);
     float ithr = u->Compute_IThreshNoAH(lay, net); // exclude AH here so they can be used as a modulator!
@@ -1143,7 +1143,7 @@ bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   }
 
   if(bias_val.un == TwoDValBias::GC) {
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
     if(us->hyst.init) {
       rval = false;
       us->SetUnique("hyst", true);
@@ -1170,9 +1170,9 @@ bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-    if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
+    if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+    if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
       if(cs->wt_scale.rel > 0.5f) {
         rval = false;
 	cs->SetUnique("wt_scale", true);
@@ -1199,14 +1199,14 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
   LeabraLayer* lay;
   taLeafItr li;
   FOR_ITR_EL(LeabraLayer, lay, net->layers., li) {
-    if(lay->spec.spec != this) continue;
+    if(lay->spec.SPtr() != this) continue;
     
     if(n_units > 0) {
       lay->un_geom.n = n_units;
       lay->un_geom.x = n_units;
     }
 
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
     LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
     
     if(twod.rep == TwoDValSpec::LOCALIST) {
@@ -1226,9 +1226,9 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
 
       for(int g=0; g<u->recv.size; g++) {
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
-	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
+	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
+	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+	if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	   cs->InheritsFrom(TA_MarkerConSpec)) {
 	  continue;
 	}
@@ -1253,9 +1253,9 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
 
       for(int g=0; g<u->recv.size; g++) {
 	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.spec == NULL)) continue;
-	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-	if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
+	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
+	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+	if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	   cs->InheritsFrom(TA_MarkerConSpec)) {
 	  continue;
 	}
@@ -1282,8 +1282,8 @@ void TwoDValLayerSpec::Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_
     float act = .03f * bias_val.wt_gain * twod.GetUnitAct(i);
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
-      if(recv_gp->prjn->spec.spec->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+      if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
 	 cs->InheritsFrom(TA_MarkerConSpec)) continue;
       for(int ci=0;ci<recv_gp->cons.size;ci++) {
 	LeabraCon* cn = (LeabraCon*)recv_gp->Cn(ci);
@@ -1331,7 +1331,7 @@ void TwoDValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net) 
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    LeabraConSpec* bspec = (LeabraConSpec*)u->spec.spec->bias_spec.spec;
+    LeabraConSpec* bspec = (LeabraConSpec*)u->spec.SPtr()->bias_spec.SPtr();
     u->clmp_net -= u->bias_scale * u->bias.Cn(0)->wt;
 
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
@@ -1406,7 +1406,7 @@ void TwoDValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale
   for(int k=0;k<twod.n_vals;k++) {
     LeabraUnit* x_u = (LeabraUnit*)ugp->FastEl(k*2);
     LeabraUnit* y_u = (LeabraUnit*)ugp->FastEl(k*2+1);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)x_u->spec.spec;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)x_u->spec.SPtr();
     x_u->SetExtFlag(Unit::EXT); y_u->SetExtFlag(Unit::EXT);
     float x_val = x_val_range.Clip(x_u->ext);
     float y_val = y_val_range.Clip(y_u->ext);
@@ -1430,7 +1430,7 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
     float sum_act = 0.0f;
     for(int i=lay->un_geom.x;i<ugp->size;i++) {
       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-      LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
+      LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
       float x_cur, y_cur;  twod.GetUnitVal(i, x_cur, y_cur);
       float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
       x_avg += x_cur * act_val;
@@ -1463,7 +1463,7 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
 	  int idx = i + y * lay->un_geom.x + x;
 	  if(idx < lay->un_geom.x || idx >= ugp->size) continue;
 	  LeabraUnit* u = (LeabraUnit*)ugp->FastEl(idx);
-	  LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
+	  LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
 	  float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
 	  nsum += 1.0f;
 	  sum += act_val;
@@ -1524,7 +1524,7 @@ void TwoDValLayerSpec::LabelUnitsNet(Network* net) {
   LeabraLayer* l;
   taLeafItr li;
   FOR_ITR_EL(LeabraLayer, l, net->layers., li) {
-    if(l->spec.spec == this)
+    if(l->spec.SPtr() == this)
       LabelUnits(l);
   }
 }

@@ -275,6 +275,7 @@ void MTA::InitKeyWords() {
   TypeDef* ky;
   ky = new TypeDef("typedef");  spc_keywords.Add(ky); ky->idx = TYPEDEF;
   ky = new TypeDef("class"); 	spc_keywords.Add(ky); ky->idx = CLASS;
+  ky = new TypeDef("typename");	spc_keywords.Add(ky); ky->idx = TYPENAME;
   ky = new TypeDef("struct"); 	spc_keywords.Add(ky); ky->idx = STRUCT;
   ky = new TypeDef("union"); 	spc_keywords.Add(ky); ky->idx = UNION;
   ky = new TypeDef("template"); spc_keywords.Add(ky); ky->idx = TEMPLATE;

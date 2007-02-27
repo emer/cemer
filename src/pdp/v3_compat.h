@@ -812,9 +812,9 @@ public:
   TA_SIMPLE_BASEFUNS(EventSpec);
 };
 
-class PDP_API EventSpec_SPtr : public SpecPtr<EventSpec> {
+class PDP_API EventSpec_SPtr : public SpecPtr<EventSpec,TA_EventSpec> {
   // ##CAT_v3Compat 
-INHERITED(SpecPtr<EventSpec>)
+  typedef SpecPtr<EventSpec,TA_EventSpec> inherited;
 public:
   void 	Initialize() 		{ };
   void 	Destroy()		{ CutLinks(); }

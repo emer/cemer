@@ -483,7 +483,7 @@ void LeabraUnitSpec::Defaults() {
   dt.Initialize();
   act_reg.Initialize();
   Initialize();
-  bias_spec.SetSpec(bias_spec.spec);
+  bias_spec.SetSpec(bias_spec.SPtr());
 }
 
 void LeabraUnitSpec::InitLinks() {
@@ -630,7 +630,7 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u) {
 }  
 
 void LeabraUnitSpec::SetCurLrate(LeabraUnit* u, LeabraNetwork* net, int epoch) {
-  ((LeabraConSpec*)bias_spec.spec)->SetCurLrate(epoch, net);
+  ((LeabraConSpec*)bias_spec.SPtr())->SetCurLrate(epoch, net);
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(!recv_gp->cons.size) continue;
@@ -709,7 +709,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
     if(lay->lesion || !recv_gp->cons.size)	continue;
      // this is the normalization value: takes into account target activity of layer
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
     WtScaleSpec& wt_scale = cs->wt_scale;
     float savg = lay->kwta.pct;
     if(cs->savg_cor.norm_con_n)	// sometimes it makes sense to just do it by the group n
@@ -720,7 +720,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
   }
   // add the bias weight into the netinput, scaled by 1/n
   if(u->bias.cons.size) {
-    LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.spec;
+    LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.SPtr();
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
     if(u->n_recv_cons > 0)
       u->bias_scale /= (float)u->n_recv_cons; // one over n scaling for bias!
@@ -760,7 +760,7 @@ void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       if(send_gp->prjn->layer->lesion || !send_gp->cons.size) continue;
-      if(((LeabraConSpec*)send_gp->spec.spec)->inhib) {
+      if(((LeabraConSpec*)send_gp->spec.SPtr())->inhib) {
 	taMisc::Error("*** Error: cannot send inhibition from a hard-clamped layer!  Set layerspec clamp.hard off!");
 	continue;
       }
@@ -933,7 +933,7 @@ void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhi
   float g_bar_i_val = g_bar.i;
   float	g_bar_e_val = g_bar.e;
   float	g_bar_l_val = g_bar.l;
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->spec.spec;
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->spec.SPtr();
   if((ls->adapt_i.type == AdaptISpec::G_BAR_I) || (ls->adapt_i.type == AdaptISpec::G_BAR_IL))
     g_bar_i_val = lay->adapt_i.g_bar_i; // adapting value..
   if(ls->adapt_i.type == AdaptISpec::G_BAR_IL)
@@ -1199,7 +1199,7 @@ void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer*, LeabraNetwork
   // don't adapt bias weights on clamped inputs..: why?  what possible consequence could it have!?
   // furthermore: it is not right for units that are clamped in 2nd plus phase!
   //  if(!((u->ext_flag & Unit::EXT) && !(u->ext_flag & Unit::TARG))) {
-  ((LeabraConSpec*)bias_spec.spec)->B_Compute_dWt((LeabraCon*)u->bias.Cn(0), u);
+  ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt((LeabraCon*)u->bias.Cn(0), u);
     //  }
   UnitSpec::Compute_dWt(u);
 }
@@ -1217,7 +1217,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u) {
   LeabraUnit* lu = (LeabraUnit*)u;
   // see above commment
   //  if(!((lu->ext_flag & Unit::EXT) && !(lu->ext_flag & Unit::TARG))) {
-  ((LeabraConSpec*)bias_spec.spec)->B_Compute_Weights((LeabraCon*)u->bias.Cn(0), lu, this);
+  ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_Weights((LeabraCon*)u->bias.Cn(0), lu, this);
     //  }
   if(opt_thresh.updt_wts && 
      ((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)))
@@ -1624,7 +1624,7 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpec(LeabraLayer* lay, int& prjn_idx, T
   taLeafItr pi;
   FOR_ITR_EL(Projection, p, lay->projections., pi) {
     LeabraLayer* fmlay = (LeabraLayer*)p->from;
-    if(fmlay->spec.spec->InheritsFrom(layer_spec)) {	// inherits - not excact match!
+    if(fmlay->spec.SPtr()->InheritsFrom(layer_spec)) {	// inherits - not excact match!
       prjn_idx = p->recv_idx;
       rval = fmlay;
       break;
@@ -1640,7 +1640,7 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpecExact(LeabraLayer* lay, int& prjn_i
   taLeafItr pi;
   FOR_ITR_EL(Projection, p, lay->projections., pi) {
     LeabraLayer* fmlay = (LeabraLayer*)p->from;
-    if(fmlay->spec.spec->GetTypeDef() == layer_spec) {	// not inherits - excact match!
+    if(fmlay->spec.SPtr()->GetTypeDef() == layer_spec) {	// not inherits - excact match!
       prjn_idx = p->recv_idx;
       rval = fmlay;
       break;
@@ -1653,7 +1653,7 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpecNet(Network* net, TypeDef* layer_sp
   LeabraLayer* lay;
   taLeafItr li;
   FOR_ITR_EL(LeabraLayer, lay, net->layers., li) {
-    if(lay->spec.spec->InheritsFrom(layer_spec)) {	// inherits - not excact match!
+    if(lay->spec.SPtr()->InheritsFrom(layer_spec)) {	// inherits - not excact match!
       return lay;
     }
   }
@@ -1964,7 +1964,7 @@ int LeabraSort::FindNewNetPos(float nw_net) {
 void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay) {
   lay->adapt_i.avg_avg = lay->kwta.pct;
   lay->adapt_i.i_kwta_pt = i_kwta_pt;
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   lay->adapt_i.g_bar_i = us->g_bar.i;
   lay->adapt_i.g_bar_l = us->g_bar.l;
   if(lay->units.gp.size > 0) {
@@ -2685,14 +2685,14 @@ void LeabraLayerSpec::AdaptGBarI(LeabraLayer* lay, LeabraNetwork*) {
       p_i = 1.0f - adapt_i.l;
     }
     lay->adapt_i.g_bar_i -= p_i * adapt_i.p_dt * diff;
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
     float minv = us->g_bar.i * (1.0 - adapt_i.mx_d);
     float maxv = us->g_bar.i * (1.0 + adapt_i.mx_d);
     if(lay->adapt_i.g_bar_i < minv) lay->adapt_i.g_bar_i = minv;
     if(lay->adapt_i.g_bar_i > maxv) lay->adapt_i.g_bar_i = maxv;
     if(adapt_i.type == AdaptISpec::G_BAR_IL) {
       lay->adapt_i.g_bar_l -= adapt_i.l * adapt_i.p_dt * diff;
-      LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+      LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
       float minv = us->g_bar.l * (1.0 - adapt_i.mx_d);
       float maxv = us->g_bar.l * (1.0 + adapt_i.mx_d);
       if(lay->adapt_i.g_bar_l < minv) lay->adapt_i.g_bar_l = minv;
@@ -2779,7 +2779,7 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
     LeabraUnit* u;
     taLeafItr ui;
     FOR_ITR_EL(LeabraUnit, u, lay->units., ui) {
-      LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
+      LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
       if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
       LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
@@ -2853,7 +2853,7 @@ void LeabraLayerSpec::Compute_TrgRelNetin(LeabraLayer* lay, LeabraNetwork*) {
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     if(!prjn->from || prjn->from->lesion) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.SPtr();
     float in_trg = cs->rel_net_adapt.trg_fm_input;
     float out_trg = cs->rel_net_adapt.trg_fm_output;
     float lat_trg = cs->rel_net_adapt.trg_lateral;
@@ -2882,7 +2882,7 @@ void LeabraLayerSpec::Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork*) {
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     if(!prjn->from || prjn->from->lesion) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.SPtr();
     if(prjn->trg_netin_rel <= 0.0f) continue; // not set
     if(!cs->rel_net_adapt.on) continue;
     if(cs->rel_net_adapt.CheckInTolerance(prjn->trg_netin_rel, prjn->avg_netin_rel))
@@ -2901,7 +2901,7 @@ void LeabraLayerSpec::Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork*) {
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
     if(!prjn->from || prjn->from->lesion) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.spec;
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.SPtr();
     cs->SetUnique("wt_scale", true);
     cs->wt_scale.abs += abs_net_adapt.abs_lrate * dst;
   }
@@ -3324,7 +3324,7 @@ void LeabraNetwork::Compute_Inhib() {
     if(lay->lesion)	continue;
     lay->Compute_Inhib(this);
     if(!do_lay_gp) {
-      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.spec;
+      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
       if(laysp->kwta.gp_i) do_lay_gp = true;
     }
   }
@@ -3335,7 +3335,7 @@ void LeabraNetwork::Compute_Inhib() {
       float lay_gp_g_i = 0.0f;
       for(int li = 0; li < lg->size; li++) {
 	lay = (LeabraLayer*)lg->FastEl(li);
-	LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.spec;
+	LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
 	if(lay->lesion || !laysp->kwta.gp_i) continue;
 	float lay_val = laysp->kwta.gp_g * lay->i_val.g_i;
 	lay_gp_g_i = MAX(lay_val, lay_gp_g_i);
@@ -3343,7 +3343,7 @@ void LeabraNetwork::Compute_Inhib() {
       if(lay_gp_g_i > 0.0f) {	// actually got something
 	for(int li = 0; li < lg->size; li++) {
 	  lay = (LeabraLayer*)lg->FastEl(li);
-	  LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.spec;
+	  LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
 	  if(lay->lesion || !laysp->kwta.gp_i) continue;
 	  lay->i_val.gp_g_i = lay_gp_g_i;
 	  if(laysp->kwta.gp_g > 1.0)
@@ -3515,7 +3515,7 @@ void LeabraNetwork::PostSettle_NStdLay() {
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
-    if(!lay->lesion && (lay->spec.spec->GetTypeDef() != &TA_LeabraLayerSpec))
+    if(!lay->lesion && (lay->spec.SPtr()->GetTypeDef() != &TA_LeabraLayerSpec))
       lay->PostSettle(this, set_both);
   }
 }
@@ -3627,7 +3627,7 @@ void LeabraNetwork::Compute_dWt_NStdLay() {
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(lay->lesion)	continue;
-    if(lay->spec.spec->GetTypeDef() != &TA_LeabraLayerSpec)
+    if(lay->spec.SPtr()->GetTypeDef() != &TA_LeabraLayerSpec)
       lay->Compute_dWt(this);
   }
 }
@@ -3648,7 +3648,7 @@ void LeabraNetwork::Trial_Init() {
   // todo: this is now the responsibility of the prog
 //   if(cur_event != NULL) {
 //     if(cur_event->spec->InheritsFrom(TA_PhaseOrderEventSpec)) {
-//       PhaseOrderEventSpec* es = (PhaseOrderEventSpec*)cur_event->spec.spec;
+//       PhaseOrderEventSpec* es = (PhaseOrderEventSpec*)cur_event->spec.SPtr();
 //       if(es->phase_order == PhaseOrderEventSpec::MINUS_PLUS)
 // 	phase = MINUS_PHASE;
 //       else if(es->phase_order == PhaseOrderEventSpec::MINUS_ONLY) {
@@ -3694,7 +3694,7 @@ void LeabraNetwork::Trial_Init() {
 void LeabraNetwork::Trial_UpdatePhase() {
   // todo: prog needs to deal
 //   if((cur_event != NULL) && (cur_event->spec->InheritsFrom(TA_PhaseOrderEventSpec))) {
-//     PhaseOrderEventSpec* es = (PhaseOrderEventSpec*)cur_event->spec.spec;
+//     PhaseOrderEventSpec* es = (PhaseOrderEventSpec*)cur_event->spec.SPtr();
 //     if(es->phase_order == PhaseOrderEventSpec::MINUS_PLUS)
 //       phase = PLUS_PHASE;
 //     else if(es->phase_order == PhaseOrderEventSpec::PLUS_MINUS)
@@ -3740,7 +3740,7 @@ void LeabraNetwork::Compute_ExtRew() {
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(lay->lesion)	continue;
-    if(lay->spec.spec->GetTypeDef() != &TA_ExtRewLayerSpec) continue;
+    if(lay->spec.SPtr()->GetTypeDef() != &TA_ExtRewLayerSpec) continue;
     LeabraUnit* eru = (LeabraUnit*)lay->units.Leaf(0);
     if(eru->misc_1 == 0.0f) { // indication of no reward available
       ext_rew = -1.1f;

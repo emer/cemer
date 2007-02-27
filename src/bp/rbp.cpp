@@ -219,13 +219,13 @@ void RBpUnitSpec::Compute_dEdNet(BpUnit* u) {
 void RBpUnitSpec::Compute_dWt(Unit* u) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts)  return; // don't compute dwts for clamped units
   UnitSpec::Compute_dWt(u);
-  ((BpConSpec*)bias_spec.spec)->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
 void RBpUnitSpec::Compute_Weights(Unit* u) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts) return; // don't update for clamped units
   UnitSpec::Compute_Weights(u);
-  ((BpConSpec*)bias_spec.spec)->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
 

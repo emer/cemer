@@ -991,7 +991,8 @@ private:
 #define taPtr_Of(T)  SmartPtr_Of(T)
 
 
-class TA_API taSmartRef: protected IDataLinkClient { // ##NO_INSTANCE ##NO_TOKENS "safe" reference for taBase objects -- does not ref count, but is a dlc so it tracks changes etc.
+class TA_API taSmartRef: protected IDataLinkClient {
+  // ##NO_INSTANCE ##NO_TOKENS safe reference for taBase objects -- does not ref count, but is a data link client so it tracks changes and automatically sets ptr to NULL when object dies
 friend class taBase;
 friend class TypeDef; // for various
 friend class MemberDef; // for streaming
@@ -1045,11 +1046,7 @@ inline bool operator ==(const taSmartRef& a, taBase* b)
   {return a.ptr() == b;}
 #endif
 
-#ifdef __MAKETA__
-template<class T>
-#else
-template<class T, TypeDef& td = TA_taBase>
-#endif
+template<class T, TypeDef& td>
 class taSmartRefT: public taSmartRef { 
 public:
   inline T*	ptr() const {return (T*)m_ptr;} // typed alias for the base version
@@ -1090,11 +1087,7 @@ private:\
   T ## Ref(const T ## Ref& src); \
 }; */
 
-#ifdef __MAKETA__
-# define SmartRef_Of(T,td)  typedef taSmartRefT<T> T ## Ref
-#else
-# define SmartRef_Of(T,td)  typedef taSmartRefT<T,td> T ## Ref
-#endif
+#define SmartRef_Of(T,td)  typedef taSmartRefT<T,td> T ## Ref
 
 SmartRef_Of(taBase,TA_taBase);		// basic ref if you don't know the type
 

@@ -72,10 +72,10 @@ template class PDP_API taGroup<Unit>;
 template class PDP_API taGroup<Layer>; // netstru.h
 template class PDP_API taGroup<Network>; // netstru.h
 
-template class PDP_API SpecPtr<ConSpec>;
-template class PDP_API SpecPtr<UnitSpec>;
-template class PDP_API SpecPtr<ProjectionSpec>;
-template class PDP_API SpecPtr<EventSpec>;
+template class PDP_API SpecPtr<ConSpec,TA_ConSpec>;
+template class PDP_API SpecPtr<UnitSpec,TA_UnitSpec>;
+template class PDP_API SpecPtr<ProjectionSpec,TA_ProjectionSpec>;
+template class PDP_API SpecPtr<EventSpec,TA_EventSpec>;
 
 // v3_compat.h
 template class PDP_API taGroup<Event>;

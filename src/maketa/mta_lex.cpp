@@ -398,12 +398,12 @@ int MTA::lex() {
     
     // get rid of things after equals signs inside of classes (always return EQUALS)
     if(c == '=') {
-      if((state == Parse_inclass)) {
+      if((state != Parse_enum)) {
 	bdepth = 0;
 	EqualsBuf = "";
 	do {
 	  c = Peekc();
-	  if(((bdepth == 0) && ((c == ',') || (c == ')'))) || (c == ';')) {
+	  if(((bdepth == 0) && ((c == ',') || (c == ')') || (c == '>'))) || (c == ';')) {
 	    yylval.chr = EqualsBuf;
 	    return EQUALS;
 	  }

@@ -532,7 +532,6 @@ void SpecPtr_impl::Initialize() {
   owner = NULL;
   type = NULL;
   base_type = &TA_BaseSpec;
-  prv_spec = NULL;
 }
 
 void SpecPtr_impl::Copy_(const SpecPtr_impl& cp) {
@@ -564,22 +563,13 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
       SetSpec(NULL);
     }
     else if(sp->GetTypeDef() == type) {
-      goto updt_spec;
+      // ok, do nothing
     }
     else {
       SetSpec(NULL);		// get rid of existing spec
     }
   }
   GetSpecOfType();
- updt_spec:
-  sp = GetSpec();
-  if (prv_spec != sp) {		
-    if(prv_spec)		// get rid of previous data client
-      prv_spec->RemoveDataClient(this);
-    prv_spec = sp;
-    if(sp && !sp->isDestroying())			// always make sure we are a data client
-      sp->AddDataClient(this);
-  }
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {
@@ -650,18 +640,13 @@ void SpecPtr_impl::GetSpecOfType() {
   }
 }
 
-void SpecPtr_impl::DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {
-  // no special calls for specs..
-//   if (owner) {
-//     owner->SmartRef_DataChanged(this, GetSpec(), dcr, op1, op2);
-//   }
-}
-void SpecPtr_impl::DataLinkDestroying(taDataLink* dl) {
-  if (owner && !owner->isDestroying()) {
-//     owner->SmartRef_DataDestroying(this, GetSpec()); 
-    SetSpec(NULL);
-    owner->UpdateAfterEdit();
-  } else
-    SetSpecVar(NULL);
-}
+// todo: could add the UAE for the relevant smartref_destroy call..
+// void SpecPtr_impl::DataLinkDestroying(taDataLink* dl) {
+//   if (owner && !owner->isDestroying()) {
+// //     owner->SmartRef_DataDestroying(this, GetSpec()); 
+//     SetSpec(NULL);
+//     owner->UpdateAfterEdit();
+//   } else
+//     SetSpec(NULL);
+// }
 

@@ -127,7 +127,7 @@ class BP_API BpRecvCons : public RecvCons {
 public:
   // these are "convenience" functions for those defined in the spec
 
-  void	SetCurLrate(int epoch) { ((BpConSpec*)spec.spec)->SetCurLrate(epoch); }
+  void	SetCurLrate(int epoch) { ((BpConSpec*)spec.SPtr())->SetCurLrate(epoch); }
 
   void	Initialize();
   void 	Destroy()		{ };
@@ -139,7 +139,7 @@ class BP_API BpSendCons : public RecvCons {
 public:
   // these are "convenience" functions for those defined in the spec
 
-  float Compute_dEdA(BpUnit* su) { return ((BpConSpec*)spec.spec)->Compute_dEdA(this, su); }
+  float Compute_dEdA(BpUnit* su) { return ((BpConSpec*)spec.SPtr())->Compute_dEdA(this, su); }
 
   void	Initialize();
   void 	Destroy()		{ };
@@ -202,10 +202,10 @@ public:
   float 	dEdNet;		// #LABEL_dEdNet error wrt net input
 
   // these are "convenience" functions for those defined in the spec
-  void SetCurLrate(int epoch)   { ((BpUnitSpec*)spec.spec)->SetCurLrate(this, epoch); }
-  void Compute_Error()		{ ((BpUnitSpec*)spec.spec)->Compute_Error(this); }
-  void Compute_dEdA()		{ ((BpUnitSpec*)spec.spec)->Compute_dEdA(this); }
-  void Compute_dEdNet()		{ ((BpUnitSpec*)spec.spec)->Compute_dEdNet(this); }
+  void SetCurLrate(int epoch)   { ((BpUnitSpec*)spec.SPtr())->SetCurLrate(this, epoch); }
+  void Compute_Error()		{ ((BpUnitSpec*)spec.SPtr())->Compute_Error(this); }
+  void Compute_dEdA()		{ ((BpUnitSpec*)spec.SPtr())->Compute_dEdA(this); }
+  void Compute_dEdNet()		{ ((BpUnitSpec*)spec.SPtr())->Compute_dEdNet(this); }
   void Compute_dEdA_dEdNet() 	{ Compute_dEdA(); Compute_Error(); Compute_dEdNet(); }
 
   void 	Initialize();

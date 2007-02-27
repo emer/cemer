@@ -1,14 +1,8 @@
-class MyClass { 
+template<class T, TypeDef* td = &TA_int>
+class MyClassT { 
 public:
-  int val;
+  T val;
+  void GetType(TypeDef* typ = td);
 };
 
-class nxClass { 
-public:
-  int val3;
-};
-
-class vpClass : virtual public MyClass, virtual public nxClass { 
-public:
-  int val2;
-};
+typedef MyClassT<int, TA_float> myguy;

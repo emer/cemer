@@ -112,7 +112,7 @@ void BpUnitSpec::Copy_(const BpUnitSpec& cp) {
 }
 
 void BpUnitSpec::SetCurLrate(BpUnit* u, int epoch) {
-  ((BpConSpec*)bias_spec.spec)->SetCurLrate(epoch);
+  ((BpConSpec*)bias_spec.SPtr())->SetCurLrate(epoch);
   for(int g=0; g<u->recv.size; g++) {
     BpRecvCons* recv_gp = (BpRecvCons*)u->recv.FastEl(g);
     recv_gp->SetCurLrate(epoch);
@@ -154,13 +154,13 @@ void BpUnitSpec::Compute_dEdNet(BpUnit* u) {
 void BpUnitSpec::Compute_dWt(Unit* u) {
   if(u->ext_flag & Unit::EXT)  return; // don't compute dwts for clamped units
   UnitSpec::Compute_dWt(u);
-  ((BpConSpec*)bias_spec.spec)->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
 void BpUnitSpec::Compute_Weights(Unit* u) {
   if(u->ext_flag & Unit::EXT)  return; // don't update for clamped units
   UnitSpec::Compute_Weights(u);
-  ((BpConSpec*)bias_spec.spec)->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
 /*TODO void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {

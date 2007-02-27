@@ -147,7 +147,7 @@ void MatrixUnitSpec::Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib
     u->net_raw += u->net_delta;
     u->net += u->clmp_net + u->net_raw;
   }
-  MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.spec;
+  MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
   float eff_dt = dt.net;
   if(freeze_net) {
     if(mls->bg_type == MatrixLayerSpec::MAINT) {
@@ -170,7 +170,7 @@ void MatrixUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
 			       LeabraNetwork* net, bool set_both)
 {
   DaModUnitSpec::PostSettle(u, lay, thr, net, set_both);
-  MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.spec;
+  MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
   if(mls->bg_type == MatrixLayerSpec::MAINT) {
     DaModUnit* lu = (DaModUnit*)u;
     if((net->phase_order == LeabraNetwork::MINUS_PLUS_PLUS) && (net->phase_no == 2)) {
@@ -316,7 +316,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     return false;
   }
 
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(!us->InheritsFrom(TA_MatrixUnitSpec)) {
     if (!quiet) taMisc::CheckError("MatrixLayerSpec: UnitSpec must be MatrixUnitSpec!");
     return false;
@@ -352,7 +352,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   }
   us->UpdateAfterEdit();
 
-  LeabraBiasSpec* bs = (LeabraBiasSpec*)us->bias_spec.spec;
+  LeabraBiasSpec* bs = (LeabraBiasSpec*)us->bias_spec.SPtr();
   if(bs == NULL) {
     if (!quiet) taMisc::CheckError("MatrixLayerSpec: Error: null bias spec in unit spec", us->name);
     return false;
@@ -366,13 +366,13 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from == recv_gp->prjn->layer) // self projection, skip it
       continue;
-    if(recv_gp->spec.spec->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
-      if(fmlay->spec.spec->InheritsFrom(TA_SNcLayerSpec)) da_lay = fmlay;
-      if(fmlay->spec.spec->InheritsFrom(TA_SNrThalLayerSpec)) snr_lay = fmlay;
+      if(fmlay->spec.SPtr()->InheritsFrom(TA_SNcLayerSpec)) da_lay = fmlay;
+      if(fmlay->spec.SPtr()->InheritsFrom(TA_SNrThalLayerSpec)) snr_lay = fmlay;
       continue;
     }
-    MatrixConSpec* cs = (MatrixConSpec*)recv_gp->spec.spec;
+    MatrixConSpec* cs = (MatrixConSpec*)recv_gp->spec.SPtr();
     if(!cs->InheritsFrom(TA_MatrixConSpec)) {
       if (!quiet) taMisc::CheckError("MatrixLayerSpec:  Receiving connections must be of type MatrixConSpec!");
       return false;
@@ -478,7 +478,7 @@ void MatrixLayerSpec::Compute_ErrRndGo(LeabraLayer* lay, LeabraNetwork*) {
 //   if(err_rnd_go.mutex)
   int snr_prjn_idx = 0;
   LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.spec;
+  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
 
   bool all_nogo = (snrthal_lay->acts_m.max < snrthalsp->snrthal.go_thr);
 
@@ -538,7 +538,7 @@ void MatrixLayerSpec::Compute_AvgDaRndGo(LeabraLayer* lay, LeabraNetwork*) {
 
   int snr_prjn_idx = 0;
   LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.spec;
+  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
 
   // compute softmax over snr unit netinputs to select the stripe to go
   float sum_exp_val = 0.0f;
@@ -643,7 +643,7 @@ void MatrixLayerSpec::Compute_DaModUnit_Contrast(DaModUnit* u, float dav, float 
 void MatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib*, LeabraNetwork*) {
   int da_prjn_idx;
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_SNcLayerSpec);
-  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.spec;
+  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   float dav = contrast.gain * dals->da.tonic_da;
   int idx = 0;
   DaModUnit* u;
@@ -659,7 +659,7 @@ void MatrixLayerSpec::Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mug
 void MatrixLayerSpec::Compute_DaPerfMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib*, LeabraNetwork*) {
   int da_prjn_idx;
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_SNcLayerSpec);
-  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.spec;
+  PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   float tonic_da = dals->da.tonic_da;
 
   int idx = 0;
@@ -731,7 +731,7 @@ void MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* mug
 void MatrixLayerSpec::Compute_MotorGate(LeabraLayer* lay, LeabraNetwork*) {
   int snr_prjn_idx = 0;
   LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.spec;
+  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
 
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
@@ -914,7 +914,7 @@ bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   }
 
   // must have the appropriate ranges for unit specs..
-  //  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+  //  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
   // check recv connection
   int mtx_prjn_idx = 0;
@@ -948,13 +948,13 @@ bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
   int mtx_prjn_idx = 0;
   LeabraLayer* matrix_lay = FindLayerFmSpec(lay, mtx_prjn_idx, &TA_MatrixLayerSpec);
-  MatrixLayerSpec* mls = (MatrixLayerSpec*)matrix_lay->spec.spec;
+  MatrixLayerSpec* mls = (MatrixLayerSpec*)matrix_lay->spec.SPtr();
 
   for(int mg=0; mg<lay->units.gp.size; mg++) {
     LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[mg];
     float gonogo = 0.0f;
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)matrix_lay->units.gp[mg];
-    MatrixUnitSpec* us = (MatrixUnitSpec*)matrix_lay->unit_spec.spec;
+    MatrixUnitSpec* us = (MatrixUnitSpec*)matrix_lay->unit_spec.SPtr();
     if((mugp->size > 0) && (mugp->acts.max >= us->opt_thresh.send)) {
       float sum_go = 0.0f;
       float sum_nogo = 0.0f;
@@ -1109,7 +1109,7 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
     return false;
   }
 
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
     if (!quiet) taMisc::CheckError("PFCLayerSpec: UnitSpec must be DaModUnitSpec!");
     return false;
@@ -1144,7 +1144,7 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
       if (!quiet) taMisc::CheckError("*** PFCLayerSpec: null from layer in recv projection:", (String)g);
       return false;
     }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.spec;
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
     if(cs->InheritsFrom(TA_MarkerConSpec)) continue;
     // could check the conspec parameters here..
   }
@@ -1175,8 +1175,8 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
 void PFCLayerSpec::ResetSynDep(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   for(int g=0; g<u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-    if(!send_gp->spec.spec->InheritsFrom(TA_TrialSynDepConSpec)) continue;
-    TrialSynDepConSpec* cs = (TrialSynDepConSpec*)send_gp->spec.spec;
+    if(!send_gp->spec.SPtr()->InheritsFrom(TA_TrialSynDepConSpec)) continue;
+    TrialSynDepConSpec* cs = (TrialSynDepConSpec*)send_gp->spec.SPtr();
     cs->Reset_EffWt(send_gp);
   }
 }
@@ -1186,7 +1186,7 @@ void PFCLayerSpec::Compute_MaintUpdt(LeabraUnit_Group* ugp, MaintUpdtAct updt_ac
   if(updt_act == NO_UPDT) return;
   for(int j=0;j<ugp->size;j++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(j);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.spec;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
     if(updt_act == STORE) {
       u->vcb.g_h = u->misc_1 = u->act_eq;
       if(gate.off_accom > 0.0f)
@@ -1232,7 +1232,7 @@ void PFCLayerSpec::Compute_TmpClear(LeabraLayer* lay, LeabraNetwork* net) {
 void PFCLayerSpec::Compute_GatingGOGO(LeabraLayer* lay, LeabraNetwork* net) {
   int snrthal_prjn_idx;
   LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.spec;
+  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
 
   for(int mg=0;mg<lay->units.gp.size;mg++) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
@@ -1405,7 +1405,7 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     return false;
   }
 
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(!us->InheritsFrom(TA_DaModUnitSpec)) {
     if (!quiet) taMisc::CheckError("PFCOutLayerSpec: UnitSpec must be DaModUnitSpec!");
     return false;
@@ -1442,7 +1442,7 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     lay->un_geom = pfc_lay->un_geom;
   }
 
-  PFCLayerSpec* pfcsp = (PFCLayerSpec*)pfc_lay->spec.spec;
+  PFCLayerSpec* pfcsp = (PFCLayerSpec*)pfc_lay->spec.SPtr();
   kwta = pfcsp->kwta;
   gp_kwta = pfcsp->gp_kwta;
   inhib_group = pfcsp->inhib_group;
@@ -1485,7 +1485,7 @@ void PFCOutLayerSpec::Compute_InhibAvg(LeabraLayer*, LeabraNetwork*) {
 void PFCOutLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   int snrthal_prjn_idx;
   LeabraLayer* snrthal_lay = FindLayerFmSpec(lay, snrthal_prjn_idx, &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.spec;
+  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)snrthal_lay->spec.SPtr();
 //   int mtx_prjn_idx;
 //   LeabraLayer* matrix_lay = FindLayerFmSpec(snrthal_lay, mtx_prjn_idx, &TA_MatrixLayerSpec);
   int pfc_prjn_idx;
@@ -1726,7 +1726,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 	input_lays.Link(lay);
       else 
 	output_lays.Link(lay);
-      LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec;
+      LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
       if(us == NULL || !us->InheritsFrom(TA_DaModUnitSpec)) {
 	us->ChangeMyType(&TA_DaModUnitSpec);
       }

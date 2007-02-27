@@ -51,7 +51,7 @@ int yylex();
 }
 
 /* type definition keywords */
-%token	<typ> 	CLASS STRUCT UNION ENUM FUNTYPE STATIC TEMPLATE CONST
+%token	<typ> 	CLASS TYPENAME STRUCT UNION ENUM FUNTYPE STATIC TEMPLATE CONST
 %token	<typ>	TYPEDEF
 
 /* pre-defined types */
@@ -92,8 +92,8 @@ int yylex();
 %type 	<meth>	methdefn basicmeth nostatmeth methname mbfundefn
 
 /* template stuff */
-%type 	<typ>	templdsub templname templhead templopen templpars
-%type	<typ>	templtypes
+%type 	<typ>	templdsub templname templhead templopen templpar templpars
+%type	<typ>	templargs templarg
 
 /* function stuff */
 %type 	<meth>	funnm regfundefn
@@ -364,8 +364,15 @@ templopen: '<'				{ mta->cur_templ_pars.Reset(); }
         ;
 
 templpars:
+          templpar
+        | templpar ',' templpar		{ $$ = $1; }
+        ;
+
+templpar:
           CLASS tyname			{ mta->cur_templ_pars.Link($2); $$ = $2; }
-        | templpars ',' CLASS tyname	{ mta->cur_templ_pars.Link($4); $$ = $1; }
+        | TYPENAME tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
+        | type tyname			{ mta->cur_templ_pars.Link($2); $$ = $2; }
+        | type tyname EQUALS		{ mta->cur_templ_pars.Link($2); $$ = $2; }
         ;
 
 fundecl:  funnm				{
@@ -737,7 +744,7 @@ subtype:  combtype
 	| THISNAME SCOPER TYPE		{ $$ = $3; }
         | SCOPER TYPE			{ $$ = $2; }
         | THISNAME
-        | TYPE templopen templtypes '>'		{ /* a template */
+        | TYPE templopen templargs '>'		{ /* a template */
  	    if(!($1->InheritsFormal(TA_template))) {
 	      yyerror("Template syntax error"); YYERROR; }
 	    if(($3->owner != NULL) && ($3->owner->owner != NULL))
@@ -754,7 +761,7 @@ subtype:  combtype
 		if($$ == td) mta->TypeAdded("template instance", sp, $$); }
 	      else
 		$$ = td; } }
-	| THISNAME templopen templtypes '>'	{ /* this template */
+	| THISNAME templopen templargs '>'	{ /* this template */
 	    if(!($1->InheritsFormal(TA_template))) {
 	      yyerror("Template syntax error"); YYERROR; }
 	    $$ = $1; }
@@ -770,10 +777,18 @@ combtype: TYPE
 	    if($$ == nty) mta->TypeAdded("combo", sp, $$); }
         ;
 
-templtypes:
-          TYPE			{ mta->cur_templ_pars.Link($1); }
-        | templtypes ',' TYPE	{ mta->cur_templ_pars.Link($3); $$ = $1; }
+templargs:
+          templarg
+        | templargs ',' templarg	{ $$ = $1; }
         ;
+
+
+templarg:
+          TYPE			{ mta->cur_templ_pars.Link($1); }
+        | NAME			{ $$ = new TypeDef($1); mta->cur_templ_pars.Push($$); }
+        | NUMBER		{ $$ = new TypeDef((String)$1); mta->cur_templ_pars.Push($$); }
+          /* todo: need to add support for arbitrary strings here, which are not just types */
+	;
 
 tdname:   NAME
         | TYPE			{ $$ = $1->name; }

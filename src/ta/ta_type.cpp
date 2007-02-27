@@ -4275,6 +4275,8 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
   internal = false;			// not internal any more
   children.Reset();			// don't have any real children..
 
+  // todo: need to add support for arbitrary strings here, which are not just types
+
   int i;
   for(i=0; i<inst_pars.size; i++) {
     TypeDef* defn_tp = templ_par->templ_pars.FastEl(i); // type as defined
