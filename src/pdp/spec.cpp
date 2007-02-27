@@ -573,13 +573,13 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
   GetSpecOfType();
  updt_spec:
   sp = GetSpec();
-  if(prv_spec != sp) {		
+  if (prv_spec != sp) {		
     if(prv_spec)		// get rid of previous data client
       prv_spec->RemoveDataClient(this);
     prv_spec = sp;
+    if(sp && !sp->isDestroying())			// always make sure we are a data client
+      sp->AddDataClient(this);
   }
-  if(sp && !sp->isDestroying())			// always make sure we are a data client
-    sp->AddDataClient(this);
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {
@@ -661,6 +661,7 @@ void SpecPtr_impl::DataLinkDestroying(taDataLink* dl) {
 //     owner->SmartRef_DataDestroying(this, GetSpec()); 
     SetSpec(NULL);
     owner->UpdateAfterEdit();
-  }
+  } else
+    SetSpecVar(NULL);
 }
 

@@ -187,6 +187,7 @@ public: // IDataLinkClient interface
 protected:
   BaseSpec*	prv_spec;	// for removing data client when changing
   void	UpdateAfterEdit_impl();	// check, update the spec type
+  virtual void		SetSpecVar(BaseSpec* es) {} // for when link destroys
 };
 
 
@@ -197,6 +198,7 @@ public:
 
   BaseSpec*	GetSpec() const		{ return spec; }
   void		SetSpec(BaseSpec* es)   {
+    if (spec == es) return; // low level setting, ex. streaming, handled in UAE
     if(!owner) return;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
       if(spec) spec->RemoveDataClient(this);
@@ -252,6 +254,9 @@ public:
   //  { taBase::SetPointer((TAPtr*)&spec, cp.spec); UpdateAfterEdit(); }
   COPY_FUNS(SpecPtr<T>, SpecPtr_impl);
   TA_TMPLT_BASEFUNS(SpecPtr, T);
+protected:
+  override void		SetSpecVar(BaseSpec* es) 
+    {spec = (T*) es; prv_spec = (T*)es;} 
 };
 
 #define SpecPtr_of(T)							      \
