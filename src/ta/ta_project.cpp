@@ -467,6 +467,7 @@ bool taRootBase::AddRecentFile_impl(const String& value) {
     // insert it
     recent_files.Insert(value, 0);
   }
+  return true;
 }
 
 void taRootBase::AddRecentPath(const String& value) {

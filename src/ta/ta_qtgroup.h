@@ -459,9 +459,9 @@ protected:
   int			array_set; // index of array_set
   override void 	GetValue_Membs();
   override void 	GetImage_Membs();
-  override void ClearBody_impl();
-  override void		Constr_Data();
-  virtual void	Constr_AryData();
+  override void 	ClearBody_impl();
+  override void		Constr_Data_Labels();
+  virtual void		Constr_AryData_Labels();
 };
 
 

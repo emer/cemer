@@ -55,8 +55,7 @@ protected:
   void	 		GetName(int idx, cssEl* md, String& name, String& desc);
   override void		ClearBody_impl(); // delete the data items
   override void		Constr_Inline() {} // n/a
-  override void		Constr_Labels();
-  override void		Constr_Data(); // construct the data and label elements of the dialog
+  override void		Constr_Data_Labels(); // construct the data and label elements of the dialog
   override void		Constr_Strings(const char* prompt="", const char* win_title="");
 private:
   void	Initialize();
@@ -94,8 +93,7 @@ public:
 protected:
   override void		Constr_impl();
   override void		Constr_Strings(const char* prompt="", const char* win_title="");
-  override void		Constr_Data(); // construct the static elements of the dialog
-  override void		Constr_Labels(); // construct the labels of the dialog
+  override void		Constr_Data_Labels(); // construct the static elements of the dialog
 };
 
 

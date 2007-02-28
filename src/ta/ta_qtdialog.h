@@ -543,12 +543,8 @@ protected:
   override void		Constr_Strings(const char* prompt, const char* win_title);
   override void		Constr_Body();    // construct the data of the dialog
   virtual void		Constr_Data_Labels(); // calls Data then Labels -- override to do your own
-  virtual void		Constr_Data(); // members, or equivalent in inherited classes, and labels
-  virtual void		Constr_Labels(); // labels
   virtual void 		Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
-  virtual void		Constr_Labels_impl(int& idx, Member_List* ms,
-     taiDataList* dl = NULL); //dl non-null enables label-buddy linking
-  virtual void		Constr_Data_impl(int& idx, Member_List* ms,
+  virtual void		Constr_Data_Labels_impl(int& idx, Member_List* ms,
      taiDataList* dl);
   void			Constr_MethButtons();
   override void		Constr_ShowMenu(); // make the show/hide menu

@@ -1535,22 +1535,20 @@ bool gpiArrayEditDataHost::ShowMember(MemberDef* md) const {
     return inherited::ShowMember(md);
 }
 
-void gpiArrayEditDataHost::Constr_Data() {
-  inherited::Constr_Data();
+void gpiArrayEditDataHost::Constr_Data_Labels() {
+  inherited::Constr_Data_Labels();
 //TODO: add a nice Array label
-  Constr_AryData();
+  Constr_AryData_Labels();
 }
 
-void gpiArrayEditDataHost::Constr_AryData() {
-  //NOTE: constructs names and labels
-  QWidget* rep;
+void gpiArrayEditDataHost::Constr_AryData_Labels() {
   taArray_base* cur_ary = (taArray_base*)cur_base;
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i) {
     taiData* mb_dat = tit->GetDataRep(this, NULL, body);
     data_el(array_set).Add(mb_dat);
-    rep = mb_dat->GetRep();
+    QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
     String nm = String("[") + String(i) + "]";
     int idx = AddData(-1, rep, fill_hor);

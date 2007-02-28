@@ -81,33 +81,9 @@ void cssiEditDialog::GetName(int idx, cssEl* md, String& name, String& desc) {
   else desc = "";
 }
 
-
-void cssiEditDialog::Constr_Labels() {
-  int index = 0;
+void cssiEditDialog::Constr_Data_Labels() {
   String name;
   String desc;
-  for (int i = 0; i < obj->members->size; ++i) {
-    cssEl* md = obj->members->FastEl(i);
-    if ((obj->type_def != NULL) && !obj->type_def->MbrHasOption(i, "SHOW") &&
-       (obj->type_def->MbrHasOption(i, "HIDDEN") || obj->type_def->MbrHasOption(i, "READ_ONLY")))
-      continue;
-    bool read_only = false;
-    if ((obj->type_def != NULL) && obj->type_def->MbrHasOption(i, "READ_ONLY"))
-      read_only = true;
-    cssiType* cit = GetTypeFromEl(md, read_only); // get the actual object..
-    if ((cit == NULL) || (cit->cur_base == NULL))
-      continue;
-
-    // get the widget representation of the data
-    taiData* mb_dat = data_el(0).SafeEl(index);
-    // now get label
-    GetName(i, md, name, desc);
-    AddName(i, name, desc, mb_dat);
-    ++index;
-  }
-}
-
-void cssiEditDialog::Constr_Data() {
   int index = 0;
   for (int i = 0; i < obj->members->size; ++i) {
     cssEl* md = obj->members->FastEl(i);
@@ -126,6 +102,11 @@ void cssiEditDialog::Constr_Data() {
     taiData* mb_dat = cit->GetDataRep(this, NULL, body);
     data_el(0).Add(mb_dat);
     AddData(index, mb_dat->GetRep());
+    
+    // now get label
+    GetName(i, md, name, desc);
+    AddName(i, name, desc, mb_dat);
+    
     ++index;
   }
 }
@@ -438,35 +419,20 @@ taiArgType* cssiArgDialog::GetBestArgType(int aidx, TypeDef* argt, MethodDef* md
   return hi_arg->ArgTypeInst(argt, md, td);
 }
 
-void cssiArgDialog::Constr_Data() {
-  QWidget* rep;
-  taiData* mb_dat;
-
+void cssiArgDialog::Constr_Data_Labels() {
+  String name;
+  String desc;
   // create the data fields
   for (int i = hide_args; i < type_el.size; ++i) {
     int j = i - hide_args;
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    mb_dat = art->GetDataRep(this, NULL, (QWidget*)body);
+    taiData* mb_dat = art->GetDataRep(this, NULL, (QWidget*)body);
 
     data_el(0).Add(mb_dat);
-    rep = mb_dat->GetRep();
+    QWidget* rep = mb_dat->GetRep();
     AddData(j, rep);
-  }
-}
-
-void cssiArgDialog::Constr_Labels() {
-  String name;
-  String desc;
-  taiData* mb_dat;
-
-  // create the labels
-
-  for (int i = 1 + hide_args; i < obj->members->size; ++i) { //note: we start from 1 + #ignored
-    int j = i - hide_args;
+    
     cssEl* md = obj->members->FastEl(i);
-
-    mb_dat = data_el(0).SafeEl(j);
-
     GetName(j, md, name, desc);
     AddName(j - 1, name, desc, mb_dat);
   }

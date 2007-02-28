@@ -1484,6 +1484,15 @@ void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const char* label) {
   }
 }
 
+void taiEditDataHost::bgrp_buttonClicked(int id) {
+  // id is an index of the membs
+  iCheckBox* chk = qobject_cast<iCheckBox*>(bgrp->button(id));
+  if (!chk) return; // shouldn't happen
+  if ((id < 0) || (id >= membs.size)) return; // ditto
+  show_set(id) = chk->isChecked();
+  ReShow_Async();
+}
+
 void taiEditDataHost::Cancel_impl() {
 //NOTE: must be ok to call this if was still deferred
   // delete all methods and menu
@@ -1554,16 +1563,12 @@ void taiEditDataHost::Constr_Body() {
 }
 
 void taiEditDataHost::Constr_Data_Labels() {
-  Constr_Data();
-  Constr_Labels();
-}
-
-void taiEditDataHost::Constr_Data() {
   int idx = 0;
   // Normal members
   if (MS_NORM >= membs.def_size) return; // don't do those
   if (show_set(MS_NORM) && (memb_el(MS_NORM).size > 0)) {
-    Constr_Data_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
+//    Constr_Data_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
+    Constr_Data_Labels_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
   }
   for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
     if (j >= membs.def_size) return; // don't do those
@@ -1587,26 +1592,8 @@ void taiEditDataHost::Constr_Data() {
     // if we are to show this section, then check the box, and build, else nothing else
     if (show_set(j)) {
       chk->setChecked(true);
-      Constr_Data_impl(idx, &memb_el(j), &data_el(j));
-    }
-  }
-}
-
-void taiEditDataHost::bgrp_buttonClicked(int id) {
-  // id is an index of the membs
-  iCheckBox* chk = qobject_cast<iCheckBox*>(bgrp->button(id));
-  if (!chk) return; // shouldn't happen
-  if ((id < 0) || (id >= membs.size)) return; // ditto
-  show_set(id) = chk->isChecked();
-  ReShow_Async();
-}
-
-void taiEditDataHost::Constr_Labels() {
-  int idx = 0;
-  for (int j = 0; j < membs.size; ++j) {
-    if (j >= membs.def_size) return; // don't do those
-    if (show_set(j) && (memb_el(j).size > 0)) {
-      Constr_Labels_impl(idx, &memb_el(j), &data_el(j));
+//      Constr_Data_impl(idx, &memb_el(j), &data_el(j));
+      Constr_Data_Labels_impl(idx, &memb_el(j), &data_el(j));
     }
   }
 }
@@ -1621,39 +1608,26 @@ void taiEditDataHost::Constr_Inline() {
   AddData(0, rep, fill_hor);
 }
 
-void taiEditDataHost::Constr_Labels_impl(int& idx, Member_List* ms, taiDataList* dl) {
+void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
+  taiDataList* dl) 
+{
   String name;
   String desc;
   for (int i = 0; i < ms->size; ++i) {
-    MemberDef* md = ms->SafeEl(i);
-
-    taiData* mb_dat = NULL;
-    // Get data widget, if dl provided
-    if (dl != NULL) {
-      mb_dat = dl->SafeEl(i);
-    }
-
+    MemberDef* md = ms->FastEl(i);
+    
+    // Create data widget
+    taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
+    dl->Add(mb_dat);
+    QWidget* rep = mb_dat->GetRep();
+    bool fill_hor = mb_dat->fillHor();
+    AddData(idx, rep, fill_hor);
+    
     // create label
     name = "";
     desc = "";
     GetName(md, name, desc);
-
-    // add to layout
     AddName(idx, name, desc, mb_dat, md);
-    ++idx;
-  }
-}
-
-void taiEditDataHost::Constr_Data_impl(int& idx, Member_List* ms, taiDataList* dl) {
-  QWidget* rep;
-  for (int i = 0; i < ms->size; ++i) {
-    MemberDef* md = ms->FastEl(i);
-    // Create data widget
-    taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
-    dl->Add(mb_dat);
-    rep = mb_dat->GetRep();
-    bool fill_hor = mb_dat->fillHor();
-    AddData(idx, rep, fill_hor);
     ++idx;
   }
 }
