@@ -855,13 +855,16 @@ int ArmModel::SetGripperPos()
 int ArmModel::SetLinksJoints()
 {
   // attach first link to base
-  this->linkJoints[0] = new HingeJoint(this->world->worldId);
+  this->linkJoints[0] = new HingeJoint(this->world);
   this->linkJoints[0]->Attach(this->links[0], this->base);
   // Set an anchor for the joint
   GzVector a = links[0]->GetPosition();    
-  this->linkJoints[0]->SetAnchor(a.x, a.y, a.z);   
+
+  this->linkJoints[0]->SetAnchor(a);   
   // Set axis of rotation                    
-  this->linkJoints[0]->SetAxis(0, 0, 1);
+  GzVector jointAxes;
+  jointAxes.x = 0; jointAxes.y = 0; jointAxes.z = 1;
+  this->linkJoints[0]->SetAxis(jointAxes);
   // Turn off the bouncing
   this->linkJoints[0]->SetParam(dParamBounce, 0);
   // Set joint limits
@@ -872,13 +875,13 @@ int ArmModel::SetLinksJoints()
     
   
   // attach second link to first link  
-  this->linkJoints[1] = new HingeJoint(this->world->worldId);
+  this->linkJoints[1] = new HingeJoint(this->world);
   this->linkJoints[1]->Attach(this->links[1], this->links[0]);
   // Set an anchor for the joint
   GzVector b = links[1]->GetPosition();    
-  this->linkJoints[1]->SetAnchor(b.x, b.y, b.z);   
+  this->linkJoints[1]->SetAnchor(b);   
   // Set axis of rotation                         
-  this->linkJoints[1]->SetAxis(0, 0, 1);
+  this->linkJoints[1]->SetAxis(jointAxes);
   // Turn off the bouncing
   this->linkJoints[1]->SetParam(dParamBounce, 0);
   // Set joint limits
@@ -912,13 +915,15 @@ int ArmModel::SetGripperJoints()
 
   // Left gripper joint
   // Attach left finger to gripper base
-  this->leftGripperJoint = new HingeJoint(this->world->worldId);
+  this->leftGripperJoint = new HingeJoint(this->world);
   this->leftGripperJoint->Attach(this->leftGripper, this->gripper);
   // Set anchor
   GzVector d = leftGripper->GetPosition();    
-  this->leftGripperJoint->SetAnchor(d.x, d.y, d.z);
+  this->leftGripperJoint->SetAnchor(d);
   // Set axis of rotation
-  this->leftGripperJoint->SetAxis(-1, 0, 0);
+  GzVector gripperJointAxes;
+  gripperJointAxes.x = -1; gripperJointAxes.y = 0; gripperJointAxes.z = 0;
+  this->leftGripperJoint->SetAxis(gripperJointAxes);
   // Turn off the bouncing
   this->leftGripperJoint->SetParam(dParamBounce, 0);
   // Set joint limits
@@ -927,13 +932,14 @@ int ArmModel::SetGripperJoints()
 
   // Right gripper joint
   // Attach right finger to gripper base
-  this->rightGripperJoint = new HingeJoint(this->world->worldId);
+  this->rightGripperJoint = new HingeJoint(this->world);
   this->rightGripperJoint->Attach(this->rightGripper, this->gripper);
   // Set anchor
   GzVector e = rightGripper->GetPosition();    
-  this->rightGripperJoint->SetAnchor(e.x, e.y, e.z);
+  this->rightGripperJoint->SetAnchor(e);
   // Set axis of rotation
-  this->rightGripperJoint->SetAxis(1, 0, 0);
+  gripperJointAxes.x = 1;
+  this->rightGripperJoint->SetAxis(gripperJointAxes);
   // Turn off the bouncing
   this->rightGripperJoint->SetParam(dParamBounce, 0);
   // Set joint limits
@@ -1139,15 +1145,19 @@ void ArmModel::PutPositionData()
   // Data timestamp
   this->gripper_iface->data->time = this->world->GetSimTime();
   
-  this->gripper_iface->data->paddles_opened = this->mGripperOpen;
-  this->gripper_iface->data->paddles_closed = !(this->mGripperOpen);
+  //  this->gripper_iface->data->paddles_opened = this->mGripperOpen;
+  this->gripper_iface->data->left_paddle_open = this->mGripperOpen;
+  this->gripper_iface->data->right_paddle_open = this->mGripperOpen;
+  //  this->gripper_iface->data->paddles_closed = !(this->mGripperOpen);
+  this->gripper_iface->data->left_paddle_open = !(this->mGripperOpen);
+  this->gripper_iface->data->right_paddle_open = !(this->mGripperOpen);
   // Assumption: closing/opening of gripper is "instantaneous"
-  this->gripper_iface->data->paddles_moving = false;
+  //  this->gripper_iface->data->paddles_moving = false;
   this->gripper_iface->data->lift_up = 
                           (this->mGripperUp && !(this->mGripperMoving));
   this->gripper_iface->data->lift_down = 
                           (!(this->mGripperUp) && !(this->mGripperMoving));
-  this->gripper_iface->data->lift_moving = this->mGripperMoving;
+  //  this->gripper_iface->data->lift_moving = this->mGripperMoving;
   
   gz_gripper_unlock(this->gripper_iface);
   
