@@ -108,7 +108,7 @@ class SimLogEditDialog: public taiEditDataHost {
 public:
   bool	ShowMember(MemberDef* md) {
     // just show a small subset of the members
-    bool rval = (md->ShowMember(show) && (md->im != NULL));
+    bool rval = (md->ShowMember(show()) && (md->im != NULL));
     if (!rval) return rval;
 // note: we also include a couple of members we know are in taProject
     if (!(md->name.contains("desc") || (md->name == "use_sim_log") || (md->name == "save_rmv_units")

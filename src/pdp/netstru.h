@@ -1127,7 +1127,7 @@ class PDP_API Unit_Group: public taGroup<Unit> {
   // #NO_UPDATE_AFTER ##CAT_Network a group of units
 INHERITED(taGroup<Unit>)
 public:
-  Layer*	own_lay;	// #READ_ONLY #NO_SAVE layer owner
+  Layer*	own_lay;	// #READ_ONLY #NO_SAVE #NO_SHOW layer owner
   PosTDCoord	pos;		// #CAT_Structure position of group relative to the layer
   bool		unique_geom;	// #DEF_false #CAT_Structure if true, this unit group has a unique geometry different from the layer geometry (otherwise, geom is always copied from lay->un_geom)
   XYNGeom	geom;		// #CONDEDIT_ON_unique_geom:true #CAT_Structure geometry of the group: layout and number of units
@@ -1263,7 +1263,7 @@ public:
     OUTPUT	// layer produces a visible output response but is not a target.  any external input serves as a comparison (COMP) against current activations.
   };
   
-  Network*		own_net;        // #READ_ONLY #NO_SAVE #CAT_Structure Network this layer is in
+  Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure Network this layer is in
   LayerType		layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   PosTDCoord		pos;		// #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
   XYNGeom		un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer 

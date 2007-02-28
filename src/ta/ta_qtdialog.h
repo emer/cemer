@@ -466,14 +466,12 @@ public:
     MS_CNT	= 3 // number of default members
   };
   
-  taMisc::ShowMembs	show;		// current setting for what to show
   taiMenu_List		ta_menus;	// menu representations (from methods, non-menubuttons only)
   taiMenu_List		ta_menu_buttons;	// menu representations (from methods -- menubuttons only)
   taiActions*		cur_menu;	// current menu to add to (if not otherwise spec'd)
   taiActions*		cur_menu_but; // current menu button to add to (if not otherwise spec'd)
 //temp  taiMenuBar*		menu;		// menu bar
   taiActions*		menu;		// menu bar
-  taiActions*		show_menu;	// Show menu bar
   
   MembSet_List		membs;
   QButtonGroup*		bgrp; // group used for set checkboxes
@@ -495,6 +493,7 @@ public:
   
   EditDataPanel*	dataPanel() {return panel;} // #IGNORE
   override void 	guiParentDestroying() {panel = NULL;}
+  taMisc::ShowMembs	show() const; // legacy -- just returns the app value
   
   bool			SetShow(int value, bool no_refresh = false); // change show value; returns true if we rebuilt/reshowed dialog
 
@@ -525,9 +524,6 @@ public:
 public: // ITypedObject i/f (common to IDLC and IDH)
   override TypeDef* 	GetTypeDef() const {return &TA_taiEditDataHost;}
 public slots:
-  virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
-  virtual void		showMenu_aboutToShow(); 
-
 // IDataHost i/f
   override iMainWindowViewer* viewerWindow() const;
 
@@ -547,7 +543,6 @@ protected:
   virtual void		Constr_Data_Labels_impl(int& idx, Member_List* ms,
      taiDataList* dl);
   void			Constr_MethButtons();
-  override void		Constr_ShowMenu(); // make the show/hide menu
   override void 	Constr_RegNotifies();
   override void		Constr_Final();
   override void		FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id);

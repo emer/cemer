@@ -574,7 +574,6 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
 :QObject(parent)
 {
   read_only = read_only_;
-  use_show = false;
   modified = false;
   typ = typ_;
   cur_base = NULL;
@@ -651,7 +650,9 @@ const iColor* taiDataHost::colorOfRow(int row) const {
 }
 
 int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
-  wid->setFont(taiM->nameFont(ctrl_size));
+  QFont f(taiM->nameFont(ctrl_size));
+  f.setBold(true);
+  wid->setFont(f);
   wid->setFixedHeight(taiM->label_height(ctrl_size));
   wid->setPaletteBackgroundColor(*colorOfRow(row));
   if (!desc.empty()) {
@@ -665,9 +666,22 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
   QHBoxLayout* layH = new QHBoxLayout();
   
+  
+  layH->addSpacing(2);
+  // we add group-box-like frame lines to separate sections
+  QFrame* ln = new QFrame(body);
+  ln->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+  ln->setMinimumWidth(16);
+  layH->addWidget(ln, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  ln->show();
+  layH->addSpacing(4); // leave a bit more room before ctrl
   layH->addWidget(wid, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-/*  layH->addItem(new QSpacerItem(2, row_height, QSizePolicy::Fixed), row, 0,
-    1, 1, (Qt::AlignRight | Qt::AlignVCenter)); */
+  layH->addSpacing(2); // don't need as much room to look balanced
+  ln = new QFrame(body);
+  ln->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+  ln->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  layH->addWidget(ln, 1, (Qt::AlignVCenter));
+  ln->show();
   layH->addSpacing(2);
   // add the item to span both cols
   layBody->addLayout(layH, row, 0, 1, 2, (Qt::AlignLeft | Qt::AlignVCenter)); 
@@ -1437,8 +1451,6 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
 :taiDataHost(typ_, read_only_, modal_, parent)
 {
   cur_base = base;
-  use_show = true; // some descendant classes override, as well as construction methods
-  show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
   // note: subclass might add more membs, and might set def_size to use them
   membs.SetMinSize(MS_CNT); 
   membs.def_size = MS_CNT;
@@ -1470,7 +1482,6 @@ void taiEditDataHost::InitGuiFields(bool virt) {
   if (virt) inherited::InitGuiFields();
   cur_menu = NULL;
   cur_menu_but = NULL;
-  show_menu = NULL;
   menu = NULL;
   panel = NULL;
 }
@@ -1500,7 +1511,6 @@ void taiEditDataHost::Cancel_impl() {
     delete menu;
     menu = NULL;
   }
-  show_menu = NULL; // would have been deleted in menu
   if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
     ((taBase*)cur_base)->RemoveDataClient(this);
   }
@@ -1534,18 +1544,28 @@ void taiEditDataHost::Enum_Members() {
   MemberSpace& ms = typ->members;
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
+//TEMP
+if (md->name == "n_units"){
+int i = 0; ++i;
+}
     if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
-    if (md->ShowMember(taMisc::NORM_MEMBS, TypeItem::SC_EDIT)) {
+    if (md->ShowMember(~taMisc::IS_NORMAL, TypeItem::SC_EDIT, taMisc::IS_NORMAL)) {
       memb_el(MS_NORM).Add(md);
       continue;
     } 
-    if (membs.def_size <= MS_EXPT) continue; 
-    if (md->ShowMember(taMisc::EXPT_MEMBS, TypeItem::SC_EDIT)) {
+    if (membs.def_size <= MS_EXPT) continue;
+    // set the show_set guys at this point to default to app values
+    if (!(show() & taMisc::NO_EXPERT)) 
+      show_set(MS_EXPT) = true;
+    if (md->ShowMember(0, TypeItem::SC_EDIT, taMisc::IS_EXPERT)) {
       memb_el(MS_EXPT).Add(md);
       continue;
     } 
     if (membs.def_size <= MS_HIDD) continue; 
-    if (md->ShowMember(taMisc::HIDD_MEMBS, TypeItem::SC_EDIT)) {
+    if (!(show() & taMisc::NO_HIDDEN)) 
+      show_set(MS_HIDD) = true;
+    if (md->ShowMember(~taMisc::IS_HIDDEN & ~taMisc::IS_NORMAL, 
+      TypeItem::SC_EDIT, taMisc::IS_HIDDEN)) {
       memb_el(MS_HIDD).Add(md);
       continue;
     }
@@ -1825,13 +1845,6 @@ void taiEditDataHost::GetButtonImage() {
 void taiEditDataHost::GetImage() {
   if ((typ == NULL) || (cur_base == NULL)) return;
   if (state >= ACCEPTED ) return;
-  if (state >= DEFERRED1) {
-    // check for global show change, if we are in "app default"
-    if (show & taMisc::USE_SHOW_GUI_DEF) {
-      // don't refresh, because we are either not constr or will refresh below anyway
-      SetShow((taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui), true);
-    }
-  } 
   if (state > DEFERRED1) {
     GetImage_Membs();
   }
@@ -1891,7 +1904,7 @@ void taiEditDataHost::GetMembDesc(MemberDef* md, String& dsc_str, String indent)
     indent += "  ";
     for (int i=0; i < md->type->members.size; ++i) {
       MemberDef* smd = md->type->members.FastEl(i);
-      if (!smd->ShowMember(show, TypeItem::SC_EDIT) || smd->HasOption("HIDDEN_INLINE"))
+      if (!smd->ShowMember(show(), TypeItem::SC_EDIT) || smd->HasOption("HIDDEN_INLINE"))
 	continue;
       GetMembDesc(smd, dsc_str, indent);
     }
@@ -1965,35 +1978,6 @@ void taiEditDataHost::GetValueInline_impl(void* base) const {
     typ->it->GetValue(mb_dat, base);
 }
 
-void taiEditDataHost::Constr_ShowMenu() {
-  if (!use_show) return;
-  if (menu == NULL) return;	// if don't even have a menu, bail
-
-  show_menu = menu->AddSubMenu("&Show");
-  connect(show_menu->menu(), SIGNAL(aboutToShow()), 
-    this, SLOT(showMenu_aboutToShow()) );
-
-  // first item controls whether to slave to app's global value, or override
-  show_menu->AddItem("App de&fault", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), taMisc::USE_SHOW_GUI_DEF );
-  show_menu->AddSep();
-  // next two items are commands that set the other toggle flags
-  show_menu->AddItem("Normal &only", taiMenu::normal, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 0 );
-  show_menu->AddItem("&All", taiMenu::normal, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 1 );
-  show_menu->AddSep();
-  //  toggle flags
-  show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 2 );
-  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 3 );
-  show_menu->AddItem("&Detail", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 4 );
-  show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 5 );
-}
-
 void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   // called by root on closing, dialog on closing, etc. etc.
   if (HasChanged()) {
@@ -2026,59 +2010,12 @@ void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   } */
 }
 
-void taiEditDataHost::showMenu_aboutToShow() {
-  int value = show;
-  if (!show_menu) return;
-  (*show_menu)[0]->setChecked((value & taMisc::USE_SHOW_GUI_DEF));
-  //note: nothing to do for the command items
-  (*show_menu)[3]->setChecked(!(value & taMisc::NO_NORMAL));
-  (*show_menu)[4]->setChecked(!(value & taMisc::NO_HIDDEN));
-  (*show_menu)[5]->setChecked(!(value & taMisc::NO_DETAIL));
-  (*show_menu)[6]->setChecked(!(value & taMisc::NO_EXPERT));
-  // disable menus if not overriding default
-  bool en = !(value & taMisc::USE_SHOW_GUI_DEF);
-  for (int i = 1; i <= 6; ++i) {
-    (*show_menu)[i]->setEnabled(en);
-  }
-}
-
-bool taiEditDataHost::SetShow(int value, bool no_refresh) {
-  int old_show = show;
-  show = (taMisc::ShowMembs)value;
-  // note: we only do change processing for effective show changes,
-  // not change to/from app default if our effective shows were the same
-  if (no_refresh || ((~taMisc::USE_SHOW_GUI_DEF & old_show) == (~taMisc::USE_SHOW_GUI_DEF & value)))
-     return false;
-  return ReShow();
-}
-
-void taiEditDataHost::ShowChange(taiAction* sender) {
-  //note: we allow modal show change in Qt version, because we don't destroy the dialog
-  int new_show;
-  if (sender->usr_data == 0)
-    new_show = taMisc::NORM_MEMBS;
-  else if (sender->usr_data == 1)
-    new_show = taMisc::ALL_MEMBS;
-  else if (sender->usr_data == taMisc::USE_SHOW_GUI_DEF)
-    new_show = sender->isChecked() ? 
-      taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui : show & ~taMisc::USE_SHOW_GUI_DEF;
-  else {
-    int mask;
-    switch (sender->usr_data.toInt()) {
-      case 2: mask = taMisc::NO_NORMAL; break;
-      case 3: mask = taMisc::NO_HIDDEN; break;
-      case 4: mask = taMisc::NO_DETAIL; break;
-      case 5: mask = taMisc::NO_EXPERT; break;
-      default: mask = 0; break; // should never happen
-    }
-    new_show = sender->isChecked() ? show & ~mask : show | mask;
-  }
-  SetShow((taMisc::ShowMembs)new_show);
-  GetImage();
+taMisc::ShowMembs taiEditDataHost::show() const {
+  return taMisc::show_gui;
 }
 
 bool taiEditDataHost::ShowMember(MemberDef* md) const {
-  return (md->ShowMember(show, TypeItem::SC_EDIT) && (md->im != NULL));
+  return (md->ShowMember(show(), TypeItem::SC_EDIT) && (md->im != NULL));
 }
 
 void taiEditDataHost::SetCurMenu(MethodDef* md) {

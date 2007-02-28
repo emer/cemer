@@ -2756,7 +2756,6 @@ const String TypeItem::opt_show("SHOW");
 const String TypeItem::opt_no_show("NO_SHOW");
 const String TypeItem::opt_hidden("HIDDEN");
 const String TypeItem::opt_read_only("READ_ONLY");
-const String TypeItem::opt_detail("DETAIL");
 const String TypeItem::opt_expert("EXPERT");
 const String TypeItem::opt_edit_show("EDIT_SHOW");
 const String TypeItem::opt_edit_no_show("EDIT_NO_SHOW");
@@ -3006,11 +3005,14 @@ const Variant MemberDef::GetValVar(const void* base, void* par) const {
   return type->GetValVar(GetOff(base), par, this); //TODO: no par???
 }
 
-bool MemberDef::ShowMember(taMisc::ShowMembs show,
-  TypeItem::ShowContext show_context) const 
+bool MemberDef::ShowMember(
+  int show_forbidden,
+  TypeItem::ShowContext show_context,
+  int show_allowed) const 
 {
-  if (show & taMisc::USE_SHOW_GUI_DEF)
-    show = taMisc::show_gui;
+  //note: require exact match to special flag, so boolean operations don't match it
+  if (show_forbidden == taMisc::USE_SHOW_GUI_DEF)
+    show_forbidden = taMisc::show_gui;
   
   // check if cache has been done yet
   if (show_any == 0) ShowMember_CalcCache();
@@ -3029,8 +3031,9 @@ bool MemberDef::ShowMember(taMisc::ShowMembs show,
   // we clearly can't show
   // if there is something (a positive) then bit-AND with the
   // show, which is negatives (what not to show), and if anything remains, don't show!
-  show_eff &= (byte)taMisc::SHOW_CHECK_MASK;
-  return (show_eff) && !(show_eff & (byte)show);
+//  show_eff &= (byte)taMisc::SHOW_CHECK_MASK;
+//  return (show_eff) && !(show_eff & (byte)show);
+  return (show_eff & (byte)show_allowed & ~(byte)show_forbidden);
 }
   
 void MemberDef::ShowMember_CalcCache() const {
@@ -3088,8 +3091,6 @@ void MemberDef::ShowMember_CalcCache_impl(byte& show, const String& suff) const 
   // note: no type-level, makes no sense
   if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !HasOption("SHOW")) 
     show |= (byte)taMisc::IS_HIDDEN;
-  if (HasOption("DETAIL" + suff) || type->HasOption("MEMB_DETAIL" + suff))
-    show |= (byte)taMisc::IS_DETAIL;
   if (HasOption("EXPERT" + suff) || type->HasOption("MEMB_EXPERT" + suff))
     show |= (byte)taMisc::IS_EXPERT;
 
@@ -3327,8 +3328,6 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
     show |= (byte)taMisc::IS_HIDDEN;
   if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mbr_show) 
     show |= (byte)taMisc::IS_HIDDEN;
-  if (HasOption("DETAIL") || type->HasOption("METH_DETAIL"))
-    show |= (byte)taMisc::IS_DETAIL;
   if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
     show |= (byte)taMisc::IS_EXPERT;
 

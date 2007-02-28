@@ -1115,6 +1115,10 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
   String nm;
   String help_text;
   
+  iLabel* lbl = new iLabel("Items from Program_Group", body);
+  AddSectionLabel(-1, lbl,
+    "useful items from the Program_Group to which this Program belongs");
+  
   // ProgGroup guys
   if(!(prog->HasProgFlag(Program::NO_STOP) || prog->HasProgFlag(Program::NO_USER_RUN))) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
@@ -1134,10 +1138,22 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
     ProgVar_List* pvl = NULL;
     switch (j) {
-    case MS_ARGS: pvl = &prog->args; break;
-    case MS_VARS: pvl = &prog->vars; break;
+    case MS_ARGS:
+      nm = "Program args";
+      help_text = "the arguments to the program";
+      pvl = &prog->args; 
+      break;
+    case MS_VARS: 
+      nm = "Program vars";
+      help_text = "the variables used inside the program";
+      pvl = &prog->vars; 
+      break;
     default: continue; // shouldn't happen!
     }
+    
+    // add a pretty section label
+    lbl = new iLabel(nm, body);
+    AddSectionLabel(-1, lbl,help_text);
     
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);

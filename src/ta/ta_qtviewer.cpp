@@ -3142,12 +3142,10 @@ void iMainWindowViewer::Constr_Menu_impl() {
   //  toggle flags
   show_menu->AddItem("&Normal", taiMenu::toggle, taiAction::men_act,
       this, SLOT(ShowChange(taiAction*)), 2 );
-  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 3 );
-  show_menu->AddItem("&Detail", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 4 );
   show_menu->AddItem("E&xpert", taiMenu::toggle, taiAction::men_act,
-      this, SLOT(ShowChange(taiAction*)), 5 );
+      this, SLOT(ShowChange(taiAction*)), 3 );
+  show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
+      this, SLOT(ShowChange(taiAction*)), 4 );
   //note: correct toggles set dynamically when user drops down menu
  
 
@@ -3514,9 +3512,8 @@ void iMainWindowViewer::ShowChange(taiAction* sender) {
     int mask;
     switch (sender->usr_data.toInt()) {
       case 2: mask = taMisc::NO_NORMAL; break;
-      case 3: mask = taMisc::NO_HIDDEN; break;
-      case 4: mask = taMisc::NO_DETAIL; break;
-      case 5: mask = taMisc::NO_EXPERT; break;
+      case 3: mask = taMisc::NO_EXPERT; break;
+      case 4: mask = taMisc::NO_HIDDEN; break;
       default: mask = 0; break; // should never happen
     }
     new_show = sender->isChecked() ? show & ~mask : show | mask;
@@ -3532,9 +3529,8 @@ void iMainWindowViewer::showMenu_aboutToShow() {
   if (!show_menu) return;
   //note: nothing to do for the command items
   (*show_menu)[2]->setChecked(!(value & taMisc::NO_NORMAL));
-  (*show_menu)[3]->setChecked(!(value & taMisc::NO_HIDDEN));
-  (*show_menu)[4]->setChecked(!(value & taMisc::NO_DETAIL));
-  (*show_menu)[5]->setChecked(!(value & taMisc::NO_EXPERT));
+  (*show_menu)[3]->setChecked(!(value & taMisc::NO_EXPERT));
+  (*show_menu)[4]->setChecked(!(value & taMisc::NO_HIDDEN));
 }
 
 void iMainWindowViewer::this_DockSelect(taiAction* me) {

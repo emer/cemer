@@ -428,25 +428,28 @@ class TA_API taMisc {
 friend class InitProcRegistrar;
 public:
 
+  // note: don't rationalize the memb bits, because it breaks the user prefs file
+  // the NO_xxx guys are for use in 'forbidden' contexts (legacy 'show')
+  // the IS_xxx guys are for use in 'allowed' contexts, and/or categorizing guys
   enum ShowMembs { // #BITS
     NO_HIDDEN 		= 0x01, // don't show items marked READ_ONLY w/o SHOW or HIDDEN
-    NO_DETAIL 		= 0x04, // don't show items marked DETAIL (usually not relevant)
+    NO_unused1		= 0x02, // #IGNORE
+    NO_unused2		= 0x04, // #IGNORE
     NO_NORMAL		= 0x08, // don't show items normally shown (helps indicate, ex. EXPERT items)
     NO_EXPERT		= 0x10, // don't show items marked EXPERT (often only for advanced sims)
 
     ALL_MEMBS		= 0x00, // #NO_BIT
-    NO_HID_DET 		= 0x03, // #NO_BIT
-    NORM_MEMBS 		= 0x15, // #NO_BIT
-    EXPT_MEMBS		= 0x0F, // #NO_BIT
-    HIDD_MEMBS		= 0x1E, // #NO_BIT
+    NORM_MEMBS 		= 0x11, // #NO_BIT
+    EXPT_MEMBS		= 0x09, // #NO_BIT
+    HIDD_MEMBS		= 0x18, // #NO_BIT
     
     IS_HIDDEN 		= 0x01, // #IGNORE used in MemberDef::ShowMember to flag RO w/o SHOW or HIDDEN guys
-    IS_DETAIL 		= 0x04, // #IGNORE used in MemberDef::ShowMember to flag DETAIL guys
     IS_NORMAL		= 0x08, // #IGNORE used in MemberDef::ShowMember to flag NORMAL guys
     IS_EXPERT		= 0x10, // #IGNORE used in MemberDef::ShowMember to flag EXPERT guys
-    SHOW_CHECK_MASK	= 0x1D, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks
-
-    USE_SHOW_GUI_DEF 	= 0x40	// #NO_BIT use default from taMisc::show_gui
+#ifndef __MAKETA__
+    SHOW_CHECK_MASK	= IS_HIDDEN | IS_NORMAL | IS_EXPERT, // #IGNORE #NO_BIT used in MemberDef::ShowMember checks, default for "allowed" param
+#endif
+    USE_SHOW_GUI_DEF 	= 0x40	// #NO_BIT use default from taMisc::show_gui, only applies to forbidden
   };
 
   enum TypeInfo {
@@ -1452,7 +1455,6 @@ public:
   static const String opt_no_show; // "NO_SHOW"
   static const String opt_hidden; // "HIDDEN"
   static const String opt_read_only; // "READ_ONLY"
-  static const String opt_detail; // "DETAIL"
   static const String opt_expert; // "EXPERT"
   static const String opt_edit_show; // "EDIT_SHOW"
   static const String opt_edit_no_show; // "EDIT_NO_SHOW"
@@ -1559,8 +1561,9 @@ public:
   bool		CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
 
-  bool		ShowMember(taMisc::ShowMembs show = taMisc::USE_SHOW_GUI_DEF,
-    TypeItem::ShowContext show_context = TypeItem::SC_ANY) const;
+  bool		ShowMember(int show_forbidden = taMisc::USE_SHOW_GUI_DEF,
+    TypeItem::ShowContext show_context = TypeItem::SC_ANY,
+    int show_allowed = taMisc::SHOW_CHECK_MASK) const;
   // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc)
 
   void		CopyFromSameType(void* trg_base, void* src_base);

@@ -1402,7 +1402,7 @@ void gpiCompactListDataHost::Constr_Strings(const char*, const char* win_title) 
 
 // don't check for null im ptr here
 bool gpiCompactListDataHost::ShowMember(MemberDef* md) const {
-  return md->ShowMember(show);
+  return md->ShowMember(show());
 }
 
 void gpiCompactListDataHost::Constr_ElData() {
@@ -1542,6 +1542,10 @@ void gpiArrayEditDataHost::Constr_Data_Labels() {
 }
 
 void gpiArrayEditDataHost::Constr_AryData_Labels() {
+  iLabel* lbl = new iLabel("Array items", body);
+  AddSectionLabel(-1, lbl,
+    "the data items in the array, one per line");
+  
   taArray_base* cur_ary = (taArray_base*)cur_base;
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
@@ -1682,6 +1686,10 @@ void gpiSelectEditDataHost::Constr_Body() {
   }
   inherited::Constr_Body();
   mnuRemoveMember = new QMenu();
+  
+  iLabel* lbl = new iLabel("Select Edit items", body);
+  AddSectionLabel(-1, lbl,
+    "the members that have been added from other objects");
 
   // delete any previous sele members
   memb_el(sele_set).Reset();
