@@ -260,9 +260,9 @@ fi
 
 dnl  --enable-profile
 if test x"$profile" = x"true"; then
-  SIM_AC_CONFIGURATION_SETTING([Optimization],[-pg -O2, except TA files which are -g -O0])  
+  SIM_AC_CONFIGURATION_SETTING([Optimization],[-pg, except TA files which are -g -O0])  
   LDFLAGS="$LDFLAGS -pg"
-  AC_SUBST([OPT_LEVEL],["-pg -O2"])
+  AC_SUBST([OPT_LEVEL],["-pg"])
   AC_DEFINE([GPROF],[],[enables profiling control functions])
 fi
 

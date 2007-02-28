@@ -240,7 +240,7 @@ void ConSpec::ApplySymmetry(RecvCons* cg, Unit* ru) {
   Connection* rc, *su_rc;
   for(int i=0; i<cg->cons.size;i++) {
     rc = cg->Cn(i);
-    su_rc = RecvCons::FindRecipRecvCon(cg->Un(i), ru);
+    su_rc = RecvCons::FindRecipRecvCon(cg->Un(i), ru, cg->prjn->layer);
     if(su_rc)
       su_rc->wt = rc->wt;	// set other's weight to ours (otherwise no random..)
   }
@@ -398,8 +398,7 @@ void RecvCons::Initialize() {
 void RecvCons::InitLinks() {
   inherited::InitLinks();
   taBase::Own(cons, this);
-  if(owner && !owner->InheritsFrom(&TA_Unit)) // don't do this for bias cons
-    spec.SetDefaultSpec(this);
+  taBase::Own(spec, this);	// don't do setdefaultspec: always being built anyway!
 }
 
 void RecvCons::CutLinks() {
@@ -593,24 +592,22 @@ Connection* RecvCons::FindConFrom(Unit* un, int& idx) const {
   return cons.SafeEl(idx);
 }
 
-Connection* RecvCons::FindRecipRecvCon(Unit* su, Unit* ru) {
-  Layer* my_lay = GET_OWNER(ru,Layer);
+Connection* RecvCons::FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay) {
   int g;
   for(g=0; g<su->recv.size; g++) {
     RecvCons* cg = su->recv.FastEl(g);
-    if((cg->prjn == NULL) && (cg->prjn->from != my_lay)) continue;
+    if(!cg->prjn || (cg->prjn->from != ru_lay)) continue;
     Connection* con = cg->FindConFrom(ru);
     if(con) return con;
   }
   return NULL;
 }
 
-Connection* RecvCons::FindRecipSendCon(Unit* ru, Unit* su) {
-  Layer* my_lay = GET_OWNER(su,Layer);
+Connection* RecvCons::FindRecipSendCon(Unit* ru, Unit* su, Layer* su_lay) {
   int g;
   for(g=0; g<ru->send.size; g++) {
     SendCons* cg = ru->send.FastEl(g);
-    if((cg->prjn == NULL) && (cg->prjn->layer != my_lay)) continue;
+    if(!cg->prjn || (cg->prjn->layer != su_lay)) continue;
     Connection* con = cg->FindConFrom(su);
     if(con) return con;
   }
@@ -1183,7 +1180,7 @@ bool RecvCons_List::RemovePrjn(Projection* aprjn) {
     RecvCons* cg = FastEl(g);
     if(cg->prjn == aprjn) {
       cg->prjn->projected = false;
-      RemoveEl(cg);
+      RemoveIdx(g);
       rval = true;
     }
   }
@@ -1197,7 +1194,7 @@ bool RecvCons_List::RemoveFrom(Layer* from) {
     RecvCons* cg = FastEl(g);
     if((cg->prjn) && (cg->prjn->from == from)) {
       cg->prjn->projected = false;
-      RemoveEl(cg);
+      RemoveIdx(g);
       rval = true;
     }
   }
@@ -1218,7 +1215,7 @@ void SendCons::Initialize() {
 
 void SendCons::InitLinks() {
   inherited::InitLinks();
-  spec.SetDefaultSpec(this);
+  taBase::Own(spec, this);	// don't do setdefaultspec: always being built anyway!
 }
 
 void SendCons::CutLinks() {
@@ -1541,12 +1538,13 @@ void UnitSpec::InitLinks() {
   children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(act_range, this);
   taBase::Own(bias_spec, this);
-//   bias_spec.owner = this;	// set the owner cuz setdefaultspec won't necc. do so.
   // don't do this if loading -- creates specs in all the wrong places..
   // specs that own specs have this problem
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if(net && !net->copying && !taMisc::is_loading)
-    bias_spec.SetDefaultSpec(this);
+  if(!taMisc::is_loading) {
+    Network* net = (Network *) GET_MY_OWNER(Network);
+    if(net && !net->copying)
+      bias_spec.SetDefaultSpec(this);
+  }
 }
 
 void UnitSpec::CutLinks() {
@@ -1744,11 +1742,12 @@ void Unit::InitLinks() {
   taBase::Own(send, this);
   taBase::Own(bias, this);
   taBase::Own(pos, this);
-  spec.SetDefaultSpec(this);
+  taBase::Own(spec, this);	// don't do setdefaultspec: always being built anyway!
   Build();
-  Layer* lay = GET_MY_OWNER(Layer);
-  if(lay && !taMisc::is_loading)
-    lay->LayoutUnits(this);
+  // note: no longer supporting incremental construction by hand..
+//   Layer* lay = GET_MY_OWNER(Layer);
+//   if(lay && !taMisc::is_loading)
+//     lay->LayoutUnits(this);
 }
 
 void Unit::CutLinks() {
@@ -1779,9 +1778,9 @@ void Unit::UpdateAfterEdit_impl() {
   // no negative positions
   pos.x = MAX(0,pos.x); pos.y = MAX(0,pos.y);  pos.z = MAX(0,pos.z);
   // stay within layer->un_geom
-  Layer* lay = GET_MY_OWNER(Layer);
-  if(!lay) return;
-  pos.x = MIN(lay->un_geom.x-1,pos.x); pos.y = MIN(lay->un_geom.y-1,pos.y);
+//   Layer* lay = GET_MY_OWNER(Layer);
+//   if(!lay) return;
+//   pos.x = MIN(lay->un_geom.x-1,pos.x); pos.y = MIN(lay->un_geom.y-1,pos.y);
   pos.z = 0;			// always zero: can't go out of plane
 }
 
@@ -2528,87 +2527,6 @@ void Projection::UpdateAfterEdit_impl() {
   Network* net = GET_MY_OWNER(Network);
   if(!net) return;
 }
-
-/*obs void Projection::GridViewWeights(GridLog* disp_log, bool use_swt, int un_x, int un_y, int wt_x, int wt_y) {
-  if(disp_log == NULL) {
-    disp_log = (GridLog*) pdpMisc::GetNewLog(GET_MY_OWNER(ProjectBase), &TA_GridLog);
-    if(disp_log == NULL) return;
-  }
-  else {
-    disp_log->Clear();
-/ *TODO    LogView* lv = (LogView*)disp_log->views()->SafeEl(0);
-    if((lv == NULL) || !lv->display_toggle || !lv->IsMapped())
-      return; * /
-  }
-/ *TODO: replace subgroup usage with a Matrix-type col instead
-  disp_log->SetName((String)"GridViewWeights: " + layer->GetName() + ", " + GetName());
-
-  DataTable* md = &(disp_log->data);
-  md->RemoveAll();
-
-  md->NewColString("row");
-
-  int rx = (un_x < 0) ? layer->act_geom.x : un_x;
-  int ry = (un_y < 0) ? layer->act_geom.y : un_y;
-
-  int wtx = (wt_x < 0) ? from->act_geom.x : wt_x;
-  int wty = (wt_y < 0) ? from->act_geom.y : wt_y;
-
-  int totn = wtx * wty;
-
-  // these are the columns
-  int i;
-  for(i=0; i<rx; i++) {
-    md->NewGroupFloat((String)"c" + (String)i, totn);
-    md->AddColDispOpt(String("GEOM_X=") + String(wtx), 0, i); // column 0, subgp i
-    md->AddColDispOpt(String("GEOM_Y=") + String(wty), 0, i); // column 0, subgp i
-  }
-
-  md->ResetData();
-
-  for(i=0;i<ry;i++) {
-    md->AddBlankRow();		// add the rows
-    md->SetStringVal(String(ry - i - 1), 0, i);	// col 0, row i
-  }
-
-  int uni = 0;
-  int ux, uy;
-  for(uy=0;uy<ry; uy++) {
-    if(uni >= layer->units.leaves)
-      break;
-    for(ux=0; ux<layer->act_geom.x; ux++, uni++) {
-      if(uni >= layer->units.leaves)
-	break;
-      if(ux >= rx) {
-	uni += layer->act_geom.x - rx; break;
-      }
-      Unit* un = (Unit*)layer->units.Leaf(uni);
-      RecvCons* cg = un->recv.FindFrom(from);
-      if(cg == NULL)
-	break;
-      int wi;
-      for(wi=0;wi<cg->size;wi++) {
-	Unit* su = cg->Un(wi);
-	Unit_Group* ownr = ((Unit_Group*)su->owner);
-	int sx, sy;
-	sx = su->pos.x + ownr->pos.x;
-	sy = su->pos.y + ownr->pos.y;
-	if((sx >= wtx) || (sy >= wty)) continue;
-	int sidx = (sy * wtx) + sx;
-	float wtval = cg->Cn(wi)->wt;
-	if(use_swt) {
-	  Connection* cn = cg->FindRecipSendCon(un, su);
-	  if(cn == NULL) continue;
-	  wtval = cn->wt;
-	}
-	md->SetFloatVal(wtval, sidx, ry-uy-1, ux);
-      }
-    }
-  }
-
-  disp_log->ViewAllData();
-* /
-}*/
 
 void Projection::WeightsToTable(DataTable* dt) {
   if(from == NULL) return;
@@ -3740,6 +3658,15 @@ void Layer::RemoveCons() {
   taMisc::DoneBusy();
 }
 
+void Layer::RemoveCons_Net() {
+  taMisc::Busy();
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->RemoveCons();
+  taMisc::DoneBusy();
+}
+
 void Layer::RemoveUnits() {
   taMisc::Busy();
   StructUpdate(true);
@@ -4237,21 +4164,6 @@ int Layer::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
   return 1;
 }
 
-/*obs void Layer::GridViewWeights(GridLog* grid_log, Layer* send_lay, bool use_swt, int un_x, int un_y, int wt_x, int wt_y) {
-  if(send_lay == NULL) return;
-  bool gotone = false;
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i) {
-    if(p->from != send_lay) continue;
-    p->GridViewWeights(grid_log, use_swt, un_x, un_y, wt_x, wt_y);
-    gotone = true;
-  }
-  if(!gotone) {
-    taMisc::Error("GridViewWeights: No sending projection from: ", send_lay->name);
-  }
-}*/
-
 void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   if(send_lay == NULL) return;
   bool gotone = false;
@@ -4476,8 +4388,9 @@ void Network::CutLinks() {
   dmem_net_comm.FreeComm();
   dmem_trl_comm.FreeComm();
 #endif
-//TODO  views.Reset();
-  layers.CutLinks();
+  RemoveCons();			// do this first in optimized way!
+  RemoveUnitGroups();		// then units
+  layers.CutLinks();		// then std kills
   specs.CutLinks();
   proj = NULL;
   inherited::CutLinks();
@@ -4912,7 +4825,7 @@ void Network::RemoveCons() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
-    l->RemoveCons();
+    l->RemoveCons_Net();
   StructUpdate(false);
   taMisc::DoneBusy();
 }
@@ -5849,13 +5762,6 @@ int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
   }
   return nchg;
 }
-
-/*obs void Network::GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_lay,
-			      bool use_swt, int un_x, int un_y, int wt_x, int wt_y)
-{
-  if(recv_lay == NULL) return;
-  recv_lay->GridViewWeights(grid_log, send_lay, use_swt, un_x, un_y, wt_x, wt_y);
-}*/
 
 void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 {

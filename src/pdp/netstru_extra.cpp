@@ -673,7 +673,7 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
     int n_cons = 0;
     FOR_ITR_EL(Unit, su, prjn->from->units., su_itr) {
-      if(RecvCons::FindRecipRecvCon(su, ru) != NULL)
+      if(RecvCons::FindRecipRecvCon(su, ru, prjn->layer))
 	n_cons++;
     }
     ru->ConnectAlloc(n_cons, prjn); // todo: allow some kind of extra??
@@ -682,7 +682,7 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
   int cnt = 0;
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr) {
     FOR_ITR_EL(Unit, su, prjn->from->units., su_itr) {
-      if(RecvCons::FindRecipRecvCon(su, ru) != NULL)
+      if(RecvCons::FindRecipRecvCon(su, ru, prjn->layer))
 	if(ru->ConnectFrom(su, prjn) != NULL)
 	  cnt++;
     }

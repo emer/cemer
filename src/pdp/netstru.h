@@ -386,9 +386,9 @@ public:
 
   virtual Connection*	FindConFrom(Unit* un, int& idx=no_idx) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
-  static Connection* 	FindRecipRecvCon(Unit* su, Unit* ru);
+  static Connection* 	FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay);
   // #CAT_Structure find the reciprocal for sending unit su to this receiving unit ru
-  static Connection* 	FindRecipSendCon(Unit* ru, Unit* su);
+  static Connection* 	FindRecipSendCon(Unit* ru, Unit* su, Layer* su_lay);
   // #CAT_Structure find the reciprocal for receiving unit ru from this sending unit su
 
   // these are convenience functions for those defined in the spec
@@ -1324,6 +1324,8 @@ public:
   // #CAT_Structure check if network is connected
   virtual void	RemoveCons();
   // #MENU #CONFIRM #MENU_SEP_BEFORE #CAT_Structure remove all connections in this layer
+  virtual void	RemoveCons_Net();
+  // #CAT_Structure remove all connections in this layer, in context of entire network removecons -- calls unit removecons only
   virtual void	RemoveUnits();
   // #MENU #DYN1 #CAT_Structure remove all units in this layer (preserving groups)
   virtual void	RemoveUnitGroups();
