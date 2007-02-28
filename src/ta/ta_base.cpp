@@ -3511,6 +3511,10 @@ ostream& taArray_base::Output(ostream& strm, int indent) const {
   return strm;
 }
 
+void taArray_base::DataChanged(int dcr, void* op1, void* op2) {
+  taOBase::DataChanged(dcr, op1, op2);
+}
+
 int taArray_base::Dump_Save_Value(ostream& strm, TAPtr, int) {
   strm << "{ ";
   int i;

@@ -2208,8 +2208,8 @@ void taiMethodPtrArgType::GetValue_impl(taiData* dat, void*) {
 
 // this special edit is for defualt instances
 class taiDefaultEditDataHost : public taiEditDataHost {
+INHERITED(taiEditDataHost)
 public:
-  override void	GetImage();
   override void	GetValue();
 
   MemberSpace   mspace;		// special copy of the mspace (added toggles)
@@ -2219,8 +2219,7 @@ public:
   	bool modal_ = false, QObject* parent = 0);
   ~taiDefaultEditDataHost();
 protected:
-  override void	Constr_Labels();
-  override void	Constr_Data();
+  override void		Enum_Members(); // called by Constr_impl to fill memb_el[]
 private:
   explicit taiDefaultEditDataHost(taiDefaultEditDataHost&)	{ }; // avoid copy constr bug
 };
@@ -2229,20 +2228,9 @@ taiDefaultEditDataHost::taiDefaultEditDataHost(void* base, TypeDef* typ_, bool r
   	bool modal_, QObject* parent)
 : taiEditDataHost(base, typ_, read_only_, modal_, parent)
 {
-  for (int i = 0; i < typ->members.size; ++i){
-    MemberDef* md = new MemberDef(*(typ->members.FastEl(i)));
-    mspace.Add(md);
-    md->im = typ->members.FastEl(i)->im;	// set this here
-    if (md->im != NULL) {
-      taiTDefaultMember* tdm = new taiTDefaultMember(md, typ);
-      tdm->bid = md->im->bid + 1;
-      tdm->AddMember(md);
-    }
-  }
 }
 
 taiDefaultEditDataHost::~taiDefaultEditDataHost(){
-  data_el.Reset();
   for (int i = mspace.size - 1; i >= 0; --i) {
     MemberDef* md = mspace.FastEl(i);
     if (md->im)
@@ -2252,23 +2240,24 @@ taiDefaultEditDataHost::~taiDefaultEditDataHost(){
   mspace.Reset();
 }
 
-void taiDefaultEditDataHost::Constr_Labels() {
-  Constr_Labels_impl(mspace, &data_el);
-}
-
-void taiDefaultEditDataHost::Constr_Data() {
-  Constr_Data_impl(mspace, &data_el);
-//  FocusOnFirst();
-//  GetImage_impl();
+void taiDefaultEditDataHost::Enum_Members() {
+  for (int i = 0; i < typ->members.size; ++i){
+    MemberDef* md = new MemberDef(*(typ->members.FastEl(i)));
+    mspace.Add(md);
+    md->im = typ->members.FastEl(i)->im;	// set this here
+    if (md->im != NULL) {
+      taiTDefaultMember* tdm = new taiTDefaultMember(md, typ);
+      tdm->bid = md->im->bid + 1;
+      tdm->AddMember(md);
+    }
+    memb_el(0).Add(md);
+  }
 }
 
 void taiDefaultEditDataHost::GetValue() {
-  GetValue_impl(memb_el, data_el, cur_base);
+  inherited::GetValue();
   if (typ->InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)cur_base;
-    rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
-    taiMisc::Update(rbase);
-
     taBase_List* gp = typ->defaults;
     TypeDefault* tpdflt = NULL;
     if (gp != NULL) {
@@ -2283,13 +2272,8 @@ void taiDefaultEditDataHost::GetValue() {
     if (tpdflt != NULL)
       tpdflt->UpdateToNameValue();
   }
-  Unchanged();
 }
 
-void taiDefaultEditDataHost::GetImage() {
-  GetImage_impl(memb_el, data_el,cur_base);
-  Unchanged();
-}
 
 ////////////////////////////////
 //  taiDefaultEdit    //

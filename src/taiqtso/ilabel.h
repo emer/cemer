@@ -30,6 +30,9 @@ INHERITED(QLabel)
 public:
   bool			highlight() {return mhighlight;}
   int			index() {return mindex;}
+  inline QVariant	userData() const {return muser_data;}
+    // put anything you want here
+  void			setUserData(const QVariant& value);
 
   iLabel(QWidget* parent = 0);
   iLabel(const QString& text, QWidget* parent); 
@@ -46,6 +49,7 @@ signals:
 protected:
   bool 			mhighlight;
   int			mindex;
+  QVariant		muser_data;
 
   override void 	contextMenuEvent (QContextMenuEvent* e); 
 private:

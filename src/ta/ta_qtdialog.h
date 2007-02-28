@@ -363,11 +363,12 @@ protected:
   QWidget*		mwidget;	// outer container for all widgets
   iDialog*		dialog; // dialog, when using Edit, NULL otherwise
   HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
-  int 			sel_item_index; // only used during handling of context menu for select edits
+  MemberDef*		sel_item_md; // only used during handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
   DataChangeHelper 	dch; // helps track the state of datachanges
 
-  int		AddName(int row, const String& name, const String& desc, taiData* buddy = NULL);
+  int		AddName(int row, const String& name, const String& desc,
+    taiData* buddy = NULL, MemberDef* md = NULL);
     // add a label item in first column; row<0 means "next row"; returns row
 //  void		AddLabel(int index, QWidget* label); // add a label item in first column
   int		AddData(int row, QWidget* data, bool fill_hor = false);
@@ -425,6 +426,29 @@ public:
   ~taiDialog_List()            { Reset(); }
 };
 
+class TA_API MembSet { // #IGNORE
+public:
+  Member_List		memb_el; // member elements (1:1 with data_el), empty in inline mode
+  taiDataList 		data_el; // data elements (1:1 with memb_el WHEN section 
+  bool			show; // flag to help by indicating whether to show or not
+  
+  MembSet() {show = false;}
+private:
+  MembSet(const MembSet& cp); // value semantics not allowed
+  MembSet& operator=(const MembSet& cp);
+};
+
+class TA_API MembSet_List : public taPtrList<MembSet> { // #IGNORE 
+public:
+  int			def_size; // set to how many you want to use default processing
+  void			SetMinSize(int n); // make sure there are at least n sets
+  void			ResetItems(bool data_only = false); // calls Reset on all lists
+  
+  MembSet_List()  {def_size = 0;}
+  ~MembSet_List() { Reset(); }
+protected:
+  void	El_Done_(void* it) { delete (MembSet*)it; }
+};
 
 class TA_API taiEditDataHost : public taiDataHost {
   // // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that
@@ -432,15 +456,12 @@ class TA_API taiEditDataHost : public taiDataHost {
 INHERITED(taiDataHost)
 friend class EditDataPanel;
 public:
-  enum MembSet { // keys for member sets
+  enum DefMembSet { // keys for default members sets -- always created
     MS_NORM,	// normal members, always shown
     MS_EXPT,	// Expert members
-    MS_HIDD	// Hidden members
-#ifndef __MAKETA__    
-    ,MS_MIN	= MS_NORM,	// first item in range
-    MS_MAX	= MS_HIDD,	// last item in range
-    MS_CNT	= MS_MAX + 1	// num items in range
-#endif
+    MS_HIDD,	// Hidden members
+    
+    MS_CNT	= 3 // number of default members
   };
   
   taMisc::ShowMembs	show;		// current setting for what to show
@@ -451,19 +472,24 @@ public:
 //temp  taiMenuBar*		menu;		// menu bar
   taiActions*		menu;		// menu bar
   taiActions*		show_menu;	// Show menu bar
-#ifndef __MAKETA__ // too hairy for maketa -- we let ourselves access as member or array value
-  union {
-    bool		show_set[MS_CNT]; // whether the set is shown (normal typ. always shown)
-  struct {
-    bool		show_set_norm; // whether the normal set is shown
-    bool		show_set_expt; // whether the normal set is shown
-    bool		show_set_hidd; // whether the normal set is shown
-  };};
-#endif
-  Member_List		memb_el[MS_CNT]; // member elements (1:1 with data_el), empty in inline mode
-  taiDataList 		data_el[MS_CNT]; // data elements (1:1 with memb_el WHEN section is shown), except in inline mode
+  
+  MembSet_List		membs;
   taiDataList 		meth_el;	// method elements
 
+  //NOTE: we provide indexed access to references here for convenience, but be careful!
+  const bool&		show_set(int i) const // whether the set is shown 
+    {return membs.FastEl(i)->show;}
+  bool&			show_set(int i) // whether the set is shown 
+    {return membs.FastEl(i)->show;}
+  const Member_List&	memb_el(int i) const // the member defs, typically enumerated once
+    {return membs.FastEl(i)->memb_el;}
+  Member_List&		memb_el(int i) // the member defs, typically enumerated once
+    {return membs.FastEl(i)->memb_el;}
+  const taiDataList&	data_el(int i) const // data items, typically rebuilt each reshow
+    {return membs.FastEl(i)->data_el;}
+  taiDataList&		data_el(int i) // data items, typically rebuilt each reshow
+    {return membs.FastEl(i)->data_el;}
+  
   EditDataPanel*	dataPanel() {return panel;} // #IGNORE
   override void 	guiParentDestroying() {panel = NULL;}
   
@@ -516,8 +542,10 @@ protected:
   virtual void		Constr_Data(); // members, or equivalent in inherited classes, and labels
   virtual void		Constr_Labels(); // labels
   virtual void 		Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
-  virtual void		Constr_Labels_impl(int& idx, const Member_List& ms, taiDataList* dl = NULL); //dl non-null enables label-buddy linking
-  virtual void		Constr_Data_impl(int& idx, const Member_List& ms, taiDataList* dl);
+  virtual void		Constr_Labels_impl(int& idx, Member_List* ms,
+     taiDataList* dl = NULL); //dl non-null enables label-buddy linking
+  virtual void		Constr_Data_impl(int& idx, Member_List* ms,
+     taiDataList* dl);
   void			Constr_MethButtons();
   override void		Constr_ShowMenu(); // make the show/hide menu
   override void 	Constr_RegNotifies();
@@ -525,10 +553,12 @@ protected:
   override void		FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id);
   virtual void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
   virtual void		GetImage_Membs(); // for overridding
+  virtual void		GetImage_Membs_def(); // calls GetImage_impl for all our lists
   virtual void		GetValue_Membs(); 
-  virtual void		GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
+  virtual void		GetValue_Membs_def(); // calls GetValue_impl for all our lists
+  virtual void		GetImage_impl(const Member_List* ms, const taiDataList& dl, void* base);
   virtual void		GetImageInline_impl(const void* base);
-  virtual void		GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const;
+  virtual void		GetValue_impl(const Member_List* ms, const taiDataList& dl, void* base) const;
   virtual void		GetValueInline_impl(void* base) const;
   virtual void		GetButtonImage();
   void			AddMethButton(taiMethodData* mth_rep, const char* label = NULL);

@@ -80,40 +80,7 @@ void cssiEditDialog::GetName(int idx, cssEl* md, String& name, String& desc) {
   else desc = "";
 }
 
-/* IV version:
-void cssiEditDialog::Constr_Labels() {
-  Constr_Labels_style();
-  GetVFix(taiM->name_font);
-  // GetHFix();
-  ivFontBoundingBox fbb;
-  int i;
-  hfix = 0;
-  for(i=0; i< obj->members->size; i++) {
-    cssEl* md = obj->members->FastEl(i);
-    String nm = md->GetName();
-    taiM->name_font->string_bbox(nm, nm.length(), fbb);
-    hfix = MAX(fbb.width(), hfix);
-  }
 
-  labels = layout->vbox();
-  for(i=0; i< obj->members->size; i++) {
-    cssEl* md = obj->members->FastEl(i);
-    if((obj->type_def != NULL) && !obj->type_def->MbrHasOption(i, "SHOW") &&
-       (obj->type_def->MbrHasOption(i, "HIDDEN") || obj->type_def->MbrHasOption(i, "READ_ONLY")))
-      continue;
-    bool read_only = false;
-    if((obj->type_def != NULL) && obj->type_def->MbrHasOption(i, "READ_ONLY"))
-      read_only = true;
-    cssiType* tv = GetTypeFromEl(md, read_only); // get the actual object..
-    if((tv == NULL) || (tv->cur_base == NULL))
-      continue;
-    type_el.Add(tv);
-    // 32 is for the openlook extra v symbol...
-    labels->append(layout->fixed(taiM->top_sep(GetNameRep(i, md)), hfix + 32, vfix));
-  }
-  wkit->pop_style();
-}
-*/
 void cssiEditDialog::Constr_Labels() {
   int index = 0;
   String name;
@@ -131,7 +98,7 @@ void cssiEditDialog::Constr_Labels() {
       continue;
 
     // get the widget representation of the data
-    taiData* mb_dat = data_el.SafeEl(index);
+    taiData* mb_dat = data_el(0).SafeEl(index);
     // now get label
     GetName(i, md, name, desc);
     AddName(i, name, desc, mb_dat);
@@ -156,43 +123,11 @@ void cssiEditDialog::Constr_Data() {
     type_el.Add(cit);
     // get the widget representation of the data
     taiData* mb_dat = cit->GetDataRep(this, NULL, body);
-    data_el.Add(mb_dat);
+    data_el(0).Add(mb_dat);
     AddData(index, mb_dat->GetRep());
     ++index;
   }
 }
-
-/* NN:
-void cssiEditDialog::Constr_Body() {
-  if(menu != NULL) {
-    body_box->prepend(taiM->vfsep);
-    body_box->prepend(layout->hcenter(menu, 0));
-  }
-  if(meth_buts != NULL) {
-    float ht = 1.4f * vfix;
-    String rows;
-    if(obj != NULL)
-      rows = obj->type_def->OptionAfter("BUTROWS_");
-    if(!rows.empty()) {
-      ht *= (float)rows;
-    }
-    else {
-      ivLRComposition* cm = (ivLRComposition*)meth_buts;
-      if(cm->count() > 12)
-	ht *= 3;
-      else if(cm->count() > 6)
-	ht *= 2;
-    }
-    meth_butg = layout->vflexible(layout->vnatural(layout->center(meth_buts, 0, 0),ht),fil,1.4f * vfix);
-    body_box->append(meth_butg);
-    body_box->append(taiM->vfspc);
-  }
-  body_box->append(but_patch);
-
-  body = new ivPatch(layout->margin(body_box, taiM->hsep_c));
-  ivResource::ref(body);
-}
-*/
 
 void cssiEditDialog::Constr_Strings(const char*, const char* win_title) {
   prompt_str = obj->GetTypeName();
@@ -213,7 +148,8 @@ int cssiEditDialog::Edit(bool modal_) {
 void cssiEditDialog::GetValue_Membs() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el.FastEl(i);
+    taiData* mb_dat = data_el(0).SafeEl(i);
+    if (mb_dat == NULL) break; // shouldn't happen
     cit->GetValue(mb_dat);
     cit->orig_obj->UpdateAfterEdit();
   }
@@ -223,7 +159,8 @@ void cssiEditDialog::GetValue_Membs() {
 void cssiEditDialog::GetImage_Membs() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el.FastEl(i);
+    taiData* mb_dat = data_el(0).SafeEl(i);
+    if (mb_dat == NULL) break; // shouldn't happen
     cit->GetImage(mb_dat);
   }
 }
@@ -510,7 +447,7 @@ void cssiArgDialog::Constr_Data() {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
     mb_dat = art->GetDataRep(this, NULL, (QWidget*)body);
 
-    data_el.Add(mb_dat);
+    data_el(0).Add(mb_dat);
     rep = mb_dat->GetRep();
     AddData(j, rep);
   }
@@ -527,7 +464,7 @@ void cssiArgDialog::Constr_Labels() {
     int j = i - hide_args;
     cssEl* md = obj->members->FastEl(i);
 
-    mb_dat = data_el.SafeEl(j);
+    mb_dat = data_el(0).SafeEl(j);
 
     GetName(j, md, name, desc);
     AddName(j - 1, name, desc, mb_dat);
@@ -538,7 +475,8 @@ void cssiArgDialog::GetValue() {
   err_flag = false;
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el.FastEl(i);
+    taiData* mb_dat = data_el(0).SafeEl(i);
+    if (mb_dat == NULL) break; // shouldn't happen
     art->GetValue(mb_dat, base);
     if (art->err_flag)
       err_flag = true;
@@ -557,7 +495,8 @@ void cssiArgDialog::GetValue() {
 void cssiArgDialog::GetImage() {
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiData* mb_dat = data_el.FastEl(i);
+    taiData* mb_dat = data_el(0).SafeEl(i);
+    if (mb_dat == NULL) break; // shouldn't happen
     art->GetImage(mb_dat, base);
   }
   Unchanged();

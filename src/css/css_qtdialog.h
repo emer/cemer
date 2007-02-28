@@ -35,34 +35,32 @@ class cssClassInst;
 class CSS_API cssiEditDialog : public taiEditDataHost {
   // edit dialog for editing css classes
 public:
-  cssClassInst*	obj;		// class object to edit
-  cssProgSpace*	top;		// top-level progspace where edit was called
-  taiType_List type_el;	// type elements (not stored on classes, so kept here)
+  static cssiType*	GetTypeFromEl(cssEl* el, bool read_only);
+  // this decodes cssEl types into cssiTypes, which are then used to render edit
+  
+  cssClassInst*		obj;	// class object to edit
+  cssProgSpace*		top;	// top-level progspace where edit was called
+  taiType_List 		type_el; // type elements (not stored on classes, so kept here)
 
-  cssiEditDialog(cssClassInst* ob, cssProgSpace* tp = NULL, bool read_only_ = false, bool modal_ = false,
-  	QObject* parent = 0);
-  cssiEditDialog()		{ };
+  cssiEditDialog(cssClassInst* ob, cssProgSpace* tp = NULL,
+    bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
+//nn  cssiEditDialog() {obj=NULL; top=NULL;} // not really used
   ~cssiEditDialog();
 
   override void		GetImage_Membs();
   override void		GetValue_Membs();
   override int		Edit(bool modal_ = false); // ati is for when leading argument(s) are predetermined, and user shouldn't be prompted for them
 
-//   void		Constr_Methods(); // construct the methods (buttons and menus)
-// NN  void		Constr_Body();
-
-//  void		GetMenuRep(MethodDef* md) { taiEditDialog::GetMenuRep(md); }
-//  void		GetMenuRep(cssMbrScriptFun* md);
-
-  static cssiType*	GetTypeFromEl(cssEl* el, bool read_only);
-  // this decodes cssEl types into cssiTypes, which are then used to render edit
 protected:
   void	 		GetName(int idx, cssEl* md, String& name, String& desc);
+  override void		Enum_Members() {} // n/a
   override void		ClearBody_impl(); // delete the data items
-  override void		Constr_Inline() {} //n/a
+  override void		Constr_Inline() {} // n/a
   override void		Constr_Labels();
   override void		Constr_Data(); // construct the data and label elements of the dialog
   override void		Constr_Strings(const char* prompt="", const char* win_title="");
+private:
+  void	Initialize();
 };
 
 
@@ -82,7 +80,7 @@ public:
 
   cssiArgDialog(MethodDef* md, TypeDef* typ, void* base, int use_argc, int hide_args,
     bool read_only_ = false, bool modal_ = true, QObject* parent = 0);
-  cssiArgDialog()		{ };
+//nn  cssiArgDialog()		{ };
   ~cssiArgDialog();
 
   void		Constr_ArgTypes();

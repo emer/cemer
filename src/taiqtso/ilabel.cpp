@@ -81,6 +81,10 @@ void iLabel::setHighlight(bool value){
   update();
 }
 
+void iLabel::setUserData(const QVariant& value) {
+  muser_data = value;
+}
+
 // NOTE: this is the Trolltech routine from QCheckbox, with the Highlight color setting added in the middle
 
 /*void iLabel::paintEvent(QPaintEvent* pe)

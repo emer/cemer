@@ -1299,11 +1299,11 @@ void gpiListDataHost::GetValue_Membs() {
   }
 
   // first for the List-structure members
-  GetValue_impl(memb_el, data_el, cur_base);
+  GetValue_Membs_def();
   // then the List elements
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-    GetValue_impl(lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
+    GetValue_impl(&lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
     ((TAPtr)lf_el->cur_base)->UpdateAfterEdit();
   }
   cur_lst->UpdateAfterEdit();	// call here too!
@@ -1337,12 +1337,12 @@ void gpiListDataHost::GetImage_Membs() {
   } 
 
   // first for the List-structure members
-  GetImage_impl(memb_el, data_el, cur_base);
+  GetImage_Membs_def();
 
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
     gpiList_ElData* lf_el = lst_data_el.FastEl(lf);
-    GetImage_impl(lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
+    GetImage_impl(&lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
   }
 }
 /* TODO
@@ -1457,7 +1457,7 @@ void gpiCompactListDataHost::GetValue_Membs() {
   }
 
   // first for the List-structure members
-  GetValue_impl(memb_el, data_el, cur_base);
+  GetValue_Membs_def();
   // then the List elements
   for (int lf=0;  lf < lst_data_el.size;  ++lf) {
     gpiCompactList_ElData* lf_el = lst_data_el.FastEl(lf);
@@ -1485,7 +1485,7 @@ void gpiCompactListDataHost::GetImage_Membs() {
   } 
 
   // first for the List-structure members
-  GetImage_impl(memb_el, data_el, cur_base);
+  GetImage_Membs_def();
 
   // then the elements
   for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
@@ -1515,7 +1515,9 @@ gpiArrayEditDataHost::gpiArrayEditDataHost(void* base, TypeDef* typ_, bool read_
   	bool modal_, QObject* parent)
 : taiEditDataHost(base, typ_, read_only_, modal_, parent)
 {
-  n_ary_membs = 0;
+  // array items get their own memb, but they are handled by us
+  membs.SetMinSize(membs.size + 1);
+  array_set = membs.size - 1;
 }
 
 gpiArrayEditDataHost::~gpiArrayEditDataHost() {
@@ -1523,7 +1525,6 @@ gpiArrayEditDataHost::~gpiArrayEditDataHost() {
 }
 
 void gpiArrayEditDataHost::ClearBody_impl() {
-  //???
   taiEditDataHost::ClearBody_impl();
 }
 
@@ -1534,40 +1535,10 @@ bool gpiArrayEditDataHost::ShowMember(MemberDef* md) const {
     return inherited::ShowMember(md);
 }
 
-void gpiArrayEditDataHost::GetImage_Membs() {
-  inherited::GetImage_Membs();
-  taArray_base* cur_ary = (taArray_base*)cur_base;
-  if (data_el.size != cur_ary->size + n_ary_membs) {
-return; //TEMP
-/*TODO:    ivGlyphIndex i;
-    for(i=ary_data_g->count()-1; i >= 0; i--)
-      ary_data_g->remove(i);
-    int j;
-    for(j=data_el.size-1; j >= n_ary_membs; j--)
-      data_el.Remove(j);
-    Constr_AryData(); */
-  }
-  MemberDef* eldm = typ->members.FindName("el");
-  taiType* tit = eldm->type->GetNonPtrType()->it;
-  for (int i = 0; i < cur_ary->size; ++i) {
-    taiData* mb_dat = data_el.FastEl(i + n_ary_membs);
-    tit->GetImage(mb_dat, cur_ary->FastEl_(i));
-  }
-}
-
-void gpiArrayEditDataHost::GetValue_Membs() {
-  inherited::GetValue_Membs();
-  taArray_base* cur_ary = (taArray_base*)cur_base;
-  if (data_el.size != cur_ary->size + n_ary_membs) {
-    taMisc::Error("Cannot apply changes: Array size has changed");
-    return;
-  }
-  MemberDef* eldm = typ->members.FindName("el");
-  taiType* tit = eldm->type->GetNonPtrType()->it;
-  for (int i = 0; i < cur_ary->size; ++i){
-    taiData* mb_dat = data_el.FastEl(i + n_ary_membs);
-    tit->GetValue(mb_dat, cur_ary->FastEl_(i));
-  }
+void gpiArrayEditDataHost::Constr_Data() {
+  inherited::Constr_Data();
+//TODO: add a nice Array label
+  Constr_AryData();
 }
 
 void gpiArrayEditDataHost::Constr_AryData() {
@@ -1578,26 +1549,15 @@ void gpiArrayEditDataHost::Constr_AryData() {
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i) {
     taiData* mb_dat = tit->GetDataRep(this, NULL, body);
-    data_el.Add(mb_dat);
+    data_el(array_set).Add(mb_dat);
     rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
     String nm = String("[") + String(i) + "]";
-    AddData(i + n_ary_membs, rep, fill_hor);
-    AddName(i + n_ary_membs, nm, String(""), mb_dat);
+    int idx = AddData(-1, rep, fill_hor);
+    AddName(idx, nm, String(""), mb_dat);
   }
 }
 
-void gpiArrayEditDataHost::Constr_Data() {
-//  data_g = layout->vbox();
-//  ary_data_g = new lrScrollBox;
-//  ary_data_g->naturalnum = 5;
-//  Constr_Data_impl(typ->members, data_el);
-  inherited::Constr_Data();
-  n_ary_membs = data_el.size;
-  Constr_AryData();
-//  FocusOnFirst();
-//  GetImage();
-}
 /* TODO
 int gpiArrayEditDataHost::Edit() {
   taArray_base* cur_ary = (taArray_base*)cur_base;
@@ -1610,6 +1570,30 @@ int gpiArrayEditDataHost::Edit() {
   return taiEditDataHost::Edit();
 } */
 
+void gpiArrayEditDataHost::GetImage_Membs() {
+  inherited::GetImage_Membs();
+  taArray_base* cur_ary = (taArray_base*)cur_base;
+  MemberDef* eldm = typ->members.FindName("el");
+  taiType* tit = eldm->type->GetNonPtrType()->it;
+  for (int i = 0; i < cur_ary->size; ++i) {
+    taiData* mb_dat = data_el(array_set).SafeEl(i);
+    if (mb_dat == NULL) return; // unexpected end
+    tit->GetImage(mb_dat, cur_ary->FastEl_(i));
+  }
+}
+
+void gpiArrayEditDataHost::GetValue_Membs() {
+  inherited::GetValue_Membs();
+  taArray_base* cur_ary = (taArray_base*)cur_base;
+  MemberDef* eldm = typ->members.FindName("el");
+  taiType* tit = eldm->type->GetNonPtrType()->it;
+  for (int i = 0; i < cur_ary->size; ++i){
+    taiData* mb_dat = data_el(array_set).SafeEl(i);
+    if (mb_dat == NULL) return; // unexpected
+    tit->GetValue(mb_dat, cur_ary->FastEl_(i));
+  }
+}
+
 
 /////////////////////////////////
 //	SArgEditDataHost	//
@@ -1617,9 +1601,8 @@ int gpiArrayEditDataHost::Edit() {
 
 SArgEditDataHost::SArgEditDataHost(void* base, TypeDef* tp,  bool read_only_,
   bool modal_, QObject* parent)
-:inherited(base, tp, read_only_, modal_, parent) {
-  n_ary_membs = 0;
-//  ary_data_g = NULL;
+:inherited(base, tp, read_only_, modal_, parent) 
+{
 }
 
 bool SArgEditDataHost::ShowMember(MemberDef* md) const {
@@ -1637,15 +1620,15 @@ void SArgEditDataHost::Constr_AryData() {
   QWidget* rep;
   for (int i=0; i < cur_ary->size; ++i) {
     taiData* mb_dat = it->GetDataRep(this, NULL, body);
-    data_el.Add(mb_dat);
+    data_el(array_set).Add(mb_dat);
     rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
     String nm = String("[") + String(i) + "]";
     String lbl = cur_ary->labels[i];
     if (!lbl.empty())
       nm = lbl + nm;
-    AddData(i + n_ary_membs, rep, fill_hor);
-    AddName(i + n_ary_membs, nm, String(""), mb_dat);
+    int idx = AddData(-1, rep, fill_hor);
+    AddName(idx, nm, String(""), mb_dat);
   }
 }
 
@@ -1660,7 +1643,9 @@ gpiSelectEditDataHost::gpiSelectEditDataHost(void* base, TypeDef* td, bool read_
 {
   use_show = false;
   sele = (SelectEdit*)base;
-  base_items = 0;
+  // we use the default membs, and add one for the sele guys
+  sele_set = membs.size; // index of new guy we add:
+  membs.SetMinSize(membs.size + 1);
   mnuRemoveMember = NULL;
 
 }
@@ -1690,7 +1675,7 @@ void gpiSelectEditDataHost::ClearBody_impl() {
   if (menu) {
     menu->Reset();
   }
-  taiEditDataHost::ClearBody_impl();
+  inherited::ClearBody_impl();
 }
 
 void gpiSelectEditDataHost::Constr_Body() {
@@ -1700,13 +1685,16 @@ void gpiSelectEditDataHost::Constr_Body() {
   inherited::Constr_Body();
   mnuRemoveMember = new QMenu();
 
-  base_items = data_el.size;
+  // delete any previous sele members
+  memb_el(sele_set).Reset();
   String nm;
   String help_text;
   for (int i = 0; i < sele->members.size; ++i) {
     MemberDef* md = sele->members.FastEl(i);
+    if (md->im == NULL) continue; // shouldn't happen
     taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
-    data_el.Add(mb_dat);
+    memb_el(sele_set).Add(md);
+    data_el(sele_set).Add(mb_dat);
     QWidget* data = mb_dat->GetRep();
     int row = AddData(-1, data);
 
@@ -1716,7 +1704,7 @@ void gpiSelectEditDataHost::Constr_Body() {
     GetName(md, nm, help_text); //note: we just call this to get the help text
     if (!new_lbl.empty())
       nm = new_lbl + " " + nm;
-    AddName(row, nm, help_text, mb_dat);
+    AddName(row, nm, help_text, mb_dat, md);
     MakeMenuItem(mnuRemoveMember, nm, i, i, SLOT(mnuRemoveMember_select(int)));
   }
   // we deleted the normally not-deleted methods, so redo them here
@@ -1799,11 +1787,22 @@ void gpiSelectEditDataHost::Constr_Methods() {
 
 void gpiSelectEditDataHost::DoRemoveSelEdit() {
    // removes the sel_item_index item -- need to reduce by 1 because of pre-existing items on seledit dialog
-  sele->RemoveField(sel_item_index - base_items);
+  int sel_item_index = memb_el(sele_set).FindEl(sel_item_md);
+  if (sel_item_index >= 0) {
+    sele->RemoveField(sel_item_index);
+  }
+#ifdef DEBUG
+  else
+    taMisc::Error("gpiSelectEditDataHost::DoRemoveSelEdit: could not find item index from MethodDef");
+#endif
 }
 
-void gpiSelectEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id) {
-  if (sender->index() < base_items) return; // only add for user-added items
+void gpiSelectEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
+  QMenu* menu, int& last_id)
+{
+  MemberDef* md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
+  int sel_item_index = memb_el(sele_set).FindEl(md);
+  if (sel_item_index < 0) return; // only add for user-added items
   menu->insertItem("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()), 0, ++last_id);
 }
 
@@ -1818,31 +1817,19 @@ QMenu* gpiSelectEditDataHost::FindMenuItem(QMenu* par_menu, const char* label) {
 }
 
 void gpiSelectEditDataHost::GetValue_Membs() {
-  GetValue_impl(typ->members, data_el, cur_base);
+  inherited::GetValue_Membs(); // does defaults
+  GetValue_SeleMembs();
   sele->UpdateAllBases();
 }
 
-void gpiSelectEditDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,
-  void* base) const
-{
-  int i, cnt = 0;
+void gpiSelectEditDataHost::GetValue_SeleMembs() {
   bool first_diff = true;
-  for(i=0; i<ms.size; i++) {
-    MemberDef* md = ms.FastEl(i);
-    if(!ShowMember(md)) continue;
-    taiData* mb_dat = dl.FastEl(cnt++);
-    md->im->GetMbrValue(mb_dat, base, first_diff);
-  }
-  if(!first_diff) {		// end the basic guy
-    taiMember::EndScript(base);
-    first_diff = true;
-  }
-
-  for(i=0; i<sele->members.size; i++) {
-    MemberDef* md = sele->members.FastEl(i);
-    TAPtr bs = sele->mbr_bases.FastEl(i);
+  for (int i=0; i < memb_el(sele_set).size; i++) {
+    MemberDef* md = memb_el(sele_set).FastEl(i);
+    TAPtr bs = sele->mbr_bases.SafeEl(i);
     if(bs == NULL) continue;
-    taiData* mb_dat = dl.FastEl(cnt++);
+    taiData* mb_dat = data_el(sele_set).SafeEl(i);
+    if (mb_dat == NULL) break; // prob shouldn't happen!
     md->im->GetMbrValue(mb_dat, (void*)bs, first_diff);
     if(!first_diff) {		// always reset!
       taiMember::EndScript((void*)bs);
@@ -1851,23 +1838,19 @@ void gpiSelectEditDataHost::GetValue_impl(const Member_List& ms, const taiDataLi
   }
 }
 
-void gpiSelectEditDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
-  void* base)
-{
-  int cnt = 0;
-  for (int i = 0; i < ms.size; ++i) {
-    MemberDef* md = ms.FastEl(i);
-    if (!ShowMember(md))
-      continue;
-    taiData* mb_dat = dl.FastEl(cnt++);
-    md->im->GetImage(mb_dat, base);
-  }
+void gpiSelectEditDataHost::GetImage_Membs() {
+  inherited::GetImage_Membs(); // does defaults
+  GetImage_SeleMembs();
+}
 
-  for (int i = 0; i < sele->members.size; ++i) {
-    MemberDef* md = sele->members.FastEl(i);
-    TAPtr bs = sele->mbr_bases.FastEl(i);
+void gpiSelectEditDataHost::GetImage_SeleMembs()
+{
+  for (int i = 0; i < memb_el(sele_set).size; ++i) {
+    MemberDef* md = memb_el(sele_set).FastEl(i);
+    TAPtr bs = sele->mbr_bases.SafeEl(i);
     if (bs == NULL) continue;
-    taiData* mb_dat = dl.FastEl(cnt++);
+    taiData* mb_dat = data_el(sele_set).SafeEl(i);
+    if (mb_dat == NULL) break; // prob shouldn't happen!
     md->im->GetImage(mb_dat, (void*)bs);
   }
 }

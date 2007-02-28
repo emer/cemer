@@ -1024,10 +1024,22 @@ void taArray_impl::Clear_Tmp_() {
   El_SetFmStr_(El_GetTmp_(), val);
 }
 
-void taArray_impl::Add_(const void* it) {
+void taArray_impl::AddOnly_(const void* it) {
   if (size >= alloc_size)
     Alloc(size+1);
   El_Copy_(FastEl_(size++), it);
+}
+
+void taArray_impl::Add_(const void* it) {
+  AddOnly_(it);
+  DataChanged(DCR_ARY_SIZE_CHANGED);
+}
+
+bool taArray_impl::AddUniqueOnly_(const void* it) {
+  if(FindEl_(it) >= 0)
+    return false;
+  AddOnly_(it);
+  return true;
 }
 
 bool taArray_impl::AddUnique_(const void* it) {
@@ -1068,15 +1080,16 @@ void taArray_impl::Copy_(const taArray_impl& cp) {
 
 void taArray_impl::SetSize(int new_size) {
   if (new_size < 0) new_size = 0;
-  if (new_size > size) {
+  if (new_size == size) return; 
+  else if (new_size > size) {
     Alloc(new_size);
     Clear_Tmp_();
     Insert_(El_GetTmp_(), size, new_size - size);
   } else if (new_size < size)  {
     ReclaimOrphans_(new_size, size - 1);
   }
-  
   size = new_size;
+  DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 
 bool taArray_impl::Equal_(const taArray_impl& ar) const {
@@ -1104,12 +1117,13 @@ void taArray_impl::InitVals_(const void* it, int start, int end) {
 }
 
 void taArray_impl::Insert_(const void* it, int where, int n) {
-  if((where > size) || (n == 0)) return;
+  if((where > size) || (n <= 0)) return;
   if ((size + n) > alloc_size)
     Alloc(size + n);	// pre-add stuff
   if((where==size) || (where < 0)) {
     int i;
-    for(i=0; i<n; i++) Add_(it);
+    for (i=0; i<n; i++) AddOnly_(it);
+    DataChanged(DCR_ARY_SIZE_CHANGED);
     return;
   }
   int i;
@@ -1121,6 +1135,7 @@ void taArray_impl::Insert_(const void* it, int where, int n) {
     El_Copy_(FastEl_(trg_o - i), FastEl_(src_o - i));
   for(i=where; i<where+n; i++)
     El_Copy_(FastEl_(i), it);
+  DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 
 bool taArray_impl::MoveIdx(int fm, int to) {
@@ -1173,8 +1188,15 @@ bool taArray_impl::RemoveIdx(uint i, int n) {
   int j;
   for(j=i; j < size-n; j++)
     El_Copy_(FastEl_(j), FastEl_(j+n));
-  size-=n;
+  size -= n;
+  DataChanged(DCR_ARY_SIZE_CHANGED);
   return true;
+}
+
+void taArray_impl::RemoveIdxOnly(int i) {
+  for(int j=i; j < size-1; j++)
+    El_Copy_(FastEl_(j), FastEl_(j+1));
+  size -= 1;
 }
 
 const void* taArray_impl::SafeEl_(int i) const {
@@ -1231,6 +1253,7 @@ void taArray_impl::ShiftLeft(int nshift) {
     El_Copy_(FastEl_(i), FastEl_(i+nshift)); // move left..
   }
   size = size - nshift;		// update the size now..
+  DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::ShiftLeftPct(float pct) {
@@ -1241,31 +1264,40 @@ void taArray_impl::ShiftLeftPct(float pct) {
 
 int taArray_impl::V_Flip(int width){
   if (size % width) return false;
+  int size_orig = size;
   int from_end,from_start;
   for(from_end = size-width,from_start = 0;
       (from_start <from_end);
       from_end -= width, from_start += width){
     int j;
     for(j=0;j<width;j++){
-      Add_(FastEl_(from_start+j));
+      AddOnly_(FastEl_(from_start+j));
       El_Copy_(FastEl_(from_start+j),FastEl_(from_end+j));
       El_Copy_(FastEl_(from_end+j),FastEl_(size-1));
-      RemoveIdx(size-1);
+      RemoveIdxOnly(size-1);
     }
   }
+  if (size_orig != size)
+    DataChanged(DCR_ARY_SIZE_CHANGED);
   return true;
 }
 
 void taArray_impl::Duplicate(const taArray_impl& cp) {
   int i;
+  int size_orig = size;
   for(i=0; i<cp.size; i++)
-    Add_(cp.FastEl_(i));
+    AddOnly_(cp.FastEl_(i));
+  if (size_orig != size)
+    DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::DupeUnique(const taArray_impl& cp) {
   int i;
+  int size_orig = size;
   for(i=0; i<cp.size; i++)
-    AddUnique_(cp.FastEl_(i));
+    AddUniqueOnly_(cp.FastEl_(i));
+  if (size_orig != size)
+    DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::Copy_Common(const taArray_impl& cp) {
@@ -1277,9 +1309,11 @@ void taArray_impl::Copy_Common(const taArray_impl& cp) {
 
 void taArray_impl::Copy_Duplicate(const taArray_impl& cp) {
   Copy_Common(cp);
-  int i;
-  for(i=size; i<cp.size; i++)
-    Add_(cp.FastEl_(i));
+  int size_orig = size;
+  for(int i=size; i<cp.size; i++)
+    AddOnly_(cp.FastEl_(i));
+  if (size_orig != size)
+    DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 
 void taArray_impl::CopyVals(const taArray_impl& from, int start, int end, int at) {
@@ -1306,8 +1340,9 @@ void taArray_impl::List(ostream& strm) const {
 }
 
 void taArray_impl::InitFromString(const String& val) {
+  int size_orig = size;
   String tmp = val;
-  Reset();
+  Reset_impl();
   tmp = tmp.after('{');		// find starting point
   while(tmp.length() > 0) {
     String el_val = tmp.before(',');
@@ -1319,8 +1354,10 @@ void taArray_impl::InitFromString(const String& val) {
     tmp = tmp.after(',');
     if (el_val.contains(' '))
       el_val = el_val.after(' ');
-    Add_(El_GetTmp_());		// add a blank
+    AddOnly_(El_GetTmp_());		// add a blank
     El_SetFmStr_(FastEl_(size-1), String(el_val));
   }
+  if (size_orig != size)
+    DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 

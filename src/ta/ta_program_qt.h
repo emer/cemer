@@ -304,7 +304,16 @@ class TA_API iProgramCtrlDataHost : public taiEditDataHost, public virtual IRefL
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
 INHERITED(taiEditDataHost)
   Q_OBJECT
-public:
+public: //
+// We use: set0: gp guys (ex step); set1: args; set2: vars
+  enum CtrlMembSets {
+    MS_GP,
+    MS_ARGS,
+    MS_VARS, // note: must come after ARGS {
+    
+    MS_CNT	= 3 // note: should hide the inherited one in DefMemSets???
+  };
+  
   inline Program*	prog() const {return (Program*)cur_base;}
 
   
@@ -320,14 +329,13 @@ protected: //
   taBase_RefList	refs; // the data members from the Program
   taBase_RefList	refs_struct; // structural guys: arg and var lists themselves, gp
   override void	GetValue_Membs();
+  override void	GetImage_Membs();
   override void	Constr_Body();
   override void 	Cancel_impl(); 
 
   void	UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var); 
 
-  override void	GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
-  override void	GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const; //
-  
+ 
 public: // IRefListClient i/f
   TYPED_OBJECT(iProgramCtrlDataHost);
   override void		DataDestroying_Ref(taBase_RefList* src, taBase* ta);

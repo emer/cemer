@@ -123,6 +123,8 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
 
   DCR_CHILD_ITEM_UPDATED, // op1=item; can optionally be invoked by an owned object (usually a member, usually not list/group items) -- owner can ignore this, or do something with it
   
+  DCR_ARY_SIZE_CHANGED, // this is the only notify we send from arrays
+  
   DCR_LIST_INIT,
   DCR_LIST_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
   DCR_LIST_ITEM_UPDATE,	// op1=item
@@ -665,9 +667,11 @@ public:
   taArray_impl()			{ alloc_size = 0; size = 0; }
   virtual ~taArray_impl()		{ alloc_size = 0; size = 0; }
 
+  virtual void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
+  // #IGNORE only called when size changes 
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
   virtual void		Alloc(int n); // allocate storage for at least the given size
-  virtual void		Reset()			{ SetSize(0); };
+  virtual void		Reset()	{ Reset_impl(); DataChanged(DCR_ARY_SIZE_CHANGED); };
   // reset the list to zero size (does not free memory)
   ////////////////////////////////////////////////
   // 	internal functions that depend on type	//
@@ -752,6 +756,10 @@ public:
   // initialize an array from given string (does reset first)
 protected:
 
+  void			AddOnly_(const void* it); // don't notify
+  bool			AddUniqueOnly_(const void* it);	// don't notify
+  void 			RemoveIdxOnly(int i); //  don't notify, no checks
+  virtual void		Reset_impl() {SetSize(0);} // don't notify
   virtual void*		MakeArray_(int i) const	{ return NULL; } // #IGNORE make a new array of item type
   virtual void		SetArray_(void* nw) {}
   virtual void		ReclaimOrphans_(int start, int end) {}// #IGNORE called when array is shortened, leaving orphaned values; note 'size' may already be trimmed: NOT called when el[] is replaced

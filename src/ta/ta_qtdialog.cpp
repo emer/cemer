@@ -592,7 +592,7 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   no_ok_but = false;
   dialog = NULL;
   state = EXISTS;
-  sel_item_index = -1;
+  sel_item_md = NULL;
   rebuild_body = false;
   warn_clobber = false;
   host_type = HT_DIALOG; // default, set later
@@ -650,11 +650,14 @@ const iColor* taiDataHost::colorOfRow(int row) const {
   }
 }
 
-int taiDataHost::AddName(int row, const String& name, const String& desc, taiData* buddy) {
+int taiDataHost::AddName(int row, const String& name, const String& desc,
+   taiData* buddy, MemberDef* md)
+{
   iLabel* label = new iLabel(row, name, body);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
   label->setPaletteBackgroundColor(*colorOfRow(row));
+  if (md) label->setUserData((ta_intptr_t)md);
   connect(label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
       this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)) );
 // if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
@@ -1163,7 +1166,7 @@ int taiDataHost::Edit(bool modal_) { // only called if isDialog() true
 }
 
 void taiDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
-  sel_item_index = sender->index();
+  sel_item_md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
 }
 
 void taiDataHost::Iconify(bool value) {
@@ -1378,6 +1381,26 @@ void taiDataHost::UnSetRevert(){
 }
 
 
+//////////////////////////////////
+// 	MembSet_List		//
+//////////////////////////////////
+
+void MembSet_List::ResetItems(bool data_only) {
+  for (int i = size - 1; i >= 0; --i) {
+    MembSet* ms = FastEl(i);
+    ms->data_el.Reset();
+    if (!data_only) ms->memb_el.Reset();
+  }
+}
+
+void MembSet_List::SetMinSize(int n) {
+  if (n < 0) return;
+  Alloc(n); // noop if already sized larger
+  while (n > size) {
+    Add(new MembSet);
+  }
+}
+
 
 //////////////////////////////////
 // 	taiEditDataHost		//
@@ -1391,15 +1414,17 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   cur_base = base;
   use_show = true; // some descendant classes override, as well as construction methods
   show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
-  show_set_norm = true; show_set_expt = false; show_set_hidd = false; 
+  // note: subclass might add more membs, and might set def_size to use them
+  membs.SetMinSize(MS_CNT); 
+  membs.def_size = MS_CNT;
+  show_set(MS_NORM) = true;
   inline_mode = false;
   InitGuiFields(false);
   //note: don't register for notification until constr starts
 }
 
 taiEditDataHost::~taiEditDataHost() {
-  for (int i = MS_MIN; i <= MS_MAX; ++i)
-    data_el[i].Reset();
+  membs.Reset(); membs.def_size = 0;
   meth_el.Reset();
   taiMisc::active_edits.RemoveEl(this);
   taiMisc::css_active_edits.RemoveEl(this);
@@ -1452,9 +1477,9 @@ void taiEditDataHost::Cancel_impl() {
 }
 
 void taiEditDataHost::ClearBody_impl() {
-  // delete the data items -- Qt will automatically disconnect the signals/slots
-  for (int i = MS_MIN; i <= MS_MAX; ++i)
-    data_el[i].Reset();
+  // delete ALL the data items -- Qt will automatically disconnect the signals/slots
+  for (int i = 0; i < membs.size; ++i)
+    data_el(i).Reset();
   inherited::ClearBody_impl(); // deletes the body widgets, except structural ones
 }
 
@@ -1472,11 +1497,11 @@ void taiEditDataHost::Enum_Members() {
     MemberDef* md = ms.FastEl(i);
     if (md->im == NULL) continue; // this puppy won't show nohow!
     if (md->ShowMember(taMisc::NORM_MEMBS, TypeItem::SC_EDIT)) {
-      memb_el[MS_NORM].Add(md);
+      memb_el(MS_NORM).Add(md);
     } else if (md->ShowMember(taMisc::EXPT_MEMBS, TypeItem::SC_EDIT)) {
-      memb_el[MS_EXPT].Add(md);
+      memb_el(MS_EXPT).Add(md);
     } else if (md->ShowMember(taMisc::HIDD_MEMBS, TypeItem::SC_EDIT)) {
-      memb_el[MS_HIDD].Add(md);
+      memb_el(MS_HIDD).Add(md);
     }
   }
 }
@@ -1494,35 +1519,35 @@ void taiEditDataHost::Constr_Body() {
 
 void taiEditDataHost::Constr_Data() {
   int idx = 0;
-  if (show_set_norm && (memb_el[MS_NORM].size > 0)) {
-    Constr_Data_impl(idx, memb_el[MS_NORM], &data_el[MS_NORM]);
+  if (show_set(MS_NORM) && (memb_el(MS_NORM).size > 0)) {
+    Constr_Data_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
   }
 //TODO: additional guys
 }
 
 void taiEditDataHost::Constr_Labels() {
   int idx = 0;
-  if (show_set_norm && (memb_el[MS_NORM].size > 0)) {
-    Constr_Labels_impl(idx, memb_el[MS_NORM], &data_el[MS_NORM]);
+  if (show_set(MS_NORM) && (memb_el(MS_NORM).size > 0)) {
+    Constr_Labels_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
   }
 //TODO: additional guys
 }
 
 void taiEditDataHost::Constr_Inline() {
-  data_el[0].Reset(); // should already be clear
+  data_el(0).Reset(); // should already be clear
   // specify inline flag, just to be sure
   taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, taiData::flgInline);
-  data_el[0].Add(mb_dat);
+  data_el(0).Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
   bool fill_hor = mb_dat->fillHor();
   AddData(0, rep, fill_hor);
 }
 
-void taiEditDataHost::Constr_Labels_impl(int& idx, const Member_List& ms, taiDataList* dl) {
+void taiEditDataHost::Constr_Labels_impl(int& idx, Member_List* ms, taiDataList* dl) {
   String name;
   String desc;
-  for (int i = 0; i < ms.size; ++i) {
-    MemberDef* md = ms.SafeEl(i);
+  for (int i = 0; i < ms->size; ++i) {
+    MemberDef* md = ms->SafeEl(i);
 
     taiData* mb_dat = NULL;
     // Get data widget, if dl provided
@@ -1536,15 +1561,15 @@ void taiEditDataHost::Constr_Labels_impl(int& idx, const Member_List& ms, taiDat
     GetName(md, name, desc);
 
     // add to layout
-    AddName(idx, name, desc, mb_dat);
+    AddName(idx, name, desc, mb_dat, md);
     ++idx;
   }
 }
 
-void taiEditDataHost::Constr_Data_impl(int& idx, const Member_List& ms, taiDataList* dl) {
+void taiEditDataHost::Constr_Data_impl(int& idx, Member_List* ms, taiDataList* dl) {
   QWidget* rep;
-  for (int i = 0; i < ms.size; ++i) {
-    MemberDef* md = ms.FastEl(i);
+  for (int i = 0; i < ms->size; ++i) {
+    MemberDef* md = ms->FastEl(i);
     // Create data widget
     taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
     dl->Add(mb_dat);
@@ -1638,7 +1663,7 @@ void taiEditDataHost::DoRaise_Panel() {
 
 void taiEditDataHost::DoSelectForEdit(int param){
   //NOTE: this handler adds if not on, or removes if already on
-  MemberDef* md = memb_el.SafeEl(sel_item_index);
+  MemberDef* md = sel_item_md;
   TypeDef* td = SelectEdit::StatTypeDef(0);
   SelectEdit* se = (SelectEdit*)td->tokens.SafeEl_(param);
   if ((md == NULL) || (se == NULL)) return; //shouldn't happen...
@@ -1684,12 +1709,13 @@ void taiEditDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& las
   FillLabelContextMenu_SelEdit(sender, menu, last_id);
 }
 
-void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id) {
-  if ((cur_base == NULL) || (typ == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; // have to be a taBase to use SelEdit
-  MemberDef* md = memb_el.SafeEl(sel_item_index);
+void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender, 
+  QMenu* menu, int& last_id)
+{
+  // have to be a taBase to use SelEdit
+  if ((cur_base == NULL) || (typ == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; 
+  MemberDef* md = sel_item_md; // from inherited routine
   if (md == NULL) return;
-  // save the index of the data item, for the handler routines
-  sel_item_index = sender->index();
   // get list of select edits
   TypeDef* td = SelectEdit::StatTypeDef(0);
   if (td->tokens.size == 0) return;
@@ -1766,24 +1792,28 @@ void taiEditDataHost::GetImage_Membs() {
   if (inline_mode) {
     GetImageInline_impl(cur_base);
   } else {
-    for (MembSet i = MS_MIN; i <= MS_MAX; ++i) {
-      if (show_set[i] && (data_el[i].size > 0))
-        GetImage_impl(memb_el[i], data_el[i], cur_base);
-    }
+    GetImage_Membs_def();
   }
 }
 
 void taiEditDataHost::GetImageInline_impl(const void* base) {
-  taiData* mb_dat = data_el.SafeEl(0);
+  taiData* mb_dat = data_el(0).SafeEl(0);
   if (mb_dat) 
     typ->it->GetImage(mb_dat, base);
 }
 
-void taiEditDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
-	void* base)
+void taiEditDataHost::GetImage_Membs_def() {
+  for (int i = 0; i < membs.def_size; ++i) {
+    if (show_set(i) && (data_el(i).size > 0))
+      GetImage_impl(&memb_el(i), data_el(i), cur_base);
+  }
+}
+
+void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl,
+  void* base)
 {
   for (int i = 0; i < dl.size; ++i) {
-    MemberDef* md = ms.SafeEl(i);
+    MemberDef* md = ms->SafeEl(i);
     taiData* mb_dat = dl.SafeEl(i);
     if ((md == NULL) || (mb_dat == NULL))
       taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
@@ -1845,10 +1875,7 @@ void taiEditDataHost::GetValue_Membs() {
   if (inline_mode) {
     GetValueInline_impl(cur_base);
   } else {
-    for (MembSet i = MS_MIN; i <= MS_MAX; ++i) {
-      if (show_set[i] && (data_el[i].size > 0))
-        GetValue_impl(memb_el[i], data_el[i], cur_base);
-    }
+    GetValue_Membs_def();
   }
   if (typ->InheritsFrom(TA_taBase)) {
     TAPtr rbase = (TAPtr)cur_base;
@@ -1857,12 +1884,19 @@ void taiEditDataHost::GetValue_Membs() {
   }
 }
 
-void taiEditDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,
+void taiEditDataHost::GetValue_Membs_def() {
+  for (int i = 0; i < membs.def_size; ++i) {
+    if (show_set(i) && (data_el(i).size > 0))
+      GetValue_impl(&memb_el(i), data_el(i), cur_base);
+  }
+}
+
+void taiEditDataHost::GetValue_impl(const Member_List* ms, const taiDataList& dl,
   void* base) const
 {
   bool first_diff = true;
-  for (int i = 0; i < ms.size; ++i) {
-    MemberDef* md = ms.FastEl(i);
+  for (int i = 0; i < ms->size; ++i) {
+    MemberDef* md = ms->FastEl(i);
     taiData* mb_dat = dl.SafeEl(i);
     if (mb_dat == NULL)
       taMisc::Error("taiEditDataHost::GetValue_impl(): unexpected dl=NULL at i ", String(i), "\n");
@@ -1874,7 +1908,7 @@ void taiEditDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl
 }
 
 void taiEditDataHost::GetValueInline_impl(void* base) const {
-  taiData* mb_dat = data_el.SafeEl(0);
+  taiData* mb_dat = data_el(0).SafeEl(0);
   if (mb_dat) 
     typ->it->GetValue(mb_dat, base);
 }

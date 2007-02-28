@@ -1076,6 +1076,8 @@ iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,
 					   bool modal_, QObject* parent)
 : taiEditDataHost(prog, prog->GetTypeDef(), read_only_, modal_, parent)
 {
+  membs.SetMinSize(MS_CNT); // note: our own MS_CNT
+  membs.def_size = 0; // we handle everything
   //  use_show = false;
   refs.setOwner(this); // these update frequently
   refs_struct.setOwner(this); // these are same for prog lifetime
@@ -1110,51 +1112,58 @@ void iProgramCtrlDataHost::Constr_Body() {
   inherited::Constr_Body();
   Program* prog = this->prog();
   refs.Reset();
+  membs.ResetItems(); // all Meths and data
   String nm;
   String help_text;
-  int sz = prog->args.size + prog->vars.size;
-  for (int i = 0; i < sz; ++i) {
-    ProgVar* pv;
-    if(i < prog->args.size)
-      pv = prog->args.FastEl(i);
-    else
-      pv = prog->vars.FastEl(i-prog->args.size);
-    if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
-    MemberDef* md = pv->GetValMemberDef();
-    taiData* mb_dat;
-    if(pv->var_type == ProgVar::T_HardEnum) {
-      mb_dat = new taiComboBox(true, NULL, this, NULL, body);
-    }
-    else if(pv->var_type == ProgVar::T_DynEnum) {
-      mb_dat = new taiComboBox(true, NULL, this, NULL, body);
-    }
-    else {
-      mb_dat = md->im->GetDataRep(this, NULL, body);
-    }
-    data_el.Add(mb_dat);
-    QWidget* data = mb_dat->GetRep();
-    int row = AddData(-1, data);
-    nm = pv->name;
-    help_text = pv->desc;
-    AddName(row, nm, help_text, mb_dat); 
-    refs.Add(pv);
-  }
-  // step program
+  
+  // ProgGroup guys
   if(!(prog->HasProgFlag(Program::NO_STOP) || prog->HasProgFlag(Program::NO_USER_RUN))) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     MemberDef* md = TA_Program_Group.members.FindName("step_prog");
     if(pg && md) {
+      memb_el(MS_GP).Add(md);
       taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
-      data_el.Add(mb_dat);
+      data_el(MS_GP).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
       int row = AddData(-1, data);
       nm = "step_prog";
       help_text = md->desc;
       AddName(row, nm, help_text, mb_dat); 
     }
-
   }
-
+  // args and vars
+  for (int j = MS_ARGS; j <= MS_VARS; ++j) {
+    ProgVar_List* pvl = NULL;
+    switch (j) {
+    case MS_ARGS: pvl = &prog->args; break;
+    case MS_VARS: pvl = &prog->vars; break;
+    default: continue; // shouldn't happen!
+    }
+    
+    for (int i = 0; i < pvl->size; ++i) {
+      ProgVar* pv = pvl->FastEl(i);
+      if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
+      MemberDef* md = pv->GetValMemberDef();
+      memb_el(j).Add(md);
+      taiData* mb_dat;
+      if(pv->var_type == ProgVar::T_HardEnum) {
+        mb_dat = new taiComboBox(true, NULL, this, NULL, body);
+      }
+      else if(pv->var_type == ProgVar::T_DynEnum) {
+        mb_dat = new taiComboBox(true, NULL, this, NULL, body);
+      }
+      else {
+        mb_dat = md->im->GetDataRep(this, NULL, body);
+      }
+      data_el(j).Add(mb_dat);
+      QWidget* data = mb_dat->GetRep();
+      int row = AddData(-1, data);
+      nm = pv->name;
+      help_text = pv->desc;
+      AddName(row, nm, help_text, mb_dat); 
+      refs.Add(pv);
+    }
+  } // j == set
 }
 
 void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList* ref, taBase* base) {
@@ -1191,60 +1200,48 @@ void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
 
 
 void iProgramCtrlDataHost::GetValue_Membs() {
-  GetValue_impl(typ->members, data_el, cur_base);
-  //  prog->UpdateAllBases();
-}
-
-void iProgramCtrlDataHost::GetValue_impl(const Member_List& ms, const taiDataList& dl,
-  void* base) const
-{
   Program* prog = this->prog(); //cache
   if (!prog) return;
-  int cnt = 0;
-  bool first_diff = true;
-  int sz = prog->args.size + prog->vars.size;
-  for (int i = 0; i < sz; ++i) {
-    ProgVar* pv;
-    if(i < prog->args.size)
-      pv = prog->args.FastEl(i);
-    else
-      pv = prog->vars.FastEl(i-prog->args.size);
-    if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
-    MemberDef* md = pv->GetValMemberDef();
-    taiData* mb_dat = dl.SafeEl(cnt++);
-    if (!mb_dat) {
-#ifdef DEBUG
-      taMisc::Warning("iProgramCtrlDataHost:GetValue_impl: ran out of controls!");
-#endif
-      break;
-    }
-    if(pv->var_type == ProgVar::T_HardEnum) {
-      ((taiComboBox*)mb_dat)->GetEnumValue(pv->int_val); // todo: not supporting first_diff
-    }
-    else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
-      ((taiComboBox*)mb_dat)->GetEnumValue(pv->dyn_enum_val.value_idx);
-    }
-    else {
-      md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
-    }
-    if(!first_diff) {		// always reset!
-      taiMember::EndScript((void*)pv);
-      first_diff = true;
-    }
-  }
-  // step program
-  if(!(prog->HasProgFlag(Program::NO_STOP) || prog->HasProgFlag(Program::NO_USER_RUN))) {
+  
+  // group stuff
+  if (data_el(MS_GP).size > 0) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
-    MemberDef* md = TA_Program_Group.members.FindName("step_prog");
-    if(pg && md) {
-      taiData* mb_dat = dl.SafeEl(cnt++);
-      if(mb_dat) {
-	md->im->GetMbrValue(mb_dat, (void*)pg, first_diff);
-	pg->UpdateAfterEdit();		// update any displays!
-	if(!first_diff) {		// always reset! todo -- this is probably wrong.
-	  taiMember::EndScript((void*)pg);
-	  first_diff = true;
-	}
+    GetValue_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
+  }
+  
+  bool first_diff = true;
+  for (int j = MS_ARGS; j <= MS_VARS; ++j) {
+    ProgVar_List* pvl = NULL;
+    switch (j) {
+    case MS_ARGS: pvl = &prog->args; break;
+    case MS_VARS: pvl = &prog->vars; break;
+    default: continue; // shouldn't happen!
+    }
+    
+    int cnt = 0;
+    for (int i = 0; i < pvl->size; ++i) {
+      ProgVar* pv = prog->vars.FastEl(i);
+      if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
+      MemberDef* md = memb_el(j).SafeEl(cnt);
+      taiData* mb_dat = data_el(j).SafeEl(cnt++);
+      if (!mb_dat) {
+#ifdef DEBUG
+        taMisc::Warning("iProgramCtrlDataHost:GetValue_impl: ran out of controls!");
+#endif
+        break;
+      }
+      if(pv->var_type == ProgVar::T_HardEnum) {
+        ((taiComboBox*)mb_dat)->GetEnumValue(pv->int_val); // todo: not supporting first_diff
+      }
+      else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
+        ((taiComboBox*)mb_dat)->GetEnumValue(pv->dyn_enum_val.value_idx);
+      }
+      else {
+        md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
+      }
+      if(!first_diff) {		// always reset!
+        taiMember::EndScript((void*)pv);
+        first_diff = true;
       }
     }
   }
@@ -1260,50 +1257,49 @@ void iProgramCtrlDataHost::UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* va
   }
 }
 
-void iProgramCtrlDataHost::GetImage_impl(const Member_List& ms, const taiDataList& dl,
-  void* base)
+void iProgramCtrlDataHost::GetImage_Membs()
 {
   Program* prog = this->prog(); //cache
   if (!prog) return;
-  int cnt = 0;
-  int sz = prog->args.size + prog->vars.size;
-  for (int i = 0; i < sz; ++i) {
-    ProgVar* pv;
-    if(i < prog->args.size)
-      pv = prog->args.FastEl(i);
-    else
-      pv = prog->vars.FastEl(i-prog->args.size);
-    if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
-    MemberDef* md = pv->GetValMemberDef();
-    taiData* mb_dat = dl.SafeEl(cnt++);
-    if (!mb_dat) {
-#ifdef DEBUG
-      taMisc::Warning("iProgramCtrlDataHost:GetImage_impl: ran out of controls!");
-#endif
-      break;
-    }
-    if(pv->var_type == ProgVar::T_HardEnum) {
-      ((taiComboBox*)mb_dat)->SetEnumType(pv->hard_enum_type);
-      ((taiComboBox*)mb_dat)->GetEnumImage(pv->int_val);
-    }
-    else if(pv->var_type == ProgVar::T_DynEnum) {
-      UpdateDynEnumCombo(((taiComboBox*)mb_dat), pv);
-      int dei = pv->dyn_enum_val.value_idx;
-      if (dei < 0) dei = 0;
-      ((taiComboBox*)mb_dat)->GetEnumImage(dei);
-    }
-    else {
-      md->im->GetImage(mb_dat, (void*)pv);
-    }
-  }
+  
   // step program
-  if(!(prog->HasProgFlag(Program::NO_STOP) || prog->HasProgFlag(Program::NO_USER_RUN))) {
+  if (data_el(MS_GP).size > 0) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
-    MemberDef* md = TA_Program_Group.members.FindName("step_prog");
-    if(pg && md) {
-      taiData* mb_dat = dl.SafeEl(cnt++);
-      if(mb_dat) {
-	md->im->GetImage(mb_dat, (void*)pg);
+    GetImage_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
+  }
+  
+  for (int j = MS_ARGS; j <= MS_VARS; ++j) {
+    ProgVar_List* pvl = NULL;
+    switch (j) {
+    case MS_ARGS: pvl = &prog->args; break;
+    case MS_VARS: pvl = &prog->vars; break;
+    default: continue; // shouldn't happen!
+    }
+    
+    int cnt = 0;
+    for (int i = 0; i < pvl->size; ++i) {
+      ProgVar* pv = prog->vars.FastEl(i);
+      if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
+      MemberDef* md = memb_el(j).SafeEl(cnt);
+      taiData* mb_dat = data_el(j).SafeEl(cnt++);
+      if (!mb_dat) {
+  #ifdef DEBUG
+        taMisc::Warning("iProgramCtrlDataHost:GetImage_impl: ran out of controls!");
+  #endif
+        break;
+      }
+      if(pv->var_type == ProgVar::T_HardEnum) {
+        ((taiComboBox*)mb_dat)->SetEnumType(pv->hard_enum_type);
+        ((taiComboBox*)mb_dat)->GetEnumImage(pv->int_val);
+      }
+      else if(pv->var_type == ProgVar::T_DynEnum) {
+        UpdateDynEnumCombo(((taiComboBox*)mb_dat), pv);
+        int dei = pv->dyn_enum_val.value_idx;
+        if (dei < 0) dei = 0;
+        ((taiComboBox*)mb_dat)->GetEnumImage(dei);
+      }
+      else {
+        md->im->GetImage(mb_dat, (void*)pv);
       }
     }
   }

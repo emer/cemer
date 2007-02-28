@@ -1692,6 +1692,8 @@ public:
 
   int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  
+  override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); 
 
   void 	Initialize()	{ }
   void 	Destroy()	{ CutLinks(); }

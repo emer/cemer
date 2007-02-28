@@ -448,8 +448,6 @@ class TA_API gpiArrayEditDataHost : public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditDataHost)
 public:
-  int		n_ary_membs;
-
   bool 		ShowMember(MemberDef* md) const;
 //TODO  int		Edit();
 
@@ -458,6 +456,7 @@ public:
   gpiArrayEditDataHost() 		{ };
   ~gpiArrayEditDataHost();
 protected:
+  int			array_set; // index of array_set
   override void 	GetValue_Membs();
   override void 	GetImage_Membs();
   override void ClearBody_impl();
@@ -498,9 +497,8 @@ public:
   override bool ShowMember(MemberDef* md) const;
 
 protected:
-  int 			base_items;	// #IGNORE number of base items, before the user-selected items
+  int			sele_set; // our set in membs
   QMenu*		mnuRemoveMember;  // #IGNORE we build this during body phase, but then add during method phase
-  override void	GetValue_Membs();
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
   override void		Constr_Body();
   void 			Constr_Methods();
@@ -509,8 +507,10 @@ protected:
   void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
   QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
 
-  override void		GetImage_impl(const Member_List& ms, const taiDataList& dl, void* base);
-  override void		GetValue_impl(const Member_List& ms, const taiDataList& dl, void* base) const;
+  override void		GetValue_Membs();
+  virtual void		GetValue_SeleMembs();
+  override void		GetImage_Membs();
+  virtual void		GetImage_SeleMembs();
 
 protected slots:
   virtual void		DoRemoveSelEdit(); // #IGNORE removes the sel_item_index item
