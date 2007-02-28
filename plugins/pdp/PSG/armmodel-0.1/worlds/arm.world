@@ -1,10 +1,17 @@
 <?xml version="1.0"?>
-<gz:world xmlns:gz="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:window="http://playerstage.sourceforge.net/gazebo/xmlschema/#window" xmlns:param="http://playerstage.sourceforge.net/gazebo/xmlschema/#params" xmlns:ui="http://playerstage.sourceforge.net/gazebo/xmlschema/#params">
+
+<gz:world 
+  xmlns:gz='http://playerstage.sourceforge.net/gazebo/xmlschema/#gz'
+  xmlns:model='http://playerstage.sourceforge.net/gazebo/xmlschema/#model'
+  xmlns:sensor='http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor'
+  xmlns:window='http://playerstage.sourceforge.net/gazebo/xmlschema/#window'
+  xmlns:param='http://playerstage.sourceforge.net/gazebo/xmlschema/#params'
+  xmlns:ui='http://playerstage.sourceforge.net/gazebo/xmlschema/#params'>
 
   <model:ObserverCam>
     <id>userCam0</id>
     <xyz>-1.289 -1.298 1.346</xyz>
-    <rpy>-0 24 36</rpy>
+    <rpy>0 37 31</rpy>
     <imageSize>640 480</imageSize>
     <updateRate>10</updateRate>
 
@@ -19,8 +26,8 @@
  
   <model:ObserverCam>
     <id>userCam1</id>
-    <xyz>1.050 -1.300 1.300</xyz>
-    <rpy>-0 31 90</rpy>
+    <xyz>1.05 -1.3 1.3</xyz>
+    <rpy>0 31 90</rpy>
     <imageSize>640 480</imageSize>
     <updateRate>10</updateRate>
 
@@ -35,17 +42,17 @@
  
   <model:ObserverCam>
     <id>userCam2</id>
-    <xyz>1.300 1.050 1.300</xyz>
-    <rpy>-0 20 180</rpy>
+    <xyz>1.3 1.05 1.3</xyz>
+    <rpy>0 20 180</rpy>
     <imageSize>320 240</imageSize>
     <updateRate>10</updateRate>
 
     <nearClip>0.2</nearClip>
     <farClip>50</farClip>
 
-    <displayRays>false</displayRays>
-    <displayAxes>false</displayAxes>
-    <displayCoM>false</displayCoM>
+    <displayRays>true</displayRays>
+    <displayAxes>true</displayAxes>
+    <displayCoM>true</displayCoM>
     <displayTextures>true</displayTextures>
   </model:ObserverCam>
 
@@ -65,22 +72,6 @@
     <textureFile>grid.ppm</textureFile>
   </model:GroundPlane>  
 
-<model:Pioneer2AT>
-    <id>robot1</id>
-    <xyz>0.012 -0.005 -0.001</xyz>
-    <model:SickLMS200>
-      <id>laser1</id>
-      <xyz>0.100 0.000 0.30</xyz>
-      <rpy>0 0 0</rpy>
-      <scanRate>75</scanRate>
-      <model:MonoCam>
-        <id>camera1</id>
-        <xyz>0 0 0.20</xyz>
-        <nearClip>0.5</nearClip>
-        <farClip>3</farClip>
-      </model:MonoCam>
-    </model:SickLMS200>
-									    
     <model:ArmModel>
         <plugin>/usr/local/lib/libarmmodel.so</plugin>
         <id>arm1</id>
@@ -103,7 +94,7 @@
         <!-- arm on ground => 0, arm on robot => 1 -->
         <robot>1</robot>
         <!-- No gripper => 0, Gripper => 1 -->
-        <gripper>1</gripper>
+        <gripper>0</gripper>
 	<!--
         <skinGripperBase>skins/sliding_thing.3ds</skinGripperBase>
         <skinGripperBaseScale>0.001023 0.001023 0.001023</skinGripperBaseScale>
@@ -120,6 +111,5 @@
 	-->
         <id>arm1</id>
     </model:ArmModel>
-</model:Pioneer2AT>
-
 </gz:world>
+
