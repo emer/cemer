@@ -367,6 +367,8 @@ protected:
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
   DataChangeHelper 	dch; // helps track the state of datachanges
 
+  int 		AddSectionLabel(int row, QWidget* wid, const String& desc);
+    // add a widget, usually a label or checkbox, that will span both columns (no data)
   int		AddName(int row, const String& name, const String& desc,
     taiData* buddy = NULL, MemberDef* md = NULL);
     // add a label item in first column; row<0 means "next row"; returns row
@@ -474,6 +476,7 @@ public:
   taiActions*		show_menu;	// Show menu bar
   
   MembSet_List		membs;
+  QButtonGroup*		bgrp; // group used for set checkboxes
   taiDataList 		meth_el;	// method elements
 
   //NOTE: we provide indexed access to references here for convenience, but be careful!
@@ -539,6 +542,7 @@ protected:
   override void		ClearBody_impl();
   override void		Constr_Strings(const char* prompt, const char* win_title);
   override void		Constr_Body();    // construct the data of the dialog
+  virtual void		Constr_Data_Labels(); // calls Data then Labels -- override to do your own
   virtual void		Constr_Data(); // members, or equivalent in inherited classes, and labels
   virtual void		Constr_Labels(); // labels
   virtual void 		Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
@@ -568,6 +572,7 @@ protected:
 
 protected slots:
   virtual void	DoSelectForEdit(int param); // param will be index of the SelectEdit; sel_data_index will hold the index of the data item
+  virtual void		bgrp_buttonClicked(int id); // one of the section checkboxes
 };
 
 

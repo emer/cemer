@@ -328,10 +328,10 @@ protected: //
   // we maintain several lists to simply mgt and notify handling
   taBase_RefList	refs; // the data members from the Program
   taBase_RefList	refs_struct; // structural guys: arg and var lists themselves, gp
-  override void	GetValue_Membs();
-  override void	GetImage_Membs();
-  override void	Constr_Body();
+  override void		Constr_Data_Labels();
   override void 	Cancel_impl(); 
+  override void		GetValue_Membs();
+  override void		GetImage_Membs();
 
   void	UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var); 
 

@@ -1108,8 +1108,7 @@ void iProgramCtrlDataHost::Cancel_impl() {
   inherited::Cancel_impl();
 }
 
-void iProgramCtrlDataHost::Constr_Body() {
-  inherited::Constr_Body();
+void iProgramCtrlDataHost::Constr_Data_Labels() {
   Program* prog = this->prog();
   refs.Reset();
   membs.ResetItems(); // all Meths and data
@@ -1220,11 +1219,11 @@ void iProgramCtrlDataHost::GetValue_Membs() {
     
     int cnt = 0;
     for (int i = 0; i < pvl->size; ++i) {
-      ProgVar* pv = prog->vars.FastEl(i);
+      ProgVar* pv = pvl->FastEl(i);
       if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
-      if (!mb_dat) {
+      if (!md || !mb_dat) {
 #ifdef DEBUG
         taMisc::Warning("iProgramCtrlDataHost:GetValue_impl: ran out of controls!");
 #endif
@@ -1278,14 +1277,14 @@ void iProgramCtrlDataHost::GetImage_Membs()
     
     int cnt = 0;
     for (int i = 0; i < pvl->size; ++i) {
-      ProgVar* pv = prog->vars.FastEl(i);
+      ProgVar* pv = pvl->FastEl(i);
       if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
-      if (!mb_dat) {
-  #ifdef DEBUG
+      if (!md || !mb_dat) {
+#ifdef DEBUG
         taMisc::Warning("iProgramCtrlDataHost:GetImage_impl: ran out of controls!");
-  #endif
+#endif
         break;
       }
       if(pv->var_type == ProgVar::T_HardEnum) {

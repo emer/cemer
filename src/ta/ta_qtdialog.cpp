@@ -650,6 +650,31 @@ const iColor* taiDataHost::colorOfRow(int row) const {
   }
 }
 
+int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
+  wid->setFont(taiM->nameFont(ctrl_size));
+  wid->setFixedHeight(taiM->label_height(ctrl_size));
+  wid->setPaletteBackgroundColor(*colorOfRow(row));
+  if (!desc.empty()) {
+    QToolTip::add(wid, desc);
+  }
+  if (row < 0)
+    row = layBody->numRows();
+  if (layBody->numRows() < (row + 1)) {
+    layBody->expand(row + 1, 2);
+  }
+  layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
+  QHBoxLayout* layH = new QHBoxLayout();
+  
+  layH->addWidget(wid, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+/*  layH->addItem(new QSpacerItem(2, row_height, QSizePolicy::Fixed), row, 0,
+    1, 1, (Qt::AlignRight | Qt::AlignVCenter)); */
+  layH->addSpacing(2);
+  // add the item to span both cols
+  layBody->addLayout(layH, row, 0, 1, 2, (Qt::AlignLeft | Qt::AlignVCenter)); 
+  wid->show(); // needed for rebuilds, to make the widget show
+  return row;
+}
+
 int taiDataHost::AddName(int row, const String& name, const String& desc,
    taiData* buddy, MemberDef* md)
 {
@@ -1419,6 +1444,10 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   membs.def_size = MS_CNT;
   show_set(MS_NORM) = true;
   inline_mode = false;
+  bgrp = new QButtonGroup(this);
+  bgrp->setExclusive(false);
+  connect(bgrp, SIGNAL(buttonClicked(int)),
+    this, SLOT(bgrp_buttonClicked(int)) );
   InitGuiFields(false);
   //note: don't register for notification until constr starts
 }
@@ -1433,7 +1462,7 @@ taiEditDataHost::~taiEditDataHost() {
     ((taBase*)cur_base)->RemoveDataClient(this);
     cur_base = NULL;
   }
-
+  bgrp = NULL;
 }
 
 // note: called non-virtually in our ctor, and virtually in WidgetDeleting
@@ -1492,16 +1521,24 @@ void taiEditDataHost::Constr_impl() {
 }
 
 void taiEditDataHost::Enum_Members() {
+  if (membs.def_size <= 0) return; // not handling anything
   MemberSpace& ms = typ->members;
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
-    if (md->im == NULL) continue; // this puppy won't show nohow!
+    if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
     if (md->ShowMember(taMisc::NORM_MEMBS, TypeItem::SC_EDIT)) {
       memb_el(MS_NORM).Add(md);
-    } else if (md->ShowMember(taMisc::EXPT_MEMBS, TypeItem::SC_EDIT)) {
+      continue;
+    } 
+    if (membs.def_size <= MS_EXPT) continue; 
+    if (md->ShowMember(taMisc::EXPT_MEMBS, TypeItem::SC_EDIT)) {
       memb_el(MS_EXPT).Add(md);
-    } else if (md->ShowMember(taMisc::HIDD_MEMBS, TypeItem::SC_EDIT)) {
+      continue;
+    } 
+    if (membs.def_size <= MS_HIDD) continue; 
+    if (md->ShowMember(taMisc::HIDD_MEMBS, TypeItem::SC_EDIT)) {
       memb_el(MS_HIDD).Add(md);
+      continue;
     }
   }
 }
@@ -1512,25 +1549,66 @@ void taiEditDataHost::Constr_Body() {
   if (inline_mode) {
     Constr_Inline();
   } else {
-    Constr_Data();
-    Constr_Labels();
+    Constr_Data_Labels();
   }
+}
+
+void taiEditDataHost::Constr_Data_Labels() {
+  Constr_Data();
+  Constr_Labels();
 }
 
 void taiEditDataHost::Constr_Data() {
   int idx = 0;
+  // Normal members
+  if (MS_NORM >= membs.def_size) return; // don't do those
   if (show_set(MS_NORM) && (memb_el(MS_NORM).size > 0)) {
     Constr_Data_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
   }
-//TODO: additional guys
+  for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
+    if (j >= membs.def_size) return; // don't do those
+    if (memb_el(j).size == 0) continue;
+    String text; String desc;
+    switch (j) {
+    case MS_EXPT:
+      text = "Expert Items";
+      desc = "show member items that are usually only needed for advanced purposes";
+      break;
+    case MS_HIDD:
+      text = "Hidden Items";
+      desc = "show member items that are rarely needed by most users";
+      break;
+    default: continue; // shouldn't happen!
+    }
+    iCheckBox* chk = new iCheckBox(text.chars(), body);
+    AddSectionLabel(idx, chk, desc);
+    ++idx;
+    bgrp->addButton(chk, j);
+    // if we are to show this section, then check the box, and build, else nothing else
+    if (show_set(j)) {
+      chk->setChecked(true);
+      Constr_Data_impl(idx, &memb_el(j), &data_el(j));
+    }
+  }
+}
+
+void taiEditDataHost::bgrp_buttonClicked(int id) {
+  // id is an index of the membs
+  iCheckBox* chk = qobject_cast<iCheckBox*>(bgrp->button(id));
+  if (!chk) return; // shouldn't happen
+  if ((id < 0) || (id >= membs.size)) return; // ditto
+  show_set(id) = chk->isChecked();
+  ReShow_Async();
 }
 
 void taiEditDataHost::Constr_Labels() {
   int idx = 0;
-  if (show_set(MS_NORM) && (memb_el(MS_NORM).size > 0)) {
-    Constr_Labels_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
+  for (int j = 0; j < membs.size; ++j) {
+    if (j >= membs.def_size) return; // don't do those
+    if (show_set(j) && (memb_el(j).size > 0)) {
+      Constr_Data_impl(idx, &memb_el(j), &data_el(j));
+    }
   }
-//TODO: additional guys
 }
 
 void taiEditDataHost::Constr_Inline() {

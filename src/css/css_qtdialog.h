@@ -53,7 +53,6 @@ public:
 
 protected:
   void	 		GetName(int idx, cssEl* md, String& name, String& desc);
-  override void		Enum_Members() {} // n/a
   override void		ClearBody_impl(); // delete the data items
   override void		Constr_Inline() {} // n/a
   override void		Constr_Labels();
