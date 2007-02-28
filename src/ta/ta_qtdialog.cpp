@@ -1606,7 +1606,7 @@ void taiEditDataHost::Constr_Labels() {
   for (int j = 0; j < membs.size; ++j) {
     if (j >= membs.def_size) return; // don't do those
     if (show_set(j) && (memb_el(j).size > 0)) {
-      Constr_Data_impl(idx, &memb_el(j), &data_el(j));
+      Constr_Labels_impl(idx, &memb_el(j), &data_el(j));
     }
   }
 }
