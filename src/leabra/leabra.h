@@ -1456,7 +1456,7 @@ public:
 };
 
 class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
-  // ##CAT_Leabra Leabra Layer: implicit inhibition for soft kWTA behavior
+  // ##CAT_Leabra layer that implements the Leabra algorithms
   INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
@@ -1824,7 +1824,7 @@ inline void LeabraBiasSpec::B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
 //////////////////////////
 
 class LEABRA_API LeabraNetwork : public Network {
-  // ##CAT_Leabra Leabra network: has specific functions to operate on Leabra Networks
+  // ##CAT_Leabra network that uses the Leabra algorithms and objects
   INHERITED(Network)
 public:
   enum StateInit {		// ways of initializing the state of the network

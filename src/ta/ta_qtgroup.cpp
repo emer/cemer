@@ -26,9 +26,6 @@
 
 #include "css_ta.h"
 
-#include "icolor.h"
-#include "ieditgrid.h"
-
 #include <qapplication.h>
 #include <qframe.h>
 #include <Q3Header>
@@ -41,6 +38,10 @@
 #include <QSplitter>
 #include <qtooltip.h>
 #include <Q3Table>
+
+#include "icolor.h"
+#include "ieditgrid.h"
+#include "iscrollarea.h"
 
 
 //////////////////////////
@@ -1157,7 +1158,7 @@ void gpiMultiEditDataHost::Constr_Box() {
 
   taiEditDataHost::Constr_Box();
 
-  scrMulti = new QScrollArea(splBody);
+  scrMulti = new iScrollArea(splBody);
   scrMulti->viewport()->setPaletteBackgroundColor(*bg_color);
   scrMulti->setWidgetResizable(true);
   multi = new QWidget();
@@ -1537,7 +1538,6 @@ bool gpiArrayEditDataHost::ShowMember(MemberDef* md) const {
 
 void gpiArrayEditDataHost::Constr_Data_Labels() {
   inherited::Constr_Data_Labels();
-//TODO: add a nice Array label
   Constr_AryData_Labels();
 }
 

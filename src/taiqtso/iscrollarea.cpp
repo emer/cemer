@@ -15,6 +15,8 @@
 
 #include "iscrollarea.h"
 
+#include <QScrollBar>
+
 iScrollArea::iScrollArea(QWidget* parent)
 :inherited(parent)
 {
@@ -24,3 +26,19 @@ iScrollArea::iScrollArea(QWidget* parent)
 void iScrollArea::init() {
 }
 
+QSize iScrollArea::sizeHint() const {
+  QSize s(inherited::sizeHint());
+  // if scrollbars are enabled but not shown, add their size anyway to avoid
+  // the annoying slightly scrolled issue
+  if (horizontalScrollBarPolicy() == Qt::ScrollBarAsNeeded) {
+    QScrollBar* sb = horizontalScrollBar();
+    if (!sb->isVisible())
+      s.rheight() += sb->sizeHint().height() + 2;
+  }
+  if (verticalScrollBarPolicy() == Qt::ScrollBarAsNeeded) {
+    QScrollBar* sb = verticalScrollBar();
+    if (!sb->isVisible())
+      s.rwidth() += sb->sizeHint().width() + 2;
+  }
+  return s;
+}

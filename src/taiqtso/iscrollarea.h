@@ -25,6 +25,9 @@ class iScrollArea: public QScrollArea {
 INHERITED(QScrollArea)
   Q_OBJECT
 public:
+
+  QSize 	sizeHint() const;
+
   explicit iScrollArea(QWidget* parent = 0);
 
 private:

@@ -27,11 +27,6 @@
 #include "ta_seledit.h"
 #include "ta_TA_type.h"
 
-#include "ibutton.h"
-#include "icolor.h"
-#include "ieditgrid.h"
-#include "iflowlayout.h"
-
 #include <qapplication.h>
 #include <QCursor>
 #include <qdesktopwidget.h>
@@ -61,6 +56,11 @@
 #include <QVBoxLayout>
 #include <qwidget.h>
 
+#include "ibutton.h"
+#include "icolor.h"
+#include "ieditgrid.h"
+#include "iflowlayout.h"
+#include "iscrollarea.h"
 
 // TODO: why is String=osString in this file, unless I do this:
 #include "ta_string.h"
@@ -300,7 +300,7 @@ iDialog::iDialog(taiDataHost* owner_, QWidget* parent, int wflags)
 {
   owner = owner_;
   mcentralWidget = NULL;
-  scr = new QScrollArea(this);
+  scr = new iScrollArea(this);
   scr->setWidgetResizable(true);
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(0);
@@ -929,31 +929,29 @@ void taiDataHost::Constr_WinName() {
 
 void taiDataHost::Constr_Prompt() {
   if (prompt != NULL) return; // already constructed
-  // convert to html-ish format, for display
+//NOTE: don't use RichText format because it doesn't word wrap!
   prompt = new QLabel(widget()); 
-  prompt->setTextFormat(Qt::RichText);
   prompt->setWordWrap(true); // so it doesn't dominate hor sizing
   QFont f = taiM->nameFont(ctrl_size);
   f.setBold(true); 
   prompt->setFont(f);
   prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
   vblDialog->addWidget(prompt);
+  prompt->setText(prompt_str);
   vblDialog->addSpacing(2);
-  QString s = Q3StyleSheet::convertFromPlainText(prompt_str); //note: couldn't find this in Qt::
-  prompt->setText(s);
-/*no  // add a separator line
+/*  // add a separator line
   QFrame* line = new QFrame(widget());
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
   vblDialog->add(line);
-  vblDialog->addSpacing(2); // add now, so next guy doesn't have to */
+  vblDialog->addSpacing(2); // add now, so next guy doesn't have to no*/
 }
 
 void taiDataHost::Constr_Box() {
   //note: see also gpiMultiEditDialog::Constr_Box, if changes made to this implementation
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
-  scrBody = new QScrollArea(scr_par);
+  scrBody = new iScrollArea(scr_par);
   scrBody->viewport()->setPaletteBackgroundColor(*bg_color_dark);
 //Qt3  scrBody->setResizePolicy(Q3ScrollView::AutoOneFit);
   scrBody->setWidgetResizable(true); // TODO: confirm
@@ -1653,7 +1651,6 @@ void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
 }
 
 void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title) {
-//  win_str = String(taiM->classname()) + ": " + win_title;
   win_str = String(win_title);
   if (typ != NULL) {
     prompt_str = typ->name;
