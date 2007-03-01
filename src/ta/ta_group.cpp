@@ -199,6 +199,19 @@ int taGroup_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& 
   return nfound;
 }
 
+void taGroup_impl::SearchNameContains(const String& nm, taBase_PtrList& items,
+				      taBase_PtrList* owners) {
+  int st_sz = items.size;
+  inherited::SearchNameContains(nm, items, owners);
+  bool already_added_me = false;
+  if(items.size > st_sz)
+    already_added_me = true;
+  gp.SearchNameContains(nm, items, owners);
+  if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..
+    owners->Link(this);
+  }
+}
+
 int taGroup_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
   nchg += gp.UpdatePointers_NewPar(old_par, new_par);

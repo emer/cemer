@@ -1296,6 +1296,28 @@ bool taBase::ChangeMyType(TypeDef* new_type) {
 ///////////////////////////////////////////////////////////////////////////
 //	Type information
 
+
+void taBase::SearchNameContains(const String& nm, taBase_PtrList& items,
+				taBase_PtrList* owners) {
+  TypeDef* td = GetTypeDef();
+  int st_sz = items.size;
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members[m];
+    if(md->type->ptr == 0) {
+      if(md->type->InheritsFrom(TA_taBase)) {
+	taBase* obj = (taBase*)md->GetOff(this);
+	if(obj->GetName().contains(nm)) {
+	  items.Link(obj);
+	}
+	obj->SearchNameContains(nm, items, owners);
+      }
+    }
+  }
+  if(owners && (items.size > st_sz)) { // we added somebody somewhere..
+    owners->Link(this);
+  }
+}
+
 taBase::ValType taBase::ValTypeForType(TypeDef* td) {
   if (td->ptr == 0) {
     if (td->DerivesFrom(TA_bool)) {
@@ -2883,6 +2905,28 @@ int taList_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& e
     }
   }
   return nfound;
+}
+
+void taList_impl::SearchNameContains(const String& nm, taBase_PtrList& items,
+				     taBase_PtrList* owners) {
+  int st_sz = items.size;
+  taOBase::SearchNameContains(nm, items, owners);
+  bool already_added_me = false;
+  if(items.size > st_sz)
+    already_added_me = true;
+  for(int i=0; i<size; i++) {
+    taBase* itm = (taBase*)el[i];
+    if(!itm) continue;
+    if(itm->GetOwner() == this) { // for guys we own (not links; prevents loops)
+      if(itm->GetName().contains(nm)) {
+	items.Link(itm);
+      }
+      itm->SearchNameContains(nm, items, owners);
+    }
+  }
+  if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..
+    owners->Link(this);
+  }
 }
 
 int taList_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {

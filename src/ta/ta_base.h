@@ -667,6 +667,10 @@ public:
   virtual bool		FindCheck(const String& nm) const // #IGNORE check this for the name
   { return ((GetName() == nm) || InheritsFromName(nm)); }
 
+  virtual void		SearchNameContains(const String& nm, taBase_PtrList& items,
+					   taBase_PtrList* owners = NULL);
+  // #CAT_ObjectMgmt search for objects whose name contains given string, from this point down the structural hierarchy (my members, and their members and objects in lists, etc).  items are linked into items list, and all owners of items found are linked into owners list (if present -- can be used as a lookup table for expanding owners to browse found items)
+
   virtual String	GetEnumString(const String& enum_tp_nm, int enum_val) const
   { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
   // #CAT_ObjectMgmt get the name corresponding to given enum value in enum type enum_tp_nm
@@ -1344,6 +1348,8 @@ public:
   virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); // #IGNORE
   override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
+  override void	SearchNameContains(const String& nm, taBase_PtrList& items,
+				   taBase_PtrList* owners = NULL);
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);

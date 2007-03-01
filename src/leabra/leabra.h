@@ -2042,6 +2042,9 @@ public:
   virtual void SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
 
+  virtual void	FindObj(const String& nm);
+  // #MENU_BUTTON find list of objects containing name, searching from root (just to test)
+
   override void	StdProgs();
 
   void 	Initialize();

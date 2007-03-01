@@ -4061,3 +4061,16 @@ void LeabraWizard::StdProgs() {
   Program_Group* pg = StdProgs_impl("LeabraAll_Std");
   // todo: could do something more here..
 }
+
+void LeabraWizard::FindObj(const String& nm) {
+  taBase_PtrList items;
+  taBase_PtrList owners;
+  
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  proj->SearchNameContains(nm, items, &owners);
+  cerr << "items:" << endl;
+  items.List(cerr);
+  
+  cerr << "owners:" << endl;
+  owners.List(cerr);
+}

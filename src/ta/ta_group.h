@@ -108,6 +108,9 @@ public:
   override int	Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
   override int	Dump_Save_PathR_impl(ostream& strm, taBase* par=NULL, int indent=0);
 
+  override void	SearchNameContains(const String& nm, taBase_PtrList& items,
+				   taBase_PtrList* owners = NULL);
+
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
