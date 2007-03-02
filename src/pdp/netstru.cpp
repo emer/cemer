@@ -3252,6 +3252,7 @@ void Layer::UpdateAfterEdit() {
 void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // no negative geoms., y,z must be 1 (for display)
+  name = taMisc::StringCVar(name); // make layer names C legal names (important for various things)
   UpdateUnitSpecs();
   SyncSendPrjns();
   if(n_units > 0) {		// todo: v3compat conversion obs remove later

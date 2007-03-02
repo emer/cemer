@@ -6,27 +6,20 @@ commit:
 ------------
 current:
 
-* project display needs update after loading: filename is not there..
-
-* general issue: epoch_timer -- not well encapsulated and thus bad.  you *can* do it this
- way but it just isn't the right way.
- -- add epoch timer (and trial) to network, do it that way..
-
-* edit user script: non-modal dialog w/ better (narrower) default sizing
-  (add c++ syntax hightight?)
-
 * datatable: row manip functions like rowcopy, moverow, insert row, etc
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
 
-* v3convert: 
-  * epoch timer not being set on 12ax convert in epoch mon
-
-* enforce naming rules on layer names, to match data table columns.
+* edit user script: non-modal dialog w/ better (narrower) default sizing
+  (add c++ syntax hightight?)
 
 * leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
   and add extra inhib in proportion.  set point in for inhib value itself.  makes the
   weakly activated units more weak, and the strongly activated more weak too!  pop out??
+
+* project display needs update after loading: filename is not there..
+
+* datatable load not getting file name ext AGAIN!
 
 
 check:

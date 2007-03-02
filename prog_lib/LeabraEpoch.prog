@@ -85,7 +85,7 @@ Program .projects[0].programs.gp[0][2] {
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
    flags=PV_NONE;
-   desc=;
+   desc="table of patterns to present to the network, one row at a time";
   };
  };
  vars {
@@ -99,7 +99,7 @@ Program .projects[0].programs.gp[0][2] {
    hard_enum_type=BasicDataLoop::Order;
    objs_ptr=0;
    flags=PV_NONE;
-   desc=;
+   desc="controls the order in which events (rows of the input data datatable) are presented to the network";
   };
   ProgVar @[1] {
    name="trial";
@@ -107,7 +107,7 @@ Program .projects[0].programs.gp[0][2] {
    int_val=5;
    objs_ptr=0;
    flags=PV_NONE;
-   desc=;
+   desc="current trial (event) within the epoch -- increments automatically";
   };
   ProgVar @[2] {
    name="trial_mon_data";
@@ -115,8 +115,8 @@ Program .projects[0].programs.gp[0][2] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[1][0]$2$;
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
-   desc="trial-level output data -- if we want to reset it every epoch";
+   flags=PV_NONE;
+   desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
   };
   ProgVar @[3] {
    name="epoch_timer";
