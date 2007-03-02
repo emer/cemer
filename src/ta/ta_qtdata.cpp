@@ -1360,11 +1360,11 @@ void taiAction::emitActions() {
   if (!ths) return;
   emit MenuAction(ths);
   if (!ths) return;
-  emit IntParamAction(usr_data.toInt());
+  emit IntParamAction(ths->usr_data.toInt());
   if (!ths) return;
-  emit PtrParamAction(usr_data.toPtr());
+  emit PtrParamAction(ths->usr_data.toPtr());
   if (!ths) return;
-  emit VarParamAction(usr_data);
+  emit VarParamAction(ths->usr_data);
 }
 
 void taiAction::this_triggered_toggled(bool checked) {
