@@ -159,13 +159,13 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
-    if(recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from;
       LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
       if(fls->InheritsFrom(TA_ExtRewLayerSpec)) ext_rew_lay = flay;
       continue;
     }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(!cs->InheritsFrom(TA_PVConSpec)) {
       if (!quiet) taMisc::CheckError("PViLayerSpec: requires recv connections to be of type PVConSpec");
       return false;
@@ -214,7 +214,7 @@ void PViLayerSpec::Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork*) {
   int i;
   for(i=0;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     if(i > 0) u->act_p = us->clamp_range.Clip(u->ext);
     else u->act_p = u->ext;
     u->act_dif = u->act_p - u->act_m;
@@ -379,13 +379,13 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
-    if(recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from;
       LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
       if(fls->InheritsFrom(TA_PViLayerSpec)) pvi_lay = flay;
       continue;
     }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(!cs->InheritsFrom(TA_LVConSpec)) {
       if (!quiet) taMisc::CheckError("LVeLayerSpec: requires recv connections to be of type LVConSpec");
       return false;
@@ -405,7 +405,7 @@ void LVeLayerSpec::Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork*) {
   int i;
   for(i=0;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     if(i > 0) u->act_p = us->clamp_range.Clip(u->ext);
     else u->act_p = u->ext;
     u->act_dif = u->act_p - u->act_m;
@@ -418,8 +418,8 @@ void LVeLayerSpec::Compute_DepressWt(Unit_Group* ugp, LeabraLayer*, LeabraNetwor
     DaModUnit* u = (DaModUnit*)ugp->FastEl(ui);
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      if(!recv_gp->spec.SPtr()->InheritsFrom(TA_LVConSpec)) continue;
-      LVConSpec* cs = (LVConSpec*)recv_gp->spec.SPtr();
+      if(!recv_gp->GetConSpec()->InheritsFrom(TA_LVConSpec)) continue;
+      LVConSpec* cs = (LVConSpec*)recv_gp->GetConSpec();
       cs->Depress_Wt(recv_gp, u);
     }
   }
@@ -559,7 +559,7 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraLayer* pvi_lay = NULL;
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
@@ -693,7 +693,7 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesion)	continue;
-      if(send_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
+      if(send_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
 	int j;
 	for(j=0;j<send_gp->cons.size; j++) {
 	  ((DaModUnit*)send_gp->Un(j))->dav = u->act;

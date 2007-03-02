@@ -127,7 +127,7 @@ class BP_API BpRecvCons : public RecvCons {
 public:
   // these are "convenience" functions for those defined in the spec
 
-  void	SetCurLrate(int epoch) { ((BpConSpec*)spec.SPtr())->SetCurLrate(epoch); }
+  void	SetCurLrate(int epoch) { ((BpConSpec*)GetConSpec())->SetCurLrate(epoch); }
 
   void	Initialize();
   void 	Destroy()		{ };
@@ -139,7 +139,7 @@ class BP_API BpSendCons : public RecvCons {
 public:
   // these are "convenience" functions for those defined in the spec
 
-  float Compute_dEdA(BpUnit* su) { return ((BpConSpec*)spec.SPtr())->Compute_dEdA(this, su); }
+  float Compute_dEdA(BpUnit* su) { return ((BpConSpec*)GetConSpec())->Compute_dEdA(this, su); }
 
   void	Initialize();
   void 	Destroy()		{ };
@@ -170,7 +170,7 @@ public:
   virtual void	SetCurLrate(BpUnit* u, int epoch);
   // set current learning rate based on epoch
 
-//TODO  virtual void	GraphActFun(GraphLog* graph_log, float min = -5.0, float max = 5.0);
+  virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph log)
 
   void 	Initialize();
@@ -202,10 +202,10 @@ public:
   float 	dEdNet;		// #LABEL_dEdNet error wrt net input
 
   // these are "convenience" functions for those defined in the spec
-  void SetCurLrate(int epoch)   { ((BpUnitSpec*)spec.SPtr())->SetCurLrate(this, epoch); }
-  void Compute_Error()		{ ((BpUnitSpec*)spec.SPtr())->Compute_Error(this); }
-  void Compute_dEdA()		{ ((BpUnitSpec*)spec.SPtr())->Compute_dEdA(this); }
-  void Compute_dEdNet()		{ ((BpUnitSpec*)spec.SPtr())->Compute_dEdNet(this); }
+  void SetCurLrate(int epoch)   { ((BpUnitSpec*)GetUnitSpec())->SetCurLrate(this, epoch); }
+  void Compute_Error()		{ ((BpUnitSpec*)GetUnitSpec())->Compute_Error(this); }
+  void Compute_dEdA()		{ ((BpUnitSpec*)GetUnitSpec())->Compute_dEdA(this); }
+  void Compute_dEdNet()		{ ((BpUnitSpec*)GetUnitSpec())->Compute_dEdNet(this); }
   void Compute_dEdA_dEdNet() 	{ Compute_dEdA(); Compute_Error(); Compute_dEdNet(); }
 
   void 	Initialize();

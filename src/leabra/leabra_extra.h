@@ -129,7 +129,7 @@ public:
 
   inline void	B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
     LeabraBiasSpec::B_Compute_dWt(cn, ru);
-    if(updt_immed) B_Compute_Weights(cn, ru, (LeabraUnitSpec*)ru->spec.SPtr());
+    if(updt_immed) B_Compute_Weights(cn, ru, (LeabraUnitSpec*)ru->GetUnitSpec());
   }
 
   void 	Initialize();
@@ -424,7 +424,7 @@ public:
   }
 
   inline void Compute_Weights(RecvCons* cg, Unit* ru) {
-    LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->spec.SPtr();
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
     LeabraRecvCons* lcg = (LeabraRecvCons*)cg;
     if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
       CON_GROUP_LOOP(cg, C_Compute_WeightsActReg((FastWtCon*)cg->Cn(i), lcg,

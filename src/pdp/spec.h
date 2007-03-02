@@ -193,6 +193,7 @@ public:
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
       spec.set(es);
       if(es) { type = es->GetTypeDef(); }
+      owner->UpdateAfterEdit();	// owner might need to apply this change to all sub guys
     }
     else {
       taMisc::Error("SetSpec: incorrect type of Spec:",

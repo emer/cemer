@@ -243,9 +243,6 @@ public:
   virtual bool  	CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
-  virtual int		UseCount();
-  // #CAT_ObjectMgmt return number of times this spec is used
-
   virtual  void  Init_Weights_Net();
   // #BUTTON #CAT_Learning initializes all weights in the network
 
@@ -354,8 +351,6 @@ public:
   // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
   UnitPtrList	units;
   // #NO_FIND #NO_SAVE #CAT_Structure pointers to the sending units of this connection (in index correspondence with cons)
-  ConSpec_SPtr 	spec;
-  // #CAT_Structure specification for connections
   Projection*	prjn;
   // #CAT_Structure pointer the the projection which created this Group
   int		send_idx;
@@ -365,6 +360,11 @@ public:
   // #CAT_Structure gets the connection at the given index
   Unit*		Un(int i) const { return units.FastEl(i); }
   // #CAT_Structure gets the unit at the given index
+
+  inline ConSpec* GetConSpec() const { return m_con_spec; }
+  // #CAT_Structure get the con spec for this connection group -- this is controlled entirely by the projection con_spec
+  inline void	SetConSpec(ConSpec* cs) { m_con_spec = cs; }
+  // #CAT_Structure set the con spec to given value -- no ref counting or other checking is done -- should generally only be called by the Projection
 
   virtual void		SetConType(TypeDef* cn_tp);
   // #CAT_Structure set the type of connection to make
@@ -392,23 +392,23 @@ public:
   // #CAT_Structure find the reciprocal for receiving unit ru from this sending unit su
 
   // these are convenience functions for those defined in the spec
-  void 	Init_Weights(Unit* ru)	 	{ spec->Init_Weights(this,ru); }
+  void 	Init_Weights(Unit* ru)	 	{ GetConSpec()->Init_Weights(this,ru); }
   // #CAT_Learning initialize weights for group
   void 	C_Init_Weights(Connection* cn, Unit* ru, Unit* su)
-  { spec->C_Init_Weights(this, cn, ru, su); }
+  { GetConSpec()->C_Init_Weights(this, cn, ru, su); }
   // #CAT_Learning initialize weights for single connection
-  void	Init_Weights_post(Unit* ru) 	{ spec->Init_Weights_post(this,ru); }
+  void	Init_Weights_post(Unit* ru) 	{ GetConSpec()->Init_Weights_post(this,ru); }
   // #IGNORE
-  void 	Init_dWt(Unit* ru)	 	{ spec->Init_dWt(this,ru); }
+  void 	Init_dWt(Unit* ru)	 	{ GetConSpec()->Init_dWt(this,ru); }
   // #CAT_Learning  initialize weight change variables
 
-  float Compute_Netin(Unit* ru)	 	{ return spec->Compute_Netin(this,ru); }
+  float Compute_Netin(Unit* ru)	 	{ return GetConSpec()->Compute_Netin(this,ru); }
   // #CAT_Activation compute net input (receiver based; recv group)
-  float Compute_Dist(Unit* ru)	 	{ return spec->Compute_Dist(this,ru); }
+  float Compute_Dist(Unit* ru)	 	{ return GetConSpec()->Compute_Dist(this,ru); }
   // #CAT_Activation compute net input as distance between activation and weights
-  void  Compute_dWt(Unit* ru)	 	{ spec->Compute_dWt(this,ru); }
+  void  Compute_dWt(Unit* ru)	 	{ GetConSpec()->Compute_dWt(this,ru); }
   // #CAT_Learning compute weight changes (the fundamental learning problem)
-  void 	Compute_Weights(Unit* ru)	{ spec->Compute_Weights(this,ru); }
+  void 	Compute_Weights(Unit* ru)	{ GetConSpec()->Compute_Weights(this,ru); }
   // #CAT_Learning update weight values from deltas
   
   virtual void	TransformWeights(const SimpleMathSpec& trans);
@@ -453,8 +453,6 @@ public:
 
   virtual void	Copy_Weights(const RecvCons* src);
   // #CAT_ObjectMgmt copies weights from other con_group
-  virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
-  // #CAT_ObjectMgmt switch any connections using old_sp to using new_sp
 
   virtual void 	LinkSendCons(Unit* ru);
   // #CAT_Structure make connection links in all the sending units (assumes that these are initially empty, as after loading or copying)
@@ -473,6 +471,8 @@ public:
   COPY_FUNS(RecvCons, inherited);
   TA_BASEFUNS(RecvCons);
 protected:
+  ConSpec* 	m_con_spec;	// con spec that we use: controlled entirely by the projection!
+
   override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
@@ -526,8 +526,6 @@ public:
   // #NO_FIND #NO_SAVE #CAT_Structure list of pointers to receiving connections, in index correspondence with units;
   UnitPtrList	units;
   // #NO_FIND #NO_SAVE #CAT_Structure pointers to the receiving units of this connection, in index correspondence with cons
-  ConSpec_SPtr 	spec;
-  // #CAT_Structure specification for connections
   Projection*	prjn;
   // #CAT_Structure pointer the the projection which created this Group
   int		recv_idx;
@@ -537,6 +535,11 @@ public:
   // #CAT_Structure gets the connection at the given index
   Unit*		Un(int i) const { return units.FastEl(i); }
   // #CAT_Structure gets the unit at the given index
+
+  inline ConSpec* GetConSpec() const { return m_con_spec; }
+  // #CAT_Structure get the con spec for this connection group -- this is controlled entirely by the projection con_spec
+  inline void	SetConSpec(ConSpec* cs) { m_con_spec = cs; }
+  // #CAT_Structure set the con spec to given value -- no ref counting or other checking is done -- should generally only be called by the Projection
 
   virtual void		SetConType(TypeDef* cn_tp);
   // #CAT_Structure set the type of connection to make
@@ -553,7 +556,7 @@ public:
   virtual Connection*	FindConFrom(Unit* un, int& idx=no_idx) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #ARGC_1 #CAT_Structure find connection from given unit
 
-  void 	Send_Netin(Unit* su)		{ spec->Send_Netin(this, su); }
+  void 	Send_Netin(Unit* su)		{ GetConSpec()->Send_Netin(this, su); }
   // #CAT_Activation send net input (sender based; send group)
   
   virtual bool	ConValuesToArray(float_Array& ary, const char* variable);
@@ -564,9 +567,6 @@ public:
   // #CAT_Structure sets values of variable in the connections from the given array (false if var not found)
   virtual bool	ConValuesFromMatrix(float_Matrix& mat, const char* variable);
   // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
-
-  virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
-  // #CAT_ObjectMgmt switch any connections using old_sp to using new_sp
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of connections
@@ -584,7 +584,9 @@ public:
   COPY_FUNS(SendCons, inherited);
   TA_BASEFUNS(SendCons);
 protected:
-  override void UpdateAfterEdit_impl();
+  ConSpec* 	m_con_spec;	// con spec that we use: controlled entirely by the projection!
+
+  override void  UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
@@ -667,9 +669,6 @@ public:
   virtual bool  CheckConfig_Unit(Unit* un, bool quiet=false);
   // #CAT_ObjectMgmt check for for misc configuration settings required by different algorithms
 
-  virtual int	UseCount();
-  // #CAT_ObjectMgmt return number of times this spec is used
-
   override String 	GetTypeDecoKey() const { return "UnitSpec"; }
 
   void 	Initialize();
@@ -704,8 +703,6 @@ public: //
     COMP_TARG_EXT	= 0x07	// #NO_BIT as a comparison, target, and external input layer
   };
 
-  UnitSpec_SPtr spec;
-  // #CAT_Structure unit specification: all the parameters that control unit function
   ExtType	ext_flag;
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received
   float 	targ;
@@ -739,7 +736,10 @@ public: //
   virtual void 	DMem_SetThisProc(int proc) 	{ dmem_this_proc = proc; } // #IGNORE
 #endif
 
-  Unit_Group*	ugrp() {return GET_MY_OWNER(Unit_Group);} // #IGNORE
+  inline UnitSpec* GetUnitSpec() const { return m_unit_spec; }
+  // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
+  inline void	SetUnitSpec(UnitSpec* us) { m_unit_spec = us; if(us) bias.SetConSpec(us->bias_spec.SPtr()); }
+  // #CAT_Structure set the unit spec to given value -- no ref counting or other checking is done
 
   virtual void	Copy_Weights(const Unit* src, Projection* prjn = NULL);
   // #CAT_ObjectMgmt copies weights from other unit (incl wts assoc with unit bias member)
@@ -767,27 +767,27 @@ public: //
   // #CAT_Activation initialize netinput state prior to computing it (for sender-based)
 
   // these are convenience functions for those defined in the spec
-  void 	Init_Acts()		{ spec->Init_Acts(this); }
+  void 	Init_Acts()		{ GetUnitSpec()->Init_Acts(this); }
   // #MENU #CAT_Activation initialize unit state variables
-  void 	Init_dWt()		{ spec->Init_dWt(this); }
+  void 	Init_dWt()		{ GetUnitSpec()->Init_dWt(this); }
   // #MENU #CAT_Learning initialze weight change variables
-  void 	Init_Weights()		{ spec->Init_Weights(this); }
+  void 	Init_Weights()		{ GetUnitSpec()->Init_Weights(this); }
   // #MENU #CAT_Learning Initialize weight values
-  void	Init_Weights_post() 	{ spec->Init_Weights_post(this); } // #IGNORE
-  void 	Compute_Netin()		{ spec->Compute_Netin(this); }
+  void	Init_Weights_post() 	{ GetUnitSpec()->Init_Weights_post(this); } // #IGNORE
+  void 	Compute_Netin()		{ GetUnitSpec()->Compute_Netin(this); }
   // #CAT_Activation compute net input from other units
-  void 	Send_Netin()		{ spec->Send_Netin(this); }
+  void 	Send_Netin()		{ GetUnitSpec()->Send_Netin(this); }
   // #CAT_Activation send net input to other units
-  void 	Send_NetinToLay(Layer* tolay)	{ spec->Send_NetinToLay(this, tolay); }
+  void 	Send_NetinToLay(Layer* tolay)	{ GetUnitSpec()->Send_NetinToLay(this, tolay); }
   // #CAT_Activation send net input to other units in given layer
-  void 	Compute_Act()		{ spec->Compute_Act(this); }
+  void 	Compute_Act()		{ GetUnitSpec()->Compute_Act(this); }
   // #CAT_Activation compute activation value: what we send to others
-  void 	Compute_dWt()		{ spec->Compute_dWt(this); }
+  void 	Compute_dWt()		{ GetUnitSpec()->Compute_dWt(this); }
   // #CAT_Learning compute weight changes: the essence of learning
-  void 	Compute_Weights()		{ spec->Compute_Weights(this); }
+  void 	Compute_Weights()		{ GetUnitSpec()->Compute_Weights(this); }
   // #CAT_Learning update weight values from weight change variables
 
-  float	Compute_SSE()		{ return spec->Compute_SSE(this); }
+  float	Compute_SSE()		{ return GetUnitSpec()->Compute_SSE(this); }
   // #CAT_Statistic compute sum-squared-error of activations versus target values (standard measure of performance)
   
   virtual void 	ApplyInputData(float val, ExtType act_ext_flags, Random* ran = NULL);
@@ -824,14 +824,6 @@ public: //
   virtual int	LesionCons(float p_lesion, bool permute=true, Projection* prjn = NULL);
   // #MENU #USE_RVAL #CAT_Structure remove connections with prob p_lesion (permute = fixed no. lesioned)
 
-  virtual bool	SetConSpec(ConSpec* con_spec);
-  // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE #CAT_Structure set all recv conspecs to con_spec
-
-  virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
-  // #CAT_Structure switch any units/layers using old_sp to using new_sp
-  virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
-  // #CAT_Structure switch any connections/projections using old_sp to using new_sp
-
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this unit
 
@@ -856,6 +848,8 @@ public: //
   TA_BASEFUNS(Unit);
 
 protected:
+  UnitSpec*	m_unit_spec;	// unit spec that we use: controlled entirely by the layer!
+
   override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
   override void	 CheckChildConfig_impl(bool quiet, bool& rval);
@@ -867,19 +861,19 @@ protected:
 class PDP_API ProjectionSpec : public BaseSpec {
   // #VIRT_BASE ##CAT_Spec Specifies the connectivity between layers (ie. full vs. partial)
 public:
-  bool		self_con;	// #CAT_Projection whether to create self-connections or not (if applicable)
-  bool		init_wts;	// #CAT_Projection whether this projection spec does weight init (else conspec)
+  bool		self_con;	// #CAT_Structure whether to create self-connections or not (if applicable)
+  bool		init_wts;	// #CAT_Structure whether this projection spec does weight init (else conspec)
 
   virtual void 	RemoveCons(Projection* prjn);
-  // #CAT_Projection deletes any existing connections
+  // #CAT_Structure deletes any existing connections
   virtual void	PreConnect(Projection* prjn);
-  // #CAT_Projection Prepare to connect (init con_groups)
+  // #CAT_Structure Prepare to connect (init con_groups)
   virtual void	Connect_impl(Projection*) { };
-  // #CAT_Projection actually implements specific connection code
+  // #CAT_Structure actually implements specific connection code
   virtual void 	Connect(Projection* prjn);
-  // #CAT_Projection connects the network, first removing existing cons, and inits weights
+  // #CAT_Structure connects the network, first removing existing cons, and inits weights
   virtual int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
-  // #CAT_Projection probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
+  // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
   virtual void 	Init_dWt(Projection* prjn);
   // #CAT_Weights initializes the weight change variables
   virtual void 	Init_Weights(Projection* prjn);
@@ -893,9 +887,6 @@ public:
   virtual void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
 
-  virtual int	UseCount();
-  // #CAT_ObjectMgmt return number of times this spec is used
-  
   override String 	GetTypeDecoKey() const { return "ProjectionSpec"; }
 
   void 	Initialize();
@@ -928,28 +919,28 @@ public:
   };
 
   Layer* 		layer;    	// #READ_ONLY #NO_SAVE layer this prjn is in
-  PrjnSource 		from_type;	// #CAT_Projection Source of the projections
-  Layer*		from;		// #CAT_Projection layer receiving from (set this for custom)
-  ProjectionSpec_SPtr	spec;		// #CAT_Projection spec for this item
-  TypeDef*		con_type;	// #TYPE_Connection #CAT_Projection Type of connection
-  TypeDef*		recvcons_type;	// #TYPE_RecvCons #CAT_Projection Type of receiving connection group to make
-  TypeDef*		sendcons_type;	// #TYPE_SendCons #CAT_Projection Type of sending connection group to make
-  ConSpec_SPtr 		con_spec;	// #CAT_Projection conspec to use for creating connections
+  PrjnSource 		from_type;	// #CAT_Structure Source of the projections
+  Layer*		from;		// #CAT_Structure layer receiving from (set this for custom)
+  ProjectionSpec_SPtr	spec;		// #CAT_Structure spec for this item
+  TypeDef*		con_type;	// #TYPE_Connection #CAT_Structure Type of connection
+  TypeDef*		recvcons_type;	// #TYPE_RecvCons #CAT_Structure Type of receiving connection group to make
+  TypeDef*		sendcons_type;	// #TYPE_SendCons #CAT_Structure Type of sending connection group to make
+  ConSpec_SPtr 		con_spec;	// #CAT_Structure conspec to use for creating connections
 
-  int			recv_idx;	// #READ_ONLY #CAT_Projection receiving con_group index
-  int			send_idx;	// #READ_ONLY #CAT_Projection sending con_group index
-  int			recv_n;		// #READ_ONLY #CAT_Projection #DEF_1 number of receiving con_groups allocated to this projection: almost always 1 -- some things won't work right if > 1 (e.g., copying)
-  int			send_n;		// #READ_ONLY #CAT_Projection number of sending con_groups: almost always 1 -- some things won't work right if > 1 (e.g., copying)
+  int			recv_idx;	// #READ_ONLY #CAT_Structure receiving con_group index
+  int			send_idx;	// #READ_ONLY #CAT_Structure sending con_group index
+  int			recv_n;		// #READ_ONLY #CAT_Structure #DEF_1 number of receiving con_groups allocated to this projection: almost always 1 -- some things won't work right if > 1 (e.g., copying)
+  int			send_n;		// #READ_ONLY #CAT_Structure number of sending con_groups: almost always 1 -- some things won't work right if > 1 (e.g., copying)
 
-  bool			projected; 	 // #HIDDEN #CAT_Projection t/f if connected
+  bool			projected; 	 // #HIDDEN #CAT_Structure t/f if connected
 
-  PrjnDirection		direction; 	// #CAT_Projection which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection or you can manually set; optionally used by only some algorithms
+  PrjnDirection		direction; 	// #CAT_Structure which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection or you can manually set; optionally used by only some algorithms
   
   virtual void 	SetFrom();
-  // #CAT_Projection set where to receive from based on selections
+  // #CAT_Structure set where to receive from based on selections
 
   virtual void	SetCustomFrom(Layer* from_lay);
-  // #CAT_Projection set a CUSTOM projection from given layer (if from_lay == layer, turns into SELF)
+  // #CAT_Structure set a CUSTOM projection from given layer (if from_lay == layer, turns into SELF)
 
   virtual void	Copy_Weights(const Projection* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_Weights copies weights from other projection
@@ -966,15 +957,15 @@ public:
 
   // convenience functions for those defined in the spec
   void 	RemoveCons()		{ spec->RemoveCons(this); }
-  // #MENU #MENU_ON_Actions #CONFIRM #CAT_Projection Reset all connections for this projection
+  // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure Reset all connections for this projection
   void 	PreConnect()		{ spec->PreConnect(this); }
-  // #CAT_Projection pre-configure connection state
+  // #CAT_Structure pre-configure connection state
   void 	Connect()		{ spec->Connect(this); }
-  // #BUTTON #CONFIRM #CAT_Projection Make all connections for this projection (resets first)
+  // #BUTTON #CONFIRM #CAT_Structure Make all connections for this projection (resets first)
   void 	Connect_impl()		{ spec->Connect_impl(this); }
-  // #CAT_Projection actually do the connecting
+  // #CAT_Structure actually do the connecting
   int 	ProbAddCons(float p_add_con, float init_wt = 0.0) { return spec->ProbAddCons(this, p_add_con, init_wt); }
-  // #MENU #USE_RVAL #CAT_Projection probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
+  // #MENU #USE_RVAL #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
   void 	Init_dWt()		{ spec->Init_dWt(this); }
   // #MENU #MENU_SEP_BEFORE #CAT_Weights Initialize weight changes for this projection
   void 	Init_Weights()		{ spec->Init_Weights(this); }
@@ -992,36 +983,37 @@ public:
 			     CountParam::Relation rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Weights remove weights that (after pre-proc) meet relation to compare val
   virtual int	LesionCons(float p_lesion, bool permute=true);
-  // #MENU #USE_RVAL #CAT_Projection remove connections with prob p_lesion (permute = fixed no. lesioned)
+  // #MENU #USE_RVAL #CAT_Structure remove connections with prob p_lesion (permute = fixed no. lesioned)
+
+  virtual bool	UpdateConSpecs(bool force = false);
+  // #CAT_Structure update con specs for all connection groups for this projection in the network to use con_spec (only if changed from last update -- force = do regardless); returns true if changed and all cons can use given spec
 
   virtual bool 	SetPrjnSpec(ProjectionSpec* sp);
-  // #BUTTON #CAT_Projection set the projection spec (connectivity pattern) for this projection
+  // #BUTTON #CAT_Structure set the projection spec (connectivity pattern) for this projection
   virtual bool 	SetConSpec(ConSpec* sp);
-  // #BUTTON #CAT_Projection set the con spec for all connections in this prjn
-  virtual bool 	ApplyConSpec();
-  // #CAT_Projection apply the current con_spec to all connections in this prjn
+  // #BUTTON #CAT_Structure set the con spec for all connections in this prjn
   virtual bool	CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
-  // #CAT_Projection check if projection is connected
+  // #CAT_Structure check if projection is connected
   virtual void	FixPrjnIndexes();
-  // #MENU #CAT_Projection fix the indicies of the connection groups (recv_idx, send_idx)
+  // #MENU #CAT_Structure fix the indicies of the connection groups (recv_idx, send_idx)
 
   virtual int	ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
-  // #CAT_Projection switch any connections/projections using old_sp to using new_sp
+  // #CAT_Structure switch any connections/projections using old_sp to using new_sp
   virtual int	ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp);
-  // #CAT_Projection switch any projections using old_sp to using new_sp
+  // #CAT_Structure switch any projections using old_sp to using new_sp
 
   virtual bool 	SetConType(TypeDef* td);
-  // #BUTTON #CAT_Projection #TYPE_Connection set the connection type for all connections in this prjn
+  // #BUTTON #CAT_Structure #TYPE_Connection set the connection type for all connections in this prjn
   virtual bool 	SetRecvConsType(TypeDef* td);
-  // #BUTTON #CAT_Projection #TYPE_RecvCons set the receiving connection group type for all connections in this prjn
+  // #BUTTON #CAT_Structure #TYPE_RecvCons set the receiving connection group type for all connections in this prjn
   virtual bool 	SetSendConsType(TypeDef* td);
-  // #BUTTON #CAT_Projection #TYPE_SendCons set the connection group type for all connections in this prjn
+  // #BUTTON #CAT_Structure #TYPE_SendCons set the connection group type for all connections in this prjn
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this projection
 
   virtual void	WeightsToTable(DataTable* dt);
-  // #MENU #NULL_OK #CAT_Projection TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  // #MENU #NULL_OK #CAT_Structure TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
@@ -1033,6 +1025,8 @@ public:
   COPY_FUNS(Projection, taNBase);
   TA_BASEFUNS(Projection);
 protected:
+  ConSpec*	m_prv_con_spec;	// previous con spec set for cons 
+
   override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
@@ -1161,11 +1155,6 @@ public:
   virtual void	RecomputeGeometry();
   // #CAT_Structure re compute geometry based on parent layer
 
-  virtual bool	SetUnitSpec(UnitSpec* unitspec);
-  // #BUTTON #CAT_Structure set for all units in group
-  virtual bool	SetConSpec(ConSpec* conspec);
-  // #BUTTON #CAT_Structure set for all unit's connections in group
-
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this unit group
 
@@ -1217,9 +1206,6 @@ protected:
 class PDP_API LayerSpec : public BaseSpec {
   // generic layer specification
 public:
-  virtual int	UseCount();
-  // #CAT_ObjectMgmt return number of times this spec is used
-
   virtual bool		CheckConfig_Layer(Layer* lay, bool quiet = false)
     {return true;} // #CAT_ObjectMgmt This is ONLY for spec-specific stuff; the layer still does all its default checking (incl child checking)
 
@@ -1407,6 +1393,11 @@ public:
   virtual void	SetLayerUnitGpGeom(int x, int y, bool n_not_xy = false, int n = 0);
   // set layer unit group geometry (convenience function for programs)
 
+  virtual bool	UpdateUnitSpecs(bool force = false);
+  // #CAT_Structure update unit specs for all units in the layer to use unit_spec (only if changed from last update -- force = do regardless); returns true if changed and all units can use given spec
+  virtual bool	UpdateConSpecs(bool force = false);
+  // #CAT_Structure update connection specs for all projections in the layer (only if changed from last update -- force = do regardless)
+
   virtual bool	SetLayerSpec(LayerSpec* layspec);
   // #BUTTON #CAT_Structure set the layer specification
   virtual LayerSpec* GetLayerSpec()		{ return (LayerSpec*)NULL; }
@@ -1415,10 +1406,8 @@ public:
   // #BUTTON #CAT_Structure set unit spec for all units in layer
   virtual void	SetUnitType(TypeDef* td);
   // #BUTTON #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
-  virtual bool	SetConSpec(ConSpec* conspec);
-  // #BUTTON #CAT_Structure set for all unit's connections in layer
   virtual void	FixPrjnIndexes();
-  // #MENU #CAT_Structure fix the projection indicies of the connection groups (other_idx)
+  // #CAT_Structure fix the projection indicies of the connection groups (other_idx)
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this layer
@@ -1478,6 +1467,8 @@ public:
   TA_BASEFUNS(Layer); //
   
 protected:
+  UnitSpec*	m_prv_unit_spec; // previous unit spec set for units in layer
+
   override void 	UpdateAfterEdit_impl();
   virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
@@ -1620,7 +1611,13 @@ public:
   int	       	avg_sse_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic number of times cur_sum_sse updated: for computing avg_sse
   float	       	cur_cnt_err;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
 
-  TimeUsed	wt_sync_time;	// #GUI_READ_ONLY #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem) 
+  TimeUsed	train_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
+  TimeUsed	epoch_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)
+  TimeUsed	trial_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing a trial (managed entirely by programs -- not always used)
+  TimeUsed	settle_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing a settling (managed entirely by programs -- not always used)
+  TimeUsed	cycle_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing a cycle (managed entirely by programs -- not always used)
+  TimeUsed	wt_sync_time;	// #GUI_READ_ONLY #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network) 
+  TimeUsed	misc_time;	// #GUI_READ_ONLY #CAT_Statistic misc timer for ad-hoc use by programs
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -1754,12 +1751,8 @@ public:
   virtual void	Compute_EpochStats();
   // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
 
-  virtual void	LayerZPos_Add(int add_to_z = 1);
-  // #CAT_Structure Add add_to_z to layer vertical positions in proportion to current positions:\n new layer.pos.z += layer.pos.z * add_to_z -- makes display look better \n -- negative values will subtract or compact the layers
   virtual void	LayerZPos_Unitize();
-  // #CAT_Structure set layer z axis positions to unitary increments (0, 1, 2.. etc)
-  virtual void	LayerZPos_Auto(float y_mult_factor = .5f);
-  // #CAT_Structure auto stretch out z positions in proportion to the maximum y axis size of the network
+  // #CAT_Structure #MENU set layer z axis positions to unitary increments (0, 1, 2.. etc)
   virtual void	LayerPos_Cleanup();
   // #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
 
@@ -1787,6 +1780,13 @@ public:
 
   virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
   // #MENU #NULL_OK #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+
+  virtual bool	UpdateUnitSpecs(bool force = false);
+  // #CAT_Structure update unit specs for entire network (calls layer version of this function)
+  virtual bool	UpdateConSpecs(bool force = false);
+  // #CAT_Structure update con specs for entire network (calls layer version of this function)
+  virtual bool	UpdateAllSpecs(bool force = false);
+  // #CAT_Structure update all unit and con specs -- just calls above two functions
 
   virtual void	ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp);
   // #CAT_Structure replace a spec of any kind, including iterating through any children of that spec

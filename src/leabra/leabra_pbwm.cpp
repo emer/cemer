@@ -366,13 +366,13 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from == recv_gp->prjn->layer) // self projection, skip it
       continue;
-    if(recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
       if(fmlay->spec.SPtr()->InheritsFrom(TA_SNcLayerSpec)) da_lay = fmlay;
       if(fmlay->spec.SPtr()->InheritsFrom(TA_SNrThalLayerSpec)) snr_lay = fmlay;
       continue;
     }
-    MatrixConSpec* cs = (MatrixConSpec*)recv_gp->spec.SPtr();
+    MatrixConSpec* cs = (MatrixConSpec*)recv_gp->GetConSpec();
     if(!cs->InheritsFrom(TA_MatrixConSpec)) {
       if (!quiet) taMisc::CheckError("MatrixLayerSpec:  Receiving connections must be of type MatrixConSpec!");
       return false;
@@ -1144,7 +1144,7 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
       if (!quiet) taMisc::CheckError("*** PFCLayerSpec: null from layer in recv projection:", (String)g);
       return false;
     }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(cs->InheritsFrom(TA_MarkerConSpec)) continue;
     // could check the conspec parameters here..
   }
@@ -1175,8 +1175,8 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
 void PFCLayerSpec::ResetSynDep(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   for(int g=0; g<u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-    if(!send_gp->spec.SPtr()->InheritsFrom(TA_TrialSynDepConSpec)) continue;
-    TrialSynDepConSpec* cs = (TrialSynDepConSpec*)send_gp->spec.SPtr();
+    if(!send_gp->GetConSpec()->InheritsFrom(TA_TrialSynDepConSpec)) continue;
+    TrialSynDepConSpec* cs = (TrialSynDepConSpec*)send_gp->GetConSpec();
     cs->Reset_EffWt(send_gp);
   }
 }
@@ -1186,7 +1186,7 @@ void PFCLayerSpec::Compute_MaintUpdt(LeabraUnit_Group* ugp, MaintUpdtAct updt_ac
   if(updt_act == NO_UPDT) return;
   for(int j=0;j<ugp->size;j++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(j);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     if(updt_act == STORE) {
       u->vcb.g_h = u->misc_1 = u->act_eq;
       if(gate.off_accom > 0.0f)

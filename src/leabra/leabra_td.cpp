@@ -316,7 +316,7 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       if(recv_gp->prjn->from->name == "RewTarg")
 	rew_targ_lay = (LeabraLayer*)recv_gp->prjn->from;
       else
@@ -387,7 +387,7 @@ bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
       if(rew_lay->name != "RewTarg") continue;
       LeabraUnit* rtu = (LeabraUnit*)rew_lay->units[0];
@@ -408,7 +408,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
   int	n_comps = 0;		// number of comp layers
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(!recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec))
+    if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec))
       continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
     if(rew_lay->name == "RewTarg") continue;
@@ -424,7 +424,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
   float toterr = 0.0f;		// total error
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(!recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec))
+    if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec))
       continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
     if(rew_lay->name == "RewTarg") continue;
@@ -688,10 +688,10 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
-    if(recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       continue;
     }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(!cs->InheritsFrom(TA_TDRewPredConSpec)) {
       taMisc::CheckError("TDRewPredLayerSpec: requires recv connections to be of type TDRewPredConSpec");
       return false;
@@ -743,7 +743,7 @@ void TDRewPredLayerSpec::Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork*) {
   int i;
   for(i=0;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     if(i > 0) u->act_p = us->clamp_range.Clip(u->ext);
     else u->act_p = u->ext;
     u->act_dif = u->act_p - u->act_m;
@@ -923,7 +923,7 @@ void TDRewIntegLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(!recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)) {
+    if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       continue;
     }
     LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from;
@@ -1047,7 +1047,7 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       taMisc::CheckError("TdLayerSpec: null from layer in recv projection:", (String)g);
       return false;
     }
-    if(recv_gp->spec.SPtr()->InheritsFrom(TA_MarkerConSpec)
+    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)
 	&& fmlay->spec.SPtr()->InheritsFrom(TA_TDRewIntegLayerSpec)) {
       rewinteg_lay = fmlay;
       if(recv_gp->cons.size <= 0) {

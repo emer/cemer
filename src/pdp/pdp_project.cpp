@@ -243,7 +243,7 @@ void Wizard::StdNetwork(Network* net) {
       }
     }
   }
-  net->LayerZPos_Auto();
+  net->LayerZPos_Unitize();
   net->StructUpdate(false);
   net->ShowInViewer();
   net->Build();

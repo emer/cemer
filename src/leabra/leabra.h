@@ -366,18 +366,18 @@ public:
   float		savg_cor;	// #NO_SAVE #CAT_Learning savg correction factor for hebbian learning
   float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
 
-  void	Compute_LinFmWt()  { ((LeabraConSpec*)spec.SPtr())->Compute_LinFmWt(this); }
+  void	Compute_LinFmWt()  { ((LeabraConSpec*)GetConSpec())->Compute_LinFmWt(this); }
   // #CAT_Learning compute linear weight value 
 
-  void	Compute_WtFmLin()  { ((LeabraConSpec*)spec.SPtr())->Compute_WtFmLin(this); }
+  void	Compute_WtFmLin()  { ((LeabraConSpec*)GetConSpec())->Compute_WtFmLin(this); }
   // #CAT_Learning compute sigmoidal contrast enhanced weight value
 
   void	C_Init_Weights_Post(Connection* cn, Unit* ru, Unit* su) { 
-    ((LeabraConSpec*)spec.SPtr())->C_Init_Weights_Post(this, cn, ru, su);
+    ((LeabraConSpec*)GetConSpec())->C_Init_Weights_Post(this, cn, ru, su);
   }
   // #CAT_Learning hook for setting other weight-like values after initializing the weight value
 
-  void	SetCurLrate(int epoch, LeabraNetwork* net) { ((LeabraConSpec*)spec.SPtr())->SetCurLrate(epoch, net); }
+  void	SetCurLrate(int epoch, LeabraNetwork* net) { ((LeabraConSpec*)GetConSpec())->SetCurLrate(epoch, net); }
   //#CAT_Learning set current learning rate based on lrate schedule and network values
 
   void 	Initialize();
@@ -392,11 +392,11 @@ class LEABRA_API LeabraSendCons : public SendCons {
   INHERITED(SendCons)
 public:
   inline void 	Send_ClampNet(LeabraUnit* su)
-  { ((LeabraConSpec*)spec.SPtr())->Send_ClampNet(this, su); }
+  { ((LeabraConSpec*)GetConSpec())->Send_ClampNet(this, su); }
   // #CAT_Activation send input from clamped layers
 
   inline void 	Send_NetinDelta(LeabraUnit* su)
-  { ((LeabraConSpec*)spec.SPtr())->Send_NetinDelta(this, su); }
+  { ((LeabraConSpec*)GetConSpec())->Send_NetinDelta(this, su); }
   // #CAT_Activation send delta-netin
 
   void 	Initialize();
@@ -846,99 +846,99 @@ public:
   float		misc_1;		// #NO_VIEW #CAT_Activation miscellaneous variable for other algorithms that need it (e.g., TdLayerSpec)
 
   void		Init_ActAvg()
-  { ((LeabraUnitSpec*)spec.SPtr())->Init_ActAvg(this); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Init_ActAvg(this); }
   // #CAT_Activation initialize average activation
 
   void		Init_Netin()
-  { ((LeabraUnitSpec*)spec.SPtr())->Init_Netin(this); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Init_Netin(this); }
   void		Init_Acts(LeabraLayer* lay)
-  { ((LeabraUnitSpec*)spec.SPtr())->Init_Acts(this, lay); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Init_Acts(this, lay); }
 
   void		SetCurLrate(LeabraNetwork* net, int epoch)
-  { ((LeabraUnitSpec*)spec.SPtr())->SetCurLrate(this, net, epoch); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->SetCurLrate(this, net, epoch); }
   // #CAT_Learning set current learning rate based on epoch
 
   void		Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_NetinScale(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinScale(this, lay, net); }
   // #CAT_Activation compute net input scaling values and input from hard-clamped inputs
   void		Compute_NetinRescale(LeabraLayer* lay, LeabraNetwork* net, float new_scale)
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_NetinRescale(this, lay, net, new_scale); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinRescale(this, lay, net, new_scale); }
   // #CAT_Activation rescale netinput scales by given amount
   void		Init_ClampNet(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->Init_ClampNet(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Init_ClampNet(this, lay, net); }
   // #CAT_Activation init clam net value prior to sending
   void		Send_ClampNet(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->Send_ClampNet(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_ClampNet(this, lay, net); }
   // #CAT_Activation compute net input from hard-clamped inputs (sender based)
 
   void		Send_Netin(LeabraLayer* lay)
-  { ((LeabraUnitSpec*)spec.SPtr())->Send_Netin(this, lay); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Netin(this, lay); }
   // #CAT_Activation send netinput; add ext input, sender-based
   void		Send_NetinDelta(LeabraLayer* lay)
-  { ((LeabraUnitSpec*)spec.SPtr())->Send_NetinDelta(this, lay); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_NetinDelta(this, lay); }
   // #CAT_Activation send netinput; sender based and only when act changes above a threshold
 
   void		Compute_NetinAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_NetinAvg(this, lay, athr, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinAvg(this, lay, athr, net); }
   // #CAT_Activation compute netin average
   void		Compute_InhibAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_InhibAvg(this, lay, athr, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_InhibAvg(this, lay, athr, net); }
   // #CAT_Activation compute inhib netin average
   void		Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_HardClamp(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_HardClamp(this, lay, net); }
   // #CAT_Activation force units to external values provided by environment: also optimizes settling by only computing netinput once
   void		Compute_HardClampNoClip(LeabraLayer* lay, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_HardClampNoClip(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_HardClampNoClip(this, lay, net); }
   // #CAT_Activation hard-clamp units without clipping values to clamp_range (use for second plus phase clamping to settled values)
   bool		Compute_SoftClamp(LeabraLayer* lay, LeabraNetwork* net) 
-  { return ((LeabraUnitSpec*)spec.SPtr())->Compute_SoftClamp(this, lay, net); }
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_SoftClamp(this, lay, net); }
   // #CAT_Activation soft-clamps unit, returns true if unit is not above .5
 
   float		Compute_IThresh(LeabraLayer* lay, LeabraNetwork* net)
-  { return ((LeabraUnitSpec*)spec.SPtr())->Compute_IThresh(this, lay, net); }
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThresh(this, lay, net); }
   // #CAT_Activation compute inhibitory value that would place unit directly at threshold
   float		Compute_IThreshNoAH(LeabraLayer* lay, LeabraNetwork* net)
-  { return ((LeabraUnitSpec*)spec.SPtr())->Compute_IThreshNoAH(this, lay, net); }
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThreshNoAH(this, lay, net); }
   // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents
 
   void		Compute_Act()	{ Unit::Compute_Act(); }
   void 		Compute_Act(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_Act(this, lay, athr, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_Act(this, lay, athr, net); }
   // #CAT_Activation compute the final activation: calls following function steps
 
   void 		Compute_MaxDa(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_MaxDa(this, lay, athr, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_MaxDa(this, lay, athr, net); }
   // #CAT_Activation compute the maximum delta-activation (change in activation); used to control settling
 
   void		PhaseInit(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->PhaseInit(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->PhaseInit(this, lay, net); }
   // #CAT_Activation initialize external input flags based on phase
   void		DecayPhase(LeabraLayer* lay, LeabraNetwork* net, float decay)
-  { ((LeabraUnitSpec*)spec.SPtr())->DecayPhase(this, lay, net, decay); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->DecayPhase(this, lay, net, decay); }
   // #CAT_Activation decay activation states towards initial values: at phase-level boundary
   void		DecayEvent(LeabraLayer* lay, LeabraNetwork* net, float decay)
-  { ((LeabraUnitSpec*)spec.SPtr())->DecayEvent(this, lay, net, decay); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->DecayEvent(this, lay, net, decay); }
   // #CAT_Activation decay activation states towards initial values: at event-level boundary
   void		ExtToComp(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->ExtToComp(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->ExtToComp(this, lay, net); }
   // #CAT_Activation change external inputs to comparisons (remove input)
   void		TargExtToComp(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->TargExtToComp(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->TargExtToComp(this, lay, net); }
   // #CAT_Activation change target & external inputs to comparisons (remove targ & input)
   void		PostSettle(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net, bool set_both=false)
-  { ((LeabraUnitSpec*)spec.SPtr())->PostSettle(this, lay, athr, net, set_both); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->PostSettle(this, lay, athr, net, set_both); }
   // #CAT_Activation set stuff after settling is over (set_both = both _m and _p for current)
 
   void 		Compute_dWt(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_dWt(this, lay, net); }	  
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt(this, lay, net); }	  
   // #CAT_Learning actually do wt change: learn!
 
   void 		Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)spec.SPtr())->Compute_WtFmLin(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_WtFmLin(this, lay, net); }
   // #CAT_Learning if weights need to be updated from linear values without doing updatewts
 
   void 		EncodeState(LeabraLayer* lay, LeabraNetwork* net)
-  { ((LeabraUnitSpec*)spec.SPtr())->EncodeState(this, lay, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->EncodeState(this, lay, net); }
   // #CAT_Learning encode current state information (hook for time-based learning)
 
   void		GetInSubGp();
@@ -1781,7 +1781,7 @@ inline void LeabraConSpec::C_Compute_WeightsActReg(LeabraCon* cn, LeabraRecvCons
 }
 
 inline void LeabraConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
-  LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->spec.SPtr();
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
   LeabraRecvCons* lcg = (LeabraRecvCons*)cg;
   if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
     CON_GROUP_LOOP(cg, C_Compute_WeightsActReg((LeabraCon*)cg->Cn(i), lcg,

@@ -186,9 +186,9 @@ public:
   // shift unit data buffers by given number of ticks
 
   // spec functions
-  void    ResetStored() { ((RBpUnitSpec*)spec.SPtr())->ResetStored(this); }
-  void    Compute_ClampExt() { ((RBpUnitSpec*)spec.SPtr())->Compute_ClampExt(this); }
-  void    Compute_HardClampNet() { ((RBpUnitSpec*)spec.SPtr())->Compute_HardClampNet(this); }
+  void    ResetStored() { ((RBpUnitSpec*)GetUnitSpec())->ResetStored(this); }
+  void    Compute_ClampExt() { ((RBpUnitSpec*)GetUnitSpec())->Compute_ClampExt(this); }
+  void    Compute_HardClampNet() { ((RBpUnitSpec*)GetUnitSpec())->Compute_HardClampNet(this); }
 
   void 	Initialize();
   void	Destroy()		{ };

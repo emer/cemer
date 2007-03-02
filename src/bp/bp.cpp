@@ -65,12 +65,10 @@ void BpConSpec::SetCurLrate(int epoch) {
 }
 
 void BpRecvCons::Initialize() {
-  spec.SetBaseType(&TA_BpConSpec);
   SetConType(&TA_BpCon);
 }
 
 void BpSendCons::Initialize() {
-  spec.SetBaseType(&TA_BpConSpec);
   SetConType(&TA_BpCon);
 }
 
@@ -163,33 +161,34 @@ void BpUnitSpec::Compute_Weights(Unit* u) {
   ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.Cn(0), (BpUnit*)u);
 }
 
-/*TODO void BpUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
-  if(graph_log == NULL) {
-    graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(BpProject), &TA_GraphLog);
-    if(graph_log == NULL) return;
+void BpUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_ActFun", true);
+    newguy = true;
   }
-  graph_log->SetName(GetName() + ": Act Fun");
-  DataTable* dt = &(graph_log->data);
-  dt->Reset();
-  dt->NewColFloat("netin");
-  dt->NewColFloat("act");
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* netin = graph_data->FindMakeColName("Netin", idx, VT_FLOAT);
+  DataCol* act = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
   BpUnit un;
-
   float x;
   for(x = min; x <= max; x += .01f) {
     un.net = x;
     Compute_Act(&un);
-    dt->AddBlankRow();
-    dt->SetValAsFloat(x, 0, -1);
-    dt->SetValAsFloat(un.act, 1, -1);
+    graph_data->AddBlankRow();
+    netin->SetValAsFloat(x, -1);
+    act->SetValAsFloat(un.act, -1);
   }
-  dt->UpdateAllRanges();
-  graph_log->ViewAllData();
-}*/
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
+}
 
 void BpUnit::Initialize() {
-  spec.SetBaseType(&TA_BpUnitSpec);
   err = dEdA = dEdNet = 0.0f;
 }
 

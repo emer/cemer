@@ -6,6 +6,9 @@ commit:
 ------------
 current:
 
+* Unit has m_spec, SetUnitSpec, GetUnitSpec; Layer has m_last_unit_spec* -- UAE checks
+if diff from cur, does ApplyUnitSpec if so, has force; build does with force...
+
 * general issue: epoch_timer -- not well encapsulated and thus bad.  you *can* do it this
  way but it just isn't the right way.
  -- add epoch timer (and trial) to network, do it that way..
@@ -47,7 +50,6 @@ check:
 Program issues
 
 * proglib: add dates (fill in!) also fix bug after repeated calls..
-* dirty!!
 
 --------------------
 Other Algorithms:

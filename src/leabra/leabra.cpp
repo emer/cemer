@@ -273,7 +273,6 @@ void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
 }
 
 void LeabraRecvCons::Initialize() {
-  spec.SetBaseType(&TA_LeabraConSpec);
   SetConType(&TA_LeabraCon);
   scale_eff = 0.0f;
   savg_cor = 1.0f;
@@ -287,7 +286,6 @@ void LeabraRecvCons::Copy_(const LeabraRecvCons& cp) {
 }
 
 void LeabraSendCons::Initialize() {
-  spec.SetBaseType(&TA_LeabraConSpec);
   SetConType(&TA_LeabraCon);
 }
 
@@ -709,7 +707,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
     LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
     if(lay->lesion || !recv_gp->cons.size)	continue;
      // this is the normalization value: takes into account target activity of layer
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->spec.SPtr();
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     WtScaleSpec& wt_scale = cs->wt_scale;
     float savg = lay->kwta.pct;
     if(cs->savg_cor.norm_con_n)	// sometimes it makes sense to just do it by the group n
@@ -760,7 +758,7 @@ void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       if(send_gp->prjn->layer->lesion || !send_gp->cons.size) continue;
-      if(((LeabraConSpec*)send_gp->spec.SPtr())->inhib) {
+      if(((LeabraConSpec*)send_gp->GetConSpec())->inhib) {
 	taMisc::Error("*** Error: cannot send inhibition from a hard-clamped layer!  Set layerspec clamp.hard off!");
 	continue;
       }
@@ -1344,8 +1342,6 @@ void LeabraUnitChans::Copy_(const LeabraUnitChans& cp) {
 
 void LeabraUnit::Initialize() {
   bias.con_type = &TA_LeabraCon;
- //  bias.spec.SetBaseType(&TA_LeabraBiasSpec);
-  spec.SetBaseType(&TA_LeabraUnitSpec);
 
   act_eq = 0.0f;
   act_avg = 0.1f;
@@ -2779,7 +2775,7 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {
     LeabraUnit* u;
     taLeafItr ui;
     FOR_ITR_EL(LeabraUnit, u, lay->units., ui) {
-      LeabraUnitSpec* us = (LeabraUnitSpec*)u->spec.SPtr();
+      LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
       if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
       LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
