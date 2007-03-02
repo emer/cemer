@@ -19,10 +19,9 @@ current:
 
 * project display needs update after loading: filename is not there..
 
-* datatable load not getting file name ext AGAIN!
-
-
 check:
+
+* datatable load not getting file name ext AGAIN!
 
 * filer needs to use basic context (ticket filed)
   * convert tmp name is bizzare -- fname filer issues (ticket)

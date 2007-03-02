@@ -18,7 +18,7 @@
 #include "ta_math.h"
 #include "css_ta.h"
 #include "css_basic_types.h"
-
+#include "ta_dataproc.h"
 
 #ifdef TA_GUI
 #  include "ta_datatable_qtso.h"
@@ -584,7 +584,7 @@ void DataTable::UpdateAfterEdit_impl() {
   CheckForCalcs();
 }
 
-bool DataTable::AddRow(int n) {
+bool DataTable::AddRows(int n) {
   if ((cols() == 0) || (n < 1)) return false;
   RowsAdding(n, true);
   for(int i=0;i<data.size;i++) {
@@ -1193,6 +1193,32 @@ void DataTable::RemoveOrphanCols() {
   }
 }
   
+bool DataTable::InsertRows(int n, int st_row) {
+  if (!RowInRangeNormalize(st_row)) return false;
+  bool rval = true;
+  DataUpdate(true);
+  for(int i=0;i<data.size;i++) {
+    DataCol* ar = data.FastEl(i);
+    if(!ar->AR()->InsertFrames(n, st_row))
+      rval = false;
+  }
+  if(rval)
+    rows += n;
+  DataUpdate(false); 
+  return rval;
+}
+
+void DataTable::RemoveRows(int n_rows, int st_row) {
+  // todo: optimize with a RemoveFrames call that does a faster bulk compaction
+  // instead of doing it over and over again..
+  if (!RowInRangeNormalize(st_row)) return;
+  DataUpdate(true);		// only data because for views, no change in column structure
+  for(int i=0;i<n_rows;i++) {
+    RemoveRow(st_row);		
+  }
+  DataUpdate(false);
+}
+
 void DataTable::RemoveRow(int row) {
   if (!RowInRangeNormalize(row)) return;
   DataUpdate(true);		// only data because for views, no change in column structure
@@ -1228,25 +1254,6 @@ bool DataTable::RowInRangeNormalize(int& row) {
   if (row < 0) row = rows + row;
   return ((row >= 0) && (row < rows));
 } 
-
-
-/*TODO void DataTable::ShiftUp(int num_rows) {
-
-  if (num_rows >= rows) {
-    ResetData();
-    return;
-  }
-  StructUpdate(true);
-  for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
-    int act_num_rows = num_rows - (rows - ar->AR()->frames());
-    if (act_num_rows > 0)
-      ar->AR()->ShiftLeft(act_num_rows);
-  }
-  rows -= num_rows;
-  StructUpdate(false); 
-}*/
-
 
 void DataTable::Reset() {
   StructUpdate(true);
@@ -1721,6 +1728,66 @@ bool DataTable::CalcAllRows() {
   return rval;
 }
 
+/////////////////////////////////////////////////////////
+// core data processing -- see taDataProc for more elaborate options
+
+void DataTable::Sort(DataCol* col1, bool ascending1,
+		     DataCol* col2, bool ascending2,
+		     DataCol* col3, bool ascending3) {
+
+  DataSortSpec spec;
+  if(col1) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col1->name;
+    if(ascending1) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col2) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col2->name;
+    if(ascending2) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col3) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col3->name;
+    if(ascending3) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  
+  taDataProc::Sort_impl(this, &spec);
+}
+
+bool DataTable::Filter(const String& filter_expr) {
+  InitCalcScript();
+  calc_script->ClearAll();
+
+  STRING_BUF(code_str, 2048);
+  code_str += "for(int row=this.rows-1;row >= 0; row--) {\n";
+  for(int i=0;i<data.size; i++) {
+    DataCol* da = data.FastEl(i);
+    // only gen if possibly used 
+    if(!filter_expr.contains(da->name)) continue;
+    if(da->is_matrix)
+      code_str += "taMatrix* " + da->name + " = this.GetValAsMatrix(" +
+	String(i) + ", row);\n";
+    else
+      code_str += "Variant " + da->name + " = this.GetValAsVar(" +
+	String(i) + ", row);\n";
+  }
+
+  code_str += "if(" + filter_expr + ") continue;\n"; // if ok, continue
+  code_str += "this.RemoveRow(row);\n";		     // else remove
+  CalcRowCodeGen(code_str);
+  bool ok = calc_script->CompileCode(code_str);
+  if(!ok) {
+    taMisc::Error("DataTable Filter:", name, "error in filter expression, see console for errors");
+    return false;
+  }
+  calc_script->Run();
+  return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////
 //		DMEM
 
@@ -1738,7 +1805,7 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
   int st_send_row = rows - n_rows;
   int st_recv_row = rows;
   int n_recv_rows = np * n_rows;
-  AddRow(n_recv_rows);		// make room for new ones
+  AddRows(n_recv_rows);		// make room for new ones
 
   static char_Array char_send;
   static char_Array char_recv;

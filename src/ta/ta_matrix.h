@@ -450,6 +450,8 @@ public:
   // #MENU #MENU_ON_Matrix #CAT_Modify remove the given frame, copying data backwards if needed
   virtual bool		CopyFrame(const taMatrix& src, int frame);
   // #CAT_Copy copy the source matrix to the indicated frame; src geom must be our frame geom; optimized for like-type mats
+  virtual bool		InsertFrames(int n_frames, int fr_idx);
+  // #CAT_Modify insert n new frames at given frame index, shifting existing data down to make room
 
   virtual void		Reset();
   // #CAT_Modify remove all items

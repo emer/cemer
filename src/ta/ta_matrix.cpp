@@ -888,6 +888,32 @@ void taMatrix::RemoveFrame(int n) {
   }
 }
 
+bool taMatrix::InsertFrames(int n, int where) {
+  if(!canResize()) return false;
+  int sz = frames(); // cache
+  if(where > sz || n <= 0) return false;
+  AddFrames(n);
+  if(where==sz || where < 0) {
+    return true;		// done!
+  }
+  int n_mv = sz - where;	// number that must be moved
+  sz += n;			// update to added size
+  int frsz = frameSize();
+  int trg_o = (sz-1) * frsz;
+  int src_o = (sz-1-n) * frsz;
+  for(int i=0; i<n_mv*frsz; i++) {	// shift everyone over
+    El_Copy_(FastEl_Flat_(trg_o-i), FastEl_Flat_(src_o-i));
+  }
+  // blank out new guys
+  const void* blank = El_GetBlank_();
+  int st = where * frsz;
+  int ed = (where+n) * frsz; 
+  for (int i = st; i < ed; ++i) {
+    El_Copy_(FastEl_Flat_(i), blank);
+  }
+  return true;
+}
+
 void taMatrix::Reset() {
   EnforceFrames(0);
   UpdateSlices_Collapse();

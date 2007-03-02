@@ -513,16 +513,19 @@ public:
   virtual void		AllocRows(int n);
   // #CAT_Rows allocate space for at least n rows
   virtual int		AddBlankRow() 
-    {if (AddRow(1)) {wr_itr = rows - 1; return wr_itr;} else return -1;}
+  { if (AddRows(1)) {wr_itr = rows - 1; return wr_itr;} else return -1; }
   // #MENU #MENU_ON_Rows #CAT_Rows add a new row to the data table, sets write (sink) index to this last row (as in WriteItem), so that subsequent datablock routines refer to this new row, and returns row #
-  virtual bool		AddRow(int n);
-  // #CAT_Rows add n rows, 'true' if added
+  virtual bool		AddRows(int n);
+  // #MENU #CAT_Rows add n rows, returns true if successfully added
+  virtual bool		InsertRows(int n_rows, int st_row);
+  // #MENU #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
+  
   virtual void		RemoveRow(int row_num);
+  // #CAT_Rows Remove an entire row of data
+  virtual void		RemoveRows(int n_rows, int st_row);
   // #MENU #MENU_ON_Rows #CAT_Rows Remove an entire row of data
-//TODO if needed:  virtual void	ShiftUp(int num_rows);
-  // remove indicated number of rows of data at front (typically used by Log to make more room in buffer)
   virtual bool		DuplicateRow(int row_no, int n_copies=1);
-  // #MENU #CAT_Rows duplicate given row number, making given number of copies of it
+  // #MENU #CAT_Rows duplicate given row number, making given number of copies of it (adds new rows at the end)
   virtual void		RemoveAllRows() { ResetData(); }
   // #CAT_Rows remove all of the rows, but keep the column structure
 
@@ -647,28 +650,38 @@ public:
   // calculated column values
 
   virtual bool		UpdateColCalcs();
-  // update column calculations
+  // #CAT_Calc update column calculations
   virtual bool		CalcLastRow();
-  // if HAS_CALCS, does calculations for last row of data -- called by WriteClose
+  // #CAT_Calc if HAS_CALCS, does calculations for last row of data -- called by WriteClose
 
   virtual bool		CheckForCalcs();
-  // see if any columns have CALC flag -- sets HAS_CALCS flag -- returns state of flag
+  // #CAT_Calc see if any columns have CALC flag -- sets HAS_CALCS flag -- returns state of flag
   virtual void		InitCalcScript();
-  // initialize the calc_script for computing column calculations
+  // #IGNORE initialize the calc_script for computing column calculations
   virtual bool		CalcAllRows_impl();
-  // perform calculations for all rows of data (calls InitCalcScript to make sure)
+  // #CAT_Calc perform calculations for all rows of data (calls InitCalcScript to make sure)
   virtual bool		CalcAllRows();
-  // #BUTTON #CONDEDIT_ON_data_flags:HAS_CALCS perform calculations for all rows of data (updates after)
+  // #CAT_Calc #BUTTON #CONDEDIT_ON_data_flags:HAS_CALCS perform calculations for all rows of data (updates after)
   virtual void		CalcRowCodeGen(String& code_str);
-  // generate code for computing one row worth of data, with assumed 'int row' variable specifying row
+  // #IGNORE generate code for computing one row worth of data, with assumed 'int row' variable specifying row
   virtual bool		CalcRow(int row);
-  // perform calculations for given row of data (calls InitCalcScript to make sure)
+  // #CAT_Calc perform calculations for given row of data (calls InitCalcScript to make sure)
+
+  /////////////////////////////////////////////////////////
+  // core data processing -- see taDataProc for more elaborate options
+
+  virtual void		Sort(DataCol* col1, bool ascending1 = true,
+			     DataCol* col2 = NULL, bool ascending2 = true,
+			     DataCol* col3 = NULL, bool ascending3 = true);
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #FROM_GROUP_data #NULL_OK sort table according to selected columns of data
+  virtual bool		Filter(const String& filter_expr);
+  // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current colum values by name -- uses css so it is not super fast, but gets the job done
 
   /////////////////////////////////////////////////////////
   // misc funs
 
   virtual void		NewGridView(T3DataViewFrame* fr = NULL);
-  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use blank if any, else make new frame)
+  // #NULL_OK #MENU #MENU_ON_View #MENU_CONTEXT #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use blank if any, else make new frame)
   virtual void		NewGraphView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #MENU #MENU_CONTEXT #CAT_Display open a graph view of this table (NULL=use blank if any, else make new frame)
 
@@ -754,7 +767,7 @@ public:
 protected:
   /////////////////////////////////////////////////////////
   // DataSink implementation
-  override bool		AddItem_impl(int n) {return AddRow(n);}
+  override bool		AddItem_impl(int n) {return AddRows(n);}
   override void		DeleteSinkChannel_impl(int chan) {RemoveCol(chan);}
   override taMatrix*	GetSinkMatrix_impl(int chan) 
   { return GetValAsMatrix(chan, wr_itr);} //note: DS refs it
