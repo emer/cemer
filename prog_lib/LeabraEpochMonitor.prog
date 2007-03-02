@@ -25,10 +25,6 @@ Program .projects[0].programs.gp[0][8] {
     ProgVar @[2] { };
   };
 
-  ProgEl_List @.load_code = [1] {
-    AssignExpr @[0] { };
-  };
-
   ProgEl_List @.init_code = [4] {
     AssignExpr @[0] { };
     MethodCall @[1] { 
@@ -49,11 +45,12 @@ Program .projects[0].programs.gp[0][8] {
     };
   };
 
-  ProgEl_List @.prog_code = [4] {
+  ProgEl_List @.prog_code = [5] {
     MethodCall @[0] { };
     MethodCall @[1] { };
-    UserScript @[2] { };
-    MethodCall @[3] { };
+    AssignExpr @[2] { };
+    UserScript @[3] { };
+    MethodCall @[4] { };
   };
 };
 Program .projects[0].programs.gp[0][8] {
@@ -244,7 +241,7 @@ Program .projects[0].programs.gp[0][8] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].programs.gp[0][2].objs[0]$3$;
+   object_val=.projects[0].networks[0].epoch_time$3$;
    objs_ptr=0;
    flags=NO_CTRL_PANEL;
    desc=;
@@ -259,34 +256,21 @@ Program .projects[0].programs.gp[0][8] {
   name=;
   el_typ=AssignExpr;
   el_def=0;
-  AssignExpr @[0] {
-   desc="set epoch timer ";
-   flags=PEF_NONE;
-   result_var=.projects[0].programs.gp[0][8].vars[2]$4$;
-   expr_val {
-    expr="this.FindProgramNameContains(\"LeabraEpoch\").objs.FindName(\"epoch_timer\")";
-    var_expr="this.FindProgramNameContains(\"LeabraEpoch\").objs.FindName(\"epoch_timer\")";
-    vars {
-    };
-    var_names{     };
-    bad_vars{     };
-   };
-  };
  };
  init_code {
   name=;
   el_typ=MethodCall;
   el_def=0;
   AssignExpr @[0] {
-   desc="set epoch timer";
+   desc=;
    flags=PEF_NONE;
-   result_var=$4$;
+   result_var=.projects[0].programs.gp[0][2].vars[3]$4$;
    expr_val {
-    expr="this.FindProgramNameContains(\"LeabraEpoch\").objs.FindName(\"epoch_timer\")";
-    var_expr="this.FindProgramNameContains(\"LeabraEpoch\").objs.FindName(\"epoch_timer\")";
+    expr="network.epoch_time";
+    var_expr="$#0.epoch_time";
     vars {
     };
-    var_names{     };
+    var_names{ network;    };
     bad_vars{     };
    };
   };
@@ -407,7 +391,20 @@ Program .projects[0].programs.gp[0][8] {
     el_def=0;
    };
   };
-  UserScript @[2] {
+  AssignExpr @[2] {
+   desc=;
+   flags=PEF_NONE;
+   result_var=$4$;
+   expr_val {
+    expr="network.epoch_time";
+    var_expr="$#0.epoch_time";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
+  UserScript @[3] {
    desc="set the timing information from the epoch timer";
    flags=PEF_NONE;
    user_script="epoch_mon_data.SetDataByName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\");
@@ -415,7 +412,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 
 ";
   };
-  MethodCall @[3] {
+  MethodCall @[4] {
    desc="update after writing new data to monitor data table";
    flags=PEF_NONE;
    result_var=NULL;

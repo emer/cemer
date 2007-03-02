@@ -6,8 +6,7 @@ commit:
 ------------
 current:
 
-* Unit has m_spec, SetUnitSpec, GetUnitSpec; Layer has m_last_unit_spec* -- UAE checks
-if diff from cur, does ApplyUnitSpec if so, has force; build does with force...
+* project display needs update after loading: filename is not there..
 
 * general issue: epoch_timer -- not well encapsulated and thus bad.  you *can* do it this
  way but it just isn't the right way.
@@ -31,9 +30,6 @@ if diff from cur, does ApplyUnitSpec if so, has force; build does with force...
 
 
 check:
-
-* new UnitSpec bias_spec pointer datalink bug (emailed to brad)
- -> maybe causes this: saving 12ax model *with* units, then close project: get a crash.  not without. spec.CutLinks
 
 * filer needs to use basic context (ticket filed)
   * convert tmp name is bizzare -- fname filer issues (ticket)
