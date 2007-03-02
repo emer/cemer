@@ -1,3 +1,20 @@
+Mac DND bug
+
+compare two identical operations, Linux, Mac:
+
+* open app
+* drag ColdHot color spec on top of ROYGBIV
+* choose Move
+
+on Linux, it moves after ROYGBIV, as expected
+
+on Mac:
+* the ColdHot item "disappears" from main tree
+* is still in the list, in slot 0
+* if you BrowseMe, you see ColdHost in slot0 in new tree
+
+
+
 Crash on close of 12ax proj
 
 * save a version that saves all units

@@ -3336,7 +3336,7 @@ void iMainWindowViewer::fileClose() {
       return;
     }
   }
-  proj->Close();
+  proj->CloseLater();
 }
 
 void iMainWindowViewer::fileOptions() {

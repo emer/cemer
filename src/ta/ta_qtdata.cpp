@@ -54,6 +54,7 @@
 #include <Q3ListBoxText>
 #include <QMenu>
 #include <QMenuBar>
+#include <QPointer>
 #include <qpushbutton.h>
 #include <QStackedWidget>
 #include <qstring.h>
@@ -1353,10 +1354,16 @@ void taiAction::connect(const taiMenuAction* mact) {
 }
 
 void taiAction::emitActions() {
+// it is possible an action could end up deleting us, so we guard...
+  QPointer<taiAction> ths = this;
   emit Action();
-  emit MenuAction(this);
+  if (!ths) return;
+  emit MenuAction(ths);
+  if (!ths) return;
   emit IntParamAction(usr_data.toInt());
+  if (!ths) return;
   emit PtrParamAction(usr_data.toPtr());
+  if (!ths) return;
   emit VarParamAction(usr_data);
 }
 
