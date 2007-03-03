@@ -29,7 +29,6 @@
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 # include "ta_datatable_qtso.h"
-# include "colorscale.h"
 # include "netstru_qtso.h"
 
 # include <qapplication.h>
@@ -674,7 +673,6 @@ void ProjectBase::AssertDefaultWiz(bool auto_opn) {
 
 void PDPRoot::Initialize() {
   projects.SetBaseType(&TA_ProjectBase); //note: must actually be one of the descendants
-  colorspecs.SetBaseType(&TA_ColorScaleSpec);
 }
 
 void PDPRoot::Destroy() {
@@ -683,13 +681,9 @@ void PDPRoot::Destroy() {
 
 void PDPRoot::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(colorspecs, this);
-  // create colorspecs even if nogui, since they are referenced in projects
-  colorspecs.SetDefaultColor();	
 }
 
 void PDPRoot::CutLinks() {
-  colorspecs.CutLinks();
   inherited::CutLinks();
 }
 

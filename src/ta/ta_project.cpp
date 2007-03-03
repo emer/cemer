@@ -412,17 +412,19 @@ void taRootBase::InitLinks() {
   taBase::Own(plugins, this);
   taBase::Own(plugin_deps, this);
   taBase::Own(mime_factories, this);
+  taBase::Own(colorspecs, this);
+  // create colorspecs even if nogui, since they are referenced in projects
+  colorspecs.SetDefaultColor();	
   taBase::Own(recent_files, this);
   taBase::Own(recent_paths, this);
-  taBase::Own(last_dirs, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
-  last_dirs.CutLinks();
   recent_paths.CutLinks();
   recent_files.CutLinks();
+  colorspecs.CutLinks();
   mime_factories.CutLinks();
   plugin_deps.CutLinks();
   plugins.CutLinks();
@@ -1148,7 +1150,8 @@ int taRootBase::DMem_SubEventLoop() {
 		 "Proc n SubEventLoop", "MPI_Bcast");
     recv_buf[cmdlen] = '\0';
     String cmd = recv_buf;
-    delete recv_buf;
+    delete[] recv_buf;
+    recv_buf = NULL; // defensive
 
     if(cmd.length() > 0) {
       if(taMisc::dmem_debug) {

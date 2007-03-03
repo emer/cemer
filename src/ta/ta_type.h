@@ -503,8 +503,8 @@ public:
     QF_FORCE_QUIT	// too late to turn back now...
   };
   
-  enum ConsoleStyle { // the type of console window and how to show it; ignored in non-gui mode (always uses OS console)
-    CS_OS, // use the operating system's console (with readline library on Unix)
+  enum ConsoleStyle { // the type of console window and how to show it; ignored in non-gui mode (either uses OS shell, or no console, depending on startup mode)
+    CS_OS_SHELL, // use the operating system's shell (with readline library on unix)
     CS_GUI_DOCKABLE, // uses a dock window, initially docked in the main app window
     CS_GUI_TRACKING // uses a separate window that "sticks" to the bottom of your project window
   };

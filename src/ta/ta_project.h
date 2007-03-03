@@ -26,6 +26,8 @@
 #include "ta_program.h"
 #include "ta_plugin_p.h"
 #include "ta_qtclipdata.h"
+#include "colorscale.h"
+
 
 #ifdef TA_GUI
   #include "ta_seledit.h"
@@ -147,7 +149,7 @@ friend class taProject;
 public:
   override int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
 
-  void	Initialize() 		{SetBaseType(&TA_taBase);} // upclassed in pdp
+  void	Initialize() 		{SetBaseType(&TA_taProject);} // upclassed in pdp
   void 	Destroy()		{ };
   TA_BASEFUNS(Project_Group);
 };
@@ -167,11 +169,9 @@ public:
   taPlugin_List		plugins; //  available plugins
   taPluginBase_List	plugin_deps; // #SHOW_TREE EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
+  ColorScaleSpec_Group 	colorspecs;	// Color Specs
   String_Array		recent_files; // #NO_SHOW recently loaded files
   String_Array		recent_paths; // #NO_SHOW recently used paths
-  
-  
-  SArg_Array		last_dirs; // #NO_SHOW #NO_SAVE #OBS obsolete, nuke
   
   virtual void  Options();
   // edit global settings/parameters (taMisc)

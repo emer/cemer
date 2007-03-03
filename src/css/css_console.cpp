@@ -146,7 +146,7 @@ void ConThread::stop() { // (main)
 
 
 cssQandDConsole* cssQandDConsole::New_SysConsole(QObject* parent) {
- cssUnixConsole* rval = new cssQandDConsole(parent);
+ cssQandDConsole* rval = new cssQandDConsole(parent);
  return rval;
 }
 

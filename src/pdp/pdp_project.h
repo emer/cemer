@@ -25,8 +25,6 @@
 #include "ta_program.h"
 #include "ta_imgproc.h"
 
-#include "colorscale.h"
-
 #ifdef TA_GUI
 # include "ta_seledit.h"
 # include "ta_qtviewer.h"
@@ -197,7 +195,6 @@ class PDP_API PDPRoot : public taRootBase {
   // structural root of object hierarchy
 INHERITED(taRootBase)
 public:
-  ColorScaleSpec_Group 	colorspecs;	// Color Specs
 
   override void	About();
 #ifdef TA_GUI
