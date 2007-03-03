@@ -653,7 +653,6 @@ public:
   };
 
   LineStyle	line_style;	// #EXPERT the style in which the line is drawn
-  float		line_width;	// #EXPERT #DEF_0 width of the line in pixels; 0 means use default
   PointStyle	point_style;	// #EXPERT the style in which the points are drawn
 
 //   void InitLinks();

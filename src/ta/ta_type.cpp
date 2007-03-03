@@ -659,6 +659,40 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
   }
 }
 
+#ifndef NO_TA_BASE
+bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
+		       const char* a, const char* b, const char* c, const char* d,
+		       const char* e, const char* f, const char* g, const char* h) {
+  if(!test) return false;
+  if(obj) {
+    String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
+      + "() (path: " + obj->GetPath_Long() + ")\n";
+    taMisc::Error(objinfo, a, b, c, d, e, f, g, h);
+  }
+  else {
+    String fn = String("Function: ") + fun_name + "()\n";
+    taMisc::Error(fn, a, b, c, d, e, f, g, h);
+  }
+  return true;
+}
+
+bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
+			 const char* a, const char* b, const char* c, const char* d,
+			 const char* e, const char* f, const char* g, const char* h) {
+  if(!test) return false;
+  if(obj) {
+    String objinfo = obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
+      + "() (path: " + obj->GetPath_Long() + ")\n";
+    taMisc::Warning(objinfo, a, b, c, d, e, f, g, h);
+  }
+  else {
+    String fn = String("Function: ") + fun_name + "()\n";
+    taMisc::Warning(fn, a, b, c, d, e, f, g, h);
+  }
+  return true;
+}
+#endif
+
 #ifdef TA_NO_GUI
 // we put the no-gui versions here, to avoid dragging in all the gui stuff
 // the gui versions are in ta_type_qt.cc

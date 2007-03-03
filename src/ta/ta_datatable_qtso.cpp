@@ -1370,10 +1370,12 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 	img->addChild(img_so);
 
 	taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
-	taBase::Ref(cell_mat);
-	bool top_zero = (cvs->mat_layout == GridColView::TOP_ZERO);
-	img_so->setImage(*cell_mat, top_zero);
-	taBase::UnRef(cell_mat);
+	if(cell_mat) {
+	  taBase::Ref(cell_mat);
+	  bool top_zero = (cvs->mat_layout == GridColView::TOP_ZERO);
+	  img_so->setImage(*cell_mat, top_zero);
+	  taBase::UnRef(cell_mat);
+	}
       }
       else {
 	float mat_ht = row_ht;
@@ -1388,16 +1390,18 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 	tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), mat_rot_rad);
 	
 	taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
-	taBase::Ref(cell_mat);
-	SoMatrixGrid* sogr = new SoMatrixGrid
-	  (cell_mat, cvs->mat_odd_vert, &colorscale, (SoMatrixGrid::MatrixLayout)cvs->mat_layout, 
-	   mat_val_text);
-	sogr->spacing = mat_block_spc;
-	sogr->block_height = mat_block_height;
-	sogr->trans_max = mat_trans;
-	sogr->render();
-	taBase::UnRef(cell_mat);
-	grsep->addChild(sogr);
+	if(cell_mat) {
+	  taBase::Ref(cell_mat);
+	  SoMatrixGrid* sogr = new SoMatrixGrid
+	    (cell_mat, cvs->mat_odd_vert, &colorscale, (SoMatrixGrid::MatrixLayout)cvs->mat_layout, 
+	     mat_val_text);
+	  sogr->spacing = mat_block_spc;
+	  sogr->block_height = mat_block_height;
+	  sogr->trans_max = mat_trans;
+	  sogr->render();
+	  taBase::UnRef(cell_mat);
+	  grsep->addChild(sogr);
+	}
       }
     }
     else {			// scalar: always text
@@ -3322,6 +3326,10 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   if(!da_y) return;
   DataCol* da_x = x_axis.GetDAPtr();
   DataCol* da_z = z_axis.GetDAPtr();
+
+  // this should only happen if we have no data at all..
+  if((view_range.min < 0) || (view_range.min >= da_x->rows())) return;
+  if((view_range.min < 0) || (view_range.min >= da_y->rows())) return;
 
   DataCol* da_er = erv.GetDAPtr();
 

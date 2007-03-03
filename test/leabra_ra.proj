@@ -4293,7 +4293,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
-	   line_width=9.403955e-38;
 	   point_style=CIRCLE;
 	  };
 	  plot_2 {
@@ -4310,7 +4309,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
-	   line_width=0;
 	   point_style=SQUARE;
 	  };
 	  share_y_axis=0;
@@ -4339,7 +4337,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
-	   line_width=0;
 	   point_style=CIRCLE;
 	  };
 	  err_2 {
@@ -4356,7 +4353,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
-	   line_width=0;
 	   point_style=CIRCLE;
 	  };
 	  err_spacing=1;
@@ -4582,7 +4578,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.1: err=0.9: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4614,7 +4610,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.1: err=0.9: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };

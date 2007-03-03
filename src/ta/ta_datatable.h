@@ -146,7 +146,8 @@ public:
 
   virtual ValType 	valType() const = 0;
   // #CAT_Access the type of data in each element
-  inline bool		isMatrix() const {return is_matrix;} // for consistency
+  inline bool		isMatrix() const {return is_matrix;}
+  // #CAT_Access true if data is a matrix
   virtual bool		isNumeric() const {return false;}
   // #CAT_Access true if data is float, int, or byte
   virtual bool		isString() const {return false;}
@@ -155,6 +156,11 @@ public:
   // #CAT_Access true if the cell contains an image
   virtual int		imageComponents() const;
   // #CAT_Access if an image, then: b&w=1, b&w+a=2, rgb=3, rgba=4
+
+  inline bool		is_matrix_err()
+  { return TestError(is_matrix, "is_matrix_err", "column has matrix data -- not supported"); }
+  inline bool		not_matrix_err()
+  { return TestError(!is_matrix, "not_matrix_err", "column does not have matrix data -- not supported"); }
   
   virtual int		cell_size() const
   { return (is_matrix) ? cell_geom.Product() : 1; }
@@ -508,6 +514,10 @@ public:
   { if (row_num < 0) row_num = rows + row_num;
     act_idx = col_size - (rows - row_num); return act_idx >= 0;} 
   // #CAT_Rows calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
+  inline bool		idx_err(int row_num, int col_size, int& act_idx) const {
+    return !TestError(!idx(row_num, col_size, act_idx), "idx_err", "index out of range"); }
+  inline bool		idx_warn(int row_num, int col_size, int& act_idx) const {
+    return !TestWarning(!idx(row_num, col_size, act_idx), "idx_err", "index out of range"); }
   virtual bool		RowInRangeNormalize(int& row);
   // #CAT_Rows normalizes row (if -ve) and tests result in range 
   virtual void		AllocRows(int n);
@@ -517,13 +527,11 @@ public:
   // #MENU #MENU_ON_Rows #CAT_Rows add a new row to the data table, sets write (sink) index to this last row (as in WriteItem), so that subsequent datablock routines refer to this new row, and returns row #
   virtual bool		AddRows(int n);
   // #MENU #CAT_Rows add n rows, returns true if successfully added
-  virtual bool		InsertRows(int n_rows, int st_row);
+  virtual bool		InsertRows(int st_row, int n_rows=1);
   // #MENU #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
   
-  virtual void		RemoveRow(int row_num);
-  // #CAT_Rows Remove an entire row of data
-  virtual void		RemoveRows(int n_rows, int st_row);
-  // #MENU #MENU_ON_Rows #CAT_Rows Remove an entire row of data
+  virtual bool		RemoveRows(int st_row, int n_rows=1);
+  // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row
   virtual bool		DuplicateRow(int row_no, int n_copies=1);
   // #MENU #CAT_Rows duplicate given row number, making given number of copies of it (adds new rows at the end)
   virtual void		RemoveAllRows() { ResetData(); }

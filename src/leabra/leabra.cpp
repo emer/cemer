@@ -526,7 +526,8 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   Network* net = GET_MY_OWNER(Network);
 
   act.send_delta = ((LeabraNetwork*)net)->send_delta; // always copy from network, so it is global..
-
+  
+  bool rval;
   for(int g=0; g<un->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)un->send.FastEl(g);
     if(send_gp->cons.size < 2) continue;
@@ -534,29 +535,26 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     float first_sc = ((LeabraRecvCons*)ru->recv.FastEl(send_gp->recv_idx))->scale_eff;
     for(int j=1; j<send_gp->cons.size; j++) {
       float sc = ((LeabraRecvCons*)ru->recv.FastEl(send_gp->recv_idx))->scale_eff;
-      if(sc != first_sc) {
-	if(!quiet) taMisc::CheckError("Leabra CheckConfig Error: the effective weight scales for\
- different sending connections within a group are not all the same!  Sending Layer:",
-				 send_gp->prjn->from->name, ", Rev Layer:", send_gp->prjn->layer->name,
-				 ", first_sc: ", (const char*)String(first_sc), ", sc: ",
-				 (const char*)String(sc));
-				 //				 ", con:", String(j));
+      if(CheckError((sc != first_sc), quiet, rval,
+		    "the effective weight scales for different sending connections within a group are not all the same!  Sending Layer:",
+		    send_gp->prjn->from->name, ", Rev Layer:", send_gp->prjn->layer->name,
+		    ", first_sc: ", String(first_sc), ", sc: ", String(sc)))
 	return false;
-      }
     }
   }
 
-  if(opt_thresh.updt_wts &&
-     (net->wt_update != Network::ON_LINE) && (net->train_mode != Network::TEST)) {
-    if(!quiet) taMisc::CheckError("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when wt_update is not ON_LINE",
-			     "I turned this flag off for you in LeabraUnitSpec:", name);
+  if(CheckError((opt_thresh.updt_wts &&
+		 (net->wt_update != Network::ON_LINE) && (net->train_mode != Network::TEST)),
+		quiet, rval,
+		"cannot use opt_thresh.updt_wts when wt_update is not ON_LINE",
+		"I turned this flag off for you")) {
     SetUnique("opt_thresh", true);
     opt_thresh.updt_wts = false;
   }
 
-  if(opt_thresh.updt_wts && act_reg.on && (act_reg.min > 0.0f)) {
-    if(!quiet) taMisc::CheckError("LeabraUnitSpec Warning: cannot use opt_thresh.updt_wts when act_reg is on and min > 0",
-			     "I turned this flag off for you in LeabraUnitSpec:", name);
+  if(CheckError((opt_thresh.updt_wts && act_reg.on && (act_reg.min > 0.0f)), quiet, rval,
+		"cannot use opt_thresh.updt_wts when act_reg is on and min > 0",
+		"I turned this flag off for you")) {
     SetUnique("opt_thresh", true);
     opt_thresh.updt_wts = false;
   }

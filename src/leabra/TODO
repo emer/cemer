@@ -6,7 +6,10 @@ commit:
 ------------
 current:
 
-* datatable: row manip functions like rowcopy, moverow, insert row, etc
+* finish converting taMisc::Error and taMisc::CheckError calls..
+* check matrix insert -- seems to not be copying all the way to end
+
+* datatable: 
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
 

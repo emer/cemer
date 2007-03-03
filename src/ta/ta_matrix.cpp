@@ -374,7 +374,7 @@ void taMatrix::Destroy() {
   }
 #ifdef DEBUG 
   if (sliceCount() > 0) {
-    taMisc::Error("taMatrix being destroyed with slice_cnt=", String(sliceCount()));
+    taMisc::Warning("taMatrix being destroyed with slice_cnt=", String(sliceCount()));
   }
 #endif
   if (slices) {
@@ -389,21 +389,21 @@ void taMatrix::Destroy() {
 }
 
 void taMatrix::Add_(const void* it) {
-  Check(canResize(), "resizing not allowed");
-  Check((dims() == 1), "Add() only allowed when dims=1");
+  if(TestError(!canResize(), "Add", "resizing not allowed")) return;
+  if(TestError((dims() != 1), "Add", "only allowed when dims=1")) return;
   int idx = frames();
   EnforceFrames(idx + 1);
   El_Copy_(FastEl_Flat_(idx), it);
 }
 
 void taMatrix::AddFrames(int n) {
-  Check(canResize(), "resizing not allowed");
+  if(TestError(!canResize(), "Add", "resizing not allowed")) return;
   
   EnforceFrames(n + frames());
 }
 
 void taMatrix::Alloc_(int new_alloc) {
-  Check((alloc_size >= 0), "cannot alloc a fixed data matrix");
+  if(TestError((alloc_size < 0), "Alloc_", "cannot alloc a fixed data matrix")) return;
 //TODO  Check((slice_cnt == 0), "cannot alloc a sliced data matrix");
   
 //NOTE: this is a low level allocator; alloc is typically managed in frames
@@ -432,8 +432,8 @@ bool taMatrix::canResize() const {
 
 void taMatrix::Copy_(const taMatrix& cp) {
   // note: we must inherit from the copy
-  Check(GetTypeDef()->InheritsFrom(cp.GetTypeDef()), "cannot copy " +
-    String(GetTypeDef()->name) + " from " + String(cp.GetTypeDef()->name));
+  if(TestError(!GetTypeDef()->InheritsFrom(cp.GetTypeDef()), "Copy_", "cannot copy",
+	       String(GetTypeDef()->name),"from",String(cp.GetTypeDef()->name))) return;
     
   // first, zero out current, if any
   SetArray_(NULL);
@@ -551,7 +551,7 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
 // This is *the* routine for resizing, so all data change ops/tracking
 // can go through this
 void taMatrix::EnforceFrames(int n, bool notify) {
-  Check(canResize(), "resizing not allowed");
+  if(TestError(!canResize(), "Add", "resizing not allowed")) return;
   
   // note: we enforce the size in terms of underlying cells, for when
   // dimensions are changed (even though that is frowned on...)
@@ -634,10 +634,11 @@ void taMatrix::EnforceFrames(int n, bool notify) {
 }
 
 int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4) const {
-//TODO: rewrite for extra dims
   int rval = -1;
   switch (geom.size) {
-  case 0: Assert(false, "matrix geometry has not been initialized");
+  case 0: 
+    if(TestError(true, "FastElIndex", "matrix geometry has not been initialized")) return -1;
+    break;
   case 1: rval = d0;
     break;
   case 2: rval = (d1 * geom[0]) + d0;
@@ -650,10 +651,6 @@ int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4) const {
     break;
   default: break;
   }
-    
-  
-//  Assert((rval < size), "matrix element is out of bounds");
-//  if (rval < 0) rval = 0; // 0 is probably the "safest" unsafe value
   return rval;
 }
  
@@ -662,21 +659,14 @@ int taMatrix::FastElIndex2D(int d0, int d1) const {
 }
 
 int taMatrix::FastElIndexN(const MatrixGeom& indices) const {
-/*  Assert((geom.size >= 1), "matrix geometry has not been initialized");
-  Assert((indices.size >= 1), "at least 1 index must be specified");
-  Assert((indices.size <= geom.size), "too many indices for matrix");*/
   int d0 = indices[0];
-//  Assert(((d0 >= 0) && (d0 < geom[0])), "matrix index out of bounds");
-  
   int rval = 0;
   for (int i = indices.size - 1 ; i > 0; --i) {
     int di = indices[i];
-//    Assert(((di >= 0) && (di < geom[i])), "matrix index out of bounds");
     rval += di;
     rval *= geom[i-1];
   }
   rval += d0;
-//  Assert((rval < size), "matrix element is out of bounds");
   return rval;
 }
  
@@ -730,15 +720,15 @@ MatrixTableModel* taMatrix::GetDataModel() {
 
 taMatrix* taMatrix::GetFrameSlice_(int frame) {
   int dims_m1 = dims() - 1; //cache
-  Check((dims_m1 > 0),
-    "dims must be >1 to GetFrameSlice");
+  if(TestError((dims_m1 <= 0),"GetFrameSlice_", "dims must be >1 to GetFrameSlice"))
+    return NULL;
   int frames_ = frames(); // cache
   // check frame_base and num_frames in bounds
-  Check(((frame >= 0) && (frame < frames_)),
-    "frame is out of bounds");
+  if(TestError(((frame < 0) || (frame >= frames_)), "GetFrameSlice_",
+	       "frame is out of bounds")) return NULL;
     
   taMatrix* rval = (taMatrix*)MakeToken(); // an empty instance of our type
-  Check((rval), "could not make token of matrix");
+  if(TestError((!rval), "GetFrameSlice_", "could not make token of matrix")) return NULL;
   
   MatrixGeom slice_geom(dims_m1);
   for (int i = 0; i < dims_m1; ++i)
@@ -753,18 +743,18 @@ taMatrix* taMatrix::GetFrameSlice_(int frame) {
 taMatrix* taMatrix::GetSlice_(const MatrixGeom& base, 
     int slice_frame_dims, int num_slice_frames)
 {
-  Check((num_slice_frames > 0),
-    "num_slice_frames must be >= 1");
+  if(TestError((num_slice_frames <= 0), "GetSlice_", "num_slice_frames must be >= 1"))
+    return NULL;
   // (note: we check resulting slice dims in bounds later)
   if (slice_frame_dims == -1)
     slice_frame_dims = dims() - 1;
   // check dim size in bounds
-  Check((slice_frame_dims >= 0) && (slice_frame_dims < dims()),
-    "slice_frame_dims must be >= 0 and < parent Matrix");
+  if(TestError((slice_frame_dims <= 0) || (slice_frame_dims >= dims()),
+	       "GetSlice_", "slice_frame_dims must be >= 0 and < parent Matrix"))
+    return NULL;
   // check start cell in bounds and legal
   int sl_i = SafeElIndexN(base); // -1 if out of bounds
-  Check((sl_i >= 0),
-    "slice base is out of bounds");
+  if(TestError((sl_i < 0), "GetSlice_", "slice base is out of bounds")) return NULL;
 
   // create geom of slice, and copy our dims
   // note that since we are talking in frames, the dims = frames+1
@@ -775,11 +765,11 @@ taMatrix* taMatrix::GetSlice_(const MatrixGeom& base,
   
   // easiest to now check for frames in bounds
   int sl_tot = slice_geom.Product();
-  Check(((sl_i + sl_tot) <= size),
-    "slice end is out of bounds");
+  if(TestError(((sl_i + sl_tot) > size), "GetSlice_", "slice end is out of bounds"))
+    return NULL;
     
   taMatrix* rval = (taMatrix*)MakeToken(); // an empty instance of our type
-  Check((rval), "could not make token of matrix");
+  if(TestError((!rval), "GetSlice_", "could not make token of matrix")) return NULL;
   
   rval->SetFixedData_(FastEl_Flat_(sl_i), slice_geom);
   // we do all the funky ref counting etc. in one place
@@ -852,62 +842,75 @@ ostream& taMatrix::Output(ostream& strm, int indent) const {
   return strm;
 }
 
-void taMatrix::RemoveFrame(int n) {
-  Check(canResize(), "matrix is not resizable");
+bool taMatrix::RemoveFrames(int st_fr, int n_fr) {
+  if(TestError(!canResize(), "RemoveFrames", "resizing not allowed")) return false;
   int frames_ = frames(); // cache
-  Check(((n >= 0) && (n < frames_)), "frame number out of bounds");
+  if(TestError(((st_fr < 0) || (st_fr >= frames_)), "RemoveFrames",
+	       "starting frame number out of range:", String(st_fr)))
+    return false;
+  int end_fr = st_fr + n_fr-1;
+  if(TestError(((end_fr < 0) || (end_fr >= frames_)), "RemoveFrames",
+	       "ending frame number out of range:", String(end_fr)))
+    return false;
   // check if we have to copy data
-  if (n != (frames_ - 1)) {
-    int fm = (n + 1) * frameSize();
-    int to = fm - frameSize();
+  int frsz = frameSize();
+  if(end_fr != (frames_ - 1)) {
+    int fm = (end_fr + 1) * frsz;
+    int to = st_fr * frsz;
     while (fm < size) {
       El_Copy_(FastEl_Flat_(to), FastEl_Flat_(fm));
-      ++fm;
-      ++to;
+      ++fm; ++to;
     }
   }
   // slice updating
-  UpdateSlices_FramesDeleted(FastEl_Flat_(n * frameSize()), 1);
+  UpdateSlices_FramesDeleted(FastEl_Flat_(st_fr * frsz), n_fr);
   // notifies
   bool is_1d = (dims() <= 1);
   if (m_dm) {
     if (is_1d)
-      m_dm->beginRemoveColumns(QModelIndex(), n, n); 
+      m_dm->beginRemoveColumns(QModelIndex(), st_fr, end_fr); 
     else
-      m_dm->beginRemoveRows(QModelIndex(), FrameToRow(n), FrameToRow(n + 1) - 1); 
+      m_dm->beginRemoveRows(QModelIndex(), FrameToRow(st_fr), FrameToRow(end_fr)); 
   }
   
   // don't notify, because we are doing it (it can't boggle excisions)
-  EnforceFrames(frames_ - 1, false); // this properly resizes, and reclaims orphans
-  
+  EnforceFrames(frames_ - n_fr, false); // this properly resizes, and reclaims orphans
   if (m_dm) {
     if (is_1d)
       m_dm->endRemoveColumns(); 
     else
       m_dm->endRemoveRows();
   }
+  return true;
 }
 
-bool taMatrix::InsertFrames(int n, int where) {
-  if(!canResize()) return false;
+bool taMatrix::InsertFrames(int st_fr, int n_fr) {
+  if(TestError(!canResize(), "InsertFrames", "resizing not allowed")) return false;
   int sz = frames(); // cache
-  if(where > sz || n <= 0) return false;
-  AddFrames(n);
-  if(where==sz || where < 0) {
+  if(st_fr < 0) st_fr = sz;
+  if(TestError((st_fr>sz), "InsertFrames", "starting frame number out of range",
+	       String(st_fr))) return false;
+  if(TestError((n_fr <= 0), "InsertFrames", "number of frames <= 0")) return false;
+  AddFrames(n_fr);
+  if(st_fr==sz) {
     return true;		// done!
   }
-  int n_mv = sz - where;	// number that must be moved
-  sz += n;			// update to added size
+  int n_mv = sz - st_fr;	// number that must be moved
+  sz += n_fr;			// update to added size
   int frsz = frameSize();
-  int trg_o = (sz-1) * frsz;
-  int src_o = (sz-1-n) * frsz;
-  for(int i=0; i<n_mv*frsz; i++) {	// shift everyone over
-    El_Copy_(FastEl_Flat_(trg_o-i), FastEl_Flat_(src_o-i));
+  int trg_o = sz-1;
+  int src_o = sz-1-n_fr;
+  for(int i=0; i<n_mv; i++) {	// shift everyone over
+    int trg_o_st = (trg_o - i) * frsz;
+    int src_o_st = (src_o - i) * frsz;
+    for(int j=0;j<frsz;j++) {
+      El_Copy_(FastEl_Flat_(trg_o_st+j), FastEl_Flat_(src_o_st+j));
+    }
   }
   // blank out new guys
   const void* blank = El_GetBlank_();
-  int st = where * frsz;
-  int ed = (where+n) * frsz; 
+  int st = st_fr * frsz;
+  int ed = (st_fr+n_fr) * frsz; 
   for (int i = st; i < ed; ++i) {
     El_Copy_(FastEl_Flat_(i), blank);
   }
@@ -935,7 +938,9 @@ int taMatrix::rowCount() {
 int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4) const {
   int rval = -1;
   switch (geom.size) {
-  //case 0: Assert(false, "matrix geometry has not been initialized");
+  case 0: 
+    if(TestError(true, "SafeElIndex", "matrix geometry has not been initialized")) return -1;
+    break;
   case 1: //note: no extra dim check needed because size is dim
     rval = d0;
     break;
@@ -974,21 +979,26 @@ int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4) const {
 }
  
 int taMatrix::SafeElIndexN(const MatrixGeom& indices) const {
-  Check((geom.size >= 1), "matrix geometry has not been initialized");
-  Check((indices.size >= 1), "at least 1 index must be specified");
-  Check((indices.size <= geom.size), "too many indices for matrix");
+  if(TestError((geom.size < 1), "SafeElIndexN", "matrix geometry has not been initialized"))
+    return -1;
+  if(TestError((indices.size < 1), "SafeElIndexN", "at least 1 index must be specified"))
+    return -1;
+  if(TestError((indices.size > geom.size), "SafeElIndexN", "too many indices for matrix"))
+    return -1;
   int d0 = indices[0];
-  Check(((d0 >= 0) && (d0 < geom[0])), "matrix index out of bounds");
+  if(TestError(((d0 < 0) || (d0 >= geom[0])), "SafeElIndexN", "matrix index 0 out of bounds:"))
+    return -1;
   
   int rval = 0;
   for (int i = indices.size - 1 ; i > 0; --i) {
     int di = indices[i];
-    Assert(((di >= 0) && (di < geom[i])), "matrix index out of bounds");
+    if(TestError(((di >= 0) && (di < geom[i])), "SafeElIndexN", "matrix index n out of bounds")) return -1;
     rval += di;
     rval *= geom[i-1];
   }
   rval += d0;
-  Check((rval < size), "matrix element is out of bounds");
+  if(TestError((rval >= size), "SafeElIndexN", "matrix element is out of bounds"))
+    return -1;
   return rval;
 }
  
@@ -1003,7 +1013,7 @@ void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_) {
 void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   String err_msg;
   bool valid = GeomIsValid(dims_, geom_, &err_msg);
-  Check(valid, err_msg);
+  if(TestError(!valid, "SetGeom_", err_msg)) return;
   
   // NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step

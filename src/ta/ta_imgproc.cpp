@@ -739,16 +739,18 @@ void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
     graph_data->AddBlankRow();
 
   float_Matrix* mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-  taBase::Ref(mat);
+  if(mat) {
+    taBase::Ref(mat);
 
-  int x,y;
-  for(y=border.y; y<= retina_size.y-border.y; y+= spacing.y) {
-    for(x=border.x; x<= retina_size.x-border.x; x+=spacing.x) {
-      mat->FastEl(x,y) += val;
+    int x,y;
+    for(y=border.y; y<= retina_size.y-border.y; y+= spacing.y) {
+      for(x=border.x; x<= retina_size.x-border.x; x+=spacing.x) {
+	mat->FastEl(x,y) += val;
+      }
     }
-  }
 
-  taBase::unRefDone(mat);
+    taBase::unRefDone(mat);
+  }
 
   graph_data->StructUpdate(false);
   if(newguy)

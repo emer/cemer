@@ -910,10 +910,8 @@ int taBase::Load_cvt(taFiler*& flr) {
   int typ_id = taMisc::find_strings(*flr->istrm, key_strs);
   flr->Close();			// file is done with anyway
   flr->open_read();		// read again in any case
-  if(typ_id < 0) {
-    taMisc::Error("Old format file could not be identified; not converting -- attempting to load as is!");
-    return false;
-  }
+  if(TestWarning((typ_id < 0), "Load_cvt",
+		 "Old format file could not be identified; not converting -- attempting to load as is!")) return false;
   DumpFileCvt* cvt = taMisc::file_converters[typ_id];
   taFiler* cvt_flr = taFiler::New(flr->filetype, flr->ext);
   taRefN::Ref(cvt_flr);
@@ -1122,7 +1120,7 @@ bool taBase::AddDataClient(IDataLinkClient* dlc) {
   // refuse new links while destroying!
   if (isDestroying()) {
 #ifdef DEBUG
-    taMisc::Warning("Attempt to add a DataLinkClient to a destructing object");
+    TestWarning(true,"AddDataClient","Attempt to add a DataLinkClient to a destructing object");
 #endif
     return false;
   }
@@ -1133,7 +1131,7 @@ bool taBase::AddDataClient(IDataLinkClient* dlc) {
   }
 #ifdef DEBUG
   else {
-    taMisc::Error("Attempt to add a DataLinkClient to an obj with no DataLink!");
+    TestError(true, "AddDataClient","Attempt to add a DataLinkClient to an obj with no DataLink!");
   }
 #endif
   return false;
@@ -1169,6 +1167,15 @@ void taBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
 
 ///////////////////////////////////////////////////////////////////////////
 //	Checking the configuration of objects prior to using them
+
+
+void taBase::CheckError_msg(const char* a, const char* b, const char* c,
+			    const char* d, const char* e, const char* f,
+			    const char* g, const char* h) const {
+  String objinfo = "Config Error in: " + GetTypeDef()->name + " "
+    + GetDisplayName() + " (path: " + GetPath_Long() + ")\n";
+  taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);
+}
 
 bool taBase::CheckConfig_Gui(bool confirm_success, bool quiet) {
   taMisc::CheckConfigStart(confirm_success, quiet);
@@ -1209,7 +1216,7 @@ void taBase::ClearCheckConfig() {
 //	Copying and changing type 
 
 bool taBase::CopyFrom(TAPtr cpy_from) {
-  if(cpy_from == NULL) return false;
+  if(TestError((!cpy_from), "CopyFrom", "source is null")) return false;
   if(!cpy_from->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_from->GetTypeDef())) {
     taMisc::Error("Cannot copy from given object of type:",cpy_from->GetTypeDef()->name,
 		  "which does not inherit from:", GetTypeDef()->name,
@@ -1221,7 +1228,7 @@ bool taBase::CopyFrom(TAPtr cpy_from) {
 }
 
 bool taBase::CopyTo(TAPtr cpy_to) {
-  if(cpy_to == NULL) return false;
+  if(TestError((!cpy_to), "CopyTo", "targetis null")) return false;
   if(!cpy_to->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_to->GetTypeDef())) {
     taMisc::Error("Cannot copy to given object of type:",cpy_to->GetTypeDef()->name,
 		  "which does not inherit from:", GetTypeDef()->name,
@@ -1234,11 +1241,9 @@ bool taBase::CopyTo(TAPtr cpy_to) {
 
 bool taBase::DuplicateMe() {
   TAPtr ownr = GetOwner();
-  if(ownr == NULL) return false;
-  if(!ownr->InheritsFrom(TA_taList_impl)) {
-    taMisc::Error("Cannot duplicate me because owner is not a list/group!",GetPath());
-    return false;
-  }
+  if(TestError((ownr == NULL), "DuplicateMe", "owner is null")) return false;
+  if(TestError(!ownr->InheritsFrom(TA_taList_impl), "DuplicateMe",
+	       "Cannot duplicate me because owner is not a list/group!")) return false;
   taList_impl* own = (taList_impl*)ownr;
   own->DuplicateEl(this);
   return true;
@@ -1276,15 +1281,13 @@ static void tabase_base_closing_all_gp(TAPtr obj) {
 
 bool taBase::ChangeMyType(TypeDef* new_type) {
   TAPtr ownr = GetOwner();
-  if((new_type == NULL) || (ownr == NULL)) return false;
-  if(!ownr->InheritsFrom(TA_taList_impl)) {
-    taMisc::Error("ChangeMyType: Cannot change my type because owner is not a list/group!",GetPath());
+  if(TestError(((new_type == NULL) || (ownr == NULL)), "ChangeMyType",
+	       "new type or owner is NULL")) return false;
+  if(TestError(!ownr->InheritsFrom(TA_taList_impl),
+	       "ChangeMyType", "Cannot change my type because owner is not a list/group!"))
     return false;
-  }
-  if(new_type == GetTypeDef()) {
-    taMisc::Error("ChangeMyType: Object is already of selected type!",GetPath());
-    return false;
-  }
+  if(TestError((new_type == GetTypeDef()), "ChangeMyType",
+	       "Object is already of selected type!")) return false;
 #ifdef TA_GUI
   tabase_base_closing_all_gp(this);
 #endif
@@ -1415,10 +1418,7 @@ const Variant taBase::GetUserData(const String& name) const {
 void taBase::SetUserData(const String& name, const Variant& value) {
   UserDataItem_List* ud = GetUserDataList(true);
 #ifdef DEBUG
-  if (!ud) {
-    taMisc::Warning("Class does not support UserData:", GetTypeDef()->name);
-    return;
-  }
+  if(TestWarning(!ud, "SetUserData", "Class does not support UserData")) return;
 #else
   if (!ud) return; // not supported, shouldn't be calling
 #endif
@@ -1429,9 +1429,8 @@ void taBase::SetUserData(const String& name, const Variant& value) {
     udi->SetName(name);
     ud->Add(udi);
   }
-  if (!udi->setValueAsVariant(value)) {
-    taMisc::Warning("Attempt to set existing UserData value as Variant was not supported for", name);
-  }
+  TestWarning(!udi->setValueAsVariant(value),"SetUserData",
+	      "Attempt to set existing UserData value as Variant, was not supported for", name);
 }
 
  
@@ -1666,14 +1665,14 @@ void taBase::CallFun(const String& fun_name) {
   if(md != NULL)
     md->CallFun((void*)this);
   else
-    taMisc::Warning("*** CallFun Error: function:", fun_name, "not found on object:", this->GetPath());
+    TestWarning(true, "CallFun", "function:", fun_name, "not found on object");
 }
 
 bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
-  if(!member) return false;
+  if(TestError(!member,"SelectForEdit", "member is null")) return false;
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
-    if(!proj) return false;
+    if(TestError(!proj, "SelectForEdit", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
   return editor->SelectMember(this, member, extra_label);
@@ -1682,7 +1681,7 @@ bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& 
 bool taBase::SelectForEditNm(const String& member, SelectEdit* editor, const String& extra_label) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
-    if(!proj) return false;
+    if(TestError(!proj, "SelectForEditNm", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
   return editor->SelectMemberNm(this, member, extra_label);
@@ -1691,7 +1690,7 @@ bool taBase::SelectForEditNm(const String& member, SelectEdit* editor, const Str
 int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
-    if(!proj) return -1;
+    if(TestError(!proj, "SelectForEditSearch", "cannot find project")) return -1;
     editor = (SelectEdit*)proj->edits.New(1);
   }
   TypeDef* td = GetTypeDef();
@@ -1718,10 +1717,10 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
 }
 
 bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label) {
-  if(!function) return false;
+  if(TestError(!function, "SelectFunForEdit", "function is null")) return false;
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
-    if(!proj) return false;
+    if(TestError(!proj, "SelectFunForEdit", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
   return editor->SelectMethod(this, function, extra_label);
@@ -1730,7 +1729,7 @@ bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const Str
 bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor, const String& extra_label) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
-    if(!proj) return false;
+    if(TestError(!proj, "SelectFunForEditNm", "cannot find project")) return false;
     editor = (SelectEdit*)proj->edits.New(1);
   }
   return editor->SelectMethodNm(this, function, extra_label);
@@ -1763,11 +1762,8 @@ void taBase::Help() {
     full_file = taMisc::FindFileOnLoadPath(help_file);
     mytd = mytd->parents.SafeEl(0);	// go with the parent
   }
-  if(full_file.empty()) {
-    taMisc::Error("Sorry, no help available for type:", GetTypeDef()->name);
-    return;
-  }
-
+  if(TestError(full_file.empty(), "Help",
+	       "Sorry, no help available")) return;
   String help_cmd = taMisc::help_cmd;
   help_cmd.gsub("%s", full_file);
   system(help_cmd);
@@ -2359,9 +2355,10 @@ const KeyString taList_impl::GetListColKey(int col) const {
 
 
 bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
-  if(new_type == NULL) return false;
+  if(TestError(!new_type, "ChangeType", "new type is null")) return false;
+  if(TestError(!InRange(idx), "ChangeType", "index is out of range")) return false;
   TAPtr itm = (TAPtr)el[idx];
-  if(itm == NULL) return false;
+  if(TestError(!itm, "ChangeType", "item is null")) return false;
   TypeDef* itd = itm->GetTypeDef();
   if(!new_type->InheritsFrom(itd) && !itm->InheritsFrom(new_type)) {
     // do they have a common parent? if so, convert to that first, then back to new_type
@@ -2378,21 +2375,21 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
 	RemoveIdx(size-1);			// remove the last guy!
       }
       else {
-	taMisc::Error("Cannot change to new type:",new_type->name,
-		      "which does not inherit from:", itd->name,
-		      "(or vice-versa)",itm->GetPath());
+	TestError(true, "Changetype", "Cannot change to new type:",new_type->name,
+		  "which does not inherit from:", itd->name,
+		  "(or vice-versa)",itm->GetPath(NULL,this));
 	return false;
       }
     }
     else {
-      taMisc::Error("Cannot change to new type:",new_type->name,
-		    "which does not inherit from:", itd->name,
-		    "(or vice-versa)",itm->GetPath());
+      TestError(true, "ChangeType", "Cannot change to new type:",new_type->name,
+		"which does not inherit from:", itd->name,
+		"(or vice-versa)",itm->GetPath(NULL,this));
       return false;
     }
   }
   TAPtr rval = inherited_taBase::MakeToken(new_type);
-  if(rval == NULL) return false;
+  if(TestError(!rval, "ChangeType", "maketoken is null")) return false;
   Add(rval);		// add to end of list
   String orgnm = rval->GetName();
   rval->UnSafeCopy(itm);	// do the copy!
@@ -2411,6 +2408,7 @@ bool taList_impl::ChangeType(TAPtr itm, TypeDef* new_type) {
   int idx = FindEl(itm);
   if(idx >= 0)
     return ChangeType(idx, new_type);
+  TestWarning(true,"ChangeType","item not found");
   return false;
 }
 
@@ -2538,11 +2536,10 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	  c = taMisc::read_word(strm); // get type
 	  String typ_nm = taMisc::LexBuf;
 	  TypeDef* eltd = taMisc::types.FindName(typ_nm);
-	  if((eltd == NULL) || !(eltd->InheritsFrom(el_base))) {
-	    taMisc::Warning("*** Null or invalid type:",typ_nm,"to link into list:",
-			    GetPath(),"of types:",el_base->name);
-	    return false;
-	  }
+	  if(TestWarning((!eltd || !eltd->InheritsFrom(el_base)),
+			 "Dump_Load_Value",
+			 "Null or invalid type:",typ_nm,"to link into list of types:",
+			 el_base->name)) return false;
 	  c = taMisc::read_till_rb_or_semi(strm);
 	  String lnk_path = taMisc::LexBuf;
 	  dumpMisc::path_subs.FixPath(eltd, tabMisc::root, lnk_path);
@@ -2568,11 +2565,10 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	  taMisc::read_word(strm, true); // get type
 	  String typ_nm = taMisc::LexBuf;
 	  TypeDef* eltd = taMisc::types.FindName(typ_nm);
-	  if((eltd == NULL) || !(eltd->InheritsFrom(el_base))) {
-	    taMisc::Warning("*** Null or invalid type:",typ_nm,"to create into list:",
-			  GetPath(),"of types:",el_base->name);
-	    return false;
-	  }
+	  if(TestWarning((!eltd || !eltd->InheritsFrom(el_base)),
+			 "Dump_Load_Value",
+			 "Null or invalid type:",typ_nm,"to link into list of types:",
+			 el_base->name)) return false;
 	  el_typ = eltd;
 	  // ensure that enough items are present (don't do full enforce size)
 	  if(size < idx)
@@ -2584,13 +2580,11 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 	}
       }
     }
-    taMisc::Warning("*** Bad formatting for link in group",GetPath(),
-		    "of type:",GetTypeDef()->name);
+    TestWarning(true, "Dump_Load_Value", "Bad formatting for link");
     return false;
   }
 
-  taMisc::Warning("*** Missing '{', '=', or '[' in dump file for group:",
-		GetPath(),"of type:",GetTypeDef()->name);
+  TestWarning(true, "Dump_Load_Value", "Missing '{', '=', or '[' in dump file");
   return false;
 }
 
@@ -2804,11 +2798,9 @@ taBase* taList_impl::New(int no, TypeDef* typ) {
 //   }
   if(typ == NULL)
     typ = el_typ;
-  if(!typ->InheritsFrom(el_base)) {
-    taMisc::Warning("*** Attempt to create type:", typ->name,
-		    "in list with base type:", el_base->name);
-    return NULL;
-  }
+  if(TestWarning(!typ->InheritsFrom(el_base), "New",
+		 "Attempt to create type:", typ->name,
+		 "in list with base type:", el_base->name)) return NULL;
   taBase* rval = NULL;
   Alloc(size + no);		// pre-allocate!
   if((size == 0) || (no > 1))
@@ -3177,10 +3169,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     taiClipData::EA_DROP_LINK | taiClipData::EA_DROP_MOVE))
   {
     obj = ms->tabObject();
-    if (!obj) {
-      taMisc::Error("Could not retrieve object for operation.");
-      return taiClipData::ER_ERROR;
-    }
+    if(TestError(!obj, "ChildEditActionLD_impl_inproc",
+		 "Could not retrieve object for operation")) return taiClipData::ER_ERROR;
     // already in this list? (affects how we do drops/copies, etc.)
     obj_idx = list->FindEl(obj);
   }
@@ -3474,7 +3464,7 @@ void taDataView::SetData(taBase* ta) {
   }
   if (!ta) return;
   if (!ta->GetTypeDef()->InheritsFrom(data_base)) {
-    taMisc::Warning("*** taDataView::m_data must inherit from ", data_base->name);
+    taMisc::Warning("taDataView::m_data must inherit from ", data_base->name);
   } else {
     ta->AddDataClient(this);
     m_data = ta;
@@ -3574,10 +3564,8 @@ int taArray_base::Dump_Load_Value(istream& strm, TAPtr) {
   if(c == ';') // just a path
     return 2;  // signal that just a path was loaded..
 
-  if(c != '{') {
-    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
-    return false;
-  }
+  if(TestError((c != '{'), "Dump_Load_Value",
+	       "Missing '{' in dump file")) return false;
   c = taMisc::read_till_rb_or_semi(strm);
   int cnt = 0;
   while((c == ';') && (c != EOF)) {
@@ -3671,9 +3659,10 @@ String SArg_Array::GetValue(const String& key) const {
 void SArg_Array::SetValue(const String& key, const String& value) {
   int idx = labels.FindEl(key);
   if (idx >= 0) {
-    if (idx >= size) { // consistency error -- no item
-      taMisc::Warning("Consistency error: SArg_Array used as key/values has missing entry for key:", key);
-    } else {
+    if(TestWarning((idx >= size), "SetValue", 
+		   "Consistency error: SArg_Array used as key/values has missing entry for key:", key)) {//nop
+    }
+    else {
       FastEl(idx) = value;
     }
   } else {

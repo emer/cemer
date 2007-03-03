@@ -893,12 +893,8 @@ bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_da
   smooth_data->name = ad_nm;
 
   if(!keep_edges) {
-    for(int i=0;i<kern_half_wd;i++) {
-      smooth_data->RemoveRow(0); // get rid of first n rows
-    }
-    for(int i=0;i<kern_half_wd;i++) {
-      smooth_data->RemoveRow(-1); // get rid of last n rows
-    }
+    smooth_data->RemoveRows(0,kern_half_wd); // get rid of first n rows
+    smooth_data->RemoveRows(-1,kern_half_wd); // get rid of last n rows
   }
 
   for(int i=0;i<smooth_data->data.size;i++) {

@@ -19,7 +19,6 @@
 #ifndef TA_MATRIX_H
 #define TA_MATRIX_H
 
-#include <assert.h>
 #include "ta_stdef.h"
 
 #include "ta_variant.h"
@@ -446,12 +445,12 @@ public:
   // #CAT_Modify make sure space exists for n frames
   virtual void		EnforceFrames(int n, bool notify = true); 
   // #MENU #MENU_ON_Object #ARGC_1 #CAT_Modify set size to n frames, blanking new elements if added
-  virtual void		RemoveFrame(int n);
-  // #MENU #MENU_ON_Matrix #CAT_Modify remove the given frame, copying data backwards if needed
+  virtual bool		RemoveFrames(int st_fr, int n_frames=1);
+  // #MENU #MENU_ON_Matrix #CAT_Modify remove the given number of frames at starting index, copying data backwards if needed
+  virtual bool		InsertFrames(int st_fr, int n_frames=1);
+  // #MENU #CAT_Modify insert n new frames at given frame index, shifting existing data down to make room
   virtual bool		CopyFrame(const taMatrix& src, int frame);
   // #CAT_Copy copy the source matrix to the indicated frame; src geom must be our frame geom; optimized for like-type mats
-  virtual bool		InsertFrames(int n_frames, int fr_idx);
-  // #CAT_Modify insert n new frames at given frame index, shifting existing data down to make room
 
   virtual void		Reset();
   // #CAT_Modify remove all items

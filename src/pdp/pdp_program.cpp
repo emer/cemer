@@ -52,14 +52,8 @@ void BasicDataLoop::UpdateAfterEdit_impl() {
 
 void BasicDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if (!data_var) {
-    if(!quiet) taMisc::CheckError("Error in BasicDataLoop in program:", program()->name, "data_var = NULL");
-    rval = false;
-  }
-  if(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable)) {
-    if(!quiet) taMisc::CheckError("Error in BasicDataLoop in program:", program()->name, "data_var does not point to a data table");
-    rval = false;
-  }
+  CheckError(!data_var, quiet, rval,  "data_var = NULL");
+  CheckError(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), quiet, rval,"data_var does not point to a data table");
 }
 
 const String BasicDataLoop::GenCssPre_impl(int indent_level) {
@@ -163,14 +157,8 @@ void GroupedDataLoop::UpdateAfterEdit_impl() {
 
 void GroupedDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!data_var) {
-    if(!quiet) taMisc::CheckError("Error in GroupedDataLoop in program:", program()->name, "data_var = NULL");
-    rval = false;
-  }
-  if(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable)) {
-    if(!quiet) taMisc::CheckError("Error in GroupedDataLoop in program:", program()->name, "data_var does not point to a data table");
-    rval = false;
-  }
+  CheckError(!data_var, quiet, rval,  "data_var = NULL");
+  CheckError(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), quiet, rval,"data_var does not point to a data table");
 }
 
 void GroupedDataLoop::GetGroupList() {
@@ -270,22 +258,11 @@ void NetCounterInit::UpdateAfterEdit_impl() {
 
 void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!counter) {
-    if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "counter is NULL");
-    rval = false;
-  }
-  if(!network_var) {
-    if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "network_var = NULL");
-    rval = false;
-  }
-  if((bool)network_var && !network_var->object_val) {
-    if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "network_var object = NULL");
-    rval = false;
-  }
-  if(!local_ctr_var) {
-    if(!quiet) taMisc::CheckError("Error in NetCounterInit in program:", program()->name, "local_ctr_var = NULL");
-    rval = false;
-  }
+  CheckError(!counter, quiet, rval, "counter is NULL");
+  CheckError(!network_var, quiet, rval, "network_var = NULL");
+  CheckError(network_var && !network_var->object_val, quiet, rval,
+	     "network_var object = NULL");
+  CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
 }
 
 String NetCounterInit::GetDisplayName() const {
@@ -336,22 +313,11 @@ void NetCounterIncr::UpdateAfterEdit_impl() {
 
 void NetCounterIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!counter) {
-    if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "counter is NULL");
-    rval = false;
-  }
-  if(!network_var) {
-    if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "network_var = NULL");
-    rval = false;
-  }
-  if((bool)network_var && !network_var->object_val) {
-    if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "network_var object = NULL");
-    rval = false;
-  }
-  if(!local_ctr_var) {
-    if(!quiet) taMisc::CheckError("Error in NetCounterIncr in program:", program()->name, "local_ctr_var = NULL");
-    rval = false;
-  }
+  CheckError(!counter, quiet, rval, "counter is NULL");
+  CheckError(!network_var, quiet, rval, "network_var = NULL");
+  CheckError(network_var && !network_var->object_val, quiet, rval,
+	     "network_var object = NULL");
+  CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
 }
 
 String NetCounterIncr::GetDisplayName() const {
@@ -398,14 +364,8 @@ void NetUpdateView::UpdateAfterEdit_impl() {
 
 void NetUpdateView::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!network_var) {
-    if(!quiet) taMisc::CheckError("Error in NetUpdateView in program:", program()->name, "network_var = NULL");
-    rval = false;
-  }
-  if(!update_var) {
-    if(!quiet) taMisc::CheckError("Error in NetUpdateView in program:", program()->name, "update_var = NULL");
-    rval = false;
-  }
+  CheckError(!network_var, quiet, rval, "network_var = NULL");
+  CheckError(!update_var, quiet, rval, "update_var = NULL");
 }
 
 String NetUpdateView::GetDisplayName() const {

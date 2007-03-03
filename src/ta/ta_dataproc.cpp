@@ -636,23 +636,29 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
       else {
 	if(sda->valType() == taBase::VT_DOUBLE) {
 	  double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	  taBase::Ref(mat);
-	  dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
-	  taBase::unRefDone(mat);
+	  if(mat) {
+	    taBase::Ref(mat);
+	    dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+	    taBase::unRefDone(mat);
+	  }
 	}
 	else if(sda->valType() == taBase::VT_FLOAT) {
 	  float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	  taBase::Ref(mat);
-	  dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), -1); // -1 = last row
-	  taBase::unRefDone(mat);
+	  if(mat) {
+	    taBase::Ref(mat);
+	    dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+	    taBase::unRefDone(mat);
+	  }
 	}
 	else if(sda->valType() == taBase::VT_INT) {
 	  int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	  taBase::Ref(mat);
-	  float_tmp.SetGeom(1, mat->size);
-	  for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
-	  dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
-	  taBase::unRefDone(mat);
+	  if(mat) {
+	    taBase::Ref(mat);
+	    float_tmp.SetGeom(1, mat->size);
+	    for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
+	    dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
+	    taBase::unRefDone(mat);
+	  }
 	}
       }
     }

@@ -844,6 +844,29 @@ void ProgEl::UpdateAfterEdit_impl() {
   if(off) { SetProgFlag(OFF); off = false; } // copy from obs and reset; todo remove
 }
 
+void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
+			    const char* d, const char* e, const char* f,
+			    const char* g, const char* h) const {
+  String prognm;
+  Program* prg = GET_MY_OWNER(Program);
+  if(prg) prognm = prg->name;
+  String objinfo = "Config Error in Program " + prognm + ": " + GetTypeDef()->name
+    + " " + GetDisplayName() + " (path: " + GetPath(NULL, prg) + ")\n";
+  taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);
+}
+
+bool ProgEl::CheckEqualsError(String& condition, bool quiet, bool& rval) {
+  if(CheckError((condition.freq('=') == 1) && !(condition.contains(">=")
+						|| condition.contains("<=")
+						|| condition.contains("!=")),
+		quiet, rval,
+		"condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically")) {
+    condition.gsub("=", "==");
+    return true;
+  }
+  return false;
+}
+
 bool ProgEl::CheckConfig_impl(bool quiet) {
   if(HasProgFlag(OFF)) {
     ClearCheckConfig();
@@ -1103,10 +1126,7 @@ void UserScript::ExportToFileName(const String& fnm) {
 
 void Loop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(loop_test.empty()) {
-    if(!quiet) taMisc::CheckError("Error in Loop in program:", program()->name, "loop_test expression is empty");
-    rval = false;
-  }
+  CheckError(loop_test.empty(), quiet, rval, "loop_test expression is empty");
 }
 
 void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1176,10 +1196,7 @@ void ForLoop::Initialize() {
 
 void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(loop_iter.empty()) {
-    if(!quiet) taMisc::CheckError("Error in ForLoop in program:", program()->name, "loop_iter expression is empty");
-    rval = false;
-  }
+  CheckError(loop_iter.empty(), quiet, rval, "loop_iter expression is empty");
 }
 
 const String ForLoop::GenCssPre_impl(int indent_level) {
@@ -1208,16 +1225,8 @@ void IfContinue::Initialize() {
 
 void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if (condition.empty()) {
-    if(!quiet) taMisc::CheckError("Error in IfContinue in program:", program()->name, "condition expression is empty");
-    rval = false;
-  }
-  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<=")
-				     || condition.contains("!="))) {
-    if(!quiet) taMisc::CheckError("Error in IfContinue in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
-    condition.gsub("=", "==");
-    rval = false;
-  }
+  CheckError(condition.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(condition, quiet, rval);
 }
 
 const String IfContinue::GenCssBody_impl(int indent_level) {
@@ -1241,16 +1250,8 @@ void IfBreak::Initialize() {
 
 void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if (condition.empty()) {
-    if(!quiet) taMisc::CheckError("Error in IfBreak in program:", program()->name, "condition expression is empty");
-    rval = false;
-  }
-  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<=")
-				     || condition.contains("!="))) {
-    if(!quiet) taMisc::CheckError("Error in IfBreak in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
-    condition.gsub("=", "==");
-    rval = false;
-  }
+  CheckError(condition.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(condition, quiet, rval);
 }
 
 const String IfBreak::GenCssBody_impl(int indent_level) {
@@ -1273,16 +1274,8 @@ void IfReturn::Initialize() {
 
 void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if (condition.empty()) {
-    if(!quiet) taMisc::CheckError("Error in IfReturn in program:", program()->name, "condition expression is empty");
-    rval = false;
-  }
-  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<=")
-				     || condition.contains("!="))) {
-    if(!quiet) taMisc::CheckError("Error in IfReturn in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
-    condition.gsub("=", "==");
-    rval = false;
-  }
+  CheckError(condition.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(condition, quiet, rval);
 }
 
 const String IfReturn::GenCssBody_impl(int indent_level) {
@@ -1306,16 +1299,8 @@ void IfElse::Initialize() {
 
 void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if (condition.empty()) {
-    if(!quiet) taMisc::CheckError("Error in IfElse in program:", program()->name, "condition expression is empty");
-    rval = false;
-  }
-  if((condition.freq('=') == 1) && !(condition.contains(">=") || condition.contains("<=")
-				     || condition.contains("!="))) {
-    if(!quiet) taMisc::CheckError("Error in IfElse in program:", program()->name, "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically");
-    condition.gsub("=", "==");
-    rval = false;
-  }
+  CheckError(condition.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(condition, quiet, rval);
 }
 
 void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1380,13 +1365,7 @@ void AssignExpr::UpdateAfterEdit_impl() {
 
 void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  String prognm;
-  Program* prg = GET_MY_OWNER(Program);
-  if(prg) prognm = prg->name;
-  if(!result_var) {
-    if(!quiet) taMisc::CheckError("Error in AssignExpr in program:", prognm, "result_var is NULL");
-    rval = false;
-  }
+  CheckError(!result_var, quiet, rval, "result_var is NULL");
   expr_val.CheckConfig(quiet, rval);
 }
 
@@ -1443,17 +1422,8 @@ void MethodCall::UpdateAfterEdit_impl() {
 
 void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  String prognm;
-  Program* prg = GET_MY_OWNER(Program);
-  if(prg) prognm = prg->name;
-  if(!obj) {
-    if(!quiet) taMisc::CheckError("Error in MethodCall in program:", prognm, "obj is NULL");
-    rval = false;
-  }
-  if(!method) {
-    if(!quiet) taMisc::CheckError("Error in MethodCall in program:", prognm, "method is NULL");
-    rval = false;
-  }
+  CheckError(!obj, quiet, rval, "obj is NULL");
+  CheckError(!method, quiet, rval, "method is NULL");
 }
 
 void MethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1536,13 +1506,7 @@ void StaticMethodCall::UpdateAfterEdit_impl() {
 
 void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  String prognm;
-  Program* prg = GET_MY_OWNER(Program);
-  if(prg) prognm = prg->name;
-  if(!method) {
-    if(!quiet) taMisc::CheckError("Error in StaticMethodCall in program:", prognm, "method is NULL");
-    rval = false;
-  }
+  CheckError(!method, quiet, rval, "method is NULL");
 }
 
 void StaticMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1619,13 +1583,7 @@ void PrintVar::Initialize() {
 
 void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  String prognm;
-  Program* prg = GET_MY_OWNER(Program);
-  if(prg) prognm = prg->name;
-  if(!print_var) {
-    if(!quiet) taMisc::CheckError("Error in PrintVar in program:", prognm, "print_var is NULL");
-    rval = false;
-  }
+  CheckError(!print_var, quiet, rval, "print_var is NULL");
 }
 
 const String PrintVar::GenCssBody_impl(int indent_level) {
@@ -1741,10 +1699,7 @@ void ProgramCall::UpdateAfterEdit_impl() {
 
 void ProgramCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!target) {
-    if(!quiet) taMisc::CheckError("Error in ProgramCall in program:", program()->name, "target is NULL");
-    rval = false;
-  }
+  CheckError(!target, quiet, rval, "target is NULL");
 }
 
 void ProgramCall::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1928,10 +1883,7 @@ void Function::UpdateAfterEdit_impl() {
 
 void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(name.empty()) {
-    if(!quiet) taMisc::CheckError("Error in Function: name is empty in program:",
-				  program()->name, ".  Functions must be named");
-  }
+  CheckError(name.empty(), quiet, rval, "name is empty -- functions must be named");
 }
 
 void Function::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1991,10 +1943,7 @@ void FunctionCall::UpdateAfterEdit_impl() {
 
 void FunctionCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!fun) {
-    if(!quiet) taMisc::CheckError("Error in FunctionCall in program:", program()->name, "fun is NULL");
-    rval = false;
-  }
+  CheckError(!fun, quiet, rval, "fun is NULL");
 }
 
 void FunctionCall::CheckChildConfig_impl(bool quiet, bool& rval) {

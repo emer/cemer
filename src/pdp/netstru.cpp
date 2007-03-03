@@ -413,67 +413,43 @@ void RecvCons::SetConType(TypeDef* cn_tp) {
 void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
   inherited::CheckThisConfig_impl(quiet, rval);
 
-  if(!GetConSpec()) {
-    if(!quiet)
-      taMisc::CheckError("No con spec set for RecvCons:", GetPath());
-    rval = false;
+  if(CheckError(!GetConSpec(), quiet, rval, "No con spec set")) {
     return;			// fatal!
   }
-  if(!prjn) {
-    if(!quiet)
-      taMisc::CheckError("RecvCons:",GetPath(),"has null projection! (Connect will fix)");
-    rval = false;
+  if(CheckError(!prjn, quiet, rval, "null projection! (Connect will fix)")) {
     return; 			// fatal!
   }
-  if(GetTypeDef() != prjn->recvcons_type) {
-    if(!quiet)
-      taMisc::CheckError("RecvCons:",GetPath(),"type does not match recvcons_type for projection:",prjn->GetPath(), "type should be:", prjn->recvcons_type->name);
+  if(CheckError((GetTypeDef() != prjn->recvcons_type), quiet, rval,
+		"type does not match recvcons_type for projection -- should be:",
+		prjn->recvcons_type->name)) {
     prjn->projected = false;
-    rval = false;
   }
-  if(con_type != prjn->con_type) {
-    if(!quiet)
-      taMisc::CheckError("RecvCons:",GetPath(),"connection type does not match con_type for projection:",prjn->GetPath(), "type should be:", prjn->con_type->name);
+  if(CheckError((con_type != prjn->con_type), quiet, rval,
+		"connection type does not match prjn con_type -- should be:",
+		prjn->con_type->name)) {
     prjn->projected = false;
-    rval = false;
   }
   if(cons.size > 0) {		// connections exist
-    if((send_idx < 0) || (send_idx != prjn->send_idx)) {
-      if(!quiet)
-	taMisc::CheckError("RecvCons:", GetPath(), "has unset send_idx, do FixPrjnIndexes or Connect");
+    if(CheckError((send_idx < 0) || (send_idx != prjn->send_idx), quiet, rval,
+		  "unset send_idx, do FixPrjnIndexes or Connect")) {
       prjn->projected = false;
-      rval = false;
     }
 
     Unit* su = Un(0);
-    if(su->send.size <= send_idx) {
-      if(!quiet)
-	taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
-			 "is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network");
+    if(CheckError((su->send.size <= send_idx), quiet, rval,
+		  "send_idx is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
       prjn->projected = false;
-      rval = false;
     }
     else {
-      if((send_idx < 0) || (send_idx != prjn->send_idx)) {
-	  taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
-			   "is not set correctly.  Do FixPrjnIndexes or Connect");
-	  rval = false;
+      SendCons* sucg = su->send.SafeEl(send_idx);
+      if(CheckError(!sucg, quiet, rval,
+		    "send_idx is not set correctly (send guy is NULL). Do Actions/Remove Cons, then Build, Connect on Network")) {
+	prjn->projected = false;
       }
       else {
-	SendCons* sucg = su->send.SafeEl(send_idx);
-	if(!sucg) {
-	  taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
-			     "is not set correctly (send guy is NULL).  Do Actions/Remove Cons, then Build, Connect on Network");
-	  rval = false;
-	}
-	else {
-	  if(sucg->prjn != prjn) {
-	    if(!quiet)
-	      taMisc::CheckError("RecvCons:", GetPath(), "send_idx", String(send_idx),
-				 "doesn't have correct prjn on sending unit.  Do Actions/Remove Cons, then Build, Connect on Network");
-	    prjn->projected = false;
-	    rval = false;
-	  }
+	if(CheckError((sucg->prjn != prjn), quiet, rval,
+		      "send_idx doesn't have correct prjn on sending unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
+	  prjn->projected = false;
 	}
       }
     }
@@ -1225,54 +1201,42 @@ int SendCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
 void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
   inherited::CheckThisConfig_impl(quiet, rval);
 
-  if(!GetConSpec()) {
-    if(!quiet)
-      taMisc::CheckError("No con spec set for SendCons:", GetPath());
+  if(CheckError(!GetConSpec(), quiet, rval, "No con spec set")) {
     return;			// fatal!
   }
-  if(!prjn) {
-    if(!quiet)
-      taMisc::CheckError("SendCons:",GetPath(),"has null projection! (Connect will fix)");
-    rval = false;
+  if(CheckError(!prjn, quiet, rval, "null projection! (Connect will fix)")) {
     return; 			// fatal!
   }
-  if(GetTypeDef() != prjn->sendcons_type) {
-    if(!quiet)
-      taMisc::CheckError("SendCons:",GetPath(),"type does not match sendcons_type for projection:",prjn->GetPath(), "type should be:", prjn->sendcons_type->name);
+  if(CheckError((GetTypeDef() != prjn->sendcons_type), quiet, rval,
+		"type does not match sendcons_type for projection -- should be:",
+		prjn->recvcons_type->name)) {
     prjn->projected = false;
-    rval = false;
   }
-  if(con_type != prjn->con_type) {
-    if(!quiet)
-      taMisc::CheckError("SendCons:",GetPath(),"connection type does not match con_type for projection:",prjn->GetPath(), "type should be:", prjn->con_type->name);
+  if(CheckError((con_type != prjn->con_type), quiet, rval,
+		"connection type does not match prjn con_type -- should be:",
+		prjn->con_type->name)) {
     prjn->projected = false;
-    rval = false;
   }
   if(cons.size > 0) {		// connections exist
-    if((recv_idx < 0) || (recv_idx != prjn->recv_idx)) {
-      if(!quiet)
-	taMisc::CheckError("SendCons:", GetPath(), "has unset recv_idx, do FixPrjnIndexes or Connect");
-      rval = false;
+    if(CheckError((recv_idx < 0) || (recv_idx != prjn->recv_idx), quiet, rval,
+		  "unset recv_idx, do FixPrjnIndexes or Connect")) {
+      prjn->projected = false;
     }
-
     Unit* ru = Un(0);
-    if(ru->recv.size <= recv_idx) {
-      taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
-			 "is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network");
-      rval = false;
+    if(CheckError((ru->recv.size <= recv_idx), quiet, rval,
+		  "recv_idx is out of range on recv unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
+      prjn->projected = false;
     }
     else {
-      RecvCons* rucg = ru->recv.FastEl(recv_idx);
-      if(!rucg) {
-	taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
-			   "is not set correctly (recv guy is NULL).  Do Actions/Remove Cons, then Build, Connect on Network");
-	rval = false;
+      RecvCons* rucg = ru->recv.SafeEl(recv_idx);
+      if(CheckError(!rucg, quiet, rval,
+		    "recv_idx is not set correctly (recv guy is NULL). Do Actions/Remove Cons, then Build, Connect on Network")) {
+	prjn->projected = false;
       }
       else {
-	if(rucg->prjn != prjn) {
-	  taMisc::CheckError("SendCons:", GetPath(), "recv_idx", String(recv_idx),
-			     "doesn't have correct prjn on recv unit.  Do Actions/Remove Cons, then Build, Connect on Network");
-	  rval = false;
+	if(CheckError((rucg->prjn != prjn), quiet, rval,
+		      "recv_idx doesn't have correct prjn on recv unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
+	  prjn->projected = false;
 	}
       }
     }
@@ -1534,17 +1498,13 @@ bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return true;
 }
 
-void UnitSpec::CheckThisConfig_impl(bool quiet, bool& ok) {
-  inherited::CheckThisConfig_impl(quiet, ok);
-  if (bias_con_type && bias_spec.spec &&
-    !bias_con_type->InheritsFrom(bias_spec.spec->min_obj_type)) 
-  {
-    ok = false;
-    if (!quiet)
-      taMisc::CheckError("Bias con type of:", bias_con_type->name,
-			 "is not of the correct type for the bias con spec,"
-			 "which needs at least a:", bias_spec.spec->min_obj_type->name);
-  }
+void UnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError((bias_con_type && bias_spec.spec &&
+	      !bias_con_type->InheritsFrom(bias_spec.spec->min_obj_type)), quiet, rval,
+	     "Bias con type of:", bias_con_type->name,
+	     "is not of the correct type for the bias con spec,"
+	     "which needs at least a:", bias_spec.spec->min_obj_type->name);
 }
 
 void UnitSpec::UpdateAfterEdit_impl() {
@@ -1828,10 +1788,7 @@ void Unit::CheckChildConfig_impl(bool quiet, bool& rval) {
 void Unit::CheckThisConfig_impl(bool quiet, bool& rval) { 
   inherited::CheckThisConfig_impl(quiet, rval);
 
-  if(!GetUnitSpec()) {
-    if(!quiet)
-      taMisc::CheckError("No unit spec set for unit:", GetPath());
-    rval = false;
+  if(CheckError(!GetUnitSpec(), quiet, rval, "No unit spec set for unit")) {
     return;			// fatal
   }
   if(!GetUnitSpec()->CheckConfig_Unit(this, quiet))
@@ -1839,24 +1796,21 @@ void Unit::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 bool Unit::CheckBuild(bool quiet) {
-  if(!GetUnitSpec()) {
-    if(!quiet)
-      taMisc::CheckError("Unit CheckBuild: no unit spec set for unit:", GetPath());
+  bool rval;
+  if(CheckError(!GetUnitSpec(), quiet, rval,
+		"Unit CheckBuild: no unit spec set for unit")) {
     return false;		// fatal
   }
-  if(!GetUnitSpec()->bias_con_type) {
-    if(bias.cons.size) {
-      if(!quiet)
-	taMisc::CheckError("Unit CheckBuild: bias weight exists but no type for unit:", GetPath());
-      return false;
-    }
+  if(CheckError((!GetUnitSpec()->bias_con_type && bias.cons.size), quiet, rval,
+		"Unit CheckBuild: bias weight exists but no type")) {
+    return false;
   }
   else {
-    if(!bias.cons.size || (bias.con_type != GetUnitSpec()->bias_con_type)) {
-      if(!quiet)
-	taMisc::CheckError("Unit CheckBuild: bias weight null or not same type for unit:",
-			   GetPath()," type should be:", GetUnitSpec()->bias_con_type->name);
-       return false;
+    if(CheckError((!bias.cons.size || (bias.con_type != GetUnitSpec()->bias_con_type)),
+		  quiet, rval, 
+		  "Unit CheckBuild: bias weight null or not same type -- should be:",
+		  GetUnitSpec()->bias_con_type->name)) {
+      return false;
     }
   }
   return true;
@@ -2348,19 +2302,15 @@ void ProjectionSpec::PreConnect(Projection* prjn) {
 }
 
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
-  if(!prjn->projected) {
-    if(!quiet)
-      taMisc::CheckError("Projection CheckConnect: ", prjn->name, "is not connected!");
+  bool rval;
+  if(CheckError(!prjn->projected, quiet, rval, "not connected!")) {
     return false;
   }
-  if(!prjn->con_spec.spec) {
-    if(!quiet)
-      taMisc::CheckError("Projection CheckConnect: ", prjn->name, "has null con_spec");
+  if(CheckError(!prjn->con_spec.spec, quiet, rval, "has null con_spec")) {
     return false;
   }
-  if(!prjn->con_spec->CheckObjectType(prjn)) {
-    if(!quiet)
-      taMisc::CheckError("Projection CheckConnect: ", prjn->name, "does not have correct spec/object type");
+  if(CheckError(!prjn->con_spec->CheckObjectType(prjn), quiet, rval,
+		"does not have correct spec/object type")) {
     return false;
   }
   return true;
@@ -2685,17 +2635,13 @@ void Projection::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(!con_spec.CheckSpec()) {
     rval = false;
   }
-  if(recvcons_type == &TA_RecvCons) {
-    if(!quiet)
-      taMisc::CheckError("Projection:",GetPath(),"recvcons_type is base type; should be special one for specific algorithm");
+  if(CheckError((recvcons_type == &TA_RecvCons), quiet, rval,
+		"recvcons_type is base type; should be special one for specific algorithm")) {
     projected = false;
-    rval = false;
   }
-  if(sendcons_type == &TA_SendCons) {
-    if(!quiet)
-      taMisc::CheckError("Projection:",GetPath(),"sendcons_type is base type; should be special one for specific algorithm");
+  if(CheckError((sendcons_type == &TA_SendCons), quiet, rval,
+		"sendcons_type is base type; should be special one for specific algorithm")) {
     projected = false;
-    rval = false;
   }
 }
 
@@ -2881,10 +2827,9 @@ bool Unit_Group::Build() {
 }
 
 bool Unit_Group::CheckBuild(bool quiet) {
-  if(!units_lesioned && (size != geom.n)) {
-    if(!quiet)
-      taMisc::CheckError("Unit_Group CheckBuild: number of units != target in group",
-			 GetPath(),"in layer:", own_lay->name);
+  bool rval;
+  if(CheckError((!units_lesioned && (size != geom.n)), quiet, rval,
+		"number of units != target in group")) {
     return false;
   }
   return true;
@@ -3489,6 +3434,7 @@ void Layer::LayoutUnitGroups() {
 }
 
 bool Layer::CheckBuild(bool quiet) {
+  bool rval;
   if(units.gp.size > 0) {
     for(int g=0; g<units.gp.size; g++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
@@ -3497,9 +3443,8 @@ bool Layer::CheckBuild(bool quiet) {
     }
   }
   else {
-    if(!units.units_lesioned && (units.size != un_geom.n)) {
-      if(!quiet)
-	taMisc::CheckError("Layer CheckBuild: number of units != target in layer", name);
+    if(CheckError((!units.units_lesioned && (units.size != un_geom.n)), quiet, rval,
+		  "number of units != target")) {
       return false;
     }
   }
@@ -3507,10 +3452,8 @@ bool Layer::CheckBuild(bool quiet) {
   Unit* u;
   taLeafItr ui;
   FOR_ITR_EL(Unit, u, units., ui) {
-    if(u->GetTypeDef() != units.el_typ) {
-      if(!quiet)
-	taMisc::CheckError("Layer CheckBuild: unit type not correct in layer", name,
-			   "syould be:", units.el_typ->name);
+    if(CheckError((u->GetTypeDef() != units.el_typ), quiet, rval,
+		  "unit type not correct -- should be:", units.el_typ->name)) {
       return false;
     }
     if(!u->CheckBuild(quiet))

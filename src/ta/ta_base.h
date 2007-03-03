@@ -595,6 +595,23 @@ protected:	// Impl
   //	Checking the configuration of objects prior to using them
 public:
 
+  inline bool 	TestError(bool test, const char* fun_name,
+			  const char* a, const char* b=0, const char* c=0,
+			  const char* d=0, const char* e=0, const char* f=0,
+			  const char* g=0, const char* h=0) const {
+    if(!test) return false;
+    return taMisc::TestError(this, test, fun_name, a, b, c, d, e, f, g, h);
+  }
+  // #CAT_ObjectMgmt if test, then report error, including object name, type, and path information; returns test -- use e.g. if(TestError((condition), "fun", "msg")) return false;
+  inline bool 	TestWarning(bool test, const char* fun_name, 
+			    const char* a, const char* b=0, const char* c=0,
+			    const char* d=0, const char* e=0, const char* f=0,
+			    const char* g=0, const char* h=0) const {
+    if(!test) return false;
+    return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
+  }
+  // #CAT_ObjectMgmt if test, then report warning, including object name, type, and path information; returns test -- use e.g. if(TestWarning((condition), "fun", "msg")) return false;
+
 #ifndef __MAKETA__
   void			CheckConfig(bool quiet, bool& rval)
     {if (!CheckConfig_impl(quiet)) rval = false;}
@@ -608,6 +625,22 @@ public:
   void			ClearCheckConfig(); // #IGNORE this can be called when a CheckConfig_impl routine blindly assert ok, ex. for an object that has an "off" or "disable" state; this routine updates the gui if the state has now changed
 
 protected: // impl
+  virtual void 	CheckError_msg(const char* a, const char* b=0, const char* c=0,
+			       const char* d=0, const char* e=0, const char* f=0,
+			       const char* g=0, const char* h=0) const;
+  // generate error message
+
+  inline bool 	CheckError(bool test, bool quiet, bool& rval,
+			   const char* a, const char* b=0, const char* c=0,
+			   const char* d=0, const char* e=0, const char* f=0,
+			   const char* g=0, const char* h=0) const {
+    if(!test) return false;
+    rval = false;
+    if(!quiet) CheckError_msg(a,b,c,d,e,f,g,h);
+    return test;
+  }
+  // for CheckConfig routines: if test, then report config error, including object name, type, and path information; returns test & sets rval to false if test is true -- use e.g. CheckError((condition), rval, "msg"));
+
   virtual bool		CheckConfig_impl(bool quiet);
   // #IGNORE usually not overridden, see Check[This/Child]_impl
   virtual void		CheckThisConfig_impl(bool quiet, bool& ok) {}
