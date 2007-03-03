@@ -27,7 +27,30 @@ extern "C" {
   extern int rl_done;		// readline done reading
 }
 
-cssQandDConsole*	cssQandDConsole::m_sys_instance = NULL;
+//////////////////////////
+//   ConThread		//
+//////////////////////////
+
+class ConThread: public QThread { // #IGNORE used to get input so input doesn't block events
+INHERITED(QThread)
+public:
+  QString		prompt; // we use a QString because it is threadsafe
+  cssQandDConsole*	con;
+  
+  void			stop(); // (main) safe way to tell it to stop
+  
+  ConThread(cssQandDConsole* parent);
+
+protected:
+  override void 	run(); // OS-dependent
+};
+
+
+//////////////////////////
+//   cssQandDConsole	//
+//////////////////////////
+
+cssQandDConsole* cssQandDConsole::m_sys_instance = NULL;
 
 cssQandDConsole* cssQandDConsole::Get_SysConsole(QObject* parent) {
  if (!m_sys_instance) {
@@ -39,84 +62,66 @@ cssQandDConsole* cssQandDConsole::Get_SysConsole(QObject* parent) {
 cssQandDConsole::cssQandDConsole(QObject* parent)
 :inherited(parent)
 {
+  thread = NULL;
 }
 
 cssQandDConsole::~cssQandDConsole() {
+  if (thread) {
+    thread->con = NULL;
+    thread->stop();
+    thread = NULL;
+  }
   if (this == m_sys_instance)
     m_sys_instance = NULL;
 }
 
-#ifdef TA_OS_UNIX
-
-class cssUnixConsole;
-
-class ConThread: public QThread {
-INHERITED(QThread)
-public:
-  String		prompt;
-  cssUnixConsole*	con;
-  
-  void			stop(); // (main) safe way to tell it to stop
-  
-  ConThread(cssUnixConsole* parent);
-
-protected:
-  override void 	run();
-
-};
-
-class cssUnixConsole: public cssQandDConsole {
-INHERITED(cssQandDConsole)
-friend class ConThread;
-public:
-  ConThread*		thread;
-  
-  override const String	prompt() {
-    if (thread) return thread->prompt; else return _nilString;
-  }
-  override void		setPrompt(const String& value) {
-    if (thread) {
-      if (thread->prompt == value) return;
-      //TODO: try tot erase last prompt if any
-      thread->prompt = value;
-      cout << value;
-    }
-  }
-  
-  override void		Start() {
-     if (!thread) return;
-     //TODO: maybe need to check not already started???
-     thread->start();
-  } 
-
-
-  void			emit_NewLine(String ln, bool eof)
-    {emit NewLine(ln, eof);}
-
-  cssUnixConsole(QObject* parent = NULL);
-  ~cssUnixConsole();
-};
-
-cssQandDConsole* cssQandDConsole::New_SysConsole(QObject* parent) {
- cssUnixConsole* rval = new cssUnixConsole(parent);
- return rval;
+void cssQandDConsole::emit_NewLine(String ln, bool eof) {
+//**called from thread
+    emit NewLine(ln, eof);
 }
 
-ConThread::ConThread(cssUnixConsole* parent)
+const QString cssQandDConsole::prompt() {
+  if (thread) 
+    return thread->prompt;
+  else 
+    return QString();
+}
+
+void cssQandDConsole::setPrompt(const QString& value) {
+  if (thread) {
+    if (thread->prompt == value) return; // test is threadsafe/threadcorrect
+    //TODO: try to erase last prompt if any
+    thread->prompt = value; // threadsafe
+    cout << value.latin1();
+  }
+}
+
+void cssQandDConsole::Start() {
+    if (!thread) return;
+    //TODO: maybe need to check not already started???
+    thread->start();
+} 
+
+
+//////////////////////////
+//   ConThread		//
+//////////////////////////
+
+ConThread::ConThread(cssQandDConsole* parent)
 :inherited(parent)
 {
   con = parent;
 }
 
 void ConThread::run() {
-  String lprompt; // local, so it is threadsafe
+  QString lprompt; // local, so latin1() is threadsafe
   String curln;
   bool eof;
   char* curln_;
   while (con) { // con null'ed can indicate stop needed
     lprompt = prompt;
     //NOTE: according to rl spec, we must call free() on the string returned
-    curln_ = rl_readline((char*)lprompt.chars());
+    curln_ = rl_readline(const_cast<char*>(lprompt.latin1())); // rl doesn't change it, so safe
     eof = (!curln_);
     if (eof) {
       curln = _nilString;
@@ -135,30 +140,17 @@ void ConThread::stop() { // (main)
   terminate(); 
 }
 
-cssUnixConsole::cssUnixConsole(QObject* parent)
-:inherited(parent)
-{
-  thread = new ConThread(this);
-}
 
-cssUnixConsole::~cssUnixConsole() {
-  if (thread) {
-    thread->con = NULL;
-    thread->stop();
-    thread = NULL;
-  }
-}
-//end  TA_OS_UNIX
-#elif defined(TA_OS_WIN)
+
+#ifdef TA_OS_UNIX
+
+
 cssQandDConsole* cssQandDConsole::New_SysConsole(QObject* parent) {
-//TEMP
-return NULL;
-//TODO:
-
-// cssUnixConsole* rval = new cssUnixConsole(parent);
- //return rval;
+ cssUnixConsole* rval = new cssQandDConsole(parent);
+ return rval;
 }
 
 
-#endif // TA_OS_WIN
+#endif  TA_OS_UNIX
+
 

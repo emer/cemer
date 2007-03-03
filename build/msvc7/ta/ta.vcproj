@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib libjpeg.lib libgsl.dll.a libgslcblas.dll.a"
+				AdditionalDependencies="Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib libjpeg.lib"
 				ShowProgress="2"
 				OutputFile="$(OutDir)/ta_debug.dll"
 				LinkIncremental="2"
@@ -225,6 +225,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\taiqtso\irenderarea.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\taiqtso\iscrollarea.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\taiqtso\ispinbox.cpp">
 				</File>
 				<File
@@ -277,6 +280,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\taiqtso\irenderarea.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\taiqtso\iscrollarea.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\taiqtso\ispinbox.h">
 				</File>
 				<File
@@ -324,6 +330,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\irenderarea.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\taiqtso\iscrollarea.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\taiqtso\ispinbox.moc.cpp">
@@ -383,6 +392,11 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\css\readline_win.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\css\xmemory.cpp">

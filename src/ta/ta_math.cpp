@@ -1545,8 +1545,6 @@ bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, in
   return mat_mds_owrite(&a_copy, xy_coords, x_axis_c, y_axis_c);
 }
 
-#else // HAVE_LIBGSL
-
 bool taMath_double::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const double_Matrix* ta_mat) {
   return false;
 }
@@ -1554,6 +1552,8 @@ bool taMath_double::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const double_Matrix* 
 bool taMath_double::vec_get_gsl_fm_ta(gsl_vector* gsl_vec, const double_Matrix* ta_vec) {
   return false;
 }
+
+#else // !HAVE_LIBGSL
 
 bool taMath_double::mat_add(double_Matrix* a, const double_Matrix* b) {
   return false;
@@ -2540,8 +2540,6 @@ bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x
   return mat_mds_owrite((float_Matrix*)a, xy_coords, x_axis_c, y_axis_c);
 }
 
-#else // HAVE_LIBGSL
-
 bool taMath_float::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const float_Matrix* ta_mat) {
   return false;
 }
@@ -2549,6 +2547,8 @@ bool taMath_float::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const float_Matrix* ta
 bool taMath_float::vec_get_gsl_fm_ta(gsl_vector* gsl_vec, const float_Matrix* ta_vec) {
   return false;
 }
+
+#else // !HAVE_LIBGSL
 
 bool taMath_float::mat_add(float_Matrix* a, const float_Matrix* b) {
   return false;

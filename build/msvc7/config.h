@@ -59,10 +59,10 @@
 //no win #define HAVE_INTTYPES_H 1
 
 /* Have the gnu scientific library */
-#define HAVE_LIBGSL
+//#define HAVE_LIBGSL
 
 /* Define to 1 if you have the 'gslcblas' library */
-#define HAVE_LIBGSLCBLAS 1
+//#define HAVE_LIBGSLCBLAS 1
 
 /* Define if you have a function readline library */
 //no win #define HAVE_LIBREADLINE 1

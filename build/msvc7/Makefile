@@ -29,6 +29,7 @@ TAIQTSO_MOCS: \
   ilineedit.moc.cpp \
   igeometry.moc.cpp \
   irenderarea.moc.cpp \
+  iscrollarea.moc.cpp \
   ispinbox.moc.cpp \
   itreewidget.moc.cpp 
 
@@ -66,6 +67,9 @@ interceptor.moc.cpp: $(PDP4DIR)\src\taiqtso\interceptor.h
 	$(MOC) %s -o $@
 
 irenderarea.moc.cpp: $(PDP4DIR)\src\taiqtso\irenderarea.h
+	$(MOC) %s -o $@
+
+iscrollarea.moc.cpp: $(PDP4DIR)\src\taiqtso\iscrollarea.h
 	$(MOC) %s -o $@
 
 ispinbox.moc.cpp: $(PDP4DIR)\src\taiqtso\ispinbox.h

@@ -442,7 +442,7 @@ void taRootBase::AddRecentFile(const String& value) {
   bool save = AddRecentFile_impl(value);
   QFileInfo fi(value);
   String path = fi.path();
-  if (AddRecentPath_impl(path));
+  if (AddRecentPath_impl(path))
     save = true;
   if (save)
     Save();

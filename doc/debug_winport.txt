@@ -1,5 +1,8 @@
 maketa bug
 
+Symptom
+
+
 
 template bug
 

@@ -24,18 +24,22 @@
 
 #include <QObject>
 
+class ConThread; // #IGNORE in .cpp
+
+
 class CSS_API cssQandDConsole: public QObject {
   // quick-and-dirty console
 INHERITED(QObject)
   Q_OBJECT
+friend class ConThread;
 public:
   static cssQandDConsole*	Get_SysConsole(QObject* parent = NULL);
     // get the system console instance, instantiating if necessary
 
-  virtual const String	prompt() = 0;
-  virtual void		setPrompt(const String& value) = 0;
+  virtual const QString	prompt(); // note: QStrings used for threadsafety
+  virtual void		setPrompt(const QString& value);
   
-  virtual void		Start() {} // call when prompt set, and ready to receive input
+  virtual void		Start(); // call when prompt set, and ready to receive input
   
   cssQandDConsole(QObject* parent = NULL);
   ~cssQandDConsole();
@@ -45,9 +49,14 @@ signals:
   // YOU MUST CONNECT EXPLICITLY VIA Qt::QueuedConnection 
   
 protected:
+  ConThread*	  thread;
   static cssQandDConsole*	m_sys_instance;
   
   static cssQandDConsole*	New_SysConsole(QObject* parent = NULL);
+
+protected: // thread
+  void				emit_NewLine(String ln, bool eof);
+
 };
 
 #endif
