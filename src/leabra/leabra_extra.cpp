@@ -256,6 +256,7 @@ void ScalarValSpec::Initialize() {
   clamp_pat = false;
   min_sum_act = 0.2f;
   val_mult_lrn = false;
+  clip_val = true;
   min = val = sb_ev = 0.0f;
   range = incr = 1.0f;
   sb_lt = 0;
@@ -751,7 +752,9 @@ void ScalarValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float resca
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
   LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
   u->SetExtFlag(Unit::EXT);
-  float val = val_range.Clip(u->ext);		// first unit has the value to clamp
+  float val = u->ext;
+  if(scalar.clip_val)
+    val = val_range.Clip(val);		// first unit has the value to clamp
   scalar.InitVal(val, ugp->size, unit_range.min, unit_range.range);
   int i;
   for(i=1;i<ugp->size;i++) {

@@ -513,8 +513,10 @@ static cssEl* cssElCFun_return_stub(int na, cssEl* arg[]) {
   if(na > 0) {
     cssProg* cp = arg[0]->prog;
     cssScriptFun* sf = cp->top->GetCurrentFun();
-    if(sf == NULL)
+    if(sf == NULL) {
       cssMisc::Error(cp, "Could not find current function scope for return value!");
+      return &cssMisc::Void;
+    }
     else {
       cssEl* rval = sf->argv[0].El();
       if(rval == &cssMisc::Void)

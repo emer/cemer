@@ -537,6 +537,7 @@ public:
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
   float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
   bool		val_mult_lrn;	// #DEF_false for learning, effectively multiply the learning rate by the minus-plus phase difference in overall represented value (i.e., if overall value is the same, no learning takes place)
+  bool		clip_val;	// #DEF_true ensure that value remains within specified range
   float		min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
   float		range;		// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values
   float		val;		// #READ_ONLY #NO_SAVE #NO_INHERIT current val being represented (implementational, computed in InitVal())

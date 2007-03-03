@@ -1017,8 +1017,7 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
 	break;
     }
     act_argc = ((int)stack->size - stack_start) - 1;
-    int i;
-    for(i=act_argc; i>0; i--)
+    for(int i=act_argc; i>0; i--)
       args[i] = stack->Pop();
 
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
@@ -1031,22 +1030,25 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
 	break;
     }
     act_argc = ((int)stack->size - stack_start) - 1;
-    int i;
-    for(i=act_argc; i>0; i--)
+
+    int diff = argc - act_argc;
+    if(diff > arg_defs.size) {	// more difference than we have defaults..
+      cssMisc::Error(prog, "Incomplete argument list for:", (const char*)name,
+		     "should have at least:", String((int)(argc-arg_defs.size)), "got:",
+		     String((int)act_argc));
+      act_argc = -1;		// err msg indication
+      return -1;
+    }
+
+    for(int i=act_argc; i>0; i--)
       args[i] = stack->Pop();
 
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
 
-    int diff = argc - act_argc;
-    if(diff > arg_defs.size) {	// more difference than we have defaults..
-      cssMisc::Error(prog, "Incomplete argument list for:", (const char*)name,
-		     "should have:", String((int)(argc-arg_defs.size)), "got:",
-		     String((int)act_argc));
-    }
     if(diff != 0) {
       int df_st = arg_defs.size - diff;
-      for(i=df_st; i < arg_defs.size; i++)	// fill in using default args..
+      for(int i=df_st; i < arg_defs.size; i++)	// fill in using default args..
 	args[def_start + i] = arg_defs.FastEl(i);
     }
     act_argc = argc;		// we always get the right number...
@@ -1129,6 +1131,9 @@ cssEl::RunStat cssElCFun::Do(cssProg* prg) {
   cssEl* args[cssElFun::ArgMax + 1];
   int act_argc;
   BindArgs(args, act_argc);
+  if(act_argc < 0)
+    return cssEl::ExecError;
+
   cssEl* tmp = (*funp)(act_argc, args);
   prog = prg;                   // restore if recursive
   if((tmp) && (tmp != &cssMisc::Void)) {
@@ -1182,11 +1187,11 @@ int cssElInCFun::BindArgs(cssEl** args, int& act_argc) {
     cssMisc::Error(prog, "Incomplete argument list for:", (const char*)name,
 		   "should have:", String((int)argc), "got:",
 		   String((int)stack->size));
-    return act_argc;
+    act_argc = -1;
+    return -1;
   }
   act_argc = argc;
-  int i;
-  for(i=act_argc; i>0; i--)
+  for(int i=act_argc; i>0; i--)
     args[i] = stack->Pop();
 
   return act_argc;
@@ -1235,10 +1240,8 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   cssEl* args[cssElFun::ArgMax + 1];
   int act_argc;
   BindArgs(args, act_argc);
-  // for debugging:
-//   for(int i=0;i<=act_argc;i++) {
-//     cerr << "arg: " << i << ": " << args[i]->PrintStr() << endl;
-//   }
+  if(act_argc < 0)
+    return cssEl::ExecError;
   cssEl* tmp = (*funp)(ths, act_argc, args);
   prog = prg;                   // restore if recursive
   tmp->prog = prog;
@@ -1470,6 +1473,8 @@ cssEl::RunStat cssScriptFun::Do(cssProg* prg) {
   cssEl** args = fun->Args();	// 
   int& act_argc = fun->ActArgc();
   BindArgs(args, act_argc);	// get arguments from previous space
+  if(act_argc < 0)
+    return cssEl::ExecError;
 
   fun->SetTop(prg->top);	// propagate top to fun
   prg->top->AddProg(fun);	// push new state (not Shove, needed to add frame before)
@@ -1662,6 +1667,8 @@ cssEl::RunStat cssMbrScriptFun::Do(cssProg* prg) {
   cssEl** args = fun->Args();	// 
   int& act_argc = fun->ActArgc();
   BindArgs(args, act_argc);   // get arguments from previous space
+  if(act_argc < 0)
+    return cssEl::ExecError;
 
   fun->SetTop(prg->top);	// propagate top to fun
   prg->top->AddProg(fun);	// push new state (not Shove, needed to add frame before)
