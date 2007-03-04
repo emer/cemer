@@ -4084,7 +4084,7 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
 }
 
 void Layer::DMem_SyncNRecvCons() {
-  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNRecvCons"
+  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNRecvCons",
 	       "attempt to DMem sync at layer level, should only be at network level!")) {
     return;
   }
@@ -4092,7 +4092,7 @@ void Layer::DMem_SyncNRecvCons() {
 }
 
 void Layer::DMem_SyncNet() {
-  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNet"
+  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNet",
 	       "attempt to DMem sync layer level, should only be at network level!")) {
     return;
   }
@@ -4100,7 +4100,7 @@ void Layer::DMem_SyncNet() {
 }
 
 void Layer::DMem_SyncAct() {
-  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncAct"
+  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncAct",
 	       "attempt to DMem sync layer level, should only be at network level!")) {
     return;
   }
@@ -4759,7 +4759,7 @@ void Network::DMem_PruneNonLocalCons() {
       int g;
       for (g = 0; g < u->recv.size; g++) {
 	recv_gp = (RecvCons *)u->recv.FastEl(g);
-	if(recv_gp->spec->DMem_AlwaysLocal()) continue;
+	if(recv_gp->GetConSpec()->DMem_AlwaysLocal()) continue;
 	for (int sui = recv_gp->cons.size-1; sui >= 0; sui--) {
 	  u->DisConnectFrom(recv_gp->Un(sui), NULL);
 	}
@@ -4894,7 +4894,7 @@ void Network::DMem_SymmetrizeWts() {
       int gi;
       for(gi=0;gi<un->recv.size;gi++) {
 	RecvCons* cg = un->recv[gi];
-	if(!cg->spec->wt_limits.sym) continue;
+	if(!cg->GetConSpec()->wt_limits.sym) continue;
 
 	// check for presence of reciprocal connections in the first place..
 	Layer* fmlay = cg->prjn->from;

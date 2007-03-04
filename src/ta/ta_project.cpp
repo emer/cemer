@@ -946,8 +946,18 @@ bool taRootBase::Startup_ConsoleType() {
   
   // note: is_batch could be extended to include "headless" cmd line invocation
   //   it would also include contexts such as piping or other stdin/out redirects
-  bool is_batch =((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc > 0));
-  
+  bool is_batch = !cssMisc::init_interactive;
+#ifdef DMEM_COMPILE
+  if(taMisc::use_gui) {
+    if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc > 0)) // non-first procs batch
+      is_batch = true;
+  }
+  else {
+    if(taMisc::dmem_nprocs > 1)	// nogui dmem is *ALWAYS* batch for all procs
+      is_batch = true;
+  }
+#endif  
+
   if (is_batch) {
     console_type = taMisc::CT_NONE;
     console_options &= ~taMisc::CO_USE_PAGING; // damn well better not use paging!!!

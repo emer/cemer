@@ -184,7 +184,7 @@ public:
   Project_Group		projects; 	// #NO_SAVE The projects
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
-  taPluginBase_List	plugin_deps; // #SHOW_TREE EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
+  taPluginBase_List	plugin_deps; // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
   String_Array		recent_files; // #NO_SHOW recently loaded files
@@ -254,7 +254,7 @@ public:
 #ifdef DMEM_COMPILE
   static bool 	Run_GuiDMem();
   // #IGNORE run the gui under dmem: requires special code.. 
-protected:
+  //protected:
   static int 	DMem_SubEventLoop();
   // #IGNORE for dmem sub-process (dmem_proc > 0), event-processing loop -- note, called from event loop
   static void	DMem_WaitProc(bool send_stop_to_subs = false);
