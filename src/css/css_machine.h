@@ -1627,18 +1627,10 @@ class CSS_API cssCmdShell : public QObject {
   friend class cssProgSpace;
   Q_OBJECT
 public:
-  enum ConsoleType { // type of console to use
-    CT_NoGui_Rl,		// -nogui readline based console
-    CT_QandD_Console		// quick-and-dirty console (compatible with qt, but uses stdin/out
-#ifdef HAVE_QT_CONSOLE
-    ,CT_Qt_Console,		// Qt-based console NOTE: only usable if HAVE_QT_CONSOLE defined
-#endif
-  };
-
   String 	name;
   String	prompt;
   String	act_prompt;		// the actual prompt
-  ConsoleType	console_type;		// what kind of console are we running?
+  taMisc::ConsoleType	console_type;		// what kind of console are we running?
 
   istream*	fin;			// input file (current)
   ostream*	fout;			// output file
@@ -1665,10 +1657,8 @@ public:
   void		PopAllSrcProg(); // pop off all of the src progs
 
   void		StartupShellInit(istream& fhi = cin, ostream& fho = cout,
-    ConsoleType cons_typ = CT_NoGui_Rl);
+    taMisc::ConsoleType cons_typ = taMisc::CT_NONE);
   // do all the initialization stuff for a shell, but don't actually start a specific shell
-  void		Shell_NoGui_Rl_Run();
-  // run a nogui readline-based shell
 
   bool		RunStartupScript();
   // run any startup scripts that might have been specified by startup args
@@ -1681,19 +1671,22 @@ public:
   void		Exit();		// exit from the shell
 
 public slots:
-  void		AcceptNewLine(const String& ln, bool eof); 
-  // called when a new line of text becomes available -- all outer shells/consoles call this interface
   void		AcceptNewLine_Qt(QString ln, bool eof); 
   // called when a new line of text becomes available -- all outer shells/consoles call this interface (qt version)
+  void		Shell_NoConsole_Run();
+  // this should be invoked by an event or timer after event loop has started, for no-console execution
+
 protected:
   int		stack_alloc_size;	// allocated size of src_prog stack
 
-  void		Shell_NoGui_Rl(const char* prmpt);
+  void		AcceptNewLine(const String& ln, bool eof); 
+  // impl for slot
+  void		Shell_No_Console(const char* prmpt);
   // configure a nogui readline-based shell
-  void		Shell_QandD_Console(const char* prmpt);
+  void		Shell_OS_Console(const char* prmpt);
   // configure a quick-and-dirty shell 
 #ifdef HAVE_QT_CONSOLE
-  void		Shell_Qt_Console(const char* prmpt);
+  void		Shell_Gui_Console(const char* prmpt);
   // configure qt gui-based shell that links with QcssConsole
 #endif
 };

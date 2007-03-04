@@ -4836,7 +4836,7 @@ bool cssProgSpace::DelWatchIdx(int idx) {
 //   CmdShell
 ///////////////////////////////////
 
-static cssQandDConsole* qand_console = NULL;
+static cssConsole* qand_console = NULL;
 #ifdef HAVE_QT_CONSOLE
 static QcssConsole* qcss_console = NULL;
 #endif
@@ -4844,8 +4844,9 @@ static QcssConsole* qcss_console = NULL;
 void cssCmdShell::Constr() {
   fin = &cin;  fout = &cout;  ferr = &cerr;
   pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
+  pgout.no_page = true; // very dangerous, except maybe with Qt guy, and dangerous even then!
 
-  console_type = CT_NoGui_Rl;
+  console_type = taMisc::CT_NONE;
 
   external_exit = false;
 //   sc_shell_this = NULL;
@@ -4943,14 +4944,13 @@ void cssCmdShell::AcceptNewLine(const String& ln, bool eof) {
 }
 
 void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho,
-  ConsoleType cons_typ)
+  taMisc::ConsoleType cons_typ)
 {
   console_type = cons_typ;
 
   fin = &fhi;
   fout = &fho;
   pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
-//   cssCmdShell* old_top = cssMisc::SetCurTop(this);
 
 #ifndef __GNUG__
   fout->sync_with_stdio();
@@ -4970,17 +4970,18 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho,
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
 #endif
   switch (console_type) {
-  case CT_NoGui_Rl:
-    cssMisc::TopShell->Shell_NoGui_Rl(cssMisc::prompt);
-    break;
-  case CT_QandD_Console:		// quick-and-dirty console (compatible with qt, but uses stdin/out
-    cssMisc::TopShell->Shell_QandD_Console(cssMisc::prompt);
+  case taMisc::CT_OS_SHELL:		// quick-and-dirty console (compatible with qt, but uses stdin/out
+    cssMisc::TopShell->Shell_OS_Console(cssMisc::prompt);
     break;
 #ifdef HAVE_QT_CONSOLE
-  case CT_Qt_Console:
-    cssMisc::TopShell->Shell_Qt_Console(cssMisc::prompt);
+  case taMisc::CT_GUI:
+    cssMisc::TopShell->Shell_Gui_Console(cssMisc::prompt);
     break;
 #endif
+  case taMisc::CT_NONE:
+    cssMisc::TopShell->Shell_No_Console(cssMisc::prompt);
+    break;
+  // all cases handled
   }
 }
 
@@ -5029,6 +5030,7 @@ extern "C" {
   extern char* rl_readline(char*);
   extern void add_history(char*);
   extern int rl_done;		// readline done reading
+  extern int (*rl_event_hook)(void);	// rl callback routine -- only used in NoConsole
 }
 
 void cssCmdShell::UpdatePrompt(bool disp_prompt) {
@@ -5047,23 +5049,26 @@ void cssCmdShell::UpdatePrompt(bool disp_prompt) {
   else
     act_prompt = prompt + pt + " ";
   switch (console_type) {
-  case CT_NoGui_Rl: break; // TODO: nothing???
-  case CT_QandD_Console:
+  case taMisc::CT_NONE: break; // TODO: nothing???
+  case taMisc::CT_OS_SHELL:
     qand_console->setPrompt(act_prompt);
     break;
 #ifdef HAVE_QT_CONSOLE
-  case CT_Qt_Console:
+  case taMisc::CT_GUI:
     qcss_console->setPrompt(act_prompt, disp_prompt);	// do not display new prompt
     break;
 #endif
   }
 }
 
-void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
-  if(!qand_console)
-    qand_console = cssQandDConsole::Get_SysConsole();
+void cssCmdShell::Shell_OS_Console(const char* prmpt) {
+//WARNING: PAGING IS EVIL SINCE IT CONFLICTS WITH THE THREADED INPUT HANDLERS
+   pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING);
 
-  console_type = CT_QandD_Console;
+  if(!qand_console)
+    qand_console = cssConsole::Get_SysConsole();
+
+  console_type = taMisc::CT_OS_SHELL;
   SetPrompt(prmpt);
   external_exit = false;
 
@@ -5075,8 +5080,9 @@ void cssCmdShell::Shell_QandD_Console(const char* prmpt) {
 	  this, SLOT(AcceptNewLine_Qt(QString, bool)), Qt::QueuedConnection);
   qand_console->Start();
 }
+
 #ifdef HAVE_QT_CONSOLE
-void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
+void cssCmdShell::Shell_Gui_Console(const char* prmpt) {
   qcss_console = QcssConsole::getInstance();
 
   if(!qcss_console) {
@@ -5084,7 +5090,7 @@ void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
     return;
   }
 
-  console_type = CT_Qt_Console;
+  console_type = taMisc::CT_GUI;
   qcss_console->setPrompt(prmpt);
   external_exit = false;
   pgout.no_page = true;		// console has its own pager!
@@ -5093,37 +5099,39 @@ void cssCmdShell::Shell_Qt_Console(const char* prmpt) {
   qcss_console->flushOutput();	// get it flushed to start up
 }
 #endif
-void cssCmdShell::Shell_NoGui_Rl(const char* prmpt) {
+void cssCmdShell::Shell_No_Console(const char* prmpt) {
   rl_done = false;
-  pgout.no_page = !taMisc::console_pager_nogui;
-  console_type = CT_NoGui_Rl;
+  pgout.no_page = true; // default
+  console_type = taMisc::CT_NONE;
   SetPrompt(prmpt);
   external_exit = false;
 
   cssMisc::TopShell->PushSrcProg(cssMisc::Top);
 }
 
-void cssCmdShell::Shell_NoGui_Rl_Run() {
+void cssCmdShell::Shell_NoConsole_Run() {
+//TODO: rejig this for batch or piped contexts:
+// end = EOF, no readline, non-blocking input
+  rl_event_hook = taiMiscCore::rl_callback;
   while(!external_exit) {
     char* curln = rl_readline((char*)act_prompt);
-    if(curln == (char*)0) {
-      char* surep;
-      if(!(surep = rl_readline("Quit, Are You Sure (y/n)? ")) || (*surep == 'y') ||
-	 (*surep == 'Y'))
-	break;
+    // NULL result is defined as EOF
+    if (curln == (char*)0) {
+      Exit();
+    } else {
+      QString str = curln;
+      free(curln); // spec has rl allocating this 
+      curln = NULL;
+      if(str.length() > 0)
+	add_history((char*)(const char*)str);
+      AcceptNewLine(str, false);
     }
-    QString str = curln;
-    free(curln);
-    curln = NULL;
-    if(str.length() > 0)
-      add_history((char*)(const char*)str);
-    AcceptNewLine(str, false);
   }
 }
 
 void cssCmdShell::FlushConsole() {
 #ifdef HAVE_QT_CONSOLE
-  if(console_type == CT_Qt_Console) {
+  if(console_type == taMisc::CT_GUI) {
     if(qcss_console)
       qcss_console->flushOutput(true); // wait for pager!
   }
@@ -5132,11 +5140,19 @@ void cssCmdShell::FlushConsole() {
 }
 
 void cssCmdShell::Exit() {
+//TODO: first get working with uncancellable, then see where we can allow cancel
   external_exit = true;
+  switch (console_type) {
+  case taMisc::CT_OS_SHELL:
+    break;
 #ifdef HAVE_QT_CONSOLE
-  if(console_type == CT_Qt_Console) {
+  case taMisc::CT_GUI:
     if(qcss_console)
       qcss_console->exit();
-  }
+    break;
 #endif
+  case taMisc::CT_NONE:
+    break;
+  }
+  taiMiscCore::Quit();
 }

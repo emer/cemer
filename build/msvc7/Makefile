@@ -179,7 +179,8 @@ TA_MOCS: \
   ta_qttype.moc.cpp \
   ta_qtviewer.moc.cpp \
   ta_qtgroup.moc.cpp \
-  ta_type.moc.cpp
+  ta_type.moc.cpp \
+  ta_project.moc.cpp
 
 colorbar_qt.moc.cpp: $(PDP4DIR)\src\ta\colorbar_qt.h
 	$(MOC) %s -o $@
@@ -203,6 +204,9 @@ ta_plugin_p.moc.cpp: $(PDP4DIR)\src\ta\ta_plugin_p.h
 	$(MOC) %s -o $@
 
 ta_program_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_program_qt.h
+	$(MOC) %s -o $@
+
+ta_project.moc.cpp: $(PDP4DIR)\src\ta\ta_project.h
 	$(MOC) %s -o $@
 
 ta_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_qt.h

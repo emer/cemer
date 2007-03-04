@@ -43,8 +43,13 @@
 #include "ta_def.h"
 #include "ta_list.h"
 #include "ta_variant.h"
-#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE) && !defined(__MAKETA__)
-# include "mpi.h"
+#if !defined(NO_TA_BASE) && !defined(__MAKETA__)
+# if defined(TA_GUI)
+#   include <QPointer> // guarded same pointers
+# endif
+# if defined(DMEM_COMPILE)
+#   include "mpi.h"
+# endif
 #endif
 
 #ifdef TA_USE_QT
@@ -322,7 +327,8 @@ public:
     CE_QUIT		= QEvent::User + 1 // sent from RootWin::CloseEvent to avoid issues
   };
 #endif
-  
+  static int		rl_callback(); // a readline-compatible callback -- calls event loop
+
   static taiMiscCore*	New(QObject* parent = NULL);
     // either call this or call taiMisc::New 
   
@@ -503,10 +509,28 @@ public:
     QF_FORCE_QUIT	// too late to turn back now...
   };
   
-  enum ConsoleStyle { // the type of console window and how to show it; ignored in non-gui mode (either uses OS shell, or no console, depending on startup mode)
-    CS_OS_SHELL, // use the operating system's shell (with readline library on unix)
-    CS_GUI_DOCKABLE, // uses a dock window, initially docked in the main app window
-    CS_GUI_TRACKING // uses a separate window that "sticks" to the bottom of your project window
+  enum ConsoleType { // the type of console window and how to show it; ignored in non-gui mode (either uses OS shell, or no console, depending on startup mode)
+    CT_OS_SHELL = 0, // #LABEL_OS_Shell use the operating system's shell or console (with readline library on unix)
+#ifdef HAVE_QT_CONSOLE // qt console not supported on windows, needs to be ported to Win32
+    CT_GUI = 1, // #LABEL_Gui uses a gui-based console, either docked in the main app window, or floating (see console_options)
+#else
+    CT_GUI = 1, // #NO_SHOW uses a gui-based console, either docked in the main app window, or floating (see console_options)
+#endif
+    CT_NONE = 4 // #NO_SHOW no console, usually only used internally, such as for batch or dmem operation
+  };
+  
+  enum ConsoleOptions { // #BITS options that can be used with the console
+    CO_0 = 0, // #NO_BIT #IGNORE dummy item, and to clear
+#ifndef TA_OS_WIN // pager causes crashes and deadlocks in windows
+    CO_USE_PAGING	= 0x0001, // #NO_SHOW use paging, like the "more" command -- NOT RECOMMENDED
+#else
+    CO_USE_PAGING	= 0x0001, // #LABEL_Use_Paging use paging, like the "more" command -- NOT RECOMMENDED
+#endif
+#ifdef HAVE_QT_CONSOLE
+    CO_GUI_TRACKING	= 0x0002 // #LABEL_Gui_Tracking in GUI mode, the console floats below the active project
+#else
+    CO_GUI_TRACKING	= 0x0002 // #NO_SHOW in GUI mode, the console floats below the active project
+#endif
   };
   
   enum ColorHints { // #BITS what types of color hinting to use in the application
@@ -538,12 +562,16 @@ public:
 
   static String		font_name;	// #SAVE #CAT_GUI default font name to use
   static int		font_size;	// #SAVE #CAT_GUI default font size to use
-  static ConsoleStyle	console_style; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
-  static bool		console_pager_gui;	// #SAVE #CAT_GUI use a pager mechanism in the gui console to present only a page of new text output at a time, as in the unix 'more' command
-  static bool		console_pager_nogui;	// #SAVE #CAT_GUI use a pager mechanism in the nogui console to present only a page of new text output at a time, as in the unix 'more' command
+  static ConsoleType	console_type; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
+#ifdef TA_OS_WIN // none on windows (yet), so we omit for clarity
+  static ConsoleOptions	console_options; // #IGNORE #CAT_GUI options for the console **REQUIRES APP RESTART
+#else
+  static ConsoleOptions	console_options; // #SAVE #CAT_GUI options for the console **REQUIRES APP RESTART
+#endif
   static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
-  static int		display_width;	// #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console
+  static int		display_width;	// #SAVE #HIDDEN #MIN_40 #MAX_132 #CAT_GUI width of console display (in chars) -- set automatically by gui console
+  
   static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu
   static int		search_depth;   // #SAVE #CAT_GUI #EXPERT depth recursive find will search for a path object
   static int		color_scale_size; // #SAVE #CAT_GUI #EXPERT number of colors to put in a color scale
@@ -661,8 +689,8 @@ public:
   static bool		check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_ok; 	// #IGNORE cumulative AND of all nested oks
 
-#ifdef TA_GUI
-  static QMainWindow*	console_win;	// #IGNORE the console window 
+#if (defined(TA_GUI) && !(defined(__MAKETA__) || defined(NO_TA_BASE)))
+  static QPointer<QMainWindow>	console_win;	// #IGNORE the console window 
 #endif
 
   static void	(*WaitProc)();

@@ -34,6 +34,7 @@
 #endif
 
 class taProject;
+class taRootBase;
 
 class TA_API taWizard : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Wizard wizard for automating construction of simulation objects
@@ -155,6 +156,22 @@ public:
 };
 
 
+class TA_API taRootBaseAdapter: public QObject {
+  // ##IGNORE QObject for dispatching startup routines in event loop
+INHERITED(QObject)
+friend class taRootBase;
+  Q_OBJECT
+public:
+  taRootBaseAdapter(): QObject(NULL) {}
+  ~taRootBaseAdapter() {}
+  
+protected slots:
+#ifdef DMEM_COMPILE
+  void 	DMem_SubEventLoop();
+#endif
+};
+
+
 class TA_API taRootBase: public taFBase {
   // ##CAT_Project base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taFBase)
@@ -198,28 +215,30 @@ public:
 			     TypeDef* root_typ = &TA_taRootBase);
   // #IGNORE this is the main function call to startup the software -- creates a root object of given type, processes args, sets global state vars, starts up css, and opens a browser window on the root object if in gui mode
 
-  static bool	Startup_InitApp(int& argc, const char* argv[]);
-  // #IGNORE init application stuff (qapp etc)
+  static bool	Startup_InitDMem(int& argc, const char* argv[]);
+  // #IGNORE init distributed memory (MPI) stuff
   static bool	Startup_InitTA(ta_void_fun ta_init_fun);
   // #IGNORE basic type-access system intializaton
   static bool	Startup_InitArgs(int& argc, const char* argv[]);
   // #IGNORE process args into more usable form
-  static bool	Startup_InitDMem(int& argc, const char* argv[]);
-  // #IGNORE init distributed memory (MPI) stuff
   static bool	Startup_ProcessGuiArg();
   // #IGNORE process the -gui/-nogui arg
+  static bool	Startup_InitApp(int& argc, const char* argv[]);
+  // #IGNORE init application stuff (qapp etc)
+  static bool	Startup_InitTypes();
+  // #IGNORE final init of typedefs
   static bool	Startup_EnumeratePlugins();
   // #IGNORE enumeration of plugins 
   static bool	Startup_LoadPlugins();
   // #IGNORE final initialize of plugins 
-  static bool	Startup_InitTypes();
-  // #IGNORE final init of typedefs
   static bool	Startup_InitCss();
   // #IGNORE initialize css script system
   static bool	Startup_InitGui();
   // #IGNORE initialize gui system
   static bool	Startup_InitViewColors();
   // #IGNORE initialize default view colors
+  static bool	Startup_ConsoleType();
+  // #IGNORE arbitrate type of console, based on user options, and app context
   static bool	Startup_MakeMainWin();
   // #IGNORE open the main window (browser of root object) (returns success)
   static bool	Startup_Console();
@@ -235,10 +254,12 @@ public:
 #ifdef DMEM_COMPILE
   static bool 	Run_GuiDMem();
   // #IGNORE run the gui under dmem: requires special code.. 
+protected:
   static int 	DMem_SubEventLoop();
-  // #IGNORE for dmem sub-process (dmem_proc > 0), event-processing loop
+  // #IGNORE for dmem sub-process (dmem_proc > 0), event-processing loop -- note, called from event loop
   static void	DMem_WaitProc(bool send_stop_to_subs = false);
   // #IGNORE waiting process for dmem_proc = 0, if send_stop_to_subs, sends a stop command to sub procs so they bail out of sub loop
+public:
 #endif
   	
   bool		CheckAddPluginDep(TypeDef* td); // add a plugin dependency, if this type is a  type defined in a plugin; true if it was
@@ -249,6 +270,9 @@ public:
   void	CutLinks();
   TA_BASEFUNS(taRootBase)
 protected:
+  static taMisc::ConsoleType console_type; // #IGNORE 
+  static int console_options; //#IGNORE taMisc::ConsoleOptions 
+  
   bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates

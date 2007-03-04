@@ -35,11 +35,11 @@ class ConThread: public QThread { // #IGNORE used to get input so input doesn't 
 INHERITED(QThread)
 public:
   QString		prompt; // we use a QString because it is threadsafe
-  cssQandDConsole*	con;
+  cssConsole*	con;
   
   void			stop(); // (main) safe way to tell it to stop
   
-  ConThread(cssQandDConsole* parent);
+  ConThread(cssConsole* parent);
 
 protected:
   override void 	run(); // OS-dependent
@@ -47,25 +47,25 @@ protected:
 
 
 //////////////////////////
-//   cssQandDConsole	//
+//   cssConsole	//
 //////////////////////////
 
-cssQandDConsole* cssQandDConsole::m_sys_instance = NULL;
+cssConsole* cssConsole::m_sys_instance = NULL;
 
-cssQandDConsole* cssQandDConsole::Get_SysConsole(QObject* parent) {
+cssConsole* cssConsole::Get_SysConsole(QObject* parent) {
  if (!m_sys_instance) {
    m_sys_instance = New_SysConsole(parent);
  }
  return m_sys_instance;
 }
 
-cssQandDConsole::cssQandDConsole(QObject* parent)
+cssConsole::cssConsole(QObject* parent)
 :inherited(parent)
 {
-  thread = NULL;
+  thread = new ConThread(this);
 }
 
-cssQandDConsole::~cssQandDConsole() {
+cssConsole::~cssConsole() {
   if (thread) {
     thread->con = NULL;
     thread->stop();
@@ -75,19 +75,19 @@ cssQandDConsole::~cssQandDConsole() {
     m_sys_instance = NULL;
 }
 
-void cssQandDConsole::emit_NewLine(String ln, bool eof) {
+void cssConsole::emit_NewLine(String ln, bool eof) {
 //**called from thread
     emit NewLine(ln, eof);
 }
 
-const QString cssQandDConsole::prompt() {
+const QString cssConsole::prompt() {
   if (thread) 
     return thread->prompt;
   else 
     return QString();
 }
 
-void cssQandDConsole::setPrompt(const QString& value) {
+void cssConsole::setPrompt(const QString& value) {
   if (thread) {
     if (thread->prompt == value) return; // test is threadsafe/threadcorrect
     //TODO: try to erase last prompt if any
@@ -96,7 +96,7 @@ void cssQandDConsole::setPrompt(const QString& value) {
   }
 }
 
-void cssQandDConsole::Start() {
+void cssConsole::Start() {
     if (!thread) return;
     //TODO: maybe need to check not already started???
     thread->start();
@@ -107,7 +107,7 @@ void cssQandDConsole::Start() {
 //   ConThread		//
 //////////////////////////
 
-ConThread::ConThread(cssQandDConsole* parent)
+ConThread::ConThread(cssConsole* parent)
 :inherited(parent)
 {
   con = parent;
@@ -145,8 +145,8 @@ void ConThread::stop() { // (main)
 #ifdef TA_OS_UNIX
 
 
-cssQandDConsole* cssQandDConsole::New_SysConsole(QObject* parent) {
- cssQandDConsole* rval = new cssQandDConsole(parent);
+cssConsole* cssConsole::New_SysConsole(QObject* parent) {
+ cssConsole* rval = new cssConsole(parent);
  return rval;
 }
 

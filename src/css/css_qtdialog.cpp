@@ -430,11 +430,11 @@ void cssiArgDialog::Constr_Data_Labels() {
 
     data_el(0).Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
-    AddData(j, rep);
+    int row = AddData(-1, rep);
     
     cssEl* md = obj->members->FastEl(i);
     GetName(j, md, name, desc);
-    AddName(j - 1, name, desc, mb_dat);
+    AddName(row, name, desc, mb_dat);
   }
 }
 

@@ -1243,8 +1243,6 @@ private:
   void  Destroy()       { } 
 };
 
-typedef taNBase* TANPtr; // this comment needed for maketa parser
-
 
 class TA_API taFBase: public taNBase {
   // #NO_TOKENS #NO_UPDATE_AFTER named/owned base class of taBase, with filename

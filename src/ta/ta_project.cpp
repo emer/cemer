@@ -24,8 +24,6 @@
 #include "css_ta.h"
 #include "css_console.h"
 
-#include <QCoreApplication>
-#include <QFileInfo>
 
 #ifdef TA_GUI
 # include "ta_qt.h"
@@ -40,6 +38,11 @@
 # include <QApplication>
 # include <QWidgetList>
 #endif
+
+#include <QCoreApplication>
+#include <QFileInfo>
+#include <QPointer>
+#include <QTimer>
 
 #include <time.h>
 #include <locale.h>
@@ -365,10 +368,25 @@ int Project_Group::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) 
 
 
 //////////////////////////
+//   taRootBaseAdapter	//
+//////////////////////////
+
+#ifdef DMEM_COMPILE
+void taRootBaseAdapter::DMem_SubEventLoop() {
+  taRootBase::DMem_SubEventLoop();
+}
+#endif // DMEM_COMPILE
+
+//////////////////////////
 //   taRoot		//
 //////////////////////////
 
 TypeDef* taRootBase::root_type;
+taMisc::ConsoleType taRootBase::console_type;
+int taRootBase::console_options;
+
+// note: not static class to avoid need qpointer in header
+QPointer<taRootBaseAdapter> root_adapter;
 
 taRootBase* taRootBase::instance() {
   if (!tabMisc::root) {
@@ -389,6 +407,8 @@ void taRootBase::Initialize() {
   version = taMisc::version;
   projects.SetName("projects");
   plugin_deps.SetBaseType(&TA_taPluginDep);
+  console_type = taMisc::console_type;
+  console_options = taMisc::console_options;
 }
 
 void taRootBase::Destroy() {
@@ -682,6 +702,9 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   --taFiler::no_save_last_fname;
   taMisc::Init_Defaults_PostLoadConfig();
 
+  console_type = taMisc::console_type;
+  console_options = taMisc::console_options;
+
   taMisc::default_scope = &TA_taProject; // this is general default
   
   // load prefs values for us
@@ -917,6 +940,36 @@ bool taRootBase::Startup_LoadPlugins() {
   return true;
 }
 
+bool taRootBase::Startup_ConsoleType() {
+  // arbitrate console options
+  // first, make sure requested console_type is a legal value for this platform
+  
+  // note: is_batch could be extended to include "headless" cmd line invocation
+  //   it would also include contexts such as piping or other stdin/out redirects
+  bool is_batch =((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc > 0));
+  
+  if (is_batch) {
+    console_type = taMisc::CT_NONE;
+    console_options &= ~taMisc::CO_USE_PAGING; // damn well better not use paging!!!
+  } else if (taMisc::use_gui) {
+#ifdef HAVE_QT_CONSOLE
+    if (!((console_type == taMisc::CT_OS_SHELL) ||
+         (console_type == taMisc::CT_GUI) ||
+         (console_type == taMisc::CT_NONE))
+    ) console_type = taMisc::CT_GUI;
+#else
+    if (!((console_type == taMisc::CT_OS_SHELL) ||
+         (console_type == taMisc::CT_NONE))
+    ) console_type = taMisc::CT_OS_SHELL;
+#endif
+  } else { // not a gui context, can only use a non-gui console
+    if (!((console_type == taMisc::CT_OS_SHELL) ||
+         (console_type == taMisc::CT_NONE))
+    ) console_type = taMisc::CT_OS_SHELL;
+  }  
+  return true; // always works
+}
+
 bool taRootBase::Startup_MakeMainWin() {
   if(!taMisc::gui_active) return true;
 #ifdef TA_GUI
@@ -925,7 +978,7 @@ bool taRootBase::Startup_MakeMainWin() {
   MainWindowViewer* db = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
   // try to size fairly large to avoid scrollbars -- values obtained empirically
   iSize s(1024, 480); // no console
-  if (taMisc::console_style == taMisc::CS_GUI_DOCKABLE) {
+  if ((console_type == taMisc::CT_GUI) && (!(console_options & taMisc::CO_GUI_TRACKING))) {
     s.h = 720; // console
     ConsoleDockViewer* cdv = new ConsoleDockViewer;
     db->docks.Add(cdv);
@@ -943,31 +996,22 @@ bool taRootBase::Startup_MakeMainWin() {
 }
 
 bool taRootBase::Startup_Console() {
-  if (taMisc::use_gui) {
-//TODO: we need event loop in gui AND non-gui, so check about Shell_NoGui_Rl
-   
-#if (!defined(QANDD_CONSOLE) && defined(HAVE_QT_CONSOLE))
-    if ((taMisc::console_style == taMisc::CS_GUI_DOCKABLE) ||
-     (taMisc::console_style == taMisc::CS_GUI_TRACKING))
-    {  //note: nothing else to do here for gui_dockable
-      if (taMisc::console_style == taMisc::CS_GUI_TRACKING) {
-        QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
-        QMainWindow* cwin = new QMainWindow();
-        cwin->setCentralWidget((QWidget*)con);
-        cwin->resize((int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
-        cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));
-        cwin->show();
-        taMisc::console_win = cwin;
-      }
-      cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_Qt_Console);
-      return true;
-    } else
-#endif
-    // otherwise, (esp Windows) we'll use the older type shell
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_QandD_Console);
-  } else {
-    cssMisc::TopShell->StartupShellInit(cin, cout, cssCmdShell::CT_NoGui_Rl);
+#ifdef HAVE_QT_CONSOLE
+  if (console_type == taMisc::CT_GUI) {  
+    //note: nothing else to do here for gui_dockable
+    if (console_options & taMisc::CO_GUI_TRACKING) {
+      QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+      QMainWindow* cwin = new QMainWindow();
+      cwin->setCentralWidget((QWidget*)con);
+      cwin->resize((int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
+      cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));
+      cwin->show();
+      taMisc::console_win = cwin; // note: uses a guarded QPointer
+    }
   }
+#endif
+  cssMisc::TopShell->StartupShellInit(cin, cout, console_type);
+
   return true;
 }
 
@@ -999,6 +1043,8 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
 #ifdef GPROF
   moncontrol(0);		// turn off at start
 #endif
+  // just create the adapter obj, whether needed or not
+  root_adapter = new taRootBaseAdapter;
   cssMisc::prompt = taMisc::app_name; // the same
   if(!Startup_InitDMem(argc, argv)) return false;
   if(!Startup_InitTA(ta_init_fun)) return false;
@@ -1010,6 +1056,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_LoadPlugins()) return false; // loads those enabled, and does type integration
   if(!Startup_InitCss()) return false;
   if(!Startup_InitGui()) return false; // note: does the taiType bidding
+  if(!Startup_ConsoleType()) return false;
   if(!Startup_MakeMainWin()) return false;
   if(!Startup_Console()) return false;
   if(!Startup_ProcessArgs()) return false;
@@ -1023,23 +1070,23 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
 
 bool taRootBase::Startup_Run() {
 #ifdef DMEM_COMPILE
+//TODO: make Run_GuiDMem dispatched after event loop, and fall through
   if((taMisc::dmem_nprocs > 1) && taMisc::gui_active) {
-    Run_GuiDMem();
+    Run_GuiDMem(); // does its own eventloop dispatch
   }
-  else {
+  else
 #endif
-//TODO: THIS IS WRONG!!!!!!!!!!!!!!!!!!!!!!
-// We ABSOLUTELY must enter the event loop in EVERY configuration
-  if(taMisc::gui_active) {
-    taiM->Exec();		// gui version is always interactive
+  {
+  // note: all paths must enter event loop, except if finished now
+  if (taMisc::gui_active || cssMisc::init_interactive) {
+    // for nogui interactive sessions, asynchronously dispatch the runtime
+    // it will execute once we enter event loop
+    if (console_type == taMisc::CT_NONE) {
+      QTimer::singleShot(0, cssMisc::TopShell, SLOT(Shell_NoConsole_Run()));
+    }
+    taiMC_->Exec();
   }
-  else {
-    if(cssMisc::init_interactive)
-      cssMisc::TopShell->Shell_NoGui_Rl_Run();
   }
-#ifdef DMEM_COMPILE
-  }
-#endif
   return Cleanup_Main();
 }
 
@@ -1066,12 +1113,13 @@ bool taRootBase::Run_GuiDMem() {
     // need to have some initial string in the stream, otherwise it goes EOF and is bad!
     *(DMemShare::cmdstream) << "cerr << \"proc no: \" << taMisc::dmem_proc << endl;" << endl;
     taMisc::StartRecording((ostream*)(DMemShare::cmdstream));
-    qApp->exec();  // normal run..
+    taiMC_->Exec();  // normal run..
     DMemShare::CloseCmdStream();
     cerr << "proc: 0 quitting!" << endl;
   } else { // slave dmems
     cssMisc::init_interactive = false; // don't stay in startup shell
-    DMem_SubEventLoop();	// this is the "shell" for a dmem sub guy
+    QTimer::singleShot(0, root_adapter, SLOT(DMem_SubEventLoop()));
+    taiMC_->Exec();  // event loop
     cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;
   }
   return true;
@@ -1181,6 +1229,7 @@ int taRootBase::DMem_SubEventLoop() {
 	if(cmd.contains("Quit()")) {
 	  if(taMisc::dmem_debug)
 	    cerr << "proc " << taMisc::dmem_proc << " got quit command, quitting." << endl;
+	  taiMiscCore::Quit(); // unconditional
 	  return 1;
 	}
       }

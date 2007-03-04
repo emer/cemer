@@ -73,17 +73,27 @@ DWORD read_error = 0;
 
 // Windows console processes automatically have a console (duh!)
 // Windows GUI processes don't have one, so we have to create it
-class cssWinConsole: public cssQandDConsole {
-INHERITED(cssQandDConsole)
+class cssWinConsole: public cssConsole {
+INHERITED(cssConsole)
 public:
+
+  static BOOL WINAPI Console_HandlerRoutine(
+    DWORD dwCtrlType); // handler routines for console events
+
+  override void		setTitle(const QString& value);
+
+  cssWinConsole(QObject* parent);
+  ~cssWinConsole();
+  
+protected:
   static bool con_created;
   static bool con_inited;
+  static bool con_closing; // we set this when deleting, so we can detect user closing and recreate console
 
+  static void initConsole(); // master routine, called to create, and if user closes
   static void createConsole();
   static void getConHandles();
   static void connectStreams();
-  
-  cssWinConsole(QObject* parent);
 };
 
 #ifdef TA_GUI
@@ -92,8 +102,9 @@ bool cssWinConsole::con_created = false;
 bool cssWinConsole::con_created = true;
 #endif
 bool cssWinConsole::con_inited = false;
+bool cssWinConsole::con_closing; 
 
-cssQandDConsole* cssQandDConsole::New_SysConsole(QObject* parent) {
+cssConsole* cssConsole::New_SysConsole(QObject* parent) {
  cssWinConsole* rval = new cssWinConsole(parent);
  return rval;
 }
@@ -134,18 +145,55 @@ void cssWinConsole::connectStreams() {
   cin.rdbuf(fb);
 }
 
-cssWinConsole::cssWinConsole(QObject* parent) 
-:inherited(parent)
+BOOL cssWinConsole::Console_HandlerRoutine(
+    DWORD dwCtrlType)
 {
+  // note: return TRUE if you handle the event
+  switch (dwCtrlType) {
+  //note: treat Ctrl-C and Ctrl-Break the same
+  case CTRL_C_EVENT: 
+  case CTRL_BREAK_EVENT: 
+    cssMisc::TopShell->Exit();
+    return true;
+  case CTRL_CLOSE_EVENT: 
+    con_inited = false; con_created = false;
+    initConsole(); // maybe we have to do this in a timer call
+    return TRUE;
+  case CTRL_LOGOFF_EVENT: break;
+  case CTRL_SHUTDOWN_EVENT: break;
+  default: break;
+  }
+  return FALSE;
+}
+
+void cssWinConsole::initConsole() {
   if (con_inited) return;
   if (!con_created) createConsole();
   //TODO: maybe not needed in true console process -- if so, modalize
   // initialize the handles
   getConHandles();
   connectStreams();
+  BOOL ok = SetConsoleCtrlHandler(
+    Console_HandlerRoutine, TRUE); // add handler
+
   con_inited = true;
 }
 
+cssWinConsole::cssWinConsole(QObject* parent) 
+:inherited(parent)
+{
+  initConsole();
+}
+
+cssWinConsole::~cssWinConsole() {
+  SetConsoleCtrlHandler(
+    Console_HandlerRoutine, FALSE); // remove handler
+  con_closing = true;
+}
+
+void cssWinConsole::setTitle(const QString& value) {
+  SetConsoleTitle(value);
+}
 
 
 extern "C" {
@@ -153,9 +201,9 @@ int rl_done = 0;		// readline done reading
 int rl_pending_input = 0;
 int rl_keyboard_input_timeout_ms = 100; // default of .1s
 char* rl_line_buffer = rl_line_buffer_;
+int (*rl_event_hook)(void) = NULL;	// this points to the Qt event loop pump if running TA_GUI
 int (*rl_attempted_completion_function)(void) = NULL;
 
-//NOTE: not currently used
 int rl_set_keyboard_input_timeout (int u) { // in microseconds
   if (u < 2000) u = 2000; // sanity
   rl_keyboard_input_timeout_ms = u / 1000;
@@ -166,10 +214,42 @@ char** completion_matches (char* text, rl_generator_fun* gen) {
   return NULL;
 }
 
+int init_readline() {
+  int rval = 0;
+  // get hstdin for case where not using the console
+  if (hstdin == INVALID_HANDLE_VALUE)
+    hstdin = GetStdHandle(STD_INPUT_HANDLE);
+
+  // does nothing at this point
+  readline_init = true;
+  return rval;
+}
+
+
+VOID CALLBACK readline_completion(
+  DWORD dwErrorCode,
+  DWORD dwNumberOfBytesTransfered,
+  LPOVERLAPPED lpOverlapped
+) {
+  if (dwErrorCode == 0) {
+    read_status = SuccessResult;
+    num_read = dwNumberOfBytesTransfered;
+  } else {
+    read_error = GetLastError(); //note: could be eof
+    read_status = ErrorResult;
+  }
+}
+
+OVERLAPPED overlapped; // be global so can't go out of scope
+
 char* readline(char* prompt) {
   DWORD hresult; // for return vals from api funcs
   DWORD last_error = 0;
 
+
+  if (!readline_init) {
+    init_readline();
+  }
 
   // prompt
   int lprompt = (prompt) ? strlen(prompt) : 0;
@@ -178,15 +258,38 @@ char* readline(char* prompt) {
   read_error = 0;
   read_status = Waiting;
   num_read = 0;
-  ResumeThread(hread_thread); // let'r rip
   
-  // note: blocks until eol or eof
-  hresult = ReadFile(hstdin, rl_line_buffer_, BUF_SIZE - 1, &num_read, NULL); 
-  if (hresult == 0) {
-    read_error = GetLastError(); //note: could be eof
-    read_status = ErrorResult;
-  } else {
-    read_status = SuccessResult;
+  // we execute one of two versions, depending on whether blocking or nonblocking
+  if (rl_event_hook) { // non blocking
+    overlapped.Offset = 0;
+    overlapped.OffsetHigh = 0;
+    overlapped.hEvent = 0; // don't use an event, we use the completion routine
+    rl_event_hook();
+    while ((read_error == 0) && (rl_done == 0) && (read_status == Waiting)) {
+      // asynchronous read -- calls the callback when done or error
+      read_status = Waiting;
+      // note: the handle is usually invalid, unless the parent process attached something to them
+      BOOL syn_hresult = ReadFileEx(hstdin, rl_line_buffer_, BUF_SIZE - 1, &overlapped, readline_completion);
+      // an error here means the async read could not be established -- the actual read result comes later
+      if (syn_hresult == 0) {
+        read_error = GetLastError(); //note: could be eof
+        read_status = ErrorResult; // NOTE: this means the 
+      } else while ((read_error == 0) && (rl_done == 0) && (read_status == Waiting) &&
+        !cssMisc::TopShell->external_exit)
+      { // just loop waiting for result
+        rl_event_hook(); // has a function, since that is what caused us to execute
+	Sleep(rl_keyboard_input_timeout_ms); 
+      }
+    }
+  } else { // blocking
+    // note: blocks until eol or eof
+    hresult = ReadFile(hstdin, rl_line_buffer_, BUF_SIZE - 1, &num_read, NULL); 
+    if (hresult != 0) {
+      read_status = SuccessResult;
+    } else {
+      read_error = GetLastError(); //note: could be eof
+      read_status = ErrorResult;
+    }
   }
 
   if (read_error == ERROR_HANDLE_EOF) {

@@ -34,9 +34,10 @@
 # include <QTimer>
 #include "css_machine.h"	// for setting error code in taMisc::Error
 # ifdef TA_GUI
-#  include "ta_qtdata.h"
-#  include "ta_qttype.h"
-#  include "igeometry.h"
+#   include "ta_qtdata.h"
+#   include "ta_qttype.h"
+#   include <QMainWindow> 
+#   include "igeometry.h"
 # endif // TA_GUI
 
 #else // ndef NO_TA_BASE
@@ -221,6 +222,13 @@ bool NameVar_PArray::SetVal(const String& nm, const Variant& vl) {
 #ifndef NO_TA_BASE
 TA_API taiMiscCore* taiMC_ = NULL; 
 
+int taiMiscCore::rl_callback() {
+  QCoreApplication* app = QCoreApplication::instance();
+  if (app)
+    app->processEvents();
+  return 0; // ???
+}
+
 taiMiscCore* taiMiscCore::New(QObject* parent) {
   taiMiscCore* rval = new taiMiscCore(parent);
   rval->Init();
@@ -348,7 +356,8 @@ void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {
 }
 
 void taiMiscCore::Quit_impl(CancelOp cancel_op) {
-  // nothing in nongui
+  // only for nogui
+  QCoreApplication::instance()->quit();
 }
 
 void taiMiscCore::timer_timeout() {
@@ -419,6 +428,7 @@ const String             taMisc::build_str;
 ////////////////////////////////////////////////////////
 // 	TA GUI parameters
 
+// parameters that are strictly platform specific
 #ifdef TA_OS_MAC
 String  taMisc::font_name = "Lucida Grande";
 int  	taMisc::font_size = 10;
@@ -426,7 +436,7 @@ String  taMisc::console_font_name = "Andale Mono";
 int  	taMisc::console_font_size = 10;
 #elif defined(TA_OS_WIN)
 String  taMisc::font_name = "Verdana"; // looks nice on Win
-int  	taMisc::font_size = 10;
+int  	taMisc::font_size = 11;
 String  taMisc::console_font_name = "Fixed";
 int  	taMisc::console_font_size = 10;
 #else // Linux or some Unix variant
@@ -435,9 +445,16 @@ int  	taMisc::font_size = 10;
 String  taMisc::console_font_name = "LucidaTypewriter";
 int  	taMisc::console_font_size = 10;
 #endif
-taMisc::ConsoleStyle taMisc::console_style = CS_GUI_TRACKING;
-bool	taMisc::console_pager_gui = false;
-bool	taMisc::console_pager_nogui = true;
+
+// parameters that differ between win and unix
+#ifdef TA_OS_WIN
+taMisc::ConsoleType taMisc::console_type = CT_OS_SHELL;
+taMisc::ConsoleOptions taMisc::console_options; // none
+#else
+taMisc::ConsoleType taMisc::console_type = CT_GUI;
+taMisc::ConsoleOptions taMisc::console_options = CO_GUI_TRACKING;
+#endif
+
 int	taMisc::display_width = 80;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
@@ -558,7 +575,7 @@ UserDataItem_List* taMisc::deferred_schema_items;
 #endif
 
 #ifdef TA_GUI
-QMainWindow* taMisc::console_win = NULL;
+QPointer<QMainWindow> taMisc::console_win = NULL;
 #endif
 
 void (*taMisc::WaitProc)() = NULL;

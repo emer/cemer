@@ -392,11 +392,6 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\css\readline_win.cpp">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\css\xmemory.cpp">
@@ -889,6 +884,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_program_qt.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_project.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_qt.moc.cpp">
