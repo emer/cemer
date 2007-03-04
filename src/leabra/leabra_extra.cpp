@@ -71,10 +71,9 @@ bool LeabraContextLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
-  if(net->trial_init != LeabraNetwork::DECAY_STATE) {
-    if(!quiet) taMisc::CheckError("LeabraContextLayerSpec requires trial_init = DECAY_STATE, I just set it for you");
+  if(CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
+		"requires trial_init = DECAY_STATE, I just set it for you")) {
     net->trial_init = LeabraNetwork::DECAY_STATE;
-    rval = false;
   }
   return rval;
 }
@@ -90,13 +89,11 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, Le
   }
   else {
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[0];
-    if(cg == NULL) {
-      taMisc::Error("*** LeabraContextLayerSpec requires one recv projection!");
+    if(TestError(!cg, "Compute_Context", "requires one recv projection!")) {
       return;
     }
     LeabraUnit* su = (LeabraUnit*)cg->Un(0);
-    if(su == NULL) {
-      taMisc::Error("*** LeabraContextLayerSpec requires one unit in recv projection!");
+    if(TestError(!su, "Compute_Context", "requires one unit in recv projection!")) {
       return;
     }
     u->ext = updt.fm_prv * u->act_p + updt.fm_hid * su->act_p; // compute new value
@@ -405,9 +402,8 @@ void ScalarValLayerSpec::HelpConfig() {
 bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
-  if(lay->un_geom.n < 3) {
-    rval = false;
-    if(!quiet) taMisc::CheckError("ScalarValLayerSpec: coarse-coded scalar representation requires at least 3 units, I just set un_geom.n");
+  if(CheckError(lay->un_geom.n < 3, quiet, rval,
+		"coarse-coded scalar representation requires at least 3 units, I just set un_geom.n")) {
     if(scalar.rep == ScalarValSpec::LOCALIST) {
       lay->un_geom.n = 4;
       lay->un_geom.x = 4;
@@ -422,10 +418,9 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     }
   }
 
-  if((scalar.rep == ScalarValSpec::SUM_BAR) && (compute_i != UNIT_INHIB)) {
-    rval = false;
+  if(CheckError((scalar.rep == ScalarValSpec::SUM_BAR) && (compute_i != UNIT_INHIB), quiet, rval,
+		"SUM_BAR rep type requires compute_i = UNIT_INHIB, because it sets gc.i individually")) {
     compute_i = UNIT_INHIB;
-    if(!quiet) taMisc::CheckError("ScalarValLayerSpec: SUM_BAR rep type requires compute_i = UNIT_INHIB, because it sets gc.i individually");
   }
 
   if(scalar.rep == ScalarValSpec::LOCALIST) {
@@ -435,26 +430,22 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   if(bias_val.un == ScalarValBias::GC) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-    if(us->hyst.init) {
-      rval = false;
+    if(CheckError(us->hyst.init, quiet, rval,
+		  "bias_val.un = GCH requires UnitSpec hyst.init = false, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
       us->SetUnique("hyst", true);
       us->hyst.init = false;
-      if(!quiet) taMisc::CheckError("ScalarValLayerSpec: bias_val.un = GCH requires UnitSpec hyst.init = false, I just set it for you in spec:",
-			       us->name,"(make sure this is appropriate for all layers that use this spec!)");
     }
-    if(us->acc.init) {
-      rval = false;
+    if(CheckError(us->acc.init, quiet, rval,
+		  "bias_val.un = GC requires UnitSpec acc.init = false, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
       us->SetUnique("acc", true);
       us->acc.init = false;
-      if(!quiet) taMisc::CheckError("ScalarValLayerSpec: bias_val.un = GC requires UnitSpec acc.init = false, I just set it for you in spec:",
-			       us->name,"(make sure this is appropriate for all layers that use this spec!)");
     }
   }
 
   // check for conspecs with correct params
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  if(u == NULL) {
-    taMisc::CheckError("Error: ScalarValLayerSpec: scalar val layer doesn't have any units:", lay->name);
+  if(CheckError(u == NULL, quiet, rval,
+		"scalar val layer doesn't have any units:", lay->name)) {
     return false;		// fatal
   }
   
@@ -463,31 +454,25 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
-      if(cs->wt_scale.rel > 0.5f) {
-        rval = false;
+      if(CheckError(cs->wt_scale.rel > 0.5f, quiet, rval,
+		    "scalar val self connections should have wt_scale < .5, I just set it to .1 for you (make sure this is appropriate for all connections that use this spec!)")) {
 	cs->SetUnique("wt_scale", true);
 	cs->wt_scale.rel = 0.1f;
-	if(!quiet) taMisc::CheckError("ScalarValLayerSpec: scalar val self connections should have wt_scale < .5, I just set it to .1 for you in spec:",
-		      cs->name,"(make sure this is appropriate for all connections that use this spec!)");
       }
-      if(cs->lrate > 0.0f) {
-        rval = false;
+      if(CheckError(cs->lrate > 0.0f, quiet, rval,
+		    "scalar val self connections should have lrate = 0, I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
 	cs->SetUnique("lrate", true);
 	cs->lrate = 0.0f;
-	if(!quiet) taMisc::CheckError("ScalarValLayerSpec: scalar val self connections should have lrate = 0, I just set it for you in spec:",
-		      cs->name,"(make sure this is appropriate for all layers that use this spec!)");
       }
     }
     else if(cs->InheritsFrom(TA_MarkerConSpec)) {
       continue;
     }
     else {
-      if((scalar.rep == ScalarValSpec::SUM_BAR) && cs->lmix.err_sb) {
-        rval = false;
+      if(CheckError((scalar.rep == ScalarValSpec::SUM_BAR) && cs->lmix.err_sb, quiet, rval,
+		    "scalar val cons for SUM_BAR should have lmix.err_sb = false (are otherwise biased!), I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
 	cs->SetUnique("lmix", true);
 	cs->lmix.err_sb = false;
-	if(!quiet) taMisc::CheckError("ScalarValLayerSpec: scalar val cons for SUM_BAR should have lmix.err_sb = false (are otherwise biased!), I just set it for you in spec:",
-		      cs->name,"(make sure this is appropriate for all layers that use this spec!)");
       }
     }
   }
@@ -956,9 +941,8 @@ void ScalarValSelfPrjnSpec::Connect_UnitGroup(Unit_Group* gp, Projection* prjn) 
 }
 
 void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
-  if(prjn->from != prjn->layer) {
-    taMisc::Error("Error: ScalarValSelfPrjnSpec must be used as a self-projection!");
+  if(!prjn->from)	return;
+  if(TestError(prjn->from != prjn->layer, "Connect_impl", "must be used as a self-projection!")) {
     return;
   }
 
@@ -1125,9 +1109,8 @@ void TwoDValLayerSpec::HelpConfig() {
 bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
-  if(lay->un_geom.n < 3) {
-    rval = false;
-    if(!quiet) taMisc::CheckError("TwoDValLayerSpec: coarse-coded twod representation requires at least 3 units, I just set un_geom.n");
+  if(CheckError(lay->un_geom.n < 3, quiet, rval,
+		"coarse-coded twod representation requires at least 3 units, I just set un_geom.n")) {
     if(twod.rep == TwoDValSpec::LOCALIST) {
       lay->un_geom.n = 12;
       lay->un_geom.x = 3;
@@ -1147,27 +1130,22 @@ bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   if(bias_val.un == TwoDValBias::GC) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-    if(us->hyst.init) {
-      rval = false;
+    if(CheckError(us->hyst.init, quiet, rval,
+		  "bias_val.un = GCH requires UnitSpec hyst.init = false, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
       us->SetUnique("hyst", true);
       us->hyst.init = false;
-      if(!quiet) taMisc::CheckError("TwoDValLayerSpec: bias_val.un = GCH requires UnitSpec hyst.init = false, I just set it for you in spec:",
-			       us->name,"(make sure this is appropriate for all layers that use this spec!)");
     }
-    if(us->acc.init) {
-      rval = false;
+    if(CheckError(us->acc.init, quiet, rval,
+		  "bias_val.un = GC requires UnitSpec acc.init = false, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
       us->SetUnique("acc", true);
       us->acc.init = false;
-      if(!quiet) taMisc::CheckError("TwoDValLayerSpec: bias_val.un = GC requires UnitSpec acc.init = false, I just set it for you in spec:",
-			       us->name,"(make sure this is appropriate for all layers that use this spec!)");
     }
   }
 
   // check for conspecs with correct params
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
-  if(u == NULL) {
-    if (!quiet)
-    taMisc::CheckError("Error: TwoDValLayerSpec: twod val layer doesn't have any units:", lay->name);
+  if(CheckError(u == NULL, quiet, rval,
+		"twod val layer doesn't have any units:", lay->name)) {
     return false;		// fatal
   }
     
@@ -1176,19 +1154,15 @@ bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
-      if(cs->wt_scale.rel > 0.5f) {
-        rval = false;
+      if(CheckError(cs->wt_scale.rel > 0.5f, quiet, rval,
+		    "twod val self connections should have wt_scale < .5, I just set it to .1 for you (make sure this is appropriate for all connections that use this spec!)")) {
 	cs->SetUnique("wt_scale", true);
 	cs->wt_scale.rel = 0.1f;
-	if(!quiet) taMisc::CheckError("TwoDValLayerSpec: twod val self connections should have wt_scale < .5, I just set it to .1 for you in spec:",
-		      cs->name,"(make sure this is appropriate for all connections that use this spec!)");
       }
-      if(cs->lrate > 0.0f) {
-        rval = false;
+      if(CheckError(cs->lrate > 0.0f, quiet, rval,
+		    "twod val self connections should have lrate = 0, I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
 	cs->SetUnique("lrate", true);
 	cs->lrate = 0.0f;
-	if(!quiet) taMisc::CheckError("TwoDValLayerSpec: twod val self connections should have lrate = 0, I just set it for you in spec:",
-		      cs->name,"(make sure this is appropriate for all layers that use this spec!)");
       }
     }
     else if(cs->InheritsFrom(TA_MarkerConSpec)) {
@@ -1633,10 +1607,9 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
   rf_spec.rf_width = rf_width;
   rf_spec.un_geom = prjn->layer->un_geom;
   rf_spec.InitFilters();	// this one call initializes all filter info once and for all!
-  if(rf_spec.un_geom != prjn->layer->un_geom) {
-    taMisc::Warning("V1RFPrjnSpec: number of filters from rf_spec:", (String)rf_spec.un_geom.n,
-		    "does not match layer un_geom.n:", (String)prjn->layer->un_geom.n);
-  }
+  TestWarning(rf_spec.un_geom != prjn->layer->un_geom,
+	      "number of filters from rf_spec:", (String)rf_spec.un_geom.n,
+	      "does not match layer un_geom.n:", (String)prjn->layer->un_geom.n);
 }
 
 void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
@@ -1717,8 +1690,7 @@ void V1RFPrjnSpec::GridFilter(DataTable* graph_data) {
 ///////////////////////////////////////////////////////////////
 
 void LeabraWizard::SRNContext(LeabraNetwork* net) {
-  if(net == NULL) {
-    taMisc::Error("SRNContext: must have basic constructed network first");
+  if(TestError(!net, "SRNContext", "must have basic constructed network first")) {
     return;
   }
   OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)net->FindMakeSpec("CtxtPrjn", &TA_OneToOnePrjnSpec);

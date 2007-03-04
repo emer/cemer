@@ -251,9 +251,8 @@ void BaseSpec::SetUnique(const char* memb_nm, bool on) {
   if(md)
     SetUnique(md->idx, on);
   else {
-    if(GetTypeDef()->members.size > 0)
-      taMisc::Error("SetUnique: Member named:", memb_nm, "not found in Spec type:",
-		    GetTypeDef()->name);
+    TestError(GetTypeDef()->members.size > 0, "SetUnique",
+	      "Member named:", memb_nm, "not found");
   }
 }
 
@@ -261,9 +260,7 @@ void BaseSpec::SetUnique(int memb_no, bool on) {
   if(memb_no < TA_BaseSpec.members.size)
     return;
   MemberDef* md = GetTypeDef()->members[memb_no];
-  if(!md) {
-    taMisc::Error("SetUnique: Member number:", String(memb_no), "not found in Spec type:",
-		  GetTypeDef()->name);
+  if(TestError(!md, "SetUnique","Member number:", String(memb_no), "not found")) {
     return;
   }
   if(on)
@@ -276,8 +273,7 @@ bool BaseSpec::GetUnique(const char* memb_nm) {
   MemberDef* md = FindMember(memb_nm);
   if(md)
     return GetUnique(md->idx);
-  taMisc::Error("GetUnique: Member named:", memb_nm, "not found in Spec type:",
-		GetTypeDef()->name);
+  TestError(true, "GetUnique", "Member named:", memb_nm, "not found");
   return false;
 }
 
@@ -285,9 +281,7 @@ bool BaseSpec::GetUnique(int memb_no) {
   if(memb_no < TA_BaseSpec.members.size)
     return false;
   MemberDef* md = GetTypeDef()->members[memb_no];
-  if(!md) {
-    taMisc::Error("GetUnique: Member number:", String(memb_no), "not found in Spec type:",
-		  GetTypeDef()->name);
+  if(TestError(!md, "GetUnique", "Member number:", String(memb_no), "not found")) {
     return false;
   }
   if(unique.FindEl(md->name) >= 0) return true;
@@ -345,29 +339,26 @@ void BaseSpec::UpdateChildren() {
 }
 
 bool BaseSpec::CheckType(TypeDef* td) {
-  if(td == NULL) {
-    taMisc::Warning("*** For spec:", name, ", NULL type.",
-                  "should be at least:", min_obj_type->name);
+  if(TestWarning(!td, "CheckType", "type is null, should be at least:", min_obj_type->name)) {
     return false;
   }
-  if(!CheckType_impl(td)) {
-    taMisc::Warning("*** For spec:", name, ", incorrect type:", td->name,
-                   "should be at least:", min_obj_type->name);
+  if(TestWarning(!CheckType_impl(td),  "CheckType", 
+		 "incorrect type:", td->name,
+		 "should be at least:", min_obj_type->name)) {
     return false;
   }
   return true;
 }
 
 bool BaseSpec::CheckObjectType(TAPtr obj) {
-  if(obj == NULL) {
-    taMisc::Warning("*** For spec:", name, ", NULL Object.",
-		  "should be at least:", min_obj_type->name);
+  if(TestWarning(!obj, "CheckObjectType",
+		 "object is null",
+		 "should be at least:", min_obj_type->name)) {
     return false;
   }
-  if(!CheckObjectType_impl(obj)) {
-    taMisc::Warning("*** For spec:", name, ", incorrect type of obj:", obj->GetPath(),
-		   "of type:", obj->GetTypeDef()->name,
-		   "should be at least:", min_obj_type->name);
+  if(TestWarning(!CheckObjectType_impl(obj), "CheckObjectType",
+		 "incorrect type of obj:", obj->GetTypeDef()->name,
+		 "should be at least:", min_obj_type->name)) {
     return false;
   }
   return true;
@@ -450,9 +441,8 @@ void BaseSubSpec::SetUnique(const char* memb_nm, bool on) {
   if(md)
     SetUnique(md->idx, on);
   else {
-    if(GetTypeDef()->members.size > 0)
-      taMisc::Error("SetUnique: Member named:", memb_nm, "not found in Spec type:",
-		    GetTypeDef()->name);
+    TestError(GetTypeDef()->members.size > 0, "SetUnique", 
+	      "Member named:", memb_nm, "not found");
   }
 }
 
@@ -460,9 +450,8 @@ void BaseSubSpec::SetUnique(int memb_no, bool on) {
   if(memb_no < TA_BaseSubSpec.members.size)
     return;
   MemberDef* md = GetTypeDef()->members[memb_no];
-  if(!md) {
-    taMisc::Error("SetUnique: Member number:", String(memb_no), "not found in Spec type:",
-		  GetTypeDef()->name);
+  if(TestError(!md, "SetUnique", 
+	       "Member number:", String(memb_no), "not found")) {
     return;
   }
   if(on)
@@ -475,8 +464,7 @@ bool BaseSubSpec::GetUnique(const char* memb_nm) {
   MemberDef* md = FindMember(memb_nm);
   if(md)
     return GetUnique(md->idx);
-  taMisc::Error("GetUnique: Member named:", memb_nm, "not found in Spec type:",
-		GetTypeDef()->name);
+  TestError(true, "GetUnique", "Member named:", memb_nm, "not found");
   return false;
 }
 
@@ -484,9 +472,7 @@ bool BaseSubSpec::GetUnique(int memb_no) {
   if(memb_no < TA_BaseSubSpec.members.size)
     return false;
   MemberDef* md = GetTypeDef()->members[memb_no];
-  if(!md) {
-    taMisc::Error("SetUnique: Member number:", String(memb_no), "not found in Spec type:",
-		  GetTypeDef()->name);
+  if(TestError(!md, "GetUnique", "Member number:", String(memb_no), "not found")) {
     return false;
   }
   if(unique.FindEl(md->name) >= 0) return true;

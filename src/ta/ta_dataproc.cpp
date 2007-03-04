@@ -48,16 +48,8 @@ String DataOpEl::GetName() const {
 
 void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(col_name.empty()) {
-    if(!quiet) taMisc::CheckError("Error in DataOpEl:",GetPath(),
-				  "col_name is empty");
-    rval = false;
-  }
-  if(col_idx < 0) {
-    if(!quiet) taMisc::CheckError("Error in DataOpEl:",GetPath(),
-				  "could not find", col_name,"in datatable");
-    rval = false;
-  }
+  CheckError(col_name.empty(), quiet, rval,"col_name is empty");
+  CheckError(col_idx < 0, quiet, rval,"could not find", col_name,"in datatable");
 }
 
 void DataOpEl::SetDataTable(DataTable* dt) {
@@ -145,11 +137,7 @@ String DataSortEl::GetDisplayName() const {
 void DataSortEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_lookup) {
-    if(col_lookup->is_matrix) {
-      if(!quiet) taMisc::CheckError("Error in DataSortEl:",GetPath(),
-				  "cannot use matrix column to sort");
-      rval = false;
-    }
+    CheckError(col_lookup->is_matrix, quiet, rval,"cannot use matrix column to sort");
   }
 }
 
@@ -169,11 +157,8 @@ String DataGroupEl::GetDisplayName() const {
 void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_lookup) {
-    if((agg.op == Aggregate::GROUP) && (col_lookup->is_matrix)) {
-      if(!quiet) taMisc::CheckError("Error in DataGroupEl:",GetPath(),
-				  "cannot use matrix column to GROUP");
-      rval = false;
-    }
+    CheckError((agg.op == Aggregate::GROUP) && (col_lookup->is_matrix), quiet, rval,
+	       "cannot use matrix column to GROUP");
   }
 }
 
@@ -223,11 +208,7 @@ bool DataSelectEl::Eval(const Variant& val) {
 void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_lookup) {
-    if(col_lookup->is_matrix) {
-      if(!quiet) taMisc::CheckError("Error in DataSelectEl:",GetPath(),
-				    "cannot use matrix column to select");
-      rval = false;
-    }
+    CheckError(col_lookup->is_matrix, quiet, rval, "cannot use matrix column to select");
   }
 }
 
@@ -1086,17 +1067,8 @@ void DataProg::Initialize() {
 
 void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!src_data) {
-    if(!quiet) taMisc::CheckError("Error in DataProg:",GetPath(),
-				  "src_data is NULL");
-    rval = false;
-  }
-  // NULL OK!
-//   if(!dest_data) {
-//     if(!quiet) taMisc::CheckError("Error in DataProg:",GetPath(),
-// 				  "dest_data is NULL");
-//     rval = false;
-//   }
+  CheckError(!src_data, quiet, rval, "src_data is NULL");
+  // NULL OK in dest_data!
 }
 
 /////////////////////////////////////////////////////////
@@ -1374,12 +1346,7 @@ void DataCalcLoop::UpdateSpecDataTable() {
 
 void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  // ok! just as long as you don't call set dest!
-//   if(!dest_data) {		// not ok!
-//     if(!quiet) taMisc::CheckError("Error in DataCalcLoop:",GetPath(),
-// 				  "dest_data is NULL");
-//     rval = false;
-//   }
+  // null ok in dest_data just as long as you don't call set dest!
 }
 
 void DataCalcLoop::UpdateColVars() {
@@ -1575,16 +1542,9 @@ void DataCalcAddDestRow::Copy(const DataCalcAddDestRow& cp) {
 void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) {
-    if(!quiet) taMisc::CheckError("DataCalcAddDestRow: parent DataCalcLoop not found in:",
-				  GetPath());
-    rval = false;
-  }
-  if(dcl && !dcl->dest_data) {		// not ok!
-     if(!quiet) taMisc::CheckError("Error in DataCalcAddDestRow:",GetPath(),
-				   "DataCalcLoop::dest_data is NULL, but AddDestRow exists!");
-     rval = false;
-  }
+  CheckError(!dcl, quiet, rval, "parent DataCalcLoop not found");
+  CheckError(dcl && !dcl->dest_data, quiet, rval,
+	     "DataCalcLoop::dest_data is NULL, but AddDestRow exists!");
 }
 
 const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
@@ -1656,16 +1616,9 @@ void DataCalcSetDestRow::Copy(const DataCalcSetDestRow& cp) {
 void DataCalcSetDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) {
-    if(!quiet) taMisc::CheckError("DataCalcSetDestRow: parent DataCalcLoop not found in:",
-				  GetPath());
-    rval = false;
-  }
-  if(dcl && !dcl->dest_data) {		// not ok!
-     if(!quiet) taMisc::CheckError("Error in DataCalcSetDestRow:",GetPath(),
-				   "DataCalcLoop::dest_data is NULL, but SetDestRow exists!");
-     rval = false;
-  }
+  CheckError(!dcl, quiet, rval,"parent DataCalcLoop not found");
+  CheckError(dcl && !dcl->dest_data, quiet, rval,
+	     "DataCalcLoop::dest_data is NULL, but is needed");
 }
 
 const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
@@ -1738,11 +1691,7 @@ void DataCalcSetSrcRow::Copy(const DataCalcSetSrcRow& cp) {
 void DataCalcSetSrcRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) {
-    if(!quiet) taMisc::CheckError("DataCalcSetSrcRow: parent DataCalcLoop not found in:",
-				  GetPath());
-    rval = false;
-  }
+  CheckError(!dcl, quiet, rval, "parent DataCalcLoop not found");
 }
 
 const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
@@ -1819,16 +1768,9 @@ void DataCalcCopyCommonCols::Copy(const DataCalcCopyCommonCols& cp) {
 void DataCalcCopyCommonCols::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) {
-    if(!quiet) taMisc::CheckError("DataCalcCopyCommonCols: parent DataCalcLoop not found in:",
-				  GetPath());
-    rval = false;
-  }
-  if(dcl && !dcl->dest_data) {		// not ok!
-     if(!quiet) taMisc::CheckError("Error in DataCalcCopyCommonCols:",GetPath(),
-				   "DataCalcLoop::dest_data is NULL, but CopyCommonCols exists!");
-     rval = false;
-  }
+  CheckError(!dcl, quiet, rval, "parent DataCalcLoop not found");
+  CheckError(dcl && !dcl->dest_data, quiet, rval,
+	     "DataCalcLoop::dest_data is NULL, but is needed");
 }
 
 const String DataCalcCopyCommonCols::GenCssBody_impl(int indent_level) {

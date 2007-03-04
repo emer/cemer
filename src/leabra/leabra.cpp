@@ -98,9 +98,7 @@ void AdaptRelNetinSpec::Initialize() {
 void AdaptRelNetinSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   trg_sum = trg_fm_input + trg_fm_output + trg_lateral;
-  if(fabsf(trg_sum - 1.0f) > .01) {
-    taMisc::Warning("*** AdaptRelNetinSpec: target values do not sum to 1");
-  }
+  TestWarning(fabsf(trg_sum - 1.0f) > .01, "UAE", "target values do not sum to 1");
 }
 
 bool AdaptRelNetinSpec::CheckInTolerance(float trg, float val) {
@@ -188,8 +186,7 @@ void LeabraConSpec::SetCurLrate(int epoch, LeabraNetwork* net) {
       return;
     }
     else {
-      taMisc::Error("*** Warning: LeabraConSpec::SetCurLrate(): appropriate ExtRew layer not found for EXT_REW_AVG, reverting to EPOCH! for:",
-		    name);
+      TestWarning(true, "SetCurLrate", "appropriate ExtRew layer not found for EXT_REW_AVG, reverting to EPOCH!");
       SetUnique("lrs_value", true);
       lrs_value = EPOCH;
       UpdateAfterEdit();
@@ -524,10 +521,10 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   if(!UnitSpec::CheckConfig_Unit(un, quiet)) return false;
 
   Network* net = GET_MY_OWNER(Network);
+  bool rval = true;
 
   act.send_delta = ((LeabraNetwork*)net)->send_delta; // always copy from network, so it is global..
   
-  bool rval;
   for(int g=0; g<un->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)un->send.FastEl(g);
     if(send_gp->cons.size < 2) continue;
@@ -756,8 +753,8 @@ void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       if(send_gp->prjn->layer->lesion || !send_gp->cons.size) continue;
-      if(((LeabraConSpec*)send_gp->GetConSpec())->inhib) {
-	taMisc::Error("*** Error: cannot send inhibition from a hard-clamped layer!  Set layerspec clamp.hard off!");
+      if(TestWarning(((LeabraConSpec*)send_gp->GetConSpec())->inhib, "Send_ClampNet",
+		     "cannot send inhibition from a hard-clamped layer!  Set layerspec clamp.hard off!")) {
 	continue;
       }
       send_gp->Send_ClampNet(u);
@@ -1538,19 +1535,15 @@ void LeabraLayerSpec::CutLinks() {
 
 bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = true;
-  if(!lay->projections.el_base->InheritsFrom(&TA_LeabraPrjn)) {
-    taMisc::CheckError("Layer:", lay->name,"does not have LeabraPrjn projection base type!",
-		       "project must be updated and projections remade");
+  if(CheckError(!lay->projections.el_base->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
+		"does not have LeabraPrjn projection base type!",
+		"project must be updated and projections remade"))
     return false;
-  }
   for(int i=0;i<lay->projections.size;i++) {
     Projection* prjn = (Projection*)lay->projections[i];
-    if(!prjn->InheritsFrom(&TA_LeabraPrjn)) {
-      taMisc::CheckError("Projection:", prjn->name, "in Layer:", lay->name,
-			 "does not have LeabraPrjn projection base type!",
-			 "Projection must be re-made");
-      rval = false;
-    }
+    CheckError(!prjn->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
+	       "does not have LeabraPrjn projection base type!",
+	       "Projection must be re-made");
   }
   return rval;
 }
@@ -3912,37 +3905,28 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   net->RemoveUnits();
   
   LeabraUnitSpec* basic_us = (LeabraUnitSpec*)net->FindSpecType(&TA_LeabraUnitSpec);
-  if(basic_us == NULL) {
-    taMisc::Error("ConfigUnitInhib: basic LeabraUnitSpec not found, bailing!");
+  if(TestError(!basic_us, "UnitInhib", "basic LeabraUnitSpec not found, bailing!")) {
     return;
   }
   LeabraUnitSpec* inhib_us = (LeabraUnitSpec*)basic_us->children.FindMakeSpec("InhibUnits", &TA_LeabraUnitSpec);
-  if(inhib_us == NULL) return;
 
   LeabraConSpec* basic_cs = (LeabraConSpec*)net->FindSpecType(&TA_LeabraConSpec);
-  if(basic_cs == NULL) {
-    taMisc::Error("ConfigUnitInhib: basic LeabraConSpec not found, bailing!");
+  if(TestError(!basic_cs, "UnitInhib", "basic LeabraConSpec not found, bailing!")) {
     return;
   }
   LeabraConSpec* inhib_cs = (LeabraConSpec*)basic_cs->children.FindMakeSpec("InhibCons", &TA_LeabraConSpec);
-  if(inhib_cs == NULL) return;
 
   LeabraConSpec* fb_inhib_cs = (LeabraConSpec*)basic_cs->children.FindMakeSpec("FBtoInhib", &TA_LeabraConSpec);
-  if(fb_inhib_cs == NULL) return;
   LeabraConSpec* ff_inhib_cs = (LeabraConSpec*)fb_inhib_cs->children.FindMakeSpec("FFtoInhib", &TA_LeabraConSpec);
-  if(ff_inhib_cs == NULL) return;
 
   LeabraLayerSpec* basic_ls = (LeabraLayerSpec*)net->FindSpecType(&TA_LeabraLayerSpec);
-  if(basic_ls == NULL) {
-    taMisc::Error("ConfigUnitInhib: basic LeabraLayerSpec not found, bailing!");
+  if(TestError(!basic_ls, "UnitInhib", "basic LeabraLayerSpec not found, bailing!")) {
     return;
   }
   LeabraLayerSpec* inhib_ls = (LeabraLayerSpec*)basic_ls->children.FindMakeSpec("InhibLayers", &TA_LeabraLayerSpec);
-  if(inhib_ls == NULL) return;
 
   FullPrjnSpec* fullprjn = (FullPrjnSpec*)net->FindSpecType(&TA_FullPrjnSpec);
-  if(fullprjn == NULL) {
-    taMisc::Error("ConfigUnitInhib: basic FullPrjnSpec not found, bailing!");
+  if(TestError(!fullprjn, "UnitInhib", "basic FullPrjnSpec not found, bailing!")) {
     return;
   }
 

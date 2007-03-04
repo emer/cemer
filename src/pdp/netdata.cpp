@@ -73,21 +73,15 @@ void LayerDataEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   // these data/network things are set by parent prior to this being called (hopefully)
   if(!data || ! network) return;
-  if(chan_name.empty()) {
-    if(!quiet) taMisc::CheckError("LayerDataEl Error: chan_name is empty");
-    rval =  false;
-  }
-  if(GetChanIdx(data) < 0) {
-    if(!quiet) taMisc::CheckError("LayerDataEl Error: channel/column named",
-			     chan_name, "not found in data:", data->name);
-    rval =  false;
-  }
+  CheckError(chan_name.empty(), quiet, rval,
+	     "chan_name is empty");
+  CheckError(GetChanIdx(data) < 0, quiet, rval,
+	     "channel/column named",chan_name, "not found in data:", data->name);
   if(net_target == LAYER) {
     Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
-    if(!lay) {
-      if(!quiet) taMisc::CheckError("LayerDataEl Error: cannot find layer named:",
-				    layer_name, "in network:", network->name);
-      rval =  false;
+    if(CheckError(!lay, quiet, rval,
+		  "cannot find layer named:",
+		  layer_name, "in network:", network->name)) {
       return; // fatal
     }
   }
@@ -189,15 +183,13 @@ void LayerWriterEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(net_target == LAYER) {
     Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
     if(!lay) return;		// already checked in parent
-    if(lay->layer_type == Layer::HIDDEN) {
-      taMisc::Warning("Warning: LayerwWriterEl:", chan_name, "for layer", layer_name,
-		      "layer_type is HIDDEN -- not appropriate for writing to (by default).  Turn use_layer_type off and set appropriate ext_flags if this is intentional.");
-    }
+    TestWarning(lay->layer_type == Layer::HIDDEN, "CheckConfig",
+		"layer_type is HIDDEN -- not appropriate for writing to (by default). Turn use_layer_type off and set appropriate ext_flags if this is intentional.");
     // todo: do this check
     // if(data->dims() == 4 && layer->uses_groups())
-//     if(offs.x != 0 || offs.y != 0) {
-//       taMisc::Error("Layer::ApplyInputData: cannot have offsets for 4d data to unit groups");
-//     }
+//     ConfigError(offs.x != 0 || offs.y != 0, quiet, rval,
+//	"cannot have offsets for 4d data to unit groups");
+//     
   }
 }
 
@@ -225,9 +217,9 @@ bool LayerWriterEl::ApplyInputData(DataBlock* db, Network* net) {
   Layer* lay = (Layer*)net->layers.FindLeafName(layer_name);
   if(!lay) return false;
   taMatrixPtr mat(db->GetMatrixData(chan_idx)); //note: refs mat
-  if(!mat) {
-    taMisc::Warning("LayerWriterEl::ApplyInputData: could not get matrix data from channel:",
-		    chan_name, "in data:",db->name);
+  if(TestWarning(!mat, "ApplyInputData",
+		 "could not get matrix data from channel:",
+		 chan_name, "in data:",db->name)) {
     return false;
   }
   if(use_layer_type) {
@@ -262,14 +254,8 @@ void LayerWriter::UpdateAfterEdit_impl() {
 
 void LayerWriter::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!data) {
-    if(!quiet) taMisc::CheckError("LayerWriter Error: data is NULL");
-    rval =  false;
-  }
-  if(!network) {
-    if(!quiet) taMisc::CheckError("LayerWriter Error: network is NULL");
-    rval =  false;
-  }
+  CheckError(!data, quiet, rval, "data is NULL");
+  CheckError(!network, quiet, rval,"network is NULL");
 }
 
 void LayerWriter::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -292,8 +278,8 @@ void LayerWriter::SetDataNetwork(DataBlock* db, Network* net) {
 }
 
 void LayerWriter::AutoConfig(bool reset_existing) {
-  if(!data || !network) {
-    taMisc::Error("Either the data or the network variables are not set -- please set them and try again!");
+  if(TestError(!data || !network, "AutoConfig",
+	       "Either the data or the network variables are not set -- please set them and try again!")) {
     return;
   }
   if(reset_existing) layer_data.Reset();
@@ -302,8 +288,8 @@ void LayerWriter::AutoConfig(bool reset_existing) {
   FOR_ITR_EL(Layer, lay, network->layers., itr) {
     if(lay->layer_type == Layer::HIDDEN) continue;
     int chan_idx = data->GetSourceChannelByName(lay->name);
-    if (chan_idx < 0) {
-      taMisc::Warning("LayerWriter AutoConfig: did not find channel/data column for layer named:", lay->name, "of type:", TA_Layer.GetEnumString("LayerType", lay->layer_type));
+    if(TestWarning(chan_idx < 0, "AutoConfig",
+		   "did not find channel/data column for layer named:", lay->name, "of type:", TA_Layer.GetEnumString("LayerType", lay->layer_type))) {
       continue;	// not found
     }
     LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeLayerData(lay->name, lay->name);
@@ -449,20 +435,9 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
 void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!computed) {
-    if(!owner) {
-      if(!quiet) taMisc::CheckError("NetMonItem named:", name, "has no owner");
-      rval =  false;
-    }
-    if(!object) {
-      if(!quiet) taMisc::CheckError("NetMonItem named:", name, "path:", GetPath(),
-				    "object is NULL");
-      rval =  false;
-    }
-    if(variable.empty()) {
-      if(!quiet) taMisc::CheckError("NetMonItem named:", name, "path:", GetPath(),
-				    "variable is empty");
-      rval =  false;
-    }
+    CheckError(!owner, quiet, rval, "NetMonItem named:", name, "has no owner");
+    CheckError(!object, quiet, rval, "object is NULL");
+    CheckError(variable.empty(), quiet, rval,"variable is empty");
   }
 }
 
@@ -668,9 +643,8 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     //note: if memb not found, then we assume it is in an iterated subobj...
     if (!md) return false;
     
-    if (!md->type->InheritsFrom(&TA_taBase)) {
-      taMisc::Error("NetMonitor can only monitor taBase objects, not: ",
-		    md->type->name, " var: ", var);
+    if(TestError(!md->type->InheritsFrom(&TA_taBase),"ScanObject_InObject",
+		 "can only monitor taBase objects, not: ", md->type->name, " var: ", var)) {
       return true; //no mon, but we did handle it
     }
     // we can only handle embedded objs and ptrs to objs
@@ -680,9 +654,9 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     else if (md->type->ptr == 1)
       ths = *((TAPtr*)md->GetOff((void*)obj));
     else {
-      taMisc::Error("NetMonitor can only handle embedded taBase objects"
-        " or ptrs to them, not level=",
-        String(md->type->ptr), " var: ", var);
+      TestError(true, "ScanObject_InObject", "can only handle embedded taBase objects"
+		" or ptrs to them, not level=",
+		String(md->type->ptr), " var: ", var);
       return true; //no mon, but we did handle it
     }
     // because we found the subobj, we deref the var and invoke ourself recursively
@@ -909,9 +883,8 @@ void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
   Layer* lay = NULL;
   if (var.before('.') == "r") lay = prjn->layer;
   else if (var.before('.') == "s") lay = prjn->from;
-  if (lay == NULL) {
-    taMisc::Error("NetMonItem Projection does not have layer's set or",
-		   "selected var does not apply to connections");
+  if(TestError(!lay, "ScanObject_Projection", "projection does not have layer's set or",
+	       "selected var does not apply to connections")) {
     return;
   }
   ScanObject_PrjnCons(prjn, var);
@@ -921,14 +894,14 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
   // check for projection monitor
   if(var.contains('.')) {
     String subvar = var.before('.');
-    if((subvar == "projections") || (subvar == "prjns")) {
-      taMisc::Error("NetMonItem: cannot monitor projections group from UnitGroup object");
+    if(TestError((subvar == "projections") || (subvar == "prjns"), "ScanObject_UnitGroup",
+		 "cannot monitor projections group from UnitGroup object")) {
       return;
     }
-    if((subvar == "r") || (subvar == "s")) {
-      // todo: could do this but is it really needed??  would need to pass ug pointer to
-      // a special version of PrjnCons fun
-      taMisc::Error("NetMonItem: cannot monitor connection weights from UnitGroup object");
+    // todo: could do this but is it really needed??  would need to pass ug pointer to
+    // a special version of PrjnCons fun
+    if(TestError((subvar == "r") || (subvar == "s"), "ScanObject_UnitGroup",
+		 "cannot monitor connection weights from UnitGroup object")) {
       return;
     }
   }
@@ -1176,16 +1149,8 @@ void NetMonitor::Copy_(const NetMonitor& cp) {
 
 void NetMonitor::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!data) {
-    if(!quiet) taMisc::CheckError("NetMonitor named:", name, "path:", GetPath(),
-				  "data is NULL");
-    rval = false;
-  }
-  if(!network) {
-    if(!quiet) taMisc::CheckError("NetMonitor named:", name, "path:", GetPath(),
-				  "network is NULL");
-    rval = false;
-  }
+  CheckError(!data, quiet, rval, "data is NULL");
+  CheckError(!network, quiet, rval,"network is NULL");
 }
 
 void NetMonitor::CheckChildConfig_impl(bool quiet, bool& rval) {

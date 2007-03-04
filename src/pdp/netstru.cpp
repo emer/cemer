@@ -261,7 +261,7 @@ void ConArray::SetType(TypeDef* cn_tp) {
   if(con_type == cn_tp) return;
   if(cons) {
 #ifdef DEBUG
-    taMisc::Warning("*** ConArray SetType error: set new type after connections were allocated!");
+    taMisc::Warning("ConArray SetType error: set new type after connections were allocated!");
 #endif
     Free();
   }
@@ -279,7 +279,7 @@ void ConArray::Alloc(int sz) {
 
 void ConArray::SetSize(int sz) {
   if(sz > alloc_size) {
-    taMisc::Warning("*** ConArray SetSize error: requesting size:", String(sz), "more than allocated:", String(alloc_size), ".  Programmer must increase size of allocation in Connect_impl function!");
+    taMisc::Warning("ConArray SetSize error: requesting size:", String(sz), "more than allocated:", String(alloc_size), ".  Programmer must increase size of allocation in Connect_impl function!");
     sz = alloc_size;
   }
   if(sz > size) {
@@ -478,7 +478,7 @@ void RecvCons::Copy_Weights(const RecvCons* src) {
 }
 
 bool RecvCons::ChangeMyType(TypeDef*) {
-  taMisc::Error("Cannot change type of con_groups -- change type setting in projection and reconnect network instead");
+  TestError(true, "ChangeMyType", "Cannot change type of con_groups -- change type setting in projection and reconnect network instead");
   return false;
 }
 
@@ -511,9 +511,9 @@ void RecvCons::AllocCons(int no) {
 
 Connection* RecvCons::NewCon(Unit* un) {
   units.Link(un);
-  if(cons.size >= cons.alloc_size) {
-    taMisc::Warning("*** RecvCons NewCon error: already at maximum allocated of:", String(cons.alloc_size), "in prjn:", prjn->GetDisplayName(), "of type:", prjn->spec.spec->GetTypeDef()->name,
-		    "Programmer must increase size of allocation in Connect_impl function!");
+  if(TestWarning(cons.size >= cons.alloc_size, "Newcon",
+		 "already at maximum allocated size.",
+		 "Programmer must increase size of allocation in Connect_impl function!")) {	
   }
   else {
     cons.New(1);
@@ -634,9 +634,9 @@ int RecvCons::LesionCons(Unit* un, float p_lesion, bool permute) {
 
 bool RecvCons::ConValuesToArray(float_Array& ary, const char* variable) {
   MemberDef* md = con_type->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   con_type->name, "in ConValuesToArray()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesToArray",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 con_type->name)) {
     return false;
   }
   for(int i=0; i<cons.size; i++) {
@@ -648,12 +648,14 @@ bool RecvCons::ConValuesToArray(float_Array& ary, const char* variable) {
 
 bool RecvCons::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
   MemberDef* md = con_type->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   con_type->name, "in ConValuesToMatrix()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesToMatrix",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 con_type->name)) {
     return false;
   }
-  if(mat.size < cons.size) return false;
+  if(TestWarning(mat.size < cons.size, "ConValuesToMatrix", "matrix size too small")) {
+    return false;
+  }
 
   for(int i=0; i<cons.size; i++) {
     float* val = (float*)md->GetOff((void*)Cn(i));
@@ -664,9 +666,9 @@ bool RecvCons::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
 
 bool RecvCons::ConValuesFromArray(float_Array& ary, const char* variable) {
   MemberDef* md = con_type->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   con_type->name, "in ConValuesFromArray()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesFromArray",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 con_type->name)) {
     return false;
   }
   int mx = MIN(cons.size, ary.size);
@@ -679,9 +681,9 @@ bool RecvCons::ConValuesFromArray(float_Array& ary, const char* variable) {
 
 bool RecvCons::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
   MemberDef* md = con_type->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   con_type->name, "in ConValuesFromMatrix()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesFromMatrix",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 con_type->name)) {
     return false;
   }
   int mx = MIN(cons.size, mat.size);
@@ -705,10 +707,8 @@ void RecvCons::SaveWeights_strm(ostream& strm, Unit*, RecvCons::WtSaveFormat fmt
   case RecvCons::TEXT:
     for(int i=0; i < cons.size; i++) {
       int lidx = Un(i)->GetMyLeafIndex();
-      if(lidx < 0) {
+      if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
 	lidx = 0;
-	taMisc::Warning("Error in SaveWeights: can't find unit in connection: ", String(i),
-			"in layer:", prjn->layer->name);
       }
       strm << lidx << " " << Cn(i)->wt << "\n";
     }
@@ -716,10 +716,8 @@ void RecvCons::SaveWeights_strm(ostream& strm, Unit*, RecvCons::WtSaveFormat fmt
   case RecvCons::BINARY:
     for(int i=0; i < cons.size; i++) {
       int lidx = Un(i)->GetMyLeafIndex();
-      if(lidx < 0) {
+      if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
 	lidx = 0;
-	taMisc::Warning("Error in SaveWeights: can't find unit in connection: ", String(i),
-		      "in layer:", prjn->layer->name);
       }
       strm.write((char*)&(lidx), sizeof(lidx));
       strm.write((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
@@ -741,14 +739,12 @@ int RecvCons::LoadWeights_StartTag(istream& strm, const String& tag, String& val
   int stat = taMisc::read_tag(strm, in_tag, val);
   if(stat == taMisc::TAG_END) return taMisc::TAG_NONE; // some other end -- not good
   if(stat != taMisc::TAG_GOT) {
-    if(!quiet)
-      taMisc::Warning("LoadWeights: Error -- bad read of start tag:", tag);
+    if(!quiet) taMisc::Warning("RecvCons::LoadWeights: bad read of start tag:", tag);
     return stat;
   }
   if(in_tag != tag) {
-    if(!quiet)
-      taMisc::Warning("LoadWeights: Error -- read different start tag:", in_tag,
-		      "expecting:", tag);
+    if(!quiet) taMisc::Warning("RecvCons::LoadWeights: read different start tag:", in_tag,
+			       "expecting:", tag);
     return taMisc::TAG_NONE; // bumping up against some other tag
   }
   return stat;
@@ -759,9 +755,8 @@ int RecvCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& c
   if(stat != taMisc::TAG_END)	// haven't already hit the end
     stat = taMisc::read_tag(strm, cur_tag, val);
   if((stat != taMisc::TAG_END) || (cur_tag != trg_tag)) {
-    if(!quiet)
-      taMisc::Warning("LoadWeights: Error -- bad read of end tag:", trg_tag, "got:",
-		      cur_tag, "stat:", String(stat));
+    if(!quiet) taMisc::Warning("RecvCons::LoadWeights: bad read of end tag:", trg_tag, "got:",
+			       cur_tag, "stat:", String(stat));
     if(stat == taMisc::TAG_END) stat = taMisc::TAG_NONE;
   }
   return stat;
@@ -777,8 +772,7 @@ int RecvCons::LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat f
 
   int sz = (int)val;
   if(sz < 0) {
-    if(!quiet)
-      taMisc::Warning("RecvCons::LoadWeights: Error in reading weights -- read size < 0");
+    TestWarning(!quiet, "LoadWeights_strm", "read size < 0");
     return taMisc::TAG_NONE;
   }
   ru->n_recv_cons += sz - cons.size;
@@ -799,18 +793,16 @@ int RecvCons::LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat f
 
     Unit* su = prjn->from->units.Leaf(lidx);
     if(!su) {
-      if(!quiet)
-	taMisc::Warning("Error in LoadWeights: unit at leaf index: ",
-			String(lidx), "not found in layer:", prjn->from->name);
+      TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
+		  String(lidx), "not found in layer:", prjn->from->name);
       i--; cons.SetSize(cons.size-1);
       ru->n_recv_cons--;
       continue;
     }
     SendCons* send_gp = su->send.SafeEl(prjn->send_idx);
     if(!send_gp) {
-      if(!quiet)
-	taMisc::Warning("Error in LoadWeights: unit at leaf index: ",
-			String(lidx), "does not have proper send group:", String(prjn->send_idx));
+      TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
+		  String(lidx), "does not have proper send group:", String(prjn->send_idx));
       i--; cons.SetSize(cons.size-1);
       ru->n_recv_cons--;
       continue;
@@ -930,15 +922,15 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
   int c = taMisc::read_till_lbracket(strm);	// get past opening bracket
   if(c == EOF) return EOF;
   c = taMisc::read_word(strm);
-  if(taMisc::LexBuf != "con_alloc") {
-    taMisc::Warning("RecvCons Expecting: 'con_alloc' in load file, got:",
-		    taMisc::LexBuf,"instead");
+  if(TestWarning(taMisc::LexBuf != "con_alloc", "Dump_Load_Value",
+		 "Expecting: 'con_alloc' in load file, got:",
+		 taMisc::LexBuf,"instead")) {
     return false;
   }
   // skip =
   c = taMisc::skip_white(strm);
-  if(c != '=') {
-    taMisc::Warning("Missing '=' in dump file for con_alloc in RecvCons");
+  if(TestWarning(c != '=', "Dump_Load_Value",
+		 "Missing '=' in dump file for con_alloc in RecvCons")) {
     return false;
   }
   c = taMisc::read_till_semi(strm);
@@ -949,21 +941,19 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
   }
 
   c = taMisc::read_word(strm);
-  if(taMisc::LexBuf != "units") {
-    taMisc::Warning("RecvCons Expecting: 'units' in load file, got:",
-		    taMisc::LexBuf,"instead");
+  if(TestWarning(taMisc::LexBuf != "units",
+		 "Dump_Load_Value", "Expecting 'units' in load file, got:",
+		 taMisc::LexBuf,"instead")) {
     return false;
   }
   // skip =
   c = taMisc::skip_white(strm);
-  if(c != '=') {
-    taMisc::Warning("Missing '=' in dump file for unit in RecvCons");
+  if(TestWarning(c != '=', "Dump_Load_Value", "Missing '=' in dump file for unit")) {
     return false;
   }
   // skip {
   c = taMisc::skip_white(strm);
-  if(c != '{') {
-    taMisc::Warning("Missing '{' in dump file for unit in RecvCons");
+  if(TestWarning(c != '{', "Dump_Load_Value", "Missing '{' in dump file for unit")) {
     return false;
   }
 
@@ -980,9 +970,7 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
     int lfidx = (int)taMisc::LexBuf;
     if(ug && (lfidx >= 0)) {
       un = (Unit*)ug->Leaf(lfidx);
-      if(!un) {
-	taMisc::Warning("Connection unit at not found at index:", String(lfidx),
-			"in connection type", con_type->name);
+      if(TestWarning(!un, "Dump_Load_Value", "Connection unit not found")) {
 	continue;
       }
     }
@@ -996,9 +984,8 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
   if(c_count <= cons.alloc_size)
     cons.SetSize(c_count);
   else {
-    taMisc::Warning("RecvCons Load: More connections read:", String(c_count),
-		    "than allocated:", String(cons.alloc_size),
-		    "weights will be incomplete");
+    TestWarning(true, "Dump_Load_Value", "More connections read than allocated.",
+		"weights will be incomplete");
   }
 
   // now read in the values
@@ -1010,24 +997,23 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
       break;		// done
     }
     MemberDef* md = con_type->members.FindName(taMisc::LexBuf);
-    if(md == NULL) {
-      taMisc::Warning("Connection member not found:", taMisc::LexBuf,
-		      "in connection type", con_type->name);
+    if(TestWarning(!md, "Dump_Load_Value",
+		   "Connection member not found:", taMisc::LexBuf)) {
       c = taMisc::skip_past_err(strm);
       if(c == '}') break;
       continue;
     }
     // skip =
     c = taMisc::skip_white(strm);
-    if(c != '=') {
-      taMisc::Warning("Missing '=' in dump file for unit in RecvCons");
+    if(TestWarning(c != '=', "Dump_Load_Value",
+		   "Missing '=' in dump file for unit")) {
       c = taMisc::skip_past_err(strm);
       continue;
     }
     // skip {
     c = taMisc::skip_white(strm);
-    if(c != '{') {
-      taMisc::Warning("Missing '{' in dump file for unit in RecvCons");
+    if(TestWarning(c != '{', "Dump_Load_Value",
+		   "Missing '{' in dump file for unit")) {
       c = taMisc::skip_past_err(strm);
       continue;
     }
@@ -1244,7 +1230,7 @@ void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 bool SendCons::ChangeMyType(TypeDef*) {
-  taMisc::Error("Cannot change type of con_groups -- change type setting in projection and reconnect network instead");
+  TestError(true, "ChangeMyType", "Cannot change type of con_groups -- change type setting in projection and reconnect network instead");
   return false;
 }
 
@@ -1293,9 +1279,9 @@ Connection* SendCons::FindConFrom(Unit* un, int& idx) const {
 
 bool SendCons::ConValuesToArray(float_Array& ary, const char* variable) {
   MemberDef* md = con_type->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   con_type->name, "in ConValuesToArray()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesToArray",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 con_type->name)) {
     return false;
   }
   for(int i=0; i<cons.size; i++) {
@@ -1307,12 +1293,14 @@ bool SendCons::ConValuesToArray(float_Array& ary, const char* variable) {
 
 bool SendCons::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
   MemberDef* md = con_type->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   con_type->name, "in ConValuesToMatrix()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesToMatrix",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 con_type->name)) {
     return false;
   }
-  if(mat.size < cons.size) return false;
+  if(TestWarning(mat.size < cons.size, "ConValuesToMatrix", "matrix size too small")) {
+    return false;
+  }
 
   for(int i=0; i<cons.size; i++) {
     float* val = (float*)md->GetOff((void*)Cn(i));
@@ -1323,9 +1311,9 @@ bool SendCons::ConValuesToMatrix(float_Matrix& mat, const char* variable) {
 
 bool SendCons::ConValuesFromArray(float_Array& ary, const char* variable) {
   MemberDef* md = con_type->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   con_type->name, "in ConValuesFromArray()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesFromArray",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 con_type->name)) {
     return false;
   }
   int mx = MIN(cons.size, ary.size);
@@ -1338,9 +1326,9 @@ bool SendCons::ConValuesFromArray(float_Array& ary, const char* variable) {
 
 bool SendCons::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
   MemberDef* md = con_type->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   con_type->name, "in ConValuesFromMatrix()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesFromMatrix",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 con_type->name)) {
     return false;
   }
   int mx = MIN(cons.size, mat.size);
@@ -2466,9 +2454,8 @@ void Projection::SetFrom() {
 
   switch(from_type) { // this is where the projection is coming from
   case NEXT:
-    if (myindex == (mynet->layers.leaves - 1)) { // is it the last layer
-      taMisc::Warning("Last Layer projects from NEXT layer in prjn:",
-		    name);
+    if(TestWarning(myindex == (mynet->layers.leaves - 1), "SetFrom",
+		   "Last Layer projects from NEXT layer")) {
       return;
     }
     else {
@@ -2478,9 +2465,8 @@ void Projection::SetFrom() {
     }
     break;
   case PREV:
-    if (myindex == 0) { // is it the first
-      taMisc::Warning("First Layer recieves projection from PREV layer in prjn:",
-		    name);
+    if(TestWarning(myindex == 0, "SetFrom",
+		   "First Layer recieves projection from PREV layer")) {
       return;
     }
     else {
@@ -2494,10 +2480,7 @@ void Projection::SetFrom() {
     taBase::SetPointer((taBase**)&from, layer);
     break;
   case CUSTOM:
-    if(from == NULL) {
-      taMisc::Warning("Warning: CUSTOM projection and from is NULL in prjn:",
-		    name, "in layer:", layer->name);
-    }
+    TestWarning(from == NULL, "SetFrom", "CUSTOM projection and from is NULL");
     break;
   }
   mynet->UpdtAfterNetMod();
@@ -3005,9 +2988,9 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
 
 bool Unit_Group::UnitValuesToArray(float_Array& ary, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in UnitValuesToArray()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesToArray",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 el_typ->name)) {
     return false;
   }
   Unit* u;
@@ -3021,9 +3004,9 @@ bool Unit_Group::UnitValuesToArray(float_Array& ary, const char* variable) {
 
 bool Unit_Group::UnitValuesToMatrix(float_Matrix& mat, const char* variable) {
   MemberDef* md = el_typ->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in UnitValuesToMatrix()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesToMatrix",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 el_typ->name)) {
     return false;
   }
   if(mat.size < leaves) return false;
@@ -3040,9 +3023,9 @@ bool Unit_Group::UnitValuesToMatrix(float_Matrix& mat, const char* variable) {
 bool Unit_Group::UnitValuesFromArray(float_Array& ary, const char* variable) {
   if(ary.size == 0) return false;
   MemberDef* md = el_typ->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in UnitValuesFromArray()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesFromArray",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 el_typ->name)) {
     return false;
   }
   int cnt=0;
@@ -3060,9 +3043,9 @@ bool Unit_Group::UnitValuesFromArray(float_Array& ary, const char* variable) {
 bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const char* variable) {
   if(mat.size == 0) return false;
   MemberDef* md = el_typ->members.FindName(variable);
-  if((md == NULL) || !md->type->InheritsFrom(TA_float)) {
-    taMisc::Warning("Variable:", variable, "not found or not a float on units of type:",
-		   el_typ->name, "in UnitValuesFromMatrix()");
+  if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesFromMatrix",
+		 "Variable:", variable, "not found or not a float on units of type:",
+		 el_typ->name)) {
     return false;
   }
   int cnt=0;
@@ -3650,9 +3633,8 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
   // the exact dimensions, and so ignore 'frame'
   if (!data || lesion) return;
   // check correct geom of data
-  if ((data->dims() != 2) && (data->dims() != 4)) {
-    taMisc::Error("Layer::ApplyInputData: data->dims must be 2 (2-d) or 4 (4-d); is: ",
-      String(data->dims()));
+  if(TestError((data->dims() != 2) && (data->dims() != 4), "ApplyInputData",
+	       "data->dims must be 2 (2-d) or 4 (4-d)")) {
     return;
   }
   TwoDCoord offs(0,0);
@@ -4024,9 +4006,7 @@ void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
     p->WeightsToTable(dt);
     gotone = true;
   }
-  if(!gotone) {
-    taMisc::Error("WeightsToEnv: No sending projection from: ", send_lay->name);
-  }
+  TestError(!gotone, "WeightsToTable", "No sending projection from:", send_lay->name);
 }
 
 Unit* Layer::FindUnitFmCoord(int x, int y) {
@@ -4104,24 +4084,24 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
 }
 
 void Layer::DMem_SyncNRecvCons() {
-  if(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER) {
-    taMisc::Error("Error: attempt to DMem sync nrecv_cons at layer level, should only be at network level!");
+  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNRecvCons"
+	       "attempt to DMem sync at layer level, should only be at network level!")) {
     return;
   }
   dmem_share_units.Sync(0);
 }
 
 void Layer::DMem_SyncNet() {
-  if(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER) {
-    taMisc::Error("Error: attempt to DMem sync netin at layer level, should only be at network level!");
+  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNet"
+	       "attempt to DMem sync layer level, should only be at network level!")) {
     return;
   }
   dmem_share_units.Sync(1);
 }
 
 void Layer::DMem_SyncAct() {
-  if(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER) {
-    taMisc::Error("Error: attempt to DMem sync act at layer level, should only be at network level!");
+  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncAct"
+	       "attempt to DMem sync layer level, should only be at network level!")) {
     return;
   }
   dmem_share_units.Sync(2);
@@ -4342,49 +4322,6 @@ void Network::UpdateMonitors() {
     if(nm->network != this) continue;
     nm->UpdateMonitors();
   }
-}
-
-// cfront requires this to be outside class function
-enum NetSection {NS_NONE, NS_DEFINITIONS, NS_CONSTRAINTS,
-		   NS_NETWORK, NS_BIASES};
-
-ConSpec* GetNSConSpec(char name,BaseSpec_Group * bsmg,
-		      BaseSpec_Group* master, TypeDef* conspec_type,
-		      bool skip_dots=true){
-  if((skip_dots == true) && (name == '.')) return NULL;
-  int i;
-  ConSpec* result;
-  for(i=0;i<bsmg->leaves;i++){
-    result = (ConSpec *) bsmg->Leaf(i);
-    if(!result->name.empty() && (result->name[0] == name)) return result;
-  }
-  if((name == 'r') || (name == 'p') ||
-     (name == 'n') || (name == '.')) { // pre-defined specs
-    result  = (ConSpec *) master->New(1,conspec_type);
-    bsmg->Link(result);
-    result->name = name;
-    result->rnd.type = Random::UNIFORM;
-    if(name == 'r') {result->rnd.mean = 0.0; result->rnd.var = .5;}
-    else if(name == 'p') {result->rnd.mean = 0.5; result->rnd.var = .5;}
-    else if(name == 'n') {result->rnd.mean = -0.5; result->rnd.var = .5;}
-    else if(name == '.') {result->rnd.mean = 0; result->rnd.var = 0;}
-    return result;
-  }
-  // search for uppercase version
-  for(i=0;i<bsmg->leaves;i++){
-    result = (ConSpec *) bsmg->Leaf(i);
-    String upnm = result->name;
-    upnm.upcase();
-    if(!upnm.empty() && (upnm[0] == name)){
-      master->DuplicateEl(result);
-      result = (ConSpec *) master->Leaf(master->leaves-1);
-      result->name = name;
-    }
-    // todo set lrate or something to 0 to make upcase
-    // version unmodifiable
-  }
-  taMisc::Error("Connection Specification letter \"", String(name) , "\" not found");
-  return NULL;
 }
 
 void Network::UpdtAfterNetMod() {
@@ -4745,16 +4682,16 @@ void Network::DMem_SyncNRecvCons() {
 }
 
 void Network::DMem_SyncNet() {
-  if(dmem_sync_level != DMEM_SYNC_NETWORK) {
-    taMisc::Error("Error: attempt to DMem sync netin at network level, should only be at layer level!");
+  if(TestError(dmem_sync_level != DMEM_SYNC_NETWORK, "DMem_SyncNet",
+	       "attempt to DMem sync at network level, should only be at layer level!")) {
     return;
   }
   dmem_share_units.Sync(1);
 }
 
 void Network::DMem_SyncAct() {
-  if(dmem_sync_level != DMEM_SYNC_NETWORK) {
-    taMisc::Error("Error: attempt to DMem sync act at network level, should only be at layer level!");
+  if(TestError(dmem_sync_level != DMEM_SYNC_NETWORK, "DMem_SyncAct",
+	       "attempt to DMem sync at network level, should only be at layer level!")) {
     return;
   }
   dmem_share_units.Sync(2);
@@ -4793,10 +4730,8 @@ void Network::DMem_DistributeUnits() {
 
 void Network::DMem_UpdtWtUpdt() {
   if(dmem_trl_comm.nprocs > 1) {
-    if(wt_update != SMALL_BATCH) {
-      taMisc::Warning("Network: changing wt_update to SMALL_BATCH because dmem trial nprocs =",
-		      (String)dmem_trl_comm.nprocs);
-    }
+    TestWarning(wt_update != SMALL_BATCH, "DMem_UpdtWtUpdt",
+		"changing wt_update to SMALL_BATCH because dmem trial nprocs > 1");
     wt_update = SMALL_BATCH;			  // must be small batch
     small_batch_n_eff = small_batch_n / dmem_trl_comm.nprocs; // effective small_batch_n
     if(small_batch_n_eff < 1) small_batch_n_eff = 1;
@@ -5264,8 +5199,8 @@ void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
 bool Network::LoadWeights_strm(istream& strm, bool quiet) {
   taMisc::Busy();
   int c = strm.peek();
-  if(c == '#') {
-    taMisc::Error("LoadWeights: cannot read old formats from version 3.2 -- must use network save");
+  if(TestError(c == '#', "LoadWeights_strm",
+	       "cannot read old formats from version 3.2 -- must use network save")) {
     return false;
   }
   String tag, val;
@@ -5292,8 +5227,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
       stat = lay->LoadWeights_strm(strm, fmt, quiet);
     }
     else {
-      if(!quiet)
-	taMisc::Warning("LoadWeights: Layer not found:", val);
+      TestWarning(!quiet, "LoadWeights", "Layer not found:", val);
       stat = Layer::SkipWeights_strm(strm, fmt, quiet);
     }
     if(stat != taMisc::TAG_END) break;
@@ -5666,17 +5600,13 @@ BaseSpec* Network::FindMakeSpec(const char* nm, TypeDef* td, bool& nw_itm) {
 
 BaseSpec* Network::FindSpecName(const char* nm) {
   BaseSpec* rval = (BaseSpec*)specs.FindSpecName(nm);
-  if(rval == NULL) {
-    taMisc::Error("Error: could not find spec named:", nm);
-  }
+  TestError(!rval, "FindSpecName", "could not find spec named:", nm);
   return rval;
 }
 
 BaseSpec* Network::FindSpecType(TypeDef* td) {
   BaseSpec* rval = (BaseSpec*)specs.FindSpecType(td);
-  if(rval == NULL) {
-    taMisc::Error("Error: could not find spec of type:", td->name);
-  }
+  TestError(!rval, "FindSpecType", "could not find spec of type:", td->name);
   return rval;
 }
 

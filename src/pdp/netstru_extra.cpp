@@ -335,9 +335,8 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
 
-  if(!wrap && init_wts) {
-    taMisc::Warning("*** Warning: TesselPrjnSpec non-wrapped tessel prjn spec with init_wts does not usually work!:",name);
-  }
+  TestWarning(!wrap && init_wts, "Connect_impl",
+	      "non-wrapped tessel prjn spec with init_wts does not usually work!");
   PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
 
   TwoDCoord use_recv_n = recv_n;
@@ -407,9 +406,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
     Layer* lay = prjn->layer;
     // trick is to divide cons in half, choose recv, send at random
     // for 1/2 cons, then go through all units and make the symmetric cons..
-    if(p_con > .95f) {
-      taMisc::Error("Warning: UniformRndPrjnSpec makes less than complete connectivity for high values of p_con in symmetric, self-connected layers using permute!");
-    }
+    TestWarning(p_con > .95f, "Connect_impl", "there is usually less than complete connectivity for high values of p_con (>.95) in symmetric, self-connected layers using permute!");
     // pre-allocate connections!
     int first;
     if(!self_con)
@@ -647,10 +644,9 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 	continue;
       }
     }
-    if(n_con < trg_con) {
-      taMisc::Warning("*** Warning: PolarRndPrjnSpec target no of connections:",String(trg_con),
-		    "not made, only made:",String(n_con));
-    }
+    TestWarning(n_con < trg_con, "Connect_impl",
+		"target no of connections:",String(trg_con),
+		"not made, only made:",String(n_con));
   }
 }
 
@@ -687,10 +683,8 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
 	  cnt++;
     }
   }
-  if(cnt == 0) {
-    taMisc::Error("Warning: SymmetricPrjnSpec on prjn:",prjn->name,"did not make any connections.",
-		  "Note that this layer must be *earlier* in list of layers than the one you are trying to symmetrize from.");
-  }
+  TestWarning(cnt == 0, "Connect_impl", "did not make any connections.",
+	      "Note that this layer must be *earlier* in list of layers than the one you are trying to symmetrize from.");
 }
 
 /////////////////////////////
@@ -1241,9 +1235,8 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* s
   // trick is to divide cons in half, choose recv, send at random
   // for 1/2 cons, then go through all units and make the symmetric cons..
   // pre-allocate connections!
-  if(p_con > .95f) {
-    taMisc::Error("Warning: GpRndTesselPrjnSpec makes less than complete connectivity for high values of p_con in symmetric, self-connected layers using permute!");
-  }
+  TestWarning(p_con > .95f, "Connect_Gps_SymSameGp",
+	      "usually less than complete connectivity for high values of p_con in symmetric, self-connected layers using permute!");
   int first;
   if(!self_con)
     first = (int) (.5f * p_con * (float)(su_gp->leaves-1));
@@ -1379,12 +1372,12 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
 
-  if(prjn->layer->units.gp.size == 0) {
-    taMisc::Warning("*** Warning: GpRndTesselPrjnSpec requires recv layer to have unit groups!:",name);
+  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
     return;
   }
-  if(prjn->from->units.gp.size == 0) {
-    taMisc::Warning("*** Warning: GpRndTesselPrjnSpec requires send layer to have unit groups!:",name);
+  if(TestWarning(prjn->from->units.gp.size == 0,  "Connect_impl",
+		 "requires send layer to have unit groups!")) {
     return;
   }
 
@@ -1427,8 +1420,8 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
   if(prjn->from == NULL)	return false;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return false;
-  if(prjn->layer->units.gp.size == 0) {
-    taMisc::Warning("*** Warning: TiledRFPrjnSpec requires recv layer to have unit groups!:",name);
+  if(TestWarning(prjn->layer->units.gp.size == 0, "InitRFSizes",
+		 "requires recv layer to have unit groups!")) {
     return false;
   }
 
@@ -1614,12 +1607,12 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->from == NULL)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
-  if(prjn->layer->units.gp.size == 0) {
-    taMisc::Warning("*** Warning: TiledGpRFPrjnSpec requires recv layer to have unit groups!:",name);
+  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
     return;
   }
-  if(prjn->from->units.gp.size == 0) {
-    taMisc::Warning("*** Warning: TiledGpRFPrjnSpec requires send layer to have unit groups!:",name);
+  if(TestWarning(prjn->from->units.gp.size == 0, "Connect_impl",
+		 "requires send layer to have unit groups!")) {
     return;
   }
 
@@ -1739,12 +1732,12 @@ int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init
   if(prjn->from == NULL)	return 0;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return 0;
-  if(prjn->layer->units.gp.size == 0) {
-    taMisc::Warning("*** Warning: TiledGpRFPrjnSpec requires recv layer to have unit groups!:",name);
+  if(TestWarning(prjn->layer->units.gp.size == 0, "ProbAddCons",
+		 "requires recv layer to have unit groups!")) {
     return 0;
   }
-  if(prjn->from->units.gp.size == 0) {
-    taMisc::Warning("*** Warning: TiledGpRFPrjnSpec requires send layer to have unit groups!:",name);
+  if(TestWarning(prjn->from->units.gp.size == 0, "ProbAddCons",
+		 "requires send layer to have unit groups!")) {
     return 0;
   }
 
@@ -1829,8 +1822,8 @@ bool TiledNovlpPrjnSpec::InitRFSizes(Projection* prjn) {
     send_lay = prjn->layer;
   }
 
-  if(recv_lay->units.gp.size == 0) {
-    taMisc::Warning("*** Warning: TiledNovlpPrjnSpec requires recv layer to have unit groups!:",name);
+  if(TestWarning(recv_lay->units.gp.size == 0, "InitRFSizes",
+		 "requires recv layer to have unit groups!")) {
     return false;
   }
 
