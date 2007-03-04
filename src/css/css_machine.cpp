@@ -5113,8 +5113,9 @@ void cssCmdShell::Shell_NoConsole_Run() {
 //TODO: rejig this for batch or piped contexts:
 // end = EOF, no readline, non-blocking input
   rl_event_hook = taiMiscCore::rl_callback;
-  while(!external_exit) {
+  while(!external_exit && !taMisc::quitting) {
     char* curln = rl_readline((char*)act_prompt);
+    if (rl_done) break;
     // NULL result is defined as EOF
     if (curln == (char*)0) {
       Exit();

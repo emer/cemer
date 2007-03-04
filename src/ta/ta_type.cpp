@@ -219,14 +219,24 @@ bool NameVar_PArray::SetVal(const String& nm, const Variant& vl) {
 //  taiMiscCore		//
 //////////////////////////
 
+extern "C" {
+  int rl_done;
+}
+
 #ifndef NO_TA_BASE
 TA_API taiMiscCore* taiMC_ = NULL; 
 
 int taiMiscCore::rl_callback() {
   QCoreApplication* app = QCoreApplication::instance();
+  if (taMisc::quitting) goto quit_exit;
   if (app)
     app->processEvents();
+  if (taMisc::quitting) goto quit_exit;
   return 0; // ???
+  
+quit_exit:
+  rl_done = 1;
+  return 0;
 }
 
 taiMiscCore* taiMiscCore::New(QObject* parent) {
