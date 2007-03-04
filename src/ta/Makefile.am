@@ -237,6 +237,7 @@ SRCS =\
 	ta_plugin_p.cpp \
 	ta_plugin_p.moc.cpp \
 	ta_project.cpp \
+	ta_project.moc.cpp \
 	$(SRCS_GUI) \
 	ta_qrc.cpp \
 	ta_ti.cpp \

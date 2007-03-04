@@ -124,7 +124,7 @@ void pdpMisc::SaveRecoverFile(int err) {
 #ifdef TA_GUI
   if(err != SIGUSR1) {	// usr1 is to save network at that point
 #ifdef HAVE_QT_CONSOLE
-    if(cssMisc::TopShell->console_type == cssCmdShell::CT_Qt_Console) {
+    if(cssMisc::TopShell->console_type == taMisc::CT_GUI) {
       String prfx = "PDP++Console.";
       // use previous cnt
 //       cnt = get_unique_file_number(0, prfx, ".txt");

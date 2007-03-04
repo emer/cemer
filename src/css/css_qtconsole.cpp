@@ -34,7 +34,7 @@ QcssConsole::QcssConsole(QObject* parent, cssCmdShell* cs) :
 {
   cmd_shell = cs;
   setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
-  setPager(taMisc::console_pager_gui);
+  setPager(taMisc::console_options & taMisc::CO_USE_PAGING);
 }
 
 QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {
@@ -45,7 +45,7 @@ QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {
 
 QString QcssConsole::interpretCommand(QString command, int* res) {
   *res = 0;
-  cmd_shell->AcceptNewLine(command, false);
+  cmd_shell->AcceptNewLine_Qt(command, false);
   inherited::interpretCommand(command, res);
   return "";
 }
@@ -114,7 +114,7 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
   String mb_name = cmd;
   mb_name = mb_name.after("::", -1);
   int len = mb_name.length();
-  taBase* parent = NULL;
+//  taBase* parent = NULL;
   TypeDef* par_td = taMisc::types.FindName(par_path);
   if(par_td == NULL) {
     cssProgSpace* src_prog = cssMisc::cur_top->GetSrcProg();
