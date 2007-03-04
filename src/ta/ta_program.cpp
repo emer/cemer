@@ -810,9 +810,6 @@ void ProgArg_List::UpdateFromMethod(MethodDef* md) {
       else if(arg_typ->InheritsFrom(TA_taString)) {
 	if(def_val.empty()) def_val = "\"\""; // empty string
       }
-      else if(def_val == "__null") {
-	def_val = "NULL";
-      }
       pa->expr.SetExpr(def_val); // set to this expr
     } else if (i != ti) {
       MoveIdx(i, ti);

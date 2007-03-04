@@ -300,30 +300,9 @@ void cssTA::operator=(const String& s) {
       return;
     }
   }
-  // todo: need to debug this!
-  else if((ptr) && (ptr_cnt == 1)) {	// otherwise treat as a pointer
-    // need the correct typedef here, either find it or make it..
-    String ptrnm = type_def->name + "_ptr";
-    TypeDef* ptr_typ = type_def->children.FindName(ptrnm);
-    if(ptr_typ)
-      ptr_typ->SetValStr(s, ptr);
-    else {
-      TypeDef nw_tp(*type_def);
-      nw_tp.ptr++;
-      nw_tp.SetValStr(s, ptr);
-    }
-  }
-  else if((ptr) && (ptr_cnt == 2)) {	// otherwise treat as a pointer
-    // need the correct typedef here, either find it or make it..
-    String ptrnm = type_def->name + "_ptr_ptr";
-    TypeDef* ptr_typ = type_def->children.FindName(ptrnm);
-    if(ptr_typ)
-      ptr_typ->SetValStr(s, ptr);
-    else {
-      TypeDef nw_tp(*type_def);
-      nw_tp.ptr+=2;
-      nw_tp.SetValStr(s, ptr);
-    }
+  else {
+    cssMisc::Error(prog, "Failed to assign cssTA pointer of type:", type_def->name,
+		   "no non-taBase support for pointer assignment from strings");
   }
 }
 
@@ -478,6 +457,21 @@ void cssTA_Base::UpdateAfterEdit() {
   if(cssMisc::call_update_after_edit && ths) ths->UpdateAfterEdit();
 }
 
+String cssTA_Base::GetStr() const {
+  if(ptr_cnt == 1) {
+    // if we are a pointer to a tabase, get the path -- otherwise for #INLINE
+    // it can return the actual inline rep and this is bad for css arg types!
+    taBase* ths = GetTAPtr();
+    if(ths)
+      return ths->GetPath();
+    else
+      return "NULL";
+  }
+  else {
+    return cssTA::GetStr();
+  }
+}
+
 bool cssTA_Base::PtrAssignPtrPtr(void* new_ptr_val) {
   if(!ptr) {
     cssMisc::Error(prog,  "Failed to assign taBase pointer-pointer of type:", GetTypeName(),
@@ -546,7 +540,32 @@ void cssTA_Base::operator=(taBase** cp) {
 }
 
 void cssTA_Base::operator=(const String& s) {
-  cssTA::operator=(s);		// just do same thing
+  if(!ROCheck()) return;
+  if(ptr_cnt == 0) {
+    cssTA::operator=(s);		// just do same thing
+    return;
+  }
+  else {
+    // note: cannot use SetValStr because it automatically does SetPointer!
+    taBase* bs = NULL;
+    String tmp_val = s;
+    if((tmp_val != String::con_NULL) && (tmp_val != "Null")) {
+      MemberDef* md = NULL;
+      bs = tabMisc::root->FindFromPath(tmp_val, md);
+      if(!md || !bs) {
+	taMisc::Warning("Invalid Path in cssTA_Base = String:",tmp_val);
+	return;
+      }
+      if(md->type->ptr == 1) {
+	bs = *((taBase**)bs);
+	if(!bs) {
+	  taMisc::Warning("Null object at end of path in cssTA_Base = String:",tmp_val);
+	  return;
+	}
+      }
+    }
+    *this = bs;			// use above = opr
+  }
 }
 
 void cssTA_Base::operator=(const cssEl& s) {

@@ -6,9 +6,13 @@ commit:
 ------------
 current:
 
-* invalid path thing in setvalstr -- sort..?
+* gauss smooth on simplelines, then graph it -- get crash
+* token chooser not showing NULL label -- probably ok..
 
-* finish converting taMisc::Error and taMisc::CheckError calls..
+* copy progel -- update pointers relative to program.  key -- otherwise ptrs
+  are to old vars etc.  don't even notice.
+
+* all names = c_type
 
 * datatable: 
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage

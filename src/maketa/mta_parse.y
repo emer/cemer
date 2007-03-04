@@ -640,7 +640,10 @@ argdefn:  subargdefn			{
             if(mta->cur_meth != NULL) { mta->cur_meth->arg_defs.Add(""); } }
         | subargdefn EQUALS		{
 	    if(mta->cur_meth != NULL) {
-	      mta->cur_meth->arg_defs.Add($2);
+	      String ad = $2;
+	      ad.gsub("(__null)", "NULL"); /* standardize on NULL */
+	      while(isspace(ad.firstchar())) ad = ad.after(0); /* remove leading sp */
+	      mta->cur_meth->arg_defs.Add(ad);
 	      if(mta->cur_meth->fun_argd < 0)
 		mta->cur_meth->fun_argd = mta->cur_meth->arg_types.size - 1; } }
 	;

@@ -135,6 +135,7 @@ public:
 
   operator taBase*() const	{ return GetTAPtr(); }
   operator taBase**() const	{ return (taBase**)GetVoidPtr(2); }
+  String GetStr() const;
   Variant GetVar() const 	{ return Variant(GetTAPtr());}
 
   // operators

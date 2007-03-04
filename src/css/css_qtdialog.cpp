@@ -370,8 +370,7 @@ void cssiArgDialog::Constr_ArgTypes() {
   for (int i = 0; i < use_argc; ++i) {
     String arg_name = md->arg_names.FastEl(i);
     TypeDef* argtd = md->arg_types.FastEl(i);
-    taiArgType* art = GetBestArgType(i, argtd,
-				       md, typ);
+    taiArgType* art = GetBestArgType(i, argtd, md, typ);
     if (art == NULL) {
       taMisc::Warning("could not get a taiArgType for parameter of type: ", argtd->name,
         "for arg_name: ", arg_name, " -- no more parameters will be shown for this function"); 
@@ -391,6 +390,9 @@ void cssiArgDialog::Constr_ArgTypes() {
       if (!art->arg_typ->DerivesFrom(&TA_TypeDef) && !art->arg_typ->DerivesFrom(&TA_ios)) {
 	while (val.firstchar() == ' ')
           val = val.after(' ');
+#ifdef DEBUG
+// 	cerr << md->name << " arg val: " << val << endl;
+#endif
 	if (art->arg_typ->DerivesFormal(TA_enum)) {
 	  art->arg_typ->SetValStr(val, art->arg_base);
 	} else {
@@ -432,7 +434,7 @@ void cssiArgDialog::Constr_Data_Labels() {
     QWidget* rep = mb_dat->GetRep();
     int row = AddData(-1, rep);
     
-    cssEl* md = obj->members->FastEl(i);
+    cssEl* md = obj->members->FastEl(i+1); // need to add 1 here to skip over arg[0]
     GetName(j, md, name, desc);
     AddName(row, name, desc, mb_dat);
   }
@@ -447,12 +449,15 @@ void cssiArgDialog::GetValue() {
     art->GetValue(mb_dat, base);
     if (art->err_flag)
       err_flag = true;
-    else {
+    else if(!art->meth->HasOption("NO_SAVE_ARG_VAL")) {
       if(art->arg_typ->DerivesFormal(TA_enum)) {
 	art->meth->arg_vals.FastEl(i) = art->arg_typ->GetValStr(art->arg_base);
       }
       else if(!art->arg_typ->DerivesFrom(TA_ios)) {
 	art->meth->arg_vals.FastEl(i) = art->arg_val->GetStr();
+#ifdef DEBUG
+// 	cerr << i << " " << art->arg_typ->name << " arg val: " << art->meth->arg_vals.FastEl(i) << endl;
+#endif
       }
     }
   }

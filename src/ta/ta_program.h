@@ -1043,7 +1043,7 @@ public:
   virtual void		SaveToProgLib(ProgLibs library = USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT save the program to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void		LoadFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib (re)load the program from the program library element of given type
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL (re)load the program from the program library element of given type
 
   virtual void		RunLoadInitCode();
   // Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading
@@ -1179,7 +1179,7 @@ public:
 
   void	FindPrograms();		// search paths to find all available programs
   taBase* NewProgram(ProgLibEl* prog_type, Program_Group* new_owner);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL create a new program in new_owner of given type (return value could be a Program or a Program_Group);  new_owner is group where program will be created
   taBase* NewProgramFmName(const String& prog_nm, Program_Group* new_owner);
   // create a new program (lookup by name) (return value could be a Program or a Program_Group, or NULL if not found); new_owner is group where program will be created
   
@@ -1201,14 +1201,14 @@ public:
   static ProgLib	prog_lib; // #HIDDEN_TREE library of available programs
 
   taBase* NewFromLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib create a new program from a library of existing program types
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL create a new program from a library of existing program types
   taBase* NewFromLibByName(const String& prog_nm);
   // create a new program from a library of existing program types, looking up by name (NULL if name not found)
 
   void		SaveToProgLib(Program::ProgLibs library = Program::USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT save the program group to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void	LoadFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib (re)load the program from the program library element of given type
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL (re)load the program from the program library element of given type
 
   void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
 
