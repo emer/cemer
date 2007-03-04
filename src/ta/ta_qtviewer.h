@@ -45,28 +45,32 @@
 class taGroup_impl;
 
 // (new) forwards this file:
-class DataLink_QObj;
-class taiDataLink;
-class tabDataLink;
-class tabListDataLink;
-class tabGroupDataLink; 
-class ISelectable;
-class ISelectable_PtrList;
-class ISelectableHost; //
+class DataLink_QObj; // #IGNORE
+class taiDataLink; // #IGNORE
+class tabDataLink; // #IGNORE
+class tabListDataLink; // #IGNORE
+class tabGroupDataLink;  // #IGNORE
+class ISelectable; // #IGNORE
+class ISelectable_PtrList; // #IGNORE
+class ISelectableHost;  // #IGNORE
 
-class iBrowseViewer;
+class iBrowseViewer; // #IGNORE
 
-class iTreeView;
-class iTreeViewItem;
-class taiListDataNode;
-class taiTreeDataNode;
-class tabTreeDataNode;
-class tabParTreeDataNode;
-class tabDefChildTreeDataNode;
-class tabListTreeDataNode;
-class tabGroupTreeDataNode;
-class iListDataPanel; //
+class iTreeView; // #IGNORE
+class iTreeViewItem; // #IGNORE
+class taiListDataNode; // #IGNORE
+class taiTreeDataNode; // #IGNORE
+class tabTreeDataNode; // #IGNORE
+class tabParTreeDataNode; // #IGNORE
+class tabDefChildTreeDataNode; // #IGNORE
+class tabListTreeDataNode; // #IGNORE
+class tabGroupTreeDataNode; // #IGNORE  
+class iDataPanel; // #IGNORE
+class iDataPanelFrame; // #IGNORE
 
+class iListDataPanel;  // #IGNORE
+
+#ifdef __MAKETA__ // skip the whole damn thing!
 
 class TA_API DataLink_QObj: public QObject {
 Q_OBJECT
@@ -1875,5 +1879,5 @@ private:
   void			init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
 };
 
-
+#endif // __MAKETA__
 #endif // TA_QTVIEWER_H

@@ -220,7 +220,7 @@ bool NameVar_PArray::SetVal(const String& nm, const Variant& vl) {
 //////////////////////////
 
 extern "C" {
-  int rl_done;
+  extern int rl_done;
 }
 
 #ifndef NO_TA_BASE

@@ -160,6 +160,12 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 			<File
 				RelativePath=".\stdafx.h">
 			</File>
+			<File
+				RelativePath="..\..\..\src\ta\ta_TA_inst.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\ta\ta_TA_type.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
