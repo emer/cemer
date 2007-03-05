@@ -2,9 +2,9 @@ header files to be parsed:
 
 header files to be parsed (file-name-only):
 
-g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/ta_TA_type.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_TA_type.h
+g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/ta_TA_type.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_TA_type.h
 [17] { /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_TA_type.h, /home/baisa/pdp4.0/trunk/src/pdp/pdpdeclare.h, /home/baisa/pdp4.0/trunk/src/pdp/pdp_base.h, /home/baisa/pdp4.0/trunk/src/pdp/spec.h, /home/baisa/pdp4.0/trunk/src/pdp/netstru.h, /home/baisa/pdp4.0/trunk/src/pdp/netstru_extra.h, /home/baisa/pdp4.0/trunk/src/pdp/netdata.h, /home/baisa/pdp4.0/trunk/src/pdp/pdp_program.h, /home/baisa/pdp4.0/trunk/src/pdp/pdp_project.h, /home/baisa/pdp4.0/trunk/src/pdp/pdpserver.h, /home/baisa/pdp4.0/trunk/src/pdp/pdpview_qt.h, /home/baisa/pdp4.0/trunk/src/pdp/pdpserver_qt.h, /home/baisa/pdp4.0/trunk/src/pdp/netstru_so.h, /home/baisa/pdp4.0/trunk/src/pdp/netstru_qtso.h, /home/baisa/pdp4.0/trunk/src/pdp/pdp_qtso.h, /home/baisa/pdp4.0/trunk/src/pdp/pdp_program_qtso.h, /home/baisa/pdp4.0/trunk/src/pdp/v3_compat.h,}[17] { ta_TA_type.h, pdpdeclare.h, pdp_base.h, spec.h, netstru.h, netstru_extra.h, netdata.h, pdp_program.h, pdp_project.h, pdpserver.h, pdpview_qt.h, pdpserver_qt.h, netstru_so.h, netstru_qtso.h, pdp_qtso.h, pdp_program_qtso.h, v3_compat.h,}Processing: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_TA_type.h
-g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdpdeclare.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdpdeclare.h
+g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdpdeclare.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdpdeclare.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_TA_type.h
 file: <built-in>
 file: <command
@@ -99,7 +99,7 @@ file: /home/baisa/pdp4.0/trunk/src/pdp/pdpdeclare.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdp_def.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_global.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/../.././config.h
-file: /home/baisa/pdp4.0/trunk/src/g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_base.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_base.h
+file: /home/baisa/pdp4.0/trunk/src/g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_base.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_base.h
 pdp/../ta/ta_global.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdp_def.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdpdeclare.h
@@ -471,7 +471,7 @@ Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../.././config.h because prev include
 file: /home/baisa/pdp4.0/trunk/src/pdp/../.././config.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_global.h because prev included
-file: /home/bag++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/spec.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/spec.h
+file: /home/bag++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/spec.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/spec.h
 isa/pdp4.0/trunk/src/pdp/../ta/ta_global.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/pdp_def.h because prev included
@@ -958,7 +958,7 @@ file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_matrix.h
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_geometry.h because prev included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_geometry.h
 
-Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_def.h because preg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netstru.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/netstru.h
+Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_def.h because preg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netstru.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/netstru.h
 v included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_def.h
 
@@ -1763,7 +1763,7 @@ file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdata.h
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h because prev included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdata.h
-file: /home/baisa/pdp4.0/trunk/src/pdp/../g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netstru_extra.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/netstru_extra.h
+file: /home/baisa/pdp4.0/trunk/src/pdp/../g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netstru_extra.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/netstru_extra.h
 ta/ta_qtdata_def.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h because prev included
@@ -2839,7 +2839,7 @@ file: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/safeptr_so.h
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/taiqtso_def.h because prev included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/taiqtso_def.h
 
-Skipping: /home/baisa/pdp4.0/trunk/sg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netdata.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/netdata.h
+Skipping: /home/baisa/pdp4.0/trunk/sg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netdata.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/netdata.h
 rc/pdp/../taiqtso/safeptr_so.h because prev included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/safeptr_so.h
 
@@ -3875,7 +3875,7 @@ Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_geometry.h because prev incl
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_geometry.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/t3viewer.h because prev included
-file: /home/baisa/pdp4.0/trunk/src/pdp/../tg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_program.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_program.h
+file: /home/baisa/pdp4.0/trunk/src/pdp/../tg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_program.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_program.h
 a/t3viewer.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/safeptr_so.h because prev included
@@ -4390,7 +4390,7 @@ Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_viewer.h because prev includ
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_viewer.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/colorscale.h because prev included
-file: /home/baisa/pdp4.0/trunk/src/pdp/../g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_project.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_project.h
+file: /home/baisa/pdp4.0/trunk/src/pdp/../g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_project.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_project.h
 ta/colorscale.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_group.h because prev included
@@ -5533,7 +5533,7 @@ file: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/igeometry.h
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/t3node_so.h because prev included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/t3node_so.h
 
-Skipping: /home/baisa/pdpg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdpserver.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdpserver.h
+Skipping: /home/baisa/pdpg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdpserver.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdpserver.h
 4.0/trunk/src/pdp/../ta/ta_matrix.h because prev included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_matrix.h
 
@@ -6181,7 +6181,7 @@ Skipping: /home/baisa/pdp4.0/trunk/src/pdp/pdp_TA_type.h because TA_xxx.h
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/pdp_base.h because of: pdp_base.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdp_base.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdpserver.h
-file: /home/baisa/pdp4g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdpview_qt.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdpview_qt.h
+file: /home/baisa/pdp4g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdpview_qt.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdpview_qt.h
 .0/trunk/src/pdp/pdpserver.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdpserver.h
 Processing: /home/baisa/pdp4.0/trunk/src/pdp/pdpview_qt.h
@@ -6744,7 +6744,7 @@ file: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/igeometry.h
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdata.h because prev included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdata.h
 
-Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdata.h because prev includedg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdpserver_qt.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdpserver_qt.h
+Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdata.h because prev includedg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdpserver_qt.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdpserver_qt.h
 
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdata.h
 
@@ -6890,7 +6890,7 @@ file: /usr/include/gnu/stubs.h
 Skipping: /usr/include/features.h because prev included
 file: /usr/include/features.h
 
-Skipping: /usr/include/stding++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netstru_so.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/netstru_so.h
+Skipping: /usr/include/stding++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netstru_so.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/netstru_so.h
 t.h because prev included
 file: /usr/include/stdint.h
 
@@ -7412,7 +7412,7 @@ file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h because prev included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h
 
-Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h because preg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netstru_qtso.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/netstru_qtso.h
+Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h because preg++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/netstru_qtso.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/netstru_qtso.h
 v included
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_base.h
 
@@ -8787,7 +8787,7 @@ file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdialog.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdialog.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/ta_qtdialog.h
 
-Skipping: /home/baisa/pdp4.0/trunk/src/pdp/pdp_g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_qtso.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_qtso.h
+Skipping: /home/baisa/pdp4.0/trunk/src/pdp/pdp_g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_qtso.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_qtso.h
 qtso.h because of: pdp_qtso.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdp_qtso.h
 
@@ -10096,7 +10096,7 @@ Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/safeptr_so.h because prev 
 file: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/safeptr_so.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtso/safeptr_so.h because prev included
-file: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtsog++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_program_qtso.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_program_qtso.h
+file: /home/baisa/pdp4.0/trunk/src/pdp/../taiqtsog++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/pdp_program_qtso.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/pdp_program_qtso.h
 /safeptr_so.h
 
 Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/t3viewer.h because prev included
@@ -10109,7 +10109,7 @@ Skipping: /home/baisa/pdp4.0/trunk/src/pdp/../ta/t3viewer.h because prev include
 file: /home/baisa/pdp4.0/trunk/src/pdp/../ta/t3viewer.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdp_qtso.h
 Processing: /home/baisa/pdp4.0/trunk/src/pdp/pdp_program_qtso.h
-g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/v3_compat.h.26773.~mta /home/baisa/pdp4.0/trunk/src/pdp/v3_compat.h
+g++ -E -I/home/baisa/pdp4.0/trunk/src/pdp/../../. -I/home/baisa/pdp4.0/trunk/src/pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../ta/ios-g++-3.1 -I/home/baisa/pdp4.0/trunk/src/pdp/../ta -I/home/baisa/pdp4.0/trunk/src/pdp/../pdp -I/home/baisa/pdp4.0/trunk/src/pdp/../css -I/home/baisa/pdp4.0/trunk/src/pdp/../leabra -I/home/baisa/pdp4.0/trunk/src/pdp/../taiqtso -I/home/baisa/pdp4.0/trunk/src/pdp/../bp -I/usr/include/qt4/Qt -I/usr/local/Trolltech/Qt-4.2.2/include/QtCore -I/opt/openmpi/1.1/include -I/opt/openmpi/1.1/include/openmpi -DOMPI_SKIP_MPICXX  -C -D__MAKETA__ -o /tmp/v3_compat.h.27562.~mta /home/baisa/pdp4.0/trunk/src/pdp/v3_compat.h
 file: /home/baisa/pdp4.0/trunk/src/pdp/pdp_program_qtso.h
 
 Skipping: <built-in> because prev included
