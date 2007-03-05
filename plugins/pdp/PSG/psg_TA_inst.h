@@ -12,6 +12,7 @@
 
 extern PSGBase*	TAI_PSGBase;
 extern PSGDemo*	TAI_PSGDemo;
+extern PSGArm*	TAI_PSGArm;
 
 
 #endif // psg_TA_insts_h

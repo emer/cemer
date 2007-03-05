@@ -24,6 +24,10 @@ TypeDef TA_PSGDemo("PSGDemo", " demo test of PSG",
 TypeDef TA_const_PSGBase_ref("const_PSGBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_PSGDemo("const_PSGDemo", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PSGDemo_ref("const_PSGDemo_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_PSGArm("PSGArm", " my psg arm 2 joint angles etc", 
+	"", "", "", sizeof(PSGArm), (void**)&TAI_PSGArm, 1, 0, 0,1);
+TypeDef TA_const_PSGArm("const_PSGArm", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PSGArm_ref("const_PSGArm_ref", 1, 0, 1, 0, 1, 0);
 
 // Instances
 
@@ -39,6 +43,15 @@ PSGDemo*		 TAI_PSGDemo=NULL;
       rval=new cssBool(((PSGDemo*)ths)->RunDemo());}
     if(na == 1) {
       rval=new cssBool(((PSGDemo*)ths)->RunDemo((int)*arg[1]));}
+    return rval;}
+PSGArm*		 TAI_PSGArm=NULL;
+  static cssEl* cssElCFun_PSGArm_GetCurState_stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssBool(((PSGArm*)ths)->GetCurState());
+    return rval;}
+  static cssEl* cssElCFun_PSGArm_SetVelocity_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssBool(((PSGArm*)ths)->SetVelocity((float)*arg[1], (float)*arg[2]));
     return rval;}
 
 // Type Data
@@ -62,6 +75,27 @@ static MethodArgs_data TA_PSGDemo_RunDemo_MethArgs[]={
 static MethodDef_data TA_PSGDemo_MethodDef[]={
   {&TA_bool,NULL,"RunDemo"," run the demo","BUTTON ","",
     0,1,0,0,0,NULL,cssElCFun_PSGDemo_RunDemo_stub,TA_PSGDemo_RunDemo_MethArgs},
+  NULL};
+static int PSGArm::* TA_PSGArm_MbrOff;
+static MemberDef_data TA_PSGArm_MemberDef[]={
+  {&TA_FloatTDCoord,NULL,"joint1_pos"," position of joint 1","","",
+    *((ta_memb_ptr*)&(TA_PSGArm_MbrOff=(int PSGArm::*)(&PSGArm::joint1_pos))),0,NULL,0},
+  {&TA_FloatTDCoord,NULL,"joint1_ang"," angle of joint 1 or something","","",
+    *((ta_memb_ptr*)&(TA_PSGArm_MbrOff=(int PSGArm::*)(&PSGArm::joint1_ang))),0,NULL,0},
+  {&TA_FloatTDCoord,NULL,"joint2_pos"," position of joint 2","","",
+    *((ta_memb_ptr*)&(TA_PSGArm_MbrOff=(int PSGArm::*)(&PSGArm::joint2_pos))),0,NULL,0},
+  {&TA_FloatTDCoord,NULL,"joint2_ang"," angle of joint 2 or something","","",
+    *((ta_memb_ptr*)&(TA_PSGArm_MbrOff=(int PSGArm::*)(&PSGArm::joint2_ang))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_PSGArm_SetVelocity_MethArgs[]={
+  {&TA_float,NULL,"j1_x",""},
+  {&TA_float,NULL,"j1_y",""},
+  NULL};
+static MethodDef_data TA_PSGArm_MethodDef[]={
+  {&TA_bool,NULL,"GetCurState"," get current state of the arm, updating pos and ang member varialbes","BUTTON ","",
+    0,0,-1,0,0,NULL,cssElCFun_PSGArm_GetCurState_stub,NULL},
+  {&TA_bool,NULL,"SetVelocity"," set the velocity inputs to the arm","BUTTON ","",
+    0,2,-1,0,0,NULL,cssElCFun_PSGArm_SetVelocity_stub,TA_PSGArm_SetVelocity_MethArgs},
   NULL};
 
 // Init Function
@@ -102,6 +136,17 @@ void ta_Init_psg() {
     TA_const_PSGDemo.AddParents(&TA_const, &TA_PSGDemo);
   taMisc::types.Add(&TA_const_PSGDemo_ref);
     TA_const_PSGDemo_ref.AddParents(&TA_const_PSGDemo);
+  taMisc::types.Add(&TA_PSGArm);
+    TAI_PSGArm = new PSGArm;
+    TA_PSGArm.AddParFormal(&TA_class);
+    TA_PSGArm.AddParCache(&TA_taBase);
+    TA_PSGArm.AddClassPar(&TA_PSGBase,0);
+    tac_AddMembers(TA_PSGArm,TA_PSGArm_MemberDef);
+    tac_AddMethods(TA_PSGArm,TA_PSGArm_MethodDef);
+  taMisc::types.Add(&TA_const_PSGArm);
+    TA_const_PSGArm.AddParents(&TA_const, &TA_PSGArm);
+  taMisc::types.Add(&TA_const_PSGArm_ref);
+    TA_const_PSGArm_ref.AddParents(&TA_const_PSGArm);
 
 
   taMisc::in_init = false;

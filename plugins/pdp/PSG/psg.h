@@ -5,6 +5,7 @@
 #include "ta_plugin.h"                       // Defines the plugin architecture.
 #include "ta_base.h"                         // Definition of the taBase object.
 #include "minmax.h"
+#include "ta_geometry.h"
 #include "psg_TA_type.h"                      // Record of type information for PSGBase class.
 
 #ifndef __MAKETA__
@@ -97,6 +98,37 @@ protected:
 private:
   void	Initialize();
   void	Destroy();
+};
+
+class PSG_API PSGArm : public PSGBase {
+  // my psg arm 2 joint angles etc
+INHERITED(PSGBase)
+public:
+  FloatTDCoord	joint1_pos;	// position of joint 1
+  FloatTDCoord	joint1_ang;	// angle of joint 1 or something
+  FloatTDCoord	joint2_pos;	// position of joint 2
+  FloatTDCoord	joint2_ang;	// angle of joint 2 or something
+
+  // or add another set of state variables that are the inputs
+  // the user sets those, then calls SetVelocity
+
+  // use RetinaSpec in src/ta/ta_imgproc.h as example of how to 
+  // configure and write to a DataTable
+  // ConfigDataTable -- LookBox is a vector of length 4 -- copy that w/3
+  // FilterImageData_impl shows how you write to the data table
+
+  bool GetCurState(DataTable*) { };
+  // #BUTTON get current state of the arm, updating pos and ang member varialbes
+  bool SetVelocity(float j1_x, float j1_y) { }; 
+  // #BUTTON set the velocity inputs to the arm
+
+  TA_SIMPLE_BASEFUNS(PSGArm);
+protected:
+  //  PlayerCc::ArmDude* arm;
+
+private:
+  void	Initialize() { };
+  void	Destroy() { };
 };
 
 #endif
