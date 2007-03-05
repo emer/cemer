@@ -188,7 +188,7 @@ public:
   // use this call to access the spec pointer value in all client calls -- fast!
   override BaseSpec*	GetSpec() const		{ return SPtr(); }
   void		SetSpec(BaseSpec* es)   {
-    if (spec == es) return; // low level setting, ex. streaming, handled in UAE
+    if (spec.ptr() == es) return; // low level setting, ex. streaming, handled in UAE
     if(!owner) return;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
       spec.set(es);
