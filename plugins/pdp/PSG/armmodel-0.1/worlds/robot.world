@@ -17,38 +17,6 @@
     <displayTextures>true</displayTextures>
     <renderMethod>XLIB</renderMethod>
   </model:ObserverCam>  
- 
-  <model:ObserverCam>
-    <id>userCam1</id>
-    <xyz>1.050 -1.300 1.300</xyz>
-    <rpy>-0 31 90</rpy>
-    <imageSize>640 480</imageSize>
-    <updateRate>10</updateRate>
-
-    <nearClip>0.2</nearClip>
-    <farClip>50</farClip>
-
-    <displayRays>false</displayRays>
-    <displayAxes>false</displayAxes>
-    <displayCoM>false</displayCoM>
-    <displayTextures>true</displayTextures>
-  </model:ObserverCam>  
- 
-  <model:ObserverCam>
-    <id>userCam2</id>
-    <xyz>1.300 1.050 1.300</xyz>
-    <rpy>-0 20 180</rpy>
-    <imageSize>320 240</imageSize>
-    <updateRate>10</updateRate>
-
-    <nearClip>0.2</nearClip>
-    <farClip>50</farClip>
-
-    <displayRays>false</displayRays>
-    <displayAxes>false</displayAxes>
-    <displayCoM>false</displayCoM>
-    <displayTextures>true</displayTextures>
-  </model:ObserverCam>
 
   <model:LightSource>
     <id>light0</id>

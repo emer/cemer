@@ -11,7 +11,10 @@ extern void ta_Init_psg();
 extern TypeDef TA_PSGPlugin;
 extern TypeDef TA_PSGBase;
 extern TypeDef TA_const_PSGBase;
+extern TypeDef TA_PSGDemo;
 extern TypeDef TA_const_PSGBase_ref;
+extern TypeDef TA_const_PSGDemo;
+extern TypeDef TA_const_PSGDemo_ref;
 
 
 #endif // psg_TA_types_h

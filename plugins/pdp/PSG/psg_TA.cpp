@@ -16,29 +16,52 @@
 
 TypeDef TA_PSGPlugin("PSGPlugin", " ", 
 	"", "", "", sizeof(PSGPlugin), (void**)0, 0, 0, 0,1);
-TypeDef TA_PSGBase("PSGBase", " declares 'inherited' keyword for safer base-class references", 
+TypeDef TA_PSGBase("PSGBase", " this is the base class for interfacing with PSG -- only one instance of this should be created -- ", 
 	"", "", "", sizeof(PSGBase), (void**)&TAI_PSGBase, 1, 0, 0,1);
 TypeDef TA_const_PSGBase("const_PSGBase", 1, 0, 0, 0, 1, 0);
+TypeDef TA_PSGDemo("PSGDemo", " demo test of PSG", 
+	"", "", "", sizeof(PSGDemo), (void**)&TAI_PSGDemo, 1, 0, 0,1);
 TypeDef TA_const_PSGBase_ref("const_PSGBase_ref", 1, 0, 1, 0, 1, 0);
+TypeDef TA_const_PSGDemo("const_PSGDemo", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const_PSGDemo_ref("const_PSGDemo_ref", 1, 0, 1, 0, 1, 0);
 
 // Instances
 
 PSGBase*		 TAI_PSGBase=NULL;
-  static cssEl* cssElCFun_PSGBase_PSG_stub(void* ths,int, cssEl**) {
+  static cssEl* cssElCFun_PSGBase_AttachToPlayer_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
-    ((PSGBase*)ths)->PSG();
+    rval=new cssBool(((PSGBase*)ths)->AttachToPlayer());
+    return rval;}
+PSGDemo*		 TAI_PSGDemo=NULL;
+  static cssEl* cssElCFun_PSGDemo_RunDemo_stub(void* ths,int na, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    if(na == 0) {
+      rval=new cssBool(((PSGDemo*)ths)->RunDemo());}
+    if(na == 1) {
+      rval=new cssBool(((PSGDemo*)ths)->RunDemo((int)*arg[1]));}
     return rval;}
 
 // Type Data
 
-static int PSGBase::* TA_PSGBase_MbrOff;
-static MemberDef_data TA_PSGBase_MemberDef[]={
-  {&TA_FixedMinMax,NULL,"min_max"," example of complex types as fields","","",
-    *((ta_memb_ptr*)&(TA_PSGBase_MbrOff=(int PSGBase::*)(&PSGBase::min_max))),0,NULL,0},
-  NULL};
 static MethodDef_data TA_PSGBase_MethodDef[]={
-  {&TA_void,NULL,"PSG"," PSG, World! Function","MENU ","",
-    0,0,-1,0,0,NULL,cssElCFun_PSGBase_PSG_stub,NULL},
+  {&TA_bool,NULL,"AttachToPlayer"," attach to the player server, creating client object","BUTTON ","",
+    0,0,-1,0,0,NULL,cssElCFun_PSGBase_AttachToPlayer_stub,NULL},
+  NULL};
+static int PSGDemo::* TA_PSGDemo_MbrOff;
+static MemberDef_data TA_PSGDemo_MemberDef[]={
+  {&TA_float,NULL,"rate_per_second"," how fast to turn","","",
+    *((ta_memb_ptr*)&(TA_PSGDemo_MbrOff=(int PSGDemo::*)(&PSGDemo::rate_per_second))),0,NULL,0},
+  {&TA_float,NULL,"collision_threshold"," how close to get before stopping","","",
+    *((ta_memb_ptr*)&(TA_PSGDemo_MbrOff=(int PSGDemo::*)(&PSGDemo::collision_threshold))),0,NULL,0},
+  {&TA_float,NULL,"run_speed"," how fast to go when not colliding","","",
+    *((ta_memb_ptr*)&(TA_PSGDemo_MbrOff=(int PSGDemo::*)(&PSGDemo::run_speed))),0,NULL,0},
+  NULL};
+static MethodArgs_data TA_PSGDemo_RunDemo_MethArgs[]={
+  {&TA_int,NULL,"n_iterations","1000"},
+  NULL};
+static MethodDef_data TA_PSGDemo_MethodDef[]={
+  {&TA_bool,NULL,"RunDemo"," run the demo","BUTTON ","",
+    0,1,0,0,0,NULL,cssElCFun_PSGDemo_RunDemo_stub,TA_PSGDemo_RunDemo_MethArgs},
   NULL};
 
 // Init Function
@@ -63,12 +86,22 @@ void ta_Init_psg() {
     TA_PSGBase.AddParFormal(&TA_class);
     TA_PSGBase.AddParCache(&TA_taBase);
     TA_PSGBase.AddClassPar(&TA_taNBase,0);
-    tac_AddMembers(TA_PSGBase,TA_PSGBase_MemberDef);
     tac_AddMethods(TA_PSGBase,TA_PSGBase_MethodDef);
   taMisc::types.Add(&TA_const_PSGBase);
     TA_const_PSGBase.AddParents(&TA_const, &TA_PSGBase);
+  taMisc::types.Add(&TA_PSGDemo);
+    TAI_PSGDemo = new PSGDemo;
+    TA_PSGDemo.AddParFormal(&TA_class);
+    TA_PSGDemo.AddParCache(&TA_taBase);
+    TA_PSGDemo.AddClassPar(&TA_PSGBase,0);
+    tac_AddMembers(TA_PSGDemo,TA_PSGDemo_MemberDef);
+    tac_AddMethods(TA_PSGDemo,TA_PSGDemo_MethodDef);
   taMisc::types.Add(&TA_const_PSGBase_ref);
     TA_const_PSGBase_ref.AddParents(&TA_const_PSGBase);
+  taMisc::types.Add(&TA_const_PSGDemo);
+    TA_const_PSGDemo.AddParents(&TA_const, &TA_PSGDemo);
+  taMisc::types.Add(&TA_const_PSGDemo_ref);
+    TA_const_PSGDemo_ref.AddParents(&TA_const_PSGDemo);
 
 
   taMisc::in_init = false;
