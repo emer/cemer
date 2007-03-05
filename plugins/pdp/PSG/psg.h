@@ -6,6 +6,7 @@
 #include "ta_base.h"                         // Definition of the taBase object.
 #include "minmax.h"
 #include "ta_geometry.h"
+#include "ta_datatable.h"
 #include "psg_TA_type.h"                      // Record of type information for PSGBase class.
 
 #ifndef __MAKETA__
