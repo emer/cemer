@@ -15,7 +15,7 @@ HEADERS += $${TARGET}.h
 # you can just refer to the HEADERS if they are the same
 
 MAKETA_HEADERS = $${HEADERS}
-MAKETA_INCLUDEPATH += `pkg-config --cflags-only-I playerc++`
+MAKETA_INCLUDEPATH += -I/usr/local/include/player-2.0
 
 # Declare all the source files, *except* the following:
 #  * moc files -- qmake handles those
