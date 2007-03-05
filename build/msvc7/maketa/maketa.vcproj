@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(SolutionDir)&quot;"
-				PreprocessorDefinitions="NO_TA_BASE;WIN32;_DEBUG;_WINDOWS"
+				PreprocessorDefinitions="NO_TA_BASE;DEBUG;WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="5"

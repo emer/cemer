@@ -22,7 +22,9 @@
 #include "ta_def.h"
 #include "ta_TA_type.h"
 
-#include <math.h>
+#ifndef __MAKETA__
+# include <math.h>
+#endif
 
 double nicenum(double x, bool round);
 

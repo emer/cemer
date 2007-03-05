@@ -596,7 +596,7 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
     else
       strm << "(Variant" << argt->GetPtrString() << ")*arg[" << j+1 << "]";
   }
-  else if(argt->DerivesFrom("ios")) { // cssEl's can cast these directly
+  else if(argt->DerivesFromName("ios")) { // cssEl's can cast these directly
     if(argt->ptr == 0)
       strm << "*(" << argt->Get_C_Name() << "*)" << "*arg[" << j+1 << "]";
     else
@@ -1241,7 +1241,7 @@ if (mta->verbose > 0) {
 	}
 	else {
 	  strm << ",0";
-	  if((ths->parents.size > 1) && (i==0) && !ths->InheritsFrom("ios"))
+	  if((ths->parents.size > 1) && (i==0) && !ths->InheritsFromName("ios"))
 	    taMisc::Error("warning: type:",ths->name,"has mult inherit but no instance",
 			   "-parent offset cannot be computed!");
 	}

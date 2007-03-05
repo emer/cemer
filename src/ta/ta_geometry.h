@@ -25,7 +25,9 @@
 #include "igeometry.h"
 #endif
 
-#include <math.h>
+#ifndef __MAKETA__
+# include <math.h>
+#endif
 
 class TwoDCoord;
 class PosTwoDCoord;

@@ -17,11 +17,13 @@
 #ifndef TA_MATH_H
 #define TA_MATH_H
 
-#include <cmath>
 #include "ta_matrix.h"
 #include "ta_mtrnd.h"
 #include "ta_dmem.h"
 
+#ifndef __MAKETA__
+# include <cmath>
+#endif
 #if (defined(HAVE_LIBGSL) && !defined(__MAKETA__))
 # include "gsl/gsl_matrix_double.h"
 # include "gsl/gsl_matrix_float.h"

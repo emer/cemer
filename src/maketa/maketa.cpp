@@ -833,6 +833,7 @@ int main(int argc, char* argv[])
     cout << "\nIgnored Types\n";   mta->spc_ignore.List();
     cout << "\nOther Types\n";   mta->spc_other.List();
   }
+  taMisc::quitting = taMisc::QF_FORCE_QUIT; // useful for debugging
   delete mta;
   taMisc::types.RemoveAll();
   return 0;

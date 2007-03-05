@@ -35,9 +35,11 @@
 //#include "fontspec.h"
 #endif
 
-#include <math.h>
-
 #include "ta_dmem.h"
+
+#ifndef __MAKETA__
+# include <math.h>
+#endif
 
 class NetMonitor;
 

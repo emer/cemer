@@ -23,7 +23,9 @@
 
 #include "icolor.h"
 
-#include <math.h>
+#ifndef __MAKETA__
+# include <math.h>
+#endif
 
 // NOTE: Qt color values are 0..255 , but float colors retained for ease of Iv->Qt port
 
