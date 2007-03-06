@@ -637,6 +637,10 @@ void ProjectBase::UpdateAfterEdit_impl() {
 void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
   if(bld_mode == NO_BUILD)
     return;
+#ifdef TA_OS_WIN // TEMP
+  taMisc::Warning("AutoBuild is not working yet on Windows -- please Build/Connect manually.");
+  return;
+#endif
   Network* net;
   taLeafItr i;
   FOR_ITR_EL(Network, net, networks., i) {
