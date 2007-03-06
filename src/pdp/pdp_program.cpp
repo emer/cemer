@@ -52,7 +52,10 @@ void BasicDataLoop::UpdateAfterEdit_impl() {
 void BasicDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!data_var, quiet, rval,  "data_var = NULL");
+  CheckError(!order_var, quiet, rval, "order_var = NULL");
   CheckError(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), quiet, rval,"data_var does not point to a data table");
+  CheckProgVarRef(data_var, quiet, rval);
+  CheckProgVarRef(order_var, quiet, rval);
 }
 
 const String BasicDataLoop::GenCssPre_impl(int indent_level) {
@@ -157,6 +160,11 @@ void GroupedDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!data_var, quiet, rval,  "data_var = NULL");
   CheckError(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), quiet, rval,"data_var does not point to a data table");
+  CheckError(!group_order_var, quiet, rval,  "group_order_var = NULL");
+  CheckError(!item_order_var, quiet, rval,  "item_order_var = NULL");
+  CheckProgVarRef(data_var, quiet, rval);
+  CheckProgVarRef(group_order_var, quiet, rval);
+  CheckProgVarRef(item_order_var, quiet, rval);
 }
 
 void GroupedDataLoop::GetGroupList() {
@@ -261,6 +269,8 @@ void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError((bool)network_var && !network_var->object_val, quiet, rval,
 	     "network_var object = NULL");
   CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
+  CheckProgVarRef(network_var, quiet, rval);
+  CheckProgVarRef(local_ctr_var, quiet, rval);
 }
 
 String NetCounterInit::GetDisplayName() const {
@@ -316,6 +326,8 @@ void NetCounterIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError((bool)network_var && !network_var->object_val, quiet, rval,
 	     "network_var object = NULL");
   CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
+  CheckProgVarRef(network_var, quiet, rval);
+  CheckProgVarRef(local_ctr_var, quiet, rval);
 }
 
 String NetCounterIncr::GetDisplayName() const {
@@ -364,6 +376,8 @@ void NetUpdateView::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!network_var, quiet, rval, "network_var = NULL");
   CheckError(!update_var, quiet, rval, "update_var = NULL");
+  CheckProgVarRef(network_var, quiet, rval);
+  CheckProgVarRef(update_var, quiet, rval);
 }
 
 String NetUpdateView::GetDisplayName() const {

@@ -153,7 +153,8 @@ Program .projects[0].programs.gp[0][6] {
      name="db";
      expr {
       expr="input_data";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ input_data;      };
@@ -166,7 +167,8 @@ Program .projects[0].programs.gp[0][6] {
      name="net";
      expr {
       expr="network";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ network;      };
@@ -191,6 +193,7 @@ Program .projects[0].programs.gp[0][6] {
      name="quiet";
      expr {
       expr="false";
+      flags=PE_NONE;
       var_expr="false";
       vars {
       };

@@ -116,7 +116,7 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[2] {
    name="epoch";
    var_type=T_Int;
-   int_val=12;
+   int_val=0;
    objs_ptr=0;
    flags=PV_NONE;
    desc=;
@@ -178,6 +178,7 @@ Program .projects[0].programs.gp[0][1] {
      name="quiet";
      expr {
       expr="false";
+      flags=PE_NONE;
       var_expr="false";
       vars {
       };
@@ -191,9 +192,10 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=PEF_NONE;
    result_var=.projects[0].programs.gp[0][1].vars[5]$5$;
-   expr_val {
+   expr {
     expr="network.train_time";
-    var_expr="$#0.train_time";
+    flags=PE_NONE;
+    var_expr="$#0#$.train_time";
     vars {
     };
     var_names{ network;    };
@@ -240,9 +242,10 @@ Program .projects[0].programs.gp[0][1] {
    desc=;
    flags=PEF_NONE;
    result_var=$5$;
-   expr_val {
+   expr {
     expr="network.train_time";
-    var_expr="$#0.train_time";
+    flags=PE_NONE;
+    var_expr="$#0#$.train_time";
     vars {
     };
     var_names{ network;    };
@@ -265,6 +268,7 @@ Program .projects[0].programs.gp[0][1] {
      name="reset_used";
      expr {
       expr="true";
+      flags=PE_NONE;
       var_expr="true";
       vars {
       };
@@ -284,7 +288,15 @@ Program .projects[0].programs.gp[0][1] {
   UserScript @[3] {
    desc="update network's train mode to be same as ours";
    flags=PEF_NONE;
-   user_script="network->train_mode = train_mode;";
+   script {
+    expr="network.train_mode = train_mode;";
+    flags=NO_VAR_ERRS;
+    var_expr="$#0#$.train_mode = $#1#$;";
+    vars {
+    };
+    var_names{ network;train_mode;    };
+    bad_vars{     };
+   };
   };
   MethodCall @[4] {
    desc="initialize network weights: could also load pre-set weights or something else here";
@@ -321,7 +333,8 @@ Program .projects[0].programs.gp[0][1] {
        name="network";
        expr {
 	expr="network";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ network;	};
@@ -334,7 +347,8 @@ Program .projects[0].programs.gp[0][1] {
        name="input_data";
        expr {
 	expr="input_data";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ input_data;	};
@@ -353,10 +367,26 @@ Program .projects[0].programs.gp[0][1] {
     IfBreak @[2] {
      desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
      flags=PEF_NONE;
-     condition="network->cnt_err <= err_stopcrit";
+     cond {
+      expr="network.cnt_err <= err_stopcrit";
+      flags=PE_NONE;
+      var_expr="$#0#$.cnt_err <= $#1#$";
+      vars {
+      };
+      var_names{ network;err_stopcrit;      };
+      bad_vars{       };
+     };
     };
    };
-   loop_test="epoch < max_epoch";
+   test {
+    expr="epoch < max_epoch";
+    flags=PE_NONE;
+    var_expr="$#0#$ < $#1#$";
+    vars {
+    };
+    var_names{ epoch;max_epoch;    };
+    bad_vars{     };
+   };
   };
   MethodCall @[6] {
    desc=;

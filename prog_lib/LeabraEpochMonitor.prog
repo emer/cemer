@@ -264,10 +264,11 @@ Program .projects[0].programs.gp[0][8] {
   AssignExpr @[0] {
    desc=;
    flags=PEF_NONE;
-   result_var=.projects[0].programs.gp[0][8].vars[2]$4$;
-   expr_val {
+   result_var=.projects[0].programs.gp[0][2].vars[3]$4$;
+   expr {
     expr="network.epoch_time";
-    var_expr="$#0.epoch_time";
+    flags=PE_NONE;
+    var_expr="$#0#$.epoch_time";
     vars {
     };
     var_names{ network;    };
@@ -290,7 +291,8 @@ Program .projects[0].programs.gp[0][8] {
      name="dt";
      expr {
       expr="epoch_mon_data";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ epoch_mon_data;      };
@@ -303,7 +305,8 @@ Program .projects[0].programs.gp[0][8] {
      name="net";
      expr {
       expr="network";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ network;      };
@@ -328,6 +331,7 @@ Program .projects[0].programs.gp[0][8] {
      name="quiet";
      expr {
       expr="false";
+      flags=PE_NONE;
       var_expr="false";
       vars {
       };
@@ -353,6 +357,7 @@ Program .projects[0].programs.gp[0][8] {
      name="reset_first";
      expr {
       expr="true";
+      flags=PE_NONE;
       var_expr="true";
       vars {
       };
@@ -395,9 +400,10 @@ Program .projects[0].programs.gp[0][8] {
    desc=;
    flags=PEF_NONE;
    result_var=$4$;
-   expr_val {
+   expr {
     expr="network.epoch_time";
-    var_expr="$#0.epoch_time";
+    flags=PE_NONE;
+    var_expr="$#0#$.epoch_time";
     vars {
     };
     var_names{ network;    };
@@ -407,10 +413,21 @@ Program .projects[0].programs.gp[0][8] {
   UserScript @[3] {
    desc="set the timing information from the epoch timer";
    flags=PEF_NONE;
-   user_script="epoch_mon_data.SetDataByName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\");
+   script {
+    expr="epoch_mon_data.SetDataByName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\");
 epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 
 ";
+    flags=NO_VAR_ERRS;
+    var_expr="$#0#$.SetDataByName($#1#$.used.GetTotSecs(), \"epoch_time_tot\");
+epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
+
+";
+    vars {
+    };
+    var_names{ epoch_mon_data;epoch_timer;    };
+    bad_vars{     };
+   };
   };
   MethodCall @[4] {
    desc="update after writing new data to monitor data table";

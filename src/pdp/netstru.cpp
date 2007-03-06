@@ -1465,7 +1465,7 @@ void UnitSpec::InitLinks() {
   // specs that own specs have this problem
   if(!taMisc::is_loading) {
     Network* net = (Network *) GET_MY_OWNER(Network);
-    if(net && !net->copying)
+    if(net && !net->HasBaseFlag(COPYING))
       bias_spec.SetDefaultSpec(this);
   }
 }
@@ -4184,7 +4184,6 @@ void Network::Initialize() {
   max_size.y = 1;
   max_size.z = 1;
 
-  copying = false;
   proj = NULL;
 #ifdef DMEM_COMPILE
   dmem_share_units.comm = (MPI_Comm)MPI_COMM_WORLD;
@@ -4233,7 +4232,6 @@ void Network::CutLinks() {
 }
 
 void Network::Copy_(const Network& cp) {
-  copying = true;
   specs = cp.specs;
   layers = cp.layers;
 
@@ -4283,7 +4281,6 @@ void Network::Copy_(const Network& cp) {
 #endif
 //   ((Network&)cp).SyncSendPrjns(); // these get screwed up in there somewhere..
   //note: batch update in tabase copy
-  copying = false;
 }
 
 void Network::UpdateAfterEdit_impl(){

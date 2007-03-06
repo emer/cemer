@@ -932,6 +932,17 @@ bool ProgEl::CheckEqualsError(String& condition, bool quiet, bool& rval) {
   return false;
 }
 
+bool ProgEl::CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval) {
+  if(!pvr) return false;
+  Program* myprg = GET_MY_OWNER(Program);
+  Program* otprg = GET_OWNER(pvr.ptr(), Program);
+  if(CheckError(myprg != otprg, quiet, rval,
+		"program variable:",pvr.ptr()->GetName(),"not in same program as me -- must be fixed!")) {
+    return true;
+  }
+  return false;
+}
+
 bool ProgEl::CheckConfig_impl(bool quiet) {
   if(HasProgFlag(OFF)) {
     ClearCheckConfig();
@@ -1493,6 +1504,7 @@ void AssignExpr::UpdateAfterEdit_impl() {
 void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!result_var, quiet, rval, "result_var is NULL");
+  CheckProgVarRef(result_var, quiet, rval);
   expr.CheckConfig(quiet, rval);
 }
 
@@ -1550,6 +1562,8 @@ void MethodCall::UpdateAfterEdit_impl() {
 void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!obj, quiet, rval, "obj is NULL");
+  CheckProgVarRef(result_var, quiet, rval);
+  CheckProgVarRef(obj, quiet, rval);
   CheckError(!method, quiet, rval, "method is NULL");
 }
 
@@ -1633,6 +1647,7 @@ void StaticMethodCall::UpdateAfterEdit_impl() {
 
 void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
+  CheckProgVarRef(result_var, quiet, rval);
   CheckError(!method, quiet, rval, "method is NULL");
 }
 
@@ -1711,6 +1726,7 @@ void PrintVar::Initialize() {
 void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!print_var, quiet, rval, "print_var is NULL");
+  CheckProgVarRef(print_var, quiet, rval);
 }
 
 const String PrintVar::GenCssBody_impl(int indent_level) {
@@ -1744,19 +1760,19 @@ void PrintExpr::Initialize() {
 
 void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  print_expr.CheckConfig(quiet, rval);
+  expr.CheckConfig(quiet, rval);
 }
 
 const String PrintExpr::GenCssBody_impl(int indent_level) {
   String rval;
   rval += cssMisc::Indent(indent_level);
-  rval += "cerr << " + print_expr.GetFullExpr() + " << endl;\n";
+  rval += "cerr << " + expr.GetFullExpr() + " << endl;\n";
   return rval;
 }
 
 String PrintExpr::GetDisplayName() const {
   String rval;
-  rval += "Print: " + print_expr.GetFullExpr();
+  rval += "Print: " + expr.GetFullExpr();
   return rval;
 }
 
@@ -2071,6 +2087,13 @@ void FunctionCall::UpdateAfterEdit_impl() {
 void FunctionCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!fun, quiet, rval, "fun is NULL");
+  CheckProgVarRef(result_var, quiet, rval);
+  if(fun) {
+    Program* myprg = GET_MY_OWNER(Program);
+    Program* otprg = GET_OWNER(fun.ptr(), Program);
+    CheckError(myprg != otprg, quiet, rval,
+	       "function call to:",fun.ptr()->GetName(),"not in same program as me -- must be fixed!");
+  }
 }
 
 void FunctionCall::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -2126,25 +2149,23 @@ void ReturnExpr::Initialize() {
 
 void ReturnExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(expr, expr_val);
 }
 
 void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  expr_val.CheckConfig(quiet, rval);
+  expr.CheckConfig(quiet, rval);
 }
 
 const String ReturnExpr::GenCssBody_impl(int indent_level) {
   String rval;
   rval += cssMisc::Indent(indent_level);
-  rval += "return " + expr_val.GetFullExpr() + ";\n";
+  rval += "return " + expr.GetFullExpr() + ";\n";
   return rval;
 }
 
 String ReturnExpr::GetDisplayName() const {
   String rval;
-  rval += "return " + expr_val.expr;
+  rval += "return " + expr.expr;
   return rval;
 }
 

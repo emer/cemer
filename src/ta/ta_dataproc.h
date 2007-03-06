@@ -490,7 +490,7 @@ private:
 };
 
 class TA_API DataCalcLoop : public DataProg { 
-  // enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
+  // ##DEF_CHILD_loop_code enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
 INHERITED(DataProg)
 public:
   DataOpList		src_cols;
@@ -501,6 +501,8 @@ public:
   ProgVar_List		src_col_vars;  // #READ_ONLY source column variables
   ProgVar_List		dest_col_vars;  // #READ_ONLY dest column variables
 
+  override taList_impl*	children_() {return &loop_code;}	
+
   virtual void	AddAllSrcColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 
   virtual void	AddAllDestColumns();
@@ -508,6 +510,7 @@ public:
   override void	UpdateSpecDataTable();
 
   override ProgVar*	FindVarName(const String& var_nm) const;
+  override taBase*	FindTypeName(const String& nm) const;
 
   override String GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DataCalcLoop);

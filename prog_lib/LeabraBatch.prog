@@ -138,7 +138,8 @@ Program .projects[0].programs.gp[0][0] {
        name="network";
        expr {
 	expr="network";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ network;	};
@@ -151,7 +152,8 @@ Program .projects[0].programs.gp[0][0] {
        name="input_data";
        expr {
 	expr="input_data";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ input_data;	};
@@ -168,7 +170,15 @@ Program .projects[0].programs.gp[0][0] {
      counter=Network::batch;
     };
    };
-   loop_test="batch < max_batch";
+   test {
+    expr="batch < max_batch";
+    flags=PE_NONE;
+    var_expr="$#0#$ < $#1#$";
+    vars {
+    };
+    var_names{ batch;max_batch;    };
+    bad_vars{     };
+   };
   };
  };
 };

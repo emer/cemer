@@ -1431,8 +1431,12 @@ void DataCalcLoop::CheckChildConfig_impl(bool quiet, bool& rval) {
 ProgVar* DataCalcLoop::FindVarName(const String& var_nm) const {
   ProgVar* pv = src_col_vars.FindName(var_nm);
   if(pv) return pv;
-
-  return dest_col_vars.FindName(var_nm);
+  pv = dest_col_vars.FindName(var_nm);
+  if(pv) return pv;
+  return loop_code.FindVarName(var_nm);
+}
+taBase* DataCalcLoop::FindTypeName(const String& nm) const {
+  return loop_code.FindTypeName(nm);
 }
 
 void DataCalcLoop::PreGenChildren_impl(int& item_id) {

@@ -104,7 +104,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[1] {
    name="trial";
    var_type=T_Int;
-   int_val=5;
+   int_val=0;
    objs_ptr=0;
    flags=PV_NONE;
    desc="current trial (event) within the epoch -- increments automatically";
@@ -153,9 +153,10 @@ Program .projects[0].programs.gp[0][2] {
    desc=;
    flags=PEF_NONE;
    result_var=.projects[0].programs.gp[0][2].vars[3]$6$;
-   expr_val {
+   expr {
     expr="network.epoch_time";
-    var_expr="$#0.epoch_time";
+    flags=PE_NONE;
+    var_expr="$#0#$.epoch_time";
     vars {
     };
     var_names{ network;    };
@@ -178,9 +179,10 @@ Program .projects[0].programs.gp[0][2] {
    desc=;
    flags=PEF_NONE;
    result_var=$6$;
-   expr_val {
+   expr {
     expr="network.epoch_time";
-    var_expr="$#0.epoch_time";
+    flags=PE_NONE;
+    var_expr="$#0#$.epoch_time";
     vars {
     };
     var_names{ network;    };
@@ -203,6 +205,7 @@ Program .projects[0].programs.gp[0][2] {
      name="reset_used";
      expr {
       expr="true";
+      flags=PE_NONE;
       var_expr="true";
       vars {
       };
@@ -234,7 +237,15 @@ Program .projects[0].programs.gp[0][2] {
     UserScript @[0] {
      desc="set trial to list_idx of data loop -- for dmem code this is the correct trial number";
      flags=PEF_NONE;
-     user_script="trial = list_idx; network->trial = list_idx;";
+     script {
+      expr="trial = list_idx; network.trial = list_idx;";
+      flags=NO_VAR_ERRS;
+      var_expr="$#0#$ = list_idx; $#1#$.trial = list_idx;";
+      vars {
+      };
+      var_names{ trial;network;      };
+      bad_vars{ list_idx;      };
+     };
     };
     ProgramCall @[1] {
      desc=;
@@ -252,7 +263,8 @@ Program .projects[0].programs.gp[0][2] {
        name="network";
        expr {
 	expr="network";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ network;	};
@@ -265,7 +277,8 @@ Program .projects[0].programs.gp[0][2] {
        name="input_data";
        expr {
 	expr="input_data";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ input_data;	};
@@ -277,7 +290,15 @@ Program .projects[0].programs.gp[0][2] {
     IfElse @[2] {
      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
      flags=PEF_NONE;
-     condition="network->Compute_Weights_Test(trial+1)";
+     cond {
+      expr="network.Compute_Weights_Test(trial+1)";
+      flags=PE_NONE;
+      var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
+      vars {
+      };
+      var_names{ network;trial;      };
+      bad_vars{       };
+     };
      true_code {
       name=;
       el_typ=MethodCall;
@@ -302,18 +323,25 @@ Program .projects[0].programs.gp[0][2] {
      };
     };
    };
-   loop_test="This is not used here";
    data_var=.projects[0].programs.gp[0][2].args[1]$10$;
    order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
    order=PERMUTED;
-   item_idx_list{ 5;4;2;1;0;3;   };
+   item_idx_list{ 5;0;4;2;1;3;   };
    dmem_nprocs=1;
    dmem_this_proc=0;
   };
   IfElse @[5] {
    desc="if full batch mode, update only at end of epoch";
    flags=PEF_NONE;
-   condition="network->wt_update == Network::BATCH";
+   cond {
+    expr="network.wt_update == Network::BATCH";
+    flags=PE_NONE;
+    var_expr="$#0#$.wt_update == Network::BATCH";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
    true_code {
     name=;
     el_typ=ProgEl;
@@ -377,7 +405,8 @@ Program .projects[0].programs.gp[0][2] {
      name="network";
      expr {
       expr="network";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ network;      };

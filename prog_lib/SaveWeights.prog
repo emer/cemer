@@ -97,7 +97,7 @@ Program .projects[0].programs.gp[0][9] {
    string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
    objs_ptr=0;
    flags=PV_NONE;
-   desc=;
+   desc="final generated file name -- do not edit!";
   };
   ProgVar @[3] {
    name="epoch_str";
@@ -146,7 +146,15 @@ Program .projects[0].programs.gp[0][9] {
   IfElse @[0] {
    desc="don't save if not first dmem process";
    flags=PEF_NONE;
-   condition="taMisc::dmem_proc > 0";
+   cond {
+    expr="taMisc::dmem_proc > 0";
+    flags=PE_NONE;
+    var_expr="taMisc::dmem_proc > 0";
+    vars {
+    };
+    var_names{     };
+    bad_vars{     };
+   };
    true_code {
     name=;
     el_typ=ProgEl;
@@ -154,7 +162,15 @@ Program .projects[0].programs.gp[0][9] {
     UserScript @[0] {
      desc=;
      flags=PEF_NONE;
-     user_script="return;";
+     script {
+      expr="return;";
+      flags=NO_VAR_ERRS;
+      var_expr="return;";
+      vars {
+      };
+      var_names{       };
+      bad_vars{ return;      };
+     };
     };
    };
    false_code {
@@ -179,7 +195,8 @@ Program .projects[0].programs.gp[0][9] {
      name="num";
      expr {
       expr="network.batch";
-      var_expr="$#0.batch";
+      flags=PE_NONE;
+      var_expr="$#0#$.batch";
       vars {
       };
       var_names{ network;      };
@@ -192,6 +209,7 @@ Program .projects[0].programs.gp[0][9] {
      name="len";
      expr {
       expr="2";
+      flags=PE_NONE;
       var_expr="2";
       vars {
       };
@@ -217,7 +235,8 @@ Program .projects[0].programs.gp[0][9] {
      name="num";
      expr {
       expr="network.epoch";
-      var_expr="$#0.epoch";
+      flags=PE_NONE;
+      var_expr="$#0#$.epoch";
       vars {
       };
       var_names{ network;      };
@@ -230,6 +249,7 @@ Program .projects[0].programs.gp[0][9] {
      name="len";
      expr {
       expr="4";
+      flags=PE_NONE;
       var_expr="4";
       vars {
       };
@@ -243,9 +263,10 @@ Program .projects[0].programs.gp[0][9] {
    desc=;
    flags=PEF_NONE;
    result_var=.projects[0].programs.gp[0][9].vars[5]$3$;
-   expr_val {
+   expr {
     expr="tag + \".\" + batch_str + \"_\" + epoch_str";
-    var_expr="$#0 + \".\" + batch_str + \"_\" + epoch_str";
+    flags=PE_NONE;
+    var_expr="$#0#$ + \".\" + batch_str + \"_\" + epoch_str";
     vars {
     };
     var_names{ tag;    };
@@ -263,11 +284,12 @@ Program .projects[0].programs.gp[0][9] {
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=NULL;
+     arg_type=const_taString_ref;
      type="const taString&";
      name="ext";
      expr {
       expr="\".wts.gz\"";
+      flags=PE_NONE;
       var_expr="\".wts.gz\"";
       vars {
       };
@@ -276,12 +298,13 @@ Program .projects[0].programs.gp[0][9] {
      };
     };
     ProgArg @[1] {
-     arg_type=NULL;
+     arg_type=const_taString_ref;
      type="const taString&";
      name="tag";
      expr {
       expr="final_tag";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ final_tag;      };
@@ -289,12 +312,13 @@ Program .projects[0].programs.gp[0][9] {
      };
     };
     ProgArg @[2] {
-     arg_type=NULL;
+     arg_type=const_taString_ref;
      type="const taString&";
      name="subdir";
      expr {
       expr="wts_subdir";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ wts_subdir;      };
@@ -302,11 +326,12 @@ Program .projects[0].programs.gp[0][9] {
      };
     };
     ProgArg @[3] {
-     arg_type=NULL;
+     arg_type=bool;
      type="bool";
      name="dmem_proc_no";
      expr {
       expr="false";
+      flags=PE_NONE;
       var_expr="false";
       vars {
       };
@@ -332,7 +357,8 @@ Program .projects[0].programs.gp[0][9] {
      name="fname";
      expr {
       expr="fname";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ fname;      };
@@ -345,6 +371,7 @@ Program .projects[0].programs.gp[0][9] {
      name="fmt";
      expr {
       expr="Network::NET_FMT";
+      flags=PE_NONE;
       var_expr="Network::NET_FMT";
       vars {
       };

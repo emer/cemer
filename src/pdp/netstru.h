@@ -1636,7 +1636,6 @@ public:
   NetViewFontSizes font_sizes;   // #CAT_Display default size of display labels when a new view is made (can be overriden in specific views)
   NetViewParams	view_params;   // #CAT_Display misc netview parameters
 
-  bool		copying; 	// #IGNORE if object is currently being copied
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
 
   // todo: these seem pretty lame:

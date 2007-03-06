@@ -396,6 +396,8 @@ protected:
 				       const char* g=0, const char* h=0) const;
   virtual bool		CheckEqualsError(String& condition, bool quiet, bool& rval);
   // check for common mistake of using = instead of == for logical equals
+  virtual bool		CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval);
+  // check program variable reference to make sure it is in same scope as this progel
 
   override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
@@ -709,9 +711,6 @@ public:
   ProgExpr		expr;
   // #AKA_expr_val expression to assign variable to
   
-//   String		expr;
-//   // #READ_ONLY #NO_SAVE obsolete expr -- todo: remove me!
-
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
@@ -855,8 +854,8 @@ class TA_API PrintExpr: public ProgEl {
   // print out (to the console) an expression -- e.g., an informational message for the user
 INHERITED(ProgEl)
 public:
-  ProgExpr		print_expr;
-  // print out (to console) this expression -- it just does 'cerr << print_expr << endl;' so you can put multiple << segments in the expression to print out multiple things
+  ProgExpr		expr;
+  // #AKA_print_expr print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
@@ -973,11 +972,8 @@ class TA_API ReturnExpr: public ProgEl {
   // return from a function with a given expression (can be empty to return from a void function) -- you can return from the code or init segments of a program to end execution at that point
 INHERITED(ProgEl)
 public:
-  ProgExpr		expr_val;
-  // expression to return from function with (can be empty to return from a void function)
-
-  String		expr;
-  // #READ_ONLY #NO_SAVE obsolete string expression
+  ProgExpr		expr;
+  // #AKA_expr_val expression to return from function with (can be empty to return from a void function)
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }

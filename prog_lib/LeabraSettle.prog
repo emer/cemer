@@ -174,7 +174,8 @@ Program .projects[0].programs.gp[0][4] {
      name="network";
      expr {
       expr="network";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ network;      };
@@ -187,7 +188,8 @@ Program .projects[0].programs.gp[0][4] {
      name="input_data";
      expr {
       expr="input_data";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ input_data;      };
@@ -211,10 +213,22 @@ Program .projects[0].programs.gp[0][4] {
   UserScript @[4] {
    desc="get min cycles";
    flags=PEF_NONE;
-   user_script="if(network->phase_no <= 1) min_cycles = network->min_cycles;
-else min_cycles = network->min_cycles_phase2;
+   script {
+    expr="if(network.phase_no <= 1) min_cycles = network.min_cycles;
+else min_cycles = network.min_cycles_phase2;
 
 ";
+    flags=NO_VAR_ERRS;
+    var_expr="if($#0#$.phase_no <= 1) $#1#$ = $#0#$.min_cycles;
+else $#1#$ = $#0#$.min_cycles_phase2;
+
+
+";
+    vars {
+    };
+    var_names{ network;min_cycles;    };
+    bad_vars{ if;else;    };
+   };
   };
   WhileLoop @[5] {
    desc=;
@@ -239,7 +253,8 @@ else min_cycles = network->min_cycles_phase2;
        name="network";
        expr {
 	expr="network";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ network;	};
@@ -258,16 +273,41 @@ else min_cycles = network->min_cycles_phase2;
     IfContinue @[2] {
      desc="avoid subsequent stopping criteria";
      flags=PEF_NONE;
-     condition="cycle < min_cycles";
+     cond {
+      expr="cycle < min_cycles";
+      flags=PE_NONE;
+      var_expr="$#0#$ < $#1#$";
+      vars {
+      };
+      var_names{ cycle;min_cycles;      };
+      bad_vars{       };
+     };
     };
     IfBreak @[3] {
      desc="stopping criterion for settling";
      flags=PEF_NONE;
-     condition="(network->maxda < network->maxda_stopcrit) ||
- (network->trg_max_act > network->trg_max_act_stopcrit)";
+     cond {
+      expr="(network.maxda < network.maxda_stopcrit) ||
+ (network.trg_max_act > network.trg_max_act_stopcrit)";
+      flags=PE_NONE;
+      var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit) ||
+ ($#0#$.trg_max_act > $#0#$.trg_max_act_stopcrit)";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
     };
    };
-   loop_test="cycle < network->cycle_max";
+   test {
+    expr="cycle < network.cycle_max";
+    flags=PE_NONE;
+    var_expr="$#0#$ < $#1#$.cycle_max";
+    vars {
+    };
+    var_names{ cycle;network;    };
+    bad_vars{     };
+   };
   };
   MethodCall @[6] {
    desc=;
@@ -284,7 +324,15 @@ else min_cycles = network->min_cycles_phase2;
   IfElse @[7] {
    desc="only run sse in minus phase";
    flags=PEF_NONE;
-   condition="network->phase == LeabraNetwork::MINUS_PHASE";
+   cond {
+    expr="network.phase == LeabraNetwork::MINUS_PHASE";
+    flags=PE_NONE;
+    var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
    true_code {
     name=;
     el_typ=MethodCall;
@@ -311,7 +359,15 @@ else min_cycles = network->min_cycles_phase2;
   IfElse @[8] {
    desc="this stat must be called in plus phase when reward information is avail";
    flags=PEF_NONE;
-   condition="network->phase_no == 1";
+   cond {
+    expr="network.phase_no == 1";
+    flags=PE_NONE;
+    var_expr="$#0#$.phase_no == 1";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
    true_code {
     name=;
     el_typ=ProgEl;

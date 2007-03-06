@@ -566,7 +566,8 @@ Program_Group .projects[0].programs.gp[0] {
 	name="network";
 	expr {
 	 expr="network";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ network;	 };
@@ -579,7 +580,8 @@ Program_Group .projects[0].programs.gp[0] {
 	name="input_data";
 	expr {
 	 expr="input_data";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ input_data;	 };
@@ -596,7 +598,15 @@ Program_Group .projects[0].programs.gp[0] {
       counter=Network::batch;
      };
     };
-    loop_test="batch < max_batch";
+    test {
+     expr="batch < max_batch";
+     flags=PE_NONE;
+     var_expr="$#0#$ < $#1#$";
+     vars {
+     };
+     var_names{ batch;max_batch;     };
+     bad_vars{      };
+    };
    };
   };
  };
@@ -661,7 +671,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[2] {
     name="epoch";
     var_type=T_Int;
-    int_val=12;
+    int_val=0;
     objs_ptr=0;
     flags=PV_NONE;
     desc=;
@@ -723,6 +733,7 @@ Program_Group .projects[0].programs.gp[0] {
       name="quiet";
       expr {
        expr="false";
+       flags=PE_NONE;
        var_expr="false";
        vars {
        };
@@ -736,9 +747,10 @@ Program_Group .projects[0].programs.gp[0] {
     desc=;
     flags=PEF_NONE;
     result_var=.projects[0].programs.gp[0][1].vars[5]$9$;
-    expr_val {
+    expr {
      expr="network.train_time";
-     var_expr="$#0.train_time";
+     flags=PE_NONE;
+     var_expr="$#0#$.train_time";
      vars {
      };
      var_names{ network;     };
@@ -785,9 +797,10 @@ Program_Group .projects[0].programs.gp[0] {
     desc=;
     flags=PEF_NONE;
     result_var=$9$;
-    expr_val {
+    expr {
      expr="network.train_time";
-     var_expr="$#0.train_time";
+     flags=PE_NONE;
+     var_expr="$#0#$.train_time";
      vars {
      };
      var_names{ network;     };
@@ -810,6 +823,7 @@ Program_Group .projects[0].programs.gp[0] {
       name="reset_used";
       expr {
        expr="true";
+       flags=PE_NONE;
        var_expr="true";
        vars {
        };
@@ -829,7 +843,15 @@ Program_Group .projects[0].programs.gp[0] {
    UserScript @[3] {
     desc="update network's train mode to be same as ours";
     flags=PEF_NONE;
-    user_script="network->train_mode = train_mode;";
+    script {
+     expr="network.train_mode = train_mode;";
+     flags=NO_VAR_ERRS;
+     var_expr="$#0#$.train_mode = $#1#$;";
+     vars {
+     };
+     var_names{ network;train_mode;     };
+     bad_vars{      };
+    };
    };
    MethodCall @[4] {
     desc="initialize network weights: could also load pre-set weights or something else here";
@@ -866,7 +888,8 @@ Program_Group .projects[0].programs.gp[0] {
 	name="network";
 	expr {
 	 expr="network";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ network;	 };
@@ -879,7 +902,8 @@ Program_Group .projects[0].programs.gp[0] {
 	name="input_data";
 	expr {
 	 expr="input_data";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ input_data;	 };
@@ -898,10 +922,26 @@ Program_Group .projects[0].programs.gp[0] {
      IfBreak @[2] {
       desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
       flags=PEF_NONE;
-      condition="network->cnt_err <= err_stopcrit";
+      cond {
+       expr="network.cnt_err <= err_stopcrit";
+       flags=PE_NONE;
+       var_expr="$#0#$.cnt_err <= $#1#$";
+       vars {
+       };
+       var_names{ network;err_stopcrit;       };
+       bad_vars{        };
+      };
      };
     };
-    loop_test="epoch < max_epoch";
+    test {
+     expr="epoch < max_epoch";
+     flags=PE_NONE;
+     var_expr="$#0#$ < $#1#$";
+     vars {
+     };
+     var_names{ epoch;max_epoch;     };
+     bad_vars{      };
+    };
    };
    MethodCall @[6] {
     desc=;
@@ -965,7 +1005,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[1] {
     name="trial";
     var_type=T_Int;
-    int_val=5;
+    int_val=0;
     objs_ptr=0;
     flags=PV_NONE;
     desc="current trial (event) within the epoch -- increments automatically";
@@ -1014,9 +1054,10 @@ Program_Group .projects[0].programs.gp[0] {
     desc=;
     flags=PEF_NONE;
     result_var=.projects[0].programs.gp[0][2].vars[3]$17$;
-    expr_val {
+    expr {
      expr="network.epoch_time";
-     var_expr="$#0.epoch_time";
+     flags=PE_NONE;
+     var_expr="$#0#$.epoch_time";
      vars {
      };
      var_names{ network;     };
@@ -1039,9 +1080,10 @@ Program_Group .projects[0].programs.gp[0] {
     desc=;
     flags=PEF_NONE;
     result_var=$17$;
-    expr_val {
+    expr {
      expr="network.epoch_time";
-     var_expr="$#0.epoch_time";
+     flags=PE_NONE;
+     var_expr="$#0#$.epoch_time";
      vars {
      };
      var_names{ network;     };
@@ -1064,6 +1106,7 @@ Program_Group .projects[0].programs.gp[0] {
       name="reset_used";
       expr {
        expr="true";
+       flags=PE_NONE;
        var_expr="true";
        vars {
        };
@@ -1095,7 +1138,15 @@ Program_Group .projects[0].programs.gp[0] {
      UserScript @[0] {
       desc="set trial to list_idx of data loop -- for dmem code this is the correct trial number";
       flags=PEF_NONE;
-      user_script="trial = list_idx; network->trial = list_idx;";
+      script {
+       expr="trial = list_idx; network.trial = list_idx;";
+       flags=NO_VAR_ERRS;
+       var_expr="$#0#$ = list_idx; $#1#$.trial = list_idx;";
+       vars {
+       };
+       var_names{ trial;network;       };
+       bad_vars{ list_idx;       };
+      };
      };
      ProgramCall @[1] {
       desc=;
@@ -1113,7 +1164,8 @@ Program_Group .projects[0].programs.gp[0] {
 	name="network";
 	expr {
 	 expr="network";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ network;	 };
@@ -1126,7 +1178,8 @@ Program_Group .projects[0].programs.gp[0] {
 	name="input_data";
 	expr {
 	 expr="input_data";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ input_data;	 };
@@ -1138,7 +1191,15 @@ Program_Group .projects[0].programs.gp[0] {
      IfElse @[2] {
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=PEF_NONE;
-      condition="network->Compute_Weights_Test(trial+1)";
+      cond {
+       expr="network.Compute_Weights_Test(trial+1)";
+       flags=PE_NONE;
+       var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
+       vars {
+       };
+       var_names{ network;trial;       };
+       bad_vars{        };
+      };
       true_code {
        name=;
        el_typ=MethodCall;
@@ -1163,18 +1224,25 @@ Program_Group .projects[0].programs.gp[0] {
       };
      };
     };
-    loop_test="This is not used here";
     data_var=.projects[0].programs.gp[0][2].args[1]$21$;
     order_var=.projects[0].programs.gp[0][2].vars[0]$22$;
     order=PERMUTED;
-    item_idx_list{ 5;4;2;1;0;3;    };
+    item_idx_list{ 5;0;4;2;1;3;    };
     dmem_nprocs=1;
     dmem_this_proc=0;
    };
    IfElse @[5] {
     desc="if full batch mode, update only at end of epoch";
     flags=PEF_NONE;
-    condition="network->wt_update == Network::BATCH";
+    cond {
+     expr="network.wt_update == Network::BATCH";
+     flags=PE_NONE;
+     var_expr="$#0#$.wt_update == Network::BATCH";
+     vars {
+     };
+     var_names{ network;     };
+     bad_vars{      };
+    };
     true_code {
      name=;
      el_typ=ProgEl;
@@ -1238,7 +1306,8 @@ Program_Group .projects[0].programs.gp[0] {
       name="network";
       expr {
        expr="network";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ network;       };
@@ -1288,7 +1357,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="phase_no";
     var_type=T_Int;
-    int_val=2;
+    int_val=0;
     objs_ptr=0;
     flags=PV_NONE;
     desc=;
@@ -1370,7 +1439,8 @@ Program_Group .projects[0].programs.gp[0] {
 	name="network";
 	expr {
 	 expr="network";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ network;	 };
@@ -1383,7 +1453,8 @@ Program_Group .projects[0].programs.gp[0] {
 	name="input_data";
 	expr {
 	 expr="input_data";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ input_data;	 };
@@ -1412,7 +1483,15 @@ Program_Group .projects[0].programs.gp[0] {
       };
      };
     };
-    loop_test="phase_no < network->phase_max";
+    test {
+     expr="phase_no < network.phase_max";
+     flags=PE_NONE;
+     var_expr="$#0#$ < $#1#$.phase_max";
+     vars {
+     };
+     var_names{ phase_no;network;     };
+     bad_vars{      };
+    };
    };
    MethodCall @[3] {
     desc="does Compute_dWt etc";
@@ -1442,7 +1521,8 @@ Program_Group .projects[0].programs.gp[0] {
       name="network";
       expr {
        expr="network";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ network;       };
@@ -1498,7 +1578,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] {
     name="cycle";
     var_type=T_Int;
-    int_val=15;
+    int_val=0;
     objs_ptr=0;
     flags=PV_NONE;
     desc=;
@@ -1581,7 +1661,8 @@ Program_Group .projects[0].programs.gp[0] {
       name="network";
       expr {
        expr="network";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ network;       };
@@ -1594,7 +1675,8 @@ Program_Group .projects[0].programs.gp[0] {
       name="input_data";
       expr {
        expr="input_data";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ input_data;       };
@@ -1618,10 +1700,22 @@ Program_Group .projects[0].programs.gp[0] {
    UserScript @[4] {
     desc="get min cycles";
     flags=PEF_NONE;
-    user_script="if(network->phase_no <= 1) min_cycles = network->min_cycles;
-else min_cycles = network->min_cycles_phase2;
+    script {
+     expr="if(network.phase_no <= 1) min_cycles = network.min_cycles;
+else min_cycles = network.min_cycles_phase2;
 
 ";
+     flags=NO_VAR_ERRS;
+     var_expr="if($#0#$.phase_no <= 1) $#1#$ = $#0#$.min_cycles;
+else $#1#$ = $#0#$.min_cycles_phase2;
+
+
+";
+     vars {
+     };
+     var_names{ network;min_cycles;     };
+     bad_vars{ if;else;     };
+    };
    };
    WhileLoop @[5] {
     desc=;
@@ -1646,7 +1740,8 @@ else min_cycles = network->min_cycles_phase2;
 	name="network";
 	expr {
 	 expr="network";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ network;	 };
@@ -1665,16 +1760,41 @@ else min_cycles = network->min_cycles_phase2;
      IfContinue @[2] {
       desc="avoid subsequent stopping criteria";
       flags=PEF_NONE;
-      condition="cycle < min_cycles";
+      cond {
+       expr="cycle < min_cycles";
+       flags=PE_NONE;
+       var_expr="$#0#$ < $#1#$";
+       vars {
+       };
+       var_names{ cycle;min_cycles;       };
+       bad_vars{        };
+      };
      };
      IfBreak @[3] {
       desc="stopping criterion for settling";
       flags=PEF_NONE;
-      condition="(network->maxda < network->maxda_stopcrit) ||
- (network->trg_max_act > network->trg_max_act_stopcrit)";
+      cond {
+       expr="(network.maxda < network.maxda_stopcrit) ||
+ (network.trg_max_act > network.trg_max_act_stopcrit)";
+       flags=PE_NONE;
+       var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit) ||
+ ($#0#$.trg_max_act > $#0#$.trg_max_act_stopcrit)";
+       vars {
+       };
+       var_names{ network;       };
+       bad_vars{        };
+      };
      };
     };
-    loop_test="cycle < network->cycle_max";
+    test {
+     expr="cycle < network.cycle_max";
+     flags=PE_NONE;
+     var_expr="$#0#$ < $#1#$.cycle_max";
+     vars {
+     };
+     var_names{ cycle;network;     };
+     bad_vars{      };
+    };
    };
    MethodCall @[6] {
     desc=;
@@ -1691,7 +1811,15 @@ else min_cycles = network->min_cycles_phase2;
    IfElse @[7] {
     desc="only run sse in minus phase";
     flags=PEF_NONE;
-    condition="network->phase == LeabraNetwork::MINUS_PHASE";
+    cond {
+     expr="network.phase == LeabraNetwork::MINUS_PHASE";
+     flags=PE_NONE;
+     var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
+     vars {
+     };
+     var_names{ network;     };
+     bad_vars{      };
+    };
     true_code {
      name=;
      el_typ=MethodCall;
@@ -1718,7 +1846,15 @@ else min_cycles = network->min_cycles_phase2;
    IfElse @[8] {
     desc="this stat must be called in plus phase when reward information is avail";
     flags=PEF_NONE;
-    condition="network->phase_no == 1";
+    cond {
+     expr="network.phase_no == 1";
+     flags=PE_NONE;
+     var_expr="$#0#$.phase_no == 1";
+     vars {
+     };
+     var_names{ network;     };
+     bad_vars{      };
+    };
     true_code {
      name=;
      el_typ=ProgEl;
@@ -1941,7 +2077,8 @@ else min_cycles = network->min_cycles_phase2;
       name="db";
       expr {
        expr="input_data";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ input_data;       };
@@ -1954,7 +2091,8 @@ else min_cycles = network->min_cycles_phase2;
       name="net";
       expr {
        expr="network";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ network;       };
@@ -1979,6 +2117,7 @@ else min_cycles = network->min_cycles_phase2;
       name="quiet";
       expr {
        expr="false";
+       flags=PE_NONE;
        var_expr="false";
        vars {
        };
@@ -2254,7 +2393,8 @@ else min_cycles = network->min_cycles_phase2;
       name="dt";
       expr {
        expr="trial_mon_data";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ trial_mon_data;       };
@@ -2267,7 +2407,8 @@ else min_cycles = network->min_cycles_phase2;
       name="net";
       expr {
        expr="network";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ network;       };
@@ -2292,6 +2433,7 @@ else min_cycles = network->min_cycles_phase2;
       name="quiet";
       expr {
        expr="false";
+       flags=PE_NONE;
        var_expr="false";
        vars {
        };
@@ -2317,6 +2459,7 @@ else min_cycles = network->min_cycles_phase2;
       name="reset_first";
       expr {
        expr="true";
+       flags=PE_NONE;
        var_expr="true";
        vars {
        };
@@ -2383,7 +2526,8 @@ else min_cycles = network->min_cycles_phase2;
       name="dt";
       expr {
        expr="trial_mon_data";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ trial_mon_data;       };
@@ -2396,6 +2540,7 @@ else min_cycles = network->min_cycles_phase2;
       name="n_rows";
       expr {
        expr="1";
+       flags=PE_NONE;
        var_expr="1";
        vars {
        };
@@ -2619,9 +2764,10 @@ else min_cycles = network->min_cycles_phase2;
     desc=;
     flags=PEF_NONE;
     result_var=$17$;
-    expr_val {
+    expr {
      expr="network.epoch_time";
-     var_expr="$#0.epoch_time";
+     flags=PE_NONE;
+     var_expr="$#0#$.epoch_time";
      vars {
      };
      var_names{ network;     };
@@ -2644,7 +2790,8 @@ else min_cycles = network->min_cycles_phase2;
       name="dt";
       expr {
        expr="epoch_mon_data";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ epoch_mon_data;       };
@@ -2657,7 +2804,8 @@ else min_cycles = network->min_cycles_phase2;
       name="net";
       expr {
        expr="network";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ network;       };
@@ -2682,6 +2830,7 @@ else min_cycles = network->min_cycles_phase2;
       name="quiet";
       expr {
        expr="false";
+       flags=PE_NONE;
        var_expr="false";
        vars {
        };
@@ -2707,6 +2856,7 @@ else min_cycles = network->min_cycles_phase2;
       name="reset_first";
       expr {
        expr="true";
+       flags=PE_NONE;
        var_expr="true";
        vars {
        };
@@ -2749,9 +2899,10 @@ else min_cycles = network->min_cycles_phase2;
     desc=;
     flags=PEF_NONE;
     result_var=$17$;
-    expr_val {
+    expr {
      expr="network.epoch_time";
-     var_expr="$#0.epoch_time";
+     flags=PE_NONE;
+     var_expr="$#0#$.epoch_time";
      vars {
      };
      var_names{ network;     };
@@ -2761,10 +2912,21 @@ else min_cycles = network->min_cycles_phase2;
    UserScript @[3] {
     desc="set the timing information from the epoch timer";
     flags=PEF_NONE;
-    user_script="epoch_mon_data.SetDataByName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\");
+    script {
+     expr="epoch_mon_data.SetDataByName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\");
 epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 
 ";
+     flags=NO_VAR_ERRS;
+     var_expr="$#0#$.SetDataByName($#1#$.used.GetTotSecs(), \"epoch_time_tot\");
+epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
+
+";
+     vars {
+     };
+     var_names{ epoch_mon_data;epoch_timer;     };
+     bad_vars{      };
+    };
    };
    MethodCall @[4] {
     desc="update after writing new data to monitor data table";
@@ -2829,7 +2991,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
     objs_ptr=0;
     flags=PV_NONE;
-    desc=;
+    desc="final generated file name -- do not edit!";
    };
    ProgVar @[3] {
     name="epoch_str";
@@ -2878,7 +3040,15 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    IfElse @[0] {
     desc="don't save if not first dmem process";
     flags=PEF_NONE;
-    condition="taMisc::dmem_proc > 0";
+    cond {
+     expr="taMisc::dmem_proc > 0";
+     flags=PE_NONE;
+     var_expr="taMisc::dmem_proc > 0";
+     vars {
+     };
+     var_names{      };
+     bad_vars{      };
+    };
     true_code {
      name=;
      el_typ=ProgEl;
@@ -2886,7 +3056,15 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
      UserScript @[0] {
       desc=;
       flags=PEF_NONE;
-      user_script="return;";
+      script {
+       expr="return;";
+       flags=NO_VAR_ERRS;
+       var_expr="return;";
+       vars {
+       };
+       var_names{        };
+       bad_vars{ return;       };
+      };
      };
     };
     false_code {
@@ -2911,7 +3089,8 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       name="num";
       expr {
        expr="network.batch";
-       var_expr="$#0.batch";
+       flags=PE_NONE;
+       var_expr="$#0#$.batch";
        vars {
        };
        var_names{ network;       };
@@ -2924,6 +3103,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       name="len";
       expr {
        expr="2";
+       flags=PE_NONE;
        var_expr="2";
        vars {
        };
@@ -2949,7 +3129,8 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       name="num";
       expr {
        expr="network.epoch";
-       var_expr="$#0.epoch";
+       flags=PE_NONE;
+       var_expr="$#0#$.epoch";
        vars {
        };
        var_names{ network;       };
@@ -2962,6 +3143,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       name="len";
       expr {
        expr="4";
+       flags=PE_NONE;
        var_expr="4";
        vars {
        };
@@ -2975,9 +3157,10 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     desc=;
     flags=PEF_NONE;
     result_var=.projects[0].programs.gp[0][9].vars[5]$47$;
-    expr_val {
+    expr {
      expr="tag + \".\" + batch_str + \"_\" + epoch_str";
-     var_expr="$#0 + \".\" + batch_str + \"_\" + epoch_str";
+     flags=PE_NONE;
+     var_expr="$#0#$ + \".\" + batch_str + \"_\" + epoch_str";
      vars {
      };
      var_names{ tag;     };
@@ -2995,11 +3178,12 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=NULL;
+      arg_type=const_taString_ref;
       type="const taString&";
       name="ext";
       expr {
        expr="\".wts.gz\"";
+       flags=PE_NONE;
        var_expr="\".wts.gz\"";
        vars {
        };
@@ -3008,12 +3192,13 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
      };
      ProgArg @[1] {
-      arg_type=NULL;
+      arg_type=const_taString_ref;
       type="const taString&";
       name="tag";
       expr {
        expr="final_tag";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ final_tag;       };
@@ -3021,12 +3206,13 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
      };
      ProgArg @[2] {
-      arg_type=NULL;
+      arg_type=const_taString_ref;
       type="const taString&";
       name="subdir";
       expr {
        expr="wts_subdir";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ wts_subdir;       };
@@ -3034,11 +3220,12 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
      };
      ProgArg @[3] {
-      arg_type=NULL;
+      arg_type=bool;
       type="bool";
       name="dmem_proc_no";
       expr {
        expr="false";
+       flags=PE_NONE;
        var_expr="false";
        vars {
        };
@@ -3064,7 +3251,8 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       name="fname";
       expr {
        expr="fname";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ fname;       };
@@ -3077,6 +3265,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       name="fmt";
       expr {
        expr="Network::NET_FMT";
+       flags=PE_NONE;
        var_expr="Network::NET_FMT";
        vars {
        };
