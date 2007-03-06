@@ -494,10 +494,11 @@ int ProgVarRef_List::UpdatePointers_NewObj(taBase* ptr_owner, taBase* old_ptr, t
 
 
 //////////////////////////
-//   ProgExprBase		//
+//   ProgExprBase	//
 //////////////////////////
 
 void ProgExprBase::Initialize() {
+  flags = PE_NONE;
 }
 
 void ProgExprBase::Destroy() {	
@@ -519,6 +520,7 @@ void ProgExprBase::CutLinks() {
 
 void ProgExprBase::Copy_(const ProgExprBase& cp) {
   expr = cp.expr;
+  flags = cp.flags;
   UpdateAfterEdit_impl();	// updates all pointers!  no need for extra call..
 }
 
@@ -527,41 +529,39 @@ void ProgExprBase::UpdateAfterEdit_impl() {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
   ParseExpr();
-  // don't worry about bad_vars -- in user scripts and other contexts things can be added
-  // locally and we don't need to control every last thing!!
-
-//   if(!taMisc::is_loading && bad_vars.size > 0) {
-//     taMisc::Error("ProgExprBase:",GetName(),"in program:", prg->name,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
-// 		  (bad_vars.size > 1 ? bad_vars[1] : _nilString),
-// 		  (bad_vars.size > 2 ? bad_vars[2] : _nilString),
-// 		  (bad_vars.size > 3 ? bad_vars[3] : _nilString)
-// 		  // 		    (bad_vars.size > 4 ? bad_vars[4] : _nilString),
-// 		  // 		    (bad_vars.size > 5 ? bad_vars[5] : _nilString),
-// 		  // 		    (bad_vars.size > 6 ? bad_vars[6] : _nilString)
-// 		  );
-//   }
+  if(!HasExprFlag(NO_VAR_ERRS)) {
+    ProgEl* pel = GET_MY_OWNER(ProgEl);
+    if(!taMisc::is_loading && bad_vars.size > 0) {
+      taMisc::Error("ProgExpr in program element:", pel->GetDisplayName(),"\n in program:", prg->name," Errors in expression -- the following variable names could not be found:", bad_vars[0],
+		    (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+		    (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+		    (bad_vars.size > 3 ? bad_vars[3] : _nilString)
+		    // (bad_vars.size > 4 ? bad_vars[4] : _nilString),
+		    // (bad_vars.size > 5 ? bad_vars[5] : _nilString),
+		    // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
+		    );
+    }
+  }
 }
 
 void ProgExprBase::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  // don't worry about bad_vars -- in user scripts and other contexts things can be added
-  // locally and we don't need to control every last thing!!
-
-//   String prognm;
-//   Program* prg = GET_MY_OWNER(Program);
-//   if(prg) prognm = prg->name;
-//   if(bad_vars.size > 0) {
-//     rval = false;
-//     if(!quiet)
-//       taMisc::CheckError("ProgExprBase:",GetName(),"in program:", prognm,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
-// 			 (bad_vars.size > 1 ? bad_vars[1] : _nilString),
-// 			 (bad_vars.size > 2 ? bad_vars[2] : _nilString),
-// 			 (bad_vars.size > 3 ? bad_vars[3] : _nilString)
-// // 			 (bad_vars.size > 4 ? bad_vars[4] : _nilString),
-// // 			 (bad_vars.size > 5 ? bad_vars[5] : _nilString),
-// // 			 (bad_vars.size > 6 ? bad_vars[6] : _nilString)
-// 			 );
-//   }
+  if(!HasExprFlag(NO_VAR_ERRS)) {
+    Program* prg = GET_MY_OWNER(Program);
+    ProgEl* pel = GET_MY_OWNER(ProgEl);
+    if(prg && pel && bad_vars.size > 0) {
+      rval = false;
+      if(!quiet)
+	taMisc::CheckError("ProgExpr in program element:", pel->GetDisplayName(),"\n in program:", prg->name," Errors in expression -- the following variable names could not be found:", bad_vars[0],
+			   (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+			   (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+			   (bad_vars.size > 3 ? bad_vars[3] : _nilString)
+			   // (bad_vars.size > 4 ? bad_vars[4] : _nilString),
+			   // (bad_vars.size > 5 ? bad_vars[5] : _nilString),
+			   // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
+			   );
+    }
+  }
 }
 
 int ProgExprBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
@@ -616,6 +616,7 @@ void ProgExprBase::ParseExpr_SkipPath(int& pos) {
 bool ProgExprBase::ParseExpr() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return true;
+  ProgEl* pel = GET_MY_OWNER(ProgEl);
   expr.gsub("->", ".");		// -> is too hard to parse.. ;)
   int pos = 0;
   int len = expr.length();
@@ -629,7 +630,7 @@ bool ProgExprBase::ParseExpr() {
     while((pos < len) && isspace(c=expr[pos])) { var_expr.cat((char)c); pos++; } // skip_white
     if((c == '.') && ((pos+1 < len) && !isdigit(expr[pos+1]))) { // a path expr
       if((pos > 0) && isspace(expr[pos-1])) {
-        taMisc::Warning("ProgExprBase: note that supplying full paths to objects is not typically very robust and is discouraged", expr);
+        taMisc::Warning("ProgExpr in program element:", pel->GetDisplayName(),"\n in Program:",prog->name," note that supplying full paths to objects is not typically very robust and is discouraged");
       }
       var_expr.cat((char)c); pos++; 
       ParseExpr_SkipPath(pos);
@@ -1144,7 +1145,8 @@ taBase* ProgVars::FindTypeName(const String& nm) const {
 
 void UserScript::Initialize() {
   static String _def_user_script("// TODO: Add your CSS script code here.\n");
-  user_script = _def_user_script;
+  script.expr = _def_user_script;
+  script.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
 }
 
 void UserScript::UpdateAfterEdit_impl() {
@@ -1283,6 +1285,9 @@ void ForLoop::Initialize() {
   init.expr = "int i = 0";
   test.expr = "i < 10";
   iter.expr = "i++";
+  init.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  test.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
 }
 
 void ForLoop::UpdateAfterEdit_impl() {

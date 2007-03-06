@@ -208,9 +208,14 @@ class TA_API ProgExprBase : public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- base doesn't have any lookup functionality
 INHERITED(taOBase)
 public:
+  enum ExprFlags { // #BITS flags for program expression setting
+    PE_NONE		= 0, // #NO_BIT
+    NO_VAR_ERRS		= 0x0001, // do not generate error messages for variables that cannot be found (e.g., for more complex expressions that might create local variables)
+  };
 
   String	expr;		// #EDIT_DIALOG #LABEL_ enter the expression here -- you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
+  ExprFlags	flags;		// #HIDDEN Flags for controlling expression behavior
   String	var_expr;	// #READ_ONLY expression with variables listed as $#1#$, etc. used for generating the actual code (this is the 'official' version that generates the full expr)
 
   ProgVarRef_List vars;		// #READ_ONLY list of program variables that appear in the expression
@@ -224,6 +229,16 @@ public:
   // parse the current expr for variables and update vars and var_expr accordingly (returns false if there are some bad_vars)
   virtual String GetFullExpr() const;
   // get full expression with variable names substituted appropriately
+
+  inline void		SetExprFlag(ExprFlags flg)   { flags = (ExprFlags)(flags | flg); }
+  // set flag state on
+  inline void		ClearExprFlag(ExprFlags flg) { flags = (ExprFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool		HasExprFlag(ExprFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void		SetExprFlagState(ExprFlags flg, bool on)
+  { if(on) SetExprFlag(flg); else ClearExprFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
 
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);

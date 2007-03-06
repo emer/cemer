@@ -33,7 +33,7 @@ void BasicDataLoop::Initialize() {
 void BasicDataLoop::GetOrderVar() {
   Program* my_prog = program();
   if(!my_prog) return;
-  if(!order_var) {
+  if(!order_var || order_var->name != "data_loop_order") {
     if(!(order_var = my_prog->vars.FindName("data_loop_order"))) {
       order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       order_var->name = "data_loop_order";
@@ -127,7 +127,7 @@ void GroupedDataLoop::Initialize() {
 void GroupedDataLoop::GetOrderVars() {
   Program* my_prog = program();
   if(!my_prog) return;
-  if(!group_order_var) {
+  if(!group_order_var || group_order_var->name != "group_order") {
     if(!(group_order_var = my_prog->vars.FindName("group_order"))) {
       group_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       group_order_var->name = "group_order";
@@ -137,7 +137,7 @@ void GroupedDataLoop::GetOrderVars() {
   group_order_var->hard_enum_type = TA_GroupedDataLoop.sub_types.FindName("Order");
   group_order = (Order)group_order_var->int_val;
 
-  if(!item_order_var) {
+  if(!item_order_var || item_order_var->name != "item_order") {
     if(!(item_order_var = my_prog->vars.FindName("item_order"))) {
       item_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       item_order_var->name = "item_order";
@@ -271,7 +271,7 @@ String NetCounterInit::GetDisplayName() const {
 
 void NetCounterInit::GetLocalCtrVar() {
   if(!counter) return;
-  if(local_ctr_var) return;
+  if(local_ctr_var && local_ctr_var->name == counter->name) return;
   Program* my_prog = program();
   if(!my_prog) return;
   if(!(local_ctr_var = my_prog->vars.FindName(counter->name))) {
@@ -326,7 +326,7 @@ String NetCounterIncr::GetDisplayName() const {
 
 void NetCounterIncr::GetLocalCtrVar() {
   if(!counter) return;
-  if(local_ctr_var) return;
+  if(local_ctr_var && local_ctr_var->name == counter->name) return;
   Program* my_prog = program();
   if(!my_prog) return;
   if(!(local_ctr_var = my_prog->vars.FindName(counter->name))) {
@@ -371,7 +371,7 @@ String NetUpdateView::GetDisplayName() const {
 }
 
 void NetUpdateView::GetUpdateVar() {
-  if(update_var) return;
+  if(update_var && update_var->name == "update_net_view") return;
   Program* my_prog = program();
   if(!my_prog) return;
   if(!(update_var = my_prog->vars.FindName("update_net_view"))) {

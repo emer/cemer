@@ -13,6 +13,7 @@ current:
   RULE IS: if it contains a ProgVarRef, needs custom COPY_
 
 * replace all exprs (loop_test, condition, user_script, etc) with ProgExpr!?  yes
+* see if a configure warning can be issued usefully when a var has been removed
 
 * #ARG_#_VAL_FM_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!
