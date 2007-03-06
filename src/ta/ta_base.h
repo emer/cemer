@@ -1077,9 +1077,9 @@ public: // IDataLinkClient interface
 
 #ifdef _MSC_VER 
 // evil msvc won't automatically promote to type to compare, but g++ chokes
-inline bool operator ==(taBase* a, const taSmartRef& b)
+inline bool operator ==(const taBase* a, const taSmartRef& b)
   {return a == b.ptr();}
-inline bool operator ==(const taSmartRef& a, taBase* b)
+inline bool operator ==(const taSmartRef& a, const taBase* b)
   {return a.ptr() == b;}
 #endif
 
@@ -1100,10 +1100,18 @@ public:
   T* operator=(const T& src) {set((T*)src.m_ptr); return (T*)m_ptr;}
   T* operator=(T* src) {set(src); return (T*)m_ptr;}
   TypeDef* GetDataTypeDef() const {return (m_ptr) ? m_ptr->GetTypeDef() : &td;}
-  taSmartRefT() {} 
+  taSmartRefT() {}  //
 #ifndef __MAKETA__
-  friend bool	operator==(const taSmartRefT<T,td>& a, const taSmartRefT& b) 
+/*  friend bool	operator==(const taSmartRefT<T,td>& a, const taSmartRefT& b) 
     {return (a.m_ptr == b.m_ptr);}  
+  friend bool	operator==(const taSmartRefT<T,td>& a, const T* b) 
+    {return (a.m_ptr == b);}  
+  friend bool	operator==(const T* a, const taSmartRefT& b) 
+    {return (a == b.m_ptr);}  */
+#ifndef _MSC_VER // not required in msvc, and just causes ambiguities
+  friend bool	operator==(const taSmartRefT& a, const taSmartRefT& b) 
+    {return (a.m_ptr == b.m_ptr);} 
+#endif 
 private:
   taSmartRefT(const taSmartRefT<T,td>& src); // not defined 
 #endif

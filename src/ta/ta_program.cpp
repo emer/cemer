@@ -2046,7 +2046,7 @@ void ProgObjList::GetVarsForObjs() {
       bool found_it = false;
       for(int j=0;j<prog->vars.size; j++) {
 	ProgVar* tv = prog->vars[j];
-	if((tv->var_type == ProgVar::T_Object) && (tv->object_val == obj)) {
+	if((tv->var_type == ProgVar::T_Object) && (tv->object_val.ptr() == obj)) {
 	  found_it = true;
 	  tv->name = nm;	// update the name
 	  tv->objs_ptr = true;	// make sure

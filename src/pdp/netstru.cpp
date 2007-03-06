@@ -154,7 +154,7 @@ static int conspec_repl_bias_ptr(UnitSpec* us, ConSpec* old, ConSpec* nw) {
   UnitSpec* u2;
   taLeafItr i;
   FOR_ITR_EL(UnitSpec, u2, us->children., i) {
-    if(u2->bias_spec.spec == old) {
+    if(u2->bias_spec.spec.ptr() == old) {
       u2->bias_spec.SetSpec(nw); // update to new
       cnt++;
     }
@@ -1488,7 +1488,7 @@ bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
 void UnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError((bias_con_type && bias_spec.spec &&
+  CheckError((bias_con_type && (bool)bias_spec.spec &&
 	      !bias_con_type->InheritsFrom(bias_spec.spec->min_obj_type)), quiet, rval,
 	     "Bias con type of:", bias_con_type->name,
 	     "is not of the correct type for the bias con spec,"
@@ -5672,10 +5672,10 @@ Projection* Network::FindMakePrjnAdd(Layer* recv, Layer* send, ProjectionSpec* p
   for(i=0;i<recv->projections.size;i++) {
     Projection* prj = (Projection*)recv->projections[i];
     if((prj->from == send)
-       && ((ps == NULL) || (prj->spec.spec == ps) ||
+       && ((ps == NULL) || (prj->spec.spec.ptr() == ps) ||
 	   (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
 	    ps->InheritsFrom(TA_FullPrjnSpec)))
-       && ((cs == NULL) || (prj->con_spec.spec == cs))) {
+       && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
       nw_itm = false;
       return prj;
     }
@@ -5732,8 +5732,8 @@ Projection* Network::FindMakeSelfPrjnAdd(Layer* recv, ProjectionSpec* ps, ConSpe
   for(i=0;i<recv->projections.size;i++) {
     Projection* prj = (Projection*)recv->projections[i];
     if((prj->from == recv)
-       && ((ps == NULL) || (prj->spec.spec == ps))
-       && ((cs == NULL) || (prj->con_spec.spec == cs))) {
+       && ((ps == NULL) || (prj->spec.spec.ptr() == ps))
+       && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
       nw_itm = false;
       return prj;
     }
@@ -5754,10 +5754,10 @@ bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* 
   for(i=recv->projections.size-1;i>=0;i--) {
     Projection* prj = (Projection*)recv->projections[i];
     if((prj->from == send)
-       && ((ps == NULL) || (prj->spec.spec == ps) ||
+       && ((ps == NULL) || (prj->spec.spec.ptr() == ps) ||
 	   (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
 	    ps->InheritsFrom(TA_FullPrjnSpec)))
-       && ((cs == NULL) || (prj->con_spec.spec == cs))) {
+       && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
       recv->projections.RemoveEl(prj);
       return true;
     }

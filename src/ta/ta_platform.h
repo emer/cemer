@@ -39,6 +39,10 @@ public:
   static String getFilePath(const String& in); // retrieves only the file path, if any (no final separator)
   static int	posFinalSep(const String& in); // position of final path separator, -1 if not found
   static bool	mkdir(const String& dir); // make or assert the directory, true if ok
+  static String unescapeBackslash(const String& in); 
+   // insures that C escaped backslashes are decoded -- typically used by maketa when reading from preprocesser {#[line] Xxx <fname>} values
+  static String lexCanonical(const String& in); 
+   // a canonical lexical form, for comparing exactly paths/files (note: does not dereference .. etc.); also insures the C escaped backslashes are decoded
   
 // Process execution
   static int	exec(const String& cmd); //

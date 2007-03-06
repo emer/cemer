@@ -618,7 +618,12 @@ int main(int argc, char* argv[])
 	while(fh.good() && !fh.eof()) {
 	  String fl;
 	  fh >> fl;
-	  mta->headv.Add(fl);
+	  //note: warn on duplicates, because these cause havoc if they slip in
+	  // but order is also sometimes important in the master input list
+	  // so we shouldn't just ignore them
+	  if (!mta->headv.AddUnique(taPlatform::lexCanonical(fl))) {
+	    cerr <<  "**WARNING: duplicate file specified, duplicate ignored:: " << fl.chars() << "\n";
+	  }
 	}
       }
       fh.close(); fh.clear();
@@ -631,7 +636,10 @@ int main(int argc, char* argv[])
     else if(mta->basename.empty())
       mta->basename = tmp;
     else {
-      mta->headv.Add(tmp);	// add the header file
+      // add the header file; see comments in loop above about duplicates
+      if (!mta->headv.AddUnique(taPlatform::lexCanonical(tmp))) {
+	cerr <<  "**WARNING: duplicate file specified, duplicate ignored:: " << tmp.chars() << "\n";
+      }
     }
   }
   

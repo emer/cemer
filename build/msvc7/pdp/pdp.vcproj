@@ -292,6 +292,12 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\pdp\netstru_qtso.moc.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\pdp\pdp_program_qtso.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdp_qtso.moc.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\pdp\pdp_TA.cpp">
 				</File>
 				<File
@@ -299,6 +305,12 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\pdp\pdp_TA_type.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpserver.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\pdp\pdpserver_qt.moc.cpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -340,6 +352,12 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 			<Filter
 				Name="Built Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\bp\bp_TA.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\bp\bp_TA_inst.h">
+				</File>
 				<File
 					RelativePath="..\include\bp_TA_type.h">
 				</File>
@@ -401,6 +419,12 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 			<Filter
 				Name="Built Files"
 				Filter="">
+				<File
+					RelativePath="..\..\..\src\leabra\leabra_TA.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\leabra\leabra_TA_inst.h">
+				</File>
 				<File
 					RelativePath="..\include\leabra_TA_type.h">
 				</File>

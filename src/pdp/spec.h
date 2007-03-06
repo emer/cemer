@@ -227,8 +227,8 @@ public:
 
   T* 		operator->() const	{ return SPtr(); }
   T* 		operator=(T* cp)	{ SetSpec(cp); return cp; }
-  bool 		operator!=(T* cp) const	{ return (spec != cp); }
-  bool 		operator==(T* cp) const	{ return (spec == cp); }
+  bool 		operator!=(T* cp) const	{ return (spec.ptr() != cp); }
+  bool 		operator==(T* cp) const	{ return (spec.ptr() == cp); }
   
   operator T*()	const		{ return SPtr(); }
   operator BaseSpec*() const	{ return SPtr(); }

@@ -262,7 +262,7 @@ int MTA::lex() {
 	continue;
       }
       c = readfilename(Getc());
-      cur_fname = LexBuf;
+      cur_fname = taPlatform::lexCanonical(LexBuf);
       if ((c != '\n') && (c != '\r'))
 	skipline();		// might be training stuff to skip here
       if (state == Skip_File) // if previously skipping, default is to find
@@ -296,13 +296,18 @@ int MTA::lex() {
 	  cout << "\nSkipping: " << cur_fname << " because prev included\n";
 	state = Skip_File;
       }
-
+//TEMP
+if (cur_fname_only == "ta_qtclipdata.h") {
+  int i = 0;
+  ++i;
+}
+// /TEMP
       String fname_only = taPlatform::getFileName(fname);
 
       if(cur_fname_only != fname_only) {
 	spc = &(spc_other); // add to other space when not in cur space
 	if(state != Skip_File) {
-	  tmp_include.AddUnique(cur_fname);
+	  tmp_include.AddUnique(cur_fname); // note: already lexcanonicalized
 	}
       }
       else {

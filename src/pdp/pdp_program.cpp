@@ -259,8 +259,8 @@ void NetCounterInit::UpdateAfterEdit_impl() {
 void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!counter, quiet, rval, "counter is NULL");
-  CheckError(!network_var, quiet, rval, "network_var = NULL");
-  CheckError(network_var && !network_var->object_val, quiet, rval,
+  CheckError(!(bool)network_var, quiet, rval, "network_var = NULL");
+  CheckError((bool)network_var && !network_var->object_val, quiet, rval,
 	     "network_var object = NULL");
   CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
 }
@@ -315,7 +315,7 @@ void NetCounterIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!counter, quiet, rval, "counter is NULL");
   CheckError(!network_var, quiet, rval, "network_var = NULL");
-  CheckError(network_var && !network_var->object_val, quiet, rval,
+  CheckError((bool)network_var && !network_var->object_val, quiet, rval,
 	     "network_var object = NULL");
   CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
 }

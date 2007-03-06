@@ -10,7 +10,7 @@ INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
   "-I$(VCDIR)\Vc7\include" 
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
-MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1 -w
+MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
 #MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe -v1
 
 
@@ -97,7 +97,6 @@ TAHEADS_GUI =\
 	$(PDP4DIR)/src/ta/ta_qtdialog.h \
 	$(PDP4DIR)/src/ta/ta_qttype_def.h \
 	$(PDP4DIR)/src/ta/ta_qttype.h \
-	$(PDP4DIR)/src/ta/ta_qtclipdata.h \
 	$(PDP4DIR)/src/ta/ta_qtviewer.h \
 	$(PDP4DIR)/src/ta/ta_matrix_qt.h \
 	$(PDP4DIR)/src/ta/ta_qtclassbrowse.h \
@@ -301,7 +300,10 @@ PDP_MAKETA =\
 
 PDP_MOCS: \
 	netstru_qtso.moc.cpp \
-	pdp_program_qtso.moc.cpp
+	pdp_program_qtso.moc.cpp \
+	pdp_qtso.moc.cpp \
+	pdpserver.moc.cpp \
+	pdpserver_qt.moc.cpp
 
 netstru_qtso.moc.cpp: $(PDP4DIR)\src\pdp\netstru_qtso.h
 	$(MOC) %s -o $@
@@ -312,7 +314,10 @@ pdp_program_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdp_program_qtso.h
 pdp_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdp_qtso.h
 	$(MOC) %s -o $@
 
-pdp_server_qt.moc.cpp: $(PDP4DIR)\src\pdp\pdp_server_qt.h
+pdpserver.moc.cpp: $(PDP4DIR)\src\pdp\pdpserver.h
+	$(MOC) %s -o $@
+
+pdpserver_qt.moc.cpp: $(PDP4DIR)\src\pdp\pdpserver_qt.h
 	$(MOC) %s -o $@
 
 
@@ -343,24 +348,26 @@ LEABRA_MAKETA =\
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
 #TODO: need to enable DEBUG to be parameterized somehow
 #MAKETA_FLAGS = -css -autohx $(INCLUDE) /D DEBUG -win_dll
-MAKETA_FLAGS = -css $(INCLUDE) /D DEBUG -win_dll -w
+MAKETA_FLAGS = -css $(INCLUDE) /D DEBUG -win_dll
 
 #note: also makes _TA_inst.h and .cpp
 ta_TA_type.h: $(TAHEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
   $(CD) $(PDP4DIR)/src/ta
   $(MAKETA) $(MAKETA_FLAGS) ta $(TAHEADS) 
   
-pdp_TA_type.h: $(PDP_HEADS) $(BP_HEADS) $(LEABRA_HEADS)
+#pdp_TA_type.h: $(PDP_HEADS) $(BP_HEADS) $(LEABRA_HEADS)
+pdp_TA_type.h: $(TA_HEADS) $(PDP_HEADS) 
   $(CD) $(PDP4DIR)/src/pdp
-  $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA) $(BP_HEADS)  $(LEABRA_HEADS)
+  $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA)
+#  $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA) $(BP_HEADS)  $(LEABRA_HEADS)
   
 #NOTE: following is defunct -- we put everything in pdp_TA
-bp_TA_type.h: $(BP_HEADS)
+bp_TA_type.h: $(TA_HEADS) $(PDP_MAKETA) $(BP_HEADS)
   $(CD) $(PDP4DIR)/src/bp
   $(MAKETA) $(MAKETA_FLAGS) bp $(BP_MAKETA) 
   
 #NOTE: following is defunct -- we put everything in pdp_TA
-leabra_TA_type.h: $(LEABRA_HEADS)
+leabra_TA_type.h: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
   $(CD) $(PDP4DIR)/src/leabra
   $(MAKETA) $(MAKETA_FLAGS) leabra $(LEABRA_MAKETA) 
   
@@ -382,11 +389,9 @@ pdp_mocs: $(PDP_MOCS)
 
 pdp_files: pdp_TA_type.h pdp_mocs
 
-#bp_files: bp_TA_type.h
-bp_files: 
+bp_files: bp_TA_type.h
 
-#leabra_files: leabra_TA_type.h
-leabra_files: 
+leabra_files: leabra_TA_type.h
 
 
 maketa_files: \

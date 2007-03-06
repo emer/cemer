@@ -3582,14 +3582,7 @@ void TypeDef::Copy(const TypeDef& cp) {
 }
 
 TypeDef::~TypeDef() {
-#ifdef NO_TA_BASE // maketa
-# ifdef DEBUG
-  if (!taMisc::quitting)  {
-  int i; 
-  ++i;
-  }
-# endif
-#else // tacss
+#ifndef NO_TA_BASE 
 # ifdef DMEM_COMPILE
   if (dmem_type) {
     delete (MPI_Datatype_PArray*)dmem_type;

@@ -1026,7 +1026,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
 }
 
 void NetMonItem::SetMonVals(TAPtr obj, const String& var) {
-  if ((object == obj) && (variable == var)) return; 
+  if ((object.ptr() == obj) && (variable == var)) return; 
   object = obj;
   if(object)
     object_type = object->GetTypeDef();
@@ -1177,7 +1177,7 @@ void NetMonitor::AddObject(TAPtr obj, const String& variable) {
   NetMonItem* nmi;
   for (int i = 0; i < items.size; ++i) {
     nmi = items.FastEl(i);
-    if ((nmi->object == obj) && (nmi->variable == variable))
+    if ((nmi->object.ptr() == obj) && (nmi->variable == variable))
       return;
   }
   nmi = (NetMonItem*)items.New(1, &TA_NetMonItem);
@@ -1192,12 +1192,12 @@ void NetMonitor::RemoveMonitors() {
 }
 
 void NetMonitor::SetDataTable(DataTable* dt) {
-  if(data == dt) return;
+  if(data.ptr() == dt) return;
   data = dt; // note: auto does UAE
 }
 
 void NetMonitor::SetNetwork(Network* net) {
-  if(network == net) return;
+  if(network.ptr() == net) return;
   network = net;
   UpdateNetworkPtrs();
 }

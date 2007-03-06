@@ -73,6 +73,14 @@ void taPlatform::sleep(int sec) {
   msleep(sec * 1000);
 }
 
+String taPlatform::unescapeBackslash(const String& in) {
+  // convert lexical double backslash to actual single backslash
+  // i.e. you are reading C source, and want to convert to the string 
+  String rval = in;
+  rval.gsub("\\\\", "\\");
+  return rval;
+}
+
 #ifdef TA_OS_WIN
 
 // Windows implementation
@@ -120,12 +128,31 @@ String taPlatform::getTempPath() {
   return rval;
 }
 
-int taPlatform::processId() {
-  return (int)GetCurrentProcessId();
+String taPlatform::lexCanonical(const String& in) {
+  //NOTE: this routine will probably fail if server shares are used -- use mapped drive letters instead
+  // ex. \\myserver\myshare\myfile.xx --> map \\myserver\myshare to Z: -> Z:\myfile
+  // first, remove any double backslashes
+  String rval = unescapeBackslash(in);
+  // then, convert all forward slashes to Windows backslashes
+  //  (this is the safest common-denominator)
+  rval.gsub("/", "\\");
+  // note: we assume that pathing is case-exact (even though win filenames are case-insensitive)
+  // but we do convert drive letter to upper case
+  String drv = rval.before(":");
+  if (drv.nonempty()) {
+    drv.upcase();
+    rval = drv + rval.from(":");
+  }
+  //TODO: maybe we should do a case conversion here, but possibly only to drive letter
+  return rval;
 }
 
 void taPlatform::msleep(int msec) {
   Sleep(msec);
+}
+
+int taPlatform::processId() {
+  return (int)GetCurrentProcessId();
 }
 
 /*evil void taPlatform::usleep(int usec) {
@@ -181,9 +208,13 @@ String taPlatform::getTempPath() {
   return rval;
 }
 
-int taPlatform::processId() {
-  return (int)getpid();
+String taPlatform::lexCanonical(const String& in) {
+  // in Unix, we don't use backslashes, and all filename 
+  // components are strictly case sensitive, so we are already
+  // lexically canonical
+  return in;
 }
+
 
 void taPlatform::msleep(int msec) {
   //note: specs say max usleep value is 1s, so we loop if necessary
@@ -192,6 +223,10 @@ void taPlatform::msleep(int msec) {
     msec -= 1000;
   }
   usleep(msec * 1000);
+}
+
+int taPlatform::processId() {
+  return (int)getpid();
 }
 
 /*void taPlatform::usleep(int usec) {

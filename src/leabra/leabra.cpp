@@ -44,9 +44,7 @@ static void leabra_converter_init() {
 }
 
 void leabra_module_init() {
-#ifndef TA_OS_WIN
-  ta_Init_leabra();		// initialize types (not needed in Win because all TA in pdp)
-#endif
+  ta_Init_leabra();		// initialize types 
   leabra_converter_init();	// configure converter
 }
 
