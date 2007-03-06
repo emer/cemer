@@ -1556,7 +1556,7 @@ void cssClassType::TypeInfo(ostream& fh) const {
 	fh << ", ";
     }
     fh << ")\t// " << meth->desc;
-    if(prog->top->debug > 0)
+    if(prog && prog->top->debug > 0)
       fh << " top: " << meth->fun->top->name;
     fh << "\n";
   }

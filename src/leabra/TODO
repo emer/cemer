@@ -7,12 +7,15 @@ commit:
 current:
 
 * gauss smooth on simplelines, then graph it -- get crash
-* token chooser not showing NULL label -- probably ok..
 
 * copy progel -- update pointers relative to program.  key -- otherwise ptrs
   are to old vars etc.  don't even notice.
+  RULE IS: if it contains a ProgVarRef, needs custom COPY_
 
-* all names = c_type
+* replace all exprs (loop_test, condition, user_script, etc) with ProgExpr!?  yes
+
+* #ARG_#_VAL_FM_xxx -- get init value of arg from given member (can be a path)
+  * ProgEl* fm name!
 
 * datatable: 
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage

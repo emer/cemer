@@ -983,7 +983,7 @@ LeabraProject .projects[0] {
      };
      float_Data @[8] {
       name="Hidden_Fm_Input_r_wt";
-      col_flags=DC_NONE;
+      col_flags=NO_SAVE_DATA;
       is_matrix=1;
       cell_geom{ 5;5;5;5;      };
       calc_expr {

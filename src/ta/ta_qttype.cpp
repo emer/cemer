@@ -703,9 +703,12 @@ void taiTokenPtrType::GetImage_impl(taiData* dat, const void* base) {
 void taiTokenPtrType::GetValue_impl(taiData* dat, void* base) {
   TypeDef* npt = typ->GetNonPtrType();
   bool ro = isReadOnly(dat);
-  if (ro || !npt->tokens.keep) {
-    // do nothing?
-    //   taiEditButton *ebrval = (taiEditButton*) dat;
+  if(ro) {
+    // do nothing
+  }
+  else if(!npt->tokens.keep) {
+    taMisc::Warning("taiTokenPtrType::GetValue_impl: Value not set for type:",npt->name,
+		    "because it is not keeping tokens");
   }
   else {
     taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
@@ -1232,7 +1235,7 @@ void taiTokenPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
     break;
   case MD_SMART_REF: {
     taSmartRef& ref = *((taSmartRef*)(mbr->GetOff(base)));
-    ref = (TAPtr)rval->GetValue();
+    ref = (taBase*)rval->GetValue();
   } break;
   }
 }

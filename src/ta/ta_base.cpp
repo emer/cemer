@@ -1865,6 +1865,17 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   return nchg;
 }
 
+int taBase::UpdatePointers_NewPar_IfParNotCp(const taBase* cp, TypeDef* par_type) {
+  taBase* mypar = GetOwner(par_type);
+  if(mypar && !mypar->HasBaseFlag(COPYING)) { // only if my guy is not already doing it
+    taBase* cppar = cp->GetOwner(par_type);
+    if(mypar != cppar) {
+      return UpdatePointers_NewPar(cppar, mypar); // update any pointers within this guy
+    }
+  }
+  return -1;
+}
+
 ///////////////////
 
 bool taBase::UpdatePointers_NewParType_Ptr(taBase** ptr, TypeDef* par_typ, taBase* new_par,
@@ -2182,6 +2193,11 @@ void taNBase::Copy_(const taNBase& cp) {
   if(!cp.name.empty()) 
     name = cp.name; 
 } 
+
+void taNBase::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  name = taMisc::StringCVar(name); // make names C legal names -- just much safer
+}
 
 //////////////////////////
 //  taFBase		//

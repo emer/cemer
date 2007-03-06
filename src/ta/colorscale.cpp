@@ -48,8 +48,8 @@ void RGBA::Initialize() {
 void RGBA::Destroy() {
 }
 
-void RGBA::UpdateAfterEdit(){
-  inherited::UpdateAfterEdit();
+void RGBA::UpdateAfterEdit_impl(){
+  taOBase::UpdateAfterEdit_impl(); // skip over NBase and avoid C name imposition
   //  if(!taMisc::gui_active)    return;
   if (!name.empty()){
     if(!(iColor::find

@@ -1184,7 +1184,8 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   fr = t3vw->FirstEmptyT3DataViewFrame();
   if (!fr) {
     fr = t3vw->NewT3DataViewFrame();
-    //note: don't rename! frames can have many objects
+    fr->SetName(obj->GetDisplayName()); // tis better to have one good name.. can always
+    // be changed.
   }
   return fr;
 }

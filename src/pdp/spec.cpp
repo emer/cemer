@@ -549,7 +549,7 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
       SetSpec(NULL);
     }
     else if(sp->GetTypeDef() == type) {
-      // ok, do nothing
+      return;			// everything is good, bail!
     }
     else {
       SetSpec(NULL);		// get rid of existing spec

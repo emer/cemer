@@ -198,9 +198,13 @@ public:
 // NOTE: the generic copy assumes that a Copy is a Structural updating operation, and
 // so brackets the actual copy with the beg/end struct update
 #define COPY_FUNS(T, P)   void Copy(const T& cp) \
-   {StructUpdate(true); P::Copy(cp); Copy_(cp); StructUpdate(false);}
+  {StructUpdate(true); P::Copy(cp); SetBaseFlag(COPYING); Copy_(cp); ClearBaseFlag(COPYING); StructUpdate(false);}
 
 #define SIMPLE_COPY(T)	  void Copy_(const T& cp)	{T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
+
+// this calls UpdatePointers_NewPar based on a major scoping owning parent, only if that
+// parent is not already copying, and the parent is different than the copy parent
+#define SIMPLE_COPY_UPDT_PTR_PAR(T,P)  void Copy_(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); UpdatePointers_NewPar_IfParNotCp(&cp, &TA_##P); }
 
 #define	SIMPLE_INITLINKS(T) void InitLinks() { inherited::InitLinks(); InitLinks_taAuto(&TA_##T); }
 #define	SIMPLE_CUTLINKS(T)  void CutLinks() { CutLinks_taAuto(&TA_##T); inherited::CutLinks(); }
@@ -270,6 +274,7 @@ public:
   enum BaseFlags { // #BITS control flags 
     THIS_INVALID	= 0x01, // CheckThisConfig_impl has detected a problem
     CHILD_INVALID	= 0x02, // CheckChildConfig_impl returns issue with a child
+    COPYING		= 0x04, // this object is currently within a Copy function
     DESTROYING		= 0x40, // Set in Destroying at the very beginning of destroy
     DESTROYED		= 0x80  // set in base destroy (DEBUG only); lets us detect multi destroys
 #ifndef __MAKETA__
@@ -891,6 +896,8 @@ public:
 
   virtual int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   // #IGNORE update pointers for a new parent (e.g., after a copy operation): and anything that lives under old_par and points to something else that lives under old_par is updated to point to new_par: this default impl uses TA info to walk the members and find the guys to change; returns number changed
+  virtual int	UpdatePointers_NewPar_IfParNotCp(const taBase* cp, TypeDef* par_type);
+  // #IGNORE for use during a copy operation: call UpdatePointers_NewPar with parent (GET_OWNER) of given par_type, only if that parent is not already COPYING (according to base flag)
 
   static bool	UpdatePointers_NewParType_Ptr(taBase** ptr, TypeDef* par_typ, taBase* new_par,
 					  bool null_not_found = false);
@@ -1246,6 +1253,9 @@ public:
   void  Copy_(const taNBase& cp); 
   COPY_FUNS(taNBase, taOBase); 
   TA_BASEFUNS(taNBase);
+protected:
+  override void		UpdateAfterEdit_impl();
+
 private:
   void 	Initialize()	{ }
   void  Destroy()       { } 

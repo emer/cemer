@@ -35,6 +35,26 @@ class Program_List;
 class ProgLibEl;
 class ProgLib;
 
+/////////////////////////////////////////////////////////////////////
+//		IMPORTANT CODING NOTES:
+
+// Any object that contains a ProgVarRef or other program-local object
+// reference should use the following basefuns macros, to ensure that
+// pointers are properly updated if copied between different programs!
+//
+//  SIMPLE_COPY_UPDT_PTR_PAR(MethodCall, Program);  // this is the key function
+//  COPY_FUNS(MethodCall, ProgEl);
+//  SIMPLE_LINKS(MethodCall);
+//  TA_BASEFUNS(MethodCall);
+
+// Also, pretty much any place where a user can enter an expression,
+// use ProgExpr -- it handles variable name updates automatically!
+// and also provides lookup of variable names
+
+// use the following macro in UAE_impl to convert from String to ProgExpr
+// todo: this should all be removed once all code has been loaded and saved!
+#define STRING_TO_PROGEXPR_CVT(S,E) if(S.nonempty()) { E.SetExpr(S); S = _nilString; }
+
 class TA_API ProgVar: public taNBase {
   // ##INSTANCE #INLINE #SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)
@@ -172,6 +192,10 @@ public:
 
   override void	El_Done_(void* it)	{ delete (ProgVarRef*)it; }
 
+  virtual int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  virtual int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
+  virtual int	UpdatePointers_NewObj(taBase* ptr_owner, taBase* old_ptr, taBase* new_ptr);
+
   ProgVarRef_List() {Initialize();}
   ~ProgVarRef_List();
 protected:
@@ -180,19 +204,18 @@ private:
   void Initialize();
 };
 
-class TA_API ProgExpr: public taOBase {
-  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change
+class TA_API ProgExprBase : public taOBase {
+  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- base doesn't have any lookup functionality
 INHERITED(taOBase)
 public:
 
-  String	expr;		// #EDIT_DIALOG enter the expression here -- you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
-  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  String	expr;		// #EDIT_DIALOG #LABEL_ enter the expression here -- you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
-  String	var_expr;	// #READ_ONLY expression with variables listed as $1, etc. used for generating the actual code (this is the 'official' version that generates the full expr)
+  String	var_expr;	// #READ_ONLY expression with variables listed as $#1#$, etc. used for generating the actual code (this is the 'official' version that generates the full expr)
 
   ProgVarRef_List vars;		// #READ_ONLY list of program variables that appear in the expression
   String_Array	var_names;	// #READ_ONLY original variable names associated with vars list -- useful for user info if a variable goes out of existence..
-  String_Array	bad_vars;	// #READ_ONLY list of variable names that are not found in the expression
+  String_Array	bad_vars;	// #READ_ONLY list of variable names that are not found in the expression (may be fine if declared locally elsewhere, or somewhere hidden -- just potentially bad)
 
   virtual bool	SetExpr(const String& ex);
   // set to use given expression -- calls ParseExpr followed by UpdateAfterEdit_impl
@@ -202,23 +225,27 @@ public:
   virtual String GetFullExpr() const;
   // get full expression with variable names substituted appropriately
 
+  override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
+  override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+
   String 	GetName() const;
   override String GetTypeDecoKey() const { return "ProgExpr"; }
 
   void 	InitLinks();
   void 	CutLinks();
-  void	Copy_(const ProgExpr& cp);
-  COPY_FUNS(ProgExpr, inherited);
-  TA_BASEFUNS(ProgExpr);
+  void	Copy_(const ProgExprBase& cp);
+  COPY_FUNS(ProgExprBase, inherited);
+  TA_BASEFUNS(ProgExprBase);
 protected:
 
   virtual void	ParseExpr_SkipPath(int& pos);
   // skip over a path expression
 
-  override void		UpdateAfterEdit_impl();
-  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
-  override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+  override void	UpdateAfterEdit_impl();
+  override void CheckThisConfig_impl(bool quiet, bool& rval);
+  override void	SmartRef_DataDestroying(taSmartRef* ref, taBase* obj);
+  override void	SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 					     int dcr, void* op1_, void* op2_);
 
 private:
@@ -227,6 +254,22 @@ private:
 };
 
 // todo: add support for choosing enum vals for enum types!
+
+class TA_API ProgExpr : public ProgExprBase {
+  // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- includes variable lookup functions
+INHERITED(ProgExprBase)
+public:
+
+  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+
+  void 	CutLinks();
+  TA_BASEFUNS(ProgExpr);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy();
+};
 
 class TA_API ProgArg: public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program a program or method argument
@@ -373,8 +416,11 @@ public:
   override int		NumListCols() const {return 2;} 
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
-  TA_BASEFUNS(ProgEl_List);
 
+  void Copy_(const ProgEl_List& cp);
+  COPY_FUNS(ProgEl_List, inherited);
+  SIMPLE_LINKS(ProgEl_List);
+  TA_BASEFUNS(ProgEl_List);
 private:
   void	Initialize();
   void	Destroy();
@@ -391,6 +437,7 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
   override String	GetDisplayName() const;
+
   TA_SIMPLE_BASEFUNS(CodeBlock);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -415,6 +462,7 @@ public:
   override taList_impl*	children_() {return &local_vars;}
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
+
   TA_SIMPLE_BASEFUNS(ProgVars);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -430,16 +478,19 @@ class TA_API UserScript: public ProgEl {
   // a user-defined css script (can access all program variables, etc)
 INHERITED(ProgEl)
 public:
-  String	    user_script; // #EDIT_DIALOG content of the user script
+  ProgExpr		script;	// the css (C++ syntax) code to be executed
 
-  virtual void	    ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
-  virtual void	    ImportFromFileName(const String& fnm); // import script from file
-  virtual void	    ExportToFile(ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
-  virtual void	    ExportToFileName(const String& fnm); // export script to file
+  String		user_script; // #READ_ONLY #NO_SAVE obsolete
+
+  virtual void	    	ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
+  virtual void	    	ImportFromFileName(const String& fnm); // import script from file
+  virtual void	    	ExportToFile(ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
+  virtual void	    	ExportToFileName(const String& fnm); // export script to file
   
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(UserScript);
 protected:
+  override void		UpdateAfterEdit_impl();
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -452,20 +503,20 @@ class TA_API Loop: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
-  String	    	loop_test; // #EDIT_DIALOG a test expression for whether to continue looping (e.g., 'i < max')
+
+  String	    	loop_test; // #READ_ONLY #NO_SAVE obsolete
   
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
   override taList_impl* children_() {return &loop_code;}
 
-  SIMPLE_LINKS(Loop);
   SIMPLE_COPY(Loop);
   COPY_FUNS(Loop, inherited);
+  SIMPLE_LINKS(Loop);
   TA_ABSTRACT_BASEFUNS(Loop);
 
 protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level); 
@@ -479,12 +530,13 @@ class TA_API WhileLoop: public Loop {
   // Repeat loop_code while loop_test expression is true (test first): while(loop_test) do loop_code
 INHERITED(Loop)
 public:
+  ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
   override String	GetDisplayName() const;
-
-  TA_BASEFUNS(WhileLoop);
-
+  TA_SIMPLE_BASEFUNS(WhileLoop);
 protected:
+  override void		UpdateAfterEdit_impl();
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
@@ -497,11 +549,13 @@ class TA_API DoLoop: public Loop {
   // Do loop_code repatedly while loop_test expression is true (test-after): do loop_code while(loop_test);
 INHERITED(Loop)
 public:
+  ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
   override String	GetDisplayName() const;
-  TA_BASEFUNS(DoLoop);
-
+  TA_SIMPLE_BASEFUNS(DoLoop);
 protected:
+  override void		UpdateAfterEdit_impl();
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
 
@@ -514,13 +568,18 @@ class TA_API ForLoop: public Loop {
   // Standard C 'for loop' over loop_code: for(init_expr; loop_test; loop_iter) loop_code\n -- runs the init_expr, then does loop_code and the loop_iter expression, and continues if loop_test is true
 INHERITED(Loop)
 public:
-  String	    	init_expr; // #EDIT_DIALOG initialization expression (e.g., declare the loop variable; 'int i')
-  String	    	loop_iter; // #EDIT_DIALOG the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
+  ProgExprBase	    	init; // initialization expression (e.g., declare the loop variable; 'int i')
+  ProgExprBase		test; // a test expression for whether to continue looping (e.g., 'i < max')
+  ProgExprBase	    	iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
+
+  String	    	init_expr; // #READ_ONLY #NO_SAVE obsolete
+  String	    	loop_iter; // #READ_ONLY #NO_SAVE obsolete
   
   override String	GetDisplayName() const;
 
   TA_SIMPLE_BASEFUNS(ForLoop);
 protected:
+  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -534,13 +593,16 @@ class TA_API IfContinue: public ProgEl {
   // if condition is true, continue looping (skip any following code and loop back to top of loop)
 INHERITED(ProgEl)
 public:
-  String	    	condition; // #EDIT_DIALOG conditionalizing expression for continuing loop
+  ProgExpr		cond; 		// conditionalizing expression for continuing loop
+
+  String	    	condition; // #READ_ONLY #NO_SAVE obsolete
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
   TA_SIMPLE_BASEFUNS(IfContinue);
 protected:
+  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -553,13 +615,16 @@ class TA_API IfBreak: public ProgEl {
   // if condition is true, break out of current loop
 INHERITED(ProgEl)
 public:
-  String	    	condition; // #EDIT_DIALOG conditionalizing expression for breaking out of loop
+  ProgExpr		cond; 		// conditionalizing expression for breaking loop
+
+  String	    	condition; // #READ_ONLY #NO_SAVE obsolete
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
   TA_SIMPLE_BASEFUNS(IfBreak);
 protected:
+  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -572,13 +637,16 @@ class TA_API IfReturn: public ProgEl {
   // if condition is true, return (from void function or stop further execution of code or init segments of Program)
 INHERITED(ProgEl)
 public:
-  String	    	condition; // #EDIT_DIALOG conditionalizing expression for returning
+  ProgExpr		cond; 		// conditionalizing expression for returning
+
+  String	    	condition; // #READ_ONLY #NO_SAVE obsolete
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
   TA_SIMPLE_BASEFUNS(IfReturn);
 protected:
+  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -591,17 +659,20 @@ class TA_API IfElse: public ProgEl {
   // a conditional test element: if(condition) then true_code; else false_code
 INHERITED(ProgEl)
 public:
-  String	    condition; // #EDIT_DIALOG  condition expression to test
-  ProgEl_List	    true_code; // #SHOW_TREE items to execute if condition true
+  ProgExpr	    cond; 	// condition expression to test for true or false
+  ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE items to execute if condition false
+
+  String	    condition; // #READ_ONLY #NO_SAVE obsolete
   
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  TA_SIMPLE_BASEFUNS(IfElse);
 
+  TA_SIMPLE_BASEFUNS(IfElse);
 protected:
+  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
@@ -620,16 +691,19 @@ INHERITED(ProgEl)
 public:
   ProgVarRef		result_var;
   // where to store the result of the epxression
-  ProgExpr		expr_val;
-  // expression to assign variable to
+  ProgExpr		expr;
+  // #AKA_expr_val expression to assign variable to
   
-  String		expr;
-  // #READ_ONLY #NO_SAVE obsolete expr -- todo: remove me!
+//   String		expr;
+//   // #READ_ONLY #NO_SAVE obsolete expr -- todo: remove me!
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  TA_SIMPLE_BASEFUNS(AssignExpr);
 
+  SIMPLE_COPY_UPDT_PTR_PAR(AssignExpr, Program);
+  COPY_FUNS(AssignExpr, ProgEl);
+  SIMPLE_LINKS(AssignExpr);
+  TA_BASEFUNS(AssignExpr);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -661,8 +735,11 @@ public:
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
-  TA_SIMPLE_BASEFUNS(MethodCall);
 
+  SIMPLE_COPY_UPDT_PTR_PAR(MethodCall, Program);
+  COPY_FUNS(MethodCall, ProgEl);
+  SIMPLE_LINKS(MethodCall);
+  TA_BASEFUNS(MethodCall);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -691,8 +768,11 @@ public:
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
-  TA_SIMPLE_BASEFUNS(StaticMethodCall);
 
+  SIMPLE_COPY_UPDT_PTR_PAR(StaticMethodCall, Program);
+  COPY_FUNS(StaticMethodCall, ProgEl);
+  SIMPLE_LINKS(StaticMethodCall);
+  TA_BASEFUNS(StaticMethodCall);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -742,8 +822,11 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  TA_SIMPLE_BASEFUNS(PrintVar);
 
+  SIMPLE_COPY_UPDT_PTR_PAR(PrintVar, Program);
+  COPY_FUNS(PrintVar, ProgEl);
+  SIMPLE_LINKS(PrintVar);
+  TA_BASEFUNS(PrintVar);
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -856,7 +939,11 @@ public:
   override taList_impl*	children_() {return &fun_args;}
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
-  TA_SIMPLE_BASEFUNS(FunctionCall);
+
+  SIMPLE_COPY_UPDT_PTR_PAR(FunctionCall, Program);
+  COPY_FUNS(FunctionCall, ProgEl);
+  SIMPLE_LINKS(FunctionCall);
+  TA_BASEFUNS(FunctionCall);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);

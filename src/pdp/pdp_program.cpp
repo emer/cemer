@@ -28,7 +28,6 @@
 
 void BasicDataLoop::Initialize() {
   order = SEQUENTIAL;
-  loop_test = "This is not used here!";
 }
 
 void BasicDataLoop::GetOrderVar() {
@@ -123,7 +122,6 @@ void GroupedDataLoop::Initialize() {
   group_order = PERMUTED;
   item_order = SEQUENTIAL;
   group_col = 0;
-  loop_test = "This is not used here!";
 }
 
 void GroupedDataLoop::GetOrderVars() {

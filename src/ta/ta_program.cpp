@@ -78,11 +78,12 @@ void ProgVar::Copy_(const ProgVar& cp) {
   objs_ptr = cp.objs_ptr;
   flags = cp.flags;
   desc = cp.desc;
+
+  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  name = taMisc::StringCVar(name); // make names C legal names
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -378,6 +379,8 @@ void ProgVar_List::Initialize() {
 
 void ProgVar_List::Copy_(const ProgVar_List& cp) {
   var_context = cp.var_context;
+
+  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
 }
 
 void ProgVar_List::El_SetIndex_(void* it_, int idx) {
@@ -462,90 +465,128 @@ ProgVarRef* ProgVarRef_List::FindVarName(const String& var_nm, int& idx) const {
   return NULL;
 }
 
-//////////////////////////
-//   ProgExpr		//
-//////////////////////////
-
-void ProgExpr::Initialize() {
-  var_lookup = NULL;
+int ProgVarRef_List::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  int nchg = 0;
+  for(int i=size-1; i>=0; i--) {
+    ProgVarRef* vrf = FastEl(i);
+    nchg += taBase::UpdatePointers_NewPar_Ref(*vrf, old_par, new_par);
+  }
+  return nchg;
 }
 
-void ProgExpr::Destroy() {	
+int ProgVarRef_List::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
+  int nchg = 0;
+  for(int i=size-1; i>=0; i--) {
+    ProgVarRef* vrf = FastEl(i);
+    nchg += taBase::UpdatePointers_NewParType_Ref(*vrf, par_typ, new_par);
+  }
+  return nchg;
+}
+
+int ProgVarRef_List::UpdatePointers_NewObj(taBase* ptr_owner, taBase* old_ptr, taBase* new_ptr) {
+  int nchg = 0;
+  for(int i=size-1; i>=0; i--) {
+    ProgVarRef* vrf = FastEl(i);
+    nchg += taBase::UpdatePointers_NewObj_Ref(*vrf, ptr_owner, old_ptr, new_ptr);
+  }
+  return nchg;
+}
+
+
+//////////////////////////
+//   ProgExprBase		//
+//////////////////////////
+
+void ProgExprBase::Initialize() {
+}
+
+void ProgExprBase::Destroy() {	
   CutLinks();
 }
 
-void ProgExpr::InitLinks() {
+void ProgExprBase::InitLinks() {
   inherited::InitLinks();
   taBase::Own(var_names, this);
   taBase::Own(bad_vars, this);
 }
 
-void ProgExpr::CutLinks() {
-  if(var_lookup) {
-    taBase::SetPointer((taBase**)&var_lookup, NULL);
-  }
+void ProgExprBase::CutLinks() {
   vars.Reset();
   var_names.CutLinks();
   bad_vars.CutLinks();
   inherited::CutLinks();
 }
 
-void ProgExpr::Copy_(const ProgExpr& cp) {
-  if(var_lookup) {
-    taBase::SetPointer((taBase**)&var_lookup, NULL);
-  }
+void ProgExprBase::Copy_(const ProgExprBase& cp) {
   expr = cp.expr;
-  UpdateAfterEdit_impl();	// gets everything
+  UpdateAfterEdit_impl();	// updates all pointers!  no need for extra call..
 }
 
-void ProgExpr::UpdateAfterEdit_impl() {
+void ProgExprBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  if(var_lookup) {
-    if(expr.empty())
-      expr += var_lookup->name;
-    else
-      expr += " " + var_lookup->name;
-    taBase::SetPointer((taBase**)&var_lookup, NULL);
-  }
   ParseExpr();
-  if(!taMisc::is_loading && bad_vars.size > 0) {
-    taMisc::Error("ProgExpr:",GetName(),"in program:", prg->name,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
-		  (bad_vars.size > 1 ? bad_vars[1] : _nilString),
-		  (bad_vars.size > 2 ? bad_vars[2] : _nilString),
-		  (bad_vars.size > 3 ? bad_vars[3] : _nilString)
-		  // 		    (bad_vars.size > 4 ? bad_vars[4] : _nilString),
-		  // 		    (bad_vars.size > 5 ? bad_vars[5] : _nilString),
-		  // 		    (bad_vars.size > 6 ? bad_vars[6] : _nilString)
-		  );
-  }
+  // don't worry about bad_vars -- in user scripts and other contexts things can be added
+  // locally and we don't need to control every last thing!!
+
+//   if(!taMisc::is_loading && bad_vars.size > 0) {
+//     taMisc::Error("ProgExprBase:",GetName(),"in program:", prg->name,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
+// 		  (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+// 		  (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+// 		  (bad_vars.size > 3 ? bad_vars[3] : _nilString)
+// 		  // 		    (bad_vars.size > 4 ? bad_vars[4] : _nilString),
+// 		  // 		    (bad_vars.size > 5 ? bad_vars[5] : _nilString),
+// 		  // 		    (bad_vars.size > 6 ? bad_vars[6] : _nilString)
+// 		  );
+//   }
 }
 
-void ProgExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
+void ProgExprBase::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  String prognm;
-  Program* prg = GET_MY_OWNER(Program);
-  if(prg) prognm = prg->name;
-  if(bad_vars.size > 0) {
-    rval = false;
-    if(!quiet)
-      taMisc::CheckError("ProgExpr:",GetName(),"in program:", prognm,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
-			 (bad_vars.size > 1 ? bad_vars[1] : _nilString),
-			 (bad_vars.size > 2 ? bad_vars[2] : _nilString),
-			 (bad_vars.size > 3 ? bad_vars[3] : _nilString)
-// 			 (bad_vars.size > 4 ? bad_vars[4] : _nilString),
-// 			 (bad_vars.size > 5 ? bad_vars[5] : _nilString),
-// 			 (bad_vars.size > 6 ? bad_vars[6] : _nilString)
-			 );
-  }
+  // don't worry about bad_vars -- in user scripts and other contexts things can be added
+  // locally and we don't need to control every last thing!!
+
+//   String prognm;
+//   Program* prg = GET_MY_OWNER(Program);
+//   if(prg) prognm = prg->name;
+//   if(bad_vars.size > 0) {
+//     rval = false;
+//     if(!quiet)
+//       taMisc::CheckError("ProgExprBase:",GetName(),"in program:", prognm,"There were errors in the expression -- the following variable names could not be found:", bad_vars[0],
+// 			 (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+// 			 (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+// 			 (bad_vars.size > 3 ? bad_vars[3] : _nilString)
+// // 			 (bad_vars.size > 4 ? bad_vars[4] : _nilString),
+// // 			 (bad_vars.size > 5 ? bad_vars[5] : _nilString),
+// // 			 (bad_vars.size > 6 ? bad_vars[6] : _nilString)
+// 			 );
+//   }
 }
 
-void ProgExpr::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
+int ProgExprBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+  int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
+  nchg += vars.UpdatePointers_NewPar(old_par, new_par);
+  return nchg;
+}
+
+int ProgExprBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
+  int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
+  nchg += vars.UpdatePointers_NewParType(par_typ, new_par);
+  return nchg;
+}
+
+int ProgExprBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
+  nchg += vars.UpdatePointers_NewObj(this, old_ptr, new_ptr);
+  return nchg;
+}
+
+void ProgExprBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
   inherited::SmartRef_DataDestroying(ref, obj); // does UAE
 }
 
-void ProgExpr::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
+void ProgExprBase::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 				    int dcr, void* op1_, void* op2_) {
   expr = GetFullExpr();		// update our expr to reflect any changes in variables.
   if(owner)			// usu we are inside something else
@@ -554,26 +595,25 @@ void ProgExpr::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
     UpdateAfterEdit();
 }
 
-bool ProgExpr::SetExpr(const String& ex) {
-  taBase::SetPointer((taBase**)&var_lookup, NULL); // justin case
+bool ProgExprBase::SetExpr(const String& ex) {
   expr = ex;
   UpdateAfterEdit();		// does parse
   return (bad_vars.size == 0);	// do we have any bad variables??
 }
 
-String ProgExpr::GetName() const {
+String ProgExprBase::GetName() const {
   if(owner) return owner->GetName();
   return _nilString;
 }
 
-void ProgExpr::ParseExpr_SkipPath(int& pos) {
+void ProgExprBase::ParseExpr_SkipPath(int& pos) {
   int len = expr.length();
   int c;
   while((pos < len) && (isalnum(c=expr[pos]) || (c=='_') || (c=='.') || (c==':')))
     { var_expr.cat((char)c); pos++; }
 }
 
-bool ProgExpr::ParseExpr() {
+bool ProgExprBase::ParseExpr() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return true;
   expr.gsub("->", ".");		// -> is too hard to parse.. ;)
@@ -589,7 +629,7 @@ bool ProgExpr::ParseExpr() {
     while((pos < len) && isspace(c=expr[pos])) { var_expr.cat((char)c); pos++; } // skip_white
     if((c == '.') && ((pos+1 < len) && !isdigit(expr[pos+1]))) { // a path expr
       if((pos > 0) && isspace(expr[pos-1])) {
-        taMisc::Warning("ProgExpr: note that supplying full paths to objects is not typically very robust and is discouraged", expr);
+        taMisc::Warning("ProgExprBase: note that supplying full paths to objects is not typically very robust and is discouraged", expr);
       }
       var_expr.cat((char)c); pos++; 
       ParseExpr_SkipPath(pos);
@@ -622,14 +662,14 @@ bool ProgExpr::ParseExpr() {
 	var = prog->FindVarName(vnm);
       if(var) {
 	if(vars.FindVar(var, idx)) {
-	  var_expr += "$#" + (String)idx;
+	  var_expr += "$#" + (String)idx + "#$";
 	}
 	else {
 	  ProgVarRef* prf = new ProgVarRef;
 	  prf->Init(this);	// we own it
 	  prf->set(var);
 	  vars.Add(prf);
-	  var_expr += "$#" + (String)(vars.size-1);
+	  var_expr += "$#" + (String)(vars.size-1) + "#$"; // needs full both-sided brackets!
 	  var_names.Add(vnm);
 	}
       }
@@ -657,19 +697,49 @@ bool ProgExpr::ParseExpr() {
   return (bad_vars.size == 0);	// do we have any bad variables??
 }
 
-String ProgExpr::GetFullExpr() const {
+String ProgExprBase::GetFullExpr() const {
   if(vars.size == 0) return var_expr;
   String rval = var_expr;
   for(int i=0;i<vars.size;i++) {
     ProgVarRef* vrf = vars.FastEl(i);
     if(vrf->ptr()) {
-      rval.gsub("$#" + (String)i, ((ProgVar*)vrf->ptr())->name);
+      rval.gsub("$#" + (String)i + "#$", ((ProgVar*)vrf->ptr())->name);
     }
     else {
-      rval.gsub("$#" + (String)i, var_names[i]); // put in original name, as a cue..
+      rval.gsub("$#" + (String)i + "#$", var_names[i]); // put in original name, as a cue..
     }
   }
   return rval;
+}
+
+//////////////////////////
+//   ProgExpr		//
+//////////////////////////
+
+void ProgExpr::Initialize() {
+  var_lookup = NULL;
+}
+
+void ProgExpr::Destroy() {	
+  CutLinks();
+}
+
+void ProgExpr::CutLinks() {
+  if(var_lookup) {
+    taBase::SetPointer((taBase**)&var_lookup, NULL);
+  }
+  inherited::CutLinks();
+}
+
+void ProgExpr::UpdateAfterEdit_impl() {
+  if(var_lookup) {
+    if(expr.empty())
+      expr += var_lookup->name;
+    else
+      expr += " " + var_lookup->name;
+    taBase::SetPointer((taBase**)&var_lookup, NULL);
+  }
+  inherited::UpdateAfterEdit_impl();
 }
 
 //////////////////////////
@@ -704,10 +774,8 @@ void ProgArg::Copy_(const ProgArg& cp) {
 
 void ProgArg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(value.nonempty()) {	// todo: remove -- obsolete
-    expr.SetExpr(value);
-    value = _nilString;		// reset
-  }
+  
+  STRING_TO_PROGEXPR_CVT(value, expr);
 }
 
 void ProgArg::UpdateFromVar(const ProgVar& cp) {
@@ -736,7 +804,7 @@ void ProgArg::UpdateFromType(TypeDef* td) {
 
 String ProgArg::GetDisplayName() const {
 //  return type + " " + name + "=" + expr.GetFullExpr();
-  return expr.GetFullExpr();
+  return expr.expr;
 }
 
 //////////////////////////
@@ -833,7 +901,6 @@ void ProgEl::Destroy() {
 void ProgEl::Copy_(const ProgEl& cp) {
   desc = cp.desc;
   flags = cp.flags;
-  off = cp.off; // todo remove
 }
 
 void ProgEl::UpdateAfterEdit_impl() {
@@ -940,7 +1007,7 @@ taBase* ProgEl::FindTypeName(const String& nm) const {
 }
 
 //////////////////////////
-//  ProgEl_List	//
+//   ProgEl_List	//
 //////////////////////////
 
 void ProgEl_List::Initialize() {
@@ -949,6 +1016,10 @@ void ProgEl_List::Initialize() {
 
 void ProgEl_List::Destroy() {
   Reset();
+}
+
+void ProgEl_List::Copy_(const ProgEl_List& cp) {
+  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
 }
 
 const String ProgEl_List::GenCss(int indent_level) {
@@ -1076,8 +1147,14 @@ void UserScript::Initialize() {
   user_script = _def_user_script;
 }
 
+void UserScript::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  STRING_TO_PROGEXPR_CVT(user_script, script);
+}
+
 const String UserScript::GenCssBody_impl(int indent_level) {
-  String rval(cssMisc::IndentLines(user_script, indent_level));
+  String rval(cssMisc::IndentLines(script.GetFullExpr(), indent_level));
   // strip trailing non-newline ws, and make sure there is a trailing newline
   rval = trimr(rval);
   if (rval.lastchar() != '\n')
@@ -1086,14 +1163,14 @@ const String UserScript::GenCssBody_impl(int indent_level) {
 }
 
 String UserScript::GetDisplayName() const {
-  return user_script;
+  return script.expr;
 }
 
 void UserScript::ImportFromFile(istream& strm) {
-  user_script = "";
+  script.expr = _nilString;
   char c;
   while((c = strm.get()) != EOF) {
-    user_script += c;
+    script.expr += c;
   }
   UpdateAfterEdit();
 }
@@ -1107,7 +1184,7 @@ void UserScript::ImportFromFileName(const String& fnm) {
 }
 
 void UserScript::ExportToFile(ostream& strm) {
-  strm << user_script;
+  strm << script.GetFullExpr();
 }
 
 void UserScript::ExportToFileName(const String& fnm) {
@@ -1120,11 +1197,6 @@ void UserScript::ExportToFileName(const String& fnm) {
 //////////////////////////
 //  Loop		//
 //////////////////////////
-
-void Loop::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(loop_test.empty(), quiet, rval, "loop_test expression is empty");
-}
 
 void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
@@ -1150,8 +1222,19 @@ taBase* Loop::FindTypeName(const String& nm) const {
 //  WhileLoop		//
 //////////////////////////
 
+void WhileLoop::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  STRING_TO_PROGEXPR_CVT(loop_test, test);
+}
+
+void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
+}
+
 const String WhileLoop::GenCssPre_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "while (" + loop_test + ") {\n";
+  return cssMisc::Indent(indent_level) + "while (" + test.GetFullExpr() + ") {\n";
 }
 
 const String WhileLoop::GenCssPost_impl(int indent_level) {
@@ -1159,12 +1242,23 @@ const String WhileLoop::GenCssPost_impl(int indent_level) {
 }
 
 String WhileLoop::GetDisplayName() const {
-  return "while (" + loop_test + ")";
+  return "while (" + test.expr + ")";
 }
 
 //////////////////////////
 //  DoLoop		//
 //////////////////////////
+
+void DoLoop::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  STRING_TO_PROGEXPR_CVT(loop_test, test);
+}
+
+void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
+}
 
 const String DoLoop::GenCssPre_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level) + "do {\n";
@@ -1172,12 +1266,12 @@ const String DoLoop::GenCssPre_impl(int indent_level) {
 }
 
 const String DoLoop::GenCssPost_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "} while (" + loop_test + ");\n";
+  String rval = cssMisc::Indent(indent_level) + "} while (" + test.GetFullExpr() + ");\n";
   return rval;
 }
 
 String DoLoop::GetDisplayName() const {
-  return "do ... while (" + loop_test + ")";
+  return "do ... while (" + test.expr + ")";
 }
 
 //////////////////////////
@@ -1186,20 +1280,29 @@ String DoLoop::GetDisplayName() const {
 
 void ForLoop::Initialize() {
   // the following are just default examples for the user
-  init_expr = "int i = 0";
-  loop_test = "i < 10";
-  loop_iter = "i++";
+  init.expr = "int i = 0";
+  test.expr = "i < 10";
+  iter.expr = "i++";
+}
+
+void ForLoop::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  STRING_TO_PROGEXPR_CVT(init_expr, init);
+  STRING_TO_PROGEXPR_CVT(loop_test, test);
+  STRING_TO_PROGEXPR_CVT(loop_iter, iter);
 }
 
 void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(loop_iter.empty(), quiet, rval, "loop_iter expression is empty");
+  CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
+  CheckError(iter.expr.empty(), quiet, rval, "iter expression is empty");
 }
 
 const String ForLoop::GenCssPre_impl(int indent_level) {
   String rval;
   rval = cssMisc::Indent(indent_level) + 
-    "for (" + init_expr + "; " + loop_test + "; " + loop_iter + ") {\n";
+    "for (" + init.GetFullExpr() + "; " + test.GetFullExpr() + "; " + iter.GetFullExpr() + ") {\n";
   return rval; 
 }
 
@@ -1209,7 +1312,7 @@ const String ForLoop::GenCssPost_impl(int indent_level) {
 }
 
 String ForLoop::GetDisplayName() const {
-  return "for (" + init_expr + "; " + loop_test + "; " + loop_iter + ")";
+  return "for (" + init.expr + "; " + test.expr + "; " + iter.expr + ")";
 }
 
 
@@ -1220,21 +1323,27 @@ String ForLoop::GetDisplayName() const {
 void IfContinue::Initialize() {
 }
 
+void IfContinue::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  STRING_TO_PROGEXPR_CVT(condition, cond);
+}
+
 void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(condition.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(condition, quiet, rval);
+  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(cond.expr, quiet, rval);
 }
 
 const String IfContinue::GenCssBody_impl(int indent_level) {
   String rval;
   rval = cssMisc::Indent(indent_level) + 
-    "if(" + condition + ") continue;\n";
+    "if(" + cond.GetFullExpr() + ") continue;\n";
   return rval; 
 }
 
 String IfContinue::GetDisplayName() const {
-  return "if(" + condition + ") continue;";
+  return "if(" + cond.expr + ") continue;";
 }
 
 
@@ -1245,21 +1354,27 @@ String IfContinue::GetDisplayName() const {
 void IfBreak::Initialize() {
 }
 
+void IfBreak::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  STRING_TO_PROGEXPR_CVT(condition, cond);
+}
+
 void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(condition.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(condition, quiet, rval);
+  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(cond.expr, quiet, rval);
 }
 
 const String IfBreak::GenCssBody_impl(int indent_level) {
   String rval;
   rval = cssMisc::Indent(indent_level) + 
-    "if(" + condition + ") break;\n";
+    "if(" + cond.GetFullExpr() + ") break;\n";
   return rval; 
 }
 
 String IfBreak::GetDisplayName() const {
-  return "if(" + condition + ") break;";
+  return "if(" + cond.expr + ") break;";
 }
 
 //////////////////////////
@@ -1269,21 +1384,27 @@ String IfBreak::GetDisplayName() const {
 void IfReturn::Initialize() {
 }
 
+void IfReturn::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  STRING_TO_PROGEXPR_CVT(condition, cond);
+}
+
 void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(condition.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(condition, quiet, rval);
+  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(cond.expr, quiet, rval);
 }
 
 const String IfReturn::GenCssBody_impl(int indent_level) {
   String rval;
   rval = cssMisc::Indent(indent_level) + 
-    "if(" + condition + ") return;\n";
+    "if(" + cond.GetFullExpr() + ") return;\n";
   return rval; 
 }
 
 String IfReturn::GetDisplayName() const {
-  return "if(" + condition + ") return;";
+  return "if(" + cond.expr + ") return;";
 }
 
 //////////////////////////
@@ -1291,13 +1412,19 @@ String IfReturn::GetDisplayName() const {
 //////////////////////////
 
 void IfElse::Initialize() {
-  //  condition = "true";
+  //  cond.expr = "true";
+}
+
+void IfElse::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  STRING_TO_PROGEXPR_CVT(condition, cond);
 }
 
 void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(condition.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(condition, quiet, rval);
+  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(cond.expr, quiet, rval);
 }
 
 void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1308,7 +1435,7 @@ void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 const String IfElse::GenCssPre_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level);
-  rval += "if (" + condition + ") {\n";
+  rval += "if (" + cond.GetFullExpr() + ") {\n";
   return rval; 
 }
 
@@ -1327,7 +1454,7 @@ const String IfElse::GenCssPost_impl(int indent_level) {
 }
 
 String IfElse::GetDisplayName() const {
-  return "if (" + condition + ")";
+  return "if (" + cond.expr + ")";
 }
 
 void IfElse::PreGenChildren_impl(int& item_id) {
@@ -1354,16 +1481,14 @@ void AssignExpr::Initialize() {
 
 void AssignExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(expr.nonempty()) {		// convert from old: todo: remove me!
-    expr_val.SetExpr(expr);
-    expr = _nilString;
-  }
+
+  //  STRING_TO_PROGEXPR_CVT(expr, expr_val);
 }
 
 void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!result_var, quiet, rval, "result_var is NULL");
-  expr_val.CheckConfig(quiet, rval);
+  expr.CheckConfig(quiet, rval);
 }
 
 const String AssignExpr::GenCssBody_impl(int indent_level) {
@@ -1374,7 +1499,7 @@ const String AssignExpr::GenCssBody_impl(int indent_level) {
     return rval;
   }
   
-  rval += result_var->name + " = " + expr_val.GetFullExpr() + ";\n";
+  rval += result_var->name + " = " + expr.GetFullExpr() + ";\n";
   return rval;
 }
 
@@ -1383,7 +1508,7 @@ String AssignExpr::GetDisplayName() const {
     return "(result_var not selected)";
   
   String rval;
-  rval += result_var->name + "=" + expr_val.GetFullExpr();
+  rval += result_var->name + "=" + expr.GetFullExpr();
   return rval;
 }
 
@@ -1996,10 +2121,8 @@ void ReturnExpr::Initialize() {
 
 void ReturnExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(expr.nonempty()) {		// convert -- todo: remove me
-    expr_val.SetExpr(expr);
-    expr = _nilString;
-  }
+
+  STRING_TO_PROGEXPR_CVT(expr, expr_val);
 }
 
 void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -2016,7 +2139,7 @@ const String ReturnExpr::GenCssBody_impl(int indent_level) {
 
 String ReturnExpr::GetDisplayName() const {
   String rval;
-  rval += "return " + expr_val.GetFullExpr();
+  rval += "return " + expr_val.expr;
   return rval;
 }
 

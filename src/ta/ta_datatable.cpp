@@ -198,7 +198,6 @@ int DataCol::imageComponents() const {
 void DataCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Init();
-  name = taMisc::StringCVar(name); // make col names C legal names (for data proc ops)
 }
 
 void DataCol::DataChanged(int dcr, void* op1, void* op2) {

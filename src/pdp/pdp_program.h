@@ -51,7 +51,10 @@ public:
 
   override String	GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS(BasicDataLoop);
+  SIMPLE_COPY_UPDT_PTR_PAR(BasicDataLoop, Program);
+  COPY_FUNS(BasicDataLoop, ProgEl);
+  SIMPLE_LINKS(BasicDataLoop);
+  TA_BASEFUNS(BasicDataLoop);
 protected:
   virtual void	GetOrderVar(); // make an order variable in program
   override void	UpdateAfterEdit_impl();
@@ -90,7 +93,10 @@ public:
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx); // 
 
-  TA_SIMPLE_BASEFUNS(GroupedDataLoop);
+  SIMPLE_COPY_UPDT_PTR_PAR(GroupedDataLoop, Program);
+  COPY_FUNS(GroupedDataLoop, ProgEl);
+  SIMPLE_LINKS(GroupedDataLoop);
+  TA_BASEFUNS(GroupedDataLoop);
 protected:
   virtual void	GetOrderVars(); // make order variables in program
   override void	UpdateAfterEdit_impl();
@@ -116,7 +122,10 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS(NetCounterInit);
+  SIMPLE_COPY_UPDT_PTR_PAR(NetCounterInit, Program);
+  COPY_FUNS(NetCounterInit, ProgEl);
+  SIMPLE_LINKS(NetCounterInit);
+  TA_BASEFUNS(NetCounterInit);
 
 protected:
   override void	UpdateAfterEdit_impl();
@@ -142,7 +151,10 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS(NetCounterIncr);
+  SIMPLE_COPY_UPDT_PTR_PAR(NetCounterIncr, Program);
+  COPY_FUNS(NetCounterIncr, ProgEl);
+  SIMPLE_LINKS(NetCounterIncr);
+  TA_BASEFUNS(NetCounterIncr);
 
 protected:
   override void	UpdateAfterEdit_impl();
@@ -166,7 +178,10 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  TA_SIMPLE_BASEFUNS(NetUpdateView);
+  SIMPLE_COPY_UPDT_PTR_PAR(NetUpdateView, Program);
+  COPY_FUNS(NetUpdateView, ProgEl);
+  SIMPLE_LINKS(NetUpdateView);
+  TA_BASEFUNS(NetUpdateView);
 
 protected:
   override void	UpdateAfterEdit_impl();

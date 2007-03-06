@@ -57,11 +57,11 @@ public:
 
   String ToString_RGBA() const;
   void 	Copy_(const RGBA& cp);
-  void  UpdateAfterEdit();
   COPY_FUNS(RGBA, taNBase);
   TA_BASEFUNS(RGBA);
   RGBA(float rd, float gr, float bl, float al = 1.0); // for Iv compatibility
 protected:
+  override void UpdateAfterEdit_impl(); // don't use C names
   iColor	color_; // #IGNORE
 private:
   void  Initialize();
