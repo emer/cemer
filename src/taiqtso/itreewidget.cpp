@@ -56,6 +56,8 @@ iTreeWidget::~iTreeWidget()
 void  iTreeWidget::init() {
   m_highlightRows = false;
   m_highlightColors = NULL; // created if highlighting enabled
+  // we never use this class for Qt-internal dnd semantics
+  setDragDropMode(DragDrop);
   connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)),
     this,  SLOT(this_itemExpanded(QTreeWidgetItem*)) );
   connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)),
@@ -203,6 +205,18 @@ void iTreeWidget::setHighlightRows(bool value) {
   m_highlightRows = value;
   update();
 }
+
+Qt::DropActions iTreeWidget::supportedDropActions() const {
+//TODO: allow the default drag action on the platform
+#ifdef TA_OS_MAC
+  // default is Move
+  return Qt::MoveAction;
+#else // NOTE: Linux/Win assumed to have same default
+  // default is Copy (+ sign)
+  return Qt::CopyAction;
+#endif
+}
+
 
 void iTreeWidget::this_itemCollapsed(QTreeWidgetItem* item) {
   doItemExpanded(item, false);

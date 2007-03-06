@@ -298,12 +298,13 @@ typedef unsigned char   byte;
 
 #ifdef __MAKETA__
 #define explicit
-//#define struct class
+#define _(c) // hide the guy from maketa
 #define INHERITED(c)
 #define STATIC_CONST static
 #define USING(b)
 #define volatile
 #else
+#define _(c) c
 #define INHERITED(c) typedef c inherited;
 #define STATIC_CONST static const
 #define USING(b) b;

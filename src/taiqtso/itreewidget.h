@@ -64,6 +64,7 @@ protected:
     const QMimeData* data, Qt::DropAction action); // override -- we always delegate to the item, and always return false (we handle item manipulation manually)
   void 			contextMenuEvent(QContextMenuEvent* e); // override
   void			doItemExpanded(QTreeWidgetItem* item, bool expanded);
+_(Qt::DropActions	supportedDropActions() const;)
   
 protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);
