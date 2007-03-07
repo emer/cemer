@@ -6,14 +6,13 @@ commit:
 ------------
 current:
 
+* didn't call LoadInitTarget on LeabraTrainBatchSeedList..
+* bugs in Slice for Group
+* check uae on progel paste
+* load/save all prog_lib and testsprojects
+* bibtex err: does not return after #include
+
 * gauss smooth on simplelines, then graph it -- get crash
-
-* copy progel -- update pointers relative to program.  key -- otherwise ptrs
-  are to old vars etc.  don't even notice.
-  RULE IS: if it contains a ProgVarRef, needs custom COPY_
-
-* replace all exprs (loop_test, condition, user_script, etc) with ProgExpr!?  yes
-* see if a configure warning can be issued usefully when a var has been removed
 
 * #ARG_#_VAL_FM_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!
@@ -33,10 +32,11 @@ current:
 
 check:
 
+* double copies of checkerror
+
 * datatable load not getting file name ext AGAIN!
 
-* filer needs to use basic context (ticket filed)
-  * convert tmp name is bizzare -- fname filer issues (ticket)
+* convert tmp name is bizzare -- fname filer issues (ticket)
 
 * leabra: max norm inhib: take max guy, compute amount of inhib that gets his
   activation to given amount above threshold (parameter) -- that's it!  *very* flexible

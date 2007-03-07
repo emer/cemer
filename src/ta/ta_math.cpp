@@ -2784,27 +2784,28 @@ void RndSeed::DMem_Sync(MPI_Comm) {
 //  	RndSeed_List   	//
 //////////////////////////
 
+void RndSeed_List::MakeSeeds(int n_seeds) {
+  seeds.SetSize(n_seeds);
+}
+
 void RndSeed_List::NewSeeds() {
-  if(size == 0) return;
+  if(seeds.size == 0) return;
   MTRnd::seed_time_pid();
   int rnd = MTRnd::genrand_int31();
-  for(int i=0;i<size;i++) {
+  for(int i=0;i<seeds.size;i++) {
     int seed = rnd + i;
-    FastEl(i)->Init(seed);
+    seeds.FastEl(i)->Init(seed);
   }
 }
 
 void RndSeed_List::UseSeed(int idx) {
-  if(!size) {
+  if(seeds.size == 0) {
     taMisc::Error("RndSeed_List: no seeds present in list!");
     return;
   }
-  int use_idx = idx % size;
-  if(idx != use_idx) {
-    taMisc::Warning("RndSeed_List: Warning -- requested seed beyond end of list:",
-		    String(idx),"list size:", String(size),"wrapping around!");
-  }
-  FastEl(use_idx)->OldSeed();
+  int use_idx = idx % seeds.size;
+  TestWarning(idx != use_idx, "UseSeed", "requested seed beyond end of list, wrapping around!");
+  seeds.FastEl(use_idx)->OldSeed();
 }
 
 //////////////////////////

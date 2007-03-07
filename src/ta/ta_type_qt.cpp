@@ -48,10 +48,12 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   // we always output to console
   if (beep_on_error) cerr << '\a'; // BEL character
   String errmsg = SuperCat(a, b, c, d, e, f, g, h, i);
-  cerr << errmsg << "\n";
+  cerr << "***ERROR: " << errmsg << "\n";
   FlushConsole();
-  if(cssMisc::cur_top)
+  if(cssMisc::cur_top) {
+    cssMisc::OutputSourceLoc(NULL);
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+  }
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
     taiChoiceDialog::ErrorDialog(NULL, errmsg);

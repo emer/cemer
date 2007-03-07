@@ -1,15 +1,13 @@
 pkgdata_prog_libdir = $(pkgdatadir)/prog_lib
 
 dist_pkgdata_prog_lib_DATA =\
-	12axAll.progp \
+	CPT12axAll.progp \
 	DataCalcSample.prog \
 	LeabraEpoch.prog \
 	LeabraTrain.prog \
 	SplitImageList.prog \
-	12axEpoch.prog \
 	LeabraEpochGpData.prog \
 	LeabraTrial.prog \
-	12axTrial.prog \
 	LeabraAll_Std.progp \
 	LeabraEpochMonitor.prog \
 	LeabraTrialMonitor.prog \

@@ -307,7 +307,7 @@ Program .projects[0].programs.gp[0][2] {
        desc=;
        flags=PEF_NONE;
        result_var=NULL;
-       obj=.projects[0].programs.gp[0][3].args[0]$9$;
+       obj=$4$;
        method=Network::Compute_Weights;
        meth_args {
 	name=;
@@ -323,10 +323,10 @@ Program .projects[0].programs.gp[0][2] {
      };
     };
    };
-   data_var=.projects[0].programs.gp[0][2].args[1]$10$;
-   order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
+   data_var=.projects[0].programs.gp[0][2].args[1]$9$;
+   order_var=.projects[0].programs.gp[0][2].vars[0]$10$;
    order=PERMUTED;
-   item_idx_list{ 5;0;4;2;1;3;   };
+   item_idx_list{ 5;4;2;1;0;3;   };
    dmem_nprocs=1;
    dmem_this_proc=0;
   };
@@ -350,7 +350,7 @@ Program .projects[0].programs.gp[0][2] {
      desc=;
      flags=PEF_NONE;
      result_var=NULL;
-     obj=$9$;
+     obj=$4$;
      method=Network::Compute_Weights;
      meth_args {
       name=;
@@ -392,7 +392,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgramCall @[8] {
    desc=;
    flags=PEF_NONE;
-   target=.projects[0].programs.gp[0][8]$12$;
+   target=.projects[0].programs.gp[0][8]$11$;
    targ_ld_init="*LeabraEpochMonitor*";
    call_init=0;
    prog_args {

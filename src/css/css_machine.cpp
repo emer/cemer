@@ -204,6 +204,34 @@ void cssMisc::CodeTop() {
   code_cur_top = NULL;
 }
 
+void cssMisc::OutputSourceLoc(cssProg* prog) {
+  cssProgSpace* top;
+  if(prog)
+    top = prog->top;
+  else
+    top = cssMisc::cur_top;
+
+  ostream* fh = &cerr;
+  if(top->cmd_shell)
+    fh = top->cmd_shell->ferr;
+
+  if(top->state & (cssProg::State_Run)) {
+    if(taMisc::dmem_proc == 0) {
+      *(fh) << top->name << ": line " << top->Prog()->CurSrcLn() << "\n"
+	    << top->Prog()->GetSrcLC(top->Prog()->CurSrcLC()) << "\n";
+      taMisc::FlushConsole();
+    }
+  }
+  else {			// parsing
+    if(taMisc::dmem_proc == 0) {
+      *(fh) << top->name << ": line " << top->src_ln << "\n"
+	    << top->Prog()->GetSrcLC(top->Prog()->tok_line) << "\n";
+      taMisc::FlushConsole();
+    }
+  }
+  fh->flush();
+}
+
 void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
 		  const char* g, const char* h, const char* i, const char* j, const char* k, const char* l)
 {
@@ -219,25 +247,31 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c, 
 
   if(taMisc::dmem_proc == 0) {
     *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
-		 << g << " " << h << " " << i << " " << j << " " << k << " " << l;
+	  << g << " " << h << " " << i << " " << j << " " << k << " " << l << endl;
     taMisc::FlushConsole();
   }
-  if(top->state & (cssProg::State_Run)) {
-    if(taMisc::dmem_proc == 0) {
-      *(fh) << "\n" << top->name << "\n>" << top->Prog()->CurSrcLn() << "\t"
-		   << top->Prog()->GetSrcLC(top->Prog()->CurSrcLC()) << "\n";
-      taMisc::FlushConsole();
-    }
-    top->run_stat = cssEl::ExecError;
-  }
-  else {
-    if(taMisc::dmem_proc == 0) {
-      *(fh) << "\n" << top->name << "\n>" << top->src_ln << "\t"
-		   << top->Prog()->GetSrcLC(top->Prog()->tok_line) << "\n";
-      taMisc::FlushConsole();
-    }
-    top->run_stat = cssEl::ExecError;
-  }
+  OutputSourceLoc(prog);
+  top->run_stat = cssEl::ExecError;
+}
+
+void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
+		    const char* g, const char* h, const char* i, const char* j, const char* k, const char* l)
+{
+  cssProgSpace* top;
+  if(prog)
+    top = prog->top;
+  else
+    top = cssMisc::cur_top;
+
+  if(taMisc::dmem_proc > 0) return;
+
+  ostream* fh = &cerr;
+  if(top->cmd_shell)
+    fh = top->cmd_shell->ferr;
+
+  *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
+	<< g << " " << h << " " << i << " " << j << " " << k << " " << l << endl;
+  OutputSourceLoc(prog);
 }
 
 String cssMisc::Indent(int indent_level, int indent_spc) {
@@ -299,34 +333,6 @@ cssElPtr cssMisc::ParseName(const String& nm) {
   if((s = cssMisc::Settings.FindName(nm)))
     return s;
   return cssMisc::VoidElPtr;
-}
-
-void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c, const char* d, const char* e, const char* f,
-		    const char* g, const char* h, const char* i, const char* j, const char* k, const char* l)
-{
-  cssProgSpace* top;
-  if(prog)
-    top = prog->top;
-  else
-    top = cssMisc::cur_top;
-
-  if(taMisc::dmem_proc > 0) return;
-
-  ostream* fh = &cerr;
-  if(top->cmd_shell)
-    fh = top->cmd_shell->ferr;
-
-  *(fh) << a << " " << b << " " << c << " " << d << " " << e << " " << f << " "
-	       << g << " " << h << " " << i << " " << j << " " << k << " " << l;
-  if(top->state & (cssProg::State_Run)) {
-    *(fh) << "\n" << top->name << "\n>" << top->Prog()->CurSrcLn() << "\t"
-      << top->Prog()->GetCurSrcLC() << "\n";
-  }
-  else {
-    *(fh) << "\n" << top->name << "\n>" << top->src_ln << "\t"
-      << top->Prog()->GetSrcLC(top->Prog()->tok_line) << "\n";
-  }
-  fh->flush();
 }
 
 #if (!defined(TA_OS_WIN))

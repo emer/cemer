@@ -33,6 +33,8 @@ class CSS_API QcssConsole : public QConsole {
   ~QcssConsole();
   QcssConsole(QObject* parent = NULL, cssCmdShell* cs = NULL);
 
+  override void clear();
+
  protected:
   static int autocompletePath(String cmd_b4, String cmd, QStringList& lst);
   static int autocompleteScoped(String cmd_b4, String cmd, QStringList& lst);

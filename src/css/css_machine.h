@@ -209,6 +209,9 @@ public:
   static cssElPtr 	ParseName(const String& nm);
   // lookup a name on any of the global lists of css names -- returns cssMisc::VoidElPtr if not found
 
+  static void 		OutputSourceLoc(cssProg* prg);
+  // output current source location information (for running program -- e.g., to report errs)
+
   static void 		Error(cssProg* prg, const char* a, const char* b="", const char* c="", const char* d="",
 			      const char* e="", const char* f="", const char* g="", const char* h="",
 			      const char* i="", const char* j="", const char* k="", const char* l="");

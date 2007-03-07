@@ -2421,7 +2421,8 @@ void Program::Init() {
   setRunState(INIT);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   taMisc::CheckConfigStart(false);
-  CheckConfig(false); //sets ret_val on fail
+  // note: following is redundate with precompilescript_impl checkconfig
+  //  CheckConfig(false); //sets ret_val on fail
   Run_impl();
   taMisc::DoneBusy();
   if (ret_val != RV_OK) ShowRunError();

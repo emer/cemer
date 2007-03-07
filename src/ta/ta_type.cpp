@@ -482,7 +482,7 @@ taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 bool			taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
 bool taMisc::beep_on_error = false;
-short	taMisc::num_recent_files = 6;
+short	taMisc::num_recent_files = 10;
 short	taMisc::num_recent_paths = 10;
  
 ////////////////////////////////////////////////////////
@@ -647,6 +647,11 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 #endif
   cerr << "***WARNING: " << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
   FlushConsole();
+#ifndef NO_TA_BASE
+  if(cssMisc::cur_top) {
+    cssMisc::OutputSourceLoc(NULL);
+  }
+#endif
 }
 
 void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
@@ -677,12 +682,14 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return;
 #endif
+  // always send to console
+  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  cerr << "***CHECK ERROR: " << msg << "\n";
+  FlushConsole();
   if (is_checking) {
-    last_check_msg.cat(SuperCat(a, b, c, d, e, f, g, h, i)).cat("\n");
+    last_check_msg.cat(msg).cat("\n");
   } else {
-    last_check_msg = SuperCat(a, b, c, d, e, f, g, h, i);
-    cerr << last_check_msg << "\n";
-    FlushConsole();
+    last_check_msg = msg;
   }
 }
 
@@ -724,8 +731,6 @@ bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
 // we put the no-gui versions here, to avoid dragging in all the gui stuff
 // the gui versions are in ta_type_qt.cc
 
-// use error with 1st char in a as a '*' to avoid graphical display!
-
 void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
@@ -733,11 +738,13 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   if(taMisc::dmem_proc > 0) return;
 #endif
   if (beep_on_error) cerr << '\a'; // BEL character
-  cerr << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
+  cerr << "***ERROR: " << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
   FlushConsole();
 #if !defined(NO_TA_BASE) 
-  if(cssMisc::cur_top)
+  if(cssMisc::cur_top) {
+    cssMisc::OutputSourceLoc(NULL);
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
+  }
 #endif
 }
 

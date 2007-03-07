@@ -933,18 +933,24 @@ public:
   TA_SIMPLE_BASEFUNS(RndSeed);
 };
 
-class TA_API RndSeed_List : public taList<RndSeed> {
-  // ##CAT_Math list of random seeds
-INHERITED(taList<RndSeed>)
+class TA_API RndSeed_List : public taNBase {
+  // ##CAT_Math ##DEF_CHILD_seeds list of random seeds
+INHERITED(taNBase)
 public:
-  virtual void	 NewSeeds();
-  // #MENU #MENU_ON_Actions #MENU_CONTEXT get new seeds for all items in the list
-  virtual void	 UseSeed(int idx);
-  // #MENU #MENU_ON_Actions #MENU_CONTEXT use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)
+  taList<RndSeed>	seeds;	// the list of random seeds
 
-  TA_BASEFUNS(RndSeed_List);
+  override taList_impl*	children_() {return &seeds;}	
+
+  virtual void	 MakeSeeds(int n_seeds);
+  // #MENU #MENU_ON_Actions #MENU_CONTEXT make set of random seed holder objects of given size
+  virtual void	 NewSeeds();
+  // #MENU #MENU_CONTEXT get new seeds for all items in the list
+  virtual void	 UseSeed(int idx);
+  // #MENU #MENU_CONTEXT use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)
+
+  TA_SIMPLE_BASEFUNS(RndSeed_List);
 private:
-  void	Initialize() 		{ SetBaseType(&TA_RndSeed); }
+  void	Initialize() 		{ seeds.SetBaseType(&TA_RndSeed); }
   void 	Destroy()		{ };
 };
 

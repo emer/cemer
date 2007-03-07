@@ -1133,7 +1133,7 @@ public:
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
   virtual void		Reset();
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE reset (remove) all program elements -- typically in preparation for loading a new program over this one
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CONFIRM reset (remove) all program elements -- typically in preparation for loading a new program over this one
 
   static String		GetProgLibPath(ProgLibs library);
   // get path to given program library

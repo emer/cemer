@@ -282,13 +282,13 @@ Program_Group .projects[0].programs.gp[1] {
   };
 };
 Program_Group .projects[0].programs.gp[1] {
- name="12axAll";
+ name="CPT12axAll";
  el_typ=Program;
  el_def=0;
  step_prog=.projects[0].programs.gp[1][1]$0$;
  desc="Generate InputData for 12-AX CPT task: Epoch + Trial";
  Program @[0] {
-  name="12axEpoch";
+  name="CPT12axEpoch";
   desc="Generate a full epoch's worth of trials for the 12-AX CPT task";
   flags=PF_NONE;
   objs {
@@ -377,7 +377,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="input_data";
 	expr {
 	 expr="input_data";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ input_data;	 };
@@ -387,16 +388,40 @@ Program_Group .projects[0].programs.gp[1] {
       };
      };
     };
-    loop_test="i < n_per_epc";
-    init_expr="int i = 0";
-    loop_iter="i++";
+    init {
+     expr="int i = 0";
+     flags=NO_VAR_ERRS;
+     var_expr="int i = 0";
+     vars {
+     };
+     var_names{      };
+     bad_vars{ i;     };
+    };
+    test {
+     expr="i < n_per_epc";
+     flags=NO_VAR_ERRS;
+     var_expr="i < $#0#$";
+     vars {
+     };
+     var_names{ n_per_epc;     };
+     bad_vars{ i;     };
+    };
+    iter {
+     expr="i++";
+     flags=NO_VAR_ERRS;
+     var_expr="i++";
+     vars {
+     };
+     var_names{      };
+     bad_vars{ i;     };
+    };
    };
   };
  };
  Program @[1] {
-  name="12axTrial";
+  name="CPT12axTrial";
   desc="Generate one trial (outer loop with multiple inner loops) of the 12-AX CPT Task";
-  flags=NO_STOP;
+  flags=PF_NONE;
   objs {
    name=;
    el_typ=taOBase;
@@ -439,7 +464,7 @@ Program_Group .projects[0].programs.gp[1] {
    ProgVar @[2] {
     name="n_inner_trials";
     var_type=T_Int;
-    int_val=1;
+    int_val=3;
     objs_ptr=0;
     flags=PV_NONE;
     desc="number of inner-loop trials";
@@ -451,7 +476,7 @@ Program_Group .projects[0].programs.gp[1] {
      name="Task";
      el_typ=DynEnumItem;
      el_def=0;
-     value_idx=1;
+     value_idx=0;
      DynEnumItem @[0] {
       name="ONE";
       value=0;
@@ -474,7 +499,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc="outer-loop task stimulus";
    };
    ProgVar @[4] {
@@ -484,7 +509,7 @@ Program_Group .projects[0].programs.gp[1] {
      name="Cue";
      el_typ=DynEnumItem;
      el_def=0;
-     value_idx=1;
+     value_idx=2;
      DynEnumItem @[0] {
       name="A";
       value=0;
@@ -507,7 +532,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc="first stimulus in cue-probe pair";
    };
    ProgVar @[5] {
@@ -540,7 +565,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc="second stimulus in cue-probe pair";
    };
    ProgVar @[6] {
@@ -550,7 +575,7 @@ Program_Group .projects[0].programs.gp[1] {
      name="Output";
      el_typ=DynEnumItem;
      el_def=0;
-     value_idx=0;
+     value_idx=-1;
      DynEnumItem @[0] {
       name="L";
       value=0;
@@ -568,7 +593,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc="output responses";
    };
    ProgVar @[7] {
@@ -576,7 +601,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[8] {
@@ -584,7 +609,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=1;
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[9] {
@@ -592,7 +617,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=2;
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[10] {
@@ -600,7 +625,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=3;
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc=;
    };
    ProgVar @[11] {
@@ -608,7 +633,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=4;
     objs_ptr=0;
-    flags=NO_CTRL_PANEL;
+    flags=PV_NONE;
     desc=;
    };
   };
@@ -690,7 +715,7 @@ Program_Group .projects[0].programs.gp[1] {
       };
      };
      MethodCall @[1] {
-      desc="set the task name";
+      desc="set the task name ";
       flags=PEF_NONE;
       result_var=NULL;
       obj=$3$;
@@ -700,12 +725,13 @@ Program_Group .projects[0].programs.gp[1] {
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
-	arg_type=NULL;
+	arg_type=const_taString_ref;
 	type="const taString&";
 	name="val";
 	expr {
 	 expr="group";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ group;	 };
@@ -713,12 +739,13 @@ Program_Group .projects[0].programs.gp[1] {
 	};
        };
        ProgArg @[1] {
-	arg_type=NULL;
+	arg_type=int;
 	type="int";
 	name="col";
 	expr {
 	 expr="group_col";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ group_col;	 };
@@ -726,11 +753,12 @@ Program_Group .projects[0].programs.gp[1] {
 	};
        };
        ProgArg @[2] {
-	arg_type=NULL;
+	arg_type=int;
 	type="int";
 	name="row";
 	expr {
 	 expr="-1";
+	 flags=PE_NONE;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -756,7 +784,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="val";
 	expr {
 	 expr="name";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ name;	 };
@@ -769,7 +798,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="col";
 	expr {
 	 expr="name_col";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ name_col;	 };
@@ -782,6 +812,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="row";
 	expr {
 	 expr="-1";
+	 flags=PE_NONE;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -807,6 +838,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="val";
 	expr {
 	 expr="1.0";
+	 flags=PE_NONE;
 	 var_expr="1.0";
 	 vars {
 	 };
@@ -820,7 +852,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="col";
 	expr {
 	 expr="input_col";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ input_col;	 };
@@ -833,6 +866,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="row";
 	expr {
 	 expr="-1";
+	 flags=PE_NONE;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -846,7 +880,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="cell";
 	expr {
 	 expr="in_idx";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ in_idx;	 };
@@ -871,6 +906,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="val";
 	expr {
 	 expr="1.0";
+	 flags=PE_NONE;
 	 var_expr="1.0";
 	 vars {
 	 };
@@ -884,7 +920,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="col";
 	expr {
 	 expr="output_col";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ output_col;	 };
@@ -897,6 +934,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="row";
 	expr {
 	 expr="-1";
+	 flags=PE_NONE;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -910,7 +948,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="cell";
 	expr {
 	 expr="out_idx";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ out_idx;	 };
@@ -922,7 +961,15 @@ Program_Group .projects[0].programs.gp[1] {
      IfElse @[5] {
       desc=;
       flags=PEF_NONE;
-      condition="rew_targ";
+      cond {
+       expr="rew_targ";
+       flags=PE_NONE;
+       var_expr="$#0#$";
+       vars {
+       };
+       var_names{ rew_targ;       };
+       bad_vars{        };
+      };
       true_code {
        name=;
        el_typ=ProgEl;
@@ -943,6 +990,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="val";
 	  expr {
 	   expr="1.0";
+	   flags=PE_NONE;
 	   var_expr="1.0";
 	   vars {
 	   };
@@ -956,7 +1004,8 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="col";
 	  expr {
 	   expr="rewtarg_col";
-	   var_expr="$#0";
+	   flags=PE_NONE;
+	   var_expr="$#0#$";
 	   vars {
 	   };
 	   var_names{ rewtarg_col;	   };
@@ -969,6 +1018,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="row";
 	  expr {
 	   expr="-1";
+	   flags=PE_NONE;
 	   var_expr="-1";
 	   vars {
 	   };
@@ -982,6 +1032,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="cell";
 	  expr {
 	   expr="0";
+	   flags=PE_NONE;
 	   var_expr="0";
 	   vars {
 	   };
@@ -1026,6 +1077,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"Group\"";
+       flags=PE_NONE;
        var_expr="\"Group\"";
        vars {
        };
@@ -1039,7 +1091,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="group_col";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ group_col;       };
@@ -1052,6 +1105,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_STRING";
+       flags=PE_NONE;
        var_expr="taBase::VT_STRING";
        vars {
        };
@@ -1065,6 +1119,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1078,6 +1133,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1091,6 +1147,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1104,6 +1161,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1117,6 +1175,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1130,6 +1189,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1155,6 +1215,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"Name\"";
+       flags=PE_NONE;
        var_expr="\"Name\"";
        vars {
        };
@@ -1168,7 +1229,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="name_col";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ name_col;       };
@@ -1181,6 +1243,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_STRING";
+       flags=PE_NONE;
        var_expr="taBase::VT_STRING";
        vars {
        };
@@ -1194,6 +1257,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1207,6 +1271,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1220,6 +1285,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1233,6 +1299,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1246,6 +1313,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1259,6 +1327,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1284,6 +1353,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"Input\"";
+       flags=PE_NONE;
        var_expr="\"Input\"";
        vars {
        };
@@ -1297,7 +1367,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="input_col";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ input_col;       };
@@ -1310,6 +1381,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_FLOAT";
+       flags=PE_NONE;
        var_expr="taBase::VT_FLOAT";
        vars {
        };
@@ -1323,6 +1395,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="2";
+       flags=PE_NONE;
        var_expr="2";
        vars {
        };
@@ -1336,6 +1409,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="3";
+       flags=PE_NONE;
        var_expr="3";
        vars {
        };
@@ -1349,6 +1423,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="3";
+       flags=PE_NONE;
        var_expr="3";
        vars {
        };
@@ -1362,6 +1437,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1375,6 +1451,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1388,6 +1465,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1413,6 +1491,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"Output\"";
+       flags=PE_NONE;
        var_expr="\"Output\"";
        vars {
        };
@@ -1426,7 +1505,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="output_col";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ output_col;       };
@@ -1439,6 +1519,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_FLOAT";
+       flags=PE_NONE;
        var_expr="taBase::VT_FLOAT";
        vars {
        };
@@ -1452,6 +1533,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="2";
+       flags=PE_NONE;
        var_expr="2";
        vars {
        };
@@ -1465,6 +1547,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="2";
+       flags=PE_NONE;
        var_expr="2";
        vars {
        };
@@ -1478,6 +1561,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="1";
+       flags=PE_NONE;
        var_expr="1";
        vars {
        };
@@ -1491,6 +1575,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1504,6 +1589,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1517,6 +1603,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1542,6 +1629,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"RewTarg\"";
+       flags=PE_NONE;
        var_expr="\"RewTarg\"";
        vars {
        };
@@ -1555,7 +1643,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="rewtarg_col";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ rewtarg_col;       };
@@ -1568,6 +1657,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_FLOAT";
+       flags=PE_NONE;
        var_expr="taBase::VT_FLOAT";
        vars {
        };
@@ -1581,6 +1671,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="2";
+       flags=PE_NONE;
        var_expr="2";
        vars {
        };
@@ -1594,6 +1685,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="1";
+       flags=PE_NONE;
        var_expr="1";
        vars {
        };
@@ -1607,6 +1699,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="1";
+       flags=PE_NONE;
        var_expr="1";
        vars {
        };
@@ -1620,6 +1713,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1633,6 +1727,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1646,6 +1741,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
+       flags=PE_NONE;
        var_expr="0";
        vars {
        };
@@ -1671,11 +1767,12 @@ Program_Group .projects[0].programs.gp[1] {
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=int;
+      arg_type=NULL;
       type="int";
       name="n";
       expr {
        expr="2";
+       flags=PE_NONE;
        var_expr="2";
        vars {
        };
@@ -1701,6 +1798,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="min";
       expr {
        expr="1";
+       flags=PE_NONE;
        var_expr="1";
        vars {
        };
@@ -1714,7 +1812,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="max";
       expr {
        expr="max_maint";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ max_maint;       };
@@ -1738,7 +1837,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="group";
       expr {
        expr="task";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ task;       };
@@ -1751,7 +1851,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="name";
       expr {
        expr="task";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ task;       };
@@ -1764,7 +1865,8 @@ Program_Group .projects[0].programs.gp[1] {
       name="in_idx";
       expr {
        expr="task";
-       var_expr="$#0";
+       flags=PE_NONE;
+       var_expr="$#0#$";
        vars {
        };
        var_names{ task;       };
@@ -1777,6 +1879,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="out_idx";
       expr {
        expr="Output::L";
+       flags=PE_NONE;
        var_expr="Output::L";
        vars {
        };
@@ -1790,6 +1893,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="rew_targ";
       expr {
        expr="false";
+       flags=PE_NONE;
        var_expr="false";
        vars {
        };
@@ -1854,7 +1958,15 @@ Program_Group .projects[0].programs.gp[1] {
      IfElse @[2] {
       desc=;
       flags=PEF_NONE;
-      condition="trg_rnd_prob < targ_pct";
+      cond {
+       expr="trg_rnd_prob < targ_pct";
+       flags=PE_NONE;
+       var_expr="$#0#$ < $#1#$";
+       vars {
+       };
+       var_names{ trg_rnd_prob;targ_pct;       };
+       bad_vars{        };
+      };
       true_code {
        name=;
        el_typ=ProgEl;
@@ -1875,6 +1987,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="n";
 	  expr {
 	   expr="2";
+	   flags=PE_NONE;
 	   var_expr="2";
 	   vars {
 	   };
@@ -1888,9 +2001,10 @@ Program_Group .projects[0].programs.gp[1] {
 	desc=;
 	flags=PEF_NONE;
 	result_var=.projects[0].programs.gp[1][1].vars[4]$9$;
-	expr_val {
+	expr {
 	 expr="Cue::A + a_or_b";
-	 var_expr="Cue::A + $#0";
+	 flags=PE_NONE;
+	 var_expr="Cue::A + $#0#$";
 	 vars {
 	 };
 	 var_names{ a_or_b;	 };
@@ -1901,9 +2015,10 @@ Program_Group .projects[0].programs.gp[1] {
 	desc=;
 	flags=PEF_NONE;
 	result_var=.projects[0].programs.gp[1][1].vars[5]$10$;
-	expr_val {
+	expr {
 	 expr="Probe::X + a_or_b";
-	 var_expr="Probe::X + $#0";
+	 flags=PE_NONE;
+	 var_expr="Probe::X + $#0#$";
 	 vars {
 	 };
 	 var_names{ a_or_b;	 };
@@ -1926,11 +2041,12 @@ Program_Group .projects[0].programs.gp[1] {
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
-	  arg_type=int;
+	  arg_type=NULL;
 	  type="int";
 	  name="n";
 	  expr {
 	   expr="Cue::N_CUES";
+	   flags=PE_NONE;
 	   var_expr="Cue::N_CUES";
 	   vars {
 	   };
@@ -1951,11 +2067,12 @@ Program_Group .projects[0].programs.gp[1] {
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
-	  arg_type=int;
+	  arg_type=NULL;
 	  type="int";
 	  name="n";
 	  expr {
 	   expr="Probe::N_PROBES";
+	   flags=PE_NONE;
 	   var_expr="Probe::N_PROBES";
 	   vars {
 	   };
@@ -1970,8 +2087,17 @@ Program_Group .projects[0].programs.gp[1] {
      IfElse @[3] {
       desc="check for targets";
       flags=PEF_NONE;
-      condition="((task == Task::ONE) && (cue == Cue::A) && (probe == Probe::X)) 
+      cond {
+       expr="((task == Task::ONE) && (cue == Cue::A) && (probe == Probe::X)) 
   || ((task == Task::TWO) && (cue == Cue::B) && (probe == Probe::Y))";
+       flags=PE_NONE;
+       var_expr="(($#0#$ == Task::ONE) && ($#1#$ == Cue::A) && ($#2#$ == Probe::X)) 
+  || (($#0#$ == Task::TWO) && ($#1#$ == Cue::B) && ($#2#$ == Probe::Y))";
+       vars {
+       };
+       var_names{ task;cue;probe;       };
+       bad_vars{        };
+      };
       true_code {
        name=;
        el_typ=ProgEl;
@@ -1980,8 +2106,9 @@ Program_Group .projects[0].programs.gp[1] {
 	desc=;
 	flags=PEF_NONE;
 	result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[2]$11$;
-	expr_val {
+	expr {
 	 expr="Output::R";
+	 flags=PE_NONE;
 	 var_expr="Output::R";
 	 vars {
 	 };
@@ -1998,8 +2125,9 @@ Program_Group .projects[0].programs.gp[1] {
 	desc=;
 	flags=PEF_NONE;
 	result_var=$11$;
-	expr_val {
+	expr {
 	 expr="Output::L";
+	 flags=PE_NONE;
 	 var_expr="Output::L";
 	 vars {
 	 };
@@ -2024,7 +2152,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="group";
 	expr {
 	 expr="task";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ task;	 };
@@ -2037,7 +2166,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="name";
 	expr {
 	 expr="cue";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ cue;	 };
@@ -2050,7 +2180,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="in_idx";
 	expr {
 	 expr="Task::N_TASKS + cue";
-	 var_expr="Task::N_TASKS + $#0";
+	 flags=PE_NONE;
+	 var_expr="Task::N_TASKS + $#0#$";
 	 vars {
 	 };
 	 var_names{ cue;	 };
@@ -2063,6 +2194,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="out_idx";
 	expr {
 	 expr="Output::L";
+	 flags=PE_NONE;
 	 var_expr="Output::L";
 	 vars {
 	 };
@@ -2076,6 +2208,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="rew_targ";
 	expr {
 	 expr="false";
+	 flags=PE_NONE;
 	 var_expr="false";
 	 vars {
 	 };
@@ -2100,7 +2233,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="group";
 	expr {
 	 expr="task";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ task;	 };
@@ -2113,7 +2247,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="name";
 	expr {
 	 expr="probe";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ probe;	 };
@@ -2126,7 +2261,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="in_idx";
 	expr {
 	 expr="Task::N_TASKS + Cue::N_CUES + probe";
-	 var_expr="Task::N_TASKS + Cue::N_CUES + $#0";
+	 flags=PE_NONE;
+	 var_expr="Task::N_TASKS + Cue::N_CUES + $#0#$";
 	 vars {
 	 };
 	 var_names{ probe;	 };
@@ -2139,7 +2275,8 @@ Program_Group .projects[0].programs.gp[1] {
 	name="out_idx";
 	expr {
 	 expr="probe_output";
-	 var_expr="$#0";
+	 flags=PE_NONE;
+	 var_expr="$#0#$";
 	 vars {
 	 };
 	 var_names{ probe_output;	 };
@@ -2152,6 +2289,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="rew_targ";
 	expr {
 	 expr="true";
+	 flags=PE_NONE;
 	 var_expr="true";
 	 vars {
 	 };
@@ -2162,9 +2300,33 @@ Program_Group .projects[0].programs.gp[1] {
       };
      };
     };
-    loop_test="i < n_inner_trials";
-    init_expr="int i = 0";
-    loop_iter="i++";
+    init {
+     expr="int i = 0";
+     flags=NO_VAR_ERRS;
+     var_expr="int i = 0";
+     vars {
+     };
+     var_names{      };
+     bad_vars{ i;     };
+    };
+    test {
+     expr="i < n_inner_trials";
+     flags=NO_VAR_ERRS;
+     var_expr="i < $#0#$";
+     vars {
+     };
+     var_names{ n_inner_trials;     };
+     bad_vars{ i;     };
+    };
+    iter {
+     expr="i++";
+     flags=NO_VAR_ERRS;
+     var_expr="i++";
+     vars {
+     };
+     var_names{      };
+     bad_vars{ i;     };
+    };
    };
   };
  };

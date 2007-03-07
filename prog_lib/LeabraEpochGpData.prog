@@ -162,10 +162,11 @@ Program .projects[0].programs[0] {
   AssignExpr @[1] {
    desc=;
    flags=PEF_NONE;
-   result_var=.projects[0].programs.gp[0][2].vars[3]$6$;
-   expr_val {
+   result_var=.projects[0].programs[0].vars[4]$6$;
+   expr {
     expr="network.epoch_time";
-    var_expr="$#0.epoch_time";
+    flags=PE_NONE;
+    var_expr="$#0#$.epoch_time";
     vars {
     };
     var_names{ network;    };
@@ -188,9 +189,10 @@ Program .projects[0].programs[0] {
    desc=;
    flags=PEF_NONE;
    result_var=$6$;
-   expr_val {
+   expr {
     expr="network.epoch_time";
-    var_expr="$#0.epoch_time";
+    flags=PE_NONE;
+    var_expr="$#0#$.epoch_time";
     vars {
     };
     var_names{ network;    };
@@ -201,7 +203,7 @@ Program .projects[0].programs[0] {
    desc=;
    flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[0].programs[0].vars[4]$7$;
+   obj=$6$;
    method=TimeUsed::StartTimer;
    meth_args {
     name=;
@@ -213,6 +215,7 @@ Program .projects[0].programs[0] {
      name="reset_used";
      expr {
       expr="true";
+      flags=PE_NONE;
       var_expr="true";
       vars {
       };
@@ -226,7 +229,7 @@ Program .projects[0].programs[0] {
    desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn OFF if not wanted)";
    flags=PEF_NONE;
    result_var=NULL;
-   obj=.projects[0].programs[0].vars[3]$8$;
+   obj=.projects[0].programs[0].vars[3]$7$;
    method=DataTable::ResetData;
    meth_args {
     name=;
@@ -244,12 +247,20 @@ Program .projects[0].programs[0] {
     UserScript @[0] {
      desc="set trial to list_idx of data loop -- for dmem code this is the correct trial number";
      flags=OFF;
-     user_script="trial = list_idx; network->trial = list_idx;";
+     script {
+      expr="trial = list_idx; network.trial = list_idx;";
+      flags=NO_VAR_ERRS;
+      var_expr="$#0#$ = list_idx; $#1#$.trial = list_idx;";
+      vars {
+      };
+      var_names{ trial;network;      };
+      bad_vars{ list_idx;      };
+     };
     };
     ProgramCall @[1] {
      desc="call the trial process";
      flags=PEF_NONE;
-     target=.projects[0].programs.gp[0][3]$9$;
+     target=.projects[0].programs.gp[0][3]$8$;
      targ_ld_init="*LeabraTrial*";
      call_init=0;
      prog_args {
@@ -262,7 +273,8 @@ Program .projects[0].programs[0] {
        name="network";
        expr {
 	expr="network";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ network;	};
@@ -275,7 +287,8 @@ Program .projects[0].programs[0] {
        name="input_data";
        expr {
 	expr="input_data";
-	var_expr="$#0";
+	flags=PE_NONE;
+	var_expr="$#0#$";
 	vars {
 	};
 	var_names{ input_data;	};
@@ -287,7 +300,15 @@ Program .projects[0].programs[0] {
     IfElse @[2] {
      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
      flags=PEF_NONE;
-     condition="network->Compute_Weights_Test(trial+1)";
+     cond {
+      expr="network.Compute_Weights_Test(trial+1)";
+      flags=PE_NONE;
+      var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
+      vars {
+      };
+      var_names{ network;trial;      };
+      bad_vars{       };
+     };
      true_code {
       name=;
       el_typ=MethodCall;
@@ -312,10 +333,9 @@ Program .projects[0].programs[0] {
      };
     };
    };
-   loop_test="This is not used here!";
-   data_var=.projects[0].programs[0].args[1]$10$;
-   group_order_var=.projects[0].programs[0].vars[0]$11$;
-   item_order_var=.projects[0].programs[0].vars[1]$12$;
+   data_var=.projects[0].programs[0].args[1]$9$;
+   group_order_var=.projects[0].programs[0].vars[0]$10$;
+   item_order_var=.projects[0].programs[0].vars[1]$11$;
    group_order=SEQUENTIAL;
    item_order=SEQUENTIAL;
    group_col=0;
@@ -325,7 +345,15 @@ Program .projects[0].programs[0] {
   IfElse @[5] {
    desc="if full batch mode, update only at end of epoch";
    flags=PEF_NONE;
-   condition="network->wt_update == Network::BATCH";
+   cond {
+    expr="network.wt_update == Network::BATCH";
+    flags=PE_NONE;
+    var_expr="$#0#$.wt_update == Network::BATCH";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
    true_code {
     name=;
     el_typ=ProgEl;
@@ -365,7 +393,7 @@ Program .projects[0].programs[0] {
    desc=;
    flags=PEF_NONE;
    result_var=NULL;
-   obj=$7$;
+   obj=$6$;
    method=TimeUsed::EndTimer;
    meth_args {
     name=;
@@ -376,7 +404,7 @@ Program .projects[0].programs[0] {
   ProgramCall @[8] {
    desc="call the epoch monitor";
    flags=PEF_NONE;
-   target=.projects[0].programs.gp[0][8]$13$;
+   target=.projects[0].programs.gp[0][8]$12$;
    targ_ld_init="*LeabraEpochMonitor*";
    call_init=0;
    prog_args {
@@ -389,7 +417,8 @@ Program .projects[0].programs[0] {
      name="network";
      expr {
       expr="network";
-      var_expr="$#0";
+      flags=PE_NONE;
+      var_expr="$#0#$";
       vars {
       };
       var_names{ network;      };

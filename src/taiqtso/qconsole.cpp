@@ -34,12 +34,15 @@ using namespace std;
 #include <iostream>
 
 void QConsole::setFontNameSize(QString fnm, int sz) {
+  setFontFamily(fnm);
+  setFontPointSize(sz);
   QFont font(fnm, sz);
   setFont(font);
 }
 
-void QConsole::setFont(QFont font) {
+void QConsole::setFont(const QFont& font) {
   setCurrentFont(font);
+  document()->setDefaultFont(font);
   getDisplayGeom();
 }
 
@@ -81,7 +84,6 @@ void QConsole::reset() {
   recordedScript.clear();
   promptDisp = false;
 }
-// todo: get height,width,font, etc from styles and actual screen size..
 
 void QConsole::exit() {
   qApp->exit();

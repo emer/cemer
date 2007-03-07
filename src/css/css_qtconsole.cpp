@@ -43,6 +43,12 @@ QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {
   return theInstance;
 }
 
+void QcssConsole::clear() {
+  setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
+  inherited::clear();
+  setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
+}
+
 QString QcssConsole::interpretCommand(QString command, int* res) {
   *res = 0;
   cmd_shell->AcceptNewLine_Qt(command, false);
