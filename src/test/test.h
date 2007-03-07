@@ -7,12 +7,22 @@
 
 class MyClass {
 public:
+  enum DupName {
+    DN1_item1,
+    DN1_item2
+  };
+
   MyClass() {}
   virtual ~MyClass() {}
 };
 
 class MySubClass: public MyClass {
 public:
+  enum DupName {
+    DN2_item1,
+    DN2_item2
+  };
+
   MySubClass() {}
 };
 

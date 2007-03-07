@@ -16,6 +16,7 @@
 #include "itreewidget.h"
 
 #include <QMap>
+#include <QModelIndex>
 
 #include <iostream>
 using namespace std;
@@ -104,6 +105,33 @@ void iTreeWidget::doItemExpanded(QTreeWidgetItem* item_, bool expanded) {
   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(item_);
   if (item)
     item->itemExpanded(expanded);
+}
+
+void iTreeWidget::dragMoveEvent(QDragMoveEvent* ev) {
+  // force all ops to be "Move" regardless (since we determine op in menu anyway)
+  ev->setDropAction(Qt::MoveAction);
+  //note: we accept autoscroll decision regardless
+  inherited::dragMoveEvent(ev);
+  switch (dropIndicatorPosition()) {
+  //TEMP: forbid above/below
+  case AboveItem:
+  case BelowItem:
+    ev->ignore();
+    break;
+  case OnItem: {
+    QModelIndex index = indexAt(ev->pos());
+    iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
+    if (item) {
+      if (!item->acceptDrop(ev->mimeData())) {
+        ev->ignore();
+      }
+    } else ev->ignore();
+    } break;
+  case OnViewport:
+     ev->ignore();
+    break;
+  }
+
 }
 
 void iTreeWidget::drawRow(QPainter* painter,
@@ -207,14 +235,7 @@ void iTreeWidget::setHighlightRows(bool value) {
 }
 
 Qt::DropActions iTreeWidget::supportedDropActions() const {
-//TODO: allow the default drag action on the platform
-#ifdef TA_OS_MAC
-  // default is Move
   return Qt::MoveAction;
-#else // NOTE: Linux/Win assumed to have same default
-  // default is Copy (+ sign)
-  return Qt::CopyAction;
-#endif
 }
 
 

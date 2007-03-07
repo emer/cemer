@@ -59,6 +59,7 @@ protected:
   void*			highlightColors() const; // insures map exists
   void 			drawRow(QPainter* painter,
     const QStyleOptionViewItem& option, const QModelIndex& index) const; //override
+  void 			dragMoveEvent(QDragMoveEvent* ev);  //override
   void			dropEvent(QDropEvent* e); // override
   bool 			dropMimeData(QTreeWidgetItem* parent, int index, 
     const QMimeData* data, Qt::DropAction action); // override -- we always delegate to the item, and always return false (we handle item manipulation manually)

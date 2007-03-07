@@ -1,23 +1,53 @@
-Class Redesign
-
-taBase
-
-Current responsibilities:
-
-* streaming
-* base for most other objects
-* concept of parent/child
-* change notification
-* gui (and non-gui) clients
-* type awareness
-* gui actions
-* named
-* data updating semantics
-* edit invocation
+Clip Changes
 
 
-Data Notification
+On/Between 
 
-* currently, is highly modal and switched -- new types require mods to base code
+* in QAbstractItemView::dragMoveEvent
 
-* change to use event-like objects that can be subclassed
+* drop valid/invalid and drop rect/line are independent --
+  the rect/line in does in QAbstractItemView::dragMoveEvent
+  but you could change the event's drop action!
+
+* position type (Above etc.) determined thus:
+  1. get index from pos: indexAt(pos)
+  2. get rect from index:  visualRect(index)
+  3. get type from pos and rect d->position(pos, rect) @@
+note: dropIndicatorPosition should be available in protected
+  mode after this event
+
+
+Probably Needed Overrides:
+
+* always for the drop action to be the same ("Move") --
+  
+
+Key impl routines:
+
+
+model::supportedDropActions()
+  - dynamically queried in dragMove to determine
+     proposed action or Ignore
+
+model::flags()
+  is: TreeModel::flags(), which is nonvirt 
+  TreeItem::flags which is data
+
+
+Proposed Changes
+
+dragMoveEvent
+  Pre:
+  * change proposedAction via
+     setDropAction
+  Post:
+  * use this->indicatorPosition and index/pos
+    to determine actual enable status of operation
+  * if operation not allowed, then ignore event
+
+TEST:
+
+* make changes to dragMove
+* disable "before/after" operations
+* check item for "on" operations
+* resulting behavior should be same as clipboard op enabling

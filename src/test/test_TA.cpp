@@ -6,7 +6,7 @@
 #include "ta_type_constr.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
-#include "ta_css.h"
+#include "css_ta.h"
 #include "test.h"
 #include "test_TA_type.h"
 #include "test_TA_inst.h"
@@ -15,18 +15,44 @@
 // Types
 
 TypeDef TA_void("void", 1, 0, 0, 0, 1, 0);
-TypeDef TA_int("int", 1, 0, 0, 0, 1, sizeof(int));
-TypeDef TA_short("short", 1, 0, 0, 0, 1, sizeof(short));
-TypeDef TA_long("long", 1, 0, 0, 0, 1, sizeof(long));
 TypeDef TA_char("char", 1, 0, 0, 0, 1, sizeof(char));
 TypeDef TA_signed_char("signed_char", 1, 0, 0, 0, 1, sizeof(signed char));
+TypeDef TA_int8_t("int8_t", 1, 0, 0, 0, 1, sizeof(int8_t));
 TypeDef TA_unsigned_char("unsigned_char", 1, 0, 0, 0, 1, sizeof(unsigned char));
-TypeDef TA_unsigned("unsigned", 1, 0, 0, 0, 1, sizeof(unsigned));
+TypeDef TA_uint8_t("uint8_t", 1, 0, 0, 0, 1, sizeof(uint8_t));
+TypeDef TA_short("short", 1, 0, 0, 0, 1, sizeof(short));
+TypeDef TA_signed_short("signed_short", 1, 0, 0, 0, 1, sizeof(signed short));
+TypeDef TA_short_int("short_int", 1, 0, 0, 0, 1, sizeof(short int));
+TypeDef TA_signed_short_int("signed_short_int", 1, 0, 0, 0, 1, sizeof(signed short int));
+TypeDef TA_int16_t("int16_t", 1, 0, 0, 0, 1, sizeof(int16_t));
+TypeDef TA_unsigned_short("unsigned_short", 1, 0, 0, 0, 1, sizeof(unsigned short));
+TypeDef TA_unsigned_short_int("unsigned_short_int", 1, 0, 0, 0, 1, sizeof(unsigned short int));
+TypeDef TA_uint16_t("uint16_t", 1, 0, 0, 0, 1, sizeof(uint16_t));
+TypeDef TA_int("int", 1, 0, 0, 0, 1, sizeof(int));
+TypeDef TA_signed_int("signed_int", 1, 0, 0, 0, 1, sizeof(signed int));
 TypeDef TA_signed("signed", 1, 0, 0, 0, 1, sizeof(signed));
+TypeDef TA_int32_t("int32_t", 1, 0, 0, 0, 1, sizeof(int32_t));
+TypeDef TA_unsigned_int("unsigned_int", 1, 0, 0, 0, 1, sizeof(unsigned int));
+TypeDef TA_unsigned("unsigned", 1, 0, 0, 0, 1, sizeof(unsigned));
+TypeDef TA_uint("uint", 1, 0, 0, 0, 1, sizeof(uint));
+TypeDef TA_uint32_t("uint32_t", 1, 0, 0, 0, 1, sizeof(uint32_t));
+TypeDef TA_int64_t("int64_t", 1, 0, 0, 0, 1, sizeof(int64_t));
+TypeDef TA_long_long("long_long", 1, 0, 0, 0, 1, sizeof(long long));
+TypeDef TA_signed_long_long("signed_long_long", 1, 0, 0, 0, 1, sizeof(signed long long));
+TypeDef TA_uint64_t("uint64_t", 1, 0, 0, 0, 1, sizeof(uint64_t));
+TypeDef TA_unsigned_long_long("unsigned_long_long", 1, 0, 0, 0, 1, sizeof(unsigned long long));
+TypeDef TA_long("long", 1, 0, 0, 0, 1, sizeof(long));
+TypeDef TA_signed_long("signed_long", 1, 0, 0, 0, 1, sizeof(signed long));
+TypeDef TA_long_int("long_int", 1, 0, 0, 0, 1, sizeof(long int));
+TypeDef TA_signed_long_int("signed_long_int", 1, 0, 0, 0, 1, sizeof(signed long int));
+TypeDef TA_unsigned_long("unsigned_long", 1, 0, 0, 0, 1, sizeof(unsigned long));
+TypeDef TA_unsigned_long_int("unsigned_long_int", 1, 0, 0, 0, 1, sizeof(unsigned long int));
+TypeDef TA_intptr_t("intptr_t", 1, 0, 0, 0, 1, sizeof(intptr_t));
+TypeDef TA_uintptr_t("uintptr_t", 1, 0, 0, 0, 1, sizeof(uintptr_t));
 TypeDef TA_float("float", 1, 0, 0, 0, 1, sizeof(float));
 TypeDef TA_double("double", 1, 0, 0, 0, 1, sizeof(double));
 TypeDef TA_bool("bool", 1, 0, 0, 0, 1, sizeof(bool));
-TypeDef TA_const("const", 1, 0, 0, 0, 1, 0);
+TypeDef TA_const("const", 1, 0, 0, 1, 1, 0);
 TypeDef TA_enum("enum", 1, 0, 0, 1, 1, 0);
 TypeDef TA_struct("struct", 1, 0, 0, 1, 1, 0);
 TypeDef TA_union("union", 1, 0, 0, 1, 1, 0);
@@ -37,11 +63,13 @@ TypeDef TA_ta_array("ta_array", 1, 0, 0, 1, 1, 0);
 TypeDef TA_taBase("taBase", " Base type for all type-aware classes", 
 	"", "", "", sizeof(taBase), (void**)0, 0, 0, 0,1);
 TypeDef TA_taRegFun("taRegFun", 1, 0, 0, 0, 1, 0);
-TypeDef TA_TypeDef("TypeDef", 1, 0, 0, 0, 1, 0);
-TypeDef TA_MemberDef("MemberDef", 1, 0, 0, 0, 1, 0);
-TypeDef TA_MethodDef("MethodDef", 1, 0, 0, 0, 1, 0);
+TypeDef TA_TypeDef("TypeDef", 1, 0, 0, 0, 1, sizeof(TypeDef));
+TypeDef TA_MemberDef("MemberDef", 1, 0, 0, 0, 1, sizeof(MemberDef));
+TypeDef TA_MethodDef("MethodDef", 1, 0, 0, 0, 1, sizeof(MethodDef));
 TypeDef TA_taString("taString", "", 
 	"", "", "", sizeof(taString), (void**)0, 0, 0, 0,1);
+TypeDef TA_Variant("Variant", "", 
+	"", "", "", sizeof(Variant), (void**)0, 0, 0, 0,1);
 TypeDef TA_void_ptr("void_ptr", 1, 1, 0, 1, 1, 0);
 TypeDef TA_MyClass("MyClass", "", 
 	"", "", "", sizeof(MyClass), (void**)0, 1, 0, 0,1);
@@ -66,6 +94,14 @@ TypeDef TA_MyTemplate_MyClass("MyTemplate_MyClass", "",
 
 // Type Data
 
+static EnumDef_data TA_MyClass_DupName[]={
+  {"DN1_item1","","",0},
+  {"DN1_item2","","",1},
+  NULL};
+static EnumDef_data TA_MySubClass_DupName[]={
+  {"DN2_item1","","",0},
+  {"DN2_item2","","",1},
+  NULL};
 static int MyTemplate<MyClass>::* TA_MyTemplate_MyClass__MbrOff;
 static MemberDef_data TA_MyTemplate_MyClass__MemberDef[]={
   {&TA_MyClass,NULL,"myVar","","","",
@@ -80,9 +116,9 @@ static MethodArgs_data TA_MyTemplate_MyClass__Set_MethArgs[]={
   NULL};
 static MethodDef_data TA_MyTemplate_MyClass__MethodDef[]={
   {&TA_void,NULL,"setVar","","","",
-    0,1,-1,0,NULL,cssElCFun_MyTemplate_MyClass__setVar_stub,TA_MyTemplate_MyClass__setVar_MethArgs},
+    0,1,-1,1,0,NULL,cssElCFun_MyTemplate_MyClass__setVar_stub,TA_MyTemplate_MyClass__setVar_MethArgs},
   {&TA_void,NULL,"Set","","","",
-    0,2,-1,0,NULL,cssElCFun_MyTemplate_MyClass__Set_stub,TA_MyTemplate_MyClass__Set_MethArgs},
+    0,2,-1,1,0,NULL,cssElCFun_MyTemplate_MyClass__Set_stub,TA_MyTemplate_MyClass__Set_MethArgs},
   NULL};
 
 // Init Function
@@ -100,14 +136,69 @@ void ta_Init_test() {
   taMisc::in_init = true;
 
   taMisc::types.Add(&TA_void);
-  taMisc::types.Add(&TA_int);
-  taMisc::types.Add(&TA_short);
-  taMisc::types.Add(&TA_long);
   taMisc::types.Add(&TA_char);
   taMisc::types.Add(&TA_signed_char);
+  taMisc::types.Add(&TA_int8_t);
+    TA_int8_t.AddParents(&TA_signed_char);
   taMisc::types.Add(&TA_unsigned_char);
-  taMisc::types.Add(&TA_unsigned);
+  taMisc::types.Add(&TA_uint8_t);
+    TA_uint8_t.AddParents(&TA_unsigned_char);
+  taMisc::types.Add(&TA_short);
+  taMisc::types.Add(&TA_signed_short);
+    TA_signed_short.AddParents(&TA_short);
+  taMisc::types.Add(&TA_short_int);
+    TA_short_int.AddParents(&TA_short);
+  taMisc::types.Add(&TA_signed_short_int);
+    TA_signed_short_int.AddParents(&TA_short);
+  taMisc::types.Add(&TA_int16_t);
+    TA_int16_t.AddParents(&TA_short);
+  taMisc::types.Add(&TA_unsigned_short);
+  taMisc::types.Add(&TA_unsigned_short_int);
+    TA_unsigned_short_int.AddParents(&TA_unsigned_short);
+  taMisc::types.Add(&TA_uint16_t);
+    TA_uint16_t.AddParents(&TA_unsigned_short);
+  taMisc::types.Add(&TA_int);
+  taMisc::types.Add(&TA_signed_int);
+    TA_signed_int.AddParents(&TA_int);
   taMisc::types.Add(&TA_signed);
+    TA_signed.AddParents(&TA_int);
+  taMisc::types.Add(&TA_int32_t);
+    TA_int32_t.AddParents(&TA_int);
+  taMisc::types.Add(&TA_unsigned_int);
+  taMisc::types.Add(&TA_unsigned);
+    TA_unsigned.AddParents(&TA_unsigned_int);
+  taMisc::types.Add(&TA_uint);
+    TA_uint.AddParents(&TA_unsigned_int);
+  taMisc::types.Add(&TA_uint32_t);
+    TA_uint32_t.AddParents(&TA_unsigned_int);
+  taMisc::types.Add(&TA_int64_t);
+  taMisc::types.Add(&TA_long_long);
+    TA_long_long.AddParents(&TA_int64_t);
+  taMisc::types.Add(&TA_signed_long_long);
+    TA_signed_long_long.AddParents(&TA_int64_t);
+  taMisc::types.Add(&TA_uint64_t);
+  taMisc::types.Add(&TA_unsigned_long_long);
+    TA_unsigned_long_long.AddParents(&TA_uint64_t);
+  taMisc::types.Add(&TA_long);
+    if (sizeof(long) == sizeof(int)) TA_long.AddParents(&TA_int);
+    else TA_long.AddParents(&TA_int64_t);
+  taMisc::types.Add(&TA_signed_long);
+    TA_signed_long.AddParents(&TA_long);
+  taMisc::types.Add(&TA_long_int);
+    TA_long_int.AddParents(&TA_long);
+  taMisc::types.Add(&TA_signed_long_int);
+    TA_signed_long_int.AddParents(&TA_long);
+  taMisc::types.Add(&TA_unsigned_long);
+    if (sizeof(unsigned long) == sizeof(unsigned int)) TA_unsigned_long.AddParents(&TA_unsigned_int);
+    else TA_unsigned_long.AddParents(&TA_uint64_t);
+  taMisc::types.Add(&TA_unsigned_long_int);
+    TA_unsigned_long_int.AddParents(&TA_unsigned_long);
+  taMisc::types.Add(&TA_intptr_t);
+    if (sizeof(intptr_t) == sizeof(int)) TA_intptr_t.AddParents(&TA_int);
+    else TA_intptr_t.AddParents(&TA_int64_t);
+  taMisc::types.Add(&TA_uintptr_t);
+    if (sizeof(uintptr_t) == sizeof(unsigned int)) TA_uintptr_t.AddParents(&TA_unsigned_int);
+    else TA_uintptr_t.AddParents(&TA_uint64_t);
   taMisc::types.Add(&TA_float);
   taMisc::types.Add(&TA_double);
   taMisc::types.Add(&TA_bool);
@@ -122,17 +213,24 @@ void ta_Init_test() {
   taMisc::types.Add(&TA_taBase);
     TA_taBase.AddParFormal(&TA_class);
   taMisc::types.Add(&TA_TypeDef);
+    TA_TypeDef.AddParFormal(&TA_class);
   taMisc::types.Add(&TA_MemberDef);
+    TA_MemberDef.AddParFormal(&TA_class);
   taMisc::types.Add(&TA_MethodDef);
+    TA_MethodDef.AddParFormal(&TA_class);
   taMisc::types.Add(&TA_taString);
     TA_taString.AddParFormal(&TA_class);
+  taMisc::types.Add(&TA_Variant);
+    TA_Variant.AddParFormal(&TA_class);
   taMisc::types.Add(&TA_void_ptr);
     TA_void_ptr.AddParents(&TA_void);
   taMisc::types.Add(&TA_MyClass);
     TA_MyClass.AddParFormal(&TA_class);
+    tac_AddEnum(TA_MyClass, "DupName", "", "", "", "", TA_MyClass_DupName);
   taMisc::types.Add(&TA_MySubClass);
     TA_MySubClass.AddParFormal(&TA_class);
     TA_MySubClass.AddClassPar(&TA_MyClass,0);
+    tac_AddEnum(TA_MySubClass, "DupName", "", "", "", "", TA_MySubClass_DupName);
   taMisc::types.Add(&TA_MyTemplate);
     TA_MyTemplate.AddParFormal(&TA_class, &TA_template);
   taMisc::types.Add(&TA_MyTemplate_MyClass_);
