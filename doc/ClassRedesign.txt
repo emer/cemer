@@ -1,5 +1,41 @@
 Clip Changes
 
+Current Clip Handling
+
+Enabling:
+
+Source:
+
+We start with an Item, or list of items
+
+ISelectable::QueryEditActions(list)
+  QueryEditActionsS
+  QueryEditActionsD
+  
+IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const {
+  taiDataLink* pdl = par_link();
+  taiDataLink* link = this->link();
+  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
+  if (link) {
+    link->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
+    link->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
+  }
+
+IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
+  // parent object will generally manage CUT, and DELETE
+  // parent object normally passes on to child object
+  taiDataLink* pdl = par_link();
+  taiDataLink* link = this->link();
+  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, NULL, allowed, forbidden); // ex. CUT of child
+  if (link) {
+    link->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
+  }
+  
+  
+NEW CLIP HANDLING
+
+
+
 
 On/Between 
 

@@ -5230,6 +5230,8 @@ iTreeViewItem::~iTreeViewItem() {
 }
 
 bool iTreeViewItem::acceptDrop(const QMimeData* mime) const {
+//TEMP:
+return true;
   taiMimeSource* ms = taiMimeSource::New(mime);
   int ea = QueryEditActions_(ms);
 //  bool rval = (ea & taiClipData::EA_DROP_OPS);

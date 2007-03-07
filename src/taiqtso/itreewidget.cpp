@@ -109,29 +109,36 @@ void iTreeWidget::doItemExpanded(QTreeWidgetItem* item_, bool expanded) {
 
 void iTreeWidget::dragMoveEvent(QDragMoveEvent* ev) {
   // force all ops to be "Move" regardless (since we determine op in menu anyway)
-  ev->setDropAction(Qt::MoveAction);
+//  ev->setDropAction(Qt::MoveAction);
   //note: we accept autoscroll decision regardless
-  inherited::dragMoveEvent(ev);
-  switch (dropIndicatorPosition()) {
-  //TEMP: forbid above/below
-  case AboveItem:
-  case BelowItem:
-    ev->ignore();
-    break;
-  case OnItem: {
-    QModelIndex index = indexAt(ev->pos());
-    iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
-    if (item) {
-      if (!item->acceptDrop(ev->mimeData())) {
-        ev->ignore();
+  inherited::dragMoveEvent(ev); return;
+  if (ev->isAccepted()) {
+//    ev->setDropAction(Qt::MoveAction);
+    switch (dropIndicatorPosition()) {
+    //TEMP: forbid above/below
+    case AboveItem:
+    case BelowItem:
+      ev->setDropAction(Qt::IgnoreAction);
+//      ev->ignore(); // puts up the stop sign icon
+//TEMP
+//cerr << "Above/BelowItem ignored\n"; cerr.flush();
+//      ev->setDropAction(Qt::IgnoreAction);
+      break;
+    case OnItem: {
+      QModelIndex index = indexAt(ev->pos());
+      iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
+      if (!item || !item->acceptDrop(ev->mimeData())) {
+        ev->setDropAction(Qt::IgnoreAction);
       }
-    } else ev->ignore();
-    } break;
-  case OnViewport:
-     ev->ignore();
-    break;
+      } break;
+    case OnViewport:
+//TEMP
+cerr << "OnViewport ignored\n";
+      ev->ignore(); // puts up the stop sign icon
+//      ev->setDropAction(Qt::IgnoreAction);
+      break;
+    }
   }
-
 }
 
 void iTreeWidget::drawRow(QPainter* painter,
@@ -235,7 +242,7 @@ void iTreeWidget::setHighlightRows(bool value) {
 }
 
 Qt::DropActions iTreeWidget::supportedDropActions() const {
-  return Qt::MoveAction;
+  return Qt::CopyAction;
 }
 
 
