@@ -15,56 +15,6 @@ on Mac:
 
 
 
-Crash on close of 12ax proj
-
-* save a version that saves all units
-* run then stop the network
-* browse all the specs and all the layers
-* close the project
-
-crashes in:
-
-  Network::CutLinks
-  specs.CutLinks
-  specs.RemoveAll
-  RemoveIdx(0)
-  El_disOwn for el
-  el::Destroying
-   el.dl->DataDestroying
-   while removing clients: note that size=172!!!!
-    (therefore, occurring for item idx=172 that was just popped)
-   dlc->RemoveDataLink -- CRASH
-
-notes: 
-  the dl itself seems ok (ex. the clients list seems sensible)
-  the dlc gives error "Cannot access memory at..."
-  the dlc addr itself seems valid, but looks to have been already 
-    destructed 
-
-Invariants:
-
-* DataLink and DLC are supposed to have an invariant relationship
-  that makes it impossible for either to destroy w/o properly
-  decoupling from the other
-
-
-Summary:
-
-* a UnitSpec-derivitive is crashing during Network::specs.CutLinks
-  seemingly because a DataLinkClient it is trying to remove from
-  its spec's reference has already destroyed
-
-
-"no datalink" err msg
-
-* create Network, UnitSpec, then click it to view props
-* you get the "Attempt to add ... " for no datalink
-
-occurs in member:
-  bias_spec.spec
-
-
-
 Tree Browsing Show/Hide
 
 Program Reset bug
