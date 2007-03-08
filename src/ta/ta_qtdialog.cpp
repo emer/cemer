@@ -1542,10 +1542,6 @@ void taiEditDataHost::Enum_Members() {
   MemberSpace& ms = typ->members;
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);
-//TEMP
-if (md->name == "n_units"){
-int i = 0; ++i;
-}
     if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
     if (md->ShowMember(~taMisc::IS_NORMAL, TypeItem::SC_EDIT, taMisc::IS_NORMAL)) {
       memb_el(MS_NORM).Add(md);

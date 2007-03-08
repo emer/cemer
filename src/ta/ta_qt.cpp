@@ -631,7 +631,7 @@ taiEditDataHost* taiMisc::FindEdit(void* obj, iMainWindowViewer* not_in_win) {
     if (host->isDialog() && !host->modal)
       return host;
     // is a EditPanel
-    if (host->dataPanel()->window() != not_in_win) // if niw NULL, then will always be true
+    if (host->isPanel() && (host->dataPanel()->window() != not_in_win)) // if niw NULL, then will always be true
       return host;
   }
   return NULL;

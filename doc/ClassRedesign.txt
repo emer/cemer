@@ -88,6 +88,7 @@ QTreeWidget
 QAbstractItemView
   if model->dropMimeData(...)
     accept
+  NOTE: this latter is delegated to QTreeWidget::accept
   stop scrolling, update gui
 
  

@@ -20,6 +20,7 @@
 #include "ta_TA_inst.h"
 
 #include <QApplication>
+#include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QTreeWidget>
@@ -1082,6 +1083,7 @@ iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,
   refs.setOwner(this); // these update frequently
   refs_struct.setOwner(this); // these are same for prog lifetime
   if (prog) { // better have a value!
+    refs_struct.Add(prog);
     // note: we deftly solve the problem of reacting to new vars/args
     // by simply putting those lists on our ref list, which notifies us
     refs_struct.Add(&(prog->args));
@@ -1108,12 +1110,40 @@ void iProgramCtrlDataHost::Cancel_impl() {
   inherited::Cancel_impl();
 }
 
+void iProgramCtrlDataHost::Enum_Members() {
+  // we show all sections, except VARS is modal
+  for (int j = 0; j < MS_CNT; ++j) {
+    // we don't show the vars by default, excep for Experts
+    if ((j != MS_VARS)  || (!(taMisc::show_gui & taMisc::NO_EXPERT))) {
+      show_set(j) = true;
+    }
+  }
+}
+
+
 void iProgramCtrlDataHost::Constr_Data_Labels() {
   Program* prog = this->prog();
   refs.Reset();
   membs.ResetItems(); // all Meths and data
+  if (!prog) return; // defensive
   String nm;
   String help_text;
+  
+  // Program guys (just a few key guys), no label
+  {
+    MemberSpace& ms = prog->GetTypeDef()->members;
+    for (int i = 0; i < ms.size; ++i) {
+      MemberDef* md = ms.FastEl(i);
+      if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
+      // just have a fixed list of guys we show
+      if ((md->name == "name") || (md->name == "desc")) {
+        memb_el(MS_PROG).Add(md);
+      } 
+    } 
+    int idx = 0;
+    // we can just use the default worker bee routine
+    Constr_Data_Labels_impl(idx, &memb_el(MS_PROG), &data_el(MS_PROG));
+  }
   
   iLabel* lbl = new iLabel("Items from Program_Group", body);
   AddSectionLabel(-1, lbl,
@@ -1142,18 +1172,24 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       nm = "Program args";
       help_text = "the arguments to the program";
       pvl = &prog->args; 
+      lbl = new iLabel(nm, body);
+      AddSectionLabel(-1, lbl,help_text);
       break;
-    case MS_VARS: 
+    case MS_VARS: {
       nm = "Program vars";
       help_text = "the variables used inside the program";
       pvl = &prog->vars; 
-      break;
+      iCheckBox* chk = new iCheckBox(nm.chars(), body);
+      AddSectionLabel(-1, chk, help_text);
+      bgrp->addButton(chk, j);
+      if (show_set(j)) {
+        chk->setChecked(true);
+      } else // not showing
+        continue; // don't put guys in
+      } break;
     default: continue; // shouldn't happen!
     }
     
-    // add a pretty section label
-    lbl = new iLabel(nm, body);
-    AddSectionLabel(-1, lbl,help_text);
     
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
@@ -1214,18 +1250,24 @@ void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
 }
 
 
-void iProgramCtrlDataHost::GetValue_Membs() {
+void iProgramCtrlDataHost::GetValue_Membs_def() {
   Program* prog = this->prog(); //cache
   if (!prog) return;
   
+  // prog stuff
+  if (show_set(MS_PROG) && (data_el(MS_PROG).size > 0)) {
+    GetValue_impl(&memb_el(MS_PROG), data_el(MS_PROG), prog);
+  }
+  
   // group stuff
-  if (data_el(MS_GP).size > 0) {
+  if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     GetValue_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
   }
   
   bool first_diff = true;
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
+    if (!show_set(j)) continue;
     ProgVar_List* pvl = NULL;
     switch (j) {
     case MS_ARGS: pvl = &prog->args; break;
@@ -1277,13 +1319,19 @@ void iProgramCtrlDataHost::GetImage_Membs()
   Program* prog = this->prog(); //cache
   if (!prog) return;
   
-  // step program
-  if (data_el(MS_GP).size > 0) {
+  // prog stuff
+  if (show_set(MS_PROG) && (data_el(MS_PROG).size > 0)) {
+    GetImage_impl(&memb_el(MS_PROG), data_el(MS_PROG), prog);
+  }
+  
+  // group stuff
+  if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     GetImage_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
   }
   
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
+    if (!show_set(j)) continue;
     ProgVar_List* pvl = NULL;
     switch (j) {
     case MS_ARGS: pvl = &prog->args; break;

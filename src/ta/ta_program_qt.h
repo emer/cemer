@@ -305,13 +305,14 @@ class TA_API iProgramCtrlDataHost : public taiEditDataHost, public virtual IRefL
 INHERITED(taiEditDataHost)
   Q_OBJECT
 public: //
-// We use: set0: gp guys (ex step); set1: args; set2: vars
+// We use sets: 0:name/desc; 1: gp guys (ex step); set2: args; set3: vars
   enum CtrlMembSets {
+    MS_PROG,
     MS_GP,
     MS_ARGS,
-    MS_VARS, // note: must come after ARGS {
+    MS_VARS, // note: must ARGS..VARS must be in numerical sequence
     
-    MS_CNT	= 3 // note: should hide the inherited one in DefMemSets???
+    MS_CNT	= 4, 
   };
   
   inline Program*	prog() const {return (Program*)cur_base;}
@@ -328,9 +329,10 @@ protected: //
   // we maintain several lists to simply mgt and notify handling
   taBase_RefList	refs; // the data members from the Program
   taBase_RefList	refs_struct; // structural guys: arg and var lists themselves, gp
+  override void		Enum_Members();
   override void		Constr_Data_Labels();
   override void 	Cancel_impl(); 
-  override void		GetValue_Membs();
+  override void		GetValue_Membs_def();
   override void		GetImage_Membs();
 
   void	UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var); 

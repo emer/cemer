@@ -3073,6 +3073,20 @@ const Variant MemberDef::GetValVar(const void* base, void* par) const {
   return type->GetValVar(GetOff(base), par, this); //TODO: no par???
 }
 
+bool MemberDef::ValIsDefault(const void* base, int for_show) const {
+  String defval = OptionAfter("DEF_");
+  void* mbr_base = GetOff(base);
+  // if it has an explicit default, compare using the string
+  // we do this regardless whether it is a simple value, or an object
+  if (defval.nonempty()) {
+    String act_val = type->GetValStr(mbr_base);
+    return (act_val == defval);
+  }
+  // otherwise, delegate to the type -- objects recurse into us
+  // if a default value was specified, compare and set the highlight accordingly
+  return type->ValIsDefault(mbr_base, this, for_show);
+}
+
 bool MemberDef::ShowMember(
   int show_forbidden,
   TypeItem::ShowContext show_context,
@@ -4744,6 +4758,28 @@ const Variant TypeDef::GetValVar(const void* base_, void*, const MemberDef* memb
   }
   // other types and degress of indirection not really supported
   return _nilVariant; 
+}
+
+bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def, 
+    int for_show) const 
+{
+  // some cases are simple, for non-class values
+  if ((InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) ||
+    (ptr > 0) || 
+    !InheritsNonAtomicClass()
+  ){
+    return ValIsEmpty(base, memb_def); // note: show not used for single guy
+  } else { // instance of a class, so must recursively determine
+    // just find all eligible guys, and return true if none fail
+    for (int i = 0; i < members.size; ++i) {
+      MemberDef* md = members.FastEl(i);
+      if (!md || !md->ShowMember(taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_ANY,
+        for_show)) continue;
+      if (!md->ValIsDefault(base, for_show))
+        return false;
+    }
+    return true;
+  }
 }
 
 bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const 

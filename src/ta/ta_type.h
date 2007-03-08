@@ -1580,6 +1580,10 @@ public:
 #ifdef TA_GUI
   taiMember*	im;		// gui structure for edit representation (was: iv)
 #endif
+
+  bool		ValIsDefault(const void* base, 
+    int for_show = taMisc::IS_EXPERT) const; // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
+  
   void 		Initialize();
   void		Copy(const MemberDef& cp);
   MemberDef();
@@ -1909,6 +1913,8 @@ public:
   const Variant	GetValVar(const void* base, void* par=NULL,
     const MemberDef* memb_def = NULL) const;
   // get a Variant representation of value; primarily for value types (int, etc.); NOTE: returns TAPtr types as the Base value (not a pointer to the pointer), which is usually what you want (see source for more detail)
+  bool		ValIsDefault(const void* base, const MemberDef* memb_def, 
+    int for_show = taMisc::IS_EXPERT) const; // true if the type contains its defaults
   bool 		ValIsEmpty(const void* base_, const MemberDef* memb_def) const;
     // true only if value is empty, ex 0 or "" 
   void		SetValStr(const String& val, void* base, void* par=NULL,

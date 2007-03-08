@@ -1617,7 +1617,7 @@ int taBase::EditDialog(bool modal) {
   taiEdit* ie;
   if((ie = GetTypeDef()->ie) != NULL) {
     //note: taiEdit looks up color, if hinting enabled
-    return ie->Edit((void*)this, false, NULL);
+    return ie->EditDialog((void*)this, false, NULL);
   }
 #endif
   return false;
