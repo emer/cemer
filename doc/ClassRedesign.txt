@@ -81,6 +81,20 @@ dragMoveEvent
     to determine actual enable status of operation
   * if operation not allowed, then ignore event
 
+Drop Event
+
+QTreeWidget
+ -- does the gui thing for self Moves (which will happen on Mac)
+QAbstractItemView
+  if model->dropMimeData(...)
+    accept
+  stop scrolling, update gui
+
+ 
+* need to bypass QTreeWidget handler, since it unconditionally
+  implements that gui-based moving
+* but can't bypass QAIV since it cleans up autoscrolling, etc.
+
 TEST:
 
 * make changes to dragMove

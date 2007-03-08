@@ -327,7 +327,7 @@ public: // Interface Properties and Methods
   virtual taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const = 0;
   virtual taiClipData*	GetClipDataMulti(const ISelectable_PtrList& sel_items, 
     int src_edit_action, bool for_drag) const {return NULL;}// only needed if multi is handled
-  virtual int		QueryEditActions_(taiMimeSource* ms) const; // typically called on single item for acceptDrop
+  virtual int		QueryEditActions_(taiMimeSource* ms) const; // typically called on single item for canAcceptDrop
   int			QueryEditActions_(const ISelectable_PtrList& sel_items) const;
     // called to get edit items available on clipboard for the sel_items
   virtual int		RefUnref(bool ref) {return 1;} // ref'ed/unrefed in select lists etc.; optional, and can be used for lifetime mgt; returns count after operation
@@ -1611,7 +1611,7 @@ public:
 
   int			dn_flags; // any of DataNodeFlags
 
-  override bool 	acceptDrop(const QMimeData* mime) const;
+  override bool 	canAcceptDrop(const QMimeData* mime) const;
   void*			linkData() const;
   virtual void		setName(const String& value); // is the first col, except for lists, which is 2nd -- note: only applicable for updates, not in constructor
   iTreeView*		treeView() const;

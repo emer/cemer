@@ -5229,7 +5229,7 @@ iTreeViewItem::~iTreeViewItem() {
   }
 }
 
-bool iTreeViewItem::acceptDrop(const QMimeData* mime) const {
+bool iTreeViewItem::canAcceptDrop(const QMimeData* mime) const {
 //TEMP:
 return true;
   taiMimeSource* ms = taiMimeSource::New(mime);

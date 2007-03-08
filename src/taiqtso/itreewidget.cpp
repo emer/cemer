@@ -108,34 +108,26 @@ void iTreeWidget::doItemExpanded(QTreeWidgetItem* item_, bool expanded) {
 }
 
 void iTreeWidget::dragMoveEvent(QDragMoveEvent* ev) {
-  // force all ops to be "Move" regardless (since we determine op in menu anyway)
-//  ev->setDropAction(Qt::MoveAction);
   //note: we accept autoscroll decision regardless
-  inherited::dragMoveEvent(ev); return;
+  inherited::dragMoveEvent(ev);
   if (ev->isAccepted()) {
-//    ev->setDropAction(Qt::MoveAction);
     switch (dropIndicatorPosition()) {
     //TEMP: forbid above/below
     case AboveItem:
     case BelowItem:
       ev->setDropAction(Qt::IgnoreAction);
-//      ev->ignore(); // puts up the stop sign icon
-//TEMP
-//cerr << "Above/BelowItem ignored\n"; cerr.flush();
-//      ev->setDropAction(Qt::IgnoreAction);
+      ev->ignore(); // puts up the stop sign icon
       break;
     case OnItem: {
       QModelIndex index = indexAt(ev->pos());
       iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
-      if (!item || !item->acceptDrop(ev->mimeData())) {
+      if (!item || !item->canAcceptDrop(ev->mimeData())) {
         ev->setDropAction(Qt::IgnoreAction);
       }
       } break;
     case OnViewport:
-//TEMP
-cerr << "OnViewport ignored\n";
+      ev->setDropAction(Qt::IgnoreAction);
       ev->ignore(); // puts up the stop sign icon
-//      ev->setDropAction(Qt::IgnoreAction);
       break;
     }
   }
@@ -164,7 +156,8 @@ no_hi: */
 
 void iTreeWidget::dropEvent(QDropEvent* e) {
   drop_pos = e->pos();
-  inherited::dropEvent(e);
+  // we have to skip QTreeWidget because it does the evil gui move, esp. on Mac
+  QTreeView::dropEvent(e);
 }
 
 bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index, 
@@ -242,7 +235,8 @@ void iTreeWidget::setHighlightRows(bool value) {
 }
 
 Qt::DropActions iTreeWidget::supportedDropActions() const {
-  return Qt::CopyAction;
+  // we have to support both, because Move is def on Mac, Copy for others
+  return Qt::CopyAction | Qt::MoveAction;
 }
 
 

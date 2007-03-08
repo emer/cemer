@@ -95,7 +95,7 @@ public:
   void			resetTextColor(int col);
     // return text color for indicated column to default, or for all cols if col=-1
   
-  virtual bool		acceptDrop(const QMimeData* mime) const {return false;}
+  virtual bool		canAcceptDrop(const QMimeData* mime) const {return false;}
     // returns whether we can accept the given data in a drop upon us
   
   virtual void		CreateChildren(); // creates the children, called automatically on expand if lazy_children; normally override _impl
