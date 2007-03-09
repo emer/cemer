@@ -1936,11 +1936,16 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   
   switch (role) {
   case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
-  case Qt::EditRole:
+  case Qt::EditRole: {
     if (col->is_matrix) 
       return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
-    else
-      return dt->GetValAsString(index.column(), index.row());
+    else {
+      if(col->rows() > index.row())
+	return col->GetValAsString(index.row());
+      else
+	return QVariant();	// nil
+    }
+  }
 // Qt::FontRole: //  QFont: font for the text
 //Qt::DecorationRole
 //Qt::ToolTipRole
