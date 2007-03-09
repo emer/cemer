@@ -5190,14 +5190,20 @@ void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange&
   String val; // each cell val
   TsvSep sep; // sep after reading the cell val
   
-  // note, for generic source, we don't adjust the paste region
+  // for generic source, for single-cell, we autoextend the range
+  // to the entire extent of the table
+  
   CellRange sel(sel_);
-  // an adjustment to paste region could be done here
+  if (sel_.single()) {
+    sel.row_to = tab->rows - 1;
+    sel.col_to = tab->cols() - 1;
+  } 
   
   // we will use the first row pass to find the max cell rows
   int max_cell_rows = 1; // has to be at least 1 (for all scalars)
   tab->DataUpdate(true); 
   // we only iterate over the dst rows; we'll just stop reading data when done 
+  // and/or break out if we run out of data
   for (int dst_row = sel.row_fr; dst_row <= sel.row_to; ++dst_row) {
     for (int cell_row = 0; cell_row < max_cell_rows; ++cell_row) {
       // we keep iterating while we have data and cols
@@ -5233,7 +5239,8 @@ void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange&
             goto next_row;
           }
         }
-        // if we're on the last col, we may have ran out of table -- read the rest of the row here
+        // if we're on the last col, we may have ran out of table -- read the rest of the row here, which will cause the loop
+  // to be
         if (dst_col == sel.col_to) while (sep != TSV_EOL) {
           if (!ReadTsvValue(istr, val, sep)) goto done;
           if (sep == TSV_EOF) goto done;
@@ -5456,10 +5463,11 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
   CellRange sel(sel_);
   if (sel_.single()) {
     sel.SetExtent(tabCols(), tabRows());
+    sel.LimitRange(tab->rows - 1, tab->cols() - 1);
   } 
   // if dest is larger than src, we shrink to src
   else {
-    sel.Limit(tabCols(), tabRows());
+    sel.LimitExtent(tabCols(), tabRows());
   }
   
   // calculate the controlling params, for efficiency and clarity

@@ -257,7 +257,7 @@ public:
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
   //TODO: maybe default highlighting???
-  void		AddBoolItem(String name, int val); // add an item to the list
+  void		AddBoolItem(String name, int val, const String& desc = _nilString); // add an item to the list
 
   void 		GetImage(int val);  // set to this value, according to bit fields
   void		GetValue(int& val) const;

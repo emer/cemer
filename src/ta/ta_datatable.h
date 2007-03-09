@@ -62,7 +62,7 @@ INHERITED(taOBase)
 public:
 
   String	expr;		// #EDIT_DIALOG enter the expression here -- column value will be set to this.\nyou can just type in names of other columns (value is corresponding row's value) or literal values, or math expressions, etc.\nenclose strings in double quotes.\ncolumn names will be checked and automatically updated
-  DataCol* col_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #FROM_GROUP_data_cols lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  DataCol* col_lookup;	// #APPLY_IMMED #NULL_OK #NO_EDIT #NO_SAVE #FROM_GROUP_data_cols lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
   DataTableCols*	data_cols;
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns (set from owner field)

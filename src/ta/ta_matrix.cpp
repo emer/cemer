@@ -32,9 +32,14 @@ void CellRange::SetExtent(int wd, int ht) {
   row_to = row_fr + ht - 1;
 }
 
-void CellRange::Limit(int wd, int ht) {
+void CellRange::LimitExtent(int wd, int ht) {
   if (width() > wd) col_to = col_fr + wd - 1;
   if (height() > ht) row_to = row_fr + ht - 1;
+}
+
+void CellRange::LimitRange(int row_to_, int col_to_) {
+  if (col_to > col_to_) col_to = col_to_;
+  if (row_to > row_to_) row_to = row_to_;
 }
 
 void CellRange::SetFromModel(const QModelIndexList& indexes) {
@@ -409,7 +414,9 @@ void taMatrix::Alloc_(int new_alloc) {
 //NOTE: this is a low level allocator; alloc is typically managed in frames
   if (alloc_size < new_alloc)	{
     char* nw = (char*)MakeArray_(new_alloc);
-    for (int i = 0; i < size; ++i) {
+    if (fastAlloc()) {
+      memcpy(nw, data(), El_SizeOf_() * size);
+    } else  for (int i = 0; i < size; ++i) {
       El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
     }
     // calculate delta, in bytes, of the new address and update slices

@@ -1137,7 +1137,7 @@ String DataTable::RangeToTSV(const CellRange& cr) {
   // metrics
   int tot_col = 0; // total flat cols
   int max_cell_rows = 0; // max flat rows per cell
-  GetFlatGeom(cr, max_cell_rows, tot_col);
+  GetFlatGeom(cr, tot_col, max_cell_rows);
   
   // allocate a reasonable best-guess buffer
   STRING_BUF(rval, (tot_col * max_cell_rows * (cr.row_to - cr.row_fr + 1)) * 10);

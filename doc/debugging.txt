@@ -1,19 +1,47 @@
-Mac DND bug
+Datatable Clip bugs
 
-compare two identical operations, Linux, Mac:
+(leabra_ra.proj)
 
-* open app
-* drag ColdHot color spec on top of ROYGBIV
-* choose Move
+make a copy of SimpleLines for test
 
-on Linux, it moves after ROYGBIV, as expected
+Things that do work:
+1
+ * copy a bunch of cells in a col
+ * paste onto dest
 
-on Mac:
-* the ColdHot item "disappears" from main tree
-* is still in the list, in slot 0
-* if you BrowseMe, you see ColdHost in slot0 in new tree
+2
+ * copy a range of cells in Name col
+ * paste onto dest
 
+ 
 
+Bug1
+* copy 2x2 starting from mitvert
+* click on a dest cell in Name
+* Paste
+* the first row copies ok;
+  the second row: 
+    Name gets blanked
+    but Input cell gets copied ok
+
+Diagnosis:
+ * clip data itself (on cb) seems fine
+ * tried larger areas: only 1st Name copies, rest are blanked
+
+Bug 2
+ * copy 3 Name cells
+ * go to 2nd last Name cell in dst
+ * Paste
+ * you get an out of range error msg
+FIXED
+
+Bug 3
+ * open Calc, put in a col of cells: a, b, c
+ * click on a dst Name cell
+ * Paste
+ * only the first cell gets copied: a
+
+ 
 
 Tree Browsing Show/Hide
 

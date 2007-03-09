@@ -441,7 +441,7 @@ public:
     NO_HIDDEN 		= 0x01, // don't show items marked READ_ONLY w/o SHOW or HIDDEN
     NO_unused1		= 0x02, // #IGNORE
     NO_unused2		= 0x04, // #IGNORE
-    NO_NORMAL		= 0x08, // don't show items normally shown (helps indicate, ex. EXPERT items)
+    NO_NORMAL		= 0x08, // #NO_SHOW don't show items normally shown (helps indicate, ex. EXPERT items)
     NO_EXPERT		= 0x10, // don't show items marked EXPERT (often only for advanced sims)
 
     ALL_MEMBS		= 0x00, // #NO_BIT

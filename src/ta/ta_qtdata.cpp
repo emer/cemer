@@ -746,6 +746,13 @@ void taiComboBox::SetEnumType(TypeDef* enum_typ, bool force) {
 //     taiBitBox	//
 //////////////////////////
 
+/* IMPORTANT NOTE:
+  taiBitBox is designed so that it preserves the values of NO_SHOW or
+  otherwise hidden bits -- the m_val value is copied directly in GetImage,
+  without any masking, and only bits that are exposed can be altered; the
+  GetValue then returns the modified original
+*/
+
 iBitCheckBox::iBitCheckBox(int val_, String label, QWidget * parent)
 :iCheckBox(label.chars(), parent)
 {
@@ -774,11 +781,12 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
     int cnt = 0;
     for (int i = 0; i < typ->enum_vals.size; ++i) {
       EnumDef* ed = typ->enum_vals.FastEl(i);
-      if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE"))
+      if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
+        ed->HasOption("NO_SHOW"))
         continue;
       if (cnt++ > 0)
         lay->addSpacing(taiM->hsep_c);
-      AddBoolItem(ed->GetLabel(), ed->enum_no);
+      AddBoolItem(ed->GetLabel(), ed->enum_no, ed->desc);
     }
     lay->addStretch();
   }
@@ -799,8 +807,11 @@ void taiBitBox::bitCheck_toggled(iBitCheckBox* sender, bool on) {
     host->Changed();
 }
 
-void taiBitBox::AddBoolItem(String name, int val) {
+void taiBitBox::AddBoolItem(String name, int val, const String& desc) {
   iBitCheckBox* bcb = new iBitCheckBox(val, name, m_rep);
+  if (desc.nonempty()) {
+    bcb->setToolTip(desc);
+  }
   lay->addWidget(bcb);
   if (readOnly()) {
     bcb->setReadOnly(true);

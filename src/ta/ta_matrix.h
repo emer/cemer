@@ -155,7 +155,9 @@ public:
   bool		single() const {return ((row_to == row_fr) && (col_to == col_fr));}
 
   void		SetExtent(int wd, int ht); // set w/h based on current fr values
-  void		Limit(int wd, int ht); // limit width and height to these values
+  void		LimitExtent(int wd, int ht); // limit width and height to these values
+  void		LimitRange(int row_to_, int col_to_); 
+   // limit range to within these values
   void 		Set(int row_fr_, int col_fr_, int row_to_, int col_to_)
     {row_fr = row_fr_; col_fr = col_fr_; row_to = row_to_; col_to = col_to_;}
   void 		SetFromModel(const QModelIndexList& indexes); //#IGNORE
@@ -545,6 +547,8 @@ protected:
   taMatrix*		slice_par; // slice parent -- we ref/unref it
   MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
   
+  virtual bool		fastAlloc() const {return true;}
+    // #IGNORE enables using fast block-based allocations, copies, and skipping reclaims -- for ints,floats, etc.; not for Strings/Variants
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
   virtual void		Alloc_(int new_alloc);
@@ -831,6 +835,7 @@ public:
   override void		El_SetFmVar_(void* it, const Variant& var) {*((String*)it) = var.toString(); };  // #IGNORE
 protected:
   STATIC_CONST String	blank; // #IGNORE
+  override bool		fastAlloc() const {return false;}
   override void		Dump_Save_Item(ostream& strm, int idx);
   override int		Dump_Load_Item(istream& strm, int idx); 
   override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
@@ -1010,6 +1015,7 @@ public:
   override void		El_SetFmVar_(void* it, const Variant& var) {*((Variant*)it) = var; };  // #IGNORE
 protected:
   STATIC_CONST Variant	blank; // #IGNORE
+  override bool		fastAlloc() const {return false;}
   override void		Dump_Save_Item(ostream& strm, int idx);
   override int		Dump_Load_Item(istream& strm, int idx); // ret is last char read, s/b ;
   override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
