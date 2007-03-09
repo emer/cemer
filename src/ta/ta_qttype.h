@@ -836,6 +836,7 @@ public:
   TA_VIEW_TYPE_FUNS(tabOViewType, tabViewType)
 protected:
   override taiDataLink*	CreateDataLink_impl(taBase* data_);
+  override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
 class TA_API tabListViewType: public tabOViewType { // for taList

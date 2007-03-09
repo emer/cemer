@@ -82,7 +82,7 @@ private:
 };
 
 class TA_API DataOpBaseSpec : public taNBase {
-  // ##CAT_Data ##DEF_CHILD_ops a datatable operation specification -- contains a list of operation elements associated with different data columns
+  // ##CAT_Data ##DEF_CHILD_ops ##DEF_CHILDNAME_Operators a datatable operation specification -- contains a list of operation elements associated with different data columns
 INHERITED(taNBase)
 public:
   DataOpList	ops;		// #SHOW_TREE the list of operation elements, associated with different data columns
@@ -446,7 +446,7 @@ private:
 };
 
 class TA_API DataSelectColsProg : public DataProg { 
-  // ##DEF_CHILD_select_spec selects rows from src_data into dest_data according to select_spec
+  // ##DEF_CHILD_select_spec ##DEF_CHILDNAME_Select_Spec selects rows from src_data into dest_data according to select_spec
 INHERITED(DataProg)
 public:
   DataOpList		select_spec; // #SHOW_TREE columns to select
@@ -490,7 +490,7 @@ private:
 };
 
 class TA_API DataCalcLoop : public DataProg { 
-  // ##DEF_CHILD_loop_code enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
+  // ##DEF_CHILD_loop_code ##DEF_CHILDNAME_Loop_Code enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
 INHERITED(DataProg)
 public:
   DataOpList		src_cols;

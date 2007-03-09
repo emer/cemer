@@ -2832,15 +2832,18 @@ iDataPanel* taiViewType::CreateDataPanel(taiDataLink* dl_) {
 }
 
 void taiViewType::DataPanelCreated(iDataPanelFrame* dp) {
+  // we will need to create a set if > 1 panel, or 1st-only uses minibar
+  bool need_set = (m_dp != NULL) || dp->hasMinibarCtrls();
   if (!m_dp) {
     m_dp = dp;
-    return;
+    if (!need_set) return; // only applies to first guy
   }
-
-  // already one panel created, so may need to create a set
+  // using or need a set
   if (!m_dps) {
     m_dps = new iDataPanelSet(dp->link());
     m_dps->AddSubPanel(m_dp);
+    // if adding first because of minibar, don't add again
+    if (m_dp == dp) return;
   }
   m_dps->AddSubPanel(dp);
 }
@@ -2911,6 +2914,22 @@ int tabOViewType::BidForView(TypeDef* td) {
 taiDataLink* tabOViewType::CreateDataLink_impl(taBase* data_) {
   return new tabODataLink((taOBase*)data_);
 }
+
+void tabOViewType::CreateDataPanel_impl(taiDataLink* dl_)
+{
+  // if we have defchildren, make a list panel
+  // notes:
+  // 1. taList will never have defchildren, so it will make the panel for itself
+  // 2. for taOBase guys, the list goes second, since the obj is germane
+  inherited::CreateDataPanel_impl(dl_);
+  if (typ && typ->OptionAfter("DEF_CHILD_").nonempty()) {
+    String custom_name = typ->OptionAfter("DEF_CHILDNAME_"); // optional
+    custom_name.gsub("_", " ");
+    iListDataPanel* bldp = new iListDataPanel(dl_, custom_name);
+    DataPanelCreated(bldp);
+  }
+}
+
 
 taiDataLink* tabOViewType::GetDataLink(void* data_, TypeDef* el_typ) {
   taOBase* data = (taOBase*)data_;

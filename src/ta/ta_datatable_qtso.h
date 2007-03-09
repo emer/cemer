@@ -1076,13 +1076,13 @@ protected:
 #endif // MAKETA
 
 class TA_API iDataTableEditor: public QWidget, public ISelectableHost {
-  Q_OBJECT
+  Q_OBJECT // ##NO_CSS
 INHERITED(QWidget)
 public:
   QVBoxLayout*		layOuter;
   QSplitter*		splMain;
   iDataTableView*	  tvTable; // the main table
-  iMatrixTableView*	  tvCell; // a matrix cell in the table
+  iMatrixTableView*	  tvCell; // a matrix cell in the table (only shown if needed)
 
   DataTable*		dt() const {return m_dt;}
   void			setDataTable(DataTable* dt);
@@ -1097,6 +1097,8 @@ public slots:
   void			tvTable_currentChanged(const QModelIndex& index); // #IGNORE
   void			tvTable_dataChanged(const QModelIndex& topLeft,
     const QModelIndex & bottomRight); // #IGNORE
+  void 			tvTable_layoutChanged(); // #IGNORE
+
   
 public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const {return false;} // always
@@ -1108,6 +1110,7 @@ protected:
   DataTableRef		m_dt;
   taMatrixPtr		m_cell; // current cell TODO: this ref will prevent col from growing for new row
   QModelIndex		m_cell_index; // we keep this to refresh cell if data changes
+  void			ConfigView(); // setup or change view, esp after col ins/deletes
 };
 
 
@@ -1140,6 +1143,7 @@ protected:
   
 protected slots:
   void			tv_hasFocus(iTableView* sender); // for both tableviews
+  void			mb_View(); // View button on minibar
 };
 
 /* TODO

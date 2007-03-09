@@ -143,7 +143,7 @@ private:
 };
 
 class PDP_API LayerWriter : public taNBase {
-  // ##CAT_Network ##DEF_CHILD_layer_data controls the writing of input data from a data source to network layers
+  // ##CAT_Network ##DEF_CHILD_layer_data #DEF_CHILDNAME_LayerDataEls controls the writing of input data from a data source to network layers
 INHERITED(taNBase)
 public:
   DataBlockRef	data;

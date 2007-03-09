@@ -439,7 +439,7 @@ public:
 /////////////////////////////////////////////////////////
 
 class TA_API RetinaSpec : public taNBase {
-  // ##CAT_Image ##DEF_CHILD_dogs full specification of retinal filtering based on difference-of-gaussian filters
+  // ##CAT_Image ##DEF_CHILD_dogs ##DEF_CHILDNAME_DOG_Filters full specification of retinal filtering based on difference-of-gaussian filters
 INHERITED(taNBase)
 public:
   enum ColorType {		// type of color processing to do (determines file loading)
@@ -550,7 +550,7 @@ protected:
 SmartRef_Of(RetinaSpec,TA_RetinaSpec); // RetinaSpecRef
 
 class TA_API V1GaborSpec : public taNBase {
-  // ##CAT_Image ##DEF_CHILD_gabors full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
+  // ##CAT_Image ##DEF_CHILD_gabors ##DEF_CHILDNAME_Gabor_Filters full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
 INHERITED(taNBase)
 public:
   GaborV1SpecList	gabors;		// the gabor (and blob) V1 filters

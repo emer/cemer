@@ -104,10 +104,9 @@ class	QSizePolicy;		// #IGNORE
 class	QSpacerItem;		// #IGNORE 
 class	QSpinBox;		// #IGNORE 
 class	QSplitter;		// #IGNORE 
+class	QStackedLayout;		// #IGNORE 
 class	QStackedWidget;		// #IGNORE 
-class	Q3Table;		// #IGNORE 
 class	QTableView;		// #IGNORE 
-class	Q3TableItem;		// #IGNORE 
 class	QTabBar;		// #IGNORE 
 class	QTabWidget;		// #IGNORE 
 class	QTcpServer;		// #IGNORE 
@@ -125,7 +124,6 @@ class	Q3VBox;			// #IGNORE
 class	QVBoxLayout;		// #IGNORE 
 class	Q3VButtonGroup;		// #IGNORE 
 class	QWidget;		// #IGNORE 
-class	Q3WidgetStack;		// #IGNORE 
 
 // #IGNORE Events
 class	QCloseEvent;		// #IGNORE 

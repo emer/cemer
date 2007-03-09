@@ -61,7 +61,7 @@ class TA_API ColCalcExpr: public taOBase {
 INHERITED(taOBase)
 public:
 
-  String	expr;		// #EDIT_DIALOG enter the expression here -- column value will be set to this.  you can just type in names of other columns (value is corresponding row's value) or literal values, or math expressions, etc.  enclose strings in double quotes.  column names will be checked and automatically updated
+  String	expr;		// #EDIT_DIALOG enter the expression here -- column value will be set to this.\nyou can just type in names of other columns (value is corresponding row's value) or literal values, or math expressions, etc.\nenclose strings in double quotes.\ncolumn names will be checked and automatically updated
   DataCol* col_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #FROM_GROUP_data_cols lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
   DataTableCols*	data_cols;
@@ -396,7 +396,7 @@ SmartRef_Of(DataTableCols,TA_DataTableCols); // DataTableColsRef
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TA_API DataTable : public DataBlock_Idx {
-  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data table of data
+  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns table of data
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
@@ -1084,5 +1084,22 @@ protected:
 protected:
   DataTable*		dt;
 };
+
+class TA_API DataTableEditorOptions : public taOBase {
+  // for specifying and saving params for editing options
+INHERITED(taOBase)
+public:
+  enum ViewMode {
+    VM_CellDetail,	// #LABEL_Cell_Detail separate panel for cell detail editing
+    VM_Flat		// #LABEL_Flat show all data in the main table, using dummy cells
+  };
+
+  TA_BASEFUNS(DataTableEditorOptions);
+  
+private:
+  void	Initialize() {}
+  void	Destroy() {}
+};
+
 
 #endif // datatable_h

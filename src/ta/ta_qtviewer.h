@@ -1081,7 +1081,7 @@ friend class iDataPanel;
 public:
   QVBoxLayout*		layDetail;
     iTabBar*		tbPanels; //note: we always maintain at least one tab
-    Q3WidgetStack*	wsPanels; //
+    QStackedWidget*	wsPanels; //
   
   bool			autoCommit() const {return true;} // if we should autocommit dirty panels when browsing (NOTE: currently always true, could be made a user option)
   iDataPanel*		curPanel() const; // currently active panel
@@ -1231,6 +1231,9 @@ class TA_API iDataPanelFrame: public iDataPanel {
 INHERITED(iDataPanel)
 friend class iDataPanelSet;
 public:
+  QWidget*		minibarCtrls() const {return m_minibar_ctrls;}
+    //non-null if any have been added
+  inline bool		hasMinibarCtrls() const {return (m_minibar_ctrls);}
   override taiDataLink*	par_link() const; // taken from dps if any, else from tabview
   override MemberDef*	par_md() const;
   override iTabViewer*	tabViewerWin() const;
@@ -1240,6 +1243,8 @@ public:
   override void		GetImage(); // called when reshowing a panel, to insure latest data
   override String 	TabText() const; // text for the panel tab -- usually just the text of the sel_node
 
+  void			AddMinibarWidget(QWidget* ctrl);
+    // adds the ctrl (typically a tool button) to the minibar (area to right of PanelSet selector buttons); note: right-justified, and fills inward; ctrl should be parentless; can force the DPF to be put into a set, if wouldn't have been otherwise
   virtual void		AddedToPanelSet() {} // called when fully added to DataPanelSet
   
   iDataPanelFrame(taiDataLink* dl_);
@@ -1252,6 +1257,8 @@ public: // IDataLinkClient interface
 
 protected:
   iDataPanelSet*	m_dps; // set if we are in a datapanelset
+  QWidget*		m_minibar_ctrls;
+  QHBoxLayout* 		lay_minibar_ctrls;
   virtual void		GetImage_impl() {} // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
   override void		Refresh_impl(); // same rule as GetImage
 };
@@ -1309,7 +1316,8 @@ public:
     QFrame*		frmButtons;
       QHBoxLayout*	layButtons;
       QButtonGroup*	buttons; // one QPushButton for each (note: not a widget)
-    Q3WidgetStack*	wsSubPanels; // subpanels
+      QStackedLayout*	layMinibar; // if any panels use the minibar, created
+    QStackedWidget*	wsSubPanels; // subpanels
 
   override taiDataLink*	par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}
   override MemberDef*	par_md() const {return (m_tabView) ? m_tabView->par_md() : NULL;}
@@ -1366,7 +1374,7 @@ public:
   void			ClearList(); // for when data changes -- we just rebuild the list
   void			FillList();
   
-  iListDataPanel(taiDataLink* dl_);
+  iListDataPanel(taiDataLink* dl_, const String& custom_name = _nilString);
   ~iListDataPanel();
 
 public: // IDataLinkClient interface
@@ -1379,6 +1387,7 @@ public slots:
     
 protected:
   iTreeViewItem* 	mparentItem;
+  String		m_custom_name; // used instead of "List View", typically for defchild lists
   void 			ConfigHeader();
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
   override void		Refresh_impl();  

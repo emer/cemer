@@ -934,7 +934,7 @@ public:
 };
 
 class TA_API RndSeed_List : public taNBase {
-  // ##CAT_Math ##DEF_CHILD_seeds list of random seeds
+  // ##CAT_Math ##DEF_CHILD_seeds ##DEF_CHILDNAME_Random_Seeds list of random seeds
 INHERITED(taNBase)
 public:
   taList<RndSeed>	seeds;	// the list of random seeds

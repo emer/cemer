@@ -47,6 +47,8 @@
 #include <QList>
 #include <QScrollArea>
 #include <QSplitter>
+#include <QStackedWidget>
+#include <QStackedLayout>
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolBox>
@@ -54,7 +56,6 @@
 #include <qvariant.h>
 #include <QVBoxLayout>
 #include <qwhatsthis.h>
-#include <Q3WidgetStack>
 
 using namespace Qt;
 
@@ -3783,7 +3784,7 @@ void iTabView::Init() {
   tbPanels->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
 #endif
   layDetail->addWidget(tbPanels);
-  wsPanels = new Q3WidgetStack(this);
+  wsPanels = new QStackedWidget(this);
   layDetail->addWidget(wsPanels);
   //add a dummy data panel with id=0 to show blank
   tbPanels->addTab("");
@@ -3813,7 +3814,7 @@ bool iTabView::ActivatePanel(taiDataLink* dl) {
 bool iTabView::AddPanel(iDataPanel* panel) {
   if (!panels.AddUnique(panel)) return false; // refs us on add
   wsPanels->addWidget(panel);
-  if (panels.size == 1) wsPanels->raiseWidget(panel); // always show first
+  if (panels.size == 1) wsPanels->setCurrentWidget(panel); // always show first
   iTabViewer* itv = tabViewerWin();
   if (itv) panel->OnWindowBind(itv);
   return true;
@@ -3932,9 +3933,9 @@ void iTabView::panelSelected(int idx) {
   iDataPanel* panel = NULL;
   if (idx >= 0) panel = tbPanels->panel(idx); 
   if (panel) {
-    wsPanels->raiseWidget(panel);
+    wsPanels->setCurrentWidget(panel);
   } else {
-    wsPanels->raiseWidget((int)0);
+    wsPanels->setCurrentIndex(-1);
   }
   if (m_viewer_win)
     m_viewer_win->TabView_Selected(this);
@@ -3992,7 +3993,7 @@ void iTabView::ResolveChanges(CancelOp& cancel_op) {
 void iTabView::SetCurrentTab(int tab_idx) {
   iDataPanel* pan = tabPanel(tab_idx);
   tbPanels->setCurrentIndex(tab_idx);
-  wsPanels->raiseWidget(pan);
+  wsPanels->setCurrentWidget(pan);
 }
 
 void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
@@ -4024,7 +4025,7 @@ void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
     }
     if (proceed) {
       tbPanels->SetPanel(tbPanels->currentIndex(), panel);
-      wsPanels->raiseWidget(panel);
+      wsPanels->setCurrentWidget(panel);
       return;
     }
   }
@@ -4152,7 +4153,10 @@ void iDataPanel::Refresh_impl() {
 }
 
 void iDataPanel::Render() {
-  if (!m_rendered) Render_impl();
+  if (!m_rendered) {
+    Render_impl();
+    m_rendered = true;
+  }
 }
 
 void iDataPanel::ResolveChanges(CancelOp& cancel_op) {
@@ -4216,9 +4220,22 @@ iDataPanelFrame::iDataPanelFrame(taiDataLink* dl_)
 :inherited(dl_)
 {
   m_dps = NULL;
+  m_minibar_ctrls = NULL;
+  lay_minibar_ctrls = NULL;
 }
 
 iDataPanelFrame::~iDataPanelFrame() {
+}
+
+void iDataPanelFrame::AddMinibarWidget(QWidget* ctrl) {
+  if (!m_minibar_ctrls) {
+    m_minibar_ctrls = new QWidget; // not owned, because panel set inserts
+    lay_minibar_ctrls = new QHBoxLayout(m_minibar_ctrls);
+    lay_minibar_ctrls->setMargin(0);
+    lay_minibar_ctrls->setSpacing(2);
+  }
+  ctrl->setParent(m_minibar_ctrls);
+  lay_minibar_ctrls->addWidget(ctrl, 0, (Qt::AlignRight | Qt::AlignVCenter));
 }
 
 void iDataPanelFrame::ClosePanel() {
@@ -4327,6 +4344,7 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 :inherited(link_)
 {
   cur_panel_id = -1;
+  layMinibar = NULL;
   QWidget* widg = new QWidget();
   layDetail = new QVBoxLayout(widg); 
   // don't introduce any new margin
@@ -4342,7 +4360,7 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   buttons = new QButtonGroup(frmButtons); // note: not a widget, not visible
   buttons->setExclusive(true); // this is the default anyway
 
-  wsSubPanels = new Q3WidgetStack(widg);
+  wsSubPanels = new QStackedWidget(widg);
   layDetail->addWidget(wsSubPanels, 1);
   setCentralWidget(widg);
 
@@ -4360,7 +4378,7 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   pn->m_dps = this;
   panels.Add(pn);
   int id = panels.size - 1;
-  wsSubPanels->addWidget(pn, id);
+  wsSubPanels->addWidget(pn);
   QToolButton* but = new QToolButton(frmButtons);
   but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
   but->setFont(taiM->buttonFont(taiMisc::sizSmall));
@@ -4375,8 +4393,37 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   if (itv) pn->OnWindowBind(itv);
 }
 void iDataPanelSet::AllSubPanelsAdded() {
-  layButtons->addStretch();
-  m_rendered = true;
+  // check if any need the minibar, if yes, initialize it and break
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanelFrame* pn = qobject_cast<iDataPanelFrame*>(panels.FastEl(i));
+    if (!pn) continue; // should always be
+    if (pn->minibarCtrls()) {
+      layButtons->addSpacing(3);
+      QFrame* fr = new QFrame(frmButtons);
+      fr->setFrameStyle(QFrame::VLine | QFrame::Sunken);
+      layButtons->addWidget(fr);
+      layButtons->addStretch();
+      layMinibar = new QStackedLayout;
+      layButtons->addLayout(layMinibar);
+      break;
+    };
+  }
+  if (layMinibar) {
+    for (int i = 0; i < panels.size; ++i) {
+      iDataPanelFrame* pn = qobject_cast<iDataPanelFrame*>(panels.FastEl(i));
+      // note: should always be 
+      QWidget* ctrl = (pn) ? pn->minibarCtrls() : NULL;
+      // note: easiest is just to create a null widg for missing guys
+      if (ctrl) {
+        ctrl->setParent(frmButtons);
+      } else {
+        ctrl = new QWidget(frmButtons);
+      }
+      layMinibar->addWidget(ctrl);
+    }
+  } else {
+    layButtons->addStretch();
+  }
 }
 
 void iDataPanelSet::btn_pressed(int id) {
@@ -4467,7 +4514,7 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
   cur_panel_id = cpi; // set this early, to prevent unexpected calls from the signal
   iDataPanel* pn = panels.SafeEl(cpi);
   if (!pn) return; //shouldn't happen
-  wsSubPanels->raiseWidget(pn);
+  wsSubPanels->setCurrentWidget(pn);
   QAbstractButton* but = buttons->button(cpi);
   // for when called programmatically:
   if (but) // should always have a value
@@ -4476,6 +4523,9 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
   QAbstractButton* but2;
   foreach(but2, buttons->buttons()) {
     if (but2 != but) but2->setDown(false);
+  }
+  if (layMinibar) {
+    layMinibar->setCurrentIndex(cpi);
   }
   //TODO: maybe something to change tab color
 }
@@ -4493,9 +4543,10 @@ void iDataPanelSet::setTabView(iTabView* value) {
 //    iListDataPanel 	//
 //////////////////////////
 
-iListDataPanel::iListDataPanel(taiDataLink* dl_)
+iListDataPanel::iListDataPanel(taiDataLink* dl_, const String& custom_name_)
 :inherited(dl_)
 {
+  m_custom_name = custom_name_; // optional
   // note: just autoexpands the first fill, user must adjust after that
   list = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   list->setName("list"); // nn???
@@ -4573,7 +4624,9 @@ void iListDataPanel::OnWindowBind_impl(iTabViewer* itv) {
 
 String iListDataPanel::panel_type() const {
   static String str("List View");
-  return str;
+  if (m_custom_name.nonempty())
+    return m_custom_name;
+  else return str;
 }
 
 void iListDataPanel::Refresh_impl() {

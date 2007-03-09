@@ -64,7 +64,7 @@ public:
 };
 
 class PDP_API BaseSpec : public taNBase {
-  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##CAT_Spec base specification class
+  // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec base specification class
 INHERITED(taNBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..

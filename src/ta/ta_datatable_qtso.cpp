@@ -4573,6 +4573,23 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
 iDataTableEditor::~iDataTableEditor() {
 }
 
+void iDataTableEditor::ConfigView() {
+  DataTable* dt = this->dt(); // cache
+  if (!dt) return;
+  bool show_cell = false; // false if not in mode, or no mat cols
+  if (true) { // in cell mode
+    for (int i = 0; i < dt->data.size; ++i) {
+      DataCol* dc = dt->data.FastEl(i);
+      if (dc->is_matrix) {
+        show_cell = true;
+        break;
+      }
+    }
+  }
+  tvCell->setVisible(show_cell);
+  
+}
+
 void iDataTableEditor::Refresh() {
   DataTableModel* mod = dynamic_cast<DataTableModel*>(tvTable->model());
   //note: this will refresh all views, not just this one
@@ -4584,9 +4601,18 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
   if (dt_ == m_dt.ptr()) return;
   if (dt_) {
 //nn    tv->setItemDelegate(new DataTableDelegate(dt_));
-    tvTable->setModel(dt_->GetDataModel());
+    QAbstractTableModel* mod = dt_->GetDataModel();
+    tvTable->setModel(mod);
+    connect(mod, SIGNAL(layoutChanged()),
+      this, SLOT(tvTable_layoutChanged()) );
   }
   m_dt = dt_;
+  ConfigView();
+}
+
+void iDataTableEditor::tvTable_layoutChanged()
+{
+  ConfigView();
 }
 
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
@@ -4635,18 +4661,12 @@ iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
 :inherited(dl_)
 {
   dte = NULL;
-/*  list->setSelectionMode(QListView::Extended);
-  list->setShowSortIndicator(true);
-  // set up number of col_n, based on link
-  list->addColumn("#");
-  for (int i = 0; i < link()->NumListCols(); ++i) {
-    list->addColumn(link()->GetColHeading(i));
-  }
-  connect(list, SIGNAL(contextMenuRequested(QListViewItem*, const QPoint &, int)),
-      this, SLOT(list_contextMenuRequested(QListViewItem*, const QPoint &, int)) );
-  connect(list, SIGNAL(selectionChanged()),
-      this, SLOT(list_selectionChanged()) );
-  FillList(); */
+  QToolButton* but = new QToolButton;
+  but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
+  but->setFont(taiM->buttonFont(taiMisc::sizSmall));
+  but->setText("View...");
+  AddMinibarWidget(but);
+  connect(but, SIGNAL(clicked()), this, SLOT(mb_View()) );
 }
 
 iDataTablePanel::~iDataTablePanel() {
@@ -4694,6 +4714,10 @@ void iDataTablePanel::GetSelectedItems(ISelectable_PtrList& lst) {
     lst.Add((taiListDataNode*)it.current());
     ++it;
   } */
+}
+
+void iDataTablePanel::mb_View() {
+  //TODO:
 }
 
 /*void iDataTablePanel::idt_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col ) {

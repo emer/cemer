@@ -1904,6 +1904,9 @@ void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
   }
+  else if (dcr == DCR_STRUCT_UPDATE_END) { // for col insert/deletes
+    emit_layoutChanged();
+  }
 }
 
 
@@ -2020,6 +2023,7 @@ bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, i
   case Qt::EditRole:
     dt->SetValAsVar(value, index.column(), index.row());
     emit dataChanged(index, index);
+    col->DataChanged(DCR_ITEM_UPDATED); // for calc refresh
     rval = true;
   default: break;
   }
