@@ -37,7 +37,8 @@ include $(top_srcdir)/mfstamp.am
 make_mta_parse:
 	bison -dtvy mta_parse.y;
 	sed -e "s/union/struct/g" y.tab.c >mta_parse.cpp;
-	sed -e "s/union/struct/g" y.tab.h >mta_parse.h;
+	sed -e "s/union/struct/g" y.tab.h >mta_parse.hxx;
+	cmp mta_parse.hxx mta_parse.h || cp mta_parse.hxx mta_parse.h;
 
 ta_TA_type.h ta_TA_inst.h:
 	if [ ! -f ta_TA_type.h ];\

@@ -521,15 +521,16 @@ public:
   
   enum ConsoleOptions { // #BITS options that can be used with the console
     CO_0 = 0, // #NO_BIT #IGNORE dummy item, and to clear
-#ifndef TA_OS_WIN // pager causes crashes and deadlocks in windows
-    CO_USE_PAGING	= 0x0001, // #NO_SHOW use paging, like the "more" command -- NOT RECOMMENDED
+#ifdef TA_OS_WIN // pager causes crashes and deadlocks in windows
+    CO_USE_PAGING_GUI	= 0x0001, // #NO_BIT use paging, like the "more" command -- NOT RECOMMENDED FOR WINDOWS
 #else
-    CO_USE_PAGING	= 0x0001, // #LABEL_Use_Paging use paging, like the "more" command -- NOT RECOMMENDED
+    CO_USE_PAGING_GUI	= 0x0001, // #LABEL_Use_Paging_Gui use paging in the gui console, like the 'more' command
 #endif
+    CO_USE_PAGING_NOGUI = 0x0002, // #LABEL_Use_Paging_NoGui use paging in the nogui console/shell, like the 'more' command
 #ifdef HAVE_QT_CONSOLE
-    CO_GUI_TRACKING	= 0x0002 // #LABEL_Gui_Tracking in GUI mode, the console floats below the active project
+    CO_GUI_TRACKING	= 0x0004, // #LABEL_Gui_Tracking in GUI mode, the console floats below the active project
 #else
-    CO_GUI_TRACKING	= 0x0002 // #NO_SHOW in GUI mode, the console floats below the active project
+    CO_GUI_TRACKING	= 0x0004, // #NO_SHOW in GUI mode, the console floats below the active project
 #endif
   };
   

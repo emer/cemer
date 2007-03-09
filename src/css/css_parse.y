@@ -106,7 +106,7 @@ int yylex();
 %type	<ival>	cmd_args
 
 /* stmt elements */
-%type	<ival>  noifstmt ifstmt do doloop nodostmt
+%type	<ival>  miscstmt miscbrastmt ifstmt elsestmt elseifstmt noelsestmt popelse do doloop
 %type 	<ival>	forloop whiloop for_cond for_cond_sc for_incr for_incr_sc for_end_paren
 %type   <ival>  cond for while if else bra cond_paren cond_end_paren mbr_bra ket
 %type	<ival>	switchblock caseitem switch
@@ -892,24 +892,25 @@ ptrs:	  '*' %prec CSS_UNARY			{ $$ = 1; }
         | ptrs '*' %prec CSS_UNARY		{ $$ = $1 + 1; }
         ;
 
-stmt: 	  noifstmt		{ cssMisc::cur_top->Prog()->lastif = -1; }
-        | ifstmt
+stmt: 	  ifstmt
+        | elsestmt
+        | miscbrastmt 		{ cssMisc::cur_top->Prog()->lastif = -1; }
         ;
 
-noifstmt: nodostmt
-        | doloop
-        ;
+miscbrastmt: miscstmt
+        | bra
+         ;
 
-nodostmt: expr term			{ Code1(cssBI::pop); }
+miscstmt: expr term			{ Code1(cssBI::pop); }
         | forloop
         | whiloop
+	| doloop	
         | CSS_RETURN argstop term	{ Code1($1); $$ = $2; }
         | CSS_RETURN argstop expr term	{ Code1($1); $$ = $2; }
         | CSS_BREAK term		{ $$ = Code1($1); }
         | CSS_CONTINUE term		{ $$ = Code1($1); }
         | switchblock
         | caseitem
-        | bra
         ;
 
 caseitem: CSS_CASE caseexpr ':'		{
@@ -1102,21 +1103,40 @@ whiloop:  while cond term  	{
 while:    CSS_WHILE 		{ }
         ;
 
-ifstmt:   if cond noifstmt 	{
+ifstmt:   if cond miscbrastmt 	{
           cssMisc::cur_top->Pop(); /* pop the if_true block */
           $$ = $2; }
-        | if cond ifstmt 	{
-	  cssMisc::cur_top->Pop(); /* pop the if_true block */
-	  $$ = $2; }
-        | else noifstmt         {
-	  cssMisc::cur_top->Pop(); /* pop the if_false block */
-	  /* now check for other else blocks that need popping! */
-	  while((cssMisc::cur_top->Prog()->owner_blk != NULL) &&
-		(cssMisc::cur_top->Prog()->owner_blk->action == cssCodeBlock::ELSE)) {
-	    cssMisc::cur_top->Pop(); } /* pop residual elses! */
+        ;
+
+elseifstmt: if cond miscstmt 	{
+          cssMisc::cur_top->Pop(); /* pop the if_true block */
+          cssMisc::cur_top->Prog()->lastelseif = false; /* use this flag! */
+          $$ = $2; }
+        | if cond bra 	{
+          cssMisc::cur_top->Pop(); /* pop the if_true block */
+          cssMisc::cur_top->Prog()->lastelseif = true; /* be on guard for another else! */
+          $$ = $2; cssMisc::cur_top->DoCompileCtrl(); /* need to do the bra! */ }
+        ;
+
+noelsestmt: ifstmt
+        | miscbrastmt
+        | ket
+        ;
+
+elsestmt: else miscbrastmt        {
+            cssMisc::cur_top->Pop(); /* pop the if_false block */
+	    /* now check for other else blocks that need popping! */
+	    cssMisc::cur_top->PopElseBlocks(); /* pop residual elses! */
+	    $$ = $1;  }
+        | else elseifstmt popelse noelsestmt   {
 	  $$ = $1;  }
-        | else ifstmt           { /* do not pop the ifstmt here!! */
-	  $$ = $1; }
+        | else elseifstmt elsestmt   { /* do not pop if going into another else */
+	  $$ = $1;  }
+        ;
+
+popelse:   /* no match */ {
+	  if(!cssMisc::cur_top->Prog()->lastelseif) {
+	    cssMisc::cur_top->PopElseBlocks(); } } /* pop residual elses! */
         ;
 
 if:   	  CSS_IF 			{
@@ -1126,8 +1146,12 @@ if:   	  CSS_IF 			{
 else:	  CSS_ELSE			{
   	    css_progdx tmp = cssMisc::cur_top->Prog()->lastif;
   	    if(tmp < 0) {
-	      yyerror("else without matching if");
-	      return cssProg::YY_Err;
+/*  	      cssProg* tmprg = cssMisc::cur_top->PrvProg(); /\* also look up one level *\/ */
+/*  	      if(tmprg) tmp = tmprg->lastif; */
+	      if(tmp < 0) {
+		yyerror("else without matching if");
+		return cssProg::YY_Err;
+	      }
 	    }
 	    cssMisc::cur_top->Prog()->lastif = -1; /* reset it */
             cssCodeBlock* blk = new cssCodeBlock(cssElseBlock_Name);
@@ -1169,11 +1193,25 @@ mbr_bra:  '{'			{  } /* do nothing? */
         ;
 
 ket:	  '}'			{
-            cssMisc::cur_top->SetPop();
 	    cssScriptFun* sfun = cssMisc::cur_top->Prog()->owner_fun;
 	    if((sfun != NULL) && (sfun->GetType() == cssEl::T_MbrScriptFun)) {
 	      cssMisc::cur_class = NULL; /* get rid of current class pointer.. */
 	      cssMisc::cur_method = NULL; } /* and current method pointer */
+	    cssProg* prv = cssMisc::cur_top->PrvProg();
+	    if(prv && prv->lastelseif) {
+	      /* now need to check if the next token is an else -- if so, then no pops! */
+	      bool got_else = cssMisc::cur_top->ParseElseCheck();
+	      if(!got_else) {
+		cssMisc::cur_top->Pop(); /* get rid of this guy now */
+		cssMisc::cur_top->PopElseBlocks(); /* get rid of this guy now */
+	      }
+	      else {
+		cssMisc::cur_top->SetPop();
+	      }
+	    }
+	    else {
+	      cssMisc::cur_top->SetPop();
+	    }
 	  }
         ;
 

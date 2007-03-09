@@ -90,7 +90,7 @@ String_Array& ReadLine(istream& fh) { //note: works for all three line ends: lf 
       break;
     }
     data.Add("");
-    String str = data.Peek();
+    String& str = data.FastEl(data.size-1);
     while(((c=fh.get()) != ' ') && (c != '\t') && (c != '\n') && (c != '\r') && !fh.eof())
       str += (char)c;
     if (fh.eof())	break;

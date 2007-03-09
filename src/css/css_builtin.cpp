@@ -1399,9 +1399,9 @@ static cssEl* cssElCFun_Dir_stub(int na, cssEl* arg[]) {
   if(na > 0)
     dir_nm = (const char*)*(arg[1]);
   String_Array& rval = Dir((const char*)dir_nm);
-  static cssTA* rv_ta = NULL;
+  static cssTA_Base* rv_ta = NULL;
   if(rv_ta == NULL) {
-    rv_ta = new cssTA(NULL, 1, &TA_String_Array);
+    rv_ta = new cssTA_Base(NULL, 1, &TA_String_Array);
     cssEl::Ref(rv_ta);
   }
   rv_ta->ptr = (void*)&rval;
@@ -1415,9 +1415,9 @@ static cssEl* cssElCFun_ReadLine_stub(int, cssEl* arg[]) {
   if(fh == NULL)
     return &cssMisc::Void;
   String_Array& rval = ReadLine(*fh);
-  static cssTA* rv_ta = NULL;
+  static cssTA_Base* rv_ta = NULL;
   if(rv_ta == NULL) {
-    rv_ta = new cssTA(NULL, 1, &TA_String_Array);
+    rv_ta = new cssTA_Base(NULL, 1, &TA_String_Array);
     cssEl::Ref(rv_ta);
   }
   rv_ta->ptr = (void*)&rval;
@@ -2110,20 +2110,17 @@ static void Install_Types() {
 
 extern "C" {
   typedef int rl_function(void);
-  typedef char* rl_generator_fun(char*, int);
-
+  typedef char* rl_generator_fun(const char*, int);
   extern char *rl_line_buffer;
-  extern int (*rl_attempted_completion_function)(void);
+  extern char** (*rl_attempted_completion_function)(const char*, int, int);
+  extern char** completion_matches (const char* text, rl_generator_fun* gen);
 
-  extern char** completion_matches (char* text, rl_generator_fun* gen);
-
-  extern char** css_attempted_completion(char* text, int start, int end);
-  extern char* css_path_generator(char* text, int state); // rl_generator_fun
-  extern char* css_scoped_generator(char* text, int state); // rl_generator_fun
-  extern char* css_keyword_generator(char* text, int state); // rl_generator_fun
+  extern char* css_path_generator(const char* text, int state); // rl_generator_fun
+  extern char* css_scoped_generator(const char* text, int state); // rl_generator_fun
+  extern char* css_keyword_generator(const char* text, int state); // rl_generator_fun
 }
 
-char** css_attempted_completion(char* text, int start, int) {
+char** css_attempted_completion(const char* text, int start, int) {
   char** matches = NULL;
   String txt_str = text;
 
@@ -2158,7 +2155,7 @@ static char* css_cmd_gen_get_nm(cssSpace* spc, int& idx, const char* text, int l
   return NULL;
 }
 
-char* css_keyword_generator(char* text, int state) {
+char* css_keyword_generator(const char* text, int state) {
   static int spc_idx;		// index in spaces searching through
   static int item_idx;		// index in items searching through
   static int len;
@@ -2218,7 +2215,7 @@ static String* css_path_search(TypeDef* td, int lst_idx, int& idx, String& mb_na
   }
 }
 
-char* css_path_generator(char* text, int state) {
+char* css_path_generator(const char* text, int state) {
   static int lst_idx;		// list index
   static int item_idx;		// index for searching within list
   static String mb_name;
@@ -2315,7 +2312,7 @@ static String* css_scope_search(TypeDef* td, int lst_idx, int& idx, int& sub_itm
   }
 }
 
-char* css_scoped_generator(char* text, int state) {
+char* css_scoped_generator(const char* text, int state) {
   static int lst_idx;		// list index
   static int item_idx;		// index for searching within list
   static int sub_item_idx;	// index of sub-item within item (if applic)
@@ -2355,16 +2352,20 @@ char* css_scoped_generator(char* text, int state) {
   return css_malloc_string(full_val);
 }
 
-
 //////////////////////////////////
 //	Initialize		//
 //////////////////////////////////
 
 extern int yydebug;
 
+extern "C" {
+  typedef int rl_function(void);
+  extern char** (*rl_attempted_completion_function)(const char*, int, int);
+}
+
 bool cssMisc::Initialize() {
   // use our completion function
-  rl_attempted_completion_function = (rl_function*)css_attempted_completion;
+  rl_attempted_completion_function = css_attempted_completion;
 
   // functions
   cssEl::Ref(&cssMisc::Void);		// reference this to keep it around

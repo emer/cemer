@@ -1436,17 +1436,17 @@ public:
   LeabraSort 	active_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of active units
   LeabraSort 	inact_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of inactive units
 
-  AvgMaxVals	netin;		// #READ_ONLY #CAT_Activation net input values for the layer
-  AvgMaxVals	i_thrs;		// #READ_ONLY #CAT_Activation inhibitory threshold values for the layer
-  AvgMaxVals	acts;		// #READ_ONLY #CAT_Activation activation values for the layer
-  AvgMaxVals	acts_p;		// #READ_ONLY #CAT_Activation plus-phase activation stats for the layer
-  AvgMaxVals	acts_m;		// #READ_ONLY #CAT_Activation minus-phase activation stats for the layer
+  AvgMaxVals	netin;		// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer
+  AvgMaxVals	i_thrs;		// #READ_ONLY #EXPERT #CAT_Activation inhibitory threshold values for the layer
+  AvgMaxVals	acts;		// #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
+  AvgMaxVals	acts_p;		// #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
+  AvgMaxVals	acts_m;		// #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
   float		phase_dif_ratio; // #READ_ONLY #SHOW #CAT_Activation phase-difference ratio (acts_m.avg / acts_p.avg)
  
-  KWTAVals	kwta;		// #READ_ONLY #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
+  KWTAVals	kwta;		// #READ_ONLY #EXPERT #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
   InhibVals	i_val;		// #READ_ONLY #SHOW #CAT_Activation inhibitory values computed by kwta
-  AvgMaxVals	un_g_i;		// #READ_ONLY #CAT_Activation average and stdev (not max) values for unit inhib-to-thresh
-  AdaptIVals	adapt_i;	// #READ_ONLY #AKA_adapt_pt #CAT_Activation adapting inhibition values
+  AvgMaxVals	un_g_i;		// #READ_ONLY #EXPERT #CAT_Activation average and stdev (not max) values for unit inhib-to-thresh
+  AdaptIVals	adapt_i;	// #READ_ONLY #AKA_adapt_pt #EXPERT #CAT_Activation adapting inhibition values
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   void	Inhib_ResetSortBuf() 		{ active_buf.size = 0; inact_buf.size = 0; }
@@ -1461,7 +1461,7 @@ class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
   float		stm_gain;	// #READ_ONLY #EXPERT #CAT_Activation actual stim gain for soft clamping, can be incremented to ensure clamped units active
-  bool		hard_clamped;	// #CAT_Activation this layer is actually hard clamped
+  bool		hard_clamped;	// #READ_ONLY #SHOW #CAT_Activation this layer is actually hard clamped
   float		dav;		// #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
   float		net_rescale;	// #READ_ONLY #EXPERT #CAT_Activation computed netinput rescaling factor (updated by net_rescale)
   AvgMaxVals	avg_netin;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale

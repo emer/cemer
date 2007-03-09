@@ -34,7 +34,7 @@ QcssConsole::QcssConsole(QObject* parent, cssCmdShell* cs) :
 {
   cmd_shell = cs;
   setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
-  setPager(taMisc::console_options & taMisc::CO_USE_PAGING);
+  setPager(taMisc::console_options & taMisc::CO_USE_PAGING_GUI);
 }
 
 QcssConsole* QcssConsole::getInstance(QObject* parent, cssCmdShell* cs) {

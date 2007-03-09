@@ -960,7 +960,7 @@ bool taRootBase::Startup_ConsoleType() {
 
   if (is_batch) {
     console_type = taMisc::CT_NONE;
-    console_options &= ~taMisc::CO_USE_PAGING; // damn well better not use paging!!!
+    console_options &= ~(taMisc::CO_USE_PAGING_GUI | taMisc::CO_USE_PAGING_NOGUI); // damn well better not use paging!!!
   } else if (taMisc::use_gui) {
 #ifdef HAVE_QT_CONSOLE
     if (!((console_type == taMisc::CT_OS_SHELL) ||

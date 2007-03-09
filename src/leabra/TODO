@@ -6,13 +6,21 @@ commit:
 ------------
 current:
 
+* prevent save file dialog popups in highvis
+
+* css include: make a new codeblock and put all the include stuff in there, to get rid of zaplast
+
+* p ((v1 > 0.0) ? (1.0 / v1): 0.0) : gives a div0 error -- should not!
+
 * didn't call LoadInitTarget on LeabraTrainBatchSeedList..
 * bugs in Slice for Group
 * check uae on progel paste
 * load/save all prog_lib and testsprojects
-* bibtex err: does not return after #include
 
 * gauss smooth on simplelines, then graph it -- get crash
+
+* #READ_ONLY -> + #EXPERT for non-system-y type data that contains values you might want 
+  to see (esp leabra etc)
 
 * #ARG_#_VAL_FM_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!

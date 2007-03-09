@@ -354,6 +354,7 @@ void cssMisc::intrcatch(int) {
 }
 #endif
 
+
 //////////////////////////
 // 	cssElPtr    	//
 //////////////////////////
@@ -2487,6 +2488,7 @@ void cssInst::ListImpl(pager_ostream& fh, int indent) const {
     src_ln = taMisc::LeadingZeros(src->ln, 4);
     src_full = src->full_src;
   }
+  if(src_full.lastchar() != '\n') src_full += '\n';
   fh << cssMisc::Indent(indent) << src_ln << "   "
      << taMisc::LeadingZeros(idx,4) << "   "
      << inst.PrintStr() << "   " << inst.El()->PrintStr()
@@ -2709,6 +2711,7 @@ void cssProg::Constr() {
   tok_line = 0; tok_col = 0;
   state = 0;
   lastif = -1;
+  lastelseif = false;
   AddFrame();			// always start off with one
 }
 
@@ -2745,6 +2748,7 @@ void cssProg::Copy(const cssProg& cp) {
   tok_col = cp.tok_col;
   state = cp.state;
   lastif = cp.lastif;
+  lastelseif = cp.lastelseif;
 }
 
 cssProg::cssProg() {
@@ -3205,9 +3209,11 @@ void cssProg::RunDebugInfo(cssInst* nxt) {
   pager_ostream& fh = top->cmd_shell->pgout;
   if(top->debug <= 1) {
     cssListEl* src = source[nxt->line];
-    if(src->ln != last_src_ln)
-      nxt->ListSrc(fh);
-    last_src_ln = src->ln;
+    if(src) {
+      if(src->ln != last_src_ln)
+	nxt->ListSrc(fh);
+      last_src_ln = src->ln;
+    }
   }
   else {
     nxt->ListImpl(fh, top->size-1); // indent
@@ -3634,6 +3640,9 @@ void cssProgSpace::Push(cssProg* it) {
   }
   prv->col = strlen(prv->GetSrcLC(prv->line)); // put col at end of cur line
   parse_depth++;
+  if(debug >= 2) {
+    cerr << "Pushed new prog: " << it->name << " depth: " << parse_depth << endl;
+  }
 }
 
 // this is for running, setting of top occurs in calling context
@@ -3654,6 +3663,9 @@ cssProg* cssProgSpace::Pop() {
       prv->col = strlen(prv->GetSrcLC(prv->line));
     }
     parse_depth--;
+    if(debug >= 2) {
+      cerr << "Popped prog: " << prv->name << " depth: " << parse_depth << endl;
+    }
     return prv;
   }
   cssMisc::Warning(Prog(), "Attempt to end Top Level definition with } ");
@@ -3989,6 +4001,7 @@ int cssProgSpace::CompileLn(istream& fh, bool* err) {
 }
 
 bool cssProgSpace::Compile(istream& fh) {
+  istream* old_fh = src_fin;
   src_fin = &fh;
 
   bool err = false;
@@ -3998,8 +4011,8 @@ bool cssProgSpace::Compile(istream& fh) {
   while (CompileLn(fh, &err) != cssProg::YY_Exit);
 
   state = old_state;
+  src_fin = old_fh;		// this is key for include -- not sure why it was removed..
   cssMisc::PopCurTop(old_top);
-  src_fin = NULL;		// return to nothing
   return !err;
 }
 
@@ -4044,9 +4057,9 @@ void cssProgSpace::Include(const char* fname) {
   Compile(fname);
 
   SetName(cur_name);
-  Prog()->ZapFrom(cur_prog_size, cur_prog_src_size);
-  src_ln = cur_src_ln;
-  list_ln = cur_list_ln;
+//   Prog()->ZapFrom(cur_prog_size, cur_prog_src_size);
+//   src_ln = cur_src_ln;
+//   list_ln = cur_list_ln;
 }
 
 void cssProgSpace::CompileRunClear(const char* fname) {
@@ -4093,6 +4106,48 @@ bool cssProgSpace::DoCompileCtrl() {
     break;
   }
   return true;			// something happened
+}
+
+bool cssProgSpace::ParseElseCheck() {
+  int c;
+  bool got_else = false;
+  cssProg* prg = Prog();
+  while (isspace(c=prg->Getc())); // skip space
+  if(c == 'e') {
+    if(prg->Getc() == 'l') {
+      if(prg->Getc() == 's') {
+	if(prg->Getc() == 'e') {
+	  got_else = true;
+	  prg->unGetc(); prg->unGetc();
+	  prg->unGetc(); prg->unGetc();
+	}
+	else {
+	  prg->unGetc(); prg->unGetc();
+	  prg->unGetc(); prg->unGetc();
+	}
+      }
+      else {
+	prg->unGetc(); prg->unGetc(); prg->unGetc();
+      }
+    }
+    else {
+      prg->unGetc(); prg->unGetc();
+    }
+  }
+  else {
+    prg->unGetc();
+  }
+  return got_else;
+}
+
+bool cssProgSpace::PopElseBlocks() {
+  bool popped = false;
+  while((Prog()->owner_blk != NULL) &&
+	(Prog()->owner_blk->action == cssCodeBlock::ELSE)) {
+    Pop();
+    popped = true;
+  }
+  return popped;
 }
 
 //////////////////////////////////////////////////
@@ -5068,8 +5123,11 @@ void cssCmdShell::UpdatePrompt(bool disp_prompt) {
 }
 
 void cssCmdShell::Shell_OS_Console(const char* prmpt) {
-//WARNING: PAGING IS EVIL SINCE IT CONFLICTS WITH THE THREADED INPUT HANDLERS
-   pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING);
+  //WARNING: PAGING IS EVIL SINCE IT CONFLICTS WITH THE THREADED INPUT HANDLERS (in GUI ONLY?)
+  if(taMisc::use_gui)
+    pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING_GUI);
+  else
+    pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING_NOGUI);
 
   if(!qand_console)
     qand_console = cssConsole::Get_SysConsole();

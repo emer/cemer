@@ -1418,12 +1418,23 @@ void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) 
   if((taMisc::dmem_proc > 0) && dmem_proc_0) return; // don't open!
 #endif
   log_file->setFileName(fname);
-  if(append) 
-    log_file->Append();
+  if(fname.empty()) {
+    if(append) 
+      log_file->Append();
+    else {
+      log_file->SaveAs();
+      if(log_file->isOpen())
+	SaveHeader_strm(*log_file->ostrm);
+    }
+  }
   else {
-    log_file->SaveAs();
-    if(log_file->isOpen())
-      SaveHeader_strm(*log_file->ostrm);
+    if(append) 
+      log_file->open_append();
+    else {
+      log_file->open_write();
+      if(log_file->isOpen())
+	SaveHeader_strm(*log_file->ostrm);
+    }
   }
 }
 

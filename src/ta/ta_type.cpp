@@ -459,10 +459,10 @@ int  	taMisc::console_font_size = 10;
 // parameters that differ between win and unix
 #ifdef TA_OS_WIN
 taMisc::ConsoleType taMisc::console_type = CT_OS_SHELL;
-taMisc::ConsoleOptions taMisc::console_options; // none
+taMisc::ConsoleOptions taMisc::console_options = CO_USE_PAGING_NOGUI; // none
 #else
 taMisc::ConsoleType taMisc::console_type = CT_GUI;
-taMisc::ConsoleOptions taMisc::console_options = CO_GUI_TRACKING;
+taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE_PAGING_NOGUI | CO_GUI_TRACKING);
 #endif
 
 int	taMisc::display_width = 80;

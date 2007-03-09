@@ -219,12 +219,17 @@ public:
   static void		Warning(cssProg* prg, const char* a, const char* b="", const char* c="", const char* d="",
 				const char* e="", const char* f="", const char* g="", const char* h="",
 				const char* i="", const char* j="", const char* k="", const char* l="");
+
 public:
 #if (!defined(TA_OS_WIN))
   static void 		intrcatch(int);	// interrupt exception handling
 #endif
 };
 
+// for readline
+extern "C" {
+  extern char** css_attempted_completion(const char* text, int start, int end);
+}
 
 class CSS_API cssElPtr {
   // a pointer to an el used in code, makes pointers context relative to current frame
@@ -1304,6 +1309,7 @@ public:
 
   int_Array	breaks;			// breakpoints
   css_progdx	lastif;			// last if statment index (for else)
+  bool		lastelseif;		// last if was an else if -- need to check for next else
 
   void 		Constr();
   void		Copy(const cssProg& cp);
@@ -1393,7 +1399,7 @@ public:
   int 		Code(cssIJump* it);
   int		ReplaceCode(int idx, cssEl* it);
   void		UnCode()		{ if(size > 0) delete insts[--size]; }
-  void		ResetLasts() 		{ lastif = -1; }
+  void		ResetLasts() 		{ lastif = -1; lastelseif = false; }
   void		BurpSrc(); 		// source was read in advance, burp it
   int		Undo(int srcln);
 
@@ -1564,6 +1570,8 @@ public:
   void		SetPush(cssProg* it)	{ compile_ctrl = CC_Push; cc_push_this = it; }
   void		SetInclude(const char* it) { compile_ctrl = CC_Include; cc_include_this = it; }
   bool		DoCompileCtrl(); 	// do compile control action based on flag
+  bool		ParseElseCheck();	// check if next input token is the word 'else' -- needed for parsing if..else constructs
+  bool 		PopElseBlocks();	// pop any remaining 'else' blocks off the stack
 
   // execution
   void 		Restart();

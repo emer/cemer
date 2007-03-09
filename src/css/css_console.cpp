@@ -113,7 +113,14 @@ ConThread::ConThread(cssConsole* parent)
   con = parent;
 }
 
+extern "C" {
+  typedef int rl_function(void);
+  extern char** (*rl_attempted_completion_function)(const char*, int, int);
+}
+
 void ConThread::run() {
+  rl_attempted_completion_function = css_attempted_completion;
+
   QString lprompt; // local, so latin1() is threadsafe
   String curln;
   bool eof;
@@ -129,6 +136,8 @@ void ConThread::run() {
       curln = curln_;
       free(curln_); 
       curln_ = NULL;
+      if(curln.length() > 0)
+	add_history((char*)(const char*)curln);
     }
     if (con)
       con->emit_NewLine(curln, eof);
