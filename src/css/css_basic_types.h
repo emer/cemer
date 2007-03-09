@@ -129,7 +129,7 @@ public:
   cssChar(const cssChar& cp, const char* nm) : cssInt(cp, nm) 	{ };
   cssCloneFuns(cssChar, *this);
 
-  String GetStr() const	{ return (String)val; }
+  String GetStr() const	{ return (String)(char)val; }
   Variant GetVar() const { return Variant((char)val); }
 
   void operator=(Real cp) 		{ val = (int)cp; }

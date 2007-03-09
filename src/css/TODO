@@ -17,6 +17,12 @@ Program todo:
 ------------------
 Immediate:
 
+- cssBI::cond for:
+         | expr '?' expr ':' expr	{ Code1(cssBI::cond); }
+  -- should not even run the non-relevant expression.. it currently is, and this 
+  prevents it from allowing you to use it as a div-by-zero preventer in datatable columns
+  issue: can't use jumps, or can it??
+
 - suppress redundant { } block within a IF_TRUE or IF_FALSE block: just replace code in upper
   with code in lower.  CleanDoubleBlock is written: need to figure out when to call it!
   seems like we need a post-processing optimization step..

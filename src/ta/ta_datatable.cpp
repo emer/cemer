@@ -1719,6 +1719,8 @@ bool DataTable::CalcRow(int row) {
 
 bool DataTable::CalcAllRows_impl() {
   InitCalcScript();
+  calc_script->ClearAll();
+
   STRING_BUF(code_str, 2048);
   code_str += "for(int row=0;row <this.rows; row++) {\n";
   CalcRowCodeGen(code_str);

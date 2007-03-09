@@ -156,8 +156,8 @@ static cssEl* cssElCFun_asgn_mult_stub(int, cssEl* arg[]) {
 static cssEl* cssElCFun_asgn_div_stub(int, cssEl* arg[]) {
   if((double)*(arg[2]) == 0.0) {
     cssProg* cp = arg[0]->prog;
-    cssMisc::Error(cp, "Floating Point Exception: Division by Zero");
-    cp->top->run_stat = cssEl::ExecError;
+    cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+//     cp->top->run_stat = cssEl::ExecError;
   }
   else {
     *(arg[1]) /= *(arg[2]);
@@ -368,8 +368,8 @@ static cssEl* cssElCFun_mul_stub(int, cssEl* arg[]) {
 static cssEl* cssElCFun_div_stub(int, cssEl* arg[]) {
   if((double)*(arg[2]) == 0.0) {
     cssProg* cp = arg[0]->prog;
-    cssMisc::Error(cp, "Floating Point Exception: Division by Zero");
-    cp->top->run_stat = cssEl::ExecError;
+    cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+//     cp->top->run_stat = cssEl::ExecError;
     return arg[2];
   }
   else {

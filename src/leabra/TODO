@@ -8,13 +8,10 @@ current:
 
 * prevent save file dialog popups in highvis
 
-* css include: make a new codeblock and put all the include stuff in there, to get rid of zaplast
-
-* p ((v1 > 0.0) ? (1.0 / v1): 0.0) : gives a div0 error -- should not!
+* css include: make a new codeblock and put all the include stuff in there, to get rid of zaplast?
 
 * didn't call LoadInitTarget on LeabraTrainBatchSeedList..
 * bugs in Slice for Group
-* check uae on progel paste
 * load/save all prog_lib and testsprojects
 
 * gauss smooth on simplelines, then graph it -- get crash
@@ -38,17 +35,17 @@ current:
 
 * project display needs update after loading: filename is not there..
 
+* leabra: max norm inhib: take max guy, compute amount of inhib that gets his
+  activation to given amount above threshold (parameter) -- that's it!  *very* flexible
+  as to the distribution of everyone else..
+
 check:
 
-* double copies of checkerror
+* check uae on progel paste
 
 * datatable load not getting file name ext AGAIN!
 
 * convert tmp name is bizzare -- fname filer issues (ticket)
-
-* leabra: max norm inhib: take max guy, compute amount of inhib that gets his
-  activation to given amount above threshold (parameter) -- that's it!  *very* flexible
-  as to the distribution of everyone else..
 
 * #288: profile check on editing a datatable and then clicking away, for
   sub-rasa updates do dialog -- seems slower after clicking around
@@ -66,6 +63,8 @@ Other Algorithms:
 --------------
 
 * css include path & files from old css..
+* p ((v1 > 0.0) ? (1.0 / v1): 0.0) : gives a div0 error -- should not!
+
 
 ------------------
 hv model
