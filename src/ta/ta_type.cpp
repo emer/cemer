@@ -477,13 +477,14 @@ ViewColor_List* taMisc::view_colors = NULL;
 #endif
 
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
-taMisc::TypeInfo  	taMisc::type_info = taMisc::NO_OPTIONS_LISTS;
+taMisc::TypeInfo  	taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 bool			taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
-bool taMisc::beep_on_error = false;
-short	taMisc::num_recent_files = 10;
-short	taMisc::num_recent_paths = 10;
+taMisc::MatrixView	taMisc::matrix_view = taMisc::BOT_ZERO;	
+bool 			taMisc::beep_on_error = false;
+short			taMisc::num_recent_files = 10;
+short			taMisc::num_recent_paths = 10;
  
 ////////////////////////////////////////////////////////
 // 	File/Path/Arg Info
@@ -5348,15 +5349,15 @@ void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
 static void OutputType_OptsLists(ostream& strm, const String_PArray& opts,
 			    const String_PArray& lists)
 {
-  if((opts.size > 0) && (taMisc::type_info == taMisc::ALL_INFO) ||
-     (taMisc::type_info == taMisc::NO_LISTS)) {
+  if((opts.size > 0) && (taMisc::type_info_ == taMisc::ALL_INFO) ||
+     (taMisc::type_info_ == taMisc::NO_LISTS)) {
     int i;
     for(i=0; i<opts.size; i++)
       strm << " #" << opts.FastEl(i);
     taMisc::FlushConsole();
   }
-  if((lists.size > 0) && (taMisc::type_info == taMisc::ALL_INFO) ||
-     (taMisc::type_info == taMisc::NO_OPTIONS)) {
+  if((lists.size > 0) && (taMisc::type_info_ == taMisc::ALL_INFO) ||
+     (taMisc::type_info_ == taMisc::NO_OPTIONS)) {
     strm << " LISTS:";
     int i;
     for(i=0; i<lists.size; i++)
@@ -5396,7 +5397,7 @@ ostream& TypeDef::OutputInherit(ostream& strm) const {
 ostream& TypeDef::OutputType(ostream& strm, int indent) const {
   taMisc::indent(strm, indent);
   OutputInherit(strm);
-//  if(taMisc::type_info == taMisc::ALL_INFO)
+//  if(taMisc::type_info_ == taMisc::ALL_INFO)
   strm << " (Sz: " << size << ")";
   if(InheritsFormal(TA_class) || InheritsFormal(TA_enum))
     strm << " {";
@@ -5495,7 +5496,7 @@ ostream& MemberDef::OutputType(ostream& strm, int indent) const {
     nwnm = name + ";";
   taMisc::fmt_sep(strm, nwnm, 1, indent);
   strm << "// ";
-  if(taMisc::type_info == taMisc::MEMB_OFFSETS) {
+  if(taMisc::type_info_ == taMisc::MEMB_OFFSETS) {
     intptr_t ui_off = (intptr_t)GetOff((void*)0x100); // 0x100 is arbitrary non-zero number..
     ui_off -= 0x100;			      // now get rid of offset
     if(ui_off > 0) {

@@ -232,8 +232,7 @@ int DataCol::displayWidth() const {
     if(isMatrix()) {
       int raw_width = 1;
       int raw_height = 1;
-      bool mat_odd_vert = true;
-      Get2DCellGeom(raw_width, raw_height, mat_odd_vert);
+      Get2DCellGeom(raw_width, raw_height);
       rval = raw_width;
     }
     else {
@@ -267,11 +266,21 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
   } else return inherited::Dump_QuerySaveMember(md);
 }
 
-void DataCol::Get2DCellGeom(int& x, int& y, bool odd_y) const {
-  x = 1;
-  y = 1;
-  if(isMatrix()) {
-    cell_geom.Get2DGeom(x, y, odd_y);
+void DataCol::Get2DCellGeom(int& x, int& y) const {
+  if (isMatrix()) {
+    cell_geom.Get2DGeom(x, y);
+  } else {
+    x = 1;
+    y = 1;
+  }
+}
+
+void DataCol::Get2DCellGeomGui(int& x, int& y, bool odd_y, int spc) const {
+  if (isMatrix()) {
+    cell_geom.Get2DGeomGui(x, y, odd_y, spc);
+  } else {
+    x = 1;
+    y = 1;
   }
 }
 
@@ -1936,16 +1945,11 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   
   switch (role) {
   case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
-  case Qt::EditRole: {
+  case Qt::EditRole:
     if (col->is_matrix) 
       return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
-    else {
-      if(col->rows() > index.row())
-	return col->GetValAsString(index.row());
-      else
-	return QVariant();	// nil
-    }
-  }
+    else
+      return dt->GetValAsString(index.column(), index.row());
 // Qt::FontRole: //  QFont: font for the text
 //Qt::DecorationRole
 //Qt::ToolTipRole

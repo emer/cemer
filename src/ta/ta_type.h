@@ -551,6 +551,11 @@ public:
     CS_CONTEXT  // #LABEL_Context choose from context menu 
   };
 
+  enum MatrixView { 	// order of display for matrix cols
+    BOT_ZERO, 	// row zero is displayed at bottom of view (default)
+    TOP_ZERO 	// row zero is displayed at top of view (ex. for images)
+  };
+  
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
   static String		version; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
@@ -584,11 +589,13 @@ public:
 #endif
 
   static ShowMembs	show_gui;	// #SAVE #CAT_GUI what to show in the gui
-  static TypeInfo	type_info;	// #SAVE #CAT_GUI #EXPERT what to show when displaying type information
+  static TypeInfo	type_info_;	// #SAVE #CAT_GUI #EXPERT #LABEL_type_info what to show when displaying type information
+  //note: 'type_info' is a reserved word in C++, it is the type of rtti data
   static KeepTokens	keep_tokens;	// #SAVE #CAT_GUI #EXPERT default for keeping tokens
   static SaveFormat	save_format;	// #SAVE #CAT_GUI #EXPERT format to use when saving things (dump files)
   static bool		auto_edit; 	// #SAVE #CAT_GUI #EXPERT automatic edit dialog after creation?
   static AutoRevert	auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
+  static MatrixView	matrix_view;	// #SAVE #CAT_GUI #EXPERT #DEF_BOT_ZERO whether to show matrices with 0 row at top or bottom of view
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
   static short		num_recent_files; // #SAVE #DEF_10 #MIN_0 #MAX_12 number of recent files to save
   static short		num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_20 number of recent paths to save

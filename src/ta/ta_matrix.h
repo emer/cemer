@@ -205,7 +205,8 @@ public:
   void 			DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d4) const;
   // get dimension values from index, based on geometry
 
-  void			Get2DGeom(int& x, int& y, bool odd_y = true) const;
+  void			Get2DGeom(int& x, int& y) const; // for flat2d views
+  void			Get2DGeomGui(int& x, int& y, bool odd_y, int spc) const;
   // for rendering routines, provides standardized 2d geom regardless of dimensionality (includes space for extra dimensions), odd_y = for odd dimension sizes, put extra dimension in y (else x): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
   
   String		GeomToString(const char* ldelim = "[", const char* rdelim = "]") const;
@@ -1071,6 +1072,7 @@ public:
   int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
   override QMimeData* 	mimeData (const QModelIndexList& indexes) const;
   override QStringList	mimeTypes () const;
+  taMisc::MatrixView 	matView() const;
 #endif //note: bugs in maketa necessitated these sections
   taMatrix*		mat() const {return m_mat;}
   
@@ -1101,10 +1103,12 @@ public: // IDataLinkClient i/f
 protected:
   static MatrixGeom	tgeom; // #IGNORE to avoid cost of allocation in index ops, we use this for non-reentrant
  
+  taMatrix*		m_mat;
+  taMisc::MatrixView	m_view_layout; //#IGNORE #DEF_TOP_ZERO
+  
   bool			ValidateIndex(const QModelIndex& index) const;
   bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
     // translates index into matrix coords; true if the index is valid
-  taMatrix*		m_mat;
 #endif
 };
 

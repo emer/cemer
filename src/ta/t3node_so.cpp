@@ -1026,7 +1026,8 @@ void SoMatrixGrid::render() {
   normal.finishEditing();
 
   int geom_x, geom_y;
-  matrix->geom.Get2DGeom(geom_x, geom_y, odd_y);
+//WAS:  matrix->geom.Get2DGeom(geom_x, geom_y, odd_y);
+  matrix->geom.Get2DGeom(geom_x, geom_y);
   float cl_x = 1.0f / (float)geom_x;	// how big each cell is
   float cl_y = 1.0f / (float)geom_y;
   max_xy = MAX(cl_x, cl_y);
@@ -1351,7 +1352,8 @@ void SoMatrixGrid::renderValues() {
   if(!shape_ || !vtx_prop_) return; // something wrong..
 
   int geom_x, geom_y;
-  matrix->geom.Get2DGeom(geom_x, geom_y, odd_y);
+//WAS:  matrix->geom.Get2DGeom(geom_x, geom_y, odd_y);
+  matrix->geom.Get2DGeom(geom_x, geom_y);
 
   SoMFVec3f& vertex = vtx_prop_->vertex;
   SoMFUInt32& color = vtx_prop_->orderedRGBA;

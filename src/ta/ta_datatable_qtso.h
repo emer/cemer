@@ -211,14 +211,9 @@ class TA_API GridColView : public DataColView {
   // information for display of a data column in a grid display.  scalar columns are always displayed as text, and matrix as blocks (with optional value text, controlled by overall table spec)
 INHERITED(DataColView)
 public:
-  enum MatrixLayout { 	// order of display for matrix cols
-    BOT_ZERO, 		// row zero is displayed at bottom of cell (default)
-    TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
-  };
-
   int		text_width; 	// width of the column (or each matrix col) in chars; also the min width in chars
   bool		scale_on; 	// adjust overall colorscale to include this data (if it is a matrix type)
-  MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
+  taMisc::MatrixView	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
   bool		mat_image;	// display matrix as an image instead of grid blocks
   bool		mat_odd_vert;	// how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
   
@@ -726,11 +721,6 @@ public:
     Z_INDEX,			// values in the matrix are drawn in the same graph, arrayed in depth along the z axis
   };
 
-  enum MatrixLayout { 	// order of display for matrix cols
-    BOT_ZERO, 		// row zero is displayed at bottom of cell (default)
-    TOP_ZERO 		// row zero is displayed at top of cell (ex. for images)
-  };
-
   GraphAxisView		x_axis; 	// the x axis (horizontal, left-to-right)
   GraphAxisView		z_axis;		// the z axis (in depth, front-to-back)
   GraphPlotView		plot_1;		// first column of data to plot
@@ -746,7 +736,7 @@ public:
   bool			negative_draw;	// continue same line when X value resets in negative axis direction?
   int 			label_spacing;	// how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
   MatrixMode		matrix_mode;	// how to display matrix data (note that if a matrix column is selected, it is the only thing displayed)
-  MatrixLayout		mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
+  taMisc::MatrixView		mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
   bool			mat_odd_vert;	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
 
   GraphPlotView		err_1;		// data for error bars for plot_1 values

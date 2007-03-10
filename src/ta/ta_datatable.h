@@ -168,7 +168,10 @@ public:
   virtual int		cell_dims() const { return cell_geom.size; }
   // #CAT_Access for matrix type, number of dimensions in each cell
   virtual int		GetCellGeom(int dim) const { return cell_geom.SafeEl(dim); } // #CAT_Access for matrix type, size of given dim
-  void			Get2DCellGeom(int& x, int& y, bool odd_y = true) const;
+  void			Get2DCellGeom(int& x, int& y) const; // for flat 2D access
+  
+  void			Get2DCellGeomGui(int& x, int& y,
+     bool odd_y = true, int spc = 1) const;
   // #CAT_Access provides standardized 2d geom regardless of dimensionality (includes space for extra dimensions), odd_y = for odd dimension sizes, put extra dimension in y (else x): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
   
   int			rows() const { return AR()->frames(); }

@@ -589,7 +589,7 @@ void DataTableView::View_FR() {
 void GridColView::Initialize(){
   text_width = 8;
   scale_on = true;
-  mat_layout = BOT_ZERO; // typical default for data patterns
+  mat_layout = taMisc::BOT_ZERO; // typical default for data patterns
   mat_image = false;
   mat_odd_vert = true;
   col_width = 0.0f;
@@ -621,7 +621,7 @@ void GridColView::InitFromUserData() {
       mat_image = dc->GetUserData("IMAGE").toBool();
     }
     if(dc->HasUserData("TOP_ZERO"))
-      mat_layout = TOP_ZERO;
+      mat_layout = taMisc::TOP_ZERO;
   }
 }
 
@@ -659,7 +659,7 @@ void GridColView::ComputeColSizes() {
   if(dc->isMatrix()) {
     int raw_width = 1;
     int raw_height = 1;
-    dc->Get2DCellGeom(raw_width, raw_height, mat_odd_vert);
+    dc->Get2DCellGeomGui(raw_width, raw_height, mat_odd_vert);
     // just linear in block size between range
     col_width = par->mat_size_range.Clip(raw_width);
     row_height = par->mat_size_range.Clip(raw_height);
@@ -1372,7 +1372,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 	taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
 	if(cell_mat) {
 	  taBase::Ref(cell_mat);
-	  bool top_zero = (cvs->mat_layout == GridColView::TOP_ZERO);
+	  bool top_zero = (cvs->mat_layout == taMisc::TOP_ZERO);
 	  img_so->setImage(*cell_mat, top_zero);
 	  taBase::UnRef(cell_mat);
 	}
@@ -2618,7 +2618,7 @@ void GraphTableView::Initialize() {
   negative_draw = false;
   label_spacing = -1;
   matrix_mode = SEP_GRAPHS;
-  mat_layout = BOT_ZERO;
+  mat_layout = taMisc::BOT_ZERO;
   mat_odd_vert = true;
 
   err_1.axis = GraphAxisBase::Y;
@@ -3177,7 +3177,8 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   MatrixGeom& mgeom = da_1->cell_geom;
 
   int geom_x, geom_y;
-  mgeom.Get2DGeom(geom_x, geom_y, mat_odd_vert);
+//WAS:  mgeom.Get2DGeom(geom_x, geom_y, mat_odd_vert);
+  mgeom.Get2DGeom(geom_x, geom_y);
   float cl_x = 1.0f / (float)geom_x;	// how big each cell is
   float cl_y = 1.0f / (float)geom_y;
   float max_xy = MAX(cl_x, cl_y);
@@ -3205,7 +3206,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
 	T3GraphLine* ln = new T3GraphLine(&plot_1);
 	gr->addChild(ln);
-	if(mat_layout == TOP_ZERO)
+	if(mat_layout == taMisc::TOP_ZERO)
 	  idx = mgeom.IndexFmDims(pos.x, geom_y-1-pos.y);
 	else
 	  idx = mgeom.IndexFmDims(pos.x, pos.y);
@@ -3243,7 +3244,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	  tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
 	  T3GraphLine* ln = new T3GraphLine(&plot_1);
 	  gr->addChild(ln);
-	  if(mat_layout == TOP_ZERO)
+	  if(mat_layout == taMisc::TOP_ZERO)
 	    idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, zmax-1-z);
 	  else
 	    idx = mgeom.IndexFmDims(pos.x, pos.y, z);
@@ -3283,7 +3284,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	    tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
 	    T3GraphLine* ln = new T3GraphLine(&plot_1);
 	    gr->addChild(ln);
-	    if(mat_layout == TOP_ZERO)
+	    if(mat_layout == taMisc::TOP_ZERO)
 	      idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
 	    else
 	      idx = mgeom.IndexFmDims(pos.x, pos.y, opos.x, opos.y);
@@ -4661,12 +4662,13 @@ iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
 :inherited(dl_)
 {
   dte = NULL;
+  /* TODO: add view button(s) when we add Flat mode, and/or image or block editing
   QToolButton* but = new QToolButton;
   but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
   but->setFont(taiM->buttonFont(taiMisc::sizSmall));
   but->setText("View...");
   AddMinibarWidget(but);
-  connect(but, SIGNAL(clicked()), this, SLOT(mb_View()) );
+  connect(but, SIGNAL(clicked()), this, SLOT(mb_View()) );*/
 }
 
 iDataTablePanel::~iDataTablePanel() {
