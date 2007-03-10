@@ -1134,7 +1134,6 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
   // build and check
 
   net->Build();
-  net->Connect();
 
   bool ok = pvisp->CheckConfig_Layer(pvi, true) && lvesp->CheckConfig_Layer(lve, true)
     && lvisp->CheckConfig_Layer(lve, true)

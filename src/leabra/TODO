@@ -6,18 +6,10 @@ commit:
 ------------
 current:
 
-* prevent save file dialog popups in highvis
-
-* css include: make a new codeblock and put all the include stuff in there, to get rid of zaplast?
 
 * didn't call LoadInitTarget on LeabraTrainBatchSeedList..
 * bugs in Slice for Group
 * load/save all prog_lib and testsprojects
-
-* gauss smooth on simplelines, then graph it -- get crash
-
-* #READ_ONLY -> + #EXPERT for non-system-y type data that contains values you might want 
-  to see (esp leabra etc)
 
 * #ARG_#_VAL_FM_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!
@@ -40,6 +32,9 @@ current:
   as to the distribution of everyone else..
 
 check:
+
+* #READ_ONLY -> + #EXPERT for non-system-y type data that contains values you might want 
+  to see (esp leabra etc)
 
 * check uae on progel paste
 
@@ -64,7 +59,10 @@ Other Algorithms:
 
 * css include path & files from old css..
 * p ((v1 > 0.0) ? (1.0 / v1): 0.0) : gives a div0 error -- should not!
-
+* css #include: make a new codeblock and put all the include stuff in there,
+   to get rid of zaplast?  how to best handle?
+* css listing is still lame.  maybe just have completely separate global text list, 
+  with pointers into that?
 
 ------------------
 hv model
@@ -78,9 +76,10 @@ hv model
 * main thing is high: v2 from v4 seems to be bad..  try run with just norel adapt + output
 * output should get more from IT than V4??  check wiki for prior experiments..
 
-
 * do repeat testing
-* show retina stuff in netview (record params in trial log to)
+* show retina stuff in netview (record params in trial log too)
+
+* add 3d model rendering using inventor..
  
 * train model to identify location of key target:
   CHL:

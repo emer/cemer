@@ -1314,10 +1314,14 @@ bool taMath_double::vec_kern_pow(double_Matrix* kernel, int half_sz, double pow_
 
 bool taMath_double::vec_convolve(double_Matrix* out_vec, const double_Matrix* in_vec,
 				   const double_Matrix* kernel, bool keep_edges) {
-  if(kernel->size == 0) return false;
+  if(kernel->size == 0) {
+    taMisc::Error("vec_convolve: kernel size == 0");
+    return false;
+  }
   int off = (kernel->size-1) / 2;
   if(keep_edges) {
-    out_vec->SetGeom(1, in_vec->size);
+    if(out_vec->size != in_vec->size)
+      out_vec->SetGeom(1, in_vec->size);
     for(int i=0;i<out_vec->size;i++) {
       double sum = 0.0;
       double dnorm = 0.0;
@@ -1337,8 +1341,12 @@ bool taMath_double::vec_convolve(double_Matrix* out_vec, const double_Matrix* in
     }
   }
   else {
-    if(in_vec->size < kernel->size) return false;
-    out_vec->SetGeom(1, in_vec->size - kernel->size);
+    if(in_vec->size < kernel->size) {
+      taMisc::Error("vec_convolve: input vector size < kernel size -- cannot convolve");
+      return false;
+    }
+    if(out_vec->size != in_vec->size - kernel->size)
+      out_vec->SetGeom(1, in_vec->size - kernel->size);
     for(int i=0;i<out_vec->size;i++) {
       double sum = 0.0;
       for(int j=0;j<kernel->size;j++) {
@@ -1427,11 +1435,11 @@ bool taMath_double::mat_div_els(double_Matrix* a, const double_Matrix* b) {
 bool taMath_double::mat_eigen_owrite(double_Matrix* a, double_Matrix* eigen_vals,
 				     double_Matrix* eigen_vecs) {
   if(a->dims() != 2) {
-    taMisc::Warning("*** mat_eigen: matrix is not 2 dimensional!");
+    taMisc::Error("mat_eigen: matrix is not 2 dimensional!");
     return false;
   }
   if(a->dim(0) != a->dim(1)) {
-    taMisc::Warning("*** mat_eigen: matrix is not square!");
+    taMisc::Error("mat_eigen: matrix is not square!");
     return false;
   }
   gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
@@ -1455,7 +1463,7 @@ bool taMath_double::mat_eigen(const double_Matrix* a, double_Matrix* eigen_vals,
 
 bool taMath_double::mat_svd_owrite(double_Matrix* a, double_Matrix* s, double_Matrix* v) {
   if(a->dims() != 2) {
-    taMisc::Warning("*** mat_svd: matrix is not 2 dimensional!");
+    taMisc::Error("mat_svd: matrix is not 2 dimensional!");
     return false;
   }
   gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
@@ -1478,21 +1486,21 @@ bool taMath_double::mat_svd(const double_Matrix* a, double_Matrix* u, double_Mat
 
 bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
   if(a->dims() != 2) {
-    taMisc::Warning("*** mat_mds: matrix is not 2 dimensional!");
+    taMisc::Error("*** mat_mds: matrix is not 2 dimensional!");
     return false;
   }
   if(a->dim(0) != a->dim(1)) {
-    taMisc::Warning("*** mat_mds: matrix is not square!");
+    taMisc::Error("*** mat_mds: matrix is not square!");
     return false;
   }
   int dim = a->dim(0);
 
   if((x_axis_c < 0) || (x_axis_c >= dim)) {
-    taMisc::Warning("*** mat_mds: x_axis component must be between 0 and",String(dim-1));
+    taMisc::Error("*** mat_mds: x_axis component must be between 0 and",String(dim-1));
     return false;
   }
   if((y_axis_c < 0) || (y_axis_c >= dim)) {
-    taMisc::Warning("*** mat_mds: y_axis component must be between 0 and",String(dim-1));
+    taMisc::Error("*** mat_mds: y_axis component must be between 0 and",String(dim-1));
     return false;
   }
 
@@ -1708,9 +1716,12 @@ bool taMath_double::mat_prjn(double_Matrix* prjn_vec, const double_Matrix* src_m
   return true;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+// frame-compatible versions of various functions
+
 bool taMath_double::mat_time_avg(double_Matrix* a, double avg_dt) {
   if(avg_dt < 0.0f || avg_dt > 1.0f) {
-    taMisc::Error("*** mat_time_avg: avg_dt is not in 0..1 range:", String(avg_dt));
+    taMisc::Error("mat_time_avg: avg_dt is not in 0..1 range:", String(avg_dt));
     return false;
   }
   double avg_dt_c = 1.0 - avg_dt;
@@ -1719,6 +1730,38 @@ bool taMath_double::mat_time_avg(double_Matrix* a, double avg_dt) {
     int frm1_idx = a->FrameStartIdx(i-1);
     for(int j=0;j<a->frameSize();j++) {
       a->FastEl_Flat(fr_idx + j) = avg_dt * a->FastEl_Flat(frm1_idx + j) + avg_dt_c * a->FastEl_Flat(fr_idx + j);
+    }
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_convolve(double_Matrix* out_vec, const double_Matrix* in_vec,
+				       const double_Matrix* kernel) {
+  if(kernel->size == 0) {
+    taMisc::Error("mat_frame_convolve: kernel size == 0");
+    return false;
+  }
+  int off = (kernel->size-1) / 2;
+  if(out_vec->size != in_vec->size) {
+    out_vec->SetGeomN(in_vec->geom); // must be same
+  }
+  for(int i=0;i<in_vec->frames();i++) {
+    for(int k=0;k<in_vec->frameSize();k++) {
+      float sum = 0.0;
+      float dnorm = 0.0;
+      for(int j=0;j<kernel->size;j++) {
+	int idx = i + j - off;
+	if(idx < 0 || idx >= in_vec->frames()) {
+	  dnorm += kernel->FastEl(j);
+	}
+	else {
+	  sum += in_vec->FastEl_Flat(in_vec->FrameStartIdx(idx) + k) * kernel->FastEl(j);
+	}
+      }
+      if(dnorm > 0.0 && dnorm < 1.0) { // renorm
+	sum /= (1.0 - dnorm);
+      }
+      out_vec->FastEl_Flat(out_vec->FrameStartIdx(i) + k) = sum;
     }
   }
   return true;
@@ -2367,10 +2410,14 @@ bool taMath_float::vec_kern_pow(float_Matrix* kernel, int half_sz, float pow_exp
 
 bool taMath_float::vec_convolve(float_Matrix* out_vec, const float_Matrix* in_vec,
 				   const float_Matrix* kernel, bool keep_edges) {
-  if(kernel->size == 0) return false;
+  if(kernel->size == 0) {
+    taMisc::Error("vec_convolve: kernel size == 0");
+    return false;
+  }
   int off = (kernel->size-1) / 2;
   if(keep_edges) {
-    out_vec->SetGeom(1, in_vec->size);
+    if(out_vec->size != in_vec->size)
+      out_vec->SetGeom(1, in_vec->size);
     for(int i=0;i<out_vec->size;i++) {
       float sum = 0.0;
       float dnorm = 0.0;
@@ -2390,8 +2437,12 @@ bool taMath_float::vec_convolve(float_Matrix* out_vec, const float_Matrix* in_ve
     }
   }
   else {
-    if(in_vec->size < kernel->size) return false;
-    out_vec->SetGeom(1, in_vec->size - kernel->size);
+    if(in_vec->size < kernel->size) {
+      taMisc::Error("vec_convolve: input vector size < kernel size -- cannot convolve");
+      return false;
+    }
+    if(out_vec->size != in_vec->size - kernel->size)
+      out_vec->SetGeom(1, in_vec->size - kernel->size);
     for(int i=0;i<out_vec->size;i++) {
       float sum = 0.0;
       for(int j=0;j<kernel->size;j++) {
@@ -2696,6 +2747,9 @@ bool taMath_float::mat_prjn(float_Matrix* prjn_vec, const float_Matrix* src_mat,
   return true;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+// frame-compatible versions of various functions
+
 bool taMath_float::mat_time_avg(float_Matrix* a, float avg_dt) {
   if(avg_dt < 0.0f || avg_dt > 1.0f) {
     taMisc::Error("*** mat_time_avg: avg_dt is not in 0..1 range:", String(avg_dt));
@@ -2707,6 +2761,38 @@ bool taMath_float::mat_time_avg(float_Matrix* a, float avg_dt) {
     int frm1_idx = a->FrameStartIdx(i-1);
     for(int j=0;j<a->frameSize();j++) {
       a->FastEl_Flat(fr_idx + j) = avg_dt * a->FastEl_Flat(frm1_idx + j) + avg_dt_c * a->FastEl_Flat(fr_idx + j);
+    }
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_convolve(float_Matrix* out_vec, const float_Matrix* in_vec,
+				       const float_Matrix* kernel) {
+  if(kernel->size == 0) {
+    taMisc::Error("mat_frame_convolve: kernel size == 0");
+    return false;
+  }
+  int off = (kernel->size-1) / 2;
+  if(out_vec->size != in_vec->size) {
+    out_vec->SetGeomN(in_vec->geom); // must be same
+  }
+  for(int i=0;i<in_vec->frames();i++) {
+    for(int k=0;k<in_vec->frameSize();k++) {
+      float sum = 0.0;
+      float dnorm = 0.0;
+      for(int j=0;j<kernel->size;j++) {
+	int idx = i + j - off;
+	if(idx < 0 || idx >= in_vec->frames()) {
+	  dnorm += kernel->FastEl(j);
+	}
+	else {
+	  sum += in_vec->FastEl_Flat(in_vec->FrameStartIdx(idx) + k) * kernel->FastEl(j);
+	}
+      }
+      if(dnorm > 0.0 && dnorm < 1.0) { // renorm
+	sum /= (1.0 - dnorm);
+      }
+      out_vec->FastEl_Flat(out_vec->FrameStartIdx(i) + k) = sum;
     }
   }
   return true;

@@ -50,7 +50,10 @@ void iLineEdit::editInEditor() {
   QDesktopWidget *d = QApplication::desktop();
   int primaryScreen = d->primaryScreen();
   QSize sz = d->availableGeometry(primaryScreen).size();
-  dlg->resize((sz.width() * 3) / 4, (sz.height() * 3) / 4);
+  int wd = (sz.width() * 3) / 4;
+  int ht = (sz.height() * 3) / 4;
+  if(wd > 640) wd = 640; 	// don't make it too wide..
+  dlg->resize(wd, ht);
   if (isReadOnly())
     dlg->txtText->setReadOnly(true);
   dlg->txtText->setPlainText(text());
@@ -140,8 +143,10 @@ iTextEditDialog::iTextEditDialog(bool readOnly_, QWidget* parent)
 void iTextEditDialog::init(bool readOnly_) {
   m_readOnly = readOnly_;
   QRect rect(QApplication::desktop()->screenGeometry(0));
-  QSize sz((rect.width() * 3) / 5, (rect.height() * 2) / 5);
-  this->resize(sz);
+  int wd = (rect.width() * 3) / 4;
+  int ht = (rect.height() * 3) / 4;
+  if(wd > 640) wd = 640; 	// don't make it too wide..
+  this->resize(wd, ht);
   QVBoxLayout* layOuter = new QVBoxLayout(this);
   txtText = new QTextEdit(this);
   layOuter->addWidget(txtText);

@@ -884,6 +884,20 @@ bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_da
 			    float_Matrix* flt_kern, double_Matrix* dbl_kern,
 			    int kern_half_wd, bool keep_edges, bool float_only)
 {
+  bool has_matrix = false;
+  for(int i=0;i<src_data->data.size;i++) {
+    DataCol* sda = src_data->data[i];
+    if(sda->isMatrix()) {
+      has_matrix = true; 
+      break;
+    }
+  }
+  if(has_matrix && !keep_edges) {
+    taMisc::Warning("taDataAnal::SmoothImpl: data table",src_data->GetDisplayName(),
+		    "has matrix cells, must use keep_edges = true! this is how it is being run");
+    keep_edges = true;
+  }
+
   float_Matrix float_tmp;
   float_Matrix float_tmp2;
   smooth_data->StructUpdate(true);
@@ -906,18 +920,30 @@ bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_da
     if(float_only && (da->valType() == VT_INT)) continue;
     
     if(da->valType() == VT_FLOAT) {
-      taMath_float::vec_convolve((float_Matrix*)da->AR(), (float_Matrix*)sda->AR(), 
-				 flt_kern, keep_edges);
+      if(da->isMatrix())
+	taMath_float::mat_frame_convolve((float_Matrix*)da->AR(), (float_Matrix*)sda->AR(), 
+					 flt_kern);
+      else
+	taMath_float::vec_convolve((float_Matrix*)da->AR(), (float_Matrix*)sda->AR(), 
+				   flt_kern, keep_edges);
     }
     else if(da->valType() == VT_DOUBLE) {
-      taMath_double::vec_convolve((double_Matrix*)da->AR(), (double_Matrix*)sda->AR(), 
+      if(da->isMatrix())
+	taMath_double::mat_frame_convolve((double_Matrix*)da->AR(), (double_Matrix*)sda->AR(), 
+					 dbl_kern);
+      else
+	taMath_double::vec_convolve((double_Matrix*)da->AR(), (double_Matrix*)sda->AR(), 
 				 dbl_kern, keep_edges);
     }
     else if(da->valType() == VT_INT) { // expensive double-convert..
       int_Matrix* mat = (int_Matrix*)da->AR();
       float_tmp.SetGeomN(mat->geom);
+      float_tmp2.SetGeomN(mat->geom);
       for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
-      taMath_float::vec_convolve(&float_tmp2, &float_tmp, flt_kern, keep_edges);
+      if(da->isMatrix())
+	taMath_float::mat_frame_convolve(&float_tmp2, &float_tmp, flt_kern);
+      else
+	taMath_float::vec_convolve(&float_tmp2, &float_tmp, flt_kern, keep_edges);
       for(int i=0;i<float_tmp2.size;i++) mat->FastEl_Flat(i) = (int)float_tmp2.FastEl_Flat(i);
     }
   }

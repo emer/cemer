@@ -1583,7 +1583,6 @@ void LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units)
   set_n_stripes(net, "SNrThal_out", n_stripes, -1, false);
   net->LayoutUnitGroups();
   net->Build();
-  net->Connect();
 }
 
 void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all, int n_stripes, bool mat_fm_pfc_full, bool out_gate, bool nolrn_pfc, bool lr_sched) {

@@ -150,7 +150,6 @@ public:
   // #IGNORE get file properties for given type
 
   String                name;           // name of the object 
-  bool			display_toggle;  // #DEF_true 'true' if display should be updated
   bool			visible; // #HIDDEN whether toolbar window is being shown to user
 
   virtual bool		deleteOnWinClose() const {return false;}

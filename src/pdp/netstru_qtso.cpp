@@ -2120,13 +2120,14 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 
   // add all base pdp commands -- you can add more in a derived constructor
 
-  butBuildAll = new QPushButton("Build All", widCmdButtons);
+  butBuildAll = new QPushButton("Build", widCmdButtons);
   AddCmdButton(butBuildAll);
   connect(butBuildAll, SIGNAL(pressed()), this, SLOT(butBuildAll_pressed()) );
+  butBuildAll->setToolTip("Build Units in Network according to Layer configuration, and Connect them together according to Projection Specifications");
 
-  butConnectAll = new QPushButton("ConnectAll", widCmdButtons);
-  AddCmdButton(butConnectAll);
-  connect(butConnectAll, SIGNAL(pressed()), this, SLOT(butConnectAll_pressed()) );
+//   butConnectAll = new QPushButton("ConnectAll", widCmdButtons);
+//   AddCmdButton(butConnectAll);
+//   connect(butConnectAll, SIGNAL(pressed()), this, SLOT(butConnectAll_pressed()) );
 
   butNewLayer = new QPushButton("&New Layer", widCmdButtons);
   AddCmdButton(butNewLayer);

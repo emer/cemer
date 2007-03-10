@@ -1478,7 +1478,7 @@ public:
   // #IGNORE aggregate network variables across procs for trial-level dmem 
 #endif
 
-  void	Build();
+  void	BuildUnits();
   void	Init_Weights() 	{ if(spec) spec->Init_Weights(this); }
   // #CAT_Learning initialize weight values and other permanent state
   void	Init_ActAvg() 	{ spec->Init_ActAvg(this); }

@@ -246,7 +246,6 @@ void Wizard::StdNetwork(Network* net) {
   net->StructUpdate(false);
   net->ShowInViewer();
   net->Build();
-  net->Connect();
 //obs  taMisc::DelayedMenuUpdate(net);
 }
 
@@ -649,7 +648,6 @@ void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
       if(chs == 1) continue;
     }
     net->Build();
-    net->Connect();
   }
 }
 

@@ -53,7 +53,6 @@ void DataViewer::GetFileProps(TypeDef* td, String& fltr, bool& cmprs) {
 
 void DataViewer::Initialize() {
   m_dvwidget = NULL;
-  display_toggle = true;
   visible = true; // default for most types
 }
 
@@ -74,7 +73,6 @@ void DataViewer::CutLinks() {
 }
 
 void DataViewer::Copy_(const DataViewer& cp) {
-  display_toggle = cp.display_toggle;
   visible = cp.visible; //note: not the same as mapped
 //TODO: should probably call Clear() too
 }

@@ -1712,6 +1712,5 @@ void LeabraWizard::SRNContext(LeabraNetwork* net) {
   net->FindMakePrjn(ctxt, hidden, otop); // one-to-one into the ctxt layer
   net->FindMakePrjn(hidden, ctxt); 	 // std prjn back into the hidden from context
   net->Build();
-  net->Connect();
 }
 

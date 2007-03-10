@@ -929,7 +929,6 @@ bool V3ProjectBase::ConvertToV4_Nets(ProjectBase* nwproj) {
   FOR_ITR_EL(Network, net, nwproj->networks., ni) {
     net->RemoveUnits();
     net->Build();
-    net->Connect();
     net->ShowInViewer();
   }
   return true;

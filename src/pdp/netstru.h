@@ -794,7 +794,7 @@ public: //
   
   virtual void 	ApplyInputData(float val, ExtType act_ext_flags, Random* ran = NULL);
   // #CAT_Activation apply external input or target value to unit
-  virtual bool	Build();
+  virtual bool	BuildUnits();
   // #CAT_Structure build unit: make sure bias connection is created and right type
   virtual bool	CheckBuild(bool quiet=false);
   // #CAT_Structure check if network is built 
@@ -1148,7 +1148,7 @@ public:
 			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
-  virtual bool	Build();
+  virtual bool	BuildUnits();
   // #MENU #MENU_ON_Actions #CAT_Structure for subgroups: build units to specs (true if changed)
   virtual bool	CheckBuild(bool quiet=false);
   // #CAT_Structure check if network is built 
@@ -1294,7 +1294,7 @@ public:
 			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
-  virtual void  Build();
+  virtual void  BuildUnits();
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure build the units based current geometry configuration
   virtual void	RecomputeGeometry();
   // #CAT_Structure recompute the layer's geometry specifcations
@@ -1658,11 +1658,13 @@ public:
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
   virtual void  Build();
-  // #BUTTON #CAT_Structure Build the network according to geometry
+  // #BUTTON #CAT_Structure Build the network units and Connect them (calls BuildUnits and Connect)
+  virtual void  BuildUnits();
+  // #MENU #MENU_ON_Actions #CAT_Structure Build the network units in layers according to geometry
   virtual void	Connect();
-  // #BUTTON #CAT_Structure Connect this network according to projections on Layers
+  // #MENU #CAT_Structure Connect this network according to projections on Layers
   virtual bool	CheckBuild(bool quiet=false);
-  // #CAT_Structure check if network is built 
+  // #CAT_Structure check if network units are built 
   virtual bool	CheckConnect(bool quiet=false);
   // #CAT_Structure check if network is connected
 

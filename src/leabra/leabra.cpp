@@ -3155,9 +3155,9 @@ bool LeabraLayer::SetLayerSpec(LayerSpec* sp) {
   return true;
 } 
 
-void LeabraLayer::Build() {
+void LeabraLayer::BuildUnits() {
   ResetSortBuf();
-  Layer::Build();
+  Layer::BuildUnits();
 }
 
 #ifdef DMEM_COMPILE

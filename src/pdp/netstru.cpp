@@ -1503,7 +1503,7 @@ void UnitSpec::UpdateAfterEdit_impl() {
 void UnitSpec::BuildBiasCons() {
   Network* net = (Network *) GET_MY_OWNER(Network);
   if (!net) return;
-  net->Build();
+  net->BuildUnits();
 }
 
 void UnitSpec::Init_Acts(Unit* u) {
@@ -1655,7 +1655,7 @@ void Unit::InitLinks() {
   taBase::Own(send, this);
   taBase::Own(bias, this);
   taBase::Own(pos, this);
-  Build();
+  BuildUnits();
   // note: no longer supporting incremental construction by hand..
 //   Layer* lay = GET_MY_OWNER(Layer);
 //   if(lay && !taMisc::is_loading)
@@ -1746,7 +1746,7 @@ void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran) {
   }
 }
 
-bool Unit::Build() {
+bool Unit::BuildUnits() {
   bool rval = false;
   if(!GetUnitSpec())
     return false;
@@ -2791,7 +2791,7 @@ void Unit_Group::LayoutUnits(Unit* u) {
   }
 }
 
-bool Unit_Group::Build() {
+bool Unit_Group::BuildUnits() {
   if((own_lay == NULL) || (owner == own_lay))	return false;
   StructUpdate(true);
   RecomputeGeometry();
@@ -2803,7 +2803,7 @@ bool Unit_Group::Build() {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, this->, i)
-    u->Build();
+    u->BuildUnits();
   units_lesioned = false;
   StructUpdate(false);
   return units_changed;
@@ -3334,7 +3334,7 @@ void Layer::LayoutUnits(Unit* u) {
   StructUpdate(false);
 }
 
-void Layer::Build() {
+void Layer::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
   RecomputeGeometry();
@@ -3348,7 +3348,7 @@ void Layer::Build() {
     for(int k=0; k< units.gp.size; k++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
       ug->UpdateAfterEdit();
-      if(ug->Build())
+      if(ug->BuildUnits())
 	units_changed = true;
     }
   }
@@ -3361,7 +3361,7 @@ void Layer::Build() {
     Unit* u;
     taLeafItr i;
     FOR_ITR_EL(Unit, u, units., i)
-      u->Build();
+      u->BuildUnits();
     units.units_lesioned = false;
   }
 
@@ -3540,7 +3540,7 @@ void Layer::Connect() {
     p->Connect();
   Unit* u;
   FOR_ITR_EL(Unit, u, units., i)
-    u->Build();			// this is for the bias connections!
+    u->BuildUnits();			// this is for the bias connections!
   StructUpdate(false);
   taMisc::DoneBusy();
 }
@@ -4386,13 +4386,18 @@ int Network::GetDefaultZ(){
 }
 
 void Network::Build() {
+  BuildUnits();
+  Connect();
+}
+
+void Network::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
   UpdateMax();
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
-    l->Build();
+    l->BuildUnits();
 //   UpdateMonitors();
   StructUpdate(false);
   taMisc::DoneBusy();

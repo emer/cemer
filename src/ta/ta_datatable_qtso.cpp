@@ -3177,8 +3177,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   MatrixGeom& mgeom = da_1->cell_geom;
 
   int geom_x, geom_y;
-//WAS:  mgeom.Get2DGeom(geom_x, geom_y, mat_odd_vert);
-  mgeom.Get2DGeom(geom_x, geom_y);
+  mgeom.Get2DGeomGui(geom_x, geom_y, mat_odd_vert, 1);
   float cl_x = 1.0f / (float)geom_x;	// how big each cell is
   float cl_y = 1.0f / (float)geom_y;
   float max_xy = MAX(cl_x, cl_y);
@@ -3328,9 +3327,11 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   DataCol* da_x = x_axis.GetDAPtr();
   DataCol* da_z = z_axis.GetDAPtr();
 
+  DataTable* dt = dataTable();
+
   // this should only happen if we have no data at all..
-  if((view_range.min < 0) || (view_range.min >= da_x->rows())) return;
-  if((view_range.min < 0) || (view_range.min >= da_y->rows())) return;
+  if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
+  if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
 
   DataCol* da_er = erv.GetDAPtr();
 

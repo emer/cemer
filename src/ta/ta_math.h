@@ -573,9 +573,15 @@ public:
 		       const double_Matrix* prjn_mat, DistMetric metric=INNER_PROD,
 		       bool norm = false, double tolerance=0.0f);
   // #CAT_HighDimMatrix compute projection of each frame of src_mat onto prjn_mat.  prjn_vec contains one value for each frame in src_mat, which is the inner/dot product (projection -- or other metric if selected) of that frame and the prjn_mat.
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // frame-compatible versions of various functions
+
   static bool mat_time_avg(double_Matrix* a, double avg_dt);
   // #CAT_HighDimMatrix replace matrix values with their running (exponentially-weighted) time-averaged values (new_val = avg_dt * running_avg + (1-avg_dt) * old_val
-
+  static bool mat_frame_convolve(double_Matrix* out_mat, const double_Matrix* in_mat,
+				 const double_Matrix* kernel);
+  // #CAT_Convolution convolve in_mat with kernel to produce out_mat, in a cell-by-cell manner across frames.  always keeps the edges by clipping and renormalizing the kernel all the way to both edges
 
   void Initialize() { };
   void Destroy() { };
@@ -896,8 +902,15 @@ public:
 		       const float_Matrix* prjn_mat, DistMetric metric=INNER_PROD,
 		       bool norm = false, float tolerance=0.0f);
   // #CAT_HighDimMatrix compute projection of each frame of src_mat onto prjn_mat.  prjn_vec contains one value for each frame in src_mat, which is the inner/dot product (projection -- or other metric if selected) of that frame and the prjn_mat.
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // frame-compatible versions of various functions
+
   static bool mat_time_avg(float_Matrix* a, float avg_dt);
   // #CAT_HighDimMatrix replace matrix values with their running (exponentially-weighted) time-averaged values (new_val = avg_dt * running_avg + (1-avg_dt) * old_val
+  static bool mat_frame_convolve(float_Matrix* out_mat, const float_Matrix* in_mat,
+				 const float_Matrix* kernel);
+  // #CAT_Convolution convolve in_mat with kernel to produce out_mat, in a cell-by-cell manner across frames.  always keeps the edges by clipping and renormalizing the kernel all the way to both edges
 
   void Initialize() { };
   void Destroy() { };

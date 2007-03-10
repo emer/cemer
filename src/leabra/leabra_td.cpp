@@ -1360,7 +1360,6 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   // build and check
 
   net->Build();
-  net->Connect();
 
   bool ok = tdrpsp->CheckConfig_Layer(tdrp, true) && tdintsp->CheckConfig_Layer(tdint, true)
     && tdsp->CheckConfig_Layer(tdda, true) && ersp->CheckConfig_Layer(extrew, true);
