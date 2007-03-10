@@ -239,6 +239,8 @@ public:
   ColorScale(int chunk);
 };
 
+SmartRef_Of(ColorScale,TA_ColorScale); // ColorScaleRef
+
 class TA_API ViewColor : public taNBase {
   // ##INLINE ##NO_TOKENS ##CAT_Display view color specification -- name lookup of color highlighting for view display
 INHERITED(taNBase)

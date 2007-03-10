@@ -56,7 +56,7 @@ typedef QWidget inherited;
 #endif
   Q_OBJECT
 public:
-  ColorScale* 		scale;
+  ColorScaleRef		scale;
   virtual int 		blocks();
 
   virtual void		SetColorScale(ColorScale* c);

@@ -43,7 +43,7 @@ public:
   float			height;
   float			width;
 
-  ColorScale* 		scale;
+  ColorScaleRef		scale;
 
   virtual int 		blocks();
   override void		clear();

@@ -110,15 +110,13 @@ void T3CBar::clear() {
 }
 
 void T3CBar::SetColorScale(ColorScale* c){
-  if (scale == c) return;
+  if (scale.ptr() == c) return;
 
-  if (scale) {
+  if ((bool)scale) {
     clear();
-    taBase::UnRef(scale);
   }
   scale = c;
-  if (scale) {
-    taBase::Ref(scale);
+  if ((bool)scale) {
     render();
   }
 }
