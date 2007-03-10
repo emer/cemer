@@ -10,8 +10,8 @@ INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
   "-I$(VCDIR)\Vc7\include" 
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
-MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
-#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe -v1
+#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
+MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe 
 
 
 all: maketa_files moc_files

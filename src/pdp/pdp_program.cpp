@@ -281,7 +281,7 @@ String NetCounterInit::GetDisplayName() const {
 
 void NetCounterInit::GetLocalCtrVar() {
   if(!counter) return;
-  if(local_ctr_var && local_ctr_var->name == counter->name) return;
+  if((bool)local_ctr_var && (local_ctr_var->name == counter->name)) return;
   Program* my_prog = program();
   if(!my_prog) return;
   if(!(local_ctr_var = my_prog->vars.FindName(counter->name))) {
@@ -338,7 +338,7 @@ String NetCounterIncr::GetDisplayName() const {
 
 void NetCounterIncr::GetLocalCtrVar() {
   if(!counter) return;
-  if(local_ctr_var && local_ctr_var->name == counter->name) return;
+  if((bool)local_ctr_var && (local_ctr_var->name == counter->name)) return;
   Program* my_prog = program();
   if(!my_prog) return;
   if(!(local_ctr_var = my_prog->vars.FindName(counter->name))) {
@@ -385,7 +385,7 @@ String NetUpdateView::GetDisplayName() const {
 }
 
 void NetUpdateView::GetUpdateVar() {
-  if(update_var && update_var->name == "update_net_view") return;
+  if((bool)update_var && (update_var->name == "update_net_view")) return;
   Program* my_prog = program();
   if(!my_prog) return;
   if(!(update_var = my_prog->vars.FindName("update_net_view"))) {

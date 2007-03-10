@@ -44,13 +44,13 @@ extern "C" { // readline completion -- either refers to readline, or we fake it
 
   extern char** completion_matches (char* text, rl_generator_fun* gen);
 }
-
+/*nn
 extern "C" { // following defined in css_builtin.cc
   extern char** css_attempted_completion(char* text, int start, int end);
   extern char* css_path_generator(char* text, int state); // rl_generator_fun
   extern char* css_scoped_generator(char* text, int state); // rl_generator_fun
   extern char* css_keyword_generator(char* text, int state); // rl_generator_fun
-}
+}*/
 
 
 enum ReadStatus {
