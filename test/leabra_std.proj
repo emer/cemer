@@ -3149,9 +3149,11 @@ of what happens in the training of each network, or where it is run (e.g., on di
 	expr="s_testy[src_row % s_testy.size] = 1.0;
 
 
+
 ";
 	flags=NO_VAR_ERRS;
 	var_expr="$#0#$[src_row % $#0#$.size] = 1.0;
+
 
 
 ";
@@ -6190,7 +6192,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
   MainWindowViewer @[0] {
    m_data=.projects[0]$74$;
    name=;
-   display_toggle=1;
    visible=1;
    m_is_root=0;
    m_is_proj_viewer=1;
@@ -6201,7 +6202,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     ToolBar @[0] {
      m_data=NULL;
      name="Application";
-     display_toggle=1;
      visible=0;
      lft=0;
      top=0;
@@ -6215,7 +6215,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     tabBrowseViewer @[0] {
      m_data=NULL;
      name=;
-     display_toggle=1;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
@@ -6224,13 +6223,11 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     PanelViewer @[1] {
      m_data=NULL;
      name=;
-     display_toggle=1;
      visible=1;
     };
     T3DataViewer @[2] {
      m_data=NULL;
      name="Frame1";
-     display_toggle=1;
      visible=1;
      frames {
       name=;
@@ -6239,7 +6236,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       T3DataViewFrame @[0] {
        m_data=NULL;
        name="Frame1";
-       display_toggle=1;
        visible=1;
        root_view {
 	m_data=NULL;
@@ -6357,7 +6353,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     ToolBoxDockViewer @[0] {
      m_data=NULL;
      name="Tools";
-     display_toggle=1;
      visible=1;
      dock_flags=6;
      dock_area=1;

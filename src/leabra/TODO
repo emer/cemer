@@ -6,20 +6,19 @@ commit:
 ------------
 current:
 
-
-* didn't call LoadInitTarget on LeabraTrainBatchSeedList..
-* bugs in Slice for Group
 * load/save all prog_lib and testsprojects
+* NewLayer not working in netview
+* default type not loading (#311)
 
 * #ARG_#_VAL_FM_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!
 
+* #READ_ONLY -> + #EXPERT for non-system-y type data that contains values you might want 
+  to see (esp leabra etc) (revisit Network too)
+
 * datatable: 
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
   * concat columns
-
-* edit user script: non-modal dialog w/ better (narrower) default sizing
-  (add c++ syntax hightight?)
 
 * leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
   and add extra inhib in proportion.  set point in for inhib value itself.  makes the
@@ -27,14 +26,11 @@ current:
 
 * project display needs update after loading: filename is not there..
 
-* leabra: max norm inhib: take max guy, compute amount of inhib that gets his
-  activation to given amount above threshold (parameter) -- that's it!  *very* flexible
-  as to the distribution of everyone else..
-
+-----------
 check:
 
-* #READ_ONLY -> + #EXPERT for non-system-y type data that contains values you might want 
-  to see (esp leabra etc)
+* edit user script: non-modal dialog w/ better (narrower) default sizing
+  (add c++ syntax hightight?) #262
 
 * check uae on progel paste
 
@@ -45,6 +41,12 @@ check:
 * #288: profile check on editing a datatable and then clicking away, for
   sub-rasa updates do dialog -- seems slower after clicking around
   (confirmed).  maybe net too?  STILL NEED THIS -- THIS IS HAPPENING!
+
+* leabra: max norm inhib: take max guy, compute amount of inhib that gets his
+  activation to given amount above threshold (parameter) -- that's it!  *very* flexible
+  as to the distribution of everyone else..
+
+* didn't call LoadInitTarget on LeabraTrainBatchSeedList..-- not repl
 
 ------------------
 Program issues

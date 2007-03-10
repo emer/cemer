@@ -774,7 +774,7 @@ taMatrix* taMatrix::GetSlice_(const MatrixGeom& base,
   if (slice_frame_dims == -1)
     slice_frame_dims = dims() - 1;
   // check dim size in bounds
-  if(TestError((slice_frame_dims <= 0) || (slice_frame_dims >= dims()),
+  if(TestError((slice_frame_dims < 0) || (slice_frame_dims >= dims()),
 	       "GetSlice_", "slice_frame_dims must be >= 0 and < parent Matrix"))
     return NULL;
   // check start cell in bounds and legal
