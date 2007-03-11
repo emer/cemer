@@ -562,6 +562,7 @@ class TA_API taiArgType : public taiType {
   // thus, they cache their values
 public:
   MethodDef*	meth;		// method that has the args
+  int		arg_idx;	// index of argument in list of args
   TypeDef*	arg_typ;	// which arg typedef this one is
   bool		err_flag;	// true if one of the args was improperly set
 
@@ -584,23 +585,23 @@ public:
   void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
-  taiArgType(TypeDef* argt, MethodDef* mb, TypeDef* td);
+  taiArgType(int aidx, TypeDef* argt, MethodDef* mb, TypeDef* td);
   taiArgType();
   ~taiArgType();
 
   void 	Initialize()	{};
   void 	Destroy()	{};
-  virtual taiArgType*  ArgTypeInst(TypeDef* argt, MethodDef* md, TypeDef* td)
-  { return new taiArgType(argt,md,td);}
+  virtual taiArgType*  ArgTypeInst(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td)
+  { return new taiArgType(aidx, argt,md,td);}
   TypeDef*	GetTypeDef() const {return &TA_taiArgType;}
 };
 
-#define TAQT_ARGTYPE_INSTANCE(x,y) x(TypeDef* argt, MethodDef* md, TypeDef*td) 	\
-: y(argt,md,td) { Initialize(); } 						\
+#define TAQT_ARGTYPE_INSTANCE(x,y) x(int aidx, TypeDef* argt, MethodDef* md, TypeDef*td)	\
+  : y(aidx, argt,md,td) { Initialize(); }				\
 x()            	{ Initialize(); } 						\
 ~x()           	{ Destroy(); }							\
-taiArgType* 	ArgTypeInst(TypeDef* argt, MethodDef* md, TypeDef*td) 		\
-{ return (taiArgType*) new x(argt,md,td); }					\
+  taiArgType* 	ArgTypeInst(int aidx, TypeDef* argt, MethodDef* md, TypeDef*td) \
+  { return (taiArgType*) new x(aidx, argt,md,td); }			\
 TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 
 

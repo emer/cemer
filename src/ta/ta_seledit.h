@@ -61,18 +61,22 @@ public:
   Method_List	methods;	// #READ_ONLY #NO_SAVE method defs
   String_Array	meth_base_paths; // #READ_ONLY #NO_SAVE paths to base objects for BaseChangeSave
 
-  virtual int	FindMbrBase(TAPtr base, MemberDef* md);
+  virtual int	FindMbrBase(taBase* base, MemberDef* md);
   // find a given base and member, returns index
-  virtual bool	SelectMember(TAPtr base, MemberDef* md, const char* lbl);
+  virtual bool	SelectMember_impl(taBase* base, MemberDef* md, const char* lbl);
+  // #IGNORE add new member to edit if it isn't already here (returns true), otherwise update lbl (returns false)
+  virtual bool	SelectMember(taBase* base, MemberDef* md, const char* lbl);
   // add new member to edit if it isn't already here (returns true), otherwise update lbl (returns false)
-  virtual bool	SelectMemberNm(TAPtr base, const char* md, const char* lbl);
+  virtual bool	SelectMemberNm(taBase* base, const char* md, const char* lbl);
   // add new member to edit if it isn't already here (returns true), otherwise update lbl (returns false)
 
-  virtual int	FindMethBase(TAPtr base, MethodDef* md);
+  virtual int	FindMethBase(taBase* base, MethodDef* md);
   // find a given base and method, returns index
-  virtual bool	SelectMethod(TAPtr base, MethodDef* md, const char* lbl);
+  virtual bool	SelectMethod_impl(taBase* base, MethodDef* md, const char* lbl);
+  // #IGNORE add new method to edit if it isn't already here (returns true), otherwise remove (returns false)
+  virtual bool	SelectMethod(taBase* base, MethodDef* md, const char* lbl);
   // add new method to edit if it isn't already here (returns true), otherwise remove (returns false)
-  virtual bool	SelectMethodNm(TAPtr base, const char* md, const char* lbl);
+  virtual bool	SelectMethodNm(taBase* base, const char* md, const char* lbl);
   // add new method to edit if it isn't already here (returns true), otherwise remove (returns false)
 
   virtual void	UpdateAllBases();	// perform update-after-edit on all base objects
@@ -94,6 +98,11 @@ public:
   virtual void	NewEdit();
   // #MENU #MENU_SEP_BEFORE closes current edit dialog and makes a new one (with any changes)
 
+  virtual int	SearchMembers(taNBase* obj, const String& memb_contains);
+  // #BUTTON search given object for member names that contain given string, and add them to this editor
+  virtual int	CompareObjs(taBase* obj_a, taBase* obj_b);
+  // #BUTTON #TYPE_taNBase compare two objects (must be of the same type) and add the differences in this select edit
+
   virtual void	GetMembsFmStrs(); // #IGNORE get members from strings (upon loading)
   virtual void	GetMethsFmStrs(); // #IGNORE get methods from strings (upon loading)
   virtual void	GetAllPaths();	// #IGNORE get paths for all current objects
@@ -105,9 +114,9 @@ public:
   virtual String GetMethLabel(int idx);	// #IGNORE get full label for method
 
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
-  override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
+  override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
   // reset everything before loading
-  override int	Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
+  override int	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
   // get paths before saving
 
   override String 	GetTypeDecoKey() const { return "SelectEdit"; }
@@ -121,7 +130,7 @@ public:
 protected:  
   void			BaseAdded(taBase* ta); // called when we add a memb or meth; we unique add to notify list
   void			BaseRemoved(taBase* ta); // called after we remove a memb or meth; if no more of this base, we unmonitor
-  virtual bool		BaseClosing(TAPtr base);
+  virtual bool		BaseClosing(taBase* base);
   // #IGNORE this base object is about to be closed (removed), if i edit it, then I need to save and reopen (returns true if edited)
   virtual bool		BaseDataChanged(taBase* obj,
     int dcr, void* op1_, void* op2_);

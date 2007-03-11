@@ -124,11 +124,11 @@ void SelectEdit::BaseRemoved(taBase* ta) {
   //TODO ??
 }
  
-bool SelectEdit::BaseClosing(TAPtr base) {
+bool SelectEdit::BaseClosing(taBase* base) {
   bool gotone = false;
   int i;
   for(i=mbr_bases.size-1;i>=0;i--) {
-    TAPtr bs = mbr_bases.FastEl(i);
+    taBase* bs = mbr_bases.FastEl(i);
     char* staddr = (char*)bs;
     char* endaddr=staddr+bs->GetSize();
     char* vbase = (char*)base;
@@ -139,7 +139,7 @@ bool SelectEdit::BaseClosing(TAPtr base) {
   }
 
   for(i=meth_bases.size-1;i>=0;i--) {
-    TAPtr bs = meth_bases.FastEl(i);
+    taBase* bs = meth_bases.FastEl(i);
     if(bs == base) {
       RemoveFun_impl(i);
       gotone = true;
@@ -155,7 +155,7 @@ bool SelectEdit::BaseDataChanged(taBase* base,
   bool rval = false;
   int i;
   for(i=mbr_bases.size-1;i>=0;i--) {
-    TAPtr bs = mbr_bases.FastEl(i);
+    taBase* bs = mbr_bases.FastEl(i);
     char* staddr = (char*)bs;
     char* endaddr=staddr+bs->GetSize();
     char* vbase = (char*)base;
@@ -166,7 +166,7 @@ bool SelectEdit::BaseDataChanged(taBase* base,
   }
 
   if (!rval) for(i=meth_bases.size-1;i>=0;i--) {
-    TAPtr bs = meth_bases.FastEl(i);
+    taBase* bs = meth_bases.FastEl(i);
     if(bs == base) {
       rval = true;
       break;
@@ -197,7 +197,7 @@ void SelectEdit::BaseChangeReShow() {
     int i;
     for(i=0;i<mbr_base_paths.size;i++) {
       String path = mbr_base_paths.FastEl(i);
-      TAPtr bs = tabMisc::root->FindFromPath(path);
+      taBase* bs = tabMisc::root->FindFromPath(path);
       if(bs == NULL) {
 	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
 	members.RemoveIdx(i);  mbr_strs.RemoveIdx(i);  config.mbr_labels.RemoveIdx(i);  mbr_base_paths.RemoveIdx(i);
@@ -214,7 +214,7 @@ void SelectEdit::BaseChangeReShow() {
     int i;
     for(i=0;i<meth_base_paths.size;i++) {
       String path = meth_base_paths.FastEl(i);
-      TAPtr bs = tabMisc::root->FindFromPath(path);
+      taBase* bs = tabMisc::root->FindFromPath(path);
       if(bs == NULL) {
 	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
 	methods.RemoveIdx(i);  meth_strs.RemoveIdx(i);  config.meth_labels.RemoveIdx(i);  meth_base_paths.RemoveIdx(i);
@@ -229,7 +229,7 @@ void SelectEdit::BaseChangeReShow() {
   ReShowEdit(true); //forced
 }
 
-int SelectEdit::Dump_Load_Value(istream& strm, TAPtr par) {
+int SelectEdit::Dump_Load_Value(istream& strm, taBase* par) {
   members.Reset();
   mbr_bases.Reset();
   mbr_strs.Reset();
@@ -260,14 +260,14 @@ void SelectEdit::GetAllPaths() {
   }
 }
 
-int SelectEdit::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
+int SelectEdit::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   return taNBase::Dump_Save_Value(strm, par, indent);
 }
 
 void SelectEdit::GetMembsFmStrs() {
   int i;
   for(i=0;i<mbr_bases.size;i++) {
-    TAPtr bs = mbr_bases.FastEl(i);
+    taBase* bs = mbr_bases.FastEl(i);
     if(bs == NULL) { // didn't get loaded, bail..
       taMisc::Warning("*** SelectEdit: couldn't find object:", config.mbr_labels[i], mbr_strs[i], "in object to edit");
       mbr_bases.RemoveIdx(i);      mbr_strs.RemoveIdx(i);      config.mbr_labels.RemoveIdx(i);
@@ -289,7 +289,7 @@ void SelectEdit::GetMembsFmStrs() {
 void SelectEdit::GetMethsFmStrs() {
   int i;
   for(i=0;i<meth_bases.size;i++) {
-    TAPtr bs = meth_bases.FastEl(i);
+    taBase* bs = meth_bases.FastEl(i);
     if(bs == NULL) { // didn't get loaded, bail..
       taMisc::Warning("*** SelectEdit: couldn't find object:", config.meth_labels[i], meth_strs[i], "in object to edit");
       meth_bases.RemoveIdx(i);      meth_strs.RemoveIdx(i);      config.meth_labels.RemoveIdx(i);
@@ -308,7 +308,7 @@ void SelectEdit::GetMethsFmStrs() {
   }
 }
 
-int SelectEdit::FindMbrBase(TAPtr base, MemberDef* md) {
+int SelectEdit::FindMbrBase(taBase* base, MemberDef* md) {
   int i;
   for(i=0;i<mbr_bases.size;i++) {
     if((mbr_bases.FastEl(i) == base) && (members.FastEl(i) == md))
@@ -317,7 +317,7 @@ int SelectEdit::FindMbrBase(TAPtr base, MemberDef* md) {
   return -1;
 }
 
-bool SelectEdit::SelectMember(TAPtr base, MemberDef* md, const char* lbl) {
+bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md, const char* lbl) {
   bool rval = false;
   int bidx = FindMbrBase(base, md);
   if (bidx >= 0) {
@@ -330,18 +330,23 @@ bool SelectEdit::SelectMember(TAPtr base, MemberDef* md, const char* lbl) {
     BaseAdded(base);
     rval = true;
   }
+  return rval;
+}
+
+bool SelectEdit::SelectMember(taBase* base, MemberDef* md, const char* lbl) {
+  bool rval = SelectMember_impl(base, md, lbl);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool SelectEdit::SelectMemberNm(TAPtr base, const char* md, const char* lbl) {
+bool SelectEdit::SelectMemberNm(taBase* base, const char* md, const char* lbl) {
   if(base == NULL) return false;
   MemberDef* mda = (MemberDef*)base->FindMember(md);
   if(mda == NULL) return false;
   return SelectMember(base, mda, lbl);
 }
 
-int SelectEdit::FindMethBase(TAPtr base, MethodDef* md) {
+int SelectEdit::FindMethBase(taBase* base, MethodDef* md) {
   int i;
   for(i=0;i<meth_bases.size;i++) {
     if((meth_bases.FastEl(i) == base) && (methods.FastEl(i) == md))
@@ -350,7 +355,7 @@ int SelectEdit::FindMethBase(TAPtr base, MethodDef* md) {
   return -1;
 }
 
-bool SelectEdit::SelectMethod(TAPtr base, MethodDef* md, const char* lbl) {
+bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* md, const char* lbl) {
   bool rval = false;
   int bidx = FindMethBase(base, md);
   if (bidx >= 0) {
@@ -363,11 +368,16 @@ bool SelectEdit::SelectMethod(TAPtr base, MethodDef* md, const char* lbl) {
     BaseAdded(base);
     rval = true;
   }
+  return rval;
+}
+
+bool SelectEdit::SelectMethod(taBase* base, MethodDef* md, const char* lbl) {
+  bool rval = SelectMethod_impl(base, md, lbl);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool SelectEdit::SelectMethodNm(TAPtr base, const char* md, const char* lbl) {
+bool SelectEdit::SelectMethodNm(taBase* base, const char* md, const char* lbl) {
   if(base == NULL) return false;
   MethodDef* mda = (MethodDef*)base->GetTypeDef()->methods.FindName(md);
   if(mda == NULL) return false;
@@ -377,13 +387,13 @@ bool SelectEdit::SelectMethodNm(TAPtr base, const char* md, const char* lbl) {
 void SelectEdit::UpdateAllBases() {
   int i;
   for(i=0;i<mbr_bases.size;i++) {
-    TAPtr bs = mbr_bases.FastEl(i);
+    taBase* bs = mbr_bases.FastEl(i);
     if(bs == NULL) continue;
     bs->UpdateAfterEdit();
     taiMisc::Update(bs);
   }
   for(i=0;i<meth_bases.size;i++) {
-    TAPtr bs = meth_bases.FastEl(i);
+    taBase* bs = meth_bases.FastEl(i);
     if(bs == NULL) continue;
     bs->UpdateAfterEdit();
   }
@@ -487,4 +497,32 @@ String SelectEdit::GetMethLabel(int i) {
   if(!lbl.empty()) nm += " ";
   nm += methods.FastEl(i)->GetLabel();
   return nm;
+}
+
+int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
+  if(TestError(!obj || memb_contains.empty(), "SearchMembers", 
+	       "null object or empty search")) return -1;
+  SelectEdit* se = this;
+  return obj->SelectForEditSearch(memb_contains, se);
+}
+
+int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b) {
+  if(TestError(!obj_a || !obj_b, "CompareObjs", "null object(s)")) return -1;
+  if(TestError(obj_a->GetTypeDef() != obj_b->GetTypeDef(), "CompareObjs",
+	       "objects must have the exact same type to be able to be compared")) return -1;
+  Member_List mds;
+  void_PArray trg_bases;
+  void_PArray src_bases;
+  obj_a->CompareSameTypeR(mds, trg_bases, src_bases, obj_b);
+  for(int i=0;i<mds.size;i++) {
+    taBase* itma = (taBase*)trg_bases[i];
+    taBase* itmb = (taBase*)src_bases[i];
+    String nma = itma->GetName().elidedTo(10);
+    String nmb = itmb->GetName().elidedTo(10);
+    if(nma.empty()) nma = "A";
+    if(nmb.empty()) nma = "B";
+    SelectMember_impl(itma, mds[i], nma);
+    SelectMember_impl(itmb, mds[i], nmb);
+  }
+  return mds.size;
 }

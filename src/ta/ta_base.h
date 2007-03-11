@@ -708,6 +708,11 @@ public:
   virtual void		SearchNameContains(const String& nm, taBase_PtrList& items,
 					   taBase_PtrList* owners = NULL);
   // #CAT_ObjectMgmt search for objects whose name contains given string, from this point down the structural hierarchy (my members, and their members and objects in lists, etc).  items are linked into items list, and all owners of items found are linked into owners list (if present -- can be used as a lookup table for expanding owners to browse found items)
+  virtual void		CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
+					 void_PArray& src_bases, taBase* cp_base,
+					 int show_forbidden = taMisc::NO_HIDDEN,
+					 int show_allowed = taMisc::SHOW_CHECK_MASK);
+  // #IGNORE compare all member values from object of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists -- recursive -- will also check members of lists/groups that I own
 
   virtual String	GetEnumString(const String& enum_tp_nm, int enum_val) const
   { return GetTypeDef()->GetEnumString(enum_tp_nm, enum_val); }
@@ -858,11 +863,13 @@ public:
   // #CAT_ObjectMgmt call function of given name on this object, prompting for args using gui interface
   
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
-  // #MENU #CAT_Display #NULL_OK select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
+  // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
   virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor, const String& extra_label);
   // select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
   virtual int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
   // #MENU #NULL_OK #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
+  virtual int		SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor);
+  // #MENU #NULL_OK #CAT_Display #TYPE_ON_0_this search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
   virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label);
   // #MENU #NULL_OK #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected
   virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor, const String& extra_label);
@@ -872,7 +879,7 @@ public:
   //	Closing 
 
   virtual void		CloseLater();
-  // #MENU #CONFIRM #NO_REVERT_AFTER #LABEL_Close_(Destroy) #NO_MENU_CONTEXT #CAT_ObjectMgmt PERMANENTLY Destroy this object!  This is not Iconify.
+  // #MENU #MENU_ON_Object #CONFIRM #NO_REVERT_AFTER #LABEL_Close_(Destroy) #NO_MENU_CONTEXT #CAT_ObjectMgmt PERMANENTLY Destroy this object!  This is not Iconify or close window..
   virtual void		Close();
   // #IGNORE an immediate version of Close for use in code (no waitproc delay)
   virtual bool		Close_Child(TAPtr obj);
@@ -1399,6 +1406,10 @@ public:
 
   override void	SearchNameContains(const String& nm, taBase_PtrList& items,
 				   taBase_PtrList* owners = NULL);
+  override void	CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
+				 void_PArray& src_bases, taBase* cp_base,
+				 int show_forbidden = taMisc::NO_HIDDEN,
+				 int show_allowed = taMisc::SHOW_CHECK_MASK);
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);

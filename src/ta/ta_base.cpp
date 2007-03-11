@@ -1304,6 +1304,7 @@ void taBase::SearchNameContains(const String& nm, taBase_PtrList& items,
 				taBase_PtrList* owners) {
   TypeDef* td = GetTypeDef();
   int st_sz = items.size;
+  // first pass: just look at our guys
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
     if(md->type->ptr == 0) {
@@ -1312,12 +1313,43 @@ void taBase::SearchNameContains(const String& nm, taBase_PtrList& items,
 	if(obj->GetName().contains(nm)) {
 	  items.Link(obj);
 	}
+      }
+    }
+  }
+  // second pass: recurse
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members[m];
+    if(md->type->ptr == 0) {
+      if(md->type->InheritsFrom(TA_taBase)) {
+	taBase* obj = (taBase*)md->GetOff(this);
 	obj->SearchNameContains(nm, items, owners);
       }
     }
   }
   if(owners && (items.size > st_sz)) { // we added somebody somewhere..
     owners->Link(this);
+  }
+}
+
+void taBase::CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
+			      void_PArray& src_bases, taBase* cp_base,
+			      int show_forbidden, int show_allowed) {
+  if(!cp_base) return;
+  TypeDef* td = GetTypeDef();
+  if(td != cp_base->GetTypeDef()) return; // must be same type..
+  // search our guy:
+  td->CompareSameType(mds, trg_bases, src_bases, (void*)this, (void*)cp_base,
+		      show_forbidden, show_allowed);
+  // then recurse..
+  for(int m=0;m<td->members.size;m++) {
+    MemberDef* md = td->members[m];
+    if(md->type->ptr == 0) {
+      if(md->type->InheritsFrom(TA_taBase)) {
+	taBase* obj = (taBase*)md->GetOff(this);
+	taBase* cp_obj = (taBase*)md->GetOff(cp_base);
+	obj->CompareSameTypeR(mds, trg_bases, src_bases, cp_obj, show_forbidden, show_allowed);
+      }
+    }
   }
 }
 
@@ -1714,6 +1746,18 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
     }
   }
   return nfound;
+}
+
+int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor) {
+  if(TestError(!cmp_obj, "SelectForEditCompare", "cmp_obj is null")) return -1;
+  if(TestError(GetTypeDef() != cmp_obj->GetTypeDef(), "SelectForEditCompare", 
+	       "objects must have the exact same type to be able to be compared")) return -1;
+  if(!editor) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(TestError(!proj, "SelectForEditCompare", "cannot find project")) return -1;
+    editor = (SelectEdit*)proj->edits.New(1);
+  }
+  return editor->CompareObjs(this, cmp_obj);
 }
 
 bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label) {
@@ -2934,6 +2978,27 @@ void taList_impl::SearchNameContains(const String& nm, taBase_PtrList& items,
   }
   if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..
     owners->Link(this);
+  }
+}
+
+void taList_impl::CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
+				   void_PArray& src_bases, taBase* cp_base,
+				   int show_forbidden, int show_allowed) {
+  if(!cp_base) return;
+  if(GetTypeDef() != cp_base->GetTypeDef()) return; // must be same type..
+
+  taOBase::CompareSameTypeR(mds, trg_bases, src_bases, cp_base, show_forbidden, show_allowed);
+  // then recurse..
+  taList_impl* cp_lst = (taList_impl*)cp_base;
+  int mxsz = MIN(size, cp_lst->size);
+  for(int i=0; i<mxsz; i++) {
+    taBase* itm = (taBase*)FastEl_(i);
+    taBase* cp_itm = (taBase*)cp_lst->FastEl_(i);
+    if(!itm || !cp_itm) continue;
+    if((itm->GetOwner() == this) && (cp_itm->GetOwner() == cp_lst)) {
+       // for guys we own (not links; prevents loops)
+      itm->CompareSameTypeR(mds, trg_bases, src_bases, cp_itm, show_forbidden, show_allowed);
+    }
   }
 }
 

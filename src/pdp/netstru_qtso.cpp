@@ -611,7 +611,7 @@ void UnitGroupView::Render_impl_blocks() {
       fnt->name = "Arial";
       un_txt->addChild(fnt);
     }
-    SoFont* fnt = (SoFont*)un_txt->getChild(1);
+    SoFont* fnt = (SoFont*)un_txt->getChild(2);
     fnt->size.setValue(ufontsz);
   }
 
@@ -622,7 +622,7 @@ void UnitGroupView::Render_impl_blocks() {
   T3Color col;
   TwoDCoord pos;
   int v_idx = 0;
-  int t_idx = 2;		// base color + complexity + font
+  int t_idx = 3;		// base color + complexity + font
   // these go in normal order; indexes are backwards
   for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
@@ -849,7 +849,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   TwoDCoord pos;
   int v_idx = 0;
   int c_idx = 0;
-  int t_idx = 2;		// base color + font
+  int t_idx = 3;		// base color + font
   // these go in normal order; indexes are backwards
   for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left

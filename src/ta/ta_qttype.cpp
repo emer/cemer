@@ -1730,9 +1730,10 @@ taiMethodData* taiMenuMethod::GetMethodRep_impl(void* base, IDataHost* host_, ta
 // 	taiArgType	//
 //////////////////////////
 
-taiArgType::taiArgType(TypeDef* argt, MethodDef* mb, TypeDef* td)
+taiArgType::taiArgType(int aidx, TypeDef* argt, MethodDef* mb, TypeDef* td)
 : taiType(td) {
   meth = mb;
+  arg_idx = aidx;
   arg_typ = argt;
   err_flag = false;
 
@@ -1744,6 +1745,7 @@ taiArgType::taiArgType(TypeDef* argt, MethodDef* mb, TypeDef* td)
 
 taiArgType::taiArgType() {
   meth = NULL;
+  arg_idx = -1;
   arg_typ = NULL;
   err_flag = false;
 
@@ -1998,16 +2000,37 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
     return;
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   String mb_nm = meth->OptionAfter("TYPE_ON_");
-  if(mb_nm != "") {
-    if(mb_nm == "this") {
-      npt = ((TAPtr)base)->GetTypeDef(); // use object type
+  if(!mb_nm.empty()) {
+    if(isnumber(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
+      int aidx = (int)String((char)mb_nm.firstchar());
+      if(aidx == arg_idx) mb_nm = mb_nm.after(1); // use it
+      else mb_nm = _nilString;			  // bail
     }
-    else {
-      MemberDef* md = typ->members.FindName(mb_nm);
-      if(md != NULL) {
-	TypeDef* mbr_typ = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
-	if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
-	  npt = mbr_typ;		// make sure this applies to this argument..
+    if(!mb_nm.empty()) {	// check again..
+      if(mb_nm == "this") {
+	npt = ((TAPtr)base)->GetTypeDef(); // use object type
+      }
+      else {
+	MemberDef* md = typ->members.FindName(mb_nm);
+	if(md != NULL) {
+	  TypeDef* mbr_typ = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+	  if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
+	    npt = mbr_typ;		// make sure this applies to this argument..
+	}
+      }
+    }
+  }
+  else {
+    mb_nm = meth->OptionAfter("TYPE_");
+    if(!mb_nm.empty()) {
+      if(isnumber(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
+	int aidx = (int)String((char)mb_nm.firstchar());
+	if(aidx == arg_idx) mb_nm = mb_nm.after(1); // use it
+	else mb_nm = _nilString;			  // bail
+      }
+      if(!mb_nm.empty()) {	// check again..
+	TypeDef* tmptd = taMisc::types.FindName(mb_nm);
+	if(tmptd) npt = tmptd;
       }
     }
   }

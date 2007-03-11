@@ -919,6 +919,9 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
   if((rval == EOF) || (rval == 2))
     return rval;
 
+  // just got type information -- impose it on cons:
+  cons.SetType(con_type);
+
   int c = taMisc::read_till_lbracket(strm);	// get past opening bracket
   if(c == EOF) return EOF;
   c = taMisc::read_word(strm);

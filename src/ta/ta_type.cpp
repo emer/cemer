@@ -698,16 +698,43 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
 bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
 		       const char* a, const char* b, const char* c, const char* d,
 		       const char* e, const char* f, const char* g, const char* h) {
+  static taBase* prv_obj = NULL;
+  static String prv_fun;
+  static String prv_a;
+
   if(!test) return false;
+
+#ifdef DMEM_COMPILE
+  if(taMisc::dmem_proc > 0) return true;
+#endif
+
   if(obj) {
     String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
       + "() (path: " + obj->GetPath_Long() + ")\n";
-    taMisc::Error(objinfo, a, b, c, d, e, f, g, h);
+
+    if(obj == prv_obj && prv_fun == fun_name && prv_a == a) {
+      // nogui version for repeat!
+      taMisc::Error_nogui(objinfo, a, b, c, d, e, f, g, h);
+    }
+    else {
+      // default gui version
+      taMisc::Error(objinfo, a, b, c, d, e, f, g, h);
+    }
   }
   else {
     String fn = String("Function: ") + fun_name + "()\n";
-    taMisc::Error(fn, a, b, c, d, e, f, g, h);
+    if(prv_fun == fun_name && prv_a == a) {
+      // nogui version for repeat!
+      taMisc::Error_nogui(fn, a, b, c, d, e, f, g, h);
+    }
+    else {
+      // default gui version
+      taMisc::Error(fn, a, b, c, d, e, f, g, h);
+    }
   }
+  prv_obj = (taBase*)obj;
+  prv_fun = fun_name;
+  prv_a = a;
   return true;
 }
 
@@ -728,12 +755,8 @@ bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
 }
 #endif
 
-#ifdef TA_NO_GUI
-// we put the no-gui versions here, to avoid dragging in all the gui stuff
-// the gui versions are in ta_type_qt.cc
-
-void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
-  const char* e, const char* f, const char* g, const char* h, const char* i)
+void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char* d,
+			 const char* e, const char* f, const char* g, const char* h, const char* i)
 {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   if(taMisc::dmem_proc > 0) return;
@@ -747,6 +770,16 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
   }
 #endif
+}
+
+#ifdef TA_NO_GUI
+// we put the no-gui versions here, to avoid dragging in all the gui stuff
+// the gui versions are in ta_type_qt.cc
+
+void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
+  const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+  Error_nogui(a,b,c,d,e,f,g,h,i);
 }
 
 int taMisc::Choice(const char* text, const char* a, const char* b, const char* c,
@@ -5340,6 +5373,51 @@ void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
 void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
   if(memb_no < members.size)
     members[memb_no]->CopyFromSameType(trg_base, src_base);
+}
+
+//////////////////////////////////
+// 	CompareSameType		//
+//////////////////////////////////
+
+void MemberSpace::CompareSameType(Member_List& mds, void_PArray& trg_bases,
+				  void_PArray& src_bases, void* trg_base, void* src_base,
+				  int show_forbidden, int show_allowed) {
+  int i;
+  for(i=0; i<size; i++) {
+    MemberDef* md = FastEl(i);
+    if(md->ShowMember(show_forbidden, TypeItem::SC_ANY, show_allowed))
+      md->CompareSameType(mds, trg_bases, src_bases, trg_base, src_base, show_forbidden,
+			  show_allowed);
+  }
+}
+
+void MemberDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
+				void_PArray& src_bases, void* trg_base, void* src_base,
+				int show_forbidden, int show_allowed) {
+  if(type->InheritsFormal(TA_class) &&
+     !(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE"))) {
+    type->CompareSameType(mds, trg_bases, src_bases, GetOff(trg_base), 
+			  GetOff(src_base), show_forbidden, show_allowed);
+  }
+  else {
+    // actually do the comparison, based on string value
+    if(type->GetValStr(GetOff(trg_base), trg_base, this) !=
+       type->GetValStr(GetOff(src_base), src_base, this)) {
+      mds.Link(this); trg_bases.Add(trg_base); src_bases.Add(src_base);
+    }
+  }
+}
+
+void TypeDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
+			      void_PArray& src_bases, void* trg_base, void* src_base,
+			      int show_forbidden, int show_allowed) {
+  if(InheritsFormal(TA_class)) {
+    members.CompareSameType(mds, trg_bases, src_bases, trg_base, src_base, show_forbidden,
+			    show_allowed);
+  }
+  else {
+    taMisc::Error("CompareSameType called on non-class object -- does not work!");
+  }
 }
 
 //////////////////////////////////////////////////////////

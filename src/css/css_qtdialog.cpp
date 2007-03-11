@@ -418,7 +418,7 @@ taiArgType* cssiArgDialog::GetBestArgType(int aidx, TypeDef* argt, MethodDef* md
   }
   if (hi_arg == NULL)
     return NULL;
-  return hi_arg->ArgTypeInst(argt, md, td);
+  return hi_arg->ArgTypeInst(aidx, argt, md, td);
 }
 
 void cssiArgDialog::Constr_Data_Labels() {

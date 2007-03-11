@@ -284,6 +284,27 @@ protected:
   void		El_SetFmStr_(void* it, const String& val) { ((NameVar*)it)->SetFmStr(val); }
 };
 
+#ifdef __MAKETA__
+class TA_API void_PArray {
+#else
+class TA_API void_PArray: public taPlainArray<void*> {
+#endif
+  // #NO_TOKENS #NO_MEMBERS #NO_CSS a plain-array of void* pointers
+public:
+  void	operator=(const void_PArray& cp)	{ Copy_Duplicate(cp); }
+  void_PArray()				{ };
+  void_PArray(const void_PArray& cp)	{ Copy_Duplicate(cp); }
+
+protected:
+  int		El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((void**)a) > *((void**)b)) rval=1; else if(*((void**)a) == *((void**)b)) rval=0; return rval; }
+  bool		El_Equal_(const void* a, const void* b) const
+    { return (*((void**)a) == *((void**)b)); }
+  String	El_GetStr_(const void* it) const { return (int)(*((void**)it)); }
+  void		El_SetFmStr_(void* it, const String& val)
+  { int tmp = (int)val; *((void**)it) = (void*)tmp; }
+};
+
 class TA_API DumpFileCvt {
   // ##NO_TOKENS #CAT_File parameters to convert a dump file
 public:
@@ -725,6 +746,10 @@ public:
 		      const char* d=0, const char* e=0, const char* f=0,
 		      const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Dialog displays error either in a window+stderr if gui_active or to stderr only
+  static void 	Error_nogui(const char* a, const char* b=0, const char* c=0,
+			    const char* d=0, const char* e=0, const char* f=0,
+			    const char* g=0, const char* h=0, const char* i=0);
+  // #CAT_Dialog explicit no-gui version of error: displays error to stderr only
 
 #ifndef NO_TA_BASE
   static bool 	TestError(const taBase* obj, bool test, const char* fun_name,
@@ -1372,6 +1397,13 @@ public:
   virtual void		CopyOnlySameType(void* trg_base, void* src_base);
   // copy only those members in my type (no inherited ones)
 
+  virtual void		CompareSameType(Member_List& mds, void_PArray& trg_bases,
+					void_PArray& src_bases, 
+					void* trg_base, void* src_base,
+					int show_forbidden = taMisc::NO_HIDDEN,
+					int show_allowed = taMisc::SHOW_CHECK_MASK);
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
+
   // IO
   virtual ostream&   	OutputType(ostream& strm, int indent = 0) const;
 
@@ -1623,6 +1655,12 @@ public:
   // copy all members from same type
   void		CopyOnlySameType(void* trg_base, void* src_base);
   // copy only those members from same type (no inherited)
+  void		CompareSameType(Member_List& mds, void_PArray& trg_bases,
+				void_PArray& src_bases, 
+				void* trg_base, void* src_base,
+				int show_forbidden = taMisc::NO_HIDDEN,
+				int show_allowed = taMisc::SHOW_CHECK_MASK);
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
 
   ostream&   	OutputType(ostream& strm, int indent = 1) const;
 
@@ -1937,6 +1975,12 @@ public:
   // copy only those members from same type (no inherited)
   void		MemberCopyFrom(int memb_no, void* trg_base, void* src_base);
   // copy a particular member from same type
+  void		CompareSameType(Member_List& mds, void_PArray& trg_bases,
+				void_PArray& src_bases, 
+				void* trg_base, void* src_base,
+				int show_forbidden = taMisc::NO_HIDDEN,
+				int show_allowed = taMisc::SHOW_CHECK_MASK);
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
 
   // IO
   ostream& 	Output(ostream& strm, void* base, int indent=0) const;

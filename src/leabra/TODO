@@ -6,7 +6,9 @@ commit:
 ------------
 current:
 
-* load/save all prog_lib and testsprojects
+* change tokenptrargtype to use new obj browser!
+
+* load/save all prog_lib and testsprojects & test convert
 * NewLayer not working in netview
 * default type not loading (#311)
 
