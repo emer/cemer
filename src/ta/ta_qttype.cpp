@@ -2001,7 +2001,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   String mb_nm = meth->OptionAfter("TYPE_ON_");
   if(!mb_nm.empty()) {
-    if(isnumber(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
+    if(isdigit(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
       int aidx = (int)String((char)mb_nm.firstchar());
       if(aidx == arg_idx) mb_nm = mb_nm.after(1); // use it
       else mb_nm = _nilString;			  // bail
@@ -2023,7 +2023,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   else {
     mb_nm = meth->OptionAfter("TYPE_");
     if(!mb_nm.empty()) {
-      if(isnumber(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
+      if(isdigit(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
 	int aidx = (int)String((char)mb_nm.firstchar());
 	if(aidx == arg_idx) mb_nm = mb_nm.after(1); // use it
 	else mb_nm = _nilString;			  // bail
