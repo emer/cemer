@@ -517,10 +517,10 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b) {
   for(int i=0;i<mds.size;i++) {
     taBase* itma = (taBase*)trg_bases[i];
     taBase* itmb = (taBase*)src_bases[i];
-    String nma = itma->GetName().elidedTo(10);
-    String nmb = itmb->GetName().elidedTo(10);
+    String nma = itma->GetDisplayName().elidedTo(10);
+    String nmb = itmb->GetDisplayName().elidedTo(10);
     if(nma.empty()) nma = "A";
-    if(nmb.empty()) nma = "B";
+    if(nmb.empty()) nmb = "B";
     SelectMember_impl(itma, mds[i], nma);
     SelectMember_impl(itmb, mds[i], nmb);
   }
