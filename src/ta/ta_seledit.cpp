@@ -129,6 +129,7 @@ bool SelectEdit::BaseClosing(taBase* base) {
   int i;
   for(i=mbr_bases.size-1;i>=0;i--) {
     taBase* bs = mbr_bases.FastEl(i);
+    if(!bs) continue;
     char* staddr = (char*)bs;
     char* endaddr=staddr+bs->GetSize();
     char* vbase = (char*)base;
@@ -156,6 +157,7 @@ bool SelectEdit::BaseDataChanged(taBase* base,
   int i;
   for(i=mbr_bases.size-1;i>=0;i--) {
     taBase* bs = mbr_bases.FastEl(i);
+    if(!bs) continue;
     char* staddr = (char*)bs;
     char* endaddr=staddr+bs->GetSize();
     char* vbase = (char*)base;
@@ -198,7 +200,7 @@ void SelectEdit::BaseChangeReShow() {
     for(i=0;i<mbr_base_paths.size;i++) {
       String path = mbr_base_paths.FastEl(i);
       taBase* bs = tabMisc::root->FindFromPath(path);
-      if(bs == NULL) {
+      if(!bs) {
 	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
 	members.RemoveIdx(i);  mbr_strs.RemoveIdx(i);  config.mbr_labels.RemoveIdx(i);  mbr_base_paths.RemoveIdx(i);
 	i--;
@@ -215,7 +217,7 @@ void SelectEdit::BaseChangeReShow() {
     for(i=0;i<meth_base_paths.size;i++) {
       String path = meth_base_paths.FastEl(i);
       taBase* bs = tabMisc::root->FindFromPath(path);
-      if(bs == NULL) {
+      if(!bs) {
 	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
 	methods.RemoveIdx(i);  meth_strs.RemoveIdx(i);  config.meth_labels.RemoveIdx(i);  meth_base_paths.RemoveIdx(i);
 	i--;
@@ -268,7 +270,7 @@ void SelectEdit::GetMembsFmStrs() {
   int i;
   for(i=0;i<mbr_bases.size;i++) {
     taBase* bs = mbr_bases.FastEl(i);
-    if(bs == NULL) { // didn't get loaded, bail..
+    if(!bs) { // didn't get loaded, bail..
       taMisc::Warning("*** SelectEdit: couldn't find object:", config.mbr_labels[i], mbr_strs[i], "in object to edit");
       mbr_bases.RemoveIdx(i);      mbr_strs.RemoveIdx(i);      config.mbr_labels.RemoveIdx(i);
       i--;
@@ -388,7 +390,7 @@ void SelectEdit::UpdateAllBases() {
   int i;
   for(i=0;i<mbr_bases.size;i++) {
     taBase* bs = mbr_bases.FastEl(i);
-    if(bs == NULL) continue;
+    if(!bs) continue;
     bs->UpdateAfterEdit();
     taiMisc::Update(bs);
   }
