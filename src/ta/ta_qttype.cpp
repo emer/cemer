@@ -1875,7 +1875,35 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
+bool taiArgType::GetHasOption(const String& opt, MethodDef* md, int aidx) {
+  if(!md) md = meth;
+  if(!md) return false;
+  if(aidx < 0) aidx = arg_idx;
+  String mb_nm = md->OptionAfter(opt + "_");
+  if(!mb_nm.empty()) {
+    if(isdigit(mb_nm.firstchar())) { // arg position indicator
+      int ai = (int)String((char)mb_nm.firstchar());
+      if(ai == aidx) return true;
+      else return false;
+    }
+  }
+  return md->HasOption(opt);
+}
 
+String taiArgType::GetOptionAfter(const String& opt, MethodDef* md, int aidx) {
+  if(!md) md = meth;
+  if(!md) return _nilString;
+  if(aidx < 0) aidx = arg_idx;
+  String mb_nm = md->OptionAfter(opt);
+  if(!mb_nm.empty()) {
+    if(isdigit(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
+      int ai = (int)String((char)mb_nm.firstchar());
+      if(ai == aidx) mb_nm = mb_nm.after(1); // use it
+      else mb_nm = _nilString;			  // bail
+    }
+  }
+  return mb_nm;
+}
 
 //////////////////////////////////
 //       taiStreamArgType     //
@@ -1986,12 +2014,14 @@ cssEl* taiTokenPtrArgType::GetElFromArg(const char* nm, void*) {
 taiData* taiTokenPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   int token_flags = 0;
-  if (meth->HasOption("NULL_OK"))
+  if (GetHasOption("NULL_OK"))
     token_flags |= taiData::flgNullOk;
-  if (meth->HasOption("EDIT_OK"))
+  if (GetHasOption("EDIT_OK"))
     token_flags |= taiData::flgEditOk;
-  taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
-	token_flags);
+  taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, token_flags);
+  return rval;
+//   taiToken* rval = new taiToken(taiMenu::buttonmenu, taiMisc::fonSmall, npt, host_, par, gui_parent_,
+// 	token_flags);
   return rval;
 }
 
@@ -1999,57 +2029,50 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   if(arg_base == NULL)
     return;
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
-  String mb_nm = meth->OptionAfter("TYPE_ON_");
+  String mb_nm = GetOptionAfter("TYPE_ON_");
   if(!mb_nm.empty()) {
-    if(isdigit(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
-      int aidx = (int)String((char)mb_nm.firstchar());
-      if(aidx == arg_idx) mb_nm = mb_nm.after(1); // use it
-      else mb_nm = _nilString;			  // bail
+    if(mb_nm == "this") {
+      npt = ((TAPtr)base)->GetTypeDef(); // use object type
     }
-    if(!mb_nm.empty()) {	// check again..
-      if(mb_nm == "this") {
-	npt = ((TAPtr)base)->GetTypeDef(); // use object type
-      }
-      else {
-	MemberDef* md = typ->members.FindName(mb_nm);
-	if(md != NULL) {
-	  TypeDef* mbr_typ = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
-	  if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
-	    npt = mbr_typ;		// make sure this applies to this argument..
-	}
+    else {
+      MemberDef* md = typ->members.FindName(mb_nm);
+      if(md != NULL) {
+	TypeDef* mbr_typ = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+	if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
+	  npt = mbr_typ;		// make sure this applies to this argument..
       }
     }
   }
   else {
-    mb_nm = meth->OptionAfter("TYPE_");
-    if(!mb_nm.empty()) {
-      if(isdigit(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
-	int aidx = (int)String((char)mb_nm.firstchar());
-	if(aidx == arg_idx) mb_nm = mb_nm.after(1); // use it
-	else mb_nm = _nilString;			  // bail
-      }
-      if(!mb_nm.empty()) {	// check again..
-	TypeDef* tmptd = taMisc::types.FindName(mb_nm);
-	if(tmptd) npt = tmptd;
-      }
+    mb_nm = GetOptionAfter("TYPE_");
+    if(!mb_nm.empty()) {	// check again..
+      TypeDef* tmptd = taMisc::types.FindName(mb_nm);
+      if(tmptd) npt = tmptd;
     }
   }
-  taiToken* rval = (taiToken*)dat;
+  taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
+  //  taiToken* rval = (taiToken*)dat;
   TAPtr scope = NULL;
-  if(meth->HasOption("NO_SCOPE"))
+  if(GetHasOption("NO_SCOPE"))
     scope = NULL;
   else if((rval->host != NULL) && (rval->host->GetBaseTypeDef() != NULL) &&
 	  (rval->host->GetBaseTypeDef()->InheritsFrom(TA_taBase)))
     scope = (TAPtr)(rval->host)->Base();
   else
     scope = (TAPtr)base;
+  String nulltxt = GetOptionAfter("NULL_TEXT_");
+  if(nulltxt.nonempty()) {
+    taMisc::SpaceLabel(nulltxt);
+    rval->setNullText(nulltxt);
+  }
   rval->GetImage(*((TAPtr*)arg_base), npt, scope);
 }
 
 void taiTokenPtrArgType::GetValue_impl(taiData* dat, void*) {
   if(arg_base == NULL)
     return;
-  taiToken* rval = (taiToken*)dat;
+  taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
+//   taiToken* rval = (taiToken*)dat;
 // since it is an arg type, its a ptr to a css ptr, don't set it..
 //   if(npt->DerivesFrom(TA_taBase))
 //     taBase::SetPointer((TAPtr*)arg_base, (TAPtr)rval->GetValue());
@@ -2069,7 +2092,7 @@ int taiTypePtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, Typ
 
 
 cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
-  String mb_nm = meth->OptionAfter("TYPE_ON_");
+  String mb_nm = GetOptionAfter("TYPE_ON_");
   if (mb_nm != "") {
     MemberDef* md = typ->members.FindName(mb_nm);
     if ((md != NULL) && (md->type == &TA_TypeDef_ptr)) {
@@ -2079,7 +2102,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       return arg_val;
     }
   } else {
-    mb_nm = meth->OptionAfter("TYPE_");
+    mb_nm = GetOptionAfter("TYPE_");
     if(mb_nm != "") {
       TypeDef* tpdf;
       if (mb_nm == "this") {
@@ -2103,7 +2126,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
 
 taiData* taiTypePtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   bool nul_ok = false;
-  nul_ok = (meth->HasOption("NULL_OK"));
+  nul_ok = (GetHasOption("NULL_OK"));
   TypeDef* init_typ = &TA_taBase;
   if (*((TypeDef**)arg_base) != NULL)
     init_typ = *((TypeDef**)arg_base);
@@ -2115,6 +2138,11 @@ void taiTypePtrArgType::GetImage_impl(taiData* dat, const void*) {
   if (arg_base == NULL)
     return;
   taiTypeDefButton* rval = (taiTypeDefButton*)dat;
+  String nulltxt = GetOptionAfter("NULL_TEXT_");
+  if(nulltxt.nonempty()) {
+    taMisc::SpaceLabel(nulltxt);
+    rval->setNullText(nulltxt);
+  }
   TypeDef* typ_ = (TypeDef*)*((void**)arg_base);
   rval->GetImage((TypeDef*)*((void**)arg_base), typ_);
 }
@@ -2478,7 +2506,7 @@ void gpiLinkList::GetMbrValue(taiData*, void*, bool&) {
 
 int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   if (td->InheritsFrom(TA_taBase) && (md->type->ptr == 1)
-     && md->type->DerivesFrom(TA_taBase) && (md->OptionAfter("FROM_GROUP_") != ""))
+      && md->type->DerivesFrom(TA_taBase) && md->OptionAfter("FROM_GROUP_").nonempty())
     return taiTokenPtrMember::BidForMember(md,td)+1;
   return 0;
 }
@@ -2597,9 +2625,9 @@ cssEl* gpiInObjArgType::GetElFromArg(const char* nm, void* base) {
 
 taiData* gpiInObjArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   int new_flags = 0; //note: exclude flgNoList
-  if (meth->HasOption("NULL_OK"))
+  if (GetHasOption("NULL_OK"))
     new_flags |= taiData::flgNullOk;
-/*nn  if (meth->HasOption("EDIT_OK"))
+/*nn  if (GetHasOption("EDIT_OK"))
     new_flags |= taiData::flgEditOk; */
   if (typ->InheritsFrom(TA_taGroup_impl))
     return new taiGroupElsButton(typ, host_, par, gui_parent_,
@@ -2635,12 +2663,8 @@ void gpiInObjArgType::GetValue_impl(taiData* dat, void*) {
 int gpiFromGpArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if ((argt->ptr != 1) || !argt->DerivesFrom(TA_taBase))
     return 0;
-  String fmgp = md->OptionAfter("FROM_GROUP_");
+  String fmgp = GetOptionAfter("FROM_GROUP_", md, aidx);
   if (fmgp.empty()) return 0;
-  if (isdigit(fmgp.firstchar()) && (fmgp.at(1,1) == "_")) {
-    int idx = (int)(String)fmgp.before('_');
-    if(aidx > idx) return 0;	// index means anything at this index or less
-  }
   return taiTokenPtrArgType::BidForArgType(aidx,argt,md,td)+1;
   return 0;
 }
@@ -2663,12 +2687,12 @@ taiData* gpiFromGpArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidg
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return NULL;
   int new_flags = 0;
-  if (meth->HasOption("NULL_OK"))
+  if (GetHasOption("NULL_OK"))
     new_flags |= taiData::flgNullOk;
-  if (meth->HasOption("EDIT_OK"))
+  if (GetHasOption("EDIT_OK"))
     new_flags |= taiData::flgEditOk;
 
-  if (meth->HasOption("NO_GROUP_OPT"))
+  if (GetHasOption("NO_GROUP_OPT"))
     new_flags |= taiData::flgNoGroup; //aka flagNoList
 
   if (from_md->type->DerivesFrom(TA_taGroup_impl))
@@ -2710,10 +2734,8 @@ void gpiFromGpArgType::GetValue_impl(taiData* dat, void*) {
 
 MemberDef* gpiFromGpArgType::GetFromMd() {
   MemberDef* from_md = NULL;
-  String mb_nm = meth->OptionAfter("FROM_GROUP_");
+  String mb_nm = GetOptionAfter("FROM_GROUP_");
   if (!mb_nm.empty()) {
-    if (isdigit(mb_nm.firstchar()) && (mb_nm.at(1,1) == "_"))
-      mb_nm = mb_nm.after('_');
     from_md = typ->members.FindName(mb_nm);
   }
   return from_md;

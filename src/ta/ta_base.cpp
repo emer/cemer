@@ -1343,13 +1343,12 @@ void taBase::CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
   // then recurse..
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->ptr == 0) {
-      if(md->type->InheritsFrom(TA_taBase)) {
-	taBase* obj = (taBase*)md->GetOff(this);
-	taBase* cp_obj = (taBase*)md->GetOff(cp_base);
-	obj->CompareSameTypeR(mds, trg_bases, src_bases, cp_obj, show_forbidden, show_allowed);
-      }
-    }
+    if(md->type->ptr > 0 || !md->type->InheritsFrom(TA_taBase)) continue;
+    if(md->type->HasOption("EDIT_INLINE") || md->type->HasOption("INLINE")) continue;
+    if(md->HasOption("HIDDEN")) continue; // categorically don't look at hidden objects for diffs
+    taBase* obj = (taBase*)md->GetOff(this);
+    taBase* cp_obj = (taBase*)md->GetOff(cp_base);
+    obj->CompareSameTypeR(mds, trg_bases, src_bases, cp_obj, show_forbidden, show_allowed);
   }
 }
 
@@ -1724,6 +1723,9 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectForEditSearch", "cannot find project")) return -1;
     editor = (SelectEdit*)proj->edits.New(1);
+    editor->name = "Srch_" + memb_contains;
+    editor->desc = "Search of members containing: " + memb_contains 
+      + " in object: " + GetDisplayName();
   }
   TypeDef* td = GetTypeDef();
   int nfound = 0;

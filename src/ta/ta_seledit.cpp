@@ -26,7 +26,7 @@
 //////////////////////////////////
 
 void SelectEditConfig::Initialize() {
-  auto_edit = true;
+  auto_edit = false;
 }
 
 void SelectEditConfig::Destroy() {
@@ -499,21 +499,40 @@ String SelectEdit::GetMethLabel(int i) {
   return nm;
 }
 
+void SelectEdit::Reset() {
+  for(int i=members.size-1;i>=0;i--) {
+    RemoveField_impl(i);
+    //    RemoveField(i);
+  }
+  // this causes problems!
+  for(int i=methods.size-1;i>=0;i--) {
+    RemoveFun_impl(i);
+    //   RemoveFun(i);
+  }
+  ReShowEdit(true); //forced
+}
+
 int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
   if(TestError(!obj || memb_contains.empty(), "SearchMembers", 
 	       "null object or empty search")) return -1;
   SelectEdit* se = this;
-  return obj->SelectForEditSearch(memb_contains, se);
+  int rval = obj->SelectForEditSearch(memb_contains, se);
+  ReShowEdit(true); //forced
+  return rval;
 }
 
 int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b) {
   if(TestError(!obj_a || !obj_b, "CompareObjs", "null object(s)")) return -1;
   if(TestError(obj_a->GetTypeDef() != obj_b->GetTypeDef(), "CompareObjs",
 	       "objects must have the exact same type to be able to be compared")) return -1;
+  name = "Cmp_" + obj_a->GetName() + "_" + obj_b->GetName();
+  desc = "Differences between: A: " + obj_a->GetDisplayName() + " and B: " + 
+    obj_b->GetDisplayName();
   Member_List mds;
   void_PArray trg_bases;
   void_PArray src_bases;
   obj_a->CompareSameTypeR(mds, trg_bases, src_bases, obj_b);
+  taMisc::Info("SelectEdit::CompareObjs generated", (String)mds.size, "differences");
   for(int i=0;i<mds.size;i++) {
     taBase* itma = (taBase*)trg_bases[i];
     taBase* itmb = (taBase*)src_bases[i];
@@ -522,5 +541,6 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b) {
     SelectMember_impl(itma, mds[i], nma);
     SelectMember_impl(itmb, mds[i], nmb);
   }
+  ReShowEdit(true);
   return mds.size;
 }

@@ -2934,6 +2934,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   targ_typ = NULL; // gets set later
   m_sel = NULL;
   cats = NULL;
+  null_text = " NULL";
   if (flags_ & flgEditDialog) {
     // put the stuff in the gui
     QWidget* act_par = new QWidget(gui_parent_);
@@ -3007,7 +3008,7 @@ const String taiItemPtrBase::labelText() {
   String nm;
 //note: don't include itemTag with name -- label is usually descriptive
   if (m_sel) nm = labelNameNonNull();
-  else       nm = itemTag() + String::con_NULL;
+  else       nm = itemTag() + nullText();
   return nm ;
 }
 
@@ -3315,7 +3316,7 @@ void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
   switch (view) {
   case 0: 
     if (HasFlag(flgNullOk)) {
-      QTreeWidgetItem* item = ic->AddItem(" NULL", NULL, (void*)NULL); 
+      QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL); 
       item->setData(1, Qt::DisplayRole, " "); //note: no desc
     }
     BuildChooser_0(ic, targ_typ, NULL); 
@@ -3440,7 +3441,7 @@ void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
     if (HasFlag(flgNullOk)) {
       // note: ' ' makes it sort to the top
       QTreeWidgetItem* item = ic->AddItem(" ", NULL, (void*)NULL); //note: no desc
-      item->setData(1, Qt::DisplayRole, " NULL");
+      item->setData(1, Qt::DisplayRole, nullText());
     }
     BuildChooser_0(ic, targ_typ, NULL); 
     ic->items->sortItems(0, Qt::Ascending);
@@ -3584,7 +3585,7 @@ void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {
   case 0: 
     if (HasFlag(flgNullOk)) {
       // note: ' ' makes it sort to the top
-      QTreeWidgetItem* item = ic->AddItem(" NULL", NULL, (void*)NULL); //note: no desc
+      QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL); //note: no desc
       item->setData(1, Qt::DisplayRole, " ");
     }
     BuildChooser_0(ic, targ_typ, NULL); 

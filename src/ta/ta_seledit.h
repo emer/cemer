@@ -49,6 +49,7 @@ public:
   static void		BaseClosingAll(taBase* obj);
   static void		BaseDataChangedAll(taBase*, int dcr, void* obj1, void* obj2);
   
+  String	desc;		// #EDIT_DIALOG description of what this edit contains
   SelectEditConfig config;	// special parameters for controlling the display
 
   taBase_List	mbr_bases;	// #LINK_GROUP #READ_ONLY #AKA_bases the bases for each element in the list
@@ -96,12 +97,15 @@ public:
   // #IGNORE just remove the fields
 
   virtual void	NewEdit();
-  // #MENU #MENU_SEP_BEFORE closes current edit dialog and makes a new one (with any changes)
+  // closes current edit dialog and makes a new one (with any changes)
 
+  // todo: following should be #BUTTON but it doesn't work..
+  virtual void	Reset();
+  // #MENU #MENU_SEP_BEFORE #CONFIRM reset (remove all) current members and methods
   virtual int	SearchMembers(taNBase* obj, const String& memb_contains);
-  // #BUTTON search given object for member names that contain given string, and add them to this editor
+  // #MENU search given object for member names that contain given string, and add them to this editor
   virtual int	CompareObjs(taBase* obj_a, taBase* obj_b);
-  // #BUTTON #TYPE_taNBase compare two objects (must be of the same type) and add the differences in this select edit
+  // #MENU #TYPE_taNBase compare two objects (must be of the same type) and add the differences in this select edit
 
   virtual void	GetMembsFmStrs(); // #IGNORE get members from strings (upon loading)
   virtual void	GetMethsFmStrs(); // #IGNORE get methods from strings (upon loading)
@@ -120,6 +124,7 @@ public:
   // get paths before saving
 
   override String 	GetTypeDecoKey() const { return "SelectEdit"; }
+  override String	GetDesc() const { return desc; }
 
   // note: this is intentionally not _impl:
   void	UpdateAfterEdit();

@@ -585,6 +585,11 @@ public:
   void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
+  virtual bool	GetHasOption(const String& opt, MethodDef* md = NULL, int aidx = -1);
+  // check the meth->HasOption, also taking into account a possible restriction to a particular argument index, specified as opt_n_xxx where n = arg idx
+  virtual String GetOptionAfter(const String& opt, MethodDef* md = NULL, int aidx = -1);
+  // get the meth->OptionAfter(opt), also taking into account a possible restriction to a particular argument index, specified as opt_n_xxx where n = arg idx
+
   taiArgType(int aidx, TypeDef* argt, MethodDef* mb, TypeDef* td);
   taiArgType();
   ~taiArgType();

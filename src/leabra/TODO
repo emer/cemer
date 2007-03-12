@@ -6,7 +6,7 @@ commit:
 ------------
 current:
 
-* change tokenptrargtype to use new obj browser!
+* css NULL cvt err for arg.
 
 * load/save all prog_lib and testsprojects & test convert
 * NewLayer not working in netview

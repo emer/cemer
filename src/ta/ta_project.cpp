@@ -1017,6 +1017,9 @@ bool taRootBase::Startup_Console() {
       cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));
       cwin->show();
       taMisc::console_win = cwin; // note: uses a guarded QPointer
+
+      MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
+      db->ViewWindow();		// make sure root guy is on top
     }
   }
 #endif

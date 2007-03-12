@@ -927,17 +927,21 @@ public:
   virtual int		columnCount(int view) const = 0; 
     // number of header columns in the view
   virtual const String	headerText(int index, int view) const = 0;
+  inline const String   nullText() { return null_text; }
   inline QAbstractButton* rep() {return m_but;}
   inline void*		sel() const {return m_sel;}
   virtual bool		isValid() const {return (targ_typ);} // if all required params have been set
   virtual int		catCount() const; 
-    // number of categories, where supported; 0=nocat, 1+=cats
+  // number of categories, where supported; 0=nocat, 1+=cats
   virtual const String	catText(int index) const; 
-    // number of different kinds of views, ex flat vs. 
+  // number of different kinds of views, ex flat vs. 
   virtual int		viewCount() const {return 1;} 
-    // number of different kinds of views, ex flat vs. tree
+  // number of different kinds of views, ex flat vs. tree
   virtual const String	viewText(int index) const = 0; 
-    // number of different kinds of views, ex flat vs. 
+  // number of different kinds of views, ex flat vs. 
+
+  void			setNullText(const String& nt) { null_text = " " + nt; }
+  // set text to display instead of NULL for a null item
   
   virtual void 		GetImage(void* cur_sel, TypeDef* targ_typ);
   
@@ -958,6 +962,7 @@ protected:
   QToolButton*		btnEdit; // only for tokens
   TypeDef*		targ_typ; 
   String_Array*		cats; // categories -- only created if needed
+  String		null_text;	
   
   virtual const String	itemTag() const {return _nilString;} // for "N: label" on button, is "N: "
   virtual const String	labelNameNonNull() const = 0; // name part of label, when obj non-null
@@ -1090,10 +1095,10 @@ class TA_API taiTokenPtrButton : public taiItemPtrBase {
 INHERITED(taiItemPtrBase)
 public:
   inline TAPtr		token() const {return (TAPtr)m_sel;}
-  int			columnCount(int view) const; // override
-  const String		headerText(int index, int view) const; // override
-  int			viewCount() const {return 1;} // override
-  const String		viewText(int index) const; // override
+  override int		columnCount(int view) const;
+  override const String	headerText(int index, int view) const;
+  override int		viewCount() const {return 1;}
+  override const String	viewText(int index) const;
 
   virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL);
     // get image, using the new type and scope supplied

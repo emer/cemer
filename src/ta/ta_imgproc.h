@@ -102,9 +102,9 @@ public:
   // #CAT_DoGFilter make our personal filter (RenderFilter(filter)) according to current params
 
   virtual void	GraphFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph
   virtual void	GridFilter(DataTable* disp_data, bool reset = true);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view (reset any existing data first)
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a grid view (reset any existing data first)
 
   void 	Initialize();
   void	Destroy() { };
@@ -151,9 +151,9 @@ public:
   // #CAT_GaborFilter get particular parameter value
 
   virtual void	GraphFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter into data table and generate a graph from it
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a graph from it
   virtual void	GridFilter(DataTable* disp_data, bool reset = true);
-  // #BUTTON #NULL_OK plot the filter into data table and generate a grid view of it (reset an existing data first)
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a grid view of it (reset an existing data first)
 
   virtual void	OutputParams(ostream& strm = cerr);
   // #CAT_GaborFilter output current parameter values to stream
@@ -216,7 +216,7 @@ public:
   // update the computed sizes
 
   virtual void	PlotSpacing(DataTable* disp_data, float val = 1.0f);
-  // #BUTTON #NULL_OK plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
 
   void 	Initialize();
   void	Destroy() { };
@@ -237,12 +237,12 @@ public:
   // apply DoG filter to input image, result in output (on = + vals, off = - vals). superimpose = add values into the outputs instead of overwriting
 
   virtual void	GraphFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph
   virtual void	GridFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a grid view
 
   virtual void	PlotSpacing(DataTable* disp_data, float val = 1.0f);
-  // #BUTTON #NULL_OK plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
 
   void 	Initialize();
   void	Destroy() { };
@@ -353,9 +353,9 @@ public:
   // actually perform the filtering operation on input patterns: Blobs
 
   virtual void	GraphFilter(DataTable* disp_data, int unit_no);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
   virtual void	GridFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view of all the gabor or blob filters
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a grid view of all the gabor or blob filters
 
   void 	Initialize();
   void	Destroy() { };
@@ -455,10 +455,10 @@ public:
   // #BUTTON #CAT_Filter create a set of default filters
 
   virtual void	ConfigDataTable(DataTable* dt, bool reset_cols = false);
-  // #BUTTON #CAT_Config #NULL_OK configure a data table to hold all of the image data (if reset_cols, reset any existing cols in data table before adding new ones) (if dt == NULL, a new one is created in data.InputData)
+  // #BUTTON #CAT_Config #NULL_OK_0 #NULL_TEXT_0_NewDataTable configure a data table to hold all of the image data (if reset_cols, reset any existing cols in data table before adding new ones) (if dt == NULL, a new one is created in data.InputData)
 
   virtual void	PlotSpacing(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the arrangement of the filters (centers) in the data table and generate a grid view
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the arrangement of the filters (centers) in the data table and generate a grid view
 
   ///////////////////////////////////////////////////////////////////////
   // Basic filtering function: transforms image and then applies dog filters
@@ -564,10 +564,10 @@ public:
   // update the sizes of our filters based on the retina spec values
 
   virtual void	ConfigDataTable(DataTable* dt, bool reset_cols = false);
-  // #BUTTON #CAT_Config #NULL_OK configure a data table to hold all of the image data (if reset_cols, reset any existing cols in data table before adding new ones) (if dt == NULL, a new one is created in data.InputData)
+  // #BUTTON #CAT_Config #NULL_OK_0 #NULL_TEXT_0_NewDataTable configure a data table to hold all of the image data (if reset_cols, reset any existing cols in data table before adding new ones) (if dt == NULL, a new one is created in data.InputData)
 
 //   virtual void	PlotSpacing(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the arrangement of the filters (centers) in the data table and generate a grid view
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the arrangement of the filters (centers) in the data table and generate a grid view
 
   virtual bool	FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt);
   // Perform the filtering function: operates on output of RetinaSpec processing

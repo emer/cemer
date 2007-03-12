@@ -196,7 +196,7 @@ public:
 
   float		tol_lg;		// #CONDEDIT_ON_on:true #DEF_0.05 tolerance from target value (as a proportion of target value) on large numbers (>.25), within which parameters are not adapted
   float		tol_sm;		// #CONDEDIT_ON_on:true #DEF_0.2 tolerance from target value (as a proportion of target value) on small numbers (<.25), within which parameters are not adapted
-  float		rel_lrate;	// #CONDEDIT_ON_on:true #DEF_0.05 adpatation 'learning' rate on wt_scale.rel parameter
+  float		rel_lrate;	// #CONDEDIT_ON_on:true #DEF_0.1 adpatation 'learning' rate on wt_scale.rel parameter
 
   virtual bool	CheckInTolerance(float trg, float val);
   // check if value is inside the tolerance from trg
@@ -1123,7 +1123,7 @@ public:
   bool		on;		// whether to apply layer netinput rescaling
   float		trg_net; 	// #CONDEDIT_ON_on:true #DEF_0.5 target maximum netinput value
   float		tol;		// #CONDEDIT_ON_on:true #DEF_0.1 tolerance around target value -- if actual value is within this tolerance from target, then do not adapt
-  float		abs_lrate;	// #CONDEDIT_ON_on:true #DEF_0.05 learning rate for adapting the wt_scale.abs parameters for all projections into layer
+  float		abs_lrate;	// #CONDEDIT_ON_on:true #DEF_0.1 learning rate for adapting the wt_scale.abs parameters for all projections into layer
 
   void	Initialize();
   void 	Destroy()	{ };

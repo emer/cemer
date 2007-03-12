@@ -863,15 +863,15 @@ public:
   // #CAT_ObjectMgmt call function of given name on this object, prompting for args using gui interface
   
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
-  // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
+  // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
   virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor, const String& extra_label);
   // select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
   virtual int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
-  // #MENU #NULL_OK #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
+  // #MENU #NULL_OK_1 #NULL_TEXT_1_NewEditor #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
   virtual int		SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor);
-  // #MENU #NULL_OK #CAT_Display #TYPE_ON_0_this search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
+  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display #TYPE_ON_0_this #NO_SCOPE search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
   virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label);
-  // #MENU #NULL_OK #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected
+  // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected
   virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor, const String& extra_label);
   // select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected
 
