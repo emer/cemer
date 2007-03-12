@@ -1587,8 +1587,18 @@ public:
     TRAIN	  		// network is being trained: learning should occur
   };
  
+  enum AutoBuildMode {
+    AUTO_BUILD,			// automatically build the network after loading
+    PROMPT_BUILD,		// prompt about building after loading
+    NO_BUILD,			// do not build network after loading
+  };
+
   BaseSpec_Group specs; 	// #CAT_Structure Specifications for network parameters
   Layer_Group	layers;		// #CAT_Structure Layers or Groups of Layers
+
+  bool		no_save_units;  // #DEF_true #CAT_Structure don't include units in network when saving (makes project file much smaller!)
+  AutoBuildMode	auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if no_save_units, then auto building makes sense)
+  
   TrainMode	train_mode;	// #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
   WtUpdate	wt_update;	// #CAT_Learning #CONDEDIT_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
   int		small_batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)

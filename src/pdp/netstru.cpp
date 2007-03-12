@@ -3072,8 +3072,7 @@ Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
 }
 
 bool Unit_Group::Dump_QuerySaveChildren() {
-  ProjectBase* prj = GET_MY_OWNER(ProjectBase);
-  if(prj && prj->no_save_units)
+  if(own_lay && own_lay->own_net && own_lay->own_net->no_save_units)
     return false;
   return true;
 }
@@ -4152,6 +4151,9 @@ void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
 
+  no_save_units = true;
+  auto_build = AUTO_BUILD;
+
   train_mode = TRAIN;
   wt_update = ON_LINE;
   small_batch_n = 10;
@@ -4237,6 +4239,9 @@ void Network::CutLinks() {
 void Network::Copy_(const Network& cp) {
   specs = cp.specs;
   layers = cp.layers;
+
+  no_save_units = cp.no_save_units;
+  auto_build = cp.auto_build;
 
   train_mode = cp.train_mode;
   wt_update = cp.wt_update;
@@ -4349,14 +4354,13 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 
 int Network::Save_strm(ostream& strm, TAPtr par, int indent) {
   bool reset_flag = false;
-  ProjectBase* prj = GET_MY_OWNER(ProjectBase);
-  if(prj && prj->no_save_units) {
-    prj->no_save_units = false;	// override!
+  if(no_save_units) {
+    no_save_units = false;	// override!
     reset_flag = true;
   }
   int rval = inherited::Save_strm(strm, par, indent);
   if(reset_flag) {
-    prj->no_save_units = true;
+    no_save_units = true;
   }    
   return rval;
 }

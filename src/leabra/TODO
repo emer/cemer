@@ -12,7 +12,7 @@ current:
 * NewLayer not working in netview
 * default type not loading (#311)
 
-* #ARG_#_VAL_FM_xxx -- get init value of arg from given member (can be a path)
+* #ARG_VAL_FM_n_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!
 
 * #READ_ONLY -> + #EXPERT for non-system-y type data that contains values you might want 

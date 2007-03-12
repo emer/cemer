@@ -156,26 +156,15 @@ class PDP_API ProjectBase : public taProject {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE Base class for a pdp project (do not create one of these -- create an algorithm-specific version)
 INHERITED(taProject)
 public:
-  enum BuildNetsMode {
-    AUTO_BUILD,			// build the networks after loading
-    PROMPT_BUILD,		// prompt about building after loading
-    NO_BUILD,			// do not build networks after loading
-  };
-  
   Network_Group		networks;	// Networks of interconnected units
 
-  bool			no_save_units;
-  // #DEF_true don't include units in network when saving (makes project file much smaller!)
-  BuildNetsMode		build_nets;
-  // what to do with networks after loading them -- if units are removed, then they can be rebuilt after loading
-  
   DataTable_Group*	analysisDataGroup();
   // returns default group used for auto-created analysis data
   override void 	AssertDefaultWiz(bool auto_opn);
   // make the default wizard(s)
 
-  virtual void	AutoBuildNets(BuildNetsMode bld_mode);
-  // build networks according to bulid mode
+  virtual void	AutoBuildNets();
+  // build networks according to their own individual auto_bulid modes
   
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only

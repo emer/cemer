@@ -597,8 +597,6 @@ void ProjectBase::Initialize() {
   // up-class a few of the bases
   wizards.SetBaseType(&TA_Wizard);
   // now the rest
-  no_save_units = true; // default is not to save units
-  build_nets = AUTO_BUILD;
 }
 
 void ProjectBase::InitLinks_impl() {
@@ -626,16 +624,14 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
 void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   if(taMisc::is_loading)
-    AutoBuildNets(build_nets);
+    AutoBuildNets();
 }
 
 void ProjectBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
-  if(bld_mode == NO_BUILD)
-    return;
+void ProjectBase::AutoBuildNets() {
 #ifdef TA_OS_WIN // TEMP
   taMisc::Warning("AutoBuild is not working yet on Windows -- please Build/Connect manually.");
   return;
@@ -643,7 +639,8 @@ void ProjectBase::AutoBuildNets(BuildNetsMode bld_mode) {
   Network* net;
   taLeafItr i;
   FOR_ITR_EL(Network, net, networks., i) {
-    if(taMisc::use_gui && (bld_mode == PROMPT_BUILD)) {
+    if(net->auto_build == Network::NO_BUILD) continue;
+    if(taMisc::use_gui && (net->auto_build == Network::PROMPT_BUILD)) {
       int chs = taMisc::Choice("Build network: " + net->name, "Yes", "No");
       if(chs == 1) continue;
     }
