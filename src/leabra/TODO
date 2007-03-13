@@ -6,7 +6,7 @@ commit:
 ------------
 current:
 
-* css NULL cvt err for arg.
+* save recover files in current project dir, with .recover name #255
 
 * load/save all prog_lib and testsprojects & test convert
 * NewLayer not working in netview
@@ -20,7 +20,6 @@ current:
 
 * datatable: 
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
-  * concat columns
 
 * leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
   and add extra inhib in proportion.  set point in for inhib value itself.  makes the

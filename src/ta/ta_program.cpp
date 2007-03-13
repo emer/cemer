@@ -91,7 +91,7 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
   if(var_type == T_Object) {
-    if(!object_val) {
+    if(!HasVarFlag(NO_NULL_CHECK) && !object_val) {
       if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
 				    "object pointer is NULL");
       rval = false;

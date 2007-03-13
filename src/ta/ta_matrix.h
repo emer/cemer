@@ -941,6 +941,9 @@ public:
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in-range for 32bit int
   
+  virtual void		InitVals(int val=0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
+  // initialize values to given fixed value
+
   void			Copy_(const int_Matrix& cp) {};
   COPY_FUNS(int_Matrix, taMatrixT<int>);
   TA_MATRIX_FUNS(int_Matrix, int);

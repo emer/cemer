@@ -68,6 +68,8 @@ public:
   virtual void 	ClearColumns();
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
+  virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt);
+  // #CAT_DataOp #BUTTON add a new column to operate on from given data table
   virtual void	AddAllColumns(DataTable* dt);
   // #CAT_DataOp #BUTTON add all columns from given data table
 
@@ -95,6 +97,9 @@ public:
   virtual void 	ClearColumns() { ops.ClearColumns(); }
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
+  virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt)
+  { return ops.AddColumn(col_name, dt); }
+  // #CAT_DataOp #BUTTON add a new column to operate on from given data table
   virtual void	AddAllColumns(DataTable* dt) { ops.AddAllColumns(dt); }
   // #CAT_DataOp #BUTTON add all columns from given data table
 
@@ -275,14 +280,19 @@ public:
   ///////////////////////////////////////////////////////////////////
   // basic copying and concatenating
 
+  static bool	CopyData(DataTable* dest, DataTable* src);
+  // #CAT_Copy #MENU_BUTTON #MENU_ON_Copy #NULL_OK_0 #NULL_TEXT_0_NewDataTable just copy the data from source to destination, completely removing any existing data in the destination, but not changing anything else about the dest (e.g., its name) (if dest is NULL, a new one is created in proj.data.AnalysisData)
   static bool	CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* dest_cols, DataOpList* src_cols, int dest_row, int src_row);
   // #CAT_Copy copy one row of data from src to dest for the common cols
   static bool	CopyCommonColData(DataTable* dest, DataTable* src);
-  // #CAT_Copy #MENU_BUTTON #MENU_ON_Copy copy data from src to dest for all columns that are common between the two (adds to end of data)
+  // #CAT_Copy #MENU_BUTTON copy data from src to dest for all columns that are common between the two (adds to end of dest rows)
   static bool	AppendRows(DataTable* dest, DataTable* src);
   // #CAT_Copy #MENU_BUTTON append rows of src to the end of dest (structure must be the same -- more efficient than CopyCommonColData when this is true)
   static bool	ReplicateRows(DataTable* dest, DataTable* src, int n_repl);
-  // #NULL_OK #CAT_Copy #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable replicate each row of src n_repl times in dest -- dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #CAT_Copy #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable replicate each row of src n_repl times in dest -- dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  static bool	ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b, DataTable* src_c=NULL,
+			   DataTable* src_d=NULL, DataTable* src_e=NULL, DataTable* src_f=NULL);
+  // #CAT_Copy #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable concatenate rows of data from all the source data tables into the destination, which is completely overwritten with the new data.  (if dest is NULL, a new one is created in proj.data.AnalysisData).  just a sequence of calls to CopyCommonColData
 
   ///////////////////////////////////////////////////////////////////
   // reordering functions
@@ -336,8 +346,8 @@ public:
   static bool	Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON joins two datatables (src_a and src_b) into dest datatable.  for each row of src_a, the value of col_a is used to search col_b of src_b for the row(s) to include from it.  all columns are included (without repeating the common column)
 
-  static bool	JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON joins two datatables into one datatable on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)). all columns from both tables are included.
+  static bool	ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b);
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON concatenate two datatables into one datatable by adding both sets of columns together, merging data on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)).
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
@@ -384,6 +394,8 @@ INHERITED(DataProg)
 public:
   DataSortSpec		sort_spec; // #SHOW_TREE data sorting specification
 
+  virtual DataOpEl* AddColumn(const String& col_name) { return sort_spec.AddColumn(col_name, src_data); }
+  // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the sort_spec list of ops columns 
 
@@ -407,6 +419,8 @@ INHERITED(DataProg)
 public:
   DataGroupSpec		group_spec; // #SHOW_TREE data grouping specification
 
+  virtual DataOpEl* AddColumn(const String& col_name) { return group_spec.AddColumn(col_name, src_data); }
+  // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the group_spec list of ops columns 
   override void	UpdateSpecDataTable();
@@ -429,6 +443,8 @@ INHERITED(DataProg)
 public:
   DataSelectSpec	select_spec; // #SHOW_TREE data selection specification
 
+  virtual DataOpEl* AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, src_data); }
+  // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
   override void	UpdateSpecDataTable();
@@ -451,6 +467,8 @@ INHERITED(DataProg)
 public:
   DataOpList		select_spec; // #SHOW_TREE columns to select
 
+  virtual DataOpEl* AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, src_data); }
+  // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
   override void	UpdateSpecDataTable();
@@ -503,6 +521,10 @@ public:
 
   override taList_impl*	children_() {return &loop_code;}	
 
+  virtual DataOpEl* AddSrcColumn(const String& col_name) { return src_cols.AddColumn(col_name, src_data); }
+  // #CAT_DataOp #BUTTON add a new source column to operate on
+  virtual DataOpEl* AddDestColumn(const String& col_name) { return dest_cols.AddColumn(col_name, dest_data); }
+  // #CAT_DataOp #BUTTON add a new dest column to operate on
   virtual void	AddAllSrcColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 
   virtual void	AddAllDestColumns();

@@ -31,7 +31,7 @@
 #include <QColor>
 
 //////////////////////////
-//   ColCalcExpr		//
+//   ColCalcExpr	//
 //////////////////////////
 
 void ColCalcExpr::Initialize() {
@@ -563,7 +563,8 @@ void DataTable::Copy_(const DataTable& cp) {
 
 void DataTable::Copy_NoData(const DataTable& cp) {
   rows = 0;
-  data_flags = cp.data_flags;
+  // don't copy the flags!
+//   data_flags = cp.data_flags;
   data.Copy_NoData(cp.data);
 }
 
@@ -1778,6 +1779,9 @@ void DataTable::Sort(DataCol* col1, bool ascending1,
 }
 
 bool DataTable::Filter(const String& filter_expr) {
+  if(TestError(filter_expr.empty(), "Filter",
+	       "empty filter expression -- must specify a filter condition!"))
+    return false;
   InitCalcScript();
   calc_script->ClearAll();
 

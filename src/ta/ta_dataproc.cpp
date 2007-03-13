@@ -101,6 +101,14 @@ void DataOpList::ClearColumns() {
   }
 }
 
+DataOpEl* DataOpList::AddColumn(const String& col_name, DataTable* dt) {
+  DataOpEl* dop = (DataOpEl*)New(1);
+  dop->col_name = col_name;
+  dop->SetDataTable(dt);
+  dop->UpdateAfterEdit();
+  return dop;
+}
+
 void DataOpList::AddAllColumns(DataTable* dt) {
   if(!dt) return;
   for(int i=0;i<dt->data.size; i++) {
@@ -308,6 +316,17 @@ bool taDataProc::GetColIntersection(DataOpList* trg_cols, DataOpList* ref_cols) 
 ///////////////////////////////////////////////////////////////////
 // basic copying and concatenating
 
+bool taDataProc::CopyData(DataTable* dest, DataTable* src) {
+  if(!src) { taMisc::Error("taDataProc::CopyData: src is NULL"); return false; }
+  GetDest(dest, src, "CopyData");
+  dest->StructUpdate(true);
+  dest->Reset();
+  dest->Copy_NoData(*src);		// give it same structure
+  AppendRows(dest, src);
+  dest->StructUpdate(false);
+  return true;
+}
+
 bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* dest_cols,
 				   DataOpList* src_cols, int dest_row, int src_row) {
   if(!dest || !src || !dest_cols || !src_cols) return false;
@@ -324,7 +343,8 @@ bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* 
 }
 
 bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
-  if(!dest || !src) return false;
+  if(!dest) { taMisc::Error("taDataProc::CopyCommonColData: dest is NULL"); return false; }
+  if(!src) { taMisc::Error("taDataProc::CopyCommonColData: src is NULL"); return false; }
   DataOpList dest_cols;
   DataOpList src_cols;
   GetCommonCols(dest, src, &dest_cols, &src_cols);
@@ -344,7 +364,8 @@ bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
 }
 
 bool taDataProc::AppendRows(DataTable* dest, DataTable* src) {
-  if(!dest || !src) return false;
+  if(!dest) { taMisc::Error("taDataProc::AppendRows: dest is NULL"); return false; }
+  if(!src) { taMisc::Error("taDataProc::AppendRows: src is NULL"); return false; }
   if(dest->data.size != src->data.size) {
     taMisc::Error("taDataProc::AppendRows -- tables do not have same number of columns -- use CopyCommonColData instead!");
     return false;
@@ -380,10 +401,32 @@ bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
   return true;
 }
 
+bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b, DataTable* src_c,
+			    DataTable* src_d, DataTable* src_e, DataTable* src_f) {
+  if(!src_a) { taMisc::Error("taDataProc::ConcatRows: src_a is NULL"); return false; }
+  if(!src_b) { taMisc::Error("taDataProc::ConcatRows: src_b is NULL"); return false; }
+  GetDest(dest, src_a, "ConcatRows");
+  dest->StructUpdate(true);
+  dest->Reset();
+  String dnm = dest->name;
+  *dest = *src_a;
+  dest->name = dnm;
+  CopyCommonColData(dest, src_b);
+  if(src_c) CopyCommonColData(dest, src_c);
+  if(src_d) CopyCommonColData(dest, src_d);
+  if(src_e) CopyCommonColData(dest, src_e);
+  if(src_f) CopyCommonColData(dest, src_f);
+  dest->StructUpdate(false);
+  return true;
+}
+
+
 ///////////////////////////////////////////////////////////////////
 // reordering functions
 
 bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
+  if(!src) { taMisc::Error("taDataProc::Sort: src is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataProc::Sort: spec is NULL"); return false; }
   // just copy and operate on dest
   GetDest(dest, src, "Sort");
   dest->Reset();
@@ -463,6 +506,7 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
 }
 
 bool taDataProc::Permute(DataTable* dest, DataTable* src) {
+  if(!src) { taMisc::Error("taDataProc::Permute: src is NULL"); return false; }
   GetDest(dest, src, "Permute");
   dest->StructUpdate(true);
   dest->Copy_NoData(*src);		// give it same structure
@@ -480,6 +524,8 @@ bool taDataProc::Permute(DataTable* dest, DataTable* src) {
 }
 
 bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
+  if(!src) { taMisc::Error("taDataProc::Group: src is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataProc::Group: spec is NULL"); return false; }
   GetDest(dest, src, "Group");
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
@@ -698,6 +744,8 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
 
 bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
 			   DataSelectSpec* spec) {
+  if(!src) { taMisc::Error("taDataProc::SplitRows: src is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataProc::SplitRows: spec is NULL"); return false; }
   GetDest(dest_a, src, "SplitRows_a");
   GetDest(dest_b, src, "SplitRows_b");
   dest_a->StructUpdate(true);
@@ -750,6 +798,7 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
 bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
 			    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
 			    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
+  if(!src) { taMisc::Error("taDataProc::SplitRowsN: src is NULL"); return false; }
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
   int n_split = 0;
@@ -810,7 +859,7 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
 bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
 				    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
 				    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
-
+  if(!src) { taMisc::Error("taDataProc::SplitRowsNPermuted: src is NULL"); return false; }
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
   int n_split = 0;
@@ -876,6 +925,8 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
 // column-wise functions: selecting, joining
 
 bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
+  if(!src) { taMisc::Error("taDataProc::SelectCols: src is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataProc::SelectCols: spec is NULL"); return false; }
   GetDest(dest, src, "SelectCols");
   dest->StructUpdate(true);
   spec->GetColumns(src);		// cache column pointers & indicies from names
@@ -904,6 +955,9 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
 }
 
 bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec) {
+  if(!src_a) { taMisc::Error("taDataProc::Join: src_a is NULL"); return false; }
+  if(!src_b) { taMisc::Error("taDataProc::Join: src_b is NULL"); return false; }
+  if(!spec) { taMisc::Error("taDataProc::Join: spec is NULL"); return false; }
   if((spec->col_a.col_idx < 0) || (spec->col_b.col_idx < 0)) return false;
   GetDest(dest, src_a, "Join");
   dest->StructUpdate(true);
@@ -1016,17 +1070,19 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
   return true;
 }
 
-bool taDataProc::JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b) {
-  GetDest(dest, src_a, "Join");
+bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b) {
+  if(!src_a) { taMisc::Error("taDataProc::ConcatCols: src_a is NULL"); return false; }
+  if(!src_b) { taMisc::Error("taDataProc::ConcatCols: src_b is NULL"); return false; }
+  GetDest(dest, src_a, "ConcatCols");
   dest->StructUpdate(true);
   dest->Reset();
   for(int i=0; i < src_a->data.size; i++) {
     DataCol* sda = src_a->data.FastEl(i);
     DataCol* nda = (DataCol*)sda->MakeToken();
-    dest->data.Add(nda);	// todo: AddUniqueName?? + no reset + orphan?
+    dest->data.Add(nda);
     nda->Copy_NoData(*sda);
   }
-  int a_cols = src_a->data.size; // -1 if skipping index value
+  int a_cols = src_a->data.size;
   for(int i=0; i < src_b->data.size; i++) {
     DataCol* sdb = src_b->data.FastEl(i);
     DataCol* nda = (DataCol*)sdb->MakeToken();
@@ -1034,7 +1090,8 @@ bool taDataProc::JoinByRow(DataTable* dest, DataTable* src_a, DataTable* src_b) 
     nda->Copy_NoData(*sdb);
   }    
   dest->UniqueColNames();	// make them unique!
-  for(int row=0;row<src_a->rows;row++) {
+  int mx_rows = MIN(src_a->rows, src_b->rows);
+  for(int row=0;row<mx_rows;row++) {
     dest->AddBlankRow();
     for(int i=0;i<src_a->data.size; i++) {
       DataCol* sda = src_a->data.FastEl(i);

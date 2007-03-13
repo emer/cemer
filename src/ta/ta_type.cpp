@@ -712,7 +712,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
     String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
       + "() (path: " + obj->GetPath_Long() + ")\n";
 
-    if(obj == prv_obj && prv_fun == fun_name && prv_a == a) {
+    if(obj == prv_obj || prv_fun == fun_name || prv_a == a) {
       // nogui version for repeat!
       taMisc::Error_nogui(objinfo, a, b, c, d, e, f, g, h);
     }
@@ -723,7 +723,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
   }
   else {
     String fn = String("Function: ") + fun_name + "()\n";
-    if(prv_fun == fun_name && prv_a == a) {
+    if(prv_fun == fun_name || prv_a == a) {
       // nogui version for repeat!
       taMisc::Error_nogui(fn, a, b, c, d, e, f, g, h);
     }

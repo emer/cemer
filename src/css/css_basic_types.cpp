@@ -31,19 +31,6 @@
 // 	cssInt		//
 //////////////////////////
 
-cssInt::operator void*() const {
-  if(val == 0)
-    return NULL;
-  CvtErr("(void*)");
-  return NULL;
-}
-
-cssInt::operator void**() const {
-  if(val == 0)
-    return NULL;
-  CvtErr("(void**)");
-  return NULL;
-}
 
 //////////////////////////
 // cssChar		//

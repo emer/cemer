@@ -5067,6 +5067,8 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
      misc_iar{      };
     };
    };
+   no_save_units=1;
+   auto_build=AUTO_BUILD;
    train_mode=TRAIN;
    wt_update=ON_LINE;
    small_batch_n=2;
@@ -5144,6 +5146,4 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
    avg_ext_rew_n=0;
   };
  };
- no_save_units=1;
- build_nets=AUTO_BUILD;
 };

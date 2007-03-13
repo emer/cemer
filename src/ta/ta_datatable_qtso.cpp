@@ -3018,6 +3018,11 @@ void GraphTableView::InitFromUserData() {
       raster_axis.UpdateAfterEdit();
     }
   }
+
+  DataTable* dt = dataTable();
+  if(dt->HasUserData("NO_Z_AXIS")) {
+    z_axis.on = false;
+  }
 }
 
 void GraphTableView::UpdateFromDataTable_this(bool first) {

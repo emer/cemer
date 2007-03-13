@@ -153,6 +153,9 @@ public:
   LayerDataEl_List	layer_data;
   // the layers/input data channel mappings to present to the network
 
+  virtual LayerDataEl*	AddLayerData()	{ return (LayerDataEl*)layer_data.New(1); }
+  // #BUTTON add a new layer data item
+
   virtual void 	SetDataNetwork(DataBlock* db, Network* net);
   // #CAT_LayerWriter set the data table and network pointers -- convenience function for programs 
 

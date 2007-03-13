@@ -72,6 +72,7 @@ public:
   enum VarFlags { // #BITS flags for modifying program variables
     PV_NONE		= 0, // #NO_BIT
     NO_CTRL_PANEL	= 0x0001, // do not show this variable in the control panel
+    NO_NULL_CHECK	= 0x0002, // do not complain if object variable is null during checkconfig (e.g., will get assigned during run)
   };
 
   VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
@@ -450,6 +451,9 @@ INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of Program elements: the block of code
 
+ virtual ProgEl*	AddProgCode(TypeDef* el_type)	{ return (ProgEl*)prog_code.New(1, el_type); }
+  // #BUTTON #TYPE_ProgEl add a new program code element
+
   override taList_impl*	children_() {return &prog_code;}	
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
@@ -473,6 +477,9 @@ INHERITED(ProgEl)
 public:
   ProgVar_List		local_vars;	// the list of variables
   
+ virtual ProgVar*	AddVar()	{ return (ProgVar*)local_vars.New(1); }
+  // #BUTTON add a new variable
+
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
 
@@ -520,6 +527,9 @@ class TA_API Loop: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
+
+ virtual ProgEl*	AddLoopCode(TypeDef* el_type)	{ return (ProgEl*)loop_code.New(1, el_type); }
+  // #BUTTON #TYPE_ProgEl add a new loop code element
 
   String	    	loop_test; // #READ_ONLY #NO_SAVE obsolete
   

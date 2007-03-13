@@ -54,8 +54,46 @@ public:
   operator Int() const	 	{ return val; }
   operator bool() const	 	{ return val; }
 
-  operator void*() const;
-  operator void**() const;
+  void* 	NullPtrCvt(const char* typ_nm)	const { if(val != 0) CvtErr(typ_nm); return NULL; }
+
+  operator void*() const	{ return NullPtrCvt("(void*)"); }
+  operator void**() const	{ return (void**)NullPtrCvt("(void**)"); }
+
+  operator int*() const		{ return (int*)NullPtrCvt("(int*)"); }
+  operator short*() const	{ return (short*)NullPtrCvt("(short*)"); }
+  operator long*() const	{ return (long*)NullPtrCvt("(long*)"); }
+  operator double*() const	{ return (double*)NullPtrCvt("(double*)"); }
+  operator float*() const	{ return (float*)NullPtrCvt("(float*)"); }
+  operator String*() const	{ return (String*)NullPtrCvt("(String*)"); }
+  operator Variant*() const	{ return (Variant*)NullPtrCvt("(Variant*)"); }
+  operator bool*() const	{ return (bool*)NullPtrCvt("(bool*)"); }
+
+  operator int**() const	{ return (int**)NullPtrCvt("(int**)"); }
+  operator short**() const	{ return (short**)NullPtrCvt("(short**)"); }
+  operator long**() const	{ return (long**)NullPtrCvt("(long**)"); }
+  operator double**() const	{ return (double**)NullPtrCvt("(double**)"); }
+  operator float**() const	{ return (float**)NullPtrCvt("(float**)"); }
+  operator String**() const	{ return (String**)NullPtrCvt("(String**)"); }
+  operator Variant**() const	{ return (Variant**)NullPtrCvt("(Variant**)"); }
+  operator bool**() const	{ return (bool**)NullPtrCvt("(bool**)"); }
+
+  operator ostream*() const	{ return (ostream*)NullPtrCvt("(ostream*)"); }
+  operator istream*() const	{ return (istream*)NullPtrCvt("(istream*)"); }
+  operator iostream*() const	{ return (iostream*)NullPtrCvt("(iostream*)"); }
+  operator fstream*() const	{ return (fstream*)NullPtrCvt("(fstream*)"); }
+  operator stringstream*() const { return (stringstream*)NullPtrCvt("(stringstream*)"); }
+
+  operator ostream**() const	{ return (ostream**)NullPtrCvt("(ostream**)"); }
+  operator istream**() const	{ return (istream**)NullPtrCvt("(istream**)"); }
+  operator iostream**()	const	{ return (iostream**)NullPtrCvt("(iostream**)"); }
+  operator fstream**() const	{ return (fstream**)NullPtrCvt("(fstream**)"); }
+  operator stringstream**() const { return (stringstream**)NullPtrCvt("(stringstream**)"); }
+
+  operator taBase*() const	{ return (taBase*)NullPtrCvt("(taBase*)"); }
+  operator taBase**() const 	{ return (taBase**)NullPtrCvt("(taBase**)"); }
+  operator TypeDef*() const	{ return (TypeDef*)NullPtrCvt("(TypeDef*)"); }
+  operator MemberDef*() const	{ return (MemberDef*)NullPtrCvt("(MemberDef*)"); }
+  operator MethodDef*() const	{ return (MethodDef*)NullPtrCvt("(MethodDef*)"); }
 
   void operator=(Real cp) 		{ val = (int)cp; }
   void operator=(Int cp)		{ val = cp; }

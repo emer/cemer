@@ -451,6 +451,9 @@ public:
   TwoDCoord		retina_size; 	// overall size of retina (auto copied to retina specs)
   DoGRetinaSpecList	dogs;		// the difference-of-gaussian retinal filters
 
+  virtual DoGRetinaSpec* AddFilter()	{ return (DoGRetinaSpec*)dogs.New(1); }
+  // #BUTTON #CAT_Filter add a new retina filter
+
   virtual void	DefaultFilters();
   // #BUTTON #CAT_Filter create a set of default filters
 
@@ -556,6 +559,9 @@ public:
   GaborV1SpecList	gabors;		// the gabor (and blob) V1 filters
   RetinaSpecRef		retina;		// the specs for the retinal filter that we follow
   float			norm_max;	// #DEF_0.95 max value to normalize output activations to -- set to -1 to turn off normalization
+
+  virtual GaborV1Spec*	AddFilter()	{ return (GaborV1Spec*)gabors.New(1); }
+  // #BUTTON #CAT_Filter add a new v1 filter
 
   virtual void	DefaultFilters();
   // #BUTTON #CAT_Filter create a set of default filters
