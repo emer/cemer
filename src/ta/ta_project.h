@@ -248,8 +248,8 @@ public:
 
   static bool	Startup_Run();
   // #IGNORE go ahead and run the main event loop
-  static bool	Cleanup_Main();
-  // #IGNORE after running, do final cleanups (called by Startup_Run)
+  static void	Cleanup_Main();
+  // #IGNORE after init, or running, do final cleanups (called by StartupInit on fail, or Startup_Run)
 
 #ifdef DMEM_COMPILE
   static bool 	Run_GuiDMem();
@@ -270,6 +270,16 @@ public:
   void	CutLinks();
   TA_BASEFUNS(taRootBase)
 protected:
+  enum StartupMilestones { // #BIT successively marked, so we can shutdown cleanly
+    SM_MPI_INIT		= 0x002,
+    SM_QAPP_OBJ		= 0x004,
+    SM_SOQT_INIT	= 0x008,
+    SM_TYPES_INIT	= 0x020,
+    SM_ROOT_CREATE	= 0x040,
+    SM_APP_OBJ		= 0x080
+  };
+  
+  static int		milestone; // StartupMilestones
   static taMisc::ConsoleType console_type; // #IGNORE 
   static int console_options; //#IGNORE taMisc::ConsoleOptions 
   

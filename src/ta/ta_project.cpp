@@ -384,6 +384,7 @@ void taRootBaseAdapter::DMem_SubEventLoop() {
 //   taRoot		//
 //////////////////////////
 
+int taRootBase::milestone;
 TypeDef* taRootBase::root_type;
 taMisc::ConsoleType taRootBase::console_type;
 int taRootBase::console_options;
@@ -682,6 +683,7 @@ void taRootBase::Options() {
 bool taRootBase::Startup_InitDMem(int& argc, const char* argv[]) {
 #ifdef DMEM_COMPILE
   taMisc::Init_DMem(argc, argv);
+  milestone |= SM_MPI_INIT;
 #endif
   return true;
 }
@@ -797,8 +799,10 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 # ifdef TA_USE_INVENTOR
 new QApplication(argc, (char**)argv); // accessed as qApp
     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
+    milestone |= (SM_QAPP_OBJ | SM_SOQT_INIT);
 # else
     new QApplication(argc, (char**)argv); // accessed as qApp
+    milestone |= SM_QAPP_OBJ;
 # endif
   } else 
 #endif
@@ -806,6 +810,7 @@ new QApplication(argc, (char**)argv); // accessed as qApp
     new QCoreApplication(argc, (char**)argv); // accessed as qApp
     QFileInfo fi(argv[0]);
     QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
+    milestone |= SM_QAPP_OBJ;
   }
   return true;
 }
@@ -875,9 +880,9 @@ bool taRootBase::Startup_InitTA_folders() {
   // seemingly not in a bundle, so try raw bin
   if (app_dir.endsWith("/bin")) {
     app_dir = app_dir.at(0, app_dir.length() - 4);
+    if (isAppDir(app_dir))
+      goto have_app_dir;
   }
-  if (isAppDir(app_dir))
-    goto have_app_dir;
     
 #else // non-Mac Unix
 /*
@@ -981,6 +986,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   if(ta_init_fun)
     (*ta_init_fun)();
   taMisc::Init_Hooks();	// client dlls register init hooks -- this calls them!
+  milestone |= SM_TYPES_INIT;
     
   if (!Startup_InitTA_folders()) return false;
 
@@ -1005,6 +1011,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   
   // load prefs values for us
   taRootBase* inst = instance();
+  milestone |= SM_ROOT_CREATE;
   inst->SetFileName(taMisc::prefs_dir + "/root");
   if (QFile::exists(inst->GetFileName())) {
     ++taFiler::no_save_last_fname;
@@ -1069,6 +1076,7 @@ bool taRootBase::Startup_InitGui() {
   { 
     taiMC_ = taiMiscCore::New();
   }
+  milestone |= SM_APP_OBJ;
   return true;
 }
 
@@ -1245,23 +1253,27 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   // just create the adapter obj, whether needed or not
   root_adapter = new taRootBaseAdapter;
   cssMisc::prompt = taMisc::app_name; // the same
-  if(!Startup_InitDMem(argc, argv)) return false;
-  if(!Startup_ProcessGuiArg(argc, argv)) return false;
-  if(!Startup_InitArgs(argc, argv)) return false;
-  if(!Startup_InitApp(argc, argv)) return false;
-  if(!Startup_InitTA(ta_init_fun)) return false;
-  if(!Startup_InitTypes()) return false;
-  if(!Startup_EnumeratePlugins()) return false;
-  if(!Startup_LoadPlugins()) return false; // loads those enabled, and does type integration
-  if(!Startup_InitCss()) return false;
-  if(!Startup_InitGui()) return false; // note: does the taiType bidding
-  if(!Startup_ConsoleType()) return false;
-  if(!Startup_MakeMainWin()) return false;
-  if(!Startup_Console()) return false;
-  if(!Startup_ProcessArgs()) return false;
+  if(!Startup_InitDMem(argc, argv)) goto startup_failed;
+  if(!Startup_ProcessGuiArg(argc, argv)) goto startup_failed;
+  if(!Startup_InitArgs(argc, argv)) goto startup_failed;
+  if(!Startup_InitApp(argc, argv)) goto startup_failed;
+  if(!Startup_InitTA(ta_init_fun)) goto startup_failed;
+  if(!Startup_InitTypes()) goto startup_failed;
+  if(!Startup_EnumeratePlugins()) goto startup_failed;
+  if(!Startup_LoadPlugins()) goto startup_failed; // loads those enabled, and does type integration
+  if(!Startup_InitCss()) goto startup_failed;
+  if(!Startup_InitGui()) goto startup_failed; // note: does the taiType bidding
+  if(!Startup_ConsoleType()) goto startup_failed;
+  if(!Startup_MakeMainWin()) goto startup_failed;
+  if(!Startup_Console()) goto startup_failed;
+  if(!Startup_ProcessArgs()) goto startup_failed;
 //note: don't call event loop yet, because we haven't initialized main event loop!
   instance()->Save(); 
   return true;
+  
+startup_failed:
+  Cleanup_Main();
+  return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1286,22 +1298,25 @@ bool taRootBase::Startup_Run() {
     taiMC_->Exec();
   }
   }
-  return Cleanup_Main();
+  Cleanup_Main();
+  return true;
 }
 
 // todo: could partition these out into separate guys..  	
-bool taRootBase::Cleanup_Main() {
-  tabMisc::DeleteRoot();
-  taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
+void taRootBase::Cleanup_Main() {
+  if (milestone & SM_ROOT_CREATE)
+    tabMisc::DeleteRoot();
+  if (milestone & SM_TYPES_INIT)
+    taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
 
 #ifdef TA_USE_INVENTOR
-  if(taMisc::gui_active)
+  if(taMisc::gui_active && (milestone & SM_SOQT_INIT))
     SoQt::done();
 #endif
 #ifdef DMEM_COMPILE
-  MPI_Finalize();
+  if (milestone & SM_MPI_INIT)
+    MPI_Finalize();
 #endif
-  return true;
 }
 
 #ifdef DMEM_COMPILE
