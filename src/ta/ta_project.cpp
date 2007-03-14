@@ -845,7 +845,7 @@ bool taRootBase::Startup_InitTA_folders() {
   {app_dir}\bin
 */
   // note: Qt docs say it returns the '/' version...
-  if (app_dir.endswith("/bin") || app_dir.endsWith("\bin")) {
+  if (app_dir.endsWith("/bin") || app_dir.endsWith("\bin")) {
     app_dir = app_dir.at(0, app_dir.length() - 4);
     if (isAppDir(app_dir))
       goto have_app_dir;
@@ -864,7 +864,7 @@ bool taRootBase::Startup_InitTA_folders() {
     if (dir.cdUp()) {
       app_dir = dir.absolutePath();
       // if bundle is in bin folder, strip that
-      if (app_dir.endswith("/bin")) {
+      if (app_dir.endsWith("/bin")) {
         app_dir = app_dir.at(0, app_dir.length() - 4);
       }
       if (isAppDir(app_dir))
@@ -873,7 +873,7 @@ bool taRootBase::Startup_InitTA_folders() {
   }
   }
   // seemingly not in a bundle, so try raw bin
-  if (app_dir.endswith("/bin")) {
+  if (app_dir.endsWith("/bin")) {
     app_dir = app_dir.at(0, app_dir.length() - 4);
   }
   if (isAppDir(app_dir))

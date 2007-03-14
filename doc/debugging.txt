@@ -23,6 +23,9 @@ Things that do work:
 
  
 
+<<<<<<< .mine
+Differences:
+=======
 Bug1
 * copy 2x2 starting from mitvert
 * click on a dest cell in Name
@@ -31,7 +34,45 @@ Bug1
   the second row: 
     Name gets blanked
     but Input cell gets copied ok
+>>>>>>> .r1608
 
+<<<<<<< .mine
+<<<<<<< .mine
+ * Linux shows + on drag; Mac does not
+
+
+Notes:
+
+ * the iTreeWidgetItem::acceptDrop is not used or called
+
+What is working, what not working:
+
+NOT working:
+* is not determining whether it is allowed to do dnd or not!
+
+* behavior is consistent with the built-in Qt dnd, whereby
+  it just does it at a gui level
+
+
+Experiments
+
+* put br's in linux, the two key ones are:
+  iTreeView::mimeData -- sh trigger at start
+    -- triggers on linux and mac
+  iTreeWidget::dropMimeData -- sh trigger at drop
+    -- NOT triggering in Mac
+
+Hypothesis:
+
+* maybe there is a mismatch between supported drop types
+  and what is happening: feedback indicates Move (no +),
+  and maybe Move is not enabled??
+  (but then why are items actually moving???)
+
+  
+=======
+>>>>>>> .r1582
+=======
 Diagnosis:
  * clip data itself (on cb) seems fine
  * tried larger areas: only 1st Name copies, rest are blanked
@@ -51,6 +92,7 @@ Bug 3
 
  
 
+>>>>>>> .r1608
 Tree Browsing Show/Hide
 
 Program Reset bug
