@@ -44,6 +44,8 @@ void css_cleanup(int err) {
 #endif // TA_OS_UNIX
 
 int main(int argc, const char *argv[]) {
+  taMisc::app_name = "css";
+  taMisc::app_lib_name = "tacss";
   cssMisc::prompt = "css";
   taMisc::use_gui = true;	// set opposite default from normal
 

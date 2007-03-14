@@ -3,13 +3,19 @@
 
 HEADERS += $${TARGET}_TA_type.h $${TARGET}_TA_inst.h
 SOURCES += $${TARGET}_TA.cpp
-
+MSVC_FOLDER = msvc7
 
 # in the following, we create a new target 'maketa' which has the indicated properties
 maketa.target = $${TARGET}_TA_type.h
 
-maketa.commands = $$(PDP4DIR)/src/maketa/maketa -D__MAKETA__  -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
-
+win32 {
+  maketa.commands = $$(PDP4DIR)\\build\\$${MSVC_FOLDER}\\bin\\maketa.exe -css /D DEBUG -win_dll \
+  /I $$(PDP4DIR)\\build\\$${MSVC_FOLDER}\\include \
+  /I $$(PDP4DIR)\\build\\$${MSVC_FOLDER} \
+  $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
+} else {
+  maketa.commands = $$(PDP4DIR)/bin/maketa -D__MAKETA__  -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
+}
 maketa.depends = $${MAKETA_HEADERS}
 
 # the following then creates the maketa target

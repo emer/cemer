@@ -579,6 +579,7 @@ public:
   
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
+  static String		org_name; // #READ_ONLY #NO_SAVE #SHOW the name of the organization, ex. ccnlab (used mostly in Windows paths)
   static String		version; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
   static const taVersion version_bin; 	// #IGNORE version number of ta/css
   static const BuildType build_type; // #READ_ONLY #NO_SAVE #SHOW build type, mostly for determining plugin subfolders to search
@@ -629,18 +630,12 @@ public:
   static TypeDef*	default_proj_type; // #SAVE #CAT_File #TYPE_taProject default type of project to create
   static LoadVerbosity	verbose_load;	// #SAVE #CAT_File #EXPERT report the names of things during loading
 
-/*  static String		inst_prefix;
-  // #SAVE #CAT_File prefix for software installation (e.g., /usr/local)
-  static String	       	pkg_dir;
-  // #SAVE #CAT_File directory name for current software package (e.g., ta_css or pdp++)
-  static String		pkg_home;
-  // #SAVE #CAT_File path to location of installed system files for current software package (e.g, /usr/local/ta_css) (should be inst_prefix + pkg_dir) */
   static String		app_dir; 
-  // #SHOW #READ_ONLY #CAT_File base of installed app directory
+  // #SHOW #READ_ONLY #CAT_File base of installed app directory -- override with "-a <path>" command line switch
   static String		app_dir_default; 
   // #HIDDEN #SAVE #CAT_File an override to use ONLY if we can't determine the app_dir
-  static String		home_dir;
-  // #CAT_File location of user's home directory
+  static String		user_dir;
+  // #SHOW #READ_ONLY #CAT_File location of user's home directory -- override with "-u <path>" command line switch
   static String		web_home;
   // #SAVE #CAT_File url for location of web repository of package information
   static String		prefs_dir;
@@ -687,13 +682,13 @@ public:
   // 	DMEM: Distributed Memory
 
   static int		dmem_proc; 	
-  // #READ_ONLY #NO_SAVE #SHOW #CAT_DMem distributed memory process number (rank in MPI, always 0 for no dmem)
+  // #READ_ONLY #HIDDEN #NO_SAVE #SHOW #CAT_DMem distributed memory process number (rank in MPI, always 0 for no dmem)
   static int		dmem_nprocs;
-  // #READ_ONLY #NO_SAVE #SHOW #CAT_DMem distributed memory number of processes (comm_size in MPI, 1 for no dmem)
+  // #READ_ONLY #HIDDEN #NO_SAVE #SHOW #CAT_DMem distributed memory number of processes (comm_size in MPI, 1 for no dmem)
   static int		cpus;
-  // #READ_ONLY #NO_SAVE #SHOW #CAT_DMem number of cpus to use (<= physical cpus)
+  // #READ_ONLY #HIDDEN #NO_SAVE #SHOW #CAT_MultiProc number of cpus to use (<= physical cpus)
   static bool		dmem_debug;
-  // #SAVE #CAT_DMem turn on debug messages for distributed memory processing
+  // #SAVE #EXPERT #CAT_DMem turn on debug messages for distributed memory processing
 
   ////////////////////////////////////////////////////////
   // 	Global State, Flags Etc

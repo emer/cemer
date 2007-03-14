@@ -388,6 +388,7 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 
 String	taMisc::app_name = "ta_css"; // replaced with actual name at startup
 String	taMisc::app_lib_name; // set in the main.cpp file
+String	taMisc::org_name = "ccnlab"; 
 #ifdef SVN_REV
 String	taMisc::version = "3.9.0-" + String(SVN_REV);
 const taVersion taMisc::version_bin(3, 9, 0, 0/*SVN_REV*/); //BROKEN ON MAC!!!!!!!s
@@ -503,7 +504,7 @@ taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 
 String	taMisc::app_dir; // set early in startup, algorithmically to find app dir
 String	taMisc::app_dir_default; // emergency override, obtained from user
-String  taMisc::home_dir;			// this will be set in init call
+String  taMisc::user_dir;			// this will be set in init call
 String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
 String	taMisc::prefs_dir; // this must be set at startup!
 String	taMisc::user_app_dir; 
@@ -617,7 +618,7 @@ void taMisc::LoadConfig() {
 //TODO: temp to move user's old file -- remove this 
   bool resave = false;
   if (!QFile::exists(cfgfn)) {
-    cfgfn = home_dir + "/.taconfig"; 
+    cfgfn = user_dir + "/.taconfig"; 
     resave = true;
   }
 // end TEMP
@@ -631,7 +632,7 @@ void taMisc::LoadConfig() {
 // ok, delete the old guy, to avoid confusion
   if (resave) SaveConfig();
   if (QFile::exists(prefs_dir + "/.taconfig")) {
-    QFile::rename(home_dir + "/.taconfig", home_dir + "/.taconfig.obsolete");
+    QFile::rename(user_dir + "/.taconfig", user_dir + "/.taconfig.obsolete");
   }
 // end TEMP
   --taFiler::no_save_last_fname;
@@ -1005,7 +1006,7 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   css_include_paths.AddUnique(app_dir + PATH_SEP + "css_stdlib");
   css_include_paths.AddUnique(user_app_dir + PATH_SEP + "css_mylib");
   css_include_paths.AddUnique(user_app_dir); // for .init files in user app dir
-  css_include_paths.AddUnique(home_dir); // needed for .init files **DEPRECATED**
+  css_include_paths.AddUnique(user_dir); // needed for .init files **DEPRECATED**
 
   prog_lib_paths.AddUnique(NameVar("SystemLib", 
     (Variant)(app_dir + PATH_SEP + "prog_lib")));

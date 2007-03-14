@@ -85,22 +85,28 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				GlobalOptimizations="TRUE"
+				OptimizeForProcessor="3"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\include&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="TA_DLL;TA_EXPORTS;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				StringPooling="TRUE"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4250;4661;4311"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib libjpeg.lib"
+				AdditionalDependencies="Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib libjpeg.lib libgsl_dll.lib libgslcblas_dll.lib"
 				OutputFile="$(OutDir)/ta.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(PDP4DIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
+				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -920,6 +926,13 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_TA.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							GlobalOptimizations="FALSE"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\ta_TA_inst.h">

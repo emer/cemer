@@ -85,7 +85,6 @@ String		pdpMisc::user_spec_def;
 float		pdpMisc::pdpZScale = 4.0f;
 
 int pdpMisc::Main(int& argc, const char *argv[]) {
-  taMisc::app_name = "pdp++";
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_pdp, &TA_PDPRoot)) return 1;
 
   root = (PDPRoot*)tabMisc::root;

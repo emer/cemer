@@ -79,6 +79,7 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="TA_DLL;PDP_DLL;WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -88,11 +89,11 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta.lib pdp.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
-				OutputFile="$(OutDir)/pdp_bin.exe"
+				AdditionalDependencies="ta.lib pdp.lib qtmain.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
+				OutputFile="$(OutDir)/pdp++.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -102,7 +103,7 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(TargetDir)pdp++*.exe $(SolutionDir)bin"/>
+				CommandLine="copy $(TargetDir)pdp*.exe $(SolutionDir)bin"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

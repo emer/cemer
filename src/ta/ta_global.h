@@ -186,30 +186,32 @@
 // pdp	    PDP_DLL	  PDP_DLL,PDP_EXPORTS
 
 #ifdef TA_OS_WIN
-#ifdef TA_USE_INVENTOR
-#  define COIN_DLL
-#  define SOQT_DLL
-#endif
-#ifdef TA_DLL
-#  define TAIQTSO_DLL
-#  define CSS_DLL
-#endif
-#ifdef TA_EXPORTS
-#  define TAIQTSO_EXPORTS
-#  define CSS_EXPORTS
-#endif
+# ifdef TA_USE_INVENTOR
+#   define COIN_DLL
+#   define SOQT_DLL
+# endif
+# ifdef TA_DLL
+#   define TAIQTSO_DLL
+#   define CSS_DLL
+# endif
+# ifdef TA_EXPORTS
+#   define TAIQTSO_EXPORTS
+#   define CSS_EXPORTS
+# endif
 
-#ifdef PDP_DLL
-#  define BP_DLL
-#  define LEABRA_DLL
+# ifdef PDP_DLL
+#   define BP_DLL
+#   define LEABRA_DLL
 //TODO: the other net types
-#endif
-#ifdef PDP_EXPORTS
-#  define BP_EXPORTS
-#  define LEABRA_EXPORTS
+# endif
+# ifdef PDP_EXPORTS
+#   define BP_EXPORTS
+#   define LEABRA_EXPORTS
 //TODO: the other net types
-#endif
-
+# endif
+# if defined(HAVE_LIBGSL) || defined(HAVE_LIBGSLCBLAS)
+#    define GSL_DLL // see gsl:Readme_GnuWin32.txt
+# endif 
 #endif
 
 

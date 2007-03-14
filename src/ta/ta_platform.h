@@ -27,9 +27,11 @@
 class TA_API taPlatform { // class to hold static members for platform specific functions
 public:
 
-  static int cpuCount(); // number of physical cpus
-  static int processId(); // returns a process-specific Id
-  static int tickCount(); // ticks since system started -- def of a 'tick' is system dependent
+// Computer info, and timing
+  static int	      cpuCount(); // number of physical cpus
+  static String	      hostName(); // name of the computer
+  static int	      processId(); // returns a process-specific Id
+  static int	      tickCount(); // ticks since system started -- def of a 'tick' is system dependent
 
 // File and Path routines
   static const String    pathSep; // normal file path separator character, ex / -- use this for construction of paths only (use qt parsing routines to parse paths)
@@ -45,6 +47,9 @@ public:
    // insures that C escaped backslashes are decoded -- typically used by maketa when reading from preprocesser {#[line] Xxx <fname>} values
   static String lexCanonical(const String& in); 
    // a canonical lexical form, for comparing exactly paths/files (note: does not dereference .. etc.); also insures the C escaped backslashes are decoded
+  
+// User Info
+  static String	      userName(); // username of logged in user
   
 // Process execution
   static int	exec(const String& cmd); //

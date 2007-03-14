@@ -552,6 +552,7 @@ inline void cat(const char* x, char y, String& r)
 // operator versions
 
 // constructive concatenation
+// only MSVC could be so anal as to not coerce char* to const char* ...
 
 inline String operator + (const String& x, const String& y)
 {
@@ -563,12 +564,22 @@ inline String operator + (const String& x, const char* y)
   String r; cat(x, y, r); return r;
 }
 
+inline String operator + (const String& x, char* y)
+{
+  String r; cat(x, y, r); return r;
+}
+
 inline String operator + (const String& x, char y)
 {
   String r; cat(x, y, r); return r;
 }
 
 inline String operator + (const char* x, const String& y)
+{
+  String r; cat(x, y, r); return r;
+}
+
+inline String operator + (char* x, const String& y)
 {
   String r; cat(x, y, r); return r;
 }

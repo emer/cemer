@@ -339,11 +339,9 @@ void taProject::UpdateSimLog() {
     String tstamp = ctime(&tmp);
     tstamp = tstamp.before('\n');
 
-    String user;
-    char* user_c = getenv("USER");
-    if(user_c != NULL) user = user_c;
-    char* host_c = getenv("HOSTNAME");
-    if(host_c != NULL) user += String("@") + String(host_c);
+    String user = taPlatform::userName();
+    String host = taPlatform::hostName();
+    if (host.nonempty()) user += String("@") + host;
 
     fstream fh;
     fh.open("SimLog", ios::out | ios::app);
@@ -741,6 +739,12 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("CssInteractive", "\
  -- Specifies that the css console should remain active after running a css script file upon startup");
 
+  taMisc::AddArgName("-u", "UserDir");
+  taMisc::AddArgName("--user_dir", "UserDir");
+  taMisc::AddArgName("user_dir=", "UserDir");
+  taMisc::AddArgNameDesc("UserDir", "\
+ -- explicitly specifies location of user home folder (should normally not need to override)");
+
   taMisc::AddArgName("-v", "CssDebug");
   taMisc::AddArgName("--verbose", "CssDebug");
   taMisc::AddArgName("verbose=", "CssDebug");
@@ -831,7 +835,7 @@ bool taRootBase::isAppDir(String path) {
 // hairy, modal, issue-prone -- we put in its own routine
 bool taRootBase::Startup_InitTA_folders() {
   // explicit cmdline override has highest priority
-  String app_dir =  taMisc::FindArgByName("AppDir");
+  String app_dir = taMisc::FindArgByName("AppDir");
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
   
@@ -919,8 +923,11 @@ have_app_dir:
 
   // initialize the key folders
   taMisc::app_dir = app_dir;
-  taMisc::home_dir = taPlatform::getHomePath();
-  taMisc::user_app_dir = taMisc::home_dir + PATH_SEP + "my" + taMisc::app_name;
+  // cmd line override of UserDir takes preference
+  taMisc::user_dir = taMisc::FindArgByName("UserDir");;
+  if (taMisc::user_dir.empty())
+    taMisc::user_dir = taPlatform::getHomePath();
+  taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + "my" + taMisc::app_name;
   taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
   // make sure it exists
   taPlatform::mkdir(taMisc::prefs_dir);

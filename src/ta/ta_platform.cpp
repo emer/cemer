@@ -16,6 +16,8 @@
 
 #include "ta_platform.h"
 
+#include "ta_type.h"
+
 #ifndef NO_TA_BASE
 # include <QDir>
 #endif
@@ -42,9 +44,9 @@ String taPlatform::getFilePath(const String& in) {
   else return in.before(pfs + 1); // we include the finalpos
 }
 
-#ifndef NO_TA_BASE
+#ifdef NO_TA_BASE
 String taPlatform::getHomePath() {
-  return String(QDir::homePath());
+  return _nilString;
 }
 #endif
 
@@ -86,6 +88,9 @@ String taPlatform::unescapeBackslash(const String& in) {
 // Windows implementation
 
 #include "windows.h"
+#ifndef NO_TA_BASE
+# include "shlobj.h"
+#endif
 
 #define BUFSIZE 1024
 char tmpbuf[BUFSIZE];
@@ -111,12 +116,28 @@ int taPlatform::exec(const String& cmd) {
 
 
 String taPlatform::getAppDataPath(const String& appname) {
-  return getHomePath() + "\\Application Data\\" + appname;
+//note: sleazy, we should use the complicated way, but this seems to be correct...
+// note: for Windows, we add the orgname, to keep it compliant
+  return getenv("APPDATA") + PATH_SEP + taMisc::org_name + PATH_SEP + appname;
 }
 
-#ifdef NO_TA_BASE
+#ifndef NO_TA_BASE
 String taPlatform::getHomePath() {
-  return getenv("USERPROFILE");
+//NOTE: we don't want the "home" folder, we really want the user's My Documents folder
+// since this can be moved from its default place, and/or renamed, we have to do this:
+  TCHAR szPath[MAX_PATH];
+  if(SUCCEEDED(SHGetFolderPath(
+    NULL, 
+    CSIDL_PERSONAL, 
+    NULL, 
+    0, 
+    szPath))) 
+  {
+    return String(szPath);
+  } else {
+    taMisc::Warning("taPlatform::getHomePath(): SHGetFolderPath() failed unexpectedly, guessing at user's home folder...");
+    return const_cast<const char*>(getenv("USERPROFILE")) + PATH_SEP + "My Documents";
+  }
 }
 #endif
 
@@ -126,6 +147,10 @@ String taPlatform::getTempPath() {
   if (retVal != 0)
     rval = String(tmpbuf);
   return rval;
+}
+
+String taPlatform::hostName() {
+  return String(getenv("COMPUTERNAME"));
 }
 
 String taPlatform::lexCanonical(const String& in) {
@@ -155,12 +180,12 @@ int taPlatform::processId() {
   return (int)GetCurrentProcessId();
 }
 
-/*evil void taPlatform::usleep(int usec) {
-#error "must implement usleep on Windows"
-} */
-
 int taPlatform::tickCount() {
   return (int)GetTickCount(); // is in ms
+}
+
+String taPlatform::userName() {
+  return String(getenv("USERNAME"));
 }
 
 #elif defined(TA_OS_UNIX)
@@ -197,15 +222,20 @@ String taPlatform::getAppDataPath(const String& appname) {
   return getHomePath() + "/." + appname;
 }
 
-#ifdef NO_TA_BASE
+#ifndef NO_TA_BASE
 String taPlatform::getHomePath() {
-  return getenv("HOME");
+ // return getenv("HOME");
+ return QDir::homePath();
 }
 #endif
 
 String taPlatform::getTempPath() {
   String rval = "/tmp";
   return rval;
+}
+
+String taPlatform::hostName() {
+  return String(getenv("HOSTNAME"));
 }
 
 String taPlatform::lexCanonical(const String& in) {
@@ -229,13 +259,12 @@ int taPlatform::processId() {
   return (int)getpid();
 }
 
-/*void taPlatform::usleep(int usec) {
-  ::usleep(usec);
-}*/
-
-
 int taPlatform::tickCount() {
   return (int)clock();
+}
+
+String taPlatform::userName() {
+  return String(getenv("USER"));
 }
 
 #else // unknown platform

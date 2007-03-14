@@ -98,7 +98,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   }
   // if still none, use user's home
   if ((eff_dir.empty() || eff_dir == "."))
-    eff_dir = taMisc::home_dir;
+    eff_dir = taMisc::user_dir;
    // gack! only way to use semi-sep filters is in constructor...
   // note: actual caption set later
   fd = new QFileDialog(NULL, "", eff_dir, filterText());
