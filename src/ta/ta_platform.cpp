@@ -90,7 +90,7 @@ String taPlatform::unescapeBackslash(const String& in) {
 #define BUFSIZE 1024
 char tmpbuf[BUFSIZE];
 
-const char    taPlatform::pathSep = '\\'; 
+const String taPlatform::pathSep('\\'); 
 
 int taPlatform::cpuCount() {
   SYSTEM_INFO info;
@@ -175,7 +175,7 @@ int taPlatform::tickCount() {
 
 // Unix implementations
 
-const char    taPlatform::pathSep = '/'; 
+const String  taPlatform::pathSep('/'); 
 
 int taPlatform::cpuCount() {
 #ifdef TA_OS_MAC

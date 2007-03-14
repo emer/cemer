@@ -501,10 +501,8 @@ taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
 // todo: but it just said that compression is not the default!  only for debug mode!
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 
-//String	taMisc::inst_prefix;//TODO: do this dynamically = WHEREAMI; // e.g., /usr/local/share
-String	taMisc::inst_prefix = WHEREAMI; // e.g., /usr/local/share
-String	taMisc::pkg_dir = "pdp++"; // "ta_css"; // todo: get from config.h
-String	taMisc::pkg_home; // is concat in Init_Defaults_PostLoadConfig
+String	taMisc::app_dir; // set early in startup, algorithmically to find app dir
+String	taMisc::app_dir_default; // emergency override, obtained from user
 String  taMisc::home_dir;			// this will be set in init call
 String	taMisc::web_home = "http://grey.colorado.edu/ta_css";
 String	taMisc::prefs_dir; // this must be set at startup!
@@ -566,7 +564,7 @@ bool	taMisc::in_init = false;
 bool	taMisc::in_event_loop = false;
 signed char	taMisc::quitting = QF_RUNNING;
 bool	taMisc::not_constr = true;
-bool	taMisc::use_gui = true;
+bool	taMisc::use_gui = false; // set to default in Init_Gui
 bool 	taMisc::gui_active = false;
 ContextFlag	taMisc::is_loading;
 ContextFlag	taMisc::is_saving;
@@ -602,16 +600,19 @@ String 	taMisc::LexBuf;
 
 void taMisc::SaveConfig() {
 #ifndef NO_TA_BASE
+  ++taFiler::no_save_last_fname;
   String cfgfn = prefs_dir + "/options";
   fstream strm;
   strm.open(cfgfn, ios::out);
   TA_taMisc.Dump_Save_Value(strm, (void*)this);
   strm.close(); strm.clear();
+  --taFiler::no_save_last_fname;
 #endif
 }
 
 void taMisc::LoadConfig() {
 #ifndef NO_TA_BASE
+  ++taFiler::no_save_last_fname;
   String cfgfn = prefs_dir + "/options";
 //TODO: temp to move user's old file -- remove this 
   bool resave = false;
@@ -633,6 +634,7 @@ void taMisc::LoadConfig() {
     QFile::rename(home_dir + "/.taconfig", home_dir + "/.taconfig.obsolete");
   }
 // end TEMP
+  --taFiler::no_save_last_fname;
 #endif
 }
 
@@ -996,19 +998,21 @@ void taMisc::Init_Hooks() {
 }
 
 void taMisc::Init_Defaults_PreLoadConfig() {
-  // set any default settings prior to loading config file (will be overwritten)
-  pkg_home = inst_prefix + "/" + pkg_dir;
 }
 
 void taMisc::Init_Defaults_PostLoadConfig() {
   // set any default settings after loading config file (ensures certain key settings in place)
-  css_include_paths.AddUnique(pkg_home + "/css_stdlib");
-  css_include_paths.AddUnique(home_dir + "/css_mylib");
-  css_include_paths.AddUnique(home_dir); // needed for .init files
+  css_include_paths.AddUnique(app_dir + PATH_SEP + "css_stdlib");
+  css_include_paths.AddUnique(user_app_dir + PATH_SEP + "css_mylib");
+  css_include_paths.AddUnique(user_app_dir); // for .init files in user app dir
+  css_include_paths.AddUnique(home_dir); // needed for .init files **DEPRECATED**
 
-  prog_lib_paths.AddUnique(NameVar("SystemLib", (Variant)(pkg_home + "/prog_lib")));
-  prog_lib_paths.AddUnique(NameVar("UserLib", (Variant)(home_dir + "/my_prog_lib")));
-  prog_lib_paths.AddUnique(NameVar("WebLib", (Variant)(web_home + "/prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("SystemLib", 
+    (Variant)(app_dir + PATH_SEP + "prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("UserLib", 
+    (Variant)(user_app_dir + PATH_SEP + "prog_lib")));
+  prog_lib_paths.AddUnique(NameVar("WebLib", 
+    (Variant)(web_home + "/prog_lib"))); //note: urls always use '/'
 
   String curdir = GetCurrentPath();
   taMisc::load_paths.AddUnique(curdir);

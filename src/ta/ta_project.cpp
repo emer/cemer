@@ -36,10 +36,13 @@
 #   include "css_qtconsole.h"
 # endif
 # include <QApplication>
+# include <QFileDialog>
+# include <QMessageBox>
 # include <QWidgetList>
 #endif
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QFileInfo>
 #include <QPointer>
 #include <QTimer>
@@ -683,72 +686,6 @@ bool taRootBase::Startup_InitDMem(int& argc, const char* argv[]) {
   return true;
 }
 
-bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
-  // first initialize the types
-  if(ta_init_fun)
-    (*ta_init_fun)();
-  taMisc::Init_Hooks();	// dynamically registered guys in statically linked client dlls like pdp
-
-  // initialize the key folders
-  taMisc::home_dir = taPlatform::getHomePath();
-  taMisc::user_app_dir = taMisc::home_dir + "/my" + taMisc::app_name;
-  taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
-  // make sure it exists
-  taPlatform::mkdir(taMisc::prefs_dir);
-  
-  // then load configuration info: sets lots of user-defined config info
-  taMisc::Init_Defaults_PreLoadConfig();
-  ++taFiler::no_save_last_fname;
-  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
-  --taFiler::no_save_last_fname;
-  taMisc::Init_Defaults_PostLoadConfig();
-
-  console_type = taMisc::console_type;
-  console_options = taMisc::console_options;
-
-  taMisc::default_scope = &TA_taProject; // this is general default
-  
-  // load prefs values for us
-  taRootBase* inst = instance();
-  inst->SetFileName(taMisc::prefs_dir + "/root");
-  if (QFile::exists(inst->GetFileName())) {
-    ++taFiler::no_save_last_fname;
-    inst->Load();
-    --taFiler::no_save_last_fname;
-  }
-  return true;
-}
-  	
-bool taRootBase::Startup_EnumeratePlugins() {
-#ifdef TA_OS_WIN
-  String plug_dir = "/bin"; 
-#else
-  String plug_dir = "/lib"; 
-#endif
-  String plug_log;
-  String plug_sub; // subdirectory, if any, for debug, mpi, etc.
-  if (taMisc::build_str.empty()) {
-    plug_log = "plugins.log";
-  } else {
-    plug_log = "plugins_" + taMisc::build_str + ".log";
-    plug_sub = "/" + taMisc::build_str;
-  }
-  // add basic tacss plugin folders, for 
-  taPlugins::AddPluginFolder(taMisc::pkg_home + plug_dir + "/plugins_tacss" + plug_sub);
-  taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir + "/plugins_tacss" + plug_sub);
-  // add for the application lib, ex. pdp
-  if (taMisc::app_lib_name.nonempty()) {
-    taPlugins::AddPluginFolder(taMisc::pkg_home + plug_dir + 
-      "/plugins_" + taMisc::app_lib_name + plug_sub);
-    taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir +
-      "/plugins_" + taMisc::app_lib_name + plug_sub);
-  }
-  taPlugins::InitLog(taMisc::prefs_dir + "/" + plug_log);
-  taPlugins::EnumeratePlugins();
-
-  return true;
-}
-
 bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("-nogui", "NoGui");
   taMisc::AddArgName("--nogui", "NoGui");
@@ -759,6 +696,12 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("--gui", "Gui");
   taMisc::AddArgNameDesc("Gui", "\
  -- Enables the GUI (graphical user interface) -- it is on by default in most programs except css");
+
+  taMisc::AddArgName("-a", "AppDir");
+  taMisc::AddArgName("--app_dir", "AppDir");
+  taMisc::AddArgName("app_dir=", "AppDir");
+  taMisc::AddArgNameDesc("AppDir", "\
+ -- explicitly specifies location of the app directory (prog libs, plugins, etc.)");
 
   taMisc::AddArgName("-version", "Version");
   taMisc::AddArgName("--version", "Version");
@@ -817,16 +760,25 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   return true;
 }
 
-bool taRootBase::Startup_ProcessGuiArg() {
-#ifndef TA_GUI
+bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
+#ifdef TA_GUI
+  taMisc::use_gui = true;
+#else
   taMisc::use_gui = false;
 #endif
 
   // process gui flag right away -- has other implications
-  if(taMisc::CheckArgByName("NoGui"))
-    taMisc::use_gui = false;
-  if(taMisc::CheckArgByName("Gui"))
-    taMisc::use_gui = true;
+  // we will just take the last one found on cmd line
+  for (int i = argc - 1; i > 0; --i) {
+    String arg = argv[i];
+     if (arg.endsWith("-nogui")) {
+      taMisc::use_gui = false; 
+      break;
+    } else if (arg.endsWith("-gui")) {
+      taMisc::use_gui = true; 
+      break;
+    }
+  }
 
 #ifndef TA_GUI
   if(taMisc::use_gui) {
@@ -855,6 +807,240 @@ new QApplication(argc, (char**)argv); // accessed as qApp
     QFileInfo fi(argv[0]);
     QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
   }
+  return true;
+}
+
+bool taRootBase::isAppDir(String path) {
+//NOTE: this is a test that is supposed to confirm a dir is a tacss dir
+// our first version checks for the prog_lib folder
+  path = taPlatform::finalSep(path) + "prog_lib";
+  QDir dir(path);
+  bool rval = dir.exists();
+#ifdef DEBUG // don't clutter with success, just failures
+  if (!rval)
+    taMisc::Info("Did not find app_dir as:", path);
+#endif
+  return rval;
+}
+
+// hairy, modal, issue-prone -- we put in its own routine
+bool taRootBase::Startup_InitTA_folders() {
+  // explicit cmdline override has highest priority
+  String app_dir =  taMisc::FindArgByName("AppDir");
+  if (app_dir.nonempty() && isAppDir(app_dir))
+    goto have_app_dir;
+  
+/* NOTE: in development, binaries can tend to get created deep
+   inside the source code structure -- therefore, we give priority
+   to the PDP4DIR variable first, before checking dynamically.
+   Below, we list the likely or supported folder structure.
+*/
+  app_dir = getenv("PDP4DIR");
+  if (app_dir.nonempty() && isAppDir(app_dir))
+    goto have_app_dir;
+
+  app_dir = QCoreApplication::applicationDirPath();
+#ifdef TA_OS_WIN
+/*
+  {app_dir}\bin
+*/
+  // note: Qt docs say it returns the '/' version...
+  if (app_dir.endswith("/bin") || app_dir.endsWith("\bin")) {
+    app_dir = app_dir.at(0, app_dir.length() - 4);
+    if (isAppDir(app_dir))
+      goto have_app_dir;
+  }
+#elif defined(TA_OS_MAC)
+/*
+  {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
+  {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
+  {app_dir}/bin (typically non-gui only, since gui must run from bundle)
+*/
+  { // because of goto
+  String probe = "/Contents/MacOS";
+  if (app_dir.endswith(probe)) {
+    app_dir = app_dir.before(probe);
+    QDir dir(app_dir);
+    if (dir.cdUp()) {
+      app_dir = dir.absolutePath();
+      // if bundle is in bin folder, strip that
+      if (app_dir.endswith("/bin")) {
+        app_dir = app_dir.at(0, app_dir.length() - 4);
+      }
+      if (isAppDir(app_dir))
+        goto have_app_dir;
+    }
+  }
+  }
+  // seemingly not in a bundle, so try raw bin
+  if (app_dir.endswith("/bin")) {
+    app_dir = app_dir.at(0, app_dir.length() - 4);
+  }
+  if (isAppDir(app_dir))
+    goto have_app_dir;
+    
+#else // non-Mac Unix
+/*
+  {app_dir}/bin
+*/
+  if (app_dir.endsWith("/bin")) {
+    app_dir = app_dir.at(0, app_dir.length() - 4);
+    if (isAppDir(app_dir))
+      goto have_app_dir;
+  }
+#endif
+
+  // common code for failure to grok the app path
+  app_dir = QCoreApplication::applicationDirPath();
+  
+  {
+  // first, maybe it is actually the exe's folder itself? -- probe with known subfolder
+  if (isAppDir(app_dir))
+    goto have_app_dir;
+  
+  // is it the current directory? -- probe with known subfolder
+  app_dir = QDir::currentPath();
+  if (isAppDir(app_dir))
+    goto have_app_dir;
+  }
+  
+#ifdef DEBUG
+  cerr << "NOTE: default app_dir logic did not find the app_dir.\n";
+#endif  
+  
+  app_dir = _nilString; // try finding override, or else prompt user
+  
+have_app_dir:
+
+  // initialize the key folders
+  taMisc::app_dir = app_dir;
+  taMisc::home_dir = taPlatform::getHomePath();
+  taMisc::user_app_dir = taMisc::home_dir + PATH_SEP + "my" + taMisc::app_name;
+  taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
+  // make sure it exists
+  taPlatform::mkdir(taMisc::prefs_dir);
+  return true;
+}
+
+bool taRootBase::Startup_InitTA_getMissingAppDir() {
+//TODO: if gui, prompt user to find the app path, must be valid
+  // start with a default, and then loop validating /fetching
+  bool prompted = false;
+  bool new_one = false; // assume it existed before
+  String app_dir(taMisc::app_dir_default);
+  while (true) {
+    // validate current override, if any -- first one comes from options
+    if (app_dir.nonempty()) {
+      if (isAppDir(app_dir)) {
+        taMisc::app_dir_default = app_dir; // save for next time
+        taMisc::app_dir = app_dir;
+        // save the manual default so user doesn't get bothered every time
+        if (new_one)
+          ((taMisc*)TA_taMisc.GetInstance())->SaveConfig();
+        return true;
+      }
+    }
+    new_one = true;
+    // if in gui mode, prompt, otherwise just fail
+    if (!taMisc::use_gui) return false;
+    
+    //ask user to supply the application folder
+    // note: 1) we can't use our own gui stuff yet; 2) we may be in nogui mode!
+    String msg = "The root application folder could not be found -- would you like to provide it yourself? (the application will close otherwise)";
+    
+    if (taMisc::use_gui) {
+      if (!prompted) {
+        //note: following will be non-gui
+        int chs = QMessageBox::question(NULL, "Can't find app folder", msg,
+          (QMessageBox::Yes | QMessageBox::No), QMessageBox::Yes);
+        if (chs != QMessageBox::Yes) return false;
+      }
+      app_dir = QFileDialog::getExistingDirectory(NULL, "Find root application folder");
+    } else {
+      if (!prompted) {
+        //note: following will be non-gui
+        int chs = taMisc::Choice(msg, "Yes (Find)", "No (Close)");
+        if (chs != 0) return false;
+      }
+      cout << "Enter path to root application folder (blank to cancel): ";
+      cout.flush();
+      cin >> app_dir;
+    }
+    prompted = true;
+    if (app_dir.empty()) return false;
+    // strip trailing slash
+    String last = app_dir.right(1);
+    if ((last == "/") || (last == "\\"))
+      app_dir.truncate(app_dir.length() - 1);
+  } 
+  return false;
+}
+
+bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
+  // first initialize the types
+  if(ta_init_fun)
+    (*ta_init_fun)();
+  taMisc::Init_Hooks();	// client dlls register init hooks -- this calls them!
+    
+  if (!Startup_InitTA_folders()) return false;
+
+  // then load configuration info: sets lots of user-defined config info
+  taMisc::Init_Defaults_PreLoadConfig();
+  ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
+  
+// if we still hadn't found an app_dir, need to find one now!
+  if (taMisc::app_dir.empty()) {
+    if (Startup_InitTA_getMissingAppDir() ) {
+    } else {
+      taMisc::Error("Could not find application folder, shutting down.");
+      return false;
+    }
+  }
+  taMisc::Init_Defaults_PostLoadConfig();
+
+  console_type = taMisc::console_type;
+  console_options = taMisc::console_options;
+
+  taMisc::default_scope = &TA_taProject; // this is general default
+  
+  // load prefs values for us
+  taRootBase* inst = instance();
+  inst->SetFileName(taMisc::prefs_dir + "/root");
+  if (QFile::exists(inst->GetFileName())) {
+    ++taFiler::no_save_last_fname;
+    inst->Load();
+    --taFiler::no_save_last_fname;
+  }
+  return true;
+}
+  	
+bool taRootBase::Startup_EnumeratePlugins() {
+#ifdef TA_OS_WIN
+  String plug_dir = "\\bin"; 
+#else
+  String plug_dir = "/lib"; 
+#endif
+  String plug_log;
+  String plug_sub; // subdirectory, if any, for debug, mpi, etc.
+  if (taMisc::build_str.empty()) {
+    plug_log = "plugins.log";
+  } else {
+    plug_log = "plugins_" + taMisc::build_str + ".log";
+    plug_sub = PATH_SEP + taMisc::build_str;
+  }
+  // add basic tacss plugin folders, for 
+  taPlugins::AddPluginFolder(taMisc::app_dir + plug_dir + PATH_SEP + "plugins_tacss" + plug_sub);
+  taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir + PATH_SEP + "plugins_tacss" + plug_sub);
+  // add for the application lib, ex. pdp
+  if (taMisc::app_lib_name.nonempty()) {
+    taPlugins::AddPluginFolder(taMisc::app_dir + plug_dir + 
+      PATH_SEP + "plugins_" + taMisc::app_lib_name + plug_sub);
+    taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir +
+      PATH_SEP + "plugins_" + taMisc::app_lib_name + plug_sub);
+  }
+  taPlugins::InitLog(taMisc::prefs_dir + PATH_SEP + plug_log);
+  taPlugins::EnumeratePlugins();
+
   return true;
 }
 
@@ -1060,10 +1246,10 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   root_adapter = new taRootBaseAdapter;
   cssMisc::prompt = taMisc::app_name; // the same
   if(!Startup_InitDMem(argc, argv)) return false;
-  if(!Startup_InitTA(ta_init_fun)) return false;
+  if(!Startup_ProcessGuiArg(argc, argv)) return false;
   if(!Startup_InitArgs(argc, argv)) return false;
-  if(!Startup_ProcessGuiArg()) return false;
   if(!Startup_InitApp(argc, argv)) return false;
+  if(!Startup_InitTA(ta_init_fun)) return false;
   if(!Startup_InitTypes()) return false;
   if(!Startup_EnumeratePlugins()) return false;
   if(!Startup_LoadPlugins()) return false; // loads those enabled, and does type integration

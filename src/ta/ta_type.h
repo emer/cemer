@@ -629,12 +629,16 @@ public:
   static TypeDef*	default_proj_type; // #SAVE #CAT_File #TYPE_taProject default type of project to create
   static LoadVerbosity	verbose_load;	// #SAVE #CAT_File #EXPERT report the names of things during loading
 
-  static String		inst_prefix;
+/*  static String		inst_prefix;
   // #SAVE #CAT_File prefix for software installation (e.g., /usr/local)
   static String	       	pkg_dir;
   // #SAVE #CAT_File directory name for current software package (e.g., ta_css or pdp++)
   static String		pkg_home;
-  // #SAVE #CAT_File path to location of installed system files for current software package (e.g, /usr/local/ta_css) (should be inst_prefix + pkg_dir)
+  // #SAVE #CAT_File path to location of installed system files for current software package (e.g, /usr/local/ta_css) (should be inst_prefix + pkg_dir) */
+  static String		app_dir; 
+  // #SHOW #READ_ONLY #CAT_File base of installed app directory
+  static String		app_dir_default; 
+  // #HIDDEN #SAVE #CAT_File an override to use ONLY if we can't determine the app_dir
   static String		home_dir;
   // #CAT_File location of user's home directory
   static String		web_home;

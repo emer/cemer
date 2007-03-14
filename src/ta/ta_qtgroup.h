@@ -507,9 +507,9 @@ protected:
   void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
   QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
 
-  override void		GetValue_Membs();
+  override void		GetValue_Membs_def();
   virtual void		GetValue_SeleMembs();
-  override void		GetImage_Membs();
+  override void		GetImage_Membs_def();
   virtual void		GetImage_SeleMembs();
 
 protected slots:

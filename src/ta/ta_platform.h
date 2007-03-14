@@ -22,6 +22,8 @@
 #include "ta_def.h"
 #include "ta_string.h"
 
+#define PATH_SEP taPlatform::pathSep
+
 class TA_API taPlatform { // class to hold static members for platform specific functions
 public:
 
@@ -30,7 +32,7 @@ public:
   static int tickCount(); // ticks since system started -- def of a 'tick' is system dependent
 
 // File and Path routines
-  static const char    pathSep; // normal file path separator character, ex / -- use this for construction only
+  static const String    pathSep; // normal file path separator character, ex / -- use this for construction of paths only (use qt parsing routines to parse paths)
   static String finalSep(const String& in); // return string that has a valid final separator
   static String getTempPath(); // get a valid temporary path (that user can write to)
   static String getHomePath(); // the user's home folder

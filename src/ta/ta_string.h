@@ -572,6 +572,21 @@ inline String operator + (const char* x, const String& y)
 {
   String r; cat(x, y, r); return r;
 }
+#ifdef TA_USE_QT
+inline String operator + (const QString& x, const String& y)
+{
+  String r;  
+  r.setRep(Scat(x.latin1(), x.length(), y.chars(), y.length()));
+  return r;
+}
+
+inline String operator + (const String& x, const QString& y)
+{
+  String r;  
+  r.setRep(Scat(x.chars(), x.length(), y.latin1(), y.length()));
+  return r;
+}
+#endif
 
 inline String reverse(const String& x)
 {

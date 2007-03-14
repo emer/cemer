@@ -1822,8 +1822,8 @@ QMenu* gpiSelectEditDataHost::FindMenuItem(QMenu* par_menu, const char* label) {
   return NULL;
 }
 
-void gpiSelectEditDataHost::GetValue_Membs() {
-  inherited::GetValue_Membs(); // does defaults
+void gpiSelectEditDataHost::GetValue_Membs_def() {
+  inherited::GetValue_Membs_def(); // does defaults
   GetValue_SeleMembs();
   sele->UpdateAllBases();
 }
@@ -1844,8 +1844,8 @@ void gpiSelectEditDataHost::GetValue_SeleMembs() {
   }
 }
 
-void gpiSelectEditDataHost::GetImage_Membs() {
-  inherited::GetImage_Membs(); // does defaults
+void gpiSelectEditDataHost::GetImage_Membs_def() {
+  inherited::GetImage_Membs_def(); // does defaults
   GetImage_SeleMembs();
 }
 

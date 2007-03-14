@@ -217,14 +217,14 @@ public:
 
   static bool	Startup_InitDMem(int& argc, const char* argv[]);
   // #IGNORE init distributed memory (MPI) stuff
-  static bool	Startup_InitTA(ta_void_fun ta_init_fun);
-  // #IGNORE basic type-access system intializaton
-  static bool	Startup_InitArgs(int& argc, const char* argv[]);
-  // #IGNORE process args into more usable form
-  static bool	Startup_ProcessGuiArg();
+  static bool	Startup_ProcessGuiArg(int argc, const char* argv[]);
   // #IGNORE process the -gui/-nogui arg
   static bool	Startup_InitApp(int& argc, const char* argv[]);
-  // #IGNORE init application stuff (qapp etc)
+  // #IGNORE init application stuff (qapp etc) -- note: twiddles cmdline args
+  static bool	Startup_InitArgs(int& argc, const char* argv[]);
+  // #IGNORE process args into more usable form
+  static bool	Startup_InitTA(ta_void_fun ta_init_fun);
+  // #IGNORE basic type-access system intializaton
   static bool	Startup_InitTypes();
   // #IGNORE final init of typedefs
   static bool	Startup_EnumeratePlugins();
@@ -273,6 +273,9 @@ protected:
   static taMisc::ConsoleType console_type; // #IGNORE 
   static int console_options; //#IGNORE taMisc::ConsoleOptions 
   
+  static bool	isAppDir(String path); // #IGNORE true if seems to be an app dir
+  static bool 	Startup_InitTA_folders();  // #IGNORE 
+  static bool 	Startup_InitTA_getMissingAppDir();  // #IGNORE 
   bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
