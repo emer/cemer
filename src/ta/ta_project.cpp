@@ -858,7 +858,7 @@ bool taRootBase::Startup_InitTA_folders() {
 */
   { // because of goto
   String probe = "/Contents/MacOS";
-  if (app_dir.endswith(probe)) {
+  if (app_dir.endsWith(probe)) {
     app_dir = app_dir.before(probe);
     QDir dir(app_dir);
     if (dir.cdUp()) {
