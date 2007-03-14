@@ -1111,12 +1111,9 @@ void iProgramCtrlDataHost::Cancel_impl() {
 }
 
 void iProgramCtrlDataHost::Enum_Members() {
-  // we show all sections, except VARS is modal
+  // we show all sections
   for (int j = 0; j < MS_CNT; ++j) {
-    // we don't show the vars by default, excep for Experts
-    if ((j != MS_VARS)  || (!(taMisc::show_gui & taMisc::NO_EXPERT))) {
-      show_set(j) = true;
-    }
+    show_set(j) = true;
   }
 }
 
@@ -1179,13 +1176,8 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       nm = "Program vars";
       help_text = "the variables used inside the program";
       pvl = &prog->vars; 
-      iCheckBox* chk = new iCheckBox(nm.chars(), body);
-      AddSectionLabel(-1, chk, help_text);
-      bgrp->addButton(chk, j);
-      if (show_set(j)) {
-        chk->setChecked(true);
-      } else // not showing
-        continue; // don't put guys in
+      lbl = new iLabel(nm, body);
+      AddSectionLabel(-1, lbl, help_text);
       } break;
     default: continue; // shouldn't happen!
     }

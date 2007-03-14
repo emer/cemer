@@ -687,6 +687,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // first initialize the types
   if(ta_init_fun)
     (*ta_init_fun)();
+  taMisc::Init_Hooks();	// dynamically registered guys in statically linked client dlls like pdp
 
   // initialize the key folders
   taMisc::home_dir = taPlatform::getHomePath();
@@ -719,7 +720,6 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
 }
   	
 bool taRootBase::Startup_EnumeratePlugins() {
-  taMisc::Init_Hooks();		// plugins register init hooks -- this calls them!
 #ifdef TA_OS_WIN
   String plug_dir = "/bin"; 
 #else

@@ -872,6 +872,8 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
         TypeDef* typ2 = GetTypeDef(); // we are the group
         AppendFilerInfo(typ2, exts, compress, filetypes);
       }
+    } else { // otherwise, loading over an item, so just get from us
+      AppendFilerInfo(typ, exts, compress, filetypes);
     }
   }
   taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes); 
