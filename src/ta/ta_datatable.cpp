@@ -95,7 +95,7 @@ String ColCalcExpr::GetFullExpr() const {
 
 
 //////////////////////////
-//   DataCol	//
+//     DataCol  	//
 //////////////////////////
 
 const String DataCol::udkey_width("WIDTH");
@@ -103,7 +103,7 @@ const String DataCol::udkey_narrow("NARROW");
 const String DataCol::udkey_hidden("HIDDEN");
 
 void DataCol::Initialize() {
-  col_flags = DC_NONE;
+  col_flags = (ColFlags)(SAVE_ROWS | SAVE_DATA);
   is_matrix = false;
   // default initialize to scalar
   cell_geom.SetSize(1);
@@ -198,6 +198,24 @@ int DataCol::imageComponents() const {
 void DataCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Init();
+
+  // convert from load -- remove asap!
+  if(col_flags == DC_NONE) {	// todo: remove -- highly unlikely both flags are off so set defaults
+    col_flags = (ColFlags)(SAVE_ROWS | SAVE_DATA);
+  }
+  else if(col_flags == CALC) {
+    col_flags = (ColFlags)(CALC | SAVE_ROWS | SAVE_DATA);
+  }
+
+  if(HasColFlag(NO_SAVE_DATA)) {
+    ClearColFlag(SAVE_DATA);	// todo: remove this -- backward compat -- only used if false (non default)
+    SetColFlag(SAVE_ROWS);		// should be set
+    ClearColFlag(NO_SAVE_DATA);
+  }
+  if(HasColFlag(NO_SAVE)) {
+    ClearColFlag(SAVE_ROWS);	// todo: remove this -- backward compat -- only used if false (non default)
+    ClearColFlag(NO_SAVE);
+  }
 }
 
 void DataCol::DataChanged(int dcr, void* op1, void* op2) {
@@ -260,7 +278,7 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
     // if no save, don't need to check DataTable global
     if (saveToDumpFile()) {
       DataTable* dt = dataTable();
-      if (dt && !dt->HasDataFlag(DataTable::NO_SAVE_DATA)) return DQR_SAVE;
+      if (dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;
     }
     return DQR_NO_SAVE;
   } else return inherited::Dump_QuerySaveMember(md);
@@ -519,8 +537,7 @@ int DataTable::idx_def_arg = 0;
 
 void DataTable::Initialize() {
   rows = 0;
-  data_flags = DF_NONE;
-  save_data = true;		// todo: remove
+  data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
   m_dm = NULL; // returns new if none exists, or existing -- enables views to be shared
   calc_script = NULL;
   log_file = NULL;
@@ -584,10 +601,17 @@ bool DataTable::CopyColRow(int dest_col, int dest_row, const DataTable& src, int
 
 void DataTable::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(!save_data) {
-    SetDataFlag(NO_SAVE_DATA);	// todo: remove this -- backward compat -- only used if false (non default)
-    save_data = true;
+
+  if(data_flags == DF_NONE) {	// todo: remove -- highly unlikely both flags are off so set defaults
+    data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
   }
+
+  if(HasDataFlag(NO_SAVE_DATA)) {
+    ClearDataFlag(SAVE_ROWS);	// todo: remove this -- backward compat -- only used if false (non default)
+    SetDataFlag(AUTO_CALC);	// should be set
+    ClearDataFlag(NO_SAVE_DATA);
+  }
+    
   UniqueColNames();
   // the following is likely redundant:
   //  UpdateColCalcs();
@@ -644,16 +668,11 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
   if (c == EOF) return EOF;
   if (c == 2) return 2; // signal that it was just a path
   // otherwise, if data was loaded, we need to set the rows
-  if(!HasDataFlag(NO_SAVE_DATA) && save_data) { // todo: remove save_data part -- obs
-    int i;
-    DataCol* col;
-    for (i = 0; i < cols(); ++i) {
-      col = GetColData(i);
-      if (!col->saveToDumpFile()) continue;
-      int frms = col->AR()->frames();
-      // number of rows is going to be = biggest number in individual cols
-      rows = max(rows, frms);
-    }
+  for (int i = 0; i < cols(); ++i) {
+    DataCol* col = GetColData(i);
+    int frms = col->AR()->frames();
+    // number of rows is going to be = biggest number in individual cols
+    rows = max(rows, frms);
   }
   return c;
 }
@@ -1640,7 +1659,7 @@ void DataTable::WriteClose_impl() {
 
 bool DataTable::UpdateColCalcs() {
   if(!CheckForCalcs()) return false;
-  if(HasDataFlag(NO_AUTO_CALC)) return false;
+  if(!HasDataFlag(AUTO_CALC)) return false;
   if(taMisc::is_loading) return false;
   return CalcAllRows_impl();
 }

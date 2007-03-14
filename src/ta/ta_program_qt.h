@@ -73,7 +73,8 @@ protected:
   taiField*		fldVal; // for: char, string, most numbers
   taiToggle*		tglVal; // for: bool
 
-  taiToggle*		tglNCP; // for: no control panel
+  taiToggle*		tglCP; // for: ctrl panel
+  taiToggle*		tglNC; // for: null check
   
   // for standard enums:
   taiEnumTypeDefButton*	thEnumType;

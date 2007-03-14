@@ -373,8 +373,14 @@ class TA_API DataProg : public ProgEl {
   // #VIRT_BASE #NO_INSTANCE a program element for data operations (virtual base class -- do not use)
 INHERITED(ProgEl)
 public:
-  DataTableRef	    src_data;	// source data for operation
-  DataTableRef	    dest_data;	// #NULL_OK destination (result) data for operation (if NULL, a new one will be automatically created)
+  ProgVarRef	    src_data_var;	// program variable pointing to source data for operation
+  ProgVarRef	    dest_data_var;	// #NULL_OK program variable pointing to destination (result) data for operation (if NULL, a new one will be automatically created)
+
+  DataTableRef	    src_data;	// #HIDDEN #NO_SAVE #OBS obsolete todo: remove
+  DataTableRef	    dest_data;	// #HIDDEN #NO_SAVE #OBS obsolete todo: remove
+
+  virtual DataTable* GetSrcData(); // get source data table pointer from src_data_var (or NULL)
+  virtual DataTable* GetDestData(); // get dsource data table pointer from dest_data_var (or NULL)
 
   virtual void	UpdateSpecDataTable() { };
   // #CAT_Data update the data table pointer(s) for the spec in this prog (so the user can choose columns from the appropriate data table)
@@ -382,6 +388,7 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_SIMPLE_BASEFUNS(DataProg);
 protected:
+  override void UpdateAfterEdit_impl();
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
@@ -490,8 +497,13 @@ class TA_API DataJoinProg : public DataProg {
   // joins two datatables (src and src_b) into dest datatable indexed by a common column
 INHERITED(DataProg)
 public:
-  DataTableRef		src_b_data;	// second source data for operation
-  DataJoinSpec		join_spec; // #SHOW_TREE data grouping specification
+  ProgVarRef		src_b_data_var;	// variable pointing to second source data for operation
+  DataJoinSpec		join_spec; 	// #SHOW_TREE data grouping specification
+
+
+  DataTableRef		src_b_data;	// #HIDDEN #NO_SAVE #OBS obsolete todo: remove
+
+  virtual DataTable* GetSrcBData(); // get source data table pointer from src_data_var (or NULL)
 
   override void	UpdateSpecDataTable();
 
@@ -559,8 +571,8 @@ class TA_API DataCalcAddDestRow : public DataProg {
 INHERITED(DataProg)
 public:
 #ifdef __MAKETA__
-  DataTableRef	    src_data;	// #READ_ONLY #HIDDEN source data for operation
-  DataTableRef	    dest_data;	// #READ_ONLY #SHOW destination table to add row in -- automatically updated from DataCalcLoop
+  ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN source data for operation
+  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW destination table to add row in -- automatically updated from DataCalcLoop
 #endif
 
   virtual void	GetDataPtrsFmLoop();
@@ -585,8 +597,8 @@ class TA_API DataCalcSetDestRow : public DataProg {
 INHERITED(DataProg)
 public:
 #ifdef __MAKETA__
-  DataTableRef	    src_data;	// #READ_ONLY #HIDDEN source data for operation
-  DataTableRef	    dest_data;	// #READ_ONLY #SHOW destination table to set row in -- automatically updated from DataCalcLoop
+  ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN source data for operation
+  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW destination table to add row in -- automatically updated from DataCalcLoop
 #endif
 
   virtual void	GetDataPtrsFmLoop();
@@ -611,8 +623,8 @@ class TA_API DataCalcSetSrcRow : public DataProg {
 INHERITED(DataProg)
 public:
 #ifdef __MAKETA__
-  DataTableRef	    src_data;	// #READ_ONLY #SHOW source table to set values in -- automatically updated from DataCalcLoop
-  DataTableRef	    dest_data;	// #READ_ONLY #HIDDEN destination table -- automatically updated from DataCalcLoop
+  ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW source table to set values in -- automatically updated from DataCalcLoop
+  ProgVarRef	    dest_data_var;	// #READ_ONLY #HIDDEN destination table -- automatically updated from DataCalcLoop
 #endif
 
   virtual void	GetDataPtrsFmLoop();
@@ -637,8 +649,8 @@ class TA_API DataCalcCopyCommonCols : public DataProg {
 INHERITED(DataProg)
 public:
 #ifdef __MAKETA__
-  DataTableRef	    src_data;	// #READ_ONLY #SHOW source data for copying -- automatically updated from DataCalcLoop
-  DataTableRef	    dest_data;	// #READ_ONLY #SHOW destination table for copying -- automatically updated from DataCalcLoop
+  ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW source data for copying -- automatically updated from DataCalcLoop
+  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW destination table for copying -- automatically updated from DataCalcLoop
 #endif
   bool		only_named_cols;
   // only copy columns that are named in src_cols and dest_cols (otherwise just operates on all the datatable columns)

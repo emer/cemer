@@ -6,6 +6,15 @@ commit:
 ------------
 current:
 
+* CONDEDIT_ON_ #BITS flag field should just check Bit!
+* #BITS save and load should do bit flag | | output!
+
+* check: DataProg DataTableRef -> ProgVarRef w/ convert
+
+* Program Init logic: do CheckConfig *after* Init function runs!?
+
+* Join should be symmetric
+
 * save recover files in current project dir, with .recover name #255
 
 * load/save all prog_lib and testsprojects & test convert
@@ -26,6 +35,13 @@ current:
   weakly activated units more weak, and the strongly activated more weak too!  pop out??
 
 * project display needs update after loading: filename is not there..
+
+-----------
+Inventor
+
+* new viewer
+* import object files
+* render objects to bitmap and use to present to network
 
 -----------
 check:

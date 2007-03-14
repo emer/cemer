@@ -45,7 +45,7 @@ void ProgVar::Initialize() {
   object_type = &TA_taOBase;
   hard_enum_type = NULL;
   objs_ptr = false;
-  flags = PV_NONE;
+  flags = (VarFlags)(CTRL_PANEL | NULL_CHECK);
 }
 
 void ProgVar::Destroy() {
@@ -84,6 +84,15 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  if(flags == PV_NONE) {	// unlikely, reinstate defaults todo: remove!
+    flags = (VarFlags)(CTRL_PANEL | NULL_CHECK);
+  }
+  if(HasVarFlag(NO_CTRL_PANEL)) { // todo: obsolete, remove
+    ClearVarFlag(CTRL_PANEL);
+    SetVarFlag(NULL_CHECK);	// wasn't set before, should be
+    ClearVarFlag(NO_CTRL_PANEL);
+  }
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -91,7 +100,7 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
   if(var_type == T_Object) {
-    if(!HasVarFlag(NO_NULL_CHECK) && !object_val) {
+    if(HasVarFlag(NULL_CHECK) && !object_val) {
       if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
 				    "object pointer is NULL");
       rval = false;
@@ -2171,6 +2180,11 @@ String ReturnExpr::GetDisplayName() const {
 
 ///////////////////////////////////////////////////////////////
 //  	ProgObjList
+
+
+DataTable* ProgObjList::NewDataTable(int n_tables) {
+  return (DataTable*)New(n_tables, &TA_DataTable);
+}
 
 void ProgObjList::GetVarsForObjs() {
   Program* prog = GET_MY_OWNER(Program);

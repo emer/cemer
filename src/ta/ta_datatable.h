@@ -123,9 +123,12 @@ public:
     DC_NONE		= 0, // #NO_BIT
     MARK 		= 0x0001, // #NO_BIT used internally to mark columns prior to an operation -- columns that remain marked after all operations are unused, and may be removed -- users should not generally mess with this flag
     PIN 		= 0x0002, // #NO_BIT protect this column from being automatically deleted according to the MARK scheme (see comment).  this is often not very easy for uers to find and use (columns to be saved should be listed explicitly in the context in which others are being used), so we are not exposing it to users, but it can be used internally for some reason
-    NO_SAVE 		= 0x0004, // do not save this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data.
-    NO_SAVE_DATA 	= 0x0008, // do not save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
+    SAVE_ROWS 		= 0x0004, // save the row data for this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data if not on.
+    SAVE_DATA 		= 0x0008, // save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
     CALC 		= 0x0010, // calculate value of this column based on calc_expr expression
+
+    NO_SAVE 		= 0x0100, // #NO_BIT obsolete todo: remove
+    NO_SAVE_DATA 	= 0x0200, // #NO_BIT obsolete todo: remove
   };
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
@@ -279,9 +282,9 @@ public:
   // #CAT_Display low level display width, in chars, taken from options
   virtual int		maxColWidth() const {return -1;}
   // #CAT_Display aprox max number of columns, in characters, -1 if variable or unknown
-  virtual bool		saveToDumpFile() const { return !HasColFlag(NO_SAVE); }
+  virtual bool		saveToDumpFile() const { return HasColFlag(SAVE_ROWS); }
   // #IGNORE whether to save col to internal dump format
-  virtual bool		saveToDataFile() const { return !HasColFlag(NO_SAVE_DATA); }
+  virtual bool		saveToDataFile() const { return HasColFlag(SAVE_DATA); }
   // #IGNORE whether to save col to external 'data' format
 
   static const KeyString key_val_type; // "val_type"
@@ -407,9 +410,11 @@ public:
 
   enum DataFlags { // #BITS flags for data table
     DF_NONE		= 0, // #NO_BIT
-    NO_SAVE_DATA 	= 0x0001, // do not save the row data associated with this table when saved with the project (column and other configuration information is always saved)
+    SAVE_ROWS 		= 0x0001, // save the row data associated with this table when saved with the project (column and other configuration information is always saved)
     HAS_CALCS 		= 0x0002, // #NO_BIT at least one of the columns has CALC flag set
-    NO_AUTO_CALC	= 0x0004, // do not automatically calculate columns
+    AUTO_CALC		= 0x0004, // automatically calculate columns
+
+    NO_SAVE_DATA 	= 0x0100, // #NO_BIT obsolete
   };
 
   /////////////////////////////////////////////////////////
@@ -426,9 +431,6 @@ public:
   // #HIDDEN #NO_SAVE script object for performing column calculations
   taFiler*		log_file;
   // #NO_SAVE #HIDDEN file for logging data incrementally as it is written -- only for output.  a new line is written when WriteClose() (DataSink interface) is called.
-
-  bool			save_data;
-  // #READ_ONLY #NO_SAVE #OBS obsolete (replaced by flag) 'true' if data should be saved in project; typically false for logs, true for data patterns -- todo: delete me!
 
   /////////////////////////////////////////////
   // Flags
@@ -499,8 +501,10 @@ public:
     
   virtual void		RemoveCol(int col);
   // #CAT_Columns removes indicated column; 'true' if removed
+  void			RemoveAllCols()	{ Reset(); }
+  // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data) -- this cannot be undone!
   virtual void		Reset();
-  // #CAT_Modify #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data) -- this cannot be undone!
+  // #CAT_Modify remove all columns (and data) -- this cannot be undone!
 
   virtual void		MarkCols();
   // #CAT_Columns mark all cols before updating, for orphan deleting
@@ -535,11 +539,10 @@ public:
   
   virtual bool		RemoveRows(int st_row, int n_rows=1);
   // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row
+  virtual void		RemoveAllRows() { ResetData(); }
+  // #MENU #CAT_Rows #CONFIRM remove all of the rows of data, but keep the column structure
   virtual bool		DuplicateRow(int row_no, int n_copies=1);
   // #MENU #CAT_Rows duplicate given row number, making given number of copies of it (adds new rows at the end)
-  virtual void		RemoveAllRows() { ResetData(); }
-  // #CAT_Rows remove all of the rows, but keep the column structure
-
   const Variant		GetColUserData(const String& name, int col) const;
   // #CAT_Config gets user data from the col
   void			SetColUserData(const String& name, const Variant& value, int col);
@@ -758,7 +761,7 @@ public:
   override int		SourceChannelCount() const { return ChannelCount(); }
   override const String	SourceChannelName(int chan) const { return ChannelName(chan); }
   override void		ResetData();
-  // #MENU #MENU_ON_Rows #CAT_Rows #CONFIRM deletes all the data (rows), but keeps the column structure -- this cannot be undone!
+  // #CAT_Rows deletes all the data (rows), but keeps the column structure -- this cannot be undone!
 
 protected:
   /////////////////////////////////////////////////////////

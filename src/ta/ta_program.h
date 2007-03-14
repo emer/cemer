@@ -26,8 +26,10 @@
 #include "ta_def.h"
 #include "ta_TA_type.h"
 
-// forwards
+// external refs
+class DataTable;
 
+// forwards
 class Program;
 SmartRef_Of(Program,TA_Program); // ProgramRef
 class Program_Group;
@@ -52,7 +54,7 @@ class ProgLib;
 // and also provides lookup of variable names
 
 // use the following macro in UAE_impl to convert from String to ProgExpr
-// todo: this should all be removed once all code has been loaded and saved!
+// todo: obsolete this should all be removed once all code has been loaded and saved!
 #define STRING_TO_PROGEXPR_CVT(S,E) if(S.nonempty()) { E.SetExpr(S); S = _nilString; }
 
 class TA_API ProgVar: public taNBase {
@@ -71,8 +73,11 @@ public:
 
   enum VarFlags { // #BITS flags for modifying program variables
     PV_NONE		= 0, // #NO_BIT
-    NO_CTRL_PANEL	= 0x0001, // do not show this variable in the control panel
-    NO_NULL_CHECK	= 0x0002, // do not complain if object variable is null during checkconfig (e.g., will get assigned during run)
+    CTRL_PANEL		= 0x0001, // show this variable in the control panel
+    NULL_CHECK		= 0x0002, // complain if object variable is null during checkconfig (e.g., will get assigned during run)
+
+    NO_CTRL_PANEL	= 0x0100, // #NO_BIT obsolete todo: remove
+    NO_NULL_CHECK	= 0x0200, // #NO_BIT obsolete todo: remove
   };
 
   VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
@@ -1007,6 +1012,9 @@ class TA_API ProgObjList: public taBase_List {
   // ##CAT_Program A list of program objects (just a taBase list with proper update actions to update variables associated with objects)
 INHERITED(taBase_List)
 public:
+
+  virtual DataTable* NewDataTable(int n_tables = 1);
+  // #BUTTON make new DataTable object(s) for local use in Program
 
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   virtual void	GetVarsForObjs();

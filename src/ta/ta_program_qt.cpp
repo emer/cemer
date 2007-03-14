@@ -64,7 +64,8 @@ void taiProgVar::init() {
   incVal = NULL; // for: ints
   fldVal = NULL; // for: char, string, most numbers
   tglVal = NULL; // for: bool
-  tglNCP = NULL;
+  tglCP = NULL;
+  tglNC = NULL;
   thEnumType = NULL;
   cboEnumValue = NULL;
   thValType = NULL;
@@ -107,10 +108,17 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
     connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
   }
 
-  lbl = MakeLabel("no ctrl panel", rep_);
+  lbl = MakeLabel("ctrl panel", rep_);
+  lbl->setToolTip("display this variable in the Program control panel?");
   AddChildWidget(lbl, taiM->hsep_c);
-  tglNCP = new taiToggle(typ, host, this, NULL, mflags & flgReadOnly);
-  AddChildWidget(tglNCP->rep());
+  tglCP = new taiToggle(typ, host, this, NULL, mflags & flgReadOnly);
+  AddChildWidget(tglCP->rep(), taiM->hsep_c);
+
+  lbl = MakeLabel("null chk", rep_);
+  lbl->setToolTip("check if this variable is NULL during Init routine (only relevant for Object variables)?");
+  AddChildWidget(lbl, taiM->hsep_c);
+  tglNC = new taiToggle(typ, host, this, NULL, mflags & flgReadOnly);
+  AddChildWidget(tglNC->rep(), taiM->hsep_c);
 }
 
 void taiProgVar::AssertControls(int value) {
@@ -258,7 +266,8 @@ void taiProgVar::GetImage(const ProgVar* var) {
   ++m_updating;
   fldName->GetImage(var->name);
   SetVarType(var->var_type); //asserts correct control type
-  tglNCP->GetImage(var->HasVarFlag(ProgVar::NO_CTRL_PANEL)); 
+  tglCP->GetImage(var->HasVarFlag(ProgVar::CTRL_PANEL)); 
+  tglNC->GetImage(var->HasVarFlag(ProgVar::NULL_CHECK)); 
 
   // we only transfer the value in use
   switch (varType()) {
@@ -304,7 +313,8 @@ void taiProgVar::GetImage(const ProgVar* var) {
 void taiProgVar::GetValue(ProgVar* var) const {
   var->name = fldName->GetValue();
   var->var_type = (ProgVar::VarType)varType();
-  var->SetVarFlagState(ProgVar::NO_CTRL_PANEL, tglNCP->GetValue()); 
+  var->SetVarFlagState(ProgVar::CTRL_PANEL, tglCP->GetValue()); 
+  var->SetVarFlagState(ProgVar::NULL_CHECK, tglNC->GetValue()); 
   // we only set the value for the type the user chose, and cleanup the rest
   switch (varType()) {
   case ProgVar::T_Int:
@@ -1185,7 +1195,7 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
     
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
-      if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
+      if(!pv->HasVarFlag(ProgVar::CTRL_PANEL)) continue;
       MemberDef* md = pv->GetValMemberDef();
       memb_el(j).Add(md);
       taiData* mb_dat;
@@ -1270,7 +1280,7 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
     int cnt = 0;
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
-      if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
+      if(!pv->HasVarFlag(ProgVar::CTRL_PANEL)) continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
       if (!md || !mb_dat) {
@@ -1334,7 +1344,7 @@ void iProgramCtrlDataHost::GetImage_Membs()
     int cnt = 0;
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
-      if(pv->HasVarFlag(ProgVar::NO_CTRL_PANEL)) continue;
+      if(!pv->HasVarFlag(ProgVar::CTRL_PANEL)) continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
       if (!md || !mb_dat) {
