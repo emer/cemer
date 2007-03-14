@@ -607,7 +607,8 @@ public:
   static ColorHints 	color_hints; // #SAVE #CAT_GUI what types of color hinting to use in the application
   static ClickStyle	click_style; // #SAVE #CAT_GUI how to select editable items in the gui, particularly in the 3d gui
 #ifndef NO_TA_BASE
-  static ViewColor_List* view_colors; 	// #NO_SAVE colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
+//NOTE: following not keeping tokens so cannot be viewed in any mode
+  static ViewColor_List* view_colors; 	// #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif
 
   static ShowMembs	show_gui;	// #SAVE #CAT_GUI what to show in the gui
@@ -633,7 +634,7 @@ public:
   static String		app_dir; 
   // #SHOW #READ_ONLY #CAT_File base of installed app directory -- override with "-a <path>" command line switch
   static String		app_dir_default; 
-  // #HIDDEN #SAVE #CAT_File an override to use ONLY if we can't determine the app_dir
+  // #HIDDEN #READ_ONLY #SAVE #CAT_File an override to use ONLY if we can't determine the app_dir
   static String		user_dir;
   // #SHOW #READ_ONLY #CAT_File location of user's home directory -- override with "-u <path>" command line switch
   static String		web_home;
@@ -682,11 +683,11 @@ public:
   // 	DMEM: Distributed Memory
 
   static int		dmem_proc; 	
-  // #READ_ONLY #HIDDEN #NO_SAVE #SHOW #CAT_DMem distributed memory process number (rank in MPI, always 0 for no dmem)
+  // #READ_ONLY #EXPERT #NO_SAVE #SHOW #CAT_DMem distributed memory process number (rank in MPI, always 0 for no dmem)
   static int		dmem_nprocs;
-  // #READ_ONLY #HIDDEN #NO_SAVE #SHOW #CAT_DMem distributed memory number of processes (comm_size in MPI, 1 for no dmem)
+  // #READ_ONLY #EXPERT #NO_SAVE #SHOW #CAT_DMem distributed memory number of processes (comm_size in MPI, 1 for no dmem)
   static int		cpus;
-  // #READ_ONLY #HIDDEN #NO_SAVE #SHOW #CAT_MultiProc number of cpus to use (<= physical cpus)
+  // #READ_ONLY #EXPERT #NO_SAVE #SHOW #CAT_MultiProc number of cpus to use (<= physical cpus)
   static bool		dmem_debug;
   // #SAVE #EXPERT #CAT_DMem turn on debug messages for distributed memory processing
 
