@@ -121,14 +121,14 @@ public:
   
   enum ColFlags { // #BITS flags for data table columns
     DC_NONE		= 0, // #NO_BIT
-    MARK 		= 0x0001, // #NO_BIT used internally to mark columns prior to an operation -- columns that remain marked after all operations are unused, and may be removed -- users should not generally mess with this flag
-    PIN 		= 0x0002, // #NO_BIT protect this column from being automatically deleted according to the MARK scheme (see comment).  this is often not very easy for uers to find and use (columns to be saved should be listed explicitly in the context in which others are being used), so we are not exposing it to users, but it can be used internally for some reason
+    MARK 		= 0x0001, // #NO_SHOW used internally to mark columns prior to an operation -- columns that remain marked after all operations are unused, and may be removed -- users should not generally mess with this flag
+    PIN 		= 0x0002, // #NO_SHOW protect this column from being automatically deleted according to the MARK scheme (see comment).  this is often not very easy for uers to find and use (columns to be saved should be listed explicitly in the context in which others are being used), so we are not exposing it to users, but it can be used internally for some reason
     SAVE_ROWS 		= 0x0004, // save the row data for this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data if not on.
     SAVE_DATA 		= 0x0008, // save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
     CALC 		= 0x0010, // calculate value of this column based on calc_expr expression
 
-    NO_SAVE 		= 0x0100, // #NO_BIT obsolete todo: remove
-    NO_SAVE_DATA 	= 0x0200, // #NO_BIT obsolete todo: remove
+    NO_SAVE 		= 0x0100, // #NO_BIT #NO_SAVE obsolete todo: remove
+    NO_SAVE_DATA 	= 0x0200, // #NO_BIT #NO_SAVE obsolete todo: remove
   };
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
@@ -411,10 +411,10 @@ public:
   enum DataFlags { // #BITS flags for data table
     DF_NONE		= 0, // #NO_BIT
     SAVE_ROWS 		= 0x0001, // save the row data associated with this table when saved with the project (column and other configuration information is always saved)
-    HAS_CALCS 		= 0x0002, // #NO_BIT at least one of the columns has CALC flag set
+    HAS_CALCS 		= 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
     AUTO_CALC		= 0x0004, // automatically calculate columns
 
-    NO_SAVE_DATA 	= 0x0100, // #NO_BIT obsolete
+    NO_SAVE_DATA 	= 0x0100, // #NO_BIT #NO_SAVE obsolete  todo: remove
   };
 
   /////////////////////////////////////////////////////////

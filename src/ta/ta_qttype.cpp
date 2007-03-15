@@ -137,9 +137,22 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
         nxtval = val.after(',');
         val = val.before(',');
       }
-      if (val == mbr_val) {
-        val_is_eq = true;
-        break;
+      if(md->type->InheritsFormal(TA_enum) && mbr_val.contains('|')) { // bits!
+	if(mbr_val.contains(val)) {
+	  String aft = mbr_val.after(val);
+	  String bef = mbr_val.before(val);
+	  if((aft.empty() || aft.firstchar() == '|') && (bef.empty() || bef.lastchar() == '|')) {
+	    // make sure it is not just a subset of something else..
+	    val_is_eq = true;
+	    break;
+	  }
+	}
+      }
+      else {
+	if (val == mbr_val) {
+	  val_is_eq = true;
+	  break;
+	}
       }
       if (!nxtval.empty())
         val = nxtval;

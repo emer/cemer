@@ -4515,9 +4515,24 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       }
     }
     else if(DerivesFormal(TA_enum)) {
-      EnumDef* ed = enum_vals.FindNo(*((int*)base));
-      if(ed != NULL) return ed->name;
-      else return String(*((int*)base));
+      int enval = *((int*)base);
+      if(HasOption("BITS")) {
+	String bits;
+	for(int i=0; i<enum_vals.size; i++) {
+	  EnumDef* ed = enum_vals[i];
+	  if(ed->HasOption("NO_BIT") || ed->HasOption("NO_SAVE")) continue;
+	  if(enval & ed->enum_no) {
+	    if(bits.empty()) bits = ed->name;
+	    else bits += "|" + ed->name;
+	  }
+	}
+	return bits;
+      }
+      else {
+	EnumDef* ed = enum_vals.FindNo(enval);
+	if(ed != NULL) return ed->name;
+	else return String(*((int*)base));
+      }
     }
     else if(DerivesFrom(TA_taString))
       return *((String*)base);
@@ -4937,25 +4952,47 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	String en_nm = strval.after("::");
 	TypeDef* td = taMisc::types.FindName(tp_nm);
 	if(td != NULL) {
-	  EnumDef* ed = td->FindEnum(en_nm);
-	  if(ed != NULL) {
-	    *((int*)base) = ed->enum_no;
-	    return;
-	  }
+	  td->SetValStr(en_nm, base, par, memb_def);
+	  return;
 	}
 	EnumDef* ed = FindEnum(en_nm);
-	if(ed != NULL) {
+	if(ed) {
 	  *((int*)base) = ed->enum_no;
 	  return;
 	}
+	taMisc::Warning("Enum named:", strval, "not found in enum type:", name);
       }
-      EnumDef* ed = FindEnum(strval);
-      if(ed != NULL) {
-	*((int*)base) = ed->enum_no;
+      if(strval.contains('|')) { // bits
+	int bits = 0;
+	while(strval.nonempty()) {
+	  String curstr = strval;
+	  if(strval.contains('|')) {
+	    curstr = strval.before('|');
+	    strval = strval.after('|');
+	  }
+	  else
+	    strval = _nilString;
+	  EnumDef* ed = FindEnum(curstr);
+	  if(ed) {
+	    bits |= ed->enum_no;
+	  }
+	  else {
+	    taMisc::Warning("Enum named:", curstr, "not found in enum type:", name);
+	  }
+	}
+	*((int*)base) = bits;
 	return;
       }
-      int intval = (int)strval;
-      *((int*)base) = intval;
+      else {
+	EnumDef* ed = FindEnum(strval);
+	if(ed) {
+	  *((int*)base) = ed->enum_no;
+	  return;
+	}
+	int intval = (int)strval;
+	*((int*)base) = intval;
+	return;
+      }
     }
     else if(DerivesFrom(TA_taString))
       *((String*)base) = val;
