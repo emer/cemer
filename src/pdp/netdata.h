@@ -53,7 +53,7 @@ public:
   // name of the channel/column in the data to use 
 
   NetTarget		net_target;
-  // what to read/write from on the network
+  // #APPLY_IMMED what to read/write from on the network
 
   NetworkRef 		network;
   // #READ_ONLY #HIDDEN #NO_SAVE the network to operate on -- managed by owner
@@ -121,7 +121,7 @@ class PDP_API LayerWriterEl : public LayerDataEl {
   // controls the writing of input data from a data source to a network layer
 INHERITED(LayerDataEl)
 public: 
-  bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
+  bool		use_layer_type; // #APPLY_IMMED #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
   Unit::ExtType	ext_flags;	// #EXPERT #CONDEDIT_OFF_use_layer_type:true how to flag the unit/layer's external input status
   Random	noise;		// #EXPERT noise optionally added to values when applied
   String_Array  value_names;	// #EXPERT display names of the individual pattern values
@@ -231,7 +231,7 @@ public:
     MY_NAME,			// always use my (net monitor item) name; if multiple columns, then add a subscript index for later ones (_1 _2, etc.)
   };
 
-  bool			computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
+  bool			computed;	// #APPLY_IMMED if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
   TypeDef*		object_type;	// #CONDEDIT_OFF_computed:true LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef 		object;		// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NO_SCOPE the network object being monitored
   MemberDef*		lookup_var;	// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NULL_OK #NO_SAVE lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
@@ -241,7 +241,7 @@ public:
   int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
 
   ValType		val_type;       // #CONDEDIT_ON_computed:true type of data column to create (only for computed variables)
-  bool			matrix;		// #CONDEDIT_ON_computed:true if true, create a matrix data column (otherwise scalar)
+  bool			matrix;		// #APPLY_IMMED #CONDEDIT_ON_computed:true if true, create a matrix data column (otherwise scalar)
   MatrixGeom		matrix_geom;	// #CONDEDIT_ON_matrix:true geometry of matrix to create if a matrix type
 
   ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 

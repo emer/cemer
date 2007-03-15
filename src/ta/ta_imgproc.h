@@ -315,7 +315,7 @@ public:
     BLOB,			// filter using blobs (color contrast tuned)
   };
 
-  V1FilterType	filter_type; 	// what type of filter to use?
+  V1FilterType	filter_type; 	// #APPLY_IMMED what type of filter to use?
   RetinalSpacingSpec::Region region; // retinal region represented by this filter -- for matching up with associated retinal outputs
   RetinalSpacingSpec::Resolution res; // resolution represented by this filter -- for matching up with associated retinal outputs
 

@@ -531,7 +531,7 @@ public:
     SUM_BAR,			// bar of increasing activation threshold across units, with value = sum of overall activation.  This has more natural activation dynamics than GAUSSIAN
   };
 
-  RepType	rep;		// type of representation of scalar value to use
+  RepType	rep;		// #APPLY_IMMED type of representation of scalar value to use
   float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in min-max units)
   float		min_net;	// #CONDEDIT_ON_rep:SUM_BAR #DEF_0.1 minimum netinput value for purposes of computing gc.i in sum_bar
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
@@ -580,10 +580,10 @@ public:
     WT				// input weights
   };
 
-  UnitBias	un;		// bias on individual units
+  UnitBias	un;		// #APPLY_IMMED bias on individual units
   BiasShape	un_shp;		// shape of unit bias
   float		un_gain;	// #CONDEDIT_OFF_un:NO_UN #DEF_1 gain multiplier (strength) of bias to apply for units.  WT = .03 as basic weight multiplier
-  WeightBias	wt;		// bias on weights: always uses a val-shaped bias
+  WeightBias	wt;		// #APPLY_IMMED bias on weights: always uses a val-shaped bias
   float		wt_gain;	// #CONDEDIT_OFF_wt:NO_WT #DEF_1 gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)
   float		val;		// value location (center of gaussian bump)
 
@@ -693,7 +693,7 @@ public:
     LOCALIST			// each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units
   };
 
-  RepType	rep;		// type of representation of scalar value to use
+  RepType	rep;		// #APPLY_IMMED type of representation of scalar value to use
   int		n_vals;		// number of values to represent in layer: layer geom.x must be >= 2 * n_vals because vals are represented in first row of layer!
   float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in min-max units)
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
@@ -740,9 +740,9 @@ public:
     WT				// input weights
   };
 
-  UnitBias	un;		// bias on individual units
+  UnitBias	un;		// #APPLY_IMMED bias on individual units
   float		un_gain;	// #CONDEDIT_OFF_un:NO_UN #DEF_1 gain multiplier (strength) of bias to apply for units.  WT = .03 as basic weight multiplier
-  WeightBias	wt;		// bias on weights: always uses a val-shaped bias
+  WeightBias	wt;		// #APPLY_IMMED bias on weights: always uses a val-shaped bias
   float		wt_gain;	// #CONDEDIT_OFF_wt:NO_WT #DEF_1 gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)
   float		x_val;		// X axis value location (center of gaussian bump)
   float		y_val;		// Y axis value location (center of gaussian bump)

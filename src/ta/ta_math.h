@@ -75,7 +75,7 @@ public:
     MODE,			// most frequent item (note: requires sorting)
   };
 
-  Operator      op;		// how to aggregate over the network
+  Operator      op;		// #APPLY_IMMED how to aggregate over the network
   CountParam	count;		// #CONDEDIT_ON_op:COUNT parameters for the COUNT aggregation
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
@@ -108,7 +108,7 @@ public:
     GTLTEQ			// make all values greater than lw and less than hi
   };
 
-  MathOpr 	opr;		// what math operator to use
+  MathOpr 	opr;		// #APPLY_IMMED what math operator to use
   double	arg;		// #CONDEDIT_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,GTEQ,LTEQ argument for ops (threshold add/sub/mul/div arg)
   double	lw;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values below threshold
   double	hi;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values above threshold
@@ -980,7 +980,7 @@ public:
     NONE 			// just the mean
   };
 
-  Type		type;		// type of random variable to generate
+  Type		type;		// #APPLY_IMMED type of random variable to generate
   double	mean;		// mean of random distribution
   double	var;		// #CONDEDIT_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = SD, not variance; uniform = half-range)
   double	par;		// #CONDEDIT_ON_type:GAMMA,BINOMIAL extra parameter for distribution (depends on each one)

@@ -174,7 +174,7 @@ public:
     LT_MAX,			// constrain weights to be less than max value
     MIN_MAX 			// constrain weights to be within min and max values
   };
-  LimitType	type;		// type of weight limitation to impose
+  LimitType	type;		// #APPLY_IMMED type of weight limitation to impose
   float		min;		// #CONDEDIT_OFF_type:NONE,LT_MAX minimum weight value (if applicable)
   float		max;		// #CONDEDIT_OFF_type:NONE,GT_MIN maximum weight value (if applicable)
   bool		sym;		// if true, also symmetrize with reciprocal connections
@@ -1125,7 +1125,7 @@ INHERITED(taGroup<Unit>)
 public:
   Layer*	own_lay;	// #READ_ONLY #NO_SAVE #NO_SHOW layer owner
   PosTDCoord	pos;		// #CAT_Structure position of group relative to the layer
-  bool		unique_geom;	// #DEF_false #CAT_Structure if true, this unit group has a unique geometry different from the layer geometry (otherwise, geom is always copied from lay->un_geom)
+  bool		unique_geom;	// #APPLY_IMMED #DEF_false #CAT_Structure if true, this unit group has a unique geometry different from the layer geometry (otherwise, geom is always copied from lay->un_geom)
   XYNGeom	geom;		// #CONDEDIT_ON_unique_geom:true #CAT_Structure geometry of the group: layout and number of units
   bool		units_lesioned;	// #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
 
@@ -1255,7 +1255,7 @@ public:
   LayerType		layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   PosTDCoord		pos;		// #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
   XYNGeom		un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer 
-  bool			unit_groups;	// #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom
+  bool			unit_groups;	// #APPLY_IMMED #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom
   XYNGeom		gp_geom;	// #CONDEDIT_ON_unit_groups:true #CAT_Structure geometry of sub-groups (if unit_groups)
   PosTwoDCoord		gp_spc;		// #CONDEDIT_ON_unit_groups:true #CAT_Structure spacing between sub-groups (if unit_groups)
   XYNGeom		flat_geom;	// #EXPERT #READ_ONLY #NO_SAVE #CAT_Structure geometry of the units flattening out over unit groups (same as un_geom if !unit_groups; un_geom * gp_geom otherwise)
@@ -1599,8 +1599,8 @@ public:
   bool		no_save_units;  // #DEF_true #CAT_Structure don't include units in network when saving (makes project file much smaller!)
   AutoBuildMode	auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if no_save_units, then auto building makes sense)
   
-  TrainMode	train_mode;	// #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
-  WtUpdate	wt_update;	// #CAT_Learning #CONDEDIT_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
+  TrainMode	train_mode;	// #APPLY_IMMED #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
+  WtUpdate	wt_update;	// #APPLY_IMMED #CAT_Learning #CONDEDIT_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
   int		small_batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int		small_batch_n_eff; // #GUI_READ_ONLY #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 

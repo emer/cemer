@@ -49,7 +49,7 @@ public:
     NEG_DIP			// da dips provide a (decaying) negative (accomodation) current on a trial-wise basis
   };
 
-  bool		on;		// whether to actually modulate activations by da values
+  bool		on;		// #APPLY_IMMED whether to actually modulate activations by da values
   ModType	mod;		// #CONDEDIT_ON_on:true how to apply DA modulation
   float		gain;		// #CONDEDIT_ON_on:true gain multiplier of da values
   float		neg_rec;	// #CONDEDIT_ON_mod:NEG_DIP recovery time constant for NEG_DIP case (how much to decay negative current per trial)
@@ -148,7 +148,7 @@ public:
     DA_REW			// get rewards from da values on first unit in layer
   };
 
-  RewardType	rew_type;	// how do we get the reward values?
+  RewardType	rew_type;	// #APPLY_IMMED how do we get the reward values?
   AvgExtRewSpec	avg_rew;	// average reward computation specifications
   OutErrSpec	out_err;	// #CONDEDIT_ON_rew_type:OUT_ERR_REW how to compute external rewards based on output performance
   ExtRewSpec	rew;		// misc reward computation specifications

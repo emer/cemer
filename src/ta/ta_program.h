@@ -80,7 +80,7 @@ public:
     NO_NULL_CHECK	= 0x0200, // #NO_BIT #NO_SAVE obsolete todo: remove
   };
 
-  VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
+  VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
   int		int_val;	// #CONDEDIT_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
   double	real_val;	// #CONDEDIT_ON_var_type:T_Real real value
   String	string_val;	// #CONDEDIT_ON_var_type:T_String string value

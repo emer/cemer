@@ -132,7 +132,7 @@ public:
   };
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
-  ColFlags		col_flags; // flags for this column to indicate specific properties 
+  ColFlags		col_flags; // #APPLY_IMMED flags for this column to indicate specific properties 
   bool			is_matrix;
   // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   MatrixGeom		cell_geom;
@@ -675,7 +675,7 @@ public:
   virtual bool		CalcAllRows_impl();
   // #CAT_Calc perform calculations for all rows of data (calls InitCalcScript to make sure)
   virtual bool		CalcAllRows();
-  // #CAT_Calc #BUTTON #CONDEDIT_ON_data_flags:HAS_CALCS perform calculations for all rows of data (updates after)
+  // #CAT_Calc #BUTTON #GHOST_OFF_data_flags:HAS_CALCS perform calculations for all rows of data (updates after)
   virtual void		CalcRowCodeGen(String& code_str);
   // #IGNORE generate code for computing one row worth of data, with assumed 'int row' variable specifying row
   virtual bool		CalcRow(int row);

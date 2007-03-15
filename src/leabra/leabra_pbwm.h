@@ -50,7 +50,7 @@ public:
     PATCH			// use patch: Note currently not supported.
   };
 
-  PatchMode	patch_mode;	// #DEF_NO_PATCH how to run the patch computation
+  PatchMode	patch_mode;	// #APPLY_IMMED #DEF_NO_PATCH how to run the patch computation
   float		patch_gain;	// #CONDEDIT_ON_patch_mode:PATCH #DEF_0.5 proportion of patch (stripe-specific) da relative to global abl da
 
   void	Initialize();
@@ -263,7 +263,7 @@ class LEABRA_API MatrixErrRndGoSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra matrix random Go firing to encourage exploration when (a series of) errors occur: a stripe is chosen from a softmax over the snrthal netinputs (closer to firing chosen with higher probability)
   INHERITED(taBase)
 public:
-  bool		on;		// #DEF_true whether to use error-driven random go
+  bool		on;		// #APPLY_IMMED #DEF_true whether to use error-driven random go
   int		min_cor;	// #CONDEDIT_ON_on:true [Default is 5 for MAINT, 1 for OUTPUT] minimum number of sequential correct to start counting errors and doing random go: need some amount of correct before errors count!
   int		min_errs;	// #CONDEDIT_ON_on:true #DEF_1 minimum number of sequential errors to start this random go exploration
   float		err_p;		// #CONDEDIT_ON_on:true #DEF_1 baseline probability of firing Go, once above min_cor and min_errs
@@ -282,7 +282,7 @@ class LEABRA_API MatrixAvgDaRndGoSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra matrix random Go firing to encourage exploration for non-productive stripes based on softmax of avg_go_da for that stripe (matrix_u->misc_1)
   INHERITED(taBase)
 public:
-  bool		on;		// [Default true for MAINT, false for OUTPUT] whether to use random go based on average dopamine values
+  bool		on;		// #APPLY_IMMED [Default true for MAINT, false for OUTPUT] whether to use random go based on average dopamine values
   float		avgda_p;	// #CONDEDIT_ON_on:true #DEF_0.1 baseline probability of firing random Go for any stripe (first pass before doing softmax)
   float		gain;		// #CONDEDIT_ON_on:true #DEF_0.5 gain on softmax over avgda values on snrthal units for choosing the stripe to activate Go for (softmax = normalized exp(gain * (avgda_thr - avg_go_da))
   float		avgda_thr;	// #CONDEDIT_ON_on:true #DEF_0.1 threshold on per stripe avg_go_da value (-1..1) below which the random Go starts happening (and is subtracted from avgda as the reference point for the softmax computation)

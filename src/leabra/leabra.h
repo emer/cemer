@@ -188,7 +188,7 @@ class LEABRA_API AdaptRelNetinSpec : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters to adapt the relative netinput strength of different projections (to be used at epoch-level in AdaptRelNetin call, after AvgAbsRelNetin vals on projection have been computed)
   INHERITED(taBase)
 public:
-  bool		on;		// whether to adapt relative netinput values for this connection (only applied if AdaptAbsNetin is called, after AbsRelNetin and AvgAbsRelNetin)
+  bool		on;		// #APPLY_IMMED whether to adapt relative netinput values for this connection (only applied if AdaptAbsNetin is called, after AbsRelNetin and AvgAbsRelNetin)
   float		trg_fm_input;	// #CONDEDIT_ON_on:true (typically 0.85) target relative netinput for fm_input projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1. if other types are missing, this is increased in proportion
   float		trg_fm_output;	// #CONDEDIT_ON_on:true (typically 0.10) target relative netwinput for fm_output projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_input and lateral should sum to 1. if other types are missing, this is increased in proportion
   float		trg_lateral;	// #CONDEDIT_ON_on:true (typically 0.05) target relative netinput for lateral projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1.  if other types are missing, this is increased in proportion
@@ -529,7 +529,7 @@ class LEABRA_API VChanSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra voltage gated channel specs
   INHERITED(taBase)
 public:
-  bool		on;		// #DEF_false true if channel is on
+  bool		on;		// #APPLY_IMMED #DEF_false true if channel is on
   float		b_dt;		// #CONDEDIT_ON_on:true time constant for integrating basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
   float		a_thr;		// #CONDEDIT_ON_on:true activation threshold of the channel: when basis > a_thr, conductance starts to build up (channels open)
   float		d_thr;		// #CONDEDIT_ON_on:true deactivation threshold of the channel: when basis < d_thr, conductance diminshes (channels close)
@@ -558,7 +558,7 @@ class LEABRA_API ActRegSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activity regulation via weight adjustment
   INHERITED(taBase)
 public:
-  bool		on;		// whether to activity regulation is on (active) or not
+  bool		on;		// #APPLY_IMMED whether to activity regulation is on (active) or not
   float		min;		// #CONDEDIT_ON_on:true #DEF_0 increase weights for units below this level of average activation
   float		max;		// #CONDEDIT_ON_on:true #DEF_0.35 decrease weights for units above this level of average activation 
   float		wt_dt;		// #CONDEDIT_ON_on:true #DEF_0.2 pre-lrate rate constant for making weight changes to rectify over-activation (dwt = cur_lrate * wt_dt * wt)
@@ -611,7 +611,7 @@ public:
     ACT_NOISE			// noise in the activations
   };
 
-  ActFun	act_fun;	// #CAT_Activation activation function to use
+  ActFun	act_fun;	// #APPLY_IMMED #CAT_Activation activation function to use
   ActFunSpec	act;		// #CAT_Activation activation function specs
   SpikeFunSpec	spike;		// #CONDEDIT_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   DepressSpec	depress;	// #CONDEDIT_ON_act_fun:DEPRESS #CAT_Activation depressing synapses activation function specs, note that act_range deterimines range of spk_amp spiking amplitude, max should be > 1
@@ -626,7 +626,7 @@ public:
   VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
   ActRegSpec	act_reg;	// #CAT_Learning activity regulation via global scaling of weight values
   MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
-  NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
+  NoiseType	noise_type;	// #APPLY_IMMED #CAT_Activation where to add random noise in the processing (if at all)
   Random	noise;		// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
   Schedule	noise_sched;	// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance over settling cycles
 
@@ -1014,7 +1014,7 @@ public:
     USE_PAT_K			// use the activity level of the current event pattern (k = # of units > pat_q)
   };
 
-  K_From	k_from;		// how is the active_k determined: directly by k, by pct, or by no. of units where ext > pat_q
+  K_From	k_from;		// #APPLY_IMMED how is the active_k determined: directly by k, by pct, or by no. of units where ext > pat_q
   int		k;		// #CONDEDIT_ON_k_from:USE_K desired number of active units in the layer
   float		pct;		// #CONDEDIT_ON_k_from:USE_PCT desired proportion of activity (used to compute a k value based on layer size, .25 std)
   float		pat_q;		// #HIDDEN #DEF_0.5 threshold for pat_k based activity level: add to k if ext > pat_q
@@ -1034,7 +1034,7 @@ class LEABRA_API KwtaTieBreak : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
   INHERITED(taBase)
 public:
-  bool		on;		// whether to perform the tie breaking function at all
+  bool		on;		// #APPLY_IMMED whether to perform the tie breaking function at all
   float		k_thr; 		// #CONDEDIT_ON_on:true #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
   float		diff_thr;	// #CONDEDIT_ON_on:true #DEF_0.2 threshold on difference ratio between top k and rest (k_ithr - k1_ithr) / k_ithr for a tie to be indicated.  This is also how much k1_ithr is reduced relative to k_ithr to fix the tie: sets a lower limit on this value.  larger values mean higher overall activations during ties, but you dont' want to activate the tie mechanism unnecessarily either.
 
@@ -1056,7 +1056,7 @@ public:
     G_BAR_IL			// adapt g_bar.i and g_bar.l for unit inhibition & leak values based on layer activation at any point in time
   };
 
-  AdaptType	type;		// what to adapt, or none for nothing
+  AdaptType	type;		// #APPLY_IMMED what to adapt, or none for nothing
   float		tol;		// #CONDEDIT_OFF_type:NONE #DEF_0.02 tolerance around target avg act before changing parameter
   float		p_dt;		// #CONDEDIT_OFF_type:NONE #DEF_0.1 #AKA_pt_dt time constant for changing the parameter (i_kwta_pt or g_bar.i)
   float		mx_d;		// #CONDEDIT_OFF_type:NONE #DEF_0.9 maximum deviation (proportion) from initial parameter setting allowed
@@ -1074,7 +1074,7 @@ class LEABRA_API ClampSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping 
   INHERITED(taBase)
 public:
-  bool		hard;		// #DEF_true whether to hard clamp inputs to this layer or not
+  bool		hard;		// #APPLY_IMMED #DEF_true whether to hard clamp inputs to this layer or not
   float		gain;		// #CONDEDIT_OFF_hard:true #DEF_0.5 starting soft clamp gain factor (net = gain * ext)
   float		d_gain;		// #CONDEDIT_OFF_hard:true [Default: 0] for soft clamp, delta to increase gain when target units not > .5 (0 = off, .1 std when used)
 
@@ -1105,7 +1105,7 @@ class LEABRA_API LayNetRescaleSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra global rescale of layer netinputs to prevent blowup
   INHERITED(taBase)
 public:
-  bool		on;		// whether to apply layer netinput rescaling
+  bool		on;		// #APPLY_IMMED whether to apply layer netinput rescaling
   float		max_net; 	// #CONDEDIT_ON_on:true #DEF_0.6 target maximum netinput value
   float		net_extra;	// #CONDEDIT_ON_on:true #DEF_0.2 extra netin value to add to actual to anticipate further increases, preventing too many updates
 
@@ -1120,7 +1120,7 @@ class LEABRA_API LayAbsNetAdaptSpec : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt absolute netinput values by adjusting the wt_scale.abs parameters in the conspecs of projections into this layer, based on differences between time-averaged max netinput values and the target
   INHERITED(taBase)
 public:
-  bool		on;		// whether to apply layer netinput rescaling
+  bool		on;		// #APPLY_IMMED whether to apply layer netinput rescaling
   float		trg_net; 	// #CONDEDIT_ON_on:true #DEF_0.5 target maximum netinput value
   float		tol;		// #CONDEDIT_ON_on:true #DEF_0.1 tolerance around target value -- if actual value is within this tolerance from target, then do not adapt
   float		abs_lrate;	// #CONDEDIT_ON_on:true #DEF_0.1 learning rate for adapting the wt_scale.abs parameters for all projections into layer
@@ -1150,10 +1150,10 @@ public:
     LAY_AND_GPS			// compute inhib over both groups and whole layer, inhibi is max of layer and group inhib
   };
 
+  InhibGroup	inhib_group;	// #APPLY_IMMED #CAT_Activation what to consider the inhibitory group (layer or unit subgroups, or both)
   KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
-  InhibGroup	inhib_group;	// #CAT_Activation what to consider the inhibitory group (layer or unit subgroups, or both)
-  Compute_I	compute_i;	// #CAT_Activation how to compute inhibition (g_i): two forms of kwta or unit-level inhibition
+  Compute_I	compute_i;	// #APPLY_IMMED #CAT_Activation how to compute inhibition (g_i): two forms of kwta or unit-level inhibition
   float		i_kwta_pt;	// #CAT_Activation [Default: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   float		gp_i_pt;	// #CAT_Activation #CONDEDIT_ON_compute_i:AVG_MAX_PT_INHIB [Default: .2] for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
   KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
@@ -1855,7 +1855,7 @@ public:
     ALL_DWT			// for three phase cases: change weights after *both* post-minus phases
   };
 
-  PhaseOrder	phase_order;	// [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
+  PhaseOrder	phase_order;	// #APPLY_IMMED [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
   bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
   StateInit	trial_init;	// #DEF_DECAY_STATE #CAT_Activation how to initialize network state at start of trial
   StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials

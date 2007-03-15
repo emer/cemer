@@ -92,7 +92,7 @@ public:
 
   float		dt;		// grain of time computing on (must be in [0..1] range)
   TimeAvgType	time_avg;	// type of time-averaging to perform
-  bool		soft_clamp;
+  bool		soft_clamp;	// #APPLY_IMMED apply input data as a net input instead of as a direct activation value to clamp to
   bool		fast_hard_clamp_net; // #CONDEDIT_OFF_soft_clamp:true compute netin from hard clamped layers only once: ONLY IF ALL LAYERS HARD CLAMPED
   float		soft_clamp_gain; // #CONDEDIT_ON_soft_clamp:true gain on the soft clamping
   bool		teacher_force;	 // use teacher forcing
