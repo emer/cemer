@@ -6,11 +6,6 @@ commit:
 ------------
 current:
 
-* CONDEDIT_ON_ #BITS flag field should just check Bit!
-* #BITS save and load should do bit flag | | output!
-
-* check: DataProg DataTableRef -> ProgVarRef w/ convert
-
 * Program Init logic: do CheckConfig *after* Init function runs!?
 
 * Join should be symmetric
@@ -45,6 +40,8 @@ Inventor
 
 -----------
 check:
+
+* check: DataProg DataTableRef -> ProgVarRef w/ convert
 
 * edit user script: non-modal dialog w/ better (narrower) default sizing
   (add c++ syntax hightight?) #262

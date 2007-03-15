@@ -55,7 +55,7 @@ Program .projects[0].programs.gp[0][4] {
 Program .projects[0].programs.gp[0][4] {
  name="LeabraSettle";
  desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
- flags=PF_NONE;
+ flags=;
  objs {
   name=;
   el_typ=taOBase;
@@ -71,7 +71,7 @@ Program .projects[0].programs.gp[0][4] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -80,7 +80,7 @@ Program .projects[0].programs.gp[0][4] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
  };
@@ -93,7 +93,7 @@ Program .projects[0].programs.gp[0][4] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -101,7 +101,7 @@ Program .projects[0].programs.gp[0][4] {
    var_type=T_Int;
    int_val=15;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[2] {
@@ -109,7 +109,7 @@ Program .projects[0].programs.gp[0][4] {
    var_type=T_Bool;
    bool_val=1;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -129,7 +129,7 @@ Program .projects[0].programs.gp[0][4] {
   el_def=0;
   NetCounterInit @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    network_var=.projects[0].programs.gp[0][4].args[0]$2$;
    local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$3$;
    counter=Network::cycle;
@@ -141,14 +141,14 @@ Program .projects[0].programs.gp[0][4] {
   el_def=0;
   NetCounterInit @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    network_var=$2$;
    local_ctr_var=$3$;
    counter=Network::cycle;
   };
   MethodCall @[1] {
    desc="resets input data, before getting new external inputs data from apply inputs call";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$2$;
    method=Network::Init_InputData;
@@ -160,7 +160,7 @@ Program .projects[0].programs.gp[0][4] {
   };
   ProgramCall @[2] {
    desc="this program can be extended to do arbitrary things to generate data and apply it to network layers";
-   flags=PEF_NONE;
+   flags=;
    target=.projects[0].programs.gp[0][6]$4$;
    targ_ld_init="*ApplyInputs*";
    call_init=0;
@@ -174,7 +174,7 @@ Program .projects[0].programs.gp[0][4] {
      name="network";
      expr {
       expr="network";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -188,7 +188,7 @@ Program .projects[0].programs.gp[0][4] {
      name="input_data";
      expr {
       expr="input_data";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -200,7 +200,7 @@ Program .projects[0].programs.gp[0][4] {
   };
   MethodCall @[3] {
    desc="initializes various counters at start of settling";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$2$;
    method=LeabraNetwork::Settle_Init;
@@ -212,7 +212,7 @@ Program .projects[0].programs.gp[0][4] {
   };
   UserScript @[4] {
    desc="get min cycles";
-   flags=PEF_NONE;
+   flags=;
    script {
     expr="if(network.phase_no <= 1) min_cycles = network.min_cycles;
 else min_cycles = network.min_cycles_phase2;
@@ -232,14 +232,14 @@ else $#1#$ = $#0#$.min_cycles_phase2;
   };
   WhileLoop @[5] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    loop_code {
     name=;
     el_typ=ProgramCall;
     el_def=0;
     ProgramCall @[0] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      target=.projects[0].programs.gp[0][5]$5$;
      targ_ld_init="*LeabraCycle*";
      call_init=0;
@@ -253,7 +253,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
        name="network";
        expr {
 	expr="network";
-	flags=PE_NONE;
+	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -265,17 +265,17 @@ else $#1#$ = $#0#$.min_cycles_phase2;
     };
     NetCounterIncr @[1] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      network_var=$2$;
      local_ctr_var=$3$;
      counter=Network::cycle;
     };
     IfContinue @[2] {
      desc="avoid subsequent stopping criteria";
-     flags=PEF_NONE;
+     flags=;
      cond {
       expr="cycle < min_cycles";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$ < $#1#$";
       vars {
       };
@@ -285,11 +285,11 @@ else $#1#$ = $#0#$.min_cycles_phase2;
     };
     IfBreak @[3] {
      desc="stopping criterion for settling";
-     flags=PEF_NONE;
+     flags=;
      cond {
       expr="(network.maxda < network.maxda_stopcrit) ||
  (network.trg_max_act > network.trg_max_act_stopcrit)";
-      flags=PE_NONE;
+      flags=;
       var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit) ||
  ($#0#$.trg_max_act > $#0#$.trg_max_act_stopcrit)";
       vars {
@@ -301,7 +301,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
    };
    test {
     expr="cycle < network.cycle_max";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$ < $#1#$.cycle_max";
     vars {
     };
@@ -311,7 +311,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
   };
   MethodCall @[6] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$2$;
    method=LeabraNetwork::Settle_Final;
@@ -323,10 +323,10 @@ else $#1#$ = $#0#$.min_cycles_phase2;
   };
   IfElse @[7] {
    desc="only run sse in minus phase";
-   flags=PEF_NONE;
+   flags=;
    cond {
     expr="network.phase == LeabraNetwork::MINUS_PHASE";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
     vars {
     };
@@ -339,7 +339,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
     el_def=0;
     MethodCall @[0] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      result_var=NULL;
      obj=$2$;
      method=LeabraNetwork::Compute_TrialStats;
@@ -358,10 +358,10 @@ else $#1#$ = $#0#$.min_cycles_phase2;
   };
   IfElse @[8] {
    desc="this stat must be called in plus phase when reward information is avail";
-   flags=PEF_NONE;
+   flags=;
    cond {
     expr="network.phase_no == 1";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$.phase_no == 1";
     vars {
     };
@@ -374,7 +374,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
     el_def=0;
     MethodCall @[0] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      result_var=NULL;
      obj=$2$;
      method=LeabraNetwork::Compute_ExtRew;
@@ -393,7 +393,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
   };
   NetUpdateView @[9] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    network_var=$2$;
    update_var=.projects[0].programs.gp[0][4].vars[2]$6$;
   };

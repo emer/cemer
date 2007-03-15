@@ -60,7 +60,7 @@ Program .projects[0].programs.gp[0][7] {
 Program .projects[0].programs.gp[0][7] {
  name="LeabraTrialMonitor";
  desc="monitor trial-level data from the network";
- flags=PF_NONE;
+ flags=;
  objs {
   name=;
   el_typ=NetMonitor;
@@ -247,7 +247,7 @@ Program .projects[0].programs.gp[0][7] {
    object_type=Network;
    object_val=$0$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -261,7 +261,7 @@ Program .projects[0].programs.gp[0][7] {
    object_type=DataTable;
    object_val=$2$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -270,7 +270,7 @@ Program .projects[0].programs.gp[0][7] {
    object_type=NetMonitor;
    object_val=.projects[0].programs.gp[0][7].objs[0]$3$;
    objs_ptr=1;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -290,7 +290,7 @@ Program .projects[0].programs.gp[0][7] {
   el_def=0;
   MethodCall @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][7].vars[1]$4$;
    method=NetMonitor::SetDataNetwork;
@@ -304,7 +304,7 @@ Program .projects[0].programs.gp[0][7] {
      name="dt";
      expr {
       expr="trial_mon_data";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -318,7 +318,7 @@ Program .projects[0].programs.gp[0][7] {
      name="net";
      expr {
       expr="network";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -330,7 +330,7 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[1] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$4$;
    method=taBase::CheckConfig;
@@ -344,7 +344,7 @@ Program .projects[0].programs.gp[0][7] {
      name="quiet";
      expr {
       expr="false";
-      flags=PE_NONE;
+      flags=;
       var_expr="false";
       vars {
       };
@@ -356,7 +356,7 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[2] {
    desc="update the monitor items and data schema";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$4$;
    method=NetMonitor::UpdateMonitors;
@@ -370,7 +370,7 @@ Program .projects[0].programs.gp[0][7] {
      name="reset_first";
      expr {
       expr="true";
-      flags=PE_NONE;
+      flags=;
       var_expr="true";
       vars {
       };
@@ -387,7 +387,7 @@ Program .projects[0].programs.gp[0][7] {
   el_def=0;
   MethodCall @[0] {
    desc="add a new blank row to the data";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][7].vars[0]$5$;
    method=DataTable::AddBlankRow;
@@ -399,7 +399,7 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[1] {
    desc="get the new monitor data.";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$4$;
    method=NetMonitor::GetMonVals;
@@ -411,7 +411,7 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[2] {
    desc="update after writing new data to monitor data table";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=DataBlock::WriteClose;
@@ -423,7 +423,7 @@ Program .projects[0].programs.gp[0][7] {
   };
   MethodCall @[3] {
    desc="only functional for dmem projects: synchronizes trial data across processes";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][7].args[0]$6$;
    method=Network::DMem_ShareTrialData;
@@ -437,7 +437,7 @@ Program .projects[0].programs.gp[0][7] {
      name="dt";
      expr {
       expr="trial_mon_data";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -451,7 +451,7 @@ Program .projects[0].programs.gp[0][7] {
      name="n_rows";
      expr {
       expr="1";
-      flags=PE_NONE;
+      flags=;
       var_expr="1";
       vars {
       };

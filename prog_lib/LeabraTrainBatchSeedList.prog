@@ -97,7 +97,7 @@ Program .projects[0].programs[1] {
  desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task
 has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless
 of what happens in the training of each network, or where it is run (e.g., on different processors)";
- flags=PF_NONE;
+ flags=;
  objs {
   name=;
   el_typ=RndSeed;
@@ -246,7 +246,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -255,7 +255,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -268,7 +268,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    var_type=T_Int;
    int_val=500;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -277,7 +277,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    int_val=1;
    hard_enum_type=Network::TrainMode;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[2] {
@@ -285,7 +285,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[3] {
@@ -293,7 +293,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    var_type=T_Real;
    real_val=0;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[4] {
@@ -302,7 +302,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    object_type=RndSeed_List;
    object_val=.projects[0].programs[1].objs[0]$2$;
    objs_ptr=1;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
   ProgVar @[5] {
@@ -311,7 +311,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].train_time$3$;
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
  };
@@ -331,7 +331,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
   el_def=0;
   MethodCall @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs[1].args[0]$4$;
    method=taBase::CheckConfig;
@@ -345,7 +345,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
      name="quiet";
      expr {
       expr="false";
-      flags=PE_NONE;
+      flags=;
       var_expr="false";
       vars {
       };
@@ -357,11 +357,11 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   AssignExpr @[1] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=.projects[0].programs[1].vars[5]$5$;
    expr {
     expr="network.train_time";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$.train_time";
     vars {
     };
@@ -371,14 +371,14 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   NetCounterInit @[2] {
    desc="initialize epoch counter ";
-   flags=PEF_NONE;
+   flags=;
    network_var=$4$;
    local_ctr_var=.projects[0].programs[1].vars[2]$6$;
    counter=Network::epoch;
   };
   MethodCall @[3] {
    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs[1].vars[4]$7$;
    method=RndSeed_List::UseSeed;
@@ -392,7 +392,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
      name="idx";
      expr {
       expr="network.batch";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$.batch";
       vars {
       };
@@ -404,7 +404,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   MethodCall @[4] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$4$;
    method=Network::Init_Weights;
@@ -421,11 +421,11 @@ of what happens in the training of each network, or where it is run (e.g., on di
   el_def=0;
   AssignExpr @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=$5$;
    expr {
     expr="network.train_time";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$.train_time";
     vars {
     };
@@ -435,7 +435,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   MethodCall @[1] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=TimeUsed::StartTimer;
@@ -449,7 +449,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
      name="reset_used";
      expr {
       expr="true";
-      flags=PE_NONE;
+      flags=;
       var_expr="true";
       vars {
       };
@@ -461,14 +461,14 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   NetCounterInit @[2] {
    desc="initialize epoch counter ";
-   flags=PEF_NONE;
+   flags=;
    network_var=$4$;
    local_ctr_var=$6$;
    counter=Network::epoch;
   };
   UserScript @[3] {
    desc="update network's train mode to be same as ours";
-   flags=PEF_NONE;
+   flags=;
    script {
     expr="network.train_mode = train_mode;";
     flags=NO_VAR_ERRS;
@@ -481,7 +481,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   MethodCall @[4] {
    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$7$;
    method=RndSeed_List::UseSeed;
@@ -495,7 +495,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
      name="idx";
      expr {
       expr="network.batch";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$.batch";
       vars {
       };
@@ -507,7 +507,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   MethodCall @[5] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$4$;
    method=Network::Init_Weights;
@@ -519,14 +519,14 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   WhileLoop @[6] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    loop_code {
     name=;
     el_typ=ProgramCall;
     el_def=0;
     ProgramCall @[0] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      target=.projects[0].programs.gp[0][2]$8$;
      targ_ld_init="*LeabraEpoch*";
      call_init=0;
@@ -540,7 +540,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
        name="network";
        expr {
 	expr="network";
-	flags=PE_NONE;
+	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -554,7 +554,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
        name="input_data";
        expr {
 	expr="input_data";
-	flags=PE_NONE;
+	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -566,17 +566,17 @@ of what happens in the training of each network, or where it is run (e.g., on di
     };
     NetCounterIncr @[1] {
      desc="increment the epoch counter";
-     flags=PEF_NONE;
+     flags=;
      network_var=$4$;
      local_ctr_var=$6$;
      counter=Network::epoch;
     };
     IfBreak @[2] {
      desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
-     flags=PEF_NONE;
+     flags=;
      cond {
       expr="network.cnt_err <= err_stopcrit";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$.cnt_err <= $#1#$";
       vars {
       };
@@ -587,7 +587,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    };
    test {
     expr="epoch < max_epoch";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$ < $#1#$";
     vars {
     };
@@ -597,7 +597,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
   };
   MethodCall @[7] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=TimeUsed::EndTimer;

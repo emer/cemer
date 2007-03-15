@@ -32,7 +32,7 @@ Program .projects[0].programs.gp[0][0] {
 Program .projects[0].programs.gp[0][0] {
  name="LeabraBatch";
  desc="Iterate over training runs";
- flags=PF_NONE;
+ flags=;
  objs {
   name=;
   el_typ=taOBase;
@@ -48,7 +48,7 @@ Program .projects[0].programs.gp[0][0] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -57,7 +57,7 @@ Program .projects[0].programs.gp[0][0] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[2] {
@@ -65,7 +65,7 @@ Program .projects[0].programs.gp[0][0] {
    var_type=T_Int;
    int_val=10;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -78,7 +78,7 @@ Program .projects[0].programs.gp[0][0] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc="batch counter";
   };
  };
@@ -98,7 +98,7 @@ Program .projects[0].programs.gp[0][0] {
   el_def=0;
   NetCounterInit @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    network_var=.projects[0].programs.gp[0][0].args[0]$2$;
    local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$3$;
    counter=Network::batch;
@@ -110,21 +110,21 @@ Program .projects[0].programs.gp[0][0] {
   el_def=0;
   NetCounterInit @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    network_var=$2$;
    local_ctr_var=$3$;
    counter=Network::batch;
   };
   WhileLoop @[1] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    loop_code {
     name=;
     el_typ=ProgEl;
     el_def=0;
     ProgramCall @[0] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      target=.projects[0].programs.gp[0][1]$4$;
      targ_ld_init="*LeabraTrain*";
      call_init=0;
@@ -138,7 +138,7 @@ Program .projects[0].programs.gp[0][0] {
        name="network";
        expr {
 	expr="network";
-	flags=PE_NONE;
+	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -152,7 +152,7 @@ Program .projects[0].programs.gp[0][0] {
        name="input_data";
        expr {
 	expr="input_data";
-	flags=PE_NONE;
+	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -164,7 +164,7 @@ Program .projects[0].programs.gp[0][0] {
     };
     NetCounterIncr @[1] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      network_var=$2$;
      local_ctr_var=$3$;
      counter=Network::batch;
@@ -172,7 +172,7 @@ Program .projects[0].programs.gp[0][0] {
    };
    test {
     expr="batch < max_batch";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$ < $#1#$";
     vars {
     };

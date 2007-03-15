@@ -58,7 +58,7 @@ Program .projects[0].programs.gp[0][1] {
 Program .projects[0].programs.gp[0][1] {
  name="LeabraTrain";
  desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task";
- flags=PF_NONE;
+ flags=;
  objs {
   name=;
   el_typ=RndSeed;
@@ -79,7 +79,7 @@ Program .projects[0].programs.gp[0][1] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -88,7 +88,7 @@ Program .projects[0].programs.gp[0][1] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -101,7 +101,7 @@ Program .projects[0].programs.gp[0][1] {
    var_type=T_Int;
    int_val=500;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -110,7 +110,7 @@ Program .projects[0].programs.gp[0][1] {
    int_val=1;
    hard_enum_type=Network::TrainMode;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[2] {
@@ -118,7 +118,7 @@ Program .projects[0].programs.gp[0][1] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[3] {
@@ -126,7 +126,7 @@ Program .projects[0].programs.gp[0][1] {
    var_type=T_Real;
    real_val=0;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[4] {
@@ -135,7 +135,7 @@ Program .projects[0].programs.gp[0][1] {
    object_type=RndSeed;
    object_val=.projects[0].programs.gp[0][1].objs[0]$2$;
    objs_ptr=1;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
   ProgVar @[5] {
@@ -144,7 +144,7 @@ Program .projects[0].programs.gp[0][1] {
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].train_time$3$;
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
  };
@@ -164,7 +164,7 @@ Program .projects[0].programs.gp[0][1] {
   el_def=0;
   MethodCall @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][1].args[0]$4$;
    method=taBase::CheckConfig;
@@ -178,7 +178,7 @@ Program .projects[0].programs.gp[0][1] {
      name="quiet";
      expr {
       expr="false";
-      flags=PE_NONE;
+      flags=;
       var_expr="false";
       vars {
       };
@@ -190,11 +190,11 @@ Program .projects[0].programs.gp[0][1] {
   };
   AssignExpr @[1] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=.projects[0].programs.gp[0][1].vars[5]$5$;
    expr {
     expr="network.train_time";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$.train_time";
     vars {
     };
@@ -204,14 +204,14 @@ Program .projects[0].programs.gp[0][1] {
   };
   NetCounterInit @[2] {
    desc="initialize epoch counter ";
-   flags=PEF_NONE;
+   flags=;
    network_var=$4$;
    local_ctr_var=.projects[0].programs.gp[0][1].vars[2]$6$;
    counter=Network::epoch;
   };
   MethodCall @[3] {
    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][1].vars[4]$7$;
    method=RndSeed::OldSeed;
@@ -223,7 +223,7 @@ Program .projects[0].programs.gp[0][1] {
   };
   MethodCall @[4] {
    desc="this initializes the weights every time user presses Init -- could turn this off for large nets (init is also in prog_code)";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$4$;
    method=Network::Init_Weights;
@@ -240,11 +240,11 @@ Program .projects[0].programs.gp[0][1] {
   el_def=0;
   AssignExpr @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=$5$;
    expr {
     expr="network.train_time";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$.train_time";
     vars {
     };
@@ -254,7 +254,7 @@ Program .projects[0].programs.gp[0][1] {
   };
   MethodCall @[1] {
    desc="keeps track of how long it takes to run entire training run";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=TimeUsed::StartTimer;
@@ -268,7 +268,7 @@ Program .projects[0].programs.gp[0][1] {
      name="reset_used";
      expr {
       expr="true";
-      flags=PE_NONE;
+      flags=;
       var_expr="true";
       vars {
       };
@@ -280,14 +280,14 @@ Program .projects[0].programs.gp[0][1] {
   };
   NetCounterInit @[2] {
    desc="initialize epoch counter ";
-   flags=PEF_NONE;
+   flags=;
    network_var=$4$;
    local_ctr_var=$6$;
    counter=Network::epoch;
   };
   UserScript @[3] {
    desc="update network's train mode to be same as ours";
-   flags=PEF_NONE;
+   flags=;
    script {
     expr="network.train_mode = train_mode;";
     flags=NO_VAR_ERRS;
@@ -300,7 +300,7 @@ Program .projects[0].programs.gp[0][1] {
   };
   MethodCall @[4] {
    desc="initialize network weights: could also load pre-set weights or something else here";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$4$;
    method=Network::Init_Weights;
@@ -312,14 +312,14 @@ Program .projects[0].programs.gp[0][1] {
   };
   WhileLoop @[5] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    loop_code {
     name=;
     el_typ=ProgramCall;
     el_def=0;
     ProgramCall @[0] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      target=.projects[0].programs.gp[0][2]$8$;
      targ_ld_init="*LeabraEpoch*";
      call_init=0;
@@ -333,7 +333,7 @@ Program .projects[0].programs.gp[0][1] {
        name="network";
        expr {
 	expr="network";
-	flags=PE_NONE;
+	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -347,7 +347,7 @@ Program .projects[0].programs.gp[0][1] {
        name="input_data";
        expr {
 	expr="input_data";
-	flags=PE_NONE;
+	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -359,17 +359,17 @@ Program .projects[0].programs.gp[0][1] {
     };
     NetCounterIncr @[1] {
      desc="increment the epoch counter";
-     flags=PEF_NONE;
+     flags=;
      network_var=$4$;
      local_ctr_var=$6$;
      counter=Network::epoch;
     };
     IfBreak @[2] {
      desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
-     flags=PEF_NONE;
+     flags=;
      cond {
       expr="network.cnt_err <= err_stopcrit";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$.cnt_err <= $#1#$";
       vars {
       };
@@ -380,7 +380,7 @@ Program .projects[0].programs.gp[0][1] {
    };
    test {
     expr="epoch < max_epoch";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$ < $#1#$";
     vars {
     };
@@ -390,7 +390,7 @@ Program .projects[0].programs.gp[0][1] {
   };
   MethodCall @[6] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=TimeUsed::EndTimer;

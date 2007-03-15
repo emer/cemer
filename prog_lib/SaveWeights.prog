@@ -51,7 +51,7 @@ Program .projects[0].programs.gp[0][9] {
 Program .projects[0].programs.gp[0][9] {
  name="SaveWeights";
  desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
- flags=PF_NONE;
+ flags=;
  objs {
   name=;
   el_typ=taOBase;
@@ -67,7 +67,7 @@ Program .projects[0].programs.gp[0][9] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -80,7 +80,7 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc="user-provided tag (startup script will set this!)";
   };
   ProgVar @[1] {
@@ -88,7 +88,7 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc="user-provided subdirectory to save weights in";
   };
   ProgVar @[2] {
@@ -96,7 +96,7 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc="final generated file name -- do not edit!";
   };
   ProgVar @[3] {
@@ -104,7 +104,7 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val="0036";
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc="string rep of epoch with leading zeros";
   };
   ProgVar @[4] {
@@ -112,7 +112,7 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val="03";
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc="string rep of batch with leading zeros";
   };
   ProgVar @[5] {
@@ -120,7 +120,7 @@ Program .projects[0].programs.gp[0][9] {
    var_type=T_String;
    string_val=".03_0036";
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc="batch + epoch";
   };
  };
@@ -145,10 +145,10 @@ Program .projects[0].programs.gp[0][9] {
   el_def=0;
   IfElse @[0] {
    desc="don't save if not first dmem process";
-   flags=PEF_NONE;
+   flags=;
    cond {
     expr="taMisc::dmem_proc > 0";
-    flags=PE_NONE;
+    flags=;
     var_expr="taMisc::dmem_proc > 0";
     vars {
     };
@@ -161,7 +161,7 @@ Program .projects[0].programs.gp[0][9] {
     el_def=0;
     UserScript @[0] {
      desc=;
-     flags=PEF_NONE;
+     flags=;
      script {
       expr="return;";
       flags=NO_VAR_ERRS;
@@ -181,7 +181,7 @@ Program .projects[0].programs.gp[0][9] {
   };
   MiscCall @[1] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=.projects[0].programs.gp[0][9].vars[4]$1$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
@@ -195,7 +195,7 @@ Program .projects[0].programs.gp[0][9] {
      name="num";
      expr {
       expr="network.batch";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$.batch";
       vars {
       };
@@ -209,7 +209,7 @@ Program .projects[0].programs.gp[0][9] {
      name="len";
      expr {
       expr="2";
-      flags=PE_NONE;
+      flags=;
       var_expr="2";
       vars {
       };
@@ -221,7 +221,7 @@ Program .projects[0].programs.gp[0][9] {
   };
   MiscCall @[2] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=.projects[0].programs.gp[0][9].vars[3]$2$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
@@ -235,7 +235,7 @@ Program .projects[0].programs.gp[0][9] {
      name="num";
      expr {
       expr="network.epoch";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$.epoch";
       vars {
       };
@@ -249,7 +249,7 @@ Program .projects[0].programs.gp[0][9] {
      name="len";
      expr {
       expr="4";
-      flags=PE_NONE;
+      flags=;
       var_expr="4";
       vars {
       };
@@ -261,11 +261,11 @@ Program .projects[0].programs.gp[0][9] {
   };
   AssignExpr @[3] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=.projects[0].programs.gp[0][9].vars[5]$3$;
    expr {
     expr="tag + \".\" + batch_str + \"_\" + epoch_str";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$ + \".\" + batch_str + \"_\" + epoch_str";
     vars {
     };
@@ -275,7 +275,7 @@ Program .projects[0].programs.gp[0][9] {
   };
   MethodCall @[4] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=.projects[0].programs.gp[0][9].vars[2]$4$;
    obj=.projects[0].programs.gp[0][9].args[0]$5$;
    method=taBase::GetFileNameFmProject;
@@ -289,7 +289,7 @@ Program .projects[0].programs.gp[0][9] {
      name="ext";
      expr {
       expr="\".wts.gz\"";
-      flags=PE_NONE;
+      flags=;
       var_expr="\".wts.gz\"";
       vars {
       };
@@ -303,7 +303,7 @@ Program .projects[0].programs.gp[0][9] {
      name="tag";
      expr {
       expr="final_tag";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -317,7 +317,7 @@ Program .projects[0].programs.gp[0][9] {
      name="subdir";
      expr {
       expr="wts_subdir";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -331,7 +331,7 @@ Program .projects[0].programs.gp[0][9] {
      name="dmem_proc_no";
      expr {
       expr="false";
-      flags=PE_NONE;
+      flags=;
       var_expr="false";
       vars {
       };
@@ -343,7 +343,7 @@ Program .projects[0].programs.gp[0][9] {
   };
   MethodCall @[5] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=Network::SaveWeights;
@@ -357,7 +357,7 @@ Program .projects[0].programs.gp[0][9] {
      name="fname";
      expr {
       expr="fname";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -371,7 +371,7 @@ Program .projects[0].programs.gp[0][9] {
      name="fmt";
      expr {
       expr="Network::NET_FMT";
-      flags=PE_NONE;
+      flags=;
       var_expr="Network::NET_FMT";
       vars {
       };

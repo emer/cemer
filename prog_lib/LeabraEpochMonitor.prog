@@ -56,7 +56,7 @@ Program .projects[0].programs.gp[0][8] {
 Program .projects[0].programs.gp[0][8] {
  name="LeabraEpochMonitor";
  desc="monitor epoch-level data from the network";
- flags=PF_NONE;
+ flags=;
  objs {
   name=;
   el_typ=NetMonitor;
@@ -211,7 +211,7 @@ Program .projects[0].programs.gp[0][8] {
    object_type=Network;
    object_val=$0$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -225,7 +225,7 @@ Program .projects[0].programs.gp[0][8] {
    object_type=DataTable;
    object_val=$1$;
    objs_ptr=0;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -234,7 +234,7 @@ Program .projects[0].programs.gp[0][8] {
    object_type=NetMonitor;
    object_val=.projects[0].programs.gp[0][8].objs[0]$2$;
    objs_ptr=1;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[2] {
@@ -243,7 +243,7 @@ Program .projects[0].programs.gp[0][8] {
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].epoch_time$3$;
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
  };
@@ -263,11 +263,11 @@ Program .projects[0].programs.gp[0][8] {
   el_def=0;
   AssignExpr @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=.projects[0].programs.gp[0][8].vars[2]$4$;
    expr {
     expr="network.epoch_time";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$.epoch_time";
     vars {
     };
@@ -277,7 +277,7 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[1] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][8].vars[1]$5$;
    method=NetMonitor::SetDataNetwork;
@@ -291,7 +291,7 @@ Program .projects[0].programs.gp[0][8] {
      name="dt";
      expr {
       expr="epoch_mon_data";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -305,7 +305,7 @@ Program .projects[0].programs.gp[0][8] {
      name="net";
      expr {
       expr="network";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -317,7 +317,7 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[2] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=taBase::CheckConfig;
@@ -331,7 +331,7 @@ Program .projects[0].programs.gp[0][8] {
      name="quiet";
      expr {
       expr="false";
-      flags=PE_NONE;
+      flags=;
       var_expr="false";
       vars {
       };
@@ -343,7 +343,7 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[3] {
    desc="update the monitor items and data schema";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=NetMonitor::UpdateMonitors;
@@ -357,7 +357,7 @@ Program .projects[0].programs.gp[0][8] {
      name="reset_first";
      expr {
       expr="true";
-      flags=PE_NONE;
+      flags=;
       var_expr="true";
       vars {
       };
@@ -374,7 +374,7 @@ Program .projects[0].programs.gp[0][8] {
   el_def=0;
   MethodCall @[0] {
    desc="add a new blank row to the data";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][8].vars[0]$6$;
    method=DataTable::AddBlankRow;
@@ -386,7 +386,7 @@ Program .projects[0].programs.gp[0][8] {
   };
   MethodCall @[1] {
    desc="get the new monitor data.";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=NetMonitor::GetMonVals;
@@ -398,11 +398,11 @@ Program .projects[0].programs.gp[0][8] {
   };
   AssignExpr @[2] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=$4$;
    expr {
     expr="network.epoch_time";
-    flags=PE_NONE;
+    flags=;
     var_expr="$#0#$.epoch_time";
     vars {
     };
@@ -412,7 +412,7 @@ Program .projects[0].programs.gp[0][8] {
   };
   UserScript @[3] {
    desc="set the timing information from the epoch timer";
-   flags=PEF_NONE;
+   flags=;
    script {
     expr="epoch_mon_data.SetDataByName(epoch_timer.used.GetTotSecs(), \"epoch_time_tot\");
 epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
@@ -431,7 +431,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
   };
   MethodCall @[4] {
    desc="update after writing new data to monitor data table";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$6$;
    method=DataBlock::WriteClose;

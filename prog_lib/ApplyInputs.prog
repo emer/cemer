@@ -79,7 +79,7 @@ Program .projects[0].programs.gp[0][6] {
      layer_name="Name";
      offset {x=0: y=0: };
      use_layer_type=1;
-     ext_flags=NO_EXTERNAL;
+     ext_flags=;
      noise {type=NONE: mean=0: var=0.5: par=1: };
      value_names{      };
     };
@@ -96,7 +96,7 @@ Program .projects[0].programs.gp[0][6] {
    object_type=LeabraNetwork;
    object_val=$1$;
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
@@ -105,7 +105,7 @@ Program .projects[0].programs.gp[0][6] {
    object_type=DataTable;
    object_val=$0$;
    objs_ptr=0;
-   flags=NO_CTRL_PANEL;
+   flags=NULL_CHECK;
    desc=;
   };
  };
@@ -119,7 +119,7 @@ Program .projects[0].programs.gp[0][6] {
    object_type=LayerWriter;
    object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
    objs_ptr=1;
-   flags=PV_NONE;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -139,7 +139,7 @@ Program .projects[0].programs.gp[0][6] {
   el_def=0;
   MethodCall @[0] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][6].vars[0]$3$;
    method=LayerWriter::SetDataNetwork;
@@ -153,7 +153,7 @@ Program .projects[0].programs.gp[0][6] {
      name="db";
      expr {
       expr="input_data";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -167,7 +167,7 @@ Program .projects[0].programs.gp[0][6] {
      name="net";
      expr {
       expr="network";
-      flags=PE_NONE;
+      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -179,7 +179,7 @@ Program .projects[0].programs.gp[0][6] {
   };
   MethodCall @[1] {
    desc=;
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$3$;
    method=taList_impl::CheckConfig;
@@ -193,7 +193,7 @@ Program .projects[0].programs.gp[0][6] {
      name="quiet";
      expr {
       expr="false";
-      flags=PE_NONE;
+      flags=;
       var_expr="false";
       vars {
       };
@@ -210,7 +210,7 @@ Program .projects[0].programs.gp[0][6] {
   el_def=0;
   MethodCall @[0] {
    desc="apply inputs to the network!  layer writer has all the key specs";
-   flags=PEF_NONE;
+   flags=;
    result_var=NULL;
    obj=$3$;
    method=LayerWriter::ApplyInputData;
