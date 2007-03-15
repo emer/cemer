@@ -221,6 +221,7 @@ public: // IDataHost i/f
   void		Changed() {}
   void		GetImage();
   void		GetValue() { } // na
+  void		Apply() {} // na
 };
 
 class TA_API taiDataHost: public QObject, virtual public IDataLinkClient, 
@@ -349,10 +350,12 @@ public: // IDataHost i/f
 //  void		GetImage()	{ }
 //  void		GetValue()	{ }
 public slots:
+  void		Apply(); //override  
+
+public slots:
   void  	Changed();	// override method call when data has changed
 
 public slots:
-  virtual void	Apply(); //override
   virtual void	Revert(); //override
 
 protected:

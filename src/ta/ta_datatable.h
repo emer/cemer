@@ -125,7 +125,7 @@ public:
     PIN 		= 0x0002, // #NO_SHOW protect this column from being automatically deleted according to the MARK scheme (see comment).  this is often not very easy for uers to find and use (columns to be saved should be listed explicitly in the context in which others are being used), so we are not exposing it to users, but it can be used internally for some reason
     SAVE_ROWS 		= 0x0004, // save the row data for this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data if not on.
     SAVE_DATA 		= 0x0008, // save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
-    CALC 		= 0x0010, // calculate value of this column based on calc_expr expression
+    CALC 		= 0x0010, // #APPLY_IMMED calculate value of this column based on calc_expr expression
 
     NO_SAVE 		= 0x0100, // #NO_BIT #NO_SAVE obsolete todo: remove
     NO_SAVE_DATA 	= 0x0200, // #NO_BIT #NO_SAVE obsolete todo: remove

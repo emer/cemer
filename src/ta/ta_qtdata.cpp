@@ -122,6 +122,11 @@ taiData::~taiData() {
   m_rep = NULL;
 }
 
+void taiData::applyNow() {
+  if (host)
+    host->Apply();
+}
+
 void taiData::CheckDoAutoApply() {
   if (!(mflags & flgAutoApply)) return;
   if (host)
@@ -589,14 +594,18 @@ taiToggle::taiToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui
   SetRep( new iCheckBox(gui_parent_) );
   rep()->setFixedHeight(taiM->label_height(defSize()));
 
-  //connect changed signal to our slot
   QObject::connect(m_rep, SIGNAL(toggled(bool) ),
         this, SLOT(repChanged() ) );
   if (readOnly()) {
     rep()->setReadOnly(true);
   } else {
-    QObject::connect(m_rep, SIGNAL(toggled(bool) ),
-          this, SLOT(repChanged() ) );
+    // if ApplyNow, just apply on change, else connect changed signal to our slot
+    if (mflags & flgAutoApply)
+      QObject::connect(m_rep, SIGNAL(toggled(bool) ),
+            this, SLOT(applyNow() ) );
+    else
+      QObject::connect(m_rep, SIGNAL(toggled(bool) ),
+            this, SLOT(repChanged() ) );
   }
 }
 
@@ -680,9 +689,13 @@ void taiComboBox::Initialize(QWidget* gui_parent_, bool is_enum_) {
   SetRep(new iComboBox(gui_parent_));
   rep()->setFixedHeight(taiM->combo_height(defSize()));
 
-  //connect changed signal to our slot
-  QObject::connect(m_rep, SIGNAL(activated(int) ),
-        this, SLOT(repChanged() ) );
+  //connect changed signal to our slot, or apply 
+  if (mflags & flgAutoApply)
+    QObject::connect(m_rep, SIGNAL(activated(int) ),
+          this, SLOT(applyNow() ) );
+  else
+    QObject::connect(m_rep, SIGNAL(activated(int) ),
+          this, SLOT(repChanged() ) );
   // also to aux signal (used by non-IDataHost clients)
   QObject::connect(m_rep, SIGNAL(activated(int) ),
     this, SIGNAL(itemChanged(int)) );
@@ -753,9 +766,11 @@ void taiComboBox::SetEnumType(TypeDef* enum_typ, bool force) {
   GetValue then returns the modified original
 */
 
-iBitCheckBox::iBitCheckBox(int val_, String label, QWidget * parent)
-:iCheckBox(label.chars(), parent)
+iBitCheckBox::iBitCheckBox(bool auto_apply_, int val_, String label,
+QWidget * parent)
+:inherited(label.chars(), parent)
 {
+  auto_apply = auto_apply_;
   val = val_;
   connect(this, SIGNAL(toggled(bool)), this, SLOT(this_toggled(bool)) );
 }
@@ -784,9 +799,12 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
       if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
         ed->HasOption("NO_SHOW"))
         continue;
+      // auto apply if entire guy marked, or if item is marked
+      bool auto_apply = ((flags_ & taiData::flgAutoApply)
+        || (ed->HasOption(TypeItem::opt_apply_immed)));
       if (cnt++ > 0)
         lay->addSpacing(taiM->hsep_c);
-      AddBoolItem(ed->GetLabel(), ed->enum_no, ed->desc);
+      AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc);
     }
     lay->addStretch();
   }
@@ -803,12 +821,18 @@ void taiBitBox::Initialize(QWidget* gui_parent_) {
 void taiBitBox::bitCheck_toggled(iBitCheckBox* sender, bool on) {
   if (on) m_val |= sender->val;
   else    m_val &= ~(sender->val);
-  if (host != NULL)
-    host->Changed();
+  if (host != NULL) {
+    if (sender->auto_apply)
+      host->Apply();
+    else
+      host->Changed();
+  }
 }
 
-void taiBitBox::AddBoolItem(String name, int val, const String& desc) {
-  iBitCheckBox* bcb = new iBitCheckBox(val, name, m_rep);
+void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
+  const String& desc) 
+{
+  iBitCheckBox* bcb = new iBitCheckBox(auto_apply, val, name, m_rep);
   if (desc.nonempty()) {
     bcb->setToolTip(desc);
   }
@@ -3018,7 +3042,10 @@ void taiItemPtrBase::OpenChooser() {
   if (ic->Choose(this)) {
     if (m_sel != ic->selObj()) {
       UpdateImage(ic->selObj());
-      DataChanged();
+      if (mflags & flgAutoApply)
+        applyNow();
+      else
+        DataChanged();
     }
   }
 delete ic;

@@ -230,10 +230,12 @@ private:
 //////////////////////////
 
 class TA_API iBitCheckBox: public iCheckBox { // #IGNORE specialized checkbox for the taiBitBox class
+INHERITED(iCheckBox)
   Q_OBJECT
 public:
   int		val;
-  iBitCheckBox(int val_, String label, QWidget* parent);
+  bool		auto_apply;
+  iBitCheckBox(bool auto_apply, int val_, String label, QWidget* parent);
 
 public slots:
   void		this_toggled(bool on);
@@ -257,7 +259,7 @@ public:
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
   //TODO: maybe default highlighting???
-  void		AddBoolItem(String name, int val, const String& desc = _nilString); // add an item to the list
+  void		AddBoolItem(bool auto_apply, String name, int val, const String& desc = _nilString); // add an item to the list
 
   void 		GetImage(int val);  // set to this value, according to bit fields
   void		GetValue(int& val) const;

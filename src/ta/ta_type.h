@@ -1530,8 +1530,9 @@ public:
     SC_ANY,		// any context -- directives like "SHOW"
     SC_EDIT,		// for in edit dialogs -- directives like "SHOW_EDIT"
     SC_TREE		// in tree views (browsing) -- directives like "SHOW_TREE"
-  };
+  }; //
   
+// const guys help speed up oft-looked up values by avoiding String churning
   static const String opt_show; // "SHOW"
   static const String opt_no_show; // "NO_SHOW"
   static const String opt_hidden; // "HIDDEN"
@@ -1543,6 +1544,10 @@ public:
   static const String opt_edit_read_only; // "EDIT_READ_ONLY"
   static const String opt_edit_detail; // "EDIT_DETAIL"
   static const String opt_edit_expert; // "EDIT_EXPERT"
+  static const String opt_apply_immed; // "APPLY_IMMED"
+  static const String opt_inline; // "INLINE"
+  static const String opt_edit_inline; // "EDIT_INLINE"
+  static const String opt_edit_dialog; // "EDIT_DIALOG"
   
   static const String opt_bits; // "BITS"
   static const String opt_instance; // "INSTANCE"
@@ -1604,9 +1609,7 @@ public:
 };
 
 class TA_API MemberDef : public TypeItem { //  defines a class member
-#ifndef __MAKETA__
-typedef TypeItem inherited;
-#endif
+INHERITED(TypeItem)
 public:
   MemberSpace*	owner;
 

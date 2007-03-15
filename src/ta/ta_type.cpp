@@ -1003,8 +1003,8 @@ void taMisc::Init_Defaults_PreLoadConfig() {
 
 void taMisc::Init_Defaults_PostLoadConfig() {
   // set any default settings after loading config file (ensures certain key settings in place)
-  css_include_paths.AddUnique(app_dir + PATH_SEP + "css_stdlib");
-  css_include_paths.AddUnique(user_app_dir + PATH_SEP + "css_mylib");
+  css_include_paths.AddUnique(app_dir + PATH_SEP + "css_lib");
+  css_include_paths.AddUnique(user_app_dir + PATH_SEP + "css_lib");
   css_include_paths.AddUnique(user_app_dir); // for .init files in user app dir
   css_include_paths.AddUnique(user_dir); // needed for .init files **DEPRECATED**
 
@@ -2870,6 +2870,10 @@ const String TypeItem::opt_edit_hidden("EDIT_HIDDEN");
 const String TypeItem::opt_edit_read_only("EDIT_READ_ONLY");
 const String TypeItem::opt_edit_detail("EDIT_DETAIL");
 const String TypeItem::opt_edit_expert("EDIT_EXPERT");
+const String TypeItem::opt_apply_immed("APPLY_IMMED");
+const String TypeItem::opt_inline("INLINE");
+const String TypeItem::opt_edit_inline("EDIT_INLINE");
+const String TypeItem::opt_edit_dialog("EDIT_DIALOG");
 
 const String TypeItem::opt_bits("BITS");
 const String TypeItem::opt_instance("INSTANCE");
@@ -2942,14 +2946,19 @@ bool TypeItem::NextOptionAfter(const String& pre, int& itr, String& res) const
 
 
 String TypeItem::GetLabel() const {
-  String tmp_label =  OptionAfter("LABEL_");
-  if((tmp_label.empty()) && !HasOption("LABEL_")) {	// not intentionally blank
-    tmp_label = name;
-    taMisc::SpaceLabel(tmp_label);
+  String rval =  OptionAfter("LABEL_");
+  if((rval.empty()) && !HasOption("LABEL_")) {	// not intentionally blank
+    rval = name;
+    taMisc::SpaceLabel(rval);
   } else				// do translate spaces..
-    tmp_label.gsub('_', ' ');
-  return tmp_label;
+    rval.gsub('_', ' ');
+  // if has the APPLY_IMMED flag, decorate it so user is aware
+  if (HasOption(opt_apply_immed)) {
+    rval.cat('!');
+  }
+  return rval;
 }
+
 
 
 //////////////////////////

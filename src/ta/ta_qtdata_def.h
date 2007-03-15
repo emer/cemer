@@ -77,7 +77,8 @@ public:
   virtual void		GetImage() = 0; // copy value to gui
   virtual void		Changed() {} // called by embedded item to indicate contents have changed
   virtual void		SetItemAsHandler(taiData* item, bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset); in ta_qtviewer.cpp
-
+  virtual void		Apply() = 0; // provided for the APPLY_IMMED functionality
+  
   IDataHost() {}
   virtual ~IDataHost() {} //
 };
@@ -192,6 +193,7 @@ protected:
 protected slots:
   void 			repChanged(); //signal from rep that data has changed
   virtual void 		repDestroyed(QObject* obj); // available if instance wants to insure its rep member is not invalid -- not connected by default, but class can override SetRep conveniently to connect
+  virtual void		applyNow(); // calling this will force the host to apply editing data -- same action as if user pressed Apply button
 
   // handler controls do nothing in base class, and in most subclasses
   virtual void 		this_GetEditActionsEnabled(int& ea) {} // for when control is clipboard handler

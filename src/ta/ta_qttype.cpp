@@ -972,12 +972,14 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
   //TODO: probably should also use parent_type in determining ro, as base class does
   if (ro)
     flags |= taiData::flgReadOnly;
-  if (((mbr->HasOption("INLINE")) || (mbr->HasOption("EDIT_INLINE"))) 
+  if (((mbr->HasOption(TypeItem::opt_inline)) ||
+       (mbr->HasOption(TypeItem::opt_edit_inline))) 
     && mbr->type->it->allowsInline())
     flags |= taiData::flgInline;
-  if (mbr->HasOption("EDIT_DIALOG")) // if a string field, puts up an editor button
+  if (mbr->HasOption(TypeItem::opt_edit_dialog)) // if a string field, puts up an editor button
     flags |= taiData::flgEditDialog;
-    
+  if (mbr->HasOption(TypeItem::opt_apply_immed))
+    flags |= taiData::flgAutoApply;
     
   if ((flags & taiData::flgReadOnly) && !handlesReadOnly()) {
     return taiMember::GetDataRep_impl(host_, par, gui_parent_, flags);
