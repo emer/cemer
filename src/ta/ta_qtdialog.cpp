@@ -457,11 +457,19 @@ void EditDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
 // iMethodButtonMgr		//
 //////////////////////////////////
 
+iMethodButtonMgr::iMethodButtonMgr(QObject* parent)
+:inherited(parent)
+{
+  widg = NULL;
+  m_lay = NULL;
+  Init();
+}
+
 iMethodButtonMgr::iMethodButtonMgr(QWidget* widg_, QLayout* lay_, QObject* parent)
 :inherited(parent)
 {
   widg = widg_;
-  lay = lay_;
+  m_lay = lay_;
   Init();
 }
 
@@ -476,7 +484,7 @@ void iMethodButtonMgr::Init() {
   base = NULL;
   typ = NULL;
   cur_menu_but = NULL;
-//  lay = new iFlowLayout(this, 3, taiM->hspc_c, (Qt::AlignCenter));
+//  m_lay = new iFlowLayout(this, 3, taiM->hspc_c, (Qt::AlignCenter));
 }
 
 void iMethodButtonMgr::AddMethButton(taiMethodData* mth_rep, const String& label) {
@@ -500,7 +508,20 @@ void iMethodButtonMgr::Reset() {
   setBase(NULL);
 }
 
+void iMethodButtonMgr::Constr(QWidget* widg_, QLayout* lay_, 
+  taBase* base_, IDataHost* host_)
+{
+  widg = widg_;
+  m_lay = lay_;  
+  Constr_impl(base_, host_);
+}
+
 void iMethodButtonMgr::Constr(taBase* base_, IDataHost* host_) 
+{
+  Constr_impl(base_, host_);
+}
+
+void iMethodButtonMgr::Constr_impl(taBase* base_, IDataHost* host_) 
 {
   Reset();
   host = host_; // prob not needed
@@ -552,7 +573,7 @@ void iMethodButtonMgr::DoAddMethButton(QAbstractButton* but) {
   if (but->parent() != widg) {
     but->reparent(widg, QPoint(0, 0));
   }
-  lay->addWidget(but);
+  m_lay->addWidget(but);
   but->show(); // needed when rebuilding
 }
 

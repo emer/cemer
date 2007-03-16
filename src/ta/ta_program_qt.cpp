@@ -504,22 +504,14 @@ void iProgramEditor::Init() {
   layEdit->setMargin(0);
   layEdit->addSpacing(taiM->vsep_c);
   
-  body = new iEditGrid(false, false, 2, 1, 2, 1, this); //note: intrinsically sizes to 2 rows minimum
+  body = new iEditGrid(false, false, 2, 1, editLines(), 1, this); //note: intrinsically sizes to 2 rows minimum
   body->setRowHeight(taiM->max_control_height(taiM->ctrl_size));
-  setEditBgColor(NULL); // set defaults
   layEdit->addWidget(body, 1); // give all the space to this guy
   layEdit->addSpacing(taiM->vsep_c);
 
-//TENT: we probably need to rejig this...
-//  widCmdButtons = new QWidget(widg);
-  widMeths = new QWidget(this);
-  QHBoxLayout* layMeths = new QHBoxLayout(widMeths); // def margins ok
-  layMeths->setMargin(0); // spacing prob ok
-  layMeths->addItem(new QSpacerItem(0, taiM->max_control_height(taiM->ctrl_size),
-   QSizePolicy::Minimum, QSizePolicy::Fixed));
-  layEdit->addWidget(widMeths);
-  meth_but_mgr = new iMethodButtonMgr(widMeths, layMeths, widMeths); 
+  meth_but_mgr = new iMethodButtonMgr(this); 
   
+  setEditBgColor(NULL); // set defaults
   
   QHBoxLayout* layButtons = new QHBoxLayout();
   layButtons->setMargin(0);
@@ -577,7 +569,8 @@ void iProgramEditor::AddData(int row_, QWidget* data, QLayout* lay) {
     hbl->addStretch();
     body->setDataLayout(row, 0, hbl);
   }
-  data->show(); // needed for rebuilds, to make the widget show
+  if (data)
+    data->show(); // needed for rebuilds, to make the widget show
 }
 
 void iProgramEditor::Base_Add() {
@@ -601,12 +594,27 @@ void iProgramEditor::Base_Add() {
   int flags = taiData::flgInline | taiData::flgNoUAE;
   if (read_only) flags |= taiData::flgReadOnly;
   
+  // do methods first, so we know whether to show, and thus how many memb lines we have
+  QHBoxLayout* layMeths = new QHBoxLayout; // def margins ok
+  layMeths->setMargin(0); // spacing prob ok
+//nn  layMeths->addItem(new QSpacerItem(0, taiM->max_control_height(taiM->ctrl_size),
+//   QSizePolicy::Minimum, QSizePolicy::Fixed));
+  layMeths->addStretch();
+  meth_but_mgr->Constr(body->dataGridWidget(), layMeths, base);
+  int lines = editLines();
+  int cur_line = 0;
+//nn  widMeths->setVisible(meth_but_mgr->show_meth_buttons);
+  if (meth_but_mgr->show_meth_buttons) {
+    lines -= 1;
+    layMeths->addStretch();
+  }
+  
   // add main inline controls in line 0, for whatever type
   TypeDef* typ = GetBaseTypeDef();
   taiData* mb_dat = typ->it->GetDataRep(this, NULL, body->dataGridWidget(), NULL, flags);
   data_el.Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
-  AddData(0, rep/*, mb_dat->GetLayout()*/);
+  AddData(cur_line++, rep/*, mb_dat->GetLayout()*/);
   
   // add desc control in line 1 for ProgEls (and any other type with a "desc" member
   md_desc = typ->members.FindName("desc");
@@ -625,17 +633,12 @@ void iProgramEditor::Base_Add() {
     data_el.Add(mb_dat);
     rep = mb_dat->GetRep();
     hbl->addWidget(rep, 1,  (Qt::AlignVCenter)); // should consume all space
-//    hbl->addStretch();
-    AddData(1, rep, hbl);
-    
-    
-    
+    AddData(cur_line++, rep, hbl);
   }
   
-  // methods
-  meth_but_mgr->Constr(base);
-  
-  
+  if (meth_but_mgr->show_meth_buttons) {
+    AddData(cur_line++, NULL, meth_but_mgr->lay());
+  }
   // ok, get er!
   GetImage();
 }
@@ -644,8 +647,8 @@ void iProgramEditor::Base_Remove() {
   base->RemoveDataClient(this);
   data_el.Reset(); // deletes the items
   md_desc = NULL; // for tidiness
-  body->clearLater();
   meth_but_mgr->Reset();
+  body->clearLater();
 /*obs  // delete widgets in iStripe
   const QObjectList& ch = body->children();
   while (ch.count() > 0) {
@@ -702,6 +705,10 @@ void iProgramEditor::Changed() {
   InternalSetModified(true);
 }
 
+int iProgramEditor::editLines() const {
+  return 4;
+}
+
 TypeDef* iProgramEditor::GetBaseTypeDef() {
   if (base) return base->GetTypeDef();
   else return &TA_void; // avoids null issues
@@ -731,7 +738,7 @@ void iProgramEditor::GetValue() {
 void iProgramEditor::GetImage() {
   TypeDef* typ = GetBaseTypeDef();
   if (!typ) return; // shouldn't happen
-  
+//note: buttons update themselves automatically  
   ++m_changing;
   taiData* mb_dat = data_el.SafeEl(0);
   if (mb_dat) 
@@ -783,6 +790,9 @@ void iProgramEditor::Refresh() {
   items->Refresh();
   if (!m_modified) {
     GetImage();
+    if (meth_but_mgr->show_meth_buttons) {
+      meth_but_mgr->GetImage();
+    }
   }
 }
 

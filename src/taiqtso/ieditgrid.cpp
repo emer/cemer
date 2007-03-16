@@ -16,6 +16,7 @@
 #include "taiqtso_def.h"
 
 #include "ieditgrid.h"
+#include "iscrollarea.h"
 
 #include <qlayout.h>
 #include <qobject.h>
@@ -160,9 +161,11 @@ void iEditGrid::init(bool header_, int hmargin_, int vmargin_,
 
 void iEditGrid::adjustMinHeight() {
   int min_rows = MAX(mmin_vis_rows, mrows);
-  // provide room for scrollbar
+  /*obs provide room for scrollbar
   int new_body_ht = ((min_rows + mhead) * (mrow_height + (2 * mvmargin))) + 
-    (((mrow_height + (2 * mvmargin)) * 2) / 3);
+    (((mrow_height + (2 * mvmargin)) * 2) / 3);*/
+  // provide room for scrollbar
+  int new_body_ht = ((min_rows + mhead) * (mrow_height + (2 * mvmargin)));
   body->setMinimumHeight(new_body_ht);
   scrBody->setMinimumHeight(new_body_ht);
   this->setMinimumHeight(new_body_ht);
@@ -192,7 +195,7 @@ void iEditGrid::createContent() {
     layOuter->addWidget(bodyNames);
   }
 //nn  layOuter->addSpacing(mhmargin);
-  scrBody = new QScrollArea(this);
+  scrBody = new iScrollArea(this);
 //  scrBody->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);  
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // use outer container for scrolling, to keep names in sync
   scrBody->setWidgetResizable(true);

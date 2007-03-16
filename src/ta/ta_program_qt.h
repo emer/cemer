@@ -155,9 +155,7 @@ public:
   QVBoxLayout*		layOuter;
   QVBoxLayout*		  layEdit;
   iEditGrid*	    	  body; // container for the actual taiData items
-  QWidget*		  widMeths; // widget for buttons; only show if any
   iMethodButtonMgr*	    meth_but_mgr; // note: not a widget
-//  QLayout*		  layMeths; // layout for the method menus/buttons
 //QHBoxLayout*		  layButtons;
   HiLightButton*	    btnApply;
   HiLightButton*	    btnRevert;
@@ -166,7 +164,8 @@ public:
   bool			read_only; // set true if we are
 #ifndef __MAKETA__ 
   QPointer<iMainWindowViewer> m_window; // set this so cliphandler can be set for controls
-#endif  
+#endif 
+  int			editLines() const; // number of edit lines (typ 4) 
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
   void 			setEditBgColor(const iColor* value); // set bg for edit, null for default
   virtual void		Refresh(); // manual refresh

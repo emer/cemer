@@ -189,6 +189,8 @@ class TA_API iMethodButtonMgr: public QObject, virtual public IDataLinkClient
 INHERITED(QObject)
   Q_OBJECT
 public:
+  inline QLayout*	lay() const {return m_lay;} 
+
   bool			show_meth_buttons; // set when we have any guys to show
   
 
@@ -196,17 +198,20 @@ public:
   
   void 			Constr(taBase* base,
     IDataHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
+  void 			Constr(QWidget* widg, QLayout* lay, taBase* base,
+    IDataHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
   void 			AddMethButton(taiMethodData* mth_rep,
     const String& label = _nilString);
   void 			GetImage();
   void			Reset(); 
 
+  iMethodButtonMgr(QObject* parent = NULL);
   iMethodButtonMgr(QWidget* widg, QLayout* lay, QObject* parent = NULL);
   ~iMethodButtonMgr();
   
 protected:
   QWidget*		widg; // the host widget
-  QLayout*		lay; // usually an iFlowLayout or QHBoxLayout, margins/spacing set
+  QLayout*		m_lay; // usually an iFlowLayout or QHBoxLayout, margins/spacing set
   IDataHost*	host; // must have outer lifetime to us!
   taBase*		base; // the object that has the methods
   TypeDef*		typ;
@@ -214,6 +219,7 @@ protected:
   taiActions*		cur_menu_but; // current menu button to add to (if not otherwise   
   taiDataList 		meth_el;	// method elements
   
+  void 			Constr_impl(taBase* base, IDataHost* host); // #IGNORE 
   virtual void 		Constr_Methods_impl(); // #IGNORE
   void 			DoAddMethButton(QAbstractButton* but); // #IGNORE
   void 			SetCurMenuButton(MethodDef* md);
