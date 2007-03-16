@@ -164,7 +164,7 @@ void iEditGrid::adjustMinHeight() {
   /*obs provide room for scrollbar
   int new_body_ht = ((min_rows + mhead) * (mrow_height + (2 * mvmargin))) + 
     (((mrow_height + (2 * mvmargin)) * 2) / 3);*/
-  // provide room for scrollbar
+  //note: we use iScrollbar which always provides room for sb area
   int new_body_ht = ((min_rows + mhead) * (mrow_height + (2 * mvmargin)));
   body->setMinimumHeight(new_body_ht);
   scrBody->setMinimumHeight(new_body_ht);

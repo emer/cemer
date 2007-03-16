@@ -505,6 +505,7 @@ void iProgramEditor::Init() {
   layEdit->addSpacing(taiM->vsep_c);
   
   body = new iEditGrid(false, false, 2, 1, editLines(), 1, this); //note: intrinsically sizes to 2 rows minimum
+  body->setMinVisibleRows(editLines());
   body->setRowHeight(taiM->max_control_height(taiM->ctrl_size));
   layEdit->addWidget(body, 1); // give all the space to this guy
   layEdit->addSpacing(taiM->vsep_c);
@@ -575,18 +576,6 @@ void iProgramEditor::AddData(int row_, QWidget* data, QLayout* lay) {
 
 void iProgramEditor::Base_Add() {
   base->AddDataClient(this);
-  // we put the grid in a box so its rows don't expand
-/*  QVBoxLayout* layGrid = new QVBoxLayout(body);
-  layGrid->setSpacing(0);
-  layGrid->setMargin(0);
-  layBody = new QGridLayout(layGrid); 
-  layBody->setSpacing(0);
-  layBody->setMargin(0);
-  // set row heights now, so only one row shows ok
-//  layBody->setRowMinimumHeight(0, body->stripeHeight()); 
-//  layBody->setRowMinimumHeight(1, body->stripeHeight()); 
-  layGrid->addStretch(); */
-  
   // get colors for type
   const iColor* bgc = base->GetEditColorInherit(); 
   setEditBgColor(bgc);
@@ -594,16 +583,15 @@ void iProgramEditor::Base_Add() {
   int flags = taiData::flgInline | taiData::flgNoUAE;
   if (read_only) flags |= taiData::flgReadOnly;
   
-  // do methods first, so we know whether to show, and thus how many memb lines we have
-  QHBoxLayout* layMeths = new QHBoxLayout; // def margins ok
-  layMeths->setMargin(0); // spacing prob ok
-//nn  layMeths->addItem(new QSpacerItem(0, taiM->max_control_height(taiM->ctrl_size),
-//   QSizePolicy::Minimum, QSizePolicy::Fixed));
-  layMeths->addStretch();
-  meth_but_mgr->Constr(body->dataGridWidget(), layMeths, base);
+  // metrics for laying out
   int lines = editLines();
   int cur_line = 0;
-//nn  widMeths->setVisible(meth_but_mgr->show_meth_buttons);
+  
+  // do methods first, so we know whether to show, and thus how many memb lines we have
+  QHBoxLayout* layMeths = new QHBoxLayout; // def margins ok
+  layMeths->setMargin(0); // spacing prob ok;
+  layMeths->addSpacing(2); //no stretch: we left-justify
+  meth_but_mgr->Constr(body->dataGridWidget(), layMeths, base);
   if (meth_but_mgr->show_meth_buttons) {
     lines -= 1;
     layMeths->addStretch();
@@ -614,7 +602,7 @@ void iProgramEditor::Base_Add() {
   taiData* mb_dat = typ->it->GetDataRep(this, NULL, body->dataGridWidget(), NULL, flags);
   data_el.Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
-  AddData(cur_line++, rep/*, mb_dat->GetLayout()*/);
+  AddData(cur_line++, rep);
   
   // add desc control in line 1 for ProgEls (and any other type with a "desc" member
   md_desc = typ->members.FindName("desc");
@@ -645,17 +633,11 @@ void iProgramEditor::Base_Add() {
 
 void iProgramEditor::Base_Remove() {
   base->RemoveDataClient(this);
+  base = NULL;
   data_el.Reset(); // deletes the items
   md_desc = NULL; // for tidiness
-  meth_but_mgr->Reset();
+  meth_but_mgr->Reset(); // deletes items and widgets (buts/menus)
   body->clearLater();
-/*obs  // delete widgets in iStripe
-  const QObjectList& ch = body->children();
-  while (ch.count() > 0) {
-    QObject* obj = ch.last();
-    delete obj;
-  } */
-  base = NULL;
   taiMiscCore::RunPending(); // note: this is critical for the editgrid clear
 }
 

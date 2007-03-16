@@ -506,6 +506,7 @@ void iMethodButtonMgr::Reset() {
     dat->Delete();
   }
   setBase(NULL);
+  show_meth_buttons = false;
 }
 
 void iMethodButtonMgr::Constr(QWidget* widg_, QLayout* lay_, 
