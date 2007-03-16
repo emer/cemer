@@ -238,11 +238,11 @@ public:
   iBitCheckBox(bool auto_apply, int val_, String label, QWidget* parent);
 
 public slots:
-  void		this_toggled(bool on);
+  void		this_clicked(bool on);
 
 #ifndef __MAKETA__
 signals:
-  void		toggledEx(iBitCheckBox* sender, bool on);
+  void		clickedEx(iBitCheckBox* sender, bool on);
 #endif
 };
 
@@ -265,7 +265,7 @@ public:
   void		GetValue(int& val) const;
 
 public slots:
-  void		bitCheck_toggled(iBitCheckBox* sender, bool on); // #IGNORE
+  void		bitCheck_clicked(iBitCheckBox* sender, bool on); // #IGNORE
 
 #ifndef __MAKETA__
 signals:

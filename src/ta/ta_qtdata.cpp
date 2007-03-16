@@ -594,17 +594,18 @@ taiToggle::taiToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui
   SetRep( new iCheckBox(gui_parent_) );
   rep()->setFixedHeight(taiM->label_height(defSize()));
 
-  QObject::connect(m_rep, SIGNAL(toggled(bool) ),
+//NOTE: use 'clicked' (gui only) not 'toggled' (gui + code)
+  QObject::connect(m_rep, SIGNAL(clicked(bool) ),
         this, SLOT(repChanged() ) );
   if (readOnly()) {
     rep()->setReadOnly(true);
   } else {
     // if ApplyNow, just apply on change, else connect changed signal to our slot
     if (mflags & flgAutoApply)
-      QObject::connect(m_rep, SIGNAL(toggled(bool) ),
+      QObject::connect(m_rep, SIGNAL(clicked(bool) ),
             this, SLOT(applyNow() ) );
     else
-      QObject::connect(m_rep, SIGNAL(toggled(bool) ),
+      QObject::connect(m_rep, SIGNAL(clicked(bool) ),
             this, SLOT(repChanged() ) );
   }
 }
@@ -772,12 +773,12 @@ QWidget * parent)
 {
   auto_apply = auto_apply_;
   val = val_;
-  connect(this, SIGNAL(toggled(bool)), this, SLOT(this_toggled(bool)) );
+  connect(this, SIGNAL(clicked(bool)), this, SLOT(this_clicked(bool)) );
 }
 
-void iBitCheckBox::this_toggled(bool on)
+void iBitCheckBox::this_clicked(bool on)
 {
-  emit toggledEx(this, on);
+  emit clickedEx(this, on);
 }
 
 
@@ -818,15 +819,21 @@ void taiBitBox::Initialize(QWidget* gui_parent_) {
   lay->setMargin(0); // in Qt4 it adds style-dependent defaults
 }
 
-void taiBitBox::bitCheck_toggled(iBitCheckBox* sender, bool on) {
+void taiBitBox::bitCheck_clicked(iBitCheckBox* sender, bool on) {
   if (on) m_val |= sender->val;
   else    m_val &= ~(sender->val);
+  if (sender->auto_apply)
+    applyNow();
+  else
+    DataChanged();
+/*was: bad, sh/call the apis
   if (host != NULL) {
     if (sender->auto_apply)
       host->Apply();
     else
       host->Changed();
   }
+*/
 }
 
 void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
@@ -840,8 +847,8 @@ void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
   if (readOnly()) {
     bcb->setReadOnly(true);
   } else {
-    QObject::connect(bcb, SIGNAL(toggledEx(iBitCheckBox*, bool)),
-      this, SLOT(bitCheck_toggled(iBitCheckBox*, bool) ) );
+    QObject::connect(bcb, SIGNAL(clickedEx(iBitCheckBox*, bool)),
+      this, SLOT(bitCheck_clicked(iBitCheckBox*, bool) ) );
   }
 }
 
