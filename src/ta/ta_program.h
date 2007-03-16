@@ -81,14 +81,14 @@ public:
   };
 
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
-  int		int_val;	// #CONDEDIT_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
-  double	real_val;	// #CONDEDIT_ON_var_type:T_Real real value
-  String	string_val;	// #CONDEDIT_ON_var_type:T_String string value
-  bool		bool_val;	// #CONDEDIT_ON_var_type:T_Bool boolean value
-  TypeDef*	object_type; 	// #CONDEDIT_ON_var_type:T_Object #NO_NULL #TYPE_taBase the minimum acceptable type of the object
-  taBaseRef	object_val;	// #CONDEDIT_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
-  TypeDef*	hard_enum_type;	// #CONDEDIT_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
-  DynEnum	dyn_enum_val;	// #CONDEDIT_ON_var_type:T_DynEnum #HIDDEN_TREE value and type information for dynamic enum
+  int		int_val;	// #CONSHOW_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
+  double	real_val;	// #CONDSHOW_ON_var_type:T_Real real value
+  String	string_val;	// #CONDSHOW_ON_var_type:T_String string value
+  bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool boolean value
+  TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase the minimum acceptable type of the object
+  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
+  TypeDef*	hard_enum_type;	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
+  DynEnum	dyn_enum_val;	// #CONDSHOW_ON_var_type:T_DynEnum #HIDDEN_TREE value and type information for dynamic enum
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
