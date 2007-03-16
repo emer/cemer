@@ -85,9 +85,9 @@ public:
   double	real_val;	// #CONDSHOW_ON_var_type:T_Real real value
   String	string_val;	// #CONDSHOW_ON_var_type:T_String string value
   bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool boolean value
-  TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase the minimum acceptable type of the object
+  TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
   taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
-  TypeDef*	hard_enum_type;	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase type information for hard enum (value goes in int_val)
+  TypeDef*	hard_enum_type;	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
   DynEnum	dyn_enum_val;	// #CONDSHOW_ON_var_type:T_DynEnum #HIDDEN_TREE value and type information for dynamic enum
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
