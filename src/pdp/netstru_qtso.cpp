@@ -2114,11 +2114,15 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   
   ////////////////////////////////////////////////////////////////////////////
   // Command Buttons
-  widCmdButtons = new iMethodButtonFrame(nv()->net(), widg);
-
+  widCmdButtons = new QWidget(widg);
+  iFlowLayout* fl = new iFlowLayout(widCmdButtons);
   layOuter->addWidget(widCmdButtons);
+  
+  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
+  meth_but_mgr->Constr(nv()->net());
 
-  // add all base pdp commands -- you can add more in a derived constructor
+
+/*obs  // add all base pdp commands -- you can add more in a derived constructor
 
   butBuildAll = new QPushButton("Build", widCmdButtons);
   AddCmdButton(butBuildAll);
@@ -2132,7 +2136,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   butNewLayer = new QPushButton("&New Layer", widCmdButtons);
   AddCmdButton(butNewLayer);
   connect(butNewLayer, SIGNAL(pressed()), this, SLOT(butNewLayer_pressed()) );
-
+*/
 //  layOuter->addStretch();
 
   setCentralWidget(widg);
@@ -2177,10 +2181,6 @@ void NetViewPanel::GetImage_impl() {
     setHighlightSpec(m_cur_spec, true);
 
   ColorScaleFromData();
-}
-
-void NetViewPanel::AddCmdButton(QWidget* but) {
-  widCmdButtons->lay->addWidget(but);
 }
 
 void NetViewPanel::butNewLayer_pressed() {

@@ -927,7 +927,7 @@ have_app_dir:
   taMisc::user_dir = taMisc::FindArgByName("UserDir");;
   if (taMisc::user_dir.empty())
     taMisc::user_dir = taPlatform::getHomePath();
-  taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + "my" + taMisc::app_name;
+  taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
   taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
   // make sure it exists
   taPlatform::mkdir(taMisc::prefs_dir);
@@ -988,6 +988,29 @@ bool taRootBase::Startup_InitTA_getMissingAppDir() {
   return false;
 }
 
+bool taRootBase::Startup_InitTA_initUserAppDir() {
+  // make sure the folder exists
+  // make sure the standard user subfolders exist:
+  QDir dir(taMisc::user_app_dir);
+  if (!dir.exists()) {
+    if (!dir.mkdir(taMisc::user_app_dir)) {
+  //TODO: this is too harsh -- should prompt user for one, like for app dir
+      taMisc::Error("Could not find or make the user dir:", taMisc::user_app_dir,
+       "Please make sure this directory exists and is readable, and try again.");
+      return false;
+    }
+  }
+//NOTE: we could get excessively anal, and check all of these, but if we
+// can make/read the user folder, then very unlikely will these fail
+  // make user prog_lib
+  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
+  // make user css_lib
+  dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
+  // TODO: make user plugin folders
+  
+  return true;
+}
+
 bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // first initialize the types
   if(ta_init_fun)
@@ -1000,6 +1023,12 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // then load configuration info: sets lots of user-defined config info
   taMisc::Init_Defaults_PreLoadConfig();
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
+  
+//TEMP -- force user dir to be what we want
+taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
+// /TEMP
+
+  if (!Startup_InitTA_initUserAppDir()) return false;
   
 // if we still hadn't found an app_dir, need to find one now!
   if (taMisc::app_dir.empty()) {

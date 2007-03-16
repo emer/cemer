@@ -125,7 +125,7 @@ protected:
 class TA_API taiIncrField : public taiData { // increment/decrement field
   Q_OBJECT
 public:
-  iSpinBox*	rep() const { return (iSpinBox*)m_rep; }
+  inline iSpinBox*	rep() const { return (iSpinBox*)(QWidget*)m_rep; }
   taiIncrField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
     // uses flags: flgPosOnly
 
@@ -149,7 +149,7 @@ protected:
 
 class TA_API taiToggle : public taiData {
 public:
-  iCheckBox*	rep() const { return (iCheckBox*)m_rep; }
+  inline iCheckBox*	rep() const { return (iCheckBox*)(QWidget*)m_rep; }
 
   taiToggle(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 //  ~taiToggle() {}
@@ -168,7 +168,7 @@ class TA_API taiPlusToggle : public taiCompData {
 public:
   taiData*	data; // set by caller after creating contained class
   iCheckBox* 	but_rep;
-  QFrame* 	rep() {return (QFrame*)m_rep;} //parent of contained controls
+  inline QFrame* 	rep() {return (QFrame*)(QWidget*)m_rep;} //parent of contained controls
 
   taiPlusToggle(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiPlusToggle();
@@ -191,7 +191,7 @@ protected:
 class TA_API taiComboBox : public taiData {
   Q_OBJECT
 public:
-  iComboBox*	rep() const { return (iComboBox*)m_rep; }
+  inline iComboBox*	rep() const { return (iComboBox*)(QWidget*)m_rep; }
 
   taiComboBox(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   taiComboBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
@@ -251,7 +251,7 @@ signals:
 class TA_API taiBitBox : public taiData { // supports enums that are bit fields (TODO: maybe support int fields too)
   Q_OBJECT
 public:
-  QWidget*	rep() const { return (QWidget*)m_rep; }
+  inline QWidget*	rep() const { return (QWidget*)(QWidget*)m_rep; }
   bool			fillHor() {return true;} // override 
 
   taiBitBox(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
@@ -286,7 +286,7 @@ class TA_API taiDimEdit : public taiData { // specify number of dims and each di
 INHERITED(taiData)
   Q_OBJECT
 public:
-  iDimEdit*		rep() const {return (iDimEdit*)m_rep;}
+  inline iDimEdit*		rep() const {return (iDimEdit*)(QWidget*)m_rep;}
   bool			fillHor() {return true;} // override 
   taiDimEdit(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
     // uses flags: 
@@ -323,7 +323,7 @@ public:
   Member_List		memb_el;	// member elements (1:1 with data_el)
   int			show;
   
-  QWidget*		rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+  inline QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
   bool			fillHor() {return true;} // override 
 
   override void 	AddChildMember(MemberDef* md);
@@ -348,7 +348,7 @@ protected:
 
 class TA_API taiDataDeck : public taiCompData {
 public:
-  QStackedWidget*	rep() {return (QStackedWidget*)m_rep;}
+  inline QStackedWidget*rep() {return (QStackedWidget*)(QWidget*)m_rep;}
 
   override void	InitLayout() {} // nothing in this class
   override void	EndLayout() {} // nothing in this class
@@ -415,7 +415,7 @@ INHERITED(taiVariantBase)
   Q_OBJECT
 public:
   
-  QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+  inline QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
 
   void  	GetImage(const Variant& var) {GetImage_Variant(var);}
   void	 	GetValue(Variant& var) const {GetValue_Variant(var);}
@@ -664,7 +664,7 @@ class TA_API taiButtonMenu: public taiActions { // a button, in which the action
 typedef taiActions inherited;
 #endif
 public:
-  QAbstractButton*	rep() {return (QAbstractButton*)m_rep;}
+  inline QAbstractButton* rep() {return (QAbstractButton*)(QWidget*)m_rep;}
   
   override void		Delete(); // should delete the menu if we didn't use it
   taiButtonMenu(int  sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
@@ -686,7 +686,7 @@ typedef taiActions inherited;
 #endif
 friend class taiMenu_List; // hack because lists return refs to strings, not values
 public:
-  QMenuBar*		rep_bar() {return (QMenuBar*)m_rep;}
+  inline QMenuBar*	rep_bar() {return (QMenuBar*)(QWidget*)m_rep;}
   
   override void		AddSep(bool new_radio_grp = false) {} // no seps or groups allowed in a menubar
   
@@ -705,7 +705,7 @@ class TA_API taiToolBar: public taiActions { // a toolbar, in which the actions 
 typedef taiActions inherited;
 #endif
 public:
-  QToolBar*		rep() {return (QToolBar*)m_rep;}
+  inline QToolBar*	rep() {return (QToolBar*)(QWidget*)m_rep;}
   
   taiToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar); // used by iDataViewer
 protected:
@@ -1406,7 +1406,7 @@ class TA_API taiMethToggle : public taiMethodData {
   // toggle representation of a method (does not call directly, but checks flag)
   Q_OBJECT
 public:
-  QCheckBox* 	rep() {return (QCheckBox*)m_rep;}
+  inline QCheckBox* 	rep() {return (QCheckBox*)(QWidget*)m_rep;}
 
   taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);

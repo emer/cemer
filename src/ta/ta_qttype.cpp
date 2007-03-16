@@ -398,7 +398,7 @@ taiData* taiEnumType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* g
   } else if (flags_ & taiData::flgReadOnly) {
     return new taiField(typ, host_, par, gui_parent_, flags_);
   } else {
-    taiComboBox* rval = new taiComboBox(true, typ,host_, par, gui_parent_);
+    taiComboBox* rval = new taiComboBox(true, typ,host_, par, gui_parent_, flags_);
     return rval;
   }
 }

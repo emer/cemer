@@ -99,7 +99,7 @@ taiData::taiData()
   typ = NULL;
   host = NULL;
   mhighlight = false;
-  m_rep = NULL;
+//nn  m_rep = NULL;
   mparent = NULL;
   mflags = 0;
 }
@@ -161,8 +161,9 @@ void taiData::Delete() {
 //NOTE: to extend this method, delete your own additional Qt gui thingies, then call us
 //DO NOT CALL INHERITED THEN DO MORE STUFF YOURSELF
   if (m_rep) {
-    delete m_rep;
+    QWidget* tmp = m_rep;
     m_rep = NULL;
+    delete tmp;
   }
   if (mparent)
     setParent(NULL); // parent deletes us

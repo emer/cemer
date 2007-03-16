@@ -286,6 +286,7 @@ protected:
   static bool	isAppDir(String path); // #IGNORE true if seems to be an app dir
   static bool 	Startup_InitTA_folders();  // #IGNORE 
   static bool 	Startup_InitTA_getMissingAppDir();  // #IGNORE 
+  static bool 	Startup_InitTA_initUserAppDir();  // #IGNORE 
   bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates

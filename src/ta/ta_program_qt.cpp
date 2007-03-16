@@ -58,6 +58,12 @@ void taiProgVar::init() {
   m_updating = 0;
   sc = scNone;
   vt = 0;
+  
+  mbr_var_type = TA_ProgVar.members.FindName("var_type");
+  mbr_object_type = TA_ProgVar.members.FindName("object_type");
+  mbr_hard_enum_type = TA_ProgVar.members.FindName("hard_enum_type");
+
+  incVal = NULL; // for: ints
   stack = NULL;
   fldName = NULL;
   cmbVarType = NULL;
@@ -94,10 +100,10 @@ void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
   AddChildWidget(fldName->GetRep(), taiM->hsep_c);
   
-  lbl = MakeLabel("var type",rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
-  
   TypeDef* typ_var_enum = TA_ProgVar.sub_types.FindName("VarType");
+  lbl = MakeLabel(mbr_var_type->GetLabel(),rep_); // gets decorated name in case APPLY_IMMED
+  AddChildWidget(lbl, taiM->hsep_c);
+  // note: we handle apply_immed in cmb handler itself
   cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
   
   AddChildWidget(cmbVarType->rep(), taiM->hsep_c);
@@ -185,9 +191,12 @@ void taiProgVar::AssertControls(int value) {
     stack = new QWidget();
     hl = new QHBoxLayout(stack);
     hl->setMargin(0);
-    lbl = MakeLabel("min type", stack);
+    lbl = MakeLabel(mbr_object_type->GetLabel(), stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    thValType = new taiTypeDefButton(&TA_taBase, host, this, stack, (mflags & flgReadOnly));
+    int flags = mflags & flgReadOnly;
+    if (mbr_object_type->HasOption(TypeItem::opt_apply_immed))
+      flags |= flgAutoApply;
+    thValType = new taiTypeDefButton(&TA_taBase, host, this, stack, flags);
     hl->addWidget(thValType->GetRep());  hl->addSpacing(taiM->hsep_c);
     lbl = MakeLabel("value", stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
@@ -202,9 +211,12 @@ void taiProgVar::AssertControls(int value) {
     hl = new QHBoxLayout(stack);
     hl->setMargin(0);
     
-    lbl = MakeLabel("enum type", stack);
+    int flags = mflags & flgReadOnly;
+    if (mbr_hard_enum_type->HasOption(TypeItem::opt_apply_immed))
+      flags |= flgAutoApply;
+    lbl = MakeLabel(mbr_hard_enum_type->GetLabel(), stack);
     hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    thEnumType = new taiEnumTypeDefButton(&TA_taBase, host, this, stack, (mflags & flgReadOnly));
+    thEnumType = new taiEnumTypeDefButton(&TA_taBase, host, this, stack, flags);
     hl->addWidget(thEnumType->GetRep()); hl->addSpacing(taiM->hsep_c);
     
     lbl = MakeLabel("enum value", stack);
@@ -245,6 +257,8 @@ void taiProgVar::cmbVarType_itemChanged(int itm) {
   cmbVarType->GetEnumValue(new_vt);
   SetVarType(new_vt);
   --m_updating;
+  if (mbr_var_type->HasOption(TypeItem::opt_apply_immed))
+    applyNow();
 }
 
 void taiProgVar::DataChanged_impl(taiData* chld) {
@@ -495,6 +509,17 @@ void iProgramEditor::Init() {
   setEditBgColor(NULL); // set defaults
   layEdit->addWidget(body, 1); // give all the space to this guy
   layEdit->addSpacing(taiM->vsep_c);
+
+//TENT: we probably need to rejig this...
+//  widCmdButtons = new QWidget(widg);
+  widMeths = new QWidget(this);
+  QHBoxLayout* layMeths = new QHBoxLayout(widMeths); // def margins ok
+  layMeths->setMargin(0); // spacing prob ok
+  layMeths->addItem(new QSpacerItem(0, taiM->max_control_height(taiM->ctrl_size),
+   QSizePolicy::Minimum, QSizePolicy::Fixed));
+  layEdit->addWidget(widMeths);
+  meth_but_mgr = new iMethodButtonMgr(widMeths, layMeths, widMeths); 
+  
   
   QHBoxLayout* layButtons = new QHBoxLayout();
   layButtons->setMargin(0);
@@ -607,6 +632,10 @@ void iProgramEditor::Base_Add() {
     
   }
   
+  // methods
+  meth_but_mgr->Constr(base);
+  
+  
   // ok, get er!
   GetImage();
 }
@@ -616,6 +645,7 @@ void iProgramEditor::Base_Remove() {
   data_el.Reset(); // deletes the items
   md_desc = NULL; // for tidiness
   body->clearLater();
+  meth_but_mgr->Reset();
 /*obs  // delete widgets in iStripe
   const QObjectList& ch = body->children();
   while (ch.count() > 0) {

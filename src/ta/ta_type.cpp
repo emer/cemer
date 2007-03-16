@@ -602,7 +602,7 @@ String 	taMisc::LexBuf;
 void taMisc::SaveConfig() {
 #ifndef NO_TA_BASE
   ++taFiler::no_save_last_fname;
-  String cfgfn = prefs_dir + "/options";
+  String cfgfn = prefs_dir + PATH_SEP + "options";
   fstream strm;
   strm.open(cfgfn, ios::out);
   TA_taMisc.Dump_Save_Value(strm, (void*)this);
@@ -614,27 +614,13 @@ void taMisc::SaveConfig() {
 void taMisc::LoadConfig() {
 #ifndef NO_TA_BASE
   ++taFiler::no_save_last_fname;
-  String cfgfn = prefs_dir + "/options";
-//TODO: temp to move user's old file -- remove this 
-  bool resave = false;
-  if (!QFile::exists(cfgfn)) {
-    cfgfn = user_dir + "/.taconfig"; 
-    resave = true;
-  }
-// end TEMP
+  String cfgfn = prefs_dir + PATH_SEP + "options";
   fstream strm;
   strm.open(cfgfn, ios::in);
   if(!strm.bad() && !strm.eof())
     TA_taMisc.Dump_Load_Value(strm, (void*)this);
-  strm.close(); strm.clear();
-  
-// TEMP
-// ok, delete the old guy, to avoid confusion
-  if (resave) SaveConfig();
-  if (QFile::exists(prefs_dir + "/.taconfig")) {
-    QFile::rename(user_dir + "/.taconfig", user_dir + "/.taconfig.obsolete");
-  }
-// end TEMP
+  strm.close(); 
+  strm.clear();
   --taFiler::no_save_last_fname;
 #endif
 }

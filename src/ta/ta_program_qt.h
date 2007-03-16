@@ -61,9 +61,14 @@ protected:
     scEnum, // regular Enum
     scDynEnum
   };
-  mutable int		m_updating; // used to prevent recursions
+ mutable int		m_updating; // used to prevent recursions
   int			sc; // current stack control 
   int 			vt; //ProgVar::VarType
+  
+// cached memberdef's mostly just to get the APPLY_IMMED flags, and deco'ed name
+  MemberDef* 		mbr_var_type;
+  MemberDef*		mbr_object_type;
+  MemberDef*		mbr_hard_enum_type;
   
   taiField*		fldName;
   taiComboBox*		cmbVarType;
@@ -150,6 +155,9 @@ public:
   QVBoxLayout*		layOuter;
   QVBoxLayout*		  layEdit;
   iEditGrid*	    	  body; // container for the actual taiData items
+  QWidget*		  widMeths; // widget for buttons; only show if any
+  iMethodButtonMgr*	    meth_but_mgr; // note: not a widget
+//  QLayout*		  layMeths; // layout for the method menus/buttons
 //QHBoxLayout*		  layButtons;
   HiLightButton*	    btnApply;
   HiLightButton*	    btnRevert;

@@ -489,14 +489,14 @@ public:
   QVBoxLayout*		laySpecs;
   iTreeView*		tvSpecs;
   
-  iMethodButtonFrame*	widCmdButtons;
+  iMethodButtonMgr*	meth_but_mgr;
+  QWidget*		widCmdButtons;
   QPushButton*		butNewLayer;
   QPushButton*		butBuildAll;
   QPushButton*		butConnectAll;
 
   NetView*		nv() {return (NetView*)m_dv;} //
 
-  void			AddCmdButton(QWidget* but); // adds button or other ctrl to cmd grid
   void 			ColorScaleFromData();
   virtual void		GetVars();
   virtual void		InitPanel();

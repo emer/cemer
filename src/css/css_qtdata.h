@@ -46,7 +46,7 @@ public:
       QWidget* gui_parent, int flags_ = 0);
   ~cssiPolyData();
 
-  QFrame*	rep() const { return (QFrame*)m_rep; } //note: actual class may be subclass of QFrame
+  inline QFrame*	rep() const { return (QFrame*)(QWidget*)m_rep; } //note: actual class may be subclass of QFrame
 
 protected:
   virtual void	Constr(QWidget* gui_parent_);

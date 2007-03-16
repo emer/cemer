@@ -23,8 +23,9 @@
 #include "ta_variant.h"
 
 #ifndef __MAKETA__
-#include <qobject.h>
-#include <qwidget.h>
+# include <QObject>
+# include <QPointer>
+# include <QWidget>
 #endif
 
 //??nn in win32  #include <unistd.h>
@@ -177,9 +178,13 @@ signals:
 
 protected:
   bool			mhighlight;
-  QWidget*		m_rep;		// widget that represents the data
+#ifndef __MAKETA__
+  QPointer<QWidget>	m_rep;		// widget that represents the data
+#endif
   taiData*		mparent;		// if data is contained within data, this the parent container
   int			mflags;
+  
+
   virtual void		SetRep(QWidget* val);
   virtual void		CheckDoAutoApply(); // call for this control when the "auto apply" action is done
   virtual void		ChildAdd(taiData* child) {}

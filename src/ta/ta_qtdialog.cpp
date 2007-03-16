@@ -454,84 +454,161 @@ void EditDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
 
 
 //////////////////////////////////
-// iMethodButtonFrame		//
+// iMethodButtonMgr		//
 //////////////////////////////////
 
-iMethodButtonFrame::iMethodButtonFrame(taBase* base_, QWidget* parent)
+iMethodButtonMgr::iMethodButtonMgr(QWidget* widg_, QLayout* lay_, QObject* parent)
 :inherited(parent)
 {
-  base = NULL;
-  setBase(base_);
+  widg = widg_;
+  lay = lay_;
   Init();
 }
 
-iMethodButtonFrame::~iMethodButtonFrame()
+iMethodButtonMgr::~iMethodButtonMgr()
 {
+  Reset();
+}
+
+void iMethodButtonMgr::Init() {
+  host = NULL;
+  show_meth_buttons = false;
+  base = NULL;
+  typ = NULL;
+  cur_menu_but = NULL;
+//  lay = new iFlowLayout(this, 3, taiM->hspc_c, (Qt::AlignCenter));
+}
+
+void iMethodButtonMgr::AddMethButton(taiMethodData* mth_rep, const String& label) {
+  QAbstractButton* but = mth_rep->GetButtonRep();
+  DoAddMethButton(but);
+  if (label.nonempty()) {
+    but->setText(label);
+  }
+}
+
+void iMethodButtonMgr::Reset() {
+  cur_menu_but = NULL;
+  while (meth_el.size > 0) {
+    taiData* dat = meth_el.Pop();
+    dat->Delete();
+  }
+  while (ta_menu_buttons.size > 0) {
+    taiData* dat = ta_menu_buttons.Pop();
+    dat->Delete();
+  }
   setBase(NULL);
 }
 
-void iMethodButtonFrame::Init() {
-  lay = new iFlowLayout(this, 3, taiM->hspc_c, (Qt::AlignCenter));
+void iMethodButtonMgr::Constr(taBase* base_, IDataHost* host_) 
+{
+  Reset();
+  host = host_; // prob not needed
+  setBase(base_);
+  show_meth_buttons = false;
+  Constr_Methods_impl();
 }
 
-void iMethodButtonFrame::DataLinkDestroying(taDataLink* dl) {
+void iMethodButtonMgr::Constr_Methods_impl() {
+  if (typ == NULL) return;
+
+  for (int i = 0; i < typ->methods.size; ++i) {
+    MethodDef* md = typ->methods.FastEl(i);
+    if ((md->im == NULL) || (md->name == "Edit")) // don't put edit on edit dialogs..
+      continue;
+    taiMethodData* mth_rep = md->im->GetMethodRep(base, host, NULL, widg); //buttons are in the frame
+    if (mth_rep == NULL)
+      continue;
+
+    meth_el.Add(mth_rep);
+    // add to menu if a menu item
+    if (mth_rep->is_menu_item) {
+      // we only do the menu buttons
+      if(md->HasOption("MENU_BUTTON")) {
+      	SetCurMenuButton(md);
+        mth_rep->AddToMenu(cur_menu_but);
+      } 
+    } else {
+      AddMethButton(mth_rep);
+    }
+  }
+}
+
+void iMethodButtonMgr::DataLinkDestroying(taDataLink* dl) {
   base = NULL;
   //TODO: delete the buttons etc.
 }
  
-void iMethodButtonFrame::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+void iMethodButtonMgr::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
   if (dcr > DCR_ITEM_UPDATED_ND) return;
   GetImage();
 }
 
-void iMethodButtonFrame::setBase(taBase* ta) {
+void iMethodButtonMgr::DoAddMethButton(QAbstractButton* but) {
+  show_meth_buttons = true;
+  // we use "medium" size for buttons
+  but->setFont(taiM->buttonFont(taiMisc::fonMedium));
+  but->setFixedHeight(taiM->button_height(taiMisc::sizMedium));
+  if (but->parent() != widg) {
+    but->reparent(widg, QPoint(0, 0));
+  }
+  lay->addWidget(but);
+  but->show(); // needed when rebuilding
+}
+
+void iMethodButtonMgr::GetImage() {
+  for (int i = 0; i < meth_el.size; ++i) {
+    taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
+    if ( !(mth_rep->hasButtonRep())) //note: construction forced creation of all buttons
+      continue;
+      
+    bool ghost_on = false; // defaults here make it editable in test chain below
+    bool val_is_eq = false;
+    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth,
+      base, ghost_on, val_is_eq)
+    ) continue;
+    QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
+    if (ghost_on) {
+      but->setEnabled(!val_is_eq);
+    } else {
+      but->setEnabled(val_is_eq);
+    }
+  }
+}
+
+void iMethodButtonMgr::setBase(taBase* ta) {
   if (base == ta) return;
   if (base) {
     base->RemoveDataClient(this);
     base = NULL;
+    typ = NULL;
   }
   base = ta;
   if (base) {
     base->AddDataClient(this);
+    typ = base->GetTypeDef();
   }
 }
 
-const iColor* iMethodButtonFrame::colorOfCurRow() const {
-  return NULL;
-} 
-  
-bool iMethodButtonFrame::HasChanged() {
-  return false; // not needed for methods
-}	
+void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
+  String men_nm = md->OptionAfter("MENU_ON_");
+  if (men_nm != "") {
+    cur_menu_but = ta_menu_buttons.FindName(men_nm);
+    if (cur_menu_but != NULL)  return;
+  }
+  if (cur_menu_but != NULL)  return;
 
-bool iMethodButtonFrame::isConstructed() {
-  return true;
+  if (men_nm == "")
+    men_nm = "Misc"; //note: this description not great, but should be different from "Actions", esp. for
+       // context menus in the browser (otherwise, there are 2 "Actions" menus); see also tabDataLink::FillContextMenu_impl
+      // also, must work when it appears before the other label (ex "Misc", then "Actions" )
+  cur_menu_but = taiActions::New(taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+	    NULL, host, NULL, widg);
+  cur_menu_but->setLabel(men_nm);
+  DoAddMethButton((QAbstractButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
+  ta_menu_buttons.Add(cur_menu_but);
 }
 
-bool iMethodButtonFrame::isModal() {
-  return false;
-}
-
-bool iMethodButtonFrame::isReadOnly() {
-  return false;
-} 
-
-iMainWindowViewer* iMethodButtonFrame::viewerWindow() const {
-  return NULL; // prob not needed
-}
-
-void* iMethodButtonFrame::Base() {
-  return base;
-}
-
-TypeDef* iMethodButtonFrame::GetBaseTypeDef() {
-  if (base) return base->GetTypeDef();
-  else return &TA_taBase;
-}
-
-void iMethodButtonFrame::GetImage() {
-//TODO
-}
 
 
 //////////////////////////////////
@@ -1485,10 +1562,10 @@ void taiEditDataHost::InitGuiFields(bool virt) {
 }
 
 
-void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const char* label) {
+void taiEditDataHost::AddMethButton(taiMethodData* mth_rep, const String& label) {
   QAbstractButton* but = mth_rep->GetButtonRep();
   DoAddMethButton(but);
-  if (label != NULL) {
+  if (label.nonempty()) {
     but->setText(label);
   }
 }

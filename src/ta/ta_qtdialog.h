@@ -184,44 +184,49 @@ protected:
 };
 
 
-class TA_API iMethodButtonFrame: public QWidget, virtual public IDataLinkClient, virtual public IDataHost
-{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS a widget that can be conveniently used anywhere to provide the meth buttons of an edit
-INHERITED(QWidget)
+class TA_API iMethodButtonMgr: public QObject, virtual public IDataLinkClient
+{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS an that can be conveniently used anywhere to provide the meth buttons of an edit -- note: requires an IDataHost and gui objects
+INHERITED(QObject)
   Q_OBJECT
 public:
-  iFlowLayout*		lay;
+  bool			show_meth_buttons; // set when we have any guys to show
+  
 
-  iMethodButtonFrame(taBase* base = NULL, QWidget* parent = NULL);
-  ~iMethodButtonFrame();
+  void			setBase(taBase* value);
+  
+  void 			Constr(taBase* base,
+    IDataHost* host = NULL); // #IGNORE -- note: host prob not needed, can be removed
+  void 			AddMethButton(taiMethodData* mth_rep,
+    const String& label = _nilString);
+  void 			GetImage();
+  void			Reset(); 
+
+  iMethodButtonMgr(QWidget* widg, QLayout* lay, QObject* parent = NULL);
+  ~iMethodButtonMgr();
   
 protected:
-  taBase*	base; // the object that has the methods
+  QWidget*		widg; // the host widget
+  QLayout*		lay; // usually an iFlowLayout or QHBoxLayout, margins/spacing set
+  IDataHost*	host; // must have outer lifetime to us!
+  taBase*		base; // the object that has the methods
+  TypeDef*		typ;
+  taiMenu_List		ta_menu_buttons; // menu representations (from methods -- menubuttons only)
+  taiActions*		cur_menu_but; // current menu button to add to (if not otherwise   
+  taiDataList 		meth_el;	// method elements
   
-  void		setBase(taBase* value);
-private:
-  void		Init();
-  
+  virtual void 		Constr_Methods_impl(); // #IGNORE
+  void 			DoAddMethButton(QAbstractButton* but); // #IGNORE
+  void 			SetCurMenuButton(MethodDef* md);
+
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
-  TypeDef* 	GetTypeDef() const {return &TA_QWidget;/*&TA_iMethodButtonFrame;*/} // override
-
+  TypeDef* 	GetTypeDef() const {return &TA_QWidget;/*&TA_iMethodButtonMgr;*/} // override
 public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
   void		DataLinkDestroying(taDataLink* dl); 
   void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
-
-public: // IDataHost i/f
-  const iColor* colorOfCurRow() const;
-  bool  	HasChanged();	
-  bool		isConstructed();
-  bool		isModal();
-  bool		isReadOnly();
- iMainWindowViewer* viewerWindow() const;
-  void*		Base();
-  TypeDef*	GetBaseTypeDef();
-  void		Changed() {}
-  void		GetImage();
-  void		GetValue() { } // na
-  void		Apply() {} // na
+  
+private:
+  void		Init();
 };
 
 class TA_API taiDataHost: public QObject, virtual public IDataLinkClient, 
@@ -559,7 +564,7 @@ protected:
   virtual void		GetValue_impl(const Member_List* ms, const taiDataList& dl, void* base) const;
   virtual void		GetValueInline_impl(void* base) const;
   virtual void		GetButtonImage();
-  void			AddMethButton(taiMethodData* mth_rep, const char* label = NULL);
+  void			AddMethButton(taiMethodData* mth_rep, const String& label = _nilString);
     // uses mth's label, if no label passed
   void			DoAddMethButton(QAbstractButton* but);
   void			DoRaise_Panel(); // what Raise() calls for panels
