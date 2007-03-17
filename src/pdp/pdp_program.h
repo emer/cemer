@@ -114,7 +114,7 @@ class PDP_API NetCounterInit: public ProgEl {
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
-  ProgVarRef	network_var;	// variable that points to the network 
+  ProgVarRef	network_var;	// #APPLY_IMMED variable that points to the network 
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   ProgVarRef 	local_ctr_var;	// local version of the counter variable, maintained by the program -- must have same name as the counter!  automatically created if not set
   MemberDef*	counter;	// #TYPE_ON_network_type #DEFCAT_Counter counter variable on network to operate on
@@ -143,7 +143,7 @@ class PDP_API NetCounterIncr: public ProgEl {
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
-  ProgVarRef	network_var;	// variable that points to the network (typically a global_var)
+  ProgVarRef	network_var;	// #APPLY_IMMED variable that points to the network (typically a global_var)
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   ProgVarRef 	local_ctr_var;	// local version of the counter variable, maintained by the program -- must have same name as the counter! -- automatically created if not set
   MemberDef*	counter;	// #TYPE_ON_network_type  #DEFCAT_Counter counter variable on network to operate on

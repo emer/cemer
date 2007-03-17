@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs.gp[0][6] { 
+Program .projects[0].programs.gp[1][6] { 
   ProgObjList @.objs = [2] {
     LayerWriter @[0] { 
       LayerDataEl_List @.layer_data = [7] {
@@ -26,7 +26,7 @@ Program .projects[0].programs.gp[0][6] {
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [8] {
+  ProgVar_List @.vars = [7] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -34,37 +34,61 @@ Program .projects[0].programs.gp[0][6] {
     ProgVar @[4] { };
     ProgVar @[5] { };
     ProgVar @[6] { };
-    ProgVar @[7] { };
   };
 
   ProgEl_List @.init_code = [3] {
     MethodCall @[0] { };
-    MethodCall @[1] { };
-    MethodCall @[2] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
   };
 
   ProgEl_List @.prog_code = [3] {
     IfElse @[0] { 
       ProgEl_List @.true_code = [2] {
-	AssignExpr @[0] { };
-	MethodCall @[1] { };
+	MethodCall @[0] { };
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [9] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	    ProgArg @[8] { };
+	  };
+	};
       };
     };
-    MethodCall @[1] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
     MethodCall @[2] { };
   };
 };
-Program .projects[0].programs.gp[0][6] {
+Program .projects[0].programs.gp[1][6] {
  name="ApplyInputsImage";
  desc="apply input data to the network, using a RetinaSpec to process a bitmap image.  epoch should iterate over a datatable with names of images to load, and the current value of that is used here to load the image and process into a second datatable (image_data) which is actually presented to the network.";
- flags=PF_NONE;
+ flags=;
  objs {
   name=;
   el_typ=LayerWriter;
   el_def=0;
   LayerWriter @[0] {
    name="LayerWriter_0";
-   data=.projects[0].data.gp[0][3]$0$;
+   data=.projects[0].data.gp[0][0]$0$;
    network=.projects[0].networks[0]$1$;
    layer_data {
     name=;
@@ -136,7 +160,7 @@ Program .projects[0].programs.gp[0][6] {
      layer_name="Name";
      offset {x=0: y=0: };
      use_layer_type=1;
-     ext_flags=NO_EXTERNAL;
+     ext_flags=;
      noise {type=NONE: mean=0: var=0.5: par=1: };
      value_names{      };
     };
@@ -153,7 +177,7 @@ Program .projects[0].programs.gp[0][6] {
     DoGRetinaSpec @[0] {
      name="high_freq_bw";
      dog {
-      name="DoGFilterSpec_9";
+      name="high_freq_bw";
       color_chan=BLACK_WHITE;
       filter_width=8;
       filter_size=17;
@@ -162,8 +186,9 @@ Program .projects[0].programs.gp[0][6] {
       circle_edge=1;
      };
      spacing {
-      name="RetinalSpacingSpec_0";
+      name="high_freq_bw";
       region=FOVEA;
+      res=MED_RES;
       retina_size {x=341: y=241: };
       border {x=109: y=85: };
       spacing {x=2: y=2: };
@@ -175,7 +200,7 @@ Program .projects[0].programs.gp[0][6] {
     DoGRetinaSpec @[1] {
      name="med_freq_bw";
      dog {
-      name="DoGFilterSpec_10";
+      name="med_freq_bw";
       color_chan=BLACK_WHITE;
       filter_width=16;
       filter_size=33;
@@ -184,8 +209,9 @@ Program .projects[0].programs.gp[0][6] {
       circle_edge=1;
      };
      spacing {
-      name="RetinalSpacingSpec_1";
+      name="med_freq_bw";
       region=PARAFOVEA;
+      res=MED_RES;
       retina_size {x=341: y=241: };
       border {x=6: y=14: };
       spacing {x=4: y=4: };
@@ -197,7 +223,7 @@ Program .projects[0].programs.gp[0][6] {
     DoGRetinaSpec @[2] {
      name="low_freq_bw";
      dog {
-      name="DoGFilterSpec_11";
+      name="low_freq_bw";
       color_chan=BLACK_WHITE;
       filter_width=32;
       filter_size=65;
@@ -206,8 +232,9 @@ Program .projects[0].programs.gp[0][6] {
       circle_edge=1;
      };
      spacing {
-      name="RetinalSpacingSpec_2";
+      name="low_freq_bw";
       region=PARAFOVEA;
+      res=MED_RES;
       retina_size {x=341: y=241: };
       border {x=6: y=16: };
       spacing {x=8: y=8: };
@@ -229,14 +256,16 @@ Program .projects[0].programs.gp[0][6] {
    object_type=LeabraNetwork;
    object_val=$1$;
    objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][1]$2$;
+   object_val=.projects[0].data.gp[0][2]$2$;
    objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
  };
@@ -250,61 +279,66 @@ Program .projects[0].programs.gp[0][6] {
    object_type=DataBlock;
    object_val=$0$;
    objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[1] {
    name="LayerWriter_0";
    var_type=T_Object;
    object_type=LayerWriter;
-   object_val=.projects[0].programs.gp[0][6].objs[0]$3$;
+   object_val=.projects[0].programs.gp[1][6].objs[0]$3$;
    objs_ptr=1;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[2] {
    name="RetinaSpec_0";
    var_type=T_Object;
    object_type=RetinaSpec;
-   object_val=.projects[0].programs.gp[0][6].objs[1]$4$;
+   object_val=.projects[0].programs.gp[1][6].objs[1]$4$;
    objs_ptr=1;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[3] {
-   name="cur_image";
-   var_type=T_String;
-   string_val="images/objs100_330/chain_330.jpg";
-   objs_ptr=0;
-   desc="current image file name (from input_data)";
-  };
-  ProgVar @[4] {
    name="move_var";
    var_type=T_Real;
    real_val=0.15;
    objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc="range for moving image";
   };
-  ProgVar @[5] {
+  ProgVar @[4] {
    name="scale_min";
    var_type=T_Real;
    real_val=0.2;
    objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc="minimum scale value";
   };
-  ProgVar @[6] {
+  ProgVar @[5] {
    name="scale_max";
    var_type=T_Real;
    real_val=0.4;
    objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc="maximum scale value";
   };
-  ProgVar @[7] {
+  ProgVar @[6] {
    name="rot_var";
    var_type=T_Real;
    real_val=0.02;
    objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
    desc="rotation range";
   };
  };
  functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
   name=;
   el_typ=ProgEl;
   el_def=0;
@@ -315,30 +349,81 @@ Program .projects[0].programs.gp[0][6] {
   el_def=0;
   MethodCall @[0] {
    desc=;
-   off=0;
+   flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][6].vars[0]$5$;
+   obj=.projects[0].programs.gp[1][6].vars[0]$5$;
    method=DataTable::ResetData;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
   MethodCall @[1] {
    desc=;
-   off=0;
+   flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][6].vars[1]$6$;
+   obj=.projects[0].programs.gp[1][6].vars[1]$6$;
    method=LayerWriter::SetDataNetwork;
-   args{ image_data;network;};
-{ DataBlock* db;Network* net;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataBlock_ptr;
+     type="DataBlock*";
+     name="db";
+     expr {
+      expr="image_data";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ image_data;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     expr {
+      expr="network";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
   };
   MethodCall @[2] {
    desc=;
-   off=0;
+   flags=;
    result_var=NULL;
    obj=$6$;
    method=taList_impl::CheckConfig;
-   args{ false;};
-{ bool quiet;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     expr {
+      expr="false";
+      flags=;
+      var_expr="false";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
   };
  };
  prog_code {
@@ -347,26 +432,169 @@ Program .projects[0].programs.gp[0][6] {
   el_def=0;
   IfElse @[0] {
    desc=;
-   off=0;
-   condition="network->phase_no == 0";
+   flags=;
+   cond {
+    expr="network.phase_no == 0";
+    flags=;
+    var_expr="$#0#$.phase_no == 0";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
    true_code {
     name=;
     el_typ=ProgEl;
     el_def=0;
-    AssignExpr @[0] {
-     desc="get current image from input_data from column named FilePath";
-     off=0;
-     result_var=.projects[0].programs.gp[0][6].vars[3]$7$;
-     expr="input_data.GetDataByName(\"FilePath\")";
+    MethodCall @[0] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$5$;
+     method=DataTable::RemoveAllRows;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
     };
     MethodCall @[1] {
      desc=;
-     off=0;
+     flags=;
      result_var=NULL;
-     obj=.projects[0].programs.gp[0][6].vars[2]$8$;
+     obj=.projects[0].programs.gp[1][6].vars[2]$7$;
      method=RetinaSpec::FilterImageName;
-     args{ cur_image;image_data;Random::UniformMeanRange(0, move_var);Random::UniformMeanRange(0, move_var);Random::UniformMinMax(scale_min, scale_max);Random::UniformMeanRange(0, rot_var);false;};
-{ const taString& img_fname;DataTable* dt;float move_x;float move_y;float scale;float rotate;bool superimpose;     };
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="img_fname";
+       expr {
+	expr="input_data.GetDataByName(\"FilePath\")";
+	flags=;
+	var_expr="$#0#$.GetDataByName(\"FilePath\")";
+	vars {
+	};
+	var_names{ names;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       expr {
+	expr="image_data";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ image_data;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[2] {
+       arg_type=float;
+       type="float";
+       name="move_x";
+       expr {
+	expr="Random::UniformMeanRange(0, move_var)";
+	flags=;
+	var_expr="Random::UniformMeanRange(0, $#0#$)";
+	vars {
+	};
+	var_names{ move_var;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[3] {
+       arg_type=float;
+       type="float";
+       name="move_y";
+       expr {
+	expr="Random::UniformMeanRange(0, move_var)";
+	flags=;
+	var_expr="Random::UniformMeanRange(0, $#0#$)";
+	vars {
+	};
+	var_names{ move_var;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[4] {
+       arg_type=float;
+       type="float";
+       name="scale";
+       expr {
+	expr="Random::UniformMinMax(scale_min, scale_max)";
+	flags=;
+	var_expr="Random::UniformMinMax($#0#$, $#1#$)";
+	vars {
+	};
+	var_names{ scale_min;scale_max;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[5] {
+       arg_type=float;
+       type="float";
+       name="rotate";
+       expr {
+	expr="Random::UniformMeanRange(0, rot_var)";
+	flags=;
+	var_expr="Random::UniformMeanRange(0, $#0#$)";
+	vars {
+	};
+	var_names{ rot_var;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[6] {
+       arg_type=float;
+       type="float";
+       name="ret_move_x";
+       expr {
+	expr="0.0f";
+	flags=;
+	var_expr="0.0f";
+	vars {
+	};
+	var_names{ 	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[7] {
+       arg_type=float;
+       type="float";
+       name="ret_move_y";
+       expr {
+	expr="0.0f";
+	flags=;
+	var_expr="0.0f";
+	vars {
+	};
+	var_names{ 	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[8] {
+       arg_type=bool;
+       type="bool";
+       name="superimpose";
+       expr {
+	expr="false";
+	flags=;
+	var_expr="false";
+	vars {
+	};
+	var_names{ 	};
+	bad_vars{ 	};
+       };
+      };
+     };
     };
    };
    false_code {
@@ -376,22 +604,42 @@ Program .projects[0].programs.gp[0][6] {
    };
   };
   MethodCall @[1] {
-   desc=;
-   off=0;
+   desc="specifies that the current (last) row of data is what is to be presented to the network";
+   flags=;
    result_var=NULL;
    obj=$5$;
    method=DataBlock_Idx::ReadItem;
-   args{ -1;};
-{ int idx;   };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=int;
+     type="int";
+     name="idx";
+     expr {
+      expr="-1";
+      flags=;
+      var_expr="-1";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
   };
   MethodCall @[2] {
-   desc="this should be activated when MethodCall can pick an obj directly to call a method on, instead of going through vars";
-   off=0;
+   desc="apply the input data";
+   flags=;
    result_var=NULL;
    obj=$6$;
    method=LayerWriter::ApplyInputData;
-   args{ };
-{    };
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
   };
  };
 };

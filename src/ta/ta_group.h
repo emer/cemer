@@ -288,7 +288,7 @@ public:
   virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
   // #CAT_Modify Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
   virtual taGroup<T>* NewGroup(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
-  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Edit #TYPE_this #NULL_OK #NULL_TEXT_SameType Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
+  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Edit #TYPE_ON_this #NULL_OK #NULL_TEXT_SameType Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
   virtual T*	FindName(const char* item_nm, int& idx=no_idx)  const
   { return (T*)FindName_(item_nm, idx); }

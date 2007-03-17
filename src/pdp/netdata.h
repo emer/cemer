@@ -232,9 +232,9 @@ public:
   };
 
   bool			computed;	// #APPLY_IMMED if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
-  TypeDef*		object_type;	// #CONDEDIT_OFF_computed:true LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
+  TypeDef*		object_type;	// #APPLY_IMMED #CONDEDIT_OFF_computed:true LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef 		object;		// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NO_SCOPE the network object being monitored
-  MemberDef*		lookup_var;	// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NULL_OK #NO_SAVE lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
+  MemberDef*		lookup_var;	// #APPLY_IMMED #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NULL_OK #NO_SAVE lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
   String        	variable;	// #CONDEDIT_OFF_computed:true Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
   String		var_label;	// #CONDEDIT_OFF_computed:true label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // #CONDEDIT_OFF_computed:true how to name the columns/channels generated from this data?

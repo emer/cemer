@@ -290,7 +290,7 @@ Program_Group .projects[0].programs.gp[1] {
  Program @[0] {
   name="CPT12axEpoch";
   desc="Generate a full epoch's worth of trials for the 12-AX CPT task";
-  flags=PF_NONE;
+  flags=;
   objs {
    name=;
    el_typ=taOBase;
@@ -306,7 +306,7 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=DataTable;
     object_val=.projects[0].data.gp[0][0]$1$;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc=;
    };
    ProgVar @[1] {
@@ -314,7 +314,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=25;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc="number of trials (cue-probe pairs) per epoch";
    };
   };
@@ -344,7 +344,7 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    MethodCall @[0] {
     desc=;
-    flags=PEF_NONE;
+    flags=;
     result_var=NULL;
     obj=.projects[0].programs.gp[1][0].args[0]$2$;
     method=DataTable::ResetData;
@@ -356,14 +356,14 @@ Program_Group .projects[0].programs.gp[1] {
    };
    ForLoop @[1] {
     desc=;
-    flags=PEF_NONE;
+    flags=;
     loop_code {
      name=;
      el_typ=ProgEl;
      el_def=0;
      ProgramCall @[0] {
       desc=;
-      flags=PEF_NONE;
+      flags=;
       target=$0$;
       targ_ld_init="*12axTrial*";
       call_init=0;
@@ -377,7 +377,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="input_data";
 	expr {
 	 expr="input_data";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -421,7 +421,7 @@ Program_Group .projects[0].programs.gp[1] {
  Program @[1] {
   name="CPT12axTrial";
   desc="Generate one trial (outer loop with multiple inner loops) of the 12-AX CPT Task";
-  flags=PF_NONE;
+  flags=;
   objs {
    name=;
    el_typ=taOBase;
@@ -437,7 +437,7 @@ Program_Group .projects[0].programs.gp[1] {
     object_type=DataTable;
     object_val=$1$;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc=;
    };
   };
@@ -450,7 +450,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=4;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc="maximum maintenance duration for outer loop";
    };
    ProgVar @[1] {
@@ -458,7 +458,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Real;
     real_val=0.5;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc="percent (proportion) of trials that are targets";
    };
    ProgVar @[2] {
@@ -466,7 +466,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=3;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc="number of inner-loop trials";
    };
    ProgVar @[3] {
@@ -499,7 +499,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc="outer-loop task stimulus";
    };
    ProgVar @[4] {
@@ -532,7 +532,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc="first stimulus in cue-probe pair";
    };
    ProgVar @[5] {
@@ -565,7 +565,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc="second stimulus in cue-probe pair";
    };
    ProgVar @[6] {
@@ -593,7 +593,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc="output responses";
    };
    ProgVar @[7] {
@@ -601,7 +601,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc=;
    };
    ProgVar @[8] {
@@ -609,7 +609,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=1;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc=;
    };
    ProgVar @[9] {
@@ -617,7 +617,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=2;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc=;
    };
    ProgVar @[10] {
@@ -625,7 +625,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=3;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc=;
    };
    ProgVar @[11] {
@@ -633,7 +633,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_Int;
     int_val=4;
     objs_ptr=0;
-    flags=PV_NONE;
+    flags=CTRL_PANEL|NULL_CHECK;
     desc=;
    };
   };
@@ -643,13 +643,13 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    Function @[0] {
     desc=;
-    flags=PEF_NONE;
+    flags=;
     return_val {
      name="rval";
      var_type=T_Int;
      int_val=0;
      objs_ptr=0;
-     flags=PV_NONE;
+     flags=CTRL_PANEL|NULL_CHECK;
      desc=;
     };
     name="MakeEvent";
@@ -662,7 +662,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=PV_NONE;
+      flags=CTRL_PANEL|NULL_CHECK;
       desc="name for the group column";
      };
      ProgVar @[1] {
@@ -670,7 +670,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=PV_NONE;
+      flags=CTRL_PANEL|NULL_CHECK;
       desc="Name for the Name Column";
      };
      ProgVar @[2] {
@@ -678,7 +678,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=PV_NONE;
+      flags=CTRL_PANEL|NULL_CHECK;
       desc="Index of input unit to turn on";
      };
      ProgVar @[3] {
@@ -686,7 +686,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=PV_NONE;
+      flags=CTRL_PANEL|NULL_CHECK;
       desc="Index of output unit to turn on";
      };
      ProgVar @[4] {
@@ -694,7 +694,7 @@ Program_Group .projects[0].programs.gp[1] {
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=PV_NONE;
+      flags=CTRL_PANEL|NULL_CHECK;
       desc="is this a reward target trial?";
      };
     };
@@ -704,7 +704,7 @@ Program_Group .projects[0].programs.gp[1] {
      el_def=0;
      MethodCall @[0] {
       desc=;
-      flags=PEF_NONE;
+      flags=;
       result_var=NULL;
       obj=.projects[0].programs.gp[1][1].args[0]$3$;
       method=DataTable::AddBlankRow;
@@ -716,7 +716,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
      MethodCall @[1] {
       desc="set the task name ";
-      flags=PEF_NONE;
+      flags=;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsString;
@@ -730,7 +730,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="val";
 	expr {
 	 expr="group";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -744,7 +744,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="col";
 	expr {
 	 expr="group_col";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -758,7 +758,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="row";
 	expr {
 	 expr="-1";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -770,7 +770,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
      MethodCall @[2] {
       desc="set the name";
-      flags=PEF_NONE;
+      flags=;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsString;
@@ -784,7 +784,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="val";
 	expr {
 	 expr="name";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -798,7 +798,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="col";
 	expr {
 	 expr="name_col";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -812,7 +812,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="row";
 	expr {
 	 expr="-1";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -824,7 +824,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
      MethodCall @[3] {
       desc="set the input";
-      flags=PEF_NONE;
+      flags=;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsFloatM;
@@ -838,7 +838,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="val";
 	expr {
 	 expr="1.0";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="1.0";
 	 vars {
 	 };
@@ -852,7 +852,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="col";
 	expr {
 	 expr="input_col";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -866,7 +866,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="row";
 	expr {
 	 expr="-1";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -880,7 +880,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="cell";
 	expr {
 	 expr="in_idx";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -892,7 +892,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
      MethodCall @[4] {
       desc="set the output";
-      flags=PEF_NONE;
+      flags=;
       result_var=NULL;
       obj=$3$;
       method=DataTable::SetValAsFloatM;
@@ -906,7 +906,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="val";
 	expr {
 	 expr="1.0";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="1.0";
 	 vars {
 	 };
@@ -920,7 +920,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="col";
 	expr {
 	 expr="output_col";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -934,7 +934,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="row";
 	expr {
 	 expr="-1";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -948,7 +948,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="cell";
 	expr {
 	 expr="out_idx";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -960,10 +960,10 @@ Program_Group .projects[0].programs.gp[1] {
      };
      IfElse @[5] {
       desc=;
-      flags=PEF_NONE;
+      flags=;
       cond {
        expr="rew_targ";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -976,7 +976,7 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        MethodCall @[0] {
 	desc="set as reward target trial: generates dopamine!";
-	flags=PEF_NONE;
+	flags=;
 	result_var=NULL;
 	obj=$3$;
 	method=DataTable::SetValAsFloatM;
@@ -990,7 +990,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="val";
 	  expr {
 	   expr="1.0";
-	   flags=PE_NONE;
+	   flags=;
 	   var_expr="1.0";
 	   vars {
 	   };
@@ -1004,7 +1004,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="col";
 	  expr {
 	   expr="rewtarg_col";
-	   flags=PE_NONE;
+	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -1018,7 +1018,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="row";
 	  expr {
 	   expr="-1";
-	   flags=PE_NONE;
+	   flags=;
 	   var_expr="-1";
 	   vars {
 	   };
@@ -1032,7 +1032,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="cell";
 	  expr {
 	   expr="0";
-	   flags=PE_NONE;
+	   flags=;
 	   var_expr="0";
 	   vars {
 	   };
@@ -1063,7 +1063,7 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    MethodCall @[0] {
     desc="make Group column";
-    flags=PEF_NONE;
+    flags=;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
@@ -1077,7 +1077,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"Group\"";
-       flags=PE_NONE;
+       flags=;
        var_expr="\"Group\"";
        vars {
        };
@@ -1091,7 +1091,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="group_col";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1105,7 +1105,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_STRING";
-       flags=PE_NONE;
+       flags=;
        var_expr="taBase::VT_STRING";
        vars {
        };
@@ -1119,7 +1119,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1133,7 +1133,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1147,7 +1147,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1161,7 +1161,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1175,7 +1175,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1189,7 +1189,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1201,7 +1201,7 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[1] {
     desc="make Name column";
-    flags=PEF_NONE;
+    flags=;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
@@ -1215,7 +1215,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"Name\"";
-       flags=PE_NONE;
+       flags=;
        var_expr="\"Name\"";
        vars {
        };
@@ -1229,7 +1229,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="name_col";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1243,7 +1243,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_STRING";
-       flags=PE_NONE;
+       flags=;
        var_expr="taBase::VT_STRING";
        vars {
        };
@@ -1257,7 +1257,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1271,7 +1271,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1285,7 +1285,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1299,7 +1299,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1313,7 +1313,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1327,7 +1327,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1339,7 +1339,7 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[2] {
     desc="make Input column";
-    flags=PEF_NONE;
+    flags=;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
@@ -1353,7 +1353,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"Input\"";
-       flags=PE_NONE;
+       flags=;
        var_expr="\"Input\"";
        vars {
        };
@@ -1367,7 +1367,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="input_col";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1381,7 +1381,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_FLOAT";
-       flags=PE_NONE;
+       flags=;
        var_expr="taBase::VT_FLOAT";
        vars {
        };
@@ -1395,7 +1395,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="2";
-       flags=PE_NONE;
+       flags=;
        var_expr="2";
        vars {
        };
@@ -1409,7 +1409,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="3";
-       flags=PE_NONE;
+       flags=;
        var_expr="3";
        vars {
        };
@@ -1423,7 +1423,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="3";
-       flags=PE_NONE;
+       flags=;
        var_expr="3";
        vars {
        };
@@ -1437,7 +1437,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1451,7 +1451,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1465,7 +1465,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1477,7 +1477,7 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[3] {
     desc="make Output column";
-    flags=PEF_NONE;
+    flags=;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
@@ -1491,7 +1491,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"Output\"";
-       flags=PE_NONE;
+       flags=;
        var_expr="\"Output\"";
        vars {
        };
@@ -1505,7 +1505,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="output_col";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1519,7 +1519,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_FLOAT";
-       flags=PE_NONE;
+       flags=;
        var_expr="taBase::VT_FLOAT";
        vars {
        };
@@ -1533,7 +1533,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="2";
-       flags=PE_NONE;
+       flags=;
        var_expr="2";
        vars {
        };
@@ -1547,7 +1547,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="2";
-       flags=PE_NONE;
+       flags=;
        var_expr="2";
        vars {
        };
@@ -1561,7 +1561,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="1";
-       flags=PE_NONE;
+       flags=;
        var_expr="1";
        vars {
        };
@@ -1575,7 +1575,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1589,7 +1589,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1603,7 +1603,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1615,7 +1615,7 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MethodCall @[4] {
     desc="make RewTarg column";
-    flags=PEF_NONE;
+    flags=;
     result_var=NULL;
     obj=$3$;
     method=DataTable::FindMakeColName;
@@ -1629,7 +1629,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_nm";
       expr {
        expr="\"RewTarg\"";
-       flags=PE_NONE;
+       flags=;
        var_expr="\"RewTarg\"";
        vars {
        };
@@ -1643,7 +1643,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="col_idx";
       expr {
        expr="rewtarg_col";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1657,7 +1657,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="val_type";
       expr {
        expr="taBase::VT_FLOAT";
-       flags=PE_NONE;
+       flags=;
        var_expr="taBase::VT_FLOAT";
        vars {
        };
@@ -1671,7 +1671,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="dims";
       expr {
        expr="2";
-       flags=PE_NONE;
+       flags=;
        var_expr="2";
        vars {
        };
@@ -1685,7 +1685,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d0";
       expr {
        expr="1";
-       flags=PE_NONE;
+       flags=;
        var_expr="1";
        vars {
        };
@@ -1699,7 +1699,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d1";
       expr {
        expr="1";
-       flags=PE_NONE;
+       flags=;
        var_expr="1";
        vars {
        };
@@ -1713,7 +1713,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d2";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1727,7 +1727,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d3";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1741,7 +1741,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="d4";
       expr {
        expr="0";
-       flags=PE_NONE;
+       flags=;
        var_expr="0";
        vars {
        };
@@ -1758,7 +1758,7 @@ Program_Group .projects[0].programs.gp[1] {
    el_def=0;
    RandomCall @[0] {
     desc=;
-    flags=PEF_NONE;
+    flags=;
     result_var=.projects[0].programs.gp[1][1].vars[3]$4$;
     object_type=Random;
     method=Random::IntZeroN;
@@ -1772,7 +1772,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="n";
       expr {
        expr="2";
-       flags=PE_NONE;
+       flags=;
        var_expr="2";
        vars {
        };
@@ -1784,7 +1784,7 @@ Program_Group .projects[0].programs.gp[1] {
    };
    RandomCall @[1] {
     desc=;
-    flags=PEF_NONE;
+    flags=;
     result_var=.projects[0].programs.gp[1][1].vars[2]$5$;
     object_type=Random;
     method=Random::IntMinMax;
@@ -1798,7 +1798,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="min";
       expr {
        expr="1";
-       flags=PE_NONE;
+       flags=;
        var_expr="1";
        vars {
        };
@@ -1812,7 +1812,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="max";
       expr {
        expr="max_maint";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1824,7 +1824,7 @@ Program_Group .projects[0].programs.gp[1] {
    };
    FunctionCall @[2] {
     desc="Create the Task Event";
-    flags=PEF_NONE;
+    flags=;
     result_var=NULL;
     fun=.projects[0].programs.gp[1][1].functions[0]$6$;
     fun_args {
@@ -1837,7 +1837,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="group";
       expr {
        expr="task";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1851,7 +1851,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="name";
       expr {
        expr="task";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1865,7 +1865,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="in_idx";
       expr {
        expr="task";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1879,7 +1879,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="out_idx";
       expr {
        expr="Output::L";
-       flags=PE_NONE;
+       flags=;
        var_expr="Output::L";
        vars {
        };
@@ -1893,7 +1893,7 @@ Program_Group .projects[0].programs.gp[1] {
       name="rew_targ";
       expr {
        expr="false";
-       flags=PE_NONE;
+       flags=;
        var_expr="false";
        vars {
        };
@@ -1905,14 +1905,14 @@ Program_Group .projects[0].programs.gp[1] {
    };
    ForLoop @[3] {
     desc="generate the cue-probe trials";
-    flags=PEF_NONE;
+    flags=;
     loop_code {
      name=;
      el_typ=ProgEl;
      el_def=0;
      ProgVars @[0] {
       desc=;
-      flags=PEF_NONE;
+      flags=;
       local_vars {
        name=;
        el_typ=ProgVar;
@@ -1922,7 +1922,7 @@ Program_Group .projects[0].programs.gp[1] {
 	var_type=T_Real;
 	real_val=0;
 	objs_ptr=0;
-	flags=PV_NONE;
+	flags=CTRL_PANEL|NULL_CHECK;
 	desc="random probability value for generating a target";
        };
        ProgVar @[1] {
@@ -1930,7 +1930,7 @@ Program_Group .projects[0].programs.gp[1] {
 	var_type=T_Int;
 	int_val=0;
 	objs_ptr=0;
-	flags=PV_NONE;
+	flags=CTRL_PANEL|NULL_CHECK;
 	desc="random A or B cue/probe value";
        };
        ProgVar @[2] {
@@ -1938,14 +1938,14 @@ Program_Group .projects[0].programs.gp[1] {
 	var_type=T_Int;
 	int_val=0;
 	objs_ptr=0;
-	flags=PV_NONE;
+	flags=CTRL_PANEL|NULL_CHECK;
 	desc="output value for the probe trial: depends on whether this is a target cue-probe sequence for given task";
        };
       };
      };
      RandomCall @[1] {
       desc=;
-      flags=PEF_NONE;
+      flags=;
       result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[0]$7$;
       object_type=Random;
       method=Random::ZeroOne;
@@ -1957,10 +1957,10 @@ Program_Group .projects[0].programs.gp[1] {
      };
      IfElse @[2] {
       desc=;
-      flags=PEF_NONE;
+      flags=;
       cond {
        expr="trg_rnd_prob < targ_pct";
-       flags=PE_NONE;
+       flags=;
        var_expr="$#0#$ < $#1#$";
        vars {
        };
@@ -1973,7 +1973,7 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        RandomCall @[0] {
 	desc=;
-	flags=PEF_NONE;
+	flags=;
 	result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[1]$8$;
 	object_type=Random;
 	method=Random::IntZeroN;
@@ -1987,7 +1987,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="n";
 	  expr {
 	   expr="2";
-	   flags=PE_NONE;
+	   flags=;
 	   var_expr="2";
 	   vars {
 	   };
@@ -1999,11 +1999,11 @@ Program_Group .projects[0].programs.gp[1] {
        };
        AssignExpr @[1] {
 	desc=;
-	flags=PEF_NONE;
+	flags=;
 	result_var=.projects[0].programs.gp[1][1].vars[4]$9$;
 	expr {
 	 expr="Cue::A + a_or_b";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="Cue::A + $#0#$";
 	 vars {
 	 };
@@ -2013,11 +2013,11 @@ Program_Group .projects[0].programs.gp[1] {
        };
        AssignExpr @[2] {
 	desc=;
-	flags=PEF_NONE;
+	flags=;
 	result_var=.projects[0].programs.gp[1][1].vars[5]$10$;
 	expr {
 	 expr="Probe::X + a_or_b";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="Probe::X + $#0#$";
 	 vars {
 	 };
@@ -2032,7 +2032,7 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        RandomCall @[0] {
 	desc=;
-	flags=PEF_NONE;
+	flags=;
 	result_var=$9$;
 	object_type=Random;
 	method=Random::IntZeroN;
@@ -2046,7 +2046,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="n";
 	  expr {
 	   expr="Cue::N_CUES";
-	   flags=PE_NONE;
+	   flags=;
 	   var_expr="Cue::N_CUES";
 	   vars {
 	   };
@@ -2058,7 +2058,7 @@ Program_Group .projects[0].programs.gp[1] {
        };
        RandomCall @[1] {
 	desc=;
-	flags=PEF_NONE;
+	flags=;
 	result_var=$10$;
 	object_type=Random;
 	method=Random::IntZeroN;
@@ -2072,7 +2072,7 @@ Program_Group .projects[0].programs.gp[1] {
 	  name="n";
 	  expr {
 	   expr="Probe::N_PROBES";
-	   flags=PE_NONE;
+	   flags=;
 	   var_expr="Probe::N_PROBES";
 	   vars {
 	   };
@@ -2086,11 +2086,11 @@ Program_Group .projects[0].programs.gp[1] {
      };
      IfElse @[3] {
       desc="check for targets";
-      flags=PEF_NONE;
+      flags=;
       cond {
        expr="((task == Task::ONE) && (cue == Cue::A) && (probe == Probe::X)) 
   || ((task == Task::TWO) && (cue == Cue::B) && (probe == Probe::Y))";
-       flags=PE_NONE;
+       flags=;
        var_expr="(($#0#$ == Task::ONE) && ($#1#$ == Cue::A) && ($#2#$ == Probe::X)) 
   || (($#0#$ == Task::TWO) && ($#1#$ == Cue::B) && ($#2#$ == Probe::Y))";
        vars {
@@ -2104,11 +2104,11 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        AssignExpr @[0] {
 	desc=;
-	flags=PEF_NONE;
+	flags=;
 	result_var=.projects[0].programs.gp[1][1].prog_code[3].loop_code[0].local_vars[2]$11$;
 	expr {
 	 expr="Output::R";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="Output::R";
 	 vars {
 	 };
@@ -2123,11 +2123,11 @@ Program_Group .projects[0].programs.gp[1] {
        el_def=0;
        AssignExpr @[0] {
 	desc=;
-	flags=PEF_NONE;
+	flags=;
 	result_var=$11$;
 	expr {
 	 expr="Output::L";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="Output::L";
 	 vars {
 	 };
@@ -2139,7 +2139,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
      FunctionCall @[4] {
       desc="Create the Cue Event";
-      flags=PEF_NONE;
+      flags=;
       result_var=NULL;
       fun=$6$;
       fun_args {
@@ -2152,7 +2152,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="group";
 	expr {
 	 expr="task";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -2166,7 +2166,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="name";
 	expr {
 	 expr="cue";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -2180,7 +2180,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="in_idx";
 	expr {
 	 expr="Task::N_TASKS + cue";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="Task::N_TASKS + $#0#$";
 	 vars {
 	 };
@@ -2194,7 +2194,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="out_idx";
 	expr {
 	 expr="Output::L";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="Output::L";
 	 vars {
 	 };
@@ -2208,7 +2208,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="rew_targ";
 	expr {
 	 expr="false";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="false";
 	 vars {
 	 };
@@ -2220,7 +2220,7 @@ Program_Group .projects[0].programs.gp[1] {
      };
      FunctionCall @[5] {
       desc="Create the Probe Event";
-      flags=PEF_NONE;
+      flags=;
       result_var=NULL;
       fun=$6$;
       fun_args {
@@ -2233,7 +2233,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="group";
 	expr {
 	 expr="task";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -2247,7 +2247,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="name";
 	expr {
 	 expr="probe";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -2261,7 +2261,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="in_idx";
 	expr {
 	 expr="Task::N_TASKS + Cue::N_CUES + probe";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="Task::N_TASKS + Cue::N_CUES + $#0#$";
 	 vars {
 	 };
@@ -2275,7 +2275,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="out_idx";
 	expr {
 	 expr="probe_output";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -2289,7 +2289,7 @@ Program_Group .projects[0].programs.gp[1] {
 	name="rew_targ";
 	expr {
 	 expr="true";
-	 flags=PE_NONE;
+	 flags=;
 	 var_expr="true";
 	 vars {
 	 };

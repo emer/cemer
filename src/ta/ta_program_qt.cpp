@@ -1077,6 +1077,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
 
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("print",
+    tabMisc::root->GetTemplateInstance(&TA_PrintExpr)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("print var",
     tabMisc::root->GetTemplateInstance(&TA_PrintVar)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("comment",
     tabMisc::root->GetTemplateInstance(&TA_Comment)));

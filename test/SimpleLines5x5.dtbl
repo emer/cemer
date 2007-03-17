@@ -15,17 +15,17 @@ DataTable .projects[0].data.gp[0][0] {
   el_def=0;
   String_Data @[0] {
    name="Name";
-   col_flags=DC_NONE;
+   col_flags=SAVE_ROWS|SAVE_DATA;
    is_matrix=0;
    cell_geom{ 1;   };
    calc_expr {
     expr=;
    };
-   ar{ [6] "checks";"mitvert";"midhoriz";"ldiag";"rdiag";"random";   };
+   ar{ [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";   };
   };
   float_Data @[1] {
    name="Input";
-   col_flags=DC_NONE;
+   col_flags=SAVE_ROWS|SAVE_DATA;
    is_matrix=1;
    cell_geom{ 5;5;   };
    calc_expr {
@@ -35,7 +35,7 @@ DataTable .projects[0].data.gp[0][0] {
   };
   float_Data @[2] {
    name="Output";
-   col_flags=DC_NONE;
+   col_flags=SAVE_ROWS|SAVE_DATA;
    is_matrix=1;
    cell_geom{ 5;5;   };
    calc_expr {
@@ -44,5 +44,5 @@ DataTable .projects[0].data.gp[0][0] {
    ar{ [5 5 6] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;1;0;0;0;0;0;0;0;1;0;0;1;0;0;1;1;0;0;0;0;0;0;0;0;0;   };
   };
  };
- data_flags=DF_NONE;
+ data_flags=SAVE_ROWS|AUTO_CALC;
 };

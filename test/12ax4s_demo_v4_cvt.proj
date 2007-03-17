@@ -15,7 +15,7 @@ LeabraProject .projects[0] {
   };
 
   DataTable_Group @.data = [0] {
-    DataTable_Group @.gp[0] = [2] { 
+    DataTable_Group @.gp[0] = [1] { 
       DataTable @[0] { 
 	DataTableCols @.data = [5] {
 	  String_Data @[0] { };
@@ -23,12 +23,6 @@ LeabraProject .projects[0] {
 	  float_Data @[2] { };
 	  float_Data @[3] { };
 	  float_Data @[4] { };
-	};
-      };
-      DataTable @[1] { 
-	DataTableCols @.data = [2] {
-	  String_Data @[0] { };
-	  float_Data @[1] { };
 	};
       };
     };
@@ -1357,7 +1351,7 @@ LeabraProject .projects[0] {
       calc_expr {
        expr=;
       };
-      ar{ [117] "TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";      };
+      ar{ [131] "TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";      };
      };
      String_Data @[1] {
       name="Name";
@@ -1367,7 +1361,7 @@ LeabraProject .projects[0] {
       calc_expr {
        expr=;
       };
-      ar{ [117] "TWO";"A";"X";"C";"Y";"ONE";"B";"X";"TWO";"B";"X";"C";"Z";"A";"X";"TWO";"C";"X";"B";"Z";"TWO";"B";"X";"A";"X";"A";"X";"ONE";"B";"X";"A";"X";"A";"X";"TWO";"A";"Z";"C";"Y";"TWO";"A";"X";"B";"X";"ONE";"B";"Y";"B";"Y";"B";"Y";"ONE";"B";"Y";"TWO";"B";"Y";"TWO";"A";"X";"A";"X";"ONE";"A";"X";"A";"Y";"TWO";"A";"X";"B";"Y";"ONE";"A";"X";"TWO";"A";"X";"TWO";"C";"Y";"B";"Y";"C";"Z";"TWO";"A";"Y";"TWO";"B";"Y";"ONE";"C";"X";"C";"Z";"A";"X";"ONE";"B";"Y";"TWO";"B";"X";"A";"X";"ONE";"B";"Y";"TWO";"A";"X";"TWO";"B";"Y";"A";"X";      };
+      ar{ [131] "TWO";"A";"X";"A";"X";"ONE";"B";"Z";"B";"Y";"A";"X";"TWO";"B";"Z";"A";"Y";"B";"Y";"TWO";"C";"X";"ONE";"A";"Y";"B";"X";"B";"Y";"ONE";"A";"X";"TWO";"B";"Z";"ONE";"B";"Z";"A";"X";"B";"Y";"TWO";"A";"Y";"ONE";"B";"Y";"TWO";"A";"Y";"TWO";"A";"X";"TWO";"A";"X";"B";"X";"ONE";"B";"Y";"C";"X";"TWO";"B";"Y";"B";"Z";"C";"X";"ONE";"A";"Z";"A";"X";"ONE";"B";"Y";"A";"X";"ONE";"C";"Y";"B";"Z";"ONE";"A";"X";"B";"Y";"A";"X";"ONE";"A";"X";"ONE";"A";"X";"A";"X";"A";"Z";"TWO";"A";"Y";"B";"Z";"A";"X";"TWO";"B";"Y";"A";"Y";"B";"Y";"TWO";"A";"X";"C";"X";"A";"Z";"ONE";"B";"Y";"B";"Y";"C";"Z";      };
      };
      float_Data @[2] {
       name="Input";
@@ -1377,7 +1371,7 @@ LeabraProject .projects[0] {
       calc_expr {
        expr=;
       };
-      ar{ [3 3 117] 0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;      };
+      ar{ [3 3 131] 0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;      };
      };
      float_Data @[3] {
       name="Output";
@@ -1387,7 +1381,7 @@ LeabraProject .projects[0] {
       calc_expr {
        expr=;
       };
-      ar{ [2 1 117] 1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;      };
+      ar{ [2 1 131] 1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;0;1;1;0;1;0;0;1;1;0;1;0;0;1;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;      };
      };
      float_Data @[4] {
       name="RewTarg";
@@ -1397,37 +1391,7 @@ LeabraProject .projects[0] {
       calc_expr {
        expr=;
       };
-      ar{ [1 1 117] 0;0;1;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;1;0;0;1;0;0;1;0;0;1;0;1;      };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-   };
-   DataTable @[1] {
-    name="MatrixRFs";
-    desc=;
-    data {
-     name="data";
-     el_typ=String_Data;
-     el_def=0;
-     String_Data @[0] {
-      name="Name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      ar{ [80] "Matrix.un[0]";"Matrix.un[1]";"Matrix.un[2]";"Matrix.un[3]";"Matrix.un[4]";"Matrix.un[5]";"Matrix.un[6]";"Matrix.un[7]";"Matrix.un[8]";"Matrix.un[9]";"Matrix.un[10]";"Matrix.un[11]";"Matrix.un[12]";"Matrix.un[13]";"Matrix.un[14]";"Matrix.un[15]";"Matrix.un[16]";"Matrix.un[17]";"Matrix.un[18]";"Matrix.un[19]";"Matrix.un[20]";"Matrix.un[21]";"Matrix.un[22]";"Matrix.un[23]";"Matrix.un[24]";"Matrix.un[25]";"Matrix.un[26]";"Matrix.un[27]";"Matrix.un[28]";"Matrix.un[29]";"Matrix.un[30]";"Matrix.un[31]";"Matrix.un[32]";"Matrix.un[33]";"Matrix.un[34]";"Matrix.un[35]";"Matrix.un[36]";"Matrix.un[37]";"Matrix.un[38]";"Matrix.un[39]";"Matrix.un[40]";"Matrix.un[41]";"Matrix.un[42]";"Matrix.un[43]";"Matrix.un[44]";"Matrix.un[45]";"Matrix.un[46]";"Matrix.un[47]";"Matrix.un[48]";"Matrix.un[49]";"Matrix.un[50]";"Matrix.un[51]";"Matrix.un[52]";"Matrix.un[53]";"Matrix.un[54]";"Matrix.un[55]";"Matrix.un[56]";"Matrix.un[57]";"Matrix.un[58]";"Matrix.un[59]";"Matrix.un[60]";"Matrix.un[61]";"Matrix.un[62]";"Matrix.un[63]";"Matrix.un[64]";"Matrix.un[65]";"Matrix.un[66]";"Matrix.un[67]";"Matrix.un[68]";"Matrix.un[69]";"Matrix.un[70]";"Matrix.un[71]";"Matrix.un[72]";"Matrix.un[73]";"Matrix.un[74]";"Matrix.un[75]";"Matrix.un[76]";"Matrix.un[77]";"Matrix.un[78]";"Matrix.un[79]";      };
-     };
-     float_Data @[1] {
-      name="Input";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 3;3;      };
-      calc_expr {
-       expr=;
-      };
-      ar{ [3 3 80] 6.2453502e-05;0.020764399;0;0.25517201;0.247816;0.081522197;2.49903e-06;4.74265e-08;2.18525e-06;1.1676e-10;1.01396e-12;0;1.50756e-11;1.5645901e-13;2.0826201e-12;0;4.1960601e-20;4.8806299e-18;2.5760899e-08;5.5859402e-09;0;2.80767e-08;1.04509e-08;1.41649e-10;0.089353301;0.47389501;0.112082;0.106535;0.042761799;0;0.042488199;0.063487299;0;0;0;0;1.25688e-11;8.2504901e-13;0;7.1957501e-13;3.3297699e-15;1.2052e-11;6.7787701e-14;4.4096501e-14;1.80135e-13;0.062090602;0.130787;0;0.107738;0.0637853;0.022009;0.451056;0.067487597;0.045045801;0.0261907;0.080729701;0;0.109682;0.102702;0.0146599;0.0012519;0.00099967699;0.00057132897;0.0041779499;0.00197312;0;0.0019456201;0.0031816;0;0;0;0;2.2940201e-09;1.7797301e-14;0;4.8113202e-10;5.4279797e-10;8.21562e-13;1.80439e-16;0;4.4131599e-18;1.25631e-16;0.0667165;0;0.022191299;0.0444801;0;0;0;0;1.7009999e-07;1.67326e-11;0;1.15542e-07;2.3907701e-10;1.26359e-14;2.6731301e-15;6.3538198e-14;1.53449e-13;0.0045263101;0.0703393;0;0.0305655;0.0190691;0.0107429;0.63170803;0.094589897;0.063164398;2.6291e-06;0.0039696801;0;0.00132983;0.00256242;0;0;0;0;0.00163123;0.00088113302;0;0.00066320901;0.00070141302;0;0;0;0;0.153644;0.149463;0;0.090903699;0.15166301;0;0;0;0;0.00059141999;0.000828719;0;0.00029167699;0.000855216;7.6738997e-06;0.125265;0.66522098;0.156938;0.050349399;0.064004503;0;0.29580501;0.220084;0.108816;3.0814001e-06;2.5219699e-06;4.31274e-07;1.2486699e-06;1.33108e-09;0;1.6887e-06;9.4686499e-08;2.1747699e-10;1.05506e-07;2.1702799e-06;7.6392399e-07;2.89899e-05;1.8380099e-08;0;1.51807e-05;2.88497e-08;1.19244e-09;1.59182e-15;7.1276698e-17;8.55549e-17;0.0575727;0.17191499;0;0.322808;0.326655;0.049406301;0.00070391601;0.000259717;0.00039125301;1.65943e-06;0.0289084;0;5.7140101e-06;4.7795002e-06;3.3770201e-07;0.66266799;0.086929299;0.14289901;4.41716e-05;0.0135546;0;0.016873499;0.0080590798;0.0146383;2.42018e-05;0.000124803;2.15087e-05;0.081765004;0.138382;0;0.348014;0.26688701;0.112398;0.00172088;5.7943798e-05;0.00077611802;0.047449999;0.018052099;0;0.0197764;0.028460899;0;0;0;0;0.00043887299;0.0169088;0;0.0159893;0.0076698302;0.0124243;5.4681699e-08;8.9536502e-07;1.9784601e-08;0.0320426;0.106565;0;0.239374;0.25159901;0.023080301;0.000122064;0.000108751;7.7229801e-05;0.038539998;0.015887599;0;0.0152489;0.0232567;0;0;0;0;8.8823304e-09;5.72538e-08;0;6.0603e-08;7.0267198e-08;2.64141e-09;0.0290615;0.61140698;0.058212802;0;0.0850548;0;0.028303601;0.0567028;0;0;0;0;2.1899901e-16;2.32855e-16;0;7.8678898e-13;1.21116e-12;0;1.10273e-14;2.3727801e-15;8.8054999e-16;0.00096546899;0.0363282;0;0.039572701;0.022508999;0.035089999;9.2013201e-05;1.57782e-05;3.0943898e-05;0.00096942502;0.0209828;0;0.0041024401;0.0034576301;0.000123986;0.419108;0.054824799;0.090592101;2.9289399e-06;3.2997201e-07;0;1.03798e-05;1.05818e-05;1.5117701e-07;2.79359e-11;1.68282e-11;1.06104e-10;1.59655e-11;2.07855e-09;0;9.5499199e-11;8.7398797e-11;1.28679e-08;0;0;0;0.069836102;0.141478;0;0.350954;0.31482399;0.072135597;0.00044581899;0.000126762;0.000199831;0.091214404;0.0364682;0;0.036481101;0.0547987;0;0;0;0;8.1190701e-06;0.0033660401;0;0.0013972;0.0023875399;0;0;0;0;7.7534501e-13;0.049627502;0;0.016180201;0.032892;0;0;0;0;1.60774e-06;1.78061e-05;0;1.69949e-05;1.88305e-05;7.6679001e-09;0.0183331;0.38441899;0.036655199;5.6591802e-05;2.2451801e-05;0;2.12799e-05;2.5425101e-05;0;0;0;0;0.072409101;0.122591;0;0.222617;0.19897901;0.024777001;0.00969854;0.222975;0.0182801;0.0253534;0.101678;0;0.104107;0.101216;0.0034249499;0.49074501;0.0740707;0.0494054;2.2562301e-05;0.0085091405;0;0.0027942201;0.0055781798;0;0;0;0;0.00311522;0.0046768598;0;0.0038709701;0.0046415702;0.00066490198;0.091701299;0.00170607;0.0788633;0.12830301;0.051257301;0;0.0513537;0.077116497;0;0;0;0;2.1634401e-09;0.000106178;0;0.000131323;4.85528e-05;0.00035745199;2.3401101e-10;1.21421e-19;4.73778e-11;0.000200501;0.064044699;0;0.021485601;0.0429378;0;0;0;0;2.2061799e-06;5.3198601e-09;0;0.000261874;0.000190516;3.40406e-06;6.9116601e-14;0;6.8570701e-15;2.39586e-07;0.049136002;0;0.049207699;0.0245726;0.0458619;3.70899e-05;6.5157901e-06;4.3732198e-06;0.00018797199;0.00127756;0;0.181207;0.155185;0.0763404;0.0065049799;0.130722;0.0133267;0.00157094;0.00252213;0;0.17292;0.14657;0.074585102;6.71767e-08;1.45448e-10;1.84599e-08;7.3135702e-06;6.0141601e-06;0;2.6228599e-06;1.16459e-06;4.3036599e-12;2.9330801e-07;0;9.3596704e-09;0.0042980202;0.0021726401;0;0.00516304;0.0029366601;0.00079392397;0.074847303;0.007036;0.074509501;4.9252801e-08;2.7817701e-10;0;1.5468199e-08;2.91946e-10;2.5489699e-13;1.85749e-16;0;7.5000201e-18;2.3354699e-13;6.5952499e-08;0;9.1105699e-07;9.364e-07;1.28819e-07;4.87752e-07;1.36349e-07;3.5572299e-08;0.023922;0.096297003;0;0.0963609;0.095079497;0.00051022699;0.489299;0.073630303;0.049055401;0.0055100298;0.052825902;0;0.149149;0.15057901;0.046847701;6.9434398e-05;2.57753e-06;3.3074e-05;1.19902e-09;0.074110702;0;0.0247036;0.049407199;0;0;0;0;0.123511;0.0494092;0;0.049407899;0.074112497;0;0;0;0;0.063975997;0.112041;0;0.113181;0.066657901;0.0231742;0.023718501;0.49963701;0.047614198;8.2371298e-07;0.046114601;0;0.0154524;0.030902799;0;0;0;0;8.0604401e-08;8.1221003e-09;0;2.20687e-09;6.6114603e-10;1.01104e-13;0;0;0;1.34685e-09;9.6563394e-07;0;3.5180799e-06;6.0781699e-06;7.27589e-07;0;2.17011e-20;0;0.063401103;0.142455;0;0.343476;0.290456;0.108749;0.00096144999;1.58485e-05;0.00048581499;1.06442e-12;1.26671e-07;0;5.7259499e-06;1.7562301e-05;2.4933799e-09;0.000104313;0.0011229099;0.000193318;0.019637899;0.060323201;0;0.088553302;0.082002997;0.0050858301;0.0814813;0.43531001;0.102642;0.104604;0.0418084;0;0.041848201;0.0627767;0;0;0;0;1.32329e-08;0.0210045;0;0.0092422199;0.0131137;3.2071401e-07;0.41960201;0.062973797;0.042006701;3.1137901e-05;0.0043214802;0;0.0051476499;0.00214733;0.0033911199;6.5675199e-10;1.8957101e-08;4.4535202e-09;6.6406501e-05;0.0091378102;0;0.00303196;0.0060512;0;0;0;0;7.7157099e-05;0.0010811;0;0.000374886;0.00077347999;0;0;0;0;0.107388;0.042835802;0;0.042969201;0.064600401;0;0;0;0;9.4963601e-14;3.4304499e-18;0;9.1313296e-13;4.44155e-12;1.13073e-18;4.47247e-18;4.28999e-16;2.2825301e-16;5.3069002e-08;0.062127698;0;0.020705299;0.0413404;0;0;0;0;0.0625863;0.107322;0;0.305511;0.272039;0.076265901;0.063136898;1.0258e-05;0.063128702;0.00082530198;0.0413826;0;0.061140999;0.0377068;0.0456293;0.00050839299;5.7554301e-15;0.00043780301;1.66389e-08;1.26666e-09;0;9.2609698e-09;9.7572295e-10;4.3041201e-10;3.3486201e-16;0;7.3690702e-17;0.0211736;0.063613199;0;0.091737702;0.087395199;0.00611537;0.020367401;0.43287501;0.041117601;5.2546202e-06;2.3737e-05;0;2.83551e-05;2.4941601e-05;7.3221199e-06;0.00069471903;0.0091533698;0.00113311;5.2076499e-09;0.0215292;0;6.7852002e-06;6.0560301e-06;2.13004e-06;0.43025699;0.064494498;0.042978998;      };
+      ar{ [1 1 131] 0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3078,8 +3042,8 @@ DoName();
       group_order=SEQUENTIAL;
       item_order=SEQUENTIAL;
       group_col=0;
-      group_idx_list{ 0;5;8;27;34;44;54;62;67;72;75;91;101;106;109;      };
-      item_idx_list{ 34;35;36;37;38;39;40;41;42;43;      };
+      group_idx_list{ 0;5;12;22;32;35;42;45;48;59;64;71;103;124;      };
+      item_idx_list{ 12;13;14;15;16;17;18;19;20;21;      };
      };
      IfElse @[6] {
       desc="if full batch mode, update only at end of epoch";
@@ -3436,7 +3400,7 @@ DoName();
      ProgVar @[1] {
       name="min_cycles";
       var_type=T_Int;
-      int_val=15;
+      int_val=35;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc=;
@@ -5331,7 +5295,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
      ProgVar @[2] {
       name="n_inner_trials";
       var_type=T_Int;
-      int_val=2;
+      int_val=3;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc="number of inner-loop trials";
@@ -5343,7 +5307,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
        name="Task";
        el_typ=DynEnumItem;
        el_def=0;
-       value_idx=1;
+       value_idx=0;
        DynEnumItem @[0] {
 	name="ONE";
 	value=0;
@@ -5376,7 +5340,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
        name="Cue";
        el_typ=DynEnumItem;
        el_def=0;
-       value_idx=0;
+       value_idx=2;
        DynEnumItem @[0] {
 	name="A";
 	value=0;
@@ -5409,7 +5373,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
        name="Probe";
        el_typ=DynEnumItem;
        el_def=0;
-       value_idx=0;
+       value_idx=2;
        DynEnumItem @[0] {
 	name="X";
 	value=0;
@@ -7642,7 +7606,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    max=1;
 	   };
 	  };
-	  display=0;
+	  display=1;
 	  ordered_uvg_list{ 10;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
@@ -7761,10 +7725,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   axis=X;
 	   col_lookup=NULL;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=3: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=3: };
-	   range {min=0: max=3: };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -7911,8 +7875,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 };
 	};
        };
-       camera_pos {x=0.5522883: y=1.109957: z=1.472763: };
-       camera_orient {x=-0.9984725: y=-0.05278365: z=0.01632948: rot=0.4831459: };
+       camera_pos {x=0.5417961: y=1.121465: z=1.46635: };
+       camera_orient {x=-0.9979209: y=-0.06215875: z=0.01709494: rot=0.4894839: };
        camera_focdist=2.16754;
       };
      };
@@ -8002,9 +7966,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
+       inhib_group=ENTIRE_LAYER;
        kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-       inhib_group=ENTIRE_LAYER;
        compute_i=KWTA_INHIB;
        i_kwta_pt=0.25;
        gp_i_pt=0.2;
@@ -8029,9 +7993,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
+       inhib_group=ENTIRE_LAYER;
        kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-       inhib_group=ENTIRE_LAYER;
        compute_i=KWTA_INHIB;
        i_kwta_pt=0.25;
        gp_i_pt=0.2;
@@ -8048,9 +8012,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        };
       };
      };
+     inhib_group=ENTIRE_LAYER;
      kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     inhib_group=ENTIRE_LAYER;
      compute_i=KWTA_AVG_INHIB;
      i_kwta_pt=0.6;
      gp_i_pt=0.2;
@@ -8107,7 +8071,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	name=;
 	el_typ=SchedItem;
 	el_def=0;
-	last_ctr=80;
+	last_ctr=68;
 	default_val=1;
 	interpolate=0;
 	cur_val=1;
@@ -8151,7 +8115,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       name=;
       el_typ=SchedItem;
       el_def=0;
-      last_ctr=80;
+      last_ctr=68;
       default_val=1;
       interpolate=0;
       cur_val=1;
@@ -8593,7 +8557,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=80;
+	   last_ctr=68;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -8645,7 +8609,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=80;
+	   last_ctr=68;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -8690,7 +8654,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=80;
+	 last_ctr=68;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -8801,7 +8765,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=80;
+	   last_ctr=68;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -8845,7 +8809,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=80;
+	 last_ctr=68;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -8904,7 +8868,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=80;
+	   last_ctr=68;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -8948,7 +8912,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=80;
+	 last_ctr=68;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -8992,7 +8956,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        name=;
        el_typ=SchedItem;
        el_def=0;
-       last_ctr=80;
+       last_ctr=68;
        default_val=1;
        interpolate=0;
        cur_val=1;
@@ -9114,9 +9078,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        el_typ=ExtRewLayerSpec;
        el_def=0;
       };
+      inhib_group=ENTIRE_LAYER;
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      inhib_group=ENTIRE_LAYER;
       compute_i=KWTA_AVG_INHIB;
       i_kwta_pt=0.9;
       gp_i_pt=0.2;
@@ -9149,9 +9113,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        el_typ=PViLayerSpec;
        el_def=0;
       };
+      inhib_group=ENTIRE_LAYER;
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      inhib_group=ENTIRE_LAYER;
       compute_i=KWTA_AVG_INHIB;
       i_kwta_pt=0.9;
       gp_i_pt=0.2;
@@ -9189,9 +9153,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 el_typ=LViLayerSpec;
 	 el_def=0;
 	};
+	inhib_group=ENTIRE_LAYER;
 	kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_PCT: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-	inhib_group=ENTIRE_LAYER;
 	compute_i=KWTA_AVG_INHIB;
 	i_kwta_pt=0.9;
 	gp_i_pt=0.2;
@@ -9221,9 +9185,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 el_typ=PatchLayerSpec;
 	 el_def=0;
 	};
+	inhib_group=UNIT_GROUPS;
 	kwta {k_from=USE_K: k=8: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_K: k=8: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-	inhib_group=UNIT_GROUPS;
 	compute_i=KWTA_INHIB;
 	i_kwta_pt=0.25;
 	gp_i_pt=0.2;
@@ -9245,9 +9209,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	lv {discount=0: use_actual_er=0: };
        };
       };
+      inhib_group=ENTIRE_LAYER;
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      inhib_group=ENTIRE_LAYER;
       compute_i=KWTA_AVG_INHIB;
       i_kwta_pt=0.9;
       gp_i_pt=0.2;
@@ -9285,9 +9249,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 el_typ=SNcLayerSpec;
 	 el_def=0;
 	};
+	inhib_group=ENTIRE_LAYER;
 	kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-	inhib_group=ENTIRE_LAYER;
 	compute_i=KWTA_INHIB;
 	i_kwta_pt=0.25;
 	gp_i_pt=0.2;
@@ -9306,9 +9270,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	snc {patch_mode=NO_PATCH: patch_gain=0.5: };
        };
       };
+      inhib_group=ENTIRE_LAYER;
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      inhib_group=ENTIRE_LAYER;
       compute_i=KWTA_INHIB;
       i_kwta_pt=0.25;
       gp_i_pt=0.2;
@@ -9334,9 +9298,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        el_typ=PFCLayerSpec;
        el_def=0;
       };
+      inhib_group=UNIT_GROUPS;
       kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      inhib_group=UNIT_GROUPS;
       compute_i=KWTA_AVG_INHIB;
       i_kwta_pt=0.6;
       gp_i_pt=0.2;
@@ -9362,9 +9326,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        el_typ=MatrixLayerSpec;
        el_def=0;
       };
+      inhib_group=UNIT_GROUPS;
       kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      inhib_group=UNIT_GROUPS;
       compute_i=KWTA_INHIB;
       i_kwta_pt=0.25;
       gp_i_pt=0.2;
@@ -9395,9 +9359,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        el_typ=SNrThalLayerSpec;
        el_def=0;
       };
+      inhib_group=ENTIRE_LAYER;
       kwta {k_from=USE_PCT: k=12: pct=0.75: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      inhib_group=ENTIRE_LAYER;
       compute_i=KWTA_AVG_INHIB;
       i_kwta_pt=0.6;
       gp_i_pt=0.2;
@@ -9619,8 +9583,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.95: max=0.95: max_i=0: };
-     acts_m {avg=0.95: max=0.95: max_i=0: };
+     acts_p {avg=0: max=0: max_i=0: };
+     acts_m {avg=0: max=0: max_i=0: };
      phase_dif_ratio=1;
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -9725,7 +9689,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.3166667: max=0.95: max_i=1: };
+     acts_p {avg=0.3166667: max=0.95: max_i=2: };
      acts_m {avg=0.3166667: max=0.95: max_i=2: };
      phase_dif_ratio=1;
      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
@@ -9882,10 +9846,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.350998: max=0.687078: max_i=3: };
-     acts_m {avg=0.3294142: max=0.6813983: max_i=3: };
-     phase_dif_ratio=0.9385074;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=8.716857: k1_ithr=2.868333: ithr_r=1.111528: ithr_diff=0.6709442: tie_brk=0: };
+     acts_p {avg=0.2726144: max=0.7477292: max_i=2: };
+     acts_m {avg=0.2726064: max=0.747733: max_i=2: };
+     phase_dif_ratio=0.9999706;
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=6.45191: k1_ithr=2.972959: ithr_r=0.7748187: ithr_diff=0.5392127: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
@@ -10037,10 +10001,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.2824819: max=0.7904619: max_i=3: };
-     acts_m {avg=0.2906353: max=0.7454066: max_i=3: };
-     phase_dif_ratio=1.028864;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.88179: k1_ithr=2.28625: ithr_r=0.5293834: ithr_diff=0.411032: tie_brk=0: };
+     acts_p {avg=0.1550512: max=0.3380501: max_i=1: };
+     acts_m {avg=0.154727: max=0.3373343: max_i=1: };
+     phase_dif_ratio=0.9979094;
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.868651: k1_ithr=2.28625: ithr_r=0.5259929: ithr_diff=0.4090317: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
@@ -10193,10 +10157,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.4070235: max=0.6684079: max_i=3: };
-     acts_m {avg=0.190892: max=0.2800592: max_i=1: };
-     phase_dif_ratio=0.468995;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.88179: k1_ithr=2.28625: ithr_r=0.5293834: ithr_diff=0.411032: tie_brk=0: };
+     acts_p {avg=0.1550512: max=0.3380501: max_i=1: };
+     acts_m {avg=0.154727: max=0.3373343: max_i=1: };
+     phase_dif_ratio=0.9979094;
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.868651: k1_ithr=2.28625: ithr_r=0.5259929: ithr_diff=0.4090317: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
@@ -10325,8 +10289,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=-0.4440594: max=-0.4440594: max_i=0: };
-     acts_m {avg=0.388591: max=0.388591: max_i=0: };
+     acts_p {avg=0: max=0: max_i=0: };
+     acts_m {avg=0: max=0: max_i=0: };
      phase_dif_ratio=1;
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10455,10 +10419,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.1765859: max=0.9179499: max_i=37: };
-     acts_m {avg=0.1523577: max=0.8573017: max_i=37: };
-     phase_dif_ratio=0.8627964;
-     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=4.323642: k1_ithr=3.303786: ithr_r=0.269029: ithr_diff=0.2358789: tie_brk=0: };
+     acts_p {avg=0.1694759: max=0.8699828: max_i=37: };
+     acts_m {avg=0.1678923: max=0.8693022: max_i=37: };
+     phase_dif_ratio=0.9906558;
+     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=4.645004: k1_ithr=3.418326: ithr_r=0.3066414: ithr_diff=0.2640855: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -10519,8 +10483,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.1055556: max=0.95: max_i=6: };
-     acts_m {avg=0.1055556: max=0.95: max_i=6: };
+     acts_p {avg=0.1055556: max=0.95: max_i=1: };
+     acts_m {avg=0.1055556: max=0.95: max_i=1: };
      phase_dif_ratio=1;
      kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10627,9 +10591,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
      acts_p {avg=0.475: max=0.95: max_i=0: };
-     acts_m {avg=0.464031: max=0.9100561: max_i=1: };
-     phase_dif_ratio=0.9769075;
-     kwta {k=1: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=5.049117: k1_ithr=3.190032: ithr_r=0.4591825: ithr_diff=0.3682001: tie_brk=0: };
+     acts_m {avg=0.4623457: max=0.9071817: max_i=0: };
+     phase_dif_ratio=0.9733593;
+     kwta {k=1: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=5.125643: k1_ithr=3.985633: ithr_r=0.2515598: ithr_diff=0.2224131: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.5: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -10755,8 +10719,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=-0.4440594: max=-0.4440594: max_i=0: };
-       acts_m {avg=0.388591: max=0.388591: max_i=0: };
+       acts_p {avg=0: max=0: max_i=0: };
+       acts_m {avg=0: max=0: max_i=0: };
        phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10777,8 +10741,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=-0.4440594: max=-0.4440594: max_i=0: };
-       acts_m {avg=0.388591: max=0.388591: max_i=0: };
+       acts_p {avg=0: max=0: max_i=0: };
+       acts_m {avg=0: max=0: max_i=0: };
        phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10799,8 +10763,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=-0.4440594: max=-0.4440594: max_i=0: };
-       acts_m {avg=0.388591: max=0.388591: max_i=0: };
+       acts_p {avg=0: max=0: max_i=0: };
+       acts_m {avg=0: max=0: max_i=0: };
        phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10821,8 +10785,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=-0.4440594: max=-0.4440594: max_i=0: };
-       acts_m {avg=0.388591: max=0.388591: max_i=0: };
+       acts_p {avg=0: max=0: max_i=0: };
+       acts_m {avg=0: max=0: max_i=0: };
        phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10844,8 +10808,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=-0.4440594: max=-0.4440594: max_i=0: };
-     acts_m {avg=0.388591: max=0.388591: max_i=0: };
+     acts_p {avg=0: max=0: max_i=0: };
+     acts_m {avg=0: max=0: max_i=0: };
      phase_dif_ratio=1;
      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=nan: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10997,10 +10961,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.2272725: max=0.9271718: max_i=16: };
-       acts_m {avg=0.227262: max=0.9271668: max_i=16: };
-       phase_dif_ratio=0.9999535;
-       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.561588: k1_ithr=3.428912: ithr_r=0.03796349: ithr_diff=0.03725196: tie_brk=0: };
+       acts_p {avg=0.1779069: max=0.8930764: max_i=11: };
+       acts_m {avg=0.1779069: max=0.8930764: max_i=11: };
+       phase_dif_ratio=1;
+       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.776081: k1_ithr=3.716916: ithr_r=0.01579218: ithr_diff=0.01566817: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -11019,10 +10983,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.2137934: max=0.9422057: max_i=10: };
-       acts_m {avg=0.2083094: max=0.9404187: max_i=10: };
-       phase_dif_ratio=0.9743491;
-       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.603217: k1_ithr=3.587873: ithr_r=0.004267396: ithr_diff=0.004258258: tie_brk=0: };
+       acts_p {avg=0.1512917: max=0.8106083: max_i=14: };
+       acts_m {avg=0.1513502: max=0.8106781: max_i=14: };
+       phase_dif_ratio=1.000387;
+       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.978912: k1_ithr=3.88489: ithr_r=0.02391376: ithr_diff=0.02363015: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -11041,10 +11005,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.2046427: max=0.8971132: max_i=7: };
-       acts_m {avg=0.1959066: max=0.8890164: max_i=7: };
-       phase_dif_ratio=0.9573106;
-       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.754039: k1_ithr=3.501297: ithr_r=0.06969899: ithr_diff=0.06732544: tie_brk=0: };
+       acts_p {avg=0.1692115: max=0.8878258: max_i=19: };
+       acts_m {avg=0.1692303: max=0.8878418: max_i=19: };
+       phase_dif_ratio=1.000111;
+       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.793087: k1_ithr=3.774168: ithr_r=0.005000466: ithr_diff=0.004987943: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -11063,10 +11027,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.2099187: max=0.8820726: max_i=25: };
-       acts_m {avg=0.2099313: max=0.8820922: max_i=25: };
-       phase_dif_ratio=1.00006;
-       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.031458: k1_ithr=3.694337: ithr_r=0.08732706: ithr_diff=0.08362266: tie_brk=0: };
+       acts_p {avg=0.1789481: max=0.8621039: max_i=15: };
+       acts_m {avg=0.1789481: max=0.8621039: max_i=15: };
+       phase_dif_ratio=1;
+       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.014401: k1_ithr=3.986426: ithr_r=0.006993104: ithr_diff=0.006968682: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -11086,9 +11050,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.2139068: max=0.9422057: max_i=1: };
-     acts_m {avg=0.2103523: max=0.9404187: max_i=1: };
-     phase_dif_ratio=0.9833828;
+     acts_p {avg=0.1693396: max=0.8930764: max_i=0: };
+     acts_m {avg=0.1693589: max=0.8930764: max_i=0: };
+     phase_dif_ratio=1.000114;
      kwta {k=28: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
@@ -11168,9 +11132,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=1.632057e-05: max=1.632057e-05: max_i=0: };
-       acts_m {avg=2.093042e-08: max=2.093042e-08: max_i=0: };
-       phase_dif_ratio=0.001282457;
+       acts_p {avg=0: max=0: max_i=0: };
+       acts_m {avg=0: max=0: max_i=0: };
+       phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
@@ -11190,9 +11154,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.7355864: max=0.7355864: max_i=0: };
-       acts_m {avg=0.722766: max=0.722766: max_i=0: };
-       phase_dif_ratio=0.9825711;
+       acts_p {avg=0: max=0: max_i=0: };
+       acts_m {avg=0: max=0: max_i=0: };
+       phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
@@ -11212,9 +11176,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.7123715: max=0.7123715: max_i=0: };
-       acts_m {avg=0.7012565: max=0.7012565: max_i=0: };
-       phase_dif_ratio=0.9843971;
+       acts_p {avg=5.911242e-10: max=5.911242e-10: max_i=0: };
+       acts_m {avg=7.68257e-10: max=7.68257e-10: max_i=0: };
+       phase_dif_ratio=1.299654;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
@@ -11257,10 +11221,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.3619936: max=0.7355864: max_i=1: };
-     acts_m {avg=0.3560056: max=0.722766: max_i=1: };
-     phase_dif_ratio=0.9834584;
-     kwta {k=3: pct=0.75: pct_c=0.25: adth_k=1: k_ithr=0.4601649: k1_ithr=-2.210606: ithr_r=0: ithr_diff=5.803943: tie_brk=0: };
+     acts_p {avg=1.477811e-10: max=5.911242e-10: max_i=2: };
+     acts_m {avg=1.920642e-10: max=7.68257e-10: max_i=2: };
+     phase_dif_ratio=1.299654;
+     kwta {k=3: pct=0.75: pct_c=0.25: adth_k=1: k_ithr=-0.6008488: k1_ithr=-3.349916: ithr_r=0: ithr_diff=-4.575305: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.75: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11392,9 +11356,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
        acts_p {avg=0.1075155: max=0.9676397: max_i=3: };
-       acts_m {avg=0.1075155: max=0.9676399: max_i=3: };
+       acts_m {avg=0.1075155: max=0.9676397: max_i=3: };
        phase_dif_ratio=1;
-       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.325165: k1_ithr=0.3048296: ithr_r=3.179318: ithr_diff=0.958386: tie_brk=0: };
+       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.323991: k1_ithr=0.3037366: ithr_r=3.18275: ithr_diff=0.9585285: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.1111111: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11413,10 +11377,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1078033: max=0.9702293: max_i=6: };
-       acts_m {avg=0.1075155: max=0.9676397: max_i=8: };
-       phase_dif_ratio=0.997331;
-       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.325562: k1_ithr=0.3048296: ithr_r=3.179372: ithr_diff=0.9583882: tie_brk=0: };
+       acts_p {avg=0.1075155: max=0.9676397: max_i=6: };
+       acts_m {avg=0.1075155: max=0.9676399: max_i=6: };
+       phase_dif_ratio=1;
+       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.323991: k1_ithr=0.3037366: ithr_r=3.18275: ithr_diff=0.9585285: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.1111111: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11435,10 +11399,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1078033: max=0.9702293: max_i=6: };
-       acts_m {avg=0.1075155: max=0.9676397: max_i=8: };
-       phase_dif_ratio=0.997331;
-       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.325562: k1_ithr=0.3048296: ithr_r=3.179372: ithr_diff=0.9583882: tie_brk=0: };
+       acts_p {avg=0.1075155: max=0.9676397: max_i=6: };
+       acts_m {avg=0.1075155: max=0.9676399: max_i=6: };
+       phase_dif_ratio=1;
+       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.323991: k1_ithr=0.3037366: ithr_r=3.18275: ithr_diff=0.9585285: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.1111111: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11458,9 +11422,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
        acts_p {avg=0.1075155: max=0.9676397: max_i=3: };
-       acts_m {avg=0.1075155: max=0.9676399: max_i=3: };
+       acts_m {avg=0.1075155: max=0.9676397: max_i=3: };
        phase_dif_ratio=1;
-       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.325165: k1_ithr=0.3048296: ithr_r=3.179318: ithr_diff=0.958386: tie_brk=0: };
+       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.323991: k1_ithr=0.3037366: ithr_r=3.18275: ithr_diff=0.9585285: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.1111111: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11480,9 +11444,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.1076594: max=0.9702293: max_i=1: };
-     acts_m {avg=0.1075155: max=0.9676399: max_i=0: };
-     phase_dif_ratio=0.9986638;
+     acts_p {avg=0.1075155: max=0.9676397: max_i=0: };
+     acts_m {avg=0.1075155: max=0.9676399: max_i=1: };
+     phase_dif_ratio=1;
      kwta {k=4: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
@@ -11510,7 +11474,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
    cycle=0;
    time=0;
    group_name="TWO";
-   trial_name="B";
+   trial_name="TWO";
    output_name=;
    sse=0;
    sum_sse=0;
@@ -11520,8 +11484,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=1165: sys=144: tot=1429332524: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=4499: sys=267: tot=1429336045: }: end={usr=4497: sys=266: tot=1429336042: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=15711: sys=5287: tot=1437240586: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=18434: sys=5436: tot=1437243519: }: end={usr=18432: sys=5435: tot=1437243517: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };

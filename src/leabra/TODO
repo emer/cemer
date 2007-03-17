@@ -6,13 +6,24 @@ commit:
 ------------
 current:
 
+* load/save all prog_lib and testsprojects & test convert
+
+* Netview going to targ instead of act
+
+* Add switch case guy: n_cases = enforced number of progels in case_code,
+  ProgExpr_List size -- use a CodeBlock for more guys!
+
 * Program Init logic: do CheckConfig *after* Init function runs!?
+
+* ProgVar FLAG: CTRL_RO -- read only in control panel
 
 * Join should be symmetric
 
 * save recover files in current project dir, with .recover name #255
 
-* load/save all prog_lib and testsprojects & test convert
+* have a way to parameterize what program to call???  nah, just make an if,then thing.
+  todo: add a switch case..?
+
 * NewLayer not working in netview
 * default type not loading (#311)
 

@@ -1185,7 +1185,7 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   if (!fr) {
     fr = t3vw->NewT3DataViewFrame();
     fr->SetName(obj->GetDisplayName()); // tis better to have one good name.. can always
-    // be changed.
+    fr->UpdateAfterEdit();		// show name
   }
   return fr;
 }

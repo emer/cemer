@@ -750,7 +750,7 @@ public:
   ProgVarRef		result_var;
   // where to store the result of the method call (optional -- can be NULL)
   ProgVarRef		obj;
-  // program variable that points to the object with the method to call
+  // #APPLY_IMMED program variable that points to the object with the method to call
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   MethodDef*		method;
@@ -786,7 +786,7 @@ INHERITED(ProgEl)
 public:
   ProgVarRef		result_var; // result variable (optional -- can be NULL)
   TypeDef*		min_type; // #NO_SHOW #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
-  TypeDef*		object_type; // #TYPE_ON_min_type The object type to look for methods on
+  TypeDef*		object_type; // #TYPE_ON_min_type #APPLY_IMMED The object type to look for methods on
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
