@@ -499,7 +499,6 @@ void iProgramEditor::Init() {
   warn_clobber = false;
 //  bg_color.set(TAI_Program->GetEditColor()); // always the same
   base = NULL;
-  md_desc = NULL;
   row = 0;
   m_show = (taMisc::ShowMembs)(taMisc::show_gui & taMisc::SHOW_CHECK_MASK);
   
@@ -591,6 +590,10 @@ void iProgramEditor::AddData(int row_, QWidget* data, QLayout* lay) {
     data->show(); // needed for rebuilds, to make the widget show*/
 }
 
+bool iProgramEditor::ShowMember(MemberDef* md) {
+  return taiPolyData::ShowMemberStat(md, show());
+}
+
 void iProgramEditor::Base_Add() {
   base->AddDataClient(this);
   // get colors for type
@@ -618,7 +621,7 @@ void iProgramEditor::Base_Add() {
   
   TypeDef* typ = GetBaseTypeDef();
   // check for a desc guy, it will consume another line
-  md_desc = typ->members.FindName("desc");
+  MemberDef* md_desc = typ->members.FindName("desc");
   if (md_desc) --lines;
   
   // make main layout
@@ -626,38 +629,67 @@ void iProgramEditor::Base_Add() {
   lay->setMargin(0);
   lay->setSpacing(0);
   
-  // add main inline controls in line 0, for whatever type
-  int flags = taiData::flgInline | taiData::flgNoUAE | taiData::flgFlowLayout;
+  // ok, we know how much room we have, so allocate and divide
+  membs.SetMinSize(lines);
+  // first, enumerate all members, to get a count
+  int mbr_cnt = 0;
+  for (int i = 0; i < typ->members.size; ++i) {
+    MemberDef* md = typ->members.FastEl(i);
+    if (ShowMember(md)) ++mbr_cnt;
+  }
+  
+  // apportion the members amongst the available lines
+  // round up slightly so first N lines get the extra odd ones
+  { 
+  int cur_ln = 0; // current line binning into
+  int n_per_ln = (mbr_cnt + (lines - 1)) / lines; // number per line, rounded up
+  for (int i = 0, i_ln = 0; i < typ->members.size; ++i) {
+    MemberDef* md = typ->members.FastEl(i);
+    if (!ShowMember(md)) continue;
+    membs.FastEl(cur_ln)->memb_el.Add(md);
+    ++i_ln;
+    if (i_ln >= n_per_ln) {
+      i_ln = 0;
+      ++cur_ln;
+    }
+  }
+  }
+  // don't forget the desc guy
+  if (md_desc) {
+     membs.SetMinSize(lines + 1);
+     membs.FastEl(lines)->memb_el.Add(md_desc);
+  }
+  
+  // add main inline controls
+  int flags = taiData::flgInline | taiData::flgNoUAE;
   if (read_only) flags |= taiData::flgReadOnly;
   
-  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, flags);
-  data_el.Add(mb_dat);
-  QWidget* rep = mb_dat->GetRep();
-  // need to manually resize the widget
-  int rep_ht = (ln_sz + ln_vmargin) * lines;
-  rep->setMinimumHeight(rep_ht);
-  rep->setMaximumHeight(rep_ht);
-  lay->addWidget(rep);
-  
-  // add desc control in line 1 for ProgEls (and any other type with a "desc" member
-  if (md_desc) {
-    row += lines;
-    //NOTE: we don't make a poly guy because it seemed impossible to get field to stretch,
-    // so we just get the field dude manually, and pack up in our own layout
+  for (int j = 0; j < membs.size; ++j) {
+    MembSet* ms = membs.FastEl(j);
+    if (ms->memb_el.size == 0) continue; // actually, is end
     QHBoxLayout* hbl = new QHBoxLayout();
     hbl->setMargin(ln_vmargin);
-    hbl->setSpacing(taiM->hsep_c);
-    QLabel* lbl = taiM->NewLabel("desc", body);
-    hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
-    lbl->show();
-    if (!read_only)
-      flags |= taiData::flgEditDialog; // nice button for popup
-    mb_dat = md_desc->im->GetDataRep(this, NULL, body, NULL, flags);
-    data_el.Add(mb_dat);
-    rep = mb_dat->GetRep();
-    hbl->addWidget(rep, 1,  (Qt::AlignVCenter)); // should consume all space
-    lay->addLayout(hbl); rep->show();
-   //AddData(cur_line++, rep, hbl);
+    hbl->setSpacing(0);
+    hbl->addSpacing(taiM->hsep_c);
+    for (int i = 0; i < ms->memb_el.size; ++i) {
+      if (i > 0)
+        hbl->addSpacing(taiM->hspc_c);
+      MemberDef* md = ms->memb_el.FastEl(i);
+      QLabel* lbl = taiM->NewLabel(md->GetLabel(), body);
+      hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
+      hbl->addSpacing(taiM->hsep_c);
+      lbl->show();
+      if (!read_only)
+        flags |= taiData::flgEditDialog; // nice button for popup
+      taiData* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
+      ms->data_el.Add(mb_dat);
+      QWidget* rep = mb_dat->GetRep();
+      hbl->addWidget(rep, 1,  (Qt::AlignVCenter)); // should consume all space
+      rep->show();
+    }
+    hbl->addStretch(); // so guys flush left
+    lay->addLayout(hbl); 
+    ++row;
   }
   
   if (meth_but_mgr->show_meth_buttons) {
@@ -665,14 +697,6 @@ void iProgramEditor::Base_Add() {
     row++;
     //AddData(cur_line++, NULL, meth_but_mgr->lay());
   }
-  // this damnable control won't seem to minsize no matter what, so we hack it
-  // by putting in dummy layouts
-/*  while (cur_line < editLines()) {
-    QWidget* wid = new QWidget(body->dataGridWidget());
-    wid->setMinimumHeight(taiM->max_control_height(taiM->ctrl_size));
-    wid->resize(1, taiM->max_control_height(taiM->ctrl_size));
-    AddData(cur_line++, wid);
-  } */
   lay->addStretch();
   
   // ok, get er!
@@ -682,8 +706,7 @@ void iProgramEditor::Base_Add() {
 void iProgramEditor::Base_Remove() {
   base->RemoveDataClient(this);
   base = NULL;
-  data_el.Reset(); // deletes the items
-  md_desc = NULL; // for tidiness
+  membs.Reset();
   meth_but_mgr->Reset(); // deletes items and widgets (buts/menus)
   body->clearLater();
   taiMiscCore::RunPending(); // note: this is critical for the editgrid clear
@@ -750,13 +773,16 @@ void iProgramEditor::GetValue() {
   
   ++m_changing;
   InternalSetModified(false); // do it first, so signals/updates etc. see us nonmodified
-  taiData* mb_dat = data_el.SafeEl(0);
-  if (mb_dat) 
-    typ->it->GetValue(mb_dat, base);
-  mb_dat = data_el.SafeEl(1);
-  if (mb_dat && md_desc) {
-    bool first_diff = true;
-    md_desc->im->GetMbrValue(mb_dat, base, first_diff);
+  bool first_diff = true;
+  for (int j = 0; j < membs.size; ++j) {
+    MembSet* ms = membs.FastEl(j);
+    for (int i = 0; i < ms->data_el.size; ++i) {
+      MemberDef* md = ms->memb_el.SafeEl(i);
+      taiData* mb_dat = ms->data_el.FastEl(i);
+      if (md && mb_dat) {
+        md->im->GetMbrValue(mb_dat, base, first_diff);
+      }
+    }
   }
   if (typ->InheritsFrom(TA_taBase)) {
     base->UpdateAfterEdit();	// hook to update the contents after an edit..
@@ -770,12 +796,15 @@ void iProgramEditor::GetImage() {
   if (!typ) return; // shouldn't happen
 //note: buttons update themselves automatically  
   ++m_changing;
-  taiData* mb_dat = data_el.SafeEl(0);
-  if (mb_dat) 
-    typ->it->GetImage(mb_dat, base);
-  mb_dat = data_el.SafeEl(1);
-  if (mb_dat && md_desc) {
-    md_desc->im->GetImage(mb_dat, base);
+  for (int j = 0; j < membs.size; ++j) {
+    MembSet* ms = membs.FastEl(j);
+    for (int i = 0; i < ms->data_el.size; ++i) {
+      MemberDef* md = ms->memb_el.SafeEl(i);
+      taiData* mb_dat = ms->data_el.FastEl(i);
+      if (md && mb_dat) {
+        md->im->GetImage(mb_dat, base);
+      }
+    }
   }
   InternalSetModified(false);
   --m_changing;

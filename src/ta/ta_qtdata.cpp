@@ -896,6 +896,16 @@ taiPolyData* taiPolyData::New(bool add_members, TypeDef* typ_, IDataHost* host_,
   return rval;
 }
 
+bool taiPolyData::ShowMemberStat(MemberDef* md, int show) {
+  if (md->HasOption("HIDDEN_INLINE") ||
+    (md->type->HasOption("HIDDEN_INLINE") && !md->HasOption("SHOW_INLINE")) 
+    )
+    return false;
+  else
+    return md->ShowMember((taMisc::ShowMembs)show);
+}
+
+
 taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par, 
   QWidget* gui_parent_, int flags)
 : inherited(typ_, host_, par, gui_parent_, flags)
@@ -912,12 +922,7 @@ taiPolyData::~taiPolyData() {
 }
 
 bool taiPolyData::ShowMember(MemberDef* md) const {
-  if (md->HasOption("HIDDEN_INLINE") ||
-    (md->type->HasOption("HIDDEN_INLINE") && !md->HasOption("SHOW_INLINE")) 
-    )
-    return false;
-  else
-    return md->ShowMember((taMisc::ShowMembs)show);
+  return ShowMemberStat(md, show);
 }
 
 void taiPolyData::AddChildMember(MemberDef* md) {

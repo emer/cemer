@@ -322,6 +322,7 @@ INHERITED(taiCompData)
 public:
   static taiPolyData*	New(bool add_members, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags = 0); // set add_members false to manually add members, otherwise all eligible typ members added
+  static bool 		ShowMemberStat(MemberDef* md, int show); // primarily for ProgEdit so we can use the exact same algorithm
   
   Member_List		memb_el;	// member elements (1:1 with data_el)
   int			show;

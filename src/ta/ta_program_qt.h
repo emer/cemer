@@ -211,9 +211,9 @@ protected:
   iColor		bg_color_dark; // for edit area
   bool			m_modified;
   bool			warn_clobber; // set if we get a notify and are already modified
-  taiDataList 		data_el; // data elements, usually only 1 or 2: an inline, and a desc
   TAPtr			base; // no need for smartref, because we are a dlc
-  MemberDef*		md_desc; // if we manually added a data item in line 2 (ie for desc)
+  MembSet_List		membs; // the member items, one set per line
+  
   int 			row;
   int			m_show;
  
@@ -221,6 +221,7 @@ protected:
    // add the data widget to the row; if lay specified, that is added instead
   virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
   virtual void		Base_Add(); // adds controls etc for base
+  bool			ShowMember(MemberDef* md);
   
   void			InternalSetModified(bool value); // does all the gui config
   void 			UpdateButtons();
