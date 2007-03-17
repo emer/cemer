@@ -129,7 +129,8 @@ public:
     flgEditDialog	= 0x100,   // for taiField, enables dialog for EDIT_DIALOG directive; for token menu, adds ... edit
     flgNoUAE		= 0x200,  // for things like polydata, don't issue an UpdateAfterEdit
     flgToggleReadOnly	= 0x400, // for taiPlusToggle, makes the toggle itself ro
-    flgAutoApply	= 0x800  // when user finishes editing this control, auto apply the edits
+    flgAutoApply	= 0x800,  // when user finishes editing this control, auto apply the edits
+    flgFlowLayout	= 0x1000 // for polyguys (inline) us a flowlayout, not hboxlayout
   };
 
   TypeDef* 		typ;		// type for the gui object

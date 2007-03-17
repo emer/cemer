@@ -23,12 +23,14 @@
 #include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QScrollBar>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
 #include "icombobox.h"
 #include "ieditgrid.h"
 #include "ilineedit.h"
+#include "iscrollarea.h"
 #include "ispinbox.h"
 #include "itreewidget.h"
 
@@ -485,6 +487,7 @@ iProgramEditor::~iProgramEditor() {
 // just delete controls -- a Higher Power had to have saved before
 //  setEditNode(NULL); // autosave here too
 }
+#define GRID_VMARGIN 1
 
 void iProgramEditor::Init() {
   m_changing = 0;
@@ -499,16 +502,22 @@ void iProgramEditor::Init() {
   
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
+  layOuter->setSpacing(taiM->vsep_c);
   
-  layEdit = new QVBoxLayout(layOuter);
-  layEdit->setMargin(0);
-  layEdit->addSpacing(taiM->vsep_c);
-  
-  body = new iEditGrid(false, false, 2, 1, editLines(), 1, this); //note: intrinsically sizes to 2 rows minimum
-  body->setMinVisibleRows(editLines());
-  body->setRowHeight(taiM->max_control_height(taiM->ctrl_size));
-  layEdit->addWidget(body, 1); // give all the space to this guy
-  layEdit->addSpacing(taiM->vsep_c);
+  scrBody = new iScrollArea(this);
+  scrBody->setWidgetResizable(true); 
+  scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  body = new iStripeWidget; 
+  scrBody->setWidget(body);
+//  body = new iEditGrid(false, false, 2, GRID_VMARGIN, editLines(), 1, this);
+//  body->setRowHeight(taiM->max_control_height(taiM->ctrl_size));
+//  body->setMinVisibleRows(editLines());
+  int line_ht = taiM->max_control_height(taiM->ctrl_size) + (2 * GRID_VMARGIN);
+  body->setStripeHeight(line_ht);
+  int body_ht = line_ht * editLines();
+  body->setMinimumHeight(body_ht);
+  scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
+  layOuter->addWidget(scrBody); 
 
   meth_but_mgr = new iMethodButtonMgr(this); 
   
@@ -525,7 +534,7 @@ void iProgramEditor::Init() {
   btnRevert = new HiLightButton("&Revert", this);
   layButtons->addWidget(btnRevert);
   layButtons->addSpacing(4);
-  layEdit->addLayout(layButtons);
+  layOuter->addLayout(layButtons);
   
   items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
@@ -560,7 +569,7 @@ void iProgramEditor::Init() {
 void iProgramEditor::AddData(int row_, QWidget* data, QLayout* lay) {
   // just get the height right from the strip widget
 //  layBody->setRowMinimumHeight(row, body->stripeHeight()); 
-  row = row_;
+/*obs,nuke  row = row_;
   if (lay)
     body->setDataLayout(row, 0, lay);
   else {
@@ -569,9 +578,13 @@ void iProgramEditor::AddData(int row_, QWidget* data, QLayout* lay) {
     hbl->addWidget(data, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
     hbl->addStretch();
     body->setDataLayout(row, 0, hbl);
+  }  
+  foreach (QObject* obj, children()) {
+    obj->deleteLater();
   }
+
   if (data)
-    data->show(); // needed for rebuilds, to make the widget show
+    data->show(); // needed for rebuilds, to make the widget show*/
 }
 
 void iProgramEditor::Base_Add() {
@@ -580,53 +593,81 @@ void iProgramEditor::Base_Add() {
   const iColor* bgc = base->GetEditColorInherit(); 
   setEditBgColor(bgc);
 
-  int flags = taiData::flgInline | taiData::flgNoUAE;
-  if (read_only) flags |= taiData::flgReadOnly;
-  
   // metrics for laying out
-  int lines = editLines();
+  int lines = editLines(); // amount of space, in lines, available
   int cur_line = 0;
   
   // do methods first, so we know whether to show, and thus how many memb lines we have
   QHBoxLayout* layMeths = new QHBoxLayout; // def margins ok
   layMeths->setMargin(0); // spacing prob ok;
   layMeths->addSpacing(2); //no stretch: we left-justify
-  meth_but_mgr->Constr(body->dataGridWidget(), layMeths, base);
+  meth_but_mgr->Constr(body, layMeths, base);
   if (meth_but_mgr->show_meth_buttons) {
-    lines -= 1;
+    --lines;
     layMeths->addStretch();
+  } else {
+    delete layMeths;
+    layMeths = NULL;
   }
   
-  // add main inline controls in line 0, for whatever type
   TypeDef* typ = GetBaseTypeDef();
-  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body->dataGridWidget(), NULL, flags);
+  // check for a desc guy, it will consume another line
+  md_desc = typ->members.FindName("desc");
+  if (md_desc) --lines;
+  
+  // make main layout
+  QVBoxLayout* lay = new QVBoxLayout(body);
+  lay->setMargin(0);
+  lay->setSpacing(0);
+  
+  // add main inline controls in line 0, for whatever type
+  int flags = taiData::flgInline | taiData::flgNoUAE | taiData::flgFlowLayout;
+  if (read_only) flags |= taiData::flgReadOnly;
+  
+  taiData* mb_dat = typ->it->GetDataRep(this, NULL, body, NULL, flags);
   data_el.Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
-  AddData(cur_line++, rep);
+  // need to manually resize the widget
+  int rep_ht = (taiM->max_control_height(taiM->ctrl_size) + GRID_VMARGIN)
+    * lines;
+  rep->setMinimumHeight(rep_ht);
+  rep->setMaximumHeight(rep_ht);
+  lay->addWidget(rep);
   
   // add desc control in line 1 for ProgEls (and any other type with a "desc" member
-  md_desc = typ->members.FindName("desc");
   if (md_desc) {
     //NOTE: we don't make a poly guy because it seemed impossible to get field to stretch,
     // so we just get the field dude manually, and pack up in our own layout
     QHBoxLayout* hbl = new QHBoxLayout();
-    hbl->setMargin(0);
+    hbl->setMargin(GRID_VMARGIN);
     hbl->setSpacing(taiM->hsep_c);
-    QLabel* lbl = taiM->NewLabel("desc", body->dataGridWidget());
+    QLabel* lbl = taiM->NewLabel("desc", body);
     hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
     lbl->show();
     if (!read_only)
       flags |= taiData::flgEditDialog; // nice button for popup
-    mb_dat = md_desc->im->GetDataRep(this, NULL, body->dataGridWidget(), NULL, flags);
+    mb_dat = md_desc->im->GetDataRep(this, NULL, body, NULL, flags);
     data_el.Add(mb_dat);
     rep = mb_dat->GetRep();
     hbl->addWidget(rep, 1,  (Qt::AlignVCenter)); // should consume all space
-    AddData(cur_line++, rep, hbl);
+    lay->addLayout(hbl); rep->show();
+   //AddData(cur_line++, rep, hbl);
   }
   
   if (meth_but_mgr->show_meth_buttons) {
-    AddData(cur_line++, NULL, meth_but_mgr->lay());
+    lay->addLayout(meth_but_mgr->lay());
+    //AddData(cur_line++, NULL, meth_but_mgr->lay());
   }
+  // this damnable control won't seem to minsize no matter what, so we hack it
+  // by putting in dummy layouts
+/*  while (cur_line < editLines()) {
+    QWidget* wid = new QWidget(body->dataGridWidget());
+    wid->setMinimumHeight(taiM->max_control_height(taiM->ctrl_size));
+    wid->resize(1, taiM->max_control_height(taiM->ctrl_size));
+    AddData(cur_line++, wid);
+  } */
+  lay->addStretch();
+  
   // ok, get er!
   GetImage();
 }

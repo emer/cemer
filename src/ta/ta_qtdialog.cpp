@@ -1053,7 +1053,7 @@ void taiDataHost::Constr_Box() {
   scrBody = new iScrollArea(scr_par);
   scrBody->viewport()->setPaletteBackgroundColor(*bg_color_dark);
 //Qt3  scrBody->setResizePolicy(Q3ScrollView::AutoOneFit);
-  scrBody->setWidgetResizable(true); // TODO: confirm
+  scrBody->setWidgetResizable(true); 
   body = new iStripeWidget();
   scrBody->setWidget(body);
   if (bg_color != NULL) {

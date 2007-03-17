@@ -856,8 +856,7 @@ bool taRootBase::Startup_InitTA_folders() {
   // note: Qt docs say it returns the '/' version...
   if (app_dir.endsWith("/bin") || app_dir.endsWith("\bin")) {
     app_dir = app_dir.at(0, app_dir.length() - 4);
-    if (isAppDir(app_dir))
-      goto have_app_dir;
+    if (isAppDir(app_dir)) goto have_app_dir;
   }
 #elif defined(TA_OS_MAC)
 /*
@@ -876,16 +875,14 @@ bool taRootBase::Startup_InitTA_folders() {
       if (app_dir.endsWith("/bin")) {
         app_dir = app_dir.at(0, app_dir.length() - 4);
       }
-      if (isAppDir(app_dir))
-        goto have_app_dir;
+      if (isAppDir(app_dir)) goto have_app_dir;
     }
   }
   }
   // seemingly not in a bundle, so try raw bin
   if (app_dir.endsWith("/bin")) {
     app_dir = app_dir.at(0, app_dir.length() - 4);
-    if (isAppDir(app_dir))
-      goto have_app_dir;
+    if (isAppDir(app_dir)) goto have_app_dir;
   }
     
 #else // non-Mac Unix
@@ -894,25 +891,33 @@ bool taRootBase::Startup_InitTA_folders() {
 */
   if (app_dir.endsWith("/bin")) {
     app_dir = app_dir.at(0, app_dir.length() - 4);
-    if (isAppDir(app_dir))
-      goto have_app_dir;
+    if (isAppDir(app_dir)) goto have_app_dir;
   }
 #endif
 
   // common code for failure to grok the app path
   app_dir = QCoreApplication::applicationDirPath();
-  
-  {
   // first, maybe it is actually the exe's folder itself? -- probe with known subfolder
-  if (isAppDir(app_dir))
-    goto have_app_dir;
+  if (isAppDir(app_dir)) goto have_app_dir;
   
   // is it the current directory? -- probe with known subfolder
   app_dir = QDir::currentPath();
-  if (isAppDir(app_dir))
-    goto have_app_dir;
-  }
+  if (isAppDir(app_dir)) goto have_app_dir;
   
+#ifdef TA_OS_UNIX
+  // on Unix platforms, check the usually folders
+  app_dir = "/usr/local/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = "/usr/local/share/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = "/usr/share/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = "/usr/local/src/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = "/usr/share/src/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+#endif
+
 #ifdef DEBUG
   cerr << "NOTE: default app_dir logic did not find the app_dir.\n";
 #endif  
@@ -958,7 +963,7 @@ bool taRootBase::Startup_InitTA_getMissingAppDir() {
     
     //ask user to supply the application folder
     // note: 1) we can't use our own gui stuff yet; 2) we may be in nogui mode!
-    String msg = "The root application folder could not be found -- would you like to provide it yourself? (the application will close otherwise)";
+    String msg = "The folder where the application was installed could not be found -- would you like to find it yourself? (the application will close otherwise)";
     
     if (taMisc::use_gui) {
       if (!prompted) {

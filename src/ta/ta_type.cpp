@@ -388,6 +388,7 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
 
 String	taMisc::app_name = "ta_css"; // replaced with actual name at startup
 String	taMisc::app_lib_name; // set in the main.cpp file
+String	taMisc::default_app_install_folder_name = "pdp++";
 String	taMisc::org_name = "ccnlab"; 
 #ifdef SVN_REV
 String	taMisc::version = "3.9.0-" + String(SVN_REV);

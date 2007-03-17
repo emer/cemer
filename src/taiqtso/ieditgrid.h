@@ -38,6 +38,8 @@ public:
   void			setTopMargin(int val);
   void			setBottomMargin(int val); // helpful to insure room for scrollbars
 
+  void			clearLater(); // delete all objects
+
   iStripeWidget(QWidget* parent = NULL);
   ~iStripeWidget();
 protected:

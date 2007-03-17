@@ -153,8 +153,8 @@ INHERITED(QWidget)
   Q_OBJECT
 public:
   QVBoxLayout*		layOuter;
-  QVBoxLayout*		  layEdit;
-  iEditGrid*	    	  body; // container for the actual taiData items
+  QScrollArea*		  scrBody;
+  iStripeWidget*	  body; // container for the actual taiData items
   iMethodButtonMgr*	    meth_but_mgr; // note: not a widget
 //QHBoxLayout*		  layButtons;
   HiLightButton*	    btnApply;

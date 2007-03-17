@@ -294,8 +294,13 @@ void taiCompData::ChildRemove(taiData* child) {
 }
 
 void taiCompData::InitLayout() { //virtual/overridable
-  lay = new QHBoxLayout(GetRep());
-  lay->setMargin(0); // in Qt4 it adds style-dependent defaults
+  if (hasFlowLayout()) {
+    lay = new iFlowLayout(GetRep(), 0, -1, (Qt::AlignLeft));
+    lay->setMargin(0); // in Qt4 it adds style-dependent defaults
+  } else {
+    lay = new QHBoxLayout(GetRep());
+    lay->setMargin(0); // in Qt4 it adds style-dependent defaults
+  }
   last_spc = taiM->hsep_c; // give it a bit of room
 }
 
@@ -304,20 +309,36 @@ void taiCompData::AddChildMember(MemberDef* md) {
 
   // add caption
   String nm = md->GetLabel();
+  QWidget* wid;
+  if (hasFlowLayout()) {
+    wid = new QWidget(GetRep());
+  } else {
+    wid = GetRep(); // directly into the guy
+  }
 //QLabel* lbl = taiM->NewLabel(nm, GetRep());
-  iLabel* lbl = MakeLabel(nm, GetRep());
+  iLabel* lbl = MakeLabel(nm, wid);
 
-  AddChildWidget(lbl, 1); // taiM->hsep_c);
 
   // add gui representation of data
-  taiData* mb_dat = md->im->GetDataRep(host, this, m_rep); //adds to list
+  taiData* mb_dat = md->im->GetDataRep(host, this, wid); //adds to list
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
   connect(mb_dat, SIGNAL(settingHighlight(bool)),
 	  lbl, SLOT(setHighlight(bool)) );
   connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),
 	  this, SLOT(ChildDataChanged(taiData*)) );
-  AddChildWidget(ctrl, taiM->hsep_c);
+	  
+  if (hasFlowLayout()) {
+    QHBoxLayout* hbl = new QHBoxLayout(wid);
+    hbl->setMargin(0);
+    hbl->setSpacing(taiM->hsep_c);
+    hbl->addWidget(lbl);
+    hbl->addWidget(ctrl);
+    AddChildWidget(wid, -1); // no explicit seps
+  } else {
+    AddChildWidget(lbl, 1); // taiM->hsep_c);
+    AddChildWidget(ctrl, taiM->hsep_c);
+  }
 
   // add description text tooltips
   if (!desc.empty()) {
@@ -327,8 +348,10 @@ void taiCompData::AddChildMember(MemberDef* md) {
 }
 
 void taiCompData::EndLayout() { //virtual/overridable
-  if (last_spc != -1)
-    lay->addStretch();
+
+  if (!hasFlowLayout() && (last_spc != -1)) {
+    layHBox()->addStretch();
+  }
 }
 
 void taiCompData::AddChildWidget(QWidget* child_widget, int space_after,
@@ -343,10 +366,19 @@ void taiCompData::AddChildWidget(QWidget* child_widget, int space_after,
 void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing,
   int stretch) 
 { 
-  if (spacing != -1)
-    lay->addSpacing(last_spc);
-  lay->addWidget(child_widget, stretch, (Qt::AlignLeft | Qt::AlignVCenter));
+  if (hasFlowLayout()) {
+    layFlow()->addWidget(child_widget);
+  } else {
+    if (spacing != -1)
+      lay->addItem(new QSpacerItem(last_spc, 0, QSizePolicy::Fixed));
+    layHBox()->addWidget(child_widget, stretch, (Qt::AlignLeft | Qt::AlignVCenter));
+  }
   child_widget->show();
+}
+
+
+bool taiCompData::hasFlowLayout() const {
+  return (mflags & flgFlowLayout);
 }
 
 QWidget* taiCompData::widgets(int index) {
@@ -361,65 +393,10 @@ void taiCompData::ChildDataChanged(taiData* sender) {
   emit ChildDataChangedNotify(sender);
 }
 
-/* NN:
-class ScrollFieldEditor : public ivFieldEditor {
-public:
-  taiData* data;
-  int	drawn;
-  ScrollFieldEditor(taiData* d,const char* strval,ivWidgetKit* w, ivStyle* st);
-  void undraw();
-  void allocate(ivCanvas* c, const ivAllocation& a,ivExtension& ext);
-  void keystroke(const ivEvent& e);
-  ivInputHandler* focus_in();
-};
-
-ScrollFieldEditor::ScrollFieldEditor(taiData* d,const char* strval,ivWidgetKit* w, ivStyle* st)
-: ivFieldEditor(strval,w,st,NULL){
-  data = d;
-  drawn = false;
-}
-
-void ScrollFieldEditor::allocate(ivCanvas* c, const ivAllocation& a,
-				 ivExtension& ext) {
-  drawn = true;
-  ivFieldEditor::allocate(c,a,ext);
-}
-
-void ScrollFieldEditor::undraw(){
-  drawn = false;
-  ivFieldEditor::undraw();
-}
-
-ivInputHandler* ScrollFieldEditor::focus_in() {
-  ivInputHandler* result = ivFieldEditor::focus_in();
-  if(data != NULL) {
-  //NOTE: following was from when parent was dialog...
-    if(!drawn && (data->dialog != NULL) && (data->dialog->state == taiDialog::ACTIVE)) {
-      data->dialog->Scroll();
-    }
-  }
-  //  cerr << "focused" << endl << flush;
-  return result;
-}
-
-void ScrollFieldEditor::keystroke(const ivEvent& e) {
-  if((data == NULL) || (data->dialog == NULL)) {
-    ivFieldEditor::keystroke(e);
-    return;
-  }                 dialog
-  if(data->dialog->dialog->special_key(e))
-    return;
-  String curval = text()->string();
-  ivFieldEditor::keystroke(e);
-  if((data != NULL) && (curval != text()->string())) {
-    data->DataChanged();
-  }
-} */ // NN
 
 //////////////////////////////////
 //	taiField		//
 //////////////////////////////////
-
 
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
  : taiData(typ_, host_, par, gui_parent_, flags_)

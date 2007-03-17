@@ -62,6 +62,7 @@ public:
   taiDataList		data_el;
 
   QLayout*		GetLayout() {return (QLayout*)lay;} // override
+  bool			hasFlowLayout() const; // else has hbox (the default)
   QWidget*		widgets(int index);
   int			widgetCount();
 
@@ -78,8 +79,10 @@ signals:
   // emitted whenever a child does DataChangedNotify
 #endif
 protected:
-  QHBoxLayout*		lay;	// may be ignored/unused by subclasses
+  QLayout*		lay;	// may be ignored/unused by subclasses
   int			last_spc;	// space after last widget, -1 = none
+  inline iFlowLayout*	layFlow() const {return (iFlowLayout*)lay;} // only if hasFlow
+  inline QHBoxLayout*	layHBox() const {return (QHBoxLayout*)lay;} // only if !hasFlow
   override void		ChildAdd(taiData* child);
   override void		ChildRemove(taiData* child);
   virtual void		AddChildWidget_impl(QWidget* child_widget, int spacing,
