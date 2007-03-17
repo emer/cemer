@@ -1398,6 +1398,11 @@ void taiDataHost::Revert_force() {
   Unchanged();
   Revert();			// use real revert to be sure..
 }
+
+taMisc::ShowMembs taiDataHost::show() const {
+  return taMisc::show_gui;
+}
+
 void taiDataHost::Unchanged() {
   modified = false;
   //TODO: set gui to unchanged state
@@ -2100,10 +2105,6 @@ void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
       break;
     }
   } */
-}
-
-taMisc::ShowMembs taiEditDataHost::show() const {
-  return taMisc::show_gui;
 }
 
 bool taiEditDataHost::ShowMember(MemberDef* md) const {

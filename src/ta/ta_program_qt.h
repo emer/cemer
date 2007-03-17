@@ -168,6 +168,7 @@ public:
   int			editLines() const; // number of edit lines (typ 4) 
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
   void 			setEditBgColor(const iColor* value); // set bg for edit, null for default
+  void			setShow(int value); // only used by expert toggle
   virtual void		Refresh(); // manual refresh
 
   iProgramEditor(QWidget* parent = NULL); //
@@ -192,6 +193,8 @@ public: // IDataHost i/f -- some delegate up to mommy
   bool			isConstructed() {return true;}
   bool			isModal() {return false;} // never for us
   bool			isReadOnly() {return read_only;}
+  taMisc::ShowMembs 	show() const {return (taMisc::ShowMembs)m_show;} 
+    // used by polydata
   iMainWindowViewer* 	window() const;
   void*			Base() {return (void*)base;} // base of the object
   TypeDef*		GetBaseTypeDef(); // TypeDef on the base, for casting
@@ -201,6 +204,8 @@ public: // IDataHost i/f -- some delegate up to mommy
 
 
 protected:
+  int			ln_sz; // const, the line size, without margins
+  int			ln_vmargin; // const, margin, typ 1 
   int			m_changing; // for suppressing spurious notifies
   iColor		bg_color; // for edit area
   iColor		bg_color_dark; // for edit area
@@ -209,7 +214,8 @@ protected:
   taiDataList 		data_el; // data elements, usually only 1 or 2: an inline, and a desc
   TAPtr			base; // no need for smartref, because we are a dlc
   MemberDef*		md_desc; // if we manually added a data item in line 2 (ie for desc)
-  int			row; // mostly for bg coloring
+  int 			row;
+  int			m_show;
  
   void 			AddData(int row, QWidget* data, QLayout* lay = NULL); 
    // add the data widget to the row; if lay specified, that is added instead
@@ -248,6 +254,9 @@ protected:
   override void		OnWindowBind_impl(iTabViewer* itv);
   override void		Refresh_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
+  
+protected slots:
+  void			mb_Expert(bool checked); // expert button on minibar
 };
 
 

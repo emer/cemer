@@ -350,6 +350,7 @@ public: // IDataLinkClient i/f -- note: only registered though for taiEDH and la
 
 public: // IDataHost i/f
   const iColor* colorOfCurRow() const {return colorOfRow(cur_row);} 
+  taMisc::ShowMembs	show() const; // legacy -- just returns the app value
   bool  	HasChanged() {return modified;}	
   bool		isConstructed() {int s = state & STATE_MASK;
     return ((s >= CONSTRUCTED) && (s < ZOMBIE));}
@@ -507,7 +508,6 @@ public:
   
   EditDataPanel*	dataPanel() {return panel;} // #IGNORE
   override void 	guiParentDestroying() {panel = NULL;}
-  taMisc::ShowMembs	show() const; // legacy -- just returns the app value
   
   bool			SetShow(int value, bool no_refresh = false); // change show value; returns true if we rebuilt/reshowed dialog
 

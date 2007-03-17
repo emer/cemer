@@ -900,8 +900,8 @@ taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags)
 : inherited(typ_, host_, par, gui_parent_, flags)
 {
-  if (host_ && (host_->GetTypeDef()->InheritsFrom(TA_taiEditDataHost))) {
-    show = (dynamic_cast<taiEditDataHost*>(host_))->show();
+  if (host_) {
+    show = host_->show();
   } else {
     show = taMisc::show_gui;
   }

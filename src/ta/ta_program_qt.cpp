@@ -487,9 +487,12 @@ iProgramEditor::~iProgramEditor() {
 // just delete controls -- a Higher Power had to have saved before
 //  setEditNode(NULL); // autosave here too
 }
-#define GRID_VMARGIN 1
 
 void iProgramEditor::Init() {
+  // layout constants
+  ln_sz = taiM->max_control_height(taiM->ctrl_size); 
+  ln_vmargin = 1; 
+
   m_changing = 0;
   read_only = false;
   m_modified = false;
@@ -498,13 +501,14 @@ void iProgramEditor::Init() {
   base = NULL;
   md_desc = NULL;
   row = 0;
+  m_show = (taMisc::ShowMembs)(taMisc::show_gui & taMisc::SHOW_CHECK_MASK);
   
   
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   layOuter->setSpacing(taiM->vsep_c);
   
-  scrBody = new iScrollArea(this);
+  scrBody = new QScrollArea(this);
   scrBody->setWidgetResizable(true); 
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   body = new iStripeWidget; 
@@ -512,10 +516,10 @@ void iProgramEditor::Init() {
 //  body = new iEditGrid(false, false, 2, GRID_VMARGIN, editLines(), 1, this);
 //  body->setRowHeight(taiM->max_control_height(taiM->ctrl_size));
 //  body->setMinVisibleRows(editLines());
-  int line_ht = taiM->max_control_height(taiM->ctrl_size) + (2 * GRID_VMARGIN);
+  int line_ht = ln_sz + (2 * ln_vmargin);
   body->setStripeHeight(line_ht);
   int body_ht = line_ht * editLines();
-  body->setMinimumHeight(body_ht);
+//  body->setMinimumHeight(body_ht);
   scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
   layOuter->addWidget(scrBody); 
 
@@ -595,12 +599,14 @@ void iProgramEditor::Base_Add() {
 
   // metrics for laying out
   int lines = editLines(); // amount of space, in lines, available
-  int cur_line = 0;
+  row = 0;
   
   // do methods first, so we know whether to show, and thus how many memb lines we have
   QHBoxLayout* layMeths = new QHBoxLayout; // def margins ok
-  layMeths->setMargin(0); // spacing prob ok;
+  layMeths->setMargin(0); 
   layMeths->addSpacing(2); //no stretch: we left-justify
+  layMeths->addItem(new QSpacerItem(0, ln_sz + (2 * ln_vmargin), 
+    QSizePolicy::Fixed, QSizePolicy::Fixed));
   meth_but_mgr->Constr(body, layMeths, base);
   if (meth_but_mgr->show_meth_buttons) {
     --lines;
@@ -628,18 +634,18 @@ void iProgramEditor::Base_Add() {
   data_el.Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
   // need to manually resize the widget
-  int rep_ht = (taiM->max_control_height(taiM->ctrl_size) + GRID_VMARGIN)
-    * lines;
+  int rep_ht = (ln_sz + ln_vmargin) * lines;
   rep->setMinimumHeight(rep_ht);
   rep->setMaximumHeight(rep_ht);
   lay->addWidget(rep);
   
   // add desc control in line 1 for ProgEls (and any other type with a "desc" member
   if (md_desc) {
+    row += lines;
     //NOTE: we don't make a poly guy because it seemed impossible to get field to stretch,
     // so we just get the field dude manually, and pack up in our own layout
     QHBoxLayout* hbl = new QHBoxLayout();
-    hbl->setMargin(GRID_VMARGIN);
+    hbl->setMargin(ln_vmargin);
     hbl->setSpacing(taiM->hsep_c);
     QLabel* lbl = taiM->NewLabel("desc", body);
     hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
@@ -656,6 +662,7 @@ void iProgramEditor::Base_Add() {
   
   if (meth_but_mgr->show_meth_buttons) {
     lay->addLayout(meth_but_mgr->lay());
+    row++;
     //AddData(cur_line++, NULL, meth_but_mgr->lay());
   }
   // this damnable control won't seem to minsize no matter what, so we hack it
@@ -809,12 +816,14 @@ void iProgramEditor::Revert() {
 }
 
 void iProgramEditor::Refresh() {
+  // to refresh, we just simulate a remove/add
   //NOTE: for refresh, we just update the items (notify should always work for add/delete)
   items->Refresh();
   if (!m_modified) {
-    GetImage();
-    if (meth_but_mgr->show_meth_buttons) {
-      meth_but_mgr->GetImage();
+    taBase* tbase = base;
+    if (tbase) {
+      setEditNode(NULL);
+      setEditNode(tbase);
     }
   }
 }
@@ -842,6 +851,13 @@ void iProgramEditor::setEditNode(TAPtr value, bool autosave) {
   if (base) Base_Add();
 }
 
+void iProgramEditor::setShow(int value) {
+  value = (value & taMisc::SHOW_CHECK_MASK);
+  if (m_show == value) return;
+  m_show = value;
+  Refresh();
+}
+
 void iProgramEditor::UpdateButtons() {
   if (base && m_modified) {
     btnApply->setEnabled(true);
@@ -866,6 +882,15 @@ iProgramPanelBase::iProgramPanelBase(taiDataLink* dl_)
 {
   pe = new iProgramEditor();
   setCentralWidget(pe); //sets parent
+  // add view button(s)
+  QCheckBox* but = new QCheckBox;
+  but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
+  but->setFont(taiM->buttonFont(taiMisc::sizSmall));
+  but->setText("expert");
+  but->setToolTip("whether to show items marked 'expert' in the program editor");
+  but->setChecked(!(taMisc::show_gui & taMisc::NO_EXPERT));
+  AddMinibarWidget(but);
+  connect(but, SIGNAL(clicked(bool)), this, SLOT(mb_Expert(bool)) );
 }
 
 void iProgramPanelBase::DataChanged_impl(int dcr, void* op1_, void* op2_) {
@@ -875,6 +900,16 @@ void iProgramPanelBase::DataChanged_impl(int dcr, void* op1_, void* op2_) {
 
 bool iProgramPanelBase::HasChanged() {
   return pe->HasChanged();
+}
+
+void iProgramPanelBase::mb_Expert(bool checked) {
+  int show = pe->show();
+  if (checked) {
+    show = show & ~taMisc::NO_EXPERT;
+  } else {
+    show = show | taMisc::NO_EXPERT;
+  }
+  pe->setShow(show);
 }
 
 void iProgramPanelBase::OnWindowBind_impl(iTabViewer* itv) {
