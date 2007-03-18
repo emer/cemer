@@ -376,9 +376,6 @@ public:
   ProgVarRef	    src_data_var;	// program variable pointing to source data for operation
   ProgVarRef	    dest_data_var;	// #NULL_OK program variable pointing to destination (result) data for operation (if NULL, a new one will be automatically created)
 
-  DataTableRef	    src_data;	// #HIDDEN #NO_SAVE #OBS obsolete todo: remove
-  DataTableRef	    dest_data;	// #HIDDEN #NO_SAVE #OBS obsolete todo: remove
-
   virtual DataTable* GetSrcData(); // get source data table pointer from src_data_var (or NULL)
   virtual DataTable* GetDestData(); // get dsource data table pointer from dest_data_var (or NULL)
 
@@ -401,7 +398,7 @@ INHERITED(DataProg)
 public:
   DataSortSpec		sort_spec; // #SHOW_TREE data sorting specification
 
-  virtual DataOpEl* AddColumn(const String& col_name) { return sort_spec.AddColumn(col_name, src_data); }
+  virtual DataOpEl* AddColumn(const String& col_name) { return sort_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the sort_spec list of ops columns 
@@ -426,7 +423,7 @@ INHERITED(DataProg)
 public:
   DataGroupSpec		group_spec; // #SHOW_TREE data grouping specification
 
-  virtual DataOpEl* AddColumn(const String& col_name) { return group_spec.AddColumn(col_name, src_data); }
+  virtual DataOpEl* AddColumn(const String& col_name) { return group_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the group_spec list of ops columns 
@@ -450,7 +447,7 @@ INHERITED(DataProg)
 public:
   DataSelectSpec	select_spec; // #SHOW_TREE data selection specification
 
-  virtual DataOpEl* AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, src_data); }
+  virtual DataOpEl* AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
@@ -474,7 +471,7 @@ INHERITED(DataProg)
 public:
   DataOpList		select_spec; // #SHOW_TREE columns to select
 
-  virtual DataOpEl* AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, src_data); }
+  virtual DataOpEl* AddColumn(const String& col_name) { return select_spec.AddColumn(col_name, GetSrcData()); }
   // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
@@ -500,8 +497,6 @@ public:
   ProgVarRef		src_b_data_var;	// variable pointing to second source data for operation
   DataJoinSpec		join_spec; 	// #SHOW_TREE data grouping specification
 
-
-  DataTableRef		src_b_data;	// #HIDDEN #NO_SAVE #OBS obsolete todo: remove
 
   virtual DataTable* GetSrcBData(); // get source data table pointer from src_data_var (or NULL)
 
@@ -533,9 +528,9 @@ public:
 
   override taList_impl*	children_() {return &loop_code;}	
 
-  virtual DataOpEl* AddSrcColumn(const String& col_name) { return src_cols.AddColumn(col_name, src_data); }
+  virtual DataOpEl* AddSrcColumn(const String& col_name) { return src_cols.AddColumn(col_name, GetSrcData()); }
   // #CAT_DataOp #BUTTON add a new source column to operate on
-  virtual DataOpEl* AddDestColumn(const String& col_name) { return dest_cols.AddColumn(col_name, dest_data); }
+  virtual DataOpEl* AddDestColumn(const String& col_name) { return dest_cols.AddColumn(col_name, GetDestData()); }
   // #CAT_DataOp #BUTTON add a new dest column to operate on
   virtual void	AddAllSrcColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 

@@ -198,24 +198,6 @@ int DataCol::imageComponents() const {
 void DataCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Init();
-
-  // convert from load -- remove asap!
-  if(col_flags == DC_NONE) {	// todo: remove -- highly unlikely both flags are off so set defaults
-    col_flags = (ColFlags)(SAVE_ROWS | SAVE_DATA);
-  }
-  else if(col_flags == CALC) {
-    col_flags = (ColFlags)(CALC | SAVE_ROWS | SAVE_DATA);
-  }
-
-  if(HasColFlag(NO_SAVE_DATA)) {
-    ClearColFlag(SAVE_DATA);	// todo: remove this -- backward compat -- only used if false (non default)
-    SetColFlag(SAVE_ROWS);		// should be set
-    ClearColFlag(NO_SAVE_DATA);
-  }
-  if(HasColFlag(NO_SAVE)) {
-    ClearColFlag(SAVE_ROWS);	// todo: remove this -- backward compat -- only used if false (non default)
-    ClearColFlag(NO_SAVE);
-  }
 }
 
 void DataCol::DataChanged(int dcr, void* op1, void* op2) {
@@ -602,16 +584,6 @@ bool DataTable::CopyColRow(int dest_col, int dest_row, const DataTable& src, int
 void DataTable::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  if(data_flags == DF_NONE) {	// todo: remove -- highly unlikely both flags are off so set defaults
-    data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
-  }
-
-  if(HasDataFlag(NO_SAVE_DATA)) {
-    ClearDataFlag(SAVE_ROWS);	// todo: remove this -- backward compat -- only used if false (non default)
-    SetDataFlag(AUTO_CALC);	// should be set
-    ClearDataFlag(NO_SAVE_DATA);
-  }
-    
   UniqueColNames();
   // the following is likely redundant:
   //  UpdateColCalcs();

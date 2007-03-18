@@ -84,15 +84,6 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  if(flags == PV_NONE) {	// unlikely, reinstate defaults todo: remove!
-    flags = (VarFlags)(CTRL_PANEL | NULL_CHECK);
-  }
-  if(HasVarFlag(NO_CTRL_PANEL)) { // todo: obsolete, remove
-    ClearVarFlag(CTRL_PANEL);
-    SetVarFlag(NULL_CHECK);	// wasn't set before, should be
-    ClearVarFlag(NO_CTRL_PANEL);
-  }
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -784,8 +775,6 @@ void ProgArg::Copy_(const ProgArg& cp) {
 
 void ProgArg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  
-  STRING_TO_PROGEXPR_CVT(value, expr);
 }
 
 void ProgArg::UpdateFromVar(const ProgVar& cp) {
@@ -902,7 +891,6 @@ void ProgArg_List::UpdateFromMethod(MethodDef* md) {
 
 void ProgEl::Initialize() {
   flags = PEF_NONE;
-  off = false;			// todo remove
 }
 
 void ProgEl::Destroy() {
@@ -915,7 +903,6 @@ void ProgEl::Copy_(const ProgEl& cp) {
 
 void ProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(off) { SetProgFlag(OFF); off = false; } // copy from obs and reset; todo remove
 }
 
 void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
@@ -1171,8 +1158,6 @@ void UserScript::Initialize() {
 
 void UserScript::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(user_script, script);
 }
 
 const String UserScript::GenCssBody_impl(int indent_level) {
@@ -1246,8 +1231,6 @@ taBase* Loop::FindTypeName(const String& nm) const {
 
 void WhileLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(loop_test, test);
 }
 
 void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1273,8 +1256,6 @@ String WhileLoop::GetDisplayName() const {
 
 void DoLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(loop_test, test);
 }
 
 void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1312,10 +1293,6 @@ void ForLoop::Initialize() {
 
 void ForLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(init_expr, init);
-  STRING_TO_PROGEXPR_CVT(loop_test, test);
-  STRING_TO_PROGEXPR_CVT(loop_iter, iter);
 }
 
 void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1350,8 +1327,6 @@ void IfContinue::Initialize() {
 
 void IfContinue::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(condition, cond);
 }
 
 void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1381,8 +1356,6 @@ void IfBreak::Initialize() {
 
 void IfBreak::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(condition, cond);
 }
 
 void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1411,8 +1384,6 @@ void IfReturn::Initialize() {
 
 void IfReturn::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(condition, cond);
 }
 
 void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1442,8 +1413,6 @@ void IfElse::Initialize() {
 
 void IfElse::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  STRING_TO_PROGEXPR_CVT(condition, cond);
 }
 
 void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1506,8 +1475,6 @@ void AssignExpr::Initialize() {
 
 void AssignExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  //  STRING_TO_PROGEXPR_CVT(expr, expr_val);
 }
 
 void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1552,17 +1519,6 @@ void MethodCall::UpdateAfterEdit_impl() {
   if(obj)
     obj_type = obj->act_object_type();
   else obj_type = &TA_taBase; // placeholder
-
-  if(args.size > 0) {		// convert -- todo: remove!
-    meth_args.SetSize(args.size);
-    for(int i=0;i<args.size;i++) {
-      ProgArg* pa = meth_args[i];
-      pa->type = args.labels[i].before(' ',-1); // get the last one..
-      pa->name = args.labels[i].after(' ',-1);
-      pa->expr.SetExpr(args[i]);
-    }
-    args.Reset();
-  }
 
   if(!taMisc::is_loading && method)
     meth_args.UpdateFromMethod(method);
@@ -1638,17 +1594,6 @@ void StaticMethodCall::Initialize() {
 
 void StaticMethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  if(args.size > 0) {		// convert -- todo: remove!
-    meth_args.SetSize(args.size);
-    for(int i=0;i<args.size;i++) {
-      ProgArg* pa = meth_args[i];
-      pa->type = args.labels[i].before(' ',-1);
-      pa->name = args.labels[i].after(' ',-1);
-      pa->expr.SetExpr(args[i]);
-    }
-    args.Reset();
-  }
 
   if(!taMisc::is_loading && method)
     meth_args.UpdateFromMethod(method);

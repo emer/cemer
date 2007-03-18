@@ -1124,32 +1124,6 @@ void DataProg::Initialize() {
 
 void DataProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
-  Program* prog = GET_MY_OWNER(Program);
-  if(prog) {
-    if(src_data) {		// todo: obsolete -- remove
-      ProgVar* pv = prog->FindVarName(src_data->name);
-      if(!pv) {  // need to make a var!
-	pv = (ProgVar*)prog->vars.New(1);
-	pv->name = src_data->name;
-	pv->SetObject(src_data.ptr());
-	taMisc::Warning("note: created new variable:", pv->name,"for src_data in program:", prog->name);
-      }
-      src_data_var = pv;
-      src_data = NULL;
-    }
-    if(dest_data) {
-      ProgVar* pv = prog->FindVarName(dest_data->name);
-      if(!pv) {  // need to make a var!
-	pv = (ProgVar*)prog->vars.New(1);
-	pv->name = dest_data->name;
-	pv->SetObject(dest_data.ptr());
-	taMisc::Warning("note: created new variable:", pv->name,"for dest_data in program:", prog->name);
-      }
-      dest_data_var = pv;
-      dest_data = NULL;
-    }
-  }
 }
 
 void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1422,20 +1396,6 @@ void DataGroupProg::AddAllColumns() {
 
 void DataJoinProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  Program* prog = GET_MY_OWNER(Program);
-  if(prog) {
-    if(src_b_data) {		// todo: obsolete -- remove
-      ProgVar* pv = prog->FindVarName(src_b_data->name);
-      if(!pv) {  // need to make a var!
-	pv = (ProgVar*)prog->vars.New(1);
-	pv->name = src_b_data->name;
-	pv->SetObject(src_b_data.ptr());
-	taMisc::Warning("note: created new variable:", pv->name,"for src_b_data in program:", prog->name);
-      }
-      src_b_data_var = pv;
-      src_b_data = NULL;
-    }
-  }
   UpdateSpecDataTable();
 }
 

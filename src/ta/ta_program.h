@@ -53,10 +53,6 @@ class ProgLib;
 // use ProgExpr -- it handles variable name updates automatically!
 // and also provides lookup of variable names
 
-// use the following macro in UAE_impl to convert from String to ProgExpr
-// todo: obsolete this should all be removed once all code has been loaded and saved!
-#define STRING_TO_PROGEXPR_CVT(S,E) if(S.nonempty()) { E.SetExpr(S); S = _nilString; }
-
 class TA_API ProgVar: public taNBase {
   // ##INSTANCE #INLINE #SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)
@@ -75,9 +71,6 @@ public:
     PV_NONE		= 0, // #NO_BIT
     CTRL_PANEL		= 0x0001, // show this variable in the control panel
     NULL_CHECK		= 0x0002, // complain if object variable is null during checkconfig (e.g., will get assigned during run)
-
-    NO_CTRL_PANEL	= 0x0100, // #NO_BIT #NO_SAVE obsolete todo: remove
-    NO_NULL_CHECK	= 0x0200, // #NO_BIT #NO_SAVE obsolete todo: remove
   };
 
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
@@ -301,8 +294,6 @@ public:
   String                name; // #SHOW #READ_ONLY the name of the argument (automatically set from the target function)
   ProgExpr		expr; // the expression to compute and pass as the argument
 
-  String		value; // #READ_ONLY #NO_SAVE obsolete: old value -- just for loading -- todo: remove me soon!
-  
   virtual void		UpdateFromVar(const ProgVar& cp); 
   // updates our type information given variable that we apply to
   virtual void		UpdateFromType(TypeDef* td); 
@@ -359,7 +350,6 @@ public:
 
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags		flags;	// flags for modifying program element function or providing information about the status of this program element
-  bool			off;	// #HIDDEN #READ_ONLY #NO_SAVE #DEF_false obsoleted by flags -- will be removed at some point soon.  turn off this program element: do not include in script
 
   virtual ProgEl*   	parent() const
     {return (ProgEl*)const_cast<ProgEl*>(this)->GetOwner(&TA_ProgEl);}
@@ -509,8 +499,6 @@ INHERITED(ProgEl)
 public:
   ProgExpr		script;	// the css (C++ syntax) code to be executed
 
-  String		user_script; // #READ_ONLY #NO_SAVE obsolete
-
   virtual void	    	ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
   virtual void	    	ImportFromFileName(const String& fnm); // import script from file
   virtual void	    	ExportToFile(ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
@@ -536,8 +524,6 @@ public:
  virtual ProgEl*	AddLoopCode(TypeDef* el_type)	{ return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
-  String	    	loop_test; // #READ_ONLY #NO_SAVE obsolete
-  
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
@@ -604,9 +590,6 @@ public:
   ProgExprBase		test; // a test expression for whether to continue looping (e.g., 'i < max')
   ProgExprBase	    	iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
 
-  String	    	init_expr; // #READ_ONLY #NO_SAVE obsolete
-  String	    	loop_iter; // #READ_ONLY #NO_SAVE obsolete
-  
   override String	GetDisplayName() const;
 
   TA_SIMPLE_BASEFUNS(ForLoop);
@@ -627,8 +610,6 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for continuing loop
 
-  String	    	condition; // #READ_ONLY #NO_SAVE obsolete
-  
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
@@ -649,8 +630,6 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for breaking loop
 
-  String	    	condition; // #READ_ONLY #NO_SAVE obsolete
-  
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
@@ -671,8 +650,6 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for returning
 
-  String	    	condition; // #READ_ONLY #NO_SAVE obsolete
-  
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
@@ -695,8 +672,6 @@ public:
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE items to execute if condition false
 
-  String	    condition; // #READ_ONLY #NO_SAVE obsolete
-  
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
   override String	GetDisplayName() const;
@@ -724,7 +699,7 @@ public:
   ProgVarRef		result_var;
   // where to store the result of the epxression
   ProgExpr		expr;
-  // #AKA_expr_val expression to assign variable to
+  // expression to assign variable to
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
@@ -758,9 +733,6 @@ public:
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
-  SArg_Array		args;
-  // #READ_ONLY #NO_SAVE obsolete form of args -- todo: remove me! soon!
-
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
@@ -791,9 +763,6 @@ public:
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
-  SArg_Array		args;
-  // #READ_ONLY #NO_SAVE obsolete form of args -- todo: remove me! soon!
-  
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
@@ -870,7 +839,7 @@ class TA_API PrintExpr: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgExpr		expr;
-  // #AKA_print_expr print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things
+  // print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
@@ -988,7 +957,7 @@ class TA_API ReturnExpr: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgExpr		expr;
-  // #AKA_expr_val expression to return from function with (can be empty to return from a void function)
+  // expression to return from function with (can be empty to return from a void function)
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }

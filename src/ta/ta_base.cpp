@@ -2852,14 +2852,6 @@ String taList_impl::GetPath_Long(TAPtr ta, TAPtr par_stop) const {
 }
 
 taBase* taList_impl::New(int no, TypeDef* typ) {
-  // note: this is unnecessary/obsolete:
-//   if(no == 0) {
-// #ifdef TA_GUI
-//     if (taMisc::gui_active)
-//       return gpiListNew::New(this, no, typ);
-// #endif
-//     return NULL;
-//   }
   if(typ == NULL)
     typ = el_typ;
   if(TestWarning(!typ->InheritsFrom(el_base), "New",

@@ -9,7 +9,7 @@ dist_pkgdata_test_DATA =\
 	giraffe.jpg \
 	imgproc_test.proj \
 	xor.proj \
-	12ax4s_demo_v4_cvt.proj \
+	12ax4s_demo_v4.proj \
 	leabra_ra.proj \
 	ra3_2.proj \
 	xor_old.proj \
