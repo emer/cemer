@@ -3142,7 +3142,6 @@ void LeabraLayer::ResetSortBuf() {
 
 void LeabraLayer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  spec.CheckSpec();
   ResetSortBuf();
 }
 

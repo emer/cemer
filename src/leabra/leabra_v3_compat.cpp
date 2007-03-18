@@ -23,7 +23,6 @@
 //////////////////////////
 
 void LeabraMaxDa::Initialize() {
-  settle_proc = NULL;
   min_layer = &TA_LeabraLayer;
   min_unit = &TA_LeabraUnit;
   net_agg.op = Aggregate::MAX;

@@ -109,9 +109,9 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   case foOpen:
     fd->setAcceptMode(QFileDialog::AcceptOpen);
     if (flags & FILE_MUST_EXIST)
-      fd->setMode(QFileDialog::AnyFile);
+      fd->setFileMode(QFileDialog::AnyFile);
     else
-      fd->setMode(QFileDialog::ExistingFile);
+      fd->setFileMode(QFileDialog::ExistingFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Open for Reading");
     caption = String("Open: ") + filter;
     break;
@@ -123,7 +123,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     fd->showExtension(true);
     fd->setConfirmOverwrite((flags & CONFIRM_OVERWRITE));
     fd->setAcceptMode(QFileDialog::AcceptSave);
-    fd->setMode(QFileDialog::AnyFile);
+    fd->setFileMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Save for Writing");
     caption = String("Save: ") + filter;
     
@@ -131,7 +131,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   case foAppend:
     fd->setConfirmOverwrite((flags & CONFIRM_OVERWRITE));
     fd->setAcceptMode(QFileDialog::AcceptSave);
-    fd->setMode(QFileDialog::AnyFile);
+    fd->setFileMode(QFileDialog::AnyFile);
 //OBS:    fd->style()->attribute("caption", "Select File to Append for Writing");
     caption = String("Append: ") + filter;
     break;
@@ -146,7 +146,8 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fde->cbCompress->setEnabled(compressEnabled());
   fde->cbCompress->setChecked(compressEnabled() && compressReq());
   fd->setExtension(fde);
-  fd->setOrientation(Qt::Vertical);
+  //  fd->setOrientation(Qt::Vertical);
+  fd->setViewMode(QFileDialog::Detail);
   fd->setHistory(hist_paths);
 
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc

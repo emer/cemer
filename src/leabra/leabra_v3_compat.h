@@ -39,9 +39,6 @@ class LEABRA_API LeabraCycle : public CycleProcess {
   // one Leabra cycle of activation updating
 INHERITED(CycleProcess)
 public:
-  LeabraSettle*	leabra_settle;
-  // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent settle proc
-
   void 	Initialize() {};
   void 	Destroy()		{ CutLinks(); }
   TA_SIMPLE_BASEFUNS(LeabraCycle);
@@ -51,8 +48,6 @@ class LEABRA_API LeabraSettle : public SettleProcess {
   // Leabra settling phase of activation updating
 INHERITED(SettleProcess)
 public:
-  LeabraTrial* 	leabra_trial;
-  // #NO_SUBTYPE #READ_ONLY #NO_SAVE pointer to parent phase trial
   int		min_cycles;	// #DEF_15 minimum number of cycles to settle for
   int		min_cycles_phase2; // #DEF_15 minimum number of cycles to settle for in second phase
   int		netin_mod;	// #DEF_1 net input computation modulus: how often to compute netinput vs. activation update (2 = faster)
@@ -123,7 +118,6 @@ public:
     INET_DA			// use inet if no activity, then use da
   };
 
-  LeabraSettle* settle_proc;	// #READ_ONLY #NO_SAVE the settle process
   dAType	da_type;	// #DEF_INET_DA type of activation change measure to use
   float		inet_scale;	// #DEF_1 how to scale the inet measure to be like da
   float		lay_avg_thr;	// #DEF_0.01 threshold for layer average activation to switch to da fm Inet

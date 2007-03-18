@@ -803,7 +803,7 @@ void V3ProjectBase::CutLinks_impl() {
   logs.CutLinks();
   processes.CutLinks();
   environments.CutLinks();
-  specs.CutLinks();
+  //  specs.CutLinks();  // don't do this! leads to infinite loops.
   defaults.CutLinks();
   inherited::CutLinks_impl();
 }

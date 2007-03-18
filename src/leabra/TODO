@@ -6,9 +6,7 @@ commit:
 ------------
 current:
 
-* load/save all prog_lib and testsprojects & test convert
-
-* Netview going to targ instead of act
+* dmem epoch is over-agressive in doing random selection??
 
 * Add switch case guy: n_cases = enforced number of progels in case_code,
   ProgExpr_List size -- use a CodeBlock for more guys!
@@ -17,15 +15,9 @@ current:
 
 * ProgVar FLAG: CTRL_RO -- read only in control panel
 
-* Join should be symmetric
-
 * save recover files in current project dir, with .recover name #255
 
-* have a way to parameterize what program to call???  nah, just make an if,then thing.
-  todo: add a switch case..?
-
 * NewLayer not working in netview
-* default type not loading (#311)
 
 * #ARG_VAL_FM_n_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!
@@ -34,6 +26,7 @@ current:
   to see (esp leabra etc) (revisit Network too)
 
 * datatable: 
+  * Join should be symmetric
   * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
 
 * leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
@@ -52,26 +45,14 @@ Inventor
 -----------
 check:
 
-* check: DataProg DataTableRef -> ProgVarRef w/ convert
-
 * edit user script: non-modal dialog w/ better (narrower) default sizing
   (add c++ syntax hightight?) #262
 
 * check uae on progel paste
 
-* datatable load not getting file name ext AGAIN!
-
-* convert tmp name is bizzare -- fname filer issues (ticket)
-
 * #288: profile check on editing a datatable and then clicking away, for
   sub-rasa updates do dialog -- seems slower after clicking around
   (confirmed).  maybe net too?  STILL NEED THIS -- THIS IS HAPPENING!
-
-* leabra: max norm inhib: take max guy, compute amount of inhib that gets his
-  activation to given amount above threshold (parameter) -- that's it!  *very* flexible
-  as to the distribution of everyone else..
-
-* didn't call LoadInitTarget on LeabraTrainBatchSeedList..-- not repl
 
 ------------------
 Program issues

@@ -1946,7 +1946,9 @@ String ProgramCall::GetDisplayName() const {
 
 void ProgramCall::PreGenMe_impl(int item_id) {
   // register as a subproc, but only if not a recursive call (which is bad anyway!)
-  if (!target) return; // not target (yet), nothing to register
+  //  if (!target) return; // not target (yet), nothing to register 
+  // actually, the LoadInit code uses this list of sub_progs to find targets, so 
+  // add reagardless of target
   Program* prog = program();
   if (!prog) return; // shouldn't normally happen
   prog->sub_progs.LinkUnique(this);
