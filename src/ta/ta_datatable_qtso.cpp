@@ -1511,6 +1511,12 @@ void GridTableView::set2dFont(bool value) {
   UpdateDisplay(true);
 }
 
+void GridTableView::set2dFontScale(float value) {
+  if(two_d_font_scale == value) return;
+  two_d_font_scale = value;
+  UpdateDisplay(true);
+}
+
 void GridTableView::setValText(bool value) {
   if (mat_val_text == value) return;
   mat_val_text = value;
@@ -1714,23 +1720,31 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   chkDisplay = new QCheckBox("Disp", widg, "chkDisplay");
   chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
-  connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
+  connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(chkDisplay_toggled(bool)) );
   layTopCtrls->addWidget(chkDisplay);
 
   chkHeaders =  new QCheckBox("Hdrs", widg, "chkHeaders");
   chkDisplay->setToolTip("Whether to display a top row of headers indicating the name of the columns");
-  connect(chkHeaders, SIGNAL(toggled(bool)), this, SLOT(chkHeaders_toggled(bool)) );
+  connect(chkHeaders, SIGNAL(clicked(bool)), this, SLOT(chkHeaders_toggled(bool)) );
   layTopCtrls->addWidget(chkHeaders);
 
   chkRowNum =  new QCheckBox("Row\n#", widg, "chkRowNum");
   chkDisplay->setToolTip("Whether to display the row number as the first column");
-  connect(chkRowNum, SIGNAL(toggled(bool)), this, SLOT(chkRowNum_toggled(bool)) );
+  connect(chkRowNum, SIGNAL(clicked(bool)), this, SLOT(chkRowNum_toggled(bool)) );
   layTopCtrls->addWidget(chkRowNum);
 
   chk2dFont =  new QCheckBox("2d\nFont", widg, "chk2dFont");
   chkDisplay->setToolTip("Whether to use a two-dimensional font that is easier to read but does not obey 3d transformations of the display");
-  connect(chk2dFont, SIGNAL(toggled(bool)), this, SLOT(chk2dFont_toggled(bool)) );
+  connect(chk2dFont, SIGNAL(clicked(bool)), this, SLOT(chk2dFont_toggled(bool)) );
   layTopCtrls->addWidget(chk2dFont);
+
+  lblFontScale = taiM->NewLabel("Font\nScale", widg, font_spec);
+  lblFontScale->setToolTip("Scaling of the 2d font to make it roughly the same size as the 3d font -- adjust this to change the size of the 2d text (has no effect if 2d Font is not clicked");
+  layTopCtrls->addWidget(lblFontScale);
+  fldFontScale = new taiField(&TA_float, NULL, NULL, widg);
+  layTopCtrls->addWidget(fldFontScale->GetRep());
+//   layMatrix->addSpacing(taiM->hsep_c);
+  connect(fldFontScale->rep(), SIGNAL(editingFinished()), this, SLOT(fldFontScale_textChanged()) );
 
   layTopCtrls->addStretch();
 
@@ -1799,7 +1813,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   chkValText =  new QCheckBox("Val\nTxt", widg, "chkValText");
   chkDisplay->setToolTip("Whether to display text of the matrix block values.");
-  connect(chkValText, SIGNAL(toggled(bool)), this, SLOT(chkValText_toggled(bool)) );
+  connect(chkValText, SIGNAL(clicked(bool)), this, SLOT(chkValText_toggled(bool)) );
   layMatrix->addWidget(chkValText);
 
   lblTrans = taiM->NewLabel("Trans-\nparency", widg, font_spec);
@@ -1832,7 +1846,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layColorScale = new QHBoxLayout(layOuter);
   
   chkAutoScale = new QCheckBox("auto\nscale", widg);
-  connect(chkAutoScale, SIGNAL(toggled(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
+  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
   layColorScale->addWidget(chkAutoScale);
 
   cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
@@ -1874,6 +1888,7 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   chkHeaders->setChecked(glv->header_on);
   chkRowNum->setChecked(glv->row_num_on);
   chk2dFont->setChecked(glv->two_d_font);
+  fldFontScale->GetImage((String)glv->two_d_font_scale);
 
   fldRows->GetImage((String)glv->view_rows);
   fldCols->GetImage((String)glv->col_n);
@@ -1963,6 +1978,13 @@ void iGridTableView_Panel::chk2dFont_toggled(bool on) {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
   glv->set2dFont(on);
+}
+
+void iGridTableView_Panel::fldFontScale_textChanged() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->set2dFontScale((float)fldFontScale->GetValue());
 }
 
 void iGridTableView_Panel::chkValText_toggled(bool on) {
@@ -3775,7 +3797,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   chkDisplay = new QCheckBox("Disp", widg, "chkDisplay");
   chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
-  connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
+  connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(chkDisplay_toggled(bool)) );
   layTopCtrls->addWidget(chkDisplay);
 
   // todo: fix tool tips on all of these..
@@ -3840,7 +3862,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   chkNegDraw =  new QCheckBox("Neg\nDraw", widg, "chkNegDraw");
   chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data");
-  connect(chkNegDraw, SIGNAL(toggled(bool)), this, SLOT(chkNegDraw_toggled(bool)) );
+  connect(chkNegDraw, SIGNAL(clicked(bool)), this, SLOT(chkNegDraw_toggled(bool)) );
   layVals->addWidget(chkNegDraw);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
@@ -3870,7 +3892,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   rncXAxis = new QCheckBox("Row\nNum", widg, "rncXAxis");
   rncXAxis->setToolTip("Use row number instead of column value for axis value");
-  connect(rncXAxis, SIGNAL(toggled(bool)), this, SLOT(rncXAxis_toggled(bool)) );
+  connect(rncXAxis, SIGNAL(clicked(bool)), this, SLOT(rncXAxis_toggled(bool)) );
   layXAxis->addWidget(rncXAxis);
 
   pdtXAxis = taiPolyData::New(true, &TA_FixedMinMax, NULL, NULL, widg);
@@ -3893,12 +3915,12 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   oncZAxis = new QCheckBox("On", widg, "oncZAxis");
   oncZAxis->setToolTip("Display a Z axis?");
-  connect(oncZAxis, SIGNAL(toggled(bool)), this, SLOT(oncZAxis_toggled(bool)) );
+  connect(oncZAxis, SIGNAL(clicked(bool)), this, SLOT(oncZAxis_toggled(bool)) );
   layZAxis->addWidget(oncZAxis);
 
   rncZAxis = new QCheckBox("Row\nNum", widg, "rncZAxis");
   rncZAxis->setToolTip("Use row number instead of column value for axis value");
-  connect(rncZAxis, SIGNAL(toggled(bool)), this, SLOT(rncZAxis_toggled(bool)) );
+  connect(rncZAxis, SIGNAL(clicked(bool)), this, SLOT(rncZAxis_toggled(bool)) );
   layZAxis->addWidget(rncZAxis);
 
   pdtZAxis = taiPolyData::New(true, &TA_FixedMinMax, NULL, NULL, widg);
@@ -3939,12 +3961,12 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   onc2Axis = new QCheckBox("On", widg, "onc2Axis");
   onc2Axis->setToolTip("Display a second column's worth of data?");
-  connect(onc2Axis, SIGNAL(toggled(bool)), this, SLOT(onc2Axis_toggled(bool)) );
+  connect(onc2Axis, SIGNAL(clicked(bool)), this, SLOT(onc2Axis_toggled(bool)) );
   lay2Axis->addWidget(onc2Axis);
 
   chkShareAxis =  new QCheckBox("Share\nAxis", widg, "chkShareAxis");
   chkShareAxis->setToolTip("Whether to share the Y axis for this second column of data with the first plot's Y axis");
-  connect(chkShareAxis, SIGNAL(toggled(bool)), this, SLOT(chkShareAxis_toggled(bool)) );
+  connect(chkShareAxis, SIGNAL(clicked(bool)), this, SLOT(chkShareAxis_toggled(bool)) );
   //  layPlots->addWidget(chkShareAxis);
   lay2Axis->addWidget(chkShareAxis);
 
@@ -3968,7 +3990,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   onc1Err = new QCheckBox("On", widg, "onc1Err");
   onc1Err->setToolTip("Display error bars for 1st column's data?");
-  connect(onc1Err, SIGNAL(toggled(bool)), this, SLOT(onc1Err_toggled(bool)) );
+  connect(onc1Err, SIGNAL(clicked(bool)), this, SLOT(onc1Err_toggled(bool)) );
   layPlots->addWidget(onc1Err);
 
   lbl2Err = taiM->NewLabel("2 Err:", widg, font_spec);
@@ -3981,7 +4003,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   onc2Err = new QCheckBox("On", widg, "onc2Err");
   onc2Err->setToolTip("Display error bars for 2nd column's data?");
-  connect(onc2Err, SIGNAL(toggled(bool)), this, SLOT(onc2Err_toggled(bool)) );
+  connect(onc2Err, SIGNAL(clicked(bool)), this, SLOT(onc2Err_toggled(bool)) );
   layPlots->addWidget(onc2Err);
 
   lblErrSpacing = taiM->NewLabel("Err\nSpc", widg, font_spec);

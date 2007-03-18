@@ -1977,7 +1977,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   ////////////////////////////////////////////////////////////////////////////
   layDispCheck = new QHBoxLayout(layViewParams);
   chkDisplay = new QCheckBox("Display", widg);
-  connect(chkDisplay, SIGNAL(toggled(bool)), this, SLOT(chkDisplay_toggled(bool)) );
+  connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(chkDisplay_toggled(bool)) );
   layDispCheck->addWidget(chkDisplay);
 //   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -2037,7 +2037,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 
   chkXYSquare = new QCheckBox("XY\nSquare", widg);
   chkXYSquare->setToolTip("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space).");
-  connect(chkXYSquare, SIGNAL(toggled(bool)), this, SLOT(chkXYSquare_toggled(bool)) );
+  connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(chkXYSquare_toggled(bool)) );
   layFontsEtc->addWidget(chkXYSquare);
 
   gbDisplayValues = new QGroupBox("Display Values", widg);
@@ -2048,7 +2048,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
   
   chkAutoScale = new QCheckBox("auto scale", gbDisplayValues);
-  connect(chkAutoScale, SIGNAL(toggled(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
+  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
   layColorScaleCtrls->addWidget(chkAutoScale);
 
   butScaleDefault = new QPushButton("Set Defaults", gbDisplayValues);

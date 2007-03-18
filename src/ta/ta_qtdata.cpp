@@ -621,7 +621,7 @@ void taiPlusToggle::InitLayout() {
   if (HasFlag(flgToggleReadOnly)) {
     but_rep->setReadOnly(true);
   } else {
-    connect(but_rep, SIGNAL(toggled(bool)),
+    connect(but_rep, SIGNAL(clicked(bool)),
         this, SLOT(Toggle_Callback()) );
   }
 }

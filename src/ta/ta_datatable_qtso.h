@@ -288,6 +288,7 @@ public:
   void		setHeader(bool value);
   void		setRowNum(bool value);
   void		set2dFont(bool value);
+  void		set2dFontScale(float value);
   void		setValText(bool value);
   void		setWidth(float wdth);
   void		setRows(int rows);
@@ -411,6 +412,8 @@ public:
   QCheckBox*		    chkHeaders;
   QCheckBox*		    chkRowNum;
   QCheckBox*		    chk2dFont;
+  QLabel*		    lblFontScale;
+  taiField*		    fldFontScale;
   QPushButton*		    butRefresh;
   QPushButton*		    butClear; // not used
 
@@ -467,6 +470,7 @@ protected slots:
   void 		chkHeaders_toggled(bool on);
   void 		chkRowNum_toggled(bool on);
   void 		chk2dFont_toggled(bool on);
+  void 		fldFontScale_textChanged();
 
   void 		butRefresh_pressed();
   void 		butClear_pressed();
