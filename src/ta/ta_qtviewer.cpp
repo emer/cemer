@@ -1214,6 +1214,15 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   taiMimeSource* ms = NULL;
   taiClipData* cd = NULL;
   int rval = taiClipData::ER_IGNORED; //not really used, but 0 is ignored, 1 is done, -1 is forbidden, -2 is error
+  
+  // until/unless we add Undo, confirm deletes
+//TODO: maybe add a new option once Undo added, to continue prompting or not
+  if (ea & taiClipData::EA_DELETE) {
+    int chs = taMisc::Choice("Are you sure you want to delete the selected object(s)?",
+      "&Yes", "&No");
+    if (chs != 0) return rval;
+  }
+  
   // get the appropriate data, either clipboard data, or item data, depending on op
   if  (ea & (taiClipData::EA_SRC_OPS)) { // no clipboard data
     // we handle cut and copy
