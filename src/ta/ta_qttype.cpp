@@ -2162,12 +2162,15 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
 }
 
 taiData* taiTypePtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  bool nul_ok = false;
-  nul_ok = (GetHasOption("NULL_OK"));
+  int flags = flags_;
+  if (GetHasOption("NULL_OK"))
+    flags |= taiData::flgNullOk;
+  
   TypeDef* init_typ = &TA_taBase;
   if (*((TypeDef**)arg_base) != NULL)
     init_typ = *((TypeDef**)arg_base);
-  taiTypeDefButton* rval = new taiTypeDefButton(init_typ, host_, par, gui_parent_, nul_ok);
+  taiTypeDefButton* rval = new taiTypeDefButton(init_typ, host_, par,
+    gui_parent_, flags);
   return rval;
 }
 

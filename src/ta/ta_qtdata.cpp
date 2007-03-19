@@ -4173,22 +4173,28 @@ QWidget* taiTypeInfoBase::GetRep() {
 void taiTypeInfoBase::GetTarget() {
   targ_typ = typ; // may get overridden by comment directives
   if (!memb_md)  return;
-  // a XxxDef* can have one of three options to specify the
+  // a XxxDef* can have one of these options to specify the
   // target type for its XxxDef menu.
   // 1) a TYPE_xxxx in its comment directives
-  // 2) a TYPE_ON_xxx in is comment directives, specifying the name
+  // 2) a TYPE_ON_this in comment directives, specifying that the 
+  //    type should be the same as the parent
+  // 3) a TYPE_ON_xxx in comment directives, specifying the name
   //    of the member in the same object which is a TypeDef*
-  // 3) Nothing, which defaults to the type of the object the memberdef
+  // 4) Nothing, which defaults to the type of the object the memberdef
   //      is in.
 
   String mb_nm = memb_md->OptionAfter("TYPE_ON_");
   if (!mb_nm.empty()) {
 //    taBase* base = (taBase*)host->cur_base; //TODO: highly unsafe cast -- should provide As_taBase() or such in taiDialog
     if (menubase != NULL) {
-      void* adr; // discarded
-      MemberDef* tdmd = ((taBase*)menubase)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
-      if (tdmd != NULL)
-        targ_typ = *((TypeDef **) tdmd->GetOff(menubase));
+      if (mb_nm == "this") {
+        targ_typ = ((taBase*)menubase)->GetTypeDef();
+      } else {
+        void* adr; // discarded
+        MemberDef* tdmd = ((taBase*)menubase)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
+        if (tdmd != NULL)
+          targ_typ = *((TypeDef **) tdmd->GetOff(menubase));
+        }
     }
     return;
   } 
