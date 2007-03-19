@@ -359,6 +359,7 @@ void taProject::SaveRecoverFile() {
 
   String prfx;
   String sufx = ".proj";
+  String recv = "_recover";
   if(file_name.empty()) {
     if(name.empty()) {
       prfx = GetTypeDef()->name;
@@ -375,8 +376,10 @@ void taProject::SaveRecoverFile() {
       prfx = file_name;		// whatever
     }
   }
-  if(!prfx.contains("_recover"))
-    prfx += "_recover";
+  if(prfx.contains(recv))
+    prfx = prfx.through(recv, -1);
+  else
+    prfx += recv;
   int cnt = taMisc::GetUniqueFileNumber(0, prfx, sufx);
   String fnm = prfx + String(cnt) + sufx;
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
