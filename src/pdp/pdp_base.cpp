@@ -90,9 +90,6 @@ int pdpMisc::Main(int& argc, const char *argv[]) {
   root = (PDPRoot*)tabMisc::root;
    //always use our wait proc, since there is a predefined chain backwards anyways...
   taMisc::WaitProc = pdpMisc::WaitProc;
-#if ((!defined(DMEM_COMPILE)) && (!defined(TA_OS_WIN))) 
-  taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFile);
-#endif
 //obs  root->LoadConfig();
   cssMisc::TopShell->cmd_prog->CompileRunClear(".pdpinitrc");
   if(taRootBase::Startup_Run())
@@ -117,22 +114,6 @@ SelectEdit* pdpMisc::FindMakeSelectEdit(ProjectBase* prj) {
 ColorScaleSpec* pdpMisc::GetDefaultColor() {
   if((root == NULL) || !taMisc::gui_active)	return NULL;
   return (ColorScaleSpec*)root->colorspecs.DefaultEl();
-}
-
-int get_unique_file_number(int st_no, const char* prefix, const char* suffix) {
-  String prfx = prefix;
-  String fname;
-  int i;
-  for(i=st_no; i<10000; i++) {	// stop at 10,000
-    fname = prfx + String(i) + suffix;
-    int acc = access(fname, R_OK);
-    if(acc != 0)
-      break;			// its ok..
-  }
-  fstream strm;
-  strm.open(fname, ios::out);	// this should hold the place for the file
-  strm.close();	strm.clear();		// while it is being saved, etc..
-  return i;
 }
 
 void pdpMisc::WaitProc() {

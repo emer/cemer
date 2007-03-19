@@ -6,7 +6,9 @@ commit:
 ------------
 current:
 
-* dmem epoch is over-agressive in doing random selection??
+* NewLayer not working in netview
+
+* multi-test on hv
 
 * Add switch case guy: n_cases = enforced number of progels in case_code,
   ProgExpr_List size -- use a CodeBlock for more guys!
@@ -15,9 +17,7 @@ current:
 
 * ProgVar FLAG: CTRL_RO -- read only in control panel
 
-* save recover files in current project dir, with .recover name #255
-
-* NewLayer not working in netview
+---
 
 * #ARG_VAL_FM_n_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!

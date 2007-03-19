@@ -920,6 +920,9 @@ public:
   static String	FindFileOnLoadPath(const char* fname);
   // #CAT_File try to find file fnm in one of the load_include paths -- returns complete path to file  (or empty str if not found)
 
+  static int 	GetUniqueFileNumber(int st_no, const String& prefix, const String& suffix);
+  // get a unique file number by adding numbers in between prefix and suffix until such a file does not exist
+
   /////////////////////////////////////////////////
   //	Recording GUI actions to css script
 

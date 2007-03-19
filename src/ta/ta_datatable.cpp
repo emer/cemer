@@ -1215,9 +1215,11 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
 }
 
 bool DataTable::RemoveRows(int st_row, int n_rows) {
+  if(st_row < 0) st_row = rows-1;	// end
   if(TestError(!RowInRangeNormalize(st_row), "RemoveRows",
 	       "start row not in range:",String(st_row)))
     return false;
+  if(n_rows < 0) n_rows = rows - st_row;
   int end_row = st_row + n_rows-1;
   if(TestError(!RowInRangeNormalize(end_row), "RemoveRows",
 	       "end row not in range:",String(end_row)))

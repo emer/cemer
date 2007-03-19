@@ -63,7 +63,6 @@ HEADS =\
 
 SRCS =\
 	pdp_base.cpp \
-	pdp_base_unix.cpp \
 	spec.cpp \
 	netstru.cpp \
 	netstru_extra.cpp \

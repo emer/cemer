@@ -353,6 +353,72 @@ void taProject::UpdateSimLog() {
 #endif
 }
 
+void taProject::SaveRecoverFile() {
+  bool tmp_sim_log = use_sim_log;
+  use_sim_log = false;		// don't pop up any dialogs..
+
+  String prfx;
+  String sufx = ".proj";
+  if(file_name.empty()) {
+    if(name.empty()) {
+      prfx = GetTypeDef()->name;
+    }
+    else {
+      prfx = name;
+    }
+  }
+  else {
+    if(file_name.contains(sufx)) {
+      prfx = file_name.before(sufx, -1);
+    }
+    else {
+      prfx = file_name;		// whatever
+    }
+  }
+  if(!prfx.contains("_recover"))
+    prfx += "_recover";
+  int cnt = taMisc::GetUniqueFileNumber(0, prfx, sufx);
+  String fnm = prfx + String(cnt) + sufx;
+  taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
+  bool saved = false;
+  if(flr->ostrm) {
+    Save_strm(*flr->ostrm);
+    saved = true;
+  }
+  else {
+    cerr << "Error saving recover file: " << fnm << endl;
+    String old_fnm = fnm;
+    String fnm = taMisc::user_dir + "/" + taMisc::GetFileFmPath(old_fnm);
+    flr->setFileName(fnm);
+    flr->Save();
+    if(flr->ostrm) {
+      cerr << "Now saving in user directory: " << fnm << endl;
+      use_sim_log = false;
+      Save_strm(*flr->ostrm);
+      saved = true;
+    }
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+
+  use_sim_log = tmp_sim_log;
+
+#ifdef HAVE_QT_CONSOLE
+  // now try to save console
+  if(saved) {
+    if(cssMisc::TopShell->console_type == taMisc::CT_GUI) {
+      String cfnm = fnm;
+      cfnm.gsub("_recover", "_console");
+      cfnm.gsub((const char*)sufx, ".txt");
+      QcssConsole* qcons = QcssConsole::getInstance();
+      if(qcons)
+	qcons->saveContents(cfnm);
+    }
+  }
+#endif
+}
+
+
 //////////////////////////
 //   Project_Group	//
 //////////////////////////
@@ -1263,6 +1329,13 @@ bool taRootBase::Startup_Console() {
   return true;
 }
 
+bool taRootBase::Startup_RegisterSigHandler() {
+#if ((!defined(DMEM_COMPILE)) && (!defined(TA_OS_WIN))) 
+  taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
+#endif
+  return true;
+}
+
 bool taRootBase::Startup_ProcessArgs() {
   if(taMisc::CheckArgByName("Version")) {
     tabMisc::root->About();
@@ -1307,6 +1380,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_ConsoleType()) goto startup_failed;
   if(!Startup_MakeMainWin()) goto startup_failed;
   if(!Startup_Console()) goto startup_failed;
+  if(!Startup_RegisterSigHandler()) goto startup_failed;
   if(!Startup_ProcessArgs()) goto startup_failed;
 //note: don't call event loop yet, because we haven't initialized main event loop!
   instance()->Save(); 
@@ -1499,3 +1573,48 @@ int taRootBase::DMem_SubEventLoop() {
 }
 
 #endif // DMEM
+
+//////////////////////////////////////////////////////////////////////////////
+// 		Recover File Handler
+
+#ifndef TA_OS_WIN
+
+#include <signal.h>
+#include <memory.h>
+#include <sstream>
+
+// for saving a recovery file if program crashes, is killed, etc.
+void taRootBase::SaveRecoverFileHandler(int err) {
+  static bool has_crashed = false;
+  signal(err, SIG_DFL);		// disable catcher
+
+  if(has_crashed) {
+    cerr << "Unable to save recover file (multiple errors)...sorry" << endl;
+    exit(err);
+  }
+  has_crashed = true;		// to prevent recursive crashing..
+
+#ifdef TA_GUI
+  taiMisc::Cleanup(err);	// cleanup stuff in tai
+#endif
+  if((err == SIGUSR1) || (err == SIGUSR2) || (err == SIGALRM))
+    cerr << "Saving project file(s) from signal: ";
+  else
+    cerr << "Saving recover file(s) and exiting from signal: ";
+  taMisc::Decode_Signal(err);
+  cerr << endl;
+
+  for (int i = 0; i < tabMisc::root->projects.size; ++i) {
+    taProject* prj = tabMisc::root->projects.FastEl(i);
+    prj->SaveRecoverFile();
+  }
+
+  if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2)) {
+    taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
+    has_crashed = false;
+  } else {
+    kill(getpid(), err);		// activate signal
+  }
+}
+
+#endif // TA_OS_WIN

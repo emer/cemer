@@ -533,7 +533,7 @@ public:
   // #MENU #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
   
   virtual bool		RemoveRows(int st_row, int n_rows=1);
-  // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row
+  // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row.  st_row = -1 means last row, and n_rows = -1 means remove from starting row to end
   virtual void		RemoveAllRows() { ResetData(); }
   // #MENU #CAT_Rows #CONFIRM remove all of the rows of data, but keep the column structure
   virtual bool		DuplicateRow(int row_no, int n_copies=1);

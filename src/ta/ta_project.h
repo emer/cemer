@@ -114,8 +114,11 @@ public:
 
   virtual MainWindowViewer* NewProjectBrowser(); 
     // create a new, empty viewer -- note: window not opened yet
-  virtual void	UpdateSimLog();
+  virtual void		UpdateSimLog();
   // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
+
+  virtual void		SaveRecoverFile();
+  // Save a recover file of this project, usually called when a signal is received indicating a crash condition
 
   override bool		SetFileName(const String& val);
   override int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
@@ -243,6 +246,8 @@ public:
   // #IGNORE open the main window (browser of root object) (returns success)
   static bool	Startup_Console();
   // #IGNORE start the console shell (returns success)
+  static bool	Startup_RegisterSigHandler();
+  // #IGNORE register signal handler routine (i.e., cleanup routine to save recover file upon crashing)
   static bool	Startup_ProcessArgs();
   // #IGNORE process general args
 
@@ -265,6 +270,9 @@ public:
   bool		CheckAddPluginDep(TypeDef* td); // add a plugin dependency, if this type is a  type defined in a plugin; true if it was
   bool		VerifyHasPlugins(); // check the current plugin_deps w/ loaded plugins, return true if all needed plugins loaded OR user says to continue loading anyway
   
+  static void 	SaveRecoverFileHandler(int err = 1);
+  // error handling function that saves a recover file when system crashes
+
   int	Save();
   void	InitLinks();
   void	CutLinks();

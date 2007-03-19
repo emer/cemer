@@ -1351,6 +1351,21 @@ String taMisc::FindFileOnLoadPath(const char* fname) {
   return FindFileOnPath(load_paths, fname);
 }
 
+int taMisc::GetUniqueFileNumber(int st_no, const String& prefix, const String& suffix) {
+  String fname;
+  int i;
+  for(i=st_no; i<10000; i++) {	// stop at 10,000
+    fname = prefix + String(i) + suffix;
+    int acc = access(fname, R_OK);
+    if(acc != 0)
+      break;			// its ok..
+  }
+  fstream strm;
+  strm.open(fname, ios::out);	// this should hold the place for the file
+  strm.close();	strm.clear();		// while it is being saved, etc..
+  return i;
+}
+
 /////////////////////////////////////////////////
 //	Recording GUI actions to css script
 

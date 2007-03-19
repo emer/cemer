@@ -1836,7 +1836,7 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
   rval += cssMisc::Indent(indent_level);
   rval += "Program* target = this" + GetPath(NULL, program())+ "->GetTarget();\n";
   rval += cssMisc::Indent(indent_level);
-  rval += "if(target != NULL) {\n";
+  rval += "if(target) {\n";
   if (prog_args.size > 0) {
     rval += cssMisc::Indent(indent_level+1);
     rval += "// set global vars of target\n";
@@ -2218,7 +2218,7 @@ ProgLib* Program::prog_lib = NULL;
 
 void Program::MakeTemplate_fmtype(Program* prog, TypeDef* td) {
   taBase* tok = (taBase*)td->GetInstance();
-  if(tok != NULL) {
+  if(tok) {
     taBase* o = tok->MakeToken();
     o->SetName("New" + td->name);
     prog->init_code.Add(o);
@@ -2753,7 +2753,7 @@ void  Program::UpdateProgVars() {
     el = sv->NewCssEl();
     script->prog_vars.Push(el);
     el = sv->NewCssType();	// for dynenums
-    if(el != NULL)
+    if(el)
       script->prog_types.Push(el);
   } 
   for (int i = 0; i < vars.size; ++i) {
@@ -2761,7 +2761,7 @@ void  Program::UpdateProgVars() {
     el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
     el = sv->NewCssType();	// for dynenums
-    if(el != NULL)
+    if(el)
       script->prog_types.Push(el);
   } 
 }
@@ -2837,7 +2837,7 @@ void Program::RunLoadInitCode() {
     el = sv->NewCssEl();
     init_scr.prog_vars.Push(el);
     el = sv->NewCssType();	// for dynenums
-    if(el != NULL)
+    if(el)
       init_scr.prog_types.Push(el);
   } 
   for (int i = 0; i < vars.size; ++i) {
@@ -2845,7 +2845,7 @@ void Program::RunLoadInitCode() {
     el = sv->NewCssEl();
     init_scr.prog_vars.Push(el); //refs
     el = sv->NewCssType();	// for dynenums
-    if(el != NULL)
+    if(el)
       init_scr.prog_types.Push(el);
   } 
 

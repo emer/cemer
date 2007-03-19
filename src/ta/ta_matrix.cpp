@@ -870,9 +870,11 @@ ostream& taMatrix::Output(ostream& strm, int indent) const {
 bool taMatrix::RemoveFrames(int st_fr, int n_fr) {
   if(TestError(!canResize(), "RemoveFrames", "resizing not allowed")) return false;
   int frames_ = frames(); // cache
+  if(st_fr < 0) st_fr = frames_ - 1;
   if(TestError(((st_fr < 0) || (st_fr >= frames_)), "RemoveFrames",
 	       "starting frame number out of range:", String(st_fr)))
     return false;
+  if(n_fr < 0) n_fr = frames_ - st_fr;
   int end_fr = st_fr + n_fr-1;
   if(TestError(((end_fr < 0) || (end_fr >= frames_)), "RemoveFrames",
 	       "ending frame number out of range:", String(end_fr)))

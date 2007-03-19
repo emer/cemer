@@ -45,8 +45,6 @@ public:
   // #IGNORE the pdp main startup function: call this from user's main
 //NOTE: v4 waitprocs (aka event loop handling)
   static void	WaitProc();  		// waiting process
-  static void 	SaveRecoverFile(int err = 1);
-  // error handling function that saves a recover file when system crashes
   static ColorScaleSpec* GetDefaultColor();  // gets the default color scale
 
   static Network* GetNewNetwork(ProjectBase* prj, TypeDef* typ = NULL);
@@ -61,8 +59,6 @@ public:
   // find a select edit if it exists, otherwise make it
 #endif
 };
-
-int get_unique_file_number(int st_no, const char* prefix, const char* suffix);
 
 #endif // base_h
 
