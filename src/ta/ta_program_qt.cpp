@@ -512,13 +512,9 @@ void iProgramEditor::Init() {
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   body = new iStripeWidget; 
   scrBody->setWidget(body);
-//  body = new iEditGrid(false, false, 2, GRID_VMARGIN, editLines(), 1, this);
-//  body->setRowHeight(taiM->max_control_height(taiM->ctrl_size));
-//  body->setMinVisibleRows(editLines());
   int line_ht = ln_sz + (2 * ln_vmargin);
   body->setStripeHeight(line_ht);
   int body_ht = line_ht * editLines();
-//  body->setMinimumHeight(body_ht);
   scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
   layOuter->addWidget(scrBody); 
 
@@ -567,27 +563,6 @@ void iProgramEditor::Init() {
     this, SLOT(items_ItemSelected(iTreeViewItem*)) );
 
   InternalSetModified(false);
-}
-
-void iProgramEditor::AddData(int row_, QWidget* data, QLayout* lay) {
-  // just get the height right from the strip widget
-//  layBody->setRowMinimumHeight(row, body->stripeHeight()); 
-/*obs,nuke  row = row_;
-  if (lay)
-    body->setDataLayout(row, 0, lay);
-  else {
-    QHBoxLayout* hbl = new QHBoxLayout();
-    hbl->setMargin(0);
-    hbl->addWidget(data, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
-    hbl->addStretch();
-    body->setDataLayout(row, 0, hbl);
-  }  
-  foreach (QObject* obj, children()) {
-    obj->deleteLater();
-  }
-
-  if (data)
-    data->show(); // needed for rebuilds, to make the widget show*/
 }
 
 bool iProgramEditor::ShowMember(MemberDef* md) {
@@ -646,6 +621,7 @@ void iProgramEditor::Base_Add() {
   for (int i = 0, i_ln = 0; i < typ->members.size; ++i) {
     MemberDef* md = typ->members.FastEl(i);
     if (!ShowMember(md)) continue;
+    if (md->name == "desc") continue; // on separate line at end
     membs.FastEl(cur_ln)->memb_el.Add(md);
     ++i_ln;
     if (i_ln >= n_per_ln) {
@@ -682,6 +658,7 @@ void iProgramEditor::Base_Add() {
       if (!read_only)
         flags |= taiData::flgEditDialog; // nice button for popup
       taiData* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
+      mb_dat->setLabel(lbl);
       ms->data_el.Add(mb_dat);
       QWidget* rep = mb_dat->GetRep();
       hbl->addWidget(rep, 1,  (Qt::AlignVCenter)); // should consume all space

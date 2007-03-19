@@ -321,6 +321,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
 
   // add gui representation of data
   taiData* mb_dat = md->im->GetDataRep(host, this, wid); //adds to list
+  mb_dat->setLabel(lbl);
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
   connect(mb_dat, SIGNAL(settingHighlight(bool)),

@@ -255,6 +255,7 @@ public:
 
   taiMember* 		sub_types() {return (taiMember*)m_sub_types;}
   taiMember** 		addr_sub_types() {return (taiMember**)&m_sub_types;}
+  bool			isCondShow() const;
 
    int		BidForType(TypeDef*) 			{return 0; }
 	// none of the member specific ones should apply types
@@ -292,6 +293,7 @@ public:
 protected:
   override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_);
+  virtual void		GetImage_CondShow(taiData* dat, const void* base);
   override void		GetImage_impl(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void		GetMbrValue_impl(taiData* dat, void* base);
@@ -337,6 +339,9 @@ protected:
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void	GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiDefaultToken : public taiTokenPtrMember {
@@ -347,12 +352,14 @@ public:
 
   int		BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  void		Initialize()	{ tpdflt = NULL; }
 
   TAQT_MEMBER_INSTANCE(taiDefaultToken, taiTokenPtrMember);
 protected:
   override void	GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
+private:
+  void		Initialize()	{ tpdflt = NULL; }
+  void		Destroy() {}
 };
 
 class TA_API taiSubTokenPtrMember : public taiMember {
@@ -366,6 +373,9 @@ public:
 protected:
   override void	GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiTypePtrMember : public taiMember {
@@ -379,6 +389,9 @@ protected:
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void	GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiEnumTypePtrMember : public taiTypePtrMember {
@@ -390,6 +403,9 @@ public:
   TAQT_MEMBER_INSTANCE(taiEnumTypePtrMember, taiTypePtrMember);
 protected:
    taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiMemberDefPtrMember : public taiMember {
@@ -403,6 +419,9 @@ protected:
    taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void	GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiMethodDefPtrMember : public taiMember {
@@ -416,6 +435,9 @@ protected:
    taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void	GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiFunPtrMember : public taiMember {
@@ -429,6 +451,9 @@ public:
 protected:
   override void	GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiCondEditMember : public taiMember {
@@ -440,16 +465,13 @@ public:
   int		BidForMember(MemberDef* md, TypeDef* td);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
-  taiCondEditMember(MemberDef* md, TypeDef* td);
-  taiCondEditMember()             { Initialize(); }
-  ~taiCondEditMember();
-  taiMember* 	MembInst(MemberDef* md, TypeDef* td)
-    { return (taiMember*) new taiCondEditMember(md, td); }
-  TypeDef*	GetTypeDef() const {return &TA_taiCondEditMember;}
-  void		Initialize();
+  TAQT_MEMBER_INSTANCE(taiCondEditMember, taiMember);
 protected:
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void	GetImage_impl(taiData* dat, const void* base);
+private:
+  void		Initialize();
+  void		Destroy() {}
 };
 
 class TypeDefault;
@@ -463,12 +485,13 @@ public:
   virtual int	BidForMember(MemberDef* md, TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
-  void		Initialize()	{ tpdflt = NULL; }
-  void		Destroy()	{ m_sub_types = NULL; } // prevent from being destroyed
 
   TAQT_MEMBER_INSTANCE(taiTDefaultMember, taiMember);
 protected:
   override void	GetImage_impl(taiData* dat, const void* base);
+private:
+  void		Initialize()	{ tpdflt = NULL; }
+  void		Destroy()	{ m_sub_types = NULL; } // prevent from being destroyed
 };
 
 
@@ -594,11 +617,12 @@ public:
   taiArgType();
   ~taiArgType();
 
-  void 	Initialize()	{};
-  void 	Destroy()	{};
   virtual taiArgType*  ArgTypeInst(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td)
   { return new taiArgType(aidx, argt,md,td);}
   TypeDef*	GetTypeDef() const {return &TA_taiArgType;}
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 #define TAQT_ARGTYPE_INSTANCE(x,y) x(int aidx, TypeDef* argt, MethodDef* md, TypeDef*td)	\
@@ -622,9 +646,10 @@ public:
   void		GetValue_impl(taiData* dat, void* base);
   virtual void	GetValueFromGF(); // actually get the value from the getfile
 
+  TAQT_ARGTYPE_INSTANCE(taiStreamArgType, taiArgType);
+private:
   void Initialize();
   void Destroy();
-  TAQT_ARGTYPE_INSTANCE(taiStreamArgType, taiArgType);
 };
 
 class TA_API taiTokenPtrArgType : public taiArgType {
@@ -636,9 +661,10 @@ public:
   void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
-  void 	Initialize()	{};
-  void 	Destroy()	{};
   TAQT_ARGTYPE_INSTANCE(taiTokenPtrArgType, taiArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiTypePtrArgType : public taiArgType {
@@ -650,9 +676,10 @@ public:
   void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
-  void 	Initialize()	{};
-  void 	Destroy()	{};
   TAQT_ARGTYPE_INSTANCE(taiTypePtrArgType, taiArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiMemberPtrArgType : public taiArgType {
@@ -664,9 +691,10 @@ public:
   void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
-  void 	Initialize()	{};
-  void 	Destroy()	{};
   TAQT_ARGTYPE_INSTANCE(taiMemberPtrArgType, taiArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API taiMethodPtrArgType : public taiArgType {
@@ -678,9 +706,10 @@ public:
   void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
-  void 	Initialize()	{};
-  void 	Destroy()	{};
   TAQT_ARGTYPE_INSTANCE(taiMethodPtrArgType, taiArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 
@@ -693,6 +722,9 @@ public:
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(gpiDefaultEl, taiMember);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API gpiLinkGP : public taiMember {
@@ -703,6 +735,9 @@ public:
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(gpiLinkGP, taiMember);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API gpiLinkList : public taiMember {
@@ -713,6 +748,9 @@ public:
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(gpiLinkList, taiMember);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API gpiFromGpTokenPtrMember : public taiTokenPtrMember {
@@ -726,6 +764,9 @@ public:
   virtual TABLPtr	GetList(MemberDef* from_md, const void* base);
 
   TAQT_MEMBER_INSTANCE(gpiFromGpTokenPtrMember, taiTokenPtrMember);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 
@@ -740,6 +781,9 @@ public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   TAQT_ARGTYPE_INSTANCE(gpiTAPtrArgType, taiTokenPtrArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API gpiInObjArgType : public gpiTAPtrArgType {
@@ -752,6 +796,9 @@ public:
   void		GetValue_impl(taiData* dat, void* base);
 
   TAQT_ARGTYPE_INSTANCE(gpiInObjArgType, gpiTAPtrArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 class TA_API gpiFromGpArgType : public taiTokenPtrArgType {
@@ -767,6 +814,9 @@ public:
   virtual TABLPtr	GetList(MemberDef* from_md, const void* base);
 
   TAQT_ARGTYPE_INSTANCE(gpiFromGpArgType, taiTokenPtrArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
 };
 
 //////////////////////////////////////////////////////////

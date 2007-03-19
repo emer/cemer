@@ -1000,9 +1000,39 @@ void taiMember::GetImage(taiData* dat, const void* base) {
   if (ro && !handlesReadOnly()) {
     taiMember::GetImage_impl(dat, base);
   } else {
-    GetImage_impl(dat, base);
+    if (isCondShow())
+      GetImage_CondShow(dat, base);
+    else
+      GetImage_impl(dat, base);
   }
 }
+
+void taiMember::GetImage_CondShow(taiData* dat, const void* base) {
+  bool is_on = false; // defaults here make it editable in test chain below
+  bool val_is_eq = false;
+  //note: we don't care if processed or not -- flag defaults make it editable
+  CheckProcessCondMembMeth("CONDSHOW", mbr, base, is_on, val_is_eq);
+  bool is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+  QWidget* wid = dat->GetRep();
+  QLabel* lbl = dat->label();
+  if (is_visible) {
+    if (lbl) {
+      lbl->setVisible(true);
+    }
+    if (wid) {
+      wid->setVisible(true);
+    }
+    GetImage_impl(dat, base);
+  } else {
+    if (wid) {
+      wid->setVisible(false);
+    }
+    if (lbl) {
+      lbl->setVisible(false);
+    }
+  }
+}
+
 
 void taiMember::GetImage_impl(taiData* dat, const void* base) {
   mbr->type->it->GetImage(dat, mbr->GetOff(base));
@@ -1035,6 +1065,11 @@ void taiMember::GetOrigVal(taiData* dat, const void* base) {
 
 void taiMember::GetMbrValue_impl(taiData* dat, void* base) {
   mbr->type->it->GetValue(dat, mbr->GetOff(base));
+}
+
+bool taiMember::isCondShow() const {
+  String optedit = mbr->OptionAfter("CONDSHOW_");
+  return optedit.nonempty();
 }
 
 void taiMember::StartScript(const void* base) {
@@ -1534,19 +1569,6 @@ void taiFunPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
 void taiCondEditMember::Initialize() {
   ro_im = NULL;
   use_ro = false;
-}
-
-taiCondEditMember::taiCondEditMember(MemberDef* md, TypeDef* td)
-: taiMember(md, td)
-{
-//  ro_im = new taiROMember(md, td);
-//  ro_im = new taiMember(md, td); // we will request the read-only version of the rep
-}
-
-taiCondEditMember::~taiCondEditMember() {
-//  if (ro_im != NULL)
-//    delete ro_im;
-//  ro_im = NULL;
 }
 
 int taiCondEditMember::BidForMember(MemberDef* md, TypeDef* td) {

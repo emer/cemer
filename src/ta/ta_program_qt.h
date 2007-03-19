@@ -217,8 +217,6 @@ protected:
   int 			row;
   int			m_show;
  
-  void 			AddData(int row, QWidget* data, QLayout* lay = NULL); 
-   // add the data widget to the row; if lay specified, that is added instead
   virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
   virtual void		Base_Add(); // adds controls etc for base
   bool			ShowMember(MemberDef* md);

@@ -58,13 +58,13 @@ class TA_API ProgVar: public taNBase {
 INHERITED(taNBase)
 public:
   enum VarType {
-    T_Int,			// integer
-    T_Real,			// real-valued number (double precision)
-    T_String,			// string of characters
-    T_Bool,			// boolean true/false 
-    T_Object,			// pointer to a C++ object 
-    T_HardEnum,			// enumerated list of options (existing C++ hard-coded one)
-    T_DynEnum,			// enumerated list of options (from my dynamically created list)
+    T_Int,			// #LABEL_Int integer
+    T_Real,			// #LABEL_Real real-valued number (double precision)
+    T_String,			// #LABEL_String string of characters
+    T_Bool,			// #LABEL_Bool boolean true/false 
+    T_Object,			// #LABEL_Object pointer to a C++ object 
+    T_HardEnum,			// #LABEL_Enum enumerated list of options (existing C++ hard-coded one)
+    T_DynEnum,			// #LABEL_DynEnum enumerated list of options (from my dynamically created list)
   };
 
   enum VarFlags { // #BITS flags for modifying program variables
@@ -74,7 +74,7 @@ public:
   };
 
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
-  int		int_val;	// #CONSHOW_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
+  int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
   double	real_val;	// #CONDSHOW_ON_var_type:T_Real real value
   String	string_val;	// #CONDSHOW_ON_var_type:T_String string value
   bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool boolean value

@@ -24,6 +24,7 @@
 
 #ifndef __MAKETA__
 # include <QObject>
+# include <QLabel>
 # include <QPointer>
 # include <QWidget>
 #endif
@@ -148,6 +149,8 @@ public:
   void			emit_UpdateUi();
   virtual bool		isConstructed();	// true if our parents (ex dialog) are fully constructed
   bool			highlight() const { return mhighlight; }	// #GET_highlight  changed highlight
+  QLabel*		label() const {return m_label;}
+  void			setLabel(QLabel* value) {m_label = value;}
   virtual void		setHighlight(bool value);	// #SET_Highlight
   virtual bool		readOnly();	// #GET_ReadOnly true if the control should be read only -- partially delegates to parent
   virtual bool		fillHor() {return false;} // override to true to fill prop cell, ex. edit controls
@@ -182,6 +185,7 @@ protected:
   bool			mhighlight;
 #ifndef __MAKETA__
   QPointer<QWidget>	m_rep;		// widget that represents the data
+  QPointer<QLabel>	m_label; // an associate label, typically for condshow show/hide
 #endif
   taiData*		mparent;		// if data is contained within data, this the parent container
   int			mflags;

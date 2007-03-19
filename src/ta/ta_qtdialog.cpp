@@ -801,6 +801,7 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
 // if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
   QWidget* buddy_widg = NULL;
   if (buddy) {
+    buddy->setLabel(label);
     buddy_widg = buddy->GetRep();
     connect(buddy, SIGNAL(settingHighlight(bool)),
         label, SLOT(setHighlight(bool)) );
