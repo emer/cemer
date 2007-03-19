@@ -637,7 +637,7 @@ void iProgramEditor::Base_Add() {
   }
   
   // add main inline controls
-  int flags = taiData::flgInline | taiData::flgNoUAE;
+  int flags = taiData::flgInline ;
   if (read_only) flags |= taiData::flgReadOnly;
   
   for (int j = 0; j < membs.size; ++j) {
@@ -655,8 +655,6 @@ void iProgramEditor::Base_Add() {
       hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
       hbl->addSpacing(taiM->hsep_c);
       lbl->show();
-      if (!read_only)
-        flags |= taiData::flgEditDialog; // nice button for popup
       taiData* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
       mb_dat->setLabel(lbl);
       ms->data_el.Add(mb_dat);
