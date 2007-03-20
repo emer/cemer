@@ -611,6 +611,8 @@ public:
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors; 	// #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif
+  static int		antialiasing_passes; // #SAVE #CAT_GUI number of rendering passes to make to smooth out the 3d display -- at least 2 is recommended to make the text legible -- the higher the number the slower the display update, but if you have a fast graphics card, it isn't that noticible of a cost (but there are diminishing returns as well)
+  static float		text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1 for rendering text -- a lower number (e.g., .1) should make things faster, without much cost in the display quality
 
   static ShowMembs	show_gui;	// #SAVE #CAT_GUI what to show in the gui
   static TypeInfo	type_info_;	// #SAVE #CAT_GUI #EXPERT #LABEL_type_info what to show when displaying type information

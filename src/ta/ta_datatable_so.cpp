@@ -299,7 +299,7 @@ void T3Axis::clear() {
   labels->removeAllChildren();
   // doesn't seem to make much diff:
   SoComplexity* cplx = new SoComplexity;
-  cplx->value.setValue(.1f);
+  cplx->value.setValue(taMisc::text_complexity);
   labels->addChild(cplx);
   labels->addChild(labelFont_);
   inherited::clear();
@@ -398,7 +398,7 @@ void T3GraphLine::assertText() {
   textSep_ = new SoSeparator();
   // doesn't seem to make much diff:
   SoComplexity* cplx = new SoComplexity;
-  cplx->value.setValue(.1f);
+  cplx->value.setValue(taMisc::text_complexity);
   textSep_->addChild(cplx);
   textSep_->addChild(labelFont_);
 

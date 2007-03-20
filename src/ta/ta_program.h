@@ -729,7 +729,7 @@ public:
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   MethodDef*		method;
-  // #TYPE_ON_obj_type the method to call on object obj
+  // #TYPE_ON_obj_type #APPLY_IMMED the method to call on object obj
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
@@ -759,7 +759,7 @@ public:
   ProgVarRef		result_var; // result variable (optional -- can be NULL)
   TypeDef*		min_type; // #NO_SHOW #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
   TypeDef*		object_type; // #TYPE_ON_min_type #APPLY_IMMED The object type to look for methods on
-  MethodDef*		method; //  #TYPE_ON_object_type the method to call
+  MethodDef*		method; //  #TYPE_ON_object_type #APPLY_IMMED the method to call
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
@@ -932,7 +932,7 @@ public:
   // #SHOW_TREE arguments to the function: passed when called
 
   virtual void		UpdateArgs(); 
-  // updates the arguments (automatically called in updateafteredit)
+  // #BUTTON updates the argument list based on the function being called
 
   override taList_impl*	children_() {return &fun_args;}
   override String	GetDisplayName() const;
@@ -1314,7 +1314,7 @@ class TA_API ProgramCall: public ProgEl {
   // ##DEF_CHILD_prog_args call (run) another program, setting any arguments before hand
 INHERITED(ProgEl)
 public:
-  ProgramRef		target; // the program to be called
+  ProgramRef		target; // #APPLY_IMMED the program to be called
   String		targ_ld_init; // #EDIT_DIALOG name(s) of target programs to search for to set this target pointer when program is loaded from program library or other external sources -- if not found, a warning message is emitted.  if empty, it defaults to name of current target. use commas to separate multiple options (tried in order) and an * indicates use the "contains" searching function (not full regexp support yet)
   bool			call_init; // #EXPERT if true, run the init_code on that program, not prog_code
   ProgArg_List		prog_args; // #SHOW_TREE arguments to the program--copied to prog before call

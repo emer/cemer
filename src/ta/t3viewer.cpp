@@ -600,7 +600,7 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
     m_renderArea->setAccumulationBuffer(true);
     bool accum_buf = m_renderArea->getAccumulationBuffer();
     if(accum_buf)
-      m_renderArea->setAntialiasing(true, 2);
+      m_renderArea->setAntialiasing(true, taMisc::antialiasing_passes);
     else {
       m_renderArea->setAntialiasing(true, 1);
       taMisc::Warning("Note: was not able to establish an accumulation buffer so rendering will not be anti-aliased.  Sorry.");
@@ -623,10 +623,11 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
 //       rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
       rend_act->setTransparencyType(SoGLRenderAction::BLEND);
       rend_act->setSmoothing(true); // low-cost line smoothing
-#ifndef TA_OS_MAC		    // temp until bug is fixed!
+      //#ifndef TA_OS_MAC		    // temp until bug is fixed!
+      // bug is now fixed with patch to soqt 1.4.1
       if(accum_buf)
-	rend_act->setNumPasses(2);    // 1 = no antialiasing; 2 = antialiasing
-#endif
+	rend_act->setNumPasses(taMisc::antialiasing_passes);    // 1 = no antialiasing; 2 = antialiasing
+      //#endif
       m_renderArea->setGLRenderAction(rend_act);
     }
     LayoutComponents();

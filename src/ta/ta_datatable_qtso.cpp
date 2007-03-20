@@ -1169,7 +1169,7 @@ void GridTableView::RenderHeader() {
 
   // doesn't seem to make much diff:
   SoComplexity* cplx = new SoComplexity;
-  cplx->value.setValue(.1f);
+  cplx->value.setValue(taMisc::text_complexity);
   hdr->addChild(cplx);
 
   SoFont* fnt = new SoFont();
@@ -1452,7 +1452,7 @@ void GridTableView::RenderLines(){
   // master font -- we only add a child font if different
   // doesn't seem to make much diff:
   SoComplexity* cplx = new SoComplexity;
-  cplx->value.setValue(.1f);
+  cplx->value.setValue(taMisc::text_complexity);
   body->addChild(cplx);
 
   SoFont* fnt = new SoFont();

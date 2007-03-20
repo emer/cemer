@@ -605,7 +605,7 @@ void UnitGroupView::Render_impl_blocks() {
       un_txt->addChild(bc);
       // doesn't seem to make much diff:
       SoComplexity* cplx = new SoComplexity;
-      cplx->value.setValue(.1f);
+      cplx->value.setValue(taMisc::text_complexity);
       un_txt->addChild(cplx);
       SoFont* fnt = new SoFont();
       fnt->name = "Arial";
@@ -1734,7 +1734,7 @@ void NetView::Render_net_text() {
     net_txt->addChild(bc);
     // doesn't seem to make much diff:
     SoComplexity* cplx = new SoComplexity;
-    cplx->value.setValue(.1f);
+    cplx->value.setValue(taMisc::text_complexity);
     net_txt->addChild(cplx);
     SoFont* fnt = new SoFont();
     fnt->size.setValue(font_sizes.net_vals);

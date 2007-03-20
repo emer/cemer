@@ -477,6 +477,8 @@ taMisc::ClickStyle taMisc::click_style = taMisc::CS_CONTEXT;
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif
+int	taMisc::antialiasing_passes = 2;
+float	taMisc::text_complexity = .1f;
 
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
 taMisc::TypeInfo  	taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
