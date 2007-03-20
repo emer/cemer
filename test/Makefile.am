@@ -13,4 +13,5 @@ dist_pkgdata_test_DATA =\
 	leabra_ra.proj \
 	ra3_2.proj \
 	xor_old.proj \
-	model_and_task_v4.proj
+	model_and_task_v4.proj \
+	simple_vis_search.proj
