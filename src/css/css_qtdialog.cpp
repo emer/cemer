@@ -327,7 +327,6 @@ cssiArgDialog::cssiArgDialog(MethodDef* md_, TypeDef* typ_, void* base_, int use
   use_argc = use_argc_;
   hide_args = hide_args_;
   err_flag = false;
-  use_show = false;
 }
 
 

@@ -2750,11 +2750,6 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   It is HIGHLY recommended to write source with unique names, and use
   variants on names or default parameters to achieve overloading.
 */
-//TEMP
-if (it->name == "SetLayerSpec") {
-  int i = 0;
-  ++i;
-}
   MethodDef* rval = NULL;
   bool replace = false; // we set true if we should replace the one we find 
   int idx;
@@ -4144,10 +4139,10 @@ int TypeDef::GetParOff(TypeDef* it, int boff) const {
 }
 
 const String TypeDef::GetPathName() const {
+//TODO: this routine may not even be used!
   // are we owned?
   // are we an EnumDef?
   
-//TEMP: just try to dumb version, see if it works...
   String rval; 
   TypeDef* owtp = GetOwnerType();
   if (owtp) { 

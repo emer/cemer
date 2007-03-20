@@ -43,6 +43,7 @@
 #include <qapplication.h>
 #include <qcolor.h> // needed for qbitmap
 #include <qcombobox.h>
+#include <QDesktopWidget>
 //#include <qcursor.h>
 //#include <qbitmap.h>
 #include <qfont.h>
@@ -399,9 +400,123 @@ void taiCompData::ChildDataChanged(taiData* sender) {
 //	taiField		//
 //////////////////////////////////
 
+iFieldEditDialog::iFieldEditDialog(bool modal_, bool read_only_, 
+  const String& desc, taiField* parent)
+:inherited()
+{
+  field = parent;
+  setModal(modal_);
+  init(read_only_, desc);
+}
+
+void iFieldEditDialog::init(bool read_only_, const String& desc) {
+  m_read_only = read_only_;
+  this->resize( taiM->dialogSize(taiMisc::dlgMini | taiMisc::dlgHor) );
+  
+  this->setFont(taiM->dialogFont(taiM->ctrl_size));
+  QVBoxLayout* layOuter = new QVBoxLayout(this);
+  if (desc.nonempty()) {
+    iLabel* prompt = new iLabel(desc, this);
+    prompt->setWordWrap(true);
+    QFont f = taiM->nameFont(taiM->ctrl_size);
+    f.setBold(true); 
+    prompt->setFont(f);
+    prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+    layOuter->addWidget(prompt);
+  }
+  txtText = new QTextEdit(this);
+  layOuter->addWidget(txtText);
+  QHBoxLayout* layButtons = new QHBoxLayout();
+  layButtons->setMargin(2);
+  layButtons->setSpacing(4);
+  layOuter->addLayout(layButtons);
+  layButtons->addStretch();
+  if (m_read_only) {
+    txtText->setReadOnly(true);
+    btnOk = NULL;
+    btnCancel = new QPushButton("&Close", this);
+    layButtons->addWidget(btnCancel);
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+  } else {
+    btnOk = new QPushButton("&Ok", this);
+    layButtons->addWidget(btnOk);
+    btnCancel = new QPushButton("&Cancel", this);
+    layButtons->addWidget(btnCancel);
+    connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
+    QObject::connect(txtText, SIGNAL(textChanged() ),
+          this, SLOT(repChanged() ) );
+  }
+  btnApply = NULL;
+  btnRevert = NULL;
+  if (!isModal() && !m_read_only) {
+    layButtons->addSpacing(8);
+    btnApply = new QPushButton("&Apply", this);
+    layButtons->addWidget(btnApply);
+    btnRevert = new QPushButton("&Revert", this);
+    layButtons->addWidget(btnRevert);
+    setApplyEnabled(false);
+    connect(btnApply, SIGNAL(clicked()), this, SLOT(btnApply_clicked()) );
+    connect(btnRevert, SIGNAL(clicked()), this, SLOT(btnRevert_clicked()) );
+  }
+}
+ 
+iFieldEditDialog::~iFieldEditDialog() {
+  if (field) {
+    field->edit = NULL;
+    field = NULL;
+  }
+}
+
+void iFieldEditDialog::accept() {
+  if (!isModal()) {
+    if (!m_read_only)
+      btnApply_clicked();
+    if (field)
+      field->edit = NULL;
+    deleteLater();
+  }
+  inherited::accept();
+}
+
+void iFieldEditDialog::reject() {
+  if (!isModal()) {
+    if (field)
+      field->edit = NULL;
+    deleteLater();
+  }
+  inherited::reject();
+}
+
+void iFieldEditDialog::setApplyEnabled(bool val) {
+  if (btnApply) btnApply->setEnabled(val);
+  if (btnRevert) btnRevert->setEnabled(val);
+}
+
+void iFieldEditDialog::setText(const QString& value) {
+  txtText->setPlainText(value);
+  setApplyEnabled(false);
+}
+
+void iFieldEditDialog::btnApply_clicked() {
+  field->rep()->setText(txtText->text());
+  setApplyEnabled(false);
+}
+
+void iFieldEditDialog::btnRevert_clicked() {
+  setText(field->rep()->text());
+}
+
+void iFieldEditDialog::repChanged() {
+  setApplyEnabled(true);
+}
+
+
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
+  edit = NULL;
+  mbr = NULL;
   if (flags_ & flgEditDialog) {
     QWidget* act_par = new QWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
@@ -443,12 +558,39 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
   }
 }
 
+taiField::~taiField() {
+  if (edit) {
+    delete edit;
+  }
+}
+
 void taiField::btnEdit_clicked(bool) {
-  rep()->editInEditor();
+//  rep()->editInEditor();
+  if (!edit) { // has to be modeless
+    String wintxt;
+    String desc;
+    //TODO: we could in theory trap the raw GetImage and derive the object parent
+    // to provide additional information, such as the object name (if base)
+    if (mbr) {
+      wintxt = "Editing field: " + mbr->name;
+      desc = mbr->desc;
+    } else {
+      wintxt = "Editing field";
+      //desc =
+    }
+    edit = new iFieldEditDialog(false, readOnly(), desc, this);
+    edit->setText(rep()->text());
+    edit->setWindowTitle(wintxt);
+    edit->show();
+  }
+  edit->show();
+  edit->raise();
 }
 
 void taiField::GetImage(const String& val) {
   rep()->setText(val);
+  if (edit)
+    edit->setText(val);
 }
 
 String taiField::GetValue() const {

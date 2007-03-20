@@ -1643,7 +1643,6 @@ gpiSelectEditDataHost::gpiSelectEditDataHost(void* base, TypeDef* td, bool read_
   	bool modal_, QObject* parent)
 : taiEditDataHost(base, td, read_only_, modal_, parent)
 {
-  use_show = false;
   sele = (SelectEdit*)base;
   // we use the default membs, and add one for the sele guys
   sele_set = membs.size; // index of new guy we add:

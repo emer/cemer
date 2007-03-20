@@ -159,7 +159,8 @@ public:
   virtual QLayout*	GetLayout() {return NULL;} // returns a top layout, if one is used
   bool			HasFlag(int flag_) const {return (mflags & flag_);} // returns true if has the indicated Flag (convenience method)
   void			SetFlag(int flags_, bool value = true) {if (value) mflags |= flags_; else mflags &= ~flags_;} // sets or clears a flag or set of flags
-
+  virtual void		SetMemberDef(MemberDef* mbr) {} // taiMember sets this
+  
   void			SetThisAsHandler(bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
   void			DataChanged(taiData* chld = NULL);
   // indicates something changed in the data from user input, if chld is passed then it called parent->DataChanged(this); ignored if parent or ourself is not fully constructed

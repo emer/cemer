@@ -3275,7 +3275,9 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
       new_obj->SetName(obj->GetName());
     else
       new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
-    new_obj->DataChanged(DCR_ITEM_UPDATED);
+//obs    new_obj->DataChanged(DCR_ITEM_UPDATED);
+      // do a full UAE (not just DC) so associated update code gets retriggered
+    new_obj->UpdateAfterEdit();
     return taiClipData::ER_OK;
   }
   
@@ -3340,6 +3342,8 @@ int taOBase::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx,
       // ok, now move the guy into the right place
       taBase* new_el = (taBase*)new_el_;
       list->MoveAfter(lst_itm, new_el);
+      // call UAE to trigger associate update code, esp in parent lists etc.
+      new_el->UpdateAfterEdit();
       return taiClipData::ER_OK;
     } else { // no data
         //TODO: error output

@@ -37,8 +37,10 @@ class taiDataLink;  //
 class iDataPanel; //
 
 // forwards
+class taiDataHostBase;
 class taiDataHost;
-class taiEditDataHost; //
+class taiEditDataHost; 
+class taiStringDataHost; //
 
 
 //////////////////////////////////
@@ -134,9 +136,9 @@ private:
 
 class TA_API iDialog : public QDialog { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
-friend class taiDataHost;
+friend class taiDataHostBase;
 public:
-  iDialog(taiDataHost* owner_, QWidget* parent = 0, int wflags = 0);
+  iDialog(taiDataHostBase* owner_, QWidget* parent = 0, int wflags = 0);
   ~iDialog();
 
   bool		post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
@@ -147,7 +149,7 @@ public:
   void		setCentralWidget(QWidget* widg); // is put in a scroll area; dialog is limited to screen size
   void		setButtonsWidget(QWidget* widg); // is put at the bottom, not in a scroll
 protected:
-  taiDataHost* 	owner;
+  taiDataHostBase* 	owner;
   QVBoxLayout*  layOuter;
   QWidget* 	mcentralWidget;
   QScrollArea*	scr;
@@ -235,8 +237,8 @@ private:
   void		Init();
 };
 
-class TA_API taiDataHost: public QObject, virtual public IDataLinkClient, 
-  virtual public IDataHost 
+//TODO: taiDHB should be used to rebase taiDH
+class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient
 { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(QObject)
   Q_OBJECT
@@ -270,31 +272,21 @@ public:
   static void	DeleteChildrenLater(QObject* obj); // convenience function -- deleteLater all children
   static void   MakeDarkBgColor(const iColor& bg, iColor& dk_bg); // for use by other users of stripe grids, to make the right dk bg color
 
+  int		ctrl_size;	// a taiMisc::SizeSpec-compatible value (ie, from FontSpec) -- def is taiM->ctrl_size
   bool          read_only;	// cannot change data
-  bool		use_show; 	// true if can use the show menu/rebuild facility
   TypeDef*	typ;		// type of object (if relevant)
   void*		cur_base;	// current base pointer of object (if relevant)
-  int		ctrl_size;	// a taiMisc::SizeSpec-compatible value (ie, from FontSpec) -- def is taiM->ctrl_size
-  int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr
-  int		cur_row;	// #IGNORE marks row num of ctrl being added to grid or matrix (for groups) -- child can read this to determine its background color, by calling colorOfRow()
-
-  String	prompt_str;	// string that goes inside as a prompt or label
-  String	win_str;	// string that goes on the window frame or similar area
   int		state;		// Dlg_State value -- indicates state of construction of dialog
   bool		modal;	// true if dialog is of the modal variety, always false for edit panels
   bool		no_ok_but;	// no ok button
   int		mouse_button;	// (Qt::ButtonState) the mouse button that pressed ok
-  bool		warn_clobber; // was changed elsewhere while edited here; warn user before saving
 
+  String	prompt_str;	// string that goes inside as a prompt or label
+  String	win_str;	// string that goes on the window frame or similar area
 
   QVBoxLayout*	vblDialog;	// layout for the entire dialog -- stacked/nested as follows:
   QLabel*	prompt;		// informative message at top of dialog
-  QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
-  QScrollArea*	  scrBody;		// scrollbars for the body items
-  QGridLayout* 	  layBody;	// layout for the body -- deleted/reconstructed when show changes
-  QWidget*	    body;		// parent for the body items (actually an iStripeWidget)
-  QFrame*	frmMethButtons;	// method buttons -- in body for dialogs, in outer panel for panel
-  iFlowLayout*	layMethButtons;	// method buttons
+  QWidget*	    body;	// parent for the body items
   QWidget*	widButtons; // box of buttons on the bottom of the dialog (unparented -- added to parent later
   QHBoxLayout*	layButtons;	
   HiLightButton*  okbut; // is HilightButton for the special mouse button handling
@@ -302,21 +294,20 @@ public:
   HiLightButton*  apply_but;	// only use for dialogs that wait around
   HiLightButton*  revert_but;
 
-
   iColor* 		bg_color;	// background color of host -- only set via setBgColor
+  virtual void		setBgColor(const iColor* new_bg); // #SET_bg_color
+
   inline bool		isDialog() {return (host_type == HT_DIALOG);} 
     // 'true' when we will be been posted as a dialog
   inline bool		isPanel() {return (host_type == HT_PANEL);} 
     // 'true' when we will be shown in a panel
   inline bool		isControl() {return (host_type == HT_CONTROL);} 
     // 'true' when shown in a control
-  virtual void	setBgColor(const iColor* new_bg); // #SET_bg_color
-  virtual const iColor* 	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
-  inline bool		showMethButtons() const {return show_meth_buttons;} // true if any are created
   QWidget* 	widget() {return mwidget;}
 
-  taiDataHost(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
-  virtual ~taiDataHost();
+  taiDataHostBase(TypeDef* typ_ = NULL, bool read_only_ = false, 
+    bool modal_ = false, QObject* parent = 0);
+  virtual ~taiDataHostBase(); //
 
   void		ClearBody();	// prepare dialog for rebuilding Body to show new contents
 
@@ -325,9 +316,112 @@ public:
     //NOTE: if built with as_panel=true, then must only be a panel, not dialog, and viceversa
   void  ConstrDeferred(); // finish deferred construction
   virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iDialog
+/*  virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
+  virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call */
+  virtual void  Unchanged();	// call when data has been saved or reverted
+/*  virtual void	Revert_force();	// forcibly (automatically) revert buffer (prompts)
+  virtual void  SetRevert();	// set the revert button on
+  virtual void  UnSetRevert();	// set the revert button off
+  virtual void  NotifyChanged(); // called by our object when it has changed (by us, or other)
+  virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
+  virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)
+  virtual void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
+  virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front*/
+  virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
+  virtual void		WidgetDeleting(); // lets us null the gui fields, and set state
+  
+public: // ITypedObject i/f (common to IDLC and IDH)
+  void*		This() {return this;} // override
+  TypeDef* 	GetTypeDef() const {return &TA_taiDataHostBase;} // override
+
+public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
+  void		DataLinkDestroying(taDataLink* dl); 
+  void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+
+
+// virtuals for IDataHost i/f -- call back to these from taiDataHost
+  virtual void		GetImage() {} // IDH brings this in too, we override in EDH
+  virtual void		GetValue() {} // IDH brings this in too, we override in EDH
+public slots:
+  virtual void		Apply(); 
+  virtual void  	Changed();	// override method call when data has changed
+
+public slots:
+  virtual void		Revert(); 
+
+protected:
+  ContextFlag		updating; // flag to indicate we are the instance that caused the update
+  bool			modified;
+  bool			warn_clobber; // was changed elsewhere while edited here; warn user before saving
+  QWidget*		mwidget;	// outer container for all widgets
+  iDialog*		dialog; // dialog, when using Edit, NULL otherwise
+  HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
+  DataChangeHelper 	dch; // helps track the state of datachanges
+
+  virtual void	Constr_Strings(const char* prompt="", const char* win_title="");
+  virtual void  Constr_Methods() {}
+  virtual void 	Constr_RegNotifies() {} // register notify on taBase
+  virtual void Constr_impl();
+  // called in following order by Constr_impl
+  virtual void	Constr_WinName();
+  virtual void	Constr_Widget(); //create the widget(), then call this inherited member
+  virtual void	Constr_Prompt();
+  virtual void  Constr_Box() {} // impl in subclass
+  virtual void	Constr_Body() {} // impl in subclass
+  virtual void  Insert_Methods() {}
+  virtual void	Constr_Buttons(); // note: Constr_impl creates the box/layout for the buttons
+  virtual void	Constr_Final() {}
+
+  virtual void	Cancel_impl();
+  virtual void 	Ok_impl(); // for dialogs
+
+public slots:
+  virtual void 	Ok(); // for dialogs
+  void 		Cancel(); // mostly for dialogs, but also used internally to close a Panel (ex. when obj deleted)
+
+protected:
+  iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
+  bool		reshow_req; // set on async req, cleared when serviced
+  bool		get_image_req;
+  
+  virtual void 		DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
+  void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
+  void			DoRaise_Dialog(); // what Raise() calls for dialogs
+  
+  
+/*  override void		customEvent(QEvent* ev);
+*/  
+  virtual void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor 
+};
+
+
+class TA_API taiDataHost: public taiDataHostBase, virtual public IDataHost 
+{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+INHERITED(taiDataHostBase)
+  Q_OBJECT
+friend class iDialog;
+public:
+  int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr
+  int		cur_row;	// #IGNORE marks row num of ctrl being added to grid or matrix (for groups) -- child can read this to determine its background color, by calling colorOfRow()
+
+
+  QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
+  QScrollArea*	  scrBody;		// scrollbars for the body items
+  QGridLayout* 	  layBody;	// layout for the body -- deleted/reconstructed when show changes
+  QFrame*	frmMethButtons;	// method buttons -- in body for dialogs, in outer panel for panel
+  iFlowLayout*	layMethButtons;	// method buttons
+
+
+  virtual const iColor* 	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
+  inline bool		showMethButtons() const {return show_meth_buttons;} // true if any are created
+
+  taiDataHost(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
+  virtual ~taiDataHost();
+
+  void		ClearBody();	// prepare dialog for rebuilding Body to show new contents
+
   virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
   virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call
-  virtual void  Unchanged();	// call when data has been saved or reverted
   virtual void	Revert_force();	// forcibly (automatically) revert buffer (prompts)
   virtual void  SetRevert();	// set the revert button on
   virtual void  UnSetRevert();	// set the revert button off
@@ -337,15 +431,13 @@ public:
   virtual void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
   virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   virtual void  Scroll(){}	// overload to scroll to field editor
-  virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
-  virtual void		WidgetDeleting(); // lets us null the gui fields, and set state
   
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
   TypeDef* 	GetTypeDef() const {return &TA_taiDataHost;} // override
 
 public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
-  void		DataLinkDestroying(taDataLink* dl); 
+//  void		DataLinkDestroying(taDataLink* dl); 
   void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f
@@ -359,28 +451,17 @@ public: // IDataHost i/f
 // iMainWindowViewer* viewerWindow() const; n/a here -- defined in taiEDH
   void*		Base() {return cur_base;} // base of the object
   TypeDef*	GetBaseTypeDef() {return typ;} // TypeDef on the base, for casting
-//  void		GetImage()	{ }
-//  void		GetValue()	{ }
+  void		GetImage()	{ }
+  void		GetValue()	{ }
 public slots:
-  void		Apply(); //override  
+  void		Apply() {inherited::Apply();} 
+  void  	Changed() {inherited::Changed();}
 
-public slots:
-  void  	Changed();	// override method call when data has changed
-
-public slots:
-  virtual void	Revert(); //override
 
 protected:
-  ContextFlag		updating; // flag to indicate we are the instance that caused the update
-  iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
-  bool			modified;
   bool			show_meth_buttons; // true if any are created
-  QWidget*		mwidget;	// outer container for all widgets
-  iDialog*		dialog; // dialog, when using Edit, NULL otherwise
-  HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
   MemberDef*		sel_item_md; // only used during handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
-  DataChangeHelper 	dch; // helps track the state of datachanges
 
   int 		AddSectionLabel(int row, QWidget* wid, const String& desc);
     // add a widget, usually a label or checkbox, that will span both columns (no data)
@@ -396,39 +477,21 @@ protected:
   void		BodyCleared(); // called when show changed, and body has actually been cleared
   void		SetMultiSize(int rows, int cols) {} // implemented in gpiMultiEditHost
   virtual void	ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
-  virtual void	Constr_Strings(const char* prompt="", const char* win_title=""); // called by static Constr
-  virtual void  Constr_Methods(); // creates the box for buttons
+  override void  Constr_Methods(); // creates the box for buttons
   virtual void	Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
-  virtual void	Constr_ShowMenu() {} // make the show/hide menu
-  virtual void 	Constr_RegNotifies() {} // register notify on taBase
-  virtual void Constr_impl();
-  // called in following order by Constr_impl
-  virtual void	Constr_WinName();
-  virtual void	Constr_Widget(); //create the widget(), then call this inherited member
-  virtual void	Constr_Prompt();
-  virtual void  Constr_Box();
-  virtual void	Constr_Body();
-  virtual void  Insert_Methods(); // insert the menu and methods, if made, and not owned elsewise
-  virtual void	Constr_Buttons(); // note: Constr_impl creates the box/layout for the buttons
-  virtual void	Constr_Final();
+  override void  Constr_Box();
+  override void	Constr_Body();
+  override void  Insert_Methods(); // insert the menu and methods, if made, and not owned elsewise
+  override void	Constr_Final();
   virtual void	FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id); // last_id enables access menu items
-  virtual void	Cancel_impl();
+  override void	Cancel_impl();
+  override void	Ok_impl();
 
-public slots:
-  virtual void 	Ok(); // for dialogs
-  void 		Cancel(); // mostly for dialogs, but also used internally to close a Panel (ex. when obj deleted)
 
 protected:
-  bool		reshow_req; // set on async req, cleared when serviced
-  bool		get_image_req;
-  
   override void		customEvent(QEvent* ev);
 
-  void 			DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
-  void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
-  void			DoRaise_Dialog(); // what Raise() calls for dialogs
-  
-  virtual void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
+  override void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
 protected slots:
   virtual void	label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
 };
@@ -580,5 +643,34 @@ protected slots:
   virtual void		bgrp_buttonClicked(int id); // one of the section checkboxes
 };
 
+
+class TA_API taiStringDataHost: public taiDataHostBase 
+{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+INHERITED(taiDataHostBase)
+  Q_OBJECT
+public:
+  iLineEdit*		edit;
+  MemberDef*		mbr; // the member being edited (doesn't have to be String)
+  
+  taBase*		base() const;
+  
+  void 			Constr(const char* prompt = "", const char* win_title = "");
+  override void		GetImage();
+  override void		GetValue();
+  
+  taiStringDataHost(MemberDef* mbr, void* base, TypeDef* typ_ = NULL, 
+   bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
+  ~taiStringDataHost();
+  
+
+protected:
+
+  void			DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+  override void		Constr_Strings(const char* prompt="", const char* win_title="");
+  override void  	Constr_Box();
+  override void 	Constr_RegNotifies();
+  override void 	DoConstr_Dialog(iDialog*& dlg);
+  override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
+};
 
 #endif // tai_dialog_h

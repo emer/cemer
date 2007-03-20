@@ -58,6 +58,7 @@
 
 #include "ibutton.h"
 #include "icolor.h"
+#include "ilineedit.h"
 #include "ieditgrid.h"
 #include "iflowlayout.h"
 #include "iscrollarea.h"
@@ -295,7 +296,7 @@ void taiChoiceDialog::reject() {
 //   iDialog		//
 //////////////////////////
 
-iDialog::iDialog(taiDataHost* owner_, QWidget* parent, int wflags)
+iDialog::iDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
 :QDialog(parent, (Qt::WFlags)wflags) 
 {
   owner = owner_;
@@ -634,7 +635,7 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
 
 
 //////////////////////////////////
-// 	taiDataHost		//
+// 	taiDataHostBase		//
 //////////////////////////////////
 
 class ReShowEvent: public QEvent {
@@ -649,7 +650,7 @@ public:
 #define LAYBODY_MARGIN	1
 #define LAYBODY_SPACING	0
 
-void taiDataHost::DeleteChildrenLater(QObject* obj) {
+void taiDataHostBase::DeleteChildrenLater(QObject* obj) {
   if (obj == NULL) return;
   QObject* chobj;
   const QObjectList& ol = obj->children(); 
@@ -658,47 +659,43 @@ void taiDataHost::DeleteChildrenLater(QObject* obj) {
     i = ol.size() - 1;
     chobj = ol.at(i);
     delete chobj;
-/*    if (chobj->isWidgetType()) ((QWidget*)chobj)->setParent((QWidget*)NULL);
-    else  chobj->setParent((QObject*)NULL);
-    chobj->deleteLater(); // deleted in event loop */
   }
 }
 
-void taiDataHost::MakeDarkBgColor(const iColor& bg, iColor& dk_bg) {
+void taiDataHostBase::MakeDarkBgColor(const iColor& bg, iColor& dk_bg) {
   dk_bg.set(taiMisc::ivBrightness_to_Qt_lightdark(bg, taiM->edit_darkbg_brightness));
 }
 
 
-taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
+taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
+  bool modal_, QObject* parent)
 :QObject(parent)
 {
   read_only = read_only_;
   modified = false;
   typ = typ_;
   cur_base = NULL;
+  modal = modal_;
+  state = EXISTS;
 
-  InitGuiFields();
+  bg_color = NULL; //not used in base
+  bg_color_dark = NULL; //not used in base
+  InitGuiFields(false);
 
-  bg_color = new iColor(); //value set later
-  bg_color_dark = new iColor(); //value set later
   if (taiM == NULL) ctrl_size = taiMisc::sizMedium;
   else              ctrl_size = taiM->ctrl_size; // for early type system instance when no taiM yet
-  row_height = 1; // actual value set in Constr
   mouse_button = 0;
-  cur_row = 0;
-  modal = modal_;
   no_ok_but = false;
   dialog = NULL;
-  state = EXISTS;
-  sel_item_md = NULL;
-  rebuild_body = false;
-  warn_clobber = false;
+//  warn_clobber = false;
   host_type = HT_DIALOG; // default, set later
   reshow_req = false;
   get_image_req = false;
+  warn_clobber = false;
 }
 
-taiDataHost::~taiDataHost() {
+
+taiDataHostBase::~taiDataHostBase() {
   if (dialog != NULL) DoDestr_Dialog(dialog);
   if (bg_color != NULL) {
     delete bg_color;
@@ -710,18 +707,11 @@ taiDataHost::~taiDataHost() {
   }
 }
 
-// note: called non-virtually in our ctor, and virtually in WidgetDeleting
-void taiDataHost::InitGuiFields(bool) { 
+void taiDataHostBase::InitGuiFields(bool) {
   mwidget = NULL;
   vblDialog = NULL;
   prompt = NULL;
-  splBody = NULL;
-  scrBody = NULL;
-  layBody = NULL;
   body = NULL;
-  frmMethButtons = NULL;
-  layMethButtons = NULL;
-  show_meth_buttons = false;
   widButtons = NULL;
   layButtons = NULL;
   okbut = NULL;
@@ -730,7 +720,249 @@ void taiDataHost::InitGuiFields(bool) {
   revert_but = NULL;
 }
 
-void taiDataHost::setBgColor(const iColor* new_bg) {
+void taiDataHostBase::Apply() {
+  if (warn_clobber) {
+    int chs = taiChoiceDialog::ChoiceDialog
+      (NULL, "Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?!Apply!Revert!Cancel!");
+    if(chs == 1) {
+      Revert();
+      return;
+    }
+    if(chs == 2)
+      return;
+  }
+  ++updating;
+  GetValue();
+  GetImage();
+  Unchanged();
+  --updating;
+}
+
+void taiDataHostBase::Revert() {
+  GetImage();
+  Unchanged();
+}
+
+void taiDataHostBase::DoDestr_Dialog(iDialog*& dlg) { // common sub-code for destructing a dialog instance
+  if (dlg != NULL) {
+    dlg->owner = NULL; // prevent reverse deletion
+    dlg->close(true); // destructive close
+    dlg = NULL;
+  }
+}
+
+void taiDataHostBase::Cancel() { //note: taiEditDataHost takes care of cancelling panels
+  state = CANCELED;
+  Cancel_impl();
+}
+
+void taiDataHostBase::Cancel_impl() { //note: taiEditDataHost takes care of cancelling panels
+  if (dialog) {
+    dialog->dismiss(false);
+  }
+  if (prompt) {
+    prompt->setText("");
+  }
+}
+
+void taiDataHostBase::Changed() {
+  if (modified) return; // handled already
+  modified = true;
+  if (updating) return;
+  if (apply_but != NULL) {
+      apply_but->setEnabled(true);
+      apply_but->setHiLight(true);
+
+  }
+  if (revert_but != NULL) {
+      revert_but->setEnabled(true);
+  }
+}
+
+/* NOTE: Constr_Xxx methods presented in execution (not lexical) order */
+void taiDataHostBase::Constr(const char* aprompt, const char* win_title,
+  const iColor* bgclr, HostType host_type_, bool deferred) 
+{
+  host_type = host_type_;
+  setBgColor(bgclr);
+  Constr_Strings(aprompt, win_title);
+  Constr_WinName();
+  Constr_Widget();
+  if (host_type != HT_CONTROL) 
+    Constr_Methods();
+  Constr_RegNotifies(); // taiEditHost registers notifies
+  state = DEFERRED1;
+  if (deferred) return;
+  ConstrDeferred(); // else finish it now!
+}
+
+
+
+void taiDataHostBase::ConstrDeferred() {
+  if (state != DEFERRED1) {
+    taMisc::Error("taiDataHost::ConstrDeferred2: expected host to be in state DEFERRED1");
+    return;
+  }
+  Constr_impl();
+  state = CONSTRUCTED;
+  GetImage();
+}
+
+void taiDataHostBase::Constr_impl() {
+  widget()->setUpdatesEnabled(false);
+  Constr_Prompt();
+  Constr_Box();
+  Constr_Body();
+  if (host_type != HT_CONTROL) 
+    Insert_Methods(); // if created, AND unowned
+  // create container for ok/cancel/apply etc. buttons
+  widButtons = new QWidget(); // parented when we do setButtonsWidget
+  widButtons->setAutoFillBackground(true);
+  if (bg_color) {
+    widButtons->setPaletteBackgroundColor(*bg_color);
+  }
+  layButtons = new QHBoxLayout(widButtons);
+//def  layButtons->setMargin(2); // facilitates container
+  Constr_Buttons();
+  Constr_Final();
+  widget()->setUpdatesEnabled(true);
+//NOTE: do NOT do a processevents -- it causes improperly nested event calls
+// in some cases, such as constructing the browser
+}
+
+void taiDataHostBase::Constr_Strings(const char* prompt, const char* win_title) {
+  prompt_str = prompt;
+  win_str = win_title;
+}
+
+void taiDataHostBase::Constr_Widget() {
+  if (mwidget != NULL) return;
+  mwidget = new QWidget();
+  if (bg_color != NULL) {
+    widget()->setPaletteBackgroundColor(*bg_color);
+  }
+  widget()->setFont(taiM->dialogFont(ctrl_size));
+  vblDialog = new QVBoxLayout(widget()); //marg=2
+  vblDialog->setSpacing(0); // need to manage ourself to get nicest look
+}
+
+void taiDataHostBase::Constr_WinName() {
+//nothing
+}
+
+void taiDataHostBase::Constr_Prompt() {
+  if (prompt != NULL) return; // already constructed
+//NOTE: don't use RichText format because it doesn't word wrap!
+  prompt = new QLabel(widget()); 
+  prompt->setWordWrap(true); // so it doesn't dominate hor sizing
+  QFont f = taiM->nameFont(ctrl_size);
+  f.setBold(true); 
+  prompt->setFont(f);
+  prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+  vblDialog->addWidget(prompt);
+  prompt->setText(prompt_str);
+  vblDialog->addSpacing(2);
+}
+
+void taiDataHostBase::Constr_Buttons() {
+  QWidget* par = widButtons;
+  layButtons->addStretch();
+  if (isDialog()) { // add dialog-like buttons
+    if(!modal && no_ok_but) {
+      okbut = NULL;
+    }
+    else {
+      if (read_only) {
+        okbut = new HiLightButton("&Close", par); //note: ok to reuse C as accelerator, because effect is same as Cancel
+      } else {
+        okbut = new HiLightButton("&Ok", par);
+      }
+      layButtons->addWidget(okbut, 0, (Qt::AlignVCenter));
+      connect(okbut, SIGNAL(clicked()),
+          this, SLOT(Ok()) );
+    }
+    if (read_only) {
+      canbut = NULL;
+    }
+    else {
+      canbut = new HiLightButton("&Cancel", par);
+      layButtons->addWidget(canbut, 0, (Qt::AlignVCenter));
+      connect(canbut, SIGNAL(clicked()),
+          this, SLOT(Cancel()) );
+    }
+  }
+
+  if (modal) {
+    apply_but = NULL;
+    revert_but = NULL;
+  } else {
+     // dont' put apply/revert buttons on a readonly dialog!
+    if (!read_only) {
+      layButtons->addSpacing(20); // TODO: parameterize, and give it some stretchiness
+      apply_but = new HiLightButton("&Apply", par);
+      layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
+      connect(apply_but, SIGNAL(clicked()),
+          this, SLOT(Apply()) );
+      revert_but = new HiLightButton("&Revert", par);
+      layButtons->addWidget(revert_but, 0, (Qt::AlignVCenter));
+      connect(revert_but, SIGNAL(clicked()),
+          this, SLOT(Revert()) );
+    }
+    Unchanged();
+  }
+  layButtons->addSpacing(10); // don't flush hard right
+}
+
+
+void taiDataHostBase::DataLinkDestroying(taDataLink* dl) {
+// TENT, TODO: confirm this is right...
+  cur_base = NULL;
+//NO!  if (!isConstructed()) return;
+  Cancel();
+}
+ 
+void taiDataHostBase::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+//inherited class completely implements
+}
+
+void taiDataHostBase::DoConstr_Dialog(iDialog*& dlg) {
+  // common subcode for creating a dialog -- used by the taiDialog and taiEditDialog cousin classes
+  if (dlg) return; // already constructed
+  if (modal) // s/b parented to current win
+    dlg = new iDialog(this, QApplication::activeWindow());
+  else 
+    dlg = new iDialog(this, NULL, Qt::WindowMinimizeButtonHint);
+  // note: X can't seem to handle more than 12-14 windows, so making these top-level is an issue
+  // BUT it is also highly unusable to make them owned, since then they obscure parent window
+  dlg->setCaption(win_str);
+//  dlg->setMinimumWidth(400); //TODO: maybe parameterize; note: would need to set layout FreeResize as well
+}
+
+void taiDataHostBase::DoRaise_Dialog() {
+  if (!dialog) return;
+  if (!modal) {
+    dialog->raise();
+    dialog->setFocus();
+  }
+}
+
+int taiDataHostBase::Edit(bool modal_) { // only called if isDialog() true
+  if (state != CONSTRUCTED)
+    return false;
+  modal = modal_;
+  if (dialog == NULL) DoConstr_Dialog(dialog);
+//dialog->resize(dialog->minimumWidth(), 1);
+  dialog->setCentralWidget(widget());
+  dialog->setButtonsWidget(widButtons);
+  //note: following is hack from rebasing
+  if (!modal && (GetTypeDef()->InheritsFrom(&TA_taiDataHost))) {
+    taiMisc::active_dialogs.AddUnique((taiDataHost*)this); // add to the list of active dialogs
+  }
+  state = ACTIVE;
+  return dialog->post(modal);
+}
+
+void taiDataHostBase::setBgColor(const iColor* new_bg) {
   if (new_bg == NULL) {
     // get from default pallette
     bg_color->set(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
@@ -738,6 +970,76 @@ void taiDataHost::setBgColor(const iColor* new_bg) {
     bg_color->set(new_bg);
   }
   MakeDarkBgColor(*bg_color, *bg_color_dark);
+}
+
+void taiDataHostBase::Ok() { //note: only used for Dialogs
+  //note: IV version used to scold user for pressing Ok in a readonly dialog --
+  // we just interpret Ok as Cancel
+  if (read_only) {
+    Cancel();
+    return;
+  }
+  Ok_impl();
+  state = ACCEPTED;
+  mouse_button = okbut->mouse_button;
+  if (dialog) {
+    dialog->dismiss(true);
+  }
+}
+
+void taiDataHostBase::Ok_impl() { 
+}
+
+void taiDataHostBase::Unchanged() {
+  modified = false;
+  //TODO: set gui to unchanged state
+  if (apply_but != NULL) {
+      apply_but->setEnabled(false);
+      apply_but->setHiLight(false);
+  }
+  if (revert_but != NULL) {
+      revert_but->setEnabled(false);
+      revert_but->setHiLight(false);
+  }
+  warn_clobber = false;
+}
+
+void taiDataHostBase::WidgetDeleting() {
+  InitGuiFields(); // called virtually
+  state = ZOMBIE;
+}
+
+
+//////////////////////////////////
+// 	taiDataHost		//
+//////////////////////////////////
+
+
+taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
+:inherited(typ_, read_only_, modal_, parent)
+{
+  InitGuiFields(false);
+
+  bg_color = new iColor(); //value set later
+  bg_color_dark = new iColor(); //value set later
+  row_height = 1; // actual value set in Constr
+  cur_row = 0;
+  sel_item_md = NULL;
+  rebuild_body = false;
+}
+
+taiDataHost::~taiDataHost() {
+}
+
+// note: called non-virtually in our ctor, and virtually in WidgetDeleting
+void taiDataHost::InitGuiFields(bool virt) { 
+  if (virt)  inherited::InitGuiFields(virt);
+  splBody = NULL;
+  scrBody = NULL;
+  layBody = NULL;
+  frmMethButtons = NULL;
+  layMethButtons = NULL;
+  show_meth_buttons = false;
 }
 
 const iColor* taiDataHost::colorOfRow(int row) const {
@@ -755,7 +1057,7 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   wid->setFixedHeight(taiM->label_height(ctrl_size));
   wid->setPaletteBackgroundColor(*colorOfRow(row));
   if (!desc.empty()) {
-    QToolTip::add(wid, desc);
+    wid->setToolTip(desc);
   }
   if (row < 0)
     row = layBody->numRows();
@@ -809,9 +1111,9 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
   
 
   if (!desc.empty()) {
-    QToolTip::add(label, desc);
+    label->setToolTip(desc);
     if (buddy_widg != NULL) {
-      QToolTip::add(buddy_widg, desc);
+      buddy_widg->setToolTip(desc);
     }
   }
   // add a label item in first column
@@ -853,7 +1155,7 @@ void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& 
   label->setFixedHeight(taiM->label_height(ctrl_size));
   label->setPaletteBackgroundColor(*colorOfRow(row));
   if (!desc.empty()) {
-    QToolTip::add(label, desc);
+    label->setToolTip(desc);
   }
   multi_body->setRowNameWidget(row, label);
   label->show(); //required to show when rebuilding
@@ -865,7 +1167,7 @@ void taiDataHost::AddMultiColName(iEditGrid* multi_body, int col, const String& 
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
   if (!desc.empty()) {
-    QToolTip::add(label, desc);
+    label->setToolTip(desc);
   }
   multi_body->setColNameWidget(col, label);
   label->show(); //required to show when rebuilding
@@ -882,24 +1184,6 @@ void taiDataHost::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget*
   data->show(); //required to show when rebuilding
 }
 
-void taiDataHost::Apply() {
-  if (warn_clobber) {
-    int chs = taiChoiceDialog::ChoiceDialog
-      (NULL, "Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?!Apply!Revert!Cancel!");
-    if(chs == 1) {
-      Revert();
-      return;
-    }
-    if(chs == 2)
-      return;
-  }
-  ++updating;
-  GetValue();
-  GetImage();
-  Unchanged();
-  --updating;
-}
-
 void taiDataHost::BodyCleared() { // called when last widget cleared from body
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
   rebuild_body = true;
@@ -907,18 +1191,8 @@ void taiDataHost::BodyCleared() { // called when last widget cleared from body
   state &= ~SHOW_CHANGED;
 }
 
-void taiDataHost::Cancel() { //note: taiEditDataHost takes care of cancelling panels
-  state = CANCELED;
-  Cancel_impl();
-}
-
 void taiDataHost::Cancel_impl() { //note: taiEditDataHost takes care of cancelling panels
-  if (dialog) {
-    dialog->dismiss(false);
-  }
-  if (prompt) {
-    prompt->setText("");
-  }
+  inherited::Cancel_impl();
   // delete any methods
   if (frmMethButtons) {
     QWidget* t = frmMethButtons; // avoid any possible callback issues
@@ -927,20 +1201,6 @@ void taiDataHost::Cancel_impl() { //note: taiEditDataHost takes care of cancelli
   }
 
   warn_clobber = false; // just in case
-}
-
-void taiDataHost::Changed() {
-  if (modified) return; // handled already
-  modified = true;
-  if (updating) return;
-  if (apply_but != NULL) {
-      apply_but->setEnabled(true);
-      apply_but->setHiLight(true);
-
-  }
-  if (revert_but != NULL) {
-      revert_but->setEnabled(true);
-  }
 }
 
 void taiDataHost::ClearBody() {
@@ -955,99 +1215,8 @@ void taiDataHost::ClearBody_impl() {
   DeleteChildrenLater(body);
 }
 
-/* NOTE: Constr_Xxx methods presented in execution (not lexical) order */
-void taiDataHost::Constr(const char* aprompt, const char* win_title,
-  const iColor* bgclr, HostType host_type_, bool deferred) 
-{
-  host_type = host_type_;
-  setBgColor(bgclr);
-  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if using even/odd shading
-  Constr_Strings(aprompt, win_title);
-  Constr_WinName();
-  Constr_Widget();
-  if (host_type != HT_CONTROL) 
-    Constr_Methods();
-  Constr_RegNotifies(); // taiEditHost registers notifies
-  state = DEFERRED1;
-  if (deferred) return;
-  ConstrDeferred(); // else finish it now!
-}
-
-
-
-void taiDataHost::ConstrDeferred() {
-  if (state != DEFERRED1) {
-    taMisc::Error("taiDataHost::ConstrDeferred2: expected host to be in state DEFERRED1");
-    return;
-  }
-  Constr_impl();
-  state = CONSTRUCTED;
-  GetImage();
-}
-
-void taiDataHost::Constr_Strings(const char* prompt, const char* win_title) {
-  prompt_str = prompt;
-  win_str = win_title;
-}
-
-void taiDataHost::Constr_impl() {
-  widget()->setUpdatesEnabled(false);
-  Constr_Prompt();
-  Constr_Box();
-  Constr_Body();
-  if (host_type != HT_CONTROL) 
-    Insert_Methods(); // if created, AND unowned
-  // create container for ok/cancel/apply etc. buttons
-  widButtons = new QWidget(); // parented when we do setButtonsWidget
-  widButtons->setAutoFillBackground(true);
-  if (bg_color) {
-    widButtons->setPaletteBackgroundColor(*bg_color);
-  }
-  layButtons = new QHBoxLayout(widButtons);
-//def  layButtons->setMargin(2); // facilitates container
-  Constr_Buttons();
-  Constr_Final();
-  widget()->setUpdatesEnabled(true);
-//NOTE: do NOT do a processevents -- it causes improperly nested event calls
-// in some cases, such as constructing the browser
-}
-
-void taiDataHost::Constr_Widget() {
-  if (mwidget != NULL) return;
-  mwidget = new QWidget();
-  if (bg_color != NULL) {
-    widget()->setPaletteBackgroundColor(*bg_color);
-  }
-  widget()->setFont(taiM->dialogFont(ctrl_size));
-  vblDialog = new QVBoxLayout(widget()); //marg=2
-  vblDialog->setSpacing(0); // need to manage ourself to get nicest look
-}
-
-void taiDataHost::Constr_WinName() {
-//nothing
-}
-
-void taiDataHost::Constr_Prompt() {
-  if (prompt != NULL) return; // already constructed
-//NOTE: don't use RichText format because it doesn't word wrap!
-  prompt = new QLabel(widget()); 
-  prompt->setWordWrap(true); // so it doesn't dominate hor sizing
-  QFont f = taiM->nameFont(ctrl_size);
-  f.setBold(true); 
-  prompt->setFont(f);
-  prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-  vblDialog->addWidget(prompt);
-  prompt->setText(prompt_str);
-  vblDialog->addSpacing(2);
-/*  // add a separator line
-  QFrame* line = new QFrame(widget());
-  line->setFrameShape(QFrame::HLine);
-  line->setFrameShadow(QFrame::Sunken);
-  vblDialog->add(line);
-  vblDialog->addSpacing(2); // add now, so next guy doesn't have to no*/
-}
-
 void taiDataHost::Constr_Box() {
+  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if using even/odd shading
   //note: see also gpiMultiEditDialog::Constr_Box, if changes made to this implementation
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
@@ -1084,7 +1253,6 @@ void taiDataHost::Constr_Body() {
 
 void taiDataHost::Constr_Methods() {
   Constr_Methods_impl();
-  Constr_ShowMenu();
 }
 
 
@@ -1121,56 +1289,8 @@ void taiDataHost::Insert_Methods() {
   }
 }
 
-void taiDataHost::Constr_Buttons() {
-  QWidget* par = widButtons;
-  layButtons->addStretch();
-  if (isDialog()) { // add dialog-like buttons
-    if(!modal && no_ok_but) {
-      okbut = NULL;
-    }
-    else {
-      if (read_only) {
-        okbut = new HiLightButton("&Close", par); //note: ok to reuse C as accelerator, because effect is same as Cancel
-      } else {
-        okbut = new HiLightButton("&Ok", par);
-      }
-      layButtons->addWidget(okbut, 0, (Qt::AlignVCenter));
-      connect(okbut, SIGNAL(clicked()),
-          this, SLOT(Ok()) );
-    }
-    if (read_only) {
-      canbut = NULL;
-    }
-    else {
-      canbut = new HiLightButton("&Cancel", par);
-      layButtons->addWidget(canbut, 0, (Qt::AlignVCenter));
-      connect(canbut, SIGNAL(clicked()),
-          this, SLOT(Cancel()) );
-    }
-  }
-
-  if (modal) {
-    apply_but = NULL;
-    revert_but = NULL;
-  } else {
-     // dont' put apply/revert buttons on a readonly dialog!
-    if (!read_only) {
-      layButtons->addSpacing(20); // TODO: parameterize, and give it some stretchiness
-      apply_but = new HiLightButton("&Apply", par);
-      layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
-      connect(apply_but, SIGNAL(clicked()),
-          this, SLOT(Apply()) );
-      revert_but = new HiLightButton("&Revert", par);
-      layButtons->addWidget(revert_but, 0, (Qt::AlignVCenter));
-      connect(revert_but, SIGNAL(clicked()),
-          this, SLOT(Revert()) );
-    }
-    Unchanged();
-  }
-  layButtons->addSpacing(10); // don't flush hard right
-}
-
 void taiDataHost::Constr_Final() {
+  inherited::Constr_Final();
   // we put all the stretch factor setting here, so it is easy to make code changes if necessary
   if (splBody) vblDialog->setStretchFactor(splBody, 1);
   else         vblDialog->setStretchFactor(scrBody, 1);
@@ -1220,15 +1340,8 @@ void taiDataHost::GetImage_Async() {
   QCoreApplication::postEvent(this, ev);
 }
 
-
-void taiDataHost::DataLinkDestroying(taDataLink* dl) {
-// TENT, TODO: confirm this is right...
-  cur_base = NULL;
-//NO!  if (!isConstructed()) return;
-  Cancel();
-}
- 
 void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+//note: nothing in base, by design
   // note: because of deferred construction, we may still need to update buttons/menus
   if (state == DEFERRED1) {
     GetImage();
@@ -1244,7 +1357,6 @@ void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2)
     ReShow();
   else if (dch.doDataUpdate()) //note: clears du state
     NotifyChanged();
-  
 }
 
 void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
@@ -1258,50 +1370,6 @@ void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e)
   delete menu;
 }
 
-void taiDataHost::DoConstr_Dialog(iDialog*& dlg) {
-  // common subcode for creating a dialog -- used by the taiDialog and taiEditDialog cousin classes
-  if (dlg) return; // already constructed
-  if (modal) // s/b parented to current win
-    dlg = new iDialog(this, QApplication::activeWindow());
-  else 
-    dlg = new iDialog(this, NULL, Qt::WindowMinimizeButtonHint);
-  // note: X can't seem to handle more than 12-14 windows, so making these top-level is an issue
-  // BUT it is also highly unusable to make them owned, since then they obscure parent window
-  dlg->setCaption(win_str);
-  dlg->setMinimumWidth(400); //TODO: maybe parameterize; note: would need to set layout FreeResize as well
-}
-
-void taiDataHost::DoDestr_Dialog(iDialog*& dlg) { // common sub-code for destructing a dialog instance
-  if (dlg != NULL) {
-    dlg->owner = NULL; // prevent reverse deletion
-    dlg->close(true); // destructive close
-    dlg = NULL;
-  }
-}
-
-void taiDataHost::DoRaise_Dialog() {
-  if (!dialog) return;
-  if (!modal) {
-    dialog->raise();
-    dialog->setFocus();
-  }
-}
-
-int taiDataHost::Edit(bool modal_) { // only called if isDialog() true
-  if (state != CONSTRUCTED)
-    return false;
-  modal = modal_;
-  if (dialog == NULL) DoConstr_Dialog(dialog);
-//dialog->resize(dialog->minimumWidth(), 1);
-  dialog->setCentralWidget(widget());
-  dialog->setButtonsWidget(widButtons);
-  if (!modal) {
-    taiMisc::active_dialogs.AddUnique(this); // add to the list of active dialogs
-  }
-  state = ACTIVE;
-  return dialog->post(modal);
-}
-
 void taiDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
   sel_item_md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
 }
@@ -1312,23 +1380,13 @@ void taiDataHost::Iconify(bool value) {
   else       dialog->deiconify();
 }
 
-void taiDataHost::Ok() { //note: only used for Dialogs
-  //note: IV version used to scold user for pressing Ok in a readonly dialog --
-  // we just interpret Ok as Cancel
-  if (read_only) {
-    Cancel();
-    return;
-  }
+void taiDataHost::Ok_impl() { //note: only used for Dialogs
   // NOTE: we herein might be bypassing the clobber warn, but shouldn't really
   //be possible to modify ourself externally inside a dialog
+  inherited::Ok_impl();
   if (HasChanged()) {
     GetValue();
     Unchanged();
-  }
-  state = ACCEPTED;
-  mouse_button = okbut->mouse_button;
-  if (dialog) {
-    dialog->dismiss(true);
   }
 }
 
@@ -1380,11 +1438,6 @@ bool taiDataHost::ReShow(bool force) {
   return true;
 }
 
-void taiDataHost::Revert() {
-  GetImage();
-  Unchanged();
-}
-
 void taiDataHost::Revert_force() {
   if (modified && (taMisc::auto_revert == taMisc::CONFIRM_REVERT)) {
     int chs = taiChoiceDialog::ChoiceDialog
@@ -1402,25 +1455,6 @@ void taiDataHost::Revert_force() {
 
 taMisc::ShowMembs taiDataHost::show() const {
   return taMisc::show_gui;
-}
-
-void taiDataHost::Unchanged() {
-  modified = false;
-  //TODO: set gui to unchanged state
-  if (apply_but != NULL) {
-      apply_but->setEnabled(false);
-      apply_but->setHiLight(false);
-  }
-  if (revert_but != NULL) {
-      revert_but->setEnabled(false);
-      revert_but->setHiLight(false);
-  }
-  warn_clobber = false;
-}
-
-void taiDataHost::WidgetDeleting() {
-  InitGuiFields(); // called virtually
-  state = ZOMBIE;
 }
 
 //////////////////////////////////
@@ -2081,31 +2115,6 @@ void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   if (HasChanged()) {
     GetValue();
   }
-  
-/* NOTE: we have changed this to always silently save
-  bool forced = (cancel_op == CO_NOT_CANCELLABLE);
-  if (HasChanged()) {
-    int chs;
-    if (forced)
-      chs = taMisc::Choice("Changes have not been applied", "&Apply", "&Discard Changes");
-    else
-      chs = taMisc::Choice("Changes have not been applied", "&Apply", "&Discard Changes", "&Cancel");
-    switch (chs) {
-    case 0: // Apply
-      GetValue();
-      break;
-    case 1: // Discard
-      // only reshow if cancellable, otherwise we will be shutdown anyway,
-      // so don't add unnecessary gui operations
-      if (forced) Unchanged();
-      else        GetImage(); // has Unchanged baked in
-      if (discarded) *discarded = true;
-      break;
-    case  2: // Cancel (non-forced only)
-      cancel_op = CO_CANCEL;
-      break;
-    }
-  } */
 }
 
 bool taiEditDataHost::ShowMember(MemberDef* md) const {
@@ -2165,4 +2174,74 @@ iMainWindowViewer* taiEditDataHost::viewerWindow() const {
   iMainWindowViewer* dv = NULL; 
   if (panel) dv = panel->viewerWindow();
   return dv;
+}
+
+
+taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_,
+  bool read_only_, bool modal_, QObject* parent)
+:inherited(typ_ ,read_only_, modal_, parent)
+{
+  cur_base = base_;
+  mbr = mbr_;
+  edit = NULL;
+}
+
+taiStringDataHost::~taiStringDataHost() {
+}
+
+taBase* taiStringDataHost::base() const {
+  return (taBase*)cur_base;
+}
+
+void taiStringDataHost::Constr(const char* prompt, const char* win_title) {
+  inherited::Constr(prompt, win_title);
+}
+
+void taiStringDataHost::Constr_Box() {
+  edit = new iLineEdit(widget());
+  vblDialog->addWidget(edit, 1);
+}
+
+void taiStringDataHost::Constr_RegNotifies() {
+  if ((typ && typ->InheritsFrom(&TA_taBase) && cur_base)) {
+    ((taBase*)cur_base)->AddDataClient(this);
+  }
+}
+
+void taiStringDataHost::Constr_Strings(const char* prompt_str_, const char* win_str_) {
+  inherited::Constr_Strings(prompt_str_, win_str_); // for if non-empty
+  taBase* base = this->base(); // cache
+  if (base && (win_str_ == "")) {
+    win_str = "Editing " + base->GetPath() + ":" + mbr->GetLabel();
+  }
+  if (prompt_str_ == "") {
+    prompt_str = mbr->GetLabel() + ": " + mbr->desc;
+  }
+  
+}
+
+void taiStringDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+}
+
+void taiStringDataHost::DoConstr_Dialog(iDialog*& dlg) {
+  inherited::DoConstr_Dialog(dlg);
+  dlg->resize( taiM->dialogSize(taiMisc::dlgSmall | taiMisc::dlgHor) );
+}
+
+
+void taiStringDataHost::GetImage() {
+  String val = mbr->type->GetValStr(mbr->GetOff(cur_base), cur_base, mbr);
+  edit->setText(val);
+}
+
+void taiStringDataHost::GetValue() {
+  String val = edit->text();
+  mbr->type->SetValStr(val, mbr->GetOff(cur_base), cur_base, mbr);
+}
+
+void taiStringDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
+  // called by root on closing, dialog on closing, etc. etc.
+  if (modified) {
+    GetValue();
+  }
 }

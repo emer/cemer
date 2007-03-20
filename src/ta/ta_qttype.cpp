@@ -981,11 +981,14 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
   if (mbr->HasOption(TypeItem::opt_apply_immed))
     flags |= taiData::flgAutoApply;
     
+  taiData* rval;
   if ((flags & taiData::flgReadOnly) && !handlesReadOnly()) {
-    return taiMember::GetDataRep_impl(host_, par, gui_parent_, flags);
+    rval = taiMember::GetDataRep_impl(host_, par, gui_parent_, flags);
   } else {
-    return GetDataRep_impl(host_, par, gui_parent_, flags);
+    rval = GetDataRep_impl(host_, par, gui_parent_, flags);
   }
+  rval->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
+  return rval;
 }
 
 taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {

@@ -41,6 +41,7 @@ class QKeySequence; // #IGNORE
 class MatrixGeom;
 
 // forwards
+class taiField;
 class taiToggle;
 class taiActions;
 class taiMenu;
@@ -96,15 +97,55 @@ private:
   QObjectList*		mwidgets; // list of child widgets
 };
 
+
+class TA_API iFieldEditDialog : public QDialog {
+  Q_OBJECT
+INHERITED(QDialog)
+public:
+  QTextEdit*	txtText;
+  QPushButton*	btnOk; // read/write only
+  QPushButton* 	btnCancel; // or close, if read only
+  QPushButton*	btnApply; // writes it back to field
+  QPushButton* 	btnRevert; // gets back from field
+  
+  bool		isReadOnly() {return m_read_only;}
+  virtual void	setText(const QString& value);
+  
+  iFieldEditDialog(bool modal_, bool read_only, const String& desc, taiField* parent);
+  ~iFieldEditDialog();
+  
+public slots:
+  override void accept();
+  override void reject();
+
+protected:
+  taiField*	field;
+  bool		m_read_only;
+  
+  void		setApplyEnabled(bool val); // set apply/revert enabled or not
+  
+protected slots:
+  void		btnApply_clicked();
+  void		btnRevert_clicked();
+  void		repChanged();
+  
+private:
+  void 		init(bool readOnly, const String& desc);
+};
+
+
 class TA_API taiField : public taiData {
   Q_OBJECT
+friend class iFieldEditDialog;
 public:
   iLineEdit*		rep() const { return leText; }
   bool			fillHor() {return true;} // override 
   void 			setMinCharWidth(int num); // hint for min chars, 0=no min
+  override void		SetMemberDef(MemberDef* mbr_) {mbr = mbr_;}
   
   taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-
+  ~taiField();
+  
   void 	GetImage(const String& val);
   String GetValue() const;
 
@@ -115,6 +156,8 @@ protected slots:
 protected:
   iLineEdit*		leText;
   QToolButton*		btnEdit; // if requested, button to invoke dialog editor
+  iFieldEditDialog*	edit; // an edit dialog, if created
+  MemberDef*		mbr;
   override void		GetImage_impl(const void* base) {GetImage(*((String*)base));}
   override void		GetValue_impl(void* base) const {*((String*)base) = GetValue();} 
   override void		GetImageVar_impl(const Variant& val) {GetImage(val.toString());}

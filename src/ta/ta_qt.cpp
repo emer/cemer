@@ -375,7 +375,13 @@ void taiMisc::AdjustFont(int fontSpec, iFont& font) {
 iSize taiMisc::dialogSize(int dialogSpec) {
   iSize rval;
   bool ver = (dialogSpec & dlgVer);
-  switch (dialogSpec & dlgSize_mask) {
+  dialogSpec &= dlgSize_mask;
+  if (dialogSpec == 0) dialogSpec = dlgMedium;
+  switch (dialogSpec) {
+  case dlgMini:
+    if (ver) rval = iSize((scrn_s.w * 2) / 10, (scrn_s.h * 3) / 10);// .2w .3h small vertically oriented dialog (ex. popup list selectors)
+    else rval = iSize((scrn_s.w * 3) / 10, (scrn_s.h * 2) / 10); // .3w .2h small horizontally oriented dialog
+    break;
   case dlgSmall:
     if (ver) rval = iSize((scrn_s.w * 3) / 10, (scrn_s.h * 2) / 5);// .3w .4h small vertically oriented dialog (ex. popup list selectors)
     else rval = iSize((scrn_s.w * 2) / 5, (scrn_s.h * 3) / 10); // .4w .3h small horizontally oriented dialog
@@ -384,6 +390,7 @@ iSize taiMisc::dialogSize(int dialogSpec) {
     if (ver) rval = iSize((scrn_s.w * 3) / 5, (scrn_s.h * 4) / 5);// .6w .8h  big vertically oriented dialog
     else rval = iSize((scrn_s.w * 4) / 5, (scrn_s.h * 3) / 5);// .8h .6w big horizontally oriented dialog
     break;
+  case dlgMedium:
   default: // medium, the default
     if (ver) rval = iSize((scrn_s.w * 2) / 5, (scrn_s.h * 3) / 5);// .4w .6h  medium vertically oriented dialog
     else rval = iSize((scrn_s.w * 3) / 5, (scrn_s.h * 2) / 5);// .6w .4h  medium horizontally oriented dialog

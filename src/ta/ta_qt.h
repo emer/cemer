@@ -106,9 +106,10 @@ public:
   enum DialogSpec {
     //choose 1:
     defDialogSize	= 0x000, // default is medium
-    dlgSmall		= 0x001,
-    dlgMedium		= 0x002,
-    dlgBig		= 0x003,
+    dlgMini		= 0x002,
+    dlgSmall		= 0x004,
+    dlgMedium		= 0x006,
+    dlgBig		= 0x008,
 
     // choose 1:
     dlgHor		= 0x000, // the default -- Hor == ~Ver
@@ -117,12 +118,12 @@ public:
     // prebaked:
     hdlg		= 0x000, // default h dialog
     vdlg		= 0x010, // default v dialog
-    hdlg_s		= 0x001,
-    vdlg_s		= 0x011,
-    hdlg_m		= 0x002,
-    vdlg_m		= 0x012,
-    hdlg_b		= 0x003,
-    vdlg_b		= 0x013,
+    hdlg_s		= 0x004,
+    vdlg_s		= 0x014,
+    hdlg_m		= 0x006,
+    vdlg_m		= 0x016,
+    hdlg_b		= 0x008,
+    vdlg_b		= 0x018,
 
     // masks
     dlgSize_mask	= 0x00F,
