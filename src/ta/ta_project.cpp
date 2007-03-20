@@ -1333,7 +1333,7 @@ bool taRootBase::Startup_Console() {
 }
 
 bool taRootBase::Startup_RegisterSigHandler() {
-#if ((!defined(DMEM_COMPILE)) && (!defined(TA_OS_WIN))) 
+#if (!defined(DMEM_COMPILE)) 
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
 #endif
   return true;
@@ -1580,7 +1580,7 @@ int taRootBase::DMem_SubEventLoop() {
 //////////////////////////////////////////////////////////////////////////////
 // 		Recover File Handler
 
-#ifndef TA_OS_WIN
+//#ifndef TA_OS_WIN
 
 #include <signal.h>
 #include <memory.h>
@@ -1600,10 +1600,14 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 #ifdef TA_GUI
   taiMisc::Cleanup(err);	// cleanup stuff in tai
 #endif
-  if((err == SIGUSR1) || (err == SIGUSR2) || (err == SIGALRM))
+#ifndef TA_OS_WIN // MS CRT doesn't handle these signals...
+  if((err == SIGUSR1) || (err == SIGUSR2) || (err == SIGALRM)) {
     cerr << "Saving project file(s) from signal: ";
-  else
+  } else
+#endif // !TA_OS_WIN
+  {
     cerr << "Saving recover file(s) and exiting from signal: ";
+  }
   taMisc::Decode_Signal(err);
   cerr << endl;
 
@@ -1612,12 +1616,17 @@ void taRootBase::SaveRecoverFileHandler(int err) {
     prj->SaveRecoverFile();
   }
 
+#ifdef TA_OS_WIN // MS CRT doesn't handle these signals...
+  exit(err);
+#else // TA_OS_WIN // MS CRT doesn't handle these signals...
   if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2)) {
     taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
     has_crashed = false;
   } else {
     kill(getpid(), err);		// activate signal
   }
+#endif // 
+ 
 }
 
-#endif // TA_OS_WIN
+//#endif // TA_OS_WIN

@@ -60,5 +60,18 @@ public:
 #endif
 };
 
+#ifdef DEBUG //temp, for testing signal handlers
+class PDP_API CrashObject: public taNBase {
+public:
+  void CrashMe() {taBase* null_ptr = NULL; null_ptr->GetName();}
+  // #MENU #MENU_CONTEXT Execute this bad boy function and you will crash!!!
+  TA_BASEFUNS(CrashObject);
+private:
+  void Initialize() {}
+  void Destroy() {}
+ 
+};
+#endif
+
 #endif // base_h
 

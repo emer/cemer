@@ -263,12 +263,12 @@ public:
   };
 
   enum ValType { // the basic data types widely supported by data-handling api's, esp. matrices
-    VT_STRING,		// an ANSI string of any length
-    VT_DOUBLE,		// a 8-byte floating point value (aprox 15 sig decimal digits)
-    VT_FLOAT,		// a 4-byte floating point value (aprox 7 sig decimal digits)
-    VT_INT,		// a 32-bit signed integer
-    VT_BYTE,		// an unsigned 8-bit integer; used mostly for image components (rgb)
-    VT_VARIANT		// a Variant, which can hold scalars, matrices, and objects
+    VT_STRING,		// #LABEL_String an ANSI string of any length
+    VT_DOUBLE,		// #LABEL_double a 8-byte floating point value (aprox 15 sig decimal digits)
+    VT_FLOAT,		// #LABEL_float a 4-byte floating point value (aprox 7 sig decimal digits)
+    VT_INT,		// #LABEL_int a 32-bit signed integer
+    VT_BYTE,		// #LABEL_byte an unsigned 8-bit integer; used mostly for image components (rgb)
+    VT_VARIANT		// #LABEL_Variant a Variant, which can hold scalars, strings, matrices, and objects
   };
   
   enum BaseFlags { // #BITS control flags 

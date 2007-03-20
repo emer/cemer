@@ -269,7 +269,7 @@ public:
   	
   bool		CheckAddPluginDep(TypeDef* td); // add a plugin dependency, if this type is a  type defined in a plugin; true if it was
   bool		VerifyHasPlugins(); // check the current plugin_deps w/ loaded plugins, return true if all needed plugins loaded OR user says to continue loading anyway
-  
+
   static void 	SaveRecoverFileHandler(int err = 1);
   // error handling function that saves a recover file when system crashes
 

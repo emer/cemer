@@ -814,14 +814,12 @@ public:
   static TypeInfoKind TypeToTypeInfoKind(TypeDef* typ);
   // #CAT_GlobalState 
   
-#if ((defined(TA_OS_UNIX)))
 #ifndef __MAKETA__
   static void	Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun));
   // #IGNORE register a cleanup process in response to all terminal signals
 #endif
   static void	Decode_Signal(int err);
   // #IGNORE printout translation of signal on cerr
-#endif // WINDOWS
 
   /////////////////////////////////////////////////
   //	Startup/Args

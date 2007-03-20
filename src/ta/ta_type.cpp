@@ -32,16 +32,13 @@
 # include <QDir>
 # include <QCoreApplication>
 # include <QTimer>
-#include "css_machine.h"	// for setting error code in taMisc::Error
+# include "css_machine.h"	// for setting error code in taMisc::Error
 # ifdef TA_GUI
 #   include "ta_qtdata.h"
 #   include "ta_qttype.h"
 #   include <QMainWindow> 
 #   include "igeometry.h"
 # endif // TA_GUI
-
-#else // ndef NO_TA_BASE
-//# include "maketa.h"
 #endif // NO_TA_BASE
 
 
@@ -49,12 +46,9 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <signal.h>
-//nn? in stdlib #include <malloc.h>
-//nn? #include <unistd.h>
-#ifdef TA_OS_WIN
-#else
-#include <sys/time.h>
-#include <sys/times.h>
+#ifndef TA_OS_WIN
+# include <sys/time.h>
+# include <sys/times.h>
 #endif
 
 const String String_PArray::def_sep(", ");
@@ -336,7 +330,13 @@ int taiMiscCore::Exec() {
     return 0;
   }
   taMisc::in_event_loop = true;
-  int rval = Exec_impl();
+  int rval = 0;
+  try {
+    rval = Exec_impl();
+  } catch(...) {
+    taMisc::in_event_loop = false;
+    raise(SIGABRT);
+  }
   taMisc::in_event_loop = false;
   return rval;
 }
@@ -920,47 +920,50 @@ taMisc::TypeInfoKind taMisc::TypeToTypeInfoKind(TypeDef* td) {
   return tik;
 }
 
-#if ((defined(TA_OS_UNIX)))
-
 void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
   // this should be the full set of terminal signals
 //  signal(SIGHUP,  fun); // 1
+//NOTE: SIGABRT is only ansi signal MS CRT really supports
+  signal(SIGABRT, fun);	// 6
+#ifndef TA_OS_WIN
+  signal(SIGILL,  fun);	// 4
+  signal(SIGSEGV, fun); // 11
   signal(SIGINT,  fun);	// 2
   signal(SIGQUIT, fun);	// 3
-  signal(SIGILL,  fun);	// 4
-  signal(SIGABRT, fun);	// 6
   signal(SIGBUS,  fun); // 7
   signal(SIGUSR1, fun); // 10
-  signal(SIGSEGV, fun); // 11
   signal(SIGUSR2, fun); // 12
-#ifndef LINUX
+# ifndef LINUX
   signal(SIGSYS,  fun);
-#endif
+# endif
   signal(SIGPIPE, fun); // 13
   signal(SIGALRM, fun); // 14
   signal(SIGTERM, fun); // 15
+#endif //!TA_OS_WIN
 }
 
 void taMisc::Decode_Signal(int err) {
   switch(err) {
+  case SIGABRT:	cerr << "abort"; break;
+#ifndef TA_OS_WIN
   case SIGHUP:	cerr << "hangup"; break;
   case SIGQUIT:	cerr << "quit";	break;
   case SIGILL:	cerr << "illegal instruction"; break;
-  case SIGABRT:	cerr << "abort"; break;
   case SIGBUS:	cerr << "bus error"; break;
   case SIGSEGV:	cerr << "segmentation violation"; break;
-#ifndef LINUX
+# ifndef LINUX
   case SIGSYS:	cerr << "bad argument to system call"; break;
-#endif
+# endif
   case SIGPIPE:	cerr << "broken pipe"; break;
   case SIGALRM:	cerr << "alarm clock"; break;
   case SIGTERM:	cerr << "software termination signal"; break;
   case SIGUSR1:	cerr << "user signal 1"; break;
   case SIGUSR2:	cerr << "user signal 2"; break;
+#endif  //!TA_OS_WIN
   default:	cerr << "unknown"; break;
   }
 }
-#endif // WINDOWS
+
 
 
 /////////////////////////////////////////////////

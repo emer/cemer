@@ -209,9 +209,6 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\pdp\pdp_base.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\pdp\pdp_base_win.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\pdp\pdp_program.cpp">
 				</File>
 				<File
@@ -373,6 +370,12 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				Filter="">
 				<File
 					RelativePath="..\..\..\src\bp\bp_TA.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\bp\bp_TA_inst.h">
@@ -440,6 +443,12 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				Filter="">
 				<File
 					RelativePath="..\..\..\src\leabra\leabra_TA.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\src\leabra\leabra_TA_inst.h">
