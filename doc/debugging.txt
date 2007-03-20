@@ -1,14 +1,22 @@
-New Group bug
+Leak Bug
 
-* third taiData has flgReadOnly set
+* Edit Dialogs delete
+* first taiEditDataHost deletes
+  from the tabMisc list of hosts
+* then the iDialog deletes
+
+for browsers:
+
+* the EditDataPanel deletes
+  (as part of the MainWindow destruction chain)
+* but the taiEditDataHost does *not* delete 
+
+sequence:
+  ~iTabView runs
+    the list of panels is reset
+  EditDataPanel deletes
 
 
-Default Project bug
-
-* will stick for: taProject (in ta), ProjectBase (in pdp)
-  but not for LeabraProjet (in leabra) or BpProject (in bp)
-  
-  
 
 
 Datatable Clip bugs

@@ -396,6 +396,7 @@ EditDataPanel::EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_)
 EditDataPanel::~EditDataPanel() {
   if (owner) {
     owner->WidgetDeleting(); // removes our ref
+    owner->deleteLater(); // no one else does this!
     owner = NULL;
   }
 }

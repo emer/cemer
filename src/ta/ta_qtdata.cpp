@@ -1698,11 +1698,13 @@ void taiActions::ActionAdded(taiAction* it) {
 }
 
 void taiActions::ActionRemoving(taiAction* it) {
-  actionsRep()->removeAction(it);
+  QWidget* wid = actionsRep(); // avoid destruct issues
+  if (wid)
+    wid->removeAction(it);
 }
 
 QWidget* taiActions::actionsRep() {
-  if (m_menu != NULL) return m_menu;
+  if (m_menu) return m_menu;
   else                return GetRep();
 }
 

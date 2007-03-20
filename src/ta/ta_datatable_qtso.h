@@ -29,6 +29,7 @@
 
 #ifndef __MAKETA__
 # include <QItemDelegate>
+# include <QPointer>
 # include <QTableView>
 #endif
 
@@ -154,7 +155,9 @@ public:
   T3_DATAVIEWFUNS(DataTableView, T3DataViewPar) //
 
 protected:
-  iDataTableView_Panel*	m_lvp; //note: will be a subclass of this, per the log type
+#ifndef __MAKETA__
+  QPointer<iDataTableView_Panel> m_lvp; //note: will be a subclass of this, per the log type
+#endif
   int			m_rows; // cached rows, we use to calc deltas etc.
   int			updating; // to prevent recursion
 
@@ -304,7 +307,7 @@ public:
   void		VScroll(bool left); // scroll left or right
   virtual void 	ViewCol_At(int start);	// start viewing at indicated column value
   
-  iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)m_lvp;}
+  iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
   T3GridViewNode* node_so() const {return (T3GridViewNode*)m_node_so.ptr();}
 
   virtual void		InitFromUserData();
@@ -804,7 +807,7 @@ public:
   void		setColorAxis(GraphColView* value);
   void		setRasterAxis(GraphColView* value);
 
-  iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)m_lvp;}
+  iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
   T3GraphViewNode* node_so() const {return (T3GraphViewNode*)m_node_so.ptr();}
 
   override String	GetLabel() const;

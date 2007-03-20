@@ -24,11 +24,12 @@
 #include "ta_qtdata_def.h"
 
 #ifndef __MAKETA__
-# include <qdialog.h>
-# include <qobject.h>
 # include <QAction>
-# include <qwidget.h>
+# include <QDialog>
 # include <QList>
+# include <QMenu>
+# include <QObject>
+# include <QWidget>
 # include "icheckbox.h"
 #endif
 
@@ -658,7 +659,9 @@ protected:
   QActionGroup*		cur_grp; // for radio groups, current group, if any
   taiAction*		cur_sel;  // selection for getting value of menu -- only used by top-level menu
   String		mlabel; // string contents of current menu label
-  QMenu*		m_menu; // for when items add to a menu
+#ifndef __MAKETA__
+  QPointer<QMenu>	m_menu; // for when items add to a menu
+#endif
   taiActions*	par_menu; // parent menu, if any -- many methods delegate their calls upward if there is a parent
   taiSubMenuEl*		par_menu_el; // parent submenu element, if any
   void 			emitLabelChanged(const String& val); // #IGNORE
