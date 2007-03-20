@@ -4147,7 +4147,6 @@ void NetViewParams::Initialize() {
 }
 
 void Network::Initialize() {
-//TODO  views.SetBaseType(&TA_NetView);
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
 
@@ -4393,8 +4392,12 @@ int Network::GetDefaultZ(){
 }
 
 void Network::Build() {
+  taMisc::Busy();
+  StructUpdate(true);
   BuildUnits();
   Connect();
+  StructUpdate(false);
+  taMisc::DoneBusy();
 }
 
 void Network::BuildUnits() {
@@ -4405,7 +4408,6 @@ void Network::BuildUnits() {
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
     l->BuildUnits();
-//   UpdateMonitors();
   StructUpdate(false);
   taMisc::DoneBusy();
 #ifdef DMEM_COMPILE
@@ -4413,15 +4415,6 @@ void Network::BuildUnits() {
 #endif
   UpdtAfterNetMod();
   if(!taMisc::gui_active)    return;
-/*TODO   NetView* nv;
-  FOR_ITR_EL(NetView, nv, views., i) {
-    if(nv->ordered_uvg_list.size == 0) {
-      nv->SelectVar("act");
-//TEMP      if(nv->editor)
-//	nv->editor->SelectActButton(Tool::select);
-    }
-  }*/
-
 }
 
 void Network::PreConnect() {
@@ -4445,7 +4438,6 @@ void Network::Connect() {
     l->Connect();
   }
   UpdtAfterNetMod();
-//   UpdateMonitors();
   StructUpdate(false);
   taMisc::DoneBusy();
 }
@@ -5454,14 +5446,6 @@ void Network::UpdateMax() {
     max_size.y = MAX(max_size.y, l->act_geom.y + l->pos.y);
     max_size.z = MAX(max_size.z, 1 + l->pos.z);
   }
-}
-
-void Network::FixLayerViews(Layer* lay){
-/*TODO   NetView* view;
-  taLeafItr i;
-  FOR_ITR_EL(NetView, view, views., i) {
-    view->FixLayer(lay);
-  }*/
 }
 
 void Network::TwoD_Or_ThreeD(LayerLayout lo){

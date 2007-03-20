@@ -1666,12 +1666,13 @@ public:
   // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual bool	LoadWeights(const String& fname="", bool quiet = true);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
-
-  virtual void  Build();
+//NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
+//  calling an inner extensible virtual _impl
+  void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls BuildUnits and Connect)
   virtual void  BuildUnits();
   // #MENU #MENU_ON_Actions #CAT_Structure Build the network units in layers according to geometry
-  virtual void	Connect();
+  void	Connect();
   // #MENU #CAT_Structure Connect this network according to projections on Layers
   virtual bool	CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built 
@@ -1840,9 +1841,6 @@ public:
   // #CAT_Structure remove a projection between two layers, if it exists
   virtual bool   RemoveLayer(const char* nm) { return layers.RemoveName(nm); }
   // #CAT_Structure remove layer with given name, if it exists
-
-  virtual void	FixLayerViews(Layer* lay=NULL);
-  // #IGNORE update the layer on all the nets views
 
   virtual void	UpdateMax();	// #IGNORE
 

@@ -632,10 +632,9 @@ void ProjectBase::UpdateAfterEdit_impl() {
 }
 
 void ProjectBase::AutoBuildNets() {
-#ifdef TA_OS_WIN // TEMP
-  taMisc::Warning("AutoBuild is not working yet on Windows -- please Build/Connect manually.");
-  return;
-#endif
+//TODO: autobuild was not working, remove these lines:
+ // taMisc::Warning("AutoBuild is not working yet on Windows -- please Build/Connect manually.");
+ // return;
   Network* net;
   taLeafItr i;
   FOR_ITR_EL(Network, net, networks., i) {
