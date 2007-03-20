@@ -647,6 +647,8 @@ void iProgramEditor::Base_Add() {
     hbl->setMargin(ln_vmargin);
     hbl->setSpacing(0);
     hbl->addSpacing(taiM->hsep_c);
+    // if only 1 guy, give it all to him, else share
+    int stretch = (ms->memb_el.size > 1) ? 0 : 1;
     for (int i = 0; i < ms->memb_el.size; ++i) {
       if (i > 0)
         hbl->addSpacing(taiM->hspc_c);
@@ -659,10 +661,11 @@ void iProgramEditor::Base_Add() {
       mb_dat->setLabel(lbl);
       ms->data_el.Add(mb_dat);
       QWidget* rep = mb_dat->GetRep();
-      hbl->addWidget(rep, 1,  (Qt::AlignVCenter)); // should consume all space
+      hbl->addWidget(rep, stretch, (Qt::AlignVCenter)); 
       rep->show();
     }
-    hbl->addStretch(); // so guys flush left
+    //if (stretch == 0)
+      hbl->addStretch(); // so guys flush left
     lay->addLayout(hbl); 
     ++row;
   }

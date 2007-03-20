@@ -1253,16 +1253,20 @@ const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
       rval += il1 + "dsp->select_spec.ops[" + String(i) + "].cmp = " + el->var->name + ";\n";
     }
   }
-  if(dest_data_var) {
-    rval += il1 + "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
-      src_data_var->name + ", dsp->select_spec);\n";
-  }
-  else {
-    rval += il1 + "taDataProc::SelectRows(NULL, " + 
-      src_data_var->name + ", dsp->select_spec);\n";
-  }
-  if(dest_data_var) {
-    rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
+  if (src_data_var) {
+    if(dest_data_var) {
+      rval += il1 + "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
+        src_data_var->name + ", dsp->select_spec);\n";
+    }
+    else {
+      rval += il1 + "taDataProc::SelectRows(NULL, " + 
+        src_data_var->name + ", dsp->select_spec);\n";
+    }
+    if(dest_data_var) {
+      rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
+    }
+  } else { // invalid!!!
+    rval += "// ***OBJECT REQUIRES src_data_var !!\n";
   }
   rval += il + "}\n";
   return rval; 
