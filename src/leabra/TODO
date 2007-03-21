@@ -6,6 +6,9 @@ commit:
 ------------
 current:
 
+* redo netflix as plugin! -- write function to generate entire plugin code from program!
+
+* Wizard layer sizing
 * progexpr not finding in fun args
 * assignexpr did not update progvar: it was a move, not a copy: UAE!
 

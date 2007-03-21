@@ -1002,7 +1002,7 @@ bool GaborV1Spec::InitFilters_Blob() {
 
     DoGFilterSpec* df = (DoGFilterSpec*)blob_specs[i];
 
-    df->filter_width = (rf_width.x-1) / 2; // assume x-y symmetric!
+    df->filter_width = (rf_width.x) / 2; // assume x-y symmetric!
     df->filter_size = df->filter_width * 2 + 1;
     df->circle_edge = true;
     df->color_chan = (DoGFilterSpec::ColorChannel)(DoGFilterSpec::RED_GREEN + clr_dx);
