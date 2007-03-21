@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<gz:world xmlns:gz="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" xmlns:window="http://playerstage.sourceforge.net/gazebo/xmlschema/#window" xmlns:param="http://playerstage.sourceforge.net/gazebo/xmlschema/#param">
+
+  <model:ObserverCam>
+    <id>userCam0</id>
+    <xyz>-0.389 -0.898 1.046</xyz>
+    <rpy>0 37 31</rpy>
+    <imageSize>640 480</imageSize>
+    <updateRate>10</updateRate>
+
+    <nearClip>0.2</nearClip>
+    <farClip>100</farClip>
+
+    <displayRays>false</displayRays>
+    <displayAxes>false</displayAxes>
+    <displayCoM>false</displayCoM>
+    <displayTextures>true</displayTextures>
+  </model:ObserverCam>
+
+    <model:ArmModel>
+      <plugin>/usr/local/lib/libarmmodel.so</plugin>
+      <id>arm1</id>
+      <xyz>0 0 0</xyz>
+      <rpy>0 0 -90</rpy>
+      <!-- arm on ground => 0, arm on robot => 1 -->
+      <robot>0</robot>
+      <!-- No gripper => 0, Gripper => 1 -->
+      <gripper>0</gripper>
+    </model:ArmModel>
+
+  <model:LightSource>
+    <id>light0</id>
+    <xyz>-5.000 -5.000 10.000</xyz>
+  </model:LightSource>
+
+  <model:GroundPlane>
+    <id>ground1</id>
+    <color>0.5 0.5 0.5</color>
+    <textureFile>grid.ppm</textureFile>
+  </model:GroundPlane>
+
+</gz:world>

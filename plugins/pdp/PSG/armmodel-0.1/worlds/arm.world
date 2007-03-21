@@ -24,37 +24,37 @@
     <displayTextures>true</displayTextures>
   </model:ObserverCam>  
  
-  <model:ObserverCam>
-    <id>userCam1</id>
-    <xyz>1.05 -1.3 1.3</xyz>
-    <rpy>0 31 90</rpy>
-    <imageSize>640 480</imageSize>
-    <updateRate>10</updateRate>
+<!--   <model:ObserverCam> -->
+<!--     <id>userCam1</id> -->
+<!--     <xyz>1.05 -1.3 1.3</xyz> -->
+<!--     <rpy>0 31 90</rpy> -->
+<!--     <imageSize>640 480</imageSize> -->
+<!--     <updateRate>10</updateRate> -->
 
-    <nearClip>0.2</nearClip>
-    <farClip>50</farClip>
+<!--     <nearClip>0.2</nearClip> -->
+<!--     <farClip>50</farClip> -->
 
-    <displayRays>false</displayRays>
-    <displayAxes>false</displayAxes>
-    <displayCoM>false</displayCoM>
-    <displayTextures>true</displayTextures>
-  </model:ObserverCam>  
+<!--     <displayRays>false</displayRays> -->
+<!--     <displayAxes>false</displayAxes> -->
+<!--     <displayCoM>false</displayCoM> -->
+<!--     <displayTextures>true</displayTextures> -->
+<!--   </model:ObserverCam>   -->
  
-  <model:ObserverCam>
-    <id>userCam2</id>
-    <xyz>1.3 1.05 1.3</xyz>
-    <rpy>0 20 180</rpy>
-    <imageSize>320 240</imageSize>
-    <updateRate>10</updateRate>
+<!--   <model:ObserverCam> -->
+<!--     <id>userCam2</id> -->
+<!--     <xyz>1.3 1.05 1.3</xyz> -->
+<!--     <rpy>0 20 180</rpy> -->
+<!--     <imageSize>320 240</imageSize> -->
+<!--     <updateRate>10</updateRate> -->
 
-    <nearClip>0.2</nearClip>
-    <farClip>50</farClip>
+<!--     <nearClip>0.2</nearClip> -->
+<!--     <farClip>50</farClip> -->
 
-    <displayRays>true</displayRays>
-    <displayAxes>true</displayAxes>
-    <displayCoM>true</displayCoM>
-    <displayTextures>true</displayTextures>
-  </model:ObserverCam>
+<!--     <displayRays>true</displayRays> -->
+<!--     <displayAxes>true</displayAxes> -->
+<!--     <displayCoM>true</displayCoM> -->
+<!--     <displayTextures>true</displayTextures> -->
+<!--   </model:ObserverCam> -->
 
   <model:LightSource>
     <id>light0</id>
@@ -69,7 +69,6 @@
   <model:GroundPlane>
     <id>ground1</id>
     <color>0.5 0.5 0.5</color>
-    <textureFile>grid.ppm</textureFile>
   </model:GroundPlane>  
 
     <model:ArmModel>
@@ -77,38 +76,10 @@
         <id>arm1</id>
         <xyz>-0.150 -0.100 0.3100</xyz>
 	<rpy>0 0 -90</rpy>
-	<!--
-        <skinBase>skins/base.3ds</skinBase>
-        <skinBaseScale>0.0005023 0.0005023 0.0005023</skinBaseScale>
-        <skinBaseXyz>0.000 -0.000 0.000</skinBaseXyz>
-        <skinBaseRpy>0.000 0.000 180.000</skinBaseRpy>
-        <skinLink0>skins/link0.3ds</skinLink0>
-        <skinLink0Scale>0.001023 0.001023 0.001023</skinLink0Scale>
-        <skinLink0Xyz>0.000 -0.000 0.0060</skinLink0Xyz>
-        <skinLink0Rpy>0.000 0.000 180.000</skinLink0Rpy>
-        <skinLink1>skins/link1.3ds</skinLink1>
-        <skinLink1Scale>0.001023 0.001023 0.001023</skinLink1Scale>
-        <skinLink1Xyz>0.001 0.001 0.0095</skinLink1Xyz>
-        <skinLink1Rpy>0.000 0.000 180.000</skinLink1Rpy>
-	-->
         <!-- arm on ground => 0, arm on robot => 1 -->
-        <robot>1</robot>
+        <robot>0</robot>
         <!-- No gripper => 0, Gripper => 1 -->
         <gripper>0</gripper>
-	<!--
-        <skinGripperBase>skins/sliding_thing.3ds</skinGripperBase>
-        <skinGripperBaseScale>0.001023 0.001023 0.001023</skinGripperBaseScale>
-        <skinGripperBaseXyz>-0.020 -0.000 0.007</skinGripperBaseXyz>
-        <skinGripperBaseRpy>0.000 0.000 180.000</skinGripperBaseRpy>
-        <skinLeftGripper>skins/gripper_l.3ds</skinLeftGripper>
-        <skinLeftGripperScale>0.001023 0.001023 0.001023</skinLeftGripperScale>
-        <skinLeftGripperXyz>0.002 -0.0095 0.007</skinLeftGripperXyz>
-        <skinLeftGripperRpy>0.000 0.000 180.000</skinLeftGripperRpy>
-        <skinRightGripper>skins/gripper_r.3ds</skinRightGripper>
-        <skinRightGripperScale>0.001023 0.001023 0.001023</skinRightGripperScale>
-        <skinRightGripperXyz>0.002 -0.006 0.0255</skinRightGripperXyz>
-        <skinRightGripperRpy>0.000 0.000 180.000</skinRightGripperRpy>
-	-->
         <id>arm1</id>
     </model:ArmModel>
 </gz:world>

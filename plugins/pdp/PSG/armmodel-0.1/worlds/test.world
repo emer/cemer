@@ -16,70 +16,37 @@
   </model:GroundPlane>
 
   <model:LightSource>
-    <id>0</id>
+    <id>light0</id>
     <xyz>-10.000 -10.000 100.000</xyz>
   </model:LightSource>
 
   <model:SimpleSolid>
-    <id>sphere_1</id>
+    <id>sphere1</id>
     <xyz>1 0 0.2</xyz>
     <shape>sphere</shape>
     <gravity>false</gravity>
-    <enable>false</enable>
+    <enable>true</enable>
     <size>0.4</size>
+    <model:ArmModel>
+      <plugin>/usr/local/lib/libarmmodel.so</plugin>
+      <id>arm1</id>
+      <xyz>-0.150 -0.100 0.3100</xyz>
+      <rpy>0 0 -90</rpy>
+      <!-- arm on ground => 0, arm on robot => 1 -->
+      <robot>1</robot>
+      <!-- No gripper => 0, Gripper => 1 -->
+      <gripper>1</gripper>
+    </model:ArmModel>
   </model:SimpleSolid>
 
-
-   <model:Pioneer2DX>
-    <id>robot1</id>
-    <xyz>-0.007 -0.007 0.234</xyz>
-    <rpy>-0 -0 0</rpy>
-    <model:SickLMS200>
-      <id>laser1</id>
-      <xyz>0.0 0 0</xyz> 
-      <rayCount>91</rayCount>
-      <rangeCount>361</rangeCount>
-    </model:SickLMS200>
-    <model:ArmModel>
-        <plugin>/usr/local/lib/libarmmodel.so</plugin>
-        <id>arm1</id>
-        <xyz>-0.150 -0.100 0.3100</xyz>
-	<rpy>0 0 -90</rpy>
-	<!--
-        <skinBase>skins/base.3ds</skinBase>
-        <skinBaseScale>0.0005023 0.0005023 0.0005023</skinBaseScale>
-        <skinBaseXyz>0.000 -0.000 0.000</skinBaseXyz>
-        <skinBaseRpy>0.000 0.000 180.000</skinBaseRpy>
-        <skinLink0>skins/link0.3ds</skinLink0>
-        <skinLink0Scale>0.001023 0.001023 0.001023</skinLink0Scale>
-        <skinLink0Xyz>0.000 -0.000 0.0060</skinLink0Xyz>
-        <skinLink0Rpy>0.000 0.000 180.000</skinLink0Rpy>
-        <skinLink1>skins/link1.3ds</skinLink1>
-        <skinLink1Scale>0.001023 0.001023 0.001023</skinLink1Scale>
-        <skinLink1Xyz>0.001 0.001 0.0095</skinLink1Xyz>
-        <skinLink1Rpy>0.000 0.000 180.000</skinLink1Rpy>
-	-->
-        <!-- arm on ground => 0, arm on robot => 1 -->
-        <robot>1</robot>
-        <!-- No gripper => 0, Gripper => 1 -->
-        <gripper>1</gripper>
-	<!--
-        <skinGripperBase>skins/sliding_thing.3ds</skinGripperBase>
-        <skinGripperBaseScale>0.001023 0.001023 0.001023</skinGripperBaseScale>
-        <skinGripperBaseXyz>-0.020 -0.000 0.007</skinGripperBaseXyz>
-        <skinGripperBaseRpy>0.000 0.000 180.000</skinGripperBaseRpy>
-        <skinLeftGripper>skins/gripper_l.3ds</skinLeftGripper>
-        <skinLeftGripperScale>0.001023 0.001023 0.001023</skinLeftGripperScale>
-        <skinLeftGripperXyz>0.002 -0.0095 0.007</skinLeftGripperXyz>
-        <skinLeftGripperRpy>0.000 0.000 180.000</skinLeftGripperRpy>
-        <skinRightGripper>skins/gripper_r.3ds</skinRightGripper>
-        <skinRightGripperScale>0.001023 0.001023 0.001023</skinRightGripperScale>
-        <skinRightGripperXyz>0.002 -0.006 0.0255</skinRightGripperXyz>
-        <skinRightGripperRpy>0.000 0.000 180.000</skinRightGripperRpy>
-	-->
-        <id>arm1</id>
-    </model:ArmModel>
-
-  </model:Pioneer2DX>
-
+  <model:ArmModel>
+    <plugin>/usr/local/lib/libarmmodel.so</plugin>
+    <id>arm1</id>
+    <xyz>-0.150 -0.100 0.3100</xyz>
+    <rpy>0 0 -90</rpy>
+    <!-- arm on ground => 0, arm on robot => 1 -->
+    <robot>1</robot>
+    <!-- No gripper => 0, Gripper => 1 -->
+    <gripper>1</gripper>
+  </model:ArmModel>
 </gz:world>
