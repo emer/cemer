@@ -1124,6 +1124,9 @@ void DataProg::Initialize() {
 
 void DataProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  UpdateProgVarRef_NewOwner(src_data_var);
+  UpdateProgVarRef_NewOwner(dest_data_var);
 }
 
 void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1132,6 +1135,8 @@ void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!src_data_var->object_val, quiet, rval, "src_data_var variable NULL");
   CheckError(src_data_var->object_type != &TA_DataTable, quiet, rval,
 	     "src_data_var variable does not point to a DataTable object");
+  CheckProgVarRef(src_data_var, quiet, rval);
+  CheckProgVarRef(dest_data_var, quiet, rval);
   // NULL OK in dest_data_var!
 }
 
@@ -1400,6 +1405,7 @@ void DataGroupProg::AddAllColumns() {
 
 void DataJoinProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(src_b_data_var);
   UpdateSpecDataTable();
 }
 
@@ -1422,6 +1428,15 @@ String DataJoinProg::GetDisplayName() const {
     rval += " to: " + dest_data_var->name;
   }
   return rval;
+}
+
+void DataJoinProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(CheckError(!src_b_data_var, quiet, rval, "src_b_data_var is NULL")) return; // fatal
+  CheckError(!src_b_data_var->object_val, quiet, rval, "src_data_var variable NULL");
+  CheckError(src_b_data_var->object_type != &TA_DataTable, quiet, rval,
+	     "src_b_data_var variable does not point to a DataTable object");
+  CheckProgVarRef(src_b_data_var, quiet, rval);
 }
 
 void DataJoinProg::CheckChildConfig_impl(bool quiet, bool& rval) {

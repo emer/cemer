@@ -6,6 +6,11 @@ commit:
 ------------
 current:
 
+* progexpr not finding in fun args
+* assignexpr did not update progvar: it was a move, not a copy: UAE!
+
+* profile loaddata -- strangely slow
+
 * NewLayer not working in netview
 
 * multi-test on hv

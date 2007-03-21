@@ -190,6 +190,23 @@ public:
   { if(on) SetColFlag(flg); else ClearColFlag(flg); }
   // set data column flag state according to on bool (if true, set flag, if false, clear it)
 
+  /////////////////////////////////////////////////////////
+  // Main data value access/modify (Get/Set) routines: for Programs and very general use
+
+  const Variant GetVal(int row) const { return GetValAsVar_impl(row, 0); }
+  // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last)
+  bool	 	SetVal(const Variant& val, int row) 
+  { return SetValAsVar_impl(val, row, 0); } 
+  // #CAT_Modify get data of scalar type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last)
+
+  const Variant GetMatrixVal(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsVarMDims(row, d0, d1, d2, d3); }
+  // #CAT_Access get value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
+  bool	 	SetMatrixVal(const Variant& val, int row, 
+			     int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsVarMDims(val, row, d0, d1, d2, d3); }
+  // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
+
   /////////////////////////////////////////////
   // Get and Set access
 
@@ -197,75 +214,114 @@ public:
   // -ve values are from end, and are valid for both low-level col access, and DataTable access
   
   const Variant GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
-  // #CAT_Access valid for all types, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVar(const Variant& val, int row) 
   { return SetValAsVar_impl(val, row, 0);} 
-  // #CAT_Modify valid for all types, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
   const String 	GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
-  // #CAT_Access valid for all types, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsString(const String& val, int row) 
   {return SetValAsString_impl(val, row, 0);} 
-  // #CAT_Modify valid for all types, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloat(int row) const {return GetValAsFloat_impl(row, 0);} 
-  // #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsFloat(float val, int row) 
-  // #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
   {return SetValAsFloat_impl(val, row, 0);} 
   double 	GetValAsDouble(int row) const {return GetValAsDouble_impl(row, 0);} 
-  // #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsDouble(double val, int row) 
-  // #CAT_Modify valid only if type is double, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid only if type is double, -ve row is from end (-1=last)
   {return SetValAsDouble_impl(val, row, 0);} 
   int	 	GetValAsInt(int row) const {return GetValAsInt_impl(row, 0);} 
-  // #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid if type is int or byte, -ve row is from end (-1=last)
   bool	 	SetValAsInt(int val, int row) 
-  // #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid if type is int or float, -ve row is from end (-1=last)
   {return SetValAsInt_impl(val, row, 0);} 
   byte	 	GetValAsByte(int row) const {return GetValAsByte_impl(row, 0);} 
-  // #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid only if type is byte, -ve row is from end (-1=last)
   bool	 	SetValAsByte(byte val, int row) 
-  // #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid if type is numeric, -ve row is from end (-1=last)
   {return SetValAsByte_impl(val, row, 0);} 
     
-  // Matrix versions
+  ///////////////////////////////////////////////////////////////
+  // Matrix versions, cell index
   const Variant GetValAsVarM(int row, int cell) const {return GetValAsVar_impl(row, cell);} 
-  // #CAT_Access valid for all types, -ve row is from end (-1=last)
+  // #CAT_XpertAccess get value as a variant (safe for all program usage), matrix version, valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVarM(const Variant& val, int row, int cell) 
   { return SetValAsVar_impl(val, row, cell);} 
-  // #CAT_Modify valid for all types, -ve row is from end (-1=last)
+  // #CAT_XpertModify set value as a variant, matrix version, valid for all types, -ve row is from end (-1=last)
   const String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
-  // #CAT_Access valid for all types, -ve row is from end (-1=last)
+  // #CAT_XpertAccess get value as a string, matrix version, valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsStringM(const String& val, int row, int cell) 
   {return SetValAsString_impl(val, row, cell);} 
-  // #CAT_Modify valid for all types, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloatM(int row, int cell) const {return GetValAsFloat_impl(row, cell);} 
-  // #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsFloatM(float val, int row, int cell) 
-  // #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
   {return SetValAsFloat_impl(val, row, cell);} 
   double 	GetValAsDoubleM(int row, int cell) const {return GetValAsDouble_impl(row, cell);} 
-  // #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsDoubleM(double val, int row, int cell) 
-  // #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
   {return SetValAsDouble_impl(val, row, cell);} 
   int	 	GetValAsIntM(int row, int cell) const {return GetValAsInt_impl(row, cell);} 
-  // #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid if type is int or byte, -ve row is from end (-1=last)
   bool	 	SetValAsIntM(int val, int row, int cell) 
-  // #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid if type is int or float, -ve row is from end (-1=last)
   {return SetValAsInt_impl(val, row, cell);} 
   byte	 	GetValAsByteM(int row, int cell) const {return GetValAsByte_impl(row, cell);} 
-  // #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
+  // #CAT_XpertAccess valid only if type is byte, -ve row is from end (-1=last)
   bool	 	SetValAsByteM(byte val, int row, int cell) 
-  // #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
+  // #CAT_XpertModify valid if type is numeric, -ve row is from end (-1=last)
   {return SetValAsByte_impl(val, row, cell);} 
 
+  ///////////////////////////////////////////////////////////////
+  // Matrix versions, with dimensions passed
+  const Variant GetValAsVarMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const;
+  // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
+  bool	 	SetValAsVarMDims(const Variant& val, int row, 
+				 int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
+  const String 	GetValAsStringMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const;
+  // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
+  bool	 	SetValAsStringMDims(const String& val, int row,
+				    int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
+  float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const 
+  { return 0.0f; }
+  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
+  bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return false; }
+  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
+  double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return 0.0; }
+  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
+  bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return false; }
+  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
+  int	 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return 0; }
+  // #CAT_XpertAccess valid if type is int or byte, -ve row is from end (-1=last)
+  bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return false; }
+  // #CAT_XpertModify valid if type is int or float, -ve row is from end (-1=last)
+  byte	 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (byte)GetValAsIntMDims(row, d0, d1, d2, d3); } 
+  // #CAT_XpertAccess valid only if type is byte, -ve row is from end (-1=last)
+  bool	 	SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0) 
+  { return SetValAsByteMDims(val, row, d0, d1, d2, d3); } 
+  // #CAT_XpertModify valid if type is numeric, -ve row is from end (-1=last)
+
+  ///////////////////////////////////////////////////////////////
   // Matrix ops -- you must Ref/UnRef taMatrix return types
   taMatrix*	GetValAsMatrix(int row);
-  // #CAT_Access gets the cell as a slice of the entire column (note: not const -- you can write it)
+  // #CAT_XpertAccess gets the cell as a slice of the entire column (note: not const -- you can write it)
   bool	 	SetValAsMatrix(const taMatrix* val, int row);
-  // #CAT_Modify set the matrix cell from a same-sized matrix 
+  // #CAT_XpertModify set the matrix cell from a same-sized matrix 
   taMatrix*	GetRangeAsMatrix(int st_row, int n_rows);
-  // #CAT_Access gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it)
+  // #CAT_XpertAccess gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it)
   bool		GetMinMaxScale(MinMax& mm);
   // #CAT_Display get min-max range of values contained within this column 
   
@@ -291,7 +347,7 @@ public:
   DataTable*		dataTable();
   // root data table this col belongs to
 
-  String	EncodeHeaderName(int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
+  String	EncodeHeaderName(int d0=0, int d1=0, int d2=0, int d3=0);
   // encode header information for saving to text files
   static void 	DecodeHeaderName(String nm, String& base_nm, int& val_typ,
 				 MatrixGeom& mat_idx, MatrixGeom& mat_geom);
@@ -320,7 +376,9 @@ public:
 protected:
   override void  UpdateAfterEdit_impl();
   // in all accessor routines, -ve row is from end (-1=last)
-  int			IndexOfEl_Flat(int row, int cell) const; 
+  int		IndexOfEl_Flat(int row, int cell) const; 
+    // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
+  int		IndexOfEl_Flat_Dims(int row, int d0, int d1=0, int d2=0, int d3=0) const; 
     // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
   virtual const Variant GetValAsVar_impl(int row, int cell) const; 
   virtual const String 	GetValAsString_impl(int row, int cell) const; 
@@ -451,7 +509,7 @@ public:
 			       const String& col_nm);
   // #MENU #MENU_ON_Columns #ARG_C_2 #CAT_Columns create new scalar column of data of specified type
   virtual DataCol* 	NewColMatrix(DataCol::ValType val_type, const String& col_nm,
-    int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
+    int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0);
   // #MENU #MENU_ON_Columns #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN(DataCol::ValType val_type, 
 				      const String& col_nm,  const MatrixGeom& cell_geom);
@@ -471,17 +529,22 @@ public:
   virtual bool		RenameCol(const String& cur_nm, const String& new_nm);
   // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
 
-  virtual DataCol* 	FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false);
+  virtual DataCol* 	FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false) const;
   // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found
 
   virtual DataCol* 	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
 					ValType val_type = VT_FLOAT, int dims = 0,
-					int d0=0, int d1=0, int d2=0, int d3=0, int d4=0);
+					int d0=0, int d1=0, int d2=0, int d3=0);
   // #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
-  virtual DataCol* 	GetColData(int col) const;
+  virtual DataCol* 	GetColData(int col) const {
+    if(TestError((col < 0 || col >= cols()), "GetColData",
+		 "column number is out of range")) return NULL;
+    else return data.FastEl(col);
+  }
   // #CAT_Columns get col data for given column 
-  virtual taMatrix*	GetColMatrix(int col) const;
+  virtual taMatrix*	GetColMatrix(int col) const
+  { DataCol* da = GetColData(col); if (da) return da->AR(); else return NULL; }
   // #CAT_Columns get matrix for given column -- WARNING: this is NOT row-number safe 
 
   virtual bool 		ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs);
@@ -499,7 +562,7 @@ public:
   void			RemoveAllCols()	{ Reset(); }
   // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data) -- this cannot be undone!
   virtual void		Reset();
-  // #CAT_Modify remove all columns (and data) -- this cannot be undone!
+  // #CAT_Columns remove all columns (and data) -- this cannot be undone!
 
   virtual void		MarkCols();
   // #CAT_Columns mark all cols before updating, for orphan deleting
@@ -508,7 +571,7 @@ public:
   
 
   /////////////////////////////////////////////////////////
-  // rows (access)
+  // rows
 
   virtual bool		hasData(int col, int row);
   // #CAT_Rows true if data at that cell
@@ -543,53 +606,135 @@ public:
   void			SetColUserData(const String& name, const Variant& value, int col);
   // #CAT_Config sets user data into the col
 
-  double 		GetValAsDouble(int col, int row);
-  // #CAT_Access get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
-  bool 			SetValAsDouble(double val, int col, int row);
-  // #CAT_Access set data of scalar type, in String form, for given column, row; does nothing if no cell' 'true' if set
-  float 		GetValAsFloat(int col, int row);
-  // #CAT_Access get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
-  bool 			SetValAsFloat(float val, int col, int row);
-  // #CAT_Access set data of scalar type, in String form, for given column, row; does nothing if no cell' 'true' if set
-  const String 		GetValAsString(int col, int row) const;
-  // #CAT_Access get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
-  bool 			SetValAsString(const String& val, int col, int row);
-  // #CAT_Access set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
-  const Variant 	GetValAsVar(int col, int row) const;
-  // #CAT_Access get data of scalar type, in Variant form, for given column, row; Invalid/NULL if no cell
-  bool 			SetValAsVar(const Variant& val, int col, int row);
-  // #CAT_Access set data of scalar type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  /////////////////////////////////////////////////////////
+  // Main data value access/modify (Get/Set) routines: for Programs and very general use
 
+  const Variant 	GetVal(int col, int row) const
+  { return GetValAsVar(col, row); }
+  // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column, row
+  bool 			SetVal(const Variant& val, int col, int row)
+  { return SetValAsVar(val, col, row); }
+  // #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column, row; returns 'true' if valid access and set is successful
+
+  const Variant 	GetMatrixVal(int col, int row,
+				     int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsVarMDims(col, row, d0, d1, d2, d3); }
+  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies
+  bool 			SetMatrixVal(const Variant& val, int col, int row, 
+				     int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsVarMDims(val, col, row, d0, d1, d2, d3); }
+  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+
+  /////////////////////////////
+  // column name versions:
+
+  const Variant 	GetValColName(const String& col_name, int row) const;
+  // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column name, row
+  bool 			SetValColName(const Variant& val, const String& col_name, int row);
+  // #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful
+
+  const Variant 	GetMatrixValColName(const String& col_name, int row,
+					    int d0, int d1=0, int d2=0, int d3=0) const;
+  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies
+  bool 			SetMatrixValColName(const Variant& val, const String& col_name,
+					    int row, int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+
+  /////////////////////////////////////////////////////////
+  // Expert data value access routines: optimized for different types
+
+  ///////////////
+  // Scalar
+
+  const Variant 	GetValAsVar(int col, int row) const;
+  // #CAT_XpertAccess get data of scalar type, in Variant form, for given column, row
+  bool 			SetValAsVar(const Variant& val, int col, int row);
+  // #CAT_XpertModify set data of scalar type, in Variant form, for given column, row; returns 'true' if valid access and set is successful
+  double 		GetValAsDouble(int col, int row);
+  // #CAT_XpertAccess get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
+  bool 			SetValAsDouble(double val, int col, int row);
+  // #CAT_XpertModify set data of scalar type, in double form, for given column, row; does nothing if no cell' 'true' if set
+  float 		GetValAsFloat(int col, int row);
+  // #CAT_XpertAccess get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
+  bool 			SetValAsFloat(float val, int col, int row);
+  // #CAT_XpertModify set data of scalar type, in float form, for given column, row; does nothing if no cell' 'true' if set
+  int 			GetValAsInt(int col, int row);
+  // #CAT_XpertAccess get data of scalar type, in int form, for given col, row; if data is NULL, then 0 is returned
+  bool 			SetValAsInt(int val, int col, int row);
+  // #CAT_XpertModify set data of scalar type, in int form, for given column, row; does nothing if no cell' 'true' if set
+  const String 		GetValAsString(int col, int row) const;
+  // #CAT_XpertAccess get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
+  bool 			SetValAsString(const String& val, int col, int row);
+  // #CAT_XpertModify set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
+
+  ///////////////
+  // Matrix, Cell
+
+  const Variant 	GetValAsVarM(int col, int row, int cell) const;
+  // #CAT_XpertAccess get data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix
+  bool 			SetValAsVarM(const Variant& val, int col, int row, int cell);
+  // #CAT_XpertModify set data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix; returns 'true' if valid access and set is successful
   double 		GetValAsDoubleM(int col, int row, int cell);
-  // #CAT_Access get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  // #CAT_XpertAccess get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsDoubleM(double val, int col, int row, int cell);
-  // #CAT_Access set data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  // #CAT_XpertModify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   float 		GetValAsFloatM(int col, int row, int cell);
-  // #CAT_Access get data of scalar type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  // #CAT_XpertAccess get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsFloatM(float val, int col, int row, int cell);
-  // #CAT_Access set data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  // #CAT_XpertModify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  int 			GetValAsIntM(int col, int row, int cell);
+  // #CAT_XpertAccess get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  bool 			SetValAsIntM(int val, int col, int row, int cell);
+  // #CAT_XpertModify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   const String 		GetValAsStringM(int col, int row, int cell,
      bool na = true) const;
-  // #CAT_Access get data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
+  // #CAT_XpertAccess get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
   bool 			SetValAsStringM(const String& val, int col, int row, int cell);
-  // #CAT_Access set data of scalar type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
-  const Variant 	GetValAsVarM(int col, int row, int cell) const;
-  // #CAT_Access get data of scalar type, in Variant form, for given column, row, and cell (flat index) in matrix; Invalid/NULL if no cell
-  bool 			SetValAsVarM(const Variant& val, int col, int row, int cell);
-  // #CAT_Access set data of scalar type, in Variant form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true' if set
+  // #CAT_XpertModify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
+
+  ///////////////
+  // Matrix, Dims
+
+  const Variant 	GetValAsVarMDims(int col, int row,
+					 int d0, int d1=0, int d2=0, int d3=0) const;
+  // #CAT_XpertAccess get data of matrix type, in Variant form, for given column, row, and matrix dimension indicies
+  bool 			SetValAsVarMDims(const Variant& val, int col, int row, 
+					 int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertModify set data of matrix type, in Variant form, for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+
+  double 		GetValAsDoubleMDims(int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertAccess get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  bool 			SetValAsDoubleMDims(double val, int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertModify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  float 		GetValAsFloatMDims(int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertAccess get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  bool 			SetValAsFloatMDims(float val, int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertModify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  int 			GetValAsIntMDims(int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertAccess get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  bool 			SetValAsIntMDims(int val, int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertModify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  const String 		GetValAsStringMDims(int col, int row, int d0, int d1=0, int d2=0, int d3=0,
+     bool na = true) const;
+  // #CAT_XpertAccess get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
+  bool 			SetValAsStringMDims(const String& val, int col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_XpertModify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
+
+  //////////////////////
+  // 	Entire Matrix
 
   taMatrix*	 	GetValAsMatrix(int col, int row);
-  // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
-  //#CAT_Access  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  // #CAT_XpertModify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
-  // #CAT_Access get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+  // #CAT_XpertAccess get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
 
   int 			GetMaxCellRows(int col_fr, int col_to); // #IGNORE get the max muber of cell rows in this col range (used for clip operations)
   void			GetFlatGeom(const CellRange& cr, int& tot_cols, 
    int& max_cell_rows); // IGNORE get the total flat cols and max rows per cell; used for TSV output
 
-  String		RangeToTSV(const CellRange& cr); // for clip operations
+  String		RangeToTSV(const CellRange& cr); // #IGNORE for clip operations
 
   /////////////////////////////////////////////////////////
   // saving/loading (file)
@@ -851,6 +996,24 @@ public:
   override bool		isString() const {return true;} 
   override ValType 	valType() const  {return VT_STRING;}
 
+  override double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (double)GetValAsStringMDims(row, d0, d1, d2, d3); }
+  override float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (float)GetValAsStringMDims(row, d0, d1, d2, d3); }
+  override int	 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (int)GetValAsStringMDims(row, d0, d1, d2, d3); }
+  override byte	 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsStringMDims(row, d0, d1, d2, d3)[0]; } 
+
+  override bool	 SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsStringMDims((String)val, row, d0, d1, d2, d3); }
+  override bool	 SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsStringMDims((String)val, row, d0, d1, d2, d3); }
+  override bool	 SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsStringMDims((String)val, row, d0, d1, d2, d3); }
+  override bool	 SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsStringMDims((String)val, row, d0, d1, d2, d3); }
+
   TA_BASEFUNS(String_Data);
 
 protected:
@@ -885,6 +1048,25 @@ friend class DataTable;
 public:
   override ValType 	valType() const  {return VT_VARIANT;}
 
+  override const Variant GetValAsVarMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override bool	 SetValAsVarMDims(const Variant& val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+
+  override double GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsVarMDims(row, d0, d1, d2, d3).toDouble(); }
+  override float GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (float)GetValAsVarMDims(row, d0, d1, d2, d3).toFloat(); }
+  override int	 GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (int)GetValAsVarMDims(row, d0, d1, d2, d3).toInt(); }
+
+  override bool	 SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsVarMDims(val, row, d0, d1, d2, d3); }
+  override bool	 SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsVarMDims(val, row, d0, d1, d2, d3); }
+  override bool	 SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsVarMDims(val, row, d0, d1, d2, d3); }
+
   TA_BASEFUNS(Variant_Data);
 
 protected:
@@ -893,11 +1075,11 @@ protected:
   override bool	 SetValAsVar_impl(const Variant& val, int row, int cell)
   { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
 
-  override double 	GetValAsDouble_impl(int row, int cell) const
+  override double GetValAsDouble_impl(int row, int cell) const
   { return GetValAsVar_impl(row, cell).toDouble(); }
-  override float 	GetValAsFloat_impl(int row, int cell) const
+  override float GetValAsFloat_impl(int row, int cell) const
   { return (float)GetValAsVar_impl(row, cell).toFloat(); }
-  override int	 	GetValAsInt_impl(int row, int cell) const
+  override int	 GetValAsInt_impl(int row, int cell) const
   { return (int)GetValAsVar_impl(row, cell).toInt(); }
 
   override bool	 SetValAsDouble_impl(double val, int row, int cell)
@@ -922,21 +1104,35 @@ public:
   override int		maxColWidth() const {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
   override ValType 	valType() const {return VT_DOUBLE;}
 
+  override double GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override float GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override int 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+
+  override bool	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((double)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((double)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+
   TA_BASEFUNS(double_Data);
   
 protected:
-  override double 	GetValAsDouble_impl(int row, int cell) const
+  override double GetValAsDouble_impl(int row, int cell) const
   { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
-  override float 	GetValAsFloat_impl(int row, int cell) const
+  override float GetValAsFloat_impl(int row, int cell) const
   { return (float)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
-  override int 		GetValAsInt_impl(int row, int cell) const
+  override int 	GetValAsInt_impl(int row, int cell) const
   { return (int)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
 
-  override bool	 	SetValAsDouble_impl(double val, int row, int cell)
+  override bool	SetValAsDouble_impl(double val, int row, int cell)
   { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
-  override bool	 	SetValAsFloat_impl(float val, int row, int cell)
+  override bool	SetValAsFloat_impl(float val, int row, int cell)
   { ar.Set_Flat((double)val, IndexOfEl_Flat(row, cell)); return true; }
-  override bool	 	SetValAsInt_impl(int val, int row, int cell)
+  override bool	SetValAsInt_impl(int val, int row, int cell)
   { ar.Set_Flat((double)val, IndexOfEl_Flat(row, cell)); return true; }
 
 private:
@@ -952,6 +1148,20 @@ public:
   override bool		isNumeric() const {return true;} 
   override int		maxColWidth() const {return 7;} // assumes sign, int: 6 dig's; float: 5 dig's, decimal point
   override ValType 	valType() const {return VT_FLOAT;}
+
+  override double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override int 		GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+
+  override bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((float)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((float)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
 
   TA_BASEFUNS(float_Data);
   
@@ -984,6 +1194,20 @@ public:
   override int		maxColWidth() const {return 11;} // assumes sign, 10 digs
   override ValType 	valType() const {return VT_INT;}
 
+  override double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override int 		GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+
+  override bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((int)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((int)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+
   TA_BASEFUNS(int_Data);
   
 protected:
@@ -1014,6 +1238,24 @@ public:
   override bool		isNumeric() const {return true;} // 
   override int		maxColWidth() const {return 3;} // assumes 3 digs
   override ValType 	valType() const {return VT_BYTE;}
+
+  override double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override int 		GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+  override byte 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
+
+  override bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((byte)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((byte)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat((byte)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
+  override bool	 	SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
 
   TA_BASEFUNS(byte_Data);
   

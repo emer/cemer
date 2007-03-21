@@ -296,6 +296,83 @@ String DataCol::GetDisplayName() const {
   return name;
 }
 
+/////////////////////
+// Access Index
+
+int DataCol::IndexOfEl_Flat(int row, int cell) const {
+  if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
+	       "cell index out of range")) return -1;
+  if(row < 0) row = rows() + row; // abs row, if request was from end
+  if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
+  return (row * cell_size()) + cell;
+} 
+
+int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3) const {
+  if(row < 0) row = rows() + row; // abs row, if request was from end
+  if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
+  switch(cell_geom.size) {
+  case 0:
+    return AR()->SafeElIndex(row);
+  case 1:
+    return AR()->SafeElIndex(d0, row);
+  case 2:
+    return AR()->SafeElIndex(d0, d1, row);
+  case 3:
+    return AR()->SafeElIndex(d0, d1, d2, row);
+  case 4:
+    return AR()->SafeElIndex(d0, d1, d2, d3, row);
+  }
+  return -1;
+} 
+
+/////////////////////
+// Access Var/String
+
+const String DataCol::GetValAsString_impl(int row, int cell) const {
+  const taMatrix* ar = AR(); //cache, and preserves constness
+  return ar->SafeElAsStr_Flat(IndexOfEl_Flat(row, cell));
+} 
+
+const Variant DataCol::GetValAsVar_impl(int row, int cell) const {
+  const taMatrix* ar = AR(); //cache, and preserves constness
+  return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
+} 
+
+bool DataCol::SetValAsString_impl(const String& val, int row, int cell) {
+  AR()->SetFmStr_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
+  return true;
+} 
+
+bool DataCol::SetValAsVar_impl(const Variant& val, int row, int cell) {
+  AR()->SetFmVar_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
+  return true;
+} 
+
+////////////////
+
+const String DataCol::GetValAsStringMDims(int row, int d0, int d1, int d2, int d3) const {
+  const taMatrix* ar = AR(); //cache, and preserves constness
+  return ar->SafeElAsStr_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3));
+} 
+
+const Variant DataCol::GetValAsVarMDims(int row, int d0, int d1, int d2, int d3) const {
+  const taMatrix* ar = AR(); //cache, and preserves constness
+  return ar->SafeElAsVar_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3));
+} 
+
+bool DataCol::SetValAsStringMDims(const String& val, int row, int d0, int d1, int d2, int d3) {
+  AR()->SetFmStr_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); // note: safe operation
+  return true;
+} 
+
+bool DataCol::SetValAsVarMDims(const Variant& val, int row, int d0, int d1, int d2, int d3) {
+  AR()->SetFmVar_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); // note: safe operation
+  return true;
+} 
+
+////////////////////
+// Access: Matrix
+
 taMatrix* DataCol::GetValAsMatrix(int row) {
   taMatrix* ar = AR(); 
   if(row < 0) row = rows() + row;
@@ -308,24 +385,6 @@ taMatrix* DataCol::GetRangeAsMatrix(int st_row, int n_rows) {
   return ar->GetFrameRangeSlice_(st_row, n_rows);
 }
 
-const String DataCol::GetValAsString_impl(int row, int cell) const {
-  const taMatrix* ar = AR(); //cache, and preserves constness
-  return ar->SafeElAsStr_Flat(IndexOfEl_Flat(row, cell));
-} 
-
-const Variant DataCol::GetValAsVar_impl(int row, int cell) const {
-  const taMatrix* ar = AR(); //cache, and preserves constness
-  return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
-} 
-
-int DataCol::IndexOfEl_Flat(int row, int cell) const {
-  if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
-	       "cell index out of range")) return -1;
-  if(row < 0) row = rows() + row; // abs row, if request was from end
-  if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
-  return (row * cell_size()) + cell;
-} 
-
 bool DataCol::SetValAsMatrix(const taMatrix* val, int row) {
   if (TestError(!val, "SetValAsMatrix", "val is null")) return false;
   if (row < 0) row = rows() + row; // abs row, if request was from end
@@ -333,16 +392,7 @@ bool DataCol::SetValAsMatrix(const taMatrix* val, int row) {
   return AR()->CopyFrame(*val, row);
 }
 
-
-bool DataCol::SetValAsString_impl(const String& val, int row, int cell) {
-  AR()->SetFmStr_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
-  return true;
-} 
-
-bool DataCol::SetValAsVar_impl(const Variant& val, int row, int cell) {
-  AR()->SetFmVar_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
-  return true;
-} 
+//////////////////
 
 bool DataCol::GetMinMaxScale(MinMax& mm) {
   if(!isNumeric()) return false;
@@ -376,7 +426,7 @@ bool DataCol::GetMinMaxScale(MinMax& mm) {
 }
 
 
-String DataCol::EncodeHeaderName(int d0, int d1, int d2, int d3, int d4) {
+String DataCol::EncodeHeaderName(int d0, int d1, int d2, int d3) {
   String typ_info;
   switch (valType()) {
   case VT_STRING: 	typ_info = "$"; break;
@@ -388,9 +438,9 @@ String DataCol::EncodeHeaderName(int d0, int d1, int d2, int d3, int d4) {
   }
   String mat_info;
   if(is_matrix) {		// specify which cell in matrix this is [dims:d0,d1,d2..]
-    MatrixGeom mg(cell_geom.size, d0, d1, d2, d3, d4);
+    MatrixGeom mg(cell_geom.size, d0, d1, d2, d3);
     mat_info = mg.GeomToString("[", "]");
-    if(cell_geom.IndexFmDims(d0, d1, d2, d3, d4) == 0) { // first guy
+    if(cell_geom.IndexFmDims(d0, d1, d2, d3) == 0) { // first guy
       mat_info += cell_geom.GeomToString("<", ">");
     }
   }
@@ -649,12 +699,6 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
   return c;
 }
 
-DataCol* DataTable::GetColData(int col) const {
-  if(TestError((col < 0 || col >= cols()), "GetColData",
-	       "column number is out of range")) return NULL;
-  else return data.SafeEl(col);
-}
-
 DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
   for(int i=data.size-1;i>=0;i--) {
     DataCol* da = data.FastEl(i);
@@ -671,12 +715,6 @@ DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
   }
   DataCol* rval = NewColFromChannelSpec_impl(cs);
   return rval;
-}
-
-taMatrix* DataTable::GetColMatrix(int col) const {
-  DataCol* da = GetColData(col);
-  if (da) return da->AR();
-  else return NULL;
 }
 
 const Variant DataTable::GetColUserData(const String& name,
@@ -712,6 +750,53 @@ taMatrix* DataTable::GetMatrixData_impl(int chan) {
   return da->AR()->GetFrameSlice_(i);
 }
 
+///////////////////////////////////////////
+//	Column Name Access
+
+const Variant DataTable::GetValColName(const String& col_nm, int row) const {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsVar(i);
+  else return _nilVariant;
+}
+
+bool DataTable::SetValColName(const Variant& val, const String& col_nm, int row) {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  if (!da) return false;
+  if (da->is_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsVar(val, i);
+    return true;
+  } else return false;
+}
+
+const Variant DataTable::GetMatrixValColName(const String& col_nm, int row,
+					     int d0, int d1, int d2, int d3) const {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsVarMDims(i, d0, d1, d2, d3);
+  else return _nilVariant;
+}
+
+bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
+				    int row, int d0, int d1, int d2, int d3) {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsVarMDims(val, i, d0, d1, d2, d3);
+    return true;
+  } else return false;
+}
+
 /////////////////////
 
 double DataTable::GetValAsDouble(int col, int row) {
@@ -728,6 +813,14 @@ float DataTable::GetValAsFloat(int col, int row) {
   if (da &&  idx_err(row, da->rows(), i))
     return da->GetValAsFloat(i);
   else return 0.0f;
+}
+
+int DataTable::GetValAsInt(int col, int row) {
+  DataCol* da = GetColData(col);
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsInt(i);
+  else return 0;
 }
 
 const String DataTable::GetValAsString(int col, int row) const {
@@ -786,6 +879,17 @@ bool DataTable::SetValAsFloat(float val, int col, int row) {
   } else return false;
 }
 
+bool DataTable::SetValAsInt(int val, int col, int row) {
+  DataCol* da = GetColData(col);
+  if (!da) return false;
+  if (da->is_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsInt(val, i);
+    return true;
+  } else return false;
+}
+
 bool DataTable::SetValAsString(const String& val, int col, int row) {
   DataCol* da = GetColData(col);
   if (!da) return false;
@@ -838,6 +942,15 @@ float DataTable::GetValAsFloatM(int col, int row, int cell) {
   else return 0.0f;
 }
 
+int DataTable::GetValAsIntM(int col, int row, int cell) {
+  DataCol* da = GetColData(col);
+  if (!da || (cell > 0 && da->not_matrix_err())) return false;
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsIntM(i, cell);
+  else return 0;
+}
+
 const String DataTable::GetValAsStringM(int col, int row, int cell, bool na) const {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
@@ -879,6 +992,16 @@ bool DataTable::SetValAsFloatM(float val, int col, int row, int cell) {
   } else return false;
 }
 
+bool DataTable::SetValAsIntM(int val, int col, int row, int cell) {
+  DataCol* da = GetColData(col);
+  if (!da || (cell > 0 && da->not_matrix_err())) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsIntM(val, i, cell);
+    return true;
+  } else return false;
+}
+
 bool DataTable::SetValAsStringM(const String& val, int col, int row, int cell) {
   DataCol* da = GetColData(col);
   if (!da || (cell > 0 && da->not_matrix_err())) return false;
@@ -900,6 +1023,107 @@ bool DataTable::SetValAsVarM(const Variant& val, int col, int row, int cell) {
 }
 
 ////////////////////////
+//	Matrix Dims
+
+double DataTable::GetValAsDoubleMDims(int col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsDoubleMDims(i, d0, d1, d2, d3);
+  else return 0.0f;
+}
+
+float DataTable::GetValAsFloatMDims(int col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsFloatMDims(i, d0, d1, d2, d3);
+  else return 0.0f;
+}
+
+int DataTable::GetValAsIntMDims(int col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsIntMDims(i, d0, d1, d2, d3);
+  else return 0;
+}
+
+const String DataTable::GetValAsStringMDims(int col, int row, int d0, int d1, int d2, int d3, bool na) const {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsStringMDims(i, d0, d1, d2, d3);
+  else 
+    return (na) ? String("n/a") : _nilString;
+}
+
+const Variant DataTable::GetValAsVarMDims(int col, int row, int d0, int d1, int d2, int d3) const {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsVarMDims(i, d0, d1, d2, d3);
+  else return _nilVariant;
+}
+
+//////////////////////////////
+
+bool DataTable::SetValAsDoubleMDims(double val, int col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsDoubleMDims(val, i, d0, d1, d2, d3);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsFloatMDims(float val, int col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsFloatMDims(val, i, d0, d1, d2, d3);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsIntMDims(int val, int col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsIntMDims(val, i, d0, d1, d2, d3);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsStringMDims(const String& val, int col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsStringMDims(val, i, d0, d1, d2, d3);
+    return true;
+  } else return false;
+}
+
+bool DataTable::SetValAsVarMDims(const Variant& val, int col, int row, int d0, int d1, int d2, int d3) {
+  DataCol* da = GetColData(col);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsVarMDims(val, i, d0, d1, d2, d3);
+    return true;
+  } else return false;
+}
+
+//////////////////////////
 
 bool DataTable::hasData(int col, int row) {
   DataCol* da = GetColData(col);
@@ -997,12 +1221,12 @@ int_Data* DataTable::NewColInt(const String& col_nm) {
 }
 
 DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm,
-    int dims, int d0, int d1, int d2, int d3, int d4)
+    int dims, int d0, int d1, int d2, int d3)
 {
   if(dims < 1) {		// < 1 is shortcut for not actually a matrix!
     return NewCol(val_type, col_nm);
   }
-  MatrixGeom geom(dims, d0, d1, d2, d3, d4);
+  MatrixGeom geom(dims, d0, d1, d2, d3);
   String err_msg;
   if(TestError(!taMatrix::GeomIsValid(geom, &err_msg), "NewcolMatrix",
 	       "Invalid geom:", err_msg)) return NULL;
@@ -1040,7 +1264,7 @@ bool DataTable::RenameCol(const String& cur_nm, const String& new_nm) {
   return true;
 }
 
-DataCol* DataTable::FindColName(const String& col_nm, int& col_idx, bool err_msg) {
+DataCol* DataTable::FindColName(const String& col_nm, int& col_idx, bool err_msg) const {
   DataCol* da = data.FindName(col_nm, col_idx);
   TestError(!da && err_msg, "FindColName",  "could not find column named:", col_nm);
   return da;
@@ -1048,14 +1272,14 @@ DataCol* DataTable::FindColName(const String& col_nm, int& col_idx, bool err_msg
 
 DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
 					   ValType val_type, int dims,
-					   int d0, int d1, int d2, int d3, int d4) {
+					   int d0, int d1, int d2, int d3) {
   DataCol* da = FindColName(col_nm, col_idx);
   if(da) {
     if(da->valType() != (ValType)val_type) {
       StructUpdate(true);
       DataCol* nda;
       if(dims > 0)
-	nda = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
+	nda = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3);
       else
 	nda = NewCol(val_type, col_nm);
       data.MoveIdx(data.size-1, col_idx);
@@ -1065,7 +1289,7 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       StructUpdate(false);
     } else if(da->cell_dims() != dims) {
       StructUpdate(true);
-      da->cell_geom.SetGeom(dims, d0, d1, d2, d3, d4);
+      da->cell_geom.SetGeom(dims, d0, d1, d2, d3);
       if(dims == 0)
 	da->is_matrix = false;
       else
@@ -1074,7 +1298,7 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       da->EnforceRows(rows);	// keep row-constant
       StructUpdate(false);
     } else {
-      MatrixGeom mg(dims, d0, d1, d2, d3, d4);
+      MatrixGeom mg(dims, d0, d1, d2, d3);
       if(mg != da->cell_geom) {
 	StructUpdate(true);
 	da->cell_geom = mg;
@@ -1087,7 +1311,7 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
   else {			// not found -- make one
     col_idx = data.size;	// will be the next guy
     if(dims >= 1)
-      return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4);
+      return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3);
     else
       return NewCol(val_type, col_nm);
   }
@@ -1330,7 +1554,7 @@ void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim) {
       for(int j=0;j<da->cell_size(); j++) {
 	int d0, d1, d2, d3, d4;
 	da->cell_geom.DimsFmIndex(j, d0, d1, d2, d3, d4);
-	String hdnm = da->EncodeHeaderName(d0, d1, d2, d3, d4);
+	String hdnm = da->EncodeHeaderName(d0, d1, d2, d3);
 	strm << cdlm << hdnm;
       }
     }
@@ -1508,12 +1732,11 @@ int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
       // geom was made on first col and should not be remade..
       da = FindMakeColName(base_nm, idx, (ValType)val_typ, mat_geom.size,
 			   mat_geom[0], mat_geom[1], mat_geom[2],
-			   mat_geom[3], mat_geom[4]);
+			   mat_geom[3]);
     }
     load_col_idx.Add(idx);
     if(mat_idx.size > 0) {
-      int mdx = da->cell_geom.IndexFmDims(mat_idx[0], mat_idx[1], mat_idx[2], mat_idx[3],
-					  mat_idx[4]);
+      int mdx = da->cell_geom.IndexFmDims(mat_idx[0], mat_idx[1], mat_idx[2], mat_idx[3]);
       load_mat_idx.Add(mdx);
     }
     else {

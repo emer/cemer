@@ -999,7 +999,7 @@ int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4) const {
     break;
   default: break;
   }
-  if ((rval < 0) || (rval >= size)) {
+  if(TestError((rval < 0) || (rval >= size), "SafeElIndex", "matrix indicies out of range")) {
     rval = -1;
   }
   return rval;

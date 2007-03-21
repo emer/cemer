@@ -46,6 +46,8 @@ void BasicDataLoop::GetOrderVar() {
 
 void BasicDataLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(data_var);
+  UpdateProgVarRef_NewOwner(order_var);
   GetOrderVar();
 }
 
@@ -153,6 +155,9 @@ void GroupedDataLoop::GetOrderVars() {
 
 void GroupedDataLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(data_var);
+  UpdateProgVarRef_NewOwner(group_order_var);
+  UpdateProgVarRef_NewOwner(item_order_var);
   GetOrderVars();
 }
 
@@ -256,6 +261,8 @@ void NetCounterInit::Destroy() {
 
 void NetCounterInit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(network_var);
+  UpdateProgVarRef_NewOwner(local_ctr_var);
   GetLocalCtrVar();
   if((bool)network_var && ((bool)network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
@@ -313,6 +320,8 @@ void NetCounterIncr::Destroy() {
 
 void NetCounterIncr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(network_var);
+  UpdateProgVarRef_NewOwner(local_ctr_var);
   GetLocalCtrVar();
   if((bool)network_var && ((bool)network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
@@ -369,6 +378,8 @@ void NetUpdateView::Destroy() {
 
 void NetUpdateView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(network_var);
+  UpdateProgVarRef_NewOwner(update_var);
   GetUpdateVar();
 }
 

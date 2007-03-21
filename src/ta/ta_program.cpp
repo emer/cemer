@@ -939,6 +939,21 @@ bool ProgEl::CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval) {
   return false;
 }
 
+bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
+  if(!pvr) return false;
+  Program* myprg = GET_MY_OWNER(Program);
+  Program* otprg = GET_OWNER(pvr.ptr(), Program);
+  if(myprg == otprg) return false; // not updated
+  ProgVar* nvar = myprg->FindVarName(pvr->name);
+  if(TestWarning(!nvar, "UpdtProgVar", "variable of name:",pvr->name,
+		 "not found in new Program -- is now NULL and must be set manually")) {
+    pvr.set(NULL);
+    return false;
+  }
+  pvr.set(nvar);
+  return true;
+}
+
 bool ProgEl::CheckConfig_impl(bool quiet) {
   if(HasProgFlag(OFF)) {
     ClearCheckConfig();
@@ -1475,6 +1490,7 @@ void AssignExpr::Initialize() {
 
 void AssignExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(result_var);
 }
 
 void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1519,6 +1535,9 @@ void MethodCall::UpdateAfterEdit_impl() {
   if(obj)
     obj_type = obj->act_object_type();
   else obj_type = &TA_taBase; // placeholder
+
+  UpdateProgVarRef_NewOwner(result_var);
+  UpdateProgVarRef_NewOwner(obj);
 
   if(!taMisc::is_loading && method)
     meth_args.UpdateFromMethod(method);
@@ -1594,6 +1613,8 @@ void StaticMethodCall::Initialize() {
 
 void StaticMethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  UpdateProgVarRef_NewOwner(result_var);
 
   if(!taMisc::is_loading && method)
     meth_args.UpdateFromMethod(method);
@@ -1675,6 +1696,11 @@ void MiscCall::Initialize() {
 //////////////////////////
 
 void PrintVar::Initialize() {
+}
+
+void PrintVar::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(print_var);
 }
 
 void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -2037,6 +2063,8 @@ void FunctionCall::Initialize() {
 
 void FunctionCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(result_var);
+
   UpdateArgs();		// always do this.. nondestructive and sometimes stuff changes anyway
 }
 

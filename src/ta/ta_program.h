@@ -49,6 +49,8 @@ class ProgLib;
 //  SIMPLE_LINKS(MethodCall);
 //  TA_BASEFUNS(MethodCall);
 
+//  The UpdateAfterEdit_impl should also call 
+
 // Also, pretty much any place where a user can enter an expression,
 // use ProgExpr -- it handles variable name updates automatically!
 // and also provides lookup of variable names
@@ -393,7 +395,9 @@ protected:
   virtual bool		CheckEqualsError(String& condition, bool quiet, bool& rval);
   // check for common mistake of using = instead of == for logical equals
   virtual bool		CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval);
-  // check program variable reference to make sure it is in same scope as this progel
+  // check program variable reference to make sure it is in same Program scope as this progel
+  virtual bool		UpdateProgVarRef_NewOwner(ProgVarRef& pvr);
+  // if program variable reference is not in same Program scope as this progel (because progel was moved to a new program), then try to find the same progvar in new owner (by name), emit warning if not found; put in UpdateAfterEdit_impl for any guy containing progvarref's
 
   override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
@@ -826,6 +830,7 @@ public:
   SIMPLE_LINKS(PrintVar);
   TA_BASEFUNS(PrintVar);
 protected:
+  override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 

@@ -921,7 +921,7 @@ public:
   };
 
   Layer* 		layer;    	// #READ_ONLY #NO_SAVE layer this prjn is in
-  PrjnSource 		from_type;	// #CAT_Structure Source of the projections
+  PrjnSource 		from_type;	// #CAT_Structure #APPLY_IMMED Source of the projections
   Layer*		from;		// #CAT_Structure layer receiving from (set this for custom)
   ProjectionSpec_SPtr	spec;		// #CAT_Structure spec for this item
   TypeDef*		con_type;	// #TYPE_Connection #CAT_Structure Type of connection
