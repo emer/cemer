@@ -26,10 +26,10 @@ HEADERS += $${HEADERS}
 #  * moc files -- qmake handles those
 #  * xx_TA.cpp file -- the shared.pri handles those
 
-SOURCES += $${TARGET}.cpp libplayerc++/playerxdr.c libplayerc++/error.c libplayerc++/functiontable.c libplayerc++/playerc++.cc libplayerc++/playerclient.cc libplayerc++/playererror.cc libplayerc++/clientproxy.cc libplayerc++/cameraproxy.cc libplayerc++/graphics2dproxy.cc libplayerc++/graphics3dproxy.cc libplayerc++/gripperproxy.cc libplayerc++/laserproxy.cc libplayerc++/limbproxy.cc libplayerc++/position2dproxy.cc libplayerc++/position3dproxy.cc libplayerc++/simulationproxy.cc
+SOURCES += $${TARGET}.cpp libplayerc++/playerxdr.c libplayerc++/error.c libplayerc++/functiontable.c libplayerc++/playerc++.cc libplayerc++/playerclient.cc libplayerc++/playererror.cc libplayerc++/clientproxy.cc libplayerc++/cameraproxy.cc libplayerc++/graphics2dproxy.cc libplayerc++/graphics3dproxy.cc libplayerc++/gripperproxy.cc libplayerc++/laserproxy.cc libplayerc++/limbproxy.cc libplayerc++/position2dproxy.cc libplayerc++/position3dproxy.cc libplayerc++/simulationproxy.cc libplayerc++/sonarproxy.cc
 
 
 include( ../pdp_shared.pri )
 
-CONFIG += link_pkgconfig
-PKGCONFIG += playerc++
+#CONFIG += link_pkgconfig
+#PKGCONFIG += playerc++
