@@ -199,12 +199,12 @@ public:
   { return SetValAsVar_impl(val, row, 0); } 
   // #CAT_Modify get data of scalar type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last)
 
-  const Variant GetMatrixVal(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return GetValAsVarMDims(row, d0,d1,d2,d3,d4); }
+  const Variant GetMatrixVal(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsVarMDims(row, d0,d1,d2,d3); }
   // #CAT_Access get value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
   bool	 	SetMatrixVal(const Variant& val, int row, 
-			     int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  { return SetValAsVarMDims(val, row, d0,d1,d2,d3,d4); }
+			     int d0, int d1=0, int d2=0, int d3=0)
+  { return SetValAsVarMDims(val, row, d0,d1,d2,d3); }
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
 
   /////////////////////////////////////////////
@@ -279,43 +279,43 @@ public:
 
   ///////////////////////////////////////////////////////////////
   // Matrix versions, with dimensions passed
-  const Variant GetValAsVarMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return GetValAsVar_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
+  const Variant GetValAsVarMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsVar_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
   // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVarMDims(const Variant& val, int row, 
-				 int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  {return SetValAsVar_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
+				 int d0, int d1=0, int d2=0, int d3=0)
+  {return SetValAsVar_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
   // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
-  const String 	GetValAsStringMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return GetValAsString_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
+  const String 	GetValAsStringMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsString_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
   // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsStringMDims(const String& val, int row,
-				    int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  {return SetValAsString_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
+				    int d0, int d1=0, int d2=0, int d3=0)
+  {return SetValAsString_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
   // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
-  float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const 
-  { return GetValAsFloat_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
+  float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const 
+  { return GetValAsFloat_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
   // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
-  bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  {return SetValAsFloat_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
+  bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  {return SetValAsFloat_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
   // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
-  double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return GetValAsDouble_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
+  double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsDouble_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
   // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
-  bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  {return SetValAsDouble_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
+  bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  {return SetValAsDouble_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
   // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
-  int	 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return GetValAsInt_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
+  int	 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsInt_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
   // #CAT_XpertAccess valid if type is int or byte, -ve row is from end (-1=last)
-  bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  {return SetValAsInt_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
+  bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
+  {return SetValAsInt_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
   // #CAT_XpertModify valid if type is int or float, -ve row is from end (-1=last)
-  byte	 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return GetValAsByte_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
+  byte	 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
+  { return GetValAsByte_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
   // #CAT_XpertAccess valid only if type is byte, -ve row is from end (-1=last)
-  bool	 	SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) 
-  {return SetValAsByte_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
+  bool	 	SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0) 
+  {return SetValAsByte_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
   // #CAT_XpertModify valid if type is numeric, -ve row is from end (-1=last)
 
   ///////////////////////////////////////////////////////////////
