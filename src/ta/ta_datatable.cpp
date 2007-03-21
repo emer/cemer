@@ -348,27 +348,6 @@ bool DataCol::SetValAsVar_impl(const Variant& val, int row, int cell) {
   return true;
 } 
 
-////////////////
-
-const String DataCol::GetValAsStringMDims(int row, int d0, int d1, int d2, int d3) const {
-  const taMatrix* ar = AR(); //cache, and preserves constness
-  return ar->SafeElAsStr_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3));
-} 
-
-const Variant DataCol::GetValAsVarMDims(int row, int d0, int d1, int d2, int d3) const {
-  const taMatrix* ar = AR(); //cache, and preserves constness
-  return ar->SafeElAsVar_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3));
-} 
-
-bool DataCol::SetValAsStringMDims(const String& val, int row, int d0, int d1, int d2, int d3) {
-  AR()->SetFmStr_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); // note: safe operation
-  return true;
-} 
-
-bool DataCol::SetValAsVarMDims(const Variant& val, int row, int d0, int d1, int d2, int d3) {
-  AR()->SetFmVar_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); // note: safe operation
-  return true;
-} 
 
 ////////////////////
 // Access: Matrix

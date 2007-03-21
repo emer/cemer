@@ -19,13 +19,10 @@
 #include "ta_project.h"
 #include "css_machine.h"
 
-#ifdef TA_GUI
-#endif // TA_GUI
-
-#ifdef TA_OS_UNIX
 
 void css_cleanup(int err) {
   signal(err, SIG_DFL);
+#ifdef TA_OS_UNIX // win doesn't support these signals
   if((err == SIGALRM) || (err == SIGUSR1) || (err == SIGUSR2)) {
     cerr << "css: received a signal: ";
     taMisc::Decode_Signal(err);
@@ -33,15 +30,16 @@ void css_cleanup(int err) {
     taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) css_cleanup);
     return;
   }
+#endif // TA_OS_UNIX
   cerr << "css: exiting and cleaning up temp files from signal: ";
   taMisc::Decode_Signal(err);
   cerr << "\n";
-#ifdef TA_GUI
-//TODO:  taqtMisc::Cleanup(err);
-#endif // GUI_IV
+#ifdef TA_OS_WIN
+  exit(err);
+#else
   kill(getpid(), err);		// activate signal
+#endif
 }
-#endif // TA_OS_UNIX
 
 int main(int argc, const char *argv[]) {
   taMisc::app_name = "css";
@@ -50,9 +48,7 @@ int main(int argc, const char *argv[]) {
   taMisc::use_gui = true;	// set opposite default from normal
 
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_ta, &TA_taRootBase)) return 1;
-#ifdef TA_OS_UNIX
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) css_cleanup);
-#endif
   if(taRootBase::Startup_Run())
     return 0;
   else

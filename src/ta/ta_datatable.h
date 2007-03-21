@@ -199,12 +199,12 @@ public:
   { return SetValAsVar_impl(val, row, 0); } 
   // #CAT_Modify get data of scalar type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last)
 
-  const Variant GetMatrixVal(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return GetValAsVarMDims(row, d0, d1, d2, d3); }
+  const Variant GetMatrixVal(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return GetValAsVarMDims(row, d0,d1,d2,d3,d4); }
   // #CAT_Access get value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
   bool	 	SetMatrixVal(const Variant& val, int row, 
-			     int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsVarMDims(val, row, d0, d1, d2, d3); }
+			     int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  { return SetValAsVarMDims(val, row, d0,d1,d2,d3,d4); }
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
 
   /////////////////////////////////////////////
@@ -279,39 +279,43 @@ public:
 
   ///////////////////////////////////////////////////////////////
   // Matrix versions, with dimensions passed
-  const Variant GetValAsVarMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const;
+  const Variant GetValAsVarMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return GetValAsVar_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
   // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVarMDims(const Variant& val, int row, 
-				 int d0, int d1=0, int d2=0, int d3=0);
+				 int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  {return SetValAsVar_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
   // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
-  const String 	GetValAsStringMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const;
+  const String 	GetValAsStringMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return GetValAsString_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
   // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsStringMDims(const String& val, int row,
-				    int d0, int d1=0, int d2=0, int d3=0);
+				    int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  {return SetValAsString_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
   // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
-  float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const 
-  { return 0.0f; }
+  float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const 
+  { return GetValAsFloat_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
   // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
-  bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return false; }
+  bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  {return SetValAsFloat_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
   // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
-  double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return 0.0; }
+  double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return GetValAsDouble_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
   // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
-  bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return false; }
+  bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  {return SetValAsDouble_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
   // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
-  int	 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return 0; }
+  int	 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return GetValAsInt_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
   // #CAT_XpertAccess valid if type is int or byte, -ve row is from end (-1=last)
-  bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return false; }
+  bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
+  {return SetValAsInt_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
   // #CAT_XpertModify valid if type is int or float, -ve row is from end (-1=last)
-  byte	 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (byte)GetValAsIntMDims(row, d0, d1, d2, d3); } 
+  byte	 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
+  { return GetValAsByte_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4)); }
   // #CAT_XpertAccess valid only if type is byte, -ve row is from end (-1=last)
-  bool	 	SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0) 
-  { return SetValAsByteMDims(val, row, d0, d1, d2, d3); } 
+  bool	 	SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0, int d4=0) 
+  {return SetValAsByte_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3,d4));} 
   // #CAT_XpertModify valid if type is numeric, -ve row is from end (-1=last)
 
   ///////////////////////////////////////////////////////////////
@@ -996,24 +1000,6 @@ public:
   override bool		isString() const {return true;} 
   override ValType 	valType() const  {return VT_STRING;}
 
-  override double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (double)GetValAsStringMDims(row, d0, d1, d2, d3); }
-  override float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (float)GetValAsStringMDims(row, d0, d1, d2, d3); }
-  override int	 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (int)GetValAsStringMDims(row, d0, d1, d2, d3); }
-  override byte	 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return GetValAsStringMDims(row, d0, d1, d2, d3)[0]; } 
-
-  override bool	 SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsStringMDims((String)val, row, d0, d1, d2, d3); }
-  override bool	 SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsStringMDims((String)val, row, d0, d1, d2, d3); }
-  override bool	 SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsStringMDims((String)val, row, d0, d1, d2, d3); }
-  override bool	 SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsStringMDims((String)val, row, d0, d1, d2, d3); }
-
   TA_BASEFUNS(String_Data);
 
 protected:
@@ -1047,25 +1033,6 @@ INHERITED(DataColTp<Variant_Matrix>)
 friend class DataTable;
 public:
   override ValType 	valType() const  {return VT_VARIANT;}
-
-  override const Variant GetValAsVarMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override bool	 SetValAsVarMDims(const Variant& val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-
-  override double GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return GetValAsVarMDims(row, d0, d1, d2, d3).toDouble(); }
-  override float GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (float)GetValAsVarMDims(row, d0, d1, d2, d3).toFloat(); }
-  override int	 GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (int)GetValAsVarMDims(row, d0, d1, d2, d3).toInt(); }
-
-  override bool	 SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsVarMDims(val, row, d0, d1, d2, d3); }
-  override bool	 SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsVarMDims(val, row, d0, d1, d2, d3); }
-  override bool	 SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsVarMDims(val, row, d0, d1, d2, d3); }
 
   TA_BASEFUNS(Variant_Data);
 
@@ -1104,20 +1071,6 @@ public:
   override int		maxColWidth() const {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
   override ValType 	valType() const {return VT_DOUBLE;}
 
-  override double GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override float GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override int 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-
-  override bool	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((double)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((double)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-
   TA_BASEFUNS(double_Data);
   
 protected:
@@ -1148,20 +1101,6 @@ public:
   override bool		isNumeric() const {return true;} 
   override int		maxColWidth() const {return 7;} // assumes sign, int: 6 dig's; float: 5 dig's, decimal point
   override ValType 	valType() const {return VT_FLOAT;}
-
-  override double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override int 		GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-
-  override bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((float)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((float)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
 
   TA_BASEFUNS(float_Data);
   
@@ -1194,20 +1133,6 @@ public:
   override int		maxColWidth() const {return 11;} // assumes sign, 10 digs
   override ValType 	valType() const {return VT_INT;}
 
-  override double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override int 		GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-
-  override bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((int)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((int)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-
   TA_BASEFUNS(int_Data);
   
 protected:
@@ -1238,24 +1163,6 @@ public:
   override bool		isNumeric() const {return true;} // 
   override int		maxColWidth() const {return 3;} // assumes 3 digs
   override ValType 	valType() const {return VT_BYTE;}
-
-  override double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (double)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (float)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override int 		GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return (int)ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-  override byte 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
-  { return ar.SafeEl_Flat(IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); }
-
-  override bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((byte)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((byte)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat((byte)val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
-  override bool	 	SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0)
-  { ar.Set_Flat(val, IndexOfEl_Flat_Dims(row, d0, d1, d2, d3)); return true; }
 
   TA_BASEFUNS(byte_Data);
   

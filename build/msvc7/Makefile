@@ -81,7 +81,7 @@ itreewidget.moc.cpp: $(PDP4DIR)\src\taiqtso\itreewidget.h
 qconsole.moc.cpp: $(PDP4DIR)\src\taiqtso\qconsole.h
 	$(MOC) %s -o $@
 
-TAHEADS_TAMISC_GUI =\
+TA_HEADS_TAMISC_GUI =\
 	$(PDP4DIR)/src/ta/colorbar_qt.h \
 	$(PDP4DIR)/src/taiqtso/safeptr_so.h \
 	$(PDP4DIR)/src/ta/t3node_so.h \
@@ -90,7 +90,7 @@ TAHEADS_TAMISC_GUI =\
 	$(PDP4DIR)/src/ta/ta_datatable_qtso.h \
 	$(PDP4DIR)/src/ta/ta_datatable_so.h 
 
-TAHEADS_GUI =\
+TA_HEADS_GUI =\
 	$(PDP4DIR)/src/ta/ta_qt.h \
 	$(PDP4DIR)/src/ta/ta_qtdata_def.h \
 	$(PDP4DIR)/src/ta/ta_qtdata.h \
@@ -104,16 +104,17 @@ TAHEADS_GUI =\
 	$(PDP4DIR)/src/ta/ta_seledit.h \
 	$(PDP4DIR)/src/ta/ta_program_qt.h
 
-TAHEADS_TAMISC =\
+TA_HEADS_TAMISC =\
 	$(PDP4DIR)/src/ta/ta_time.h \
 	$(PDP4DIR)/src/ta/fun_lookup.h \
 	$(PDP4DIR)/src/ta/ta_data_extras.h 
 
-TAHEADS =\
+TA_HEADS =\
 	$(PDP4DIR)/src/ta/ios-g++-3.1/streambuf.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/iostream.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/fstream.h \
 	$(PDP4DIR)/src/ta/ios-g++-3.1/sstream.h \
+	$(PDP4DIR)/build/msvc7/config.h \
 	$(PDP4DIR)/src/ta/ta_global.h \
 	$(PDP4DIR)/src/taiqtso/igeometry.h \
 	$(PDP4DIR)/src/ta/ta_def.h \
@@ -154,9 +155,9 @@ TAHEADS =\
 	$(PDP4DIR)/src/ta/ta_plugin.h \
 	$(PDP4DIR)/src/ta/ta_plugin_p.h \
 	$(PDP4DIR)/src/ta/ta_project.h \
-	$(TAHEADS_GUI) \
-	$(TAHEADS_TAMISC) \
-	$(TAHEADS_TAMISC_GUI)
+	$(TA_HEADS_GUI) \
+	$(TA_HEADS_TAMISC) \
+	$(TA_HEADS_TAMISC_GUI)
 
 TA_MOCS: \
   colorbar_qt.moc.cpp \
@@ -347,26 +348,30 @@ LEABRA_MAKETA =\
 
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
 #TODO: need to enable DEBUG to be parameterized somehow
-#MAKETA_FLAGS = -css -autohx $(INCLUDE) /D DEBUG -win_dll
-MAKETA_FLAGS = -css $(INCLUDE) /D DEBUG -win_dll
+
+!IF "$(TARGET)" == "Release"
+MAKETA_FLAGS = -css -autohx $(INCLUDE) -win_dll
+!ELSEIF "$(TARGET)" == "Debug"
+MAKETA_FLAGS = -css -autohx /D DEBUG $(INCLUDE) -win_dll
+!ELSE
+! ERROR TARGET macro must be defined as one of: Debug, Release 
+!ENDIF
+
+#MAKETA_FLAGS = -css $(INCLUDE) -win_dll
 
 #note: also makes _TA_inst.h and .cpp
-ta_TA_type.h: $(TAHEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
+ta_TA_type.h: $(TA_HEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
   $(CD) $(PDP4DIR)/src/ta
-  $(MAKETA) $(MAKETA_FLAGS) ta $(TAHEADS) 
+  $(MAKETA) $(MAKETA_FLAGS) ta $(TA_HEADS) 
   
-#pdp_TA_type.h: $(PDP_HEADS) $(BP_HEADS) $(LEABRA_HEADS)
 pdp_TA_type.h: $(TA_HEADS) $(PDP_HEADS) 
   $(CD) $(PDP4DIR)/src/pdp
   $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA)
-#  $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA) $(BP_HEADS)  $(LEABRA_HEADS)
   
-#NOTE: following is defunct -- we put everything in pdp_TA
 bp_TA_type.h: $(TA_HEADS) $(PDP_MAKETA) $(BP_HEADS)
   $(CD) $(PDP4DIR)/src/bp
   $(MAKETA) $(MAKETA_FLAGS) bp $(BP_MAKETA) 
   
-#NOTE: following is defunct -- we put everything in pdp_TA
 leabra_TA_type.h: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
   $(CD) $(PDP4DIR)/src/leabra
   $(MAKETA) $(MAKETA_FLAGS) leabra $(LEABRA_MAKETA) 
@@ -376,14 +381,14 @@ clean:
  
 # NOTE: 'ta' and 'pdp' are the two libraries
 
-taiqtso_files: TAIQTSO_MOCS
+taiqtso_files: $(TAIQTSO_MOCS)
  
-css_files: CSS_MOCS
-
 ta_mocs: $(TA_MOCS)
 
 ta_files: ta_TA_type.h ta_mocs
   
+css_files: $(CSS_MOCS)
+
 
 pdp_mocs: $(PDP_MOCS)
 

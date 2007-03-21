@@ -61,7 +61,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="ta_prebuild.cmd"/>
+				CommandLine="call ta_prebuild.cmd $(ConfigurationName)"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -96,7 +96,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				DisableSpecificWarnings="4250;4661;4311"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -107,9 +107,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(PDP4DIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
-				OptimizeReferences="2"
+				OptimizeReferences="0"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
 				ImportLibrary="$(OutDir)/ta.lib"
@@ -126,7 +126,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="ta_prebuild.cmd"/>
+				CommandLine="call ta_prebuild.cmd $(ConfigurationName)"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
