@@ -45,8 +45,8 @@ SUBDIRS =\
 	src/pdp_bin \
 	prog_lib \
 	css_stdlib \
-	test
-
+	test \
+	manual
 
 
 EXTRA_DIST += src/ta/ios-g++-3.1

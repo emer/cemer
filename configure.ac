@@ -24,7 +24,7 @@ dnl
 dnl  [1] http://www.gnu.org/software/libtool/manual.html Versioning
 
 # Set binary version here. The format allows for 99.99.99abc
-AC_INIT([PDP],[4.0.0a],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
+AC_INIT([PDP],[4.0.1b1],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
 LIB_VERSION=0:0:0   #Set library version here
 
 AC_SUBST([PACKAGE_VERSION])
@@ -291,7 +291,8 @@ AC_CONFIG_FILES([Makefile
 		src/pdp_bin/Makefile
 		prog_lib/Makefile
 		test/Makefile
-		css_stdlib/Makefile])
+		css_stdlib/Makefile
+                manual/Makefile])
 
 AC_OUTPUT
 SIM_AC_CONFIGURATION_SUMMARY
