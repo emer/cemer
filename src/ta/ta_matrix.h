@@ -443,9 +443,9 @@ public:
   void			AddFrame() {AddFrames(1);}
   // #MENU #MENU_ON_Matrix #MENU_CONTEXT #CAT_Modify add 1 new blank frame
   virtual void		AddFrames(int n);
-  // #MENU #MENU_ON_Matrix #MENU_CONTEXT #CAT_Modify add n new blank frames
+  // #MENU #MENU_ON_Matrix #MENU_CONTEXT #CAT_Modify add n new blank frames -- note that this assumes incremental growth and thus calls AllocFrames in advance
   virtual void		AllocFrames(int n);
-  // #CAT_Modify make sure space exists for n frames
+  // #CAT_Modify make sure space exists for n frames: this is to be used when the matrix is growing incrementally, as opposed to being a fixed known size -- it allocates extra room to grow
   virtual void		EnforceFrames(int n, bool notify = true); 
   // #MENU #MENU_ON_Object #ARGC_1 #CAT_Modify set size to n frames, blanking new elements if added
   virtual bool		RemoveFrames(int st_fr, int n_frames=1);
@@ -549,14 +549,16 @@ protected:
   MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
   
   virtual bool		fastAlloc() const {return true;}
-    // #IGNORE enables using fast block-based allocations, copies, and skipping reclaims -- for ints,floats, etc.; not for Strings/Variants
+  // #IGNORE enables using fast block-based allocations, copies, and skipping reclaims -- for ints,floats, etc.; not for Strings/Variants
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
   virtual void		Alloc_(int new_alloc);
   // set capacity to n -- should always be in multiples of frames 
   virtual void*		MakeArray_(int i) const = 0;
-  // #IGNORE make a new array of item type; raise exception on failure
+  // #IGNORE make a new array of item type
   virtual void		SetArray_(void* nw) = 0;
+  virtual void*		FastRealloc_(int i) = 0;
+  // #IGNORE reallocate existing array, only valid for fastAlloc() objects
   virtual void		ReclaimOrphans_(int from, int to) {}
   // called when elements can be reclaimed, ex. for strings
   
@@ -691,8 +693,13 @@ public:
   override void*	FastEl_Flat_(int idx)	{ return &(el[idx]); } 
   override const void*	FastEl_Flat_(int idx) const { return &(el[idx]); } 
 protected:
-  override void*	MakeArray_(int n) const	{ return new T[n]; }
-  override void		SetArray_(void* nw) {if ((el != NULL) && (alloc_size > 0)) delete [] el; el = (T*)nw;}
+  override void*	MakeArray_(int n) const	
+  { if(fastAlloc()) return malloc(n * sizeof(T)); else return new T[n]; }
+  override void		SetArray_(void* nw) 
+  { if (el && (alloc_size > 0)) { if(fastAlloc()) free(el); else delete [] el; }
+    el = (T*)nw; }
+  override void*	FastRealloc_(int n)
+  { el = (T*)realloc((char*)el, n * sizeof(T)); return el; }
   override bool		El_Equal_(const void* a, const void* b) const
     { return (*((T*)a) == *((T*)b)); }
   override void		El_Copy_(void* to, const void* fm) {*((T*)to) = *((T*)fm); }

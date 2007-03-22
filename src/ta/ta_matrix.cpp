@@ -422,38 +422,54 @@ void taMatrix::Add_(const void* it) {
 void taMatrix::AddFrames(int n) {
   if(TestError(!canResize(), "Add", "resizing not allowed")) return;
   
+  AllocFrames(n + frames());
   EnforceFrames(n + frames());
 }
 
 void taMatrix::Alloc_(int new_alloc) {
   if(TestError((alloc_size < 0), "Alloc_", "cannot alloc a fixed data matrix")) return;
-//TODO  Check((slice_cnt == 0), "cannot alloc a sliced data matrix");
-  
-//NOTE: this is a low level allocator; alloc is typically managed in frames
+  // TODO  Check((slice_cnt == 0), "cannot alloc a sliced data matrix");
+  // NOTE: this is a low level allocator; alloc is typically managed in frames
   if (alloc_size < new_alloc)	{
-    char* nw = (char*)MakeArray_(new_alloc);
-    if (fastAlloc()) {
-      memcpy(nw, data(), El_SizeOf_() * size);
-    } else  for (int i = 0; i < size; ++i) {
-      El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
+    if(fastAlloc() && (alloc_size > 0)) {		// fast alloc = malloc/realloc
+      char* old = (char*)data();
+      FastRealloc_(new_alloc);
+      ta_intptr_t delta = (char*)data() - old;
+      UpdateSlices_Realloc(delta);
     }
-    // calculate delta, in bytes, of the new address and update slices
-    ta_intptr_t delta = nw - (char*)data();
-    UpdateSlices_Realloc(delta);
-    // we can now update ourself
-    SetArray_(nw);
+    else {
+      char* nw = (char*)MakeArray_(new_alloc);
+      for (int i = 0; i < size; ++i) {
+	El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
+      }
+      // calculate delta, in bytes, of the new address and update slices
+      ta_intptr_t delta = nw - (char*)data();
+      UpdateSlices_Realloc(delta);
+      // we can now update ourself
+      SetArray_(nw);
+    }
     alloc_size = new_alloc;
   }
 }
 
 void taMatrix::AllocFrames(int n) {
-  Alloc_(n * frameSize());
+  if(TestError((alloc_size < 0), "AllocFrames", "cannot alloc a fixed data matrix")) return;
+  int frsz = frameSize();
+  if(frsz == 0) return;		// not dimensioned yet -- don't bother
+  int cur_n = alloc_size / frsz;
+  if(cur_n >= n) return;	// already sufficient!
+
+  int act_n = n;		// actual n frames to request
+  // start w/ 4, double up to 64, then 1.5x thereafter
+  if (cur_n == 0) act_n = MAX(4, act_n);
+  else if (cur_n < 64) act_n = MAX((cur_n * 2), act_n);
+  else act_n =  MAX(((cur_n * 3) / 2), act_n);
+  Alloc_(act_n * frsz);
 }
 
 bool taMatrix::canResize() const {
   return (alloc_size >= 0);
 }
-
 
 void taMatrix::Copy_(const taMatrix& cp) {
   // note: we must inherit from the copy

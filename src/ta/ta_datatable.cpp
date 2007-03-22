@@ -222,6 +222,7 @@ DataTable* DataCol::dataTable() {
 void DataCol::EnforceRows(int rws) {
   taMatrix* mat = AR();
   if (!mat) return;
+  mat->AllocFrames(rws);	// allocate space for the new frames -- this is key for allowing extra room to grow as the rows incrementally increase!
   mat->EnforceFrames(rws);
 }
 
