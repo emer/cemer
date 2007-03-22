@@ -1,0 +1,3 @@
+#!/bin/sh
+rm /usr/local/lib/libpdp-@PACKAGE_VERSION@.so.0 /usr/local/lib/libtacss-@PACKAGE_VERSION@.so.0 /usr/local/lib/libSoQt.so.20 /usr/local/lib/libCoin.so.40
+

@@ -2,8 +2,8 @@
 # Due to a bug in CheckInstall, we have to do this manually.
 # It sucks. Hopefully they will fix it, otherwise we need
 # to stop using CheckInstall.
-ln -s /usr/local/lib/libpdp-4.0.1b1.so.0.0.0 /usr/local/lib/libpdp-4.0.1b1.so.0
-ln -s /usr/local/lib/libtacss-4.0.1b1.so.0.0.0 /usr/local/lib/libtacss-4.0.1b1.so.0
+ln -s /usr/local/lib/libpdp-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/libpdp-@PACKAGE_VERSION@.so.0
+ln -s /usr/local/lib/libtacss-@PACKAGE_VERSION@.so.@LIB_VERSION_2@@ /usr/local/lib/libtacss-@PACKAGE_VERSION@.so.0
 ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
 ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
 
