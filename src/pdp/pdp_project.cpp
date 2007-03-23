@@ -309,9 +309,17 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
     if(lay->layer_type == Layer::HIDDEN) continue;
     int lay_idx = 0;
     //DataCol* ld = 
-    data_table->FindMakeColName
-      (lay->name, lay_idx, DataTable::VT_FLOAT, 2,
-       MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1));
+    if(lay->unit_groups) {
+      data_table->FindMakeColName
+	(lay->name, lay_idx, DataTable::VT_FLOAT, 4,
+	 MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1),
+	 MAX(lay->gp_geom.x,1), MAX(lay->gp_geom.y,1));
+    }
+    else {
+      data_table->FindMakeColName
+	(lay->name, lay_idx, DataTable::VT_FLOAT, 2,
+	 MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1));
+    }
   }
   data_table->StructUpdate(false);
 }

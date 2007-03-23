@@ -1162,7 +1162,7 @@ void NetMonitor::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading || taMisc::is_duplicating) return;
   UpdateNetworkPtrs();
-  UpdateMonitors();
+  UpdateDataTable();
 }
 
 String NetMonitor::GetDisplayName() const {
@@ -1212,7 +1212,7 @@ void NetMonitor::SetDataNetwork(DataTable* dt, Network* net) {
   SetDataTable(dt);
 }
 
-void NetMonitor::UpdateMonitors(bool reset_first) {
+void NetMonitor::UpdateDataTable(bool reset_first) {
   if (!data) return;
   data->StructUpdate(true);
   if(reset_first)

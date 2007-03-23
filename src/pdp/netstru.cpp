@@ -1624,9 +1624,11 @@ void UnitSpec::Compute_Weights(Unit* u) {
   // This is not true of Init_Weights and Init_dWt, which are virtual.
 }
 
-float UnitSpec::Compute_SSE(Unit* u) {
+float UnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
   float sse = 0.0f;
+  has_targ = false;
   if(u->ext_flag & Unit::TARG) {
+    has_targ = true;
     float uerr = u->targ - u->act;
     if(fabsf(uerr) >= sse_tol)
       sse = uerr * uerr;
@@ -3106,6 +3108,8 @@ void Layer::Initialize() {
   dmem_dist = DMEM_DIST_DEFAULT;
   m_prv_unit_spec = NULL;
 
+  sse = 0.0f;
+
   n_units = 0;			// todo: v3compat obs
 }
 
@@ -3618,6 +3622,7 @@ void Layer::Init_Weights() {
   taLeafItr i;
   FOR_ITR_EL(Unit, u, units., i)
     u->Init_Weights();
+  sse = 0.0f;
 }
 
 void Layer::Init_Weights_post() {
@@ -3769,14 +3774,23 @@ void Layer::Compute_dWt() {
   FOR_ITR_EL(Unit, u, units., i)
     u->Compute_dWt();
 }
-float Layer::Compute_SSE() {
+float Layer::Compute_SSE(int& n_vals, bool unit_avg, bool sqrt) {
+  n_vals = 0;
   if(!(ext_flag & Unit::TARG)) return 0.0f;
-  float sse = 0.0f;
+  sse = 0.0f;
   Unit* u;
   taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
-    sse += u->Compute_SSE();
-  return sse;
+  bool has_targ;
+  FOR_ITR_EL(Unit, u, units., i) {
+    sse += u->Compute_SSE(has_targ);
+    if(has_targ) n_vals++;
+  }
+  float rval = sse;
+  if(unit_avg && n_vals > 0)
+    sse /= (float)n_vals;
+  if(sqrt)
+    sse = sqrtf(sse);
+  return rval;
 }
 void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
@@ -4164,6 +4178,8 @@ void Network::Initialize() {
   cycle = 0;
   time = 0.0f;
 
+  sse_unit_avg = false;
+  sse_sqrt = false;
   sse = 0.0f;
   sum_sse = 0.0f;
   avg_sse = 0.0f;
@@ -4323,7 +4339,7 @@ void Network::UpdateMonitors() {
   for (int i = 0; i < ts.size; ++i) {
     NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
     if(nm->network != this) continue;
-    nm->UpdateMonitors();
+    nm->UpdateDataTable();
   }
 }
 
@@ -5120,14 +5136,21 @@ void Network::Compute_Weights() {
   Compute_Weights_impl();
 }
 
-void Network::Compute_SSE() {
+void Network::Compute_SSE(bool unit_avg, bool sqrt) {
   sse = 0.0f;
+  int n_vals = 0;
+  int lay_vals = 0;
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
-      sse += l->Compute_SSE();
+    if(l->lesion) continue;
+    sse += l->Compute_SSE(lay_vals, unit_avg, sqrt);
+    n_vals += lay_vals;
   }
+  if(unit_avg && n_vals > 0)
+    sse /= (float)n_vals;
+  if(sqrt)
+    sse = sqrtf(sse);
   cur_sum_sse += sse;
   avg_sse_n++;
   if(sse > cnt_err_tol)
@@ -5135,7 +5158,7 @@ void Network::Compute_SSE() {
 }
 
 void Network::Compute_TrialStats() {
-  Compute_SSE();
+  Compute_SSE(sse_unit_avg, sse_sqrt);
 }
 
 void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {

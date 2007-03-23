@@ -6,13 +6,16 @@ commit:
 ------------
 current:
 
-* redo netflix as plugin! -- write function to generate entire plugin code from program!
+* netflix: do first-pass customer/movie count, then filter on that for rendering
+full table.  should save lots of ram!  increase thresholds so can get roughly through full set of movies and just get the most popular ones..
+
+* add InitAllVals(variant) function to datacols and datatable as per column guys (include val + incr)
+
+* simple versions of all the dataproc functions with high-frequency options (Group etc)
 
 * Wizard layer sizing
 * progexpr not finding in fun args
 * assignexpr did not update progvar: it was a move, not a copy: UAE!
-
-* profile loaddata -- strangely slow
 
 * NewLayer not working in netview
 
@@ -42,6 +45,7 @@ current:
   weakly activated units more weak, and the strongly activated more weak too!  pop out??
 
 * project display needs update after loading: filename is not there..
+
 
 -----------
 Inventor

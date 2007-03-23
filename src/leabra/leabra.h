@@ -753,7 +753,7 @@ public:
   virtual void	EncodeState(LeabraUnit*, LeabraLayer*, LeabraNetwork*)	{ };
   // #CAT_Learning encode current state information (hook for time-based learning)
 
-  override float Compute_SSE(Unit* u);
+  override float Compute_SSE(bool& has_targ, Unit* u);
 
   virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
 
@@ -1314,6 +1314,9 @@ public:
   virtual void	Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning use this if weights will be used again for activations prior to being updated
 
+  virtual float	Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg = false, bool sqrt = false);
+  // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
+
   ////////////////////////////////////////////////////////////////////////////////
   //	Stage 7: Parameter Adaptation over longer timesales
 
@@ -1543,7 +1546,10 @@ public:
   // #CAT_Learning learn: compute the weight changes
   void	Compute_WtFmLin(LeabraNetwork* net) 	{ spec->Compute_WtFmLin(this, net); }
   // #CAT_Learning use this if weights will be used again for activations prior to being updated
-  void	Compute_Weights();
+  override void	Compute_Weights();
+
+  override float Compute_SSE(int& n_vals, bool unit_avg = false, bool sqrt = false)
+  { return spec->Compute_SSE(this, n_vals, unit_avg, sqrt); }
 
   void	Compute_AbsRelNetin(LeabraNetwork* net)	{ spec->Compute_AbsRelNetin(this, net); }
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer

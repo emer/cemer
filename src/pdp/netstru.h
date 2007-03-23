@@ -662,7 +662,7 @@ public:
   virtual void 	Compute_Weights(Unit* u);
   // #CAT_Learning update weights from deltas
 
-  virtual float	Compute_SSE(Unit* u);
+  virtual float	Compute_SSE(bool& has_targ, Unit* u);
   // #CAT_Statistic compute sum squared error for this unit
 
   virtual void	BuildBiasCons();
@@ -789,7 +789,7 @@ public: //
   void 	Compute_Weights()		{ GetUnitSpec()->Compute_Weights(this); }
   // #CAT_Learning update weight values from weight change variables
 
-  float	Compute_SSE()		{ return GetUnitSpec()->Compute_SSE(this); }
+  float	Compute_SSE(bool& has_targ) { return GetUnitSpec()->Compute_SSE(has_targ, this); }
   // #CAT_Statistic compute sum-squared-error of activations versus target values (standard measure of performance)
   
   virtual void 	ApplyInputData(float val, ExtType act_ext_flags, Random* ran = NULL);
@@ -1272,6 +1272,8 @@ public:
 
   LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
 
+  float			sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
+
   int			n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
 
@@ -1366,8 +1368,8 @@ public:
   virtual void	Compute_Weights();
   // #CAT_Learning update weights based on previous weight changes
 
-  virtual float	Compute_SSE();
-  // #CAT_Statistic compute sum squared error of activation vs targt over the entire layer
+  virtual float	Compute_SSE(int& n_vals, bool unit_avg = false, bool sqrt = false);
+  // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
 
   virtual void	PropagateInputDistance();
   // #CAT_Structure propagate my input distance (dist.fm_input) to layers I send to
@@ -1602,7 +1604,7 @@ public:
   TrainMode	train_mode;	// #APPLY_IMMED #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
   WtUpdate	wt_update;	// #APPLY_IMMED #CAT_Learning #CONDEDIT_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
   int		small_batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
-  int		small_batch_n_eff; // #GUI_READ_ONLY #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
+  int		small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 
   int		batch;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int		epoch;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
@@ -1613,6 +1615,8 @@ public:
   String	trial_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
   String	output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (must be computed by a program)
   
+  bool		sse_unit_avg;	// #CAT_Statistic when computing the sse value, average over units
+  bool		sse_sqrt;	// #CAT_Statistic when computing the sse value, take the square root of the result
   float		sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float		sum_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
   float		avg_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
@@ -1623,13 +1627,13 @@ public:
   int	       	avg_sse_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic number of times cur_sum_sse updated: for computing avg_sse
   float	       	cur_cnt_err;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
 
-  TimeUsed	train_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
-  TimeUsed	epoch_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)
-  TimeUsed	trial_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing a trial (managed entirely by programs -- not always used)
-  TimeUsed	settle_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing a settling (managed entirely by programs -- not always used)
-  TimeUsed	cycle_time;	// #GUI_READ_ONLY #CAT_Statistic time used for computing a cycle (managed entirely by programs -- not always used)
-  TimeUsed	wt_sync_time;	// #GUI_READ_ONLY #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network) 
-  TimeUsed	misc_time;	// #GUI_READ_ONLY #CAT_Statistic misc timer for ad-hoc use by programs
+  TimeUsed	train_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
+  TimeUsed	epoch_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)
+  TimeUsed	trial_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a trial (managed entirely by programs -- not always used)
+  TimeUsed	settle_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a settling (managed entirely by programs -- not always used)
+  TimeUsed	cycle_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a cycle (managed entirely by programs -- not always used)
+  TimeUsed	wt_sync_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network) 
+  TimeUsed	misc_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -1753,8 +1757,8 @@ public:
   virtual void	Compute_Weights_impl();
   // #CAT_Learning just the weight update routine: update weights from delta-weight changes
 
-  virtual void	Compute_SSE();
-  // #CAT_Statistic compute sum squared error of activations vs targets over the entire network
+  virtual void	Compute_SSE(bool unit_avg = false, bool sqrt = false);
+  // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
   virtual void	Compute_TrialStats();
   // #CAT_Statistic compute trial-level statistics (SSE and others defined by specific algorithms)
   virtual void	DMem_ShareTrialData(DataTable* dt, int n_rows = 1);

@@ -347,21 +347,21 @@ public:
   // #DEF_true remove orphan columns when updating table schema
 
   void		SetNetwork(Network* net);
-  // #MENU #MENU_ON_Action #MENU_CONTEXT #BUTTON #CAT_Monitor set the overall network -- will update any sub-objects to corresponding ones on this network
+  // #MENU #MENU_ON_Action #MENU_CONTEXT #CAT_Monitor set the overall network -- will update any sub-objects to corresponding ones on this network
   void		SetDataTable(DataTable* dt);
-  // #MENU #MENU_CONTEXT #BUTTON #CAT_Monitor set the data table used
+  // #MENU #MENU_CONTEXT #CAT_Monitor set the data table used
   void		SetDataNetwork(DataTable* dt, Network* net);
-  // #MENU #MENU_CONTEXT #BUTTON #CAT_Monitor set both the data table and network -- convenient for programs
+  // #CAT_Monitor set both the data table and network -- convenient for programs
 
   void		AddNetwork(Network* net, const String& variable)
   { AddObject(net, variable);}
-  // #MENU #MENU_ON_Action #MENU_SEP_BEFORE #CAT_Monitor monitor a value in the Network or its subobjects
+  // #BUTTON #CAT_Monitor monitor a value in the Network or its subobjects
   void		AddLayer(Layer* lay, const String& variable)
   { AddObject(lay, variable);}
-  // #MENU #CAT_Monitor monitor a value in the Layer or its subobjects
+  // #BUTTON #CAT_Monitor monitor a value in the Layer or its subobjects
   void		AddProjection(Projection* prj, const String& variable)
   { AddObject(prj, variable);}
-  // #MENU #CAT_Monitor monitor a value in the Projection or its subobjects
+  // #BUTTON #CAT_Monitor monitor a value in the Projection or its subobjects
   void		AddUnitGroup(Unit_Group* ug, const String& variable)
   { AddObject(ug, variable);}
   // #CAT_Monitor monitor a value in the UnitGroup or its subobjects
@@ -371,8 +371,11 @@ public:
   
   void		AddObject(TAPtr obj, const String& variable);
   // #CAT_Monitor monitor a value in the object or its subobjects
-  void 		UpdateMonitors(bool reset_first = false);
-  // #MENU #MENU_SEP_BEFORE #CAT_Monitor create or update the channels -- call this during Init. if reset_first, then existing data rows are removed first
+
+  void 		UpdateDataTable(bool reset_first = false);
+  // #BUTTON #CAT_Monitor update the datatable configuration to match current set of monitored items -- call this during Init. if reset_first, then existing data rows are removed first
+  void 		UpdateMonitors(bool reset_first = false) { UpdateDataTable(reset_first); }
+  // #CAT_Monitor old name for UpdateDataTable
 
   void 		GetMonVals();
   // #CAT_Monitor get all the values and store in current row of data table -- call in program to get new data

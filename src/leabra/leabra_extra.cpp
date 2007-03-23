@@ -736,7 +736,10 @@ void ScalarValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float resca
   if(ugp->size < 3) return;	// must be at least a few units..
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
   LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
-  u->SetExtFlag(Unit::EXT);
+  if(!clamp.hard)
+    u->UnSetExtFlag(Unit::EXT);
+  else
+    u->SetExtFlag(Unit::EXT);
   float val = u->ext;
   if(scalar.clip_val)
     val = val_range.Clip(val);		// first unit has the value to clamp
@@ -839,12 +842,17 @@ void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
     LeabraLayerSpec::Compute_HardClamp(lay, net);
     return;
   }
-  if(!(clamp.hard && (lay->ext_flag & Unit::EXT))) {
+  if(!(lay->ext_flag & Unit::EXT)) {
     lay->hard_clamped = false;
     return;
   }
-
+  // allow for soft-clamping: translates pattern into exts first
   UNIT_GP_ITR(lay, if(ugp->size > 2) { ClampValue(ugp, net); } );
+  // now check for actual hard clamping
+  if(!clamp.hard) {
+    lay->hard_clamped = false;
+    return;
+  }
   HardClampExt(lay, net);
 }
 
@@ -875,7 +883,7 @@ void ScalarValLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ugp, L
   }    
 }
 
-void ScalarValLayerSpec::Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net) {
+void ScalarValLayerSpec::Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net) {
   if(scalar.val_mult_lrn) {
     // because it is very hard to actually change the lrate, we are just moving
     // the act_m value toward act_p to decrease the effective lrate: this is equivalent
@@ -900,9 +908,38 @@ void ScalarValLayerSpec::Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, Leabr
 
 void ScalarValLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR(lay, 
-	      Compute_dWtUgp(ugp, lay, net);
+	      Compute_dWt_Ugp(ugp, lay, net);
 	      );
   AdaptKWTAPt(lay, net);
+}
+
+float ScalarValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
+  LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+  // only count if target value is within range -- otherwise considered a non-target
+  if(u->ext_flag & Unit::TARG && val_range.RangeTestEq(u->targ)) {
+    n_vals++;
+    float uerr = u->targ - u->act_m;
+    if(fabsf(uerr) < us->sse_tol)
+      return 0.0f;
+    return uerr * uerr;
+  }
+  return 0.0f;
+}
+
+float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
+  n_vals = 0;
+  if(!(lay->ext_flag & Unit::TARG)) return 0.0f;
+  lay->sse = 0.0f;
+  UNIT_GP_ITR(lay, 
+	      lay->sse += Compute_SSE_Ugp(ugp, lay, n_vals);
+	      );
+  float rval = lay->sse;
+  if(unit_avg && n_vals > 0)
+    lay->sse /= (float)n_vals;
+  if(sqrt)
+    lay->sse = sqrtf(lay->sse);
+  return rval;
 }
 
 //////////////////////////////////

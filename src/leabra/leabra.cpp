@@ -1216,9 +1216,11 @@ void LeabraUnitSpec::Compute_Weights(Unit* u) {
   UnitSpec::Compute_Weights(lu);
 }
 
-float LeabraUnitSpec::Compute_SSE(Unit* u) {
+float LeabraUnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
+  has_targ = false;
   LeabraUnit* lu = (LeabraUnit*)u;
   if(lu->ext_flag & Unit::TARG) {
+    has_targ = true;
     float uerr = lu->targ - lu->act_m;
     if(fabsf(uerr) < sse_tol)
       return 0.0f;
@@ -2748,6 +2750,10 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_
   if((adapt_i.type == AdaptISpec::G_BAR_I) || (adapt_i.type == AdaptISpec::G_BAR_IL)) {
     AdaptGBarI(lay, net);
   }
+}
+
+float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
+  return lay->Layer::Compute_SSE(n_vals, unit_avg, sqrt);
 }
 
 void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork*) {

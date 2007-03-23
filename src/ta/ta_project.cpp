@@ -290,7 +290,7 @@ DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
   if(!nw_nm.empty())
     rval->name = nw_nm;
   if(msg)
-    taMisc::Warning("Note: created new data table named:", rval->name, "in .data.AnalysisData");
+    taMisc::Info("Note: created new data table named:", rval->name, "in .data.AnalysisData");
   return rval;
 }
 

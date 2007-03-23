@@ -233,7 +233,7 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
      u->ext = pve_val;		// clamp to pve value
      ClampValue(ugp, net); 	// apply new value
      Compute_ExtToPlus(ugp, net); // copy ext values to act_p
-     Compute_dWtUgp(ugp, lay, net);
+     Compute_dWt_Ugp(ugp, lay, net);
      );
 }
 
@@ -446,7 +446,7 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
        u->ext = (1.0f - lv.discount) * pve_val;
        ClampValue(ugp, net); 		// apply new value
        Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
-       Compute_dWtUgp(ugp, lay, net);
+       Compute_dWt_Ugp(ugp, lay, net);
      }
      else {
        Compute_DepressWt(ugp, lay, net); // always depress!!
