@@ -29,10 +29,13 @@ class	DumpFileCvtList;
 class TA_API dumpMisc {
   // #NO_TOKENS ##NO_CSS ##NO_MEMBERS miscellaneous stuff for dump files
 public:
-  static taBase_PtrList		update_after; // objects to update after loading
+  static taBase_PtrList		update_after; // objects to update after loading (still in is_loading context)
+  static taBase_PtrList		post_update_after; // objects to update after loading, dispatched from event loop 
   static DumpPathSubList 	path_subs;     // path substitutions
   static DumpPathTokenList	path_tokens;  // path tokens
   static VPUList 		vpus;	      // pointers that couldn't get cached out
+  
+  static void 		 	PostUpdateAfter(); // called by taiMiscCore when there were guys on pua list
 };
 
 // an object to store an Value that couldn't be cashed out

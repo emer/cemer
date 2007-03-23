@@ -23,10 +23,12 @@
 
 // for process pending events
 #ifdef TA_GUI
-#  include "ta_qt.h"
-#  include "css_qt.h"
-#include "css_console.h"
+# include "ta_qt.h"
+# include "css_qt.h"
+# include "css_console.h"
 #endif
+
+#include <QTimer>
 
 /* Version 4.x Note on Error handling
 
@@ -38,9 +40,19 @@
 
 */
 taBase_PtrList 	dumpMisc::update_after;
+taBase_PtrList  dumpMisc::post_update_after;
 DumpPathSubList	dumpMisc::path_subs;
 DumpPathTokenList dumpMisc::path_tokens;
 VPUList 	dumpMisc::vpus;
+
+
+void dumpMisc::PostUpdateAfter() {
+  for (int i=0; i < dumpMisc::post_update_after.size; i++) {
+    TAPtr tmp = dumpMisc::post_update_after.FastEl(i);
+    tmp->Dump_Load_post();
+  }
+  dumpMisc::post_update_after.Reset();
+}  
 
 
 //////////////////////////
@@ -1336,10 +1348,14 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
       TAPtr rbase = (TAPtr)base;
       rval = rbase->Dump_Load_Value(strm, (TAPtr)par);
       if(rval==1) {
-	if(rbase->HasOption("IMMEDIATE_UPDATE"))
+	if (rbase->HasOption("IMMEDIATE_UPDATE"))
 	  rbase->UpdateAfterEdit();
 	else if(!rbase->HasOption("NO_UPDATE_AFTER")) {
 	  dumpMisc::update_after.Link(rbase);
+	}
+	// post load is a separate option, compatible with IMMED or NO_UA
+	if (rbase->HasOption("DUMP_LOAD_POST")) {
+	  dumpMisc::post_update_after.Link(rbase);
 	}
       }
     }
@@ -1405,6 +1421,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
 }
 
 int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
+//WARNING: DO NOT put any calls to eventloop in the load code -- it will cause crashes
   if (el_) *el_ = NULL; //default if error
   if(base == NULL) {
     taMisc::Warning("*** Cannot load into NULL");
@@ -1415,6 +1432,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   dumpMisc::path_tokens.Reset();
   dumpMisc::vpus.Reset();
   dumpMisc::update_after.Reset();
+  dumpMisc::post_update_after.Reset();
   tabMisc::root->plugin_deps.Reset();
 
   int c;
@@ -1477,7 +1495,6 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     el = par->New(1,td);		// create one of the saved type
     if(el == NULL) {
       taMisc::Warning("*** Could not make a:",td->name,"in:",par->GetPath());
-      --taMisc::is_loading;
       rval = false;
       goto endload;
     }
@@ -1504,20 +1521,22 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
       taBase::Ref(tmp);
     }
     tmp->UpdateAfterEdit();
-#ifdef TA_GUI
-//TEMP:cause crash in clip paste    taiMisc::RunPending();	// process events as they happen in updates..
-#endif
   }
   rval = true;
   
 endload:
   --taMisc::is_loading;
 
-  dumpMisc::update_after.Reset();
+  dumpMisc::update_after.Reset(); //note: don't reset post list!
   dumpMisc::path_subs.Reset();
   dumpMisc::path_tokens.Reset();
   dumpMisc::vpus.Reset();
   if (el_) *el_ = (void*)el;
+  // if there were any post guys, send a msg to the taiMisc object, who will call us
+  // back when the eventloop gets processed next
+  if (dumpMisc::post_update_after.size > 0) {
+    QTimer::singleShot(0, taiM_, SLOT(PostUpdateAfter()) );
+  }
   return rval;
 }
 

@@ -305,10 +305,11 @@ public:
   static void		Own(taSmartRef& it, TAPtr onr);	// #IGNORE for semantic compat with other Owns
 protected:
   // legacy ref counting routines, for compatability -- do not use for new code
-  static void   	unRef(taBase* it) { it->refn--; }	     // #IGNORE
 #ifdef DEBUG
+  static void   	unRef(taBase* it);	     // #IGNORE
   static void   	Done(taBase* it); // #IGNORE
 #else
+  static void   	unRef(taBase* it) { it->refn--; }	     // #IGNORE
   static void   	Done(taBase* it) 	{ if (it->refn == 0) delete it;} // #IGNORE
 #endif
   static void		unRefDone(taBase* it) 	{unRef(it); Done(it);}	 // #IGNORE
@@ -525,7 +526,9 @@ public:
   { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
-
+  virtual void 		Dump_Load_post() {} 
+  // #IGNORE called after load, in normal (non loading) context if has DUMP_LOAD_POST directive
+  
   virtual void 		Dump_Save_GetPluginDeps();
   // #IGNORE called prior to saving, to build the plugin deps in .plugin_deps
   // note: this routine (and overrides) is in ta_dump.cpp

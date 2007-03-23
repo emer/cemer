@@ -631,12 +631,15 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
 
 void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-  if(taMisc::is_loading)
-    AutoBuildNets();
 }
 
 void ProjectBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+}
+
+void ProjectBase::Dump_Load_post() {
+  inherited::Dump_Load_post();
+  AutoBuildNets();
 }
 
 void ProjectBase::AutoBuildNets() {
@@ -644,11 +647,6 @@ void ProjectBase::AutoBuildNets() {
   taLeafItr i;
   FOR_ITR_EL(Network, net, networks., i) {
     if(net->auto_build == Network::NO_BUILD) continue;
-#ifdef TA_OS_WIN //TODO: get this working, and remove!!!!
-    taMisc::Error("1 or more networks was set to AutoBuild, but this feature is not supported in Windows under pdp beta1"
-      " -- please build the network(s) yourself (network/Build button) after the project has finished loading.");
-     return;
-#endif
     if(taMisc::use_gui && (net->auto_build == Network::PROMPT_BUILD)) {
       int chs = taMisc::Choice("Build network: " + net->name, "Yes", "No");
       if(chs == 1) continue;

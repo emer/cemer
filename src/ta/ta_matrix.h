@@ -440,14 +440,14 @@ public:
   ///////////////////////////////////////
   // alloc management
 
-  void			AddFrame() {AddFrames(1);}
+  bool			AddFrame() {return AddFrames(1);}
   // #MENU #MENU_ON_Matrix #MENU_CONTEXT #CAT_Modify add 1 new blank frame
-  virtual void		AddFrames(int n);
+  virtual bool		AddFrames(int n);
   // #MENU #MENU_ON_Matrix #MENU_CONTEXT #CAT_Modify add n new blank frames -- note that this assumes incremental growth and thus calls AllocFrames in advance
-  virtual void		AllocFrames(int n);
-  // #CAT_Modify make sure space exists for n frames: this is to be used when the matrix is growing incrementally, as opposed to being a fixed known size -- it allocates extra room to grow
-  virtual void		EnforceFrames(int n, bool notify = true); 
-  // #MENU #MENU_ON_Object #ARGC_1 #CAT_Modify set size to n frames, blanking new elements if added
+  virtual bool		AllocFrames(int n);
+  // #CAT_Modify make sure space exists for n frames: calling this is optional, and is typically done if you know ahead of time how much space you need 
+  virtual bool		EnforceFrames(int n, bool notify = true); 
+  // #MENU #MENU_ON_Object #ARGC_1 #CAT_Modify set size to n frames, blanking new elements if added; resizes by 1.5x as needed 
   virtual bool		RemoveFrames(int st_fr, int n_frames=1);
   // #MENU #MENU_ON_Matrix #CAT_Modify remove the given number of frames at starting index, copying data backwards if needed.  st_fr = -1 means last frame, and n_frames = -1 means all frames from start to end
   virtual bool		InsertFrames(int st_fr, int n_frames=1);
@@ -552,7 +552,7 @@ protected:
   // #IGNORE enables using fast block-based allocations, copies, and skipping reclaims -- for ints,floats, etc.; not for Strings/Variants
   virtual void		SetGeom_(int dims_, const int geom_[]); //
   
-  virtual void		Alloc_(int new_alloc);
+  virtual bool		Alloc_(int new_alloc);
   // set capacity to n -- should always be in multiples of frames 
   virtual void*		MakeArray_(int i) const = 0;
   // #IGNORE make a new array of item type

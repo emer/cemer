@@ -419,15 +419,12 @@ void taMatrix::Add_(const void* it) {
   El_Copy_(FastEl_Flat_(idx), it);
 }
 
-void taMatrix::AddFrames(int n) {
-  if(TestError(!canResize(), "Add", "resizing not allowed")) return;
-  
-  AllocFrames(n + frames());
-  EnforceFrames(n + frames());
+bool taMatrix::AddFrames(int n) {
+  return EnforceFrames(n + frames());
 }
 
-void taMatrix::Alloc_(int new_alloc) {
-  if(TestError((alloc_size < 0), "Alloc_", "cannot alloc a fixed data matrix")) return;
+bool taMatrix::Alloc_(int new_alloc) {
+  if(TestError((alloc_size < 0), "Alloc_", "cannot alloc a fixed data matrix")) return false;
   // TODO  Check((slice_cnt == 0), "cannot alloc a sliced data matrix");
   // NOTE: this is a low level allocator; alloc is typically managed in frames
   if (alloc_size < new_alloc)	{
@@ -450,21 +447,23 @@ void taMatrix::Alloc_(int new_alloc) {
     }
     alloc_size = new_alloc;
   }
+  return true; // this impl assumes this can never fail!
 }
 
-void taMatrix::AllocFrames(int n) {
-  if(TestError((alloc_size < 0), "AllocFrames", "cannot alloc a fixed data matrix")) return;
+bool taMatrix::AllocFrames(int n) {
+  if(TestError((alloc_size < 0), "AllocFrames", "cannot alloc a fixed data matrix")) return false;
+  if(TestError((n < 0), "AllocFrames", "n (num frames) must be >= 0")) return false;
   int frsz = frameSize();
-  if(frsz == 0) return;		// not dimensioned yet -- don't bother
+  if(frsz == 0) return false;		// not dimensioned yet -- don't bother
   int cur_n = alloc_size / frsz;
-  if(cur_n >= n) return;	// already sufficient!
+  if(cur_n >= n) return true;	// already sufficient!
 
   int act_n = n;		// actual n frames to request
   // start w/ 4, double up to 64, then 1.5x thereafter
   if (cur_n == 0) act_n = MAX(4, act_n);
   else if (cur_n < 64) act_n = MAX((cur_n * 2), act_n);
   else act_n =  MAX(((cur_n * 3) / 2), act_n);
-  Alloc_(act_n * frsz);
+  return Alloc_(act_n * frsz);
 }
 
 bool taMatrix::canResize() const {
@@ -591,13 +590,11 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
 
 // This is *the* routine for resizing, so all data change ops/tracking
 // can go through this
-void taMatrix::EnforceFrames(int n, bool notify) {
-  if(TestError(!canResize(), "Add", "resizing not allowed")) return;
-  
+bool taMatrix::EnforceFrames(int n, bool notify) {
   // note: we enforce the size in terms of underlying cells, for when
   // dimensions are changed (even though that is frowned on...)
+  if (!AllocFrames(n)) return false; // does legality test
   int new_size = n * frameSize();
-  Alloc_(new_size); // makes sure we have enough raw space
   // blank new or reclaim old
   bool is_1d = (dims() <= 1); // 1d makes the row ops into col ops for notify
   if (new_size > size) {
@@ -672,6 +669,7 @@ void taMatrix::EnforceFrames(int n, bool notify) {
     geom.Set(geom.size-1, n);	
   }
   DataChanged(DCR_ITEM_UPDATED);
+  return true;
 }
 
 int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4) const {

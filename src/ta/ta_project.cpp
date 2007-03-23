@@ -209,9 +209,6 @@ void taProject::Copy_(const taProject& cp) {
 
 void taProject::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
-//   if(taMisc::is_loading) {
-//     PostLoadAutos();
-//   }
 }
 
 taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
@@ -316,7 +313,6 @@ int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
 
 int taProject::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
   int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
-  PostLoadAutos();
   return rval;
 }
 

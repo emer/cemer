@@ -341,7 +341,8 @@ enum CancelOp { // ops for passing cancel status and instructions, typically for
 class TA_API taiMiscCore: public QObject { 
   // ##NO_TOKENS ##NO_INSTANCE object for Qt Core event processing, etc. taiMisc inherits; taiM is always instance
 INHERITED(QObject)
-Q_OBJECT
+  Q_OBJECT
+friend class TypeDef; // for the post_load guy
 public:
 #ifndef __MAKETA__
   enum CustomEvents {
@@ -374,6 +375,9 @@ public:
   taiMiscCore(QObject* parent = NULL);
   ~taiMiscCore();
   
+public slots:
+  void	   		PostUpdateAfter(); // run the dumpMisc::PostUpdateAfter; called asynchronously via a timer  
+
 protected slots:
   void			app_aboutToQuit();
   virtual void		timer_timeout(); // called when timer times out, for waitproc processing

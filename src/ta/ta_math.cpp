@@ -24,13 +24,38 @@
 #include "ta_platform.h"
 
 #ifdef HAVE_LIBGSL
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_linalg.h>
+# include <gsl/gsl_eigen.h>
+# include <gsl/gsl_linalg.h>
 #endif
 
 #include <math.h>
 
 #include <float.h>
+
+#ifdef _WINDOWS 
+//# include <stdlib.h>
+//# include "../../../3rdparty/misc/s_erf.c"
+ // extern double erf(double x); // in s_erf.c
+ // extern double erfc(double x); // in s_erf.c
+ 
+double erfc(double x) {
+  double t,z,ans;
+  
+  z=fabs(x);
+  t=1.0/(1.0+0.5*z);
+  ans=t*exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+
+	t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+
+	t*(-0.82215223+t*0.17087277)))))))));
+  return  x >= 0.0 ? ans : 2.0-ans;
+}
+
+double erf(double x) {
+  return 1.0 - erfc(x);
+}
+
+
+#endif
+
 
 //////////////////////////
 //  	CountParam     	//
@@ -562,25 +587,11 @@ double taMath_double::gamma_dev(int ia) {
 
 //note: put into .cpp to deal with win
 double taMath_double::erf(double x) {
-#ifdef TA_OS_WIN
-//TEMP
-  taMisc::Error("Randy O'Reilly still needs to implement the erf() function for Windows."
-    " This program will now crash horrifically to help provide incentive...");
-  int i = 1; int j = 0; int k = i / j; return k;
-#else
   return ::erf(x);
-#endif
 }
 
 double taMath_double::erfc(double x) {
-#ifdef TA_OS_WIN
-//TEMP
-  taMisc::Error("Randy O'Reilly still needs to implement the erfc() function for Windows."
-    " This program will now crash horrifically to help provide incentive...");
-  int i = 1; int j = 0; int k = i / j; return k;
-#else
   return ::erfc(x);
-#endif
 }
 
 double taMath_double::gauss_den(double z) {

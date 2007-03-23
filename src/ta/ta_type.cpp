@@ -365,6 +365,12 @@ void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {
   // nothing in nongui
 }
 
+void taiMiscCore::PostUpdateAfter() {
+#ifndef NO_TA_BASE
+  dumpMisc::PostUpdateAfter();
+#endif
+}  
+
 void taiMiscCore::Quit_impl(CancelOp cancel_op) {
   // only for nogui
   QCoreApplication::instance()->quit();

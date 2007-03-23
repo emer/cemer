@@ -317,6 +317,10 @@ void taBase::UnRef(TAPtr it) {
     delete it;
 }
 
+void taBase::unRef(taBase* it) {
+  it->refn--;
+}
+
 void taBase::Done(taBase* it) {
   if (it->refn == 0)
     delete it;
