@@ -24,7 +24,7 @@ dnl
 dnl  [1] http://www.gnu.org/software/libtool/manual.html Versioning
 
 # Set binary version here. The format allows for 99.99.99abc
-AC_INIT([pdp],[4.0.1b1],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
+AC_INIT([pdp],[4.0.2b1],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
 # Change both of these
 LIB_VERSION=0:0:0   #Set library version here
 # For other things

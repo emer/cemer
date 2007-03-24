@@ -575,9 +575,14 @@ public:
   // #CAT_ObjectMgmt bracket data value changes with (nestable) true/false calls;
 
   virtual bool		isDirty() const {return false;}
-  // #IGNORE implemented by very few, esp. Project
+  // #IGNORE implemented by very few, esp. Project -- Dirty is used to indicate the need to resave an object
   virtual void 		setDirty(bool value);
   // #CAT_ObjectMgmt set the dirty flag indicating a change in object values; 'true' gets forwarded up; 'false' does nothing
+  
+  virtual bool		isStale() const {return false;}
+  // #IGNORE implemented by few, esp. Program and Network -- Stale indicates the need to "rebuild" an object with such semantics (ex regen script, rebuild a net, etc.)
+  virtual void		setStale();
+  // #CAT_ObjectMgmt set the stale flag indicating a change in object values; gets forwarded up ("true" is implied, only the impl obj defines when it is cleared)
 
 protected:  // Impl
   virtual void		UpdateAfterEdit_impl() {}

@@ -212,9 +212,15 @@ void ProgVar::DataChanged(int dcr, void* op1, void* op2) {
   // turn them into changes of us, to force gui to update (esp enum list)
   if ((dcr == DCR_CHILD_ITEM_UPDATED) && (op1 == &dyn_enum_val)) {
     DataChanged(DCR_ITEM_UPDATED);
-    return; // don't send and further
+    return; // don't send any further
   }
   inherited::DataChanged(dcr, op1, op2);
+  // only send stale if the schema changed, not just the value
+  String tfs = GetFreshSig();
+  if (m_fresh_sig != tfs) {
+    m_fresh_sig = tfs;
+    setStale();
+  }
 }
 
 String ProgVar::GetDisplayName() const {
@@ -242,6 +248,17 @@ String ProgVar::GetDisplayName() const {
   return "invalid type!";
 }
 
+String ProgVar::GetFreshSig() const {
+  STRING_BUF(rval, 125);
+  // NOTE: the sig is not 100% optimized, but we keep it simple...
+  // sig is following: name, type, obj_type, enum_type
+  // note that dyn_enum are just fancy int generators, so don't factor in
+  rval.cat(name).cat(";").cat(var_type).cat(";")
+   .cat((object_type) ? object_type->name : "").cat(";")
+   .cat((hard_enum_type) ? hard_enum_type->name : "");
+  return rval;
+}
+  
 taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
   DumpQueryResult rval = DQR_SAVE; // only used for membs we match below
   if (md->name == "int_val")
@@ -390,6 +407,12 @@ void ProgVar_List::El_SetIndex_(void* it_, int idx) {
   }
 }
 
+void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX))
+    setStale();
+}
+
 taBase* ProgVar_List::FindTypeName(const String& nm)  const {
   for (int i = 0; i < size; ++i) {
     ProgVar* it = FastEl(i);
@@ -417,15 +440,15 @@ const String ProgVar_List::GenCss(int indent_level) const {
   return rval;
 }
 
-void ProgVar_List::setDirty(bool value) {
-  inherited::setDirty(value);
+void ProgVar_List::setStale() {
+  inherited::setStale();
   // if we are in a program group, dirty all progs
   // note: we have to test if in a prog first, otherwise we'll always get a group
   Program* prog = GET_MY_OWNER(Program);
   if (!prog) {
     Program_Group* grp = GET_MY_OWNER(Program_Group);
     if (grp)
-      grp->SetProgsDirty();
+      grp->SetProgsStale();
   }
 }
 
@@ -814,6 +837,12 @@ void ProgArg_List::Initialize() {
   SetBaseType(&TA_ProgArg);
 }
 
+void ProgArg_List::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX))
+    setStale();
+}
+
 void ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
   int i;  int ti;
   ProgArg* pa;
@@ -903,6 +932,11 @@ void ProgEl::Copy_(const ProgEl& cp) {
 
 void ProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+}
+
+void ProgEl::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  setStale(); // always
 }
 
 void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
@@ -1043,6 +1077,12 @@ void ProgEl_List::Destroy() {
 
 void ProgEl_List::Copy_(const ProgEl_List& cp) {
   UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
+}
+
+void ProgEl_List::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX))
+    setStale();
 }
 
 const String ProgEl_List::GenCss(int indent_level) {
@@ -2277,7 +2317,7 @@ void Program::Initialize() {
   flags = PF_NONE;
   objs.SetBaseType(&TA_taNBase);
   ret_val = 0;
-  m_dirty = true; 
+  m_stale = true; 
   prog_gp = NULL;
   m_checked = false;
   if(!prog_lib)
@@ -2339,7 +2379,7 @@ void Program::Copy_(const Program& cp) {
   init_code = cp.init_code;
   prog_code = cp.prog_code;
   ret_val = 0; // redo
-  m_dirty = true; // require rebuild/refetch
+  m_stale = true; // require rebuild/refetch
   m_scriptCache = "";
   m_checked = false; // redo
   sub_progs.RemoveAll();
@@ -2351,7 +2391,7 @@ void Program::UpdateAfterEdit_impl() {
   //WARNING: the running css prog calls this on any changes to our vars,
   // such as ret_val -- therefore, DO NOT do things here that are incompatible
   // with the runtime, in particular, do NOT invalidate the following state flags:
-  //   m_dirty, script_compiled
+  //   m_stale, script_compiled
   
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
@@ -2591,32 +2631,30 @@ void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
   script_compiled = true;
   ret_val = 0;
-  m_dirty = false;
+  m_stale = false;
   DataChanged(DCR_ITEM_UPDATED_ND); // this will *not* call setDirty
 }
 
-void Program::setDirty(bool value) {
+void Program::setStale() {
+  //note: we don't propagate setStale
   //note: 2nd recursive call of this during itself doesn't do anything
   if(run_state == RUN) return;	     // change is likely self-generated during running, don't do it!
   bool changed = false;
-  if (value && script_compiled) {
-    // make sure this always reflects dirty status -- is used as check for compiling..
+  if (script_compiled) {
+    // make sure this always reflects stale status -- is used as check for compiling..
     script_compiled = false; 
     changed = true;
   }
-  if (m_dirty != value) {  // prevent recursion and spurious inherited calls!!!!
-    inherited::setDirty(value); // needed to dirty the Project
+  if (!m_stale) {  // prevent recursion and spurious inherited calls!!!!
     changed = true;
-    m_dirty = value;
-    if (m_dirty) {
-      //note: actions in here will not recurse us, because m_dirty is now set
-      sub_progs.RemoveAll(); // will need to re-enumerate
-    }
-    DirtyChanged_impl();
+    m_stale = true;
+    //note: actions in here will not recurse us, because m_stale is now set
+    sub_progs.RemoveAll(); // will need to re-enumerate
   }
   if (changed) { // user will need to recompile/INIT
     run_state = NOT_INIT;
-    DataChanged(DCR_ITEM_UPDATED_ND); //note: doesn't recurse ud
+//obs    DataChanged(DCR_ITEM_UPDATED_ND); //note: doesn't recurse ud
+    DataChanged(DCR_ITEM_UPDATED); //note: doesn't recurse ud
   }
 }
 
@@ -2684,7 +2722,7 @@ Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_f
 }
 
 const String Program::scriptString() {
-  if (m_dirty) {
+  if (m_stale) {
     // enumerate all the progels, esp. to get subprocs registered
     int item_id = 0;
     prog_code.PreGen(item_id);
@@ -2755,7 +2793,7 @@ const String Program::scriptString() {
     m_scriptCache += "  __Prog();\n";
     m_scriptCache += "}\n";
 
-    m_dirty = false;
+    m_stale = false;
   }
   return m_scriptCache;
 }
@@ -2958,12 +2996,12 @@ void Program_Group::SaveToProgLib(Program::ProgLibs library) {
   Program_Group::prog_lib.FindPrograms();
 }
 
-void Program_Group::SetProgsDirty() {
-//WARNING: this will cause us to also receive setDirty for each prog call
+void Program_Group::SetProgsStale() {
+//obs: WARNING: this will cause us to also receive setStale for each prog call
   taLeafItr itr;
   Program* prog;
   FOR_ITR_EL(Program, prog, this->, itr) {
-    prog->setDirty(true);
+    prog->setStale();
   }
 }
 

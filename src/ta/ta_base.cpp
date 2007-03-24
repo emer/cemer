@@ -1102,6 +1102,13 @@ void taBase::setDirty(bool value) {
   }
 }
 
+void taBase::setStale() {
+  taBase* owner;
+  if ((owner = GetOwner())) {
+    owner->setStale();
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //	Data Links -- notify other guys when you change
 

@@ -139,7 +139,10 @@ public:
   COPY_FUNS(ProgVar, inherited);
   TA_BASEFUNS(ProgVar);
 protected:
+  String		m_fresh_sig; // the sig from last change
+  
   override void UpdateAfterEdit_impl();
+  virtual String	GetFreshSig() const; // #IGNORE make a string that is the "fresh" signature of obj; as long as "fresh" stays the same, we don't stale on changes
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval); //object, if any
   virtual const String	GenCssArg_impl();
@@ -167,7 +170,8 @@ public:
 
   override String GetTypeDecoKey() const { return "ProgVar"; }
 
-  void	setDirty(bool value);
+  void	setStale();
+  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	Copy_(const ProgVar_List& cp);
   COPY_FUNS(ProgVar_List, inherited);
   TA_BASEFUNS(ProgVar_List);
@@ -332,6 +336,7 @@ public:
   
   override String GetTypeDecoKey() const { return "ProgArg"; }
 
+  void DataChanged(int dcr, void* op1=0, void* op2=0);
   TA_BASEFUNS(ProgArg_List);
 private:
   void	Initialize();
@@ -380,6 +385,7 @@ public:
   virtual taBase*	FindTypeName(const String& nm) const;
   // find given type within this program element -- NULL if not found
 
+  override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   override String 	GetStateDecoKey() const;
   override int		GetEnabled() const;
   // note: it is our own, plus disabled if parent is
@@ -434,6 +440,7 @@ public:
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
 
+  void DataChanged(int dcr, void* op1=0, void* op2=0);
   void Copy_(const ProgEl_List& cp);
   COPY_FUNS(ProgEl_List, inherited);
   SIMPLE_LINKS(ProgEl_List);
@@ -981,7 +988,9 @@ private:
 //		End of Prog Els!
 ///////////////////////////////////////////////////////////////////
 
-
+//Note: object operations per se don't affect Program::stale, but
+// they will indirectly to the extent that adding/removing them
+// causes a corresponding var to get created
 class TA_API ProgObjList: public taBase_List {
   // ##CAT_Program A list of program objects (just a taBase list with proper update actions to update variables associated with objects)
 INHERITED(taBase_List)
@@ -1014,6 +1023,7 @@ public:
     PF_NONE		= 0, // #NO_BIT
     NO_STOP		= 0x0001, // this program cannot be stopped by Stop or Step buttons
     NO_USER_RUN		= 0x0002, // this program is not supposed to be run by regular users
+    SHOW_STEP		= 0x0004, // show the step_prog in the ctrl panel
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -1077,7 +1087,7 @@ public:
   // #HIDDEN #GUI_READ_ONLY #NO_SAVE return value: 0=ok, +ve=sys-defined err, -ve=user-defined err; also accessible inside program
   ProgEl_List		sub_progs;
   // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCall's, not the actual Program's)
-  bool		    	m_dirty;
+  bool		    	m_stale;
   // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
   
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
@@ -1090,8 +1100,8 @@ public:
   { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
-  bool			isDirty() {return m_dirty;}
-  override void		setDirty(bool value); // indicates a component has changed
+  bool			isStale() {return m_stale;}
+  override void		setStale(); // indicates a component has changed
   void			setRunState(RunState value); // sets and updates gui
   override ScriptSource	scriptSource() {return ScriptString;}
   override const String	scriptString();
@@ -1181,7 +1191,6 @@ protected:
   override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
-  virtual void		DirtyChanged_impl() {} // called when m_dirty was changed 
   override bool		PreCompileScript_impl(); // CheckConfig & add/update the global vars
   virtual void		Stop_impl(); 
   virtual int		Run_impl(); 
@@ -1300,7 +1309,7 @@ public:
   virtual void	LoadFromProgLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL (re)load the program from the program library element of given type
 
-  void		SetProgsDirty(); // set all progs in this group/subgroup to be dirty
+  void		SetProgsStale(); // set all progs in this group/subgroup to be dirty
 
   override String 	GetTypeDecoKey() const { return "Program"; }
   

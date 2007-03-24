@@ -113,6 +113,8 @@ class  taHashTable; //
     
   NOTE: you can use the test (dcr <= DCR_ITEM_UPDATED_ND) to test for both versions
   
+  NOTE: for lists and groups, all the DCRs relating to item add/remove/reorder
+    are sequential, and can be tested via
 */
 
 enum DataChangedReason { /* reason why DataChanged being called, as well as defining ops (also used by taBase and other classes) --
@@ -126,21 +128,21 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_ARY_SIZE_CHANGED, // this is the only notify we send from arrays
   
   DCR_LIST_INIT,
-  DCR_LIST_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
   DCR_LIST_ITEM_UPDATE,	// op1=item
+  DCR_LIST_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
   DCR_LIST_ITEM_REMOVE,	// op1=item -- note, item not DisOwned yet, but has been removed from list
   DCR_LIST_ITEM_MOVED,	// op1=item, op2=item_after, null=at beginning
   DCR_LIST_ITEMS_SWAP,	// op1=item1, op2=item2
   DCR_LIST_SORTED,	// after sorting; ops not used
 
-  DCR_GROUP_INSERT,	// op1=group, op2=group_after, null=at beginning
   DCR_GROUP_UPDATE,	// op1=group, typically called for group name change
+  DCR_GROUP_INSERT,	// op1=group, op2=group_after, null=at beginning
   DCR_GROUP_REMOVE,	// op1=group -- note, item not DisOwned yet, but has been removed from list
   DCR_GROUP_MOVED,	// op1=group, op2=group_after, null=at beginning
   DCR_GROUPS_SWAP,	// op1=group1, op2=group2
   
-  DCR_GROUP_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
   DCR_GROUP_ITEM_UPDATE,	// op1=item
+  DCR_GROUP_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
   DCR_GROUP_ITEM_REMOVE,	// op1=item -- note, item not DisOwned yet, but has been removed from list
   DCR_GROUP_ITEM_MOVED,	// op1=item, op2=item_after, null=at beginning
   DCR_GROUP_ITEMS_SWAP,	// op1=item1, op2=item2
@@ -161,9 +163,11 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_LIST_MAX		= DCR_LIST_SORTED,
   DCR_GROUP_MIN		= DCR_GROUP_INSERT,
   DCR_GROUP_MAX		= DCR_GROUPS_SWAP,
-  DCR_LIST_ITEM_MIN	= DCR_LIST_ITEM_INSERT,
+  DCR_LIST_ITEM_MIN	= DCR_LIST_ITEM_UPDATE,
   DCR_LIST_ITEM_MAX	= DCR_LIST_SORTED,
-  DCR_GROUP_ITEM_MIN	= DCR_GROUP_ITEM_INSERT,
+  DCR_LIST_ORDER_MIN	= DCR_LIST_ITEM_INSERT, // anything related to item ordering
+  DCR_LIST_ORDER_MAX	= DCR_LIST_SORTED,
+  DCR_GROUP_ITEM_MIN	= DCR_GROUP_ITEM_UPDATE,
   DCR_GROUP_ITEM_MAX	= DCR_GROUP_LIST_SORTED
 #endif
 };
