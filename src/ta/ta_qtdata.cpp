@@ -4717,7 +4717,7 @@ void taiMethodData::ShowReturnVal(cssEl* rval) {
   }
   String val = meth->name + " Return Value: ";
   val += rval->PrintStr();
-  taiChoiceDialog::ChoiceDialog(NULL, val, "Return Value", true);
+  taMisc::Choice(val, "Ok");
 }
 
 void taiMethodData::ApplyBefore() {
@@ -4727,8 +4727,7 @@ void taiMethodData::ApplyBefore() {
   if (meth->HasOption("NO_APPLY_BEFORE") || !host->HasChanged())
     return;
   if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {
-    int chs = taiChoiceDialog::ChoiceDialog
-      (NULL, "Auto Apply/Revert: You have edited the dialog--apply or revert and lose changes?,Apply,Revert");
+    int chs = taMisc::Choice("Auto Apply/Revert: You have edited the dialog--apply or revert and lose changes?", "Apply", "Revert");
     if (chs == 0)
       host->GetValue();
   } else {

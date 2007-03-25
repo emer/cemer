@@ -449,6 +449,9 @@ public:
   static double	vec_mode(const double_Matrix* vec);
   // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
 
+  static String vec_stats(const double_Matrix* vec);
+  // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+
   static void	vec_sort(double_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place)
 
@@ -718,6 +721,11 @@ public:
   ///////////////////////////////////////
   // arithmetic ops
 
+  static void	vec_fm_ints(float_Matrix* float_mat, const int_Matrix* int_mat);
+  // initialize given float matrix (which is completely overwritten) from integer matrix data
+  static void	vec_to_ints(int_Matrix* int_mat, const float_Matrix* float_mat);
+  // copy float matrix data back to integer matrix
+
   static bool	vec_check_same_size(const float_Matrix* a, const float_Matrix* b, bool quiet = false);
   // check that both vectors are the same size, and issue warning if not (unless quiet)
 
@@ -776,6 +784,9 @@ public:
   // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
   static float	vec_mode(const float_Matrix* vec);
   // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
+
+  static String vec_stats(const float_Matrix* vec);
+  // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   static void	vec_sort(float_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place)

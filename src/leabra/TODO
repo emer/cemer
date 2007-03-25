@@ -2,22 +2,14 @@ leabra todo list:
 
 commit:
 
-
 ------------
 current:
 
-* netflix: do first-pass customer/movie count, then filter on that for rendering
-full table.  should save lots of ram!  increase thresholds so can get roughly through full set of movies and just get the most popular ones..
-
-* add InitAllVals(variant) function to datacols and datatable as per column guys (include val + incr)
-
-* simple versions of all the dataproc functions with high-frequency options (Group etc)
-
-* Wizard layer sizing
-* progexpr not finding in fun args
-* assignexpr did not update progvar: it was a move, not a copy: UAE!
+* progexpr not finding variables in function args
 
 * NewLayer not working in netview
+
+* bar graph mode??
 
 * multi-test on hv
 
@@ -57,8 +49,7 @@ Inventor
 -----------
 check:
 
-* edit user script: non-modal dialog w/ better (narrower) default sizing
-  (add c++ syntax hightight?) #262
+* Init column out of range error in various projects
 
 * check uae on progel paste
 

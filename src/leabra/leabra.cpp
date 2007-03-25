@@ -355,7 +355,7 @@ void ActFunSpec::Initialize() {
   gain = 600.0f;
   nvar = .005f;
   avg_dt = .005f;
-  send_delta = false;
+  send_delta = true;
   i_thr = STD;
 }
 
@@ -3230,7 +3230,8 @@ void LeabraNetwork::Initialize() {
   avg_cycles_n = 0;
 
   netin_mod = 1;
-  send_delta = false;
+  //  send_delta = false;
+  send_delta = true;		// so much faster -- should always be on by default
 
   maxda_stopcrit = .005f;
   maxda = 0.0f;

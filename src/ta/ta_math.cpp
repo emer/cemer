@@ -987,6 +987,20 @@ void taMath_double::vec_sort(double_Matrix* vec, bool descending) {
   }
 }
 
+String taMath_double::vec_stats(const double_Matrix* vec) {
+  String rval;
+  int idx;
+  rval += "n=" + String(vec->size) + "; ";
+  rval += "min=" + String(vec_min(vec, idx)) + "; ";
+  rval += "max=" + String(vec_max(vec, idx)) + "; ";
+  double mean = vec_mean(vec);
+  rval += "mean=" + String(mean) + "; ";
+  rval += "median=" + String(vec_median(vec)) + "; ";
+  rval += "mode=" + String(vec_mode(vec)) + "; ";
+  rval += "stdev=" + String(vec_std_dev(vec, mean, true)) + "; ";
+  rval += "sem=" + String(vec_sem(vec, mean, true)) + ";";
+  return rval;
+}
 
 ///////////////////////////////////////
 // distance metrics (comparing two vectors)
@@ -1801,6 +1815,16 @@ float taMath_float::deg_per_rad = (float)(180.0 / M_PI);
 ///////////////////////////////////////
 // arithmetic ops
 
+void taMath_float::vec_fm_ints(float_Matrix* float_mat, const int_Matrix* int_mat) {
+  float_mat->SetGeomN(int_mat->geom);
+  for(int i=0;i<int_mat->size;i++) float_mat->FastEl_Flat(i) = (float)int_mat->FastEl_Flat(i);
+}
+
+void taMath_float::vec_to_ints(int_Matrix* int_mat, const float_Matrix* float_mat) {
+  int_mat->SetGeomN(float_mat->geom);
+  for(int i=0;i<float_mat->size;i++) int_mat->FastEl_Flat(i) = (int)float_mat->FastEl_Flat(i);
+}
+
 bool taMath_float::vec_check_same_size(const float_Matrix* a, const float_Matrix* b, bool quiet) {
   if(a->size != b->size) {
     if(!quiet)
@@ -2079,6 +2103,21 @@ void taMath_float::vec_sort(float_Matrix* vec, bool descending) {
     }
     vec->FastEl_Flat(i-1) = tmp; // ra[i] = tmp;
   }
+}
+
+String taMath_float::vec_stats(const float_Matrix* vec) {
+  String rval;
+  int idx;
+  rval += "n=" + String(vec->size) + "; ";
+  rval += "min=" + String(vec_min(vec, idx)) + "; ";
+  rval += "max=" + String(vec_max(vec, idx)) + "; ";
+  float mean = vec_mean(vec);
+  rval += "mean=" + String(mean) + "; ";
+  rval += "median=" + String(vec_median(vec)) + "; ";
+  rval += "mode=" + String(vec_mode(vec)) + "; ";
+  rval += "stdev=" + String(vec_std_dev(vec, mean, true)) + "; ";
+  rval += "sem=" + String(vec_sem(vec, mean, true)) + ";";
+  return rval;
 }
 
 

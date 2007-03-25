@@ -4646,7 +4646,9 @@ void iDataTableEditor::tvTable_layoutChanged()
 
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   DataTable* dt_ = dt(); // cache
-  DataCol* col = dt_->GetColData(index.column());
+  int colidx = index.column();
+  DataCol* col = NULL;
+  if(colidx >= 0) dt_->GetColData(colidx);
   // note: we return from following if, otherwise fall through to do the contra
   if (col && col->is_matrix) {
     m_cell = dt_->GetValAsMatrix(index.column(), index.row());

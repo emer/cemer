@@ -1535,7 +1535,7 @@ endload:
   // if there were any post guys, send a msg to the taiMisc object, who will call us
   // back when the eventloop gets processed next
   if (dumpMisc::post_update_after.size > 0) {
-    QTimer::singleShot(0, taiM_, SLOT(PostUpdateAfter()) );
+    QTimer::singleShot(0, taiMC_, SLOT(PostUpdateAfter()) );
   }
   return rval;
 }

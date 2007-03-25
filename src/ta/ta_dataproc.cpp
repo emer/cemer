@@ -595,8 +595,7 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
     }
     else if(sda->valType() == taBase::VT_INT) {
       int_Matrix* mat = (int_Matrix*)sda->AR();
-      float_tmp.SetGeom(1, mat->size);
-      for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
+      taMath_float::vec_fm_ints(&float_tmp, mat);
       dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), 0);
     }
   }
@@ -681,8 +680,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 	  int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
 	  if(mat) {
 	    taBase::Ref(mat);
-	    float_tmp.SetGeom(1, mat->size);
-	    for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
+	    taMath_float::vec_fm_ints(&float_tmp, mat);
 	    dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
 	    taBase::unRefDone(mat);
 	  }

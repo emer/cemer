@@ -642,6 +642,18 @@ void ProjectBase::Dump_Load_post() {
   AutoBuildNets();
 }
 
+void ProjectBase::SaveRecoverFile_strm(ostream& strm) {
+  Network* net;
+  taLeafItr i;
+  FOR_ITR_EL(Network, net, networks., i) {
+    net->SetNetFlag(Network::SAVE_UNITS_FORCE); // force to save units for recover file!
+  }
+  Save_strm(strm);
+  FOR_ITR_EL(Network, net, networks., i) {
+    net->ClearNetFlag(Network::SAVE_UNITS_FORCE);
+  }
+}
+
 void ProjectBase::AutoBuildNets() {
   Network* net;
   taLeafItr i;

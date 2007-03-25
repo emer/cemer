@@ -1595,11 +1595,19 @@ public:
     NO_BUILD,			// do not build network after loading
   };
 
+  enum NetFlags { // #BITS flags for modifying program variables
+    NF_NONE		= 0, // #NO_BIT
+    SAVE_UNITS		= 0x0001, // save units with the project or other saves (specificaly saving just the network always saves the units)
+    SAVE_UNITS_FORCE 	= 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
+  };
+
+
   BaseSpec_Group specs; 	// #CAT_Structure Specifications for network parameters
   Layer_Group	layers;		// #CAT_Structure Layers or Groups of Layers
 
-  bool		no_save_units;  // #DEF_true #CAT_Structure don't include units in network when saving (makes project file much smaller!)
-  AutoBuildMode	auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if no_save_units, then auto building makes sense)
+  NetFlags	flags;		// #CAT_Structure flags controlling various aspects of network function
+
+  AutoBuildMode	auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if the SAVE_UNITS flag is not on, then auto building makes sense)
   
   TrainMode	train_mode;	// #APPLY_IMMED #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
   WtUpdate	wt_update;	// #APPLY_IMMED #CAT_Learning #CONDEDIT_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
@@ -1651,6 +1659,18 @@ public:
   NetViewParams	view_params;   // #CAT_Display misc netview parameters
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
+
+  bool		no_save_units;  // #READ_ONLY #NO_SAVE #HIDDEN obsolete -- todo: remove!
+
+  inline void		SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
+  // set flag state on
+  inline void		ClearNetFlag(NetFlags flg) { flags = (NetFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool		HasNetFlag(NetFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void		SetNetFlagState(NetFlags flg, bool on)
+  { if(on) SetNetFlag(flg); else ClearNetFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
 
   // todo: these seem pretty lame:
   virtual int	GetDefaultX();  // #IGNORE 

@@ -70,18 +70,19 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
 #endif
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
+    String delimiter = "!|";
     int   chn = 0;
     String chstr = text;
-    chstr += "!";
-    if (a) { chstr += String(a) + "!"; chn++; }
-    if (b) { chstr += String(b) + "!"; chn++; }
-    if (c) { chstr += String(c) + "!"; chn++; }
-    if (d) { chstr += String(d) + "!"; chn++; }
-    if (e) { chstr += String(e) + "!"; chn++; }
-    if (f) { chstr += String(f) + "!"; chn++; }
-    if (g) { chstr += String(g) + "!"; chn++; }
-    if (h) { chstr += String(h) + "!"; chn++; }
-    if (i) { chstr += String(i) + "!"; chn++; }
+    chstr += delimiter;
+    if (a) { chstr += String(a) + delimiter; chn++; }
+    if (b) { chstr += String(b) + delimiter; chn++; }
+    if (c) { chstr += String(c) + delimiter; chn++; }
+    if (d) { chstr += String(d) + delimiter; chn++; }
+    if (e) { chstr += String(e) + delimiter; chn++; }
+    if (f) { chstr += String(f) + delimiter; chn++; }
+    if (g) { chstr += String(g) + delimiter; chn++; }
+    if (h) { chstr += String(h) + delimiter; chn++; }
+    if (i) { chstr += String(i) + delimiter; chn++; }
     m = taiChoiceDialog::ChoiceDialog(NULL, chstr, text);
   } else
 #endif

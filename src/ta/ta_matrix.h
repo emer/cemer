@@ -318,9 +318,9 @@ public:
   { return El_GetStr_(FastEl_Flat_(idx)); } 
   // #CAT_Access  treats the matrix like a flat array, returns the element as a string
 
-  void		SetFmStr_Flat(const String& str, int idx) 	
+  void			SetFmStr_Flat(const String& str, int idx) 	
   { if (InRange_Flat(idx))  El_SetFmStr_(FastEl_Flat_(idx), str); } 
-  // #CAT_Access treats the matrix like a flat array, sets the element as a string
+  // #CAT_Modify treats the matrix like a flat array, sets the element as a string
   
   // Clipboard Support (note: works well unless you have tabs/newlines in your data)
   
@@ -349,14 +349,19 @@ public:
   void		SetFmVar(const Variant& var, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
   { int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4)) >= 0)
 	       El_SetFmVar_(FastEl_Flat_(idx), var); } 
-  // #CAT_Access (safely) sets the element as a variant
+  // #CAT_Modify (safely) sets the element as a variant
   void		SetFmVarN(const Variant& var, const MatrixGeom& indices) 	
   { int idx; if ((idx = SafeElIndexN(indices)) >= 0)
 	       El_SetFmVar_(FastEl_Flat_(idx), var); } 
-  // #CAT_Access (safely) sets the element as a variant
+  // #CAT_Modify (safely) sets the element as a variant
   void		SetFmVar_Flat(const Variant& var, int idx) 	
   { if (InRange_Flat(idx))  El_SetFmVar_(FastEl_Flat_(idx), var); } 
-  // #CAT_Access treats the matrix like a flat array, (safely) sets the element as a variant
+  // #CAT_Modify treats the matrix like a flat array, (safely) sets the element as a variant
+
+  void		InitValsFmVar(const Variant& var)
+  { for(int i=0;i<size;i++) El_SetFmVar_(FastEl_Flat_(i), var); }
+  // #CAT_Modify initialize values to given fixed value
+
    	
 public:
   ///////////////////////////////////////////////////////////////////
@@ -674,14 +679,14 @@ public:
   void			Set(const T& item, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
   { int idx = SafeElIndex(d0,d1,d2,d3,d4); 
     if (InRange_Flat(idx)) el[idx] = item; }
-  // #CAT_Access safely assign values to items in the matrix
+  // #CAT_Modify safely assign values to items in the matrix
   void			SetN(const T& item, const MatrixGeom& indices) 	
   {  int idx = SafeElIndexN(indices); 
     if (InRange_Flat(idx)) el[idx] = item; }
-  // #CAT_Access safely assign values to items in the matrix
+  // #CAT_Modify safely assign values to items in the matrix
   void			Set_Flat(const T& item, int idx) 	
   { if (InRange_Flat(idx)) el[idx] = item; }
-  // #CAT_Access safely assign values to items in the matrix, treated as a flat vector
+  // #CAT_Modify safely assign values to items in the matrix, treated as a flat vector
   
   // compatibility functions, for when dims=1
   void			Add(const T& item) {Add_(&item);}

@@ -381,7 +381,7 @@ void taProject::SaveRecoverFile() {
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
   if(flr->ostrm) {
-    Save_strm(*flr->ostrm);
+    SaveRecoverFile_strm(*flr->ostrm);
     saved = true;
   }
   else {
@@ -393,7 +393,7 @@ void taProject::SaveRecoverFile() {
     if(flr->ostrm) {
       cerr << "Now saving in user directory: " << fnm << endl;
       use_sim_log = false;
-      Save_strm(*flr->ostrm);
+      SaveRecoverFile_strm(*flr->ostrm);
       saved = true;
     }
   }
@@ -436,6 +436,14 @@ int Project_Group::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) 
 //////////////////////////
 //   taRootBaseAdapter	//
 //////////////////////////
+
+void taRootBaseAdapter::Startup_ProcessArgs() {
+  taRootBase::Startup_ProcessArgs();
+}
+
+void taRootBaseAdapter::Startup_RunStartupScript() {
+  taRootBase::Startup_RunStartupScript();
+}
 
 #ifdef DMEM_COMPILE
 void taRootBaseAdapter::DMem_SubEventLoop() {
@@ -1329,9 +1337,10 @@ bool taRootBase::Startup_Console() {
 }
 
 bool taRootBase::Startup_RegisterSigHandler() {
-#if (!defined(DMEM_COMPILE)) 
+// #if (!defined(DMEM_COMPILE)) 
+  // let's see if this works now!
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
-#endif
+// #endif
   return true;
 }
 
@@ -1348,10 +1357,21 @@ bool taRootBase::Startup_ProcessArgs() {
   if(proj_ld.empty())
     proj_ld = taMisc::FindArgValContains(".proj");
 
-  if(!proj_ld.empty())
+  if(!proj_ld.empty()) {
     tabMisc::root->projects.Load(proj_ld);
+  }
 
+  // chain the next step -- this will hopefully happen *after* any post-loading
+  // events triggered by the projects.load 
+  QTimer::singleShot(0, root_adapter, SLOT(Startup_RunStartupScript()));
+
+  return true;
+}
+
+bool taRootBase::Startup_RunStartupScript() {
   cssMisc::TopShell->RunStartupScript();
+
+  if(!cssMisc::init_interactive) taiMC_->Quit();
 
   return true;
 }
@@ -1380,8 +1400,9 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_MakeMainWin()) goto startup_failed;
   if(!Startup_Console()) goto startup_failed;
   if(!Startup_RegisterSigHandler()) goto startup_failed;
-  if(!Startup_ProcessArgs()) goto startup_failed;
-//note: don't call event loop yet, because we haven't initialized main event loop!
+  // note: Startup_ProcessArgs() is called after having entered the event loop
+  // note: don't call event loop yet, because we haven't initialized main event loop
+  // happens in Startup_Run()
   instance()->Save(); 
   return true;
   
@@ -1398,20 +1419,23 @@ bool taRootBase::Startup_Run() {
 //TODO: make Run_GuiDMem dispatched after event loop, and fall through
   if((taMisc::dmem_nprocs > 1) && taMisc::gui_active) {
     Run_GuiDMem(); // does its own eventloop dispatch
+    return;
   }
-  else
 #endif
-  {
-  // note: all paths must enter event loop, except if finished now
+
+  // first thing to do upon entering event loop:
+  QTimer::singleShot(0, root_adapter, SLOT(Startup_ProcessArgs()));
+
   if (taMisc::gui_active || cssMisc::init_interactive) {
-    // for nogui interactive sessions, asynchronously dispatch the runtime
-    // it will execute once we enter event loop
+    // next thing is to start the console if interactive
     if (console_type == taMisc::CT_NONE) {
       QTimer::singleShot(0, cssMisc::TopShell, SLOT(Shell_NoConsole_Run()));
     }
-    taiMC_->Exec();
   }
-  }
+
+  // now everyone goes into the event loop
+  taiMC_->Exec();
+
   Cleanup_Main();
   return true;
 }

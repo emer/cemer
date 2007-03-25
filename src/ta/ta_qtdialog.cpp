@@ -212,33 +212,43 @@ taiChoiceDialog::taiChoiceDialog(QWidget* par, const char* prompt,
   
   connect(bgChoiceButtons, SIGNAL(buttonClicked(int)),
       this, SLOT(done(int)) );
-
   setCaption(win_title);
+
+  String delimiter = "!|";
+
   String prompt_str(prompt);
-  String blabs = prompt_str.after('!');
-  prompt_str = prompt_str.before('!');
-  txtMessage->setText(prompt_str);
+  if(prompt_str.contains(delimiter)) { // has options encoded within prompt string
+    String blabs = prompt_str.after(delimiter);
+    prompt_str = prompt_str.before(delimiter);
+    txtMessage->setText(prompt_str);
 
-  // create buttons
-
-  int curId = 0;
-  hblButtons->addStretch();
-  while (Constr_OneBut(blabs, curId)) {
-    ++curId;
+    // create buttons
+    int curId = 0;
+    hblButtons->addStretch();
+    while (Constr_OneBut(blabs, curId)) {
+      ++curId;
+    }
+  }
+  else {			// does not have options; just give it an Ok.
+    txtMessage->setText(prompt_str);
+    String ok_msg = "Ok";
+    Constr_OneBut(ok_msg, 0);	// always have a button!
   }
   hblButtons->addStretch();
 }
 
 bool taiChoiceDialog::Constr_OneBut(String& lbl, int curId) {
+  String delimiter = "!|";
+
   if(lbl.length() == 0)
     return false;
-  String blab = lbl.before('!');
+  String blab = lbl.before(delimiter);
   if(blab == "") {
     blab = lbl;
     lbl = "";			// done next time, anyway
   }
   else
-    lbl = lbl.after('!');
+    lbl = lbl.after(delimiter);
   if(blab == "")
     return false;
 

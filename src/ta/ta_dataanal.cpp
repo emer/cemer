@@ -869,10 +869,9 @@ bool taDataAnal::TimeAvg(DataTable* avg_data, bool view, DataTable* src_data,
     }
     else if(da->valType() == VT_INT) { // expensive double-convert..
       int_Matrix* mat = (int_Matrix*)da->AR();
-      float_tmp.SetGeomN(mat->geom);
-      for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
+      taMath_float::vec_fm_ints(&float_tmp, mat);
       taMath_float::mat_time_avg(&float_tmp, avg_dt);
-      for(int i=0;i<mat->size;i++) mat->FastEl_Flat(i) = (int)float_tmp.FastEl_Flat(i);
+      taMath_float::vec_to_ints(mat, &float_tmp);
     }
   }
 
@@ -937,14 +936,14 @@ bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_da
     }
     else if(da->valType() == VT_INT) { // expensive double-convert..
       int_Matrix* mat = (int_Matrix*)da->AR();
-      float_tmp.SetGeomN(mat->geom);
+      taMath_float::vec_fm_ints(&float_tmp, mat);
       float_tmp2.SetGeomN(mat->geom);
-      for(int i=0;i<mat->size;i++) float_tmp.FastEl_Flat(i) = (float)mat->FastEl_Flat(i);
       if(da->isMatrix())
 	taMath_float::mat_frame_convolve(&float_tmp2, &float_tmp, flt_kern);
       else
 	taMath_float::vec_convolve(&float_tmp2, &float_tmp, flt_kern, keep_edges);
-      for(int i=0;i<float_tmp2.size;i++) mat->FastEl_Flat(i) = (int)float_tmp2.FastEl_Flat(i);
+      int_Matrix* smat = (int_Matrix*)sda->AR();
+      taMath_float::vec_to_ints(smat, &float_tmp2);
     }
   }
   smooth_data->StructUpdate(false);

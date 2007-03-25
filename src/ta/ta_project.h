@@ -119,6 +119,8 @@ public:
 
   virtual void		SaveRecoverFile();
   // Save a recover file of this project, usually called when a signal is received indicating a crash condition
+  virtual void		SaveRecoverFile_strm(ostream& strm) { Save_strm(strm); }
+  // #IGNORE underlying save function to use when saving a recover file -- might want to do something special here
 
   override bool		SetFileName(const String& val);
   override int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
@@ -169,6 +171,8 @@ public:
   ~taRootBaseAdapter() {}
   
 protected slots:
+  void 	Startup_ProcessArgs();
+  void 	Startup_RunStartupScript();
 #ifdef DMEM_COMPILE
   void 	DMem_SubEventLoop();
 #endif
@@ -248,11 +252,16 @@ public:
   // #IGNORE start the console shell (returns success)
   static bool	Startup_RegisterSigHandler();
   // #IGNORE register signal handler routine (i.e., cleanup routine to save recover file upon crashing)
-  static bool	Startup_ProcessArgs();
-  // #IGNORE process general args
 
   static bool	Startup_Run();
   // #IGNORE go ahead and run the main event loop
+
+  // these following two guys are run in the event loop, after Startup_Run
+  static bool	Startup_ProcessArgs();
+  // #IGNORE process general args
+  static bool	Startup_RunStartupScript();
+  // #IGNORE process general args
+
   static void	Cleanup_Main();
   // #IGNORE after init, or running, do final cleanups (called by StartupInit on fail, or Startup_Run)
 

@@ -3278,8 +3278,8 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
   for (int i = 0; i < tabMisc::root->projects.size; ++i) {
     proj = tabMisc::root->projects.FastEl(i);
     if (proj->file_name == fname) {
-      int chs = taiChoiceDialog::ChoiceDialog
-        (NULL, "That project is already open -- it will be viewed instead !&Ok!&Cancel!");
+      int chs = taMisc::Choice("That project is already open -- it will be viewed instead",
+			       "Ok", "Cancel");
       switch (chs) {
       case 0: break; // break out of switch -- we'll also break out of the loop
       case 1: return;

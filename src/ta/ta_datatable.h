@@ -207,6 +207,11 @@ public:
   { return SetValAsVarMDims(val, row, d0,d1,d2,d3); }
   // #CAT_Modify set value of matrix type, in Variant form (any data type, use for Programs), -ve row is from end (-1=last), d's are matrix dimension indicies
 
+  bool	 	InitVals(const Variant& init_val);
+  // #CAT_Modify initialize all values in this column to given value
+  bool	 	InitValsToRowNo();
+  // #CAT_Modify initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
+
   /////////////////////////////////////////////
   // Get and Set access
 
@@ -334,6 +339,9 @@ public:
 
   /////////////////////////////////////////////
   // misc
+
+  virtual String	ColStats();
+  // #CAT_DataProc #MENU #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   int			displayWidth() const;
   // #CAT_Display low level display width, in chars, taken from options
@@ -629,6 +637,11 @@ public:
   { return SetValAsVarMDims(val, col, row, d0, d1, d2, d3); }
   // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
 
+  bool	 	InitVals(const Variant& init_val, int col);
+  // #CAT_Modify initialize all values in given column to given value
+  bool	 	InitValsToRowNo(int col);
+  // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
+
   /////////////////////////////
   // column name versions:
 
@@ -643,6 +656,12 @@ public:
   bool 			SetMatrixValColName(const Variant& val, const String& col_name,
 					    int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+
+  bool	 	InitValsColName(const Variant& init_val, const String& col_name);
+  // #CAT_Modify initialize all values in column of given name to given value
+  bool	 	InitValsToRowNoColName(const String& col_name);
+  // #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
+
 
   /////////////////////////////////////////////////////////
   // Expert data value access routines: optimized for different types
@@ -834,6 +853,12 @@ public:
   // #CAT_DataProc #MENU #MENU_ON_DataProc #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual bool		Filter(const String& filter_expr);
   // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current colum values by name.  NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  virtual bool		GroupMeanSEM(DataTable* dest_data,
+				     DataCol* gp_col1, DataCol* gp_col2 = NULL,
+				     DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);
+  // #CAT_DataProc #MENU #FROM_GROUP_data #NULL_OK #NULL_TEXT_0_NewDataTable groups data according to given columns in hierarchical fashion (gp_col2 is subgrouped within gp_col1, etc), and compute the Mean and Standard Error of the Mean (SEM) for any other numerical columns of data -- results go in dest_data table (new table created if NULL)
+  virtual String	ColStats(DataCol* col);
+  // #CAT_DataProc #MENU #FROM_GROUP_data #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   /////////////////////////////////////////////////////////
   // misc funs

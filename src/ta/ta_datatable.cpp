@@ -225,6 +225,23 @@ void DataCol::EnforceRows(int rws) {
   mat->EnforceFrames(rws);
 }
 
+String DataCol::ColStats() {
+  if(valType() == VT_DOUBLE) {
+    return taMath_double::vec_stats((double_Matrix*)AR());
+  }
+  else if(valType() == VT_FLOAT) {
+    return taMath_float::vec_stats((float_Matrix*)AR());
+  }
+  else if(valType() == VT_INT) {
+    float_Matrix float_tmp;
+    int_Matrix* mat = (int_Matrix*)AR();
+    taMath_float::vec_fm_ints(&float_tmp, mat);
+    return taMath_float::vec_stats(&float_tmp);
+  }
+  TestError(true, "ColStats", "column data type is not double, float or int");
+  return _nilString;
+}
+
 int DataCol::displayWidth() const {
   // explicit width has highest priority
   int rval = GetUserData(udkey_width).toInt();
@@ -348,6 +365,18 @@ bool DataCol::SetValAsVar_impl(const Variant& val, int row, int cell) {
   return true;
 } 
 
+bool DataCol::InitVals(const Variant& init_val)  {
+  AR()->InitValsFmVar(init_val);
+  return true;
+} 
+
+bool DataCol::InitValsToRowNo()  {
+  if(TestError(is_matrix, "InitValsToRowNo", "column is a matrix")) return false;
+  for(int i=0; i<rows(); i++) {
+    SetValAsInt(i, i);
+  }
+  return true;
+} 
 
 ////////////////////
 // Access: Matrix
@@ -774,6 +803,38 @@ bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
     da->SetValAsVarMDims(val, i, d0, d1, d2, d3);
     return true;
   } else return false;
+}
+
+/////////////////////
+
+bool DataTable::InitVals(const Variant& init_val, int col) {
+  DataCol* da = GetColData(col);
+  if (!da) return false;
+  da->InitVals(init_val);
+  return true;
+}
+
+bool DataTable::InitValsToRowNo(int col) {
+  DataCol* da = GetColData(col);
+  if (!da) return false;
+  da->InitValsToRowNo();
+  return true;
+}
+
+bool DataTable::InitValsColName(const Variant& init_val, const String& col_nm) {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  if (!da) return false;
+  da->InitVals(init_val);
+  return true;
+}
+
+bool DataTable::InitValsToRowNoColName(const String& col_nm) {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  if (!da) return false;
+  da->InitValsToRowNo();
+  return true;
 }
 
 /////////////////////
@@ -2003,6 +2064,49 @@ bool DataTable::Filter(const String& filter_expr) {
   calc_script->Run();
   return true;
 }
+
+bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,
+			     DataCol* col2, DataCol* col3, DataCol* col4) {
+  DataGroupSpec spec;
+  if(col1) {
+    DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
+    sp->col_name = col1->name;
+    sp->agg.op = Aggregate::GROUP;
+  }
+  if(col2) {
+    DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
+    sp->col_name = col2->name;
+    sp->agg.op = Aggregate::GROUP;
+  }
+  if(col3) {
+    DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
+    sp->col_name = col3->name;
+    sp->agg.op = Aggregate::GROUP;
+  }
+  if(col4) {
+    DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
+    sp->col_name = col4->name;
+    sp->agg.op = Aggregate::GROUP;
+  }
+  for(int i=0;i<data.size;i++) {
+    DataCol* da = data.FastEl(i);
+    if(da == col1 || da == col2 || da == col3 || da == col4) continue;
+    if(!da->isNumeric()) continue;
+    DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
+    sp->col_name = da->name;
+    sp->agg.op = Aggregate::MEAN;
+    sp = (DataGroupEl*)spec.ops.New(1);
+    sp->col_name = da->name;
+    sp->agg.op = Aggregate::SEM;
+  }
+  return taDataProc::Group(dest_data, this, &spec);
+}
+
+String DataTable::ColStats(DataCol* col) {
+  if(TestError(!col, "ColStats", "column is null")) return _nilString;
+  return col->ColStats();
+}
+
 
 ////////////////////////////////////////////////////////////////////////////
 //		DMEM

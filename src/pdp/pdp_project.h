@@ -163,6 +163,8 @@ public:
   override void 	AssertDefaultWiz(bool auto_opn);
   // make the default wizard(s)
 
+  override void		SaveRecoverFile_strm(ostream& strm);
+
   virtual void	AutoBuildNets();
   // build networks according to their own individual auto_bulid modes
   

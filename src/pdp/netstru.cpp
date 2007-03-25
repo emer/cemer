@@ -3074,7 +3074,8 @@ Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
 }
 
 bool Unit_Group::Dump_QuerySaveChildren() {
-  if(own_lay && own_lay->own_net && own_lay->own_net->no_save_units)
+  if(own_lay && own_lay->own_net && !own_lay->own_net->HasNetFlag(Network::SAVE_UNITS)
+     && !own_lay->own_net->HasNetFlag(Network::SAVE_UNITS_FORCE))
     return false;
   return true;
 }
@@ -4164,7 +4165,8 @@ void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
 
-  no_save_units = true;
+  flags = NF_NONE;
+  no_save_units = true;		// todo: obsolete, remove!
   auto_build = AUTO_BUILD;
 
   train_mode = TRAIN;
@@ -4255,7 +4257,6 @@ void Network::Copy_(const Network& cp) {
   specs = cp.specs;
   layers = cp.layers;
 
-  no_save_units = cp.no_save_units;
   auto_build = cp.auto_build;
 
   train_mode = cp.train_mode;
@@ -4272,6 +4273,8 @@ void Network::Copy_(const Network& cp) {
   trial_name = cp.trial_name;
   output_name = cp.output_name;
 
+  sse_unit_avg = cp.sse_unit_avg;
+  sse_sqrt = cp.sse_sqrt;
   sse = cp.sse;
   sum_sse = cp.sum_sse;
   avg_sse = cp.avg_sse;
@@ -4310,6 +4313,11 @@ void Network::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
   if(wt_save_fmt == NET_FMT)
     wt_save_fmt = TEXT;
+
+  if(!no_save_units) {		// todo: obsolete, remove conversion
+    SetNetFlag(SAVE_UNITS);
+    no_save_units = true;
+  }
 
   UpdtAfterNetMod();
 }
@@ -4368,15 +4376,9 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 }
 
 int Network::Save_strm(ostream& strm, TAPtr par, int indent) {
-  bool reset_flag = false;
-  if(no_save_units) {
-    no_save_units = false;	// override!
-    reset_flag = true;
-  }
+  SetNetFlag(SAVE_UNITS_FORCE); // override if !SAVE_UNITS
   int rval = inherited::Save_strm(strm, par, indent);
-  if(reset_flag) {
-    no_save_units = true;
-  }    
+  ClearNetFlag(SAVE_UNITS_FORCE);
   return rval;
 }
 
