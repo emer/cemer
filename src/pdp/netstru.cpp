@@ -3101,6 +3101,7 @@ void Layer::Initialize() {
   own_net = NULL;
   layer_type = HIDDEN;
   unit_groups = false;
+  gp_spc.x = 1;  gp_spc.y = 1;
   projections.SetBaseType(&TA_Projection);
   units.SetBaseType(&TA_Unit);
   lesion = false;

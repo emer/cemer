@@ -5,6 +5,8 @@ commit:
 ------------
 current:
 
+* do 2d scalarvallayer thing
+
 * progexpr not finding variables in function args
 
 * NewLayer not working in netview

@@ -88,7 +88,7 @@ LeabraProject .projects[0] {
     taImageProc @[3] { };
   };
 
-  Program_Group @.programs = [3] {
+  Program_Group @.programs = [2] {
     Program @[0] { 
       ProgVar_List @.args = [1] {
 	ProgVar @[0] { };
@@ -99,11 +99,6 @@ LeabraProject .projects[0] {
       };
     };
     Program @[1] { 
-      ProgEl_List @.prog_code = [1] {
-	UserScript @[0] { };
-      };
-    };
-    Program @[2] { 
       ProgEl_List @.prog_code = [1] {
 	UserScript @[0] { };
       };
@@ -1347,21 +1342,21 @@ LeabraProject .projects[0] {
       name="Group";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{       };
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
-      ar{ [131] "TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";      };
+      ar{ [137] "ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"TWO";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";"ONE";      };
      };
      String_Data @[1] {
       name="Name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{       };
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
-      ar{ [131] "TWO";"A";"X";"A";"X";"ONE";"B";"Z";"B";"Y";"A";"X";"TWO";"B";"Z";"A";"Y";"B";"Y";"TWO";"C";"X";"ONE";"A";"Y";"B";"X";"B";"Y";"ONE";"A";"X";"TWO";"B";"Z";"ONE";"B";"Z";"A";"X";"B";"Y";"TWO";"A";"Y";"ONE";"B";"Y";"TWO";"A";"Y";"TWO";"A";"X";"TWO";"A";"X";"B";"X";"ONE";"B";"Y";"C";"X";"TWO";"B";"Y";"B";"Z";"C";"X";"ONE";"A";"Z";"A";"X";"ONE";"B";"Y";"A";"X";"ONE";"C";"Y";"B";"Z";"ONE";"A";"X";"B";"Y";"A";"X";"ONE";"A";"X";"ONE";"A";"X";"A";"X";"A";"Z";"TWO";"A";"Y";"B";"Z";"A";"X";"TWO";"B";"Y";"A";"Y";"B";"Y";"TWO";"A";"X";"C";"X";"A";"Z";"ONE";"B";"Y";"B";"Y";"C";"Z";      };
+      ar{ [137] "ONE";"C";"Z";"C";"Y";"B";"Y";"ONE";"A";"X";"A";"X";"ONE";"A";"X";"B";"Y";"A";"X";"TWO";"A";"Y";"A";"X";"C";"Z";"TWO";"A";"X";"C";"Y";"B";"Y";"ONE";"B";"Y";"B";"Y";"C";"X";"ONE";"C";"X";"TWO";"B";"Y";"B";"Y";"C";"X";"TWO";"B";"Y";"B";"Y";"TWO";"A";"Z";"B";"Y";"TWO";"B";"Y";"C";"Y";"A";"Z";"ONE";"B";"Y";"B";"Y";"TWO";"B";"Y";"A";"X";"TWO";"A";"X";"C";"X";"B";"Y";"TWO";"A";"X";"A";"X";"TWO";"A";"X";"C";"Y";"TWO";"C";"Y";"A";"Z";"B";"Z";"ONE";"C";"Z";"A";"Y";"B";"Y";"TWO";"B";"Y";"B";"Y";"B";"Y";"TWO";"B";"Y";"TWO";"A";"X";"ONE";"A";"X";"ONE";"A";"X";"ONE";"B";"Y";"ONE";"C";"Z";"B";"Y";"B";"Y";      };
      };
      float_Data @[2] {
       name="Input";
@@ -1371,7 +1366,7 @@ LeabraProject .projects[0] {
       calc_expr {
        expr=;
       };
-      ar{ [3 3 131] 0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;      };
+      ar{ [3 3 137] 1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;1;0;      };
      };
      float_Data @[3] {
       name="Output";
@@ -1381,7 +1376,7 @@ LeabraProject .projects[0] {
       calc_expr {
        expr=;
       };
-      ar{ [2 1 131] 1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;0;1;1;0;1;0;0;1;1;0;1;0;0;1;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;      };
+      ar{ [2 1 137] 1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;0;1;1;0;1;0;0;1;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;0;1;1;0;1;0;1;0;1;0;0;1;1;0;0;1;1;0;1;0;1;0;1;0;0;1;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;0;1;1;0;0;1;1;0;0;1;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;0;1;1;0;1;0;0;1;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;1;0;      };
      };
      float_Data @[4] {
       name="RewTarg";
@@ -1391,7 +1386,7 @@ LeabraProject .projects[0] {
       calc_expr {
        expr=;
       };
-      ar{ [1 1 131] 0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;      };
+      ar{ [1 1 137] 0;0;1;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;1;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;1;0;1;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2118,98 +2113,6 @@ if(.networks[0].layers[0].units.leaves == 0) {
       };
       var_names{       };
       bad_vars{ for;use;an;auto;script;that;builds;and;connects;the;network;only;do;it;if;is;not;already;built;layers;units;      };
-     };
-    };
-   };
-  };
-  Program @[2] {
-   name="label_pfc_units";
-   desc=;
-   flags=;
-   objs {
-    name=;
-    el_typ=taOBase;
-    el_def=0;
-   };
-   args {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   functions {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   load_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   init_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_code {
-    name=;
-    el_typ=UserScript;
-    el_def=0;
-    UserScript @[0] {
-     desc="script imported from: ./label_pfc_units.css";
-     flags=;
-     script {
-      expr="
-void DoName() {
-  Network* net = .networks[0];
-  Layer* input = net.layers.Input;
-  Layer* pfc = net.layers.PFC;
-
-  int g;
-  for(g=0;g<pfc.units.gp.size;g++) {
-    int ui;
-    for(ui=0;ui<input.units.size;ui++) {
-      Unit* iu = input.units[ui];
-      Unit* pu = pfc.units.gp[g][ui];
-      pu.name = iu.name;
-    }
-  }
-}
-
-DoName();
-
-";
-      flags=NO_VAR_ERRS;
-      var_expr="
-void DoName() {
-  Network* net = .networks[0];
-  Layer* input = net.layers.Input;
-  Layer* pfc = net.layers.PFC;
-
-  int g;
-  for(g=0;g<pfc.units.gp.size;g++) {
-    int ui;
-    for(ui=0;ui<input.units.size;ui++) {
-      Unit* iu = input.units[ui];
-      Unit* pu = pfc.units.gp[g][ui];
-      pu.name = iu.name;
-    }
-  }
-}
-
-DoName();
-
-
-";
-      vars {
-      };
-      var_names{       };
-      bad_vars{ DoName;net;input;pfc;g;for;ui;iu;pu;      };
      };
     };
    };
@@ -3042,8 +2945,8 @@ DoName();
       group_order=SEQUENTIAL;
       item_order=SEQUENTIAL;
       group_col=0;
-      group_idx_list{ 0;5;12;22;32;35;42;45;48;59;64;71;103;124;      };
-      item_idx_list{ 12;13;14;15;16;17;18;19;20;21;      };
+      group_idx_list{ 0;19;33;43;67;72;101;108;121;      };
+      item_idx_list{ 72;73;74;75;76;77;78;79;80;81;82;83;84;85;86;87;88;89;90;91;92;93;94;95;96;97;98;99;100;      };
      };
      IfElse @[6] {
       desc="if full batch mode, update only at end of epoch";
@@ -5340,7 +5243,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
        name="Cue";
        el_typ=DynEnumItem;
        el_def=0;
-       value_idx=2;
+       value_idx=1;
        DynEnumItem @[0] {
 	name="A";
 	value=0;
@@ -5373,7 +5276,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
        name="Probe";
        el_typ=DynEnumItem;
        el_def=0;
-       value_idx=2;
+       value_idx=1;
        DynEnumItem @[0] {
 	name="X";
 	value=0;
@@ -7606,7 +7509,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    max=1;
 	   };
 	  };
-	  display=1;
+	  display=0;
 	  ordered_uvg_list{ 10;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
@@ -7725,10 +7628,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   axis=X;
 	   col_lookup=NULL;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=2: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=1: };
-	   range {min=0: max=1: };
+	   data_range {min=0: max=2: };
+	   range {min=0: max=2: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -7876,7 +7779,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	};
        };
        camera_pos {x=0.5417961: y=1.121465: z=1.46635: };
-       camera_orient {x=-0.9979209: y=-0.06215875: z=0.01709494: rot=0.4894839: };
+       camera_orient {x=-0.9979199: y=-0.06215869: z=0.01709492: rot=0.4894839: };
        camera_focdist=2.16754;
       };
      };
@@ -8071,7 +7974,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	name=;
 	el_typ=SchedItem;
 	el_def=0;
-	last_ctr=68;
+	last_ctr=67;
 	default_val=1;
 	interpolate=0;
 	cur_val=1;
@@ -8115,7 +8018,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       name=;
       el_typ=SchedItem;
       el_def=0;
-      last_ctr=68;
+      last_ctr=67;
       default_val=1;
       interpolate=0;
       cur_val=1;
@@ -8557,7 +8460,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=68;
+	   last_ctr=67;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -8609,7 +8512,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=68;
+	   last_ctr=67;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -8654,7 +8557,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=68;
+	 last_ctr=67;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -8765,7 +8668,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=68;
+	   last_ctr=67;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -8809,7 +8712,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=68;
+	 last_ctr=67;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -8868,7 +8771,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=68;
+	   last_ctr=67;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -8912,7 +8815,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=68;
+	 last_ctr=67;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -8956,7 +8859,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        name=;
        el_typ=SchedItem;
        el_def=0;
-       last_ctr=68;
+       last_ctr=67;
        default_val=1;
        interpolate=0;
        cur_val=1;
@@ -9580,11 +9483,12 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0: max=0: max_i=0: };
-     acts_m {avg=0: max=0: max_i=0: };
+     acts_p {avg=0.95: max=0.95: max_i=0: };
+     acts_m {avg=0.95: max=0.95: max_i=0: };
      phase_dif_ratio=1;
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -9686,10 +9590,11 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.3166667: max=0.95: max_i=2: };
+     acts_p {avg=0.3166667: max=0.95: max_i=1: };
      acts_m {avg=0.3166667: max=0.95: max_i=2: };
      phase_dif_ratio=1;
      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
@@ -9843,13 +9748,14 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.2726144: max=0.7477292: max_i=2: };
-     acts_m {avg=0.2726064: max=0.747733: max_i=2: };
-     phase_dif_ratio=0.9999706;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=6.45191: k1_ithr=2.972959: ithr_r=0.7748187: ithr_diff=0.5392127: tie_brk=0: };
+     acts_p {avg=0.3231452: max=0.6894001: max_i=3: };
+     acts_m {avg=0.3200516: max=0.6828633: max_i=3: };
+     phase_dif_ratio=0.9904264;
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.095815: k1_ithr=3.613639: ithr_r=0.1252503: ithr_diff=0.117724: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
@@ -9998,13 +9904,14 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.1550512: max=0.3380501: max_i=1: };
-     acts_m {avg=0.154727: max=0.3373343: max_i=1: };
-     phase_dif_ratio=0.9979094;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.868651: k1_ithr=2.28625: ithr_r=0.5259929: ithr_diff=0.4090317: tie_brk=0: };
+     acts_p {avg=0.3014844: max=0.7230556: max_i=3: };
+     acts_m {avg=0.2988918: max=0.7169933: max_i=3: };
+     phase_dif_ratio=0.9914005;
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=5.168529: k1_ithr=2.920517: ithr_r=0.5708275: ithr_diff=0.4349423: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
@@ -10154,13 +10061,14 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.1550512: max=0.3380501: max_i=1: };
-     acts_m {avg=0.154727: max=0.3373343: max_i=1: };
-     phase_dif_ratio=0.9979094;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.868651: k1_ithr=2.28625: ithr_r=0.5259929: ithr_diff=0.4090317: tie_brk=0: };
+     acts_p {avg=0.1886998: max=0.3027399: max_i=1: };
+     acts_m {avg=0.1836302: max=0.2943513: max_i=1: };
+     phase_dif_ratio=0.973134;
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.881507: k1_ithr=3.01636: ithr_r=0.2521727: ithr_diff=0.2228895: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
@@ -10286,11 +10194,12 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0: max=0: max_i=0: };
-     acts_m {avg=0: max=0: max_i=0: };
+     acts_p {avg=-0.3687892: max=-0.3687892: max_i=0: };
+     acts_m {avg=0.384504: max=0.384504: max_i=0: };
      phase_dif_ratio=1;
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10299,7 +10208,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      spec {type=PVLVDaLayerSpec: spec=.projects[0].networks[0].specs.gp[2][3]$139$: };
      stm_gain=0.5;
      hard_clamped=0;
-     dav=0;
+     dav=-0.4109436;
      net_rescale=1;
      avg_netin {avg=0: max=0: max_i=-1: };
      avg_netin_sum {avg=0: max=0: max_i=-1: };
@@ -10416,13 +10325,14 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.1694759: max=0.8699828: max_i=37: };
-     acts_m {avg=0.1678923: max=0.8693022: max_i=37: };
-     phase_dif_ratio=0.9906558;
-     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=4.645004: k1_ithr=3.418326: ithr_r=0.3066414: ithr_diff=0.2640855: tie_brk=0: };
+     acts_p {avg=0.1874862: max=0.8585567: max_i=34: };
+     acts_m {avg=0.175561: max=0.8749455: max_i=23: };
+     phase_dif_ratio=0.9363943;
+     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.922746: k1_ithr=3.240803: ithr_r=0.1909707: ithr_diff=0.1738432: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -10480,11 +10390,12 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.1055556: max=0.95: max_i=1: };
-     acts_m {avg=0.1055556: max=0.95: max_i=1: };
+     acts_p {avg=0.1055556: max=0.95: max_i=7: };
+     acts_m {avg=0.1055556: max=0.95: max_i=7: };
      phase_dif_ratio=1;
      kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10587,13 +10498,14 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=1.824852;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.475: max=0.95: max_i=0: };
-     acts_m {avg=0.4623457: max=0.9071817: max_i=0: };
-     phase_dif_ratio=0.9733593;
-     kwta {k=1: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=5.125643: k1_ithr=3.985633: ithr_r=0.2515598: ithr_diff=0.2224131: tie_brk=0: };
+     acts_p {avg=0.475: max=0.95: max_i=1: };
+     acts_m {avg=0.4643024: max=0.918845: max_i=0: };
+     phase_dif_ratio=0.9774787;
+     kwta {k=1: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=4.688273: k1_ithr=3.516271: ithr_r=0.2876632: ithr_diff=0.2499858: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.5: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -10719,8 +10631,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0: max=0: max_i=0: };
-       acts_m {avg=0: max=0: max_i=0: };
+       acts_p {avg=-0.3687892: max=-0.3687892: max_i=0: };
+       acts_m {avg=0.384504: max=0.384504: max_i=0: };
        phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10741,8 +10653,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0: max=0: max_i=0: };
-       acts_m {avg=0: max=0: max_i=0: };
+       acts_p {avg=-0.3687892: max=-0.3687892: max_i=0: };
+       acts_m {avg=0.384504: max=0.384504: max_i=0: };
        phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10763,8 +10675,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0: max=0: max_i=0: };
-       acts_m {avg=0: max=0: max_i=0: };
+       acts_p {avg=-0.3687892: max=-0.3687892: max_i=0: };
+       acts_m {avg=0.384504: max=0.384504: max_i=0: };
        phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10785,8 +10697,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0: max=0: max_i=0: };
-       acts_m {avg=0: max=0: max_i=0: };
+       acts_p {avg=-0.3687892: max=-0.3687892: max_i=0: };
+       acts_m {avg=0.384504: max=0.384504: max_i=0: };
        phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10805,11 +10717,12 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0: max=0: max_i=0: };
-     acts_m {avg=0: max=0: max_i=0: };
+     acts_p {avg=-0.3687892: max=-0.3687892: max_i=0: };
+     acts_m {avg=0.384504: max=0.384504: max_i=0: };
      phase_dif_ratio=1;
      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=nan: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -10818,7 +10731,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      spec {type=SNcLayerSpec: spec=.projects[0].networks[0].specs.gp[2][3].children[0]$145$: };
      stm_gain=0.5;
      hard_clamped=0;
-     dav=0;
+     dav=-0.4109436;
      net_rescale=1;
      avg_netin {avg=0: max=0: max_i=-1: };
      avg_netin_sum {avg=0: max=0: max_i=-1: };
@@ -10961,10 +10874,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1779069: max=0.8930764: max_i=11: };
-       acts_m {avg=0.1779069: max=0.8930764: max_i=11: };
+       acts_p {avg=0.1881142: max=0.8888065: max_i=12: };
+       acts_m {avg=0.1881142: max=0.8888065: max_i=12: };
        phase_dif_ratio=1;
-       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.776081: k1_ithr=3.716916: ithr_r=0.01579218: ithr_diff=0.01566817: tie_brk=0: };
+       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.768577: k1_ithr=3.678123: ithr_r=0.02429487: ithr_diff=0.02400213: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -10983,10 +10896,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1512917: max=0.8106083: max_i=14: };
-       acts_m {avg=0.1513502: max=0.8106781: max_i=14: };
-       phase_dif_ratio=1.000387;
-       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.978912: k1_ithr=3.88489: ithr_r=0.02391376: ithr_diff=0.02363015: tie_brk=0: };
+       acts_p {avg=0.2054378: max=0.8378626: max_i=21: };
+       acts_m {avg=0.2054378: max=0.8378626: max_i=21: };
+       phase_dif_ratio=1;
+       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.979025: k1_ithr=3.950002: ithr_r=0.007320603: ithr_diff=0.007293921: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -11005,10 +10918,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1692115: max=0.8878258: max_i=19: };
-       acts_m {avg=0.1692303: max=0.8878418: max_i=19: };
-       phase_dif_ratio=1.000111;
-       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.793087: k1_ithr=3.774168: ithr_r=0.005000466: ithr_diff=0.004987943: tie_brk=0: };
+       acts_p {avg=0.2096473: max=0.9075687: max_i=4: };
+       acts_m {avg=0.2096469: max=0.9075617: max_i=4: };
+       phase_dif_ratio=0.9999985;
+       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.747679: k1_ithr=3.659356: ithr_r=0.0238494: ithr_diff=0.02356729: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -11027,10 +10940,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1789481: max=0.8621039: max_i=15: };
-       acts_m {avg=0.1789481: max=0.8621039: max_i=15: };
-       phase_dif_ratio=1;
-       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.014401: k1_ithr=3.986426: ithr_r=0.006993104: ithr_diff=0.006968682: tie_brk=0: };
+       acts_p {avg=0.2235478: max=0.9103925: max_i=16: };
+       acts_m {avg=0.2235397: max=0.9103671: max_i=16: };
+       phase_dif_ratio=0.9999639;
+       kwta {k=7: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.117596: k1_ithr=3.536168: ithr_r=0.1522258: ithr_diff=0.1412057: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -11047,12 +10960,13 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.1693396: max=0.8930764: max_i=0: };
-     acts_m {avg=0.1693589: max=0.8930764: max_i=0: };
-     phase_dif_ratio=1.000114;
+     acts_p {avg=0.2066868: max=0.9103925: max_i=3: };
+     acts_m {avg=0.2066847: max=0.9103671: max_i=3: };
+     phase_dif_ratio=0.9999899;
      kwta {k=28: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
@@ -11132,9 +11046,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0: max=0: max_i=0: };
-       acts_m {avg=0: max=0: max_i=0: };
-       phase_dif_ratio=1;
+       acts_p {avg=2.299184e-08: max=2.299184e-08: max_i=0: };
+       acts_m {avg=7.092239e-09: max=7.092239e-09: max_i=0: };
+       phase_dif_ratio=0.3084676;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
@@ -11176,9 +11090,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=5.911242e-10: max=5.911242e-10: max_i=0: };
-       acts_m {avg=7.68257e-10: max=7.68257e-10: max_i=0: };
-       phase_dif_ratio=1.299654;
+       acts_p {avg=0: max=0: max_i=0: };
+       acts_m {avg=0: max=0: max_i=0: };
+       phase_dif_ratio=1;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
@@ -11198,9 +11112,9 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0: max=0: max_i=0: };
-       acts_m {avg=0: max=0: max_i=0: };
-       phase_dif_ratio=1;
+       acts_p {avg=0.8105474: max=0.8105474: max_i=0: };
+       acts_m {avg=0.8105559: max=0.8105559: max_i=0: };
+       phase_dif_ratio=1.00001;
        kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
@@ -11218,13 +11132,14 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=1.477811e-10: max=5.911242e-10: max_i=2: };
-     acts_m {avg=1.920642e-10: max=7.68257e-10: max_i=2: };
-     phase_dif_ratio=1.299654;
-     kwta {k=3: pct=0.75: pct_c=0.25: adth_k=1: k_ithr=-0.6008488: k1_ithr=-3.349916: ithr_r=0: ithr_diff=-4.575305: tie_brk=0: };
+     acts_p {avg=0.2026369: max=0.8105474: max_i=3: };
+     acts_m {avg=0.202639: max=0.8105559: max_i=3: };
+     phase_dif_ratio=1.00001;
+     kwta {k=3: pct=0.75: pct_c=0.25: adth_k=1: k_ithr=1.266439: k1_ithr=-0.9014837: ithr_r=0: ithr_diff=1.711825: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.75: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11358,7 +11273,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        acts_p {avg=0.1075155: max=0.9676397: max_i=3: };
        acts_m {avg=0.1075155: max=0.9676397: max_i=3: };
        phase_dif_ratio=1;
-       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.323991: k1_ithr=0.3037366: ithr_r=3.18275: ithr_diff=0.9585285: tie_brk=0: };
+       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.325343: k1_ithr=0.3048296: ithr_r=3.179342: ithr_diff=0.958387: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.1111111: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11377,10 +11292,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1075155: max=0.9676397: max_i=6: };
-       acts_m {avg=0.1075155: max=0.9676399: max_i=6: };
+       acts_p {avg=0.1075155: max=0.9676397: max_i=0: };
+       acts_m {avg=0.1075155: max=0.9676397: max_i=0: };
        phase_dif_ratio=1;
-       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.323991: k1_ithr=0.3037366: ithr_r=3.18275: ithr_diff=0.9585285: tie_brk=0: };
+       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.325343: k1_ithr=0.3048296: ithr_r=3.179342: ithr_diff=0.958387: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.1111111: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11399,10 +11314,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1075155: max=0.9676397: max_i=6: };
-       acts_m {avg=0.1075155: max=0.9676399: max_i=6: };
+       acts_p {avg=0.1075155: max=0.9676397: max_i=4: };
+       acts_m {avg=0.1075155: max=0.9676399: max_i=4: };
        phase_dif_ratio=1;
-       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.323991: k1_ithr=0.3037366: ithr_r=3.18275: ithr_diff=0.9585285: tie_brk=0: };
+       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.325343: k1_ithr=0.3048296: ithr_r=3.179342: ithr_diff=0.958387: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.1111111: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11421,10 +11336,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
        netin {avg=0: max=0: max_i=-1: };
        i_thrs {avg=0: max=0: max_i=-1: };
        acts {avg=0: max=0: max_i=-1: };
-       acts_p {avg=0.1075155: max=0.9676397: max_i=3: };
-       acts_m {avg=0.1075155: max=0.9676397: max_i=3: };
+       acts_p {avg=0.1075155: max=0.9676397: max_i=4: };
+       acts_m {avg=0.1075155: max=0.9676399: max_i=4: };
        phase_dif_ratio=1;
-       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=7.323991: k1_ithr=0.3037366: ithr_r=3.18275: ithr_diff=0.9585285: tie_brk=0: };
+       kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=3.287256: k1_ithr=-0.1: ithr_r=0: ithr_diff=1.03042: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0.1111111: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -11441,11 +11356,12 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
       fm_input=-1;
       fm_output=-1;
      };
+     sse=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
      acts_p {avg=0.1075155: max=0.9676397: max_i=0: };
-     acts_m {avg=0.1075155: max=0.9676399: max_i=1: };
+     acts_m {avg=0.1075155: max=0.9676399: max_i=2: };
      phase_dif_ratio=1;
      kwta {k=4: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
@@ -11463,7 +11379,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
      misc_iar{      };
     };
    };
-   no_save_units=1;
+   flags=;
    auto_build=AUTO_BUILD;
    train_mode=TRAIN;
    wt_update=ON_LINE;
@@ -11474,8 +11390,10 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
    cycle=0;
    time=0;
    group_name="TWO";
-   trial_name="TWO";
+   trial_name="Y";
    output_name=;
+   sse_unit_avg=0;
+   sse_sqrt=0;
    sse=0;
    sum_sse=0;
    avg_sse=0;
@@ -11484,8 +11402,8 @@ FloatTransform @*(.m_transform) {scale={x=0.3925669: y=0.392567: z=0.3925672: }:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=15711: sys=5287: tot=1437240586: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=18434: sys=5436: tot=1437243519: }: end={usr=18432: sys=5435: tot=1437243517: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=910: sys=118: tot=1521103924: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=2999: sys=279: tot=1521106223: }: end={usr=2994: sys=277: tot=1521106215: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };

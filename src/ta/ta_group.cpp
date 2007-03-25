@@ -74,7 +74,7 @@ void taGroup_impl::Initialize() {
 }
 
 void taGroup_impl::Destroy() {
-  if (leaf_gp != NULL) {
+  if (leaf_gp) {
     taBase::unRefDone(leaf_gp);
     leaf_gp = NULL;
   }
@@ -116,7 +116,7 @@ void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
   taList_impl::DataChanged(dcr, op1, op2); // normal processing
   // send LIST events to the root group as a GROUP_ITEM event
   if (root_gp && (dcr >= DCR_LIST_ITEM_MIN) && (dcr <= DCR_LIST_ITEM_MAX)) {
-    root_gp->DataChanged(dcr + (DCR_GROUP_ITEM_MIN - DCR_LIST_ITEM_MIN) , op1, op2);
+    root_gp->DataChanged(dcr + DCR_ListItem_Group_Offset, op1, op2);
   } 
   // GROUP_ITEM +/- and GROUP +/- events cause invalidation of the group iteration cache
   // have to trigger on items too, because iteration cache does funky stuff for size==0
@@ -124,7 +124,7 @@ void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
     || (dcr == DCR_GROUP_ITEM_INSERT) || (dcr == DCR_GROUP_ITEM_REMOVE)
     || ((dcr >= DCR_GROUP_MIN) && (dcr <= DCR_GROUP_MAX)) ) 
   {
-    if (leaf_gp != NULL) {
+    if (leaf_gp) {
       taBase::unRefDone(leaf_gp);
       leaf_gp = NULL;
     }
@@ -132,7 +132,7 @@ void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
 }
 
 void taGroup_impl::InitLeafGp() const {
-  if (leaf_gp != NULL)
+  if (leaf_gp)
     return;
   taGroup_impl* ncths = (taGroup_impl*)this;
   ncths->leaf_gp = new TALOG;

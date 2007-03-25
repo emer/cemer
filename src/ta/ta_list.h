@@ -114,73 +114,73 @@ class  taHashTable; //
   NOTE: you can use the test (dcr <= DCR_ITEM_UPDATED_ND) to test for both versions
   
   NOTE: for lists and groups, all the DCRs relating to item add/remove/reorder
-    are sequential, and can be tested via
+    are sequential, and can be tested via ?
+
+  PLEASE keep numbers updated as some debuggers do not record the enum symbols..
 */
 
-enum DataChangedReason { /* reason why DataChanged being called, as well as defining ops (also used by taBase and other classes) --
- some data change operations will emit multiple DataChanged calls */
-  DCR_ITEM_UPDATED = 0, // after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
-  DCR_ITEM_UPDATED_ND, // same as IU, but doesn't invoke Dirty (to avoid circular dirtying)
-  DCR_ITEM_REBUILT, // for complex items that support the STRUCT updates
+enum DataChangedReason { /* reason why DataChanged being called, as well as defining ops (also used by taBase and other classes) -- some data change operations will emit multiple DataChanged calls */
+  DCR_ITEM_UPDATED = 0, // 0 after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
+  DCR_ITEM_UPDATED_ND, 	// 1 same as IU, but doesn't invoke Dirty (to avoid circular dirtying)
+  DCR_ITEM_REBUILT, 	// 2 for complex items that support the STRUCT updates
 
-  DCR_CHILD_ITEM_UPDATED, // op1=item; can optionally be invoked by an owned object (usually a member, usually not list/group items) -- owner can ignore this, or do something with it
+  DCR_CHILD_ITEM_UPDATED, // 3 op1=item; can optionally be invoked by an owned object (usually a member, usually not list/group items) -- owner can ignore this, or do something with it
   
-  DCR_ARY_SIZE_CHANGED, // this is the only notify we send from arrays
+  DCR_ARY_SIZE_CHANGED, // 4 this is the only notify we send from arrays
   
-  DCR_LIST_INIT,
-  DCR_LIST_ITEM_UPDATE,	// op1=item
-  DCR_LIST_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
-  DCR_LIST_ITEM_REMOVE,	// op1=item -- note, item not DisOwned yet, but has been removed from list
-  DCR_LIST_ITEM_MOVED,	// op1=item, op2=item_after, null=at beginning
-  DCR_LIST_ITEMS_SWAP,	// op1=item1, op2=item2
-  DCR_LIST_SORTED,	// after sorting; ops not used
+  DCR_LIST_INIT,	// 5 
+  DCR_LIST_ITEM_UPDATE,	// 6 op1=item
+  DCR_LIST_ITEM_INSERT,	// 7 op1=item, op2=item_after, null=at beginning
+  DCR_LIST_ITEM_REMOVE,	// 8 op1=item -- note, item not DisOwned yet, but has been removed from list
+  DCR_LIST_ITEM_MOVED,	// 9 op1=item, op2=item_after, null=at beginning
+  DCR_LIST_ITEMS_SWAP,	// 10 op1=item1, op2=item2
+  DCR_LIST_SORTED,	// 11 after sorting; ops not used
 
-  DCR_GROUP_UPDATE,	// op1=group, typically called for group name change
-  DCR_GROUP_INSERT,	// op1=group, op2=group_after, null=at beginning
-  DCR_GROUP_REMOVE,	// op1=group -- note, item not DisOwned yet, but has been removed from list
-  DCR_GROUP_MOVED,	// op1=group, op2=group_after, null=at beginning
-  DCR_GROUPS_SWAP,	// op1=group1, op2=group2
+  DCR_GROUP_UPDATE,	// 12 op1=group, typically called for group name change
+  DCR_GROUP_INSERT,	// 13 op1=group, op2=group_after, null=at beginning
+  DCR_GROUP_REMOVE,	// 14 op1=group -- note, item not DisOwned yet, but has been removed from list
+  DCR_GROUP_MOVED,	// 15 op1=group, op2=group_after, null=at beginning
+  DCR_GROUPS_SWAP,	// 16 op1=group1, op2=group2
   
-  DCR_GROUP_ITEM_UPDATE,	// op1=item
-  DCR_GROUP_ITEM_INSERT,	// op1=item, op2=item_after, null=at beginning
-  DCR_GROUP_ITEM_REMOVE,	// op1=item -- note, item not DisOwned yet, but has been removed from list
-  DCR_GROUP_ITEM_MOVED,	// op1=item, op2=item_after, null=at beginning
-  DCR_GROUP_ITEMS_SWAP,	// op1=item1, op2=item2
-  DCR_GROUP_LIST_SORTED,	// after sorting; ops not used
+  DCR_GROUP_ITEM_UPDATE, // 17 op1=item
+  DCR_GROUP_ITEM_INSERT, // 18 op1=item, op2=item_after, null=at beginning
+  DCR_GROUP_ITEM_REMOVE, // 19 op1=item -- note, item not DisOwned yet, but has been removed from list
+  DCR_GROUP_ITEM_MOVED,	 // 20 op1=item, op2=item_after, null=at beginning
+  DCR_GROUP_ITEMS_SWAP,	 // 21 op1=item1, op2=item2
+  DCR_GROUP_LIST_SORTED, // 22 after sorting; ops not used
 
-  DCR_UPDATE_VIEWS, // no ops; sent for UpdateAllViews
-  DCR_REBUILD_VIEWS, // no ops; sent to DataViews for RebuildAllViews
+  DCR_UPDATE_VIEWS, 	 // 23 no ops; sent for UpdateAllViews
+  DCR_REBUILD_VIEWS, 	 // 24 no ops; sent to DataViews for RebuildAllViews
   
-  DCR_STRUCT_UPDATE_BEGIN, // for some updating, like doing Layer->Build, better for gui to just do one
-  DCR_STRUCT_UPDATE_END,  // update operation at the end of everything
-  DCR_DATA_UPDATE_BEGIN, // for some data changes, like various log updates, better for gui to just do one
-  DCR_DATA_UPDATE_END,  // update operation at the end of everything
+  DCR_STRUCT_UPDATE_BEGIN, // 25 for some updating, like doing Layer->Build, better for gui to just do one
+  DCR_STRUCT_UPDATE_END,  // 26 update operation at the end of everything
+  DCR_DATA_UPDATE_BEGIN, // 27 for some data changes, like various log updates, better for gui to just do one
+  DCR_DATA_UPDATE_END,  // 28 update operation at the end of everything
     
-  DCR_ITEM_DELETING  // NOTE: not used in standard DataChanged calls, but may be used by forwarders, ex. taDataMonitor
+  DCR_ITEM_DELETING,  // 29 NOTE: not used in standard DataChanged calls, but may be used by forwarders, ex. taDataMonitor
 
 #ifndef __MAKETA__
- ,DCR_LIST_MIN		= DCR_LIST_INIT,
+  DCR_LIST_MIN		= DCR_LIST_INIT,
   DCR_LIST_MAX		= DCR_LIST_SORTED,
-  DCR_GROUP_MIN		= DCR_GROUP_INSERT,
+  DCR_GROUP_MIN		= DCR_GROUP_UPDATE,
   DCR_GROUP_MAX		= DCR_GROUPS_SWAP,
   DCR_LIST_ITEM_MIN	= DCR_LIST_ITEM_UPDATE,
   DCR_LIST_ITEM_MAX	= DCR_LIST_SORTED,
   DCR_LIST_ORDER_MIN	= DCR_LIST_ITEM_INSERT, // anything related to item ordering
   DCR_LIST_ORDER_MAX	= DCR_LIST_SORTED,
   DCR_GROUP_ITEM_MIN	= DCR_GROUP_ITEM_UPDATE,
-  DCR_GROUP_ITEM_MAX	= DCR_GROUP_LIST_SORTED
+  DCR_GROUP_ITEM_MAX	= DCR_GROUP_LIST_SORTED,
 #endif
 };
 
 /* DataChangedReason Notes
 
-   GROUP_xx notifications are simply the LIST_ITEM notifications of the gp list, passed on to the
-   owning Group as GROUP_ ops (by adding the DCR_List_Group_Offset to the op code)
-
+   GROUP_xx notifications are simply the LIST_ITEM notifications of the gp list,
+   passed on to the owning Group as GROUP_ ops
+   (by adding the DCR_List_Group_Offset to the op code)
 */
-#define DCR_LIST_ITEM_MIN 	DCR_LIST_ITEM_INSERT
-#define DCR_LIST_ITEM_MAX 	DCR_LIST_ITEMS_SWAP
-#define DCR_ListItem_Group_Offset	(DCR_GROUP_INSERT - DCR_LIST_ITEM_INSERT)
+
+#define DCR_ListItem_Group_Offset	(DCR_GROUP_ITEM_MIN - DCR_LIST_ITEM_MIN)
 
 typedef int taListItr; // pseudo class, compatible with the FOR_ITR_EL macro in ta_group
 
