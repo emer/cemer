@@ -1419,7 +1419,7 @@ bool taRootBase::Startup_Run() {
 //TODO: make Run_GuiDMem dispatched after event loop, and fall through
   if((taMisc::dmem_nprocs > 1) && taMisc::gui_active) {
     Run_GuiDMem(); // does its own eventloop dispatch
-    return;
+    return true;
   }
 #endif
 
