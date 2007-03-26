@@ -1018,6 +1018,7 @@ void TwoDValSpec::Initialize() {
   x_min = x_val = y_min = y_val = 0.0f;
   x_range = x_incr = y_range = y_incr = 1.0f;
   x_size = y_size = 1;
+  clip_val = true;
 }
 
 void TwoDValSpec::InitVal(float xval, float yval, int xsize, int ysize, float xmin, float xrng, float ymin, float yrng) {
@@ -1422,8 +1423,12 @@ void TwoDValLayerSpec::ClampValue(Unit_Group* ugp, LeabraNetwork*, float rescale
     LeabraUnit* y_u = (LeabraUnit*)ugp->FastEl(k*2+1);
     LeabraUnitSpec* us = (LeabraUnitSpec*)x_u->GetUnitSpec();
     x_u->SetExtFlag(Unit::EXT); y_u->SetExtFlag(Unit::EXT);
-    float x_val = x_val_range.Clip(x_u->ext);
-    float y_val = y_val_range.Clip(y_u->ext);
+    float x_val = x_u->ext;
+    float y_val = y_u->ext;
+    if(twod.clip_val) {
+      x_val = x_val_range.Clip(x_u->ext);
+      y_val = y_val_range.Clip(y_u->ext);
+    }
     twod.InitVal(x_val, y_val, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
     for(int i=lay->un_geom.x;i<ugp->size;i++) {
       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
@@ -1565,12 +1570,17 @@ void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraLayerSpec::Compute_HardClamp(lay, net);
     return;
   }
-  if(!(clamp.hard && (lay->ext_flag & Unit::EXT))) {
+  if(!(lay->ext_flag & Unit::EXT)) {
     lay->hard_clamped = false;
     return;
   }
-
+  // allow for soft-clamping: translates pattern into exts first
   UNIT_GP_ITR(lay, if(ugp->size > 2) { ClampValue(ugp, net); } );
+  // now check for actual hard clamping
+  if(!clamp.hard) {
+    lay->hard_clamped = false;
+    return;
+  }
   HardClampExt(lay, net);
 }
 
@@ -1591,6 +1601,51 @@ void TwoDValLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 	      Compute_dWtUgp(ugp, lay, net);
 	      );
   AdaptKWTAPt(lay, net);
+}
+
+float TwoDValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
+  float rval = 0.0f;
+  for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
+    LeabraUnit* x_tu = (LeabraUnit*)ugp->FastEl(k*2);
+    LeabraUnit* y_tu = (LeabraUnit*)ugp->FastEl(k*2+1);
+    LeabraUnitSpec* us = (LeabraUnitSpec*)x_tu->GetUnitSpec();
+    // only count if target value is within range -- otherwise considered a non-target
+    if((x_tu->ext_flag & Unit::TARG) && x_val_range.RangeTestEq(x_tu->targ) && 
+       (y_tu->ext_flag & Unit::TARG) && y_val_range.RangeTestEq(y_tu->targ)) {
+      n_vals++;
+
+      // now find minimum dist actual activations
+      float mn_dist = taMath::flt_max;
+      for(int j=0;j<twod.n_vals;j++) {
+	LeabraUnit* x_u = (LeabraUnit*)ugp->FastEl(j*2);
+	LeabraUnit* y_u = (LeabraUnit*)ugp->FastEl(j*2+1);
+	float dx = x_tu->targ - x_u->act_m;
+	float dy = y_tu->targ - y_u->act_m;
+	if(fabsf(dx) < us->sse_tol) dx = 0.0f;
+	if(fabsf(dy) < us->sse_tol) dy = 0.0f;
+	float dist = dx * dx + dy * dy;
+	if(dist < mn_dist)
+	  mn_dist = dist;
+      }
+      rval += mn_dist;
+    }
+  }
+  return rval;
+}
+
+float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
+  n_vals = 0;
+  if(!(lay->ext_flag & Unit::TARG)) return 0.0f;
+  lay->sse = 0.0f;
+  UNIT_GP_ITR(lay, 
+	      lay->sse += Compute_SSE_Ugp(ugp, lay, n_vals);
+	      );
+  float rval = lay->sse;
+  if(unit_avg && n_vals > 0)
+    lay->sse /= (float)n_vals;
+  if(sqrt)
+    lay->sse = sqrtf(lay->sse);
+  return rval;
 }
 
 ///////////////////////////////////////////////////////////////

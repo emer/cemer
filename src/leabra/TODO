@@ -5,13 +5,11 @@ commit:
 ------------
 current:
 
-* do 2d scalarvallayer thing
-
 * progexpr not finding variables in function args
 
 * NewLayer not working in netview
 
-* bar graph mode??
+* bar graph mode??  -- easy to do.. just do it..  no fill..
 
 * multi-test on hv
 

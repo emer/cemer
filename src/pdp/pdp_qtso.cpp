@@ -124,6 +124,10 @@ void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
       taiMember::GetImage_impl(dat, base);
   } else {
     taiPlusToggle* rval = (taiPlusToggle*)dat;
+    if(!rval->data) {
+      cerr << "spec mbr bug: null data in: " << mbr->name << endl;
+      return;
+    }
     if (m_sub_types != NULL)
       sub_types()->GetImage(rval->data,base);
     else
@@ -169,6 +173,12 @@ void taiSpecMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   }
 
   CmpOrigVal(dat, base, first_diff);
+
+  if(!rval->data) {
+    cerr << "spec mbr bug: null data in: " << mbr->name << endl;
+    return;
+  }
+
   if (m_sub_types != NULL)
     sub_types()->GetMbrValue(rval->data, base, first_diff);
   else

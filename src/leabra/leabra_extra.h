@@ -703,6 +703,7 @@ public:
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
   float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
   float		mn_dst;		// #DEF_0.5 minimum distance factor for reading out multiple bumps: must be at least this times un_width far away from other bumps
+  bool		clip_val;	// #DEF_true ensure that value remains within specified range
 
   float		x_min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
   float		x_range;	// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values
@@ -803,6 +804,10 @@ public:
   virtual void 	Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
   // compute weight changes just for one unit group
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+
+  virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+  override float Compute_SSE(LeabraLayer* lay, int& n_vals,
+			     bool unit_avg = false, bool sqrt = false);
 
   virtual void	ReConfig(Network* net, int n_units = -1);
   // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value

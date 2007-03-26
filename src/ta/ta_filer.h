@@ -63,7 +63,7 @@ public:
     COMPRESS_REQ		= 0x008, // if compr enabled, requests it by default
     COMPRESS_REQ_DEF		= 0x100, // use taiMisc default for compression
     
-    DEF_FLAGS			= 0x003, // #NO_BIT default flags for no compression
+    DEF_FLAGS			= 0x007, // #NO_BIT default flags for no compression (compression is always enabled by default, just not requested)
     DEF_FLAGS_COMPRESS		= 0x107 // #NO_BIT default flags for compression w/ autocompress
   };
 

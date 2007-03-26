@@ -144,7 +144,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->selectFile(m_fname);
   // we always make and set the extension, but don't always show it
   fde->cbCompress->setEnabled(compressEnabled());
-  fde->cbCompress->setChecked(compressEnabled() && compressReq());
+  fde->cbCompress->setChecked(compressEnabled() && (compressReq() || isCompressed()));
   fd->setExtension(fde);
   //  fd->setOrientation(Qt::Vertical);
   fd->setViewMode(QFileDialog::Detail);
