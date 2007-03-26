@@ -5,6 +5,8 @@ commit:
 ------------
 current:
 
+* not recognizing the compression extension on SaveAs and adding a .proj.  very annoying.
+
 * progexpr not finding variables in function args
 
 * NewLayer not working in netview
