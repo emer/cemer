@@ -130,6 +130,7 @@ public:
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
   ColFlags		col_flags; // #APPLY_IMMED flags for this column to indicate specific properties 
+  short			col_idx; // #READ_ONLY #SHOW #NO_SAVE the index of this column in the table
   bool			is_matrix;
   // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   MatrixGeom		cell_geom;
@@ -380,6 +381,8 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
+  override int	GetIndex() const {return col_idx;}
+  override void	SetIndex(int value) {col_idx = (short)value;}
   override String GetDesc() const {return desc;}
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
@@ -424,6 +427,7 @@ private:
 class TA_API DataTableCols: public taList<DataCol> {
   // ##CAT_Data columns of a datatable 
 INHERITED(taList<DataCol>)
+friend class DataTable;
 public:
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   
@@ -437,14 +441,15 @@ public:
   // header text for the indicated column
   override const KeyString GetListColKey(int col) const;
   
-  virtual void	Copy_NoData(const DataTableCols& cp);
-  // #CAT_ObjectMgmt copy only the column structure, but no data, from other data table
-  virtual void	CopyFromRow(int dest_row, const DataTableCols& cp, int src_row);
-  // #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
-
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 
   TA_BASEFUNS(DataTableCols);
+protected: // these guys must only be used by DataTable, but no external guys
+  virtual void	Copy_NoData(const DataTableCols& cp);
+  // #IGNORE #CAT_ObjectMgmt copy only the column structure, but no data, from other data table
+  virtual void	CopyFromRow(int dest_row, const DataTableCols& cp, int src_row);
+  // #IGNORE #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
+
 private:
   void	Initialize();
   void	Destroy()		{}
@@ -477,6 +482,8 @@ INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
 public:
+  static int		idx_def_arg;
+  // default arg val for functions returning index
 
   enum DataFlags { // #BITS flags for data table
     DF_NONE		= 0, // #NO_BIT
@@ -487,7 +494,6 @@ public:
 
   /////////////////////////////////////////////////////////
   // 	Main datatable interface:
-
   int 			rows;
   // #READ_ONLY #NO_SAVE #SHOW the number of rows
   DataTableCols		data;
@@ -545,12 +551,19 @@ public:
   // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
 
   virtual DataCol* 	FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false) const;
-  // #CAT_Columns find a column of the given name; if err_msg then generate an error if not found
+  // #CAT_Columns #ARGC_1 find a column of the given name; if err_msg then generate an error if not found
 
+  DataCol* 		FindMakeCol(const String& col_nm,
+	ValType val_type = VT_FLOAT);
+  // #CAT_Columns insures that a scalar column of the given name and val type exists, and return that col. 
+  DataCol* 		FindMakeColMatrix(const String& col_nm,
+	ValType val_type = VT_FLOAT, int dims = 1,
+	int d0=0, int d1=0, int d2=0, int d3=0);
+  // #CAT_Columns insures that a matrix column of the given name, val type, and dimensions exists, and returns that col. 
   virtual DataCol* 	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
 					ValType val_type = VT_FLOAT, int dims = 0,
 					int d0=0, int d1=0, int d2=0, int d3=0);
-  // #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
+  // #EXPERT #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
   virtual DataCol* 	GetColData(int col) const {
     if(TestError((col < 0 || col >= cols()), "GetColData",
@@ -909,8 +922,6 @@ protected:
   /////////////////////////////////////////////////////////
   // IMPL
   
-  static int		idx_def_arg;
-  // default arg val for functions returning index
 
   void			RowsAdding(int n, bool begin);
   // indicate beginning and end of row adding -- you have to pass the same n each time; NOT nestable

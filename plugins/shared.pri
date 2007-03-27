@@ -14,7 +14,7 @@ win32 {
   /I $$(PDP4DIR)\\build\\$${MSVC_FOLDER} \
   $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
 } else {
-  maketa.commands = $$(PDP4DIR)/bin/maketa -D__MAKETA__  -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
+  maketa.commands = $$(PDP4DIR)/bin/maketa -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
 }
 maketa.depends = $${MAKETA_HEADERS}
 

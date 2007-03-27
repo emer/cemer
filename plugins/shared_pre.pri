@@ -15,7 +15,7 @@ THIS_ROOT = ../../..
 # we have up to 8 variants of binary, based on: debug, mpi, and nogui
 # we set parameters for these below
 
-LIB_VER = 4.0.0a
+LIB_VER = 4.0.2b1
 
 BUILD_EXT_US = _
 BUILD_EXT_SF = /

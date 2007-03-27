@@ -104,6 +104,7 @@ const String DataCol::udkey_hidden("HIDDEN");
 
 void DataCol::Initialize() {
   col_flags = (ColFlags)(SAVE_ROWS | SAVE_DATA);
+  col_idx = -1;
   is_matrix = false;
   // default initialize to scalar
   cell_geom.SetSize(1);
@@ -635,7 +636,9 @@ void DataTable::Copy_(const DataTable& cp) {
 }
 
 void DataTable::Copy_NoData(const DataTable& cp) {
-  rows = 0;
+  // note: CANNOT just set rows=0, because we must reclaim mat space (ex strings)
+  // and must insure data model is sync'ed propery
+  ResetData();
   // don't copy the flags!
 //   data_flags = cp.data_flags;
   data.Copy_NoData(cp.data);
@@ -718,7 +721,7 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
     DataCol* col = GetColData(i);
     int frms = col->AR()->frames();
     // number of rows is going to be = biggest number in individual cols
-    rows = max(rows, frms);
+    rows = max((int)rows, frms);
   }
   return c;
 }
@@ -1341,6 +1344,20 @@ DataCol* DataTable::FindColName(const String& col_nm, int& col_idx, bool err_msg
   return da;
 }
 
+DataCol* DataTable::FindMakeCol(const String& col_nm,
+  ValType val_type) 
+{
+  return FindMakeColName(col_nm, idx_def_arg, val_type, 0);
+}
+
+DataCol* DataTable::FindMakeColMatrix(const String& col_nm,
+  ValType val_type, int dims,
+  int d0, int d1, int d2, int d3)
+{
+  return FindMakeColName(col_nm, idx_def_arg, val_type,
+    dims, d0, d1, d2, d3);
+}
+
 DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
 					   ValType val_type, int dims,
 					   int d0, int d1, int d2, int d3) {
@@ -1496,6 +1513,7 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   DataUpdate(true);// only data because for views, no change in column structure
   if (m_dm)
     m_dm->beginInsertRows(QModelIndex(), st_row, st_row + n_rows-1);
+//TODO:TEMP
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
     if(!ar->AR()->InsertFrames(st_row, n_rows))
@@ -1585,13 +1603,13 @@ void DataTable::RowsAdding(int n, bool begin) {
   if (begin) {
     DataUpdate(true);// only data because for views, no change in column structure
     if (m_dm) {
-      m_dm->beginInsertRows(QModelIndex(), rows, rows + n);
+//TEMP      m_dm->beginInsertRows(QModelIndex(), rows, rows + n);
     }
   } else { // end
     rows += n;
     
     if (m_dm) {
-      m_dm->endInsertRows();
+//TEMP      m_dm->endInsertRows();
     }
     DataUpdate(false);
   }
@@ -2257,10 +2275,10 @@ void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
   void* op1, void* op2)
 {
   //this is primarily for code-driven changes
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
+  if (dcr == DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
   }
-  else if (dcr == DCR_STRUCT_UPDATE_END) { // for col insert/deletes
+  else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_ITEM_UPDATED)) { // for col insert/deletes
     emit_layoutChanged();
   }
 }
