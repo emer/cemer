@@ -43,6 +43,8 @@
 
 */
 
+// class QStringList; // #IGNORE
+
 class TA_API taFiler : public taRefN {
   // ##NO_TOKENS #EDIT_INLINE associate this with each file that is managed
 friend class taRefN; // for deleting
@@ -95,7 +97,7 @@ public:
   bool			isCompressed() const; 
   // if open, indicates actual compr status, else indicates .gz suffix on fname
 
-  const String		filterText(bool incl_allfiles = true) const;
+  const String		filterText(bool incl_allfiles = true, QStringList* list = NULL) const;
   // #IGNORE Qt-compatible filter text
   
   String		fileName() const; // concats dir and fname

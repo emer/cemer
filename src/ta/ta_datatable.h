@@ -212,6 +212,9 @@ public:
   bool	 	InitValsToRowNo();
   // #CAT_Modify initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
 
+  int 		FindVal(const Variant& val, int st_row = 0) const;
+  // #CAT_Access find row number for given value within column of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+
   /////////////////////////////////////////////
   // Get and Set access
 
@@ -642,6 +645,9 @@ public:
   bool	 	InitValsToRowNo(int col);
   // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
 
+  int 		FindVal(const Variant& val, int col, int st_row = 0) const;
+  // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+
   /////////////////////////////
   // column name versions:
 
@@ -662,6 +668,8 @@ public:
   bool	 	InitValsToRowNoColName(const String& col_name);
   // #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
 
+  int 		FindValColName(const Variant& val, const String& col_name, int st_row = 0) const;
+  // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
   /////////////////////////////////////////////////////////
   // Expert data value access routines: optimized for different types

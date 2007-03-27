@@ -474,6 +474,7 @@ taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE
 #endif
 
 int	taMisc::display_width = 80;
+int	taMisc::tree_indent = 12;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;

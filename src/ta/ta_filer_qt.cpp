@@ -21,6 +21,8 @@
 #include "ta_base.h"
 #include "ta_project.h"
 
+# include "ta_qt.h"
+
 #include <QApplication>
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -72,6 +74,10 @@ void taiFileDialogExtension::init() {
 //////////////////////////////////
 
 bool taFiler::GetFileName(FileOperation filerOperation) {
+  // note: attempting to make these permanent, so changes don't get lost all the damn time
+  static QFileDialog* fd = NULL;
+  static taiFileDialogExtension* fde = NULL;
+
   String tfname;
   if(!taMisc::gui_active) {
     if (m_fname.empty()) {
@@ -83,8 +89,6 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   }
   bool result = false;
   int rval = 0;
-  QFileDialog* fd = NULL; //declare early... had some troubles in debugger if not
-  taiFileDialogExtension* fde = NULL;
   String caption;
   // get the path history in qt form
   // if there is a filename path, use that
@@ -101,9 +105,25 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     eff_dir = taMisc::user_dir;
    // gack! only way to use semi-sep filters is in constructor...
   // note: actual caption set later
-  fd = new QFileDialog(NULL, "", eff_dir, filterText());
 
-  fde = new taiFileDialogExtension();
+  QStringList filter_list;
+  String filtext = filterText(true, &filter_list);
+
+  if(!fd) {
+    fd = new QFileDialog(NULL, "", eff_dir, filtext);
+
+    int nw_wd = (int)((float)taiM->scrn_s.w * .5f);
+    int nw_ht = (int)((float)taiM->scrn_s.h * .5f);
+
+    fd->resize(nw_wd, nw_ht);
+
+    fde = new taiFileDialogExtension();
+    fd->setExtension(fde);
+  }
+  else {
+    fd->setDirectory(eff_dir);
+    fd->setFilters(filter_list);
+  }
 
   switch (filerOperation) {
   case foOpen:
@@ -145,7 +165,6 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   // we always make and set the extension, but don't always show it
   fde->cbCompress->setEnabled(compressEnabled());
   fde->cbCompress->setChecked(compressEnabled() && (compressReq() || isCompressed()));
-  fd->setExtension(fde);
   //  fd->setOrientation(Qt::Vertical);
   fd->setViewMode(QFileDialog::Detail);
   fd->setHistory(hist_paths);
@@ -182,9 +201,9 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   }
 
 exit:
-  if (fd) {
-    delete fd;
-    fd = NULL;
-  }
+//   if (fd) {
+//     delete fd;
+//     fd = NULL;
+//   }
   return result; 
 }

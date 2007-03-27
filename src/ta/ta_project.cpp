@@ -339,8 +339,9 @@ void taProject::UpdateSimLog() {
     String host = taPlatform::hostName();
     if (host.nonempty()) user += String("@") + host;
 
+    String fnm = taMisc::GetDirFmPath(file_name) + "/SimLog";
     fstream fh;
-    fh.open("SimLog", ios::out | ios::app);
+    fh.open(fnm, ios::out | ios::app);
     fh << endl << endl;
     fh << file_name << " <- " << GetFileName() << "\t" << tstamp << "\t" << user << endl;
     if(!desc.empty()) fh << "\t" << desc << endl;

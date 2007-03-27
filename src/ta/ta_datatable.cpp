@@ -225,6 +225,22 @@ void DataCol::EnforceRows(int rws) {
   mat->EnforceFrames(rws);
 }
 
+int DataCol::FindVal(const Variant& val, int st_row) const {
+  if(TestError(isMatrix(), "FindVal", "column must be scalar, not matrix")) return -1;
+  if(st_row >= 0) {
+    for(int i=st_row; i<rows(); i++) {
+      if(GetVal(i) == val) return i;
+    }
+    return -1;
+  }
+  else {
+    for(int i=rows()-st_row; i>=0; i--) {
+      if(GetVal(i) == val) return i;
+    }
+    return -1;
+  }
+}
+
 String DataCol::ColStats() {
   if(valType() == VT_DOUBLE) {
     return taMath_double::vec_stats((double_Matrix*)AR());
@@ -835,6 +851,21 @@ bool DataTable::InitValsToRowNoColName(const String& col_nm) {
   if (!da) return false;
   da->InitValsToRowNo();
   return true;
+}
+
+/////////////////////
+
+int DataTable::FindVal(const Variant& val, int col, int st_row) const {
+  DataCol* da = GetColData(col);
+  if (!da) return false;
+  return da->FindVal(val, st_row);
+}
+
+int DataTable::FindValColName(const Variant& val, const String& col_nm, int st_row) const {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  if (!da) return false;
+  return da->FindVal(val, st_row);
 }
 
 /////////////////////

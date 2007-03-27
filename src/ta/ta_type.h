@@ -605,6 +605,8 @@ public:
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
   static int		display_width;	// #SAVE #HIDDEN #MIN_40 #MAX_132 #CAT_GUI width of console display (in chars) -- set automatically by gui console
   
+  static int		tree_indent; 	// #SAVE #CAT_GUI number of pixels to indent in the tree browser gui interface
+
   static int		max_menu;	// #SAVE #CAT_GUI #EXPERT maximum number of items in a menu
   static int		search_depth;   // #SAVE #CAT_GUI #EXPERT depth recursive find will search for a path object
   static int		color_scale_size; // #SAVE #CAT_GUI #EXPERT number of colors to put in a color scale

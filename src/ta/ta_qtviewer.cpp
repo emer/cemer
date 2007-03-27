@@ -4738,6 +4738,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   m_show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
   m_decorate_enabled = true;
   italic_font = NULL; 
+  setIndentation(taMisc::tree_indent);
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1, 
     QColor(0xFF, 0x99, 0x99),  // pale dull red

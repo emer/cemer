@@ -2090,6 +2090,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   tvSpecs->setColumnCount(2);
   tvSpecs->setSortingEnabled(false);// only 1 order possible
   tvSpecs->setHeaderText(0, "Spec");
+  tvSpecs->setColumnWidth(0, 160); // more width for spec column
   tvSpecs->setHeaderText(1, "Description");
   tvSpecs->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE); // in case of multi-line specs
   tvSpecs->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's

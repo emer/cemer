@@ -2,10 +2,16 @@ leabra todo list:
 
 commit:
 
+* SimLog not in correct location -- added project directory
+* if existing file has compression suffix, activate compression 
+* make save dialog wider, taller etc (ta_filer_qt.cpp:110), and also made it static
+  and reused so that configuration changes (e.g., in column width, sorting etc persist)!
+* make spec view in netview, first panel wider (netstru_qtso.cpp:2093)
+* reduce indent level on browsers (ta_qtviewer.cpp:4741 -- added taMisc::tree_indent)
+
 ------------
 current:
 
-* not recognizing the compression extension on SaveAs and adding a .proj.  very annoying.
 
 * progexpr not finding variables in function args
 

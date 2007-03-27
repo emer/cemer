@@ -362,7 +362,7 @@ String taFiler::fileName() const {
   else return m_dir + "/" + m_fname;
 }
 
-const String taFiler::filterText(bool incl_allfiles) const {
+const String taFiler::filterText(bool incl_allfiles, QStringList* list) const {
   STRING_BUF(rval, 80);
   String_PArray sa_ft;
   String_PArray sa_ex;
@@ -373,18 +373,23 @@ const String taFiler::filterText(bool incl_allfiles) const {
     String tft = sa_ft.SafeEl(i);
     if (tft.empty()) tft = "?";
     String tex = sa_ex.FastEl(i);
-    if (rval.nonempty()) rval.cat(";;");
-    rval.cat(tft).cat(" files (");
+    String itm = tft.cat(" files (");
     //note: ok if ext empty
-    rval.cat("*").cat(tex);
+    itm.cat("*").cat(tex);
     if (compressEnabled()) {
-      rval.cat(" *").cat(tex).cat(taMisc::compress_sfx);
+      itm.cat(" *").cat(tex).cat(taMisc::compress_sfx);
     }
-    rval.cat(")");
+    itm.cat(")");
+    if (rval.nonempty()) rval.cat(";;").cat(itm);
+    if(list)
+      *list << itm;
   }
   if (incl_allfiles) {
+    String itm = "All files (*)";
     if (rval.nonempty()) rval.cat(";;");
-    rval.cat("All files (*)");
+    rval.cat(itm);
+    if(list)
+      *list << itm;
   }
   return rval;
 }
@@ -394,6 +399,12 @@ void taFiler::FixFileName() {
   // General approach:
   // if m_fname is an actual existing file, we don't touch it
   if (file_exists) return;
+
+  // if existing file has compression suffix, then activate compression
+  if(m_fname.endsWith(taMisc::compress_sfx)) {
+    compressed = true;
+  }
+
   // otherwise, if no ext was supplied and we have one, we apply it
   String act_ext; // the actual extension
   if (ext.nonempty()) act_ext = ext;
