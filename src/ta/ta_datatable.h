@@ -684,6 +684,20 @@ public:
   int 		FindValColName(const Variant& val, const String& col_name, int st_row = 0) const;
   // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
+  /////////////////////////////
+  // column pointer versions, just for the gui:
+
+  bool	 	InitValsCol(DataCol* col, const Variant& init_val)
+  { return col->InitVals(init_val); }
+  // #CAT_Columns #MENU #MENU_ON_Columns #FROM_GROUP_data initialize all values in given column to given value
+  bool	 	InitValsToRowNo(DataCol* col) 
+  { return col->InitValsToRowNo(); }
+  // #CAT_Modify #MENU #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
+  int 		FindValCol(DataCol* col, const Variant& val, int st_row = 0) const 
+  { return col->FindVal(val, st_row); }
+  // #CAT_Access #MENU #FROM_GROUP_data find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+
+
   /////////////////////////////////////////////////////////
   // Expert data value access routines: optimized for different types
 
