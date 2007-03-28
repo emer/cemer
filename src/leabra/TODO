@@ -5,6 +5,8 @@ commit:
 ------------
 current:
 
+* nf strategy: sort cust list, etc
+
 * add CountExpr that works like filter but just counts number of times it is true!
 
 * progexpr not finding variables in function args

@@ -120,10 +120,9 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     fde = new taiFileDialogExtension();
     fd->setExtension(fde);
   }
-  else {
-    fd->setDirectory(eff_dir);
-    fd->setFilters(filter_list);
-  }
+
+  fd->setDirectory(eff_dir);
+  fd->setFilters(filter_list);
 
   switch (filerOperation) {
   case foOpen:
