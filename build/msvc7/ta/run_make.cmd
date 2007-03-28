@@ -1,1 +1,0 @@
-nmake moc_files

@@ -11,12 +11,12 @@ INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
 #MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
-MAKETA = $(PDP4DIR)\build\msvc7\maketa\Release\maketa.exe 
+MAKETA = $(PDP4DIR)\build\msvc7\bin\maketa.exe 
 
 
 all: maketa_files moc_files
 
-TAIQTSO_MOCS: \
+taiqtso_mocs: \
   ilabel.moc.cpp \
   idimedit.moc.cpp \
   ibutton.moc.cpp \
@@ -159,7 +159,7 @@ TA_HEADS =\
 	$(TA_HEADS_TAMISC) \
 	$(TA_HEADS_TAMISC_GUI)
 
-TA_MOCS: \
+ta_mocs: \
   colorbar_qt.moc.cpp \
   t3viewer.moc.cpp \
   ta_datatable.moc.cpp \
@@ -246,7 +246,7 @@ ta_type.moc.cpp: $(PDP4DIR)\src\ta\ta_type.h
 
 
 
-CSS_MOCS: \
+css_mocs: \
 	css_console.moc.cpp \
 	css_machine.moc.cpp \
 	css_qttype.moc.cpp \
@@ -299,7 +299,7 @@ PDP_MAKETA =\
 	$(PDP_HEADS)
 
 
-PDP_MOCS: \
+pdp_mocs: \
 	netstru_qtso.moc.cpp \
 	pdp_program_qtso.moc.cpp \
 	pdp_qtso.moc.cpp \
@@ -360,37 +360,41 @@ MAKETA_FLAGS = -css -autohx /D DEBUG $(INCLUDE) -win_dll
 #MAKETA_FLAGS = -css $(INCLUDE) -win_dll
 
 #note: also makes _TA_inst.h and .cpp
-ta_TA_type.h: $(TA_HEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
+ta_TA_type.hx: $(TA_HEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
   $(CD) $(PDP4DIR)/src/ta
   $(MAKETA) $(MAKETA_FLAGS) ta $(TA_HEADS) 
   
-pdp_TA_type.h: $(TA_HEADS) $(PDP_HEADS) 
+ta_TA_type.h: ta_TA_type.hx
+
+pdp_TA_type.hx: $(TA_HEADS) $(PDP_HEADS) 
   $(CD) $(PDP4DIR)/src/pdp
   $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA)
   
-bp_TA_type.h: $(TA_HEADS) $(PDP_MAKETA) $(BP_HEADS)
+pdp_TA_type.h: pdp_TA_type.hx 
+
+bp_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(BP_HEADS)
   $(CD) $(PDP4DIR)/src/bp
   $(MAKETA) $(MAKETA_FLAGS) bp $(BP_MAKETA) 
   
-leabra_TA_type.h: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
+bp_TA_type.h: bp_TA_type.hx
+
+leabra_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
   $(CD) $(PDP4DIR)/src/leabra
   $(MAKETA) $(MAKETA_FLAGS) leabra $(LEABRA_MAKETA) 
+
+leabra_TA_type.h: leabra_TA_type.hx
   
 clean: 
   del *.moc.cpp
  
 # NOTE: 'ta' and 'pdp' are the two libraries
 
-taiqtso_files: $(TAIQTSO_MOCS)
- 
-ta_mocs: $(TA_MOCS)
+taiqtso_files: taiqtso_mocs
 
 ta_files: ta_TA_type.h ta_mocs
   
-css_files: $(CSS_MOCS)
+css_files: css_mocs
 
-
-pdp_mocs: $(PDP_MOCS)
 
 pdp_files: pdp_TA_type.h pdp_mocs
 
@@ -398,10 +402,3 @@ bp_files: bp_TA_type.h
 
 leabra_files: leabra_TA_type.h
 
-
-maketa_files: \
-  ta_TA_type.h 
- 
-moc_files: \
-  $(TAIQTSO_MOCS) \
-  $(TA_MOCS)
