@@ -1131,7 +1131,9 @@ public:
   int			CallInit(Program* caller); 
   // runs the program's Init from a superProg Init, 0=success
   virtual bool		SetVar(const String& var_nm, const Variant& value);
-  // set the value of a program variable (in the cssProgSpace) prior to calling Run
+  // set the value of a program variable -- must be called after Init as it directly sets the underlying css variable -- can be called from within a running program
+  virtual bool		SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet = false);
+  // set the value of a program variable (using SetVar) based on the value of startup argument arg_nm -- typically called from startup scripts -- displays information about variable set if !quiet
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
   virtual void		Reset();

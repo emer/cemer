@@ -633,6 +633,7 @@ void DataTable::Copy_(const DataTable& cp) {
   data = cp.data;
   rows = cp.rows;
   data_flags = cp.data_flags;
+  auto_load_file = cp.auto_load_file;
 }
 
 void DataTable::Copy_NoData(const DataTable& cp) {
@@ -710,6 +711,28 @@ bool DataTable::ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs) 
     return da->cell_geom.Equal(cs->cellGeom());
   }
   return true;
+}
+
+bool DataTable::AutoLoadData() {
+  if(!HasDataFlag(AUTO_LOAD)) return false;
+  if(TestError(auto_load_file.empty(), "AutoLoadData", "auto_load_file is empty!"))
+    return false;
+  if(TestError(access(auto_load_file, F_OK) != 0, "AutoLoadData",
+	       "could not access auto_load_file:", auto_load_file))
+    return false;
+
+  if(auto_load_file.contains(".dtbl")) {
+    Load(auto_load_file);
+  }
+  else {
+    LoadData(auto_load_file);
+  }
+  return true;
+}
+
+void DataTable::Dump_Load_post() {
+  inherited::Dump_Load_post();
+  AutoLoadData();
 }
 
 int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {

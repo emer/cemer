@@ -2,10 +2,13 @@ leabra todo list:
 
 commit:
 
+* autoload datatable from file!  very convenient for large datatables -- small project files!
+
 ------------
 current:
 
-* nf strategy: sort cust list, etc
+* program SetVar should operate on the progvar and not on the underlying css guy -- then
+  it doesn't matter when it is called relative to Init, etc
 
 * add CountExpr that works like filter but just counts number of times it is true!
 

@@ -490,6 +490,7 @@ public:
     SAVE_ROWS 		= 0x0001, // save the row data associated with this table when saved with the project (column and other configuration information is always saved)
     HAS_CALCS 		= 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
     AUTO_CALC		= 0x0004, // automatically calculate columns
+    AUTO_LOAD		= 0x0008, // automatically load data table from auto_load_file when data table object is loaded (useful when not saving rows of a large table, to make the project file smaller, but the cost is that the project is no longer self contained)
   };
 
   /////////////////////////////////////////////////////////
@@ -500,6 +501,8 @@ public:
   // all the columns and actual data
   DataFlags		data_flags;
   // flags for various features and state of the data table
+  String		auto_load_file;
+  // file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
 
   cssProgSpace* 	calc_script;
   // #HIDDEN #NO_SAVE script object for performing column calculations
@@ -921,6 +924,10 @@ public:
 
   virtual void	DMem_ShareRows(MPI_Comm comm, int n_rows = 1);
   // #CAT_DMem Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table
+
+  virtual bool		AutoLoadData();
+  // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded
+  override void		Dump_Load_post();
 
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
   override String 	GetTypeDecoKey() const { return "DataTable"; }

@@ -2667,6 +2667,16 @@ bool Program::SetVar(const String& nm, const Variant& value) {
   return true;
 }
 
+bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet) {
+  String arg_str = taMisc::FindArgByName(arg_nm);
+  if(arg_str.empty()) return false; // no arg, no action
+  bool rval = SetVar(var_nm, arg_str);
+  if(TestError(!rval, "SetVarFmArg", "variable:",var_nm,
+	       "not found in program:", name)) return false;
+  taMisc::Info("Set", var_nm, "in program:", name, "to:", arg_str);
+  return true;
+}
+
 ProgVar* Program::FindVarName(const String& var_nm) const {
   ProgVar* sv = args.FindName(var_nm);
   if(sv) return sv;
