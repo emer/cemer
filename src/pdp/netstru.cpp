@@ -4320,6 +4320,8 @@ void Network::UpdateAfterEdit_impl(){
     no_save_units = true;
   }
 
+  ClearNetFlag(SAVE_UNITS_FORCE); // might have been saved in on state from recover file or something!
+
   UpdtAfterNetMod();
 }
 
@@ -4366,6 +4368,8 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
   int rval = inherited::Dump_Load_Value(strm, par);
   if(rval)
     LinkSendCons();
+
+  ClearNetFlag(SAVE_UNITS_FORCE);	// might have been saved in on state from recover file or something!
 
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
