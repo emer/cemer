@@ -722,7 +722,13 @@ bool DataTable::AutoLoadData() {
     return false;
 
   if(auto_load_file.contains(".dtbl")) {
+    String cur_nm = name;
+    DataFlags cur_data_flags = data_flags;
+    String cur_alf = auto_load_file;
     Load(auto_load_file);
+    name = cur_nm;
+    data_flags = cur_data_flags;
+    auto_load_file = cur_alf;
   }
   else {
     LoadData(auto_load_file);

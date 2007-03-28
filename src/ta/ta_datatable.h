@@ -477,20 +477,20 @@ SmartRef_Of(DataTableCols,TA_DataTableCols); // DataTableColsRef
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TA_API DataTable : public DataBlock_Idx {
-  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns table of data
+  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST table of data of different types
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
 public:
   static int		idx_def_arg;
-  // default arg val for functions returning index
+  // #HIDDEN #NO_SAVE default arg val for functions returning index
 
   enum DataFlags { // #BITS flags for data table
     DF_NONE		= 0, // #NO_BIT
     SAVE_ROWS 		= 0x0001, // save the row data associated with this table when saved with the project (column and other configuration information is always saved)
     HAS_CALCS 		= 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
     AUTO_CALC		= 0x0004, // automatically calculate columns
-    AUTO_LOAD		= 0x0008, // automatically load data table from auto_load_file when data table object is loaded (useful when not saving rows of a large table, to make the project file smaller, but the cost is that the project is no longer self contained)
+    AUTO_LOAD		= 0x0008, // #APPLY_IMMED automatically load data table from auto_load_file when data table object is loaded (useful when not saving rows of a large table, to make the project file smaller, but the cost is that the project is no longer self contained)
   };
 
   /////////////////////////////////////////////////////////
@@ -500,9 +500,9 @@ public:
   DataTableCols		data;
   // all the columns and actual data
   DataFlags		data_flags;
-  // flags for various features and state of the data table
+  // #APPLY_IMMED flags for various features and state of the data table
   String		auto_load_file;
-  // file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
+  // #CONDEDIT_ON_data_flags:AUTO_LOAD file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
 
   cssProgSpace* 	calc_script;
   // #HIDDEN #NO_SAVE script object for performing column calculations
