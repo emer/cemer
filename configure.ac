@@ -87,11 +87,11 @@ SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libz
 dnl  non-modal, for now
 AC_DEFINE([V3_COMPAT],[],[turn on version 3.x compatability code])
 
-dnl  Check to see if a conflicting version of pdp++ or css++ is installed
+dnl  Check to see if a conflicting version of pdp++ or  is installed
 if test x"$prefix" = x"NONE"; then
   prefix=/usr/local
 fi
-if test x"$debug" = x"false"; then
+if test x"$debug" = x"false" -a x"$bundle" = x"false"; then
   PDP_PROG_PDP
 fi
 
@@ -103,7 +103,7 @@ AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/..
 
 dnl  Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
 LDFLAGS="$LDFLAGS -L/opt/local/lib" dnl Harmless insertion for DarwinPorts
-AC_CHECK_LIB([termcap],[main]) # TODO: This is a temorary hack to get rpms working n Fedora that were uilt on Kubuntu
+AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working n Fedora that were built on Kubuntu
 AC_CHECK_LIB([m],[main])
 AC_CHECK_LIB([gslcblas],[main])
 AC_CHECK_LIB([gsl],[main],
@@ -289,13 +289,13 @@ AC_SUBST([CXXCPP])
 
 
 if test x"$bundle" = x"true"; then
-  bundle_name=pdp-${PACKAGE_VERSION}.app
-  bundle_dir=`pwd`/${bundle_name}
-  bindir=${bundle_dir}/Contents/MacOS
-  libdir=${bundle_dir}/Contents/Frameworks/libpdp_tacss-${LIB_VERSION_2}.framework
-  datadir= ${bundle_dir}/Contents/Resources
-  infodir=$datadir
-  includedir=${bundle_dir}/Contents/Frameworks/${bundle_name}.framework/Headers
+  bundle_name="pdp-${PACKAGE_VERSION}.app"
+  bundle_dir="`pwd`/${bundle_name}"
+  bindir="${bundle_dir}/Contents/MacOS"
+  libdir="${bundle_dir}/Contents/Frameworks/libpdp_tacss-${LIB_VERSION_2}.framework"
+  datadir="${bundle_dir}/Contents/Resources"
+  infodir="$datadir"
+  includedir="${bundle_dir}/Contents/Frameworks/${bundle_name}.framework/Headers"
 
   SIM_AC_CONFIGURATION_SETTING([OSX Bundle],[./$bundle_name])
 
