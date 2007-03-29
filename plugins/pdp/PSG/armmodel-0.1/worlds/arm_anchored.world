@@ -15,6 +15,7 @@
     <displayAxes>false</displayAxes>
     <displayCoM>false</displayCoM>
     <displayTextures>true</displayTextures>
+    <renderMethod>XLIB</renderMethod>
   </model:ObserverCam>
 
     <model:ArmModel>
