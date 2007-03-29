@@ -27,7 +27,6 @@ dnl  [1] http://www.gnu.org/software/libtool/manual.html Versioning
 AC_INIT([pdp],[4.0.2b1],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
 # Change both of these
 LIB_VERSION=0:0:0   #Set library version here
-# For other things
 LIB_VERSION_2=0.0.0
 
 AC_SUBST([PACKAGE_VERSION])
@@ -39,6 +38,9 @@ AC_DEFINE_DIR([LIB_VERSION],[LIB_VERSION]) # Co-opting this macro
 
 SIM_AC_CONFIGURATION_SETTING([PDP++ binary version],[${PACKAGE_VERSION}])
 SIM_AC_CONFIGURATION_SETTING([TA/CSS library version],[${LIB_VERSION}])
+
+# If you need universal binaries, please send us an email
+# SIM_AC_UNIVERSAL_BINARIES 
 
 AC_PREREQ([2.59])                                      dnl Autoconf 2.59 required
 AC_COPYRIGHT([
@@ -272,7 +274,10 @@ fi
 
 PDP_DETERMINE_SUFFIX                                dnl Infixing
 
-SIM_AC_CONFIGURATION_SETTING([Installation prefix],[${prefix}])
+if test x"bundle" = x"false"; then
+  SIM_AC_CONFIGURATION_SETTING([Installation prefix],[${prefix}])
+fi
+
 AC_SUBST([PDP_SUFFIX])
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
@@ -280,6 +285,22 @@ AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CXXCPP])
+
+
+if test x"$bundle" = x"true"; then
+  bundle_name=pdp-${PACKAGE_VERSION}.app
+  bundle_dir=`pwd`/${bundle_name}
+  bindir=${bundle_dir}/Contents/MacOS
+  libdir=${bundle_dir}/Contents/Frameworks/libpdp_tacss-${LIB_VERSION_2}.framework
+  datadir= ${bundle_dir}/Contents/Resources
+  infodir=$datadir
+  includedir=${bundle_dir}/Contents/Frameworks/${bundle_name}.framework/Headers
+
+  SIM_AC_CONFIGURATION_SETTING([OSX Bundle],[./$bundle_name])
+
+fi
+
+	
 
 AC_CONFIG_FILES([Makefile
 		src/maketa/Makefile

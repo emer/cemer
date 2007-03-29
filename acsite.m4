@@ -1,58 +1,3 @@
-dnl						 PDP_SET_VERSION
-dnl *************************************************************
-dnl 
-dnl *************************************************************
-dnl Copyright, 1995-2005, Regents of the University of Colorado,
-dnl Carnegie Mellon University, Princeton University.
-dnl
-dnl This file is part of TA/PDP++
-dnl
-dnl   TA/PDP++ is free software; you can redistribute it and/or modify
-dnl   it under the terms of the GNU General Public License as published by
-dnl   the Free Software Foundation; either version 2 of the License, or
-dnl   (at your option) any later version.
-dnl
-dnl   TA/PDP++ is distributed in the hope that it will be useful,
-dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-dnl   GNU General Public License for more details. 
-AC_DEFUN([PDP_SET_VERSION],[
-
-SIM_AC_CONFIGURATION_SETTING([VERSION],[$VERSION])
-BIN_MAJOR=`echo "$VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})([a-z]{0,3})/\1/'`
-SIM_AC_CONFIGURATION_SETTING([BIN_MAJOR],[$BIN_MAJOR])
-BIN_MINOR=`echo "$VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})([a-z]{0,3})/\2/'`
-BIN_POINT=`echo "$VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})([a-z]{0,3})/\3/'`
-BIN_SPECIAL=`echo "$VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})([a-z]{0,3})/\4/'`
-
-LIB_CURRENT=`echo "$LIB_VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})/\1/'`
-LIB_REVISION=`echo "$LIB_VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})/\2/'`
-LIB_AGE=`echo "$LIB_VERSION" | sed -r 's/([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{1,2})/\3/'`
-
-
-# AC_DEFINE([BIN_MAJOR],[${BIN_MAJOR}],[Binary major version])
-# AC_DEFINE([BIN_MINOR],[${BIN_MINOR}],[Binary minor version])
-# AC_DEFINE([BIN_POINT],[${BIN_POINT}],[Binary point version])
-# AC_DEFINE([BIN_SPECIAL],[${BIN_SPECIAL}],[Library special version])
-# AC_DEFINE([LIB_CURRENT],[${LIB_CURRENT}],[Library current])
-# AC_DEFINE([LIB_REVISION],[${LIB_REVISION}],[Library revision])
-# AC_DEFINE([LIB_AGE],[${LIB_AGE}],[Library age])
-# AC_DEFINE([BIN_VERSION],[${BIN_VERSION}],[Concatenated binary version])
-# AC_DEFINE([LIB_VERSION],[${LIB_VERSION}],[Concatenated library version])
-
-
-AC_SUBST([BIN_MAJOR])
-AC_SUBST([BIN_MINOR])
-AC_SUBST([BIN_POINT])
-AC_SUBST([BIN_SPECIAL])
-AC_SUBST([LIB_CURRENT])
-AC_SUBST([LIB_REVISION])
-AC_SUBST([LIB_AGE])
-AC_SUBST([BIN_VERSION])
-AC_SUBST([LIB_VERSION])
-
-])
-
 dnl 					         PDP_SVN_REVISION
 dnl *************************************************************
 dnl Set SVN_REV to the revision of the local repository
@@ -115,16 +60,6 @@ dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
 AC_DEFUN([PDP_SET_BUILD_MODE],[
-AC_ARG_ENABLE([readline],
-	      AC_HELP_STRING([--disable-readline],
-			     [Disable linking against the readline library.  @<:@default=enabled@:>@]),
-			     [readline=false],
-			     [readline=true])
-AC_ARG_WITH([rpm],
-	      AC_HELP_STRING([--with-rpm],
-			     [Enable the creation of rpms with `make rpm'.You must first `touch aminclude.am' and set PLATFORM_SUFFIX (see below).  @<:@default=disabled@:>@ ]),
-			     [rpm=true],
-			     [rpm=false])
 AC_ARG_ENABLE([gui],
 	      AC_HELP_STRING([--disable-gui],
 			     [Disable compiling with a GUI. @<:@default=enabled@:>@]),
@@ -155,16 +90,34 @@ AC_ARG_ENABLE([profile],
 			     [Enable profiling.  @<:@default=disabled@:>@]),
 			     [profile=true],
 			     [profile=false])
-AC_ARG_ENABLE([plugins],
-	      AC_HELP_STRING([--enable-plugins],
-			     [Enable plugin development support. Source code will be installed to `/usr/local/pdp++/src' and `/usr/local/pdp++/plugins' will be created.  @<:@default=disabled@:>@]),
-			     [plugins=true],
-			     [plugins=false])
 AC_ARG_ENABLE([maketa_opt],
 	      AC_HELP_STRING([--disable-maketa-opt],
 			     [Disable optimization of the maketa executeable. @<:@default=enabled@:>@]),
 			     [maketa_opt=false],
 			     [maketa_opt=true])
+AC_ARG_ENABLE([bundle],
+	      AC_HELP_STRING([--enable-bundle],
+			     [Create an OSX Bundle upon make install. Creates, e.g., pdp-4.0.2.app  @<:@default=disabled@:>@]),
+			     [bundle=true],
+			     [bundle=false])
+
+AC_ARG_ENABLE([plugins],
+	      AC_HELP_STRING([--enable-plugins],
+			     [Enable plugin development support. Source code will be installed to `/usr/local/pdp++/src' and `/usr/local/pdp++/plugins' will be created.  @<:@default=disabled@:>@]),
+			     [plugins=true],
+			     [plugins=false])
+AC_ARG_ENABLE([readline],
+	      AC_HELP_STRING([--disable-readline],
+			     [Disable linking against the readline library.  @<:@default=enabled@:>@]),
+			     [readline=false],
+			     [readline=true])
+#NOTE: This actually works with a few minor hiccups
+AC_ARG_WITH([rpm],
+	      AC_HELP_STRING([--with-rpm],
+			     [Enable the creation of rpms with `make rpm'.You must first `touch aminclude.am' and set PLATFORM_SUFFIX (see below).  @<:@default=disabled@:>@ ]),
+			     [rpm=true],
+			     [rpm=false])
+
 
 
 AM_CONDITIONAL([PLUGINS],[test $plugins = true])
@@ -5067,3 +5020,106 @@ case $host_os in
 esac
 ])
 
+# **************************************************************************
+# SIM_AC_MAC_CPP_ADJUSTMENTS
+#
+# Add --no-cpp-precomp if necessary. Without this option, the
+# Apple preprocessor is used on Mac OS X platforms, and it is
+# known to be very buggy.  It's better to use this option, so
+# the GNU preprocessor is preferred.
+#
+
+
+AC_DEFUN([SIM_AC_MAC_CPP_ADJUSTMENTS],
+[case $host_os in
+darwin*)
+  if test x"$GCC" = x"yes"; then
+    # FIXME: create a SIM_AC_CPP_OPTION macro
+    SIM_AC_CC_COMPILER_OPTION([-no-cpp-precomp], [CPPFLAGS="$CPPFLAGS -no-cpp-precomp"])
+  fi
+  ;;
+esac
+]) # SIM_AC_MAC_CPP_ADJUSTMENTS
+
+
+# **************************************************************************
+# This macro sets up the MAC_FRAMEWORK automake conditional, depending on
+# the host OS and whether $sim_ac_prefer_framework has been overridden or
+# not.
+
+AC_DEFUN([SIM_AC_MAC_FRAMEWORK],
+[case $host_os in
+darwin*)
+  : ${sim_ac_prefer_framework=true}
+  ;;
+esac
+: ${sim_ac_prefer_framework=false}
+# This AM_CONDITIONAL can be used to make Mac OS X specific make-rules
+# related to installing proper Frameworks instead.
+AM_CONDITIONAL([MAC_FRAMEWORK], [$sim_ac_prefer_framework])
+
+if $sim_ac_prefer_framework; then
+  ifelse([$1], , :, [$1])
+else
+  ifelse([$2], , :, [$2])
+fi
+]) # SIM_AC_MAC_FRAMEWORK
+
+
+############################################################################
+# Usage:
+#  SIM_AC_UNIVERSAL_BINARIES([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+#
+#  Determine whether we should build Universal Binaries. If yes, these
+#  shell variables are set:
+#
+#    $sim_ac_enable_universal (true if we are building Universal Binaries)
+#    $sim_ac_universal_flags (extra flags needed for Universal Binaries)
+#  
+#  The CFLAGS and CXXFLAGS variables will also be modified accordingly.
+#
+#  Note that when building Universal Binaries, dependency tracking will 
+#  be turned off.
+#
+#  Important: This macro must be called _before_ AM_INIT_AUTOMAKE.
+#
+# Author: Karin Kosina <kyrah@sim.no>.
+
+AC_DEFUN([SIM_AC_UNIVERSAL_BINARIES], [
+
+sim_ac_enable_universal=false
+
+
+case $host_os in
+  darwin* ) 
+    AC_ARG_ENABLE(
+      [universal],
+      AC_HELP_STRING([--enable-universal], [build Universal Binaries]), [
+        case $enableval in
+          yes | true) sim_ac_enable_universal=true ;;
+          *) ;;
+        esac])
+
+    AC_MSG_CHECKING([whether we should build Universal Binaries])   
+    if $sim_ac_enable_universal; then
+      AC_MSG_RESULT([yes])
+      SIM_AC_CONFIGURATION_SETTING([Build Universal Binaries], [Yes])
+
+      # need to build against Universal Binary SDK on PPC
+      if test x"$host_cpu" = x"powerpc"; then
+        sim_ac_universal_sdk_flags="-isysroot /Developer/SDKs/MacOSX10.4u.sdk"
+      fi
+
+      sim_ac_universal_flags="-arch i386 -arch ppc $sim_ac_universal_sdk_flags"
+      
+      CFLAGS="$sim_ac_universal_flags $CFLAGS"
+      CXXFLAGS="$sim_ac_universal_flags $CXXFLAGS"
+
+      # disable dependency tracking since we can't use -MD when cross-compiling
+      enable_dependency_tracking=no
+    else
+      AC_MSG_RESULT([no])
+      SIM_AC_CONFIGURATION_SETTING([Build Universal Binaries], [No (default)])
+    fi
+esac
+]) # SIM_AC_UNIVERSAL_BINARIES
