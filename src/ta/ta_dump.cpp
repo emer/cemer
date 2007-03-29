@@ -1435,7 +1435,9 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   dumpMisc::path_tokens.Reset();
   dumpMisc::vpus.Reset();
   dumpMisc::update_after.Reset();
-  dumpMisc::post_update_after.Reset();
+  // NOTE: post_update_after can include load commands so don't reset here
+  // -- is auto reset after running!
+  //  dumpMisc::post_update_after.Reset();
   tabMisc::root->plugin_deps.Reset();
 
   int c;

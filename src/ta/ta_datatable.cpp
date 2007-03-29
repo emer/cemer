@@ -721,6 +721,8 @@ bool DataTable::AutoLoadData() {
 	       "could not access auto_load_file:", auto_load_file))
     return false;
 
+  cerr << "DataTable: " << name << " auto loading data from: " << auto_load_file << endl;
+
   if(auto_load_file.contains(".dtbl")) {
     String cur_nm = name;
     DataFlags cur_data_flags = data_flags;
