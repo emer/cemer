@@ -423,7 +423,7 @@ public:
   float		gain;		// #DEF_600 gain (gamma) of the sigmoidal rate-coded activation function 
   float		nvar;		// #DEF_0.005 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
   float		avg_dt;		// #DEF_0.005 time constant for integrating activation average (computed across trials)
-  bool		send_delta;	// #DEF_false #READ_ONLY send only changes in activation when it changes beyond opt_thresh.delta: COPIED FROM LeabraSettle!
+  bool		send_delta;	// #DEF_true #READ_ONLY send only changes in activation when it changes beyond opt_thresh.delta: COPIED FROM LeabraSettle!
   IThrFun	i_thr;		// #DEF_STD how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing)
 
   void	Initialize();
@@ -1881,7 +1881,7 @@ public:
   int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
 
   int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)
-  bool		send_delta;	// #DEF_false #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
+  bool		send_delta;	// #DEF_true #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
 
   float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
   float		maxda;		// #GUI_READ_ONLY #SHOW maximum #CAT_Statistic #VIEW change in activation (delta-activation) over network; used in stopping settling

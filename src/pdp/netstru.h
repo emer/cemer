@@ -1591,7 +1591,7 @@ public:
  
   enum AutoBuildMode {
     AUTO_BUILD,			// automatically build the network after loading
-    PROMPT_BUILD,		// prompt about building after loading
+    PROMPT_BUILD,		// prompt about building after loading (if run in -nogui mode, it is automatically built without prompting)
     NO_BUILD,			// do not build network after loading
   };
 

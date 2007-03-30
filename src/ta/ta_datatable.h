@@ -490,7 +490,12 @@ public:
     SAVE_ROWS 		= 0x0001, // save the row data associated with this table when saved with the project (column and other configuration information is always saved)
     HAS_CALCS 		= 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
     AUTO_CALC		= 0x0004, // automatically calculate columns
-    AUTO_LOAD		= 0x0008, // #APPLY_IMMED automatically load data table from auto_load_file when data table object is loaded (useful when not saving rows of a large table, to make the project file smaller, but the cost is that the project is no longer self contained)
+  };
+
+  enum AutoLoadMode {
+    NO_AUTO_LOAD,		// do not automatically load data file
+    AUTO_LOAD,			// automatically load a data file after loading
+    PROMPT_LOAD,		// prompt about loading a data file after loading (if run in -nogui mode, it is automatically loaded)
   };
 
   /////////////////////////////////////////////////////////
@@ -501,8 +506,10 @@ public:
   // all the columns and actual data
   DataFlags		data_flags;
   // #APPLY_IMMED flags for various features and state of the data table
+  AutoLoadMode		auto_load;
+  // #APPLY_IMMED #CONDEDIT_OFF_data_flags:SAVE_ROWS whether to automatically load a data file from auto_load_file when data table object is loaded (only applicable when SAVE_ROWS is not active -- makes the project file smaller for large data tables, but the cost is that the project is no longer self contained)
   String		auto_load_file;
-  // #CONDEDIT_ON_data_flags:AUTO_LOAD file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
+  // #CONDEDIT_OFF_auto_loads:NO_AUTO_LOAD file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
 
   cssProgSpace* 	calc_script;
   // #HIDDEN #NO_SAVE script object for performing column calculations
@@ -698,7 +705,7 @@ public:
   // #CAT_Modify #MENU #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
   int 		FindValCol(DataCol* col, const Variant& val, int st_row = 0) const 
   { return col->FindVal(val, st_row); }
-  // #CAT_Access #MENU #FROM_GROUP_data find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
 
   /////////////////////////////////////////////////////////

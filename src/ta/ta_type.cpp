@@ -645,7 +645,7 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 //TODO: should provide a way to log these somehow
   if(taMisc::dmem_proc > 0) return;
 #endif
-  cerr << "***WARNING: " << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
+  cerr << "***WARNING: " << SuperCat(a, b, c, d, e, f, g, h, i) << endl;
   FlushConsole();
 #ifndef NO_TA_BASE
   if(cssMisc::cur_top) {
@@ -661,7 +661,7 @@ void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
 //TODO: should provide a way to log these somehow
   if(taMisc::dmem_proc > 0) return;
 #endif
-  cout << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
+  cout << SuperCat(a, b, c, d, e, f, g, h, i) << endl;
   FlushConsole();
 }
 
@@ -684,7 +684,7 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
 #endif
   // always send to console
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
-  cerr << "***CHECK ERROR: " << msg << "\n";
+  cerr << "***CHECK ERROR: " << msg << endl;
   FlushConsole();
   if (is_checking) {
     last_check_msg.cat(msg).cat("\n");
@@ -761,7 +761,7 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
   if(taMisc::dmem_proc > 0) return;
 #endif
   if (beep_on_error) cerr << '\a'; // BEL character
-  cerr << "***ERROR: " << SuperCat(a, b, c, d, e, f, g, h, i)  << "\n";
+  cerr << "***ERROR: " << SuperCat(a, b, c, d, e, f, g, h, i)  << endl;
   FlushConsole();
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {

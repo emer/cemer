@@ -663,7 +663,7 @@ void ProjectBase::AutoBuildNets() {
       int chs = taMisc::Choice("Build network: " + net->name, "Yes", "No");
       if(chs == 1) continue;
     }
-    cerr << "Network: " << net->name << " auto building" << endl;
+    taMisc::Info("Network:",net->name,"auto building");
     net->Build();
   }
 }

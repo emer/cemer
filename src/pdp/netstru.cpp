@@ -5122,7 +5122,14 @@ bool Network::Compute_Weights_Test(int trial_no) {
   if(wt_update == ON_LINE) return true;
   if(wt_update == BATCH) return false;
   if(wt_update == SMALL_BATCH) {
-    return (trial_no % small_batch_n_eff == 0);
+    int trial_no_eff = trial_no;
+#ifdef DMEM_COMPILE
+    if(dmem_trl_comm.nprocs > 1) {
+      trial_no_eff = ((trial_no_eff-1) / dmem_trl_comm.nprocs) + 1;
+      // subtract the 1 that was presumably added to trial_no, then add it back
+    }
+#endif
+    return (trial_no_eff % small_batch_n_eff == 0);
   }
   return false;
 }

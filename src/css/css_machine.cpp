@@ -5197,11 +5197,12 @@ void cssCmdShell::Shell_NoConsole_Run() {
 void cssCmdShell::FlushConsole() {
 #ifdef HAVE_QT_CONSOLE
   if(console_type == taMisc::CT_GUI) {
-    if(qcss_console)
+    if(qcss_console) {
       qcss_console->flushOutput(true); // wait for pager!
+      taiM->ProcessEvents();
+    }
   }
 #endif
-  taiM->ProcessEvents();
 }
 
 void cssCmdShell::Exit() {

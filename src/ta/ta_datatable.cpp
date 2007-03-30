@@ -595,6 +595,7 @@ int DataTable::idx_def_arg = 0;
 void DataTable::Initialize() {
   rows = 0;
   data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
+  auto_load = NO_AUTO_LOAD;
   m_dm = NULL; // returns new if none exists, or existing -- enables views to be shared
   calc_script = NULL;
   log_file = NULL;
@@ -633,6 +634,7 @@ void DataTable::Copy_(const DataTable& cp) {
   data = cp.data;
   rows = cp.rows;
   data_flags = cp.data_flags;
+  auto_load = cp.auto_load;
   auto_load_file = cp.auto_load_file;
 }
 
@@ -714,14 +716,21 @@ bool DataTable::ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs) 
 }
 
 bool DataTable::AutoLoadData() {
-  if(!HasDataFlag(AUTO_LOAD)) return false;
+  if(HasDataFlag(SAVE_ROWS)) return false;
+  if(auto_load == NO_AUTO_LOAD) return false;
+  
+  if(taMisc::use_gui && (auto_load == PROMPT_LOAD)) {
+    int chs = taMisc::Choice("Load data file: " + auto_load_file + " into data table: " + name, "Yes", "No");
+    if(chs == 1) return false;
+  }
+
   if(TestError(auto_load_file.empty(), "AutoLoadData", "auto_load_file is empty!"))
     return false;
   if(TestError(access(auto_load_file, F_OK) != 0, "AutoLoadData",
 	       "could not access auto_load_file:", auto_load_file))
     return false;
 
-  cerr << "DataTable: " << name << " auto loading data from: " << auto_load_file << endl;
+  taMisc::Info("DataTable:", name, "auto loading data from:", auto_load_file);
 
   if(auto_load_file.contains(".dtbl")) {
     String cur_nm = name;
