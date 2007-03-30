@@ -509,7 +509,7 @@ public:
   AutoLoadMode		auto_load;
   // #APPLY_IMMED #CONDEDIT_OFF_data_flags:SAVE_ROWS whether to automatically load a data file from auto_load_file when data table object is loaded (only applicable when SAVE_ROWS is not active -- makes the project file smaller for large data tables, but the cost is that the project is no longer self contained)
   String		auto_load_file;
-  // #CONDEDIT_OFF_auto_loads:NO_AUTO_LOAD file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
+  // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
 
   cssProgSpace* 	calc_script;
   // #HIDDEN #NO_SAVE script object for performing column calculations
