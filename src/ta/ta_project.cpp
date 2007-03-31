@@ -819,6 +819,12 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("UserDir", "\
  -- explicitly specifies location of user home folder (should normally not need to override)");
 
+  taMisc::AddArgName("-ua", "UserAppDir");
+  taMisc::AddArgName("--user_app_dir", "UserAppDir");
+  taMisc::AddArgName("user_app_dir=", "UserAppDir");
+  taMisc::AddArgNameDesc("UserAppDir", "\
+ -- explicitly specifies location of user app folder (should normally not need to override)");
+
   taMisc::AddArgName("-v", "CssDebug");
   taMisc::AddArgName("--verbose", "CssDebug");
   taMisc::AddArgName("verbose=", "CssDebug");
@@ -1006,7 +1012,10 @@ have_app_dir:
   taMisc::user_dir = taMisc::FindArgByName("UserDir");;
   if (taMisc::user_dir.empty())
     taMisc::user_dir = taPlatform::getHomePath();
-  taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
+  
+  taMisc::user_app_dir = taMisc::FindArgByName("UserAppDir");;
+  if (taMisc::user_app_dir.empty())
+    taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
   taMisc::prefs_dir = taPlatform::getAppDataPath(taMisc::app_name);
   // make sure it exists
   taPlatform::mkdir(taMisc::prefs_dir);

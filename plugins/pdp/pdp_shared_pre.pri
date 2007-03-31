@@ -21,6 +21,10 @@ DESTDIR = $${THIS_ROOT}/lib/plugins_pdp$${BUILD_EXT_SF}
 
 LIBS += -lpdp$${BUILD_EXT_US}-$${LIB_VER}
 # shared file includes tacss plugin folder already
+win32 {
+} else {
+  LIBS += -L$$(PDP4DIR)/src/pdp_lib/.libs
+}
 LIBS += -L$${THIS_ROOT}/lib/plugins_pdp$${BUILD_EXT_SF}
 LIBS += -L$$(PDP4DIR)/lib/plugins_pdp$${BUILD_EXT_SF}
 

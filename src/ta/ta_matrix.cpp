@@ -43,17 +43,22 @@ void CellRange::LimitRange(int row_to_, int col_to_) {
 }
 
 void CellRange::SetFromModel(const QModelIndexList& indexes) {
+//NOTE: this assumes that we only allow contiguous areas -- the
+//  input list could have discontiguous guys, but here we will
+//  just make an overal sel based on the max
+  // start with first guy, then expand it out
   if (indexes.count() > 0) {
     const QModelIndex& mi = indexes.first();
-    row_fr = mi.row();
-    col_fr = mi.column();
-    if (indexes.count() > 1) {
-      const QModelIndex& mi = indexes.last();
-      row_to = mi.row();
-      col_to = mi.column();
-    } else { // note: this prob doesn't happen
-      row_to = row_fr;
-      col_to = col_fr;
+    row_fr = row_to = mi.row();
+    col_fr = col_to = mi.column();
+    for (int i = 1; i < indexes.count(); ++i) {
+      const QModelIndex& mi = indexes.at(i);
+      int r = mi.row();
+      int c = mi.column();
+      if (r < row_fr) row_fr = r;
+      else if (r > row_to) row_to = r;
+      if (c < col_fr) col_fr = c;
+      else if (c > col_to) col_to = c;
     }
   } else {
     Set(0, 0, -1, -1);
@@ -713,7 +718,7 @@ const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int co
   if ((row_fr < 0) || (col_fr < 0) || (row_to < row_fr) || (col_to < col_fr))
     return _nilString;
   // allocate a reasonable best-guess buffer
-  STRING_BUF(rval, (col_fr - col_to + 1) * (row_fr - row_to + 1) * 10);
+  STRING_BUF(rval, (col_to - col_fr + 1) * (row_to - row_fr + 1) * 10);
   // to access in 2d, you just ignore the higher dimension
   for (int row = row_fr; row <= row_to; ++row) {
     if (row > 0) rval.cat('\n');

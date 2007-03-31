@@ -71,6 +71,10 @@ LIBS += -ltacss$${BUILD_EXT_US}-$${LIB_VER}
 LIBS += -L$${THIS_ROOT}/lib/plugins_tacss$${BUILD_EXT_SF}
 LIBS += -L$$(PDP4DIR)/lib/plugins_tacss$${BUILD_EXT_SF}
 LIBS +=	-L$$(PDP4DIR)/lib -L$${THIS_ROOT}/lib
+win32 {
+} else {
+  LIBS += -L$$(PDP4DIR)/src/ta_lib/.libs
+}
 
 # following is the basic list for taccs -- pdp extends it
 INCLUDEPATH +=\
