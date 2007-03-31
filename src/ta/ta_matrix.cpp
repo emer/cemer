@@ -1063,6 +1063,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   
   // NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
+  StructUpdate(true);
   bool changed = geom.SetSize(dims_);
   for (int i = 0; i < (dims_ - 1) ; ++i) {
     if(geom[i] != geom_[i]) {
@@ -1090,7 +1091,7 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
       EnforceFrames(geom_[dims_-1]); // does nothing if outer dim==0
     }
   }
-  DataChanged(DCR_ITEM_UPDATED);
+  StructUpdate(false);
 }
 
 void taMatrix::Slice_Collapse() {
@@ -1485,6 +1486,9 @@ void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
   //this is primarily for code-driven changes
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
+  }
+  else if (dcr == DCR_STRUCT_UPDATE_END) {
+    emit_layoutChanged();
   }
 }
 
