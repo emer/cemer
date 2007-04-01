@@ -68,7 +68,6 @@ void QConsole::clear() {
   getDisplayGeom();
   curPromptPos = 0;
   setAcceptRichText(false);	// just plain
-  noPager = false;
   quitPager = false;
   contPager = false;
   curOutputLn = 0;

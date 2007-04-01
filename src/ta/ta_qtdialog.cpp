@@ -733,8 +733,8 @@ void taiDataHostBase::InitGuiFields(bool) {
 
 void taiDataHostBase::Apply() {
   if (warn_clobber) {
-    int chs = taiChoiceDialog::ChoiceDialog
-      (NULL, "Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?!Apply!Revert!Cancel!");
+    int chs = taMisc::Choice("Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?",
+			     "Apply", "Revert", "Cancel");
     if(chs == 1) {
       Revert();
       return;

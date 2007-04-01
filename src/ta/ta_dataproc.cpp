@@ -1481,7 +1481,6 @@ void DataCalcLoop::Initialize() {
 void DataCalcLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateSpecDataTable();
-  UpdateColVars();
   for(int i=0;i<loop_code.size;i++) {
     ProgEl* pe = loop_code[i];
     if(pe->InheritsFrom(&TA_DataCalcAddDestRow) || pe->InheritsFrom(&TA_DataCalcSetDestRow))
@@ -1492,6 +1491,7 @@ void DataCalcLoop::UpdateAfterEdit_impl() {
 void DataCalcLoop::UpdateSpecDataTable() {
   src_cols.SetDataTable(GetSrcData());
   dest_cols.SetDataTable(GetDestData());
+  UpdateColVars();
 }
 
 void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1565,6 +1565,7 @@ String DataCalcLoop::GetDisplayName() const {
 
 void DataCalcLoop::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
+  UpdateColVars();
   if(GetSrcData()) {
     src_cols.GetColumns(GetSrcData());
     src_cols.CheckConfig(quiet, rval);
@@ -1649,10 +1650,24 @@ const String DataCalcLoop::GenCssPost_impl(int indent_level) {
 
 void DataCalcLoop::AddAllSrcColumns() {
   src_cols.AddAllColumns(GetSrcData());
+  UpdateColVars();
 }
 void DataCalcLoop::AddAllDestColumns() {
   dest_cols.AddAllColumns(GetDestData());
+  UpdateColVars();
 }
+
+DataOpEl* DataCalcLoop::AddSrcColumn(const String& col_name) {
+  DataOpEl* rval = src_cols.AddColumn(col_name, GetSrcData());
+  UpdateColVars();
+  return rval;
+}
+DataOpEl* DataCalcLoop::AddDestColumn(const String& col_name) {
+  DataOpEl* rval = dest_cols.AddColumn(col_name, GetDestData());
+  UpdateColVars();
+  return rval;
+}
+
 
 /////////////////////////////////////////////////////////
 //   data calc add dest row

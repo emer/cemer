@@ -48,7 +48,7 @@ public:
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically if data is a datatable, just for choosing column..
 
   DataCol*		col_lookup;
-  // #NO_SAVE #FROM_GROUP_data_cols column/channel in data table use -- just to lookup the chan_name, which is what is actually used -- this is reset to NULL after column is selected
+  // #NO_SAVE #FROM_GROUP_data_cols #APPLY_IMMED column/channel in data table use -- just to lookup the chan_name, which is what is actually used -- this is reset to NULL after column is selected
   String		chan_name;
   // name of the channel/column in the data to use 
 

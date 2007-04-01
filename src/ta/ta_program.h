@@ -78,7 +78,7 @@ public:
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
   int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
   double	real_val;	// #CONDSHOW_ON_var_type:T_Real real value
-  String	string_val;	// #CONDSHOW_ON_var_type:T_String string value
+  String	string_val;	// #CONDSHOW_ON_var_type:T_String #EDIT_DIALOG string value
   bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool boolean value
   TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
   taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #TYPE_ON_object_type object pointer value

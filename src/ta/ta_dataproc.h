@@ -529,15 +529,18 @@ public:
 
   override taList_impl*	children_() {return &loop_code;}	
 
-  virtual DataOpEl* AddSrcColumn(const String& col_name) { return src_cols.AddColumn(col_name, GetSrcData()); }
+  virtual DataOpEl* AddSrcColumn(const String& col_name);
   // #CAT_DataOp #BUTTON add a new source column to operate on
-  virtual DataOpEl* AddDestColumn(const String& col_name) { return dest_cols.AddColumn(col_name, GetDestData()); }
+  virtual DataOpEl* AddDestColumn(const String& col_name);
   // #CAT_DataOp #BUTTON add a new dest column to operate on
   virtual void	AddAllSrcColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 
   virtual void	AddAllDestColumns();
   // #BUTTON #CAT_Data add all columns from dest_data to the dest_cols list of columns 
   override void	UpdateSpecDataTable();
+
+  virtual ProgEl*	AddLoopCode(TypeDef* el_type)	{ return (ProgEl*)loop_code.New(1, el_type); }
+  // #BUTTON #TYPE_ProgEl add a new loop code element
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
