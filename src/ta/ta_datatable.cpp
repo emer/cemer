@@ -2096,9 +2096,72 @@ bool DataTable::CalcAllRows() {
 /////////////////////////////////////////////////////////
 // core data processing -- see taDataProc for more elaborate options
 
-void DataTable::Sort(DataCol* col1, bool ascending1,
-		     DataCol* col2, bool ascending2,
-		     DataCol* col3, bool ascending3) {
+void DataTable::Sort(int col1, bool ascending1,
+		     int col2, bool ascending2,
+		     int col3, bool ascending3) {
+
+  DataSortSpec spec;
+  if(col1 >= 0) {
+    DataCol* da = GetColData(col1);
+    if(da) {
+      DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+      sp->col_name = da->name;
+      if(ascending1) sp->order = DataSortEl::ASCENDING;
+      else sp->order = DataSortEl::DESCENDING;
+    }
+  }
+  if(col2 >= 0) {
+    DataCol* da = GetColData(col2);
+    if(da) {
+      DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+      sp->col_name = da->name;
+      if(ascending2) sp->order = DataSortEl::ASCENDING;
+      else sp->order = DataSortEl::DESCENDING;
+    }
+  }
+  if(col3 >= 0) {
+    DataCol* da = GetColData(col3);
+    if(da) {
+      DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+      sp->col_name = da->name;
+      if(ascending3) sp->order = DataSortEl::ASCENDING;
+      else sp->order = DataSortEl::DESCENDING;
+    }
+  }
+  
+  taDataProc::Sort_impl(this, &spec);
+}
+
+void DataTable::SortColName(const String& col1, bool ascending1,
+			    const String& col2, bool ascending2,
+			    const String& col3, bool ascending3) {
+
+  DataSortSpec spec;
+  if(col1.nonempty()) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col1;
+    if(ascending1) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col2.nonempty()) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col2;
+    if(ascending2) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col3.nonempty()) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col3;
+    if(ascending3) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  
+  taDataProc::Sort_impl(this, &spec);
+}
+
+void DataTable::SortCol(DataCol* col1, bool ascending1,
+			DataCol* col2, bool ascending2,
+			DataCol* col3, bool ascending3) {
 
   DataSortSpec spec;
   if(col1) {
@@ -2131,6 +2194,7 @@ bool DataTable::Filter(const String& filter_expr) {
   calc_script->ClearAll();
 
   STRING_BUF(code_str, 2048);
+  code_str += "this.DataUpdate(true);\n";
   code_str += "for(int row=this.rows-1;row >= 0; row--) {\n";
   for(int i=0;i<data.size; i++) {
     DataCol* da = data.FastEl(i);
@@ -2146,7 +2210,8 @@ bool DataTable::Filter(const String& filter_expr) {
 
   code_str += "if(" + filter_expr + ") continue;\n"; // if ok, continue
   code_str += "this.RemoveRows(row,1);\n";		     // else remove
-  CalcRowCodeGen(code_str);
+  code_str += "}\n";
+  code_str += "this.DataUpdate(false);\n";
   bool ok = calc_script->CompileCode(code_str);
   if(TestError(!ok, "Filter", "error in filter expression, see console for errors"))
     return false;

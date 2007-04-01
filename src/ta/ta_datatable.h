@@ -892,10 +892,18 @@ public:
   /////////////////////////////////////////////////////////
   // core data processing -- see taDataProc for more elaborate options
 
-  virtual void		Sort(DataCol* col1, bool ascending1 = true,
-			     DataCol* col2 = NULL, bool ascending2 = true,
-			     DataCol* col3 = NULL, bool ascending3 = true);
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  virtual void		Sort(int col1, bool ascending1 = true,
+			     int col2 = -1, bool ascending2 = true,
+			     int col3 = -1, bool ascending3 = true);
+  // #CAT_DataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  virtual void		SortColName(const String& col1, bool ascending1 = true,
+				    const String& col2 = "", bool ascending2 = true,
+				    const String& col3 = "", bool ascending3 = true);
+  // #CAT_DataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  virtual void		SortCol(DataCol* col1, bool ascending1 = true,
+				DataCol* col2 = NULL, bool ascending2 = true,
+				DataCol* col3 = NULL, bool ascending3 = true);
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual bool		Filter(const String& filter_expr);
   // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current colum values by name.  NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual bool		GroupMeanSEM(DataTable* dest_data,
