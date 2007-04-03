@@ -1,5 +1,32 @@
 Clip Data Interface
 
+QT DND SEMANTICS
+
+1. Drop on View itself:
+  item: NULL (only situation without an item)
+  case: between or before top level item
+    index: index of that position, ex. before 1st, 
+      index=0; between 1st & 2nd, index = 1
+  case: empty area at bottom
+    index: # top level items (i.e. "after last top")
+2. Drop on an item:
+  item: the item
+  index: # of children of that item (ie., "after last")
+    NOTE: this means the index is 1 for all our tree
+      guys that have a dummy child item!!
+3. Drop between two items:
+  item: parent of the items
+  index: what index would be of a new item there
+    ex. if before 1st, index=0l if after last, index=N
+  NOTE: there is a subtle difference between the feedback
+    and meaning of "before first" vs. "1st after parent",
+    and "after last" vs. "before next parent" -- this 
+    distinction is very subtle, and requires just a tiny
+    change in moving the mouse; also, the feedback is very
+    subtle, being just a slight difference in the width
+    of the feedback line
+    
+  
 REDESIGN
 
 * current is a strictly "drop/paste ON item"
@@ -39,7 +66,10 @@ Issues w/ New
   * if only support "after", then no way to place at 0
   * can't only support in items, because list could be
     empty, so need to support child of parent
-  
+* pasting ON is very item-dependent, and not that common:
+  SubSpec
+* DEF children -- need to basically treat the par of
+  list as if it were the list
   
 Ideas:
 
@@ -94,22 +124,80 @@ HOW TO
 * we currently have the "item on" and "parent" tests/actions
 
 
-CHANGES:
-
-Src ops: these will remain the same (???)
-
-Dst Ops:
-  Generic Parent:
-    Move/Paste/(Link) item into list/group
-     * at end
-     * at item (ie, items move down)
-     
 Mapping:
 
 DND:
 Tree:
   Move/Copy/(Link) into:
     we get exact place:
+
+
+NOTES:
+
+What ARE our paste requirements/possibilities?
+Order of precedence/ubiquity:
+
+As DST 
+  List: commensurable child items
+  Child-of-List: proxy for parent; commensurable child item
+  DefChildHost: proxy for the defchild List
+  
+What about item-based operations (not based on list)
+  SetSpec: drop a spec on commensurable host
+  SetVar: drop an object on a progvar
+  MakeVar: drop an object on the .args or .vars list
+  
+  
+As SRC:
+  Item: Copy or Cut
+  NOTE: never ambiguous, because we always choose 1 or more
+    items
+Notes: 
+  * whether an item can be Cut depends on if it is in
+  a List (assuming List agrees)
+  * don't care about defchild concept -- just drive by
+    the underlying list??? (EXCEPT: what about link lists?
+      the link parent is only derivable from the gui, not
+      the underlying guy!!!)
+  
+CHANGES:
+
+* Src ops: these will remain the same (???)
+* we should provide a new object directive to enable
+  some methods to expose "drop on" semantics, such as
+  "SetSpec"
+  * meth must take obj of type being passed
+  * for simplicity, maybe only permit single-src item?
+* for list ops:
+  * on parent: add at end
+  * on child: add at that position
+  NOTE: this provides all possibilities, and is intuitive
+* for multi guys, add the items to a special list, that is
+  really only designated for this purpose; we can then
+  have meths that would accept this list; automatically means
+  more than 1 item; items can be hetero
+* prob need to add a new query/action pair for multi guys
+* stream format:
+  * multi guys should now be that list, not the individual guys
+  * could still have same/similar taClip guys
+* add new DND dst op: "Update From" -- is basically a copy,
+  for when src item is >= class of dst item
+  
+dst ops: clip ops
+  Move Here -- list op
+  Copy Here -- list op
+  Update From -- item op
+action ops:
+  (based on dst directive, and commensurable src type on meth)
+ex. SetSpec
+  MakeVar(Arg)
+  
+Dst Ops:
+  Generic Parent:
+    Move/Paste/(Link) item into list/group
+     * at end
+     * at item (ie, items move down)
+     
 
 
 TEST SCENARIOS

@@ -144,7 +144,7 @@ protected:
   String		m_prev_sig; // the sig last time it changed
   
   override void UpdateAfterEdit_impl();
-  virtual String	GetFreshSig() const; // #IGNORE make a string that is the "fresh" signature of obj; as long as "fresh" stays the same, we don't stale on changes
+  virtual String	GetSchemaSig() const; // #IGNORE make a string that is the schema signature of obj; as long as schema stays the same, we don't stale on changes (ex, to value)
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval); //object, if any
   virtual const String	GenCssArg_impl();

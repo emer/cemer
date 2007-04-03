@@ -85,7 +85,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
     // only send stale if the schema changed, not just the value
-  String tfs = GetFreshSig();
+  String tfs = GetSchemaSig();
   // loading is a special case: initialize
   if (taMisc::is_loading) {
     m_prev_sig = tfs;
@@ -260,7 +260,7 @@ String ProgVar::GetDisplayName() const {
   return "invalid type!";
 }
 
-String ProgVar::GetFreshSig() const {
+String ProgVar::GetSchemaSig() const {
   STRING_BUF(rval, 125);
   // NOTE: the sig is not 100% optimized, but we keep it simple...
   // sig is following: name, type, obj_type, enum_type
