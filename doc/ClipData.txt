@@ -1,5 +1,117 @@
 Clip Data Interface
 
+REDESIGN
+
+* current is a strictly "drop/paste ON item"
+* from this, we derive list semantics
+
+* new design:
+  * dnd: full decoding of ON vs. list position
+  * (assumption) every possibility is decoded,
+    including the ambiguous cases of:
+    "1st in list" vs. "1st after list item"
+
+Issues w/ Current
+
+* multi-select should really not be treated serially
+  as seq of single guys, ex. prob with reversing multi
+  paste
+* the "item on"/"parent" cascade is not deterministic,
+  because ALL could accept, say, a "paste", and the
+  user may intend the 2nd semantic, but on the action,
+  because the 1st guy enabled it, he'd trap it, and do
+  it
+  
+* too complicated??? currently:
+
+  Gui Parent
+  Gui Item
+  Link
+  [Link's subclasses]
+  Base guy
+  [Base guy's subclasses]
+  
+Issues w/ New
+
+* clip semantics is spare vs. dnd:
+  * have to have something selected to do a dest op
+* in order to place something:
+  * if only support "after", then no way to place at 0
+  * can't only support in items, because list could be
+    empty, so need to support child of parent
+  
+  
+Ideas:
+
+* resolve the clip paucity by providing the full set
+  of possibilities:
+  ex:
+  Paste -> As Child of Item
+        -> After Item
+* note that with lists, and with the "between" semantics,
+  it will often NOT make sense to enable ON, therefore,
+  in practice, we just need to insure you can put something
+  anywhere
+
+* "after" seems intuitive:
+  * on an item, is typically "After Item"
+  * on list is "Into List"
+  * HOWEVER: may be more intuitive for the item to go
+    last in a list, when pasting on list
+    HOWEVER: prob not intuitive for item to go before?
+    HOWEVER: what if you intent is "i want the item
+      to go "here"" (not "after here") -- in this case,
+      a "before" semantics is more appropriate
+      
+  * by default, with lists, when you add something,
+    you really typically want it to go to the end --
+    putting it at the beginning is fairly non-intuitive
+    
+* prob not necessary to provide both "before" and "after" for
+  each guy, but would be helpful to clearly specify,
+  ex. "Paste Here" or "Move Here"
+  NOTE: konqueror uses exactly this language in its DND
+    menus, but only, ex. "Paste File" in its clip menu
+    
+* to help resolve the parent/item ambiguity, separate 
+  actions cleanly into "on item" vs. "in parent" actions
+  
+
+GOALS
+
+* try to avoid "massive" redesign (even if it would be better!)
+  regression, time, always takes longer than think, etc.
+* try to "extend" rather than "replace"
+* need to establish 100% unambiguous enabling/action semantics,
+  such that the possibilities are uniquely enumerated, and the
+  right guy will respond to the right command
+* solve multi-paste issue (order wrong, plus should be bulk,
+  not serial)
+
+  
+HOW TO
+
+* we currently have the "item on" and "parent" tests/actions
+
+
+CHANGES:
+
+Src ops: these will remain the same (???)
+
+Dst Ops:
+  Generic Parent:
+    Move/Paste/(Link) item into list/group
+     * at end
+     * at item (ie, items move down)
+     
+Mapping:
+
+DND:
+Tree:
+  Move/Copy/(Link) into:
+    we get exact place:
+
+
 TEST SCENARIOS
 
 These scenarios test some of the exceptions and specials.

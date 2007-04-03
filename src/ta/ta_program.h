@@ -88,6 +88,7 @@ public:
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
   
+  bool			schemaChanged(); // true if schema for most recent change differed from prev change
   void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
   virtual const String	GenCssType() const; // type name
   virtual const String	GenCssInitVal() const; // intial value
@@ -139,7 +140,8 @@ public:
   COPY_FUNS(ProgVar, inherited);
   TA_BASEFUNS(ProgVar);
 protected:
-  String		m_fresh_sig; // the sig from last change
+  String		m_this_sig; // the sig from most recent change
+  String		m_prev_sig; // the sig last time it changed
   
   override void UpdateAfterEdit_impl();
   virtual String	GetFreshSig() const; // #IGNORE make a string that is the "fresh" signature of obj; as long as "fresh" stays the same, we don't stale on changes

@@ -84,6 +84,20 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+    // only send stale if the schema changed, not just the value
+  String tfs = GetFreshSig();
+  // loading is a special case: initialize
+  if (taMisc::is_loading) {
+    m_prev_sig = tfs;
+    m_this_sig = tfs;
+  } else {
+    m_prev_sig = m_this_sig;
+    m_this_sig = tfs;
+    if (m_prev_sig != m_this_sig) {
+      setStale();
+    }
+  }
+
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -140,6 +154,10 @@ MemberDef* ProgVar::GetValMemberDef() {
   return NULL;
 }
 
+bool ProgVar::schemaChanged() {
+  return (m_this_sig != m_prev_sig);
+}
+ 
 void ProgVar::SetInt(int val) {
   var_type = T_Int;
   int_val = val;
@@ -215,12 +233,6 @@ void ProgVar::DataChanged(int dcr, void* op1, void* op2) {
     return; // don't send any further
   }
   inherited::DataChanged(dcr, op1, op2);
-  // only send stale if the schema changed, not just the value
-  String tfs = GetFreshSig();
-  if (m_fresh_sig != tfs) {
-    m_fresh_sig = tfs;
-    setStale();
-  }
 }
 
 String ProgVar::GetDisplayName() const {
@@ -610,7 +622,15 @@ void ProgExprBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
 }
 
 void ProgExprBase::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
-				    int dcr, void* op1_, void* op2_) {
+				    int dcr, void* op1_, void* op2_)
+{
+  // we only update ourself if the schema of a var changed
+  if (obj && obj->InheritsFrom(&TA_ProgVar)) {
+    ProgVar* pv = (ProgVar*)obj;
+    if (!pv->schemaChanged()) 
+      return;
+  }
+  
   expr = GetFullExpr();		// update our expr to reflect any changes in variables.
   if(owner)			// usu we are inside something else
     owner->UpdateAfterEdit();
