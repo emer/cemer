@@ -3158,16 +3158,18 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   // generic list paste allows any subtype of the base type
   bool right_type = ((list->el_base) && (ms->td() != NULL) && ms->td()->InheritsFrom(list->el_base));
 
+  //note: we no longer allow linking generally, only into LINK_GROUPs
   if (right_type)
-    allowed |= (taiClipData::EA_PASTE | taiClipData::EA_LINK |
-        taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_LINK | taiClipData::EA_DROP_MOVE);
+    allowed |= (taiClipData::EA_PASTE |
+        taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_MOVE);
 
   // LinkGroups only allow linking, not adding
-  if (md && md->HasOption("LINK_GROUP"))
+  if (md && md->HasOption("LINK_GROUP")) {
+    allowed |= (taiClipData::EA_LINK | taiClipData::EA_DROP_LINK);
     forbidden |= (taiClipData::EA_PASTE | taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_MOVE);
+  }
 
   //TODO: some groups allow promiscuous linking -- they must enable such themselves
-  // TODO: maybe we could add a virtual method "CanLink" or somesuch, to let our descendant more closely decide
 }
 
 // called by a child -- lists etc. can then allow drops on the child, to indicate inserting into the list, etc.

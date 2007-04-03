@@ -545,28 +545,12 @@ void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_
 void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
 
-  if ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_ITEM_MAX)) {
+  if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX)) {
     DataTable* dt = GET_MY_OWNER(DataTable); // cache
     if (!dt) return;
     // treat changes here as Struct changes on the table
     dt->StructUpdate(true);
     dt->StructUpdate(false);
-    
-    
-    // for most schema changes, we just call the datamodel layoutChanged
-    // note that groups themselves don't show in the datatable editor
-/*wrong    // it seems to handle Adds and Moves ok, but Deletes leave it
-    // with the same number of cols, unless we also send a removeColumn notify
-    if (dcr == DCR_GROUP_ITEM_REMOVE) {
-      // we just tell it the last col is being deleted, since it will refresh all
-      // in the layoutChanged notify
-      int col = dt->cols() - 1;
-      dt->m_dm->beginRemoveColumns(QModelIndex(), col, col);
-      dt->m_dm->endRemoveColumns();
-    }*/
-    if (dt->m_dm) {
-      dt->m_dm->emit_layoutChanged();
-    }
   }
   
 }
@@ -1550,10 +1534,7 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   if(TestError((st_row < 0 || st_row > rows), "InsertRows",
 	       "row not in range:",String(st_row))) return false;
   bool rval = true;
-  DataUpdate(true);// only data because for views, no change in column structure
-  if (m_dm)
-    m_dm->beginInsertRows(QModelIndex(), st_row, st_row + n_rows-1);
-//TODO:TEMP
+  DataUpdate(true);
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
     if(!ar->AR()->InsertFrames(st_row, n_rows))
@@ -1561,8 +1542,6 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   }
   if(rval)
     rows += n_rows;
-  if (m_dm)
-    m_dm->endInsertRows();
   DataUpdate(false); 
   return rval;
 }
@@ -1577,9 +1556,7 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
   if(TestError(!RowInRangeNormalize(end_row), "RemoveRows",
 	       "end row not in range:",String(end_row)))
     return false;
-  DataUpdate(true);		// only data because for views, no change in column structure
-  if (m_dm) m_dm->beginRemoveRows(QModelIndex(), st_row, end_row);
-  
+  DataUpdate(true);
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
     int act_row;
@@ -1587,8 +1564,6 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
       ar->AR()->RemoveFrames(act_row, n_rows);
   }
   rows -= n_rows;
-  
-  if (m_dm) m_dm->endRemoveRows();
   DataUpdate(false);
   return true;
 }
@@ -1623,17 +1598,13 @@ void DataTable::Reset() {
 
 void DataTable::ResetData() {
   if (rows == 0) return; // prevent erroneous m_dm calls
-  DataUpdate(true);// only data because for views, no change in column structure
-  if (m_dm) m_dm->beginRemoveRows(QModelIndex(), 0, rows - 1);
-  
+  StructUpdate(true);
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
     ar->AR()->Reset();
   }
   rows = 0;
-  
-  if (m_dm) m_dm->endRemoveRows();
-  DataUpdate(false);
+  StructUpdate(false);
   // also update itrs in case using simple itr mode
   ReadItrInit();
   WriteItrInit();
@@ -1642,15 +1613,8 @@ void DataTable::ResetData() {
 void DataTable::RowsAdding(int n, bool begin) {
   if (begin) {
     DataUpdate(true);// only data because for views, no change in column structure
-    if (m_dm) {
-//TEMP      m_dm->beginInsertRows(QModelIndex(), rows, rows + n);
-    }
   } else { // end
     rows += n;
-    
-    if (m_dm) {
-//TEMP      m_dm->endInsertRows();
-    }
     DataUpdate(false);
   }
 }

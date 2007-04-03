@@ -480,6 +480,7 @@ void taMatrix::Copy_(const taMatrix& cp) {
   if(TestError(!GetTypeDef()->InheritsFrom(cp.GetTypeDef()), "Copy_", "cannot copy",
 	       String(GetTypeDef()->name),"from",String(cp.GetTypeDef()->name))) return;
     
+  StructUpdate(true);
   // first, zero out current, if any
   SetArray_(NULL);
   if (cp.isFixedData()) {
@@ -493,10 +494,11 @@ void taMatrix::Copy_(const taMatrix& cp) {
       El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i));
     }
   }
-  // notifies
+  StructUpdate(false);
+/*nuke  // notifies
   if (m_dm) {
     m_dm->emit_dataChanged(0, 0, rowCount() - 1, dim(0) - 1);
-  }
+  }*/
 }
 
 bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
@@ -506,6 +508,7 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
   int base = FrameStartIdx(frame);
   // if same data types, we use an optimized copy, else must use variants
   // note that "Inherits" should imply same data type
+  DataUpdate(true);
   if (GetTypeDef()->InheritsFrom(src.GetTypeDef())) {
     for (int i = 0; i < n; ++i) {
       El_Copy_(FastEl_Flat_(base + i), src.FastEl_Flat_(i));
@@ -515,10 +518,12 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
       El_SetFmVar_(FastEl_Flat_(base + i), src.El_GetVar_(src.FastEl_Flat_(i)));
     }
   }
-  // notifies
+  DataUpdate(false);
+
+/*nuke  // notifies
   if (m_dm) {
     m_dm->emit_dataChanged(FrameToRow(frame), 0, FrameToRow(frame + 1) - 1, dim(0) - 1);
-  }
+  }*/
   return true;
 }
 
