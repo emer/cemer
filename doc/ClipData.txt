@@ -25,18 +25,25 @@ QT DND SEMANTICS
     change in moving the mouse; also, the feedback is very
     subtle, being just a slight difference in the width
     of the feedback line
-    
-  
+
+QUESTIONS
+
+* where should we put the new clip ops, like SetSpec?
+  maybe easiest in something already there, like
+  the link?
+  * means need special sublink for every guy with
+    special clip ops
+
 REDESIGN
 
-* current is a strictly "drop/paste ON item"
-* from this, we derive list semantics
+* all clip ops must be in same section on menu,
+  and be clearly distinct from non-clip ops
+* no non clip-ops for DND
+* dst fully handles multi-items (NOT via
+  iteration of clip handler)
+* new clip ops:
+  signature is similar to current, but like:
 
-* new design:
-  * dnd: full decoding of ON vs. list position
-  * (assumption) every possibility is decoded,
-    including the ambiguous cases of:
-    "1st in list" vs. "1st after list item"
 
 Issues w/ Current
 
@@ -48,6 +55,7 @@ Issues w/ Current
   user may intend the 2nd semantic, but on the action,
   because the 1st guy enabled it, he'd trap it, and do
   it
+
   
 * too complicated??? currently:
 
