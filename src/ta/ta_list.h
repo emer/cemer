@@ -212,6 +212,8 @@ protected:
     // if added item has empty name, this will get called, enabling a name to be set; index has been set
   virtual taHashVal El_GetHashVal_(void* it) const;
   // gets hash code based on key type in hash table; default is for string-key'ed lists (v3.2 default)
+  virtual TypeDef*	El_GetType_(void*) const {return GetElType();}
+    // should usually override to provide per-item typing where applicable
   virtual TALPtr El_GetOwner_(void*) const	{ return (TALPtr)this; }
   // who owns the el?
   virtual void*	El_SetOwner_(void* it) 		{ return it; }
@@ -262,7 +264,7 @@ public:
   ////////////////////////////////////////////////
 
   void*   	GetTA_Element_(int i, TypeDef*& eltd) const
-  { eltd = GetElType(); return (void*)SafeEl_(i); } // #IGNORE 
+  { void* rval = SafeEl_(i); if (rval) eltd = El_GetType_(rval); return rval; } // #IGNORE 
   void*		SafeEl_(int i) const
   { void* rval=NULL; if(InRange(i)) rval = el[i]; return rval; } 	// #IGNORE
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
@@ -343,6 +345,8 @@ public:
 
   virtual bool	MoveIdx(int from, int to);
   // #CAT_Modify Move element from index (from) to position (to) in list
+  virtual bool	MoveBeforeIdx(int from, int to);
+  // #CAT_Modify Move element from index (from) to just before position (to) in list; for end, use to=-1 or size
   virtual bool	SwapIdx(int pos1, int pos2);
   // #CAT_Modify Swap the elements in the two given positions on the list
 

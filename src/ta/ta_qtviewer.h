@@ -373,7 +373,7 @@ class TA_API ISelectable_PtrList: public taPtrList<ISelectable> { // for selecti
 INHERITED(taPtrList<ISelectable>)
 friend class ISelectableHost;
 public:
-  TypeDef*		Type1(); // data type of item
+  TypeDef*		Type1(); // data type of 1st item
   TypeDef*		CommonSubtype1N(); // greatest common data subtype of items 1-N
   TypeDef*		CommonSubtype2N(); // greatest common data subtype of items 2-N
   

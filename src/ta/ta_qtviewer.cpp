@@ -1242,9 +1242,13 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
       }
     }
   } else { // paste-like op, get item data
-    //TODO: maybe we should confirm only 1 item selected???
-    ms = taiMimeSource::New(QApplication::clipboard()->mimeData(QClipboard::Clipboard));
-    rval = EditActionD_impl_(ms, ea);
+    // confirm only 1 item selected for dst op -- Error is diagnostic, not operational
+    if (sel_items.size > 1) {
+      taMisc::Error("Paste-like clip operations only allowed for a single dest item");
+    } else {
+      ms = taiMimeSource::New(QApplication::clipboard()->mimeData(QClipboard::Clipboard));
+      rval = EditActionD_impl_(ms, ea);
+    }
   }
   if (ms) delete ms;
   if (cd) delete cd;
@@ -1364,7 +1368,7 @@ int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items) const {
       QApplication::clipboard()->mimeData(QClipboard::Clipboard));
     QueryEditActionsD_impl_(ms, allowed, forbidden);
     delete ms;
-  } else { // multi select
+  } else { // multi select -- no dst ops allowed
     for (int i = 0; i < sel_items.size; ++i) {
       ISelectable* is = sel_items.SafeEl(i);
       if (is)
@@ -1638,8 +1642,8 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
   
   for (int i = 0; i < t1n->methods.size; ++i) {
     MethodDef* md = t1n->methods.FastEl(i);
-    //look for all MENU methods with compatible arg0 type
-    if ((md->arg_types.size == 0) || !md->HasOption("MENU")) continue;
+    //look for all DROP methods with compatible arg0 type
+    if ((md->arg_types.size == 0) || !md->HasOption("DROP")) continue;
     
     TypeDef* arg0_typ = md->arg_types.FastEl(0);
     // must be a pointer to a class type

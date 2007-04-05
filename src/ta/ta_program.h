@@ -454,7 +454,7 @@ private:
 
 
 class TA_API CodeBlock: public ProgEl { 
-  // ##DEF_CHILD_prog_code a block of code (list of program elements), each executed in sequence
+  // a block of code (list of program elements), each executed in sequence
 INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of Program elements: the block of code
@@ -529,7 +529,7 @@ private:
 };
 
 class TA_API Loop: public ProgEl { 
-  // ##DEF_CHILD_loop_code #VIRT_BASE base class for loops
+  // #VIRT_BASE base class for loops
 INHERITED(ProgEl)
 public:
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop

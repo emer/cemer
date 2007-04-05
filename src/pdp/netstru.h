@@ -1403,11 +1403,11 @@ public:
   // #CAT_Structure update connection specs for all projections in the layer (only if changed from last update -- force = do regardless)
 
   virtual bool	SetLayerSpec(LayerSpec* layspec);
-  // #BUTTON #CAT_Structure set the layer specification
+  // #BUTTON #DROP #CAT_Structure set the layer specification
   virtual LayerSpec* GetLayerSpec()		{ return (LayerSpec*)NULL; }
   // #CAT_Structure get the layer spec for this layer (if used)
   virtual bool	SetUnitSpec(UnitSpec* unitspec);
-  // #BUTTON #CAT_Structure set unit spec for all units in layer
+  // #BUTTON #DROP #CAT_Structure set unit spec for all units in layer
   virtual void	SetUnitType(TypeDef* td);
   // #BUTTON #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
   virtual void	FixPrjnIndexes();

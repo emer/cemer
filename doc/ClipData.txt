@@ -38,7 +38,7 @@ REDESIGN
 
 * all clip ops must be in same section on menu,
   and be clearly distinct from non-clip ops
-* no non clip-ops for DND
+D* no non clip-ops for DND
 * dst fully handles multi-items (NOT via
   iteration of clip handler)
 * new clip ops:

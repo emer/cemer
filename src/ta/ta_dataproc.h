@@ -516,7 +516,7 @@ private:
 };
 
 class TA_API DataCalcLoop : public DataProg { 
-  // ##DEF_CHILD_loop_code ##DEF_CHILDNAME_Loop_Code enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
+  // enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
 INHERITED(DataProg)
 public:
   DataOpList		src_cols;

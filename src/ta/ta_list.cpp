@@ -175,14 +175,18 @@ bool taPtrList_impl::MoveIdx(int fm, int to) {
   if ((fm < 0) || (fm >= size) || (to < 0) || (to >= size)) return false;
 
   void* itm = el[fm];
-  int j;
-  for(j=fm; j < size-1; j++) {		// compact, if necc
-    el[j] = el[j+1];
-    UpdateIndex_(j);
-  }
-  for(j=size-1; j>to; j--) {
-    el[j] = el[j-1];
-    UpdateIndex_(j);
+  // algo is diff depending on whether fm is > or < to
+  if (fm < to) {
+    // 'to' gets pushed up, to make room for fm
+    for (int j = fm; j < to; j++) {		// compact, if necc
+      el[j] = el[j+1];
+      UpdateIndex_(j);
+    }
+  } else { // fm > to
+    for (int j = fm; j > to; j--) {
+      el[j] = el[j-1];
+      UpdateIndex_(j);
+    }
   }
   el[to] = itm;
   UpdateIndex_(to);
@@ -190,11 +194,40 @@ bool taPtrList_impl::MoveIdx(int fm, int to) {
   return true;
 }
 
+bool taPtrList_impl::MoveBeforeIdx(int fm, int to) {
+// consistent api, used to move the item fm to before the to index
+// to move to end, use to=-1 or size
+// note that fm=to-1 is also a noop
+  if ((fm < 0) || (fm >= size)) return false; // bad params
+  if ((to < 0) || (to > size)) to = size;
+  if ((fm == to) || ((fm + 1) == to)) return true; // nop
+
+  void* itm = el[fm];
+  // algo is diff depending on whether fm is > or < to
+  if (fm < to) {
+    for (int j = fm; j < (to - 1); j++) {
+      el[j] = el[j+1];
+      UpdateIndex_(j);
+    }
+    el[to-1] = itm;
+    UpdateIndex_(to-1);
+    DataChanged(DCR_LIST_ITEM_MOVED, itm, SafeEl_(to - 2)); // itm, itm_after, NULL at beg
+  } else { // fm > to
+    for (int j = fm; j > to; j--) {
+      el[j] = el[j-1];
+      UpdateIndex_(j);
+    }
+    el[to] = itm;
+    UpdateIndex_(to);
+    DataChanged(DCR_LIST_ITEM_MOVED, itm, SafeEl_(to - 1)); // itm, itm_after, NULL at beg
+  }
+  return true;
+}
+
 bool taPtrList_impl::MoveBefore_(void* trg, void* item) {
-  int trgi = (trg) ? FindEl_(trg) - 1 : size - 1; // last if none
+  int trgi = FindEl_(trg); // -1 if none, which means "last" for Before api
   int iti = FindEl_(item);
-  if((trgi < 0) || (iti < 0) || (iti == trgi)) return false;
-  return MoveIdx(iti, trgi);
+  return MoveBeforeIdx(iti, trgi); // validates all params
 }
 
 bool taPtrList_impl::MoveAfter_(void* trg, void* item) {

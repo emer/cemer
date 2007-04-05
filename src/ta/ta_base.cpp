@@ -3140,16 +3140,19 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   if (lst_itm) {
     // CUT generally always allowed (will either DELETE or UNLINK src item, depending on context)
     allowed |= taiClipData::EA_CUT;
-    // Delete only allowed if we are the owner
-    if (lst_itm->GetOwner() == list)
+    // Delete only allowed if we are the owner (assert forbiddens for multi-op cases)
+    if (lst_itm->GetOwner() == list) {
       allowed |= taiClipData::EA_DELETE;
-    else // otherwise, it is unlinking, not deleting
+      forbidden |= taiClipData::EA_UNLINK;
+    } else { // otherwise, it is unlinking, not deleting
+      forbidden |= taiClipData::EA_DELETE;
       allowed |= taiClipData::EA_UNLINK;
+    }
   }
 
   // DST ops
 
-  if (ms == NULL) return; // shouldn't happen -- might mean nothing on clipboard
+  if (ms == NULL) return; // SRC only query
   // if not a taBase type of object, no more applicable
   if (!ms->isBase()) return;
   if (!ms->isThisProcess())
@@ -3264,6 +3267,7 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     obj_idx = list->FindEl(obj);
   }
   
+    
   // All non-move paste ops (i.e., copy an object)
   if (
     (ea & (taiClipData::EA_DROP_COPY)) ||
@@ -3275,13 +3279,10 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
     taBase* new_obj = obj->MakeToken();
     //TODO: maybe the renaming should be delayed until put in list, or maybe better, done by list???
 //    new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
-    int new_idx;
+    // if dest is list itself, then targ item is the virtual new item (end+1)
     if (itm_idx < 0) 
-      new_idx = 0; // if dest is list, then insert at beginning
-    else if (itm_idx == (list->size - 1)) 
-      new_idx = -1; // if clicked on last, then insert at end
-    else new_idx = itm_idx + 1;
-    list->Insert(new_obj, new_idx);
+      itm_idx = list->size; 
+    list->Insert(new_obj, itm_idx); // at end if itm_idx=size
     new_obj->UnSafeCopy(obj);	// always copy after inserting so there is a full path & initlinks
     // retain the name if being copied from outside the list, otherwise give new name
     if (obj_idx < 0)
@@ -3302,16 +3303,15 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
   ) {
     if (obj == lst_itm) return 1; // nop
     if (obj_idx >= 0) { // in this list: just do a list move
-      // to_idx will differ depending on whether dst is before or after the src object
-      if (itm_idx < obj_idx) { // for before, to will be dst + 1
-        list->MoveIdx(obj_idx, itm_idx + 1);
-      } else if (itm_idx > obj_idx) { // for after, to will just be the dst
-        list->MoveIdx(obj_idx, itm_idx);
-      } else return taiClipData::ER_OK; // do nothing case of drop on self
+      list->MoveBeforeIdx(obj_idx, itm_idx); // noop for self ops
+      return taiClipData::ER_OK; // do nothing case of drop on self
     } else { // not in this list, need to do a transfer
       if (list->Transfer(obj)) { // should always succeed -- only fails if we already own item
       // was added at end, fix up location, if necessary
-        list->MoveIdx(list->size - 1, itm_idx + 1);
+        if (itm_idx >= 0) { // if <0, then means "at end" already
+          // for fm>to, to will just be the dst, because fm pushes to down
+          list->MoveIdx(list->size - 1, itm_idx);
+        }
       } else return taiClipData::ER_ERROR;
     }
     //NOTE: we never issue a data_taken() because we have actually moved the item ourself
@@ -3354,7 +3354,7 @@ int taOBase::ChildEditActionLD_impl_ext(const MemberDef* md, int itm_idx,
       }
       // ok, now move the guy into the right place
       taBase* new_el = (taBase*)new_el_;
-      list->MoveAfter(lst_itm, new_el);
+      list->MoveBefore(lst_itm, new_el);
       // call UAE to trigger associate update code, esp in parent lists etc.
       new_el->UpdateAfterEdit();
       return taiClipData::ER_OK;

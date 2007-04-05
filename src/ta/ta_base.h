@@ -1305,6 +1305,7 @@ class TA_API taBase_PtrList: public taPtrList<taBase> { // a primitive taBase li
 
 protected:
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
+  TypeDef*	El_GetType_(void* it) const {return ((TAPtr)it)->GetTypeDef();}
 
   void*		El_Ref_(void* it)	{ taBase::Ref((TAPtr)it); return it; }
   void*		El_unRef_(void* it)	{ taBase::unRef((TAPtr)it); return it; }
@@ -1349,7 +1350,7 @@ protected:
   IRefListClient*	m_own; // optional owner
   
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
-
+  TypeDef*	El_GetType_(void* it) const {return ((TAPtr)it)->GetTypeDef();}
   void*		El_Ref_(void* it);
   void*		El_unRef_(void* it);
 private:
@@ -1384,9 +1385,8 @@ public:
 
   override TypeDef* 	GetElType() const {return el_typ;}
   // #IGNORE Default type for objects in group
-  override void* 	GetTA_Element(int i, TypeDef*& eltd)
-  { return taPtrList_ta_base::GetTA_Element_(i, eltd); }
-  // #IGNORE a bracket opr
+  override void*        GetTA_Element(int i, TypeDef*& eltd)
+    { return taPtrList_ta_base::GetTA_Element_(i, eltd); }
   override taList_impl* children_() {return this;}
 
 
@@ -1483,6 +1483,7 @@ protected:
   void		El_SetIndex_(void* it, int idx) {((TAPtr)it)->SetIndex(idx);}
   void		El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST 
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
+  TypeDef*	El_GetType_(void* it) const {return ((TAPtr)it)->GetTypeDef();}
   TALPtr	El_GetOwner_(void* it) const { return (TABLPtr)((TAPtr)it)->GetOwner(); }
   void*		El_SetOwner_(void* it)	{ ((TAPtr)it)->SetOwner(this); return it; }
   bool		El_FindCheck_(void* it, const String& nm) const
