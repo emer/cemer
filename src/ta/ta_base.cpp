@@ -1555,7 +1555,18 @@ void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child
 int taBase::ChildEditAction(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea)
 {
   int rval = 0;
-  rval = ChildEditAction_impl(md, child, ms, ea);
+  if (ms && ms->isMulti()) { 
+  // note: we go backwards, since that seems to work best (ex. causes pasted items to end up in correct order) 
+    for (int i = 0; i < ms->count(); ++i){//TEMPms->count() - 1; i >= 0 ; --i) { 
+      ms->setIndex(i); 
+      // if a src op, then child is the operand so look up each iteration, else it is dest, so leave it be 
+      if (ea & taiClipData::EA_SRC_OPS) 
+        child = ms->tabObject(); 
+      rval = ChildEditAction_impl(md, child, ms, ea); //note: we just return the last value 
+    } 
+  } else { 
+    rval = ChildEditAction_impl(md, child, ms, ea); 
+  } 
   return rval;
 }
 
@@ -3193,16 +3204,11 @@ int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSou
 
     // decode src location
     if (list) {
-      // gop in reverse, to end up in right order
-      for (int i = ms->count() - 1; i >= 0 ; --i) {
-        ms->setIndex(i);
-        if (ms->isThisProcess()) {
-          rval = ChildEditActionLD_impl_inproc(md, item_idx, child, ms, ea);
-        } else {
-          // DST OP, SRC OUT OF PROCESS
-          rval = ChildEditActionLD_impl_ext(md, item_idx, child, ms, ea);
-        }
-        if (rval != taiClipData::ER_OK) break;
+      if (ms->isThisProcess()) {
+        rval = ChildEditActionLD_impl_inproc(md, item_idx, child, ms, ea);
+      } else {
+        // DST OP, SRC OUT OF PROCESS
+        rval = ChildEditActionLD_impl_ext(md, item_idx, child, ms, ea);
       }
     }
   }
