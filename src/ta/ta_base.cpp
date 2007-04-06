@@ -1535,7 +1535,19 @@ int taBase::EditAction_impl(taiMimeSource* ms, int ea) {
 void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child,
   taiMimeSource* ms, int& allowed, int& forbidden)
 {
-   ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
+  if (ms && ms->isMulti()) {
+    int item_allowed = 0;
+    int item_allowed_accum = -1;
+    for (int i = 0; i < ms->count(); ++i) {
+      ms->setIndex(i);
+      // try it for every item -- we only ultimately allow what is allowed for all items
+      ChildQueryEditActions_impl(md, child, ms, item_allowed, forbidden);
+      item_allowed_accum &= item_allowed;
+    }
+    allowed |= item_allowed_accum;
+  } else {
+    ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
+  }
 }
 
 void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
@@ -3142,16 +3154,14 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   // DST ops
 
   if (ms == NULL) return; // SRC only query
-  taiObjectsMimeItem* omi = ms->objects();
-  if (!omi) return; // not even tacss objs
-  TypeDef* ctd = omi->CommonSubtype();
-  // if not a taBase type(s) of object, no more applicable
-  if (!omi->allBase()) return;
+  // if not a taBase type of object, no more applicable
+  if (!ms->isBase()) return;
   if (!ms->isThisProcess())
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
 
   // generic list paste allows any subtype of the base type
-  bool right_type = ((list->el_base) && (ctd != NULL) && ctd->InheritsFrom(list->el_base));
+  bool right_type = ((list->el_base) && (ms->td() != NULL) && ms->td()->InheritsFrom(list->el_base));
+
 
   //note: we no longer allow linking generally, only into LINK_GROUPs
   if (right_type)

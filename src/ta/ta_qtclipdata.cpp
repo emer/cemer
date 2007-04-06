@@ -528,6 +528,7 @@ void taiMimeSource::Decode() {
   if (data(taiClipData::tacss_common, str) > 0) {
     Decode_common(str);
   }
+  objects(); // asserts
 }
 
 bool taiMimeSource::Decode_common(String arg) {
