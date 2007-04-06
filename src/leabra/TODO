@@ -2,11 +2,10 @@ leabra todo list:
 
 commit:
 
-* add DataUpdate brackets in Filter op -- still doesn't fix problem!
-* add col idx version of sort!
-
 ------------
 current:
+
+* nflix: savg cor!
 
 * assignexpr "resp = output.units.gp[movie_unit][0].act_eq" gives parse err on t_eq !
 
