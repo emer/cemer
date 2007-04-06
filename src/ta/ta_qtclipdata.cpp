@@ -339,6 +339,11 @@ taBase* taiObjectMimeItem::obj() {  // note: only called when we are InProcess
 //  taiObjectsMimeItem		//
 //////////////////////////////////
 
+void taiObjectsMimeItem::Initialize() {
+  m_all_base = 0;
+  items.SetBaseType(&TA_taiObjectMimeItem);
+}
+
 taiMimeItem* taiObjectsMimeItem::Extract(taiMimeSource* ms, 
     const String& subkey)
 {
@@ -385,13 +390,22 @@ fail:
   return false;
 }
 
+bool taiObjectsMimeItem::allBase() const {
+  if (m_all_base == 0) 
+    CommonSubtype(); // asserts it
+  return (m_all_base == 1);
+}
+
 TypeDef* taiObjectsMimeItem::CommonSubtype() const {
+  m_all_base = -1; // assume not
   if (count() == 0) return NULL;
   TypeDef* rval = item(0)->td();
   for (int i = 1; (rval && (i < count())); ++i) {
     rval = TypeDef::GetCommonSubtype(rval, 
       ((taiObjectMimeItem*)item(i))->td());
   }
+  if (rval && rval->InheritsFrom(&TA_taBase))
+    m_all_base = 1;
   return rval;
 }
 
@@ -485,7 +499,7 @@ void taiMimeSource::ms_destroyed() {
 taiObjectsMimeItem* taiMimeSource::objects() const {
   if (!mi)
     mi = (taiObjectsMimeItem*)const_cast<taiMimeSource*>(this)->GetMimeItem(&TA_taiObjectsMimeItem);
-  return mi;
+  return mi; // could be NULL if no tacss
 }
 
 

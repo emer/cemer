@@ -39,11 +39,14 @@ REDESIGN
 * all clip ops must be in same section on menu,
   and be clearly distinct from non-clip ops
 D* no non clip-ops for DND
+* maybe factor out src/dst handlers/queryers???
+  too complicated?
 * dst fully handles multi-items (NOT via
   iteration of clip handler)
 * new clip ops:
   signature is similar to current, but like:
-
+* should provide a way for contextually/dynamically
+  enabling actions, such as SetSpec
 
 Issues w/ Current
 
@@ -55,16 +58,8 @@ Issues w/ Current
   user may intend the 2nd semantic, but on the action,
   because the 1st guy enabled it, he'd trap it, and do
   it
-
-  
-* too complicated??? currently:
-
-  Gui Parent
-  Gui Item
-  Link
-  [Link's subclasses]
-  Base guy
-  [Base guy's subclasses]
+* a BrowseMe guy gets a gui par link -- really shouldn't
+  (but this is not a clip issue)  
   
 Issues w/ New
 

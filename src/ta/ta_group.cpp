@@ -38,7 +38,7 @@
 void taSubGroup::DataChanged(int dcr, void* op1, void* op2) {
   if (owner == NULL) return;
   // send LIST events to the owning group as a GROUP_ITEM event
-  if ((dcr >= DCR_LIST_ITEM_MIN) && (dcr <= DCR_LIST_ITEM_MAX))
+  if ((dcr >= DCR_LIST_ITEM_TO_GROUP_MIN) && (dcr <= DCR_LIST_ITEM_TO_GROUP_MAX))
     ((TAGPtr)owner)->DataChanged(dcr + DCR_ListItem_Group_Offset, op1, op2);
 }
 
@@ -115,8 +115,9 @@ void taGroup_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
 void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
   taList_impl::DataChanged(dcr, op1, op2); // normal processing
   // send LIST events to the root group as a GROUP_ITEM event
-  if (root_gp && (dcr >= DCR_LIST_ITEM_MIN) && (dcr <= DCR_LIST_ITEM_MAX)) {
-    root_gp->DataChanged(dcr + DCR_ListItem_Group_Offset, op1, op2);
+  if (root_gp && (dcr >= DCR_LIST_ITEM_TO_GROUP_ITEM_MIN) &&
+     (dcr <= DCR_LIST_ITEM_TO_GROUP_ITEM_MAX)) {
+    root_gp->DataChanged(dcr + DCR_ListItem_GroupItem_Offset, op1, op2);
   } 
   // GROUP_ITEM +/- and GROUP +/- events cause invalidation of the group iteration cache
   // have to trigger on items too, because iteration cache does funky stuff for size==0
@@ -686,17 +687,36 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md, int subgrp_i
 
   if (ms == NULL) return; // src op query
   // DST ops
-  // if not a taBase type of object, no more applicable
-  if (!ms->isBase()) return;
-  if (!ms->isThisProcess())
-    forbidden &= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
+  taiObjectsMimeItem* omi = ms->objects();
+  if (!omi) return; // not even tacss objs
+  TypeDef* ctd = omi->CommonSubtype();
+  // if not a taBase type(s) of object, no more applicable
+  if (!omi->allBase()) return;
+  if (ms->isThisProcess()) {
+    // cannot allow a group to be moved into self or one of its own child subgroups
+    for (int i = 0; i < omi->count(); ++i) {
+      taGroup_impl* grp = static_cast<taGroup_impl*>(omi->item(i)->obj());
+      if (!grp) continue; // shouldn't happen!
+      taGroup_impl* chk_grp = this;
+      // the grp must not be this one, or parent to it
+      while (chk_grp && (chk_grp != grp) && (chk_grp != grp->root_gp))
+        chk_grp = chk_grp->super_gp;
+      if (grp == chk_grp) { // nasty nasty!!!
+        forbidden |= taiClipData::EA_DROP_MOVE;
+        if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
+          forbidden |= taiClipData::EA_PASTE;
+      }
+    }
+  } else {
+    forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
+  }
 
   // generic group paste only allows exact type, so we check for each inheriting from the other, which means same
-  bool right_gptype = (ms->td() && (ms->td()->InheritsFrom(GetTypeDef()) && GetTypeDef()->InheritsFrom(ms->td())));
+  bool right_gptype = (ctd && (ctd->InheritsFrom(GetTypeDef()) && GetTypeDef()->InheritsFrom(ctd)));
 
-  //TODO: should we allow copy?
   if (right_gptype)
-    allowed |= (taiClipData::EA_PASTE | taiClipData::EA_DROP_MOVE);
+    allowed |= (taiClipData::EA_PASTE |
+        taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_MOVE);
 }
 
 // called by a child -- lists etc. can then allow drops on the child, to indicate inserting into the list, etc.

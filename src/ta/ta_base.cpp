@@ -1531,22 +1531,11 @@ int taBase::EditAction_impl(taiMimeSource* ms, int ea) {
 }
 
 // gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
+// called twice: ms=NULL for SRC ops, ms=val for DST ops
 void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child,
   taiMimeSource* ms, int& allowed, int& forbidden)
 {
-  if (ms && ms->isMulti()) {
-    int item_allowed = 0;
-    int item_allowed_accum = -1;
-    for (int i = 0; i < ms->count(); ++i) {
-      ms->setIndex(i);
-      // try it for every item -- we only ultimately allow what is allowed for all items
-      ChildQueryEditActions_impl(md, child, ms, item_allowed, forbidden);
-      item_allowed_accum &= item_allowed;
-    }
-    allowed |= item_allowed_accum;
-  } else {
-    ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
-  }
+   ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
 }
 
 void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
@@ -1566,18 +1555,7 @@ void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child
 int taBase::ChildEditAction(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea)
 {
   int rval = 0;
-  if (ms && ms->isMulti()) {
-    // note: we go backwards, since that seems to work best (ex. causes pasted items to end up in correct order)
-    for (int i = ms->count() - 1; i >= 0 ; --i) {
-      ms->setIndex(i);
-      // if a src op, then child is the operand so look up each iteration, else it is dest, so leave it be
-      if (ea & taiClipData::EA_SRC_OPS)
-        child = ms->tabObject();
-      rval = ChildEditAction_impl(md, child, ms, ea); //note: we just return the last value
-    }
-  } else {
-    rval = ChildEditAction_impl(md, child, ms, ea);
-  }
+  rval = ChildEditAction_impl(md, child, ms, ea);
   return rval;
 }
 
@@ -3133,7 +3111,7 @@ void taOBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* chil
 
 void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm,
   const taiMimeSource* ms, int& allowed, int& forbidden)
-{ //note: ONLY called if children_ valid
+{ //note: ONLY called if children_ valid/used
   taList_impl* list = children_();
   if (!list) return;
   // SRC ops
@@ -3153,13 +3131,16 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   // DST ops
 
   if (ms == NULL) return; // SRC only query
-  // if not a taBase type of object, no more applicable
-  if (!ms->isBase()) return;
+  taiObjectsMimeItem* omi = ms->objects();
+  if (!omi) return; // not even tacss objs
+  TypeDef* ctd = omi->CommonSubtype();
+  // if not a taBase type(s) of object, no more applicable
+  if (!omi->allBase()) return;
   if (!ms->isThisProcess())
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
 
   // generic list paste allows any subtype of the base type
-  bool right_type = ((list->el_base) && (ms->td() != NULL) && ms->td()->InheritsFrom(list->el_base));
+  bool right_type = ((list->el_base) && (ctd != NULL) && ctd->InheritsFrom(list->el_base));
 
   //note: we no longer allow linking generally, only into LINK_GROUPs
   if (right_type)
@@ -3197,7 +3178,7 @@ int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSou
   ChildQueryEditActionsL_impl(md, child, ms, allowed, forbidden);
   if (ea & forbidden) return -1; // requested op was forbidden
   //TODO: nuke eax, should prob never have been a separate variable
-  int eax = ea &= (allowed & (~forbidden));
+  ea &= (allowed & (~forbidden));
 
   if (ea & taiClipData::EA_SRC_OPS) {
     // for COPY, CUT, and DRAG, nothing more for us to do; just ack
@@ -3205,18 +3186,23 @@ int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSou
       return taiClipData::ER_OK;
 
     if (list) {
-      rval = ChildEditActionLS_impl(md, child, eax);
+      rval = ChildEditActionLS_impl(md, child, ea);
     }
   } else  if (ea & taiClipData::EA_DST_OPS) {
     if (ms == NULL) return taiClipData::ER_IGNORED;
 
     // decode src location
     if (list) {
-      if (ms->isThisProcess())
-        rval = ChildEditActionLD_impl_inproc(md, item_idx, child, ms, eax);
-      else {
-        // DST OP, SRC OUT OF PROCESS
-        rval = ChildEditActionLD_impl_ext(md, item_idx, child, ms, eax);
+      // gop in reverse, to end up in right order
+      for (int i = ms->count() - 1; i >= 0 ; --i) {
+        ms->setIndex(i);
+        if (ms->isThisProcess()) {
+          rval = ChildEditActionLD_impl_inproc(md, item_idx, child, ms, ea);
+        } else {
+          // DST OP, SRC OUT OF PROCESS
+          rval = ChildEditActionLD_impl_ext(md, item_idx, child, ms, ea);
+        }
+        if (rval != taiClipData::ER_OK) break;
       }
     }
   }
@@ -3227,6 +3213,7 @@ int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSou
 }
 
 int taOBase::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea) {
+//only called if list valid and enabled
   taList_impl* list = children_();
   if (!list) return taiClipData::ER_IGNORED;
   if (lst_itm == NULL) return taiClipData::ER_IGNORED;
@@ -3251,7 +3238,6 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md, int itm_idx,
   taList_impl* list = children_();
   if (!list) return taiClipData::ER_IGNORED;
   
-  if (!ms->isBase()) return taiClipData::ER_IGNORED; //not taBase
   // itm_idx, -1 means parent itself
   int obj_idx = -1; // -1 means not in this list
   taBase* obj = NULL;

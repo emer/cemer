@@ -159,7 +159,6 @@ public:
     EA_CLEAR		= 0x02000, // ex. for grid cells
     EA_UNLINK		= 0x00100,
     EA_LINK		= 0x00200,
-    EA_SET_AS_SUBGROUP	= 0x00400, //NOTE: not needed, will be nuked
     EA_SET_AS_SUBITEM	= 0x00800,
     EA_CLIP_OP_MASK	= 0x0FFF0, // masks the clipboard op codes
 
@@ -172,16 +171,16 @@ public:
     EA_PASTE_XXX	= EA_PASTE | EA_PASTE_APPEND, // all the pastes
     EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DELETE | EA_CLEAR | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
     EA_DROP_OPS		= (EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
-    EA_DST_OPS		= (EA_PASTE_XXX | EA_LINK | EA_SET_AS_SUBGROUP |
+    EA_DST_OPS		= (EA_PASTE_XXX | EA_LINK  |
       EA_SET_AS_SUBITEM | EA_DROP_OPS), //
-    EA_FORB_ON_SRC_CUT	= (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM), // dst ops forbidden when the source operation was Cut
-    EA_FORB_ON_SRC_READONLY = (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM |
+    EA_FORB_ON_SRC_CUT	= (EA_LINK  | EA_SET_AS_SUBITEM), // dst ops forbidden when the source operation was Cut
+    EA_FORB_ON_SRC_READONLY = (EA_LINK  | EA_SET_AS_SUBITEM |
       EA_DROP_LINK | EA_DROP_MOVE), 
       // dst ops forbidden when the source operation forbade Cut/Move
-    EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK | EA_SET_AS_SUBGROUP |
+    EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK  |
       EA_SET_AS_SUBITEM | EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
         // dst ops forbidden when multi source operands selected
-    EA_IN_PROC_OPS	= (EA_LINK | EA_SET_AS_SUBGROUP | EA_SET_AS_SUBITEM |
+    EA_IN_PROC_OPS	= (EA_LINK  | EA_SET_AS_SUBITEM |
       EA_DROP_LINK), // ops that require an in-process src
 #endif
     EA_OP_MASK		= 0xFFFF0 // masks all operation codes
@@ -391,6 +390,7 @@ private:
 class TA_API taiObjectsMimeItem: public taiMultiMimeItem { // for tacss objects
 INHERITED(taiMultiMimeItem)
 public:
+  bool			allBase() const; // true if all objs derive from taBase
   bool			isMulti() const  {return (items.size > 1);}
   taiObjectMimeItem*	item(int idx) const 
     {return (taiObjectMimeItem*)items.FastEl(idx);} 
@@ -404,9 +404,10 @@ public: // TAI_xxx instance interface -- used for dynamic creation
     const String& mimetype = _nilString);
 
 protected:
+  mutable unsigned char	m_all_base; // 0=unknown; -1 no, 1=yes
   override bool		Constr_impl(const String&);
 private:
-  void	Initialize() {items.SetBaseType(&TA_taiObjectMimeItem);}
+  void	Initialize();
   void	Destroy() {}
 }; //
 
@@ -435,7 +436,7 @@ public:
   int			srcAction() const {return m_src_action;}
   bool			isThisProcess() const {return m_this_proc;} // override
   
-  taiObjectsMimeItem*	objects() const; // convenience GetMimeItem accessor for this type
+  taiObjectsMimeItem*	objects() const; // convenience GetMimeItem accessor for this type -- NULL if not tacss on clipboard
 
   taiMimeItem*		GetMimeItem(TypeDef* td, const String& subkey = _nilString);
     // get a guy of specified taiMimeItem type, using optional subkey; NULL if that type not supported; note: we check our list first, before trying to make a new guy

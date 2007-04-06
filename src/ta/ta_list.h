@@ -128,36 +128,37 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   
   DCR_ARY_SIZE_CHANGED, // 4 this is the only notify we send from arrays
   
-  DCR_LIST_INIT,	// 5 
-  DCR_LIST_ITEM_UPDATE,	// 6 op1=item
-  DCR_LIST_ITEM_INSERT,	// 7 op1=item, op2=item_after, null=at beginning
-  DCR_LIST_ITEM_REMOVE,	// 8 op1=item -- note, item not DisOwned yet, but has been removed from list
-  DCR_LIST_ITEM_MOVED,	// 9 op1=item, op2=item_after, null=at beginning
-  DCR_LIST_ITEMS_SWAP,	// 10 op1=item1, op2=item2
-  DCR_LIST_SORTED,	// 11 after sorting; ops not used
+  DCR_LIST_INIT = 10,	// 10 
+  DCR_LIST_ITEM_UPDATE,	// 11 op1=item
+  DCR_LIST_ITEM_INSERT,	// 12 op1=item, op2=item_after, null=at beginning
+  DCR_LIST_ITEM_REMOVE,	// 13 op1=item -- note, item not DisOwned yet, but has been removed from list
+  DCR_LIST_ITEM_MOVED,	// 14 op1=item, op2=item_after, null=at beginning
+  DCR_LIST_ITEMS_SWAP,	// 15 op1=item1, op2=item2
+  DCR_LIST_SORTED,	// 16 after sorting; ops not used
 
-  DCR_GROUP_UPDATE,	// 12 op1=group, typically called for group name change
-  DCR_GROUP_INSERT,	// 13 op1=group, op2=group_after, null=at beginning
-  DCR_GROUP_REMOVE,	// 14 op1=group -- note, item not DisOwned yet, but has been removed from list
-  DCR_GROUP_MOVED,	// 15 op1=group, op2=group_after, null=at beginning
-  DCR_GROUPS_SWAP,	// 16 op1=group1, op2=group2
+  DCR_GROUP_UPDATE = 21,// 21 op1=group, typically called for group name change
+  DCR_GROUP_INSERT,	// 22 op1=group, op2=group_after, null=at beginning
+  DCR_GROUP_REMOVE,	// 23 op1=group -- note, item not DisOwned yet, but has been removed from list
+  DCR_GROUP_MOVED,	// 24 op1=group, op2=group_after, null=at beginning
+  DCR_GROUPS_SWAP,	// 25 op1=group1, op2=group2
+  DCR_GROUPS_SORTED,	// 26 op1=group1, op2=group2
   
-  DCR_GROUP_ITEM_UPDATE, // 17 op1=item
-  DCR_GROUP_ITEM_INSERT, // 18 op1=item, op2=item_after, null=at beginning
-  DCR_GROUP_ITEM_REMOVE, // 19 op1=item -- note, item not DisOwned yet, but has been removed from list
-  DCR_GROUP_ITEM_MOVED,	 // 20 op1=item, op2=item_after, null=at beginning
-  DCR_GROUP_ITEMS_SWAP,	 // 21 op1=item1, op2=item2
-  DCR_GROUP_LIST_SORTED, // 22 after sorting; ops not used
+  DCR_GROUP_ITEM_UPDATE = 31, // 31 op1=item
+  DCR_GROUP_ITEM_INSERT, // 32 op1=item, op2=item_after, null=at beginning
+  DCR_GROUP_ITEM_REMOVE, // 33 op1=item -- note, item not DisOwned yet, but has been removed from list
+  DCR_GROUP_ITEM_MOVED,	 // 34 op1=item, op2=item_after, null=at beginning
+  DCR_GROUP_ITEMS_SWAP,	 // 35 op1=item1, op2=item2
+  DCR_GROUP_LIST_SORTED, // 36 after sorting; ops not used
 
-  DCR_UPDATE_VIEWS, 	 // 23 no ops; sent for UpdateAllViews
-  DCR_REBUILD_VIEWS, 	 // 24 no ops; sent to DataViews for RebuildAllViews
+  DCR_UPDATE_VIEWS = 40, // 40 no ops; sent for UpdateAllViews
+  DCR_REBUILD_VIEWS, 	 // 41 no ops; sent to DataViews for RebuildAllViews
   
-  DCR_STRUCT_UPDATE_BEGIN, // 25 for some updating, like doing Layer->Build, better for gui to just do one
-  DCR_STRUCT_UPDATE_END,  // 26 update operation at the end of everything
-  DCR_DATA_UPDATE_BEGIN, // 27 for some data changes, like various log updates, better for gui to just do one
-  DCR_DATA_UPDATE_END,  // 28 update operation at the end of everything
+  DCR_STRUCT_UPDATE_BEGIN = 50, // 50 for some updating, like doing Layer->Build, better for gui to just do one
+  DCR_STRUCT_UPDATE_END,  // 51 update operation at the end of everything
+  DCR_DATA_UPDATE_BEGIN = 60, // 60 for some data changes, like various log updates, better for gui to just do one
+  DCR_DATA_UPDATE_END,  // 61 update operation at the end of everything
     
-  DCR_ITEM_DELETING,  // 29 NOTE: not used in standard DataChanged calls, but may be used by forwarders, ex. taDataMonitor
+  DCR_ITEM_DELETING = 70,  // 70 NOTE: not used in standard DataChanged calls, but may be used by forwarders, ex. taDataMonitor
 
 #ifndef __MAKETA__
   DCR_LIST_MIN		= DCR_LIST_INIT,
@@ -170,6 +171,10 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_LIST_ORDER_MAX	= DCR_LIST_SORTED,
   DCR_GROUP_ITEM_MIN	= DCR_GROUP_ITEM_UPDATE,
   DCR_GROUP_ITEM_MAX	= DCR_GROUP_LIST_SORTED,
+  DCR_LIST_ITEM_TO_GROUP_ITEM_MIN = DCR_LIST_ITEM_UPDATE, // for checking to translate for item->item
+  DCR_LIST_ITEM_TO_GROUP_ITEM_MAX = DCR_LIST_SORTED, // for checking to translate for item->item
+  DCR_LIST_ITEM_TO_GROUP_MIN = DCR_LIST_ITEM_UPDATE, // for checking to translate for item->item
+  DCR_LIST_ITEM_TO_GROUP_MAX = DCR_LIST_SORTED, // for checking to translate for item->item
 #endif
 };
 
@@ -180,7 +185,8 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
    (by adding the DCR_List_Group_Offset to the op code)
 */
 
-#define DCR_ListItem_Group_Offset	(DCR_GROUP_ITEM_MIN - DCR_LIST_ITEM_MIN)
+#define DCR_ListItem_GroupItem_Offset	(DCR_GROUP_ITEM_MIN - DCR_LIST_ITEM_TO_GROUP_ITEM_MIN)
+#define DCR_ListItem_Group_Offset	(DCR_GROUP_MIN - DCR_LIST_ITEM_TO_GROUP_MIN)
 
 typedef int taListItr; // pseudo class, compatible with the FOR_ITR_EL macro in ta_group
 

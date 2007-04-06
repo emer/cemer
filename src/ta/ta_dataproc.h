@@ -527,7 +527,7 @@ public:
   ProgVar_List		src_col_vars;  // #READ_ONLY source column variables
   ProgVar_List		dest_col_vars;  // #READ_ONLY dest column variables
 
-  override taList_impl*	children_() {return &loop_code;}	
+//no  override taList_impl*	children_() {return &loop_code;}	
 
   virtual DataOpEl* AddSrcColumn(const String& col_name);
   // #CAT_DataOp #BUTTON add a new source column to operate on

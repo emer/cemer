@@ -462,7 +462,7 @@ public:
  virtual ProgEl*	AddProgCode(TypeDef* el_type)	{ return (ProgEl*)prog_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new program code element
 
-  override taList_impl*	children_() {return &prog_code;}	
+//no  override taList_impl*	children_() {return &prog_code;}	
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
   override String	GetDisplayName() const;
@@ -539,8 +539,8 @@ public:
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   override taBase*	FindTypeName(const String& nm) const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  override taList_impl* children_() {return &loop_code;}
+  override String 	GetTypeDecoKey() const { return "ProgCtrl"; } //
+//no  override taList_impl* children_() {return &loop_code;}
 
   SIMPLE_COPY(Loop);
   COPY_FUNS(Loop, inherited);

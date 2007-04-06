@@ -1421,6 +1421,7 @@ int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as 
     rval = pdl->ChildEditAction_impl(par_md(), link, NULL, ea);
   }
   if (link) {
+    //note: item-as-parent does not apply to src context, so we omit it
     if (rval == taiClipData::ER_IGNORED)
       rval = link->EditAction_impl(NULL, ea);
   }
@@ -1483,6 +1484,7 @@ void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) co
   taiDataLink* link = this->link();
   if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, NULL, allowed, forbidden); // ex. CUT of child
   if (link) {
+    // note: item-as-parent doesn't apply to src actions, so we omit that
     link->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
   }
 }
