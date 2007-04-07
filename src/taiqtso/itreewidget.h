@@ -53,6 +53,7 @@ signals:
   
 protected:
   QPoint		drop_pos; // we capture this from the drop event
+  int			key_mods; // we captur this from the drop event
   bool			m_highlightRows;
   mutable void*		m_highlightColors; // a QMap
   
@@ -110,7 +111,8 @@ protected:
   uint			lazy_children : 1;
   uint			children_created : 1;
   
-  virtual void		dropped(const QMimeData* mime, const QPoint& pos) {}
+  virtual void		dropped(const QMimeData* mime, const QPoint& pos, 
+    int key_mods) {}
     // what to do when data dropped, usually we put up a drop context menu
   virtual void		itemExpanded(bool expanded); // called when exanded or closed
   virtual void		CreateChildren_impl() {} // override this to create the true children

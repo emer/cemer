@@ -280,6 +280,16 @@ bool T3DataView::isMapped() const {
 }
 
 
+void T3DataView::OnWindowBind(iT3DataViewFrame* vw) {
+  OnWindowBind_impl(vw);
+}
+
+ISelectable* T3DataView::par() const {
+  T3DataView* rval = parent();
+  if (rval) return rval;
+  else return NULL;
+}
+
 /* taiDataLink* T3DataView::par_link() const {
   if (hasParent()) return parent()->link();
   else     return NULL;
@@ -290,9 +300,6 @@ bool T3DataView::isMapped() const {
   else     return NULL;
 } */
 
-void T3DataView::OnWindowBind(iT3DataViewFrame* vw) {
-  OnWindowBind_impl(vw);
-}
 
 void T3DataView::ReInit() {
   ReInit_impl();

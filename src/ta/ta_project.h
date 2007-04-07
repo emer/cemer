@@ -196,6 +196,9 @@ public:
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
   String_Array		recent_files; // #NO_SHOW recently loaded files
   String_Array		recent_paths; // #NO_SHOW recently used paths
+#ifdef DEBUG
+  taBase_Group		test_group; // #EXPERT #NO_SAVE #LINK_GROUP group for testing clip ops etc.
+#endif
   
   virtual void  Options();
   // edit global settings/parameters (taMisc)

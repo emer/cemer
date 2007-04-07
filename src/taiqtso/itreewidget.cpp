@@ -156,6 +156,7 @@ no_hi: */
 
 void iTreeWidget::dropEvent(QDropEvent* e) {
   drop_pos = e->pos();
+  key_mods = e->keyboardModifiers();
   // we have to skip QTreeWidget because it does the evil gui move, esp. on Mac
   QTreeView::dropEvent(e);
 }
@@ -167,7 +168,7 @@ bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index,
 //NOTE: index doesn't seem to be needed -- parent always seems to indicate
 // the target of the drop action
   if (!item) return false;
-  item->dropped(data, drop_pos);
+  item->dropped(data, drop_pos, key_mods);
   return false; // never let Qt manipulate the items
 }
 
@@ -236,7 +237,8 @@ void iTreeWidget::setHighlightRows(bool value) {
 
 Qt::DropActions iTreeWidget::supportedDropActions() const {
   // we have to support both, because Move is def on Mac, Copy for others
-  return Qt::CopyAction | Qt::MoveAction;
+  // we have to support all, to allow the keyboard shortcuts on drop
+  return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
 

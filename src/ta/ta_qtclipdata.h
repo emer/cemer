@@ -144,46 +144,56 @@ INHERITED(QMimeData)
   Q_OBJECT
 public:
   enum EditAction { // extended definitions of clipboard operations for ta/pdp, divided into two field banks: OP and SRC
-    EA_SRC_CUT		= 0x00001, // flag indicating the source was a Clip/Cut operation
-    EA_SRC_COPY		= 0x00002, // flag indicating the source was a Clip/Copy operation
-    EA_SRC_DRAG		= 0x00004, // flag indicating the source was a Drag operation
-    EA_SRC_READONLY	= 0x00008, // flag to tell dest that Cut/Move/Link are not allowed, only Copy
+    EA_SRC_CUT		= 0x00000001, // flag indicating the source was a Clip/Cut operation
+    EA_SRC_COPY		= 0x00000002, // flag indicating the source was a Clip/Copy operation
+    EA_SRC_DRAG		= 0x00000004, // flag indicating the source was a Drag operation
+    EA_SRC_READONLY	= 0x00000008, // flag to tell dest that Cut/Move/Link are not allowed, only Copy
 
-    EA_SRC_MASK		= 0x0000F,  // note: SRC_ flags could be clear if src op unknown (ex. external mime format)
+    EA_SRC_MASK		= 0x0000000F,  // note: SRC_ flags could be clear if src op unknown (ex. external mime format)
 
-    EA_CUT		= 0x00010,
-    EA_COPY		= 0x00020,
-    EA_PASTE		= 0x00040,
-    EA_PASTE_APPEND	= 0x01000, // ex. for pasting new data rows into tables
-    EA_DELETE		= 0x00080,
-    EA_CLEAR		= 0x02000, // ex. for grid cells
-    EA_UNLINK		= 0x00100,
-    EA_LINK		= 0x00200,
-    EA_SET_AS_SUBITEM	= 0x00800,
-    EA_CLIP_OP_MASK	= 0x0FFF0, // masks the clipboard op codes
+    EA_CUT		= 0x00000010,
+    EA_COPY		= 0x00000020,
+    EA_PASTE		= 0x00000040, // ex. esp for putting an item as a peer to another
+    EA_PASTE_INTO	= 0x00000400, // ex. when pasting an item into a list itself
+    EA_PASTE_APPEND	= 0x00001000, // ex. for pasting new data rows into tables
+    EA_DELETE		= 0x00000080,
+    EA_CLEAR		= 0x00002000, // ex. for grid cells
+    EA_UNLINK		= 0x00000100,
+    EA_LINK		= 0x00000200,
+    EA_LINK_INTO	= 0x00000800,
+    EA_CLIP_OP_MASK	= 0x000FFFF0, // masks the clipboard op codes
 
-    EA_DRAG		= 0x10000, // initiation of a drag -- note that src can't distinguish move/copy/link ops
-    EA_DROP_COPY	= 0x20000,
-    EA_DROP_LINK	= 0x40000,
-    EA_DROP_MOVE	= 0x80000,
-    EA_DRAG_OP_MASK	= 0xF0000, // masks the drag/drop op codes
+    EA_DRAG		= 0x00100000, // initiation of a drag -- note that src can't distinguish move/copy/link ops
+    EA_DROP_COPY	= 0x00200000,
+    EA_DROP_LINK	= 0x00400000,
+    EA_DROP_MOVE	= 0x00800000,
+    EA_DROP_COPY_INTO	= 0x02000000,
+    EA_DROP_LINK_INTO	= 0x04000000,
+    EA_DROP_MOVE_INTO	= 0x08000000,
+    EA_DRAG_OP_MASK	= 0x0FF00000, // masks the drag/drop op codes
 #ifndef __MAKETA__
-    EA_PASTE_XXX	= EA_PASTE | EA_PASTE_APPEND, // all the pastes
+    EA_PASTE2		= EA_PASTE | EA_PASTE_INTO, // these guys combine both, to reduce clutter
+    EA_LINK2		= EA_LINK | EA_LINK_INTO,
+    EA_DROP_COPY2	= EA_DROP_COPY | EA_DROP_COPY_INTO,
+    EA_DROP_LINK2	= EA_DROP_LINK | EA_DROP_LINK_INTO,
+    EA_DROP_MOVE2	= EA_DROP_MOVE | EA_DROP_MOVE_INTO,
+    
+    EA_PASTE_XXX	= EA_PASTE | EA_PASTE_INTO | EA_PASTE_APPEND, // all the pastes
     EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DELETE | EA_CLEAR | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
-    EA_DROP_OPS		= (EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
-    EA_DST_OPS		= (EA_PASTE_XXX | EA_LINK  |
-      EA_SET_AS_SUBITEM | EA_DROP_OPS), //
-    EA_FORB_ON_SRC_CUT	= (EA_LINK  | EA_SET_AS_SUBITEM), // dst ops forbidden when the source operation was Cut
-    EA_FORB_ON_SRC_READONLY = (EA_LINK  | EA_SET_AS_SUBITEM |
-      EA_DROP_LINK | EA_DROP_MOVE), 
+    EA_DROP_OPS		= (EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE |
+      EA_DROP_COPY_INTO | EA_DROP_LINK_INTO | EA_DROP_MOVE_INTO),
+    EA_DST_OPS		= (EA_PASTE_XXX | EA_LINK | 
+      EA_LINK_INTO | EA_DROP_OPS), //
+    EA_FORB_ON_SRC_CUT	= (EA_LINK | EA_LINK_INTO), // dst ops forbidden when the source operation was Cut
+    EA_FORB_ON_SRC_READONLY = (EA_DROP_MOVE | EA_DROP_MOVE_INTO), 
       // dst ops forbidden when the source operation forbade Cut/Move
-    EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK  |
-      EA_SET_AS_SUBITEM | EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE),
-        // dst ops forbidden when multi source operands selected
-    EA_IN_PROC_OPS	= (EA_LINK  | EA_SET_AS_SUBITEM |
-      EA_DROP_LINK), // ops that require an in-process src
+    EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK | EA_LINK_INTO |
+       EA_DROP_OPS),
+        // dst ops forbidden when multi operands selected
+    EA_IN_PROC_OPS	= (EA_LINK | EA_LINK_INTO | EA_DROP_LINK |
+      EA_DROP_LINK_INTO), // ops that require an in-process src
 #endif
-    EA_OP_MASK		= 0xFFFF0 // masks all operation codes
+    EA_OP_MASK		= 0x0FFFFFF0 // masks all operation codes
 
   };
   

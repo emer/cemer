@@ -308,6 +308,7 @@ INHERITED(IDataLinkProxy)
 friend class ISelectableHost;
 public: // Interface Properties and Methods
   virtual MemberDef*	md() const {return NULL;} // memberdef in data parent, if any, of the selected item
+  virtual ISelectable*	par() const = 0; // gui parent, if any
   virtual taiDataLink*	par_link() const; // parent item's link -- this is the *data* parent (not the gui parent) -- for taBase links, gets from the link
   virtual MemberDef* 	par_md() const;// data parent item's (if any) md
   virtual ISelectableHost* host() const = 0; //
@@ -334,7 +335,8 @@ public: // Interface Properties and Methods
 
   ~ISelectable();
 protected:
-  void 			DropHandler(const QMimeData* mime, const QPoint& pos);
+  void 			DropHandler(const QMimeData* mime, const QPoint& pos, 
+    int key_mods);
     //  handles all aspects of a drag drop operation
   virtual int		EditActionD_impl_(taiMimeSource* ms, int ea) = 0;
     // do Dst op for single selected item; generally doesn't need extending
@@ -862,8 +864,11 @@ public:
   taiAction* 		editCutAction;
   taiAction* 		editCopyAction;
   taiAction* 		editPasteAction;
-  taiAction* 		editDeleteAction;
+  taiAction* 		editPasteIntoAction;
   taiAction* 		editLinkAction;
+  taiAction* 		editLinkIntoAction;
+  taiAction* 		editUnlinkAction;
+  taiAction* 		editDeleteAction;
   
   taiAction* 		viewRefreshAction;
   taiAction* 		viewSplitVerticalAction;
@@ -1623,6 +1628,7 @@ public:
   override bool 	canAcceptDrop(const QMimeData* mime) const;
   void*			linkData() const;
   virtual void		setName(const String& value); // is the first col, except for lists, which is 2nd -- note: only applicable for updates, not in constructor
+  iTreeViewItem*	parent() const; // strongly typed version of base
   iTreeView*		treeView() const;
 
   override void 	CreateChildren(); 
@@ -1665,6 +1671,7 @@ public: // IDataLinkClient interface
 public: // ISelectable interface
   override taiDataLink*	link() const {return IDataLinkClient::link();}
   override MemberDef*	md() const {return m_md;}
+  override ISelectable*	par() const;
 //obs  override String	view_name() const; // for members, the member name; for list items, the name if
   override ISelectableHost* host() const;
 //  override taiClipData*	GetClipData(int src_edit_action, bool for_drag);
@@ -1677,7 +1684,8 @@ protected:
 
 protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)
-  override void		dropped(const QMimeData* mime, const QPoint& pos);
+  override void		dropped(const QMimeData* mime, const QPoint& pos, 
+    int key_mods);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void 	itemExpanded(bool value);
   virtual bool		ShowNode_impl(int show, const String& context) const;

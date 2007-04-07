@@ -165,10 +165,11 @@ public:
   TA_DATAVIEWFUNS(T3DataView, taDataView);
 
 public: // ISelectable interface (only not in IDataLinkClient)
+  override ISelectableHost* host() const; //
   override MemberDef*	md() const {return m_md;}
+  override ISelectable*	par() const;
 //  override taiDataLink* par_link() const; // from parent data
 //  override MemberDef* 	par_md() const; // as for par_link
-  override ISelectableHost* host() const; //
   
 /*override int		EditAction_(ISelectable_PtrList& sel_items, int ea);
   override void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);

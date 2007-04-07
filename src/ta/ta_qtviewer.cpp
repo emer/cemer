@@ -1159,7 +1159,10 @@ QObject* ISelectable::clipHandlerObj() const {
 }
 
 // called from ui to handle drops
-void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos) {
+void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos, 
+    int mods) 
+{
+//Note: on Mac, "Ctrl" and test bits always refer to Command key (not Ctrl key)
   taiMimeSource* ms = taiMimeSource::New(mime);
   ISelectableHost* host_ = host(); //cache
   
@@ -1168,27 +1171,94 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos) {
   host_->drop_item = this;
   
   int ea = QueryEditActions_(ms);
+  int key_mods = mods & (Qt::ShiftModifier | Qt::ControlModifier |
+    Qt::AltModifier);
+  // only honor if user has chosen 1 and only 1 mod
+  // and its shortcut ops is ambiguous and available
+  if (key_mods == Qt::ShiftModifier) { // Move
+    if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2) 
+      goto show_menu;
+    host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_MOVE2); // is only one or the other
+    goto exit;
+  } else if (key_mods == Qt::ControlModifier) { // Copy
+    if ((ea & taiClipData::EA_DROP_COPY2) == taiClipData::EA_DROP_COPY2) 
+      goto show_menu;
+    host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_COPY2); // is only one or the other
+    goto exit;
+  } else if (key_mods == Qt::AltModifier) { // Link
+    if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2) 
+      goto show_menu;
+    host_->helperObj()->DropEditAction(ea & taiClipData::EA_DROP_LINK2); // is only one or the other
+    goto exit;
+  }
+  
+     
   // always show menu, for consistency
-  
+show_menu: 
+  { // block for jump
   taiMenu* menu = new taiMenu(widget(), taiMenu::normal, 0);
-  QAction* act;
-
-  act = menu->AddItem("&Move Here", taiAction::int_act,
-    host_->helperObj(),  SLOT(DropEditAction(int)), 
-    taiClipData::EA_DROP_MOVE, QKeySequence("Shift"));
-  act->setEnabled(ea & taiClipData::EA_DROP_MOVE);
+  QAction* act = NULL;
   
-  act = menu->AddItem("&Copy Here", taiAction::int_act,
-    host_->helperObj(),  SLOT(DropEditAction(int)),
-    taiClipData::EA_DROP_COPY, QKeySequence("Ctrl"));
-  act->setEnabled(ea & taiClipData::EA_DROP_COPY);
+//NOTE: "Xxx+" shortcuts are dummies, to hint the shortcircuit drop key
+// if has both variants of an op, no shortcuts and both, else yes
+  if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2) {
+    act = menu->AddItem("Move Here", taiAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)), 
+      taiClipData::EA_DROP_MOVE, QKeySequence());
+    act = menu->AddItem("Move Into", taiAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)), 
+      taiClipData::EA_DROP_MOVE_INTO, QKeySequence());
+  } else {
+    if (ea & taiClipData::EA_DROP_MOVE)
+      act = menu->AddItem("&Move Here", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)), 
+        taiClipData::EA_DROP_MOVE, QKeySequence("Shift+"));
+    else if (ea & taiClipData::EA_DROP_MOVE_INTO)
+      act = menu->AddItem("&Move Into", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)), 
+        taiClipData::EA_DROP_MOVE_INTO, QKeySequence("Shift+"));
+  }
   
-  act = menu->AddItem("&Link Here", taiAction::int_act,
-    host_->helperObj(),  SLOT(DropEditAction(int)),
-    taiClipData::EA_DROP_LINK, QKeySequence("Ctrl+Shift"));
-  act->setEnabled(ea & taiClipData::EA_DROP_LINK);
+  act = NULL;
+  if ((ea & taiClipData::EA_DROP_COPY2) == taiClipData::EA_DROP_COPY2) {
+    act = menu->AddItem("Copy Here", taiAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)),
+      taiClipData::EA_DROP_COPY, QKeySequence());
+    act = menu->AddItem("Copy Into", taiAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)),
+      taiClipData::EA_DROP_COPY_INTO, QKeySequence());
+  } else {
+    if (ea & taiClipData::EA_DROP_COPY)
+      act = menu->AddItem("&Copy Here", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)),
+        taiClipData::EA_DROP_COPY, QKeySequence("Ctrl+"));
+    else if (ea & taiClipData::EA_DROP_COPY_INTO)
+      act = menu->AddItem("&Copy Into", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)),
+        taiClipData::EA_DROP_COPY_INTO, QKeySequence("Ctrl+"));
+  }
+  
+  act = NULL;
+  if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2) {
+    act = menu->AddItem("Link Here", taiAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)),
+      taiClipData::EA_DROP_LINK, QKeySequence());
+    act = menu->AddItem("Link Into", taiAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)),
+      taiClipData::EA_DROP_LINK_INTO, QKeySequence());
+  } else {
+    if (ea & taiClipData::EA_DROP_LINK)
+      act = menu->AddItem("&Link Here", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)),
+        taiClipData::EA_DROP_LINK, QKeySequence("Alt+"));
+    else if (ea & taiClipData::EA_DROP_LINK_INTO)
+      act = menu->AddItem("&Link Into", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)),
+        taiClipData::EA_DROP_LINK_INTO, QKeySequence("Alt+"));
+  }
 
   // if any appropriate drop actions, then add them!
+  menu->AddSep();
   host_->UpdateMethodsActionsForDrop();
   host_->AddDynActions(menu);
   
@@ -1204,10 +1274,188 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos) {
   act = menu->menu()->exec(men_pos);
   //menu->deleteLater();
   delete menu;
-  delete ms;
+  } // block for jump
+exit:
   host_->drop_ms = NULL;
   host_->drop_item = NULL;
+  delete ms;
 }
+
+void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu) {
+  FillContextMenu_impl(menu);
+  int allowed = QueryEditActions_(sel_items);
+  FillContextMenu_EditItems_impl(menu, allowed);
+  taiDataLink* link = this->link();
+  if (link) link->FillContextMenu(menu);
+}
+
+void ISelectable::FillContextMenu(taiActions* menu) {
+  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+  FillContextMenu_impl(menu);
+  int allowed = QueryEditActions_(ms);
+  FillContextMenu_EditItems_impl(menu, allowed);
+  taiDataLink* link = this->link();
+  if (link) link->FillContextMenu(menu);
+}
+
+void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int ea) {
+  if (ea == 0) return;
+  if (menu->count() > 0)
+    menu->AddSep();
+  //TODO: maybe always show the basic ones, and only enable/disable
+  //TODO: provide a way to add these via already existing Actions (ex toolbar)
+//  cut copy paste link delete
+  taiAction* mel;
+  if (ea & taiClipData::EA_CUT) {
+    mel = menu->AddItem("Cu&t", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_CUT;
+  }
+  if (ea & taiClipData::EA_COPY) {
+    mel = menu->AddItem("&Copy", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_COPY;
+  }
+  
+  // Paste and Link guys are slightly complicated, because we can have 
+  // OP/OP_INTO variants, so we can't have shortcuts with both
+  if ((ea & taiClipData::EA_PASTE2) == taiClipData::EA_PASTE2) {
+    mel = menu->AddItem("Paste", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_PASTE;
+    mel = menu->AddItem("Paste Into", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_PASTE_INTO;
+  } 
+  else if (ea & taiClipData::EA_PASTE) {
+    mel = menu->AddItem("&Paste", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_PASTE;
+  } 
+  else if (ea & taiClipData::EA_PASTE_INTO) {
+    mel = menu->AddItem("&Paste Into", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_PASTE_INTO;
+  } 
+  
+  if (ea & taiClipData::EA_PASTE_APPEND) {
+    mel = menu->AddItem("Paste Append", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_PASTE_APPEND;
+  }
+  
+  if ((ea & taiClipData::EA_LINK) == taiClipData::EA_LINK) {
+    mel = menu->AddItem("Link", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_LINK;
+    mel = menu->AddItem("Link Into", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_LINK_INTO;
+  } 
+  else if (ea & taiClipData::EA_LINK) {
+    mel = menu->AddItem("&Link", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_LINK;
+  } 
+  else if (ea & taiClipData::EA_LINK_INTO) {
+    mel = menu->AddItem("&Link Into", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_LINK_INTO;
+  } 
+  
+  if (ea & taiClipData::EA_UNLINK) {
+    mel = menu->AddItem("&Unlink", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_UNLINK;
+  }
+  if (ea & taiClipData::EA_DELETE) {
+    mel = menu->AddItem("&Delete", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_DELETE;
+  }
+  taiDataLink* link = this->link();
+  if (link) link->FillContextMenu_EditItems(menu, ea);
+}
+
+taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
+  bool for_drag) const
+{
+  if (sel_items.size <= 1) { 
+    return GetClipDataSingle(src_edit_action, for_drag);
+  } else { 
+    return GetClipDataMulti(sel_items,src_edit_action, for_drag);
+  }
+}
+
+/*obs -- these were the versions that drove off the data parent,
+  not the gui parent -- it is often the same, but not esp. when
+  you have things like link groups
+taiDataLink* ISelectable::par_link() const {
+  taiDataLink* link = this->link();
+  if (link) {
+    taBase* tab = link->taData();
+    if (tab) tab = tab->GetOwner();
+    if (tab) {
+      return (taiDataLink*)tab->GetDataLink();
+    }
+  }
+  return NULL;
+}*/
+
+MemberDef* ISelectable::par_md() const {
+  // to get the par_md, we have to go up the grandparent, and ask for member addr
+  MemberDef* rval = NULL;
+  taBase* par_tab = NULL; //note: still only got the guy, not par
+  taBase* gpar_tab = NULL;
+  taiDataLink* link = this->link();
+  if (!link) goto exit;
+  par_tab = link->taData(); //note: still only got the guy, not par
+  if (!par_tab) goto exit;
+  par_tab = par_tab->GetOwner(); // now we have par
+  if (!par_tab) goto exit;
+  gpar_tab = par_tab->GetOwner();
+  if (!gpar_tab) goto exit;
+  rval = gpar_tab->FindMemberPtr(par_tab);
+exit:
+   return rval;
+}
+
+taiDataLink* ISelectable::par_link() const {
+  ISelectable* par = this->par();
+  if (par) return par->link();
+  else     return NULL;
+}
+
+/*obs
+MemberDef* ISelectable::par_md() const {
+// what we will return, is the md if the gui par recognizes us as a member
+  MemberDef* rval = NULL;
+  taBase* par_tab = NULL; 
+  taiDataLink* link = NULL;
+  ISelectable* par = this->par();
+  if (!par) goto exit;
+  link = par->link();
+  if (!link) goto exit;
+  par_tab = link->taData();
+  if (!par_tab) goto exit;
+   
+   
+  
+  
+  // to get the par_md, we have to go up the grandparent, and ask for member addr
+  taBase* gpar_tab = NULL;
+  taiDataLink* link = this->link();
+  if (!link) goto exit;
+  par_tab = link->taData(); //note: still only got the guy, not par
+  if (!par_tab) goto exit;
+  par_tab = par_tab->GetOwner(); // now we have par
+  if (!par_tab) goto exit;
+  gpar_tab = par_tab->GetOwner();
+  if (!gpar_tab) goto exit;
+  rval = gpar_tab->FindMemberPtr(par_tab);
+exit:
+   return rval;
+}*/
 
 // called from Ui for cut/paste etc. -- not called for drag/drop ops
 int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
@@ -1255,100 +1503,6 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   return rval;
 }
 
-void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu) {
-  FillContextMenu_impl(menu);
-  int allowed = QueryEditActions_(sel_items);
-  FillContextMenu_EditItems_impl(menu, allowed);
-  taiDataLink* link = this->link();
-  if (link) link->FillContextMenu(menu);
-}
-
-void ISelectable::FillContextMenu(taiActions* menu) {
-  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
-  FillContextMenu_impl(menu);
-  int allowed = QueryEditActions_(ms);
-  FillContextMenu_EditItems_impl(menu, allowed);
-  taiDataLink* link = this->link();
-  if (link) link->FillContextMenu(menu);
-}
-
-void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) {
-  if (allowed == 0) return;
-  if (menu->count() > 0)
-    menu->AddSep();
-  //TODO: maybe always show the basic ones, and only enable/disable
-  //TODO: provide a way to add these via already existing Actions (ex toolbar)
-//  cut copy paste link delete
-  if (allowed & taiClipData::EA_CUT) {
-    taiAction* mel = menu->AddItem("Cu&t", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
-    mel->usr_data = taiClipData::EA_CUT;
-  }
-  if (allowed & taiClipData::EA_COPY) {
-    taiAction* mel = menu->AddItem("&Copy", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
-    mel->usr_data = taiClipData::EA_COPY;
-  }
-  if (allowed & taiClipData::EA_PASTE) {
-    taiAction* mel = menu->AddItem("&Paste", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
-    mel->usr_data = taiClipData::EA_PASTE;
-  }
-  if (allowed & taiClipData::EA_LINK) {
-    taiAction* mel = menu->AddItem("&Link", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
-    mel->usr_data = taiClipData::EA_LINK;
-  }
-  if (allowed & taiClipData::EA_DELETE) {
-    taiAction* mel = menu->AddItem("&Delete", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
-    mel->usr_data = taiClipData::EA_DELETE;
-  }
-  taiDataLink* link = this->link();
-  if (link) link->FillContextMenu_EditItems(menu, allowed);
-}
-
-taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
-  bool for_drag) const
-{
-  if (sel_items.size <= 1) { 
-    return GetClipDataSingle(src_edit_action, for_drag);
-  } else { 
-    return GetClipDataMulti(sel_items,src_edit_action, for_drag);
-  }
-}
-
-taiDataLink* ISelectable::par_link() const {
-  taiDataLink* link = this->link();
-  if (link) {
-    taBase* tab = link->taData();
-    if (tab) tab = tab->GetOwner();
-    if (tab) {
-      return (taiDataLink*)tab->GetDataLink();
-    }
-  }
-  return NULL;
-}
-
-MemberDef* ISelectable::par_md() const {
-  // to get the par_md, we have to go up the grandparent, and ask for member addr
-  MemberDef* rval = NULL;
-  taBase* par_tab = NULL; //note: still only got the guy, not par
-  taBase* gpar_tab = NULL;
-  taiDataLink* link = this->link();
-  if (!link) goto exit;
-  par_tab = link->taData(); //note: still only got the guy, not par
-  if (!par_tab) goto exit;
-  par_tab = par_tab->GetOwner(); // now we have par
-  if (!par_tab) goto exit;
-  gpar_tab = par_tab->GetOwner();
-  if (!gpar_tab) goto exit;
-  rval = gpar_tab->FindMemberPtr(par_tab);
-exit:
-   return rval;
-}
-
-
 int ISelectable::QueryEditActions_(taiMimeSource* ms) const {
   int allowed = 0;
   int forbidden = 0;
@@ -1395,39 +1549,6 @@ QWidget* ISelectable::widget() const {
 //   IObjectSelectable		//
 //////////////////////////////////
 
-int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: follows same logic as the Query
-  taiDataLink* pdl = par_link();
-  //note: called routines must requery for allowed
-  taiDataLink* link = this->link();
-  int rval = taiClipData::ER_IGNORED;
-  if (pdl) {
-    rval = pdl->ChildEditAction_impl(par_md(), link, ms, ea);
-  }
-  if (link) {
-    if (rval == taiClipData::ER_IGNORED)
-      rval = link->ChildEditAction_impl(this->md(), NULL, ms, ea);
-    if (rval == taiClipData::ER_IGNORED)
-      rval = link->EditAction_impl(ms, ea);
-  }
-  return rval;
-}
-
-int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Query
-  taiDataLink* pdl = par_link();
-  //note: called routines must requery for allowed
-  taiDataLink* link = this->link();
-  int rval = taiClipData::ER_IGNORED;
-  if (pdl) {
-    rval = pdl->ChildEditAction_impl(par_md(), link, NULL, ea);
-  }
-  if (link) {
-    //note: item-as-parent does not apply to src context, so we omit it
-    if (rval == taiClipData::ER_IGNORED)
-      rval = link->EditAction_impl(NULL, ea);
-  }
-  return rval;
-}
-
 taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action, bool for_drag) const {
   // if it is taBase, we can make an object
   taBase* obj = this->taData();
@@ -1465,12 +1586,67 @@ taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_
   return rval;
 }
 
+int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: follows same logic as the Query
+  taiDataLink* pdl = par_link();
+  //note: called routines must requery for allowed
+  taiDataLink* link = this->link();
+  int rval = taiClipData::ER_IGNORED;
+  // we have to individually disambiguate the allowed, because we have
+  // to make sure the right list or group guy handles things like PasteInto, etc.
+  int allowed = 0;
+  int forbidden = 0;
+  int eax;
+  if (pdl) {
+//no    pdl->ChildQueryEditActions_impl(par_md(), link, ms, allowed, forbidden);
+    pdl->ChildQueryEditActions_impl(NULL, link, ms, allowed, forbidden);
+    eax = ea & (allowed & (~forbidden));
+    if (eax)
+//no      rval = pdl->ChildEditAction_impl(par_md(), link, ms, eax);
+      rval = pdl->ChildEditAction_impl(NULL, link, ms, eax);
+  }
+  if (link && (rval == taiClipData::ER_IGNORED)) {
+    allowed = forbidden = 0;
+    link->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden);
+    eax = ea & (allowed & (~forbidden));
+    if (eax)
+      rval = link->ChildEditAction_impl(this->md(), NULL, ms, eax);
+    
+    if (rval == taiClipData::ER_IGNORED) {
+      allowed = forbidden = 0;
+      link->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
+      eax = ea & (allowed & (~forbidden));
+      if (eax)
+        rval = link->EditAction_impl(ms, eax);
+    }
+  }
+  return rval;
+}
+
+int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Query
+  taiDataLink* pdl = par_link();
+  //note: called routines must requery for allowed
+  taiDataLink* link = this->link();
+  int rval = taiClipData::ER_IGNORED;
+  if (pdl) {
+//no    rval = pdl->ChildEditAction_impl(par_md(), link, NULL, ea);
+    rval = pdl->ChildEditAction_impl(NULL, link, NULL, ea);
+  }
+  if (link) {
+    //note: item-as-parent does not apply to src context, so we omit it
+    if (rval == taiClipData::ER_IGNORED)
+      rval = link->EditAction_impl(NULL, ea);
+  }
+  return rval;
+}
+
 void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const {
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
   taiDataLink* pdl = par_link();
   taiDataLink* link = this->link();
-  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
+  if (pdl) 
+//no    pdl->ChildQueryEditActions_impl(par_md(), link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
+    pdl->ChildQueryEditActions_impl(NULL, link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
   if (link) {
     link->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
     link->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
@@ -1482,7 +1658,9 @@ void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) co
   // parent object normally passes on to child object
   taiDataLink* pdl = par_link();
   taiDataLink* link = this->link();
-  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, NULL, allowed, forbidden); // ex. CUT of child
+  if (pdl) 
+//no    pdl->ChildQueryEditActions_impl(par_md(), link, NULL, allowed, forbidden); // ex. CUT of child
+    pdl->ChildQueryEditActions_impl(NULL, link, NULL, allowed, forbidden); // ex. CUT of child
   if (link) {
     // note: item-as-parent doesn't apply to src actions, so we omit that
     link->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
@@ -2721,6 +2899,7 @@ void iApplicationToolBar::Constr_post() {
   win->editCutAction->addTo(tb);
   win->editCopyAction->addTo(tb);
   win->editPasteAction->addTo(tb);
+  win->editPasteIntoAction->addTo(tb);
   tb->addSeparator();
   win->helpHelpAction->addTo(tb);
 }
@@ -3118,11 +3297,16 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editCutAction->setIconSet( QIconSet( image6 ) );
   editCopyAction = AddAction(new taiAction(taiClipData::EA_COPY, "&Copy", QKeySequence("Ctrl+C"), _editCopyAction ));
   editCopyAction->setIconSet( QIconSet( image7 ) );
+  //note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
   editPasteAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste", QKeySequence("Ctrl+V"), _editPasteAction ));
   editPasteAction->setIconSet( QIconSet( image8 ) );
+  editPasteIntoAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste Into", QKeySequence("Ctrl+V"), "editPasteIntoAction" ));
+  editPasteIntoAction->setIconSet( QIconSet( image8 ) );
   editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Shift+D"), _editDeleteAction ));
 //  editDeleteAction->setIconSet( QIconSet( image8 ) );
   editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence("Ctrl+L"), _editLinkAction ));
+  editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence("Ctrl+L"), "editLinkIntoAction" ));
+  editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction" ));
   viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
@@ -3139,7 +3323,10 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editCutAction->AddTo( editMenu );
   editCopyAction->AddTo( editMenu );
   editPasteAction->AddTo( editMenu );
+  editPasteIntoAction->AddTo( editMenu );
   editLinkAction->AddTo( editMenu );
+  editLinkIntoAction->AddTo( editMenu );
+  editUnlinkAction->AddTo( editMenu );
   editDeleteAction->AddTo( editMenu );
 
   viewRefreshAction->AddTo(viewMenu);
@@ -3178,7 +3365,10 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editCopyAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editPasteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editPasteIntoAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editLinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editLinkIntoAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editUnlinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editDeleteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
 //nn  connect(actionsMenu->GetRep(), SIGNAL( aboutToShow() ), this, SLOT(actionsMenu_aboutToShow()) );
@@ -3605,11 +3795,43 @@ void iMainWindowViewer::UpdateUi() {
   editCutAction->setEnabled(ea & taiClipData::EA_CUT);
   editCopyAction->setEnabled(ea & taiClipData::EA_COPY);
   editPasteAction->setEnabled(ea & taiClipData::EA_PASTE);
+  editPasteIntoAction->setEnabled(ea & taiClipData::EA_PASTE_INTO);
+
+  // fairly hacky to adjust Paste and Link depending on whether both OP/OP_INTO
+  if ((ea & taiClipData::EA_PASTE2) == taiClipData::EA_PASTE2) {
+    // need to remove accelerators
+    editPasteAction->setText("Paste");
+    editPasteAction->setShortcut(QKeySequence());
+    editPasteIntoAction->setText("Paste Into");
+    editPasteIntoAction->setShortcut(QKeySequence());
+  } else { 
+    // restore accelerators
+    editPasteAction->setText("&Paste");
+    editPasteAction->setShortcut(QKeySequence("Ctrl+V"));
+    editPasteIntoAction->setText("&Paste Into");
+    editPasteIntoAction->setShortcut(QKeySequence("Ctrl+V"));
+  }
+  
   editLinkAction->setEnabled(ea & taiClipData::EA_LINK);
+  editLinkIntoAction->setEnabled(ea & taiClipData::EA_LINK_INTO);
+  
+  if ((ea & taiClipData::EA_LINK2) == taiClipData::EA_LINK2) {
+    // need to remove accelerators
+    editLinkAction->setText("Link");
+    editLinkAction->setShortcut(QKeySequence());
+    editLinkIntoAction->setText("Link Into");
+    editLinkIntoAction->setShortcut(QKeySequence());
+  } else { 
+    // restore accelerators
+    editLinkAction->setText("&Link");
+    editLinkAction->setShortcut(QKeySequence("Ctrl+L"));
+    editLinkIntoAction->setText("&Link Into");
+    editLinkIntoAction->setShortcut(QKeySequence("Ctrl+L"));
+  }
+  
+  editUnlinkAction->setVisible(ea & taiClipData::EA_UNLINK);
   editDeleteAction->setEnabled(ea & taiClipData::EA_DELETE);
-/*todo  editCutAction->setEnabled(ea & taiClipData::EA_LINK);
-  editCutAction->setEnabled(ea & taiClipData::EA_SET_AS_SUBGROUP);
-  editCutAction->setEnabled(ea & taiClipData::EA_SET_AS_SUBITEM); */
+  
   emit SetActionsEnabled();
 }
 
@@ -5462,8 +5684,9 @@ void iTreeViewItem::dragLeft() {
 }*/
 
 
-void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos) {
-  DropHandler(mime, pos);
+void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos, 
+    int key_mods) {
+  DropHandler(mime, pos, key_mods);
 /*
   taiMimeSource* ms = taiMimeSource::New(mime);
 
@@ -5543,6 +5766,16 @@ void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   if (fm_idx < to_idx) --to_idx;
   QTreeWidgetItem* tak = takeChild(fm_idx);
   insertChild(to_idx, tak); 
+}
+
+ISelectable* iTreeViewItem::par() const {
+  iTreeViewItem* rval = parent();
+  if (rval) return rval;
+  else return NULL;
+}
+
+iTreeViewItem* iTreeViewItem::parent() const {
+  return dynamic_cast<iTreeViewItem*>(inherited::parent());
 }
 
 void iTreeViewItem::setName(const String& value) {

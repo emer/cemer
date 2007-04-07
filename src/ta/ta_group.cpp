@@ -676,47 +676,57 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md, int subgrp_i
 {
   // SRC ops
   if (subgrp) {
-    // CUT generally always allowed (will either DELETE or UNLINK src item, depending on context)
-    allowed |= taiClipData::EA_CUT;
     // Delete only allowed if we are the owner
-    if (subgrp->GetOwner() == &gp)
+    if (subgrp->GetOwner() == &gp) {
+      // only allow CUT in own context, to avoid confusion
+      allowed |= taiClipData::EA_CUT;
       allowed |= taiClipData::EA_DELETE;
-    else // otherwise, it is unlinking, not deleting
+    } else { // otherwise, it is unlinking, not deleting
       allowed |= taiClipData::EA_UNLINK;
+    }
   }
 
   if (ms == NULL) return; // src op query
+  
   // DST ops
-  taiObjectsMimeItem* omi = ms->objects();
-  if (!omi) return; // not even tacss objs
-  TypeDef* ctd = omi->CommonSubtype();
-  // if not a taBase type(s) of object, no more applicable
-  if (!omi->allBase()) return;
+  // if not a taBase type of object, no more applicable
+  if (!ms->isBase()) return;
+  if (!ms->isThisProcess())
+    forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
+  
   if (ms->isThisProcess()) {
-    // cannot allow a group to be moved into self or one of its own child subgroups
-    for (int i = 0; i < omi->count(); ++i) {
-      taGroup_impl* grp = static_cast<taGroup_impl*>(omi->item(i)->obj());
-      if (!grp) continue; // shouldn't happen!
-      taGroup_impl* chk_grp = this;
-      // the grp must not be this one, or parent to it
-      while (chk_grp && (chk_grp != grp) && (chk_grp != grp->root_gp))
-        chk_grp = chk_grp->super_gp;
-      if (grp == chk_grp) { // nasty nasty!!!
-        forbidden |= taiClipData::EA_DROP_MOVE;
-        if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
-          forbidden |= taiClipData::EA_PASTE;
-      }
+    // cannot allow a group to be moved into one of its own subgroups
+    taGroup_impl* grp = static_cast<taGroup_impl*>(ms->tabObject());
+    taGroup_impl* chk_grp = this;
+    // the grp must not be this one, or parent to it
+    while (chk_grp && (chk_grp != grp) && (chk_grp != grp->root_gp))
+      chk_grp = chk_grp->super_gp;
+    if (grp == chk_grp) { // nasty nasty!!!
+      // forbid both kinds of cases
+      forbidden |= taiClipData::EA_DROP_MOVE2;
+      if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
+        forbidden |= taiClipData::EA_PASTE2;
     }
   } else {
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
   }
 
   // generic group paste only allows exact type, so we check for each inheriting from the other, which means same
-  bool right_gptype = (ctd && (ctd->InheritsFrom(GetTypeDef()) && GetTypeDef()->InheritsFrom(ctd)));
+  TypeDef* td = ms->td();
+  bool right_gptype = (td && (td->InheritsFrom(GetTypeDef()) && GetTypeDef()->InheritsFrom(td)));
 
-  if (right_gptype)
-    allowed |= (taiClipData::EA_PASTE |
-        taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_MOVE);
+  // find relevant ops 
+  int op = 0;
+  if (subgrp) {
+    op |= (taiClipData::EA_PASTE | taiClipData::EA_DROP_COPY |
+      taiClipData::EA_DROP_MOVE);
+  } else {
+    op |= (taiClipData::EA_PASTE_INTO | taiClipData::EA_DROP_COPY_INTO |
+      taiClipData::EA_DROP_MOVE_INTO);
+  }
+  if (right_gptype) {
+    allowed |= op;
+  }
 }
 
 // called by a child -- lists etc. can then allow drops on the child, to indicate inserting into the list, etc.
@@ -783,9 +793,11 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
   int srcgrp_idx = -1; // -1 means not in this group
   taBase* srcobj = NULL;
 
+//NOTE: OP/OP_INTO are implicitly encoded via existence of lst_itm so 
+//  we always lump the two variants together (OP2)
   // only fetch obj for ops that require it
-  if (ea & (taiClipData::EA_PASTE | taiClipData::EA_LINK  | taiClipData::EA_DROP_COPY |
-    taiClipData::EA_DROP_LINK | taiClipData::EA_DROP_MOVE))
+  if (ea & (taiClipData::EA_PASTE2 | taiClipData::EA_LINK2  | taiClipData::EA_DROP_COPY2 |
+    taiClipData::EA_DROP_LINK2 | taiClipData::EA_DROP_MOVE2))
   {
     srcobj = ms->tabObject();
     if (srcobj == NULL) {
@@ -795,86 +807,94 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_
     // already in this list? (affects how we do drops/copies, etc.)
     srcgrp_idx = gp.FindEl(srcobj);
   }
-/*TODO: work out logistics for this... maybe this should only be for when the src is a group
+
   // All non-move paste ops (i.e., copy an object)
   if (
-    (ea & (taiClipData::EA_DROP_COPY)) ||
+    (ea & (taiClipData::EA_DROP_COPY2)) ||
     //  Cut/Paste is a move
-    ((ea & taiClipData::EA_PASTE) && (ms->srcAction() & taiClipData::EA_SRC_COPY))
+    ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_COPY))
   ) {
-    // TODO: instead of cloning, we might be better off just streaming a new copy
-    // since this will better guarantee that in-proc and outof-proc behavior is same
-    taBase* new_obj = obj->Clone();
-    //TODO: maybe the renaming should be delayed until put in list, or maybe better, done by list???
-    new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
-    int new_idx;
-    if (itm_idx <= 0) 
-      new_idx = 0; // if dest is list, then insert at beginning
-    else if (itm_idx == (size - 1)) 
-      new_idx = -1; // if clicked on last, then insert at end
-    else new_idx = itm_idx + 1;
-    subgrp->Insert(new_obj, new_idx);
+    taBase* new_obj = srcobj->MakeToken();
+    if (subgrp_idx < 0) 
+      subgrp_idx = gp.size; // // at end if itm_idx=size
+    gp.Insert(new_obj, subgrp_idx);
+    new_obj->UnSafeCopy(srcobj);	// always copy after inserting so there is a full path & initlinks
+    // retain the name if being copied from outside the gp, otherwise give new name
+    if (srcgrp_idx < 0)
+      new_obj->SetName(srcobj->GetName());
+    else
+      new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj 
+    // do a full UAE (not just DC) so associated update code gets retriggered
+//nn for gps    new_obj->UpdateAfterEdit();
     return taiClipData::ER_OK;
-  } */
+  } 
   
   // All Move-like ops
   if (
-    (ea & (taiClipData::EA_DROP_MOVE)) ||
+    (ea & (taiClipData::EA_DROP_MOVE2)) ||
     //  Cut/Paste is a move
-    ((ea & taiClipData::EA_PASTE) && (ms->srcAction() & taiClipData::EA_SRC_CUT))
+    ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_CUT))
   ) {
     if (srcobj == subgrp) return taiClipData::ER_OK; // nop
     if (srcgrp_idx >= 0) { // in this group: just do a group move
-      // to_idx will differ depending on whether dst is before or after the src object
-      if (subgrp_idx < srcgrp_idx) { // for before, to will be dst + 1
-        gp.MoveIdx(srcgrp_idx, subgrp_idx + 1);
-      } else if (subgrp_idx > srcgrp_idx) { // for after, to will just be the dst
-        gp.MoveIdx(srcgrp_idx, subgrp_idx);
-      } else return taiClipData::ER_OK; // do nothing case of drop on self
+      gp.MoveBeforeIdx(srcgrp_idx, subgrp_idx); // ok if -1, means end
+      return taiClipData::ER_OK; // do nothing case of drop on self
     } else { // not directly in this group, need to do a transfer
       if (gp.Transfer(srcobj)) { // should always succeed -- only fails if we already own item
       // was added at end, fix up location, if necessary
-        gp.MoveIdx(gp.size - 1, subgrp_idx + 1);
+        if (subgrp_idx >= 0) { // if <0, then means "at end" already
+          gp.MoveIdx(gp.size - 1, subgrp_idx);
+        }
       } else return taiClipData::ER_ERROR; //TODO: error message
     }
-    // NOTE: we don't acknowledge action to source because we moved the item ourself
     return taiClipData::ER_OK;
   }
 
   // Link ops
   if (ea &
-    (taiClipData::EA_LINK | taiClipData::EA_DROP_LINK))
+    (taiClipData::EA_LINK2 | taiClipData::EA_DROP_LINK2))
   {
     if (srcgrp_idx >= 0) return taiClipData::ER_FORBIDDEN; // in this list: link forbidden
-    gp.InsertLink(srcobj, srcgrp_idx + 1);
+    if (subgrp_idx < 0) 
+      subgrp_idx = gp.size; 
+    gp.InsertLink(srcobj, subgrp_idx);
     return taiClipData::ER_OK;
   }
   return taiClipData::ER_IGNORED;
 }
+
 int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, int subgrp_idx, taGroup_impl* subgrp, taiMimeSource* ms, int ea)
 {
   // if src is not even a taBase, we just stop
   if (!ms->isBase()) return taiClipData::ER_IGNORED;
 
+//Note: the OP/OP_INTO is actually encoded in lst_itm NULL or not, so we lump together
   // DST OPS WHEN SRC OBJECT IS OUT OF PROCESS
-  switch (ea & taiClipData::EA_OP_MASK) {
-  case taiClipData::EA_DROP_COPY:
-  case taiClipData::EA_DROP_MOVE:
-  case taiClipData::EA_PASTE:
+  if (ea & (taiClipData::EA_DROP_COPY2 |
+    // taiClipData::EA_DROP_MOVE | //can't do move across processes
+     taiClipData::EA_PASTE2))
   {
     istringstream istr;
     if (ms->objectData(istr) > 0) {
       TypeDef* td = GetTypeDef();
-      int dump_val = td->Dump_Load(istr, this, this);
+      void* new_el_ = NULL; // the dude added
+      int dump_val = td->Dump_Load(istr, this, this, &new_el_);
       if (dump_val == 0) {
         //TODO: error output
         return taiClipData::ER_ERROR; // load failed
       }
+      // ok, now move the guy into the right place
+      taGroup_impl* new_el = (taGroup_impl*)new_el_;
+      //note: is a taBase for sure, but just make sure it is a taGroup
+      if (!new_el || !new_el->GetTypeDef()->InheritsFrom(&TA_taGroup_impl)) {
+        taMisc::Error("Unexpected no group or not a group when pasting/dropping.");
+        return taiClipData::ER_ERROR;
+      }
+      gp.MoveBefore(subgrp, new_el);
       return taiClipData::ER_OK;
     } else { // no data
       return taiClipData::ER_ERROR; //TODO: error message
     }
-  }
   }
   return taiClipData::ER_IGNORED;
 }
