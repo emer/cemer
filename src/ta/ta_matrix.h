@@ -44,6 +44,9 @@ class MatrixTableModel; //
 
    Matrix is a ref-counted N-dimensional array of data, 1 <= N <= MAX_MATRIX_DIMS.
    
+   End-user mats should only use up to N-1 dims, since 1 is reserved for 
+   DataTable rows. Explicit accessors are only provided for 1:N-2
+   
    Each concrete class holds one specific type of data, ex. byte or float. 
    The number of dimensions is set at create time, and is lifetime-invariant.
    The number of elements in each dimension (except the highest) is fixed.
@@ -138,7 +141,7 @@ class MatrixTableModel; //
    
 */
 
-#define TA_MATRIX_DIMS_MAX 5
+#define TA_MATRIX_DIMS_MAX 8
 #define IMatrix taMatrix
 
 class TA_API CellRange { // specifies a range of cells
@@ -180,6 +183,7 @@ class TA_API MatrixGeom: public taBase  {
   // matrix geometry, similar to an array of int
 INHERITED(taBase)
 friend class taMatrix;
+friend class DataCol;
 public:
   int			size; // DO NOT SET DIRECTLY, use SetSize
   
@@ -196,13 +200,17 @@ public:
   void			Add(int value); // safely add a new element
   void			Set(int i, int value) // safely set an element
     {if (InRange(i)) el[i] = value;}
-  void			SetGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
+  void			SetGeom(int dims, int d0, int d1=0, int d2=0,
+    int d3=0, int d4=0, int d5=0, int d6=0);
     
   inline void		Reset() {SetSize(0);} // set size to 0, and clear all dims
 
-  int 			IndexFmDims(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const;
-  // get index from dimension values, based on geometry
-  void 			DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d4) const;
+  int 			IndexFmDims(const MatrixGeom& dims) const;
+    // get index from dimension values, based on geometry
+  int			IndexFmDims(int d0, int d1=0, int d2=0,
+    int d3=0, int d4=0, int d5=0, int d6=0) const;
+    // get index from dimension values, based on geometry
+  void 			DimsFmIndex(int idx, MatrixGeom& dims) const;
   // get dimension values from index, based on geometry
 
   void			Get2DGeom(int& x, int& y) const; // for flat2d views
@@ -218,7 +226,7 @@ public:
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const MatrixGeom& cp);
   explicit MatrixGeom(int init_size);
-  MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0);
+  MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   COPY_FUNS(MatrixGeom, taBase);
   TA_BASEFUNS_LITE(MatrixGeom); //
 
@@ -229,10 +237,14 @@ public: // functions for internal/trusted use only
   inline int&		operator [](int i) {return el[i];}  // #IGNORE 
 
 protected:
+  static MatrixGeom	td; // temp
   void	UpdateAfterEdit_impl();
   int			el[TA_MATRIX_DIMS_MAX];
   
   inline int		operator [](int i) const {return el[i];}  
+
+  int 			IndexFmDims_(const int* d) const;
+    // get index from dimension values, based on geometry
 
 private:
   void			Initialize();

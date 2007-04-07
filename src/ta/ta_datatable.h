@@ -363,7 +363,7 @@ public:
   DataTable*		dataTable();
   // root data table this col belongs to
 
-  String	EncodeHeaderName(int d0=0, int d1=0, int d2=0, int d3=0);
+  String	EncodeHeaderName(const MatrixGeom& dims) const;
   // encode header information for saving to text files
   static void 	DecodeHeaderName(String nm, String& base_nm, int& val_typ,
 				 MatrixGeom& mat_idx, MatrixGeom& mat_geom);

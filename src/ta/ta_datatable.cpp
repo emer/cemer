@@ -451,7 +451,7 @@ bool DataCol::GetMinMaxScale(MinMax& mm) {
 }
 
 
-String DataCol::EncodeHeaderName(int d0, int d1, int d2, int d3) {
+String DataCol::EncodeHeaderName(const MatrixGeom& dims) const {
   String typ_info;
   switch (valType()) {
   case VT_STRING: 	typ_info = "$"; break;
@@ -463,9 +463,8 @@ String DataCol::EncodeHeaderName(int d0, int d1, int d2, int d3) {
   }
   String mat_info;
   if(is_matrix) {		// specify which cell in matrix this is [dims:d0,d1,d2..]
-    MatrixGeom mg(cell_geom.size, d0, d1, d2, d3);
-    mat_info = mg.GeomToString("[", "]");
-    if(cell_geom.IndexFmDims(d0, d1, d2, d3) == 0) { // first guy
+    mat_info = dims.GeomToString("[", "]");
+    if(cell_geom.IndexFmDims(dims) == 0) { // first guy
       mat_info += cell_geom.GeomToString("<", ">");
     }
   }
@@ -1638,6 +1637,7 @@ void DataTable::RowsAdding(int n, bool begin) {
 void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim) {
   char cdlm = GetDelim(delim);
   strm << "_H:";		// indicates header
+  MatrixGeom dims;
   for(int i=0;i<data.size;i++) {
     DataCol* da = data.FastEl(i);
     if(!da->saveToDataFile()) continue;
@@ -1645,14 +1645,13 @@ void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim) {
 
     if(da->isMatrix()) {
       for(int j=0;j<da->cell_size(); j++) {
-	int d0, d1, d2, d3, d4;
-	da->cell_geom.DimsFmIndex(j, d0, d1, d2, d3, d4);
-	String hdnm = da->EncodeHeaderName(d0, d1, d2, d3);
+	da->cell_geom.DimsFmIndex(j, dims);
+	String hdnm = da->EncodeHeaderName(dims);
 	strm << cdlm << hdnm;
       }
     }
     else {
-      String hdnm = da->EncodeHeaderName();
+      String hdnm = da->EncodeHeaderName(dims); //note: dims ignored
       strm << cdlm << hdnm;
     }
   }

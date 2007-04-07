@@ -69,14 +69,17 @@ void CellRange::SetFromModel(const QModelIndexList& indexes) {
 //  MatrixGeom		//
 //////////////////////////
 
+MatrixGeom MatrixGeom::td;
+
 MatrixGeom::MatrixGeom(int init_size) {
   Initialize();
   SetSize(init_size);
 }
   
-MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
+MatrixGeom::MatrixGeom(int dims, int d0, int d1, int d2, int d3, int d4, int d5, int d6)
+{
   Initialize();
-  SetGeom(dims, d0, d1, d2, d3, d4);
+  SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
 }
 
 void MatrixGeom::Initialize() {
@@ -114,54 +117,93 @@ void MatrixGeom::Add(int value) {
   el[size++] = value;
 }
 
-int MatrixGeom::IndexFmDims(int d0, int d1, int d2, int d3, int d4) const {
+int MatrixGeom::IndexFmDims(const MatrixGeom& d) const {
+  return IndexFmDims_(d.el);
+}
+
+int MatrixGeom::IndexFmDims(int d0, int d1, int d2,
+    int d3, int d4, int d5, int d6) const
+{
+  int d[TA_MATRIX_DIMS_MAX];
+  d[0] = d0;
+  d[1] = d1;
+  d[2] = d2;
+  d[3] = d3;
+  d[4] = d4;
+  d[5] = d5;
+  d[6] = d6;
+  d[7] = 0;
+  return IndexFmDims_(d);
+}
+
+int MatrixGeom::IndexFmDims_(const int* d) const {
   int rval = -1;
   switch (size) {
   case 0: rval = 0;
     break;
-  case 1: rval = d0;
+  case 1: rval = d[0];
     break;
-  case 2: rval = (d1 * el[0]) + d0;
+  case 2: rval = (d[1] * el[0]) + d[0];
     break;
-  case 3: rval = (((d2 * el[1]) + d1) * el[0]) + d0;
+  case 3: rval = (((d[2] * el[1]) + d[1]) * el[0]) + d[0];
     break;
-  case 4: rval = (((((d3 * el[2]) + d2) * el[1]) + d1) * el[0]) + d0;
+  case 4: rval = (((((d[3] * el[2]) + d[2]) * el[1]) + d[1]) * el[0]) + d[0];
     break;
-  case 5: rval = (((((((d4 * el[3]) + d3) * el[2]) + d2) * el[1]) + d1) * el[0]) + d0;
+  case 5: rval = (((((((d[4] * el[3]) + d[3]) * el[2]) + d[2]) * el[1]) + d[1]) * el[0]) + d[0];
+  case 6: rval = (((((((((d[5] * el[4]) + d[4]) * el[3]) + d[3]) * el[2]) + d[2]) * el[1]) + d[1]) * el[0]) + d[0];
+  case 7: rval = (((((((((((d[6] * el[5]) + d[5]) * el[4]) + d[4]) * el[3]) + d[3]) * el[2]) + d[2]) * el[1]) + d[1]) * el[0]) + d[0];
     break;
   default: break;
   }
   return rval;
 }
 
-void MatrixGeom::DimsFmIndex(int idx, int& d0, int& d1, int& d2, int& d3, int& d4) const {
+void MatrixGeom::DimsFmIndex(int idx, MatrixGeom& d) const {
+  d.SetSize(size);
   switch (size) {
   case 0: 
     break;
   case 1:
-    d0 = idx;
+    d[0] = idx;
     break;
   case 2:
-    d1 = idx / el[0];
-    d0 = idx % el[0];
+    d[1] = idx / el[0];
+    d[0] = idx % el[0];
     break;
   case 3:
-    d2 = idx / (el[1] * el[0]);
-    d1 = (idx % el[1]) / el[0];
-    d0 = idx % (el[1] * el[0]);
+    d[2] = idx / (el[1] * el[0]);
+    d[1] = (idx % el[1]) / el[0];
+    d[0] = idx % (el[1] * el[0]);
     break;
   case 4: 
-    d3 = idx / (el[2] * el[1] * el[0]);
-    d2 = (idx % el[2]) / (el[1] * el[0]);
-    d1 = (idx % (el[2] * el[1])) / el[0];
-    d0 = idx % (el[2] * el[1] * el[0]);
+    d[3] = idx / (el[2] * el[1] * el[0]);
+    d[2] = (idx % el[2]) / (el[1] * el[0]);
+    d[1] = (idx % (el[2] * el[1])) / el[0];
+    d[0] = idx % (el[2] * el[1] * el[0]);
     break;
   case 5: 
-    d4 = idx / (el[3] * el[2] * el[1] * el[0]);
-    d3 = (idx % el[3]) / (el[2] * el[1] * el[0]);
-    d2 = (idx % (el[3] * el[2])) / (el[1] * el[0]);
-    d1 = (idx % (el[3] * el[2] * el[1])) / el[0];
-    d0 = idx % (el[3] * el[2] * el[1] * el[0]);
+    d[4] = idx / (el[3] * el[2] * el[1] * el[0]);
+    d[3] = (idx % el[3]) / (el[2] * el[1] * el[0]);
+    d[2] = (idx % (el[3] * el[2])) / (el[1] * el[0]);
+    d[1] = (idx % (el[3] * el[2] * el[1])) / el[0];
+    d[0] = idx % (el[3] * el[2] * el[1] * el[0]);
+    break;
+  case 6: 
+    d[5] = idx / (el[4] * el[3] * el[2] * el[1] * el[0]);
+    d[4] = (idx % el[4]) / (el[3] * el[2] * el[1] * el[0]);
+    d[3] = (idx % (el[4] * el[3])) / (el[2] * el[1] * el[0]);
+    d[2] = (idx % (el[4] * el[3] * el[2])) / (el[1] * el[0]);
+    d[1] = (idx % (el[4] * el[3] * el[2] * el[1])) / el[0];
+    d[0] = idx % (el[4] * el[3] * el[2] * el[1] * el[0]);
+    break;
+  case 7: 
+    d[6] = idx / (el[5] * el[4] * el[3] * el[2] * el[1] * el[0]);
+    d[5] = (idx % el[5]) / (el[3] * el[2] * el[1] * el[0]);
+    d[4] = (idx % (el[5] * el[4])) / (el[3] * el[2] * el[1] * el[0]);
+    d[3] = (idx % (el[5] * el[4] * el[3])) / (el[2] * el[1] * el[0]);
+    d[2] = (idx % (el[5] * el[4] * el[3] * el[2])) / (el[1] * el[0]);
+    d[1] = (idx % (el[5] * el[4] * el[3] * el[2] * el[1])) / el[0];
+    d[0] = idx % (el[5] * el[4] * el[3] * el[2] * el[1] * el[0]);
     break;
   default: break;
   }
@@ -322,13 +364,17 @@ int MatrixGeom::Product() const {
   return rval;
 }
 
-void MatrixGeom::SetGeom(int dims, int d0, int d1, int d2, int d3, int d4) {
+void MatrixGeom::SetGeom(int dims, int d0, int d1, int d2, int d3, int d4,
+  int d5, int d6) 
+{
   SetSize(dims);
   el[0] = d0;
   el[1] = d1;
   el[2] = d2;
   el[3] = d3;
   el[4] = d4;
+  el[5] = d5;
+  el[6] = d6;
 }
 
 
