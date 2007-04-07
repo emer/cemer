@@ -426,7 +426,7 @@ public:
   DynMethodDesc*	AddNew(int dmd_type, MethodDef* md); // creates new DMD and adds, returning ref
   void			Fill(ISelectable_PtrList& sel_items); // clear, then fill based on sel_items
   void			FillForDrop(const taiMimeSource& ms, 
-    ISelectable_PtrList& sel_items); // clear, then fill based on ms and sel_items (used for Drop operations)
+    ISelectable* drop_item); // clear, then fill based on ms and sel_items (used for Drop operations)
   ~DynMethod_PtrList();
 protected:
   override void 	El_Done_(void* it) {delete (DynMethodDesc*)it;}

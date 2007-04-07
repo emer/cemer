@@ -425,6 +425,20 @@ void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
     setStale();
 }
 
+void ProgVar_List::AddVarTo(taNBase* src) {
+  if (!src) return;
+  // if already exists, just ignore
+  for (int i = 0; i < size; ++i) {
+    ProgVar* it = FastEl(i);
+    if ((it->var_type == ProgVar::T_Object) &&
+      (it->object_val.ptr() == src))
+      return;
+  }
+  ProgVar* it = (ProgVar*)New(1);
+  it->SetObject(src);
+  it->SetName(src->GetName());
+}
+
 taBase* ProgVar_List::FindTypeName(const String& nm)  const {
   for (int i = 0; i < size; ++i) {
     ProgVar* it = FastEl(i);
@@ -1903,6 +1917,10 @@ Program* ProgramCall::GetTarget() {
 // 		       desc, "in program:", program()->name);
 //   }
   return target.ptr();
+}
+
+void ProgramCall::SetTarget(Program* target_) {
+  target = target_;
 }
 
 const String ProgramCall::GenCssPre_impl(int indent_level) {

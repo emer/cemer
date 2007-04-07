@@ -104,7 +104,7 @@ public:
   virtual void	SetReal(double val);
   virtual void	SetString(const String& val);
   virtual void	SetBool(bool val);
-  virtual void	SetObject(taBase* val);
+  virtual void	SetObject(taBase* val); // #DROP1
   virtual void	SetHardEnum(TypeDef* enum_type, int val);
   virtual void	SetDynEnum(int val);
   virtual void	SetDynEnumName(const String& val);
@@ -169,6 +169,9 @@ public:
 
   virtual taBase* FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on list
+  
+  void		AddVarTo(taNBase* src);
+    // #DROPN add a var to the given object
 
   override String GetTypeDecoKey() const { return "ProgVar"; }
 
@@ -1342,6 +1345,7 @@ public:
 
   virtual Program*	GetTarget();
   // safe call to get target: emits error if target is null (used by program)
+  void			SetTarget(Program* target); // #DROP1
 
   virtual bool		LoadInitTarget();
   // initialize target based on targ_ld_init information

@@ -1811,25 +1811,28 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
 }
 
 void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms, 
-    ISelectable_PtrList& sel_items)
+    ISelectable* drop_item)
 {
   Reset();
   taiObjectsMimeItem* mi = ms.objects();
-  if (!mi || (mi->count() == 0) || (sel_items.size == 0)) return;
+  if (!mi || (mi->count() == 0)) return;
   TypeDef* tms = mi->CommonSubtype(); // greatest common subtype of source object(s)
-  TypeDef* t1n = sel_items.CommonSubtype1N(); // greatest common subtype of items 1-N
-  if (!tms || !t1n) return; // typically for non-taBase types, ex Class browsing
+  TypeDef* tdi = drop_item->GetDataTypeDef(); 
+  if (!tdi) return;
   
-  for (int i = 0; i < t1n->methods.size; ++i) {
-    MethodDef* md = t1n->methods.FastEl(i);
+  for (int i = 0; i < tdi->methods.size; ++i) {
+    MethodDef* md = tdi->methods.FastEl(i);
     //look for all DROP methods with compatible arg0 type
-    if ((md->arg_types.size == 0) || !md->HasOption("DROP")) continue;
-    
+    if (md->arg_types.size == 0) continue; 
     TypeDef* arg0_typ = md->arg_types.FastEl(0);
     // must be a pointer to a class type
     if (arg0_typ->ptr != 1) {
       continue;
     }
+    // meth must be marked for drop
+    if (!(md->HasOption("DROPN") ||
+      ((mi->count() == 1) && md->HasOption("DROP1")))) continue;
+    
     // now get the non-pointer type
     arg0_typ = arg0_typ->GetNonPtrType();
     if (!tms->InheritsFrom(arg0_typ)) continue;
@@ -2102,6 +2105,8 @@ void ISelectableHost::DoDynAction(int idx) {
             if (!link) continue; // prob won't happen, because we wouldn't have been called
             base = link->data();
             rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
+            if (link->isBase())
+              ((taBase*)base)->UpdateAfterEdit();
           }
         }
         delete param[1];
@@ -2189,9 +2194,7 @@ void ISelectableHost::UpdateMethodsActionsForDrop() {
   dyn_methods.Reset();
   dyn_actions.Reset(); // note: items ref deleted if needed
   if (!drop_ms || !drop_item) return;
-  ISelectable_PtrList drop_targets; 
-  drop_targets.Add(drop_item);
-  dyn_methods.FillForDrop(*drop_ms, drop_targets);
+  dyn_methods.FillForDrop(*drop_ms, drop_item);
 
   // dynamically create actions
   for (int i = 0; i < dyn_methods.size; ++i) {
