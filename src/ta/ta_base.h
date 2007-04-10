@@ -795,38 +795,41 @@ public:
   // #IGNORE todo: what is this??
 
   ///////////////////////////////////////////////////////////////////////////
-  //   Clipboard Edit Actions (for drag-n-drop, cut/paste etc)
+  //   Clipboard Queries and Edit Actions (for drag-n-drop, cut/paste etc)
+  //   ms=NULL indicates SRC ops/context, else DST ops
+  //  child="item here" for item, else NULL for "into" parent
+#ifdef TA_GUI
 public:
-  virtual void		ChildQueryEditActions(const MemberDef* md, const taBase* child,
-					      taiMimeSource* ms, int& allowed, int& forbidden);
-  // #IGNORE gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
+  void			QueryEditActions(taiMimeSource* ms,
+    int& allowed, int& forbidden);
+  int			EditAction(taiMimeSource* ms, int ea); // #IGNORE 
+  
+  void			ChildQueryEditActions(const MemberDef* md, const taBase* child,
+	taiMimeSource* ms, int& allowed, int& forbidden);
+  // #IGNORE gives ops allowed on child, md valid if obj is a member of query parent, o/w NULL; child is sel item, or NULL if querying parent only; ms is clipboard or drop contents
   virtual int		ChildEditAction(const MemberDef* md, taBase* child,
-					taiMimeSource* ms, int ea);
+        taiMimeSource* ms, int ea);
   // #IGNORE note: multi source ops will have child=NULL
-  virtual void		QueryEditActions(const taiMimeSource* ms, int& allowed, int& forbidden)
-  { QueryEditActions_impl(ms, allowed, forbidden); }
-  // #IGNORE ms is null for Src-op query
-  virtual int		EditAction(taiMimeSource* ms, int ea)
-  {return EditAction_impl(ms, ea); } // #IGNORE 
-
-protected:
+  
+protected: //  note: all impl code is in ta_qtclipdata.cpp
+  virtual void		QueryEditActionsS_impl(int& allowed, int& forbidden);
+    // called once per src item, by controller
+  virtual void		QueryEditActionsD_impl(taiMimeSource* ms,
+    int& allowed, int& forbidden);
     // gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
+  virtual int		EditActionS_impl(int ea);
+    // called once per src item, by controller
+  virtual int		EditActionD_impl(taiMimeSource* ms, int ea);
+    // called once per ms item, in 0:N order, by ourself
+  
+  virtual void		ChildQueryEditActions_impl(const MemberDef* md,
+    const taBase* child, const taiMimeSource* ms,
+    int& allowed, int& forbidden);
+    // called in 
   virtual int		ChildEditAction_impl(const MemberDef* md, taBase* child,
-					     taiMimeSource* ms, int ea);
-  // note: multi source ops will have child=NULL
-  virtual int		ChildEditActionS_impl(const MemberDef* md, taBase* child, int ea)
-  {return 0;}
-    // src op implementation (non-list/grp)
-  virtual int		ChildEditActionD_impl(const MemberDef* md, taBase* child,
-					      taiMimeSource* ms, int ea) {return 0;}
+	taiMimeSource* ms, int ea) {return 0;}
     // dst op implementation (non-list/grp)
-  virtual void		ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
-						   const taiMimeSource* ms,
-    int& allowed, int& forbidden);
-  virtual int		EditAction_impl(taiMimeSource* ms, int ea);
-  virtual void		QueryEditActions_impl(const taiMimeSource* ms,
-    int& allowed, int& forbidden);
-
+#endif // TA_USE_GUI
   ///////////////////////////////////////////////////////////////////////////
   // 	Browser gui
 public:
@@ -1184,6 +1187,7 @@ protected:
   taDataLink*		m_data_link; //
   
 #ifdef TA_GUI
+public:
 protected: // all related to taList or DEF_CHILD children_
   override void	ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
     const taiMimeSource* ms, int& allowed, int& forbidden);
@@ -1191,13 +1195,13 @@ protected: // all related to taList or DEF_CHILD children_
   virtual void	ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm,
     const taiMimeSource* ms, int& allowed, int& forbidden);
     // returns the operations allowed for list items (ex Paste)
-  override int	ChildEditAction_impl(const MemberDef* md, taBase* child,
-    taiMimeSource* ms, int ea);
-     // called by a child -- follows same delegation logic as the child's EditActions call */
+  
+  virtual int	ChildEditAction_impl(const MemberDef* md, taBase* child,
+        taiMimeSource* ms, int ea);
   virtual int	ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea);
-  virtual int	ChildEditActionLD_impl_inproc(const MemberDef* md, int item_idx,
+  virtual int	ChildEditActionLD_impl_inproc(const MemberDef* md,
     taBase* lst_itm, taiMimeSource* ms, int ea);
-  virtual int	ChildEditActionLD_impl_ext(const MemberDef* md, int item_idx,
+  virtual int	ChildEditActionLD_impl_ext(const MemberDef* md,
     taBase* lst_itm, taiMimeSource* ms, int ea);
 #endif
 

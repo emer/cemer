@@ -64,23 +64,6 @@ class TA_API taGroup_impl : public taList_impl {
 #ifndef __MAKETA__
 typedef taList_impl inherited;
 #endif
-protected:
-  virtual String	GetValStr(const TypeDef* td, void* par=NULL,
-	MemberDef* memb_def = NULL) const;
-  virtual TAGPtr LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
-#ifdef TA_GUI
-protected:
-  mutable TALOG*	leaf_gp; 	// #READ_ONLY #NO_SAVE cached 'flat' list of leaf-containing-gps for iter
-  override void	ChildQueryEditActions_impl(const MemberDef* md, const taBase* child, const taiMimeSource* ms,
-    int& allowed, int& forbidden);
-  virtual void	ChildQueryEditActionsG_impl(const MemberDef* md, int subgrp_idx, taGroup_impl* subgrp, const taiMimeSource* ms,
-    int& allowed, int& forbidden);
-  override int	ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea);
-    // if child or ms is a group, dispatch to new G version
-  virtual int	ChildEditActionGS_impl(const MemberDef* md, int subgrp_idx, taGroup_impl* subgrp, int ea);
-  virtual int	ChildEditActionGD_impl_inproc(const MemberDef* md, int subgrp_idx, taGroup_impl* subgrp, taiMimeSource* ms, int ea);
-  virtual int	ChildEditActionGD_impl_ext(const MemberDef* md, int subgrp_idx, taGroup_impl* subgrp, taiMimeSource* ms, int ea);
-#endif
 public:
   virtual TAGPtr GetSuperGp_();			// #IGNORE Parent super-group, or NULL
   virtual void	 UpdateLeafCount_(int no); 	// #IGNORE updates the leaves count
@@ -229,8 +212,29 @@ public:
   TA_BASEFUNS(taGroup_impl);
 
 protected:
+  mutable TALOG*	leaf_gp; 	// #READ_ONLY #NO_SAVE cached 'flat' list of leaf-containing-gps for iter
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   override void		ItemRemoved_(); // update the leaf counts (supercursively)
+  virtual String	GetValStr(const TypeDef* td, void* par=NULL,
+	MemberDef* memb_def = NULL) const;
+  virtual TAGPtr LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
+#ifdef TA_GUI
+protected: // clip functions
+  override void	ChildQueryEditActions_impl(const MemberDef* md,
+    const taBase* child, const taiMimeSource* ms,
+    int& allowed, int& forbidden);
+  virtual void	ChildQueryEditActionsG_impl(const MemberDef* md,
+    taGroup_impl* subgrp, const taiMimeSource* ms,
+    int& allowed, int& forbidden);
+  override int	ChildEditAction_impl(const MemberDef* md, taBase* child,
+    taiMimeSource* ms, int ea);
+    // if child or ms is a group, dispatch to new G version
+  virtual int	ChildEditActionGS_impl(const MemberDef* md, taGroup_impl* subgrp, int ea);
+  virtual int	ChildEditActionGD_impl_inproc(const MemberDef* md, 
+    taGroup_impl* subgrp, taiMimeSource* ms, int ea);
+  virtual int	ChildEditActionGD_impl_ext(const MemberDef* md,
+    taGroup_impl* subgrp, taiMimeSource* ms, int ea);
+#endif
 };
 
 template<class T> class taGroup : public taGroup_impl {

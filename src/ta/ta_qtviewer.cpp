@@ -1523,11 +1523,18 @@ int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items) const {
     QueryEditActionsD_impl_(ms, allowed, forbidden);
     delete ms;
   } else { // multi select -- no dst ops allowed
+    int allowed_accum = 0; // add allowed to this guy
+    int allowed_knockout = -1; // subtract allowed from this guy
     for (int i = 0; i < sel_items.size; ++i) {
       ISelectable* is = sel_items.SafeEl(i);
-      if (is)
-        is->QueryEditActionsS_impl_(allowed, forbidden);
+      if (is) {
+        int item_allowed = 0;
+        is->QueryEditActionsS_impl_(item_allowed, forbidden);
+        allowed_accum |= item_allowed;
+        allowed_knockout &= item_allowed;
+      }
     }
+    allowed |= (allowed_accum & allowed_knockout);
   }
   return (allowed & (~forbidden));
 }
@@ -1645,7 +1652,6 @@ void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed,
   taiDataLink* pdl = par_link();
   taiDataLink* link = this->link();
   if (pdl) 
-//no    pdl->ChildQueryEditActions_impl(par_md(), link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
     pdl->ChildQueryEditActions_impl(NULL, link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
   if (link) {
     link->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
@@ -1659,7 +1665,6 @@ void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) co
   taiDataLink* pdl = par_link();
   taiDataLink* link = this->link();
   if (pdl) 
-//no    pdl->ChildQueryEditActions_impl(par_md(), link, NULL, allowed, forbidden); // ex. CUT of child
     pdl->ChildQueryEditActions_impl(NULL, link, NULL, allowed, forbidden); // ex. CUT of child
   if (link) {
     // note: item-as-parent doesn't apply to src actions, so we omit that

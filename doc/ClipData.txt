@@ -26,6 +26,28 @@ QT DND SEMANTICS
     subtle, being just a slight difference in the width
     of the feedback line
 
+QUERY CONTEXTS
+
+Item::QueryEditActions_(taiMimeSource* ms)
+  Item::DropHandler
+  Item::FillContextMenu(taiActions* menu)
+  
+Host::FillContextMenu(menu)
+  Item::FillContextMenu(items, menu)
+
+TreeView::this_contextMenuRequested
+  Item::FillContextMenu(items, menu)
+
+
+T3ViewspaceWidget::ContextMenuRequested
+  Host::FillContextMenu(menu)
+  
+QueryE
+
+* on DND drop, to populate menu (or determine short cut enables)
+  
+* on rightclick 
+
 QUESTIONS
 
 * where should we put the new clip ops, like SetSpec?

@@ -156,6 +156,7 @@ public:
     EA_PASTE		= 0x00000040, // ex. esp for putting an item as a peer to another
     EA_PASTE_INTO	= 0x00000400, // ex. when pasting an item into a list itself
     EA_PASTE_APPEND	= 0x00001000, // ex. for pasting new data rows into tables
+    EA_PASTE_ASSIGN	= 0x00004000, // set sel object from obj on clipboard
     EA_DELETE		= 0x00000080,
     EA_CLEAR		= 0x00002000, // ex. for grid cells
     EA_UNLINK		= 0x00000100,
@@ -167,6 +168,7 @@ public:
     EA_DROP_COPY	= 0x00200000,
     EA_DROP_LINK	= 0x00400000,
     EA_DROP_MOVE	= 0x00800000,
+    EA_DROP_ASSIGN	= 0x01000000,
     EA_DROP_COPY_INTO	= 0x02000000,
     EA_DROP_LINK_INTO	= 0x04000000,
     EA_DROP_MOVE_INTO	= 0x08000000,
@@ -178,7 +180,7 @@ public:
     EA_DROP_LINK2	= EA_DROP_LINK | EA_DROP_LINK_INTO,
     EA_DROP_MOVE2	= EA_DROP_MOVE | EA_DROP_MOVE_INTO,
     
-    EA_PASTE_XXX	= EA_PASTE | EA_PASTE_INTO | EA_PASTE_APPEND, // all the pastes
+    EA_PASTE_XXX	= EA_PASTE | EA_PASTE_INTO | EA_PASTE_APPEND | EA_PASTE_ASSIGN, // all the pastes
     EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DELETE | EA_CLEAR | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
     EA_DROP_OPS		= (EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE |
       EA_DROP_COPY_INTO | EA_DROP_LINK_INTO | EA_DROP_MOVE_INTO),
@@ -187,11 +189,10 @@ public:
     EA_FORB_ON_SRC_CUT	= (EA_LINK | EA_LINK_INTO), // dst ops forbidden when the source operation was Cut
     EA_FORB_ON_SRC_READONLY = (EA_DROP_MOVE | EA_DROP_MOVE_INTO), 
       // dst ops forbidden when the source operation forbade Cut/Move
-    EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK | EA_LINK_INTO |
+    EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK2 |
        EA_DROP_OPS),
         // dst ops forbidden when multi operands selected
-    EA_IN_PROC_OPS	= (EA_LINK | EA_LINK_INTO | EA_DROP_LINK |
-      EA_DROP_LINK_INTO), // ops that require an in-process src
+    EA_IN_PROC_OPS	= (EA_LINK2 | EA_DROP_LINK2), // ops that require an in-process src
 #endif
     EA_OP_MASK		= 0x0FFFFFF0 // masks all operation codes
 
@@ -451,6 +452,8 @@ public:
   taiMimeItem*		GetMimeItem(TypeDef* td, const String& subkey = _nilString);
     // get a guy of specified taiMimeItem type, using optional subkey; NULL if that type not supported; note: we check our list first, before trying to make a new guy
     
+  void			ResolveObjects(); // for inProcess, binds all objects to the paths, prior to opeations
+  
   ~taiMimeSource();
 
 public slots:
