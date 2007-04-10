@@ -5842,6 +5842,14 @@ bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
   } 
 }
 
+taiDataLink* taiListDataNode::par_link() const {
+  // in case we decide to support trees in list views, check for an item parent:
+  taiDataLink* rval = inherited::par_link();
+  if (rval) return rval;
+  if (panel) return panel->link();
+  return NULL;
+}
+
 void taiListDataNode::setName(const String& value) {
   if (columnCount() >= 2) // s/always be true!
     this->setText(1, value);

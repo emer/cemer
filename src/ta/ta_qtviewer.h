@@ -1375,7 +1375,6 @@ public:
   iTreeView*		list; //actually an iLDPListView
 
   override String	panel_type() const; // this string is on the subpanel button for this panel
-
   void			ClearList(); // for when data changes -- we just rebuild the list
   void			FillList();
   
@@ -1391,7 +1390,6 @@ public slots:
     // for editing
     
 protected:
-  iTreeViewItem* 	mparentItem;
   String		m_custom_name; // used instead of "List View", typically for defchild lists
   void 			ConfigHeader();
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
@@ -1716,7 +1714,7 @@ public: // IDataLinkClient interface
   override TypeDef*	GetTypeDef() const {return &TA_taiListDataNode;}
 
 public: // ISelectable interface
-//obs, get data par link  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
+  override taiDataLink* par_link() const; // we get from the panel, which gets from the viewer window
 //obs  override MemberDef* 	par_md() const; // as for par_link
 };
 

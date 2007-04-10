@@ -26,6 +26,34 @@ QT DND SEMANTICS
     subtle, being just a slight difference in the width
     of the feedback line
 
+BUGS
+
+* start 2 instances of pdp
+* in inst1, copy a group with subitems
+1. click on a group in inst2
+  Paste Into
+  * result: group is pasted as a peer, not into
+2. click on a group
+  Paste
+  * result: items from group are pasted as
+    items in the level of the group;
+  * the group itself is not evident
+  
+Note: group is actually loaded as PEER of the "this"
+  parent group
+  
+(order bug,  inproc or extproc)
+* assume items are listed in order: c5, c1
+* if you go c5,c1 Paste Into,
+  you get c5,c1
+* but if you go c1,c5 Paste Into,
+  there are still pasted as c5,c1
+i.e., the order of selection is not preserved
+  (why?)
+note: doesn't matter on what item you right click
+ to do the Copy
+
+
 QUERY CONTEXTS
 
 Item::QueryEditActions_(taiMimeSource* ms)

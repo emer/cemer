@@ -1269,6 +1269,8 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* 
   // if src is not even a taBase, we just stop
   if (!ms->isBase()) return taiClipData::ER_IGNORED;
 
+// Note on streaming:
+// For Paste Here, we have to stream into ourself
 //Note: the OP/OP_INTO is actually encoded in lst_itm NULL or not, so we lump together
   // DST OPS WHEN SRC OBJECT IS OUT OF PROCESS
   if (ea & (taiClipData::EA_DROP_COPY2 |
@@ -1278,20 +1280,20 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* 
     istringstream istr;
     if (ms->objectData(istr) > 0) {
       TypeDef* td = GetTypeDef();
-      void* new_el_ = NULL; // the dude added
-      int dump_val = td->Dump_Load(istr, this, this, &new_el_);
-      if (dump_val == 0) {
-        //TODO: error output
+      // we need to add the new group BEFORE streaming!
+      taGroup_impl* new_gp = NewGp_(1, td);
+      bool ok; // dummy
+      if (CheckError((!new_gp), false, ok,
+        "Could not make new group in for TypeDef:", td->name)) 
         return taiClipData::ER_ERROR; // load failed
-      }
-      // ok, now move the guy into the right place
-      taGroup_impl* new_el = (taGroup_impl*)new_el_;
-      //note: is a taBase for sure, but just make sure it is a taGroup
-      if (!new_el || !new_el->GetTypeDef()->InheritsFrom(&TA_taGroup_impl)) {
-        taMisc::Error("Unexpected no group or not a group when pasting/dropping.");
-        return taiClipData::ER_ERROR;
-      }
-      gp.MoveBefore(subgrp, new_el);
+      // move it now, before the load
+      gp.MoveBefore(subgrp, new_gp);
+      taBase* ld_par = this;
+      int dump_val = td->Dump_Load(istr, new_gp, ld_par/*, &new_el_*/);
+      
+      if (CheckError((dump_val == 0), false, ok,
+        "Load error for TypeDef:" + td->name)) 
+        return taiClipData::ER_ERROR; // load failed
       return taiClipData::ER_OK;
     } else { // no data
       return taiClipData::ER_ERROR; //TODO: error message
