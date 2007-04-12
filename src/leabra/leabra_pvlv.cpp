@@ -100,7 +100,7 @@ void PViLayerSpec::HelpConfig() {
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
   ScalarValLayerSpec::HelpConfig();
 }
 
@@ -328,7 +328,7 @@ void LVeLayerSpec::HelpConfig() {
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
   ScalarValLayerSpec::HelpConfig();
 }
 
@@ -512,7 +512,7 @@ void PVLVDaLayerSpec::HelpConfig() {
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative da = negative activation signal here";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
@@ -752,7 +752,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
  re-run this configuration process to make sure everything is OK.  When you press\
  Re/New/Init on the control process these same checks will be performed, so you\
  can be sure everything is ok.";
-  taMisc::Choice(msg,"Ok");
+  taMisc::Confirm(msg);
 
   net->RemoveUnits();
 
@@ -1151,7 +1151,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
     "PVLV configuration is now complete.  Do not forget the one remaining thing\
  you need to do manually:\n\n" + man_msg;
   }
-  taMisc::Choice(msg,"Ok");
+  taMisc::Confirm(msg);
 
   pvesp->UpdateAfterEdit();
   pvisp->UpdateAfterEdit();

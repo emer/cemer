@@ -70,10 +70,9 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
 #endif
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
-    String delimiter = "!|";
+    String delimiter = taiChoiceDialog::delimiter;
     int   chn = 0;
-    String chstr = text;
-    chstr += delimiter;
+    String chstr = delimiter;
     if (a) { chstr += String(a) + delimiter; chn++; }
     if (b) { chstr += String(b) + delimiter; chn++; }
     if (c) { chstr += String(c) + delimiter; chn++; }
@@ -83,7 +82,7 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
     if (g) { chstr += String(g) + delimiter; chn++; }
     if (h) { chstr += String(h) + delimiter; chn++; }
     if (i) { chstr += String(i) + delimiter; chn++; }
-    m = taiChoiceDialog::ChoiceDialog(NULL, chstr, text);
+    m = taiChoiceDialog::ChoiceDialog(NULL, text, chstr);
   } else
 #endif
   {
@@ -110,4 +109,23 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
     m = choiceval;
   }
   return m;
+}
+
+void taMisc::Confirm(const char* a, const char* b, const char* c,
+  const char* d, const char* e, const char* f, const char* g,
+  const char* h, const char* i)
+{
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  if (taMisc::dmem_proc > 0) return;
+#endif
+  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+#if !defined(NO_TA_BASE)
+  if (taMisc::gui_active) {
+    taiChoiceDialog::ConfirmDialog(NULL, msg);
+  } else
+#endif
+  {
+    cout << msg << "\n";
+    FlushConsole();
+  }
 }

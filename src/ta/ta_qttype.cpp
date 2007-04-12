@@ -1016,24 +1016,9 @@ void taiMember::GetImage_CondShow(taiData* dat, const void* base) {
   //note: we don't care if processed or not -- flag defaults make it editable
   CheckProcessCondMembMeth("CONDSHOW", mbr, base, is_on, val_is_eq);
   bool is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
-  QWidget* wid = dat->GetRep();
-  QLabel* lbl = dat->label();
-  if (is_visible) {
-    if (lbl) {
-      lbl->setVisible(true);
-    }
-    if (wid) {
-      wid->setVisible(true);
-    }
-    GetImage_impl(dat, base);
-  } else {
-    if (wid) {
-      wid->setVisible(false);
-    }
-    if (lbl) {
-      lbl->setVisible(false);
-    }
-  }
+  dat->setVisible(is_visible);
+  if (is_visible)
+    GetImage_impl(dat, base); 
 }
 
 

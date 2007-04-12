@@ -1,3 +1,39 @@
+CURRENT BUGS
+
+Choice Dialog
+
+* the id-based priority/role assignment causes the dialog to reorder
+  the buttons, i.e. it puts them in an order established by role
+* the Copy To Clipboard guy causes the dialog to close
+* it is very non-standard and arcane, with its weird overrides, etc.
+* "no cancel" is confusing
+
+Notes:
+* semantics for Error, Warning, etc. are really irrelevant, since
+  there is nothing for user to do but click Ok
+* the taMisc::Choice api does not provide any explicit support for
+  the "no cancel" option
+* "no cancel" seems primarily just to support Ok-only
+
+Default Behavior:
+* Qt wants to put the Default button 1st, the Cancel button 2nd
+ (WARN: this could possibly be platform dependent! ex Mac may do
+  opposite.)
+  
+Possible Redesign:
+
+* should allocate the choice items in a fixed way, yet permit
+  them to be placed anywhere
+* if only 1 choice is provided, it is FORCED,
+  i.e., Cancel must always be explicitly provided in Choices
+* if more than 1 choice is provided, then Cancel *should*
+  be provided and *should* be last option
+* last option provided is the default Cancel/No/Reject
+* order should not be germane (but ID of course still is:
+  id=order)
+
+* 
+
 WORK PRIORITY
 -------------
 

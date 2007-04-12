@@ -27,8 +27,9 @@
 #include "ta_seledit.h"
 #include "ta_TA_type.h"
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QCursor>
+#include <QClipboard>
 #include <qdesktopwidget.h>
 #include <qdialog.h>
 #include <qevent.h>
@@ -165,11 +166,13 @@ void HiLightButton::mouseMoveEvent(QMouseEvent*  mev) {
 // 		taiChoiceDialog				//
 //////////////////////////////////////////////////////////
 
-int taiChoiceDialog::ChoiceDialog(QWidget* win, const char* prompt,
-	const char* win_title, bool no_cancel)
+const String taiChoiceDialog::delimiter("!|");
+
+int taiChoiceDialog::ChoiceDialog(QWidget* parent_, const String& msg,
+  const String& but_list, const char* title)
 {
-  if (win == NULL) win = QApplication::activeWindow();
-  taiChoiceDialog* dlg = new taiChoiceDialog(win, prompt, win_title, no_cancel);
+  taiChoiceDialog* dlg = new taiChoiceDialog(Question, QString(title),
+    msg.toQString(), but_list,  parent_, false);
   // show the dialog
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   int rval = dlg->exec();
@@ -178,105 +181,96 @@ int taiChoiceDialog::ChoiceDialog(QWidget* win, const char* prompt,
   return rval;
 }
 
-void taiChoiceDialog::ErrorDialog(QWidget* parent_, const char* msg, const char* win_title)
+
+void taiChoiceDialog::ErrorDialog(QWidget* parent_, const char* msg,
+  const char* title, bool copy_but_)
 {
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
-  QMessageBox::warning(parent_, win_title, msg);
+  taiChoiceDialog* dlg = new taiChoiceDialog(Warning, QString(title), 
+    QString(msg), "", parent_, copy_but_);
+  dlg->exec();
   QApplication::restoreOverrideCursor();
+  delete dlg;
 }
 
-taiChoiceDialog::taiChoiceDialog(QWidget* par, const char* prompt,
-	const char* win_title, bool no_cancel_)
-  : QDialog(par, 0, true)
+void taiChoiceDialog::ConfirmDialog(QWidget* parent_, const char* msg,
+  const char* title, bool copy_but_)
 {
-  iSize ss = taiM->scrn_s;
-  setMaximumSize(ss.width(), ss.height());
-  setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
+  QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  taiChoiceDialog* dlg = new taiChoiceDialog(Information, QString(title), 
+    QString(msg), "", parent_, copy_but_);
+  dlg->exec();
+  QApplication::restoreOverrideCursor();
+  delete dlg;
+}
 
-  no_cancel = no_cancel_;
-  // Main layout
-  vblMain = new QVBoxLayout(this);
-  // Text area
-  txtMessage = new QLabel(this);
-  txtMessage->setMinimumSize(400, 130); //TODO: could maybe be set based on display size
-  txtMessage->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
-  vblMain->add(txtMessage);
-  //txtMessage->show();
-
-  // Button layout, and (hidden)button group
-  hblButtons = new QHBoxLayout();
-  hblButtons->setSpacing(5); // TODO: button spacing should be central constant
-  vblMain->addLayout(hblButtons);
+taiChoiceDialog::taiChoiceDialog(Icon icon, const QString& title,
+  const QString& text, String but_list, QWidget* parent,
+  bool copy_but_)
+:inherited(icon, title, text, NoButton, parent)
+{
+  if (title.isEmpty()) {
+    setWindowTitle(QCoreApplication::instance()->applicationName());
+  }
   bgChoiceButtons = new QButtonGroup(this); // note: not a widget, invisible
   bgChoiceButtons->setExclusive(false); // not really applicable
+
+  // create buttons
+  String_PArray sa;
+  if (but_list.contains(delimiter)) { // has options encoded within prompt string
+    // strip leading/trailing delims, and parse all at once, to get count now
+    if (but_list.startsWith(delimiter))
+      but_list = but_list.after(delimiter);
+    if (but_list.endsWith(delimiter))
+      but_list = but_list.left(but_list.length() - delimiter.length());
+    sa.SetFromString(but_list, delimiter);
+  }
+  // we always have at least an Ok button
+  if (sa.size == 0) {
+    sa.Add("&Ok");
+  }
+  num_chs = sa.size;
+
+  for (int i = 0; i < sa.size; ++i) {
+    ButtonRole role = AcceptRole;
+    if ((i > 0) && (i == (sa.size - 1)))
+      role = RejectRole;
+    Constr_OneBut(sa[i], i, role);
+  }
+
+  if (copy_but_) {
+    // damn copy button
+    QAbstractButton* but = Constr_OneBut("Copy to clipboard", -2, ActionRole);
+    connect(but, SIGNAL(clicked()), this, SLOT(copyToClipboard()));
+  }
+}
+
+void taiChoiceDialog::done(int r) {
+  QAbstractButton* but = clickedButton();
+  int id = -1;
+  if (but) 
+    id = bgChoiceButtons->id(but);
+  if (id < -1) return; // ignore
+  // if user goes Esc, it returns -1 -- we want our last button instead
+  if ((id == -1) || (r < 0))
+    r = num_chs - 1;
+  inherited::done(r);  
+}
+
+void taiChoiceDialog::copyToClipboard() {
+  QApplication::clipboard()->setText(text());
+}
+
+QAbstractButton* taiChoiceDialog::Constr_OneBut(String lbl, int id, ButtonRole role) {
+  if (lbl.startsWith(" ")) // allow for one space..
+    lbl = lbl.after(' ');
+  if (lbl.empty())
+    return NULL; // not really supposed to happen...
   
-  connect(bgChoiceButtons, SIGNAL(buttonClicked(int)),
-      this, SLOT(done(int)) );
-  setCaption(win_title);
-
-  String delimiter = "!|";
-
-  String prompt_str(prompt);
-  if(prompt_str.contains(delimiter)) { // has options encoded within prompt string
-    String blabs = prompt_str.after(delimiter);
-    prompt_str = prompt_str.before(delimiter);
-    txtMessage->setText(prompt_str);
-
-    // create buttons
-    int curId = 0;
-    hblButtons->addStretch();
-    while (Constr_OneBut(blabs, curId)) {
-      ++curId;
-    }
-  }
-  else {			// does not have options; just give it an Ok.
-    txtMessage->setText(prompt_str);
-    String ok_msg = "Ok";
-    Constr_OneBut(ok_msg, 0);	// always have a button!
-  }
-  hblButtons->addStretch();
-}
-
-bool taiChoiceDialog::Constr_OneBut(String& lbl, int curId) {
-  String delimiter = "!|";
-
-  if(lbl.length() == 0)
-    return false;
-  String blab = lbl.before(delimiter);
-  if(blab == "") {
-    blab = lbl;
-    lbl = "";			// done next time, anyway
-  }
-  else
-    lbl = lbl.after(delimiter);
-  if(blab == "")
-    return false;
-
-  if(blab[0] == ' ')		// allow for one space..
-    blab = blab.after(' ');
-
-  QPushButton* but = new QPushButton(blab, this);
-  hblButtons->add(but);
-  bgChoiceButtons->addButton(but, curId);
-//  but->show();
-
-  // set first button to be default for dialog
-  if (curId == 0) {
-    but->setDefault(true);
-    but->setAutoDefault(true);
-  }
-
-  // set 2nd button to be cancel for dialog
-  if ((!no_cancel) && (curId == 1)) {
-    connect(but, SIGNAL(clicked()),
-      this, SLOT(reject()));
-  }
-  return true;
-}
-
-void taiChoiceDialog::accept() {
-   // override -- it should return 0 for our purpose (not 1)
-  done(0);
+  QPushButton* but = new QPushButton(lbl, this);
+  addButton(but, role);
+  bgChoiceButtons->addButton(but, id);
+  return but;
 }
 
 void taiChoiceDialog::keyPressEvent(QKeyEvent* ev) {
@@ -287,18 +281,12 @@ void taiChoiceDialog::keyPressEvent(QKeyEvent* ev) {
     QPushButton* but = (QPushButton*)bgChoiceButtons->button(but_index);
     if (but != NULL) {
       // simulate effect of pressing the button
-      done(but_index);
+      but->click();
       ev->accept(); // swallow key
     }
   } else {
     QDialog::keyPressEvent(ev);
   }
-}
-
-void taiChoiceDialog::reject() {
-  // this is the easiest way to override the Esc behavior of choosing button 1
-  if (!no_cancel)
-    done(1);
 }
 
 
@@ -734,7 +722,7 @@ void taiDataHostBase::InitGuiFields(bool) {
 void taiDataHostBase::Apply() {
   if (warn_clobber) {
     int chs = taMisc::Choice("Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?",
-			     "Apply", "Revert", "Cancel");
+			     "&Apply", "&Revert", "&Cancel");
     if(chs == 1) {
       Revert();
       return;
@@ -1133,7 +1121,7 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
   if (layBody->numRows() < (row + 1)) {
     layBody->expand(row + 1, 2);
   }
-  layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
+//nn  layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
   QHBoxLayout* layH = new QHBoxLayout();
   layH->addWidget(label, 0, (Qt::AlignLeft | Qt::AlignVCenter));
 /*  layH->addItem(new QSpacerItem(2, row_height, QSizePolicy::Fixed), row, 0,
@@ -1143,20 +1131,23 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
   label->show(); // needed for rebuilds, to make the widget show
   return row;
 }
+
 int taiDataHost::AddData(int row, QWidget* data, bool fill_hor) {
-   // add a data item in second column
-    if (row < 0)
-      row = layBody->numRows();
-    if (layBody->numRows() < (row + 1)) {
-      layBody->expand(row + 1, 2);
-    }
-    layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
-    QHBoxLayout* hbl = new QHBoxLayout();
-    layBody->addLayout(hbl, row, 1);
-    hbl->addWidget(data, 0);
-    if (!fill_hor) hbl->addStretch();
-    data->show(); // needed for rebuilds, to make the widget show
-    return row;
+  // add a data item in second column
+  if (row < 0)
+    row = layBody->numRows();
+  if (layBody->numRows() < (row + 1)) {
+    layBody->expand(row + 1, 2);
+  }
+  // note1: margins not automatically baked in to max height
+  // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
+  layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); 
+  QHBoxLayout* hbl = new QHBoxLayout();
+  layBody->addLayout(hbl, row, 1);
+  hbl->addWidget(data, 0);
+  if (!fill_hor) hbl->addStretch();
+  data->show(); // needed for rebuilds, to make the widget show
+  return row;
 }
 
 void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc) {
@@ -1451,8 +1442,9 @@ bool taiDataHost::ReShow(bool force) {
 
 void taiDataHost::Revert_force() {
   if (modified && (taMisc::auto_revert == taMisc::CONFIRM_REVERT)) {
-    int chs = taiChoiceDialog::ChoiceDialog
-      (NULL, "Revert: You have edited the data -- apply, or revert and lose changes?!Apply!Revert!Cancel!");
+    int chs = taMisc::Choice
+      ("Revert: You have edited the data -- apply, or revert and lose changes?",
+      "Apply", "Revert", "Cancel");
     if(chs == 2)
       return;
     if(chs == 0) {
@@ -1786,7 +1778,7 @@ void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
     AddData(idx, rep, fill_hor);
-    
+
     // create label
     name = "";
     desc = "";
@@ -1997,6 +1989,7 @@ void taiEditDataHost::GetImage() {
 }
 
 void taiEditDataHost::GetImage_Membs() {
+  cur_row = 0;
   if (inline_mode) {
     GetImageInline_impl(cur_base);
   } else {
@@ -2025,8 +2018,15 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
     taiData* mb_dat = dl.SafeEl(i);
     if ((md == NULL) || (mb_dat == NULL))
       taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
-    else
-      md->im->GetImage(mb_dat, base);
+    else {
+      md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
+      if (mb_dat->visible()) {
+        layBody->setRowSpacing(cur_row, row_height + (2 * LAYBODY_MARGIN)); 
+      } else {
+        layBody->setRowSpacing(cur_row, 0); 
+      }
+      ++cur_row;
+    }
   }
 }
 

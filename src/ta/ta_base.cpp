@@ -552,6 +552,24 @@ TAPtr taBase::GetOwner(TypeDef* td) const {
   return own->GetOwner(td);
 }
 
+bool taBase::IsChildOf(taBase* obj) const {
+  // note: we define ourself as a child of ourself
+  const taBase* tobj = this;
+  do {
+    if (tobj == obj) return true;
+  } while ((tobj = tobj->GetOwner()));
+  return false;
+}
+
+bool taBase::IsParentOf(taBase* obj) const {
+  // note: we define ourself as a parent of ourself
+  do {
+    if (this == obj) return true;
+  } while ((obj = obj->GetOwner()));
+  return false;
+}
+
+
 void taBase::SetDefaultName_impl(int idx) {
   // name root -- use an explicit name root if any, else just the class name
   TypeDef* td = GetTypeDef();
@@ -942,12 +960,15 @@ int taBase::Load_cvt(taFiler*& flr) {
   taRefN::unRefDone(flr);	// get rid of orig filer
   flr = cvt_flr;		// use new one
   flr->open_read();		// read the converted file
-  taMisc::Choice("Note: converting old file of type: " + cvt->proj_type_base + 
+  int chs = taMisc::Choice("Note: converting old file of type: " + cvt->proj_type_base + 
 		".\n Created intermediate cvt file as: " + cvt_fname + 
 		".\n Many error messages are likely (and should be ignored)," +
 		 "\n and you will probably need to convert object using convert button",
-		 "Continue");
-  return true;	
+        "Continue", "Cancel");
+//TODO: BA changed this to a cancellable operation 04/11/07 -- may need to be tested
+  if (chs == 0) 
+    return true;
+  else return false;
 }
 
 int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
@@ -1081,8 +1102,14 @@ void taBase::RebuildAllViews() {
 }
 
 void taBase::DataChanged(int dcr, void* op1, void* op2) {
-  if (!taMisc::is_loading && (dcr != DCR_ITEM_UPDATED_ND))
-    setDirty(true); // note, also then sets dirty for list ops, like Add etc.
+  if (!taMisc::is_loading) {
+   if (dcr != DCR_ITEM_UPDATED_ND)
+     setDirty(true); // note, also then sets dirty for list ops, like Add etc.
+   // only assume stale for strict condition:
+   if ((useStale() && (dcr == DCR_ITEM_UPDATED)))
+     setStale();
+  }
+  
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
 #ifdef TA_GUI
@@ -2294,6 +2321,9 @@ String taList_impl::ChildGetColText_impl(taBase* child, const KeyString& key, in
 }
 
 void taList_impl::DataChanged(int dcr, void* op1, void* op2) {
+  //note: set stale before notifies
+  if (useStale() && ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX)))
+    setStale();
   inherited_taBase::DataChanged(dcr, op1, op2);
 }
 

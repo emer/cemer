@@ -1239,6 +1239,13 @@ show_menu:
   }
   
   act = NULL;
+  if (ea & taiClipData::EA_DROP_ASSIGN) {
+    act = menu->AddItem("Assign To", taiAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)),
+      taiClipData::EA_DROP_ASSIGN, QKeySequence());
+  }   
+     
+  act = NULL;
   if ((ea & taiClipData::EA_DROP_LINK2) == taiClipData::EA_DROP_LINK2) {
     act = menu->AddItem("Link Here", taiAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
@@ -1316,34 +1323,50 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int ea) {
         taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_COPY;
   }
+  if (ea & taiClipData::EA_DUPE) {
+    mel = menu->AddItem("Duplicate", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_DUPE;
+  }
   
   // Paste and Link guys are slightly complicated, because we can have 
   // OP/OP_INTO variants, so we can't have shortcuts with both
-  if ((ea & taiClipData::EA_PASTE2) == taiClipData::EA_PASTE2) {
-    mel = menu->AddItem("Paste", taiMenu::use_default,
+  int paste_cnt = 0;
+  if (ea & taiClipData::EA_PASTE) ++paste_cnt;
+  if (ea & taiClipData::EA_PASTE_INTO) ++paste_cnt;
+  if (ea & taiClipData::EA_PASTE_ASSIGN) ++paste_cnt;
+  if (ea & taiClipData::EA_PASTE_APPEND) ++paste_cnt;
+  String txt;
+  if (ea & taiClipData::EA_PASTE) {
+    if (paste_cnt > 1) txt = "Paste"; else txt = "&Paste";
+    mel = menu->AddItem(txt, taiMenu::use_default,
         taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE;
-    mel = menu->AddItem("Paste Into", taiMenu::use_default,
+  } 
+  if (ea & taiClipData::EA_PASTE_INTO) {
+    if (paste_cnt > 1) txt = "Paste Into"; else txt = "&Paste Into";
+    mel = menu->AddItem(txt, taiMenu::use_default,
         taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_INTO;
   } 
-  else if (ea & taiClipData::EA_PASTE) {
-    mel = menu->AddItem("&Paste", taiMenu::use_default,
+  if (ea & taiClipData::EA_PASTE_ASSIGN) {
+    if (paste_cnt > 1) txt = "Paste Assign"; else txt = "&Paste Assign";
+    mel = menu->AddItem(txt, taiMenu::use_default,
         taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
-    mel->usr_data = taiClipData::EA_PASTE;
+    mel->usr_data = taiClipData::EA_PASTE_ASSIGN;
   } 
-  else if (ea & taiClipData::EA_PASTE_INTO) {
-    mel = menu->AddItem("&Paste Into", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
-    mel->usr_data = taiClipData::EA_PASTE_INTO;
-  } 
-  
   if (ea & taiClipData::EA_PASTE_APPEND) {
-    mel = menu->AddItem("Paste Append", taiMenu::use_default,
+    if (paste_cnt > 1) txt = "Paste Append"; else txt = "&Paste Append";
+    mel = menu->AddItem(txt, taiMenu::use_default,
         taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_APPEND;
   }
   
+  if (ea & taiClipData::EA_DELETE) {
+    mel = menu->AddItem("&Delete", taiMenu::use_default,
+        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+    mel->usr_data = taiClipData::EA_DELETE;
+  }
   if ((ea & taiClipData::EA_LINK) == taiClipData::EA_LINK) {
     mel = menu->AddItem("Link", taiMenu::use_default,
         taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
@@ -1367,11 +1390,6 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int ea) {
     mel = menu->AddItem("&Unlink", taiMenu::use_default,
         taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
     mel->usr_data = taiClipData::EA_UNLINK;
-  }
-  if (ea & taiClipData::EA_DELETE) {
-    mel = menu->AddItem("&Delete", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
-    mel->usr_data = taiClipData::EA_DELETE;
   }
   taiDataLink* link = this->link();
   if (link) link->FillContextMenu_EditItems(menu, ea);
@@ -2908,6 +2926,8 @@ void iApplicationToolBar::Constr_post() {
   win->editCopyAction->addTo(tb);
   win->editPasteAction->addTo(tb);
   win->editPasteIntoAction->addTo(tb);
+  win->editPasteAssignAction->addTo(tb);
+  win->editPasteAppendAction->addTo(tb);
   tb->addSeparator();
   win->helpHelpAction->addTo(tb);
 }
@@ -3306,10 +3326,15 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editCopyAction = AddAction(new taiAction(taiClipData::EA_COPY, "&Copy", QKeySequence("Ctrl+C"), _editCopyAction ));
   editCopyAction->setIconSet( QIconSet( image7 ) );
   //note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
+  editDupeAction = AddAction(new taiAction(taiClipData::EA_DUPE, "Duplicate", QKeySequence(), "editDuplicateAction" ));
   editPasteAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste", QKeySequence("Ctrl+V"), _editPasteAction ));
   editPasteAction->setIconSet( QIconSet( image8 ) );
-  editPasteIntoAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste Into", QKeySequence("Ctrl+V"), "editPasteIntoAction" ));
+  editPasteIntoAction = AddAction(new taiAction(taiClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence("Ctrl+V"), "editPasteIntoAction" ));
   editPasteIntoAction->setIconSet( QIconSet( image8 ) );
+  editPasteAssignAction = AddAction(new taiAction(taiClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence("Ctrl+V"), "editPasteAssignAction" ));
+  editPasteAssignAction->setIconSet( QIconSet( image8 ) );
+  editPasteAppendAction = AddAction(new taiAction(taiClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence("Ctrl+V"), "editPasteAppendAction" ));
+  editPasteAppendAction->setIconSet( QIconSet( image8 ) );
   editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Shift+D"), _editDeleteAction ));
 //  editDeleteAction->setIconSet( QIconSet( image8 ) );
   editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence("Ctrl+L"), _editLinkAction ));
@@ -3330,8 +3355,11 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editMenu->insertSeparator();
   editCutAction->AddTo( editMenu );
   editCopyAction->AddTo( editMenu );
+  editDupeAction->AddTo( editMenu );
   editPasteAction->AddTo( editMenu );
   editPasteIntoAction->AddTo( editMenu );
+  editPasteAssignAction->AddTo( editMenu );
+  editPasteAppendAction->AddTo( editMenu );
   editLinkAction->AddTo( editMenu );
   editLinkIntoAction->AddTo( editMenu );
   editUnlinkAction->AddTo( editMenu );
@@ -3372,8 +3400,11 @@ void iMainWindowViewer::Constr_Menu_impl() {
 //   connect( editRedoAction, SIGNAL( activated() ), this, SLOT( editRedo() ) );
   connect( editCutAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editCopyAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editDupeAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editPasteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editPasteIntoAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editPasteAssignAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editPasteAppendAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editLinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editLinkIntoAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editUnlinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
@@ -3800,28 +3831,56 @@ void iMainWindowViewer::UpdateActionsMenu(ISelectableHost* src_host, bool do_add
 
 void iMainWindowViewer::UpdateUi() {
   int ea = GetEditActions();
+  // some actions we always show, others we only show if available
   editCutAction->setEnabled(ea & taiClipData::EA_CUT);
   editCopyAction->setEnabled(ea & taiClipData::EA_COPY);
+  editDupeAction->setVisible(ea & taiClipData::EA_DUPE);
+  // we always show the plainjane Paste (enable or disable)
+  // if more than one paste guy is enabled, no shortcuts/accelerators
+  int paste_cnt = 0;
+  if (ea & taiClipData::EA_PASTE) ++paste_cnt;
+  if (ea & taiClipData::EA_PASTE_INTO) ++paste_cnt;
+  if (ea & taiClipData::EA_PASTE_ASSIGN) ++paste_cnt;
+  if (ea & taiClipData::EA_PASTE_APPEND) ++paste_cnt;
   editPasteAction->setEnabled(ea & taiClipData::EA_PASTE);
-  editPasteIntoAction->setEnabled(ea & taiClipData::EA_PASTE_INTO);
-
-  // fairly hacky to adjust Paste and Link depending on whether both OP/OP_INTO
-  if ((ea & taiClipData::EA_PASTE2) == taiClipData::EA_PASTE2) {
-    // need to remove accelerators
-    editPasteAction->setText("Paste");
-    editPasteAction->setShortcut(QKeySequence());
-    editPasteIntoAction->setText("Paste Into");
-    editPasteIntoAction->setShortcut(QKeySequence());
-  } else { 
-    // restore accelerators
-    editPasteAction->setText("&Paste");
-    editPasteAction->setShortcut(QKeySequence("Ctrl+V"));
-    editPasteIntoAction->setText("&Paste Into");
-    editPasteIntoAction->setShortcut(QKeySequence("Ctrl+V"));
+  editPasteIntoAction->setVisible(ea & taiClipData::EA_PASTE_INTO);
+  editPasteAssignAction->setVisible(ea & taiClipData::EA_PASTE_ASSIGN);
+  editPasteAppendAction->setVisible(ea & taiClipData::EA_PASTE_APPEND);
+  if (ea & taiClipData::EA_PASTE_INTO) {
+    if (paste_cnt > 1) {
+      editPasteIntoAction->setText("Paste Into");
+      editPasteIntoAction->setShortcut(QKeySequence());
+    } else {
+      editPasteIntoAction->setText("&Paste Into");
+      editPasteIntoAction->setShortcut(QKeySequence("Ctrl+V"));
+    }
+  }
+  if (ea & taiClipData::EA_PASTE_ASSIGN)  {
+    if (paste_cnt > 1) {
+      editPasteAssignAction->setText("Paste Assign");
+      editPasteAssignAction->setShortcut(QKeySequence());
+    } else {
+      editPasteAssignAction->setText("&Paste Assign");
+      editPasteAssignAction->setShortcut(QKeySequence("Ctrl+V"));
+    }
+  }
+  if (ea & taiClipData::EA_PASTE_APPEND)  {
+    if (paste_cnt > 1) {
+      editPasteAppendAction->setText("Paste Append");
+      editPasteAppendAction->setShortcut(QKeySequence());
+    } else {
+      editPasteAppendAction->setText("&Paste Append");
+      editPasteAppendAction->setShortcut(QKeySequence("Ctrl+V"));
+    }
   }
   
-  editLinkAction->setEnabled(ea & taiClipData::EA_LINK);
-  editLinkIntoAction->setEnabled(ea & taiClipData::EA_LINK_INTO);
+  editDeleteAction->setEnabled(ea & taiClipData::EA_DELETE);
+  
+  // linking is currently not really used, so we'll not show by default
+  // if we later add more linking capability, we may want to always enable,
+  // just to hint user that it is sometimes available
+  editLinkAction->setVisible(ea & taiClipData::EA_LINK);
+  editLinkIntoAction->setVisible(ea & taiClipData::EA_LINK_INTO);
   
   if ((ea & taiClipData::EA_LINK2) == taiClipData::EA_LINK2) {
     // need to remove accelerators
@@ -3838,7 +3897,6 @@ void iMainWindowViewer::UpdateUi() {
   }
   
   editUnlinkAction->setVisible(ea & taiClipData::EA_UNLINK);
-  editDeleteAction->setEnabled(ea & taiClipData::EA_DELETE);
   
   emit SetActionsEnabled();
 }
@@ -5529,14 +5587,14 @@ iTreeViewItem::~iTreeViewItem() {
 }
 
 bool iTreeViewItem::canAcceptDrop(const QMimeData* mime) const {
-//TEMP:
-return true;
+ return true;
+/*obs always say yes, since we put up a drop menu, and this decode 
+  // would be done all the time
   taiMimeSource* ms = taiMimeSource::New(mime);
   int ea = QueryEditActions_(ms);
-//  bool rval = (ea & taiClipData::EA_DROP_OPS);
-  bool rval = (ea & taiClipData::EA_DROP_MOVE); //NOTE: we only use MOVE for drag/drop
+  bool rval = (ea & taiClipData::EA_DROP_OPS);
   delete ms;
-  return rval;
+  return rval;*/
 }
 
 /* nnint iTreeViewItem::compare (QTreeWidgetItem* item, int col, bool ascending) const {
@@ -5668,83 +5726,10 @@ void iTreeViewItem::DecorateDataNode() {
   }
 }
 
-/*void iTreeViewItem::dragEntered() {
-  QTreeWidgetItem::dragEntered();
-    if ( type() != Dir ||
-	 type() == Dir && !QDir( itemFileName ).isReadable() )
-	return;
-
-    ( (QtFileIconView*)iconView() )->setOpenItem( this );
-//TODO:    assertTimer(true);
-//    timer->start( 1500 );
-}
-
-void iTreeViewItem::dragLeft() {
-  QTreeWidgetItem::dragLeft();
-    if ( type() != Dir ||
-	 type() == Dir && !QDir( itemFileName ).isReadable() )
-	return;
-
-    if (timer) {
-      timer->stop();
-      assertTimer(false);
-    }
-}*/
-
-
 void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos, 
     int key_mods) {
   DropHandler(mime, pos, key_mods);
-/*
-  taiMimeSource* ms = taiMimeSource::New(mime);
 
-  int ea = GetEditActions_(ms);
-  // always show menu, for consistency
-  
-  QMenu* menu = new QMenu(treeWidget());
-  taiMenu* imenu = new taiMenu(treeWidget(), taiMenu::normal, 0, menu);
-  QAction* act;
-
-  act = menu->addAction("&Move Here");
-  act->setShortcut(QKeySequence("Shift"));
-  act->setData(taiClipData::EA_DROP_MOVE);
-  act->setEnabled(ea & taiClipData::EA_DROP_MOVE);
-  
-  act = menu->addAction("&Copy Here");
-  act->setShortcut(QKeySequence("Ctrl"));
-  act->setData(taiClipData::EA_DROP_COPY);
-  act->setEnabled(ea & taiClipData::EA_DROP_COPY);
-  
-  act = menu->addAction("&Link Here");
-  act->setShortcut(QKeySequence("Ctrl+Shift"));
-  act->setData(taiClipData::EA_DROP_LINK);
-  act->setEnabled(ea & taiClipData::EA_DROP_LINK);
-
-  // if any appropriate drop actions, then add them!
-  host()->UpdateMethodsActionsForDrop(ms);
-  host()->AddDynActions(imenu);
-  
-  menu->addSeparator();
-  act = menu->addAction("C&ancel");
-  act->setData(-1);
-  act->setShortcut(QKeySequence("Esc"));
-
-  // 
-  //TODO: any for us last (ex. delete)
-  // get current mouse position
-  QPoint men_pos = treeWidget()->mapToGlobal(pos);
-  
-  act = menu->exec(men_pos);
-  int ea = -1;
-  if (act)
-    ea = act->data().toInt();
-  menu->deleteLater();
-  if (ea != -1) {
-    EditActionD_impl_(ms, ea);
-  }
-  delete imenu;
-
-  delete ms;*/
 }
 
 void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {

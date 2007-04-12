@@ -23,6 +23,7 @@
 #include "ta_qttype.h"
 #include "ta_qtdata.h"
 #include "ta_qtclipdata.h"
+#include "ta_qtdialog.h"
 
 #include "css_machine.h" // for trace flag
 //#include "irenderarea.h"
@@ -35,7 +36,6 @@
 #include <qfile.h>
 #include <qfiledialog.h>
 #include <qlayout.h>
-#include <qmessagebox.h>
 #include <qmime.h>
 #include <QMenu>
 #include <qscrollbar.h>
@@ -788,7 +788,7 @@ void iT3DataViewFrame::fileExportInventor() {
   static QFileDialog* fd = NULL;
   SoNode* scene = m_ra->getSceneGraph();
   if (!scene) {
-    QMessageBox::information(this, "No scene", "No scene exists yet.", "Ok");
+    taiChoiceDialog::ErrorDialog(this, "No scene exists yet.", "No scene", false);
     return;
   }
 
@@ -802,12 +802,14 @@ void iT3DataViewFrame::fileExportInventor() {
   // check if exists, to warn user
   QFile f(fileName);
   if (f.exists()) {
-    if (QMessageBox::question(this, "Confirm file overwrite", "That file already exists, overwrite it?",
-        QString::null, "&Ok", "&Cancel", 1, 1) != 0) return;
+    if (taiChoiceDialog::ChoiceDialog(this, 
+      "That file already exists, overwrite it?",
+      "Confirm file overwrite",
+      "&Ok" + taiChoiceDialog::delimiter + "&Cancel") != 0) return;
   }
   SoOutput out;
   if (!out.openFile(fileName)) {
-    QMessageBox::warning(this, "File error", "Could not open file.", "Ok");
+    taiChoiceDialog::ErrorDialog(this, "Could not open file.", "File error", false);
     return;
   }
   SoWriteAction wa(&out);

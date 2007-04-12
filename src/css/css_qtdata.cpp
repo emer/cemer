@@ -223,7 +223,7 @@ void cssiMethMenu::ShowReturnVal(cssEl* rval) {
   }
   String val = css_fun->name + " Return Value: ";
   val += rval->PrintStr();
-  taiChoiceDialog::ChoiceDialog(NULL, val, "Return Value", true);
+  taiChoiceDialog::information(NULL, "Return Value", val);
 }
 
 void cssiMethMenu::ApplyBefore() {
@@ -232,8 +232,8 @@ void cssiMethMenu::ApplyBefore() {
   if (css_fun->HasOption("NO_APPLY_BEFORE") || !host->HasChanged())
     return;
   if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {
-    int chs = taiChoiceDialog::ChoiceDialog
-      (NULL, "Auto Apply/Revert: You have edited the data --apply or revert and lose changes?,&Apply,&Revert");
+    int chs = taMisc::Choice
+      ("Auto Apply/Revert: You have edited the data --apply or revert and lose changes?","&Apply","&Revert");
     if(chs == 0)
       host->GetValue();
   }

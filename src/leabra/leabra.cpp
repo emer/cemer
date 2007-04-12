@@ -1556,7 +1556,7 @@ level for layers that have different activity levels.  Note that if you set \
 the activity level by percent this will work for different sized layers that \
 have the same percent activity level.";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 void LeabraLayerSpec::Init_Weights(LeabraLayer* lay) {

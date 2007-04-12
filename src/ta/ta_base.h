@@ -275,6 +275,7 @@ public:
     THIS_INVALID	= 0x01, // CheckThisConfig_impl has detected a problem
     CHILD_INVALID	= 0x02, // CheckChildConfig_impl returns issue with a child
     COPYING		= 0x04, // this object is currently within a Copy function
+    USE_STALE		= 0x08, // calls setStale on appropriate changes
     DESTROYING		= 0x40, // Set in Destroying at the very beginning of destroy
     DESTROYED		= 0x80  // set in base destroy (DEBUG only); lets us detect multi destroys
 #ifndef __MAKETA__
@@ -326,7 +327,7 @@ public:
   ///////////////////////////////////////////////////////////////////////////
   //	Basic constructor/destructor ownership/initlink etc interface
 public:
-
+  
   virtual void		InitLinks()		{ };
   // #IGNORE initialize links to other objs and do more elaborate object initialization, called after construction & SetOwner (added to object hierarchy).  ALWAYS CALL PARENT InitLinks!!!
   virtual void		CutLinks();
@@ -403,7 +404,7 @@ public:
   //	Object managment flags (taBase supports up to 8 flags for basic object mgmt purposes)
 public:
 
-  bool			HasBaseFlag(int flag) const;
+  bool		HasBaseFlag(int flag) const;
   // #CAT_ObjectMgmt true if flag set, or if multiple, any set
   void			SetBaseFlag(int flag);
   // #CAT_ObjectMgmt sets the flag(s)
@@ -411,6 +412,11 @@ public:
   // #CAT_ObjectMgmt clears the flag(s)
   int			baseFlags() const {return m_flags;}
   // #IGNORE flag values; see also HasBaseFlag
+  inline bool		useStale() const {return HasBaseFlag(USE_STALE);}
+    // #IGNORE
+  inline void		setUseStale(bool val) 
+    {if (val) SetBaseFlag(USE_STALE); else ClearBaseFlag(USE_STALE);}
+    // #IGNORE
 
   ///////////////////////////////////////////////////////////////////////////
   //	Basic object properties: index in list, owner, name, description, etc
@@ -446,7 +452,8 @@ public:
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
   virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
   virtual TAPtr		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
-
+  bool 			IsParentOf(taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
+  bool			IsChildOf(taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect child of the obj (or is the obj)
   ///////////////////////////////////////////////////////////////////////////
   //	Paths in the structural hierarchy
 public:

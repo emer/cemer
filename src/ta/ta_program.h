@@ -176,7 +176,6 @@ public:
   override String GetTypeDecoKey() const { return "ProgVar"; }
 
   void	setStale();
-  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	Copy_(const ProgVar_List& cp);
   COPY_FUNS(ProgVar_List, inherited);
   TA_BASEFUNS(ProgVar_List);
@@ -232,6 +231,11 @@ public:
   String_Array	var_names;	// #READ_ONLY original variable names associated with vars list -- useful for user info if a variable goes out of existence..
   String_Array	bad_vars;	// #READ_ONLY list of variable names that are not found in the expression (may be fine if declared locally elsewhere, or somewhere hidden -- just potentially bad)
 
+  bool		empty() const {return expr.empty();} 
+    // #IGNORE quicky test for whether has anything or not, without needing to render
+  bool		nonempty() const {return expr.nonempty();} 
+    // #IGNORE quicky test for whether has anything or not, without needing to render
+    
   virtual bool	SetExpr(const String& ex);
   // set to use given expression -- calls ParseExpr followed by UpdateAfterEdit_impl
 
@@ -303,6 +307,8 @@ public:
   TypeDef*		arg_type; // #READ_ONLY typedef of the target arg, where available
   String                type; // #SHOW #READ_ONLY the type of the argument (automatically set from the target function)
   String                name; // #SHOW #READ_ONLY the name of the argument (automatically set from the target function)
+  bool			required; // #SHOW #READ_ONLY if a value is required (i.e., it is not a default argument)
+  String                def_val; // #SHOW #READ_ONLY for default arguments, what will get passed by default -- this is for reference only (leave expr blank for default)
   ProgExpr		expr; // the expression to compute and pass as the argument
 
   virtual void		UpdateFromVar(const ProgVar& cp); 
@@ -323,6 +329,7 @@ public:
   TA_BASEFUNS(ProgArg);
 protected:
   override void		UpdateAfterEdit_impl();
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
   void	Destroy();
@@ -340,9 +347,11 @@ public:
   // update our list of args based on method def arguments
   
   override String GetTypeDecoKey() const { return "ProgArg"; }
-
-  void DataChanged(int dcr, void* op1=0, void* op2=0);
+  virtual const String	GenCssBody_impl(int indent_level); 
+  
   TA_BASEFUNS(ProgArg_List);
+protected:
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
   void	Destroy() {Reset();}
@@ -390,7 +399,6 @@ public:
   virtual taBase*	FindTypeName(const String& nm) const;
   // find given type within this program element -- NULL if not found
 
-  override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   override String 	GetStateDecoKey() const;
   override int		GetEnabled() const;
   // note: it is our own, plus disabled if parent is
@@ -445,7 +453,6 @@ public:
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
 
-  void DataChanged(int dcr, void* op1=0, void* op2=0);
   void Copy_(const ProgEl_List& cp);
   COPY_FUNS(ProgEl_List, inherited);
   SIMPLE_LINKS(ProgEl_List);

@@ -271,7 +271,7 @@ void ExtRewLayerSpec::HelpConfig() {
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
   ScalarValLayerSpec::HelpConfig();
 }
 
@@ -629,7 +629,7 @@ void TDRewPredLayerSpec::HelpConfig() {
  - All units I recv from must be DaModUnit/Spec units (to hold t-1 act vals)\n\
  - Sending connection to a TDRewIntegLayerSpec to integrate predictions with external rewards";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
   ScalarValLayerSpec::HelpConfig();
 }
 
@@ -823,7 +823,7 @@ void TDRewIntegLayerSpec::HelpConfig() {
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
   ScalarValLayerSpec::HelpConfig();
 }
 
@@ -986,7 +986,7 @@ void TdLayerSpec::HelpConfig() {
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative td = negative activation signal here";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
@@ -1166,7 +1166,7 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
  re-run this configuration process to make sure everything is OK.  When you press\
  Re/New/Init on the control process these same checks will be performed, so you\
  can be sure everything is ok.";
-  taMisc::Choice(msg,"Ok");
+  taMisc::Confirm(msg);
 
   net->RemoveUnits();
 
@@ -1376,7 +1376,7 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     "TD configuration is now complete.  Do not forget the one remaining thing\
  you need to do manually:\n\n" + man_msg;
   }
-  taMisc::Choice(msg,"Ok");
+  taMisc::Confirm(msg);
 
   tdrpsp->UpdateAfterEdit();
   ersp->UpdateAfterEdit();

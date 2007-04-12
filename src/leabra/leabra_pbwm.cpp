@@ -63,7 +63,7 @@ void SNcLayerSpec::HelpConfig() {
  After pressing OK here, you will see configuration info for the PVLVDaLayerSpec\
  which this layer is based on";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
   PVLVDaLayerSpec::HelpConfig();
 }
 
@@ -289,7 +289,7 @@ void MatrixLayerSpec::HelpConfig() {
  - This layer must be after DaLayers in list of layers\n\
  - Units must be organized into groups (stipes) of same number as PFC";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
@@ -899,7 +899,7 @@ void SNrThalLayerSpec::HelpConfig() {
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative da = negative activation signal here";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
@@ -1058,7 +1058,7 @@ void PFCLayerSpec::HelpConfig() {
  - This layer must be after SNrThalLayerSpec layer in list of layers\n\
  - Units must be organized into groups corresponding to the matrix groups (stripes).";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
@@ -1385,7 +1385,7 @@ void PFCOutLayerSpec::HelpConfig() {
  - This layer must be after PFCLayerSpec layer in list of layers\n\
  - Units must be organized into groups corresponding to the matrix groups (stripes).";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
@@ -1602,7 +1602,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
  re-run this configuration process to make sure everything is OK.  When you press\
  Re/New/Init on the control process these same checks will be performed, so you\
  can be sure everything is ok.";
-  taMisc::Choice(msg,"Ok");
+  taMisc::Confirm(msg);
 
   int half_stripes = n_stripes /2;
   half_stripes = MAX(1, half_stripes);
@@ -2197,7 +2197,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     "BG/PFC configuration is now complete.  Do not forget the one remaining thing\
  you need to do manually:\n\n" + man_msg;
   }
-  taMisc::Choice(msg,"Ok");
+  taMisc::Confirm(msg);
 
   for(int j=0;j<net->specs.leaves;j++) {
     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);

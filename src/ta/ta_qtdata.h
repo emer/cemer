@@ -212,6 +212,7 @@ protected:
 class TA_API taiPlusToggle : public taiCompData {
 // a regular field plus a toggle..
   Q_OBJECT
+INHERITED(taiCompData)
 public:
   taiData*	data; // set by caller after creating contained class
   iCheckBox* 	but_rep;
@@ -229,6 +230,7 @@ public slots:
 
 protected:
   override void	DataChanged_impl(taiData* chld);
+  override void	applyNow();
 };
 
 //////////////////////////

@@ -206,9 +206,9 @@ void taiMisc::CheckConfigResult_(bool ok) {
   }
   
   if (ok) {
-    QMessageBox::information(QApplication::activeWindow(),
-      "Check Succeeded", 
-      "No configuration errors were found.");
+    taiChoiceDialog::ConfirmDialog(QApplication::activeWindow(), 
+      "No configuration errors were found.",
+      "Check Succeeded", false);
   } else {
     iTextEditDialog* td = new iTextEditDialog(true);
     td->setWindowTitle("Check Failed");

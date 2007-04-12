@@ -651,7 +651,14 @@ void taBase::QueryEditActionsS_impl(int& allowed, int& forbidden)
 
 void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbidden)
 {
-  //TODO: determine if AssignTo is allowed
+  // determine if we can assign to
+  // note: only works inprocess, 
+  // TODO: maybe we could just stream in the stuff for ext???
+  if (!ms->isMulti() && ms->isThisProcess()) {
+    TypeDef* td = ms->td();
+    if (td && td->InheritsFrom(GetTypeDef()))
+      allowed |= (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN);
+  }
 }
 
 int taBase::EditAction(taiMimeSource* ms, int ea)
@@ -692,6 +699,15 @@ int taBase::EditActionS_impl(int ea) {
 
 int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
   //TODO: decode AssignTo
+  if (ea & (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN)) {
+    taBase* obj = ms->tabObject();
+    bool ok; // dummy
+    if (CheckError((!obj), false, ok,
+      "Could not retrieve object from clipboard"))
+      return taiClipData::ER_ERROR;
+    this->UnSafeCopy(obj);
+    UpdateAfterEdit();
+  }
   return 0;
 }
 
@@ -800,11 +816,14 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   if (!list) return;
   // SRC ops
   if (lst_itm) {
-    // Delete only allowed if we are the owner (assert forbiddens for multi-op cases)
     if (lst_itm->GetOwner() == list) {
       // only allow CUT in own list, otherwise can be confusing
       allowed |= taiClipData::EA_CUT;
+      // Delete only allowed if we are the owner
       allowed |= taiClipData::EA_DELETE;
+      // in general, allow duplicate
+      //TODO: any forbidden cases? ex. read only?
+//not yet implemented      allowed |= taiClipData::EA_DUPE;
     } else { // otherwise, it is unlinking, not deleting
       allowed |= taiClipData::EA_UNLINK;
     }
@@ -815,9 +834,19 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   if (ms == NULL) return; // SRC only query
   // if not a taBase type of object, no more applicable
   if (!ms->isBase()) return;
-  if (!ms->isThisProcess())
+  if (ms->isThisProcess()) {
+    // cannot allow an object to be moved into one of its own subobjects
+    taBase* obj = ms->tabObject();
+    if (this->IsChildOf(obj)) {
+      // forbid both kinds of cases
+      forbidden |= taiClipData::EA_DROP_MOVE2;
+      if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
+        forbidden |= taiClipData::EA_PASTE2;
+    }
+  } else {
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
-
+  }
+  
   // generic list paste allows any subtype of the base type
   bool right_type = ((list->el_base) && (ms->td() != NULL) && ms->td()->InheritsFrom(list->el_base));
 
@@ -1098,9 +1127,7 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
     taGroup_impl* grp = static_cast<taGroup_impl*>(ms->tabObject());
     taGroup_impl* chk_grp = this;
     // the grp must not be this one, or parent to it
-    while (chk_grp && (chk_grp != grp) && (chk_grp != grp->root_gp))
-      chk_grp = chk_grp->super_gp;
-    if (grp == chk_grp) { // nasty nasty!!!
+    if (this->IsChildOf(grp)) {
       // forbid both kinds of cases
       forbidden |= taiClipData::EA_DROP_MOVE2;
       if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
@@ -1284,7 +1311,7 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* 
       taGroup_impl* new_gp = NewGp_(1, td);
       bool ok; // dummy
       if (CheckError((!new_gp), false, ok,
-        "Could not make new group in for TypeDef:", td->name)) 
+        "Could not make new group for TypeDef:", td->name)) 
         return taiClipData::ER_ERROR; // load failed
       // move it now, before the load
       gp.MoveBefore(subgrp, new_gp);

@@ -396,7 +396,7 @@ void ScalarValLayerSpec::HelpConfig() {
  for neighboring units to have similar values.  It should usually have a fairly small wt_scale.rel\
  parameter (e.g., .1)";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
@@ -1141,7 +1141,7 @@ void TwoDValLayerSpec::HelpConfig() {
  for neighboring units to have similar values.  It should usually have a fairly small wt_scale.rel\
  parameter (e.g., .1)";
   cerr << help << endl << flush;
-  taMisc::Choice(help, "Ok");
+  taMisc::Confirm(help);
 }
 
 bool TwoDValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {

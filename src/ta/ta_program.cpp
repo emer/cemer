@@ -28,8 +28,6 @@
 # include "ilineedit.h" // for iTextDialog
 # include "ta_qt.h"
 # include "ta_qtdialog.h"
-
-# include <QMessageBox>
 #endif
 
 
@@ -404,6 +402,7 @@ cssEl* ProgVar::NewCssType() {
 void ProgVar_List::Initialize() {
   SetBaseType(&TA_ProgVar);
   var_context = VC_ProgVars;
+  setUseStale(true);
 }
 
 void ProgVar_List::Copy_(const ProgVar_List& cp) {
@@ -419,12 +418,6 @@ void ProgVar_List::El_SetIndex_(void* it_, int idx) {
   }
 }
 
-void ProgVar_List::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX))
-    setStale();
-}
-
 void ProgVar_List::AddVarTo(taNBase* src) {
   if (!src) return;
   // if already exists, just ignore
@@ -437,6 +430,7 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   ProgVar* it = (ProgVar*)New(1);
   it->SetObject(src);
   it->SetName(src->GetName());
+  it->UpdateAfterEdit();
 }
 
 taBase* ProgVar_List::FindTypeName(const String& nm)  const {
@@ -806,6 +800,8 @@ void ProgExpr::UpdateAfterEdit_impl() {
 
 void ProgArg::Initialize() {
   arg_type = NULL;
+  required = true; // generally true
+  setUseStale(true); // always requires recompile
 }
 
 void ProgArg::Destroy() {	
@@ -826,12 +822,20 @@ void ProgArg::CutLinks() {
 void ProgArg::Copy_(const ProgArg& cp) {
   type = cp.type;
   name = cp.name;
+  required = cp.required;
+  def_val = cp.def_val;
   expr = cp.expr;
   arg_type = cp.arg_type;
 }
 
 void ProgArg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+}
+
+void ProgArg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError((required && expr.empty()), quiet, rval,
+    "An expression is required for this argument");
 }
 
 void ProgArg::UpdateFromVar(const ProgVar& cp) {
@@ -869,12 +873,35 @@ String ProgArg::GetDisplayName() const {
 
 void ProgArg_List::Initialize() {
   SetBaseType(&TA_ProgArg);
+  setUseStale(true);
 }
 
-void ProgArg_List::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX))
-    setStale();
+void ProgArg_List::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  // make sure that once a def args is used, no more have values
+  bool has_non_def = false;
+  for (int i = size - 1; i >= 0; --i) {
+    ProgArg* pa = FastEl(i);
+    if (pa->required) break; // ok, no errors, and no more defs
+    if (CheckError((has_non_def && pa->expr.empty()), quiet, rval,
+      "Arg: " + pa->name + " cannot use default value because later args"
+      " have a non-default value specified")) break;
+    has_non_def = pa->expr.nonempty();
+  }
+}
+
+const String ProgArg_List::GenCssBody_impl(int /*indent_level*/) {
+  String rval = "(";
+    for (int i = 0; i < size; ++ i) {
+      ProgArg* pa = FastEl(i);
+      //note: we test for violations of rules about def expressions, so
+      // ok for us to just break here when we get to the first def
+      if (!pa->required && pa->expr.empty()) break;
+      if (i > 0) rval += ", ";
+      rval += pa->expr.GetFullExpr();
+    }
+  rval += ")";
+  return rval;
 }
 
 void ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
@@ -907,6 +934,7 @@ void ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
 }
 
 void ProgArg_List::UpdateFromMethod(MethodDef* md) {
+//NOTE: safe to call during loading
   int i;  int ti;
   ProgArg* pa;
   // delete args not in md list
@@ -923,26 +951,32 @@ void ProgArg_List::UpdateFromMethod(MethodDef* md) {
   for (ti = 0; ti < md->arg_names.size; ++ti) {
     TypeDef* arg_typ = md->arg_types.FastEl(ti);
     String arg_nm = md->arg_names[ti];
-    FindName(arg_nm, i);
+    pa = FindName(arg_nm, i);
     if (i < 0) {
       pa = new ProgArg();
       pa->name = arg_nm;
       pa->UpdateFromType(arg_typ);
       Insert(pa, ti);
-      // get default value if available
-      String def_val = md->arg_defs.SafeEl(ti);
-      def_val.gsub(" ", "");
-      if(arg_typ->is_enum() && !def_val.contains("::")) {
-	TypeDef* ot = arg_typ->GetOwnerType();
-	if(ot)
-	  def_val = ot->name + "::" + def_val;
-      }
-      else if(arg_typ->InheritsFrom(TA_taString)) {
-	if(def_val.empty()) def_val = "\"\""; // empty string
-      }
-      pa->expr.SetExpr(def_val); // set to this expr
+      //pa->expr.SetExpr(def_val); // set to this expr
     } else if (i != ti) {
       MoveIdx(i, ti);
+    }
+    // have to do default for all, since it is not saved
+    pa->required = (md->fun_argd > ti);
+    if (!pa->required) { // do default processing
+      // get default value if available
+      String def_val = md->arg_defs.SafeEl(ti);
+      if (def_val.nonempty() && arg_typ->is_enum() && !def_val.contains("::")) {
+        TypeDef* ot = arg_typ->GetOwnerType();
+        if(ot)
+          def_val = ot->name + "::" + def_val;
+      }
+      else if (arg_typ->InheritsFrom(TA_taString) ||
+        ((arg_typ->ptr == 1) && arg_typ->InheritsFrom(&TA_char))) 
+      {
+        if(def_val.empty()) def_val = "\"\""; // empty string
+      }
+      pa->def_val = def_val;
     }
   }
 }
@@ -954,6 +988,7 @@ void ProgArg_List::UpdateFromMethod(MethodDef* md) {
 
 void ProgEl::Initialize() {
   flags = PEF_NONE;
+  setUseStale(true);
 }
 
 void ProgEl::Destroy() {
@@ -966,11 +1001,6 @@ void ProgEl::Copy_(const ProgEl& cp) {
 
 void ProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-}
-
-void ProgEl::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  setStale(); // always
 }
 
 void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
@@ -1103,6 +1133,7 @@ taBase* ProgEl::FindTypeName(const String& nm) const {
 
 void ProgEl_List::Initialize() {
   SetBaseType(&TA_ProgEl);
+  setUseStale(true);
 }
 
 void ProgEl_List::Destroy() {
@@ -1111,12 +1142,6 @@ void ProgEl_List::Destroy() {
 
 void ProgEl_List::Copy_(const ProgEl_List& cp) {
   UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
-}
-
-void ProgEl_List::DataChanged(int dcr, void* op1, void* op2) {
-  inherited::DataChanged(dcr, op1, op2);
-  if ((dcr >= DCR_LIST_ORDER_MIN) && (dcr <= DCR_LIST_ORDER_MAX))
-    setStale();
 }
 
 const String ProgEl_List::GenCss(int indent_level) {
@@ -1613,7 +1638,8 @@ void MethodCall::UpdateAfterEdit_impl() {
   UpdateProgVarRef_NewOwner(result_var);
   UpdateProgVarRef_NewOwner(obj);
 
-  if(!taMisc::is_loading && method)
+//  if(!taMisc::is_loading && method)
+  if (method) // needed to set required etc.
     meth_args.UpdateFromMethod(method);
 }
 
@@ -1643,13 +1669,8 @@ const String MethodCall::GenCssBody_impl(int indent_level) {
   rval += obj->name;
   rval += "->";
   rval += method->name;
-  rval += "(";
-    for (int i = 0; i < meth_args.size; ++ i) {
-      ProgArg* pa = meth_args[i];
-      if (i > 0) rval += ", ";
-      rval += pa->expr.GetFullExpr();
-    }
-  rval += ");\n";
+  rval += meth_args.GenCssBody_impl(indent_level);
+  rval += ";\n";
   
   return rval;
 }
@@ -1690,7 +1711,8 @@ void StaticMethodCall::UpdateAfterEdit_impl() {
 
   UpdateProgVarRef_NewOwner(result_var);
 
-  if(!taMisc::is_loading && method)
+//  if(!taMisc::is_loading && method)
+  if (method) // needed to set required etc.
     meth_args.UpdateFromMethod(method);
 }
 
@@ -1718,13 +1740,8 @@ const String StaticMethodCall::GenCssBody_impl(int indent_level) {
   rval += object_type->name;
   rval += "::";
   rval += method->name;
-  rval += "(";
-    for (int i = 0; i < meth_args.size; ++ i) {
-      ProgArg* pa = meth_args[i];
-      if (i > 0) rval += ", ";
-      rval += pa->expr.GetFullExpr();
-    }
-  rval += ");\n";
+  rval += meth_args.GenCssBody_impl(indent_level);
+  rval += ";\n";
   
   return rval;
 }
@@ -2593,10 +2610,9 @@ void Program::Step() {
   Cont_impl();
   taMisc::DoneBusy();
   if (ret_val != 0) {//TODO: use enums and sensible output string
-    QMessageBox::warning(NULL, QString("Operation Failed"),
-      String(
-      "The Program did not run -- ret_val=").cat(String(ret_val)), 
-      QMessageBox::Ok, QMessageBox::NoButton);
+    taiChoiceDialog::ErrorDialog(NULL, String(
+      "The Program did not run -- ret_val=").cat(String(ret_val)),
+      QString("Operation Failed"));
   }
   step_mode = false;
   if(stop_req) {

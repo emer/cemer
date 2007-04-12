@@ -899,9 +899,9 @@ new QApplication(argc, (char**)argv); // accessed as qApp
   {
     new QCoreApplication(argc, (char**)argv); // accessed as qApp
     QFileInfo fi(argv[0]);
-    QCoreApplication::instance()->setApplicationName(fi.baseName()); // just the name part w/o path or suffix
     milestone |= SM_QAPP_OBJ;
-  }
+  }    
+  QCoreApplication::instance()->setApplicationName(taMisc::app_name);
   return true;
 }
 

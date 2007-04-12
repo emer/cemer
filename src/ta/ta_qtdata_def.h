@@ -154,6 +154,8 @@ public:
   virtual void		setHighlight(bool value);	// #SET_Highlight
   virtual bool		readOnly();	// #GET_ReadOnly true if the control should be read only -- partially delegates to parent
   virtual bool		fillHor() {return false;} // override to true to fill prop cell, ex. edit controls
+  bool			visible() const {return m_visible;}
+  bool			setVisible(bool value); // for CONDSHOW guys, makes lbl/rep vis or not, also triggers VisibleChanged if changes; ret true if visible changed
   bool 			eventFilter(QObject* watched, QEvent* ev); // override
   virtual QWidget*	GetRep()	{ return m_rep; }
   virtual QLayout*	GetLayout() {return NULL;} // returns a top layout, if one is used
@@ -184,6 +186,7 @@ signals:
 
 protected:
   bool			mhighlight;
+  bool			m_visible; // defaults to true, only for CONDSHOW guys
 #ifndef __MAKETA__
   QPointer<QWidget>	m_rep;		// widget that represents the data
   QPointer<QLabel>	m_label; // an associate label, typically for condshow show/hide

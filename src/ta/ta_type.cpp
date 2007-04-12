@@ -814,6 +814,20 @@ int taMisc::Choice(const char* text, const char* a, const char* b, const char* c
   return m;
 }
 
+void taMisc::Confirm(const char* a, const char* b, const char* c,
+  const char* d, const char* e, const char* f, const char* g,
+  const char* h, const char* i)
+{
+#if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
+  if (taMisc::dmem_proc > 0) return;
+#endif
+  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  {
+    cout << msg << "\n";
+    FlushConsole();
+  }
+}
+
 #endif // def TA_NO_GUI
 
 void taMisc::EditFile(const String& filename) {

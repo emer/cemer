@@ -100,7 +100,8 @@ taiData::taiData()
   typ = NULL;
   host = NULL;
   mhighlight = false;
-//nn  m_rep = NULL;
+  m_visible = true;
+  m_rep = NULL;
   mparent = NULL;
   mflags = 0;
 }
@@ -111,6 +112,7 @@ taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui
   typ = typ_;
   host = host_;
   mhighlight = false;
+  m_visible = true;
   m_rep = NULL;
   mparent = NULL; // must be valid before calling setParent!
   mflags = flags_;
@@ -124,7 +126,10 @@ taiData::~taiData() {
 }
 
 void taiData::applyNow() {
-  if (host)
+  // we send this up via parents, to let them trap first, ex taiToggle
+  if (mparent)
+    mparent->applyNow();
+  else if (host)
     host->Apply();
 }
 
@@ -251,6 +256,29 @@ void taiData::SetRep(QWidget* val) {
 
 void taiData::SetThisAsHandler(bool set_it) {
   if (host) host->SetItemAsHandler(this, set_it);
+}
+
+bool taiData::setVisible(bool value) {
+  if (m_visible == value) return false;
+  QWidget* wid = GetRep();
+  QLabel* lbl = label();
+  if (value) {
+    if (lbl) {
+      lbl->setVisible(true);
+    }
+    if (wid) {
+      wid->setVisible(true);
+    }
+  } else {
+    if (wid) {
+      wid->setVisible(false);
+    }
+    if (lbl) {
+      lbl->setVisible(false);
+    }
+  }
+  m_visible = value;
+  return true;
 }
 
 void taiData::repChanged() {
@@ -755,6 +783,11 @@ taiPlusToggle::taiPlusToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWid
 taiPlusToggle::~taiPlusToggle() {
 //  rep = NULL;
   data = NULL; //note: will be owned/parented elsewise, so it must delete that way
+}
+
+void taiPlusToggle::applyNow() {
+  but_rep->setChecked(true);
+  inherited::applyNow();
 }
 
 void taiPlusToggle::InitLayout() {
@@ -4717,7 +4750,7 @@ void taiMethodData::ShowReturnVal(cssEl* rval) {
   }
   String val = meth->name + " Return Value: ";
   val += rval->PrintStr();
-  taMisc::Choice(val, "Ok");
+  taMisc::Confirm(val);
 }
 
 void taiMethodData::ApplyBefore() {

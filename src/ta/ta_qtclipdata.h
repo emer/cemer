@@ -153,6 +153,7 @@ public:
 
     EA_CUT		= 0x00000010,
     EA_COPY		= 0x00000020,
+    EA_DUPE		= 0x00008000, // duplicate at point of selection
     EA_PASTE		= 0x00000040, // ex. esp for putting an item as a peer to another
     EA_PASTE_INTO	= 0x00000400, // ex. when pasting an item into a list itself
     EA_PASTE_APPEND	= 0x00001000, // ex. for pasting new data rows into tables
@@ -181,18 +182,18 @@ public:
     EA_DROP_MOVE2	= EA_DROP_MOVE | EA_DROP_MOVE_INTO,
     
     EA_PASTE_XXX	= EA_PASTE | EA_PASTE_INTO | EA_PASTE_APPEND | EA_PASTE_ASSIGN, // all the pastes
-    EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DELETE | EA_CLEAR | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
+    EA_SRC_OPS		= (EA_CUT | EA_COPY | EA_DUPE | EA_DELETE | EA_CLEAR | EA_UNLINK | EA_DRAG), // src ops -- param will be a mime rep of the src obj
     EA_DROP_OPS		= (EA_DROP_COPY | EA_DROP_LINK | EA_DROP_MOVE |
       EA_DROP_COPY_INTO | EA_DROP_LINK_INTO | EA_DROP_MOVE_INTO),
     EA_DST_OPS		= (EA_PASTE_XXX | EA_LINK | 
       EA_LINK_INTO | EA_DROP_OPS), //
     EA_FORB_ON_SRC_CUT	= (EA_LINK | EA_LINK_INTO), // dst ops forbidden when the source operation was Cut
-    EA_FORB_ON_SRC_READONLY = (EA_DROP_MOVE | EA_DROP_MOVE_INTO), 
-      // dst ops forbidden when the source operation forbade Cut/Move
+    EA_FORB_ON_SRC_READONLY = (EA_DUPE | EA_DELETE | EA_DROP_MOVE | EA_DROP_MOVE_INTO), 
+      // ops forbidden when the source operation forbade Cut/Move
     EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK2 |
        EA_DROP_OPS),
         // dst ops forbidden when multi operands selected
-    EA_IN_PROC_OPS	= (EA_LINK2 | EA_DROP_LINK2), // ops that require an in-process src
+    EA_IN_PROC_OPS	= (EA_DROP_MOVE2 | EA_LINK2 | EA_DROP_LINK2), // ops that require an in-process src
 #endif
     EA_OP_MASK		= 0x0FFFFFF0 // masks all operation codes
 

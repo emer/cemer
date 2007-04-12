@@ -27,7 +27,7 @@
 #ifndef __MAKETA__
 # include <ilabel.h>
 # include <QEvent>
-# include <QDialog>
+# include <QMessageBox>
 # include <QObject>
 # include <QPushButton>
 #endif
@@ -97,36 +97,39 @@ class taiTypeHier;
 // Button 1 is the Cancel, if user presses Esc (only if "no_cancel" option false)
 // User can also press the number associated with the button, starting from 0
 
-class TA_API taiChoiceDialog : public QDialog {
+class TA_API taiChoiceDialog : public QMessageBox {
   Q_OBJECT
+INHERITED(QMessageBox)
 public:
-  // puts up a modal choice dialog.  returns value of Edit()
-  static  int	ChoiceDialog(QWidget* win, const char* prompt="",
-    const char* win_title="", bool no_cancel_ = false);
+  static const String	delimiter;
+  
+  static int	ChoiceDialog(QWidget* parent_, const String& msg, const String& but_list, 
+    const char* win_title = "");
 
-  static void ErrorDialog(QWidget* parent_, const char* msg, const char* win_title = "Error");
+  static void 	ErrorDialog(QWidget* parent_, const char* msg, 
+    const char* win_title = "Error", bool copy_but = true);
+    
+  static void 	ConfirmDialog(QWidget* parent_, const char* msg, 
+    const char* win_title = "", bool copy_but = true);
 
-  bool		no_cancel;
-  QVBoxLayout*	vblMain;
-  QHBoxLayout*	hblButtons;
-  QLabel*	txtMessage; // maybe should be a ro edit, so user can copy???
   QButtonGroup* bgChoiceButtons; //note: not a widget
 
+  override void	done(int r);
+  
   ~taiChoiceDialog()		{ }
 
 protected:
+  int		num_chs; // number of choices, we return last idx for Esc
   virtual void keyPressEvent(QKeyEvent* ev); // override
 
 protected slots:
-  virtual void accept(); // override -- it should return 0 for our purpose (not 1)
-  virtual void reject(); // override -- ignore new no_cancel, also should return 1 for our purpose
+  void		copyToClipboard(); // copy text of msg to clipboard
 
-private:
-  taiChoiceDialog(QWidget* par = 0, const char* prompt = "",
-    const char* win_title = "", bool no_cancel = false);
 #ifndef __MAKETA__
-  virtual bool	Constr_OneBut(String& lbl, int curId);
-  // constructs one button, returns false when no more..
+private:
+  taiChoiceDialog(Icon icon, const QString& title, const QString& text, String but_list, QWidget* parent, bool copy_but);
+  
+  virtual QAbstractButton* Constr_OneBut(String lbl, int id, ButtonRole role);
 #endif
 };
 

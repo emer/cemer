@@ -863,12 +863,15 @@ public:
   taiAction* 		editRedoAction;
   taiAction* 		editCutAction;
   taiAction* 		editCopyAction;
+  taiAction* 		editDupeAction;
+  taiAction* 		editDeleteAction;
   taiAction* 		editPasteAction;
   taiAction* 		editPasteIntoAction;
+  taiAction* 		editPasteAssignAction;
+  taiAction* 		editPasteAppendAction;
   taiAction* 		editLinkAction;
   taiAction* 		editLinkIntoAction;
   taiAction* 		editUnlinkAction;
-  taiAction* 		editDeleteAction;
   
   taiAction* 		viewRefreshAction;
   taiAction* 		viewSplitVerticalAction;

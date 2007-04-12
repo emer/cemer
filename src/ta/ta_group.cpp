@@ -113,6 +113,10 @@ void taGroup_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
+  // group staling
+  if (useStale() && (!taMisc::is_loading) && 
+    ((dcr >= DCR_GROUP_MIN) && (dcr <= DCR_GROUP_MAX)))
+    setStale();
   taList_impl::DataChanged(dcr, op1, op2); // normal processing
   // send LIST events to the root group as a GROUP_ITEM event
   if (root_gp && (dcr >= DCR_LIST_ITEM_TO_GROUP_ITEM_MIN) &&
