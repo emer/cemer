@@ -81,6 +81,7 @@ friend class T3DataView;
 public:
   TA_DATAVIEWLISTFUNS(T3DataView_List, DataView_List, T3DataView)
 private:
+  NCOPY(T3DataView_List)
   void			Initialize() {SetBaseType(&TA_T3DataView);}
   void			Destroy() {}
 };
@@ -215,6 +216,7 @@ protected:
   override void		DataUpdateAfterEdit_impl(); // called by data for an UAE
 
 private:
+  void	Copy_(const T3DataView& cp);
   void			Initialize();
   void			Destroy();
 };
@@ -265,6 +267,7 @@ protected:
   override void		DoActionChildren_impl(DataViewAction acts);
   
 private:
+  void	Copy_(const T3DataViewPar& cp);
   void			Initialize() {}
   void			Destroy() {CutLinks();}
 };
@@ -287,6 +290,7 @@ protected:
   override void		Constr_Node_impl();
 
 private:
+  NCOPY(T3DataViewRoot)
   void			Initialize() {host = NULL;}
   void			Destroy() {}
 };
@@ -457,7 +461,6 @@ public:
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const T3DataViewFrame& cp);
   COPY_FUNS(T3DataViewFrame, DataViewer)
   TA_DATAVIEWFUNS(T3DataViewFrame, DataViewer)
 
@@ -477,6 +480,7 @@ protected:
   override void		Reset_impl(); //  #IGNORE
   override void 	Dump_Save_pre();
 private:
+  void	Copy_(const T3DataViewFrame& cp);
   void			Initialize();
   void			Destroy();
 };
@@ -486,6 +490,7 @@ INHERITED(DataViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(T3DataViewFrame_List, DataViewer_List, T3DataViewFrame)
 private:
+  NCOPY(T3DataViewFrame_List)
   void 	Initialize() { SetBaseType(&TA_T3DataViewFrame);}
   void	Destroy() {}
 };

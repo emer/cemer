@@ -31,12 +31,13 @@
 
 class PDP_API PDPView : public DataViewer {
   // #NO_TOKENS pdp version of a win view
+INHERITED(DataViewer)
 public:
   void		AddNotify(TAPtr ud);
   void		RemoveNotify(TAPtr ud);
   TypeDef* 	UpdaterType()		{ return &TA_SchedProcess; }
 
-  TA_BASEFUNS(PDPView);
+  TA_BASEFUNS_LITE_NCOPY(PDPView);
 
 private:
   void	Initialize()	{ };

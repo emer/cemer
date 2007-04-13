@@ -43,17 +43,24 @@ void TypeDefault::Destroy() {
   token = NULL;
 }
 
+void TypeDefault::Copy_(const TypeDefault& cp) {
+  old_type = cp.old_type;
+  default_type = cp.default_type;
+  memcpy(active, cp.active, sizeof(active));
+  active_membs = cp.active_membs;
+}
+
+void TypeDefault::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(active_membs, this);
+}
+
 int TypeDefault::Dump_Load_Value(istream& strm, TAPtr par) {
   active_membs.Reset();		// remove all members before loading..
   int rval = taNBase::Dump_Load_Value(strm, par);
   if(rval == 1)
     UpdateAfterEdit();
   return rval;
-}
-
-void TypeDefault::InitLinks() {
-  taNBase::InitLinks();
-  taBase::Own(active_membs, this);
 }
 
 void TypeDefault::SetActive(char* memb_nm, bool onoff) {
@@ -94,7 +101,8 @@ bool TypeDefault::GetActive(int memb_no) {
   return active[lng_no] & (1 << bit_no) ? 1 : 0;
 }
 
-void TypeDefault::UpdateAfterEdit() {
+void TypeDefault::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(default_type == NULL)
     return;
 

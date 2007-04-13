@@ -221,6 +221,7 @@ public:
   TA_DATAVIEWLISTFUNS(DataViewer_List, DataView_List, DataViewer)
 
 private:
+  NCOPY(DataViewer_List)
   void 	Initialize() { SetBaseType(&TA_DataViewer);}
   void	Destroy() {}
 };
@@ -243,6 +244,7 @@ public:
 protected:
 
 private:
+  NCOPY(FrameViewer)
   void 	Initialize();
   void	Destroy() {CutLinks();}
 };
@@ -252,6 +254,7 @@ INHERITED(DataViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(FrameViewer_List, DataViewer_List, FrameViewer)
 private:
+  NCOPY(FrameViewer_List)
   void 	Initialize() { SetBaseType(&TA_FrameViewer);}
   void	Destroy() {}
 };
@@ -272,12 +275,12 @@ public:
 
   inline iBrowseViewer*	widget() {return (iBrowseViewer*)inherited::widget();}
 
-  void 	Copy_(const BrowseViewer& cp);
   COPY_FUNS(BrowseViewer, FrameViewer) //
   TA_DATAVIEWFUNS(BrowseViewer, FrameViewer) //
 protected:
   override void		Render_pre(); // 
 private:
+  void 	Copy_(const BrowseViewer& cp);
   void			Initialize();
   void			Destroy() {CutLinks();}
 };
@@ -297,7 +300,6 @@ public:
   void	UpdateAfterEdit(); // if root deletes, our window must die
   void	InitLinks();
   void	CutLinks();
-  void 	Copy_(const tabBrowseViewer& cp);
   COPY_FUNS(tabBrowseViewer, BrowseViewer) //
   TA_DATAVIEWFUNS(tabBrowseViewer, BrowseViewer) //
   
@@ -306,6 +308,7 @@ protected:
 
   
 private:
+  void 	Copy_(const tabBrowseViewer& cp);
   void			Initialize() {}
   void			Destroy() {CutLinks();}
 };
@@ -323,7 +326,6 @@ public:
   void			setRoot(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); // use this to set the root
   
   void	UpdateAfterEdit();
-  void 	Copy_(const ClassBrowseViewer& cp);
   COPY_FUNS(ClassBrowseViewer, BrowseViewer) //
   TA_DATAVIEWFUNS(ClassBrowseViewer, BrowseViewer) //
 protected:
@@ -333,6 +335,7 @@ protected:
   void			StrToRoot();
   void			RootToStr();
 private:
+  void 	Copy_(const ClassBrowseViewer& cp);
   void			Initialize();
   void			Destroy() {}
 };
@@ -350,6 +353,7 @@ public:
 protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
 private:
+  NCOPY(PanelViewer)
   void			Initialize();
   void			Destroy() {CutLinks();}
 };
@@ -375,10 +379,10 @@ public:
   void 			ScriptWinState(ostream& strm = cout);
 
   void	UpdateAfterEdit();
-  void 	Copy_(const WindowState& cp);
   COPY_FUNS(WindowState, taOBase)
   TA_BASEFUNS(WindowState)
 private:
+  void 	Copy_(const WindowState& cp);
   void 	Initialize();
   void 	Destroy() {}
 };
@@ -413,7 +417,6 @@ public:
   
   void	InitLinks();
   void	CutLinks();
-  void 	Copy_(const TopLevelViewer& cp);
   COPY_FUNS(TopLevelViewer, DataViewer) //
   TA_DATAVIEWFUNS(TopLevelViewer, DataViewer) //
 protected:
@@ -425,6 +428,7 @@ protected:
   virtual void		MakeWinName_impl() {} // set win_name, impl in subs
   
 private:
+  void 	Copy_(const TopLevelViewer& cp);
   void 	Initialize();
   void	Destroy() {CutLinks();}
 };
@@ -455,6 +459,8 @@ protected:
   //override void		MakeWinName_impl(); each subguy will need this
   
 private:
+  void 	Copy_(const DockViewer& cp) 
+    {dock_flags = cp.dock_flags; dock_area = cp.dock_area;}
   void 	Initialize();
   void	Destroy() {}
 };
@@ -465,6 +471,7 @@ INHERITED(DataViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(DockViewer_List, DataViewer_List, DockViewer)
 private:
+  NCOPY(DockViewer_List)
   void 	Initialize() { SetBaseType(&TA_DockViewer);}
   void	Destroy() {}
 };
@@ -480,6 +487,7 @@ protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE note: we just use base window, and put the console into it
   override void		MakeWinName_impl(); // set win_name, impl in subs
 private:
+  NCOPY(ConsoleDockViewer)
   void			Initialize();
   void			Destroy() {}
 };
@@ -499,6 +507,7 @@ protected:
   override void		MakeWinName_impl(); 
   
 private:
+  NCOPY(ToolBoxDockViewer)
   void 	Initialize();
   void	Destroy() {}
 };
@@ -537,7 +546,6 @@ public:
 
   inline iToolBar*	widget() {return (iToolBar*)inherited::widget();} // #IGNORE lex override
 
-  void	Copy_(const ToolBar& cp);
   COPY_FUNS(ToolBar, DataViewer)
   TA_DATAVIEWFUNS(ToolBar, DataViewer)
 
@@ -550,6 +558,7 @@ protected:
   override void 	GetWinState_impl();//TODO: we can eliminate these with UserData system
   override void 	SetWinState_impl();
 private:
+  void	Copy_(const ToolBar& cp);
   void 	Initialize();
   void	Destroy() {}
 };
@@ -560,6 +569,7 @@ INHERITED(DataViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(ToolBar_List, DataViewer_List, ToolBar)
 private:
+  NCOPY(ToolBar_List)
   void			Initialize() {SetBaseType(&TA_ToolBar);}
   void			Destroy() {}
 };
@@ -624,7 +634,6 @@ public:
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const MainWindowViewer& cp);
   COPY_FUNS(MainWindowViewer, TopLevelViewer)
   TA_DATAVIEWFUNS(MainWindowViewer, TopLevelViewer) //
 
@@ -675,6 +684,7 @@ protected:
   
   
 private:
+  void	Copy_(const MainWindowViewer& cp);
   void 	Initialize();
   void	Destroy();
 };
@@ -690,10 +700,10 @@ public:
 //  void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const TreeDecorationSpec& cp);
   COPY_FUNS(TreeDecorationSpec, inherited)
   TA_BASEFUNS(TreeDecorationSpec) //
 private:
+  void	Copy_(const TreeDecorationSpec& cp);
   void Initialize();
   void Destroy();
 };
@@ -705,6 +715,7 @@ public:
   
   TA_BASEFUNS(TreeDecorationSpec_List) //
 private:
+  NCOPY(TreeDecorationSpec_List)
   void Initialize() {SetBaseType(&TA_TreeDecorationSpec);}
   void Destroy() {}
 };

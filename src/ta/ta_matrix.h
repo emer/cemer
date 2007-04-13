@@ -263,7 +263,7 @@ inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
 
 class TA_API taMatrix: public taNBase {
   // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
-INHERITED(taOBase)
+INHERITED(taNBase)
 friend class MatrixTableModel;
 
 public:
@@ -637,7 +637,7 @@ class TA_API taMatrix_Group: public taGroup<taMatrix> {
 INHERITED(taGroup<taMatrix>)
 public:
 
-  TA_BASEFUNS(taMatrix_Group);
+  TA_BASEFUNS_NCOPY(taMatrix_Group);
 private:
   void		Initialize() {SetBaseType(&TA_taMatrix);}
   void		Destroy() {}
@@ -705,7 +705,7 @@ public:
   // #CAT_Modify only valid when dims=1
 
   void	CutLinks() 	{SetArray_(NULL); taMatrix::CutLinks();}
-  TA_ABSTRACT_TMPLT_BASEFUNS(taMatrixT, T)
+  TA_TMPLT_ABSTRACT_BASEFUNS(taMatrixT, T)
 public:
   override void*	FastEl_Flat_(int idx)	{ return &(el[idx]); } 
   override const void*	FastEl_Flat_(int idx) const { return &(el[idx]); } 
@@ -842,6 +842,7 @@ protected: \
 
 class TA_API String_Matrix: public taMatrixT<String> {
   // #INSTANCE a matrix of strings
+INHERITED(taMatrixT<String>)
 public:
   override int		defAlignment() const;
   override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
@@ -879,6 +880,7 @@ private:
 
 class TA_API float_Matrix: public taMatrixT<float> {
   // #INSTANCE a matrix of floats
+INHERITED(taMatrixT<float>)
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_float;} 
   override ValType	GetDataValType() const {return VT_FLOAT;} 
@@ -914,6 +916,7 @@ private:
 
 class TA_API double_Matrix: public taMatrixT<double> {
   // #INSTANCE a matrix of doubles
+INHERITED(taMatrixT<double>)
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_double;} 
   override ValType	GetDataValType() const {return VT_DOUBLE;} 
@@ -958,6 +961,7 @@ private:
 
 class TA_API int_Matrix: public taMatrixT<int> {
   // #INSTANCE a matrix of ints
+INHERITED(taMatrixT<int>)
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_int;} 
   override ValType	GetDataValType() const {return VT_INT;} 
@@ -993,6 +997,7 @@ private:
 
 class TA_API byte_Matrix: public taMatrixT<byte> {
   // #INSTANCE a matrix of bytes
+INHERITED(taMatrixT<byte>)
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_unsigned_char;} 
   override ValType	GetDataValType() const {return VT_BYTE;} 
@@ -1025,6 +1030,7 @@ private:
 
 class TA_API Variant_Matrix: public taMatrixT<Variant> {
   // #INSTANCE a matrix of variants
+INHERITED(taMatrixT<Variant>)
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_Variant;} 
   override ValType	GetDataValType() const {return VT_VARIANT;} 
@@ -1061,6 +1067,7 @@ private:
 
 class TA_API rgb_Matrix: public taMatrixT<rgb_t> {
   // #INSTANCE a matrix of rgb values
+INHERITED(taMatrixT<rgb_t>)
 public:
   override TypeDef*	GetDataTypeDef() const {return &TA_rgb_t;} 
   override ValType	GetDataValType() const {return VT_INT;} // note: not quite right.

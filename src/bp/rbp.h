@@ -64,7 +64,7 @@ public:
 
   void 	Initialize()		{ };
   void	Destroy()		{ };
-  TA_BASEFUNS(RBpConSpec);
+  TA_BASEFUNS2_NCOPY(RBpConSpec, BpConSpec);
 };
 
 class BP_API SymRBpConSpec : public RBpConSpec {
@@ -76,9 +76,10 @@ public:
   inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
   // Compute dE with respect to the weights (using prv_act) as sender
 
+  void 	Copy_(const SymRBpConSpec& cp) {sym_wt_updt = cp.sym_wt_updt;}
   void 	Initialize()		{ sym_wt_updt = true; }
   void	Destroy()		{ };
-  TA_BASEFUNS(SymRBpConSpec);
+  TA_BASEFUNS2(SymRBpConSpec, RBpConSpec);
 };
 
 
@@ -120,8 +121,8 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(RBpUnitSpec);
-  COPY_FUNS(RBpUnitSpec, UnitSpec);
-  TA_BASEFUNS(RBpUnitSpec);
+  COPY_FUNS(RBpUnitSpec, BpUnitSpec);
+  TA_BASEFUNS2(RBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API float_CircBuffer : public float_Array {
@@ -148,7 +149,7 @@ public:
   void	Destroy()		{ };
   void 	Copy_(const float_CircBuffer& cp);
   COPY_FUNS(float_CircBuffer, float_Array);
-  TA_BASEFUNS(float_CircBuffer);
+  TA_BASEFUNS2(float_CircBuffer, float_Array);
 };
 
 
@@ -195,7 +196,7 @@ public:
   void	InitLinks();
   void	Copy_(const RBpUnit& cp);
   COPY_FUNS(RBpUnit, BpUnit);
-  TA_BASEFUNS(RBpUnit);
+  TA_BASEFUNS2(RBpUnit, BpUnit);
 };
 
 // use previous activation value
@@ -251,7 +252,7 @@ public:
   void	Destroy()		{ };
   void	Copy_(const RBpContextSpec& cp);
   COPY_FUNS(RBpContextSpec, RBpUnitSpec);
-  TA_BASEFUNS(RBpContextSpec);
+  TA_BASEFUNS2(RBpContextSpec, RBpUnitSpec);
 };
 
 //////////////////////////////////////////
@@ -272,7 +273,7 @@ public:
   void 	InitLinks();
   SIMPLE_COPY(NoisyRBpUnitSpec);
   COPY_FUNS(NoisyRBpUnitSpec, RBpUnitSpec);
-  TA_BASEFUNS(NoisyRBpUnitSpec);
+  TA_BASEFUNS2(NoisyRBpUnitSpec, RBpUnitSpec);
 };
 
 //////////////////////////////////
@@ -294,7 +295,7 @@ public:
   void 	Destroy()	{ };
 //   SIMPLE_COPY(BpWizard);
 //   COPY_FUNS(BpWizard, Wizard);
-  TA_BASEFUNS(BpWizard);
+  TA_BASEFUNS2_NCOPY(BpWizard, Wizard);
 };
 
 #endif // rbp_h

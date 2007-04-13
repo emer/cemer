@@ -51,6 +51,7 @@ protected:
 
 private:
   QDir*			m_dir; // autocreated, only access via dir()
+  void Copy_(const DirectoryCatalog& cp);
   void			Initialize();
   void			Destroy();
 };

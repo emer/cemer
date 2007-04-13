@@ -108,7 +108,7 @@ public:
   void	InitLinks();
   SIMPLE_COPY(BpConSpec);
   COPY_FUNS(BpConSpec, ConSpec);
-  TA_BASEFUNS(BpConSpec);
+  TA_BASEFUNS2(BpConSpec, ConSpec);
 };
 
 // the following functions are possible weight decay functions
@@ -131,7 +131,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(BpRecvCons);
+  TA_BASEFUNS2(BpRecvCons, RecvCons);
 };
 
 class BP_API BpSendCons : public RecvCons {
@@ -143,7 +143,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(BpSendCons);
+  TA_BASEFUNS2(BpSendCons, RecvCons);
 };
 
 class BpUnit;
@@ -179,7 +179,7 @@ public:
   void	CutLinks();
   void	Copy_(const BpUnitSpec& cp);
   COPY_FUNS(BpUnitSpec, UnitSpec);
-  TA_BASEFUNS(BpUnitSpec);
+  TA_BASEFUNS2(BpUnitSpec, UnitSpec);
 };
 
 // the following functions are possible error functions.
@@ -212,7 +212,7 @@ public:
   void 	Destroy()		{ };
   void	Copy_(const BpUnit& cp);
   COPY_FUNS(BpUnit, Unit);
-  TA_BASEFUNS(BpUnit);
+  TA_BASEFUNS2(BpUnit, Unit);
 };
 
 // inline functions (for speed)
@@ -300,7 +300,7 @@ public:
 
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS(HebbBpConSpec);
+  TA_BASEFUNS2(HebbBpConSpec, BpConSpec);
 };
 
 inline void HebbBpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
@@ -327,7 +327,7 @@ public:
   void 	Destroy()	{ };
   SIMPLE_COPY(ErrScaleBpConSpec);
   COPY_FUNS(ErrScaleBpConSpec, BpConSpec);
-  TA_BASEFUNS(ErrScaleBpConSpec);
+  TA_BASEFUNS2(ErrScaleBpConSpec, BpConSpec);
 };
 
 inline float ErrScaleBpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
@@ -370,7 +370,7 @@ public:
   void 	Destroy()		{ };
   void	Copy_(const DeltaBarDeltaBpConSpec& cp);
   COPY_FUNS(DeltaBarDeltaBpConSpec, BpConSpec);
-  TA_BASEFUNS(DeltaBarDeltaBpConSpec);
+  TA_BASEFUNS2(DeltaBarDeltaBpConSpec, BpConSpec);
 };
 
 inline void DeltaBarDeltaBpConSpec::C_UpdateLrate
@@ -476,7 +476,7 @@ public:
   void	InitLinks();
   void	Copy_(const BpContextSpec& cp);
   COPY_FUNS(BpContextSpec, BpUnitSpec);
-  TA_BASEFUNS(BpContextSpec);
+  TA_BASEFUNS2(BpContextSpec, BpUnitSpec);
 };
 
 class BP_API LinearBpUnitSpec : public BpUnitSpec {
@@ -488,7 +488,7 @@ public:
   void	UpdateAfterEdit();
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(LinearBpUnitSpec);
+  TA_BASEFUNS2(LinearBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API ThreshLinBpUnitSpec : public BpUnitSpec {
@@ -504,7 +504,7 @@ public:
   void 	Destroy()		{ };
   SIMPLE_COPY(ThreshLinBpUnitSpec);
   COPY_FUNS(ThreshLinBpUnitSpec, BpUnitSpec);
-  TA_BASEFUNS(ThreshLinBpUnitSpec);
+  TA_BASEFUNS2(ThreshLinBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API NoisyBpUnitSpec : public BpUnitSpec {
@@ -519,7 +519,7 @@ public:
   void 	InitLinks();
   SIMPLE_COPY(NoisyBpUnitSpec);
   COPY_FUNS(NoisyBpUnitSpec, BpUnitSpec);
-  TA_BASEFUNS(NoisyBpUnitSpec);
+  TA_BASEFUNS2(NoisyBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API StochasticBpUnitSpec : public BpUnitSpec {
@@ -528,7 +528,7 @@ public:
   void				Compute_Act(Unit* u);
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS(StochasticBpUnitSpec);
+  TA_BASEFUNS2_NCOPY(StochasticBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API RBFBpUnitSpec : public BpUnitSpec {
@@ -547,7 +547,7 @@ public:
   void  Destroy()               { };
   SIMPLE_COPY(RBFBpUnitSpec);
   COPY_FUNS(RBFBpUnitSpec, BpUnitSpec);
-  TA_BASEFUNS(RBFBpUnitSpec);
+  TA_BASEFUNS2(RBFBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API BumpBpUnitSpec : public BpUnitSpec {
@@ -565,7 +565,7 @@ public:
   void  Destroy()               { };
   SIMPLE_COPY(BumpBpUnitSpec);
   COPY_FUNS(BumpBpUnitSpec, BpUnitSpec);
-  TA_BASEFUNS(BumpBpUnitSpec);
+  TA_BASEFUNS2(BumpBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API ExpBpUnitSpec : public BpUnitSpec {
@@ -576,7 +576,7 @@ public:
 
   void  Initialize()	{ };
   void  Destroy()	{ };
-  TA_BASEFUNS(ExpBpUnitSpec);
+  TA_BASEFUNS2_NCOPY(ExpBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API SoftMaxBpUnitSpec : public BpUnitSpec {
@@ -594,16 +594,17 @@ public:
 
   void  Initialize()	{ };
   void  Destroy()	{ };
-  TA_BASEFUNS(SoftMaxBpUnitSpec);
+  TA_BASEFUNS2_NCOPY(SoftMaxBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API BpLayer : public Layer {
   // A feedforward backpropagation layer
+INHERITED(Layer)
 public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(BpLayer);
+  TA_BASEFUNS_NCOPY(BpLayer);
 };
 
 class PDP_API BpNetwork : public Network {
@@ -621,6 +622,7 @@ public:
   
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
+  void Copy_(const BpNetwork& cp) {bp_to_inputs = cp.bp_to_inputs;}
   void	Initialize();
   void 	Destroy()		{}
   TA_BASEFUNS(BpNetwork);
@@ -633,7 +635,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{}
-  TA_BASEFUNS(BpProject);
+  TA_BASEFUNS_NCOPY(BpProject);
 };
 
 

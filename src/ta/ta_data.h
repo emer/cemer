@@ -44,10 +44,10 @@ public:
   virtual const String_Matrix& cellNames() const;
   
   String GetColText(int col, int);
-  void 	Copy_(const ChannelSpec& cp);
   COPY_FUNS(ChannelSpec, inherited);
   TA_BASEFUNS(ChannelSpec);
 private:
+  void 	Copy_(const ChannelSpec& cp);
   void		Initialize();
   void		Destroy() {}
 };
@@ -72,12 +72,12 @@ public:
   void 	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
-  void 	Copy_(const MatrixChannelSpec& cp);
   COPY_FUNS(MatrixChannelSpec, ChannelSpec);
   TA_BASEFUNS(MatrixChannelSpec);
 protected:
   void			InitCellNames();
 private:
+  void 	Copy_(const MatrixChannelSpec& cp);
   void		Initialize();
   void		Destroy() {CutLinks();}
 };
@@ -91,7 +91,7 @@ public:
   int		NumListCols() const {return 6;}
   String 	GetColHeading(int col);
 
-  TA_BASEFUNS(ChannelSpec_List);
+  TA_BASEFUNS_NCOPY(ChannelSpec_List);
 private:
   void		Initialize() {SetBaseType(&TA_ChannelSpec);}
   void		Destroy() {}
@@ -322,6 +322,7 @@ protected:
   virtual void		DeleteSinkChannel_impl(int chan) {}
 
 private:
+  NCOPY(DataBlock)
   void			Initialize() {}
   void			Destroy() {}
 };
@@ -330,6 +331,7 @@ SmartRef_Of(DataBlock,TA_DataBlock); // DataBlockRef
 
 class TA_API DataBlock_Idx : public DataBlock { 
  // #VIRT_BASE #NO_INSTANCE base class for a data source and/or sink that supports random access to data via an index
+INHERITED(DataBlock)
 public: 
   override bool		ReadAvailable() const
   { return ((rd_itr >= 0) && (rd_itr < ItemCount())); }
@@ -354,7 +356,6 @@ public:
      if ((idx < 0) || (idx >= ItemCount())) return false;
      wr_itr = idx;  return WriteItem_impl();} 
  
-  void	Copy_(const DataBlock_Idx& cp) { rd_itr = -2; }
   COPY_FUNS(DataBlock_Idx, DataBlock)
   TA_ABSTRACT_BASEFUNS(DataBlock_Idx);
 protected:
@@ -366,6 +367,7 @@ protected:
   override void		ReadItrInit() {rd_itr = -1;}
   override void		WriteItrInit() {wr_itr = -1;}
 private:
+  void	Copy_(const DataBlock_Idx& cp) { rd_itr = -2; }
   void			Initialize() {rd_itr = -2; wr_itr = -2;}
   void			Destroy() {}
 };

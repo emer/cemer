@@ -96,13 +96,13 @@ public:
   { val = MIN(max,val); val = MAX(min,val); return val; }
   // clip given value within current range
 
+  TA_BASEFUNS_LITE(MinMax);
+ protected:
+  void	UpdateAfterEdit_impl();
+private:
   void 	Initialize() 		{ min = max = 0.0f; }
   void 	Destroy()		{ };
   void 	Copy_(const MinMax& cp)	{ min = cp.min; max = cp.max; }
-  COPY_FUNS(MinMax, inherited);
-  TA_BASEFUNS(MinMax);
- protected:
-  void	UpdateAfterEdit_impl();
 };
 
 class TA_API MinMaxRange : public MinMax {
@@ -118,19 +118,20 @@ public:
   float	Project(float val) const	{ return min + (val * range); }
   // project a normalized value into the current min-max range
 
-  void 	Initialize() 		{ range = scale = 0.0f; }
-  void 	Destroy()		{ };
-  void 	Copy_(const MinMaxRange& cp)	{ range = cp.range; scale = cp.scale; }
-  COPY_FUNS(MinMaxRange, inherited);
-  TA_BASEFUNS(MinMaxRange);
- protected:
+  TA_BASEFUNS_LITE(MinMaxRange);
+protected:
   void	UpdateAfterEdit_impl()
   { inherited::UpdateAfterEdit_impl(); 
     range = Range(); if(range != 0.0f) scale = 1.0f / range; }
+private:
+  void 	Initialize() 		{ range = scale = 0.0f; }
+  void 	Destroy()		{ };
+  void 	Copy_(const MinMaxRange& cp)	{ range = cp.range; scale = cp.scale; }
 };
 
 class TA_API FixedMinMax : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum values with toggles for usage
+INHERITED(taBase)
 public:
   bool		fix_min;	// use fixed minimum value?
   float		min;		// minimum value
@@ -144,11 +145,11 @@ public:
   void	SetMax(float mx) { max = mx; fix_max = true; }
   void	FixRange(MinMax& mm) { if(fix_min) mm.min = min; if(fix_max) mm.max = max; }
 
+  TA_BASEFUNS_LITE(FixedMinMax);
+private:
   void 	Initialize();
   void 	Destroy()		{ };
   void 	Copy_(const FixedMinMax& cp);
-  COPY_FUNS(FixedMinMax, taBase);
-  TA_BASEFUNS(FixedMinMax);
 };
 
 class TA_API Modulo : public taOBase {
@@ -159,13 +160,13 @@ public:
   int		 m;	        // Modulo N mod m, where N is counter
   int		 off;		// Modulo Offset (actually (N - off) mod m
 
+  TA_BASEFUNS_LITE(Modulo);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
   void	Initialize();
   void 	Destroy()		{ };
   void	Copy_(const Modulo& cp);
-  COPY_FUNS(Modulo, taOBase);
-  TA_BASEFUNS(Modulo);
- protected:
-  void	UpdateAfterEdit_impl();
 };
 
 class TA_API MinMaxInt : public taBase {
@@ -234,11 +235,11 @@ public:
   { val = MIN(max,val); val = MAX(min,val); return val; }
   // clip given value within current range
 
+  TA_BASEFUNS_LITE(MinMaxInt);
+private:
   void 	Initialize() 		{ min = max = 0; }
   void 	Destroy()		{ };
   void 	Copy_(const MinMaxInt& cp)	{ min = cp.min; max = cp.max; }
-  COPY_FUNS(MinMaxInt, inherited);
-  TA_BASEFUNS(MinMaxInt);
 };
 
 #endif // minmax_h

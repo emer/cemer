@@ -39,6 +39,11 @@ void DirectoryCatalog::Destroy() {
   ReadClose();
 }
 
+void DirectoryCatalog::Copy_(const DirectoryCatalog& cp) {
+  ReadClose();
+  directory = cp.directory;
+}
+
 QDir& DirectoryCatalog::dir() {
   if (!m_dir)
     m_dir = new QDir();

@@ -167,6 +167,7 @@ public:
 
 class PDP_API WeightLimits : public taBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Network specifies weight limits for connections
+INHERITED(taBase)
 public:
   enum LimitType {
     NONE,			// no weight limitations
@@ -198,6 +199,7 @@ public:
 
 class PDP_API ConSpec: public BaseSpec {
   // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection 
+INHERITED(BaseSpec)
 public:
   Random	rnd;		// #CAT_ConSpec Weight randomization specification
   WeightLimits	wt_limits;	// #CAT_ConSpec limits on weight sign, symmetry
@@ -259,7 +261,7 @@ public:
   void	CutLinks();
   void	Copy_(const ConSpec& cp);
   COPY_FUNS(ConSpec, BaseSpec);
-  TA_BASEFUNS(ConSpec);
+  TA_BASEFUNS_LITE(ConSpec);
 };
 
 SpecPtr_of(ConSpec);
@@ -481,6 +483,7 @@ protected:
 
 class PDP_API RecvCons_List: public taList<RecvCons> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of receiving connections, one per projection
+INHERITED(taList<RecvCons>)
 public:
   virtual RecvCons*	NewPrjn(Projection* prjn);
   // #CAT_Structure create a new sub_group from given projection, with given ownership (own_cons)
@@ -501,6 +504,7 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
+  NCOPY(RecvCons_List)
   void	Initialize() 		{ SetBaseType(&TA_RecvCons); }
   void 	Destroy()		{ };
   TA_BASEFUNS(RecvCons_List);
@@ -594,6 +598,7 @@ protected:
 
 class PDP_API SendCons_List: public taList<SendCons> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of sending connections, one per projection
+INHERITED(taList<SendCons>)
 public:
   // projection-related functions for operations on sub-groups of the group
   virtual SendCons*	NewPrjn(Projection* prjn);
@@ -617,7 +622,7 @@ public:
 
   void	Initialize() 		{ SetBaseType(&TA_SendCons); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(SendCons_List);
+  TA_BASEFUNS_NCOPY(SendCons_List);
 };
 
 
@@ -862,6 +867,7 @@ protected:
 
 class PDP_API ProjectionSpec : public BaseSpec {
   // #VIRT_BASE ##CAT_Spec Specifies the connectivity between layers (ie. full vs. partial)
+INHERITED(BaseSpec)
 public:
   bool		self_con;	// #CAT_Structure whether to create self-connections or not (if applicable)
   bool		init_wts;	// #CAT_Structure whether this projection spec does weight init (else conspec)
@@ -1036,12 +1042,13 @@ protected:
 
 class PDP_API Projection_Group: public taGroup<Projection> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network 
+INHERITED(taGroup<Projection>)
 public:
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
   void	Initialize() 		{ SetBaseType(&TA_Projection); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(Projection_Group);
+  TA_BASEFUNS_NCOPY(Projection_Group);
 };
 
 //////////////////////////////////////////////////////////
@@ -1207,6 +1214,7 @@ protected:
 
 class PDP_API LayerSpec : public BaseSpec {
   // generic layer specification
+INHERITED(BaseSpec)
 public:
   virtual bool		CheckConfig_Layer(Layer* lay, bool quiet = false)
     {return true;} // #CAT_ObjectMgmt This is ONLY for spec-specific stuff; the layer still does all its default checking (incl child checking)
@@ -1217,11 +1225,12 @@ public:
   void	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
-  TA_BASEFUNS(LayerSpec); //
+  TA_BASEFUNS_NCOPY(LayerSpec); //
 };
 
 class PDP_API LayerDistances : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Network specifies distance from input/output layers
+INHERITED(taBase)
 public:
   int	fm_input;		// how many layers between closest input layer and me (-1 if unknown)
   int	fm_output;		// how many layers between closest output layer and me (-1 if unknown)
@@ -1232,7 +1241,7 @@ public:
   void	Destroy()		{ };
   SIMPLE_COPY(LayerDistances);
   COPY_FUNS(LayerDistances, taBase);
-  TA_BASEFUNS(LayerDistances);
+  TA_BASEFUNS_LITE(LayerDistances);
 };
 
 class PDP_API Layer : public taNBase {
@@ -1936,7 +1945,7 @@ public:
 
   void	Initialize() 		{SetBaseType(&TA_Network);}
   void 	Destroy()		{ };
-  TA_BASEFUNS(Network_Group); //
+  TA_BASEFUNS_NCOPY(Network_Group); //
 };
 
 #endif /* netstru_h */

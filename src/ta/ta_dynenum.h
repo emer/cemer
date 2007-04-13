@@ -23,6 +23,7 @@
 
 class TA_API DynEnumItem : public taNBase {
   // #NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##CAT_Program dynamic enumerated type value (name and numerical int value)
+INHERITED(taNBase)
 public:
   int		value;		// numerical (integer) value of this enum
   String	desc;		// description of item

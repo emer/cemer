@@ -1704,8 +1704,7 @@ void DataCalcAddDestRow::InitLinks() {
   GetDataPtrsFmLoop();
 }  
 
-void DataCalcAddDestRow::Copy(const DataCalcAddDestRow& cp) {
-  inherited::Copy(cp);
+void DataCalcAddDestRow::Copy_(const DataCalcAddDestRow& cp) {
   GetDataPtrsFmLoop();
 }  
 
@@ -1781,8 +1780,7 @@ void DataCalcSetDestRow::InitLinks() {
   GetDataPtrsFmLoop();
 }  
 
-void DataCalcSetDestRow::Copy(const DataCalcSetDestRow& cp) {
-  inherited::Copy(cp);
+void DataCalcSetDestRow::Copy_(const DataCalcSetDestRow& cp) {
   GetDataPtrsFmLoop();
 }  
 
@@ -1859,8 +1857,7 @@ void DataCalcSetSrcRow::InitLinks() {
   GetDataPtrsFmLoop();
 }  
 
-void DataCalcSetSrcRow::Copy(const DataCalcSetSrcRow& cp) {
-  inherited::Copy(cp);
+void DataCalcSetSrcRow::Copy_(const DataCalcSetSrcRow& cp) {
   GetDataPtrsFmLoop();
 }  
 
@@ -1935,9 +1932,8 @@ void DataCalcCopyCommonCols::InitLinks() {
   GetDataPtrsFmLoop();
 }  
 
-void DataCalcCopyCommonCols::Copy(const DataCalcCopyCommonCols& cp) {
-  inherited::Copy(cp);
-  Copy_(cp);
+void DataCalcCopyCommonCols::Copy_(const DataCalcCopyCommonCols& cp) {
+  CopyInner_(cp);
   GetDataPtrsFmLoop();
 }  
 

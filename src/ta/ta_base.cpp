@@ -1254,6 +1254,42 @@ void taBase::ClearCheckConfig() {
 ///////////////////////////////////////////////////////////////////////////
 //	Copying and changing type 
 
+void taBase::Copy_(const taBase& cp) { // note: not a virtual method
+  // just the flags
+  m_flags = (m_flags & ~COPY_MASK) | (cp.m_flags & COPY_MASK);
+}
+
+bool taBase::CanAssignFrom(const taBase* cpy_from, bool quiet) {
+  bool ok = true; // ref var needed for Check
+//note: rules for Assign are more strict than CopyFrom: 
+// can only AssignFrom a class >= ourself
+  if (CheckError((!cpy_from), quiet, ok,
+    "AssignFrom: source is null")) return false;
+  if (CheckError((cpy_from == this), quiet, ok,
+    "AssignFrom: cannot Assign to self")) return false;
+  if (CheckError((!cpy_from->InheritsFrom(GetTypeDef())), quiet, ok,
+    "AssignFrom: Cannot copy from given object of type: " + cpy_from->GetTypeDef()->name +
+    " which does not inherit from: ", GetTypeDef()->name))
+    return false;
+  if (CheckError((cpy_from->IsParentOf(this)), quiet, ok,
+    "AssignFrom: cannot Assign from a parent")) return false;
+  return ok;
+}
+
+bool taBase::AssignFrom(const taBase* cpy_from) {
+//note: rules for Assign are more strict than CopyFrom: 
+// can only AssignFrom a class >= ourself
+  bool ok = CanAssignFrom(cpy_from, false);
+  if (ok) {
+    AssignFrom_impl(cpy_from); // this just does things like setting list/group same size
+    UnSafeCopy(const_cast<taBase*>(cpy_from));
+  }
+  return ok;
+}
+
+void taBase::AssignFrom_impl(const taBase* cpy_from) {
+}
+
 bool taBase::CopyFrom(TAPtr cpy_from) {
   if(TestError((!cpy_from), "CopyFrom", "source is null")) return false;
   if(!cpy_from->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_from->GetTypeDef())) {
@@ -2262,17 +2298,26 @@ void taList_impl::CutLinks() {
   inherited_taBase::CutLinks();
 }
 
-void taList_impl::Copy(const taList_impl& cp) {
+void taList_impl::Copy_(const taList_impl& cp) {
   if(!cp.name.empty())
     name = cp.name;
   el_base = cp.el_base;
   el_typ = cp.el_typ;
   el_def = cp.el_def;
+//TODO: make same size, then copy exact elements
   taPtrList_impl::Copy_Duplicate(cp);
 }
 
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
+}
+
+void taList_impl::AssignFrom_impl(const taBase* cpy_from_) {
+  inherited::AssignFrom_impl(cpy_from_);
+  const taList_impl* cpy_from = dynamic_cast<const taList_impl*>(cpy_from_);
+  if (!cpy_from) return; // shouldn't happen
+  SetSize(cpy_from->size);
+  // UnSafeCopy should then take care of items
 }
 
 void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -2378,7 +2423,7 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
       return false;
     }
   }
-  TAPtr rval = inherited_taBase::MakeToken(new_type);
+  TAPtr rval = taBase::MakeToken(new_type);
   if(TestError(!rval, "ChangeType", "maketoken is null")) return false;
   Add(rval);		// add to end of list
   String orgnm = rval->GetName();
@@ -2591,7 +2636,7 @@ void taList_impl::EnforceSameStru(const taList_impl& cp) {
     TAPtr citm = (TAPtr)cp.el[i];
     if(citm == NULL) continue;
     if(size <= i) {
-      TAPtr itm = inherited_taBase::MakeToken(citm->GetTypeDef());
+      TAPtr itm = taBase::MakeToken(citm->GetTypeDef());
       if(itm != NULL)
 	Add_(itm);
     }
@@ -2599,7 +2644,7 @@ void taList_impl::EnforceSameStru(const taList_impl& cp) {
       TAPtr itm = (TAPtr)el[i];
       if(citm->GetTypeDef() == itm->GetTypeDef())
 	continue;
-      TAPtr rval = inherited_taBase::MakeToken(citm->GetTypeDef());
+      TAPtr rval = taBase::MakeToken(citm->GetTypeDef());
       if(rval != NULL)
 	ReplaceIdx(i, rval);
     }
@@ -2626,7 +2671,7 @@ void taList_impl::EnforceType() {
     if((itm == NULL) || (itm->GetTypeDef() == el_typ))
       continue;
 
-    TAPtr rval = inherited_taBase::MakeToken(el_typ);
+    TAPtr rval = taBase::MakeToken(el_typ);
     if(rval != NULL)
       ReplaceIdx(i, rval);
   }
@@ -2789,7 +2834,7 @@ taBase* taList_impl::New(int no, TypeDef* typ) {
     el_typ = typ;	// first item or multiple items set el_typ
   int i;
   for(i=0; i < no; i++) {
-    rval = inherited_taBase::MakeToken(typ);
+    rval = taBase::MakeToken(typ);
     if(rval != NULL)
       Add_(rval);
   }

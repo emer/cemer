@@ -111,6 +111,7 @@ protected:
   NetView*		m_nv; // cache
 
 private:
+  void Copy_(const nvDataView& cp) {m_nv = NULL;}
   void			Initialize();
   void			Destroy() {}
 };
@@ -125,9 +126,7 @@ private:
 // when the need arises (ex. user selects a T3Unit in the gui)
 
 class PDP_API UnitView: public T3DataView {
-#ifndef __MAKETA__
-  typedef T3DataView inherited;
-#endif
+INHERITED(T3DataView)
   friend class UnitGroupView;
 public:
 #ifndef __MAKETA__
@@ -145,6 +144,7 @@ protected:
   override void 	Render_pre(); //
   //note: _impl is done by the UnitGroupView
 private:
+  void Copy_(const UnitView& cp) {m_nv = NULL;}
   void			Initialize();
   void			Destroy() {CutLinks();}
 };
@@ -186,9 +186,7 @@ protected:
 // The Units font is here, so we don't replicate it in every Unit
 
 class PDP_API UnitGroupView: public nvDataView {
-#ifndef __MAKETA__
-  typedef nvDataView inherited;
-#endif
+INHERITED(nvDataView)
 public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
@@ -221,6 +219,7 @@ protected:
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
+  NCOPY(UnitGroupView)
   void			Initialize();
   void			Destroy();
 };
@@ -234,7 +233,6 @@ public:
   void			setHighlightColor(const T3Color& color); 
     // used for highlighting in gui, esp lay/prjn
     
-  void Copy_(const nvhDataView& cp);
   COPY_FUNS(nvhDataView, inherited);
   TA_BASEFUNS(nvhDataView)
 protected:
@@ -243,6 +241,7 @@ protected:
   virtual void		DoHighlightColor(bool apply) {} 
 
 private:
+  void Copy_(const nvhDataView& cp);
   void			Initialize() {}
   void			Destroy() {}
 };
@@ -275,6 +274,7 @@ protected:
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
+  NCOPY(LayerView)
   void			Initialize();
   void			Destroy();
 };
@@ -298,6 +298,7 @@ protected:
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
+  NCOPY(PrjnView)
   void			Initialize();
   void			Destroy();
 };
@@ -440,6 +441,7 @@ protected:
   void 			UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void			viewWin_NotifySignal(ISelectableHost* src, int op);
 private:
+  SIMPLE_COPY(NetView) // 4/12/07 added for consistency, but may need testing
   void			Initialize();
   void			Destroy();
 };

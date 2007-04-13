@@ -22,6 +22,7 @@
 
 class TA_API taDataGen : public taNBase {
   // ##CAT_Data collection of data generation functions (e.g., drawing, random patterns)
+INHERITED(taNBase)
 public:
 
   static bool	CheckDims(float_Matrix* mat, int dims);
@@ -125,7 +126,7 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS(taDataGen);
+  TA_BASEFUNS_NCOPY(taDataGen);
 };
 
 
@@ -137,7 +138,7 @@ class TA_API DataGenCall : public StaticMethodCall {
   // call a taDataGen (data generation) function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS(DataGenCall);
+  TA_BASEFUNS_NCOPY(DataGenCall);
 private:
   void	Initialize();
   void	Destroy()	{ };

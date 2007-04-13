@@ -91,6 +91,7 @@ typedef PDPLog GraphLog;
 
 class PDP_API float_RArray : public float_Array {
   // #NO_UPDATE_AFTER float array with range, plus a lot of other mathematical functions
+INHERITED(float_Array)
 public:
   enum DistMetric {		// generalized distance metrics
     SUM_SQUARES,		// sum of squares:  sum[(x-y)^2]
@@ -117,6 +118,7 @@ public:
 
 class PDP_API CritParam : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat stopping criteria params
+INHERITED(taBase)
 public:
   enum Relation {
     EQUAL,		// #LABEL_=
@@ -141,7 +143,7 @@ public:
   void 	Destroy()		{ };
   void	Copy_(const CritParam& cp);
   COPY_FUNS(CritParam, taBase);
-  TA_BASEFUNS(CritParam);
+  TA_BASEFUNS_LITE(CritParam);
 };
 
 
@@ -216,13 +218,14 @@ private:
 
 class PDP_API Script_Group : public taGroup<Script> {
   // ##CAT_v3Compat 
+INHERITED(taGroup<Script>)
 public:
 //   virtual void	StopRecording();
 //   virtual void	AutoRun();
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(Script_Group);
+  TA_BASEFUNS_NCOPY(Script_Group);
 };
 
 class PDP_API Process : public taNBase {
@@ -845,7 +848,7 @@ public:
 
   void	Initialize() {SetBaseType(&TA_Pattern);}
   void 	Destroy()		{ }
-  TA_BASEFUNS(Pattern_Group);
+  TA_BASEFUNS_NCOPY(Pattern_Group);
 };
 
 class PDP_API Event : public taNBase {
@@ -1786,7 +1789,7 @@ public:
 
   void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(TypeDefault_Group);
+  TA_BASEFUNS_NCOPY(TypeDefault_Group);
 };
 
 
@@ -1815,10 +1818,11 @@ public:
 
 class PDP_API PDPLog_Group : public taGroup<PDPLog> {
   // ##CAT_v3Compat 
+INHERITED(taGroup<PDPLog>)
 public:
   void	Initialize() 		{SetBaseType(&TA_PDPLog);}
   void 	Destroy()		{ }
-  TA_BASEFUNS(PDPLog_Group);
+  TA_BASEFUNS_NCOPY(PDPLog_Group);
 };
 
 

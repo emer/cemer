@@ -46,10 +46,10 @@ public:
 
   void 	InitLinks();
   void	CutLinks(); 
-  SIMPLE_COPY(taWizard);
   COPY_FUNS(taWizard, inherited);
   TA_BASEFUNS(taWizard);
 private:
+  SIMPLE_COPY(taWizard);
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
 };
@@ -62,9 +62,11 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Wizard"; }
 
+  TA_BASEFUNS(Wizard_Group);
+private:
+  NCOPY(Wizard_Group)
   void	Initialize() 		{ SetBaseType(&TA_taWizard); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(Wizard_Group);
 };
 
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {
@@ -75,9 +77,11 @@ public:
 
   override String 	GetTypeDecoKey() const { return "SelectEdit"; }
 
+  TA_BASEFUNS(SelectEdit_Group);
+private:
+  NCOPY(SelectEdit_Group)
   void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(SelectEdit_Group);
 };
 
 class TA_API taProject : public taFBase {
@@ -132,7 +136,6 @@ public:
   void	UpdateAfterEdit();
   virtual void		InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
   virtual void		CutLinks_impl(); // #IGNORE use this instead of CutLinks in subclasses -- you can call this first to nuke the viewers etc. before your own stuff
-  void	Copy_(const taProject& cp);
   COPY_FUNS(taProject, taFBase);
   TA_BASEFUNS(taProject);
   
@@ -142,6 +145,7 @@ protected:
   virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
   
 private:
+  void	Copy_(const taProject& cp);
   void 	InitLinks(); // don't try to use this -- use _impl instead
   void	Initialize();
   void 	Destroy() { CutLinks(); }
@@ -155,9 +159,11 @@ friend class taProject;
 public:
   override int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
 
+  TA_BASEFUNS(Project_Group);
+private:
+  NCOPY(Project_Group)
   void	Initialize() 		{SetBaseType(&TA_taProject);} // upclassed in pdp
   void 	Destroy()		{ };
-  TA_BASEFUNS(Project_Group);
 };
 
 
@@ -312,6 +318,7 @@ protected:
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates
   virtual taBase* 	GetTemplateInstance_impl(TypeDef* typ, taBase* base);
 private:
+  SIMPLE_COPY(taRootBase)
   void	Initialize();
   void	Destroy();
 };

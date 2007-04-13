@@ -26,6 +26,7 @@
 
 class PDP_API FullPrjnSpec : public ProjectionSpec {
   // Full connectivity between layers
+INHERITED(ProjectionSpec)
 public:
   void 	Connect_impl(Projection* prjn);
   // Connection function for full connectivity
@@ -33,11 +34,12 @@ public:
 
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS(FullPrjnSpec);
+  TA_BASEFUNS_NCOPY(FullPrjnSpec);
 };
 
 class PDP_API TessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification
+INHERITED(taOBase)
 public:
   TwoDCoord	send_off;	// offset from current receiving unit
   float		wt_val;		// value to assign to weight
@@ -52,10 +54,11 @@ public:
 
 class PDP_API TessEl_List : public taList<TessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of TessEl objects
+INHERITED(taList<TessEl>)
 public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS(TessEl_List);
+  TA_BASEFUNS_LITE_NCOPY(TessEl_List);
 };
 
 class PDP_API TesselPrjnSpec : public ProjectionSpec {
@@ -105,6 +108,7 @@ protected:
 
 class PDP_API OneToOnePrjnSpec : public ProjectionSpec {
   // one-to-one connectivity (1st unit to 1st unit, etc)
+INHERITED(ProjectionSpec)
 public:
   int	n_conns;		// number of connections to make (-1 for size of layer)
   int	recv_start;		// starting unit index for recv connections
@@ -188,12 +192,13 @@ protected:
 
 class PDP_API SymmetricPrjnSpec : public ProjectionSpec {
   // connects units with receiving connection where sending one already exists
+INHERITED(ProjectionSpec)
 public:
   void 	Connect_impl(Projection* prjn);
 
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS(SymmetricPrjnSpec);
+  TA_BASEFUNS_NCOPY(SymmetricPrjnSpec);
 };
 
 class PDP_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
@@ -223,12 +228,13 @@ protected:
 
 class PDP_API CustomPrjnSpec : public ProjectionSpec {
   // connectivity is defined manually (i.e. unit-by-unit)
+INHERITED(ProjectionSpec)
 public:
 
   void	Connect(Projection* prjn);	// do nothing
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS(CustomPrjnSpec);
+  TA_BASEFUNS_NCOPY(CustomPrjnSpec);
 };
 
 
@@ -238,12 +244,13 @@ public:
 
 class PDP_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-one connectivity (all in 1st group to all in 1st group, etc)
+INHERITED(OneToOnePrjnSpec)
 public:
   void	Connect_impl(Projection* prjn);
 
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS(GpOneToOnePrjnSpec);
+  TA_BASEFUNS_NCOPY(GpOneToOnePrjnSpec);
 };
 
 class PDP_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
@@ -268,6 +275,7 @@ protected:
 
 class PDP_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-many connectivity (one sending gp to all recv units)
+INHERITED(OneToOnePrjnSpec)
 public:
   enum NConGroups {		// number of connection groups for this projection
     RECV_SEND_PAIR,		// create separate con_groups for each recv_send pair
@@ -292,6 +300,7 @@ public:
 
 class PDP_API GpTessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification for groups
+INHERITED(taOBase)
 public:
   TwoDCoord	send_gp_off;	// offset of group from current receiving group
   float		p_con;		// proportion connectivity from this group -- negative value means just make symmetric cons
@@ -301,15 +310,16 @@ public:
   void	InitLinks();
   void	Copy_(const GpTessEl& cp);
   COPY_FUNS(GpTessEl, taOBase);
-  TA_BASEFUNS(GpTessEl);
+  TA_BASEFUNS_LITE(GpTessEl);
 };
 
 class PDP_API GpTessEl_List : public taList<GpTessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of GpTessEl objects
+INHERITED(taList<GpTessEl>)
 public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS(GpTessEl_List);
+  TA_BASEFUNS_LITE_NCOPY(GpTessEl_List);
 };
 
 class PDP_API GpRndTesselPrjnSpec : public ProjectionSpec {
@@ -405,6 +415,7 @@ public:
 
 class PDP_API TiledGpRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups
+INHERITED(ProjectionSpec)
 public:
   TwoDCoord	send_gp_size;		// number of groups in the sending receptive field
   TwoDCoord	send_gp_skip;		// number of groups to skip per each recv group (typically 1/2 of the size for nice overlap)
@@ -424,6 +435,7 @@ public:
 
 class PDP_API TiledNovlpPrjnSpec : public ProjectionSpec {
   // Tiled non-overlapping projection spec: connects entire receiving layer unit groups with non-overlapping tiled regions of sending units
+INHERITED(ProjectionSpec)
 public:
   bool		reciprocal;	// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
 

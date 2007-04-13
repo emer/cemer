@@ -94,6 +94,7 @@ public:
 // todo: could be re-written using float_Matrix
 class TA_API FunLookupND : public taNBase {
   // #NO_UPDATE_AFTER ##CAT_Math n-dimensional function lookup: function is defined for n_dims inputs and produces a corresponding interpolated output
+INHERITED(taNBase)
 public:
   int 		n_dims;		// number of dimensions
   float_Array 	mesh_pts;	// the n-dimensional mesh of function values at specific points in n_dims space

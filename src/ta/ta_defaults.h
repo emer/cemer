@@ -21,13 +21,14 @@
 
 class TA_API NameValue : public taNBase {
   // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER name/value pair
+INHERITED(taNBase)
 public:
   String 	value;			// Value for name
 
-  void 	Copy_(const NameValue& cp)		{ value = cp.value; }
   COPY_FUNS(NameValue, taNBase);
   TA_BASEFUNS(NameValue);
 private:
+  void 	Copy_(const NameValue& cp)		{ value = cp.value; }
   void  Initialize() {}
   void	Destroy() {}
 };
@@ -36,6 +37,7 @@ private:
 
 class TA_API TypeDefault : public taNBase {
   // ##EXT_def #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER ##CAT_Project Contains a default object of a type
+INHERITED(taNBase)
 public:
   TypeDef*	old_type;	// #HIDDEN #NO_SAVE has previous type (if default_type changes)
   TypeDef*	default_type;	// #TYPE_taBase type of the default
@@ -54,10 +56,12 @@ public:
 
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
-  void	UpdateAfterEdit();
   void	InitLinks();
   TA_BASEFUNS(TypeDefault);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
+  void	Copy_(const TypeDefault& cp);
   void  Initialize();
   void	Destroy();
 };

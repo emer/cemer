@@ -121,6 +121,18 @@ void T3DataView::Destroy() {
 #endif
 }
 
+void T3DataView::Copy_(const T3DataView& cp) {
+//TODO: 4/12/07 added for consistency, but NOT tested, and likely may have issues!
+  flags = cp.flags;
+  m_md = cp.m_md;
+  Clear_impl(); // hope this works!
+  last_child_node = NULL;
+  FloatTransform* ft = cp.m_transform; 
+  if (ft)
+    transform(true)->Copy(*ft);
+}
+
+
 void T3DataView::CutLinks() {
   Reset();
   if (m_transform) {
@@ -397,6 +409,11 @@ void T3DataViewPar::CutLinks() {
   inherited::CutLinks();
 }
 
+void T3DataViewPar::Copy_(const T3DataViewPar& cp) {
+//TODO: 4/12/07 added for consistency, but NOT tested, and likely may have issues!
+  Clear_impl(); // hope this works!
+  children = cp.children; 
+}
 void T3DataViewPar::CloseChild(taDataView* child) {
   child->Reset();
   children.RemoveEl(child);

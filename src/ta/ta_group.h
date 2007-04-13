@@ -30,14 +30,16 @@ typedef taList<taGroup_impl> TALOG; // list of groups (LOG)
 
 class 	TA_API taSubGroup : public TALOG {
   // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER has the sub-groups for a group
+INHERITED(TALOG)
 public:
   override  void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // forward LIST events as GROUP events to owner
 
   bool	Transfer(taBase* item);
 
+  TA_BASEFUNS_NCOPY(taSubGroup);
+private:
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS(taSubGroup);
 };
 
 typedef int taGroupItr;
@@ -61,9 +63,7 @@ for(el = (T*) grp FirstGp(itr); el; el = (T*) grp NextGp(itr))
 
 class TA_API taGroup_impl : public taList_impl {
   // #INSTANCE #NO_UPDATE_AFTER implementation of a group
-#ifndef __MAKETA__
-typedef taList_impl inherited;
-#endif
+INHERITED(taList_impl)
 public:
   virtual TAGPtr GetSuperGp_();			// #IGNORE Parent super-group, or NULL
   virtual void	 UpdateLeafCount_(int no); 	// #IGNORE updates the leaves count
@@ -204,13 +204,13 @@ public:
 
   virtual void 	List(ostream& strm=cout) const; // Display list of elements in the group
 
-  void 	Initialize();
   void 	InitLinks();		// inherit the el_typ from parent group..
   void 	CutLinks();
-  void  Destroy();
-  void 	Copy(const taGroup_impl& cp);
   TA_BASEFUNS(taGroup_impl);
-
+private:
+  void 	Initialize();
+  void  Destroy();
+  void 	Copy_(const taGroup_impl& cp);
 protected:
   mutable TALOG*	leaf_gp; 	// #READ_ONLY #NO_SAVE cached 'flat' list of leaf-containing-gps for iter
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
@@ -218,6 +218,7 @@ protected:
   virtual String	GetValStr(const TypeDef* td, void* par=NULL,
 	MemberDef* memb_def = NULL) const;
   virtual TAGPtr LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
+  override void		AssignFrom_impl(const taBase* cpy_from);
 #ifdef TA_GUI
 protected: // clip functions
   override void	ChildQueryEditActions_impl(const MemberDef* md,
@@ -327,9 +328,8 @@ public:
   virtual T* 	FindLeafType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindLeafType_(item_tp, idx);}
   // #CAT_Access find given type leaf element (NULL = not here), sets idx to leaf_idx or -1
 
-  void Initialize() 			{ SetBaseType(T::StatTypeDef(1));}
-
-  taGroup() 				{ Register(); Initialize(); }
+ 
+/*  taGroup() 				{ Register(); Initialize(); }
   taGroup(const taGroup<T>& cp)		{ Register(); Initialize(); Copy(cp); }
   ~taGroup() 				{ unRegister(); Destroy(); }
   taBase* Clone() 			{ return new taGroup<T>(*this); }
@@ -338,11 +338,15 @@ public:
   void  CastCopyTo(taBase* cp)            { taGroup<T>& rf = *((taGroup<T>*)cp); rf.Copy(*this); }
   taBase* MakeToken()			{ return (taBase*)(new taGroup<T>); }
   taBase* MakeTokenAry(int no)		{ return (taBase*)(new taGroup<T>[no]); }
-  void operator=(const taGroup<T>& cp)	{ Copy(cp); }
-  TA_TMPLT_TYPEFUNS(taGroup,T);
+  void operator=(const taGroup<T>& cp)	{ Copy(cp); } */
+  TA_TMPLT_BASEFUNS(taGroup,T);
 protected:
   taGroup<T>* 	LeafGp(int leaf_idx) const		{ return (taGroup<T>*)LeafGp_(leaf_idx); }
   // the group containing given leaf; NOTE: **don't confuse this with the Safe/FastLeafGp funcs*** -- moved here to try to flush out any use, since it is so confusing and nonstandard and likely to be mixed up with the XxxLeafGp funcs 
+private:
+  TMPLT_NCOPY(taGroup,T)
+  void Initialize() 	{ SetBaseType(T::StatTypeDef(1));}
+  void	Destroy () {}
 };
 
 
@@ -362,10 +366,11 @@ protected:
 // define default base group to not keep tokens
 class TA_API taBase_Group : public taGroup<taBase> {
   // #NO_TOKENS #NO_UPDATE_AFTER group of objects
+INHERITED(taGroup<taBase>)
 public:
   void	Initialize() 		{ SetBaseType(&TA_taBase); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(taBase_Group);
+  TA_BASEFUNS_NCOPY(taBase_Group);
 };
 
 #define BaseGroup_of(T)							      \

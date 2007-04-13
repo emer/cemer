@@ -153,48 +153,64 @@ void taGroup_impl::InitLeafGp_impl(TALOG* lg) const {
     FastGp_(i)->InitLeafGp_impl(lg);
 }
 
-void taGroup_impl::Copy(const taGroup_impl& cp) {
-  taList_impl::Copy(cp);
+void taGroup_impl::AssignFrom_impl(const taBase* cpy_from_) {
+  inherited::AssignFrom_impl(cpy_from_);
+  const taGroup_impl* cpy_from = dynamic_cast<const taGroup_impl*>(cpy_from_);
+  if (!cpy_from) return; // shouldn't happen
+  // make gp sizes the same
+  gp.SetSize(cpy_from->gp.size);
+  // recursively make gp/item sizes same for the gps
+  for (int i = 0; i < cpy_from->gp.size; ++i) {
+    taGroup_impl* gp_cpy_to = gp.SafeEl(i);
+    if (!gp_cpy_to) return; // shouldn't happen
+    const taGroup_impl* gp_cpy_from = cpy_from->gp.FastEl(i); 
+    gp_cpy_to->AssignFrom_impl(gp_cpy_from);
+  }
+  // UnSafeCopy should then take care of items and gps
+}
+
+void taGroup_impl::Copy_(const taGroup_impl& cp) {
   gp.Copy(cp.gp);
+  leaves = cp.leaves; // prob not needed
 }
 
 void taGroup_impl::AddOnly_(void* it) {
-  taList_impl::AddOnly_(it);
+  inherited::AddOnly_(it);
   UpdateLeafCount_(1);		// not the most efficient, but gets it at a low level
 }
 
 void taGroup_impl::Borrow(const taGroup_impl& cp) {
-  taList_impl::Borrow(cp);
+  inherited::Borrow(cp);
   gp.Borrow(cp.gp);
 }
 
 void taGroup_impl::BorrowUnique(const taGroup_impl& cp) {
-  taList_impl::BorrowUnique(cp);
+  inherited::BorrowUnique(cp);
   gp.BorrowUnique(cp.gp);
 }
 
 void taGroup_impl::BorrowUniqNameOld(const taGroup_impl& cp) {
-  taList_impl::BorrowUniqNameOld(cp);
+  inherited::BorrowUniqNameOld(cp);
   gp.BorrowUniqNameOld(cp.gp);
 }
 
 void taGroup_impl::BorrowUniqNameNew(const taGroup_impl& cp) {
-  taList_impl::BorrowUniqNameNew(cp);
+  inherited::BorrowUniqNameNew(cp);
   gp.BorrowUniqNameNew(cp.gp);
 }
 
 void taGroup_impl::Copy_Common(const taGroup_impl& cp) {
-  taList_impl::Copy_Common(cp);
+  inherited::Copy_Common(cp);
   gp.Copy_Common(cp.gp);
 }
 
 void taGroup_impl::Copy_Duplicate(const taGroup_impl& cp) {
-  taList_impl::Copy_Duplicate(cp);
+  inherited::Copy_Duplicate(cp);
   gp.Copy_Duplicate(cp.gp);
 }
 
 void taGroup_impl::Copy_Borrow(const taGroup_impl& cp) {
-  taList_impl::Copy_Borrow(cp);
+  inherited::Copy_Borrow(cp);
   gp.Copy_Borrow(cp.gp);
 }
 

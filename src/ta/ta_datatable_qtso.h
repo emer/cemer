@@ -1286,6 +1286,7 @@ protected:
   virtual void		WriteTable_Generic(DataTable* tab, const CellRange& sel);
   
 private:
+  NCOPY(taiTabularDataMimeItem);
   void	Initialize() {}
   void	Destroy() {}
 };
@@ -1295,7 +1296,7 @@ class TA_API taiMatrixDataMimeItem: public taiTabularDataMimeItem { // this clas
 INHERITED(taiTabularDataMimeItem)
 public: // i/f for tabular data guy  
   
-  TA_BASEFUNS(taiMatrixDataMimeItem);
+  TA_BASEFUNS_NCOPY(taiMatrixDataMimeItem);
     
 public: // TAI_xxx instance interface -- used for dynamic creation
   override taiMimeItem* Extract(taiMimeSource* ms, 
@@ -1312,7 +1313,7 @@ class TA_API taiTsvMimeItem: public taiTabularDataMimeItem { // this class handl
 INHERITED(taiTabularDataMimeItem)
 public: // i/f for tabular data guy  
   
-  TA_BASEFUNS(taiTsvMimeItem);
+  TA_BASEFUNS_NCOPY(taiTsvMimeItem);
     
 public: // TAI_xxx instance interface -- used for dynamic creation
   override taiMimeItem* Extract(taiMimeSource* ms, 
@@ -1359,7 +1360,7 @@ public:
   
   override void		WriteTable(DataTable* tab, const CellRange& sel);
   
-  TA_BASEFUNS(taiTableDataMimeItem);
+  TA_BASEFUNS_NCOPY(taiTableDataMimeItem);
     
 public: // TAI_xxx instance interface -- used for dynamic creation
   override taiMimeItem* Extract(taiMimeSource* ms, 

@@ -232,7 +232,7 @@ public:
 
   void 	Initialize()		{ };
   void	Destroy()		{ };
-  TA_BASEFUNS(LViLayerSpec);
+  TA_BASEFUNS2_NCOPY(LViLayerSpec, LVeLayerSpec);
 };
 
 //////////////////////////

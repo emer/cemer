@@ -136,7 +136,6 @@ public:
   void 	SetDefaultName() {} // make it local to list, set by list
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const ProgVar& cp);
   COPY_FUNS(ProgVar, inherited);
   TA_BASEFUNS(ProgVar);
 protected:
@@ -150,6 +149,7 @@ protected:
   virtual const String	GenCssArg_impl();
   virtual const String	GenCssVar_impl();
 private:
+  void	Copy_(const ProgVar& cp);
   void	Initialize();
   void	Destroy();
 };
@@ -176,7 +176,6 @@ public:
   override String GetTypeDecoKey() const { return "ProgVar"; }
 
   void	setStale();
-  void	Copy_(const ProgVar_List& cp);
   COPY_FUNS(ProgVar_List, inherited);
   TA_BASEFUNS(ProgVar_List);
   
@@ -184,6 +183,7 @@ protected:
   override void	El_SetIndex_(void*, int);
   
 private:
+  void	Copy_(const ProgVar_List& cp);
   void	Initialize();
   void	Destroy() {Reset();}
 };
@@ -263,7 +263,6 @@ public:
 
   void 	InitLinks();
   void 	CutLinks();
-  void	Copy_(const ProgExprBase& cp);
   COPY_FUNS(ProgExprBase, inherited);
   TA_BASEFUNS(ProgExprBase);
 protected:
@@ -278,6 +277,7 @@ protected:
 					     int dcr, void* op1_, void* op2_);
 
 private:
+  void	Copy_(const ProgExprBase& cp);
   void	Initialize();
   void	Destroy();
 };
@@ -292,7 +292,7 @@ public:
   ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
   void 	CutLinks();
-  TA_BASEFUNS(ProgExpr);
+  TA_BASEFUNS_NCOPY(ProgExpr);
 protected:
   override void	UpdateAfterEdit_impl();
 private:
@@ -324,13 +324,13 @@ public:
 
   void 	InitLinks();
   void 	CutLinks();
-  void	Copy_(const ProgArg& cp);
   COPY_FUNS(ProgArg, inherited);
   TA_BASEFUNS(ProgArg);
 protected:
   override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
 private:
+  void	Copy_(const ProgArg& cp);
   void	Initialize();
   void	Destroy();
 };
@@ -349,7 +349,7 @@ public:
   override String GetTypeDecoKey() const { return "ProgArg"; }
   virtual const String	GenCssBody_impl(int indent_level); 
   
-  TA_BASEFUNS(ProgArg_List);
+  TA_BASEFUNS_NCOPY(ProgArg_List);
 protected:
   override void CheckChildConfig_impl(bool quiet, bool& rval);
 private:
@@ -403,7 +403,6 @@ public:
   override int		GetEnabled() const;
   // note: it is our own, plus disabled if parent is
   override String 	GetDesc() const {return desc;}
-  void	Copy_(const ProgEl& cp);
   COPY_FUNS(ProgEl, inherited);
   TA_BASEFUNS(ProgEl);
 
@@ -432,6 +431,7 @@ protected:
   virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
 
 private:
+  void	Copy_(const ProgEl& cp);
   void	Initialize();
   void	Destroy();
 };
@@ -453,11 +453,11 @@ public:
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
 
-  void Copy_(const ProgEl_List& cp);
   COPY_FUNS(ProgEl_List, inherited);
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
 private:
+  void Copy_(const ProgEl_List& cp);
   void	Initialize();
   void	Destroy();
 };
@@ -1017,7 +1017,7 @@ public:
 
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_BASEFUNS(ProgObjList);
+  TA_BASEFUNS_NCOPY(ProgObjList);
 protected:
   void*		El_Own_(void* it); // give anon objs a name
 
@@ -1189,7 +1189,6 @@ public: // XxxGui versions provide feedback to the user
 
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const Program& cp);
   COPY_FUNS(Program, inherited);
   TA_BASEFUNS(Program);
 
@@ -1217,6 +1216,7 @@ protected:
 #endif
 
 private:
+  void	Copy_(const Program& cp);
   void	Initialize();
   void	Destroy();
 };
@@ -1228,7 +1228,7 @@ class TA_API Program_List : public taList<Program> {
 public:
   
   override String 	GetTypeDecoKey() const { return "Program"; }
-  TA_BASEFUNS(Program_List);
+  TA_BASEFUNS_NCOPY(Program_List);
 private:
   void	Initialize();
   void 	Destroy()		{Reset(); }; //
@@ -1329,11 +1329,11 @@ public:
   
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const Program_Group& cp);
   COPY_FUNS(Program_Group, inherited)
   TA_BASEFUNS(Program_Group);
 
 private:
+  void	Copy_(const Program_Group& cp);
   void	Initialize();
   void 	Destroy()		{Reset(); };
 };
@@ -1388,6 +1388,7 @@ protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // in _qt file
 #endif
 private:
+  NCOPY(ProgramToolBar)
   void Initialize() {}
   void Destroy() {}
 };

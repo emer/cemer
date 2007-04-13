@@ -95,9 +95,11 @@ public:
   void	FreeComm();
   // #IGNORE free the comm & group 
 
+  TA_BASEFUNS_LITE(DMemComm);
+private:
+  NCOPY(DMemComm)
   void 	Initialize();
   void 	Destroy();
-  TA_BASEFUNS(DMemComm);
 };
 
 class TA_API DMemShareVar : public taBase {
@@ -132,13 +134,14 @@ public:
 
   virtual void 	ResetVar();	// #IGNORE reset variable info
 
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
-  void	Copy_(const DMemShareVar& cp);
   COPY_FUNS(DMemShareVar, taBase);
   TA_BASEFUNS(DMemShareVar);
+private
+  void	Copy_(const DMemShareVar& cp);
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
 };
 
 class TA_API DMemShare : public taBase_List {
@@ -188,6 +191,7 @@ public:
 
 class TA_API DMemAggVars : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##CAT_DMem collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)
+INHERITED(taBase)
 public:
   MPI_Comm	comm;		// #IGNORE communicator to use in aggregating these variables
   MPI_Op	agg_op;		// #IGNORE operator to use in aggregation, if this is fixed and determined by the member comment directive (if dynamic, leave as MPI_OP_NULL)
@@ -226,7 +230,7 @@ public:
   void	CutLinks();
   void	Copy_(const DMemAggVars& cp);
   COPY_FUNS(DMemAggVars, taBase);
-  TA_BASEFUNS(DMemAggVars);
+  TA_BASEFUNS_LITE(DMemAggVars);
 };
 
 #else // DMEM_COMPILE
@@ -242,41 +246,50 @@ class TA_API DMemComm : public taBase {
 public:
 
   //  void	Dummy(const DMemComm&) { };
+  TA_BASEFUNS_LITE(DMemComm);
+private:
+  NCOPY(DMemComm)
   void 	Initialize() { };
   void 	Destroy() { };
-  TA_BASEFUNS(DMemComm);
 };
 
 class TA_API DMemShareVar : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
+INHERITED(taBase)
 public:
 
   void	Dummy(const DMemShareVar&) { };
+  TA_BASEFUNS(DMemShareVar);
+private:
+  NCOPY(DMemShareVar)
   void 	Initialize() { };
   void 	Destroy()	{ };
-  TA_BASEFUNS(DMemShareVar);
 };
 
 class TA_API DMemShare : public taBase_List {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem collection of objects that are shared across distributed processes: link the objects into this list to share them
+INHERITED(taBase_List)
 public:
   static void 	ExtractLocalFromList(taPtrList_impl&, taPtrList_impl&) { };
   // #IGNORE
 
   void	Dummy(const DMemShare&) { };
+  TA_BASEFUNS_NCOPY(DMemShare);
+private:
   void 	Initialize() 	{ };
   void 	Destroy()	{ };
-  TA_BASEFUNS(DMemShare);
 };
 
 class TA_API DMemAggVars : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem collection of a variables of a different types (FLOAT, DOUBLE, INT) that *each proc has an instance of* (can be multiple members of a given object) -- these can all be Allreduced'ed to aggregate across procs (must all use same agg op -- use diff objs for diff ops if fixed)
+INHERITED(taBase)
 public:
 
   void	Dummy(const DMemAggVars&) { };
+  TA_BASEFUNS_NCOPY(DMemAggVars);
+private:
   void 	Initialize() { };
   void 	Destroy()	{ };
-  TA_BASEFUNS(DMemAggVars);
 };
 
 #endif // DMEM_COMPILE

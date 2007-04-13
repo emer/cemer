@@ -38,7 +38,7 @@ class FloatTDCoord;
 
 class TA_API TwoDCoord : public taBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
-  INHERITED(taBase)
+INHERITED(taBase)
 public:
   int 		x;  		// horizontal
   int 		y;  		// vertical
@@ -49,26 +49,14 @@ public:
   inline void 	GetXY(float& xx, float& yy) { xx = (float)x; yy = (float)y; }
   virtual void	CopyToMatrixGeom(MatrixGeom& geom);
 
-  inline void 	Initialize() 		{ x = y = 0; }
-  inline void 	Destroy()		{ };
-  inline void 	Copy(const TwoDCoord& cp) { x = cp.x; y = cp.y; }
 
-  TwoDCoord() 				{ Initialize(); }
-  TwoDCoord(const TwoDCoord& cp) 	{ Copy(cp); }
   TwoDCoord(int xx) 			{ SetXY(xx, xx); }
   TwoDCoord(int xx, int yy) 		{ SetXY(xx, yy); }
   TwoDCoord(float xx, float yy) 	{ SetXY(xx, yy); }
   TwoDCoord(const FloatTwoDCoord& cp);	// conversion constructor
-  ~TwoDCoord() 				{ };
-  TAPtr Clone() 			{ return new TwoDCoord(*this); }
-  void  UnSafeCopy(TAPtr cp);
-  void  CastCopyTo(TAPtr cp) 	{ TwoDCoord& rf = *((TwoDCoord*)cp); rf.Copy(*this); }
-  TAPtr MakeToken()			{ return (TAPtr)(new TwoDCoord); }
-  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new TwoDCoord[no]); }
-  TypeDef* GetTypeDef() const 		{ return StatTypeDef(0); }
-  static TypeDef* StatTypeDef(int);
+  
+  TA_BASEFUNS_LITE(TwoDCoord)
 
-  inline TwoDCoord& operator=(const TwoDCoord& cp) 	{ Copy(cp); return *this;}
   TwoDCoord& operator=(const FloatTwoDCoord& cp);
   inline TwoDCoord& operator=(int cp) 		{ x = cp; y = cp; return *this;}
   inline TwoDCoord& operator=(float cp) 		{ x = (int)cp; y = (int)cp; return *this;}
@@ -176,6 +164,10 @@ public:
   bool		WrapClip(bool wrap, const TwoDCoord& max) {
     return WrapClipOne(wrap, x, max.x) || WrapClipOne(wrap, y, max.y);
   } // wrap-around or clip coordinates within 0,0 - max range, true if clipped
+private:
+  inline void 	Copy_(const TwoDCoord& cp) { x = cp.x; y = cp.y; }
+  inline void 	Initialize() 		{ x = y = 0; }
+  inline void 	Destroy()		{ };
 };
 
 inline TwoDCoord operator + (int td, const TwoDCoord& v) {
@@ -195,15 +187,17 @@ class TA_API PosTwoDCoord : public TwoDCoord {
   // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 2D coordinate space
   INHERITED(TwoDCoord)
 public:
-  void	Initialize()		{ }
-  void	Destroy()		{ };
-  TA_BASEFUNS(PosTwoDCoord);
+  TA_BASEFUNS_LITE(PosTwoDCoord);
 
   inline PosTwoDCoord& operator=(int cp) { x = cp; y = cp; return *this;}
   inline PosTwoDCoord& operator=(float cp) { x = (int)cp; y = (int)cp; return *this;}
   inline PosTwoDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; return *this;}
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void 	Copy_(const PosTwoDCoord&) {}
+  void	Initialize()		{ }
+  void	Destroy()		{ }
 };
 
 class TA_API XYNGeom : public PosTwoDCoord {
@@ -218,13 +212,14 @@ public:
 
   void operator=(const TwoDCoord& cp);
 
-  void 	Copy(const XYNGeom& cp)
-  { PosTwoDCoord::Copy(cp); n_not_xy = cp.n_not_xy; n = cp.n; z = cp.z; }
-  void	Initialize();
-  void	Destroy()		{ };
   TA_BASEFUNS(XYNGeom);
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void 	Copy_(const XYNGeom& cp)
+  { n_not_xy = cp.n_not_xy; n = cp.n; z = cp.z; }
+  void	Initialize();
+  void	Destroy()		{ };
 
 };
 
@@ -247,26 +242,12 @@ public:
   }
   override void	CopyToMatrixGeom(MatrixGeom& geom);
 
-  inline void 	Initialize() 		{ x = y = z = 0; }
-  inline void 	Destroy()		{ };
-  inline void 	Copy(const TDCoord& cp)	{ x = cp.x; y = cp.y; z = cp.z; }
-
-  TDCoord() 				{ Initialize(); }
-  TDCoord(const TDCoord& cp) 		{ Copy(cp); }
   TDCoord(int xx) 			{ SetXYZ(xx, xx, xx); }
   TDCoord(int xx, int yy, int zz) 	{ SetXYZ(xx, yy, zz); }
   TDCoord(float xx, float yy, float zz) { SetXYZ(xx, yy, zz); }
   TDCoord(const FloatTDCoord& cp);	// conversion constructor
-  ~TDCoord() 				{ };
-  TAPtr Clone() 			{ return new TDCoord(*this); }
-  void  UnSafeCopy(TAPtr cp);
-  void  CastCopyTo(TAPtr cp) 		{ TDCoord& rf = *((TDCoord*)cp); rf.Copy(*this); }
-  TAPtr MakeToken()			{ return (TAPtr)(new TDCoord); }
-  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new TDCoord[no]); }
-  TypeDef* GetTypeDef() const 		{ return StatTypeDef(0); }
-  static TypeDef* StatTypeDef(int);
-
-  inline TDCoord& operator=(const TDCoord& cp) 	{ Copy(cp); return *this;}
+  TA_BASEFUNS_LITE(TDCoord)
+  
   TDCoord& operator=(const FloatTDCoord& cp);
   inline TDCoord& operator=(int cp) 		{ x = cp; y = cp; z = cp; return *this;}
   inline TDCoord& operator=(float cp) 		{ x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
@@ -373,6 +354,10 @@ public:
   bool		WrapClip(bool wrap, const TDCoord& max) {
     return TwoDCoord::WrapClip(wrap, max) || WrapClipOne(wrap, z, max.z);
   } // wrap-around or clip coordinates within 0,0 - max range, -1 if clipped
+private:
+  inline void 	Copy_(const TDCoord& cp) { x = cp.x; y = cp.y; z = cp.z; }
+  inline void 	Initialize() 		{ x = y = z = 0; }
+  inline void 	Destroy()		{ };
 };
 
 inline TDCoord operator + (int td, const TDCoord& v) {
@@ -392,15 +377,17 @@ class TA_API PosTDCoord : public TDCoord {
   // #NO_UPDATE_AFTER #INLINE #INLINE_DUMP positive-only value in 3D coordinate space
   INHERITED(TDCoord)
 public:
-  void	Initialize()		{ x = y = z = 0; }
-  void	Destroy()		{ };
-  TA_BASEFUNS(PosTDCoord);
+  TA_BASEFUNS_LITE(PosTDCoord);
 
   inline PosTDCoord& operator=(int cp) 	{ x = cp; y = cp; z = cp; return *this;}
   inline PosTDCoord& operator=(float cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
   inline PosTDCoord& operator=(double cp) { x = (int)cp; y = (int)cp; z = (int)cp; return *this;}
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  NCOPY(PosTDCoord)
+  void	Initialize()	{ }
+  void	Destroy()	{ };
 };
 
 class TA_API FloatTwoDCoord : public taBase {
@@ -413,27 +400,13 @@ public:
   inline void 	SetXY(float xx, float yy) 	{ x = xx; y = yy; }
   inline void 	GetXY(float& xx, float& yy) 	{ xx = x; yy = y; }
 
-  inline void 	Initialize() 			{ x = y = 0.0; }
-  inline void 	Destroy()			{ };
-  inline void 	Copy(const FloatTwoDCoord& cp)	{ x = cp.x; y = cp.y; }
-
-  FloatTwoDCoord() 				{ Initialize(); }
-  FloatTwoDCoord(const FloatTwoDCoord& cp) 	{ Copy(cp); }
   FloatTwoDCoord(float xx) 			{ SetXY(xx, xx); }
   FloatTwoDCoord(float xx, float yy) 		{ SetXY(xx, yy); }
   FloatTwoDCoord(int xx) 			{ SetXY(xx, xx); }
   FloatTwoDCoord(int xx, int yy) 		{ SetXY(xx, yy); }
   FloatTwoDCoord(const TwoDCoord& cp);	// conversion constructor
-  ~FloatTwoDCoord() 				{ };
-  TAPtr Clone() 				{ return new FloatTwoDCoord(*this); }
-  void  UnSafeCopy(TAPtr cp);
-  void  CastCopyTo(TAPtr cp) 	{ FloatTwoDCoord& rf = *((FloatTwoDCoord*)cp); rf.Copy(*this); }
-  TAPtr MakeToken()			{ return (TAPtr)(new FloatTwoDCoord); }
-  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new FloatTwoDCoord[no]); }
-  TypeDef* GetTypeDef() const 		{ return StatTypeDef(0); }
-  static TypeDef* StatTypeDef(int);
-
-  inline FloatTwoDCoord& operator=(const FloatTwoDCoord& cp) { Copy(cp); return *this;}
+  TA_BASEFUNS_LITE(FloatTwoDCoord)
+  
   FloatTwoDCoord& operator=(const TwoDCoord& cp);
   inline FloatTwoDCoord& operator=(float cp) 		{ x = cp; y = cp; return *this;}
   inline FloatTwoDCoord& operator=(double cp) 		{ x = (float)cp; y = (float)cp; return *this;}
@@ -512,6 +485,10 @@ public:
   inline float MinVal() const	{ float mn = MIN(x, y); return mn; }
 
   inline String GetStr() { return String(x) + ", " + String(y); }
+private:
+  inline void 	Copy_(const FloatTwoDCoord& cp)	{ x = cp.x; y = cp.y; }
+  inline void 	Initialize() 			{ x = y = 0.0; }
+  inline void 	Destroy()			{ };
 };
 
 inline FloatTwoDCoord operator + (float td, const FloatTwoDCoord& v) {
@@ -540,26 +517,13 @@ public:
     xx = x; yy = y; zz = z;
   }
 
-  inline void 	Initialize() 			{ x = y = z = 0.0; }
-  inline void 	Destroy()			{ };
-  inline void 	Copy(const FloatTDCoord& cp)	{ x = cp.x; y = cp.y; z = cp.z; }
-
-  FloatTDCoord() 				{ Initialize(); }
-  FloatTDCoord(const FloatTDCoord& cp) 		{ Copy(cp); }
+  TA_BASEFUNS_LITE(FloatTDCoord) 
   FloatTDCoord(float xx)			{ SetXYZ(xx, xx, xx); }
   FloatTDCoord(float xx, float yy, float zz)	{ SetXYZ(xx, yy, zz); }
   FloatTDCoord(int xx) 				{ SetXYZ(xx, xx, xx); }
   FloatTDCoord(int xx, int yy, int zz) 		{ SetXYZ(xx, yy, zz); }
   FloatTDCoord(const TDCoord& cp);	// conversion constructor
-  ~FloatTDCoord() 				{ };
-  TAPtr Clone() 			{ return new FloatTDCoord(*this); }
-  void  UnSafeCopy(TAPtr cp);
-  void  CastCopyTo(TAPtr cp) 		{ FloatTDCoord& rf = *((FloatTDCoord*)cp); rf.Copy(*this); }
-  TAPtr MakeToken()			{ return (TAPtr)(new FloatTDCoord); }
-  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new FloatTDCoord[no]); }
-  TypeDef* GetTypeDef() const 		{ return StatTypeDef(0); }
-  static TypeDef* StatTypeDef(int);
-  inline FloatTDCoord& operator=(const FloatTDCoord& cp) { Copy(cp); return *this;}
+  
   FloatTDCoord& operator=(const TDCoord& cp);
   inline FloatTDCoord& operator=(float cp) 		{ x = cp; y = cp; z = cp; return *this;}
   inline FloatTDCoord& operator=(double cp) 		{ x = (float)cp; y = (float)cp; z = (float)cp; return *this;}
@@ -651,6 +615,10 @@ public:
 #ifdef TA_GUI
   operator iVec3f() const {return iVec3f(x, y, z);}
 #endif
+private:
+  inline void 	Initialize() 			{ z = 0.0; }
+  inline void 	Destroy()			{ };
+  inline void 	Copy_(const FloatTDCoord& cp)	{ z = cp.z; }
 };
 
 inline FloatTDCoord operator + (float td, const FloatTDCoord& v) {
@@ -681,14 +649,14 @@ public:
 
   String 		GetStr() {return FloatTDCoord::GetStr() + ", " + String(rot); }
 
-  void 			Copy_(const FloatRotation& cp)	{x = cp.x; y = cp.y; z = cp.z; rot = cp.rot;}
-
-  void 			Initialize() {x = y = 0.0f; z = 1.0f; rot = 0.0;}
-  void 			Destroy() {}
   FloatRotation(float xx, float yy, float zz, float rr)	{SetXYZR(xx, yy, zz, rr); }
   FloatRotation(int xx, int yy, int zz, float rr) 	{SetXYZR(xx, yy, zz, rr); }
-  TA_BASEFUNS(FloatRotation);
+  TA_BASEFUNS_LITE(FloatRotation);
   COPY_FUNS(FloatRotation, FloatTDCoord);
+private:
+  void 			Copy_(const FloatRotation& cp)	{rot = cp.rot;}
+  void 			Initialize() {rot = 0.0;}
+  void 			Destroy() {}
 };
 
 class TA_API FloatTransform: public taBase {
@@ -699,14 +667,14 @@ public:
   FloatRotation		rotate; // rotation
   FloatTDCoord		translate; // translate, in x, y, and z
 
-  void 			Copy_(const FloatTransform& cp)
-    {scale.Copy(cp.scale); rotate.Copy(cp.rotate); translate.Copy(cp.translate);}
-  TA_BASEFUNS(FloatTransform);
+  TA_BASEFUNS_LITE(FloatTransform);
   COPY_FUNS(FloatTransform, taBase);
 #ifdef TA_USE_INVENTOR
   void			CopyTo(SoTransform* txfm); // #IGNORE txfers values to an inventor txfm -- note, does a transfer, not an accumulate
 #endif
 private:
+  void 			Copy_(const FloatTransform& cp)
+    {scale.Copy(cp.scale); rotate.Copy(cp.rotate); translate.Copy(cp.translate);}
   void 			Initialize() {scale = 1.0f;}
   void 			Destroy() {}
 };
@@ -820,6 +788,7 @@ inline ValIdx operator / (float td, const ValIdx& v) {
 
 class TA_API ValIdx_Array : public taArray<ValIdx> {
   // #NO_UPDATE_AFTER ##CAT_Math array of value & index items
+INHERITED(taArray<ValIdx>)
 public:
   STATIC_CONST ValIdx blank; // #HIDDEN #READ_ONLY 
   String	El_GetStr_(void* it) const { return (String)((ValIdx*)it); } // #IGNORE
@@ -827,10 +796,11 @@ public:
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE
   virtual void*		GetTA_Element(int i, TypeDef*& eltd)
   { eltd = &TA_ValIdx; if(InRange(i)) return FastEl_(i); return NULL; }
+  TA_BASEFUNS_NCOPY(ValIdx_Array);
+  TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
+private:
   void Initialize()	{ };
   void Destroy()	{ };
-  TA_BASEFUNS(ValIdx_Array);
-  TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
 };
 
 #endif // tdgeometry_h

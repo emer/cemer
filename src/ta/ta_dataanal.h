@@ -24,6 +24,7 @@ class ClustNode;
 
 class TA_API ClustLink : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Math a link in the cluster tree with distance
+INHERITED(taBase)
 public:
   float		dist;		// distance to this node from parent
   ClustNode*	node;		// cluster node
@@ -33,7 +34,7 @@ public:
   void	CutLinks();
   void	Copy_(const ClustLink& cp);
   COPY_FUNS(ClustLink, taBase);
-  TA_BASEFUNS(ClustLink);
+  TA_BASEFUNS_LITE(ClustLink);
 };
 
 
@@ -99,6 +100,7 @@ public:
 
 class TA_API taDataAnal : public taNBase {
   // ##CAT_Data collection of data analysis functions
+INHERITED(taNBase)
 public:
 
   static bool	GetDest(DataTable*& dest, DataTable* src, const String& suffix);
@@ -238,7 +240,7 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS(taDataAnal);
+  TA_BASEFUNS_NCOPY(taDataAnal);
 };
 
 /////////////////////////////////////////////////////////
@@ -249,7 +251,7 @@ class TA_API DataAnalCall : public StaticMethodCall {
   // call a taDataAnal (data analysis) function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS(DataAnalCall);
+  TA_BASEFUNS_NCOPY(DataAnalCall);
 private:
   void	Initialize();
   void	Destroy()	{ };

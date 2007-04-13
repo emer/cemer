@@ -62,10 +62,11 @@ public:
 
 #ifdef DEBUG //temp, for testing signal handlers
 class PDP_API CrashObject: public taNBase {
+INHERITED(taNBase)
 public:
   void CrashMe() {taBase* null_ptr = NULL; null_ptr->GetName();}
   // #MENU #MENU_CONTEXT Execute this bad boy function and you will crash!!!
-  TA_BASEFUNS(CrashObject);
+  TA_BASEFUNS_NCOPY(CrashObject);
 private:
   void Initialize() {}
   void Destroy() {}

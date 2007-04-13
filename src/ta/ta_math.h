@@ -122,7 +122,8 @@ public:
 };
 
 class TA_API taMath : public taNBase {
-  // ##CAT_Math collection of commonly-used math functions
+  // ##CAT_Math ##NO_TOKENS ##NO_INSTANCE collection of commonly-used math functions
+INHERITED(taNBase)
 public:
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +189,7 @@ public:
 
   void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS(taMath);
+  TA_ABSTRACT_BASEFUNS_NCOPY(taMath);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -197,6 +198,7 @@ public:
 
 class TA_API taMath_double : public taMath {
   // double precision math computations
+INHERITED(taMath)
 public:
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -588,7 +590,7 @@ public:
 
   void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS(taMath_double);
+  TA_ABSTRACT_BASEFUNS_NCOPY(taMath_double);
 };
 
 
@@ -598,6 +600,7 @@ public:
 
 class TA_API taMath_float : public taMath {
   // single-precision (float) math computations
+INHERITED(taMath)
 public:
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -923,9 +926,9 @@ public:
 				 const float_Matrix* kernel);
   // #CAT_Convolution convolve in_mat with kernel to produce out_mat, in a cell-by-cell manner across frames.  always keeps the edges by clipping and renormalizing the kernel all the way to both edges
 
-  void Initialize() { };
+//  void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS(taMath_float);
+  TA_ABSTRACT_BASEFUNS_NCOPY(taMath_float);
 };
 
 
@@ -980,7 +983,7 @@ private:
 
 class TA_API Random : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Random Number Generation
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum Type {
     UNIFORM,			// uniform with var = range on either side of the mean
@@ -1048,7 +1051,7 @@ public:
   void	Destroy()		 { };
   void	Copy_(const Random& cp);
   COPY_FUNS(Random, taBase);
-  TA_BASEFUNS(Random); //
+  TA_BASEFUNS_LITE(Random); //
 };
 
 #endif // TA_MATH_H

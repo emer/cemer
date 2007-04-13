@@ -245,6 +245,7 @@ private:
     
 
 class TA_API taiMimeFactory_List: public taList<taiMimeFactory> {
+INHERITED(taList<taiMimeFactory>)
 public:
   static taiMimeFactory_List* instance() {return g_instance;}
   static void		setInstance(taiMimeFactory_List* value);
@@ -256,7 +257,7 @@ public:
   taiMimeFactory*	GetInstanceByType(TypeDef* td);
     // get an instance of the exact factory, making if needed
     
-  TA_BASEFUNS(taiMimeFactory_List);
+  TA_BASEFUNS_NCOPY(taiMimeFactory_List);
 protected:
   static taiMimeFactory_List*	g_instance; // we set this during InitLinks for the global guy
 private:
@@ -322,7 +323,7 @@ public:
     
   void	SetIndex(int idx) {m_index = idx;} // iml index as convenience
   int	GetIndex() const {return m_index;}
-  TA_BASEFUNS(taiMimeItem);
+  TA_BASEFUNS_NCOPY(taiMimeItem);
 
 public: // TAI_xxx instance interface -- used for dynamic creation
   virtual taiMimeItem* 	Extract(taiMimeSource* ms, 
@@ -347,9 +348,11 @@ private:
 
 
 class TA_API taiMimeItem_List: public taList<taiMimeItem> {
+INHERITED(taList<taiMimeItem>)
 public:
   TA_BASEFUNS(taiMimeItem_List);
 private:
+  NCOPY(taiMimeItem_List)
   void	Initialize() {SetBaseType(&TA_taiMimeItem);}
   void	Destroy() {}
 };
@@ -369,6 +372,7 @@ protected:
   taiMimeItem_List	items; // the subitems
   
 private:
+  NCOPY(taiMultiMimeItem)
   void	Initialize();
   void	Destroy() {CutLinks();}
 };
@@ -386,7 +390,7 @@ public:
   int			GetObjectData(istringstream& result);
     // #IGNORE gets the object data for the current item; returns number of bytes
 
-  TA_BASEFUNS(taiObjectMimeItem);
+  TA_BASEFUNS_NCOPY(taiObjectMimeItem);
 protected:
   String		m_type_name;
   TypeDef*		m_td;
@@ -409,7 +413,7 @@ public:
 
   TypeDef*		CommonSubtype() const; // type of item (if 1) or common subtype if multiple
 
-  TA_BASEFUNS(taiObjectsMimeItem);
+  TA_BASEFUNS_NCOPY(taiObjectsMimeItem);
   
 public: // TAI_xxx instance interface -- used for dynamic creation
   override taiMimeItem* Extract(taiMimeSource* ms, 

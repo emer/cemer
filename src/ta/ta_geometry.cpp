@@ -21,16 +21,10 @@
 #include <Inventor/nodes/SoTransform.h>
 #endif
 
-TypeDef* TwoDCoord::StatTypeDef(int) 	{ return &TA_TwoDCoord; }
-
 TwoDCoord::TwoDCoord(const FloatTwoDCoord& cp) {
   Register(); Initialize(); x = (int)cp.x; y = (int)cp.y;
 }
 
-void  TwoDCoord::UnSafeCopy(TAPtr cp) {
-  if(cp->InheritsFrom(&TA_TwoDCoord)) Copy(*((TwoDCoord*)cp));
-  if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);
-}
 
 TwoDCoord& TwoDCoord::operator=(const FloatTwoDCoord& cp) {
   x = (int)cp.x; y = (int)cp.y;
@@ -97,16 +91,9 @@ void XYNGeom::operator=(const TwoDCoord& cp) {
   x = cp.x; y = cp.y; UpdateAfterEdit();
 }
 
-TypeDef* TDCoord::StatTypeDef(int) 	{ return &TA_TDCoord; }
-
 TDCoord::TDCoord(const FloatTDCoord& cp) {
   Register(); Initialize();
   x = (int)cp.x; y = (int)cp.y; z = (int)cp.z;
-}
-
-void  TDCoord::UnSafeCopy(TAPtr cp) {
-  if(cp->InheritsFrom(&TA_TDCoord)) Copy(*((TDCoord*)cp));
-  if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);
 }
 
 TDCoord& TDCoord::operator=(const FloatTDCoord& cp) {
@@ -139,15 +126,8 @@ void PosTDCoord::UpdateAfterEdit_impl() {
 }
 
 
-TypeDef* FloatTwoDCoord::StatTypeDef(int) 	{ return &TA_FloatTwoDCoord; }
-
 FloatTwoDCoord::FloatTwoDCoord(const TwoDCoord& cp) {
   Register(); Initialize(); x = (float)cp.x; y = (float)cp.y;
-}
-
-void FloatTwoDCoord::UnSafeCopy(TAPtr cp) {
-  if(cp->InheritsFrom(&TA_FloatTwoDCoord)) Copy(*((FloatTwoDCoord*)cp));
-  if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);
 }
 
 FloatTwoDCoord& FloatTwoDCoord::operator=(const TwoDCoord& cp) {
@@ -155,16 +135,9 @@ FloatTwoDCoord& FloatTwoDCoord::operator=(const TwoDCoord& cp) {
   return *this;
 }
 
-TypeDef* FloatTDCoord::StatTypeDef(int) 	{ return &TA_FloatTDCoord; }
-
 FloatTDCoord::FloatTDCoord(const TDCoord& cp) {
   Register(); Initialize();
   x = (float)cp.x; y = (float)cp.y; z = (float)cp.z;
-}
-
-void  FloatTDCoord::UnSafeCopy(TAPtr cp) {
-  if(cp->InheritsFrom(&TA_FloatTDCoord)) Copy(*((FloatTDCoord*)cp));
-  if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);
 }
 
 FloatTDCoord& FloatTDCoord::operator=(const TDCoord& cp) {

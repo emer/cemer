@@ -56,27 +56,29 @@ public:
   const iColor*		color() const; //note: always correct -- updated on call
 
   String ToString_RGBA() const;
-  void 	Copy_(const RGBA& cp);
   COPY_FUNS(RGBA, taNBase);
-  TA_BASEFUNS(RGBA);
+  TA_BASEFUNS_LITE(RGBA);
   RGBA(float rd, float gr, float bl, float al = 1.0); // for Iv compatibility
 protected:
   override void UpdateAfterEdit_impl(); // don't use C names
   iColor	color_; // #IGNORE
 private:
+  void 	Copy_(const RGBA& cp);
   void  Initialize();
   void 	Destroy();
 };
 
 class TA_API RGBA_List : public taList<RGBA> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of RGBA objects
+INHERITED(taList<RGBA>)
 public:
   void	Initialize() 		{SetBaseType(&TA_RGBA); };
   void 	Destroy()		{ };
-  TA_BASEFUNS(RGBA_List);
+  TA_BASEFUNS_NCOPY(RGBA_List);
 };
 
 class TA_API TAColor : public taBase { // ##NO_TOKENS Color
+INHERITED(taBase)
 public:
   const iColor* color() {return &color_;}		// #IGNORE
   const iColor*	contrastcolor() {return &contrastcolor_;}	// #IGNORE
@@ -88,20 +90,25 @@ public:
   }
   void SetColor(float r,float g, float b, float a=1.0,	RGBA* background=NULL);
   // #USE_RVAL #ARGC=4 #NEW_FUN
-  void Initialize()	{}
-  void Destroy() {}
-  TA_BASEFUNS(TAColor);
+  TA_BASEFUNS_LITE(TAColor);
 protected:
   iColor 	color_;		// #IGNORE
   iColor	contrastcolor_;	// #IGNORE
+private:
+  void	Copy_(const TAColor& cp) 
+    { color_ = cp.color_; contrastcolor_ = cp.contrastcolor_;}
+  void Initialize()	{}
+  void Destroy() {}
 };
 
 class TA_API TAColor_List : public taList<TAColor> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of TAColor objects
+INHERITED(taList<TAColor>)
 public:
+  TA_BASEFUNS_NCOPY(TAColor_List);
+private:
   void	Initialize() 		{SetBaseType(&TA_TAColor); };
   void 	Destroy()		{ };
-  TA_BASEFUNS(TAColor_List);
 };
 
 class TA_API ColorScaleSpec : public taNBase {
@@ -120,12 +127,13 @@ public:
   static const KeyString key_clr3;
   static const KeyString key_clr4;
   override String GetColText(const KeyString& key, int itm_idx) const;
-  void 	Initialize();
-  void 	Destroy()		{ };
   void 	InitLinks();
-  void 	Copy_(const ColorScaleSpec& cp);
   COPY_FUNS(ColorScaleSpec, taNBase);
   TA_BASEFUNS(ColorScaleSpec);
+private:
+  void 	Copy_(const ColorScaleSpec& cp);
+  void 	Initialize();
+  void 	Destroy()		{ };
 };
 
 SmartRef_Of(ColorScaleSpec,TA_ColorScaleSpec); // ColorScaleSpecRef
@@ -141,10 +149,11 @@ public:
   override int		NumListCols() const;
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const; // header text for the indicated column
+
+  TA_BASEFUNS_NCOPY(ColorScaleSpec_Group);
+private:
   void 	Initialize()	{SetBaseType(&TA_ColorScaleSpec);};
   void 	Destroy()	{ };
-
-  TA_BASEFUNS(ColorScaleSpec_Group);
 };
 
 //////////////////////////
@@ -153,9 +162,7 @@ public:
 
 class TA_API ScaleRange : public taNBase {
   // ##NO_TOKENS ##CAT_Display saves scale ranges for different variables viewed in netview
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
+INHERITED(taNBase)
 public:
   bool		auto_scale;
   float 	min;
@@ -163,11 +170,11 @@ public:
 
   void		SetFromScale(ColorScale& cs);
 
-  void 		Copy_(const ScaleRange &cp)
-    {auto_scale = cp.auto_scale; min = cp.min; max = cp.max; }
   COPY_FUNS(ScaleRange, taNBase);
   TA_BASEFUNS(ScaleRange);
 private:
+  void 		Copy_(const ScaleRange &cp)
+    {auto_scale = cp.auto_scale; min = cp.min; max = cp.max; }
   void 		Initialize()	{ auto_scale = false; min = 0.0f; max = 0.0f;}
   void 		Destroy()	{ }
 };
@@ -175,17 +182,16 @@ private:
 
 class TA_API ScaleRange_List : public taList<ScaleRange> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ScaleRange objects
-#ifndef __MAKETA__
-typedef taList<ScaleRange> inherited;
-#endif
+INHERITED(taList<ScaleRange>)
 public:
   void			Initialize() {SetBaseType(&TA_ScaleRange);}
   void 			Destroy() {};
-  TA_BASEFUNS(ScaleRange_List);
+  TA_BASEFUNS_NCOPY(ScaleRange_List);
 };
 
 class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
+INHERITED(taNBase)
 public:
   static float		sc_val_def; // #HIDDEN def arg for sc_val
 
@@ -230,13 +236,15 @@ public:
   void			UpdateMinMax(float mn, float mx); // maybe expand bounds
   bool			UpdateMinMax(float val); // maybe expand bounds, returning true if expanded
 
-  void 	Initialize();
-  void 	Destroy();
   void	InitLinks();
   void	CutLinks();
   void  UpdateAfterEdit();
   TA_BASEFUNS(ColorScale);
   ColorScale(int chunk);
+private:
+  SIMPLE_COPY(ColorScale) //note: added 4/12/07 for consistency, but may not be good
+  void 	Initialize();
+  void 	Destroy();
 };
 
 SmartRef_Of(ColorScale,TA_ColorScale); // ColorScaleRef
@@ -254,16 +262,17 @@ public:
   override String	GetDesc() const { return desc; }
 
   void	InitLinks();
-  SIMPLE_COPY(ViewColor);
   COPY_FUNS(ViewColor, inherited);
   TA_BASEFUNS(ViewColor);
 private:
+  SIMPLE_COPY(ViewColor);
   void  Initialize();
   void 	Destroy();
 };
 
 class TA_API ViewColor_List : public taList<ViewColor> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ViewColor items
+INHERITED(taList<ViewColor>)
 public:
 
   virtual bool	FindMakeViewColor(const String& nm, const String& dsc,
@@ -271,9 +280,10 @@ public:
 				  bool bg=false, const String& bg_color_name="");
   // find view color of given name -- if not there, make it, with given params (returns false if didn't already exist)
 
+  TA_BASEFUNS_NCOPY(ViewColor_List);
+private:
   void	Initialize() 		{ SetBaseType(&TA_ViewColor); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(ViewColor_List);
 };
 
 

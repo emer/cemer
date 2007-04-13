@@ -38,6 +38,7 @@
 
 class PDP_API LayerWizEl : public taNBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Wizard specifies basic parameters for a layer
+INHERITED(taNBase)
 public:
   enum InputOutput {
     INPUT,
@@ -199,6 +200,7 @@ public:
   void	CutLinks();
   TA_BASEFUNS(PDPRoot);
 private:
+  NCOPY(taRootBase)
   void 	Initialize();
   void 	Destroy();
 };

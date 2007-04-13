@@ -264,6 +264,7 @@ private:
 
 class TA_API taDataProc : public taNBase {
   // ##CAT_Data collection of commonly-used datatable processing operations (database-style)
+INHERITED(taNBase)
 public:
   
   static bool	GetDest(DataTable*& dest, DataTable* src, const String& suffix);
@@ -350,9 +351,11 @@ public:
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON concatenate two datatables into one datatable by adding both sets of columns together, merging data on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)).
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
+  TA_BASEFUNS(taDataProc);
+private:
+  NCOPY(taDataProc)
   void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS(taDataProc);
 };
 
 /////////////////////////////////////////////////////////
@@ -579,7 +582,6 @@ public:
 
   override String GetDisplayName() const;
   void	InitLinks();
-  void	Copy(const DataCalcAddDestRow& cp);
   TA_BASEFUNS(DataCalcAddDestRow);
 protected:
   override void UpdateAfterEdit_impl();
@@ -587,6 +589,7 @@ protected:
   override const String	GenCssBody_impl(int indent_level); 
 
 private:
+  void	Copy_(const DataCalcAddDestRow& cp);
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
@@ -605,7 +608,6 @@ public:
 
   override String GetDisplayName() const;
   void 	InitLinks();
-  void	Copy(const DataCalcSetDestRow& cp);
   TA_BASEFUNS(DataCalcSetDestRow);
 protected:
   override void UpdateAfterEdit_impl();
@@ -613,6 +615,7 @@ protected:
   override const String	GenCssBody_impl(int indent_level); 
 
 private:
+  void	Copy_(const DataCalcSetDestRow& cp);
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
@@ -631,7 +634,6 @@ public:
 
   override String GetDisplayName() const;
   void 	InitLinks();
-  void	Copy(const DataCalcSetSrcRow& cp);
   TA_BASEFUNS(DataCalcSetSrcRow);
 protected:
   override void UpdateAfterEdit_impl();
@@ -639,6 +641,7 @@ protected:
   override const String	GenCssBody_impl(int indent_level); 
 
 private:
+  void	Copy_(const DataCalcSetSrcRow& cp);
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
@@ -659,8 +662,7 @@ public:
 
   override String GetDisplayName() const;
   void 	InitLinks();
-  SIMPLE_COPY(DataCalcCopyCommonCols);
-  void	Copy(const DataCalcCopyCommonCols& cp);
+  SIMPLE_COPY_EX(DataCalcCopyCommonCols,CopyInner_);
   TA_BASEFUNS(DataCalcCopyCommonCols);
 protected:
   override void UpdateAfterEdit_impl();
@@ -668,6 +670,7 @@ protected:
   override const String	GenCssBody_impl(int indent_level); 
 
 private:
+  void	Copy_(const DataCalcCopyCommonCols& cp);
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
