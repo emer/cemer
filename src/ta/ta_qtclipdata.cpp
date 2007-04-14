@@ -715,7 +715,6 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
   return 0;
 }
 
-// gives ops allowed on child, with ms being clipboard or drop contents, md valid if we are a member, o/w NULL
 // called twice: ms=NULL for SRC ops, ms=val for DST ops
 void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child,
   taiMimeSource* ms, int& allowed, int& forbidden)
@@ -742,8 +741,14 @@ void taBase::ChildQueryEditActions(const MemberDef* md, const taBase* child,
 void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
   const taiMimeSource* ms, int& allowed, int& forbidden)
 {
+  // SRC
+  // duplicate: note, don't test for parent-only query (child=NULL)
+  if (child && ChildCanDuplicate(child))
+    allowed |= taiClipData::EA_DUPE;
+
   if (ms == NULL) return; // querying for src ops only
 
+  // DST
   // if src action was Cut, that limits the Dst ops
   if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
    forbidden |= taiClipData::EA_FORB_ON_SRC_CUT;
@@ -785,6 +790,18 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
   return rval;
 }
 
+int taBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
+  taiMimeSource* ms, int ea) 
+{
+    // op implementation (non-list/grp)
+  if (ea & taiClipData::EA_DUPE) {
+    if (ChildDuplicate(child) != NULL)
+      return taiClipData::ER_OK;
+    else return taiClipData::ER_ERROR;
+  }
+  
+  return 0;
+}
 
 
 //////////////////////////////////
@@ -797,20 +814,21 @@ void taOBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* chil
   // in general, we allow to CUT and DELETE -- inheriting class can forbid these if it wants
   // for the paste-like ops, we will generally allow insertions of compatible child
   // specific classes will need to replace this method to allow things like linking
-  int item_idx = -1;
   taList_impl* list = children_();
   if (list) {
+    int item_idx = -1;
     if (child) item_idx = list->FindEl(child);
-  
     // if it is a list item, or is null, then we can do list operations, so we call our L version
     if ((!child) || (item_idx >= 0))
       ChildQueryEditActionsL_impl(md, child, ms, allowed, forbidden);
   }
-  // if child was a list item, then we don't pass the child to the base (since it doesn't boggle list items)
+  inherited::ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
+  
+/*no  // if child was a list item, then we don't pass the child to the base (since it doesn't boggle list items)
   if (item_idx >=0)
     inherited::ChildQueryEditActions_impl(md, NULL, ms, allowed, forbidden);
   else
-    inherited::ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
+    inherited::ChildQueryEditActions_impl(md, child, ms, allowed, forbidden); */
 }
 
 void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm,
@@ -883,56 +901,39 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
 int taOBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
   taiMimeSource* ms, int ea)
 { 
-  int item_idx = -1;
-  // we will want list idx of child (if exists)
-  taList_impl* list = children_();
-  if (list) {
-    item_idx = list->FindEl(child);
-  }
-  
-  // if child exists, but is not a list item, 
-  // or list doesn't exist, then just delegate to base handler
-  if ((!list) || (child && (item_idx < 0))) {
-    return inherited::ChildEditAction_impl(md, child, ms, ea);
-  }
-  
-  // ok, either no child, or it is a list item
-  // there is a list
-  
-  // we will be calling our own L routines...
-  // determine the list-only operations allowed/forbidden, and apply to ea
   int rval = taiClipData::ER_IGNORED;
   int allowed = 0;
   int forbidden = 0;
-  ChildQueryEditActionsL_impl(md, child, ms, allowed, forbidden);
-  if (ea & forbidden) return taiClipData::ER_FORBIDDEN; // requested op was forbidden
-  // preserve ea for inherited call
-  int eax = ea &= (allowed & (~forbidden));
-  
-  if (!eax) {
-    return rval;
-  } 
-  
-  // SRC
-  if (ea & taiClipData::EA_SRC_OPS) { // dispatch on full ea, but only pass eax
-    return ChildEditActionLS_impl(md, child, eax);
+  // we will want list idx of child (if exists)
+  taList_impl* list = children_();
+  // give first priority to list ops
+  if (list) {
+    int item_idx = -1;
+    if (child) item_idx = list->FindEl(child);
+    
+    // is it a list item, or op on the list?
+    if ((!child) || (item_idx >= 0)) {
+      ChildQueryEditActionsL_impl(md, child, ms, allowed, forbidden);
+      int eax = (ea & (allowed & (~forbidden)));
+      if (eax) { // some list op to do...
+        // SRC -- not need to decode SRC on full ea, not the eax
+        if (ea & taiClipData::EA_SRC_OPS) {
+          return ChildEditActionLS_impl(md, child, eax);
+        } else { // DST
+          if (!ms) return rval; // shouldn't happen
+          if (ms->isThisProcess()) {
+            rval = ChildEditActionLD_impl_inproc(md, child, ms, eax);
+          } else {
+            // DST OP, SRC OUT OF PROCESS
+            rval = ChildEditActionLD_impl_ext(md, child, ms, eax);
+          }
+          return rval;
+        }
+      }
+    }
   }
   
-  
-  // DST
-  if (!ms) return rval; // shouldn't happen
-  // note: single is just the degenerate case here
-  // we requery to be absolutely sure 
-  if (!eax) {
-    return rval; // 
-  } 
-  if (ms->isThisProcess()) {
-    rval = ChildEditActionLD_impl_inproc(md, child, ms, eax);
-  } else {
-    // DST OP, SRC OUT OF PROCESS
-    rval = ChildEditActionLD_impl_ext(md, child, ms, eax);
-  }
-  return rval;
+  return inherited::ChildEditAction_impl(md, child, ms, ea);
 }
 
 
@@ -955,7 +956,6 @@ int taOBase::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea
   case taiClipData::EA_DELETE: //note: handled by controller
   case taiClipData::EA_DRAG:
     return taiClipData::ER_OK;
-  
   default: break; // compiler food
   }
   return taiClipData::ER_IGNORED;

@@ -77,7 +77,7 @@ public:
 
   override String 	GetTypeDecoKey() const { return "ProgArg"; }
 
-  TA_BASEFUNS(DataOpList);
+  TA_BASEFUNS_NCOPY(DataOpList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DataOpEl); }
   void 	Destroy()		{ };

@@ -154,7 +154,7 @@ INHERITED(taList<taPluginBase>)
 public:
   taPluginBase*		FindUniqueId(const String& value); // find by unique_id
   
-  TA_BASEFUNS(taPluginBase_List);
+  TA_BASEFUNS_NCOPY(taPluginBase_List);
   
 protected:
 // forbid most clip ops, since we are managed based on existing plugins
@@ -180,7 +180,7 @@ public:
   void		LoadPlugins(); // Load and initialize all the enabled plugins, unload remainder
   
   void			ViewPluginLog(); // #MENU_CONTEXT #BUTTON view the most recent plugin log
-  TA_BASEFUNS(taPlugin_List);
+  TA_BASEFUNS_NCOPY(taPlugin_List);
   
 protected:
   void		ReconcilePlugins(); // reconciles our list with list of plugins

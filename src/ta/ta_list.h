@@ -307,8 +307,8 @@ public:
   virtual bool	AddUnique_(void* it);			// #IGNORE
   virtual bool	AddUniqNameNew_(void* it);
   // #IGNORE add a new object so that list only has one, new replaces existing
-  virtual bool	DuplicateEl_(void* it);
-  // #IGNORE duplicate given item and add to list
+  virtual void*	DuplicateEl_(void* it);
+  // #IGNORE duplicate given item and add to list, returning new item, or NULL if failed
   virtual bool	Insert_(void* it, int where);		// #IGNORE
   virtual bool 	ReplaceEl_(void* ol, void* nw);		// #IGNORE
   virtual bool 	ReplaceName_(const String& ol, void* nw);	// #IGNORE
@@ -494,10 +494,11 @@ public:
   virtual bool 	ReplaceIdx(int old_idx, T* new_it)	{ return ReplaceIdx_(old_idx, (void*)new_it); }
   // replace element at index with the new one
 
-  virtual bool	RemoveEl(T* item)		{ return RemoveEl_(item); }
+  virtual bool	RemoveEl(T* item)	{ return RemoveEl_(item); }
   // #MENU #ARG_ON_OBJ Remove given item from list
-  virtual bool 	DuplicateEl(T* item)		{ return DuplicateEl_((void*)item); }
-  // #MENU #ARG_ON_OBJ Duplicate given list item and Add to list
+  // note: folowing not virt, because we hide in taList with stronger typed version
+  virtual T* 	DuplicateEl(const T* item) { return (T*)DuplicateEl_((void*)item); }
+  // #MENU #ARG_ON_OBJ Duplicate given list item and Add to list; returns item added, or NULL if failed
 
   virtual void 	Link(T* item)			{ Link_((void*)item); }
   // Link an item to list without owning it
@@ -570,7 +571,7 @@ public:
 
   virtual bool	RemoveEl(T* item)		{ return RemoveEl_((void*)item); }
   // #MENU #ARG_ON_OBJ #CAT_Modify Remove given item from list
-  virtual bool 	DuplicateEl(T* item)		{ return DuplicateEl_((void*)item); }
+  T* 		DuplicateEl(const T* item) { return (T*)DuplicateEl_((void*)item); }
   // #MENU #ARG_ON_OBJ #CAT_Modify Duplicate given list item and Add to list
 
   virtual void 	Link(T* item)			{ Link_((void*)item); }

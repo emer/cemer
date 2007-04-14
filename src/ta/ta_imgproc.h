@@ -264,7 +264,7 @@ public:
 					      RetinalSpacingSpec::Resolution res);
   // find first spec with given retinal region and resolution (falls back to res then reg if no perfect match)
 
-  TA_BASEFUNS(DoGRetinaSpecList);
+  TA_BASEFUNS_NCOPY(DoGRetinaSpecList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DoGRetinaSpec); }
   void 	Destroy()		{ };
@@ -375,7 +375,7 @@ public:
   virtual bool UpdateSizesFmRetina(DoGRetinaSpecList& dogs);
   // calls SetGpGeomFmRetSpec on all the items in the list
 
-  TA_BASEFUNS(GaborV1SpecList);
+  TA_BASEFUNS_NCOPY(GaborV1SpecList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_GaborV1Spec); }
   void 	Destroy()		{ };

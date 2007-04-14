@@ -1491,20 +1491,14 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
       cd = NULL; // clipboard now owns it
       rval = taiClipData::ER_OK;
       //TODO: if CUT, now need to undoably delete!
-    } else { // other ops, like Clear or Unlink
-      if (sel_items.size <= 1) { // single select
-        rval = EditActionS_impl_(ea);
-      } else { // multi src
-        // iterate items while they are done and not forbidden or error
-        // note that delete is handled by host, not here
-        for (int i = 0; i < sel_items.size; ++i) {
-          ISelectable* is = sel_items.SafeEl(i);
-          if (!is) continue;
-          int trval = is->EditActionS_impl_(ea);
-          if (trval == 0) continue;
-          rval = trval;
-          if (rval < 0) break; // forbidden or error
-        }
+    } else { // other ops, like Duplicate, Clear or Unlink
+      for (int i = 0; i < sel_items.size; ++i) {
+        ISelectable* is = sel_items.SafeEl(i);
+        if (!is) continue;
+        int trval = is->EditActionS_impl_(ea);
+        if (trval == 0) continue;
+        rval = trval;
+        if (rval < 0) break; // forbidden or error
       }
     }
   } else { // paste-like op, get item data

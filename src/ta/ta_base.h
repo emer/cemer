@@ -567,6 +567,9 @@ public:
   { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])
   virtual taList_impl*  children_() {return NULL;} 
     // for lists, and for taOBase w/ default children
+  const taList_impl*  	children_() const 
+    {return const_cast<const taList_impl*>(const_cast<taBase*>(this)->children_());} 
+    // mostly for testing if has children
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
   virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
   virtual TAPtr		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
@@ -817,6 +820,11 @@ public:
   bool			CopyTo(TAPtr cpy_to);
   // #MENU #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
+  virtual bool		ChildCanDuplicate(const taBase* chld, bool quiet = true) const;
+    // #IGNORE
+  virtual taBase*	ChildDuplicate(const taBase* chld);
+    // #IGNORE duplicate given child, returning the new one (NULL if can't do it)
+
   virtual bool		DuplicateMe();
   // #MENU #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
@@ -981,8 +989,8 @@ protected: //  note: all impl code is in ta_qtclipdata.cpp
     int& allowed, int& forbidden);
     // called in 
   virtual int		ChildEditAction_impl(const MemberDef* md, taBase* child,
-	taiMimeSource* ms, int ea) {return 0;}
-    // dst op implementation (non-list/grp)
+	taiMimeSource* ms, int ea);
+    // op implementation (non-list/grp)
 #endif // TA_USE_GUI
   ///////////////////////////////////////////////////////////////////////////
   // 	Browser gui
@@ -1712,22 +1720,9 @@ public:
   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
   // #CAT_Modify move item so that it appears just after the target item trg in the list
 
-// when a taList is declared in advance of defining the type within it, this breaks
-//  void 	Initialize() 			{ SetBaseType(T::StatTypeDef(1)); }
-/*
-  taList() 				{ Register(); Initialize(); }
-  taList(const taList<T>& cp):taList_impl() { Register(); Initialize(); Copy(cp); }
-  ~taList() 				{ unRegister(); Destroy(); }
-  TAPtr Clone() 			{ return new taList<T>(*this); }
-  void  UnSafeCopy(TAPtr cp) 		{ if(cp->InheritsFrom(taList::StatTypeDef(0))) Copy(*((taList<T>*)cp));
-                                          else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
-  void  CastCopyTo(TAPtr cp)            { taList<T>& rf = *((taList<T>*)cp); rf.Copy(*this); }
-  TAPtr MakeToken()			{ return (TAPtr)(new taList<T>); }
-  TAPtr MakeTokenAry(int no)		{ return (TAPtr)(new taList<T>[no]); }
-  void operator=(const taList<T>& cp)	{ Copy(cp); }*/
-  TMPLT_NCOPY(taList,T);
   TA_TMPLT_BASEFUNS(taList,T);
 private:
+  TMPLT_NCOPY(taList,T);
   void	Initialize()			{ SetBaseType(StatTypeDef(0)); }
   void	Destroy()			{ };
 };

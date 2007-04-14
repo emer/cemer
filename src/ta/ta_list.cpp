@@ -611,16 +611,16 @@ void taPtrList_impl::UpdateAllIndicies() {
 /////////////////////////
 
 
-bool taPtrList_impl::DuplicateEl_(void* it) {
+void* taPtrList_impl::DuplicateEl_(void* it) {
   if(it == NULL)
-    return false;
+    return NULL;
   ++taMisc::is_duplicating;
   void* nw = El_MakeToken_(it);
   Add_(nw, true); //defer notify until after copy
   El_Copy_(nw, it);
   --taMisc::is_duplicating;
-  DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
-  return true;
+  DataChanged(DCR_LIST_ITEM_INSERT, nw, SafeEl_(size - 2)); 
+  return nw;
 }
 
 void taPtrList_impl::Stealth_Borrow(const taPtrList_impl& cp) {

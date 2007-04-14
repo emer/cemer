@@ -1306,15 +1306,31 @@ bool taBase::CopyTo(TAPtr cpy_to) {
   return cpy_to->CopyFrom(this);
 }
 
-bool taBase::DuplicateMe() {
-  TAPtr ownr = GetOwner();
-  if(TestError((ownr == NULL), "DuplicateMe", "owner is null")) return false;
-  if(TestError(!ownr->InheritsFrom(TA_taList_impl), "DuplicateMe",
-	       "Cannot duplicate me because owner is not a list/group!")) return false;
-  taList_impl* own = (taList_impl*)ownr;
-  own->DuplicateEl(this);
-  return true;
+bool taBase::ChildCanDuplicate(const taBase* chld, bool quiet) const {
+  bool ok = true;
+  if (CheckError((chld == NULL), quiet, ok,
+    "Duplicate:", "no object provided!"))
+     return false;
+  const taList_impl* lst = children_();
+  if (CheckError((!lst), quiet, ok,
+    "Duplicate: cannot duplicate obj because owner is not a list/group!"))
+     return false;
+  return ok;
 }
+
+taBase* taBase::ChildDuplicate(const taBase* chld) {
+  taList_impl* lst = children_();
+  if (lst) return lst->DuplicateEl(chld);
+  else return NULL;
+}
+
+bool taBase::DuplicateMe() {
+  TAPtr own = GetOwner();
+  if (TestError((own == NULL), "DuplicateMe", "owner is null")) return false;
+  if (own->ChildCanDuplicate(this, false)) return false;
+  return (own->ChildDuplicate(this));
+}
+
 
 #ifdef TA_GUI
 static void tabase_base_closing_all_gp(TAPtr obj) {

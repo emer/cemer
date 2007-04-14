@@ -108,7 +108,7 @@ public:
   virtual LayerDataEl* FindMakeLayerData(const String& chn_name, const String& lay_name);
   // #CAT_LayerData find (first) layer data that applies to given data channel name and layer name -- make it if it doesn't exist
 
-  TA_BASEFUNS(LayerDataEl_List);
+  TA_BASEFUNS_NCOPY(LayerDataEl_List);
 private:
   void	Initialize() { SetBaseType(&TA_LayerDataEl); }
   void 	Destroy() {}
@@ -326,7 +326,7 @@ public:
   int	NumListCols() const {return 3;} 
   const KeyString GetListColKey(int col) const;
   String GetColHeading(const KeyString&) const; // header text for the indicated column
-  TA_BASEFUNS(NetMonItem_List);
+  TA_BASEFUNS_NCOPY(NetMonItem_List);
   
 private:
   void		Initialize() {SetBaseType(&TA_NetMonItem);}
