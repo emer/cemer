@@ -1327,7 +1327,7 @@ public:
     VM_Flat		// #LABEL_Flat show all data in the main table, using dummy cells
   };
 
-  TA_BASEFUNS(DataTableEditorOptions);
+  TA_BASEFUNS_NCOPY(DataTableEditorOptions);
   
 private:
   void	Initialize() {}

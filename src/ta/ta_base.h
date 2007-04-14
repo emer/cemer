@@ -98,28 +98,50 @@ public:
 
 // common defs used by ALL taBase types: Type and Copy guys
 #define TA_BASEFUNS_MAIN_(y) \
-  private: inline void Copy__(const y& cp) { SetBaseFlag(COPYING); \
-    Copy_(cp); ClearBaseFlag(COPYING);} public: \
-  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
-  void Copy(const y& cp) { StructUpdate(true); inherited::Copy(cp); \
-    Copy__(cp); StructUpdate(false);} \
-  void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y*)cp)); \
+private: \
+  inline void Copy__(const y& cp) { \
+    SetBaseFlag(COPYING); \
+      Copy_(cp); \
+    ClearBaseFlag(COPYING);} \
+protected: \
+  void Copy_impl(const y& cp) { \
+    StructUpdate(true); \
+      inherited::Copy_impl(cp); \
+      Copy__(cp); \
+    StructUpdate(false);} \
+  void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y*)cp)); \
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
-  void  CastCopyTo(TAPtr cp) { y& rf = *((y*)cp); rf.Copy(*this); } \
-  y& operator=(const y& cp) { Copy(cp); return *this;} \
-  TypeDef* GetTypeDef() const { return &TA_##y; }
+  void  CastCopyTo(TAPtr cp) { y& rf = *((y*)cp); rf.Copy_impl(*this); } \
+public: \
+  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
+  TypeDef* GetTypeDef() const { return &TA_##y; } \
+  void Copy(const y& cp) { bool ok = true; \
+    CanCopy_impl((const taBase*)&cp, true, ok, true); \
+    if (ok) Copy_impl(cp);} \
+  y& operator=(const y& cp) { Copy(cp); return *this;}
 
 #define TA_TMPLT_BASEFUNS_MAIN_(y,T) \
-  private: inline void Copy__(const y<T>& cp) { SetBaseFlag(COPYING); \
-    Copy_(cp); ClearBaseFlag(COPYING);} public: \
-  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
-  void Copy(const y<T>& cp) { StructUpdate(true); inherited::Copy(cp); \
-    Copy__(cp); StructUpdate(false);} \
-  void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy(*((y<T>*)cp)); \
+private: \
+  inline void Copy__(const y<T>& cp) { \
+    SetBaseFlag(COPYING); \
+      Copy_(cp); \
+    ClearBaseFlag(COPYING);} \
+protected: \
+  void Copy_impl(const y<T>& cp) { \
+    StructUpdate(true); \
+      inherited::Copy_impl(cp); \
+      Copy__(cp); \
+    StructUpdate(false);} \
+  void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T>*)cp)); \
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
-  void  CastCopyTo(TAPtr cp) { y<T>& rf = *((y<T>*)cp); rf.Copy(*this); } \
-  y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; } \
-  TypeDef* GetTypeDef() const { return &TA_##y; }
+  void  CastCopyTo(TAPtr cp) { y<T>& rf = *((y<T>*)cp); rf.Copy_impl(*this); } \
+public: \
+  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
+  TypeDef* GetTypeDef() const { return &TA_##y; } \
+  void Copy(const y<T>& cp) {  bool ok = true; \
+    CanCopy_impl((const taBase*)&cp, true, ok, true); \
+    if (ok) Copy_impl(cp);} \
+  y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; }
 
 // common defs used to make instances: Cloning and Tokens
 #define TA_BASEFUNS_INST_(y) \
@@ -134,24 +156,25 @@ public:
 
 // ctors -- one size fits all (where used) thanks to Initialize__
 #define TA_BASEFUNS_CTORS_(y) \
-  y () { Initialize__(); SetDefaultName();} \
-  y (const y& cp) { Initialize__(); Copy__(cp);}
+  y () { Initialize__(); } \
+  y (const y& cp) { Initialize__(); if (CanCopy_ctor((TAPtr)&cp)) Copy__(cp);}
 
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
-  y () { Initialize__(); SetDefaultName(); } \
-  y (const y<T>& cp) { Register(); Initialize__(); Copy__(cp); } \
+  y () { Initialize__(); } \
+  y (const y<T>& cp) { Initialize__(); \
+   if (CanCopy_ctor((TAPtr)&cp)) Copy__(cp); } \
 
 // common dtor/init, when using tokens (same for TMPLT)
 #define TA_BASEFUNS_TOK_(y) \
-  inline void Initialize__() {Register(); Initialize();} \
+  inline void Initialize__() {Register(); Initialize(); SetDefaultName();} \
   ~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); }
 
 #define TA_TMPLT_BASEFUNS_TOK_(y,T) TA_BASEFUNS_TOK_(y)
 
 // common dtor/init when not using tokens (the LITE guys)
 #define TA_BASEFUNS_NTOK_(y) \
-  inline void Initialize__() {Initialize();} \
-  ~y () { CheckDestroyed(); Destroying(); Destroy(); }
+  inline void Initialize__() {Initialize();}  \
+  ~y () { CheckDestroyed(); Destroying(); Destroy(); } 
 
 #define TA_TMPLT_BASEFUNS_NTOK_(y,T) TA_BASEFUNS_NTOK_(y)
 
@@ -483,10 +506,9 @@ public:
   static TAPtr 		MakeTokenAry(TypeDef* td, int no);
   // #IGNORE static version to make an array of tokens of the given type
 
-  taBase()					{ Register(); Initialize(); }
-  taBase(taBase& cp)				{ Register(); Initialize(); Copy_(cp); }
-  taBase(int)					{ Initialize(); } // don't register...
-  virtual ~taBase() 				{ Destroy(); } //
+  taBase()			{ Register(); Initialize(); }
+  taBase(taBase& cp)		{ Register(); Initialize(); Copy_impl(cp); }
+  virtual ~taBase() 		{ Destroy(); } //
 
   virtual TAPtr		Clone()			{ return new taBase(*this); } // #IGNORE
   virtual TAPtr 	MakeToken()		{ return new taBase; }	// #IGNORE
@@ -548,8 +570,8 @@ public:
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
   virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
   virtual TAPtr		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
-  bool 			IsParentOf(taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
-  bool			IsChildOf(taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect child of the obj (or is the obj)
+  bool 			IsParentOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
+  bool			IsChildOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect child of the obj (or is the obj)
   ///////////////////////////////////////////////////////////////////////////
   //	Paths in the structural hierarchy
 public:
@@ -771,10 +793,15 @@ protected: // impl
   //	Copying and changing type 
 public:
 
-  void			Copy(const taBase&) {}
-  // #IGNORE the copy (=) operator FOR JUST THIS CLASS -- CALL PARENT Copy() for its functions; note: base version is so trivial, we don't do any of the stuff in COPY_FUNS macro, but you should imagine it does
-  virtual void		UnSafeCopy(TAPtr) {} // #IGNORE assumes source is same type
-  virtual void		CastCopyTo(TAPtr)	{ }; // #IGNORE ??
+  bool 			CanCopy(const taBase* cp, bool quiet = true) const;
+    // #IGNORE the retail version
+  void 			CanCopy(const taBase* cp, bool quiet, bool& ok) const 
+    {if (CanCopy(cp, quiet)) return; ok = false;} 
+    // #IGNORE convenience, for nested calls
+
+  void			Copy(const taBase& cp) { 
+    if (CanCopy(&cp)) Copy_impl(cp);}
+  // #IGNORE the copy (=) operator FOR JUST THIS CLASS -- CALL PARENT Copy() for its functions; note: base version is so trivial, we don't do any of the stuff in BASEFUNS macro, but you should imagine it does
   virtual void		CopyFromSameType(void* src_base)
   { GetTypeDef()->CopyFromSameType((void*)this, src_base); }
   // #IGNORE copy values from object of same type
@@ -784,24 +811,27 @@ public:
   virtual void		MemberCopyFrom(int memb_no, void* src_base)
   { GetTypeDef()->MemberCopyFrom(memb_no, (void*)this, src_base); }
    // #IGNORE copy given member index no from source object of same type
-  virtual bool		CopyFrom(TAPtr cpy_from);
+//note: CopyFrom/To should NOT be virtual -- specials should be handled in the impl routines, or the Copy_ routines
+  bool			CopyFrom(TAPtr cpy_from);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy from given object into this object (this is a safe interface to UnSafeCopy)
-  bool			AssignFrom(const taBase* cpy_from);
-    // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt  for use in the clip AssignTo, does a literal copy, making us the same as given object (which must be >= our type); stricter and more literal than CopyFrom
-  bool 			CanAssignFrom(const taBase* cpy_from, bool quiet = true);
-    //#IGNORE
-  virtual bool		CopyTo(TAPtr cpy_to);
+  bool			CopyTo(TAPtr cpy_to);
   // #MENU #TYPE_ON_this #NO_SCOPE #CAT_ObjectMgmt Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
   virtual bool		DuplicateMe();
   // #MENU #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
   // #MENU #TYPE_this #CAT_ObjectMgmt Change me into a different type of object, copying current info (done through owner)
+  virtual void		UnSafeCopy(TAPtr) {} // #IGNORE assumes source is same type
+  virtual void		CastCopyTo(TAPtr) {}; // #IGNORE
 
 protected: // impl
-  virtual void		AssignFrom_impl(const taBase* cpy_from);
-private:
-  void			Copy_(const taBase& cp);
+  void			Copy_impl(const taBase& cp);
+  virtual void		CanCopy_impl(const taBase* cpy_from, bool quiet,
+    bool& ok, bool virt) const; 
+    // basic query interface impl, only passed frm >= our class; may get called repeatedly, so subs are allowed to add an empty stub
+  bool			CanCopy_ctor(const taBase* cpy_from) const
+    {bool ok = true; CanCopy_impl(cpy_from, true, ok, false); return ok;}
+    // this is the guy used in the Copy ctor to guard the Copy_ for that level
   
   ///////////////////////////////////////////////////////////////////////////
   //	Type information
@@ -1304,14 +1334,15 @@ public:
   TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
   UserDataItem_List* 	GetUserDataList(bool fc = false) const;  
   void	CutLinks();
-  void	Copy_(const taOBase& cp);
   COPY_FUNS(taOBase, taBase)
   TA_BASEFUNS(taOBase); //
 protected:
   taDataLink*		m_data_link; //
+  override void		CanCopy_impl(const taBase* cp_fm, bool quiet,
+    bool& ok, bool virt) const 
+    {if (virt) inherited::CanCopy_impl(cp_fm, quiet, ok, virt);}
   
 #ifdef TA_GUI
-public:
 protected: // all related to taList or DEF_CHILD children_
   override void	ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
     const taiMimeSource* ms, int& allowed, int& forbidden);
@@ -1330,6 +1361,7 @@ protected: // all related to taList or DEF_CHILD children_
 #endif
 
 private:
+  void	Copy_(const taOBase& cp);
   void 	Initialize()	{ owner = NULL; user_data_ = NULL; m_data_link = NULL; }
   void	Destroy();
 };
@@ -1379,7 +1411,7 @@ public:
   void 	Initialize()	{}
 #endif
   void	CutLinks();
-  TA_BASEFUNS(taOABase); //
+  TA_BASEFUNS_NCOPY(taOABase); //
   
 private:
   void	Destroy() {CutLinks();}
@@ -1395,12 +1427,12 @@ public:
   String	GetName() const			{ return name; }
   override void	SetDefaultName();
 
-  void  Copy_(const taNBase& cp); 
   TA_BASEFUNS(taNBase);
 protected:
   override void		UpdateAfterEdit_impl();
 
 private:
+  void  Copy_(const taNBase& cp); 
   void 	Initialize()	{ }
   void  Destroy()       { } 
 };
@@ -1408,9 +1440,6 @@ private:
 
 class TA_API taFBase: public taNBase {
   // #NO_TOKENS #NO_UPDATE_AFTER named/owned base class of taBase, with filename
-#ifndef __MAKETA__
-typedef taNBase inherited;
-#endif
 public:
   String		desc;	   // #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
   String		file_name; // #READ_ONLY #NO_SAVE #SHOW the current filename for this object
@@ -1419,11 +1448,11 @@ public:
 
   override bool		SetFileName(const String& val); // #IGNORE note: we canonicalize name first
   override String	GetFileName() const { return file_name; } // #IGNORE
+  TA_BASEFUNS2(taFBase, taNBase)
+private:
+  void			Copy_(const taFBase& cp) { desc = cp.desc; file_name = cp.file_name; }
   void 			Initialize() {}
   void			Destroy() {}
-  void			Copy_(const taFBase& cp) { desc = cp.desc; file_name = cp.file_name; }
-  COPY_FUNS(taFBase, taNBase);
-  TA_BASEFUNS(taFBase)
 };
 
 
@@ -1610,10 +1639,12 @@ protected:
   void		El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST 
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
   TypeDef*	El_GetType_(void* it) const {return ((TAPtr)it)->GetTypeDef();}
-  TALPtr	El_GetOwner_(void* it) const { return (TABLPtr)((TAPtr)it)->GetOwner(); }
+  TALPtr	El_GetOwnerList_(void* it) const 
+  { return dynamic_cast<TABLPtr>(((TAPtr)it)->GetOwner()); }
+  void*		El_GetOwnerObj_(void* it) const { return ((TAPtr)it)->GetOwner(); }
   void*		El_SetOwner_(void* it)	{ ((TAPtr)it)->SetOwner(this); return it; }
   bool		El_FindCheck_(void* it, const String& nm) const
-  { if (((TAPtr)it)->FindCheck(nm)) {TALPtr own = El_GetOwner_(it);
+  { if (((TAPtr)it)->FindCheck(nm)) {TALPtr own = El_GetOwnerList_(it);
     return ((!own) || (own == (TALPtr)this));} return false; }
 
   void*		El_Ref_(void* it)	{ taBase::Ref((TAPtr)it); return it; }
@@ -1621,15 +1652,16 @@ protected:
   void		El_Done_(void* it)	{ taBase::Done((TAPtr)it); }
   void*		El_Own_(void* it)	{ taBase::Own((TAPtr)it,this); return it; }
   void		El_disOwn_(void* it)
-  { if(El_GetOwner_(it) == this) {((TAPtr)it)->Destroying(); ((TAPtr)it)->CutLinks();}
+  { if(El_GetOwnerList_(it) == this) {((TAPtr)it)->Destroying(); ((TAPtr)it)->CutLinks();}
     El_Done_(El_unRef_(it)); }
   // cut links to other objects when removed from owner group
 
   void*		El_MakeToken_(void* it) { return (void*)((TAPtr)it)->MakeToken(); }
   void*		El_Copy_(void* trg, void* src)
   { ((TAPtr)trg)->UnSafeCopy((TAPtr)src); return trg; }
-  void		AssignFrom_impl(const taBase* cpy_from);
 protected:
+  override void CanCopy_impl(const taBase* cp_fm, bool quiet,
+    bool& ok, bool virt) const;
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
   override String ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const;
 private:

@@ -552,7 +552,7 @@ TAPtr taBase::GetOwner(TypeDef* td) const {
   return own->GetOwner(td);
 }
 
-bool taBase::IsChildOf(taBase* obj) const {
+bool taBase::IsChildOf(const taBase* obj) const {
   // note: we define ourself as a child of ourself
   const taBase* tobj = this;
   do {
@@ -561,7 +561,7 @@ bool taBase::IsChildOf(taBase* obj) const {
   return false;
 }
 
-bool taBase::IsParentOf(taBase* obj) const {
+bool taBase::IsParentOf(const taBase* obj) const {
   // note: we define ourself as a parent of ourself
   do {
     if (this == obj) return true;
@@ -1254,64 +1254,56 @@ void taBase::ClearCheckConfig() {
 ///////////////////////////////////////////////////////////////////////////
 //	Copying and changing type 
 
-void taBase::Copy_(const taBase& cp) { // note: not a virtual method
+void taBase::Copy_impl(const taBase& cp) { // note: not a virtual method
   // just the flags
   m_flags = (m_flags & ~COPY_MASK) | (cp.m_flags & COPY_MASK);
 }
 
-bool taBase::CanAssignFrom(const taBase* cpy_from, bool quiet) {
+bool taBase::CanCopy(const taBase* cp, bool quiet) const {
   bool ok = true; // ref var needed for Check
-//note: rules for Assign are more strict than CopyFrom: 
-// can only AssignFrom a class >= ourself
-  if (CheckError((!cpy_from), quiet, ok,
-    "AssignFrom: source is null")) return false;
-  if (CheckError((cpy_from == this), quiet, ok,
-    "AssignFrom: cannot Assign to self")) return false;
-  if (CheckError((!cpy_from->InheritsFrom(GetTypeDef())), quiet, ok,
-    "AssignFrom: Cannot copy from given object of type: " + cpy_from->GetTypeDef()->name +
-    " which does not inherit from: ", GetTypeDef()->name))
-    return false;
-  if (CheckError((cpy_from->IsParentOf(this)), quiet, ok,
-    "AssignFrom: cannot Assign from a parent")) return false;
-  return ok;
-}
-
-bool taBase::AssignFrom(const taBase* cpy_from) {
-//note: rules for Assign are more strict than CopyFrom: 
-// can only AssignFrom a class >= ourself
-  bool ok = CanAssignFrom(cpy_from, false);
-  if (ok) {
-    AssignFrom_impl(cpy_from); // this just does things like setting list/group same size
-    UnSafeCopy(const_cast<taBase*>(cpy_from));
+  // do the generic guys, that apply in every case
+  if (CheckError((!cp), quiet, ok,
+    "Copy: source is null")) return false;
+  if (cp->InheritsFrom(GetTypeDef())) {
+    // we will be doing the copy
+    CanCopy_impl(cp, quiet, ok, true);
+  } else if (InheritsFrom(cp->GetTypeDef())) {
+    // other guy will be doing it
+    cp->CanCopy_impl(this, quiet, ok, true);
+  } else { // not commensurable classes
+    CheckError((true), quiet, ok,
+       "Cannot copy from given object of type:", cp->GetTypeDef()->name,
+       "which does not inherit from:", GetTypeDef()->name,
+      "(or I don't inherit from it)");
   }
   return ok;
 }
 
-void taBase::AssignFrom_impl(const taBase* cpy_from) {
+// this guy is always called with cp_fm !null, and our class or a subclass
+void taBase::CanCopy_impl(const taBase* cpy_from, bool quiet,
+  bool& ok, bool /*virt*/) const
+{
+/* if this were a subclass, we would add this code:
+  if (virt) {
+    inherited::CanCopy_(cpy_from, quiet, ok, virt);
+    if (!ok) return; // no reason to continue, and could be bad to do so
+  }
+*/
+  if (CheckError((cpy_from->IsParentOf(this)), quiet, ok,
+    "Copy: cannot Copy from a parent")) return;
 }
+
 
 bool taBase::CopyFrom(TAPtr cpy_from) {
-  if(TestError((!cpy_from), "CopyFrom", "source is null")) return false;
-  if(!cpy_from->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_from->GetTypeDef())) {
-    taMisc::Error("Cannot copy from given object of type:",cpy_from->GetTypeDef()->name,
-		  "which does not inherit from:", GetTypeDef()->name,
-		  "(or I don't inherit from it)", GetPath());
-    return false;
-  }
+// this one is easy, since it is really just the same as Copy, but with warnings
+  if (!CanCopy(cpy_from, false)) return false;
   UnSafeCopy(cpy_from);
   return true;
 }
 
 bool taBase::CopyTo(TAPtr cpy_to) {
   if(TestError((!cpy_to), "CopyTo", "targetis null")) return false;
-  if(!cpy_to->InheritsFrom(GetTypeDef()) && !InheritsFrom(cpy_to->GetTypeDef())) {
-    taMisc::Error("Cannot copy to given object of type:",cpy_to->GetTypeDef()->name,
-		  "which does not inherit from:", GetTypeDef()->name,
-		  "(or I don't inherit from it)",GetPath());
-    return false;
-  }
-  cpy_to->UnSafeCopy(this);
-  return true;
+  return cpy_to->CopyFrom(this);
 }
 
 bool taBase::DuplicateMe() {
@@ -2197,8 +2189,7 @@ void taNBase::SetDefaultName() {
 }
 
 void taNBase::Copy_(const taNBase& cp) { 
-  if(!cp.name.empty()) 
-    name = cp.name; 
+  name = cp.name; 
 } 
 
 void taNBase::UpdateAfterEdit_impl() {
@@ -2298,26 +2289,33 @@ void taList_impl::CutLinks() {
   inherited_taBase::CutLinks();
 }
 
+void taList_impl::CanCopy_impl(const taBase* cp_fm_, bool quiet,
+  bool& ok, bool virt) const 
+{
+  if (virt) {
+    inherited::CanCopy_impl(cp_fm_, quiet, ok, virt);
+    if (!ok) return; // no reason to continue, and could be bad to do so
+  }
+  const taList_impl* cp_fm = (const taList_impl*)cp_fm_; // is safe
+  // we only allow list copies when the base types are the same,
+  // since otherwise, we must be dealing with lists for different
+  // purposes, and they cannot be considered assignable
+  if (CheckError((el_base != cp_fm->el_base), quiet, ok,
+    "Copy: Lists must have same el_base to be copyable")) return;
+}
+
 void taList_impl::Copy_(const taList_impl& cp) {
-  if(!cp.name.empty())
+//old  if(!cp.name.empty())
     name = cp.name;
   el_base = cp.el_base;
   el_typ = cp.el_typ;
   el_def = cp.el_def;
-//TODO: make same size, then copy exact elements
-  taPtrList_impl::Copy_Duplicate(cp);
+//old  taPtrList_impl::Copy_Duplicate(cp);
+  taPtrList_impl::Copy_Exact(cp);
 }
 
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
-}
-
-void taList_impl::AssignFrom_impl(const taBase* cpy_from_) {
-  inherited::AssignFrom_impl(cpy_from_);
-  const taList_impl* cpy_from = dynamic_cast<const taList_impl*>(cpy_from_);
-  if (!cpy_from) return; // shouldn't happen
-  SetSize(cpy_from->size);
-  // UnSafeCopy should then take care of items
 }
 
 void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -2498,7 +2496,7 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent) {
       continue;
     cnt++; // sure we are dumping something at this point
 
-    if (El_GetOwner_(itm) != this) { // a link, create a dummy placeholder
+    if (El_Kind_(itm) == EK_LINK) { // a link, create a dummy placeholder
       taMisc::indent(strm, indent);
       strm << itm->GetTypeDef()->name << " @[" << i << "] { };\n";
       continue;
@@ -2530,10 +2528,11 @@ int taList_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
   for(i=0; i<size; i++) {
     taBase* itm = (taBase*)FastEl_(i);
     if (!itm) continue;
-    if (El_GetOwner_(itm) == this) {
+    ElKind ek = El_Kind_(itm);
+    if (ek == EK_OWN) {
       itm->Dump_Save_impl(strm, par, indent);
     }
-    else if (El_GetOwner_(itm) != NULL) {	// a link
+    else if (ek == EK_LINK) {	// a link
       taMisc::indent(strm, indent) << GetTypeDef()->name << " ";
       if(par != NULL) strm << "@";
       strm << mypath << " = ";
@@ -2658,9 +2657,7 @@ void taList_impl::SetSize(int sz) {
   if(size < sz)
     New(sz - size);
   else {
-    int i;
-    for(i=size-1; i>=sz; i--)
-      RemoveIdx(i);
+    Trim(sz);
   }
 }
 

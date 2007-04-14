@@ -64,6 +64,11 @@ void PdpServer::Destroy() {
   CloseServer(false);
 }
 
+void PdpServer::Copy_(const PdpServer& cp) {
+  CloseServer();
+  port = cp.port;
+}
+
 void PdpServer::CloseServer(bool notify) {
   if (!open) return;
   if (client) {

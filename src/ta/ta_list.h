@@ -210,25 +210,27 @@ protected:
   // get a hash code value from given ptr
 
   // these define what to do with an individual item (overload them!)
-  virtual String GetListName_() const 		{ return _nilString; }
+  virtual String 	GetListName_() const 		{ return _nilString; }
   // name of the list
-  virtual String El_GetName_(void*) const 	{ return _nilString; }
+  virtual String 	El_GetName_(void*) const 	{ return _nilString; }
   // gets name from an element (for list)
-  virtual void	El_SetDefaultName_(void*, int) {}
+  virtual void		El_SetDefaultName_(void*, int) {}
     // if added item has empty name, this will get called, enabling a name to be set; index has been set
-  virtual taHashVal El_GetHashVal_(void* it) const;
+  virtual taHashVal 	El_GetHashVal_(void* it) const;
   // gets hash code based on key type in hash table; default is for string-key'ed lists (v3.2 default)
   virtual TypeDef*	El_GetType_(void*) const {return GetElType();}
     // should usually override to provide per-item typing where applicable
-  virtual TALPtr El_GetOwner_(void*) const	{ return (TALPtr)this; }
+  virtual TALPtr	El_GetOwnerList_(void*) const	{ return (TALPtr)this; }
+  // who owns the el? -- only returns a list if the owner is a list
+  virtual void*		El_GetOwnerObj_(void*) const	{ return NULL; }
   // who owns the el?
-  virtual void*	El_SetOwner_(void* it) 		{ return it; }
+  virtual void*		El_SetOwner_(void* it) 		{ return it; }
   // set owner to this
-  virtual void	El_SetIndex_(void*, int) 	{ };
+  virtual void		El_SetIndex_(void*, int) 	{ };
   // sets the element's self-index
-  virtual bool  El_FindCheck_(void* it, const String& nm) const
+  virtual bool  	El_FindCheck_(void* it, const String& nm) const
   { return (El_GetName_(it) == nm); }
-  virtual int	El_Compare_(void* a, void* b) const
+  virtual int		El_Compare_(void* a, void* b) const
   { int rval=-1; if(El_GetName_(a) > El_GetName_(b)) rval=1;
     else if(El_GetName_(a) == El_GetName_(b)) rval=0; return rval; }
   // compare two items for purposes of sorting
@@ -243,7 +245,13 @@ protected:
   // how to make a token of the same type as the argument
   virtual void*	El_Copy_(void* trg, void*) { return trg; }
   // how to copy from given item (2nd arg)
-
+  enum ElKind {
+    EK_NULL	= 0, // duh!
+    EK_OWN	= 1, // owned by list, is an instance
+    EK_LINK	= 2 // is a linked item
+  };
+  virtual ElKind	El_Kind_(void* it) const; // kind of item; normally not overidden
+  
   void		InitList_();
   virtual int	Scratch_Find_(const String& it) const;
   // find item on the scratch_list using derived El_FindCheck_()
@@ -332,6 +340,7 @@ public:
   // #CAT_Modify allocate a list big enough for given number of elements (or current size) -- uses optimized memory allocation policies and generally allocates more than currently needed
   virtual void	AllocExact(int sz);
   // #CAT_Modify allocate exact number specified
+  void		Trim(int n); // #IGNORE if larger than n, trim to n (does NOT expand)
   virtual void 	Reset()			{ RemoveAll(); }
   // #CAT_Modify reset the list (remove all elements)
   virtual bool	IsEmpty() const	{ return (size == 0) ? true : false; }
@@ -403,6 +412,8 @@ public:
   // #CAT_Copy apply copy operator to items, use duplicate to add new ones from cp (if necc)
   void	Copy_Borrow(const taPtrList_impl& cp);
   // #CAT_Copy apply copy operator to items, use borrow to add new ones from cp (if necc)
+  void	Copy_Exact(const taPtrList_impl& cp);
+  // #CAT_Copy makes us basically identical to cp, in number, and type
 
   // browsing -- browse client lists must override
   virtual int		NumListCols() const {return 0;}
@@ -420,6 +431,8 @@ public:
   // #CAT_Display List the group items
 protected:
   virtual void		ItemRemoved_() {} // we overload this in groups to update the leaf counts
+  void			Copy_Duplicate_impl(const taPtrList_impl& cp);
+    // factored code
 };
 
 template<class T> 

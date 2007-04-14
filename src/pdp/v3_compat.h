@@ -1813,7 +1813,7 @@ public:
   void 	Destroy();
   void	InitLinks();
   void	CutLinks();
-  TA_BASEFUNS(PDPLog);
+  TA_BASEFUNS_NCOPY(PDPLog);
 };
 
 class PDP_API PDPLog_Group : public taGroup<PDPLog> {

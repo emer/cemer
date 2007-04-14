@@ -164,7 +164,7 @@ void* taPtrList_impl::FindName_(const String& nm, int& idx) const {
 void taPtrList_impl::UpdateIndex_(int idx) {
   if(el[idx] == NULL)
     return;
-  if(El_GetOwner_(el[idx]) == this)
+  if(El_GetOwnerList_(el[idx]) == this)
     El_SetIndex_(el[idx], idx);
   if(hash_table != NULL)
     hash_table->UpdateIndex(El_GetName_(el[idx]), idx);
@@ -399,7 +399,7 @@ bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
 }
 
 bool taPtrList_impl::Transfer_(void* it) {
-  taPtrList_impl* old_own = El_GetOwner_(it);
+  taPtrList_impl* old_own = El_GetOwnerList_(it);
   if (old_own == this)
     return false;
   El_Ref_(it);			// extra ref so no delete on remove
@@ -600,7 +600,7 @@ void taPtrList_impl::Sort_(bool descending) {
 void taPtrList_impl::UpdateAllIndicies() {
   int i;
   for(i=0; i<size; i++)  {
-    if(El_GetOwner_(el[i]) == this)
+    if(El_GetOwnerList_(el[i]) == this)
       El_SetIndex_(el[i], i);
   }
 }
@@ -639,6 +639,11 @@ int taPtrList_impl::Scratch_Find_(const String& it) const {
       return i;
   }
   return -1;
+}
+
+void taPtrList_impl::Trim(int n) {
+  for (int i= size - 1; i >= n; --i)
+      RemoveIdx(i);
 }
 
 void taPtrList_impl::Duplicate(const taPtrList_impl& cp) {
@@ -758,7 +763,9 @@ void taPtrList_impl::Copy_Common(const taPtrList_impl& cp) {
   for(i=0; i < mx_idx; i++) {
     if(cp.el[i] == NULL) continue;
     it = el[i];
+    ++taMisc::is_duplicating;
     El_Copy_(it, cp.el[i]);
+    --taMisc::is_duplicating;
     DataChanged(DCR_LIST_ITEM_UPDATE, it); 
   }
 }
@@ -767,23 +774,27 @@ void taPtrList_impl::Copy_Duplicate(const taPtrList_impl& cp) {
   int mx_sz = MAX(size, cp.size);
   Alloc(mx_sz);
   Copy_Common(cp);
-  int i;
-  for(i=size; i < cp.size; i++) {
-    if(cp.el[i] == NULL)
+  Copy_Duplicate_impl(cp);
+}
+
+void taPtrList_impl::Copy_Duplicate_impl(const taPtrList_impl& cp) {
+  for (int i=size; i < cp.size; i++) {
+    void* cp_it = cp.el[i];
+    switch (cp.El_Kind_(cp_it)) {
+    case EK_NULL:
       Add_(NULL);
-    else {
-      TALPtr elo = El_GetOwner_(cp.el[i]);
-      if((elo == NULL) || (elo == &cp)) {
-	++taMisc::is_duplicating;
-	void* it = El_MakeToken_(cp.el[i]);
-	Add_(it, true);
-	El_Copy_(it, cp.el[i]);
-        DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
-	--taMisc::is_duplicating;
-      }  else {
-	// if object is not owned by copying list, then it is linked, so link here!
-	Link_(cp.el[i]);
-      }
+      break;
+    case EK_OWN: {
+      ++taMisc::is_duplicating;
+      void* it = El_MakeToken_(cp_it);
+      Add_(it, true);
+      El_Copy_(it, cp_it);
+      DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
+      --taMisc::is_duplicating;
+    } break;
+    case EK_LINK:
+      Link_(cp_it);
+      break;
     }
   }
 }
@@ -793,6 +804,59 @@ void taPtrList_impl::Copy_Borrow(const taPtrList_impl& cp) {
   int i;
   for(i=size; i < cp.size; i++)
     Link_(cp.el[i]);
+}
+
+void taPtrList_impl::Copy_Exact(const taPtrList_impl& cp) {
+  // if we have more items than cp, then trim ourself, otherwise make room
+  if (size > cp.size)
+    Trim(cp.size);
+  else Alloc(cp.size);
+  // do a pairwise check for items we can keep; remove others
+  // we can keep owned items of same type, or same links, or NULL
+  // copy commensurable owned items as we encounter them
+  int i = 0;
+  while ((i < size) && (i < cp.size)) {
+    void* it = el[i];
+    void* cp_it = cp.el[i];
+    ElKind ek = El_Kind_(it);
+    ElKind cp_ek = cp.El_Kind_(cp_it);
+    // we check cases in order of likelihood
+    // if both owned, must be same type
+    if ((ek == EK_OWN) && (cp_ek == EK_OWN)) {
+      if (El_GetType_(it) == cp.El_GetType_(cp_it)) {
+        ++taMisc::is_duplicating;
+        El_Copy_(it, cp_it);
+        --taMisc::is_duplicating;
+        DataChanged(DCR_LIST_ITEM_UPDATE, it); 
+        goto cont;
+      } // otherwise fall through
+    }
+    // if both are links, must be same item
+    else if ((ek == EK_LINK) && (cp_ek == EK_LINK)) {
+      if (it == cp_it) goto cont;
+    }
+    // if either null, then both must be null
+    else if ((it == NULL) || (cp_it == NULL)) { 
+      if (it == cp_it) goto cont;
+    }
+    // not commensurable,
+    RemoveIdx(i);
+    continue; // don't advance index
+cont:
+    ++i;
+  }
+  // ok, now copy or link in any ones not in us
+  Copy_Duplicate_impl(cp);
+}
+
+taPtrList_impl::ElKind taPtrList_impl::El_Kind_(void* it) const {
+  if (!it) return EK_NULL;
+  // if object is owned by us, or has no owner it is an instance
+  else if ((El_GetOwnerList_(it) == this) || 
+    (El_GetOwnerObj_(it) == NULL))
+    return EK_OWN;
+  // otherwise a link
+  return EK_LINK;
 }
 
 ostream& taPtrList_impl::Indenter(ostream& strm, const String& itm, int no, int prln, int tabs)

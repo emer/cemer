@@ -153,20 +153,21 @@ void taGroup_impl::InitLeafGp_impl(TALOG* lg) const {
     FastGp_(i)->InitLeafGp_impl(lg);
 }
 
-void taGroup_impl::AssignFrom_impl(const taBase* cpy_from_) {
-  inherited::AssignFrom_impl(cpy_from_);
-  const taGroup_impl* cpy_from = dynamic_cast<const taGroup_impl*>(cpy_from_);
-  if (!cpy_from) return; // shouldn't happen
-  // make gp sizes the same
-  gp.SetSize(cpy_from->gp.size);
-  // recursively make gp/item sizes same for the gps
-  for (int i = 0; i < cpy_from->gp.size; ++i) {
-    taGroup_impl* gp_cpy_to = gp.SafeEl(i);
-    if (!gp_cpy_to) return; // shouldn't happen
-    const taGroup_impl* gp_cpy_from = cpy_from->gp.FastEl(i); 
-    gp_cpy_to->AssignFrom_impl(gp_cpy_from);
+void taGroup_impl::CanCopy_impl(const taBase* cp_fm_, bool quiet, 
+  bool& ok, bool virt) const 
+{
+  if (virt) {
+    inherited::CanCopy_impl(cp_fm_, quiet, ok, virt);
+    if (!ok) return; // no reason to continue, and could be bad to do so
   }
-  // UnSafeCopy should then take care of items and gps
+  const taGroup_impl* cp_fm = (const taGroup_impl*)cp_fm_; // is safe
+  // we only allow group copies when the group types are identical
+  // since otherwise, we must be dealing with groups for different
+  // purposes, and they cannot be considered assignable
+  if (CheckError((GetTypeDef() != cp_fm->GetTypeDef()), quiet, ok,
+    "Copy: Groups must be of same type to be copyable")) return;
+  // make sure that the gp elbase's are commensurable
+  gp.CanCopy(&cp_fm->gp, quiet, ok);
 }
 
 void taGroup_impl::Copy_(const taGroup_impl& cp) {

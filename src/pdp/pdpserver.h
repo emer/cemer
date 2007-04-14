@@ -85,6 +85,7 @@ protected:
   
   QTcpSocket*		client; // #IGNORE the one and only socket we allow to connect
 private:
+  void	Copy_(const PdpServer& cp);
   void	Initialize();
   void 	Destroy();
 };

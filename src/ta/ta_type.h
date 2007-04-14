@@ -1273,7 +1273,7 @@ class TA_API EnumSpace : public taPtrList<EnumDef> {
 protected:
   String	GetListName_() const		{ return name; }
   String	El_GetName_(void* it) const;
-  TALPtr 	El_GetOwner_(void* it) const;
+  TALPtr 	El_GetOwnerList_(void* it) const;
   void*		El_SetOwner_(void* it);
   void		El_SetIndex_(void* it, int i);
 
@@ -1352,7 +1352,7 @@ INHERITED(Member_List)
 protected:
   String	GetListName_() const		{ return name; }
   String El_GetName_(void* it) const;
-  TALPtr 	El_GetOwner_(void* it) const;
+  TALPtr 	El_GetOwnerList_(void* it) const;
   void*		El_SetOwner_(void* it);
   void		El_SetIndex_(void* it, int i);
 
@@ -1451,7 +1451,7 @@ INHERITED(Method_List)
 protected:
   String	GetListName_() const		{ return name; }
   String El_GetName_(void* it) const;
-  TALPtr 	El_GetOwner_(void* it) const;
+  TALPtr 	El_GetOwnerList_(void* it) const;
   void*		El_SetOwner_(void* it);
   void		El_SetIndex_(void* it, int i);
 
@@ -1498,7 +1498,7 @@ class TA_API TypeSpace: public taPtrList<TypeDef> {
 protected:
   String	GetListName_() const 		{ return name; }
   String	El_GetName_(void* it) const;
-  TALPtr 	El_GetOwner_(void* it) const;
+  TALPtr 	El_GetOwnerList_(void* it) const;
   void*		El_SetOwner_(void* it);
   void		El_SetIndex_(void* it, int i);
 

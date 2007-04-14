@@ -213,12 +213,13 @@ private:
   void 	Copy_(const taGroup_impl& cp);
 protected:
   mutable TALOG*	leaf_gp; 	// #READ_ONLY #NO_SAVE cached 'flat' list of leaf-containing-gps for iter
+  override void 	CanCopy_impl(const taBase* cp_fm, bool quiet, 
+    bool& ok, bool virt) const;
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   override void		ItemRemoved_(); // update the leaf counts (supercursively)
   virtual String	GetValStr(const TypeDef* td, void* par=NULL,
 	MemberDef* memb_def = NULL) const;
   virtual TAGPtr LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
-  override void		AssignFrom_impl(const taBase* cpy_from);
 #ifdef TA_GUI
 protected: // clip functions
   override void	ChildQueryEditActions_impl(const MemberDef* md,

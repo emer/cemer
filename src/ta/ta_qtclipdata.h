@@ -231,7 +231,7 @@ public:
   static QByteArray	StrToByteArray(const QString& str);
     // convenience, for converting strings to bytearrays
     
-  TA_BASEFUNS(taiMimeFactory);//
+  TA_BASEFUNS_NCOPY(taiMimeFactory);//
 private:
   void	Initialize() {}
   void	Destroy() {}
@@ -241,7 +241,7 @@ private:
   static T* instance() {static T* in = NULL; if (!in) \
     in = (T*)(taiMimeFactory_List::StatGetInstanceByType(&TA_##T)); \
     return in;} \
-  TA_BASEFUNS(T)
+  TA_BASEFUNS_NCOPY(T)
     
 
 class TA_API taiMimeFactory_List: public taList<taiMimeFactory> {

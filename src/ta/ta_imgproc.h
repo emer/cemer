@@ -429,9 +429,10 @@ public:
   // #CAT_Filter #MENU_BUTTON #MENU_ON_Filter apply Gabor filter to on/off input channels to produce a V1-like processing of the input image.  superimpose = add values instead of overwriting (this is just a call to equiv function on spec)
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
+  TA_BASEFUNS_NCOPY(taImageProc);
+private:
   void 	Initialize();
   void	Destroy();
-  TA_BASEFUNS(taImageProc);
 };
 
 /////////////////////////////////////////////////////////

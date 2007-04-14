@@ -2315,7 +2315,7 @@ TypeSpace::~TypeSpace() {
 }
 
 String	TypeSpace::El_GetName_(void* it) const { return ((TypeDef*)it)->name; }
-TALPtr 	TypeSpace::El_GetOwner_(void* it) const { return ((TypeDef*)it)->owner; }
+TALPtr 	TypeSpace::El_GetOwnerList_(void* it) const { return ((TypeDef*)it)->owner; }
 void*	TypeSpace::El_SetOwner_(void* it_) { 
   if (!it_) return it_;
   TypeDef* it = (TypeDef*)it_;
@@ -2393,7 +2393,7 @@ void TypeSpace::ListAllTokens(ostream& strm) {
 //////////////////////////////////
 
 String	EnumSpace::El_GetName_(void* it) const { return ((EnumDef*)it)->name; }
-TALPtr 	EnumSpace::El_GetOwner_(void* it) const { return ((EnumDef*)it)->owner; }
+TALPtr 	EnumSpace::El_GetOwnerList_(void* it) const { return ((EnumDef*)it)->owner; }
 void*	EnumSpace::El_SetOwner_(void* it) { return ((EnumDef*)it)->owner = this; }
 void	EnumSpace::El_SetIndex_(void* it, int i){ ((EnumDef*)it)->idx = i; }
 
@@ -2495,7 +2495,7 @@ void TokenSpace::List(ostream &strm) const {
 //////////////////////////////////
 
 String	MemberSpace::El_GetName_(void* it) const { return ((MemberDef*)it)->name; }
-TALPtr 	MemberSpace::El_GetOwner_(void* it) const { return ((MemberDef*)it)->owner; }
+TALPtr 	MemberSpace::El_GetOwnerList_(void* it) const { return ((MemberDef*)it)->owner; }
 void*	MemberSpace::El_SetOwner_(void* it) { return ((MemberDef*)it)->owner = this; }
 void	MemberSpace::El_SetIndex_(void* it, int i){ ((MemberDef*)it)->idx = i; }
 
@@ -2748,7 +2748,7 @@ MemberDef* MemberSpace::FindAddrPtr(void* base, void* mbr, int& idx) const {
 //////////////////////////////////
 
 String	MethodSpace::El_GetName_(void* it) const { return ((MethodDef*)it)->name; }
-TALPtr 	MethodSpace::El_GetOwner_(void* it) const { return ((MethodDef*)it)->owner; }
+TALPtr 	MethodSpace::El_GetOwnerList_(void* it) const { return ((MethodDef*)it)->owner; }
 void*	MethodSpace::El_SetOwner_(void* it) { return ((MethodDef*)it)->owner = this; }
 void	MethodSpace::El_SetIndex_(void* it, int i){ ((MethodDef*)it)->idx = i; }
 

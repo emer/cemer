@@ -659,7 +659,7 @@ void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbid
     if (td && td->InheritsFrom(GetTypeDef())) {
       // tent allow, but must make sure not copying parent into child (infinite recurse)
       taBase* obj = ms->tabObject();
-      if (CanAssignFrom(obj))
+      if (CanCopy(obj))
         allowed |= (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN);
     }
   }
@@ -709,7 +709,7 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
     if (CheckError((!obj), false, ok,
       "Could not retrieve object from clipboard"))
       return taiClipData::ER_ERROR;
-    this->AssignFrom(obj);
+    this->CopyFrom(obj);
     UpdateAfterEdit();
   }
   return 0;
@@ -839,13 +839,12 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
   // if not a taBase type of object, no more applicable
   if (!ms->isBase()) return;
   if (ms->isThisProcess()) {
-    // cannot allow an object to be moved into one of its own subobjects
+    // cannot allow an object to be copied or moved into one of its own subobjects
     taBase* obj = ms->tabObject();
     if (this->IsChildOf(obj)) {
       // forbid both kinds of cases
-      forbidden |= taiClipData::EA_DROP_MOVE2;
-      if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
-        forbidden |= taiClipData::EA_PASTE2;
+      forbidden |= (taiClipData::EA_DROP_COPY2 | taiClipData::EA_DROP_MOVE2 |
+        taiClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
     }
   } else {
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
@@ -1127,14 +1126,13 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
   
   if (ms->isThisProcess()) {
-    // cannot allow a group to be moved into one of its own subgroups
+    // cannot allow a group to be copied or moved into one of its own subgroups
     taGroup_impl* grp = static_cast<taGroup_impl*>(ms->tabObject());
     // the grp must not be this one, or parent to it
     if (this->IsChildOf(grp)) {
       // forbid both kinds of cases
-      forbidden |= taiClipData::EA_DROP_MOVE2;
-      if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
-        forbidden |= taiClipData::EA_PASTE2;
+      forbidden |= (taiClipData::EA_DROP_COPY2 | taiClipData::EA_DROP_MOVE2 |
+        taiClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
     }
   } else {
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls
