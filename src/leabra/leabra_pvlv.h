@@ -235,6 +235,13 @@ public:
   TA_BASEFUNS2_NCOPY(LViLayerSpec, LVeLayerSpec);
 };
 
+////////////////////////////////////////////////////////////////////////////
+//			New version of LV and DA!
+////////////////////////////////////////////////////////////////////////////
+
+// 1. just use PVConSpec instead of LVConSpec
+// 2. click on new_delta in daspec
+
 //////////////////////////
 //	  DaLayer 	//
 //////////////////////////
@@ -253,6 +260,7 @@ public:
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   float		min_lvi;	// #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
+  bool		lv_delta;	// #DEF_false new LV delta formulation: lv da is relative to last trial, reset by PV rew pred -- no synaptic depression!
 
   void	Initialize();
   void 	Destroy()	{ };
@@ -268,15 +276,22 @@ public:
   PVLVDaSpec	da;		// parameters for the lvpv da computation
 
   virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net);
-  // compute a zero da value: in minus phase
+  // compute a zero da value: in minus phase -- not used!
   virtual void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
   // compute the da value based on recv projections: every cycle in 1+ phases
   virtual void	Send_Da(LeabraLayer* lay, LeabraNetwork* net);
   // send the da value to sending projections: every cycle
 
+  virtual void	Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
+  // compute the da value based on recv projections: every cycle in 1+ phases (delta version)
+  virtual void	Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
+  // update the LV
+
+
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_dWt(LeabraLayer*, LeabraNetwork*);
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both=false);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
