@@ -175,6 +175,22 @@ void taGroup_impl::Copy_(const taGroup_impl& cp) {
   leaves = cp.leaves; // prob not needed
 }
 
+bool taGroup_impl::ChildCanDuplicate(const taBase* chld,
+    bool quiet) const
+{
+  if (gp.FindEl(chld) >= 0) {
+    return true;
+  }
+  return inherited::ChildCanDuplicate(chld, quiet); 
+}
+
+taBase* taGroup_impl::ChildDuplicate(const taBase* chld) {
+  if (gp.FindEl(chld) >= 0) {
+    return gp.DuplicateEl(chld);
+  }
+  return inherited::ChildDuplicate(chld);
+}
+
 void taGroup_impl::AddOnly_(void* it) {
   inherited::AddOnly_(it);
   UpdateLeafCount_(1);		// not the most efficient, but gets it at a low level

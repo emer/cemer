@@ -825,7 +825,7 @@ public:
   virtual taBase*	ChildDuplicate(const taBase* chld);
     // #IGNORE duplicate given child, returning the new one (NULL if can't do it)
 
-  virtual bool		DuplicateMe();
+  bool			DuplicateMe();
   // #MENU #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
   // #MENU #TYPE_this #CAT_ObjectMgmt Change me into a different type of object, copying current info (done through owner)

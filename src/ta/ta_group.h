@@ -189,6 +189,10 @@ public:
   virtual int	FindLeafEl(taBase* item) const;  // find given leaf element (-1 = not here)
   // #CAT_Access find given leaf element -1 = not here.
 
+  override bool		ChildCanDuplicate(const taBase* chld,
+    bool quiet = true) const;
+  override taBase*	ChildDuplicate(const taBase* chld);
+  
   void	Duplicate(const taGroup_impl& cp);
   void	DupeUniqNameOld(const taGroup_impl& cp);
   void	DupeUniqNameNew(const taGroup_impl& cp);

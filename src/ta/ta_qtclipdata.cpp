@@ -1095,11 +1095,7 @@ void taGroup_impl::ChildQueryEditActions_impl(const MemberDef* md, const taBase*
   if ((child == NULL) || (subgrp_idx >= 0))
     ChildQueryEditActionsG_impl(md, (taGroup_impl*)child, ms, allowed, forbidden);
 
-  // if child was a group item, then we don't pass the child to the base (since it doesn't boggle group items)
-  if (subgrp_idx >=0)
-    taList_impl::ChildQueryEditActions_impl(md, NULL, ms, allowed, forbidden);
-  else
-    taList_impl::ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
+  taList_impl::ChildQueryEditActions_impl(md, child, ms, allowed, forbidden);
 }
 
 void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
@@ -1157,41 +1153,41 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
 }
 
 // called by a child -- lists etc. can then allow drops on the child, to indicate inserting into the list, etc.
-int taGroup_impl::ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea) {
+int taGroup_impl::ChildEditAction_impl(const MemberDef* md, taBase* child,
+  taiMimeSource* ms, int ea) 
+{
+  int rval = taiClipData::ER_IGNORED;
   // if child exists, but is not a group item, then just delegate down to base
   int subgrp_idx = -1;
-  if (child) {
+  if (child)
     subgrp_idx = gp.FindEl(child);
-    if (subgrp_idx < 0)
-      return taList_impl::ChildEditAction_impl(md, child, ms, ea);
+    
+  // group actions are eligible if group parent op, or child group
+  if ((!child) || (subgrp_idx >= 0)) {
+  
+    // we will be calling our own G routines...
+    // determine the group-only operations allowed/forbidden, and apply to ea
+    int allowed = 0;
+    int forbidden = 0;
+    ChildQueryEditActionsG_impl(md, (taGroup_impl*)child, ms, allowed, forbidden);
+    int eax = (ea & (allowed & (~forbidden)));
+  
+    if (eax) { // ok, it is a group operation
+      if (ea & taiClipData::EA_SRC_OPS) { // note: must use original ea to decode SRC
+        rval = ChildEditActionGS_impl(md, (taGroup_impl*)child, eax);
+      } else {
+        if (ms == NULL) return taiClipData::ER_IGNORED; // shouldn't happen
+        // decode src location
+        if (ms->isThisProcess())
+          rval = ChildEditActionGD_impl_inproc(md, (taGroup_impl*)child, ms, eax);
+        else
+          // DST OP, SRC OUT OF PROCESS
+          rval = ChildEditActionGD_impl_ext(md, (taGroup_impl*)child, ms, eax);
+      }
+      return rval;
+    }
   }
-
-  // we will be calling our own G routines...
-  // however, if child is NULL, and our ops don't do anything, then we must call base ops
-  // determine the list-only operations allowed/forbidden, and apply to ea
-  int rval = taiClipData::ER_IGNORED;
-  int allowed = 0;
-  int forbidden = 0;
-  ChildQueryEditActionsG_impl(md, (taGroup_impl*)child, ms, allowed, forbidden);
-  if (ea & forbidden) return taiClipData::ER_FORBIDDEN; // requested op was forbidden
-  int eax = ea & (allowed & (~forbidden));
-
-  if (eax & taiClipData::EA_SRC_OPS) {
-    rval = ChildEditActionGS_impl(md, (taGroup_impl*)child, eax);
-  } else  if (eax & taiClipData::EA_DST_OPS) {
-    if (ms == NULL) return taiClipData::ER_IGNORED;
-
-    // decode src location
-    if (ms->isThisProcess())
-      rval = ChildEditActionGD_impl_inproc(md, (taGroup_impl*)child, ms, eax);
-    else
-      // DST OP, SRC OUT OF PROCESS
-      rval = ChildEditActionGD_impl_ext(md, (taGroup_impl*)child, ms, eax);
-  }
-
-  if ((rval == 0) && (child == NULL))
-      rval = taList_impl::ChildEditAction_impl(md, NULL, ms, ea);
-  return rval;
+  return inherited::ChildEditAction_impl(md, child, ms, ea);
 }
 
 int taGroup_impl::ChildEditActionGS_impl(const MemberDef* md, taGroup_impl* subgrp, int ea)
