@@ -1491,8 +1491,12 @@ bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
 void UnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError((bias_con_type && (bool)bias_spec.spec &&
-	      !bias_con_type->InheritsFrom(bias_spec.spec->min_obj_type)), quiet, rval,
+  if(!bias_con_type) return;
+  if(CheckError(!bias_spec.spec, quiet, rval,
+		 "Bias con type of:", bias_con_type->name,
+		 "does not have a spec set!"))
+    return;
+  CheckError((!bias_con_type->InheritsFrom(bias_spec.spec->min_obj_type)), quiet, rval,
 	     "Bias con type of:", bias_con_type->name,
 	     "is not of the correct type for the bias con spec,"
 	     "which needs at least a:", bias_spec.spec->min_obj_type->name);

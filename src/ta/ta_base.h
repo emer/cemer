@@ -1681,6 +1681,7 @@ private:
 template<class T> 
 class taList: public taList_impl {
   // #NO_TOKENS #INSTANCE #NO_UPDATE_AFTER a base list template
+INHERITED(taList_impl)
 public:
   T*		SafeEl(int idx) const		{ return (T*)SafeEl_(idx); }
   // #CAT_Access get element at index
@@ -1963,6 +1964,7 @@ protected: \
 template<class T>
 class taArray : public taArray_base {
   // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER
+INHERITED(taArray_base)
 public:
   T*		el;		// #NO_SHOW #NO_SAVE Pointer to actual array memory
   T		err;		// #NO_SHOW what is returned when out of range; MUST INIT IN CONSTRUCTOR

@@ -554,7 +554,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   }    
   dest->UniqueColNames();	// make them unique!
 
-  // sort by grouped guys, in order
+  // sort by grouped guys, in order (also add "LAST" and "FIRST" -- important to be sorted)
   DataSortSpec sort_spec;
   taBase::Own(sort_spec, NULL);
   for(int i=0;i<spec->ops.size; i++) {
@@ -605,7 +605,24 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
 bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
   DataTable ssrc;
   taBase::Own(ssrc, NULL);	// activates initlinks, refs
-  taDataProc::Sort(&ssrc, src, sort_spec);
+
+  DataSortSpec full_sort_spec;
+  taBase::Own(full_sort_spec, NULL);
+  full_sort_spec = *sort_spec;
+
+  // add LAST and FIRST to end of sort spec
+  for(int i=0;i<spec->ops.size; i++) {
+    DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
+    if(ds->col_idx < 0) continue;
+    if((ds->agg.op != Aggregate::FIRST) && (ds->agg.op != Aggregate::LAST)) continue;
+    DataSortEl* ss = (DataSortEl*)full_sort_spec.ops.New(1, &TA_DataSortEl);
+    ss->col_name = ds->col_name;
+    ss->col_idx = ds->col_idx;
+    taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
+    ss->order = DataSortEl::ASCENDING;
+  }
+
+  taDataProc::Sort(&ssrc, src, &full_sort_spec);
 
   sort_spec->GetColumns(&ssrc);	// re-get columns -- they were nuked by Sort op!
 

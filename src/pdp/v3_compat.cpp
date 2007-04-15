@@ -924,6 +924,7 @@ bool V3ProjectBase::ConvertToV4_Nets(ProjectBase* nwproj) {
     }
   }
 
+  networks.el_base = nwproj->networks.el_base; // make sure the copy goes through!
   nwproj->networks = networks;	// this should the do spec updating automatically!
 
   FOR_ITR_EL(Network, net, nwproj->networks., ni) {

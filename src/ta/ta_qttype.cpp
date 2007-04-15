@@ -2119,9 +2119,18 @@ int taiTypePtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, Typ
 cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
   String mb_nm = GetOptionAfter("TYPE_ON_");
   if (mb_nm != "") {
-    MemberDef* md = typ->members.FindName(mb_nm);
-    if ((md != NULL) && (md->type == &TA_TypeDef_ptr)) {
-      TypeDef* tpdf = *(TypeDef**)(md->GetOff(base));
+    TypeDef* tpdf = NULL;
+    if (mb_nm == "this") {
+      tpdf = typ;
+      if (typ->InheritsFrom(&TA_taBase) && (base != NULL))
+	tpdf = ((TAPtr)base)->GetTypeDef();
+    } else {
+      MemberDef* md = typ->members.FindName(mb_nm);
+      if ((md != NULL) && (md->type == &TA_TypeDef_ptr)) {
+	TypeDef* tpdf = *(TypeDef**)(md->GetOff(base));
+      }
+    }
+    if(tpdf) {
       arg_val = new cssTypeDef(tpdf, 1, &TA_TypeDef, nm);
       arg_base = (void*)&(((cssTA*)arg_val)->ptr);
       return arg_val;

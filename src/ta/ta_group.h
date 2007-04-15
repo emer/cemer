@@ -245,6 +245,7 @@ protected: // clip functions
 
 template<class T> class taGroup : public taGroup_impl {
   // #INSTANCE #NO_UPDATE_AFTER
+  INHERITED(taGroup_impl)
 public:
   ////////////////////////////////////////////////
   // 	functions that return the type		//
