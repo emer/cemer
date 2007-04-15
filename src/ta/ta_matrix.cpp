@@ -520,8 +520,24 @@ bool taMatrix::AllocFrames(int n) {
 bool taMatrix::canResize() const {
   return (alloc_size >= 0);
 }
-
+/*
+void Copy_impl(const taBase* cp) { \
+    StructUpdate(true); \
+      inherited::Copy_impl(cp); \
+      Copy__(cp); \
+    StructUpdate(false);} \
+} */
 void taMatrix::Copy_(const taMatrix& cp) {
+  // this assumes copy has been validated -- we only do the sizing here
+  // each instance guy implements the actual copy, so same-type are fast,
+  // and also so diff-type can be mediated, ex. rgb, etc.
+//TODO: we should preserve where we can
+/* can't use virt
+  SetArray_(NULL);
+  SetGeomN(cp.geom); 
+  */
+
+/*obs
   // note: we must inherit from the copy
   if(TestError(!GetTypeDef()->InheritsFrom(cp.GetTypeDef()), "Copy_", "cannot copy",
 	       String(GetTypeDef()->name),"from",String(cp.GetTypeDef()->name))) return;
@@ -540,11 +556,7 @@ void taMatrix::Copy_(const taMatrix& cp) {
       El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i));
     }
   }
-  StructUpdate(false);
-/*nuke  // notifies
-  if (m_dm) {
-    m_dm->emit_dataChanged(0, 0, rowCount() - 1, dim(0) - 1);
-  }*/
+  StructUpdate(false); */
 }
 
 bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
@@ -651,10 +663,17 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
   // dimensions are changed (even though that is frowned on...)
   if (!AllocFrames(n)) return false; // does legality test
   int new_size = n * frameSize();
+  // avoid spurious notifies -- geom changes do their own notify
+  if (new_size == size) {
+    geom.Set(geom.size-1, n);	
+    return true;
+  }
   // blank new or reclaim old
   bool is_1d = (dims() <= 1); // 1d makes the row ops into col ops for notify
+  
+  StructUpdate(true);
   if (new_size > size) {
-    // Qt data model notification begin
+/*obs    // Qt data model notification begin
     bool was_zero = (size == 0);
     bool in_row = false;
     bool in_col = false;
@@ -674,7 +693,7 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
           in_col = true;
         }
       }
-    }
+    } */
     
     // data change
     const void* blank = El_GetBlank_();
@@ -684,14 +703,14 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
     size = new_size;
     geom.Set(geom.size-1, n);
     	
-    // notify end
+/*    // notify end
     if (m_dm && notify) {
       if (in_col) m_dm->endInsertColumns();
       if (in_row) m_dm->endInsertRows();
-    }
+    }*/
     
   } else if (new_size < size) {
-    bool to_zero = (new_size == 0);
+/*    bool to_zero = (new_size == 0);
     bool rm_row = false;
     bool rm_col = false;
     if (m_dm && notify) {
@@ -710,21 +729,18 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
           rm_col = true;
         }
       }
-    }
+    }*/
     
     ReclaimOrphans_(new_size, size - 1);
     size = new_size;
     geom.Set(geom.size-1, n);	
     
-    if (m_dm && notify) {
+/*    if (m_dm && notify) {
       if (rm_col) m_dm->endRemoveColumns();
       if (rm_row) m_dm->endRemoveRows();
-    }
+    }*/
   }
-  else {
-    geom.Set(geom.size-1, n);	
-  }
-  DataChanged(DCR_ITEM_UPDATED);
+  StructUpdate(false);
   return true;
 }
 
@@ -1111,36 +1127,37 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   String err_msg;
   bool valid = GeomIsValid(dims_, geom_, &err_msg);
   if(TestError(!valid, "SetGeom_", err_msg)) return;
+  // flex not allowed for fixed data
+  if (isFixedData()) {
+    if(TestError((geom_[dims_-1] == 0), "SetGeom_", 
+      "fixed data cannot use flex sizing")) return;
+  }
   
-  // NOTE: following routine is conservative of existing geom, and will ignore flex sizing if already sized
+  // NOTE: following routine is conservative of existing geom
+  // if you are using flex sizing, it will collapse any existing!!!
   // only copy bottom N-1 dims, setting 0 frames -- we size frames in next step
   StructUpdate(true);
-  bool changed = geom.SetSize(dims_);
-  for (int i = 0; i < (dims_ - 1) ; ++i) {
+  // we collapse slices if #dims change, inner dims change, or frames go down
+  bool collapse_slices = geom.SetSize(dims_);
+  for (int i = 0; i < (dims_ - 1); ++i) {
     if(geom[i] != geom_[i]) {
-      changed = true;
+      collapse_slices = true;
       geom[i] = geom_[i];
     }
   }
-
+  if (geom[dims_ -1] > geom_[dims_ - 1])
+    collapse_slices = true;
+  
   // assign storage if not fixed
   if (isFixedData()) {
-    if(geom[dims_-1] != geom_[dims_-1]) {
-      changed = true;
-      geom[dims_-1] = geom_[dims_-1];
-    }
-    if(changed) {
-      UpdateSlices_Collapse();
-      size = geom.Product();
-    }
+    geom[dims_ -1] = geom_[dims_ - 1];
+    size = geom.Product();
   } else {
-    // if flex case, we skip this step -- it will stay zero on new, or retain value if data exists
-    if (geom_[dims_-1] != 0) {
-      // exact value case
-      geom[dims_-1] = 0; // next step actually sets
-      // todo: should use "changed" flag to reset??
-      EnforceFrames(geom_[dims_-1]); // does nothing if outer dim==0
-    }
+    // next step actually sets last geom
+    EnforceFrames(geom_[dims_-1]); 
+  }
+  if (collapse_slices) {
+    UpdateSlices_Collapse();
   }
   StructUpdate(false);
 }
@@ -1538,7 +1555,7 @@ void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
   }
-  else if (dcr == DCR_STRUCT_UPDATE_END) {
+  else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_ITEM_UPDATED)) {
     emit_layoutChanged();
   }
 }

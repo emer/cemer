@@ -30,6 +30,7 @@
 #  include <QAbstractTableModel>
 #endif
 
+#include <string.h>
 
 // externals
 class TypeDef;
@@ -514,7 +515,6 @@ public:
     { return Output(strm, indent); }
   int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  void			Copy_(const taMatrix& cp);
   COPY_FUNS(taMatrix, taNBase);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
 
@@ -615,6 +615,7 @@ protected:
   // load the ;-term'ed value ; generic is fine for numbers, override for strings, variants, etc.; ret is last char read, usually ;
 
 private:
+  void			Copy_(const taMatrix& cp);
   void 			Initialize();
   void			Destroy();
 };
@@ -723,7 +724,8 @@ protected:
   override void		El_Copy_(void* to, const void* fm) {*((T*)to) = *((T*)fm); }
   override uint		El_SizeOf_() const	{ return sizeof(T); }
 
-private: //note: forbid these for now -- if needed, define semantics
+private: 
+  TMPLT_NCOPY(taMatrixT, T)
   void			Initialize()	{el = NULL;}
   void			Destroy() { CutLinks();}
 };
@@ -836,7 +838,35 @@ public:
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
 
+#define MAT_COPY_SAME_SLOW(y,T) \
+  void	Copy_(const y& cp) { SetGeomN(cp.geom); \
+    for (int i = 0; i < size; ++i) { \
+      El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i)); \
+    }}
 
+#define MAT_COPY_SAME_FAST(y,T) \
+  void	Copy_(const y& cp) { SetGeomN(cp.geom); \
+    memcpy(data(), cp.data(), size * sizeof(T)); \
+    }
+    
+    
+#define TA_MATRIX_FUNS_FAST(y,T) \
+private: \
+  MAT_COPY_SAME_FAST(y,T) \
+protected: \
+  override bool	fastAlloc() const {return true;} \
+public: \
+  TA_MATRIX_FUNS(y,T)
+  
+#define TA_MATRIX_FUNS_SLOW(y,T) \
+private: \
+  MAT_COPY_SAME_SLOW(y,T) \
+protected: \
+  override bool	fastAlloc() const {return false;} \
+public: \
+  TA_MATRIX_FUNS(y,T)
+  
+  
 ///////////////////////////////////
 // 	String_Matrix
 ///////////////////////////////////
@@ -849,9 +879,8 @@ public:
   override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
   override ValType	GetDataValType() const {return VT_STRING;} 
   
-  void			Copy_(const String_Matrix& cp) {}
   COPY_FUNS(String_Matrix, taMatrixT<String>)
-  TA_MATRIX_FUNS(String_Matrix, String)
+  TA_MATRIX_FUNS_SLOW(String_Matrix, String)
   
 public:
   override float	El_GetFloat_(const void* it) const	
@@ -862,7 +891,6 @@ public:
   override void		El_SetFmVar_(void* it, const Variant& var) {*((String*)it) = var.toString(); };  // #IGNORE
 protected:
   STATIC_CONST String	blank; // #IGNORE
-  override bool		fastAlloc() const {return false;}
   override void		Dump_Save_Item(ostream& strm, int idx);
   override int		Dump_Load_Item(istream& strm, int idx); 
   override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
@@ -892,9 +920,7 @@ public:
   virtual void		InitVals(float val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
     
-  void			Copy_(const float_Matrix& cp) {};
-  COPY_FUNS(float_Matrix, taMatrixT<float>);
-  TA_MATRIX_FUNS(float_Matrix, float);
+  TA_MATRIX_FUNS_FAST(float_Matrix, float);
 public:
   override float	El_GetFloat_(const void* it) const { return *((float*)it); } // #IGNORE
   override const String	El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
@@ -928,9 +954,7 @@ public:
   virtual void		InitVals(double val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
     
-  void			Copy_(const double_Matrix& cp) {};
-  COPY_FUNS(double_Matrix, taMatrixT<double>);
-  TA_MATRIX_FUNS(double_Matrix, double);
+  TA_MATRIX_FUNS_FAST(double_Matrix, double);
   
 public:
   override float	El_GetFloat_(const void* it) const 
@@ -973,9 +997,7 @@ public:
   virtual void		InitVals(int val=0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
 
-  void			Copy_(const int_Matrix& cp) {};
-  COPY_FUNS(int_Matrix, taMatrixT<int>);
-  TA_MATRIX_FUNS(int_Matrix, int);
+  TA_MATRIX_FUNS_FAST(int_Matrix, int);
   
 public:
   override float	El_GetFloat_(const void* it) const { return (float)*((int*)it); } // #IGNORE
@@ -1006,9 +1028,7 @@ public:
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts 0-255 or octal or hex forms
   
-  void			Copy_(const byte_Matrix& cp) {};
-  COPY_FUNS(byte_Matrix, taMatrixT<byte>);
-  TA_MATRIX_FUNS(byte_Matrix, byte);
+  TA_MATRIX_FUNS_FAST(byte_Matrix, byte);
   
 public: //
   override float	El_GetFloat_(const void* it) const { return (float)*((byte*)it); } // #IGNORE
@@ -1036,9 +1056,7 @@ public:
   override TypeDef*	GetDataTypeDef() const {return &TA_Variant;} 
   override ValType	GetDataValType() const {return VT_VARIANT;} 
   
-  void			Copy_(const Variant_Matrix& cp) {};
-  COPY_FUNS(Variant_Matrix, taMatrixT<Variant>);
-  TA_MATRIX_FUNS(Variant_Matrix, Variant);
+  TA_MATRIX_FUNS_SLOW(Variant_Matrix, Variant);
   
 public:
   //NOTE: setString may not be exactly what is wanted -- that will change variant to String
@@ -1050,7 +1068,6 @@ public:
   override void		El_SetFmVar_(void* it, const Variant& var) {*((Variant*)it) = var; };  // #IGNORE
 protected:
   STATIC_CONST Variant	blank; // #IGNORE
-  override bool		fastAlloc() const {return false;}
   override void		Dump_Save_Item(ostream& strm, int idx);
   override int		Dump_Load_Item(istream& strm, int idx); // ret is last char read, s/b ;
   override void		ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
@@ -1076,9 +1093,7 @@ public:
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in form: "r g b" or RRGGBB in hex
   
-  void			Copy_(const rgb_Matrix& cp) {};
-  COPY_FUNS(rgb_Matrix, taMatrixT<rgb_t>);
-  TA_MATRIX_FUNS(rgb_Matrix, rgb_t);
+  TA_MATRIX_FUNS_FAST(rgb_Matrix, rgb_t);
   
 public: //
   //note: for streaming, we use web RGB hex value

@@ -178,12 +178,16 @@ void DataCol::CopyFromRow_Robust(int dest_row, const DataCol& src, int src_row) 
 
 void DataCol::Init() {
   taMatrix* ar = AR(); //cache
+  int rows = 0; // rows, based on table (not our frames, which may have changed)
+  DataTable* tab = dataTable();
+  if (tab) rows = tab->rows;
   if (is_matrix) {
     MatrixGeom tdim = cell_geom;
-    tdim.SetSize(tdim.size + 1); // leaves the new outer dim = 0, which is flex sizing
+    tdim.SetSize(tdim.size + 1);
+    tdim.Set(tdim.size-1, rows);
     ar->SetGeomN(tdim);
   } else {
-    ar->SetGeom(1, 0); // sets to 1-d, with flex sizing
+    ar->SetGeom(1, rows);
   }
 }
 
