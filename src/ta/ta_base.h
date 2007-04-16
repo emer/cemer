@@ -109,9 +109,9 @@ protected: \
       inherited::Copy_impl(cp); \
       Copy__(cp); \
     StructUpdate(false);} \
-  void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y*)cp)); \
-    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
-  void  CastCopyTo(TAPtr cp) { y& rf = *((y*)cp); rf.Copy_impl(*this); } \
+  void  UnSafeCopy(const taBase* cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y*)cp)); \
+    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);} \
+  void  CastCopyTo(taBase* cp) const { y& rf = *((y*)cp); rf.Copy_impl(*this); } \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
@@ -132,9 +132,9 @@ protected: \
       inherited::Copy_impl(cp); \
       Copy__(cp); \
     StructUpdate(false);} \
-  void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T>*)cp)); \
+  void  UnSafeCopy(const taBase* cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T>*)cp)); \
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
-  void  CastCopyTo(TAPtr cp) { y<T>& rf = *((y<T>*)cp); rf.Copy_impl(*this); } \
+  void  CastCopyTo(taBase* cp) const { y<T>& rf = *((y<T>*)cp); rf.Copy_impl(*this); } \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
@@ -407,12 +407,12 @@ public:
     THIS_INVALID	= 0x01, // CheckThisConfig_impl has detected a problem
     CHILD_INVALID	= 0x02, // CheckChildConfig_impl returns issue with a child
     COPYING		= 0x04, // this object is currently within a Copy function
-    USE_STALE		= 0x08, // calls setStale on appropriate changes
+    USE_STALE		= 0x08, // calls setStale on appropriate changes; usually set in Initialize
     DESTROYING		= 0x40, // Set in Destroying at the very beginning of destroy
     DESTROYED		= 0x80  // set in base destroy (DEBUG only); lets us detect multi destroys
 #ifndef __MAKETA__
     ,INVALID_MASK	= THIS_INVALID | CHILD_INVALID
-    ,COPY_MASK		= THIS_INVALID | CHILD_INVALID | USE_STALE // flags to copy when doing an object copy
+    ,COPY_MASK		= THIS_INVALID | CHILD_INVALID // flags to copy when doing an object copy
 #endif
   };
   
@@ -805,6 +805,8 @@ public:
   void			Copy(const taBase& cp) { 
     if (CanCopy(&cp)) Copy_impl(cp);}
   // #IGNORE the copy (=) operator FOR JUST THIS CLASS -- CALL PARENT Copy() for its functions; note: base version is so trivial, we don't do any of the stuff in BASEFUNS macro, but you should imagine it does
+  virtual bool		Copy(const taBase* cp);
+  // #IGNORE this is a generic copy, that enables common-subclass copying, or even copying from disparate clases that might have a sensible copy semantic
   virtual void		CopyFromSameType(void* src_base)
   { GetTypeDef()->CopyFromSameType((void*)this, src_base); }
   // #IGNORE copy values from object of same type
@@ -829,14 +831,24 @@ public:
   // #MENU #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
   // #MENU #TYPE_this #CAT_ObjectMgmt Change me into a different type of object, copying current info (done through owner)
-  virtual void		UnSafeCopy(TAPtr) {} // #IGNORE assumes source is same type
-  virtual void		CastCopyTo(TAPtr) {}; // #IGNORE
+  virtual void		UnSafeCopy(const taBase*) {} // #IGNORE custom version made for each class: if cp->Inherits(me) Copy(cp); else if me->Inherits(cp) cp.CastCopyTo(me) else CopyOther_impl(cp)
+  virtual void		CastCopyTo(taBase*) const {}; // #IGNORE custom version made for every class, casts
+  void			CopyToCustom(taBase* src) const; // #IGNORE DO NOT CALL -- this is only a public, static wrapper for the _impl
+  void			CopyFromCustom(const taBase* cp); // #IGNORE DO NOT CALL -- this is only a public, static wrapper for the _impl
 
 protected: // impl
   void			Copy_impl(const taBase& cp);
+  virtual bool		CanDoCopy_impl(const taBase* cp, bool quiet, bool copy);
+    // intertwines the checks and copy, so it can be used for checking, or copying 
   virtual void		CanCopy_impl(const taBase* cpy_from, bool quiet,
     bool& ok, bool virt) const; 
     // basic query interface impl, only passed frm >= our class; may get called repeatedly, so subs are allowed to add an empty stub
+  virtual void		CopyFromCustom_impl(const taBase* cp) {} // this is the generic copy, that enables common subclass or disparate class copying; follow pattern of Copy_impl, except we are always called in a Struct bracket
+  virtual void		CopyToCustom_impl(taBase* targ) const {} // this is a fairly rarely used one for the case where the src actually does the copy; follow pattern of Copy_impl, except we are always called in a Struct bracket
+  
+  virtual void		CanCopyCustom_impl(bool to, const taBase* cp,
+    bool quiet, bool& allowed, bool& forbidden) const {}
+    // we need an allowed/forbidden paradigm here, so we can always call inherited -- only issue msg on forbidden; caller will supply msg if not allowed -- this routine is called for self (to=0), and we also call the proposed buddy (to=1) -- either one can forbid; us forbidding trumps cp allowing; since cp-controlled is so unusual, it is given priority
   bool			CanCopy_ctor(const taBase* cpy_from) const
     {bool ok = true; CanCopy_impl(cpy_from, true, ok, false); return ok;}
     // this is the guy used in the Copy ctor to guard the Copy_ for that level
@@ -1440,7 +1452,7 @@ protected:
   override void		UpdateAfterEdit_impl();
 
 private:
-  void  Copy_(const taNBase& cp); 
+  NCOPY(taNBase); //note: we don't copy name, because it causes too many issues
   void 	Initialize()	{ }
   void  Destroy()       { } 
 };
@@ -1474,10 +1486,6 @@ protected:
   void*		El_Ref_(void* it)	{ taBase::Ref((TAPtr)it); return it; }
   void*		El_unRef_(void* it)	{ taBase::unRef((TAPtr)it); return it; }
   void		El_Done_(void* it)	{ taBase::Done((TAPtr)it); }
-
-/*nuke  void*		El_MakeToken_(void* it) { return (void*)((TAPtr)it)->MakeToken(); }
-  void*		El_Copy_(void* trg, void* src)
-  { ((TAPtr)trg)->UnSafeCopy((TAPtr)src); return trg; } */
 };
 
 typedef taPtrList_base<taBase>  taPtrList_ta_base; // this comment needed for maketa parser
@@ -1646,6 +1654,7 @@ protected:
   void		El_SetIndex_(void* it, int idx) {((TAPtr)it)->SetIndex(idx);}
   void		El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST 
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
+  void 		El_SetName_(void* it, const String& nm)  {((TAPtr)it)->SetName(nm);}
   TypeDef*	El_GetType_(void* it) const {return ((TAPtr)it)->GetTypeDef();}
   TALPtr	El_GetOwnerList_(void* it) const 
   { return dynamic_cast<TABLPtr>(((TAPtr)it)->GetOwner()); }

@@ -520,43 +520,33 @@ bool taMatrix::AllocFrames(int n) {
 bool taMatrix::canResize() const {
   return (alloc_size >= 0);
 }
-/*
-void Copy_impl(const taBase* cp) { \
-    StructUpdate(true); \
-      inherited::Copy_impl(cp); \
-      Copy__(cp); \
-    StructUpdate(false);} \
-} */
-void taMatrix::Copy_(const taMatrix& cp) {
-  // this assumes copy has been validated -- we only do the sizing here
-  // each instance guy implements the actual copy, so same-type are fast,
-  // and also so diff-type can be mediated, ex. rgb, etc.
-//TODO: we should preserve where we can
-/* can't use virt
-  SetArray_(NULL);
-  SetGeomN(cp.geom); 
-  */
 
-/*obs
-  // note: we must inherit from the copy
-  if(TestError(!GetTypeDef()->InheritsFrom(cp.GetTypeDef()), "Copy_", "cannot copy",
-	       String(GetTypeDef()->name),"from",String(cp.GetTypeDef()->name))) return;
-    
-  StructUpdate(true);
-  // first, zero out current, if any
-  SetArray_(NULL);
-  if (cp.isFixedData()) {
-    SetFixedData_(cp.data(), cp.geom); //sets size
-  } else {
-    alloc_size = 0;
-    size = 0;
-    geom.Reset();
-    SetGeomN(cp.geom);
-    for (int i = 0; i < size; ++i) {
-      El_Copy_(FastEl_Flat_(i), cp.FastEl_Flat_(i));
-    }
+void taMatrix::CanCopyCustom_impl(bool to, const taBase* cp, bool quiet,
+    bool& allowed, bool& forbidden) const
+{
+  if (to) return; // no strictures
+  if (cp->InheritsFrom(&TA_taMatrix)) {
+    allowed = true; // generally allowed
   }
-  StructUpdate(false); */
+}
+
+void taMatrix::CopyFromCustom_impl(const taBase* cp_fm) {
+  if (cp_fm->InheritsFrom(&TA_taMatrix)) {
+    Copy_Matrix_impl(static_cast<const taMatrix*>(cp_fm));
+  }
+  else inherited::CopyFromCustom_impl(cp_fm); // unlikely/prob doesn't happen
+}
+
+void taMatrix::Copy_Matrix_impl(const taMatrix* cp) {
+  // note: caller has asserted Struct guys
+  // assumes copy has been validated
+  inherited::Copy_impl(*cp); // do all common generic parent class copying
+  SetBaseFlag(COPYING); // note: still have to set/reset here, because not nestable
+  SetGeomN(cp->geom);
+  for (int i = 0; i < size; ++i) {
+    El_SetFmVar_(FastEl_Flat_(i), cp->FastElAsVar_Flat(i));
+  }  
+  ClearBaseFlag(COPYING);
 }
 
 bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
@@ -668,77 +658,18 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
     geom.Set(geom.size-1, n);	
     return true;
   }
-  // blank new or reclaim old
-  bool is_1d = (dims() <= 1); // 1d makes the row ops into col ops for notify
-  
   StructUpdate(true);
   if (new_size > size) {
-/*obs    // Qt data model notification begin
-    bool was_zero = (size == 0);
-    bool in_row = false;
-    bool in_col = false;
-    if (m_dm && notify) {
-      if (is_1d) {
-        if (was_zero) { 
-          m_dm->beginInsertRows(QModelIndex(), 0, 1); 
-          in_row = true;
-        }
-        m_dm->beginInsertColumns(QModelIndex(), size, new_size - 1);
-        in_col = true;
-      } else { //Nd
-        m_dm->beginInsertRows(QModelIndex(), rowCount(), FrameToRow(n) - 1); 
-        in_row = true;
-        if (was_zero) { 
-          m_dm->beginInsertColumns(QModelIndex(), 0, dim(0) - 1);
-          in_col = true;
-        }
-      }
-    } */
-    
-    // data change
     const void* blank = El_GetBlank_();
     for (int i = size; i < new_size; ++i) {
       El_Copy_(FastEl_Flat_(i), blank);
     }
     size = new_size;
     geom.Set(geom.size-1, n);
-    	
-/*    // notify end
-    if (m_dm && notify) {
-      if (in_col) m_dm->endInsertColumns();
-      if (in_row) m_dm->endInsertRows();
-    }*/
-    
   } else if (new_size < size) {
-/*    bool to_zero = (new_size == 0);
-    bool rm_row = false;
-    bool rm_col = false;
-    if (m_dm && notify) {
-      if (is_1d) {
-        if (to_zero) {
-          m_dm->beginRemoveRows(QModelIndex(), 0, 1); 
-          rm_row = true;
-        }
-        m_dm->beginRemoveColumns(QModelIndex(), 0, dim(0) - 1);
-        rm_col = true;
-      } else { // Nd
-        m_dm->beginRemoveRows(QModelIndex(), FrameToRow(n), rowCount() - 1); 
-        rm_row = true;
-        if (to_zero) {
-          m_dm->beginRemoveColumns(QModelIndex(), 0, dim(0) - 1);
-          rm_col = true;
-        }
-      }
-    }*/
-    
     ReclaimOrphans_(new_size, size - 1);
     size = new_size;
     geom.Set(geom.size-1, n);	
-    
-/*    if (m_dm && notify) {
-      if (rm_col) m_dm->endRemoveColumns();
-      if (rm_row) m_dm->endRemoveRows();
-    }*/
   }
   StructUpdate(false);
   return true;

@@ -614,8 +614,14 @@ protected:
   virtual int		Dump_Load_Item(istream& strm, int idx); 
   // load the ;-term'ed value ; generic is fine for numbers, override for strings, variants, etc.; ret is last char read, usually ;
 
+  override void		CanCopyCustom_impl(bool to, const taBase* cp, bool quiet,
+    bool& allowed, bool& forbidden) const;
+  override void		CopyFromCustom_impl(const taBase* cp_fm);
+  virtual void 		Copy_Matrix_impl(const taMatrix* cp); 
+   // generic copy using Variant; only called when not same matrix type
+
 private:
-  void			Copy_(const taMatrix& cp);
+  NCOPY(taMatrix) // there is a generic copy, but not at the direct object level
   void 			Initialize();
   void			Destroy();
 };
@@ -651,7 +657,6 @@ private:
 template<class T> 
 class taMatrixT : public taMatrix {
   // #VIRT_BASE #NO_INSTANCE ##CAT_Data 
-  INHERITED(taMatrix)
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 

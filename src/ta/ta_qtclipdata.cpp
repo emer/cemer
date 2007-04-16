@@ -655,13 +655,11 @@ void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbid
   // note: only works inprocess, 
   // TODO: maybe we could just stream in the stuff for ext???
   if (!ms->isMulti() && ms->isThisProcess()) {
-    TypeDef* td = ms->td();
-    if (td && td->InheritsFrom(GetTypeDef())) {
-      // tent allow, but must make sure not copying parent into child (infinite recurse)
-      taBase* obj = ms->tabObject();
-      if (CanCopy(obj))
-        allowed |= (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN);
-    }
+    // Assign (copy)
+    // note: validation checks for the parent/child scenario
+    taBase* obj = ms->tabObject();
+    if (CanCopy(obj))
+      allowed |= (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN);
   }
 }
 
@@ -709,7 +707,7 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
     if (CheckError((!obj), false, ok,
       "Could not retrieve object from clipboard"))
       return taiClipData::ER_ERROR;
-    this->CopyFrom(obj);
+    this->Copy(obj);
     UpdateAfterEdit();
   }
   return 0;

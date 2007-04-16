@@ -1254,12 +1254,7 @@ void taBase::ClearCheckConfig() {
 ///////////////////////////////////////////////////////////////////////////
 //	Copying and changing type 
 
-void taBase::Copy_impl(const taBase& cp) { // note: not a virtual method
-  // just the flags
-  m_flags = (m_flags & ~COPY_MASK) | (cp.m_flags & COPY_MASK);
-}
-
-bool taBase::CanCopy(const taBase* cp, bool quiet) const {
+bool taBase::CanDoCopy_impl(const taBase* cp, bool quiet, bool copy) {
   bool ok = true; // ref var needed for Check
   // do the generic guys, that apply in every case
   if (CheckError((!cp), quiet, ok,
@@ -1267,16 +1262,38 @@ bool taBase::CanCopy(const taBase* cp, bool quiet) const {
   if (cp->InheritsFrom(GetTypeDef())) {
     // we will be doing the copy
     CanCopy_impl(cp, quiet, ok, true);
+    if (ok && copy) UnSafeCopy(cp);
   } else if (InheritsFrom(cp->GetTypeDef())) {
     // other guy will be doing it
     cp->CanCopy_impl(this, quiet, ok, true);
-  } else { // not commensurable classes
-    CheckError((true), quiet, ok,
+    if (ok && copy) UnSafeCopy(cp);
+  } else { // custom
+    bool to_cp = false; // rare case where src will copy
+    bool allowed = false;
+    bool forbidden = false;
+    // check rare case: cp will copy into us -- it can assert forbidden to stop everything
+    cp->CanCopyCustom_impl(true, this, quiet, allowed, forbidden);
+    to_cp = (allowed && !forbidden);
+    // check most common case: cp to us
+    CanCopyCustom_impl(false, cp, quiet, allowed, forbidden);
+    if (!(allowed && !forbidden)) ok = false;
+    // only give our own error, if forbidden guy didn't
+    if (!forbidden) CheckError((!allowed), quiet, ok,
        "Cannot copy from given object of type:", cp->GetTypeDef()->name,
        "which does not inherit from:", GetTypeDef()->name,
       "(or I don't inherit from it)");
+    if (ok && copy) {
+      if (to_cp) cp->CopyToCustom(this);
+      else       CopyFromCustom(cp);
+    }
   }
   return ok;
+}
+
+bool taBase::CanCopy(const taBase* cp, bool quiet) const {
+   // harmless, because CanDoCopy is actually const on check
+  taBase* ths = const_cast<taBase*>(this);
+  return ths->CanDoCopy_impl(cp, quiet, false);
 }
 
 // this guy is always called with cp_fm !null, and our class or a subclass
@@ -1294,6 +1311,10 @@ void taBase::CanCopy_impl(const taBase* cpy_from, bool quiet,
 }
 
 
+bool taBase::Copy(const taBase* cp) {
+  return CanDoCopy_impl(cp, false, true);
+}
+
 bool taBase::CopyFrom(TAPtr cpy_from) {
 // this one is easy, since it is really just the same as Copy, but with warnings
   if (!CanCopy(cpy_from, false)) return false;
@@ -1304,6 +1325,27 @@ bool taBase::CopyFrom(TAPtr cpy_from) {
 bool taBase::CopyTo(TAPtr cpy_to) {
   if(TestError((!cpy_to), "CopyTo", "targetis null")) return false;
   return cpy_to->CopyFrom(this);
+}
+
+void taBase::CopyToCustom(taBase* src) const {
+  src->StructUpdate(true);
+  src->SetBaseFlag(COPYING); // note: this is always outer guy, so do it here
+    CopyToCustom_impl(src);
+  src->ClearBaseFlag(COPYING); // note: this is always outer guy, so do it here
+  src->StructUpdate(false);
+}
+
+void taBase::CopyFromCustom(const taBase* cp_fm) {
+  StructUpdate(true);
+  SetBaseFlag(COPYING); // note: this is always outer guy, so do it here
+    CopyFromCustom_impl(cp_fm);
+  ClearBaseFlag(COPYING); // note: this is always outer guy, so do it here
+  StructUpdate(false);
+}
+
+void taBase::Copy_impl(const taBase& cp) { // note: not a virtual method
+  // just the flags
+  m_flags = (m_flags & ~COPY_MASK) | (cp.m_flags & COPY_MASK);
 }
 
 bool taBase::ChildCanDuplicate(const taBase* chld, bool quiet) const {
@@ -2203,10 +2245,6 @@ void taNBase::SetDefaultName() {
     return;
   SetDefaultName_();
 }
-
-void taNBase::Copy_(const taNBase& cp) { 
-  name = cp.name; 
-} 
 
 void taNBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();

@@ -416,6 +416,7 @@ protected:
   
 private:
   void 	Copy_(const DataCol& cp);
+  void 	Copy_Common_(const DataCol& cp);
   void	Initialize();
   void	Destroy()	{CutLinks(); }; //
 };

@@ -126,7 +126,9 @@ void DataCol::CutLinks() {
   inherited::CutLinks();
 }
 
-void DataCol::Copy_(const DataCol& cp) {
+void DataCol::Copy_Common_(const DataCol& cp) {
+  // things common to full and schema-only copy
+  name = cp.name; // this is the default we want for DataCol
   desc = cp.desc;
   col_flags = cp.col_flags;
   is_matrix = cp.is_matrix;
@@ -134,10 +136,18 @@ void DataCol::Copy_(const DataCol& cp) {
   calc_expr = cp.calc_expr;
 }
 
+void DataCol::Copy_(const DataCol& cp) {
+  Copy_Common_(cp);
+}
+
 void DataCol::Copy_NoData(const DataCol& cp) {
-  taNBase::Copy(cp);
-  Copy_(cp);
-  Init();			// initialize array to new geom
+  StructUpdate(true);
+  inherited::Copy_impl(cp);
+  SetBaseFlag(COPYING);
+  Copy_Common_(cp);
+  Init(); //note: table should have no rows, so won't make any
+  ClearBaseFlag(COPYING);
+  StructUpdate(false);			// initialize array to new geom
 }
 
 void DataCol::CopyFromRow(int dest_row, const DataCol& src, int src_row) {

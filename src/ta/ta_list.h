@@ -214,6 +214,8 @@ protected:
   // name of the list
   virtual String 	El_GetName_(void*) const 	{ return _nilString; }
   // gets name from an element (for list)
+  virtual void 		El_SetName_(void*, const String&)  {}
+  // mostly for whole-list copies, where we copy the name too
   virtual void		El_SetDefaultName_(void*, int) {}
     // if added item has empty name, this will get called, enabling a name to be set; index has been set
   virtual taHashVal 	El_GetHashVal_(void* it) const;
@@ -244,7 +246,9 @@ protected:
   virtual void*	El_MakeToken_(void* it) 	{ return it; }
   // how to make a token of the same type as the argument
   virtual void*	El_Copy_(void* trg, void*) { return trg; }
-  // how to copy from given item (2nd arg)
+  // how to copy from given item (2nd arg); usually doesn't copy name
+  virtual void*	El_CopyN_(void* trg, void* fm);
+  // El_Copy_ + name copy; our version synthesizes, but you can override for efficiency
   enum ElKind {
     EK_NULL	= 0, // duh!
     EK_OWN	= 1, // owned by list, is an instance
@@ -309,7 +313,7 @@ public:
   // #IGNORE add a new object so that list only has one, new replaces existing
   virtual void*	DuplicateEl_(void* it);
   // #IGNORE duplicate given item and add to list, returning new item, or NULL if failed
-  virtual bool	Insert_(void* it, int where);		// #IGNORE
+  virtual bool	Insert_(void* it, int where, bool no_notify = false);		// #IGNORE
   virtual bool 	ReplaceEl_(void* ol, void* nw);		// #IGNORE
   virtual bool 	ReplaceName_(const String& ol, void* nw);	// #IGNORE
   virtual bool 	ReplaceIdx_(int ol, void* nw, bool no_notify_insert = false); // #IGNORE

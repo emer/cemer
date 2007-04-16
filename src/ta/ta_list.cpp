@@ -345,9 +345,9 @@ void taPtrList_impl::RemoveAll() {
     RemoveLast();
 }
 
-bool taPtrList_impl::Insert_(void* it, int where) {
+bool taPtrList_impl::Insert_(void* it, int where, bool no_notify) {
   if((where >= size) || (where < 0)) {
-    Add_(it);
+    Add_(it, no_notify);
     return true;
   }
   AddOnly_(NULL); 
@@ -361,7 +361,7 @@ bool taPtrList_impl::Insert_(void* it, int where) {
     El_SetIndex_(El_Own_(it), where);
     if(hash_table != NULL)
       hash_table->Add(El_GetHashVal_(it), where);
-    DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(where - 1));
+    if (!no_notify) DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(where - 1));
   }
   return true;
 }
@@ -610,16 +610,23 @@ void taPtrList_impl::UpdateAllIndicies() {
 //      Duplication    //
 /////////////////////////
 
+void* taPtrList_impl::El_CopyN_(void* to, void* fm) {
+  void* rval = El_Copy_(to, fm);
+  El_SetName_(to, El_GetName_(fm));
+  return rval;
+}
+
 
 void* taPtrList_impl::DuplicateEl_(void* it) {
   if(it == NULL)
     return NULL;
+  int idx = FindEl_(it); // can't be not found!
   ++taMisc::is_duplicating;
   void* nw = El_MakeToken_(it);
-  Add_(nw, true); //defer notify until after copy
-  El_Copy_(nw, it);
+  Insert_(nw, idx + 1, true); //defer notify until after copy
+  El_Copy_(nw, it); // note: DONT set name, leave as default
   --taMisc::is_duplicating;
-  DataChanged(DCR_LIST_ITEM_INSERT, nw, SafeEl_(size - 2)); 
+  DataChanged(DCR_LIST_ITEM_INSERT, nw, SafeEl_(idx)); 
   return nw;
 }
 
@@ -764,7 +771,7 @@ void taPtrList_impl::Copy_Common(const taPtrList_impl& cp) {
     if(cp.el[i] == NULL) continue;
     it = el[i];
     ++taMisc::is_duplicating;
-    El_Copy_(it, cp.el[i]);
+    El_CopyN_(it, cp.el[i]); //+name
     --taMisc::is_duplicating;
     DataChanged(DCR_LIST_ITEM_UPDATE, it); 
   }
@@ -788,7 +795,7 @@ void taPtrList_impl::Copy_Duplicate_impl(const taPtrList_impl& cp) {
       ++taMisc::is_duplicating;
       void* it = El_MakeToken_(cp_it);
       Add_(it, true);
-      El_Copy_(it, cp_it);
+      El_CopyN_(it, cp_it);
       DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
       --taMisc::is_duplicating;
     } break;
@@ -825,7 +832,7 @@ void taPtrList_impl::Copy_Exact(const taPtrList_impl& cp) {
     if ((ek == EK_OWN) && (cp_ek == EK_OWN)) {
       if (El_GetType_(it) == cp.El_GetType_(cp_it)) {
         ++taMisc::is_duplicating;
-        El_Copy_(it, cp_it);
+        El_CopyN_(it, cp_it);
         --taMisc::is_duplicating;
         DataChanged(DCR_LIST_ITEM_UPDATE, it); 
         goto cont;
