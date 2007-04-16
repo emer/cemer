@@ -2127,7 +2127,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
     } else {
       MemberDef* md = typ->members.FindName(mb_nm);
       if ((md != NULL) && (md->type == &TA_TypeDef_ptr)) {
-	TypeDef* tpdf = *(TypeDef**)(md->GetOff(base));
+	tpdf = *(TypeDef**)(md->GetOff(base));
       }
     }
     if(tpdf) {
