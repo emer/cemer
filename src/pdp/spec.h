@@ -111,15 +111,16 @@ public:
   // remove a child based on name or type
 
   override String GetDesc() const { return desc; }
-  void 	Initialize();
-  void	Destroy();
   void	InitLinks();
   void	CutLinks();
-  void 	Copy_(const BaseSpec& cp);
   COPY_FUNS(BaseSpec, taNBase);
   TA_BASEFUNS(BaseSpec);
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy();
+  void 	Copy_(const BaseSpec& cp);
 };
 
 class PDP_API BaseSubSpec : public taNBase {
@@ -142,14 +143,15 @@ public:
   virtual void	UpdateSpec();
   // update from parent sub spec, if one exists
 
-  void 	Initialize();
-  void	Destroy();
   void	InitLinks();
-  void 	Copy_(const BaseSubSpec& cp);
   COPY_FUNS(BaseSubSpec, taNBase);
   TA_BASEFUNS(BaseSubSpec);
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void 	Copy_(const BaseSubSpec& cp);
+  void 	Initialize();
+  void	Destroy();
 };
 
 class PDP_API SpecPtr_impl : public taOBase {
@@ -171,13 +173,14 @@ public:
 
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
 
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Copy_(const SpecPtr_impl& cp);
   COPY_FUNS(SpecPtr_impl, inherited);
   TA_BASEFUNS(SpecPtr_impl);
 protected:
   override void	UpdateAfterEdit_impl();	// check, update the spec type
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+  void	Copy_(const SpecPtr_impl& cp);
 };
 
 template<class T, TypeDef& typ> 
@@ -238,7 +241,10 @@ public:
 
   void  InitLinks()		{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
   void  CutLinks()		{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
-  void  Copy(const SpecPtr<T,typ>& cp)  { StructUpdate(true); inherited::Copy(cp); Copy__(cp); StructUpdate(false); }
+  
+  TA_TMPLT2_BASEFUNS_LITE(SpecPtr,T,typ)
+  
+/*  void  Copy(const SpecPtr<T,typ>& cp)  { StructUpdate(true); inherited::Copy(cp); Copy__(cp); StructUpdate(false); }
 
   SpecPtr () { Initialize(); }
   SpecPtr (const SpecPtr<T,typ>& cp) { Initialize(); Copy__(cp); }
@@ -254,18 +260,17 @@ public:
   SpecPtr<T,typ>& operator=(const SpecPtr<T,typ>& cp) { Copy(cp); return *this;}
   TypeDef* GetTypeDef() const { return &TA_SpecPtr; }
   static TypeDef* StatTypeDef(int) { return &TA_SpecPtr; }
+*/
 private:
-  inline void Copy__(const SpecPtr<T,typ>& cp) { SetBaseFlag(COPYING); \
-    Copy_(cp); ClearBaseFlag(COPYING);} 
   void	Copy_(const SpecPtr<T,typ>& cp) { spec.set(cp.SPtr()); } 
   void 	Initialize()		{ }
   void	Destroy()		{ CutLinks(); }
 };
 
 #define SpecPtr_of(T) \
-  class PDP_API T ## _SPtr : public SpecPtr<T, TA_ ## T> { \
+class PDP_API T ## _SPtr : public SpecPtr<T, TA_ ## T> { \
 private: \
-  typedef SpecPtr<T, TA_ ## T> inherited; \
+  typedef SpecPtr<T, TA_ ## T> inherited;\
   void Copy_(const T ## _SPtr&) {} \
   void 	Initialize() { }; \
   void	Destroy() { }; \

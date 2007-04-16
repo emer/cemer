@@ -143,6 +143,29 @@ public: \
     if (ok) Copy_impl(cp);} \
   y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; }
 
+#define TA_TMPLT2_BASEFUNS_MAIN_(y,T,U) \
+private: \
+  inline void Copy__(const y<T,U>& cp) { \
+    SetBaseFlag(COPYING); \
+      Copy_(cp); \
+    ClearBaseFlag(COPYING);} \
+protected: \
+  void Copy_impl(const y<T,U>& cp) { \
+    StructUpdate(true); \
+      inherited::Copy_impl(cp); \
+      Copy__(cp); \
+    StructUpdate(false);} \
+  void  UnSafeCopy(const taBase* cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y<T,U>*)cp)); \
+    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); } \
+  void  CastCopyTo(taBase* cp) const { y<T,U>& rf = *((y<T,U>*)cp); rf.Copy_impl(*this); } \
+public: \
+  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
+  TypeDef* GetTypeDef() const { return &TA_##y; } \
+  void Copy(const y<T,U>& cp) {  bool ok = true; \
+    CanCopy_impl((const taBase*)&cp, true, ok, true); \
+    if (ok) Copy_impl(cp);} \
+  y<T,U>& operator=(const y<T,U>& cp) { Copy(cp); return *this; }
+
 // common defs used to make instances: Cloning and Tokens
 #define TA_BASEFUNS_INST_(y) \
   TAPtr Clone() { return new y(*this); }  \
@@ -154,6 +177,11 @@ public: \
   TAPtr MakeToken(){ return (TAPtr)(new y<T>); }  \
   TAPtr MakeTokenAry(int n){ return (TAPtr)(new y<T>[n]); }  
 
+#define TA_TMPLT2_BASEFUNS_INST_(y,T,U) \
+  TAPtr Clone() { return new y<T,U>(*this); } \
+  TAPtr MakeToken(){ return (TAPtr)(new y<T,U>); }  \
+  TAPtr MakeTokenAry(int n){ return (TAPtr)(new y<T,U>[n]); }  
+
 // ctors -- one size fits all (where used) thanks to Initialize__
 #define TA_BASEFUNS_CTORS_(y) \
   y () { Initialize__(); } \
@@ -162,6 +190,11 @@ public: \
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
   y () { Initialize__(); } \
   y (const y<T>& cp) { Initialize__(); \
+   if (CanCopy_ctor((TAPtr)&cp)) Copy__(cp); } \
+
+#define TA_TMPLT2_BASEFUNS_CTORS_(y,T,U) \
+  y () { Initialize__(); } \
+  y (const y<T,U>& cp) { Initialize__(); \
    if (CanCopy_ctor((TAPtr)&cp)) Copy__(cp); } \
 
 // common dtor/init, when using tokens (same for TMPLT)
@@ -177,6 +210,7 @@ public: \
   ~y () { CheckDestroyed(); Destroying(); Destroy(); } 
 
 #define TA_TMPLT_BASEFUNS_NTOK_(y,T) TA_BASEFUNS_NTOK_(y)
+#define TA_TMPLT2_BASEFUNS_NTOK_(y,T,U) TA_BASEFUNS_NTOK_(y)
 
 // normal set of funs, for tokens, except ctors; you can use this yourself
 // when you have consts in your class and can't use the generic ctors
@@ -256,6 +290,12 @@ public: \
   TA_TMPLT_BASEFUNS_INST_(y,T) \
   TA_TMPLT_BASEFUNS_NTOK_(y,T) 
 
+// template versions, ex. for smart ptrs, and similar class with no reg
+#define TA_TMPLT2_BASEFUNS_LITE(y,T,U) \
+  TA_TMPLT2_BASEFUNS_CTORS_(y,T,U) \
+  TA_TMPLT2_BASEFUNS_MAIN_(y,T,U) \
+  TA_TMPLT2_BASEFUNS_INST_(y,T,U) \
+  TA_TMPLT2_BASEFUNS_NTOK_(y,T,U)
 
 // macro for abstract base classes (with pure virtual methods, and no instance)
 #define TA_ABSTRACT_BASEFUNS(y) \
