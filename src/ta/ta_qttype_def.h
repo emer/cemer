@@ -213,5 +213,4 @@ taiType* 	TypInst(TypeDef* td)			\
 { return (taiType*) new x(td); }			\
 TypeDef*	GetTypeDef() const {return &TA_ ## x;}
 
-
 #endif // TAI_QTTYPE_DEF_H

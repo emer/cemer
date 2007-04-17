@@ -224,7 +224,9 @@ taiData* taiType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
 }
 
 void taiType::GetImage(taiData* dat, const void* base) {
-  bool ro = isReadOnly(dat);
+//  bool ro = isReadOnly(dat);
+  // use the exact criteria we used in the GetRep
+  bool ro = dat->HasFlag(taiData::flgReadOnly);
   if (ro && !handlesReadOnly()) {
     taiType::GetImage_impl(dat, base);
   } else {
@@ -240,7 +242,9 @@ void taiType::GetImage_impl(taiData* dat, const void* base) {
 }
 
 void taiType::GetValue(taiData* dat, void* base) {
-  bool ro = isReadOnly(dat);
+//  bool ro = isReadOnly(dat);
+  // use the exact criteria we used in the GetRep
+  bool ro = dat->HasFlag(taiData::flgReadOnly);
   if (!ro || handlesReadOnly()) {
     GetValue_impl(dat, base);
   }
@@ -941,11 +945,18 @@ const iColor* taiEdit::GetBackgroundColor(void* base) {
 // 	taiMember	//
 //////////////////////////
 
-/*int taiMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if (md->HasOption("READ_ONLY") || md->HasOption("IV_READ_ONLY"))
-    return (handlesReadOnly()) ? 1 : 0;
-  else return 1;
-} */
+// macro for doing safe casts of types -- helps to uncover errors
+// when the actual class is not the expected class
+// (of course this NEVER happens... uh, huh... ;) )
+#define QCAST_MBR_SAFE_EXIT(qtyp, rval, dat) \
+  qtyp rval = qobject_cast<qtyp>(dat); \
+  if (!rval) { \
+    taMisc::Error("QCAST_MBR_SAFE_EXIT: expect " #qtyp "for mbr", \
+    mbr->name, "but was:", \
+      dat->metaObject()->className()); \
+    return; \
+  }
+
 
 void taiMember::EndScript(const void* base) {
   if(taMisc::record_script == NULL)
@@ -961,6 +972,9 @@ bool taiMember::isReadOnly(taiData* dat, IDataHost* host_) {
   rval = rval || mbr->HasOption("READ_ONLY") || //note: 'IV' only for legacy support
     mbr->HasOption("IV_READ_ONLY") || mbr->HasOption("GUI_READ_ONLY");
   return rval;
+}
+bool taiMember::handlesReadOnly() {
+  return mbr->type->it->handlesReadOnly();
 }
 
 
@@ -981,17 +995,35 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
   if (mbr->HasOption(TypeItem::opt_apply_immed))
     flags |= taiData::flgAutoApply;
     
-  taiData* rval;
-  if ((flags & taiData::flgReadOnly) && !handlesReadOnly()) {
-    rval = taiMember::GetDataRep_impl(host_, par, gui_parent_, flags);
-  } else {
-    rval = GetDataRep_impl(host_, par, gui_parent_, flags);
+  ro = (flags & taiData::flgReadOnly); // just for clarity and parity with Image/Value
+  taiData* rval = NULL;
+  if (ro || !isCondEdit()) { // condedit is irrelevant
+    rval = GetArbitrateDataRep(host_, par, gui_parent_, flags);
+  } else { // rw && condEdit 
+    taiDataDeck* deck = new taiDataDeck(typ, host_, par, gui_parent_, flags);
+  
+    deck->InitLayout();
+    // rw child -- always the impl of this guy
+    gui_parent_ = deck->GetRep();
+    taiData* child = GetArbitrateDataRep(host_, deck, gui_parent_, flags);;
+    deck->AddChildWidget(child->GetRep());
+    child->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
+    
+    // ro child, either ro of this guy, or default if we don't handle ro
+    flags |= taiData::flgReadOnly;
+    child = GetArbitrateDataRep(host_, deck, gui_parent_, flags);;
+    deck->AddChildWidget(child->GetRep());
+    child->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
+    deck->EndLayout();
+    rval = deck;
   }
   rval->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
   return rval;
 }
 
-taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_) 
+{
   taiData* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_);
   return dat;
 }
@@ -999,28 +1031,44 @@ taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui
 //NOTE: we always delegate to _impl because those do the readonly delegation by
 // calling the non-impl version of their functions
 void taiMember::GetImage(taiData* dat, const void* base) {
-  bool ro = isReadOnly(dat);
-  if (ro && !handlesReadOnly()) {
-    taiMember::GetImage_impl(dat, base);
-  } else {
-    if (isCondShow())
-      GetImage_CondShow(dat, base);
-    else
-      GetImage_impl(dat, base);
+  bool is_visible = true;
+  if (isCondShow()) {
+    bool is_on = false; // defaults here make it editable in test chain below
+    bool val_is_eq = false;
+    //note: we don't care if processed or not -- flag defaults make it editable
+    CheckProcessCondMembMeth("CONDSHOW", mbr, base, is_on, val_is_eq);
+    is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+    dat->setVisible(is_visible);
+  }
+  if (!is_visible) return;
+  
+  // note: must use identical criteria for ro here as when we did GetDataRep
+  bool ro = dat->HasFlag(taiData::flgReadOnly) ;
+  
+  if (ro || !isCondEdit()) { // condedit is irrelevant
+    GetArbitrateImage(dat, base);
+  } else { // rw && condEdit
+    QCAST_MBR_SAFE_EXIT(taiDataDeck*, deck, dat)
+    bool is_on = false; // defaults here make it editable in test chain below
+    bool val_is_eq = false;
+    int img = 0;
+    //note: we don't care if processed or not -- flag defaults make it editable
+    CheckProcessCondMembMeth("CONDEDIT", mbr, base, is_on, val_is_eq);
+    if (is_on) {
+      if (val_is_eq) img = 0; // editable
+      else           img = 1;	// not editable
+    } else {
+      if (val_is_eq) img = 1;	// not editable
+      else           img = 0;	// editable
+    }
+    deck->GetImage(img);
+    if (img == 0) { // rw, always our impl
+      GetArbitrateImage(deck->data_el.FastEl(0), base);
+    } else { //ro
+      GetArbitrateImage(deck->data_el.FastEl(1), base);
+    }
   }
 }
-
-void taiMember::GetImage_CondShow(taiData* dat, const void* base) {
-  bool is_on = false; // defaults here make it editable in test chain below
-  bool val_is_eq = false;
-  //note: we don't care if processed or not -- flag defaults make it editable
-  CheckProcessCondMembMeth("CONDSHOW", mbr, base, is_on, val_is_eq);
-  bool is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
-  dat->setVisible(is_visible);
-  if (is_visible)
-    GetImage_impl(dat, base); 
-}
-
 
 void taiMember::GetImage_impl(taiData* dat, const void* base) {
   mbr->type->it->GetImage(dat, mbr->GetOff(base));
@@ -1028,11 +1076,42 @@ void taiMember::GetImage_impl(taiData* dat, const void* base) {
 }
 
 void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-  bool ro = isReadOnly(dat);
-  if (ro && !handlesReadOnly()) {
-    taiMember::GetMbrValue_impl(dat, base);
-  } else {
-    GetMbrValue_impl(dat, base);
+  bool is_visible = true;
+  if (isCondShow()) {
+    bool is_on = false; // defaults here make it editable in test chain below
+    bool val_is_eq = false;
+    //note: we don't care if processed or not -- flag defaults make it editable
+    CheckProcessCondMembMeth("CONDSHOW", mbr, base, is_on, val_is_eq);
+    is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+    dat->setVisible(is_visible);
+  }
+  if (!is_visible) return;
+  
+  // note: must use identical criteria for ro here as when we did GetDataRep
+  bool ro = dat->HasFlag(taiData::flgReadOnly);
+  if (ro) return; // duh!
+  
+  if (!isCondEdit()) { 
+    // can never be ro! so it was always this one:
+    GetArbitrateMbrValue(dat, base, first_diff);
+  } else { // note: we only do this if we aren't RO, otherwise there is no point
+    QCAST_MBR_SAFE_EXIT(taiDataDeck*, deck, dat)
+    bool is_on = false; // defaults here make it editable in test chain below
+    bool val_is_eq = false;
+    int img = 0;
+    //note: we don't care if processed or not -- flag defaults make it editable
+    CheckProcessCondMembMeth("CONDEDIT", mbr, base, is_on, val_is_eq);
+    if (is_on) {
+      if (val_is_eq) img = 0; // editable
+      else           img = 1;	// not editable
+    } else {
+      if (val_is_eq) img = 1;	// not editable
+      else           img = 0;	// editable
+    }
+    // only process editable case, and skip the CmpOrigVal
+    if (img != 0) return;
+    dat = deck->data_el.FastEl(0);
+    GetArbitrateMbrValue(dat, base, first_diff);
   }
   CmpOrigVal(dat, base, first_diff);
 }
@@ -1053,6 +1132,11 @@ void taiMember::GetOrigVal(taiData* dat, const void* base) {
 
 void taiMember::GetMbrValue_impl(taiData* dat, void* base) {
   mbr->type->it->GetValue(dat, mbr->GetOff(base));
+}
+
+bool taiMember::isCondEdit() const { //return false; //TEMP
+  String optedit = mbr->OptionAfter("CONDEDIT_");
+  return optedit.nonempty();
 }
 
 bool taiMember::isCondShow() const {
@@ -1134,6 +1218,48 @@ TypeDef* taiMember::GetTargetType(const void* base) {
   return targ_typ;
 };
 
+taiData* taiMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_)
+{
+  taiData* rval = NULL;
+  
+/*if (m_sub_types) {
+    rval = sub_types()->GetDataRep(host_, rval, gui_parent_, NULL, flags_);
+  } else {*/
+    bool ro = (flags_ & taiData::flgReadOnly); 
+    if (ro && !handlesReadOnly()) {
+      rval = taiMember::GetDataRep_impl(host_, par, gui_parent_, flags_);
+    } else {
+      rval = GetDataRep_impl(host_, par, gui_parent_, flags_);
+    }
+//}
+}
+
+void taiMember::GetArbitrateImage(taiData* dat, const void* base) {
+/*if (m_sub_types) {
+    sub_types()->GetImage(dat, base);
+  } else {*/
+    bool ro = (dat->HasFlag(taiData::flgReadOnly)); 
+    if (ro && !handlesReadOnly()) {
+      taiMember::GetImage_impl(dat, base);
+    } else {
+      GetImage_impl(dat, base);
+    }
+// }
+}
+
+void taiMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff) {
+/*if (m_sub_types) {
+    sub_types()->GetMbrValue(dat, base, first_diff);
+  } else {*/
+    bool ro = (dat->HasFlag(taiData::flgReadOnly)); 
+    if (ro && !handlesReadOnly()) {
+      taiMember::GetMbrValue_impl(dat, base);
+    } else {
+      GetMbrValue_impl(dat, base);
+    }
+//}
+}
 
 //////////////////////////////////
 //  	taiTokenPtrMember  	//
@@ -1554,34 +1680,35 @@ void taiFunPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
 //	taiCondEditMember  //
 //////////////////////////////
 
-void taiCondEditMember::Initialize() {
-  ro_im = NULL;
-  use_ro = false;
-}
-
+/*
 int taiCondEditMember::BidForMember(MemberDef* md, TypeDef* td) {
   if (!td->InheritsFrom(TA_taBase))
     return 0;
   String optedit = md->OptionAfter("CONDEDIT_");
   if (!optedit.empty()) {
     return (taiMember::BidForMember(md,td) + 100); // 100 = definitely do this over other!
-  }
+  } 
   return 0;
 }
 
-taiData* taiCondEditMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiCondEditMember::GetDataRep_impl(IDataHost* host_,
+   taiData* par, QWidget* gui_parent_, int flags_) 
+{
+  // only get read-only for modal dialogs (otherwise, no chance to update!)
+  bool use_ro = (!host_->isModal()); 
+  
+  if (use_ro) flags_ |= taiData::flgCondEditUseRO;
+  
   taiDataDeck* rval = new taiDataDeck(typ, host_, par, gui_parent_, flags_);
-  use_ro = (!host_->isModal()); // only get read-only for modal dialogs (otherwise, no chance to update!)
 
   rval->InitLayout();
   taiData* child;
   if (m_sub_types)
-    child = sub_types()->GetDataRep(host_, rval, gui_parent_);
+    child = sub_types()->GetDataRep(host_, rval, gui_parent_, NULL, flags_);
   else
     child = taiMember::GetDataRep_impl(host_, rval, gui_parent_, flags_);
   rval->AddChildWidget(child->GetRep());
-  if (use_ro) {		// only get read-only for waiting dialogs (otherwise, no chance to update!)
-//    child = ro_im->GetDataRepEx(host_, rval, gui_parent_, (flags_ | taiData::flgReadOnly));
+  if (use_ro) {
     child = taiMember::GetDataRep_impl(host_, rval, gui_parent_, (flags_ | taiData::flgReadOnly));
     rval->AddChildWidget(child->GetRep());
   }
@@ -1589,14 +1716,16 @@ taiData* taiCondEditMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   return rval;
 }
 
+
 void taiCondEditMember::GetImage_impl(taiData* dat, const void* base){
-  taiDataDeck* rval = (taiDataDeck*)dat;
+  QCAST_MBR_SAFE_EXIT(taiDataDeck*, rval, dat)
   if(m_sub_types) {
     sub_types()->GetImage(rval->data_el.FastEl(0), base);
   }
   else {
     taiMember::GetImage_impl(rval->data_el.FastEl(0), base);
   }
+  bool use_ro = rval->HasFlag(taiData::flgCondEditUseRO); 
   if (use_ro) {	// only if two options (i.e., !host_->waiting)
 //    ro_im->GetImage(rval->data_el.FastEl(1), base);
     taiMember::GetImage_impl(rval->data_el.FastEl(1), base);
@@ -1623,14 +1752,22 @@ void taiCondEditMember::GetImage_impl(taiData* dat, const void* base){
 }
 
 void taiCondEditMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-  taiDataDeck* rval = (taiDataDeck*)dat;
+// note: these guys are so hairy and complicated, we put these tests in!
+  taiDataDeck* rval = qobject_cast<taiDataDeck*>(dat);
+  if (!rval) {
+    taMisc::Error("taiCondEditMember::GetMbrValue: expect taiDataDeck for mbr",
+    mbr->name, "but was:",
+      dat->metaObject()->className());
+    return;
+  }
   if (m_sub_types) {
     sub_types()->GetMbrValue(rval->data_el.FastEl(0), base, first_diff);
   } else {
     taiMember::GetMbrValue(rval->data_el.FastEl(0), base, first_diff);
   }
+  //note: of course never need to get the RO guy...
 }
-
+*/
 
 /////////////////////////////
 //    taiTDefaultMember  //
@@ -1641,7 +1778,9 @@ int taiTDefaultMember::BidForMember(MemberDef*, TypeDef*) {
   return (0);
 }
 
-taiData* taiTDefaultMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiTDefaultMember::GetDataRep(IDataHost* host_,
+  taiData* par, QWidget* gui_parent_, int flags_)
+{
   taiPlusToggle* rval = new taiPlusToggle(typ, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   taiData* rdat;
@@ -1655,8 +1794,8 @@ taiData* taiTDefaultMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   return rval;
 }
 
-void taiTDefaultMember::GetImage_impl(taiData* dat, const void* base) {
-  taiPlusToggle* rval = (taiPlusToggle*)dat;
+void taiTDefaultMember::GetImage(taiData* dat, const void* base) {
+  QCAST_MBR_SAFE_EXIT(taiPlusToggle*, rval, dat)
   if (m_sub_types) {
     sub_types()->GetImage(rval->data, base);
   } else {
@@ -1680,7 +1819,7 @@ void taiTDefaultMember::GetImage_impl(taiData* dat, const void* base) {
 
 void taiTDefaultMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   //note: we don't call the inherited, or use the impls
-  taiPlusToggle* rval = (taiPlusToggle*)dat;
+  QCAST_MBR_SAFE_EXIT(taiPlusToggle*, rval, dat)
   if (m_sub_types) {
     sub_types()->GetMbrValue(rval->data, base, first_diff);
   } else {

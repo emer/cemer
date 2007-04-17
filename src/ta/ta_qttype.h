@@ -255,6 +255,8 @@ public:
 
   taiMember* 		sub_types() {return (taiMember*)m_sub_types;}
   taiMember** 		addr_sub_types() {return (taiMember**)&m_sub_types;}
+  override bool		handlesReadOnly();
+  bool			isCondEdit() const;
   bool			isCondShow() const;
 
    int		BidForType(TypeDef*) 			{return 0; }
@@ -291,9 +293,17 @@ public:
   	{ return new taiMember(md, td);}
   TypeDef*	GetTypeDef() const {return &TA_taiMember;}
 protected:
+// the "Arbitrate routines all apply the same logic of ro, and subtype, to call 
+// either that guy, or our own -- only SpecPtr overrides these
+  virtual taiData* 	GetArbitrateDataRep(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_); // gets sub or this, and factors ro
+  virtual void		GetArbitrateImage(taiData* dat, const void* base);
+  // generate the gui representation of the data -- same rules as GetDataRep
+  virtual void		GetArbitrateMbrValue(taiData* dat, void* base,
+    bool& first_diff);
+    
   override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_);
-  virtual void		GetImage_CondShow(taiData* dat, const void* base);
   override void		GetImage_impl(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void		GetMbrValue_impl(taiData* dat, void* base);
@@ -456,12 +466,10 @@ private:
   void		Destroy() {}
 };
 
+/* die die die
 class TA_API taiCondEditMember : public taiMember {
   // conditional editing member
 public:
-  taiMember*	ro_im;		// member for read-only (no editing)
-  bool		use_ro; // true if we are actually using the RO member
-
   int		BidForMember(MemberDef* md, TypeDef* td);
   void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
@@ -470,25 +478,25 @@ protected:
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void	GetImage_impl(taiData* dat, const void* base);
 private:
-  void		Initialize();
+  void		Initialize() {}
   void		Destroy() {}
-};
+}; */
 
 class TypeDefault;
 
 class TA_API taiTDefaultMember : public taiMember {
-// special for the TypeDefault member (add the "active" box)
+// special for the TypeDefault member (add the "active" box) -- this doesn't use the default handling, and just provides its own directly
 INHERITED(taiMember)
 public:
   TypeDefault*	tpdflt;
 
   virtual int	BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  override void	GetImage(taiData* dat, const void* base);
   override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   TAQT_MEMBER_INSTANCE(taiTDefaultMember, taiMember);
 protected:
-  override void	GetImage_impl(taiData* dat, const void* base);
 private:
   void		Initialize()	{ tpdflt = NULL; }
   void		Destroy()	{ m_sub_types = NULL; } // prevent from being destroyed

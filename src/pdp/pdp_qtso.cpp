@@ -88,7 +88,7 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
 }
 
 
-taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par,
+taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
   QWidget* gui_parent, int flags_) 
 {
   bool no_check_box = NoCheckBox(host_);
@@ -114,7 +114,7 @@ taiData* taiSpecMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   }
 }
 
-void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
+void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
   IDataHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
@@ -149,7 +149,7 @@ void taiSpecMember::GetImage_impl(taiData* dat, const void* base) {
   }
 }
 
-void taiSpecMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
+void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff) {
   IDataHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {

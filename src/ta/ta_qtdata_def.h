@@ -119,20 +119,21 @@ typedef QObject inherited;
 #endif
 public:
   enum Flags { // flags are so we don't have to keep adding parameters to constructor... flags >= 10000 are custom per type
-    flgReadOnly		= 0x001,
-    flgNoTokenDlg	= 0x002, // for tokenptr, not keeping tokens, so don't enable but
-    flgNullOk		= 0x004, // used typically by menus of tokens or objects, to allow NULL
-    flgEditOk		= 0x008,  // used typically by menus to allow Edit of item
-    flgNoList		= 0x010,  // used typically by menus to include lists of item
-    flgNoGroup		= 0x010,  // used typically by menus to include groups of items -- note this is the same as NoList
-    flgNoInGroup	= 0x020,  // used by gpiGroupEls
-    flgEditOnly		= 0x040,  // used by EditButton
-    flgInline		= 0x080,   // used by types and members that support INLINE directive, esp. Array
-    flgEditDialog	= 0x100,   // for taiField, enables dialog for EDIT_DIALOG directive; for token menu, adds ... edit
-    flgNoUAE		= 0x200,  // for things like polydata, don't issue an UpdateAfterEdit
-    flgToggleReadOnly	= 0x400, // for taiPlusToggle, makes the toggle itself ro
-    flgAutoApply	= 0x800,  // when user finishes editing this control, auto apply the edits
-    flgFlowLayout	= 0x1000 // for polyguys (inline) us a flowlayout, not hboxlayout
+    flgReadOnly		= 0x0001,
+    flgNoTokenDlg	= 0x0002, // for tokenptr, not keeping tokens, so don't enable but
+    flgNullOk		= 0x0004, // used typically by menus of tokens or objects, to allow NULL
+    flgEditOk		= 0x0008,  // used typically by menus to allow Edit of item
+    flgNoList		= 0x0010,  // used typically by menus to include lists of item
+    flgNoGroup		= 0x0010,  // used typically by menus to include groups of items -- note this is the same as NoList
+    flgNoInGroup	= 0x0020,  // used by gpiGroupEls
+    flgEditOnly		= 0x0040,  // used by EditButton
+    flgInline		= 0x0080,   // used by types and members that support INLINE directive, esp. Array
+    flgEditDialog	= 0x0100,   // for taiField, enables dialog for EDIT_DIALOG directive; for token menu, adds ... edit
+    flgNoUAE		= 0x0200,  // for things like polydata, don't issue an UpdateAfterEdit
+    flgToggleReadOnly	= 0x0400, // for taiPlusToggle, makes the toggle itself ro
+    flgAutoApply	= 0x0800,  // when user finishes editing this control, auto apply the edits
+    flgFlowLayout	= 0x1000, // for polyguys (inline) us a flowlayout, not hboxlayout
+    flgCondEditUseRO	= 0x2000 // for taiCondEditMember, used to keep its use_ro flag
   };
 
   TypeDef* 		typ;		// type for the gui object
@@ -159,6 +160,7 @@ public:
   bool 			eventFilter(QObject* watched, QEvent* ev); // override
   virtual QWidget*	GetRep()	{ return m_rep; }
   virtual QLayout*	GetLayout() {return NULL;} // returns a top layout, if one is used
+  inline int		flags() const {return mflags;}
   bool			HasFlag(int flag_) const {return (mflags & flag_);} // returns true if has the indicated Flag (convenience method)
   void			SetFlag(int flags_, bool value = true) {if (value) mflags |= flags_; else mflags &= ~flags_;} // sets or clears a flag or set of flags
   virtual void		SetMemberDef(MemberDef* mbr) {} // taiMember sets this

@@ -35,7 +35,6 @@ class PDP_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   void		CmpOrigVal(taiData* dat, const void* base, bool& first_diff); // replaces
 
@@ -43,8 +42,9 @@ public:
 
   TAQT_MEMBER_INSTANCE(taiSpecMember, taiMember);
 protected:
-  override taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  override void		GetImage_impl(taiData* dat, const void* base);
+  override taiData*	GetArbitrateDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  override void		GetArbitrateImage(taiData* dat, const void* base);
+  override void		GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
 };
 
 #endif // pdp_qt_h
