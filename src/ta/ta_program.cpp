@@ -660,7 +660,8 @@ String ProgExprBase::GetName() const {
 void ProgExprBase::ParseExpr_SkipPath(int& pos) {
   int len = expr.length();
   int c;
-  while((pos < len) && (isalnum(c=expr[pos]) || (c=='_') || (c=='.') || (c==':')))
+  while((pos < len) && (isalnum(c=expr[pos]) || (c=='_') || (c=='.') || (c==':')
+			|| (c=='[') || (c==']')))
     { var_expr.cat((char)c); pos++; }
 }
 

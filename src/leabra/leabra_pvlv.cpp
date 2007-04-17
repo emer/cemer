@@ -284,6 +284,8 @@ void LVConSpec::Initialize() {
 void LVSpec::Initialize() {
   discount = 0.0f;
   use_actual_er = false;
+  new_lv = false;
+  da_thr = .01f;
 }
 
 void LVeLayerSpec::Initialize() {
@@ -387,8 +389,7 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       if(fls->InheritsFrom(TA_PViLayerSpec)) pvi_lay = flay;
       continue;
     }
-    // todo: note temporarily skipping this check!
-    continue;
+    if(lv.new_lv) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(CheckError(!cs->InheritsFrom(TA_LVConSpec), quiet, rval,
 		  "requires recv connections to be of type LVConSpec")) {
@@ -442,16 +443,34 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 
   UNIT_GP_ITR
     (lay, 
-     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+     DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
 
-     if(er_avail) {
-       u->ext = (1.0f - lv.discount) * pve_val;
-       ClampValue(ugp, net); 		// apply new value
-       Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
-       Compute_dWt_Ugp(ugp, lay, net);
+     if(lv.new_lv) {
+       if(actual_er_avail) { // an actual external signal
+	 u->ext = (1.0f - lv.discount) * pve_val;
+	 ClampValue(ugp, net); 		// apply new value
+	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
+	 Compute_dWt_Ugp(ugp, lay, net);
+       }
+       else { // rely on td value, computed by DA guy, with self specifically removed
+	 if(fabs(u->dav) > lv.da_thr) { 
+	   u->ext = u->act_m + u->dav;
+	   ClampValue(ugp, net); 		// apply new value
+	   Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
+	   Compute_dWt_Ugp(ugp, lay, net);
+	 }
+       }
      }
      else {
-       Compute_DepressWt(ugp, lay, net); // always depress!!
+       if(er_avail) {
+	 u->ext = (1.0f - lv.discount) * pve_val;
+	 ClampValue(ugp, net); 		// apply new value
+	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
+	 Compute_dWt_Ugp(ugp, lay, net);
+       }
+       else {
+	 Compute_DepressWt(ugp, lay, net); // always depress!!
+       }
      }
      );
 }
@@ -476,6 +495,7 @@ void PVLVDaSpec::Initialize() {
   min_lvi = 0.1f;
   use_actual_er = false;
   lv_delta = false;
+  dip_reset_thr = 0.3f;
 }
 
 void PVLVDaLayerSpec::Initialize() {
@@ -717,20 +737,24 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraRecvCons* pvicg = (LeabraRecvCons*)u->recv[pvi_prjn_idx];
     DaModUnit* pvisu = (DaModUnit*)pvicg->Un(0);
     float eff_lvi = MAX(lvisu->act_eq, da.min_lvi); // effective lvi value
-    float lv_da = lvesu->act_eq - eff_lvi; 
-    float pv_da = pve_val - pvisu->act_m; 
+
+    float lvd = lvesu->act_eq - eff_lvi; 
+    float pvd = pve_val - pvisu->act_m; 
+
+    float lv_da = lvd - lvesu->misc_1;
+    float pv_da = pvd - pvisu->misc_1;
 
     if(net->phase_no == 0) {	// not used at this point..
       u->dav = lv_da; 		// lviu->act_eq - avgbl;
     }
     else {
-      // uses misc_1 to hold prior LV value..
-      //      if(da.mode == PVLVDaSpec::IF_PV_ELSE_LV) { // always this mode
-      if(er_avail) {
-	u->dav = pv_da;
+      if(fabs(lv_da) > fabs(pv_da)) {
+	u->dav = lv_da;
+	u->misc_1 = 0.0f;	// our misc_1 holds the value to send to LV
       }
       else {
-	u->dav = lv_da - u->misc_1; // misc_1 is prior lv value
+	u->dav = pv_da;
+	u->misc_1 = pv_da;	// our misc_1 holds the value to send to LV
       }
     }
     u->ext = da.tonic_da + u->dav;
@@ -750,7 +774,7 @@ void PVLVDaLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
   bool actual_er_avail = false;
   bool pv_detected = false;
-  pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  float pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
 
   bool er_avail = pv_detected;
   if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
@@ -763,14 +787,30 @@ void PVLVDaLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraRecvCons* lvicg = (LeabraRecvCons*)u->recv[lvi_prjn_idx];
     DaModUnit* lvisu = (DaModUnit*)lvicg->Un(0);
     LeabraRecvCons* pvicg = (LeabraRecvCons*)u->recv[pvi_prjn_idx];
+    DaModUnit* pvisu = (DaModUnit*)pvicg->Un(0);
     float eff_lvi = MAX(lvisu->act_eq, da.min_lvi); // effective lvi value
-    float lv_da = lvesu->act_eq - eff_lvi; 
 
-    if(er_avail) {
-      u->misc_1 = 0.0f;	// reset prior LV value
+    float lvd = lvesu->act_eq - eff_lvi; 
+    float pvd = pve_val - pvisu->act_m; 
+    float pv_da = pvd - pvisu->misc_1;
+
+    bool reset_now = false;
+
+    if(actual_er_avail) {
+      reset_now = true;
     }
     else {
-      u->misc_1 = lv_da;
+      if(pv_da < -da.dip_reset_thr)
+	reset_now = true;
+    }
+
+    if(reset_now) {
+      lvesu->misc_1 = 0.0f;
+      pvisu->misc_1 = 0.0f;
+    }
+    else {
+      lvesu->misc_1 = lvd;
+      pvisu->misc_1 = pvd;
     }
   }
 }
@@ -783,9 +823,13 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesion)	continue;
-      if(send_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-	int j;
-	for(j=0;j<send_gp->cons.size; j++) {
+      if(tol->GetLayerSpec()->InheritsFrom(&TA_LVeLayerSpec)) {
+	for(int j=0;j<send_gp->cons.size; j++) {
+	  ((DaModUnit*)send_gp->Un(j))->dav = u->misc_1; // special val for lv guys
+	}
+      }
+      else {
+	for(int j=0;j<send_gp->cons.size; j++) {
 	  ((DaModUnit*)send_gp->Un(j))->dav = u->act;
 	}
       }

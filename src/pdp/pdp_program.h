@@ -46,6 +46,8 @@ public:
   int		dmem_nprocs;	// #READ_ONLY number of processors to use for distributed memory processing (input data distributed over nodes) -- computed automatically if dmem is active; else set to 1
   int		dmem_this_proc;	// #READ_ONLY processor rank for this processor relative to communicator group
 
+  virtual void	GetOrderVal();
+  // get order value from order_var variable
   virtual void	DMem_Initialize(Network* net);
   // configure the dmem communicator stuff: depends on dmem setup of network
 
@@ -89,6 +91,8 @@ public:
 
   override String	GetDisplayName() const;
 
+  virtual void	GetOrderVals();
+  // get order values from order_var variables
   virtual void	GetGroupList();
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx); // 

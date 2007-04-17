@@ -2,12 +2,12 @@ leabra todo list:
 
 commit:
 
+* fixed ProgExpr path parse bug [ ]
+
 ------------
 current:
 
-* Unit spec bias spec ptr not being copied in convert (and regular?)
-
-* assignexpr "resp = output.units.gp[movie_unit][0].act_eq" gives parse err on t_eq !
+* clearer if DynEnum type and token are separate..  Brad was right.  Dynenum edit not working.
 
 * CHECK: add DataUpdate brackets in Filter op -- still doesn't fix problem!
 

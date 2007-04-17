@@ -44,6 +44,11 @@ void BasicDataLoop::GetOrderVar() {
   order = (Order)order_var->int_val;
 }
 
+void BasicDataLoop::GetOrderVal() {
+  if(!order_var) GetOrderVar();
+  else order = (Order)order_var->int_val;
+}
+
 void BasicDataLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateProgVarRef_NewOwner(data_var);
@@ -68,6 +73,7 @@ const String BasicDataLoop::GenCssPre_impl(int indent_level) {
 
   String rval = cssMisc::Indent(indent_level) + "{ // BasicDataLoop " + data_nm + "\n";
   rval += id1 + "BasicDataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
+  rval += id1 + "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value\n";
   rval += id1 + "data_loop->DMem_Initialize(network); // note: this assumes network variable exists!\n";
   rval += id1 + "data_loop->item_idx_list.SetSize(" + data_nm + "->ItemCount());\n";
   rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
@@ -127,6 +133,14 @@ void GroupedDataLoop::Initialize() {
   group_order = PERMUTED;
   item_order = SEQUENTIAL;
   group_col = 0;
+}
+
+void GroupedDataLoop::GetOrderVals() {
+  if(!group_order_var || !item_order_var) GetOrderVars();
+  else {
+    group_order = (Order)group_order_var->int_val;
+    item_order = (Order)item_order_var->int_val;
+  }
 }
 
 void GroupedDataLoop::GetOrderVars() {
@@ -205,6 +219,7 @@ const String GroupedDataLoop::GenCssPre_impl(int indent_level) {
 
   String rval = cssMisc::Indent(indent_level) + "{ // GroupedDataLoop " + data_nm + "\n";
   rval += id1 + "GroupedDataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
+  rval += id1 + "data_loop->GetOrderVals(); // order_var variables control order -- make sure we have current values\n";
   rval += id1 + "data_loop->GetGroupList();\n";
   rval += id1 + "if(data_loop->group_order == GroupedDataLoop::PERMUTED) data_loop->group_idx_list.Permute();\n";
   rval += id1 + data_nm + "->ReadOpen();\n";
