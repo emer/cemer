@@ -33,6 +33,9 @@ current:
 == Misc
 
 * NewLayer not working in netview
+* Can't view weights with 2 nets in same view!
+* r.wt disp scale gets reset when you click on a new unit
+
 * CHECK: add DataUpdate brackets in Filter op -- still doesn't fix problem!
 * multi-test on hv
 

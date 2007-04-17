@@ -748,13 +748,13 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
       u->dav = lv_da; 		// lviu->act_eq - avgbl;
     }
     else {
-      if(fabs(lv_da) > fabs(pv_da)) {
-	u->dav = lv_da;
-	u->misc_1 = 0.0f;	// our misc_1 holds the value to send to LV
-      }
-      else {
+      if(actual_er_avail || (fabs(pv_da) > fabs(lv_da))) {
 	u->dav = pv_da;
 	u->misc_1 = pv_da;	// our misc_1 holds the value to send to LV
+      }
+      else {
+	u->dav = lv_da;
+	u->misc_1 = 0.0f;	// our misc_1 holds the value to send to LV
       }
     }
     u->ext = da.tonic_da + u->dav;
