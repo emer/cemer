@@ -1233,6 +1233,7 @@ taiData* taiMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
       rval = GetDataRep_impl(host_, par, gui_parent_, flags_);
     }
 //}
+  return rval;
 }
 
 void taiMember::GetArbitrateImage(taiData* dat, const void* base) {
