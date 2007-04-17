@@ -116,20 +116,24 @@ public:
   virtual DBOptions	dbOptions() const = 0; // #CAT_Access options the instance type support
   
   inline bool		isIndexable() const {return (dbOptions() & DB_INDEXABLE);} 
-  // #CAT_Access true if can be accessed by index
+  // #CAT_XpertAccess true if can be accessed by index
   inline bool		isSequencable() const {return (dbOptions() & DB_SEQUENCABLE);} 
-  // #CAT_Access true if can be accessed sequentially
+  // #CAT_XpertAccess true if can be accessed sequentially
   inline bool		isSource() const {return (dbOptions() & DB_SOURCE);} 
-  // #CAT_Access true if is a data source
+  // #CAT_XpertAccess true if is a data source
   inline bool		isSink() const {return (dbOptions() & DB_SINK);} 
-  // #CAT_Access true if is a data sink
+  // #CAT_XpertAccess true if is a data sink
   inline bool		isSinkGrowable() const {return (dbOptions() & DB_SINK_GROWABLE);} 
-  // #CAT_Access true if sink is growable (via AddItem)
+  // #CAT_XpertAccess true if sink is growable (via AddItem)
   inline bool		isSinkDynamic() const {return (dbOptions() & DB_SINK_DYNAMIC);} 
-  // #CAT_Access true if sink schema can be modified
+  // #CAT_XpertAccess true if sink schema can be modified
   
   virtual int		ItemCount() const {return 0;} 
   // #CAT_Access number of items (if indexable)
+  virtual int		ReadIndex() const {return -1;} 
+  // #CAT_Access index of current item to read (source), if indexible
+  virtual int		WriteIndex() const {return -1;} 
+  // #CAT_Access index of current item to write (sink), if indexible
   
   virtual void		ResetData() {}
   // #CAT_Modify for supported devices, clears all the data (but not the schema)
@@ -356,6 +360,9 @@ public:
      if ((idx < 0) || (idx >= ItemCount())) return false;
      wr_itr = idx;  return WriteItem_impl();} 
  
+  override int		ReadIndex() const {return rd_itr;} 
+  override int		WriteIndex() const {return wr_itr;} 
+
   COPY_FUNS(DataBlock_Idx, DataBlock)
   TA_ABSTRACT_BASEFUNS(DataBlock_Idx);
 protected:
