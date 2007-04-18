@@ -4040,7 +4040,8 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
 
 void LeabraWizard::StdProgs() {
   // todo: could check for subgroups and do LeabraAll_GpData instead
-  Program_Group* pg = StdProgs_impl("LeabraAll_Std");
+  //Program_Group* pg = 
+  StdProgs_impl("LeabraAll_Std");
   // todo: could do something more here..
 }
 

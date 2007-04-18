@@ -79,8 +79,6 @@ public:
   TypeItem*		data() {return (TypeItem*)m_data;} //
   TypeItem*		data() const {return (TypeItem*)m_data;} //
 
-//  override const QPixmap* GetIcon(int bmf, int& flags_supported);
-    // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
   override String	GetName() const;
   override String	GetDisplayName() const;

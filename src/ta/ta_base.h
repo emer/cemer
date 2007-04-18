@@ -1088,7 +1088,7 @@ public:
   virtual const iColor* GetEditColor(); // #IGNORE background color for edit dialog
   virtual const iColor* GetEditColorInherit();
   // #IGNORE background color for edit dialog, include inherited colors from parents
-#ifdef TA_GUI
+#if defined(TA_GUI) && !defined(__MAKETA__) 
   virtual const QPixmap* GetDataNodeBitmap(int, int& flags_supported) const
     {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h
 #endif
@@ -1682,7 +1682,7 @@ public:
 
   MemberDef*	ReturnFindMd() const;
   // #IGNORE return the find_md variable, initialized if necessary
-#ifdef TA_GUI
+#if defined(TA_GUI) && !defined(__MAKETA__) 
   override const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const;
 #endif
   override int		NumListCols() const {return 3;} // #IGNORE number of columns in a default list view for this list type

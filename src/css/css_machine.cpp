@@ -4049,10 +4049,11 @@ bool cssProgSpace::CompileCode(const String& code) {
 
 void cssProgSpace::Include(const char* fname) {
   String cur_name = name;
-  int cur_prog_size = Prog()->size;
-  int cur_prog_src_size = Prog()->src_size;
-  int cur_list_ln = list_ln;
-  int cur_src_ln = src_ln;
+//TODO: BA 2007-04-18 why are these here? these are all unused...
+//  int cur_prog_size = Prog()->size;
+//  int cur_prog_src_size = Prog()->src_size;
+//  int cur_list_ln = list_ln;
+//  int cur_src_ln = src_ln;
 
   Compile(fname);
 

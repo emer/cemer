@@ -1006,6 +1006,7 @@ protected:
     // called when we should handle this for sure
   void 			UpdateActionsMenu(ISelectableHost* src_host, bool do_add);
 
+#ifndef _MAKETA__
 private:
   QObject* last_clip_handler; //we need to remember this, because you can't anonymously disconnect signals from your own slots
   ISelectableHost* last_sel_server; // last guy to get focus
@@ -1019,6 +1020,7 @@ private:
   QPixmap image7;
   QPixmap image8;
   void			Init();
+#endif
 };
 
 

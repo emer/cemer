@@ -598,9 +598,12 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
   SoMFVec3f& point = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
 
   int mk_idx;
+  //note: don't put defaults in these switches, so we can detect missing values
+  // also, the NONE may be compiler food...
   switch(marker_size_) {
   case SMALL: {
     switch (style){
+    case MarkerStyle_NONE: mk_idx = SoMarkerSet::NONE; break; // compiler food
     case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_5_5;  break;
     case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_5_5;  break;
     case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_5_5;  break;
@@ -617,6 +620,7 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
   }
   case MEDIUM: {
     switch (style){
+    case MarkerStyle_NONE: mk_idx = SoMarkerSet::NONE; break; // compiler food
     case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_7_7;  break;
     case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_7_7;  break;
     case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_7_7;  break;
@@ -633,6 +637,7 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
   }
   case LARGE: {
     switch (style){
+    case MarkerStyle_NONE: mk_idx = SoMarkerSet::NONE; break; // compiler food
     case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_9_9;  break;
     case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_9_9;  break;
     case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_9_9;  break;
