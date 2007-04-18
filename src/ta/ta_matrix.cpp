@@ -436,6 +436,7 @@ void taMatrix::Initialize()
 #ifdef TA_GUI
   m_dm = NULL;
 #endif
+  fixed_dealloc = NULL;
 }
  
 void taMatrix::Destroy() {
@@ -1046,12 +1047,18 @@ int taMatrix::SafeElIndexN(const MatrixGeom& indices) const {
   return rval;
 }
  
-void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_) {
-  // first, clear out any old data
+void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_,
+    fixed_dealloc_fun fixed_dealloc_) 
+{
+  // first, clear out any old data, use NULL first to dealloc if needed
+  SetArray_(NULL);
+  // now, set new data, and the new deallocer
+  fixed_dealloc = fixed_dealloc_;
   SetArray_(el_);
   alloc_size = -1; // flag for fixed data
   geom.Reset();
   SetGeomN(geom_);
+  
 }
 
 void taMatrix::SetGeom_(int dims_, const int geom_[]) {

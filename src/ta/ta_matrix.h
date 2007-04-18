@@ -262,6 +262,8 @@ inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
 // 	Base taMatrix
 ///////////////////////////////////
 
+typedef void (*fixed_dealloc_fun)(void*); // function that deallocates fixed data
+
 class TA_API taMatrix: public taNBase {
   // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
 INHERITED(taNBase)
@@ -564,6 +566,7 @@ protected:
   taMatrix_PList*	slices; // list of extant slices -- created on first slice
   taMatrix*		slice_par; // slice parent -- we ref/unref it
   MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
+  fixed_dealloc_fun	fixed_dealloc; // optional dealloc fun passed in on FixedData
   
   virtual bool		fastAlloc() const {return true;}
   // #IGNORE enables using fast block-based allocations, copies, and skipping reclaims -- for ints,floats, etc.; not for Strings/Variants
@@ -592,7 +595,8 @@ protected:
   virtual uint		El_SizeOf_() const = 0;
   // #IGNORE size of element
   
-  virtual void		SetFixedData_(void* el_, const MatrixGeom& geom_);
+  virtual void		SetFixedData_(void* el_, const MatrixGeom& geom_,
+    fixed_dealloc_fun fixed_dealloc = NULL);
   // initialize fixed data
 //  virtual bool		Equal_(const taMatrix& src) const; 
     // 'true' if same size and els
@@ -662,7 +666,8 @@ public:
 
   override void*	data() const {return el;} // #IGNORE
   
-  void			SetFixedData(T* data_, const MatrixGeom& geom_)
+  void			SetFixedData(T* data_, const MatrixGeom& geom_,
+    fixed_dealloc_fun fixed_dealloc = NULL)
   { SetFixedData_(data_, geom_); } 
   // #IGNORE sets external (fixed) data, setting the geom/size
   
@@ -720,8 +725,9 @@ protected:
   override void*	MakeArray_(int n) const	
   { if(fastAlloc()) return malloc(n * sizeof(T)); else return new T[n]; }
   override void		SetArray_(void* nw) 
-  { if (el && (alloc_size > 0)) { if(fastAlloc()) free(el); else delete [] el; }
-    el = (T*)nw; }
+  { if (el) {if (alloc_size > 0) { if(fastAlloc()) free(el); else delete [] el; }
+    else if (alloc_size < 0) {if (fixed_dealloc) fixed_dealloc(el);}}
+    el = (T*)nw; fixed_dealloc = NULL;}
   override void*	FastRealloc_(int n)
   { el = (T*)realloc((char*)el, n * sizeof(T)); return el; }
   override bool		El_Equal_(const void* a, const void* b) const
@@ -904,8 +910,7 @@ private:
   void		Initialize() {}
   void		Destroy() {}
 };
-
-//nn?? SmartPtr_Of(String_Matrix); // String_MatrixPtr
+TA_SMART_PTRS(String_Matrix);
 
 
 ///////////////////////////////////
@@ -939,8 +944,7 @@ private:
   void		Initialize() {}
   void		Destroy() {}
 };
-
-//nn?? SmartPtr_Of(float_Matrix)
+TA_SMART_PTRS(float_Matrix);
 
 ///////////////////////////////////
 // 	double_Matrix
@@ -982,8 +986,7 @@ private:
   void		Initialize() {}
   void		Destroy() {}
 };
-
-//nn?? SmartPtr_Of(double_Matrix)
+TA_SMART_PTRS(double_Matrix);
 
 ///////////////////////////////////
 // 	int_Matrix
@@ -1016,8 +1019,8 @@ private:
   void		Initialize() {}
   void		Destroy() {} //
 };
+TA_SMART_PTRS(int_Matrix);
 
-//nn? SmartPtr_Of(int_Matrix)
 
 ///////////////////////////////////
 // 	byte_Matrix
@@ -1047,8 +1050,7 @@ private:
   void		Initialize() {}
   void		Destroy() {} //
 };
-
-//nn? SmartPtr_Of(byte_Matrix)
+TA_SMART_PTRS(byte_Matrix);
 
 ///////////////////////////////////
 // 	Variant_Matrix
@@ -1081,8 +1083,7 @@ private:
   void		Initialize() {}
   void		Destroy() {}
 };
-
-//nn? SmartPtr_Of(Variant_Matrix) //
+TA_SMART_PTRS(Variant_Matrix);
 
 ///////////////////////////////////
 // 	rgb_Matrix
@@ -1112,8 +1113,8 @@ private:
   void		Initialize() {}
   void		Destroy() {} //
 };
+TA_SMART_PTRS(rgb_Matrix);
 
-//nn? SmartPtr_Of(byte_Matrix)
 
 class TA_API MatrixTableModel: public QAbstractTableModel,
   public IDataLinkClient

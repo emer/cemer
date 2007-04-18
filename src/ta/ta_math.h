@@ -588,6 +588,17 @@ public:
 				 const double_Matrix* kernel);
   // #CAT_Convolution convolve in_mat with kernel to produce out_mat, in a cell-by-cell manner across frames.  always keeps the edges by clipping and renormalizing the kernel all the way to both edges
 
+  /////////////////////////////////////////////////////////////////////////////////
+  // fft routines -- one size fits all, but we may use the radix-2 impl of gsl where appropriate
+  
+/*  static bool fft_real_wavetable(double_Matrix* out_mat, int n);
+  // #CAT_FFT makes a wavetable for the radix-N fft -- useful when making repeated calls to the transform; the data in this mat is opaque, size is set to 1, and is not valid */
+  
+  static bool fft_real_transform(double_Matrix* out_mat, const double_Matrix* in_mat,
+    bool real_out = false, bool norm = true);
+  // #CAT_FFT compute the radix-N FFT of the real data in in_mat, writing the complex output to out_mat (d0[0]=real,d0[1]=imag) if real_out=0 or the power sqrt(r^2+i^2) if real_out=1; if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0; real_out=1 computes norm=1 divides results by 1/sqrt(N) which makes the forward and reverse FFTs symmetric
+  
+
   void Initialize() { };
   void Destroy() { };
   TA_ABSTRACT_BASEFUNS_NCOPY(taMath_double);
@@ -926,9 +937,20 @@ public:
 				 const float_Matrix* kernel);
   // #CAT_Convolution convolve in_mat with kernel to produce out_mat, in a cell-by-cell manner across frames.  always keeps the edges by clipping and renormalizing the kernel all the way to both edges
 
-//  void Initialize() { };
-  void Destroy() { };
+  /////////////////////////////////////////////////////////////////////////////////
+  // fft routines -- see double for more info; note: these have to copy to temp double guys, so may be SLOW compared to double
+  
+/*  static bool fft_real_wavetable(double_Matrix* out_mat, int n);
+  // #CAT_FFT makes a wavetable for the radix-N fft -- useful when making repeated calls to the transform; the data in this mat is opaque, size is set to 1, and is not valid */
+  
+  static bool fft_real_transform(float_Matrix* out_mat, const float_Matrix* in_mat,
+    bool real_out = false, bool norm = true);
+  // #CAT_FFT compute the radix-N FFT of the real data in in_mat, writing the complex output to out_mat (d0[0]=real,d0[1]=imag) if real_out=0 or the power sqrt(r^2+i^2) if real_out=1; if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0; real_out=1 computes norm=1 divides results by 1/sqrt(N) which makes the forward and reverse FFTs symmetric
+  
   TA_ABSTRACT_BASEFUNS_NCOPY(taMath_float);
+private:
+  void Initialize() { };
+  void Destroy() { };
 };
 
 

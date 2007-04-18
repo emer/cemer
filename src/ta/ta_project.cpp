@@ -625,7 +625,7 @@ bool taRootBase::CheckAddPluginDep(TypeDef* td) {
       if (plugin_deps.FindName(pl->GetName())) break;
       // otherwise, clone a dep, and add
       taPluginDep* pl_dep = new taPluginDep;
-      pl_dep->Copy(*(taPluginBase*)pl);
+      static_cast<taPluginBase*>(pl_dep)->Copy(*pl);
       plugin_deps.Add(pl_dep);
       break;
     }

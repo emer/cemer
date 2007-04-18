@@ -24,8 +24,11 @@
 #include "ta_platform.h"
 
 #ifdef HAVE_LIBGSL
+# include <gsl/gsl_errno.h>
 # include <gsl/gsl_eigen.h>
 # include <gsl/gsl_linalg.h>
+# include <gsl/gsl_fft_real.h>
+# include <gsl/gsl_fft_halfcomplex.h>
 #endif
 
 #include <math.h>
@@ -1578,6 +1581,110 @@ bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, in
   return mat_mds_owrite(&a_copy, xy_coords, x_axis_c, y_axis_c);
 }
 
+/* bool taMath_double::fft_real_wavetable(double_Matrix* out_mat, int n) {
+  if (!out_mat || (n <= 0)) return false;
+  gsl_fft_real_wavetable* gwt = gsl_fft_real_wavetable_alloc((size_t)n);
+  //note: unknown length, and only needed opaquely, so size=0 is set to prevent access
+  MatrixGeom geom(1, 0);
+  out_mat->SetFixedData((double*)gwt, geom,
+    (fixed_dealloc_fun)gsl_fft_real_wavetable_free);
+  return true;
+}*/
+
+bool taMath_double::fft_real_transform(double_Matrix* out_mat,
+  const double_Matrix* in_mat, bool real_out, bool norm)
+{
+  if (!out_mat || !in_mat) return false;
+  int n = in_mat->dim(0); // inner guy is frame size
+  if (n == 0) return false; // huh?
+  // calculate the number of flat d0 frames, often just 1
+  int frames = in_mat->size / n;
+  
+  // set dims on output -- we provide full redundant real/complex
+  // note: we will reduce later if user requested real_out
+  // note: out_geom needs to remain valid for use later in reduction
+  MatrixGeom out_geom(in_mat->dims() + 1);
+  out_geom.Set(0, 2); // real/imag
+  for (int i = 0; i < in_mat->dims(); ++i) {
+    out_geom.Set(i+1, in_mat->dim(i));
+  }
+  out_mat->SetGeomN(out_geom);
+  
+  
+  // make scratch
+  // declare all, so we can jump to exit
+  bool rval = false; 
+  gsl_fft_real_wavetable* gwt = NULL;
+  gsl_fft_real_workspace* work = NULL;
+  double* data = NULL;
+  const size_t stride = 1;
+  
+  gwt = gsl_fft_real_wavetable_alloc((size_t)n);
+  if (!gwt) goto exit; // unlikely
+  work = gsl_fft_real_workspace_alloc((size_t) n);
+  if (!work) goto exit; // unlikely
+  data = new double[n];
+  if (!data) goto exit; // unlikely
+    
+  
+  // do the fft for each frame, typically just 1
+  for (int fr = 0; fr < frames; ++fr) {
+    // copy the in data
+    memcpy(data, in_mat->FastEl_Flat_(fr * n),
+      sizeof(double) * n);
+    // do the fft itself -- returns result in-place
+    int gsl_errno = gsl_fft_real_transform (
+      data,
+      stride, (size_t) n,
+      gwt,  work);
+    if (gsl_errno != 0) {
+      taMisc::Warning("taMath_double::fft_real_transform",
+        gsl_strerror(gsl_errno));
+      goto exit;
+    }
+    
+    // descramble the result into the output mat -- our format is compatible
+    void* complex_out = out_mat->FastEl_Flat_(fr * n * 2);
+    gsl_errno = gsl_fft_halfcomplex_unpack (
+      data,
+      (gsl_complex_packed_array) complex_out, stride, (size_t) n);
+    if (gsl_errno != 0) {
+      taMisc::Warning("taMath_double::fft_real_transform",
+        gsl_strerror(gsl_errno));
+      goto exit;
+    }
+    
+    // results are scaled by N -- we usually want to renormalize by 1/sqrt(N)
+    if (norm) for (int i = 0, idx = fr * n * 2; i < (2 * n); ++i, ++idx) {
+      out_mat->FastEl_Flat(idx) /= (sqrt(n));
+    }
+  }
+  
+  // if user wants real only, then reduce here
+  // our in-place approach is a bit sleazy, but works...
+  if (real_out) {
+    for (int o = 0, in = 0; o < (frames * n); ++o, in += 2) {
+      out_mat->FastEl_Flat(o) = sqrt(
+        (pow(out_mat->FastEl_Flat(in),2)) +
+        (pow(out_mat->FastEl_Flat(in+1),2)));
+    }
+    // now redim, which will preserve the data -- we can just reuse geom
+    out_geom.SetSize(out_mat->dims() - 1); // reduce 1 dim
+    for (int i = 1; i < out_mat->dims(); ++i) 
+      out_geom.Set(i-1, out_mat->dim(i));
+    
+    out_mat->SetGeomN(out_geom);
+  }
+  
+  rval = true;
+exit:
+  // cleanup
+  delete[] data; // ok if NULL
+  if (work) gsl_fft_real_workspace_free(work);
+  if (gwt) gsl_fft_real_wavetable_free(gwt);
+  return rval;
+}
+
 
 #else // !HAVE_LIBGSL
 
@@ -1621,6 +1728,16 @@ bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, i
 }
 
 bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  return false;
+}
+
+bool taMath_double::fft_real_wavetable(double_Matrix* out_mat, int n) {
+  return false;
+}
+
+bool taMath_double::fft_real_transform(double_Matrix* out_mat,
+  const double_Matrix* in_mat, double_Matrix* wavetable, double_Matrix* workspace)
+{
   return false;
 }
 
@@ -2634,6 +2751,19 @@ bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x
   return mat_mds_owrite((float_Matrix*)a, xy_coords, x_axis_c, y_axis_c);
 }
 
+bool taMath_float::fft_real_transform(float_Matrix* out_mat, const float_Matrix* in_mat,
+    bool real_out, bool norm)
+{
+  if (!out_mat || !in_mat) return false;
+  double_Matrix dout_mat;
+  double_Matrix din_mat;
+  din_mat.Copy(in_mat);
+  bool rval = taMath_double::fft_real_transform(&dout_mat, &din_mat,
+    real_out, norm);
+  out_mat->Copy(&dout_mat);
+  return rval;
+}
+
 
 #else // !HAVE_LIBGSL
 
@@ -2677,6 +2807,12 @@ bool taMath_float::mat_mds_owrite(float_Matrix* a, float_Matrix* xy_coords, int 
 }
 
 bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x_axis_c, int y_axis_c) {
+  return false;
+}
+
+bool taMath_float::fft_real_transform(float_Matrix* out_mat, const float_Matrix* in_mat,
+    bool real_out, bool norm)
+{
   return false;
 }
 

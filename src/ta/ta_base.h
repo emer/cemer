@@ -115,6 +115,7 @@ protected: \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
+  USING(taBase::Copy); \
   void Copy(const y& cp) { bool ok = true; \
     CanCopy_impl((const taBase*)&cp, true, ok, true); \
     if (ok) Copy_impl(cp);} \
@@ -138,6 +139,7 @@ protected: \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
+  USING(taBase::Copy); \
   void Copy(const y<T>& cp) {  bool ok = true; \
     CanCopy_impl((const taBase*)&cp, true, ok, true); \
     if (ok) Copy_impl(cp);} \
@@ -161,6 +163,7 @@ protected: \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
+  USING(taBase::Copy); \
   void Copy(const y<T,U>& cp) {  bool ok = true; \
     CanCopy_impl((const taBase*)&cp, true, ok, true); \
     if (ok) Copy_impl(cp);} \
@@ -391,6 +394,10 @@ public: \
 #define SET_POINTER(var,obj) (taBase::SetPointer((TAPtr*)&(var), (TAPtr)(obj)))
 #define DEL_POINTER(var) (taBase::DelPointer((TAPtr*)&(var)))
 
+// standard smart refs and ptrs -- you should use this for every class
+#define TA_SMART_PTRS(y) \
+  SmartPtr_Of(y) \
+  SmartRef_Of(y, TA_ ## y);
 
 /* Clipboard (Edit) operation summary
 
@@ -553,7 +560,7 @@ public:
   virtual TAPtr		Clone()			{ return new taBase(*this); } // #IGNORE
   virtual TAPtr 	MakeToken()		{ return new taBase; }	// #IGNORE
   virtual TAPtr 	MakeTokenAry(int no)	{ return new taBase[no]; } // #IGNORE
-  taBase&		operator=(const taBase& cp) { Copy(cp); return *this;}
+//  taBase&		operator=(const taBase& cp) { Copy(cp); return *this;}
   virtual TypeDef*	GetTypeDef() const;	// #IGNORE
   virtual taBase*	New(int n_objs=1, TypeDef* type=NULL) { return NULL; }
   // #CAT_ObjectMgmt Create n_objs objects of given type (type is optional)
@@ -842,8 +849,8 @@ public:
     {if (CanCopy(cp, quiet)) return; ok = false;} 
     // #IGNORE convenience, for nested calls
 
-  void			Copy(const taBase& cp) { 
-    if (CanCopy(&cp)) Copy_impl(cp);}
+//  void			Copy(const taBase& cp) { 
+//    if (CanCopy(&cp)) Copy_impl(cp);}
   // #IGNORE the copy (=) operator FOR JUST THIS CLASS -- CALL PARENT Copy() for its functions; note: base version is so trivial, we don't do any of the stuff in BASEFUNS macro, but you should imagine it does
   virtual bool		Copy(const taBase* cp);
   // #IGNORE this is a generic copy, that enables common-subclass copying, or even copying from disparate clases that might have a sensible copy semantic

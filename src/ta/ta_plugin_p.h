@@ -134,17 +134,14 @@ public:
   
   DepCheck		dep_check; // #READ_ONLY #SHOW #NO_SAVE set if plugin_dep is missing in plugins
   
-  void		Copy_(const taPluginDep& cp); //note: we only use this for descs, not actual plugins
   COPY_FUNS(taPluginDep, taPluginBase);
-  TA_BASEFUNS(taPluginDep);
-#ifndef __MAKETA__
-  using inherited::Copy;
-#endif
+  TA_BASEFUNS(taPluginDep); //
 protected:
   override void CheckThisConfig_impl(bool quiet, bool& rval); // only for _deps
 private:
   void	Initialize();
   void	Destroy() {}
+  void	Copy_(const taPluginDep& cp); //note: we only use this for descs, not actual plugins
 };
 
 
