@@ -2,7 +2,6 @@ leabra todo list:
 
 commit:
 
-* fixed ProgExpr path parse bug [ ]
 
 ------------
 current:
@@ -32,6 +31,7 @@ current:
 
 == Misc
 
+* compress file getting .proj.proj.gz sometimes
 * NewLayer not working in netview
 * Can't view weights with 2 nets in same view!
 * r.wt disp scale gets reset when you click on a new unit

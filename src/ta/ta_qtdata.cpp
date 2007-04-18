@@ -670,7 +670,11 @@ taiIncrField::taiIncrField(TypeDef* typ_, IDataHost* host_, taiData* par,
 {
   SetRep( new iSpinBox(gui_parent_) );
   iSpinBox* rep = this->rep();
-  rep->setFixedHeight(taiM->text_height(defSize()));
+  int ht = taiM->text_height(defSize());
+  rep->setMaximumSize(5 * ht, ht);
+  rep->setMinimumSize(2*ht, ht);
+//   rep->setFixedHeight(ht);
+  //  rep->setCharWidth(6); // make them a bit smaller
 
   //note: the taiType will set the max/min
   if (readOnly()) {
