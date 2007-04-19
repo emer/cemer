@@ -589,40 +589,37 @@ int taMatrix::Dump_Load_Item(istream& strm, int idx) {
 }
 
 int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
+  
+  // we now expect dims, if not completely null
   int c = taMisc::skip_white(strm);
   if (c == EOF)    return EOF;
-  if (c == ';') // just a path
-    return 2;  // signal that just a path was loaded..
-
   
-  if (c != '{') {
-    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
-    return false;
-  }
-  // we expect, but don't require, the [..] dims 
-  MatrixGeom ar; // temp, while streaming
-  c = taMisc::skip_white(strm, true); // use peek mode, until we're sure
   if (c == '[') {
+    MatrixGeom ar; // temp, while streaming
     strm.get(); // actually gets the [
     do {
       c = taMisc::read_word(strm); // also consumes next char, whether sp or ]
       ar.Add(taMisc::LexBuf.toInt());
     } while ((c != ']') && (c != EOF));
-  }
-  //note: should always be at least one dim if we had [ but we check anyway
-  if (ar.size > 0) {
-    SetGeomN(ar);
-    //note: we always write the correct number, so early termination is an error!
-    int i = 0;
-    while ((i < size) && (c != EOF)) {
-      c = Dump_Load_Item(strm, i++);
+    //note: should always be at least one dim if we had [ but we check anyway
+    if (ar.size > 0) {
+      SetGeomN(ar);
+      //note: we always write the correct number, so early termination is an error!
+      int i = 0;
+      while ((i < size) && (c != EOF)) {
+        c = Dump_Load_Item(strm, i++);
+      }
     }
   }
+  
+  // no members, if any
+  return inherited::Dump_Load_Value(strm, par);
+/*
   c = taMisc::read_till_rbracket(strm);
   if (c==EOF)	return EOF;
   c = taMisc::read_till_semi(strm);
   if (c==EOF)	return EOF;
-  return true;
+  return true;*/
 }
 
 void taMatrix::Dump_Save_Item(ostream& strm, int idx) {
@@ -631,6 +628,8 @@ void taMatrix::Dump_Save_Item(ostream& strm, int idx) {
 
 int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
   strm << "{ ";
+  
+  // save data, if not completely null
   int i;
   if (geom.size > 0) {
     strm << "[";
@@ -644,6 +643,10 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
     Dump_Save_Item(strm, i);
     strm <<  ';';
   }
+  
+  // now save the members
+  GetTypeDef()->members.Dump_Save(strm, (void*)this, par, indent);
+  
   return true;
 }
 

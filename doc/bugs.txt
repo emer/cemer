@@ -1,3 +1,25 @@
+ccn lab 4/18/07
+
+* when you call up Axis Properties from t3 graph, the dialog only
+  appears behind the project, not on top (prob general bug)
+ * the 1st ViewProperties opens it up in front; but the 2nd one
+   seems to put it behind
+
+* need to include clip image copy for graphs, maybe other t3
+* use arrow/move control/mode in t3 to mediate visibility of clickable
+  borders; and then make the cotnrol bigger
+* need Window menu!!!!
+* deleting the T3View frame guy in the frames does not actually delete
+  the gui guys that go with it
+
+* when Brad did EpochTable and DataCalc/ComputeGroup thing, the program just aborted
+
+* "Frame" term too confusing?
+
+* look at v3 load conversion dialog -- seems that when you go "Cancel" it still proceeds with the conversion
+
+* copying a group does not give it a new name
+
 CURRENT BUGS
 
 Choice Dialog

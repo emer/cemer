@@ -383,9 +383,9 @@ public:
   // main matrix interface
 
   int 			size;
-  // #SHOW #READ_ONLY number of elements in the matrix (= frames*frameSize)
+  // #SHOW #READ_ONLY #NO_SAVE number of elements in the matrix (= frames*frameSize)
   MatrixGeom		geom;
-  // #SHOW #READ_ONLY dimensions array -- you cannot change this directly, you have to use API functions to change size
+  // #SHOW #READ_ONLY #NO_SAVE dimensions array -- you cannot change this directly, you have to use API functions to change size
   
   static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
   // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
