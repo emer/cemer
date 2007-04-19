@@ -816,7 +816,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
     }
     else if (c == '[') {
       // finished with members, mat data coming up (so exit members)
-      return rval;
+      return 3; // special kludgy code to tell Matrix::Dump_Load to expect mat vals
     } else {
       MemberDef* md = FindName(mb_name);
       if(md == NULL) {		// try to find a name with an aka..

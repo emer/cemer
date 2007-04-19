@@ -589,14 +589,34 @@ int taMatrix::Dump_Load_Item(istream& strm, int idx) {
 }
 
 int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
+//NOTE: this code is compatible with early 4.0 beta release which 
+// didn't save the members and only saved the data
+
+  int c = taMisc::skip_white(strm);
+  if(c == EOF)	return EOF;
+  if(c == ';')	return 2;	// signal that its a path
+  if(c == '}') {
+    if(strm.peek() == ';') strm.get();
+    return 2;
+  }
+
+  if (c != '{') {
+    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
+    return false;
+  }
+  // now, load members (if we have dims, will exit at that point)
+  int rval = GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
+  // 3 is a hacky code to tell us that it got the [ 
+  if ((rval != 3) || (rval == EOF)) return rval;
   
   // we now expect dims, if not completely null
-  int c = taMisc::skip_white(strm);
+  c = taMisc::skip_white(strm);
   if (c == EOF)    return EOF;
   
   if (c == '[') {
     MatrixGeom ar; // temp, while streaming
-    strm.get(); // actually gets the [
+    if (strm.peek() == '[')
+      strm.get(); // actually gets the [
     do {
       c = taMisc::read_word(strm); // also consumes next char, whether sp or ]
       ar.Add(taMisc::LexBuf.toInt());
@@ -611,15 +631,12 @@ int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
       }
     }
   }
-  
-  // no members, if any
-  return inherited::Dump_Load_Value(strm, par);
-/*
+  // because we had data, we have to clean up
   c = taMisc::read_till_rbracket(strm);
   if (c==EOF)	return EOF;
   c = taMisc::read_till_semi(strm);
   if (c==EOF)	return EOF;
-  return true;*/
+  return true;
 }
 
 void taMatrix::Dump_Save_Item(ostream& strm, int idx) {
@@ -627,7 +644,9 @@ void taMatrix::Dump_Save_Item(ostream& strm, int idx) {
 }
 
 int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
-  strm << "{ ";
+  // save the members -- it puts the { out
+  //int rval = 
+  inherited::Dump_Save_Value(strm, par, indent);
   
   // save data, if not completely null
   int i;
@@ -643,10 +662,7 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
     Dump_Save_Item(strm, i);
     strm <<  ';';
   }
-  
-  // now save the members
-  GetTypeDef()->members.Dump_Save(strm, (void*)this, par, indent);
-  
+ 
   return true;
 }
 
@@ -1068,6 +1084,15 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
   String err_msg;
   bool valid = GeomIsValid(dims_, geom_, &err_msg);
   if(TestError(!valid, "SetGeom_", err_msg)) return;
+  // dims=0 is special case, which is just a reset
+  if (dims_ == 0) {
+    StructUpdate(true);
+    Reset(); // deletes data, and collapses slices
+    geom.Reset(); // ok, now you know what 0-d really means!!!
+    StructUpdate(false);
+    return;
+  }
+  
   // flex not allowed for fixed data
   if (isFixedData()) {
     if(TestError((geom_[dims_-1] == 0), "SetGeom_", 
