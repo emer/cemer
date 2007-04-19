@@ -651,16 +651,19 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
   // save data, if not completely null
   int i;
   if (geom.size > 0) {
+    taMisc::indent(strm, indent);
+    // dims
     strm << "[";
     for (i=0; i< geom.size; ++i) {
       if (i > 0) strm << " ";
       strm << geom.FastEl(i);
     }
     strm << "] ";
-  }
-  for (i=0; i < size; ++i) {
-    Dump_Save_Item(strm, i);
-    strm <<  ';';
+    // values
+    for (i=0; i < size; ++i) {
+      Dump_Save_Item(strm, i);
+      strm <<  ';';
+    }
   }
  
   return true;

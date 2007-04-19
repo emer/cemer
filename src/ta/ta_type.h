@@ -911,6 +911,7 @@ public:
   static String	StringCVar(const String& str);
   // #CAT_Utility make return string in a form that would be valid as a variable name in C (i.e., alpha + numeric (not at start) + _
 
+  
   /////////////////////////////////////////////////
   //	File Paths etc
 

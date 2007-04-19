@@ -1356,6 +1356,7 @@ bool taRootBase::Startup_RegisterSigHandler() {
 // #if (!defined(DMEM_COMPILE)) 
   // let's see if this works now!
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
+  milestone |= SM_REG_SIG;
 // #endif
   return true;
 }
@@ -1458,6 +1459,10 @@ bool taRootBase::Startup_Run() {
 
 // todo: could partition these out into separate guys..  	
 void taRootBase::Cleanup_Main() {
+  // remove sig handler -- very nasty when baddies happen after this point
+  if (milestone & SM_REG_SIG) {
+    taMisc::Register_Cleanup(SIG_DFL); // replace back to using default
+  }
   if (milestone & SM_ROOT_CREATE)
     tabMisc::DeleteRoot();
   if (milestone & SM_TYPES_INIT)
@@ -1647,7 +1652,7 @@ void taRootBase::SaveRecoverFileHandler(int err) {
   taMisc::Decode_Signal(err);
   cerr << endl;
 
-  for (int i = 0; i < tabMisc::root->projects.size; ++i) {
+  if (tabMisc::root) for (int i = 0; i < tabMisc::root->projects.size; ++i) {
     taProject* prj = tabMisc::root->projects.FastEl(i);
     prj->SaveRecoverFile();
   }

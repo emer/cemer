@@ -302,7 +302,8 @@ protected:
     SM_SOQT_INIT	= 0x008,
     SM_TYPES_INIT	= 0x020,
     SM_ROOT_CREATE	= 0x040,
-    SM_APP_OBJ		= 0x080
+    SM_APP_OBJ		= 0x080,
+    SM_REG_SIG		= 0x100
   };
   
   static int		milestone; // StartupMilestones
