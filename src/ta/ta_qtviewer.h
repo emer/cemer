@@ -94,6 +94,7 @@ public:
   virtual void		FillContextMenu_EditItems(taiActions* menu, int allowed) {}
   virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
+  virtual taiDataLink*	GetListChild(void* el) {return NULL;} // get link when item is known (esp for change notifies)
   virtual String	GetTypeDecoKey() const {return _nilString;}
   virtual String	GetStateDecoKey() const {return _nilString;}
   virtual const QVariant GetColData(const KeyString& key, int role) const 
@@ -201,8 +202,9 @@ public: // for taLists, and default children (where defined) in taOBase
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
     taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
     const String& node_name, int dn_flags);
-  override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
-  override int		NumListCols() const; // number of columns in a list view for this item type
+  override taiDataLink*	GetListChild(int itm_idx);
+  override taiDataLink*	GetListChild(void* el);
+   override int		NumListCols() const; // number of columns in a list view for this item type
   override const KeyString GetListColKey(int col) const; // #IGNORE
   override String	GetColHeading(const KeyString& key) const; // #IGNORE
   override String	ChildGetColText(taDataLink* child, const KeyString& key, 
@@ -1382,6 +1384,7 @@ public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
   void			ClearList(); // for when data changes -- we just rebuild the list
   void			FillList();
+  void			RenumberList();
   
   iListDataPanel(taiDataLink* dl_, const String& custom_name = _nilString);
   ~iListDataPanel();
@@ -1492,6 +1495,8 @@ public:
     // how many levels the DefaultExpand expands
   void			setDefaultExpandLevels(int value) 
     {m_def_exp_levels = (int)value;}
+  iTreeViewItem*	item(int i) const; // item at i, NULL if out of range
+  inline int		itemCount() const {return topLevelItemCount();}
   void			setHeaderText(int col, const String& value); // convenience
   int 			maxColChars(int col); // value if set, -1 otherwise
   void			setMaxColChars(int col, int value); // sets max number of chars for that text (when retrieved from the link); elided if greater
@@ -1618,14 +1623,6 @@ public:
     DNF_NO_UPDATE_NAME	= 0x200 // for root items that don't have a md, we autoset UPDATE_NAME unless this flag is set
   };
 
-/*nn  enum BrowseDropAction {
-    BDA_MOVE,
-    BDA_COPY,
-    BDA_LINK,
-    BDA_MOVE_AS_SUBGROUP, // moves item as a subgroup, ex a Unit group
-    BDA_MOVE_AS_SUBITEM // moves item as a subitem, ex a sub spec, or subprocess
-  }; */
-
   int			dn_flags; // any of DataNodeFlags
 
   override bool 	canAcceptDrop(const QMimeData* mime) const;
@@ -1709,6 +1706,7 @@ public:
 
   bool 			operator<(const QTreeWidgetItem& item) const; // override
 
+  override void		DecorateDataNode();
   taiListDataNode(int num_, iListDataPanel* panel_, taiDataLink* link_,
     iTreeView* parent_, taiListDataNode* after, int dn_flags_ = 0);
     //note: list flag automatically or'ed in

@@ -212,6 +212,8 @@ int DataCol::imageComponents() const {
 
 void DataCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if (is_matrix) // autokey only allowed on scalar cols
+    col_flags = (ColFlags)(col_flags & ~AUTO_KEY);
   Init();
 }
 
@@ -234,11 +236,35 @@ DataTable* DataCol::dataTable() {
   return rval;
 }
 
-void DataCol::EnforceRows(int rws) {
+bool DataCol::EnforceRows(int rws) {
   taMatrix* mat = AR();
-  if (!mat) return;
-  mat->EnforceFrames(rws);
+  if (!mat) return false;
+  bool rval = false;
+  if (col_flags & AUTO_KEY) {
+    int a_rows = mat->frames();
+    rval = mat->EnforceFrames(rws);
+    int b_rows = mat->frames();
+    for (int i = a_rows; i < b_rows; ++i) {
+      SetVal(++(dataTable()->keygen), i);
+    }
+  } else {
+    rval = mat->EnforceFrames(rws);
+  }
+  return rval;
 }
+
+bool DataCol::InsertRows(int st_row, int n_rows) {
+  taMatrix* mat = AR();
+  if (!mat) return false;
+  bool rval = mat->InsertFrames(st_row, n_rows);
+  if (!rval) return rval;
+  if (col_flags & AUTO_KEY) {
+    for (int i = st_row; i < st_row + n_rows; ++i) {
+      SetVal(++(dataTable()->keygen), i);
+    }
+  }
+  return rval;
+}  
 
 int DataCol::FindVal(const Variant& val, int st_row) const {
   if(TestError(isMatrix(), "FindVal", "column must be scalar, not matrix")) return -1;
@@ -594,6 +620,7 @@ void DataTable::Initialize() {
   data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
   auto_load = NO_AUTO_LOAD;
   m_dm = NULL; // returns new if none exists, or existing -- enables views to be shared
+  keygen.setType(Variant::T_Int64);
   calc_script = NULL;
   log_file = NULL;
 }
@@ -633,6 +660,7 @@ void DataTable::Copy_(const DataTable& cp) {
   data_flags = cp.data_flags;
   auto_load = cp.auto_load;
   auto_load_file = cp.auto_load_file;
+  keygen = cp.keygen;
 }
 
 void DataTable::Copy_NoData(const DataTable& cp) {
@@ -1550,8 +1578,7 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   DataUpdate(true);
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
-    if(!ar->AR()->InsertFrames(st_row, n_rows))
-      rval = false;
+    rval = ar->InsertRows(st_row, n_rows);
   }
   if(rval)
     rows += n_rows;
@@ -1577,6 +1604,7 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
       ar->AR()->RemoveFrames(act_row, n_rows);
   }
   rows -= n_rows;
+  if (rows == 0)  keygen.setInt64(0);
   DataUpdate(false);
   return true;
 }
@@ -1606,6 +1634,7 @@ void DataTable::Reset() {
   StructUpdate(true);
   data.Reset();
   rows = 0;
+  keygen.setInt64(0);
   StructUpdate(false);
 }
 
@@ -1617,6 +1646,7 @@ void DataTable::ResetData() {
     ar->AR()->Reset();
   }
   rows = 0;
+  keygen.setInt64(0);
   StructUpdate(false);
   // also update itrs in case using simple itr mode
   ReadItrInit();

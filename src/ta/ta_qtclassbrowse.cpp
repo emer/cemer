@@ -408,9 +408,9 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     }
     break;
   case taMisc::TIK_METHOD: {
-    MethodDef* md = static_cast<MethodDef*>(data());
+    /*MethodDef* md */ static_cast<MethodDef*>(data());
     //TODO: enumerate params
-    taiDataLink* dl = NULL;
+    //taiDataLink* dl = NULL;
     }
     break;
   case taMisc::TIK_TYPE: {

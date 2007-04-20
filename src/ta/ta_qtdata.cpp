@@ -1037,7 +1037,10 @@ taiDimEdit::taiDimEdit(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* g
 }
 
 void taiDimEdit::Initialize(QWidget* gui_parent_) {
-  SetRep(new iDimEdit(gui_parent_));
+  iDimEdit* de = new iDimEdit(gui_parent_); // cache
+  // note: max user-dims is 1 less, since we reserve one for table cols
+  de->setMaxDims(TA_MATRIX_DIMS_MAX - 1);
+  SetRep(de);
   if (readOnly()) {
     rep()->setReadOnly(true);
   } else {

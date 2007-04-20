@@ -862,6 +862,12 @@ void taOBase::ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst
       forbidden |= (taiClipData::EA_DROP_COPY2 | taiClipData::EA_DROP_MOVE2 |
         taiClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
     }
+    // confusing to allow move of an obj on itself
+    if (lst_itm && (lst_itm == obj)) {
+      forbidden |= (taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_MOVE);
+      if ((ms->srcAction() & taiClipData::EA_SRC_CUT))
+        forbidden |= taiClipData::EA_PASTE;
+    }
   } else {
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for L action calls
   }
@@ -1127,6 +1133,12 @@ void taGroup_impl::ChildQueryEditActionsG_impl(const MemberDef* md,
       // forbid both kinds of cases
       forbidden |= (taiClipData::EA_DROP_COPY2 | taiClipData::EA_DROP_MOVE2 |
         taiClipData::EA_PASTE2); //note: paste, regardless whether src cut or copy
+    }
+    // confusing to allow move of an obj on itself
+    if (subgrp && (subgrp == grp)) {
+      forbidden |= (taiClipData::EA_DROP_COPY | taiClipData::EA_DROP_MOVE);
+      if ((ms->srcAction() & taiClipData::EA_SRC_CUT))
+        forbidden |= taiClipData::EA_PASTE;
     }
   } else {
     forbidden |= taiClipData::EA_IN_PROC_OPS; // note: redundant during queries, but needed for G action calls

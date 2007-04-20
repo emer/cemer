@@ -698,7 +698,7 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
   return true;
 }
 
-int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4) const {
+int taMatrix::FastElIndex(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
   int rval = -1;
   switch (geom.size) {
   case 0: 
@@ -850,7 +850,7 @@ taMatrix* taMatrix::GetFrameRangeSlice_(int st_frame, int n_frames) {
   return GetSlice_(base, dims()-1, n_frames);
 }
 
-bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4) const {
+bool taMatrix::InRange(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
   switch (geom.size) {
   case 0: return false; // not initialized
   case 1: return ((d0 >= 0) && (d0 < geom[0]));
@@ -1002,7 +1002,7 @@ int taMatrix::rowCount() {
   }
 }
 
-int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4) const {
+int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
   int rval = -1;
   switch (geom.size) {
   case 0: 

@@ -220,8 +220,6 @@ protected:
     // if added item has empty name, this will get called, enabling a name to be set; index has been set
   virtual taHashVal 	El_GetHashVal_(void* it) const;
   // gets hash code based on key type in hash table; default is for string-key'ed lists (v3.2 default)
-  virtual TypeDef*	El_GetType_(void*) const {return GetElType();}
-    // should usually override to provide per-item typing where applicable
   virtual TALPtr	El_GetOwnerList_(void*) const	{ return (TALPtr)this; }
   // who owns the el? -- only returns a list if the owner is a list
   virtual void*		El_GetOwnerObj_(void*) const	{ return NULL; }
@@ -283,6 +281,8 @@ public:
 
   void*   	GetTA_Element_(int i, TypeDef*& eltd) const
   { void* rval = SafeEl_(i); if (rval) eltd = El_GetType_(rval); return rval; } // #IGNORE 
+  virtual TypeDef*	El_GetType_(void*) const {return GetElType();}
+    // #IGNORE should usually override to provide per-item typing where applicable
   void*		SafeEl_(int i) const
   { void* rval=NULL; if(InRange(i)) rval = el[i]; return rval; } 	// #IGNORE
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
@@ -464,7 +464,6 @@ public:
 
   virtual T*	FindName(const String& item_nm, int& idx=no_index) const { return (T*)FindName_(item_nm, idx); }
   // find given named element (NULL = not here), sets idx
-
   virtual T*	Pop()				{ return (T*)Pop_(); }
   // pop the last element off the stack
   virtual T*	Peek() const			{ return (T*)Peek_(); }

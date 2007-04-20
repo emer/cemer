@@ -1525,10 +1525,11 @@ private:
 
 
 class TA_API taBase_PtrList: public taPtrList<taBase> { // a primitive taBase list type, used for global lists that manage taBase objects
-
+public:
+  TypeDef*	El_GetType_(void* it) const 
+    {return ((TAPtr)it)->GetTypeDef();} // #IGNORE
 protected:
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
-  TypeDef*	El_GetType_(void* it) const {return ((TAPtr)it)->GetTypeDef();}
 
   void*		El_Ref_(void* it)	{ taBase::Ref((TAPtr)it); return it; }
   void*		El_unRef_(void* it)	{ taBase::unRef((TAPtr)it); return it; }
@@ -1608,6 +1609,8 @@ public:
   // #IGNORE Default type for objects in group
   override void*        GetTA_Element(int i, TypeDef*& eltd)
     { return taPtrList_ta_base::GetTA_Element_(i, eltd); }
+  override TypeDef*	El_GetType_(void* it) const
+    {return ((TAPtr)it)->GetTypeDef();} // #IGNORE 
   override taList_impl* children_() {return this;}
 
 
@@ -1702,7 +1705,6 @@ protected:
   void		El_SetDefaultName_(void*, int idx); // sets default name if child has DEF_NAME_LIST 
   String	El_GetName_(void* it) const { return ((TAPtr)it)->GetName(); }
   void 		El_SetName_(void* it, const String& nm)  {((TAPtr)it)->SetName(nm);}
-  TypeDef*	El_GetType_(void* it) const {return ((TAPtr)it)->GetTypeDef();}
   TALPtr	El_GetOwnerList_(void* it) const 
   { return dynamic_cast<TABLPtr>(((TAPtr)it)->GetOwner()); }
   void*		El_GetOwnerObj_(void* it) const { return ((TAPtr)it)->GetOwner(); }
@@ -1723,6 +1725,8 @@ protected:
   void*		El_MakeToken_(void* it) { return (void*)((TAPtr)it)->MakeToken(); }
   void*		El_Copy_(void* trg, void* src)
   { ((TAPtr)trg)->UnSafeCopy((TAPtr)src); return trg; }
+  void* 	El_CopyN_(void* to, void* fm); // wrap in an update bracket
+  
 protected:
   override void CanCopy_impl(const taBase* cp_fm, bool quiet,
     bool& ok, bool virt) const;

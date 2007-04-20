@@ -71,7 +71,7 @@ class MatrixTableModel; //
    Accessors
      most routines provide three accessor variants:
      
-     Xxx(d0, d1, d2, d3, d4) this is the most common way to access the data --
+     Xxx(d0, d1, d2, d3, d4, d5, d6) this is the most common way to access the data --
        d's higher than the actual dimension of the matrix are ignored
        
      XxxN(const MatrixGeom&) -- for any dimensionality -- it is unspecified whether
@@ -142,6 +142,8 @@ class MatrixTableModel; //
    
 */
 
+// note: the "max" is a low-level max, but we limit user to 1 less,
+// so that mats and table cells have the same maximum geometry
 #define TA_MATRIX_DIMS_MAX 8
 #define IMatrix taMatrix
 
@@ -227,7 +229,8 @@ public:
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   void			Copy_(const MatrixGeom& cp);
   explicit MatrixGeom(int init_size);
-  MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
+  MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0);
   COPY_FUNS(MatrixGeom, taBase);
   TA_BASEFUNS_LITE(MatrixGeom); //
 
@@ -296,12 +299,14 @@ public:
   // #CAT_Access flat row count, for 2-d grid operations, only 0 if empty
   int			FrameToRow(int f) const;
   // #CAT_Access convert frame number to row number
-  int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
+  int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const; 
   int			FastElIndex2D(int d0, int d1=0) const; 
   // #CAT_Access NO bounds check and return index as if the mat was only 2d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   int			FastElIndexN(const MatrixGeom& indices) const;
   // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
-  int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
+  int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const; 
   // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
   int			SafeElIndexN(const MatrixGeom& indices) const; 
   // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
@@ -318,8 +323,9 @@ public:
   ///////////////////////////////////////
   // String
 
-  const String		SafeElAsStr(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return SafeElAsStr_Flat(SafeElIndex(d0, d1, d2, d3, d4)); }
+  const String		SafeElAsStr(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const
+  { return SafeElAsStr_Flat(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)); }
   // #CAT_Access (safely) returns the element as a string
   const String		SafeElAsStrN(const MatrixGeom& indices) const
   { return SafeElAsStr_Flat(SafeElIndexN(indices)); }  
@@ -347,8 +353,9 @@ public:
   ///////////////////////////////////////
   // Variant
 
-  const Variant		SafeElAsVar(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return SafeElAsVar_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
+  const Variant		SafeElAsVar(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const
+  { return SafeElAsVar_Flat(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)); } 
   // #CAT_Access (safely) returns the element as a variant
   const Variant		SafeElAsVarN(const MatrixGeom& indices) const	
   { return SafeElAsVar_Flat(SafeElIndexN(indices)); }   
@@ -361,8 +368,9 @@ public:
   { return El_GetVar_(FastEl_Flat_(idx)); } 
   // #CAT_Access treats the matrix like a flat array, returns the element as a variant
     
-  void		SetFmVar(const Variant& var, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  { int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4)) >= 0)
+  void		SetFmVar(const Variant& var, int d0, int d1=0, int d2=0,
+    int d3=0, int d4=0, int d5=0, int d6=0)
+  { int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4, d5, d6)) >= 0)
 	       El_SetFmVar_(FastEl_Flat_(idx), var); } 
   // #CAT_Modify (safely) sets the element as a variant
   void		SetFmVarN(const Variant& var, const MatrixGeom& indices) 	
@@ -403,7 +411,8 @@ public:
   virtual int		defAlignment() const;
   // #CAT_Display default Qt alignment, left for text, right for nums
     
-  bool			InRange(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const; 
+  bool			InRange(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const; 
   // #CAT_Access true if indices in range; ignores irrelevant dims
   bool			InRangeN(const MatrixGeom& indices) const;  
   // #CAT_Access true if indices in range; MAY ignore under-supplied dims
@@ -414,8 +423,9 @@ public:
   ///////////////////////////////////////
   // Float access
 
-  float		SafeElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return SafeElAsFloat_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
+  float		SafeElAsFloat(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const
+  { return SafeElAsFloat_Flat(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)); } 
   // #CAT_Access (safely) returns the element as a float
   float		SafeElAsFloatN(const MatrixGeom& indices) const	
   { return SafeElAsFloat_Flat(SafeElIndexN(indices)); }   
@@ -424,8 +434,9 @@ public:
   { if (InRange_Flat(idx)) return El_GetFloat_(FastEl_Flat_(idx)); else return 0.0f; } 
   // #CAT_Access (safely) returns the element as a float, flat array model
 
-  float		FastElAsFloat(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return El_GetFloat_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4))); }
+  float		FastElAsFloat(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const
+  { return El_GetFloat_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4, d5, d6))); }
   // #CAT_Access get element as float without range checking 
   float		FastElAsFloatN(const MatrixGeom& indices) const	
   { return El_GetFloat_(FastEl_Flat_(FastElIndexN(indices))); }   
@@ -437,8 +448,9 @@ public:
   ///////////////////////////////////////
   // Double access
 
-  double	SafeElAsDouble(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return SafeElAsDouble_Flat(SafeElIndex(d0, d1, d2, d3, d4)); } 
+  double	SafeElAsDouble(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const
+  { return SafeElAsDouble_Flat(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)); } 
   // #CAT_Access (safely) returns the element as a double
   double	SafeElAsDoubleN(const MatrixGeom& indices) const	
   { return SafeElAsDouble_Flat(SafeElIndexN(indices)); }   
@@ -447,8 +459,9 @@ public:
   { if (InRange_Flat(idx)) return El_GetDouble_(FastEl_Flat_(idx)); else return 0.0f; } 
   // #CAT_Access (safely) returns the element as a double, float array model
 
-  double	FastElAsDouble(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return El_GetDouble_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4))); }
+  double	FastElAsDouble(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const
+  { return El_GetDouble_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4, d5, d6))); }
   // #CAT_Access get element as double without range checking 
   double	FastElAsDoubleN(const MatrixGeom& indices) const	
   { return El_GetDouble_(FastEl_Flat_(FastElIndexN(indices))); }   
@@ -478,8 +491,10 @@ public:
   virtual void		Reset();
   // #CAT_Modify remove all items
   
-  void			SetGeom(int size, int d0, int d1=0, int d2=0, int d3=0, int d4=0)  
-  { int d[5]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3; d[4]=d4; SetGeom_(size, d);} 
+  void			SetGeom(int size, int d0, int d1=0, int d2=0,
+    int d3=0, int d4=0, int d5=0, int d6=0)  
+  { int d[TA_MATRIX_DIMS_MAX]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3;
+    d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; SetGeom_(size, d);} 
   // #CAT_Modify set geom for matrix -- if matches current size, it is non-destructive 
   void			SetGeomN(const MatrixGeom& geom_) 
   { SetGeom_(geom_.size, geom_.el);}
@@ -530,8 +545,9 @@ public:
   // #IGNORE the raw element in the flat space _
   virtual const void*	FastEl_Flat_(int i) const = 0;
   // #IGNORE const version
-  const void*		FastEl_(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const 
-  { return FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4)); } 
+  const void*		FastEl_(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const 
+  { return FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4, d5, d6)); } 
   // #IGNORE the raw element in index space -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   const void*		FastElN_(const MatrixGeom& indices) const 
   { return FastEl_Flat_(FastElIndexN(indices));} 
@@ -675,14 +691,16 @@ public:
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  const T&		FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const
-  { return el[FastElIndex(d0,d1,d2,d3,d4)]; }
+  const T&		FastEl(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const
+  { return el[FastElIndex(d0, d1, d2, d3, d4, d5, d6)]; }
   const T&		FastElN(const MatrixGeom& indices) const
   { return el[FastElIndexN(indices)]; } 
   const T&		FastEl_Flat(int idx) const { return el[idx]; }
   
-  T&			FastEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  { return el[FastElIndex(d0, d1, d2, d3, d4)]; }
+  T&			FastEl(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0)
+  { return el[FastElIndex(d0, d1, d2, d3, d4, d5, d6)]; }
   // #CAT_Access get element without range checking
   T&			FastElN(const MatrixGeom& indices)
   { return el[FastElIndexN(indices)]; }
@@ -690,8 +708,9 @@ public:
   T&			FastEl_Flat(int idx) { return el[idx]; }
   // #CAT_Access get element without range checking -- treats matrix like a flat array
   
-  const T&		SafeEl(int d0, int d1=0, int d2=0, int d3=0, int d4=0) const 	
-  { return *((T*)(SafeEl_(SafeElIndex(d0,d1,d2,d3,d4)))); } 
+  const T&		SafeEl(int d0, int d1=0, int d2=0, int d3=0,
+    int d4=0, int d5=0, int d6=0) const 	
+  { return *((T*)(SafeEl_(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)))); } 
   // #CAT_Access (safely) access the element for reading
   const T&		SafeElN(const MatrixGeom& indices) const  
   { return *((T*)(SafeEl_(SafeElIndexN(indices)))); }  
@@ -700,8 +719,9 @@ public:
   { return *((T*)(SafeEl_(idx))); }
   // #CAT_Access (safely) access the matrix as if it were a flat vector, for reading
   
-  void			Set(const T& item, int d0, int d1=0, int d2=0, int d3=0, int d4=0)
-  { int idx = SafeElIndex(d0,d1,d2,d3,d4); 
+  void			Set(const T& item, int d0, int d1=0, int d2=0,
+    int d3=0, int d4=0, int d5=0, int d6=0)
+  { int idx = SafeElIndex(d0, d1, d2, d3, d4, d5, d6); 
     if (InRange_Flat(idx)) el[idx] = item; }
   // #CAT_Modify safely assign values to items in the matrix
   void			SetN(const T& item, const MatrixGeom& indices) 	
@@ -741,87 +761,6 @@ private:
   void			Destroy() { CutLinks();}
 };
 
-/*obs
-class TA_API taMatrixPtr { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS "safe" ptr for Matrix objects -- automatically does ref counts
-public:
-  taMatrix*	ptr() {return m_ptr;} //note: strong types define strongly typed version
-  const taMatrix*	ptr() const {return m_ptr;} //note: strong types define strongly typed version
-  
-  taMatrixPtr() {m_ptr = NULL;}
-  ~taMatrixPtr() {set(NULL);} //
-  
-  taMatrix* operator->() const {return m_ptr;} 
-  operator taMatrix*() const {return m_ptr;} //
-  
-  // WARNING: these permit incorrect assignments to strongly typed pointers, use with caution
-  taMatrixPtr(const taMatrixPtr& src) {m_ptr = NULL; set(src.m_ptr);} 
-  taMatrix* operator=(taMatrixPtr& src) {set(src.m_ptr); return m_ptr;} 
-  taMatrix* operator=(taMatrix* src) {set(src); return m_ptr;}  //
-  
-  // WARNING: these are bogus operators required to enable creating an array of items (legacy issue)
-  operator taString() const {return _nilString;}
-  explicit taMatrixPtr(const String& ignored) {m_ptr = NULL;}
-  
-protected:
-  taMatrix*	m_ptr;
-  void		set(taMatrix* src) {taBase::SetPointer((taBase**)(&m_ptr), src);} //
-}; //
-
-// operators for doing NULL testing on the smart pointers 
-// note: these operators are only defined when int==0 i.e. NULL
-// note: use '0' instead of 'NULL' in your tests to avoid a compiler warning
-inline bool operator ==(const taMatrixPtr& a, int b)
-  {return ((b== 0) && (a.ptr() == NULL));} 
-inline bool operator ==(int a, const taMatrixPtr& b)
-  {return ((a == 0) && (NULL == b.ptr()));} 
-inline bool operator !=(const taMatrixPtr& a, int b)
-  {return ((b == 0) && (a.ptr() != NULL));}
-inline bool operator !=(int a, const taMatrixPtr& b)
-  {return ((a == 0) && (NULL != b.ptr()));} //
-
-// operators for doing equality testing on the smart pointers 
-inline bool operator ==(const taMatrixPtr& a, const taMatrixPtr& b)
-  {return (a.ptr() == b.ptr());} 
-inline bool operator ==(const taMatrixPtr& a, const taMatrix* b)
-  {return (a.ptr() == b);} 
-inline bool operator ==(const taMatrix* a, const taMatrixPtr& b)
-  {return (a == b.ptr());} 
-inline bool operator !=(const taMatrixPtr& a, const taMatrixPtr& b)
-  {return (a.ptr() != b.ptr());}
-inline bool operator !=(const taMatrixPtr& a, const taMatrix* b)
-  {return (a.ptr() != b);}
-inline bool operator !=(const taMatrix* a, const taMatrixPtr& b)
-  {return (a != b.ptr());}
-
-
-// macro for creating smart ptrs of taMatrixT classes
-#define taMatrixPtr_Of(T)  class TA_API T ## Ptr: public taMatrixPtr { \
-public: \
-  T* ptr() const {return (T*)m_ptr;} \
-  operator T*() const {return (T*)m_ptr;} \
-  T* operator->() const {return (T*)m_ptr;} \
-  T* operator=(T ## Ptr& src) {set((T*)src.m_ptr); return (T*)m_ptr;} \
-  T* operator=(T* src) {set(src); return (T*)m_ptr;} \
-  T ## Ptr() {} \
-  T ## Ptr(const T ## Ptr& src) {set((T*)src.m_ptr);} \
-  T ## Ptr(T* src) {set(src);} \
-};
-
-
-class TA_API MatrixPtr_Array : public taArray<taMatrixPtr> {
-  // #NO_UPDATE_AFTER array (list) of matrix pointers -- used typically for multi params in data processing
-public:
-  STATIC_CONST taMatrixPtr blank; // #HIDDEN #READ_ONLY 
-
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_taMatrixPtr; return FastEl_Flat_(i); }
-  void Initialize()	{};
-  void Destroy()	{ };
-  TA_BASEFUNS(MatrixPtr_Array);
-  TA_ARRAY_FUNS(MatrixPtr_Array, taMatrixPtr)
-};*/
-
-
 /* XxxData
  
    XxxData is an N-dimension array of data.
@@ -841,8 +780,8 @@ public:
    {return (y*)GetSlice_(base, sfd, nsf);} \
   y* GetFrameSlice(int frame) {return (y*) GetFrameSlice_(frame);} \
   y* GetFrameRangeSlice(int frame, int n_frames) {return (y*) GetFrameRangeSlice_(frame, n_frames);} \
-  y(int dims_, int d0, int d1=0, int d2=0, int d3=0, int d4=0) \
-    {SetGeom(dims_, d0,d1,d2,d3,d4);} \
+  y(int dims_,int d0,int d1=0,int d2=0,int d3=0,int d4=0,int d5=0,int d6=0) \
+    {SetGeom(dims_, d0,d1,d2,d3,d4,d5,d6);} \
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
   y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
   TA_BASEFUNS(y) \

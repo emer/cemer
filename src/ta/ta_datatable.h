@@ -126,6 +126,7 @@ public:
     SAVE_ROWS 		= 0x0004, // save the row data for this column in the internal format used when the entire object is saved (e.g., along with a project or whatever).  the column configuration etc is always saved, just not the rows of data if not on.
     SAVE_DATA 		= 0x0008, // save this column in the 'data' export format used by the SaveData and associated functions (e.g., as recorded in 'logs' of data from running programs)
     CALC 		= 0x0010, // #APPLY_IMMED calculate value of this column based on calc_expr expression
+    AUTO_KEY		= 0x0020, // automatically set a key from next keygen value when a row is added (scalar cols only)
   };
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
@@ -338,8 +339,10 @@ public:
   bool		GetMinMaxScale(MinMax& mm);
   // #CAT_Display get min-max range of values contained within this column 
   
-  void		EnforceRows(int rows);
+  bool		EnforceRows(int rows);
   // force data to have this many rows
+  bool		InsertRows(int st_row, int n_rows);
+  // insert n_rows starting at st_row
 
   /////////////////////////////////////////////
   // misc
@@ -420,6 +423,8 @@ private:
   void	Initialize();
   void	Destroy()	{CutLinks(); }; //
 };
+TA_SMART_PTRS(DataCol); //
+
 
 /////////////////////////////////////////////////////////
 //   DataTableCols -- group of DataCol
@@ -456,8 +461,7 @@ private:
   void	Initialize();
   void	Destroy()		{}
 };
-
-SmartRef_Of(DataTableCols,TA_DataTableCols); // DataTableColsRef
+TA_SMART_PTRS(DataTableCols); //
 
 /////////////////////////////////////////////////////////
 //   DataTable
@@ -512,6 +516,7 @@ public:
   // #APPLY_IMMED #CONDEDIT_OFF_data_flags:SAVE_ROWS whether to automatically load a data file from auto_load_file when data table object is loaded (only applicable when SAVE_ROWS is not active -- makes the project file smaller for large data tables, but the cost is that the project is no longer self contained)
   String		auto_load_file;
   // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
+  Variant		keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   cssProgSpace* 	calc_script;
   // #HIDDEN #NO_SAVE script object for performing column calculations
@@ -630,7 +635,7 @@ public:
   virtual int		AddBlankRow() 
   { if (AddRows(1)) {wr_itr = rows - 1; return wr_itr;} else return -1; }
   // #MENU #MENU_ON_Rows #CAT_Rows add a new row to the data table, sets write (sink) index to this last row (as in WriteItem), so that subsequent datablock routines refer to this new row, and returns row #
-  virtual bool		AddRows(int n);
+  virtual bool		AddRows(int n = 1);
   // #MENU #CAT_Rows add n rows, returns true if successfully added
   virtual bool		InsertRows(int st_row, int n_rows=1);
   // #MENU #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
@@ -1030,8 +1035,7 @@ private:
   void	Initialize();
   void	Destroy();
 };
-
-SmartRef_Of(DataTable,TA_DataTable); // DataTableRef
+TA_SMART_PTRS(DataTable); //
 
 
 /////////////////////////////////////////////////////////
@@ -1050,6 +1054,7 @@ private:
   void	Initialize() 		{ SetBaseType(&TA_DataTable); }
   void 	Destroy()		{ };
 };
+TA_SMART_PTRS(DataTable_Group);
 
 
 /////////////////////////////////////////////////////////
@@ -1109,6 +1114,7 @@ private:
   void	Initialize() {}
   void	Destroy() {}
 };
+TA_SMART_PTRS(String_Data);
 
 
 class TA_API Variant_Data : public DataColTp<Variant_Matrix> {
@@ -1144,6 +1150,7 @@ private:
   void	Initialize() {}
   void	Destroy() {}
 };
+TA_SMART_PTRS(Variant_Data); //
 
 
 class TA_API double_Data : public DataColTp<double_Matrix> {
@@ -1176,6 +1183,7 @@ private:
   void	Initialize() {}
   void	Destroy() {}
 };
+TA_SMART_PTRS(double_Data); //
 
 class TA_API float_Data : public DataColTp<float_Matrix> {
   // floating point data
@@ -1207,6 +1215,7 @@ private:
   void	Initialize() {}
   void	Destroy() {}
 };
+TA_SMART_PTRS(float_Data); //
 
 class TA_API int_Data : public DataColTp<int_Matrix> {
   // int data
@@ -1238,6 +1247,7 @@ private:
   void	Initialize() {}
   void	Destroy() {}
 };
+TA_SMART_PTRS(int_Data); //
 
 class TA_API byte_Data : public DataColTp<byte_Matrix> {
   // byte data
@@ -1273,6 +1283,7 @@ private:
   void	Initialize() {}
   void	Destroy() {}
 };
+TA_SMART_PTRS(byte_Data); //
 
 class TA_API DataTableModel: public QAbstractTableModel,
   public IDataLinkClient

@@ -2359,13 +2359,22 @@ void taList_impl::CanCopy_impl(const taBase* cp_fm_, bool quiet,
 }
 
 void taList_impl::Copy_(const taList_impl& cp) {
-//old  if(!cp.name.empty())
-    name = cp.name;
+//old  if(!cp.name.empty()) name = cp.name;
+//no    name = cp.name;
   el_base = cp.el_base;
   el_typ = cp.el_typ;
   el_def = cp.el_def;
 //old  taPtrList_impl::Copy_Duplicate(cp);
   taPtrList_impl::Copy_Exact(cp);
+}
+
+void* taList_impl::El_CopyN_(void* to_, void* fm) {
+  taBase* to = (TAPtr)to_;
+  to->StructUpdate(true);
+  void* rval = El_Copy_(to_, fm);
+  El_SetName_(to_, El_GetName_(fm));
+  to->StructUpdate(false);
+  return rval;
 }
 
 void taList_impl::UpdateAfterEdit(){

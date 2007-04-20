@@ -1117,7 +1117,14 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // then load configuration info: sets lots of user-defined config info
   taMisc::Init_Defaults_PreLoadConfig();
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
-  
+//TEMP
+if (taMisc::proj_view_pref == -1) {
+  if (taMisc::user_dir.contains("oreilly")) 
+    taMisc::proj_view_pref = taMisc::PVP_3PANE;
+  else taMisc::proj_view_pref = taMisc::PVP_2x2;
+}
+// / TEMP
+
 //TEMP -- force user dir to be what we want
 taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
 // /TEMP

@@ -1002,7 +1002,22 @@ taiDataLink* tabODataLink::GetListChild(int itm_idx) {
     return NULL;
   TypeDef* typ;
   void* el = list()->GetTA_Element(itm_idx, typ); // gets the item, and its TypeDef
-  if (typ == NULL) return NULL; //TODO: maybe we should return a null link???
+  if (typ == NULL) return NULL; 
+  // if we get a taBase item, the type might only be the base type, not the derived type of the item
+  // so we cast the item, and then grab the exact type right from the item
+  if (typ->InheritsFrom(&TA_taBase)) {
+      typ = ((taBase*)el)->GetTypeDef();
+  }
+  // get the link
+  taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
+  return dl;
+}
+
+taiDataLink* tabODataLink::GetListChild(void* el) {
+  if (!list()) return inherited::GetListChild(el);
+  if (!el) return NULL;
+  TypeDef* typ = list()->El_GetType_(el);
+  if (typ == NULL) return NULL;
   // if we get a taBase item, the type might only be the base type, not the derived type of the item
   // so we cast the item, and then grab the exact type right from the item
   if (typ->InheritsFrom(&TA_taBase)) {
@@ -4884,24 +4899,80 @@ void iListDataPanel::ConfigHeader() {
 
 void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (!( ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_MAX))
-    || (dcr == DCR_DATA_UPDATE_END) || (dcr == DCR_STRUCT_UPDATE_END))
-  ) return;
-
-  ClearList();
-  if (dcr == DCR_STRUCT_UPDATE_END)
+  if (dcr == DCR_LIST_ITEM_REMOVE) {
+    // index will now be invalid for followers
+    RenumberList();
+  }
+  // we handle the cases separately, since just refilling the list
+  else if (dcr == DCR_LIST_ITEM_INSERT) {
+    // insert at end, regardless of sort order
+    taiDataLink* item = link()->GetListChild(op1_);
+    if (!item) {
+      taMisc::Warning("iListDataPanel::DataChanged_impl: unexpected could not find new list item");
+      return;
+    }
+    taiListDataNode* last_child = dynamic_cast<taiListDataNode*>(
+      list->item(list->itemCount() - 1));
+    /*taiListDataNode* dn = */new taiListDataNode(-1, this, item, list,
+      last_child, (iTreeViewItem::DNF_CAN_DRAG)); // numbered/decorated in Renumber call
+    RenumberList();
+  }
+  // note: remember, we already handled insert and remove
+  else if ((dcr >= DCR_LIST_MIN) && (dcr <= DCR_LIST_MAX)) {
+    // for other list ops, esp sort or move, just reorder whole list (easy, harmless)
+    RenumberList();
+  }
+  else if (dcr == DCR_STRUCT_UPDATE_END) {
     ConfigHeader();
-  FillList();
+  }
 }
 
 void iListDataPanel::FillList() {
   taiListDataNode* last_child = NULL;
   int i = 0;
-  for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
-    if (!child) continue;
-    taiListDataNode* dn = new taiListDataNode(i, this, child, list, last_child, (iTreeViewItem::DNF_CAN_DRAG));
+  while (true) { // break when NULL child encountered
+    taiDataLink* child = link()->GetListChild(i);
+    if (!child) break;
+    taiListDataNode* dn = new taiListDataNode(i, this, child, list,
+      last_child, (iTreeViewItem::DNF_CAN_DRAG));
     dn->DecorateDataNode(); // fills in remaining columns
     last_child = dn;
+    ++i;
+  }
+}
+
+void iListDataPanel::RenumberList() {
+  int i = 0;
+  // mark all the items first, because this is the easiest, safest way/place
+  // to remove items that are stale, ex. moved from our list to another list
+  for (int j = 0; j < list->itemCount(); ++j) {
+    taiListDataNode* dn = dynamic_cast<taiListDataNode*>(
+      list->item(j));
+    dn->num = -1;
+  }
+  
+  // we have to iterate in proper link order, then find child, since items maybe
+  // be sorted by some other column now
+  for (taiDataLink* child; (child = link()->GetListChild(i)); ++i) { //iterate until no more
+    if (!child) break;
+    // find the item for the link
+    for (int j = 0; j < list->itemCount(); ++j) {
+      taiListDataNode* dn = dynamic_cast<taiListDataNode*>(
+        list->item(j));
+      if (dn && (dn->link() == child)) {
+        dn->num = i;
+        dn->DecorateDataNode(); // fills in remaining columns
+        break;
+      }
+    }
+  }
+  
+  // now delete stales -- note: an item that is deleting would have deleted
+  // its node, but doing so now is harmless
+  for (int j = list->itemCount() - 1; j >=0; --j) {
+    taiListDataNode* dn = dynamic_cast<taiListDataNode*>(
+      list->item(j));
+    if (dn && (dn->num == -1)) delete dn;
   }
 }
 
@@ -5267,6 +5338,12 @@ QFont& iTreeView::italicFont() const {
     italic_font->setItalic(true);
   }
   return *italic_font;
+}
+
+iTreeViewItem* iTreeView::item(int i) const {
+  if ((i < 0) || (i >= topLevelItemCount()))
+    return NULL;
+  return dynamic_cast<iTreeViewItem*>(topLevelItem(i));
 }
 
 void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
@@ -5819,6 +5896,11 @@ bool taiListDataNode::operator<(const QTreeWidgetItem& item) const
     taiListDataNode* ldn = (taiListDataNode*)&item;
     return (num < ldn->num);
   } 
+}
+
+void taiListDataNode::DecorateDataNode() {
+  inherited::DecorateDataNode();
+  setText(0, String(num)); // in case changed via renumber
 }
 
 taiDataLink* taiListDataNode::par_link() const {
