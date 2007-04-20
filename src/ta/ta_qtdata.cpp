@@ -674,7 +674,6 @@ taiIncrField::taiIncrField(TypeDef* typ_, IDataHost* host_, taiData* par,
   rep->setMaximumSize(5 * ht, ht);
   rep->setMinimumSize(2*ht, ht);
 //   rep->setFixedHeight(ht);
-  //  rep->setCharWidth(6); // make them a bit smaller
 
   //note: the taiType will set the max/min
   if (readOnly()) {

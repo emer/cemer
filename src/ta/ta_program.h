@@ -100,14 +100,18 @@ public:
   virtual cssEl*	NewCssType();
   // if object defines new type information (dyn_enum), generate a type object
 
-  virtual void	SetInt(int val);
-  virtual void	SetReal(double val);
-  virtual void	SetString(const String& val);
-  virtual void	SetBool(bool val);
-  virtual void	SetObject(taBase* val); // #DROP1
-  virtual void	SetHardEnum(TypeDef* enum_type, int val);
-  virtual void	SetDynEnum(int val);
-  virtual void	SetDynEnumName(const String& val);
+  virtual void	SetInt(int val); // set variable type to INT and set value
+  virtual void	SetReal(double val);  // set variable type to REAL and set value
+  virtual void	SetString(const String& val);  // set variable type to STRING and set value
+  virtual void	SetBool(bool val);  // set variable type to BOOL and set value
+  virtual void	SetObject(taBase* val); // #DROP1 set variable type to OBJECT and set value
+  virtual void	SetHardEnum(TypeDef* enum_type, int val); // set variable type to HARD_ENUM and set value
+  virtual void	SetDynEnum(int val);  // set variable type to DYN_ENUM and set value
+  virtual void	SetDynEnumName(const String& val); //  // set variable type to DYN_ENUM and set value
+  virtual void	SetVar(const Variant& value);
+  // set from variant value (general purpose variable setting) -- does not change type of variable, just sets from variant value
+
+  ProgVar* operator=(const Variant& value);
  
   virtual taBase* FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on variable

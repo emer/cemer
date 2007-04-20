@@ -2,6 +2,11 @@ leabra todo list:
 
 commit:
 
+* Network scope on Layers and other Network objs
+* Program Init logic: do CheckConfig *after* Init function runs!  prevents catch-22
+* program SetVar should operate on the progvar and not on the underlying css guy -- then
+  it doesn't matter when it is called relative to Init, etc
+
 
 ------------
 current:
@@ -12,18 +17,15 @@ current:
 * graph axis units not good; also add label of data column
 * bar graph mode??  -- easy to do.. just do it..  no fill..
 * add a few more lines, repl share axis with axis_1 and axis_2
+* log units on axis
 
 == Program
 
 * Add switch case guy: n_cases = enforced number of progels in case_code,
   ProgExpr_List size -- use a CodeBlock for more guys!
 
-* Program Init logic: do CheckConfig *after* Init function runs!?
-
 * clearer if DynEnum type and token are separate..  Brad was right.  Dynenum edit not working.
-
-* program SetVar should operate on the progvar and not on the underlying css guy -- then
-  it doesn't matter when it is called relative to Init, etc
+* add a types group, ProgType obj, ProgEnum subclass, plan for ProgClass guy..
 
 * VarInc, VarDec (var++, var--) -- can be useful
 

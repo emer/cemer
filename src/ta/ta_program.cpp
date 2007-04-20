@@ -198,6 +198,35 @@ void ProgVar::SetDynEnumName(const String& val) {
   dyn_enum_val.SetNameVal(val);
 }
 
+void ProgVar::SetVar(const Variant& value) {
+  switch(var_type) {
+  case T_Int:
+    int_val = value.toInt();
+    break;
+  case T_Real:
+    real_val = value.toDouble();
+    break;
+  case T_String:
+    string_val = value.toString();
+    break;
+  case T_Bool:
+    bool_val = value.toBool();
+    break;
+  case T_Object:
+    object_val = value.toBase();
+    break;
+  case T_HardEnum:
+    int_val = value.toInt();
+    break;
+  case T_DynEnum:
+    if(value.isStringType())
+      dyn_enum_val.SetNameVal(value.toString());
+    else
+      dyn_enum_val.SetNumVal(value.toInt());
+    break;
+  }
+}
+
 taBase* ProgVar::FindTypeName(const String& nm) const {
   if(var_type != T_DynEnum) return NULL; // currently only dynenum has new types
   if(dyn_enum_val.name == nm) return (taBase*)&dyn_enum_val;
@@ -2494,25 +2523,32 @@ int Program::Call(Program* caller) {
 } 
 
 int Program::CallInit(Program* caller) {
-  setRunState(INIT); // this is redundant if called from an existing INIT but otherwise needed
-  int rval = Run_impl();
-  script->Restart(); // for init, always restart script at beginning if run again	
-  setRunState(DONE);		// always done..
-  return rval;
+  setRunState(INIT);    // this is redundant if called from an existing INIT but otherwise needed
+  Run_impl();
+  CheckConfig(false);	// check after running!  see below
+  script->Restart(); 	// for init, always restart script at beginning if run again	
+  setRunState(DONE);	// always done..
+  return ret_val;
 } 
 
 void Program::Init() {
   taMisc::Busy();
   setRunState(INIT);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
-  taMisc::CheckConfigStart(false);
-  // note: following is redundate with precompilescript_impl checkconfig
-  //  CheckConfig(false); //sets ret_val on fail
+  // first run the Init code, THEN do the check.  this prevents a catch-22
+  // with Init code that is designed to configure things so there won't be 
+  // config errors!!  It exposes init code to the possibility of 
+  // running unchecked code, so we need to make sure all progel's have 
+  // an extra compile-time check and don't just crash (fail quietly -- err will showup later)
+  taMisc::CheckConfigStart(false); // CallInit will do CheckConfig..
   Run_impl();
   taMisc::DoneBusy();
+  // now check us..
+  CheckConfig(false);
+  taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   if (ret_val != RV_OK) ShowRunError();
   script->Restart();		// restart script at beginning if run again
-  taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
+
   setRunState(DONE);
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 } 
@@ -2526,8 +2562,6 @@ bool Program::PreCompileScript_impl() {
   if(!AbstractScriptBase::PreCompileScript_impl()) return false;
   objs.GetVarsForObjs();
   UpdateProgVars();
-  //Note: following may be a nested invocation
-  if (!CheckConfig(false)) return false; 
   return true;
 }
 
@@ -2714,12 +2748,18 @@ void Program::setStale() {
 }
 
 bool Program::SetVar(const String& nm, const Variant& value) {
-  if(!script) return false;
-  cssElPtr& el_ptr = script->prog_vars.FindName(nm);
-  if (el_ptr == cssMisc::VoidElPtr) return false;
-  cssEl* el = el_ptr.El();
-  *el = value;
+  ProgVar* var = FindVarName(nm);
+  if(TestError(!var, "SetVar", "variable named:", nm, "not found!"))
+    return false;
+  var->SetVar(value);
   return true;
+  // old version operated on css version of variable -- not good
+//   if(!script) return false;
+//   cssElPtr& el_ptr = script->prog_vars.FindName(nm);
+//   if (el_ptr == cssMisc::VoidElPtr) return false;
+//   cssEl* el = el_ptr.El();
+//   *el = value;
+//   return true;
 }
 
 bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet) {

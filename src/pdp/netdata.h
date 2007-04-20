@@ -60,7 +60,7 @@ public:
   Layer_Group* 		layer_group;
   // #READ_ONLY #HIDDEN #NO_SAVE the group of layers on the network -- just for choosing the layer from a list
   LayerRef 		layer;
-  // #NO_SAVE #CONDEDIT_ON_net_target:LAYER #FROM_GROUP_layer_group the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
+  // #NO_SAVE #CONDEDIT_ON_net_target:LAYER #FROM_GROUP_layer_group #NO_SCOPE the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
   String 		layer_name;
   // #CONDEDIT_ON_net_target:LAYER the name of the Layer that will get read or written
 

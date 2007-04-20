@@ -909,7 +909,7 @@ public:
 SpecPtr_of(ProjectionSpec);
 
 class PDP_API Projection: public taNBase {
-  // ##CAT_Network Projection describes connectivity between layers (from receivers perspective)
+  // ##CAT_Network ##SCOPE_Network Projection describes connectivity between layers (from receivers perspective)
 INHERITED(taNBase)
 public:
   enum PrjnSource {
@@ -1127,7 +1127,7 @@ inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 
 
 class PDP_API Unit_Group: public taGroup<Unit> {
-  // #NO_UPDATE_AFTER ##CAT_Network a group of units
+  // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network a group of units
 INHERITED(taGroup<Unit>)
 public:
   Layer*	own_lay;	// #READ_ONLY #NO_SAVE #NO_SHOW layer owner
@@ -1245,7 +1245,7 @@ public:
 };
 
 class PDP_API Layer : public taNBase {
-  // ##EXT_lay ##COMPRESS ##CAT_Network layer containing units
+  // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network layer containing units
 INHERITED(taNBase)
 public:
   enum DMemDist {
@@ -1501,7 +1501,7 @@ protected:
 };
 
 class PDP_API Layer_Group : public taGroup<Layer> {
-  // ##CAT_Network group of layers
+  // ##CAT_Network ##SCOPE_Network group of layers 
   INHERITED(taGroup<Layer>)
 public:
   TDCoord	pos;		// Position of Group of layers relative to network

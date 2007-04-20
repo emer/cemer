@@ -2889,7 +2889,7 @@ void GraphTableView::ComputeAxisRanges() {
   }
   plot_1.ComputeRange();
   plot_2.ComputeRange();
-  if(share_y_axis && plot_2.on) {
+  if(share_y_axis && plot_2.on && !plot_2.GetDAPtr()->isString()) {
     plot_1.UpdateRange_impl(plot_2.data_range.min, plot_2.data_range.max);
   }
   if(color_mode == COLOR_AXIS)
